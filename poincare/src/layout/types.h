@@ -31,7 +31,7 @@ RANGE(CodePointLayout, AsciiCodePointLayout, UnicodeCodePointLayout)
 
 NODE(CombinedCodePoints, 0, {
   CodePoint codePoint;
-  CodePoint combinedCodePoint;
+  CodePoint combiningCodePoint;
 })
 
 NODE(Abs, 1)

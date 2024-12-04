@@ -13,7 +13,7 @@ CodePoint CodePointLayout::GetCodePoint(const Tree* l) {
   return CodePoint(l->nodeValueBlock(0)->get<uint32_t>());
 }
 
-CodePoint CodePointLayout::GetCombinedCodePoint(const Tree* l) {
+CodePoint CodePointLayout::GetCombiningCodePoint(const Tree* l) {
   return CodePoint(l->nodeValueBlock(4)->get<uint32_t>());
 }
 
@@ -23,10 +23,11 @@ Tree* CodePointLayout::Push(CodePoint codePoint) {
   }
   return SharedTreeStack->pushUnicodeCodePointLayout(codePoint);
 }
+
 Tree* CodePointLayout::PushCombined(CodePoint codePoint,
-                                    CodePoint combinedCodepoint) {
+                                    CodePoint combiningCodepoint) {
   return SharedTreeStack->pushCombinedCodePointsLayout(codePoint,
-                                                       combinedCodepoint);
+                                                       combiningCodepoint);
 }
 
 char* CodePointLayout::CopyName(const Tree* l, char* buffer,
@@ -34,7 +35,7 @@ char* CodePointLayout::CopyName(const Tree* l, char* buffer,
   CodePoint c = GetCodePoint(l);
   size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
   if (l->isCombinedCodePointsLayout()) {
-    CodePoint c = GetCombinedCodePoint(l);
+    CodePoint c = GetCombiningCodePoint(l);
     size += UTF8Decoder::CodePointToChars(c, buffer + size, bufferSize - size);
   }
   buffer[size] = 0;
@@ -44,10 +45,11 @@ char* CodePointLayout::CopyName(const Tree* l, char* buffer,
 bool CodePointLayout::IsCodePoint(const Tree* l, CodePoint codePoint) {
   return l->isCodePointLayout() && GetCodePoint(l) == codePoint;
 }
+
 bool CodePointLayout::IsCombinedCodePoint(const Tree* l, CodePoint codePoint,
-                                          CodePoint combinedCodePoint) {
+                                          CodePoint combiningCodePoint) {
   return l->isCombinedCodePointsLayout() && GetCodePoint(l) == codePoint &&
-         GetCombinedCodePoint(l) == combinedCodePoint;
+         GetCombiningCodePoint(l) == combiningCodePoint;
 }
 
 }  // namespace Poincare::Internal

@@ -119,11 +119,11 @@ Tree* AbstractTreeStack::pushUnicodeCodePointLayout(CodePoint codePoint) {
 }
 
 Tree* AbstractTreeStack::pushCombinedCodePointsLayout(
-    CodePoint codePoint, CodePoint combinedCodePoint) {
+    CodePoint codePoint, CodePoint combiningCodePoint) {
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   Tree* result = pushBlock(Type::CombinedCodePointsLayout);
   int first = codePoint;
-  int second = combinedCodePoint;
+  int second = combiningCodePoint;
   pushBlock(OMG::BitHelper::getByteAtIndex(first, 0));
   pushBlock(OMG::BitHelper::getByteAtIndex(first, 1));
   pushBlock(OMG::BitHelper::getByteAtIndex(first, 2));

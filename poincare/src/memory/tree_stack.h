@@ -148,7 +148,7 @@ class AbstractTreeStack : public BlockStack {
   Tree* pushAsciiCodePointLayout(CodePoint codePoint);
   Tree* pushUnicodeCodePointLayout(CodePoint codePoint);
   Tree* pushCombinedCodePointsLayout(CodePoint codePoint,
-                                     CodePoint combinedCodePoint);
+                                     CodePoint combiningCodePoint);
 
   Tree* pushAutocompletedPairLayout(TypeBlock type, bool leftIsTemporary,
                                     bool rightIsTemporary);

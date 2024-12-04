@@ -39,15 +39,17 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   bool isEmpty() const { return m_length == 0; }
 
   const Layout* layout() const { return m_layout; }
+
   CodePoint codePoint() override {
     return m_length > 0 && (m_layout->isCodePointLayout() ||
                             m_layout->isCombinedCodePointsLayout())
                ? CodePointLayout::GetCodePoint(m_layout)
                : UCodePointNull;
   }
-  CodePoint combinedCodePoint() {
+
+  CodePoint combiningCodePoint() {
     return m_length > 0 && m_layout->isCombinedCodePointsLayout()
-               ? CodePointLayout::GetCombinedCodePoint(m_layout)
+               ? CodePointLayout::GetCombiningCodePoint(m_layout)
                : UCodePointNull;
   }
 

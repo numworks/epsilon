@@ -144,9 +144,9 @@ static void PushCodePoint(Tree* layout, CodePoint codePoint) {
 }
 
 static void PushCombinedCodePoint(Tree* layout, CodePoint codePoint,
-                                  CodePoint combinedCodePoint) {
+                                  CodePoint combiningCodePoint) {
   NAry::AddChild(layout,
-                 CodePointLayout::PushCombined(codePoint, combinedCodePoint));
+                 CodePointLayout::PushCombined(codePoint, combiningCodePoint));
 }
 
 static void InsertCodePointAt(Tree* layout, CodePoint codePoint, int index) {

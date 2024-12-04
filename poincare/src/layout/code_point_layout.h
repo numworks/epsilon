@@ -9,16 +9,16 @@ namespace Poincare::Internal {
 class CodePointLayout {
  public:
   static CodePoint GetCodePoint(const Tree* l);
-  static CodePoint GetCombinedCodePoint(const Tree* l);
+  static CodePoint GetCombiningCodePoint(const Tree* l);
   static Tree* Push(CodePoint codePoint);
-  static Tree* PushCombined(CodePoint codePoint, CodePoint combinedCodePoint);
+  static Tree* PushCombined(CodePoint codePoint, CodePoint combiningCodePoint);
 
   // Print name in buffer and return end
   static char* CopyName(const Tree* l, char* buffer, size_t bufferSize);
 
   static bool IsCodePoint(const Tree* l, CodePoint codePoint);
   static bool IsCombinedCodePoint(const Tree* l, CodePoint codePoint,
-                                  CodePoint combinedCodePoint);
+                                  CodePoint combiningCodePoint);
 };
 
 }  // namespace Poincare::Internal

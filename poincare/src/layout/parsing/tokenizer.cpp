@@ -177,7 +177,7 @@ Token Tokenizer::popToken() {
   if (m_decoder.nextLayoutIsCombinedCodePoint()) {
     // Special case for ≠
     if (m_decoder.codePoint() == '=' &&
-        m_decoder.combinedCodePoint() ==
+        m_decoder.combiningCodePoint() ==
             UCodePointCombiningLongSolidusOverlay) {
       size_t length = 1;
       Token result(Token::Type::ComparisonOperator);

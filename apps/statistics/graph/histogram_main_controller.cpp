@@ -53,7 +53,6 @@ void HistogramMainController::viewWillAppear() {
 }
 
 void HistogramMainController::enterHeaderView() {
-  m_selectedSubview = SelectedSubview::Header;
   header()->selectFirstButton();
   // Take back the firstResponder ownership from the ButtonCell
   Escher::App::app()->setFirstResponder(this);
@@ -64,8 +63,6 @@ void HistogramMainController::exitHeaderView() {
 }
 
 void HistogramMainController::enterListView() {
-  m_selectedSubview = SelectedSubview::List;
-
   // Select or sanitize the series and the bar indices
   m_listController.processSeriesAndBarSelection();
 
@@ -86,61 +83,51 @@ void HistogramMainController::exitListView() {
 }
 
 bool HistogramMainController::handleEvent(Ion::Events::Event event) {
-  switch (m_selectedSubview) {
-    case SelectedSubview::Header: {
-      // Handle going up or down the header
-      if (event == Ion::Events::Up || event == Ion::Events::Back) {
-        m_tabController->selectTab();
-        return true;
-      }
-      if (event == Ion::Events::Down) {
-        exitHeaderView();
-        enterListView();
-        return true;
-      }
-      // Handle events on selected button, and navigation between header buttons
-      return buttonAtIndex(header()->selectedButton(),
-                           Escher::ButtonRowController::Position::Top)
-          ->handleEvent(event);
+  if (isHeaderSelected()) {
+    // Handle going up or down the header
+    if (event == Ion::Events::Up || event == Ion::Events::Back) {
+      m_tabController->selectTab();
+      return true;
     }
-    case SelectedSubview::List: {
-      // Handle going to the histogramParameter page
-      if (event == Ion::Events::OK || event == Ion::Events::EXE ||
-          event == Ion::Events::Toolbox) {
-        stackController()->push(histogramParameterController());
-        return true;
-      }
-      // Handle list navigation
-      if (m_listController.handleEvent(event)) {
-        updateBannerView();
-        return true;
-      }
-      // Handle going up from the first list element
-      if (event == Ion::Events::Up) {
-        exitListView();
-        enterHeaderView();
-        return true;
-      }
-      return false;
+    if (event == Ion::Events::Down) {
+      exitHeaderView();
+      enterListView();
+      return true;
     }
-    default:
-      OMG::unreachable();
+    // Handle events on selected button, and navigation between header buttons
+    return buttonAtIndex(header()->selectedButton(),
+                         Escher::ButtonRowController::Position::Top)
+        ->handleEvent(event);
+  } else {
+    // Handle going to the histogramParameter page
+    if (event == Ion::Events::OK || event == Ion::Events::EXE ||
+        event == Ion::Events::Toolbox) {
+      stackController()->push(histogramParameterController());
+      return true;
+    }
+    // Handle list navigation
+    if (m_listController.handleEvent(event)) {
+      updateBannerView();
+      return true;
+    }
+    // Handle going up from the first list element
+    if (event == Ion::Events::Up) {
+      exitListView();
+      enterHeaderView();
+      return true;
+    }
+    return false;
   }
 }
 
 void HistogramMainController::didEnterResponderChain(
     Responder* firstResponder) {
-  switch (m_selectedSubview) {
-    case SelectedSubview::Header: {
-      enterHeaderView();
-      return;
-    }
-    case SelectedSubview::List: {
-      enterListView();
-      return;
-    }
-    default:
-      OMG::unreachable();
+  if (isHeaderSelected()) {
+    enterHeaderView();
+    return;
+  } else {
+    enterListView();
+    return;
   }
 }
 
@@ -150,17 +137,12 @@ void HistogramMainController::willExitResponderChain(
     /* The tab controller is taking control, but the histogram view is still
      * visible. We restore the current subview to an unselected state. */
     assert(m_tabController != nullptr);
-    switch (m_selectedSubview) {
-      case SelectedSubview::Header: {
-        exitHeaderView();
-        return;
-      }
-      case SelectedSubview::List: {
-        exitListView();
-        return;
-      }
-      default:
-        OMG::unreachable();
+    if (isHeaderSelected()) {
+      exitHeaderView();
+      return;
+    } else {
+      exitListView();
+      return;
     }
   }
 }
@@ -228,7 +210,12 @@ Poincare::Range1D<double> HistogramMainController::activeSeriesRange() const {
       maxValue = std::max<double>(maxValue, m_store->maxValue(i));
     }
   }
-  return {minValue, maxValue};
+  return Poincare::Range1D<double>(minValue, maxValue);
+}
+
+void HistogramMainController::initRangeParameters() {
+  m_histogramRange.setXRange(computeXRange());
+  m_histogramRange.setYRange(computeYRange());
 }
 
 void HistogramMainController::initBarParameters() {
@@ -253,7 +240,7 @@ void HistogramMainController::initBarParameters() {
              barWidth, xRange.min(), m_store) &&
          numberOfBars > 0) {
     numberOfBars--;
-    barWidth = (xRange.max() - xRange.min()) / numberOfBars;
+    barWidth = (xRange.length()) / numberOfBars;
   }
   assert(HistogramParameterController::AuthorizedBarWidth(
       barWidth, xRange.min(), m_store));
@@ -275,9 +262,8 @@ void HistogramMainController::initBarParameters() {
           m_histogramRange.xMin() - barWidth / 2.0, m_histogramRange.xMax());
     }
   }
-  assert(barWidth > 0.0 &&
-         std::ceil((xRange.max() - xRange.min()) / barWidth) <=
-             HistogramRange::k_maxNumberOfBars);
+  assert(barWidth > 0.0 && std::ceil((xRange.length()) / barWidth) <=
+                               HistogramRange::k_maxNumberOfBars);
   m_store->setBarWidth(barWidth);
 }
 

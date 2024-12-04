@@ -69,7 +69,7 @@ TypedSystemExpression typedApproximateToTree(
 }
 
 double typedApproximateToScalar(const TypedSystemExpression& expr) {
-  return expr.approximateToScalarJunior<double>();
+  return expr.approximateSystemToScalar<double>();
 }
 
 EMSCRIPTEN_BINDINGS(system_expression) {

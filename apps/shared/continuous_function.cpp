@@ -529,7 +529,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     if (point.isUndefined()) {
       return Coordinate2D<T>();
     }
-    return point.approximateToPointJunior<T>();
+    return point.approximateToPoint<T>();
   }
 
   if (!properties().isParametric()) {

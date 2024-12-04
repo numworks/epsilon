@@ -240,10 +240,10 @@ class JuniorExpression : public OExpression {
   PointOrScalar<T> approximateToPointOrScalarWithValue(T x) const;
 
   template <typename T>
-  T approximateToScalarJunior() const;
+  T approximateSystemToScalar() const;
 
   template <typename T>
-  Coordinate2D<T> approximateToPointJunior() const;
+  Coordinate2D<T> approximateToPoint() const;
 
   template <typename T>
   T approximateIntegralToScalar(const SystemExpression& lowerBound,

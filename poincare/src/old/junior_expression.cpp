@@ -552,14 +552,14 @@ PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
 }
 
 template <typename T>
-T SystemExpression::approximateToScalarJunior() const {
+T SystemExpression::approximateSystemToScalar() const {
   return Approximation::To<T>(
       tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                         .prepare = true});
 }
 
 template <typename T>
-Coordinate2D<T> SystemExpression::approximateToPointJunior() const {
+Coordinate2D<T> SystemExpression::approximateToPoint() const {
   return Approximation::ToPoint<T>(
       tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                         .prepare = true});
@@ -1152,13 +1152,13 @@ template float SystemFunctionScalar::approximateToScalarWithValue<float>(
 template double SystemFunctionScalar::approximateToScalarWithValue<double>(
     double, int) const;
 
-template float SystemExpression::approximateToScalarJunior<float>() const;
-template double SystemExpression::approximateToScalarJunior<double>() const;
+template float SystemExpression::approximateSystemToScalar<float>() const;
+template double SystemExpression::approximateSystemToScalar<double>() const;
 
-template Coordinate2D<float> SystemExpression::approximateToPointJunior<float>()
+template Coordinate2D<float> SystemExpression::approximateToPoint<float>()
     const;
-template Coordinate2D<double>
-SystemExpression::approximateToPointJunior<double>() const;
+template Coordinate2D<double> SystemExpression::approximateToPoint<double>()
+    const;
 
 template float SystemFunction::approximateIntegralToScalar<float>(
     const SystemExpression& upperBound,

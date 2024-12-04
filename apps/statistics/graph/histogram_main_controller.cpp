@@ -71,8 +71,8 @@ void HistogramMainController::enterListView() {
 
   // Highlight the selected series and bar
   m_listController.highlightRow(m_listController.selectedSeries());
-  m_listController.highlightHistogramBar(m_listController.selectedSeries(),
-                                         m_listController.selectedBarIndex());
+  m_listController.scrollAndHighlightHistogramBar(
+      m_listController.selectedSeries(), m_listController.selectedBarIndex());
 
   /* Make the banner visible and update the model data displayed in the banner
    * (this data depends on the selected series and index) */
@@ -298,7 +298,7 @@ Poincare::Range1D<float> HistogramMainController::computeYRange() const {
    * viewHeight)
    * */
   float bottomMargin = static_cast<float>(HistogramRange::k_bottomMargin);
-  float viewHeight = static_cast<float>(m_listController.histogramHeight());
+  float viewHeight = static_cast<float>(m_listController.rowHeight());
   float yMin = yMax * bottomMargin / (bottomMargin - viewHeight);
   return {yMin, yMax};
 }

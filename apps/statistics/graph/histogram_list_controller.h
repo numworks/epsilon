@@ -27,11 +27,9 @@ class HistogramListController
    * return valid values. */
   void processSeriesAndBarSelection();
 
-  /* Highlight the row corresponding to a certain series */
   void highlightRow(std::size_t row);
 
-  /* Highlight a certain histogram bar in a certain row */
-  void highlightHistogramBar(std::size_t row, std::size_t barIndex);
+  void scrollAndHighlightHistogramBar(std::size_t row, std::size_t barIndex);
 
   // Unhighlight the entire list
   void unhighlightList() { m_selectableListView.deselectTable(); }
@@ -41,7 +39,7 @@ class HistogramListController
   std::size_t selectedBarIndex() const;
 
   // Height of one histogram graph (they all have the same size)
-  KDCoordinate histogramHeight() const {
+  KDCoordinate rowHeight() const {
     return numberOfRows() == 1 ? m_selectableListView.bounds().height() - 1
                                : k_listRowHeight;
   }
@@ -55,7 +53,6 @@ class HistogramListController
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override {
     return m_displayCells.size();
-    ;
   }
 
   // Escher::Responder
@@ -66,9 +63,7 @@ class HistogramListController
 
   // Escher::TableViewDataSource
   // TODO: Escher::TableViewDataSource::nonMemoizedRowHeight should be const
-  KDCoordinate nonMemoizedRowHeight(int row) override {
-    return histogramHeight();
-  }
+  KDCoordinate nonMemoizedRowHeight(int row) override { return rowHeight(); }
 
   // Check if one of the statistics series is selected in the Snapshot
   bool hasSelectedSeries() const;
@@ -82,7 +77,7 @@ class HistogramListController
   std::size_t unsafeSelectedBarIndex() const;
 
   // Navigation inside and between the histogram cells
-  std::size_t moveSelectionHorizontally(
+  std::size_t horizontallyShiftedBarIndex(
       std::size_t previousBarIndex, std::size_t selectedSeries,
       OMG::HorizontalDirection direction) const;
   std::size_t sanitizeSelectedIndex(std::size_t selectedSeries,

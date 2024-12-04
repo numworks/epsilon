@@ -31,16 +31,18 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
   assert(row >= 0 && row < numberOfRows());
   HistogramCell* histogramCell = static_cast<HistogramCell*>(cell);
   histogramCell->setSeries(row);
-  histogramCell->reload();
 }
 
 bool HistogramListController::handleEvent(Ion::Events::Event event) {
   // Handle left/right navigation inside a histogram cell
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
-    // Set a new bar index in the snapshot and update the bar highlight
-    setSelectedBarIndex(moveSelectionHorizontally(
-        selectedBarIndex(), selectedSeries(), event.direction()));
-    highlightHistogramBar(selectedSeries(), selectedBarIndex());
+    std::size_t newBarIndex = horizontallyShiftedBarIndex(
+        selectedBarIndex(), selectedSeries(), event.direction());
+    if (newBarIndex != selectedBarIndex()) {
+      setSelectedBarIndex(newBarIndex);
+
+      scrollAndHighlightHistogramBar(selectedSeries(), selectedBarIndex());
+    }
     return true;
   }
 
@@ -57,17 +59,18 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
      * HistogramListController. */
     Escher::App::app()->setFirstResponder(parentResponder());
 
-    // Set the current series and index in the snaphot
+    // Set the current series and index in the snapshot
     std::size_t previousSelectedSeries = selectedSeries();
     setSelectedSeries(m_selectableListView.selectedRow());
     /* The series index of the new selected cell is computed to be close to its
-     * previous location in the neighbouring cell */
+     * previous location in the neighboring cell */
     setSelectedBarIndex(barIndexAfterSelectingNewSeries(
         previousSelectedSeries, selectedSeries(), unsafeSelectedBarIndex()));
 
     // Update row and bar highlights
     highlightRow(selectedSeries());
-    highlightHistogramBar(selectedSeries(), selectedBarIndex());
+
+    scrollAndHighlightHistogramBar(selectedSeries(), selectedBarIndex());
   }
 
   return true;
@@ -117,10 +120,19 @@ void HistogramListController::highlightRow(std::size_t row) {
   m_selectableListView.selectedCell()->setHighlighted(true);
 }
 
-void HistogramListController::highlightHistogramBar(std::size_t row,
-                                                    std::size_t barIndex) {
+void HistogramListController::scrollAndHighlightHistogramBar(
+    std::size_t row, std::size_t barIndex) {
   assert(0 <= row && row <= m_store->numberOfActiveSeries());
   assert(0 <= barIndex && barIndex < m_store->numberOfBars(row));
+
+  /* Update the histogram x-axis range to adapt to the bar index. WARNING: the
+   * range update must be done before setting the bar highlight, because the bar
+   * has to be visible when calling setBarHighlight. */
+  if (m_histogramRange->scrollToSelectedBarIndex(selectedSeries(),
+                                                 selectedBarIndex())) {
+    m_selectableListView.cell(selectedSeries())->reloadCell();
+  }
+
   /* The following function will set the bar highlight in the HistogramView
    * owned by the cell */
   static_cast<HistogramCell*>(m_selectableListView.cell(row))
@@ -148,36 +160,32 @@ std::size_t HistogramListController::unsafeSelectedBarIndex() const {
 std::size_t HistogramListController::selectedBarIndex() const {
   std::size_t barIndex = unsafeSelectedBarIndex();
   assert(barIndex < m_store->numberOfBars(selectedSeries()));
+
   return barIndex;
 }
 
 void HistogramListController::setSelectedBarIndex(std::size_t barIndex) {
   assert(barIndex < m_store->numberOfBars(selectedSeries()));
-  // update value in snapshot
   *App::app()->snapshot()->selectedIndex() = barIndex;
-  // update histogram range
-  if (m_histogramRange->scrollToSelectedBarIndex(selectedSeries(), barIndex)) {
-    m_selectableListView.cell(selectedSeries())->reloadCell();
-  }
 }
 
 bool HistogramListController::hasSelectedSeries() const {
   return *App::app()->snapshot()->selectedSeries() > -1;
 }
 
-std::size_t HistogramListController::moveSelectionHorizontally(
+std::size_t HistogramListController::horizontallyShiftedBarIndex(
     std::size_t previousBarIndex, std::size_t selectedSeries,
     OMG::HorizontalDirection direction) const {
-  int newBarIndex = previousBarIndex;
+  int numberOfBars = m_store->numberOfBars(selectedSeries);
 
+  int newBarIndex = previousBarIndex;
   do {
     newBarIndex += direction.isRight() ? 1 : -1;
     if (newBarIndex < 0) {
       return std::size_t{0};
     }
-    if (newBarIndex >= m_store->numberOfBars(selectedSeries)) {
-      return static_cast<std::size_t>(m_store->numberOfBars(selectedSeries) -
-                                      1);
+    if (newBarIndex >= numberOfBars) {
+      return static_cast<std::size_t>(numberOfBars - 1);
     }
   } while (m_store->heightOfBarAtIndex(selectedSeries, newBarIndex) == 0);
   return static_cast<std::size_t>(newBarIndex);

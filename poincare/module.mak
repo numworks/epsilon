@@ -2,16 +2,17 @@ _sources_poincare_minimal := $(addprefix src/, \
   api.cpp \
   cas_disabled.cpp:-cas \
   cas_enabled.cpp:+cas \
-  init.cpp \
+  init.cpp:-nopool \
+  init_no_pool.cpp:+nopool \
   new_trigonometry.cpp \
   preferences.cpp \
   print_float.cpp \
   sign.cpp \
-  old/integer.cpp \
+  old/integer.cpp:-nopool \
   old/serialization_helper.cpp \
-  old/pool_handle.cpp \
-  old/pool_object.cpp \
-  old/pool.cpp \
+  old/pool_handle.cpp:-nopool \
+  old/pool_object.cpp:-nopool \
+  old/pool.cpp:-nopool \
 )
 
 _sources_poincare_checkpoint := $(addprefix src/, \
@@ -30,7 +31,7 @@ _sources_poincare_storage := $(addprefix src/, \
 )
 
 _sources_poincare_extended := $(addprefix src/, \
-$(addprefix old/, \
+$(addprefix old/, $(addsuffix :-nopool, \
   absolute_value.cpp \
   addition.cpp \
   aliases_list.cpp \
@@ -49,7 +50,6 @@ $(addprefix old/, \
   computation_context.cpp \
   conjugate.cpp \
   constant.cpp \
-  context.cpp \
   cosine.cpp \
   cotangent.cpp \
   decimal.cpp \
@@ -59,7 +59,6 @@ $(addprefix old/, \
   dimension.cpp \
   distribution_dispatcher.cpp \
   division.cpp \
-  empty_context.cpp \
   empty_expression.cpp \
   evaluation.cpp \
   expression.cpp \
@@ -114,11 +113,14 @@ $(addprefix old/, \
   symbol.cpp \
   symbol_abstract.cpp \
   tangent.cpp \
-  tree_variable_context.cpp \
   trigonometry.cpp \
   undefined.cpp \
   unit.cpp \
   unit_convert.cpp \
+) \
+  context.cpp \
+  empty_context.cpp \
+  tree_variable_context.cpp \
 ) \
 $(addprefix expression/, \
   advanced_operation.cpp \
@@ -242,8 +244,8 @@ $(addprefix numeric/, \
   zoom.cpp \
 ) \
 $(addprefix pool/, \
-  layout.cpp \
-  layout_cursor.cpp \
+  layout.cpp:-nopool \
+  layout_cursor.cpp:-nopool \
 ) \
 $(addprefix probability/, \
   binomial_distribution.cpp \

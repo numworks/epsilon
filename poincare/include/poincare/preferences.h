@@ -14,8 +14,6 @@ namespace Poincare {
 
 using SymbolicComputation = Internal::SymbolicComputation;
 
-class JuniorExpression;
-
 /* Preferences live in the Storage, which does not enforce alignment. The packed
  * attribute ensures the compiler will not emit instructions that require the
  * data to be aligned. */
@@ -96,7 +94,7 @@ class __attribute__((packed)) Preferences final {
   static Preferences* SharedPreferences();
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
-      ComplexFormat complexFormat, const JuniorExpression& e, Context* context,
+      ComplexFormat complexFormat, const Internal::Tree* e, Context* context,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols);
 

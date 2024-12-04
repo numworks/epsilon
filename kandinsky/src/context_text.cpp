@@ -102,9 +102,8 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
       codePoint = decoder.nextCodePoint();
     } else {
       assert(!codePoint.isCombining());
-      if (origin().x() + position.x() +
-                  KDFont::GlyphWidth(style.font, codePoint) >
-              clippingRect().left() &&
+      KDCoordinate width = KDFont::GlyphWidth(style.font, codePoint);
+      if (origin().x() + position.x() + width > clippingRect().left() &&
           origin().x() + position.x() <= clippingRect().right()) {
         KDFont::Font(style.font)
             ->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
@@ -130,8 +129,7 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
           codePoint = decoder.nextCodePoint();
         }
       }
-      position = position.translatedBy(
-          KDPoint(KDFont::GlyphWidth(style.font, codePoint), 0));
+      position = position.translatedBy(KDPoint(width, 0));
       if (origin().x() + position.x() > clippingRect().right()) {
         // fast forward until line feed
         while (codePoint != UCodePointLineFeed && codePoint != UCodePointNull) {

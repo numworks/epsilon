@@ -185,6 +185,7 @@ $(addprefix function_properties/, \
 $(addprefix helpers/, \
   expression_equal_sign.cpp \
   layout.cpp \
+  scatter_plot_iterable.cpp \
   store.cpp \
 ) \
 $(addprefix layout/, \

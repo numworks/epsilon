@@ -1,11 +1,13 @@
-#include "scatter_plot_helper.h"
-
+#include <poincare/helpers/scatter_plot_iterable.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/memory/tree.h>
 
 using namespace Poincare;
 
-namespace Shared {
+ScatterPlotIterable::ScatterPlotIterable(const Poincare::SystemExpression e)
+    : m_expression(e) {
+  assert(e.dimension().isPointOrListOfPoints() || e.dimension().isEmptyList());
+}
 
 Coordinate2D<float> ScatterPlotIterable::Iterator::operator*() const {
   assert(m_node->isPoint());
@@ -42,10 +44,3 @@ int ScatterPlotIterable::length() const {
              ? m_expression.tree()->numberOfChildren()
              : 1;
 }
-
-ScatterPlotIterable::ScatterPlotIterable(const Poincare::SystemExpression e)
-    : m_expression(e) {
-  assert(e.dimension().isPointOrListOfPoints() || e.dimension().isEmptyList());
-}
-
-}  // namespace Shared

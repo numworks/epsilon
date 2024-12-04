@@ -1,20 +1,18 @@
-#ifndef SHARED_SCATTER_PLOT_HELPER_H
-#define SHARED_SCATTER_PLOT_HELPER_H
+#ifndef POINCARE_HELPERS_SCATTER_PLOT_ITERABLE_H
+#define POINCARE_HELPERS_SCATTER_PLOT_ITERABLE_H
 
 #include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
 
-namespace Poincare::Internal {
+namespace Poincare {
+
+namespace Internal {
 class Tree;
 }
 
-namespace Shared {
-
-// TODO_PCJ: Move this class in Poincare
 class ScatterPlotIterable {
-  friend class ContinuousFunction;
-
  public:
+  ScatterPlotIterable(const Poincare::SystemExpression e);
   class Iterator {
    public:
     Iterator(const Poincare::Internal::Tree* node) : m_node(node) {}
@@ -31,11 +29,9 @@ class ScatterPlotIterable {
   int length() const;
 
  private:
-  ScatterPlotIterable(const Poincare::SystemExpression e);
-
   const Poincare::SystemExpression m_expression;
 };
 
-}  // namespace Shared
+}  // namespace Poincare
 
 #endif

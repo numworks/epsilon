@@ -11,6 +11,7 @@
 
 #include <apps/i18n.h>
 #include <poincare/function_properties/conic.h>
+#include <poincare/helpers/scatter_plot_iterable.h>
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/preferences.h>
@@ -19,7 +20,6 @@
 #include "continuous_function_properties.h"
 #include "function.h"
 #include "packed_range_1D.h"
-#include "scatter_plot_helper.h"
 
 namespace Shared {
 
@@ -254,9 +254,10 @@ class ContinuousFunction : public Function {
   constexpr static CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
 
   /* Scatter plot helper */
-  ScatterPlotIterable iterateScatterPlot(Poincare::Context* context) const {
+  Poincare::ScatterPlotIterable iterateScatterPlot(
+      Poincare::Context* context) const {
     assert(properties().isScatterPlot());
-    return ScatterPlotIterable(expressionReduced(context));
+    return Poincare::ScatterPlotIterable(expressionReduced(context));
   }
 
  private:

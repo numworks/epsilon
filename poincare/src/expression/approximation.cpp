@@ -22,6 +22,7 @@
 #include "physical_constant.h"
 #include "random.h"
 #include "rational.h"
+#include "simplification.h"
 #include "symbol.h"
 #include "undefined.h"
 #include "units/representatives.h"
@@ -201,7 +202,7 @@ Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
     context.m_randomContext.m_isInitialized = true;
   }
   if (params.prepare || params.optimize) {
-    // TODO_PCJ: assert e is already projected.
+    assert(Simplification::IsSystem(e));
     if (!clone) {
       clone = e->cloneTree();
     }

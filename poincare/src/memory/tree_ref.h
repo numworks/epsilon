@@ -37,8 +37,8 @@ class TreeRef {
     if (m_identifier != other.m_identifier) {
       SharedTreeStack->deleteIdentifier(m_identifier);
       m_identifier = other.m_identifier;
-      other.m_identifier = TreeStack::ReferenceTable::NoNodeIdentifier;
     }
+    other.m_identifier = TreeStack::ReferenceTable::NoNodeIdentifier;
     return *this;
   }
 

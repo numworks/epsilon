@@ -24,6 +24,10 @@ _sources_liba_extended := $(addprefix src/, \
   nearbyintf.c \
 )
 
+_sources_liba_armv6m := $(addprefix src/armv6m/, \
+  setjmp.s \
+  longjmp.s \
+)
 _sources_liba_armv7m := $(addprefix src/armv7m/, \
   setjmp.s \
   longjmp.s \
@@ -141,7 +145,7 @@ _sources_liba_test += $(addprefix test/, \
 $(call create_module,liba,1, \
   $(addsuffix :+minimal,$(_sources_liba_minimal)) \
   $(addsuffix :-minimal,$(_sources_liba_extended)) \
-  $(foreach f,armv7m aeabirt openbsd test,$(addsuffix :+$f,$(_sources_liba_$f))) \
+  $(foreach f,armv6m armv7m aeabirt openbsd test,$(addsuffix :+$f,$(_sources_liba_$f))) \
 )
 
 $(call all_objects_for,liba/src/external/sqlite/mem5.c): CFLAGS += -w

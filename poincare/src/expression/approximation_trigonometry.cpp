@@ -42,6 +42,11 @@ template <typename T>
 std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
                                                       std::complex<T> value,
                                                       AngleUnit angleUnit) {
+  if (IsNonReal(value)) {
+    /* TODO_PCJ: better handle nonreal values, we are losing information
+     * (result could be undef here) */
+    return NonReal<T>();
+  }
   switch (type) {
     case Type::Cos:
     case Type::Sin: {

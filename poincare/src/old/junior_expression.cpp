@@ -1,4 +1,3 @@
-#include <apps/global_preferences.h>
 #include <poincare/cas.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -483,10 +482,8 @@ T UserExpression::ParseAndSimplifyAndApproximateToScalar(
     return NAN;
   }
   ProjectionContext ctx = {
-      .m_complexFormat = Preferences::ComplexFormat::Cartesian,
-      .m_angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
-      .m_unitFormat =
-          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+      .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
+      .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
       .m_symbolic = symbolicComputation,
       .m_context = context};
   exp = exp.cloneAndSimplify(&ctx);

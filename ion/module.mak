@@ -29,7 +29,12 @@ ifneq ($(ION_LOG_EVENTS_NAME),0)
 SFLAGS_ion += -DION_LOG_EVENTS_NAME=1
 endif
 
+ifeq ($(PLATFORM),u0-discovery)
+# relative to scandium root
+include src/ion/u0.mak
+else
 include $(PATH_ion)/shared.$(PLATFORM_TYPE).mak
+endif
 
 $(call assert_defined,KANDINSKY_fonts_dependencies)
 $(call all_objects_for,$(SOURCES_ion)): $(KANDINSKY_fonts_dependencies)

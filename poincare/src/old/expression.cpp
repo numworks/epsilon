@@ -472,30 +472,6 @@ OExpression OExpression::makePositiveAnyNegativeNumeralFactor(
   return OExpression();
 }
 
-template <typename U>
-Evaluation<U> OExpression::approximateToEvaluation(
-    const ApproximationContext &approximationContext) const {
-  s_approximationEncounteredComplex = false;
-  Evaluation<U> e = node()->approximate(U(), approximationContext);
-  if (approximationContext.complexFormat() ==
-          Preferences::ComplexFormat::Real &&
-      s_approximationEncounteredComplex) {
-    switch (e.otype()) {
-      case EvaluationNode<U>::Type::MatrixComplex:
-        return MatrixComplex<U>::Undefined();
-      case EvaluationNode<U>::Type::ListComplex:
-        return ListComplex<U>::Undefined();
-      case EvaluationNode<U>::Type::PointEvaluation:
-        return PointEvaluation<U>::Undefined();
-      default:
-        assert(e.otype() == EvaluationNode<U>::Type::BooleanEvaluation ||
-               e.otype() == EvaluationNode<U>::Type::Complex);
-        return Complex<U>::Undefined();
-    }
-  }
-  return e;
-}
-
 Ion::Storage::Record::ErrorStatus OExpression::storeWithNameAndExtension(
     const char *baseName, const char *extension) const {
   return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
@@ -1376,11 +1352,6 @@ OExpression OExpression::FunctionHelper::build(OExpression children) const {
          numberOfChildren <= m_maxNumberOfChildren);
   return maker(children, numberOfChildren, m_initializer, m_size);
 }
-
-template Evaluation<float> OExpression::approximateToEvaluation(
-    const ApproximationContext &approximationContext) const;
-template Evaluation<double> OExpression::approximateToEvaluation(
-    const ApproximationContext &approximationContext) const;
 
 template OExpression OExpression::approximateKeepingUnits<double>(
     const ReductionContext &reductionContext) const;

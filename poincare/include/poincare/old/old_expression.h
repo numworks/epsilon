@@ -507,11 +507,6 @@ class OExpression : public PoolHandle {
   /* Tuple */
   typedef std::initializer_list<OExpression> Tuple;
 
-  /* Iterator */
-  template <typename U>
-  Evaluation<U> approximateToEvaluation(
-      const ApproximationContext& approximationContext) const;
-
   Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
       const char* baseName, const char* extension) const;
 

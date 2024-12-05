@@ -51,6 +51,7 @@ OExpression ListSort::shallowReduce(ReductionContext reductionContext) {
     return child;
   }
 
+#if 0
   OList list = static_cast<OList&>(child);
   ApproximationContext approximationContext(reductionContext, true);
   Evaluation<float> approximatedList =
@@ -65,7 +66,6 @@ OExpression ListSort::shallowReduce(ReductionContext reductionContext) {
     return *this;
   }
 
-#if 0
   Helpers::ListSortPack<float> pack{
       &list, static_cast<ListComplex<float>*>(&approximatedList),
       listOfDefinedScalars};

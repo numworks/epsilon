@@ -12,6 +12,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/old/sequence.h>
 #include <poincare/old/symbol.h>
+#include <poincare/preferences.h>
 #include <poincare/print.h>
 
 #include <cmath>
@@ -66,8 +67,13 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   Poincare::Sequence sequenceSymbol = Poincare::Sequence::Builder(
       name, strlen(name), Poincare::Symbol::SystemSymbol());
   Poincare::Symbol variable = Poincare::Symbol::SystemSymbol();
-  function = function.replaceSymbolWithExpression(sequenceSymbol, variable)
-                 .getSystemFunction(Shared::Function::k_unknownName);
+  function =
+      function.replaceSymbolWithExpression(sequenceSymbol, variable)
+          .cloneAndReduce(
+              {App::app()->localContext(),
+               Poincare::Preferences::SharedPreferences()->complexFormat(),
+               Poincare::Preferences::SharedPreferences()->angleUnit()})
+          .getSystemFunction(Shared::Function::k_unknownName);
   Curve2DEvaluation<float> evaluateFunction = [](float t, void* model,
                                                  void* context) {
     Poincare::SystemFunction* e = (Poincare::SystemFunction*)model;

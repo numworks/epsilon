@@ -2,13 +2,12 @@
 
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/new_trigonometry.h>
 #include <poincare/numeric/roots.h>
-#include <poincare/old/function.h>
 #include <poincare/old/serialization_helper.h>
-#include <poincare/old/symbol.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/derivation.h>
 
@@ -875,8 +874,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     // Ensure that function name is either record's name, or free
     assert(record->fullName() != nullptr);
     assert(leftExpression.isUserFunction());
-    const char* functionName =
-        static_cast<Poincare::Function&>(leftExpression).name();
+    const char* functionName = SymbolHelper::GetName(leftExpression);
     const size_t functionNameLength = strlen(functionName);
     const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
     CodePoint codePointSymbol = CodePointForSymbol(functionSymbol);
@@ -1067,10 +1065,7 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
     expressionToStore = ExpressionModel::ReplaceSymbolWithUnknown(
         expressionToStore, symbol, true);
   } else {
-    if (expressionToStore.recursivelyMatches([](const NewExpression e) {
-          return e.isUserSymbol() && AliasesLists::k_thetaAliases.contains(
-                                         static_cast<const Symbol&>(e).name());
-        })) {
+    if (expressionToStore.recursivelyMatches(SymbolHelper::IsTheta)) {
       symbol = expressionToStore.cloneChildAtIndex(0).isIdenticalTo(
                    Symbol::Builder(k_polarSymbol))
                    ? k_radiusSymbol

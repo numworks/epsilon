@@ -37,8 +37,6 @@ class ButtonRowController : public ViewController {
 
   int selectedButton();
   bool setSelectedButton(int selectedButton);
-  bool selectFirstButton() { return setSelectedButton(0); }
-  bool unselectButtonRow() { return setSelectedButton(-1); }
   void setMessageOfButtonAtIndex(I18n::Message message, int index);
   void reloadButtons() { m_contentView.layoutSubviews(); }
 

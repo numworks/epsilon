@@ -53,13 +53,13 @@ void HistogramMainController::viewWillAppear() {
 }
 
 void HistogramMainController::enterHeaderView() {
-  header()->selectFirstButton();
+  header()->setSelectedButton(0);
   // Take back the firstResponder ownership from the ButtonCell
   Escher::App::app()->setFirstResponder(this);
 }
 
 void HistogramMainController::exitHeaderView() {
-  header()->unselectButtonRow();
+  header()->setSelectedButton(-1);
 }
 
 void HistogramMainController::enterListView() {

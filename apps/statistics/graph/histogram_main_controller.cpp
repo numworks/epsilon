@@ -202,6 +202,7 @@ void HistogramMainController::updateBannerView() {
 }
 
 Poincare::Range1D<double> HistogramMainController::activeSeriesRange() const {
+  assert(m_store->hasActiveSeries());
   double minValue = DBL_MAX;
   double maxValue = -DBL_MAX;
   for (int i = 0; i < Store::k_numberOfSeries; i++) {

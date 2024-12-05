@@ -357,8 +357,8 @@ QUIZ_CASE(pcj_approximation_with_context) {
   store("2x+5→f(x)", &globalContext);
   store("π+1→a", &globalContext);
   ProjectionContext ctx = {
-      .m_context = &globalContext,
       .m_complexFormat = ComplexFormat::Cartesian,
+      .m_context = &globalContext,
   };
 
   approximates_to<float>("a", "4.141593", ctx);

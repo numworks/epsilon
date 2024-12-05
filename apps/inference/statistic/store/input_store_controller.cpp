@@ -10,10 +10,10 @@ using namespace Poincare;
 namespace Inference {
 
 InputStoreController::InputStoreController(StackViewController* parent,
-                                           ViewController* resultsController,
+                                           ViewController* nextController,
                                            Statistic* statistic,
                                            Poincare::Context* context)
-    : InputCategoricalController(parent, resultsController, statistic),
+    : InputCategoricalController(parent, nextController, statistic),
       m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this),
       m_extraParameters{
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),

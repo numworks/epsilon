@@ -14,7 +14,7 @@ class InputStoreController : public InputCategoricalController,
                              Escher::DropdownCallback {
  public:
   InputStoreController(Escher::StackViewController* parent,
-                       Escher::ViewController* resultsController,
+                       Escher::ViewController* nextController,
                        Statistic* statistic, Poincare::Context* context);
 
   // Responder

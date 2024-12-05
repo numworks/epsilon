@@ -90,7 +90,7 @@ class InputCategoricalController : public CategoricalController,
                                    public Shared::ParameterTextFieldDelegate {
  public:
   InputCategoricalController(Escher::StackViewController* parent,
-                             Escher::ViewController* resultsController,
+                             Escher::ViewController* nextController,
                              Statistic* statistic);
 
   // TextFieldDelegate

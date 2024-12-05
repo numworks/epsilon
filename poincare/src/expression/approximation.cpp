@@ -915,8 +915,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     /* Handle units as their scalar value in basic SI so prefix and
      * representative homogeneity isn't necessary. Dimension is expected to be
      * handled at this point. */
-    case Type::Unit:
-      return Units::Unit::GetValue(e);
+    case Type::Unit: {
+      T approxSI = Units::Unit::GetValue(e);
+      // For angle units, convert to angle value in the context
+      return Units::IsPureAngleUnit(e)
+                 ? ConvertFromRadian(approxSI, ctx->m_angleUnit)
+                 : approxSI;
+    }
     case Type::PhysicalConstant:
       return PhysicalConstant::GetProperties(e).m_value;
     case Type::LnUser: {

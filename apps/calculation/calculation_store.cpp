@@ -174,7 +174,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
     }
   }
 
-  /* When a input contains a store, it is kept by the reduction in the
+  /* When an input contains a store, it is kept by the reduction in the
    * exact output and the actual store is performed here. The global
    * context will perform the store and ensure that no symbol is kept in
    * the definition of a variable.

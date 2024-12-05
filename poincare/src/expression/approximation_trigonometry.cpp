@@ -25,7 +25,7 @@ T ConvertToRadian(T angle, AngleUnit angleUnit) {
 }
 
 template <typename T>
-T ConvertFromRadian(T angle, AngleUnit angleUnit) {
+T Approximation::ConvertFromRadian(T angle, AngleUnit angleUnit) {
   switch (angleUnit) {
     case AngleUnit::Radian:
       return angle;
@@ -216,6 +216,9 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
       OMG::unreachable();
   }
 }
+
+template float Approximation::ConvertFromRadian(float, AngleUnit);
+template double Approximation::ConvertFromRadian(double, AngleUnit);
 
 template std::complex<float> Approximation::TrigonometricToComplex(
     TypeBlock, std::complex<float>, AngleUnit);

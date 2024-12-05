@@ -256,6 +256,9 @@ class Approximation final {
   static Tree* ToComplexTree(const Tree* e, const Context* ctx);
 
   template <typename T>
+  static T ConvertFromRadian(T angle, AngleUnit angleUnit);
+
+  template <typename T>
   static std::complex<T> TrigonometricToComplex(TypeBlock type,
                                                 std::complex<T> value,
                                                 AngleUnit angleUnit);
@@ -264,8 +267,8 @@ class Approximation final {
                                              std::complex<T> value);
   template <typename T>
   static T ApproximateIntegral(const Tree* integral, const Context* ctx);
-  template <typename T>
 
+  template <typename T>
   static T ApproximateDerivative(const Tree* function, T at, int order,
                                  const Context* ctx);
   template <typename T>

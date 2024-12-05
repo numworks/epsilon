@@ -2,6 +2,7 @@
 
 #include <poincare/cas.h>
 #include <poincare/helpers/store.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/symbol.h>
@@ -271,7 +272,7 @@ bool CalculationStore::preferencesHaveChanged() {
 }
 
 VariableContext CalculationStore::createAnsContext(Context* context) {
-  VariableContext ansContext(Symbol::k_ansAliases.mainAlias(), context);
+  VariableContext ansContext(SymbolHelper::AnsMainAlias(), context);
   ansContext.setExpressionForSymbolAbstract(ansExpression(context),
                                             Symbol::Ans());
   return ansContext;

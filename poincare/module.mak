@@ -187,6 +187,7 @@ $(addprefix helpers/, \
   layout.cpp \
   scatter_plot_iterable.cpp \
   store.cpp \
+  symbol.cpp \
 ) \
 $(addprefix layout/, \
   autocompleted_pair.cpp \

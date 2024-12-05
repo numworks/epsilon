@@ -1,8 +1,8 @@
 #include "layout_field.h"
 
 #include <apps/i18n.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/symbol.h>
 
 using namespace Poincare;
 
@@ -46,12 +46,12 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       (event == Ion::Events::Multiplication || event == Ion::Events::Plus ||
        event == Ion::Events::Power || event == Ion::Events::Square ||
        event == Ion::Events::Sto)) {
-    insertText(Symbol::k_ansAliases.mainAlias());
+    insertText(SymbolHelper::AnsMainAlias());
   }
   if (event == Ion::Events::Minus && isEditing() &&
       layout().tree()->treeIsIdenticalTo("-"_l)) {
     // Turn single - to Ans -
-    setText(Symbol::k_ansAliases.mainAlias());
+    setText(SymbolHelper::AnsMainAlias());
     // The Minus symbol will be addded by Escher::LayoutField::handleEvent
   }
   if (event == Ion::Events::Division && isEditing()) {
@@ -96,7 +96,7 @@ bool LayoutField::handleDivision() {
         assert(m_currentStep == DivisionCycleStep::Start ||
                m_currentStep == DivisionCycleStep::MixedFraction);
         m_currentStep = DivisionCycleStep::DenominatorOfAnsFraction;
-        insertText(Symbol::k_ansAliases.mainAlias());
+        insertText(SymbolHelper::AnsMainAlias());
     }
   } else if (mixedFractionsEnabled) {
     assert(m_divisionCycleWithAns == OMG::Troolean::False);

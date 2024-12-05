@@ -201,7 +201,12 @@ ExpiringPointer<Calculation> CalculationStore::push(
                                             context)) {
       value = valueApprox;
     }
-    assert(!value.deepIsSymbolic(nullptr, SymbolicComputation::KeepAllSymbols));
+#if 0
+    /* TODO_PCJ: restore assert
+     * Handle case of functions (3*x->f(x)): there should be no symbol except x */
+    assert(!value.recursivelyMatches(
+        [](const NewExpression e) { return e.isUserSymbol(); }));
+#endif
     if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
       exactOutputExpression = value;
       approximateOutputExpression = valueApprox;

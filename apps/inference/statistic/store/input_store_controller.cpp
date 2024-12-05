@@ -75,6 +75,7 @@ void InputStoreController::viewWillAppear() {
                   m_statistic->parameterDefinitionAtIndex(param));
   }
 
+  // TODO: dedicated function for the dropdown cell view initialization
   m_dropdownCell.dropdown()->init();
   Table* tableModel = m_storeTableCell.tableModel();
   if (tableModel->numberOfSeries() == 2) {
@@ -107,6 +108,7 @@ void InputStoreController::viewWillAppear() {
         ->setText(buffer);
   }
   m_dropdownCell.dropdown()->reloadCell();
+
   InputCategoricalController::viewWillAppear();
 }
 
@@ -126,6 +128,12 @@ void InputStoreController::initView() {
   m_loadedSubApp = m_statistic->subApp();
   m_loadedDistribution = m_statistic->distributionType();
   m_loadedTest = m_statistic->significanceTestType();
+
+  // TODO: this has to be moved in a higher level class
+  // (InputDatasetsController)
+  if (m_loadedTest == SignificanceTestType::TwoMeans) {
+    hideParameterCells(1);
+  }
 }
 
 int InputStoreController::indexOfEditedParameterAtIndex(int index) const {

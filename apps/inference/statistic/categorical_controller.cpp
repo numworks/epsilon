@@ -227,9 +227,7 @@ InputCategoricalController::InputCategoricalController(
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_statistic(statistic),
-      m_significanceCell(&m_selectableListView, this) {
-  m_significanceCell.setVisible(false);
-}
+      m_significanceCell(&m_selectableListView, this) {}
 
 bool InputCategoricalController::textFieldShouldFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {

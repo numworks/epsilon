@@ -5,8 +5,8 @@
 #include <escher/selectable_list_view_controller.h>
 
 #include "../store.h"
+#include "histogram_cell.h"
 #include "histogram_range.h"
-#include "histogram_view.h"
 
 namespace Statistics {
 

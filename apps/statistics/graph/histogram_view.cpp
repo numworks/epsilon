@@ -59,6 +59,7 @@ HistogramView::HistogramView(Store* store, Shared::CurveViewRange* range)
   m_series = -1;
   m_highlightedBarStart = NAN;
   m_highlightedBarEnd = NAN;
+  setDisplayLabels(false);
 }
 
 void HistogramView::reload(bool resetInterruption, bool force) {

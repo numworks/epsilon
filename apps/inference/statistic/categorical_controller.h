@@ -52,6 +52,10 @@ class CategoricalController
   virtual int indexOfTableCell() const { return 0; }
   void didScroll();
 
+  void setNextController(Escher::ViewController* controller) {
+    m_nextController = controller;
+  }
+
  protected:
   KDCoordinate nonMemoizedRowHeight(int row) override final;
 

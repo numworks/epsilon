@@ -6,7 +6,7 @@
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/pattern_matching.h>
-#include <poincare/src/numeric/helpers.h>
+#include <poincare/src/numeric/matrix_array.h>
 
 #include <cmath>
 

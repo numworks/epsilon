@@ -229,7 +229,7 @@ $(addprefix memory/, \
 $(addprefix numeric/, \
   beta_function.cpp \
   erf_inv.cpp \
-  helpers.cpp \
+  matrix_array.cpp \
   point_of_interest.cpp \
   random.cpp \
   regularized_gamma_function.cpp \

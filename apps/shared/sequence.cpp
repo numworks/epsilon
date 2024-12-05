@@ -164,22 +164,19 @@ double Sequence::approximateAtContextRank(Context* ctx, int rank,
   if (rank < initialRank()) {
     return NAN;
   }
-  double x;
-  SystemExpression e;
   if (rank >= firstNonInitialRank()) {
-    x = static_cast<double>(rank - order());
-    e = expressionReduced(ctx);
-  } else {
-    assert(type() != Type::Explicit);
-    x = static_cast<double>(NAN);
-    if (rank == initialRank()) {
-      e = firstInitialConditionExpressionReduced(ctx);
-    } else {
-      assert(type() == Type::DoubleRecurrence);
-      e = secondInitialConditionExpressionReduced(ctx);
-    }
+    return expressionReduced(ctx).approximateToScalarWithValue(
+        static_cast<double>(rank - order()));
   }
-  return e.approximateToScalarWithValue(x);
+  assert(type() != Type::Explicit);
+  SystemExpression e;
+  if (rank == initialRank()) {
+    e = firstInitialConditionExpressionReduced(ctx);
+  } else {
+    assert(type() == Type::DoubleRecurrence);
+    e = secondInitialConditionExpressionReduced(ctx);
+  }
+  return e.approximateToScalar<double>();
 }
 
 UserExpression Sequence::sumBetweenBounds(double start, double end,

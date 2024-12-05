@@ -11,5 +11,7 @@ int displayColoredTilingSize10() { return 0; }
 
 bool waitForVBlank() { return true; }
 
+void refreshDisplay() {}
+
 }  // namespace Display
 }  // namespace Ion

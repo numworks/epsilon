@@ -25,6 +25,7 @@ void pushRectUniform(KDRect r, KDColor c);
 void pullRect(KDRect r, KDColor* pixels);
 
 bool waitForVBlank();
+void refreshDisplay();
 
 class Context : public KDContext {
   friend OMG::GlobalBox<Context>;

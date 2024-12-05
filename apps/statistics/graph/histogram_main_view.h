@@ -12,30 +12,26 @@ class HistogramMainView : public Escher::View {
 
   HistogramBannerView* bannerView() { return &m_bannerView; }
 
-  Escher::SelectableListView* listView() { return m_listView; }
-
-  void setBannerVisibility(bool isVisible) {
-    m_isBannerVisible = isVisible;
+  void setDisplayBanner(bool isVisible) {
+    m_displayBanner = isVisible;
     reload();
   }
 
   void reload() { layoutSubviews(); }
 
  private:
-  HistogramBannerView m_bannerView;
-  bool m_isBannerVisible = false;
-
-  /* The SelectableListView is owned by the HistogramListController.
-   * SelectableListView is a member of SelectableListViewController, which is a
-   * base class of HistogramListController. */
-  Escher::SelectableListView* m_listView;
-
   // Escher::View
   int numberOfSubviews() const override { return 2; }
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  KDRect bannerFrame() const;
+  HistogramBannerView m_bannerView;
+  bool m_displayBanner;
+
+  /* The SelectableListView is owned by the HistogramListController.
+   * SelectableListView is a member of SelectableListViewController, which is a
+   * base class of HistogramListController. */
+  Escher::SelectableListView* m_listView;
 };
 
 }  // namespace Statistics

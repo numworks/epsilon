@@ -43,6 +43,35 @@ class InputStoreController : public InputCategoricalController,
     selectSeriesForDropdownRow(m_dropdownCell.dropdown()->selectedRow());
   }
 
+  // TODO: move to .cpp
+  void hideParameterCells(uint8_t datasetIndex) {
+    // Hiding some of the cells is only relevant for the TwoMeans test type
+    // TODO:
+    // assert(m_statistic->significanceTestType() ==
+    //        SignificanceTestType::TwoMeans);
+
+    if (m_statistic->significanceTestType() == SignificanceTestType::TwoMeans) {
+      // At most, there are two dataset selection pages
+      assert(datasetIndex == 0 || datasetIndex == 1);
+      if (datasetIndex == 0) {
+        // The significance cell is visible only on the second dataset page
+        m_significanceCell.setVisible(false);
+      }
+
+      if (m_statistic->distributionType() == DistributionType::Z) {
+        assert(numberOfExtraParameters() == 2);
+        // Hide the parameter of the other dataset
+        m_extraParameters[(datasetIndex + 1) % 2].setVisible(false);
+      }
+
+      else {
+        /* In the TwoMeans test, there are either 2 extra parameters (for the Z
+         * distribution type), or 0 extra parameter */
+        assert(numberOfExtraParameters() == 0);
+      }
+    }
+  }
+
  private:
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:

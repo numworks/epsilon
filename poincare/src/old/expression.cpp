@@ -1161,14 +1161,6 @@ Evaluation<U> OExpression::approximateWithValueForSymbol(
   return approximateToEvaluation<U>(newContext);
 }
 
-template <typename U>
-U OExpression::approximateToScalarWithValueForSymbol(
-    const char *symbol, U x,
-    const ApproximationContext &approximationContext) const {
-  return approximateWithValueForSymbol<U>(symbol, x, approximationContext)
-      .toScalar();
-}
-
 OExpression OExpression::deepApproximateKeepingSymbols(
     ReductionContext reductionContext, bool *parentCanApproximate,
     bool *parentShouldReduce) {
@@ -1431,13 +1423,6 @@ template Evaluation<float> OExpression::approximateWithValueForSymbol(
     const char *symbol, float x,
     const ApproximationContext &approximationContext) const;
 template Evaluation<double> OExpression::approximateWithValueForSymbol(
-    const char *symbol, double x,
-    const ApproximationContext &approximationContext) const;
-
-template float OExpression::approximateToScalarWithValueForSymbol(
-    const char *symbol, float x,
-    const ApproximationContext &approximationContext) const;
-template double OExpression::approximateToScalarWithValueForSymbol(
     const char *symbol, double x,
     const ApproximationContext &approximationContext) const;
 

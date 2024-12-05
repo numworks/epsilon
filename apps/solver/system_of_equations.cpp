@@ -107,7 +107,6 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(Context* context) {
   }
   return secondError;
 }
-#endif
 
 template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
@@ -122,6 +121,7 @@ static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
                  context, Preferences::SharedPreferences()->complexFormat(),
                  Preferences::SharedPreferences()->angleUnit())));
 }
+#endif
 
 void SystemOfEquations::setApproximateSolvingRange(
     Poincare::Range1D<double> approximateSolvingRange) {

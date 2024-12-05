@@ -23,7 +23,15 @@ bool Approximation::ShallowPrepareForApproximation(Tree* e, void* ctx) {
          PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
          /* TODO: e^ is better than exp because we have code to handle special
           * cases in pow, exp is probably more precise on normal values */
-         PatternMatching::MatchReplace(e, KExp(KA), KPow(e_e, KA)) || changed;
+         PatternMatching::MatchReplace(e, KExp(KA), KPow(e_e, KA)) ||
+         PatternMatching::MatchReplace(
+             e, KMult(KA_s, KLn(KB), KPow(KLn(10_e), -1_e), KC_s),
+             KMult(KA_s, KLog(KB), KC_s)) ||
+         PatternMatching::MatchReplace(
+             e, KMult(KA_s, KPow(KLn(10_e), -1_e), KLn(KB), KC_s),
+             KMult(KA_s, KLog(KB), KC_s)) ||
+
+         changed;
 }
 
 Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {

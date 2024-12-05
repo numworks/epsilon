@@ -41,11 +41,11 @@ class HistogramListController
   // Height of one histogram graph (they all have the same size)
   KDCoordinate rowHeight() const {
     return numberOfRows() == 1 ? m_selectableListView.bounds().height() - 1
-                               : k_listRowHeight;
+                               : k_rowHeight;
   }
 
   // Escher::TableViewDataSource
-  int numberOfRows() const override { return m_store->numberOfActiveSeries(); };
+  int numberOfRows() const override { return m_store->numberOfActiveSeries(); }
 
   // Escher::ListViewDataSource
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
@@ -59,7 +59,7 @@ class HistogramListController
   bool handleEvent(Ion::Events::Event event) override;
 
  private:
-  static constexpr KDCoordinate k_listRowHeight = 75;
+  static constexpr KDCoordinate k_rowHeight = 75;
 
   // Escher::TableViewDataSource
   // TODO: Escher::TableViewDataSource::nonMemoizedRowHeight should be const

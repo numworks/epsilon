@@ -73,12 +73,12 @@ void HistogramMainController::enterListView() {
 
   /* Make the banner visible and update the model data displayed in the banner
    * (this data depends on the selected series and index) */
-  m_view.setBannerVisibility(true);
+  m_view.setDisplayBanner(true);
   updateBannerView();
 }
 
 void HistogramMainController::exitListView() {
-  m_view.setBannerVisibility(false);
+  m_view.setDisplayBanner(false);
   m_listController.unhighlightList();
 }
 
@@ -210,7 +210,8 @@ Poincare::Range1D<double> HistogramMainController::activeSeriesRange() const {
       maxValue = std::max<double>(maxValue, m_store->maxValue(i));
     }
   }
-  return Poincare::Range1D<double>(minValue, maxValue);
+
+  return Poincare::Range1D<double>{minValue, maxValue};
 }
 
 void HistogramMainController::initRangeParameters() {
@@ -220,7 +221,7 @@ void HistogramMainController::initRangeParameters() {
 
 void HistogramMainController::initBarParameters() {
   Poincare::Range1D<double> xRange = activeSeriesRange();
-  m_histogramRange.setHistogramRange(xRange.min(), xRange.max());
+  m_histogramRange.setXRange(xRange.min(), xRange.max());
 
   m_store->setFirstDrawnBarAbscissa(xRange.min());
   double barWidth = m_histogramRange.xGridUnit();
@@ -258,8 +259,8 @@ void HistogramMainController::initBarParameters() {
       // Bars are offsetted right to center the bars around the labels.
       xRange.setMinKeepingValid(xRange.min() - barWidth / 2.0);
       m_store->setFirstDrawnBarAbscissa(xRange.min());
-      m_histogramRange.setHistogramRange(
-          m_histogramRange.xMin() - barWidth / 2.0, m_histogramRange.xMax());
+      m_histogramRange.setXRange(m_histogramRange.xMin() - barWidth / 2.0,
+                                 m_histogramRange.xMax());
     }
   }
   assert(barWidth > 0.0 && std::ceil((xRange.length()) / barWidth) <=

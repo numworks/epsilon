@@ -441,7 +441,11 @@ class OExpression : public PoolHandle {
   OExpression approximateKeepingUnits(
       const ReductionContext& reductionContext) const;
   template <typename U>
-  U approximateToScalar(const ApproximationContext& approximationContext) const;
+  U approximateToScalar(
+      const ApproximationContext& approximationContext) const {
+    assert(false);
+    return NAN;
+  }
 
   /* This class is meant to contain data about named functions (e.g. sin,
    * tan...) in one place: their name, their number of children and a pointer to

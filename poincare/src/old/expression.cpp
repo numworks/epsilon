@@ -1143,12 +1143,6 @@ OExpression OExpression::approximateKeepingUnits(
   return Multiplication::Builder(approximationWithoutUnits, units);
 }
 
-template <typename U>
-U OExpression::approximateToScalar(
-    const ApproximationContext &approximationContext) const {
-  return approximateToEvaluation<U>(approximationContext).toScalar();
-}
-
 OExpression OExpression::deepApproximateKeepingSymbols(
     ReductionContext reductionContext, bool *parentCanApproximate,
     bool *parentShouldReduce) {
@@ -1395,11 +1389,6 @@ OExpression OExpression::FunctionHelper::build(OExpression children) const {
 template OExpression OExpression::approximate<float>(
     const ApproximationContext &approximationContext) const;
 template OExpression OExpression::approximate<double>(
-    const ApproximationContext &approximationContext) const;
-
-template float OExpression::approximateToScalar(
-    const ApproximationContext &approximationContext) const;
-template double OExpression::approximateToScalar(
     const ApproximationContext &approximationContext) const;
 
 template Evaluation<float> OExpression::approximateToEvaluation(

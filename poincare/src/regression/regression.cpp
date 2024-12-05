@@ -228,7 +228,7 @@ int Regression::solveLinearSystem(double* solutions, double* coefficients,
   for (int i = 0; i < n * n; i++) {
     coefficientsSave[i] = coefficients[i];
   }
-  int inverseResult = MatrixInverseOnArrays(coefficients, n, n);
+  int inverseResult = MatrixArray::Inverse(coefficients, n, n);
   int numberOfMatrixModifications = 0;
   while (inverseResult < 0 &&
          numberOfMatrixModifications < k_maxMatrixInversionFixIterations) {
@@ -241,7 +241,7 @@ int Regression::solveLinearSystem(double* solutions, double* coefficients,
       coefficientsSave[i * n + i] =
           (1 + ((double)i) / ((double)n)) * coefficientsSave[i * n + i];
     }
-    inverseResult = MatrixInverseOnArrays(coefficientsSave, n, n);
+    inverseResult = MatrixArray::Inverse(coefficientsSave, n, n);
     numberOfMatrixModifications++;
   }
   if (inverseResult < 0) {
@@ -252,8 +252,8 @@ int Regression::solveLinearSystem(double* solutions, double* coefficients,
       coefficients[i] = coefficientsSave[i];
     }
   }
-  MatrixMultiplicationOnArrays<double>(coefficients, constants, solutions, n, n,
-                                       1);
+  MatrixArray::Multiplication<double>(coefficients, constants, solutions, n, n,
+                                      1);
   return 0;
 }
 

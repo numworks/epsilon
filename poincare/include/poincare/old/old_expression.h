@@ -435,7 +435,10 @@ class OExpression : public PoolHandle {
    * not be use to implement node approximation */
   template <typename U>
   OExpression approximate(
-      const ApproximationContext& approximationContext) const;
+      const ApproximationContext& approximationContext) const {
+    assert(false);
+    return OExpression();
+  }
   // WARNING: this will reduce the expression before removing units
   template <typename U>
   OExpression approximateKeepingUnits(

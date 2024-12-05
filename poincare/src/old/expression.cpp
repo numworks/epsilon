@@ -1116,15 +1116,6 @@ int OExpression::lengthOfListChildren() const {
 /* Evaluation */
 
 template <typename U>
-OExpression OExpression::approximate(
-    const ApproximationContext &approximationContext) const {
-  return isUninitialized()
-             ? Undefined::Builder()
-             : approximateToEvaluation<U>(approximationContext)
-                   .complexToExpression(approximationContext.complexFormat());
-}
-
-template <typename U>
 OExpression OExpression::approximateKeepingUnits(
     const ReductionContext &reductionContext) const {
   // OUnit need to be extracted before approximating.
@@ -1385,11 +1376,6 @@ OExpression OExpression::FunctionHelper::build(OExpression children) const {
          numberOfChildren <= m_maxNumberOfChildren);
   return maker(children, numberOfChildren, m_initializer, m_size);
 }
-
-template OExpression OExpression::approximate<float>(
-    const ApproximationContext &approximationContext) const;
-template OExpression OExpression::approximate<double>(
-    const ApproximationContext &approximationContext) const;
 
 template Evaluation<float> OExpression::approximateToEvaluation(
     const ApproximationContext &approximationContext) const;

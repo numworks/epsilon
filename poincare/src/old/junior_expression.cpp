@@ -974,6 +974,16 @@ bool NewExpression::allChildrenAreUndefined() const {
       [](const Tree* e) { return !e->isUndefined(); });
 }
 
+bool NewExpression::hasRandomNumber() const {
+  return !tree()->hasDescendantSatisfying(
+      [](const Tree* e) { return !e->isRandom() || e->isRandInt(); });
+}
+
+bool NewExpression::hasRandomList() const {
+  return !tree()->hasDescendantSatisfying(
+      [](const Tree* e) { return !e->isRandIntNoRep(); });
+}
+
 ComparisonJunior::Operator NewExpression::comparisonOperator() const {
   assert(isComparison());
   return Internal::Binary::ComparisonOperatorForType(tree()->type());

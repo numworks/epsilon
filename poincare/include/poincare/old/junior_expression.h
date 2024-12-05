@@ -386,6 +386,8 @@ class JuniorExpression : public OExpression {
   bool isConstantNumber() const;
   bool isPureAngleUnit() const;
   bool allChildrenAreUndefined() const;
+  bool hasRandomNumber() const;
+  bool hasRandomList() const;
 
   // More complex bool properties
   bool isMatrix(Context* context = nullptr) const;

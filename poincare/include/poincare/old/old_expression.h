@@ -442,10 +442,6 @@ class OExpression : public PoolHandle {
       const ReductionContext& reductionContext) const;
   template <typename U>
   U approximateToScalar(const ApproximationContext& approximationContext) const;
-  template <typename U>
-  Evaluation<U> approximateWithValueForSymbol(
-      const char* symbol, U x,
-      const ApproximationContext& approximationContext) const;
 
   /* This class is meant to contain data about named functions (e.g. sin,
    * tan...) in one place: their name, their number of children and a pointer to

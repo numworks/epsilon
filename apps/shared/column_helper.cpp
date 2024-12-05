@@ -177,8 +177,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     }
   }
 
-  formula = PoincareHelpers::CloneAndReduce(
-      formula, &storeContext,
+  PoincareHelpers::CloneAndSimplify(
+      &formula, &storeContext,
       {.target = ReductionTarget::SystemForApproximation,
        .symbolicComputation = SymbolicComputation::ReplaceAllSymbols});
 

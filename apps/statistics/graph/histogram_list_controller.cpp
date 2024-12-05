@@ -10,10 +10,10 @@ HistogramListController::HistogramListController(
     HistogramRange* histogramRange)
     : Escher::SelectableListViewController<Escher::ListViewDataSource>(
           parentResponder, this),
-      m_displayCells({HistogramCell(HistogramView(store, 0, histogramRange)),
-                      HistogramCell(HistogramView(store, 1, histogramRange)),
-                      HistogramCell(HistogramView(store, 2, histogramRange)),
-                      HistogramCell(HistogramView(store, 3, histogramRange))}),
+      m_displayCells({HistogramCell(HistogramView(store, histogramRange)),
+                      HistogramCell(HistogramView(store, histogramRange)),
+                      HistogramCell(HistogramView(store, histogramRange)),
+                      HistogramCell(HistogramView(store, histogramRange))}),
       m_store(store),
       m_histogramRange(histogramRange) {
   m_selectableListView.resetMargins();

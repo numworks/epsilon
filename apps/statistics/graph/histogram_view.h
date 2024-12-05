@@ -38,7 +38,7 @@ class HistogramView
                               HistogramPlotPolicy, Shared::PlotPolicy::NoBanner,
                               Shared::PlotPolicy::NoCursor> {
  public:
-  HistogramView(Store* store, int series, Shared::CurveViewRange* range);
+  HistogramView(Store* store, Shared::CurveViewRange* range);
 
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false);

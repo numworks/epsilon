@@ -52,12 +52,11 @@ void HistogramPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
 
 // HistogramView
 
-HistogramView::HistogramView(Store* store, int series,
-                             Shared::CurveViewRange* range)
+HistogramView::HistogramView(Store* store, Shared::CurveViewRange* range)
     : PlotView(range) {
   // HistogramPlotPolicy
   m_store = store;
-  m_series = series;
+  m_series = -1;
   m_highlightedBarStart = NAN;
   m_highlightedBarEnd = NAN;
 }

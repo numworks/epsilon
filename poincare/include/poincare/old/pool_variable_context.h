@@ -26,10 +26,8 @@ class PoolVariableContext : public ContextWithParent {
   bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
                                       const Internal::Tree* symbol) override;
 
- protected:
-  const Internal::Tree* protectedExpressionForSymbolAbstract(
-      const Internal::Tree* symbol,
-      ContextWithParent* lastDescendantContext) override;
+  const Internal::Tree* expressionForSymbolAbstract(
+      const Internal::Tree* symbol) override;
 
  private:
   const char* m_name;

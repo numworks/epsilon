@@ -108,16 +108,12 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
   }
 }
 
-const Internal::Tree* GlobalContext::protectedExpressionForSymbolAbstract(
-    const Internal::Tree* symbol,
-    Poincare::ContextWithParent* lastDescendantContext) {
+const Internal::Tree* GlobalContext::expressionForSymbolAbstract(
+    const Internal::Tree* symbol) {
   assert(symbol->isUserNamed() || !symbol->isUserSequence());
   Ion::Storage::Record r =
       SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbol));
-  return expressionForSymbolAndRecord(
-      symbol, r,
-      lastDescendantContext ? static_cast<Context*>(lastDescendantContext)
-                            : static_cast<Context*>(this));
+  return expressionForSymbolAndRecord(symbol, r);
 }
 
 bool GlobalContext::setExpressionForSymbolAbstract(
@@ -129,8 +125,8 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
-  UserExpression e = UserExpression::Builder(
-      expressionForSymbolAndRecord(symbol, record, this));
+  UserExpression e =
+      UserExpression::Builder(expressionForSymbolAndRecord(symbol, record));
   if (e.isUninitialized()) {
     e = Undefined::Builder();
   }
@@ -161,7 +157,7 @@ bool GlobalContext::setExpressionForSymbolAbstract(
 }
 
 const Internal::Tree* GlobalContext::expressionForSymbolAndRecord(
-    const Internal::Tree* symbol, Ion::Storage::Record r, Context* ctx) {
+    const Internal::Tree* symbol, Ion::Storage::Record r) {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   return symbol->isUserSymbol() ? ExpressionForUserNamed(r)
                                 : ExpressionForFunction(r);

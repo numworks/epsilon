@@ -13,6 +13,12 @@ class ContextWithParent : public Context {
   ContextWithParent(Context* parentContext) : m_parentContext(parentContext) {}
 
   // Context
+  const Internal::Tree* expressionForSymbolAbstract(
+      const Internal::Tree* symbol) override {
+    assert(m_parentContext);
+    return m_parentContext->expressionForSymbolAbstract(symbol);
+  }
+
   SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                  int length) override {
     assert(m_parentContext);
@@ -22,16 +28,6 @@ class ContextWithParent : public Context {
                                       const Internal::Tree* symbol) override {
     assert(m_parentContext);
     return m_parentContext->setExpressionForSymbolAbstract(expression, symbol);
-  }
-
- protected:
-  const Internal::Tree* protectedExpressionForSymbolAbstract(
-      const Internal::Tree* symbol,
-      ContextWithParent* lastDescendantContext) override {
-    assert(m_parentContext);
-    return m_parentContext->protectedExpressionForSymbolAbstract(
-        symbol,
-        lastDescendantContext == nullptr ? this : lastDescendantContext);
   }
 
  private:

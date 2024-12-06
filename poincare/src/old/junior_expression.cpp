@@ -206,8 +206,7 @@ const Tree* NewExpression::TreeFromAddress(const void* address) {
   if (address == nullptr) {
     return nullptr;
   }
-  return Tree::FromBlocks(static_cast<const Block*>(address) +
-                          offsetof(JuniorExpressionNode, m_blocks));
+  return reinterpret_cast<const JuniorExpressionNode*>(address)->tree();
 }
 
 UserExpression UserExpression::Parse(const Tree* layout, Context* context,

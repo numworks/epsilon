@@ -89,9 +89,8 @@ class SystemOfEquations {
     using Poincare::ContextWithParent::ContextWithParent;
 
    private:
-    const Poincare::Internal::Tree* protectedExpressionForSymbolAbstract(
-        const Poincare::Internal::Tree* symbol,
-        Poincare::ContextWithParent* lastDescendantContext) override;
+    const Poincare::Internal::Tree* expressionForSymbolAbstract(
+        const Poincare::Internal::Tree* symbol) override;
   };
 
   Poincare::SystemExpression equationStandardFormForApproximateSolve(

@@ -12,12 +12,9 @@ class Tree;
 
 namespace Poincare {
 
-class ContextWithParent;
 class PoolObject;
 
 class Context {
-  friend class ContextWithParent;
-
  public:
   enum class SymbolAbstractType : uint8_t {
     None,
@@ -30,8 +27,8 @@ class Context {
                                                          int length) = 0;
 
   /* The returned Tree* may live in the Pool or in the Storage. */
-  const Internal::Tree* expressionForSymbolAbstract(
-      const Internal::Tree* symbol);
+  virtual const Internal::Tree* expressionForSymbolAbstract(
+      const Internal::Tree* symbol) = 0;
 
   virtual bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
                                               const Internal::Tree* symbol) = 0;
@@ -44,15 +41,6 @@ class Context {
   }
 
   static Context* GlobalContext;
-
- protected:
-  /* This is used by the ContextWithParent to pass itself to its parent.
-   * When getting the expression for a sequence in GlobalContext, you need
-   * information on the variable that is stored in the ContextWithParent that
-   * called you. */
-  virtual const Internal::Tree* protectedExpressionForSymbolAbstract(
-      const Internal::Tree* symbol,
-      ContextWithParent* lastDescendantContext) = 0;
 };
 
 }  // namespace Poincare

@@ -36,8 +36,8 @@ bool PoolVariableContext::setExpressionForSymbolAbstract(
   return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
 }
 
-const Internal::Tree* PoolVariableContext::protectedExpressionForSymbolAbstract(
-    const Internal::Tree* symbol, ContextWithParent* lastDescendantContext) {
+const Internal::Tree* PoolVariableContext::expressionForSymbolAbstract(
+    const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
     if (symbol->isUserSymbol()) {
@@ -45,8 +45,7 @@ const Internal::Tree* PoolVariableContext::protectedExpressionForSymbolAbstract(
     }
     return Internal::KTrees::KUndef;
   }
-  return ContextWithParent::protectedExpressionForSymbolAbstract(
-      symbol, lastDescendantContext);
+  return ContextWithParent::expressionForSymbolAbstract(symbol);
 }
 
 template void PoolVariableContext::setApproximationForVariable(float);

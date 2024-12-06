@@ -23,10 +23,8 @@ class EmptyContext : public Context {
     return false;
   }
 
- protected:
-  const Internal::Tree* protectedExpressionForSymbolAbstract(
-      const Internal::Tree* symbol,
-      ContextWithParent* lastDescendantContext) override;
+  const Internal::Tree* expressionForSymbolAbstract(
+      const Internal::Tree* symbol) override;
 };
 
 }  // namespace Poincare

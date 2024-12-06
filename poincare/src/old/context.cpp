@@ -8,9 +8,4 @@ namespace Poincare {
 
 Context* Context::GlobalContext = nullptr;
 
-const Internal::Tree* Context::expressionForSymbolAbstract(
-    const Internal::Tree* symbol) {
-  return protectedExpressionForSymbolAbstract(symbol, nullptr);
-}
-
 }  // namespace Poincare

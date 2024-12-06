@@ -4,8 +4,8 @@
 
 namespace Poincare {
 
-const Internal::Tree* EmptyContext::protectedExpressionForSymbolAbstract(
-    const Internal::Tree* symbol, ContextWithParent* lastDescendantContext) {
+const Internal::Tree* EmptyContext::expressionForSymbolAbstract(
+    const Internal::Tree* symbolt) {
   return nullptr;  // TODO KUndef ?
 }
 

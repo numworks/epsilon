@@ -70,12 +70,10 @@ class GlobalContext final : public Poincare::Context {
 
  private:
   // Expression getters
-  const Poincare::Internal::Tree* protectedExpressionForSymbolAbstract(
-      const Poincare::Internal::Tree* symbol,
-      Poincare::ContextWithParent* lastDescendantContext) override;
+  const Poincare::Internal::Tree* expressionForSymbolAbstract(
+      const Poincare::Internal::Tree* symbol) override;
   const Poincare::Internal::Tree* expressionForSymbolAndRecord(
-      const Poincare::Internal::Tree* symbol, Ion::Storage::Record r,
-      Context* ctx);
+      const Poincare::Internal::Tree* symbol, Ion::Storage::Record r);
   static const Poincare::Internal::Tree* ExpressionForUserNamed(
       Ion::Storage::Record r);
   static const Poincare::Internal::Tree* ExpressionForFunction(

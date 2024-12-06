@@ -23,12 +23,12 @@ jobs:
       - name: Fetch PR branch
         uses: actions/checkout@v3
         with:
-          fetch-depth: 100
+          fetch-depth: 150
           ref: ${{ github.event.pull_request.head.sha }}
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
       - name: Fetch target branch
-        run: git fetch --depth=100 origin ${{ github.event.pull_request.base.sha }}
+        run: git fetch --depth=150 origin ${{ github.event.pull_request.base.sha }}
       - name: Find most recent ancestor of PR and target branch
         id: common_ancestor
         run: echo "commit_sha=$(git merge-base ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT

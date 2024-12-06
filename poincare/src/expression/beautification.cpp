@@ -173,11 +173,11 @@ bool Beautification::ShallowBeautifyPercent(Tree* e) {
 }
 
 // Turn "m" into "1*m", "m*s" into "1*m*s" and "3vyd+ft" into "3*yd+1*ft".
-bool BeautifyUnitsAtRoot(Tree* e) {
+bool DeepBeautifyUnits(Tree* e) {
   if (e->isAdd()) {
     bool changed = false;
     for (Tree* child : e->children()) {
-      changed = BeautifyUnitsAtRoot(child) || changed;
+      changed = DeepBeautifyUnits(child) || changed;
     }
     return changed;
   }
@@ -208,7 +208,7 @@ bool Beautification::DeepBeautify(Tree* e,
     AdvancedReduction::Reduce(e);
   }
   changed = Tree::ApplyShallowTopDown(e, ShallowBeautify) || changed;
-  changed = BeautifyUnitsAtRoot(e) || changed;
+  changed = DeepBeautifyUnits(e) || changed;
   /* Divisions are created after the main beautification since they work top
    * down and require powers to have been built from exponentials already. */
   changed =

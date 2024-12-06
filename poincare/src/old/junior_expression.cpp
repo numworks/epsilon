@@ -357,6 +357,7 @@ void UserExpression::cloneAndSimplifyAndApproximate(
           Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                     .projectLocalVariables = true},
           approxCtx);
+      context->m_dimension = Internal::Dimension::Get(a);
       Beautification::DeepBeautify(a, *context);
       *approximatedExpression = UserExpression::Builder(a);
     }

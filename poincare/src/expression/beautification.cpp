@@ -424,16 +424,20 @@ bool Beautification::TurnIntoPolarForm(
     Dependency::DeepRemoveUselessDependencies(result);
   }
   Tree* polarForm = result->isDep() ? Dependency::Main(result) : result;
+  bool argIsNull = false;
   if (bubbledUpDependencies) {
     // abs and arg pointers may have been invalidated, find them again.
     PatternMatching::Context ctx;
     bool find = PatternMatching::Match(polarForm,
-                                       KMult(KA, KExp(KMult(KB, i_e))), &ctx);
+                                       KMult(KA, KExp(KMult(KB_s, i_e))), &ctx);
     assert(find);
     abs = const_cast<Tree*>(ctx.getTree(KA));
-    arg = const_cast<Tree*>(ctx.getTree(KB));
+    argIsNull =
+        ctx.getNumberOfTrees(KB) == 1 && Number::IsNull(ctx.getTree(KB));
+  } else {
+    argIsNull = Number::IsNull(arg);
   }
-  if (Number::IsNull(abs) || Number::IsNull(arg)) {
+  if (Number::IsNull(abs) || argIsNull) {
     NAry::RemoveChildAtIndex(polarForm, 1);
   }
   if (abs->isOne()) {

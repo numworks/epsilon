@@ -1382,12 +1382,15 @@ bool Approximation::SkipApproximation(TypeBlock type, TypeBlock parentType,
     case Type::ATrig:
     case Type::Trig:
       // Do not approximate second term in case tree isn't replaced.
-      return (indexInParent == 1);
+      return indexInParent == 1;
     case Type::PowMatrix:
     case Type::Pow:
       // Note: After projection, Power's second term should always be integer.
       // Only approximate power's index if the entire tree can be approximated.
-      return (indexInParent == 1 && !previousChildApproximated);
+      return indexInParent == 1 && !previousChildApproximated;
+    case Type::ListSlice:
+    case Type::ListElement:
+      return indexInParent >= 1;
     case Type::Identity:
       return true;
     default:

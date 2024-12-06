@@ -146,7 +146,7 @@ class JuniorExpression : public OExpression {
   }
 
   NewExpression clone() const {
-    OExpression clone = OExpression::clone();
+    PoolHandle clone = PoolHandle::clone();
     return static_cast<NewExpression&>(clone);
   }
 

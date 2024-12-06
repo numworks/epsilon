@@ -45,8 +45,8 @@ static bool s_reductionEncounteredUndistributedList = false;
 /* Constructor & Destructor */
 
 OExpression OExpression::clone() const {
-  PoolHandle c = PoolHandle::clone();
-  return static_cast<OExpression &>(c);
+  assert(false);
+  return OExpression();
 }
 
 OExpression OExpression::ExpressionFromAddress(const void *address,

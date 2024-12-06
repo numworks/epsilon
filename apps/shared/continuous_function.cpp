@@ -1009,7 +1009,7 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record* record,
     if (IsFunctionAssignment(newExpression)) {
       const UserExpression function = newExpression.cloneChildAtIndex(0);
       error = Ion::Storage::Record::SetBaseNameWithExtension(
-          record, static_cast<const SymbolAbstract&>(function).name(),
+          record, SymbolHelper::GetName(function),
           Ion::Storage::functionExtension);
       if (error != Ion::Storage::Record::ErrorStatus::NameTaken) {
         return error;

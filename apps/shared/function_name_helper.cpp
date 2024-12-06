@@ -114,8 +114,7 @@ bool ParametricComponentsNameError(UserExpression expression,
   constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
   char functionName[bufferSize];
   assert(function.isUserFunction());
-  strlcpy(functionName, static_cast<const Poincare::Function&>(function).name(),
-          bufferSize);
+  strlcpy(functionName, SymbolHelper::GetName(function), bufferSize);
   size_t functionNameLength = strlen(functionName);
   assert(f->fullName() != nullptr);
   bool willDefineNewParametricComponents =

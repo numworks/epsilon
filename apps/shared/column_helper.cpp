@@ -3,6 +3,7 @@
 #include <apps/constant.h>
 #include <escher/container.h>
 #include <omg/utf8_helper.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/print.h>
 
 #include "column_parameter_controller.h"
@@ -164,10 +165,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     bool isValidEquality = false;
     const UserExpression leftOfEqual = formula.cloneChildAtIndex(0);
     if (leftOfEqual.isUserSymbol()) {
-      const Symbol symbolLeftOfEqual = static_cast<const Symbol&>(leftOfEqual);
-      if (store()->isColumnName(symbolLeftOfEqual.name(),
-                                strlen(symbolLeftOfEqual.name()), series,
-                                column)) {
+      const char* name = SymbolHelper::GetName(leftOfEqual);
+      if (store()->isColumnName(name, strlen(name), series, column)) {
         formula = formula.cloneChildAtIndex(1);
         isValidEquality = true;
       }

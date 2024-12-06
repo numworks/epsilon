@@ -1,6 +1,6 @@
 #include <emscripten/bind.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/old/junior_expression.h>
-#include <poincare/old/symbol_abstract.h>
 
 using namespace emscripten;
 
@@ -11,7 +11,7 @@ std::string symbolName(const JuniorExpression& expr) {
     // Only works on symbols expressions
     return std::string();
   }
-  const char* name = static_cast<const SymbolAbstract&>(expr).name();
+  const char* name = SymbolHelper::GetName(expr);
   return std::string(name, strlen(name));
 }
 

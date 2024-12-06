@@ -665,7 +665,12 @@ void OExpression::SetReductionEncounteredUndistributedList(bool encounter) {
 bool OExpression::isIdenticalTo(const OExpression e) const {
   /* We use the simplification order only because it is a already-coded total
    * order on expresssions. */
+#if 0
   return ExpressionNode::SimplificationOrder(node(), e.node(), true) == 0;
+#else
+  assert(false);
+  return false;
+#endif
 }
 
 bool OExpression::isIdenticalToWithoutParentheses(const OExpression e) const {

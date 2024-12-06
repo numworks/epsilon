@@ -149,6 +149,8 @@ class JuniorExpression : public OExpression {
     PoolHandle clone = PoolHandle::clone();
     return static_cast<NewExpression&>(clone);
   }
+  // TODO_PCJ: rename isIdenticalTo once the one of OExpression is delete
+  bool isIdenticalToJunior(const JuniorExpression e) const;
 
   static NewExpression ExpressionFromAddress(const void* address, size_t size);
 

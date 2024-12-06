@@ -188,6 +188,10 @@ const Tree* JuniorExpressionNode::tree() const {
 
 /* JuniorExpression */
 
+bool JuniorExpression::isIdenticalToJunior(const JuniorExpression e) const {
+  return tree()->treeIsIdenticalTo(e.tree());
+}
+
 NewExpression NewExpression::ExpressionFromAddress(const void* address,
                                                    size_t size) {
   if (address == nullptr || size == 0) {
@@ -706,7 +710,7 @@ static bool IsIgnoredSymbol(const NewExpression* e,
   }
   while (ignoredSymbols) {
     assert(ignoredSymbols->head);
-    if (ignoredSymbols->head->isIdenticalTo(*e)) {
+    if (ignoredSymbols->head->isIdenticalToJunior(*e)) {
       return true;
     }
     ignoredSymbols = reinterpret_cast<JuniorExpression::IgnoredSymbols*>(

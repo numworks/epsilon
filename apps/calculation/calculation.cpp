@@ -165,7 +165,7 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
              CAS::ShouldOnlyDisplayApproximation(
                  inputExp, outputExp, approximateOutput(), context)) {
     m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (inputExp.isIdenticalTo(outputExp) ||
+  } else if (inputExp.isIdenticalToJunior(outputExp) ||
              inputExp.recursivelyMatches(&NewExpression::isApproximate,
                                          context) ||
              outputExp.recursivelyMatches(&NewExpression::isApproximate,

@@ -308,6 +308,9 @@ class JuniorExpression : public OExpression {
                 int numberOfSignificantDigits, Context* context,
                 bool withThousandsSeparator = false) const;
 
+  Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
+      const char* baseName, const char* extension) const;
+
 #if 1  // TODO_PCJ
   NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,
                                             const NewExpression& expression,

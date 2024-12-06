@@ -669,6 +669,12 @@ char* UserExpression::toLatex(char* buffer, int bufferSize,
       buffer, buffer + bufferSize - 1, withThousandsSeparator);
 }
 
+Ion::Storage::Record::ErrorStatus UserExpression::storeWithNameAndExtension(
+    const char* baseName, const char* extension) const {
+  return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      baseName, extension, addressInPool(), size(), true);
+}
+
 NewExpression NewExpression::replaceSymbolWithExpression(
     const SymbolAbstract& symbol, const NewExpression& expression,
     bool onlySecondTerm) {

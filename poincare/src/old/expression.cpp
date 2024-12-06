@@ -472,12 +472,6 @@ OExpression OExpression::makePositiveAnyNegativeNumeralFactor(
   return OExpression();
 }
 
-Ion::Storage::Record::ErrorStatus OExpression::storeWithNameAndExtension(
-    const char *baseName, const char *extension) const {
-  return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      baseName, extension, addressInPool(), size(), true);
-}
-
 OExpression OExpression::deepReplaceSymbolWithExpression(
     const SymbolAbstract &symbol, const OExpression expression) {
   /* In this case, replacing a symbol does not alter the number of children,

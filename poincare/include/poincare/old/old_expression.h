@@ -507,9 +507,6 @@ class OExpression : public PoolHandle {
   /* Tuple */
   typedef std::initializer_list<OExpression> Tuple;
 
-  Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
-      const char* baseName, const char* extension) const;
-
   OExpression(const ExpressionNode* n) : PoolHandle(n) {}
 
  protected:

@@ -807,6 +807,13 @@ UserExpression ContinuousFunction::Model::expressionClone(
   return e.cloneChildAtIndex(1);
 }
 
+const Internal::Tree* ContinuousFunction::Model::expressionTree(
+    const Ion::Storage::Record* record) const {
+  assert(record->fullName() != nullptr &&
+         record->fullName()[0] != k_unnamedRecordFirstChar);
+  return ExpressionModel::expressionTree(record)->child(1);
+}
+
 UserExpression ContinuousFunction::Model::originalEquation(
     const Ion::Storage::Record* record, CodePoint symbol) const {
   UserExpression unknownSymbolEquation =

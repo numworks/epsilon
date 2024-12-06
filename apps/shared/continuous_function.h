@@ -395,6 +395,8 @@ class ContinuousFunction : public Function {
     // Return the expression of the named function (right side of the equal)
     Poincare::UserExpression expressionClone(
         const Ion::Storage::Record* record) const override;
+    const Poincare::Internal::Tree* expressionTree(
+        const Ion::Storage::Record* record) const override;
     // Return the entire expression that the user input. Replace symbols.
     Poincare::UserExpression originalEquation(
         const Ion::Storage::Record* record, CodePoint symbol) const;

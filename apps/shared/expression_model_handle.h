@@ -23,6 +23,9 @@ class ExpressionModelHandle : public Ion::Storage::Record {
   Poincare::UserExpression expressionClone() const {
     return model()->expressionClone(this);
   }
+  const Poincare::Internal::Tree* expressionTree() const {
+    return model()->expressionTree(this);
+  }
   Poincare::Layout layout() { return model()->layout(this, symbol()); }
   /* Here, isDefined is the exact contrary of isEmpty. However, for Sequence
    * inheriting from ExpressionModelHandle, isEmpty and isDefined have not

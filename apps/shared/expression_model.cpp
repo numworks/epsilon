@@ -136,6 +136,14 @@ UserExpression ExpressionModel::expressionClone(
    */
 }
 
+const Internal::Tree* ExpressionModel::expressionTree(
+    const Storage::Record* record) const {
+  assert(record->fullName() != nullptr);
+  /* A new Expression has to be created at each call (because it might be
+   * tempered with after calling) */
+  return UserExpression::TreeFromAddress(expressionAddress(record));
+}
+
 Layout ExpressionModel::layout(const Storage::Record* record,
                                CodePoint symbol) const {
   if (m_layout.isUninitialized()) {

@@ -46,8 +46,8 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   if (record.hasExtension(Ion::Storage::expressionExtension) ||
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
-    return PoincareHelpers::CreateLayout(ExpressionForUserNamed(record),
-                                         context);
+    return PoincareHelpers::CreateLayout(
+        Expression::Builder(ExpressionForUserNamed(record)), context);
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
              record.hasExtension(Ion::Storage::regressionExtension)) {
@@ -62,8 +62,11 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
       assert(record.hasExtension(Ion::Storage::regressionExtension));
       symbol = CodePoints::k_cartesianSymbol;
     }
-    return PoincareHelpers::CreateLayout(
-        ExpressionForFunction(Symbol::Builder(symbol), record), context);
+    UserExpression expression =
+        Expression::Builder(ExpressionForFunction(record))
+            .replaceSymbolWithExpression(Symbol::SystemSymbol(),
+                                         Symbol::Builder(symbol));
+    return PoincareHelpers::CreateLayout(expression, context);
   } else {
     assert(record.hasExtension(Ion::Storage::sequenceExtension));
     return Sequence(record).layout();
@@ -111,7 +114,6 @@ const Internal::Tree* GlobalContext::protectedExpressionForSymbolAbstract(
   assert(symbol->isUserNamed());
   Ion::Storage::Record r =
       SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbol));
-  UserExpression symbolExpression = UserExpression::Builder(symbol);
   return expressionForSymbolAndRecord(
       symbol, r,
       lastDescendantContext ? static_cast<Context*>(lastDescendantContext)
@@ -127,7 +129,8 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
-  UserExpression e = expressionForSymbolAndRecord(symbol, record, this);
+  UserExpression e = UserExpression::Builder(
+      expressionForSymbolAndRecord(symbol, record, this));
   if (e.isUninitialized()) {
     e = Undefined::Builder();
   }
@@ -157,19 +160,19 @@ bool GlobalContext::setExpressionForSymbolAbstract(
          Ion::Storage::Record::ErrorStatus::None;
 }
 
-const UserExpression GlobalContext::expressionForSymbolAndRecord(
+const Internal::Tree* GlobalContext::expressionForSymbolAndRecord(
     const Internal::Tree* symbol, Ion::Storage::Record r, Context* ctx) {
   assert(symbol->isUserNamed());
   if (symbol->isUserSymbol()) {
     return ExpressionForUserNamed(r);
   } else if (symbol->isUserFunction()) {
-    return ExpressionForFunction(UserExpression::Builder(symbol->child(0)), r);
+    return ExpressionForFunction(r);
   }
   assert(symbol->isSequence());
   return expressionForSequence(symbol, r, ctx);
 }
 
-const UserExpression GlobalContext::ExpressionForUserNamed(
+const Internal::Tree* GlobalContext::ExpressionForUserNamed(
     Ion::Storage::Record r) {
   if (!r.hasExtension(Ion::Storage::expressionExtension) &&
       !r.hasExtension(Ion::Storage::listExtension) &&
@@ -178,29 +181,25 @@ const UserExpression GlobalContext::ExpressionForUserNamed(
   }
   // An expression record value is the expression itself
   Ion::Storage::Record::Data d = r.value();
-  return NewExpression::ExpressionFromAddress(d.buffer, d.size);
+  return UserExpression::TreeFromAddress(d.buffer);
 }
 
-const UserExpression GlobalContext::ExpressionForFunction(
-    const UserExpression& parameter, Ion::Storage::Record r) {
-  UserExpression e;
+const Internal::Tree* GlobalContext::ExpressionForFunction(
+    Ion::Storage::Record r) {
   if (r.hasExtension(Ion::Storage::parametricComponentExtension) ||
       r.hasExtension(Ion::Storage::regressionExtension)) {
     // A regression record value is the expression itself
     Ion::Storage::Record::Data d = r.value();
-    e = NewExpression::ExpressionFromAddress(d.buffer, d.size);
+    return UserExpression::TreeFromAddress(d.buffer);
   } else if (r.hasExtension(Ion::Storage::functionExtension)) {
     /* A function record value has metadata before the expression. To get the
      * expression, use the function record handle. */
-    e = ContinuousFunction(r).expressionClone();
+    return ContinuousFunction(r).expressionTree();
   }
-  if (!e.isUninitialized()) {
-    e = e.replaceSymbolWithExpression(Symbol::SystemSymbol(), parameter);
-  }
-  return e;
+  return nullptr;
 }
 
-const UserExpression GlobalContext::expressionForSequence(
+const Internal::Tree* GlobalContext::expressionForSequence(
     const Internal::Tree* symbol, Ion::Storage::Record r, Context* ctx) {
   if (!r.hasExtension(Ion::Storage::sequenceExtension)) {
     return UserExpression();

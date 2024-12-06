@@ -154,6 +154,10 @@ class JuniorExpression : public OExpression {
 
   static NewExpression ExpressionFromAddress(const void* address, size_t size);
 
+  /* Get a Tree from the storage, more efficient and safer than
+   * ExpressionFromAddress.tree() because it points to the storage directly. */
+  static const Internal::Tree* TreeFromAddress(const void* address);
+
   static UserExpression Parse(const Internal::Tree* layout, Context* context,
                               bool addMissingParenthesis = true,
                               bool parseForAssignment = false);

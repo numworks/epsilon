@@ -28,6 +28,8 @@ class Context {
   };
   virtual SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                          int length) = 0;
+
+  /* The returned Tree* may live in the Pool or in the Storage. */
   const Internal::Tree* expressionForSymbolAbstract(
       const Internal::Tree* symbol);
 

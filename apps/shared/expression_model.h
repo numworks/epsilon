@@ -18,6 +18,10 @@ class ExpressionModel {
       const Ion::Storage::Record* record, Poincare::Context* context) const;
   virtual Poincare::UserExpression expressionClone(
       const Ion::Storage::Record* record) const;
+
+  virtual const Poincare::Internal::Tree* expressionTree(
+      const Ion::Storage::Record* record) const;
+
   Poincare::Layout layout(const Ion::Storage::Record* record,
                           CodePoint symbol = 0) const;
 

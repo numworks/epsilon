@@ -202,6 +202,14 @@ NewExpression NewExpression::ExpressionFromAddress(const void* address,
       Pool::sharedPool->copyTreeFromAddress(address, size)));
 }
 
+const Tree* NewExpression::TreeFromAddress(const void* address) {
+  if (address == nullptr) {
+    return nullptr;
+  }
+  return Tree::FromBlocks(static_cast<const Block*>(address) +
+                          offsetof(JuniorExpressionNode, m_blocks));
+}
+
 UserExpression UserExpression::Parse(const Tree* layout, Context* context,
                                      bool addMissingParenthesis,
                                      bool parseForAssignment) {

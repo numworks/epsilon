@@ -107,7 +107,12 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
       const Tree* definition =
           ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
-        return DeepCheckListLength(definition, ctx);
+        Tree* clone = e->cloneTree();
+        // Replace function's symbol with definition
+        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
+        bool result = DeepCheckListLength(clone, ctx);
+        clone->removeTree();
+        return result;
       }
       return true;
     }
@@ -195,7 +200,12 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       const Tree* definition =
           ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
-        return ListLength(definition, ctx);
+        Tree* clone = e->cloneTree();
+        // Replace function's symbol with definition
+        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
+        int result = ListLength(clone, ctx);
+        clone->removeTree();
+        return result;
       }
       // Fallthrough so f({1,3,4}) returns 3. TODO : Maybe k_nonListListLength ?
       [[fallthrough]];
@@ -433,7 +443,12 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       const Tree* definition =
           ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
-        return DeepCheckDimensions(definition, ctx);
+        Tree* clone = e->cloneTree();
+        // Replace function's symbol with definition
+        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
+        bool result = DeepCheckDimensions(clone, ctx);
+        clone->removeTree();
+        return result;
       }
       [[fallthrough]];
     }
@@ -609,7 +624,12 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       const Tree* definition =
           ctx ? ctx->expressionForSymbolAbstract(e) : nullptr;
       if (definition) {
-        return Get(definition, ctx);
+        Tree* clone = e->cloneTree();
+        // Replace function's symbol with definition
+        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
+        Dimension result = Get(clone, ctx);
+        clone->removeTree();
+        return result;
       }
       // TODO: Maybe scalar ?
       return Get(e->child(0), ctx);

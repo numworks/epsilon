@@ -61,18 +61,8 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
     return true;
   }
   // Get Definition
-  const Tree* definition = nullptr;
-  if (context) {
-    if (e->isUserFunction() && e->child(0)->treeIsIdenticalTo(KVarX)) {
-      // Context expects a KUnknownSymbol and not a VarX argument
-      Tree* eWithUnknown = e->cloneNode();
-      KUnknownSymbol->cloneTree();
-      definition = context->expressionForSymbolAbstract(eWithUnknown);
-      eWithUnknown->removeTree();
-    } else {
-      definition = context->expressionForSymbolAbstract(e);
-    }
-  }
+  const Tree* definition =
+      context ? context->expressionForSymbolAbstract(e) : nullptr;
   if (symbolic == SymbolicComputation::ReplaceAllSymbols && !definition) {
     e->cloneTreeOverTree(KNotDefined);
     return true;

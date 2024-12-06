@@ -199,6 +199,7 @@ Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
     /* Initialize randomContext only on root expressions to catch unsafe
      * approximations of projected sub-expressions. */
     context.m_randomContext.m_isInitialized = true;
+    // TODO_PCJ: RandIntNoRep needs to be seeded for a proper approximation.
   }
   if (params.prepare || params.optimize) {
     assert(Simplification::IsSystem(e));

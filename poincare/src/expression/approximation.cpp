@@ -177,11 +177,10 @@ Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
     SharedTreeStack->pushAdd(2);
     SharedTreeStack->pushFloat(re);
   }
-  // Complex part
-  if (im != 1.0) {
-    SharedTreeStack->pushMult(2);
-    SharedTreeStack->pushFloat(im);
-  }
+  // Complex part.
+  // Push im even if it is 1.0 to ensure the expression is not used as exact.
+  SharedTreeStack->pushMult(2);
+  SharedTreeStack->pushFloat(im);
   SharedTreeStack->pushComplexI();
   return result;
 }

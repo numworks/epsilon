@@ -268,21 +268,26 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
                 KMult(KA_s, KLog(KB), KC_s));
 
   int n = e->numberOfChildren();
-  while (
-      // sin(A)/cos(A) -> tan(A)
-      PatternMatching::MatchReplace(
-          e, KMult(KA_s, KPow(KCos(KB), -1_e), KC_s, KSin(KB), KD_s),
-          KMult(KA_s, KC_s, KTan(KB), KD_s)) ||
-      // cos(A)/sin(A) -> cot(A)
-      PatternMatching::MatchReplace(
-          e, KMult(KA_s, KCos(KB), KC_s, KPow(KSin(KB), -1_e), KD_s),
-          KMult(KA_s, KC_s, KCot(KB), KD_s)) ||
-      // sinh(A)/cosh(A) -> tanh(A)
-      PatternMatching::MatchReplace(
-          e, KMult(KA_s, KPow(KCosH(KB), -1_e), KC_s, KSinH(KB), KD_s),
-          KMult(KA_s, KC_s, KTanH(KB), KD_s))) {
-    assert(n > e->numberOfChildren());
-    (void)n;
+  while (e->isMult() && n > 1 &&
+         (
+             // sin(A)/cos(A) -> tan(A)
+             PatternMatching::MatchReplace(
+                 e, KMult(KA_s, KPow(KCos(KB), -1_e), KC_s, KSin(KB), KD_s),
+                 KMult(KA_s, KC_s, KTan(KB), KD_s)) ||
+             // cos(A)/sin(A) -> cot(A)
+             PatternMatching::MatchReplace(
+                 e, KMult(KA_s, KCos(KB), KC_s, KPow(KSin(KB), -1_e), KD_s),
+                 KMult(KA_s, KC_s, KCot(KB), KD_s)) ||
+             // sinh(A)/cosh(A) -> tanh(A)
+             PatternMatching::MatchReplace(
+                 e, KMult(KA_s, KPow(KCosH(KB), -1_e), KC_s, KSinH(KB), KD_s),
+                 KMult(KA_s, KC_s, KTanH(KB), KD_s)) ||
+             // Remove 1.0 from multiplications
+             PatternMatching::MatchReplace(e, KMult(KA_s, 1.0_de, KB_s),
+                                           KMult(KA_s, KB_s)) ||
+             PatternMatching::MatchReplace(e, KMult(KA_s, 1.0_fe, KB_s),
+                                           KMult(KA_s, KB_s)))) {
+    assert(!e->isMult() || n > e->numberOfChildren());
     n = e->numberOfChildren();
     changed = true;
   }

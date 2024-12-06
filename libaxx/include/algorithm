@@ -41,6 +41,15 @@ inline constexpr T max(std::initializer_list<T> ilist) {
   return actionOnList(ilist, std::max<T>);
 }
 
+template <class Iterator, class UnaryFunction>
+UnaryFunction for_each(Iterator first, Iterator last, UnaryFunction function) {
+  while (first != last) {
+    function(*first);
+    first++;
+  }
+  return function;
+}
+
 template <class Iterator>
 constexpr Iterator max_element(Iterator first, Iterator end) {
   if (first == end) {

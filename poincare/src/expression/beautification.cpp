@@ -434,7 +434,7 @@ bool Beautification::TurnIntoPolarForm(
     abs = const_cast<Tree*>(ctx.getTree(KA));
     arg = const_cast<Tree*>(ctx.getTree(KB));
   }
-  if (abs->isZero() || arg->isZero()) {
+  if (Number::IsNull(abs) || Number::IsNull(arg)) {
     NAry::RemoveChildAtIndex(polarForm, 1);
   }
   if (abs->isOne()) {

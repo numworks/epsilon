@@ -10,6 +10,8 @@ namespace Poincare::Internal {
 
 class Number {
  public:
+  // Return true if e is zero or a null float.
+  static bool IsNull(const Tree* e);
   static bool IsStrictRational(const Tree* e) {
     return e->isOfType({Type::Half, Type::RationalNegShort,
                         Type::RationalPosShort, Type::RationalNegBig,

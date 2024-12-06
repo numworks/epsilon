@@ -10,6 +10,13 @@
 
 namespace Poincare::Internal {
 
+bool Number::IsNull(const Tree* e) {
+  if (!e->isFloat()) {
+    return e->isZero();
+  }
+  return Approximation::To<double>(e, Approximation::Parameters{}) == 0.0;
+}
+
 Tree* Number::Addition(const Tree* e1, const Tree* e2) {
   if (e1->isDoubleFloat() || e2->isDoubleFloat()) {
     return SharedTreeStack->pushDoubleFloat(

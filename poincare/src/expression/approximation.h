@@ -243,7 +243,7 @@ class Approximation final {
   template <typename T>
   static bool SkipApproximation(TypeBlock type, TypeBlock parentType,
                                 int indexInParent,
-                                bool previousChildApproximated);
+                                bool previousChildWasApproximated);
 
   /* Variables with id >= firstNonApproximableVarId are considered not
    * approximable. */

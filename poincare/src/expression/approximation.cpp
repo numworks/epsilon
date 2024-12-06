@@ -1375,7 +1375,7 @@ bool Approximation::SkipApproximation<double>(TypeBlock type) {
 template <typename T>
 bool Approximation::SkipApproximation(TypeBlock type, TypeBlock parentType,
                                       int indexInParent,
-                                      bool previousChildApproximated) {
+                                      bool previousChildWasApproximated) {
   if (SkipApproximation<T>(type)) {
     return true;
   }
@@ -1388,7 +1388,7 @@ bool Approximation::SkipApproximation(TypeBlock type, TypeBlock parentType,
     case Type::Pow:
       // Note: After projection, Power's second term should always be integer.
       // Only approximate power's index if the entire tree can be approximated.
-      return indexInParent == 1 && !previousChildApproximated;
+      return indexInParent == 1 && !previousChildWasApproximated;
     case Type::ListSlice:
     case Type::ListElement:
       return indexInParent >= 1;
@@ -1427,14 +1427,14 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(
     return true;
   }
   bool changed = false;
-  bool previousChildApproximated = false;
+  bool previousChildWasApproximated = false;
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
     if (!SkipApproximation<T>(child->type(), e->type(), child.index,
-                              previousChildApproximated)) {
+                              previousChildWasApproximated)) {
       changed =
           PrivateApproximateAndReplaceEveryScalar<T>(child, ctx) || changed;
     }
-    previousChildApproximated = child->isFloat();
+    previousChildWasApproximated = child->isFloat();
   }
   // TODO: Merge additions and multiplication's children if possible.
   return changed;

@@ -823,9 +823,9 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
     return false;
   }
   const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
-  return functionSymbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol)) ||
-         functionSymbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)) ||
-         functionSymbol.isIdenticalTo(Symbol::Builder(k_polarSymbol));
+  return SymbolHelper::IsSymbol(functionSymbol, k_cartesianSymbol) ||
+         SymbolHelper::IsSymbol(functionSymbol, k_parametricSymbol) ||
+         SymbolHelper::IsSymbol(functionSymbol, k_polarSymbol);
 }
 
 UserExpression ContinuousFunction::Model::expressionEquation(
@@ -891,13 +891,12 @@ UserExpression ContinuousFunction::Model::expressionEquation(
       leftExpression = ExpressionModel::ReplaceSymbolWithUnknown(
           leftExpression, codePointSymbol);
     }
-  } else if (leftExpression.isIdenticalTo(Symbol::Builder(k_radiusSymbol)) ||
-             leftExpression.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
+  } else if (SymbolHelper::IsSymbol(leftExpression, k_radiusSymbol) ||
+             SymbolHelper::IsSymbol(leftExpression, k_polarSymbol)) {
     result = result.cloneChildAtIndex(1);
-    tempFunctionSymbol =
-        leftExpression.isIdenticalTo(Symbol::Builder(k_polarSymbol))
-            ? ContinuousFunctionProperties::SymbolType::Radius
-            : ContinuousFunctionProperties::SymbolType::Theta;
+    tempFunctionSymbol = SymbolHelper::IsSymbol(leftExpression, k_polarSymbol)
+                             ? ContinuousFunctionProperties::SymbolType::Radius
+                             : ContinuousFunctionProperties::SymbolType::Theta;
     isUnnamedFunction = false;
   }
   if (computedFunctionSymbol) {
@@ -1028,13 +1027,13 @@ CodePoint ContinuousFunction::Model::CodePointForSymbol(
     const UserExpression& symbol) {
   // Extract the CodePoint function's symbol. We know it is either x, t or θ
   assert(symbol.isUserSymbol());
-  if (symbol.isIdenticalTo(Symbol::Builder(k_cartesianSymbol))) {
+  if (SymbolHelper::IsSymbol(symbol, k_cartesianSymbol)) {
     return k_cartesianSymbol;
   }
-  if (symbol.isIdenticalTo(Symbol::Builder(k_polarSymbol))) {
+  if (SymbolHelper::IsSymbol(symbol, k_polarSymbol)) {
     return k_polarSymbol;
   }
-  assert(symbol.isIdenticalTo(Symbol::Builder(k_parametricSymbol)));
+  assert(SymbolHelper::IsSymbol(symbol, k_parametricSymbol));
   return k_parametricSymbol;
 }
 
@@ -1066,8 +1065,8 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
         expressionToStore, symbol, true);
   } else {
     if (expressionToStore.recursivelyMatches(SymbolHelper::IsTheta)) {
-      symbol = expressionToStore.cloneChildAtIndex(0).isIdenticalTo(
-                   Symbol::Builder(k_polarSymbol))
+      symbol = SymbolHelper::IsSymbol(expressionToStore.cloneChildAtIndex(0),
+                                      k_polarSymbol)
                    ? k_radiusSymbol
                    : k_polarSymbol;
     }

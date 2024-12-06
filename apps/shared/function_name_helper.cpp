@@ -1,6 +1,7 @@
 #include "function_name_helper.h"
 
 #include <apps/shared/global_context.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/old/function.h>
 #include <poincare/old/serialization_helper.h>
 
@@ -105,8 +106,8 @@ bool ParametricComponentsNameError(UserExpression expression,
   const UserExpression function = expression.cloneChildAtIndex(0);
   const UserExpression functionSymbol = function.cloneChildAtIndex(0);
   const UserExpression point = expression.cloneChildAtIndex(1);
-  if (!functionSymbol.isIdenticalTo(
-          Symbol::Builder(ContinuousFunction::k_parametricSymbol)) ||
+  if (!SymbolHelper::IsSymbol(functionSymbol,
+                              ContinuousFunction::k_parametricSymbol) ||
       !point.isPoint()) {
     // The user is not defining a parametric function
     return false;

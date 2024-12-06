@@ -3,6 +3,7 @@
 #include <omg/unreachable.h>
 #include <poincare/cas.h>
 #include <poincare/function_properties/function_type.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/src/expression/polynomial.h>
 
 #include "continuous_function.h"
@@ -505,13 +506,13 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */
   return equation.isComparison() &&
-         equation.cloneChildAtIndex(0).isIdenticalTo(Symbol::Builder(symbol)) &&
+         SymbolHelper::IsSymbol(equation.cloneChildAtIndex(0), symbol) &&
          !equation.cloneChildAtIndex(1).recursivelyMatches(
              [](const NewExpression e, Context* context, void* auxiliary) {
                const CodePoint* symbol =
                    static_cast<const CodePoint*>(auxiliary);
                return (!e.isUninitialized() &&
-                       e.isIdenticalTo(Symbol::Builder(*symbol)))
+                       SymbolHelper::IsSymbol(e, *symbol))
                           ? OMG::Troolean::True
                           : OMG::Troolean::Unknown;
              },

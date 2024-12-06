@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <assert.h>
 #include <poincare/cas.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/function.h>
 #include <poincare/old/junior_expression.h>
@@ -134,12 +135,12 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   finalExpression = finalExpression.replaceSymbolWithExpression(
       static_cast<const Symbol&>(childSymbol), Symbol::SystemSymbol());
   SymbolAbstract symbolToStore = symbol;
-  if (!(childSymbol.isIdenticalTo(
-            Symbol::Builder(ContinuousFunction::k_cartesianSymbol)) ||
-        childSymbol.isIdenticalTo(
-            Symbol::Builder(ContinuousFunction::k_polarSymbol)) ||
-        childSymbol.isIdenticalTo(
-            Symbol::Builder(ContinuousFunction::k_parametricSymbol)))) {
+  if (!(SymbolHelper::IsSymbol(childSymbol,
+                               ContinuousFunction::k_cartesianSymbol) ||
+        SymbolHelper::IsSymbol(childSymbol,
+                               ContinuousFunction::k_polarSymbol) ||
+        SymbolHelper::IsSymbol(childSymbol,
+                               ContinuousFunction::k_parametricSymbol))) {
     // Unsupported symbol. Fall back to the default cartesian function symbol
     UserExpression symbolInX = Poincare::Function::Builder(
         symbolToStore.name(), strlen(symbolToStore.name()),

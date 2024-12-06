@@ -1,4 +1,5 @@
 #include <omg/utf8_helper.h>
+#include <poincare/code_points.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/parametric.h>
 #include <poincare/src/expression/symbol.h>
@@ -17,16 +18,16 @@ namespace Poincare::XNT {
 // Cycles
 constexpr int k_maxCycleSize = 5;
 constexpr CodePoint k_defaultXNTCycle[] = {
-    Symbol::k_cartesianSymbol,
-    Symbol::k_sequenceSymbol,
-    Symbol::k_parametricSymbol,
-    Symbol::k_polarSymbol,
+    CodePoints::k_cartesianSymbol,
+    CodePoints::k_sequenceSymbol,
+    CodePoints::k_parametricSymbol,
+    CodePoints::k_polarSymbol,
     UCodePointNull,
 };
 constexpr CodePoint k_defaultContinuousXNTCycle[] = {
-    Symbol::k_cartesianSymbol,
-    Symbol::k_parametricSymbol,
-    Symbol::k_polarSymbol,
+    CodePoints::k_cartesianSymbol,
+    CodePoints::k_parametricSymbol,
+    CodePoints::k_polarSymbol,
     UCodePointNull,
 };
 constexpr CodePoint k_defaultDiscreteXNTCycle[] = {
@@ -37,9 +38,9 @@ constexpr CodePoint k_defaultDiscreteXNTCycle[] = {
 
 static int indexOfCodePointInCycle(CodePoint codePoint,
                                    const CodePoint* cycle) {
-  if (codePoint == Symbol::k_radiusSymbol) {
+  if (codePoint == CodePoints::k_radiusSymbol) {
     // r is not in the cycle, use θ instead
-    codePoint = Symbol::k_polarSymbol;
+    codePoint = CodePoints::k_polarSymbol;
   }
   for (size_t i = 0; i < k_maxCycleSize - 1; i++) {
     if (cycle[i] == codePoint) {

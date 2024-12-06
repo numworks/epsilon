@@ -2,6 +2,7 @@
 #define APPS_SHARED_SEQUENCE_H
 
 #include <assert.h>
+#include <poincare/code_points.h>
 #include <poincare/src/expression/sequence.h>
 #include <poincare/src/expression/sequence_cache.h>
 
@@ -25,7 +26,7 @@ class Sequence : public Function {
 
  public:
   constexpr static CodePoint k_sequenceSymbol =
-      Poincare::Symbol::k_sequenceSymbol;
+      Poincare::CodePoints::k_sequenceSymbol;
   using Type = Poincare::Internal::Sequence::Type;
   Sequence(Ion::Storage::Record record = Record()) : Function(record) {}
 

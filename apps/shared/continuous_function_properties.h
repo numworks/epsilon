@@ -4,10 +4,10 @@
 #include <apps/i18n.h>
 #include <omg/bit_helper.h>
 #include <omg/troolean.h>
+#include <poincare/code_points.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/expression.h>
 #include <poincare/function_properties/conic.h>
-#include <poincare/old/symbol.h>
 
 /* ContinuousFunctionProperties is an object containing:
  *  - A pointer to a const function type
@@ -18,16 +18,8 @@ namespace Shared {
 
 class ContinuousFunctionProperties {
  public:
-  // === Symbols ===
-  constexpr static CodePoint k_cartesianSymbol =
-      Poincare::Symbol::k_cartesianSymbol;
-  constexpr static CodePoint k_parametricSymbol =
-      Poincare::Symbol::k_parametricSymbol;
-  constexpr static CodePoint k_polarSymbol = Poincare::Symbol::k_polarSymbol;
-  constexpr static CodePoint k_radiusSymbol = Poincare::Symbol::k_radiusSymbol;
-  constexpr static CodePoint k_ordinateSymbol =
-      Poincare::Symbol::k_ordinateSymbol;
-  constexpr static char k_ordinateName[2] = {k_ordinateSymbol, '\0'};
+  constexpr static char k_ordinateName[2] = {
+      Poincare::CodePoints::k_ordinateSymbol, '\0'};
 
   /* Units are not handled when plotting function. The default unit does not
    * matter */

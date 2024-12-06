@@ -167,10 +167,10 @@ void MathVariableBoxController::fillCellForRow(HighlightCell* cell, int row) {
       symbol = GlobalContext::s_continuousFunctionStore->modelForRecord(record)
                    ->symbol();
     } else if (record.hasExtension(Storage::parametricComponentExtension)) {
-      symbol = ContinuousFunctionProperties::k_parametricSymbol;
+      symbol = CodePoints::k_parametricSymbol;
     } else {
       assert(record.hasExtension(Storage::regressionExtension));
-      symbol = ContinuousFunctionProperties::k_cartesianSymbol;
+      symbol = CodePoints::k_cartesianSymbol;
     }
     symbolLength = Function::NameWithArgument(
         record, symbol, symbolName, Function::k_maxNameWithArgumentSize);

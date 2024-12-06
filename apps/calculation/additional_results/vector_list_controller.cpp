@@ -6,6 +6,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/new_trigonometry.h>
+#include <poincare/old/symbol.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/projection.h>
 #include <string.h>

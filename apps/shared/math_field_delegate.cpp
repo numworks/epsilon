@@ -32,7 +32,7 @@ void AbstractMathFieldDelegate::updateXNTIndex(Ion::Events::Event event) {
 }
 
 CodePoint AbstractMathFieldDelegate::defaultXNT() {
-  return ContinuousFunction::k_cartesianSymbol;
+  return CodePoints::k_cartesianSymbol;
 }
 
 bool AbstractMathFieldDelegate::isAcceptableExpression(const UserExpression exp,

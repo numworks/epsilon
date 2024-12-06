@@ -75,7 +75,7 @@ const char* FunctionModelsParameterController::ModelWithDefaultName(
   bool polar = modelString[0] == 'r';
   size_t constantNameLength = 1 + polar;
   assert(modelString[constantNameLength] == '(');
-  CodePoint symbol = polar ? Shared::ContinuousFunction::k_polarSymbol
+  CodePoint symbol = polar ? CodePoints::k_polarSymbol
                            : CodePoint(modelString[constantNameLength + 1]);
   /* Model starts with a named function. If that name is already taken, use
    * another one. */

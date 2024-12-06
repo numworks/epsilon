@@ -1,8 +1,8 @@
 #ifndef CALCULATION_FUNCTION_LIST_CONTROLLER_H
 #define CALCULATION_FUNCTION_LIST_CONTROLLER_H
 
-#include <apps/shared/continuous_function_properties.h>
 #include <omg/code_point.h>
+#include <poincare/code_points.h>
 
 #include "function_graph_cell.h"
 #include "function_model.h"
@@ -23,7 +23,7 @@ class FunctionListController : public IllustratedExpressionsListController {
 
  private:
   constexpr static char k_symbolName[2] = {
-      Shared::ContinuousFunctionProperties::k_cartesianSymbol, '\0'};
+      Poincare::CodePoints::k_cartesianSymbol, '\0'};
   constexpr static int k_maxNumberOfOutputRows = 1;
 
   IllustrationCell* illustrationCell() override { return &m_graphCell; }

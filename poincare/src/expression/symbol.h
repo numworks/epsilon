@@ -21,13 +21,6 @@ class Symbol final {
       k_maxNameLengthWithoutQuotationMarks + 2;
   constexpr static size_t k_maxNameSize = k_maxNameLength + 1;
 
-  constexpr static CodePoint k_cartesianSymbol = 'x';
-  constexpr static CodePoint k_parametricSymbol = 't';
-  constexpr static CodePoint k_polarSymbol = UCodePointGreekSmallLetterTheta;
-  constexpr static CodePoint k_radiusSymbol = 'r';
-  constexpr static CodePoint k_ordinateSymbol = 'y';
-  constexpr static CodePoint k_sequenceSymbol = 'n';
-
   constexpr static int k_maxSymbolReplacementsCount = 10;
 
   static uint8_t Length(const Tree* e) {

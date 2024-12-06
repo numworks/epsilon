@@ -4,6 +4,7 @@
 #include <apps/shared/function_name_helper.h>
 #include <assert.h>
 #include <escher/metric.h>
+#include <poincare/code_points.h>
 #include <poincare/layout.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol_abstract.h>
@@ -67,10 +68,10 @@ void ListController::fillWithDefaultFunctionEquation(char* buffer,
                                                      size_t bufferSize,
                                                      CodePoint symbol) const {
   size_t length;
-  if (symbol == ContinuousFunction::k_cartesianSymbol &&
+  if (symbol == CodePoints::k_cartesianSymbol &&
       FunctionModelsParameterController::EquationsPrefered()) {
-    length = SerializationHelper::CodePoint(
-        buffer, bufferSize, ContinuousFunction::k_ordinateSymbol);
+    length = SerializationHelper::CodePoint(buffer, bufferSize,
+                                            CodePoints::k_ordinateSymbol);
   } else {
     length = FunctionNameHelper::DefaultName(buffer, bufferSize, symbol);
     assert(0 < length && length < bufferSize - 1);
@@ -86,7 +87,7 @@ bool ListController::shouldCompleteEquation(Poincare::UserExpression expression,
   /* We do not want to complete equation if expression is already an
    * (in)equation, a point or a list of points. */
   return !expression.isComparison() &&
-         (!dimension.isPoint() || symbol == Symbol::k_parametricSymbol) &&
+         (!dimension.isPoint() || symbol == CodePoints::k_parametricSymbol) &&
          !dimension.isListOfPoints();
 }
 

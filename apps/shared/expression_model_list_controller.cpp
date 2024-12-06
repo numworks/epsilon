@@ -6,8 +6,8 @@
 #include <escher/selectable_table_view.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
+#include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/old/symbol.h>
 
 #include <algorithm>
 
@@ -232,17 +232,17 @@ void ExpressionModelListController::finishEdition() {
 }
 
 static CodePoint symbolForEquation(UserExpression expression) {
-  CodePoint symbol = Symbol::k_cartesianSymbol;
+  CodePoint symbol = CodePoints::k_cartesianSymbol;
   expression.recursivelyMatches(
       [](const NewExpression e, Context* context, void* auxiliary) {
         CodePoint* symbol = static_cast<CodePoint*>(auxiliary);
         assert(symbol);
-        if (SymbolHelper::IsSymbol(e, Symbol::k_polarSymbol)) {
-          *symbol = Symbol::k_polarSymbol;
+        if (SymbolHelper::IsSymbol(e, CodePoints::k_polarSymbol)) {
+          *symbol = CodePoints::k_polarSymbol;
           return true;
         }
-        if (SymbolHelper::IsSymbol(e, Symbol::k_parametricSymbol)) {
-          *symbol = Symbol::k_parametricSymbol;
+        if (SymbolHelper::IsSymbol(e, CodePoints::k_parametricSymbol)) {
+          *symbol = CodePoints::k_parametricSymbol;
           return true;
         }
         return false;

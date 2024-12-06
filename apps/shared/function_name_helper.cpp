@@ -1,6 +1,7 @@
 #include "function_name_helper.h"
 
 #include <apps/shared/global_context.h>
+#include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/old/function.h>
 #include <poincare/old/serialization_helper.h>
@@ -30,9 +31,8 @@ size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction* f,
     length += SerializationHelper::CodePoint(buffer + length,
                                              bufferSize - length, derivative);
   }
-  length +=
-      Shared::Function::WithArgument(ContinuousFunction::k_parametricSymbol,
-                                     buffer + length, bufferSize - length);
+  length += Shared::Function::WithArgument(
+      CodePoints::k_parametricSymbol, buffer + length, bufferSize - length);
   return length;
 }
 
@@ -56,7 +56,7 @@ static bool functionNameIsFree(char* buffer, size_t bufferSize,
                                CodePoint symbol) {
   size_t length = strlen(buffer);
   return GlobalContext::SymbolAbstractNameIsFree(buffer) &&
-         (symbol != ContinuousFunction::k_parametricSymbol ||
+         (symbol != CodePoints::k_parametricSymbol ||
           ParametricComponentsNamesAreFree(buffer, length, bufferSize));
 }
 
@@ -67,10 +67,10 @@ int DefaultName(char* buffer, size_t bufferSize, CodePoint symbol) {
   /* First default names the first of theses names f, g, h, p and then f1, f2,
    * that does not exist yet in the storage. */
   size_t length = 0;
-  if (symbol == ContinuousFunction::k_polarSymbol) {
+  if (symbol == CodePoints::k_polarSymbol) {
     // Try r1, r2, ...
-    length = SerializationHelper::CodePoint(
-        buffer, bufferSize, ContinuousFunctionProperties::k_radiusSymbol);
+    length = SerializationHelper::CodePoint(buffer, bufferSize,
+                                            CodePoints::k_radiusSymbol);
   } else {
     // Find the next available name
     for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
@@ -106,8 +106,7 @@ bool ParametricComponentsNameError(UserExpression expression,
   const UserExpression function = expression.cloneChildAtIndex(0);
   const UserExpression functionSymbol = function.cloneChildAtIndex(0);
   const UserExpression point = expression.cloneChildAtIndex(1);
-  if (!SymbolHelper::IsSymbol(functionSymbol,
-                              ContinuousFunction::k_parametricSymbol) ||
+  if (!SymbolHelper::IsSymbol(functionSymbol, CodePoints::k_parametricSymbol) ||
       !point.isPoint()) {
     // The user is not defining a parametric function
     return false;

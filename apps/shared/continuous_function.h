@@ -241,17 +241,6 @@ class ContinuousFunction : public Function {
   void didBecomeInactive() override { m_cache = nullptr; }
 
   constexpr static char k_unnamedRecordFirstChar = '?';
-  constexpr static CodePoint k_cartesianSymbol =
-      ContinuousFunctionProperties::k_cartesianSymbol;
-  constexpr static CodePoint k_parametricSymbol =
-      ContinuousFunctionProperties::k_parametricSymbol;
-  constexpr static CodePoint k_polarSymbol =
-      ContinuousFunctionProperties::k_polarSymbol;
-  constexpr static CodePoint k_radiusSymbol =
-      ContinuousFunctionProperties::k_radiusSymbol;
-  constexpr static CodePoint k_ordinateSymbol =
-      ContinuousFunctionProperties::k_ordinateSymbol;
-  constexpr static CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
 
   /* Scatter plot helper */
   Poincare::ScatterPlotIterable iterateScatterPlot(

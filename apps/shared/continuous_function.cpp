@@ -2,6 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
+#include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -19,6 +20,15 @@
 using namespace Poincare;
 
 namespace Shared {
+
+// Symbols
+constexpr CodePoint k_cartesianSymbol = Poincare::CodePoints::k_cartesianSymbol;
+constexpr CodePoint k_parametricSymbol =
+    Poincare::CodePoints::k_parametricSymbol;
+constexpr CodePoint k_polarSymbol = Poincare::CodePoints::k_polarSymbol;
+constexpr CodePoint k_radiusSymbol = Poincare::CodePoints::k_radiusSymbol;
+constexpr CodePoint k_ordinateSymbol = Poincare::CodePoints::k_ordinateSymbol;
+constexpr CodePoint k_unnamedExpressionSymbol = k_cartesianSymbol;
 
 /* ContinuousFunction - Public */
 

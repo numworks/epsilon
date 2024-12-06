@@ -1,5 +1,6 @@
 #include <apps/shared/function_name_helper.h>
 #include <apps/shared/global_context.h>
+#include <poincare/code_points.h>
 #include <quiz.h>
 
 #include <cmath>
@@ -10,11 +11,10 @@ namespace Graph {
 
 using namespace Shared;
 
-constexpr CodePoint k_cartesianSymbol =
-    Shared::ContinuousFunction::k_cartesianSymbol;
+constexpr CodePoint k_cartesianSymbol = Poincare::CodePoints::k_cartesianSymbol;
 constexpr CodePoint k_parametricSymbol =
-    Shared::ContinuousFunction::k_parametricSymbol;
-constexpr CodePoint k_polarSymbol = Shared::ContinuousFunction::k_polarSymbol;
+    Poincare::CodePoints::k_parametricSymbol;
+constexpr CodePoint k_polarSymbol = Poincare::CodePoints::k_polarSymbol;
 
 void assert_default_name_for_symbol_is(CodePoint symbol,
                                        const char* expectedName) {

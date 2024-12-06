@@ -2,6 +2,7 @@
 
 #include <omg/unreachable.h>
 #include <poincare/cas.h>
+#include <poincare/code_points.h>
 #include <poincare/function_properties/function_type.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/src/expression/polynomial.h>
@@ -11,6 +12,14 @@
 using namespace Poincare;
 
 namespace Shared {
+
+// === Symbols ===
+constexpr CodePoint k_cartesianSymbol = Poincare::CodePoints::k_cartesianSymbol;
+constexpr CodePoint k_parametricSymbol =
+    Poincare::CodePoints::k_parametricSymbol;
+constexpr CodePoint k_polarSymbol = Poincare::CodePoints::k_polarSymbol;
+constexpr CodePoint k_radiusSymbol = Poincare::CodePoints::k_radiusSymbol;
+constexpr CodePoint k_ordinateSymbol = Poincare::CodePoints::k_ordinateSymbol;
 
 bool ContinuousFunctionProperties::parameterAtIndexIsEditable(int index) const {
   assert(isEnabled());

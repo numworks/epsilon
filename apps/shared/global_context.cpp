@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <assert.h>
 #include <poincare/cas.h>
+#include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/function.h>
@@ -55,10 +56,10 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
                    ->symbol();
     } else if (record.hasExtension(
                    Ion::Storage::parametricComponentExtension)) {
-      symbol = ContinuousFunctionProperties::k_parametricSymbol;
+      symbol = CodePoints::k_parametricSymbol;
     } else {
       assert(record.hasExtension(Ion::Storage::regressionExtension));
-      symbol = ContinuousFunctionProperties::k_cartesianSymbol;
+      symbol = CodePoints::k_cartesianSymbol;
     }
     return PoincareHelpers::CreateLayout(
         ExpressionForFunction(Symbol::Builder(symbol), record), context);
@@ -135,16 +136,13 @@ bool GlobalContext::setExpressionForSymbolAbstract(
   finalExpression = finalExpression.replaceSymbolWithExpression(
       static_cast<const Symbol&>(childSymbol), Symbol::SystemSymbol());
   SymbolAbstract symbolToStore = symbol;
-  if (!(SymbolHelper::IsSymbol(childSymbol,
-                               ContinuousFunction::k_cartesianSymbol) ||
-        SymbolHelper::IsSymbol(childSymbol,
-                               ContinuousFunction::k_polarSymbol) ||
-        SymbolHelper::IsSymbol(childSymbol,
-                               ContinuousFunction::k_parametricSymbol))) {
+  if (!(SymbolHelper::IsSymbol(childSymbol, CodePoints::k_cartesianSymbol) ||
+        SymbolHelper::IsSymbol(childSymbol, CodePoints::k_polarSymbol) ||
+        SymbolHelper::IsSymbol(childSymbol, CodePoints::k_parametricSymbol))) {
     // Unsupported symbol. Fall back to the default cartesian function symbol
     UserExpression symbolInX = Poincare::Function::Builder(
         symbolToStore.name(), strlen(symbolToStore.name()),
-        Symbol::Builder(ContinuousFunction::k_cartesianSymbol));
+        Symbol::Builder(CodePoints::k_cartesianSymbol));
     symbolToStore = static_cast<const SymbolAbstract&>(symbolInX);
   }
   return setExpressionForFunction(finalExpression, symbolToStore, record) ==

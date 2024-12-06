@@ -345,6 +345,15 @@ bool Beautification::TurnIntoPolarForm(
     return false;
   }
   assert(!e->isDepList());
+  /* If the expression comes from an approximation, its polar form must stay an
+   * approximation. Arg system reductions tends to remove approximated nodes, so
+   * we need to re-approximate them. */
+  bool hasDoubleFloats = false, hasSingleFloats = false;
+  if (e->hasDescendantSatisfying([](const Tree* e) { return e->isFloat(); })) {
+    hasSingleFloats = e->hasDescendantSatisfying(
+        [](const Tree* e) { return e->isSingleFloat(); });
+    hasDoubleFloats = !hasSingleFloats;
+  }
   /* Try to turn a scalar x into abs(x)*e^(i×arg(x))
    * If abs or arg stays unreduced, leave x as it was. */
   Tree* result = SharedTreeStack->pushMult(2);
@@ -354,6 +363,13 @@ bool Beautification::TurnIntoPolarForm(
   if (projectionContext.m_advanceReduce) {
     AdvancedReduction::Reduce(abs);
   }
+  if (hasSingleFloats || hasDoubleFloats) {
+    /* If this assert fails, an approximated node has been lost during
+     * systematic simplification, ApproximateAndReplaceEveryScalar should be
+     * called on abs like below with arg. */
+    assert(abs->hasDescendantSatisfying(
+        [](const Tree* e) { return e->isFloat(); }));
+  }
   Tree* exp = SharedTreeStack->pushExp();
   Tree* mult = SharedTreeStack->pushMult(2);
   Tree* arg = SharedTreeStack->pushArg();
@@ -361,6 +377,11 @@ bool Beautification::TurnIntoPolarForm(
   SystematicReduction::ShallowReduce(arg);
   if (projectionContext.m_advanceReduce) {
     AdvancedReduction::Reduce(arg);
+  }
+  if (hasSingleFloats) {
+    Approximation::ApproximateAndReplaceEveryScalar<float>(arg);
+  } else if (hasDoubleFloats) {
+    Approximation::ApproximateAndReplaceEveryScalar<double>(arg);
   }
   SharedTreeStack->pushComplexI();
   /* mult is not flattened because i will be kept apart anyway in

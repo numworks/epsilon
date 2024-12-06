@@ -1391,7 +1391,7 @@ bool Approximation::SkipApproximation(TypeBlock type, TypeBlock parentType,
       return indexInParent == 1 && !previousChildWasApproximated;
     case Type::ListSlice:
     case Type::ListElement:
-      return indexInParent >= 1;
+      return indexInParent >= 1 && !previousChildWasApproximated;
     case Type::Identity:
       return true;
     default:

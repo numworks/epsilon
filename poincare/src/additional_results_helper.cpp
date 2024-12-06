@@ -407,7 +407,8 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
-  ProjectionContext ctx = {.m_strategy = Strategy::ApproximateToFloat,
+  ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian,
+                           .m_strategy = Strategy::ApproximateToFloat,
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
                            .m_context = context,
                            .m_advanceReduce = false};

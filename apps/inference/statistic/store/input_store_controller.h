@@ -72,6 +72,19 @@ class InputStoreController : public InputCategoricalController,
     }
   }
 
+  // TODO: move to .cpp
+  void setAllParameterCellsVisible() {
+    /* TODO: should we assert that we are not in the
+     * SignificanceTestType::TwoMeans case? */
+
+    std::for_each(m_extraParameters,
+                  m_extraParameters + numberOfExtraParameters(),
+                  [](InputCategoricalCell<Escher::LayoutView>& cell) {
+                    cell.setVisible(true);
+                  });
+    m_significanceCell.setVisible(true);
+  }
+
  private:
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:

@@ -111,7 +111,7 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
 const Internal::Tree* GlobalContext::protectedExpressionForSymbolAbstract(
     const Internal::Tree* symbol,
     Poincare::ContextWithParent* lastDescendantContext) {
-  assert(symbol->isUserNamed());
+  assert(symbol->isUserNamed() || !symbol->isUserSequence());
   Ion::Storage::Record r =
       SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbol));
   return expressionForSymbolAndRecord(
@@ -162,14 +162,9 @@ bool GlobalContext::setExpressionForSymbolAbstract(
 
 const Internal::Tree* GlobalContext::expressionForSymbolAndRecord(
     const Internal::Tree* symbol, Ion::Storage::Record r, Context* ctx) {
-  assert(symbol->isUserNamed());
-  if (symbol->isUserSymbol()) {
-    return ExpressionForUserNamed(r);
-  } else if (symbol->isUserFunction()) {
-    return ExpressionForFunction(r);
-  }
-  assert(symbol->isSequence());
-  return expressionForSequence(symbol, r, ctx);
+  assert(symbol->isUserSymbol() || symbol->isUserFunction());
+  return symbol->isUserSymbol() ? ExpressionForUserNamed(r)
+                                : ExpressionForFunction(r);
 }
 
 const Internal::Tree* GlobalContext::ExpressionForUserNamed(
@@ -197,42 +192,6 @@ const Internal::Tree* GlobalContext::ExpressionForFunction(
     return ContinuousFunction(r).expressionTree();
   }
   return nullptr;
-}
-
-const Internal::Tree* GlobalContext::expressionForSequence(
-    const Internal::Tree* symbol, Ion::Storage::Record r, Context* ctx) {
-  if (!r.hasExtension(Ion::Storage::sequenceExtension)) {
-    return UserExpression();
-  }
-  /* A function record value has metadata before the expression. To get the
-   * expression, use the function record handle. */
-  Sequence seq(r);
-  UserExpression rank = UserExpression::Builder(symbol->child(0));
-  bool rankIsInteger = false;
-  SystemExpression rankSimplified = PoincareHelpers::CloneAndReduce(
-      rank, ctx, {.target = ReductionTarget::SystemForApproximation});
-  double rankValue = rankSimplified.approximateToScalar<double>(
-      Preferences::SharedPreferences()->angleUnit(),
-      Preferences::SharedPreferences()->complexFormat(), ctx);
-  if (rankSimplified.isRational()) {
-#if 0  // TODO_PCJ
-    Rational n = static_cast<Rational &>(rankSimplified);
-    rankIsInteger = n.isInteger();
-#else
-    assert(false);
-    rankIsInteger = false;
-#endif
-  } else if (!std::isnan(rankValue)) {
-    /* WARNING:
-     * in some edge cases, because of quantification, we have
-     * floor(x) = x while x is not integer.*/
-    rankIsInteger = std::floor(rankValue) == rankValue;
-  }
-  if (rankIsInteger) {
-    return NewExpression::Builder<double>(
-        seq.evaluateXYAtParameter(rankValue, sequenceContext()).y());
-  }
-  return NewExpression::Builder<double>(NAN);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(

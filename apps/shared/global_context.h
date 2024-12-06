@@ -80,9 +80,6 @@ class GlobalContext final : public Poincare::Context {
       Ion::Storage::Record r);
   static const Poincare::Internal::Tree* ExpressionForFunction(
       Ion::Storage::Record r);
-  const Poincare::Internal::Tree* expressionForSequence(
-      const Poincare::Internal::Tree* symbol, Ion::Storage::Record r,
-      Context* ctx);
   // Expression setters
   /* This modifies the expression. */
   Ion::Storage::Record::ErrorStatus setExpressionForUserNamed(

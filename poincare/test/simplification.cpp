@@ -869,7 +869,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   // Angles
   simplifies_to("_rad", "1×_rad");
   simplifies_to("360×_°", "2×π×_rad");
-  simplifies_to("π×π×_rad", "_rad×π^2");
+  simplifies_to("π×π×_rad", "1×_rad×π^2");
   simplifies_to("π×π×_rad", "180×π×_°", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("π×π×_rad×_m", "9.8696044010894×_m×_rad");
   simplifies_to("π×π×_rad×_rad", "π^2×_rad^2");

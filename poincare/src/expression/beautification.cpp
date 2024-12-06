@@ -187,7 +187,7 @@ bool DeepBeautifyUnits(Tree* e) {
     return true;
   }
   if (e->isMult() && e->numberOfChildren() > 0 &&
-      Units::Unit::IsUnitOrPowerOfUnit(e)) {
+      Units::Unit::IsUnitOrPowerOfUnit(e->child(0))) {
     NAry::AddChildAtIndex(e, (1_e)->cloneTree(), 0);
     return true;
   }

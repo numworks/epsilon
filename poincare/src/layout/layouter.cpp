@@ -929,7 +929,7 @@ bool Layouter::implicitAddition(const Tree* addition) {
           (child->child(0)->isInteger() ||
            child->child(0)->isOfType(
                {Type::Decimal, Type::DoubleFloat, Type::SingleFloat})) &&
-          child->child(1)->isUnit())) {
+          child->child(1)->isUnitOrPhysicalConstant())) {
       return false;
     }
     ComplexSign sign = GetComplexSign(child->child(0));

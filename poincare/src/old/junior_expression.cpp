@@ -870,7 +870,7 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
         if (isAngleUnit && hasAngleUnits) {
           *hasAngleUnits = true;
         }
-        return (e.tree()->isUnit() &&
+        return (e.tree()->isUnitOrPhysicalConstant() &&
                 (!pack->ignoreAngleUnits || !isAngleUnit)) ||
                e.tree()->isPhysicalConstant();
       },

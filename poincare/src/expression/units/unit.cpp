@@ -483,7 +483,8 @@ bool Unit::AllowImplicitAddition(const Representative* smallestRepresentative,
 }
 
 bool Unit::IsUnitOrPowerOfUnit(const Tree* e) {
-  return e->isUnit() || (e->isPow() && e->child(0)->isUnit());
+  return e->isUnitOrPhysicalConstant() ||
+         (e->isPow() && e->child(0)->isUnitOrPhysicalConstant());
 }
 
 bool Unit::ForceMarginLeftOfUnit(const Tree* e) {
@@ -804,7 +805,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
 bool GetUnits(Tree* extractedUnits, Tree** unit1, Tree** unit2) {
   assert(!*unit1 && !*unit2);
   for (Tree* e : extractedUnits->selfAndDescendants()) {
-    if (e->isUnit() || e->isPhysicalConstant()) {
+    if (e->isUnitOrPhysicalConstant()) {
       if (*unit2) {
         return false;
       }
@@ -1027,7 +1028,7 @@ bool IsCombinationOfUnits(const Tree* e) {
 bool HasUnit(const Tree* e) {
   // TODO should HasUnit be replaced by dimensional analysis ?
   return e->hasDescendantSatisfying(
-      [](const Tree* e) { return e->isUnit() || e->isPhysicalConstant(); });
+      [](const Tree* e) { return e->isUnitOrPhysicalConstant(); });
 }
 
 bool IsPureAngleUnit(const Tree* e) {

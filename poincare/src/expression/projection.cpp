@@ -211,7 +211,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     Decimal::Project(e);
     changed = true;
   }
-  if (e->isUnit() &&
+  if (e->isUnitOrPhysicalConstant() &&
       projectionContext->m_dimension.hasNonKelvinTemperatureUnit() &&
       Units::Unit::GetRepresentative(e)->siVector() !=
           Units::Temperature::Dimension) {

@@ -98,7 +98,7 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
        * Indeed x^(-inf) can be different from 1/x^inf
        * for example (-2)^inf is undef but (-2)^-inf is 0 (and not undef) */
       assert(!Infinity::IsPlusOrMinusInfinity(exponent));
-      if (base->isUnit()) {
+      if (base->isUnitOrPhysicalConstant()) {
         factorsOuterNumerator = pow;
       } else if (!base->isEulerE() &&
                  MakePositiveAnyNegativeNumeralFactor(exponent)) {
@@ -109,7 +109,7 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
       } else {
         factorsNumerator = pow;
       }
-    } else if (factor->isUnit()) {
+    } else if (factor->isUnitOrPhysicalConstant()) {
       factorsOuterNumerator = factor->cloneTree();
     } else {
       factorsNumerator = factor->cloneTree();

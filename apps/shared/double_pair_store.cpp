@@ -5,7 +5,7 @@
 #include <ion/storage/file_system.h>
 #include <omg/list.h>
 #include <omg/memory.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <stddef.h>
 
 #include <algorithm>
@@ -96,7 +96,7 @@ size_t DoublePairStore::tableName(int series, char* buffer,
                                   size_t bufferSize) const {
   size_t length = fillColumnName(series, 0, buffer);
   length +=
-      SerializationHelper::CodePoint(buffer + length, bufferSize - length, '/');
+      UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length, '/');
   length += fillColumnName(series, 1, buffer + length);
   return length;
 }

@@ -613,4 +613,79 @@ bool IsPrefixCaseInsensitiveNoCombining(const char* a, const char* b) {
   return static_cast<bool>(SuffixCaseInsensitiveNoCombining(a, b));
 }
 
+static bool checkBufferSize(char* buffer, size_t bufferSize, size_t* result) {
+  // If buffer has size 0 or 1, put a zero if it fits and return
+  if (bufferSize == 0) {
+    *result = -1;
+    return true;
+  }
+
+  buffer[bufferSize - 1] = 0;  // Null-terminate the buffer
+  if (bufferSize == 1) {
+    *result = 0;
+    return true;
+  }
+  return false;
+}
+
+size_t WriteCodePoint(char* buffer, size_t bufferSize, class CodePoint c) {
+  {
+    size_t result = 0;
+    if (checkBufferSize(buffer, bufferSize, &result)) {
+      return result;
+    }
+  }
+  size_t length = UTF8Decoder::CharSizeOfCodePoint(c);
+  if (length >= bufferSize) {
+    /* Code point doesn't fit, nullify the rest of the buffer to prevent
+     * truncated utf8 characters */
+    memset(buffer, 0, bufferSize);
+  } else {
+    UTF8Decoder::CodePointToChars(c, buffer, bufferSize - 1);
+    buffer[length] = 0;
+  }
+  return length;
+}
+
+size_t ReplaceSystemParenthesesAndBracesByUserParentheses(char* buffer,
+                                                          size_t length) {
+  assert(
+      UTF8Decoder::CharSizeOfCodePoint(UCodePointLeftSystemParenthesis == 1));
+  assert(
+      UTF8Decoder::CharSizeOfCodePoint(UCodePointRightSystemParenthesis == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint('(' == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint(')' == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSystem == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint('{' == 1));
+  assert(UTF8Decoder::CharSizeOfCodePoint('}' == 1));
+
+  if (length < 0) {
+    length = strlen(buffer);
+  }
+
+  size_t offset = 0;
+  char c = *(buffer + offset);
+  bool pendingSystemCodePoint = false;
+  while (c != 0) {
+    if (pendingSystemCodePoint && (c == '{' || c == '}')) {
+      *(buffer + offset) = c == '{' ? '(' : ')';
+      strlcpy(buffer + offset - 1, buffer + offset,
+              strlen(buffer + offset) + 1);
+      length--;
+      offset--;
+    } else if (c == UCodePointLeftSystemParenthesis) {
+      *(buffer + offset) = '(';
+    } else if (c == UCodePointRightSystemParenthesis) {
+      *(buffer + offset) = ')';
+    }
+    offset++;
+    if (length >= 0 && offset > length - 1) {
+      break;
+    }
+    pendingSystemCodePoint = c == UCodePointSystem;
+    c = *(buffer + offset);
+  }
+  return length;
+}
+
 }  // namespace UTF8Helper

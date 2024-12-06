@@ -2,13 +2,13 @@
 
 #include <apps/apps_container_helper.h>
 #include <escher/palette.h>
+#include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/new_trigonometry.h>
 #include <poincare/numeric/roots.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/derivation.h>
 
@@ -89,7 +89,7 @@ size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
   if (isNamed()) {
     length += Function::name(buffer, bufferSize);
   } else {
-    length += SerializationHelper::CodePoint(
+    length += UTF8Helper::WriteCodePoint(
         buffer, bufferSize,
         properties().isPolar()
             ? k_radiusSymbol
@@ -101,8 +101,8 @@ size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
         derivationOrder == 1
             ? Poincare::Internal::Derivation::k_firstOrderSymbol
             : Poincare::Internal::Derivation::k_secondOrderSymbol;
-    length += SerializationHelper::CodePoint(buffer + length,
-                                             bufferSize - length, derivative);
+    length += UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length,
+                                         derivative);
   }
   return length;
 }
@@ -1023,8 +1023,8 @@ ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record* record,
     }
     // Rename record with a hidden record name.
     char name[k_maxDefaultNameSize];
-    size_t length = SerializationHelper::CodePoint(name, k_maxDefaultNameSize,
-                                                   k_unnamedRecordFirstChar);
+    size_t length = UTF8Helper::WriteCodePoint(name, k_maxDefaultNameSize,
+                                               k_unnamedRecordFirstChar);
     Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
         name, length, k_maxDefaultNameSize, Ion::Storage::functionExtension);
     error = Ion::Storage::Record::SetBaseNameWithExtension(

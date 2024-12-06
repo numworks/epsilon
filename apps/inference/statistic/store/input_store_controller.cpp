@@ -1,6 +1,6 @@
 #include "input_store_controller.h"
 
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 
 #include "inference/text_helpers.h"
 
@@ -96,8 +96,8 @@ void InputStoreController::viewWillAppear() {
     if (hasTwoSeries) {
       size_t length = store()->tableName(DropdownDataSource::Series1ForRow(row),
                                          buffer, bufferSize);
-      length += SerializationHelper::CodePoint(buffer + length,
-                                               bufferSize - length, ',');
+      length +=
+          UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length, ',');
       store()->tableName(DropdownDataSource::Series2ForRow(row),
                          buffer + length, bufferSize - length);
     } else {

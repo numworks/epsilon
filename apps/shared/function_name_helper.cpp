@@ -1,10 +1,10 @@
 #include "function_name_helper.h"
 
 #include <apps/shared/global_context.h>
+#include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/old/function.h>
-#include <poincare/old/serialization_helper.h>
 
 using namespace Poincare;
 
@@ -14,9 +14,9 @@ namespace FunctionNameHelper {
 
 size_t AddSuffixForParametricComponent(char* baseName, size_t baseNameLength,
                                        size_t bufferSize, bool first) {
-  return SerializationHelper::CodePoint(baseName + baseNameLength,
-                                        bufferSize - baseNameLength,
-                                        first ? 'x' : 'y');
+  return UTF8Helper::WriteCodePoint(baseName + baseNameLength,
+                                    bufferSize - baseNameLength,
+                                    first ? 'x' : 'y');
 }
 
 size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction* f,
@@ -28,8 +28,8 @@ size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction* f,
   if (derivationOrder > 0) {
     assert(derivationOrder == 1 || derivationOrder == 2);
     const CodePoint derivative = derivationOrder == 1 ? '\'' : '\"';
-    length += SerializationHelper::CodePoint(buffer + length,
-                                             bufferSize - length, derivative);
+    length += UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length,
+                                         derivative);
   }
   length += Shared::Function::WithArgument(
       CodePoints::k_parametricSymbol, buffer + length, bufferSize - length);
@@ -69,20 +69,20 @@ int DefaultName(char* buffer, size_t bufferSize, CodePoint symbol) {
   size_t length = 0;
   if (symbol == CodePoints::k_polarSymbol) {
     // Try r1, r2, ...
-    length = SerializationHelper::CodePoint(buffer, bufferSize,
-                                            CodePoints::k_radiusSymbol);
+    length = UTF8Helper::WriteCodePoint(buffer, bufferSize,
+                                        CodePoints::k_radiusSymbol);
   } else {
     // Find the next available name
     for (size_t i = 0; i < k_maxNumberOfDefaultLetterNames; i++) {
-      length = SerializationHelper::CodePoint(buffer, bufferSize,
-                                              k_defaultLetterNames[i]);
+      length = UTF8Helper::WriteCodePoint(buffer, bufferSize,
+                                          k_defaultLetterNames[i]);
       if (functionNameIsFree(buffer, bufferSize, symbol)) {
         return length;
       }
     }
     // f, g, h and p are already taken. Try f1, f2, ...
-    length = SerializationHelper::CodePoint(buffer, bufferSize,
-                                            k_defaultLetterNames[0]);
+    length =
+        UTF8Helper::WriteCodePoint(buffer, bufferSize, k_defaultLetterNames[0]);
   }
   assert(bufferSize >= ContinuousFunction::k_maxDefaultNameSize);
   return Ion::Storage::FileSystem::sharedFileSystem

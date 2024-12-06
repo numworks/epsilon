@@ -1,9 +1,9 @@
 #include "unit_comparison_helper.h"
 
 #include <apps/i18n.h>
+#include <omg/utf8_helper.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/dimension_vector.h>
@@ -587,8 +587,8 @@ void FillRatioBuffer(double ratio, char* textBuffer, int bufferSize) {
   // Add % at the end
   if (withPercentage) {
     assert(bufferIndex < bufferSize - 1);
-    SerializationHelper::CodePoint(textBuffer + bufferIndex,
-                                   bufferSize - bufferIndex, '%');
+    UTF8Helper::WriteCodePoint(textBuffer + bufferIndex,
+                               bufferSize - bufferIndex, '%');
   }
 }
 

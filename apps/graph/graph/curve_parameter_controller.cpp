@@ -3,7 +3,7 @@
 #include <apps/i18n.h>
 #include <apps/shared/function_name_helper.h>
 #include <assert.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/print.h>
 
 #include "../app.h"
@@ -123,7 +123,7 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
       Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
   char buffer[bufferSize];
   if (row == static_cast<int>(ParameterIndex::Abscissa)) {
-    SerializationHelper::CodePoint(buffer, bufferSize, properties.symbol());
+    UTF8Helper::WriteCodePoint(buffer, bufferSize, properties.symbol());
   } else {
     bool firstComponent = parameterAtRowIsFirstComponent(row);
     int derivationOrder = derivationOrderOfParameterAtRow(row);

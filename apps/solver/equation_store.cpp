@@ -3,7 +3,7 @@
 #include <apps/constant.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/old/symbol.h>
 
 #include "app.h"
@@ -18,7 +18,7 @@ Ion::Storage::Record::ErrorStatus EquationStore::addEmptyModel() {
   char name[bufferSize];
   static_assert(k_maxNumberOfEquations < 9,
                 "Equation name record might not fit");
-  size_t length = SerializationHelper::CodePoint(name, bufferSize, 'e');
+  size_t length = UTF8Helper::WriteCodePoint(name, bufferSize, 'e');
   Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
       name, length, bufferSize, Ion::Storage::equationExtension,
       k_maxNumberOfEquations);

@@ -3,7 +3,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <omg/utf8_decoder.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <string.h>
 
 namespace Shared {
@@ -46,12 +46,12 @@ void TextToInsertForCommandText(const char* command, int commandLength,
       if (argumentAlreadyReplaced) {
         argumentAlreadyReplaced = false;
       }
-      length += Poincare::SerializationHelper::CodePoint(
-          buffer + length, bufferSize - length, codePoint);
+      length += UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length,
+                                           codePoint);
     } else {
       if (replaceArgsWithEmptyChar && !argumentAlreadyReplaced) {
         assert(length < bufferSize);
-        length += Poincare::SerializationHelper::CodePoint(
+        length += UTF8Helper::WriteCodePoint(
             buffer + length, bufferSize - length, UCodePointEmpty);
         argumentAlreadyReplaced = true;
       }

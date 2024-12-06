@@ -2,13 +2,13 @@
 
 #include <apps/apps_container.h>
 #include <assert.h>
+#include <omg/utf8_helper.h>
 #include <poincare/cas.h>
 #include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/function.h>
 #include <poincare/old/junior_expression.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>
 
 #include "continuous_function.h"

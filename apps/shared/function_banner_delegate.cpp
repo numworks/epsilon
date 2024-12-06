@@ -1,6 +1,6 @@
 #include "function_banner_delegate.h"
 
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 
 #include "poincare_helpers.h"
 
@@ -15,12 +15,12 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
   ExpiringPointer<Function> function = functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
   size_t numberOfChar = 0;
-  numberOfChar += SerializationHelper::CodePoint(
+  numberOfChar += UTF8Helper::WriteCodePoint(
       buffer + numberOfChar, k_textBufferSize - numberOfChar - 1,
       function->symbol());
   assert(numberOfChar <= k_textBufferSize);
-  SerializationHelper::CodePoint(buffer + numberOfChar,
-                                 k_textBufferSize - numberOfChar, '=');
+  UTF8Helper::WriteCodePoint(buffer + numberOfChar,
+                             k_textBufferSize - numberOfChar, '=');
   bannerView()->abscissaSymbol()->setText(buffer);
 
   numberOfChar = function->printAbscissaValue(
@@ -34,7 +34,7 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
 
   numberOfChar = function->nameWithArgument(buffer, k_textBufferSize);
   assert(numberOfChar <= k_textBufferSize);
-  numberOfChar += SerializationHelper::CodePoint(
+  numberOfChar += UTF8Helper::WriteCodePoint(
       buffer + numberOfChar, k_textBufferSize - numberOfChar, '=');
   numberOfChar += function->printFunctionValue(
       cursorT, cursorX, cursorY, buffer + numberOfChar,

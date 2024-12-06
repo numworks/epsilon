@@ -4,9 +4,9 @@
 #include <apps/shared/function_name_helper.h>
 #include <assert.h>
 #include <escher/metric.h>
+#include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
 #include <poincare/layout.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol_abstract.h>
 
 #include "../app.h"
@@ -70,15 +70,15 @@ void ListController::fillWithDefaultFunctionEquation(char* buffer,
   size_t length;
   if (symbol == CodePoints::k_cartesianSymbol &&
       FunctionModelsParameterController::EquationsPrefered()) {
-    length = SerializationHelper::CodePoint(buffer, bufferSize,
-                                            CodePoints::k_ordinateSymbol);
+    length = UTF8Helper::WriteCodePoint(buffer, bufferSize,
+                                        CodePoints::k_ordinateSymbol);
   } else {
     length = FunctionNameHelper::DefaultName(buffer, bufferSize, symbol);
     assert(0 < length && length < bufferSize - 1);
     length += Shared::Function::WithArgument(symbol, buffer + length,
                                              bufferSize - length);
   }
-  SerializationHelper::CodePoint(buffer + length, bufferSize - length, '=');
+  UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length, '=');
 }
 
 bool ListController::shouldCompleteEquation(Poincare::UserExpression expression,

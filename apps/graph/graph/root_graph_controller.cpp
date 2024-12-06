@@ -1,7 +1,7 @@
 #include "root_graph_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 
 using namespace Shared;
 using namespace Poincare;

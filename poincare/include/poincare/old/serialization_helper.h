@@ -22,9 +22,6 @@ enum class ParenthesisType : uint8_t {
   None,
 };
 
-size_t ReplaceSystemParenthesesAndBracesByUserParentheses(char* buffer,
-                                                          size_t length = -1);
-
 // SerializableReference to text
 size_t Infix(const PoolObject* node, char* buffer, size_t bufferSize,
              Preferences::PrintFloatMode floatDisplayMode, int numberOfDigits,

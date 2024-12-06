@@ -166,6 +166,12 @@ const char* SuffixCaseInsensitiveNoCombining(const char* prefix,
 /* Returns whether the first string is prefix to the second. */
 bool IsPrefixCaseInsensitiveNoCombining(const char* prefix, const char* text);
 
+// Write one code point in a buffer and a null-terminating char
+size_t WriteCodePoint(char* buffer, size_t bufferSize, CodePoint c);
+
+size_t ReplaceSystemParenthesesAndBracesByUserParentheses(char* buffer,
+                                                          size_t length = -1);
+
 }  // namespace UTF8Helper
 
 #endif

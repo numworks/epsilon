@@ -2,7 +2,7 @@
 
 #include <apps/constant.h>
 #include <escher/container.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/print.h>
 
 #include "column_parameter_controller.h"
@@ -88,8 +88,8 @@ void StoreColumnHelper::fillFormulaInputWithTemplate(
   char formulaText[k_bufferSize];
   size_t length = fillColumnNameFromStore(referencedColumn(), formulaText);
   if (length < ClearColumnHelper::k_maxSizeOfColumnName - 1) {
-    length += SerializationHelper::CodePoint(formulaText + length,
-                                             k_bufferSize - length, '=');
+    length += UTF8Helper::WriteCodePoint(formulaText + length,
+                                         k_bufferSize - length, '=');
   }
   Layout formulaLayout = Layout::Parse(formulaText);
   if (!templateLayout.isUninitialized()) {

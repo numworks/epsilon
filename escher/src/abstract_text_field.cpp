@@ -8,7 +8,6 @@
 #include <omg/utf8_helper.h>
 #include <poincare/old/aliases_list.h>
 #include <poincare/old/parametered_expression.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol_abstract.h>
 #include <poincare/xnt.h>
 
@@ -110,8 +109,7 @@ void AbstractTextField::ContentView::setText(const char* text) {
   strlcpy(buffer, text, maxBufferSize);
   /* Replace System parentheses (used to keep layout tree structure) by normal
    * parentheses */
-  SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
-      buffer);
+  UTF8Helper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
   markWholeFrameAsDirty();
 }
 
@@ -504,7 +502,7 @@ size_t AbstractTextField::getTextFromEvent(Ion::Events::Event event,
                                            char* buffer, size_t bufferSize) {
   if (event == Ion::Events::DoubleQuotes && m_delegate &&
       m_delegate->shouldInsertSingleQuoteInsteadOfDoubleQuotes(this)) {
-    return SerializationHelper::CodePoint(buffer, bufferSize, '\'');
+    return UTF8Helper::WriteCodePoint(buffer, bufferSize, '\'');
   }
   return EditableField::getTextFromEvent(event, buffer, bufferSize);
 }
@@ -577,8 +575,7 @@ bool AbstractTextField::insertText(const char* eventText, bool indentation,
     }
     /* Replace System parentheses (used to keep layout tree structure) by normal
      * parentheses */
-    SerializationHelper::ReplaceSystemParenthesesAndBracesByUserParentheses(
-        buffer);
+    UTF8Helper::ReplaceSystemParenthesesAndBracesByUserParentheses(buffer);
 
     if (insertTextAtLocation(buffer, const_cast<char*>(cursorLocation()))) {
       /* The cursor position depends on the text as we sometimes want to

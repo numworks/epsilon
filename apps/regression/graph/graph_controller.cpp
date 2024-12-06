@@ -3,9 +3,9 @@
 #include <apps/apps_container_helper.h>
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
+#include <omg/utf8_helper.h>
 #include <poincare/layout.h>
 #include <poincare/numeric/zoom.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -126,9 +126,8 @@ bool GraphController::buildRegressionExpression(
   if (length >= bufferSize - 1 || length == 0) {
     return false;
   }
-  return SerializationHelper::
-             ReplaceSystemParenthesesAndBracesByUserParentheses(
-                 buffer, length) < bufferSize - 1;
+  return UTF8Helper::ReplaceSystemParenthesesAndBracesByUserParentheses(
+             buffer, length) < bufferSize - 1;
 }
 
 // SimpleInteractiveCurveViewController

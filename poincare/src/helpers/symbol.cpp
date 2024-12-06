@@ -1,5 +1,5 @@
+#include <omg/utf8_helper.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/symbol.h>
 
@@ -23,7 +23,7 @@ bool SymbolHelper::IsSymbol(NewExpression e, CodePoint c) {
   constexpr size_t bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
   size_t codePointLength =
-      SerializationHelper::CodePoint(buffer, bufferSize - 1, c);
+      UTF8Helper::WriteCodePoint(buffer, bufferSize - 1, c);
   assert(codePointLength < bufferSize);
   return strcmp(GetName(e), buffer) == 0;
 }

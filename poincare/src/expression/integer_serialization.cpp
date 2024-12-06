@@ -1,4 +1,4 @@
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/print_float.h>
 #include <poincare/sign.h>
 
@@ -6,7 +6,7 @@
 
 using Poincare::Preferences;
 using Poincare::PrintFloat;
-using Poincare::SerializationHelper::CodePoint;
+using UTF8Helper::WriteCodePoint;
 
 namespace Poincare::Internal {
 
@@ -67,9 +67,9 @@ size_t IntegerHandler::serializeInDecimal(char* buffer, size_t bufferSize,
 
   size_t length = 0;
   if (isZero()) {
-    length += CodePoint(buffer + length, bufferSize - length, '0');
+    length += WriteCodePoint(buffer + length, bufferSize - length, '0');
   } else if (m_sign == NonStrictSign::Negative) {
-    length += CodePoint(buffer + length, bufferSize - length, '-');
+    length += WriteCodePoint(buffer + length, bufferSize - length, '-');
   }
 
   while (!(d.remainder.isZero() && d.quotient.isZero())) {
@@ -82,7 +82,7 @@ size_t IntegerHandler::serializeInDecimal(char* buffer, size_t bufferSize,
                  Preferences::PrintFloatMode::Decimal)
           .CharLength;
     }
-    length += CodePoint(buffer + length, bufferSize - length, c);
+    length += WriteCodePoint(buffer + length, bufferSize - length, c);
     d = Udiv(d.quotient, base, workingBuffer);
   }
   assert(length <= bufferSize - 1);

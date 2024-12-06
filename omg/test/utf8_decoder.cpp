@@ -1,6 +1,5 @@
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
-#include <poincare/old/serialization_helper.h>
 #include <quiz.h>
 #include <string.h>
 
@@ -41,7 +40,7 @@ void assert_code_point_decode_to_chars(
   memset(buffer, 0, sizeof(buffer));
   /* SerializationHelper handles any bufferSize and always outputs a
    * null-terminated string with decoded CodePoint if it fits */
-  Poincare::SerializationHelper::CodePoint(buffer, bufferSize, c);
+  UTF8Helper::WriteCodePoint(buffer, bufferSize, c);
   quiz_assert(strcmp(expectedSerialization, buffer) == 0);
   if (UTF8Decoder::CharSizeOfCodePoint(c) <= bufferSize) {
     // UTF8Decoder::CodePointToChars must be called on big enough buffers only.

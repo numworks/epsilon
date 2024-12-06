@@ -1,7 +1,7 @@
 #include "calculation_parameter_controller.h"
 
 #include <assert.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 
 #include <cmath>
 
@@ -142,8 +142,8 @@ void CalculationParameterController::fillAreaCell() {
   char secondPlaceHolder[bufferSize];
   if (!ShouldDisplayChevronInAreaCell()) {
     // If there are only 2 functions, display "Area between f(x) and g(x)"
-    size_t numberOfChars = Poincare::SerializationHelper::CodePoint(
-        secondPlaceHolder, bufferSize, ' ');
+    size_t numberOfChars =
+        UTF8Helper::WriteCodePoint(secondPlaceHolder, bufferSize, ' ');
     Ion::Storage::Record secondRecord =
         AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
             0, m_record);

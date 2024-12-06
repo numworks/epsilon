@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <escher/container.h>
 #include <omg/ieee754.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/print.h>
 
 #include "../app.h"
@@ -73,8 +73,7 @@ void FrequencyController::appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
     labelBuffer[0] = 0;
     return;
   }
-  Poincare::SerializationHelper::CodePoint(labelBuffer + length,
-                                           maxSize - length, '%');
+  UTF8Helper::WriteCodePoint(labelBuffer + length, maxSize - length, '%');
 }
 
 void FrequencyController::reloadValueInBanner(

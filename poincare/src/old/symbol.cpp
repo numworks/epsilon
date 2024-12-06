@@ -6,7 +6,6 @@
 #include <poincare/old/context.h>
 #include <poincare/old/parametered_expression.h>
 #include <poincare/old/rational.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -105,7 +104,7 @@ Symbol Symbol::Builder(CodePoint name) {
   constexpr size_t bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
   size_t codePointLength =
-      SerializationHelper::CodePoint(buffer, bufferSize - 1, name);
+      UTF8Helper::WriteCodePoint(buffer, bufferSize - 1, name);
   assert(codePointLength < bufferSize);
   return Symbol::Builder(buffer, codePointLength);
 }

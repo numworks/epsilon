@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <escher/metric.h>
 #include <ion/events.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 
 #include "app.h"
 
@@ -270,9 +270,9 @@ bool MenuController::textFieldDidFinishEditing(AbstractTextField* textField,
     bool foundDefaultName = Script::DefaultName(
         numberedDefaultName, Script::k_defaultScriptNameMaxSize);
     int defaultNameLength = strlen(numberedDefaultName);
-    defaultNameLength += Poincare::SerializationHelper::CodePoint(
-        numberedDefaultName + defaultNameLength, bufferSize - defaultNameLength,
-        '.');
+    defaultNameLength +=
+        UTF8Helper::WriteCodePoint(numberedDefaultName + defaultNameLength,
+                                   bufferSize - defaultNameLength, '.');
     assert(defaultNameLength < bufferSize);
     strlcpy(numberedDefaultName + defaultNameLength,
             ScriptStore::k_scriptExtension, bufferSize - defaultNameLength);

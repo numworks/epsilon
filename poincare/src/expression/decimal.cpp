@@ -1,6 +1,6 @@
 #include "decimal.h"
 
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
@@ -28,7 +28,7 @@ void Decimal::Project(Tree* e) {
 
 using Poincare::Preferences;
 using Poincare::PrintFloat;
-using Poincare::SerializationHelper::CodePoint;
+using UTF8Helper::WriteCodePoint;
 
 int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
                        Preferences::PrintFloatMode mode,
@@ -50,7 +50,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   }
   if (unsignedMantissa->isZero()) {
     // This already writes the null terminating char
-    return CodePoint(buffer, bufferSize, '0');
+    return WriteCodePoint(buffer, bufferSize, '0');
   }
 
   // Compute the exponent
@@ -115,7 +115,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   // Print the sign
   int currentChar = 0;
   if (negative) {
-    currentChar += CodePoint(buffer, bufferSize, '-');
+    currentChar += WriteCodePoint(buffer, bufferSize, '-');
     if (currentChar >= bufferSize - 1) {
       return bufferSize - 1;
     }
@@ -207,8 +207,9 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
         exponent == 0) {
       return currentChar;
     }
-    currentChar += CodePoint(buffer + currentChar, bufferSize - currentChar,
-                             UCodePointLatinLetterSmallCapitalE);
+    currentChar +=
+        WriteCodePoint(buffer + currentChar, bufferSize - currentChar,
+                       UCodePointLatinLetterSmallCapitalE);
     if (currentChar >= bufferSize - 1) {
       return bufferSize - 1;
     }
@@ -262,7 +263,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     int endMarkerPosition = negative ? exponent + 1 : exponent;
     for (int i = currentChar - 1; i < endMarkerPosition; i++) {
       currentChar +=
-          CodePoint(buffer + currentChar, bufferSize - currentChar, '0');
+          WriteCodePoint(buffer + currentChar, bufferSize - currentChar, '0');
       if (currentChar + 1 >= bufferSize - 1) {
         return bufferSize - 1;
       }

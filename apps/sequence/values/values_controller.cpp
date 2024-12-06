@@ -3,9 +3,9 @@
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
+#include <omg/utf8_helper.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/sequence.h>
-#include <poincare/old/serialization_helper.h>
 
 #include <cmath>
 
@@ -82,8 +82,8 @@ size_t ValuesController::fillColumnName(int column, char* buffer) {
   if (!isSumColumn) {
     return seq->nameWithArgument(buffer, k_maxSizeOfColumnName);
   }
-  size_t sigmaLength = SerializationHelper::CodePoint(
-      buffer, k_maxSizeOfColumnName, UCodePointNArySummation);
+  size_t sigmaLength = UTF8Helper::WriteCodePoint(buffer, k_maxSizeOfColumnName,
+                                                  UCodePointNArySummation);
   return sigmaLength +
          seq->name(buffer + sigmaLength, k_maxSizeOfColumnName - sigmaLength);
 }

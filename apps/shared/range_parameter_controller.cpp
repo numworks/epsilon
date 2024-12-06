@@ -1,6 +1,6 @@
 #include "range_parameter_controller.h"
 
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 
 #include "poincare_helpers.h"
 
@@ -68,11 +68,11 @@ void RangeParameterController::fillCells() {
       int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
           min, buffer, bufferSize, precision,
           Preferences::PrintFloatMode::Decimal);
-      numberOfChars += SerializationHelper::CodePoint(
+      numberOfChars += UTF8Helper::WriteCodePoint(
           buffer + numberOfChars, bufferSize - numberOfChars, ' ');
-      numberOfChars += SerializationHelper::CodePoint(
+      numberOfChars += UTF8Helper::WriteCodePoint(
           buffer + numberOfChars, bufferSize - numberOfChars, ';');
-      numberOfChars += SerializationHelper::CodePoint(
+      numberOfChars += UTF8Helper::WriteCodePoint(
           buffer + numberOfChars, bufferSize - numberOfChars, ' ');
       numberOfChars += PoincareHelpers::ConvertFloatToTextWithDisplayMode(
           max, buffer + numberOfChars, bufferSize - numberOfChars, precision,

@@ -4,11 +4,11 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
+#include <omg/utf8_helper.h>
 #include <poincare/cas.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/layout.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/old/variable_context.h>
 
 #include "../app.h"

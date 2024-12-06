@@ -6,11 +6,11 @@
 #include <apps/shared/sequence.h>
 #include <assert.h>
 #include <escher/metric.h>
+#include <omg/utf8_helper.h>
 #include <poincare/expression.h>
 #include <poincare/k_layout.h>
 #include <poincare/layout.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/preferences.h>
 
 #include <algorithm>
@@ -302,22 +302,22 @@ bool MathVariableBoxController::selectLeaf(int selectedRow) {
     char closingChar = m_currentPage == Page::Function ? ')' : '}';
     assert(nameLength < nameToHandleMaxSize);
     if (m_currentPage == Page::Sequence) {
-      nameLength += SerializationHelper::CodePoint(
+      nameLength += UTF8Helper::WriteCodePoint(
           nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
           UCodePointSystem);
     }
-    nameLength += SerializationHelper::CodePoint(
+    nameLength += UTF8Helper::WriteCodePoint(
         nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
         openingChar);
-    nameLength += SerializationHelper::CodePoint(
+    nameLength += UTF8Helper::WriteCodePoint(
         nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
         UCodePointEmpty);
     if (m_currentPage == Page::Sequence) {
-      nameLength += SerializationHelper::CodePoint(
+      nameLength += UTF8Helper::WriteCodePoint(
           nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
           UCodePointSystem);
     }
-    nameLength += SerializationHelper::CodePoint(
+    nameLength += UTF8Helper::WriteCodePoint(
         nameToHandle + nameLength, nameToHandleMaxSize - nameLength - 1,
         closingChar);
     assert(nameLength < nameToHandleMaxSize);

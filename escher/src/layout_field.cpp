@@ -4,6 +4,7 @@
 #include <escher/text_field.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
+#include <omg/utf8_helper.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol.h>
@@ -11,7 +12,6 @@
 #include <poincare/layout.h>
 #include <poincare/old/context.h>
 #include <poincare/old/parametered_expression.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
@@ -564,7 +564,7 @@ size_t LayoutField::getTextFromEvent(Ion::Events::Event event, char* buffer,
     return strlcpy(buffer, SymbolHelper::AnsMainAlias(), bufferSize);
   }
   if (event == Ion::Events::DoubleQuotes) {
-    return SerializationHelper::CodePoint(buffer, bufferSize, '\'');
+    return UTF8Helper::WriteCodePoint(buffer, bufferSize, '\'');
   }
   return EditableField::getTextFromEvent(event, buffer, bufferSize);
 }

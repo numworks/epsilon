@@ -2,7 +2,6 @@
 #include <omg/print.h>
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
-#include <poincare/old/serialization_helper.h>
 #include <poincare/old/undefined.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
@@ -75,7 +74,7 @@ size_t PrintFloat::Long::serialize(char* buffer, size_t bufferSize) const {
   }
   size_t numberOfChars = 0;
   if (m_negative) {
-    numberOfChars += SerializationHelper::CodePoint(buffer, bufferSize, '-');
+    numberOfChars += UTF8Helper::WriteCodePoint(buffer, bufferSize, '-');
   }
   if (m_digits[0] != 0) {
     numberOfChars += OMG::Print::IntLeft(m_digits[0], buffer + numberOfChars,

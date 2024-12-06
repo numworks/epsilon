@@ -2,7 +2,7 @@
 
 #include <escher/palette.h>
 #include <ion.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 
 using namespace Escher;
 
@@ -101,7 +101,7 @@ ContinuousFunction ContinuousFunctionStore::newModel(const char* name,
 Ion::Storage::Record::ErrorStatus ContinuousFunctionStore::addEmptyModel() {
   constexpr size_t bufferSize = ContinuousFunction::k_maxDefaultNameSize;
   char name[bufferSize];
-  size_t length = Poincare::SerializationHelper::CodePoint(
+  size_t length = UTF8Helper::WriteCodePoint(
       name, bufferSize, ContinuousFunction::k_unnamedRecordFirstChar);
   Ion::Storage::FileSystem::sharedFileSystem->firstAvailableNameFromPrefix(
       name, length, bufferSize, modelExtension());

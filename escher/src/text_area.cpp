@@ -7,7 +7,6 @@
 #include <limits.h>
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
-#include <poincare/old/serialization_helper.h>
 #include <stddef.h>
 
 #include <algorithm>
@@ -346,9 +345,8 @@ void TextArea::Text::insertSpacesAtLocation(int numberOfSpaces,
   assert(location + spacesSize + sizeToMove <= m_buffer + m_bufferSize);
   memmove(location + spacesSize, location, sizeToMove);
   for (int i = 0; i < numberOfSpaces; i++) {
-    Poincare::SerializationHelper::CodePoint(
-        location + i * spaceCharSize, (m_buffer + m_bufferSize) - location,
-        ' ');
+    UTF8Helper::WriteCodePoint(location + i * spaceCharSize,
+                               (m_buffer + m_bufferSize) - location, ' ');
   }
 }
 
@@ -593,8 +591,8 @@ bool TextArea::ContentView::insertTextAtLocation(const char* text,
   m_text.insertText(text, textLen, location);
   // Replace System parentheses (used to keep layout tree structure) by normal
   // parentheses
-  Poincare::SerializationHelper::
-      ReplaceSystemParenthesesAndBracesByUserParentheses(location, textLen);
+  UTF8Helper::ReplaceSystemParenthesesAndBracesByUserParentheses(location,
+                                                                 textLen);
   reloadRectFromPosition(location, lineBreak);
   return true;
 }

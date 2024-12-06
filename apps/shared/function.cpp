@@ -4,7 +4,7 @@
 #include <float.h>
 #include <ion/display.h>
 #include <omg/utf8_decoder.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <string.h>
 
 #include <algorithm>
@@ -19,12 +19,12 @@ namespace Shared {
 
 size_t Function::WithArgument(CodePoint argument, char* buffer,
                               size_t bufferSize) {
-  size_t length = SerializationHelper::CodePoint(buffer, bufferSize, '(');
+  size_t length = UTF8Helper::WriteCodePoint(buffer, bufferSize, '(');
   assert(UTF8Decoder::CharSizeOfCodePoint(argument) <= 2);
-  length += SerializationHelper::CodePoint(buffer + length, bufferSize - length,
-                                           argument);
+  length += UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length,
+                                       argument);
   length +=
-      SerializationHelper::CodePoint(buffer + length, bufferSize - length, ')');
+      UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length, ')');
   return length;
 }
 

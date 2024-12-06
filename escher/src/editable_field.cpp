@@ -2,7 +2,7 @@
 #include <escher/editable_field.h>
 #include <escher/metric.h>
 #include <escher/toolbox.h>
-#include <poincare/old/serialization_helper.h>
+#include <omg/utf8_helper.h>
 #include <poincare/old/symbol.h>
 #include <poincare/xnt.h>
 
@@ -38,7 +38,7 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
     // Use default XNT cycle
     CodePoint xnt = Poincare::XNT::CodePointAtIndexInDefaultCycle(
         currentIndex, startingXNT, &cycleSize);
-    SerializationHelper::CodePoint(buffer, bufferSize, xnt);
+    UTF8Helper::WriteCodePoint(buffer, bufferSize, xnt);
   }
   if (cycleSize > 1 && currentIndex > 0) {
     removePreviousXNT();

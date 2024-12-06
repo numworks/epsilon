@@ -412,9 +412,8 @@ bool Beautification::TurnIntoPolarForm(
     Approximation::ApproximateAndReplaceEveryScalar<double>(arg);
   }
   SharedTreeStack->pushComplexI();
-  /* mult is not flattened because i will be kept apart anyway in
-   * Division::BeautifyIntoDivision.
-   * exp is not ShallowReduced to preserve exp(A*i) form with A within ]-π,π]
+  NAry::Flatten(mult);
+  /* exp is not ShallowReduced to preserve exp(A*i) form with A within ]-π,π]
    * because of exp(arg(exp(A*i))*i) -> exp(A*i) reduction. */
   // Bubble up dependencies that appeared during reduction.
   bool bubbledUpDependencies = Dependency::ShallowBubbleUpDependencies(mult) &&

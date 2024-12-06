@@ -17,6 +17,7 @@
 #include "rational.h"
 #include "symbol.h"
 #include "systematic_reduction.h"
+#include "units/unit.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -171,6 +172,28 @@ bool Beautification::ShallowBeautifyPercent(Tree* e) {
                                        KMult(KA, KAdd(1_e, KDiv(KB, 100_e))));
 }
 
+// Turn "m" into "1*m", "m*s" into "1*m*s" and "3vyd+ft" into "3*yd+1*ft".
+bool BeautifyUnitsAtRoot(Tree* e) {
+  if (e->isAdd()) {
+    bool changed = false;
+    for (Tree* child : e->children()) {
+      changed = BeautifyUnitsAtRoot(child) || changed;
+    }
+    return changed;
+  }
+  if (Units::Unit::IsUnitOrPowerOfUnit(e)) {
+    e->cloneNodeAtNode(1_e);
+    e->cloneNodeAtNode(KMult.node<2>);
+    return true;
+  }
+  if (e->isMult() && e->numberOfChildren() > 0 &&
+      Units::Unit::IsUnitOrPowerOfUnit(e)) {
+    NAry::AddChildAtIndex(e, (1_e)->cloneTree(), 0);
+    return true;
+  }
+  return false;
+}
+
 bool Beautification::DeepBeautify(Tree* e,
                                   ProjectionContext projectionContext) {
   bool dummy = false;
@@ -185,6 +208,7 @@ bool Beautification::DeepBeautify(Tree* e,
     AdvancedReduction::Reduce(e);
   }
   changed = Tree::ApplyShallowTopDown(e, ShallowBeautify) || changed;
+  changed = BeautifyUnitsAtRoot(e) || changed;
   /* Divisions are created after the main beautification since they work top
    * down and require powers to have been built from exponentials already. */
   changed =

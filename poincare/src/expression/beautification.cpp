@@ -392,13 +392,12 @@ bool Beautification::TurnIntoPolarForm(
   if (projectionContext.m_advanceReduce) {
     AdvancedReduction::Reduce(abs);
   }
-  if (hasSingleFloats || hasDoubleFloats) {
-    /* If this assert fails, an approximated node has been lost during
-     * systematic simplification, ApproximateAndReplaceEveryScalar should be
-     * called on abs like below with arg. */
-    assert(abs->hasDescendantSatisfying(
-        [](const Tree* e) { return e->isFloat(); }));
-  }
+  /* If this assert fails, an approximated node has been lost during systematic
+   * simplification, ApproximateAndReplaceEveryScalar should be called on abs
+   * like below with arg. */
+  assert(
+      !(hasSingleFloats || hasDoubleFloats) ||
+      abs->hasDescendantSatisfying([](const Tree* e) { return e->isFloat(); }));
   Tree* exp = SharedTreeStack->pushExp();
   Tree* mult = SharedTreeStack->pushMult(2);
   Tree* arg = SharedTreeStack->pushArg();

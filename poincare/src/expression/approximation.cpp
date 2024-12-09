@@ -2,6 +2,7 @@
 
 #include <omg/float.h>
 #include <omg/unreachable.h>
+#include <poincare/new_trigonometry.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/numeric/statistics_dataset.h>
 #include <poincare/src/probability/distribution_method.h>
@@ -919,7 +920,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       T approxSI = Units::Unit::GetValue(e);
       // For angle units, convert to angle value in the context
       return Units::IsPureAngleUnit(e)
-                 ? ConvertFromRadian(approxSI, ctx->m_angleUnit)
+                 ? NewTrigonometry::ConvertRadianToAngleUnit<T>(
+                       approxSI, ctx->m_angleUnit)
                  : approxSI;
     }
     case Type::PhysicalConstant:

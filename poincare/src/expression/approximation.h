@@ -256,9 +256,6 @@ class Approximation final {
   static Tree* ToComplexTree(const Tree* e, const Context* ctx);
 
   template <typename T>
-  static T ConvertFromRadian(T angle, AngleUnit angleUnit);
-
-  template <typename T>
   static std::complex<T> TrigonometricToComplex(TypeBlock type,
                                                 std::complex<T> value,
                                                 AngleUnit angleUnit);

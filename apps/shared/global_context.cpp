@@ -135,7 +135,7 @@ bool GlobalContext::setExpressionForUserNamed(
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.isUserSymbol()) {
-    return setExpressionForUserNamed(finalExpression, symbol, record) ==
+    return setExpressionForUserSymbol(finalExpression, symbol.name(), record) ==
            Ion::Storage::Record::ErrorStatus::None;
   }
   const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
@@ -190,8 +190,8 @@ const Internal::Tree* GlobalContext::ExpressionForFunction(
   return nullptr;
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
-    UserExpression& expression, const SymbolAbstract& symbol,
+Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
+    UserExpression& expression, const char* name,
     Ion::Storage::Record previousRecord) {
   bool storeApproximation = CAS::NeverDisplayReductionOfInput(expression, this);
   PoincareHelpers::ReductionParameters params = {
@@ -219,8 +219,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
   /* If there is another record competing with this one for its name,
    * it is destroyed directly in Storage, through the record_name_verifier. */
   return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      symbol.name(), extension, expression.addressInPool(), expression.size(),
-      true);
+      name, extension, expression.addressInPool(), expression.size(), true);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(

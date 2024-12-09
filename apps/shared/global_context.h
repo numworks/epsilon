@@ -80,9 +80,8 @@ class GlobalContext final : public Poincare::Context {
       Ion::Storage::Record r);
   // Expression setters
   /* This modifies the expression. */
-  Ion::Storage::Record::ErrorStatus setExpressionForUserNamed(
-      Poincare::UserExpression& expression,
-      const Poincare::SymbolAbstract& symbol,
+  Ion::Storage::Record::ErrorStatus setExpressionForUserSymbol(
+      Poincare::UserExpression& expression, const char* name,
       Ion::Storage::Record previousRecord);
   Ion::Storage::Record::ErrorStatus setExpressionForFunction(
       const Poincare::UserExpression& expression,

@@ -18,7 +18,7 @@ They return the approximated input under the requested dimension :
 
 To use when the input tree is a root and may have random nodes.
 
-This sets up a context for the approximation of various random nodes, handling random seeding and the `RandIntNoRep` tree.
+This sets up a memoization of the approximated values of various random nodes, handling random seeding and the `RandIntNoRep` tree.
 
 #### projectLocalVariables
 
@@ -40,9 +40,9 @@ This also greatly improve integral approximations.
 
 In addition to `prepare` parameter, and only used in `ToTree`.
 
-The resulting Tree will have been optimized for successive approximations (for Grapher fro example).
+The resulting Tree will have been optimized for successive approximations (for Grapher for example).
 
-In practice this means `ApproximateAndReplaceEveryScalar` has been called on it.
+In practice this means `ApproximateAndReplaceEveryScalar` will be applied on the tree.
 
 ### Context
 

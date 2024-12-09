@@ -29,7 +29,7 @@ class GlobalContext final : public Poincare::Context {
   constexpr static int k_numberOfExtensions = std::size(k_extensions);
 
   // Storage information
-  static bool SymbolAbstractNameIsFree(const char* baseName);
+  static bool UserNameIsFree(const char* baseName);
 
   static const Poincare::Layout LayoutForRecord(Ion::Storage::Record record);
 

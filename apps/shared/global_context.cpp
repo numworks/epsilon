@@ -36,7 +36,7 @@ void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
   GlobalContext::s_continuousFunctionStore->storageDidChangeForRecord(record);
 }
 
-bool GlobalContext::SymbolAbstractNameIsFree(const char* baseName) {
+bool GlobalContext::UserNameIsFree(const char* baseName) {
   return SymbolAbstractRecordWithBaseName(baseName).isNull();
 }
 

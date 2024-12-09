@@ -888,7 +888,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     const size_t functionNameLength = strlen(functionName);
     const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
     CodePoint codePointSymbol = CodePointForSymbol(functionSymbol);
-    if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
+    if (Shared::GlobalContext::UserNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
       // Set the model's plot type.
       tempFunctionSymbol =

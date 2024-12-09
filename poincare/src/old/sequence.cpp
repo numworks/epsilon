@@ -80,19 +80,6 @@ Evaluation<T> SequenceNode::templatedApproximate(
 #endif
 }
 
-Sequence Sequence::Builder(const char* name, size_t length,
-                           JuniorExpression child) {
-  // If needed, handle theta like functions and symbols
-  assert(!AliasesLists::k_thetaAliases.contains(name, length));
-  Internal::Tree* e =
-      Internal::SharedTreeStack->pushUserSequence(name, length + 1);
-  assert(!child.isUninitialized());
-  child.tree()->cloneTree();
-
-  JuniorExpression expr = JuniorExpression::Builder(e);
-  return static_cast<Sequence&>(expr);
-}
-
 OExpression Sequence::shallowReduce(ReductionContext reductionContext) {
   if (reductionContext.symbolicComputation() ==
       SymbolicComputation::ReplaceAllSymbolsWithUndefined) {

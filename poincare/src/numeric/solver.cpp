@@ -12,10 +12,6 @@ using namespace Poincare::Internal;
 
 namespace Poincare {
 
-/* Using our consteval operator- inside a template<float> does not work with
- * llvm14 it works with 17. */
-constexpr KTree minusOne = -1_e;
-
 template <typename T>
 Solver<T>::Solver(T xStart, T xEnd, Context* context)
     : m_xStart(xStart),
@@ -167,7 +163,7 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
      * Either Pass ReductionContext(m_context, m_complexFormat,
      * m_angleUnit, UnitFormat::Metric, ReductionTarget::SystemForAnalysis) or
      * ensure expression is projected. */
-    *memoizedDifference = PatternMatching::Create(KAdd(KA, KMult(minusOne, KB)),
+    *memoizedDifference = PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)),
                                                   {.KA = e1, .KB = e2});
   }
   Solution root = nextRoot(*memoizedDifference);

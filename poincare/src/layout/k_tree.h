@@ -155,9 +155,11 @@ consteval auto operator"" _cl() {
 
 // Rack concatenation operator ^
 
+// TODO: should be consteval, works with clang17
+
 // rack ^ rack
 template <Block N1, Block... B1, Block N2, Block... B2>
-consteval auto operator^(
+constexpr auto operator^(
     SimpleKTrees::KTree<Type::RackSimpleLayout, N1, 0, B1...>,
     SimpleKTrees::KTree<Type::RackSimpleLayout, N2, 0, B2...>) {
   static_assert(static_cast<uint8_t>(N1) + static_cast<uint8_t>(N2) < 256);
@@ -169,7 +171,7 @@ consteval auto operator^(
 // rack ^ layout
 template <Block N1, Block... B1, Block T2, Block... B2>
   requires(Type(uint8_t(T2)) != Type::RackSimpleLayout)
-consteval auto operator^(
+constexpr auto operator^(
     SimpleKTrees::KTree<Type::RackSimpleLayout, N1, 0, B1...>,
     SimpleKTrees::KTree<T2, B2...>) {
   static_assert(static_cast<uint8_t>(N1) < 255);
@@ -180,7 +182,7 @@ consteval auto operator^(
 // layout ^ rack
 template <Block T1, Block... B1, Block N2, Block... B2>
   requires(Type(uint8_t(T1)) != Type::RackSimpleLayout)
-consteval auto operator^(
+constexpr auto operator^(
     SimpleKTrees::KTree<T1, B1...>,
     SimpleKTrees::KTree<Type::RackSimpleLayout, N2, 0, B2...>) {
   static_assert(static_cast<uint8_t>(N2) < 255);
@@ -192,7 +194,7 @@ consteval auto operator^(
 template <Block T1, Block... B1, Block T2, Block... B2>
   requires(Type(uint8_t(T1)) != Type::RackSimpleLayout &&
            Type(uint8_t(T2)) != Type::RackSimpleLayout)
-consteval auto operator^(SimpleKTrees::KTree<T1, B1...>,
+constexpr auto operator^(SimpleKTrees::KTree<T1, B1...>,
                          SimpleKTrees::KTree<T2, B2...>) {
   return KTree<Type::RackSimpleLayout, 2, 0, T1, B1..., T2, B2...>();
 }

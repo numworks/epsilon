@@ -1175,11 +1175,6 @@ Tree* Approximation::ToPoint(const Tree* e, const Context* ctx) {
   return point;
 }
 
-/* Using our consteval operator- inside a template<float> does not work with
- * llvm14 it works with 17. */
-constexpr KTree minusOne = -1_e;
-constexpr KTree one = 1_e;
-
 template <typename T>
 Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
   /* TODO: Normal matrix nodes and operations with approximated children are
@@ -1210,7 +1205,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
     case Type::Sub: {
       Tree* a = ToMatrix<T>(e->child(0), ctx);
       Tree* b = ToMatrix<T>(e->child(1), ctx);
-      b->moveTreeOverTree(Matrix::ScalarMultiplication(minusOne, b, true, ctx));
+      b->moveTreeOverTree(Matrix::ScalarMultiplication(-1_e, b, true, ctx));
       Matrix::Addition(a, b, true, ctx);
       a->removeTree();
       a->removeTree();
@@ -1245,7 +1240,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
     case Type::Div: {
       Tree* a = ToMatrix<T>(e->child(0), ctx);
       Tree* s = KDiv->cloneNode();
-      one->cloneTree();
+      (1_e)->cloneTree();
       e->child(1)->cloneTree();
       ToComplexTree<T>(s, ctx);
       s->removeTree();

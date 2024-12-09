@@ -22,10 +22,8 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
 #endif
       .function("isUninitialized", &PoolHandle::isUninitialized);
 
-  class_<OExpression, base<PoolHandle>>("PCR_OExpression")
-      .function("isIdenticalTo", &OExpression::isIdenticalTo);
-
-  class_<JuniorExpression, base<OExpression>>("PCR_Expression")
+  class_<JuniorExpression, base<PoolHandle>>("PCR_Expression")
+      .function("isIdenticalTo", &JuniorExpression::isIdenticalToJunior)
       .function("isUndefined", &JuniorExpression::isUndefined)
       .function("isNAry", &JuniorExpression::isNAry)
       .function("isApproximate", &JuniorExpression::isApproximate)

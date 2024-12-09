@@ -650,15 +650,15 @@ size_t WriteCodePoint(char* buffer, size_t bufferSize, class CodePoint c) {
 
 size_t ReplaceSystemParenthesesAndBracesByUserParentheses(char* buffer,
                                                           size_t length) {
-  assert(
+  static_assert(
       UTF8Decoder::CharSizeOfCodePoint(UCodePointLeftSystemParenthesis == 1));
-  assert(
+  static_assert(
       UTF8Decoder::CharSizeOfCodePoint(UCodePointRightSystemParenthesis == 1));
-  assert(UTF8Decoder::CharSizeOfCodePoint('(' == 1));
-  assert(UTF8Decoder::CharSizeOfCodePoint(')' == 1));
-  assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSystem == 1));
-  assert(UTF8Decoder::CharSizeOfCodePoint('{' == 1));
-  assert(UTF8Decoder::CharSizeOfCodePoint('}' == 1));
+  static_assert(UTF8Decoder::CharSizeOfCodePoint('(' == 1));
+  static_assert(UTF8Decoder::CharSizeOfCodePoint(')' == 1));
+  static_assert(UTF8Decoder::CharSizeOfCodePoint(UCodePointSystem == 1));
+  static_assert(UTF8Decoder::CharSizeOfCodePoint('{' == 1));
+  static_assert(UTF8Decoder::CharSizeOfCodePoint('}' == 1));
 
   if (length < 0) {
     length = strlen(buffer);

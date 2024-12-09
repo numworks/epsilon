@@ -169,15 +169,18 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("2+36/8+2", "17/2");
   simplifies_to("a+a", "2×a");
   simplifies_to("b+a", "a+b");
+  simplifies_to("a×b", "a×b");
+  simplifies_to("b^2×a", "a×b^2");
   simplifies_to("(a×a)×a", "a^3");
   simplifies_to("a×(a×a)", "a^3");
   simplifies_to("(a×b)^2", "a^2×b^2");
   simplifies_to("(a×b×c)^2", "a^2×b^2×c^2");
   simplifies_to("(x^3)^2", "x^6");
   simplifies_to("a×a×a", "a^3");
-  simplifies_to("a×a×a×b", "b×a^3");
+  simplifies_to("a×a×a×b", "a^3×b");
   simplifies_to("a×2a×b×a×b×4", "8×a^3×b^2");
   simplifies_to("1×1×1×1", "1");
+  simplifies_to("a+1/a+a×a", "a^2+a+1/a");
   simplifies_to("2a+3b+4a", "6×a+3×b");
   simplifies_to("-6×b-4×a×b-2×b+3×a×b-4×b+2×a×b+3×b+6×a×b", "(7×a-9)×b");
   simplifies_to("d+c+b+a", "a+b+c+d");
@@ -238,15 +241,15 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(1+x, x, y)", "1");
   simplifies_to("diff(sin(ln(x)), x, y)", "dep(cos(ln(y))/y,{realPos(y)})");
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-                "dep((3×ln(y)×y^4+(1+4×ln(y))×y^3)×e^(3×y),{ln(y)×e^(3×y)×y^4,"
+                "dep((3×y^4×ln(y)+y^3×(1+4×ln(y)))×e^(3×y),{y^4×ln(y)×e^(3×y),"
                 "nonNull(y),realPos(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
   simplifies_to("diff(ln(x), x, -1)", "undef");
   simplifies_to("diff(x^3,x,x,2)", "6×x");
-  simplifies_to("diff(x*y*y*y*z,y,x,2)", "6×z×x^2");
+  simplifies_to("diff(x*y*y*y*z,y,x,2)", "6×x^2×z");
 
-  simplifies_to("k*x*sum(y*x*k,k,1,2)", "3×x^2×k×y");
+  simplifies_to("k*x*sum(y*x*k,k,1,2)", "3×k×x^2×y");
   simplifies_to("diff(3×x^2×k×y,x,k,2)", "6×k×y");
   simplifies_to("diff(k*x*sum(y*x*k,k,1,2),x,k,2)", "6×k×y");
   simplifies_to("diff((x^2, floor(x)),x,k)", "(2×k,diff(floor(x),x,k))");
@@ -454,7 +457,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   // TODO_PCJ: we should have b×product(k,k,a,b)^2 not product(k,k,a,b)^2×b
   simplifies_to(
       "exp(2*sum(ln(k),k,a,b) + ln(b))",
-      "dep(product(k,k,a,b)^2×b,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,"
+      "dep(b×product(k,k,a,b)^2,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,"
       "b),nonNull(b),realPos(b)})");
   simplifies_to("product(exp(2k),k,0,y)", "e^(y×(y+1))");
 
@@ -551,7 +554,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
-                "-tanh(x)+(tanh(2×x)×(sinh(x)^2/cosh(x)^2+1))/2");
+                "-tanh(x)+((sinh(x)^2/cosh(x)^2+1)×tanh(2×x))/2");
   simplifies_to("arcosh(5)", "arcosh(5)", cartesianCtx);
   simplifies_to("arcosh(5)-ln(5+√(24))", "0", cartesianCtx);
   simplifies_to("arcosh(cosh(x))", "abs(x)", cartesianCtx);
@@ -831,10 +834,10 @@ QUIZ_CASE(pcj_simplification_constants) {
   simplifies_to("_mn + _G", "undef");
   simplifies_to("_c", "299792458×_m×_s^(-1)");
   simplifies_to("_e", "1.602176634ᴇ-19×_C");
-  simplifies_to("_G", "6.6743ᴇ-11×_s^(-2)×_m^3×_kg^(-1)");
+  simplifies_to("_G", "6.6743ᴇ-11×_m^3×_kg^(-1)×_s^(-2)");
   simplifies_to("_g0", "9.80665×_m×_s^(-2)");
   simplifies_to("_k", "1.380649ᴇ-23×_J×_K^(-1)");
-  simplifies_to("_ke", "8987551792.3×_F^(-1)×_m");
+  simplifies_to("_ke", "8987551792.3×_m×_F^(-1)");
   simplifies_to("_me", "9.1093837015ᴇ-31×_kg");
   simplifies_to("_mn", "1.67492749804ᴇ-27×_kg");
   simplifies_to("_mp", "1.67262192369ᴇ-27×_kg");
@@ -874,7 +877,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1_mL+1_m^3", "1.000001×_m^3");
   simplifies_to("4_tsp", "1.3333333333333×_tbsp",
                 {.m_unitDisplay = UnitDisplay::AutomaticImperial});
-  simplifies_to("3_L*_c", "899377.374×_s^(-1)×_m^4");
+  simplifies_to("3_L*_c", "899377.374×_m^4×_s^(-1)");
 
   // Temperature
   simplifies_to("4_°C", "4×_°C");
@@ -938,14 +941,14 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0×_°C", "0×_°C", {.m_unitDisplay = UnitDisplay::None});
   simplifies_to("6×0×_°F", "0×_°F", {.m_unitDisplay = UnitDisplay::None});
   simplifies_to("0×_K", "0×_K");
-  simplifies_to("0×_K×_s×_s×(_g+4×_kg)", "0×_kg×_K×_s^2");
+  simplifies_to("0×_K×_s×_s×(_g+4×_kg)", "0×_s^2×_kg×_K");
   simplifies_to("0×_L-0×_L", "0×_L");
   simplifies_to("3×_dm-3×_dm", "0×_dm");
 
   // Angles
   simplifies_to("_rad", "1×_rad");
   simplifies_to("360×_°", "2×π×_rad");
-  simplifies_to("π×π×_rad", "1×_rad×π^2");
+  simplifies_to("π×π×_rad", "π^2×_rad");
   simplifies_to("π×π×_rad", "180×π×_°", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("1×π×_°", "π×_°", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("π×π×_rad×_m", "9.8696044010894×_m×_rad");

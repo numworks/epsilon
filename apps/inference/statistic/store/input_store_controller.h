@@ -69,6 +69,8 @@ class InputStoreController : public InputCategoricalController,
          * distribution type), or 0 extra parameter */
         assert(numberOfExtraParameters() == 0);
       }
+
+      m_selectableListView.layoutSubviews();
     }
   }
 
@@ -83,6 +85,8 @@ class InputStoreController : public InputCategoricalController,
                     cell.setVisible(true);
                   });
     m_significanceCell.setVisible(true);
+
+    m_selectableListView.layoutSubviews();
   }
 
  private:

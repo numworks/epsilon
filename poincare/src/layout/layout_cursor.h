@@ -2,6 +2,7 @@
 #define POINCARE_LAYOUT_CURSOR_H
 
 #include <omg/directions.h>
+#include <omg/unreachable.h>
 #include <poincare/layout.h>
 #include <poincare/old/context.h>
 #include <poincare/src/memory/tree.h>
@@ -145,7 +146,7 @@ class TreeCursor final : public LayoutCursor {
   Rack* cursorRack() const override { return m_cursor; }
   void setCursorRack(Rack* rack) override { assert(false); };
   bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override {
-    assert(false);
+    OMG::unreachable();
   }
 
  private:
@@ -157,11 +158,33 @@ class TreeStackCursor final : public LayoutCursor {
   friend class PoolLayoutCursor;
   friend class InputBeautification;
 
+ public:
   TreeStackCursor(int position, int startOfSelection, int cursorOffset)
       : LayoutCursor(position, startOfSelection) {
-    setCursorRack(
-        Rack::From(Tree::FromBlocks(rootRack()->block() + cursorOffset)));
+    if (cursorOffset != -1) {
+      setCursorRack(
+          Rack::From(Tree::FromBlocks(rootRack()->block() + cursorOffset)));
+    }
   }
+
+  /* The private API has structs because it is used through
+   * PoolLayoutCursor::execute. The public API is a more convenient wrapper
+   * around the private one. */
+  void insertText(const char* text, Poincare::Context* context = nullptr,
+                  bool forceRight = false, bool forceLeft = false,
+                  bool linearMode = false) {
+    InsertTextContext insertTextContext{text, forceRight, forceLeft,
+                                        linearMode};
+    insertText(context, &insertTextContext);
+  }
+  void insertLayout(const Tree* l, Poincare::Context* context = nullptr,
+                    bool forceRight = false, bool forceLeft = false,
+                    bool collapseSiblings = true) {
+    InsertLayoutContext insertLayoutContext{l, forceRight, forceLeft,
+                                            collapseSiblings};
+    insertLayout(context, &insertLayoutContext);
+  }
+  void performBackspace() { performBackspace(nullptr, nullptr); }
 
   Rack* rootRack() const override {
     return static_cast<Rack*>(Tree::FromBlocks(SharedTreeStack->firstBlock()));
@@ -170,6 +193,7 @@ class TreeStackCursor final : public LayoutCursor {
     return static_cast<Rack*>(static_cast<Tree*>(m_cursorRackRef));
   }
 
+ private:
   // TreeStackCursor Actions
   void performBackspace(Poincare::Context* context, const void* nullptrData);
   void deleteAndResetSelection(Poincare::Context* context,

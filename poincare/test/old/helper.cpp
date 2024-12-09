@@ -234,10 +234,13 @@ void assert_expression_approximates_to(const char *expression,
             .m_unitFormat = reductionContext.unitFormat(),
             .m_symbolic = reductionContext.symbolicComputation(),
             .m_context = reductionContext.context()};
+        /* tree is projected beforehand so we can prepare it for approximation,
+         * and have better results on integrals for example. */
+        Simplification::ToSystem(e, &context);
         TreeRef result = Internal::Approximation::ToTree<T>(
             e,
             Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                                .projectLocalVariables = true},
+                                                .prepare = true},
             Internal::Approximation::Context(reductionContext.angleUnit(),
                                              reductionContext.complexFormat(),
                                              reductionContext.context()));

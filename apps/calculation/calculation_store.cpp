@@ -6,7 +6,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/new_trigonometry.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
 
@@ -278,7 +277,8 @@ bool CalculationStore::preferencesHaveChanged() {
 
 PoolVariableContext CalculationStore::createAnsContext(Context* context) {
   PoolVariableContext ansContext(SymbolHelper::AnsMainAlias(), context);
-  ansContext.setExpressionForUserNamed(ansExpression(context), Symbol::Ans());
+  ansContext.setExpressionForUserNamed(ansExpression(context),
+                                       JuniorSymbol::Ans());
   return ansContext;
 }
 

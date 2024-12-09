@@ -29,7 +29,6 @@
 #include <poincare/old/float_list.h>
 #include <poincare/old/floor.h>
 #include <poincare/old/frac_part.h>
-#include <poincare/old/function.h>
 #include <poincare/old/imaginary_part.h>
 #include <poincare/old/infinity.h>
 #include <poincare/old/integer.h>
@@ -79,13 +78,11 @@
 #include <poincare/old/rational.h>
 #include <poincare/old/real_part.h>
 #include <poincare/old/round.h>
-#include <poincare/old/sequence.h>
 #include <poincare/old/sign_function.h>
 #include <poincare/old/sine.h>
 #include <poincare/old/square_root.h>
 #include <poincare/old/store.h>
 #include <poincare/old/subtraction.h>
-#include <poincare/old/symbol.h>
 #include <poincare/old/tangent.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>

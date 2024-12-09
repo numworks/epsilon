@@ -8,7 +8,6 @@
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/pool_variable_context.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/equation_solver.h>
 #include <poincare/src/expression/float_helper.h>
@@ -535,7 +534,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
              parameterNameLength < parameterNameSize);
       parameterName[parameterNameLength] = 0;
       ab.addChildAtIndexInPlace(
-          Symbol::Builder(parameterName, parameterNameLength), abChildren,
+          JuniorSymbol::Builder(parameterName, parameterNameLength), abChildren,
           abChildren);
       ++abChildren;
       ab.setDimensions(++m, n + 1);
@@ -563,7 +562,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
         variable(i), i == 0 ? context : &solutionContexts[i - 1]);
     solutionContexts[i].setExpressionForUserNamed(
         ab.matrixChild(i, n),
-        Symbol::Builder(variable(i), strlen(variable(i))));
+        JuniorSymbol::Builder(variable(i), strlen(variable(i))));
   }
   ReductionContext reductionContextWithSolutions(
       &solutionContexts[n - 1], m_complexFormat,
@@ -639,7 +638,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
     if (simplifiedEquations[0].isDep()) {
       VariableContext contextWithSolution(variable(0), context);
       contextWithSolution.setExpressionForUserNamed(
-          x[i], Symbol::Builder(variable(0), strlen(variable(0))));
+          x[i], JuniorSymbol::Builder(variable(0), strlen(variable(0))));
       ReductionContext reductionContextWithSolution = reductionContext;
       reductionContextWithSolution.setContext(&contextWithSolution);
       if (simplifiedEquations[0]

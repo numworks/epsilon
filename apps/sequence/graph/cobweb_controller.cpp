@@ -2,7 +2,6 @@
 
 #include <poincare/layout.h>
 #include <poincare/numeric/zoom.h>
-#include <poincare/old/sequence.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 

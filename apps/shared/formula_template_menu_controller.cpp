@@ -2,7 +2,6 @@
 
 #include <ion/storage/record.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/symbol.h>
 #include <poincare/print.h>
 
 #include "column_helper.h"
@@ -148,16 +147,17 @@ UserExpression FormulaTemplateMenuController::templateExpressionForCell(
     fillSumColumnNames(columnNames);
     return UserExpression::Create(
         KAdd(KA, KB),
-        {.KA = Symbol::Builder(columnNames[0],
-                               DoublePairStore::k_columnNamesLength),
-         .KB = Symbol::Builder(columnNames[1],
-                               DoublePairStore::k_columnNamesLength)});
+        {.KA = JuniorSymbol::Builder(columnNames[0],
+                                     DoublePairStore::k_columnNamesLength),
+         .KB = JuniorSymbol::Builder(columnNames[1],
+                                     DoublePairStore::k_columnNamesLength)});
   }
   // Build the expression "V1"
   assert(cell == Cell::OtherApp && shouldDisplayOtherAppCell());
   char columnName[DoublePairStore::k_columnNamesLength + 1];
   fillOtherAppColumnName(columnName);
-  return Symbol::Builder(columnName, DoublePairStore::k_columnNamesLength);
+  return JuniorSymbol::Builder(columnName,
+                               DoublePairStore::k_columnNamesLength);
 }
 
 void FormulaTemplateMenuController::computeUninitializedLayouts() {

@@ -5,7 +5,6 @@
 #include <omg/utf8_helper.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/symbol.h>
 #include <string.h>
 
 #include <algorithm>

@@ -7,7 +7,6 @@
 #include <omg/utf8_helper.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/sequence.h>
 #include <poincare/src/expression/sequence.h>
 #include <string.h>
 
@@ -48,23 +47,24 @@ void Sequence::setType(Type t) {
   /* Reset all contents */
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::None;
+  char name[SymbolHelper::k_maxNameSize];
+  nameWithoutExtension(name, SymbolHelper::k_maxNameSize);
   switch (t) {
     case Type::Explicit:
       error = setExpressionContent(UserExpression());
       break;
     case Type::SingleRecurrence: {
-      error = setExpressionContent(Poincare::Sequence::Builder(
-          fullName(), 1, UserExpression::Builder(KUnknownSymbol)));
+      error = setExpressionContent(Poincare::JuniorSequence::Builder(
+          name, UserExpression::Builder(KUnknownSymbol)));
       break;
     }
     case Type::DoubleRecurrence: {
       error = setExpressionContent(Poincare::UserExpression::Create(
           KAdd(KA, KB),
-          {.KA = Poincare::Sequence::Builder(
-               fullName(), 1,
-               UserExpression::Builder(KAdd(KUnknownSymbol, 1_e))),
-           .KB = Poincare::Sequence::Builder(
-               fullName(), 1, UserExpression::Builder(KUnknownSymbol))}));
+          {.KA = Poincare::JuniorSequence::Builder(
+               name, UserExpression::Builder(KAdd(KUnknownSymbol, 1_e))),
+           .KB = Poincare::JuniorSequence::Builder(
+               name, UserExpression::Builder(KUnknownSymbol))}));
       break;
     }
   }

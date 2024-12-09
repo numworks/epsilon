@@ -1,7 +1,5 @@
 #include <poincare/expression.h>
 #include <poincare/old/context.h>
-#include <poincare/old/function.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/symbol.h>
 
 namespace Poincare {

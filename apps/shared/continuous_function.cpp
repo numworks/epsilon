@@ -1154,8 +1154,8 @@ SystemExpression ContinuousFunction::Model::parametricForm(
      * - y(r) = r * sin(θ(r)) */
     e = SystemExpression::CreateReduce(
         KPoint(KMult(KA, KTrig(KB, 0_e)), KMult(KA, KTrig(KB, 1_e))),
-        {.KA = prop.isPolar() ? e : Symbol::SystemSymbol(),
-         .KB = prop.isPolar() ? Symbol::SystemSymbol() : e});
+        {.KA = prop.isPolar() ? e : JuniorSymbol::SystemSymbol(),
+         .KB = prop.isPolar() ? JuniorSymbol::SystemSymbol() : e});
   } else {
     assert(prop.isParametric());
     e = e.clone();

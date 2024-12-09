@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <float.h>
 #include <omg/print.h>
-#include <poincare/old/symbol.h>
 #include <poincare/preferences.h>
 #include <string.h>
 

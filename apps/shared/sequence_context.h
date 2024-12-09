@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/old/context_with_parent.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/sequence_cache.h>
 
 #include "sequence_store.h"

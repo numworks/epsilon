@@ -395,7 +395,7 @@ bool DoublePairStore::storeColumn(int series, int i) const {
     Record(name, listExtension).destroy();
     return true;
   }
-  Symbol listSymbol = Symbol::Builder(name, nameLength);
+  JuniorSymbol listSymbol = JuniorSymbol::Builder(name, nameLength);
   /* TODO: add a flag to tell setExpressionForUserNamed not to reduce the
    * float list since there is nothing to reduce and it may be long. Break in
    * regression_trigonometric_4 to see the performance issue. */

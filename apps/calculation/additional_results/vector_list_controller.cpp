@@ -6,7 +6,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/new_trigonometry.h>
-#include <poincare/old/symbol.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/projection.h>
 #include <string.h>
@@ -98,9 +97,9 @@ void VectorListController::computeAdditionalResults(
   if (!std::isfinite(angleApproximation)) {
     return;
   }
-  setLineAtIndex(index++,
-                 Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
-                 angle, &ctx);
+  setLineAtIndex(
+      index++, Poincare::JuniorSymbol::Builder(UCodePointGreekSmallLetterTheta),
+      angle, &ctx);
 
   // 4. Illustration
   float xApproximation = vector.cloneChildAtIndex(0).approximateToScalar<float>(

@@ -7,9 +7,7 @@
 #include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/function.h>
 #include <poincare/old/junior_expression.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/symbol.h>
 
 #include "continuous_function.h"
@@ -147,9 +145,9 @@ bool GlobalContext::setExpressionForUserNamed(
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_polarSymbol) ||
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_parametricSymbol))) {
     // Unsupported symbol. Fall back to the default cartesian function symbol
-    UserExpression symbolInX = Poincare::Function::Builder(
-        symbolToStore.name(), strlen(symbolToStore.name()),
-        Symbol::Builder(CodePoints::k_cartesianSymbol));
+    UserExpression symbolInX = Poincare::JuniorFunction::Builder(
+        symbolToStore.name(),
+        JuniorSymbol::Builder(CodePoints::k_cartesianSymbol));
     symbolToStore = static_cast<const JuniorFunction&>(symbolInX);
   }
   return setExpressionForUserFunction(finalExpression, symbolToStore, record) ==

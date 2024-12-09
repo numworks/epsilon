@@ -4,7 +4,6 @@
 #include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/old/function.h>
 
 using namespace Poincare;
 

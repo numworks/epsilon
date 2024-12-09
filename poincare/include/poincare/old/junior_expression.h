@@ -315,7 +315,6 @@ class JuniorExpression : public OExpression {
   Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
       const char* baseName, const char* extension) const;
 
-#if 1  // TODO_PCJ
   NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,
                                             const NewExpression& expression,
                                             bool onlySecondTerm = false);
@@ -414,7 +413,6 @@ class JuniorExpression : public OExpression {
 
   ComparisonJunior::Operator comparisonOperator() const;
 
-#endif
 #if 1
   /* TODO_PCJ: Remove those methods from PoolHandle once only JuniorExpression
    * remains. In the meantime, they are overriden there to assert false in case

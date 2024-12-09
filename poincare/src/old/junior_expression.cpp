@@ -1,4 +1,5 @@
 #include <poincare/cas.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/boolean.h>
@@ -683,7 +684,7 @@ Ion::Storage::Record::ErrorStatus UserExpression::storeWithNameAndExtension(
 }
 
 NewExpression NewExpression::replaceSymbolWithExpression(
-    const SymbolAbstract& symbol, const NewExpression& expression,
+    const JuniorSymbolAbstract& symbol, const NewExpression& expression,
     bool onlySecondTerm) {
   /* TODO_PCJ: Handle functions and sequences as well. See
    * replaceSymbolWithExpression implementations. */
@@ -702,6 +703,17 @@ NewExpression NewExpression::replaceSymbolWithExpression(
   }
   result->removeTree();
   return *this;
+}
+
+NewExpression NewExpression::replaceSymbolWithUnknown(
+    const JuniorSymbolAbstract& symbol, bool onlySecondTerm) {
+  return replaceSymbolWithExpression(symbol, JuniorSymbol::SystemSymbol(),
+                                     onlySecondTerm);
+}
+
+NewExpression NewExpression::replaceUnknownWithSymbol(CodePoint symbol) {
+  return replaceSymbolWithExpression(JuniorSymbol::SystemSymbol(),
+                                     JuniorSymbol::Builder(symbol));
 }
 
 bool UserExpression::replaceSymbols(Poincare::Context* context,
@@ -1151,6 +1163,54 @@ const char* Poincare::Infinity::k_infinityName =
     Internal::Infinity::k_infinityName;
 const char* Poincare::Infinity::k_minusInfinityName =
     Internal::Infinity::k_minusInfinityName;
+
+/* JuniorSymbolAbstract */
+
+const char* JuniorSymbolAbstract::name() const {
+  return SymbolHelper::GetName(*this);
+}
+
+/* JuniorSymbol */
+
+JuniorSymbol JuniorSymbol::Builder(const char* name, int length) {
+  if (length < 0) {
+    length = strlen(name);
+  }
+  if (BuiltinsAliases::k_thetaAliases.contains(name)) {
+    name = BuiltinsAliases::k_thetaAliases.mainAlias();
+    length = strlen(name);
+  }
+  NewExpression e = JuniorExpression::Builder(
+      SharedTreeStack->pushUserSymbol(name, static_cast<size_t>(length + 1)));
+  return static_cast<JuniorSymbol&>(e);
+}
+
+JuniorSymbol JuniorSymbol::Builder(CodePoint name) {
+  constexpr size_t bufferSize = CodePoint::MaxCodePointCharLength + 1;
+  char buffer[bufferSize];
+  size_t codePointLength =
+      UTF8Helper::WriteCodePoint(buffer, bufferSize - 1, name);
+  assert(codePointLength < bufferSize);
+  return Builder(buffer, codePointLength);
+}
+
+JuniorSymbol JuniorSymbol::Ans() {
+  return Builder(SymbolHelper::AnsMainAlias());
+}
+
+/* JuniorSequence */
+
+JuniorSequence JuniorSequence::Builder(const char* name,
+                                       JuniorExpression child) {
+  // If needed, handle theta like functions and symbols
+  assert(!BuiltinsAliases::k_thetaAliases.contains(name));
+  Internal::Tree* e =
+      Internal::SharedTreeStack->pushUserSequence(name, strlen(name) + 1);
+  assert(!child.isUninitialized());
+  child.tree()->cloneTree();
+  JuniorExpression expr = JuniorExpression::Builder(e);
+  return static_cast<JuniorSequence&>(expr);
+}
 
 template SystemExpression JuniorExpressionNode::approximateToTree<float>(
     const ApproximationContext&) const;

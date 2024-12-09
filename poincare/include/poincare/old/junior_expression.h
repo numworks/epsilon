@@ -21,6 +21,7 @@ struct ProjectionContext;
 namespace Poincare {
 
 class Symbol;
+class JuniorSymbolAbstract;
 
 /* Aliases used to specify a JuniorExpression's type. TODO_PCJ: split them into
  * actual classes to prevent casting one into another. */
@@ -315,9 +316,13 @@ class JuniorExpression : public OExpression {
   Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
       const char* baseName, const char* extension) const;
 
-  NewExpression replaceSymbolWithExpression(const SymbolAbstract& symbol,
+  NewExpression replaceSymbolWithExpression(const JuniorSymbolAbstract& symbol,
                                             const NewExpression& expression,
                                             bool onlySecondTerm = false);
+  NewExpression replaceSymbolWithUnknown(const JuniorSymbolAbstract& symbol,
+                                         bool onlySecondTerm = false);
+  NewExpression replaceUnknownWithSymbol(CodePoint symbol);
+
   bool replaceSymbols(Poincare::Context* context,
                       SymbolicComputation symbolic =
                           SymbolicComputation::ReplaceDefinedSymbols);
@@ -534,6 +539,29 @@ class Infinity {
  public:
   static const char* k_infinityName;
   static const char* k_minusInfinityName;
+};
+
+// TODO_PCJ: rename
+class JuniorSymbolAbstract : public JuniorExpression {
+ public:
+  // TODO_PCJ: merge SymbolHelper in this class
+  const char* name() const;
+};
+
+// TODO_PCJ: rename
+class JuniorSymbol : public JuniorSymbolAbstract {
+ public:
+  // TODO_PCJ: merge SymbolHelper in this class
+  static JuniorSymbol Builder(const char* name, int length = -1);
+  static JuniorSymbol Builder(CodePoint name);
+  static JuniorSymbol Ans();
+  static JuniorSymbol SystemSymbol() { return Builder(UCodePointUnknown); }
+};
+
+// TODO_PCJ: rename
+class JuniorSequence : public JuniorSymbolAbstract {
+ public:
+  static JuniorSequence Builder(const char* name, JuniorExpression child);
 };
 
 }  // namespace Poincare

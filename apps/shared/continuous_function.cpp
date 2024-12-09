@@ -691,8 +691,8 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       }
       if (!willBeAlongX && yDegree != 0) {
         // No need to replace anything if yDegree is 0
-        m_expression.replaceSymbolWithExpression(
-            Symbol::Builder(k_ordinateSymbol), Symbol::SystemSymbol());
+        m_expression.replaceSymbolWithUnknown(
+            JuniorSymbol::Builder(k_ordinateSymbol));
       }
     } else {
       /* m_expression is resulting of a simplification with the target
@@ -820,8 +820,7 @@ UserExpression ContinuousFunction::Model::originalEquation(
   if (unknownSymbolEquation.isUninitialized() || symbol == UCodePointUnknown) {
     return unknownSymbolEquation;
   }
-  return unknownSymbolEquation.replaceSymbolWithExpression(
-      Symbol::SystemSymbol(), Symbol::Builder(symbol));
+  return unknownSymbolEquation.replaceUnknownWithSymbol(symbol);
 }
 
 bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
@@ -925,8 +924,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
      * TODO: Make a consistent behavior calculation/additional_results using a
      *       VariableContext to temporary disable y's predefinition. */
     result = result.replaceSymbolWithExpression(
-        Symbol::Builder(k_ordinateSymbol),
-        Symbol::Builder(UCodePointTemporaryUnknown));
+        JuniorSymbol::Builder(k_ordinateSymbol),
+        JuniorSymbol::Builder(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
   result.replaceSymbols(context);
@@ -937,8 +936,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   }
   if (isUnnamedFunction) {
     result = result.replaceSymbolWithExpression(
-        Symbol::Builder(UCodePointTemporaryUnknown),
-        Symbol::Builder(k_ordinateSymbol));
+        JuniorSymbol::Builder(UCodePointTemporaryUnknown),
+        JuniorSymbol::Builder(k_ordinateSymbol));
   }
   assert(!result.isUninitialized());
   return result;

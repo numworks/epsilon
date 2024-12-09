@@ -64,8 +64,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
     }
     UserExpression expression =
         Expression::Builder(ExpressionForUserFunction(record))
-            .replaceSymbolWithExpression(Symbol::SystemSymbol(),
-                                         Symbol::Builder(symbol));
+            .replaceUnknownWithSymbol(symbol);
     return PoincareHelpers::CreateLayout(expression, context);
   } else {
     assert(record.hasExtension(Ion::Storage::sequenceExtension));
@@ -131,7 +130,8 @@ bool GlobalContext::setExpressionForUserNamed(
     e = Undefined::Builder();
   }
   UserExpression finalExpression =
-      expression.clone().replaceSymbolWithExpression(symbol, e);
+      expression.clone().replaceSymbolWithExpression(
+          static_cast<JuniorSymbolAbstract&>(symbolExpression), e);
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.isUserSymbol()) {
@@ -140,8 +140,8 @@ bool GlobalContext::setExpressionForUserNamed(
   }
   const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
   assert(symbol.isUserFunction() && childSymbol.isUserSymbol());
-  finalExpression = finalExpression.replaceSymbolWithExpression(
-      static_cast<const Symbol&>(childSymbol), Symbol::SystemSymbol());
+  finalExpression = finalExpression.replaceSymbolWithUnknown(
+      static_cast<const JuniorSymbol&>(childSymbol));
   SymbolAbstract symbolToStore = symbol;
   if (!(SymbolHelper::IsSymbol(childSymbol, CodePoints::k_cartesianSymbol) ||
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_polarSymbol) ||

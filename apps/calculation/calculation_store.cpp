@@ -92,7 +92,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
 
 UserExpression CalculationStore::replaceAnsInExpression(
     UserExpression expression, Context* context) const {
-  Symbol ansSymbol = Symbol::Ans();
+  JuniorSymbol ansSymbol = JuniorSymbol::Ans();
   UserExpression ansExpression = this->ansExpression(context);
   return expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
 }

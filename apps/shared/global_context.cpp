@@ -47,7 +47,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
     return PoincareHelpers::CreateLayout(
-        Expression::Builder(ExpressionForUserNamed(record)), context);
+        Expression::Builder(ExpressionForUserSymbol(record)), context);
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
              record.hasExtension(Ion::Storage::regressionExtension)) {
@@ -159,11 +159,11 @@ bool GlobalContext::setExpressionForUserNamed(
 const Internal::Tree* GlobalContext::expressionForSymbolAndRecord(
     const Internal::Tree* symbol, Ion::Storage::Record r) {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
-  return symbol->isUserSymbol() ? ExpressionForUserNamed(r)
+  return symbol->isUserSymbol() ? ExpressionForUserSymbol(r)
                                 : ExpressionForFunction(r);
 }
 
-const Internal::Tree* GlobalContext::ExpressionForUserNamed(
+const Internal::Tree* GlobalContext::ExpressionForUserSymbol(
     Ion::Storage::Record r) {
   if (!r.hasExtension(Ion::Storage::expressionExtension) &&
       !r.hasExtension(Ion::Storage::listExtension) &&

@@ -74,7 +74,7 @@ class GlobalContext final : public Poincare::Context {
       const Poincare::Internal::Tree* symbol) override;
   const Poincare::Internal::Tree* expressionForSymbolAndRecord(
       const Poincare::Internal::Tree* symbol, Ion::Storage::Record r);
-  static const Poincare::Internal::Tree* ExpressionForUserNamed(
+  static const Poincare::Internal::Tree* ExpressionForUserSymbol(
       Ion::Storage::Record r);
   static const Poincare::Internal::Tree* ExpressionForFunction(
       Ion::Storage::Record r);

@@ -110,7 +110,7 @@ Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
 
 const Internal::Tree* GlobalContext::expressionForSymbolAbstract(
     const Internal::Tree* symbol) {
-  assert(symbol->isUserNamed() && !symbol->isUserSequence());
+  assert(symbol->isUserSymbol() || symbol->isUserFunction());
   Ion::Storage::Record r =
       SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbol));
   return expressionForSymbolAndRecord(symbol, r);

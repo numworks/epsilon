@@ -90,7 +90,6 @@
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
 #include <poincare/old/unit_convert.h>
-#include <poincare/old/variable_context.h>
 #include <poincare/old/vector_cross.h>
 #include <poincare/old/vector_dot.h>
 #include <poincare/old/vector_norm.h>

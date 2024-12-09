@@ -4,7 +4,6 @@
 #include <poincare/comparison_operator.h>
 #include <poincare/layout.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/variable_context.h>
 
 #include "app.h"
 

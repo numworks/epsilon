@@ -127,11 +127,10 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     ::LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
-#if TODO_PCJ
   assert(layoutField->context() == context());
-#endif
   Context* context = this->context();
-  VariableContext ansContext = m_calculationStore->createAnsContext(context);
+  PoolVariableContext ansContext =
+      m_calculationStore->createAnsContext(context);
   if (!layoutField->isEmpty()) {
     m_lastInput = layoutField->layout().clone();
   }

@@ -6,13 +6,16 @@
 
 namespace Poincare {
 
-class VariableContext : public ContextWithParent {
+/* TODO: this context is used only by the parser, rework it ? */
+
+class TreeVariableContext : public ContextWithParent {
  public:
-  VariableContext(const char* name = nullptr, Context* parentContext = nullptr)
+  TreeVariableContext(const char* name = nullptr,
+                      Context* parentContext = nullptr)
       : ContextWithParent(parentContext), m_name(name) {}
   /* Building a self referential context is a trick for parsing parametered
    * expression. */
-  VariableContext(SymbolAbstract symbol, Context* parentContext)
+  TreeVariableContext(SymbolAbstract symbol, Context* parentContext)
       : ContextWithParent(parentContext),
         m_name(symbol.name()),
         m_value(symbol) {}

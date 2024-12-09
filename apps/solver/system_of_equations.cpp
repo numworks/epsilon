@@ -7,8 +7,8 @@
 #include <poincare/cas.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/empty_context.h>
+#include <poincare/old/pool_variable_context.h>
 #include <poincare/old/symbol.h>
-#include <poincare/old/variable_context.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/equation_solver.h>
 #include <poincare/src/expression/float_helper.h>
@@ -557,7 +557,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   m_numberOfSolutions = 0;
 
   // Make sure the solution satisfies dependencies in equations
-  VariableContext solutionContexts[k_maxNumberOfSolutions];
+  PoolVariableContext solutionContexts[k_maxNumberOfSolutions];
   for (int i = 0; i < n; i++) {
     solutionContexts[i] = VariableContext(
         variable(i), i == 0 ? context : &solutionContexts[i - 1]);

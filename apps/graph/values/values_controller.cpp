@@ -9,7 +9,7 @@
 #include <poincare/helpers/layout.h>
 #include <poincare/layout.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/variable_context.h>
+#include <poincare/old/pool_variable_context.h>
 
 #include "../app.h"
 
@@ -375,8 +375,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     // Compute exact result
     assert(derivationOrder == 0);
     result = function->expressionReduced(context);
-    VariableContext abscissaContext =
-        VariableContext(Shared::Function::k_unknownName, context);
+    PoolVariableContext abscissaContext =
+        PoolVariableContext(Shared::Function::k_unknownName, context);
     UserExpression abscissaExpression =
         UserExpression::DecimalBuilderFromDouble(abscissa);
     abscissaContext.setExpressionForSymbolAbstract(

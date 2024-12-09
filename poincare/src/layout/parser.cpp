@@ -1,7 +1,7 @@
 #include "parser.h"
 
 #include <omg/unreachable.h>
-#include <poincare/old/variable_context.h>
+#include <poincare/old/tree_variable_context.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/memory/n_ary.h>
@@ -118,7 +118,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       /* TODO: The behaviour relative to the parametric expressions
        * is duplicated with RackParser::parseReservedFunction */
       bool useParameterContext = context && ref->isParametric();
-      VariableContext parameterContext;  // For parametric
+      TreeVariableContext parameterContext;  // For parametric
 
       for (int i = 0; i < n; i++) {
         Context* chidContext = context;
@@ -145,7 +145,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
             TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
           }
           parameterContext =
-              VariableContext(Symbol::GetName(parsedChild), context);
+              TreeVariableContext(Symbol::GetName(parsedChild), context);
           /* Preparing the context for the function child relies on the variable
            * child being parsed first */
           static_assert(Parametric::k_variableIndex == 0);

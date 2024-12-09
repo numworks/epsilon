@@ -4,7 +4,7 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/old/empty_context.h>
-#include <poincare/old/variable_context.h>
+#include <poincare/old/tree_variable_context.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/integer.h>
@@ -113,13 +113,13 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
     Poincare::EmptyContext tempContext = Poincare::EmptyContext();
     // This is instantiated outside the condition so that the pointer is not
     // lost.
-    Poincare::VariableContext assignmentContext("", &tempContext);
+    Poincare::TreeVariableContext assignmentContext("", &tempContext);
     if (rightHandSide->isUserFunction() && m_parsingContext.context()) {
       /* If assigning a function, set the function parameter in the context
        * for parsing leftHandSide.
        * This is to ensure that 3g->f(g) is correctly parsed */
       TreeRef functionParameter = rightHandSide->child(0);
-      assignmentContext = Poincare::VariableContext(
+      assignmentContext = Poincare::TreeVariableContext(
           Symbol::GetName(functionParameter), m_parsingContext.context());
       m_parsingContext.setContext(&assignmentContext);
     }
@@ -892,7 +892,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
         LayoutSpanDecoder nameDecoder(
             LayoutSpan(parameterText, parameterLength));
         nameDecoder.printInBuffer(name, std::size(name));
-        Poincare::VariableContext parameterContext(name, oldContext);
+        Poincare::TreeVariableContext parameterContext(name, oldContext);
         m_parsingContext.setContext(&parameterContext);
         leftHandSide = parseFunctionParameters();
         m_parsingContext.setContext(oldContext);
@@ -1136,7 +1136,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
      * this will ensure that f(abc)=abc is understood like f(x)=x
      */
     Poincare::Context* previousContext = m_parsingContext.context();
-    Poincare::VariableContext functionAssignmentContext(
+    Poincare::TreeVariableContext functionAssignmentContext(
         Symbol::GetName(parameter), m_parsingContext.context());
     m_parsingContext.setContext(&functionAssignmentContext);
     // We have to parseUntil here so that we do not lose the

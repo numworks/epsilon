@@ -114,11 +114,11 @@ $(addprefix old/, \
   symbol.cpp \
   symbol_abstract.cpp \
   tangent.cpp \
+  tree_variable_context.cpp \
   trigonometry.cpp \
   undefined.cpp \
   unit.cpp \
   unit_convert.cpp \
-  variable_context.cpp \
 ) \
 $(addprefix expression/, \
   advanced_operation.cpp \

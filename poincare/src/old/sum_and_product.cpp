@@ -2,7 +2,6 @@
 #include <poincare/old/simplification_helper.h>
 #include <poincare/old/sum_and_product.h>
 #include <poincare/old/undefined.h>
-#include <poincare/old/variable_context.h>
 extern "C" {
 #include <assert.h>
 #include <stdlib.h>

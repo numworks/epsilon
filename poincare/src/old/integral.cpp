@@ -9,7 +9,6 @@
 #include <poincare/old/simplification_helper.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
-#include <poincare/old/variable_context.h>
 #include <stdlib.h>
 
 #include <algorithm>

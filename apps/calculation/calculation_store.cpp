@@ -122,7 +122,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
        * Setting Ans in the context makes it available during the parsing of the
        * input, namely to know if a rightwards arrow is a unit conversion or a
        * variable assignment. */
-      VariableContext ansContext = createAnsContext(context);
+      PoolVariableContext ansContext = createAnsContext(context);
 
       /* Push a new, empty Calculation */
       current = reinterpret_cast<Calculation*>(cursor);
@@ -276,8 +276,8 @@ bool CalculationStore::preferencesHaveChanged() {
   return true;
 }
 
-VariableContext CalculationStore::createAnsContext(Context* context) {
-  VariableContext ansContext(SymbolHelper::AnsMainAlias(), context);
+PoolVariableContext CalculationStore::createAnsContext(Context* context) {
+  PoolVariableContext ansContext(SymbolHelper::AnsMainAlias(), context);
   ansContext.setExpressionForSymbolAbstract(ansExpression(context),
                                             Symbol::Ans());
   return ansContext;

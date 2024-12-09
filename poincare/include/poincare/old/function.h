@@ -2,7 +2,6 @@
 #define POINCARE_FUNCTION_H
 
 #include "symbol_abstract.h"
-#include "variable_context.h"
 
 namespace Poincare {
 

@@ -1,6 +1,6 @@
 #include <poincare/old/symbol.h>
+#include <poincare/old/tree_variable_context.h>
 #include <poincare/old/undefined.h>
-#include <poincare/old/variable_context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/symbol.h>
 
@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(
+Context::SymbolAbstractType TreeVariableContext::expressionTypeForIdentifier(
     const char* identifier, int length) {
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
           identifier, length, m_name) == 0) {
@@ -17,7 +17,7 @@ Context::SymbolAbstractType VariableContext::expressionTypeForIdentifier(
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
-bool VariableContext::setExpressionForSymbolAbstract(
+bool TreeVariableContext::setExpressionForSymbolAbstract(
     const Internal::Tree* expression, const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
@@ -31,7 +31,7 @@ bool VariableContext::setExpressionForSymbolAbstract(
   return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
 }
 
-const Internal::Tree* VariableContext::expressionForSymbolAbstract(
+const Internal::Tree* TreeVariableContext::expressionForSymbolAbstract(
     const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {

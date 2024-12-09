@@ -2,17 +2,16 @@
 #define POINCARE_HELPERS_STORE_H
 
 #include <poincare/old/junior_expression.h>
-#include <poincare/old/symbol_abstract.h>
 
 namespace Poincare {
 
 namespace StoreHelper {
 
 const JuniorExpression Value(const UserExpression& e);
-const SymbolAbstract Symbol(const UserExpression& e);
+const JuniorSymbolAbstract Symbol(const UserExpression& e);
 bool PerformStore(Context* context, const UserExpression& e);
 bool StoreValueForSymbol(Context* context, const UserExpression& value,
-                         const SymbolAbstract& symbol);
+                         const JuniorSymbolAbstract& symbol);
 
 }  // namespace StoreHelper
 

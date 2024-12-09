@@ -46,9 +46,9 @@ In practice this means `ApproximateAndReplaceEveryScalar` will be applied on the
 
 ### Context
 
-Context passes all the necessary informations for the approximation :
+Context passes all the necessary information for the approximation :
 - Random nodes memoization
-- Local variable values
+- Local variables values
 - Global symbol context
 - List element or Point element that is being approximated
 - Angle unit and Complex format

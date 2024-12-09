@@ -613,7 +613,8 @@ bool IsPrefixCaseInsensitiveNoCombining(const char* a, const char* b) {
   return static_cast<bool>(SuffixCaseInsensitiveNoCombining(a, b));
 }
 
-static bool checkBufferSize(char* buffer, size_t bufferSize, size_t* result) {
+static bool nullTerminateBuffer(char* buffer, size_t bufferSize,
+                                size_t* result) {
   // If buffer has size 0 or 1, put a zero if it fits and return
   if (bufferSize == 0) {
     *result = -1;
@@ -631,7 +632,7 @@ static bool checkBufferSize(char* buffer, size_t bufferSize, size_t* result) {
 size_t WriteCodePoint(char* buffer, size_t bufferSize, class CodePoint c) {
   {
     size_t result = 0;
-    if (checkBufferSize(buffer, bufferSize, &result)) {
+    if (nullTerminateBuffer(buffer, bufferSize, &result)) {
       return result;
     }
   }

@@ -393,3 +393,5 @@ endif
 ifneq ($(POINCARE_TREE_LOG),0)
 SFLAGS_poincare += -DPOINCARE_TREE_LOG=1
 endif
+
+SFLAGS_poincare += -DPOINCARE_CONTEXT_TIDY_POOL=1

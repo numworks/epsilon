@@ -29,7 +29,9 @@ class SequenceContext : public Poincare::ContextWithParent {
   Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(
       const char* identifier, int length) override;
 
+#if POINCARE_CONTEXT_TIDY_POOL
   void tidyDownstreamPoolFrom(Poincare::PoolObject* treePoolCursor) override;
+#endif
   SequenceStore* sequenceStore() { return m_sequenceStore; }
   bool sequenceIsNotComputable(int sequenceIndex);
   void resetCache() { cache()->resetCache(); }

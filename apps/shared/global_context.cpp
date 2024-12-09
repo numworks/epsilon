@@ -260,10 +260,12 @@ Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(
       ->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
 }
 
+#if POINCARE_CONTEXT_TIDY_POOL
 void GlobalContext::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) {
   s_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
   s_continuousFunctionStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
+#endif
 
 void GlobalContext::prepareForNewApp() {
   s_sequenceStore->setStorageChangeFlag(false);

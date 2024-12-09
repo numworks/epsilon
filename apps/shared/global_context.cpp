@@ -125,7 +125,7 @@ bool GlobalContext::setExpressionForUserNamed(
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = UserNamedRecordWithBaseName(symbol.name());
   UserExpression e =
-      UserExpression::Builder(expressionForSymbolAndRecord(symbol, record));
+      UserExpression::Builder(expressionForSymbolAndRecord(symbolTree, record));
   if (e.isUninitialized()) {
     e = Undefined::Builder();
   }

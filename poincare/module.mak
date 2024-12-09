@@ -394,4 +394,10 @@ ifneq ($(POINCARE_TREE_LOG),0)
 SFLAGS_poincare += -DPOINCARE_TREE_LOG=1
 endif
 
-SFLAGS_poincare += -DPOINCARE_CONTEXT_TIDY_POOL=1
+# TODO: replace with a config header to avoid cluttering the command line
+ifeq ($(POINCARE_variant),epsilon)
+SFLAGS_poincare += -DPOINCARE_CONTEXT_TIDY_POOL=1 -DPOINCARE_TREE_STACK_SIZE=1024*16
+endif
+ifeq ($(POINCARE_variant),scandium)
+SFLAGS_poincare += -DPOINCARE_NO_DOUBLE_APPROXIMATION=1 -DPOINCARE_TREE_STACK_SIZE=1024*8 -DPOINCARE_NO_POLYNOMIAL_SOLVER=1 -DPOINCARE_NO_ADVANCED_REDUCTION=1
+endif

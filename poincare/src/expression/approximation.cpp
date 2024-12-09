@@ -31,7 +31,7 @@
 #include "variables.h"
 #include "vector.h"
 
-#if NO_DOUBLE_APPROXIMATION
+#if POINCARE_NO_DOUBLE_APPROXIMATION
 #define FALLBACK_ON_FLOAT(F)         \
   if (sizeof(T) == sizeof(double)) { \
     return F<float>(e, ctx);         \

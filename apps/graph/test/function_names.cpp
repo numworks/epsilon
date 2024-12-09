@@ -11,11 +11,7 @@
 namespace Graph {
 
 using namespace Shared;
-
-constexpr CodePoint k_cartesianSymbol = Poincare::CodePoints::k_cartesianSymbol;
-constexpr CodePoint k_parametricSymbol =
-    Poincare::CodePoints::k_parametricSymbol;
-constexpr CodePoint k_polarSymbol = Poincare::CodePoints::k_polarSymbol;
+using namespace Poincare::CodePoints;
 
 void assert_default_name_for_symbol_is(CodePoint symbol,
                                        const char* expectedName) {

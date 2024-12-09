@@ -46,6 +46,19 @@ In practice this means `ApproximateAndReplaceEveryScalar` has been called on it.
 
 ### Context
 
+Context passes all the necessary informations for the approximation :
+- Random nodes memoization
+- Local variable values
+- Global symbol context
+- List element or Point element that is being approximated
+- Angle unit and Complex format
+
+All of them have a default value, that can be used when the information doesn't matter.
+
+A set of assertions across the approximation will ensure the right context has been provided.
+
+For example, approximating `cos(3)` with default angle unit `AngleUnit::None` will raise, but approximating `Trig(3,1)` will not.
+
 ## Other entry points
 
 TODO: Some of them may be made private.

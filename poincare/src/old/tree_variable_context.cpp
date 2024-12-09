@@ -31,7 +31,7 @@ bool TreeVariableContext::setExpressionForUserNamed(
   return ContextWithParent::setExpressionForUserNamed(expression, symbol);
 }
 
-const Internal::Tree* TreeVariableContext::expressionForSymbolAbstract(
+const Internal::Tree* TreeVariableContext::expressionForUserNamed(
     const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
@@ -40,7 +40,7 @@ const Internal::Tree* TreeVariableContext::expressionForSymbolAbstract(
     }
     return Internal::KTrees::KUndef;
   }
-  return ContextWithParent::expressionForSymbolAbstract(symbol);
+  return ContextWithParent::expressionForUserNamed(symbol);
 }
 
 }  // namespace Poincare

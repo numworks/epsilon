@@ -89,7 +89,7 @@ class SystemOfEquations {
     using Poincare::ContextWithParent::ContextWithParent;
 
    private:
-    const Poincare::Internal::Tree* expressionForSymbolAbstract(
+    const Poincare::Internal::Tree* expressionForUserNamed(
         const Poincare::Internal::Tree* symbol) override;
   };
 

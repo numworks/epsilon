@@ -70,7 +70,7 @@ class GlobalContext final : public Poincare::Context {
 
  private:
   // Expression getters
-  const Poincare::Internal::Tree* expressionForSymbolAbstract(
+  const Poincare::Internal::Tree* expressionForUserNamed(
       const Poincare::Internal::Tree* symbol) override;
   const Poincare::Internal::Tree* expressionForSymbolAndRecord(
       const Poincare::Internal::Tree* symbol, Ion::Storage::Record r);

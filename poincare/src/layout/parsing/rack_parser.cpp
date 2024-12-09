@@ -648,7 +648,7 @@ void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
   bool leftIsSymbolWithUnits = false;
   if (leftHandSide->isUserSymbol() && m_parsingContext.context()) {
     const Tree* value =
-        m_parsingContext.context()->expressionForSymbolAbstract(leftHandSide);
+        m_parsingContext.context()->expressionForUserNamed(leftHandSide);
     leftIsSymbolWithUnits = value && Units::HasUnit(value);
   }
 

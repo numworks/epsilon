@@ -76,14 +76,14 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 }
 
 const Internal::Tree*
-SystemOfEquations::ContextWithoutT::expressionForSymbolAbstract(
+SystemOfEquations::ContextWithoutT::expressionForUserNamed(
     const Internal::Tree* symbol) {
   assert(symbol->isUserNamed());
   if (symbol->isUserSymbol() &&
       strcmp(Internal::Symbol::GetName(symbol), "t") == 0) {
     return UserExpression();
   }
-  return ContextWithParent::expressionForSymbolAbstract(symbol);
+  return ContextWithParent::expressionForUserNamed(symbol);
 }
 
 #if 0

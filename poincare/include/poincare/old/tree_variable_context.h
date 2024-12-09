@@ -27,7 +27,7 @@ class TreeVariableContext : public ContextWithParent {
   bool setExpressionForUserNamed(const Internal::Tree* expression,
                                  const Internal::Tree* symbol) override;
 
-  const Internal::Tree* expressionForSymbolAbstract(
+  const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) override;
 
  private:

@@ -23,7 +23,7 @@ class EmptyContext : public Context {
     return false;
   }
 
-  const Internal::Tree* expressionForSymbolAbstract(
+  const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) override;
 };
 

@@ -27,7 +27,7 @@ class Context {
                                                          int length) = 0;
 
   /* The returned Tree* may live in the Pool or in the Storage. */
-  virtual const Internal::Tree* expressionForSymbolAbstract(
+  virtual const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) = 0;
 
   virtual bool setExpressionForUserNamed(const Internal::Tree* expression,

@@ -403,8 +403,7 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
           system->userVariable(row - rowOfUserVariablesMessage - 1);
       Symbol symbol = Symbol::Builder(symbolName, strlen(symbolName));
       UserExpression value = UserExpression::Builder(
-          App::app()->localContext()->expressionForSymbolAbstract(
-              symbol.tree()));
+          App::app()->localContext()->expressionForUserNamed(symbol.tree()));
       Layout layout =
           PoincareHelpers::CreateLayout(value, App::app()->localContext());
       static_cast<ScrollableTwoLayoutsCell*>(cell)->setLayouts(Layout(),
@@ -455,7 +454,7 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
       system->userVariable(row - rowOfUserVariablesMessage - 1);
   Symbol symbol = Symbol::Builder(symbolName, strlen(symbolName));
   UserExpression value = UserExpression::Builder(
-      App::app()->localContext()->expressionForSymbolAbstract(symbol.tree()));
+      App::app()->localContext()->expressionForUserNamed(symbol.tree()));
   Layout layout =
       PoincareHelpers::CreateLayout(value, App::app()->localContext());
   return layout->layoutSize(k_solutionsFont).height() +

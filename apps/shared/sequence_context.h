@@ -25,7 +25,7 @@ class SequenceContext : public Poincare::ContextWithParent {
    * So expressionTypeForIdentifier returns Type::Sequence for u, v and w,
    * and calls the parent context in other cases.
    * The other methods (setExpressionForUserNamed and
-   * expressionForSymbolAbstract) always call the parent context. */
+   * expressionForUserNamed) always call the parent context. */
   Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(
       const char* identifier, int length) override;
 

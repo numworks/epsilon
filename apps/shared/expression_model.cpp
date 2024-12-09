@@ -87,7 +87,7 @@ SystemExpression ExpressionModel::expressionReduced(
    * should probably be removed. The difficulty relies in the ambiguous
    * conventions about the values returned or set when a symbol has no proper
    * expression: for example,
-   *  - GlobalContext::expressionForSymbolAbstract returns an uninitialized
+   *  - GlobalContext::expressionForUserNamed returns an uninitialized
    *    expression,
    *  - so do Expression::replaceSymbols and SymbolAbstract::Expand,
    *  - Symbol::shallowReduce and Function::shallowReduce and
@@ -130,7 +130,7 @@ UserExpression ExpressionModel::expressionClone(
   /* TODO
    * The substitution of UCodePointUnknown back and forth is done in the
    * methods layout, setContent (through buildExpressionFromLayout), layout and
-   * also in GlobalContext::expressionForSymbolAbstract and
+   * also in GlobalContext::expressionForUserNamed and
    * GlobalContext::setExpressionForUserNamed. When getting the expression,
    * the substitutions may probably be gathered here.
    */

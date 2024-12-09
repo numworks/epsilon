@@ -62,7 +62,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
   }
   // Get Definition
   const Tree* definition =
-      context ? context->expressionForSymbolAbstract(e) : nullptr;
+      context ? context->expressionForUserNamed(e) : nullptr;
   if (symbolic == SymbolicComputation::ReplaceAllSymbols && !definition) {
     e->cloneTreeOverTree(KNotDefined);
     return true;
@@ -130,7 +130,7 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
         default: {
           const Tree* definition =
               projectionContext.m_context
-                  ? projectionContext.m_context->expressionForSymbolAbstract(
+                  ? projectionContext.m_context->expressionForUserNamed(
                         descendant)
                   : nullptr;
           assert(definition != e);

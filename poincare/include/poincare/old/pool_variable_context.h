@@ -2,7 +2,7 @@
 #define POINCARE_POOL_VARIABLE_CONTEXT_H
 
 #include "context_with_parent.h"
-#include "symbol_abstract.h"
+#include "junior_expression.h"
 
 namespace Poincare {
 
@@ -13,7 +13,7 @@ class PoolVariableContext : public ContextWithParent {
       : ContextWithParent(parentContext), m_name(name) {}
   /* Building a self referential context is a trick for parsing parametered
    * expression. */
-  PoolVariableContext(SymbolAbstract symbol, Context* parentContext)
+  PoolVariableContext(JuniorSymbolAbstract symbol, Context* parentContext)
       : ContextWithParent(parentContext),
         m_name(symbol.name()),
         m_value(symbol) {}
@@ -31,7 +31,7 @@ class PoolVariableContext : public ContextWithParent {
 
  private:
   const char* m_name;
-  Expression m_value;
+  NewExpression m_value;
 };
 
 }  // namespace Poincare

@@ -147,7 +147,32 @@ inline int longPressFactor() {
 
 // Keyboard events
 
-#include <ion/keyboard_events.h>
+#define DUMMY_KEY(...) PLAIN_KEY(__VA_ARGS__)
+#define PLAIN_KEY(Name, ...) \
+  constexpr Event Name = Event::PlainKey(Keyboard::Key::Name);
+
+#define SHIFT_KEY(Name, R, C, SEvent, ...)                     \
+  constexpr Event Name = Event::PlainKey(Keyboard::Key::Name); \
+  constexpr Event SEvent = Event::ShiftKey(Keyboard::Key::Name);
+
+#define ALPHA_KEY(Name, R, C, AEvent, SAEvent, ...)              \
+  constexpr Event Name = Event::PlainKey(Keyboard::Key::Name);   \
+  constexpr Event AEvent = Event::AlphaKey(Keyboard::Key::Name); \
+  constexpr Event SAEvent = Event::ShiftAlphaKey(Keyboard::Key::Name);
+
+#define SHIFT_ALPHA_KEY(Name, R, C, SEvent, AEvent, SAEvent, ...) \
+  constexpr Event Name = Event::PlainKey(Keyboard::Key::Name);    \
+  constexpr Event SEvent = Event::ShiftKey(Keyboard::Key::Name);  \
+  constexpr Event AEvent = Event::AlphaKey(Keyboard::Key::Name);  \
+  constexpr Event SAEvent = Event::ShiftAlphaKey(Keyboard::Key::Name);
+
+#include <ion/keys.inc>
+
+#undef PLAIN_KEY
+#undef SHIFT_KEY
+#undef ALPHA_KEY
+#undef SHIFT_ALPHA_KEY
+#undef DUMMY_KEY
 
 // Special
 

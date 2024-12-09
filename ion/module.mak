@@ -14,14 +14,21 @@ _ion_display_height_epsilon = 240
 _ion_display_width_scandium = 200
 _ion_display_height_scandium = 87
 
+_ion_keyboard_columns = 6
+_ion_keyboard_rows_epsilon = 9
+_ion_keyboard_rows_scandium = 8
+
 SFLAGS_ion += \
   -I$(PATH_ion)/include/ion/keyboard/$(ION_layout_variant) \
   -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_layout_variant)) \
-  -DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_layout_variant))
+  -DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_layout_variant)) \
+  -DION_KEYBOARD_COLUMNS=$(_ion_keyboard_columns) \
+  -DION_KEYBOARD_ROWS=$(_ion_keyboard_rows_$(ION_layout_variant)) \
 
 PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
   -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
+  -DION_KEYBOARD_RICH=$(if $(findstring epsilon,$(ION_layout_variant)),1,0)
 
 ION_LOG_EVENTS_NAME ?= $(DEBUG)
 

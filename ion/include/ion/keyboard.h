@@ -7,10 +7,42 @@ extern "C" {
 #include <stdint.h>
 }
 
-#include <ion/layout_keyboard.h>
+#include <array>
 
 namespace Ion {
 namespace Keyboard {
+
+constexpr int NumberOfKeys = ION_KEYBOARD_ROWS * ION_KEYBOARD_COLUMNS;
+
+#define PLAIN_KEY(...) KEY(__VA_ARGS__)
+#define SHIFT_KEY(...) KEY(__VA_ARGS__)
+#define ALPHA_KEY(...) KEY(__VA_ARGS__)
+#define SHIFT_ALPHA_KEY(...) KEY(__VA_ARGS__)
+#define DUMMY_KEY(...) KEY(__VA_ARGS__)
+
+enum class Key {
+#define KEY(N, R, C, ...) N = R * ION_KEYBOARD_COLUMNS + C,
+#include <ion/keys.inc>
+#undef KEY
+  None = NumberOfKeys,
+};
+
+#undef DUMMY_KEY
+#define DUMMY_KEY(...)
+
+constexpr Key ValidKeys[] = {
+#define KEY(N, ...) Key::N,
+#include <ion/keys.inc>
+#undef KEY
+};
+
+#undef PLAIN_KEY
+#undef SHIFT_KEY
+#undef ALPHA_KEY
+#undef SHIFT_ALPHA_KEY
+#undef DUMMY_KEY
+
+constexpr int NumberOfValidKeys = std::size(ValidKeys);
 
 class State {
  public:

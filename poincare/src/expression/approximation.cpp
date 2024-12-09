@@ -35,7 +35,7 @@ namespace Poincare::Internal {
 
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
-  if (!Dimension::DeepCheck(e)) {
+  if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return KUndefUnhandledDimension->cloneTree();
   }
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
@@ -46,8 +46,8 @@ Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
   }
   const Tree* target = clone ? clone : e;
   Tree* result;
-  Dimension dim = Dimension::Get(target);
-  int listLength = Dimension::ListLength(target);
+  Dimension dim = Dimension::Get(target, context.m_symbolContext);
+  int listLength = Dimension::ListLength(target, context.m_symbolContext);
   if (listLength != Dimension::k_nonListListLength) {
     assert(!dim.isMatrix());
     result = SharedTreeStack->pushList(listLength);
@@ -69,10 +69,10 @@ Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
 template <typename T>
 std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
                                          Context context) {
-  if (!Dimension::DeepCheck(e)) {
+  if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return NAN;
   }
-  assert(Dimension::IsNonListScalar(e));
+  assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
@@ -87,11 +87,11 @@ template <typename T>
 PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
                                                 Parameters params,
                                                 Context context) {
-  assert(Dimension::DeepCheck(e));
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
-  Dimension dim = Dimension::Get(target);
+  Dimension dim = Dimension::Get(target, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   PointOrScalar<T> result =
       dim.isScalar() ? PointOrScalar<T>(NAN) : PointOrScalar<T>(NAN, NAN);
@@ -139,8 +139,8 @@ bool Approximation::ToBoolean(const Tree* e, Parameters params,
 template <typename T>
 T Approximation::To(const Tree* e, Parameters params, Context context) {
   // Units are tolerated in scalar approximation (replaced with SI ratios).
-  assert(Dimension::DeepCheck(e));
-  Dimension dim = Dimension::Get(e);
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
+  Dimension dim = Dimension::Get(e, context.m_symbolContext);
   if (!(dim.isScalar() || dim.isUnit())) {
     return NAN;
   }
@@ -158,7 +158,8 @@ T Approximation::To(const Tree* e, T abscissa, Parameters params,
 template <typename T>
 Coordinate2D<T> Approximation::ToPoint(const Tree* e, Parameters params,
                                        Context context) {
-  assert(Dimension::DeepCheck(e) && Dimension::Get(e).isPoint());
+  assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
+         Dimension::Get(e, context.m_symbolContext).isPoint());
   return ToPointOrScalar<T>(e, params, context).toPoint();
 };
 
@@ -317,7 +318,7 @@ std::complex<float> Approximation::HelperUndefDependencies(const Tree* dep,
   // Dependency children may have different dimensions.
   std::complex<float> undefValue = std::complex<float>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
-    Dimension dim = Dimension::Get(child);
+    Dimension dim = Dimension::Get(child, ctx->m_symbolContext);
     if (dim.isScalar()) {
       // Optimize most cases
       std::complex<float> c = ToComplex<float>(child, ctx);
@@ -330,7 +331,8 @@ std::complex<float> Approximation::HelperUndefDependencies(const Tree* dep,
         assert(!std::isnan(c.imag()));
       }
     } else {
-      Tree* a = ToTree<float>(child, Dimension::Get(child), ctx);
+      Tree* a = ToTree<float>(child,
+                              Dimension::Get(child, ctx->m_symbolContext), ctx);
       if (a->isUndefined()) {
         a->removeTree();
         undefValue = NAN;
@@ -724,7 +726,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       return ToComplex<T>(e->child(2), &ctxCopy);
     }
     case Type::Dim: {
-      int n = Dimension::ListLength(e->child(0));
+      int n = Dimension::ListLength(e->child(0), ctx->m_symbolContext);
       return n >= 0 ? n : NAN;
     }
     case Type::ListElement: {
@@ -732,7 +734,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       const Tree* index = e->child(1);
       assert(Integer::Is<uint8_t>(index));
       int i = Integer::Handler(index).to<uint8_t>() - 1;
-      if (i < 0 || i >= Dimension::ListLength(values)) {
+      if (i < 0 || i >= Dimension::ListLength(values, ctx->m_symbolContext)) {
         return NAN;
       }
       assert(ctx);
@@ -756,7 +758,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::ListProduct: {
       assert(ctx);
       const Tree* values = e->child(0);
-      int length = Dimension::ListLength(values);
+      int length = Dimension::ListLength(values, ctx->m_symbolContext);
       Context tempCtx(*ctx);
       std::complex<T> result = e->isListSum() ? 0 : 1;
       for (int i = 0; i < length; i++) {
@@ -770,7 +772,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::Max: {
       assert(ctx);
       const Tree* values = e->child(0);
-      int length = Dimension::ListLength(values);
+      int length = Dimension::ListLength(values, ctx->m_symbolContext);
       Context tempCtx(*ctx);
       T result;
       for (int i = 0; i < length; i++) {
@@ -793,7 +795,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       assert(ctx);
       const Tree* values = e->child(0);
       const Tree* coefficients = e->child(1);
-      int length = Dimension::ListLength(values);
+      int length = Dimension::ListLength(values, ctx->m_symbolContext);
       Context tempCtx(*ctx);
       std::complex<T> sum = 0;
       std::complex<T> sumOfSquares = 0;
@@ -859,7 +861,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       Tree* list = ToList<T>(e->child(0), ctx);
       TreeDatasetColumn<T> values(list);
       T median;
-      if (Dimension::IsList(e->child(1))) {
+      if (Dimension::IsList(e->child(1), ctx->m_symbolContext)) {
         Tree* weightsList = ToList<T>(e->child(1), ctx);
         TreeDatasetColumn<T> weights(weightsList);
         median = StatisticsDataset<T>(&values, &weights).median();
@@ -1134,8 +1136,8 @@ bool Approximation::ToBoolean(const Tree* e, const Context* ctx) {
 template <typename T>
 Tree* Approximation::ToList(const Tree* e, const Context* ctx) {
   assert(ctx);
-  Dimension dimension = Dimension::Get(e);
-  int length = Dimension::ListLength(e);
+  Dimension dimension = Dimension::Get(e, ctx->m_symbolContext);
+  int length = Dimension::ListLength(e, ctx->m_symbolContext);
   assert(length != Dimension::k_nonListListLength);
   Context tempCtx(*ctx);
   Tree* list = SharedTreeStack->pushList(length);
@@ -1202,7 +1204,8 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
       bool resultIsMatrix = false;
       Tree* result = nullptr;
       for (const Tree* child : e->children()) {
-        bool childIsMatrix = Dimension::Get(child).isMatrix();
+        bool childIsMatrix =
+            Dimension::Get(child, ctx->m_symbolContext).isMatrix();
         Tree* approx = childIsMatrix ? ToMatrix<T>(child, ctx)
                                      : ToComplexTree<T>(child, ctx);
         if (result == nullptr) {
@@ -1262,7 +1265,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
       return result;
     }
     case Type::Dim: {
-      Dimension dim = Dimension::Get(e->child(0));
+      Dimension dim = Dimension::Get(e->child(0), ctx->m_symbolContext);
       assert(dim.isMatrix());
       Tree* result = SharedTreeStack->pushMatrix(1, 2);
       SharedTreeStack->pushFloat(T(dim.matrix.rows));
@@ -1398,6 +1401,7 @@ bool Approximation::SkipApproximation(TypeBlock type, TypeBlock parentType,
       return indexInParent == 1 && !previousChildWasApproximated;
     case Type::ListSlice:
     case Type::ListElement:
+      assert(indexInParent < 1 || previousChildWasApproximated);
       return indexInParent >= 1 && !previousChildWasApproximated;
     case Type::Identity:
       return true;
@@ -1429,7 +1433,8 @@ bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
 template <typename T>
 bool Approximation::PrivateApproximateAndReplaceEveryScalar(
     Tree* e, const Context* ctx) {
-  if (CanApproximate(e) && Dimension::IsNonListScalar(e)) {
+  if (CanApproximate(e) &&
+      Dimension::IsNonListScalar(e, ctx->m_symbolContext)) {
     e->moveTreeOverTree(ToTree<T>(e, Dimension(), ctx));
     return true;
   }

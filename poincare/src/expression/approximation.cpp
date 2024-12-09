@@ -921,8 +921,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
      * handled at this point. */
     case Type::Unit: {
       T approxSI = Units::Unit::GetValue(e);
-      // For angle units, convert to angle value in the context
-      return Units::IsPureAngleUnit(e)
+      /* For angle units, convert to angle value in the context. Do not convert
+       * if angle unit is None. */
+      return (Units::IsPureAngleUnit(e) && ctx->m_angleUnit != AngleUnit::None)
                  ? NewTrigonometry::ConvertRadianToAngleUnit<T>(
                        approxSI, ctx->m_angleUnit)
                  : approxSI;

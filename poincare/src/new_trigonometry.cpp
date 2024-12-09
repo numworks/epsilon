@@ -7,8 +7,6 @@ namespace Poincare {
 
 double NewTrigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
   switch (angleUnit) {
-    // TODO_PCJ: make sure earlier that None is acceptable
-    case Preferences::AngleUnit::None:
     case Preferences::AngleUnit::Radian:
       return M_PI;
     case Preferences::AngleUnit::Degree:

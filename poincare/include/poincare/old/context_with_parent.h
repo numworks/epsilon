@@ -19,8 +19,8 @@ class ContextWithParent : public Context {
     return m_parentContext->expressionForUserNamed(symbol);
   }
 
-  SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
-                                                 int length) override {
+  UserNamedType expressionTypeForIdentifier(const char* identifier,
+                                            int length) override {
     assert(m_parentContext);
     return m_parentContext->expressionTypeForIdentifier(identifier, length);
   }

@@ -501,7 +501,7 @@ Token::Type Tokenizer::stringTokenType(const char* string,
            ParsingContext::ParsingMethod::Assignment ||
        m_parsingContext->context() == nullptr ||
        m_parsingContext->context()->expressionTypeForIdentifier(
-           string, *length) != Context::SymbolAbstractType::None)) {
+           string, *length) != Context::UserNamedType::None)) {
     return Token::Type::CustomIdentifier;
   }
   /* If not unit conversion and "m" has been or is being assigned by the user

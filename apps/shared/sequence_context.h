@@ -26,7 +26,7 @@ class SequenceContext : public Poincare::ContextWithParent {
    * and calls the parent context in other cases.
    * The other methods (setExpressionForUserNamed and
    * expressionForUserNamed) always call the parent context. */
-  Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(
+  Poincare::Context::UserNamedType expressionTypeForIdentifier(
       const char* identifier, int length) override;
 
   void tidyDownstreamPoolFrom(Poincare::PoolObject* treePoolCursor) override;

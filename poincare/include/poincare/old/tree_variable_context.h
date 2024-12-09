@@ -21,8 +21,8 @@ class TreeVariableContext : public ContextWithParent {
         m_value(symbol) {}
 
   // Context
-  SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
-                                                 int length) override;
+  UserNamedType expressionTypeForIdentifier(const char* identifier,
+                                            int length) override;
   // The provided expression needs to outlive the VariableContext
   bool setExpressionForUserNamed(const Internal::Tree* expression,
                                  const Internal::Tree* symbol) override;

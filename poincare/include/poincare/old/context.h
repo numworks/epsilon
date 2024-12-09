@@ -16,15 +16,9 @@ class PoolObject;
 
 class Context {
  public:
-  enum class SymbolAbstractType : uint8_t {
-    None,
-    Function,
-    Sequence,
-    Symbol,
-    List
-  };
-  virtual SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
-                                                         int length) = 0;
+  enum class UserNamedType : uint8_t { None, Function, Sequence, Symbol, List };
+  virtual UserNamedType expressionTypeForIdentifier(const char* identifier,
+                                                    int length) = 0;
 
   /* The returned Tree* may live in the Pool or in the Storage. */
   virtual const Internal::Tree* expressionForUserNamed(

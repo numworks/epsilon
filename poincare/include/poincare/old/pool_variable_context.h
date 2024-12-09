@@ -21,8 +21,8 @@ class PoolVariableContext : public ContextWithParent {
   template <typename T>
   void setApproximationForVariable(T value);
   // Context
-  SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
-                                                 int length) override;
+  UserNamedType expressionTypeForIdentifier(const char* identifier,
+                                            int length) override;
   bool setExpressionForUserNamed(const Internal::Tree* expression,
                                  const Internal::Tree* symbol) override;
 

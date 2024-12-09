@@ -13,11 +13,11 @@ void PoolVariableContext::setApproximationForVariable(T value) {
   m_value = Expression::Builder<T>(value);
 }
 
-Context::SymbolAbstractType PoolVariableContext::expressionTypeForIdentifier(
+Context::UserNamedType PoolVariableContext::expressionTypeForIdentifier(
     const char* identifier, int length) {
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
           identifier, length, m_name) == 0) {
-    return SymbolAbstractType::Symbol;
+    return UserNamedType::Symbol;
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }

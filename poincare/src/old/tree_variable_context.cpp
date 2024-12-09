@@ -8,11 +8,11 @@
 
 namespace Poincare {
 
-Context::SymbolAbstractType TreeVariableContext::expressionTypeForIdentifier(
+Context::UserNamedType TreeVariableContext::expressionTypeForIdentifier(
     const char* identifier, int length) {
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
           identifier, length, m_name) == 0) {
-    return SymbolAbstractType::Symbol;
+    return UserNamedType::Symbol;
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }

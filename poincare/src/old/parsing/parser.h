@@ -165,7 +165,7 @@ class Parser {
                                     size_t length, Token::Type stoppingType);
   bool privateParseCustomIdentifierWithParameters(
       OExpression& leftHandSide, const char* name, size_t length,
-      Token::Type stoppingType, Context::SymbolAbstractType idType,
+      Token::Type stoppingType, Context::UserNamedType idType,
       bool parseApostropheAsDerivative);
   void parseSequence(OExpression& leftHandSide, const char* name,
                      Token::Type rightDelimiter);

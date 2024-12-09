@@ -925,22 +925,22 @@ void Parser::privateParseCustomIdentifier(OExpression &leftHandSide,
    * afterwards.
    * If there is no context, f(x) is always parsed as a function and u{n} as
    * a sequence*/
-  Context::SymbolAbstractType idType = Context::SymbolAbstractType::None;
+  Context::UserNamedType idType = Context::UserNamedType::None;
   if (m_parsingContext.context() &&
       m_parsingContext.parsingMethod() !=
           ParsingContext::ParsingMethod::Assignment) {
     idType =
         m_parsingContext.context()->expressionTypeForIdentifier(name, length);
-    if (idType != Context::SymbolAbstractType::Function &&
-        idType != Context::SymbolAbstractType::Sequence &&
-        idType != Context::SymbolAbstractType::List) {
+    if (idType != Context::UserNamedType::Function &&
+        idType != Context::UserNamedType::Sequence &&
+        idType != Context::UserNamedType::List) {
       leftHandSide = Symbol::Builder(name, length);
       return;
     }
   }
 
-  if (idType == Context::SymbolAbstractType::Sequence ||
-      (idType == Context::SymbolAbstractType::None &&
+  if (idType == Context::UserNamedType::Sequence ||
+      (idType == Context::UserNamedType::None &&
        m_nextToken.otype() == Token::Type::LeftSystemBrace)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed
@@ -973,7 +973,7 @@ void Parser::privateParseCustomIdentifier(OExpression &leftHandSide,
 
 bool Parser::privateParseCustomIdentifierWithParameters(
     OExpression &leftHandSide, const char *name, size_t length,
-    Token::Type stoppingType, Context::SymbolAbstractType idType,
+    Token::Type stoppingType, Context::UserNamedType idType,
     bool parseApostropheAsDerivative) {
   int derivativeOrder = 0;
   if (parseApostropheAsDerivative) {
@@ -1034,7 +1034,7 @@ bool Parser::privateParseCustomIdentifierWithParameters(
       m_status =
           Status::Error;  // Function and variable must have distinct names.
       return true;
-    } else if (idType == Context::SymbolAbstractType::List) {
+    } else if (idType == Context::UserNamedType::List) {
       if (derivativeOrder > 0) {
         return false;
       }

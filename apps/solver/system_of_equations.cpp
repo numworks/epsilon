@@ -343,7 +343,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
         context,
         [](const char* s, Context* c) {
           return c->expressionTypeForIdentifier(s, strlen(s)) ==
-                 Context::SymbolAbstractType::Symbol;
+                 Context::UserNamedType::Symbol;
         },
         &m_userVariables[0][0], SymbolHelper::k_maxNameSize,
         m_numberOfUserVariables);

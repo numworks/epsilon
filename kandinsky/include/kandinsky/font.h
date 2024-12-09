@@ -57,7 +57,7 @@ class KDFont {
     // Return the ceil when height is odd
     return (GlyphHeight(size) + 1) / 2;
   }
-#if KDFONT_PROPORTIONAL
+#if KANDINSKY_FONT_VARIABLE_WIDTH
   static KDCoordinate GlyphWidth(Size size, CodePoint codePoint);
   constexpr static KDCoordinate GlyphMaxWidth(Size size) {
     return size == Size::Small ? SmallFont::k_glyphWidth
@@ -144,13 +144,13 @@ class KDFont {
 
   constexpr KDFont(KDCoordinate glyphWidth, KDCoordinate glyphHeight,
                    const uint16_t* glyphDataOffset,
-#if KDFONT_PROPORTIONAL
+#if KANDINSKY_FONT_VARIABLE_WIDTH
                    const uint8_t* widths,
 #endif
                    const uint8_t* data)
       : m_glyphSize(glyphWidth, glyphHeight),
         m_glyphDataOffset(glyphDataOffset),
-#if KDFONT_PROPORTIONAL
+#if KANDINSKY_FONT_VARIABLE_WIDTH
         m_glyphWidths(widths),
 #endif
         m_data(data) {
@@ -184,7 +184,7 @@ class KDFont {
 
   KDSize m_glyphSize;
   const uint16_t* m_glyphDataOffset;
-#if KDFONT_PROPORTIONAL
+#if KANDINSKY_FONT_VARIABLE_WIDTH
   const uint8_t* m_glyphWidths;
 #endif
   const uint8_t* m_data;

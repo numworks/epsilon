@@ -245,7 +245,7 @@ void writeFontSourceFile(const char * fontSourceFilename, const char * fontName,
 	  "  %s::k_glyphWidth,\n"
 	  "  %s::k_glyphHeight,\n"
 	  "  glyphDataOffset,\n"
-	  "#if KDFONT_PROPORTIONAL\n"
+	  "#if KANDINSKY_FONT_VARIABLE_WIDTH\n"
 	  "  glyphWidths,\n"
 	  "#endif\n"
 	  "  glyphData\n"

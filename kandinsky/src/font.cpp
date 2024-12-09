@@ -10,7 +10,7 @@ extern "C" {
 
 constexpr static int k_tabCharacterWidth = 4;
 
-#if KDFONT_PROPORTIONAL
+#if KANDINSKY_FONT_VARIABLE_WIDTH
 KDCoordinate KDFont::GlyphWidth(Size size, CodePoint codePoint) {
   int index = Font(size)->indexForCodePoint(codePoint);
   return size == Size::Small ? privateSmallFont.m_glyphWidths[index]

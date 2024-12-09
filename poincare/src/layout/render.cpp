@@ -373,7 +373,7 @@ KDSize Render::Size(const Layout* l) {
     case LayoutType::AsciiCodePoint:
     case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints: {
-#if !KDFONT_PROPORTIONAL
+#if !KANDINSKY_FONT_VARIABLE_WIDTH
       // Handle the middle dot which is thinner than the other glyphs
       width = CodePointLayout::GetCodePoint(l) == UCodePointMiddleDot
                   ? CodePoint::k_middleDotWidth

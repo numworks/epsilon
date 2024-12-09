@@ -63,7 +63,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
       symbol = CodePoints::k_cartesianSymbol;
     }
     UserExpression expression =
-        Expression::Builder(ExpressionForFunction(record))
+        Expression::Builder(ExpressionForUserFunction(record))
             .replaceSymbolWithExpression(Symbol::SystemSymbol(),
                                          Symbol::Builder(symbol));
     return PoincareHelpers::CreateLayout(expression, context);
@@ -160,7 +160,7 @@ const Internal::Tree* GlobalContext::expressionForSymbolAndRecord(
     const Internal::Tree* symbol, Ion::Storage::Record r) {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   return symbol->isUserSymbol() ? ExpressionForUserSymbol(r)
-                                : ExpressionForFunction(r);
+                                : ExpressionForUserFunction(r);
 }
 
 const Internal::Tree* GlobalContext::ExpressionForUserSymbol(
@@ -175,7 +175,7 @@ const Internal::Tree* GlobalContext::ExpressionForUserSymbol(
   return UserExpression::TreeFromAddress(d.buffer);
 }
 
-const Internal::Tree* GlobalContext::ExpressionForFunction(
+const Internal::Tree* GlobalContext::ExpressionForUserFunction(
     Ion::Storage::Record r) {
   if (r.hasExtension(Ion::Storage::parametricComponentExtension) ||
       r.hasExtension(Ion::Storage::regressionExtension)) {

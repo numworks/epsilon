@@ -559,6 +559,12 @@ class JuniorSymbol : public JuniorSymbolAbstract {
 };
 
 // TODO_PCJ: rename
+class JuniorFunction : public JuniorSymbolAbstract {
+ public:
+  static JuniorFunction Builder(const char* name, JuniorExpression child);
+};
+
+// TODO_PCJ: rename
 class JuniorSequence : public JuniorSymbolAbstract {
  public:
   static JuniorSequence Builder(const char* name, JuniorExpression child);

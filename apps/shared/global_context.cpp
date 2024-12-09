@@ -120,7 +120,8 @@ bool GlobalContext::setExpressionForUserNamed(
   assert(symbolTree->isUserNamed());
   UserExpression expression = UserExpression::Builder(expressionTree);
   UserExpression symbolExpression = UserExpression::Builder(symbolTree);
-  SymbolAbstract symbol = static_cast<SymbolAbstract&>(symbolExpression);
+  JuniorSymbolAbstract symbol =
+      static_cast<JuniorSymbolAbstract&>(symbolExpression);
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
   Ion::Storage::Record record = UserNamedRecordWithBaseName(symbol.name());
@@ -130,8 +131,7 @@ bool GlobalContext::setExpressionForUserNamed(
     e = Undefined::Builder();
   }
   UserExpression finalExpression =
-      expression.clone().replaceSymbolWithExpression(
-          static_cast<JuniorSymbolAbstract&>(symbolExpression), e);
+      expression.clone().replaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.isUserSymbol()) {
@@ -142,7 +142,7 @@ bool GlobalContext::setExpressionForUserNamed(
   assert(symbol.isUserFunction() && childSymbol.isUserSymbol());
   finalExpression = finalExpression.replaceSymbolWithUnknown(
       static_cast<const JuniorSymbol&>(childSymbol));
-  SymbolAbstract symbolToStore = symbol;
+  JuniorFunction symbolToStore = static_cast<const JuniorFunction&>(symbol);
   if (!(SymbolHelper::IsSymbol(childSymbol, CodePoints::k_cartesianSymbol) ||
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_polarSymbol) ||
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_parametricSymbol))) {
@@ -150,7 +150,7 @@ bool GlobalContext::setExpressionForUserNamed(
     UserExpression symbolInX = Poincare::Function::Builder(
         symbolToStore.name(), strlen(symbolToStore.name()),
         Symbol::Builder(CodePoints::k_cartesianSymbol));
-    symbolToStore = static_cast<const SymbolAbstract&>(symbolInX);
+    symbolToStore = static_cast<const JuniorFunction&>(symbolInX);
   }
   return setExpressionForUserFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
@@ -223,7 +223,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(
-    const UserExpression& expressionToStore, const SymbolAbstract& symbol,
+    const UserExpression& expressionToStore, const JuniorFunction& symbol,
     Ion::Storage::Record previousRecord) {
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error =

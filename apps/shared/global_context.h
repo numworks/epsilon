@@ -85,7 +85,7 @@ class GlobalContext final : public Poincare::Context {
       Ion::Storage::Record previousRecord);
   Ion::Storage::Record::ErrorStatus setExpressionForUserFunction(
       const Poincare::UserExpression& expression,
-      const Poincare::SymbolAbstract& symbol,
+      const Poincare::JuniorFunction& symbol,
       Ion::Storage::Record previousRecord);
   // Record getter
   static Ion::Storage::Record UserNamedRecordWithBaseName(const char* name);

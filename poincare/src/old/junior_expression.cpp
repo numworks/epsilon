@@ -1198,6 +1198,21 @@ JuniorSymbol JuniorSymbol::Ans() {
   return Builder(SymbolHelper::AnsMainAlias());
 }
 
+/* JuniorFunction */
+
+JuniorFunction JuniorFunction::Builder(const char* name,
+                                       JuniorExpression child) {
+  if (BuiltinsAliases::k_thetaAliases.contains(name)) {
+    name = BuiltinsAliases::k_thetaAliases.mainAlias();
+  }
+  Internal::Tree* e =
+      Internal::SharedTreeStack->pushUserFunction(name, strlen(name) + 1);
+  assert(!child.isUninitialized());
+  child.tree()->cloneTree();
+  JuniorExpression expr = JuniorExpression::Builder(e);
+  return static_cast<JuniorFunction&>(expr);
+}
+
 /* JuniorSequence */
 
 JuniorSequence JuniorSequence::Builder(const char* name,

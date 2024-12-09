@@ -37,7 +37,7 @@ void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
 }
 
 bool GlobalContext::UserNameIsFree(const char* baseName) {
-  return SymbolAbstractRecordWithBaseName(baseName).isNull();
+  return UserNamedRecordWithBaseName(baseName).isNull();
 }
 
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
@@ -112,7 +112,7 @@ const Internal::Tree* GlobalContext::expressionForUserNamed(
     const Internal::Tree* symbol) {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   Ion::Storage::Record r =
-      SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbol));
+      UserNamedRecordWithBaseName(Internal::Symbol::GetName(symbol));
   return expressionForSymbolAndRecord(symbol, r);
 }
 
@@ -124,7 +124,7 @@ bool GlobalContext::setExpressionForUserNamed(
   SymbolAbstract symbol = static_cast<SymbolAbstract&>(symbolExpression);
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
-  Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
+  Ion::Storage::Record record = UserNamedRecordWithBaseName(symbol.name());
   UserExpression e =
       UserExpression::Builder(expressionForSymbolAndRecord(symbol, record));
   if (e.isUninitialized()) {
@@ -254,7 +254,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   return error;
 }
 
-Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(
+Ion::Storage::Record GlobalContext::UserNamedRecordWithBaseName(
     const char* name) {
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);

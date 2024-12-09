@@ -224,18 +224,19 @@ Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
 template <typename T>
 static void MergeChildrenOfMultAndAdd(Tree* e) {
   assert(e->isMult() || e->isAdd());
-  TreeRef merge = (e->isMult() ? 1_e : 0_e)->cloneTree();
+  T merge = (e->isMult() ? 1 : 0);
   int lastFloatIndex = -1;
   int n = e->numberOfChildren();
   int i = 0;
-  Tree* child = e->child(0);
+  Tree* child = e->nextNode();
   while (i < n) {
     if (child->isMult() || child->isAdd()) {
       MergeChildrenOfMultAndAdd<T>(child);
     }
     if (child->isFloat()) {
-      merge->moveTreeOverTree((e->isMult() ? Number::Multiplication
-                                           : Number::Addition)(merge, child));
+      T childValue = child->isSingleFloat() ? FloatHelper::FloatTo(child)
+                                            : FloatHelper::DoubleTo(child);
+      merge = (e->isMult() ? merge * childValue : merge + childValue);
       lastFloatIndex = i;
       child->removeTree();
       n--;
@@ -246,7 +247,9 @@ static void MergeChildrenOfMultAndAdd(Tree* e) {
     }
   }
   if (lastFloatIndex != -1) {
-    NAry::AddChildAtIndex(e, merge, lastFloatIndex);
+    /* To preserve order, push the merged children at an index where there was a
+     * float */
+    NAry::AddChildAtIndex(e, SharedTreeStack->pushFloat(merge), lastFloatIndex);
     NAry::SquashIfPossible(e);
   }
 }

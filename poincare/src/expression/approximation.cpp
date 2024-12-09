@@ -20,6 +20,7 @@
 #include "float_helper.h"
 #include "list.h"
 #include "matrix.h"
+#include "number.h"
 #include "physical_constant.h"
 #include "random.h"
 #include "rational.h"
@@ -219,9 +220,40 @@ Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
   return clone;
 }
 
+// Merge float children and preserve order
+template <typename T>
+static void MergeChildrenOfMultAndAdd(Tree* e) {
+  assert(e->isMult() || e->isAdd());
+  TreeRef merge = (e->isMult() ? 1_e : 0_e)->cloneTree();
+  int lastFloatIndex = -1;
+  int n = e->numberOfChildren();
+  int i = 0;
+  Tree* child = e->child(0);
+  while (i < n) {
+    if (child->isMult() || child->isAdd()) {
+      MergeChildrenOfMultAndAdd<T>(child);
+    }
+    if (child->isFloat()) {
+      merge->moveTreeOverTree((e->isMult() ? Number::Multiplication
+                                           : Number::Addition)(merge, child));
+      lastFloatIndex = i;
+      child->removeTree();
+      n--;
+      NAry::SetNumberOfChildren(e, n);
+    } else {
+      child = child->nextTree();
+      i++;
+    }
+  }
+  if (lastFloatIndex != -1) {
+    NAry::AddChildAtIndex(e, merge, lastFloatIndex);
+    NAry::SquashIfPossible(e);
+  }
+}
+
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
-  /* TODO_PCJ: not all approximation methods comes here, but this assert should
+  /* TODO_PCJ: not all approximation methods come here, but this assert should
    * always be called when approximating. */
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   if (dim.isBoolean()) {
@@ -231,6 +263,9 @@ Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
     // Preserve units and only replace scalar values.
     Tree* result = e->cloneTree();
     PrivateApproximateAndReplaceEveryScalar<T>(result, ctx);
+    if (result->isMult() || result->isAdd()) {
+      MergeChildrenOfMultAndAdd<T>(result);
+    }
     return result;
   }
   if (dim.isScalar()) {

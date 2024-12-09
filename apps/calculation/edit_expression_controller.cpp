@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <ion/display.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/symbol.h>
 #include <poincare/preferences.h>
 
 #include "app.h"

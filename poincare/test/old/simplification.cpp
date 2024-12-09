@@ -5,7 +5,6 @@
 #include <poincare/old/infinity.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/store.h>
-#include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
 #include <poincare/old/unit_convert.h>

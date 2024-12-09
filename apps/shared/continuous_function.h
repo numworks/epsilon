@@ -12,7 +12,6 @@
 #include <apps/i18n.h>
 #include <poincare/function_properties/conic.h>
 #include <poincare/helpers/scatter_plot_iterable.h>
-#include <poincare/old/symbol_abstract.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/preferences.h>
 

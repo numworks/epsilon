@@ -4,7 +4,6 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/old/empty_context.h>
-#include <poincare/old/symbol_abstract.h>
 #include <poincare/old/variable_context.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/binary.h>

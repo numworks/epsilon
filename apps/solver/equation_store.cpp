@@ -4,7 +4,6 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/utf8_helper.h>
-#include <poincare/old/symbol.h>
 
 #include "app.h"
 

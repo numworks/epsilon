@@ -3,7 +3,6 @@
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/layout.h>
 #include <poincare/numeric/zoom.h>
-#include <poincare/old/symbol.h>
 
 #include <algorithm>
 

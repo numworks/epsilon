@@ -8,7 +8,6 @@
 #include <omg/utf8_helper.h>
 #include <poincare/old/aliases_list.h>
 #include <poincare/old/parametered_expression.h>
-#include <poincare/old/symbol_abstract.h>
 #include <poincare/xnt.h>
 
 #include <algorithm>

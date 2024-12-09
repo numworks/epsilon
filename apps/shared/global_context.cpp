@@ -152,7 +152,7 @@ bool GlobalContext::setExpressionForUserNamed(
         Symbol::Builder(CodePoints::k_cartesianSymbol));
     symbolToStore = static_cast<const SymbolAbstract&>(symbolInX);
   }
-  return setExpressionForFunction(finalExpression, symbolToStore, record) ==
+  return setExpressionForUserFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
 }
 
@@ -222,7 +222,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
       name, extension, expression.addressInPool(), expression.size(), true);
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
+Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(
     const UserExpression& expressionToStore, const SymbolAbstract& symbol,
     Ion::Storage::Record previousRecord) {
   Ion::Storage::Record recordToSet = previousRecord;

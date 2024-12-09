@@ -32,15 +32,6 @@ const char* SymbolHelper::GetName(NewExpression e) {
   return Internal::Symbol::GetName(e.tree());
 }
 
-bool SymbolHelper::NameHasQuotationMarks(const char* name, size_t length) {
-  return length > 2 && name[0] == '"' && name[length - 1] == '"';
-}
-
-bool SymbolHelper::NameLengthIsValid(const char* name, size_t length) {
-  return length <= k_maxNameLengthWithoutQuotationMarks ||
-         (NameHasQuotationMarks(name, length) && length <= k_maxNameLength);
-}
-
 size_t SymbolHelper::NameWithoutQuotationMarks(char* buffer, size_t bufferSize,
                                                const char* name,
                                                size_t nameLength) {

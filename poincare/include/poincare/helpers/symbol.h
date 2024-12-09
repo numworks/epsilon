@@ -16,8 +16,13 @@ constexpr static size_t k_maxNameLength =
     k_maxNameLengthWithoutQuotationMarks + 2;
 constexpr static size_t k_maxNameSize = k_maxNameLength + 1;
 
-bool NameHasQuotationMarks(const char* name, size_t length);
-bool NameLengthIsValid(const char* name, size_t length);
+constexpr static bool NameHasQuotationMarks(const char* name, size_t length) {
+  return length > 2 && name[0] == '"' && name[length - 1] == '"';
+}
+constexpr static bool NameLengthIsValid(const char* name, size_t length) {
+  return length <= k_maxNameLengthWithoutQuotationMarks ||
+         (NameHasQuotationMarks(name, length) && length <= k_maxNameLength);
+}
 size_t NameWithoutQuotationMarks(char* buffer, size_t bufferSize,
                                  const char* name, size_t nameLength);
 

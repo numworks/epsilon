@@ -1,6 +1,7 @@
 #include <float.h>
 #include <ion.h>
 #include <omg/float.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/based_integer.h>
@@ -1209,11 +1210,11 @@ void OExpression::deepApproximateChildrenKeepingSymbols(
        * - sum(kx, k, 0, 10) -> thisCanApproximate == false, and should stay
        * false. getVariables() == 1 */
       char variables[Poincare::OExpression::k_maxNumberOfVariables]
-                    [Poincare::SymbolAbstractNode::k_maxNameSize] = {""};
+                    [SymbolHelper::k_maxNameSize] = {""};
       int nVariables = getVariables(
           reductionContext.context(),
           [](const char *, Context *) { return true; }, variables[0],
-          SymbolAbstractNode::k_maxNameSize);
+          SymbolHelper::k_maxNameSize);
       thisCanApproximate = (nVariables == 0);
     }
     /* If at least 1 child failed approximation, no need to approximate: it

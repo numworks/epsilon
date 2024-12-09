@@ -21,22 +21,10 @@ namespace Poincare {
 
 SymbolAbstractNode::SymbolAbstractNode(const char *newName, int length)
     : ExpressionNode() {
+#if 0
   assert(NameLengthIsValid(newName, length));
+#endif
   strlcpy(m_name, newName, length + 1);
-}
-
-size_t SymbolAbstractNode::NameWithoutQuotationMarks(char *buffer,
-                                                     size_t bufferSize,
-                                                     const char *name,
-                                                     size_t nameLength) {
-  if (NameHasQuotationMarks(name, nameLength)) {
-    assert(bufferSize > nameLength - 2);
-    size_t result = strlcpy(buffer, name + 1, bufferSize) - 1;
-    buffer[nameLength - 2] = 0;  // Remove the last '""
-    return result;
-  }
-  assert(bufferSize > nameLength);
-  return strlcpy(buffer, name, bufferSize);
 }
 
 OExpression SymbolAbstractNode::replaceSymbolWithExpression(

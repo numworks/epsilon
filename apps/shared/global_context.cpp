@@ -337,7 +337,7 @@ void GlobalContext::DeleteParametricComponentsOfRecord(
   if (!f->properties().isEnabledParametric()) {
     return;
   }
-  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+  constexpr size_t bufferSize = SymbolHelper::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = f->name(buffer, bufferSize);
   DeleteParametricComponentsWithBaseName(buffer, length, bufferSize);
@@ -366,7 +366,7 @@ void GlobalContext::StoreParametricComponentsOfRecord(
     // For example: g(t)=f'(t) or g(t)=diff(f(t),t,t)
     return;
   }
-  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+  constexpr size_t bufferSize = SymbolHelper::k_maxNameSize;
   char buffer[bufferSize];
   size_t length = f->name(buffer, bufferSize);
   assert(FunctionNameHelper::ParametricComponentsNamesAreFree(buffer, length,

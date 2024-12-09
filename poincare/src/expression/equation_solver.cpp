@@ -26,7 +26,7 @@ namespace Poincare::Internal {
 template <int N>
 void VariableArray<N>::append(const char* variable) {
   assert(m_numberOfVariables < N);
-  assert(strlen(variable) < Symbol::k_maxNameLength);
+  assert(strlen(variable) < SymbolHelper::k_maxNameLength);
   memcpy(m_variables[m_numberOfVariables], variable, strlen(variable) + 1);
   m_numberOfVariables++;
 }

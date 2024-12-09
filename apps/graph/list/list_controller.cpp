@@ -6,8 +6,8 @@
 #include <escher/metric.h>
 #include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/layout.h>
-#include <poincare/old/symbol_abstract.h>
 
 #include "../app.h"
 
@@ -98,7 +98,7 @@ bool ListController::completeEquation(LayoutField* equationField,
   ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(selectedRecord());
   constexpr size_t k_bufferSize =
-      SymbolAbstractNode::k_maxNameSize + sizeof("(θ)≥") - 1;
+      SymbolHelper::k_maxNameSize + sizeof("(θ)≥") - 1;
   char buffer[k_bufferSize];
   if (f->isNull() || f->properties().status() ==
                          ContinuousFunctionProperties::Status::Undefined) {

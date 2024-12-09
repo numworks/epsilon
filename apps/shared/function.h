@@ -1,7 +1,7 @@
 #ifndef SHARED_FUNCTION_H
 #define SHARED_FUNCTION_H
 
-#include <poincare/old/symbol.h>
+#include <poincare/helpers/symbol.h>
 
 #include "expression_model_handle.h"
 
@@ -19,7 +19,7 @@ class Function : public ExpressionModelHandle {
   constexpr static int k_parenthesedThetaArgumentByteLength = 4;
   constexpr static int k_parenthesedXNTArgumentByteLength = 3;
   constexpr static int k_maxNameWithArgumentSize =
-      Poincare::SymbolAbstractNode::k_maxNameSize +
+      Poincare::SymbolHelper::k_maxNameSize +
       k_parenthesedThetaArgumentByteLength; /* Function name and
                                                null-terminating char + "(θ)" */
   ;

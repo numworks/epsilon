@@ -346,7 +346,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
           return c->expressionTypeForIdentifier(s, strlen(s)) ==
                  Context::SymbolAbstractType::Symbol;
         },
-        &m_userVariables[0][0], SymbolAbstractNode::k_maxNameSize,
+        &m_userVariables[0][0], SymbolHelper::k_maxNameSize,
         m_numberOfUserVariables);
     /* Don't abort if there are more the k_maxNumberOfVariables defined user
      * variables. */
@@ -377,7 +377,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     // Gather solving variables
     int nbSolvingVariables = simplifiedEquations[i].getVariables(
         context, [](const char*, Context*) { return true; }, &m_variables[0][0],
-        SymbolAbstractNode::k_maxNameSize, m_numberOfSolvingVariables);
+        SymbolHelper::k_maxNameSize, m_numberOfSolvingVariables);
     /* The equation has been parsed, so there should not be any variable with a
      * name that is too long. */
     // FIXME Special return values of getVariables should be named.
@@ -411,7 +411,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   int m = numberOfOriginalEquations;
   for (int i = 0; i < m; i++) {
     bool isLinear = simplifiedEquations[i].getLinearCoefficients(
-        &m_variables[0][0], SymbolAbstractNode::k_maxNameSize, coefficients[i],
+        &m_variables[0][0], SymbolHelper::k_maxNameSize, coefficients[i],
         &constants[i], context, m_complexFormat, angleUnit, unitFormat,
         symbolicComputation);
     if (!isLinear) {

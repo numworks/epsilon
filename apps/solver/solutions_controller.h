@@ -14,6 +14,7 @@
 #include <escher/tab_view_controller.h>
 #include <escher/table_view_data_source.h>
 #include <ion.h>
+#include <poincare/helpers/symbol.h>
 
 #include "equation_store.h"
 #include "system_of_equations.h"
@@ -182,8 +183,7 @@ class SolutionsController : public Escher::ViewController,
    * cell is not too wide. */
   constexpr static int k_symbolCellWidth =
       KDFont::GlyphWidth(k_solutionsFont) *
-          (Poincare::SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks +
-           2) +
+          (Poincare::SymbolHelper::k_maxNameLengthWithoutQuotationMarks + 2) +
       2 * Escher::AbstractEvenOddBufferTextCell::k_horizontalMargin;
   constexpr static int k_valueCellWidth = Ion::Display::Width -
                                           k_symbolCellWidth -

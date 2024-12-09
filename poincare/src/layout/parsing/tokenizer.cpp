@@ -2,6 +2,7 @@
 
 #include <omg/unicode_helper.h>
 #include <omg/utf8_helper.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/src/expression/aliases.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
@@ -26,7 +27,7 @@ bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
   Token t = tokenizer.popToken();
   if (t.type() != Token::Type::CustomIdentifier ||
       t.length() != decoder.end() - decoder.start() ||
-      !SymbolAbstractNode::NameLengthIsValid(t.text(), t.length())) {
+      !SymbolHelper::NameLengthIsValid(t.text(), t.length())) {
     return false;
   }
   return true;
@@ -498,7 +499,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   bool hasUnitOnlyCodePoint = HasCodePoint(span, UCodePointDegreeSign) ||
                               HasCodePoint(span, '\'') ||
                               HasCodePoint(span, '"');
-  char string[Symbol::k_maxNameSize];
+  char string[SymbolHelper::k_maxNameSize];
   LayoutSpanDecoder decoder(span);
   decoder.printInBuffer(string, std::size(string));
   if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "

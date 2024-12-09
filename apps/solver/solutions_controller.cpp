@@ -7,7 +7,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/symbol.h>
-#include <poincare/old/symbol_abstract.h>
 #include <poincare/preferences.h>
 
 #include <algorithm>
@@ -337,7 +336,7 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
      * if it has quotation marks, in which case it can have up to 9
      * chars, including the quotation marks). */
     constexpr size_t k_maxSize =
-        SymbolAbstractNode::k_maxNameLengthWithoutQuotationMarks + 1;
+        SymbolHelper::k_maxNameLengthWithoutQuotationMarks + 1;
     constexpr size_t bufferSize = k_maxSize + 2;
     char bufferSymbol[bufferSize];
     if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
@@ -346,13 +345,13 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
         /* The system has more than one variable: the cell text is the
          * variable name */
         const char* varName = system->variable(row);
-        SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
-                                                      varName, strlen(varName));
+        SymbolHelper::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
+                                                varName, strlen(varName));
       } else {
         /* The system has one variable but might have many solutions: the cell
          * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
         const char* varName = system->variable(0);
-        size_t length = SymbolAbstractNode::NameWithoutQuotationMarks(
+        size_t length = SymbolHelper::NameWithoutQuotationMarks(
             bufferSymbol, bufferSize, varName, strlen(varName));
         length += OMG::Print::IntLeft(row + 1, bufferSymbol + length,
                                       bufferSize - length);
@@ -363,8 +362,8 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
       assert(rowOfUserVariablesMessage >= 0);
       const char* varName =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
-      SymbolAbstractNode::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
-                                                    varName, strlen(varName));
+      SymbolHelper::NameWithoutQuotationMarks(bufferSymbol, bufferSize, varName,
+                                              strlen(varName));
     }
     static_cast<AbstractEvenOddBufferTextCell*>(cell)->setText(bufferSymbol);
   }

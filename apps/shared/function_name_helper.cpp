@@ -111,7 +111,7 @@ bool ParametricComponentsNameError(UserExpression expression,
     // The user is not defining a parametric function
     return false;
   }
-  constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+  constexpr size_t bufferSize = SymbolHelper::k_maxNameSize;
   char functionName[bufferSize];
   assert(function.isUserFunction());
   strlcpy(functionName, SymbolHelper::GetName(function), bufferSize);

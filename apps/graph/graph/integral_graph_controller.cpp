@@ -1,6 +1,7 @@
 #include "integral_graph_controller.h"
 
 #include <assert.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/layout.h>
 #include <stdlib.h>
 
@@ -45,7 +46,7 @@ Layout IntegralGraphController::createFunctionLayout() {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(selectedRecord());
   constexpr size_t bufferSize =
-      Poincare::SymbolAbstractNode::k_maxNameSize + 5;  // f(x)dx
+      Poincare::SymbolHelper::k_maxNameSize + 5;  // f(x)dx
   char buffer[bufferSize];
   const char* dx = "dx";
   size_t numberOfChars =

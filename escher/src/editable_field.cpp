@@ -3,7 +3,7 @@
 #include <escher/metric.h>
 #include <escher/toolbox.h>
 #include <omg/utf8_helper.h>
-#include <poincare/old/symbol.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/xnt.h>
 
 using namespace Poincare;
@@ -30,7 +30,7 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
   if (!prepareToEdit()) {
     return false;
   }
-  constexpr int bufferSize = SymbolAbstractNode::k_maxNameSize;
+  constexpr int bufferSize = SymbolHelper::k_maxNameSize;
   char buffer[bufferSize];
   size_t cycleSize;
   // Find special XNT

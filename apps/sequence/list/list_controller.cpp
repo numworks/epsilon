@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <assert.h>
+#include <poincare/helpers/symbol.h>
 
 #include <algorithm>
 
@@ -136,7 +137,7 @@ bool ListController::isAcceptableExpression(const UserExpression expression,
 void ListController::computeTitlesColumnWidth(bool forceMax) {
   if (forceMax) {
     m_titlesColumnWidth =
-        nameWidth(Poincare::SymbolAbstractNode::k_maxNameLength +
+        nameWidth(Poincare::SymbolHelper::k_maxNameLength +
                   Shared::Function::k_parenthesedArgumentCodePointLength) +
         k_functionTitleSumOfMargins;
     return;

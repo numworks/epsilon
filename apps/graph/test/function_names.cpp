@@ -1,6 +1,7 @@
 #include <apps/shared/function_name_helper.h>
 #include <apps/shared/global_context.h>
 #include <poincare/code_points.h>
+#include <poincare/helpers/symbol.h>
 #include <quiz.h>
 
 #include <cmath>
@@ -18,7 +19,7 @@ constexpr CodePoint k_polarSymbol = Poincare::CodePoints::k_polarSymbol;
 
 void assert_default_name_for_symbol_is(CodePoint symbol,
                                        const char* expectedName) {
-  constexpr size_t bufferSize = Poincare::SymbolAbstractNode::k_maxNameLength;
+  constexpr size_t bufferSize = Poincare::SymbolHelper::k_maxNameLength;
   char buffer[bufferSize];
   FunctionNameHelper::DefaultName(buffer, bufferSize, symbol);
   quiz_assert(strcmp(expectedName, buffer) == 0);

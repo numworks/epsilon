@@ -157,10 +157,10 @@ void MathVariableBoxController::fillCellForRow(HighlightCell* cell, int row) {
   if (m_currentPage == Page::Expression || m_currentPage == Page::List ||
       m_currentPage == Page::Matrix) {
     static_assert(Shared::Function::k_maxNameWithArgumentSize >
-                      SymbolAbstractNode::k_maxNameSize,
+                      SymbolHelper::k_maxNameSize,
                   "Forgot argument's size?");
-    symbolLength = record.nameWithoutExtension(
-        symbolName, SymbolAbstractNode::k_maxNameSize);
+    symbolLength =
+        record.nameWithoutExtension(symbolName, SymbolHelper::k_maxNameSize);
   } else if (m_currentPage == Page::Function) {
     CodePoint symbol = UCodePointNull;
     if (record.hasExtension(Storage::functionExtension)) {
@@ -447,7 +447,7 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
       return false;
     }
     bool isParametricFunction = false;
-    constexpr size_t bufferSize = SymbolAbstractNode::k_maxNameSize;
+    constexpr size_t bufferSize = SymbolHelper::k_maxNameSize;
     char buffer[bufferSize];
     size_t length = 0;
     if (record.hasExtension(Storage::functionExtension)) {

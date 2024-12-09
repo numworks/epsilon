@@ -25,50 +25,6 @@ bool PoolLayoutCursor::beautifyRightOfRack(Rack* rack,
   return ctx.m_shouldRedraw;
 }
 
-void PoolLayoutCursor::addEmptyExponentialLayout(Poincare::Context* context) {
-  insertLayout("e"_l ^ KSuperscriptL(""_l), context, false, false);
-}
-
-void PoolLayoutCursor::addEmptyLogarithmWithBase10Layout(
-    Poincare::Context* context) {
-  const Tree* l =
-      Preferences::SharedPreferences()->logarithmBasePosition() ==
-              Preferences::LogarithmBasePosition::TopLeft
-          ? KPrefixSuperscriptL("10"_l) ^ "log"_l ^ KParenthesesRightTempL(""_l)
-          : "log"_l ^ KSubscriptL("10"_l) ^ KParenthesesRightTempL(""_l);
-  insertLayout(l, context, false, false);
-}
-
-void PoolLayoutCursor::addEmptyTenPowerLayout(Poincare::Context* context) {
-  insertLayout("×10"_l ^ KSuperscriptL(""_l), context, false, false);
-}
-
-void PoolLayoutCursor::addEmptyMatrixLayout(Poincare::Context* context) {
-  insertLayout(KEmptyMatrixL, context, false, false);
-}
-
-void PoolLayoutCursor::addEmptySquareRootLayout(Poincare::Context* context) {
-  insertLayout(KSqrtL(""_l), context, false, false);
-}
-
-void PoolLayoutCursor::addEmptyPowerLayout(Poincare::Context* context) {
-  insertLayout(KSuperscriptL(""_l), context, false, false);
-}
-
-void PoolLayoutCursor::addEmptySquarePowerLayout(Poincare::Context* context) {
-  /* Force the cursor right of the layout. */
-  insertLayout(KSuperscriptL("2"_l), context, true, false);
-}
-
-void PoolLayoutCursor::addFractionLayoutAndCollapseSiblings(
-    Poincare::Context* context) {
-  insertLayout(KFracL(""_l, ""_l), context, false, false);
-}
-
-void PoolLayoutCursor::addMixedFractionLayout(Poincare::Context* context) {
-  insertLayout(KFracL(""_l, ""_l), context, false, true, false);
-}
-
 void PoolLayoutCursor::applyTreeStackCursor(TreeStackCursor cursor) {
   m_position = cursor.m_position;
   m_startOfSelection = cursor.m_startOfSelection;

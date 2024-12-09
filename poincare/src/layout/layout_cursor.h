@@ -154,7 +154,25 @@ class TreeCursor final : public LayoutCursor {
   Rack* m_cursor;
 };
 
-class TreeStackCursor final : public LayoutCursor {
+template <class Cursor>
+class AddEmptyLayoutHelpers {
+  void insertLayout(const Tree* l, Poincare::Context* context, bool forceRight,
+                    bool forceLeft, bool collapseSiblings = true);
+
+ public:
+  void addEmptyMatrixLayout(Poincare::Context* context);
+  void addEmptyPowerLayout(Poincare::Context* context);
+  void addEmptySquareRootLayout(Poincare::Context* context);
+  void addEmptySquarePowerLayout(Poincare::Context* context);
+  void addEmptyExponentialLayout(Poincare::Context* context);
+  void addEmptyLogarithmWithBase10Layout(Poincare::Context* context);
+  void addEmptyTenPowerLayout(Poincare::Context* context);
+  void addFractionLayoutAndCollapseSiblings(Poincare::Context* context);
+  void addMixedFractionLayout(Poincare::Context* context);
+};
+
+class TreeStackCursor final : public LayoutCursor,
+                              public AddEmptyLayoutHelpers<TreeStackCursor> {
   friend class PoolLayoutCursor;
   friend class InputBeautification;
 
@@ -227,7 +245,8 @@ class TreeStackCursor final : public LayoutCursor {
   TreeRef m_cursorRackRef;
 };
 
-class PoolLayoutCursor final : public LayoutCursor {
+class PoolLayoutCursor final : public LayoutCursor,
+                               public AddEmptyLayoutHelpers<PoolLayoutCursor> {
  public:
   /* This constructor either set the cursor at the leftMost or rightmost
    * position in the cursorNode. */
@@ -252,15 +271,6 @@ class PoolLayoutCursor final : public LayoutCursor {
   Rack* cursorRack() const override { return rootRack() + m_cursorRack; }
 
   /* Layout insertion */
-  void addEmptyMatrixLayout(Poincare::Context* context);
-  void addEmptyPowerLayout(Poincare::Context* context);
-  void addEmptySquareRootLayout(Poincare::Context* context);
-  void addEmptySquarePowerLayout(Poincare::Context* context);
-  void addEmptyExponentialLayout(Poincare::Context* context);
-  void addEmptyLogarithmWithBase10Layout(Poincare::Context* context);
-  void addEmptyTenPowerLayout(Poincare::Context* context);
-  void addFractionLayoutAndCollapseSiblings(Poincare::Context* context);
-  void addMixedFractionLayout(Poincare::Context* context);
   void insertText(const char* text, Poincare::Context* context = nullptr,
                   bool forceRight = false, bool forceLeft = false,
                   bool linearMode = false) {

@@ -116,7 +116,7 @@ const Internal::Tree* GlobalContext::expressionForSymbolAbstract(
   return expressionForSymbolAndRecord(symbol, r);
 }
 
-bool GlobalContext::setExpressionForSymbolAbstract(
+bool GlobalContext::setExpressionForUserNamed(
     const Internal::Tree* expressionTree, const Internal::Tree* symbolTree) {
   assert(symbolTree->isUserNamed());
   UserExpression expression = UserExpression::Builder(expressionTree);

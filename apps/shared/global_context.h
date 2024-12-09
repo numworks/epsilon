@@ -55,7 +55,7 @@ class GlobalContext final : public Poincare::Context {
    * Otherwise, we would need the context and the angle unit to evaluate it */
   SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
                                                  int length) override;
-  bool setExpressionForSymbolAbstract(
+  bool setExpressionForUserNamed(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
   static OMG::GlobalBox<SequenceStore> s_sequenceStore;

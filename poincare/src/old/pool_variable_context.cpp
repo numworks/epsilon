@@ -22,7 +22,7 @@ Context::SymbolAbstractType PoolVariableContext::expressionTypeForIdentifier(
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
-bool PoolVariableContext::setExpressionForSymbolAbstract(
+bool PoolVariableContext::setExpressionForUserNamed(
     const Internal::Tree* expression, const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
@@ -33,7 +33,7 @@ bool PoolVariableContext::setExpressionForSymbolAbstract(
     m_value = Expression::Builder(expression->cloneTree());
     return true;
   }
-  return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
+  return ContextWithParent::setExpressionForUserNamed(expression, symbol);
 }
 
 const Internal::Tree* PoolVariableContext::expressionForSymbolAbstract(

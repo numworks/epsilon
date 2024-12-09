@@ -26,7 +26,7 @@ bool StoreHelper::StoreValueForSymbol(Context* context,
                                       const SymbolAbstract& symbol) {
   assert(!value.isUninitialized());
   assert(symbol.isUserSymbol() || symbol.isUserFunction());
-  return context->setExpressionForSymbolAbstract(value, symbol);
+  return context->setExpressionForUserNamed(value, symbol);
 }
 
 }  // namespace Poincare

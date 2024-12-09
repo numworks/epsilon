@@ -379,7 +379,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         PoolVariableContext(Shared::Function::k_unknownName, context);
     UserExpression abscissaExpression =
         UserExpression::DecimalBuilderFromDouble(abscissa);
-    abscissaContext.setExpressionForSymbolAbstract(
+    abscissaContext.setExpressionForUserNamed(
         abscissaExpression,
         Symbol::Builder(Shared::Function::k_unknownName,
                         strlen(Shared::Function::k_unknownName)));

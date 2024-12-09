@@ -17,8 +17,8 @@ class EmptyContext : public Context {
                                                  int length) override {
     return SymbolAbstractType::None;
   }
-  bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
-                                      const Internal::Tree* symbol) override {
+  bool setExpressionForUserNamed(const Internal::Tree* expression,
+                                 const Internal::Tree* symbol) override {
     assert(false);
     return false;
   }

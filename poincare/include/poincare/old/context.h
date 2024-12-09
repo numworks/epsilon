@@ -30,8 +30,8 @@ class Context {
   virtual const Internal::Tree* expressionForSymbolAbstract(
       const Internal::Tree* symbol) = 0;
 
-  virtual bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
-                                              const Internal::Tree* symbol) = 0;
+  virtual bool setExpressionForUserNamed(const Internal::Tree* expression,
+                                         const Internal::Tree* symbol) = 0;
   virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}
   virtual bool canRemoveUnderscoreToUnits() const { return true; }
 

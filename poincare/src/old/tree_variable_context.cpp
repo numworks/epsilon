@@ -17,7 +17,7 @@ Context::SymbolAbstractType TreeVariableContext::expressionTypeForIdentifier(
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
-bool TreeVariableContext::setExpressionForSymbolAbstract(
+bool TreeVariableContext::setExpressionForUserNamed(
     const Internal::Tree* expression, const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
@@ -28,7 +28,7 @@ bool TreeVariableContext::setExpressionForSymbolAbstract(
     m_value = expression;
     return true;
   }
-  return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
+  return ContextWithParent::setExpressionForUserNamed(expression, symbol);
 }
 
 const Internal::Tree* TreeVariableContext::expressionForSymbolAbstract(

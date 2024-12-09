@@ -24,10 +24,10 @@ class ContextWithParent : public Context {
     assert(m_parentContext);
     return m_parentContext->expressionTypeForIdentifier(identifier, length);
   }
-  bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
-                                      const Internal::Tree* symbol) override {
+  bool setExpressionForUserNamed(const Internal::Tree* expression,
+                                 const Internal::Tree* symbol) override {
     assert(m_parentContext);
-    return m_parentContext->setExpressionForSymbolAbstract(expression, symbol);
+    return m_parentContext->setExpressionForUserNamed(expression, symbol);
   }
 
  private:

@@ -561,7 +561,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   for (int i = 0; i < n; i++) {
     solutionContexts[i] = VariableContext(
         variable(i), i == 0 ? context : &solutionContexts[i - 1]);
-    solutionContexts[i].setExpressionForSymbolAbstract(
+    solutionContexts[i].setExpressionForUserNamed(
         ab.matrixChild(i, n),
         Symbol::Builder(variable(i), strlen(variable(i))));
   }
@@ -638,7 +638,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
      * we need to handle them now. */
     if (simplifiedEquations[0].isDep()) {
       VariableContext contextWithSolution(variable(0), context);
-      contextWithSolution.setExpressionForSymbolAbstract(
+      contextWithSolution.setExpressionForUserNamed(
           x[i], Symbol::Builder(variable(0), strlen(variable(0))));
       ReductionContext reductionContextWithSolution = reductionContext;
       reductionContextWithSolution.setContext(&contextWithSolution);

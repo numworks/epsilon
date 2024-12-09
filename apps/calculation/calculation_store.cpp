@@ -278,8 +278,7 @@ bool CalculationStore::preferencesHaveChanged() {
 
 PoolVariableContext CalculationStore::createAnsContext(Context* context) {
   PoolVariableContext ansContext(SymbolHelper::AnsMainAlias(), context);
-  ansContext.setExpressionForSymbolAbstract(ansExpression(context),
-                                            Symbol::Ans());
+  ansContext.setExpressionForUserNamed(ansExpression(context), Symbol::Ans());
   return ansContext;
 }
 

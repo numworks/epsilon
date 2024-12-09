@@ -1,3 +1,16 @@
+EADK_EXPECTED_CRC := 26852e98
+
+# Compute crc of eadk.h if the crc32 command exists (on devs machines for instance)
+EADK_CRC := $(shell if command -v crc32 &>/dev/null; then crc32 $(PATH_eadk)/include/eadk/eadk.h ; else echo $(EADK_EXPECTED_CRC) ; fi)
+
+ifneq ($(EADK_CRC),$(EADK_EXPECTED_CRC))
+
+$(info eadk.h has changed, nwlink should be updated)
+$(info Update flags and ASYNCIFY_IMPORTS in nwlink/src/index.js if API has changed)
+$(info Change EADK_EXPECTED_CRC to $(EADK_CRC) to silence this message.)
+
+endif
+
 ifeq ($(PLATFORM_TYPE),simulator)
 
 # Functions to be exported in the dynamic symbol table

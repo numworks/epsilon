@@ -34,7 +34,7 @@ void ExpressionModel::text(const Storage::Record* record, char* buffer,
     return;
   }
   if (symbol != 0) {
-    e = e.replaceUnknownWithSymbol(symbol);
+    e.replaceUnknownWithSymbol(symbol);
   }
   size_t serializedSize = e.serialize(buffer, bufferSize);
   if (serializedSize >= bufferSize - 1) {
@@ -148,7 +148,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
     assert(record->fullName() != nullptr);
     UserExpression clone = ExpressionModel::expressionClone(record);
     if (!clone.isUninitialized() && symbol != 0) {
-      clone = clone.replaceUnknownWithSymbol(symbol);
+      clone.replaceUnknownWithSymbol(symbol);
     }
     m_layout = PoincareHelpers::CreateLayout(
         clone, Escher::App::app()->localContext());
@@ -241,8 +241,7 @@ Poincare::UserExpression ExpressionModel::buildExpressionFromLayout(
 Poincare::UserExpression ExpressionModel::ReplaceSymbolWithUnknown(
     Poincare::UserExpression e, CodePoint symbol, bool onlySecondTerm) {
   if (!e.isUninitialized() && symbol != 0) {
-    return e.replaceSymbolWithUnknown(JuniorSymbol::Builder(symbol),
-                                      onlySecondTerm);
+    e.replaceSymbolWithUnknown(JuniorSymbol::Builder(symbol), onlySecondTerm);
   }
   return e;
 }

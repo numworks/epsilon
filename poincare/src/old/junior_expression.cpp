@@ -660,13 +660,13 @@ Ion::Storage::Record::ErrorStatus UserExpression::storeWithNameAndExtension(
       baseName, extension, addressInPool(), size(), true);
 }
 
-NewExpression NewExpression::replaceSymbolWithExpression(
+bool NewExpression::replaceSymbolWithExpression(
     const JuniorSymbolAbstract& symbol, const NewExpression& expression,
     bool onlySecondTerm) {
   /* TODO_PCJ: Handle functions and sequences as well. See
    * replaceSymbolWithExpression implementations. */
   if (isUninitialized()) {
-    return *this;
+    return false;
   }
   assert(symbol.tree()->isUserNamed());
   Tree* result = tree()->cloneTree();
@@ -676,19 +676,20 @@ NewExpression NewExpression::replaceSymbolWithExpression(
           expression.tree())) {
     NewExpression res = Builder(result);
     replaceWithInPlace(res);
-    return res;
+    *this = res;
+    return true;
   }
   result->removeTree();
-  return *this;
+  return false;
 }
 
-NewExpression NewExpression::replaceSymbolWithUnknown(
-    const JuniorSymbolAbstract& symbol, bool onlySecondTerm) {
+bool NewExpression::replaceSymbolWithUnknown(const JuniorSymbolAbstract& symbol,
+                                             bool onlySecondTerm) {
   return replaceSymbolWithExpression(symbol, JuniorSymbol::SystemSymbol(),
                                      onlySecondTerm);
 }
 
-NewExpression NewExpression::replaceUnknownWithSymbol(CodePoint symbol) {
+bool NewExpression::replaceUnknownWithSymbol(CodePoint symbol) {
   return replaceSymbolWithExpression(JuniorSymbol::SystemSymbol(),
                                      JuniorSymbol::Builder(symbol));
 }

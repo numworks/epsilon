@@ -57,14 +57,14 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       name, Poincare::NewExpression::Builder(sequence->initialRank()));
   Poincare::SystemExpression initialExpression =
       sequence->firstInitialConditionExpressionReduced(context);
-  function =
-      function.replaceSymbolWithExpression(initialSymbol, initialExpression);
+  function.replaceSymbolWithExpression(initialSymbol, initialExpression);
 
   // Replace u(n) by n: u(n) becomes the variable
   Poincare::JuniorSequence sequenceSymbol = Poincare::JuniorSequence::Builder(
       name, Poincare::JuniorSymbol::SystemSymbol());
+  function.replaceSymbolWithUnknown(sequenceSymbol);
   function =
-      function.replaceSymbolWithUnknown(sequenceSymbol)
+      function
           .cloneAndReduce(
               {App::app()->localContext(),
                Poincare::Preferences::SharedPreferences()->complexFormat(),

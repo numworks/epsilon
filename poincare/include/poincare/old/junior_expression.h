@@ -291,12 +291,12 @@ class JuniorExpression : public PoolHandle {
   Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
       const char* baseName, const char* extension) const;
 
-  NewExpression replaceSymbolWithExpression(const JuniorSymbolAbstract& symbol,
-                                            const NewExpression& expression,
-                                            bool onlySecondTerm = false);
-  NewExpression replaceSymbolWithUnknown(const JuniorSymbolAbstract& symbol,
-                                         bool onlySecondTerm = false);
-  NewExpression replaceUnknownWithSymbol(CodePoint symbol);
+  bool replaceSymbolWithExpression(const JuniorSymbolAbstract& symbol,
+                                   const NewExpression& expression,
+                                   bool onlySecondTerm = false);
+  bool replaceSymbolWithUnknown(const JuniorSymbolAbstract& symbol,
+                                bool onlySecondTerm = false);
+  bool replaceUnknownWithSymbol(CodePoint symbol);
 
   bool replaceSymbols(Poincare::Context* context,
                       SymbolicComputation symbolic =

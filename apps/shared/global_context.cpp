@@ -61,8 +61,8 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
       symbol = CodePoints::k_cartesianSymbol;
     }
     UserExpression expression =
-        Expression::Builder(ExpressionForUserFunction(record))
-            .replaceUnknownWithSymbol(symbol);
+        Expression::Builder(ExpressionForUserFunction(record));
+    expression.replaceUnknownWithSymbol(symbol);
     return PoincareHelpers::CreateLayout(expression, context);
   } else {
     assert(record.hasExtension(Ion::Storage::sequenceExtension));
@@ -128,8 +128,8 @@ bool GlobalContext::setExpressionForUserNamed(
   if (e.isUninitialized()) {
     e = Undefined::Builder();
   }
-  UserExpression finalExpression =
-      expression.clone().replaceSymbolWithExpression(symbol, e);
+  UserExpression finalExpression = expression.clone();
+  finalExpression.replaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.isUserSymbol()) {
@@ -138,7 +138,7 @@ bool GlobalContext::setExpressionForUserNamed(
   }
   const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
   assert(symbol.isUserFunction() && childSymbol.isUserSymbol());
-  finalExpression = finalExpression.replaceSymbolWithUnknown(
+  finalExpression.replaceSymbolWithUnknown(
       static_cast<const JuniorSymbol&>(childSymbol));
   JuniorFunction symbolToStore = static_cast<const JuniorFunction&>(symbol);
   if (!(SymbolHelper::IsSymbol(childSymbol, CodePoints::k_cartesianSymbol) ||

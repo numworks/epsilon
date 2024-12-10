@@ -93,7 +93,8 @@ UserExpression CalculationStore::replaceAnsInExpression(
     UserExpression expression, Context* context) const {
   JuniorSymbol ansSymbol = JuniorSymbol::Ans();
   UserExpression ansExpression = this->ansExpression(context);
-  return expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
+  expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
+  return expression;
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(

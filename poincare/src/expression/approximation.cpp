@@ -220,40 +220,6 @@ Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
   return clone;
 }
 
-// Merge float children and preserve order
-template <typename T>
-static void MergeChildrenOfMultAndAdd(Tree* e) {
-  assert(e->isMult() || e->isAdd());
-  T merge = (e->isMult() ? 1 : 0);
-  int lastFloatIndex = -1;
-  int n = e->numberOfChildren();
-  int i = 0;
-  Tree* child = e->nextNode();
-  while (i < n) {
-    if (child->isMult() || child->isAdd()) {
-      MergeChildrenOfMultAndAdd<T>(child);
-    }
-    if (child->isFloat()) {
-      T childValue = child->isSingleFloat() ? FloatHelper::FloatTo(child)
-                                            : FloatHelper::DoubleTo(child);
-      merge = (e->isMult() ? merge * childValue : merge + childValue);
-      lastFloatIndex = i;
-      child->removeTree();
-      n--;
-      NAry::SetNumberOfChildren(e, n);
-    } else {
-      child = child->nextTree();
-      i++;
-    }
-  }
-  if (lastFloatIndex != -1) {
-    /* To preserve order, push the merged children at an index where there was a
-     * float */
-    NAry::AddChildAtIndex(e, SharedTreeStack->pushFloat(merge), lastFloatIndex);
-    NAry::SquashIfPossible(e);
-  }
-}
-
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
   /* TODO_PCJ: not all approximation methods come here, but this assert should
@@ -266,9 +232,6 @@ Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
     // Preserve units and only replace scalar values.
     Tree* result = e->cloneTree();
     PrivateApproximateAndReplaceEveryScalar<T>(result, ctx);
-    if (result->isMult() || result->isAdd()) {
-      MergeChildrenOfMultAndAdd<T>(result);
-    }
     return result;
   }
   if (dim.isScalar()) {
@@ -1471,6 +1434,38 @@ bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
 }
 
 template <typename T>
+static bool MergeChildrenOfMultOrAdd(Tree* e) {
+  assert(e->isMult() || e->isAdd());
+  T merge = (e->isMult() ? 1 : 0);
+  int lastFloatIndex = -1;
+  int n = e->numberOfChildren();
+  int i = 0;
+  Tree* child = e->nextNode();
+  while (i < n) {
+    if (child->isFloat()) {
+      T childValue = child->isSingleFloat() ? FloatHelper::FloatTo(child)
+                                            : FloatHelper::DoubleTo(child);
+      merge = (e->isMult() ? merge * childValue : merge + childValue);
+      lastFloatIndex = i;
+      child->removeTree();
+      n--;
+      NAry::SetNumberOfChildren(e, n);
+    } else {
+      child = child->nextTree();
+      i++;
+    }
+  }
+  if (lastFloatIndex != -1) {
+    /* To preserve order, push the merged children at an index where there was a
+     * float */
+    NAry::AddChildAtIndex(e, SharedTreeStack->pushFloat(merge), lastFloatIndex);
+    NAry::SquashIfPossible(e);
+    return true;
+  }
+  return false;
+}
+
+template <typename T>
 bool Approximation::PrivateApproximateAndReplaceEveryScalar(
     Tree* e, const Context* ctx) {
   if (CanApproximate(e) &&
@@ -1488,7 +1483,10 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(
     }
     previousChildWasApproximated = child->isFloat();
   }
-  // TODO: Merge additions and multiplication's children if possible.
+  // Merge addition and multiplication's children while preserving order
+  if (e->isAdd() || e->isMult()) {
+    changed = MergeChildrenOfMultOrAdd<T>(e) || changed;
+  }
   return changed;
 }
 

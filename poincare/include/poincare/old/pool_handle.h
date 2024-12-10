@@ -147,10 +147,10 @@ class PoolHandle {
  protected:
   /* Constructor */
   PoolHandle(const PoolObject* node);
-  // Un-inlining this constructor actually inscreases the firmware size
-  PoolHandle(uint16_t nodeIndentifier = PoolObject::NoNodeIdentifier)
-      : m_identifier(nodeIndentifier) {
-    if (hasNode(nodeIndentifier)) {
+  // Un-inlining this constructor actually increases the firmware size
+  PoolHandle(uint16_t nodeIdentifier = PoolObject::NoNodeIdentifier)
+      : m_identifier(nodeIdentifier) {
+    if (hasNode(nodeIdentifier)) {
       object()->retain();
     }
   }

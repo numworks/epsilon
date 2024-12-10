@@ -175,9 +175,8 @@ class InputStoreController : public InputCategoricalController,
    * distinct dataset selection page. This is used only for some test categories
    * (e.g. TwoMeansTest). */
   PageIndex m_pageIndex;
-  /* This member variable stores the address of another InputStoreController
-   * instance so that we can set m_nextController to point to it when needed. */
   InputStoreController* m_nextInputStoreController;
+  ViewController* m_nextOtherController;
 };
 
 }  // namespace Inference

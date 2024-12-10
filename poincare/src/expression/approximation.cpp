@@ -1436,7 +1436,7 @@ bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
 template <typename T>
 static bool MergeChildrenOfMultOrAdd(Tree* e) {
   assert(e->isMult() || e->isAdd());
-  T merge = (e->isMult() ? 1 : 0);
+  T merge = (e->isMult() ? 1.0 : 0.0);
   int lastFloatIndex = -1;
   int n = e->numberOfChildren();
   int i = 0;

@@ -1,4 +1,3 @@
-#include <poincare/old/float.h>
 #include <poincare/old/float_list.h>
 #include <poincare/src/memory/tree.h>
 

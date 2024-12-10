@@ -1,6 +1,5 @@
 #include <omg/memory.h>
 #include <poincare/old/ghost.h>
-#include <poincare/old/poincare_expressions.h>
 #include <poincare/old/pool_handle.h>
 #if POINCARE_TREE_LOG
 #include <iostream>
@@ -323,49 +322,5 @@ void PoolHandle::release(uint16_t identifier) {
   assert(node->identifier() == identifier);
   node->release(node->numberOfChildren());
 }
-
-template Addition PoolHandle::NAryBuilder<Addition, AdditionNode>(
-    const Tuple &);
-template ComplexCartesian PoolHandle::FixedArityBuilder<
-    ComplexCartesian, ComplexCartesianNode>(const Tuple &);
-template Dependency PoolHandle::FixedArityBuilder<Dependency, DependencyNode>(
-    const Tuple &);
-template Derivative PoolHandle::FixedArityBuilder<Derivative, DerivativeNode>(
-    const Tuple &);
-template DistributionDispatcher PoolHandle::NAryBuilder<
-    DistributionDispatcher, DistributionDispatcherNode>(const Tuple &);
-template EmptyExpression PoolHandle::FixedArityBuilder<
-    EmptyExpression, EmptyExpressionNode>(const Tuple &);
-template FloatList<double> PoolHandle::NAryBuilder<FloatList<double>, ListNode>(
-    const Tuple &);
-template FloatList<float> PoolHandle::NAryBuilder<FloatList<float>, ListNode>(
-    const Tuple &);
-template Ghost PoolHandle::FixedArityBuilder<Ghost, GhostNode>(const Tuple &);
-template Integral PoolHandle::FixedArityBuilder<Integral, IntegralNode>(
-    const Tuple &);
-template OList PoolHandle::NAryBuilder<OList, ListNode>(const Tuple &);
-template ListComplex<double> PoolHandle::NAryBuilder<
-    ListComplex<double>, ListComplexNode<double>>(const Tuple &);
-template ListComplex<float> PoolHandle::NAryBuilder<
-    ListComplex<float>, ListComplexNode<float>>(const Tuple &);
-template OMatrix PoolHandle::NAryBuilder<OMatrix, MatrixNode>(const Tuple &);
-template MatrixComplex<double> PoolHandle::NAryBuilder<
-    MatrixComplex<double>, MatrixComplexNode<double>>(const Tuple &);
-template MatrixComplex<float> PoolHandle::NAryBuilder<
-    MatrixComplex<float>, MatrixComplexNode<float>>(const Tuple &);
-template Multiplication
-PoolHandle::NAryBuilder<Multiplication, MultiplicationNode>(const Tuple &);
-template Opposite PoolHandle::FixedArityBuilder<Opposite, OppositeNode>(
-    const Tuple &);
-template Parenthesis
-PoolHandle::FixedArityBuilder<Parenthesis, ParenthesisNode>(const Tuple &);
-template PiecewiseOperator PoolHandle::NAryBuilder<
-    PiecewiseOperator, PiecewiseOperatorNode>(const Tuple &);
-template Subtraction
-PoolHandle::FixedArityBuilder<Subtraction, SubtractionNode>(const Tuple &);
-template OUndefined PoolHandle::FixedArityBuilder<OUndefined, UndefinedNode>(
-    const Tuple &);
-template Nonreal PoolHandle::FixedArityBuilder<Nonreal, NonrealNode>(
-    const Tuple &);
 
 }  // namespace Poincare

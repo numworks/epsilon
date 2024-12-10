@@ -3,7 +3,6 @@
 
 // clang-format off
 // Force the include order
-#include <poincare/old/old_expression.h>
 #include <poincare/old/junior_expression.h>
 // clang-format on
 

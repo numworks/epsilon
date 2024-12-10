@@ -6,8 +6,6 @@
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <omg/utf8_helper.h>
-#include <poincare/old/aliases_list.h>
-#include <poincare/old/parametered_expression.h>
 #include <poincare/xnt.h>
 
 #include <algorithm>

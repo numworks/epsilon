@@ -8,7 +8,6 @@ _sources_poincare_minimal := $(addprefix src/, \
   print_float.cpp \
   sign.cpp \
   old/integer.cpp \
-  old/serialization_helper.cpp \
   old/pool_handle.cpp \
   old/pool_object.cpp \
   old/pool.cpp \
@@ -31,94 +30,13 @@ _sources_poincare_storage := $(addprefix src/, \
 
 _sources_poincare_extended := $(addprefix src/, \
 $(addprefix old/, \
-  absolute_value.cpp \
-  addition.cpp \
-  aliases_list.cpp \
-  approximation_helper.cpp \
-  arc_tangent.cpp \
-  arithmetic.cpp \
-  array.cpp \
-  based_integer.cpp \
-  binomial_coefficient.cpp \
-  boolean.cpp \
-  ceiling.cpp \
-  comparison.cpp \
-  complex.cpp \
-  complex_argument.cpp \
-  complex_cartesian.cpp \
   computation_context.cpp \
-  conjugate.cpp \
-  constant.cpp \
   context.cpp \
-  cosine.cpp \
-  cotangent.cpp \
-  decimal.cpp \
-  dependency.cpp \
-  derivative.cpp \
-  determinant.cpp \
-  dimension.cpp \
-  distribution_dispatcher.cpp \
-  division.cpp \
   empty_context.cpp \
-  empty_expression.cpp \
-  evaluation.cpp \
-  expression.cpp \
-  expression_node.cpp \
-  expression_node_properties.cpp \
-  float.cpp \
   float_list.cpp \
-  floor.cpp \
-  frac_part.cpp \
-  function.cpp \
-  imaginary_part.cpp \
-  infinity.cpp \
-  integral.cpp \
   junior_expression.cpp \
-  list.cpp \
-  list_complex.cpp \
-  logarithm.cpp \
-  logical_operator.cpp \
-  matrix.cpp \
-  matrix_complex.cpp \
-  matrix_inverse.cpp \
-  multiplication.cpp \
-  n_ary_expression.cpp \
-  n_ary_infix_expression.cpp \
-  naperian_logarithm.cpp \
-  nonreal.cpp \
-  nth_root.cpp \
-  number.cpp \
-  opposite.cpp \
-  parametered_expression.cpp \
-  parenthesis.cpp \
-  percent.cpp \
-  piecewise_operator.cpp \
-  point.cpp \
-  point_evaluation.cpp \
   pool_variable_context.cpp \
-  power.cpp \
-  randint.cpp \
-  randint_no_repeat.cpp \
-  random.cpp \
-  rational.cpp \
-  real_part.cpp \
-  rightwards_arrow_expression.cpp \
-  round.cpp \
-  sequence.cpp \
-  sign_function.cpp \
-  simplification_helper.cpp \
-  sine.cpp \
-  square_root.cpp \
-  store.cpp \
-  subtraction.cpp \
-  symbol.cpp \
-  symbol_abstract.cpp \
-  tangent.cpp \
   tree_variable_context.cpp \
-  trigonometry.cpp \
-  undefined.cpp \
-  unit.cpp \
-  unit_convert.cpp \
 ) \
 $(addprefix expression/, \
   advanced_operation.cpp \

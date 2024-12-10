@@ -11,7 +11,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/context.h>
-#include <poincare/old/parametered_expression.h>
 #include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>

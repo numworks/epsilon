@@ -1133,6 +1133,12 @@ bool Unit::HasAngleDimension(NewExpression expression) {
   assert(Internal::Dimension::DeepCheck(expression.tree()));
   return Internal::Dimension::Get(expression.tree()).isSimpleAngleUnit();
 }
+/* Undefined */
+
+Undefined Undefined::Builder() {
+  NewExpression e = NewExpression::Builder(KUndef);
+  return static_cast<Undefined&>(e);
+}
 
 /* NonReal */
 

@@ -192,11 +192,13 @@ class Integer final : public PoolHandle {
   static Integer Factorial(const Integer &i);
   static Integer RandomInt(const Integer &a, const Integer &b);
 
+#if 0
   // Derived expression builder
   static OExpression CreateEuclideanDivision(const Integer &num,
                                              const Integer &denom);
   static OExpression CreateMixedFraction(const Integer &num,
                                          const Integer &denom);
+#endif
 
   constexpr static int k_maxNumberOfDigits = 32;
 

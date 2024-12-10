@@ -1,14 +1,7 @@
 #include <ion.h>
 #include <omg/ieee754.h>
 #include <poincare/layout.h>
-#include <poincare/old/addition.h>
-#include <poincare/old/comparison.h>
-#include <poincare/old/division.h>
 #include <poincare/old/integer.h>
-#include <poincare/old/multiplication.h>
-#include <poincare/old/opposite.h>
-#include <poincare/old/serialization_helper.h>
-#include <poincare/old/subtraction.h>
 
 #include <cmath>
 #include <utility>
@@ -180,11 +173,11 @@ size_t Integer::serializeInDecimal(char *buffer, size_t bufferSize) const {
 
   size_t length = 0;
   if (isZero()) {
-    length += SerializationHelper::CodePoint(buffer + length,
-                                             bufferSize - length, '0');
+    length +=
+        UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length, '0');
   } else if (isNegative()) {
-    length += SerializationHelper::CodePoint(buffer + length,
-                                             bufferSize - length, '-');
+    length +=
+        UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length, '-');
   }
 
   while (!(d.remainder.isZero() && d.quotient.isZero())) {
@@ -198,7 +191,7 @@ size_t Integer::serializeInDecimal(char *buffer, size_t bufferSize) const {
           .CharLength;
     }
     length +=
-        SerializationHelper::CodePoint(buffer + length, bufferSize - length, c);
+        UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length, c);
     d = udiv(d.quotient, base);
   }
   assert(length <= bufferSize - 1);
@@ -221,16 +214,16 @@ size_t Integer::serializeInBinaryBase(char *buffer, size_t bufferSize,
     return bufferSize - 1;
   }
   // Fill buffer with "0x"
-  currentChar += SerializationHelper::CodePoint(buffer + currentChar,
-                                                bufferSize - currentChar, '0');
-  currentChar += SerializationHelper::CodePoint(
-      buffer + currentChar, bufferSize - currentChar, symbol);
+  currentChar += UTF8Helper::WriteCodePoint(buffer + currentChar,
+                                            bufferSize - currentChar, '0');
+  currentChar += UTF8Helper::WriteCodePoint(buffer + currentChar,
+                                            bufferSize - currentChar, symbol);
 
   int nbOfDigits = numberOfDigits();
   // Special case for 0
   if (nbOfDigits == 0) {
-    currentChar += SerializationHelper::CodePoint(
-        buffer + currentChar, bufferSize - currentChar, '0');
+    currentChar += UTF8Helper::WriteCodePoint(buffer + currentChar,
+                                              bufferSize - currentChar, '0');
     return currentChar;
   }
 

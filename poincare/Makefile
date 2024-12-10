@@ -37,7 +37,9 @@ POINCARE_variant = epsilon
 SFLAGS += \
   -Iion/include/ion/keyboard/epsilon \
   -DION_DISPLAY_WIDTH=1000 \
-  -DION_DISPLAY_HEIGHT=1000
+  -DION_DISPLAY_HEIGHT=1000 \
+  -DION_KEYBOARD_COLUMNS=6 \
+  -DION_KEYBOARD_ROWS=9
 
 $(call import_module,omg,omg)
 $(call import_module,kandinsky,kandinsky)

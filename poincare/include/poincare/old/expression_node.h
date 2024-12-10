@@ -242,7 +242,6 @@ class ExpressionNode : public PoolObject {
   /* Evaluation Helper */
   typedef float SinglePrecision;
   typedef double DoublePrecision;
-  constexpr static int k_maxNumberOfSteps = 10000;
   virtual Evaluation<float> approximate(
       SinglePrecision p,
       const ApproximationContext& approximationContext) const {

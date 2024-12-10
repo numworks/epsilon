@@ -185,8 +185,7 @@ UserExpression Sequence::sumBetweenBounds(double start, double end,
    * the approximation of u(n) is not handled by Poincare (but only by
    * Sequence). */
   double result = 0.0;
-  if (end - start > ExpressionNode::k_maxNumberOfSteps ||
-      start + 1.0 == start) {
+  if (end - start > k_maxNumberOfSteps || start + 1.0 == start) {
     return NewExpression::Builder<double>(NAN);
   }
   start = std::round(start);

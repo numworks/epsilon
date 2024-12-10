@@ -145,6 +145,7 @@ class Sequence : public Function {
 
  private:
   constexpr static KDFont::Size k_layoutFont = KDFont::Size::Large;
+  constexpr static int k_maxNumberOfSteps = 10000;
 
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Sequence. See comment in

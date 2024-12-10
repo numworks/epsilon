@@ -160,7 +160,7 @@ static void compareSolutions(SystemOfEquations* system,
         expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));
 #else
     quiz_assert(!expectedExpression.isUninitialized() &&
-                expectedExpression.isIdenticalToJunior(obtainedExpression));
+                expectedExpression.isIdenticalTo(obtainedExpression));
 #endif
 
     i++;

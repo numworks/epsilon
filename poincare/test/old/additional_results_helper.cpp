@@ -34,7 +34,7 @@ static inline void assert_generalizes_to_and_extract(const char* expression,
       AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(e, "x",
                                                                        &v);
   quiz_assert(value == v);
-  quiz_assert(g.isIdenticalToJunior(f));
+  quiz_assert(g.isIdenticalTo(f));
 }
 
 QUIZ_CASE(poincare_additional_results_generalization) {

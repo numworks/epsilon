@@ -39,7 +39,6 @@
 #include <poincare/old/sign_function.h>
 #include <poincare/old/square_root.h>
 #include <poincare/old/sum.h>
-#include <poincare/old/undefined.h>
 #include <poincare/old/unit.h>
 #include <poincare/old/vector_norm.h>
 

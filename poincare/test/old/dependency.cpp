@@ -1,5 +1,5 @@
 #include <ion/storage/file_system.h>
-#include <poincare/old/undefined.h>
+#include <poincare/old/junior_expression.h>
 
 #include "helper.h"
 

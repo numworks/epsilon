@@ -1,7 +1,6 @@
 #include <ion/storage/file_system.h>
 #include <poincare/old/derivative.h>
 #include <poincare/old/nonreal.h>
-#include <poincare/old/undefined.h>
 
 #include "helper.h"
 

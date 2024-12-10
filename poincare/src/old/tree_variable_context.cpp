@@ -1,5 +1,4 @@
 #include <poincare/old/tree_variable_context.h>
-#include <poincare/old/undefined.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/symbol.h>
 

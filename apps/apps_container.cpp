@@ -2,6 +2,7 @@
 
 #include <escher/clipboard.h>
 #include <ion.h>
+#include <omg/unreachable.h>
 #include <poincare/init.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/old/exception_checkpoint.h>

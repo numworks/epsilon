@@ -585,6 +585,8 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(-12)", "-2^2×3");
   simplifies_to("factor(-4/17)", "-2^2/17");
   simplifies_to("factor(2π)", "undef");
+  simplifies_to("factor(42*3)", "2×3^2×7",
+                {.m_complexFormat = ComplexFormat::Polar});
 
   simplifies_to("quo(23,5)", "4");
   simplifies_to("rem(23,5)", "3");

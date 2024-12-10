@@ -674,9 +674,7 @@ bool NewExpression::replaceSymbolWithExpression(
   if (Variables::ReplaceSymbolWithTree(
           onlySecondTerm ? result->child(1) : result, symbol.tree(),
           expression.tree())) {
-    NewExpression res = Builder(result);
-    replaceWithInPlace(res);
-    *this = res;
+    *this = NewExpression::Builder(result);
     return true;
   }
   result->removeTree();

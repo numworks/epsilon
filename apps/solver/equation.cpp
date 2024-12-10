@@ -36,7 +36,7 @@ SystemExpression Equation::Model::standardForm(
                                     {.target = reductionTarget});
 
   if (simplifiedInput.isNonReal()) {
-    returnedExpression = Nonreal::Builder();
+    returnedExpression = NonReal::Builder();
   } else if (simplifiedInput.recursivelyMatches(
                  [](const NewExpression e, Context* context) {
                    return (e.isUndefined() || e.isPlusOrMinusInfinity());

@@ -535,6 +535,13 @@ class Undefined final : public JuniorExpression {
   constexpr static int NameSize() { return 6; }
 };
 
+class NonReal final : public JuniorExpression {
+ public:
+  static NonReal Builder();
+  constexpr static const char* Name() { return "nonreal"; }
+  constexpr static int NameSize() { return 8; }
+};
+
 class Infinity {
  public:
   static const char* k_infinityName;

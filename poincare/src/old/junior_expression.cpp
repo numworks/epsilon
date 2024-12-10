@@ -1157,6 +1157,13 @@ bool Unit::HasAngleDimension(NewExpression expression) {
   return Internal::Dimension::Get(expression.tree()).isSimpleAngleUnit();
 }
 
+/* NonReal */
+
+NonReal NonReal::Builder() {
+  NewExpression e = NewExpression::Builder(KNonReal);
+  return static_cast<NonReal&>(e);
+}
+
 /* Infinity */
 
 const char* Poincare::Infinity::k_infinityName =

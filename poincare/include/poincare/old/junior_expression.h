@@ -1,15 +1,16 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
+#include <ion/storage/file_system.h>
 #include <poincare/api.h>
 #include <poincare/comparison_operator.h>
+#include <poincare/old/computation_context.h>
 #include <poincare/point_or_scalar.h>
+#include <poincare/print_float.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/dimension_type.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
-
-#include "old_expression.h"
 
 namespace Poincare::Internal {
 class Tree;
@@ -20,7 +21,6 @@ struct ProjectionContext;
 
 namespace Poincare {
 
-class Symbol;
 class JuniorSymbolAbstract;
 
 /* Aliases used to specify a JuniorExpression's type. TODO_PCJ: split them into
@@ -71,7 +71,7 @@ class Dimension {
   bool m_isEmptyList;
 };
 
-class JuniorExpressionNode final : public ExpressionNode {
+class JuniorExpressionNode final : public PoolObject {
   friend class JuniorExpression;
 
  public:
@@ -88,18 +88,6 @@ class JuniorExpressionNode final : public ExpressionNode {
 #endif
 
   // Properties
-  Type otype() const override { return Type::JuniorExpression; }
-  // Unimplemented. Use Sign API on SystemExpression's trees only.
-  OMG::Troolean isPositive(Context* context) const override {
-    assert(false);
-    return OMG::Troolean::Unknown;
-  }
-  OMG::Troolean isNull(Context* context) const override {
-    assert(false);
-    return OMG::Troolean::Unknown;
-  }
-  int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
-                                  bool ignoreParentheses) const override;
 
   template <typename T>
   SystemExpression approximateToTree(
@@ -113,35 +101,19 @@ class JuniorExpressionNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override {
-    assert(false);
-    return OExpression();
-  }
-  LayoutShape leftLayoutShape() const override {
-    // TODO_PCJ: Remove
-    assert(false);
-    return LayoutShape::BoundaryPunctuation;
-  }
-
  private:
-  bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                OExpression symbolValue) override;
-
   // PCJ
   const Internal::Tree* tree() const;
 
   Internal::Block m_blocks[0];
 };
 
-class JuniorExpression : public OExpression {
+class JuniorExpression : public PoolHandle {
   friend class JuniorExpressionNode;
 
  public:
-  using OExpression::OExpression;
-
-  JuniorExpression() {}
-
+  JuniorExpression() : PoolHandle() {}
+  JuniorExpression(const JuniorExpressionNode* n) : PoolHandle(n) {}
   JuniorExpression(const API::UserExpression& ue) {
     *this = Builder(ue.tree());
   }
@@ -196,11 +168,6 @@ class JuniorExpression : public OExpression {
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : node()->tree();
   }
-  NewExpression childAtIndex(int i) const {
-    // JuniorExpression cannot have parents or children JuniorExpressions.
-    assert(false);
-    return NewExpression();
-  }
   NewExpression cloneChildAtIndex(int i) const;
   int numberOfDescendants(bool includeSelf) const;
 
@@ -211,7 +178,9 @@ class JuniorExpression : public OExpression {
                     Context* context = nullptr) const;
 
   JuniorExpressionNode* node() const {
-    return static_cast<JuniorExpressionNode*>(OExpression::node());
+    assert(identifier() != PoolObject::NoNodeIdentifier &&
+           !PoolHandle::object()->isGhost());
+    return static_cast<JuniorExpressionNode*>(PoolHandle::object());
   }
 
   void cloneAndSimplifyAndApproximate(UserExpression* simplifiedExpression,
@@ -284,14 +253,12 @@ class JuniorExpression : public OExpression {
       Context* context) const;
   bool isDiscontinuousBetweenFloatValues(float x1, float x2) const;
 
-  OExpression shallowReduce(ReductionContext reductionContext) {
-    // TODO_PCJ
-    assert(false);
-    return OExpression();
-  }
-  bool derivate(const ReductionContext& reductionContext, Symbol symbol,
-                OExpression symbolValue);
-
+  constexpr static int k_maxNumberOfVariables = 6;
+  // TODO: factorize with k_maxPolynomialDegree from Polynomial
+  constexpr static int k_maxPolynomialDegree = 3;
+  // TODO: factorize with k_maxNumberOfPolynomialCoefficients from Polynomial
+  constexpr static int k_maxNumberOfPolynomialCoefficients =
+      k_maxPolynomialDegree + 1;
   int polynomialDegree(const char* symbolName) const;
   /* Fills the table coefficients with the expressions of the first 3 polynomial
    * coefficients and returns the  polynomial degree. It is supposed to be
@@ -312,6 +279,15 @@ class JuniorExpression : public OExpression {
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits, Context* context,
                 bool withThousandsSeparator = false) const;
+
+  /* TODO:
+   * - Use same convention as strlcpy: return size of the source even if the
+   * bufferSize was too small.*/
+  size_t serialize(char* buffer, size_t bufferSize,
+                   Preferences::PrintFloatMode floatDisplayMode =
+                       Preferences::PrintFloatMode::Decimal,
+                   int numberOfSignificantDigits =
+                       PrintFloat::k_maxNumberOfSignificantDigits) const;
 
   Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
       const char* baseName, const char* extension) const;

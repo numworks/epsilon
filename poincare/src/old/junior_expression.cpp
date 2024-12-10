@@ -2,14 +2,7 @@
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/boolean.h>
-#include <poincare/old/complex.h>
 #include <poincare/old/junior_expression.h>
-#include <poincare/old/list_complex.h>
-#include <poincare/old/matrix.h>
-#include <poincare/old/matrix_complex.h>
-#include <poincare/old/point_evaluation.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
@@ -136,16 +129,6 @@ void JuniorExpressionNode::logAttributes(std::ostream& stream) const {
 }
 #endif
 
-int JuniorExpressionNode::simplificationOrderSameType(
-    const ExpressionNode* e, bool ascending, bool ignoreParentheses) const {
-  if (!ascending) {
-    return e->simplificationOrderSameType(this, true, ignoreParentheses);
-  }
-  assert(otype() == e->otype());
-  return Order::CompareSystem(
-      tree(), static_cast<const JuniorExpressionNode*>(e)->tree());
-}
-
 template <typename T>
 SystemExpression JuniorExpressionNode::approximateToTree(
     const ApproximationContext& approximationContext) const {
@@ -173,14 +156,6 @@ size_t JuniorExpressionNode::serialize(
   size_t size = Serialize(layout, buffer, buffer + bufferSize) - buffer;
   layout->removeTree();
   return size;
-}
-
-bool JuniorExpressionNode::derivate(const ReductionContext& reductionContext,
-                                    Poincare::Symbol symbol,
-                                    OExpression symbolValue) {
-  // TODO_PCJ: Remove
-  assert(false);
-  return false;
 }
 
 const Tree* JuniorExpressionNode::tree() const {
@@ -625,13 +600,6 @@ SystemExpression SystemExpression::removeUndefListElements() const {
   return SystemExpression::Builder(clone);
 }
 
-bool NewExpression::derivate(const ReductionContext& reductionContext,
-                             Poincare::Symbol symbol, OExpression symbolValue) {
-  // TODO_PCJ: Remove
-  assert(false);
-  return false;
-}
-
 int SystemExpression::polynomialDegree(const char* symbolName) const {
   return Degree::Get(tree(), symbolName);
 }
@@ -675,6 +643,15 @@ char* UserExpression::toLatex(char* buffer, int bufferSize,
           createLayout(floatDisplayMode, numberOfSignificantDigits, context)
               .tree()),
       buffer, buffer + bufferSize - 1, withThousandsSeparator);
+}
+
+size_t UserExpression::serialize(char* buffer, size_t bufferSize,
+                                 Preferences::PrintFloatMode floatDisplayMode,
+                                 int numberOfSignificantDigits) const {
+  return isUninitialized()
+             ? 0
+             : node()->serialize(buffer, bufferSize, floatDisplayMode,
+                                 numberOfSignificantDigits);
 }
 
 Ion::Storage::Record::ErrorStatus UserExpression::storeWithNameAndExtension(

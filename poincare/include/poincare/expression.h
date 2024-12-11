@@ -8,7 +8,6 @@
 
 namespace Poincare {
 using Expression = JuniorExpression;
-using ExpressionNode = JuniorExpressionNode;
 }  // namespace Poincare
 
 #endif

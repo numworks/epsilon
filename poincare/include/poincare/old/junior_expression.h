@@ -69,11 +69,11 @@ class Dimension {
   bool m_isEmptyList;
 };
 
-class JuniorExpressionNode final : public PoolObject {
+class ExpressionObject final : public PoolObject {
   friend class JuniorExpression;
 
  public:
-  JuniorExpressionNode(const Internal::Tree* tree, size_t treeSize);
+  ExpressionObject(const Internal::Tree* tree, size_t treeSize);
 
   // PoolObject
   size_t size() const override;
@@ -107,11 +107,11 @@ class JuniorExpressionNode final : public PoolObject {
 };
 
 class JuniorExpression : public PoolHandle {
-  friend class JuniorExpressionNode;
+  friend class ExpressionObject;
 
  public:
   JuniorExpression() : PoolHandle() {}
-  JuniorExpression(const JuniorExpressionNode* n) : PoolHandle(n) {}
+  JuniorExpression(const ExpressionObject* n) : PoolHandle(n) {}
   JuniorExpression(const API::UserExpression& ue) {
     *this = Builder(ue.tree());
   }
@@ -174,10 +174,10 @@ class JuniorExpression : public PoolHandle {
   bool deepIsOfType(std::initializer_list<Internal::Type> types,
                     Context* context = nullptr) const;
 
-  JuniorExpressionNode* object() const {
+  ExpressionObject* object() const {
     assert(identifier() != PoolObject::NoNodeIdentifier &&
            !PoolHandle::object()->isGhost());
-    return static_cast<JuniorExpressionNode*>(PoolHandle::object());
+    return static_cast<ExpressionObject*>(PoolHandle::object());
   }
 
   void cloneAndSimplifyAndApproximate(UserExpression* simplifiedExpression,

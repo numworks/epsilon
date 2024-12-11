@@ -112,25 +112,25 @@ bool Poincare::Dimension::isPointOrListOfPoints() {
 
 bool Poincare::Dimension::isEmptyList() { return m_isEmptyList; }
 
-/* JuniorExpressionNode */
+/* ExpressionObject */
 
-JuniorExpressionNode::JuniorExpressionNode(const Tree* tree, size_t treeSize) {
+ExpressionObject::ExpressionObject(const Tree* tree, size_t treeSize) {
   memcpy(m_blocks, tree->block(), treeSize);
 }
 
-size_t JuniorExpressionNode::size() const {
-  return sizeof(JuniorExpressionNode) + tree()->treeSize();
+size_t ExpressionObject::size() const {
+  return sizeof(ExpressionObject) + tree()->treeSize();
 }
 
 #if POINCARE_TREE_LOG
-void JuniorExpressionNode::logAttributes(std::ostream& stream) const {
+void ExpressionObject::logAttributes(std::ostream& stream) const {
   stream << '\n';
   tree()->log(stream);
 }
 #endif
 
 template <typename T>
-SystemExpression JuniorExpressionNode::approximateToTree(
+SystemExpression ExpressionObject::approximateToTree(
     const ApproximationContext& approximationContext) const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
       tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true},
@@ -139,7 +139,7 @@ SystemExpression JuniorExpressionNode::approximateToTree(
                              approximationContext.context())));
 }
 
-Poincare::Layout JuniorExpressionNode::createLayout(
+Poincare::Layout ExpressionObject::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context, OMG::Base base) const {
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
@@ -147,10 +147,9 @@ Poincare::Layout JuniorExpressionNode::createLayout(
       base));
 }
 
-size_t JuniorExpressionNode::serialize(
-    char* buffer, size_t bufferSize,
-    Preferences::PrintFloatMode floatDisplayMode,
-    int numberOfSignificantDigits) const {
+size_t ExpressionObject::serialize(char* buffer, size_t bufferSize,
+                                   Preferences::PrintFloatMode floatDisplayMode,
+                                   int numberOfSignificantDigits) const {
   Tree* layout = Layouter::LayoutExpression(tree()->cloneTree(), true,
                                             numberOfSignificantDigits);
   size_t size = Serialize(layout, buffer, buffer + bufferSize) - buffer;
@@ -158,7 +157,7 @@ size_t JuniorExpressionNode::serialize(
   return size;
 }
 
-const Tree* JuniorExpressionNode::tree() const {
+const Tree* ExpressionObject::tree() const {
   return Tree::FromBlocks(m_blocks);
 }
 
@@ -174,7 +173,7 @@ NewExpression NewExpression::ExpressionFromAddress(const void* address,
     return NewExpression();
   }
   // Build the OExpression in the Tree Pool
-  return NewExpression(static_cast<JuniorExpressionNode*>(
+  return NewExpression(static_cast<ExpressionObject*>(
       Pool::sharedPool->copyTreeFromAddress(address, size)));
 }
 
@@ -182,7 +181,7 @@ const Tree* NewExpression::TreeFromAddress(const void* address) {
   if (address == nullptr) {
     return nullptr;
   }
-  return reinterpret_cast<const JuniorExpressionNode*>(address)->tree();
+  return reinterpret_cast<const ExpressionObject*>(address)->tree();
 }
 
 UserExpression UserExpression::Parse(const Tree* layout, Context* context,
@@ -275,10 +274,8 @@ NewExpression NewExpression::Builder(const Tree* tree) {
     return NewExpression();
   }
   size_t size = tree->treeSize();
-  void* bufferNode =
-      Pool::sharedPool->alloc(sizeof(JuniorExpressionNode) + size);
-  JuniorExpressionNode* node =
-      new (bufferNode) JuniorExpressionNode(tree, size);
+  void* bufferNode = Pool::sharedPool->alloc(sizeof(ExpressionObject) + size);
+  ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
   PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
   return static_cast<NewExpression&>(h);
 }
@@ -1153,9 +1150,9 @@ const char* Poincare::Infinity::k_infinityName =
 const char* Poincare::Infinity::k_minusInfinityName =
     Internal::Infinity::k_minusInfinityName;
 
-template SystemExpression JuniorExpressionNode::approximateToTree<float>(
+template SystemExpression ExpressionObject::approximateToTree<float>(
     const ApproximationContext&) const;
-template SystemExpression JuniorExpressionNode::approximateToTree<double>(
+template SystemExpression ExpressionObject::approximateToTree<double>(
     const ApproximationContext&) const;
 
 template SystemExpression SystemExpression::Builder<float>(float);

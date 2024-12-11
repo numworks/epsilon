@@ -71,6 +71,8 @@ class StackViewController : public ViewController {
 
  private:
   virtual ViewController* stackSlot(int index) = 0;
+  virtual const ViewController* stackSlot(int index) const = 0;
+
   virtual void setStackSlot(int index, ViewController* controller) = 0;
 };
 
@@ -95,6 +97,11 @@ class CustomSizeStackViewController : public StackViewController {
 
  private:
   ViewController* stackSlot(int index) override {
+    assert(index >= 0 && index < static_cast<int>(Capacity));
+    return m_stack[index];
+  }
+
+  const ViewController* stackSlot(int index) const override {
     assert(index >= 0 && index < static_cast<int>(Capacity));
     return m_stack[index];
   }

@@ -151,6 +151,11 @@ void LayoutObject::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
       cursor ? cursor->selection() : Internal::LayoutSelection());
 }
 
+int Layout::numberOfDescendants(bool includeSelf) const {
+  assert(tree());
+  return tree()->numberOfDescendants(includeSelf);
+}
+
 Layout Layout::clone() const {
   if (isUninitialized()) {
     return Layout();

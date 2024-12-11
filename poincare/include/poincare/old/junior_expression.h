@@ -397,52 +397,9 @@ class JuniorExpression : public PoolHandle {
   /* TODO_PCJ: Remove those methods from PoolHandle once only JuniorExpression
    * remains. In the meantime, they are overriden there to assert false in case
    * they are still used. */
-  /* Hierarchy */
-  bool hasChild(PoolHandle t) const {
-    assert(false);
-    return false;
-  }
-  bool hasSibling(PoolHandle t) const {
-    assert(false);
-    return false;
-  }
-  bool hasAncestor(PoolHandle t, bool includeSelf) const {
-    assert(false);
-    return false;
-  }
-  PoolHandle commonAncestorWith(PoolHandle t,
-                                bool includeTheseNodes = true) const {
-    assert(false);
-    return t;
-  }
-  void setNumberOfChildren(int numberOfChildren) { assert(false); }
-  int indexOfChild(PoolHandle t) const {
-    assert(false);
-    return 0;
-  }
-  PoolHandle parent() const {
-    assert(false);
-    return *this;
-  }
   void setParentIdentifier(uint16_t id) { assert(false); }
   void deleteParentIdentifier() { assert(false); }
   void deleteParentIdentifierInChildren() { assert(false); }
-  void incrementNumberOfChildren(int increment = 1) { assert(false); }
-
-  /* Hierarchy operations */
-  // Replace
-  void replaceChildInPlace(PoolHandle oldChild, PoolHandle newChild) {
-    assert(false);
-  }
-  void replaceChildAtIndexInPlace(int oldChildIndex, PoolHandle newChild) {
-    assert(false);
-  }
-  void replaceChildAtIndexWithGhostInPlace(int index) { assert(false); }
-  void replaceChildWithGhostInPlace(PoolHandle t) { assert(false); }
-  // Merge
-  void mergeChildrenAtIndexInPlace(PoolHandle t, int i) { assert(false); }
-  // Swap
-  void swapChildrenInPlace(int i, int j) { assert(false); }
 #endif
 
  private:

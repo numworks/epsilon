@@ -13,7 +13,8 @@ namespace Poincare {
 class Ghost final : public PoolHandle {
  public:
   static Ghost Builder() {
-    return PoolHandle::FixedArityBuilder<Ghost, GhostNode>();
+    PoolHandle h = PoolHandle::Builder<GhostNode>();
+    return static_cast<Ghost &>(h);
   }
 };
 

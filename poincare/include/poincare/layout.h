@@ -105,6 +105,8 @@ class Layout final : public PoolHandle {
     return const_cast<Layout*>(this)->node()->tree();
   }
 
+  int numberOfDescendants(bool includeSelf) const;
+
   // Serialization
   size_t serialize(char* buffer, size_t bufferSize) const {
     return (*this)->serialize(buffer, bufferSize);
@@ -134,10 +136,6 @@ class Layout final : public PoolHandle {
 
   // True if rack with only code points in it
   bool isCodePointsString() const;
-
- private:
-  // Private using to make code using TreePool::childAtIndex on a Layout fail
-  using PoolHandle::childAtIndex;
 };
 
 }  // namespace Poincare

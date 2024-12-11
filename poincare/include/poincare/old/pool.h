@@ -63,7 +63,6 @@ class Pool final {
   void move(PoolObject *destination, PoolObject *source,
             int realNumberOfSourceChildren);
 #if PCJ_DELETE
-  void moveChildren(PoolObject *destination, PoolObject *sourceParent);
   void removeChildren(PoolObject *node, int nodeNumberOfChildren);
   void removeChildrenAndDestroy(PoolObject *nodeToDestroy,
                                 int nodeNumberOfChildren);

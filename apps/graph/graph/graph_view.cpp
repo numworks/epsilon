@@ -1,6 +1,6 @@
 #include "graph_view.h"
 
-#include <poincare/new_trigonometry.h>
+#include <poincare/trigonometry.h>
 
 #include "../app.h"
 
@@ -392,7 +392,7 @@ void GraphView::drawTangent(KDContext* ctx, KDRect rect,
 static float polarThetaFromCoordinates(float x, float y,
                                        Preferences::AngleUnit angleUnit) {
   // Return θ, between -π and π in given angleUnit for a (x,y) position.
-  return NewTrigonometry::ConvertRadianToAngleUnit<float>(
+  return Trigonometry::ConvertRadianToAngleUnit<float>(
              std::arg(std::complex<float>(x, y)), angleUnit)
       .real();
 }
@@ -412,7 +412,7 @@ void GraphView::drawPolar(KDContext* ctx, KDRect rect, ContinuousFunction* f,
 
   const Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
-  const float piInAngleUnit = NewTrigonometry::PiInAngleUnit(angleUnit);
+  const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
   /* Cancel optimization if :
    * - One of rect limits is nan.
    * - Step is too large, see cache optimization comments

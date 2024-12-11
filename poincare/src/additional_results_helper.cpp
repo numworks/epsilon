@@ -1,5 +1,4 @@
 #include <poincare/additional_results_helper.h>
-#include <poincare/new_trigonometry.h>
 #include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/dimension.h>
@@ -15,6 +14,7 @@
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/trigonometry.h>
 
 namespace Poincare {
 
@@ -120,8 +120,8 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
     approximateAngleTree->removeTree();
   }
   simplifiedAngle->removeTree();
-  *approximatedAngle = NewTrigonometry::ConvertAngleToRadian(*approximatedAngle,
-                                                             ctx->m_angleUnit);
+  *approximatedAngle =
+      Trigonometry::ConvertAngleToRadian(*approximatedAngle, ctx->m_angleUnit);
 }
 
 /* Returns a (unreduced) division between pi in each unit, or 1 if the units

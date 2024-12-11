@@ -1,11 +1,11 @@
 #include <poincare/k_tree.h>
-#include <poincare/new_trigonometry.h>
 #include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/units/representatives.h>
+#include <poincare/trigonometry.h>
 
 namespace Poincare {
 
-double NewTrigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
+double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
   switch (angleUnit) {
     case Preferences::AngleUnit::Radian:
       return M_PI;
@@ -17,15 +17,15 @@ double NewTrigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
   }
 }
 
-double NewTrigonometry::ConvertAngleToRadian(double angle,
-                                             Preferences::AngleUnit angleUnit) {
+double Trigonometry::ConvertAngleToRadian(double angle,
+                                          Preferences::AngleUnit angleUnit) {
   return angleUnit != Preferences::AngleUnit::Radian
              ? angle * M_PI / PiInAngleUnit(angleUnit)
              : angle;
 }
 
 template <typename T>
-std::complex<T> NewTrigonometry::ConvertToRadian(
+std::complex<T> Trigonometry::ConvertToRadian(
     const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   if (angleUnit != Preferences::AngleUnit::Radian) {
     return c * std::complex<T>((T)M_PI / (T)PiInAngleUnit(angleUnit));
@@ -34,7 +34,7 @@ std::complex<T> NewTrigonometry::ConvertToRadian(
 }
 
 template <typename T>
-std::complex<T> NewTrigonometry::ConvertRadianToAngleUnit(
+std::complex<T> Trigonometry::ConvertRadianToAngleUnit(
     const std::complex<T> c, Preferences::AngleUnit angleUnit) {
   if (angleUnit != Preferences::AngleUnit::Radian) {
     return c * std::complex<T>((T)PiInAngleUnit(angleUnit) / (T)M_PI);
@@ -42,7 +42,7 @@ std::complex<T> NewTrigonometry::ConvertRadianToAngleUnit(
   return c;
 }
 
-UserExpression NewTrigonometry::Period(Preferences::AngleUnit angleUnit) {
+UserExpression Trigonometry::Period(Preferences::AngleUnit angleUnit) {
   return UserExpression::Builder(Internal::Angle::Period(angleUnit));
 }
 
@@ -102,7 +102,7 @@ static void privateDeepAddAngleUnitToAmbiguousDirectFunctions(
   }
 }
 
-void NewTrigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+void Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
     UserExpression& e, Preferences::AngleUnit angleUnit) {
   Internal::Tree* clone = e.tree()->cloneTree();
   privateDeepAddAngleUnitToAmbiguousDirectFunctions(clone, angleUnit);
@@ -110,13 +110,13 @@ void NewTrigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
   return;
 }
 
-template std::complex<float> NewTrigonometry::ConvertToRadian<float>(
+template std::complex<float> Trigonometry::ConvertToRadian<float>(
     std::complex<float>, Preferences::AngleUnit);
-template std::complex<double> NewTrigonometry::ConvertToRadian<double>(
+template std::complex<double> Trigonometry::ConvertToRadian<double>(
     std::complex<double>, Preferences::AngleUnit);
-template std::complex<float> NewTrigonometry::ConvertRadianToAngleUnit<float>(
+template std::complex<float> Trigonometry::ConvertRadianToAngleUnit<float>(
     std::complex<float>, Preferences::AngleUnit);
-template std::complex<double> NewTrigonometry::ConvertRadianToAngleUnit<double>(
+template std::complex<double> Trigonometry::ConvertRadianToAngleUnit<double>(
     std::complex<double>, Preferences::AngleUnit);
 
 }  // namespace Poincare

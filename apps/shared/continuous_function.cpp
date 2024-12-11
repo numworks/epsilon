@@ -7,10 +7,10 @@
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/new_trigonometry.h>
 #include <poincare/numeric/roots.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/derivation.h>
+#include <poincare/trigonometry.h>
 
 #include <algorithm>
 
@@ -432,7 +432,7 @@ float ContinuousFunction::autoTMax() const {
              ? INFINITY
              : (properties().isInversePolar()
                     ? Range1D<float>::k_defaultHalfLength
-                    : 2.f * NewTrigonometry::PiInAngleUnit(
+                    : 2.f * Trigonometry::PiInAngleUnit(
                                 Preferences::SharedPreferences()->angleUnit()));
 }
 
@@ -495,7 +495,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
   assert(thisProperties.isPolar() || thisProperties.isInversePolar());
   const T r = thisProperties.isPolar() ? x1x2.y() : x1x2.x();
   const T angle = (thisProperties.isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
-                  NewTrigonometry::PiInAngleUnit(
+                  Trigonometry::PiInAngleUnit(
                       Poincare::Preferences::SharedPreferences()->angleUnit());
   return Coordinate2D<T>(r * std::cos(angle), r * std::sin(angle));
 }

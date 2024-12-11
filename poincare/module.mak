@@ -3,7 +3,7 @@ _sources_poincare_minimal := $(addprefix src/, \
   cas_disabled.cpp:-cas \
   cas_enabled.cpp:+cas \
   init.cpp \
-  new_trigonometry.cpp \
+  trigonometry.cpp \
   preferences.cpp \
   print_float.cpp \
   sign.cpp \

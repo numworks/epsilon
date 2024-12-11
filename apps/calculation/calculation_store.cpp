@@ -4,10 +4,10 @@
 #include <poincare/helpers/store.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
-#include <poincare/new_trigonometry.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/trigonometry.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -21,7 +21,7 @@ static UserExpression enhancePushedExpression(UserExpression expression) {
    *     If angleUnit = deg, cos(π)->cos(π°)
    * */
   if (!Preferences::SharedPreferences()->examMode().forbidUnits()) {
-    NewTrigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+    Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
         expression, Preferences::SharedPreferences()->angleUnit());
   }
   return expression;

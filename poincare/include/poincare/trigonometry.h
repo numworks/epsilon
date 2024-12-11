@@ -1,5 +1,5 @@
-#ifndef POINCARE_NEW_TRIGONOMETRY_H
-#define POINCARE_NEW_TRIGONOMETRY_H
+#ifndef POINCARE_TRIGONOMETRY_H
+#define POINCARE_TRIGONOMETRY_H
 
 #include <complex.h>
 #include <poincare/expression.h>
@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class NewTrigonometry final {
+class Trigonometry final {
  public:
   static double PiInAngleUnit(Preferences::AngleUnit angleUnit);
   static double ConvertAngleToRadian(double angle,

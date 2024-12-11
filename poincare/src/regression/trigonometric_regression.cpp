@@ -2,9 +2,9 @@
 
 #include <assert.h>
 #include <poincare/k_tree.h>
-#include <poincare/new_trigonometry.h>
 #include <poincare/numeric/statistics.h>
 #include <poincare/preferences.h>
+#include <poincare/trigonometry.h>
 
 #include <cmath>
 
@@ -13,7 +13,7 @@
 namespace Poincare::Regression {
 
 static double toRadians() {
-  return M_PI / Poincare::NewTrigonometry::PiInAngleUnit(
+  return M_PI / Poincare::Trigonometry::PiInAngleUnit(
                     Poincare::Preferences::SharedPreferences()->angleUnit());
 }
 
@@ -175,7 +175,7 @@ void TrigonometricRegression::specializedInitCoefficientsForFit(
   // Init the "amplitude" coefficient a
   modelCoefficients[0] = (yMax - yMin) / 2.0;
   // Init the "period" coefficient b
-  double piInAngleUnit = Poincare::NewTrigonometry::PiInAngleUnit(
+  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(
       Poincare::Preferences::SharedPreferences()->angleUnit());
   double period = 2.0 * std::fabs(xMax - xMin);
   if (period > 0) {
@@ -200,7 +200,7 @@ void TrigonometricRegression::specializedInitCoefficientsForFit(
 void TrigonometricRegression::uniformizeCoefficientsFromFit(
     double* modelCoefficients) const {
   // Coefficients must be unique.
-  double piInAngleUnit = Poincare::NewTrigonometry::PiInAngleUnit(
+  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(
       Poincare::Preferences::SharedPreferences()->angleUnit());
   // A must be positive.
   if (modelCoefficients[0] < 0.0) {

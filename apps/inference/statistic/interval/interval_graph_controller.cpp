@@ -15,7 +15,8 @@ IntervalGraphController::IntervalGraphController(
       m_currentMarginOfError(0.0),
       m_currentThreshold(0.0) {}
 
-Escher::ViewController::TitlesDisplay IntervalGraphController::titlesDisplay() {
+Escher::ViewController::TitlesDisplay IntervalGraphController::titlesDisplay()
+    const {
   return ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
 

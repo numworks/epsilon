@@ -27,7 +27,7 @@ class FunctionParameterController : public Shared::ListParameterController,
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
   const char* title() override;
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastTwoTitles;
   }
   void setParameterDelegate(ParameterDelegate* parameterDelegate) {

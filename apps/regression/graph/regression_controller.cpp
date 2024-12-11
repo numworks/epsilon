@@ -28,7 +28,7 @@ const char* RegressionController::title() {
   return I18n::translate(I18n::Message::RegressionModel);
 }
 
-ViewController::TitlesDisplay RegressionController::titlesDisplay() {
+ViewController::TitlesDisplay RegressionController::titlesDisplay() const {
   if (displaySeriesNameAsTitle()) {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }

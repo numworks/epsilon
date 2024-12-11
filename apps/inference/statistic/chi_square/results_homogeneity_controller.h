@@ -46,7 +46,7 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
                                   Escher::ViewController* nextController,
                                   HomogeneityTest* statistic);
 
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   KDColor tabBackgroundColor() const override {

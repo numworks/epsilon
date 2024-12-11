@@ -33,7 +33,7 @@ class FunctionListController : public ExpressionModelListController,
 
   /* ViewController */
   Escher::View* view() override { return &m_selectableListView; }
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
 

@@ -15,7 +15,7 @@ class StoreColumnParameterController : public Shared::StoreParameterController {
     // Do not display an option to hide series
     m_hideCell.setVisible(false);
   }
-  Escher::ViewController::TitlesDisplay titlesDisplay() override {
+  Escher::ViewController::TitlesDisplay titlesDisplay() const override {
     return m_titlesDisplay;
   }
   void setTitlesDisplay(Escher::ViewController::TitlesDisplay titlesDisplay) {

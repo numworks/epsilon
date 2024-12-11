@@ -17,7 +17,7 @@ class GoToParameterController : public Shared::GoToParameterController {
                           GraphController* graphController);
   void setXPrediction(bool xPrediction);
   const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
 

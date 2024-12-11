@@ -12,7 +12,7 @@ namespace Inference {
 class TestGraphController : public Escher::ViewController {
  public:
   TestGraphController(Escher::StackViewController* stack, Test* test);
-  ViewController::TitlesDisplay titlesDisplay() override;
+  ViewController::TitlesDisplay titlesDisplay() const override;
   const char* title() override;
   Escher::View* view() override { return &m_graphView; }
   void didBecomeFirstResponder() override;

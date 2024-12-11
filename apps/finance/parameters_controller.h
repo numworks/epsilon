@@ -25,7 +25,7 @@ class ParametersController : public Shared::FloatParameterController<double>,
   KDCoordinate nonMemoizedRowHeight(int row) override;
   // Confirm cell plus all parameters but the unknown one
   int numberOfRows() const override;
-  Escher::ViewController::TitlesDisplay titlesDisplay() override {
+  Escher::ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
 

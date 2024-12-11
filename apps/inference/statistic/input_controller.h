@@ -44,7 +44,7 @@ class InputController
     InputTitle(this, m_statistic, m_titleBuffer, k_titleBufferSize);
     return m_titleBuffer;
   }
-  ViewController::TitlesDisplay titlesDisplay() override;
+  ViewController::TitlesDisplay titlesDisplay() const override;
   void initView() override;
   void viewWillAppear() override;
   int typeAtRow(int row) const override;

@@ -31,7 +31,7 @@ class CurveParameterController
   int numberOfRows() const override { return k_numberOfRows; }
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastTitle;
   }
 

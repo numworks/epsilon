@@ -82,7 +82,7 @@ void InputController::InputTitle(Escher::ViewController* vc,
   }
 }
 
-ViewController::TitlesDisplay InputController::titlesDisplay() {
+ViewController::TitlesDisplay InputController::titlesDisplay() const {
   return m_statistic->hasHypothesisParameters()
              ? m_statistic->canChooseDataset()
                    ? TitlesDisplay::DisplayLastAndThirdToLast

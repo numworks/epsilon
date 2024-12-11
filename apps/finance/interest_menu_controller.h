@@ -22,7 +22,7 @@ class InterestMenuController : public Escher::ListWithTopAndBottomController {
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event e) override;
   const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   int numberOfRows() const override;

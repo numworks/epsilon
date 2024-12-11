@@ -17,7 +17,7 @@ class ParametersController : public Shared::FloatParameterController<double> {
                        Distribution* m_distribution,
                        CalculationController* calculationController);
   const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   bool handleEvent(Ion::Events::Event event) override;

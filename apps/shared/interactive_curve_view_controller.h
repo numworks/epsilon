@@ -40,7 +40,7 @@ class InteractiveCurveViewController
   void willExitResponderChain(Responder* nextFirstResponder) override;
 
   // ViewController
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::NeverDisplayOwnTitle;
   }
   void viewWillAppear() override;

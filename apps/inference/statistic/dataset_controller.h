@@ -26,7 +26,7 @@ class DatasetController
                                 InputController::k_titleBufferSize);
     return m_titleBuffer;
   }
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return m_statistic->hasHypothesisParameters()
                ? TitlesDisplay::DisplayLastTwoTitles
                : TitlesDisplay::DisplayLastTitle;

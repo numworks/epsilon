@@ -21,7 +21,7 @@ class RegressionController : public Escher::SelectableListViewController<
   void setDisplayedFromDataTab(bool status) { m_displayedFromDataTab = status; }
   // ViewController
   const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override;
+  ViewController::TitlesDisplay titlesDisplay() const override;
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;

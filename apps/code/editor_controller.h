@@ -24,7 +24,7 @@ class EditorController : public Escher::ViewController {
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  Escher::ViewController::TitlesDisplay titlesDisplay() override {
+  Escher::ViewController::TitlesDisplay titlesDisplay() const override {
     return Escher::ViewController::TitlesDisplay::DisplayNoTitle;
   }
 

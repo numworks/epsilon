@@ -22,7 +22,7 @@ class FunctionZoomAndPanCurveViewController
   const char* title() override;
   Escher::View* view() override { return &m_contentView; }
   void viewWillAppear() override;
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayNoTitle;
   }
   void didBecomeFirstResponder() override;

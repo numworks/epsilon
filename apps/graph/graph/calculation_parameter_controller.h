@@ -34,7 +34,7 @@ class CalculationParameterController
   void viewWillAppear() override;
   void fillAreaCell();
   int numberOfRows() const override { return k_numberOfRows; }
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastTwoTitles;
   }
 

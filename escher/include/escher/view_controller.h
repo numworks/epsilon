@@ -61,7 +61,7 @@ class ViewController : public Responder {
   virtual void initView() {}
   virtual void viewWillAppear() {}
   virtual void viewDidDisappear() {}
-  virtual TitlesDisplay titlesDisplay() {
+  virtual TitlesDisplay titlesDisplay() const {
     return TitlesDisplay::DisplayAllTitles;
   }
   /* Use these two functions only if the controller is in a stack hierarchy */

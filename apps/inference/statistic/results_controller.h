@@ -31,7 +31,7 @@ class ResultsController
   static bool ButtonAction(ResultsController* controller, void* s);
 
   // ViewController
-  ViewController::TitlesDisplay titlesDisplay() override;
+  ViewController::TitlesDisplay titlesDisplay() const override;
   const char* title() override;
   void initView() override;
 

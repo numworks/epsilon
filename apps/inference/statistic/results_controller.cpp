@@ -26,7 +26,7 @@ ResultsController::ResultsController(
                  &ResultsController::ButtonAction, this),
              ButtonCell::Style::EmbossedLight) {}
 
-ViewController::TitlesDisplay ResultsController::titlesDisplay() {
+ViewController::TitlesDisplay ResultsController::titlesDisplay() const {
   if (m_statistic->subApp() == Statistic::SubApp::Interval ||
       (m_statistic->significanceTestType() ==
            SignificanceTestType::Categorical &&

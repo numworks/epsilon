@@ -21,7 +21,7 @@ class DerivativesParameterController
   const char* title() override {
     return I18n::translate(I18n::Message::GraphDerivatives);
   }
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastThreeTitles;
   }
   bool handleEvent(Ion::Events::Event event) override;

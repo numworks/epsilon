@@ -15,7 +15,7 @@ class AlternateEmptyViewController : public ViewController {
                                AlternateEmptyViewDelegate* delegate);
   View* view() override { return &m_contentView; }
   const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override;
+  ViewController::TitlesDisplay titlesDisplay() const override;
   void didBecomeFirstResponder() override;
   void initView() override;
   void viewWillAppear() override;

@@ -19,7 +19,7 @@ class ResultsGoodnessTabController : public Escher::TabViewController,
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   KDColor tabBackgroundColor() const override {

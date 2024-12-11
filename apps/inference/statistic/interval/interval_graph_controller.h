@@ -14,7 +14,7 @@ class IntervalGraphController : public Escher::ViewController {
  public:
   IntervalGraphController(Escher::StackViewController* stack,
                           Interval* interval);
-  ViewController::TitlesDisplay titlesDisplay() override;
+  ViewController::TitlesDisplay titlesDisplay() const override;
   const char* title() override;
   Escher::View* view() override { return &m_graphView; }
   void viewWillAppear() override;

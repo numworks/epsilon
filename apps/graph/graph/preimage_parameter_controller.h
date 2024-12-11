@@ -18,7 +18,7 @@ class PreimageParameterController : public Shared::GoToParameterController {
   }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   void viewWillAppear() override;
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastThreeTitles;
   }
 

@@ -26,7 +26,7 @@ class InputStoreController : public InputCategoricalController,
                                 InputController::k_titleBufferSize);
     return m_titleBuffer;
   }
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return m_statistic->subApp() == Statistic::SubApp::Interval
                ? ViewController::TitlesDisplay::DisplayLastTitle
            : m_statistic->canChooseDataset()
@@ -64,7 +64,7 @@ class InputStoreController : public InputCategoricalController,
       : public Escher::StackViewController::Default {
    public:
     using Escher::StackViewController::Default::Default;
-    TitlesDisplay titlesDisplay() override { return m_titlesDisplay; }
+    TitlesDisplay titlesDisplay() const override { return m_titlesDisplay; }
     void setTitlesDisplay(TitlesDisplay titlesDisplay) {
       m_titlesDisplay = titlesDisplay;
     }

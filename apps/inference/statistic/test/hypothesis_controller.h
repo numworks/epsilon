@@ -33,7 +33,7 @@ class HypothesisController
   static bool ButtonAction(HypothesisController* controller, void* s);
 
   // SelectableListViewController
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   };
   const char* title() override;

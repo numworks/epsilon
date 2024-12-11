@@ -20,7 +20,7 @@ class SandboxController : public Escher::ViewController {
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  Escher::ViewController::TitlesDisplay titlesDisplay() override {
+  Escher::ViewController::TitlesDisplay titlesDisplay() const override {
     return Escher::ViewController::TitlesDisplay::DisplayNoTitle;
   }
 

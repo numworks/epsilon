@@ -11,7 +11,8 @@ TestGraphController::TestGraphController(Escher::StackViewController* stack,
       m_test(test),
       m_zoom(0) {}
 
-Escher::ViewController::TitlesDisplay TestGraphController::titlesDisplay() {
+Escher::ViewController::TitlesDisplay TestGraphController::titlesDisplay()
+    const {
   // TODO: improve StackViewController way of picking Stack titles to display
   if (m_test->significanceTestType() == SignificanceTestType::Categorical &&
       m_test->categoricalType() == CategoricalType::GoodnessOfFit) {

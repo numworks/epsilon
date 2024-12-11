@@ -45,7 +45,8 @@ const char* AlternateEmptyViewController::title() {
   return m_contentView.mainViewController()->title();
 }
 
-ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay() {
+ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay()
+    const {
   return m_contentView.mainViewController()->titlesDisplay();
 }
 

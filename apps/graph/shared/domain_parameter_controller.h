@@ -19,7 +19,7 @@ class DomainParameterController
   const char* title() override {
     return I18n::translate(I18n::Message::FunctionDomain);
   }
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastThreeTitles;
   }
 

@@ -12,7 +12,7 @@ class ModalViewEmptyController : public ViewController {
  public:
   ModalViewEmptyController(I18n::Message message)
       : ViewController(nullptr), m_view(message) {}
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
   View* view() override { return &m_view; }

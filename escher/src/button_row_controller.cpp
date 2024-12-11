@@ -193,7 +193,7 @@ const char* ButtonRowController::title() {
   return m_contentView.mainViewController()->title();
 }
 
-ViewController::TitlesDisplay ButtonRowController::titlesDisplay() {
+ViewController::TitlesDisplay ButtonRowController::titlesDisplay() const {
   return m_contentView.mainViewController()->titlesDisplay();
 }
 

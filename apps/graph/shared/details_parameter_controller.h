@@ -29,7 +29,7 @@ class DetailsParameterController
 
   // ViewController
   const char* title() override;
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastThreeTitles;
   }
   void viewWillAppear() override;

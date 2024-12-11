@@ -27,7 +27,7 @@ class TypeController
                  InputController* intervalInputController,
                  DatasetController* datasetController, Statistic* statistic);
   const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   void stackOpenPage(Escher::ViewController* nextPage) override;

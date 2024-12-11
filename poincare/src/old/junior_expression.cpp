@@ -161,9 +161,9 @@ const Tree* ExpressionObject::tree() const {
   return Tree::FromBlocks(m_blocks);
 }
 
-/* JuniorExpression */
+/* Expression */
 
-bool JuniorExpression::isIdenticalTo(const JuniorExpression e) const {
+bool Expression::isIdenticalTo(const Expression e) const {
   return tree()->treeIsIdenticalTo(e.tree());
 }
 
@@ -435,7 +435,7 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
     Approximation::PrepareFunctionForApproximation(result, symbolName,
                                                    ComplexFormat::Real);
   }
-  return JuniorExpression::Builder(result);
+  return Expression::Builder(result);
 }
 
 template <typename T>
@@ -702,7 +702,7 @@ bool UserExpression::replaceSymbols(Poincare::Context* context,
 }
 
 static bool IsIgnoredSymbol(const NewExpression* e,
-                            JuniorExpression::IgnoredSymbols* ignoredSymbols) {
+                            Expression::IgnoredSymbols* ignoredSymbols) {
   if (!e->tree()->isUserSymbol()) {
     return false;
   }
@@ -711,8 +711,8 @@ static bool IsIgnoredSymbol(const NewExpression* e,
     if (ignoredSymbols->head->isIdenticalTo(*e)) {
       return true;
     }
-    ignoredSymbols = reinterpret_cast<JuniorExpression::IgnoredSymbols*>(
-        ignoredSymbols->tail);
+    ignoredSymbols =
+        reinterpret_cast<Expression::IgnoredSymbols*>(ignoredSymbols->tail);
   }
   return false;
 }
@@ -753,7 +753,7 @@ bool NewExpression::recursivelyMatches(ExpressionTrinaryTest test,
     }
     assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
            tree()->isUserFunction());
-    JuniorExpression e = clone();
+    Expression e = clone();
     // Undefined symbols must be preserved.
     e.replaceSymbols(context, SymbolicComputation::ReplaceDefinedSymbols);
     return !e.isUninitialized() &&
@@ -964,7 +964,7 @@ bool NewExpression::isInRadians(Context* context) const {
 }
 
 bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
-  return recursivelyMatches(&JuniorExpression::isDiscontinuous, context);
+  return recursivelyMatches(&Expression::isDiscontinuous, context);
 }
 
 bool NewExpression::isConstantNumber() const {

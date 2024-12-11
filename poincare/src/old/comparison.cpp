@@ -76,14 +76,14 @@ ComparisonNode::OperatorType ComparisonNode::SwitchInferiorSuperior(
   }
 }
 
-bool ComparisonNode::IsBinaryComparison(JuniorExpression e,
+bool ComparisonNode::IsBinaryComparison(Expression e,
                                         OperatorType* operatorType) {
   assert(!e.isUninitialized());
   if (!e.isComparison()) {
     return false;
   }
   if (operatorType) {
-    assert(e.otype() == ExpressionNode::Type::JuniorExpression &&
+    assert(e.otype() == ExpressionNode::Type::Expression &&
            e.tree()->numberOfChildren() == 2);
     switch (e.tree()->type()) {
       case Internal::Type::Equal:
@@ -126,7 +126,7 @@ bool ComparisonNode::IsComparisonWithoutNotEqualOperator(OExpression e) {
   return true;
 }
 
-bool ComparisonNode::IsBinaryComparisonWithOperator(JuniorExpression e,
+bool ComparisonNode::IsBinaryComparisonWithOperator(Expression e,
                                                     OperatorType operatorType) {
   OperatorType operatorTypeOfE;
   return IsBinaryComparison(e, &operatorTypeOfE) &&

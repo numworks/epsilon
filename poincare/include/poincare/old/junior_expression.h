@@ -21,11 +21,11 @@ struct ProjectionContext;
 
 namespace Poincare {
 
-/* Aliases used to specify a JuniorExpression's type. TODO_PCJ: split them into
+/* Aliases used to specify a Expression's type. TODO_PCJ: split them into
  * actual classes to prevent casting one into another. */
 
 // Can be applied to different types of Expressions
-using NewExpression = JuniorExpression;
+using NewExpression = Expression;
 // Can be layoutted (Not projected)
 using UserExpression = NewExpression;
 // Can be approximated without context
@@ -70,7 +70,7 @@ class Dimension {
 };
 
 class ExpressionObject final : public PoolObject {
-  friend class JuniorExpression;
+  friend class Expression;
 
  public:
   ExpressionObject(const Internal::Tree* tree, size_t treeSize);
@@ -80,7 +80,7 @@ class ExpressionObject final : public PoolObject {
   int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
-    stream << "JuniorExpression";
+    stream << "Expression";
   }
   void logAttributes(std::ostream& stream) const override;
 #endif
@@ -106,21 +106,19 @@ class ExpressionObject final : public PoolObject {
   Internal::Block m_blocks[0];
 };
 
-class JuniorExpression : public PoolHandle {
+class Expression : public PoolHandle {
   friend class ExpressionObject;
 
  public:
-  JuniorExpression() : PoolHandle() {}
-  JuniorExpression(const ExpressionObject* n) : PoolHandle(n) {}
-  JuniorExpression(const API::UserExpression& ue) {
-    *this = Builder(ue.tree());
-  }
+  Expression() : PoolHandle() {}
+  Expression(const ExpressionObject* n) : PoolHandle(n) {}
+  Expression(const API::UserExpression& ue) { *this = Builder(ue.tree()); }
 
   NewExpression clone() const {
     PoolHandle clone = PoolHandle::clone();
     return static_cast<NewExpression&>(clone);
   }
-  bool isIdenticalTo(const JuniorExpression e) const;
+  bool isIdenticalTo(const Expression e) const;
 
   static NewExpression ExpressionFromAddress(const void* address, size_t size);
 
@@ -168,7 +166,7 @@ class JuniorExpression : public PoolHandle {
   NewExpression cloneChildAtIndex(int i) const;
   int numberOfDescendants(bool includeSelf) const;
 
-  // The following two methods should be moved out of JuniorExpression's public
+  // The following two methods should be moved out of Expression's public
   // API.
   bool isOfType(std::initializer_list<Internal::Type> types) const;
   bool deepIsOfType(std::initializer_list<Internal::Type> types,
@@ -324,7 +322,7 @@ class JuniorExpression : public PoolHandle {
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
 
-  typedef bool (JuniorExpression::*NonStaticSimpleExpressionTest)() const;
+  typedef bool (Expression::*NonStaticSimpleExpressionTest)() const;
   bool recursivelyMatches(NonStaticSimpleExpressionTest test,
                           Context* context = nullptr,
                           SymbolicComputation replaceSymbols =
@@ -392,7 +390,7 @@ class JuniorExpression : public PoolHandle {
   ComparisonJunior::Operator comparisonOperator() const;
 
 #if 1
-  /* TODO_PCJ: Remove those methods from PoolHandle once only JuniorExpression
+  /* TODO_PCJ: Remove those methods from PoolHandle once only Expression
    * remains. In the meantime, they are overriden there to assert false in case
    * they are still used. */
   void setParentIdentifier(uint16_t id) { assert(false); }
@@ -407,7 +405,7 @@ class JuniorExpression : public PoolHandle {
 };
 
 // TODO_PCJ: Actually implement methods. Assert its block type is Matrix
-class Matrix final : public JuniorExpression {
+class Matrix final : public Expression {
  public:
   /* Cap the matrix's size for inverse and determinant computation.
    * TODO: Find another solution */
@@ -424,7 +422,7 @@ class Matrix final : public JuniorExpression {
   int rank(Context* context, bool forceCanonization = false);
 };
 
-class Point final : public JuniorExpression {
+class Point final : public Expression {
  public:
   static Point Builder(const Internal::Tree* x, const Internal::Tree* y);
   static Point Builder(const NewExpression x, const NewExpression y) {
@@ -435,7 +433,7 @@ class Point final : public JuniorExpression {
 };
 
 // TODO_PCJ: Actually implement methods. Assert its block type is List
-class List : public JuniorExpression {
+class List : public Expression {
  public:
   static List Builder();
   int numberOfChildren() const;
@@ -445,7 +443,7 @@ class List : public JuniorExpression {
                               int currentNumberOfChildren);
 };
 
-class Boolean final : public JuniorExpression {
+class Boolean final : public Expression {
  public:
   bool value() const;
 };
@@ -458,14 +456,14 @@ class Unit final {
   static bool HasAngleDimension(NewExpression expression);
 };
 
-class Undefined final : public JuniorExpression {
+class Undefined final : public Expression {
  public:
   static Undefined Builder();
   constexpr static const char* Name() { return "undef"; }
   constexpr static int NameSize() { return 6; }
 };
 
-class NonReal final : public JuniorExpression {
+class NonReal final : public Expression {
  public:
   static NonReal Builder();
   constexpr static const char* Name() { return "nonreal"; }

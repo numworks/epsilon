@@ -25,7 +25,7 @@ Preferences::Preferences()
       m_forceExamModeReload(false) {}
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
-    ComplexFormat complexFormat, const JuniorExpression& exp, Context* context,
+    ComplexFormat complexFormat, const Expression& exp, Context* context,
     SymbolicComputation replaceSymbols) {
   Internal::ProjectionContext projectionContext = {
       .m_complexFormat = complexFormat,

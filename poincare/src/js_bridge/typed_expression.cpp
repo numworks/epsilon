@@ -44,7 +44,7 @@ template <ExpressionType T>
 TypedExpression<T> TypedExpression<T>::BuildFromJsTree(
     const TypedExpression<T>::JsTree& jsTree) {
   Tree* tree = JsArrayToTree(jsTree);
-  JuniorExpression result = JuniorExpression::Builder(tree);
+  Expression result = Expression::Builder(tree);
   return TypedExpression<T>::Cast(result);
 }
 

@@ -148,7 +148,7 @@ class ExpressionNode : public PoolObject {
     VectorCross,
     OMatrix,
     EmptyExpression,
-    JuniorExpression,
+    Expression,
     Matrix,
     Point,
     List,

@@ -21,7 +21,7 @@ Tree *floatNodeAtIndex(const Tree *tree, int index) {
 template <typename T>
 void FloatList<T>::addValueAtIndex(T value, int index) {
   assert(index <= numberOfChildren());
-  List::addChildAtIndexInPlace(JuniorExpression::Builder<T>(value), index,
+  List::addChildAtIndexInPlace(Expression::Builder<T>(value), index,
                                numberOfChildren());
 }
 

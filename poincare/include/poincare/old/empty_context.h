@@ -7,7 +7,7 @@
 
 namespace Poincare {
 
-class JuniorExpression;
+class Expression;
 class ContextWithParent;
 
 class EmptyContext : public Context {

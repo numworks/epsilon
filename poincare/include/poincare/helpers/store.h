@@ -7,7 +7,7 @@ namespace Poincare {
 
 namespace StoreHelper {
 
-const JuniorExpression Value(const UserExpression& e);
+const Expression Value(const UserExpression& e);
 const UserExpression Symbol(const UserExpression& e);
 bool PerformStore(Context* context, const UserExpression& e);
 bool StoreValueForSymbol(Context* context, const UserExpression& value,

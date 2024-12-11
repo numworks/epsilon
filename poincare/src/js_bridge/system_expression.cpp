@@ -16,18 +16,18 @@ namespace Poincare::JSBridge {
 // === 1. Builders ===
 
 TypedSystemExpression BuildSystemInt(int32_t value) {
-  JuniorExpression result = JuniorExpression::Builder(value);
+  Expression result = Expression::Builder(value);
   return TypedSystemExpression::Cast(result);
 }
 
 TypedSystemExpression BuildSystemFloat(double value) {
-  JuniorExpression result = JuniorExpression::Builder<double>(value);
+  Expression result = Expression::Builder<double>(value);
   return TypedSystemExpression::Cast(result);
 }
 
 TypedSystemExpression BuildSystemRational(int32_t numerator,
                                           int32_t denominator) {
-  JuniorExpression result = JuniorExpression::Builder(
+  Expression result = Expression::Builder(
       Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
   return TypedSystemExpression::Cast(result);
 }
@@ -37,21 +37,20 @@ TypedSystemExpression BuildSystemRational(int32_t numerator,
 TypedUserExpression typedCloneAndBeautify(
     const TypedSystemExpression& expr,
     const ReductionContext& reductionContext) {
-  JuniorExpression result = expr.cloneAndBeautify(reductionContext);
+  Expression result = expr.cloneAndBeautify(reductionContext);
   return TypedUserExpression::Cast(result);
 }
 
 TypedSystemFunction typedGetSystemFunction(
     const TypedSystemExpression& expression, std::string symbolName) {
-  JuniorExpression result =
-      expression.getSystemFunction(symbolName.c_str(), true);
+  Expression result = expression.getSystemFunction(symbolName.c_str(), true);
   return TypedSystemFunction::Cast(result);
 }
 
 TypedSystemExpression typedGetReducedDerivative(
     const TypedSystemExpression& expression, std::string symbolName,
     int derivationOrder) {
-  JuniorExpression result =
+  Expression result =
       expression.getReducedDerivative(symbolName.c_str(), derivationOrder);
   return TypedSystemExpression::Cast(result);
 }
@@ -63,7 +62,7 @@ TypedSystemExpression typedApproximateToTree(
   ApproximationContext approximationContext(
       &context, Preferences::ComplexFormat::Cartesian,
       Preferences::AngleUnit::Radian);
-  JuniorExpression result =
+  Expression result =
       expression.approximateToTree<double>(approximationContext);
   return TypedSystemExpression::Cast(result);
 }
@@ -74,7 +73,7 @@ double typedApproximateToScalar(const TypedSystemExpression& expr) {
 
 EMSCRIPTEN_BINDINGS(system_expression) {
   register_type<TypedSystemExpression::JsTree>("SystemExpressionTree");
-  class_<TypedSystemExpression, base<JuniorExpression>>("PCR_SystemExpression")
+  class_<TypedSystemExpression, base<Expression>>("PCR_SystemExpression")
       .constructor<>()
       .class_function("BuildFromTree", &TypedSystemExpression::BuildFromJsTree)
       .function("getTree", &TypedSystemExpression::getJsTree)
@@ -89,8 +88,7 @@ EMSCRIPTEN_BINDINGS(system_expression) {
       .function("getReducedDerivative", &typedGetReducedDerivative)
       .function("approximateToTree", &typedApproximateToTree)
       .function("approximateToScalar", &typedApproximateToScalar)
-      .function("isPlusOrMinusInfinity",
-                &JuniorExpression::isPlusOrMinusInfinity);
+      .function("isPlusOrMinusInfinity", &Expression::isPlusOrMinusInfinity);
 }
 
 }  // namespace Poincare::JSBridge

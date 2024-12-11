@@ -39,11 +39,11 @@ class ComparisonNode : public ExpressionNode {
 
   static OperatorType SwitchInferiorSuperior(OperatorType type);
 
-  static bool IsBinaryComparison(JuniorExpression e,
+  static bool IsBinaryComparison(Expression e,
                                  OperatorType* returnType = nullptr);
-  static bool IsBinaryComparisonWithOperator(JuniorExpression e,
+  static bool IsBinaryComparisonWithOperator(Expression e,
                                              OperatorType operatorType);
-  static bool IsBinaryEquality(JuniorExpression e) {
+  static bool IsBinaryEquality(Expression e) {
     return IsBinaryComparisonWithOperator(e, OperatorType::Equal);
   }
   static bool IsComparisonWithoutNotEqualOperator(

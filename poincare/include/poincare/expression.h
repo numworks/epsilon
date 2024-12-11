@@ -6,8 +6,4 @@
 #include <poincare/old/junior_expression.h>
 // clang-format on
 
-namespace Poincare {
-using Expression = JuniorExpression;
-}  // namespace Poincare
-
 #endif

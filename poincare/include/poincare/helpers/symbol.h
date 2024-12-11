@@ -34,8 +34,8 @@ const char* GetName(NewExpression e);
 // Builders
 UserExpression BuildSymbol(const char* name, int length = -1);
 UserExpression BuildSymbol(CodePoint name);
-UserExpression BuildFunction(const char* name, JuniorExpression child);
-UserExpression BuildSequence(const char* name, JuniorExpression child);
+UserExpression BuildFunction(const char* name, Expression child);
+UserExpression BuildSequence(const char* name, Expression child);
 
 static inline UserExpression Ans() {
   return BuildSymbol(SymbolHelper::AnsMainAlias());

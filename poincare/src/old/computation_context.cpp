@@ -3,7 +3,7 @@
 
 namespace Poincare {
 
-void ComputationContext::updateComplexFormat(const JuniorExpression e) {
+void ComputationContext::updateComplexFormat(const Expression e) {
   m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
       m_complexFormat, e, m_context);
 }

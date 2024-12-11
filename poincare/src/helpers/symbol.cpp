@@ -54,7 +54,7 @@ UserExpression SymbolHelper::BuildSymbol(const char* name, int length) {
     name = BuiltinsAliases::k_thetaAliases.mainAlias();
     length = strlen(name);
   }
-  return JuniorExpression::Builder(
+  return Expression::Builder(
       SharedTreeStack->pushUserSymbol(name, static_cast<size_t>(length + 1)));
 }
 
@@ -67,8 +67,7 @@ UserExpression SymbolHelper::BuildSymbol(CodePoint name) {
   return BuildSymbol(buffer, codePointLength);
 }
 
-UserExpression SymbolHelper::BuildFunction(const char* name,
-                                           JuniorExpression child) {
+UserExpression SymbolHelper::BuildFunction(const char* name, Expression child) {
   if (BuiltinsAliases::k_thetaAliases.contains(name)) {
     name = BuiltinsAliases::k_thetaAliases.mainAlias();
   }
@@ -79,8 +78,7 @@ UserExpression SymbolHelper::BuildFunction(const char* name,
   return NewExpression::Builder(e);
 }
 
-UserExpression SymbolHelper::BuildSequence(const char* name,
-                                           JuniorExpression child) {
+UserExpression SymbolHelper::BuildSequence(const char* name, Expression child) {
   // If needed, handle theta like functions and symbols
   assert(!BuiltinsAliases::k_thetaAliases.contains(name));
   Internal::Tree* e =

@@ -76,7 +76,7 @@ class OExpression : public PoolHandle {
   friend class IntegralNode;
   friend class InverseMethod;
   friend class LeastCommonMultiple;
-  friend class JuniorExpressionNode;
+  friend class ExpressionNode;
   friend class OList;
   friend class ListFunctionWithOneOrTwoParametersNode;
   friend class ListMean;

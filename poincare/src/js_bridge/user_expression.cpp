@@ -24,17 +24,17 @@ namespace Poincare::JSBridge {
 // === 1.1. Build from numbers ===
 
 TypedUserExpression BuildUserInt(int32_t value) {
-  JuniorExpression result = JuniorExpression::Builder(value);
+  Expression result = Expression::Builder(value);
   return TypedUserExpression::Cast(result);
 }
 
 TypedUserExpression BuildUserFloat(double value) {
-  JuniorExpression result = JuniorExpression::Builder<double>(value);
+  Expression result = Expression::Builder<double>(value);
   return TypedUserExpression::Cast(result);
 }
 
 TypedUserExpression BuildUserRational(int32_t numerator, int32_t denominator) {
-  JuniorExpression result = JuniorExpression::Builder(
+  Expression result = Expression::Builder(
       Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
   return TypedUserExpression::Cast(result);
 }
@@ -44,13 +44,13 @@ TypedUserExpression BuildUserRational(int32_t numerator, int32_t denominator) {
 TypedUserExpression BuildFromLatex(std::string latex) {
   EmptyContext context;
   return TypedUserExpression::Cast(
-      JuniorExpression::ParseLatex(latex.c_str(), &context));
+      Expression::ParseLatex(latex.c_str(), &context));
 }
 
 TypedUserExpression BuildFromLatexWithAssignmentParam(std::string latex,
                                                       bool parseForAssignment) {
   EmptyContext context;
-  return TypedUserExpression::Cast(JuniorExpression::ParseLatex(
+  return TypedUserExpression::Cast(Expression::ParseLatex(
       latex.c_str(), &context, true, parseForAssignment));
 }
 
@@ -434,7 +434,7 @@ TypedUserExpression BuildFromPattern(std::string pattern,
   const TypedUserExpression contextExprs[] = {expressions...};
   Tree* resultTree = buildTreeFromPattern(buffer, bufferEnd, contextExprs,
                                           sizeof...(expressions));
-  return TypedUserExpression::Cast(JuniorExpression::Builder(resultTree));
+  return TypedUserExpression::Cast(Expression::Builder(resultTree));
 }
 
 // === 2. Methods ===
@@ -461,7 +461,7 @@ std::string typedToLatex(const TypedUserExpression& expression,
 
 TypedSystemExpression typedCloneAndReduce(
     const TypedUserExpression& expr, const ReductionContext& reductionContext) {
-  JuniorExpression result = expr.cloneAndReduce(reductionContext);
+  Expression result = expr.cloneAndReduce(reductionContext);
   return TypedSystemExpression::Cast(result);
 }
 
@@ -487,7 +487,7 @@ TypedSystemExpression typedCloneAndReduce(
 
 EMSCRIPTEN_BINDINGS(user_expression) {
   register_type<TypedUserExpression::JsTree>("UserExpressionTree");
-  class_<TypedUserExpression, base<JuniorExpression>>("PCR_UserExpression")
+  class_<TypedUserExpression, base<Expression>>("PCR_UserExpression")
       .constructor<>()
       .class_function("BuildFromTree", &TypedUserExpression::BuildFromJsTree)
       .function("getTree", &TypedUserExpression::getJsTree)

@@ -66,7 +66,7 @@ class SymbolAbstractNode : public ExpressionNode {
  * 'sizeof(OExpression) == sizeof(ExpressionInheritingFromSymbolAbstract)
  * due to the virtual table. */
 
-class SymbolAbstract : public JuniorExpression {
+class SymbolAbstract : public Expression {
   friend class Function;
   friend class FunctionNode;
   friend class Sequence;
@@ -79,25 +79,24 @@ class SymbolAbstract : public JuniorExpression {
  public:
   const char *name() const;
   bool hasSameNameAs(const SymbolAbstract &other) const;
-  // Implemented in JuniorExpression::replaceSymbolWithExpression
+  // Implemented in Expression::replaceSymbolWithExpression
 #if 0
-  JuniorExpression replaceSymbolWithExpression(
-      const SymbolAbstract &symbol, const JuniorExpression &expression);
+  Expression replaceSymbolWithExpression(
+      const SymbolAbstract &symbol, const Expression &expression);
 #endif
 
  protected:
-  SymbolAbstract(const SymbolAbstractNode *node) : JuniorExpression(node) {}
+  SymbolAbstract(const SymbolAbstractNode *node) : Expression(node) {}
   SymbolAbstractNode *node() const {
     // TODO_PCJ
     assert(false);
     return nullptr;
-    // return static_cast<SymbolAbstractNode *>(JuniorExpression::node());
+    // return static_cast<SymbolAbstractNode *>(Expression::node());
   }
 
  private:
-  static JuniorExpression Expand(const SymbolAbstract &symbol, Context *context,
-                                 bool clone,
-                                 SymbolicComputation symbolicComputation);
+  static Expression Expand(const SymbolAbstract &symbol, Context *context,
+                           bool clone, SymbolicComputation symbolicComputation);
 };
 
 }  // namespace Poincare

@@ -6,7 +6,7 @@ using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
-std::string symbolName(const JuniorExpression& expr) {
+std::string symbolName(const Expression& expr) {
   if (!expr.isUserSymbol() && !expr.isUserFunction()) {
     // Only works on symbols expressions
     return std::string();
@@ -23,11 +23,11 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
       .function("isUninitialized", &PoolHandle::isUninitialized);
 
   class_<JuniorExpression, base<PoolHandle>>("PCR_Expression")
-      .function("isIdenticalTo", &JuniorExpression::isIdenticalTo)
-      .function("isUndefined", &JuniorExpression::isUndefinedOrNonReal)
-      .function("isUserSymbol", &JuniorExpression::isUserSymbol)
-      .function("isUserFunction", &JuniorExpression::isUserFunction)
-      .function("isEquality", &JuniorExpression::isEquality)
+      .function("isIdenticalTo", &Expression::isIdenticalTo)
+      .function("isUndefined", &Expression::isUndefinedOrNonReal)
+      .function("isUserSymbol", &Expression::isUserSymbol)
+      .function("isUserFunction", &Expression::isUserFunction)
+      .function("isEquality", &Expression::isEquality)
       .function("symbolName", &symbolName);
 }
 

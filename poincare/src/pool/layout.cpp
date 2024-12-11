@@ -138,7 +138,7 @@ Layout Layout::Concatenate(Layout layout1, Layout layout2) {
 
 void Layout::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
                   Internal::LayoutCursor* cursor) {
-  node()->draw(ctx, p, style, cursor);
+  object()->draw(ctx, p, style, cursor);
 }
 
 // Rendering

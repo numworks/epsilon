@@ -102,7 +102,7 @@ class Layout final : public PoolHandle {
   static Layout Concatenate(Layout layout1, Layout layout2);
 
   Internal::Tree* tree() const {
-    return const_cast<Layout*>(this)->node()->tree();
+    return const_cast<Layout*>(this)->object()->tree();
   }
 
   int numberOfDescendants(bool includeSelf) const;
@@ -126,11 +126,11 @@ class Layout final : public PoolHandle {
   void draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
             Internal::LayoutCursor* cursor = nullptr);
 
-  LayoutObject* node() {
+  LayoutObject* object() {
     return static_cast<LayoutObject*>(PoolHandle::object());
   }
 
-  const LayoutObject* node() const {
+  const LayoutObject* object() const {
     return static_cast<LayoutObject*>(PoolHandle::object());
   }
 

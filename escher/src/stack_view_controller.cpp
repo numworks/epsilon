@@ -30,6 +30,13 @@ ViewController* StackViewController::topViewController() {
   return stackSlot(m_size - 1);
 }
 
+const ViewController* StackViewController::topViewController() const {
+  if (m_size < 1) {
+    return nullptr;
+  }
+  return stackSlot(m_size - 1);
+}
+
 void StackViewController::push(ViewController* vc) {
   /* Add the frame to the model */
   pushModel(vc);

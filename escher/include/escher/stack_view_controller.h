@@ -31,6 +31,7 @@ class StackViewController : public ViewController {
   int depth() const { return m_size; }
   StackView* view() override { return &m_view; }
   ViewController* topViewController();
+  const ViewController* topViewController() const;
   const char* title() override;
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder* previousFirstResponder) override;

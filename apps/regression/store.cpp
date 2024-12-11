@@ -355,7 +355,8 @@ void Store::storeRegressionFunction(int series,
   }
   char name[k_functionNameSize];
   BuildFunctionName(series, name, k_functionNameSize);
-  expression.replaceSymbolWithUnknown(JuniorSymbol::Builder(Model::k_xSymbol));
+  expression.replaceSymbolWithUnknown(
+      SymbolHelper::BuildSymbol(Model::k_xSymbol));
   expression.storeWithNameAndExtension(name, Ion::Storage::regressionExtension);
 }
 

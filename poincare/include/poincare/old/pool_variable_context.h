@@ -1,6 +1,8 @@
 #ifndef POINCARE_POOL_VARIABLE_CONTEXT_H
 #define POINCARE_POOL_VARIABLE_CONTEXT_H
 
+#include <poincare/helpers/symbol.h>
+
 #include "context_with_parent.h"
 #include "junior_expression.h"
 
@@ -13,9 +15,9 @@ class PoolVariableContext : public ContextWithParent {
       : ContextWithParent(parentContext), m_name(name) {}
   /* Building a self referential context is a trick for parsing parametered
    * expression. */
-  PoolVariableContext(JuniorSymbolAbstract symbol, Context* parentContext)
+  PoolVariableContext(UserExpression symbol, Context* parentContext)
       : ContextWithParent(parentContext),
-        m_name(symbol.name()),
+        m_name(SymbolHelper::GetName(symbol)),
         m_value(symbol) {}
 
   template <typename T>

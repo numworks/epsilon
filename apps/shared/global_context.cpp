@@ -117,12 +117,11 @@ bool GlobalContext::setExpressionForUserNamed(
     const Internal::Tree* expressionTree, const Internal::Tree* symbolTree) {
   assert(symbolTree->isUserNamed());
   UserExpression expression = UserExpression::Builder(expressionTree);
-  UserExpression symbolExpression = UserExpression::Builder(symbolTree);
-  JuniorSymbolAbstract symbol =
-      static_cast<JuniorSymbolAbstract&>(symbolExpression);
+  UserExpression symbol = UserExpression::Builder(symbolTree);
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
-  Ion::Storage::Record record = UserNamedRecordWithBaseName(symbol.name());
+  Ion::Storage::Record record =
+      UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol));
   UserExpression e =
       UserExpression::Builder(expressionForSymbolAndRecord(symbolTree, record));
   if (e.isUninitialized()) {
@@ -133,22 +132,21 @@ bool GlobalContext::setExpressionForUserNamed(
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.isUserSymbol()) {
-    return setExpressionForUserSymbol(finalExpression, symbol.name(), record) ==
+    return setExpressionForUserSymbol(finalExpression,
+                                      SymbolHelper::GetName(symbol), record) ==
            Ion::Storage::Record::ErrorStatus::None;
   }
   const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
   assert(symbol.isUserFunction() && childSymbol.isUserSymbol());
-  finalExpression.replaceSymbolWithUnknown(
-      static_cast<const JuniorSymbol&>(childSymbol));
-  JuniorFunction symbolToStore = static_cast<const JuniorFunction&>(symbol);
+  finalExpression.replaceSymbolWithUnknown(childSymbol);
+  UserExpression symbolToStore = symbol;
   if (!(SymbolHelper::IsSymbol(childSymbol, CodePoints::k_cartesianSymbol) ||
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_polarSymbol) ||
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_parametricSymbol))) {
     // Unsupported symbol. Fall back to the default cartesian function symbol
-    UserExpression symbolInX = Poincare::JuniorFunction::Builder(
-        symbolToStore.name(),
-        JuniorSymbol::Builder(CodePoints::k_cartesianSymbol));
-    symbolToStore = static_cast<const JuniorFunction&>(symbolInX);
+    symbolToStore = Poincare::SymbolHelper::BuildFunction(
+        SymbolHelper::GetName(symbolToStore),
+        SymbolHelper::BuildSymbol(CodePoints::k_cartesianSymbol));
   }
   return setExpressionForUserFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
@@ -221,8 +219,9 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(
-    const UserExpression& expressionToStore, const JuniorFunction& symbol,
+    const UserExpression& expressionToStore, const UserExpression& symbol,
     Ion::Storage::Record previousRecord) {
+  assert(symbol.isUserFunction());
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::None;
@@ -230,8 +229,8 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(
     GlobalContext::DeleteParametricComponentsOfRecord(recordToSet);
   } else {
     // The previous record was not a function. Create a new model.
-    ContinuousFunction newModel =
-        s_continuousFunctionStore->newModel(symbol.name(), &error);
+    ContinuousFunction newModel = s_continuousFunctionStore->newModel(
+        SymbolHelper::GetName(symbol), &error);
     if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }

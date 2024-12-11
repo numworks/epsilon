@@ -400,8 +400,8 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
       // It's a user variable row, get values of the solutions or discriminant
       const char* symbolName =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
-      JuniorSymbol symbol =
-          JuniorSymbol::Builder(symbolName, strlen(symbolName));
+      UserExpression symbol =
+          SymbolHelper::BuildSymbol(symbolName, strlen(symbolName));
       UserExpression value = UserExpression::Builder(
           App::app()->localContext()->expressionForUserNamed(symbol.tree()));
       Layout layout =
@@ -452,7 +452,8 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
   // TODO: memoize user symbols if too slow
   const char* symbolName =
       system->userVariable(row - rowOfUserVariablesMessage - 1);
-  JuniorSymbol symbol = JuniorSymbol::Builder(symbolName, strlen(symbolName));
+  UserExpression symbol =
+      SymbolHelper::BuildSymbol(symbolName, strlen(symbolName));
   UserExpression value = UserExpression::Builder(
       App::app()->localContext()->expressionForUserNamed(symbol.tree()));
   Layout layout =

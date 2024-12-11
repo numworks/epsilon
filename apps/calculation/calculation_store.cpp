@@ -91,7 +91,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
 
 UserExpression CalculationStore::replaceAnsInExpression(
     UserExpression expression, Context* context) const {
-  JuniorSymbol ansSymbol = JuniorSymbol::Ans();
+  UserExpression ansSymbol = SymbolHelper::Ans();
   UserExpression ansExpression = this->ansExpression(context);
   expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
   return expression;
@@ -193,7 +193,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
     // TODO: factorize with StoreMenuController::parseAndStore
     // TODO: add circuit breaker?
     UserExpression value = StoreHelper::Value(exactOutputExpression);
-    JuniorSymbolAbstract symbol = StoreHelper::Symbol(exactOutputExpression);
+    UserExpression symbol = StoreHelper::Symbol(exactOutputExpression);
     UserExpression valueApprox =
         PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
     if (symbol.isUserSymbol() &&
@@ -279,7 +279,7 @@ bool CalculationStore::preferencesHaveChanged() {
 PoolVariableContext CalculationStore::createAnsContext(Context* context) {
   PoolVariableContext ansContext(SymbolHelper::AnsMainAlias(), context);
   ansContext.setExpressionForUserNamed(ansExpression(context),
-                                       JuniorSymbol::Ans());
+                                       SymbolHelper::Ans());
   return ansContext;
 }
 

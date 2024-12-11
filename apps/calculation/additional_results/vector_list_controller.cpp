@@ -98,7 +98,8 @@ void VectorListController::computeAdditionalResults(
     return;
   }
   setLineAtIndex(
-      index++, Poincare::JuniorSymbol::Builder(UCodePointGreekSmallLetterTheta),
+      index++,
+      Poincare::SymbolHelper::BuildSymbol(UCodePointGreekSmallLetterTheta),
       angle, &ctx);
 
   // 4. Illustration

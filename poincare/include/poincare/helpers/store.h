@@ -8,10 +8,10 @@ namespace Poincare {
 namespace StoreHelper {
 
 const JuniorExpression Value(const UserExpression& e);
-const JuniorSymbolAbstract Symbol(const UserExpression& e);
+const UserExpression Symbol(const UserExpression& e);
 bool PerformStore(Context* context, const UserExpression& e);
 bool StoreValueForSymbol(Context* context, const UserExpression& value,
-                         const JuniorSymbolAbstract& symbol);
+                         const UserExpression& symbol);
 
 }  // namespace StoreHelper
 

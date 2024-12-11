@@ -88,16 +88,6 @@ bool SymbolNode::isSystemSymbol() const {
   return result;
 }
 
-Symbol Symbol::Builder(const char* name, int length) {
-  assert(false);
-  return Symbol();
-}
-
-Symbol Symbol::Builder(CodePoint name) {
-  assert(false);
-  return Symbol();
-}
-
 OExpression Symbol::shallowReduce(ReductionContext reductionContext) {
   assert(false);
   return replaceWithUndefinedInPlace();

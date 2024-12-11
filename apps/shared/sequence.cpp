@@ -54,16 +54,16 @@ void Sequence::setType(Type t) {
       error = setExpressionContent(UserExpression());
       break;
     case Type::SingleRecurrence: {
-      error = setExpressionContent(Poincare::JuniorSequence::Builder(
+      error = setExpressionContent(Poincare::SymbolHelper::BuildSequence(
           name, UserExpression::Builder(KUnknownSymbol)));
       break;
     }
     case Type::DoubleRecurrence: {
       error = setExpressionContent(Poincare::UserExpression::Create(
           KAdd(KA, KB),
-          {.KA = Poincare::JuniorSequence::Builder(
+          {.KA = Poincare::SymbolHelper::BuildSequence(
                name, UserExpression::Builder(KAdd(KUnknownSymbol, 1_e))),
-           .KB = Poincare::JuniorSequence::Builder(
+           .KB = Poincare::SymbolHelper::BuildSequence(
                name, UserExpression::Builder(KUnknownSymbol))}));
       break;
     }

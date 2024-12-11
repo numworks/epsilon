@@ -1,6 +1,8 @@
 #ifndef POINCARE_VARIABLE_CONTEXT_H
 #define POINCARE_VARIABLE_CONTEXT_H
 
+#include <poincare/helpers/symbol.h>
+
 #include "context_with_parent.h"
 #include "junior_expression.h"
 
@@ -15,9 +17,9 @@ class TreeVariableContext : public ContextWithParent {
       : ContextWithParent(parentContext), m_name(name) {}
   /* Building a self referential context is a trick for parsing parametered
    * expression. */
-  TreeVariableContext(JuniorSymbolAbstract symbol, Context* parentContext)
+  TreeVariableContext(UserExpression symbol, Context* parentContext)
       : ContextWithParent(parentContext),
-        m_name(symbol.name()),
+        m_name(SymbolHelper::GetName(symbol)),
         m_value(symbol) {}
 
   // Context

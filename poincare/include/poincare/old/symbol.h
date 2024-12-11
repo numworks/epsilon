@@ -73,15 +73,8 @@ class Symbol final : public SymbolAbstract {
   constexpr static CodePoint k_ordinateSymbol = 'y';
   constexpr static CodePoint k_sequenceSymbol = 'n';
   constexpr static AliasesList k_ansAliases = AliasesLists::k_ansAliases;
-  static Symbol SystemSymbol() { return Builder(UCodePointUnknown); }
 
   Symbol(const SymbolNode* node = nullptr) : SymbolAbstract(node) {}
-  static Symbol Builder(const char* name, int length);
-  static Symbol Builder(CodePoint name);
-  static Symbol Ans() {
-    return Symbol::Builder(k_ansAliases.mainAlias(),
-                           strlen(k_ansAliases.mainAlias()));
-  }
 
   // Symbol properties
   bool isSystemSymbol() const { return node()->isSystemSymbol(); }

@@ -534,7 +534,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
              parameterNameLength < parameterNameSize);
       parameterName[parameterNameLength] = 0;
       ab.addChildAtIndexInPlace(
-          JuniorSymbol::Builder(parameterName, parameterNameLength), abChildren,
+          SymbolHelper::BuildSymbol(parameterName, parameterNameLength), abChildren,
           abChildren);
       ++abChildren;
       ab.setDimensions(++m, n + 1);
@@ -562,7 +562,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
         variable(i), i == 0 ? context : &solutionContexts[i - 1]);
     solutionContexts[i].setExpressionForUserNamed(
         ab.matrixChild(i, n),
-        JuniorSymbol::Builder(variable(i), strlen(variable(i))));
+        SymbolHelper::BuildSymbol(variable(i), strlen(variable(i))));
   }
   ReductionContext reductionContextWithSolutions(
       &solutionContexts[n - 1], m_complexFormat,
@@ -638,7 +638,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
     if (simplifiedEquations[0].isDep()) {
       VariableContext contextWithSolution(variable(0), context);
       contextWithSolution.setExpressionForUserNamed(
-          x[i], JuniorSymbol::Builder(variable(0), strlen(variable(0))));
+          x[i], SymbolHelper::BuildSymbol(variable(0), strlen(variable(0))));
       ReductionContext reductionContextWithSolution = reductionContext;
       reductionContextWithSolution.setContext(&contextWithSolution);
       if (simplifiedEquations[0]

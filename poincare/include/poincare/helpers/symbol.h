@@ -31,6 +31,19 @@ bool IsTheta(NewExpression e);
 bool IsSymbol(NewExpression e, CodePoint c);
 const char* GetName(NewExpression e);
 
+// Builders
+UserExpression BuildSymbol(const char* name, int length = -1);
+UserExpression BuildSymbol(CodePoint name);
+UserExpression BuildFunction(const char* name, JuniorExpression child);
+UserExpression BuildSequence(const char* name, JuniorExpression child);
+
+static inline UserExpression Ans() {
+  return BuildSymbol(SymbolHelper::AnsMainAlias());
+}
+static inline UserExpression SystemSymbol() {
+  return BuildSymbol(UCodePointUnknown);
+}
+
 }  // namespace SymbolHelper
 
 }  // namespace Poincare

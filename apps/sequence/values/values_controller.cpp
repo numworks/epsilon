@@ -158,7 +158,7 @@ Layout ValuesController::functionTitleLayout(int column) {
   UserExpression sumExpression = UserExpression::Create(
       KSum("k"_e, KA, "n"_e, KB),
       {.KA = NewExpression::Builder(sequence->initialRank()),
-       .KB = Poincare::JuniorSequence::Builder(
+       .KB = Poincare::SymbolHelper::BuildSequence(
            sequenceName, UserExpression::Builder("k"_e))});
   return sumExpression.createLayout(preferences->displayMode(),
                                     preferences->numberOfSignificantDigits(),

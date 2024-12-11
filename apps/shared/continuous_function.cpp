@@ -920,8 +920,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
      * TODO: Make a consistent behavior calculation/additional_results using a
      *       VariableContext to temporary disable y's predefinition. */
     result.replaceSymbolWithExpression(
-        JuniorSymbol::Builder(k_ordinateSymbol),
-        JuniorSymbol::Builder(UCodePointTemporaryUnknown));
+        SymbolHelper::BuildSymbol(k_ordinateSymbol),
+        SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
   result.replaceSymbols(context);
@@ -932,8 +932,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   }
   if (isUnnamedFunction) {
     result.replaceSymbolWithExpression(
-        JuniorSymbol::Builder(UCodePointTemporaryUnknown),
-        JuniorSymbol::Builder(k_ordinateSymbol));
+        SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown),
+        SymbolHelper::BuildSymbol(k_ordinateSymbol));
   }
   assert(!result.isUninitialized());
   return result;
@@ -1150,8 +1150,8 @@ SystemExpression ContinuousFunction::Model::parametricForm(
      * - y(r) = r * sin(θ(r)) */
     e = SystemExpression::CreateReduce(
         KPoint(KMult(KA, KTrig(KB, 0_e)), KMult(KA, KTrig(KB, 1_e))),
-        {.KA = prop.isPolar() ? e : JuniorSymbol::SystemSymbol(),
-         .KB = prop.isPolar() ? JuniorSymbol::SystemSymbol() : e});
+        {.KA = prop.isPolar() ? e : SymbolHelper::SystemSymbol(),
+         .KB = prop.isPolar() ? SymbolHelper::SystemSymbol() : e});
   } else {
     assert(prop.isParametric());
     e = e.clone();

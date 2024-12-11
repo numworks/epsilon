@@ -10,11 +10,11 @@ const JuniorExpression StoreHelper::Value(const UserExpression& e) {
   return e.cloneChildAtIndex(0);
 }
 
-const JuniorSymbolAbstract StoreHelper::Symbol(const UserExpression& e) {
+const UserExpression StoreHelper::Symbol(const UserExpression& e) {
   assert(!e.isUninitialized() && e.isStore());
-  const JuniorExpression symbol = e.cloneChildAtIndex(1);
+  const UserExpression symbol = e.cloneChildAtIndex(1);
   assert(symbol.isUserSymbol() || symbol.isUserFunction());
-  return static_cast<const JuniorSymbolAbstract&>(symbol);
+  return symbol;
 }
 
 bool StoreHelper::PerformStore(Context* context, const UserExpression& e) {
@@ -23,7 +23,7 @@ bool StoreHelper::PerformStore(Context* context, const UserExpression& e) {
 
 bool StoreHelper::StoreValueForSymbol(Context* context,
                                       const UserExpression& value,
-                                      const JuniorSymbolAbstract& symbol) {
+                                      const UserExpression& symbol) {
   assert(!value.isUninitialized());
   assert(symbol.isUserSymbol() || symbol.isUserFunction());
   return context->setExpressionForUserNamed(value, symbol);

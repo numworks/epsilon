@@ -32,7 +32,7 @@ class SlopeTTest : public Test, public SlopeTStatistic {
   bool validateInputs() override { return SlopeTStatistic::validateInputs(); }
 
   // Significance Test: Slope
-  const char* hypothesisSymbol() override { return "β"; }
+  const char* hypothesisSymbol() const override { return "β"; }
 
   void compute() override;
 

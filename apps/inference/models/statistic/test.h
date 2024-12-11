@@ -60,6 +60,9 @@ class Test : public Statistic {
   // Input
   bool hasHypothesisParameters() const override { return true; }
   HypothesisParams* hypothesisParams() override { return &m_hypothesisParams; }
+  const HypothesisParams* hypothesisParams() const override {
+    return &m_hypothesisParams;
+  }
   virtual bool isValidH0(double h0) { return true; }
 
   // Additional estimates

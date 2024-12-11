@@ -1,3 +1,4 @@
+#include <poincare/expression.h>
 #include <poincare/function_properties/conic.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/degree.h>
@@ -12,7 +13,6 @@
 #include <algorithm>
 
 #include "helper.h"
-#include "poincare/old/junior_expression.h"
 
 /* Double comparison is extensively used in Conics's methods for performances.
  * To limit the approximation errors that may rise from these comparisons, we

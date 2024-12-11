@@ -34,7 +34,6 @@ $(addprefix old/, \
   context.cpp \
   empty_context.cpp \
   float_list.cpp \
-  junior_expression.cpp \
   pool_variable_context.cpp \
   tree_variable_context.cpp \
 ) \
@@ -63,6 +62,7 @@ $(addprefix expression/, \
   dimension.cpp \
   division.cpp \
   equation_solver.cpp \
+  expression.cpp \
   float_helper.cpp \
   infinity.cpp \
   integer.cpp \

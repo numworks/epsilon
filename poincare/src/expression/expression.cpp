@@ -1,8 +1,8 @@
 #include <poincare/cas.h>
+#include <poincare/expression.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/junior_expression.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>

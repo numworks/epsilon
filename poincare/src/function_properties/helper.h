@@ -1,7 +1,7 @@
 #ifndef POINCARE_FUNCTION_PROPERTIES_HELPER_H
 #define POINCARE_FUNCTION_PROPERTIES_HELPER_H
 
-#include <poincare/old/junior_expression.h>
+#include <poincare/expression.h>
 
 namespace Poincare::Internal {
 

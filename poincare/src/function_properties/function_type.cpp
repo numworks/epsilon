@@ -1,3 +1,4 @@
+#include <poincare/expression.h>
 #include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/degree.h>
 #include <poincare/src/expression/dependency.h>
@@ -9,7 +10,6 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "helper.h"
-#include "poincare/old/junior_expression.h"
 
 namespace Poincare {
 

@@ -1,9 +1,8 @@
 #ifndef POINCARE_FLOAT_LIST_H
 #define POINCARE_FLOAT_LIST_H
 
+#include <poincare/expression.h>
 #include <poincare/numeric/statistics.h>
-
-#include "junior_expression.h"
 
 namespace Poincare {
 

@@ -1,7 +1,7 @@
 #include <emscripten/bind.h>
+#include <poincare/expression.h>
 #include <poincare/old/computation_context.h>
 #include <poincare/old/empty_context.h>
-#include <poincare/old/junior_expression.h>
 
 #include <string>
 

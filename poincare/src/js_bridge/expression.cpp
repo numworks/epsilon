@@ -1,6 +1,6 @@
 #include <emscripten/bind.h>
+#include <poincare/expression.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/old/junior_expression.h>
 
 using namespace emscripten;
 

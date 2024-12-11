@@ -1,7 +1,6 @@
+#include <poincare/expression.h>
 #include <poincare/helpers/store.h>
 #include <poincare/src/expression/dimension.h>
-
-#include "poincare/old/junior_expression.h"
 
 namespace Poincare {
 

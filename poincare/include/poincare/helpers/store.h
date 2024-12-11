@@ -1,7 +1,7 @@
 #ifndef POINCARE_HELPERS_STORE_H
 #define POINCARE_HELPERS_STORE_H
 
-#include <poincare/old/junior_expression.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 

@@ -2,7 +2,7 @@
 #define POINCARE_JS_BRIDGE_TYPED_EXPRESSION_H
 
 #include <emscripten/bind.h>
-#include <poincare/old/junior_expression.h>
+#include <poincare/expression.h>
 
 namespace Poincare::JSBridge {
 

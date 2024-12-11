@@ -630,8 +630,8 @@ Poincare::Layout UserExpression::createLayout(
   if (isUninitialized()) {
     return Poincare::Layout();
   }
-  return node()->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                              context, base);
+  return object()->createLayout(floatDisplayMode, numberOfSignificantDigits,
+                                context, base);
 }
 
 char* UserExpression::toLatex(char* buffer, int bufferSize,
@@ -650,8 +650,8 @@ size_t UserExpression::serialize(char* buffer, size_t bufferSize,
                                  int numberOfSignificantDigits) const {
   return isUninitialized()
              ? 0
-             : node()->serialize(buffer, bufferSize, floatDisplayMode,
-                                 numberOfSignificantDigits);
+             : object()->serialize(buffer, bufferSize, floatDisplayMode,
+                                   numberOfSignificantDigits);
 }
 
 Ion::Storage::Record::ErrorStatus UserExpression::storeWithNameAndExtension(

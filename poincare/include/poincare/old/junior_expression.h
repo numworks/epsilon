@@ -163,7 +163,7 @@ class JuniorExpression : public PoolHandle {
   static NewExpression Builder(Internal::Tree* tree);
 
   const Internal::Tree* tree() const {
-    return isUninitialized() ? nullptr : node()->tree();
+    return isUninitialized() ? nullptr : object()->tree();
   }
   NewExpression cloneChildAtIndex(int i) const;
   int numberOfDescendants(bool includeSelf) const;
@@ -174,7 +174,7 @@ class JuniorExpression : public PoolHandle {
   bool deepIsOfType(std::initializer_list<Internal::Type> types,
                     Context* context = nullptr) const;
 
-  JuniorExpressionNode* node() const {
+  JuniorExpressionNode* object() const {
     assert(identifier() != PoolObject::NoNodeIdentifier &&
            !PoolHandle::object()->isGhost());
     return static_cast<JuniorExpressionNode*>(PoolHandle::object());
@@ -231,7 +231,7 @@ class JuniorExpression : public PoolHandle {
   template <typename T>
   SystemExpression approximateToTree(
       const ApproximationContext& approximationContext) const {
-    return node()->approximateToTree<T>(approximationContext);
+    return object()->approximateToTree<T>(approximationContext);
   }
   /* Approximation Helper */
   template <typename T>

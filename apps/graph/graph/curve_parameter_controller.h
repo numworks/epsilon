@@ -26,7 +26,7 @@ class CurveParameterController
       GraphController* graphController,
       FunctionParameterController* functionParameterController,
       DerivativeColumnParameterController* derivativeColumnParameterController);
-  const char* title() override;
+  const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
   void viewWillAppear() override;
@@ -100,7 +100,9 @@ class CurveParameterController
       static_cast<int>(ParameterIndex::NumberOfParameters);
   constexpr static int k_numberOfRows = k_numberOfParameterRows + 2;
 
-  char m_title[k_titleSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_title[k_titleSize];
   ParameterCell m_parameterCells[k_numberOfParameterRows];
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>

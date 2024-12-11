@@ -33,7 +33,7 @@ class TestController
   void stackOpenPage(Escher::ViewController* nextPage) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event e) override;
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
 
   constexpr static int k_indexOfOneProp = 0;

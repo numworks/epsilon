@@ -22,7 +22,7 @@ CurveParameterController::CurveParameterController(
   m_goToCell.label()->setMessage(I18n::Message::Goto);
 }
 
-const char* CurveParameterController::title() {
+const char* CurveParameterController::title() const {
   return I18n::translate(I18n::Message::SequenceOptions);
 }
 

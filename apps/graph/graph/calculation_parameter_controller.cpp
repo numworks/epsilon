@@ -49,7 +49,7 @@ HighlightCell* CalculationParameterController::cell(int row) {
   return cells[row];
 }
 
-const char* CalculationParameterController::title() {
+const char* CalculationParameterController::title() const {
   return I18n::translate(I18n::Message::Find);
 }
 

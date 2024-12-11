@@ -198,7 +198,7 @@ SolutionsController::SolutionsController(Responder* parentResponder,
 }
 
 /* ViewController */
-const char* SolutionsController::title() {
+const char* SolutionsController::title() const {
   if (App::app()->system()->type() ==
       SystemOfEquations::Type::GeneralMonovariable) {
     return I18n::translate(I18n::Message::ApproximateSolution);

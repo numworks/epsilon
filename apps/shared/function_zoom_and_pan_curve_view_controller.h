@@ -19,7 +19,7 @@ class FunctionZoomAndPanCurveViewController
       Responder* parentResponder,
       InteractiveCurveViewRange* interactiveCurveViewRange,
       AbstractPlotView* curveView);
-  const char* title() override;
+  const char* title() const override;
   Escher::View* view() override { return &m_contentView; }
   void viewWillAppear() override;
   TitlesDisplay titlesDisplay() const override {

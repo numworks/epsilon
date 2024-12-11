@@ -42,7 +42,7 @@ HypothesisController::HypothesisController(
   m_ha.accessory()->setDropdown(&m_haDropdown);
 }
 
-const char* HypothesisController::title() {
+const char* HypothesisController::title() const {
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
                                 I18n::translate(m_test->title()),
                                 I18n::translate(I18n::Message::Test));

@@ -19,7 +19,7 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
   bool handleEvent(Ion::Events::Event event) override;
 
   // Escher::ViewController
-  const char* title() override;
+  const char* title() const override;
 
   // Escher::TableViewDataSource
   int numberOfRows() const override { return k_numberOfRows; }

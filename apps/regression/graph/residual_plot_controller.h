@@ -34,7 +34,7 @@ class ResidualPlotController : public Escher::ViewController {
   }
 
   // Escher::ViewController
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::ResidualPlot);
   }
   Escher::View* view() override { return &m_curveView; }

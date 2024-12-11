@@ -56,7 +56,7 @@ class ViewController : public Responder {
   };
 
   ViewController(Responder* parentResponder) : Responder(parentResponder) {}
-  virtual const char* title() { return nullptr; }
+  virtual const char* title() const { return nullptr; }
   virtual View* view() = 0;
   virtual void initView() {}
   virtual void viewWillAppear() {}

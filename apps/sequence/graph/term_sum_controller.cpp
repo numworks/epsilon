@@ -23,7 +23,7 @@ TermSumController::TermSumController(Responder* parentResponder,
                                      CurveViewCursor* cursor)
     : SumGraphController(parentResponder, graphView, graphRange, cursor) {}
 
-const char* TermSumController::title() {
+const char* TermSumController::title() const {
   return I18n::translate(I18n::Message::TermSum);
 }
 

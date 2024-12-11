@@ -32,7 +32,7 @@ TypeParameterController::TypeParameterController(Responder* parentResponder,
   m_selectableListView.hideScrollBars();
 }
 
-const char* TypeParameterController::title() {
+const char* TypeParameterController::title() const {
   return I18n::translate(isNewModel() ? I18n::Message::ChooseSequenceType
                                       : I18n::Message::SequenceType);
 }

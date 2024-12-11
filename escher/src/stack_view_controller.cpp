@@ -18,8 +18,8 @@ StackViewController::StackViewController(
       m_displayedAsModal(false),
       m_headersDisplayMask(~0) {}
 
-const char* StackViewController::title() {
-  ViewController* vc = stackSlot(0);
+const char* StackViewController::title() const {
+  const ViewController* vc = stackSlot(0);
   return vc->title();
 }
 

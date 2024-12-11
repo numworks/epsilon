@@ -16,7 +16,7 @@ class ParametersController : public Shared::FloatParameterController<double> {
   ParametersController(Escher::StackViewController* parentResponder,
                        Distribution* m_distribution,
                        CalculationController* calculationController);
-  const char* title() override;
+  const char* title() const override;
   ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }

@@ -17,7 +17,7 @@ MinimumGraphController::MinimumGraphController(
                                  curveViewRange, cursor,
                                  I18n::Message::NoMinimumFound) {}
 
-const char* MinimumGraphController::title() {
+const char* MinimumGraphController::title() const {
   return I18n::translate(I18n::Message::Minimum);
 }
 
@@ -29,7 +29,7 @@ MaximumGraphController::MaximumGraphController(
                                  curveViewRange, cursor,
                                  I18n::Message::NoMaximumFound) {}
 
-const char* MaximumGraphController::title() {
+const char* MaximumGraphController::title() const {
   return I18n::translate(I18n::Message::Maximum);
 }
 

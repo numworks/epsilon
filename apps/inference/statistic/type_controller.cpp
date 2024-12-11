@@ -64,7 +64,7 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-const char* TypeController::title() {
+const char* TypeController::title() const {
   I18n::Message format = m_statistic->distributionTitle();
   I18n::Message testOrInterval = m_statistic->statisticBasicTitle();
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),

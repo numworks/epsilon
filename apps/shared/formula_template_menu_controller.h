@@ -22,7 +22,7 @@ class FormulaTemplateMenuController
   FormulaTemplateMenuController(Escher::Responder* parentResponder,
                                 StoreColumnHelper* storeColumnHelper);
 
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   void viewDidDisappear() override;

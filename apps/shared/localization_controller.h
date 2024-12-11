@@ -35,7 +35,7 @@ class LocalizationController
   bool shouldDisplayWarning() const { return mode() == Mode::Country; }
 
   Escher::View* view() override { return &m_contentView; }
-  const char* title() override;
+  const char* title() const override;
   void didBecomeFirstResponder() override {
     Escher::App::app()->setFirstResponder(selectableListView());
   }

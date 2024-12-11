@@ -20,7 +20,7 @@ class BoxParameterController
   BoxParameterController(Escher::Responder* parentResponder, Store* store,
                          DataViewController* dataViewController);
   void viewWillAppear() override;
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::StatisticsGraphSettings);
   }
 

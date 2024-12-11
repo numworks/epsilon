@@ -14,7 +14,7 @@ namespace Settings {
 class PressToTestController : public Escher::ListWithTopAndBottomController {
  public:
   PressToTestController(Escher::Responder* parentResponder);
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::PressToTest);
   }
   bool handleEvent(Ion::Events::Event event) override;

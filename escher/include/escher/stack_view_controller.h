@@ -32,7 +32,7 @@ class StackViewController : public ViewController {
   StackView* view() override { return &m_view; }
   ViewController* topViewController();
   const ViewController* topViewController() const;
-  const char* title() override;
+  const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder* previousFirstResponder) override;
   void didBecomeFirstResponder() override;

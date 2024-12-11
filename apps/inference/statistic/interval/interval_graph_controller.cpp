@@ -20,7 +20,7 @@ Escher::ViewController::TitlesDisplay IntervalGraphController::titlesDisplay()
   return ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
 
-const char* IntervalGraphController::title() {
+const char* IntervalGraphController::title() const {
   m_interval->setGraphTitleForValue(m_currentMarginOfError, m_titleBuffer,
                                     sizeof(m_titleBuffer));
   return m_titleBuffer;

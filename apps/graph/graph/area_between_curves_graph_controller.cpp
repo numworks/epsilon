@@ -16,7 +16,7 @@ using namespace Escher;
 
 namespace Graph {
 
-const char* AreaBetweenCurvesGraphController::title() {
+const char* AreaBetweenCurvesGraphController::title() const {
   return I18n::translate(I18n::Message::AreaBetweenCurves);
 }
 

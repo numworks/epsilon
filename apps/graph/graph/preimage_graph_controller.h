@@ -10,7 +10,7 @@ class PreimageGraphController : public CalculationGraphController {
                           GraphView* graphView, BannerView* bannerView,
                           Shared::InteractiveCurveViewRange* curveViewRange,
                           Shared::CurveViewCursor* cursor);
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::Preimage);
   }
   double image() { return m_image; }

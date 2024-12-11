@@ -15,7 +15,7 @@ FunctionZoomAndPanCurveViewController::FunctionZoomAndPanCurveViewController(
       m_contentView(curveView),
       m_interactiveRange(interactiveRange) {}
 
-const char* FunctionZoomAndPanCurveViewController::title() {
+const char* FunctionZoomAndPanCurveViewController::title() const {
   return I18n::translate(I18n::Message::Navigate);
 }
 

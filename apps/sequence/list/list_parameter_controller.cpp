@@ -23,7 +23,7 @@ ListParameterController::ListParameterController(ListController* listController)
   m_firstRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
 }
 
-const char* ListParameterController::title() {
+const char* ListParameterController::title() const {
   return I18n::translate(I18n::Message::SequenceOptions);
 }
 

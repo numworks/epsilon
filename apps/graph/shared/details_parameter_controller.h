@@ -28,7 +28,7 @@ class DetailsParameterController
   bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
-  const char* title() override;
+  const char* title() const override;
   TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastThreeTitles;
   }

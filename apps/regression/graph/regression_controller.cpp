@@ -21,7 +21,7 @@ RegressionController::RegressionController(Responder* parentResponder,
       m_series(-1),
       m_displayedFromDataTab(true) {}
 
-const char* RegressionController::title() {
+const char* RegressionController::title() const {
   if (displaySeriesNameAsTitle()) {
     return Store::SeriesTitle(m_series);
   }

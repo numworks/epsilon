@@ -21,7 +21,7 @@ class FunctionModelsParameterController
  public:
   FunctionModelsParameterController(Escher::Responder* parentResponder,
                                     ListController* listController);
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;

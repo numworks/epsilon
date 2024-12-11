@@ -41,7 +41,7 @@ AlternateEmptyViewController::AlternateEmptyViewController(
     : ViewController(parentResponder),
       m_contentView(mainViewController, delegate) {}
 
-const char* AlternateEmptyViewController::title() {
+const char* AlternateEmptyViewController::title() const {
   return m_contentView.mainViewController()->title();
 }
 

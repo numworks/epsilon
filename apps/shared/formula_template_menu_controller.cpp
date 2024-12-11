@@ -20,7 +20,7 @@ FormulaTemplateMenuController::FormulaTemplateMenuController(
   m_selectableListView.hideScrollBars();
 }
 
-const char* FormulaTemplateMenuController::title() {
+const char* FormulaTemplateMenuController::title() const {
   return I18n::translate(I18n::Message::FillWithFormula);
 }
 

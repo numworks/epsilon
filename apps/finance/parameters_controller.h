@@ -17,7 +17,7 @@ class ParametersController : public Shared::FloatParameterController<double>,
  public:
   ParametersController(Escher::StackViewController* parent,
                        ResultController* resultController);
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
@@ -64,7 +64,9 @@ class ParametersController : public Shared::FloatParameterController<double>,
 
   constexpr static int k_titleBufferSize =
       1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
-  char m_titleBuffer[k_titleBufferSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[k_titleBufferSize];
 
   ResultController* m_resultController;
   Escher::MessageTextView m_messageView;

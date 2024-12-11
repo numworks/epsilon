@@ -35,7 +35,7 @@ bool InterestMenuController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-const char* InterestMenuController::title() {
+const char* InterestMenuController::title() const {
   return I18n::translate(App::GetInterestData()->menuTitle());
 }
 

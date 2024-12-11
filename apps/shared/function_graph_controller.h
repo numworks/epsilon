@@ -34,7 +34,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
    public:
     FunctionSelectionController(FunctionGraphController* graphController)
         : CurveSelectionController(graphController) {}
-    const char* title() override {
+    const char* title() const override {
       return I18n::translate(I18n::Message::GraphCalculus);
     }
     int numberOfRows() const override {

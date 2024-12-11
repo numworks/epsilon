@@ -40,7 +40,7 @@ EquationModelsParameterController::EquationModelsParameterController(
   }
 }
 
-const char* EquationModelsParameterController::title() {
+const char* EquationModelsParameterController::title() const {
   return I18n::translate(I18n::Message::UseEquationModel);
 }
 

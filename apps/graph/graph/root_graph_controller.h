@@ -11,7 +11,7 @@ class RootGraphController : public CalculationGraphController {
                       BannerView* bannerView,
                       Shared::InteractiveCurveViewRange* curveViewRange,
                       Shared::CurveViewCursor* cursor);
-  const char* title() override;
+  const char* title() const override;
 
  private:
   Poincare::Solver<double>::Interest specialInterest() const override {

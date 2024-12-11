@@ -23,7 +23,7 @@ class ListParameterController : public Shared::ListParameterController,
                                 public Shared::ParameterTextFieldDelegate {
  public:
   ListParameterController(ListController* list);
-  const char* title() override;
+  const char* title() const override;
 
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
                                     Ion::Events::Event event) override;

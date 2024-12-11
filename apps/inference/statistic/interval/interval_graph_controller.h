@@ -15,7 +15,7 @@ class IntervalGraphController : public Escher::ViewController {
   IntervalGraphController(Escher::StackViewController* stack,
                           Interval* interval);
   ViewController::TitlesDisplay titlesDisplay() const override;
-  const char* title() override;
+  const char* title() const override;
   Escher::View* view() override { return &m_graphView; }
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -30,7 +30,9 @@ class IntervalGraphController : public Escher::ViewController {
   void saveIntervalValues();
   void intervalDidChange();
 
-  char m_titleBuffer[k_titleBufferSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[k_titleBufferSize];
   IntervalGraphView m_graphView;
   Interval* m_interval;
   double m_currentEstimate;

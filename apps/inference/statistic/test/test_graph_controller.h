@@ -13,7 +13,7 @@ class TestGraphController : public Escher::ViewController {
  public:
   TestGraphController(Escher::StackViewController* stack, Test* test);
   ViewController::TitlesDisplay titlesDisplay() const override;
-  const char* title() override;
+  const char* title() const override;
   Escher::View* view() override { return &m_graphView; }
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -22,7 +22,9 @@ class TestGraphController : public Escher::ViewController {
   constexpr static int k_titleBufferSize =
       sizeof("df= α= z= p-value=") + Constants::k_shortFloatNumberOfChars * 4;
   constexpr static int k_zoomSteps = 6;
-  char m_titleBuffer[k_titleBufferSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[k_titleBufferSize];
   TestGraphView m_graphView;
   Test* m_test;
   /* When the test curve has two interesting sides, we can choose to zoom on

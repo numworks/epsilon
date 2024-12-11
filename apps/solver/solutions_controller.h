@@ -30,7 +30,7 @@ class SolutionsController : public Escher::ViewController,
                       Escher::ButtonRowController* header);
 
   // ViewController
-  const char* title() override;
+  const char* title() const override;
   Escher::View* view() override { return &m_contentView; }
   void initView() override;
   void viewWillAppear() override;

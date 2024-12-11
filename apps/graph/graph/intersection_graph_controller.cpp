@@ -19,7 +19,7 @@ IntersectionGraphController::IntersectionGraphController(
                                  curveViewRange, cursor,
                                  I18n::Message::NoIntersectionFound) {}
 
-const char* IntersectionGraphController::title() {
+const char* IntersectionGraphController::title() const {
   return I18n::translate(I18n::Message::Intersection);
 }
 

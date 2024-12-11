@@ -41,7 +41,7 @@ void HistogramParameterController::viewWillAppear() {
   FloatParameterController::viewWillAppear();
 }
 
-const char* HistogramParameterController::title() {
+const char* HistogramParameterController::title() const {
   return I18n::translate(I18n::Message::StatisticsGraphSettings);
 }
 

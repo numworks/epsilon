@@ -26,7 +26,7 @@ ParametersController::ParametersController(
   }
 }
 
-const char* ParametersController::title() {
+const char* ParametersController::title() const {
   return I18n::translate(m_distribution->title());
 }
 

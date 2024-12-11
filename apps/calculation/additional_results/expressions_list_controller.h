@@ -87,7 +87,7 @@ class ExpressionsListController
    public:
     InnerListController(ExpressionsListController* dataSource,
                         Escher::SelectableListViewDelegate* delegate = nullptr);
-    const char* title() override {
+    const char* title() const override {
       return I18n::translate(I18n::Message::AdditionalResults);
     }
     Escher::View* view() override { return &m_selectableListView; }

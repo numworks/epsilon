@@ -16,7 +16,7 @@ RootGraphController::RootGraphController(
                                  curveViewRange, cursor,
                                  I18n::Message::NoZeroFound) {}
 
-const char* RootGraphController::title() {
+const char* RootGraphController::title() const {
   return I18n::translate(I18n::Message::Zeros);
 }
 

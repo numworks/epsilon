@@ -27,7 +27,7 @@ class GraphOptionsController
                          GraphController* graphController);
   void removeRegression();
 
-  const char* title() override;
+  const char* title() const override;
   ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }

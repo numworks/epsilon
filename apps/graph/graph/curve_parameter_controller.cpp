@@ -60,7 +60,7 @@ CurveParameterController::function() const {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 
-const char* CurveParameterController::title() {
+const char* CurveParameterController::title() const {
   if (function()->isNamed()) {
     const char* calculate = I18n::translate(I18n::Message::CalculateOnFx);
     size_t len = strlen(calculate);

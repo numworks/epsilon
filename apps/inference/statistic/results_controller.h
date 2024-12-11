@@ -32,7 +32,7 @@ class ResultsController
 
   // ViewController
   ViewController::TitlesDisplay titlesDisplay() const override;
-  const char* title() override;
+  const char* title() const override;
   void initView() override;
 
   // StandardMemoizedListViewDataSource
@@ -61,7 +61,9 @@ class ResultsController
   TestGraphController* m_testGraphController;
   IntervalGraphController* m_intervalGraphController;
   constexpr static int k_titleBufferSize = 50;
-  char m_titleBuffer[k_titleBufferSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[k_titleBufferSize];
 
  private:
   constexpr static int k_numberOfReusableCells = 6;

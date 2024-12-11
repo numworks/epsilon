@@ -61,7 +61,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
    public:
     CurveSelectionController(GraphController* graphController)
         : Shared::CurveSelectionController(graphController) {}
-    const char* title() override {
+    const char* title() const override {
       return I18n::translate(I18n::Message::Regression);
     }
     int numberOfRows() const override {

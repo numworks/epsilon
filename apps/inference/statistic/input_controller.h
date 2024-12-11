@@ -32,15 +32,16 @@ class InputController
           Escher::AbstractMenuCell::k_minimalLargeFontCellHeight +
       2;
 
-  static void InputTitle(Escher::ViewController* vc, Statistic* statistic,
-                         char* titleBuffer, size_t titleBufferSize);
+  static void InputTitle(const Escher::ViewController* vc,
+                         const Statistic* statistic, char* titleBuffer,
+                         size_t titleBufferSize);
 
   InputController(Escher::StackViewController* parent,
                   ResultsController* resultsController, Statistic* statistic);
   int numberOfRows() const override {
     return m_statistic->numberOfParameters() + 1 /* button */;
   }
-  const char* title() override {
+  const char* title() const override {
     InputTitle(this, m_statistic, m_titleBuffer, k_titleBufferSize);
     return m_titleBuffer;
   }
@@ -71,7 +72,9 @@ class InputController
                                             int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override;
 
-  char m_titleBuffer[k_titleBufferSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[k_titleBufferSize];
   Statistic* m_statistic;
   ResultsController* m_resultsController;
 

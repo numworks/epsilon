@@ -19,7 +19,7 @@ class TypeParameterController
  public:
   TypeParameterController(Escher::Responder* parentResponder,
                           ListController* list, KDMargins margins = {});
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void didBecomeFirstResponder() override;

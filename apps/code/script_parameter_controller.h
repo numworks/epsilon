@@ -25,7 +25,7 @@ class ScriptParameterController
   void dismissScriptParameterController();
 
   /* ViewController */
-  const char* title() override;
+  const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;

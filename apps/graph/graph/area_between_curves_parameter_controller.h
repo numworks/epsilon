@@ -17,7 +17,7 @@ class AreaBetweenCurvesParameterController
       Escher::Responder* parentResponder,
       AreaBetweenCurvesGraphController* areaGraphController);
 
-  const char* title() override;
+  const char* title() const override;
   void setRecord(Ion::Storage::Record record) { m_mainRecord = record; }
 
   bool handleEvent(Ion::Events::Event event) override;

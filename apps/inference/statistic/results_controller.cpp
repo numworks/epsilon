@@ -38,7 +38,7 @@ ViewController::TitlesDisplay ResultsController::titlesDisplay() const {
              : ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
 
-const char* ResultsController::title() {
+const char* ResultsController::title() const {
   m_titleBuffer[0] = 0;
   StackViewController* stackViewControllerResponder =
       static_cast<StackViewController*>(parentResponder());

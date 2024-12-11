@@ -11,7 +11,7 @@ class IntersectionGraphController : public CalculationGraphController {
                               GraphView* graphView, BannerView* bannerView,
                               Shared::InteractiveCurveViewRange* curveViewRange,
                               Shared::CurveViewCursor* cursor);
-  const char* title() override;
+  const char* title() const override;
 
  private:
   void reloadBannerView() override;

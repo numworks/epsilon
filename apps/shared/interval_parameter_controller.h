@@ -19,7 +19,7 @@ class IntervalParameterController : public FloatParameterController<double> {
     return m_interval;
   }
   void setInterval(Interval* interval);
-  const char* title() override;
+  const char* title() const override;
   void setTitle(I18n::Message title) { m_title = title; }
   int numberOfRows() const override;
   KDCoordinate nonMemoizedRowHeight(int row) override;

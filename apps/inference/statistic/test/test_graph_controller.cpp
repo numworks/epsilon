@@ -24,7 +24,7 @@ Escher::ViewController::TitlesDisplay TestGraphController::titlesDisplay()
   return ViewController::TitlesDisplay::DisplayLastFourTitles;
 }
 
-const char* TestGraphController::title() {
+const char* TestGraphController::title() const {
   m_test->setGraphTitle(m_titleBuffer, sizeof(m_titleBuffer));
   return m_titleBuffer;
 }

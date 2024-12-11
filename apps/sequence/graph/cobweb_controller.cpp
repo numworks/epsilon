@@ -34,7 +34,7 @@ CobwebController::CobwebController(Responder* parentResponder,
       m_step(-1),
       m_sequenceStore(sequenceStore) {}
 
-const char* CobwebController::title() {
+const char* CobwebController::title() const {
   return I18n::translate(I18n::Message::CobwebPlot);
 }
 

@@ -27,7 +27,7 @@ class DerivativeColumnParameterController
  public:
   DerivativeColumnParameterController(Escher::Responder* parentResponder);
 
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return 2; }

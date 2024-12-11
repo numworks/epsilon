@@ -28,7 +28,7 @@ void GoToParameterController::setXPrediction(bool xPrediction) {
   setParameterName(xPrediction ? I18n::Message::X : I18n::Message::Y);
 }
 
-const char* GoToParameterController::title() {
+const char* GoToParameterController::title() const {
   if (m_xPrediction) {
     return I18n::translate(I18n::Message::XPrediction);
   }

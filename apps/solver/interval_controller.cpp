@@ -22,7 +22,7 @@ IntervalController::IntervalController(Responder* parentResponder)
   m_okButton.setMessage(I18n::Message::ResolveEquation);
 }
 
-const char* IntervalController::title() {
+const char* IntervalController::title() const {
   return I18n::translate(I18n::Message::SearchInverval);
 }
 

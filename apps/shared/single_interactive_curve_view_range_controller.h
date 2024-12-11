@@ -15,7 +15,7 @@ class SingleInteractiveCurveViewRangeController
       InteractiveCurveViewRange* interactiveCurveViewRange,
       MessagePopUpController* confirmPopUpController);
 
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(m_axis == OMG::Axis::Horizontal
                                ? I18n::Message::ValuesOfX
                                : I18n::Message::ValuesOfY);

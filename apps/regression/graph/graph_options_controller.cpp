@@ -56,7 +56,7 @@ void GraphOptionsController::removeRegression() {
   static_cast<StackViewController*>(parentResponder())->pop();
 }
 
-const char* GraphOptionsController::title() {
+const char* GraphOptionsController::title() const {
   return Store::SeriesTitle(m_graphController->selectedSeriesIndex());
 }
 

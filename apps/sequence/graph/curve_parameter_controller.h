@@ -19,7 +19,7 @@ class CurveParameterController
                            CobwebController* cobwebController,
                            Shared::InteractiveCurveViewRange* graphRange,
                            Shared::CurveViewCursor* cursor);
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);

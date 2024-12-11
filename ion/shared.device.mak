@@ -58,9 +58,11 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/, \
 
 # TODO Of those flags, phase out those that can be edited on the command line,
 # namely DEVELOPMENT, IN_FACTORY and EMBED_EXTRA_DATA
+SFLAGS_ion += \
+  -DEMBED_EXTRA_DATA=$(EMBED_EXTRA_DATA)
+
 PRIVATE_SFLAGS_ion += \
   -DDEVELOPMENT=$(DEVELOPMENT) \
-  -DEMBED_EXTRA_DATA=$(EMBED_EXTRA_DATA) \
   -DIN_FACTORY=$(IN_FACTORY) \
   -DPCB_LATEST=$(PCB_LATEST) \
   -DSIGNATURE_INDEX=$(SIGNATURE_INDEX) \

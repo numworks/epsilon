@@ -70,7 +70,8 @@ class StackViewController : public ViewController {
   StackView::Mask m_headersDisplayMask;
 
  private:
-  virtual ViewController** stackSlot(int index) = 0;
+  virtual ViewController* stackSlot(int index) = 0;
+  virtual void setStackSlot(int index, ViewController* controller) = 0;
 };
 
 template <unsigned Capacity>
@@ -93,9 +94,14 @@ class CustomSizeStackViewController : public StackViewController {
   }
 
  private:
-  ViewController** stackSlot(int index) override {
+  ViewController* stackSlot(int index) override {
     assert(index >= 0 && index < static_cast<int>(Capacity));
-    return &m_stack[index];
+    return m_stack[index];
+  }
+
+  void setStackSlot(int index, ViewController* controller) override {
+    assert(index >= 0 && index < static_cast<int>(Capacity));
+    m_stack[index] = controller;
   }
 
   ViewController* m_stack[Capacity];

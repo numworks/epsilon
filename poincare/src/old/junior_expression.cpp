@@ -932,12 +932,6 @@ bool NewExpression::isPercent() const {
 
 bool NewExpression::isSequence() const { return tree()->isSequence(); }
 
-bool NewExpression::isIntegral() const {
-  return tree()->isIntegral() || tree()->isIntegralWithAlternatives();
-}
-
-bool NewExpression::isDiff() const { return tree()->isDiff(); }
-
 bool NewExpression::isParametric() const { return tree()->isParametric(); }
 
 bool NewExpression::isBoolean() const { return tree()->isBoolean(); }

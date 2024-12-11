@@ -28,8 +28,6 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
       .function("isNAry", &JuniorExpression::isNAry)
       .function("isApproximate", &JuniorExpression::isApproximate)
       .function("isPercent", &JuniorExpression::isPercent)
-      .function("isIntegral", &JuniorExpression::isIntegral)
-      .function("isDiff", &JuniorExpression::isDiff)
       .function("isBoolean", &JuniorExpression::isBoolean)
       .function("isUserSymbol", &JuniorExpression::isUserSymbol)
       .function("isUserFunction", &JuniorExpression::isUserFunction)

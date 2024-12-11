@@ -375,6 +375,7 @@ class JuniorExpression : public OExpression {
   bool isSequence() const;
   bool isIntegral() const;
   bool isDiff() const;
+  bool isParametric() const;
   bool isBoolean() const;
   bool isList() const;
   bool isUserSymbol() const;

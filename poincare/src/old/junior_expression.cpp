@@ -938,6 +938,8 @@ bool NewExpression::isIntegral() const {
 
 bool NewExpression::isDiff() const { return tree()->isDiff(); }
 
+bool NewExpression::isParametric() const { return tree()->isParametric(); }
+
 bool NewExpression::isBoolean() const { return tree()->isBoolean(); }
 
 bool NewExpression::isList() const { return tree()->isList(); }

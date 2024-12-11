@@ -1106,13 +1106,6 @@ void List::addChildAtIndexInPlace(NewExpression t, int index,
 
 int List::numberOfChildren() const { return tree()->numberOfChildren(); }
 
-/* Boolean */
-
-bool Boolean::value() const {
-  assert(tree()->isTrue() || tree()->isFalse());
-  return tree()->isTrue();
-}
-
 /* Unit */
 
 NewExpression Unit::Builder(Preferences::AngleUnit angleUnit) {

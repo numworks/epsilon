@@ -443,11 +443,6 @@ class List : public Expression {
                               int currentNumberOfChildren);
 };
 
-class Boolean final : public Expression {
- public:
-  bool value() const;
-};
-
 class Unit final {
  public:
   // Build default unit for given angleUnit preference.

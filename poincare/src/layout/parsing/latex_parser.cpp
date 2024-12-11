@@ -414,7 +414,11 @@ Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
             if (!result->treeIsIdenticalTo(
                     parentLayout->child(indexInLayout))) {
               /* The child was already parsed elsewhere, but the result is
-               * different. Thus the latex is invalid. */
+               * different. Thus the latex is invalid.
+               * Ex: "\frac{d^{3}}{dx^{4}}x"
+               *    In this n-th derivative, the first order layout is
+               *    different from the second one.
+               * */
               TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
             }
           }
@@ -428,8 +432,10 @@ Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
     }
     /* When parsing fails, we try the next rule.
      * This is especially useful for rules like diff and frac, for which only
-     * comparing the few chars is not enough to know if the rule is the right
-     * one. */
+     * comparing the first chars is not enough to know if the rule is the right
+     * one.
+     * Ex: "\frac{d^{4}}{d^{2}}"
+     *     This isn't an nth-derivative but just the frac d^4/d^2 */
     ExceptionCatch(type) {
       if (type != ExceptionType::ParseFail) {
         TreeStackCheckpoint::Raise(type);

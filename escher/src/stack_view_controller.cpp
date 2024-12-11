@@ -148,8 +148,8 @@ void StackViewController::viewDidDisappear() {
   m_view.setContentView(nullptr);
 }
 
-bool StackViewController::shouldStoreHeaderOnStack(ViewController* vc,
-                                                   int index) {
+bool StackViewController::shouldStoreHeaderOnStack(const ViewController* vc,
+                                                   int index) const {
   /* In general, the titlesDisplay controls how the stack is shown
    * only while the controller is the last on the stack. */
   return vc->title() != nullptr &&
@@ -167,7 +167,7 @@ void StackViewController::updateStack(
   /* Load the stack view */
   m_view.resetStack();
   for (int i = 0; i < m_size; i++) {
-    ViewController* childrenVC = stackSlot(i);
+    const ViewController* childrenVC = stackSlot(i);
     if (shouldStoreHeaderOnStack(childrenVC, i)) {
       m_view.pushStack(stackSlot(i));
     }

@@ -57,7 +57,7 @@ class StackViewController : public ViewController {
   StackView m_view;
   void pushModel(ViewController* vc);
   void setupActiveViewController();
-  bool shouldStoreHeaderOnStack(ViewController* vc, int index);
+  bool shouldStoreHeaderOnStack(const ViewController* vc, int index) const;
   void updateStack(ViewController::TitlesDisplay titleDisplay);
   void dismissPotentialModal();
   virtual void didExitPage(ViewController* controller) const;

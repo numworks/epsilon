@@ -368,6 +368,7 @@ class JuniorExpression : public OExpression {
 
   // Simple bool properties
   bool isUndefined() const;
+  bool isUndefinedOrNonReal() const;
   bool isNAry() const;
   bool isApproximate() const;
   bool isPlusOrMinusInfinity() const;

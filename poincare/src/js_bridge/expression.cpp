@@ -15,13 +15,6 @@ std::string symbolName(const JuniorExpression& expr) {
   return std::string(name, strlen(name));
 }
 
-boolean isUndefined(const JuniorExpression& expr) {
-  // Expression::isUndefined returns false on "nonreal"
-  // Tree::isUndefined returns true on "nonreal"
-  // For now we want the second behaviour
-  return expr.tree()->isUndefined();
-}
-
 EMSCRIPTEN_BINDINGS(junior_expression) {
   class_<PoolHandle>("PCR_PoolHandle")
 #if POINCARE_TREE_LOG
@@ -31,7 +24,7 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
 
   class_<JuniorExpression, base<PoolHandle>>("PCR_Expression")
       .function("isIdenticalTo", &JuniorExpression::isIdenticalToJunior)
-      .function("isUndefined", &isUndefined)
+      .function("isUndefined", &JuniorExpression::isUndefinedOrNonReal)
       .function("isUserSymbol", &JuniorExpression::isUserSymbol)
       .function("isUserFunction", &JuniorExpression::isUserFunction)
       .function("isEquality", &JuniorExpression::isEquality)

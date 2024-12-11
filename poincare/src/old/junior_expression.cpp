@@ -902,6 +902,9 @@ bool NewExpression::isUndefined() const {
   // - create a Tree range for non-nonreal undefined
   return tree()->isUndefined() && !tree()->isNonReal();
 }
+bool NewExpression::isUndefinedOrNonReal() const {
+  return tree()->isUndefined();
+}
 
 bool NewExpression::isMatrix(Context* context) const {
   if (context) {

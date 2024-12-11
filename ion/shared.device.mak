@@ -64,7 +64,6 @@ PRIVATE_SFLAGS_ion += \
   -DIN_FACTORY=$(IN_FACTORY) \
   -DPCB_LATEST=$(PCB_LATEST) \
   -DSIGNATURE_INDEX=$(SIGNATURE_INDEX) \
-  -DSIGNATURE_INDEX=$(SIGNATURE_INDEX) \
 
 PRIVATE_SFLAGS_ion += \
   -I$(PATH_ion)/src/device/epsilon-core/device/include/$(PLATFORM) \

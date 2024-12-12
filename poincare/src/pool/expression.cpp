@@ -338,8 +338,8 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   assert(!approximatedExpression || approximatedExpression->isUninitialized());
   if (approximatedExpression) {
     const Tree* e = simplifiedExpression->tree();
-    Approximation::Context approxCtx(context->m_angleUnit,
-                                     context->m_complexFormat);
+    Approximation::Context approxCtx(
+        context->m_angleUnit, context->m_complexFormat, context->m_context);
     if (CAS::Enabled()) {
       Tree* a = e->cloneTree();
       /* We are using ApproximateAndReplaceEveryScalar to approximate

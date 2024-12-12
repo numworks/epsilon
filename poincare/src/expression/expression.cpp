@@ -1,3 +1,4 @@
+#include <omg/utf8_helper.h>
 #include <poincare/cas.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/symbol.h>
@@ -649,12 +650,6 @@ size_t UserExpression::serialize(char* buffer, size_t bufferSize,
              ? 0
              : object()->serialize(buffer, bufferSize, floatDisplayMode,
                                    numberOfSignificantDigits);
-}
-
-Ion::Storage::Record::ErrorStatus UserExpression::storeWithNameAndExtension(
-    const char* baseName, const char* extension) const {
-  return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      baseName, extension, addressInPool(), size(), true);
 }
 
 bool NewExpression::replaceSymbolWithExpression(const UserExpression& symbol,

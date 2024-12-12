@@ -2,6 +2,7 @@
 #define APPS_SHARED_SEQUENCE_H
 
 #include <assert.h>
+#include <ion/storage/file_system.h>
 #include <poincare/code_points.h>
 #include <poincare/src/expression/sequence.h>
 #include <poincare/src/expression/sequence_cache.h>

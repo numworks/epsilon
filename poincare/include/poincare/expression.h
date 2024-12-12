@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
-#include <ion/storage/file_system.h>
 #include <poincare/api.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/old/computation_context.h>
@@ -283,9 +282,6 @@ class Expression : public PoolHandle {
                        Preferences::PrintFloatMode::Decimal,
                    int numberOfSignificantDigits =
                        PrintFloat::k_maxNumberOfSignificantDigits) const;
-
-  Ion::Storage::Record::ErrorStatus storeWithNameAndExtension(
-      const char* baseName, const char* extension) const;
 
   bool replaceSymbolWithExpression(const UserExpression& symbol,
                                    const NewExpression& expression,

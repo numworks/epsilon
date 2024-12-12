@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <float.h>
+#include <ion/storage/file_system.h>
 #include <omg/print.h>
 #include <poincare/preferences.h>
 #include <string.h>
@@ -346,7 +347,9 @@ void Store::storeRegressionFunction(int series,
   BuildFunctionName(series, name, k_functionNameSize);
   expression.replaceSymbolWithUnknown(
       SymbolHelper::BuildSymbol(Model::k_xSymbol));
-  expression.storeWithNameAndExtension(name, Ion::Storage::regressionExtension);
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      name, Ion::Storage::regressionExtension, expression.addressInPool(),
+      expression.size(), true);
 }
 
 void Store::deleteRegressionFunction(int series) const {

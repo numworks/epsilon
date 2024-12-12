@@ -309,8 +309,9 @@ static void storeParametricComponent(char* baseName, size_t baseNameLength,
   UserExpression child = e.cloneChildAtIndex(first ? 0 : 1);
   FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
                                                       bufferSize, first);
-  child.storeWithNameAndExtension(baseName,
-                                  Ion::Storage::parametricComponentExtension);
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      baseName, Ion::Storage::parametricComponentExtension,
+      child.addressInPool(), child.size(), true);
 }
 
 void GlobalContext::StoreParametricComponentsOfRecord(

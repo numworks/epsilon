@@ -1,3 +1,4 @@
+#include <omg/utf8_helper.h>
 #include <poincare/old/pool_variable_context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/symbol.h>

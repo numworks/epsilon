@@ -347,6 +347,7 @@ void UserExpression::cloneAndSimplifyAndApproximate(
       Approximation::ApproximateAndReplaceEveryScalar<double>(a, approxCtx);
       *approximatedExpression = UserExpression::Builder(a);
     } else {
+      // Note: The non-beautified expression could be approximated instead.
       Tree* a = Approximation::ToTree<double>(
           e,
           Approximation::Parameters{.isRootAndCanHaveRandom = true,

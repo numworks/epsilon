@@ -365,7 +365,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   Shared::ExpiringPointer<ContinuousFunction> function =
       functionAtIndex(column, row, &abscissa, &derivationOrder);
   Context* context = App::app()->localContext();
-  SystemExpression result;
+  UserExpression result;
   if (derivationOrder >= 1) {
     // Compute derivative approximate result
     assert(derivationOrder == 1 || derivationOrder == 2);
@@ -374,7 +374,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   } else {
     // Compute exact result
     assert(derivationOrder == 0);
-    result = function->expressionReduced(context);
+    SystemExpression e = function->expressionReduced(context);
     PoolVariableContext abscissaContext =
         PoolVariableContext(Shared::Function::k_unknownName, context);
     UserExpression abscissaExpression =
@@ -384,16 +384,20 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         SymbolHelper::BuildSymbol(Shared::Function::k_unknownName,
                                   strlen(Shared::Function::k_unknownName)));
     bool simplificationFailure = false;
-    // TODO_PCJ: result is a SystemExpression, we don't want to project again
-    PoincareHelpers::CloneAndSimplify(
-        &result, &abscissaContext,
-        {.symbolicComputation = SymbolicComputation::ReplaceAllSymbols,
-         .unitConversion = UnitConversion::Default},
-        &simplificationFailure);
+    UserExpression approximation;
+    // TODO_PCJ: e is a SystemExpression, we don't need to project again
+    Poincare::Internal::ProjectionContext projectionContext = {
+        .m_complexFormat =
+            Poincare::Preferences::SharedPreferences()->complexFormat(),
+        .m_angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
+        .m_unitFormat =
+            GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+        .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+        .m_context = &abscissaContext};
+    e.cloneAndSimplifyAndApproximate(
+        &result, &approximation, &projectionContext, &simplificationFailure);
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */
-    UserExpression approximation =
-        PoincareHelpers::Approximate<double>(result, context);
     if (simplificationFailure || !m_exactValuesAreActivated ||
         CAS::ShouldOnlyDisplayApproximation(function->originalEquation(),
                                             result, approximation, context)) {

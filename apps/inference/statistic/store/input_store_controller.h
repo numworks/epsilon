@@ -45,9 +45,11 @@ class InputStoreController : public InputCategoricalController,
   ViewController::TitlesDisplay titlesDisplay() const override {
     return m_statistic->subApp() == Statistic::SubApp::Interval
                ? ViewController::TitlesDisplay::DisplayLastTitle
-           : m_statistic->canChooseDataset()
+           : !m_statistic->canChooseDataset()
+               ? ViewController::TitlesDisplay::DisplayLastTwoTitles
+           : m_pageIndex == PageIndex::One
                ? ViewController::TitlesDisplay::DisplayLastAndThirdToLast
-               : ViewController::TitlesDisplay::DisplayLastTwoTitles;
+               : ViewController::TitlesDisplay::SameAsPreviousPage;
   }
   void viewWillAppear() override;
   void initView() override;

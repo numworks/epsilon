@@ -32,6 +32,7 @@ class StackViewController : public ViewController {
   StackView* view() override { return &m_view; }
   ViewController* topViewController();
   const ViewController* topViewController() const;
+  const ViewController* secondTopViewController() const;
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void didEnterResponderChain(Responder* previousFirstResponder) override;
@@ -57,8 +58,15 @@ class StackViewController : public ViewController {
   StackView m_view;
   void pushModel(ViewController* vc);
   void setupActiveViewController();
-  bool shouldStoreHeaderOnStack(const ViewController* vc, int index) const;
-  void updateStack(ViewController::TitlesDisplay titleDisplay);
+  bool shouldStoreHeaderOnStack(const ViewController* controller,
+                                uint8_t pageIndex,
+                                uint8_t numberOfDifferentPages) const;
+  StackView::Mask previousPageHeaderMask() const;
+  /* Compute the number of different pages up to indexOfTopPage, ignoring the
+   * pages which should copy the title of their previous page */
+  size_t numberOfDifferentPages(size_t indexOfTopPage) const;
+  void updateStack(ViewController::TitlesDisplay titleDisplay,
+                   size_t indexOfTopPage);
   void dismissPotentialModal();
   virtual void didExitPage(ViewController* controller) const;
   virtual void willOpenPage(ViewController* controller) const;
@@ -68,13 +76,13 @@ class StackViewController : public ViewController {
   /* Represents the stacks to display, _starting from the end_.
    * m_headersDisplayMask = 0b11111011   ->  shouldn't display
    * m_stackViews[numberOfStacks - 1 - 2]. */
+  // TODO: this member variable should be passed as an argument
   StackView::Mask m_headersDisplayMask;
 
- private:
-  virtual ViewController* stackSlot(int index) = 0;
-  virtual const ViewController* stackSlot(int index) const = 0;
+  virtual ViewController* stackSlot(uint8_t index) = 0;
+  virtual const ViewController* stackSlot(uint8_t index) const = 0;
 
-  virtual void setStackSlot(int index, ViewController* controller) = 0;
+  virtual void setStackSlot(uint8_t index, ViewController* controller) = 0;
 };
 
 template <unsigned Capacity>
@@ -97,18 +105,18 @@ class CustomSizeStackViewController : public StackViewController {
   }
 
  private:
-  ViewController* stackSlot(int index) override {
-    assert(index >= 0 && index < static_cast<int>(Capacity));
+  ViewController* stackSlot(uint8_t index) override {
+    assert(index >= 0 && index < Capacity);
     return m_stack[index];
   }
 
-  const ViewController* stackSlot(int index) const override {
-    assert(index >= 0 && index < static_cast<int>(Capacity));
+  const ViewController* stackSlot(uint8_t index) const override {
+    assert(index >= 0 && index < Capacity);
     return m_stack[index];
   }
 
-  void setStackSlot(int index, ViewController* controller) override {
-    assert(index >= 0 && index < static_cast<int>(Capacity));
+  void setStackSlot(uint8_t index, ViewController* controller) override {
+    assert(index >= 0 && index < Capacity);
     m_stack[index] = controller;
   }
 

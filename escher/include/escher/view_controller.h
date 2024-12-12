@@ -52,7 +52,10 @@ class ViewController : public Responder {
     DisplayLastTwoTitles = StackView::Mask(0b11),
     DisplaySecondToLast = StackView::Mask(0b10),
     DisplayLastTitle = StackView::Mask(0b1),
-    DisplayNoTitle = StackView::Mask(0)
+    DisplayNoTitle = StackView::Mask(0),
+    /* Special value to display the same titles as the previous page on the
+     * stack. */
+    SameAsPreviousPage = StackView::Mask(0b10000000)
   };
 
   ViewController(Responder* parentResponder) : Responder(parentResponder) {}

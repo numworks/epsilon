@@ -37,6 +37,13 @@ const ViewController* StackViewController::topViewController() const {
   return stackSlot(m_size - 1);
 }
 
+const ViewController* StackViewController::secondTopViewController() const {
+  if (m_size < 2) {
+    return nullptr;
+  }
+  return stackSlot(m_size - 2);
+}
+
 void StackViewController::push(ViewController* vc) {
   /* Add the frame to the model */
   pushModel(vc);
@@ -98,7 +105,12 @@ void StackViewController::setupActiveView() {
     vc->initView();
     ViewController::TitlesDisplay topHeaderDisplayParameter =
         vc->titlesDisplay();
-    updateStack(topHeaderDisplayParameter);
+    if (topHeaderDisplayParameter == TitlesDisplay::SameAsPreviousPage) {
+      updateStack(secondTopViewController()->titlesDisplay(), m_size - 1);
+    } else {
+      updateStack(topHeaderDisplayParameter, m_size);
+    }
+
     m_view.setContentView(vc->view());
     vc->viewWillAppear();
   }
@@ -148,29 +160,61 @@ void StackViewController::viewDidDisappear() {
   m_view.setContentView(nullptr);
 }
 
-bool StackViewController::shouldStoreHeaderOnStack(const ViewController* vc,
-                                                   int index) const {
+bool StackViewController::shouldStoreHeaderOnStack(
+    const ViewController* controller, uint8_t pageIndex,
+    uint8_t numberOfDifferentPages) const {
+  /* A SameAsPreviousPage controller should be skipped by the caller of
+   * shouldStoreHeaderOnStack */
+  assert(controller->titlesDisplay() !=
+         ViewController::TitlesDisplay::SameAsPreviousPage);
   /* In general, the titlesDisplay controls how the stack is shown
    * only while the controller is the last on the stack. */
-  return vc->title() != nullptr &&
-         vc->titlesDisplay() !=
+  return controller->title() != nullptr &&
+         controller->titlesDisplay() !=
              ViewController::TitlesDisplay::NeverDisplayOwnTitle &&
-         OMG::BitHelper::bitAtIndex(m_headersDisplayMask, m_size - 1 - index);
+         OMG::BitHelper::bitAtIndex(m_headersDisplayMask,
+                                    numberOfDifferentPages - 1 - pageIndex);
+}
+
+StackView::Mask StackViewController::previousPageHeaderMask() const {
+  const ViewController* previousPageController = secondTopViewController();
+  assert(previousPageController);
+  return static_cast<StackView::Mask>(previousPageController->titlesDisplay());
+}
+
+size_t StackViewController::numberOfDifferentPages(
+    size_t indexOfTopPage) const {
+  size_t result = 0;
+  for (size_t i = 0; i < indexOfTopPage; i++) {
+    if (!(stackSlot(i)->titlesDisplay() ==
+          ViewController::TitlesDisplay::SameAsPreviousPage)) {
+      result++;
+    }
+  }
+  return result;
 }
 
 void StackViewController::updateStack(
-    ViewController::TitlesDisplay titleDisplay) {
+    ViewController::TitlesDisplay titleDisplay, size_t indexOfTopPage) {
   /* Update the header display mask */
-  // If NeverDisplayOwnTitle, we show all other headers -> DisplayAllTitles
   m_headersDisplayMask = static_cast<StackView::Mask>(titleDisplay);
 
   /* Load the stack view */
   m_view.resetStack();
-  for (int i = 0; i < m_size; i++) {
-    const ViewController* childrenVC = stackSlot(i);
-    if (shouldStoreHeaderOnStack(childrenVC, i)) {
+
+  // Ignore the SameAsPreviousPage titles
+  size_t pageIndex = 0;
+  for (size_t i = 0; i < indexOfTopPage; i++) {
+    if (stackSlot(i)->titlesDisplay() ==
+        ViewController::TitlesDisplay::SameAsPreviousPage) {
+      continue;
+    }
+    if (shouldStoreHeaderOnStack(stackSlot(i), pageIndex,
+                                 numberOfDifferentPages(indexOfTopPage))) {
+      // TODO: const ViewController*
       m_view.pushStack(stackSlot(i));
     }
+    pageIndex++;
   }
 }
 

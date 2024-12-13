@@ -15,8 +15,7 @@ StackViewController::StackViewController(
       m_view(style, extendVertically, headerViewStack),
       m_size(1),
       m_isVisible(false),
-      m_displayedAsModal(false),
-      m_headersDisplayMask(~0) {}
+      m_displayedAsModal(false) {}
 
 const char* StackViewController::title() const {
   const ViewController* vc = stackSlot(0);
@@ -160,9 +159,9 @@ void StackViewController::viewDidDisappear() {
   m_view.setContentView(nullptr);
 }
 
-bool StackViewController::shouldStoreHeaderOnStack(
+constexpr bool StackViewController::shouldStoreHeaderOnStack(
     const ViewController* controller, uint8_t pageIndex,
-    uint8_t numberOfDifferentPages) const {
+    StackView::Mask titlesMask, uint8_t numberOfDifferentPages) {
   /* A SameAsPreviousPage controller should be skipped by the caller of
    * shouldStoreHeaderOnStack */
   assert(controller->titlesDisplay() !=
@@ -172,7 +171,7 @@ bool StackViewController::shouldStoreHeaderOnStack(
   return controller->title() != nullptr &&
          controller->titlesDisplay() !=
              ViewController::TitlesDisplay::NeverDisplayOwnTitle &&
-         OMG::BitHelper::bitAtIndex(m_headersDisplayMask,
+         OMG::BitHelper::bitAtIndex(titlesMask,
                                     numberOfDifferentPages - 1 - pageIndex);
 }
 
@@ -196,9 +195,6 @@ size_t StackViewController::numberOfDifferentPages(
 
 void StackViewController::updateStack(
     ViewController::TitlesDisplay titleDisplay, size_t indexOfTopPage) {
-  /* Update the header display mask */
-  m_headersDisplayMask = static_cast<StackView::Mask>(titleDisplay);
-
   /* Load the stack view */
   m_view.resetStack();
 
@@ -210,6 +206,7 @@ void StackViewController::updateStack(
       continue;
     }
     if (shouldStoreHeaderOnStack(stackSlot(i), pageIndex,
+                                 static_cast<StackView::Mask>(titleDisplay),
                                  numberOfDifferentPages(indexOfTopPage))) {
       // TODO: const ViewController*
       m_view.pushStack(stackSlot(i));

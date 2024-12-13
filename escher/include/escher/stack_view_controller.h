@@ -56,11 +56,17 @@ class StackViewController : public ViewController {
 
  private:
   StackView m_view;
+
+  /* The StackView::Mask represents the stacks to display, _starting from the
+   * end_. titlesMask = 0b11111011   ->  shouldn't display
+   * m_stackViews[numberOfStacks - 1 - 2]. */
+  constexpr static bool shouldStoreHeaderOnStack(
+      const ViewController* controller, uint8_t pageIndex,
+      StackView::Mask titlesMask, uint8_t numberOfDifferentPages);
+
   void pushModel(ViewController* vc);
   void setupActiveViewController();
-  bool shouldStoreHeaderOnStack(const ViewController* controller,
-                                uint8_t pageIndex,
-                                uint8_t numberOfDifferentPages) const;
+
   StackView::Mask previousPageHeaderMask() const;
   /* Compute the number of different pages up to indexOfTopPage, ignoring the
    * pages which should copy the title of their previous page */
@@ -73,11 +79,6 @@ class StackViewController : public ViewController {
   uint8_t m_size;
   bool m_isVisible;
   bool m_displayedAsModal;
-  /* Represents the stacks to display, _starting from the end_.
-   * m_headersDisplayMask = 0b11111011   ->  shouldn't display
-   * m_stackViews[numberOfStacks - 1 - 2]. */
-  // TODO: this member variable should be passed as an argument
-  StackView::Mask m_headersDisplayMask;
 
   virtual ViewController* stackSlot(uint8_t index) = 0;
   virtual const ViewController* stackSlot(uint8_t index) const = 0;

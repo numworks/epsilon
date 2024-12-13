@@ -31,7 +31,8 @@ void MatrixListController::computeAdditionalResults(
   // Compute all layouts at once to reuse intermediate results
   Layout determinant, inverse, rowEchelonForm, reducedRowEchelonForm, trace;
   AdditionalResultsHelper::ComputeMatrixProperties(
-      exactOutput, approximateOutput, ctx, determinant, inverse, rowEchelonForm,
+      exactOutput, approximateOutput, ctx, displayMode(),
+      numberOfSignificantDigits(), determinant, inverse, rowEchelonForm,
       reducedRowEchelonForm, trace);
 
   size_t index = 0;

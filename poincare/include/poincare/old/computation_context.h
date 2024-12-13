@@ -146,10 +146,6 @@ class ApproximationContext : public ComputationContext {
       : ApproximationContext(computationContext.context(),
                              computationContext.complexFormat(),
                              computationContext.angleUnit(), withinReduce) {}
-  ApproximationContext(Context* context,
-                       Preferences::ComplexFormat complexFormat)
-      : ApproximationContext(context, complexFormat,
-                             Preferences::SharedPreferences()->angleUnit()) {}
 
   bool withinReduce() const { return m_withinReduce; }
 

@@ -391,12 +391,10 @@ SystemExpression AdditionalResultsHelper::CreateMixedFraction(
 }
 
 // Eat reduced expression's tree and return a beautified layout
-Poincare::Layout CreateBeautifiedLayout(
-    Tree* reducedExpression, ProjectionContext* ctx,
-    uint8_t numberOfSignificantDigits =
-        Preferences::SharedPreferences()->numberOfSignificantDigits(),
-    Preferences::PrintFloatMode displayMode =
-        Preferences::SharedPreferences()->displayMode()) {
+Poincare::Layout CreateBeautifiedLayout(Tree* reducedExpression,
+                                        ProjectionContext* ctx,
+                                        Preferences::PrintFloatMode displayMode,
+                                        uint8_t numberOfSignificantDigits) {
   Simplification::BeautifyReduced(reducedExpression, ctx);
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
       reducedExpression, false, numberOfSignificantDigits, displayMode));
@@ -416,13 +414,14 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
   Simplification::ProjectAndReduce(e, &ctx);
   assert(!ctx.m_dimension.isUnit());
   return CreateBeautifiedLayout(
-      e, &ctx, calculationPreferences.numberOfSignificantDigits,
-      Preferences::PrintFloatMode::Scientific);
+      e, &ctx, Preferences::PrintFloatMode::Scientific,
+      calculationPreferences.numberOfSignificantDigits);
 }
 
 void AdditionalResultsHelper::ComputeMatrixProperties(
     const UserExpression& exactOutput, const UserExpression& approximateOutput,
-    Internal::ProjectionContext ctx, Poincare::Layout& determinantL,
+    Internal::ProjectionContext ctx, Preferences::PrintFloatMode displayMode,
+    uint8_t numberOfSignificantDigits, Poincare::Layout& determinantL,
     Poincare::Layout& inverseL, Poincare::Layout& rowEchelonFormL,
     Poincare::Layout& reducedRowEchelonFormL, Poincare::Layout& traceL) {
   assert(approximateOutput.tree()->isMatrix());
@@ -449,7 +448,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     // TODO_PCJ: Prevent having to update ctx here.
     Internal::Dimension previousDimension = ctx.m_dimension;
     ctx.m_dimension = Internal::Dimension::Get(determinant, ctx.m_context);
-    determinantL = CreateBeautifiedLayout(determinant, &ctx);
+    determinantL = CreateBeautifiedLayout(determinant, &ctx, displayMode,
+                                          numberOfSignificantDigits);
     ctx.m_dimension = previousDimension;
     matrixClone->removeTree();
 
@@ -457,7 +457,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
      * A squared matrix is invertible if and only if determinant is non null */
     if (!determinantIsUndefinedOrNull) {
       Tree* inverse = Internal::Matrix::Inverse(matrix, false);
-      inverseL = CreateBeautifiedLayout(inverse, &ctx);
+      inverseL = CreateBeautifiedLayout(inverse, &ctx, displayMode,
+                                        numberOfSignificantDigits);
     }
   }
 
@@ -466,19 +467,22 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr, false);
   // Clone layouted tree to preserve reducedRowEchelonForm for next step.
   rowEchelonFormL =
-      CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), &ctx);
+      CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), &ctx,
+                             displayMode, numberOfSignificantDigits);
 
   /* 4. Matrix reduced row echelon form
    *    Computed from row echelon form to save computation time. */
   Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr, false);
-  reducedRowEchelonFormL = CreateBeautifiedLayout(reducedRowEchelonForm, &ctx);
+  reducedRowEchelonFormL = CreateBeautifiedLayout(
+      reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);
 
   // 5. Matrix trace if square matrix
   if (isSquared) {
     Tree* trace = Internal::Matrix::Trace(matrix);
     // TODO_PCJ: Prevent having to update ctx here.
     ctx.m_dimension = Internal::Dimension::Get(trace, ctx.m_context);
-    traceL = CreateBeautifiedLayout(trace, &ctx);
+    traceL = CreateBeautifiedLayout(trace, &ctx, displayMode,
+                                    numberOfSignificantDigits);
   }
 
   matrix->removeTree();

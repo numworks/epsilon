@@ -182,6 +182,9 @@ QUIZ_CASE(solver_quadratic_real) {
   assert_solves_to("(x-2/3)(x+0.2)=0", {"x=-1/5", "x=2/3", "delta=169/225"});
   assert_solves_to("x^2+1", {"delta=-4"});
   assert_solves_to("x^3+3×x^2+3×x+0.7=0", {"x=-0.3305670499", "delta=-2.43"});
+  // Complex format is updated with input
+  assert_solves_to("(x+i)(x-i)", {"x=-i", "x=i", "delta=-4"});
+  assert_solves_to("(x-i)^2", {"x=i", "delta=0"});
 
   // TODO_PCJ: fails to simplify
   // assert_solves_to("√(2)(x-√(3))(x-√(5))=0", {"x=√(3)",

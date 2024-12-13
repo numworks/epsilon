@@ -126,15 +126,21 @@ install_latest_lcov(){
   sudo apt update
   # Remove any existing lcov installed with apt
   sudo apt remove lcov -y
-  # Some lcov dependencies need to be manually installed
-  sudo apt install libdatetime-perl libcapture-tiny-perl libdatetime-format-dateparse-perl -y
-  # Download the lcov github release with wget
-  sudo apt install wget
-  sudo wget https://github.com/linux-test-project/lcov/releases/download/v2.1/lcov-2.1.tar.gz && tar -xf lcov-2.1.tar.gz
-  # Compile lcov
-  cd lcov-2.1 && sudo make install && cd ..
-  # Clean folder
-  rm -r lcov-*
+
+  # Install lcov 2.1 from the binary source, only if it is not already there
+  if ! lcov --version | grep -q '2.1'
+  then
+    # Some lcov dependencies need to be manually installed
+    sudo apt install libdatetime-perl libcapture-tiny-perl libdatetime-format-dateparse-perl -y
+    # Download the lcov github release with wget
+    sudo apt install wget
+    sudo wget https://github.com/linux-test-project/lcov/releases/download/v2.1/lcov-2.1.tar.gz && tar -xf lcov-2.1.tar.gz
+    # Compile lcov
+    cd lcov-2.1 && sudo make install && cd ..
+    # Clean folder
+    rm -r lcov-*
+  fi
+
   # Test that version 2.1 is installed
   if ! lcov --version | grep -q '2.1'
   then

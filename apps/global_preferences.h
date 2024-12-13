@@ -33,56 +33,56 @@ class __attribute__((packed)) GlobalPreferences {
   void countryHasChanged(bool updateSnapshots = true);
 
   CountryPreferences::AvailableExamModes availableExamModes() const {
-    return preferences().availableExamModes();
+    return countryPreferences().availableExamModes();
   }
   CountryPreferences::MethodForQuartiles methodForQuartiles() const {
-    return preferences().methodForQuartiles();
+    return countryPreferences().methodForQuartiles();
   }
   CountryPreferences::OutlierDefaultVisibility outliersStatus() const {
-    return preferences().outliersStatus();
+    return countryPreferences().outliersStatus();
   }
   CountryPreferences::HistogramsOffset histogramOffset() const {
-    return preferences().histogramOffset();
+    return countryPreferences().histogramOffset();
   }
   Poincare::Preferences::UnitFormat unitFormat() const {
-    return preferences().unitFormat();
+    return countryPreferences().unitFormat();
   }
   CountryPreferences::HomeAppsLayout homeAppsLayout() const {
-    return preferences().homeAppsLayout();
+    return countryPreferences().homeAppsLayout();
   }
   const char* discriminantSymbol() const {
-    return preferences().discriminantSymbol();
+    return countryPreferences().discriminantSymbol();
   }
   const char* yPredictedSymbol() const {
-    return preferences().yPredictedSymbol();
+    return countryPreferences().yPredictedSymbol();
   }
   CountryPreferences::StatsRowsLayout statsRowsLayout() const {
-    return preferences().statsRowsLayout();
+    return countryPreferences().statsRowsLayout();
   }
   Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const {
-    return preferences().combinatoricSymbols();
+    return countryPreferences().combinatoricSymbols();
   }
   CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox()
       const {
-    return preferences().listsStatsOrderInToolbox();
+    return countryPreferences().listsStatsOrderInToolbox();
   }
   Poincare::Preferences::MixedFractions mixedFractions() const {
-    return preferences().mixedFractions();
+    return countryPreferences().mixedFractions();
   }
   CountryPreferences::RegressionApp regressionAppVariant() const {
-    return preferences().regressionAppVariant();
+    return countryPreferences().regressionAppVariant();
   }
   CountryPreferences::GraphTemplatesLayout graphTemplatesLayout() const {
-    return preferences().graphTemplatesLayout();
+    return countryPreferences().graphTemplatesLayout();
   }
   Poincare::Preferences::LogarithmBasePosition logarithmBasePosition() const {
-    return preferences().logarithmBasePosition();
+    return countryPreferences().logarithmBasePosition();
   }
   Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent() const {
-    return preferences().logarithmKeyEvent();
+    return countryPreferences().logarithmKeyEvent();
   }
   Poincare::Preferences::ParabolaParameter parabolaParameter() const {
-    return preferences().parabolaParameter();
+    return countryPreferences().parabolaParameter();
   }
   int sequencesInitialRank() const;
 
@@ -124,7 +124,7 @@ class __attribute__((packed)) GlobalPreferences {
     setCountry(I18n::Country::WW, false);
   }
 
-  const CountryPreferences& preferences() const {
+  const CountryPreferences& countryPreferences() const {
     return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)];
   }
 

@@ -39,11 +39,11 @@ void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {
 }
 
 int GlobalPreferences::sequencesInitialRank() const {
-  switch (preferences().sequencesInitialRank()) {
+  switch (countryPreferences().sequencesInitialRank()) {
     case CountryPreferences::SequencesInitialRank::Zero:
       return 0;
     default:
-      assert(preferences().sequencesInitialRank() ==
+      assert(countryPreferences().sequencesInitialRank() ==
              CountryPreferences::SequencesInitialRank::One);
       return 1;
   }

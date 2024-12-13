@@ -462,16 +462,16 @@ T SystemFunctionScalar::approximateToScalarWithValue(T x,
 template <typename T>
 T UserExpression::ParseAndSimplifyAndApproximateToScalar(
     const char* text, Context* context,
+    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     SymbolicComputation symbolicComputation) {
   UserExpression exp = Parse(text, context, false);
   if (exp.isUninitialized()) {
     return NAN;
   }
-  ProjectionContext ctx = {
-      .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
-      .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
-      .m_symbolic = symbolicComputation,
-      .m_context = context};
+  ProjectionContext ctx = {.m_complexFormat = complexFormat,
+                           .m_angleUnit = angleUnit,
+                           .m_symbolic = symbolicComputation,
+                           .m_context = context};
   exp = exp.cloneAndSimplify(&ctx);
   assert(!exp.isUninitialized());
   return exp.approximateToScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat);
@@ -1184,9 +1184,11 @@ template double SystemFunction::approximateIntegralToScalar<double>(
     const SystemExpression& lowerBound) const;
 
 template float UserExpression::ParseAndSimplifyAndApproximateToScalar<float>(
-    const char*, Context*, SymbolicComputation);
+    const char*, Context*, Preferences::ComplexFormat, Preferences::AngleUnit,
+    SymbolicComputation);
 template double UserExpression::ParseAndSimplifyAndApproximateToScalar<double>(
-    const char*, Context*, SymbolicComputation);
+    const char*, Context*, Preferences::ComplexFormat, Preferences::AngleUnit,
+    SymbolicComputation);
 
 template bool UserExpression::hasDefinedComplexApproximation<float>(
     const ApproximationContext&, float*, float*) const;

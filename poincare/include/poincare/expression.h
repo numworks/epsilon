@@ -234,6 +234,8 @@ class Expression : public PoolHandle {
   template <typename T>
   static T ParseAndSimplifyAndApproximateToScalar(
       const char* text, Context* context,
+      Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit,
       SymbolicComputation symbolicComputation =
           SymbolicComputation::ReplaceAllSymbols);
   template <typename T>

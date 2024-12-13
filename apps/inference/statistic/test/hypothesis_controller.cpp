@@ -73,7 +73,9 @@ bool HypothesisController::textFieldDidFinishEditing(
   double h0 =
       Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<double>(
           textField->draftText(),
-          AppsContainerHelper::sharedAppsContainerGlobalContext());
+          AppsContainerHelper::sharedAppsContainerGlobalContext(),
+          Poincare::Preferences::SharedPreferences()->complexFormat(),
+          Poincare::Preferences::SharedPreferences()->angleUnit());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);

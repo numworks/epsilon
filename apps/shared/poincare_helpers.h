@@ -177,7 +177,9 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
   (void)numberOfChar;
   // Extract displayed value
   return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(
-      buffer, context);
+      buffer, context,
+      Poincare::Preferences::SharedPreferences()->complexFormat(),
+      Poincare::Preferences::SharedPreferences()->angleUnit());
 }
 
 }  // namespace PoincareHelpers

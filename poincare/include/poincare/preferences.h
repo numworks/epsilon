@@ -101,6 +101,11 @@ class __attribute__((packed)) Preferences final {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols);
 
+  /* TODO_PCJ: WARNING: The following methods should not be called in Poincare
+   * EditionMode, AngleUnt, ComplexFormat, PrintFloatMode and
+   * NumberOfSignificantDigits should not be stored in Preferences, but the
+   * refactor wasn't tackled yet. None of them is currently called in Poincaré
+   * though. */
   CalculationPreferences calculationPreferences() const {
     return m_calculationPreferences;
   }
@@ -126,18 +131,20 @@ class __attribute__((packed)) Preferences final {
   void setComplexFormat(Preferences::ComplexFormat complexFormat) {
     m_calculationPreferences.complexFormat = complexFormat;
   }
-  CombinatoricSymbols combinatoricSymbols() const {
-    return m_combinatoricSymbols;
-  }
-  void setCombinatoricSymbols(CombinatoricSymbols combinatoricSymbols) {
-    m_combinatoricSymbols = combinatoricSymbols;
-  }
   uint8_t numberOfSignificantDigits() const {
     return m_calculationPreferences.numberOfSignificantDigits;
   }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
     m_calculationPreferences.numberOfSignificantDigits =
         numberOfSignificantDigits;
+  }
+  // END OF WARNING
+
+  CombinatoricSymbols combinatoricSymbols() const {
+    return m_combinatoricSymbols;
+  }
+  void setCombinatoricSymbols(CombinatoricSymbols combinatoricSymbols) {
+    m_combinatoricSymbols = combinatoricSymbols;
   }
   bool mixedFractionsAreEnabled() const { return m_mixedFractionsAreEnabled; }
   void enableMixedFractions(MixedFractions enable) {

@@ -812,12 +812,12 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1_mm+1_km", "1.000001×_km");
   // simplifies_to("2_month×7_dm", "3681720×_s×_m");
   simplifies_to("2×_m/_m", "2");
-  simplifies_to("1234_g", "1.234×_kg");
+  simplifies_to("1234_g", "1234×_g");
   simplifies_to("cos(0_rad)", "1");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
   simplifies_to("_s^-1", "1×_s^(-1)");
   simplifies_to("abs(-3.3_m)", "3.3×_m");
-  simplifies_to("10^(-6)_m^3", "1×_cm^3");
+  simplifies_to("10^(-6)_m^3", "1ᴇ-6×_m^3");
 
   // Temperature
   simplifies_to("4_°C", "4×_°C");
@@ -843,8 +843,14 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("π×_rad×_°", "π^2/180×_rad^2");
 
   // BestRepresentative
-  simplifies_to("1_m+1_km", "1.001×_km");
-  simplifies_to("1ᴇ-9_s", "1×_ns");
+  simplifies_to("1_m+1_km", "1.001×_km",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("1ᴇ-9_s", "1×_ns",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("1234_g", "1.234×_kg",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("10^(-6)_m^3", "1×_cm^3",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
 
   // TODO: Decide on implicit '_' parsing
   //   simplifies_to("1m+1km", "1_m+1_km" /  "m+k×m" / "m+km" );
@@ -853,7 +859,8 @@ QUIZ_CASE(pcj_simplification_unit) {
 
   // UnitFormat
   simplifies_to("1609.344_m", "1.609344×_km",
-                {.m_unitFormat = UnitFormat::Imperial});
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::AutomaticMetric});
 
   // Constants
   simplifies_to("_mn + _mp", "3.34754942173ᴇ-24×_g");

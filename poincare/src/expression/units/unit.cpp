@@ -846,39 +846,24 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
 
   Tree* unit1 = nullptr;
   Tree* unit2 = nullptr;
-  // If the input is made of one single unit, preserve representative.
-  if (GetUnits(extractedUnits, &unit1, &unit2)) {
-    bool keepRepresentative = !unit2;
-    if (unit2 && dimension.unit.vector == Speed::Dimension) {
-      // Consider speed as a single unit.
-      if (GetRepresentative(unit2)->siVector() == Distance::Dimension) {
-        // Swap both unit to optimize prefix on distance unit.
-        std::swap(unit1, unit2);
-      }
-      keepRepresentative = true;
+  /* If the input is made of one single unit, preserve it.
+   * Consider speed as a single unit. */
+  if (GetUnits(extractedUnits, &unit1, &unit2) &&
+      (!unit2 || (unit2 && dimension.unit.vector == Speed::Dimension))) {
+    assert(!dimension.isAngleUnit());
+    double value = Approximation::To<double>(e, Approximation::Parameters{});
+    if (IsNonKelvinTemperature(GetRepresentative(unit1))) {
+      value = KelvinValueToRepresentative(value, GetRepresentative(unit1));
+    } else {
+      // Correct the value since e is in basic SI
+      value /= Approximation::To<double>(extractedUnits,
+                                         Approximation::Parameters{});
     }
-    if (keepRepresentative) {
-      assert(!dimension.isAngleUnit());
-      // Keep the same representative, find the best prefix.
-      double value = Approximation::To<double>(e, Approximation::Parameters{});
-      if (IsNonKelvinTemperature(GetRepresentative(unit1))) {
-        value = KelvinValueToRepresentative(value, GetRepresentative(unit1));
-      } else {
-        // Correct the value since e is in basic SI
-        value /= Approximation::To<double>(extractedUnits,
-                                           Approximation::Parameters{});
-        /* With speed, find best prefix for distance. Otherwise, target
-         * extractedUnits (that could be a Power). */
-        ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-            (unit2 ? unit1 : (Tree*)extractedUnits), &value, UnitFormat::Metric,
-            true, false);
-      }
-      e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
-      // Multiply value and extractedUnits.
-      assert(e->nextTree() == extractedUnits);
-      e->cloneNodeAtNode(KMult.node<2>);
-      return;
-    }
+    e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
+    // Multiply value and extractedUnits.
+    assert(e->nextTree() == extractedUnits);
+    e->cloneNodeAtNode(KMult.node<2>);
+    return;
   }
   // Fallback on automatic unit display.
   UnitDisplay display = DisplayImperialUnits(extractedUnits)

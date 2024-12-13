@@ -21,6 +21,8 @@ QUIZ_CASE(solver_error) {
   assert_solves_to_error("x[[2,3]]=0", EquationUndefined);
   assert_solves_to_error("x-{2,3}=0", EquationUndefined);
   assert_solves_to_error("x{2,3}=0", EquationUndefined);
+
+  assert_solves_to_error("x-random()=0", EquationUndefined);
 }
 
 QUIZ_CASE(solver_linear_system) {
@@ -75,6 +77,8 @@ QUIZ_CASE(solver_linear_system) {
 
   assert_solves_to("√(x)^(2)=-1", {"x=-1"});
   assert_solves_to("sin(asin(x))=2", {"x=2"});
+
+  assert_solves_to("x+cos(π/2)y=0", {"x=0"});
 }
 
 QUIZ_CASE(solver_quadratic) {

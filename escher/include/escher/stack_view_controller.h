@@ -30,8 +30,8 @@ class StackViewController : public ViewController {
 
   int depth() const { return m_size; }
   StackView* view() override { return &m_view; }
-  ViewController* topViewController();
   const ViewController* topViewController() const;
+  ViewController* topViewController();
   const ViewController* secondTopViewController() const;
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;

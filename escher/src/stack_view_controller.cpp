@@ -22,18 +22,16 @@ const char* StackViewController::title() const {
   return vc->title();
 }
 
-ViewController* StackViewController::topViewController() {
+const ViewController* StackViewController::topViewController() const {
   if (m_size < 1) {
     return nullptr;
   }
   return stackSlot(m_size - 1);
 }
 
-const ViewController* StackViewController::topViewController() const {
-  if (m_size < 1) {
-    return nullptr;
-  }
-  return stackSlot(m_size - 1);
+ViewController* StackViewController::topViewController() {
+  return const_cast<ViewController*>(
+      const_cast<const StackViewController*>(this)->topViewController());
 }
 
 const ViewController* StackViewController::secondTopViewController() const {

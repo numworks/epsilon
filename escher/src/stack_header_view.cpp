@@ -7,8 +7,8 @@ extern "C" {
 
 namespace Escher {
 
-StackHeaderView::StackHeaderView(ViewController* controller, KDColor textColor,
-                                 KDColor backgroundColor,
+StackHeaderView::StackHeaderView(const ViewController* controller,
+                                 KDColor textColor, KDColor backgroundColor,
                                  KDColor separatorColor)
     : View(),
       m_textColor(textColor),

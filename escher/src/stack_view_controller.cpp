@@ -199,15 +199,15 @@ void StackViewController::updateStack(
   // Ignore the SameAsPreviousPage titles
   uint8_t pageIndex = 0;
   for (uint8_t i = 0; i < indexOfTopPage; i++) {
-    if (stackSlot(i)->titlesDisplay() ==
+    const ViewController* controller = stackSlot(i);
+    if (controller->titlesDisplay() ==
         ViewController::TitlesDisplay::SameAsPreviousPage) {
       continue;
     }
-    if (shouldStoreHeaderOnStack(stackSlot(i), pageIndex,
+    if (shouldStoreHeaderOnStack(controller, pageIndex,
                                  static_cast<StackView::Mask>(titleDisplay),
                                  numberOfDifferentPages(indexOfTopPage))) {
-      // TODO: const ViewController*
-      m_view.pushStack(stackSlot(i));
+      m_view.pushStack(controller);
     }
     pageIndex++;
   }

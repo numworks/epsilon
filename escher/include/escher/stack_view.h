@@ -22,7 +22,7 @@ class StackView : public View {
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders,
                                     bool headersOverlapContent,
                                     KDColor headersContentBorderColor);
-  void pushStack(ViewController* controller);
+  void pushStack(const ViewController* controller);
   void reload() { markWholeFrameAsDirty(); }
   void resetStack() { m_stackHeaderViews->reset(); }
 

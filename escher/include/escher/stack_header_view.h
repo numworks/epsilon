@@ -10,7 +10,7 @@ class ViewController;
 
 class StackHeaderView : public View, public Bordered {
  public:
-  StackHeaderView(ViewController* controller = nullptr,
+  StackHeaderView(const ViewController* controller = nullptr,
                   KDColor textColor = KDColorBlack,
                   KDColor backgroundColor = KDColorBlack,
                   KDColor separatorColor = KDColorBlack);
@@ -27,7 +27,7 @@ class StackHeaderView : public View, public Bordered {
   KDColor m_textColor;
   KDColor m_backgroundColor;
   KDColor m_separatorColor;
-  ViewController* m_controller;
+  const ViewController* m_controller;
 };
 
 }  // namespace Escher

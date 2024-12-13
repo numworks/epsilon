@@ -29,7 +29,7 @@ void StackView::setupHeadersBorderOverlaping(
   m_borderView.setColor(headersContentBorderColor);
 }
 
-void StackView::pushStack(ViewController* vc) {
+void StackView::pushStack(const ViewController* vc) {
   KDColor textColor = Palette::GrayDarkMiddle;
   KDColor backgroundColor = KDColorWhite;
   KDColor separatorColor = Palette::GrayBright;

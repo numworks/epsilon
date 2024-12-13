@@ -22,7 +22,7 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
 #endif
       .function("isUninitialized", &PoolHandle::isUninitialized);
 
-  class_<JuniorExpression, base<PoolHandle>>("PCR_Expression")
+  class_<Expression, base<PoolHandle>>("PCR_Expression")
       .function("isIdenticalTo", &Expression::isIdenticalTo)
       .function("isUndefined", &Expression::isUndefinedOrNonReal)
       .function("isUserSymbol", &Expression::isUserSymbol)

@@ -332,6 +332,8 @@ QUIZ_CASE(pcj_approximation_integrals) {
                           "0.0014084507042254");
   approximates_to<float>("int(710×x×e^(-710×x), x, 0, 10)", "0.001408451");
   approximates_to<float>("710*int(x×e^(-710×x), x, 0, 10)", "0.001408451");
+  approximates_to<double>("int(√(5-x^2), x, -√(5), √(5))", "7.8539816339745",
+                          {.m_complexFormat = ComplexFormat::Real});
 }
 
 QUIZ_CASE(pcj_approximation_derivatives) {

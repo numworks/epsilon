@@ -1,17 +1,18 @@
 #ifndef POINCARE_REGRESSION_TRIGONOMETRIC_REGRESSION_H
 #define POINCARE_REGRESSION_TRIGONOMETRIC_REGRESSION_H
 
+#include <poincare/preferences.h>
+
 #include "regression.h"
 
 namespace Poincare::Regression {
 
 class TrigonometricRegression : public Regression {
  public:
-  using Regression::Regression;
-
   constexpr TrigonometricRegression(
+      Preferences::AngleUnit angleUnit,
       size_t initialParametersIterations = k_defaultParametersIterations)
-      : Regression(initialParametersIterations) {}
+      : Regression(initialParametersIterations), m_angleUnit(angleUnit) {}
 
   Type type() const override { return Type::Trigonometric; }
 
@@ -50,6 +51,10 @@ class TrigonometricRegression : public Regression {
       double residualStandardDeviation1, double residualStandardDeviation2,
       const Regression::Coefficients& modelCoefficients1,
       const Regression::Coefficients& modelCoefficients2) const override;
+
+  double toRadiansCoeff() const;
+
+  Preferences::AngleUnit m_angleUnit;
 };
 
 }  // namespace Poincare::Regression

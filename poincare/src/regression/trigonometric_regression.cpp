@@ -12,9 +12,8 @@
 
 namespace Poincare::Regression {
 
-static double toRadians() {
-  return M_PI / Poincare::Trigonometry::PiInAngleUnit(
-                    Poincare::Preferences::SharedPreferences()->angleUnit());
+double TrigonometricRegression::toRadiansCoeff() const {
+  return M_PI / Poincare::Trigonometry::PiInAngleUnit(m_angleUnit);
 }
 
 API::UserExpression TrigonometricRegression::privateExpression(
@@ -34,7 +33,7 @@ double TrigonometricRegression::privateEvaluate(
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
-  double radian = toRadians();
+  double radian = toRadiansCoeff();
   // sin() is here defined for radians, so b*x+c are converted in radians.
   return a * std::sin(radian * (b * x + c)) + d;
 }
@@ -50,7 +49,7 @@ double TrigonometricRegression::partialDerivate(
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double radian = toRadians();
+  double radian = toRadiansCoeff();
   /* sin() and cos() are here defined for radians, so b*x+c are converted in
    * radians. The added coefficient also appear in derivatives. */
   if (derivateCoefficientIndex == 0) {
@@ -175,8 +174,7 @@ TrigonometricRegression::specializedInitCoefficientsForFit(
   // Init the "amplitude" coefficient a
   double a = (yMax - yMin) / 2.0;
   // Init the "frequency" coefficient b
-  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(
-      Poincare::Preferences::SharedPreferences()->angleUnit());
+  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(m_angleUnit);
   double period = 2.0 * std::fabs(xMax - xMin);
   double b =
       (period > 0)
@@ -216,8 +214,7 @@ TrigonometricRegression::specializedInitCoefficientsForFit(
 void TrigonometricRegression::uniformizeCoefficientsFromFit(
     Coefficients& modelCoefficients) const {
   // Coefficients must be unique.
-  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(
-      Poincare::Preferences::SharedPreferences()->angleUnit());
+  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(m_angleUnit);
   // A must be positive.
   if (modelCoefficients[0] < 0.0) {
     // A * sin(B * x + C) + D = -A * sin(B * x + C + π) + D

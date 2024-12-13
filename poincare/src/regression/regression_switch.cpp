@@ -18,7 +18,7 @@
 
 namespace Poincare::Regression {
 
-const Regression* Regression::Get(Type type) {
+const Regression* Regression::Get(Type type, Preferences::AngleUnit angleUnit) {
   switch (type) {
     case Type::None:
       constexpr static NoneRegression none;
@@ -53,15 +53,31 @@ const Regression* Regression::Get(Type type) {
     case Type::Power:
       constexpr static PowerRegression power;
       return &power;
-    case Type::Trigonometric:
-      constexpr static TrigonometricRegression trigonometric;
-      return &trigonometric;
     case Type::Logistic:
       constexpr static LogisticRegression logistic;
       return &logistic;
     case Type::Median:
       constexpr static MedianRegression median;
       return &median;
+    case Type::Trigonometric: {
+      /* NOTE: Having a constexpr var for each angle unit seems weird, but it
+       * was the easiest way to adapt to the current implementation.
+       * Maybe the way Regressions are handled should be rethought ? */
+      if (angleUnit == Preferences::AngleUnit::Radian) {
+        constexpr static TrigonometricRegression trigonometricRad(
+            Preferences::AngleUnit::Radian);
+        return &trigonometricRad;
+      }
+      if (angleUnit == Preferences::AngleUnit::Degree) {
+        constexpr static TrigonometricRegression trigonometricDeg(
+            Preferences::AngleUnit::Degree);
+        return &trigonometricDeg;
+      }
+      assert(angleUnit == Preferences::AngleUnit::Gradian);
+      constexpr static TrigonometricRegression trigonometricGrad(
+          Preferences::AngleUnit::Gradian);
+      return &trigonometricGrad;
+    }
   }
   OMG::unreachable();
 }

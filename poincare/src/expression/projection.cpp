@@ -82,18 +82,6 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
   return true;
 }
 
-ProjectionContext Projection::ContextFromSettings() {
-  return ProjectionContext{
-      .m_complexFormat =
-          Poincare::Preferences::SharedPreferences()->complexFormat(),
-      .m_angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
-      .m_strategy = Strategy::Default,
-      .m_dimension = Dimension(),
-      .m_unitFormat = UnitFormat::Metric,
-      // TODO_PCJ: forward SharedGlobalPreferences()->unitFormat() somehow
-  };
-}
-
 bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
   // If it lives in the pool, fetching definitions may invalidate it.
   bool mayReplaceSymbols =

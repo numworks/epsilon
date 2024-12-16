@@ -6,6 +6,7 @@
 
 #include "approximation.h"
 #include "float_helper.h"
+#include "k_tree.h"
 #include "rational.h"
 
 namespace Poincare::Internal {
@@ -15,6 +16,10 @@ bool Number::IsNull(const Tree* e) {
     return e->isZero();
   }
   return Approximation::To<double>(e, Approximation::Parameters{}) == 0.0;
+}
+
+bool Number::IsOne(const Tree* e) {
+  return e->isOne() || e->treeIsIdenticalTo(1_fe) || e->treeIsIdenticalTo(1_de);
 }
 
 Tree* Number::Addition(const Tree* e1, const Tree* e2) {

@@ -1,5 +1,4 @@
 #include <emscripten/bind.h>
-#include <poincare/src/layout/parsing/latex_parser.h>
 #include <poincare/src/regression/regression.h>
 #include <poincare/src/regression/series.h>
 
@@ -63,8 +62,7 @@ std::string latexTemplateFormula(const Regression::Regression* reg) {
   constexpr int k_bufferSize = 1024;
   char buffer[k_bufferSize];
   Layout layout = reg->templateLayout();
-  Internal::LatexParser::LayoutToLatex(Internal::Rack::From(layout.tree()),
-                                       buffer, buffer + k_bufferSize - 1);
+  layout.toLatex(buffer, k_bufferSize);
   return std::string(buffer, strlen(buffer));
 }
 

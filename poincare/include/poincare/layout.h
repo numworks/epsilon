@@ -108,9 +108,12 @@ class Layout final : public PoolHandle {
   int numberOfDescendants(bool includeSelf) const;
 
   // Serialization
+  // TODO_PCJ: One of these is defined on PoolObject, the other is not
+  // TODO_PCJ: Should these return a char* pointing to the end of the buffer ?
   size_t serialize(char* buffer, size_t bufferSize) const {
     return (*this)->serialize(buffer, bufferSize);
   }
+  size_t toLatex(char* buffer, size_t bufferSize) const;
 
   // Clone
   Layout clone() const;

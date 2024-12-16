@@ -5,6 +5,7 @@
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/layouter.h>
+#include <poincare/src/layout/parsing/latex_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/render.h>
 #include <poincare/src/layout/serialize.h>
@@ -154,6 +155,13 @@ void LayoutObject::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
 int Layout::numberOfDescendants(bool includeSelf) const {
   assert(tree());
   return tree()->numberOfDescendants(includeSelf);
+}
+
+size_t Layout::toLatex(char* buffer, size_t bufferSize) const {
+  assert(tree() && tree()->isRackLayout());
+  return Internal::LatexParser::LayoutToLatex(Internal::Rack::From(tree()),
+                                              buffer, buffer + bufferSize - 1) -
+         buffer;
 }
 
 Layout Layout::clone() const {

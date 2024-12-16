@@ -267,7 +267,7 @@ $(addprefix helpers/, \
 ) \
 )
 
-_sources_poincare_js_bridge := $(patsubst %,src/js_bridge/%:+js_bridge, \
+_sources_poincare_js_bridge := $(patsubst %,poincarejs/bridge/%:+js_bridge, \
   computation_context.cpp \
   preferences.cpp \
   typed_expression.cpp \

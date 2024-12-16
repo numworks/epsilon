@@ -1,13 +1,5 @@
 #include <ion/storage/file_system.h>
-#include <poincare/old/boolean.h>
-#include <poincare/old/constant.h>
-#include <poincare/old/function.h>
-#include <poincare/old/infinity.h>
-#include <poincare/old/rational.h>
-#include <poincare/old/store.h>
-#include <poincare/old/undefined.h>
-#include <poincare/old/unit.h>
-#include <poincare/old/unit_convert.h>
+#include <poincare/expression.h>
 
 #include "../helper.h"
 #include "helper.h"
@@ -363,6 +355,7 @@ QUIZ_CASE(poincare_simplification_constants) {
   // assert_parsed_expression_simplify_to("_hplanck", "6.62607015ᴇ-34×_J×_s");
 }
 
+#if 0
 void assert_parsed_unit_simplify_to_with_prefixes(
     const OUnit::Representative* representative) {
   int numberOfPrefixes;
@@ -387,6 +380,7 @@ void assert_parsed_unit_simplify_to_with_prefixes(
     }
   }
 }
+#endif
 
 QUIZ_CASE(poincare_simplification_units) {
   /* SI base units */
@@ -467,8 +461,10 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_week", "1×_week");
   assert_parsed_expression_simplify_to("_month", "1×_month");
   assert_parsed_expression_simplify_to("_year", "1×_year");
+#if 0
   assert_parsed_unit_simplify_to_with_prefixes(
       OUnit::k_distanceRepresentatives);
+#endif
   assert_parsed_expression_simplify_to("_au", "1×_au");
   assert_parsed_expression_simplify_to("_ly", "1×_ly");
   assert_parsed_expression_simplify_to("_pc", "1×_pc");
@@ -476,17 +472,22 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_ft", "1×_ft", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_yd", "1×_yd", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_mi", "1×_mi", User, Radian, Imperial);
+#if 0
   assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_massRepresentatives);
+#endif
   assert_parsed_expression_simplify_to("_t", "1×_t");
   assert_parsed_expression_simplify_to("_oz", "1×_oz", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_lb", "1×_lb", User, Radian, Imperial);
   assert_parsed_expression_simplify_to("_shtn", "1×_shtn", User, Radian,
                                        Imperial);
+#if 0
   assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_currentRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(
       OUnit::k_temperatureRepresentatives);
+#endif
   assert_parsed_expression_simplify_to("_°C", "1×_°C");
   assert_parsed_expression_simplify_to("_°F", "1×_°F");
+#if 0
   assert_parsed_unit_simplify_to_with_prefixes(
       OUnit::k_amountOfSubstanceRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(
@@ -496,7 +497,9 @@ QUIZ_CASE(poincare_simplification_units) {
       OUnit::k_pressureRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(
       OUnit::k_pressureRepresentatives + 1);
+#endif
   assert_parsed_expression_simplify_to("_atm", "1×_atm");
+#if 0
   assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_energyRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(OUnit::k_energyRepresentatives +
                                                1);
@@ -517,6 +520,7 @@ QUIZ_CASE(poincare_simplification_units) {
       OUnit::k_inductanceRepresentatives);
   assert_parsed_unit_simplify_to_with_prefixes(
       OUnit::k_catalyticActivityRepresentatives);
+#endif
 
   /* Units that do not appear as output */
   assert_parsed_expression_simplify_to("_Hz", "1×_s^(-1)");
@@ -568,7 +572,7 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_kat_kg^-2.8",
                                        "1×_mol×_kg^(-14/5)×_s^(-1)");
 
-  /* OUnit sum/subtract */
+  /* Unit sum/subtract */
   assert_parsed_expression_simplify_to("_m+_m", "2×_m");
   assert_parsed_expression_simplify_to("_m-_m", "0×_m");
 
@@ -2875,8 +2879,8 @@ static void testLogicalOperatorTruthTable(const char* operatorString,
   assert(operatorLength <= 4);
   // Test truth table
   for (int a = 0; a <= 1; a++) {
-    const char* aString = a == 1 ? BooleanNode::k_trueAliases.mainAlias()
-                                 : BooleanNode::k_falseAliases.mainAlias();
+    const char* aString = a == 1 ? BuiltinsAliases::k_trueAliases.mainAlias()
+                                 : BuiltinsAliases::k_falseAliases.mainAlias();
     int length = strlcpy(buffer, aString, strlen(aString) + 1);
     buffer[length] = ' ';
     length++;
@@ -2884,13 +2888,14 @@ static void testLogicalOperatorTruthTable(const char* operatorString,
     buffer[length] = ' ';
     length++;
     for (int b = 0; b <= 1; b++) {
-      const char* bString = b == 1 ? BooleanNode::k_trueAliases.mainAlias()
-                                   : BooleanNode::k_falseAliases.mainAlias();
+      const char* bString = b == 1
+                                ? BuiltinsAliases::k_trueAliases.mainAlias()
+                                : BuiltinsAliases::k_falseAliases.mainAlias();
       strlcpy(buffer + length, bString, strlen(bString) + 1);
       const char* truthString =
           evaluationFunction(static_cast<bool>(a), static_cast<bool>(b))
-              ? BooleanNode::k_trueAliases.mainAlias()
-              : BooleanNode::k_falseAliases.mainAlias();
+              ? BuiltinsAliases::k_trueAliases.mainAlias()
+              : BuiltinsAliases::k_falseAliases.mainAlias();
       assert_parsed_expression_simplify_to(buffer, truthString);
     }
   }

@@ -31,8 +31,7 @@ class TestPlotPolicy : Shared::PlotPolicy::WithCurves {
 class TestXAxis : public Shared::PlotPolicy::HorizontalLabeledAxis {
  protected:
   void drawLabel(int i, float t, const Shared::AbstractPlotView* plotView,
-                 KDContext* ctx, KDRect rect,
-                 Shared::AbstractPlotView::Axis axis,
+                 KDContext* ctx, KDRect rect, OMG::Axis axis,
                  KDColor color) const override;
 };
 

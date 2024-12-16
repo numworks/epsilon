@@ -7,23 +7,23 @@
 
 namespace Poincare {
 
-class JuniorExpression;
+class Expression;
 class ContextWithParent;
 
 class EmptyContext : public Context {
  public:
   // Context
-  SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
-                                                 int length) override {
-    return SymbolAbstractType::None;
+  UserNamedType expressionTypeForIdentifier(const char* identifier,
+                                            int length) override {
+    return UserNamedType::None;
   }
-  bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
-                                      const Internal::Tree* symbol) override {
+  bool setExpressionForUserNamed(const Internal::Tree* expression,
+                                 const Internal::Tree* symbol) override {
     assert(false);
     return false;
   }
 
-  const Internal::Tree* expressionForSymbolAbstract(
+  const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) override;
 };
 

@@ -18,8 +18,8 @@ StackViewController::StackViewController(
       m_displayedAsModal(false),
       m_headersDisplayMask(~0) {}
 
-const char* StackViewController::title() {
-  ViewController* vc = *stackSlot(0);
+const char* StackViewController::title() const {
+  const ViewController* vc = stackSlot(0);
   return vc->title();
 }
 
@@ -27,7 +27,14 @@ ViewController* StackViewController::topViewController() {
   if (m_size < 1) {
     return nullptr;
   }
-  return *stackSlot(m_size - 1);
+  return stackSlot(m_size - 1);
+}
+
+const ViewController* StackViewController::topViewController() const {
+  if (m_size < 1) {
+    return nullptr;
+  }
+  return stackSlot(m_size - 1);
 }
 
 void StackViewController::push(ViewController* vc) {
@@ -38,7 +45,7 @@ void StackViewController::push(ViewController* vc) {
   }
   setupActiveViewController();
   if (m_size > 1) {
-    (*stackSlot(m_size - 2))->viewDidDisappear();
+    stackSlot(m_size - 2)->viewDidDisappear();
   }
 }
 
@@ -82,7 +89,7 @@ void StackViewController::popUntilDepth(int depth,
 
 void StackViewController::pushModel(ViewController* controller) {
   willOpenPage(controller);
-  *stackSlot(m_size++) = controller;
+  setStackSlot(m_size++, controller);
 }
 
 void StackViewController::setupActiveView() {
@@ -124,7 +131,7 @@ bool StackViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void StackViewController::initView() { (*stackSlot(0))->initView(); }
+void StackViewController::initView() { stackSlot(0)->initView(); }
 
 void StackViewController::viewWillAppear() {
   /* Load the visible controller view */
@@ -141,8 +148,8 @@ void StackViewController::viewDidDisappear() {
   m_view.setContentView(nullptr);
 }
 
-bool StackViewController::shouldStoreHeaderOnStack(ViewController* vc,
-                                                   int index) {
+bool StackViewController::shouldStoreHeaderOnStack(const ViewController* vc,
+                                                   int index) const {
   /* In general, the titlesDisplay controls how the stack is shown
    * only while the controller is the last on the stack. */
   return vc->title() != nullptr &&
@@ -160,9 +167,9 @@ void StackViewController::updateStack(
   /* Load the stack view */
   m_view.resetStack();
   for (int i = 0; i < m_size; i++) {
-    ViewController* childrenVC = *stackSlot(i);
+    const ViewController* childrenVC = stackSlot(i);
     if (shouldStoreHeaderOnStack(childrenVC, i)) {
-      m_view.pushStack(*stackSlot(i));
+      m_view.pushStack(stackSlot(i));
     }
   }
 }

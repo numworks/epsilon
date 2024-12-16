@@ -24,7 +24,7 @@ GridTypeController::GridTypeController(
   cell(1)->accessory()->setImage(ImageStore::PolarGridIcon);
 }
 
-const char* GridTypeController::title() {
+const char* GridTypeController::title() const {
   return I18n::translate(I18n::Message::GridType);
 }
 

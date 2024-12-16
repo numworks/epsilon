@@ -16,10 +16,10 @@ class DomainParameterController
   DomainParameterController(Escher::Responder* parentResponder);
 
   // ViewController
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::FunctionDomain);
   }
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastThreeTitles;
   }
 

@@ -1,6 +1,7 @@
 #ifndef SHARED_PLOT_VIEW_H
 #define SHARED_PLOT_VIEW_H
 
+#include <omg/enums.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/layout.h>
 
@@ -18,10 +19,6 @@ namespace Shared {
 
 class AbstractPlotView : public Escher::View {
  public:
-  enum class Axis : uint8_t {
-    Horizontal = 0,
-    Vertical,
-  };
   enum class RelativePosition : uint8_t {
     Before,
     There,
@@ -33,10 +30,6 @@ class AbstractPlotView : public Escher::View {
   constexpr static KDFont::Size k_font = KDFont::Size::Small;
   constexpr static KDCoordinate k_defaultDashThickness = 1;
   constexpr static KDCoordinate k_defaultDashLength = 3;
-
-  constexpr static Axis OtherAxis(Axis axis) {
-    return static_cast<Axis>(1 - static_cast<uint8_t>(axis));
-  }
 
   AbstractPlotView(CurveViewRange* range)
       : m_range(range),
@@ -58,11 +51,11 @@ class AbstractPlotView : public Escher::View {
   void setRange(CurveViewRange* range) { m_range = range; }
   void setCursorView(CursorView* cursorView);
   bool hasFocus() const { return m_focus; }
-  float rangeMin(Axis axis) const {
-    return axis == Axis::Horizontal ? m_range->xMin() : m_range->yMin();
+  float rangeMin(OMG::Axis axis) const {
+    return axis == OMG::Axis::Horizontal ? m_range->xMin() : m_range->yMin();
   }
-  float rangeMax(Axis axis) const {
-    return axis == Axis::Horizontal ? m_range->xMax() : m_range->yMax();
+  float rangeMax(OMG::Axis axis) const {
+    return axis == OMG::Axis::Horizontal ? m_range->xMax() : m_range->yMax();
   }
   KDCoordinate graphWidth() const { return bounds().width() - 1; }
   KDCoordinate graphHeight() const {
@@ -75,17 +68,17 @@ class AbstractPlotView : public Escher::View {
   float pixelHeight() const {
     return (m_range->yMax() - m_range->yMin()) / graphHeight();
   }
-  float pixelLength(Axis axis) const {
-    return axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
+  float pixelLength(OMG::Axis axis) const {
+    return axis == OMG::Axis::Horizontal ? pixelWidth() : pixelHeight();
   }
-  float floatToFloatPixel(Axis axis, float f) const;
-  KDCoordinate floatToKDCoordinatePixel(Axis axis, float f) const;
-  float pixelToFloat(Axis axis, KDCoordinate c) const;
+  float floatToFloatPixel(OMG::Axis axis, float f) const;
+  KDCoordinate floatToKDCoordinatePixel(OMG::Axis axis, float f) const;
+  float pixelToFloat(OMG::Axis axis, KDCoordinate c) const;
   Poincare::Coordinate2D<float> floatToPixel2D(
       Poincare::Coordinate2D<float> p) const {
     return Poincare::Coordinate2D<float>(
-        floatToFloatPixel(Axis::Horizontal, p.x()),
-        floatToFloatPixel(Axis::Vertical, p.y()));
+        floatToFloatPixel(OMG::Axis::Horizontal, p.x()),
+        floatToFloatPixel(OMG::Axis::Vertical, p.y()));
   }
   double angleFromPoint(KDPoint point) const;
   /* Compute the rect where a label will be drawn. */
@@ -97,13 +90,14 @@ class AbstractPlotView : public Escher::View {
   /* FIXME These methods are public as they need to be accessible to helper
    * classes used as template parameters to PlotView. A better solution might
    * be to private them and befriend the helpers. */
-  void drawStraightSegment(KDContext* ctx, KDRect rect, Axis parallel,
+  void drawStraightSegment(KDContext* ctx, KDRect rect, OMG::Axis parallel,
                            float position, float min, float max, KDColor color,
                            KDCoordinate thickness = 1,
                            KDCoordinate dashSize = 0) const;
   void drawDashedStraightSegment(
-      KDContext* ctx, KDRect rect, Axis parallel, float position, float min,
-      float max, KDColor color, KDCoordinate thickness = k_defaultDashThickness,
+      KDContext* ctx, KDRect rect, OMG::Axis parallel, float position,
+      float min, float max, KDColor color,
+      KDCoordinate thickness = k_defaultDashThickness,
       KDCoordinate dashSize = k_defaultDashLength) const {
     drawStraightSegment(ctx, rect, parallel, position, min, max, color,
                         thickness, dashSize);
@@ -138,8 +132,8 @@ class AbstractPlotView : public Escher::View {
                   KDColor color) const {
     drawArc(ctx, rect, center, radius, 0.f, 2 * M_PI, color);
   }
-  void drawTick(KDContext* ctx, KDRect rect, Axis perpendicular, float position,
-                KDColor color = KDColorBlack) const;
+  void drawTick(KDContext* ctx, KDRect rect, OMG::Axis perpendicular,
+                float position, KDColor color = KDColorBlack) const;
   void drawArrowhead(KDContext* ctx, KDRect rect,
                      Poincare::Coordinate2D<float> xy,
                      Poincare::Coordinate2D<float> dxy, float pixelArrowWidth,

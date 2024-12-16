@@ -7,10 +7,10 @@
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/new_trigonometry.h>
 #include <poincare/numeric/roots.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/derivation.h>
+#include <poincare/trigonometry.h>
 
 #include <algorithm>
 
@@ -220,23 +220,6 @@ KDColor ContinuousFunction::subCurveColor(int subCurveIndex) const {
   return color(derivationOrderFromSubCurveIndex(subCurveIndex));
 }
 
-double ContinuousFunction::evaluateCurveParameter(int index, double cursorT,
-                                                  double cursorX,
-                                                  double cursorY,
-                                                  Context* context) const {
-  switch (properties().symbolType()) {
-    case ContinuousFunctionProperties::SymbolType::T:
-      return index == 0   ? cursorT
-             : index == 1 ? evaluateXYAtParameter(cursorT, context).x()
-                          : evaluateXYAtParameter(cursorT, context).y();
-    case ContinuousFunctionProperties::SymbolType::Theta:
-    case ContinuousFunctionProperties::SymbolType::Radius:
-      return index == 0 ? cursorT : evaluate2DAtParameter(cursorT, context).y();
-    default:
-      return index == 0 ? cursorX : cursorY;
-  }
-}
-
 void ContinuousFunction::updateModel(Context* context, bool wasCartesian) {
   setCache(nullptr);
   m_model.resetProperties();  // Reset model's properties.
@@ -432,7 +415,7 @@ float ContinuousFunction::autoTMax() const {
              ? INFINITY
              : (properties().isInversePolar()
                     ? Range1D<float>::k_defaultHalfLength
-                    : 2.f * NewTrigonometry::PiInAngleUnit(
+                    : 2.f * Trigonometry::PiInAngleUnit(
                                 Preferences::SharedPreferences()->angleUnit()));
 }
 
@@ -448,8 +431,7 @@ bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
     Context* context) const {
   return expressionApproximated(context).recursivelyMatches(
       [](const NewExpression e) {
-        return !e.isUninitialized() &&
-               (e.isSequence() || e.isIntegral() || e.isDiff());
+        return !e.isUninitialized() && (e.isSequence() || e.isParametric());
       });
 }
 
@@ -496,7 +478,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
   assert(thisProperties.isPolar() || thisProperties.isInversePolar());
   const T r = thisProperties.isPolar() ? x1x2.y() : x1x2.x();
   const T angle = (thisProperties.isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
-                  NewTrigonometry::PiInAngleUnit(
+                  Trigonometry::PiInAngleUnit(
                       Poincare::Preferences::SharedPreferences()->angleUnit());
   return Coordinate2D<T>(r * std::cos(angle), r * std::sin(angle));
 }
@@ -690,11 +672,6 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
         m_expression = Undefined::Builder();
         return m_expression;
       }
-      if (!willBeAlongX && yDegree != 0) {
-        // No need to replace anything if yDegree is 0
-        m_expression.replaceSymbolWithExpression(
-            Symbol::Builder(k_ordinateSymbol), Symbol::SystemSymbol());
-      }
     } else {
       /* m_expression is resulting of a simplification with the target
        * SystemForAnalysis. But SystemForApproximation can be sometimes way
@@ -821,8 +798,8 @@ UserExpression ContinuousFunction::Model::originalEquation(
   if (unknownSymbolEquation.isUninitialized() || symbol == UCodePointUnknown) {
     return unknownSymbolEquation;
   }
-  return unknownSymbolEquation.replaceSymbolWithExpression(
-      Symbol::SystemSymbol(), Symbol::Builder(symbol));
+  unknownSymbolEquation.replaceUnknownWithSymbol(symbol);
+  return unknownSymbolEquation;
 }
 
 bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
@@ -889,7 +866,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     const size_t functionNameLength = strlen(functionName);
     const UserExpression functionSymbol = leftExpression.cloneChildAtIndex(0);
     CodePoint codePointSymbol = CodePointForSymbol(functionSymbol);
-    if (Shared::GlobalContext::SymbolAbstractNameIsFree(functionName) ||
+    if (Shared::GlobalContext::UserNameIsFree(functionName) ||
         strncmp(record->fullName(), functionName, functionNameLength) == 0) {
       // Set the model's plot type.
       tempFunctionSymbol =
@@ -925,9 +902,9 @@ UserExpression ContinuousFunction::Model::expressionEquation(
      * symbols nested in function, which is not a supported behavior anyway.
      * TODO: Make a consistent behavior calculation/additional_results using a
      *       VariableContext to temporary disable y's predefinition. */
-    result = result.replaceSymbolWithExpression(
-        Symbol::Builder(k_ordinateSymbol),
-        Symbol::Builder(UCodePointTemporaryUnknown));
+    result.replaceSymbolWithExpression(
+        SymbolHelper::BuildSymbol(k_ordinateSymbol),
+        SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
   result.replaceSymbols(context);
@@ -937,9 +914,9 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     return Undefined::Builder();
   }
   if (isUnnamedFunction) {
-    result = result.replaceSymbolWithExpression(
-        Symbol::Builder(UCodePointTemporaryUnknown),
-        Symbol::Builder(k_ordinateSymbol));
+    result.replaceSymbolWithExpression(
+        SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown),
+        SymbolHelper::BuildSymbol(k_ordinateSymbol));
   }
   assert(!result.isUninitialized());
   return result;
@@ -1156,8 +1133,8 @@ SystemExpression ContinuousFunction::Model::parametricForm(
      * - y(r) = r * sin(θ(r)) */
     e = SystemExpression::CreateReduce(
         KPoint(KMult(KA, KTrig(KB, 0_e)), KMult(KA, KTrig(KB, 1_e))),
-        {.KA = prop.isPolar() ? e : Symbol::SystemSymbol(),
-         .KB = prop.isPolar() ? Symbol::SystemSymbol() : e});
+        {.KA = prop.isPolar() ? e : SymbolHelper::SystemSymbol(),
+         .KB = prop.isPolar() ? SymbolHelper::SystemSymbol() : e});
   } else {
     assert(prop.isParametric());
     e = e.clone();

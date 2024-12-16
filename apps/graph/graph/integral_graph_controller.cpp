@@ -20,7 +20,7 @@ IntegralGraphController::IntegralGraphController(
     InteractiveCurveViewRange* graphRange, CurveViewCursor* cursor)
     : SumGraphController(parentResponder, graphView, graphRange, cursor) {}
 
-const char* IntegralGraphController::title() {
+const char* IntegralGraphController::title() const {
   return I18n::translate(I18n::Message::Integral);
 }
 

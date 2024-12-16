@@ -26,10 +26,10 @@ void TrigonometryGraphPolicy::drawPlot(const AbstractPlotView* plotView,
   float c = std::cos(angle);
 
   // - Draw sine and cosine projections
-  plotView->drawDashedStraightSegment(
-      ctx, rect, AbstractPlotView::Axis::Horizontal, s, 0.f, c, Palette::Red);
-  plotView->drawDashedStraightSegment(
-      ctx, rect, AbstractPlotView::Axis::Vertical, c, 0.f, s, Palette::Red);
+  plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Horizontal, s, 0.f,
+                                      c, Palette::Red);
+  plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, c, 0.f, s,
+                                      Palette::Red);
   plotView->drawSegment(ctx, rect, {0.f, 0.f}, {c, s}, Palette::Red);
 
   // - Draw angle position on the circle
@@ -81,8 +81,8 @@ void UnitCircle::drawAxesAndGrid(const AbstractPlotView* plotView,
   plotView->drawLabel(ctx, rect, "1",
                       labelRect.translatedBy(k_oneFineTunePosition),
                       KDColorBlack);
-  m_xAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Horizontal);
-  m_yAxis.drawAxis(plotView, ctx, rect, AbstractPlotView::Axis::Vertical);
+  m_xAxis.drawAxis(plotView, ctx, rect, OMG::Axis::Horizontal);
+  m_yAxis.drawAxis(plotView, ctx, rect, OMG::Axis::Vertical);
 }
 
 TrigonometryGraphView::TrigonometryGraphView(TrigonometryModel* model)

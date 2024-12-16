@@ -13,7 +13,7 @@ class IntegralGraphController : public Shared::SumGraphController {
                           GraphView* graphView,
                           Shared::InteractiveCurveViewRange* graphRange,
                           Shared::CurveViewCursor* cursor);
-  const char* title() override;
+  const char* title() const override;
 
  protected:
   double cursorNextStep(double position,

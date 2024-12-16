@@ -42,7 +42,7 @@ AreaBetweenCurvesParameterController::AreaBetweenCurvesParameterController(
       m_areaGraphController(areaGraphController),
       m_topView(I18n::Message::SelectSecondCurve, k_messageFormat) {}
 
-const char* AreaBetweenCurvesParameterController::title() {
+const char* AreaBetweenCurvesParameterController::title() const {
   return I18n::translate(I18n::Message::AreaBetweenCurves);
 }
 

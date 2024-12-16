@@ -1,12 +1,12 @@
 #include <emscripten/bind.h>
+#include <poincare/expression.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/old/junior_expression.h>
 
 using namespace emscripten;
 
 namespace Poincare::JSBridge {
 
-std::string symbolName(const JuniorExpression& expr) {
+std::string symbolName(const Expression& expr) {
   if (!expr.isUserSymbol() && !expr.isUserFunction()) {
     // Only works on symbols expressions
     return std::string();
@@ -22,26 +22,12 @@ EMSCRIPTEN_BINDINGS(junior_expression) {
 #endif
       .function("isUninitialized", &PoolHandle::isUninitialized);
 
-  class_<JuniorExpression, base<PoolHandle>>("PCR_Expression")
-      .function("isIdenticalTo", &JuniorExpression::isIdenticalToJunior)
-      .function("isUndefined", &JuniorExpression::isUndefined)
-      .function("isNAry", &JuniorExpression::isNAry)
-      .function("isApproximate", &JuniorExpression::isApproximate)
-      .function("isPercent", &JuniorExpression::isPercent)
-      .function("isIntegral", &JuniorExpression::isIntegral)
-      .function("isDiff", &JuniorExpression::isDiff)
-      .function("isBoolean", &JuniorExpression::isBoolean)
-      .function("isUserSymbol", &JuniorExpression::isUserSymbol)
-      .function("isUserFunction", &JuniorExpression::isUserFunction)
-      .function("isFactor", &JuniorExpression::isFactor)
-      .function("isNonReal", &JuniorExpression::isNonReal)
-      .function("isOpposite", &JuniorExpression::isOpposite)
-      .function("isDiv", &JuniorExpression::isDiv)
-      .function("isBasedInteger", &JuniorExpression::isBasedInteger)
-      .function("isComparison", &JuniorExpression::isComparison)
-      .function("isEquality", &JuniorExpression::isEquality)
-      .function("isRational", &JuniorExpression::isRational)
-      .function("isConstantNumber", &JuniorExpression::isConstantNumber)
+  class_<Expression, base<PoolHandle>>("PCR_Expression")
+      .function("isIdenticalTo", &Expression::isIdenticalTo)
+      .function("isUndefined", &Expression::isUndefinedOrNonReal)
+      .function("isUserSymbol", &Expression::isUserSymbol)
+      .function("isUserFunction", &Expression::isUserFunction)
+      .function("isEquality", &Expression::isEquality)
       .function("symbolName", &symbolName);
 }
 

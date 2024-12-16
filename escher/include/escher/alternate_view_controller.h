@@ -26,7 +26,7 @@ class AlternateViewController : public ViewController {
     return m_viewControllers[m_delegate->activeViewControllerIndex()];
   }
   View* view() override { return activeViewController()->view(); }
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return m_delegate->alternateViewTitlesDisplay();
   }
   void didBecomeFirstResponder() override {

@@ -68,8 +68,8 @@ class WithCurves {
     Pattern(int s, KDColor color, KDColor backgroundColor = k_transparent);
 
     void drawInLine(const AbstractPlotView* plotView, KDContext* ctx,
-                    KDRect rect, AbstractPlotView::Axis parallel,
-                    float position, float min, float max) const;
+                    KDRect rect, OMG::Axis parallel, float position, float min,
+                    float max) const;
 
    private:
     constexpr static size_t k_size = 4;
@@ -86,11 +86,10 @@ class WithCurves {
                  bool dashed = false);
     /* If one of the pattern bound is nullptr, the main curve is used instead.
      */
-    void setPatternOptions(
-        Pattern pattern, float patternStart, float patternEnd,
-        Curve2D patternLowerBound, Curve2D patternUpperBound,
-        bool patternWithoutCurve,
-        AbstractPlotView::Axis axis = AbstractPlotView::Axis::Horizontal);
+    void setPatternOptions(Pattern pattern, float patternStart,
+                           float patternEnd, Curve2D patternLowerBound,
+                           Curve2D patternUpperBound, bool patternWithoutCurve,
+                           OMG::Axis axis = OMG::Axis::Horizontal);
     void setPrecisionOptions(bool drawStraightLinesEarly,
                              Curve2DEvaluation<double> curveDouble,
                              DiscontinuityTest discontinuity);
@@ -127,7 +126,7 @@ class WithCurves {
     float m_patternStart;
     float m_patternEnd;
     KDColor m_color;
-    AbstractPlotView::Axis m_axis;
+    OMG::Axis m_axis;
     bool m_thick;
     bool m_dashed;
     bool m_patternWithoutCurve;

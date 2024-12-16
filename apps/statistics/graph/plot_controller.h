@@ -38,13 +38,9 @@ class PlotController : public DataViewController {
                                     float* v) const {
     return false;
   }
-  virtual void appendLabelSuffix(Shared::AbstractPlotView::Axis axis,
-                                 char* labelBuffer, int maxSize,
+  virtual void appendLabelSuffix(OMG::Axis axis, char* labelBuffer, int maxSize,
                                  int glyphLength, int maxGlyphLength) const {}
-  virtual float labelStepMultiplicator(
-      Shared::AbstractPlotView::Axis axis) const {
-    return 1.0f;
-  }
+  virtual float labelStepMultiplicator(OMG::Axis axis) const { return 1.0f; }
 
   // DataViewController
   DataView* dataView() override { return &m_view; }

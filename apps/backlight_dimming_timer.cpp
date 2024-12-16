@@ -2,8 +2,8 @@
 
 #include <ion.h>
 
-BacklightDimmingTimer::BacklightDimmingTimer()
-    : Timer(k_idleBeforeDimmingDuration / Timer::TickDuration) {}
+BacklightDimmingTimer::BacklightDimmingTimer(int dimmingTime)
+    : Timer(dimmingTime / Timer::TickDuration) {}
 
 bool BacklightDimmingTimer::fire() {
   Ion::Backlight::setBrightness(k_dimBacklightBrightness);

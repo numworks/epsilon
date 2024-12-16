@@ -25,7 +25,7 @@ double typedApproximateIntegralToScalar(
 
 EMSCRIPTEN_BINDINGS(system_function) {
   register_type<TypedSystemFunction::JsTree>("SystemFunctionTree");
-  class_<TypedSystemFunction, base<JuniorExpression>>("PCR_SystemFunction")
+  class_<TypedSystemFunction, base<Expression>>("PCR_SystemFunction")
       .constructor<>()
       .class_function("BuildFromTree", &TypedSystemFunction::BuildFromJsTree)
       .function("getTree", &TypedSystemFunction::getJsTree)

@@ -56,12 +56,12 @@ class ViewController : public Responder {
   };
 
   ViewController(Responder* parentResponder) : Responder(parentResponder) {}
-  virtual const char* title() { return nullptr; }
+  virtual const char* title() const { return nullptr; }
   virtual View* view() = 0;
   virtual void initView() {}
   virtual void viewWillAppear() {}
   virtual void viewDidDisappear() {}
-  virtual TitlesDisplay titlesDisplay() {
+  virtual TitlesDisplay titlesDisplay() const {
     return TitlesDisplay::DisplayAllTitles;
   }
   /* Use these two functions only if the controller is in a stack hierarchy */

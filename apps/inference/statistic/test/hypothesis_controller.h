@@ -33,10 +33,10 @@ class HypothesisController
   static bool ButtonAction(HypothesisController* controller, void* s);
 
   // SelectableListViewController
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   };
-  const char* title() override;
+  const char* title() const override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::HighlightCell* cell(int i) override;
@@ -88,7 +88,9 @@ class HypothesisController
 
   constexpr static int k_titleBufferSize =
       Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
-  char m_titleBuffer[k_titleBufferSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[k_titleBufferSize];
   Test* m_test;
 };
 

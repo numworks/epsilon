@@ -26,8 +26,8 @@ class ButtonRowController : public ViewController {
                       KDCoordinate verticalMargin = 0);
 
   View* view() override { return &m_contentView; }
-  const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override;
+  const char* title() const override;
+  ViewController::TitlesDisplay titlesDisplay() const override;
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Responder* nextFirstResponder) override;
   bool handleEvent(Ion::Events::Event event) override;

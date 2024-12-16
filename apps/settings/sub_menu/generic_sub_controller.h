@@ -11,7 +11,7 @@ class GenericSubController : public Escher::SelectableListViewController<
                                  Escher::StandardMemoizedListViewDataSource> {
  public:
   GenericSubController(Escher::Responder* parentResponder);
-  const char* title() override;
+  const char* title() const override;
   void initView() override;
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;

@@ -6,7 +6,6 @@
 #include <omg/print.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/symbol.h>
 #include <poincare/preferences.h>
 
 #include <algorithm>
@@ -199,7 +198,7 @@ SolutionsController::SolutionsController(Responder* parentResponder,
 }
 
 /* ViewController */
-const char* SolutionsController::title() {
+const char* SolutionsController::title() const {
   if (App::app()->system()->type() ==
       SystemOfEquations::Type::GeneralMonovariable) {
     return I18n::translate(I18n::Message::ApproximateSolution);
@@ -401,10 +400,10 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
       // It's a user variable row, get values of the solutions or discriminant
       const char* symbolName =
           system->userVariable(row - rowOfUserVariablesMessage - 1);
-      Symbol symbol = Symbol::Builder(symbolName, strlen(symbolName));
+      UserExpression symbol =
+          SymbolHelper::BuildSymbol(symbolName, strlen(symbolName));
       UserExpression value = UserExpression::Builder(
-          App::app()->localContext()->expressionForSymbolAbstract(
-              symbol.tree()));
+          App::app()->localContext()->expressionForUserNamed(symbol.tree()));
       Layout layout =
           PoincareHelpers::CreateLayout(value, App::app()->localContext());
       static_cast<ScrollableTwoLayoutsCell*>(cell)->setLayouts(Layout(),
@@ -453,9 +452,10 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
   // TODO: memoize user symbols if too slow
   const char* symbolName =
       system->userVariable(row - rowOfUserVariablesMessage - 1);
-  Symbol symbol = Symbol::Builder(symbolName, strlen(symbolName));
+  UserExpression symbol =
+      SymbolHelper::BuildSymbol(symbolName, strlen(symbolName));
   UserExpression value = UserExpression::Builder(
-      App::app()->localContext()->expressionForSymbolAbstract(symbol.tree()));
+      App::app()->localContext()->expressionForUserNamed(symbol.tree()));
   Layout layout =
       PoincareHelpers::CreateLayout(value, App::app()->localContext());
   return layout->layoutSize(k_solutionsFont).height() +

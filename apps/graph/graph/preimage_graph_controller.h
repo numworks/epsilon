@@ -10,7 +10,7 @@ class PreimageGraphController : public CalculationGraphController {
                           GraphView* graphView, BannerView* bannerView,
                           Shared::InteractiveCurveViewRange* curveViewRange,
                           Shared::CurveViewCursor* cursor);
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::Preimage);
   }
   double image() { return m_image; }
@@ -18,7 +18,8 @@ class PreimageGraphController : public CalculationGraphController {
 
  private:
   Poincare::Coordinate2D<double> computeNewPointOfInterest(
-      double start, double max, Poincare::Context* context) override;
+      double start, double max, Poincare::Context* context,
+      bool stretch) override;
   double m_image;
 };
 

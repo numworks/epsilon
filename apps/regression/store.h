@@ -130,6 +130,11 @@ class Store : public Shared::LinearRegressionStore {
   double m_determinationCoefficient[k_numberOfSeries];
   double m_residualStandardDeviation[k_numberOfSeries];
   bool m_recomputeCoefficients[k_numberOfSeries];
+
+  // TODO: an std::string_view could be used
+  using stringViewType = const char*;
+  constexpr static std::array<stringViewType, k_numberOfSeries> k_seriesTitles =
+      {"X1/Y1", "X2/Y2", "X3/Y3", "X4/Y4", "X5/Y5", "X6/Y6"};
 };
 
 typedef void (Store::*RangeMethodPointer)();

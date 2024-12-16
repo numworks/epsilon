@@ -49,7 +49,7 @@ class FloatParameterController : public Escher::ListWithTopAndBottomController,
   }
   virtual T parameterAtIndex(int index) = 0;
   virtual void buttonAction();
-  virtual bool hasUndefinedValue(const char* text, T floatValue) const;
+  virtual bool hasUndefinedValue(const char* text, T floatValue, int row) const;
 
   Escher::ButtonCell m_okButton;
 

@@ -4,11 +4,10 @@
 #include <poincare/helpers/store.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
-#include <poincare/new_trigonometry.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/trigonometry.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -22,7 +21,7 @@ static UserExpression enhancePushedExpression(UserExpression expression) {
    *     If angleUnit = deg, cos(π)->cos(π°)
    * */
   if (!Preferences::SharedPreferences()->examMode().forbidUnits()) {
-    NewTrigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
+    Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
         expression, Preferences::SharedPreferences()->angleUnit());
   }
   return expression;
@@ -57,7 +56,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
   UserExpression ansExpr;
   if ((mostRecentCalculation->displayOutput(context) ==
            Calculation::DisplayOutput::ApproximateOnly &&
-       !exactOutput.isIdenticalToJunior(approxOutput)) ||
+       !exactOutput.isIdenticalTo(approxOutput)) ||
       exactOutput.isUndefined()) {
     /* Case 1.
      * If exact output was hidden, it should not be accessible using Ans.
@@ -92,9 +91,10 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
 
 UserExpression CalculationStore::replaceAnsInExpression(
     UserExpression expression, Context* context) const {
-  Symbol ansSymbol = Symbol::Ans();
+  UserExpression ansSymbol = SymbolHelper::Ans();
   UserExpression ansExpression = this->ansExpression(context);
-  return expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
+  expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
+  return expression;
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(
@@ -193,7 +193,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
     // TODO: factorize with StoreMenuController::parseAndStore
     // TODO: add circuit breaker?
     UserExpression value = StoreHelper::Value(exactOutputExpression);
-    SymbolAbstract symbol = StoreHelper::Symbol(exactOutputExpression);
+    UserExpression symbol = StoreHelper::Symbol(exactOutputExpression);
     UserExpression valueApprox =
         PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
     if (symbol.isUserSymbol() &&
@@ -278,8 +278,8 @@ bool CalculationStore::preferencesHaveChanged() {
 
 PoolVariableContext CalculationStore::createAnsContext(Context* context) {
   PoolVariableContext ansContext(SymbolHelper::AnsMainAlias(), context);
-  ansContext.setExpressionForSymbolAbstract(ansExpression(context),
-                                            Symbol::Ans());
+  ansContext.setExpressionForUserNamed(ansExpression(context),
+                                       SymbolHelper::Ans());
   return ansContext;
 }
 

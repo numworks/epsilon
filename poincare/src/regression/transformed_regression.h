@@ -10,19 +10,22 @@ namespace Poincare::Regression {
  * (Logarithm), Y (Exponential) or both (Power). */
 class TransformedRegression : public Regression {
  public:
-  double evaluate(const double* modelCoefficients, double x) const override;
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
                   double y, Poincare::Context* context) const override;
 
  protected:
-  void privateFit(const Series* series, double* modelCoefficients,
-                  Poincare::Context* context) const override;
+  Coefficients privateFit(const Series* series,
+                          Poincare::Context* context) const override;
   bool dataSuitableForFit(const Series* series) const override;
 
   bool applyLnOnX() const { return FitsLnX(type()); };
   bool applyLnOnY() const { return FitsLnY(type()); }
   bool applyLnOnA() const { return applyLnOnY(); }
   bool applyLnOnB() const { return FitsLnB(type()); }
+
+ private:
+  double privateEvaluate(const Coefficients& modelCoefficients,
+                         double x) const override;
 };
 
 }  // namespace Poincare::Regression

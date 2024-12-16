@@ -27,10 +27,10 @@ class CategoricalTypeController
       Escher::StackViewController* parent, Chi2Test* statistic,
       InputGoodnessController* inputGoodnessController,
       InputHomogeneityController* inputHomogeneityController);
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::Chi2Test);
   }
   void stackOpenPage(Escher::ViewController* nextPage) override;

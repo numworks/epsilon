@@ -18,6 +18,7 @@ namespace Poincare {
 class PoolHandle {
   friend class PoolObject;
   friend class Pool;
+  friend class Ghost;
 
  public:
   /* Constructors  */
@@ -70,9 +71,6 @@ class PoolHandle {
   void* addressInPool() const { return reinterpret_cast<void*>(object()); }
 
   bool isGhost() const { return object()->isGhost(); }
-#if PCJ_DELETE
-  bool deepIsGhost() const { return object()->deepIsGhost(); }
-#endif
   bool isUninitialized() const {
     return m_identifier == PoolObject::NoNodeIdentifier;
   }
@@ -83,50 +81,12 @@ class PoolHandle {
 
 /* Hierarchy */
 #if PCJ_DELETE
-  bool hasChild(PoolHandle t) const;
-  bool hasSibling(PoolHandle t) const {
-    return object()->hasSibling(t.object());
-  }
-  bool hasAncestor(PoolHandle t, bool includeSelf) const {
-    return object()->hasAncestor(t.object(), includeSelf);
-  }
-  PoolHandle commonAncestorWith(PoolHandle t,
-                                bool includeTheseNodes = true) const;
   int numberOfChildren() const { return object()->numberOfChildren(); }
-  void setNumberOfChildren(int numberOfChildren) {
-    object()->setNumberOfChildren(numberOfChildren);
-  }
-  int indexOfChild(PoolHandle t) const;
-  PoolHandle parent() const;
-  PoolHandle childAtIndex(int i) const;
   void setParentIdentifier(uint16_t id) { object()->setParentIdentifier(id); }
   void deleteParentIdentifier() { object()->deleteParentIdentifier(); }
   void deleteParentIdentifierInChildren() {
     object()->deleteParentIdentifierInChildren();
   }
-  void incrementNumberOfChildren(int increment = 1) {
-    object()->incrementNumberOfChildren(increment);
-  }
-  int numberOfDescendants(bool includeSelf) const {
-    return object()->numberOfDescendants(includeSelf);
-  }
-#endif
-
-  /* Hierarchy operations */
-  // Replace
-  void replaceWithInPlace(PoolHandle t);
-#if PCJ_DELETE
-  void replaceChildInPlace(PoolHandle oldChild, PoolHandle newChild);
-  void replaceChildAtIndexInPlace(int oldChildIndex, PoolHandle newChild);
-  void replaceChildAtIndexWithGhostInPlace(int index) {
-    assert(index >= 0 && index < numberOfChildren());
-    replaceChildWithGhostInPlace(childAtIndex(index));
-  }
-  void replaceChildWithGhostInPlace(PoolHandle t);
-  // Merge
-  void mergeChildrenAtIndexInPlace(PoolHandle t, int i);
-  // Swap
-  void swapChildrenInPlace(int i, int j);
 #endif
 
   /* Logging */
@@ -136,33 +96,18 @@ class PoolHandle {
 
   typedef std::initializer_list<PoolHandle> Tuple;
 
-  static PoolHandle Builder(PoolObject::Initializer initializer, size_t size,
-                            int numberOfChildren = -1);
-#if PCJ_DELETE
-  static PoolHandle BuilderWithChildren(PoolObject::Initializer initializer,
-                                        size_t size, const Tuple& children);
-
-#endif
-
  protected:
   /* Constructor */
   PoolHandle(const PoolObject* node);
-  // Un-inlining this constructor actually inscreases the firmware size
-  PoolHandle(uint16_t nodeIndentifier = PoolObject::NoNodeIdentifier)
-      : m_identifier(nodeIndentifier) {
-    if (hasNode(nodeIndentifier)) {
+  // Un-inlining this constructor actually increases the firmware size
+  PoolHandle(uint16_t nodeIdentifier = PoolObject::NoNodeIdentifier)
+      : m_identifier(nodeIdentifier) {
+    if (hasNode(nodeIdentifier)) {
       object()->retain();
     }
   }
 
 #if PCJ_DELETE
-  /* WARNING: if the children table is the result of a cast, the object
-   * downcasted has to be the same size as a PoolHandle. */
-  template <class T, class U>
-  static T NAryBuilder(const Tuple& children = {});
-  template <class T, class U>
-  static T FixedArityBuilder(const Tuple& children = {});
-
   static PoolHandle BuildWithGhostChildren(PoolObject* node);
 #endif
 
@@ -173,26 +118,12 @@ class PoolHandle {
     return PoolObject::IsValidIdentifier(identifier);
   }
 
-/* Hierarchy operations */
-#if PCJ_DELETE
-  // Add
-  void addChildAtIndexInPlace(PoolHandle t, int index,
-                              int currentNumberOfChildren);
-  // Remove puts a child at the end of the pool
-  void removeChildAtIndexInPlace(int i);
-  void removeChildInPlace(PoolHandle t, int childNumberOfChildren);
-#endif
   uint16_t m_identifier;
 
  private:
   template <class U>
   static PoolHandle Builder();
 
-#if PCJ_DELETE
-  void detachFromParent();
-  // Add ghost children on layout construction
-  void buildGhostChildren();
-#endif
   void release(uint16_t identifier);
 };
 

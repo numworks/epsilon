@@ -10,8 +10,6 @@
 #include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/sequence.h>
-#include <poincare/old/symbol.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -55,20 +53,20 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
 
   /* Replace initial term by its value, to avoid replacing it by a wrong value
    * at next step */
-  Poincare::Sequence initialSymbol = Poincare::Sequence::Builder(
-      name, strlen(name),
-      Poincare::NewExpression::Builder(sequence->initialRank()));
+  Poincare::UserExpression initialSymbol =
+      Poincare::SymbolHelper::BuildSequence(
+          name, Poincare::NewExpression::Builder(sequence->initialRank()));
   Poincare::SystemExpression initialExpression =
       sequence->firstInitialConditionExpressionReduced(context);
-  function =
-      function.replaceSymbolWithExpression(initialSymbol, initialExpression);
+  function.replaceSymbolWithExpression(initialSymbol, initialExpression);
 
   // Replace u(n) by n: u(n) becomes the variable
-  Poincare::Sequence sequenceSymbol = Poincare::Sequence::Builder(
-      name, strlen(name), Poincare::Symbol::SystemSymbol());
-  Poincare::Symbol variable = Poincare::Symbol::SystemSymbol();
+  Poincare::UserExpression sequenceSymbol =
+      Poincare::SymbolHelper::BuildSequence(
+          name, Poincare::SymbolHelper::SystemSymbol());
+  function.replaceSymbolWithUnknown(sequenceSymbol);
   function =
-      function.replaceSymbolWithExpression(sequenceSymbol, variable)
+      function
           .cloneAndReduce(
               {App::app()->localContext(),
                Poincare::Preferences::SharedPreferences()->complexFormat(),
@@ -105,11 +103,10 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
     rank++;
     measuringContext.reset();
     plotView->drawDashedStraightSegment(&measuringContext, rect,
-                                        AbstractPlotView::Axis::Vertical, x, y,
-                                        uOfX, sequence->color());
+                                        OMG::Axis::Vertical, x, y, uOfX,
+                                        sequence->color());
     m_verticalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawDashedStraightSegment(ctx, rect,
-                                        AbstractPlotView::Axis::Vertical, x, y,
+    plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y,
                                         uOfX, sequence->color());
     y = uOfX;
     float uOfuOfX =
@@ -117,12 +114,11 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
             .y();
     measuringContext.reset();
     plotView->drawDashedStraightSegment(&measuringContext, rect,
-                                        AbstractPlotView::Axis::Horizontal, y,
-                                        x, uOfX, sequence->color());
+                                        OMG::Axis::Horizontal, y, x, uOfX,
+                                        sequence->color());
     m_horizontalLineCache[i].save(ctx, measuringContext.writtenRect());
-    plotView->drawDashedStraightSegment(ctx, rect,
-                                        AbstractPlotView::Axis::Horizontal, y,
-                                        x, uOfX, sequence->color());
+    plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Horizontal, y, x,
+                                        uOfX, sequence->color());
     x = uOfX;
     uOfX = uOfuOfX;
   }
@@ -135,8 +131,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   measuringContext.reset();
   if (m_step) {
     plotView->drawDashedStraightSegment(&measuringContext, rect,
-                                        AbstractPlotView::Axis::Vertical, x, y,
-                                        0.f, Escher::Palette::GrayDark);
+                                        OMG::Axis::Vertical, x, y, 0.f,
+                                        Escher::Palette::GrayDark);
     m_verticalLineCache[m_step].save(ctx, measuringContext.writtenRect());
   }
   measuringContext.reset();
@@ -153,8 +149,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   m_textCache.save(ctx, measuringContext.writtenRect());
   // Actual drawings
   if (m_step) {
-    plotView->drawDashedStraightSegment(ctx, rect,
-                                        AbstractPlotView::Axis::Vertical, x, y,
+    plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, x, y,
                                         0.f, Escher::Palette::GrayDark);
   }
   plotView->drawDot(ctx, rect, Dots::Size::Medium, {x, y},

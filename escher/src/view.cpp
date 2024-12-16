@@ -154,8 +154,6 @@ KDPoint View::pointFromPointInView(View* view, KDPoint point) {
   return point.translatedBy(relativeChildOrigin(view));
 }
 
-KDRect View::bounds() const { return m_frame.movedTo(KDPointZero); }
-
 #if ESCHER_VIEW_LOGGING
 const char* View::className() const { return "View"; }
 

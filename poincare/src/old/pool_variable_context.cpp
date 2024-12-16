@@ -1,6 +1,5 @@
+#include <omg/utf8_helper.h>
 #include <poincare/old/pool_variable_context.h>
-#include <poincare/old/symbol.h>
-#include <poincare/old/undefined.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/symbol.h>
 
@@ -13,16 +12,16 @@ void PoolVariableContext::setApproximationForVariable(T value) {
   m_value = Expression::Builder<T>(value);
 }
 
-Context::SymbolAbstractType PoolVariableContext::expressionTypeForIdentifier(
+Context::UserNamedType PoolVariableContext::expressionTypeForIdentifier(
     const char* identifier, int length) {
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
           identifier, length, m_name) == 0) {
-    return SymbolAbstractType::Symbol;
+    return UserNamedType::Symbol;
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
-bool PoolVariableContext::setExpressionForSymbolAbstract(
+bool PoolVariableContext::setExpressionForUserNamed(
     const Internal::Tree* expression, const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
@@ -33,10 +32,10 @@ bool PoolVariableContext::setExpressionForSymbolAbstract(
     m_value = Expression::Builder(expression->cloneTree());
     return true;
   }
-  return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
+  return ContextWithParent::setExpressionForUserNamed(expression, symbol);
 }
 
-const Internal::Tree* PoolVariableContext::expressionForSymbolAbstract(
+const Internal::Tree* PoolVariableContext::expressionForUserNamed(
     const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
@@ -45,7 +44,7 @@ const Internal::Tree* PoolVariableContext::expressionForSymbolAbstract(
     }
     return Internal::KTrees::KUndef;
   }
-  return ContextWithParent::expressionForSymbolAbstract(symbol);
+  return ContextWithParent::expressionForUserNamed(symbol);
 }
 
 template void PoolVariableContext::setApproximationForVariable(float);

@@ -20,8 +20,8 @@ class ResultController : public Escher::ListWithTopAndBottomController {
   void viewWillAppear() override;
   void didBecomeFirstResponder() override {}
   bool handleEvent(Ion::Events::Event e) override;
-  const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  const char* title() const override;
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
   }
   int numberOfRows() const override { return 1; }
@@ -37,7 +37,9 @@ class ResultController : public Escher::ListWithTopAndBottomController {
  private:
   constexpr static int k_titleBufferSize =
       1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
-  char m_titleBuffer[k_titleBufferSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[k_titleBufferSize];
 
   Escher::MessageTextView m_messageView;
   ResultCell m_cell;

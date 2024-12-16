@@ -12,7 +12,7 @@ namespace Solver {
 class IntervalController : public Shared::SingleRangeController<double> {
  public:
   IntervalController(Escher::Responder* parentResponder);
-  const char* title() override;
+  const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
 
  private:

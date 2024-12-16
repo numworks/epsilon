@@ -16,7 +16,7 @@ using namespace Escher;
 
 namespace Graph {
 
-const char* AreaBetweenCurvesGraphController::title() {
+const char* AreaBetweenCurvesGraphController::title() const {
   return I18n::translate(I18n::Message::AreaBetweenCurves);
 }
 
@@ -57,7 +57,7 @@ double AreaBetweenCurvesGraphController::cursorNextStep(
       App::app()
           ->graphController()
           ->pointsOfInterestForRecord(selectedRecord())
-          ->firstPointInDirection(position, nextSnap,
+          ->firstPointInDirection(position, nextSnap, false,
                                   Solver<double>::Interest::Intersection)
           .xy();
   if (std::isfinite(nextIntersection.x())) {
@@ -112,7 +112,7 @@ AreaBetweenCurvesGraphController::createSumExpression(
       function->expressionReduced(context).clone();
   Poincare::SystemExpression result = Poincare::NewExpression::Create(
       KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
-      {.KA = Symbol::SystemSymbol(),
+      {.KA = SymbolHelper::SystemSymbol(),
        .KB = NewExpression::Builder<double>(startSum),
        .KC = NewExpression::Builder<double>(endSum),
        .KD = expressionF,

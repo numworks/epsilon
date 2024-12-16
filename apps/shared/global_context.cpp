@@ -5,11 +5,9 @@
 #include <omg/utf8_helper.h>
 #include <poincare/cas.h>
 #include <poincare/code_points.h>
+#include <poincare/expression.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/function.h>
-#include <poincare/old/junior_expression.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/symbol.h>
 
 #include "continuous_function.h"
@@ -36,8 +34,8 @@ void GlobalContext::storageDidChangeForRecord(Ion::Storage::Record record) {
   GlobalContext::s_continuousFunctionStore->storageDidChangeForRecord(record);
 }
 
-bool GlobalContext::SymbolAbstractNameIsFree(const char* baseName) {
-  return SymbolAbstractRecordWithBaseName(baseName).isNull();
+bool GlobalContext::UserNameIsFree(const char* baseName) {
+  return UserNamedRecordWithBaseName(baseName).isNull();
 }
 
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
@@ -47,7 +45,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
     return PoincareHelpers::CreateLayout(
-        Expression::Builder(ExpressionForUserNamed(record)), context);
+        Expression::Builder(ExpressionForUserSymbol(record)), context);
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
              record.hasExtension(Ion::Storage::regressionExtension)) {
@@ -63,9 +61,8 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
       symbol = CodePoints::k_cartesianSymbol;
     }
     UserExpression expression =
-        Expression::Builder(ExpressionForFunction(record))
-            .replaceSymbolWithExpression(Symbol::SystemSymbol(),
-                                         Symbol::Builder(symbol));
+        Expression::Builder(ExpressionForUserFunction(record));
+    expression.replaceUnknownWithSymbol(symbol);
     return PoincareHelpers::CreateLayout(expression, context);
   } else {
     assert(record.hasExtension(Ion::Storage::sequenceExtension));
@@ -84,86 +81,85 @@ void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(
   }
 }
 
-Context::SymbolAbstractType GlobalContext::expressionTypeForIdentifier(
+Context::UserNamedType GlobalContext::expressionTypeForIdentifier(
     const char* identifier, int length) {
   const char* extension =
       Ion::Storage::FileSystem::sharedFileSystem
           ->extensionOfRecordBaseNamedWithExtensions(
               identifier, length, k_extensions, k_numberOfExtensions);
   if (extension == nullptr) {
-    return Context::SymbolAbstractType::None;
+    return Context::UserNamedType::None;
   } else if (strcmp(extension, Ion::Storage::expressionExtension) == 0 ||
              strcmp(extension, Ion::Storage::matrixExtension) == 0) {
-    return Context::SymbolAbstractType::Symbol;
+    return Context::UserNamedType::Symbol;
   } else if (strcmp(extension, Ion::Storage::functionExtension) == 0 ||
              strcmp(extension, Ion::Storage::parametricComponentExtension) ==
                  0 ||
              strcmp(extension, Ion::Storage::regressionExtension) == 0) {
-    return Context::SymbolAbstractType::Function;
+    return Context::UserNamedType::Function;
   } else if (strcmp(extension, Ion::Storage::listExtension) == 0) {
-    return Context::SymbolAbstractType::List;
+    return Context::UserNamedType::List;
   } else {
     assert(strcmp(extension, Ion::Storage::sequenceExtension) == 0);
-    return Context::SymbolAbstractType::Sequence;
+    return Context::UserNamedType::Sequence;
   }
 }
 
-const Internal::Tree* GlobalContext::expressionForSymbolAbstract(
+const Internal::Tree* GlobalContext::expressionForUserNamed(
     const Internal::Tree* symbol) {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   Ion::Storage::Record r =
-      SymbolAbstractRecordWithBaseName(Internal::Symbol::GetName(symbol));
+      UserNamedRecordWithBaseName(Internal::Symbol::GetName(symbol));
   return expressionForSymbolAndRecord(symbol, r);
 }
 
-bool GlobalContext::setExpressionForSymbolAbstract(
+bool GlobalContext::setExpressionForUserNamed(
     const Internal::Tree* expressionTree, const Internal::Tree* symbolTree) {
   assert(symbolTree->isUserNamed());
   UserExpression expression = UserExpression::Builder(expressionTree);
-  UserExpression symbolExpression = UserExpression::Builder(symbolTree);
-  SymbolAbstract symbol = static_cast<SymbolAbstract&>(symbolExpression);
+  UserExpression symbol = UserExpression::Builder(symbolTree);
   /* If the new expression contains the symbol, replace it because it will be
    * destroyed afterwards (to be able to do A+2->A) */
-  Ion::Storage::Record record = SymbolAbstractRecordWithBaseName(symbol.name());
+  Ion::Storage::Record record =
+      UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol));
   UserExpression e =
-      UserExpression::Builder(expressionForSymbolAndRecord(symbol, record));
+      UserExpression::Builder(expressionForSymbolAndRecord(symbolTree, record));
   if (e.isUninitialized()) {
     e = Undefined::Builder();
   }
-  UserExpression finalExpression =
-      expression.clone().replaceSymbolWithExpression(symbol, e);
+  UserExpression finalExpression = expression.clone();
+  finalExpression.replaceSymbolWithExpression(symbol, e);
 
   // Set the expression in the storage depending on the symbol type
   if (symbol.isUserSymbol()) {
-    return setExpressionForUserNamed(finalExpression, symbol, record) ==
+    return setExpressionForUserSymbol(finalExpression,
+                                      SymbolHelper::GetName(symbol), record) ==
            Ion::Storage::Record::ErrorStatus::None;
   }
   const UserExpression childSymbol = symbol.cloneChildAtIndex(0);
   assert(symbol.isUserFunction() && childSymbol.isUserSymbol());
-  finalExpression = finalExpression.replaceSymbolWithExpression(
-      static_cast<const Symbol&>(childSymbol), Symbol::SystemSymbol());
-  SymbolAbstract symbolToStore = symbol;
+  finalExpression.replaceSymbolWithUnknown(childSymbol);
+  UserExpression symbolToStore = symbol;
   if (!(SymbolHelper::IsSymbol(childSymbol, CodePoints::k_cartesianSymbol) ||
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_polarSymbol) ||
         SymbolHelper::IsSymbol(childSymbol, CodePoints::k_parametricSymbol))) {
     // Unsupported symbol. Fall back to the default cartesian function symbol
-    UserExpression symbolInX = Poincare::Function::Builder(
-        symbolToStore.name(), strlen(symbolToStore.name()),
-        Symbol::Builder(CodePoints::k_cartesianSymbol));
-    symbolToStore = static_cast<const SymbolAbstract&>(symbolInX);
+    symbolToStore = Poincare::SymbolHelper::BuildFunction(
+        SymbolHelper::GetName(symbolToStore),
+        SymbolHelper::BuildSymbol(CodePoints::k_cartesianSymbol));
   }
-  return setExpressionForFunction(finalExpression, symbolToStore, record) ==
+  return setExpressionForUserFunction(finalExpression, symbolToStore, record) ==
          Ion::Storage::Record::ErrorStatus::None;
 }
 
 const Internal::Tree* GlobalContext::expressionForSymbolAndRecord(
     const Internal::Tree* symbol, Ion::Storage::Record r) {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
-  return symbol->isUserSymbol() ? ExpressionForUserNamed(r)
-                                : ExpressionForFunction(r);
+  return symbol->isUserSymbol() ? ExpressionForUserSymbol(r)
+                                : ExpressionForUserFunction(r);
 }
 
-const Internal::Tree* GlobalContext::ExpressionForUserNamed(
+const Internal::Tree* GlobalContext::ExpressionForUserSymbol(
     Ion::Storage::Record r) {
   if (!r.hasExtension(Ion::Storage::expressionExtension) &&
       !r.hasExtension(Ion::Storage::listExtension) &&
@@ -175,7 +171,7 @@ const Internal::Tree* GlobalContext::ExpressionForUserNamed(
   return UserExpression::TreeFromAddress(d.buffer);
 }
 
-const Internal::Tree* GlobalContext::ExpressionForFunction(
+const Internal::Tree* GlobalContext::ExpressionForUserFunction(
     Ion::Storage::Record r) {
   if (r.hasExtension(Ion::Storage::parametricComponentExtension) ||
       r.hasExtension(Ion::Storage::regressionExtension)) {
@@ -190,8 +186,8 @@ const Internal::Tree* GlobalContext::ExpressionForFunction(
   return nullptr;
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
-    UserExpression& expression, const SymbolAbstract& symbol,
+Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
+    UserExpression& expression, const char* name,
     Ion::Storage::Record previousRecord) {
   bool storeApproximation = CAS::NeverDisplayReductionOfInput(expression, this);
   PoincareHelpers::ReductionParameters params = {
@@ -219,13 +215,13 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserNamed(
   /* If there is another record competing with this one for its name,
    * it is destroyed directly in Storage, through the record_name_verifier. */
   return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      symbol.name(), extension, expression.addressInPool(), expression.size(),
-      true);
+      name, extension, expression.addressInPool(), expression.size(), true);
 }
 
-Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
-    const UserExpression& expressionToStore, const SymbolAbstract& symbol,
+Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(
+    const UserExpression& expressionToStore, const UserExpression& symbol,
     Ion::Storage::Record previousRecord) {
+  assert(symbol.isUserFunction());
   Ion::Storage::Record recordToSet = previousRecord;
   Ion::Storage::Record::ErrorStatus error =
       Ion::Storage::Record::ErrorStatus::None;
@@ -233,8 +229,8 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
     GlobalContext::DeleteParametricComponentsOfRecord(recordToSet);
   } else {
     // The previous record was not a function. Create a new model.
-    ContinuousFunction newModel =
-        s_continuousFunctionStore->newModel(symbol.name(), &error);
+    ContinuousFunction newModel = s_continuousFunctionStore->newModel(
+        SymbolHelper::GetName(symbol), &error);
     if (error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
     }
@@ -254,7 +250,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForFunction(
   return error;
 }
 
-Ion::Storage::Record GlobalContext::SymbolAbstractRecordWithBaseName(
+Ion::Storage::Record GlobalContext::UserNamedRecordWithBaseName(
     const char* name) {
   return Ion::Storage::FileSystem::sharedFileSystem
       ->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
@@ -315,8 +311,9 @@ static void storeParametricComponent(char* baseName, size_t baseNameLength,
   UserExpression child = e.cloneChildAtIndex(first ? 0 : 1);
   FunctionNameHelper::AddSuffixForParametricComponent(baseName, baseNameLength,
                                                       bufferSize, first);
-  child.storeWithNameAndExtension(baseName,
-                                  Ion::Storage::parametricComponentExtension);
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      baseName, Ion::Storage::parametricComponentExtension,
+      child.addressInPool(), child.size(), true);
 }
 
 void GlobalContext::StoreParametricComponentsOfRecord(

@@ -42,7 +42,7 @@ HypothesisController::HypothesisController(
   m_ha.accessory()->setDropdown(&m_haDropdown);
 }
 
-const char* HypothesisController::title() {
+const char* HypothesisController::title() const {
   Poincare::Print::CustomPrintf(m_titleBuffer, sizeof(m_titleBuffer),
                                 I18n::translate(m_test->title()),
                                 I18n::translate(I18n::Message::Test));
@@ -73,7 +73,9 @@ bool HypothesisController::textFieldDidFinishEditing(
   double h0 =
       Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<double>(
           textField->draftText(),
-          AppsContainerHelper::sharedAppsContainerGlobalContext());
+          AppsContainerHelper::sharedAppsContainerGlobalContext(),
+          Poincare::Preferences::SharedPreferences()->complexFormat(),
+          Poincare::Preferences::SharedPreferences()->angleUnit());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);
@@ -108,8 +110,6 @@ HighlightCell* HypothesisController::cell(int row) {
 
 void HypothesisController::didBecomeFirstResponder() {
   selectRow(0);
-  m_h0.setEditable(m_test->significanceTestType() !=
-                   SignificanceTestType::Slope);
   m_haDropdown.selectRow(
       static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));
   m_haDropdown.init();

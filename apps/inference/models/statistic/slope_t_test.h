@@ -32,9 +32,15 @@ class SlopeTTest : public Test, public SlopeTStatistic {
   bool validateInputs() override { return SlopeTStatistic::validateInputs(); }
 
   // Significance Test: Slope
-  const char* hypothesisSymbol() override { return "β"; }
+  const char* hypothesisSymbol() const override { return "β"; }
 
   void compute() override;
+
+  // Estimates
+  int numberOfEstimates() const override { return 2; }
+  double estimateValue(int index) override;
+  Poincare::Layout estimateLayout(int index) const override;
+  I18n::Message estimateDescription(int index) override;
 
  private:
   // Significance Test: Slope

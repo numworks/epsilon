@@ -19,7 +19,7 @@ class OneProportionZTest : public Test {
   void tidy() override { m_estimateLayout = Poincare::Layout(); }
 
   // Significance Test: OneProportion
-  const char* hypothesisSymbol() override {
+  const char* hypothesisSymbol() const override {
     return OneProportion::HypothesisSymbol();
   }
   void initParameters() override { OneProportion::InitTestParameters(this); }

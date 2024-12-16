@@ -1,5 +1,4 @@
 #include <apps/shared/global_context.h>
-#include <poincare/old/undefined.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>

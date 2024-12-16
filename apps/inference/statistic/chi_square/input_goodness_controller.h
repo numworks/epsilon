@@ -19,7 +19,7 @@ class InputGoodnessController : public InputCategoricalController {
   void viewWillAppear() override;
 
   // ViewController
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::InputGoodnessControllerTitle);
   }
 

@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <float.h>
+#include <ion/storage/file_system.h>
 #include <omg/print.h>
-#include <poincare/old/symbol.h>
 #include <poincare/preferences.h>
 #include <string.h>
 
@@ -18,22 +18,11 @@ using namespace Shared;
 
 namespace Regression {
 
-static_assert(Store::k_numberOfSeries == 3,
-              "Number of series changed, Regression::Store() needs to adapt "
-              "(m_seriesChecksum)");
-
 const char* Store::SeriesTitle(int series) {
   /* Controller titles for menus targetting a specific series. These cannot
    * live on the stack and must be const char *. */
-  switch (series) {
-    case 0:
-      return "X1/Y1";
-    case 1:
-      return "X2/Y2";
-    default:
-      assert(series == 2);
-      return "X3/Y3";
-  }
+  assert(series >= 0 && series < k_seriesTitles.size());
+  return k_seriesTitles[series];
 }
 
 Store::Store(Shared::GlobalContext* context,
@@ -356,9 +345,11 @@ void Store::storeRegressionFunction(int series,
   }
   char name[k_functionNameSize];
   BuildFunctionName(series, name, k_functionNameSize);
-  expression = expression.replaceSymbolWithExpression(
-      Symbol::Builder(Model::k_xSymbol), Symbol::SystemSymbol());
-  expression.storeWithNameAndExtension(name, Ion::Storage::regressionExtension);
+  expression.replaceSymbolWithUnknown(
+      SymbolHelper::BuildSymbol(Model::k_xSymbol));
+  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
+      name, Ion::Storage::regressionExtension, expression.addressInPool(),
+      expression.size(), true);
 }
 
 void Store::deleteRegressionFunction(int series) const {

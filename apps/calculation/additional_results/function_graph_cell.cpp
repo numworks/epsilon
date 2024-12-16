@@ -13,13 +13,12 @@ using namespace Escher;
 namespace Calculation {
 
 template <size_t N>
-void FunctionAxis<N>::reloadAxis(AbstractPlotView* plotView,
-                                 AbstractPlotView::Axis axis) {
+void FunctionAxis<N>::reloadAxis(AbstractPlotView* plotView, OMG::Axis axis) {
   PlotPolicy::LabeledAxis<N>::reloadAxis(plotView, axis);
   const FunctionModel* model =
       static_cast<const FunctionModel*>(plotView->range());
-  float t = axis == AbstractPlotView::Axis::Horizontal ? model->abscissa()
-                                                       : model->ordinate();
+  float t =
+      axis == OMG::Axis::Horizontal ? model->abscissa() : model->ordinate();
   // Compute special labels content and position
   Print::CustomPrintf(
       m_specialLabel, PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxSize,
@@ -29,17 +28,15 @@ void FunctionAxis<N>::reloadAxis(AbstractPlotView* plotView,
 
 template <size_t N>
 void FunctionAxis<N>::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
-                               KDRect rect, AbstractPlotView::Axis axis) const {
+                               KDRect rect, OMG::Axis axis) const {
   const FunctionModel* model =
       static_cast<const FunctionModel*>(plotView->range());
-  float t = axis == AbstractPlotView::Axis::Horizontal ? model->abscissa()
-                                                       : model->ordinate();
-  AbstractPlotView::Axis otherAxis = axis == AbstractPlotView::Axis::Horizontal
-                                         ? AbstractPlotView::Axis::Vertical
-                                         : AbstractPlotView::Axis::Horizontal;
-  float other = otherAxis == AbstractPlotView::Axis::Horizontal
-                    ? model->abscissa()
-                    : model->ordinate();
+  float t =
+      axis == OMG::Axis::Horizontal ? model->abscissa() : model->ordinate();
+  OMG::Axis otherAxis = axis == OMG::Axis::Horizontal ? OMG::Axis::Vertical
+                                                      : OMG::Axis::Horizontal;
+  float other = otherAxis == OMG::Axis::Horizontal ? model->abscissa()
+                                                   : model->ordinate();
   // Compute the special label position needed by labelWillBeDisplayed
   if (m_specialLabelRect == KDRectZero) {
     PlotPolicy::AbstractLabeledAxis::computeLabelsRelativePosition(plotView,
@@ -98,17 +95,17 @@ FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::
     labelWillBeDisplayed(int i, KDRect labelRect) const;
 template void
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::reloadAxis(
-    AbstractPlotView* plotView, AbstractPlotView::Axis axis);
+    AbstractPlotView* plotView, OMG::Axis axis);
 template void
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>::reloadAxis(
-    AbstractPlotView* plotView, AbstractPlotView::Axis axis);
+    AbstractPlotView* plotView, OMG::Axis axis);
 template void
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::drawAxis(
     const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
-    AbstractPlotView::Axis axis) const;
+    OMG::Axis axis) const;
 template void
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>::drawAxis(
     const AbstractPlotView* plotView, KDContext* ctx, KDRect rect,
-    AbstractPlotView::Axis axis) const;
+    OMG::Axis axis) const;
 
 }  // namespace Calculation

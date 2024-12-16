@@ -69,9 +69,6 @@ class PoolObject {
 #endif
   // Ghost
   virtual bool isGhost() const { return false; }
-#if PCJ_DELETE
-  bool deepIsGhost() const;
-#endif
 
   // Node operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
@@ -102,29 +99,12 @@ class PoolObject {
 
 // Hierarchy
 #if PCJ_DELETE
-  PoolObject *parent() const;
-  PoolObject *root();
   virtual int numberOfChildren() const = 0;
   /* The following methods are only used for nodes that have a variable number
    * of children like OList, HorizontalLayout or Randint */
-  virtual void setNumberOfChildren(int numberOfChildren) {
-  }  // Do not assert false.
-  void incrementNumberOfChildren(int increment = 1) {
-    setNumberOfChildren(numberOfChildren() + increment);
-  }
-  void eraseNumberOfChildren() { setNumberOfChildren(0); }
-  int numberOfDescendants(bool includeSelf) const;
-  PoolObject *childAtIndex(int i) const;
-  int indexOfChild(const PoolObject *child) const;
-  int indexInParent() const;
-  bool hasChild(const PoolObject *child) const;
-  bool hasAncestor(const PoolObject *node, bool includeSelf) const;
-  bool hasSibling(const PoolObject *e) const;
   void deleteParentIdentifierInChildren() const {
     changeParentIdentifierInChildren(NoNodeIdentifier);
   }
-  // AddChild collateral effect
-  virtual void didChangeArity(int newNumberOfChildren) {}
 
   /* Serialization
    * Return the number of chars written, without the null-terminating char. */
@@ -133,25 +113,6 @@ class PoolObject {
                            int numberOfSignificantDigits) const {
     assert(false);
     return 0;
-  }
-
-  /* When serializing, we turn a tree into a string. In order not to lose
-   * structure information, we sometimes need to add system parentheses (that
-   * are invisible when turning the string back into a tree).
-   * For example:
-   * - Layout:
-   *  2 (2
-   * --- π --> [[2]/[3]]π which keeps the omitted multiplication and forbid to
-   * parse --- π 3 3)
-   * - OExpression:
-   *  2+3
-   * ----- --> [2+3]/4 to keep the fraction structure
-   *   4
-   *
-   * */
-  virtual bool childNeedsSystemParenthesesAtSerialization(
-      const PoolObject *child) const {
-    return false;
   }
 
   template <typename T>
@@ -232,7 +193,6 @@ class PoolObject {
   }
 #if PCJ_DELETE
   PoolObject *nextSibling() const;
-  PoolObject *lastDescendant() const;
 #endif
 
 #if POINCARE_TREE_LOG

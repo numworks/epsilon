@@ -16,6 +16,8 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
   using GridType = GridTypeController::GridType;
+  template <typename T>
+  using AxisInformation = MemoizedCurveViewRange::AxisInformation<T>;
 
   InteractiveCurveViewRange(
       InteractiveCurveViewRangeDelegate* delegate = nullptr)
@@ -26,7 +28,8 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
         m_checksumOfMemoizedAutoRange(0),
         m_offscreenYAxis(0.f),
         m_gridType(GridType::Cartesian),
-        m_isAuto{true, true},
+        m_zoomAuto{true, true},
+        m_userGridUnit{NAN, NAN},
         m_zoomNormalize(false) {}
 
   constexpr static float NormalYXRatio() {
@@ -38,21 +41,36 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
   void setDelegate(InteractiveCurveViewRangeDelegate* delegate);
 
-  bool zoomAuto() const { return m_isAuto.x && m_isAuto.y; }
+  bool zoomAndGridUnitAuto() const { return zoomAuto() && gridUnitAuto(); }
+  bool zoomAuto() const { return m_zoomAuto.x && m_zoomAuto.y; }
   void setZoomAuto(bool v) { privateSetZoomAuto(v, v); }
-  bool isAuto(Axis axis) const { return m_isAuto(axis); }
-  void setAuto(Axis axis, bool v) {
-    BoolPair newAuto = m_isAuto;
+  bool zoomAuto(OMG::Axis axis) const { return m_zoomAuto(axis); }
+  void setZoomAuto(OMG::Axis axis, bool v) {
+    AxisInformation<bool> newAuto = m_zoomAuto;
     newAuto.set(axis, v);
     privateSetZoomAuto(newAuto.x, newAuto.y);
+  }
+  bool gridUnitAuto() const {
+    return gridUnitAuto(OMG::Axis::Horizontal) &&
+           gridUnitAuto(OMG::Axis::Vertical);
+  }
+  void setGridUnitAuto() { privateSetUserGridUnit(NAN, NAN); }
+  bool gridUnitAuto(OMG::Axis axis) const {
+    return std::isnan(m_userGridUnit(axis));
+  }
+  AxisInformation<float> userGridUnit() const { return m_userGridUnit; }
+  void setUserGridUnit(AxisInformation<float> userGridUnit) {
+    privateSetUserGridUnit(userGridUnit.x, userGridUnit.y);
+  }
+  float userGridUnit(OMG::Axis axis) const { return m_userGridUnit(axis); }
+  void setUserGridUnit(OMG::Axis axis, float v) {
+    AxisInformation<float> newGridUnit = m_userGridUnit;
+    newGridUnit.set(axis, v);
+    privateSetUserGridUnit(newGridUnit.x, newGridUnit.y);
   }
   bool zoomNormalize() const { return m_zoomNormalize; }
   void setZoomNormalize(bool v);
   float roundLimit(float y, float range, bool isMin);
-
-  // MemoizedCurveViewRange
-  float xGridUnit() const override;
-  float yGridUnit() const override;
 
   // CurveViewWindow
   void setXRange(float min, float max) override;
@@ -64,9 +82,9 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   // Window
   void zoom(float ratio, float x, float y);
   void panWithVector(float x, float y);
-  void computeRanges() { privateComputeRanges(m_isAuto.x, m_isAuto.y); }
+  void computeRanges() { privateComputeRanges(m_zoomAuto.x, m_zoomAuto.y); }
   void normalize();
-  void centerAxisAround(Axis axis, float position);
+  void centerAxisAround(OMG::Axis axis, float position);
   bool panToMakePointVisible(float x, float y, float topMarginRatio,
                              float rightMarginRatio, float bottomMarginRatio,
                              float leftMarginRatio, float pixelWidth);
@@ -110,20 +128,21 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
  private:
   void privateSetZoomAuto(bool xAuto, bool yAuto);
+  void privateSetGridUnitAuto(bool xAuto, bool yAuto);
+  void privateSetUserGridUnit(float xValue, float yValue);
   void privateComputeRanges(bool computeX, bool computeY);
+  float computeGridUnitFromUserParameter(OMG::Axis axis) const;
+
+  // MemoizedCurveViewRange
+  float computeGridUnit(OMG::Axis axis) override;
 
   Poincare::Range2D<float> m_memoizedAutoRange;
   uint64_t m_checksumOfMemoizedAutoRange;
   float m_offscreenYAxis;
 
   GridType m_gridType;
-
-  struct BoolPair {
-    bool x, y;
-    bool operator()(Axis axis) const { return axis == Axis::X ? x : y; }
-    void set(Axis axis, bool value) { (axis == Axis::X ? x : y) = value; }
-  };
-  BoolPair m_isAuto;
+  AxisInformation<bool> m_zoomAuto;
+  AxisInformation<float> m_userGridUnit;
   bool m_zoomNormalize;
 };
 

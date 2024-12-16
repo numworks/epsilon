@@ -51,7 +51,7 @@ bool DetailsListController::handleEvent(Ion::Events::Event e) {
   return true;
 }
 
-const char* DetailsListController::title() {
+const char* DetailsListController::title() const {
   return I18n::translate(ElementsDataBase::Name(
       App::app()->elementsViewDataSource()->selectedElement()));
 }

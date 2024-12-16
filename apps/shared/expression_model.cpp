@@ -5,7 +5,6 @@
 #include <omg/utf8_helper.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/symbol.h>
 #include <string.h>
 
 #include <algorithm>
@@ -35,8 +34,7 @@ void ExpressionModel::text(const Storage::Record* record, char* buffer,
     return;
   }
   if (symbol != 0) {
-    e = e.replaceSymbolWithExpression(Symbol::SystemSymbol(),
-                                      Symbol::Builder(symbol));
+    e.replaceUnknownWithSymbol(symbol);
   }
   size_t serializedSize = e.serialize(buffer, bufferSize);
   if (serializedSize >= bufferSize - 1) {
@@ -87,7 +85,7 @@ SystemExpression ExpressionModel::expressionReduced(
    * should probably be removed. The difficulty relies in the ambiguous
    * conventions about the values returned or set when a symbol has no proper
    * expression: for example,
-   *  - GlobalContext::expressionForSymbolAbstract returns an uninitialized
+   *  - GlobalContext::expressionForUserNamed returns an uninitialized
    *    expression,
    *  - so do Expression::replaceSymbols and SymbolAbstract::Expand,
    *  - Symbol::shallowReduce and Function::shallowReduce and
@@ -130,8 +128,8 @@ UserExpression ExpressionModel::expressionClone(
   /* TODO
    * The substitution of UCodePointUnknown back and forth is done in the
    * methods layout, setContent (through buildExpressionFromLayout), layout and
-   * also in GlobalContext::expressionForSymbolAbstract and
-   * GlobalContext::setExpressionForSymbolAbstract. When getting the expression,
+   * also in GlobalContext::expressionForUserNamed and
+   * GlobalContext::setExpressionForUserNamed. When getting the expression,
    * the substitutions may probably be gathered here.
    */
 }
@@ -150,8 +148,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
     assert(record->fullName() != nullptr);
     UserExpression clone = ExpressionModel::expressionClone(record);
     if (!clone.isUninitialized() && symbol != 0) {
-      clone = clone.replaceSymbolWithExpression(Symbol::SystemSymbol(),
-                                                Symbol::Builder(symbol));
+      clone.replaceUnknownWithSymbol(symbol);
     }
     m_layout = PoincareHelpers::CreateLayout(
         clone, Escher::App::app()->localContext());
@@ -244,8 +241,8 @@ Poincare::UserExpression ExpressionModel::buildExpressionFromLayout(
 Poincare::UserExpression ExpressionModel::ReplaceSymbolWithUnknown(
     Poincare::UserExpression e, CodePoint symbol, bool onlySecondTerm) {
   if (!e.isUninitialized() && symbol != 0) {
-    return e.replaceSymbolWithExpression(
-        Symbol::Builder(symbol), Symbol::SystemSymbol(), onlySecondTerm);
+    e.replaceSymbolWithUnknown(SymbolHelper::BuildSymbol(symbol),
+                               onlySecondTerm);
   }
   return e;
 }

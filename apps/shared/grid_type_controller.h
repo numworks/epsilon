@@ -26,7 +26,7 @@ class GridTypeController
     return static_cast<Escher::StackViewController*>(parentResponder());
   }
 
-  const char* title() override;
+  const char* title() const override;
 
  private:
   InteractiveCurveViewRange* m_interactiveCurveViewRange;

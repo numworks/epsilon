@@ -10,21 +10,21 @@ namespace Statistics {
 MultipleBoxesView::MultipleBoxesView(Store* store,
                                      DataViewController* dataViewController)
     : MultipleDataView(store),
-      m_boxView1(store, 0, dataViewController),
-      m_boxView2(store, 1, dataViewController),
-      m_boxView3(store, 2, dataViewController),
+      m_boxViews{BoxView(store, 0, dataViewController),
+                 BoxView(store, 1, dataViewController),
+                 BoxView(store, 2, dataViewController),
+                 BoxView(store, 3, dataViewController),
+                 BoxView(store, 4, dataViewController),
+                 BoxView(store, 5, dataViewController)},
       m_axisView(store) {
-  static_assert(MultipleBoxesView::BoxToBoxMargin(2) >=
-                        BoxPlotPolicy::BoxVerticalMargin() &&
-                    MultipleBoxesView::BoxToBoxMargin(3) >=
-                        BoxPlotPolicy::BoxVerticalMargin(),
-                "BoxToBoxMargin() should be bigger than BoxVerticalMargin().");
+  static_assert(IsBoxMarginValid(),
+                "BoxToBoxMargin() should be bigger than BoxVerticalMargin() "
+                "for all numbers of valid series.");
 }
 
 BoxView* MultipleBoxesView::plotViewForSeries(int series) {
-  assert(series >= 0 && series < Shared::DoublePairStore::k_numberOfSeries);
-  BoxView* views[] = {&m_boxView1, &m_boxView2, &m_boxView3};
-  return views[series];
+  assert(series >= 0 && series < m_boxViews.size());
+  return &m_boxViews[series];
 }
 
 void MultipleBoxesView::layoutDataSubviews(bool force) {

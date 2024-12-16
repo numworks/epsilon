@@ -35,7 +35,7 @@ void IntervalParameterController::setInterval(Interval* interval) {
   *SharedTempIntervalParameters() = *(interval->parameters());
 }
 
-const char* IntervalParameterController::title() {
+const char* IntervalParameterController::title() const {
   return I18n::translate(m_title);
 }
 

@@ -16,7 +16,7 @@ DerivativeColumnParameterController::DerivativeColumnParameterController(
   m_colorCell.label()->setMessage(I18n::Message::Color);
 }
 
-const char* DerivativeColumnParameterController::title() {
+const char* DerivativeColumnParameterController::title() const {
   assert(m_parameterDelegate);
   return m_parameterDelegate->usePersonalizedTitle()
              ? m_titleBuffer

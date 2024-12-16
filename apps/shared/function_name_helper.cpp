@@ -4,7 +4,6 @@
 #include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/old/function.h>
 
 using namespace Poincare;
 
@@ -39,7 +38,7 @@ size_t ParametricComponentNameWithArgument(Shared::ContinuousFunction* f,
 static bool parametricComponentNameIsFree(char* baseName, size_t baseNameLength,
                                           size_t bufferSize, bool first) {
   AddSuffixForParametricComponent(baseName, baseNameLength, bufferSize, first);
-  bool isFree = GlobalContext::SymbolAbstractNameIsFree(baseName);
+  bool isFree = GlobalContext::UserNameIsFree(baseName);
   baseName[baseNameLength] = 0;  // Remove suffix
   return isFree;
 }
@@ -55,7 +54,7 @@ bool ParametricComponentsNamesAreFree(char* baseName, size_t baseNameLength,
 static bool functionNameIsFree(char* buffer, size_t bufferSize,
                                CodePoint symbol) {
   size_t length = strlen(buffer);
-  return GlobalContext::SymbolAbstractNameIsFree(buffer) &&
+  return GlobalContext::UserNameIsFree(buffer) &&
          (symbol != CodePoints::k_parametricSymbol ||
           ParametricComponentsNamesAreFree(buffer, length, bufferSize));
 }
@@ -118,7 +117,7 @@ bool ParametricComponentsNameError(UserExpression expression,
   size_t functionNameLength = strlen(functionName);
   assert(f->fullName() != nullptr);
   bool willDefineNewParametricComponents =
-      GlobalContext::SymbolAbstractNameIsFree(functionName) ||
+      GlobalContext::UserNameIsFree(functionName) ||
       (strncmp(f->fullName(), functionName, functionNameLength) == 0 &&
        !f->properties().isEnabledParametric());
   if (willDefineNewParametricComponents &&

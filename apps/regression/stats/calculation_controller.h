@@ -115,10 +115,10 @@ class CalculationController : public Shared::DoublePairTableController {
   Escher::SmallFontEvenOddBufferTextCell
       m_calculationCells[k_numberOfCalculationCells];
   Store* m_store;
-  double m_memoizedDoubleCalculationCells[k_numberOfSeriesTitleCells][2]
+  double m_memoizedDoubleCalculationCells[Store::k_numberOfSeries][2]
                                          [k_numberOfDoubleBufferCalculations];
   double m_memoizedSimpleCalculationCells
-      [k_numberOfSeriesTitleCells][k_numberOfMemoizedSingleBufferCalculations];
+      [Store::k_numberOfSeries][k_numberOfMemoizedSingleBufferCalculations];
 };
 
 }  // namespace Regression

@@ -1,7 +1,7 @@
 #ifndef POINCARE_HELPERS_SYMBOL_H
 #define POINCARE_HELPERS_SYMBOL_H
 
-#include <poincare/old/junior_expression.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 
@@ -30,6 +30,19 @@ const char* AnsMainAlias();
 bool IsTheta(NewExpression e);
 bool IsSymbol(NewExpression e, CodePoint c);
 const char* GetName(NewExpression e);
+
+// Builders
+UserExpression BuildSymbol(const char* name, int length = -1);
+UserExpression BuildSymbol(CodePoint name);
+UserExpression BuildFunction(const char* name, Expression child);
+UserExpression BuildSequence(const char* name, Expression child);
+
+static inline UserExpression Ans() {
+  return BuildSymbol(SymbolHelper::AnsMainAlias());
+}
+static inline UserExpression SystemSymbol() {
+  return BuildSymbol(UCodePointUnknown);
+}
 
 }  // namespace SymbolHelper
 

@@ -1,17 +1,21 @@
 #ifndef SHARED_DOUBLE_PAIR_STORE_PREFERENCES_H
 #define SHARED_DOUBLE_PAIR_STORE_PREFERENCES_H
 
+#include <array>
+
 #include "double_pair_store.h"
 
 namespace Shared {
 
 class DoublePairStorePreferences {
  public:
-  DoublePairStorePreferences()
-      : m_valid{false, false, false}, m_hidden{false, false, false} {}
-  static_assert(
-      DoublePairStore::k_numberOfSeries == 3,
-      "Initialization of flags in DoublePairStorePreferences is wrong.");
+  DoublePairStorePreferences() {
+    // TODO: use std::array::fill(false)
+    for (size_t i = 0; i < DoublePairStore::k_numberOfSeries; i++) {
+      m_valid[i] = false;
+      m_hidden[i] = false;
+    }
+  }
 
   bool seriesIsActive(int series) const {
     return m_valid[series] && !m_hidden[series];
@@ -21,8 +25,8 @@ class DoublePairStorePreferences {
   void setSeriesHidden(int series, bool hidden) { m_hidden[series] = hidden; }
 
  private:
-  bool m_valid[DoublePairStore::k_numberOfSeries];
-  bool m_hidden[DoublePairStore::k_numberOfSeries];
+  std::array<bool, DoublePairStore::k_numberOfSeries> m_valid;
+  std::array<bool, DoublePairStore::k_numberOfSeries> m_hidden;
 };
 
 }  // namespace Shared

@@ -57,7 +57,8 @@ class View {
     return child->absoluteOrigin().relativeTo(absoluteOrigin());
   }
 
-  KDRect bounds() const;
+  constexpr KDRect bounds() const { return m_frame.movedTo(KDPointZero); }
+
   KDRect dirtyRect() const { return m_dirtyRect; }
 
   virtual KDSize minimalSizeForOptimalDisplay() const { return KDSizeZero; }

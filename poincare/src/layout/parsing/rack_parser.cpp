@@ -648,7 +648,7 @@ void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
   bool leftIsSymbolWithUnits = false;
   if (leftHandSide->isUserSymbol() && m_parsingContext.context()) {
     const Tree* value =
-        m_parsingContext.context()->expressionForSymbolAbstract(leftHandSide);
+        m_parsingContext.context()->expressionForUserNamed(leftHandSide);
     leftIsSymbolWithUnits = value && Units::HasUnit(value);
   }
 
@@ -996,30 +996,30 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
    * afterwards.
    * If there is no context, f(x) is always parsed as a function and u{n} as
    * a sequence*/
-  Poincare::Context::SymbolAbstractType idType =
-      Poincare::Context::SymbolAbstractType::None;
+  Poincare::Context::UserNamedType idType =
+      Poincare::Context::UserNamedType::None;
   if (m_parsingContext.context() &&
       m_parsingContext.parsingMethod() !=
           ParsingContext::ParsingMethod::Assignment) {
     idType =
         m_parsingContext.context()->expressionTypeForIdentifier(name, length);
-    if (idType != Poincare::Context::SymbolAbstractType::Function &&
-        idType != Poincare::Context::SymbolAbstractType::Sequence &&
-        idType != Poincare::Context::SymbolAbstractType::List) {
+    if (idType != Poincare::Context::UserNamedType::Function &&
+        idType != Poincare::Context::UserNamedType::Sequence &&
+        idType != Poincare::Context::UserNamedType::List) {
       leftHandSide = SharedTreeStack->pushUserSymbol(name);
       return;
     }
   }
 
-  if (idType == Poincare::Context::SymbolAbstractType::List) {
+  if (idType == Poincare::Context::UserNamedType::List) {
     leftHandSide = SharedTreeStack->pushUserSymbol(name);
     parseListParameters(leftHandSide);
     return;
   }
 
   // Parse u(n)
-  if (idType == Poincare::Context::SymbolAbstractType::Sequence ||
-      (idType == Poincare::Context::SymbolAbstractType::None &&
+  if (idType == Poincare::Context::UserNamedType::Sequence ||
+      (idType == Poincare::Context::UserNamedType::None &&
        m_nextToken.type() == Token::Type::Subscript)) {
     /* If the user is not defining a variable and the identifier is already
      * known to be a sequence, or has an unknown type and is followed

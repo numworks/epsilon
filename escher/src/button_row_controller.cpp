@@ -189,11 +189,11 @@ ButtonRowController::ButtonRowController(Responder* parentResponder,
       m_contentView(mainViewController, delegate, position, style, size,
                     verticalMargin) {}
 
-const char* ButtonRowController::title() {
+const char* ButtonRowController::title() const {
   return m_contentView.mainViewController()->title();
 }
 
-ViewController::TitlesDisplay ButtonRowController::titlesDisplay() {
+ViewController::TitlesDisplay ButtonRowController::titlesDisplay() const {
   return m_contentView.mainViewController()->titlesDisplay();
 }
 

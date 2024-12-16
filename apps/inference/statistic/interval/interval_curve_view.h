@@ -14,13 +14,11 @@ class IntervalAxis : public Shared::PlotPolicy::SimpleAxis {
   constexpr static size_t k_glyphLength =
       Shared::PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxGlyphLength;
 
-  void reloadAxis(Shared::AbstractPlotView* plotView,
-                  Shared::AbstractPlotView::Axis) override;
+  void reloadAxis(Shared::AbstractPlotView* plotView, OMG::Axis) override;
   float tickPosition(int i, const Shared::AbstractPlotView* plotView,
-                     Shared::AbstractPlotView::Axis) const override;
+                     OMG::Axis) const override;
   void drawLabel(int i, float t, const Shared::AbstractPlotView* plotView,
-                 KDContext* ctx, KDRect rect,
-                 Shared::AbstractPlotView::Axis axis,
+                 KDContext* ctx, KDRect rect, OMG::Axis axis,
                  KDColor color = k_color) const override;
 
  private:

@@ -1,47 +1,5 @@
 #if 0
 #include <apps/shared/global_context.h>
-#include <poincare/old/absolute_value.h>
-#include <poincare/old/addition.h>
-#include <poincare/old/arc_cosine.h>
-#include <poincare/old/arc_sine.h>
-#include <poincare/old/arc_tangent.h>
-#include <poincare/old/based_integer.h>
-#include <poincare/old/ceiling.h>
-#include <poincare/old/complex_cartesian.h>
-#include <poincare/old/conjugate.h>
-#include <poincare/old/constant.h>
-#include <poincare/old/derivative.h>
-#include <poincare/old/division.h>
-#include <poincare/old/division_quotient.h>
-#include <poincare/old/division_remainder.h>
-#include <poincare/old/factor.h>
-#include <poincare/old/factorial.h>
-#include <poincare/old/floor.h>
-#include <poincare/old/frac_part.h>
-#include <poincare/old/great_common_divisor.h>
-#include <poincare/old/imaginary_part.h>
-#include <poincare/old/infinity.h>
-#include <poincare/old/integral.h>
-#include <poincare/old/least_common_multiple.h>
-#include <poincare/old/multiplication.h>
-#include <poincare/old/nonreal.h>
-#include <poincare/old/opposite.h>
-#include <poincare/old/parenthesis.h>
-#include <poincare/old/percent.h>
-#include <poincare/old/permute_coefficient.h>
-#include <poincare/old/power.h>
-#include <poincare/old/product.h>
-#include <poincare/old/randint.h>
-#include <poincare/old/random.h>
-#include <poincare/old/rational.h>
-#include <poincare/old/real_part.h>
-#include <poincare/old/round.h>
-#include <poincare/old/sign_function.h>
-#include <poincare/old/square_root.h>
-#include <poincare/old/sum.h>
-#include <poincare/old/undefined.h>
-#include <poincare/old/unit.h>
-#include <poincare/old/vector_norm.h>
 
 #include "helper.h"
 
@@ -854,7 +812,7 @@ QUIZ_DISABLED_CASE(poincare_properties_get_polynomial_coefficients) {
   const char* coefficient5[] = {"0", "i", 0};
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
                                                        coefficient5);
-  const char* coefficient6[] = {Nonreal::Name(), 0};
+  const char* coefficient6[] = {NonReal::Name(), 0};
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
                                                        coefficient6, Real);
 

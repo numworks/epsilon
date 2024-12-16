@@ -14,15 +14,13 @@ namespace Statistics {
 // LabeledAxisWithOptionalPercent
 
 float LabeledAxisWithOptionalPercent::tickStep(
-    const Shared::AbstractPlotView* plotView,
-    Shared::AbstractPlotView::Axis axis) const {
+    const Shared::AbstractPlotView* plotView, OMG::Axis axis) const {
   return PlotPolicy::VerticalLabeledAxis::tickStep(plotView, axis) *
          m_plotController->labelStepMultiplicator(axis);
 }
 
 int LabeledAxisWithOptionalPercent::computeLabel(
-    int i, const Shared::AbstractPlotView* plotView,
-    AbstractPlotView::Axis axis) {
+    int i, const Shared::AbstractPlotView* plotView, OMG::Axis axis) {
   int length = PlotPolicy::VerticalLabeledAxis::computeLabel(i, plotView, axis);
   m_plotController->appendLabelSuffix(axis, &m_labels[i][length],
                                       k_labelBufferMaxSize - length, length,

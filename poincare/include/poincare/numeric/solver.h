@@ -26,6 +26,8 @@ class Solver {
     GlobalMinimum,
     GlobalMaximum,
     Discontinuity,
+    ReachedDiscontinuity,    // Discontinuity where f(x) is defined
+    UnreachedDiscontinuity,  // Discontinuity where f(x) is undefined
     Intersection,
     HorizontalAsymptote,
     YIntercept,
@@ -53,6 +55,32 @@ class Solver {
     Interest m_interest;
   };
 
+  // We need a queue because we can have several solutions at the same abscissa
+  class SolutionQueue {
+   public:
+    SolutionQueue() : m_size(0) {}
+    void push(Solution solution) {
+      assert(m_size < k_maxSize);
+      m_solutions[m_size++] = solution;
+    }
+    Solution pop() {
+      assert(m_size > 0);
+      Solution solution = m_solutions[0];
+      for (int i = 1; i < m_size; i++) {
+        m_solutions[i - 1] = m_solutions[i];
+      }
+      m_size--;
+      return solution;
+    }
+    bool isEmpty() const { return m_size == 0; }
+
+   private:
+    // We can have at most 3 solutions at the same abscissa
+    constexpr static int k_maxSize = 3;
+    Solution m_solutions[k_maxSize];
+    int m_size;
+  };
+
   enum class GrowthSpeed : bool { Fast, Precise };
 
   typedef T (*FunctionEvaluation)(T, const void*);
@@ -60,7 +88,8 @@ class Solver {
                                   Coordinate2D<T>, const void*);
   typedef Coordinate2D<T> (*HoneResult)(FunctionEvaluation, const void*, T, T,
                                         Interest, T, OMG::Troolean);
-  typedef bool (*DiscontinuityEvaluation)(T, T, const void*);
+  typedef bool (*DiscontinuityEvaluation)(Coordinate2D<T>, Coordinate2D<T>,
+                                          const void*);
 
   constexpr static T k_relativePrecision = OMG::Float::Epsilon<T>();
   constexpr static T k_minimalAbsoluteStep =
@@ -97,10 +126,14 @@ class Solver {
                           Interest::LocalMaximum);
   }
   static Interest UndefinedInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
-                                     Coordinate2D<T> c, const void*) {
-    return BoolToInterest((std::isfinite(a.y()) && std::isnan(c.y())) ||
-                              (std::isfinite(c.y()) && std::isnan(a.y())),
+                                     Coordinate2D<T> c, const void* aux) {
+    return BoolToInterest(UndefinedTestBetweenPoints(a, c, aux),
                           Interest::Discontinuity);
+  }
+  static Interest DiscontinuityInBracket(Coordinate2D<T> a, Coordinate2D<T> b,
+                                         Coordinate2D<T> c, const void* aux) {
+    return BoolToInterest(DiscontinuityTestBetweenPoints(a, c, aux),
+                          Interest::ReachedDiscontinuity);
   }
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
@@ -121,6 +154,9 @@ class Solver {
   Solution nextMinimum(const Internal::Tree* e);
   Solution nextMaximum(const Internal::Tree* e) {
     return next(e, MaximumInBracket, SafeBrentMaximum);
+  }
+  Solution nextDiscontinuity(const Internal::Tree* e) {
+    return next(e, DiscontinuityInBracket, DummyHone);
   }
   /* Caller of nextIntersection may provide a place to store the difference
    * between the two expressions, in case the method needs to be called several
@@ -160,17 +196,22 @@ class Solver {
                                                const void* aux, T xMin, T xMax,
                                                Interest interest, T xPrecision,
                                                OMG::Troolean discontinuous);
+  static Coordinate2D<T> DummyHone(FunctionEvaluation, const void*, T, T,
+                                   Interest, T, OMG::Troolean) {
+    assert(false);
+    return Coordinate2D<T>();
+  }
 
-  static bool DiscontinuityTestForExpression(T x1, T x2, const void* aux);
-  static Coordinate2D<T> FindUndefinedIntervalBound(
-      Coordinate2D<T> p1, Coordinate2D<T> p2, Coordinate2D<T> p3,
-      FunctionEvaluation f, const void* aux, T minimalSizeOfInterval,
-      bool findStart);
-  static void ExcludeUndefinedFromBracket(Coordinate2D<T>* p1,
-                                          Coordinate2D<T>* p2,
-                                          Coordinate2D<T>* p3,
-                                          FunctionEvaluation f, const void* aux,
-                                          T minimalSizeOfInterval);
+  static bool UndefinedTestBetweenPoints(Coordinate2D<T> a, Coordinate2D<T> b,
+                                         const void*) {
+    return (std::isfinite(a.y()) && std::isnan(b.y())) ||
+           (std::isfinite(b.y()) && std::isnan(a.y()));
+  }
+  static bool DiscontinuityTestBetweenPoints(Coordinate2D<T> a,
+                                             Coordinate2D<T> b,
+                                             const void* aux);
+  static bool DiscontinuityTestAtPoints(Coordinate2D<T> a, Coordinate2D<T> b,
+                                        const void* aux);
   static bool FunctionSeemsConstantOnTheInterval(
       Solver<T>::FunctionEvaluation f, const void* aux, T xMin, T xMax);
 
@@ -185,19 +226,32 @@ class Solver {
   T nextRootInMultiplication(const Internal::Tree* m) const;
   T nextRootInAddition(const Internal::Tree* m) const;
   T nextRootInDependency(const Internal::Tree* m) const;
-  Solution honeAndRoundSolution(FunctionEvaluation f, const void* aux, T start,
-                                T end, Interest interest, HoneResult hone,
-                                DiscontinuityEvaluation discontinuityTest);
-  Solution registerSolution(Solution solution);
+  void honeAndRoundSolution(FunctionEvaluation f, const void* aux,
+                            Coordinate2D<T> start, Coordinate2D<T> end,
+                            Interest interest, HoneResult hone,
+                            DiscontinuityEvaluation discontinuityTest);
+  void honeAndRoundDiscontinuitySolution(FunctionEvaluation f, const void* aux,
+                                         Coordinate2D<T> start,
+                                         Coordinate2D<T> end);
+  bool FindMinimalIntervalContainingDiscontinuity(
+      FunctionEvaluation f, const void* aux, Coordinate2D<T>* start,
+      Coordinate2D<T>* middle, Coordinate2D<T>* end, T minimalSizeOfInterval,
+      DiscontinuityEvaluation discontinuityTest);
+
+  Solution registerSolution(Solution solution, bool wasQueued = false);
   Solution registerRoot(T x) {
     return registerSolution(Solution(x, k_zero, Interest::Root));
   }
+
+  Interest TestBetween(Coordinate2D<T> a, Coordinate2D<T> b, BracketTest test,
+                       FunctionEvaluation f, const void* aux);
 
   T m_xStart;
   T m_xEnd;
   T m_searchStep;
   Context* m_context;
   GrowthSpeed m_growthSpeed;
+  SolutionQueue m_solutionQueue;
 };
 
 }  // namespace Poincare

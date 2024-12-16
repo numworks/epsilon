@@ -11,7 +11,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/context.h>
-#include <poincare/old/parametered_expression.h>
 #include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
@@ -625,7 +624,20 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       Poincare::Preferences::EditionMode::Edition1D) {
     constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
     char buffer[bufferSize];
-    layout.serialize(buffer, bufferSize);
+    /* TODO_PCJ: We shouldn't serialize 2D layouts.
+     * We should only be able to serialize 1D layouts. If the layout is in 2D,
+     * we should first parse it as an expression and then layout it in 1D. This
+     * way we would have an uniform serialization for one same expression (and
+     * make the most of all the optimizations done when layouting an
+     * expression). */
+    Expression e = Expression::Parse(layout, nullptr);
+    if (!e.isUninitialized()) {
+      e.serialize(buffer, bufferSize,
+                  Poincare::Preferences::SharedPreferences()->displayMode(),
+                  Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
+    } else {
+      layout.serialize(buffer, bufferSize);
+    }
     insertText(buffer, false, forceCursorRightOfLayout);
   } else {
     /* makeEditable is in the else because it only strips separators

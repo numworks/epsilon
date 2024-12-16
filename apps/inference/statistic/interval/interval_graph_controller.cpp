@@ -15,11 +15,12 @@ IntervalGraphController::IntervalGraphController(
       m_currentMarginOfError(0.0),
       m_currentThreshold(0.0) {}
 
-Escher::ViewController::TitlesDisplay IntervalGraphController::titlesDisplay() {
+Escher::ViewController::TitlesDisplay IntervalGraphController::titlesDisplay()
+    const {
   return ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
 
-const char* IntervalGraphController::title() {
+const char* IntervalGraphController::title() const {
   m_interval->setGraphTitleForValue(m_currentMarginOfError, m_titleBuffer,
                                     sizeof(m_titleBuffer));
   return m_titleBuffer;

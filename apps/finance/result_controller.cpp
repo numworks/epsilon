@@ -48,7 +48,7 @@ bool ResultController::handleEvent(Ion::Events::Event event) {
   return popFromStackViewControllerOnLeftEvent(event);
 }
 
-const char* ResultController::title() {
+const char* ResultController::title() const {
   /* Try fitting the known parameters values in the title using a minimal
    * precision. Use "..." at the end if not all parameters fit. */
   constexpr int precision =

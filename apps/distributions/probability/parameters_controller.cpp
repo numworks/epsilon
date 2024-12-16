@@ -26,7 +26,7 @@ ParametersController::ParametersController(
   }
 }
 
-const char* ParametersController::title() {
+const char* ParametersController::title() const {
   return I18n::translate(m_distribution->title());
 }
 
@@ -129,13 +129,13 @@ void ParametersController::buttonAction() {
 }
 
 bool ParametersController::hasUndefinedValue(const char* text,
-                                             double floatValue) const {
+                                             double floatValue, int row) const {
   if (text[0] == 0) {
     // Accept empty inputs
     return false;
   }
   return Shared::FloatParameterController<double>::hasUndefinedValue(
-      text, floatValue);
+      text, floatValue, row);
 }
 
 }  // namespace Distributions

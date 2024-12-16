@@ -37,7 +37,7 @@ class PointsOfInterestCache {
   bool computeNextStep(bool allowUserInterruptions);
 
   Poincare::PointOfInterest firstPointInDirection(
-      double start, double end,
+      double start, double end, bool stretch,
       Poincare::Solver<double>::Interest interest =
           Poincare::Solver<double>::Interest::None,
       int subCurveIndex = 0);

@@ -1,6 +1,6 @@
 #include <omg/float.h>
 #include <omg/unreachable.h>
-#include <poincare/new_trigonometry.h>
+#include <poincare/trigonometry.h>
 
 #include <bit>
 #include <cmath>
@@ -24,7 +24,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
     case Type::Cos:
     case Type::Sin: {
       std::complex<T> angleInput =
-          NewTrigonometry::ConvertToRadian<T>(value, angleUnit);
+          Trigonometry::ConvertToRadian<T>(value, angleUnit);
       std::complex<T> res =
           type.isCos() ? std::cos(angleInput) : std::sin(angleInput);
       return NeglectRealOrImaginaryPartIfNegligible(res, angleInput);
@@ -83,7 +83,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
         }
       }
       result = NeglectRealOrImaginaryPartIfNegligible(result, value);
-      return NewTrigonometry::ConvertRadianToAngleUnit(result, angleUnit);
+      return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
     }
     case Type::ATan: {
       std::complex<T> result;
@@ -116,7 +116,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
         }
       }
       result = NeglectRealOrImaginaryPartIfNegligible(result, value);
-      return NewTrigonometry::ConvertRadianToAngleUnit(result, angleUnit);
+      return Trigonometry::ConvertRadianToAngleUnit(result, angleUnit);
     }
     case Type::ASec:
     case Type::ACsc:
@@ -126,7 +126,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
       return TrigonometricToComplex(type.isASec() ? Type::ACos : Type::ASin,
                                     static_cast<T>(1) / value, angleUnit);
     case Type::ACot: {
-      std::complex<T> piOverTwo = NewTrigonometry::ConvertRadianToAngleUnit(
+      std::complex<T> piOverTwo = Trigonometry::ConvertRadianToAngleUnit(
           std::complex<T>(M_PI_2), angleUnit);
       std::complex<T> arctanValue =
           TrigonometricToComplex(Type::ATan, value, angleUnit);

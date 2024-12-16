@@ -78,19 +78,19 @@ bool SymbolAbstract::hasSameNameAs(const SymbolAbstract &other) const {
   return strcmp(other.name(), name()) == 0;
 }
 
-// Implemented in JuniorExpression::replaceSymbolWithExpression
+// Implemented in Expression::replaceSymbolWithExpression
 #if 0
-JuniorExpression SymbolAbstract::replaceSymbolWithExpression(
-    const SymbolAbstract &symbol, const JuniorExpression &expression) {
+Expression SymbolAbstract::replaceSymbolWithExpression(
+    const SymbolAbstract &symbol, const Expression &expression) {
   deepReplaceSymbolWithExpression(symbol, expression);
   if (symbol.type() == type() && hasSameNameAs(symbol)) {
-    JuniorExpression exp = expression.clone();
+    Expression exp = expression.clone();
     if (numberOfChildren() > 0) {
       assert(isOfType(
           {ExpressionNode::Type::Function, ExpressionNode::Type::Sequence}));
       assert(numberOfChildren() == 1 && symbol.numberOfChildren() == 1);
-      JuniorExpression myVariable = childAtIndex(0).clone();
-      JuniorExpression symbolVariable = symbol.childAtIndex(0);
+      Expression myVariable = childAtIndex(0).clone();
+      Expression symbolVariable = symbol.childAtIndex(0);
       if (symbolVariable.type() == ExpressionNode::Type::Symbol) {
         exp = exp.replaceSymbolWithExpression(symbolVariable.convert<Symbol>(),
                                               myVariable);
@@ -98,7 +98,7 @@ JuniorExpression SymbolAbstract::replaceSymbolWithExpression(
         return *this;
       }
     }
-  JuniorExpression p = parent();
+  Expression p = parent();
   if (!p.isUninitialized() &&
       p.node()->childAtIndexNeedsUserParentheses(exp, p.indexOfChild(*this))) {
     exp = Parenthesis::Builder(exp);
@@ -110,19 +110,19 @@ JuniorExpression SymbolAbstract::replaceSymbolWithExpression(
 }
 #endif
 
-JuniorExpression SymbolAbstract::Expand(
-    const SymbolAbstract &symbol, Context *context, bool clone,
-    SymbolicComputation symbolicComputation) {
+Expression SymbolAbstract::Expand(const SymbolAbstract &symbol,
+                                  Context *context, bool clone,
+                                  SymbolicComputation symbolicComputation) {
   assert(context);
 #if 0
-  JuniorExpression e = context->expressionForSymbolAbstract(symbol, clone);
+  Expression e = context->expressionForUserNamed(symbol, clone);
   /* Replace all the symbols iteratively. This prevents a memory failure when
    * symbols are defined circularly. Symbols defined in a parametered function
    * will be preserved as long as the function is defined within this symbol. */
-  e = JuniorExpression::ExpressionWithoutSymbols(e, context,
+  e = Expression::ExpressionWithoutSymbols(e, context,
                                                  symbolicComputation);
   if (!e.isUninitialized() && symbol.isUserFunction()) {
-    e = JuniorExpression::Create(KDep(KA, KDepList(KB)),
+    e = Expression::Create(KDep(KA, KDepList(KB)),
                                  {.KA = e, .KB = symbol.tree()->child(0)});
   }
   return e;

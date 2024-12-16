@@ -5,7 +5,6 @@
 #include <ion/storage/file_system.h>
 #include <omg/global_box.h>
 #include <poincare/old/context.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/sequence_cache.h>
 
 #include <array>
@@ -29,7 +28,7 @@ class GlobalContext final : public Poincare::Context {
   constexpr static int k_numberOfExtensions = std::size(k_extensions);
 
   // Storage information
-  static bool SymbolAbstractNameIsFree(const char* baseName);
+  static bool UserNameIsFree(const char* baseName);
 
   static const Poincare::Layout LayoutForRecord(Ion::Storage::Record record);
 
@@ -53,9 +52,9 @@ class GlobalContext final : public Poincare::Context {
   /* Expression for symbol
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
-  SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
-                                                 int length) override;
-  bool setExpressionForSymbolAbstract(
+  UserNamedType expressionTypeForIdentifier(const char* identifier,
+                                            int length) override;
+  bool setExpressionForUserNamed(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
   static OMG::GlobalBox<SequenceStore> s_sequenceStore;
@@ -72,27 +71,25 @@ class GlobalContext final : public Poincare::Context {
 
  private:
   // Expression getters
-  const Poincare::Internal::Tree* expressionForSymbolAbstract(
+  const Poincare::Internal::Tree* expressionForUserNamed(
       const Poincare::Internal::Tree* symbol) override;
   const Poincare::Internal::Tree* expressionForSymbolAndRecord(
       const Poincare::Internal::Tree* symbol, Ion::Storage::Record r);
-  static const Poincare::Internal::Tree* ExpressionForUserNamed(
+  static const Poincare::Internal::Tree* ExpressionForUserSymbol(
       Ion::Storage::Record r);
-  static const Poincare::Internal::Tree* ExpressionForFunction(
+  static const Poincare::Internal::Tree* ExpressionForUserFunction(
       Ion::Storage::Record r);
   // Expression setters
   /* This modifies the expression. */
-  Ion::Storage::Record::ErrorStatus setExpressionForUserNamed(
-      Poincare::UserExpression& expression,
-      const Poincare::SymbolAbstract& symbol,
+  Ion::Storage::Record::ErrorStatus setExpressionForUserSymbol(
+      Poincare::UserExpression& expression, const char* name,
       Ion::Storage::Record previousRecord);
-  Ion::Storage::Record::ErrorStatus setExpressionForFunction(
+  Ion::Storage::Record::ErrorStatus setExpressionForUserFunction(
       const Poincare::UserExpression& expression,
-      const Poincare::SymbolAbstract& symbol,
+      const Poincare::UserExpression& symbol,
       Ion::Storage::Record previousRecord);
   // Record getter
-  static Ion::Storage::Record SymbolAbstractRecordWithBaseName(
-      const char* name);
+  static Ion::Storage::Record UserNamedRecordWithBaseName(const char* name);
   double approximateSequenceAtRank(const char* identifier,
                                    int rank) const override;
   SequenceContext m_sequenceContext;

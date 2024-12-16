@@ -18,50 +18,81 @@
 
 namespace Poincare::Regression {
 
-const Regression* Regression::Get(Type type) {
+/* WARNING: The "constexpr static" object sometimes raised "memory out of
+ * bounds" error with emscripten compiler for an unknown reason.
+ * Initilazing them at runtime (not constexpr) fixed the problem.
+ * This might need further investigation ? Does the emscripten compiler respects
+ * all the cpp standard guarantees ? Note that changing -Oz to -O0 doesn't fix
+ * the problem. Weirdly, using ASSERTIONS=1 fixes it, no idea why. */
+#ifdef TARGET_POINCARE_JS
+#define STATIC_VARIABLE static
+#else
+#define STATIC_VARIABLE constexpr static
+#endif
+
+const Regression* Regression::Get(Type type, Preferences::AngleUnit angleUnit) {
+  STATIC_VARIABLE NoneRegression none;
+  STATIC_VARIABLE LinearRegression linearAxpb(false);
+  STATIC_VARIABLE LinearRegression linearApbx(true);
+  STATIC_VARIABLE ProportionalRegression proportional;
+  STATIC_VARIABLE QuadraticRegression quadratic;
+  STATIC_VARIABLE CubicRegression cubic;
+  STATIC_VARIABLE QuarticRegression quartic;
+  STATIC_VARIABLE LogarithmicRegression logarithmic;
+  STATIC_VARIABLE ExponentialRegression exponentialAebx(false);
+  STATIC_VARIABLE ExponentialRegression exponentialAbx(true);
+  STATIC_VARIABLE PowerRegression power;
+  STATIC_VARIABLE LogisticRegression logistic;
+  STATIC_VARIABLE MedianRegression median;
+  /* NOTE: Having a static var for each angle unit seems weird, but it
+   * was the easiest way to adapt to the current implementation.
+   * Maybe the way Regressions are handled should be rethought ? */
+  STATIC_VARIABLE TrigonometricRegression trigonometricRad(
+      Preferences::AngleUnit::Radian);
+  STATIC_VARIABLE TrigonometricRegression trigonometricDeg(
+      Preferences::AngleUnit::Degree);
+  STATIC_VARIABLE TrigonometricRegression trigonometricGrad(
+      Preferences::AngleUnit::Gradian);
+
   switch (type) {
     case Type::None:
-      constexpr static NoneRegression none;
       return &none;
     case Type::LinearAxpb:
-      constexpr static LinearRegression linearAbxpb(false);
-      return &linearAbxpb;
+      return &linearAxpb;
     case Type::LinearApbx:
-      constexpr static LinearRegression linearApbx(true);
       return &linearApbx;
     case Type::Proportional:
-      constexpr static ProportionalRegression proportional;
       return &proportional;
     case Type::Quadratic:
-      constexpr static QuadraticRegression quadratic;
       return &quadratic;
     case Type::Cubic:
-      constexpr static CubicRegression cubic;
       return &cubic;
     case Type::Quartic:
-      constexpr static QuarticRegression quartic;
       return &quartic;
     case Type::Logarithmic:
-      constexpr static LogarithmicRegression logarithmic;
       return &logarithmic;
     case Type::ExponentialAebx:
-      constexpr static ExponentialRegression exponentialAebx(false);
       return &exponentialAebx;
     case Type::ExponentialAbx:
-      constexpr static ExponentialRegression exponentialAbx(true);
       return &exponentialAbx;
     case Type::Power:
-      constexpr static PowerRegression power;
       return &power;
-    case Type::Trigonometric:
-      constexpr static TrigonometricRegression trigonometric;
-      return &trigonometric;
     case Type::Logistic:
-      constexpr static LogisticRegression logistic;
       return &logistic;
     case Type::Median:
-      constexpr static MedianRegression median;
       return &median;
+    case Type::Trigonometric: {
+      switch (angleUnit) {
+        case Preferences::AngleUnit::Radian:
+          return &trigonometricRad;
+        case Preferences::AngleUnit::Degree:
+          return &trigonometricDeg;
+        case Preferences::AngleUnit::Gradian:
+          return &trigonometricGrad;
+        default:
+          OMG::unreachable();
+      }
+    }
   }
   OMG::unreachable();
 }

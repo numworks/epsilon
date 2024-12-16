@@ -127,7 +127,7 @@ bool StoreMenuController::parseAndStore(const char* text) {
     return false;
   }
   UserExpression value = StoreHelper::Value(input);
-  SymbolAbstract symbol = StoreHelper::Symbol(input);
+  UserExpression symbol = StoreHelper::Symbol(input);
   close();
   app->prepareForIntrusiveStorageChange();
   bool stored = StoreHelper::StoreValueForSymbol(context, value, symbol);

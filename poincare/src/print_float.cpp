@@ -2,7 +2,7 @@
 #include <omg/print.h>
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
-#include <poincare/old/undefined.h>
+#include <poincare/expression.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/infinity.h>

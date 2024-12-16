@@ -5,7 +5,6 @@
 #include <assert.h>
 #include <omg/utf8_helper.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/sequence.h>
 
 #include <cmath>
 
@@ -154,11 +153,13 @@ Layout ValuesController::functionTitleLayout(int column) {
   if (!isSumColumn) {
     return sequence->nameLayout();
   }
+  char sequenceName[SymbolHelper::k_maxNameSize];
+  sequence->nameWithoutExtension(sequenceName, SymbolHelper::k_maxNameSize);
   UserExpression sumExpression = UserExpression::Create(
       KSum("k"_e, KA, "n"_e, KB),
       {.KA = NewExpression::Builder(sequence->initialRank()),
-       .KB = Poincare::Sequence::Builder(sequence->fullName(), 1,
-                                         UserExpression::Builder("k"_e))});
+       .KB = Poincare::SymbolHelper::BuildSequence(
+           sequenceName, UserExpression::Builder("k"_e))});
   return sumExpression.createLayout(preferences->displayMode(),
                                     preferences->numberOfSignificantDigits(),
                                     nullptr);

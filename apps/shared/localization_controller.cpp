@@ -184,7 +184,7 @@ int LocalizationController::indexOfCellToSelectOnReset() const {
       GlobalPreferences::SharedGlobalPreferences()->language());
 }
 
-const char* LocalizationController::title() {
+const char* LocalizationController::title() const {
   if (mode() == Mode::Language) {
     return I18n::translate(I18n::Message::Language);
   }

@@ -19,7 +19,7 @@ class TangentGraphController
                          GraphView* graphView, BannerView* bannerView,
                          Shared::InteractiveCurveViewRange* curveViewRange,
                          Shared::CurveViewCursor* cursor);
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,

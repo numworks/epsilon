@@ -27,8 +27,8 @@ class GraphOptionsController
                          GraphController* graphController);
   void removeRegression();
 
-  const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  const char* title() const override;
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   bool handleEvent(Ion::Events::Event event) override;

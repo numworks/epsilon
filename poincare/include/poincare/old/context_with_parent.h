@@ -13,21 +13,21 @@ class ContextWithParent : public Context {
   ContextWithParent(Context* parentContext) : m_parentContext(parentContext) {}
 
   // Context
-  const Internal::Tree* expressionForSymbolAbstract(
+  const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) override {
     assert(m_parentContext);
-    return m_parentContext->expressionForSymbolAbstract(symbol);
+    return m_parentContext->expressionForUserNamed(symbol);
   }
 
-  SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
-                                                 int length) override {
+  UserNamedType expressionTypeForIdentifier(const char* identifier,
+                                            int length) override {
     assert(m_parentContext);
     return m_parentContext->expressionTypeForIdentifier(identifier, length);
   }
-  bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
-                                      const Internal::Tree* symbol) override {
+  bool setExpressionForUserNamed(const Internal::Tree* expression,
+                                 const Internal::Tree* symbol) override {
     assert(m_parentContext);
-    return m_parentContext->setExpressionForSymbolAbstract(expression, symbol);
+    return m_parentContext->setExpressionForUserNamed(expression, symbol);
   }
 
  private:

@@ -10,12 +10,13 @@ class CubicRegression : public Regression {
   using Regression::Regression;
 
   Type type() const override { return Type::Cubic; }
-  double evaluate(const double* modelCoefficients, double x) const override;
 
  private:
+  double privateEvaluate(const Coefficients& modelCoefficients,
+                         double x) const override;
   Poincare::API::UserExpression privateExpression(
       const double* modelCoefficients) const override;
-  double partialDerivate(const double* modelCoefficients,
+  double partialDerivate(const Coefficients& modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
 };
 

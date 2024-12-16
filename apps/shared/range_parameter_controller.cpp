@@ -54,17 +54,17 @@ void RangeParameterController::fillCells() {
       2 * PrintFloat::charSizeForFloatsWithPrecision(precision) + 4;
   char buffer[bufferSize];
   for (int i = 0; i < 2; ++i) {
-    Axis axis = i == 0 ? Axis::X : Axis::Y;
-    bool isAuto = m_tempInteractiveRange.isAuto(axis);
+    OMG::Axis axis = i == 0 ? OMG::Axis::Horizontal : OMG::Axis::Vertical;
+    bool isAuto = m_tempInteractiveRange.zoomAuto(axis);
 
     if (isAuto) {
       strlcpy(buffer, I18n::translate(I18n::Message::DefaultSetting),
               bufferSize);
     } else {
-      float min = axis == Axis::X ? m_tempInteractiveRange.xMin()
-                                  : m_tempInteractiveRange.yMin();
-      float max = axis == Axis::X ? m_tempInteractiveRange.xMax()
-                                  : m_tempInteractiveRange.yMax();
+      float min = axis == OMG::Axis::Horizontal ? m_tempInteractiveRange.xMin()
+                                                : m_tempInteractiveRange.yMin();
+      float max = axis == OMG::Axis::Horizontal ? m_tempInteractiveRange.xMax()
+                                                : m_tempInteractiveRange.yMax();
       int numberOfChars = PoincareHelpers::ConvertFloatToTextWithDisplayMode(
           min, buffer, bufferSize, precision,
           Preferences::PrintFloatMode::Decimal);
@@ -79,7 +79,8 @@ void RangeParameterController::fillCells() {
           Preferences::PrintFloatMode::Decimal);
       buffer[numberOfChars++] = 0;
     }
-    MenuCell* cell = axis == Axis::X ? &m_xRangeCell : &m_yRangeCell;
+    MenuCell* cell =
+        axis == OMG::Axis::Horizontal ? &m_xRangeCell : &m_yRangeCell;
     cell->subLabel()->setText(buffer);
   }
 
@@ -118,10 +119,10 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back &&
       (m_interactiveRange->rangeChecksum() !=
            m_tempInteractiveRange.rangeChecksum() ||
-       m_interactiveRange->isAuto(Axis::X) !=
-           m_tempInteractiveRange.isAuto(Axis::X) ||
-       m_interactiveRange->isAuto(Axis::Y) !=
-           m_tempInteractiveRange.isAuto(Axis::Y) ||
+       m_interactiveRange->zoomAuto(OMG::Axis::Horizontal) !=
+           m_tempInteractiveRange.zoomAuto(OMG::Axis::Horizontal) ||
+       m_interactiveRange->zoomAuto(OMG::Axis::Vertical) !=
+           m_tempInteractiveRange.zoomAuto(OMG::Axis::Vertical) ||
        m_interactiveRange->gridType() != m_tempInteractiveRange.gridType())) {
     // Open pop-up to confirm discarding values
     m_confirmPopUpController.presentModally();
@@ -138,7 +139,7 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if ((cell == &m_xRangeCell || cell == &m_yRangeCell) &&
       static_cast<MenuCell*>(cell)->canBeActivatedByEvent(event)) {
     m_singleInteractiveCurveViewRangeController.setAxis(
-        cell == &m_xRangeCell ? Axis::X : Axis::Y);
+        cell == &m_xRangeCell ? OMG::Axis::Horizontal : OMG::Axis::Vertical);
     stackController()->push(&m_singleInteractiveCurveViewRangeController);
     return true;
   }
@@ -162,6 +163,7 @@ void RangeParameterController::buttonAction() {
 
   /* Use setZoomAuto to refresh the Auto button on the graph. */
   m_interactiveRange->setZoomAuto(m_tempInteractiveRange.zoomAuto());
+  m_interactiveRange->setUserGridUnit(m_tempInteractiveRange.userGridUnit());
   m_interactiveRange->setZoomNormalize(m_tempInteractiveRange.zoomNormalize());
   *m_interactiveRange = m_tempInteractiveRange;
 

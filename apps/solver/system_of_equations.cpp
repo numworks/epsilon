@@ -8,7 +8,6 @@
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/pool_variable_context.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/equation_solver.h>
 #include <poincare/src/expression/float_helper.h>
@@ -76,14 +75,14 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 }
 
 const Internal::Tree*
-SystemOfEquations::ContextWithoutT::expressionForSymbolAbstract(
+SystemOfEquations::ContextWithoutT::expressionForUserNamed(
     const Internal::Tree* symbol) {
   assert(symbol->isUserNamed());
   if (symbol->isUserSymbol() &&
       strcmp(Internal::Symbol::GetName(symbol), "t") == 0) {
     return UserExpression();
   }
-  return ContextWithParent::expressionForSymbolAbstract(symbol);
+  return ContextWithParent::expressionForUserNamed(symbol);
 }
 
 #if 0
@@ -343,7 +342,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
         context,
         [](const char* s, Context* c) {
           return c->expressionTypeForIdentifier(s, strlen(s)) ==
-                 Context::SymbolAbstractType::Symbol;
+                 Context::UserNamedType::Symbol;
         },
         &m_userVariables[0][0], SymbolHelper::k_maxNameSize,
         m_numberOfUserVariables);
@@ -535,7 +534,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
              parameterNameLength < parameterNameSize);
       parameterName[parameterNameLength] = 0;
       ab.addChildAtIndexInPlace(
-          Symbol::Builder(parameterName, parameterNameLength), abChildren,
+          SymbolHelper::BuildSymbol(parameterName, parameterNameLength), abChildren,
           abChildren);
       ++abChildren;
       ab.setDimensions(++m, n + 1);
@@ -561,9 +560,9 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   for (int i = 0; i < n; i++) {
     solutionContexts[i] = VariableContext(
         variable(i), i == 0 ? context : &solutionContexts[i - 1]);
-    solutionContexts[i].setExpressionForSymbolAbstract(
+    solutionContexts[i].setExpressionForUserNamed(
         ab.matrixChild(i, n),
-        Symbol::Builder(variable(i), strlen(variable(i))));
+        SymbolHelper::BuildSymbol(variable(i), strlen(variable(i))));
   }
   ReductionContext reductionContextWithSolutions(
       &solutionContexts[n - 1], m_complexFormat,
@@ -638,8 +637,8 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
      * we need to handle them now. */
     if (simplifiedEquations[0].isDep()) {
       VariableContext contextWithSolution(variable(0), context);
-      contextWithSolution.setExpressionForSymbolAbstract(
-          x[i], Symbol::Builder(variable(0), strlen(variable(0))));
+      contextWithSolution.setExpressionForUserNamed(
+          x[i], SymbolHelper::BuildSymbol(variable(0), strlen(variable(0))));
       ReductionContext reductionContextWithSolution = reductionContext;
       reductionContextWithSolution.setContext(&contextWithSolution);
       if (simplifiedEquations[0]

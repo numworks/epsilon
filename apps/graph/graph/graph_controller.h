@@ -72,7 +72,7 @@ class GraphController : public Shared::FunctionGraphController,
 
    private:
     constexpr static int k_maxNumberOfDisplayableFunctions = 7;
-    Poincare::Layout nameLayoutAtIndex(int j) const override;
+    const Poincare::Layout nameLayoutAtIndex(int j) const override;
     Shared::CurveSelectionCellWithChevron
         m_cells[k_maxNumberOfDisplayableFunctions];
   };
@@ -91,6 +91,7 @@ class GraphController : public Shared::FunctionGraphController,
   void jumpToLeftRightCurve(double t, OMG::HorizontalDirection direction,
                             int functionsCount,
                             Ion::Storage::Record record) override;
+  void setCursorIsRing(bool isRing) override { m_cursorView.setIsRing(isRing); }
 
   // SimpleInteractiveCurveViewController
   void reloadBannerView() override;

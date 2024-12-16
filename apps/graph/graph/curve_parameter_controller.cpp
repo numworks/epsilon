@@ -1,13 +1,15 @@
 #include "curve_parameter_controller.h"
 
 #include <apps/i18n.h>
+#include <apps/shared/color_names.h>
 #include <apps/shared/function_name_helper.h>
+#include <apps/shared/grid_type_controller.h>
 #include <assert.h>
+#include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
 #include <poincare/print.h>
 
 #include "../app.h"
-#include "apps/shared/color_names.h"
 #include "graph_controller.h"
 
 using namespace Shared;
@@ -58,7 +60,7 @@ CurveParameterController::function() const {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 
-const char* CurveParameterController::title() {
+const char* CurveParameterController::title() const {
   if (function()->isNamed()) {
     const char* calculate = I18n::translate(I18n::Message::CalculateOnFx);
     size_t len = strlen(calculate);
@@ -75,30 +77,52 @@ const char* CurveParameterController::title() {
   return m_title;
 }
 
-bool CurveParameterController::parameterAtRowIsFirstComponent(int row) const {
-  assert(0 <= row && row <= k_numberOfParameterRows);
-  ParameterIndex index = static_cast<ParameterIndex>(row);
+bool CurveParameterController::parameterAtIndexIsPreimage(
+    ParameterIndex index) const {
+  return index == ParameterIndex::Image1 &&
+         function()->properties().canHavePreimage();
+}
+
+bool CurveParameterController::parameterAtIndexIsFirstComponent(
+    ParameterIndex index) const {
   switch (index) {
     case ParameterIndex::Image1:
     case ParameterIndex::FirstDerivative1:
     case ParameterIndex::SecondDerivative1:
       return true;
+    case ParameterIndex::Image2:
+    case ParameterIndex::Image3:
+    case ParameterIndex::FirstDerivative2:
+    case ParameterIndex::SecondDerivative2:
+      return false;
     default:
-      assert(index == ParameterIndex::Image2 ||
-             index == ParameterIndex::FirstDerivative2 ||
-             index == ParameterIndex::SecondDerivative2);
+      OMG::unreachable();
+  }
+}
+
+bool CurveParameterController::parameterAtIndexIsEditable(
+    ParameterIndex index) const {
+  switch (function()->properties().editableParameters()) {
+    case ContinuousFunctionProperties::EditableParametersType::Abscissa:
+      return (index == ParameterIndex::Abscissa);
+    case ContinuousFunctionProperties::EditableParametersType::Image:
+      return (index == ParameterIndex::Image1);
+    case ContinuousFunctionProperties::EditableParametersType::Both:
+      return (index == ParameterIndex::Abscissa) ||
+             (index == ParameterIndex::Image1);
+    case ContinuousFunctionProperties::EditableParametersType::None:
       return false;
   }
 }
 
-int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
-  assert(0 <= row && row <= k_numberOfParameterRows);
-  ParameterIndex index = static_cast<ParameterIndex>(row);
+int CurveParameterController::derivationOrderOfParameterAtIndex(
+    ParameterIndex index) const {
   switch (index) {
     case ParameterIndex::Abscissa:
       return -1;
     case ParameterIndex::Image1:
     case ParameterIndex::Image2:
+    case ParameterIndex::Image3:
       return 0;
     case ParameterIndex::FirstDerivative1:
     case ParameterIndex::FirstDerivative2:
@@ -110,24 +134,94 @@ int CurveParameterController::derivationOrderOfParameterAtRow(int row) const {
   }
 }
 
+double CurveParameterController::evaluateCurveAt(ParameterIndex index,
+                                                 Context* context) const {
+  double cursorT = m_cursor->t();
+  double cursorX = m_cursor->x();
+  double cursorY = m_cursor->y();
+
+  if (function()->properties().isScatterPlot() &&
+      (cursorT != std::round(cursorT) ||
+       cursorT >= function()->iterateScatterPlot(context).length())) {
+    /* FIXME This will display the first point of a multi-point scatter plot
+     * when accessed through the Calculate button, which is not super useful,
+     * but there is no real alternative barring some UX changes. */
+    cursorT = 0.;
+    Poincare::Coordinate2D<double> xy =
+        function()->evaluateXYAtParameter(cursorT, context);
+    cursorX = xy.x();
+    cursorY = xy.y();
+  }
+
+  switch (function()->properties().symbolType()) {
+    case ContinuousFunctionProperties::SymbolType::T:
+      return (index == ParameterIndex::Abscissa) ? cursorT
+             : index == ParameterIndex::Image1
+                 ? function()->evaluateXYAtParameter(cursorT, context).x()
+                 : function()->evaluateXYAtParameter(cursorT, context).y();
+    case ContinuousFunctionProperties::SymbolType::Theta:
+    case ContinuousFunctionProperties::SymbolType::Radius: {
+      switch (index) {
+        case ParameterIndex::Abscissa:
+          return cursorT;
+        case ParameterIndex::Image1:
+          return function()->evaluate2DAtParameter(cursorT, context).y();
+        case ParameterIndex::Image2:
+          return function()->evaluateXYAtParameter(cursorT, context).x();
+        case ParameterIndex::Image3:
+          return function()->evaluateXYAtParameter(cursorT, context).y();
+        default:
+          OMG::unreachable();
+      }
+    }
+    default:
+      return index == ParameterIndex::Abscissa ? cursorX : cursorY;
+  }
+}
+
+double CurveParameterController::evaluateDerivativeAt(ParameterIndex index,
+                                                      int derivationOrder,
+                                                      Context* context) const {
+  assert(derivationOrder == 1 || derivationOrder == 2);
+  assert(function()->canDisplayDerivative());
+  bool firstComponent = parameterAtIndexIsFirstComponent(index);
+  PointOrScalar<double> derivative = function()->approximateDerivative<double>(
+      m_cursor->t(), context, derivationOrder);
+  if (derivative.isScalar()) {
+    assert(firstComponent);
+    return derivative.toScalar();
+  }
+  assert(derivative.isPoint());
+  Coordinate2D<double> xy = derivative.toPoint();
+  return firstComponent ? xy.x() : xy.y();
+}
+
 void CurveParameterController::fillParameterCellAtRow(int row) {
+  assert(row >= 0);
   if (row >= k_numberOfParameterRows) {
     return;
   }
+  ParameterIndex index = static_cast<ParameterIndex>(row);
+
   ContinuousFunctionProperties properties = function()->properties();
   if (row < properties.numberOfCurveParameters()) {
-    m_parameterCells[row].setEditable(
-        properties.parameterAtIndexIsEditable(row));
+    m_parameterCells[row].setEditable(parameterAtIndexIsEditable(index));
   }
   constexpr size_t bufferSize =
       Escher::OneLineBufferTextView<KDFont::Size::Large>::MaxTextSize();
   char buffer[bufferSize];
-  if (row == static_cast<int>(ParameterIndex::Abscissa)) {
+  if (index == ParameterIndex::Abscissa) {
     UTF8Helper::WriteCodePoint(buffer, bufferSize, properties.symbol());
   } else {
-    bool firstComponent = parameterAtRowIsFirstComponent(row);
-    int derivationOrder = derivationOrderOfParameterAtRow(row);
-    if (properties.isParametric()) {
+    bool firstComponent = parameterAtIndexIsFirstComponent(index);
+    int derivationOrder = derivationOrderOfParameterAtIndex(index);
+    if (properties.isPolar() &&
+        (index == ParameterIndex::Image2 || index == ParameterIndex::Image3)) {
+      UTF8Helper::WriteCodePoint(buffer, bufferSize,
+                                 (index == ParameterIndex::Image2)
+                                     ? Poincare::CodePoints::k_cartesianSymbol
+                                     : Poincare::CodePoints::k_ordinateSymbol);
+    } else if (properties.isParametric()) {
       FunctionNameHelper::ParametricComponentNameWithArgument(
           function().pointer(), buffer, bufferSize, firstComponent,
           derivationOrder);
@@ -141,44 +235,20 @@ void CurveParameterController::fillParameterCellAtRow(int row) {
 }
 
 double CurveParameterController::parameterAtIndex(int index) {
-  Poincare::Context* ctx = App::app()->localContext();
-  int derivationOrder = derivationOrderOfParameterAtRow(index);
+  assert(0 <= index && index <= k_numberOfParameterRows);
+  ParameterIndex parameterIndex = static_cast<ParameterIndex>(index);
+
+  int derivationOrder = derivationOrderOfParameterAtIndex(parameterIndex);
   if (derivationOrder >= 1) {
-    assert(derivationOrder == 1 || derivationOrder == 2);
-    assert(function()->canDisplayDerivative());
-    bool firstComponent = parameterAtRowIsFirstComponent(index);
-    PointOrScalar<double> derivative =
-        function()->approximateDerivative<double>(m_cursor->t(), ctx,
-                                                  derivationOrder);
-    if (derivative.isScalar()) {
-      assert(firstComponent);
-      return derivative.toScalar();
-    }
-    assert(derivative.isPoint());
-    Coordinate2D<double> xy = derivative.toPoint();
-    return firstComponent ? xy.x() : xy.y();
+    return evaluateDerivativeAt(parameterIndex, derivationOrder,
+                                App::app()->localContext());
   }
-  double t = m_cursor->t();
-  double x = m_cursor->x();
-  double y = m_cursor->y();
-  if (function()->properties().isScatterPlot() &&
-      (t != std::round(t) ||
-       t >= function()->iterateScatterPlot(ctx).length())) {
-    /* FIXME This will display the first point of a multi-point scatter plot
-     * when accessed through the Calculate button, which is not super useful,
-     * but there is no real alternative barring some UX changes. */
-    t = 0.;
-    Poincare::Coordinate2D<double> xy =
-        function()->evaluateXYAtParameter(t, ctx);
-    x = xy.x();
-    y = xy.y();
-  }
-  return function()->evaluateCurveParameter(index, t, x, y, ctx);
+  return evaluateCurveAt(parameterIndex, App::app()->localContext());
 }
 
-bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
+bool CurveParameterController::confirmParameterAtIndex(ParameterIndex index,
                                                        double f) {
-  if (function()->properties().parameterAtIndexIsPreimage(parameterIndex)) {
+  if (parameterAtIndexIsPreimage(index)) {
     m_preimageGraphController.setImage(f);
     return true;
   }
@@ -198,7 +268,7 @@ bool CurveParameterController::confirmParameterAtIndex(int parameterIndex,
 
 bool CurveParameterController::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
-  int index = selectedRow();
+  int row = selectedRow();
   if (!ExplicitFloatParameterController::textFieldDidFinishEditing(textField,
                                                                    event)) {
     return false;
@@ -206,7 +276,9 @@ bool CurveParameterController::textFieldDidFinishEditing(
   StackViewController* stack = stackController();
   stack->popUntilDepth(
       InteractiveCurveViewController::k_graphControllerStackDepth, true);
-  if (function()->properties().parameterAtIndexIsPreimage(index)) {
+
+  assert(0 <= row && row <= k_numberOfParameterRows);
+  if (parameterAtIndexIsPreimage(static_cast<ParameterIndex>(row))) {
     stack->push(&m_preimageGraphController);
   }
   return true;
@@ -271,14 +343,22 @@ void CurveParameterController::viewWillAppear() {
   /* We need to update the visibility of the derivativeCell here (and not in
    * setRecord) in since show derivative can be toggled from a sub-menu of
    * this one. */
-  bool isParametric = function()->properties().isParametric();
+  const bool isParametric = function()->properties().isParametric();
+  const bool isPolar = function()->properties().isPolar();
   bool displayImage, displayValueFirstDerivative, displayValueSecondDerivative;
   function()->valuesToDisplayOnDerivativeCurve(m_derivationOrder, &displayImage,
                                                &displayValueFirstDerivative,
                                                &displayValueSecondDerivative);
   parameterCell(ParameterIndex::Image1)->setVisible(displayImage);
   parameterCell(ParameterIndex::Image2)
-      ->setVisible(isParametric && displayImage);
+      ->setVisible((isParametric ||
+                    (isPolar && m_graphRange->gridType() ==
+                                    GridTypeController::GridType::Cartesian)) &&
+                   displayImage);
+  parameterCell(ParameterIndex::Image3)
+      ->setVisible((isPolar && m_graphRange->gridType() ==
+                                   GridTypeController::GridType::Cartesian) &&
+                   displayImage);
   parameterCell(ParameterIndex::FirstDerivative1)
       ->setVisible(displayValueFirstDerivative);
   parameterCell(ParameterIndex::FirstDerivative2)

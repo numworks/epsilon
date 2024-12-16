@@ -16,8 +16,8 @@ class GoToParameterController : public Shared::GoToParameterController {
                           Store* store, Shared::CurveViewCursor* cursor,
                           GraphController* graphController);
   void setXPrediction(bool xPrediction);
-  const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  const char* title() const override;
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
 

@@ -19,7 +19,7 @@ class TabTableController : public Escher::ViewController,
   void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void willExitResponderChain(Responder* nextFirstResponder) override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
 

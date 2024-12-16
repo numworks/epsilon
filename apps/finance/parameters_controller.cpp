@@ -21,7 +21,7 @@ ParametersController::ParametersController(StackViewController* parent,
   m_dropdownCell.accessory()->setDropdown(&m_dropdown);
 }
 
-const char* ParametersController::title() {
+const char* ParametersController::title() const {
   uint8_t unknownParam = App::GetInterestData()->getUnknown();
   const char* label =
       I18n::translate(App::GetInterestData()->labelForParameter(unknownParam));

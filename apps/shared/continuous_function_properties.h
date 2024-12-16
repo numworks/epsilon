@@ -194,9 +194,15 @@ class ContinuousFunctionProperties {
            equationType() == Poincare::ComparisonJunior::Operator::Inferior;
   }
 
-  int numberOfCurveParameters() const { return isParametric() ? 3 : 2; }
-  bool parameterAtIndexIsEditable(int index) const;
-  bool parameterAtIndexIsPreimage(int index) const;
+  int numberOfCurveParameters() const {
+    return isParametric() ? 3 : isPolar() ? 4 : 2;
+  }
+
+  enum class EditableParametersType : uint8_t { Abscissa, Image, Both, None };
+
+  EditableParametersType editableParameters() const;
+
+  bool canHavePreimage() const;
 
   CodePoint symbol() const;
 

@@ -29,7 +29,7 @@ void ScriptParameterController::dismissScriptParameterController() {
   stackViewController()->pop();
 }
 
-const char* ScriptParameterController::title() {
+const char* ScriptParameterController::title() const {
   return I18n::translate(m_pageTitle);
 }
 

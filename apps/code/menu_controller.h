@@ -38,7 +38,7 @@ class MenuController : public Escher::ViewController,
 
   /* ViewController */
   Escher::View* view() override { return &m_selectableTableView; }
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
   bool handleEvent(Ion::Events::Event event) override;

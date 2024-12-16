@@ -33,56 +33,56 @@ class __attribute__((packed)) GlobalPreferences {
   void countryHasChanged(bool updateSnapshots = true);
 
   CountryPreferences::AvailableExamModes availableExamModes() const {
-    return preferences().availableExamModes();
+    return countryPreferences().availableExamModes();
   }
   CountryPreferences::MethodForQuartiles methodForQuartiles() const {
-    return preferences().methodForQuartiles();
+    return countryPreferences().methodForQuartiles();
   }
   CountryPreferences::OutlierDefaultVisibility outliersStatus() const {
-    return preferences().outliersStatus();
+    return countryPreferences().outliersStatus();
   }
   CountryPreferences::HistogramsOffset histogramOffset() const {
-    return preferences().histogramOffset();
+    return countryPreferences().histogramOffset();
   }
   Poincare::Preferences::UnitFormat unitFormat() const {
-    return preferences().unitFormat();
+    return countryPreferences().unitFormat();
   }
   CountryPreferences::HomeAppsLayout homeAppsLayout() const {
-    return preferences().homeAppsLayout();
+    return countryPreferences().homeAppsLayout();
   }
   const char* discriminantSymbol() const {
-    return preferences().discriminantSymbol();
+    return countryPreferences().discriminantSymbol();
   }
   const char* yPredictedSymbol() const {
-    return preferences().yPredictedSymbol();
+    return countryPreferences().yPredictedSymbol();
   }
   CountryPreferences::StatsRowsLayout statsRowsLayout() const {
-    return preferences().statsRowsLayout();
+    return countryPreferences().statsRowsLayout();
   }
   Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const {
-    return preferences().combinatoricSymbols();
+    return countryPreferences().combinatoricSymbols();
   }
   CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox()
       const {
-    return preferences().listsStatsOrderInToolbox();
+    return countryPreferences().listsStatsOrderInToolbox();
   }
   Poincare::Preferences::MixedFractions mixedFractions() const {
-    return preferences().mixedFractions();
+    return countryPreferences().mixedFractions();
   }
   CountryPreferences::RegressionApp regressionAppVariant() const {
-    return preferences().regressionAppVariant();
+    return countryPreferences().regressionAppVariant();
   }
   CountryPreferences::GraphTemplatesLayout graphTemplatesLayout() const {
-    return preferences().graphTemplatesLayout();
+    return countryPreferences().graphTemplatesLayout();
   }
   Poincare::Preferences::LogarithmBasePosition logarithmBasePosition() const {
-    return preferences().logarithmBasePosition();
+    return countryPreferences().logarithmBasePosition();
   }
   Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent() const {
-    return preferences().logarithmKeyEvent();
+    return countryPreferences().logarithmKeyEvent();
   }
   Poincare::Preferences::ParabolaParameter parabolaParameter() const {
-    return preferences().parabolaParameter();
+    return countryPreferences().parabolaParameter();
   }
   int sequencesInitialRank() const;
 
@@ -102,22 +102,29 @@ class __attribute__((packed)) GlobalPreferences {
   int brightnessLevel() const { return m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
 
+  int dimmingTime() const { return m_dimmingTime; }
+  void setDimmingTime(int dimmingTime) { m_dimmingTime = dimmingTime; }
+
   KDFont::Size font() const { return m_font; }
   void setFont(KDFont::Size font) { m_font = font; }
 
+  // In milliseconds
+  constexpr static uint32_t k_defaultDimmingTime = 30 * 1000;
+
  private:
-  constexpr static uint8_t k_version = 0;
+  constexpr static uint8_t k_version = 1;
 
   GlobalPreferences()
       : m_version(k_version),
         m_brightnessLevel(Ion::Backlight::MaxBrightness),
         m_showPopUp(true),
-        m_font(KDFont::Size::Large) {
+        m_font(KDFont::Size::Large),
+        m_dimmingTime(k_defaultDimmingTime) {
     setLanguage(I18n::Language::EN);
     setCountry(I18n::Country::WW, false);
   }
 
-  const CountryPreferences& preferences() const {
+  const CountryPreferences& countryPreferences() const {
     return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)];
   }
 
@@ -131,26 +138,27 @@ class __attribute__((packed)) GlobalPreferences {
                 "I18n::NumberOfCountries is not superior to 0");
 
 #if __EMSCRIPTEN__
-  CODE_GUARD(global_preferences, 3643843895,           //
-             uint8_t m_version;                        //
-             emscripten_align1_int m_brightnessLevel;  //
-             I18n::Language m_language;                //
-             I18n::Country m_country;                  //
-             bool m_showPopUp;                         //
-             KDFont::Size m_font;)
+  using BrightnessType = emscripten_align1_int;
+  using DimmingTimeType = emscripten_align1_int;
 #else
-  CODE_GUARD(global_preferences, 1861289878,  //
-             uint8_t m_version;               //
-             int m_brightnessLevel;           //
-             I18n::Language m_language;       //
-             I18n::Country m_country;         //
-             bool m_showPopUp;                //
-             KDFont::Size m_font;)
+  using BrightnessType = int;
+  using DimmingTimeType = uint32_t;
 #endif
+
+  CODE_GUARD(global_preferences, 3087701149,    //
+             uint8_t m_version;                 //
+             BrightnessType m_brightnessLevel;  //
+             I18n::Language m_language;         //
+             I18n::Country m_country;           //
+             bool m_showPopUp;                  //
+             KDFont::Size m_font;               //
+             DimmingTimeType m_dimmingTime;     // in milliseconds
+             public
+             : static constexpr int k_objectSize = 13;)
 };
 
 #if PLATFORM_DEVICE
-static_assert(sizeof(GlobalPreferences) == 9,
+static_assert(sizeof(GlobalPreferences) == GlobalPreferences::k_objectSize,
               "Class GlobalPreferences changed size");
 #endif
 

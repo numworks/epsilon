@@ -2,7 +2,6 @@
 
 #include <poincare/numeric/roots.h>
 #include <poincare/numeric/solver.h>
-#include <poincare/src/expression/dependency.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -10,6 +9,7 @@
 
 #include "advanced_reduction.h"
 #include "approximation.h"
+#include "dependency.h"
 #include "float.h"
 #include "list.h"
 #include "matrix.h"
@@ -96,8 +96,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   if (projectionContext.m_context) {
     Tree* userSymbols = Variables::GetUserSymbols(equationsSet);
     for (const Tree* userSymbol : userSymbols->children()) {
-      if (projectionContext.m_context->expressionForSymbolAbstract(
-              userSymbol)) {
+      if (projectionContext.m_context->expressionForUserNamed(userSymbol)) {
         context->userVariables.append(Symbol::GetName(userSymbol));
       }
     }
@@ -514,10 +513,6 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
 Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
                                       uint8_t n, Context* context,
                                       Error* error) {
-  constexpr static int k_maxPolynomialDegree = 3;
-  constexpr static int k_maxNumberOfPolynomialCoefficients =
-      k_maxPolynomialDegree + 1;
-
   assert(simplifiedEquationSet->isList() &&
          simplifiedEquationSet->numberOfChildren() == 1);
   assert(n == 1);
@@ -534,9 +529,10 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
     return nullptr;
   }
 
-  const Tree* coefficients[k_maxNumberOfPolynomialCoefficients] = {};
+  const Tree* coefficients[Polynomial::k_maxNumberOfPolynomialCoefficients] =
+      {};
   int degree = Polynomial::Degree(polynomial);
-  if (degree > k_maxPolynomialDegree) {
+  if (degree > Polynomial::k_maxPolynomialDegree) {
     *error = Error::RequireApproximateSolution;
     SharedTreeStack->dropBlocksFrom(equation);
     return nullptr;
@@ -548,7 +544,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   const Tree* coefficient = Polynomial::LeadingCoefficient(polynomial);
   for (int i = 0; i < numberOfTerms; i++) {
     int exponent = Polynomial::ExponentAtIndex(polynomial, i);
-    if (exponent < k_maxNumberOfPolynomialCoefficients) {
+    if (exponent < Polynomial::k_maxNumberOfPolynomialCoefficients) {
       coefficients[exponent] = coefficient;
     }
     coefficient = coefficient->nextTree();
@@ -655,7 +651,7 @@ Tree* EquationSolver::getNextParameterSymbol(size_t* parameterIndex,
     parameterName[parameterNameLength] = 0;
     Tree* symbol =
         SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
-    if (!context->expressionForSymbolAbstract(symbol)) {
+    if (!context->expressionForUserNamed(symbol)) {
       return symbol;
     }
     // Skip already used parameter indices in global variables

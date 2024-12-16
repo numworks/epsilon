@@ -42,8 +42,8 @@ void InputController::initCell(ParameterCell, void* cell, int index) {
   c->setDelegate(this);
 }
 
-void InputController::InputTitle(Escher::ViewController* vc,
-                                 Statistic* statistic, char* titleBuffer,
+void InputController::InputTitle(const Escher::ViewController* vc,
+                                 const Statistic* statistic, char* titleBuffer,
                                  size_t titleBufferSize) {
   if (statistic->hasHypothesisParameters()) {
     /* H0:<first symbol>=<firstParam>
@@ -82,7 +82,7 @@ void InputController::InputTitle(Escher::ViewController* vc,
   }
 }
 
-ViewController::TitlesDisplay InputController::titlesDisplay() {
+ViewController::TitlesDisplay InputController::titlesDisplay() const {
   return m_statistic->hasHypothesisParameters()
              ? m_statistic->canChooseDataset()
                    ? TitlesDisplay::DisplayLastAndThirdToLast

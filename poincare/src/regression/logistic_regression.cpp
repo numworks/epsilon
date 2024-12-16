@@ -21,8 +21,8 @@ UserExpression LogisticRegression::privateExpression(
        .KC = UserExpression::FromDouble(modelCoefficients[2])});
 }
 
-double LogisticRegression::evaluate(const double* modelCoefficients,
-                                    double x) const {
+double LogisticRegression::privateEvaluate(
+    const Coefficients& modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -50,9 +50,9 @@ double LogisticRegression::levelSet(const double* modelCoefficients,
   return -std::log(lnArgument) / b;
 }
 
-double LogisticRegression::partialDerivate(const double* modelCoefficients,
-                                           int derivateCoefficientIndex,
-                                           double x) const {
+double LogisticRegression::partialDerivate(
+    const Coefficients& modelCoefficients, int derivateCoefficientIndex,
+    double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -70,8 +70,8 @@ double LogisticRegression::partialDerivate(const double* modelCoefficients,
   return 1.0 / denominator;
 }
 
-void LogisticRegression::specializedInitCoefficientsForFit(
-    double* modelCoefficients, double defaultValue,
+Regression::Coefficients LogisticRegression::specializedInitCoefficientsForFit(
+    double defaultValue, size_t /* attemptNumber */,
     const Series* series) const {
   StatisticsDatasetFromSeriesColumn xColumn(series, 0);
   StatisticsDatasetFromSeriesColumn yColumn(series, 1);
@@ -124,9 +124,7 @@ void LogisticRegression::specializedInitCoefficientsForFit(
     a = defaultValue;
   }
 
-  modelCoefficients[0] = a;
-  modelCoefficients[1] = b;
-  modelCoefficients[2] = c;
+  return {a, b, c};
 }
 
 }  // namespace Poincare::Regression

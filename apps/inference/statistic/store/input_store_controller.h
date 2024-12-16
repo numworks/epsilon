@@ -21,12 +21,12 @@ class InputStoreController : public InputCategoricalController,
   bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
-  const char* title() override {
+  const char* title() const override {
     InputController::InputTitle(this, m_statistic, m_titleBuffer,
                                 InputController::k_titleBufferSize);
     return m_titleBuffer;
   }
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return m_statistic->subApp() == Statistic::SubApp::Interval
                ? ViewController::TitlesDisplay::DisplayLastTitle
            : m_statistic->canChooseDataset()
@@ -64,7 +64,7 @@ class InputStoreController : public InputCategoricalController,
       : public Escher::StackViewController::Default {
    public:
     using Escher::StackViewController::Default::Default;
-    TitlesDisplay titlesDisplay() override { return m_titlesDisplay; }
+    TitlesDisplay titlesDisplay() const override { return m_titlesDisplay; }
     void setTitlesDisplay(TitlesDisplay titlesDisplay) {
       m_titlesDisplay = titlesDisplay;
     }
@@ -113,7 +113,9 @@ class InputStoreController : public InputCategoricalController,
    * stack view controller (gray scales). */
   PrivateStackViewController m_secondStackController;
   StoreColumnParameterController m_storeParameterController;
-  char m_titleBuffer[InputController::k_titleBufferSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[InputController::k_titleBufferSize];
   Statistic::SubApp m_loadedSubApp;
   DistributionType m_loadedDistribution;
   SignificanceTestType m_loadedTest;

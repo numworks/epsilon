@@ -1,8 +1,10 @@
 #ifndef POINCARE_VARIABLE_CONTEXT_H
 #define POINCARE_VARIABLE_CONTEXT_H
 
+#include <poincare/expression.h>
+#include <poincare/helpers/symbol.h>
+
 #include "context_with_parent.h"
-#include "symbol_abstract.h"
 
 namespace Poincare {
 
@@ -15,19 +17,19 @@ class TreeVariableContext : public ContextWithParent {
       : ContextWithParent(parentContext), m_name(name) {}
   /* Building a self referential context is a trick for parsing parametered
    * expression. */
-  TreeVariableContext(SymbolAbstract symbol, Context* parentContext)
+  TreeVariableContext(UserExpression symbol, Context* parentContext)
       : ContextWithParent(parentContext),
-        m_name(symbol.name()),
+        m_name(SymbolHelper::GetName(symbol)),
         m_value(symbol) {}
 
   // Context
-  SymbolAbstractType expressionTypeForIdentifier(const char* identifier,
-                                                 int length) override;
+  UserNamedType expressionTypeForIdentifier(const char* identifier,
+                                            int length) override;
   // The provided expression needs to outlive the VariableContext
-  bool setExpressionForSymbolAbstract(const Internal::Tree* expression,
-                                      const Internal::Tree* symbol) override;
+  bool setExpressionForUserNamed(const Internal::Tree* expression,
+                                 const Internal::Tree* symbol) override;
 
-  const Internal::Tree* expressionForSymbolAbstract(
+  const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) override;
 
  private:

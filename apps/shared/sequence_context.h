@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/old/context_with_parent.h>
-#include <poincare/old/symbol.h>
 #include <poincare/src/expression/sequence_cache.h>
 
 #include "sequence_store.h"
@@ -24,9 +23,9 @@ class SequenceContext : public Poincare::ContextWithParent {
    * already defined.
    * So expressionTypeForIdentifier returns Type::Sequence for u, v and w,
    * and calls the parent context in other cases.
-   * The other methods (setExpressionForSymbolAbstract and
-   * expressionForSymbolAbstract) always call the parent context. */
-  Poincare::Context::SymbolAbstractType expressionTypeForIdentifier(
+   * The other methods (setExpressionForUserNamed and
+   * expressionForUserNamed) always call the parent context. */
+  Poincare::Context::UserNamedType expressionTypeForIdentifier(
       const char* identifier, int length) override;
 
 #if POINCARE_CONTEXT_TIDY_POOL

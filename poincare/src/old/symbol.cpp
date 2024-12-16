@@ -88,27 +88,6 @@ bool SymbolNode::isSystemSymbol() const {
   return result;
 }
 
-Symbol Symbol::Builder(const char* name, int length) {
-  if (AliasesLists::k_thetaAliases.contains(name, length)) {
-    name = AliasesLists::k_thetaAliases.mainAlias();
-    length = strlen(name);
-  }
-  // UserSequence  UserSymbol
-  JuniorExpression expr =
-      JuniorExpression::Builder(Internal::SharedTreeStack->pushUserSymbol(
-          name, static_cast<size_t>(length + 1)));
-  return static_cast<Symbol&>(expr);
-}
-
-Symbol Symbol::Builder(CodePoint name) {
-  constexpr size_t bufferSize = CodePoint::MaxCodePointCharLength + 1;
-  char buffer[bufferSize];
-  size_t codePointLength =
-      UTF8Helper::WriteCodePoint(buffer, bufferSize - 1, name);
-  assert(codePointLength < bufferSize);
-  return Symbol::Builder(buffer, codePointLength);
-}
-
 OExpression Symbol::shallowReduce(ReductionContext reductionContext) {
   assert(false);
   return replaceWithUndefinedInPlace();

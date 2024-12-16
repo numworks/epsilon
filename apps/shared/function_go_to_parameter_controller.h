@@ -13,7 +13,9 @@ class FunctionGoToParameterController : public GoToParameterController {
       InteractiveCurveViewController* graphController,
       InteractiveCurveViewRange* graphRange, CurveViewCursor* cursor);
 
-  const char* title() override { return I18n::translate(I18n::Message::Goto); }
+  const char* title() const override {
+    return I18n::translate(I18n::Message::Goto);
+  }
   void setRecord(Ion::Storage::Record record);
 
  protected:

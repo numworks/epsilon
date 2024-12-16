@@ -43,6 +43,8 @@ class GraphControllerHelper {
                                     OMG::HorizontalDirection direction,
                                     int functionsCount,
                                     Ion::Storage::Record record) {}
+
+  virtual void setCursorIsRing(bool isRing) {}
 };
 
 }  // namespace Graph

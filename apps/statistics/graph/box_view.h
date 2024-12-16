@@ -16,28 +16,34 @@ namespace Statistics {
 
 class BoxPlotPolicy {
  public:
-  constexpr static KDCoordinate BoxHeight(int numberOfValideSeries) {
-    return numberOfValideSeries > 2 ? k_threeBoxesHeight : k_twoBoxesHeight;
+  constexpr static KDCoordinate BoxHeight(int numberOfValidSeries) {
+    assert(numberOfValidSeries <= Store::k_numberOfSeries);
+    return k_boxesHeights[numberOfValidSeries - 1];
   }
   constexpr static KDCoordinate BoxVerticalMargin() {
     return k_verticalSideSize;
   }
-  constexpr static KDCoordinate BoxFrameHeight(int numberOfValideSeries) {
-    return k_verticalSideSize + BoxHeight(numberOfValideSeries) +
+  constexpr static KDCoordinate BoxFrameHeight(int numberOfValidSeries) {
+    return k_verticalSideSize + BoxHeight(numberOfValidSeries) +
            k_verticalSideSize;
   }
 
  protected:
   constexpr static KDColor k_selectedColor = Escher::Palette::YellowDark;
   constexpr static KDColor k_unfocusedColor = Escher::Palette::GrayMiddle;
-  constexpr static KDCoordinate k_twoBoxesHeight = 40;
-  constexpr static KDCoordinate k_threeBoxesHeight = 27;
+
+  constexpr static std::array<KDCoordinate, Store::k_numberOfSeries>
+      k_boxesHeights = {40, 40, 27, 18, 15, 11};
+
   constexpr static KDCoordinate k_quantileBarWidth = 2;
   constexpr static Shared::Dots::Size k_outlierDotSize =
       Shared::Dots::Size::Small;
   constexpr static KDCoordinate k_outlierSize = Shared::Dots::SmallDotDiameter;
-  static_assert(k_outlierSize <= std::max(k_twoBoxesHeight, k_threeBoxesHeight),
+
+  static_assert(k_outlierSize <= *std::min_element(k_boxesHeights.cbegin(),
+                                                   k_boxesHeights.cend()),
                 "Outliers are not expected to be taller than the box.");
+
   constexpr static KDCoordinate k_chevronMargin = 2;
   // A calculation may be a quantile or an outlier. It has chevrons if selected.
   constexpr static KDCoordinate k_biggestCalculationWidth =

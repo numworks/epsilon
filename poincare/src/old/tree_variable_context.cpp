@@ -1,6 +1,5 @@
-#include <poincare/old/symbol.h>
+#include <omg/utf8_helper.h>
 #include <poincare/old/tree_variable_context.h>
-#include <poincare/old/undefined.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/symbol.h>
 
@@ -8,16 +7,16 @@
 
 namespace Poincare {
 
-Context::SymbolAbstractType TreeVariableContext::expressionTypeForIdentifier(
+Context::UserNamedType TreeVariableContext::expressionTypeForIdentifier(
     const char* identifier, int length) {
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
           identifier, length, m_name) == 0) {
-    return SymbolAbstractType::Symbol;
+    return UserNamedType::Symbol;
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
-bool TreeVariableContext::setExpressionForSymbolAbstract(
+bool TreeVariableContext::setExpressionForUserNamed(
     const Internal::Tree* expression, const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
@@ -28,10 +27,10 @@ bool TreeVariableContext::setExpressionForSymbolAbstract(
     m_value = expression;
     return true;
   }
-  return ContextWithParent::setExpressionForSymbolAbstract(expression, symbol);
+  return ContextWithParent::setExpressionForUserNamed(expression, symbol);
 }
 
-const Internal::Tree* TreeVariableContext::expressionForSymbolAbstract(
+const Internal::Tree* TreeVariableContext::expressionForUserNamed(
     const Internal::Tree* symbol) {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
@@ -40,7 +39,7 @@ const Internal::Tree* TreeVariableContext::expressionForSymbolAbstract(
     }
     return Internal::KTrees::KUndef;
   }
-  return ContextWithParent::expressionForSymbolAbstract(symbol);
+  return ContextWithParent::expressionForUserNamed(symbol);
 }
 
 }  // namespace Poincare

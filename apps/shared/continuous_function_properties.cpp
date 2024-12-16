@@ -14,33 +14,31 @@ using namespace Poincare::CodePoints;
 
 namespace Shared {
 
-bool ContinuousFunctionProperties::parameterAtIndexIsEditable(int index) const {
+ContinuousFunctionProperties::EditableParametersType
+ContinuousFunctionProperties::editableParameters() const {
   assert(isEnabled());
-  assert(index < numberOfCurveParameters());
   CurveParameterType curveParameterType = getCurveParameterType();
   switch (curveParameterType) {
     case CurveParameterType::CartesianFunction:
     case CurveParameterType::Line:
-      return true;
+      return EditableParametersType::Both;
     case CurveParameterType::VerticalLine:
-      return index == 1;
+      return EditableParametersType::Image;
     case CurveParameterType::HorizontalLine:
     case CurveParameterType::Parametric:
     case CurveParameterType::Polar:
     case CurveParameterType::InversePolar:
-      return index == 0;
+      return EditableParametersType::Abscissa;
     default:
-      return false;
+      return EditableParametersType::None;
   }
 }
 
-bool ContinuousFunctionProperties::parameterAtIndexIsPreimage(int index) const {
+bool ContinuousFunctionProperties::canHavePreimage() const {
   assert(isEnabled());
-  assert(index < numberOfCurveParameters());
   CurveParameterType curveParameterType = getCurveParameterType();
   return (curveParameterType == CurveParameterType::CartesianFunction ||
-          curveParameterType == CurveParameterType::Line) &&
-         index == 1;
+          curveParameterType == CurveParameterType::Line);
 }
 
 ContinuousFunctionProperties::AreaType ContinuousFunctionProperties::areaType()

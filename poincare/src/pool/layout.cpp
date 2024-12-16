@@ -138,7 +138,7 @@ Layout Layout::Concatenate(Layout layout1, Layout layout2) {
 
 void Layout::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
                   Internal::LayoutCursor* cursor) {
-  node()->draw(ctx, p, style, cursor);
+  object()->draw(ctx, p, style, cursor);
 }
 
 // Rendering
@@ -149,6 +149,11 @@ void LayoutObject::draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,
       tree(), ctx, p, style,
       cursor ? cursor->simpleCursor() : Internal::SimpleLayoutCursor(),
       cursor ? cursor->selection() : Internal::LayoutSelection());
+}
+
+int Layout::numberOfDescendants(bool includeSelf) const {
+  assert(tree());
+  return tree()->numberOfDescendants(includeSelf);
 }
 
 Layout Layout::clone() const {

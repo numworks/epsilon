@@ -73,8 +73,10 @@ static constexpr int OperatorPriority(TypeBlock type) {
     case Type::LogicalNot:
       return 12;
     case Type::LogicalAnd:
+    case Type::LogicalNand:
       return 13;
     case Type::LogicalOr:
+    case Type::LogicalNor:
     case Type::LogicalXor:
       return 14;
 
@@ -674,6 +676,8 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::LogicalOr:
     case Type::LogicalXor:
     case Type::LogicalNot:
+    case Type::LogicalNor:
+    case Type::LogicalNand:
       if (!type.isLogicalNot()) {
         layoutExpression(layoutParent, expression->nextNode(),
                          OperatorPriority(type));

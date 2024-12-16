@@ -45,25 +45,26 @@ void AbstractPlotView::drawRect(KDContext* ctx, KDRect rect) const {
   drawPlot(ctx, rect);
 }
 
-float AbstractPlotView::floatToFloatPixel(Axis axis, float f) const {
-  float res = axis == Axis::Horizontal ? (f - m_range->xMin()) / pixelWidth()
-                                       : (m_range->yMax() - f) / pixelHeight();
+float AbstractPlotView::floatToFloatPixel(OMG::Axis axis, float f) const {
+  float res = axis == OMG::Axis::Horizontal
+                  ? (f - m_range->xMin()) / pixelWidth()
+                  : (m_range->yMax() - f) / pixelHeight();
   return std::clamp(res, static_cast<float>(KDCOORDINATE_MIN),
                     static_cast<float>(KDCOORDINATE_MAX));
 }
 
-KDCoordinate AbstractPlotView::floatToKDCoordinatePixel(Axis axis,
+KDCoordinate AbstractPlotView::floatToKDCoordinatePixel(OMG::Axis axis,
                                                         float f) const {
   return std::round(floatToFloatPixel(axis, f));
 }
 
-float AbstractPlotView::pixelToFloat(Axis axis, KDCoordinate p) const {
-  return (axis == Axis::Horizontal) ? m_range->xMin() + p * pixelWidth()
-                                    : m_range->yMax() - p * pixelHeight();
+float AbstractPlotView::pixelToFloat(OMG::Axis axis, KDCoordinate p) const {
+  return (axis == OMG::Axis::Horizontal) ? m_range->xMin() + p * pixelWidth()
+                                         : m_range->yMax() - p * pixelHeight();
 }
 
 void AbstractPlotView::drawStraightSegment(KDContext* ctx, KDRect rect,
-                                           Axis parallel, float position,
+                                           OMG::Axis parallel, float position,
                                            float min, float max, KDColor color,
                                            KDCoordinate thickness,
                                            KDCoordinate dashSize) const {
@@ -73,7 +74,7 @@ void AbstractPlotView::drawStraightSegment(KDContext* ctx, KDRect rect,
   min = std::clamp(min, fmin, fmax);
   max = std::clamp(max, fmin, fmax);
 
-  KDCoordinate p = floatToKDCoordinatePixel(OtherAxis(parallel), position);
+  KDCoordinate p = floatToKDCoordinatePixel(OMG::OtherAxis(parallel), position);
   KDCoordinate a = floatToKDCoordinatePixel(parallel, min);
   KDCoordinate b = floatToKDCoordinatePixel(parallel, max);
   if (a > b) {
@@ -97,7 +98,7 @@ void AbstractPlotView::drawStraightSegment(KDContext* ctx, KDRect rect,
 #endif
   if (dashSize <= 0 || 2 * dashSize > b - a) {
     dashSize = b - a;
-    KDRect lineRect = (parallel == Axis::Horizontal)
+    KDRect lineRect = (parallel == OMG::Axis::Horizontal)
                           ? KDRect(a, p, dashSize, thickness)
                           : KDRect(p, a, thickness, dashSize);
     ctx->fillRect(lineRect, color);
@@ -111,7 +112,7 @@ void AbstractPlotView::drawStraightSegment(KDContext* ctx, KDRect rect,
                    static_cast<float>(numberOfDashes);
   for (int d = 0; d <= numberOfDashes; d++) {
     int i = std::round(interval * d) + a;
-    KDRect rectangle = parallel == Axis::Horizontal
+    KDRect rectangle = parallel == OMG::Axis::Horizontal
                            ? KDRect(i, p, dashSize, thickness)
                            : KDRect(p, i, thickness, dashSize);
     ctx->fillRect(rectangle.intersectedWith(rect), color);
@@ -238,8 +239,8 @@ void AbstractPlotView::drawRing(KDContext* ctx, KDRect rect, Dots::Size size,
 }
 
 double AbstractPlotView::angleFromPoint(KDPoint point) const {
-  double x = pixelToFloat(Axis::Horizontal, point.x());
-  double y = pixelToFloat(Axis::Vertical, point.y());
+  double x = pixelToFloat(OMG::Axis::Horizontal, point.x());
+  double y = pixelToFloat(OMG::Axis::Vertical, point.y());
   double angle = std::atan2(y, x);
   return angle < 0 ? angle + 2 * M_PI : angle;
 }
@@ -259,8 +260,9 @@ void AbstractPlotView::drawArc(KDContext* ctx, KDRect rect,
   bool isLastSegment = false;
   double tMin = 0;
   double tMax = 2 * M_PI;
-  if (!rect.contains(KDPoint(floatToKDCoordinatePixel(Axis::Horizontal, 0.f),
-                             floatToKDCoordinatePixel(Axis::Vertical, 0.f)))) {
+  if (!rect.contains(
+          KDPoint(floatToKDCoordinatePixel(OMG::Axis::Horizontal, 0.f),
+                  floatToKDCoordinatePixel(OMG::Axis::Vertical, 0.f)))) {
     // TODO: factorise with Graph::GraphView::drawPolar
     double t1 = angleFromPoint(rect.bottomRight());
     double t2 = angleFromPoint(rect.topRight());
@@ -322,8 +324,8 @@ void AbstractPlotView::drawArc(KDContext* ctx, KDRect rect,
     }
     previousX = x;
     previousY = y;
-    x = floatToFloatPixel(Axis::Horizontal, std::cos(t) * radius);
-    y = floatToFloatPixel(Axis::Vertical, std::sin(t) * radius);
+    x = floatToFloatPixel(OMG::Axis::Horizontal, std::cos(t) * radius);
+    y = floatToFloatPixel(OMG::Axis::Vertical, std::sin(t) * radius);
     if (std::isnan(previousX)) {
       continue;
     }
@@ -336,14 +338,15 @@ void AbstractPlotView::drawArc(KDContext* ctx, KDRect rect,
   } while (!isLastSegment);
 }
 
-void AbstractPlotView::drawTick(KDContext* ctx, KDRect rect, Axis perpendicular,
-                                float position, KDColor color) const {
-  Axis parallel = OtherAxis(perpendicular);
+void AbstractPlotView::drawTick(KDContext* ctx, KDRect rect,
+                                OMG::Axis perpendicular, float position,
+                                KDColor color) const {
+  OMG::Axis parallel = OMG::OtherAxis(perpendicular);
   KDCoordinate p = floatToKDCoordinatePixel(perpendicular, position);
   KDCoordinate tickStart =
       floatToKDCoordinatePixel(parallel, 0.f) - k_tickHalfLength;
   KDCoordinate tickLength = 2 * k_tickHalfLength + 1;
-  KDRect tickRect = perpendicular == Axis::Horizontal
+  KDRect tickRect = perpendicular == OMG::Axis::Horizontal
                         ? KDRect(p, tickStart, 1, tickLength)
                         : KDRect(tickStart, p, tickLength, 1);
   ctx->fillRect(tickRect, color);

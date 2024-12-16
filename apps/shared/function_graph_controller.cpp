@@ -103,7 +103,7 @@ void FunctionGraphController::FunctionSelectionController::fillCellForRow(
   CurveSelectionCellWithChevron* myCell =
       static_cast<CurveSelectionCellWithChevron*>(cell);
   myCell->setColor(function->color());
-  myCell->label()->setLayout(function->layout().clone());
+  myCell->label()->setLayout(nameLayoutAtIndex(row).clone());
 }
 
 void FunctionGraphController::FunctionSelectionController::

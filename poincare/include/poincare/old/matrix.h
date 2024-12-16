@@ -74,10 +74,6 @@ class OMatrix final : public OExpression {
   // rank returns -1 if the rank cannot be computed
   int rank(Context* context, bool forceCanonization = false);
   OExpression createTrace();
-  /* Inverse the array in-place. Array has to be given in the form
-   * array[row_index][column_index] */
-  template <typename T>
-  static int ArrayInverse(T* array, int numberOfRows, int numberOfColumns);
   static OMatrix CreateIdentity(int dim);
   OMatrix createTranspose() const;
   OExpression createRef(const ReductionContext& reductionContext,
@@ -129,10 +125,6 @@ class OMatrix final : public OExpression {
   OMatrix rowCanonize(const ReductionContext& reductionContext,
                       bool* canonizationSuccess, OExpression* determinant,
                       bool reduced = true, bool forceCanonization = false);
-  // Row canonize the array in place
-  template <typename T>
-  static void ArrayRowCanonize(T* array, int numberOfRows, int numberOfColumns,
-                               T* c = nullptr, bool reduced = true);
 };
 
 }  // namespace Poincare

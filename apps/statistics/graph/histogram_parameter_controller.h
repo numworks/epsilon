@@ -19,7 +19,7 @@ class HistogramParameterController
                                  Store* store);
 
   void viewWillAppear() override;
-  const char* title() override;
+  const char* title() const override;
   int numberOfRows() const override { return 1 + k_numberOfCells; }
   KDCoordinate nonMemoizedRowHeight(int row) override;
 

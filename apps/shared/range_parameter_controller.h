@@ -19,8 +19,6 @@ namespace Shared {
 class RangeParameterController
     : public Escher::ExplicitSelectableListViewController {
  public:
-  using Axis = SingleInteractiveCurveViewRangeController::Axis;
-
   using MenuCell =
       Escher::MenuCell<Escher::MessageTextView, Escher::OneLineBufferTextView<>,
                        Escher::ChevronView>;
@@ -28,7 +26,9 @@ class RangeParameterController
       Escher::Responder* parentResponder,
       InteractiveCurveViewRange* interactiveCurveViewRange);
 
-  const char* title() override { return I18n::translate(I18n::Message::Axis); }
+  const char* title() const override {
+    return I18n::translate(I18n::Message::Axis);
+  }
 
   int numberOfRows() const override { return 5; }
   Escher::HighlightCell* cell(int row) override;

@@ -22,7 +22,7 @@ TangentGraphController::TangentGraphController(
       m_graphRange(curveViewRange),
       m_drawTangent(false) {}
 
-const char* TangentGraphController::title() {
+const char* TangentGraphController::title() const {
   I18n::Message message = m_drawTangent ? I18n::Message::Tangent
                                         : I18n::Message::CartesianSlopeFormula;
   return I18n::translate(message);

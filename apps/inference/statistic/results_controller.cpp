@@ -26,7 +26,7 @@ ResultsController::ResultsController(
                  &ResultsController::ButtonAction, this),
              ButtonCell::Style::EmbossedLight) {}
 
-ViewController::TitlesDisplay ResultsController::titlesDisplay() {
+ViewController::TitlesDisplay ResultsController::titlesDisplay() const {
   if (m_statistic->subApp() == Statistic::SubApp::Interval ||
       (m_statistic->significanceTestType() ==
            SignificanceTestType::Categorical &&
@@ -38,7 +38,7 @@ ViewController::TitlesDisplay ResultsController::titlesDisplay() {
              : ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
 
-const char* ResultsController::title() {
+const char* ResultsController::title() const {
   m_titleBuffer[0] = 0;
   StackViewController* stackViewControllerResponder =
       static_cast<StackViewController*>(parentResponder());

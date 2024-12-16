@@ -23,7 +23,7 @@ bool ResultsGoodnessTabController::handleEvent(Ion::Events::Event event) {
 
 // ResultsGoodnessTabController::MainResultsController
 
-const char* ResultsGoodnessTabController::MainResultsController::title() {
+const char* ResultsGoodnessTabController::MainResultsController::title() const {
   m_statistic->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), true);
   return m_titleBuffer;
 }

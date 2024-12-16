@@ -3,7 +3,8 @@
 
 #include <omg/enums.h>
 #include <omg/float.h>
-#include <poincare/old/expression_node.h>
+#include <poincare/old/computation_context.h>
+#include <poincare/old/pool_handle.h>
 #include <poincare/print_float.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/test/float_helper.h>

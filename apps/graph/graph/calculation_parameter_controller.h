@@ -29,12 +29,12 @@ class CalculationParameterController
                                  GraphView* graphView, BannerView* bannerView,
                                  Shared::InteractiveCurveViewRange* range,
                                  Shared::CurveViewCursor* cursor);
-  const char* title() override;
+  const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void fillAreaCell();
   int numberOfRows() const override { return k_numberOfRows; }
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastTwoTitles;
   }
 

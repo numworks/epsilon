@@ -19,7 +19,7 @@ IntersectionGraphController::IntersectionGraphController(
                                  curveViewRange, cursor,
                                  I18n::Message::NoIntersectionFound) {}
 
-const char* IntersectionGraphController::title() {
+const char* IntersectionGraphController::title() const {
   return I18n::translate(I18n::Message::Intersection);
 }
 
@@ -58,8 +58,9 @@ void IntersectionGraphController::reloadBannerView() {
 }
 
 Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(
-    double start, double max, Poincare::Context* context) {
-  PointOfInterest p = computeAtLeastOnePointOfInterest(start, max, context);
+    double start, double max, Poincare::Context* context, bool stretch) {
+  PointOfInterest p =
+      computeAtLeastOnePointOfInterest(start, max, context, stretch);
   if (!p.isUninitialized()) {
     m_intersectedRecord = Ion::Storage::Record(p.data);
   }

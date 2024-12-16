@@ -62,9 +62,6 @@ $(addprefix ion/src/shared/, \
   keyboard_queue.cpp \
   layout_events/epsilon/layout_events.cpp \
   stack_position.cpp \
-  storage/file_system.cpp \
-  storage/record_name_verifier.cpp \
-  storage/record.cpp \
 ) \
 $(addprefix ion/src/shared/dummy/, \
   authentication.cpp \
@@ -81,6 +78,7 @@ $(addprefix ion/src/shared/dummy/, \
   exam_bytes.cpp \
   external_apps.cpp \
   fcc_id.cpp \
+  init.cpp \
   keyboard.cpp \
   led.cpp \
   platform_info.cpp \
@@ -93,7 +91,6 @@ $(addprefix ion/src/shared/dummy/, \
 $(addprefix ion/src/simulator/shared/, \
   crc32.cpp \
   device_name.cpp \
-  init.cpp \
   random.cpp \
 ) \
 )
@@ -142,7 +139,7 @@ $(call all_objects_for,$(SOURCES_poincarejs)): $(KANDINSKY_fonts_dependencies)
 $(call create_goal,poincare, \
   kandinsky \
   omg \
-  poincare.js_bridge \
+  poincare.js_bridge.nostorage \
   poincarejs \
 )
 

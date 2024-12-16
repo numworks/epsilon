@@ -13,12 +13,12 @@ class PreimageParameterController : public Shared::GoToParameterController {
                               Shared::InteractiveCurveViewRange* graphRange,
                               Shared::CurveViewCursor* cursor,
                               PreimageGraphController* preimageGraphController);
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::Preimage);
   }
   void setRecord(Ion::Storage::Record record) { m_record = record; }
   void viewWillAppear() override;
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastThreeTitles;
   }
 

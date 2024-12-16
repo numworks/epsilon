@@ -62,7 +62,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
   }
   // Get Definition
   const Tree* definition =
-      context ? context->expressionForSymbolAbstract(e) : nullptr;
+      context ? context->expressionForUserNamed(e) : nullptr;
   if (symbolic == SymbolicComputation::ReplaceAllSymbols && !definition) {
     e->cloneTreeOverTree(KNotDefined);
     return true;
@@ -80,18 +80,6 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
   // Replace node again in case it has been replaced with another symbol
   ShallowReplaceUserNamed(e, context, symbolic);
   return true;
-}
-
-ProjectionContext Projection::ContextFromSettings() {
-  return ProjectionContext{
-      .m_complexFormat =
-          Poincare::Preferences::SharedPreferences()->complexFormat(),
-      .m_angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
-      .m_strategy = Strategy::Default,
-      .m_dimension = Dimension(),
-      .m_unitFormat = UnitFormat::Metric,
-      // TODO_PCJ: forward SharedGlobalPreferences()->unitFormat() somehow
-  };
 }
 
 bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
@@ -130,7 +118,7 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
         default: {
           const Tree* definition =
               projectionContext.m_context
-                  ? projectionContext.m_context->expressionForSymbolAbstract(
+                  ? projectionContext.m_context->expressionForUserNamed(
                         descendant)
                   : nullptr;
           assert(definition != e);

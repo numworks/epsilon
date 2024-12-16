@@ -19,11 +19,16 @@ UserExpression LinearRegression::privateExpression(
        .KB = UserExpression::FromDouble(modelCoefficients[1])});
 }
 
-void LinearRegression::privateFit(const Series* series,
-                                  double* modelCoefficients,
-                                  Context* context) const {
-  modelCoefficients[slopeCoefficientIndex()] = series->slope();
-  modelCoefficients[yInterceptCoefficientIndex()] = series->yIntercept();
+Regression::Coefficients LinearRegression::privateFit(const Series* series,
+                                                      Context* context) const {
+  Coefficients result;
+  size_t slopeIndex = slopeCoefficientIndex();
+  size_t yInterceptIndex = yInterceptCoefficientIndex();
+  assert((slopeIndex == 0 && yInterceptIndex == 1) ||
+         (slopeIndex == 1 && yInterceptIndex == 0));
+  result[slopeIndex] = series->slope();
+  result[yInterceptIndex] = series->yIntercept();
+  return result;
 }
 
 }  // namespace Poincare::Regression

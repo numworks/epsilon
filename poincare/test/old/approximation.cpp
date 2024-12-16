@@ -1,8 +1,4 @@
 #include <apps/shared/global_context.h>
-#include <poincare/old/constant.h>
-#include <poincare/old/float.h>
-#include <poincare/old/infinity.h>
-#include <poincare/old/undefined.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/k_tree.h>

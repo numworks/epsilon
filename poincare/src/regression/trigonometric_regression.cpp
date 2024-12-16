@@ -2,9 +2,9 @@
 
 #include <assert.h>
 #include <poincare/k_tree.h>
-#include <poincare/new_trigonometry.h>
 #include <poincare/numeric/statistics.h>
 #include <poincare/preferences.h>
+#include <poincare/trigonometry.h>
 
 #include <cmath>
 
@@ -12,9 +12,8 @@
 
 namespace Poincare::Regression {
 
-static double toRadians() {
-  return M_PI / Poincare::NewTrigonometry::PiInAngleUnit(
-                    Poincare::Preferences::SharedPreferences()->angleUnit());
+double TrigonometricRegression::toRadiansCoeff() const {
+  return M_PI / Poincare::Trigonometry::PiInAngleUnit(m_angleUnit);
 }
 
 API::UserExpression TrigonometricRegression::privateExpression(
@@ -28,20 +27,20 @@ API::UserExpression TrigonometricRegression::privateExpression(
        .KD = API::UserExpression::FromDouble(modelCoefficients[3])});
 }
 
-double TrigonometricRegression::evaluate(const double* modelCoefficients,
-                                         double x) const {
+double TrigonometricRegression::privateEvaluate(
+    const Coefficients& modelCoefficients, double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
   double d = modelCoefficients[3];
-  double radian = toRadians();
+  double radian = toRadiansCoeff();
   // sin() is here defined for radians, so b*x+c are converted in radians.
   return a * std::sin(radian * (b * x + c)) + d;
 }
 
-double TrigonometricRegression::partialDerivate(const double* modelCoefficients,
-                                                int derivateCoefficientIndex,
-                                                double x) const {
+double TrigonometricRegression::partialDerivate(
+    const Coefficients& modelCoefficients, int derivateCoefficientIndex,
+    double x) const {
   if (derivateCoefficientIndex == 3) {
     // Derivate with respect to d: 1
     return 1.0;
@@ -50,7 +49,7 @@ double TrigonometricRegression::partialDerivate(const double* modelCoefficients,
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double radian = toRadians();
+  double radian = toRadiansCoeff();
   /* sin() and cos() are here defined for radians, so b*x+c are converted in
    * radians. The added coefficient also appear in derivatives. */
   if (derivateCoefficientIndex == 0) {
@@ -159,12 +158,12 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   *yMaxExtremum = yMax;
 }
 
-void TrigonometricRegression::specializedInitCoefficientsForFit(
-    double* modelCoefficients, double defaultValue,
-    const Series* series) const {
+Regression::Coefficients
+TrigonometricRegression::specializedInitCoefficientsForFit(
+    double defaultValue, size_t attemptNumber, const Series* series) const {
   /* With trigonometric model, a good fit heavily depends on good starting
    * parameters. We try to find two successive extrema, and from them deduce the
-   * amplitude, period, y-delta and phase.
+   * amplitude, frequency, y-delta and phase.
    * Since we look for "good" extrema (having the 2 previous/next values
    * smaller/bigger), this should be pretty resilient to outliers as long as
    * there are enough data points.
@@ -173,35 +172,49 @@ void TrigonometricRegression::specializedInitCoefficientsForFit(
   double xMin, xMax, yMin, yMax;
   findExtrema(&xMin, &xMax, &yMin, &yMax, series);
   // Init the "amplitude" coefficient a
-  modelCoefficients[0] = (yMax - yMin) / 2.0;
-  // Init the "period" coefficient b
-  double piInAngleUnit = Poincare::NewTrigonometry::PiInAngleUnit(
-      Poincare::Preferences::SharedPreferences()->angleUnit());
+  double a = (yMax - yMin) / 2.0;
+  // Init the "frequency" coefficient b
+  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(m_angleUnit);
   double period = 2.0 * std::fabs(xMax - xMin);
-  if (period > 0) {
-    /* b/(2*piInAngleUnit) is the frequency of the sine.
-     * With two successive extrema, we have the period, so we initialize b
-     * so that b*period = 2*piInAngleUnit . This helps preventing an overfitting
-     * regression with an excessive frequency. */
-    modelCoefficients[1] = (2.0 * piInAngleUnit) / period;
-  } else {
-    /* Without period, fall back on default value, taking into account the
-     * angleUnit to ensure consistent result across different angle units. */
-    modelCoefficients[1] = defaultValue * piInAngleUnit;
-  }
+  double b =
+      (period > 0)
+          ?
+          /* b/(2*piInAngleUnit) is the frequency of the sine.
+           * With two successive extrema, we have the period, so we initialize b
+           * so that b*period = 2*piInAngleUnit . This helps preventing an
+           * overfitting regression with an excessive frequency. */
+          (2.0 * piInAngleUnit) / period
+          :
+          /* Without period, fall back on default value, taking into account the
+           * angleUnit to ensure consistent result across different angle units.
+           */
+          defaultValue * piInAngleUnit;
+
   // Init the "Phase" coefficient c
   /* Choose c so that sin(b * xMax + c) is maximal. It must depend on the angle
    * unit */
-  modelCoefficients[2] = piInAngleUnit / 2 - modelCoefficients[1] * xMax;
+  double c = piInAngleUnit / 2 - b * xMax;
   // Init the "y-delta" coefficient d
-  modelCoefficients[k_numberOfCoefficients - 1] = (yMax + yMin) / 2.0;
+  double d = (yMax + yMin) / 2.0;
+
+  /* For each initialization of coefficients (indicated by attemptNumber), we
+   * modify the initial guess for the frequency parameter (b) which was computed
+   * earlier. Out of the total number of attempts
+   * (m_initialParametersIterations), half of the modified b values are higher
+   * than the initial b value, and half of the modified b values are lower than
+   * the initial b value. The multiplication coefficient increases or decreases
+   * geometrically with a certain geometrical factor.  */
+  b = b *
+      std::pow(k_frequencyMultiplicationFactor,
+               (int)attemptNumber + 1 - (int)m_initialParametersIterations / 2);
+
+  return {a, b, c, d};
 }
 
 void TrigonometricRegression::uniformizeCoefficientsFromFit(
-    double* modelCoefficients) const {
+    Coefficients& modelCoefficients) const {
   // Coefficients must be unique.
-  double piInAngleUnit = Poincare::NewTrigonometry::PiInAngleUnit(
-      Poincare::Preferences::SharedPreferences()->angleUnit());
+  double piInAngleUnit = Poincare::Trigonometry::PiInAngleUnit(m_angleUnit);
   // A must be positive.
   if (modelCoefficients[0] < 0.0) {
     // A * sin(B * x + C) + D = -A * sin(B * x + C + π) + D
@@ -229,6 +242,31 @@ void TrigonometricRegression::uniformizeCoefficientsFromFit(
       modelCoefficients[2] = piInAngleUnit;
     }
   }
+}
+
+bool TrigonometricRegression::isRegressionBetter(
+    double residualStandardDeviation1, double residualStandardDeviation2,
+    const Regression::Coefficients& modelCoefficients1,
+    const Regression::Coefficients& modelCoefficients2) const {
+  /* If model 1 has a significantly lower residual standard deviation than
+   * model 2, it is the best of the two models. */
+  constexpr double significantlyLowerFactor = 0.9;
+  if (residualStandardDeviation1 <
+      significantlyLowerFactor * residualStandardDeviation2) {
+    return true;
+  }
+  constexpr double sameRangeFactor = 1.1;
+  /* If model 1 has its residual standard deviation in the same range as the
+   * one of model 2, but has a lower frequency parameter (the "b" parameter),
+   * we prefer it to model 2. This is because we want to avoid trigonometric
+   * regressions which fits the data, but with a frequency that is for
+   * instance twice the "base" frequency that would also fit the data. */
+  if ((residualStandardDeviation1 <
+       sameRangeFactor * residualStandardDeviation2) &&
+      modelCoefficients1[1] < modelCoefficients2[1]) {
+    return true;
+  }
+  return false;
 }
 
 }  // namespace Poincare::Regression

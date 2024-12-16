@@ -24,7 +24,7 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
                    Shared::XYBannerView* bannerView,
                    Shared::CursorView* cursorView,
                    Shared::SequenceStore* sequenceStore);
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
   void setRecord(Ion::Storage::Record record);
   bool isRecordSuitable() const;

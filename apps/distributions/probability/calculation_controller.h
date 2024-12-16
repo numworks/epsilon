@@ -34,8 +34,8 @@ class CalculationController : public Escher::ViewController,
 
   /* ViewController */
   Escher::View* view() override { return &m_contentView; }
-  const char* title() override { return m_titleBuffer; }
-  TitlesDisplay titlesDisplay() override {
+  const char* title() const override { return m_titleBuffer; }
+  TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   void viewWillAppear() override;

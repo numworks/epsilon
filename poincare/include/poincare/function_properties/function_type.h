@@ -1,7 +1,7 @@
 #ifndef POINCARE_FUNCTION_PROPERTIES_FUNCTION_TYPE_H
 #define POINCARE_FUNCTION_PROPERTIES_FUNCTION_TYPE_H
 
-#include <poincare/old/junior_expression.h>
+#include <poincare/expression.h>
 
 namespace Poincare {
 

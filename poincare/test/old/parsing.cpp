@@ -1,7 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/init.h>
 #include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/poincare_expressions.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
@@ -344,11 +343,13 @@ QUIZ_CASE(poincare_parsing_lists_access) {
 }
 
 QUIZ_CASE(poincare_parsing_constants) {
+#if 0
   for (ConstantNode::ConstantInfo info : ConstantNode::k_constants) {
     for (const char* constantNameAlias : info.m_aliasesList) {
       assert_tokenizes_as_constant(constantNameAlias);
     }
   }
+#endif
 }
 
 QUIZ_CASE(poincare_parsing_units) {

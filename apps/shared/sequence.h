@@ -2,6 +2,7 @@
 #define APPS_SHARED_SEQUENCE_H
 
 #include <assert.h>
+#include <ion/storage/file_system.h>
 #include <poincare/code_points.h>
 #include <poincare/src/expression/sequence.h>
 #include <poincare/src/expression/sequence_cache.h>
@@ -145,6 +146,7 @@ class Sequence : public Function {
 
  private:
   constexpr static KDFont::Size k_layoutFont = KDFont::Size::Large;
+  constexpr static int k_maxNumberOfSteps = 10000;
 
   /* RecordDataBuffer is the layout of the data buffer of Record
    * representing a Sequence. See comment in

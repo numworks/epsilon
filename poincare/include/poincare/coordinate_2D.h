@@ -16,6 +16,10 @@ class Coordinate2D final {
     return Coordinate2D<C>(static_cast<C>(m_x), static_cast<C>(m_y));
   }
 
+  bool operator==(const Coordinate2D& other) const {
+    return (x() == other.x() && y() == other.y());
+  }
+
   T x() const { return m_x; }
   T y() const { return m_y; }
   void setX(T x) { m_x = x; }

@@ -32,12 +32,10 @@ void ComplexGraphPolicy::drawPlot(const AbstractPlotView* plotView,
                    0.f, th, Palette::GrayDark);
 
   // - Draw dashed segment to indicate real and imaginary
-  plotView->drawDashedStraightSegment(ctx, rect,
-                                      AbstractPlotView::Axis::Horizontal, imag,
+  plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Horizontal, imag,
                                       0.f, real, Palette::Red);
-  plotView->drawDashedStraightSegment(ctx, rect,
-                                      AbstractPlotView::Axis::Vertical, real,
-                                      0.f, imag, Palette::Red);
+  plotView->drawDashedStraightSegment(ctx, rect, OMG::Axis::Vertical, real, 0.f,
+                                      imag, Palette::Red);
 
   // - Draw complex position on the plan
   plotView->drawDot(ctx, rect, Dots::Size::Large,

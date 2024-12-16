@@ -16,8 +16,8 @@ class ParametersController : public Shared::FloatParameterController<double> {
   ParametersController(Escher::StackViewController* parentResponder,
                        Distribution* m_distribution,
                        CalculationController* calculationController);
-  const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  const char* title() const override;
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   bool handleEvent(Ion::Events::Event event) override;
@@ -38,7 +38,8 @@ class ParametersController : public Shared::FloatParameterController<double> {
 
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
-  bool hasUndefinedValue(const char* text, double floatValue) const override;
+  bool hasUndefinedValue(const char* text, double floatValue,
+                         int row) const override;
 
   constexpr static int k_maxNumberOfCells = 3;
   Escher::MessageTextView m_headerView;

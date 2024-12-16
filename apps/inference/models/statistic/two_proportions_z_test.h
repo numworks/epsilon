@@ -19,7 +19,7 @@ class TwoProportionsZTest : public Test {
   void tidy() override { m_p1p2Layout = m_p2Layout = Poincare::Layout(); }
 
   // Significance Test: TwoProportions
-  const char* hypothesisSymbol() override {
+  const char* hypothesisSymbol() const override {
     return TwoProportions::HypothesisSymbol();
   }
   void initParameters() override { TwoProportions::InitTestParameters(this); }

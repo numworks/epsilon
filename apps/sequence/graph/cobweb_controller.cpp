@@ -2,7 +2,6 @@
 
 #include <poincare/layout.h>
 #include <poincare/numeric/zoom.h>
-#include <poincare/old/sequence.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
@@ -35,7 +34,7 @@ CobwebController::CobwebController(Responder* parentResponder,
       m_step(-1),
       m_sequenceStore(sequenceStore) {}
 
-const char* CobwebController::title() {
+const char* CobwebController::title() const {
   return I18n::translate(I18n::Message::CobwebPlot);
 }
 

@@ -1,7 +1,5 @@
 #include <ion/storage/file_system.h>
-#include <poincare/old/derivative.h>
-#include <poincare/old/nonreal.h>
-#include <poincare/old/undefined.h>
+#include <poincare/expression.h>
 
 #include "helper.h"
 
@@ -19,7 +17,7 @@ void assert_reduces_to_formal_expression(
 QUIZ_CASE(poincare_derivative_formal) {
   // Undefined
   assert_reduces_to_formal_expression("diff(undef,x,x)", Undefined::Name());
-  assert_reduces_to_formal_expression("diff(nonreal,x,x)", Nonreal::Name());
+  assert_reduces_to_formal_expression("diff(nonreal,x,x)", NonReal::Name());
   assert_reduces_to_formal_expression("diff(inf,x,x)", Undefined::Name());
 
   // Constants
@@ -160,8 +158,8 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(ln(x),x,1)", "1");
   assert_reduces_for_approximation("diff(ln(x),x,2.2)", "5/11");
   assert_reduces_for_approximation("diff(ln(x),x,0)", Undefined::Name());
-  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", Nonreal::Name());
-  assert_reduces_for_approximation("diff(log(x),x,-10)", Nonreal::Name());
+  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", NonReal::Name());
+  assert_reduces_for_approximation("diff(log(x),x,-10)", NonReal::Name());
 
   assert_reduces_for_approximation("diff(abs(x),x,123)", "1");
   assert_reduces_for_approximation("diff(abs(x),x,-2.34)", "-1");
@@ -212,8 +210,8 @@ QUIZ_CASE(poincare_derivative_approximation) {
   assert_approximate_to("diff(ln(x),x,1)", "1");
   assert_approximate_to("diff(ln(x),x,2.2)", "0.455");
   assert_approximate_to("diff(ln(x),x,0)", Undefined::Name());
-  assert_approximate_to("diff(ln(x),x,-3.1)", Nonreal::Name());
-  assert_approximate_to("diff(log(x),x,-10)", Nonreal::Name());
+  assert_approximate_to("diff(ln(x),x,-3.1)", NonReal::Name());
+  assert_approximate_to("diff(log(x),x,-10)", NonReal::Name());
   assert_approximate_to("diff(abs(x),x,123)", "1");
   assert_approximate_to("diff(abs(x),x,-2.34)", "-1");
   assert_approximate_to("diff(1/x,x,-2)", "-0.25");

@@ -153,10 +153,6 @@ class ContinuousFunction : public Function {
         t, context, subCurveIndexFromDerivationOrder(derivationOrder));
   }
 
-  double evaluateCurveParameter(int index, double cursorT, double cursorX,
-                                double cursorY,
-                                Poincare::Context* context) const;
-
   /* Derivative */
 
   // If derivative should be displayed

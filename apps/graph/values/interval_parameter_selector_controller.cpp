@@ -13,7 +13,7 @@ namespace Graph {
 IntervalParameterSelectorController::IntervalParameterSelectorController()
     : SelectableListViewController(nullptr) {}
 
-const char* IntervalParameterSelectorController::title() {
+const char* IntervalParameterSelectorController::title() const {
   return I18n::translate(I18n::Message::IntervalSet);
 }
 

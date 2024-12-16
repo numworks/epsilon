@@ -30,7 +30,7 @@ class OneMeanTest : public Test, public OneMeanStatistic {
   I18n::Message distributionTitle() const override {
     return OneMean::DistributionTitle();
   }
-  const char* hypothesisSymbol() override {
+  const char* hypothesisSymbol() const override {
     return OneMean::HypothesisSymbol();
   }
   void initParameters() override { OneMean::InitTestParameters(this); }

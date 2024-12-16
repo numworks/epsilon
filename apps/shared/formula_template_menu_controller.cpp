@@ -2,7 +2,6 @@
 
 #include <ion/storage/record.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/symbol.h>
 #include <poincare/print.h>
 
 #include "column_helper.h"
@@ -21,7 +20,7 @@ FormulaTemplateMenuController::FormulaTemplateMenuController(
   m_selectableListView.hideScrollBars();
 }
 
-const char* FormulaTemplateMenuController::title() {
+const char* FormulaTemplateMenuController::title() const {
   return I18n::translate(I18n::Message::FillWithFormula);
 }
 
@@ -144,20 +143,19 @@ UserExpression FormulaTemplateMenuController::templateExpressionForCell(
   if (cell == Cell::OtherColumns) {
     char name1[DoublePairStore::k_columnNamesLength + 1];
     char name2[DoublePairStore::k_columnNamesLength + 1];
-    char* columnNames[2] = {name1, name2};
-    fillSumColumnNames(columnNames);
+    fillSumColumnNames(name1, name2);
     return UserExpression::Create(
-        KAdd(KA, KB),
-        {.KA = Symbol::Builder(columnNames[0],
-                               DoublePairStore::k_columnNamesLength),
-         .KB = Symbol::Builder(columnNames[1],
-                               DoublePairStore::k_columnNamesLength)});
+        KAdd(KA, KB), {.KA = SymbolHelper::BuildSymbol(
+                           name1, DoublePairStore::k_columnNamesLength),
+                       .KB = SymbolHelper::BuildSymbol(
+                           name2, DoublePairStore::k_columnNamesLength)});
   }
   // Build the expression "V1"
   assert(cell == Cell::OtherApp && shouldDisplayOtherAppCell());
   char columnName[DoublePairStore::k_columnNamesLength + 1];
   fillOtherAppColumnName(columnName);
-  return Symbol::Builder(columnName, DoublePairStore::k_columnNamesLength);
+  return SymbolHelper::BuildSymbol(columnName,
+                                   DoublePairStore::k_columnNamesLength);
 }
 
 void FormulaTemplateMenuController::computeUninitializedLayouts() {
@@ -185,8 +183,7 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(BufferTemplateCell* cell,
   if (index == 0) {
     char name1[DoublePairStore::k_columnNamesLength + 1];
     char name2[DoublePairStore::k_columnNamesLength + 1];
-    char* columnNames[2] = {name1, name2};
-    fillSumColumnNames(columnNames);
+    fillSumColumnNames(name1, name2);
     Print::CustomPrintf(buffer, k_bufferSize, I18n::translate(message), name1,
                         name2);
     cell->subLabel()->setText(buffer);
@@ -200,15 +197,37 @@ void FormulaTemplateMenuController::fillSubLabelBuffer(BufferTemplateCell* cell,
   cell->subLabel()->setText(buffer);
 }
 
-void FormulaTemplateMenuController::fillSumColumnNames(char* buffers[]) const {
-  for (int i = 0; i < 2; i++) {
-    m_storeColumnHelper->fillColumnNameFromStore(
-        m_storeColumnHelper->referencedColumn(), buffers[i]);
-    int seriesIndex = static_cast<int>(buffers[i][1] - '1');
-    int newSeriesIndex =
-        (seriesIndex + i + 1) % DoublePairStore::k_numberOfSeries;
-    buffers[i][1] = '1' + newSeriesIndex;
-  }
+void replaceSeriesIndex(char* columnName, int value) {
+  columnName[1] = '1' + value;
+}
+int getSeriesIndex(const char* columnName) {
+  return static_cast<int>(columnName[1] - '1');
+}
+
+void FormulaTemplateMenuController::fillSumColumnNames(
+    char* columnName1, char* columnName2) const {
+  char currentColumnName[DoublePairStore::k_columnNamesLength + 1];
+  m_storeColumnHelper->fillColumnNameFromStore(
+      m_storeColumnHelper->referencedColumn(), currentColumnName);
+  int currentSeriesIndex = getSeriesIndex(currentColumnName);
+
+  strlcpy(columnName1, currentColumnName,
+          DoublePairStore::k_columnNamesLength + 1);
+  strlcpy(columnName2, currentColumnName,
+          DoublePairStore::k_columnNamesLength + 1);
+
+  /* The displayed sum will be "V_(n-2) + V_(n-1)" (for columnName in the form
+   * "V1", "V2", "V3" etc.). For the first and the second column, we display
+   * "V2+V3" or "V1+V3" respectively.  */
+  static_assert(DoublePairStore::k_numberOfSeries >= 3);
+  replaceSeriesIndex(columnName1, currentSeriesIndex == 0 ? 1
+                                  : currentSeriesIndex == 1
+                                      ? 0
+                                      : currentSeriesIndex - 2);
+  replaceSeriesIndex(columnName2, currentSeriesIndex == 0 ? 2
+                                  : currentSeriesIndex == 1
+                                      ? 2
+                                      : currentSeriesIndex - 1);
 }
 
 char correspondingColumnInOtherApp(char columnPrefix) {

@@ -26,12 +26,12 @@ class CurveParameterController
       GraphController* graphController,
       FunctionParameterController* functionParameterController,
       DerivativeColumnParameterController* derivativeColumnParameterController);
-  const char* title() override;
+  const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastTitle;
   }
 
@@ -49,10 +49,12 @@ class CurveParameterController
  private:
   using ParameterCell = Escher::MenuCellWithEditableText<
       Escher::OneLineBufferTextView<KDFont::Size::Large>>;
+
   enum class ParameterIndex {
     Abscissa = 0,
     Image1,
     Image2,
+    Image3,
     FirstDerivative1,
     FirstDerivative2,
     SecondDerivative1,
@@ -68,17 +70,26 @@ class CurveParameterController
   }
   double parameterAtIndex(int index) override;
   bool setParameterAtIndex(int parameterIndex, double f) override {
-    return confirmParameterAtIndex(parameterIndex, f);
+    assert(0 <= parameterIndex && parameterIndex <= k_numberOfParameterRows);
+    return confirmParameterAtIndex(static_cast<ParameterIndex>(parameterIndex),
+                                   f);
   }
   Escher::HighlightCell* cell(int row) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
   Escher::TextField* textFieldOfCellAtRow(int row) override;
   Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
-  bool confirmParameterAtIndex(int parameterIndex, double f);
+  bool confirmParameterAtIndex(ParameterIndex index, double f);
   void fillParameterCellAtRow(int row) override;
-  bool parameterAtRowIsFirstComponent(int row) const;
-  int derivationOrderOfParameterAtRow(int row) const;
+  bool parameterAtIndexIsPreimage(ParameterIndex index) const;
+  bool parameterAtIndexIsFirstComponent(ParameterIndex index) const;
+  bool parameterAtIndexIsEditable(ParameterIndex index) const;
+  int derivationOrderOfParameterAtIndex(ParameterIndex index) const;
+  double evaluateCurveAt(ParameterIndex index,
+                         Poincare::Context* context) const;
+  double evaluateDerivativeAt(ParameterIndex index, int derivationOrder,
+                              Poincare::Context* context) const;
+
   Escher::StackViewController* stackController() const;
 
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,
@@ -89,7 +100,9 @@ class CurveParameterController
       static_cast<int>(ParameterIndex::NumberOfParameters);
   constexpr static int k_numberOfRows = k_numberOfParameterRows + 2;
 
-  char m_title[k_titleSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_title[k_titleSize];
   ParameterCell m_parameterCells[k_numberOfParameterRows];
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::ChevronView>

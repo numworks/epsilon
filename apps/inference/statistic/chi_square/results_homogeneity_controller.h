@@ -46,7 +46,7 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
                                   Escher::ViewController* nextController,
                                   HomogeneityTest* statistic);
 
-  ViewController::TitlesDisplay titlesDisplay() override {
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   KDColor tabBackgroundColor() const override {
@@ -75,7 +75,7 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
   class ExpectedValuesController : public SingleModeController {
    public:
     using SingleModeController::SingleModeController;
-    const char* title() override {
+    const char* title() const override {
       return I18n::translate(
           I18n::Message::HomogeneityResultsExpectedValuesTitle);
     }
@@ -88,7 +88,7 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
   class ContributionsController : public SingleModeController {
    public:
     using SingleModeController::SingleModeController;
-    const char* title() override {
+    const char* title() const override {
       return I18n::translate(I18n::Message::Contributions);
     }
     void viewWillAppear() override {

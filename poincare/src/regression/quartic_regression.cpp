@@ -20,8 +20,8 @@ UserExpression QuarticRegression::privateExpression(
        .KE = UserExpression::FromDouble(modelCoefficients[4])});
 }
 
-double QuarticRegression::evaluate(const double* modelCoefficients,
-                                   double x) const {
+double QuarticRegression::privateEvaluate(const Coefficients& modelCoefficients,
+                                          double x) const {
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -30,7 +30,7 @@ double QuarticRegression::evaluate(const double* modelCoefficients,
   return a * x * x * x * x + b * x * x * x + c * x * x + d * x + e;
 }
 
-double QuarticRegression::partialDerivate(const double* modelCoefficients,
+double QuarticRegression::partialDerivate(const Coefficients& modelCoefficients,
                                           int derivateCoefficientIndex,
                                           double x) const {
   switch (derivateCoefficientIndex) {

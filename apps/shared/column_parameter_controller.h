@@ -32,7 +32,7 @@ class ColumnParameterController
       : Escher::ExplicitSelectableListViewController(parentResponder),
         ColumnParameters() {}
   void viewWillAppear() override;
-  const char* title() override { return m_titleBuffer; }
+  const char* title() const override { return m_titleBuffer; }
 
  protected:
   Escher::StackViewController* stackView();

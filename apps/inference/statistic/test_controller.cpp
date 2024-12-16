@@ -41,7 +41,7 @@ TestController::TestController(StackViewController* parentResponder,
   selectRow(0);
 }
 
-const char* TestController::title() {
+const char* TestController::title() const {
   return I18n::translate(m_statistic->statisticTitle());
 }
 

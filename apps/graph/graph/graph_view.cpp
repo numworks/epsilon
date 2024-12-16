@@ -1,6 +1,6 @@
 #include "graph_view.h"
 
-#include <poincare/new_trigonometry.h>
+#include <poincare/trigonometry.h>
 
 #include "../app.h"
 
@@ -90,11 +90,11 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   ContinuousFunctionCache* cch = functionStore()->cacheAtIndex(index);
   float tmin = f->tMin();
   float tmax = f->tMax();
-  Axis axis = f->isAlongY() ? Axis::Vertical : Axis::Horizontal;
-  KDCoordinate rectMin = axis == Axis::Horizontal
+  OMG::Axis axis = f->isAlongY() ? OMG::Axis::Vertical : OMG::Axis::Horizontal;
+  KDCoordinate rectMin = axis == OMG::Axis::Horizontal
                              ? rect.left() - k_externRectMargin
                              : rect.bottom() + k_externRectMargin;
-  KDCoordinate rectMax = axis == Axis::Horizontal
+  KDCoordinate rectMax = axis == OMG::Axis::Horizontal
                              ? rect.right() + k_externRectMargin
                              : rect.top() - k_externRectMargin;
   float tCacheMin, tStep, tCacheStep;
@@ -105,7 +105,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
      * entirely invalidated. */
     tCacheMin = std::isnan(rectLimit) ? tmin : std::max(tmin, rectLimit);
     tmax = std::min(pixelToFloat(axis, rectMax), tmax);
-    tStep = axis == Axis::Horizontal ? pixelWidth() : pixelHeight();
+    tStep = axis == OMG::Axis::Horizontal ? pixelWidth() : pixelHeight();
     tCacheStep = tStep / 2.;
   } else {
     tCacheMin = tmin;
@@ -219,7 +219,7 @@ void GraphView::drawCartesian(KDContext* ctx, KDRect rect,
                               Ion::Storage::Record record, float tStart,
                               float tEnd, float tStep,
                               DiscontinuityTest discontinuity,
-                              Axis axis) const {
+                              OMG::Axis axis) const {
   assert(f->properties().isCartesian());
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   bool hasTwoCurves = (f->numberOfSubCurves() == 2);
@@ -340,13 +340,13 @@ void GraphView::drawTangent(KDContext* ctx, KDRect rect,
    * approximations errors.
    * */
   float minAbscissa =
-      pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+      pixelToFloat(OMG::Axis::Horizontal, rect.left() - k_externRectMargin);
   float maxAbscissa =
-      pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
+      pixelToFloat(OMG::Axis::Horizontal, rect.right() + k_externRectMargin);
   float minOrdinate =
-      pixelToFloat(Axis::Vertical, rect.bottom() + k_externRectMargin);
+      pixelToFloat(OMG::Axis::Vertical, rect.bottom() + k_externRectMargin);
   float maxOrdinate =
-      pixelToFloat(Axis::Vertical, rect.top() - k_externRectMargin);
+      pixelToFloat(OMG::Axis::Vertical, rect.top() - k_externRectMargin);
 
   Coordinate2D<float> leftIntersection(
       minAbscissa, tangentParameterA * minAbscissa + tangentParameterB);
@@ -392,7 +392,7 @@ void GraphView::drawTangent(KDContext* ctx, KDRect rect,
 static float polarThetaFromCoordinates(float x, float y,
                                        Preferences::AngleUnit angleUnit) {
   // Return θ, between -π and π in given angleUnit for a (x,y) position.
-  return NewTrigonometry::ConvertRadianToAngleUnit<float>(
+  return Trigonometry::ConvertRadianToAngleUnit<float>(
              std::arg(std::complex<float>(x, y)), angleUnit)
       .real();
 }
@@ -403,16 +403,17 @@ void GraphView::drawPolar(KDContext* ctx, KDRect rect, ContinuousFunction* f,
   assert(f->properties().isPolar());
   // Compute rect limits
   float rectLeft =
-      pixelToFloat(Axis::Horizontal, rect.left() - k_externRectMargin);
+      pixelToFloat(OMG::Axis::Horizontal, rect.left() - k_externRectMargin);
   float rectRight =
-      pixelToFloat(Axis::Horizontal, rect.right() + k_externRectMargin);
-  float rectUp = pixelToFloat(Axis::Vertical, rect.top() - k_externRectMargin);
+      pixelToFloat(OMG::Axis::Horizontal, rect.right() + k_externRectMargin);
+  float rectUp =
+      pixelToFloat(OMG::Axis::Vertical, rect.top() - k_externRectMargin);
   float rectDown =
-      pixelToFloat(Axis::Vertical, rect.bottom() + k_externRectMargin);
+      pixelToFloat(OMG::Axis::Vertical, rect.bottom() + k_externRectMargin);
 
   const Preferences::AngleUnit angleUnit =
       Preferences::SharedPreferences()->angleUnit();
-  const float piInAngleUnit = NewTrigonometry::PiInAngleUnit(angleUnit);
+  const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
   /* Cancel optimization if :
    * - One of rect limits is nan.
    * - Step is too large, see cache optimization comments
@@ -567,6 +568,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
 
   bool canDisplayPoints = pointsOfInterestCache->canDisplayPoints(m_interest);
   PointOfInterest p;
+  Coordinate2D<float> lastBlackDot;
   int i = 0;
   do {
     // Compute more points of interest if necessary
@@ -616,8 +618,17 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
     // Draw the dot
     Coordinate2D<float> dotCoordinates =
         static_cast<Coordinate2D<float>>(p.xy());
+    if (lastBlackDot == dotCoordinates &&
+        p.interest == Solver<double>::Interest::ReachedDiscontinuity) {
+      /* Reached discontinuity dots are drawn in the color of the function, but
+       * a dot is already drawn in black at the same coordinates. */
+      continue;
+    }
 
-    KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates);
+    bool isRing =
+        p.interest == Solver<double>::Interest::UnreachedDiscontinuity;
+
+    KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates, isRing);
     /* If the dot intersects the dirty rect, force the redraw.
      * Either dotRelativeRect or dirtyRect needs to be translated, as one is
      * relative and the other absolute. Since dotRect might have been clamped to
@@ -635,7 +646,23 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
       assert(cursorView());
       cursorView()->setCursorFrame(this, frameOfCursor, true);
     }
-    drawDot(ctx, rect, k_dotSize, dotCoordinates, Escher::Palette::GrayDarkest);
+    // Refresh expiring pointer
+    ExpiringPointer<ContinuousFunction> f =
+        functionStore()->modelForRecord(selectedRec);
+    KDColor color =
+        p.interest == Solver<double>::Interest::ReachedDiscontinuity ||
+                p.interest == Solver<double>::Interest::UnreachedDiscontinuity
+            ? f->color()
+            : Escher::Palette::GrayDarkest;
+    if (isRing) {
+      drawRing(ctx, rect, k_dotSize, dotCoordinates, color, false);
+    } else {
+      drawDot(ctx, rect, k_dotSize, dotCoordinates, color);
+    }
+    if (color == Escher::Palette::GrayDarkest) {
+      lastBlackDot = dotCoordinates;
+    }
+
     if (redrawCursor) {
       /* WARNING: We cannot assert that cursorView is a MemoizedCursorView
        * but it is thanks to the constructor. */

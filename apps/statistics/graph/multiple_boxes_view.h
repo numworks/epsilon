@@ -27,18 +27,38 @@ class MultipleBoxesView : public MultipleDataView {
 
  private:
   constexpr static KDCoordinate TopToFirstBoxMargin(int numberOfSeries) {
-    return numberOfSeries == 1 ? 48 : 14;
+    assert(1 <= numberOfSeries && numberOfSeries <= Store::k_numberOfSeries);
+    return numberOfSeries == 1 ? k_topToFirstBoxMarginOneSeries
+                               : k_topToFirstBoxMarginMultipleSeries;
   }
   constexpr static KDCoordinate BoxToBoxMargin(int numberOfSeries) {
-    return numberOfSeries == 3 ? 12 : 24;
+    assert(1 <= numberOfSeries && numberOfSeries <= k_boxToBoxMargins.size());
+    return k_boxToBoxMargins[numberOfSeries - 1];
   }
+
+  constexpr static bool IsBoxMarginValid() {
+    for (size_t numberOfSeries = 1; numberOfSeries < Store::k_numberOfSeries;
+         numberOfSeries++) {
+      if (MultipleBoxesView::BoxToBoxMargin(numberOfSeries) <
+          BoxPlotPolicy::BoxVerticalMargin()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   constexpr static KDCoordinate k_axisViewHeight = 21;
+
+  static constexpr KDCoordinate k_topToFirstBoxMarginOneSeries = 48;
+  static constexpr KDCoordinate k_topToFirstBoxMarginMultipleSeries = 14;
+  static constexpr std::array<KDCoordinate, Store::k_numberOfSeries>
+      k_boxToBoxMargins = {24, 24, 12, 10, 10, 10};
 
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void changeDataViewSeriesSelection(int series, bool select) override;
-  BoxView m_boxView1;
-  BoxView m_boxView2;
-  BoxView m_boxView3;
+
+  std::array<BoxView, Store::k_numberOfSeries> m_boxViews;
+
   BoxAxisView m_axisView;
   BoxBannerView m_bannerView;
 };

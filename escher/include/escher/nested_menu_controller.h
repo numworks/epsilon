@@ -80,7 +80,7 @@ class NestedMenuController : public StackViewController::Custom<5>,
           m_selectableListView(tableView),
           m_titleCount(0),
           m_titleBuffer("") {}
-    const char* title() override { return m_titleBuffer; }
+    const char* title() const override { return m_titleBuffer; }
     void popTitle();
     void pushTitle(I18n::Message title);
     void resetTitle();
@@ -107,7 +107,7 @@ class NestedMenuController : public StackViewController::Custom<5>,
         : ViewController(parentResponder),
           m_selectableListView(tableView),
           m_title(title) {}
-    const char* title() override { return I18n::translate(m_title); }
+    const char* title() const override { return I18n::translate(m_title); }
     void setTitle(I18n::Message title) { m_title = title; }
     View* view() override { return m_selectableListView; }
     void didBecomeFirstResponder() override;

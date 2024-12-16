@@ -14,7 +14,7 @@ SingleRangeController<T>::SingleRangeController(
     : FloatParameterController<T>(parentResponder),
       m_autoParam(false),
       m_confirmPopUpController(confirmPopUpController) {
-  for (int i = 0; i < k_numberOfTextCells; i++) {
+  for (int i = 0; i < k_numberOfBoundsCells; i++) {
     m_boundsCells[i].setParentResponder(&this->m_selectableListView);
     m_boundsCells[i].setDelegate(this);
   }
@@ -24,8 +24,9 @@ SingleRangeController<T>::SingleRangeController(
 template <typename T>
 void SingleRangeController<T>::viewWillAppear() {
   extractParameters();
-  m_boundsCells[0].label()->setMessage(parameterMessage(0));
-  m_boundsCells[1].label()->setMessage(parameterMessage(1));
+  for (int i = 0; i < k_numberOfBoundsCells; i++) {
+    m_boundsCells[i].label()->setMessage(parameterMessage(i));
+  }
   FloatParameterController<T>::viewWillAppear();
 }
 
@@ -33,9 +34,6 @@ template <typename T>
 HighlightCell* SingleRangeController<T>::reusableCell(int index, int type) {
   if (type == k_autoCellType) {
     return &m_autoCell;
-  }
-  if (type == this->k_parameterCellType) {
-    return m_boundsCells + index;
   }
   return FloatParameterController<T>::reusableCell(index, type);
 }
@@ -60,7 +58,6 @@ void SingleRangeController<T>::fillCellForRow(Escher::HighlightCell* cell,
     m_autoCell.accessory()->setState(m_autoParam);
     return;
   }
-  assert(type == this->k_buttonCellType || type == this->k_parameterCellType);
   FloatParameterController<T>::fillCellForRow(cell, row);
 }
 
@@ -86,15 +83,17 @@ bool SingleRangeController<T>::handleEvent(Ion::Events::Event event) {
 template <typename T>
 HighlightCell* SingleRangeController<T>::reusableParameterCell(int index,
                                                                int type) {
-  assert(index >= 1 && index < k_numberOfTextCells + 1);
-  return &m_boundsCells[index - 1];
+  assert(type == this->k_parameterCellType);
+  assert(0 <= index && index < k_numberOfBoundsCells);
+  return &m_boundsCells[index];
 }
 
 template <typename T>
 bool SingleRangeController<T>::setParameterAtIndex(int parameterIndex, T f) {
-  assert(parameterIndex == 1 || parameterIndex == 2);
-  parameterIndex == 1 ? m_rangeParam.setMinKeepingValid(f, limit())
-                      : m_rangeParam.setMaxKeepingValid(f, limit());
+  int i = parameterIndex - 1;
+  assert(0 <= i && i < k_numberOfBoundsCells);
+  i == 0 ? m_rangeParam.setMinKeepingValid(f, limit())
+         : m_rangeParam.setMaxKeepingValid(f, limit());
   return true;
 }
 
@@ -120,9 +119,13 @@ void SingleRangeController<T>::buttonAction() {
 template <typename T>
 bool SingleRangeController<T>::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
+  bool autoStatusDependsOnRow =
+      typeAtRow(this->innerSelectedRow()) == this->k_parameterCellType;
   if (FloatParameterController<T>::textFieldDidFinishEditing(textField,
                                                              event)) {
-    setAutoStatus(false);
+    if (autoStatusDependsOnRow) {
+      setAutoStatus(false);
+    }
     return true;
   }
   return false;
@@ -130,8 +133,9 @@ bool SingleRangeController<T>::textFieldDidFinishEditing(
 
 template <typename T>
 T SingleRangeController<T>::parameterAtIndex(int index) {
-  assert(index >= 1 && index < k_numberOfTextCells + 1);
-  return (index == 1 ? m_rangeParam.min() : m_rangeParam.max());
+  int i = index - 1;
+  assert(0 <= i && i < k_numberOfBoundsCells);
+  return i == 0 ? m_rangeParam.min() : m_rangeParam.max();
 }
 
 template <typename T>

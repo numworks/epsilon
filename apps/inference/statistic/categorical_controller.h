@@ -102,7 +102,7 @@ class InputCategoricalController : public CategoricalController,
 
   // ViewController
   void viewWillAppear() override;
-  Escher::ViewController::TitlesDisplay titlesDisplay() override {
+  Escher::ViewController::TitlesDisplay titlesDisplay() const override {
     return Escher::ViewController::TitlesDisplay::DisplayLastTitle;
   }
 

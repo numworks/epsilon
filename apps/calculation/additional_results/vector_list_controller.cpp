@@ -5,10 +5,9 @@
 #include <omg/round.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/new_trigonometry.h>
-#include <poincare/old/symbol.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/trigonometry.h>
 #include <string.h>
 
 #include "../app.h"
@@ -91,16 +90,17 @@ void VectorListController::computeAdditionalResults(
   if (sign.canBeStrictlyNegative() && !sign.canBeStrictlyPositive()) {
     angle = UserExpression::Create(
         KSub(KA, KB),
-        {.KA = NewTrigonometry::Period(ctx.m_angleUnit), .KB = angle});
+        {.KA = Trigonometry::Period(ctx.m_angleUnit), .KB = angle});
   }
   float angleApproximation =
       angle.approximateToScalar<float>(angleUnit(), complexFormat(), context);
   if (!std::isfinite(angleApproximation)) {
     return;
   }
-  setLineAtIndex(index++,
-                 Poincare::Symbol::Builder(UCodePointGreekSmallLetterTheta),
-                 angle, &ctx);
+  setLineAtIndex(
+      index++,
+      Poincare::SymbolHelper::BuildSymbol(UCodePointGreekSmallLetterTheta),
+      angle, &ctx);
 
   // 4. Illustration
   float xApproximation = vector.cloneChildAtIndex(0).approximateToScalar<float>(
@@ -114,7 +114,7 @@ void VectorListController::computeAdditionalResults(
   }
   m_model.setVector(xApproximation, yApproximation);
   angleApproximation =
-      NewTrigonometry::ConvertAngleToRadian(angleApproximation, angleUnit());
+      Trigonometry::ConvertAngleToRadian(angleApproximation, angleUnit());
   m_model.setAngle(angleApproximation);
   setShowIllustration(true);
 }

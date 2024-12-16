@@ -13,7 +13,7 @@ class AreaBetweenCurvesGraphController : public IntegralGraphController {
       Shared::CurveViewCursor* cursor)
       : IntegralGraphController(parentResponder, graphView, graphRange,
                                 cursor) {}
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   void setSecondRecord(Ion::Storage::Record record);

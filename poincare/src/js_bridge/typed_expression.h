@@ -2,7 +2,7 @@
 #define POINCARE_JS_BRIDGE_TYPED_EXPRESSION_H
 
 #include <emscripten/bind.h>
-#include <poincare/old/junior_expression.h>
+#include <poincare/expression.h>
 
 namespace Poincare::JSBridge {
 
@@ -11,7 +11,7 @@ namespace Poincare::JSBridge {
 enum class ExpressionType { UserExpression, SystemExpression, SystemFunction };
 
 template <ExpressionType T>
-class TypedExpression : public JuniorExpression {
+class TypedExpression : public Expression {
  public:
   /* Bind JavaScript val type. It represents an Uint8Array which is used to
    * store typed trees from Poincare in the JS heap.
@@ -21,19 +21,19 @@ class TypedExpression : public JuniorExpression {
    * */
   EMSCRIPTEN_DECLARE_VAL_TYPE(JsTree)
 
-  TypedExpression() : JuniorExpression() {}
+  TypedExpression() : Expression() {}
 
-  static inline TypedExpression Cast(JuniorExpression expr) {
-    /* WARNING: The down-casting of JuniorExpression into TypedExpression
+  static inline TypedExpression Cast(Expression expr) {
+    /* WARNING: The down-casting of Expression into TypedExpression
      * is possible only because TypedExpressions don't have more member
-     * variables than JuniorExpression. */
-    static_assert(sizeof(TypedExpression) == sizeof(JuniorExpression));
+     * variables than Expression. */
+    static_assert(sizeof(TypedExpression) == sizeof(Expression));
     return *reinterpret_cast<TypedExpression*>(&expr);
   }
 
-  // Build a JuniorExpression from a JS Uint8Array
+  // Build a Expression from a JS Uint8Array
   static TypedExpression BuildFromJsTree(const JsTree& jsTree);
-  // Build a JS Uint8Array from a JuniorExpression.
+  // Build a JS Uint8Array from a Expression.
   JsTree getJsTree() const;
 
   TypedExpression typedClone() const;

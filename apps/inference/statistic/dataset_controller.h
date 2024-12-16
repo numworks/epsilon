@@ -21,12 +21,12 @@ class DatasetController
                     InputStoreController* storeController,
                     Statistic* statistic);
 
-  const char* title() override {
+  const char* title() const override {
     InputController::InputTitle(this, m_statistic, m_titleBuffer,
                                 InputController::k_titleBufferSize);
     return m_titleBuffer;
   }
-  TitlesDisplay titlesDisplay() override {
+  TitlesDisplay titlesDisplay() const override {
     return m_statistic->hasHypothesisParameters()
                ? TitlesDisplay::DisplayLastTwoTitles
                : TitlesDisplay::DisplayLastTitle;
@@ -40,7 +40,10 @@ class DatasetController
   InputController* m_inputController;
   InputStoreController* m_storeController;
   Statistic* m_statistic;
-  char m_titleBuffer[InputController::k_titleBufferSize];
+
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[InputController::k_titleBufferSize];
 };
 
 }  // namespace Inference

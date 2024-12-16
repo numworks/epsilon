@@ -26,8 +26,8 @@ class TypeController
                  HypothesisController* hypothesisController,
                  InputController* intervalInputController,
                  DatasetController* datasetController, Statistic* statistic);
-  const char* title() override;
-  ViewController::TitlesDisplay titlesDisplay() override {
+  const char* title() const override;
+  ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   void stackOpenPage(Escher::ViewController* nextPage) override;
@@ -46,7 +46,9 @@ class TypeController
 
   constexpr static int k_titleBufferSize =
       sizeof("intervalle pour une moyenne à deux échantillons");
-  char m_titleBuffer[k_titleBufferSize];
+  /* m_titleBuffer is declared as mutable so that ViewController::title() can
+   * remain const-qualified in the generic case. */
+  mutable char m_titleBuffer[k_titleBufferSize];
 
   Statistic* m_statistic;
 };

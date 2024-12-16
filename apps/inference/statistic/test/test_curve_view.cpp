@@ -41,7 +41,7 @@ void TestPlotPolicy::drawZLabelAndZGraduation(
 void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView* plotView,
                                             KDContext* ctx, KDRect rect,
                                             float x, Layout layout) const {
-  plotView->drawTick(ctx, rect, AbstractPlotView::Axis::Horizontal, x);
+  plotView->drawTick(ctx, rect, OMG::Axis::Horizontal, x);
   plotView->drawLayout(ctx, rect, layout, Coordinate2D<float>(x, 0.f),
                        AbstractPlotView::RelativePosition::There,
                        AbstractPlotView::RelativePosition::After, KDColorBlack);
@@ -142,9 +142,9 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
 // TestXAxis
 
 void TestXAxis::drawLabel(int i, float t, const AbstractPlotView* plotView,
-                          KDContext* ctx, KDRect rect,
-                          AbstractPlotView::Axis axis, KDColor color) const {
-  assert(axis == AbstractPlotView::Axis::Horizontal);
+                          KDContext* ctx, KDRect rect, OMG::Axis axis,
+                          KDColor color) const {
+  assert(axis == OMG::Axis::Horizontal);
   const TestCurveView* testCurveView =
       static_cast<const TestCurveView*>(plotView);
   float z = testCurveView->test()->testCriticalValue();

@@ -45,16 +45,16 @@ class CalculationGraphController
 
   Shared::ContinuousFunctionStore* functionStore() const;
   Poincare::Coordinate2D<double> computeNewPointOfInterestFromAbscissa(
-      double start, OMG::HorizontalDirection direction);
+      double start, OMG::HorizontalDirection direction, bool stretch);
   virtual Poincare::Solver<double>::Interest specialInterest() const {
     return Poincare::Solver<double>::Interest::None;
   }
   virtual Poincare::Coordinate2D<double> computeNewPointOfInterest(
-      double start, double max, Poincare::Context* context) {
-    return computeAtLeastOnePointOfInterest(start, max, context).xy();
+      double start, double max, Poincare::Context* context, bool stretch) {
+    return computeAtLeastOnePointOfInterest(start, max, context, stretch).xy();
   }
   Poincare::PointOfInterest computeAtLeastOnePointOfInterest(
-      double start, double max, Poincare::Context* context);
+      double start, double max, Poincare::Context* context, bool stretch);
 
   GraphView* m_graphView;
   BannerView* m_bannerView;

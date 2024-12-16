@@ -30,7 +30,7 @@ class TwoMeansTest : public Test, public TwoMeansStatistic {
   I18n::Message distributionTitle() const override {
     return TwoMeans::DistributionTitle();
   }
-  const char* hypothesisSymbol() override {
+  const char* hypothesisSymbol() const override {
     return TwoMeans::HypothesisSymbol();
   }
   void initParameters() override { TwoMeans::InitTestParameters(this); }

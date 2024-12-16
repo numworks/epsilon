@@ -1,11 +1,4 @@
 #include <apps/shared/global_context.h>
-#include <poincare/old/addition.h>
-#include <poincare/old/constant.h>
-#include <poincare/old/decimal.h>
-#include <poincare/old/old_expression.h>
-#include <poincare/old/power.h>
-#include <poincare/old/rational.h>
-#include <poincare/old/unit.h>
 #include <quiz.h>
 
 #include "helper.h"

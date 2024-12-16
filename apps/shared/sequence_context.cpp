@@ -25,13 +25,13 @@ void SequenceContext::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) {
 }
 #endif
 
-Context::SymbolAbstractType SequenceContext::expressionTypeForIdentifier(
+Context::UserNamedType SequenceContext::expressionTypeForIdentifier(
     const char* identifier, int length) {
   constexpr int numberOfSequencesNames =
       std::size(SequenceStore::k_sequenceNames);
   for (int i = 0; i < numberOfSequencesNames; i++) {
     if (strncmp(identifier, SequenceStore::k_sequenceNames[i], length) == 0) {
-      return Context::SymbolAbstractType::Sequence;
+      return Context::UserNamedType::Sequence;
     }
   }
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);

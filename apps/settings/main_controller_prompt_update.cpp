@@ -10,6 +10,7 @@ constexpr MessageTree s_modelMenu[] = {
     MessageTree(I18n::Message::EditionMode, s_modelEditionModeChildren),
     MessageTree(I18n::Message::ComplexFormat, s_modelComplexFormatChildren),
     MessageTree(I18n::Message::Brightness),
+    MessageTree(I18n::Message::ScreenTimeout, s_modelScreenTimeoutChildren),
     MessageTree(I18n::Message::FontSizes, s_modelFontChildren),
     MessageTree(I18n::Message::Language),
     MessageTree(I18n::Message::Country),

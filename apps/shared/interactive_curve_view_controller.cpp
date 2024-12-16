@@ -33,7 +33,7 @@ InteractiveCurveViewController::InteractiveCurveViewController(
                          navigationButtonInvocation(), k_buttonFont),
       m_calculusButton(this, calculusButtonMessage, calculusButtonInvocation(),
                        k_buttonFont) {
-  m_autoButton.setState(m_interactiveRange->zoomAuto());
+  m_autoButton.setState(m_interactiveRange->zoomAndGridUnitAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
 }
 
@@ -194,9 +194,9 @@ void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   m_cursor->moveTo(t, xy.x(), xy.y());
   reloadBannerView();
   if (!isCursorCurrentlyVisible(false, true)) {
-    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::X,
+    interactiveCurveViewRange()->centerAxisAround(OMG::Axis::Horizontal,
                                                   m_cursor->x());
-    interactiveCurveViewRange()->centerAxisAround(CurveViewRange::Axis::Y,
+    interactiveCurveViewRange()->centerAxisAround(OMG::Axis::Vertical,
                                                   m_cursor->y());
   }
   curveView()->reload();
@@ -341,7 +341,7 @@ float InteractiveCurveViewController::addMargin(float y, float range,
 }
 
 void InteractiveCurveViewController::updateZoomButtons() {
-  m_autoButton.setState(m_interactiveRange->zoomAuto());
+  m_autoButton.setState(m_interactiveRange->zoomAndGridUnitAuto());
   m_rangeButton.setState(!m_interactiveRange->zoomNormalize());
   header()->reloadButtons();
 }
@@ -359,10 +359,15 @@ void InteractiveCurveViewController::setCurveViewAsMainView(
 Invocation InteractiveCurveViewController::autoButtonInvocation() {
   return Invocation::Builder<InteractiveCurveViewController>(
       [](InteractiveCurveViewController* graphController, void* sender) {
-        graphController->m_interactiveRange->setZoomAuto(
-            !graphController->m_interactiveRange->zoomAuto());
+        bool newAuto =
+            !graphController->m_interactiveRange->zoomAndGridUnitAuto();
+        graphController->m_interactiveRange->setZoomAuto(newAuto);
+        if (newAuto) {
+          // Only set grid unit auto to false when user gives a step
+          graphController->m_interactiveRange->setGridUnitAuto();
+        }
         graphController->m_interactiveRange->computeRanges();
-        if (graphController->m_interactiveRange->zoomAuto()) {
+        if (newAuto) {
           graphController->setCurveViewAsMainView(true, true);
         }
         return true;

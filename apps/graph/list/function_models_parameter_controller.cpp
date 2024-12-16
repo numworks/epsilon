@@ -44,7 +44,7 @@ Escher::HighlightCell* FunctionModelsParameterController::cell(int row) {
   return &m_modelCells[row];
 }
 
-const char* FunctionModelsParameterController::title() {
+const char* FunctionModelsParameterController::title() const {
   return I18n::translate(I18n::Message::FunctionTemplates);
 }
 

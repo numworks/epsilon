@@ -16,7 +16,7 @@ GenericSubController::GenericSubController(Responder* parentResponder)
     : SelectableListViewController(parentResponder),
       m_messageTreeModel(nullptr) {}
 
-const char* GenericSubController::title() {
+const char* GenericSubController::title() const {
   if (m_messageTreeModel) {
     return I18n::translate(m_messageTreeModel->label());
   }

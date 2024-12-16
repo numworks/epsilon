@@ -73,7 +73,11 @@ class Statistic : public Shared::Inference {
     assert(false);
     return nullptr;
   }
-  virtual const char* hypothesisSymbol() {
+  virtual const HypothesisParams* hypothesisParams() const {
+    assert(false);
+    return nullptr;
+  }
+  virtual const char* hypothesisSymbol() const {
     assert(false);
     return nullptr;
   }

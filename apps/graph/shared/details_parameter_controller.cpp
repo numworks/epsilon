@@ -27,7 +27,7 @@ bool DetailsParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-const char* DetailsParameterController::title() {
+const char* DetailsParameterController::title() const {
   return I18n::translate(I18n::Message::Details);
 }
 

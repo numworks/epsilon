@@ -28,16 +28,9 @@ void Pool::move(PoolObject *destination, PoolObject *source,
   moveNodes(destination, source, moveSize);
 }
 
-void Pool::moveChildren(PoolObject *destination, PoolObject *sourceParent) {
-  size_t moveSize =
-      sourceParent->deepSize(-1) -
-      OMG::Memory::AlignedSize(sourceParent->size(), ByteAlignment);
-  moveNodes(destination, sourceParent->next(), moveSize);
-}
-
 void Pool::removeChildren(PoolObject *node, int nodeNumberOfChildren) {
   for (int i = 0; i < nodeNumberOfChildren; i++) {
-    PoolObject *child = node->childAtIndex(0);
+    PoolObject *child = node->next();
     int childNumberOfChildren = child->numberOfChildren();
     /* The new child will be put at the address last(), but removed from its
      * previous position, hence the newAddress we use. */
@@ -47,7 +40,6 @@ void Pool::removeChildren(PoolObject *node, int nodeNumberOfChildren) {
     move(last(), child, childNumberOfChildren);
     newAddress->release(newAddress->numberOfChildren());
   }
-  node->eraseNumberOfChildren();
 }
 
 PoolObject *Pool::deepCopy(PoolObject *node) {

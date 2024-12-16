@@ -14,7 +14,7 @@ class InputHomogeneityController : public InputCategoricalController {
       HomogeneityTest* statistic);
 
   // ViewController
-  const char* title() override {
+  const char* title() const override {
     return I18n::translate(I18n::Message::InputHomogeneityControllerTitle);
   }
 

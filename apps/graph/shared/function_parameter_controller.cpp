@@ -29,7 +29,7 @@ FunctionParameterController::FunctionParameterController(
   m_functionDomainCell.label()->setMessage(I18n::Message::FunctionDomain);
 }
 
-const char* FunctionParameterController::title() {
+const char* FunctionParameterController::title() const {
   assert(m_parameterDelegate);
   return m_parameterDelegate->usePersonalizedTitle()
              ? m_titleBuffer

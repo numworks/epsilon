@@ -507,7 +507,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
               ParsingContext::ParsingMethod::Assignment ||
           m_parsingContext->context() == nullptr ||
           m_parsingContext->context()->expressionTypeForIdentifier(
-              string, *length) != Context::SymbolAbstractType::None)) {
+              string, *length) != Context::UserNamedType::None)) {
     return Token::Type::CustomIdentifier;
   }
 

@@ -70,7 +70,7 @@ Layout PreferencesController::layoutForPreferences(I18n::Message message) {
     case I18n::Message::Real:
       return "x"_l;
     case I18n::Message::Algebraic:
-      return "a+ib"_l;
+      return "a+bi"_l;
     case I18n::Message::Exponential:
       return "re"_l ^ KSuperscriptL("iθ"_l);
 
@@ -102,6 +102,11 @@ KDCoordinate PreferencesController::nonMemoizedRowHeight(int row) {
 
 void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
                                                         int valueIndex) {
+  /* TODO: Implement a derived class for each preference (angle units, display
+   * mode, complex format...). Each derived class would be responsible for
+   * implementing a setter. This would make the code more modular and avoid such
+   * hard-to-read if/else blocks. */
+
   Preferences* preferences = Preferences::SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
@@ -127,6 +132,11 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
 
 int PreferencesController::valueIndexForPreference(
     I18n::Message message) const {
+  /* TODO: Implement a derived class for each preference (angle units, display
+   * mode, complex format...). Each derived class would be responsible for
+   * implementing a getter. This would make the code more modular and avoid such
+   * hard-to-read if/else blocks. */
+
   Preferences* preferences = Preferences::SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();

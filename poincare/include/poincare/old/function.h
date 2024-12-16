@@ -54,8 +54,6 @@ class Function final : public SymbolAbstract {
 
  public:
   Function(const FunctionNode* n) : SymbolAbstract(n) {}
-  static Function Builder(const char* name, size_t length,
-                          JuniorExpression child);
 
   // Simplification
   OExpression shallowReduce(ReductionContext reductionContext);

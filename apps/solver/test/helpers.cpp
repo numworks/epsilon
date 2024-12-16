@@ -154,9 +154,14 @@ static void compareSolutions(SystemOfEquations* system,
     Expression obtainedExpression =
         parsedExpression.cloneAndReduce(ReductionContext{});
     quiz_assert(!obtainedExpression.isUninitialized());
+#if 0
     quiz_assert(
         !expectedExpression.isUninitialized() &&
         expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));
+#else
+    quiz_assert(!expectedExpression.isUninitialized() &&
+                expectedExpression.isIdenticalTo(obtainedExpression));
+#endif
 
     i++;
   }

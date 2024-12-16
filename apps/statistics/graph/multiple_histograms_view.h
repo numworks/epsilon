@@ -1,6 +1,8 @@
 #ifndef STATISTICS_MULTIPLE_HISTOGRAMS_VIEW_H
 #define STATISTICS_MULTIPLE_HISTOGRAMS_VIEW_H
 
+#include <array>
+
 #include "../store.h"
 #include "histogram_banner_view.h"
 #include "histogram_parameter_controller.h"
@@ -18,9 +20,9 @@ class MultipleHistogramsView : public MultipleDataView {
 
  private:
   void changeDataViewSeriesSelection(int series, bool select) override;
-  HistogramView m_histogramView1;
-  HistogramView m_histogramView2;
-  HistogramView m_histogramView3;
+
+  std::array<HistogramView, Store::k_numberOfSeries> m_histogramViews;
+
   HistogramBannerView m_bannerView;
 };
 

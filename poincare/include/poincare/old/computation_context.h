@@ -8,7 +8,7 @@
 
 namespace Poincare {
 
-class JuniorExpression;
+class Expression;
 
 enum class ReductionTarget {
   /* Minimal reduction: this at least reduces rationals operations as
@@ -34,13 +34,6 @@ class ComputationContext {
       : m_context(context),
         m_complexFormat(complexFormat),
         m_angleUnit(angleUnit) {}
-  ComputationContext(Context* context)
-      : ComputationContext(context,
-                           Preferences::SharedPreferences()->complexFormat(),
-                           Preferences::SharedPreferences()->angleUnit()) {
-    assert(m_complexFormat != Preferences::ComplexFormat::None);
-    assert(m_angleUnit != Preferences::AngleUnit::None);
-  }
 
   Context* context() const { return m_context; }
   void setContext(Context* context) { m_context = context; }
@@ -55,7 +48,7 @@ class ComputationContext {
     assert(m_angleUnit != Preferences::AngleUnit::None);
   }
 
-  void updateComplexFormat(const JuniorExpression e);
+  void updateComplexFormat(const Expression e);
 
  private:
   Context* m_context;
@@ -153,12 +146,6 @@ class ApproximationContext : public ComputationContext {
       : ApproximationContext(computationContext.context(),
                              computationContext.complexFormat(),
                              computationContext.angleUnit(), withinReduce) {}
-  ApproximationContext(Context* context, bool withinReduce = false)
-      : ComputationContext(context), m_withinReduce(withinReduce) {}
-  ApproximationContext(Context* context,
-                       Preferences::ComplexFormat complexFormat)
-      : ApproximationContext(context, complexFormat,
-                             Preferences::SharedPreferences()->angleUnit()) {}
 
   bool withinReduce() const { return m_withinReduce; }
 

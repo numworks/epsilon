@@ -95,7 +95,7 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
   char* text = textField->draftText();
   T floatBody = ParseInputFloatValue<T>(text);
-  if (hasUndefinedValue(text, floatBody) ||
+  if (hasUndefinedValue(text, floatBody, innerSelectedRow()) ||
       !setParameterAtIndex(innerSelectedRow(), floatBody)) {
     return false;
   }
@@ -118,8 +118,9 @@ void FloatParameterController<T>::buttonAction() {
 
 template <typename T>
 bool FloatParameterController<T>::hasUndefinedValue(const char* text,
-                                                    T floatValue) const {
-  InfinityTolerance infTolerance = infinityAllowanceForRow(innerSelectedRow());
+                                                    T floatValue,
+                                                    int row) const {
+  InfinityTolerance infTolerance = infinityAllowanceForRow(row);
   return HasUndefinedValue(floatValue,
                            infTolerance == InfinityTolerance::PlusInfinity,
                            infTolerance == InfinityTolerance::MinusInfinity);

@@ -18,9 +18,9 @@ class LabeledAxisWithOptionalPercent
 
  protected:
   float tickStep(const Shared::AbstractPlotView* plotView,
-                 Shared::AbstractPlotView::Axis axis) const;
+                 OMG::Axis axis) const;
   int computeLabel(int i, const Shared::AbstractPlotView* plotView,
-                   Shared::AbstractPlotView::Axis axis);
+                   OMG::Axis axis);
 
   PlotController* m_plotController;
 };

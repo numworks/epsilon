@@ -15,7 +15,7 @@ class IntervalParameterSelectorController
           Escher::SimpleListViewDataSource> {
  public:
   IntervalParameterSelectorController();
-  const char* title() override;
+  const char* title() const override;
   void viewWillAppear() override { m_selectableListView.reloadData(); }
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;

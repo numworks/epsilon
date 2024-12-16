@@ -14,7 +14,7 @@ class TermSumController : public Shared::SumGraphController {
   TermSumController(Escher::Responder* parentResponder, GraphView* graphView,
                     CurveViewRange* graphRange,
                     Shared::CurveViewCursor* cursor);
-  const char* title() override;
+  const char* title() const override;
 
  private:
   CodePoint sumSymbol() const override { return UCodePointNArySummation; }

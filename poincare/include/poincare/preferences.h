@@ -40,7 +40,7 @@ class __attribute__((packed)) Preferences final {
     Decimal = 0,
     Scientific,
     Engineering,
-    LastPrintFloatMode = Engineering,
+    NModes,
   };
   enum class EditionMode : bool {
     Edition2D,
@@ -49,15 +49,16 @@ class __attribute__((packed)) Preferences final {
   using ComplexFormat = Internal::ComplexFormat;
   constexpr static ComplexFormat k_defaultComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
+  // TODO: C++23: use std::to_underlying instead of static_cast
   constexpr static size_t k_numberOfBitsForAngleUnit =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(AngleUnit::LastAngleUnit) + 1);
+          static_cast<uint8_t>(AngleUnit::NUnits));
   constexpr static size_t k_numberOfBitsForPrintFloatMode =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(PrintFloatMode::LastPrintFloatMode) + 1);
+          static_cast<uint8_t>(PrintFloatMode::NModes));
   constexpr static size_t k_numberOfBitsForComplexFormat =
       OMG::BitHelper::numberOfBitsToCountUpTo(
-          static_cast<unsigned int>(ComplexFormat::LastComplexFormat) + 1);
+          static_cast<uint8_t>(ComplexFormat::NFormats));
 
   struct CalculationPreferences {
     AngleUnit angleUnit : k_numberOfBitsForAngleUnit;
@@ -98,6 +99,15 @@ class __attribute__((packed)) Preferences final {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols);
 
+  /* WARNING: The following methods should not be called in Poincare
+   * EditionMode, AngleUnit, ComplexFormat, PrintFloatMode and
+   * NumberOfSignificantDigits should not be stored in Poincaré's Preferences,
+   * and rather be passed to methods signatures.
+   * The refactor wasn't tackled yet but none of them is currently called in
+   * Poincaré. To ensure this, they are forbidden in PoincareJS (which doesn't
+   * need them)
+   * TODO_PCJ: Get rid of them entirely */
+#ifndef TARGET_POINCARE_JS
   CalculationPreferences calculationPreferences() const {
     return m_calculationPreferences;
   }
@@ -123,18 +133,24 @@ class __attribute__((packed)) Preferences final {
   void setComplexFormat(Preferences::ComplexFormat complexFormat) {
     m_calculationPreferences.complexFormat = complexFormat;
   }
-  CombinatoricSymbols combinatoricSymbols() const {
-    return m_combinatoricSymbols;
-  }
-  void setCombinatoricSymbols(CombinatoricSymbols combinatoricSymbols) {
-    m_combinatoricSymbols = combinatoricSymbols;
-  }
   uint8_t numberOfSignificantDigits() const {
     return m_calculationPreferences.numberOfSignificantDigits;
   }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
     m_calculationPreferences.numberOfSignificantDigits =
         numberOfSignificantDigits;
+  }
+  uint32_t mathPreferencesCheckSum() const {
+    return (static_cast<uint32_t>(complexFormat()) << 8) +
+           static_cast<uint32_t>(angleUnit());
+  }
+#endif
+
+  CombinatoricSymbols combinatoricSymbols() const {
+    return m_combinatoricSymbols;
+  }
+  void setCombinatoricSymbols(CombinatoricSymbols combinatoricSymbols) {
+    m_combinatoricSymbols = combinatoricSymbols;
   }
   bool mixedFractionsAreEnabled() const { return m_mixedFractionsAreEnabled; }
   void enableMixedFractions(MixedFractions enable) {
@@ -158,11 +174,6 @@ class __attribute__((packed)) Preferences final {
   bool forceExamModeReload() const { return m_forceExamModeReload; }
   ExamMode examMode() const;
   void setExamMode(ExamMode examMode);
-
-  uint32_t mathPreferencesCheckSum() const {
-    return (static_cast<uint32_t>(complexFormat()) << 8) +
-           static_cast<uint32_t>(angleUnit());
-  }
 
  private:
   constexpr static uint8_t k_version = 0;

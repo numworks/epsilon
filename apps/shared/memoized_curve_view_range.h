@@ -9,6 +9,17 @@ namespace Shared {
 
 class MemoizedCurveViewRange : public CurveViewRange {
  public:
+  template <typename T>
+  struct AxisInformation {
+    T x, y;
+    T operator()(OMG::Axis axis) const {
+      return axis == OMG::Axis::Horizontal ? x : y;
+    }
+    void set(OMG::Axis axis, T value) {
+      (axis == OMG::Axis::Horizontal ? x : y) = value;
+    }
+  };
+
   MemoizedCurveViewRange();
 
   // CurveViewRange
@@ -18,19 +29,17 @@ class MemoizedCurveViewRange : public CurveViewRange {
   float yMax() const override { return m_range.yMax(); }
   /* A null gridUnit value means a limit has been changed without updating the
    * grid unit. */
-  float xGridUnit() const override {
-    assert(m_xGridUnit != 0.0f);
-    return m_xGridUnit;
-  }
-  float yGridUnit() const override {
-    assert(m_yGridUnit != 0.0f);
-    return m_yGridUnit;
-  }
+  float xGridUnit() override final;
+  float yGridUnit() override final;
   virtual void setXRange(float min, float max) { protectedSetXRange(min, max); }
   virtual void setYRange(float min, float max) { protectedSetYRange(min, max); }
 
  protected:
   Poincare::Range2D<float> memoizedRange() const { return m_range; }
+  virtual float computeGridUnit(OMG::Axis axis) {
+    return axis == OMG::Axis::Horizontal ? CurveViewRange::xGridUnit()
+                                         : CurveViewRange::yGridUnit();
+  }
 
   void protectedSetXRange(float min, float max,
                           float limit = Poincare::Range1D<float>::k_maxFloat) {
@@ -51,14 +60,11 @@ class MemoizedCurveViewRange : public CurveViewRange {
   }
 
  private:
-  constexpr static float k_defaultGridUnit = 2.f;
-
   void privateSet(float min, float max, float limit, bool x);
 
   // Window bounds of the data
   Poincare::Range2D<float> m_range;
-  float m_xGridUnit;
-  float m_yGridUnit;
+  AxisInformation<float> m_gridUnit;
 };
 
 }  // namespace Shared

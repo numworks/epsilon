@@ -63,7 +63,7 @@ Evaluation<T> SequenceNode::templatedApproximate(
      * approximation. Indeed, in order to know that the sequence is well defined
      * (especially for self-referencing or inter-dependently defined sequences),
      * we need to reduce the sequence definition (done by calling
-     * 'expressionForSymbolAbstract'); if we're within a reduce routine, we
+     * 'expressionForUserNamed'); if we're within a reduce routine, we
      * would create an infinite loop. Returning a NAN approximation for
      * sequences within reduce routine does not really matter: we just have
      * access to less information in order to simplify (abs(u(n)) might not be
@@ -72,25 +72,12 @@ Evaluation<T> SequenceNode::templatedApproximate(
   }
 #if 0
   OExpression e =
-      approximationContext.context()->expressionForSymbolAbstract(this, false);
+      approximationContext.context()->expressionForUserNamed(this, false);
   if (e.isUninitialized()) {
     return Complex<T>::Undefined();
   }
   return e.node()->approximate(T(), approximationContext);
 #endif
-}
-
-Sequence Sequence::Builder(const char* name, size_t length,
-                           JuniorExpression child) {
-  // If needed, handle theta like functions and symbols
-  assert(!AliasesLists::k_thetaAliases.contains(name, length));
-  Internal::Tree* e =
-      Internal::SharedTreeStack->pushUserSequence(name, length + 1);
-  assert(!child.isUninitialized());
-  child.tree()->cloneTree();
-
-  JuniorExpression expr = JuniorExpression::Builder(e);
-  return static_cast<Sequence&>(expr);
 }
 
 OExpression Sequence::shallowReduce(ReductionContext reductionContext) {

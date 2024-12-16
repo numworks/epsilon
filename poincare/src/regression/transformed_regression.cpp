@@ -8,8 +8,8 @@
 
 namespace Poincare::Regression {
 
-double TransformedRegression::evaluate(const double* modelCoefficients,
-                                       double x) const {
+double TransformedRegression::privateEvaluate(
+    const Coefficients& modelCoefficients, double x) const {
   /* TODO: Ensure this transformed evaluation remain precise. Otherwise,
    * reimplement if for each models. Same for levelSet. */
   bool opposeY = false;
@@ -57,20 +57,19 @@ double TransformedRegression::levelSet(const double* modelCoefficients,
   return applyLnOnX() ? std::exp(transformedX) : transformedX;
 }
 
-void TransformedRegression::privateFit(const Series* series,
-                                       double* modelCoefficients,
-                                       Poincare::Context* context) const {
+Regression::Coefficients TransformedRegression::privateFit(
+    const Series* series, Poincare::Context* context) const {
   bool opposeY = applyLnOnA() && series->getY(0) < 0.0;
   StatisticsCalculationOptions options(applyLnOnX(), applyLnOnY(), opposeY);
-  modelCoefficients[0] = series->yIntercept(options);
-  modelCoefficients[1] = series->slope(options);
+  double c0 = series->yIntercept(options);
+  double c1 = series->slope(options);
   if (applyLnOnA()) {
-    modelCoefficients[0] =
-        (opposeY ? -1.0 : 1.0) * std::exp(modelCoefficients[0]);
+    c0 = (opposeY ? -1.0 : 1.0) * std::exp(c0);
   }
   if (applyLnOnB()) {
-    modelCoefficients[1] = std::exp(modelCoefficients[1]);
+    c1 = std::exp(c1);
   }
+  return {c0, c1};
 }
 
 bool TransformedRegression::dataSuitableForFit(const Series* series) const {

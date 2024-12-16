@@ -3,7 +3,6 @@
 
 #include <apps/shared/interactive_curve_view_range.h>
 #include <poincare/old/context_with_parent.h>
-#include <poincare/old/symbol_abstract.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/equation_solver.h>
 
@@ -89,7 +88,7 @@ class SystemOfEquations {
     using Poincare::ContextWithParent::ContextWithParent;
 
    private:
-    const Poincare::Internal::Tree* expressionForSymbolAbstract(
+    const Poincare::Internal::Tree* expressionForUserNamed(
         const Poincare::Internal::Tree* symbol) override;
   };
 

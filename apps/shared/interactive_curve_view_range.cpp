@@ -54,13 +54,13 @@ float InteractiveCurveViewRange::roundLimit(float y, float range, bool isMin) {
 }
 
 void InteractiveCurveViewRange::setXRange(float min, float max) {
-  assert(!m_isAuto.x || m_delegate == nullptr);
+  assert(!m_zoomAuto.x || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetXRange(min, max, k_maxFloat);
   computeRanges();
 }
 
 void InteractiveCurveViewRange::setYRange(float min, float max) {
-  assert(!m_isAuto.y || m_delegate == nullptr);
+  assert(!m_zoomAuto.y || m_delegate == nullptr);
   MemoizedCurveViewRange::protectedSetYRange(min, max, k_maxFloat);
   setZoomNormalize(isOrthonormal());
 }
@@ -74,29 +74,30 @@ void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
   MemoizedCurveViewRange::protectedSetYRange(yMin(), yMax() + d, k_maxFloat);
 }
 
-float InteractiveCurveViewRange::xGridUnit() const {
-  if (m_zoomNormalize) {
-    float yUnit = yGridUnit();
-    if ((xMax() - xMin()) / yUnit <= k_maxNumberOfXGridUnits) {
-      return yUnit;
-    }
+float InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
+  if (!gridUnitAuto(axis)) {
+    return computeGridUnitFromUserParameter(axis);
   }
-  return MemoizedCurveViewRange::xGridUnit();
-}
-
-float InteractiveCurveViewRange::yGridUnit() const {
-  float res = MemoizedCurveViewRange::yGridUnit();
+  float res = MemoizedCurveViewRange::computeGridUnit(axis);
   if (m_zoomNormalize) {
-    /* When m_zoomNormalize is active, both xGridUnit and yGridUnit will be the
-     * same. To declutter the X axis, we try a unit twice as large. We check
-     * that it allows enough graduations on the Y axis, but if the standard
-     * unit would lead to too many graduations on the X axis, we force the
-     * larger unit anyways. */
-    float numberOfYUnits = (yMax() - yMin() + offscreenYAxis()) / res;
-    float numberOfXUnits = (xMax() - xMin()) / res;
-    if (numberOfXUnits > k_maxNumberOfXGridUnits ||
-        numberOfYUnits / 2.f > k_minNumberOfYGridUnits) {
-      return 2 * res;
+    if (axis == OMG::Axis::Horizontal) {
+      float yUnit = yGridUnit();
+      if ((xMax() - xMin()) / yUnit <= k_maxNumberOfXGridUnits) {
+        return yUnit;
+      }
+    } else {
+      assert(axis == OMG::Axis::Vertical);
+      /* When m_zoomNormalize is active, both xGridUnit and yGridUnit will be
+       * the same. To declutter the X axis, we try a unit twice as large. We
+       * check that it allows enough graduations on the Y axis, but if the
+       * standard unit would lead to too many graduations on the X axis, we
+       * force the larger unit anyways. */
+      float numberOfYUnits = (yMax() - yMin() + offscreenYAxis()) / res;
+      float numberOfXUnits = (xMax() - xMin()) / res;
+      if (numberOfXUnits > k_maxNumberOfXGridUnits ||
+          numberOfYUnits / 2.f > k_minNumberOfYGridUnits) {
+        return 2 * res;
+      }
     }
   }
   return res;
@@ -162,17 +163,18 @@ void InteractiveCurveViewRange::panWithVector(float x, float y) {
 void InteractiveCurveViewRange::normalize() {
   /* If one axis is set manually and the other is in auto mode, prioritize
    * changing the auto one. */
-  bool canChangeX = m_isAuto.x || !m_isAuto.y;
-  bool canChangeY = m_isAuto.y || !m_isAuto.x;
+  bool canChangeX = m_zoomAuto.x || !m_zoomAuto.y;
+  bool canChangeY = m_zoomAuto.y || !m_zoomAuto.x;
   setZoomAuto(false);
   protectedNormalize(canChangeX, canChangeY, !canChangeX || !canChangeY);
 }
 
-void InteractiveCurveViewRange::centerAxisAround(Axis axis, float position) {
+void InteractiveCurveViewRange::centerAxisAround(OMG::Axis axis,
+                                                 float position) {
   if (std::isnan(position)) {
     return;
   }
-  if (axis == Axis::X) {
+  if (axis == OMG::Axis::Horizontal) {
     float range = xMax() - xMin();
     if (std::fabs(position / range) > k_maxRatioPositionRange) {
       range = Range1D<float>::DefaultLengthAt(position);
@@ -318,10 +320,20 @@ void InteractiveCurveViewRange::protectedNormalize(bool canChangeX,
 }
 
 void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
-  bool oldAuto = zoomAuto();
-  m_isAuto.x = xAuto;
-  m_isAuto.y = yAuto;
-  if (m_delegate && (oldAuto != zoomAuto())) {
+  bool oldAuto = zoomAndGridUnitAuto();
+  m_zoomAuto.x = xAuto;
+  m_zoomAuto.y = yAuto;
+  if (m_delegate && oldAuto != zoomAndGridUnitAuto()) {
+    m_delegate->updateZoomButtons();
+  }
+}
+
+void InteractiveCurveViewRange::privateSetUserGridUnit(float xValue,
+                                                       float yValue) {
+  bool oldAuto = zoomAndGridUnitAuto();
+  m_userGridUnit.x = xValue;
+  m_userGridUnit.y = yValue;
+  if (m_delegate && oldAuto != zoomAndGridUnitAuto()) {
     m_delegate->updateZoomButtons();
   }
 }
@@ -394,6 +406,95 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
   }
 
   setZoomNormalize(isOrthonormal());
+}
+
+float InteractiveCurveViewRange::computeGridUnitFromUserParameter(
+    OMG::Axis axis) const {
+  assert(!gridUnitAuto(axis));
+  float minNumberOfUnits, maxNumberOfUnits, range;
+  if (axis == OMG::Axis::Horizontal) {
+    minNumberOfUnits = k_minNumberOfXGridUnits;
+    maxNumberOfUnits = k_maxNumberOfXGridUnits;
+    range = xMax() - xMin();
+  } else {
+    assert(axis == OMG::Axis::Vertical);
+    minNumberOfUnits = k_minNumberOfYGridUnits;
+    maxNumberOfUnits = k_maxNumberOfYGridUnits;
+    range = yMax() - yMin() + offscreenYAxis();
+  }
+  assert(range > 0.0f && std::isfinite(range));
+  float userGridUnit = m_userGridUnit(axis);
+  assert(userGridUnit > 0.0f);
+  float numberOfUnits = range / userGridUnit;  // in float for now
+  if (minNumberOfUnits <= numberOfUnits && numberOfUnits <= maxNumberOfUnits) {
+    // Case 1
+    return userGridUnit;
+  } else if (numberOfUnits < minNumberOfUnits) {
+    // Case 2
+    assert(std::ceil(minNumberOfUnits / numberOfUnits) <=
+           std::floor(maxNumberOfUnits / numberOfUnits));
+    int k = std::ceil(minNumberOfUnits / numberOfUnits);
+    return userGridUnit / k;
+  }
+  assert(numberOfUnits > maxNumberOfUnits);
+  // Case 3
+  assert(std::ceil(numberOfUnits / maxNumberOfUnits) <=
+         std::floor(numberOfUnits / minNumberOfUnits));
+  int k = std::ceil(numberOfUnits / maxNumberOfUnits);
+  return userGridUnit * k;
+
+  // clang-format off
+  /* Proof of the algorithm:
+   *
+   * We want to find gridUnit = userGridUnit * k or gridUnit = userGridUnit / k, with k an integer.
+   * We want: minNumberOfUnits <= range / gridUnit <= maxNumberOfUnits
+   *
+   * Case 1: minNumberOfUnits <= range / userGridUnit <= maxNumberOfUnits
+   * ------
+   * The solution is userGridUnit.
+   *
+   * Case 2: range / userGridUnit < minNumberOfUnits
+   * -------
+   * We want to decrease the grid unit, so we look for gridUnit = userGridUnit / k, with k an integer
+   * A solution thus needs to verify:
+   *       minNumberOfUnits <= range / (userGridUnit / k) <= maxNumberOfUnits
+   * <=>   minNumberOfUnits <=  k * range / userGridUnit  <= maxNumberOfUnits
+   * <=>   E1 = minNumberOfUnits * userGridUnit / range <= k <= maxNumberOfUnits * userGridUnit / range = E2
+   * Since k must be a integer,
+   * <=>   ceil(E1) <= k <= floor(E2)
+   *
+   * We have a solution if ceil(E1) <= floor(E2) <=> floor(E1) < floor(E2) <=> floor(E1) != floor(E2)
+   *
+   * Let's compute E2 - E1:
+   * E2 - E1 = (maxNumberOfUnits - minNumberOfUnits) * userGridUnit / range
+   * and since range / userGridUnit < minNumberOfUnits
+   * E2 - E1 > (maxNumberOfUnits - minNumberOfUnits) / minNumberOfUnits = E3
+   * For minNumberOfUnits = 7 and maxNumberOfUnits = 18, E3 = 1.57...
+   * For minNumberOfUnits = 5 and maxNumberOfUnits = 13, E3 = 1.6
+   * => E2 - E1 > 1.5
+   * => floor(E1) != floor(E2)
+   *
+   * We can take the smallest k solution to be as close as possible to the user input:
+   * ceil(E1) = ceil(minNumberOfUnits * userGridUnit / range)
+   *
+   * Case 3: range / userGridUnit > maxNumberOfUnits
+   * -------
+   * We want to increase the grid unit, so we look for gridUnit = userGridUnit * k, with k an integer
+   * Similar computation than in case 2 will give
+   * E1 = range / (maxNumberOfUnits * userGridUnit)
+   * E2 = range / (minNumberOfUnits * userGridUnit)
+   * Let's compute E2 - E1:
+   * E2 - E1 = (1/minNumberOfUnits - 1/maxNumberOfUnits) * range / userGridUnit
+   * and since range / userGridUnit > maxNumberOfUnits
+   * E2 - E1 > (1/minNumberOfUnits - 1/maxNumberOfUnits) * maxNumberOfUnits = (maxNumberOfUnits - minNumberOfUnits) / minNumberOfUnits = E3
+   * We saw in case 2 that E3 > 1.5
+   * => E2 - E1 > 1.5
+   * => floor(E1) != floor(E2)
+   *
+   * We can take the smallest k solution to be as close as possible to the user input:
+   * ceil(E1) = ceil(range / (maxNumberOfUnits * userGridUnit))
+   * */
+  // clang-format on
 }
 
 }  // namespace Shared

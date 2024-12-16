@@ -818,6 +818,12 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("_s^-1", "1×_s^(-1)");
   simplifies_to("abs(-3.3_m)", "3.3×_m");
   simplifies_to("10^(-6)_m^3", "1ᴇ-6×_m^3");
+  simplifies_to("1000000_cm", "1000000×_cm");
+  simplifies_to("normcdf(0,20,3)×_s", "1.3083978345207ᴇ-11×_s");
+
+  // No unit conversion
+  // TODO: should return 1×_m+1×_cm
+  simplifies_to("1_m+1_cm", "1×_cm+1×_m", {.m_unitDisplay = UnitDisplay::None});
 
   // Temperature
   simplifies_to("4_°C", "4×_°C");
@@ -829,6 +835,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("2_K×2_K", "4×_K^2");
   simplifies_to("1/_K", "1×_K^(-1)");
   simplifies_to("(2_K)^2", "4×_K^2");
+  simplifies_to("_cKπ23", "72.256631032565×_cK");
 
   // Undefined
   simplifies_to("2_°C-1_°C", "undef");
@@ -861,6 +868,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1609.344_m", "1.609344×_km",
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::AutomaticMetric});
+  simplifies_to("2×π×_cK", "6.2831853071796×_cK",
+                {.m_unitFormat = UnitFormat::Imperial});
 
   // Constants
   simplifies_to("_mn + _mp", "3.34754942173ᴇ-24×_g");
@@ -908,6 +917,12 @@ QUIZ_CASE(pcj_simplification_unit) {
                 {.m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("35_gon", "31×_°+30×_'",
                 {.m_unitDisplay = UnitDisplay::Decomposition});
+
+  // International System
+  simplifies_to("1000000_cm", "10000×_m",
+                {.m_unitDisplay = UnitDisplay::BasicSI});
+  simplifies_to("(-1/2)×_'", "-π/21600×_rad",
+                {.m_unitDisplay = UnitDisplay::BasicSI});
 }
 
 QUIZ_CASE(pcj_simplification_dependencies) {

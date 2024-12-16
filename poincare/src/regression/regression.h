@@ -35,8 +35,7 @@ class Regression {
 
   using Coefficients = std::array<double, k_maxNumberOfCoefficients>;
 
-  explicit constexpr Regression(size_t initialParametersIterations = 1,
-                                double lowerRegressionScoreFactor = 1.0)
+  explicit constexpr Regression(size_t initialParametersIterations = 1)
       : m_initialParametersIterations{initialParametersIterations} {}
 
   // AngleUnit is needed for Trig regression

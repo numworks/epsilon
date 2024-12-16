@@ -20,6 +20,10 @@ struct Dependency {
     assert(e->isDep());
     return e->child(k_mainIndex);
   }
+  // Return main if e is a dependency, e otherwise.
+  static const Tree* SafeMain(const Tree* e) {
+    return e->isDep() ? Main(e) : e;
+  }
   // Compare two trees ignoring dependencies.
   static bool MainTreeIsIdenticalToMain(const Tree* e, const Tree* other) {
     return (e->isDep() ? Main(e) : e)

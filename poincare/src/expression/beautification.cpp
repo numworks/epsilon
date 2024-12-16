@@ -12,6 +12,7 @@
 #include "dependency.h"
 #include "division.h"
 #include "float.h"
+#include "metric.h"
 #include "number.h"
 #include "projection.h"
 #include "rational.h"
@@ -379,7 +380,15 @@ bool Beautification::ApplyComplexFormat(
   Tree* result =
       (format == ComplexFormat::Polar ? GetPolarFormat : GetCartesianFormat)(
           e, projectionContext);
-  if (result && !Dependency::MainTreeIsIdenticalToMain(result, e)) {
+  /* If complex format is different, apply it if :
+   *  - It has a better metric than the original expression
+   *  - It simplified all the introduced re/im/arg/abs nodes */
+  if (result && !Dependency::MainTreeIsIdenticalToMain(result, e) &&
+      (Metric::GetMetric(e) >= Metric::GetMetric(result) ||
+       !Dependency::SafeMain(result)->hasDescendantSatisfying(
+           [](const Tree* e) {
+             return e->isRe() || e->isIm() || e->isArg() || e->isAbs();
+           }))) {
     e->moveTreeOverTree(result);
     return true;
   }

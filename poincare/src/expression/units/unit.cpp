@@ -752,7 +752,8 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   // Turn e into its SI value. 2_m + _yd -> 3.8288
   Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
   if (unitDisplay == UnitDisplay::AutomaticMetric ||
-      unitDisplay == UnitDisplay::AutomaticImperial) {
+      unitDisplay == UnitDisplay::AutomaticImperial ||
+      unitDisplay == UnitDisplay::PrefixFreeMetric) {
     extractedUnits->removeTree();
     ApplyAutomaticDisplay(e, dimension, unitDisplay);
     return true;
@@ -794,6 +795,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     case UnitDisplay::None:
     case UnitDisplay::AutomaticMetric:
     case UnitDisplay::AutomaticImperial:
+    case UnitDisplay::PrefixFreeMetric:
       // Silence warning
       break;
   }
@@ -865,10 +867,10 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
     e->cloneNodeAtNode(KMult.node<2>);
     return;
   }
-  // Fallback on automatic unit display.
+  // Fallback on automatic imperial display or prefix free metric display
   UnitDisplay display = DisplayImperialUnits(extractedUnits)
                             ? UnitDisplay::AutomaticImperial
-                            : UnitDisplay::AutomaticMetric;
+                            : UnitDisplay::PrefixFreeMetric;
   extractedUnits->removeTree();
   ApplyAutomaticDisplay(e, dimension, display);
 }
@@ -983,10 +985,12 @@ bool Unit::ApplyAutomaticDisplay(Tree* e, Dimension dimension,
     GetBaseUnits(vector);
     NAry::Flatten(units);
     NAry::SquashIfPossible(units);
-    ChooseBestRepresentativeAndPrefixForValue(
-        units, &value,
-        unitDisplay == UnitDisplay::AutomaticMetric ? UnitFormat::Metric
-                                                    : UnitFormat::Imperial);
+    if (unitDisplay != UnitDisplay::PrefixFreeMetric) {
+      ChooseBestRepresentativeAndPrefixForValue(
+          units, &value,
+          unitDisplay == UnitDisplay::AutomaticMetric ? UnitFormat::Metric
+                                                      : UnitFormat::Imperial);
+    }
     Tree* approximated = SharedTreeStack->pushDoubleFloat(value);
     e->moveTreeOverTree(approximated);
   }

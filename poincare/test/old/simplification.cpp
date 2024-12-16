@@ -544,7 +544,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("0×_°C", "0×_°C");
   assert_parsed_expression_simplify_to("-32×_°F", "-32×_°F");
   assert_parsed_expression_simplify_to("273.16×_K", "273.16×_K");
-  assert_parsed_expression_simplify_to("_cKπ23", "0.72256631032565×_K");
   assert_parsed_expression_simplify_to("100×_°C→_K", "373.15×_K");
   assert_parsed_expression_simplify_to("-100×_°C→_K", "173.15×_K");
   assert_parsed_expression_simplify_to("(12_m/6_m)×_°C", "2×_°C");
@@ -680,8 +679,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("inf×_s", "∞×_s");
   assert_parsed_expression_simplify_to("-inf×_oz", "-∞×_kg");
   assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0×_s");
-  assert_parsed_expression_simplify_to("normcdf(0,20,3)×_s",
-                                       "13.083978345207×_ps");
   assert_parsed_expression_simplify_to("log(0)×_s", Undefined::Name());
   assert_parsed_expression_simplify_to("log(undef)*_s", Undefined::Name());
 
@@ -806,8 +803,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("√(16×_m^2)", "4×_m");
   assert_parsed_expression_simplify_to("1×_A_kg", "2.2046226218488×_A×_lb",
                                        User, Radian, Imperial);
-  assert_parsed_expression_simplify_to("2×π×_cK", "0.062831853071796×_K", User,
-                                       Radian, Imperial);
   assert_parsed_expression_simplify_to("abs(_s)", "1×_s");
   assert_parsed_expression_simplify_to("abs(3_m)", "3×_m");
   assert_parsed_expression_simplify_to("ceil(3.3_m)", Undefined::Name());
@@ -2241,21 +2236,6 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("(2+x)^2", "x^2+4×x+4",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("(2+x)^2", "x^2+4×x+4", User);
-}
-
-QUIZ_CASE(poincare_simplification_unit_conversion) {
-  assert_parsed_expression_simplify_to(
-      "1000000_cm", "10×_km", User, Degree, MetricUnitFormat, Cartesian,
-      ReplaceDefinedSymbols, DefaultUnitConversion);
-  assert_parsed_expression_simplify_to("1000000_cm", "1000000×_cm", User,
-                                       Degree, MetricUnitFormat, Cartesian,
-                                       ReplaceDefinedSymbols, NoUnitConversion);
-  assert_parsed_expression_simplify_to(
-      "1000000_cm", "10000×_m", User, Degree, MetricUnitFormat, Cartesian,
-      ReplaceDefinedSymbols, InternationalSystemUnitConversion);
-  assert_parsed_expression_simplify_to(
-      "(-1/2)'", "-π/21600×_rad", User, Degree, MetricUnitFormat, Cartesian,
-      ReplaceDefinedSymbols, InternationalSystemUnitConversion);
 }
 
 QUIZ_CASE(poincare_simplification_user_function) {

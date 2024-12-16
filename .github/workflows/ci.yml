@@ -190,7 +190,7 @@ jobs:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
-      - run: make -f poincare/Makefile
+      - run: make -f poincare/poincarejs/Makefile
       - uses: actions/upload-artifact@v4
         with:
           name: poincarejs.zip

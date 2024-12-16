@@ -2,11 +2,7 @@
 #include "utils.h"
 
 #include <emscripten/bind.h>
-#include <poincare/src/memory/tree.h>
-#include <poincare/src/memory/tree_stack.h>
-#include <poincare/src/memory/type_block.h>
 
-using namespace Poincare::Internal;
 using namespace emscripten;
 
 namespace Poincare::JSBridge {

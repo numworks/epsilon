@@ -15,7 +15,7 @@ class EmptyRectangle {
  public:
   static KDSize Size(KDFont::Size font, bool withMargins = true);
   static KDCoordinate Baseline(KDFont::Size font) {
-    return Size(font).height() / 2;
+    return KDFont::GlyphBaseline(font);
   }
 
   static void DrawEmptyRectangle(KDContext* ctx, KDPoint p, KDFont::Size font,

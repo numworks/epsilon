@@ -106,6 +106,20 @@ _sources_ion_kernel += $(addprefix device/epsilon-core/device/shared-core/driver
 )
 endif
 
+ifneq ($(EMBED_EXTRA_DATA),0)
+_sources_ion_kernel += trampoline.o bootloader.o
+
+$(OUTPUT_DIRECTORY)/kernel/$(PATH_ion)/src/trampoline.o: $(OUTPUT_DIRECTORY)/kernel/$(PATH_ion)/src/bootloader.o
+	@ :
+
+$(OUTPUT_DIRECTORY)/kernel/$(PATH_ion)/src/bootloader.o: $(OUTPUT_DIRECTORY)/bootloader/bootloader.elf
+	$(Q) $(OBJCOPY) -O binary -S -R .trampoline -R .pseudo_otp -R .unused_flash $< $(@:.o=.bin)
+	$(Q) $(OBJCOPY) -O binary -S -j .trampoline $< $(@:bootloader.o=trampoline.bin)
+	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.bootloader $(@:.o=.bin) $@
+	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.trampoline $(@:bootloader.o=trampoline.bin) $(@:bootloader.o=trampoline.o)
+
+endif
+
 _ldflags_ion_kernel := \
   -Wl,-T,$(PATH_ion)/src/device/epsilon-core/device/kernel/flash/kernel_A.ld:+A \
   -Wl,-T,$(PATH_ion)/src/device/epsilon-core/device/kernel/flash/kernel_B.ld:+B \

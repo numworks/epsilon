@@ -30,7 +30,9 @@ int main(int argc, char * argv[]) {
   int maxWidth = 0;
   int maxAboveBaseline = 0;
   int maxBelowBaseline = 0;
-  computeMetrics(face, &maxWidth, &maxAboveBaseline, &maxBelowBaseline);
+  int glyphWidthsLength = NumberOfCodePoints + 1;
+  uint8_t * glyphWidths = (uint8_t *)malloc(glyphWidthsLength);
+  computeMetrics(face, &maxWidth, &maxAboveBaseline, &maxBelowBaseline, glyphWidths);
   ENSURE(maxWidth > 0 && maxAboveBaseline > 0 && maxBelowBaseline > 0, "Computing bounds");
 
   int glyphWidth = maxWidth;
@@ -50,8 +52,8 @@ int main(int argc, char * argv[]) {
                     k_grayscaleBitsPerPixel);
   writeFontHeaderFile(outputH, fontName, glyphWidth, glyphHeight);
   writeFontSourceFile(outputCpp, fontName, glyphWidth, glyphHeight, glyphDataOffset,
-                      glyphDataOffsetLength, glyphData, glyphDataLength, k_grayscaleBitsPerPixel,
-                      numberOfCodePointsPairs);
+                      glyphDataOffsetLength, glyphData, glyphDataLength, glyphWidths, glyphWidthsLength,
+		      k_grayscaleBitsPerPixel, numberOfCodePointsPairs);
 
 #if GENERATE_PNG
   storeRenderedGlyphsImage(outputPng, face, glyphWidth, glyphHeight, maxAboveBaseline);
@@ -105,7 +107,7 @@ void initTTF(FT_Library * library, FT_Face * face, const char * fontFile, int re
          "Setting face pixel size to %dx%d", requestedGlyphWidth, requestedGlyphHeight);
 }
 
-void computeMetrics(FT_Face face, int * maxWidth, int * maxAboveBaseline, int * maxBelowBaseline) {
+void computeMetrics(FT_Face face, int * maxWidth, int * maxAboveBaseline, int * maxBelowBaseline, uint8_t * glyphWidths) {
   /* Glyph metrics are complicated. Here are some useful links:
    * https://www.freetype.org/freetype2/docs/glyphs/metrics.png
    * https://www.freetype.org/freetype2/docs/glyphs/glyphs-3.html
@@ -116,6 +118,8 @@ void computeMetrics(FT_Face face, int * maxWidth, int * maxAboveBaseline, int * 
     int aboveBaseline = face->glyph->bitmap_top;
     int belowBaseline = face->glyph->bitmap.rows - face->glyph->bitmap_top;
     int width = face->glyph->bitmap_left + face->glyph->bitmap.width;
+    /* Advance is given in 26.6 format ie 64th of a pixel. */
+    glyphWidths[i] = face->glyph->advance.x / 64;
     *maxWidth = max(width, *maxWidth);
     *maxAboveBaseline = max(aboveBaseline, *maxAboveBaseline);
     *maxBelowBaseline = max(belowBaseline, *maxBelowBaseline);
@@ -198,7 +202,9 @@ void writeFontHeaderFile(const char * fontHeaderFilename, const char * fontName,
 
 void writeFontSourceFile(const char * fontSourceFilename, const char * fontName, int glyphWidth,
                          int glyphHeight, uint16_t * glyphDataOffset, int glyphDataOffsetLength,
-                         uint8_t * glyphData, int glyphDataLength, int grayscaleBitsPerPixel,
+                         uint8_t * glyphData, int glyphDataLength,
+			 uint8_t * glyphWidths, int glyphWidthsLength,
+			 int grayscaleBitsPerPixel,
                          int CodePointToGlyphIndexLength) {
   FILE * fontFile = fopen(fontSourceFilename, "w");
 
@@ -228,9 +234,22 @@ void writeFontSourceFile(const char * fontSourceFilename, const char * fontName,
   prettyPrintArray(fontFile, 80, 1, glyphData, glyphDataLength);
   fprintf(fontFile, "};\n\n");
 
+  // glyphWidths
+  fprintf(fontFile, "constexpr static uint8_t glyphWidths[numberOfCodePoints + 1] = {");
+  prettyPrintArray(fontFile, 80, 1, glyphWidths, glyphWidthsLength);
+  fprintf(fontFile, "};\n\n");
+
   // Font instanciation
   fprintf(fontFile,
-          "const KDFont KDFont::private%s(%s::k_glyphWidth, %s::k_glyphHeight, glyphDataOffset, glyphData);\n",
+	  "const KDFont KDFont::private%s(\n"
+	  "  %s::k_glyphWidth,\n"
+	  "  %s::k_glyphHeight,\n"
+	  "  glyphDataOffset,\n"
+	  "#if KANDINSKY_FONT_VARIABLE_WIDTH\n"
+	  "  glyphWidths,\n"
+	  "#endif\n"
+	  "  glyphData\n"
+	  ");\n",
           fontName, fontName, fontName);
 
   fclose(fontFile);

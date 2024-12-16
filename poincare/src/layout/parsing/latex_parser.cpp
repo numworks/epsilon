@@ -1,9 +1,12 @@
 #include "latex_parser.h"
 
 #include <omg/utf8_decoder.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/layout/code_point_layout.h>
+#include <poincare/src/layout/indices.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parsing/tokenizer.h>
+#include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/layout/vertical_offset.h>
 #include <poincare/src/memory/n_ary.h>
@@ -16,141 +19,229 @@ namespace Poincare::Internal {
 
 namespace LatexParser {
 
-/* This value is a system symbol named GroupSeparator */
-constexpr static const char* k_variableRightDelimiter = "\u001D";
+// ===== Latex Tokens =====
 
-static bool IsVariableRightDelimiter(const char* string, size_t length) {
-  return length == strlen(k_variableRightDelimiter) &&
-         strncmp(string, k_variableRightDelimiter, length) == 0;
-}
-
-// ===== Tokens =====
-
-/* These token description arrays alternate
- *  - A delimiter string (ex: "\\left(" or "\\right)")
- *  - A string containing 1 char that matches the index of the child in the
- * layout (ex: "\0" or "\1")
+/* A LatexToken is an array of LatexTokenChildren
+ * A LatexTokenChild is a pair of a left delimiter and the index of the child
+ * in the layout.
+ * Example:
+ * For n-th Root, the latex "\\sqrt[2]{3}"" matches the layout Root(3,2)
+ * Thus, the LatexToken is:
+ * {{ "\\sqrt[",  1},
+ *  { "]{",  0},
+ *  { "}",  k_noChild}};
  * */
-constexpr static const char* parenthesisToken[] = {"\\left(", "\0", "\\right)"};
-constexpr static const char* curlyBracesToken[] = {"\\left\\{", "\0",
-                                                   "\\right\\}"};
-constexpr static const char* absToken[] = {"\\left|", "\0", "\\right|"};
-constexpr static const char* sqrtToken[] = {"\\sqrt{", "\0", "}"};
-constexpr static const char* conjugateToken[] = {"\\overline{", "\0", "}"};
-constexpr static const char* superscriptToken[] = {"^{", "\0", "}"};
-constexpr static const char* subscriptToken[] = {"_{", "\0", "}"};
-constexpr static const char* fracToken[] = {"\\frac{", "\0", "}{", "\1", "}"};
-// The root's power is at index 0 in latex and 1 in layouts
-constexpr static const char* nthRootToken[] = {"\\sqrt[", "\1", "]{", "\0",
-                                               "}"};
-constexpr static const char* binomToken[] = {"\\binom{", "\0", "}{", "\1", "}"};
+
+struct LatexTokenChild {
+  const char* leftDelimiter;
+  int indexInLayout;
+};
+
+const static int k_noChild = -1;
+
+using LatexToken = const LatexTokenChild*;
+
+constexpr static LatexTokenChild parenthesisToken[] = {{"\\left(", 0},
+                                                       {"\\right)", k_noChild}};
+constexpr static LatexTokenChild curlyBracesToken[] = {
+    {"\\left\\{", 0}, {"\\right\\}", k_noChild}};
+
+constexpr static LatexTokenChild absToken[] = {{"\\left|", 0},
+                                               {"\\right|", k_noChild}};
+
+constexpr static LatexTokenChild sqrtToken[] = {{"\\sqrt{", 0},
+                                                {"}", k_noChild}};
+
+constexpr static LatexTokenChild conjugateToken[] = {{"\\overline{", 0},
+                                                     {"}", k_noChild}};
+
+constexpr static LatexTokenChild superscriptToken[] = {{"^{", 0},
+                                                       {"}", k_noChild}};
+
+constexpr static LatexTokenChild subscriptToken[] = {{"_{", 0},
+                                                     {"}", k_noChild}};
+
+constexpr static LatexTokenChild fracToken[] = {
+    {"\\frac{", Fraction::k_numeratorIndex},
+    {"}{", Fraction::k_denominatorIndex},
+    {"}", k_noChild}};
+
+constexpr static LatexTokenChild nthRootToken[] = {
+    {"\\sqrt[", NthRoot::k_indexIndex},
+    {"]{", NthRoot::k_radicandIndex},
+    {"}", k_noChild}};
+
+constexpr static LatexTokenChild binomToken[] = {
+    {"\\binom{", Binomial::k_nIndex},
+    {"}{", Binomial::k_kIndex},
+    {"}", k_noChild}};
 
 /* Latex: \\int_{\LowerBound}^{\UpperBound}\Integrand d\Symbol
- * Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand)
- *
- * It's no that easy to know where the integral ends in Latex, as there is no
- * clear delimiter between the integrand and the symbol, and at the end of the
- * symbol.
- *
- * Also it's not clear if "\\int_{0}^{1}ta^{3}dta" is
- * - "int(ta, 0, 1, (ta)^3)"
- * - "int(t, 0, 1, t * a^3) * a".
- * Desmos chose the second option as they don't accept variables with
- * multiple characters.
- * But Poincaré does accept such variables, so we will choose the first option.
- *
- * For the delimiter between the integrand and the symbol, we use "\\ d".
- * This means that the user MUST input a space before the "dx".
- * - "\\int_{0}^{1}x^{3}dx" -> Not working
- * - "\\int_{0}^{1}x^{3}\\ dx" -> Working
- * This has some limitations, but we couldn't use just "d" for the delimiter,
- * as it would fail for integrals containing a "d" in the integrand.
- * For example "\\int_{0}^{1}round(x)dx". (since "round" contains a "d")
- *
- * For the delimiter at the end of the symbol, we use variableRightDelimiter.
- * This means the parsing will stop as soon as a non-"IdentifierMaterial"
- * codepoint is found (i.e. non-alphanumeric codepoint or greek letter. See
- * Tokenizer::IsIdentifierMaterial for more info).
- *
- * */
-constexpr static const char* integralToken[] = {
-    "\\int_{", "\1", "}^{",
-    "\2",      "}",  "\3",
-    "\\ d",    "\0", k_variableRightDelimiter};
+ * Layout: Integral(\Symbol, \LowerBound, \UpperBound, \Integrand) */
+constexpr static LatexTokenChild integralToken[] = {
+    {"\\int_{", Integral::k_lowerBoundIndex},
+    {"}^{", Integral::k_upperBoundIndex},
+    // Split '}' and the integrand because the latter has custom parsing
+    {"}", k_noChild},
+    {"", Integral::k_integrandIndex},
+    {"\\ d", Integral::k_differentialIndex},
+    /* Add a space to separate the variable from the next latex token.
+     * This space is not visible to the user in latex (" " != "\\ " ) */
+    {" ", k_noChild}};
+constexpr static int k_integrandIndexInIntegralToken = 3;
+constexpr static int k_variableIndexInIntegralToken = 4;
+constexpr static int k_endIndexInIntegralToken = 5;
+
+/* Latex: \\sum_{\Variable=\LowerBound}^{\UpperBound}(\Function)
+ * Layout: Sum(\Variable, \LowerBound, \UpperBound, \Function) */
+constexpr static LatexTokenChild sumToken[] = {
+    {"\\sum_{", Parametric::k_variableIndex},
+    {"=", Parametric::k_lowerBoundIndex},
+    {"}^{", Parametric::k_upperBoundIndex},
+    // Split '}' and the parentheses because the latter are optional
+    {"}", k_noChild},
+    {"\\left(", Parametric::k_argumentIndex},
+    {"\\right)", k_noChild}};
+
+/* Latex: \\prod{\Variable=\LowerBound}^{\UpperBound}(\Function)
+ * Layout: Product(\Variable, \LowerBound, \UpperBound, \Function) */
+constexpr static LatexTokenChild prodToken[] = {
+    {"\\prod_{", Parametric::k_variableIndex},
+    {"=", Parametric::k_lowerBoundIndex},
+    {"}^{", Parametric::k_upperBoundIndex},
+    // Split '}' and the parentheses because the latter are optional
+    {"}", k_noChild},
+    {"\\left(", Parametric::k_argumentIndex},
+    {"\\right)", k_noChild}};
+
+/* Latex: \\frac{d}{d\Variable}(\Function)
+ * Layout: Diff(\Variable, \Variable, "1"_l, \Function) */
+constexpr static LatexTokenChild diffToken[] = {
+    {"\\frac{d}{d", Derivative::k_variableIndex},
+    // Split '}' and the parentheses because the latter are optional
+    {"}", k_noChild},
+    {"\\left(", Derivative::k_derivandIndex},
+    {"\\right)", k_noChild}};
+constexpr static int k_variableIndexInDiffToken = 0;
+
+/* Latex: \\frac{d}{d\Variable}(\Function)_{\Variable=\Abscissa}
+ * Layout: Diff(\Variable, \Abscissa, "1"_l, \Function) */
+constexpr static LatexTokenChild diffAtAToken[] = {
+    {"\\frac{d}{d", Derivative::k_variableIndex},
+    {"}\\left(", Derivative::k_derivandIndex},
+    {"\\right)_{", Derivative::k_variableIndex},
+    {"=", Derivative::k_abscissaIndex},
+    {"}", k_noChild}};
+
+/* Latex: \\frac{d^{\Order}}{d\Variable^{\Order}}(\Function)
+ * Layout: Diff(\Variable, \Variable, \Order, \Function) */
+constexpr static LatexTokenChild nthDiffToken[] = {
+    {"\\frac{d^{", Derivative::k_orderIndex},
+    {"}}{d", Derivative::k_variableIndex},
+    {"^{", Derivative::k_orderIndex},
+    // Split '}}' and the parentheses because the latter are optional
+    {"}}", k_noChild},
+    {"\\left(", Derivative::k_derivandIndex},
+    {"\\right)", k_noChild}};
+constexpr static int k_variableIndexInNthDiffToken = 1;
+
+/* Latex:
+ * \\frac{d^{\Order}}{d\Variable^{\Order}}(\Function)_{\Variable=\Abscissa}
+ * Layout: Diff(\Variable, \Abscissa, \Order, \Function) */
+constexpr static LatexTokenChild nthDiffAtAToken[] = {
+    {"\\frac{d^{", Derivative::k_orderIndex},
+    {"}}{d", Derivative::k_variableIndex},
+    {"^{", Derivative::k_orderIndex},
+    {"}}\\left(", Derivative::k_derivandIndex},
+    {"\\right)_{", Derivative::k_variableIndex},
+    {"=", Derivative::k_abscissaIndex},
+    {"}", k_noChild}};
 
 // Code points
-constexpr static const char* middleDotToken[] = {"\\cdot"};
-constexpr static const char* multiplicationSignToken[] = {"\\times"};
-constexpr static const char* lesserOrEqualToken[] = {"\\le"};
-constexpr static const char* greaterOrEqualToken[] = {"\\ge"};
-constexpr static const char* degreeToken[] = {"\\degree"};
-constexpr static const char* rightwardsArrowToken[] = {"\\to"};
-constexpr static const char* infinityToken[] = {"\\infty"};
-constexpr static const char* divisionToken[] = {"\\div"};
+constexpr static LatexTokenChild middleDotToken[] = {{"\\cdot", k_noChild}};
+constexpr static LatexTokenChild multiplicationSignToken[] = {
+    {"\\times", k_noChild}};
+constexpr static LatexTokenChild lesserOrEqualToken[] = {{"\\le", k_noChild}};
+constexpr static LatexTokenChild greaterOrEqualToken[] = {{"\\ge", k_noChild}};
+constexpr static LatexTokenChild degreeToken[] = {{"\\degree", k_noChild}};
+constexpr static LatexTokenChild rightwardsArrowToken[] = {{"\\to", k_noChild}};
+constexpr static LatexTokenChild infinityToken[] = {{"\\infty", k_noChild}};
+constexpr static LatexTokenChild divisionToken[] = {{"\\div", k_noChild}};
 
 // Tokens that do nothing
-constexpr static const char* textToken[] = {"\\text{"};
-constexpr static const char* operatorToken[] = {"\\operatorname{"};
-constexpr static const char* spaceToken[] = {" "};
+constexpr static LatexTokenChild textToken[] = {{"\\text{", k_noChild}};
+constexpr static LatexTokenChild operatorToken[] = {
+    {"\\operatorname{", k_noChild}};
+constexpr static LatexTokenChild spaceToken[] = {{" ", k_noChild}};
 /* TODO: Currently we are working with MathQuill which doesn't recognize the
  * special characters spacings. See
  * https://github.com/desmosinc/mathquill/blob/f71f190ee067a9a2a33683cdb02b43333b9b240e/src/commands/math/advancedSymbols.ts#L224
  */
-// constexpr static const char* commaToken[] = {","};
-constexpr static const char* escapeToken[] = {"\\"};
-constexpr static const char* leftBraceToken[] = {"{"};
-constexpr static const char* rightBraceToken[] = {"}"};
+/* constexpr static LatexToken commaToken = {
+    { ",",  k_noChild}}; */
+constexpr static LatexTokenChild escapeToken[] = {{"\\", k_noChild}};
+constexpr static LatexTokenChild leftBraceToken[] = {{"{", k_noChild}};
+constexpr static LatexTokenChild rightBraceToken[] = {{"}", k_noChild}};
 
 using LayoutDetector = bool (*)(const Tree*);
-using LayoutConstructor = Tree* (*)();
+using EmptyLayoutBuilder = Tree* (*)();
 
-struct LatexToken {
-  const char* const* description;
-  const int descriptionLength;
-  const LayoutDetector detector;
-  const LayoutConstructor constructor;
+struct LatexLayoutRule {
+  /* The latex token. Is used to:
+   * - detect a latex token when turning Latex to Layout
+   * - build a latex string when turning Layout to Latex
+   * */
+  const LatexToken latexToken;
+  const int latexTokenSize;
+  // Detect if a layout should be turned into this latex token
+  const LayoutDetector detectLayout;
+  // Builds the layout for this latex token
+  const EmptyLayoutBuilder buildEmptyLayout;
 };
 
-#define ONE_CHILD_TOKEN(LATEX, IS_LAYOUT, KTREE)               \
+#define ONE_CHILD_RULE(LATEX_TOKEN, IS_LAYOUT, KTREE)          \
   {                                                            \
-    LATEX, std::size(LATEX),                                   \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),                       \
         [](const Tree* t) -> bool { return t->IS_LAYOUT(); },  \
         []() -> Tree* { return KTREE(KRackL())->cloneTree(); } \
   }
 
-#define TWO_CHILDREN_TOKEN(LATEX, IS_LAYOUT, KTREE)                      \
+#define TWO_CHILDREN_RULE(LATEX_TOKEN, IS_LAYOUT, KTREE)                 \
   {                                                                      \
-    LATEX, std::size(LATEX),                                             \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),                                 \
         [](const Tree* t) -> bool { return t->IS_LAYOUT(); },            \
         []() -> Tree* { return KTREE(KRackL(), KRackL())->cloneTree(); } \
   }
 
-#define CODEPOINT_TOKEN(LATEX, CODEPOINT)                               \
+#define CODEPOINT_RULE(LATEX_TOKEN, CODEPOINT)                          \
   {                                                                     \
-    LATEX, std::size(LATEX),                                            \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),                                \
         [](const Tree* t) -> bool {                                     \
           return CodePointLayout::IsCodePoint(t, CODEPOINT);            \
         },                                                              \
         []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); } \
   }
 
-#define DO_NOTHING_TOKEN(LATEX)                                           \
-  {                                                                       \
-    LATEX, std::size(LATEX), [](const Tree* t) -> bool { return false; }, \
-        []() -> Tree* { return nullptr; }                                 \
+#define DO_NOTHING_RULE(LATEX_TOKEN)                 \
+  {                                                  \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),             \
+        [](const Tree* t) -> bool { return false; }, \
+        []() -> Tree* { return nullptr; }            \
   }
 
-constexpr static LatexToken k_tokens[] = {
+bool IsDerivativeLayout(const Tree* l, bool withoutOrder, bool withoutVariable);
+
+constexpr static LatexLayoutRule k_rules[] = {
     // Parenthesis
-    ONE_CHILD_TOKEN(parenthesisToken, isParenthesesLayout, KParenthesesL),
+    ONE_CHILD_RULE(parenthesisToken, isParenthesesLayout, KParenthesesL),
     // Curly braces
-    ONE_CHILD_TOKEN(curlyBracesToken, isCurlyBracesLayout, KCurlyBracesL),
+    ONE_CHILD_RULE(curlyBracesToken, isCurlyBracesLayout, KCurlyBracesL),
     // Absolute value
-    ONE_CHILD_TOKEN(absToken, isAbsLayout, KAbsL),
+    ONE_CHILD_RULE(absToken, isAbsLayout, KAbsL),
     // Sqrt
-    ONE_CHILD_TOKEN(sqrtToken, isSqrtLayout, KSqrtL),
+    ONE_CHILD_RULE(sqrtToken, isSqrtLayout, KSqrtL),
     // Conjugate
-    ONE_CHILD_TOKEN(conjugateToken, isConjLayout, KConjL),
+    ONE_CHILD_RULE(conjugateToken, isConjLayout, KConjL),
     // Superscript
     {superscriptToken, std::size(superscriptToken),
      [](const Tree* l) -> bool {
@@ -163,116 +254,204 @@ constexpr static LatexToken k_tokens[] = {
        return l->isVerticalOffsetLayout() && VerticalOffset::IsSubscript(l);
      },
      []() -> Tree* { return KSubscriptL(KRackL())->cloneTree(); }},
-    // Fraction
-    TWO_CHILDREN_TOKEN(fracToken, isFractionLayout, KFracL),
     // Root
-    TWO_CHILDREN_TOKEN(nthRootToken, isRootLayout, KRootL),
+    TWO_CHILDREN_RULE(nthRootToken, isRootLayout, KRootL),
     // Binomial
-    TWO_CHILDREN_TOKEN(binomToken, isBinomialLayout, KBinomialL),
+    TWO_CHILDREN_RULE(binomToken, isBinomialLayout, KBinomialL),
+
     // Integral
     {integralToken, std::size(integralToken),
      [](const Tree* l) -> bool { return l->isIntegralLayout(); },
      []() -> Tree* {
        return KIntegralL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
      }},
+    // Sum
+    {sumToken, std::size(sumToken),
+     [](const Tree* l) -> bool { return l->isSumLayout(); },
+     []() -> Tree* {
+       return KSumL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
+    // Product
+    {prodToken, std::size(prodToken),
+     [](const Tree* l) -> bool { return l->isProductLayout(); },
+     []() -> Tree* {
+       return KProductL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
+
+    /* WARNING: The order matters here
+     * Diff layouts need to stay is this order and be before "frac" to be
+     * detected correctly */
+    // Diff at A
+    {diffAtAToken, std::size(diffAtAToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, false); },
+     []() -> Tree* {
+       return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
+     }},
+    // Diff
+    {diffToken, std::size(diffToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, false, true); },
+     []() -> Tree* {
+       return KDiffL(KRackL(), KRackL(), "1"_l, KRackL())->cloneTree();
+     }},
+    // Nth diff at A
+    {nthDiffAtAToken, std::size(nthDiffAtAToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, false); },
+     []() -> Tree* {
+       return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
+    // Nth diff
+    {nthDiffToken, std::size(nthDiffToken),
+     [](const Tree* l) -> bool { return IsDerivativeLayout(l, true, true); },
+     []() -> Tree* {
+       return KNthDiffL(KRackL(), KRackL(), KRackL(), KRackL())->cloneTree();
+     }},
+    // Fraction
+    TWO_CHILDREN_RULE(fracToken, isFractionLayout, KFracL),
+
     /* WARNING: The order matters here, since we want "\left(" to be checked
      * before "\le" */
     // Middle Dot
-    CODEPOINT_TOKEN(middleDotToken, UCodePointMiddleDot),
+    CODEPOINT_RULE(middleDotToken, UCodePointMiddleDot),
     // Multiplication sign
-    CODEPOINT_TOKEN(multiplicationSignToken, UCodePointMultiplicationSign),
+    CODEPOINT_RULE(multiplicationSignToken, UCodePointMultiplicationSign),
     // <=
-    CODEPOINT_TOKEN(lesserOrEqualToken, UCodePointInferiorEqual),
+    CODEPOINT_RULE(lesserOrEqualToken, UCodePointInferiorEqual),
     // >=
-    CODEPOINT_TOKEN(greaterOrEqualToken, UCodePointSuperiorEqual),
+    CODEPOINT_RULE(greaterOrEqualToken, UCodePointSuperiorEqual),
     // °
-    CODEPOINT_TOKEN(degreeToken, UCodePointDegreeSign),
+    CODEPOINT_RULE(degreeToken, UCodePointDegreeSign),
     // ->
-    CODEPOINT_TOKEN(rightwardsArrowToken, UCodePointRightwardsArrow),
+    CODEPOINT_RULE(rightwardsArrowToken, UCodePointRightwardsArrow),
     // Infinity
-    CODEPOINT_TOKEN(infinityToken, UCodePointInfinity),
+    CODEPOINT_RULE(infinityToken, UCodePointInfinity),
     // ÷
     {divisionToken, std::size(divisionToken),
      // This codepoint doesn't exist in Poincare
      [](const Tree* t) -> bool { return false; },
      []() -> Tree* { return KCodePointL<'/'>()->cloneTree(); }},
     // Tokens that do nothing
-    DO_NOTHING_TOKEN(textToken),
-    DO_NOTHING_TOKEN(operatorToken),
-    DO_NOTHING_TOKEN(spaceToken),
-    // DO_NOTHING_TOKEN(commaToken),
-    DO_NOTHING_TOKEN(escapeToken),
-    DO_NOTHING_TOKEN(leftBraceToken),
-    DO_NOTHING_TOKEN(rightBraceToken),
+    DO_NOTHING_RULE(textToken),
+    DO_NOTHING_RULE(operatorToken),
+    DO_NOTHING_RULE(spaceToken),
+    // DO_NOTHING_RULE(commaToken),
+    DO_NOTHING_RULE(escapeToken),
+    DO_NOTHING_RULE(leftBraceToken),
+    DO_NOTHING_RULE(rightBraceToken),
 };
 
 // ===== Latex to Layout ======
 
-Tree* NextLatexToken(const char** start, bool parseVariableOnly);
+Tree* NextLatexToken(const char** start, const char* parentRightDelimiter);
 
-void ParseLatexOnRackUntilIdentifier(Rack* parent, const char** start,
-                                     const char* endIdentifier) {
-  size_t endLen = strlen(endIdentifier);
-
-  bool parseVariable = IsVariableRightDelimiter(endIdentifier, endLen);
-  bool ignoreEndIdentifier = endLen == 0 || parseVariable;
-
-  while (**start != 0 &&
-         (ignoreEndIdentifier || strncmp(*start, endIdentifier, endLen) != 0)) {
-    Tree* child = NextLatexToken(start, parseVariable);
+void ParseLatexOnRackUntilDelimiter(Rack* parent, const char** start,
+                                    const char* rightDelimiter) {
+  size_t delimiterLen = strlen(rightDelimiter);
+  while (**start != 0 && (delimiterLen == 0 ||
+                          strncmp(*start, rightDelimiter, delimiterLen) != 0)) {
+    Tree* child = NextLatexToken(start, rightDelimiter);
     if (child) {
       NAry::AddChild(parent, child);
-    } else if (parseVariable) {
-      /* The next codepoint wasn't identifier material so the variable came to
-       * an end */
-      break;
     }
   }
-
-  if (ignoreEndIdentifier) {
-    return;
-  }
-
-  if (**start == 0) {
-    /* We're at the end of the string and endIdentifier couldn't be found */
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
-  *start += endLen;
 }
 
-Tree* NextLatexToken(const char** start, bool parseVariableOnly) {
-  if (!parseVariableOnly) {
-    for (const LatexToken& token : k_tokens) {
-      const char* leftDelimiter = token.description[0];
-      size_t leftDelimiterLength = strlen(leftDelimiter);
-      if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
-        continue;
-      }
-      // Special token found
-      *start += leftDelimiterLength;
-      Tree* layoutToken = token.constructor();
+bool CustomBuildLayoutChildFromLatex(const char** latexString,
+                                     const LatexLayoutRule& rule,
+                                     int indexInLatexToken, Tree* parentLayout,
+                                     const char* parentRightDelimiter);
+
+Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
+  bool atLeastOneRuleMatched = false;
+
+  for (const LatexLayoutRule& rule : k_rules) {
+    const LatexToken latexToken = rule.latexToken;
+    const char* leftDelimiter = latexToken[0].leftDelimiter;
+    if (strncmp(*start, leftDelimiter, strlen(leftDelimiter)) != 0) {
+      continue;
+    }
+    // Token found
+    atLeastOneRuleMatched = true;
+    const char* currentStart = *start;
+
+    ExceptionTry {
+      Tree* parentLayout = rule.buildEmptyLayout();
 
       // Parse children
-      for (int i = 1; i < token.descriptionLength - 1; i += 2) {
-        assert(strlen(token.description[i]) <= 1);
-        int childIndexInLayout = token.description[i][0];
-        const char* rightDelimiter = token.description[i + 1];
-        ParseLatexOnRackUntilIdentifier(
-            Rack::From(layoutToken->child(childIndexInLayout)), start,
-            rightDelimiter);
+      for (int i = 0; i < rule.latexTokenSize; i++) {
+        // Check for custom parsing of child
+        if (CustomBuildLayoutChildFromLatex(start, rule, i, parentLayout,
+                                            parentRightDelimiter)) {
+          continue;
+        }
+
+        // Classic parsing
+        // --- Step 1. Skip left delimiter ---
+        const char* leftDelimiter = latexToken[i].leftDelimiter;
+        int leftDelimiterLength = strlen(leftDelimiter);
+        if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
+          // Left delimiter not found
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        }
+        *start += leftDelimiterLength;
+
+        // --- Step 2. Parse child ---
+        int indexInLayout = latexToken[i].indexInLayout;
+        if (indexInLayout == k_noChild) {
+          continue;
+        }
+        assert(indexInLayout >= 0 &&
+               indexInLayout < parentLayout->numberOfChildren());
+        assert(i < rule.latexTokenSize - 1);
+        Tree* result = KRackL()->cloneTree();
+        const char* rightDelimiter = latexToken[i + 1].leftDelimiter;
+        ParseLatexOnRackUntilDelimiter(Rack::From(result), start,
+                                       rightDelimiter);
+
+        bool wasAlreadyParsedElsewhere = false;
+        for (int j = 0; j < i; j++) {
+          if (latexToken[j].indexInLayout == indexInLayout) {
+            wasAlreadyParsedElsewhere = true;
+            if (!result->treeIsIdenticalTo(
+                    parentLayout->child(indexInLayout))) {
+              /* The child was already parsed elsewhere, but the result is
+               * different. Thus the latex is invalid.
+               * Ex: "\frac{d^{3}}{dx^{4}}x"
+               *    In this n-th derivative, the first order layout is
+               *    different from the second one.
+               * */
+              TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+            }
+          }
+        }
+        if (!wasAlreadyParsedElsewhere) {
+          parentLayout->child(indexInLayout)->cloneTreeOverTree(result);
+        }
       }
 
-      return layoutToken;
+      return parentLayout;
+    }
+    /* When parsing fails, we try the next rule.
+     * This is especially useful for rules like diff and frac, for which only
+     * comparing the first chars is not enough to know if the rule is the right
+     * one.
+     * Ex: "\frac{d^{4}}{d^{2}}"
+     *     This isn't an nth-derivative but just the frac d^4/d^2 */
+    ExceptionCatch(type) {
+      if (type != ExceptionType::ParseFail) {
+        TreeStackCheckpoint::Raise(type);
+      }
+      *start = currentStart;
     }
   }
 
-  // Code points
-  UTF8Decoder decoder(*start);
-  CodePoint c = decoder.nextCodePoint();
-  if (parseVariableOnly && !Tokenizer::IsIdentifierMaterial(c)) {
-    return nullptr;
+  // If some rule matched but the parsing still failed, there is a syntax error
+  if (atLeastOneRuleMatched) {
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  Tree* codepoint = CodePointLayout::Push(c);
+
+  // Parse as code point
+  UTF8Decoder decoder(*start);
+  Tree* codepoint = CodePointLayout::Push(decoder.nextCodePoint());
   *start = decoder.stringPosition();
   return codepoint;
 }
@@ -280,7 +459,7 @@ Tree* NextLatexToken(const char** start, bool parseVariableOnly) {
 Tree* LatexToLayout(const char* latexString) {
   ExceptionTry {
     Tree* result = KRackL()->cloneTree();
-    ParseLatexOnRackUntilIdentifier(Rack::From(result), &latexString, "");
+    ParseLatexOnRackUntilDelimiter(Rack::From(result), &latexString, "");
     return result;
   }
   ExceptionCatch(type) {
@@ -306,9 +485,6 @@ Tree* LatexToLayout(const char* latexString) {
  *   Conj
  *   CombinedCodePoints
  *   CondensedSum
- *   Diff
- *   Product
- *   Sum
  *   ListSequence
  *   Point2D
  *   Matrix
@@ -356,52 +532,50 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
       continue;
     }
 
-    bool tokenFound = false;
-    for (const LatexToken& token : k_tokens) {
-      if (!token.detector(child)) {
+    bool ruleFound = false;
+    for (const LatexLayoutRule& rule : k_rules) {
+      if (!rule.detectLayout(child)) {
         continue;
       }
 
-      int i = 0;
-      tokenFound = true;
-      bool isCodePoint = token.descriptionLength == 1;
+      const LatexToken latexToken = rule.latexToken;
+      ruleFound = true;
+      bool isLatexCodePoint = rule.latexTokenSize == 1;
 
-      while (true) {
-        const char* delimiter = token.description[i];
-        size_t delimiterLength = strlen(delimiter);
+      for (int i = 0; i < rule.latexTokenSize; i++) {
+        // Write delimiter
+        const char* leftDelimiter = latexToken[i].leftDelimiter;
+        size_t leftDelimiterLength = strlen(leftDelimiter);
 
-        // Do not write variable right delimiter in latex string
-        if (!IsVariableRightDelimiter(delimiter, delimiterLength)) {
-          if (buffer + delimiterLength + isCodePoint >= end) {
-            // Buffer is too short
-            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-          }
-          memcpy(buffer, delimiter, delimiterLength);
-          buffer += delimiterLength;
+        if (buffer + leftDelimiterLength + isLatexCodePoint >= end) {
+          // Buffer is too short
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
+        memcpy(buffer, leftDelimiter, leftDelimiterLength);
+        buffer += leftDelimiterLength;
 
-        if (i == token.descriptionLength - 1) {
-          if (isCodePoint) {
-            /* Add a space after latex codepoints, otherwise the string might
-             * not be valid in latex.
-             * 3\cdotcos -> NO
-             * 3\cdot cos -> YES
-             **/
-            *buffer = ' ';
-            buffer += 1;
-          }
-          *buffer = 0;
-          break;
+        // Write child
+        int indexInLayout = latexToken[i].indexInLayout;
+        if (indexInLayout != k_noChild) {
+          buffer =
+              serializer(Rack::From(child->child(indexInLayout)), buffer, end);
         }
-        assert(strlen(token.description[i + 1]) <= 1);
-        int indexOfChildInLayout = token.description[i + 1][0];
-        buffer = serializer(Rack::From(child->child(indexOfChildInLayout)),
-                            buffer, end);
-        i += 2;
       }
+
+      if (isLatexCodePoint) {
+        /* Add a space after latex codepoints, otherwise the string might
+         * not be valid in latex.
+         * 3\cdotcos -> not valid
+         * 3\cdot cos -> valid
+         **/
+        *buffer = ' ';
+        buffer += 1;
+      }
+      *buffer = 0;
+      break;
     }
 
-    if (tokenFound) {
+    if (ruleFound) {
       continue;
     }
 
@@ -437,6 +611,293 @@ char* LayoutToLatex(const Rack* rack, char* buffer, char* end,
     *buffer = 0;
   }
   return buffer;
+}
+
+// ===== Custom constructors =====
+
+void BuildIntegrandChildFromLatex(const char** latexString, Tree* parentLayout);
+
+void BuildIntegralVariableChildFromLatex(const char** latexString,
+                                         Tree* parentLayout);
+
+void CloneVariableLayoutIntoAbscissaChild(const LatexLayoutRule& rule,
+                                          int indexInLatexToken,
+                                          Tree* parentLayout);
+
+bool BuildChildWithOptionalParenthesesFromLatex(
+    const char** latexString, const LatexLayoutRule& rule,
+    int indexInLatexToken, Tree* parentLayout,
+    const char* parentRightDelimiter);
+
+bool CustomBuildLayoutChildFromLatex(const char** latexString,
+                                     const LatexLayoutRule& rule,
+                                     int indexInLatexToken, Tree* parentLayout,
+                                     const char* parentRightDelimiter) {
+  const LatexToken latexToken = rule.latexToken;
+
+  // Integral integrand and variable
+  if (latexToken == integralToken) {
+    if (indexInLatexToken == k_integrandIndexInIntegralToken) {
+      BuildIntegrandChildFromLatex(latexString, parentLayout);
+      return true;
+    } else if (indexInLatexToken == k_variableIndexInIntegralToken) {
+      BuildIntegralVariableChildFromLatex(latexString, parentLayout);
+      return true;
+    } else if (indexInLatexToken == k_endIndexInIntegralToken) {
+      // Do nothing
+      return true;
+    }
+  }
+
+  // Abscissa in diff and nth diff without value
+  if ((latexToken == diffToken &&
+       indexInLatexToken == k_variableIndexInDiffToken + 1) ||
+      (latexToken == nthDiffToken &&
+       indexInLatexToken == k_variableIndexInNthDiffToken + 1)) {
+    // Do this just after the variable has been parsed
+    CloneVariableLayoutIntoAbscissaChild(rule, indexInLatexToken, parentLayout);
+    return false;
+  }
+
+  // Analysis optional parentheses
+  if ((latexToken == sumToken || latexToken == prodToken ||
+       latexToken == diffToken || latexToken == nthDiffToken)) {
+    return BuildChildWithOptionalParenthesesFromLatex(
+        latexString, rule, indexInLatexToken, parentLayout,
+        parentRightDelimiter);
+  }
+  return false;
+}
+
+// ----- Integral -----
+
+// Helper. Measures the char length of a token that contains multiple codepoints
+size_t TokenCharLength(Token token) {
+  LayoutSpan span = token.toSpan();
+  size_t result = 0;
+  LayoutSpanDecoder decoder(span);
+  while (!decoder.isEmpty()) {
+    CodePoint c = decoder.nextCodePoint();
+    if (c == UCodePointNull) {
+      break;
+    }
+    result += UTF8Decoder::CharSizeOfCodePoint(c);
+  }
+  return result;
+}
+
+/* It's no that easy to know where the integral ends in Latex, as there is no
+ * clear delimiter between the integrand and the symbol, and at the end of the
+ * symbol.
+ *
+ * Also it's not clear if "\\int_{0}^{1}ta^{3}dta" is
+ * - "int(ta, 0, 1, (ta)^3)"
+ * - "int(t, 0, 1, t * a^3) * a".
+ * Desmos chose the second option as they don't accept variables with
+ * multiple characters. But Poincaré does accept such variables, so we must
+ * implement the first option. This is mandatory because the parsing must
+ * work both ways, i.e. a layout converted to latex must be convertable back
+ * to the same layout.
+ *
+ * For the delimiter between the integrand and the symbol, we need the find
+ * a 'd' inside the integral.
+ * But we can't just look for the first 'd' in the integrand, as it could be
+ * part of another identifier like "undef" or "round". We thus use the tokenizer
+ * to find the first 'd' that is not part of another identifier.
+ *
+ * For the delimiter at the end of the symbol, the parsing will stop as soon as
+ * a non-"IdentifierMaterial" codepoint is found (i.e. non-alphanumeric
+ * codepoint or greek letter. See Tokenizer::IsIdentifierMaterial for more
+ * info).
+ **/
+void BuildIntegrandChildFromLatex(const char** latexString,
+                                  Tree* parentLayout) {
+  Rack* integrandRack = Rack::From(parentLayout->child(
+      integralToken[k_integrandIndexInIntegralToken].indexInLayout));
+  const char* integrandStart = *latexString;
+
+  EmptyContext emptyContext;
+  ParsingContext parsingContext(&emptyContext,
+                                ParsingContext::ParsingMethod::Classic);
+  while (**latexString != 0) {
+    if (**latexString == 'd') {
+      // We might have found the end of the integrand
+      const char* dPosition = *latexString;
+
+      // --- Step 2.1 --- Find the identifier string surrounding the `d`
+      /* Example: ∫3+abcdxyz1
+       *                ↑ Start is at 'd'
+       *             ↑------↑ Surrounding identifier string is 'abcdxyz1'
+       * */
+      UTF8Decoder decoderStart(integrandStart - 1, dPosition);
+      CodePoint previousCodePoint = decoderStart.previousCodePoint();
+      while (decoderStart.stringPosition() >= integrandStart &&
+             Tokenizer::IsIdentifierMaterial(previousCodePoint) &&
+             !previousCodePoint.isDecimalDigit()) {
+        previousCodePoint = decoderStart.previousCodePoint();
+      }
+      decoderStart.nextCodePoint();
+      const char* identifierStart = decoderStart.stringPosition();
+
+      UTF8Decoder decoderEnd(dPosition);
+      CodePoint nextCodePoint = decoderEnd.nextCodePoint();
+      while (Tokenizer::IsIdentifierMaterial(nextCodePoint)) {
+        nextCodePoint = decoderEnd.nextCodePoint();
+      }
+      decoderEnd.previousCodePoint();
+      const char* identifierEnd = decoderEnd.stringPosition();
+
+      // --- Step 2.2 --- Tokenize the identifier string until the 'd'
+      /* Examples:
+       * "abcdxyz1" -> "a" "b" "c" "d" ...
+       *            -> The 'd' is not part of another identifier
+       *            -> It's the delimiter
+       * "abundefz" -> "a" "b" "undef" ...
+       *            -> The 'd' is part of "undef"
+       *            -> It's not the delimiter
+       */
+      Rack* rack = RackFromText(identifierStart, identifierEnd);
+
+      Tokenizer tokenizer(rack, &parsingContext);
+      Token currentToken;
+      size_t totalTokensLength = 0;
+      while (dPosition >= identifierStart + totalTokensLength) {
+        currentToken = tokenizer.popToken();
+        size_t tokenLength = TokenCharLength(currentToken);
+        totalTokensLength += tokenLength;
+      }
+      Token nextToken = tokenizer.popToken();
+      rack->removeTree();
+
+      /* currentToken contains the 'd'
+       * If it's a custom identifier and has length 1, it's the delimiter.
+       * We also check that there is a following token that can be used as
+       * variable.
+       * */
+      if (currentToken.type() == Token::Type::CustomIdentifier &&
+          currentToken.length() == 1 &&
+          nextToken.type() != Token::Type::EndOfStream) {
+        break;
+      }
+    }
+
+    // Parse the content of the integrand
+    Tree* child = NextLatexToken(latexString, "");
+    if (child) {
+      NAry::AddChild(integrandRack, child);
+    }
+  }
+
+  if (**latexString == 0) {
+    /* We're at the end of the string and the 'd' couldn't be found */
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+  // Skip 'd'
+  *latexString += 1;
+}
+
+void BuildIntegralVariableChildFromLatex(const char** latexString,
+                                         Tree* parentLayout) {
+  UTF8Decoder decoder(*latexString);
+  CodePoint c = decoder.nextCodePoint();
+  while (Tokenizer::IsIdentifierMaterial(c)) {
+    Tree* codepoint = CodePointLayout::Push(c);
+    NAry::AddChild(
+        Rack::From(parentLayout->child(
+            integralToken[k_variableIndexInIntegralToken].indexInLayout)),
+        codepoint);
+    c = decoder.nextCodePoint();
+  }
+  decoder.previousCodePoint();
+  *latexString = decoder.stringPosition();
+}
+
+bool IsDerivativeLayout(const Tree* l, bool isNthDerivative,
+                        bool isAbscissaEqualToVariable) {
+  /* If the abscissa layout is identical to the variable (`d/dx(...)_{x=x}`)
+   * we assume the user wants to use the latex `d/dx(...)` rather than
+   * `d/dx(...)_{x=a}`. This trick is necessary because no layout for `d/dx()``
+   * without abscissa exists. */
+  return l->isDiffLayout() &&
+         (isNthDerivative == l->toDiffLayoutNode()->isNthDerivative) &&
+         (isAbscissaEqualToVariable ==
+          l->child(Derivative::k_variableIndex)
+              ->treeIsIdenticalTo(l->child(Derivative::k_abscissaIndex)));
+}
+
+// --- Diff and NthDiff ---
+
+/* Diff and NthDiff do not have an abscissa value provided by Latex.
+ * We thus replace the abscissa with the variable. */
+void CloneVariableLayoutIntoAbscissaChild(const LatexLayoutRule& rule,
+                                          int indexInLatexToken,
+                                          Tree* parentLayout) {
+  const LatexToken latexToken = rule.latexToken;
+  assert(latexToken == diffToken || latexToken == nthDiffToken);
+
+  int variableIndex = latexToken[indexInLatexToken - 1].indexInLayout;
+
+  Tree* variable = parentLayout->child(variableIndex);
+  Tree* abscissa = parentLayout->child(Derivative::k_abscissaIndex);
+  abscissa->cloneTreeOverTree(variable);
+}
+
+// ---- Analysis optional parenthesis ----
+
+/* For Sum, Prod, diff and nthdiff, if the user doesn't use parentheses
+ * around the function, we still want to be able to parse their input.
+ * In this case, the algorithm considers that the function continues until
+ * the end of the input (or when encountering the parent delimiter). */
+bool BuildChildWithOptionalParenthesesFromLatex(
+    const char** latexString, const LatexLayoutRule& rule,
+    int indexInLatexToken, Tree* parentLayout,
+    const char* parentRightDelimiter) {
+  const LatexToken& latexToken = rule.latexToken;
+  assert(latexToken == sumToken || latexToken == prodToken ||
+         latexToken == diffToken || latexToken == nthDiffToken);
+
+  if (indexInLatexToken == rule.latexTokenSize - 2) {
+    const char* leftDelimiter = latexToken[indexInLatexToken].leftDelimiter;
+    const char* rightDelimiter =
+        latexToken[indexInLatexToken + 1].leftDelimiter;
+    assert(strncmp(leftDelimiter, "\\left(", strlen("\\left(")) == 0);
+    assert(strncmp(rightDelimiter, "\\right)", strlen("\\right)")) == 0);
+
+    int leftDelimiterLength = strlen(leftDelimiter);
+    bool hasLeftParenthesis =
+        strncmp(*latexString, leftDelimiter, leftDelimiterLength) == 0;
+    if (hasLeftParenthesis) {
+      *latexString += leftDelimiterLength;
+    }
+
+    int indexInLayout = latexToken[indexInLatexToken].indexInLayout;
+    assert(indexInLayout >= 0 &&
+           indexInLayout < parentLayout->numberOfChildren());
+    /* If no left parenthesis, parse till the end of the string
+     * else, stop when reaching delimiter of parent token. */
+    ParseLatexOnRackUntilDelimiter(
+        Rack::From(parentLayout->child(indexInLayout)), latexString,
+        hasLeftParenthesis ? rightDelimiter : parentRightDelimiter);
+
+    // Skip right parenthesis if has left parenthesis
+    if (hasLeftParenthesis) {
+      int rightDelimiterLength = strlen(rightDelimiter);
+      bool hasRightParenthesis =
+          strncmp(*latexString, rightDelimiter, rightDelimiterLength) == 0;
+      if (!hasRightParenthesis) {
+        // Right parenthesis not found
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      *latexString += rightDelimiterLength;
+    }
+    return true;
+  }
+
+  if (indexInLatexToken == rule.latexTokenSize - 1) {
+    // Already handled in previous child
+    return true;
+  }
+  return false;
 }
 
 }  // namespace LatexParser

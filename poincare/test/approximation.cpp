@@ -102,17 +102,17 @@ QUIZ_CASE(pcj_approximation_replace) {
   TreeRef ref2(
       KMult(2.0_de, KDiv("x"_e, KAdd(1_e, 2.0_de)), KAdd(1_e, 2_e, 10.5_de)));
   quiz_assert(Approximation::ApproximateAndReplaceEveryScalar<double>(ref2));
-  assert_trees_are_equal(ref2, KMult(2.0_de, KDiv("x"_e, 3.0_de), 13.5_de));
+  assert_trees_are_equal(ref2, KMult(KDiv("x"_e, 3.0_de), 27_de));
 
   TreeRef ref3(
       KMult(2.0_fe, KDiv("x"_e, KAdd(1_e, 2.0_de)), KAdd(1_e, 2_e, 10.5_de)));
   quiz_assert(Approximation::ApproximateAndReplaceEveryScalar<double>(ref3));
-  assert_trees_are_equal(ref3, KMult(2.0_fe, KDiv("x"_e, 3.0_fe), 13.5_fe));
+  assert_trees_are_equal(ref3, KMult(KDiv("x"_e, 3.0_fe), 27_fe));
 
   TreeRef ref4(
       KMult(2.0_de, KDiv("x"_e, KAdd(1_e, 2.0_fe)), KAdd(1_e, 2_e, 10.5_fe)));
   quiz_assert(Approximation::ApproximateAndReplaceEveryScalar<float>(ref4));
-  assert_trees_are_equal(ref4, KMult(2.0_fe, KDiv("x"_e, 3.0_fe), 13.5_fe));
+  assert_trees_are_equal(ref4, KMult(KDiv("x"_e, 3.0_fe), 27_fe));
 }
 
 QUIZ_CASE(pcj_approximation_power) {

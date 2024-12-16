@@ -351,7 +351,7 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
 
 bool Beautification::TurnIntoPolarForm(
     Tree* e, Dimension dim, const ProjectionContext& projectionContext) {
-  if (e->isUndefined()) {
+  if (e->isUndefined() || e->isFactor()) {
     return false;
   }
   // Apply element-wise on explicit lists, matrices, sets.

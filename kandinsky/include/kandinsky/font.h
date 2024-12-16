@@ -53,17 +53,36 @@ class KDFont {
     Large = Small
 #endif
   };
-  constexpr static KDCoordinate GlyphWidth(Size size) {
-    return size == Size::Small ? SmallFont::k_glyphWidth
-                               : LargeFont::k_glyphWidth;
-  }
   constexpr static KDCoordinate GlyphHeight(Size size) {
     return size == Size::Small ? SmallFont::k_glyphHeight
                                : LargeFont::k_glyphHeight;
   }
+  constexpr static KDCoordinate GlyphBaseline(Size size) {
+    // Return the ceil when height is odd
+    return (GlyphHeight(size) + 1) / 2;
+  }
+#if KANDINSKY_FONT_VARIABLE_WIDTH
+  static KDCoordinate GlyphWidth(Size size, CodePoint codePoint);
+  constexpr static KDCoordinate GlyphMaxWidth(Size size) {
+    return size == Size::Small ? SmallFont::k_glyphWidth
+                               : LargeFont::k_glyphWidth;
+  }
+  static KDSize GlyphSize(Size size, CodePoint codePoint = ' ') {
+    return KDSize(GlyphWidth(size, codePoint), GlyphHeight(size));
+  }
+#else
+  constexpr static KDCoordinate GlyphWidth(Size size,
+                                           CodePoint codePoint = ' ') {
+    return size == Size::Small ? SmallFont::k_glyphWidth
+                               : LargeFont::k_glyphWidth;
+  }
+  constexpr static KDCoordinate GlyphMaxWidth(Size size) {
+    return GlyphWidth(size);
+  }
   constexpr static KDSize GlyphSize(Size size) {
     return KDSize(GlyphWidth(size), GlyphHeight(size));
   }
+#endif
   constexpr static int k_maxGlyphPixelCount =
       std::max({SmallFont::k_glyphWidth * SmallFont::k_glyphHeight,
                 LargeFont::k_glyphWidth* LargeFont::k_glyphHeight});
@@ -135,10 +154,18 @@ class KDFont {
   }
 
   constexpr KDFont(KDCoordinate glyphWidth, KDCoordinate glyphHeight,
-                   const uint16_t* glyphDataOffset, const uint8_t* data)
+                   const uint16_t* glyphDataOffset,
+#if KANDINSKY_FONT_VARIABLE_WIDTH
+                   const uint8_t* widths,
+#endif
+                   const uint8_t* data)
       : m_glyphSize(glyphWidth, glyphHeight),
         m_glyphDataOffset(glyphDataOffset),
-        m_data(data) {}
+#if KANDINSKY_FONT_VARIABLE_WIDTH
+        m_glyphWidths(widths),
+#endif
+        m_data(data) {
+  }
 
  private:
   void fetchGrayscaleGlyphAtIndex(GlyphIndex index,
@@ -168,6 +195,9 @@ class KDFont {
 
   KDSize m_glyphSize;
   const uint16_t* m_glyphDataOffset;
+#if KANDINSKY_FONT_VARIABLE_WIDTH
+  const uint8_t* m_glyphWidths;
+#endif
   const uint8_t* m_data;
 
   static const CodePointIndexPair* s_CodePointToGlyphIndex;

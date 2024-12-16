@@ -28,7 +28,7 @@ QUIZ_CASE(pcj_projection) {
   ctx.m_strategy = Strategy::ApproximateToFloat;
   ctx.m_angleUnit = AngleUnit::Radian;
   Simplification::ToSystem(ref, &ctx);
-  assert_trees_are_equal(ref, KAdd(1_de, KPow(2_de, "x"_e), 1_de));
+  assert_trees_are_equal(ref, KAdd(KPow(2_de, "x"_e), 2_de));
 
   ctx.m_complexFormat = ComplexFormat::Cartesian;
   ctx.m_strategy = Strategy::Default;

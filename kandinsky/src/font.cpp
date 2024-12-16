@@ -10,6 +10,14 @@ extern "C" {
 
 constexpr static int k_tabCharacterWidth = 4;
 
+#if KANDINSKY_FONT_VARIABLE_WIDTH
+KDCoordinate KDFont::GlyphWidth(Size size, CodePoint codePoint) {
+  int index = Font(size)->indexForCodePoint(codePoint);
+  return size == Size::Small ? privateSmallFont.m_glyphWidths[index]
+                             : privateLargeFont.m_glyphWidths[index];
+}
+#endif
+
 KDSize KDFont::stringSizeUntil(const char* text, const char* limit,
                                KDCoordinate lineSpacing) const {
   if (text == nullptr || (limit != nullptr && text >= limit)) {
@@ -21,6 +29,7 @@ KDSize KDFont::stringSizeUntil(const char* text, const char* limit,
   KDCoordinate stringHeight = m_glyphSize.height();
   KDCoordinate stringWidth = 0;
   KDCoordinate lineStringWidth = 0;
+  Size fontSize = this == &privateSmallFont ? Size::Small : Size::Large;
   while (codePoint != UCodePointNull &&
          (limit == nullptr || currentStringPosition < limit)) {
     if (codePoint == UCodePointLineFeed) {
@@ -28,9 +37,9 @@ KDSize KDFont::stringSizeUntil(const char* text, const char* limit,
       lineStringWidth = 0;
       stringHeight += m_glyphSize.height() + lineSpacing;
     } else if (codePoint == UCodePointTabulation) {
-      lineStringWidth += k_tabCharacterWidth * m_glyphSize.width();
+      lineStringWidth += k_tabCharacterWidth * GlyphWidth(fontSize, ' ');
     } else if (!codePoint.isCombining()) {
-      lineStringWidth += m_glyphSize.width();
+      lineStringWidth += GlyphWidth(fontSize, codePoint);
     }
     currentStringPosition = decoder.stringPosition();
     codePoint = decoder.nextCodePoint();

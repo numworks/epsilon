@@ -29,6 +29,7 @@ class array {
     }
   }
   constexpr U& operator[](unsigned int n) { return m_array[n]; }
+  constexpr const U& operator[](unsigned int n) const { return m_array[n]; }
 
  private:
   U m_array[N];

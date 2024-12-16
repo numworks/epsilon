@@ -21,7 +21,7 @@ constexpr static KDFont::Size k_fontSize = KDFont::Size::Large;
 constexpr static int k_glyphHeight = KDFont::GlyphHeight(k_fontSize);
 constexpr static int k_margin = 6;
 #if DEBUG && ION_LOG_EVENTS_NAME
-constexpr static int k_glyphWidth = KDFont::GlyphWidth(k_fontSize);
+constexpr static int k_glyphWidth = KDFont::GlyphMaxWidth(k_fontSize);  // TODO
 constexpr static KDColor k_backgroundColor = KDColorBlack;
 constexpr static KDColor k_glyphColor = KDColorWhite;
 #endif

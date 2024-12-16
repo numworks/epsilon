@@ -24,7 +24,7 @@ void Context::Putchar(char c) {
   constexpr KDFont::Size font = KDFont::Size::Large;
   constexpr KDGlyph::Style style = {.font = font};
   char text[2] = {c, 0};
-  if (s_cursor.x() > Ion::Display::Width - KDFont::GlyphWidth(font)) {
+  if (s_cursor.x() > Ion::Display::Width - KDFont::GlyphWidth(font, c)) {
     s_cursor = SharedContext->drawString("\n", s_cursor, style);
   }
   if (s_cursor.y() > Ion::Display::Height - 2 * KDFont::GlyphHeight(font)) {

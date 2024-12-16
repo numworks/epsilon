@@ -82,8 +82,9 @@ bool mayNeedParentheses(const Rack* rack) {
 }
 
 char* serializeWithParentheses(const Rack* rack, char* buffer, char* end,
-                               RackSerializer serializer) {
-  bool addParentheses = mayNeedParentheses(rack);
+                               RackSerializer serializer,
+                               bool forceParentheses = false) {
+  bool addParentheses = forceParentheses || mayNeedParentheses(rack);
   if (addParentheses) {
     buffer = append("(", buffer, end);
   }
@@ -140,9 +141,10 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
         buffer =
             serializeWithParentheses(layout->child(0), buffer, end, serializer);
       } else {
-        // TODO_PCJ: something else is needed here
-        buffer =
-            serializeWithParentheses(layout->child(0), buffer, end, serializer);
+        /* TODO_PCJ: something else is needed here to translate the subscript.
+         * For now, force parentheses around subscript expression */
+        buffer = serializeWithParentheses(layout->child(0), buffer, end,
+                                          serializer, true);
       }
       break;
     }

@@ -20,6 +20,7 @@
 #include "float_helper.h"
 #include "list.h"
 #include "matrix.h"
+#include "number.h"
 #include "physical_constant.h"
 #include "random.h"
 #include "rational.h"
@@ -230,7 +231,7 @@ Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
 
 template <typename T>
 Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
-  /* TODO_PCJ: not all approximation methods comes here, but this assert should
+  /* TODO_PCJ: not all approximation methods come here, but this assert should
    * always be called when approximating. */
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   if (dim.isBoolean()) {
@@ -932,8 +933,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
      * handled at this point. */
     case Type::Unit: {
       T approxSI = Units::Unit::GetValue(e);
-      // For angle units, convert to angle value in the context
-      return Units::IsPureAngleUnit(e)
+      /* For angle units, convert to angle value in the context. Do not convert
+       * if angle unit is None. */
+      return (Units::IsPureAngleUnit(e) && ctx->m_angleUnit != AngleUnit::None)
                  ? NewTrigonometry::ConvertRadianToAngleUnit<T>(
                        approxSI, ctx->m_angleUnit)
                  : approxSI;
@@ -1442,6 +1444,38 @@ bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
 }
 
 template <typename T>
+static bool MergeChildrenOfMultOrAdd(Tree* e) {
+  assert(e->isMult() || e->isAdd());
+  T merge = (e->isMult() ? 1.0 : 0.0);
+  int lastFloatIndex = -1;
+  int n = e->numberOfChildren();
+  int i = 0;
+  Tree* child = e->nextNode();
+  while (i < n) {
+    if (child->isFloat()) {
+      T childValue = child->isSingleFloat() ? FloatHelper::FloatTo(child)
+                                            : FloatHelper::DoubleTo(child);
+      merge = (e->isMult() ? merge * childValue : merge + childValue);
+      lastFloatIndex = i;
+      child->removeTree();
+      n--;
+      NAry::SetNumberOfChildren(e, n);
+    } else {
+      child = child->nextTree();
+      i++;
+    }
+  }
+  if (lastFloatIndex != -1) {
+    /* To preserve order, push the merged children at an index where there was a
+     * float */
+    NAry::AddChildAtIndex(e, SharedTreeStack->pushFloat(merge), lastFloatIndex);
+    NAry::SquashIfPossible(e);
+    return true;
+  }
+  return false;
+}
+
+template <typename T>
 bool Approximation::PrivateApproximateAndReplaceEveryScalar(
     Tree* e, const Context* ctx) {
   if (CanApproximate(e) &&
@@ -1459,7 +1493,10 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(
     }
     previousChildWasApproximated = child->isFloat();
   }
-  // TODO: Merge additions and multiplication's children if possible.
+  // Merge addition and multiplication's children while preserving order
+  if (e->isAdd() || e->isMult()) {
+    changed = MergeChildrenOfMultOrAdd<T>(e) || changed;
+  }
   return changed;
 }
 

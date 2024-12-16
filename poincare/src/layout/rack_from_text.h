@@ -5,7 +5,7 @@
 
 namespace Poincare::Internal {
 
-Rack* RackFromText(const char* text);
+Rack* RackFromText(const char* start, const char* end = nullptr);
 
 }  // namespace Poincare::Internal
 

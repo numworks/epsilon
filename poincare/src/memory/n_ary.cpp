@@ -213,6 +213,9 @@ Tree* NAry::CloneSubRange(const Tree* nary, int startIndex, int endIndex) {
   Tree* result = nary->cloneNode();
   int nb = endIndex - startIndex;
   SetNumberOfChildren(result, nb);
+  if (nb == 0) {
+    return result;
+  }
   const Tree* child = nary->child(startIndex);
   for (int i = 0; i < nb; i++) {
     child->cloneTree();

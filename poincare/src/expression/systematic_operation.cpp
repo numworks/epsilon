@@ -747,7 +747,7 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
     // Bubble-up may be unlocked after merging identical bases
     SystematicReduction::BubbleUpFromChildren(e);
     /* TODO: If this assert can't be preserved, ReduceSortedAddition must handle
-     * one or both of this cases as handled in ReduceSortedMultiplication: With
+     * one or both of these cases as handled in ReduceSortedMultiplication: With
      * a,b and c the sorted addition children (a < b < c), M(a,b) the result of
      * merging children a and b (with MergeAdditionChildWithNext) if it exists.
      * - M(a,b) > c or a > M(b,c) (Addition must be sorted again)

@@ -63,8 +63,8 @@ void assert_lcm_equals_to(IntegerHandler a, IntegerHandler b,
   }
 }
 
-void assert_prime_factorization_equals_to(IntegerHandler a, int* factors,
-                                          int* coefficients, int length) {
+void assert_prime_factorization_equals_to(IntegerHandler a, uint32_t* factors,
+                                          uint8_t* coefficients, int length) {
   constexpr size_t bufferSize = 100;
   char failInformationBuffer[bufferSize];
   fill_buffer_with(failInformationBuffer, bufferSize, "factor(", &a, 1);
@@ -86,7 +86,7 @@ void assert_prime_factorization_equals_to(IntegerHandler a, int* factors,
 
 template <unsigned long N>
 void assert_divisors_equal_to(uint32_t a,
-                              const std::array<int, N>& expectedList) {
+                              const std::array<uint32_t, N>& expectedList) {
   static_assert(N <= Arithmetic::Divisors::k_maxNumberOfDivisors);
   Arithmetic::Divisors result = Arithmetic::ListPositiveDivisors(a);
   quiz_assert_print_if_failure(
@@ -94,7 +94,7 @@ void assert_divisors_equal_to(uint32_t a,
       "divisor list computation failed");
   quiz_assert_print_if_failure(result.numberOfDivisors == N,
                                "incorrect number of divisors");
-  for (int i = 0; i < N; i++) {
+  for (unsigned long i = 0; i < N; i++) {
     quiz_assert_print_if_failure(result.list[i] == expectedList[i],
                                  "incorrect divisor value");
   }
@@ -139,46 +139,46 @@ QUIZ_CASE(poincare_arithmetic_lcm) {
 }
 
 QUIZ_CASE(poincare_arithmetic_factorization) {
-  int factors0[5] = {2, 3, 5, 79, 1319};
-  int coefficients0[5] = {2, 1, 1, 1, 1};
+  uint32_t factors0[5] = {2, 3, 5, 79, 1319};
+  uint8_t coefficients0[5] = {2, 1, 1, 1, 1};
   assert_prime_factorization_equals_to(IntegerHandler(6252060), factors0,
                                        coefficients0, 5);
-  int factors1[3] = {3, 2969, 6907};
-  int coefficients1[3] = {1, 1, 1};
+  uint32_t factors1[3] = {3, 2969, 6907};
+  uint8_t coefficients1[3] = {1, 1, 1};
   assert_prime_factorization_equals_to(IntegerHandler(61520649), factors1,
                                        coefficients1, 3);
-  int factors2[3] = {2, 5, 7};
-  int coefficients2[3] = {2, 4, 2};
+  uint32_t factors2[3] = {2, 5, 7};
+  uint8_t coefficients2[3] = {2, 4, 2};
   assert_prime_factorization_equals_to(IntegerHandler(122500), factors2,
                                        coefficients2, 3);
 
-  int factors3[7] = {3, 7, 11, 13, 19, 3607, 3803};
-  int coefficients3[7] = {4, 2, 2, 2, 2, 2, 2};
+  uint32_t factors3[7] = {3, 7, 11, 13, 19, 3607, 3803};
+  uint8_t coefficients3[7] = {4, 2, 2, 2, 2, 2, 2};
   assert_prime_factorization_equals_to(
       ParseHandler("5513219850886344455940081"), factors3, coefficients3, 7);
 
-  int factors4[2] = {8017, 8039};
-  int coefficients4[2] = {1, 1};
+  uint32_t factors4[2] = {8017, 8039};
+  uint8_t coefficients4[2] = {1, 1};
   assert_prime_factorization_equals_to(IntegerHandler(8017 * 8039), factors4,
                                        coefficients4, 2);
-  int factors5[1] = {10007};
-  int coefficients5[1] = {1};
+  uint32_t factors5[1] = {10007};
+  uint8_t coefficients5[1] = {1};
   assert_prime_factorization_equals_to(IntegerHandler(10007), factors5,
                                        coefficients5, 1);
 
-  int factors6[0] = {};
-  int coefficients6[0] = {};
+  uint32_t factors6[0] = {};
+  uint8_t coefficients6[0] = {};
   assert_prime_factorization_equals_to(
       IntegerHandler(10007 * 10007), factors6, coefficients6,
       Arithmetic::FactorizedInteger::k_factorizationFailed);
 
-  int factors7[0] = {};
-  int coefficients7[0] = {};
+  uint32_t factors7[0] = {};
+  uint8_t coefficients7[0] = {};
   assert_prime_factorization_equals_to(IntegerHandler(1), factors7,
                                        coefficients7, 0);
 
-  int factors8[1] = {101119};
-  int coefficients8[1] = {1};
+  uint32_t factors8[1] = {101119};
+  uint8_t coefficients8[1] = {1};
   assert_prime_factorization_equals_to(IntegerHandler(101119), factors8,
                                        coefficients8, 1);
 }

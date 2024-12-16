@@ -311,6 +311,11 @@ QUIZ_CASE(pcj_simplification_complex) {
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
       .m_context = &globalContext,
   };
+  ProjectionContext PolarCtx = {
+      .m_complexFormat = ComplexFormat::Polar,
+      .m_symbolic = SymbolicComputation::KeepAllSymbols,
+      .m_context = &globalContext,
+  };
   simplifies_to("2×i×i", "-2", ctx);
   simplifies_to("1+i×(1+i×(1+i))", "0", ctx);
   simplifies_to("(1+i)×(3+2i)", "1+5×i", ctx);
@@ -357,7 +362,8 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(exp(i*π*10))", "0", ctx);
   simplifies_to("arg(exp(-i*π))", "π", ctx);
   simplifies_to("abs(arccos(z)^2)", "abs(arccos(z)^2)", ctx);
-  simplifies_to("e^(arg(e^(x×i))×i)", "e^(x×i)", ctx);
+  simplifies_to("e^(arg(e^(x×i))×i)", "e^(x×i)", PolarCtx);
+  simplifies_to("e^(arg(e^(x×i))×i)", "cos(x)+sin(x)×i", ctx);
   simplifies_to("arg(abs(x)×e^(arg(z)×i))", "dep(arg(z),{nonNull(abs(x))})",
                 ctx);
   simplifies_to("arg(-3×(x+y×i))", "arg(-(x+y×i))", ctx);
@@ -574,8 +580,10 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("arccot(0)", "π/2");
   simplifies_to("sec(arcsec(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   simplifies_to("csc(arccsc(x))", "dep(x,{nonNull(x)})", cartesianCtx);
-  // TODO: Should simplify to 1+abs(x)
-  simplifies_to("cot(arccot(1+abs(x)))", "tan(arctan(1+abs(x)))", cartesianCtx);
+  simplifies_to(
+      "cot(arccot(1+abs(x)))",
+      "dep(1+abs(x),{sin(arctan(1+abs(x))),nonNull(cos(arctan(1+abs(x))))})",
+      cartesianCtx);
 
   simplifies_to("sin(x)*(cos(x)^-1)*ln(x)",
                 "dep(tan(x)×ln(x),{nonNull(x),realPos(x)})");
@@ -731,8 +739,8 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("0^(1+x^2)", "0");
   simplifies_to("√(9)", "3");
   simplifies_to("√(-9)", "3×i", cartesianCtx);
-  simplifies_to("√(i)", "e^(π/4×i)", cartesianCtx);
-  simplifies_to("√(-i)", "e^(-π/4×i)", cartesianCtx);
+  simplifies_to("√(i)", "√(2)/2+√(2)/2×i", cartesianCtx);
+  simplifies_to("√(-i)", "√(2)/2-√(2)/2×i", cartesianCtx);
   simplifies_to("root(-8,3)", "-2");
   simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
   simplifies_to("1-e^(-(0.09/(5.63*10^-7)))", "1-e^(-90000000/563)");
@@ -760,8 +768,10 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(x)^2", "x", cartesianCtx);
   /* TODO: Should be 0, (exp(i*(arg(A) + arg(B) - arg(A*B))) should be
    * simplified to 1 */
-  simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))", "√(-2)+√(-1-i)×√(1-i)",
-                cartesianCtx);
+  simplifies_to(
+      "√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))",
+      "(re(√(-2))+re(√(-1-i)×√(1-i)))+(im(√(-2))+im(√(-(1+i))×√(1-i)))×i",
+      cartesianCtx);
 
   // Expand/Contract
   simplifies_to("e^(ln(2)+π)", "2e^π");
@@ -784,8 +794,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(-2+√(3))", "√(2)×(-1/2+√(3)/2)×i", cartesianCtx);
   simplifies_to("√(-3-√(8))", "(1+√(2))×i", cartesianCtx);
   simplifies_to("√(17+4×√(13))", "2+√(13)");
-  simplifies_to("√(√(1058)-√(896))", "4×root(2,4)-root(2,4)×√(7)",
-                cartesianCtx);
+  simplifies_to("√(√(1058)-√(896))", "root(2,4)×(4-√(7))", cartesianCtx);
   simplifies_to("√(57×√(17)+68×√(10))", "2×(1/2+(√(10)×√(17))/17)×17^(3/4)");
 }
 
@@ -1085,7 +1094,9 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{nonNull(x),realPos(x)})");
   simplifies_to("log(-inf,x)",
                 "dep(nonreal,{nonNull(x),realPos(x),ln(-∞)/ln(x)})");
-  simplifies_to("log(-inf,x)", "dep(ln(-∞)/ln(x),{nonNull(x)})", cartesianCtx);
+  simplifies_to("log(-inf,x)",
+                "dep(re(ln(-∞)/ln(x))+im(ln(-∞)/ln(x))×i,{nonNull(x)})",
+                cartesianCtx);
   /* Should be nonreal, TODO return NonReal when evaluating PowReal(x) with x
    * non real */
   simplifies_to("log(inf,-3)", "undef");
@@ -1095,7 +1106,9 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(1,inf)", "0");
   simplifies_to("log(1,-inf)", "0", cartesianCtx);
   simplifies_to("log(x,inf)", "dep(0,{0×ln(x),nonNull(x),realPos(x)})");
-  simplifies_to("log(x,-inf)", "dep(ln(x)/ln(-∞),{nonNull(x)})", cartesianCtx);
+  simplifies_to("log(x,-inf)",
+                "dep(re(ln(x)/ln(-∞))+im(ln(x)/ln(-∞))×i,{nonNull(x)})",
+                cartesianCtx);
   simplifies_to("log(inf,inf)", "undef");
   // TODO_PCJ simplifies_to("log(-inf,inf)", "undef", cartesianCtx);
   // TODO_PCJ simplifies_to("log(inf,-inf)", "undef", cartesianCtx);
@@ -1200,10 +1213,22 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 "{√(-x^2+1),x,sin(arctan(x))}", cartesianCtx);
   simplifies_to("sin({acos(-x), asin(-x), atan(-x)})",
                 "{√(-x^2+1),-x,-sin(arctan(x))}", cartesianCtx);
-  simplifies_to("tan({acos(x), asin(x), atan(x)})",
-                "{√(-x^2+1)/x,(x×√(-x^2+1))/(-x^2+1),x}", cartesianCtx);
-  simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
-                "{-√(-x^2+1)/x,-(x×√(-x^2+1))/(-x^2+1),-x}", cartesianCtx);
+  simplifies_to(
+      "tan({acos(x), asin(x), atan(x)})",
+      "{dep(re(√(-x^2+1))/x+(im(√(-x^2+1))×i)/"
+      "x,{0×im(√(-x^2+1)),0×re(√(-x^2+1))}),dep((x×re(√(-x^2+1)))/"
+      "(-x^2+1)+(x×im(√(-x^2+1)))/(-x^2+1)×i,{0×im(√(-x^2+1)),0×im(√(-x^2+1)/"
+      "(-x^2+1)),0×re(√(-x^2+1)),0×re(√(-x^2+1)/(-x^2+1))}),x}",
+      cartesianCtx);
+  simplifies_to(
+      "tan({acos(-x), asin(-x), atan(-x)})",
+      "{dep(-re(√(-x^2+1))/x-(im(√(-x^2+1))×i)/"
+      "x,{0×im(√(-x^2+1)),0×im(√(-x^2+1)/x),0×re(√(-x^2+1)),0×re(√(-x^2+1)/"
+      "x)}),dep(-(x×re(√(-x^2+1)))/(-x^2+1)-(x×im(√(-x^2+1)))/"
+      "(-x^2+1)×i,{0×im(√(-x^2+1)),0×im((x×√(-x^2+1))/(-x^2+1)),0×im(√(-x^2+1)/"
+      "(-x^2+1)),0×re(√(-x^2+1)),0×re((x×√(-x^2+1))/(-x^2+1)),0×re(√(-x^2+1)/"
+      "(-x^2+1))}),-x}",
+      cartesianCtx);
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}",
                 {.m_complexFormat = ComplexFormat::Cartesian,
@@ -1223,7 +1248,15 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("atan({cos(x), sin(x), tan(x)})",
                 "{arctan(cos(x)),arctan(sin(x)),arctan(tan(x))}", cartesianCtx);
   simplifies_to("acos({cos(x), sin(x), tan(x)})",
-                "{arccos(cos(x)),arccos(sin(x)),arccos(tan(x))}",
+                "{dep(arccos(cos(x)),{0,1/"
+                "180,0×im(π×arccos(cos(x))),0×re((π×arccos(cos(x)))/"
+                "180),0×re(arccos(cos(x))/"
+                "180),0×re(π×arccos(cos(x)))}),dep(arccos(sin(x)),{0,1/"
+                "180,0×im(π×arccos(sin(x))),0×re((π×arccos(sin(x)))/"
+                "180),0×re(arccos(sin(x))/"
+                "180),0×re(π×arccos(sin(x)))}),dep(arccos(tan(x)),{0,1/"
+                "180,0×im(π×arccos(tan(x))),0×re((π×arccos(tan(x)))/"
+                "180),0×re(arccos(tan(x))/180),0×re(π×arccos(tan(x)))})}",
                 {.m_complexFormat = ComplexFormat::Cartesian,
                  .m_angleUnit = AngleUnit::Degree});
   simplifies_to("acos(cos({3π/7, -11π/15,34π/15, 40π/13}))",
@@ -1253,7 +1286,9 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("90-acos(x)", "arcsin(x)", {.m_angleUnit = AngleUnit::Degree});
 #endif
   // TODO: Improve output with better advanced reduction.
-  simplifies_to("(y*π+z/180)*asin(x)", "(π×y+z/180)×arcsin(x)",
+  simplifies_to("(y*π+z/180)*asin(x)",
+                "dep((π×(180×y+z/π)×arcsin(x))/180,{0×im((π×arcsin(x))/"
+                "180),0×re((π×arcsin(x))/180)})",
                 {.m_complexFormat = ComplexFormat::Cartesian,
                  .m_angleUnit = AngleUnit::Degree});
   simplifies_to("arg(cos(π/6)+i*sin(π/6))", "π/6");
@@ -1323,7 +1358,9 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(π)-ln(1/π)", "2×ln(π)");
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)",
                 "dep(1-ln(x),{arg(1/x),arg(x),realPos(x)})");
-  simplifies_to("1-ln(x)", "dep(1-ln(x),{nonNull(x)})", cartesianCtx);
+  simplifies_to("1-ln(x)",
+                "dep((1-re(ln(x)))-im(ln(x))×i,{arg(1/x),arg(x),0×re(ln(x))})",
+                cartesianCtx);
   simplifies_to("ln(0)", "undef");
   simplifies_to("ln(0)", "undef", cartesianCtx);
   simplifies_to(
@@ -1334,7 +1371,8 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);
   simplifies_to("ln(x)+ln(y)-ln(x×y)",
-                "dep(ln(x)+ln(y)-ln(x×y),{nonNull(x),nonNull(y)})",
+                "dep((arg(x)+arg(y)-arg(x×y))×i,{0×ln(x),0×ln(y),nonNull(x),"
+                "nonNull(y),arg(x)×i+arg(y)×i-arg(x×y)×i})",
                 cartesianCtx);
   simplifies_to(
       "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",

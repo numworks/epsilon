@@ -95,7 +95,7 @@ QUIZ_CASE(pcj_equation_solver) {
   // Complex format detection
   projCtx.m_complexFormat = ComplexFormat::Real;
   store("i→a", &globalContext);
-  check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "e^(π/3×i)"}, projCtx);
+  check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "1/2+√(3)/2×i"}, projCtx);
   check_solutions({"x-a", "x-a+y-root(-1,3)", "a-1"}, {"1", "1", "-1"},
                   projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();

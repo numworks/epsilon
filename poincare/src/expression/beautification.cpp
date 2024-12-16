@@ -196,12 +196,12 @@ bool DeepBeautifyUnits(Tree* e) {
 
 bool Beautification::DeepBeautify(Tree* e,
                                   ProjectionContext projectionContext) {
-  bool dummy = false;
-  if (projectionContext.m_complexFormat == ComplexFormat::Polar) {
-    TurnIntoPolarForm(e, projectionContext.m_dimension, projectionContext);
-  }
   bool changed =
-      DeepBeautifyAngleFunctions(e, projectionContext.m_angleUnit, &dummy);
+      ApplyComplexFormat(e, projectionContext.m_dimension, projectionContext);
+  bool dummy = false;
+  changed =
+      DeepBeautifyAngleFunctions(e, projectionContext.m_angleUnit, &dummy) ||
+      changed;
   if (changed && projectionContext.m_advanceReduce &&
       projectionContext.m_angleUnit != AngleUnit::Radian) {
     // A ShallowBeautifyAngleFunctions may have added expands possibilities.
@@ -349,18 +349,20 @@ bool Beautification::ShallowBeautify(Tree* e, void* context) {
       changed;
 }
 
-bool Beautification::TurnIntoPolarForm(
+bool Beautification::ApplyComplexFormat(
     Tree* e, Dimension dim, const ProjectionContext& projectionContext) {
-  if (e->isUndefined() || e->isFactor()) {
+  ComplexFormat format = projectionContext.m_complexFormat;
+  if (e->isUndefined() || e->isFactor() || format == ComplexFormat::Real) {
     return false;
   }
+  assert(format == ComplexFormat::Cartesian || format == ComplexFormat::Polar);
   // Apply element-wise on explicit lists, matrices, sets.
   if (e->isMatrix() || e->isSet() || (dim.isScalar() && e->isList())) {
     bool changed = false;
     for (Tree* child : e->children()) {
       assert(Dimension::Get(child).isScalar());
       changed |=
-          TurnIntoPolarForm(child, Dimension::Scalar(), projectionContext);
+          ApplyComplexFormat(child, Dimension::Scalar(), projectionContext);
       if (e->isDep()) {
         // Skip DepList
         break;
@@ -374,6 +376,21 @@ bool Beautification::TurnIntoPolarForm(
     return false;
   }
   assert(!e->isDepList());
+  Tree* result =
+      (format == ComplexFormat::Polar ? GetPolarFormat : GetCartesianFormat)(
+          e, projectionContext);
+  if (result && !Dependency::MainTreeIsIdenticalToMain(result, e)) {
+    e->moveTreeOverTree(result);
+    return true;
+  }
+  if (result != nullptr) {
+    result->removeTree();
+  }
+  return false;
+}
+
+Tree* Beautification::GetPolarFormat(
+    const Tree* e, const ProjectionContext& projectionContext) {
   /* If the expression comes from an approximation, its polar form must stay an
    * approximation. Arg system reductions tends to remove approximated nodes, so
    * we need to re-approximate them. */
@@ -395,7 +412,7 @@ bool Beautification::TurnIntoPolarForm(
   if (!hasReduced) {
     abs->removeTree();
     result->removeNode();
-    return false;
+    return nullptr;
   }
   /* If this assert fails, an approximated node has been lost during systematic
    * simplification, ApproximateAndReplaceEveryScalar should be called on abs
@@ -420,7 +437,7 @@ bool Beautification::TurnIntoPolarForm(
   SharedTreeStack->pushComplexI();
   if (!hasReduced) {
     result->removeTree();
-    return false;
+    return nullptr;
   }
   NAry::Flatten(mult);
   /* exp is not ShallowReduced to preserve exp(A*i) form with A within ]-π,π]
@@ -454,8 +471,74 @@ bool Beautification::TurnIntoPolarForm(
     NAry::RemoveChildAtIndex(polarForm, 0);
   }
   NAry::SquashIfPossible(polarForm);
-  e->moveTreeOverTree(result);
-  return true;
+  return result;
+}
+
+Tree* Beautification::GetCartesianFormat(
+    const Tree* e, const ProjectionContext& projectionContext) {
+  /* Try to turn a scalar x into re(x)+i×arg(x)
+   * If re or im stays unreduced, leave x as it was. */
+  Tree* result = SharedTreeStack->pushAdd(2);
+  Tree* re = SharedTreeStack->pushRe();
+  e->cloneTree();
+  bool hasReduced = SystematicReduction::ShallowReduce(re);
+  if (projectionContext.m_advanceReduce) {
+    hasReduced = AdvancedReduction::Reduce(re) || hasReduced;
+  }
+  if (!hasReduced) {
+    re->removeTree();
+    result->removeNode();
+    return nullptr;
+  }
+  Tree* mult = SharedTreeStack->pushMult(2);
+  Tree* im = SharedTreeStack->pushIm();
+  e->cloneTree();
+  // Both im and re must have been reduced
+  hasReduced = SystematicReduction::ShallowReduce(im);
+  if (projectionContext.m_advanceReduce) {
+    hasReduced = AdvancedReduction::Reduce(im) || hasReduced;
+  }
+  SharedTreeStack->pushComplexI();
+  if (!hasReduced) {
+    result->removeTree();
+    return nullptr;
+  }
+  // Bubble up dependencies that appeared during reduction.
+  bool bubbledUpDependencies = Dependency::ShallowBubbleUpDependencies(mult);
+  bubbledUpDependencies =
+      Dependency::ShallowBubbleUpDependencies(result) || bubbledUpDependencies;
+  if (bubbledUpDependencies) {
+    Dependency::DeepRemoveUselessDependencies(result);
+  }
+  Tree* cartesianForm = result->isDep() ? Dependency::Main(result) : result;
+  if (bubbledUpDependencies) {
+    // im and re pointers may have been invalidated, find them again.
+    PatternMatching::Context ctx;
+    bool find =
+        PatternMatching::Match(cartesianForm, KAdd(KA, KMult(KB, i_e)), &ctx);
+    assert(find);
+    re = const_cast<Tree*>(ctx.getTree(KA));
+    im = const_cast<Tree*>(ctx.getTree(KB));
+    mult = re->nextTree();
+  }
+
+  if (Number::IsNull(im)) {
+    mult->removeTree();
+    cartesianForm->removeNode();
+  } else {
+    if (Number::IsOne(im)) {
+      im->removeTree();
+      mult->removeNode();
+    } else {
+      NAry::Flatten(mult);
+    }
+    if (Number::IsNull(re)) {
+      re->removeTree();
+      cartesianForm->removeNode();
+    }
+  }
+
+  return result;
 }
 
 template <typename T>

@@ -267,25 +267,10 @@ $(addprefix helpers/, \
 ) \
 )
 
-_sources_poincare_js_bridge := $(patsubst %,poincarejs/bridge/%:+js_bridge, \
-  computation_context.cpp \
-  preferences.cpp \
-  typed_expression.cpp \
-  expression.cpp \
-  system_expression.cpp \
-  system_function.cpp \
-  user_expression.cpp \
-  utils.cpp \
-  regression.cpp \
-  solver.cpp \
-  statistics.cpp \
-)
-
 $(call create_module,poincare,1, \
   $(_sources_poincare_minimal) \
   $(_sources_poincare_checkpoint) \
   $(_sources_poincare_storage) \
-  $(_sources_poincare_js_bridge) \
   $(addsuffix :-minimal,$(_sources_poincare_extended)) \
   $(addsuffix :+test,$(_sources_poincare_test)) \
 )

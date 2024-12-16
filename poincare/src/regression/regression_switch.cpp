@@ -24,8 +24,8 @@ const Regression* Regression::Get(Type type, Preferences::AngleUnit angleUnit) {
       constexpr static NoneRegression none;
       return &none;
     case Type::LinearAxpb:
-      constexpr static LinearRegression linearAbxpb(false);
-      return &linearAbxpb;
+      constexpr static LinearRegression linearAxpb(false);
+      return &linearAxpb;
     case Type::LinearApbx:
       constexpr static LinearRegression linearApbx(true);
       return &linearApbx;

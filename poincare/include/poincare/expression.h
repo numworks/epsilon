@@ -150,6 +150,8 @@ class Expression : public PoolHandle {
   static SystemExpression Builder(PointOrScalar<T> pointOrScalar);
 
   static SystemExpression DecimalBuilderFromDouble(double v);
+  static SystemExpression RationalBuilder(int32_t numerator,
+                                          int32_t denominator);
 
   template <Internal::KTrees::KTreeConcept T>
   static NewExpression Builder(T x) {

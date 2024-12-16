@@ -1,15 +1,11 @@
 #include <emscripten/bind.h>
-#include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/empty_context.h>
-#include <poincare/src/expression/projection.h>
-#include <poincare/src/expression/rational.h>
 
 #include <string>
 
 #include "typed_expression.h"
 
 using namespace emscripten;
-using namespace Poincare::Internal;
 
 namespace Poincare::JSBridge {
 
@@ -27,8 +23,7 @@ TypedSystemExpression BuildSystemFloat(double value) {
 
 TypedSystemExpression BuildSystemRational(int32_t numerator,
                                           int32_t denominator) {
-  Expression result = Expression::Builder(
-      Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
+  Expression result = Expression::RationalBuilder(numerator, denominator);
   return TypedSystemExpression::Cast(result);
 }
 

@@ -6,7 +6,6 @@
 #include "utils.h"
 
 using namespace emscripten;
-using namespace Poincare::Internal;
 using namespace Poincare::Regression;
 
 namespace Poincare::JSBridge {

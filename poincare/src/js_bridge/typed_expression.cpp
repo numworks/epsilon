@@ -5,13 +5,12 @@
 #include <poincare/src/memory/type_block.h>
 
 using namespace emscripten;
-using namespace Poincare::Internal;
 
 namespace Poincare::JSBridge {
 
 /* Copies Javascript Uint8Array bytes on the tree stack and then build
  * a tree from it */
-Tree* JsArrayToTree(const val& jsTree) {
+Internal::Tree* JsArrayToTree(const val& jsTree) {
   size_t treeSize = jsTree["length"].as<size_t>();
   if (treeSize == 0) {
     return nullptr;
@@ -22,16 +21,17 @@ Tree* JsArrayToTree(const val& jsTree) {
    * find an easy way to access the raw address of the external tree buffer.
    * I tried to use `jsTree["buffer"].as<uint8_t*>` but emscripten wouldn't let
    * me access the pointer. */
-  TreeStack* stack = TreeStack::SharedTreeStack;
-  Block* destination = stack->lastBlock();
+  Internal::TreeStack* stack = Internal::TreeStack::SharedTreeStack;
+  Internal::Block* destination = stack->lastBlock();
   for (int i = 0; i < treeSize; i++) {
-    stack->insertBlock(destination + i, Block(jsTree[i].as<uint8_t>()), true);
+    stack->insertBlock(destination + i,
+                       Internal::Block(jsTree[i].as<uint8_t>()), true);
   }
-  return Tree::FromBlocks(destination);
+  return Internal::Tree::FromBlocks(destination);
 }
 
 // Uses the bytes of the tree to build a TypedArray in javascript
-val TreeToJsArray(const Tree* tree) {
+val TreeToJsArray(const Internal::Tree* tree) {
   if (!tree) {
     uint8_t emptyArray[0];
     return val(typed_memory_view(0, emptyArray));
@@ -43,7 +43,7 @@ val TreeToJsArray(const Tree* tree) {
 template <ExpressionType T>
 TypedExpression<T> TypedExpression<T>::BuildFromJsTree(
     const TypedExpression<T>::JsTree& jsTree) {
-  Tree* tree = JsArrayToTree(jsTree);
+  Internal::Tree* tree = JsArrayToTree(jsTree);
   Expression result = Expression::Builder(tree);
   return TypedExpression<T>::Cast(result);
 }

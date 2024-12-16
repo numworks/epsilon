@@ -18,6 +18,7 @@
 #include <poincare/src/expression/order.h>
 #include <poincare/src/expression/parametric.h>
 #include <poincare/src/expression/polynomial.h>
+#include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/symbol.h>
@@ -268,6 +269,12 @@ SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
       PrintFloat::k_maxNumberOfSignificantDigits,
       Preferences::PrintFloatMode::Decimal);
   return UserExpression::Parse(buffer, nullptr);
+}
+
+SystemExpression SystemExpression::RationalBuilder(int32_t numerator,
+                                                   int32_t denominator) {
+  return Builder(
+      Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
 }
 
 NewExpression NewExpression::Builder(const Tree* tree) {

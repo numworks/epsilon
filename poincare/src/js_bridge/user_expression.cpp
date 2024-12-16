@@ -3,7 +3,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/src/expression/projection.h>
-#include <poincare/src/expression/rational.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
@@ -15,7 +14,6 @@
 #include "typed_expression.h"
 
 using namespace emscripten;
-using namespace Poincare::Internal;
 
 namespace Poincare::JSBridge {
 
@@ -34,8 +32,7 @@ TypedUserExpression BuildUserFloat(double value) {
 }
 
 TypedUserExpression BuildUserRational(int32_t numerator, int32_t denominator) {
-  Expression result = Expression::Builder(
-      Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
+  Expression result = Expression::RationalBuilder(numerator, denominator);
   return TypedUserExpression::Cast(result);
 }
 
@@ -60,13 +57,13 @@ using CustomBuilder = bool (*)(const char* children, size_t childrenLength);
 
 struct TreePatternBuilder {
   const char* identifier;
-  Type type;
+  Internal::Type type;
   CustomBuilder customBuilder = nullptr;
 };
 
-#define BUILDER(TYPE) \
-  {                   \
-#TYPE, Type::TYPE \
+#define BUILDER(TYPE)           \
+  {                             \
+#TYPE, Internal::Type::TYPE \
   }
 
 // This list is filled with all the types in expression/types.h
@@ -258,15 +255,16 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     /* PointOfInterest -> Not implemented ❌ */
 
     // 13 - Custom builders
-    {"UserSymbol", Type::Undef,
+    {"UserSymbol", Internal::Type::Undef,
      [](const char* children, size_t childrenLength) -> bool {
        if (!children || childrenLength < 1) {
          return false;
        }
-       TreeStack::SharedTreeStack->pushUserSymbol(children, childrenLength + 1);
+       Internal::TreeStack::SharedTreeStack->pushUserSymbol(children,
+                                                            childrenLength + 1);
        return true;
      }},
-    {"VarK", Type::Undef,
+    {"VarK", Internal::Type::Undef,
      [](const char* children, size_t childrenLength) -> bool {
        if (children) {
          return false;
@@ -274,7 +272,7 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
        KVarK->cloneTree();
        return true;
      }},
-    {"VarX", Type::Undef,
+    {"VarX", Internal::Type::Undef,
      [](const char* children, size_t childrenLength) -> bool {
        if (children) {
          return false;
@@ -291,13 +289,13 @@ TreePatternBuilder findTreePatternBuilder(const char* identifier,
       return treeBuilder;
     }
   }
-  return {"", Type::Undef};
+  return {"", Internal::Type::Undef};
 }
 
 // Parses the pattern and builds the tree from it
-Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
-                           const TypedUserExpression* contextExprs,
-                           size_t nContextExprs) {
+Internal::Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
+                                     const TypedUserExpression* contextExprs,
+                                     size_t nContextExprs) {
   // Skip whitespaces
   while (*buffer == ' ' && buffer < bufferEnd) {
     buffer++;
@@ -307,8 +305,8 @@ Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
     return nullptr;
   }
 
-  TreeStack* stack = TreeStack::SharedTreeStack;
-  Tree* result = Tree::FromBlocks(stack->lastBlock());
+  Internal::TreeStack* stack = Internal::TreeStack::SharedTreeStack;
+  Internal::Tree* result = Internal::Tree::FromBlocks(stack->lastBlock());
 
   // Detect the presence of children in parenthesis
   const char* childrenBuffer = buffer + 1;
@@ -379,9 +377,9 @@ Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
   }
 
   // 2.2. Use the default builder
-  bool isNAry = TypeBlock::IsNAry(treeBuilder.type);
-  if (!isNAry &&
-      TypeBlock::NumberOfChildren(treeBuilder.type) != numberOfChildren) {
+  bool isNAry = Internal::TypeBlock::IsNAry(treeBuilder.type);
+  if (!isNAry && Internal::TypeBlock::NumberOfChildren(treeBuilder.type) !=
+                     numberOfChildren) {
     // Invalid number of children
     return nullptr;
   }
@@ -407,8 +405,8 @@ Tree* buildTreeFromPattern(const char* buffer, const char* bufferEnd,
        tempBuffer++) {
     if ((innerParenthesis == 0 && *tempBuffer == ',') ||
         tempBuffer == bufferEnd - 1) {
-      Tree* childTree = buildTreeFromPattern(childStart, tempBuffer,
-                                             contextExprs, nContextExprs);
+      Internal::Tree* childTree = buildTreeFromPattern(
+          childStart, tempBuffer, contextExprs, nContextExprs);
       if (!childTree) {
         stack->flushFromBlock(result);
         return nullptr;
@@ -432,8 +430,8 @@ TypedUserExpression BuildFromPattern(std::string pattern,
   const char* buffer = pattern.c_str();
   const char* bufferEnd = buffer + pattern.size();
   const TypedUserExpression contextExprs[] = {expressions...};
-  Tree* resultTree = buildTreeFromPattern(buffer, bufferEnd, contextExprs,
-                                          sizeof...(expressions));
+  Internal::Tree* resultTree = buildTreeFromPattern(
+      buffer, bufferEnd, contextExprs, sizeof...(expressions));
   return TypedUserExpression::Cast(Expression::Builder(resultTree));
 }
 
@@ -443,8 +441,8 @@ bool ExactAndApproximateExpressionsAreStrictlyEqualWrapper(
     const TypedUserExpression& exact, const TypedUserExpression& approximate,
     Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit) {
-  ProjectionContext ctx{.m_complexFormat = complexFormat,
-                        .m_angleUnit = angleUnit};
+  Internal::ProjectionContext ctx{.m_complexFormat = complexFormat,
+                                  .m_angleUnit = angleUnit};
   return ExactAndApproximateExpressionsAreStrictlyEqual(exact, approximate,
                                                         &ctx);
 }

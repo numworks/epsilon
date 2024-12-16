@@ -1,6 +1,5 @@
 #include <emscripten/bind.h>
 #include <poincare/src/layout/parsing/latex_parser.h>
-#include <poincare/src/regression/linear_regression.h>
 #include <poincare/src/regression/regression.h>
 #include <poincare/src/regression/series.h>
 

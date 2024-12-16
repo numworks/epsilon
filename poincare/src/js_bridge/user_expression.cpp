@@ -31,11 +31,6 @@ TypedUserExpression BuildUserFloat(double value) {
   return TypedUserExpression::Cast(result);
 }
 
-TypedUserExpression BuildUserRational(int32_t numerator, int32_t denominator) {
-  Expression result = Expression::RationalBuilder(numerator, denominator);
-  return TypedUserExpression::Cast(result);
-}
-
 // === 1.2. Build from Latex string ===
 
 TypedUserExpression BuildFromLatex(std::string latex) {
@@ -70,8 +65,8 @@ struct TreePatternBuilder {
 constexpr TreePatternBuilder treePatternBuilders[] = {
     // 1 - Numbers
     // 1.1.a - Negative Rationals
-    /* RationalNegBig -> Use BuildRational ✅ */
-    /* RationalNegShort -> Use BuildRational ✅ */
+    /* RationalNegBig -> System node, not allowed in UserExpressions ⛔️ */
+    /* RationalNegShort -> System node, not allowed in UserExpressions ⛔️ */
     // 1.2 - Integers
     /* IntegerNegBig -> Use BuildInteger ✅ */
     /* IntegerNegShort -> Use BuildInteger ✅ */
@@ -79,8 +74,8 @@ constexpr TreePatternBuilder treePatternBuilders[] = {
     BUILDER(Zero),
     BUILDER(One),
     BUILDER(Two),
-    /* IntegerPosShort -> Use BuildInteger ✅ */
-    /* IntegerPosBig -> Use BuildInteger ✅ */
+    /* IntegerPosShort -> System node, not allowed in UserExpressions ⛔️ */
+    /* IntegerPosBig -> System node, not allowed in UserExpressions ⛔️ */
     // 1.1.b - Positive rationals
     BUILDER(Half),
     /* RationalPosShort -> Use BuildRational ✅ */
@@ -494,7 +489,6 @@ EMSCRIPTEN_BINDINGS(user_expression) {
                 &TypedUserExpression::typedCloneChildAtIndex)
       .class_function("BuildInt", &BuildUserInt)
       .class_function("BuildFloat", &BuildUserFloat)
-      .class_function("BuildRational", &BuildUserRational)
       .class_function("BuildFromLatex", &BuildFromLatex)
       .class_function("BuildFromLatex", &BuildFromLatexWithAssignmentParam)
       .class_function("BuildFromPattern", &BuildFromPattern<>)

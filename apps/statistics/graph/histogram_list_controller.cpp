@@ -36,13 +36,7 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
 bool HistogramListController::handleEvent(Ion::Events::Event event) {
   // Handle left/right navigation inside a histogram cell
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
-    std::size_t newBarIndex = horizontallyShiftedBarIndex(
-        selectedBarIndex(), selectedSeries(), event.direction());
-    if (newBarIndex != selectedBarIndex()) {
-      setSelectedBarIndex(newBarIndex);
-
-      scrollAndHighlightHistogramBar(selectedRow(), selectedBarIndex());
-    }
+    moveSelectionHorizontally(event.direction());
     return true;
   }
 
@@ -186,22 +180,26 @@ bool HistogramListController::hasSelectedSeries() const {
   return *App::app()->snapshot()->selectedSeries() > -1;
 }
 
-std::size_t HistogramListController::horizontallyShiftedBarIndex(
-    std::size_t previousBarIndex, std::size_t selectedSeries,
-    OMG::HorizontalDirection direction) const {
-  int numberOfBars = m_store->numberOfBars(selectedSeries);
+bool HistogramListController::moveSelectionHorizontally(
+    OMG::HorizontalDirection direction) {
+  int numberOfBars = m_store->numberOfBars(selectedSeries());
 
-  int newBarIndex = previousBarIndex;
+  int newBarIndex = selectedBarIndex();
   do {
     newBarIndex += direction.isRight() ? 1 : -1;
     if (newBarIndex < 0) {
       return std::size_t{0};
     }
     if (newBarIndex >= numberOfBars) {
-      return static_cast<std::size_t>(numberOfBars - 1);
+      return false;
     }
-  } while (m_store->heightOfBarAtIndex(selectedSeries, newBarIndex) == 0);
-  return static_cast<std::size_t>(newBarIndex);
+  } while (m_store->heightOfBarAtIndex(selectedSeries(), newBarIndex) == 0);
+
+  assert(newBarIndex != selectedBarIndex());
+  setSelectedBarIndex(static_cast<size_t>(newBarIndex));
+  scrollAndHighlightHistogramBar(selectedRow(), selectedBarIndex());
+
+  return true;
 }
 
 std::size_t HistogramListController::sanitizeSelectedIndex(

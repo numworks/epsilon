@@ -77,9 +77,8 @@ class HistogramListController
   std::size_t unsafeSelectedBarIndex() const;
 
   // Navigation inside and between the histogram cells
-  std::size_t horizontallyShiftedBarIndex(
-      std::size_t previousBarIndex, std::size_t selectedSeries,
-      OMG::HorizontalDirection direction) const;
+  bool moveSelectionHorizontally(OMG::HorizontalDirection direction);
+
   std::size_t sanitizeSelectedIndex(std::size_t selectedSeries,
                                     std::size_t initialSelectedIndex) const;
   std::size_t barIndexAfterSelectingNewSeries(

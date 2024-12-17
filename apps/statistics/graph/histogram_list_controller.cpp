@@ -54,7 +54,7 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     Escher::App::app()->setFirstResponder(parentResponder());
 
     // Set the current series and index in the snapshot
-    std::size_t previousSelectedSeries = selectedSeries();
+    size_t previousSelectedSeries = selectedSeries();
     setSelectedSeries(selectedRow());
     /* The series index of the new selected cell is computed to be close to
      * its previous location in the neighboring cell */
@@ -78,7 +78,7 @@ void HistogramListController::processSeriesAndBarSelection() {
   /* If the number of histogram bars has been changed by the user and there are
    * less bars, the selected bar index can become out of range. We need to clamp
    * this index to the last bar. */
-  std::size_t numberOfBars = m_store->numberOfBars(selectedSeries());
+  size_t numberOfBars = m_store->numberOfBars(selectedSeries());
   if (unsafeSelectedBarIndex() >= numberOfBars) {
     setSelectedBarIndex(numberOfBars - 1);
   }
@@ -94,7 +94,7 @@ void HistogramListController::processSeriesAndBarSelection() {
 #endif
 }
 
-void HistogramListController::highlightRow(std::size_t selectedSeries) {
+void HistogramListController::highlightRow(size_t selectedSeries) {
   int rowOfSelectedSeries =
       m_store->activeSeriesIndexFromSeriesIndex(selectedSeries);
   assert(0 <= rowOfSelectedSeries &&
@@ -120,8 +120,8 @@ void HistogramListController::highlightRow(std::size_t selectedSeries) {
   m_selectableListView.selectedCell()->setHighlighted(true);
 }
 
-void HistogramListController::scrollAndHighlightHistogramBar(
-    std::size_t row, std::size_t barIndex) {
+void HistogramListController::scrollAndHighlightHistogramBar(size_t row,
+                                                             size_t barIndex) {
   assert(0 <= row && row <= m_store->numberOfActiveSeries());
 
   int seriesAtRow = m_store->seriesIndexFromActiveSeriesIndex(row);
@@ -142,7 +142,7 @@ void HistogramListController::scrollAndHighlightHistogramBar(
                         m_store->endOfBarAtIndex(seriesAtRow, barIndex));
 }
 
-std::size_t HistogramListController::selectedSeries() const {
+size_t HistogramListController::selectedSeries() const {
   /* The selectedSeries() method from the snapshot returns the index of the
    * selected series considering ACTIVE series only */
   int selectedActiveSeries = *App::app()->snapshot()->selectedSeries();
@@ -150,28 +150,27 @@ std::size_t HistogramListController::selectedSeries() const {
          selectedActiveSeries < m_store->numberOfActiveSeries());
   int series = m_store->seriesIndexFromActiveSeriesIndex(selectedActiveSeries);
   assert(0 <= series && series < Store::k_numberOfSeries);
-  return static_cast<std::size_t>(series);
+  return static_cast<size_t>(series);
 }
 
-void HistogramListController::setSelectedSeries(
-    std::size_t activeSelectedSeries) {
+void HistogramListController::setSelectedSeries(size_t activeSelectedSeries) {
   assert(activeSelectedSeries < m_store->numberOfActiveSeries());
   *App::app()->snapshot()->selectedSeries() = activeSelectedSeries;
 }
 
-std::size_t HistogramListController::unsafeSelectedBarIndex() const {
+size_t HistogramListController::unsafeSelectedBarIndex() const {
   int barIndex = *App::app()->snapshot()->selectedIndex();
   assert(barIndex >= 0);
-  return static_cast<std::size_t>(barIndex);
+  return static_cast<size_t>(barIndex);
 }
 
-std::size_t HistogramListController::selectedBarIndex() const {
-  std::size_t barIndex = unsafeSelectedBarIndex();
+size_t HistogramListController::selectedBarIndex() const {
+  size_t barIndex = unsafeSelectedBarIndex();
   assert(barIndex < m_store->numberOfBars(selectedSeries()));
   return barIndex;
 }
 
-void HistogramListController::setSelectedBarIndex(std::size_t barIndex) {
+void HistogramListController::setSelectedBarIndex(size_t barIndex) {
   assert(barIndex < m_store->numberOfBars(selectedSeries()));
   *App::app()->snapshot()->selectedIndex() = barIndex;
 }
@@ -188,7 +187,7 @@ bool HistogramListController::moveSelectionHorizontally(
   do {
     newBarIndex += direction.isRight() ? 1 : -1;
     if (newBarIndex < 0) {
-      return std::size_t{0};
+      return size_t{0};
     }
     if (newBarIndex >= numberOfBars) {
       return false;
@@ -202,11 +201,11 @@ bool HistogramListController::moveSelectionHorizontally(
   return true;
 }
 
-std::size_t HistogramListController::sanitizeSelectedIndex(
-    std::size_t selectedSeries, std::size_t previousIndex) const {
+size_t HistogramListController::sanitizeSelectedIndex(
+    size_t selectedSeries, size_t previousIndex) const {
   assert(m_store->seriesIsActive(selectedSeries));
 
-  std::size_t selectedIndex = previousIndex;
+  size_t selectedIndex = previousIndex;
 
   if (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) != 0) {
     return selectedIndex;
@@ -229,9 +228,9 @@ std::size_t HistogramListController::sanitizeSelectedIndex(
   return selectedIndex;
 }
 
-std::size_t HistogramListController::barIndexAfterSelectingNewSeries(
-    std::size_t previousSelectedSeries, std::size_t currentSelectedSeries,
-    std::size_t previousSelectedBarIndex) const {
+size_t HistogramListController::barIndexAfterSelectingNewSeries(
+    size_t previousSelectedSeries, size_t currentSelectedSeries,
+    size_t previousSelectedBarIndex) const {
   /* In the simple following case, when all bars are aligned, the selected
    * index should not change:
    *           _ _ _ _
@@ -263,7 +262,7 @@ std::size_t HistogramListController::barIndexAfterSelectingNewSeries(
   double startDifference =
       m_store->startOfBarAtIndex(previousSelectedSeries, 0) -
       m_store->startOfBarAtIndex(currentSelectedSeries, 0);
-  std::size_t newSelectedBarIndex =
+  size_t newSelectedBarIndex =
       (previousSelectedBarIndex +
        static_cast<int>(startDifference / m_store->barWidth()));
   newSelectedBarIndex =

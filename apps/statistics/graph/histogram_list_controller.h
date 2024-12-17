@@ -27,16 +27,16 @@ class HistogramListController
    * return valid values. */
   void processSeriesAndBarSelection();
 
-  void highlightRow(std::size_t selectedSeries);
+  void highlightRow(size_t selectedSeries);
 
-  void scrollAndHighlightHistogramBar(std::size_t row, std::size_t barIndex);
+  void scrollAndHighlightHistogramBar(size_t row, size_t barIndex);
 
   // Unhighlight the entire list
   void unhighlightList() { m_selectableListView.deselectTable(); }
 
   // Get the selected series or index from the Snapshot
-  std::size_t selectedSeries() const;
-  std::size_t selectedBarIndex() const;
+  size_t selectedSeries() const;
+  size_t selectedBarIndex() const;
 
   // Height of one histogram graph (they all have the same size)
   KDCoordinate rowHeight() const {
@@ -69,24 +69,24 @@ class HistogramListController
   bool hasSelectedSeries() const;
 
   // Set the selected series or index in the Snapshot
-  void setSelectedSeries(std::size_t activeSelectedSeries);
-  void setSelectedBarIndex(std::size_t barIndex);
+  void setSelectedSeries(size_t activeSelectedSeries);
+  void setSelectedBarIndex(size_t barIndex);
 
   /* Return the current bar index in the snapshot without checking the upper
    * bound */
-  std::size_t unsafeSelectedBarIndex() const;
+  size_t unsafeSelectedBarIndex() const;
 
   // Navigation inside and between the histogram cells
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction);
 
-  std::size_t sanitizeSelectedIndex(std::size_t selectedSeries,
-                                    std::size_t initialSelectedIndex) const;
-  std::size_t barIndexAfterSelectingNewSeries(
-      std::size_t previousSelectedSeries, std::size_t currentSelectedSeries,
-      std::size_t previousSelectedBarIndex) const;
+  size_t sanitizeSelectedIndex(size_t selectedSeries,
+                               size_t initialSelectedIndex) const;
+  size_t barIndexAfterSelectingNewSeries(size_t previousSelectedSeries,
+                                         size_t currentSelectedSeries,
+                                         size_t previousSelectedBarIndex) const;
 
   // Maximum number of histograms displayed on the same screen
-  constexpr static std::size_t k_displayedHistograms = 4;
+  constexpr static size_t k_displayedHistograms = 4;
   // SelectableList cells
   std::array<HistogramCell, k_displayedHistograms> m_displayCells;
 

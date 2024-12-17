@@ -871,6 +871,9 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
   UnitDisplay display = DisplayImperialUnits(extractedUnits)
                             ? UnitDisplay::AutomaticImperial
                             : UnitDisplay::PrefixFreeMetric;
+  assert(display == UnitDisplay::PrefixFreeMetric ||
+         !e->hasDescendantSatisfying(
+             [](const Tree* e) { return e->isPhysicalConstant(); }));
   extractedUnits->removeTree();
   ApplyAutomaticDisplay(e, dimension, display);
 }

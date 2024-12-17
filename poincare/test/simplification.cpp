@@ -809,8 +809,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1_m+1_s", "undef");
   simplifies_to("1_m+1_yd", "1.9144×_m");
   simplifies_to("1_m+x", "undef");
-  simplifies_to("1_mm+1_km", "1.000001×_km");
-  // simplifies_to("2_month×7_dm", "3681720×_s×_m");
+  simplifies_to("1_mm+1_km", "1000.001×_m");
+  simplifies_to("2_month×7_dm", "3681720×_s×_m");
   simplifies_to("2×_m/_m", "2");
   simplifies_to("1234_g", "1234×_g");
   simplifies_to("cos(0_rad)", "1");
@@ -872,11 +872,13 @@ QUIZ_CASE(pcj_simplification_unit) {
                 {.m_unitFormat = UnitFormat::Imperial});
 
   // Constants
-  simplifies_to("_mn + _mp", "3.34754942173ᴇ-24×_g");
+  simplifies_to("_mn + _mp", "3.34754942173ᴇ-27×_kg");
   simplifies_to("_mn + _G", "undef");
 
   // Implicit additions
-  simplifies_to("3h300min", "8×_h");
+  simplifies_to("3h300min", "28800×_s");
+  simplifies_to("3h300min", "8×_h",
+                {.m_unitDisplay = UnitDisplay::AutomaticMetric});
 
   // 0
   simplifies_to("0×0×2×(_rad + _°)×_°", "0×_rad^2");

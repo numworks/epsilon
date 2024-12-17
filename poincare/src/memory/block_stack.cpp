@@ -8,7 +8,7 @@
 #include "tree.h"
 #include "tree_stack_checkpoint.h"
 
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
 #endif
 
@@ -33,7 +33,7 @@ Block* BlockStack::initFromAddress(const void* address, bool isTree) {
                     size * sizeof(Block), true)) {
     return nullptr;
   }
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("Copy", copiedTree,
       isTree ? Tree::FromBlocks(copiedTree)->treeSize()
              : Tree::FromBlocks(copiedTree)->nodeSize());
@@ -168,7 +168,7 @@ void BlockStack::moveBlocks(Block* destination, Block* source,
 void BlockStack::flush() {
   m_size = 0;
   m_referenceTable.reset();
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("Flush");
 #endif
 }
@@ -182,7 +182,7 @@ void BlockStack::flushFromBlock(const Block* block) {
    * raise. */
   m_size = block - m_blocks;
   m_referenceTable.invalidateIdentifiersAfterBlock(block);
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("flushFromBlock", block);
 #endif
 }

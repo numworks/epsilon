@@ -8,7 +8,7 @@
 
 #include <algorithm>
 
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
 #endif
 

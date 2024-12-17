@@ -12,7 +12,7 @@
 #include "k_tree.h"
 #include "rational.h"
 
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
 #endif
 
@@ -141,7 +141,7 @@ Tree* IntegerHandler::pushOnTreeStack() const {
                                            : Type::IntegerPosBig);
   SharedTreeStack->pushBlock(m_numberOfDigits);
   pushDigitsOnTreeStack();
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("PushInteger", e->block(), e->treeSize());
 #endif
   return e;

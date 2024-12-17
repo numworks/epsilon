@@ -3,7 +3,7 @@
 #include <poincare/preferences.h>
 #include <poincare/src/memory/tree_stack.h>
 
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
 #endif
 
@@ -15,7 +15,7 @@ void Init() {
 }
 
 void Shutdown() {
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Internal::CloseLogger();
 #endif
 }

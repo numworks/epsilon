@@ -5,7 +5,7 @@
 
 namespace Poincare::Internal {
 
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
 // See build/poincare_visualization
 __attribute__((__used__)) void ResetLogger();
 __attribute__((__used__)) void CloseLogger();

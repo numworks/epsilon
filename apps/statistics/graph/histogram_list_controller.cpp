@@ -30,7 +30,7 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
                                              int row) {
   assert(row >= 0 && row < numberOfRows());
   HistogramCell* histogramCell = static_cast<HistogramCell*>(cell);
-  histogramCell->setSeries(row);
+  histogramCell->setSeries(m_store->seriesIndexFromActiveSeriesIndex(row));
 }
 
 bool HistogramListController::handleEvent(Ion::Events::Event event) {
@@ -41,36 +41,35 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     if (newBarIndex != selectedBarIndex()) {
       setSelectedBarIndex(newBarIndex);
 
-      scrollAndHighlightHistogramBar(selectedSeries(), selectedBarIndex());
+      scrollAndHighlightHistogramBar(selectedRow(), selectedBarIndex());
     }
     return true;
   }
 
+  int previousSelectedRow = selectedRow();
   if (!m_selectableListView.handleEvent(event)) {
     return false;
   }
-
-  if (selectedRow() != selectedSeries()) {
+  if (selectedRow() != previousSelectedRow) {
     /* If the SelectableListView handled the event by selecting a new row,
      * then it took the firstResponder ownership. However we want the main
-     * controller to be the first responder, because the banner view needs to be
-     * updated as well. So the firstResponder ownership is given back to the
-     * main controller, which is the parent responder of
+     * controller to be the first responder, because the banner view needs to
+     * be updated as well. So the firstResponder ownership is given back to
+     * the main controller, which is the parent responder of
      * HistogramListController. */
     Escher::App::app()->setFirstResponder(parentResponder());
 
     // Set the current series and index in the snapshot
     std::size_t previousSelectedSeries = selectedSeries();
-    setSelectedSeries(m_selectableListView.selectedRow());
-    /* The series index of the new selected cell is computed to be close to its
-     * previous location in the neighboring cell */
+    setSelectedSeries(selectedRow());
+    /* The series index of the new selected cell is computed to be close to
+     * its previous location in the neighboring cell */
     setSelectedBarIndex(barIndexAfterSelectingNewSeries(
         previousSelectedSeries, selectedSeries(), unsafeSelectedBarIndex()));
 
     // Update row and bar highlights
     highlightRow(selectedSeries());
-
-    scrollAndHighlightHistogramBar(selectedSeries(), selectedBarIndex());
+    scrollAndHighlightHistogramBar(selectedRow(), selectedBarIndex());
   }
 
   return true;
@@ -101,12 +100,19 @@ void HistogramListController::processSeriesAndBarSelection() {
 #endif
 }
 
-void HistogramListController::highlightRow(std::size_t row) {
-  assert(0 <= row && row <= m_selectableListView.totalNumberOfRows());
+void HistogramListController::highlightRow(std::size_t selectedSeries) {
+  int rowOfSelectedSeries =
+      m_store->activeSeriesIndexFromSeriesIndex(selectedSeries);
+  assert(0 <= rowOfSelectedSeries &&
+         rowOfSelectedSeries <= m_selectableListView.totalNumberOfRows());
 
-  if (!m_selectableListView.selectedCell()) {
+  if (m_selectableListView.selectedCell()) {
+    /* If a cell is already selected in the list, assert it is the row
+     * corresponding to the selected series */
+    assert(selectedRow() == rowOfSelectedSeries);
+  } else {
     // Set the cell to "selected" state in the SelectedListView
-    m_selectableListView.selectCell(row);
+    m_selectableListView.selectCell(rowOfSelectedSeries);
     /* The SelectableListView took the firstResponder ownership when selecting
      * the cell. However we want the main controller to be the first
      * responder, because the banner view needs to be updated as well. So the
@@ -123,32 +129,40 @@ void HistogramListController::highlightRow(std::size_t row) {
 void HistogramListController::scrollAndHighlightHistogramBar(
     std::size_t row, std::size_t barIndex) {
   assert(0 <= row && row <= m_store->numberOfActiveSeries());
-  assert(0 <= barIndex && barIndex < m_store->numberOfBars(row));
+
+  int seriesAtRow = m_store->seriesIndexFromActiveSeriesIndex(row);
+
+  assert(0 <= barIndex && barIndex < m_store->numberOfBars(seriesAtRow));
 
   /* Update the histogram x-axis range to adapt to the bar index. WARNING: the
    * range update must be done before setting the bar highlight, because the bar
    * has to be visible when calling setBarHighlight. */
-  if (m_histogramRange->scrollToSelectedBarIndex(selectedSeries(),
-                                                 selectedBarIndex())) {
-    m_selectableListView.cell(selectedSeries())->reloadCell();
+  if (m_histogramRange->scrollToSelectedBarIndex(seriesAtRow, barIndex)) {
+    m_selectableListView.selectedCell()->reloadCell();
   }
 
   /* The following function will set the bar highlight in the HistogramView
    * owned by the cell */
   static_cast<HistogramCell*>(m_selectableListView.cell(row))
-      ->setBarHighlight(m_store->startOfBarAtIndex(row, barIndex),
-                        m_store->endOfBarAtIndex(row, barIndex));
+      ->setBarHighlight(m_store->startOfBarAtIndex(seriesAtRow, barIndex),
+                        m_store->endOfBarAtIndex(seriesAtRow, barIndex));
 }
 
 std::size_t HistogramListController::selectedSeries() const {
-  int series = *App::app()->snapshot()->selectedSeries();
-  assert(0 <= series && series < m_store->numberOfActiveSeries());
+  /* The selectedSeries() method from the snapshot returns the index of the
+   * selected series considering ACTIVE series only */
+  int selectedActiveSeries = *App::app()->snapshot()->selectedSeries();
+  assert(0 <= selectedActiveSeries &&
+         selectedActiveSeries < m_store->numberOfActiveSeries());
+  int series = m_store->seriesIndexFromActiveSeriesIndex(selectedActiveSeries);
+  assert(0 <= series && series < Store::k_numberOfSeries);
   return static_cast<std::size_t>(series);
 }
 
-void HistogramListController::setSelectedSeries(std::size_t selectedSeries) {
-  assert(selectedSeries < m_store->numberOfActiveSeries());
-  *App::app()->snapshot()->selectedSeries() = selectedSeries;
+void HistogramListController::setSelectedSeries(
+    std::size_t activeSelectedSeries) {
+  assert(activeSelectedSeries < m_store->numberOfActiveSeries());
+  *App::app()->snapshot()->selectedSeries() = activeSelectedSeries;
 }
 
 std::size_t HistogramListController::unsafeSelectedBarIndex() const {
@@ -160,7 +174,6 @@ std::size_t HistogramListController::unsafeSelectedBarIndex() const {
 std::size_t HistogramListController::selectedBarIndex() const {
   std::size_t barIndex = unsafeSelectedBarIndex();
   assert(barIndex < m_store->numberOfBars(selectedSeries()));
-
   return barIndex;
 }
 

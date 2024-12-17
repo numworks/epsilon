@@ -69,7 +69,7 @@ void HistogramMainController::enterListView() {
   // Highlight the selected series and bar
   m_listController.highlightRow(m_listController.selectedSeries());
   m_listController.scrollAndHighlightHistogramBar(
-      m_listController.selectedSeries(), m_listController.selectedBarIndex());
+      m_listController.selectedRow(), m_listController.selectedBarIndex());
 
   /* Make the banner visible and update the model data displayed in the banner
    * (this data depends on the selected series and index) */

@@ -12,7 +12,7 @@ namespace Statistics {
 class HistogramPlotPolicy : public Shared::PlotPolicy::WithHistogram {
  public:
   void setSeries(int series) {
-    assert(0 <= series && series < m_store->numberOfActiveSeries());
+    assert(0 <= series && series < Store::k_numberOfSeries);
     m_series = series;
   }
 

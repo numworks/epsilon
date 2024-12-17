@@ -27,7 +27,7 @@ class HistogramListController
    * return valid values. */
   void processSeriesAndBarSelection();
 
-  void highlightRow(std::size_t row);
+  void highlightRow(std::size_t selectedSeries);
 
   void scrollAndHighlightHistogramBar(std::size_t row, std::size_t barIndex);
 
@@ -69,7 +69,7 @@ class HistogramListController
   bool hasSelectedSeries() const;
 
   // Set the selected series or index in the Snapshot
-  void setSelectedSeries(std::size_t selectedSeries);
+  void setSelectedSeries(std::size_t activeSelectedSeries);
   void setSelectedBarIndex(std::size_t barIndex);
 
   /* Return the current bar index in the snapshot without checking the upper

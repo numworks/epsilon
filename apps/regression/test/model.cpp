@@ -127,6 +127,22 @@ QUIZ_CASE(regression_linear_2) {
                        r2, sr);
 }
 
+QUIZ_CASE(regression_linear_3) {
+  /* Test that the regression is computed if the list length is equal to the
+   * number of coefficients */
+  constexpr double x[] = {-4.0, 2.0};
+  constexpr double y[] = {2.0, 14.0};
+  constexpr Coefficients coefficientsAxpb = {2.0, 10.0};
+  constexpr Coefficients coefficientsApbx = {10.0, 2.0};
+  constexpr double r = 1.0;
+  constexpr double r2 = 1.0;
+  constexpr double sr = NAN;
+  assert_regression_is(x, y, 5, Model::Type::LinearAxpb, coefficientsAxpb, r,
+                       r2, sr);
+  assert_regression_is(x, y, 5, Model::Type::LinearApbx, coefficientsApbx, r,
+                       r2, sr);
+}
+
 QUIZ_CASE(regression_proportional) {
   constexpr double x[] = {7.0, 5.0, 1.0, 9.0, 3.0};
   constexpr double y[] = {-41.4851, -29.62186, -6.454245, -53.4976, -18.03325};

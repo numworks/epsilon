@@ -245,14 +245,13 @@ void TrigonometricRegression::uniformizeCoefficientsFromFit(
 }
 
 bool TrigonometricRegression::isRegressionBetter(
-    double residualStandardDeviation1, double residualStandardDeviation2,
+    double residualsSquareSum1, double residualsSquareSum2,
     const Regression::Coefficients& modelCoefficients1,
     const Regression::Coefficients& modelCoefficients2) const {
   /* If model 1 has a significantly lower residual standard deviation than
    * model 2, it is the best of the two models. */
   constexpr double significantlyLowerFactor = 0.9;
-  if (residualStandardDeviation1 <
-      significantlyLowerFactor * residualStandardDeviation2) {
+  if (residualsSquareSum1 < significantlyLowerFactor * residualsSquareSum2) {
     return true;
   }
   constexpr double sameRangeFactor = 1.1;
@@ -261,8 +260,7 @@ bool TrigonometricRegression::isRegressionBetter(
    * we prefer it to model 2. This is because we want to avoid trigonometric
    * regressions which fits the data, but with a frequency that is for
    * instance twice the "base" frequency that would also fit the data. */
-  if ((residualStandardDeviation1 <
-       sameRangeFactor * residualStandardDeviation2) &&
+  if ((residualsSquareSum1 < sameRangeFactor * residualsSquareSum2) &&
       modelCoefficients1[1] < modelCoefficients2[1]) {
     return true;
   }

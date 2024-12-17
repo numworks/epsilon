@@ -180,14 +180,16 @@ class Regression {
   double privateResidualAtIndex(const Series* series,
                                 const Coefficients& modelCoefficients,
                                 int index) const;
+  double privateResidualsSquareSum(const Series* series,
+                                   const Coefficients& modelCoefficients) const;
   double privateResidualStandardDeviation(
       const Series* series, const Coefficients& modelCoefficients) const;
 
   virtual bool isRegressionBetter(
-      double residualStandardDeviation1, double residualStandardDeviation2,
+      double residualsSquareSum1, double residualsSquareSum2,
       const Regression::Coefficients& /* modelCoefficients1 */,
       const Regression::Coefficients& /* modelCoefficients2 */) const {
-    return residualStandardDeviation1 < residualStandardDeviation2;
+    return residualsSquareSum1 < residualsSquareSum2;
   }
 
   // Levenberg-Marquardt

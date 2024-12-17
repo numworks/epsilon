@@ -83,7 +83,7 @@ void Regression::fit(const Series* series, double* modelCoefficients,
 
 Regression::Coefficients Regression::privateFit(
     const Series* series, Poincare::Context* context) const {
-  double lowestResidualStandardDeviation = OMG::Float::Max<double>();
+  double lowestResidualsSquareSum = OMG::Float::Max<double>();
   std::array<double, k_maxNumberOfCoefficients> bestModelCoefficients;
   /* The coefficients are initialized to zero, so that in the worst case (it
    * could theoretically happen if all residual standard deviations are infinite
@@ -96,12 +96,11 @@ Regression::Coefficients Regression::privateFit(
         k_initialCoefficientValue, false, attemptNumber, series);
     fitLevenbergMarquardt(series, modelCoefficients, context);
     uniformizeCoefficientsFromFit(modelCoefficients);
-    double newResidualStandardDeviation =
-        privateResidualStandardDeviation(series, modelCoefficients);
-    if (isRegressionBetter(newResidualStandardDeviation,
-                           lowestResidualStandardDeviation, modelCoefficients,
-                           bestModelCoefficients)) {
-      lowestResidualStandardDeviation = newResidualStandardDeviation;
+    double newResidualsSquareSum =
+        privateResidualsSquareSum(series, modelCoefficients);
+    if (isRegressionBetter(newResidualsSquareSum, lowestResidualsSquareSum,
+                           modelCoefficients, bestModelCoefficients)) {
+      lowestResidualsSquareSum = newResidualsSquareSum;
       bestModelCoefficients = modelCoefficients;
     }
     attemptNumber++;
@@ -419,6 +418,17 @@ double Regression::privateResidualAtIndex(const Series* series,
          privateEvaluate(modelCoefficients, series->getX(index));
 }
 
+double Regression::privateResidualsSquareSum(
+    const Series* series, const Coefficients& modelCoefficients) const {
+  int n = series->numberOfPairs();
+  double sum = 0.;
+  for (int i = 0; i < n; i++) {
+    double res = privateResidualAtIndex(series, modelCoefficients, i);
+    sum += res * res;
+  }
+  return sum;
+}
+
 double Regression::privateResidualStandardDeviation(
     const Series* series, const Coefficients& modelCoefficients) const {
   int nCoeff = numberOfCoefficients();
@@ -426,11 +436,7 @@ double Regression::privateResidualStandardDeviation(
   if (n <= nCoeff) {
     return NAN;
   }
-  double sum = 0.;
-  for (int i = 0; i < n; i++) {
-    double res = privateResidualAtIndex(series, modelCoefficients, i);
-    sum += res * res;
-  }
+  double sum = privateResidualsSquareSum(series, modelCoefficients);
   return std::sqrt(sum / (n - nCoeff));
 }
 

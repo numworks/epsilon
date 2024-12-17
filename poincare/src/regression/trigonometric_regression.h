@@ -48,7 +48,7 @@ class TrigonometricRegression : public Regression {
       Coefficients& modelCoefficients) const override;
 
   bool isRegressionBetter(
-      double residualStandardDeviation1, double residualStandardDeviation2,
+      double residualsSquareSum1, double residualsSquareSum2,
       const Regression::Coefficients& modelCoefficients1,
       const Regression::Coefficients& modelCoefficients2) const override;
 

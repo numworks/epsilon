@@ -13,7 +13,8 @@ COPY build/setup.sh build/setup.sh
 
 RUN build/setup.sh --ci
 
-RUN apt-get install clang libc++-dev libc++abi-dev
+# Uncomment if you want to build with TOOLCHAIN=host-clang
+# RUN apt-get install clang libc++-dev libc++abi-dev
 
 ENV PYTHON=/runner/.venv/bin/python
 

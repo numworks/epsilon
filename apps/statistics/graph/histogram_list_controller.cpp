@@ -62,7 +62,7 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
         previousSelectedSeries, selectedSeries(), unsafeSelectedBarIndex()));
 
     // Update row and bar highlights
-    highlightRow(selectedSeries());
+    highlightSelectedSeries();
     scrollAndHighlightHistogramBar(selectedRow(), selectedBarIndex());
   }
 
@@ -94,19 +94,17 @@ void HistogramListController::processSeriesAndBarSelection() {
 #endif
 }
 
-void HistogramListController::highlightRow(size_t selectedSeries) {
-  int rowOfSelectedSeries =
-      m_store->activeSeriesIndexFromSeriesIndex(selectedSeries);
-  assert(0 <= rowOfSelectedSeries &&
-         rowOfSelectedSeries <= m_selectableListView.totalNumberOfRows());
+void HistogramListController::highlightSelectedSeries() {
+  assert(hasSelectedSeries());
 
-  if (m_selectableListView.selectedCell()) {
-    /* If a cell is already selected in the list, assert it is the row
-     * corresponding to the selected series */
-    assert(selectedRow() == rowOfSelectedSeries);
+  /* The series could be selected in the snapshot but the corresponding row in
+   * the list could be unselected yet.  */
+  if (selectedRow()) {
+    assert(m_store->seriesIndexFromActiveSeriesIndex(selectedRow()) ==
+           selectedSeries());
   } else {
-    // Set the cell to "selected" state in the SelectedListView
-    m_selectableListView.selectCell(rowOfSelectedSeries);
+    m_selectableListView.selectCell(
+        m_store->activeSeriesIndexFromSeriesIndex(selectedSeries()));
     /* The SelectableListView took the firstResponder ownership when selecting
      * the cell. However we want the main controller to be the first
      * responder, because the banner view needs to be updated as well. So the
@@ -115,8 +113,8 @@ void HistogramListController::highlightRow(size_t selectedSeries) {
     Escher::App::app()->setFirstResponder(parentResponder());
   }
 
-  /* Highlight the selected cell. Not that the cell could be selected in the
-   * list but not highlighted */
+  /* The cell corresponding to the selected series could be selected in the list
+   * but not highlighted */
   m_selectableListView.selectedCell()->setHighlighted(true);
 }
 

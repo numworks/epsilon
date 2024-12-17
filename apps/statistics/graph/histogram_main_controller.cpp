@@ -67,7 +67,7 @@ void HistogramMainController::enterListView() {
   m_listController.processSeriesAndBarSelection();
 
   // Highlight the selected series and bar
-  m_listController.highlightRow(m_listController.selectedSeries());
+  m_listController.highlightSelectedSeries();
   m_listController.scrollAndHighlightHistogramBar(
       m_listController.selectedRow(), m_listController.selectedBarIndex());
 

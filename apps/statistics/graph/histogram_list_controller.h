@@ -27,7 +27,7 @@ class HistogramListController
    * return valid values. */
   void processSeriesAndBarSelection();
 
-  void highlightRow(size_t selectedSeries);
+  void highlightSelectedSeries();
 
   void scrollAndHighlightHistogramBar(size_t row, size_t barIndex);
 

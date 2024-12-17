@@ -39,7 +39,7 @@ jobs:
         uses: ./.github/actions/docker-builder
 
       - name: Make head
-        run: $DOCKER_RUN "make PLATFORM=simulator test.bin"
+        run: $DOCKER_RUN "make PLATFORM=simulator ASSERTIONS=1 test.bin"
       - name: Run head
         shell: bash
         run: $DOCKER_RUN "output/debug/optimized/linux/test.bin --headless --limit-stack-usage" | tee out
@@ -54,7 +54,7 @@ jobs:
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
 
       - name: Make ancestor
-        run: $DOCKER_RUN "make PLATFORM=simulator test.bin"
+        run: $DOCKER_RUN "make PLATFORM=simulator ASSERTIONS=1 test.bin"
       - name: Run ancestor
         shell: bash
         run: $DOCKER_RUN "output/debug/optimized/linux/test.bin --headless --limit-stack-usage" | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv

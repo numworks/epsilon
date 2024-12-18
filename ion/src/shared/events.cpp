@@ -36,7 +36,7 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
   // shift-alpha-X -> alpha-X -> X
   assert(static_cast<int>(key) >= 0 &&
          static_cast<int>(key) < Keyboard::NumberOfKeys);
-  m_id = Events::None.m_id;
+  m_id = Events::None;
 
   int noFallbackOffsets[] = {k_plainEventsOffset};
   int shiftFallbackOffsets[] = {k_shiftEventsOffset, k_plainEventsOffset};
@@ -52,24 +52,24 @@ Event::Event(Keyboard::Key key, bool shift, bool alpha, bool lock) {
   int offset = k_plainEventsOffset;
   do {
     offset = fallbackOffset[i++];
-    m_id = offset + (int)key;
-  } while (offset > k_plainEventsOffset && !s_dataForEvent[m_id].isDefined() &&
-           m_id < k_specialEventsOffset);
+    m_id = static_cast<EventId>(offset + (int)key);
+  } while (offset > k_plainEventsOffset && !s_dataForEvent[id()].isDefined() &&
+           static_cast<uint8_t>(m_id) < k_specialEventsOffset);
 
   // If we press percent in alphalock, change to backspace
-  if (m_id == static_cast<uint8_t>(Ion::Events::Percent) && lock) {
-    m_id = static_cast<uint8_t>(Ion::Events::Backspace);
+  if (m_id == Ion::Events::Percent && lock) {
+    m_id = Ion::Events::Backspace;
   }
-  assert(m_id != Events::None.m_id);
+  assert(m_id != Events::None);
 }
 
 const char* Event::defaultText() const {
   /* As the ExternalText event is only available on the simulator, we save a
    * comparison by not handling it on the device. */
-  if (m_id >= k_specialEventsOffset) {
+  if (id() >= k_specialEventsOffset) {
     return nullptr;
   }
-  return s_dataForEvent[m_id].text();
+  return s_dataForEvent[id()].text();
 }
 
 // Internal functions

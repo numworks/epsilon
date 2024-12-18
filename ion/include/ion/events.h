@@ -61,6 +61,8 @@ class ShiftAlphaStatus {
 };
 static_assert(sizeof(ShiftAlphaStatus) == sizeof(uint8_t));
 
+enum class EventId : uint8_t;
+
 class Event {
  public:
   constexpr static int k_pageSize = Keyboard::NumberOfKeys;
@@ -84,16 +86,21 @@ class Event {
   }
 
   // Return Ion::Event::None by default
-  constexpr Event() : m_id(k_specialEventsOffset) {}
-  constexpr Event(int i) : m_id(i) { assert(static_cast<int>(m_id) == i); }
-  constexpr explicit operator uint8_t() const { return m_id; }
+  constexpr Event() : m_id(static_cast<EventId>(k_specialEventsOffset)) {}
+  constexpr Event(int i) : m_id(static_cast<EventId>(i)) {
+    assert(static_cast<int>(id()) == i);
+  }
+  constexpr Event(EventId id) : m_id(id) {}
+  constexpr operator uint8_t() const { return id(); }
 
   Event(Keyboard::Key key, bool shift, bool alpha, bool lock);
 
-  bool operator==(const Event& other) const { return (m_id == other.m_id); }
-  bool operator!=(const Event& other) const { return (m_id != other.m_id); }
-  bool isKeyboardEvent() const { return m_id < k_specialEventsOffset; }
-  bool isSpecialEvent() const { return m_id >= k_specialEventsOffset; }
+  bool operator==(const Event& other) const = default;
+  bool operator!=(const Event& other) const = default;
+  bool operator==(const EventId& other) const { return (m_id == other); }
+  bool operator!=(const EventId& other) const { return (m_id != other); }
+  bool isKeyboardEvent() const { return id() < k_specialEventsOffset; }
+  bool isSpecialEvent() const { return id() >= k_specialEventsOffset; }
   bool isMoveEvent() const;
   bool isSelectionEvent() const;
   bool isKeyPress() const;
@@ -109,7 +116,8 @@ class Event {
 
  private:
   const char* defaultText() const;
-  uint8_t m_id;
+  constexpr uint8_t id() const { return static_cast<uint8_t>(m_id); }
+  EventId m_id;
 };
 
 #if ION_EVENTS_JOURNAL
@@ -148,25 +156,41 @@ inline int longPressFactor() {
 // Keyboard events
 
 #define DUMMY_KEY(...) PLAIN_KEY(__VA_ARGS__)
-#define PLAIN_KEY(Name, ...) \
-  constexpr Event Name = Event::PlainKey(Keyboard::Key::Name);
+#define PLAIN_KEY(Name, ...) Name = Event::PlainKey(Keyboard::Key::Name),
 
-#define SHIFT_KEY(Name, R, C, SEvent, ...)                     \
-  constexpr Event Name = Event::PlainKey(Keyboard::Key::Name); \
-  constexpr Event SEvent = Event::ShiftKey(Keyboard::Key::Name);
+#define SHIFT_KEY(Name, R, C, SEvent, ...)     \
+  Name = Event::PlainKey(Keyboard::Key::Name), \
+  SEvent = Event::ShiftKey(Keyboard::Key::Name),
 
-#define ALPHA_KEY(Name, R, C, AEvent, SAEvent, ...)              \
-  constexpr Event Name = Event::PlainKey(Keyboard::Key::Name);   \
-  constexpr Event AEvent = Event::AlphaKey(Keyboard::Key::Name); \
-  constexpr Event SAEvent = Event::ShiftAlphaKey(Keyboard::Key::Name);
+#define ALPHA_KEY(Name, R, C, AEvent, SAEvent, ...) \
+  Name = Event::PlainKey(Keyboard::Key::Name),      \
+  AEvent = Event::AlphaKey(Keyboard::Key::Name),    \
+  SAEvent = Event::ShiftAlphaKey(Keyboard::Key::Name),
 
 #define SHIFT_ALPHA_KEY(Name, R, C, SEvent, AEvent, SAEvent, ...) \
-  constexpr Event Name = Event::PlainKey(Keyboard::Key::Name);    \
-  constexpr Event SEvent = Event::ShiftKey(Keyboard::Key::Name);  \
-  constexpr Event AEvent = Event::AlphaKey(Keyboard::Key::Name);  \
-  constexpr Event SAEvent = Event::ShiftAlphaKey(Keyboard::Key::Name);
+  Name = Event::PlainKey(Keyboard::Key::Name),                    \
+  SEvent = Event::ShiftKey(Keyboard::Key::Name),                  \
+  AEvent = Event::AlphaKey(Keyboard::Key::Name),                  \
+  SAEvent = Event::ShiftAlphaKey(Keyboard::Key::Name),
+
+enum class EventId : uint8_t {
+  None = Event::Special(0),
+  Termination = Event::Special(1),
+  TimerFire = Event::Special(2),
+  USBEnumeration = Event::Special(3),
+  USBPlug = Event::Special(4),
+  BatteryCharging = Event::Special(5),
+  /* This event is only used in the simulator, to handle text that cannot be
+   * associated with a key. */
+  ExternalText = Event::Special(6),
+  /* This event is fired one time after the getEvent did not find any event. */
+  Idle = Event::Special(7),
 
 #include <ion/keys.inc>
+};
+
+// EventIds are declared as an enum for the debugger to print their names.
+using enum EventId;
 
 #undef PLAIN_KEY
 #undef SHIFT_KEY
@@ -175,18 +199,6 @@ inline int longPressFactor() {
 #undef DUMMY_KEY
 
 // Special
-
-constexpr Event None = Event::Special(0);
-constexpr Event Termination = Event::Special(1);
-constexpr Event TimerFire = Event::Special(2);
-constexpr Event USBEnumeration = Event::Special(3);
-constexpr Event USBPlug = Event::Special(4);
-constexpr Event BatteryCharging = Event::Special(5);
-/* This event is only used in the simulator, to handle text that cannot be
- * associated with a key. */
-constexpr Event ExternalText = Event::Special(6);
-/* This event is fired one time after the getEvent did not find any event. */
-constexpr Event Idle = Event::Special(7);
 
 inline bool Event::isMoveEvent() const {
   return *this == Left || *this == Right || *this == Up || *this == Down;

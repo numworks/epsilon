@@ -233,7 +233,7 @@ class TemplatedTreeStack : public AbstractTreeStack {
   Block m_blockBuffer[k_maxNumberOfBlocks];
 };
 
-class TreeStack : public TemplatedTreeStack<1024 * 16> {
+class TreeStack : public TemplatedTreeStack<POINCARE_TREE_STACK_SIZE> {
  public:
   static OMG::GlobalBox<TreeStack> SharedTreeStack;
 };

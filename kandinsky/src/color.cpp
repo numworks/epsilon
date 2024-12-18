@@ -59,7 +59,7 @@ KDColor KDColor::HSVBlend(KDColor color1, KDColor color2) {
 }
 
 KDColor::HSVColor
-#if PLATFORM_DEVICE
+#if PLATFORM_DEVICE && !PLATFORM_DEVICE_ARMV6M
     // Needed because compiler does not respect procedure call standards
     __attribute__((pcs("aapcs-vfp")))
 #endif

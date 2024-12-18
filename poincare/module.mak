@@ -2,15 +2,16 @@ _sources_poincare_minimal := $(addprefix src/, \
   api.cpp \
   cas_disabled.cpp:-cas \
   cas_enabled.cpp:+cas \
-  init.cpp \
+  init.cpp:-nopool \
+  init_no_pool.cpp:+nopool \
   trigonometry.cpp \
   preferences.cpp \
   print_float.cpp \
   sign.cpp \
-  old/integer.cpp \
-  old/pool_handle.cpp \
-  old/pool_object.cpp \
-  old/pool.cpp \
+  old/integer.cpp:-nopool \
+  old/pool_handle.cpp:-nopool \
+  old/pool_object.cpp:-nopool \
+  old/pool.cpp:-nopool \
 )
 
 _sources_poincare_checkpoint := $(addprefix src/, \
@@ -34,7 +35,7 @@ $(addprefix old/, \
   context.cpp \
   empty_context.cpp \
   float_list.cpp \
-  pool_variable_context.cpp \
+  pool_variable_context.cpp:-nopool \
   tree_variable_context.cpp \
 ) \
 $(addprefix expression/, \
@@ -160,7 +161,8 @@ $(addprefix numeric/, \
   zoom.cpp \
 ) \
 $(addprefix pool/, \
-  layout.cpp \
+  layout.cpp:-nopool \
+  layout_cursor.cpp:-nopool \
 ) \
 $(addprefix probability/, \
   binomial_distribution.cpp \
@@ -292,10 +294,10 @@ $(call create_module,poincare,1, \
 $(call assert_defined,KANDINSKY_fonts_dependencies)
 $(call all_objects_for,$(SOURCES_poincare)): $(KANDINSKY_fonts_dependencies)
 
-POINCARE_POOL_VISUALIZATION ?= 0
-ifneq ($(POINCARE_POOL_VISUALIZATION),0)
+POINCARE_TREE_STACK_VISUALIZATION ?= 0
+ifneq ($(POINCARE_TREE_STACK_VISUALIZATION),0)
 POINCARE_TREE_LOG := 1
-SFLAGS_poincare += -DPOINCARE_POOL_VISUALIZATION=1
+SFLAGS_poincare += -DPOINCARE_TREE_STACK_VISUALIZATION=1
 endif
 
 POINCARE_TREE_LOG ?= 0
@@ -307,4 +309,12 @@ endif
 
 ifneq ($(POINCARE_TREE_LOG),0)
 SFLAGS_poincare += -DPOINCARE_TREE_LOG=1
+endif
+
+# TODO: replace with a config header to avoid cluttering the command line
+ifeq ($(POINCARE_variant),epsilon)
+SFLAGS_poincare += -DPOINCARE_CONTEXT_TIDY_POOL=1 -DPOINCARE_TREE_STACK_SIZE=1024*16
+endif
+ifeq ($(POINCARE_variant),scandium)
+SFLAGS_poincare += -DPOINCARE_TREE_STACK_SIZE=1024*8 -DPOINCARE_NO_POLYNOMIAL_SOLVER=1 -DPOINCARE_NO_ADVANCED_REDUCTION=1
 endif

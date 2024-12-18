@@ -86,6 +86,7 @@ $(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/,codepoint_to_glyph_inde
 endef
 
 ifeq ($(KANDINSKY_font_variant),epsilon)
+SFLAGS_kandinsky += -DKANDINSKY_FONT_LARGE_FONT=1
 $(call raster_font,SmallFont,12,7,14)
 $(call raster_font,LargeFont,16,10,18)
 endif

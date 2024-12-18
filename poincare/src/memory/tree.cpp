@@ -4,7 +4,7 @@
 
 #include "tree_ref.h"
 
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
 #endif
 
@@ -435,7 +435,7 @@ Tree* Tree::cloneAt(const Tree* nodeToClone, bool before, bool newIsTree,
   size_t size = newIsTree ? nodeToClone->treeSize() : nodeToClone->nodeSize();
   SharedTreeStack->insertBlocks(destination->block(), nodeToClone->block(),
                                 size, at);
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("Insert", destination->block(), size);
 #endif
   return destination;
@@ -450,7 +450,7 @@ Tree* Tree::moveAt(Tree* nodeToMove, bool before, bool newIsTree, bool at) {
                               at);
   Block* dst = destination->block();
   Block* addedBlock = dst > nodeToMove->block() ? dst - size : dst;
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("Insert", addedBlock, size, nodeToMove->block());
 #endif
   return Tree::FromBlocks(addedBlock);
@@ -474,7 +474,7 @@ Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {
     SharedTreeStack->insertBlocks(oldBlock + minSize, newBlock + minSize,
                                   newSize - oldSize);
   }
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("Replace", oldBlock, newSize);
 #endif
   return Tree::FromBlocks(oldBlock);
@@ -503,7 +503,7 @@ Tree* Tree::moveOver(Tree* newNode, bool oldIsTree, bool newIsTree) {
     finalBlock -= newSize;
   }
   SharedTreeStack->removeBlocks(finalBlock + newSize, oldSize);
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   if (oldBlock < newBlock) {
     newBlock -= oldSize;
   }
@@ -516,7 +516,7 @@ void Tree::remove(bool isTree) {
   Block* b = block();
   size_t size = isTree ? treeSize() : nodeSize();
   SharedTreeStack->removeBlocks(b, size);
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("Remove", nullptr, INT_MAX, b);
 #endif
 }
@@ -526,7 +526,7 @@ Tree* Tree::detach(bool isTree) {
   size_t sizeToMove = isTree ? treeSize() : nodeSize();
   Block* source = block();
   SharedTreeStack->moveBlocks(destination, source, sizeToMove, true);
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("Detach", destination - sizeToMove, sizeToMove, source);
 #endif
   return Tree::FromBlocks(destination - sizeToMove);

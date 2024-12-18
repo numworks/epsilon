@@ -1,4 +1,4 @@
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
 #include <assert.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <poincare/src/memory/visualization.h>

@@ -10,6 +10,7 @@ $(addprefix shared/, \
 ) \
 $(addprefix device/shared/boot/, \
   rt0.cpp \
+  ssp.c \
 ) \
 $(addprefix device/shared/drivers/, \
   assert.cpp:+kernelassert \

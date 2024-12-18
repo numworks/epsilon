@@ -223,7 +223,8 @@ struct IntegerRepresentation;
 template <int64_t V>
 struct IntegerLiteral : IntegerRepresentation<V> {
   // IntegerLiteral inherits KTree via IntegerRepresentation
-  consteval IntegerLiteral<-V> operator-() { return IntegerLiteral<-V>(); }
+  // TODO: should be consteval, works with clang17
+  constexpr IntegerLiteral<-V> operator-() { return IntegerLiteral<-V>(); }
   // Note : we could decide to implement constant propagation operators here
 };
 

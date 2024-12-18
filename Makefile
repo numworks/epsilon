@@ -30,6 +30,8 @@ QUIZ_cases_directories := apps escher ion kandinsky liba libaxx omg poincare pyt
 KANDINSKY_font_variant := epsilon
 ION_layout_variant := epsilon
 
+POINCARE_variant := epsilon
+
 # Import modules
 
 $(call import_module,liba,liba)

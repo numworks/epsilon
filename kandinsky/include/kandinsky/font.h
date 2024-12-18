@@ -47,7 +47,11 @@ class KDFont {
  public:
   enum class Size : bool {
     Small,  // width = 7 , height = 14
-    Large   // width = 10 , height = 18
+#if KANDINSKY_FONT_LARGE_FONT
+    Large  // width = 10 , height = 18
+#else
+    Large = Small
+#endif
   };
   constexpr static KDCoordinate GlyphHeight(Size size) {
     return size == Size::Small ? SmallFont::k_glyphHeight
@@ -63,7 +67,7 @@ class KDFont {
     return size == Size::Small ? SmallFont::k_glyphWidth
                                : LargeFont::k_glyphWidth;
   }
-  constexpr static KDSize GlyphSize(Size size, CodePoint codePoint = ' ') {
+  static KDSize GlyphSize(Size size, CodePoint codePoint = ' ') {
     return KDSize(GlyphWidth(size, codePoint), GlyphHeight(size));
   }
 #else
@@ -82,9 +86,13 @@ class KDFont {
   constexpr static int k_maxGlyphPixelCount =
       std::max({SmallFont::k_glyphWidth * SmallFont::k_glyphHeight,
                 LargeFont::k_glyphWidth* LargeFont::k_glyphHeight});
+#if KANDINSKY_FONT_LARGE_FONT
   constexpr static const KDFont* Font(Size size) {
     return size == Size::Small ? &privateSmallFont : &privateLargeFont;
   }
+#else
+  constexpr static const KDFont* Font(Size size) { return &privateSmallFont; }
+#endif
 
   static bool CanBeWrittenWithGlyphs(const char* text);
 

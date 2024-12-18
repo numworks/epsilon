@@ -51,6 +51,9 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
 }
 
 bool AdvancedReduction::Reduce(Tree* e) {
+#if POINCARE_NO_ADVANCED_REDUCTION
+  return false;
+#endif
   /* In the case of a list, advanced reduction works more efficiently when
    * called independently on the list elements. Thus we ensure that there are no
    * "hidden" lists. The List::BubbleUp function fails when the tree has

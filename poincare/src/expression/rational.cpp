@@ -7,7 +7,7 @@
 #include "k_tree.h"
 #include "number.h"
 
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
 #include <poincare/src/memory/visualization.h>
 #endif
 
@@ -137,7 +137,7 @@ Tree* Rational::PushIrreducible(IntegerHandler numerator,
     denominator.pushDigitsOnTreeStack();
   }
   assert(IsIrreducible(e));
-#if POINCARE_POOL_VISUALIZATION
+#if POINCARE_TREE_STACK_VISUALIZATION
   Log("PushRational", e->block(), e->treeSize());
 #endif
   return e;

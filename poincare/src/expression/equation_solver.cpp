@@ -145,8 +145,10 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   if (*error == Error::NonLinearSystem && numberOfVariables <= 1 &&
       equationsSet->numberOfChildren() <= 1) {
     assert(result.isUninitialized());
+#if !POINCARE_NO_POLYNOMIAL_SOLVER
     result =
         SolvePolynomial(reducedEquationSet, numberOfVariables, context, error);
+#endif
     if (*error == Error::RequireApproximateSolution) {
       context->type = Type::GeneralMonovariable;
       // TODO: Handle GeneralMonovariable solving.

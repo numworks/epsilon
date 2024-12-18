@@ -26,13 +26,17 @@ class Context {
 
   virtual bool setExpressionForUserNamed(const Internal::Tree* expression,
                                          const Internal::Tree* symbol) = 0;
-  virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}
   virtual bool canRemoveUnderscoreToUnits() const { return true; }
 
   virtual double approximateSequenceAtRank(const char* identifier,
                                            int rank) const {
     return NAN;
   }
+
+#if POINCARE_CONTEXT_TIDY_POOL
+  // TODO: this method should be removed completely
+  virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}
+#endif
 
   static Context* GlobalContext;
 };

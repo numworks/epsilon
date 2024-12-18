@@ -31,6 +31,7 @@ endif
 
 # FIXME: We shouldn't need Kandinsky font
 KANDINSKY_font_variant := epsilon
+POINCARE_variant = epsilon
 
 # FIXME: Flags to build ion files
 SFLAGS += \

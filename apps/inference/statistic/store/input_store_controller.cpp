@@ -82,8 +82,6 @@ void InputStoreController::viewWillAppear() {
   m_dropdownCell.dropdown()->init();
   Table* tableModel = m_storeTableCell.tableModel();
   if (tableModel->numberOfSeries() == 2) {
-    m_dropdownCell.dropdown()->selectRow(DropdownDataSource::RowForSeriesPair(
-        tableModel->seriesAt(0), tableModel->seriesAt(1)));
     if (m_pageIndex == PageIndex::One) {
       m_dropdownCell.setMessage(I18n::Message::DataSet1);
     } else {
@@ -93,9 +91,10 @@ void InputStoreController::viewWillAppear() {
 
   } else {
     assert(tableModel->numberOfSeries() == 1);
-    m_dropdownCell.dropdown()->selectRow(tableModel->seriesAt(0));
     m_dropdownCell.setMessage(I18n::Message::DataSet);
   }
+  m_dropdownCell.dropdown()->selectRow(tableModel->seriesAt(0));
+
   int nRows = m_dropdownDataSource.numberOfRows();
   bool hasTwoSeries =
       m_statistic->significanceTestType() == SignificanceTestType::TwoMeans;
@@ -103,16 +102,7 @@ void InputStoreController::viewWillAppear() {
       2 * Shared::DoublePairStore::k_tableNameLength + sizeof(",") + 1;
   char buffer[bufferSize];
   for (int row = 0; row < nRows; row++) {
-    if (hasTwoSeries) {
-      size_t length = store()->tableName(DropdownDataSource::Series1ForRow(row),
-                                         buffer, bufferSize);
-      length +=
-          UTF8Helper::WriteCodePoint(buffer + length, bufferSize - length, ',');
-      store()->tableName(DropdownDataSource::Series2ForRow(row),
-                         buffer + length, bufferSize - length);
-    } else {
-      store()->tableName(row, buffer, bufferSize);
-    }
+    store()->tableName(row, buffer, bufferSize);
     static_cast<SmallBufferTextHighlightCell*>(m_dropdownDataSource.cell(row))
         ->setText(buffer);
   }
@@ -174,15 +164,7 @@ void InputStoreController::selectSeriesForDropdownRow(int row) {
     row = 0;
   }
   Table* tableModel = m_storeTableCell.tableModel();
-  if (m_statistic->significanceTestType() == SignificanceTestType::TwoMeans) {
-    assert(tableModel->numberOfSeries() == 2);
-    tableModel->setSeriesAt(m_statistic, 0,
-                            DropdownDataSource::Series1ForRow(row));
-    tableModel->setSeriesAt(m_statistic, 1,
-                            DropdownDataSource::Series2ForRow(row));
-  } else {
-    tableModel->setSeriesAt(m_statistic, 0, row);
-  }
+  tableModel->setSeriesAt(m_statistic, 0, row);
 }
 
 }  // namespace Inference

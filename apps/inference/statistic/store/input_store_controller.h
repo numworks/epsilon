@@ -110,6 +110,7 @@ class InputStoreController : public InputCategoricalController,
  private:
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:
+    // TODO: remove these three methods as they are not needed anymores
     static int RowForSeriesPair(int s1, int s2) {
       return s1 == 1 ? 2 : s2 == 1 ? 0 : 1;
     }

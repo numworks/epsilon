@@ -80,8 +80,9 @@ void InputStoreController::viewWillAppear() {
 
   // TODO: dedicated function for the dropdown cell view initialization
   m_dropdownCell.dropdown()->init();
-  Table* tableModel = m_storeTableCell.tableModel();
-  if (tableModel->numberOfSeries() == 2) {
+  RawDataStatistic* model =
+      static_cast<RawDataStatistic*>(m_storeTableCell.tableModel());
+  if (model->numberOfSeries() == 2) {
     if (m_pageIndex == PageIndex::One) {
       m_dropdownCell.setMessage(I18n::Message::DataSet1);
     } else {
@@ -90,10 +91,10 @@ void InputStoreController::viewWillAppear() {
     }
 
   } else {
-    assert(tableModel->numberOfSeries() == 1);
+    assert(model->numberOfSeries() == 1);
     m_dropdownCell.setMessage(I18n::Message::DataSet);
   }
-  m_dropdownCell.dropdown()->selectRow(tableModel->seriesAt(0));
+  m_dropdownCell.dropdown()->selectRow(model->seriesAt(0));
 
   int nRows = m_dropdownDataSource.numberOfRows();
   bool hasTwoSeries =

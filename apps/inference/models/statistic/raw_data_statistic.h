@@ -20,7 +20,8 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
       : StatisticsStore(context, &m_storePreferences), m_series{-1, -1} {}
 
   int seriesAt(int index) const override {
-    assert(index < numberOfSeries() && index < k_maxNumberOfSeries);
+    assert(index >= 0 && index < numberOfSeries() &&
+           index < k_maxNumberOfSeries);
     return m_series[index];
   }
   void setSeriesAt(Statistic* stat, int index, int series) override;
@@ -40,7 +41,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
   bool deleteParameterAtPosition(int row, int column) override;
   void recomputeData() override;
   int maxNumberOfColumns() const override {
-    return k_numberOfColumnsPerSeries * numberOfSeries();
+    return k_numberOfColumnsPerSeries * numberOfSeriesInTable();
   }
   int maxNumberOfRows() const override {
     return Shared::StatisticsStore::k_maxNumberOfPairs;

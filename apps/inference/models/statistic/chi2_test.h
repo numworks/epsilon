@@ -21,6 +21,8 @@ class Chi2Test : public Test, public Table {
   bool initializeCategoricalType(CategoricalType type);
 
   // Table
+  int numberOfSeries() const override { return 0; }
+
   void setParameterAtPosition(double value, int row, int column) override {
     assert(index2DToIndex(row, column) < numberOfStatisticParameters());
     setParameterAtIndex(value, index2DToIndex(row, column));

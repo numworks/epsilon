@@ -43,7 +43,7 @@ Table* Table::FromStatistic(Statistic* stat) {
 }
 
 bool Table::hasSeries() const {
-  for (int i = 0; i < numberOfSeries(); i++) {
+  for (int i = 0; i < numberOfSeriesInTable(); i++) {
     if (seriesAt(i) < 0) {
       return false;
     }
@@ -52,7 +52,7 @@ bool Table::hasSeries() const {
 }
 
 void Table::unsetSeries(Statistic* stat) {
-  for (int i = 0; i < numberOfSeries(); i++) {
+  for (int i = 0; i < numberOfSeriesInTable(); i++) {
     setSeriesAt(stat, i, -1);
   }
 }
@@ -121,7 +121,7 @@ int Table::index2DToIndex(int row, int column) const {
 }
 
 bool Table::validateSeries(Shared::DoublePairStore* doublePairStore) const {
-  for (int i = 0; i < numberOfSeries(); ++i) {
+  for (int i = 0; i < numberOfSeriesInTable(); ++i) {
     int series = seriesAt(i);
     if (!doublePairStore->seriesIsValid(series) ||
         doublePairStore->numberOfPairsOfSeries(series) <= 2) {

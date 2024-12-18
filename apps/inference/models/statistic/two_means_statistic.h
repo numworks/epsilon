@@ -9,7 +9,9 @@ class TwoMeansStatistic : public RawDataStatistic {
  public:
   using RawDataStatistic::RawDataStatistic;
 
-  int numberOfSeries() const override { return 1; }
+  int numberOfSeriesInTable() const override { return 1; }
+
+  int numberOfSeries() const override { return 2; }
 
  protected:
   TwoMeans::Type twoMeansType(const Statistic* stat) const {

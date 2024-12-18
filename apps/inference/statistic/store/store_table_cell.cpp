@@ -27,11 +27,13 @@ StoreTableCell::StoreTableCell(Responder* parentResponder, Statistic* statistic,
 bool StoreTableCell::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   Table* t = tableModel();
-  if (t->numberOfSeries() == 1) {
+  if (t->numberOfSeriesInTable() == 1) {
     return DoubleColumnTableCell::textFieldDidFinishEditing(textField, event);
   }
 
-  assert(t->numberOfSeries() == 2);
+  /* NOTE: the following code can be removed if numberOfSeriesInTable() is
+   * always 1 */
+  assert(t->numberOfSeriesInTable() == 2);
   Shared::DoublePairStore* s = store();
   int minLength = std::min<int>(s->numberOfPairsOfSeries(t->seriesAt(0)),
                                 s->numberOfPairsOfSeries(t->seriesAt(1)));

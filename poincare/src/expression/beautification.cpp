@@ -76,18 +76,31 @@ float Beautification::DegreeForSortingAddition(const Tree* e,
  * Simplifications are needed, this has to be done before beautification.
  * A bottom-up pattern is also needed because inverse trigonometric must
  * simplify its parents. */
-bool Beautification::DeepBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
-                                                bool* simplifyParent) {
+bool Beautification::DeepBeautifyAngleFunctions(
+    Tree* e, const ProjectionContext& projectionContext) {
+  bool dummy = false;
+  bool changed = BottomUpBeautifyAngleFunctions(e, projectionContext, &dummy);
+  if (changed && projectionContext.m_advanceReduce &&
+      projectionContext.m_angleUnit != AngleUnit::Radian) {
+    // Expands possibilities may have been added.
+    AdvancedReduction::Reduce(e);
+  }
+  return changed;
+}
+
+bool Beautification::BottomUpBeautifyAngleFunctions(
+    Tree* e, const ProjectionContext& projectionContext, bool* simplifyParent) {
   bool modified = false;
   bool mustSystematicReduce = false;
   for (Tree* child : e->children()) {
     bool tempMustSystematicReduce = false;
-    modified |=
-        DeepBeautifyAngleFunctions(child, angleUnit, &tempMustSystematicReduce);
+    modified |= BottomUpBeautifyAngleFunctions(child, projectionContext,
+                                               &tempMustSystematicReduce);
     mustSystematicReduce |= tempMustSystematicReduce;
   }
-  if (ShallowBeautifyAngleFunctions(e, angleUnit, simplifyParent)) {
-    return true;
+  if (ShallowBeautifyAngleFunctions(e, projectionContext.m_angleUnit,
+                                    simplifyParent)) {
+    modified = true;
   } else if (mustSystematicReduce) {
     assert(modified);
     *simplifyParent = SystematicReduction::ShallowReduce(e);
@@ -199,15 +212,7 @@ bool Beautification::DeepBeautify(Tree* e,
                                   ProjectionContext projectionContext) {
   bool changed =
       ApplyComplexFormat(e, projectionContext.m_dimension, projectionContext);
-  bool dummy = false;
-  changed =
-      DeepBeautifyAngleFunctions(e, projectionContext.m_angleUnit, &dummy) ||
-      changed;
-  if (changed && projectionContext.m_advanceReduce &&
-      projectionContext.m_angleUnit != AngleUnit::Radian) {
-    // A ShallowBeautifyAngleFunctions may have added expands possibilities.
-    AdvancedReduction::Reduce(e);
-  }
+  changed = DeepBeautifyAngleFunctions(e, projectionContext) || changed;
   changed = Tree::ApplyShallowTopDown(e, ShallowBeautify) || changed;
   changed = DeepBeautifyUnits(e) || changed;
   /* Divisions are created after the main beautification since they work top

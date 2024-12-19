@@ -29,8 +29,11 @@ class Beautification {
                               const ProjectionContext& projectionContext);
   static Tree* GetCartesianFormat(const Tree* e,
                                   const ProjectionContext& projectionContext);
-  static bool DeepBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
-                                         bool* simplifyParent);
+  static bool DeepBeautifyAngleFunctions(
+      Tree* e, const ProjectionContext& projectionContext);
+  static bool BottomUpBeautifyAngleFunctions(
+      Tree* e, const ProjectionContext& projectionContext,
+      bool* simplifyParent);
   static bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
                                             bool* simplifyParent);
   static bool ShallowBeautifyPercent(Tree* e);

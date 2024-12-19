@@ -59,7 +59,8 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
 
     // Set the current series and index in the snapshot
     size_t previousSelectedSeries = selectedSeries();
-    setSelectedSeries(selectedRow());
+    setSelectedSeries(static_cast<int8_t>(
+        m_store->seriesIndexFromActiveSeriesIndex(selectedRow())));
     /* The series index of the new selected cell is computed to be close to
      * its previous location in the neighboring cell */
     setSelectedBarIndex(barIndexAfterSelectingNewSeries(
@@ -75,7 +76,8 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
 
 void HistogramListController::processSeriesAndBarSelection() {
   if (!hasSelectedSeries()) {
-    setSelectedSeries(0);
+    setSelectedSeries(
+        static_cast<int8_t>(m_store->seriesIndexFromActiveSeriesIndex(0)));
     setSelectedBarIndex(0);
   }
 
@@ -142,19 +144,14 @@ void HistogramListController::scrollAndHighlightHistogramBar(size_t row,
 }
 
 size_t HistogramListController::selectedSeries() const {
-  /* The selectedSeries() method from the snapshot returns the index of the
-   * selected series considering ACTIVE series only */
-  int selectedActiveSeries = App::app()->snapshot()->selectedSeries();
-  assert(0 <= selectedActiveSeries &&
-         selectedActiveSeries < m_store->numberOfActiveSeries());
-  int series = m_store->seriesIndexFromActiveSeriesIndex(selectedActiveSeries);
+  int series = App::app()->snapshot()->selectedSeries();
   assert(0 <= series && series < Store::k_numberOfSeries);
   return static_cast<size_t>(series);
 }
 
-void HistogramListController::setSelectedSeries(size_t activeSelectedSeries) {
-  assert(activeSelectedSeries < m_store->numberOfActiveSeries());
-  App::app()->snapshot()->setSelectedSeries(activeSelectedSeries);
+void HistogramListController::setSelectedSeries(int8_t series) const {
+  assert(series < m_store->k_numberOfSeries);
+  App::app()->snapshot()->setSelectedSeries(series);
 }
 
 size_t HistogramListController::unsafeSelectedBarIndex() const {
@@ -169,7 +166,7 @@ size_t HistogramListController::selectedBarIndex() const {
   return barIndex;
 }
 
-void HistogramListController::setSelectedBarIndex(size_t barIndex) {
+void HistogramListController::setSelectedBarIndex(int16_t barIndex) const {
   assert(barIndex < m_store->numberOfBars(selectedSeries()));
   App::app()->snapshot()->setSelectedIndex(barIndex);
 }

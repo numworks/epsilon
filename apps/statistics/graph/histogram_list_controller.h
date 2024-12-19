@@ -69,8 +69,8 @@ class HistogramListController
   bool hasSelectedSeries() const;
 
   // Set the selected series or index in the Snapshot
-  void setSelectedSeries(size_t activeSelectedSeries);
-  void setSelectedBarIndex(size_t barIndex);
+  void setSelectedSeries(int8_t series) const;
+  void setSelectedBarIndex(int16_t barIndex) const;
 
   /* Return the current bar index in the snapshot without checking the upper
    * bound */

@@ -187,7 +187,7 @@ bool HistogramListController::moveSelectionHorizontally(
     if ((newBarIndex < 0) || (newBarIndex >= numberOfBars)) {
       return false;
     }
-  } while (m_store->heightOfBarAtIndex(selectedSeries(), newBarIndex) == 0);
+  } while (m_store->heightOfBarAtIndex(selectedSeries(), newBarIndex) == 0.0);
 
   assert(newBarIndex != selectedBarIndex());
   setSelectedBarIndex(static_cast<size_t>(newBarIndex));
@@ -202,19 +202,19 @@ size_t HistogramListController::sanitizeSelectedIndex(
 
   size_t selectedIndex = previousIndex;
 
-  if (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) != 0) {
+  if (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) != 0.0) {
     return selectedIndex;
   }
   int numberOfBars = m_store->numberOfBars(selectedSeries);
   // search a bar with non null height left of the selected one
-  while (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) == 0 &&
+  while (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) == 0.0 &&
          selectedIndex >= 0) {
     selectedIndex -= 1;
   }
   if (selectedIndex < 0) {
     // search a bar with non null height right of the selected one
     selectedIndex = previousIndex + 1;
-    while (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) == 0 &&
+    while (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) == 0.0 &&
            selectedIndex < numberOfBars) {
       selectedIndex += 1;
     }

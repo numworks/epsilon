@@ -99,7 +99,7 @@ void HistogramListController::highlightSelectedSeries() {
 
   /* The series could be selected in the snapshot but the corresponding row in
    * the list could be unselected yet.  */
-  if (selectedRow()) {
+  if (selectedRow() >= 0) {
     assert(m_store->seriesIndexFromActiveSeriesIndex(selectedRow()) ==
            selectedSeries());
   } else {

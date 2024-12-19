@@ -25,7 +25,7 @@ class HistogramListController
    * that the selected bar is not empty. In all cases, when exiting this
    * function, selectedSeries() and selectedBarIndex() are guaranteed to return
    * valid values. */
-  void processSeriesAndBarSelection();
+  void processSeriesAndBarSelection() const;
 
   void highlightSelectedSeries();
 

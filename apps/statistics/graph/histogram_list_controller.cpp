@@ -74,7 +74,7 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-void HistogramListController::processSeriesAndBarSelection() {
+void HistogramListController::processSeriesAndBarSelection() const {
   if (!hasSelectedSeries()) {
     setSelectedSeries(
         static_cast<int8_t>(m_store->seriesIndexFromActiveSeriesIndex(0)));

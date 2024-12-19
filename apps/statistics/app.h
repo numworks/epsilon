@@ -41,6 +41,14 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     int8_t* selectedSeries() { return &m_selectedSeries; }
     int16_t* selectedIndex() { return &m_selectedIndex; }
 
+    void setSelectedSeries(int8_t selectedSeries) {
+      m_selectedSeries = selectedSeries;
+    }
+
+    void setSelectedIndex(int16_t selectedIndex) {
+      m_selectedIndex = selectedIndex;
+    }
+
    private:
     uint32_t m_storeVersion;
     UserPreferences m_userPreferences;

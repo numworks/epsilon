@@ -295,7 +295,6 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         }
       }
       return true;
-    case Type::Opposite:
     case Type::Div:
     case Type::Mult: {
       /* TODO: Forbid Complex * units. Units are already forbidden in complex
@@ -307,7 +306,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         Dimension next = childDim[i];
         if (next.isMatrix()) {
           // Matrix size must match. Forbid Matrices on denominator
-          if ((cols && cols != next.matrix.rows) || secondDivisionChild) {
+          if ((cols != 0 && cols != next.matrix.rows) || secondDivisionChild) {
             return false;
           }
           cols = next.matrix.cols;
@@ -455,6 +454,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       break;
     case Type::AngleUnitContext:
     case Type::ListSort:
+    case Type::Opposite:
     case Type::Parentheses:
       return true;
     case Type::RandIntNoRep: {

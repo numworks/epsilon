@@ -99,10 +99,8 @@ QUIZ_CASE(solver_quadratic) {
 
   assert_solves_to("2×x^2-4×x+2=0", {"x=1", "delta=0"});
   assert_solves_to("2×x^2-4×x+4=3", {"x=1-√(2)/2", "x=1+√(2)/2", "delta=8"});
-  assert_solves_to(
-      "3×x^2-4x+4=2",
-      {"x=-(-4+√(-8))/6", "x=(4+√(-8))/6",  // TODO_PCJ: simplify (metric)
-       "delta=-8"});
+  assert_solves_to("3×x^2-4x+4=2",
+                   {"x=2/3-√(2)/3×i", "x=2/3+√(2)/3×i", "delta=-8"});
   assert_solves_to("x^2+x+1=3×x^2+π×x-√(5)",
                    {"x=-(-1+π+√((1-π)^2+8+8×√(5)))/4",
                     "x=(1-π+√((1-π)^2+8+8×√(5)))/4", "delta=(1-π)^2+8+8×√(5)"});
@@ -140,7 +138,7 @@ QUIZ_CASE(solver_cubic) {
    * can be discussed. */
   assert_solves_to("x^3-13-i=0", {"x=(root(13+i,3)(-1+√(3)i))/2",
                                   "x=-(root(13+i,3)(1+√(3)i))/2",
-                                  "x=root(13+i,3)", "delta=-27×(168+26×i)"});
+                                  "x=root(13+i,3)", "delta=-4536-702×i"});
 
   assert_solves_to("x^3-(2+i)×x^2-2×i×x-2+4×i=0",
                    {
@@ -342,8 +340,7 @@ QUIZ_CASE(solver_complex_cartesian) {
       {"x=-(1+√(-3))/2", "x=(-1+√(-3))/2",  // TODO_PCJ: simplify (metric)
        "delta=-3"});
   assert_solves_to("x^2-√(-1)=0",
-                   {"x=-√(i)", "x=√(i)",  // TODO_PCJ: force cartesian format
-                    "delta=4i"});
+                   {"x=-√(2)/2-√(2)/2×i", "x=√(2)/2+√(2)/2×i", "delta=4i"});
   assert_solves_to("x+√(-1)×√(-1)=0", "x=1");
   assert_solves_to("root(-8,3)*x+3=0",
                    "x=(3×(-8)^(2/3))/8");  //  TODO_PCJ: force cartesian format

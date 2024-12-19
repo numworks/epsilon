@@ -29,13 +29,13 @@ class HistogramListController
 
   void highlightSelectedSeries();
 
-  void scrollAndHighlightHistogramBar(size_t row, size_t barIndex);
+  void scrollAndHighlightHistogramBar(int row, int16_t barIndex);
 
   void unhighlightList() { m_selectableListView.deselectTable(); }
 
   // Get the selected series or index from the Snapshot
-  size_t selectedSeries() const;
-  size_t selectedBarIndex() const;
+  int8_t selectedSeries() const;
+  int16_t selectedBarIndex() const;
 
   // Height of one histogram graph (they all have the same size)
   KDCoordinate rowHeight() const {
@@ -51,7 +51,7 @@ class HistogramListController
   int typeAtRow(int row) const override { return 0; }
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override {
-    return m_displayCells.size();
+    return static_cast<int>(m_displayCells.size());
   }
 
   // Escher::Responder
@@ -74,16 +74,16 @@ class HistogramListController
 
   /* Return the current bar index in the snapshot without checking the upper
    * bound */
-  size_t unsafeSelectedBarIndex() const;
+  int16_t unsafeSelectedBarIndex() const;
 
   // Navigation inside and between the histogram cells
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction);
 
-  size_t sanitizedSelectedIndex(size_t selectedSeries,
-                                size_t initialSelectedIndex) const;
-  size_t barIndexAfterSelectingNewSeries(size_t previousSelectedSeries,
-                                         size_t currentSelectedSeries,
-                                         size_t previousSelectedBarIndex) const;
+  int16_t sanitizedSelectedIndex(int8_t selectedSeries,
+                                 int16_t initialSelectedIndex) const;
+  int16_t barIndexAfterSelectingNewSeries(
+      int8_t previousSelectedSeries, int8_t currentSelectedSeries,
+      int16_t previousSelectedBarIndex) const;
 
   // Maximum number of histograms displayed on the same screen
   constexpr static size_t k_displayedHistograms = 4;

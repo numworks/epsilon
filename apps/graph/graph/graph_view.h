@@ -47,9 +47,10 @@ class GraphView : public Shared::FunctionGraphView,
   constexpr static int k_externRectMargin = 2;
   constexpr static Shared::Dots::Size k_dotSize = Shared::Dots::Size::Tiny;
 
-  static bool FunctionIsDiscontinuousBetweenFloatValues(float x1, float x2,
-                                                        void* model,
-                                                        void* context);
+  static bool FunctionIsDiscontinuousOnFloatInterval(float minBound,
+                                                     float maxBound,
+                                                     void* model,
+                                                     void* context);
   Escher::View* ornamentView() const override {
     return const_cast<InterestView*>(&m_interestView);
   }

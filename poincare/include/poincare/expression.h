@@ -250,7 +250,8 @@ class Expression : public PoolHandle {
       Preferences::CalculationPreferences calculationPreferences,
       Context* context) const;
   bool involvesDiscontinuousFunction() const;
-  bool isDiscontinuousBetweenFloatValues(float x1, float x2) const;
+  template <typename T>
+  bool isDiscontinuousOnInterval(T minBound, T maxBound) const;
 
   constexpr static int k_maxNumberOfVariables = 6;
   // TODO: factorize with k_maxPolynomialDegree from Polynomial

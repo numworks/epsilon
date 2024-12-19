@@ -174,10 +174,10 @@ bool ContinuousFunction::isNamed() const {
          recordFullName[0] != k_unnamedRecordFirstChar;
 }
 
-bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
-    float x1, float x2, Poincare::Context* context) const {
+bool ContinuousFunction::isDiscontinuousOnFloatInterval(
+    float minBound, float maxBound, Poincare::Context* context) const {
   SystemFunction equation = expressionApproximated(context);
-  return equation.isDiscontinuousBetweenFloatValues(x1, x2);
+  return equation.isDiscontinuousOnInterval<float>(minBound, maxBound);
 }
 
 void ContinuousFunction::getLineParameters(double* slope, double* intercept,

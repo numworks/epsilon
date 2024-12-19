@@ -120,9 +120,8 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
    * discontinuous functions, this avoids recomputing potential
    * discontinuity at each dot of the curve. */
   DiscontinuityTest discontinuityEvaluation =
-      e.involvesDiscontinuousFunction()
-          ? FunctionIsDiscontinuousBetweenFloatValues
-          : NoDiscontinuity;
+      e.involvesDiscontinuousFunction() ? FunctionIsDiscontinuousOnFloatInterval
+                                        : NoDiscontinuity;
 
   if (f->properties().isCartesian()) {
     drawCartesian(ctx, rect, f.operator->(), record, tCacheMin, tmax, tStep,
@@ -187,12 +186,13 @@ static Coordinate2D<float> evaluateZero(float t, void*, void*) {
   return Coordinate2D<float>(t, 0.f);
 }
 
-bool GraphView::FunctionIsDiscontinuousBetweenFloatValues(float x1, float x2,
-                                                          void* model,
-                                                          void* context) {
+bool GraphView::FunctionIsDiscontinuousOnFloatInterval(float minBound,
+                                                       float maxBound,
+                                                       void* model,
+                                                       void* context) {
   return static_cast<ContinuousFunction*>(model)
-      ->isDiscontinuousBetweenFloatValues(
-          x1, x2, static_cast<Poincare::Context*>(context));
+      ->isDiscontinuousOnFloatInterval(
+          minBound, maxBound, static_cast<Poincare::Context*>(context));
 }
 
 template <typename T>

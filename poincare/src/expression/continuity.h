@@ -23,7 +23,7 @@ class Continuity {
 
   // e must be a system function
   template <typename T>
-  static bool IsDiscontinuousBetweenValues(const Tree* e, T x1, T x2);
+  static bool IsDiscontinuousOnInterval(const Tree* e, T minBound, T maxBound);
 
  private:
   static bool ShallowIsDiscontinuous(const Tree* e);

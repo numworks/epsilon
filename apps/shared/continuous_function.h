@@ -98,8 +98,8 @@ class ContinuousFunction : public Function {
     return isActiveInTable() &&
            properties().canComputeIntersectionsWithFunctionsAlongSameVariable();
   }
-  bool isDiscontinuousBetweenFloatValues(float x1, float x2,
-                                         Poincare::Context* context) const;
+  bool isDiscontinuousOnFloatInterval(float minBound, float maxBound,
+                                      Poincare::Context* context) const;
   // Compute line parameters (slope and intercept) from ContinuousFunction
   void getLineParameters(double* slope, double* intercept,
                          Poincare::Context* context) const;

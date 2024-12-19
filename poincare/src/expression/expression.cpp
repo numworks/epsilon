@@ -537,9 +537,9 @@ bool SystemFunction::involvesDiscontinuousFunction() const {
   return Continuity::InvolvesDiscontinuousFunction(tree());
 }
 
-bool SystemFunction::isDiscontinuousBetweenFloatValues(float x1,
-                                                       float x2) const {
-  return Continuity::IsDiscontinuousBetweenValues<float>(tree(), x1, x2);
+template <typename T>
+bool SystemFunction::isDiscontinuousOnInterval(T minBound, T maxBound) const {
+  return Continuity::IsDiscontinuousOnInterval<T>(tree(), minBound, maxBound);
 }
 
 template <typename T>
@@ -1170,6 +1170,11 @@ template float SystemFunctionScalar::approximateToScalarWithValue<float>(
     float, int) const;
 template double SystemFunctionScalar::approximateToScalarWithValue<double>(
     double, int) const;
+
+template bool SystemFunction::isDiscontinuousOnInterval<float>(float,
+                                                               float) const;
+template bool SystemFunction::isDiscontinuousOnInterval<double>(double,
+                                                                double) const;
 
 template float SystemExpression::approximateSystemToScalar<float>() const;
 template double SystemExpression::approximateSystemToScalar<double>() const;

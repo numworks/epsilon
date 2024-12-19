@@ -26,22 +26,27 @@ void StatisticsStore::clearColumn(int series, int column) {
 }
 
 double StatisticsStore::sumOfOccurrences(int series) const {
+  assert(series >= 0);
   return m_datasets[series].totalWeight();
 }
 
 double StatisticsStore::mean(int series) const {
+  assert(series >= 0);
   return m_datasets[series].mean();
 }
 
 double StatisticsStore::standardDeviation(int series) const {
+  assert(series >= 0);
   return m_datasets[series].standardDeviation();
 }
 
 double StatisticsStore::sampleStandardDeviation(int series) const {
+  assert(series >= 0);
   return m_datasets[series].sampleStandardDeviation();
 }
 
 bool StatisticsStore::updateSeries(int series, bool delayUpdate) {
+  assert(series >= 0);
   m_datasets[series].setHasBeenModified();
   return DoublePairStore::updateSeries(series, delayUpdate);
 }

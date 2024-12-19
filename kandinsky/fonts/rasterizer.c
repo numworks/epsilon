@@ -235,9 +235,11 @@ void writeFontSourceFile(const char * fontSourceFilename, const char * fontName,
   fprintf(fontFile, "};\n\n");
 
   // glyphWidths
+  fprintf(fontFile, "#if KANDINSKY_FONT_VARIABLE_WIDTH\n");
   fprintf(fontFile, "constexpr static uint8_t glyphWidths[numberOfCodePoints + 1] = {");
   prettyPrintArray(fontFile, 80, 1, glyphWidths, glyphWidthsLength);
-  fprintf(fontFile, "};\n\n");
+  fprintf(fontFile, "};\n");
+  fprintf(fontFile, "#endif\n\n");
 
   // Font instanciation
   fprintf(fontFile,

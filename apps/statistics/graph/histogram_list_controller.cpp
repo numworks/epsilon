@@ -91,7 +91,7 @@ void HistogramListController::processSeriesAndBarSelection() {
   setSelectedBarIndex(
       sanitizedSelectedIndex(selectedSeries(), selectedBarIndex()));
 
-#if defined(ASSERTIONS)
+#if ASSERTIONS
   // Check that selectedSeries() and selectedBarIndex() do not throw an assert
   selectedSeries();
   selectedBarIndex();

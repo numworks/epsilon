@@ -33,6 +33,14 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
   histogramCell->setSeries(m_store->seriesIndexFromActiveSeriesIndex(row));
 }
 
+void HistogramListController::restoreFirstResponder() const {
+  /* The banner view, which is owned by the main controller needs to be updated
+   * at the same time as the histogram list view. To ensure this, the
+   * firstResponder ownership is given back to the main controller, which is the
+   * parent responder of HistogramListController. */
+  Escher::App::app()->setFirstResponder(parentResponder());
+}
+
 bool HistogramListController::handleEvent(Ion::Events::Event event) {
   // Handle left/right navigation inside a histogram cell
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
@@ -45,13 +53,9 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (selectedRow() != previousSelectedRow) {
-    /* If the SelectableListView handled the event by selecting a new row,
-     * then it took the firstResponder ownership. However we want the main
-     * controller to be the first responder, because the banner view needs to
-     * be updated as well. So the firstResponder ownership is given back to
-     * the main controller, which is the parent responder of
-     * HistogramListController. */
-    Escher::App::app()->setFirstResponder(parentResponder());
+    /* If the SelectableListView selected a new row,then it took the
+     * firstResponder ownership. We need to manually restore it. */
+    restoreFirstResponder();
 
     // Set the current series and index in the snapshot
     size_t previousSelectedSeries = selectedSeries();
@@ -106,11 +110,8 @@ void HistogramListController::highlightSelectedSeries() {
     m_selectableListView.selectCell(
         m_store->activeSeriesIndexFromSeriesIndex(selectedSeries()));
     /* The SelectableListView took the firstResponder ownership when selecting
-     * the cell. However we want the main controller to be the first
-     * responder, because the banner view needs to be updated as well. So the
-     * firstResponder ownership is given back to the main controller, which
-     * is the parent responder of HistogramListController. */
-    Escher::App::app()->setFirstResponder(parentResponder());
+     * the cell. We need to manually restore it. */
+    restoreFirstResponder();
   }
 
   /* The cell corresponding to the selected series could be selected in the list

@@ -176,8 +176,7 @@ bool ContinuousFunction::isNamed() const {
 
 bool ContinuousFunction::isDiscontinuousBetweenFloatValues(
     float x1, float x2, Poincare::Context* context) const {
-  SystemFunction equation =
-      expressionReduced(context).getSystemFunction(k_unknownName);
+  SystemFunction equation = expressionApproximated(context);
   return equation.isDiscontinuousBetweenFloatValues(x1, x2);
 }
 
@@ -368,8 +367,7 @@ PointOrScalar<T> ContinuousFunction::approximateDerivative(
     return PointOrScalar<T>(NAN);
   }
   // Derivative is simplified once and for all
-  SystemFunction derivate = expressionDerivateReduced(context, derivationOrder)
-                                .getSystemFunction(k_unknownName);
+  SystemFunction derivate = expressionApproximated(context, derivationOrder);
   return derivate.approximateToPointOrScalarWithValue(t);
 }
 
@@ -948,8 +946,7 @@ SystemFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
   ContinuousFunctionProperties prop = properties(record);
   if (m_expressionSlope.isUninitialized()) {
     if (prop.isCartesian()) {
-      m_expressionSlope = expressionDerivateReduced(record, context, 1)
-                              .getSystemFunction(k_unknownName);
+      m_expressionSlope = expressionApproximated(record, context, 1);
     } else {
       assert(prop.isParametric() || prop.isPolar());
       SystemExpression expression = parametricForm(record, context);

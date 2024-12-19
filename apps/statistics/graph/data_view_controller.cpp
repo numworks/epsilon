@@ -22,7 +22,7 @@ DataViewController::DataViewController(
 }
 
 int DataViewController::selectedSeries() const {
-  return *App::app()->snapshot()->selectedSeries();
+  return App::app()->snapshot()->selectedSeries();
 }
 
 void DataViewController::setSelectedSeries(int selectedSeries) const {
@@ -32,7 +32,7 @@ void DataViewController::setSelectedSeries(int selectedSeries) const {
 }
 
 int DataViewController::selectedIndex() const {
-  return *App::app()->snapshot()->selectedIndex();
+  return App::app()->snapshot()->selectedIndex();
 }
 
 void DataViewController::setSelectedIndex(int selectedIndex) const {

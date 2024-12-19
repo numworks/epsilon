@@ -38,8 +38,8 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     uint32_t* storeVersion() { return &m_storeVersion; }
     GraphViewModel* graphViewModel() { return &m_graphViewModel; }
     UserPreferences* userPreferences() { return &m_userPreferences; }
-    int8_t* selectedSeries() { return &m_selectedSeries; }
-    int16_t* selectedIndex() { return &m_selectedIndex; }
+    int8_t selectedSeries() const { return m_selectedSeries; }
+    int16_t selectedIndex() const { return m_selectedIndex; }
 
     void setSelectedSeries(int8_t selectedSeries) {
       m_selectedSeries = selectedSeries;

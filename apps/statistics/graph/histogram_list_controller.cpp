@@ -144,7 +144,7 @@ void HistogramListController::scrollAndHighlightHistogramBar(size_t row,
 size_t HistogramListController::selectedSeries() const {
   /* The selectedSeries() method from the snapshot returns the index of the
    * selected series considering ACTIVE series only */
-  int selectedActiveSeries = *App::app()->snapshot()->selectedSeries();
+  int selectedActiveSeries = App::app()->snapshot()->selectedSeries();
   assert(0 <= selectedActiveSeries &&
          selectedActiveSeries < m_store->numberOfActiveSeries());
   int series = m_store->seriesIndexFromActiveSeriesIndex(selectedActiveSeries);
@@ -154,11 +154,11 @@ size_t HistogramListController::selectedSeries() const {
 
 void HistogramListController::setSelectedSeries(size_t activeSelectedSeries) {
   assert(activeSelectedSeries < m_store->numberOfActiveSeries());
-  *App::app()->snapshot()->selectedSeries() = activeSelectedSeries;
+  App::app()->snapshot()->setSelectedSeries(activeSelectedSeries);
 }
 
 size_t HistogramListController::unsafeSelectedBarIndex() const {
-  int barIndex = *App::app()->snapshot()->selectedIndex();
+  int barIndex = App::app()->snapshot()->selectedIndex();
   assert(barIndex >= 0);
   return static_cast<size_t>(barIndex);
 }
@@ -171,11 +171,11 @@ size_t HistogramListController::selectedBarIndex() const {
 
 void HistogramListController::setSelectedBarIndex(size_t barIndex) {
   assert(barIndex < m_store->numberOfBars(selectedSeries()));
-  *App::app()->snapshot()->selectedIndex() = barIndex;
+  App::app()->snapshot()->setSelectedIndex(barIndex);
 }
 
 bool HistogramListController::hasSelectedSeries() const {
-  return *App::app()->snapshot()->selectedSeries() > -1;
+  return App::app()->snapshot()->selectedSeries() > -1;
 }
 
 bool HistogramListController::moveSelectionHorizontally(

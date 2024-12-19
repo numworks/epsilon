@@ -533,6 +533,10 @@ bool UserExpression::isScalarComplex(
   return false;
 }
 
+bool SystemFunction::involvesDiscontinuousFunction() const {
+  return Continuity::InvolvesDiscontinuousFunction(tree());
+}
+
 bool SystemFunction::isDiscontinuousBetweenFloatValues(float x1,
                                                        float x2) const {
   return Continuity::IsDiscontinuousBetweenValues<float>(tree(), x1, x2);
@@ -902,10 +906,6 @@ bool NewExpression::isMatrix(Context* context) const {
   return tree()->isMatrix();
 }
 
-bool NewExpression::isDiscontinuous() const {
-  return Continuity::InvolvesDiscontinuousFunction(tree());
-}
-
 bool NewExpression::isNAry() const { return tree()->isNAry(); }
 
 bool NewExpression::isApproximate() const {
@@ -963,10 +963,6 @@ bool NewExpression::isPureAngleUnit() const {
 
 bool NewExpression::isInRadians(Context* context) const {
   return Internal::Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
-}
-
-bool NewExpression::involvesDiscontinuousFunction(Context* context) const {
-  return recursivelyMatches(&Expression::isDiscontinuous, context);
 }
 
 bool NewExpression::isConstantNumber() const {

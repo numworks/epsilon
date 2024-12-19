@@ -249,6 +249,7 @@ class Expression : public PoolHandle {
   bool isScalarComplex(
       Preferences::CalculationPreferences calculationPreferences,
       Context* context) const;
+  bool involvesDiscontinuousFunction() const;
   bool isDiscontinuousBetweenFloatValues(float x1, float x2) const;
 
   constexpr static int k_maxNumberOfVariables = 6;
@@ -367,7 +368,6 @@ class Expression : public PoolHandle {
   bool isComparison() const;
   bool isEquality() const;
   bool isRational() const;
-  bool isDiscontinuous() const;
   // Return true if expression is a number, constant, inf or undef.
   bool isConstantNumber() const;
   bool isPureAngleUnit() const;
@@ -380,7 +380,6 @@ class Expression : public PoolHandle {
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
                bool replaceSymbols = false, Context* ctx = nullptr) const;
   bool isInRadians(Context* context) const;
-  bool involvesDiscontinuousFunction(Context* context) const;
 
   // This function can be used with recursivelyMatches
   static bool IsMatrix(const NewExpression e, Context* context = nullptr) {

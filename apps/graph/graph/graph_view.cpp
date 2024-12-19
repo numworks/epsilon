@@ -120,7 +120,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
    * discontinuous functions, this avoids recomputing potential
    * discontinuity at each dot of the curve. */
   DiscontinuityTest discontinuityEvaluation =
-      e.involvesDiscontinuousFunction(context())
+      e.involvesDiscontinuousFunction()
           ? FunctionIsDiscontinuousBetweenFloatValues
           : NoDiscontinuity;
 

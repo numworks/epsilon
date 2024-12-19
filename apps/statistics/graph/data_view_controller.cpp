@@ -25,16 +25,19 @@ int DataViewController::selectedSeries() const {
   return *App::app()->snapshot()->selectedSeries();
 }
 
-void DataViewController::setSelectedSeries(int selectedSeries) {
-  *App::app()->snapshot()->selectedSeries() = selectedSeries;
+void DataViewController::setSelectedSeries(int selectedSeries) const {
+  assert(selectedSeries > INT8_MIN && selectedSeries < INT8_MAX);
+  App::app()->snapshot()->setSelectedSeries(
+      static_cast<int8_t>(selectedSeries));
 }
 
 int DataViewController::selectedIndex() const {
   return *App::app()->snapshot()->selectedIndex();
 }
 
-void DataViewController::setSelectedIndex(int selectedIndex) {
-  *App::app()->snapshot()->selectedIndex() = selectedIndex;
+void DataViewController::setSelectedIndex(int selectedIndex) const {
+  assert(selectedIndex > INT16_MIN && selectedIndex < INT16_MAX);
+  App::app()->snapshot()->setSelectedIndex(static_cast<int16_t>(selectedIndex));
 }
 
 void DataViewController::viewWillAppear() {
@@ -121,7 +124,7 @@ void DataViewController::sanitizeSeriesIndex() {
   // Sanitize selectedSeries()
   if (selectedSeries() < 0 ||
       !activeSeriesMethod()(m_store, selectedSeries())) {
-    for (int series = 0; series < Store::k_numberOfSeries; series++) {
+    for (int8_t series = 0; series < Store::k_numberOfSeries; series++) {
       if (activeSeriesMethod()(m_store, series)) {
         setSelectedSeries(series);
         return;

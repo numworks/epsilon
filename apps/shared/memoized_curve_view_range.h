@@ -32,14 +32,13 @@ class MemoizedCurveViewRange : public CurveViewRange {
   float xGridUnit() override final;
   float yGridUnit() override final;
 
-  // TODO: create setters for double float numbers
   virtual void setXRange(float min, float max) { protectedSetXRange(min, max); }
   virtual void setYRange(float min, float max) { protectedSetYRange(min, max); }
 
-  virtual void setXRange(Poincare::Range1D<float> range) {
+  void setXRange(Poincare::Range1D<float> range) {
     setXRange(range.min(), range.max());
   }
-  virtual void setYRange(Poincare::Range1D<float> range) {
+  void setYRange(Poincare::Range1D<float> range) {
     setYRange(range.min(), range.max());
   }
 

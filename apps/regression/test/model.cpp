@@ -107,10 +107,10 @@ QUIZ_CASE(regression_linear) {
   constexpr double r = 1.0;
   constexpr double r2 = 1.0;
   constexpr double sr = 0.0425;
-  assert_regression_is(x, y, 4, Model::Type::LinearAxpb, coefficientsAxpb, r,
-                       r2, sr);
-  assert_regression_is(x, y, 4, Model::Type::LinearApbx, coefficientsApbx, r,
-                       r2, sr);
+  assert_regression_is(x, y, std::size(x), Model::Type::LinearAxpb,
+                       coefficientsAxpb, r, r2, sr);
+  assert_regression_is(x, y, std::size(x), Model::Type::LinearApbx,
+                       coefficientsApbx, r, r2, sr);
 }
 
 QUIZ_CASE(regression_linear_2) {
@@ -121,10 +121,10 @@ QUIZ_CASE(regression_linear_2) {
   constexpr double r = 0.5857;
   constexpr double r2 = 0.343;
   constexpr double sr = 27.642;
-  assert_regression_is(x, y, 5, Model::Type::LinearAxpb, coefficientsAxpb, r,
-                       r2, sr);
-  assert_regression_is(x, y, 5, Model::Type::LinearApbx, coefficientsApbx, r,
-                       r2, sr);
+  assert_regression_is(x, y, std::size(x), Model::Type::LinearAxpb,
+                       coefficientsAxpb, r, r2, sr);
+  assert_regression_is(x, y, std::size(x), Model::Type::LinearApbx,
+                       coefficientsApbx, r, r2, sr);
 }
 
 QUIZ_CASE(regression_linear_3) {
@@ -137,10 +137,10 @@ QUIZ_CASE(regression_linear_3) {
   constexpr double r = 1.0;
   constexpr double r2 = 1.0;
   constexpr double sr = NAN;
-  assert_regression_is(x, y, 5, Model::Type::LinearAxpb, coefficientsAxpb, r,
-                       r2, sr);
-  assert_regression_is(x, y, 5, Model::Type::LinearApbx, coefficientsApbx, r,
-                       r2, sr);
+  assert_regression_is(x, y, std::size(x), Model::Type::LinearAxpb,
+                       coefficientsAxpb, r, r2, sr);
+  assert_regression_is(x, y, std::size(x), Model::Type::LinearApbx,
+                       coefficientsApbx, r, r2, sr);
 }
 
 QUIZ_CASE(regression_proportional) {

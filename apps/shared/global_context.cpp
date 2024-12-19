@@ -24,7 +24,7 @@ namespace Shared {
 constexpr const char* GlobalContext::k_extensions[];
 
 OMG::GlobalBox<SequenceStore> GlobalContext::s_sequenceStore;
-OMG::GlobalBox<Internal::SequenceCache> GlobalContext::s_sequenceCache;
+OMG::GlobalBox<SequenceCache> GlobalContext::s_sequenceCache;
 OMG::GlobalBox<ContinuousFunctionStore>
     GlobalContext::s_continuousFunctionStore;
 

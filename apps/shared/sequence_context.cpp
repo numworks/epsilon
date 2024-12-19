@@ -52,7 +52,7 @@ bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
   return cache()->sequenceIsNotComputable(sequenceIndex);
 }
 
-Poincare::Internal::SequenceCache* SequenceContext::cache() {
+SequenceCache* SequenceContext::cache() {
   return GlobalContext::s_sequenceCache;
 }
 

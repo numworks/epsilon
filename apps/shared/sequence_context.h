@@ -3,8 +3,8 @@
 
 #include <poincare/expression.h>
 #include <poincare/old/context_with_parent.h>
-#include <poincare/src/expression/sequence_cache.h>
 
+#include "sequence_cache.h"
 #include "sequence_store.h"
 
 namespace Shared {
@@ -40,7 +40,7 @@ class SequenceContext : public Poincare::ContextWithParent {
   constexpr static int k_numberOfSequences =
       SequenceStore::k_maxNumberOfSequences;
 
-  Poincare::Internal::SequenceCache* cache();
+  SequenceCache* cache();
   SequenceStore* m_sequenceStore;
 };
 

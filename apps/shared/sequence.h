@@ -5,9 +5,9 @@
 #include <ion/storage/file_system.h>
 #include <poincare/code_points.h>
 #include <poincare/src/expression/sequence.h>
-#include <poincare/src/expression/sequence_cache.h>
 
 #include "function.h"
+#include "sequence_cache.h"
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>
@@ -134,7 +134,7 @@ class Sequence : public Function {
   }
   double approximateAtContextRank(Poincare::Context* ctx, int rank,
                                   bool intermediateComputation) const;
-  double approximateAtRank(int rank, Poincare::Internal::SequenceCache* sqctx,
+  double approximateAtRank(int rank, SequenceCache* sqctx,
                            Poincare::Context* ctx) const;
 
   Poincare::UserExpression sumBetweenBounds(

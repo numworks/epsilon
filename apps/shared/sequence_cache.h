@@ -1,15 +1,13 @@
-#ifndef POINCARE_EXPRESSION_SEQUENCE_CACHE_H
-#define POINCARE_EXPRESSION_SEQUENCE_CACHE_H
+#ifndef APPS_SHARED_SEQUENCE_CACHE_H
+#define APPS_SHARED_SEQUENCE_CACHE_H
 
 #include <omg/troolean.h>
 #include <poincare/old/context.h>
 
 namespace Shared {
+
 class SequenceStore;
 class Sequence;
-}  // namespace Shared
-
-namespace Poincare::Internal {
 
 class SequenceCache {
  public:
@@ -18,7 +16,7 @@ class SequenceCache {
   void resetCache();
   bool sequenceIsNotComputable(int sequenceIndex);
 
-  void stepUntilRank(int sequenceIndex, int rank, Context* ctx);
+  void stepUntilRank(int sequenceIndex, int rank, Poincare::Context* ctx);
   int rank(int sequenceIndex, bool intermediateComputation) {
     return *(rankPointer(sequenceIndex, intermediateComputation));
   }
@@ -35,7 +33,7 @@ class SequenceCache {
   void shiftValuesRight(int sequenceIndex, bool intermediateComputation,
                         int delta);
   void stepRanks(int sequenceIndex, bool intermediateComputation, int step,
-                 Context* ctx);
+                 Poincare::Context* ctx);
   void resetValuesOfSequence(int sequenceIndex, bool intermediateComputation);
   void resetRanksAndValuesOfSequence(int sequenceIndex,
                                      bool intermediateComputation);
@@ -63,5 +61,5 @@ class SequenceCache {
   const Shared::SequenceStore* m_sequenceStore;
 };
 
-}  // namespace Poincare::Internal
+}  // namespace Shared
 #endif

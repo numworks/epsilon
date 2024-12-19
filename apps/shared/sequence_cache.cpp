@@ -3,10 +3,9 @@
 #include <assert.h>
 #include <omg/signaling_nan.h>
 
-// TODO_PCJ remove this include
-#include <apps/shared/sequence_store.h>
+#include "sequence_store.h"
 
-namespace Poincare::Internal {
+namespace Shared {
 
 SequenceCache::SequenceCache(Shared::SequenceStore* sequenceStore)
     : m_sequenceStore(sequenceStore) {
@@ -94,7 +93,8 @@ void SequenceCache::shiftValuesRight(int sequenceIndex,
   }
 }
 
-void SequenceCache::stepUntilRank(int sequenceIndex, int rank, Context* ctx) {
+void SequenceCache::stepUntilRank(int sequenceIndex, int rank,
+                                  Poincare::Context* ctx) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   bool intermediateComputation = m_isInsideComputation;
   const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
@@ -120,7 +120,7 @@ void SequenceCache::stepUntilRank(int sequenceIndex, int rank, Context* ctx) {
 }
 
 void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
-                              int step, Context* ctx) {
+                              int step, Poincare::Context* ctx) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
 
   // Update computation state
@@ -207,4 +207,4 @@ bool SequenceCache::sequenceIsNotComputable(int sequenceIndex) {
   return TrooleanToBool(m_sequenceIsNotComputable[sequenceIndex]);
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Shared

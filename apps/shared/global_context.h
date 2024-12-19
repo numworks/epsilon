@@ -5,11 +5,11 @@
 #include <ion/storage/file_system.h>
 #include <omg/global_box.h>
 #include <poincare/old/context.h>
-#include <poincare/src/expression/sequence_cache.h>
 
 #include <array>
 
 #include "continuous_function_store.h"
+#include "sequence_cache.h"
 #include "sequence_context.h"
 #include "sequence_store.h"
 
@@ -58,7 +58,7 @@ class GlobalContext final : public Poincare::Context {
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
   static OMG::GlobalBox<SequenceStore> s_sequenceStore;
-  static OMG::GlobalBox<Poincare::Internal::SequenceCache> s_sequenceCache;
+  static OMG::GlobalBox<SequenceCache> s_sequenceCache;
   static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext* sequenceContext() { return &m_sequenceContext; }

@@ -147,7 +147,7 @@ T Sequence::privateEvaluateYAtX(T x, Context* context) const {
       n, reinterpret_cast<SequenceContext*>(context)->cache(), context));
 }
 
-double Sequence::approximateAtRank(int rank, Internal::SequenceCache* sqctx,
+double Sequence::approximateAtRank(int rank, SequenceCache* sqctx,
                                    Context* ctx) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   if (!isDefined() || rank < initialRank() ||

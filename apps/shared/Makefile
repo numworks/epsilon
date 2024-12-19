@@ -82,6 +82,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   plot_view.cpp \
   plot_view_axes.cpp \
   sequence.cpp \
+	sequence_cache.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
   statistics_store.cpp \

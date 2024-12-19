@@ -17,21 +17,20 @@ class HistogramListController
   HistogramListController(Escher::Responder* parentResponder, Store* store,
                           HistogramRange* histogramRange);
 
-  // Public API that can be used from the main controller
+  // API that can be used from the main controller
 
   /* If no statistics series was selected in the snapshot, this function selects
    * the first series and its first bar index. Otherwise, the currently selected
    * bar index is "sanitized" to ensure it is still in the authorized range and
    * that the selected bar is not empty. In all cases, when exiting this
-   * function, you are guaranteed that selectedSeries() and selectedBarIndex()
-   * return valid values. */
+   * function, selectedSeries() and selectedBarIndex() are guaranteed to return
+   * valid values. */
   void processSeriesAndBarSelection();
 
   void highlightSelectedSeries();
 
   void scrollAndHighlightHistogramBar(size_t row, size_t barIndex);
 
-  // Unhighlight the entire list
   void unhighlightList() { m_selectableListView.deselectTable(); }
 
   // Get the selected series or index from the Snapshot

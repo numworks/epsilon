@@ -363,6 +363,13 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   }
 
   if (rank != n || n <= 0) {
+#if POINCARE_NO_INFINITE_SYSTEMS
+    (void)m;
+    context->hasMoreSolutions = true;
+    matrix->removeTree();
+    *error = Error::NoError;
+    return SharedTreeStack->pushSet(0);
+#else
     /* The system is insufficiently qualified: bind the value of n-rank
      * variables to parameters. */
     context->hasMoreSolutions = true;
@@ -418,6 +425,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       matrix->removeTree();
       return nullptr;
     }
+#endif
   } else {
     context->hasMoreSolutions = false;
   }

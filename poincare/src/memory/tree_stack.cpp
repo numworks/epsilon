@@ -100,6 +100,13 @@ Tree* AbstractTreeStack::pushUnit(uint8_t representativeId, uint8_t prefixId) {
   return result;
 }
 
+Tree* AbstractTreeStack::pushAngleUnitContext(AngleUnit angleUnit) {
+  Tree* result = pushBlock(Type::AngleUnitContext);
+  static_assert(sizeof(AngleUnit) == sizeof(Block));
+  pushBlock(static_cast<uint8_t>(angleUnit));
+  return result;
+}
+
 Tree* AbstractTreeStack::pushAsciiCodePointLayout(CodePoint codePoint) {
   Tree* result = pushBlock(Type::AsciiCodePointLayout);
   assert(codePoint < 128);

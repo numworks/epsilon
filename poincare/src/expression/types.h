@@ -385,6 +385,10 @@ NODE(SequenceDoubleRecurrence, 4)
 
 RANGE(Sequence, SequenceExplicit, SequenceDoubleRecurrence)
 
+/* Used as intermediary step in beautification to hide context dependant nodes
+ * during context-less simplification and approximation. */
+NODE(AngleUnitContext, 1, { uint8_t angleUnit; })
+
 // TODO: should this really be here ?
 NODE(PointOfInterest, 0, {
   double abscissa;

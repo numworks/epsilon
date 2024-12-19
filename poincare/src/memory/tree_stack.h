@@ -15,6 +15,8 @@
 
 // TODO: used only for pushVar
 #include <poincare/sign.h>
+// TODO: used for pushAngleUnitContext
+#include <poincare/src/expression/context.h>
 
 namespace Poincare {
 class Layout;
@@ -144,6 +146,8 @@ class AbstractTreeStack : public BlockStack {
 
   Tree* pushPhysicalConstant(uint8_t constantId);
   Tree* pushUnit(uint8_t representativeId, uint8_t prefixId);
+
+  Tree* pushAngleUnitContext(AngleUnit angleUnit);
 
   Tree* pushAsciiCodePointLayout(CodePoint codePoint);
   Tree* pushUnicodeCodePointLayout(CodePoint codePoint);

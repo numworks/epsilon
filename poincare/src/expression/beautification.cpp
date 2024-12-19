@@ -79,12 +79,23 @@ float Beautification::DegreeForSortingAddition(const Tree* e,
 bool Beautification::DeepBeautifyAngleFunctions(
     Tree* e, const ProjectionContext& projectionContext) {
   bool dummy = false;
+  /* BottomUpBeautifyAngleFunctions temporarily introduces AngleUnitContext
+   * nodes to allow simplification and approximation of beautified angle
+   * functions. */
   bool changed = BottomUpBeautifyAngleFunctions(e, projectionContext, &dummy);
   if (changed && projectionContext.m_advanceReduce &&
       projectionContext.m_angleUnit != AngleUnit::Radian) {
     // Expands possibilities may have been added.
     AdvancedReduction::Reduce(e);
   }
+  // Remove AngleUnitContext nodes
+  e->ApplyShallowTopDown(e, [](Tree* e, void* context) {
+    if (e->isAngleUnitContext()) {
+      e->removeNode();
+      return true;
+    }
+    return false;
+  });
   return changed;
 }
 
@@ -123,6 +134,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
                                               KMult(KSinH(KMult(KA_s)), i_e))) {
       // Necessary to simplify i introduced here
       *simplifyParent = true;
+      // Hyperbolic trigonometric functions don't need AngleUnitContext
       return true;
     };
     if (angleUnit != AngleUnit::Radian) {
@@ -136,6 +148,7 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     }
     PatternMatching::MatchReplace(e, KTrig(KA, 0_e), KCos(KA)) ||
         PatternMatching::MatchReplace(e, KTrig(KA, 1_e), KSin(KA));
+    e->moveNodeBeforeNode(SharedTreeStack->pushAngleUnitContext(angleUnit));
     return true;
   }
   if (e->isATrig() || e->isATanRad()) {
@@ -150,11 +163,13 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
             e, KATanRad(KMult(KA_s, i_e)), KMult(KArTanH(KMult(KA_s)), i_e))) {
       // Necessary to simplify i introduced here
       *simplifyParent = true;
+      // Hyperbolic trigonometric functions don't need AngleUnitContext
       return true;
     }
     PatternMatching::MatchReplace(e, KATrig(KA, 0_e), KACos(KA)) ||
         PatternMatching::MatchReplace(e, KATrig(KA, 1_e), KASin(KA)) ||
         PatternMatching::MatchReplace(e, KATanRad(KA), KATan(KA));
+    e->moveNodeBeforeNode(SharedTreeStack->pushAngleUnitContext(angleUnit));
     if (angleUnit != AngleUnit::Radian) {
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
           KMult(KA, KB), {.KA = e, .KB = Angle::ToRad(angleUnit)}));

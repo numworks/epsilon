@@ -400,6 +400,11 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
   switch (e->type()) {
     case Type::Parentheses:
       return ToComplex<T>(e->child(0), ctx);
+    case Type::AngleUnitContext: {
+      Context tempCtx(*ctx);
+      tempCtx.m_angleUnit = static_cast<AngleUnit>(e->nodeValue(0));
+      return ToComplex<T>(e->child(0), &tempCtx);
+    }
     case Type::ComplexI:
       return std::complex<T>(0, 1);
     case Type::Pi:

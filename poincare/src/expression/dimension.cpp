@@ -32,6 +32,7 @@ bool IsIntegerExpression(const Tree* e) {
     return true;
   }
   switch (e->type()) {
+    case Type::AngleUnitContext:
     case Type::Parentheses:
     case Type::Opposite:
     case Type::Mult:
@@ -452,6 +453,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       break;
     case Type::Matrix:
       break;
+    case Type::AngleUnitContext:
     case Type::ListSort:
     case Type::Parentheses:
       return true;
@@ -563,6 +565,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       }
       return dim;
     }
+    case Type::AngleUnitContext:
     case Type::Abs:
     case Type::Opposite:
     case Type::Sqrt:

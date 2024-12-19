@@ -85,7 +85,7 @@ void HistogramListController::processSeriesAndBarSelection() {
 
   /* Sanitize selected index so that the selected bar is never empty */
   setSelectedBarIndex(
-      sanitizeSelectedIndex(selectedSeries(), selectedBarIndex()));
+      sanitizedSelectedIndex(selectedSeries(), selectedBarIndex()));
 
 #if defined(ASSERTIONS)
   // Check that selectedSeries() and selectedBarIndex() do not throw an assert
@@ -196,7 +196,7 @@ bool HistogramListController::moveSelectionHorizontally(
   return true;
 }
 
-size_t HistogramListController::sanitizeSelectedIndex(
+size_t HistogramListController::sanitizedSelectedIndex(
     size_t selectedSeries, size_t previousIndex) const {
   assert(m_store->seriesIsActive(selectedSeries));
 
@@ -264,7 +264,7 @@ size_t HistogramListController::barIndexAfterSelectingNewSeries(
       std::max(std::min(static_cast<int>(newSelectedBarIndex),
                         m_store->numberOfBars(currentSelectedSeries) - 1),
                0);
-  return sanitizeSelectedIndex(currentSelectedSeries, newSelectedBarIndex);
+  return sanitizedSelectedIndex(currentSelectedSeries, newSelectedBarIndex);
 }
 
 }  // namespace Statistics

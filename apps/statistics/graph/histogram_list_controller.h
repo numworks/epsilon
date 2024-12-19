@@ -78,8 +78,8 @@ class HistogramListController
   // Navigation inside and between the histogram cells
   bool moveSelectionHorizontally(OMG::HorizontalDirection direction);
 
-  size_t sanitizeSelectedIndex(size_t selectedSeries,
-                               size_t initialSelectedIndex) const;
+  size_t sanitizedSelectedIndex(size_t selectedSeries,
+                                size_t initialSelectedIndex) const;
   size_t barIndexAfterSelectingNewSeries(size_t previousSelectedSeries,
                                          size_t currentSelectedSeries,
                                          size_t previousSelectedBarIndex) const;

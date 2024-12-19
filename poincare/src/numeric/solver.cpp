@@ -842,6 +842,8 @@ template double Solver<double>::DefaultSearchStepForAmplitude(double);
 template bool Solver<double>::FunctionSeemsConstantOnTheInterval(
     Solver<double>::FunctionEvaluation f, const void* aux, double xMin,
     double xMax);
+template bool Solver<double>::DiscontinuityTestBetweenPoints(
+    Coordinate2D<double>, Coordinate2D<double>, const void*);
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(
     Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void*);

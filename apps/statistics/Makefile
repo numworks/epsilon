@@ -15,8 +15,8 @@ SOURCES_apps += $(addprefix $(PATH_apps)/statistics/,$(addsuffix :-test, \
   graph/histogram_banner_view.cpp \
   graph/histogram_cell.cpp \
 	graph/histogram_list_controller.cpp \
-  graph/histogram_main_view.cpp \
-  graph/histogram_main_controller.cpp \
+	graph/histogram_main_controller.cpp \
+	graph/histogram_main_view.cpp \
   graph/histogram_parameter_controller.cpp \
   graph/histogram_range.cpp \
   graph/histogram_view.cpp \

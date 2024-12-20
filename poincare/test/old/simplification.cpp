@@ -325,36 +325,6 @@ QUIZ_CASE(poincare_simplification_multiplication) {
       "000000000000000000000000000000000000000,256)");
 }
 
-/* Some of these are currently not tested because their units are weirdly
- * simplified. These tests whould be updated when the output units are
- * updated. */
-QUIZ_CASE(poincare_simplification_constants) {
-  assert_parsed_expression_simplify_to("i", "i");
-  assert_parsed_expression_simplify_to("π", "π");
-  assert_parsed_expression_simplify_to("e", "e");
-  assert_parsed_expression_simplify_to("_c", "299792.458×_km×_s^(-1)");
-  assert_parsed_expression_simplify_to("_e", "1.602176634ᴇ-19×_C");
-  // assert_parsed_expression_simplify_to("_G",
-  // "_m^3*_kg^(-1)*_s^(-2)");
-  assert_parsed_expression_simplify_to("_g0", "9.80665×_m×_s^(-2)");
-  // assert_parsed_expression_simplify_to("_k",
-  // "1.380649e-23×_J×_K^(-1)");
-  // assert_parsed_expression_simplify_to("_ke",
-  // "8.9875517923×_N*_m^(2)/_C^(2)");
-  assert_parsed_expression_simplify_to("_me", "9.1093837015ᴇ-31×_kg");
-  assert_parsed_expression_simplify_to("_mn", "1.67492749804ᴇ-27×_kg");
-  assert_parsed_expression_simplify_to("_mp", "1.67262192369ᴇ-27×_kg");
-  // assert_parsed_expression_simplify_to("_Na",
-  // "6.02214076ᴇ23×_mol^(-1)");
-  assert_parsed_expression_simplify_to("_R",
-                                       "8.3144626181532×_J×_mol^(-1)×_K^(-1)");
-  // assert_parsed_expression_simplify_to("_ε0",
-  // "8.8541878128ᴇ-12×_F×_m^(-1)");
-  // assert_parsed_expression_simplify_to("_μ0",
-  // "1.25663706212ᴇ-6×_N×_A^(-2)");
-  // assert_parsed_expression_simplify_to("_hplanck", "6.62607015ᴇ-34×_J×_s");
-}
-
 #if 0
 void assert_parsed_unit_simplify_to_with_prefixes(
     const OUnit::Representative* representative) {

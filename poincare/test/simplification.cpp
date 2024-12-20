@@ -803,6 +803,28 @@ QUIZ_CASE(pcj_simplification_float) {
   QUIZ_ASSERT(!SystematicReduction::ShallowReduce(u));
 }
 
+QUIZ_CASE(pcj_simplification_constants) {
+  simplifies_to("i", "i");
+  simplifies_to("π", "π");
+  simplifies_to("e", "e");
+  simplifies_to("_mn + _mp", "3.34754942173ᴇ-27×_kg");
+  simplifies_to("_mn + _G", "undef");
+  simplifies_to("_c", "299792458×_m×_s^(-1)");
+  simplifies_to("_e", "1.602176634ᴇ-19×_C");
+  simplifies_to("_G", "6.6743ᴇ-11×_s^(-2)×_m^3×_kg^(-1)");
+  simplifies_to("_g0", "9.80665×_m×_s^(-2)");
+  simplifies_to("_k", "1.380649ᴇ-23×_J×_K^(-1)");
+  simplifies_to("_ke", "8987551792.3×_F^(-1)×_m");
+  simplifies_to("_me", "9.1093837015ᴇ-31×_kg");
+  simplifies_to("_mn", "1.67492749804ᴇ-27×_kg");
+  simplifies_to("_mp", "1.67262192369ᴇ-27×_kg");
+  simplifies_to("_Na", "6.02214076ᴇ23×_mol^(-1)");
+  simplifies_to("_R", "8.3144626181532×_J×_K^(-1)×_mol^(-1)");
+  simplifies_to("_ε0", "8.8541878128ᴇ-12×_F×_m^(-1)");
+  simplifies_to("_μ0", "1.25663706212ᴇ-6×_N×_A^(-2)");
+  simplifies_to("_hplanck", "6.62607015ᴇ-34×_s×_J");
+}
+
 QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("12_m", "12×_m");
   simplifies_to("1_s", "1×_s");
@@ -870,10 +892,6 @@ QUIZ_CASE(pcj_simplification_unit) {
                  .m_unitDisplay = UnitDisplay::AutomaticMetric});
   simplifies_to("2×π×_cK", "6.2831853071796×_cK",
                 {.m_unitFormat = UnitFormat::Imperial});
-
-  // Constants
-  simplifies_to("_mn + _mp", "3.34754942173ᴇ-27×_kg");
-  simplifies_to("_mn + _G", "undef");
 
   // Implicit additions
   simplifies_to("3h300min", "28800×_s");

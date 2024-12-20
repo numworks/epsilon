@@ -75,7 +75,7 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
 }
 
 void HistogramListController::processSeriesAndBarSelection() {
-  if (!hasSelectedSeries()) {
+  if (!hasSelectedSeries() || !m_store->seriesIsActive(selectedSeries())) {
     setSelectedSeries(
         static_cast<int8_t>(m_store->seriesIndexFromActiveSeriesIndex(0)));
     setSelectedBarIndex(0);

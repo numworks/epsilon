@@ -74,7 +74,7 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-void HistogramListController::processSeriesAndBarSelection() const {
+void HistogramListController::processSeriesAndBarSelection() {
   if (!hasSelectedSeries()) {
     setSelectedSeries(
         static_cast<int8_t>(m_store->seriesIndexFromActiveSeriesIndex(0)));
@@ -150,7 +150,7 @@ int8_t HistogramListController::selectedSeries() const {
   return series;
 }
 
-void HistogramListController::setSelectedSeries(int8_t series) const {
+void HistogramListController::setSelectedSeries(int8_t series) {
   assert(series < m_store->k_numberOfSeries);
   App::app()->snapshot()->setSelectedSeries(series);
 }
@@ -165,7 +165,7 @@ int16_t HistogramListController::selectedBarIndex() const {
   return barIndex;
 }
 
-void HistogramListController::setSelectedBarIndex(int16_t barIndex) const {
+void HistogramListController::setSelectedBarIndex(int16_t barIndex) {
   assert(barIndex < m_store->numberOfBars(selectedSeries()));
   App::app()->snapshot()->setSelectedIndex(barIndex);
 }

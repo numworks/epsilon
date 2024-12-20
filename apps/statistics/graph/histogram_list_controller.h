@@ -25,7 +25,7 @@ class HistogramListController
    * that the selected bar is not empty. In all cases, when exiting this
    * function, selectedSeries() and selectedBarIndex() are guaranteed to return
    * valid values. */
-  void processSeriesAndBarSelection() const;
+  void processSeriesAndBarSelection();
 
   void highlightSelectedSeries();
 
@@ -69,8 +69,8 @@ class HistogramListController
   bool hasSelectedSeries() const;
 
   // Set the selected series or index in the Snapshot
-  void setSelectedSeries(int8_t series) const;
-  void setSelectedBarIndex(int16_t barIndex) const;
+  void setSelectedSeries(int8_t series);
+  void setSelectedBarIndex(int16_t barIndex);
 
   /* Return the current bar index in the snapshot without checking the upper
    * bound */

@@ -16,12 +16,9 @@ HistogramMainController::HistogramMainController(
     : Escher::ViewController(parentResponder),
       GraphButtonRowDelegate(header, stackViewController, this,
                              typeViewController),
-      m_storeVersion(storeVersion),
-      m_store(store),
-      m_histogramRange(store),
-      m_tabController(tabController),
       m_listController(this, m_store, &m_histogramRange),
       m_histogramParameterController(nullptr, store),
+      m_view(m_listController.selectableListView()),
       m_parameterButton(
           this, I18n::Message::StatisticsGraphSettings,
           Escher::Invocation::Builder<HistogramMainController>(
@@ -32,7 +29,10 @@ HistogramMainController::HistogramMainController(
               },
               this),
           KDFont::Size::Small),
-      m_view(m_listController.selectableListView()) {}
+      m_histogramRange(store),
+      m_storeVersion(storeVersion),
+      m_store(store),
+      m_tabController(tabController) {}
 
 Escher::ButtonCell* HistogramMainController::buttonAtIndex(
     int index, Escher::ButtonRowController::Position position) const {

@@ -45,6 +45,8 @@ class HistogramMainController : public Escher::ViewController,
   void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
 
  private:
+  constexpr static int k_maxNumberOfBarsPerWindow = 100;
+
   void updateBannerView();
 
   void enterHeaderView();
@@ -59,30 +61,28 @@ class HistogramMainController : public Escher::ViewController,
   /* Sets the bar width, the x start abscissa and a first value of the histogram
    * x range */
   void initBarParameters();
-  constexpr static int k_maxNumberOfBarsPerWindow = 100;
-
   void initRangeParameters();
   Poincare::Range1D<float> computeXRange() const;
   Poincare::Range1D<float> computeYRange() const;
   Poincare::Range1D<double> activeSeriesRange() const;
 
-  // Model
-  uint32_t* m_storeVersion;
-  Store* m_store;
-  HistogramRange m_histogramRange;
-
-  // The TabViewController is the parent responder
-  Escher::TabViewController* m_tabController;
-
   // Children controllers
   HistogramListController m_listController;
   HistogramParameterController m_histogramParameterController;
 
+  // Main view
+  HistogramMainView m_view;
+
   // Histogram parameter button, added to the ButtonRow
   Escher::SimpleButtonCell m_parameterButton;
 
-  // Main view
-  HistogramMainView m_view;
+  // Model
+  HistogramRange m_histogramRange;
+  uint32_t* m_storeVersion;
+  Store* m_store;
+
+  // The TabViewController is the parent responder
+  Escher::TabViewController* m_tabController;
 };
 
 }  // namespace Statistics

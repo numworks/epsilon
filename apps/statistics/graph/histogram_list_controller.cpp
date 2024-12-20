@@ -53,7 +53,7 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
     return false;
   }
   if (selectedRow() != previousSelectedRow) {
-    /* If the SelectableListView selected a new row,then it took the
+    /* If the SelectableListView selected a new row, then it took the
      * firstResponder ownership. We need to manually restore it. */
     restoreFirstResponder();
 

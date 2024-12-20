@@ -199,10 +199,6 @@ int16_t HistogramListController::sanitizedSelectedIndex(
 
   int16_t selectedIndex = previousIndex;
 
-  if (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) != 0.0) {
-    return selectedIndex;
-  }
-  int numberOfBars = m_store->numberOfBars(selectedSeries);
   // search a bar with non null height left of the selected one
   while (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) == 0.0 &&
          selectedIndex >= 0) {
@@ -212,11 +208,11 @@ int16_t HistogramListController::sanitizedSelectedIndex(
     // search a bar with non null height right of the selected one
     selectedIndex = previousIndex + 1;
     while (m_store->heightOfBarAtIndex(selectedSeries, selectedIndex) == 0.0 &&
-           selectedIndex < numberOfBars) {
+           selectedIndex < m_store->numberOfBars(selectedSeries)) {
       selectedIndex += 1;
     }
   }
-  assert(selectedIndex < numberOfBars);
+  assert(selectedIndex < m_store->numberOfBars(selectedSeries));
   return selectedIndex;
 }
 

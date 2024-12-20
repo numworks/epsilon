@@ -122,12 +122,14 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
 
 void HistogramMainController::didEnterResponderChain(
     Responder* firstResponder) {
-  if (isHeaderSelected()) {
+  /* If the HistogramMainController page is being opened, the viewWillAppear
+   * function has already been called, and the list has been initialized. */
+  bool isListAlreadySelected = m_listController.selectedRow() >= 0;
+  if (!isListAlreadySelected) {
+    /* If the HistogramMainController took the first responder ownership from
+     * another element in the page (for instance the TabViewController), the
+     * header should be selected. */
     enterHeaderView();
-    return;
-  } else {
-    enterListView();
-    return;
   }
 }
 

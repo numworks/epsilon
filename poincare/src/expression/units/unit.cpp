@@ -717,6 +717,11 @@ Tree* Unit::GetBaseUnits(SIVector vector) {
   return result;
 }
 
+bool HasPhysicalConstant(const Tree* e) {
+  return e->hasDescendantSatisfying(
+      [](const Tree* e) { return e->isPhysicalConstant(); });
+}
+
 /* TODO_PCJ: Confirm this logic that as not been re-implemented in additional
  * results is no longer expected. Implement it otherwise.
  * - Angle unit displayed as degree and radians
@@ -737,6 +742,10 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   if (!dimension.isUnit()) {
     // There may remain units that cancel themselves, remove them.
     return Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
+  }
+  if (HasPhysicalConstant(e) && unitDisplay != UnitDisplay::MainOutput &&
+      unitDisplay != UnitDisplay::BasicSI) {
+    return false;
   }
   TreeRef extractedUnits = e->cloneTree();
   if (e->isUnitConversion()) {
@@ -849,9 +858,10 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
   Tree* unit1 = nullptr;
   Tree* unit2 = nullptr;
   /* If the input is made of one single unit, preserve it.
-   * Consider speed as a single unit. */
+   * Consider speed as a single unit but not physical constants. */
   if (GetUnits(extractedUnits, &unit1, &unit2) &&
-      (!unit2 || (unit2 && dimension.unit.vector == Speed::Dimension))) {
+      (!unit2 || (unit2 && dimension.unit.vector == Speed::Dimension)) &&
+      !extractedUnits->isPhysicalConstant()) {
     assert(!dimension.isAngleUnit());
     double value = Approximation::To<double>(e, Approximation::Parameters{});
     if (IsNonKelvinTemperature(GetRepresentative(unit1))) {
@@ -871,9 +881,7 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
   UnitDisplay display = DisplayImperialUnits(extractedUnits)
                             ? UnitDisplay::AutomaticImperial
                             : UnitDisplay::PrefixFreeMetric;
-  assert(display == UnitDisplay::PrefixFreeMetric ||
-         !e->hasDescendantSatisfying(
-             [](const Tree* e) { return e->isPhysicalConstant(); }));
+  assert(display == UnitDisplay::PrefixFreeMetric || !HasPhysicalConstant(e));
   extractedUnits->removeTree();
   ApplyAutomaticDisplay(e, dimension, display);
 }

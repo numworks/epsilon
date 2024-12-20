@@ -743,9 +743,11 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     // There may remain units that cancel themselves, remove them.
     return Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
   }
-  if (HasPhysicalConstant(e) && unitDisplay != UnitDisplay::MainOutput &&
-      unitDisplay != UnitDisplay::BasicSI) {
-    return false;
+  if (HasPhysicalConstant(e) &&
+      !e->hasDescendantSatisfying([](const Tree* e) { return e->isUnit(); }) &&
+      unitDisplay != UnitDisplay::MainOutput) {
+    // Display only SI and derived units for inputs with physical constants only
+    unitDisplay = UnitDisplay::BasicSI;
   }
   TreeRef extractedUnits = e->cloneTree();
   if (e->isUnitConversion()) {
@@ -860,8 +862,8 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
   /* If the input is made of one single unit, preserve it.
    * Consider speed as a single unit but not physical constants. */
   if (GetUnits(extractedUnits, &unit1, &unit2) &&
-      (!unit2 || (unit2 && dimension.unit.vector == Speed::Dimension)) &&
-      !extractedUnits->isPhysicalConstant()) {
+      ((!unit2 && !unit1->isPhysicalConstant()) ||
+       (unit2 && dimension.unit.vector == Speed::Dimension))) {
     assert(!dimension.isAngleUnit());
     double value = Approximation::To<double>(e, Approximation::Parameters{});
     if (IsNonKelvinTemperature(GetRepresentative(unit1))) {

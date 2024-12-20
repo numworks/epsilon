@@ -97,9 +97,11 @@ void UnitListController::computeAdditionalResults(
                           : Internal::UnitDisplay::AutomaticImperial;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
+#if 0  // TODO: correctly implement AutomaticInput and reenable it
   ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticInput;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
+#endif
   ctx.m_unitDisplay = Internal::UnitDisplay::Decomposition;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
   assert(!expressions[numberOfExpressions - 1].isUninitialized());

@@ -66,6 +66,11 @@ class HistogramMainController : public Escher::ViewController,
   Poincare::Range1D<float> computeYRange() const;
   Poincare::Range1D<double> activeSeriesRange() const;
 
+  // Model
+  HistogramRange m_histogramRange;
+  uint32_t* m_storeVersion;
+  Store* m_store;
+
   // Children controllers
   HistogramListController m_listController;
   HistogramParameterController m_histogramParameterController;
@@ -75,11 +80,6 @@ class HistogramMainController : public Escher::ViewController,
 
   // Histogram parameter button, added to the ButtonRow
   Escher::SimpleButtonCell m_parameterButton;
-
-  // Model
-  HistogramRange m_histogramRange;
-  uint32_t* m_storeVersion;
-  Store* m_store;
 
   // The TabViewController is the parent responder
   Escher::TabViewController* m_tabController;

@@ -792,13 +792,14 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       if (ApplyEquivalentDisplay(e, extractedUnits, dimension)) {
         return true;
       }
-      [[fallthrough]];
+      goto basicSI;
     case UnitDisplay::Decomposition:
       if (ApplyDecompositionDisplay(e, extractedUnits, dimension)) {
         return true;
       }
-      [[fallthrough]];
+      goto basicSI;
     case UnitDisplay::BasicSI:
+    basicSI:
       MoveTreeOverTree(extractedUnits, GetBaseUnits(dimension.unit.vector));
       assert(e->nextTree() == extractedUnits);
       e->cloneNodeAtNode(KMult.node<2>);

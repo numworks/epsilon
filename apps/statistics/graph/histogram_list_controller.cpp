@@ -33,7 +33,7 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
   histogramCell->setSeries(m_store->seriesIndexFromActiveSeriesIndex(row));
 }
 
-void HistogramListController::restoreFirstResponder() const {
+void HistogramListController::setMainControllerFirstResponder() const {
   /* The banner view, which is owned by the main controller needs to be updated
    * at the same time as the histogram list view. To ensure this, the
    * firstResponder ownership is given back to the main controller, which is the
@@ -55,7 +55,7 @@ bool HistogramListController::handleEvent(Ion::Events::Event event) {
   if (selectedRow() != previousSelectedRow) {
     /* If the SelectableListView selected a new row, then it took the
      * firstResponder ownership. We need to manually restore it. */
-    restoreFirstResponder();
+    setMainControllerFirstResponder();
 
     // Set the current series and index in the snapshot
     size_t previousSelectedSeries = selectedSeries();
@@ -111,7 +111,7 @@ void HistogramListController::highlightSelectedSeries() {
         m_store->activeSeriesIndexFromSeriesIndex(selectedSeries()));
     /* The SelectableListView took the firstResponder ownership when selecting
      * the cell. We need to manually restore it. */
-    restoreFirstResponder();
+    setMainControllerFirstResponder();
   }
 
   /* The cell corresponding to the selected series could be selected in the list

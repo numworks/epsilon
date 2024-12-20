@@ -17,8 +17,6 @@ class HistogramListController
   HistogramListController(Escher::Responder* parentResponder, Store* store,
                           HistogramRange* histogramRange);
 
-  // API that can be used from the main controller
-
   /* If no statistics series was selected in the snapshot, this function selects
    * the first series and its first bar index. Otherwise, the currently selected
    * bar index is "sanitized" to ensure it is still in the authorized range and

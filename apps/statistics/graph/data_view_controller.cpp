@@ -25,7 +25,7 @@ int DataViewController::selectedSeries() const {
   return App::app()->snapshot()->selectedSeries();
 }
 
-void DataViewController::setSelectedSeries(int selectedSeries) const {
+void DataViewController::setSelectedSeries(int selectedSeries) {
   assert(selectedSeries >= INT8_MIN && selectedSeries <= INT8_MAX);
   App::app()->snapshot()->setSelectedSeries(
       static_cast<int8_t>(selectedSeries));
@@ -35,7 +35,7 @@ int DataViewController::selectedIndex() const {
   return App::app()->snapshot()->selectedIndex();
 }
 
-void DataViewController::setSelectedIndex(int selectedIndex) const {
+void DataViewController::setSelectedIndex(int selectedIndex) {
   assert(selectedIndex >= INT16_MIN && selectedIndex <= INT16_MAX);
   App::app()->snapshot()->setSelectedIndex(static_cast<int16_t>(selectedIndex));
 }

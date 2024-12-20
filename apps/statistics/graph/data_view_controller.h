@@ -31,9 +31,9 @@ class DataViewController : public Escher::ViewController,
   void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
 
   int selectedSeries() const;
-  void setSelectedSeries(int selectedSeries) const;
+  void setSelectedSeries(int selectedSeries);
   int selectedIndex() const;
-  void setSelectedIndex(int selectedIndex) const;
+  void setSelectedIndex(int selectedIndex);
 
  protected:
   /* Some DataViewController implementations may have a stricter condition.

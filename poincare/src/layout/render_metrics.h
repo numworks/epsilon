@@ -25,7 +25,11 @@ constexpr KDCoordinate k_horizontalMargin = 2;
 namespace Fraction {
 using FractionAndConjugate::k_horizontalMargin;
 using FractionAndConjugate::k_horizontalOverflow;
+#if POINCARE_SCANDIUM_LAYOUTS
+constexpr KDCoordinate k_lineMargin = 0;
+#else
 constexpr KDCoordinate k_lineMargin = 2;
+#endif
 constexpr KDCoordinate k_lineHeight = 1;
 }  // namespace Fraction
 
@@ -144,9 +148,15 @@ constexpr KDCoordinate Baseline(KDCoordinate childHeight,
 
 namespace Parenthesis {
 constexpr KDCoordinate k_widthMargin = 1;
+#if POINCARE_SCANDIUM_LAYOUTS
+constexpr KDCoordinate k_curveWidth = 3;
+constexpr KDCoordinate k_curveHeight = 4;
+constexpr KDCoordinate k_minVerticalMargin = 0;
+#else
 constexpr KDCoordinate k_curveWidth = 5;
 constexpr KDCoordinate k_curveHeight = 7;
 constexpr KDCoordinate k_minVerticalMargin = 2;
+#endif
 constexpr KDCoordinate k_parenthesisWidth = 2 * k_widthMargin + k_curveWidth;
 
 constexpr KDCoordinate Height(KDCoordinate childHeight) {

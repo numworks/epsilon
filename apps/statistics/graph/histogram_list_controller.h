@@ -61,7 +61,6 @@ class HistogramListController
   static constexpr KDCoordinate k_rowHeight = 75;
 
   // Escher::TableViewDataSource
-  // TODO: Escher::TableViewDataSource::nonMemoizedRowHeight should be const
   KDCoordinate nonMemoizedRowHeight(int row) override { return rowHeight(); }
 
   void restoreFirstResponder() const;

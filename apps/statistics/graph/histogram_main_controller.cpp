@@ -66,15 +66,15 @@ void HistogramMainController::enterListView() {
   // Select or sanitize the series and the bar indices
   m_listController.processSeriesAndBarSelection();
 
-  // Highlight the selected series and bar
-  m_listController.highlightSelectedSeries();
-  m_listController.scrollAndHighlightHistogramBar(
-      m_listController.selectedRow(), m_listController.selectedBarIndex());
-
   /* Make the banner visible and update the model data displayed in the banner
    * (this data depends on the selected series and index) */
   m_view.setDisplayBanner(true);
   updateBannerView();
+
+  // Highlight the selected series and bar
+  m_listController.highlightSelectedSeries();
+  m_listController.scrollAndHighlightHistogramBar(
+      m_listController.selectedRow(), m_listController.selectedBarIndex());
 }
 
 void HistogramMainController::exitListView() {

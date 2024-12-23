@@ -170,35 +170,6 @@ bool SystematicOperation::ReduceSortedMultiplication(Tree* e) {
   }
   assert(mult->isMult());
 
-  if (mult->child(0)->isZero()) {
-    Dimension dim = Dimension::Get(mult);
-    if (dim.isUnit()) {
-      // 0 * 0 * 2 * (m + km) * m -> 0 * m^2
-      // Use hash because change is too complex to track.
-      uint32_t hash = changed ? 0 : mult->hash();
-      if (dim.hasNonKelvinTemperatureUnit()) {
-        /* Temperature exception : 0*_°C != 0*K : unit must be preserved.
-         * Taking advantage of the fact only very simple expressions of such
-         * temperatures are allowed. */
-        assert(dim.unit.vector.supportSize() == 1 &&
-               dim.unit.vector.temperature == 1);
-        mult->moveTreeOverTree(Units::Unit::Push(dim.unit.representative));
-        mult->moveTreeOverTree(
-            PatternMatching::Create(KMult(0_e, KA), {.KA = mult}));
-      } else {
-        // Since all units are equivalent, use base SI.
-        mult->moveTreeOverTree(Units::Unit::GetBaseUnits(dim.unit.vector));
-        if (mult->isMult()) {
-          NAry::Sort(mult, Order::OrderType::PreserveMatrices);
-        } else {
-          mult->cloneNodeAtNode(KMult.node<1>);
-        }
-        NAry::AddChildAtIndex(mult, (0_e)->cloneTree(), 0);
-      }
-      return changed || (hash != mult->hash());
-    }
-  }
-
   if (changed && NAry::SquashIfPossible(mult)) {
     return true;
   }

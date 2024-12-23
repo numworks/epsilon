@@ -204,9 +204,9 @@ bool Simplification::HandleUnits(Tree* e,
                                  ProjectionContext* projectionContext) {
   bool changed = false;
   if (!e->isUndefined() &&
-      Units::Unit::ProjectToBestUnits(e, projectionContext->m_dimension,
-                                      projectionContext->m_unitDisplay,
-                                      projectionContext->m_angleUnit)) {
+      Units::Unit::ProjectToBestUnits(
+          e, projectionContext->m_dimension, projectionContext->m_unitDisplay,
+          projectionContext->m_angleUnit, projectionContext->m_unitFormat)) {
     // Re-apply strategy to make sure introduced integers are floats.
     if (projectionContext->m_strategy == Strategy::ApproximateToFloat) {
       ApplyStrategy(e, *projectionContext, true);

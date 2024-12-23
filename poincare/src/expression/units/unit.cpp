@@ -734,7 +734,8 @@ bool HasPhysicalConstant(const Tree* e) {
 
 // From a projected tree, gather units and use best representatives/prefixes.
 bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
-                              UnitDisplay unitDisplay, AngleUnit angleUnit) {
+                              UnitDisplay unitDisplay, AngleUnit angleUnit,
+                              UnitFormat unitFormat) {
   if (unitDisplay == UnitDisplay::None && !e->isUnitConversion()) {
     // TODO_PCJ : Remove units that cancel themselves
     return false;
@@ -794,7 +795,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       }
       goto basicSI;
     case UnitDisplay::Decomposition:
-      if (ApplyDecompositionDisplay(e, extractedUnits, dimension)) {
+      if (ApplyDecompositionDisplay(e, extractedUnits, dimension, unitFormat)) {
         return true;
       }
       goto basicSI;
@@ -1191,7 +1192,8 @@ constexpr const Representative* const volumeRepresentativesList[] = {
     &Volume::representatives.pint, &Volume::representatives.cup};
 
 bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
-                                     Dimension dimension) {
+                                     Dimension dimension,
+                                     UnitFormat unitFormat) {
   // Decompose time, angle, and imperial volume, mass and length
   SIVector vector = dimension.unit.vector;
   const Representative* const* list = nullptr;
@@ -1202,7 +1204,8 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
   } else if (vector == Angle::Dimension) {
     list = angleRepresentativesList;
     length = std::size(angleRepresentativesList);
-  } else if (DisplayImperialUnits(extractedUnits)) {
+  } else if (DisplayImperialUnits(extractedUnits) &&
+             unitFormat == UnitFormat::Imperial) {
     if (vector == Mass::Dimension) {
       list = massRepresentativesList;
       length = std::size(massRepresentativesList);

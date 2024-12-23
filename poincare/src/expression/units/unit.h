@@ -225,7 +225,8 @@ class Unit {
 
   // Project expression and unit according to unitDisplay strategy
   static bool ProjectToBestUnits(Tree* e, Dimension dimension,
-                                 UnitDisplay unitDisplay, AngleUnit angleUnit);
+                                 UnitDisplay unitDisplay, AngleUnit angleUnit,
+                                 UnitFormat unitFormat);
 
  private:
   // From Kelvin value, return value in given temperature representative
@@ -246,7 +247,8 @@ class Unit {
   static bool ApplyEquivalentDisplay(Tree* e, TreeRef& extractedUnits,
                                      Dimension dimension);
   static bool ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
-                                        Dimension dimension);
+                                        Dimension dimension,
+                                        UnitFormat unitFormat);
 };
 
 Tree* ChooseBestDerivedUnits(SIVector* unitsExponents);

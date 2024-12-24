@@ -749,13 +749,6 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   }
   // Turn e into its SI value. 2_m + _yd -> 3.8288
   Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
-  if (unitDisplay == UnitDisplay::AutomaticMetric ||
-      unitDisplay == UnitDisplay::AutomaticImperial ||
-      unitDisplay == UnitDisplay::AutomaticPrefixFreeMetric) {
-    extractedUnits->removeTree();
-    ApplyAutomaticDisplay(e, dimension, unitDisplay);
-    return true;
-  }
   assert(extractedUnits && e->nextTree() == extractedUnits);
   bool treeRemoved = RemoveNonUnits(extractedUnits, true);
   // Warning : extractedUnits isn't just e's dimension. 2_m + _yd -> _m + _yd
@@ -772,6 +765,11 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       break;
     case UnitDisplay::MainOutput:
       ApplyMainOutputDisplay(e, extractedUnits, dimension, angleUnit);
+      break;
+    case UnitDisplay::AutomaticMetric:
+    case UnitDisplay::AutomaticImperial:
+    case UnitDisplay::AutomaticPrefixFreeMetric:
+      ApplyAutomaticDisplay(e, extractedUnits, dimension, unitDisplay);
       break;
     case UnitDisplay::AutomaticInput:
       // TODO: Handle power of same dimension better 1ft* 1ft* 1in -> in^3 */
@@ -791,9 +789,6 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       e->cloneNodeAtNode(KMult.node<2>);
       break;
     case UnitDisplay::None:
-    case UnitDisplay::AutomaticMetric:
-    case UnitDisplay::AutomaticImperial:
-    case UnitDisplay::AutomaticPrefixFreeMetric:
       OMG::unreachable();
   }
   if (!foundResult) {
@@ -873,8 +868,7 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
                             : UnitDisplay::AutomaticPrefixFreeMetric;
   assert(display == UnitDisplay::AutomaticPrefixFreeMetric ||
          !HasPhysicalConstant(e));
-  inputUnits->removeTree();
-  ApplyAutomaticDisplay(e, dimension, display);
+  ApplyAutomaticDisplay(e, inputUnits, dimension, display);
 }
 
 bool Unit::ShallowRemoveUnit(Tree* e, void*) {
@@ -970,18 +964,29 @@ bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
   return didRemovedTree;
 }
 
+bool IsPureAngleUnit(const Tree* e) {
+  return e->isUnit() &&
+         Unit::GetRepresentative(e)->siVector() == Angle::Dimension;
+}
+
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should
  *           output 5°C, 41°F should output 41°F). */
-void Unit::ApplyAutomaticDisplay(Tree* e, Dimension dimension,
-                                 UnitDisplay unitDisplay) {
+void Unit::ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
+                                 Dimension dimension, UnitDisplay unitDisplay) {
   assert(dimension.isUnit() && !e->isUndefined());
   Units::SIVector vector = dimension.unit.vector;
   assert(!vector.isEmpty());
   TreeRef units;
+  double value = Approximation::To<double>(e, Approximation::Parameters{});
   if (dimension.isAngleUnit()) {
-    units = GetBaseUnits(vector);
+    if (IsPureAngleUnit(inputUnits)) {
+      // Keep input representative
+      units = inputUnits->cloneTree();
+      value = value / GetRepresentative(units)->ratio();
+    } else {
+      units = GetBaseUnits(vector);
+    }
   } else {
-    double value = Approximation::To<double>(e, Approximation::Parameters{});
     units = SharedTreeStack->pushMult(2);
     ChooseBestDerivedUnits(&vector);
     GetBaseUnits(vector);
@@ -993,12 +998,13 @@ void Unit::ApplyAutomaticDisplay(Tree* e, Dimension dimension,
           unitDisplay == UnitDisplay::AutomaticMetric ? UnitFormat::Metric
                                                       : UnitFormat::Imperial);
     }
-    Tree* approximated = SharedTreeStack->pushDoubleFloat(value);
-    e->moveTreeOverTree(approximated);
   }
-  e->moveTreeOverTree(
-      PatternMatching::Create(KMult(KA, KB), {.KA = e, .KB = units}));
+  TreeRef approximated = SharedTreeStack->pushDoubleFloat(value);
+  e->moveTreeOverTree(PatternMatching::Create(
+      KMult(KA, KB), {.KA = approximated, .KB = units}));
+  approximated->removeTree();
   units->removeTree();
+  inputUnits->removeTree();
 }
 
 bool IsCombinationOfUnits(const Tree* e) {
@@ -1019,11 +1025,6 @@ bool HasUnit(const Tree* e) {
   // TODO should HasUnit be replaced by dimensional analysis ?
   return e->hasDescendantSatisfying(
       [](const Tree* e) { return e->isUnitOrPhysicalConstant(); });
-}
-
-bool IsPureAngleUnit(const Tree* e) {
-  return e->isUnit() &&
-         Unit::GetRepresentative(e)->siVector() == Angle::Dimension;
 }
 
 // Use only one of the input unit and converts e to it.

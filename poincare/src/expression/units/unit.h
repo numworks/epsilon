@@ -237,8 +237,9 @@ class Unit {
   /* This and all following functions remove inputUnits before returning */
   static void ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
                                      Dimension dimension, AngleUnit angleUnit);
-  // Without taking input units into account, select best unit for tree
-  static void ApplyAutomaticDisplay(Tree* e, Dimension dimension,
+  // Select best unit for tree
+  static void ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
+                                    Dimension dimension,
                                     UnitDisplay unitDisplay);
   static bool ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits);
   static bool ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,

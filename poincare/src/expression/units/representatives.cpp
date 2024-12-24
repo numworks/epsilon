@@ -139,8 +139,8 @@ const Speed::Representatives<const Speed> Speed::representatives = {
     .none = {nullptr, 1_e, None, None}};
 
 const Representative* Distance::standardRepresentative(
-    double value, double exponent, UnitFormat unitFormat,
-    const Prefix** prefix) const {
+    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
+    const Representative* forcedRepr) const {
   return unitFormat == UnitFormat::Metric
              ?
              /* Exclude imperial units from the search. */
@@ -157,7 +157,7 @@ const Representative* Distance::standardRepresentative(
 #if 0
 const Representative* Angle::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
-    const Prefix** prefix) const {
+    const Prefix** prefix, const Representative* forcedRepr) const {
   if (reductionContext.angleUnit() == AngleUnit::Degree) {
     return defaultFindBestRepresentativeAndPrefix(value, exponent, &arcSecond, 3,
                                          prefix);
@@ -181,8 +181,20 @@ const Representative* Angle::DefaultRepresentativeForAngleUnit(
 }
 
 const Representative* Mass::standardRepresentative(
-    double value, double exponent, UnitFormat unitFormat,
-    const Prefix** prefix) const {
+    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
+    const Representative* forcedRepr) const {
+  if (forcedRepr) {
+    // Grams and kilograms are split in two representatives.
+    if (forcedRepr == &representatives.gram ||
+        forcedRepr == &representatives.kilogram) {
+      return defaultFindBestRepresentativeAndPrefix(
+          value, exponent, &representatives.kilogram, &representatives.gram + 1,
+          prefix);
+    } else {
+      return Representative::standardRepresentative(value, exponent, unitFormat,
+                                                    prefix, forcedRepr);
+    }
+  }
   if (unitFormat == UnitFormat::Imperial) {
     // With shortTon but not longTon
     return defaultFindBestRepresentativeAndPrefix(
@@ -199,31 +211,17 @@ const Representative* Mass::standardRepresentative(
       value, exponent, &representatives.kilogram, &representatives.ton, prefix);
 }
 
-const Representative* Mass::standardRepresentative(
+const Representative* Surface::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
     const Representative* forcedRepr) const {
-  // Grams and kilograms are split in two representatives.
-  if (forcedRepr == &representatives.gram ||
-      forcedRepr == &representatives.kilogram) {
-    return defaultFindBestRepresentativeAndPrefix(
-        value, exponent, &representatives.kilogram, &representatives.gram + 1,
-        prefix);
-  }
-  return Representative::standardRepresentative(value, exponent, unitFormat,
-                                                prefix, forcedRepr);
-}
-
-const Representative* Surface::standardRepresentative(
-    double value, double exponent, UnitFormat unitFormat,
-    const Prefix** prefix) const {
   *prefix = Prefix::EmptyPrefix();
   return unitFormat == UnitFormat::Metric ? &representatives.hectare
                                           : &representatives.acre;
 }
 
 const Representative* Volume::standardRepresentative(
-    double value, double exponent, UnitFormat unitFormat,
-    const Prefix** prefix) const {
+    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
+    const Representative* forcedRepr) const {
   if (unitFormat == UnitFormat::Metric) {
     *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
     return &representatives.liter;

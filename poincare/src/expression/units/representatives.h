@@ -82,7 +82,7 @@ class Distance : public Helper<Distance> {
 
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const Prefix** prefix) const override;
+      const Prefix** prefix, const Representative* forcedRepr) const override;
 
   using Helper::Helper;
   const static Representatives<const Self> representatives;
@@ -107,7 +107,7 @@ class Angle : public Helper<Angle> {
 #if 0
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const Prefix** prefix) const override;
+      const Prefix** prefix, const Representative* forcedRepr) const override;
 #endif
 
   using Helper::Helper;
@@ -130,9 +130,6 @@ class Mass : public Helper<Mass> {
     R dalton;
   };
 
-  const Representative* standardRepresentative(
-      double value, double exponent, UnitFormat unitFormat,
-      const Prefix** prefix) const override;
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
@@ -167,7 +164,7 @@ class Temperature : public Helper<Temperature> {
 
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const Prefix** prefix) const override {
+      const Prefix** prefix, const Representative* forcedRepr) const override {
     return this;
   }
   using Helper::Helper;
@@ -407,7 +404,7 @@ class Surface : public Helper<Surface> {
 
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const Prefix** prefix) const override;
+      const Prefix** prefix, const Representative* forcedRepr) const override;
   using Helper::Helper;
   const static Representatives<const Self> representatives;
 };
@@ -430,7 +427,7 @@ class Volume : public Helper<Volume> {
 
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const Prefix** prefix) const override;
+      const Prefix** prefix, const Representative* forcedRepr) const override;
   using Helper::Helper;
   const static Representatives<const Self> representatives;
 };
@@ -450,7 +447,7 @@ class Speed : public Helper<Speed> {
 
   const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const Prefix** prefix) const override {
+      const Prefix** prefix, const Representative* forcedRepr) const override {
     return nullptr;
   }
   using Helper::Helper;

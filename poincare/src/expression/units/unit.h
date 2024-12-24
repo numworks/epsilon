@@ -81,19 +81,14 @@ class Representative {
   virtual bool isBaseUnit() const = 0;
   virtual const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
-      const Prefix** prefix) const {
-    return defaultFindBestRepresentativeAndPrefix(
-        value, exponent, representativesOfSameDimension(),
-        representativesOfSameDimension() + numberOfRepresentatives(), prefix);
-  }
-  virtual const Representative* standardRepresentative(
-      double value, double exponent, UnitFormat unitFormat,
-      const Prefix** prefix, const Representative* forcedRepr) const {
+      const Prefix** prefix, const Representative* forcedRepr = nullptr) const {
     if (forcedRepr) {
       return defaultFindBestRepresentativeAndPrefix(value, exponent, forcedRepr,
                                                     forcedRepr + 1, prefix);
     }
-    return standardRepresentative(value, exponent, unitFormat, prefix);
+    return defaultFindBestRepresentativeAndPrefix(
+        value, exponent, representativesOfSameDimension(),
+        representativesOfSameDimension() + numberOfRepresentatives(), prefix);
   }
 
   Aliases rootSymbols() const { return m_rootSymbols; }

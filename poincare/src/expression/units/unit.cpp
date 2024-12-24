@@ -809,8 +809,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     case UnitDisplay::AutomaticMetric:
     case UnitDisplay::AutomaticImperial:
     case UnitDisplay::AutomaticPrefixFreeMetric:
-      // Silence warning
-      break;
+      OMG::unreachable();
   }
   assert(false);
   return true;

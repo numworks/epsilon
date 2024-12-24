@@ -223,7 +223,7 @@ static bool compareMagnitudeOrders(float order, float otherOrder) {
   return (std::fabs(order) < std::fabs(otherOrder));
 }
 
-const Representative* Representative::defaultFindBestRepresentative(
+const Representative* Representative::defaultFindBestRepresentativeAndPrefix(
     double value, double exponent, const Representative* begin,
     const Representative* end, const Prefix** prefix) const {
   assert(begin < end);

@@ -82,7 +82,7 @@ class Representative {
   virtual const Representative* standardRepresentative(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix) const {
-    return defaultFindBestRepresentative(
+    return defaultFindBestRepresentativeAndPrefix(
         value, exponent, representativesOfSameDimension(),
         representativesOfSameDimension() + numberOfRepresentatives(), prefix);
   }
@@ -90,8 +90,8 @@ class Representative {
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const {
     if (forcedRepr) {
-      return defaultFindBestRepresentative(value, exponent, forcedRepr,
-                                           forcedRepr + 1, prefix);
+      return defaultFindBestRepresentativeAndPrefix(value, exponent, forcedRepr,
+                                                    forcedRepr + 1, prefix);
     }
     return standardRepresentative(value, exponent, unitFormat, prefix);
   }
@@ -130,7 +130,7 @@ class Representative {
         m_outputPrefixable(outputPrefixable),
         m_isImperial(isImperial) {}
 
-  const Representative* defaultFindBestRepresentative(
+  const Representative* defaultFindBestRepresentativeAndPrefix(
       double value, double exponent, const Representative* begin,
       const Representative* end, const Prefix** prefix) const;
 

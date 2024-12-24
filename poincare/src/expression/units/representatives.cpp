@@ -144,14 +144,14 @@ const Representative* Distance::standardRepresentative(
   return unitFormat == UnitFormat::Metric
              ?
              /* Exclude imperial units from the search. */
-             defaultFindBestRepresentative(value, exponent,
-                                           &representatives.meter,
-                                           &representatives.inch, prefix)
+             defaultFindBestRepresentativeAndPrefix(
+                 value, exponent, &representatives.meter, &representatives.inch,
+                 prefix)
              :
              /* Exclude meters from the search. */
-             defaultFindBestRepresentative(value, exponent,
-                                           &representatives.meter + 1,
-                                           representatives.end(), prefix);
+             defaultFindBestRepresentativeAndPrefix(
+                 value, exponent, &representatives.meter + 1,
+                 representatives.end(), prefix);
 }
 
 #if 0
@@ -159,7 +159,7 @@ const Representative* Angle::standardRepresentative(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix) const {
   if (reductionContext.angleUnit() == AngleUnit::Degree) {
-    return defaultFindBestRepresentative(value, exponent, &arcSecond, 3,
+    return defaultFindBestRepresentativeAndPrefix(value, exponent, &arcSecond, 3,
                                          prefix);
   }
   return DefaultRepresentativeForAngleUnit(reductionContext.angleUnit());
@@ -185,16 +185,17 @@ const Representative* Mass::standardRepresentative(
     const Prefix** prefix) const {
   if (unitFormat == UnitFormat::Imperial) {
     // With shortTon but not longTon
-    return defaultFindBestRepresentative(value, exponent,
-                                         &representatives.ounce,
-                                         &representatives.longTon, prefix);
+    return defaultFindBestRepresentativeAndPrefix(
+        value, exponent, &representatives.ounce, &representatives.longTon,
+        prefix);
   }
   assert(unitFormat == UnitFormat::Metric);
   if (exponent == 1. && value >= representatives.ton.ratio()) {
-    return defaultFindBestRepresentative(value, exponent, &representatives.ton,
-                                         &representatives.ton + 1, prefix);
+    return defaultFindBestRepresentativeAndPrefix(
+        value, exponent, &representatives.ton, &representatives.ton + 1,
+        prefix);
   }
-  return defaultFindBestRepresentative(
+  return defaultFindBestRepresentativeAndPrefix(
       value, exponent, &representatives.kilogram, &representatives.ton, prefix);
 }
 
@@ -204,9 +205,9 @@ const Representative* Mass::standardRepresentative(
   // Grams and kilograms are split in two representatives.
   if (forcedRepr == &representatives.gram ||
       forcedRepr == &representatives.kilogram) {
-    return defaultFindBestRepresentative(value, exponent,
-                                         &representatives.kilogram,
-                                         &representatives.gram + 1, prefix);
+    return defaultFindBestRepresentativeAndPrefix(
+        value, exponent, &representatives.kilogram, &representatives.gram + 1,
+        prefix);
   }
   return Representative::standardRepresentative(value, exponent, unitFormat,
                                                 prefix, forcedRepr);
@@ -227,8 +228,8 @@ const Representative* Volume::standardRepresentative(
     *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
     return &representatives.liter;
   }
-  return defaultFindBestRepresentative(value, exponent, &representatives.cup,
-                                       representatives.end(), prefix);
+  return defaultFindBestRepresentativeAndPrefix(
+      value, exponent, &representatives.cup, representatives.end(), prefix);
 }
 
 }  // namespace Units

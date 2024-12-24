@@ -926,6 +926,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("6×0×_°F", "0×_°F", {.m_unitDisplay = UnitDisplay::None});
   simplifies_to("0×_K", "0×_K");
   simplifies_to("0×_K×_s×_s×(_g+4×_kg)", "0×_kg×_K×_s^2");
+  simplifies_to("0×_L-0×_L", "0×_L");
+  simplifies_to("3×_dm-3×_dm", "0×_dm");
 
   // Angles
   simplifies_to("_rad", "1×_rad");
@@ -937,6 +939,9 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0.2_rad", "1/5×_rad");
   simplifies_to("-0.2_rad", "-1/5×_rad");
   simplifies_to("0.2_rad^2", "1/5×_rad^2");
+  simplifies_to("5×_°-5×_°", "0×_°",
+                {.m_angleUnit = AngleUnit::Radian,
+                 .m_unitDisplay = UnitDisplay::AutomaticMetric});
 
   // Decomposition
   simplifies_to("123_m", "undef",

@@ -38,10 +38,10 @@ enum class SymbolicComputation {
 enum class UnitDisplay : uint8_t {
   // Display for main output in Calculation
   MainOutput,
-  // Best metric representative, no prefix
-  PrefixFreeMetric,
   // Best prefix and best metric representative
   AutomaticMetric,
+  // Best metric representative, no prefix
+  AutomaticPrefixFreeMetric,
   // Best prefix and best imperial representative
   AutomaticImperial,
   // If multiple choice, best of the input representative and prefix

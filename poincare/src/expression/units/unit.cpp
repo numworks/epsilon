@@ -765,7 +765,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
   if (unitDisplay == UnitDisplay::AutomaticMetric ||
       unitDisplay == UnitDisplay::AutomaticImperial ||
-      unitDisplay == UnitDisplay::PrefixFreeMetric) {
+      unitDisplay == UnitDisplay::AutomaticPrefixFreeMetric) {
     extractedUnits->removeTree();
     ApplyAutomaticDisplay(e, dimension, unitDisplay);
     return true;
@@ -808,7 +808,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     case UnitDisplay::None:
     case UnitDisplay::AutomaticMetric:
     case UnitDisplay::AutomaticImperial:
-    case UnitDisplay::PrefixFreeMetric:
+    case UnitDisplay::AutomaticPrefixFreeMetric:
       // Silence warning
       break;
   }
@@ -884,8 +884,9 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
   // Fallback on automatic imperial display or prefix free metric display
   UnitDisplay display = DisplayImperialUnitsInOutput(inputUnits)
                             ? UnitDisplay::AutomaticImperial
-                            : UnitDisplay::PrefixFreeMetric;
-  assert(display == UnitDisplay::PrefixFreeMetric || !HasPhysicalConstant(e));
+                            : UnitDisplay::AutomaticPrefixFreeMetric;
+  assert(display == UnitDisplay::AutomaticPrefixFreeMetric ||
+         !HasPhysicalConstant(e));
   inputUnits->removeTree();
   ApplyAutomaticDisplay(e, dimension, display);
 }
@@ -1000,7 +1001,7 @@ bool Unit::ApplyAutomaticDisplay(Tree* e, Dimension dimension,
     GetBaseUnits(vector);
     NAry::Flatten(units);
     NAry::SquashIfPossible(units);
-    if (unitDisplay != UnitDisplay::PrefixFreeMetric) {
+    if (unitDisplay != UnitDisplay::AutomaticPrefixFreeMetric) {
       ChooseBestRepresentativeAndPrefixForValue(
           units, &value,
           unitDisplay == UnitDisplay::AutomaticMetric ? UnitFormat::Metric

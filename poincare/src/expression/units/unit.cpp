@@ -722,7 +722,7 @@ bool HasPhysicalConstant(const Tree* e) {
       [](const Tree* e) { return e->isPhysicalConstant(); });
 }
 
-/* TODO_PCJ: Confirm this logic that as not been re-implemented in additional
+/* TODO_PCJ: Confirm this logic that has not been re-implemented in additional
  * results is no longer expected. Implement it otherwise.
  * - Angle unit displayed as degree and radians
  * - Temperature units displayed as Kelvin, Celsius and Fahrenheit

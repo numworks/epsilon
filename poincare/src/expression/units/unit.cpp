@@ -523,7 +523,7 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
   double baseValue = *value * std::pow(GetValue(unit), exponent);
   const Prefix* bestPrefix = optimizePrefix ? Prefix::EmptyPrefix() : nullptr;
   const Representative* bestRepresentative =
-      GetRepresentative(unit)->standardRepresentative(
+      GetRepresentative(unit)->bestRepresentativeAndPrefix(
           baseValue, exponent, unitFormat, &bestPrefix,
           optimizeRepresentative ? nullptr : GetRepresentative(unit));
   if (!optimizePrefix) {

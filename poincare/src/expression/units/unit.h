@@ -79,7 +79,7 @@ class Representative {
    * all representatives for this's dimension. */
   virtual const Representative* representativesOfSameDimension() const = 0;
   virtual bool isBaseUnit() const = 0;
-  virtual const Representative* standardRepresentative(
+  virtual const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr = nullptr) const {
     if (forcedRepr) {

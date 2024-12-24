@@ -138,7 +138,7 @@ const Volume::Representatives<const Volume> Volume::representatives = {
 const Speed::Representatives<const Speed> Speed::representatives = {
     .none = {nullptr, 1_e, None, None}};
 
-const Representative* Distance::standardRepresentative(
+const Representative* Distance::bestRepresentativeAndPrefix(
     double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
     const Representative* forcedRepr) const {
   return unitFormat == UnitFormat::Metric
@@ -155,7 +155,7 @@ const Representative* Distance::standardRepresentative(
 }
 
 #if 0
-const Representative* Angle::standardRepresentative(
+const Representative* Angle::bestRepresentativeAndPrefix(
     double value, double exponent, UnitFormat unitFormat,
     const Prefix** prefix, const Representative* forcedRepr) const {
   if (reductionContext.angleUnit() == AngleUnit::Degree) {
@@ -180,7 +180,7 @@ const Representative* Angle::DefaultRepresentativeForAngleUnit(
   }
 }
 
-const Representative* Mass::standardRepresentative(
+const Representative* Mass::bestRepresentativeAndPrefix(
     double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
     const Representative* forcedRepr) const {
   if (forcedRepr) {
@@ -191,8 +191,8 @@ const Representative* Mass::standardRepresentative(
           value, exponent, &representatives.kilogram, &representatives.gram + 1,
           prefix);
     } else {
-      return Representative::standardRepresentative(value, exponent, unitFormat,
-                                                    prefix, forcedRepr);
+      return Representative::bestRepresentativeAndPrefix(
+          value, exponent, unitFormat, prefix, forcedRepr);
     }
   }
   if (unitFormat == UnitFormat::Imperial) {
@@ -211,7 +211,7 @@ const Representative* Mass::standardRepresentative(
       value, exponent, &representatives.kilogram, &representatives.ton, prefix);
 }
 
-const Representative* Surface::standardRepresentative(
+const Representative* Surface::bestRepresentativeAndPrefix(
     double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
     const Representative* forcedRepr) const {
   *prefix = Prefix::EmptyPrefix();
@@ -219,7 +219,7 @@ const Representative* Surface::standardRepresentative(
                                           : &representatives.acre;
 }
 
-const Representative* Volume::standardRepresentative(
+const Representative* Volume::bestRepresentativeAndPrefix(
     double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
     const Representative* forcedRepr) const {
   if (unitFormat == UnitFormat::Metric) {

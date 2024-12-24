@@ -80,7 +80,7 @@ class Distance : public Helper<Distance> {
     R mile;
   };
 
-  const Representative* standardRepresentative(
+  const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
 
@@ -105,7 +105,7 @@ class Angle : public Helper<Angle> {
       AngleUnit angleUnit);
 
 #if 0
-  const Representative* standardRepresentative(
+  const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
 #endif
@@ -130,7 +130,7 @@ class Mass : public Helper<Mass> {
     R dalton;
   };
 
-  const Representative* standardRepresentative(
+  const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
 
@@ -162,7 +162,7 @@ class Temperature : public Helper<Temperature> {
     R fahrenheit;
   };
 
-  const Representative* standardRepresentative(
+  const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override {
     return this;
@@ -402,7 +402,7 @@ class Surface : public Helper<Surface> {
     R acre;
   };
 
-  const Representative* standardRepresentative(
+  const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
   using Helper::Helper;
@@ -425,7 +425,7 @@ class Volume : public Helper<Volume> {
     R fluidOnce;
   };
 
-  const Representative* standardRepresentative(
+  const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
   using Helper::Helper;
@@ -445,7 +445,7 @@ class Speed : public Helper<Speed> {
     return nullptr;
   };
 
-  const Representative* standardRepresentative(
+  const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override {
     return nullptr;

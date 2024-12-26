@@ -28,7 +28,7 @@ class HistogramCell : public Escher::HighlightCell {
     m_view.setBarHighlight(barHighlightStart, barHighlightEnd);
   }
 
-  void reload() { layoutSubviews(); }
+  void reload() { m_view.reload(); }
 
  private:
   // Escher::View

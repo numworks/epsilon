@@ -11,7 +11,6 @@ void HistogramCell::setHighlighted(bool highlight) {
 void HistogramCell::layoutSubviews(bool force) {
   setChildFrame(&m_view, KDRect(0, 0, bounds().width(), bounds().height()),
                 force);
-  m_view.reload();
 }
 
 }  // namespace Statistics

@@ -150,6 +150,9 @@ void HistogramMainController::willExitResponderChain(
 }
 
 void HistogramMainController::updateBannerView() {
+  KDCoordinate previousHeight =
+      m_view.bannerView()->minimalSizeForOptimalDisplay().height();
+
   int precision =
       Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
@@ -195,12 +198,16 @@ void HistogramMainController::updateBannerView() {
       displayMode, precision);
   m_view.bannerView()->relativeFrequencyView()->setText(buffer);
 
-  /* The banner size has changed, and this will change the heights of both the
-   * list and the banner subviews */
-  m_view.reload();
-
-  // The histogram y range must be updated after the heights have changed
-  m_histogramRange.setYRange(computeYRange());
+  if (previousHeight !=
+      m_view.bannerView()->minimalSizeForOptimalDisplay().height()) {
+    /* If the banner size has changed, the size of the list view has also
+     * changed, so the whole view needs to be reloaded. */
+    m_view.reload();
+    // The histogram y range must be updated if the heights have changed
+    m_histogramRange.setYRange(computeYRange());
+  } else {
+    m_view.bannerView()->reload();
+  }
 }
 
 Poincare::Range1D<double> HistogramMainController::activeSeriesRange() const {

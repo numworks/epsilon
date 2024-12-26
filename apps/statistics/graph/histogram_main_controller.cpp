@@ -110,6 +110,7 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
     // Handle list navigation
     if (m_listController.handleEvent(event)) {
       updateBannerView();
+      m_listController.selectableListView()->layoutSubviews();
       return true;
     }
     // Handle going up from the first list element

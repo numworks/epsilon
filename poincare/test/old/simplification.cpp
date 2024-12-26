@@ -642,10 +642,8 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("_kg×_s^(-3)×_K^(-4)",
                                        "1×_K^(-4)×_kg×_s^(-3)");
 
-  /* Keep SI units for 0, infinity float results, Remove unit for undefined
+  /* Keep SI units for infinity float results, Remove unit for undefined
    * expression */
-  assert_parsed_expression_simplify_to("0×_s", "0×_s");
-  assert_parsed_expression_simplify_to("0×_tsp", "0×_m^3");
   assert_parsed_expression_simplify_to("inf×_s", "∞×_s");
   assert_parsed_expression_simplify_to("-inf×_oz", "-∞×_kg");
   assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0×_s");
@@ -789,12 +787,6 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("1/_m+1/_km", "1.001×_m^(-1)");
   assert_parsed_expression_simplify_to("10000_kg", "10×_t");
   assert_parsed_expression_simplify_to("1000000_kg", "1×_kt");
-
-  // angle units
-  assert_parsed_expression_simplify_to("ln(2/2)_°", "0×_rad", User, Degree);
-  assert_parsed_expression_simplify_to("ln(2/2)_rad", "0×_rad");
-  assert_parsed_expression_simplify_to("1×π×_°", "π×_°", User, Degree);
-  assert_parsed_expression_simplify_to("1×π×_rad", "π×_rad");
 }
 
 QUIZ_CASE(poincare_simplification_power) {

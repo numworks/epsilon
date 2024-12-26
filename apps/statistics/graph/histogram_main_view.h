@@ -25,6 +25,10 @@ class HistogramMainView : public Escher::View {
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
+  void layoutBanner(bool force);
+
+  KDSize bannerSize() const;
+
   HistogramBannerView m_bannerView;
   bool m_displayBanner;
 

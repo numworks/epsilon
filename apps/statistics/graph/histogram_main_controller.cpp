@@ -66,10 +66,12 @@ void HistogramMainController::enterListView() {
   // Select or sanitize the series and the bar indices
   m_listController.processSeriesAndBarSelection();
 
-  /* Make the banner visible and update the model data displayed in the banner
-   * (this data depends on the selected series and index) */
-  m_view.setDisplayBanner(true);
+  /* Update the model data displayed in the banner (this data depends on the
+   * selected series and index), make the banner visible and recompute the graph
+   * y range. */
   updateBannerView();
+  m_view.setDisplayBanner(true);
+  m_histogramRange.setYRange(computeYRange());
 
   // Highlight the selected series and bar
   m_listController.highlightSelectedSeries();
@@ -203,8 +205,6 @@ void HistogramMainController::updateBannerView() {
     /* If the banner size has changed, the size of the list view has also
      * changed, so the whole view needs to be reloaded. */
     m_view.reload();
-    // The histogram y range must be updated if the heights have changed
-    m_histogramRange.setYRange(computeYRange());
   } else {
     m_view.bannerView()->reload();
   }

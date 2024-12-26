@@ -12,10 +12,7 @@ class HistogramMainView : public Escher::View {
 
   HistogramBannerView* bannerView() { return &m_bannerView; }
 
-  void setDisplayBanner(bool isVisible) {
-    m_displayBanner = isVisible;
-    reload();
-  }
+  void setDisplayBanner(bool isVisible);
 
   void reload() { layoutSubviews(); }
 

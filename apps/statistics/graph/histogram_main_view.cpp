@@ -5,6 +5,14 @@ namespace Statistics {
 HistogramMainView::HistogramMainView(Escher::SelectableListView* listView)
     : m_displayBanner(false), m_listView(listView) {}
 
+void HistogramMainView::setDisplayBanner(bool isVisible) {
+  if (isVisible == m_displayBanner) {
+    return;
+  }
+  m_displayBanner = isVisible;
+  layoutSubviews();
+}
+
 Escher::View* HistogramMainView::subviewAtIndex(int index) {
   if (index == 0) {
     return m_listView;

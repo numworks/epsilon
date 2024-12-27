@@ -26,9 +26,13 @@ class TwoMeansStatistic : public RawDataStatistic {
     }
   }
 
+  // TODO: const Statistic*
   void syncParametersWithStore(Statistic* stat) override;
 
   double m_params[TwoMeans::k_numberOfParams];
+
+ private:
+  void syncParametersWithStore(const Statistic* stat, uint8_t index);
 };
 
 }  // namespace Inference

@@ -6,21 +6,26 @@ void TwoMeansStatistic::syncParametersWithStore(Statistic* stat) {
   if (!hasSeries()) {
     return;
   }
-  int series1 = seriesAt(0);
-  int series2 = seriesAt(1);
+  syncParametersWithStore(stat, 0);
+  syncParametersWithStore(stat, 1);
+}
+
+void TwoMeansStatistic::syncParametersWithStore(const Statistic* stat,
+                                                uint8_t index) {
+  int series = seriesAt(index);
+  if (series < 0) {
+    return;
+  }
 
   /* For T tests, the S parameters are the sample standard deviations, which can
    * be computed from the datasets. For Z tests however, the S parameters are
    * the population standard deviations, which are given by the user. */
-  m_params[TwoMeans::ParamsOrder::x1] = mean(series1);
-  m_params[TwoMeans::ParamsOrder::x2] = mean(series2);
+  m_params[TwoMeans::x(index)] = mean(series);
   TwoMeans::Type type = twoMeansType(stat);
   if (type != TwoMeans::Type::Z) {
-    m_params[TwoMeans::ParamsOrder::s1] = sampleStandardDeviation(series1);
-    m_params[TwoMeans::ParamsOrder::s2] = sampleStandardDeviation(series2);
+    m_params[TwoMeans::s(index)] = sampleStandardDeviation(series);
   }
-  m_params[TwoMeans::ParamsOrder::n1] = sumOfOccurrences(series1);
-  m_params[TwoMeans::ParamsOrder::n2] = sumOfOccurrences(series2);
+  m_params[TwoMeans::n(index)] = sumOfOccurrences(series);
 }
 
 }  // namespace Inference

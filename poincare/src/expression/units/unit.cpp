@@ -830,9 +830,9 @@ bool GetUnits(Tree* extractedUnits, Tree** unit1, Tree** unit2) {
   return true;
 }
 
-bool Unit::DisplayImperialUnits(const Tree* extractedUnits) {
+bool Unit::DisplayImperialUnitsInOutput(const Tree* inputUnits) {
   bool hasImperialUnits = false;
-  for (const Tree* e : extractedUnits->selfAndDescendants()) {
+  for (const Tree* e : inputUnits->selfAndDescendants()) {
     if (e->isUnit()) {
       if (GetRepresentative(e)->isImperial()) {
         hasImperialUnits = true;
@@ -846,16 +846,16 @@ bool Unit::DisplayImperialUnits(const Tree* extractedUnits) {
   return hasImperialUnits;
 }
 
-void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
+void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
                                   Dimension dimension, AngleUnit angleUnit) {
   if (dimension.isAngleUnit()) {
-    // Replace extractedUnits to target angle unit.
+    // Replace inputUnits to target angle unit.
     Tree* newExtractedUnits = KPow->cloneNode();
     Unit::Push(angleUnit);
     Integer::Push(dimension.unit.vector.angle);
-    assert(Dimension::Get(newExtractedUnits) == Dimension::Get(extractedUnits));
-    MoveTreeOverTree(extractedUnits, newExtractedUnits);
-    ApplyAutomaticInputDisplay(e, extractedUnits);
+    assert(Dimension::Get(newExtractedUnits) == Dimension::Get(inputUnits));
+    MoveTreeOverTree(inputUnits, newExtractedUnits);
+    ApplyAutomaticInputDisplay(e, inputUnits);
     return;
   }
 
@@ -863,7 +863,7 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
   Tree* unit2 = nullptr;
   /* If the input is made of one single unit, preserve it.
    * Consider speed as a single unit but not physical constants. */
-  if (GetUnits(extractedUnits, &unit1, &unit2) &&
+  if (GetUnits(inputUnits, &unit1, &unit2) &&
       ((!unit2 && !unit1->isPhysicalConstant()) ||
        (unit2 && dimension.unit.vector == Speed::Dimension))) {
     assert(!dimension.isAngleUnit());
@@ -872,21 +872,21 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
       value = KelvinValueToRepresentative(value, GetRepresentative(unit1));
     } else {
       // Correct the value since e is in basic SI
-      value /= Approximation::To<double>(extractedUnits,
-                                         Approximation::Parameters{});
+      value /=
+          Approximation::To<double>(inputUnits, Approximation::Parameters{});
     }
     e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
-    // Multiply value and extractedUnits.
-    assert(e->nextTree() == extractedUnits);
+    // Multiply value and inputUnits.
+    assert(e->nextTree() == inputUnits);
     e->cloneNodeAtNode(KMult.node<2>);
     return;
   }
   // Fallback on automatic imperial display or prefix free metric display
-  UnitDisplay display = DisplayImperialUnits(extractedUnits)
+  UnitDisplay display = DisplayImperialUnitsInOutput(inputUnits)
                             ? UnitDisplay::AutomaticImperial
                             : UnitDisplay::PrefixFreeMetric;
   assert(display == UnitDisplay::PrefixFreeMetric || !HasPhysicalConstant(e));
-  extractedUnits->removeTree();
+  inputUnits->removeTree();
   ApplyAutomaticDisplay(e, dimension, display);
 }
 
@@ -1040,33 +1040,33 @@ bool IsPureAngleUnit(const Tree* e) {
          Unit::GetRepresentative(e)->siVector() == Angle::Dimension;
 }
 
-// Use only one of the extracted unit and converts e to it.
-bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& extractedUnits) {
+// Use only one of the input unit and converts e to it.
+bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits) {
   /* TODO: Select the best possible choice if there are multiple units
            With _mm*_Hz+(_m+_km)*_s^-1 : _mm*_Hz, _m_s^-1 or _km_s^-1 ?
   */
-  RemoveNonUnits(extractedUnits, false);
-  if (extractedUnits->isUnit() &&
-      IsNonKelvinTemperature(GetRepresentative(extractedUnits))) {
+  RemoveNonUnits(inputUnits, false);
+  if (inputUnits->isUnit() &&
+      IsNonKelvinTemperature(GetRepresentative(inputUnits))) {
     // Handle non kelvin temperature conversion separately.
     e->moveTreeOverTree(
         SharedTreeStack->pushDoubleFloat(KelvinValueToRepresentative(
             Approximation::To<double>(e, Approximation::Parameters{}),
-            GetRepresentative(extractedUnits))));
+            GetRepresentative(inputUnits))));
     e->cloneNodeAtNode(KMult.node<2>);
     return true;
   }
-  // Multiply e, extractedUnits and inverse of extractedUnits's SI value.
+  // Multiply e, inputUnits and inverse of inputUnits's SI value.
   e->cloneNodeAtNode(KMult.node<3>);
   KPow->cloneNode();
-  Tree* unitClone = extractedUnits->cloneTree();
+  Tree* unitClone = inputUnits->cloneTree();
   Tree::ApplyShallowTopDown(unitClone, ShallowRemoveUnit);
   (-1_e)->cloneTree();
   return true;
 }
 
 // Use an equivalent representative for surface and volumes
-bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& extractedUnits,
+bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
                                   Dimension dimension) {
   SIVector vector = dimension.unit.vector;
   // Only Surfaces and Volumes are concerned
@@ -1074,14 +1074,13 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& extractedUnits,
     return false;
   }
   bool isVolume = (vector.distance == 3);
-  bool hasDistanceUnit =
-      extractedUnits->hasDescendantSatisfying([](const Tree* e) {
-        return e->isUnit() &&
-               GetRepresentative(e)->siVector() == Distance::Dimension;
-      });
-  bool isImperial = DisplayImperialUnits(extractedUnits);
+  bool hasDistanceUnit = inputUnits->hasDescendantSatisfying([](const Tree* e) {
+    return e->isUnit() &&
+           GetRepresentative(e)->siVector() == Distance::Dimension;
+  });
+  bool isImperial = DisplayImperialUnitsInOutput(inputUnits);
 
-  extractedUnits->removeTree();
+  inputUnits->removeTree();
   const Representative* targetRepresentative;
   Tree* units;
   // TODO: Maybe handle intermediary cases where multiple units are involved.
@@ -1191,7 +1190,7 @@ constexpr const Representative* const volumeRepresentativesList[] = {
     &Volume::representatives.gallon, &Volume::representatives.quart,
     &Volume::representatives.pint, &Volume::representatives.cup};
 
-bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
+bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
                                      Dimension dimension,
                                      UnitFormat unitFormat) {
   // Decompose time, angle, and imperial volume, mass and length
@@ -1205,7 +1204,7 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
     list = angleRepresentativesList;
     length = std::size(angleRepresentativesList);
   } else if (unitFormat == UnitFormat::Imperial &&
-             DisplayImperialUnits(extractedUnits)) {
+             DisplayImperialUnitsInOutput(inputUnits)) {
     if (vector == Mass::Dimension) {
       list = massRepresentativesList;
       length = std::size(massRepresentativesList);
@@ -1227,8 +1226,8 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
       std::abs(value) <= list[length - 2]->ratio()) {
     return false;
   }
-  // extractedUnits are no longer necessary
-  extractedUnits->removeTree();
+  // inputUnits are no longer necessary
+  inputUnits->removeTree();
   e->moveTreeOverTree(BuildDecomposition(value, list, length));
   return true;
 }

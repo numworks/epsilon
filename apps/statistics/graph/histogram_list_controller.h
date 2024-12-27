@@ -55,6 +55,11 @@ class HistogramListController
   // Escher::Responder
   bool handleEvent(Ion::Events::Event event) override;
 
+  // Escher::SelectableViewController
+  void didBecomeFirstResponder() override {
+    // Do not transfer the first responder ownership to the SelectableListView
+  }
+
  private:
   static constexpr KDCoordinate k_rowHeight = 75;
 

@@ -110,7 +110,6 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
     // Handle list navigation
     if (m_listController.handleEvent(event)) {
       updateBannerView();
-      m_listController.selectableListView()->layoutSubviews();
       return true;
     }
     // Handle going up from the first list element
@@ -208,6 +207,12 @@ void HistogramMainController::updateBannerView() {
   } else {
     m_view.bannerView()->reload();
   }
+
+  /* The list needs to be layouted once again after updating the banner size,
+   * this ensures that the x-axis ticks of all graphs in the list are properly
+   * aligned with the x-asis ticks of the selected graph.  */
+  // TODO: find a more direct way to ensure the above behavior
+  m_listController.selectableListView()->layoutSubviews();
 }
 
 Poincare::Range1D<double> HistogramMainController::activeSeriesRange() const {

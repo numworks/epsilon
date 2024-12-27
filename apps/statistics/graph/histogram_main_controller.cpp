@@ -77,6 +77,8 @@ void HistogramMainController::enterListView() {
   m_listController.highlightSelectedSeries();
   m_listController.scrollAndHighlightHistogramBar(
       m_listController.selectedRow(), m_listController.selectedBarIndex());
+
+  Escher::App::app()->setFirstResponder(&m_listController, true);
 }
 
 void HistogramMainController::exitListView() {
@@ -107,11 +109,6 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
       stackController()->push(histogramParameterController());
       return true;
     }
-    // Handle list navigation
-    if (m_listController.handleEvent(event)) {
-      updateBannerView();
-      return true;
-    }
     // Handle going up from the first list element
     if (event == Ion::Events::Up) {
       exitListView();
@@ -131,6 +128,8 @@ void HistogramMainController::didBecomeFirstResponder() {
      * another element in the page (for instance the TabViewController), the
      * header should be selected. */
     enterHeaderView();
+  } else {
+    enterListView();
   }
 }
 

@@ -34,43 +34,45 @@ void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,
   histogramCell->setSeries(m_store->seriesIndexFromActiveSeriesIndex(row));
 }
 
-void HistogramListController::setMainControllerFirstResponder() const {
-  /* The banner view, which is owned by the main controller needs to be updated
-   * at the same time as the histogram list view. To ensure this, the
-   * firstResponder ownership is given back to the main controller, which is the
-   * parent responder of HistogramListController. */
-  Escher::App::app()->setFirstResponder(parentResponder());
+void HistogramListController::restoreFirstResponder() {
+  /* The banner view needs to be updated at the same time as the histogram list
+   * view. To ensure this, the firstResponder ownership is given back to the
+   * HistogramListController. This is needed when the SelectableListView
+   * selected a cell, which automatically makes it the first responder. */
+  Escher::App::app()->setFirstResponder(this);
 }
 
 bool HistogramListController::handleEvent(Ion::Events::Event event) {
   // Handle left/right navigation inside a histogram cell
   if (event == Ion::Events::Left || event == Ion::Events::Right) {
     moveSelectionHorizontally(event.direction());
+    m_bannerDelegate->updateBannerView();
     return true;
   }
 
   int previousSelectedRow = selectedRow();
-  if (!m_selectableListView.handleEvent(event)) {
+  m_selectableListView.handleEvent(event);
+  restoreFirstResponder();
+
+  if (selectedRow() == previousSelectedRow) {
     return false;
   }
-  if (selectedRow() != previousSelectedRow) {
-    /* If the SelectableListView selected a new row, then it took the
-     * firstResponder ownership. We need to manually restore it. */
-    setMainControllerFirstResponder();
 
-    // Set the current series and index in the snapshot
-    int8_t previousSelectedSeries = selectedSeries();
-    setSelectedSeries(static_cast<int8_t>(
-        m_store->seriesIndexFromActiveSeriesIndex(selectedRow())));
-    /* The series index of the new selected cell is computed to be close to
-     * its previous location in the neighboring cell */
-    setSelectedBarIndex(barIndexAfterSelectingNewSeries(
-        previousSelectedSeries, selectedSeries(), unsafeSelectedBarIndex()));
+  // Set the current series and index in the snapshot
+  int8_t previousSelectedSeries = selectedSeries();
+  setSelectedSeries(static_cast<int8_t>(
+      m_store->seriesIndexFromActiveSeriesIndex(selectedRow())));
+  /* The series index of the new selected cell is computed to be close to
+   * its previous location in the neighboring cell */
+  setSelectedBarIndex(barIndexAfterSelectingNewSeries(
+      previousSelectedSeries, selectedSeries(), unsafeSelectedBarIndex()));
 
-    // Update row and bar highlights
-    highlightSelectedSeries();
-    scrollAndHighlightHistogramBar(selectedRow(), selectedBarIndex());
-  }
+  // Update row and bar highlights
+  highlightSelectedSeries();
+  scrollAndHighlightHistogramBar(selectedRow(), selectedBarIndex());
+
+  // Update banner content and size
+  m_bannerDelegate->updateBannerView();
 
   return true;
 }
@@ -113,9 +115,7 @@ void HistogramListController::highlightSelectedSeries() {
   } else {
     m_selectableListView.selectCell(
         m_store->activeSeriesIndexFromSeriesIndex(selectedSeries()));
-    /* The SelectableListView took the firstResponder ownership when selecting
-     * the cell. We need to manually restore it. */
-    setMainControllerFirstResponder();
+    restoreFirstResponder();
   }
 
   /* The cell corresponding to the selected series could be selected in the list

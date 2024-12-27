@@ -68,7 +68,7 @@ class HistogramListController
   // Escher::TableViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override { return rowHeight(); }
 
-  void setMainControllerFirstResponder() const;
+  void restoreFirstResponder();
 
   // Check if one of the statistics series is selected in the Snapshot
   bool hasSelectedSeries() const;

@@ -123,8 +123,7 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
   }
 }
 
-void HistogramMainController::didEnterResponderChain(
-    Responder* firstResponder) {
+void HistogramMainController::didBecomeFirstResponder() {
   /* If the HistogramMainController page is being opened, the viewWillAppear
    * function has already been called, and the list has been initialized. */
   bool isListAlreadySelected = m_listController.selectedRow() >= 0;

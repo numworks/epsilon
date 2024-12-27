@@ -7,13 +7,14 @@ namespace Statistics {
 
 HistogramListController::HistogramListController(
     Escher::Responder* parentResponder, Store* store,
-    HistogramRange* histogramRange)
+    HistogramRange* histogramRange, BannerDelegate* bannerDelegate)
     : Escher::SelectableListViewController<Escher::ListViewDataSource>(
           parentResponder, this),
       m_displayCells({HistogramCell(HistogramView(store, histogramRange)),
                       HistogramCell(HistogramView(store, histogramRange)),
                       HistogramCell(HistogramView(store, histogramRange)),
                       HistogramCell(HistogramView(store, histogramRange))}),
+      m_bannerDelegate(bannerDelegate),
       m_store(store),
       m_histogramRange(histogramRange) {
   m_selectableListView.resetMargins();

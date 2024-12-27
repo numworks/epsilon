@@ -19,7 +19,7 @@ HistogramMainController::HistogramMainController(
       m_histogramRange(store),
       m_storeVersion(storeVersion),
       m_store(store),
-      m_listController(this, m_store, &m_histogramRange),
+      m_listController(this, m_store, &m_histogramRange, this),
       m_histogramParameterController(nullptr, store),
       m_view(m_listController.selectableListView()),
       m_parameterButton(

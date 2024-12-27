@@ -5,6 +5,7 @@
 #include <escher/selectable_list_view_controller.h>
 
 #include "../store.h"
+#include "banner_delegate.h"
 #include "histogram_cell.h"
 #include "histogram_range.h"
 
@@ -15,7 +16,8 @@ class HistogramListController
       public Escher::SelectableListViewDelegate {
  public:
   HistogramListController(Escher::Responder* parentResponder, Store* store,
-                          HistogramRange* histogramRange);
+                          HistogramRange* histogramRange,
+                          BannerDelegate* bannerDelegate);
 
   /* If no statistics series was selected in the snapshot, this function selects
    * the first series and its first bar index. Otherwise, the currently selected
@@ -92,6 +94,9 @@ class HistogramListController
   constexpr static size_t k_displayedHistograms = 4;
   // SelectableList cells
   std::array<HistogramCell, k_displayedHistograms> m_displayCells;
+
+  // Banner update
+  BannerDelegate* m_bannerDelegate;
 
   // Model
   Store* m_store;

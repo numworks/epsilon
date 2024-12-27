@@ -4,6 +4,7 @@
 #include <escher/tab_view_controller.h>
 
 #include "../store.h"
+#include "banner_delegate.h"
 #include "graph_button_row_delegate.h"
 #include "histogram_list_controller.h"
 #include "histogram_main_view.h"
@@ -13,7 +14,8 @@
 namespace Statistics {
 
 class HistogramMainController : public Escher::ViewController,
-                                public GraphButtonRowDelegate {
+                                public GraphButtonRowDelegate,
+                                public BannerDelegate {
  public:
   HistogramMainController(Escher::Responder* parentResponder,
                           Escher::ButtonRowController* header,
@@ -43,10 +45,10 @@ class HistogramMainController : public Escher::ViewController,
   void didBecomeFirstResponder() override;
   void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
 
+  void updateBannerView() override;
+
  private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;
-
-  void updateBannerView();
 
   void enterHeaderView();
   void exitHeaderView();

@@ -1204,8 +1204,8 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& extractedUnits,
   } else if (vector == Angle::Dimension) {
     list = angleRepresentativesList;
     length = std::size(angleRepresentativesList);
-  } else if (DisplayImperialUnits(extractedUnits) &&
-             unitFormat == UnitFormat::Imperial) {
+  } else if (unitFormat == UnitFormat::Imperial &&
+             DisplayImperialUnits(extractedUnits)) {
     if (vector == Mass::Dimension) {
       list = massRepresentativesList;
       length = std::size(massRepresentativesList);

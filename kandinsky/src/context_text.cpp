@@ -115,6 +115,15 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
           codePoint = decoder.nextCodePoint();
         }
         KDFont::Font(style.font)->colorizeGlyphBuffer(&palette, &glyphBuffer);
+#if KANDINSKY_FONT_VARIABLE_WIDTH
+        /* Glyph data are all defined with a GlyphMaxWidth stride. To
+         * crop the background to the actual glyph width without using
+         * variable strides, we crop the context. */
+        KDRect savedClippingRect = clippingRect();
+        setClippingRect(
+            KDRect(savedClippingRect.origin(),
+                   KDSize(position.x() + width, savedClippingRect.height())));
+#endif
         /* Push the character on the screen
          * It's OK to trash the content of the color buffer since we'll re-fetch
          * it for the next char anyway */
@@ -122,6 +131,9 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
             KDRect(position,
                    KDSize(KDFont::GlyphMaxWidth(style.font), glyphHeight)),
             glyphBuffer.colorBuffer(), glyphBuffer.colorBuffer());
+#if KANDINSKY_FONT_VARIABLE_WIDTH
+        setClippingRect(savedClippingRect);
+#endif
       } else {
         codePoint = decoder.nextCodePoint();
         while (codePoint.isCombining()) {

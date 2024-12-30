@@ -56,11 +56,16 @@ void InputStoreController::onDropdownSelected(int selectedRow) {
 }
 
 Escher::HighlightCell* InputStoreController::explicitCellAtRow(int row) {
-  return row == k_dropdownCellIndex ? &m_dropdownCell
-         : indexOfFirstExtraParameter() <= row &&
-                 row < indexOfSignificanceCell()
-             ? &m_extraParameters[row - indexOfFirstExtraParameter()]
-             : InputCategoricalController::explicitCellAtRow(row);
+  if (row == k_dropdownCellIndex) {
+    return &m_dropdownCell;
+  }
+  if (row == indexOfTableCell()) {
+    return &m_storeTableCell;
+  }
+  if (indexOfFirstExtraParameter() <= row && row < indexOfSignificanceCell()) {
+    return &m_extraParameters[row - indexOfFirstExtraParameter()];
+  }
+  return InputCategoricalController::explicitCellAtRow(row);
 }
 
 void InputStoreController::createDynamicCells() {

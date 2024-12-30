@@ -102,7 +102,8 @@ const ElectricCapacitance::Representatives<const ElectricCapacitance>
         .farad = {"F", 1_e, All, LongScale}};
 
 const ElectricResistance::Representatives<const ElectricResistance>
-    ElectricResistance::representatives = {.ohm = {"Ω", 1_e, All, LongScale}};
+    ElectricResistance::representatives = {
+        .ohm = {BuiltinsAliases::k_ohmAliases, 1_e, All, LongScale}};
 
 const ElectricConductance::Representatives<const ElectricConductance>
     ElectricConductance::representatives = {

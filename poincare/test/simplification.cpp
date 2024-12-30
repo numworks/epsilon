@@ -868,6 +868,14 @@ QUIZ_CASE(pcj_simplification_unit) {
   // TODO: should return 1×_m+1×_cm
   simplifies_to("1_m+1_cm", "1×_cm+1×_m", {.m_unitDisplay = UnitDisplay::None});
 
+  // Volumes
+  simplifies_to("3_L+2_dL", "3.2×_L");
+  simplifies_to("1_L+1_gal", "1.2641720523581×_gal");
+  simplifies_to("1_mL+1_m^3", "1.000001×_m^3");
+  simplifies_to("4_tsp", "1.3333333333333×_tbsp",
+                {.m_unitDisplay = UnitDisplay::AutomaticImperial});
+  simplifies_to("3_L*_c", "899377.374×_s^(-1)×_m^4");
+
   // Temperature
   simplifies_to("4_°C", "4×_°C");
   // Note: this used to be undef in previous Poincare.

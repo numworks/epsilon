@@ -481,6 +481,9 @@ T UserExpression::ParseAndSimplifyAndApproximateToScalar(
                            .m_context = context};
   exp = exp.cloneAndSimplify(&ctx);
   assert(!exp.isUninitialized());
+  if (!Poincare::Dimension(exp, context).isScalar()) {
+    return NAN;
+  }
   return exp.approximateToScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat);
 }
 

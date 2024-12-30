@@ -232,7 +232,8 @@ class Expression : public PoolHandle {
       const ApproximationContext& approximationContext) const {
     return object()->approximateToTree<T>(approximationContext);
   }
-  /* Approximation Helper */
+  /* Approximation Helper
+   * Return NAN for all non scalar expressions. */
   template <typename T>
   static T ParseAndSimplifyAndApproximateToScalar(
       const char* text, Context* context,

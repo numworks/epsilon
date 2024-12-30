@@ -107,6 +107,10 @@ class InputStoreController : public InputCategoricalController,
     m_selectableListView.layoutSubviews();
   }
 
+  bool canSelectCellAtRow(int row) override {
+    return explicitCellAtRow(row)->isVisible();
+  }
+
  private:
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:

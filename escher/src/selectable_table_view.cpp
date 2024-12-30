@@ -65,7 +65,7 @@ int SelectableTableView::lastSelectableIndexInDirection(
 bool SelectableTableView::canSelectCellAtLocation(int column, int row) {
   assert(0 <= column && column < totalNumberOfColumns());
   assert(0 <= row && row < totalNumberOfRows());
-  HighlightCell* cell = cellAtLocation(column, row);
+  const HighlightCell* cell = cellAtLocation(column, row);
   return (!cell || cell->isVisible()) &&
          dataSource()->canSelectCellAtLocation(column, row);
 }

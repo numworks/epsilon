@@ -80,8 +80,8 @@ void InputStoreController::viewWillAppear() {
 
   // TODO: dedicated function for the dropdown cell view initialization
   m_dropdownCell.dropdown()->init();
-  RawDataStatistic* model =
-      static_cast<RawDataStatistic*>(m_storeTableCell.tableModel());
+  const RawDataStatistic* model =
+      static_cast<const RawDataStatistic*>(m_storeTableCell.tableModel());
   if (model->numberOfSeries() == 2) {
     if (m_pageIndex == PageIndex::One) {
       m_dropdownCell.setMessage(I18n::Message::DataSet1);

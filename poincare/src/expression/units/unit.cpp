@@ -983,6 +983,28 @@ bool IsPureAngleUnit(const Tree* e) {
          Unit::GetRepresentative(e)->siVector() == Angle::Dimension;
 }
 
+bool IsVolumeAndHasOnlyVolumeUnits(const Tree* e) {
+  if (Dimension::Get(e).unit.vector != Volume::Dimension) {
+    return false;
+  }
+  bool hasOnlyVolumeUnits = false;
+  for (const Tree* child : e->selfAndDescendants()) {
+    if (child->isPhysicalConstant()) {
+      return false;
+    }
+    if (child->isUnit()) {
+      if (Dimension::Get(child)
+              .unit.representative->representativesOfSameDimension() ==
+          &Volume::representatives.liter) {
+        hasOnlyVolumeUnits = true;
+      } else {
+        return false;
+      }
+    }
+  }
+  return hasOnlyVolumeUnits;
+}
+
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should
  *           output 5°C, 41°F should output 41°F). */
 void Unit::ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
@@ -1004,11 +1026,17 @@ void Unit::ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
     inputUnits->removeTree();
     return;
   } else {
-    units = SharedTreeStack->pushMult(2);
-    ChooseBestDerivedUnits(&vector);
-    GetBaseUnits(vector);
-    NAry::Flatten(units);
-    NAry::SquashIfPossible(units);
+    if (IsVolumeAndHasOnlyVolumeUnits(inputUnits)) {
+      // Use volume representative
+      units = Push(&Volume::representatives.liter);
+      value = value / GetRepresentative(units)->ratio();
+    } else {
+      units = SharedTreeStack->pushMult(2);
+      ChooseBestDerivedUnits(&vector);
+      GetBaseUnits(vector);
+      NAry::Flatten(units);
+      NAry::SquashIfPossible(units);
+    }
     if (unitDisplay != UnitDisplay::AutomaticPrefixFreeMetric) {
       ChooseBestRepresentativeAndPrefixForValue(
           units, &value,

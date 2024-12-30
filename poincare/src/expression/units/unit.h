@@ -240,7 +240,8 @@ class Unit {
                                     UnitDisplay unitDisplay);
   static bool ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits);
   static bool ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
-                                     Dimension dimension);
+                                     Dimension dimension,
+                                     UnitFormat unitFormat);
   static bool ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
                                         Dimension dimension,
                                         UnitFormat unitFormat);

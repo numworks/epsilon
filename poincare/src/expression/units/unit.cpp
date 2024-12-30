@@ -790,7 +790,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
       // TODO: Handle power of same dimension better 1ft* 1ft* 1in -> in^3 */
       return ApplyAutomaticInputDisplay(e, extractedUnits);
     case UnitDisplay::Equivalent:
-      if (ApplyEquivalentDisplay(e, extractedUnits, dimension)) {
+      if (ApplyEquivalentDisplay(e, extractedUnits, dimension, unitFormat)) {
         return true;
       }
       goto basicSI;
@@ -1067,7 +1067,7 @@ bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits) {
 
 // Use an equivalent representative for surface and volumes
 bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
-                                  Dimension dimension) {
+                                  Dimension dimension, UnitFormat unitFormat) {
   SIVector vector = dimension.unit.vector;
   // Only Surfaces and Volumes are concerned
   if (vector.supportSize() != 1 || vector.distance < 2 || vector.distance > 3) {
@@ -1078,7 +1078,7 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     return e->isUnit() &&
            GetRepresentative(e)->siVector() == Distance::Dimension;
   });
-  bool isImperial = DisplayImperialUnitsInOutput(inputUnits);
+  bool isImperial = unitFormat == UnitFormat::Imperial;
 
   inputUnits->removeTree();
   const Representative* targetRepresentative;
@@ -1105,10 +1105,10 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   // Select best prefix
   double value = Approximation::To<double>(e, Approximation::Parameters{}) /
                  Approximation::To<double>(units, Approximation::Parameters{});
-  // TODO: Allow representative switch between in, ft, yd and mi
-  // UnitFormat doesn't matter with optimizeRepresentative false.
+  /* TODO: Allow representative switch between in, ft, yd and mi, and between
+   * gal, qt etc */
   ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-      units, &value, UnitFormat::Metric, true, false);
+      units, &value, unitFormat, true, false);
   e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
   // Multiply e with units
   e->cloneNodeAtNode(KMult.node<2>);

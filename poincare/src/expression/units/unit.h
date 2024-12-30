@@ -233,7 +233,7 @@ class Unit {
   static bool RemoveNonUnits(Tree* e, bool preserveAdd);
   // Return true if Imperial units should be used in output
   static bool DisplayImperialUnitsInOutput(const Tree* inputUnits);
-  static void ApplyMainOutputDisplay(Tree* e, TreeRef& extractedUnits,
+  static void ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
                                      Dimension dimension, AngleUnit angleUnit);
   // Without taking input units into account, select best unit for tree
   static bool ApplyAutomaticDisplay(Tree* e, Dimension dimension,

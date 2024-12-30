@@ -11,6 +11,7 @@
 
 namespace Inference {
 
+// TODO: uint8_t underlying class for a clearer conversion to an index
 enum class PageIndex : bool { One, Two };
 
 static inline constexpr uint8_t toUint(PageIndex pageIndex) {
@@ -115,7 +116,10 @@ class InputStoreController : public InputCategoricalController,
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:
     int numberOfRows() const override { return k_numberOfRows; }
-    Escher::HighlightCell* cell(int row) override { return &m_cells[row]; }
+    Escher::HighlightCell* cell(int row) override {
+      assert(0 <= row && row < k_numberOfRows);
+      return &m_cells[row];
+    }
 
    private:
     constexpr static int k_numberOfRows =

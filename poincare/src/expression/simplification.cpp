@@ -14,7 +14,14 @@
 #include "units/unit.h"
 #include "variables.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Simplification {
+
+static Tree* ApplySimplify(const Tree* dataTree,
+                           ProjectionContext* projectionContext, bool beautify);
+
+static bool HandleUnits(Tree* e, ProjectionContext* projectionContext);
+static bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
+                          bool reduceIfSuccess);
 
 #if ASSERTIONS
 template <typename T>
@@ -38,9 +45,8 @@ inline static bool AreConsistent(const ComplexSign& sign,
 }
 #endif
 
-bool Simplification::Simplify(Tree* e,
-                              const ProjectionContext& projectionContext,
-                              bool beautify) {
+bool Simplify(Tree* e, const ProjectionContext& projectionContext,
+              bool beautify) {
   ExceptionTry {
 #if ASSERTIONS
     size_t treesNumber = SharedTreeStack->numberOfTrees();
@@ -64,9 +70,8 @@ bool Simplification::Simplify(Tree* e,
   return true;
 }
 
-Tree* Simplification::ApplySimplify(const Tree* dataTree,
-                                    ProjectionContext* projectionContext,
-                                    bool beautify) {
+Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
+                    bool beautify) {
   /* Store is an expression only for convenience. Only first child is to
    * be simplified. */
   bool isStore = dataTree->isStore();
@@ -102,8 +107,7 @@ Tree* Simplification::ApplySimplify(const Tree* dataTree,
   return e;
 }
 
-void Simplification::ProjectAndReduce(Tree* e,
-                                      ProjectionContext* projectionContext) {
+void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext) {
   assert(!e->isStore());
   ToSystem(e, projectionContext);
   ReduceSystem(e, projectionContext->m_advanceReduce,
@@ -113,8 +117,7 @@ void Simplification::ProjectAndReduce(Tree* e,
   ApplyStrategy(e, *projectionContext, true);
 }
 
-bool Simplification::BeautifyReduced(Tree* e,
-                                     ProjectionContext* projectionContext) {
+bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext) {
   assert(!e->isStore());
   // TODO: Should this be recomputed here ?
   assert(e->isUndefined() ||
@@ -123,8 +126,7 @@ bool Simplification::BeautifyReduced(Tree* e,
   return Beautification::DeepBeautify(e, *projectionContext) || changed;
 }
 
-bool Simplification::PrepareForProjection(
-    Tree* e, ProjectionContext* projectionContext) {
+bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
   // Seed random nodes before anything is merged/duplicated.
   int maxRandomSeed = Random::SeedRandomNodes(e, 0);
   bool changed = maxRandomSeed > 0;
@@ -144,7 +146,7 @@ bool Simplification::PrepareForProjection(
   return changed;
 }
 
-bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
+bool ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 1 - Prepare for projection */
   bool changed = PrepareForProjection(e, projectionContext);
   /* 2 - Update projection context */
@@ -157,7 +159,7 @@ bool Simplification::ToSystem(Tree* e, ProjectionContext* projectionContext) {
 }
 
 #if ASSERTIONS
-bool Simplification::IsSystem(const Tree* e) {
+bool IsSystem(const Tree* e) {
   /* TODO: an assert will fail when projecting a random node that has already
    * been projected. We need to find a better solution than skipping the test.
    */
@@ -173,8 +175,7 @@ bool Simplification::IsSystem(const Tree* e) {
 }
 #endif
 
-bool Simplification::ReduceSystem(Tree* e, bool advanced,
-                                  bool expandAlgebraic) {
+bool ReduceSystem(Tree* e, bool advanced, bool expandAlgebraic) {
   bool changed = SystematicReduction::DeepReduce(e);
   assert(!SystematicReduction::DeepReduce(e));
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
@@ -200,8 +201,7 @@ bool Simplification::ReduceSystem(Tree* e, bool advanced,
   return result;
 }
 
-bool Simplification::HandleUnits(Tree* e,
-                                 ProjectionContext* projectionContext) {
+bool HandleUnits(Tree* e, ProjectionContext* projectionContext) {
   bool changed = false;
   if (!e->isUndefined() &&
       Units::Unit::ProjectToBestUnits(
@@ -226,9 +226,8 @@ bool Simplification::HandleUnits(Tree* e,
   return changed;
 }
 
-bool Simplification::ApplyStrategy(Tree* e,
-                                   const ProjectionContext& projectionContext,
-                                   bool reduceIfSuccess) {
+bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
+                   bool reduceIfSuccess) {
   if (projectionContext.m_strategy != Strategy::ApproximateToFloat ||
       !Approximation::ApproximateAndReplaceEveryScalar<double>(
           e, Approximation::Context(projectionContext.m_angleUnit,
@@ -243,4 +242,4 @@ bool Simplification::ApplyStrategy(Tree* e,
   return true;
 }
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Simplification

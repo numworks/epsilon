@@ -31,10 +31,10 @@ _sources_poincare_storage := $(addprefix src/, \
 
 _sources_poincare_extended := $(addprefix src/, \
 $(addprefix old/, \
-  computation_context.cpp \
+  computation_context.cpp:-nopool \
   context.cpp \
   empty_context.cpp \
-  float_list.cpp \
+  float_list.cpp:-nopool \
   pool_variable_context.cpp:-nopool \
   tree_variable_context.cpp \
 ) \
@@ -97,16 +97,16 @@ $(addprefix expression/, \
   vector.cpp \
 ) \
 $(addprefix function_properties/, \
-  conic.cpp \
-  function_type.cpp \
-  helper.cpp \
+  conic.cpp:-nopool \
+  function_type.cpp:-nopool \
+  helper.cpp:-nopool \
 ) \
 $(addprefix helpers/, \
   expression_equal_sign.cpp:-nopool \
   layout.cpp \
-  scatter_plot_iterable.cpp \
-  store.cpp \
-  symbol.cpp \
+  scatter_plot_iterable.cpp:-nopool \
+  store.cpp:-nopool \
+  symbol.cpp:-nopool \
   trigonometry.cpp:-nopool \
 ) \
 $(addprefix layout/, \
@@ -203,7 +203,7 @@ $(addprefix regression/, \
   transformed_regression.cpp \
   trigonometric_regression.cpp \
 ) \
-  additional_results_helper.cpp \
+  additional_results_helper.cpp:-nopool \
   comparison_operator.cpp \
   print.cpp \
   range.cpp \

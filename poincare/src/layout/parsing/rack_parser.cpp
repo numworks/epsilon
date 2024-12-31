@@ -2,9 +2,9 @@
 
 #include <omg/unicode_helper.h>
 #include <omg/utf8_decoder.h>
-#include <poincare/helpers/symbol.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/tree_variable_context.h>
+#include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/integer.h>
@@ -888,7 +888,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       if (ParsingHelper::ParameterText(&decoder, &parameterText,
                                        &parameterLength)) {
         Poincare::Context* oldContext = m_parsingContext.context();
-        char name[SymbolHelper::k_maxNameLength];
+        char name[Symbol::k_maxNameLength];
         LayoutSpanDecoder nameDecoder(
             LayoutSpan(parameterText, parameterLength));
         nameDecoder.printInBuffer(name, std::size(name));
@@ -969,7 +969,7 @@ void RackParser::parseCustomIdentifier(TreeRef& leftHandSide,
   assert(leftHandSide.isUninitialized());
   const Tree* l = m_currentToken.firstLayout();
   size_t length = m_currentToken.length();
-  constexpr int bufferSize = sizeof(CodePoint) * SymbolHelper::k_maxNameSize;
+  constexpr int bufferSize = sizeof(CodePoint) * Symbol::k_maxNameSize;
   if (length >= bufferSize) {
     // Identifier name too long.
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -990,7 +990,7 @@ void RackParser::parseCustomIdentifier(TreeRef& leftHandSide,
 void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
                                               const char* name, size_t length,
                                               Token::Type stoppingType) {
-  if (!SymbolHelper::NameLengthIsValid(name, length)) {
+  if (!Symbol::NameLengthIsValid(name, length)) {
     // Identifier name too long.
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }

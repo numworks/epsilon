@@ -2,7 +2,6 @@
 
 #include <omg/unicode_helper.h>
 #include <omg/utf8_helper.h>
-#include <poincare/helpers/symbol.h>
 #include <poincare/src/expression/aliases.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
@@ -499,7 +498,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   bool hasUnitOnlyCodePoint = HasCodePoint(span, UCodePointDegreeSign) ||
                               HasCodePoint(span, '\'') ||
                               HasCodePoint(span, '"');
-  char string[SymbolHelper::k_maxNameSize];
+  char string[Symbol::k_maxNameSize];
   LayoutSpanDecoder decoder(span);
   decoder.printInBuffer(string, std::size(string));
   if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "

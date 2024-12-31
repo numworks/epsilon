@@ -2,27 +2,17 @@
 #define POINCARE_HELPERS_SYMBOL_H
 
 #include <poincare/expression.h>
+#include <poincare/src/expression/symbol.h>
 
 namespace Poincare {
 
 namespace SymbolHelper {
-/* A symbol  can have a max length of 7 chars, or 9 if it's
- * surrounded by quotation marks.
- * This makes it so a 9 chars name (with quotation marks), can be
- * turned into a 7 char name in the result cells of the solver (by
- * removing the quotation marks). */
-constexpr static size_t k_maxNameLengthWithoutQuotationMarks = 7;
-constexpr static size_t k_maxNameLength =
-    k_maxNameLengthWithoutQuotationMarks + 2;
-constexpr static size_t k_maxNameSize = k_maxNameLength + 1;
+using Internal::Symbol::k_maxNameLength;
+using Internal::Symbol::k_maxNameLengthWithoutQuotationMarks;
+using Internal::Symbol::k_maxNameSize;
+using Internal::Symbol::NameHasQuotationMarks;
+using Internal::Symbol::NameLengthIsValid;
 
-constexpr static bool NameHasQuotationMarks(const char* name, size_t length) {
-  return length > 2 && name[0] == '"' && name[length - 1] == '"';
-}
-constexpr static bool NameLengthIsValid(const char* name, size_t length) {
-  return length <= k_maxNameLengthWithoutQuotationMarks ||
-         (NameHasQuotationMarks(name, length) && length <= k_maxNameLength);
-}
 size_t NameWithoutQuotationMarks(char* buffer, size_t bufferSize,
                                  const char* name, size_t nameLength);
 
@@ -37,15 +27,12 @@ UserExpression BuildSymbol(CodePoint name);
 UserExpression BuildFunction(const char* name, Expression child);
 UserExpression BuildSequence(const char* name, Expression child);
 
-static inline UserExpression Ans() {
-  return BuildSymbol(SymbolHelper::AnsMainAlias());
-}
+static inline UserExpression Ans() { return BuildSymbol(AnsMainAlias()); }
 static inline UserExpression SystemSymbol() {
   return BuildSymbol(UCodePointUnknown);
 }
 
 }  // namespace SymbolHelper
-
 }  // namespace Poincare
 
 #endif

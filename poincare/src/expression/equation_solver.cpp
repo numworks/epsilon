@@ -2,6 +2,7 @@
 
 #include <poincare/numeric/roots.h>
 #include <poincare/numeric/solver.h>
+#include <poincare/preferences.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -26,7 +27,7 @@ namespace Poincare::Internal {
 template <int N>
 void VariableArray<N>::append(const char* variable) {
   assert(m_numberOfVariables < N);
-  assert(strlen(variable) < SymbolHelper::k_maxNameLength);
+  assert(strlen(variable) < Symbol::k_maxNameLength);
   memcpy(m_variables[m_numberOfVariables], variable, strlen(variable) + 1);
   m_numberOfVariables++;
 }

@@ -1,7 +1,6 @@
 #ifndef POINCARE_EXPRESSION_EQUATION_SOLVER_H
 #define POINCARE_EXPRESSION_EQUATION_SOLVER_H
 
-#include <poincare/helpers/symbol.h>
 #include <poincare/range.h>
 #include <poincare/src/memory/tree.h>
 
@@ -29,7 +28,7 @@ class VariableArray {
 
  private:
   int m_numberOfVariables;
-  char m_variables[N][SymbolHelper::k_maxNameSize];
+  char m_variables[N][Symbol::k_maxNameSize];
 };
 
 class EquationSolver {

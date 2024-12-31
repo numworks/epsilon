@@ -1,10 +1,11 @@
 #include <omg/ieee754.h>
 #include <omg/print.h>
+#include <omg/string.h>
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
-#include <poincare/expression.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
+#include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/infinity.h>
 extern "C" {
 #include <assert.h>
@@ -17,6 +18,10 @@ extern "C" {
 #include <cmath>
 
 namespace Poincare {
+
+constexpr const char* k_undefName =
+    Internal::BuiltinsAliases::k_undefinedAlias.mainAlias();
+constexpr int k_undefNameLength = OMG::StringLength(k_undefName);
 
 constexpr size_t PrintFloat::Long::k_maxNumberOfCharsForDigit;
 
@@ -209,14 +214,14 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
 
   if (std::isnan(f)) {
     // Nan
-    constexpr int requiredCharLength = Undefined::NameSize() - 1;
+    constexpr int requiredCharLength = k_undefNameLength;
     constexpr TextLengths requiredTextLengths = {
         .CharLength = requiredCharLength, .GlyphLength = requiredCharLength};
     if (requiredCharLength > availableCharLength) {
       // We will not be able to print
       return requiredTextLengths;
     }
-    strlcpy(buffer, Undefined::Name(), bufferSize);
+    strlcpy(buffer, k_undefName, bufferSize);
     return requiredTextLengths;
   }
 

@@ -4,6 +4,7 @@
 #include <omg/memory.h>
 #include <poincare/numeric/point_of_interest.h>
 #include <poincare/src/expression/float_helper.h>
+#include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/physical_constant.h>
 
 #include <algorithm>
@@ -47,6 +48,14 @@ Tree* AbstractTreeStack::pushDoubleFloat(double value) {
   pushBlock(FloatHelper::SubFloatAtIndex(value, 6));
   pushBlock(FloatHelper::SubFloatAtIndex(value, 7));
   return result;
+}
+
+Tree* AbstractTreeStack::pushInteger(int32_t value) {
+  return Integer::Push(value);
+}
+
+Tree* AbstractTreeStack::pushInteger(uint32_t value) {
+  return Integer::Push(value);
 }
 
 Tree* AbstractTreeStack::pushUserNamed(TypeBlock type, const char* name,

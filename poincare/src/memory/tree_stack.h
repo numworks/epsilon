@@ -109,6 +109,9 @@ class AbstractTreeStack : public BlockStack {
   Tree* pushFloat(float value) { return pushSingleFloat(value); }
   Tree* pushFloat(double value) { return pushDoubleFloat(value); }
 
+  Tree* pushInteger(int32_t value);
+  Tree* pushInteger(uint32_t value);
+
   Tree* pushUserSymbol(const char* name) {
     return pushUserSymbol(name, strlen(name) + 1);
   }

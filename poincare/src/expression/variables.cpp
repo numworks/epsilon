@@ -30,8 +30,8 @@ ComplexSign Variables::GetComplexSign(const Tree* variable) {
   return ComplexSign::FromValue(variable->nodeValue(1), variable->nodeValue(2));
 }
 
-uint8_t Variables::ToId(const Tree* variables, const char* name,
-                        uint8_t length) {
+uint8_t Variables::Private::ToId(const Tree* variables, const char* name,
+                                 uint8_t length) {
   for (IndexedChild<const Tree*> child : variables->indexedChildren()) {
     if (strcmp(Symbol::GetName(child), name) == 0) {
       return child.index;
@@ -40,18 +40,18 @@ uint8_t Variables::ToId(const Tree* variables, const char* name,
   OMG::unreachable();  // Not found
 }
 
-const Tree* Variables::ToSymbol(const Tree* variables, uint8_t id) {
+const Tree* Variables::Private::ToSymbol(const Tree* variables, uint8_t id) {
   return variables->child(id);
 }
 
 Tree* Variables::GetUserSymbols(const Tree* e) {
   // TODO Is it worth to represent the empty set with nullptr ?
   Tree* set = Set::PushEmpty();
-  GetUserSymbols(e, set);
+  Private::GetUserSymbols(e, set);
   return set;
 }
 
-void Variables::GetUserSymbols(const Tree* e, Tree* set) {
+void Variables::Private::GetUserSymbols(const Tree* e, Tree* set) {
   if (e->isUserSymbol()) {
     return Set::Add(set, e);
   }
@@ -294,7 +294,7 @@ bool Variables::HasVariable(const Tree* e, int id) {
   return false;
 }
 
-void Variables::EnterOrLeaveScope(Tree* e, bool enter, int var) {
+void Variables::Private::EnterOrLeaveScope(Tree* e, bool enter, int var) {
   assert(!e->isRandomized());
   if (e->isVar()) {
     uint8_t id = Id(e);

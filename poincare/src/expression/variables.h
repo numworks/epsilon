@@ -15,71 +15,72 @@ namespace Poincare::Internal {
  *
  * Variable are also given a complex sign restrained by the context. */
 
-class Variables {
+namespace Variables {
+// Used to store a Variable constant tree on the stack.
+class Variable {
  public:
-  // Used to store a Variable constant tree on the stack.
-  class Variable {
-   public:
-    Variable(uint8_t id, ComplexSign sign);
-    operator const Tree*() const { return Tree::FromBlocks(m_blocks); }
-
-   private:
-    constexpr static size_t k_size = TypeBlock::NumberOfMetaBlocks(Type::Var);
-    Block m_blocks[k_size];
-  };
-  // Push a Set with the free user symbols of the expression
-  static Tree* GetUserSymbols(const Tree* e);
-  static bool HasUserSymbols(const Tree* e);
-
-  static bool ProjectLocalVariablesToId(Tree* e, uint8_t depth = 0);
-  static bool BeautifyToName(Tree* e, uint8_t depth = 0);
-  static uint8_t Id(const Tree* variable);
-  static ComplexSign GetComplexSign(const Tree* variable);
-
-  // On projected expressions
-  static bool HasVariables(const Tree* e);
-
-  // On projected expressions
-  static bool HasVariable(const Tree* e, const Tree* variable);
-  static bool HasVariable(const Tree* e, int id);
-
-  // Replace occurrences of variable with value and simplify inside e
-  static bool Replace(Tree* e, const Tree* variable, const Tree* value,
-                      bool simplify);
-  static bool Replace(Tree* e, int id, const Tree* value, bool leave = false,
-                      bool simplify = true);
-  static bool Replace(Tree* e, int id, const TreeRef& value, bool leave = false,
-                      bool simplify = true);
-
-  // Replace symbol with Var<id>
-  static bool ReplaceSymbol(Tree* e, const char* symbol, int id,
-                            ComplexSign sign);
-  static bool ReplaceSymbol(Tree* e, const Tree* symbol, int id,
-                            ComplexSign sign);
-  static void ReplaceUserFunctionOrSequenceWithTree(Tree* e,
-                                                    const Tree* replacement);
-  static bool ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
-                                    const Tree* replacement);
-
-  // Increment all variable indexes
-  static void EnterScope(Tree* e) { return EnterOrLeaveScope(e, true, -1); }
-  // Increment non null variable indexes
-  static void EnterScopeExceptLocalVariable(Tree* e) {
-    return EnterOrLeaveScope(e, true, 0);
-  }
-  // Decrement variables indexes
-  static void LeaveScope(Tree* e) { return EnterOrLeaveScope(e, false, 0); }
-  static bool LeaveScopeWithReplacement(Tree* e, const Tree* value,
-                                        bool simplify,
-                                        bool addDependencyInValue);
+  Variable(uint8_t id, ComplexSign sign);
+  operator const Tree*() const { return Tree::FromBlocks(m_blocks); }
 
  private:
-  // Variables below preserveUnder are considered local and preserved
-  static void EnterOrLeaveScope(Tree* e, bool enter, int preserveUnder);
-  static void GetUserSymbols(const Tree* e, Tree* set);
-  static uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
-  static const Tree* ToSymbol(const Tree* variables, uint8_t id);
+  constexpr static size_t k_size = TypeBlock::NumberOfMetaBlocks(Type::Var);
+  Block m_blocks[k_size];
 };
+
+namespace Private {
+// Variables below preserveUnder are considered local and preserved
+void EnterOrLeaveScope(Tree* e, bool enter, int preserveUnder);
+void GetUserSymbols(const Tree* e, Tree* set);
+uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
+const Tree* ToSymbol(const Tree* variables, uint8_t id);
+}  // namespace Private
+
+// Push a Set with the free user symbols of the expression
+Tree* GetUserSymbols(const Tree* e);
+bool HasUserSymbols(const Tree* e);
+
+bool ProjectLocalVariablesToId(Tree* e, uint8_t depth = 0);
+bool BeautifyToName(Tree* e, uint8_t depth = 0);
+uint8_t Id(const Tree* variable);
+ComplexSign GetComplexSign(const Tree* variable);
+
+// On projected expressions
+bool HasVariables(const Tree* e);
+
+// On projected expressions
+bool HasVariable(const Tree* e, const Tree* variable);
+bool HasVariable(const Tree* e, int id);
+
+// Replace occurrences of variable with value and simplify inside e
+bool Replace(Tree* e, const Tree* variable, const Tree* value, bool simplify);
+bool Replace(Tree* e, int id, const Tree* value, bool leave = false,
+             bool simplify = true);
+bool Replace(Tree* e, int id, const TreeRef& value, bool leave = false,
+             bool simplify = true);
+
+// Replace symbol with Var<id>
+bool ReplaceSymbol(Tree* e, const char* symbol, int id, ComplexSign sign);
+bool ReplaceSymbol(Tree* e, const Tree* symbol, int id, ComplexSign sign);
+void ReplaceUserFunctionOrSequenceWithTree(Tree* e, const Tree* replacement);
+bool ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
+                           const Tree* replacement);
+
+// Increment all variable indexes
+inline void EnterScope(Tree* e) {
+  return Private::EnterOrLeaveScope(e, true, -1);
+}
+// Increment non null variable indexes
+inline void EnterScopeExceptLocalVariable(Tree* e) {
+  return Private::EnterOrLeaveScope(e, true, 0);
+}
+// Decrement variables indexes
+inline void LeaveScope(Tree* e) {
+  return Private::EnterOrLeaveScope(e, false, 0);
+}
+bool LeaveScopeWithReplacement(Tree* e, const Tree* value, bool simplify,
+                               bool addDependencyInValue);
+
+};  // namespace Variables
 
 }  // namespace Poincare::Internal
 #endif

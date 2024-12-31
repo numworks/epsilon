@@ -23,7 +23,24 @@
 
 namespace Poincare::Internal {
 
-using namespace Beautification::Private;
+bool ApplyComplexFormat(Tree* e, Dimension dim,
+                        const ProjectionContext& projectionContext);
+Tree* GetPolarFormat(const Tree* e, const ProjectionContext& projectionContext);
+Tree* GetCartesianFormat(const Tree* e,
+                         const ProjectionContext& projectionContext);
+bool DeepBeautifyAngleFunctions(Tree* e,
+                                const ProjectionContext& projectionContext);
+bool BottomUpBeautifyAngleFunctions(Tree* e,
+                                    const ProjectionContext& projectionContext,
+                                    bool* simplifyParent,
+                                    bool canSystematicReduce = true);
+bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
+                                   bool* simplifyParent,
+                                   bool canSystematicReduce);
+bool ShallowBeautifyPercent(Tree* e);
+bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
+bool ShallowBeautify(Tree* e, void* context);
+bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
 
 float Beautification::DegreeForSortingAddition(const Tree* e,
                                                bool symbolsOnly) {
@@ -78,8 +95,8 @@ float Beautification::DegreeForSortingAddition(const Tree* e,
  * Simplifications are needed, this has to be done before beautification.
  * A bottom-up pattern is also needed because inverse trigonometric must
  * simplify its parents. */
-bool Beautification::Private::DeepBeautifyAngleFunctions(
-    Tree* e, const ProjectionContext& projectionContext) {
+bool DeepBeautifyAngleFunctions(Tree* e,
+                                const ProjectionContext& projectionContext) {
   bool dummy = false;
   /* BottomUpBeautifyAngleFunctions temporarily introduces AngleUnitContext
    * nodes to allow simplification and approximation of beautified angle
@@ -102,9 +119,10 @@ bool Beautification::Private::DeepBeautifyAngleFunctions(
   return changed;
 }
 
-bool Beautification::Private::BottomUpBeautifyAngleFunctions(
-    Tree* e, const ProjectionContext& projectionContext, bool* simplifyParent,
-    bool canSystematicReduce) {
+bool BottomUpBeautifyAngleFunctions(Tree* e,
+                                    const ProjectionContext& projectionContext,
+                                    bool* simplifyParent,
+                                    bool canSystematicReduce) {
   bool modified = false;
   bool mustSystematicReduce = false;
   // Do not use systematicReduction in dependency lists
@@ -127,9 +145,9 @@ bool Beautification::Private::BottomUpBeautifyAngleFunctions(
 }
 
 // At this stage of the simplification, advanced reductions are expected.
-bool Beautification::Private::ShallowBeautifyAngleFunctions(
-    Tree* e, AngleUnit angleUnit, bool* simplifyParent,
-    bool canSystematicReduce) {
+bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
+                                   bool* simplifyParent,
+                                   bool canSystematicReduce) {
   // Beautify System nodes to prevent future simplifications.
   if (e->isTrig()) {
     // Hyperbolic functions
@@ -193,7 +211,7 @@ bool Beautification::Private::ShallowBeautifyAngleFunctions(
   return false;
 }
 
-bool Beautification::Private::ShallowBeautifyPercent(Tree* e) {
+bool ShallowBeautifyPercent(Tree* e) {
   // A% -> A / 100
   if (PatternMatching::MatchReplace(e, KPercentSimple(KA), KDiv(KA, 100_e))) {
     return true;
@@ -255,8 +273,7 @@ bool Beautification::DeepBeautify(Tree* e,
   return changed;
 }
 
-bool Beautification::Private::ShallowBeautifyOppositesDivisionsRoots(
-    Tree* e, void* context) {
+bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context) {
   if (e->isMult() && e->numberOfChildren() >= 2 &&
       Dimension::Get(e->child(1)).isUnit()) {
     // (-A)*U -> -A*U, with U a unit
@@ -298,7 +315,7 @@ bool Beautification::Private::ShallowBeautifyOppositesDivisionsRoots(
 }
 
 // Reverse most system projections to display better expressions
-bool Beautification::Private::ShallowBeautify(Tree* e, void* context) {
+bool ShallowBeautify(Tree* e, void* context) {
   bool changed = false;
   if (e->isAdd()) {
     NAry::Sort(e, Order::OrderType::AdditionBeautification);
@@ -383,8 +400,8 @@ bool Beautification::Private::ShallowBeautify(Tree* e, void* context) {
       changed;
 }
 
-bool Beautification::Private::ApplyComplexFormat(
-    Tree* e, Dimension dim, const ProjectionContext& projectionContext) {
+bool ApplyComplexFormat(Tree* e, Dimension dim,
+                        const ProjectionContext& projectionContext) {
   ComplexFormat format = projectionContext.m_complexFormat;
   if (e->isUndefined() || e->isFactor() || format == ComplexFormat::Real) {
     return false;
@@ -431,8 +448,8 @@ bool Beautification::Private::ApplyComplexFormat(
   return false;
 }
 
-Tree* Beautification::Private::GetPolarFormat(
-    const Tree* e, const ProjectionContext& projectionContext) {
+Tree* GetPolarFormat(const Tree* e,
+                     const ProjectionContext& projectionContext) {
   /* If the expression comes from an approximation, its polar form must stay an
    * approximation. Arg system reductions tends to remove approximated nodes, so
    * we need to re-approximate them. */
@@ -516,8 +533,8 @@ Tree* Beautification::Private::GetPolarFormat(
   return result;
 }
 
-Tree* Beautification::Private::GetCartesianFormat(
-    const Tree* e, const ProjectionContext& projectionContext) {
+Tree* GetCartesianFormat(const Tree* e,
+                         const ProjectionContext& projectionContext) {
   /* Try to turn a scalar x into re(x)+i×arg(x)
    * If re or im stays unreduced, leave x as it was. */
   Tree* result = SharedTreeStack->pushAdd(2);
@@ -629,8 +646,7 @@ Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
   return result;
 }
 
-bool Beautification::Private::ShallowBeautifySpecialDisplays(Tree* e,
-                                                             void* context) {
+bool ShallowBeautifySpecialDisplays(Tree* e, void* context) {
   return Arithmetic::BeautifyFactor(e) || ShallowBeautifyPercent(e);
 }
 

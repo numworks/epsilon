@@ -63,7 +63,6 @@ $(addprefix expression/, \
   dimension.cpp \
   division.cpp \
   equation_solver.cpp \
-  expression.cpp \
   float_helper.cpp \
   infinity.cpp \
   integer.cpp \
@@ -160,6 +159,7 @@ $(addprefix numeric/, \
   zoom.cpp \
 ) \
 $(addprefix pool/, \
+  expression.cpp:-nopool \
   layout.cpp:-nopool \
   layout_cursor.cpp:-nopool \
 ) \

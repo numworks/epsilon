@@ -8,40 +8,37 @@
 
 namespace Poincare::Internal {
 
-class Beautification {
-  friend class Approximation;
+namespace Beautification {
+float DegreeForSortingAddition(const Tree* e, bool symbolsOnly);
+bool AddUnits(Tree* e, ProjectionContext projectionContext);
+bool DeepBeautify(Tree* e, ProjectionContext projectionContext = {});
 
- public:
-  static float DegreeForSortingAddition(const Tree* e, bool symbolsOnly);
-  static bool AddUnits(Tree* e, ProjectionContext projectionContext);
-  static bool DeepBeautify(Tree* e, ProjectionContext projectionContext = {});
+/* Create a Tree to represent a complex value according to the format, for
+ * instance 0+1*i => <Constant i> in Cartesian mode. */
+template <typename T>
+Tree* PushBeautifiedComplex(std::complex<T> value, ComplexFormat complexFormat);
 
-  /* Create a Tree to represent a complex value according to the format, for
-   * instance 0+1*i => <Constant i> in Cartesian mode. */
-  template <typename T>
-  static Tree* PushBeautifiedComplex(std::complex<T> value,
-                                     ComplexFormat complexFormat);
-
- private:
-  static bool ApplyComplexFormat(Tree* e, Dimension dim,
-                                 const ProjectionContext& projectionContext);
-  static Tree* GetPolarFormat(const Tree* e,
-                              const ProjectionContext& projectionContext);
-  static Tree* GetCartesianFormat(const Tree* e,
-                                  const ProjectionContext& projectionContext);
-  static bool DeepBeautifyAngleFunctions(
-      Tree* e, const ProjectionContext& projectionContext);
-  static bool BottomUpBeautifyAngleFunctions(
-      Tree* e, const ProjectionContext& projectionContext, bool* simplifyParent,
-      bool canSystematicReduce = true);
-  static bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
-                                            bool* simplifyParent,
-                                            bool canSystematicReduce);
-  static bool ShallowBeautifyPercent(Tree* e);
-  static bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
-  static bool ShallowBeautify(Tree* e, void* context);
-  static bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
-};
+namespace Private {
+bool ApplyComplexFormat(Tree* e, Dimension dim,
+                        const ProjectionContext& projectionContext);
+Tree* GetPolarFormat(const Tree* e, const ProjectionContext& projectionContext);
+Tree* GetCartesianFormat(const Tree* e,
+                         const ProjectionContext& projectionContext);
+bool DeepBeautifyAngleFunctions(Tree* e,
+                                const ProjectionContext& projectionContext);
+bool BottomUpBeautifyAngleFunctions(Tree* e,
+                                    const ProjectionContext& projectionContext,
+                                    bool* simplifyParent,
+                                    bool canSystematicReduce = true);
+bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
+                                   bool* simplifyParent,
+                                   bool canSystematicReduce);
+bool ShallowBeautifyPercent(Tree* e);
+bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
+bool ShallowBeautify(Tree* e, void* context);
+bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
+}  // namespace Private
+}  // namespace Beautification
 
 }  // namespace Poincare::Internal
 

@@ -18,10 +18,6 @@
 // TODO: used for pushAngleUnitContext
 #include <poincare/src/expression/context.h>
 
-namespace Poincare {
-class Layout;
-}
-
 namespace Poincare::Internal {
 
 /* TreeStack is built on top of BlockStack to interpret contiguous chunk of
@@ -242,7 +238,8 @@ class TreeStack : public TemplatedTreeStack<POINCARE_TREE_STACK_SIZE> {
   static OMG::GlobalBox<TreeStack> SharedTreeStack;
 };
 
-#define SharedTreeStack TreeStack::SharedTreeStack
+inline constexpr OMG::GlobalBox<TreeStack>& SharedTreeStack =
+    TreeStack::SharedTreeStack;
 
 }  // namespace Poincare::Internal
 

@@ -163,7 +163,7 @@ $(addprefix numeric/, \
 $(addprefix pool/, \
   expression.cpp:-nopool \
   layout.cpp:-nopool \
-  layout_cursor.cpp:-nopool \
+  pool_layout_cursor.cpp:-nopool \
 ) \
 $(addprefix probability/, \
   binomial_distribution.cpp \

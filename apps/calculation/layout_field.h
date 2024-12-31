@@ -29,12 +29,10 @@ class LayoutField : public Escher::LayoutField {
     MixedFraction,               // cursor before Empty/Empty
   };
 
-  void resetInsertionCursor() {
-    m_insertionCursor = Poincare::Internal::PoolLayoutCursor();
-  }
+  void resetInsertionCursor() { m_insertionCursor = Poincare::LayoutCursor(); }
   bool handleDivision();
 
-  Poincare::Internal::PoolLayoutCursor m_insertionCursor;
+  Poincare::LayoutCursor m_insertionCursor;
   DivisionCycleStep m_currentStep;
   OMG::Troolean m_divisionCycleWithAns;
 };

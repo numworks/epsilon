@@ -1,15 +1,16 @@
-#ifndef POINCARE_LAYOUT_CURSOR_H
-#define POINCARE_LAYOUT_CURSOR_H
+#ifndef POINCARE_LAYOUT_LAYOUT_CURSOR_H
+#define POINCARE_LAYOUT_LAYOUT_CURSOR_H
 
 #include <omg/directions.h>
 #include <omg/unreachable.h>
-#include <poincare/layout.h>
 #include <poincare/old/context.h>
+#include <poincare/preferences.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include "cursor_motion.h"
 #include "empty_rectangle.h"
+#include "k_tree.h"
 #include "layout_selection.h"
 #include "rack_layout.h"
 #include "render.h"
@@ -157,18 +158,47 @@ class TreeCursor final : public LayoutCursor {
 template <class Cursor>
 class AddEmptyLayoutHelpers {
   void insertLayout(const Tree* l, Poincare::Context* context, bool forceRight,
-                    bool forceLeft, bool collapseSiblings = true);
+                    bool forceLeft, bool collapseSiblings = true) {
+    // Up cast to the template class that should be a cursor
+    static_cast<Cursor&>(*this).insertLayout(l, context, forceRight, forceLeft,
+                                             collapseSiblings);
+  }
 
  public:
-  void addEmptyMatrixLayout(Poincare::Context* context);
-  void addEmptyPowerLayout(Poincare::Context* context);
-  void addEmptySquareRootLayout(Poincare::Context* context);
-  void addEmptySquarePowerLayout(Poincare::Context* context);
-  void addEmptyExponentialLayout(Poincare::Context* context);
-  void addEmptyLogarithmWithBase10Layout(Poincare::Context* context);
-  void addEmptyTenPowerLayout(Poincare::Context* context);
-  void addFractionLayoutAndCollapseSiblings(Poincare::Context* context);
-  void addMixedFractionLayout(Poincare::Context* context);
+  void addEmptyMatrixLayout(Poincare::Context* context) {
+    insertLayout(KEmptyMatrixL, context, false, false);
+  }
+  void addEmptyPowerLayout(Poincare::Context* context) {
+    insertLayout(KSuperscriptL(""_l), context, false, false);
+  }
+  void addEmptySquareRootLayout(Poincare::Context* context) {
+    insertLayout(KSqrtL(""_l), context, false, false);
+  }
+  void addEmptySquarePowerLayout(Poincare::Context* context) {
+    /* Force the cursor right of the layout. */
+    insertLayout(KSuperscriptL("2"_l), context, true, false);
+  }
+  void addEmptyExponentialLayout(Poincare::Context* context) {
+    insertLayout("e"_l ^ KSuperscriptL(""_l), context, false, false);
+  }
+  void addEmptyLogarithmWithBase10Layout(Poincare::Context* context) {
+    const Tree* l =
+        Preferences::SharedPreferences()->logarithmBasePosition() ==
+                Preferences::LogarithmBasePosition::TopLeft
+            ? KPrefixSuperscriptL("10"_l) ^ "log"_l ^
+                  KParenthesesRightTempL(""_l)
+            : "log"_l ^ KSubscriptL("10"_l) ^ KParenthesesRightTempL(""_l);
+    insertLayout(l, context, false, false);
+  }
+  void addEmptyTenPowerLayout(Poincare::Context* context) {
+    insertLayout("×10"_l ^ KSuperscriptL(""_l), context, false, false);
+  }
+  void addFractionLayoutAndCollapseSiblings(Poincare::Context* context) {
+    insertLayout(KFracL(""_l, ""_l), context, false, false);
+  }
+  void addMixedFractionLayout(Poincare::Context* context) {
+    insertLayout(KFracL(""_l, ""_l), context, false, true, false);
+  }
 };
 
 class TreeStackCursor final : public LayoutCursor,
@@ -243,75 +273,6 @@ class TreeStackCursor final : public LayoutCursor,
   void beautifyLeftAction(Poincare::Context* context, const void* /* no arg */);
 
   TreeRef m_cursorRackRef;
-};
-
-class PoolLayoutCursor final : public LayoutCursor,
-                               public AddEmptyLayoutHelpers<PoolLayoutCursor> {
- public:
-  /* This constructor either set the cursor at the leftMost or rightmost
-   * position in the cursorNode. */
-  PoolLayoutCursor(
-      Poincare::Layout rootLayout = Poincare::Layout(),
-      Tree* cursorNode = nullptr,
-      OMG::HorizontalDirection sideOfLayout = OMG::Direction::Right())
-      : LayoutCursor(0, -1), m_rootLayout(rootLayout) {
-    if (cursorNode) {
-      moveCursorToLayout(cursorNode, sideOfLayout);
-    }
-  }
-
-  bool isUninitialized() const {
-    return m_rootLayout.isUninitialized() || LayoutCursor::isUninitialized();
-  }
-
-  Poincare::Layout rootLayout() { return m_rootLayout; }
-  Rack* rootRack() const override {
-    return static_cast<Rack*>(const_cast<Tree*>(m_rootLayout.tree()));
-  }
-  Rack* cursorRack() const override { return rootRack() + m_cursorRack; }
-
-  /* Layout insertion */
-  void insertText(const char* text, Poincare::Context* context = nullptr,
-                  bool forceRight = false, bool forceLeft = false,
-                  bool linearMode = false) {
-    TreeStackCursor::InsertTextContext insertTextContext{text, forceRight,
-                                                         forceLeft, linearMode};
-    execute(&TreeStackCursor::insertText, context, &insertTextContext);
-  }
-  void insertLayout(const Tree* l, Poincare::Context* context = nullptr,
-                    bool forceRight = false, bool forceLeft = false,
-                    bool collapseSiblings = true) {
-    TreeStackCursor::InsertLayoutContext insertLayoutContext{
-        l, forceRight, forceLeft, collapseSiblings};
-    execute(&TreeStackCursor::insertLayout, context, &insertLayoutContext);
-  }
-  void deleteAndResetSelection() {
-    execute(&TreeStackCursor::deleteAndResetSelection);
-  }
-  void performBackspace() { execute(&TreeStackCursor::performBackspace); }
-  void invalidateSizesAndPositions() override {
-    m_rootLayout->invalidAllSizesPositionsAndBaselines();
-  }
-
-  void beautifyLeft(Poincare::Context* context);
-
- private:
-  TreeStackCursor createTreeStackCursor() const {
-    return TreeStackCursor(m_position, m_startOfSelection, cursorRackOffset());
-  }
-  void applyTreeStackCursor(TreeStackCursor cursor);
-  typedef void (TreeStackCursor::*Action)(Poincare::Context* context,
-                                          const void* data);
-  void execute(Action action, Poincare::Context* context = nullptr,
-               const void* data = nullptr);
-  void setCursorRack(Rack* rack) override {
-    // Don't use rack here as it may be invalid during execute
-    m_cursorRack = rack - Rack::From(static_cast<Tree*>(rootRack()));
-  }
-  bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
-
-  Poincare::Layout m_rootLayout;
-  int m_cursorRack;
 };
 
 }  // namespace Poincare::Internal

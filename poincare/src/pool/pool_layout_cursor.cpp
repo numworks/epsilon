@@ -1,5 +1,6 @@
+#include "pool_layout_cursor.h"
+
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/layout/layout_cursor.h>
 
 namespace Poincare::Internal {
 
@@ -58,5 +59,7 @@ void PoolLayoutCursor::execute(Action action, Poincare::Context* context,
       Tree::FromBlocks(SharedTreeStack->firstBlock()));
   SharedTreeStack->flush();
 }
+
+template class AddEmptyLayoutHelpers<PoolLayoutCursor>;
 
 }  // namespace Poincare::Internal

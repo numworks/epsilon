@@ -10,8 +10,8 @@
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/layout_cursor.h>
 #include <poincare/old/context.h>
-#include <poincare/src/layout/layout_cursor.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/xnt.h>
@@ -44,7 +44,7 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
 void LayoutField::ContentView::clearLayout() {
   Layout l = KRackL();
   m_layoutView.setLayout(l);
-  m_cursor = Poincare::Internal::PoolLayoutCursor(
+  m_cursor = Poincare::LayoutCursor(
       l, const_cast<Poincare::Internal::Tree*>(l.tree()));
 }
 
@@ -226,7 +226,7 @@ void LayoutField::reload(KDSize previousSize) {
 }
 
 using LayoutInsertionMethod =
-    void (Poincare::Internal::PoolLayoutCursor::*)(Poincare::Context* context);
+    void (Poincare::LayoutCursor::*)(Poincare::Context* context);
 
 bool LayoutField::insertText(const char* text, bool indentation,
                              bool forceCursorRightOfText) {
@@ -248,19 +248,18 @@ bool LayoutField::insertText(const char* text, bool indentation,
     return false;
   }
 
-  Poincare::Internal::PoolLayoutCursor* cursor = this->cursor();
+  Poincare::LayoutCursor* cursor = this->cursor();
   // Handle special cases
   constexpr Ion::Events::Event specialEvents[] = {
       Ion::Events::Division, Ion::Events::Exp,    Ion::Events::Power,
       Ion::Events::Sqrt,     Ion::Events::Square, Ion::Events::EE};
   constexpr LayoutInsertionMethod handleSpecialEvents[] = {
-      &Poincare::Internal::PoolLayoutCursor::
-          addFractionLayoutAndCollapseSiblings,
-      &Poincare::Internal::PoolLayoutCursor::addEmptyExponentialLayout,
-      &Poincare::Internal::PoolLayoutCursor::addEmptyPowerLayout,
-      &Poincare::Internal::PoolLayoutCursor::addEmptySquareRootLayout,
-      &Poincare::Internal::PoolLayoutCursor::addEmptySquarePowerLayout,
-      &Poincare::Internal::PoolLayoutCursor::addEmptyTenPowerLayout};
+      &Poincare::LayoutCursor::addFractionLayoutAndCollapseSiblings,
+      &Poincare::LayoutCursor::addEmptyExponentialLayout,
+      &Poincare::LayoutCursor::addEmptyPowerLayout,
+      &Poincare::LayoutCursor::addEmptySquareRootLayout,
+      &Poincare::LayoutCursor::addEmptySquarePowerLayout,
+      &Poincare::LayoutCursor::addEmptyTenPowerLayout};
   constexpr int numberOfSpecialEvents = std::size(specialEvents);
   static_assert(numberOfSpecialEvents == std::size(handleSpecialEvents),
                 "Wrong number of layout insertion methods");
@@ -392,11 +391,10 @@ void LayoutField::restoreContent(const char* buffer, size_t size,
       reinterpret_cast<const Poincare::Internal::Tree*>(buffer));
   setLayout(l);
   if (*cursorOffset != -1) {
-    *cursor() =
-        Poincare::Internal::PoolLayoutCursor(l, l.tree() + *cursorOffset);
+    *cursor() = Poincare::LayoutCursor(l, l.tree() + *cursorOffset);
     cursor()->setPosition(*position);
   } else {
-    *cursor() = Poincare::Internal::PoolLayoutCursor(l, l.tree());
+    *cursor() = Poincare::LayoutCursor(l, l.tree());
   }
 }
 

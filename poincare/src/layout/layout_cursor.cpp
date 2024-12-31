@@ -11,7 +11,6 @@
 #include "grid.h"
 #include "indices.h"
 #include "input_beautification.h"
-#include "k_tree.h"
 #include "layout_cursor.h"
 #include "poincare/src/memory/tree_stack.h"
 #include "rack_layout.h"
@@ -151,77 +150,6 @@ bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
     }
   }
   return true;
-}
-
-// AddEmptyLayoutHelpers
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::insertLayout(const Tree* l,
-                                            Poincare::Context* context,
-                                            bool forceRight, bool forceLeft,
-                                            bool collapseSiblings) {
-  // Up cast to the template class that should be a cursor
-  static_cast<C&>(*this).insertLayout(l, context, forceRight, forceLeft,
-                                      collapseSiblings);
-}
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::addEmptyExponentialLayout(
-    Poincare::Context* context) {
-  insertLayout("e"_l ^ KSuperscriptL(""_l), context, false, false);
-}
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::addEmptyLogarithmWithBase10Layout(
-    Poincare::Context* context) {
-  const Tree* l =
-      Preferences::SharedPreferences()->logarithmBasePosition() ==
-              Preferences::LogarithmBasePosition::TopLeft
-          ? KPrefixSuperscriptL("10"_l) ^ "log"_l ^ KParenthesesRightTempL(""_l)
-          : "log"_l ^ KSubscriptL("10"_l) ^ KParenthesesRightTempL(""_l);
-  insertLayout(l, context, false, false);
-}
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::addEmptyTenPowerLayout(
-    Poincare::Context* context) {
-  insertLayout("×10"_l ^ KSuperscriptL(""_l), context, false, false);
-}
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::addEmptyMatrixLayout(
-    Poincare::Context* context) {
-  insertLayout(KEmptyMatrixL, context, false, false);
-}
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::addEmptySquareRootLayout(
-    Poincare::Context* context) {
-  insertLayout(KSqrtL(""_l), context, false, false);
-}
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::addEmptyPowerLayout(Poincare::Context* context) {
-  insertLayout(KSuperscriptL(""_l), context, false, false);
-}
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::addEmptySquarePowerLayout(
-    Poincare::Context* context) {
-  /* Force the cursor right of the layout. */
-  insertLayout(KSuperscriptL("2"_l), context, true, false);
-}
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::addFractionLayoutAndCollapseSiblings(
-    Poincare::Context* context) {
-  insertLayout(KFracL(""_l, ""_l), context, false, false);
-}
-
-template <class C>
-void AddEmptyLayoutHelpers<C>::addMixedFractionLayout(
-    Poincare::Context* context) {
-  insertLayout(KFracL(""_l, ""_l), context, false, true, false);
 }
 
 // TreeStackCursor
@@ -1099,8 +1027,5 @@ void TreeStackCursor::balanceAutocompletedBracketsAndKeepAValidCursor() {
   AutocompletedPair::BalanceBrackets(rootRack(), ref, &m_position);
   m_cursorRackRef = static_cast<Tree*>(ref);
 }
-
-template class AddEmptyLayoutHelpers<TreeStackCursor>;
-template class AddEmptyLayoutHelpers<PoolLayoutCursor>;
 
 }  // namespace Poincare::Internal

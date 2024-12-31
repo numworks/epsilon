@@ -3,7 +3,7 @@
 
 #include <escher/glyphs_view.h>
 #include <poincare/layout.h>
-#include <poincare/src/layout/layout_cursor.h>
+#include <poincare/layout_cursor.h>
 
 namespace Escher {
 
@@ -56,7 +56,7 @@ class LayoutView : public GlyphsView {
 
 class LayoutViewWithCursor : public LayoutView {
  public:
-  LayoutViewWithCursor(Poincare::Internal::PoolLayoutCursor* cursor,
+  LayoutViewWithCursor(Poincare::LayoutCursor* cursor,
                        KDGlyph::Format format = {})
       : LayoutView(format), m_cursor(cursor), m_editing(true) {
     assert(cursor);
@@ -71,7 +71,7 @@ class LayoutViewWithCursor : public LayoutView {
   Poincare::Internal::LayoutCursor* cursor() const override {
     return m_editing ? m_cursor : nullptr;
   }
-  Poincare::Internal::PoolLayoutCursor* m_cursor;
+  Poincare::LayoutCursor* m_cursor;
   bool m_editing;
 };
 

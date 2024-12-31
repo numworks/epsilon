@@ -17,9 +17,9 @@ _sources_poincare_minimal := $(addprefix src/, \
 _sources_poincare_checkpoint := $(addprefix src/, \
   $(addsuffix :-nocheckpoint, \
     memory/tree_stack_checkpoint.cpp \
-    old/pool_checkpoint.cpp \
-    old/circuit_breaker_checkpoint.cpp \
-    old/exception_checkpoint.cpp \
+    old/pool_checkpoint.cpp:-nopool \
+    old/circuit_breaker_checkpoint.cpp:-nopool \
+    old/exception_checkpoint.cpp:-nopool \
   ) \
   old/pool_checkpoint_dummy.cpp:+nocheckpoint \
 )
@@ -120,7 +120,7 @@ $(addprefix layout/, \
   layout_selection.cpp \
   layout_span.cpp \
   layout_span_decoder.cpp \
-  layout_memoization.cpp \
+  layout_memoization.cpp:-nopool \
   layouter.cpp \
   multiplication_symbol.cpp \
   parser.cpp \
@@ -186,6 +186,7 @@ $(addprefix probability/, \
   uniform_distribution.cpp \
 ) \
 $(addprefix regression/, \
+  $(addsuffix :-nopool, \
   affine_regression.cpp \
   cubic_regression.cpp \
   exponential_regression.cpp \
@@ -202,7 +203,7 @@ $(addprefix regression/, \
   series.cpp \
   transformed_regression.cpp \
   trigonometric_regression.cpp \
-) \
+)) \
   additional_results_helper.cpp:-nopool \
   comparison_operator.cpp \
   print.cpp \

@@ -10,6 +10,8 @@
 
 namespace Poincare::Internal {
 
+static constexpr size_t k_maxNumberOfChildren = 255;
+
 void NAry::AddChildAtIndex(Tree* nary, Tree* child, int index) {
   assert(nary->isNAry());
   Tree* insertionPoint =

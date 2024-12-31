@@ -2,7 +2,7 @@
 #define GRAPH_POINTS_OF_INTEREST_CACHE
 
 #include <ion/storage/record.h>
-#include <poincare/numeric/point_of_interest.h>
+#include <poincare/numeric/point_of_interest_list.h>
 
 namespace Graph {
 

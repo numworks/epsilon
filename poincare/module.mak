@@ -1,5 +1,5 @@
 _sources_poincare_minimal := $(addprefix src/, \
-  api.cpp \
+  api.cpp:-nopool \
   cas_disabled.cpp:-cas \
   cas_enabled.cpp:+cas \
   init.cpp:-nopool \
@@ -149,7 +149,7 @@ $(addprefix numeric/, \
   beta_function.cpp \
   erf_inv.cpp \
   matrix_array.cpp \
-  point_of_interest.cpp \
+  point_of_interest_list.cpp:-nopool \
   random.cpp \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \

@@ -9,12 +9,11 @@
 
 namespace Poincare::Internal {
 
-class Parser final {
- public:
-  static Tree* Parse(const Tree* l, Poincare::Context* context,
-                     ParsingContext::ParsingMethod method =
-                         ParsingContext::ParsingMethod::Classic);
-};
+namespace Parser {
+Tree* Parse(const Tree* l, Poincare::Context* context,
+            ParsingContext::ParsingMethod method =
+                ParsingContext::ParsingMethod::Classic);
+}
 
 }  // namespace Poincare::Internal
 

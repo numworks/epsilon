@@ -3,6 +3,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/round.h>
+#include <poincare/helpers/trigonometry.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/sign.h>

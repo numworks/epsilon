@@ -3,11 +3,11 @@
 #include <poincare/cas.h>
 #include <poincare/helpers/store.h>
 #include <poincare/helpers/symbol.h>
+#include <poincare/helpers/trigonometry.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
-#include <poincare/trigonometry.h>
 
 using namespace Poincare;
 using namespace Shared;

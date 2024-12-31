@@ -106,6 +106,7 @@ $(addprefix helpers/, \
   scatter_plot_iterable.cpp \
   store.cpp \
   symbol.cpp \
+  trigonometry.cpp:-nopool \
 ) \
 $(addprefix layout/, \
   autocompleted_pair.cpp \

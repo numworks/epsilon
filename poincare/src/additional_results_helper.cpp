@@ -63,12 +63,8 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
   if (!reductionSuccess ||
       simplifiedAngle->hasDescendantSatisfying(
           [](const Tree* e) { return e->isFrac(); }) ||
-      shouldOnlyDisplayApproximation(
-          exactAngle,
-          UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
-          UserExpression::Builder(
-              static_cast<const Tree*>(approximateAngleTree)),
-          ctx->m_context)) {
+      shouldOnlyDisplayApproximation(exactAngle, simplifiedAngle,
+                                     approximateAngleTree, ctx->m_context)) {
     if (directTrigonometry) {
       assert(!approximateAngleTree);
       /* Do not approximate the FracPart, which could lead to truncation error

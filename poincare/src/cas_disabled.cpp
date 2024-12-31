@@ -1,4 +1,5 @@
 #include <poincare/cas.h>
+#include <poincare/preferences.h>
 
 #include "expression/dimension.h"
 #include "expression/units/unit.h"
@@ -89,12 +90,12 @@ bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
 
 bool CAS::Enabled() { return false; }
 
-bool CAS::NeverDisplayReductionOfInput(const UserExpression& input,
+bool CAS::NeverDisplayReductionOfInput(const Internal::Tree* input,
                                        Context* context) {
-  if (input.isUninitialized()) {
+  if (!input) {
     return false;
   }
-  return input.tree()->hasDescendantSatisfying([](const Tree* t) {
+  return input->hasDescendantSatisfying([](const Tree* t) {
     return t->isOfType({
                Type::PhysicalConstant,
                Type::RandInt,
@@ -113,13 +114,12 @@ bool CAS::NeverDisplayReductionOfInput(const UserExpression& input,
 }
 
 bool CAS::ShouldOnlyDisplayApproximation(
-    const UserExpression& input, const UserExpression& exactOutput,
-    const UserExpression& approximateOutput, Context* context) {
+    const Internal::Tree* input, const Internal::Tree* exactOutput,
+    const Internal::Tree* approximateOutput, Context* context) {
   return NeverDisplayReductionOfInput(input, context) ||
          neverDisplayExactOutput(exactOutput, context) ||
-         (!approximateOutput.isUninitialized() &&
-          neverDisplayExactExpressionOfApproximation(approximateOutput,
-                                                     context));
+         (approximateOutput && neverDisplayExactExpressionOfApproximation(
+                                   approximateOutput, context));
 }
 
 }  // namespace Poincare

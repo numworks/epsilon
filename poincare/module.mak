@@ -62,6 +62,7 @@ $(addprefix expression/, \
   derivation.cpp \
   dimension.cpp \
   division.cpp \
+  equal_sign.cpp \
   equation_solver.cpp \
   float_helper.cpp \
   infinity.cpp \
@@ -101,7 +102,7 @@ $(addprefix function_properties/, \
   helper.cpp \
 ) \
 $(addprefix helpers/, \
-  expression_equal_sign.cpp \
+  expression_equal_sign.cpp:-nopool \
   layout.cpp \
   scatter_plot_iterable.cpp \
   store.cpp \

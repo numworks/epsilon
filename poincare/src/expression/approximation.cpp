@@ -41,10 +41,12 @@
 #define FALLBACK_ON_FLOAT(F)
 #endif
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Approximation {
+
+using namespace Private;
 
 template <typename T>
-Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
+Tree* ToTree(const Tree* e, Parameters params, Context context) {
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return KUndefUnhandledDimension->cloneTree();
   }
@@ -77,8 +79,7 @@ Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
 }
 
 template <typename T>
-std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
-                                         Context context) {
+std::complex<T> ToComplex(const Tree* e, Parameters params, Context context) {
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return NAN;
   }
@@ -94,9 +95,8 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
 };
 
 template <typename T>
-PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
-                                                Parameters params,
-                                                Context context) {
+PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameters params,
+                                 Context context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
@@ -124,17 +124,15 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
 };
 
 template <typename T>
-PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e, T abscissa,
-                                                Parameters params,
-                                                Context context) {
+PointOrScalar<T> ToPointOrScalar(const Tree* e, T abscissa, Parameters params,
+                                 Context context) {
   LocalContext localContext(abscissa, context.m_localContext);
   context.m_localContext = &localContext;
   return ToPointOrScalar<T>(e, params, context);
 }
 
 template <typename T>
-bool Approximation::ToBoolean(const Tree* e, Parameters params,
-                              Context context) {
+bool ToBoolean(const Tree* e, Parameters params, Context context) {
   assert(Dimension::DeepCheck(e) && Dimension::Get(e).isBoolean());
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
@@ -147,7 +145,7 @@ bool Approximation::ToBoolean(const Tree* e, Parameters params,
 };
 
 template <typename T>
-T Approximation::To(const Tree* e, Parameters params, Context context) {
+T To(const Tree* e, Parameters params, Context context) {
   // Units are tolerated in scalar approximation (replaced with SI ratios).
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
@@ -160,23 +158,21 @@ T Approximation::To(const Tree* e, Parameters params, Context context) {
 };
 
 template <typename T>
-T Approximation::To(const Tree* e, T abscissa, Parameters params,
-                    Context context) {
+T To(const Tree* e, T abscissa, Parameters params, Context context) {
   LocalContext localContext(abscissa, context.m_localContext);
   context.m_localContext = &localContext;
   return To<T>(e, params, context);
 }
 
 template <typename T>
-Coordinate2D<T> Approximation::ToPoint(const Tree* e, Parameters params,
-                                       Context context) {
+Coordinate2D<T> ToPoint(const Tree* e, Parameters params, Context context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
          Dimension::Get(e, context.m_symbolContext).isPoint());
   return ToPointOrScalar<T>(e, params, context).toPoint();
 };
 
 template <typename T>
-Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
+Tree* Private::ToComplexTree(const Tree* e, const Context* ctx) {
   std::complex<T> value = PrivateToComplex<T>(e, ctx);
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
@@ -200,8 +196,8 @@ Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
-                                           Context& context) {
+Tree* Private::PrepareTreeAndContext(const Tree* e, Parameters params,
+                                     Context& context) {
   // Only clone if necessary
   Tree* clone = nullptr;
   if (params.projectLocalVariables) {
@@ -232,8 +228,7 @@ Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
 }
 
 template <typename T>
-Tree* Approximation::PrivateToTree(const Tree* e, Dimension dim,
-                                   const Context* ctx) {
+Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
   /* TODO_PCJ: not all approximation methods come here, but this assert should
    * always be called when approximating. */
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
@@ -259,7 +254,7 @@ Tree* Approximation::PrivateToTree(const Tree* e, Dimension dim,
 /* Helpers */
 
 template <typename T>
-T Approximation::FloatBinomial(T n, T k) {
+T FloatBinomial(T n, T k) {
   if (k != std::round(k)) {
     return NAN;
   }
@@ -327,8 +322,8 @@ static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
 
 /* Return highest order of undefined dependencies if there is at least one, zero
  * otherwise */
-std::complex<float> Approximation::HelperUndefDependencies(const Tree* dep,
-                                                           const Context* ctx) {
+std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
+                                                     const Context* ctx) {
   // Dependency children may have different dimensions.
   std::complex<float> undefValue = std::complex<float>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
@@ -358,15 +353,14 @@ std::complex<float> Approximation::HelperUndefDependencies(const Tree* dep,
 }
 
 template <typename T>
-std::complex<T> Approximation::UndefDependencies(const Tree* dep,
-                                                 const Context* ctx) {
+std::complex<T> Private::UndefDependencies(const Tree* dep,
+                                           const Context* ctx) {
   std::complex<float> res = HelperUndefDependencies(dep, ctx);
   return IsNonReal(res) ? NonReal<T>() : std::complex<T>(res);
 }
 
 template <typename T>
-std::complex<T> Approximation::PrivateToComplex(const Tree* e,
-                                                const Context* ctx) {
+std::complex<T> Private::PrivateToComplex(const Tree* e, const Context* ctx) {
   std::complex<T> value = ToComplexSwitch<T>(e, ctx);
   FALLBACK_ON_FLOAT(PrivateToComplex);
   if (ctx && ctx->m_complexFormat == ComplexFormat::Real && value.imag() != 0 &&
@@ -383,8 +377,7 @@ std::complex<T> Approximation::PrivateToComplex(const Tree* e,
 }
 
 template <typename T>
-std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
-                                               const Context* ctx) {
+std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
   FALLBACK_ON_FLOAT(ToComplexSwitch);
   /* TODO: the second part of this function and several ifs in different cases
    * act differently / more precisely on reals. We should have a dedicated,
@@ -472,23 +465,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       return NeglectRealOrImaginaryPartIfNegligible(std::sqrt(c), c);
     }
     case Type::Root: {
-      std::complex<T> base = PrivateToComplex<T>(e->child(0), ctx);
-      std::complex<T> exp = PrivateToComplex<T>(e->child(1), ctx);
-      /* If the complexFormat is Real, we look for nth root of form root(x,q)
-       * with x real and q integer because they might have a real form which
-       * does not correspond to the principal angle. */
-      if (ctx && ctx->m_complexFormat == Preferences::ComplexFormat::Real &&
-          exp.imag() == 0.0 && std::round(exp.real()) == exp.real()) {
-        // root(x, q) with q integer and x real
-        std::complex<T> result =
-            ComputeNotPrincipalRealRootOfRationalPow<T>(base, 1, exp.real());
-        if (!Undefined::IsUndefined(result)) {
-          return result;
-        }
-      }
-      return ComputeComplexPower<T>(
-          base, std::complex<T>(1.0) / (exp),
-          ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
+      return ApproximateRoot<T>(e, ctx);
     }
     case Type::Exp:
       return std::exp(PrivateToComplex<T>(e->child(0), ctx));
@@ -1087,7 +1064,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
 }
 
 template <typename T>
-bool Approximation::PrivateToBoolean(const Tree* e, const Context* ctx) {
+bool Private::PrivateToBoolean(const Tree* e, const Context* ctx) {
   FALLBACK_ON_FLOAT(PrivateToBoolean);
   if (e->isTrue()) {
     return true;
@@ -1162,7 +1139,7 @@ bool Approximation::PrivateToBoolean(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-Tree* Approximation::ToList(const Tree* e, const Context* ctx) {
+Tree* Private::ToList(const Tree* e, const Context* ctx) {
   FALLBACK_ON_FLOAT(ToList);
   assert(ctx);
   Dimension dimension = Dimension::Get(e, ctx->m_symbolContext);
@@ -1178,7 +1155,7 @@ Tree* Approximation::ToList(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-Tree* Approximation::PrivateToPoint(const Tree* e, const Context* ctx) {
+Tree* Private::PrivateToPoint(const Tree* e, const Context* ctx) {
   FALLBACK_ON_FLOAT(PrivateToPoint);
   assert(ctx);
   Context tempCtx(*ctx);
@@ -1191,7 +1168,7 @@ Tree* Approximation::PrivateToPoint(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
+Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
   /* TODO: Normal matrix nodes and operations with approximated children are
    * used to carry matrix approximation. A dedicated node that knows its
    * children have a fixed size would be more efficient. */
@@ -1321,7 +1298,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-T Approximation::PrivateTo(const Tree* e, const Context* ctx) {
+T Private::PrivateTo(const Tree* e, const Context* ctx) {
 #if ASSERTIONS
   Dimension dim = Dimension::Get(e, ctx->m_symbolContext);
 #endif
@@ -1334,7 +1311,7 @@ T Approximation::PrivateTo(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-T Approximation::ToLocalContext(const Tree* e, const Context* ctx, T x) {
+T ToLocalContext(const Tree* e, const Context* ctx, T x) {
   assert(ctx);
   Context ctxCopy(*ctx);
   LocalContext localCtx(x, ctxCopy.m_localContext);
@@ -1343,8 +1320,8 @@ T Approximation::ToLocalContext(const Tree* e, const Context* ctx, T x) {
 }
 
 template <typename T>
-const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise,
-                                                 const Context* ctx) {
+const Tree* Private::SelectPiecewiseBranch(const Tree* piecewise,
+                                           const Context* ctx) {
   assert(piecewise->isPiecewise());
   int n = piecewise->numberOfChildren();
   int i = 0;
@@ -1365,7 +1342,7 @@ const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise,
 /* TODO: users of this function just want to test equality of branch and do not
  * need the index */
 template <typename T>
-int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
+int IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   assert(piecewise->isPiecewise());
   /* TODO: Without randomContext, randomized nodes in piecewise's condition will
    *       approximate to NAN. */
@@ -1376,8 +1353,11 @@ int Approximation::IndexOfActivePiecewiseBranchAt(const Tree* piecewise, T x) {
   return branch == KUndef ? -1 : piecewise->indexOfChild(branch);
 }
 
-bool Approximation::CanApproximate(const Tree* e,
-                                   int firstNonApproximableVarId) {
+bool CanApproximate(const Tree* e, bool approxLocalVar) {
+  return Private::CanApproximate(e, 0);
+}
+
+bool Private::CanApproximate(const Tree* e, int firstNonApproximableVarId) {
   if (e->isRandomized() || e->isUserSymbol() || e->isUserFunction() ||
       (e->isVar() && Variables::Id(e) >= firstNonApproximableVarId) ||
       e->isDepList()) {
@@ -1405,19 +1385,19 @@ bool Approximation::CanApproximate(const Tree* e,
 }
 
 template <>
-bool Approximation::SkipApproximation<float>(TypeBlock type) {
+bool Private::SkipApproximation<float>(TypeBlock type) {
   return type.isSingleFloat() || type.isComplexI();
 }
 
 template <>
-bool Approximation::SkipApproximation<double>(TypeBlock type) {
+bool Private::SkipApproximation<double>(TypeBlock type) {
   return type.isDoubleFloat() || type.isComplexI();
 }
 
 template <typename T>
-bool Approximation::SkipApproximation(TypeBlock type, TypeBlock parentType,
-                                      int indexInParent,
-                                      bool previousChildWasApproximated) {
+bool Private::SkipApproximation(TypeBlock type, TypeBlock parentType,
+                                int indexInParent,
+                                bool previousChildWasApproximated) {
   if (SkipApproximation<T>(type)) {
     return true;
   }
@@ -1443,7 +1423,7 @@ bool Approximation::SkipApproximation(TypeBlock type, TypeBlock parentType,
 }
 
 template <typename T>
-bool Approximation::ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
+bool ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
   // Prevent float to double conversion
   if (sizeof(T) == sizeof(double) &&
       e->hasDescendantSatisfying(
@@ -1495,9 +1475,9 @@ static bool MergeChildrenOfMultOrAdd(Tree* e) {
 }
 
 template <typename T>
-bool Approximation::PrivateApproximateAndReplaceEveryScalar(
-    Tree* e, const Context* ctx) {
-  if (CanApproximate(e) &&
+bool Private::PrivateApproximateAndReplaceEveryScalar(Tree* e,
+                                                      const Context* ctx) {
+  if (Approximation::CanApproximate(e) &&
       Dimension::IsNonListScalar(e, ctx->m_symbolContext)) {
     e->moveTreeOverTree(PrivateToTree<T>(e, Dimension(), ctx));
     return true;
@@ -1520,7 +1500,7 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(
   return changed;
 }
 
-Tree* Approximation::ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
+Tree* ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
   if (GetComplexSign(e).isReal()) {
     return e->cloneTree();
   }
@@ -1537,88 +1517,69 @@ Tree* Approximation::ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
  * correct ToComplex<T> as needed since the code is mostly independent of the
  * float type used in the tree. */
 
-template Tree* Approximation::ToTree<float>(const Tree*, Parameters, Context);
-template Tree* Approximation::ToTree<double>(const Tree*, Parameters, Context);
+template Tree* ToTree<float>(const Tree*, Parameters, Context);
+template Tree* ToTree<double>(const Tree*, Parameters, Context);
 
-template std::complex<float> Approximation::ToComplex(const Tree*, Parameters,
-                                                      Context);
-template std::complex<double> Approximation::ToComplex(const Tree*, Parameters,
-                                                       Context);
+template std::complex<float> ToComplex(const Tree*, Parameters, Context);
+template std::complex<double> ToComplex(const Tree*, Parameters, Context);
 
-template PointOrScalar<float> Approximation::ToPointOrScalar(const Tree*,
-                                                             Parameters,
-                                                             Context);
-template PointOrScalar<double> Approximation::ToPointOrScalar(const Tree*,
-                                                              Parameters,
-                                                              Context);
-
-template PointOrScalar<float> Approximation::ToPointOrScalar(const Tree*, float,
-                                                             Parameters,
-                                                             Context);
-template PointOrScalar<double> Approximation::ToPointOrScalar(const Tree*,
-                                                              double,
-                                                              Parameters,
-                                                              Context);
-
-template bool Approximation::ToBoolean<float>(const Tree*, Parameters, Context);
-template bool Approximation::ToBoolean<double>(const Tree*, Parameters,
+template PointOrScalar<float> ToPointOrScalar(const Tree*, Parameters, Context);
+template PointOrScalar<double> ToPointOrScalar(const Tree*, Parameters,
                                                Context);
 
-template float Approximation::To(const Tree*, Parameters, Context);
-template double Approximation::To(const Tree*, Parameters, Context);
+template PointOrScalar<float> ToPointOrScalar(const Tree*, float, Parameters,
+                                              Context);
+template PointOrScalar<double> ToPointOrScalar(const Tree*, double, Parameters,
+                                               Context);
 
-template float Approximation::To(const Tree*, float, Parameters, Context);
-template double Approximation::To(const Tree*, double, Parameters, Context);
+template bool ToBoolean<float>(const Tree*, Parameters, Context);
+template bool ToBoolean<double>(const Tree*, Parameters, Context);
 
-template Coordinate2D<float> Approximation::ToPoint(const Tree*, Parameters,
-                                                    Context);
-template Coordinate2D<double> Approximation::ToPoint(const Tree*, Parameters,
-                                                     Context);
+template float To(const Tree*, Parameters, Context);
+template double To(const Tree*, Parameters, Context);
 
-template float Approximation::FloatBinomial(float, float);
-template double Approximation::FloatBinomial(double, double);
+template float To(const Tree*, float, Parameters, Context);
+template double To(const Tree*, double, Parameters, Context);
 
-template std::complex<float> Approximation::PrivateToComplex(const Tree*,
-                                                             const Context*);
-template std::complex<double> Approximation::PrivateToComplex(const Tree*,
-                                                              const Context*);
+template Coordinate2D<float> ToPoint(const Tree*, Parameters, Context);
+template Coordinate2D<double> ToPoint(const Tree*, Parameters, Context);
 
-template Tree* Approximation::PrivateToPoint<float>(const Tree*,
-                                                    const Context*);
-template Tree* Approximation::PrivateToPoint<double>(const Tree*,
-                                                     const Context*);
+template float FloatBinomial(float, float);
+template double FloatBinomial(double, double);
 
-template float Approximation::PrivateTo(const Tree*, const Context*);
-template double Approximation::PrivateTo(const Tree*, const Context*);
+template std::complex<float> Private::PrivateToComplex(const Tree*,
+                                                       const Context*);
+template std::complex<double> Private::PrivateToComplex(const Tree*,
+                                                        const Context*);
 
-template float Approximation::ToLocalContext(const Tree*, const Context*,
-                                             float);
-template double Approximation::ToLocalContext(const Tree*, const Context*,
-                                              double);
+template Tree* Private::PrivateToPoint<float>(const Tree*, const Context*);
+template Tree* Private::PrivateToPoint<double>(const Tree*, const Context*);
 
-template int Approximation::IndexOfActivePiecewiseBranchAt(const Tree*, float);
-template int Approximation::IndexOfActivePiecewiseBranchAt(const Tree*, double);
+template float Private::PrivateTo(const Tree*, const Context*);
+template double Private::PrivateTo(const Tree*, const Context*);
 
-template bool Approximation::ApproximateAndReplaceEveryScalar<float>(Tree*,
-                                                                     Context);
-template bool Approximation::ApproximateAndReplaceEveryScalar<double>(Tree*,
-                                                                      Context);
+template float ToLocalContext(const Tree*, const Context*, float);
+template double ToLocalContext(const Tree*, const Context*, double);
 
-template bool Approximation::PrivateApproximateAndReplaceEveryScalar<float>(
+template int IndexOfActivePiecewiseBranchAt(const Tree*, float);
+template int IndexOfActivePiecewiseBranchAt(const Tree*, double);
+
+template bool ApproximateAndReplaceEveryScalar<float>(Tree*, Context);
+template bool ApproximateAndReplaceEveryScalar<double>(Tree*, Context);
+
+template bool Private::PrivateApproximateAndReplaceEveryScalar<float>(
     Tree*, const Context*);
-template bool Approximation::PrivateApproximateAndReplaceEveryScalar<double>(
+template bool Private::PrivateApproximateAndReplaceEveryScalar<double>(
     Tree*, const Context*);
 
-template bool Approximation::SkipApproximation<float>(TypeBlock, TypeBlock, int,
-                                                      bool);
-template bool Approximation::SkipApproximation<double>(TypeBlock, TypeBlock,
-                                                       int, bool);
+template bool Private::SkipApproximation<float>(TypeBlock, TypeBlock, int,
+                                                bool);
+template bool Private::SkipApproximation<double>(TypeBlock, TypeBlock, int,
+                                                 bool);
 
-template Tree* Approximation::PrepareTreeAndContext<float>(const Tree*,
-                                                           Parameters,
-                                                           Context&);
-template Tree* Approximation::PrepareTreeAndContext<double>(const Tree*,
-                                                            Parameters,
-                                                            Context&);
+template Tree* Private::PrepareTreeAndContext<float>(const Tree*, Parameters,
+                                                     Context&);
+template Tree* Private::PrepareTreeAndContext<double>(const Tree*, Parameters,
+                                                      Context&);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Approximation

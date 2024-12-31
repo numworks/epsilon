@@ -1,11 +1,10 @@
 #include "approximation.h"
 #include "matrix.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
-std::complex<T> Approximation::ApproximateTrace(const Tree* matrix,
-                                                const Context* ctx) {
+std::complex<T> ApproximateTrace(const Tree* matrix, const Context* ctx) {
   int n = Matrix::NumberOfRows(matrix);
   assert(n == Matrix::NumberOfColumns(matrix));
   std::complex<T> result = std::complex<T>(0);
@@ -23,9 +22,9 @@ std::complex<T> Approximation::ApproximateTrace(const Tree* matrix,
   return result;
 }
 
-template std::complex<float> Approximation::ApproximateTrace<float>(
-    const Tree* matrix, const Context* ctx);
-template std::complex<double> Approximation::ApproximateTrace<double>(
-    const Tree* matrix, const Context* ctx);
+template std::complex<float> ApproximateTrace<float>(const Tree* matrix,
+                                                     const Context* ctx);
+template std::complex<double> ApproximateTrace<double>(const Tree* matrix,
+                                                       const Context* ctx);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Approximation::Private

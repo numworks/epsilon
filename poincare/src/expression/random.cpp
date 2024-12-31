@@ -51,8 +51,8 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
 }
 
 template <typename T>
-T Approximation::ApproximateRandom(const Tree* randomTree,
-                                   const Context* approxCtx) {
+T Approximation::Private::ApproximateRandom(const Tree* randomTree,
+                                            const Context* approxCtx) {
   uint8_t seed = Random::GetSeed(randomTree);
   if (randomTree->isRandIntNoRep()) {
     assert(approxCtx->m_listElement >= 0);
@@ -79,8 +79,8 @@ T Approximation::ApproximateRandom(const Tree* randomTree,
 }
 
 template <typename T>
-T Approximation::ApproximateRandomHelper(const Tree* randomTree,
-                                         const Context* ctx) {
+T Approximation::Private::ApproximateRandomHelper(const Tree* randomTree,
+                                                  const Context* ctx) {
   if (randomTree->isRandom()) {
     return Poincare::random<T>();
   } else if (randomTree->isRandInt()) {
@@ -148,14 +148,14 @@ T Random::RandomInt(T a, T b) {
   return std::floor(rand * range + a);
 }
 
-template float Approximation::ApproximateRandom<float>(const Tree*,
-                                                       const Context*);
-template double Approximation::ApproximateRandom<double>(const Tree*,
-                                                         const Context*);
-template float Approximation::ApproximateRandomHelper<float>(const Tree*,
-                                                             const Context*);
-template double Approximation::ApproximateRandomHelper<double>(const Tree*,
-                                                               const Context*);
+template float Approximation::Private::ApproximateRandom<float>(const Tree*,
+                                                                const Context*);
+template double Approximation::Private::ApproximateRandom<double>(
+    const Tree*, const Context*);
+template float Approximation::Private::ApproximateRandomHelper<float>(
+    const Tree*, const Context*);
+template double Approximation::Private::ApproximateRandomHelper<double>(
+    const Tree*, const Context*);
 template float Random::RandomInt<float>(float, float);
 template double Random::RandomInt<double>(double, double);
 

@@ -3,12 +3,20 @@
 #include "rational.h"
 #include "undefined.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
-std::complex<T> Approximation::ComputeComplexPower(
-    const std::complex<T> c, const std::complex<T> d,
-    ComplexFormat complexFormat) {
+static std::complex<T> ComputeComplexPower(const std::complex<T> c,
+                                           const std::complex<T> d,
+                                           ComplexFormat complexFormat);
+template <typename T>
+static std::complex<T> ComputeNotPrincipalRealRootOfRationalPow(
+    const std::complex<T> c, T p, T q);
+
+template <typename T>
+std::complex<T> ComputeComplexPower(const std::complex<T> c,
+                                    const std::complex<T> d,
+                                    ComplexFormat complexFormat) {
   constexpr T zero = static_cast<T>(0.0);
 
   if (c.imag() == zero && c.real() < zero &&
@@ -86,7 +94,7 @@ std::complex<T> Approximation::ComputeComplexPower(
 }
 
 template <typename T>
-std::complex<T> Approximation::ComputeNotPrincipalRealRootOfRationalPow(
+std::complex<T> ComputeNotPrincipalRealRootOfRationalPow(
     const std::complex<T> c, T p, T q) {
   // Assert p and q are in fact integers
   assert(std::round(p) == p);
@@ -118,9 +126,8 @@ std::complex<T> Approximation::ComputeNotPrincipalRealRootOfRationalPow(
 }
 
 template <typename T>
-std::complex<T> Approximation::ApproximatePower(const Tree* power,
-                                                const Context* ctx,
-                                                ComplexFormat complexFormat) {
+std::complex<T> ApproximatePower(const Tree* power, const Context* ctx,
+                                 ComplexFormat complexFormat) {
   const Tree* base = power->child(0);
   const Tree* exponent = power->child(1);
   std::complex<T> c = PrivateToComplex<T>(base, ctx);
@@ -158,18 +165,38 @@ defaultApproximation:
                                 complexFormat);
 }
 
-template std::complex<float> Approximation::ApproximatePower(const Tree*,
-                                                             const Context*,
-                                                             ComplexFormat);
-template std::complex<double> Approximation::ApproximatePower(const Tree*,
-                                                              const Context*,
-                                                              ComplexFormat);
+template <typename T>
+std::complex<T> ApproximateRoot(const Tree* root, const Context* ctx) {
+  std::complex<T> base = PrivateToComplex<T>(root->child(0), ctx);
+  std::complex<T> exp = PrivateToComplex<T>(root->child(1), ctx);
+  /* If the complexFormat is Real, we look for nth root of form root(x,q)
+   * with x real and q integer because they might have a real form which
+   * does not correspond to the principal angle. */
+  if (ctx && ctx->m_complexFormat == ComplexFormat::Real && exp.imag() == 0.0 &&
+      std::round(exp.real()) == exp.real()) {
+    // root(x, q) with q integer and x real
+    std::complex<T> result =
+        ComputeNotPrincipalRealRootOfRationalPow<T>(base, 1, exp.real());
+    if (!Undefined::IsUndefined(result)) {
+      return result;
+    }
+  }
+  return ComputeComplexPower<T>(
+      base, std::complex<T>(1.0) / (exp),
+      ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
+}
 
-template std::complex<float>
-Approximation::ComputeNotPrincipalRealRootOfRationalPow(
+template std::complex<float> ApproximatePower(const Tree*, const Context*,
+                                              ComplexFormat);
+template std::complex<double> ApproximatePower(const Tree*, const Context*,
+                                               ComplexFormat);
+
+template std::complex<float> ApproximateRoot(const Tree*, const Context*);
+template std::complex<double> ApproximateRoot(const Tree*, const Context*);
+
+template std::complex<float> ComputeNotPrincipalRealRootOfRationalPow(
     const std::complex<float>, float, float);
-template std::complex<double>
-Approximation::ComputeNotPrincipalRealRootOfRationalPow(
+template std::complex<double> ComputeNotPrincipalRealRootOfRationalPow(
     const std::complex<double>, double, double);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Approximation::Private

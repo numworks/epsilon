@@ -8,9 +8,10 @@
 #include "systematic_reduction.h"
 #include "variables.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Approximation {
 
-bool Approximation::ShallowPrepareForApproximation(Tree* e, void* ctx) {
+namespace Private {
+bool ShallowPrepareForApproximation(Tree* e, void* ctx) {
   // TODO: we want x^-1 -> 1/x and y*x^-1 -> y/x but maybe not x^-2 -> 1/x^2 ?
   // TODO: Ensure no node is duplicated (random not may have not been seeded)
   bool changed = PatternMatching::MatchReplace(
@@ -34,7 +35,7 @@ bool Approximation::ShallowPrepareForApproximation(Tree* e, void* ctx) {
          changed;
 }
 
-Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
+static Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   Tree* value = SharedTreeStack->pushAdd(2);
   bound->cloneTree();
   KVarX->cloneTree();
@@ -50,7 +51,7 @@ Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {
   return value;
 }
 
-bool ShallowExpandIntegrals(Tree* e, void* ctx) {
+static bool ShallowExpandIntegrals(Tree* e, void* ctx) {
   if (!e->isIntegral()) {
     return false;
   }
@@ -65,8 +66,21 @@ bool ShallowExpandIntegrals(Tree* e, void* ctx) {
   return true;
 }
 
-void Approximation::PrepareFunctionForApproximation(
-    Tree* e, const char* variable, ComplexFormat complexFormat) {
+bool PrepareExpressionForApproximation(Tree* e) {
+  bool changed = Tree::ApplyShallowTopDown(e, &ShallowExpandIntegrals);
+  changed =
+      Tree::ApplyShallowTopDown(e, &ShallowPrepareForApproximation) || changed;
+  if (changed) {
+    // ShallowPrepareForApproximation can introduce dependencies
+    Dependency::DeepBubbleUpDependencies(e);
+  }
+  return changed;
+}
+
+}  // namespace Private
+
+void PrepareFunctionForApproximation(Tree* e, const char* variable,
+                                     ComplexFormat complexFormat) {
   Variables::ReplaceSymbol(e, variable, 0,
                            complexFormat == ComplexFormat::Real
                                ? ComplexSign::RealUnknown()
@@ -82,15 +96,4 @@ void Approximation::PrepareFunctionForApproximation(
       Context(AngleUnit::None, complexFormat)));
 }
 
-bool Approximation::PrepareExpressionForApproximation(Tree* e) {
-  bool changed = Tree::ApplyShallowTopDown(e, &ShallowExpandIntegrals);
-  changed =
-      Tree::ApplyShallowTopDown(e, &ShallowPrepareForApproximation) || changed;
-  if (changed) {
-    // ShallowPrepareForApproximation can introduce dependencies
-    Dependency::DeepBubbleUpDependencies(e);
-  }
-  return changed;
-}
-
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Approximation

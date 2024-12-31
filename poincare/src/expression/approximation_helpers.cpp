@@ -2,10 +2,10 @@
 
 #include "approximation.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
-bool Approximation::IsIntegerRepresentationAccurate(T x) {
+bool IsIntegerRepresentationAccurate(T x) {
   /* Float and double's precision to represent integers is limited by the size
    * of their mantissa. If an integer requires more digits than there is in the
    * mantissa, there will be a loss on precision that can be fatal on operations
@@ -18,7 +18,7 @@ bool Approximation::IsIntegerRepresentationAccurate(T x) {
 }
 
 template <typename T>
-T Approximation::PositiveIntegerApproximation(T c) {
+T PositiveIntegerApproximation(T c) {
   T s = std::abs(c);
   /* Conversion from uint32 to float changes UINT32_MAX from 4294967295 to
    * 4294967296. */
@@ -51,9 +51,10 @@ T minimalNonNullMagnitudeOfParts(std::complex<T> c) {
 }
 
 template <typename T>
-std::complex<T> Approximation::NeglectRealOrImaginaryPartIfNegligible(
-    std::complex<T> result, std::complex<T> input1, std::complex<T> input2,
-    bool enableNullResult) {
+std::complex<T> NeglectRealOrImaginaryPartIfNegligible(std::complex<T> result,
+                                                       std::complex<T> input1,
+                                                       std::complex<T> input2,
+                                                       bool enableNullResult) {
   /* Cheat: openbsd  functions (cos, sin, tan, cosh, acos, pow...) are
    * numerical implementation and thus are approximative.
    * The error epsilon is ~1E-7 on float and ~1E-15 on double. In order to avoid
@@ -79,33 +80,27 @@ std::complex<T> Approximation::NeglectRealOrImaginaryPartIfNegligible(
 }
 
 template <typename T>
-std::complex<T> Approximation::MakeResultRealIfInputIsReal(
-    std::complex<T> result, std::complex<T> input) {
+std::complex<T> MakeResultRealIfInputIsReal(std::complex<T> result,
+                                            std::complex<T> input) {
   return input.imag() == static_cast<T>(0.0)
              ? std::complex<T>(result.real(), static_cast<T>(0.0))
              : result;
 }
 
-template bool Approximation::IsIntegerRepresentationAccurate(float);
-template bool Approximation::IsIntegerRepresentationAccurate(double);
+template bool IsIntegerRepresentationAccurate(float);
+template bool IsIntegerRepresentationAccurate(double);
 
-template float Approximation::PositiveIntegerApproximation(float);
-template double Approximation::PositiveIntegerApproximation(double);
+template float PositiveIntegerApproximation(float);
+template double PositiveIntegerApproximation(double);
 
-template std::complex<float>
-Approximation::NeglectRealOrImaginaryPartIfNegligible(std::complex<float>,
-                                                      std::complex<float>,
-                                                      std::complex<float>,
-                                                      bool);
-template std::complex<double>
-Approximation::NeglectRealOrImaginaryPartIfNegligible(std::complex<double>,
-                                                      std::complex<double>,
-                                                      std::complex<double>,
-                                                      bool);
+template std::complex<float> NeglectRealOrImaginaryPartIfNegligible(
+    std::complex<float>, std::complex<float>, std::complex<float>, bool);
+template std::complex<double> NeglectRealOrImaginaryPartIfNegligible(
+    std::complex<double>, std::complex<double>, std::complex<double>, bool);
 
-template std::complex<float> Approximation::MakeResultRealIfInputIsReal(
-    std::complex<float>, std::complex<float>);
-template std::complex<double> Approximation::MakeResultRealIfInputIsReal(
-    std::complex<double>, std::complex<double>);
+template std::complex<float> MakeResultRealIfInputIsReal(std::complex<float>,
+                                                         std::complex<float>);
+template std::complex<double> MakeResultRealIfInputIsReal(std::complex<double>,
+                                                          std::complex<double>);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Approximation::Private

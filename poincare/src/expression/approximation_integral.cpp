@@ -7,7 +7,7 @@
 #include "simplification.h"
 #include "variables.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
 struct DetailedResult {
@@ -39,25 +39,27 @@ struct AlternativeIntegrand {
 };
 
 template <typename T>
-T integrand(T x, Substitution<T> substitution,
-            const Approximation::Context* ctx);
+static T integrand(T x, Substitution<T> substitution,
+                   const Approximation::Context* ctx);
 
 template <typename T>
-T integrandNearBound(T x, T xc, AlternativeIntegrand alternativeIntegrand,
-                     const Approximation::Context* ctx);
+static T integrandNearBound(T x, T xc,
+                            AlternativeIntegrand alternativeIntegrand,
+                            const Approximation::Context* ctx);
 
 template <typename T>
-DetailedResult<T> tanhSinhQuadrature(int level,
-                                     AlternativeIntegrand alternativeIntegrand,
-                                     const Approximation::Context* ctx);
+static DetailedResult<T> tanhSinhQuadrature(
+    int level, AlternativeIntegrand alternativeIntegrand,
+    const Approximation::Context* ctx);
 template <typename T>
-DetailedResult<T> kronrodGaussQuadrature(T a, T b, Substitution<T> substitution,
-                                         const Approximation::Context* ctx);
+static DetailedResult<T> kronrodGaussQuadrature(
+    T a, T b, Substitution<T> substitution, const Approximation::Context* ctx);
 template <typename T>
-DetailedResult<T> adaptiveQuadrature(T a, T b, Substitution<T> substitution,
-                                     const Approximation::Context* ctx);
+static DetailedResult<T> adaptiveQuadrature(T a, T b,
+                                            Substitution<T> substitution,
+                                            const Approximation::Context* ctx);
 template <typename T>
-DetailedResult<T> iterateAdaptiveQuadrature(
+static DetailedResult<T> iterateAdaptiveQuadrature(
     DetailedResult<T> quadKG, T a, T b, T absoluteErrorThreshold,
     T relativeErrorThreshold, Substitution<T> substitution,
     const Approximation::Context* ctx, int iterationDepth, int& iterationCount);
@@ -65,7 +67,7 @@ DetailedResult<T> iterateAdaptiveQuadrature(
 const Tree* integrandExpression;
 
 template <typename T>
-T Approximation::ApproximateIntegral(const Tree* integral, const Context* ctx) {
+T ApproximateIntegral(const Tree* integral, const Context* ctx) {
   /* TODO: Reduction is mapped on list, but not approximation.
    * Find a smart way of doing it. */
   const Tree* lowerBound = integral->child(Parametric::k_lowerBoundIndex);
@@ -492,9 +494,7 @@ DetailedResult<T> iterateAdaptiveQuadrature(DetailedResult<T> quadKG, T a, T b,
   return result;
 }
 
-template float Approximation::ApproximateIntegral(const Tree* integral,
-                                                  const Context* ctx);
-template double Approximation::ApproximateIntegral(const Tree* integral,
-                                                   const Context* ctx);
+template float ApproximateIntegral(const Tree* integral, const Context* ctx);
+template double ApproximateIntegral(const Tree* integral, const Context* ctx);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Approximation::Private

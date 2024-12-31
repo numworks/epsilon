@@ -9,12 +9,11 @@
 #include "approximation.h"
 #include "float.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
-std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
-                                                      std::complex<T> value,
-                                                      AngleUnit angleUnit) {
+std::complex<T> TrigonometricToComplex(TypeBlock type, std::complex<T> value,
+                                       AngleUnit angleUnit) {
   if (IsNonReal(value)) {
     /* TODO_PCJ: better handle nonreal values, we are losing information
      * (result could be undef here) */
@@ -138,8 +137,7 @@ std::complex<T> Approximation::TrigonometricToComplex(TypeBlock type,
 }
 
 template <typename T>
-std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
-                                                   std::complex<T> value) {
+std::complex<T> HyperbolicToComplex(TypeBlock type, std::complex<T> value) {
   switch (type) {
     case Type::CosH:
     case Type::SinH:
@@ -192,14 +190,16 @@ std::complex<T> Approximation::HyperbolicToComplex(TypeBlock type,
   }
 }
 
-template std::complex<float> Approximation::TrigonometricToComplex(
-    TypeBlock, std::complex<float>, AngleUnit);
-template std::complex<double> Approximation::TrigonometricToComplex(
-    TypeBlock, std::complex<double>, AngleUnit);
+template std::complex<float> TrigonometricToComplex(TypeBlock,
+                                                    std::complex<float>,
+                                                    AngleUnit);
+template std::complex<double> TrigonometricToComplex(TypeBlock,
+                                                     std::complex<double>,
+                                                     AngleUnit);
 
-template std::complex<float> Approximation::HyperbolicToComplex(
-    TypeBlock, std::complex<float>);
-template std::complex<double> Approximation::HyperbolicToComplex(
-    TypeBlock, std::complex<double>);
+template std::complex<float> HyperbolicToComplex(TypeBlock,
+                                                 std::complex<float>);
+template std::complex<double> HyperbolicToComplex(TypeBlock,
+                                                  std::complex<double>);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Approximation::Private

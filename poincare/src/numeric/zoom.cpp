@@ -244,7 +244,7 @@ void Zoom::fitIntersections(Function2D<float> f1, const void* model1,
                 Solver<float>::OddRootInBracket, HoneIntersection, vertical);
 }
 
-void Zoom::fitConditions(SystemFunction piecewise,
+void Zoom::fitConditions(const Internal::Tree* piecewise,
                          Function2D<float> fullFunction, const void* model,
                          bool vertical) {
   struct ConditionsParameters {
@@ -255,7 +255,7 @@ void Zoom::fitConditions(SystemFunction piecewise,
     bool vertical;
   };
   const ConditionsParameters params = {.zoom = this,
-                                       .piecewise = piecewise.tree(),
+                                       .piecewise = piecewise,
                                        .fullFunction = fullFunction,
                                        .model = model,
                                        .vertical = vertical};

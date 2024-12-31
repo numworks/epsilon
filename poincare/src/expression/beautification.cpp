@@ -21,7 +21,7 @@
 #include "units/unit.h"
 #include "variables.h"
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::Beautification {
 
 bool ApplyComplexFormat(Tree* e, Dimension dim,
                         const ProjectionContext& projectionContext);
@@ -42,8 +42,7 @@ bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
 bool ShallowBeautify(Tree* e, void* context);
 bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
 
-float Beautification::DegreeForSortingAddition(const Tree* e,
-                                               bool symbolsOnly) {
+float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
   switch (e->type()) {
     case Type::Mult: {
       /* If we consider the symbol degree, the degree of a multiplication is
@@ -254,8 +253,7 @@ bool DeepBeautifyUnits(Tree* e) {
   return false;
 }
 
-bool Beautification::DeepBeautify(Tree* e,
-                                  ProjectionContext projectionContext) {
+bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   bool changed =
       ApplyComplexFormat(e, projectionContext.m_dimension, projectionContext);
   changed = DeepBeautifyAngleFunctions(e, projectionContext) || changed;
@@ -601,8 +599,8 @@ Tree* GetCartesianFormat(const Tree* e,
 }
 
 template <typename T>
-Tree* Beautification::PushBeautifiedComplex(std::complex<T> value,
-                                            ComplexFormat complexFormat) {
+Tree* PushBeautifiedComplex(std::complex<T> value,
+                            ComplexFormat complexFormat) {
   // TODO: factorize with beautification somehow ?
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
@@ -650,9 +648,9 @@ bool ShallowBeautifySpecialDisplays(Tree* e, void* context) {
   return Arithmetic::BeautifyFactor(e) || ShallowBeautifyPercent(e);
 }
 
-template Tree* Beautification::PushBeautifiedComplex(
-    std::complex<float>, ComplexFormat complexFormat);
-template Tree* Beautification::PushBeautifiedComplex(
-    std::complex<double>, ComplexFormat complexFormat);
+template Tree* PushBeautifiedComplex(std::complex<float>,
+                                     ComplexFormat complexFormat);
+template Tree* PushBeautifiedComplex(std::complex<double>,
+                                     ComplexFormat complexFormat);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::Beautification

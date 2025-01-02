@@ -16,17 +16,17 @@
 #include "../app.h"
 
 using namespace Poincare;
-// TODO_PCJ: Isolate from Internal::Poincare
-using namespace Poincare::Internal::Units;
 using namespace Shared;
 
 namespace Calculation {
 
 namespace UnitComparison {
 
+// TODO_PCJ: Isolate from Internal::Poincare
 struct ReferenceUnit {
-  SIVector siVector;
-  const Representative* outputRepresentative = nullptr;
+  Poincare::Internal::Units::SIVector siVector;
+  const Poincare::Internal::Units::Representative* outputRepresentative =
+      nullptr;
 };
 
 /* If you add new reference values, they always need to be
@@ -468,21 +468,24 @@ constexpr static const struct {
   const ReferenceValue* referenceTable;
   size_t tableLength;
 } k_referenceTables[] = {
-    {ReferenceUnit({Distance::Dimension}), k_lengthReferences,
-     std::size(k_lengthReferences)},
-    {ReferenceUnit({Time::Dimension}), k_timeReferences,
-     std::size(k_timeReferences)},
-    {ReferenceUnit({Mass::Dimension}), k_massReferences,
-     std::size(k_massReferences)},
-    {ReferenceUnit({Surface::Dimension}), k_areaReferences,
-     std::size(k_areaReferences)},
-    {ReferenceUnit({Volume::Dimension}), k_volumeReferences,
-     std::size(k_volumeReferences)},
-    {ReferenceUnit({Power::Dimension, &Power::representatives.watt}),
+    {ReferenceUnit({Poincare::Internal::Units::Distance::Dimension}),
+     k_lengthReferences, std::size(k_lengthReferences)},
+    {ReferenceUnit({Poincare::Internal::Units::Time::Dimension}),
+     k_timeReferences, std::size(k_timeReferences)},
+    {ReferenceUnit({Poincare::Internal::Units::Mass::Dimension}),
+     k_massReferences, std::size(k_massReferences)},
+    {ReferenceUnit({Poincare::Internal::Units::Surface::Dimension}),
+     k_areaReferences, std::size(k_areaReferences)},
+    {ReferenceUnit({Poincare::Internal::Units::Volume::Dimension}),
+     k_volumeReferences, std::size(k_volumeReferences)},
+    {ReferenceUnit({Poincare::Internal::Units::Power::Dimension,
+                    &Poincare::Internal::Units::Power::representatives.watt}),
      k_powerReferences, std::size(k_powerReferences)},
-    {ReferenceUnit({Speed::Dimension}), k_velocityReferences,
-     std::size(k_velocityReferences)},
-    {ReferenceUnit({Pressure::Dimension, &Pressure::representatives.pascal}),
+    {ReferenceUnit({Poincare::Internal::Units::Speed::Dimension}),
+     k_velocityReferences, std::size(k_velocityReferences)},
+    {ReferenceUnit(
+         {Poincare::Internal::Units::Pressure::Dimension,
+          &Poincare::Internal::Units::Pressure::representatives.pascal}),
      k_pressureReferences, std::size(k_pressureReferences)}};
 
 static_assert(std::size(k_referenceTables) == k_numberOfReferenceTables,
@@ -492,7 +495,7 @@ int FindUpperAndLowerReferenceValues(
     double inputValue, UserExpression approximatedSIExpression,
     Context* context, const ReferenceValue** returnReferenceValues,
     int* returnReferenceTableIndex) {
-  SIVector siVector =
+  Poincare::Internal::Units::SIVector siVector =
       Internal::Dimension::Get(approximatedSIExpression.tree(), context)
           .unit.vector;
   /* 1. Find table of corresponding unit.

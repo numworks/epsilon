@@ -1,6 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <float.h>
 #include <omg/float.h>
+#include <poincare/sign.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/k_tree.h>
@@ -367,4 +368,17 @@ QUIZ_CASE(pcj_approximation_with_context) {
   approximates_to<float>("f(a)", "13.28319", ctx);
   approximates_to<float>("f(a+i)", "13.28319+2×i", ctx);
   approximates_to<float>("z", "undef", ctx);
+}
+
+// Use projected trees
+void assert_function_prepares_to(const Tree* input, const Tree* expected) {
+  Tree* clone = input->cloneTree();
+  Approximation::PrepareFunctionForApproximation(clone, "x",
+                                                 ComplexFormat::Real);
+  assert_trees_are_equal(clone, expected);
+}
+
+QUIZ_CASE(pcj_prepare_function) {
+  assert_function_prepares_to(KAdd(2_e, 3_e, "x"_e), KAdd(5.0_de, KVarX));
+  assert_function_prepares_to(KAdd(2_e, "a"_e, "x"_e), KUndef);
 }

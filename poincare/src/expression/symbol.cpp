@@ -92,11 +92,8 @@ bool involvesCircularity(const Tree* e, Poincare::Context* context,
 
 bool Symbol::InvolvesCircularity(const Tree* e, Poincare::Context* context) {
   const char* visitedSymbols[k_maxSymbolReplacementsCount];
-  if (involvesCircularity(e, context, k_maxSymbolReplacementsCount,
-                          visitedSymbols, 0)) {
-    return true;
-  }
-  return false;
+  return involvesCircularity(e, context, k_maxSymbolReplacementsCount,
+                             visitedSymbols, 0);
 }
 
 }  // namespace Poincare::Internal

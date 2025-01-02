@@ -160,7 +160,7 @@ FunctionType::CartesianType FunctionType::CartesianFunctionType(
 
   // f(x) = piecewise(...)
   if (e->hasDescendantSatisfying(
-          [](const Internal::Tree* t) { return t->isPiecewise(); })) {
+          [](const Tree* t) { return t->isPiecewise(); })) {
     return CartesianType::Piecewise;
   }
 

@@ -609,7 +609,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       /* TODO_PCJ: Sequence are not replaced by their definition on projection,
        * GlobalContext is therefore used. */
       return Poincare::Context::GlobalContext->approximateSequenceAtRank(
-          Internal::Symbol::GetName(e), rank);
+          Symbol::GetName(e), rank);
     }
     /* Analysis */
     case Type::Sum:

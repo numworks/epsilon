@@ -209,7 +209,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   // Project angles depending on context
-  Internal::AngleUnit angleUnit = projectionContext->m_angleUnit;
+  AngleUnit angleUnit = projectionContext->m_angleUnit;
   if (e->isOfType({Type::Sin, Type::Cos, Type::Tan})) {
     /* In degree, cos(23°) and cos(23) -> trig(23×π/180, 0)
      * but        cos(23rad)           -> trig(23      , 0) */
@@ -218,7 +218,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     if (childDim.isSimpleAngleUnit()) {
       // Remove all units to fall back to radian
       changed = Tree::ApplyShallowTopDown(e, Units::Unit::ShallowRemoveUnit);
-    } else if (angleUnit != Internal::AngleUnit::Radian) {
+    } else if (angleUnit != AngleUnit::Radian) {
       child->moveTreeOverTree(PatternMatching::Create(
           KMult(KA, KB), {.KA = child, .KB = Angle::ToRad(angleUnit)}));
       changed = true;
@@ -249,7 +249,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
           // atan(A) -> atanRad(A)
           PatternMatching::MatchReplace(e, KATan(KA), KATanRad(KA));
     }
-    if (angleUnit != Internal::AngleUnit::Radian) {
+    if (angleUnit != AngleUnit::Radian) {
       // arccos_degree(x) = arccos_radians(x) * 180/π
       e->moveTreeOverTree(PatternMatching::Create(
           KMult(KA, KB), {.KA = e, .KB = Angle::RadTo(angleUnit)}));

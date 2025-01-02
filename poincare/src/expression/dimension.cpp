@@ -49,7 +49,6 @@ bool IsIntegerExpression(const Tree* e) {
 }
 
 bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
-  using Type = Internal::Type;
   // TODO complexity should be linear
   // TODO: remove the VLA as it is non-standard
   int childLength[e->numberOfChildren() == 0 ? 1 : e->numberOfChildren()];

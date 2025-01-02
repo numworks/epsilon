@@ -7,11 +7,10 @@ namespace Poincare::Internal {
 
 double PositiveModulo(double i, double n);
 
-void RemoveConstantTermsInAddition(Internal::Tree* e, const char* symbol);
+void RemoveConstantTermsInAddition(Tree* e, const char* symbol);
 
-bool DetectLinearPatternOfTrig(const Internal::Tree* e, const char* symbol,
-                               double* a, double* b, double* c,
-                               bool acceptConstantTerm);
+bool DetectLinearPatternOfTrig(const Tree* e, const char* symbol, double* a,
+                               double* b, double* c, bool acceptConstantTerm);
 
 }  // namespace Poincare::Internal
 

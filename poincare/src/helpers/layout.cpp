@@ -45,7 +45,7 @@ void DeleteChildrenRacks(Tree* rack) {
   }
 }
 
-void SanitizeRack(Internal::Tree* rack) {
+void SanitizeRack(Tree* rack) {
   if (!rack->isRackLayout()) {
     rack->cloneNodeAtNode(KRackL.node<1>);
   }
@@ -63,7 +63,7 @@ void SanitizeRack(Internal::Tree* rack) {
   }
 }
 
-bool IsSanitizedRack(const Internal::Tree* rack) {
+bool IsSanitizedRack(const Tree* rack) {
   if (!rack->isRackLayout()) {
     return false;
   }

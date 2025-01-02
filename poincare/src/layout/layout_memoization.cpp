@@ -9,7 +9,7 @@
 namespace Poincare::Internal {
 
 KDSize LayoutMemoization::layoutSize(KDFont::Size font,
-                                     Internal::LayoutCursor* cursor) const {
+                                     LayoutCursor* cursor) const {
   if (!m_flags.m_sized || m_flags.m_sizeFontSize != font) {
     KDSize size = computeSize(font, cursor);
 
@@ -53,7 +53,7 @@ KDSize LayoutMemoization::layoutSize(KDFont::Size font,
 }
 
 KDCoordinate LayoutMemoization::baseline(KDFont::Size font,
-                                         Internal::LayoutCursor* cursor) const {
+                                         LayoutCursor* cursor) const {
   if (!m_flags.m_baselined || m_flags.m_baselineFontSize != font) {
     m_baseline = computeBaseline(font, cursor);
     m_flags.m_baselined = true;

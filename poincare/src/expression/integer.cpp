@@ -813,16 +813,15 @@ OMG::Troolean Integer::IsPositiveRationalInteger(const Tree* e) {
           GetComplexSign(e).realSign().trooleanIsStrictlyNegative()));
 }
 
+template float IntegerHandler::to<float>() const;
+template double IntegerHandler::to<double>() const;
+template uint32_t IntegerHandler::to<uint32_t>() const;
+template uint8_t IntegerHandler::to<uint8_t>() const;
+template int8_t IntegerHandler::to<int8_t>() const;
+template int IntegerHandler::to<int>() const;
+
+template bool IntegerHandler::isUnsignedType<uint8_t>() const;
+template bool IntegerHandler::isSignedType<int8_t>() const;
+template bool IntegerHandler::isSignedType<int>() const;
+
 }  // namespace Poincare::Internal
-
-template float Poincare::Internal::IntegerHandler::to<float>() const;
-template double Poincare::Internal::IntegerHandler::to<double>() const;
-template uint32_t Poincare::Internal::IntegerHandler::to<uint32_t>() const;
-template uint8_t Poincare::Internal::IntegerHandler::to<uint8_t>() const;
-template int8_t Poincare::Internal::IntegerHandler::to<int8_t>() const;
-template int Poincare::Internal::IntegerHandler::to<int>() const;
-
-template bool Poincare::Internal::IntegerHandler::isUnsignedType<uint8_t>()
-    const;
-template bool Poincare::Internal::IntegerHandler::isSignedType<int8_t>() const;
-template bool Poincare::Internal::IntegerHandler::isSignedType<int>() const;

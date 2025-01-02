@@ -15,8 +15,7 @@ const CPL* CPL::CodePointLSearch(const CPL* s, CodePoint c, const CPL* stop) {
 }
 
 int CPL::compareWithNullTerminatedString(int length, const char* string) const {
-  Poincare::Internal::CPLayoutDecoder decoder(
-      reinterpret_cast<const Poincare::Internal::Tree*>(this), 0, length);
+  CPLayoutDecoder decoder(reinterpret_cast<const Tree*>(this), 0, length);
   return OMG::CompareDecoderWithNullTerminatedString(&decoder, string);
 }
 

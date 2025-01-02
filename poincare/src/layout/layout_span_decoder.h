@@ -89,8 +89,8 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   uint16_t m_length;
 };
 
-inline int CompareLayoutSpanWithNullTerminatedString(
-    const Poincare::Internal::LayoutSpan a, const char* b) {
+inline int CompareLayoutSpanWithNullTerminatedString(const LayoutSpan a,
+                                                     const char* b) {
   LayoutSpanDecoder da(a.start, a.length);
   UTF8Decoder db(b);
   return OMG::CompareDecoders(&da, &db);

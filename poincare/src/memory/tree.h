@@ -425,8 +425,7 @@ class Tree : public TypeBlock {
   void remove(bool isTree);
 
   // Forbid tree == Type::Add
-  using TypeBlock::operator==, TypeBlock::operator!=,
-      TypeBlock::operator Internal::Type;
+  using TypeBlock::operator==, TypeBlock::operator!=, TypeBlock::operator Type;
 
   // A tree is made of 1 TypeBlock (inherited) and nodeSize()-1 ValueBlocks
   // Should be last - and most likely only - member

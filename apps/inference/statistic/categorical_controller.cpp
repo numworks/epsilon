@@ -221,11 +221,8 @@ void CategoricalController::initWidth(TableView* tableView) {
 
 InputCategoricalController::InputCategoricalController(
     StackViewController* parent, ViewController* nextController,
-    Statistic* statistic)
-    : CategoricalController(
-          parent, nextController,
-          Invocation::Builder<InputCategoricalController>(
-              &InputCategoricalController::ButtonAction, this)),
+    Statistic* statistic, Invocation invocation)
+    : CategoricalController(parent, nextController, invocation),
       m_statistic(statistic),
       m_significanceCell(&m_selectableListView, this) {}
 

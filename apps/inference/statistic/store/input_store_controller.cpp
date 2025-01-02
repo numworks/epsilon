@@ -13,7 +13,10 @@ InputStoreController::InputStoreController(
     StackViewController* parent, ViewController* nextController,
     PageIndex pageIndex, InputStoreController* nextInputStoreController,
     Statistic* statistic, Poincare::Context* context)
-    : InputCategoricalController(parent, nextController, statistic),
+    : InputCategoricalController(
+          parent, nextController, statistic,
+          Invocation::Builder<InputStoreController>(
+              &InputStoreController::ButtonAction, this)),
       m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this),
       m_extraParameters{
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),
@@ -149,6 +152,15 @@ void InputStoreController::initView() {
     setNextController(shouldDisplayTwoPages ? m_nextInputStoreController
                                             : m_nextOtherController);
   }
+}
+
+bool InputStoreController::ButtonAction(InputStoreController* controller,
+                                        void* s) {
+  InputStoreController* nextPage = controller->m_nextInputStoreController;
+  if (nextPage) {
+    nextPage->initSeriesSelection();
+  }
+  return InputCategoricalController::ButtonAction(controller, s);
 }
 
 int InputStoreController::indexOfEditedParameterAtIndex(int index) const {

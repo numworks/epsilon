@@ -112,6 +112,8 @@ class InputStoreController : public InputCategoricalController,
     return explicitCellAtRow(row)->isVisible();
   }
 
+  static bool ButtonAction(InputStoreController* controller, void* s);
+
  private:
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:

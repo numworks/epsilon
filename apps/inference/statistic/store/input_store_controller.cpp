@@ -86,9 +86,6 @@ void InputStoreController::viewWillAppear() {
                   m_statistic->parameterDefinitionAtIndex(param));
   }
 
-  static_cast<RawDataStatistic*>(m_storeTableCell.tableModel())
-      ->setActivePage(m_pageIndex);
-
   // TODO: dedicated function for the dropdown cell view initialization
   m_dropdownCell.dropdown()->init();
   const RawDataStatistic* model =
@@ -133,6 +130,8 @@ void InputStoreController::viewWillAppear() {
 
 void InputStoreController::initView() {
   InputCategoricalController::initView();
+  static_cast<RawDataStatistic*>(m_storeTableCell.tableModel())
+      ->setActivePage(m_pageIndex);
   categoricalTableCell()->recomputeDimensions();
 
   if (m_loadedSubApp != m_statistic->subApp() ||

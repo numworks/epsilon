@@ -19,7 +19,12 @@ body {
 .col-fullscreen canvas {
   max-height: 96vh;
   max-width: 64vw;
-  height: 49.995vw;
+#ifdef LAYOUT_epsilon
+  height: 48vw; /* 64 * 240 / 320 */
+#endif
+#ifdef LAYOUT_scandium
+  height: 27.84vw; /* 64 * 87 / 200 */
+#endif
   width: auto;
 }
 

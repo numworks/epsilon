@@ -68,10 +68,7 @@ class GlobalContext final : public Poincare::Context {
   static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext* sequenceContext() { return &m_sequenceContext; }
-#if POINCARE_CONTEXT_TIDY_POOL
-  void tidyDownstreamPoolFrom(
-      Poincare::PoolObject* treePoolCursor = nullptr) override;
-#endif
+  void tidyStores();
   void prepareForNewApp();
   void reset();
 

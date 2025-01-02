@@ -258,12 +258,10 @@ Ion::Storage::Record GlobalContext::UserNamedRecordWithBaseName(
       ->recordBaseNamedWithExtensions(name, k_extensions, k_numberOfExtensions);
 }
 
-#if POINCARE_CONTEXT_TIDY_POOL
-void GlobalContext::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) {
-  s_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
-  s_continuousFunctionStore->tidyDownstreamPoolFrom(treePoolCursor);
+void GlobalContext::tidyStores() {
+  s_sequenceStore->tidyDownstreamPoolFrom();
+  s_continuousFunctionStore->tidyDownstreamPoolFrom();
 }
-#endif
 
 void GlobalContext::prepareForNewApp() {
   s_sequenceStore->setStorageChangeFlag(false);

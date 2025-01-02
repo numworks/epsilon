@@ -302,7 +302,6 @@ endif
 # TODO: replace with a config header to avoid cluttering the command line
 ifeq ($(POINCARE_variant),epsilon)
 SFLAGS_poincare += \
-  -DPOINCARE_CONTEXT_TIDY_POOL=1 \
   -DPOINCARE_TREE_STACK_SIZE=1024*16
 endif
 ifeq ($(POINCARE_variant),scandium)

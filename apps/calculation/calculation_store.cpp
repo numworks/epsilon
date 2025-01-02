@@ -1,5 +1,6 @@
 #include "calculation_store.h"
 
+#include <apps/shared/global_context.h>
 #include <poincare/cas.h>
 #include <poincare/helpers/store.h>
 #include <poincare/helpers/symbol.h>
@@ -171,7 +172,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
       /* Post-processing of store expression */
       exactOutputExpression = enhancePushedExpression(exactOutputExpression);
     } else {
-      context->tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());
+      GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
+          checkpoint.endOfPoolBeforeCheckpoint());
       return nullptr;
     }
   }

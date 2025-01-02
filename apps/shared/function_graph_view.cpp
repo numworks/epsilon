@@ -1,5 +1,6 @@
 #include "function_graph_view.h"
 
+#include <apps/shared/global_context.h>
 #include <assert.h>
 #include <float.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
@@ -44,7 +45,10 @@ void FunctionGraphPolicy::drawPlot(const AbstractPlotView* plotView,
     } else {
       setFunctionInterrupted(index);
       tidyModel(index, checkpoint.endOfPoolBeforeCheckpoint());
-      m_context->tidyDownstreamPoolFrom(checkpoint.endOfPoolBeforeCheckpoint());
+      functionStore()->tidyDownstreamPoolFrom(
+          checkpoint.endOfPoolBeforeCheckpoint());
+      GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
+          checkpoint.endOfPoolBeforeCheckpoint());
     }
     firstDrawnRecord = false;
   }

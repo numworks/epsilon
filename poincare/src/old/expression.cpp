@@ -973,9 +973,7 @@ OExpression OExpression::cloneAndDeepReduceWithSystemCheckpoint(
        * cloneAndDeepReduceWithSystemCheckpoint: cleaning all the pool might
        * discard ExpressionHandles that are used by parent
        * cloneAndDeepReduceWithSystemCheckpoint. */
-#if POINCARE_CONTEXT_TIDY_POOL
       reductionContext->context()->tidyDownstreamPoolFrom(treePoolCursor);
-#endif
       if (reductionContext->target() !=
           ReductionTarget::SystemForApproximation) {
         // System interruption, try again with another ReductionTarget

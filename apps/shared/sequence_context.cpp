@@ -19,12 +19,6 @@ SequenceContext::SequenceContext(Context* parentContext,
                                  SequenceStore* sequenceStore)
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
-#if POINCARE_CONTEXT_TIDY_POOL
-void SequenceContext::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) {
-  m_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
-}
-#endif
-
 Context::UserNamedType SequenceContext::expressionTypeForIdentifier(
     const char* identifier, int length) {
   constexpr int numberOfSequencesNames =

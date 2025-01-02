@@ -33,11 +33,6 @@ class Context {
     return NAN;
   }
 
-#if POINCARE_CONTEXT_TIDY_POOL
-  // TODO: this method should be removed completely
-  virtual void tidyDownstreamPoolFrom(PoolObject* treePoolCursor = nullptr) {}
-#endif
-
   static Context* GlobalContext;
 };
 

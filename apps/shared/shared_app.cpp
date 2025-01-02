@@ -19,8 +19,7 @@ void SharedApp::Snapshot::tidy() {
   /* Since the sequence store and the continuous function store is now
    * accessible from every app, when exiting any application, we need to tidy
    * it.*/
-  AppsContainerHelper::sharedAppsContainerGlobalContext()
-      ->tidyDownstreamPoolFrom();
+  AppsContainerHelper::sharedAppsContainerGlobalContext()->tidyStores();
   Escher::App::Snapshot::tidy();
 }
 

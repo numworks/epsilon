@@ -384,7 +384,7 @@ void PointsOfInterestCache::tidyDownstreamPoolFrom(
     store->modelForRecord(store->activeRecordAtIndex(i))
         ->tidyDownstreamPoolFrom(treePoolCursor);
   }
-  App::app()->localContext()->tidyDownstreamPoolFrom(treePoolCursor);
+  GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(treePoolCursor);
 }
 
 }  // namespace Graph

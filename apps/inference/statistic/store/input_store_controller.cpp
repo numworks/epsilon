@@ -159,9 +159,8 @@ void InputStoreController::initView() {
 
 bool InputStoreController::ButtonAction(InputStoreController* controller,
                                         void* s) {
-  InputStoreController* nextPage = controller->m_nextInputStoreController;
-  if (nextPage) {
-    nextPage->initSeriesSelection();
+  if (controller->m_nextInputStoreController == controller->m_nextController) {
+    controller->m_nextInputStoreController->initSeriesSelection();
   }
   return InputCategoricalController::ButtonAction(controller, s);
 }

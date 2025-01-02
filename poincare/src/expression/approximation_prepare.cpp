@@ -71,6 +71,10 @@ void Approximation::PrepareFunctionForApproximation(
                            complexFormat == ComplexFormat::Real
                                ? ComplexSign::RealUnknown()
                                : ComplexSign::Unknown());
+  /* All symbols should already have been replaced by their definition.
+   * Leftover symbols can be replaced by undefined. */
+  Projection::DeepReplaceUserNamed(
+      e, nullptr, SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   e->moveTreeOverTree(ToTree<double>(
       e,
       Parameters{

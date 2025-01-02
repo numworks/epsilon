@@ -87,6 +87,7 @@ bool Beautification::DeepBeautifyAngleFunctions(
       projectionContext.m_angleUnit != AngleUnit::Radian) {
     // Expands possibilities may have been added.
     AdvancedReduction::Reduce(e);
+    Dependency::DeepRemoveUselessDependencies(e);
   }
   // Remove AngleUnitContext nodes
   e->ApplyShallowTopDown(e, [](Tree* e, void* context) {

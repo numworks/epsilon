@@ -25,11 +25,12 @@ bool RawDataStatistic::parametersAreValid(Statistic* stat) {
 
 void RawDataStatistic::setParameterAtPosition(double value, int row,
                                               int column) {
-  set(value, seriesAtColumn(column), relativeColumn(column), row, false, true);
+  set(value, seriesAt(toUint(m_activePageIndex) - 1), relativeColumn(column),
+      row, false, true);
 }
 
 double RawDataStatistic::parameterAtPosition(int row, int column) const {
-  int series = seriesAtColumn(column);
+  int series = seriesAt(toUint(m_activePageIndex) - 1);
   if (row >= numberOfPairsOfSeries(series)) {
     return NAN;
   }
@@ -37,7 +38,7 @@ double RawDataStatistic::parameterAtPosition(int row, int column) const {
 }
 
 void RawDataStatistic::deleteParametersInColumn(int column) {
-  clearColumn(seriesAtColumn(column), relativeColumn(column));
+  clearColumn(seriesAt(toUint(m_activePageIndex) - 1), relativeColumn(column));
 }
 
 bool RawDataStatistic::deleteParameterAtPosition(int row, int column) {
@@ -45,7 +46,7 @@ bool RawDataStatistic::deleteParameterAtPosition(int row, int column) {
     // Param is already deleted
     return false;
   }
-  int series = seriesAtColumn(column);
+  int series = seriesAt(toUint(m_activePageIndex) - 1);
   int numberOfPairs = numberOfPairsOfSeries(series);
   deletePairOfSeriesAtIndex(series, row);
   // DoublePairStore::updateSeries has handled the deletion of empty rows

@@ -1979,8 +1979,9 @@ QUIZ_CASE(poincare_simplification_complex_format) {
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("cos(12)", "cos(12)", User, Radian,
                                        MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("cos(12+i)", "cos(12+i)", User, Radian,
-                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to(
+      "cos(12+i)", "cos(12)×cosh(1)-sin(12)×sinh(1)×i", User, Radian,
+      MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("diff(3×x, x, 3)", "3", User, Radian,
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("quo(34,x)", "quo(34,x)", User, Radian,
@@ -2035,8 +2036,9 @@ QUIZ_CASE(poincare_simplification_complex_format) {
                                        MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("sin(23)", "sin(23)", User, Radian,
                                        MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("sin(23+i)", "sin(23+i)", User, Radian,
-                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to(
+      "sin(23+i)", "sin(23)×cosh(1)+cos(23)×sinh(1)×i", User, Radian,
+      MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("√(1-i)",
                                        "√(2+2×√(2))/2-√(-2+2×√(2))/2×i", User,
                                        Radian, MetricUnitFormat, Cartesian);
@@ -2178,8 +2180,9 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("1/π+1/x", "(x+π)/(π×x)", User);
 
   // Display in the form a+ib only for ReductionTarget = User
-  assert_parsed_expression_simplify_to("1/(1+i)", "1/(1+i)", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("1/(1+i)", "1/(1+i)",
+  assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i",
+                                       SystemForAnalysis);
+  assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i",
                                        SystemForApproximation);
   assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i", User);
   assert_parsed_expression_simplify_to("√(i×(i+2))", "√(-1+2×i)",

@@ -1492,6 +1492,7 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(
     }
     previousChildWasApproximated = child->isFloat();
   }
+  changed = Undefined::ShallowBubbleUpUndef(e) || changed;
   // Merge addition and multiplication's children while preserving order
   if (e->isAdd() || e->isMult()) {
     changed = MergeChildrenOfMultOrAdd<T>(e) || changed;

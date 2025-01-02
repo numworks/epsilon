@@ -33,8 +33,8 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
 
   RawDataStatistic(Shared::GlobalContext* context)
       : StatisticsStore(context, &m_storePreferences),
-        m_series{-1, -1},
-        m_activePageIndex{PageIndex::One} {}
+        m_activePageIndex{PageIndex::One},
+        m_series{-1, -1} {}
 
   int seriesAt(int index) const override {
     assert(index >= 0 && index < numberOfSeries() &&
@@ -89,13 +89,13 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
     return Index2D{.row = 1, .col = maxNumberOfColumns()};
   }
 
- private:
-  Shared::DoublePairStorePreferences m_storePreferences;
-  int m_series[k_maxNumberOfSeries];
-
   /* In some cases (e.g. TwoMeans), the statistic can be displayed on several
    * pages. On each page, the selected series is displayed in a table. */
   PageIndex m_activePageIndex;
+
+ private:
+  Shared::DoublePairStorePreferences m_storePreferences;
+  int m_series[k_maxNumberOfSeries];
 };
 
 }  // namespace Inference

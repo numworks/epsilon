@@ -3,11 +3,26 @@
 
 #include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/statistics_store.h>
+#include <omg/unreachable.h>
 
 #include "statistic.h"
 #include "table.h"
 
 namespace Inference {
+
+// TODO: uint8_t underlying class for a clearer conversion to an index
+enum class PageIndex : bool { One, Two };
+
+static inline constexpr uint8_t toUint(PageIndex pageIndex) {
+  switch (pageIndex) {
+    case PageIndex::One:
+      return 1;
+    case PageIndex::Two:
+      return 2;
+    default:
+      OMG::unreachable();
+  }
+}
 
 class RawDataStatistic : public Table, public Shared::StatisticsStore {
  public:
@@ -17,7 +32,9 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
       k_maxNumberOfSeries * k_numberOfColumnsPerSeries;
 
   RawDataStatistic(Shared::GlobalContext* context)
-      : StatisticsStore(context, &m_storePreferences), m_series{-1, -1} {}
+      : StatisticsStore(context, &m_storePreferences),
+        m_series{-1, -1},
+        m_activePageIndex{PageIndex::One} {}
 
   int seriesAt(int index) const override {
     assert(index >= 0 && index < numberOfSeries() &&
@@ -33,6 +50,8 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
            column < k_numberOfColumnsPerSeries * numberOfSeries());
     return seriesAt(column / k_numberOfColumnsPerSeries);
   }
+
+  void setActivePage(PageIndex pageIndex) { m_activePageIndex = pageIndex; }
 
   // Table
   void setParameterAtPosition(double value, int row, int column) override;
@@ -75,6 +94,10 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
  private:
   Shared::DoublePairStorePreferences m_storePreferences;
   int m_series[k_maxNumberOfSeries];
+
+  /* In some cases (e.g. TwoMeans), the statistic can be displayed on several
+   * pages. On each page, the selected series is displayed in a table. */
+  PageIndex m_activePageIndex;
 };
 
 }  // namespace Inference

@@ -5,25 +5,10 @@
 
 #include "../categorical_controller.h"
 #include "../input_controller.h"
-#include "omg/unreachable.h"
 #include "store_column_parameter_controller.h"
 #include "store_table_cell.h"
 
 namespace Inference {
-
-// TODO: uint8_t underlying class for a clearer conversion to an index
-enum class PageIndex : bool { One, Two };
-
-static inline constexpr uint8_t toUint(PageIndex pageIndex) {
-  switch (pageIndex) {
-    case PageIndex::One:
-      return 1;
-    case PageIndex::Two:
-      return 2;
-    default:
-      OMG::unreachable();
-  }
-}
 
 class InputStoreController : public InputCategoricalController,
                              Escher::DropdownCallback {

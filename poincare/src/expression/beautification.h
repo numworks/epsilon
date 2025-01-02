@@ -32,10 +32,11 @@ class Beautification {
   static bool DeepBeautifyAngleFunctions(
       Tree* e, const ProjectionContext& projectionContext);
   static bool BottomUpBeautifyAngleFunctions(
-      Tree* e, const ProjectionContext& projectionContext,
-      bool* simplifyParent);
+      Tree* e, const ProjectionContext& projectionContext, bool* simplifyParent,
+      bool canSystematicReduce = true);
   static bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
-                                            bool* simplifyParent);
+                                            bool* simplifyParent,
+                                            bool canSystematicReduce);
   static bool ShallowBeautifyPercent(Tree* e);
   static bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
   static bool ShallowBeautify(Tree* e, void* context);

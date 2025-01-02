@@ -1273,6 +1273,14 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin(90)", "1",
                 {.m_angleUnit = AngleUnit::Degree,
                  .m_strategy = Strategy::ApproximateToFloat});
+
+  // Beautification and dependencies
+  // TODO: 0 and 1/180 should have been simplified from dependencies.
+  simplifies_to("re(2*acos(cos(x)))",
+                "dep(2×re(arccos(cos(x))),{0,1/"
+                "180,π,0×im(arccos(cos(x))),0×im(π×arccos(cos(x))),piecewise(0,"
+                "abs(cos((180×π×x)/(180×π)))≤1,nonreal)})",
+                {.m_angleUnit = AngleUnit::Degree});
 }
 
 QUIZ_CASE(pcj_simplification_advanced) {

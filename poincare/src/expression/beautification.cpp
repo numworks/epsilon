@@ -100,17 +100,21 @@ bool Beautification::DeepBeautifyAngleFunctions(
 }
 
 bool Beautification::BottomUpBeautifyAngleFunctions(
-    Tree* e, const ProjectionContext& projectionContext, bool* simplifyParent) {
+    Tree* e, const ProjectionContext& projectionContext, bool* simplifyParent,
+    bool canSystematicReduce) {
   bool modified = false;
   bool mustSystematicReduce = false;
+  // Do not use systematicReduction in dependency lists
+  canSystematicReduce &= !e->isDepList();
   for (Tree* child : e->children()) {
     bool tempMustSystematicReduce = false;
     modified |= BottomUpBeautifyAngleFunctions(child, projectionContext,
-                                               &tempMustSystematicReduce);
+                                               &tempMustSystematicReduce,
+                                               canSystematicReduce);
     mustSystematicReduce |= tempMustSystematicReduce;
   }
   if (ShallowBeautifyAngleFunctions(e, projectionContext.m_angleUnit,
-                                    simplifyParent)) {
+                                    simplifyParent, canSystematicReduce)) {
     modified = true;
   } else if (mustSystematicReduce) {
     assert(modified);
@@ -121,17 +125,20 @@ bool Beautification::BottomUpBeautifyAngleFunctions(
 
 // At this stage of the simplification, advanced reductions are expected.
 bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
-                                                   bool* simplifyParent) {
+                                                   bool* simplifyParent,
+                                                   bool canSystematicReduce) {
   // Beautify System nodes to prevent future simplifications.
   if (e->isTrig()) {
     // Hyperbolic functions
     if (
         // cos(A?*i) -> cosh(A)
-        PatternMatching::MatchReplaceSimplify(e, KTrig(KMult(KA_s, i_e), 0_e),
-                                              KCosH(KMult(KA_s))) ||
+        PatternMatching::MatchReplace(e, KTrig(KMult(KA_s, i_e), 0_e),
+                                      KCosH(KMult(KA_s)),
+                                      canSystematicReduce) ||
         // sin(A?*i) -> sinh(A)*i
-        PatternMatching::MatchReplaceSimplify(e, KTrig(KMult(KA_s, i_e), 1_e),
-                                              KMult(KSinH(KMult(KA_s)), i_e))) {
+        PatternMatching::MatchReplace(e, KTrig(KMult(KA_s, i_e), 1_e),
+                                      KMult(KSinH(KMult(KA_s)), i_e),
+                                      canSystematicReduce)) {
       // Necessary to simplify i introduced here
       *simplifyParent = true;
       // Hyperbolic trigonometric functions don't need AngleUnitContext
@@ -139,8 +146,9 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     };
     if (angleUnit != AngleUnit::Radian) {
       Tree* child = e->child(0);
-      child->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
+      child->moveTreeOverTree(PatternMatching::Create(
+          KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)},
+          canSystematicReduce));
       /* This adds new potential multiplication expansions. Another advanced
        * reduction in DeepBeautify may be needed.
        * TODO: Call AdvancedReduction::Reduce in DeepBeautify only if we went
@@ -155,12 +163,13 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     // Inverse hyperbolic functions
     if (
         // asin(A?*i) -> asinh(A)*i
-        PatternMatching::MatchReplaceSimplify(
-            e, KATrig(KMult(KA_s, i_e), 1_e),
-            KMult(KArSinH(KMult(KA_s)), i_e)) ||
+        PatternMatching::MatchReplace(e, KATrig(KMult(KA_s, i_e), 1_e),
+                                      KMult(KArSinH(KMult(KA_s)), i_e),
+                                      canSystematicReduce) ||
         // atan(A?*i) -> atanh(A)*i
-        PatternMatching::MatchReplaceSimplify(
-            e, KATanRad(KMult(KA_s, i_e)), KMult(KArTanH(KMult(KA_s)), i_e))) {
+        PatternMatching::MatchReplace(e, KATanRad(KMult(KA_s, i_e)),
+                                      KMult(KArTanH(KMult(KA_s)), i_e),
+                                      canSystematicReduce)) {
       // Necessary to simplify i introduced here
       *simplifyParent = true;
       // Hyperbolic trigonometric functions don't need AngleUnitContext
@@ -171,8 +180,9 @@ bool Beautification::ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
         PatternMatching::MatchReplace(e, KATanRad(KA), KATan(KA));
     e->moveNodeBeforeNode(SharedTreeStack->pushAngleUnitContext(angleUnit));
     if (angleUnit != AngleUnit::Radian) {
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KMult(KA, KB), {.KA = e, .KB = Angle::ToRad(angleUnit)}));
+      e->moveTreeOverTree(PatternMatching::Create(
+          KMult(KA, KB), {.KA = e, .KB = Angle::ToRad(angleUnit)},
+          canSystematicReduce));
       *simplifyParent = true;
     }
     return true;

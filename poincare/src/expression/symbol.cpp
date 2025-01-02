@@ -31,6 +31,10 @@ ComplexSign Symbol::GetComplexSign(const Tree* e) {
 bool involvesCircularity(const Tree* e, Poincare::Context* context,
                          int maxDepth, const char** visitedSymbols,
                          int numberOfVisitedSymbols) {
+  // If no context is provided, we cannot check for circularity.
+  if (!context) {
+    return false;
+  }
   // Check for circularity only when a symbol/function is encountered
   if (!e->isUserFunction() && !e->isUserSymbol()) {
     for (const Tree* child : e->children()) {

@@ -55,7 +55,10 @@ bool RawDataStatistic::deleteParameterAtPosition(int row, int column) {
 
 void RawDataStatistic::recomputeData() {
   for (int i = 0; i < numberOfSeries(); i++) {
-    updateSeries(m_series[i]);
+    int seriesAtIndex = m_series[i];
+    if (seriesAtIndex >= 0) {
+      updateSeries(seriesAtIndex);
+    }
   }
 }
 

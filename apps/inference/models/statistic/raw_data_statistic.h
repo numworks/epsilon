@@ -95,6 +95,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
 
  private:
   Shared::DoublePairStorePreferences m_storePreferences;
+  // TODO: use an std::array to ensure bound safety
   int m_series[k_maxNumberOfSeries];
 };
 

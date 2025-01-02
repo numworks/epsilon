@@ -102,7 +102,8 @@ void InputStoreController::viewWillAppear() {
     assert(model->numberOfSeries() == 1);
     m_dropdownCell.setMessage(I18n::Message::DataSet);
   }
-  m_dropdownCell.dropdown()->selectRow(model->seriesAt(0));
+  m_dropdownCell.dropdown()->selectRow(
+      model->seriesAt(toUint(m_pageIndex) - 1));
 
   int nRows = m_dropdownDataSource.numberOfRows();
   bool hasTwoSeries =
@@ -182,7 +183,7 @@ void InputStoreController::selectSeriesForDropdownRow(int row) {
     row = 0;
   }
   Table* tableModel = m_storeTableCell.tableModel();
-  tableModel->setSeriesAt(m_statistic, 0, row);
+  tableModel->setSeriesAt(m_statistic, toUint(m_pageIndex) - 1, row);
 }
 
 }  // namespace Inference

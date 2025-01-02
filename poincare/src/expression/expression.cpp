@@ -450,6 +450,8 @@ template <typename T>
 T UserExpression::approximateToScalar(AngleUnit angleUnit,
                                       ComplexFormat complexFormat,
                                       Context* context) const {
+  assert(Poincare::Dimension(*this, context).isScalar() ||
+         Poincare::Dimension(*this, context).isUnit());
   return Approximation::To<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,

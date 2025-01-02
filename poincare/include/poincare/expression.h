@@ -197,7 +197,7 @@ class Expression : public PoolHandle {
    * If scalarsOnly = true, returns undef if it's a point or a list. */
   SystemFunction getSystemFunction(const char* symbolName,
                                    bool scalarsOnly = false) const;
-  // Approximate to scalar any scalar expression
+  // Approximate scalar or unit
   template <typename T>
   T approximateToScalar(
       Preferences::AngleUnit angleUnit = Preferences::AngleUnit::None,

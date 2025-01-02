@@ -104,10 +104,13 @@ class Approximation final {
   static Tree* ToTree(const Tree* e, Parameters params,
                       Context context = Context());
 
+  /* Approximate to real any scalar, unit or list with a list element. Return
+   * NAN otherwise. */
   template <typename T>
   static T To(const Tree* e, Parameters params, Context context = Context());
 
-  // Approximate to real with given value for VarX
+  /* Approximate to real any scalar, unit, list/point with a list/point element,
+  with given value for VarX */
   template <typename T>
   static T To(const Tree* e, T abscissa, Parameters params,
               Context context = Context());
@@ -192,11 +195,11 @@ class Approximation final {
   template <typename T>
   static Tree* ToTree(const Tree* e, Dimension dim, const Context* ctx);
 
-  // Tree must be of scalar dimension
+  // Tree must be of scalar dimension or equivalent
   template <typename T>
   static std::complex<T> ToComplex(const Tree* e, const Context* ctx);
 
-  // Tree must be of scalar dimension and real.
+  // Tree must be of scalar dimension or equivalent, and real.
   template <typename T>
   static T To(const Tree* e, const Context* ctx);
 

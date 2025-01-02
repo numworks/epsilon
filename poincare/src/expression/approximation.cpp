@@ -154,6 +154,7 @@ T Approximation::To(const Tree* e, Parameters params, Context context) {
   if (!(dim.isScalar() || dim.isUnit())) {
     return NAN;
   }
+  assert(context.m_listElement != -1 || !e->isList());
   return ToPointOrScalar<T>(e, params, context).toScalar();
 };
 
@@ -1313,6 +1314,11 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
 
 template <typename T>
 T Approximation::To(const Tree* e, const Context* ctx) {
+#if ASSERTIONS
+  Dimension dim = Dimension::Get(e, ctx->m_symbolContext);
+#endif
+  assert((dim.isScalar() && (ctx->m_listElement != -1 || !e->isList())) ||
+         (dim.isPoint() && ctx->m_pointElement != -1) || dim.isUnit());
   std::complex<T> value = ToComplex<T>(e, ctx);
   // Remove signaling nan
   return value.imag() == 0 && !IsNonReal(value) ? value.real() : NAN;

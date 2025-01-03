@@ -764,40 +764,41 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   // Take advantage of e being last tree.
   assert(extractedUnits);
   assert(dimension.unit.vector == Dimension::Get(extractedUnits).unit.vector);
+  bool foundResult = true;
   switch (unitDisplay) {
     case UnitDisplay::Forbidden:
       extractedUnits->removeTree();
-      e->cloneTreeOverTree(KUndef);
-      return true;
+      foundResult = false;
+      break;
     case UnitDisplay::MainOutput:
       ApplyMainOutputDisplay(e, extractedUnits, dimension, angleUnit);
-      return true;
+      break;
     case UnitDisplay::AutomaticInput:
       // TODO: Handle power of same dimension better 1ft* 1ft* 1in -> in^3 */
-      return ApplyAutomaticInputDisplay(e, extractedUnits);
+      foundResult = ApplyAutomaticInputDisplay(e, extractedUnits);
+      break;
     case UnitDisplay::Equivalent:
-      if (ApplyEquivalentDisplay(e, extractedUnits, dimension, unitFormat)) {
-        return true;
-      }
-      goto basicSI;
+      foundResult =
+          ApplyEquivalentDisplay(e, extractedUnits, dimension, unitFormat);
+      break;
     case UnitDisplay::Decomposition:
-      if (ApplyDecompositionDisplay(e, extractedUnits, dimension, unitFormat)) {
-        return true;
-      }
-      goto basicSI;
+      foundResult =
+          ApplyDecompositionDisplay(e, extractedUnits, dimension, unitFormat);
+      break;
     case UnitDisplay::BasicSI:
-    basicSI:
       MoveTreeOverTree(extractedUnits, GetBaseUnits(dimension.unit.vector));
       assert(e->nextTree() == extractedUnits);
       e->cloneNodeAtNode(KMult.node<2>);
-      return true;
+      break;
     case UnitDisplay::None:
     case UnitDisplay::AutomaticMetric:
     case UnitDisplay::AutomaticImperial:
     case UnitDisplay::AutomaticPrefixFreeMetric:
       OMG::unreachable();
   }
-  assert(false);
+  if (!foundResult) {
+    e->cloneTreeOverTree(KUndef);
+  }
   return true;
 }
 

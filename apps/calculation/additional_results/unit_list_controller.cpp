@@ -124,7 +124,7 @@ void UnitListController::computeAdditionalResults(
   Layout exactOutputLayout =
       Shared::PoincareHelpers::CreateLayout(exactOutput, context);
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
-    if (!expressions[i].isUninitialized()) {
+    if (!expressions[i].isUninitialized() && !expressions[i].isUndefined()) {
       Layout layout =
           Shared::PoincareHelpers::CreateLayout(expressions[i], context);
       // Skip layouts identical to exactOutput

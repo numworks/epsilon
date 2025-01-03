@@ -794,6 +794,10 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(17+4×√(13))", "2+√(13)");
   simplifies_to("√(√(1058)-√(896))", "root(2,4)×(4-√(7))", cartesianCtx);
   simplifies_to("√(57×√(17)+68×√(10))", "2×(1/2+(√(10)×√(17))/17)×17^(3/4)");
+  // TODO: Should be 0
+  simplifies_to("(-8)^(1/3)-1-√(3)×i", "-1+root(-8,3)-√(3)×i", cartesianCtx);
+  // TODO: Should be 0
+  simplifies_to("√(-3)-√(3)×i", "√(-3)-√(3)×i", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_float) {

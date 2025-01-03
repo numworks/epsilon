@@ -33,7 +33,7 @@ class RangeParameterController
   int numberOfRows() const override { return 5; }
   const Escher::HighlightCell* cell(int row) const;
   Escher::HighlightCell* cell(int row) override;
-  KDCoordinate separatorBeforeRow(int row) override;
+  KDCoordinate separatorBeforeRow(int row) const override;
 
   void showGridTypeMenu(bool visible) { m_gridTypeCell.setVisible(visible); }
 

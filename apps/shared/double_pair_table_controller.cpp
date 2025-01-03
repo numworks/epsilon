@@ -98,7 +98,7 @@ int DoublePairTableController::typeAtLocation(int column, int row) const {
   return k_calculationCellType;
 }
 
-KDCoordinate DoublePairTableController::separatorBeforeColumn(int index) {
+KDCoordinate DoublePairTableController::separatorBeforeColumn(int index) const {
   return typeAtLocation(index, 0) == k_seriesTitleCellType
              ? Metric::TableSeparatorThickness
              : 0;

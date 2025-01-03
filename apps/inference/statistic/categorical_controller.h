@@ -43,7 +43,7 @@ class CategoricalController
   int reusableCellCount(int type) const override final { return 1; }
   void fillCellForRow(Escher::HighlightCell* cell, int row) override final {}
   void initWidth(Escher::TableView* tableView) override;
-  KDCoordinate separatorBeforeRow(int row) override {
+  KDCoordinate separatorBeforeRow(int row) const override {
     return row == indexOfNextCell() ? k_defaultRowSeparator : 0;
   }
 

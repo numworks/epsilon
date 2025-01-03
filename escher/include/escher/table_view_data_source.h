@@ -38,8 +38,8 @@ class TableViewDataSource {
   int columnAfterCumulatedWidth(KDCoordinate offsetX);
   int rowAfterCumulatedHeight(KDCoordinate offsetY);
 
-  virtual KDCoordinate separatorBeforeColumn(int column) { return 0; }
-  virtual KDCoordinate separatorBeforeRow(int row) { return 0; }
+  virtual KDCoordinate separatorBeforeColumn(int column) const { return 0; }
+  virtual KDCoordinate separatorBeforeRow(int row) const { return 0; }
 
   virtual HighlightCell* reusableCell(int index, int type) = 0;
   virtual int reusableCellCount(int type) const = 0;

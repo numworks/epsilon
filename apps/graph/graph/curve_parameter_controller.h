@@ -62,7 +62,7 @@ class CurveParameterController
     NumberOfParameters,
   };
 
-  KDCoordinate separatorBeforeRow(int row) override {
+  KDCoordinate separatorBeforeRow(int row) const override {
     return cell(row) == &m_calculationCell ? k_defaultRowSeparator : 0;
   }
   ParameterCell* parameterCell(ParameterIndex index) {

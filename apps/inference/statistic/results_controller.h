@@ -41,7 +41,7 @@ class ResultsController
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;
   int typeAtRow(int row) const override;
-  KDCoordinate separatorBeforeRow(int row) override {
+  KDCoordinate separatorBeforeRow(int row) const override {
     return row == m_statistic->secondResultSectionStart() ||
                    typeAtRow(row) == k_buttonCellType
                ? k_defaultRowSeparator

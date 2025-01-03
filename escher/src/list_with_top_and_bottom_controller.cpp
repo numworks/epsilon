@@ -11,7 +11,7 @@ void ListWithTopAndBottomDataSource::initWidth(TableView* tableView) {
   StandardMemoizedListViewDataSource::initWidth(tableView);
 }
 
-KDCoordinate ListWithTopAndBottomDataSource::separatorBeforeRow(int row) {
+KDCoordinate ListWithTopAndBottomDataSource::separatorBeforeRow(int row) const {
   assert(0 <= row && row < numberOfRows());
   if (hasTopView() && row == 0) {
     return 0;

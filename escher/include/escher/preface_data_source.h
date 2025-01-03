@@ -28,11 +28,11 @@ class IntermediaryDataSource : public TableViewDataSource,
     return m_mainDataSource->typeAtLocation(columnInMainDataSource(column),
                                             rowInMainDataSource(row));
   }
-  KDCoordinate separatorBeforeColumn(int column) override {
+  KDCoordinate separatorBeforeColumn(int column) const override {
     return m_mainDataSource->separatorBeforeColumn(
         columnInMainDataSource(column));
   }
-  KDCoordinate separatorBeforeRow(int row) override {
+  KDCoordinate separatorBeforeRow(int row) const override {
     return m_mainDataSource->separatorBeforeRow(rowInMainDataSource(row));
   }
 
@@ -65,7 +65,7 @@ class RowPrefaceDataSource : public IntermediaryDataSource {
 
   KDCoordinate cumulatedHeightAtPrefaceRow(bool after) const;
   int numberOfRows() const override { return 1; }
-  KDCoordinate separatorBeforeRow(int row) override { return 0; }
+  KDCoordinate separatorBeforeRow(int row) const override { return 0; }
   KDCoordinate separatorAfterPrefaceRow() {
     assert(m_prefaceRow >= 0);
     return m_mainDataSource->separatorBeforeRow(m_prefaceRow + 1);
@@ -100,7 +100,7 @@ class ColumnPrefaceDataSource : public IntermediaryDataSource {
   KDCoordinate cumulatedWidthAtPrefaceColumn(bool after) const;
 
   int numberOfColumns() const override { return 1; }
-  KDCoordinate separatorBeforeColumn(int column) override { return 0; }
+  KDCoordinate separatorBeforeColumn(int column) const override { return 0; }
   KDCoordinate separatorAfterPrefaceColumn() {
     assert(m_prefaceColumn >= 0);
     return m_mainDataSource->separatorBeforeColumn(m_prefaceColumn + 1);

@@ -26,7 +26,7 @@ class SingleInteractiveCurveViewRangeController
   int typeAtRow(int row) const override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
-  KDCoordinate separatorBeforeRow(int row) override;
+  KDCoordinate separatorBeforeRow(int row) const override;
   bool textFieldDidReceiveEvent(Escher::AbstractTextField* textField,
                                 Ion::Events::Event event) override;
   void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;

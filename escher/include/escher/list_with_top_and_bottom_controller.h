@@ -15,7 +15,7 @@ class ListWithTopAndBottomDataSource
         m_bottomCell(bottomView) {}
 
   int numberOfRows() const override;
-  KDCoordinate separatorBeforeRow(int row) override;
+  KDCoordinate separatorBeforeRow(int row) const override;
   HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;
 

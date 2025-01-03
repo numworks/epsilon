@@ -142,7 +142,7 @@ KDCoordinate SingleInteractiveCurveViewRangeController::nonMemoizedRowHeight(
 }
 
 KDCoordinate SingleInteractiveCurveViewRangeController::separatorBeforeRow(
-    int row) {
+    int row) const {
   return typeAtRow(row) == k_gridUnitCellType
              ? k_defaultRowSeparator
              : SingleRangeController<float>::separatorBeforeRow(row);

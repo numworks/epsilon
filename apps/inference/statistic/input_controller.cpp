@@ -128,7 +128,7 @@ void InputController::fillCellForRow(Escher::HighlightCell* cell, int row) {
   FloatParameterController<double>::fillCellForRow(cell, row);
 }
 
-KDCoordinate InputController::separatorBeforeRow(int row) {
+KDCoordinate InputController::separatorBeforeRow(int row) const {
   return typeAtRow(row) == k_significanceCellType
              ? k_defaultRowSeparator
              : FloatParameterController<double>::separatorBeforeRow(row);

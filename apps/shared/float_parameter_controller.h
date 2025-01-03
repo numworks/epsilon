@@ -29,7 +29,7 @@ class FloatParameterController : public Escher::ListWithTopAndBottomController,
   Escher::HighlightCell* reusableCell(int index, int type) override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
-  KDCoordinate separatorBeforeRow(int row) override {
+  KDCoordinate separatorBeforeRow(int row) const override {
     return typeAtRow(row) == k_buttonCellType ? k_defaultRowSeparator : 0;
   }
 

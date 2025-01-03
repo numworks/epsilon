@@ -56,7 +56,7 @@ const char* DetailsListController::title() const {
       App::app()->elementsViewDataSource()->selectedElement()));
 }
 
-KDCoordinate DetailsListController::separatorBeforeRow(int row) {
+KDCoordinate DetailsListController::separatorBeforeRow(int row) const {
   assert(row < numberOfRows());
   const DataField* dataField = DataFieldForRow(row);
   if (dataField == &ElementsDataBase::ConfigurationField ||

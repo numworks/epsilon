@@ -29,7 +29,7 @@ class DetailsListController : public Escher::ListWithTopAndBottomController {
   int reusableCellCount(int type) const override {
     return k_maxNumberOfDisplayedRows;
   }
-  KDCoordinate separatorBeforeRow(int row) override;
+  KDCoordinate separatorBeforeRow(int row) const override;
 
   // Escher::ListViewDataSource
   int typeAtRow(int row) const override { return 0; }

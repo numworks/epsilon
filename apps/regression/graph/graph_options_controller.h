@@ -38,7 +38,7 @@ class GraphOptionsController
   int numberOfRows() const override { return k_maxNumberOfRows; }
   const Escher::HighlightCell* cell(int row) const;
   Escher::HighlightCell* cell(int row) override;
-  KDCoordinate separatorBeforeRow(int row) override {
+  KDCoordinate separatorBeforeRow(int row) const override {
     return cell(row) == &m_xParameterCell ||
                    cell(row) == &m_removeRegressionCell
                ? k_defaultRowSeparator

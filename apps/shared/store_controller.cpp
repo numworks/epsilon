@@ -116,7 +116,7 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
       AbstractEvenOddBufferTextCell::k_defaultPrecision);
 }
 
-KDCoordinate StoreController::separatorBeforeColumn(int column) {
+KDCoordinate StoreController::separatorBeforeColumn(int column) const {
   return column > 0 && m_store->relativeColumn(column) == 0
              ? Escher::Metric::TableSeparatorThickness
              : 0;

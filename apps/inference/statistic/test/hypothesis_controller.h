@@ -42,7 +42,7 @@ class HypothesisController
   const Escher::HighlightCell* cell(int i) const;
   Escher::HighlightCell* cell(int i) override;
   int numberOfRows() const override { return 3; }
-  KDCoordinate separatorBeforeRow(int row) override {
+  KDCoordinate separatorBeforeRow(int row) const override {
     return cell(row) == &m_next ? k_defaultRowSeparator : 0;
   }
   bool canStoreCellAtRow(int row) override { return false; }

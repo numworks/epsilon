@@ -98,8 +98,8 @@ void RangeParameterController::fillCells() {
   m_gridTypeCell.subLabel()->setText(I18n::translate(gridTypeCellSubMessage));
 }
 
-KDCoordinate RangeParameterController::separatorBeforeRow(int row) {
-  HighlightCell* cell = this->cell(row);
+KDCoordinate RangeParameterController::separatorBeforeRow(int row) const {
+  const HighlightCell* cell = this->cell(row);
   return cell == &m_xRangeCell || cell == &m_okButton ? k_defaultRowSeparator
                                                       : 0;
 }

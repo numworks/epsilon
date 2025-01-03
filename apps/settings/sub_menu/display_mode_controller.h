@@ -20,7 +20,7 @@ class DisplayModeController : public PreferencesController,
     return (row == numberOfRows() - 1) ? k_significantDigitsType
                                        : k_resultFormatType;
   }
-  KDCoordinate separatorBeforeRow(int row) override {
+  KDCoordinate separatorBeforeRow(int row) const override {
     return typeAtRow(row) == k_significantDigitsType
                ? k_defaultRowSeparator
                : PreferencesController::separatorBeforeRow(row);

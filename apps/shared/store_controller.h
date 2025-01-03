@@ -33,7 +33,7 @@ class StoreController : public EditableCellTableViewController,
   int typeAtLocation(int column, int row) const override;
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
-  KDCoordinate separatorBeforeColumn(int column) override;
+  KDCoordinate separatorBeforeColumn(int column) const override;
   bool canStoreCellAtLocation(int column, int row) override { return row > 0; }
 
   // ViewController

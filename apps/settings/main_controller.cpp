@@ -276,7 +276,7 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
   myTextCell->subLabel()->setMessage(subtitle);
 }
 
-KDCoordinate MainController::separatorBeforeRow(int row) {
+KDCoordinate MainController::separatorBeforeRow(int row) const {
   return typeAtRow(row) == k_brightnessCellType ||
                  typeAtRow(row) == k_resetCellType
              ? k_defaultRowSeparator

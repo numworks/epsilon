@@ -46,7 +46,7 @@ class MainController : public Escher::SelectableListViewController<
   int reusableCellCount(int type) const override;
   int typeAtRow(int row) const override;
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
-  KDCoordinate separatorBeforeRow(int row) override;
+  KDCoordinate separatorBeforeRow(int row) const override;
   void viewWillAppear() override;
   bool hasTestModeCell() const;
 

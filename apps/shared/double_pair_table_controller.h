@@ -55,7 +55,7 @@ class DoublePairTableController
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;
   int typeAtLocation(int column, int row) const override;
-  KDCoordinate separatorBeforeColumn(int index) override;
+  KDCoordinate separatorBeforeColumn(int index) const override;
 
  protected:
   // Number of cells

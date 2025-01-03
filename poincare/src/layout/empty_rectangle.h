@@ -20,10 +20,6 @@ class EmptyRectangle {
 
   static void DrawEmptyRectangle(KDContext* ctx, KDPoint p, KDFont::Size font,
                                  KDColor fillColor);
-
- private:
-  constexpr static KDCoordinate k_marginWidth = 1;
-  constexpr static KDCoordinate k_marginHeight = 3;
 };
 
 }  // namespace Poincare::Internal

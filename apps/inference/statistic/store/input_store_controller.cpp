@@ -106,8 +106,6 @@ void InputStoreController::viewWillAppear() {
       model->seriesAt(toUint(m_pageIndex) - 1));
 
   int nRows = m_dropdownDataSource.numberOfRows();
-  bool hasTwoSeries =
-      m_statistic->significanceTestType() == SignificanceTestType::TwoMeans;
   constexpr size_t bufferSize =
       2 * Shared::DoublePairStore::k_tableNameLength + sizeof(",") + 1;
   char buffer[bufferSize];
@@ -118,14 +116,9 @@ void InputStoreController::viewWillAppear() {
   }
   m_dropdownCell.dropdown()->reloadCell();
 
-  if (hasTwoSeries)
-    // TODO: refactor hideParameterCells because the page index is a member
-    // variable of InputStoreController
-    hideParameterCells(m_pageIndex == PageIndex::One ? 0 : 1);
-  else
-    setAllParameterCellsVisible();
-
   InputCategoricalController::viewWillAppear();
+
+  m_selectableListView.layoutSubviews(true);
 }
 
 void InputStoreController::initView() {
@@ -154,6 +147,14 @@ void InputStoreController::initView() {
     // member
     setNextController(shouldDisplayTwoPages ? m_nextInputStoreController
                                             : m_nextOtherController);
+  }
+
+  if (shouldDisplayTwoPages) {
+    // TODO: refactor hideParameterCells because the page index is a member
+    // variable of InputStoreController
+    hideParameterCells(m_pageIndex == PageIndex::One ? 0 : 1);
+  } else {
+    setAllParameterCellsVisible();
   }
 }
 

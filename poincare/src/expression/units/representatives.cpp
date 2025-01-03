@@ -141,14 +141,17 @@ const Speed::Representatives<const Speed> Speed::representatives = {
 const Representative* Distance::bestRepresentativeAndPrefix(
     double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
     const Representative* forcedRepr) const {
-  return unitFormat == UnitFormat::Metric
-             ?
-             /* Exclude imperial units from the search. */
+  bool useMetricRepresentative;
+  if (forcedRepr) {
+    useMetricRepresentative = forcedRepr == &representatives.meter;
+  } else {
+    useMetricRepresentative = unitFormat == UnitFormat::Metric;
+  }
+  return useMetricRepresentative ? /* Exclude imperial units from the search. */
              defaultFindBestRepresentativeAndPrefix(
                  value, exponent, &representatives.meter, &representatives.inch,
                  prefix)
-             :
-             /* Exclude meters from the search. */
+                                 : /* Exclude meters from the search. */
              defaultFindBestRepresentativeAndPrefix(
                  value, exponent, &representatives.meter + 1,
                  representatives.end(), prefix);
@@ -215,14 +218,26 @@ const Representative* Surface::bestRepresentativeAndPrefix(
     double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
     const Representative* forcedRepr) const {
   *prefix = Prefix::EmptyPrefix();
-  return unitFormat == UnitFormat::Metric ? &representatives.hectare
-                                          : &representatives.acre;
+  bool useMetricRepresentative;
+  if (forcedRepr) {
+    useMetricRepresentative = forcedRepr == &representatives.hectare;
+  } else {
+    useMetricRepresentative = unitFormat == UnitFormat::Metric;
+  }
+  return useMetricRepresentative ? &representatives.hectare
+                                 : &representatives.acre;
 }
 
 const Representative* Volume::bestRepresentativeAndPrefix(
     double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
     const Representative* forcedRepr) const {
-  if (unitFormat == UnitFormat::Metric) {
+  bool useMetricRepresentative;
+  if (forcedRepr) {
+    useMetricRepresentative = forcedRepr == &representatives.liter;
+  } else {
+    useMetricRepresentative = unitFormat == UnitFormat::Metric;
+  }
+  if (useMetricRepresentative) {
     *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
     return &representatives.liter;
   }

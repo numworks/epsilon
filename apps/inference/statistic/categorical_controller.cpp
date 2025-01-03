@@ -2,6 +2,7 @@
 
 #include <escher/invocation.h>
 
+#include "escher/highlight_cell.h"
 #include "inference/app.h"
 #include "inference/constants.h"
 #include "inference/text_helpers.h"
@@ -189,9 +190,14 @@ HighlightCell* CategoricalController::reusableCell(int index, int type) {
   return explicitCellAtRow(type);
 }
 
-HighlightCell* CategoricalController::explicitCellAtRow(int row) {
+const HighlightCell* CategoricalController::explicitCellAtRow(int row) const {
   assert(row == indexOfNextCell());
   return &m_next;
+}
+
+HighlightCell* CategoricalController::explicitCellAtRow(int row) {
+  return const_cast<HighlightCell*>(
+      const_cast<const CategoricalController*>(this)->explicitCellAtRow(row));
 }
 
 KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
@@ -200,7 +206,7 @@ KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
                     static_cast<int>(m_selectableListView.bounds().height()));
   }
   // The rest of the cells are explicit
-  HighlightCell* cell = explicitCellAtRow(row);
+  const HighlightCell* cell = explicitCellAtRow(row);
   return cell->isVisible() ? cell->minimalSizeForOptimalDisplay().height() : 0;
 }
 
@@ -280,11 +286,18 @@ void InputCategoricalController::viewWillAppear() {
   categoricalTableCell()->recomputeDimensionsAndReload(true, true);
 }
 
-HighlightCell* InputCategoricalController::explicitCellAtRow(int row) {
+const HighlightCell* InputCategoricalController::explicitCellAtRow(
+    int row) const {
   if (row == indexOfSignificanceCell()) {
     return &m_significanceCell;
   }
   return CategoricalController::explicitCellAtRow(row);
+}
+
+HighlightCell* InputCategoricalController::explicitCellAtRow(int row) {
+  return const_cast<HighlightCell*>(
+      const_cast<const InputCategoricalController*>(this)->explicitCellAtRow(
+          row));
 }
 
 }  // namespace Inference

@@ -60,6 +60,7 @@ class CategoricalController
   KDCoordinate nonMemoizedRowHeight(int row) override final;
 
   virtual Escher::HighlightCell* explicitCellAtRow(int row);
+  virtual const Escher::HighlightCell* explicitCellAtRow(int row) const;
   virtual int indexOfNextCell() const { return indexOfTableCell() + 1; }
   virtual CategoricalTableCell* categoricalTableCell() = 0;
 
@@ -112,6 +113,7 @@ class InputCategoricalController : public CategoricalController,
   }
 
  protected:
+  const Escher::HighlightCell* explicitCellAtRow(int row) const override;
   Escher::HighlightCell* explicitCellAtRow(int row) override;
   InputCategoricalTableCell* categoricalTableCell() override = 0;
   virtual int indexOfSignificanceCell() const = 0;

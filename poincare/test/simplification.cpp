@@ -373,6 +373,11 @@ QUIZ_CASE(pcj_simplification_complex) {
   // TODO: Improve sign detection
   simplifies_to("abs(-1+π)", "abs(-1+π)");
   simplifies_to("abs(1-π)", "abs(1-π)");
+
+  simplifies_to("2/(4+4*i)", "1/4-1/4×i", cartesianCtx);
+  simplifies_to("e^(π*i/6)+e^(-π*i/3)", "(1+√(3))/2+(1/2-√(3)/2)×i",
+                cartesianCtx);
+  simplifies_to("e^(π*i/6)*e^(-π*i/3)", "√(3)/2-1/2×i", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {

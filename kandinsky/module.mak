@@ -51,7 +51,7 @@ $(call all_objects_for,$(PATH_omg)/test/print.cpp): $(KANDINSKY_fonts_dependenci
 $(call import_module,kandinsky_rasterizer,$(PATH_kandinsky)/fonts)
 $(call create_module,kandinsky_rasterizer,1,rasterizer.c)
 
-_cflags_kandinsky_rasterizer := -std=c11 $(shell pkg-config freetype2 --cflags)
+_cflags_kandinsky_rasterizer := -std=c11 -MMD -MP $(shell pkg-config freetype2 --cflags)
 _ldflags_kandinsky_rasterizer := $(shell pkg-config freetype2 --libs)
 
 _has_libpng := $(shell pkg-config libpng --exists && echo 1)

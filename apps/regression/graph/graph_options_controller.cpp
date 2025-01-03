@@ -175,32 +175,38 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-HighlightCell* GraphOptionsController::cell(int row) {
+const HighlightCell* GraphOptionsController::cell(int row) const {
   assert(row >= 0 && row < k_maxNumberOfRows);
   if (GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
       CountryPreferences::RegressionApp::Default) {
-    HighlightCell* cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
-                                               &m_regressionEquationCell,
-                                               &m_rCell,
-                                               &m_r2Cell,
-                                               &m_xParameterCell,
-                                               &m_yParameterCell,
-                                               &m_residualPlotCell,
-                                               &m_removeRegressionCell};
+    const HighlightCell* cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
+                                                     &m_regressionEquationCell,
+                                                     &m_rCell,
+                                                     &m_r2Cell,
+                                                     &m_xParameterCell,
+                                                     &m_yParameterCell,
+                                                     &m_residualPlotCell,
+                                                     &m_removeRegressionCell};
     return cells[row];
   }
   assert(GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
          CountryPreferences::RegressionApp::Variant1);
-  HighlightCell* cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
-                                             &m_regressionEquationCell,
-                                             &m_rCell,
-                                             &m_r2Cell,
-                                             &m_residualPlotCell,
-                                             &m_xParameterCell,
-                                             &m_yParameterCell,
-                                             &m_removeRegressionCell};
+  const HighlightCell* cells[k_maxNumberOfRows] = {&m_changeRegressionCell,
+                                                   &m_regressionEquationCell,
+                                                   &m_rCell,
+                                                   &m_r2Cell,
+                                                   &m_residualPlotCell,
+                                                   &m_xParameterCell,
+                                                   &m_yParameterCell,
+                                                   &m_removeRegressionCell};
   return cells[row];
 }
+
+HighlightCell* GraphOptionsController::cell(int row) {
+  return const_cast<Escher::HighlightCell*>(
+      const_cast<const GraphOptionsController*>(this)->cell(row));
+}
+
 bool GraphOptionsController::displayRegressionEquationCell() const {
   return m_store->coefficientsAreDefined(
       m_graphController->selectedSeriesIndex(),

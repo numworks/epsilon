@@ -74,6 +74,8 @@ class CurveParameterController
     return confirmParameterAtIndex(static_cast<ParameterIndex>(parameterIndex),
                                    f);
   }
+
+  const Escher::HighlightCell* cell(int row) const;
   Escher::HighlightCell* cell(int row) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;

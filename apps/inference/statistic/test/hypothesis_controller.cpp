@@ -103,9 +103,14 @@ const char* HypothesisController::symbolPrefix() {
   return m_test->hypothesisSymbol();
 }
 
-HighlightCell* HypothesisController::cell(int row) {
-  HighlightCell* cells[] = {&m_h0, &m_ha, &m_next};
+const HighlightCell* HypothesisController::cell(int row) const {
+  const HighlightCell* cells[] = {&m_h0, &m_ha, &m_next};
   return cells[row];
+}
+
+HighlightCell* HypothesisController::cell(int row) {
+  return const_cast<Escher::HighlightCell*>(
+      const_cast<const HypothesisController*>(this)->cell(row));
 }
 
 void HypothesisController::didBecomeFirstResponder() {

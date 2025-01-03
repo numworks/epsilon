@@ -36,6 +36,7 @@ class GraphOptionsController
 
   // MemoizedListViewDataSource
   int numberOfRows() const override { return k_maxNumberOfRows; }
+  const Escher::HighlightCell* cell(int row) const;
   Escher::HighlightCell* cell(int row) override;
   KDCoordinate separatorBeforeRow(int row) override {
     return cell(row) == &m_xParameterCell ||

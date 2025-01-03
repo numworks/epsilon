@@ -41,11 +41,16 @@ RangeParameterController::RangeParameterController(
   m_gridTypeCell.setVisible(false);
 }
 
-HighlightCell* RangeParameterController::cell(int row) {
+const HighlightCell* RangeParameterController::cell(int row) const {
   assert(row < numberOfRows());
-  HighlightCell* cells[] = {&m_normalizeCell, &m_xRangeCell, &m_yRangeCell,
-                            &m_gridTypeCell, &m_okButton};
+  const HighlightCell* cells[] = {&m_normalizeCell, &m_xRangeCell,
+                                  &m_yRangeCell, &m_gridTypeCell, &m_okButton};
   return cells[row];
+}
+
+HighlightCell* RangeParameterController::cell(int row) {
+  return const_cast<Escher::HighlightCell*>(
+      const_cast<const RangeParameterController*>(this)->cell(row));
 }
 
 void RangeParameterController::fillCells() {

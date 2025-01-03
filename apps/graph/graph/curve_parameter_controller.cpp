@@ -45,14 +45,19 @@ CurveParameterController::CurveParameterController(
   m_optionsCell.label()->setMessage(I18n::Message::Options);
 }
 
-Escher::HighlightCell* CurveParameterController::cell(int row) {
+const Escher::HighlightCell* CurveParameterController::cell(int row) const {
   assert(0 <= row && row < k_numberOfRows);
   if (row < k_numberOfParameterRows) {
     return &m_parameterCells[row];
   }
-  HighlightCell* cells[k_numberOfRows - k_numberOfParameterRows] = {
+  const HighlightCell* cells[k_numberOfRows - k_numberOfParameterRows] = {
       &m_calculationCell, &m_optionsCell};
   return cells[row - k_numberOfParameterRows];
+}
+
+Escher::HighlightCell* CurveParameterController::cell(int row) {
+  return const_cast<Escher::HighlightCell*>(
+      const_cast<const CurveParameterController*>(this)->cell(row));
 }
 
 Shared::ExpiringPointer<Shared::ContinuousFunction>

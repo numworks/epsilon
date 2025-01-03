@@ -331,9 +331,10 @@ Tree* Logarithm::ExpandLnOnInteger(IntegerHandler m, bool escapeIfPrime) {
       Arithmetic::FactorizedInteger::k_factorizationFailed) {
     return nullptr;
   }
-  if (escapeIfPrime && (factorization.numberOfFactors == 0 ||
-                        (factorization.numberOfFactors == 1 &&
-                         factorization.coefficients[0] == 1))) {
+  if (!isNegative && escapeIfPrime &&
+      (factorization.numberOfFactors == 0 ||
+       (factorization.numberOfFactors == 1 &&
+        factorization.coefficients[0] == 1))) {
     return nullptr;
   }
   Tree* result = KAdd.node<0>->cloneNode();

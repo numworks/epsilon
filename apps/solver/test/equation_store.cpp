@@ -337,7 +337,7 @@ QUIZ_CASE(solver_complex_cartesian) {
   assert_solves_to("x+√(-1)=0", "x=-i");
   assert_solves_to(
       "x^2+x+1=0",
-      {"x=-(1+√(-3))/2", "x=(-1+√(-3))/2",  // TODO_PCJ: simplify (metric)
+      {"x=-1/2-√(3)/2×i", "x=-1/2+√(3)/2×i",  // TODO_PCJ: simplify (metric)
        "delta=-3"});
   assert_solves_to("x^2-√(-1)=0",
                    {"x=-√(2)/2-√(2)/2×i", "x=√(2)/2+√(2)/2×i", "delta=4i"});

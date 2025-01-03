@@ -795,8 +795,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(√(1058)-√(896))", "root(2,4)×(4-√(7))", cartesianCtx);
   simplifies_to("√(57×√(17)+68×√(10))", "root(17,4)×(2×√(10)+√(17))");
   simplifies_to("(-8)^(1/3)-1-√(3)×i", "0", cartesianCtx);
-  // TODO: Should be 0
-  simplifies_to("√(-3)-√(3)×i", "√(-3)-√(3)×i", cartesianCtx);
+  simplifies_to("√(-3)-√(3)×i", "0", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_float) {
@@ -1345,7 +1344,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to(
       "ln(cos(x)^2+sin(x)^2)",
       "dep(0,{nonNull(cos(x)^2+sin(x)^2),realPos(cos(x)^2+sin(x)^2)})");
-  simplifies_to("ln(-10)-ln(5)", "ln(-2)", cartesianCtx);
+  simplifies_to("ln(-10)-ln(5)", "ln(2)+π×i", cartesianCtx);
   simplifies_to("im(ln(-120))", "π", cartesianCtx);
   simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
   simplifies_to("im(ln(i-2)+ln(i-1))-2π", "im(ln(1-3×i))", cartesianCtx);

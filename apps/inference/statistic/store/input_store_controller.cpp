@@ -164,6 +164,17 @@ void InputStoreController::initView() {
   }
 }
 
+KDCoordinate InputStoreController::separatorBeforeRow(int row) const {
+  /* A separator before the last cell (the "next" button) must be added, with
+   * an exception: no such separator should be added if all cells between the
+   * "table" cell and the "next" cell are set to invisible, otherwise an
+   * unwanted thin white line appears. */
+  if (row == indexOfNextCell() && !areAllParameterCellsInvisible()) {
+    return k_defaultRowSeparator;
+  }
+  return 0;
+}
+
 bool InputStoreController::ButtonAction(InputStoreController* controller,
                                         void* s) {
   if (controller->m_nextInputStoreController == controller->m_nextController) {
@@ -192,6 +203,15 @@ void InputStoreController::selectSeriesForDropdownRow(int row) {
   }
   Table* tableModel = m_storeTableCell.tableModel();
   tableModel->setSeriesAt(m_statistic, toUint(m_pageIndex) - 1, row);
+}
+
+bool InputStoreController::areAllParameterCellsInvisible() const {
+  for (int row = indexOfTableCell() + 1; row < indexOfNextCell(); row++) {
+    if (explicitCellAtRow(row)->isVisible()) {
+      return false;
+    }
+  }
+  return true;
 }
 
 }  // namespace Inference

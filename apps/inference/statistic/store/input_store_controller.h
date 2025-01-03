@@ -43,6 +43,9 @@ class InputStoreController : public InputCategoricalController,
   // DropdownCallback
   void onDropdownSelected(int selectedRow) override;
 
+  // CategoricalController
+  KDCoordinate separatorBeforeRow(int row) const override;
+
   void initSeriesSelection() {
     selectSeriesForDropdownRow(m_dropdownCell.dropdown()->selectedRow());
   }
@@ -153,6 +156,8 @@ class InputStoreController : public InputCategoricalController,
   }
   int indexOfEditedParameterAtIndex(int index) const override;
   void selectSeriesForDropdownRow(int row);
+
+  bool areAllParameterCellsInvisible() const;
 
   DropdownDataSource m_dropdownDataSource;
   DropdownCategoricalCell m_dropdownCell;

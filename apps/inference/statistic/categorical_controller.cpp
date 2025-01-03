@@ -2,7 +2,6 @@
 
 #include <escher/invocation.h>
 
-#include "escher/highlight_cell.h"
 #include "inference/app.h"
 #include "inference/constants.h"
 #include "inference/text_helpers.h"

@@ -2,7 +2,12 @@ $(call assert_defined,KANDINSKY_font_variant)
 
 KANDINSKY_codepoints := $(PATH_kandinsky)/fonts/code_points.h
 
+ifeq ($(KANDINSKY_font_variant),epsilon)
 _sources_kandinsky_fonts := LargeFont.ttf SmallFont.ttf
+endif
+ifeq ($(KANDINSKY_font_variant),scandium)
+_sources_kandinsky_fonts := SmallFont.ttf
+endif
 
 KANDINSKY_fonts_dependencies := $(patsubst %.ttf,$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/%.h,$(_sources_kandinsky_fonts))
 
@@ -97,6 +102,5 @@ endif
 ifeq ($(KANDINSKY_font_variant),scandium)
 SFLAGS += -DKANDINSKY_FONT_VARIABLE_WIDTH=1
 $(call raster_font,SmallFont,12,8,13)
-$(call raster_font,LargeFont,16,10,18)
 endif
 

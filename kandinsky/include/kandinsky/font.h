@@ -2,8 +2,12 @@
 #define KANDINSKY_FONT_H
 
 #include <kandinsky/coordinate.h>
-#include <kandinsky/fonts/LargeFont.h>
 #include <kandinsky/fonts/SmallFont.h>
+#if KANDINSKY_FONT_LARGE_FONT
+#include <kandinsky/fonts/LargeFont.h>
+#else
+using LargeFont = SmallFont;
+#endif
 #include <kandinsky/fonts/code_points.h>
 #include <kandinsky/fonts/font_constants.h>
 #include <kandinsky/size.h>
@@ -41,7 +45,9 @@ constexpr static int indexOf(const uint32_t* array, const int arraySize,
 
 class KDFont {
  private:
+#if KANDINSKY_FONT_LARGE_FONT
   static const KDFont privateLargeFont;
+#endif
   static const KDFont privateSmallFont;
 
  public:

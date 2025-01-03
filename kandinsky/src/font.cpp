@@ -13,8 +13,12 @@ constexpr static int k_tabCharacterWidth = 4;
 #if KANDINSKY_FONT_VARIABLE_WIDTH
 KDCoordinate KDFont::GlyphWidth(Size size, CodePoint codePoint) {
   int index = Font(size)->indexForCodePoint(codePoint);
+#if KANDINSKY_FONT_LARGE_FONT
   return size == Size::Small ? privateSmallFont.m_glyphWidths[index]
                              : privateLargeFont.m_glyphWidths[index];
+#else
+  return privateSmallFont.m_glyphWidths[index];
+#endif
 }
 #endif
 

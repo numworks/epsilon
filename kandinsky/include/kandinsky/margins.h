@@ -9,6 +9,11 @@ struct KD1DMarginsStruct {
   KDCoordinate secondMargin;
 };
 
+struct KDMarginsStruct {
+  KD1DMarginsStruct horizontal;
+  KD1DMarginsStruct vertical;
+};
+
 class KD1DMargins {
  public:
   constexpr KD1DMargins(KDCoordinate firstMargin, KDCoordinate secondMargin)
@@ -43,6 +48,10 @@ class KDHorizontalMargins : public KD1DMargins {
     return other.left() == left() && other.right() == right();
   }
 
+  constexpr operator KDMarginsStruct() const {
+    return {{left(), right()}, {0, 0}};
+  }
+
   constexpr KDCoordinate left() const { return firstMargin(); }
   constexpr KDCoordinate right() const { return secondMargin(); }
 
@@ -62,6 +71,10 @@ class KDVerticalMargins : public KD1DMargins {
     return other.top() == top() && other.bottom() == bottom();
   }
 
+  constexpr operator KDMarginsStruct() const {
+    return {{0, 0}, {top(), bottom()}};
+  }
+
   constexpr KDCoordinate top() const { return firstMargin(); }
   constexpr KDCoordinate bottom() const { return secondMargin(); }
 
@@ -69,11 +82,6 @@ class KDVerticalMargins : public KD1DMargins {
   void setBottom(KDCoordinate m) { setSecondMargin(m); }
 
   constexpr KDCoordinate height() const { return total(); }
-};
-
-struct KDMarginsStruct {
-  KD1DMarginsStruct horizontal;
-  KD1DMarginsStruct vertical;
 };
 
 // KDMargins(left, right, top, bottom)

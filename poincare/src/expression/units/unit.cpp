@@ -1057,6 +1057,7 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   SIVector vector = dimension.unit.vector;
   // Only Surfaces and Volumes are concerned
   if (vector.supportSize() != 1 || vector.distance < 2 || vector.distance > 3) {
+    inputUnits->removeTree();
     return false;
   }
   bool isVolume = (vector.distance == 3);
@@ -1211,6 +1212,7 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
     }
   }
   if (!list) {
+    inputUnits->removeTree();
     return false;
   }
   double value = Approximation::To<double>(e, Approximation::Parameters{});
@@ -1218,6 +1220,7 @@ bool Unit::ApplyDecompositionDisplay(Tree* e, TreeRef& inputUnits,
   assert(length > 1);
   if (std::isnan(value) || std::isinf(value) ||
       std::abs(value) <= list[length - 2]->ratio()) {
+    inputUnits->removeTree();
     return false;
   }
   // inputUnits are no longer necessary

@@ -89,7 +89,7 @@ constexpr static Aliases k_piAliases = "\01π\00pi\00";
 constexpr static Aliases k_thetaAliases = "\01θ\00theta\00";
 // Units
 constexpr static Aliases k_litersAliases = "\01L\00l\00";
-constexpr static Aliases k_ohmAliases = "\01Ω\00Ohm\00";
+constexpr static Aliases k_ohmAliases = "\01Ω\00ohm\00Ohm\00";
 // Inverse trigo
 constexpr static Aliases k_acosAliases = "\01arccos\00acos\00";
 constexpr static Aliases k_asinAliases = "\01arcsin\00asin\00";

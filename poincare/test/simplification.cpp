@@ -842,6 +842,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("10^(-6)_m^3", "1ᴇ-6×_m^3");
   simplifies_to("1000000_cm", "1000000×_cm");
   simplifies_to("normcdf(0,20,3)×_s", "1.3083978345207ᴇ-11×_s");
+  simplifies_to("17_nohm*3+2_nOhm", "53×_nΩ");
 
   // No unit conversion
   // TODO: should return 1×_m+1×_cm

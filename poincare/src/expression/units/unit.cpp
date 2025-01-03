@@ -1112,8 +1112,6 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     units->removeTree();
     return false;
   }
-  /* TODO: Allow representative switch between in, ft, yd and mi, and between
-   * gal, qt etc */
   ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
       units, &value, unitFormat, true, false);
   e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));

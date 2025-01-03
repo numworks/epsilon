@@ -972,7 +972,7 @@ bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
 
 /* TODO_PCJ: Added temperature unit used to depend on the input (5°C should
  *           output 5°C, 41°F should output 41°F). */
-bool Unit::ApplyAutomaticDisplay(Tree* e, Dimension dimension,
+void Unit::ApplyAutomaticDisplay(Tree* e, Dimension dimension,
                                  UnitDisplay unitDisplay) {
   assert(dimension.isUnit() && !e->isUndefined());
   Units::SIVector vector = dimension.unit.vector;
@@ -999,7 +999,6 @@ bool Unit::ApplyAutomaticDisplay(Tree* e, Dimension dimension,
   e->moveTreeOverTree(
       PatternMatching::Create(KMult(KA, KB), {.KA = e, .KB = units}));
   units->removeTree();
-  return true;
 }
 
 bool IsCombinationOfUnits(const Tree* e) {

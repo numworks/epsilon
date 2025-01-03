@@ -195,7 +195,16 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
     if (context->rack == context->selection.layout() &&
         context->index >= context->selection.leftPosition() &&
         context->index < context->selection.rightPosition()) {
+#if POINCARE_SCANDIUM_LAYOUTS
       childStyle.backgroundColor = context->style.selectionColor;
+      childStyle.glyphColor = context->style.backgroundColor;
+      childStyle.requiredPlaceholderColor =
+          context->style.optionalPlaceholderColor;
+      childStyle.optionalPlaceholderColor =
+          context->style.requiredPlaceholderColor;
+#else
+      childStyle.backgroundColor = context->style.selectionColor;
+#endif
     }
     if (child) {
       DrawSimpleLayout(child, context->ctx, p, childStyle, context->selection);
@@ -1238,9 +1247,13 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           LayoutStyle braceStyle = style;
           if (AutocompletedPair::IsTemporary(l,
                                              left ? Side::Left : Side::Right)) {
+#if POINCARE_SCANDIUM_LAYOUTS
+            braceStyle.glyphColor = style.optionalPlaceholderColor;
+#else
             braceStyle.glyphColor =
                 KDColor::Blend(style.glyphColor, style.backgroundColor,
                                Pair::k_temporaryBlendAlpha);
+#endif
           }
           if (l->isCurlyBracesLayout()) {
             RenderCurlyBracesWithChildHeight(left, Height(l->child(0)), ctx,

@@ -639,6 +639,13 @@ bool SystematicOperation::ReduceExp(Tree* e) {
     e->cloneTreeOverTree(1_e);
     return true;
   }
+  // This step shortcuts an advanced reduction step.
+  // exp(A+ln(B)+C) -> B*exp(A+C)
+  if (child->isAdd() && PatternMatching::MatchReplaceSimplify(
+                            e, KExp(KAdd(KA_s, KLn(KB), KC_s)),
+                            KMult(KB, KExp(KAdd(KA_s, KC_s))))) {
+    return true;
+  }
   if (child->isMult()) {
     PatternMatching::Context ctx;
     if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KA))), &ctx) &&
@@ -670,6 +677,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
     /* This last step shortcuts at least three advanced reduction steps and is
      * quite common when manipulating roots of negatives.
      * TODO: Deactivate it if advanced reduction is strong enough. */
+    // exp(0.5*(A + πi + B)) -> i*exp(0.5*(A + B))
     if (PatternMatching::MatchReplaceSimplify(
             e, KExp(KMult(1_e / 2_e, KAdd(KA_s, KMult(π_e, i_e), KB_s))),
             KMult(KExp(KMult(1_e / 2_e, KAdd(KA_s, KB_s))), i_e))) {

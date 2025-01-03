@@ -1105,6 +1105,13 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   // Select best prefix
   double value = Approximation::To<double>(e, Approximation::Parameters{}) /
                  Approximation::To<double>(units, Approximation::Parameters{});
+  if (units->isUnit() &&
+      GetRepresentative(units) == &Surface::representatives.acre &&
+      value < 1.0f) {
+    // Do not display values of less than 1 acre
+    units->removeTree();
+    return false;
+  }
   /* TODO: Allow representative switch between in, ft, yd and mi, and between
    * gal, qt etc */
   ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(

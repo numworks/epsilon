@@ -26,9 +26,11 @@ namespace Fraction {
 using FractionAndConjugate::k_horizontalMargin;
 using FractionAndConjugate::k_horizontalOverflow;
 #if POINCARE_SCANDIUM_LAYOUTS
-constexpr KDCoordinate k_lineMargin = 0;
+constexpr KDCoordinate k_numeratorMargin = 0;
+constexpr KDCoordinate k_denominatorMargin = 1;
 #else
-constexpr KDCoordinate k_lineMargin = 2;
+constexpr KDCoordinate k_numeratorMargin = 2;
+constexpr KDCoordinate k_denominatorMargin = 2;
 #endif
 constexpr KDCoordinate k_lineHeight = 1;
 }  // namespace Fraction
@@ -361,14 +363,14 @@ inline KDPoint PositionOfDInNumerator(const Layout* node, KDCoordinate baseline,
       (Width(node->child(k_variableIndex)) + k_dxHorizontalMargin) / 2 +
           Fraction::k_horizontalMargin + Fraction::k_horizontalOverflow,
       baseline - KDFont::Font(font)->stringSize(k_dString).height() -
-          Fraction::k_lineMargin - Fraction::k_lineHeight);
+          Fraction::k_numeratorMargin - Fraction::k_lineHeight);
 }
 
 inline KDPoint PositionOfDInDenominator(const Layout* node,
                                         KDCoordinate baseline,
                                         KDFont::Size font) {
   return KDPoint(Fraction::k_horizontalMargin + Fraction::k_horizontalOverflow,
-                 baseline + Fraction::k_lineMargin +
+                 baseline + Fraction::k_denominatorMargin +
                      OrderHeightOffset(node, font) +
                      Height(node->child(k_variableIndex)) -
                      KDFont::Font(font)->stringSize(k_dString).height());

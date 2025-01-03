@@ -328,8 +328,8 @@ KDSize Render::Size(const Layout* l) {
       width =
           std::max(numeratorSize.width(), denominatorSize.width()) +
           2 * (Fraction::k_horizontalOverflow + Fraction::k_horizontalMargin);
-      height = numeratorSize.height() + Fraction::k_lineMargin +
-               Fraction::k_lineHeight + Fraction::k_lineMargin +
+      height = numeratorSize.height() + Fraction::k_numeratorMargin +
+               Fraction::k_lineHeight + Fraction::k_denominatorMargin +
                denominatorSize.height();
       break;
     }
@@ -614,8 +614,9 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
     case LayoutType::Fraction: {
       KDCoordinate x = (Width(l) - Size(l->child(childIndex)).width()) / 2;
       KDCoordinate y = (childIndex == 1)
-                           ? Height(l->child(0)) + 2 * Fraction::k_lineMargin +
-                                 Fraction::k_lineHeight
+                           ? Height(l->child(0)) + Fraction::k_numeratorMargin +
+                                 Fraction::k_lineHeight +
+                                 Fraction::k_denominatorMargin
                            : 0;
       return KDPoint(x, y);
     }
@@ -704,7 +705,7 @@ KDCoordinate Render::Baseline(const Layout* l) {
       KDCoordinate fraction =
           OrderHeightOffset(l, s_font) +
           KDFont::Font(s_font)->stringSize(k_dString).height() +
-          Fraction::k_lineMargin + Fraction::k_lineHeight;
+          Fraction::k_numeratorMargin + Fraction::k_lineHeight;
 
       KDCoordinate parenthesis = ParenthesisBaseline(l, s_font);
       return std::max(parenthesis, fraction);
@@ -731,7 +732,7 @@ KDCoordinate Render::Baseline(const Layout* l) {
     }
 
     case LayoutType::Fraction:
-      return Height(l->child(0)) + Fraction::k_lineMargin +
+      return Height(l->child(0)) + Fraction::k_numeratorMargin +
              Fraction::k_lineHeight;
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces:
@@ -1215,7 +1216,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
 
     case LayoutType::Fraction: {
       KDCoordinate fractionLineY =
-          p.y() + Size(l->child(0)).height() + Fraction::k_lineMargin;
+          p.y() + Size(l->child(0)).height() + Fraction::k_numeratorMargin;
       ctx->fillRect(KDRect(p.x() + Fraction::k_horizontalMargin, fractionLineY,
                            Width(l) - 2 * Fraction::k_horizontalMargin,
                            Fraction::k_lineHeight),

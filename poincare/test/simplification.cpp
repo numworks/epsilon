@@ -939,9 +939,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0.2_rad^2", "1/5×_rad^2");
 
   // Decomposition
-  simplifies_to("123_m", "123×_m",
-                {.m_unitDisplay = UnitDisplay::Decomposition});
-  simplifies_to("1241_yd", "1134.7704×_m",
+  simplifies_to("123_m", "undef",
                 {.m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("π_year",
                 "3×_year+1×_month+21×_day+6×_h+42×_min+4.3249249999999×_s",
@@ -967,6 +965,7 @@ QUIZ_CASE(pcj_simplification_unit) {
                  .m_unitDisplay = UnitDisplay::Decomposition});
 
   // Equivalent
+  simplifies_to("3_s", "undef", {.m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("3_ft^3", "84.950539776×_L",
                 {.m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("3_L", "3×_dm^3", {.m_unitDisplay = UnitDisplay::Equivalent});
@@ -981,7 +980,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("30000_m^2", "7.413161444015×_acre",
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
-  simplifies_to("3000_m^2", "3000×_m^2",
+  simplifies_to("3000_m^2", "undef",
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("3_ft^3", "22.441558441558×_gal",

@@ -2180,8 +2180,7 @@ QUIZ_CASE(poincare_simplification_reduction_target) {
   assert_parsed_expression_simplify_to("1/π+1/x", "(x+π)/(π×x)", User);
 
   // Display in the form a+ib only for ReductionTarget = User
-  assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i",
-                                       SystemForAnalysis);
+  assert_parsed_expression_simplify_to("1/(1+i)", "1/(1+i)", SystemForAnalysis);
   assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i",
                                        SystemForApproximation);
   assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i", User);

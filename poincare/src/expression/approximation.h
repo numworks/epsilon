@@ -193,7 +193,7 @@ class Approximation final {
 
   // Tree can be of any dimension
   template <typename T>
-  static Tree* ToTree(const Tree* e, Dimension dim, const Context* ctx);
+  static Tree* PrivateToTree(const Tree* e, Dimension dim, const Context* ctx);
 
   // Tree must be of scalar dimension or equivalent
   template <typename T>

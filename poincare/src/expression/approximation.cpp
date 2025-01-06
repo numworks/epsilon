@@ -63,10 +63,10 @@ Tree* Approximation::ToTree(const Tree* e, Parameters params, Context context) {
     result = SharedTreeStack->pushList(listLength);
     for (int i = 0; i < listLength; i++) {
       context.m_listElement = i;
-      ToTree<T>(target, dim, &context);
+      PrivateToTree<T>(target, dim, &context);
     }
   } else {
-    result = ToTree<T>(target, dim, &context);
+    result = PrivateToTree<T>(target, dim, &context);
   }
   if (!clone) {
     return result;
@@ -231,7 +231,8 @@ Tree* Approximation::PrepareTreeAndContext(const Tree* e, Parameters params,
 }
 
 template <typename T>
-Tree* Approximation::ToTree(const Tree* e, Dimension dim, const Context* ctx) {
+Tree* Approximation::PrivateToTree(const Tree* e, Dimension dim,
+                                   const Context* ctx) {
   /* TODO_PCJ: not all approximation methods come here, but this assert should
    * always be called when approximating. */
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
@@ -342,8 +343,8 @@ std::complex<float> Approximation::HelperUndefDependencies(const Tree* dep,
         assert(!std::isnan(c.imag()));
       }
     } else {
-      Tree* a = ToTree<float>(child,
-                              Dimension::Get(child, ctx->m_symbolContext), ctx);
+      Tree* a = PrivateToTree<float>(
+          child, Dimension::Get(child, ctx->m_symbolContext), ctx);
       if (a->isUndefined()) {
         a->removeTree();
         undefValue = NAN;
@@ -1164,7 +1165,7 @@ Tree* Approximation::ToList(const Tree* e, const Context* ctx) {
   Tree* list = SharedTreeStack->pushList(length);
   for (int i = 0; i < length; i++) {
     tempCtx.m_listElement = i;
-    ToTree<T>(e, dimension, &tempCtx);
+    PrivateToTree<T>(e, dimension, &tempCtx);
   }
   return list;
 }
@@ -1490,7 +1491,7 @@ bool Approximation::PrivateApproximateAndReplaceEveryScalar(
     Tree* e, const Context* ctx) {
   if (CanApproximate(e) &&
       Dimension::IsNonListScalar(e, ctx->m_symbolContext)) {
-    e->moveTreeOverTree(ToTree<T>(e, Dimension(), ctx));
+    e->moveTreeOverTree(PrivateToTree<T>(e, Dimension(), ctx));
     return true;
   }
   bool changed = false;

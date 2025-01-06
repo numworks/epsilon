@@ -139,7 +139,7 @@ bool Approximation::ToBoolean(const Tree* e, Parameters params,
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
-  bool b = ToBoolean<T>(target, &context);
+  bool b = PrivateToBoolean<T>(target, &context);
   if (clone) {
     clone->removeTree();
   }
@@ -237,7 +237,7 @@ Tree* Approximation::PrivateToTree(const Tree* e, Dimension dim,
    * always be called when approximating. */
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   if (dim.isBoolean()) {
-    return (ToBoolean<T>(e, ctx) ? KTrue : KFalse)->cloneTree();
+    return (PrivateToBoolean<T>(e, ctx) ? KTrue : KFalse)->cloneTree();
   }
   if (dim.isUnit()) {
     // Preserve units and only replace scalar values.
@@ -1085,8 +1085,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
 }
 
 template <typename T>
-bool Approximation::ToBoolean(const Tree* e, const Context* ctx) {
-  FALLBACK_ON_FLOAT(ToBoolean);
+bool Approximation::PrivateToBoolean(const Tree* e, const Context* ctx) {
+  FALLBACK_ON_FLOAT(PrivateToBoolean);
   if (e->isTrue()) {
     return true;
   }
@@ -1115,26 +1115,26 @@ bool Approximation::ToBoolean(const Tree* e, const Context* ctx) {
     return e->isEqual() == (a == b);
   }
   if (e->isPiecewise()) {
-    return ToBoolean<T>(SelectPiecewiseBranch<T>(e, ctx), ctx);
+    return PrivateToBoolean<T>(SelectPiecewiseBranch<T>(e, ctx), ctx);
   }
   if (e->isList()) {
     assert(ctx && ctx->m_listElement != -1);
-    return ToBoolean<T>(e->child(ctx->m_listElement), ctx);
+    return PrivateToBoolean<T>(e->child(ctx->m_listElement), ctx);
   }
   if (e->isParentheses()) {
-    return ToBoolean<T>(e->child(0), ctx);
+    return PrivateToBoolean<T>(e->child(0), ctx);
   }
   if (e->isListSort()) {
     /* TODO we are computing all elements and sorting the list for all
      * elements, this is awful */
     Tree* list = ToList<T>(e->child(0), ctx);
     NAry::Sort(list);
-    bool result = ToBoolean<T>(list, ctx);
+    bool result = PrivateToBoolean<T>(list, ctx);
     list->removeTree();
     return result;
   }
   assert(e->isLogicalOperator());
-  bool a = ToBoolean<T>(e->child(0), ctx);
+  bool a = PrivateToBoolean<T>(e->child(0), ctx);
   if (e->isLogicalNot()) {
     return !a;
   }
@@ -1142,7 +1142,7 @@ bool Approximation::ToBoolean(const Tree* e, const Context* ctx) {
     // TODO: Undefined boolean return false for now.
     return (UndefDependencies<T>(e, ctx) == std::complex<T>(0));
   }
-  bool b = ToBoolean<T>(e->child(1), ctx);
+  bool b = PrivateToBoolean<T>(e->child(1), ctx);
   switch (e->type()) {
     case Type::LogicalAnd:
       return a && b;
@@ -1349,7 +1349,7 @@ const Tree* Approximation::SelectPiecewiseBranch(const Tree* piecewise,
   while (i < n) {
     const Tree* condition = child->nextTree();
     i++;
-    if (i == n || ToBoolean<T>(condition, ctx)) {
+    if (i == n || PrivateToBoolean<T>(condition, ctx)) {
       return child;
     }
     child = condition->nextTree();

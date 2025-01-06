@@ -205,7 +205,7 @@ class Approximation final {
 
   // Tree must be of boolean dimension.
   template <typename T>
-  static bool ToBoolean(const Tree* e, const Context* ctx);
+  static bool PrivateToBoolean(const Tree* e, const Context* ctx);
 
   // Tree must have a positive ListLength
   template <typename T>

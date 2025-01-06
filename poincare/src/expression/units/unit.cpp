@@ -1089,6 +1089,7 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   Tree* units;
   // TODO: Maybe handle intermediary cases where multiple units are involved.
   // L <--> m3, ha <--> m2, gal <--> ft3, acre <--> ft2
+  bool optimizePrefix = true;
   if (hasDistanceUnit) {
     if (isVolume) {
       targetRepresentative = isImperial ? &Volume::representatives.gallon
@@ -1101,6 +1102,8 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   } else {
     targetRepresentative = isImperial ? &Distance::representatives.foot
                                       : &Distance::representatives.meter;
+    // Only display imperial areas in ft^2
+    optimizePrefix = !isImperial;
     units = KPow->cloneNode();
     Push(targetRepresentative, Prefix::EmptyPrefix());
     Integer::Push(isVolume ? 3 : 2);
@@ -1117,7 +1120,7 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     return false;
   }
   ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-      units, &value, unitFormat, true, false);
+      units, &value, unitFormat, optimizePrefix, false);
   e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
   // Multiply e with units
   e->cloneNodeAtNode(KMult.node<2>);

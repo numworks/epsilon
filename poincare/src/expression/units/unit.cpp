@@ -433,23 +433,14 @@ static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
 
 void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
                                                      UnitFormat unitFormat) {
-  int numberOfFactors;
-  Tree* factor;
   if (units->isMult()) {
-    numberOfFactors = units->numberOfChildren();
-    factor = units->child(0);
-  } else {
-    numberOfFactors = 1;
-    factor = units;
-  }
-  bool didOptimizePrefix =
+    for (Tree* factor : units->children()) {
       ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
           factor, value, unitFormat, true, true);
-  for (int i = 1; i < numberOfFactors; i++) {
-    didOptimizePrefix =
-        ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-            units->child(i), value, unitFormat, !didOptimizePrefix, true) ||
-        didOptimizePrefix;
+    }
+  } else {
+    ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
+        units, value, unitFormat, true, true);
   }
 }
 

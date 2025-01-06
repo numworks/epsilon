@@ -45,12 +45,20 @@ constexpr KDCoordinate k_middleDotWidth = 5;
 }
 
 namespace OperatorSeparator {
+#if POINCARE_SCANDIUM_LAYOUTS
+constexpr static KDCoordinate k_width = 3;
+#else
 constexpr static KDCoordinate k_width = 4;
-}
+#endif
+}  // namespace OperatorSeparator
 
 namespace ThousandsSeparator {
+#if POINCARE_SCANDIUM_LAYOUTS
+constexpr static KDCoordinate k_width = 2;
+#else
 constexpr static KDCoordinate k_width = 3;
-}
+#endif
+}  // namespace ThousandsSeparator
 
 namespace VerticalOffset {
 #if POINCARE_SCANDIUM_LAYOUTS

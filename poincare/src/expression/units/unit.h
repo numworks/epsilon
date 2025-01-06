@@ -187,10 +187,11 @@ class Unit {
   static bool IsUnitOrPowerOfUnit(const Tree* e);
   static bool ForceMarginLeftOfUnit(const Tree* e);
 
+  /* Optimize prefix for the given unit and value.
+   * Can optimize representative as well. */
   static void ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
                                                 double exponent,
                                                 UnitFormat unitFormat,
-                                                bool optimizePrefix,
                                                 bool optimizeRepresentative);
 
   static bool IsNonKelvinTemperature(const Representative* representative);

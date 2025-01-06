@@ -401,9 +401,9 @@ bool Unit::CanParse(ForwardUnicodeDecoder* name,
   return false;
 }
 
-// Return true if best representative and prefix has been chosen.
+// Return true if best representative and prefix have been chosen.
 static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-    Tree* unit, double* value, UnitFormat unitFormat, bool optimizePrefix,
+    Tree* unit, double* value, UnitFormat unitFormat,
     bool optimizeRepresentative) {
   double exponent = 1.f;
   Tree* factor = unit;
@@ -426,7 +426,6 @@ static bool ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     return false;
   }
   Unit::ChooseBestRepresentativeAndPrefix(factor, value, exponent, unitFormat,
-                                          optimizePrefix,
                                           optimizeRepresentative);
   return true;
 }
@@ -435,12 +434,12 @@ void Unit::ChooseBestRepresentativeAndPrefixForValue(Tree* units, double* value,
                                                      UnitFormat unitFormat) {
   if (units->isMult()) {
     for (Tree* factor : units->children()) {
-      ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-          factor, value, unitFormat, true, true);
+      ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(factor, value,
+                                                            unitFormat, true);
     }
   } else {
-    ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-        units, value, unitFormat, true, true);
+    ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(units, value,
+                                                          unitFormat, true);
   }
 }
 
@@ -495,12 +494,7 @@ bool Unit::ForceMarginLeftOfUnit(const Tree* e) {
 void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
                                              double exponent,
                                              UnitFormat unitFormat,
-                                             bool optimizePrefix,
                                              bool optimizeRepresentative) {
-  assert(optimizePrefix || !optimizeRepresentative);
-  if (!optimizePrefix && !optimizeRepresentative) {
-    return;
-  }
   assert(exponent != 0.f);
 
   if ((std::isinf(*value) ||
@@ -516,14 +510,11 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
   }
   // Convert value to base units
   double baseValue = *value * std::pow(GetValue(unit), exponent);
-  const Prefix* bestPrefix = optimizePrefix ? Prefix::EmptyPrefix() : nullptr;
+  const Prefix* bestPrefix = Prefix::EmptyPrefix();
   const Representative* bestRepresentative =
       GetRepresentative(unit)->bestRepresentativeAndPrefix(
           baseValue, exponent, unitFormat, &bestPrefix,
           optimizeRepresentative ? nullptr : GetRepresentative(unit));
-  if (!optimizePrefix) {
-    bestPrefix = Prefix::EmptyPrefix();
-  }
 
   if (bestRepresentative != GetRepresentative(unit)) {
     *value = *value * std::pow(GetRepresentative(unit)->ratio() /
@@ -1108,8 +1099,10 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     units->removeTree();
     return false;
   }
-  ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(
-      units, &value, unitFormat, optimizePrefix, false);
+  if (optimizePrefix) {
+    ChooseBestRepresentativeAndPrefixForValueOnSingleUnit(units, &value,
+                                                          unitFormat, false);
+  }
   e->moveTreeOverTree(SharedTreeStack->pushDoubleFloat(value));
   // Multiply e with units
   e->cloneNodeAtNode(KMult.node<2>);

@@ -461,6 +461,7 @@ struct RepresentativesList {
   int length;
 };
 
+#if POINCARE_UNIT
 // These must be sorted in order, from smallest to biggest
 constexpr const Representative*
     k_timeRepresentativesAllowingImplicitAddition[] = {
@@ -502,6 +503,26 @@ constexpr static const Representative* k_representativesWithoutLeftMargin[] = {
     &Temperature::representatives.celsius,
     &Temperature::representatives.fahrenheit,
 };
+#else
+constexpr const Representative*
+    k_timeRepresentativesAllowingImplicitAddition[] = {};
+
+constexpr static const Representative*
+    k_distanceRepresentativesAllowingImplicitAddition[] = {};
+
+constexpr static const Representative*
+    k_massRepresentativesAllowingImplicitAddition[] = {};
+
+constexpr static const Representative*
+    k_angleRepresentativesAllowingImplicitAddition[] = {};
+
+constexpr static RepresentativesList
+    k_representativesAllowingImplicitAddition[] = {};
+constexpr static int k_representativesAllowingImplicitAdditionLength = 0;
+
+constexpr static const Representative* k_representativesWithoutLeftMargin[] =
+    {};
+#endif
 
 }  // namespace Units
 }  // namespace Poincare::Internal

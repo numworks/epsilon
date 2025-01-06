@@ -98,6 +98,7 @@ bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
  */
 
 bool Binary::ReduceBooleanOperator(Tree* e) {
+#if POINCARE_BOOLEAN
   return
       // not true -> false
       PatternMatching::MatchReplace(e, KLogicalNot(KTrue), KFalse) ||
@@ -132,9 +133,13 @@ bool Binary::ReduceBooleanOperator(Tree* e) {
       PatternMatching::MatchReplace(e, KLogicalAnd(KA, KA), KA) ||
       // A xor A -> false
       PatternMatching::MatchReplace(e, KLogicalXor(KA, KA), KFalse);
+#else
+  return false;
+#endif
 }
 
 bool Binary::ReduceComparison(Tree* e) {
+#if POINCARE_BOOLEAN
   assert(e->numberOfChildren() == 2);
   // a < b => a - b < 0 ?
   if (e->isInequality()) {
@@ -198,6 +203,9 @@ bool Binary::ReduceComparison(Tree* e) {
   }
   e->cloneTreeOverTree(result);
   return true;
+#else
+  return false;
+#endif
 }
 
 bool Binary::ReducePiecewise(Tree* piecewise) {

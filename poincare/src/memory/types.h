@@ -16,10 +16,16 @@
   NODE_DECL(F, N, S) NODE_USE(F, N, sizeof(CustomTypeStructs::NODE_NAME(F)))
 #define NODE(...) GET4TH(__VA_ARGS__, NODE3, NODE2, NODE1)(__VA_ARGS__)
 
+#define UNDEF_NODE(F, ...) UNDEF_NODE_USE(F)
+
 // Macros that may be customized before including this file :
 
 #ifndef RANGE
 #define RANGE(NAME, FIRST, LAST)
+#endif
+
+#ifndef UNDEF_RANGE
+#define UNDEF_RANGE(NAME, FIRST, LAST)
 #endif
 
 #ifndef NODE_USE
@@ -28,6 +34,10 @@
 
 #ifndef NODE_DECL
 #define NODE_DECL(NAME, NB_CHILDREN, NODE_STRUCT)
+#endif
+
+#ifndef UNDEF_NODE_USE
+#define UNDEF_NODE_USE(NAME)
 #endif
 
 // 1 - Expressions
@@ -64,8 +74,10 @@ NODE(NumberOfTypes)
 #endif
 
 #undef RANGE
+#undef UNDEF_RANGE
 #undef NODE_USE
 #undef NODE_DECL
+#undef UNDEF_NODE_USE
 
 #undef GET4TH
 #undef NODE1

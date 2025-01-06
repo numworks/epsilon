@@ -591,6 +591,7 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
   parseBinaryOperator(leftHandSide, rightHandSide,
                       Token::Type::ComparisonOperator);
   if (leftHandSide->isComparison() || leftHandSide->isLogicalAnd()) {
+#if POINCARE_BOOLEAN
     /* TODO: a < b = c usd to be parsed to Comparison[<,=](a,b,c).
      * It is now parsed as (a < b and b = c) to simplify code.
      * Bigger structures like a < b = c > d, end up here with (a < b and b = c)
@@ -604,6 +605,9 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
     Tree* comparison = SharedTreeStack->pushBlock(operatorType);
     MoveNodeAtNode(rightHandSide, comparison);
     CloneNodeAtNode(leftHandSide, KLogicalAnd);
+#else
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
   } else {
     Tree* comparison = SharedTreeStack->pushBlock(operatorType);
     MoveNodeAtNode(leftHandSide, comparison);
@@ -665,6 +669,7 @@ void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
 
 void RackParser::parseLogicalOperatorNot(TreeRef& leftHandSide,
                                          Token::Type stoppingType) {
+#if POINCARE_BOOLEAN
   if (!leftHandSide.isUninitialized()) {
     // Left-hand side should be empty
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -676,6 +681,9 @@ void RackParser::parseLogicalOperatorNot(TreeRef& leftHandSide,
   }
   CloneNodeAtNode(rightHandSide, KLogicalNot);
   leftHandSide = rightHandSide;
+#else
+  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 void RackParser::parseBinaryLogicalOperator(Type operatorType,
@@ -729,10 +737,13 @@ void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
   Token::Type endToken = Token::Type::RightParenthesis;
 
   TreeRef list = parseCommaSeparatedList();
+#if POINCARE_POINT
   if (!list.isUninitialized() && list->numberOfChildren() == 2) {
     CloneNodeOverNode(list, KPoint);
     leftHandSide = list;
-  } else if (!list.isUninitialized() && list->numberOfChildren() == 1) {
+  } else
+#endif
+      if (!list.isUninitialized() && list->numberOfChildren() == 1) {
     CloneNodeOverNode(list, KParentheses);
     leftHandSide = list;
   } else {
@@ -768,14 +779,19 @@ void RackParser::parsePercent(TreeRef& leftHandSide, Token::Type stoppingType) {
 
 void RackParser::parseConstant(TreeRef& leftHandSide,
                                Token::Type stoppingType) {
+#if POINCARE_UNIT
   assert(leftHandSide.isUninitialized());
   int index = PhysicalConstant::Index(m_currentToken.toSpan());
   assert(index >= 0);
   leftHandSide = SharedTreeStack->pushPhysicalConstant(uint8_t(index));
   isThereImplicitOperator();
+#else
+  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 void RackParser::parseUnit(TreeRef& leftHandSide, Token::Type stoppingType) {
+#if POINCARE_UNIT
   assert(leftHandSide.isUninitialized());
   const Units::Representative* unitRepresentative = nullptr;
   const Units::Prefix* unitPrefix = nullptr;
@@ -786,6 +802,9 @@ void RackParser::parseUnit(TreeRef& leftHandSide, Token::Type stoppingType) {
   }
   leftHandSide = Units::Unit::Push(unitRepresentative, unitPrefix);
   isThereImplicitOperator();
+#else
+  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 void RackParser::parseReservedFunction(TreeRef& leftHandSide,
@@ -912,9 +931,12 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     builtin = Builtin::GetReservedFunction(KLog);
   } else if (numberOfParameters == 2 && builtin->type() == Type::Log) {
     builtin = Builtin::GetReservedFunction(KLogBase);
-  } else if (numberOfParameters == 1 && builtin->type() == Type::Sum) {
+  }
+#if POINCARE_LIST
+  else if (numberOfParameters == 1 && builtin->type() == Type::Sum) {
     builtin = Builtin::GetReservedFunction(KListSum);
   }
+#endif
   assert(builtin);
 
   if (!builtin->checkNumberOfParameters(numberOfParameters)) {
@@ -1252,6 +1274,7 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
 }
 
 void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
+#if POINCARE_LIST
   if (!leftHandSide.isUninitialized()) {
     // TODO: should assert(leftHandSide.isUninitialized());
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1267,17 +1290,23 @@ void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
   }
   parseListParameters(leftHandSide);
   isThereImplicitOperator();
+#else
+  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 void RackParser::parseListParameters(TreeRef& leftHandSide) {
   TreeRef parameter = tryParseFunctionParameters();
   if (parameter) {
+#if POINCARE_LIST
     int numberOfParameters = parameter->numberOfChildren();
     if (numberOfParameters == 2) {
       CloneNodeAtNode(leftHandSide, KListSlice);
     } else if (numberOfParameters == 1) {
       CloneNodeAtNode(leftHandSide, KListElement);
-    } else {
+    } else
+#endif
+    {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
     parameter->removeNode();

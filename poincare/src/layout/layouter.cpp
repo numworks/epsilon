@@ -922,6 +922,7 @@ void Layouter::StripUselessPlus(Tree* rack) {
 }
 
 bool Layouter::implicitAddition(const Tree* addition) {
+#if POINCARE_UNIT
   if (addition->numberOfChildren() < 2) {
     return false;
   }
@@ -961,6 +962,9 @@ bool Layouter::implicitAddition(const Tree* addition) {
     storedUnitRepresentative = childRepresentative;
   }
   return true;
+#else
+  return false;
+#endif
 }
 
 }  // namespace Poincare::Internal

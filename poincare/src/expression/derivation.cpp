@@ -22,6 +22,7 @@ bool Derivation::Reduce(Tree* e) {
   const Tree* order = symbolValue->nextTree();
   const Tree* constDerivand = order->nextTree();
 
+#if POINCARE_POINT
   // Distribute derivation on points.
   if (constDerivand->isPoint()) {
     /* Points could be handled in Derive in the general case with
@@ -41,6 +42,7 @@ bool Derivation::Reduce(Tree* e) {
     e->moveTreeOverTree(pointDiff);
     return true;
   }
+#endif
 
   OMG::Troolean validOrder = Integer::IsPositiveRationalInteger(order);
   if (validOrder == OMG::Troolean::False) {

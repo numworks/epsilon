@@ -100,6 +100,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
 
 Tree* List::Variance(const Tree* list, const Tree* coefficients,
                      TypeBlock type) {
+#if POINCARE_LIST
   // var(L) = mean(L^2) - mean(L)^2
   SimpleKTrees::KTree variance =
       KAdd(KMean(KPow(KA, 2_e), KB), KMult(-1_e, KPow(KMean(KA, KB), 2_e)));
@@ -121,9 +122,13 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
         type == Type::Variance ? variance : stdDev,
         {.KA = list, .KB = coefficients});
   }
+#else
+  OMG::unreachable();
+#endif
 }
 
 Tree* List::Mean(const Tree* list, const Tree* coefficients) {
+#if POINCARE_LIST
   if (coefficients->isOne()) {
     Tree* result = KMult.node<2>->cloneNode();
     Fold(list, Type::ListSum);
@@ -134,6 +139,9 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
   return PatternMatching::CreateSimplify(
       KMult(KListSum(KMult(KA, KB)), KPow(KListSum(KB), -1_e)),
       {.KA = list, .KB = coefficients});
+#else
+  OMG::unreachable();
+#endif
 }
 
 bool List::BubbleUp(Tree* e, Tree::Operation reduction) {

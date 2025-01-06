@@ -528,13 +528,18 @@ bool SystematicOperation::ReduceDistribution(Tree* e) {
 bool SystematicOperation::ReduceDim(Tree* e) {
   Dimension dim = Dimension::Get(e->child(0));
   if (dim.isMatrix()) {
+#if POINCARE_MATRIX
     Tree* result = SharedTreeStack->pushMatrix(1, 2);
     Integer::Push(dim.matrix.rows);
     Integer::Push(dim.matrix.cols);
     e->moveTreeOverTree(result);
     return true;
+#endif
   }
+#if POINCARE_LIST
   return List::ShallowApplyListOperators(e);
+#endif
+  OMG::unreachable();
 }
 
 static bool ReduceNestedRadicals(Tree* e) {

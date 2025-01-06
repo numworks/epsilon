@@ -232,21 +232,33 @@ Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
   /* TODO_PCJ: not all approximation methods come here, but this assert should
    * always be called when approximating. */
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
+#if POINCARE_BOOLEAN
   if (dim.isBoolean()) {
     return (PrivateToBoolean<T>(e, ctx) ? KTrue : KFalse)->cloneTree();
   }
+#endif
+#if POINCARE_UNIT
   if (dim.isUnit()) {
     // Preserve units and only replace scalar values.
     Tree* result = e->cloneTree();
     PrivateApproximateAndReplaceEveryScalar<T>(result, ctx);
     return result;
   }
+#endif
   if (dim.isScalar()) {
     return ToComplexTree<T>(e, ctx);
   }
-  assert(dim.isPoint() || dim.isMatrix());
-  Tree* result =
-      dim.isPoint() ? PrivateToPoint<T>(e, ctx) : ToMatrix<T>(e, ctx);
+  Tree* result = nullptr;
+#if POINCARE_POINT
+  if (dim.isPoint()) {
+    result = PrivateToPoint<T>(e, ctx);
+  }
+#endif
+#if POINCARE_MATRIX
+  if (dim.isMatrix()) {
+    result = ToMatrix<T>(e, ctx);
+  }
+#endif
   Undefined::ShallowBubbleUpUndef(result);
   return result;
 }

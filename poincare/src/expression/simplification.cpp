@@ -178,7 +178,9 @@ bool IsSystem(const Tree* e) {
 bool ReduceSystem(Tree* e, bool advanced, bool expandAlgebraic) {
   bool changed = SystematicReduction::DeepReduce(e);
   assert(!SystematicReduction::DeepReduce(e));
+#if POINCARE_LIST
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
+#endif
   if (advanced) {
     changed = AdvancedReduction::Reduce(e) || changed;
   }
@@ -203,6 +205,7 @@ bool ReduceSystem(Tree* e, bool advanced, bool expandAlgebraic) {
 
 bool HandleUnits(Tree* e, ProjectionContext* projectionContext) {
   bool changed = false;
+#if POINCARE_UNIT
   if (!e->isUndefined() &&
       Units::Unit::ProjectToBestUnits(
           e, projectionContext->m_dimension, projectionContext->m_unitDisplay,
@@ -223,6 +226,7 @@ bool HandleUnits(Tree* e, ProjectionContext* projectionContext) {
     projectionContext->m_strategy = Strategy::ApproximateToFloat;
     ApplyStrategy(e, *projectionContext, true);
   }
+#endif
   return changed;
 }
 

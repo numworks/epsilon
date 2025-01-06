@@ -231,6 +231,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
         !e->isATan()) {
       // Only real functions asin and acos have a domain of definition
       // acos(A) -> atrig(A, 0) if -1 <= A <= 1
+#if POINCARE_PIECEWISE
       PatternMatching::MatchReplace(
           e, KACos(KA),
           KDep(KATrig(KA, 0_e),
@@ -242,6 +243,10 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
               KDep(KATrig(KA, 1_e),
                    KDepList(KPiecewise(0_e, KInferiorEqual(KAbs(KA), 1_e),
                                        KNonReal))));
+#else
+      // TODO FIXME
+      OMG::unreachable();
+#endif
     } else {
       // acos(A) -> atrig(A, 0)
       PatternMatching::MatchReplace(e, KACos(KA), KATrig(KA, 0_e)) ||
@@ -263,7 +268,9 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   if (e->isPow()) {
     if (PatternMatching::MatchReplace(e, KPow(e_e, KA), KExp(KA))) {
     } else if (Dimension::Get(e->child(0)).isMatrix()) {
+#if POINCARE_MATRIX
       e->cloneNodeOverNode(KPowMatrix);
+#endif
     } else if (realMode) {
       e->cloneNodeOverNode(KPowReal);
     } else {
@@ -369,12 +376,14 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // ArTanh(A) -> -i*atan(i*A)
       PatternMatching::MatchReplace(
           e, KArTanH(KA), KMult(-1_e, KATanRad(KMult(KA, i_e)), i_e)) ||
+#if POINCARE_BOOLEAN
       // A nor B -> not (A or B)
       PatternMatching::MatchReplace(e, KLogicalNor(KA, KB),
                                     KLogicalNot(KLogicalOr(KA, KB))) ||
       // A nand B -> not (A and B)
       PatternMatching::MatchReplace(e, KLogicalNand(KA, KB),
                                     KLogicalNot(KLogicalAnd(KA, KB))) ||
+#endif
       changed;
 }
 

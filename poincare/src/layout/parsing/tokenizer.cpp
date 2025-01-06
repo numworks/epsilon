@@ -474,10 +474,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   /* Special case for "min". min() = minimum(), min = minute. We handle this now
    * so that min is never understood as a CustomIdentifier (3->min is not
    * allowed, just like 3->cos) */
-  if (CompareLayoutSpanWithNullTerminatedString(
-          span,
-          Builtin::GetReservedFunction(Type::Min)->aliases()->mainAlias()) ==
-      0) {
+  if (CompareLayoutSpanWithNullTerminatedString(span, "min") == 0) {
     bool followedByParenthesis =
         m_decoder.layout()->isParenthesesLayout() ||
         CodePointLayout::IsCodePoint(m_decoder.layout(), '(');

@@ -254,6 +254,7 @@ void Zoom::fitConditions(const Internal::Tree* piecewise,
     const void* model;
     bool vertical;
   };
+#if POINCARE_PIECEWISE
   const ConditionsParameters params = {.zoom = this,
                                        .piecewise = piecewise,
                                        .fullFunction = fullFunction,
@@ -283,6 +284,9 @@ void Zoom::fitConditions(const Internal::Tree* piecewise,
       };
   bool dummy;
   fitWithSolver(&dummy, &dummy, evaluator, &params, test, hone, vertical);
+#else
+  OMG::unreachable();
+#endif
 }
 
 void Zoom::fitMagnitude(Function2D<float> f, const void* model,

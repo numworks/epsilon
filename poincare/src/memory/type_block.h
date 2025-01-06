@@ -49,6 +49,7 @@ enum class Type : uint8_t {
  * NODE(Fraction) in layout.h => FractionLayout,
  */
 #define NODE_USE(F, N, S) SCOPED_NODE(F),
+#define UNDEF_NODE_USE(F) SCOPED_NODE(F),
 #include "types.h"
 };
 
@@ -79,6 +80,7 @@ class TypeBlock : public Block {
    * NODE(MinusOne) => "MinusOne", */
   static constexpr const char* names[] = {
 #define NODE_USE(F, N, S) #F,
+#define UNDEF_NODE_USE(F) "",
 #include "types.h"
   };
 #endif
@@ -92,12 +94,19 @@ class TypeBlock : public Block {
                                                       \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
 
+#define UNDEF_RANGE(NAME, FIRST, LAST)                        \
+  static constexpr bool Is##NAME(Type type) { return false; } \
+  constexpr bool is##NAME() const { return false; }
+
 #define RANGE1(N) RANGE(N, N, N)
+#define UNDEF_RANGE1(N) UNDEF_RANGE(N, N, N)
 
 #define NODE_USE(F, N, S) RANGE1(SCOPED_NODE(F))
+#define UNDEF_NODE_USE(F) UNDEF_RANGE1(SCOPED_NODE(F))
 
 #include "types.h"
 #undef RANGE1
+#undef UNDEF_RANGE1
 
   consteval static size_t DefaultNumberOfMetaBlocks(int N) {
     return N == NARY2D ? 3 : N == NARY ? 2 : N == NARY16 ? 3 : 1;
@@ -135,7 +144,13 @@ class TypeBlock : public Block {
     return IsOfType(type(), types);
   }
 
-  bool isScalarOnly() const { return !isAMatrixOrContainsMatricesAsChildren(); }
+  bool isScalarOnly() const {
+#if POINCARE_MATRIX
+    return !isAMatrixOrContainsMatricesAsChildren();
+#else
+    return true;
+#endif
+  }
 
   // Their next metaBlock contains the numberOfChildren
   constexpr static bool IsNAry(Type type) {
@@ -201,7 +216,10 @@ class TypeBlock : public Block {
         return numberOfMetaBlocks + numberOfChars;
       }
       case Type::UserFunction:
-      case Type::UserSequence: {
+#if POINCARE_SEQUENCE
+      case Type::UserSequence:
+#endif
+      {
         uint8_t numberOfChars = static_cast<uint8_t>(*next());
         return numberOfMetaBlocks + numberOfChars;
       }

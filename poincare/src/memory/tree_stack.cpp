@@ -95,6 +95,7 @@ Tree* AbstractTreeStack::pushRandIntNoRep(uint8_t seed) {
   return result;
 }
 
+#if POINCARE_UNIT
 Tree* AbstractTreeStack::pushPhysicalConstant(uint8_t constantId) {
   assert(constantId < PhysicalConstant::k_numberOfConstants);
   Tree* result = pushBlock(Type::PhysicalConstant);
@@ -108,6 +109,7 @@ Tree* AbstractTreeStack::pushUnit(uint8_t representativeId, uint8_t prefixId) {
   pushBlock(prefixId);
   return result;
 }
+#endif
 
 Tree* AbstractTreeStack::pushAngleUnitContext(AngleUnit angleUnit) {
   Tree* result = pushBlock(Type::AngleUnitContext);

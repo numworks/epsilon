@@ -168,6 +168,7 @@ class InputBeautification {
          }
          return integral;
        }},
+#if POINCARE_MATRIX
       /* norm( */
       ruleHelper<Type::Norm, Type::VectorNormLayout>(),
       /* pi */ k_piRule,
@@ -191,6 +192,7 @@ class InputBeautification {
          KRackL()->cloneTree();
          return ref;
        }},
+#endif
       {/* product( */
        "product", 4,
        [](TreeRef* parameters) -> Tree* {

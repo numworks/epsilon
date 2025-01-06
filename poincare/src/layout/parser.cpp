@@ -72,9 +72,12 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       }
       if (l->layoutType() == LayoutType::Parentheses) {
         int numberOfChildren = list->numberOfChildren();
+#if POINCARE_POINT
         if (numberOfChildren == 2) {
           list->cloneNodeOverNode(KPoint);
-        } else if (numberOfChildren == 1) {
+        } else
+#endif
+            if (numberOfChildren == 1) {
           list->cloneNodeOverNode(KParentheses);
         } else {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

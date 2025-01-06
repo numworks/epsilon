@@ -285,6 +285,7 @@ int Order::CompareLastChild(const Tree* e1, const Tree* e2, OrderType order) {
 int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
   Dimension dim = Dimension::Get(e1);
   if (dim.isPoint()) {
+#if POINCARE_POINT
     assert(Dimension::Get(e2).isPoint());
     /* TODO: make less calls to Dimension::Get */
     Coordinate2D<double> p1 =
@@ -296,6 +297,7 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
            : p1.y() < p2.y() ? -1
            : p1.y() > p2.y() ? 1
                              : 0;
+#endif
   }
   /* TODO: the approximations could be precomputed and called only once */
   double v1 = Approximation::To<double>(e1, Approximation::Parameters{});

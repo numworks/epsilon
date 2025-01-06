@@ -121,6 +121,7 @@ constexpr static Builtin s_builtins[] = {
     {Type::LogBase, "log"},
     {Type::Log, "log"},
     {Type::LnUser, "ln"},
+#if POINCARE_MATRIX
     {Type::Cross, "cross"},
     {Type::Det, "det"},
     {Type::Dim, "dim"},
@@ -131,6 +132,7 @@ constexpr static Builtin s_builtins[] = {
     {Type::Rref, "rref"},
     {Type::Trace, "trace"},
     {Type::Transpose, "transpose"},
+#endif
     {Type::Arg, "arg"},
     {Type::Re, "re"},
     {Type::Im, "im"},
@@ -142,6 +144,7 @@ constexpr static Builtin s_builtins[] = {
     {Type::Frac, "frac"},
     {Type::Round, "round"},
     {Type::Sign, "sign"},
+#if POINCARE_LIST
     {Type::Mean, "mean"},
     {Type::StdDev, "stddev"},
     {Type::Median, "med"},
@@ -153,15 +156,18 @@ constexpr static Builtin s_builtins[] = {
     {Type::ListProduct, "prod"},
     {Type::ListSort, "sort"},
     {Type::Permute, "permute"},
+#endif
     {Type::Random, "random"},
     {Type::RandInt, "randint"},
     {Type::RandIntNoRep, "randintnorep"},
-    {Type::Diff, "diff"},            // 2D layout is special
+    {Type::Diff, "diff"},  // 2D layout is special
+#if POINCARE_PIECEWISE
     {Type::Piecewise, "piecewise"},  // 2D layout is a grid
-    {Type::Dep, "dep"},              // TODO shouldn't be user parsable
-    {Type::NonNull, "nonNull"},      // TODO shouldn't be user parsable
-    {Type::Real, "real"},            // TODO shouldn't be user parsable
-    {Type::RealPos, "realPos"},      // TODO shouldn't be user parsable
+#endif
+    {Type::Dep, "dep"},          // TODO shouldn't be user parsable
+    {Type::NonNull, "nonNull"},  // TODO shouldn't be user parsable
+    {Type::Real, "real"},        // TODO shouldn't be user parsable
+    {Type::RealPos, "realPos"},  // TODO shouldn't be user parsable
 };
 
 constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
@@ -172,11 +178,15 @@ constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
     {Type::Integral, "int", LayoutType::Integral},
     {Type::Sqrt, BuiltinsAliases::k_squareRootAliases, LayoutType::Sqrt},
     {Type::Root, "root", LayoutType::Root},
+#if POINCARE_MATRIX
     {Type::Norm, "norm", LayoutType::VectorNorm},
+#endif
     {Type::Conj, "conj", LayoutType::Conj},
     {Type::Ceil, "ceil", LayoutType::Ceil},
     {Type::Floor, "floor", LayoutType::Floor},
+#if POINCARE_LIST
     {Type::ListSequence, "sequence", LayoutType::ListSequence},
+#endif
 };
 
 constexpr const Builtin* Builtin::GetReservedFunction(Type type) {

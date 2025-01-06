@@ -54,9 +54,6 @@ constexpr auto KOpposite = KUnary<Type::Opposite>();
 constexpr auto KFloor = KUnary<Type::Floor>();
 constexpr auto KCeil = KUnary<Type::Ceil>();
 constexpr auto KFrac = KUnary<Type::Frac>();
-constexpr auto KListSum = KUnary<Type::ListSum>();
-constexpr auto KMin = KUnary<Type::Min>();
-constexpr auto KMax = KUnary<Type::Max>();
 constexpr auto KSec = KUnary<Type::Sec>();
 constexpr auto KCsc = KUnary<Type::Csc>();
 constexpr auto KCot = KUnary<Type::Cot>();
@@ -73,6 +70,32 @@ constexpr auto KPercentSimple = KUnary<Type::PercentSimple>();
 constexpr auto KParentheses = KUnary<Type::Parentheses>();
 constexpr auto KSign = KUnary<Type::Sign>();
 constexpr auto KFactor = KUnary<Type::Factor>();
+
+constexpr auto KATrig = KBinary<Type::ATrig>();
+constexpr auto KLogBase = KBinary<Type::LogBase>();
+constexpr auto KTrig = KBinary<Type::Trig>();
+constexpr auto KTrigDiff = KBinary<Type::TrigDiff>();
+constexpr auto KDiv = KBinary<Type::Div>();
+constexpr auto KSub = KBinary<Type::Sub>();
+constexpr auto KPow = KBinary<Type::Pow>();
+constexpr auto KPowReal = KBinary<Type::PowReal>();
+constexpr auto KDep = KBinary<Type::Dep>();
+constexpr auto KNonNull = KUnary<Type::NonNull>();
+constexpr auto KReal = KUnary<Type::Real>();
+constexpr auto KRealPos = KUnary<Type::RealPos>();
+constexpr auto KRound = KBinary<Type::Round>();
+constexpr auto KBinomial = KBinary<Type::Binomial>();
+constexpr auto KPermute = KBinary<Type::Permute>();
+constexpr auto KRoot = KBinary<Type::Root>();
+constexpr auto KPercentAddition = KBinary<Type::PercentAddition>();
+constexpr auto KMixedFraction = KBinary<Type::MixedFraction>();
+constexpr auto KQuo = KBinary<Type::Quo>();
+constexpr auto KRem = KBinary<Type::Rem>();
+constexpr auto KStore = KBinary<Type::Store>();
+constexpr auto KUnitConversion = KBinary<Type::UnitConversion>();
+constexpr auto KDecimal = KBinary<Type::Decimal>();
+
+#if POINCARE_MATRIX
 constexpr auto KNorm = KUnary<Type::Norm>();
 constexpr auto KTrace = KUnary<Type::Trace>();
 constexpr auto KDet = KUnary<Type::Det>();
@@ -83,45 +106,28 @@ constexpr auto KRef = KUnary<Type::Ref>();
 constexpr auto KRref = KUnary<Type::Rref>();
 constexpr auto KTranspose = KUnary<Type::Transpose>();
 
-constexpr auto KATrig = KBinary<Type::ATrig>();
-constexpr auto KLogBase = KBinary<Type::LogBase>();
-constexpr auto KTrig = KBinary<Type::Trig>();
-constexpr auto KTrigDiff = KBinary<Type::TrigDiff>();
-constexpr auto KDiv = KBinary<Type::Div>();
-constexpr auto KSub = KBinary<Type::Sub>();
-constexpr auto KPow = KBinary<Type::Pow>();
-constexpr auto KPowReal = KBinary<Type::PowReal>();
 constexpr auto KPowMatrix = KBinary<Type::PowMatrix>();
-constexpr auto KDep = KBinary<Type::Dep>();
-constexpr auto KNonNull = KUnary<Type::NonNull>();
-constexpr auto KRealPos = KUnary<Type::RealPos>();
-constexpr auto KReal = KUnary<Type::Real>();
-constexpr auto KRound = KBinary<Type::Round>();
-constexpr auto KListElement = KBinary<Type::ListElement>();
-constexpr auto KMean = KBinary<Type::Mean>();
-constexpr auto KBinomial = KBinary<Type::Binomial>();
-constexpr auto KPermute = KBinary<Type::Permute>();
-constexpr auto KRoot = KBinary<Type::Root>();
-constexpr auto KPercentAddition = KBinary<Type::PercentAddition>();
-constexpr auto KMixedFraction = KBinary<Type::MixedFraction>();
-constexpr auto KQuo = KBinary<Type::Quo>();
-constexpr auto KRem = KBinary<Type::Rem>();
-constexpr auto KPoint = KBinary<Type::Point>();
-constexpr auto KStore = KBinary<Type::Store>();
-constexpr auto KUnitConversion = KBinary<Type::UnitConversion>();
-constexpr auto KEqual = KBinary<Type::Equal>();
-constexpr auto KNotEqual = KBinary<Type::NotEqual>();
-constexpr auto KSuperior = KBinary<Type::Superior>();
-constexpr auto KInferior = KBinary<Type::Inferior>();
-constexpr auto KSuperiorEqual = KBinary<Type::SuperiorEqual>();
-constexpr auto KInferiorEqual = KBinary<Type::InferiorEqual>();
-constexpr auto KDecimal = KBinary<Type::Decimal>();
 constexpr auto KDot = KBinary<Type::Dot>();
 constexpr auto KCross = KBinary<Type::Cross>();
+
+#endif
+
+#if POINCARE_LIST
+constexpr auto KListSum = KUnary<Type::ListSum>();
+constexpr auto KMin = KUnary<Type::Min>();
+constexpr auto KMax = KUnary<Type::Max>();
+
+constexpr auto KListElement = KBinary<Type::ListElement>();
+constexpr auto KMean = KBinary<Type::Mean>();
 
 constexpr auto KListSlice = KFixedArity<3, Type::ListSlice>();
 constexpr auto KListSequence = KFixedArity<3, Type::ListSequence>();
 constexpr auto KListSort = KUnary<Type::ListSort>();
+#endif
+
+#if POINCARE_POINT
+constexpr auto KPoint = KBinary<Type::Point>();
+#endif
 
 constexpr auto KSum = KFixedArity<4, Type::Sum>();
 constexpr auto KProduct = KFixedArity<4, Type::Product>();
@@ -137,7 +143,10 @@ constexpr auto KLCM = KNAry<Type::LCM>();
 constexpr auto KList = KNAry<Type::List>();
 constexpr auto KSet = KNAry<Type::Set>();
 constexpr auto KDepList = KNAry<Type::DepList>();
+
+#if POINCARE_PIECEWISE
 constexpr auto KPiecewise = KNAry<Type::Piecewise>();
+#endif
 
 // with seed 0
 constexpr auto KRandom = KTree<Type::Random, 0>();
@@ -164,6 +173,14 @@ constexpr auto KUnknownSymbol =
     KTree<Type::UserSymbol, 2, static_cast<uint8_t>(UCodePointUnknown), 0>();
 
 // Booleans
+constexpr auto KEqual = KBinary<Type::Equal>();
+constexpr auto KInferiorEqual = KBinary<Type::InferiorEqual>();
+#if POINCARE_BOOLEAN
+constexpr auto KNotEqual = KBinary<Type::NotEqual>();
+constexpr auto KSuperior = KBinary<Type::Superior>();
+constexpr auto KInferior = KBinary<Type::Inferior>();
+constexpr auto KSuperiorEqual = KBinary<Type::SuperiorEqual>();
+
 constexpr auto KFalse = KTree<Type::False>();
 constexpr auto KTrue = KTree<Type::True>();
 
@@ -174,7 +191,9 @@ constexpr auto KLogicalOr = KBinary<Type::LogicalOr>();
 constexpr auto KLogicalXor = KBinary<Type::LogicalXor>();
 constexpr auto KLogicalNor = KBinary<Type::LogicalNor>();
 constexpr auto KLogicalNand = KBinary<Type::LogicalNand>();
+#endif
 
+#if POINCARE_MATRIX
 template <uint8_t Rows, uint8_t Cols>
 struct KMatrixHelper {
   template <KTreeConcept... CTS>
@@ -194,6 +213,7 @@ struct KMatrixHelper {
 
 template <uint8_t Rows, uint8_t Cols>
 constexpr auto KMatrix = KMatrixHelper<Rows, Cols>();
+#endif
 
 /* if you want to add operator+ and so on, you can revert them from the commit
  * [poincare_junior] Split tree_constructor.h */
@@ -488,8 +508,10 @@ struct _KFunHelper<B, S, std::index_sequence<I...>>
 template <String S>
 constexpr auto KFun = _KFunHelper<Type::UserFunction, S>();
 
+#if POINCARE_SEQUENCE
 template <String S>
 constexpr auto KSeq = _KFunHelper<Type::UserSequence, S>();
+#endif
 
 }  // namespace KTrees
 }  // namespace Poincare::Internal

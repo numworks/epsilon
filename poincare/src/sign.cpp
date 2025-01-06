@@ -329,9 +329,11 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Pow:
       return Power(GetComplexSign(e->child(0)), GetComplexSign(e->child(1)),
                    e->child(1)->isTwo());
+#if POINCARE_MATRIX
     case Type::Norm:
       // Child isn't a scalar
       return ComplexSign(Sign::Positive(), Sign::Zero());
+#endif
     case Type::Abs:
       return Abs(GetComplexSign(e->child(0)));
     case Type::Exp:
@@ -357,10 +359,12 @@ ComplexSign GetComplexSign(const Tree* e) {
       return GetComplexSign(Dependency::Main(e));
     case Type::Inf:
       return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
+#if POINCARE_UNIT
     case Type::PhysicalConstant:
     case Type::Unit:
       // Units are considered equivalent to their SI ratio
       return ComplexSign(Sign::FinitePositive(), Sign::Zero());
+#endif
     case Type::ATrig:
       assert(e->child(1)->isOne() || e->child(1)->isZero());
       return e->child(1)->isOne() ? ArcSine(GetComplexSign(e->child(0)))

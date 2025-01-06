@@ -95,16 +95,22 @@ NODE(UserSymbol, 0, {
   uint8_t size;
   char name[];
 })
-NODE(UserFunction, 1, {
-  uint8_t size;
-  char name[];
-})
+
+#if POINCARE_SEQUENCE
 NODE(UserSequence, 1, {
   uint8_t size;
   char name[];
 })
+#else
+UNDEF_NODE(UserSequence)
+#endif
 
-RANGE(UserNamed, UserSymbol, UserSequence)
+NODE(UserFunction, 1, {
+  uint8_t size;
+  char name[];
+})
+
+RANGE(UserNamed, UserSymbol, UserFunction)
 
 NODE(Random, 0, { uint8_t seed; })
 NODE(RandInt, 2, { uint8_t seed; })
@@ -178,10 +184,19 @@ NODE(ComplexI)
 NODE(Conj, 1)
 // Decimal(Value, -Exponent) with Value a positive int and Exponent an int
 NODE(Decimal, 2)
+
+#if POINCARE_DISTRIBUTION
 NODE(Distribution, NARY, {
   uint8_t distributionId;
   uint8_t methodId;
 })
+#else
+UNDEF_NODE(Distribution, NARY, {
+  uint8_t distributionId;
+  uint8_t methodId;
+})
+#endif
+
 NODE(Div, 2)
 NODE(Exp, 1)
 NODE(Fact, 1)
@@ -250,6 +265,7 @@ RANGE(Parametric, Sum, ListSequence)
 
 // 5 - Matrix and vector builtins
 
+#if POINCARE_MATRIX
 NODE(Dot, 2)
 NODE(Norm, 1)
 NODE(Trace, 1)
@@ -269,10 +285,27 @@ NODE(PowMatrix, 2)
 NODE(Matrix, NARY2D)
 
 RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
+#else
+UNDEF_NODE(Dot, 2)
+UNDEF_NODE(Norm, 1)
+UNDEF_NODE(Trace, 1)
+UNDEF_NODE(Cross, 2)
+UNDEF_NODE(Det, 1)
+UNDEF_NODE(Dim, 1)
+UNDEF_NODE(Identity, 1)
+UNDEF_NODE(Inverse, 1)
+UNDEF_NODE(Ref, 1)
+UNDEF_NODE(Rref, 1)
+UNDEF_NODE(Transpose, 1)
+UNDEF_NODE(PowMatrix, 2)
+UNDEF_NODE(Matrix, NARY2D)
+UNDEF_RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
+#endif
 
 // 6 - Lists
 
 NODE(List, NARY)
+#if POINCARE_LIST
 NODE(ListSort, 1)
 
 // ListElement(List, ElementIndex)
@@ -293,11 +326,32 @@ NODE(ListSum, 1)
 NODE(ListProduct, 1)
 
 RANGE(ListToScalar, ListElement, ListProduct)
+#else
+UNDEF_NODE(ListSort, 1)
+UNDEF_NODE(ListElement, 2)
+UNDEF_NODE(ListSlice, 3)
+UNDEF_NODE(Mean, 2)
+UNDEF_NODE(StdDev, 2)
+UNDEF_NODE(Median, 2)
+UNDEF_NODE(Variance, 2)
+UNDEF_NODE(SampleStdDev, 2)
+UNDEF_RANGE(ListStatWithCoefficients, Mean, SampleStdDev)
+UNDEF_NODE(Min, 1)
+UNDEF_NODE(Max, 1)
+UNDEF_NODE(ListSum, 1)
+UNDEF_NODE(ListProduct, 1)
+UNDEF_RANGE(ListToScalar, ListElement, ListProduct)
+#endif
 
+#if POINCARE_POINT
 NODE(Point, 2)
+#else
+UNDEF_NODE(Point, 2)
+#endif
 
 // 7 - Booleans
 
+#if POINCARE_BOOLEAN
 NODE(False)
 NODE(True)
 
@@ -312,29 +366,67 @@ NODE(LogicalNand, 2)
 
 RANGE(LogicalOperator, LogicalNot, LogicalNand)
 RANGE(LogicalOperatorOrBoolean, False, LogicalNand)
+#else
+UNDEF_NODE(False)
+UNDEF_NODE(True)
+
+UNDEF_RANGE(Boolean, False, True)
+
+UNDEF_NODE(LogicalNot, 1)
+UNDEF_NODE(LogicalAnd, 2)
+UNDEF_NODE(LogicalOr, 2)
+UNDEF_NODE(LogicalXor, 2)
+UNDEF_NODE(LogicalNor, 2)
+UNDEF_NODE(LogicalNand, 2)
+
+UNDEF_RANGE(LogicalOperator, LogicalNot, LogicalNand)
+UNDEF_RANGE(LogicalOperatorOrBoolean, False, LogicalNand)
+#endif
 
 NODE(Equal, 2)
 NODE(NotEqual, 2)
+NODE(InferiorEqual, 2)
+#if POINCARE_BOOLEAN
 NODE(Superior, 2)
 NODE(Inferior, 2)
 NODE(SuperiorEqual, 2)
-NODE(InferiorEqual, 2)
 
-RANGE(Inequality, Superior, InferiorEqual)
-RANGE(Comparison, Equal, InferiorEqual)
+RANGE(Inequality, InferiorEqual, SuperiorEqual)
+RANGE(Comparison, Equal, SuperiorEqual)
+#else
+UNDEF_NODE(Superior, 2)
+UNDEF_NODE(Inferior, 2)
+UNDEF_NODE(SuperiorEqual, 2)
+
+UNDEF_RANGE(Inequality, InferiorEqual, SuperiorEqual)
+UNDEF_RANGE(Comparison, Equal, SuperiorEqual)
+#endif
 
 // 8 - Units
 
+#if POINCARE_UNIT
 NODE(Unit, 0, {
   uint8_t representativeId;
   uint8_t prefixId;
 })
 NODE(PhysicalConstant, 0, { uint8_t constantId; })
 RANGE(UnitOrPhysicalConstant, Unit, PhysicalConstant)
+#else
+UNDEF_NODE(Unit, 0, {
+  uint8_t representativeId;
+  uint8_t prefixId;
+})
+UNDEF_NODE(PhysicalConstant, 0, { uint8_t constantId; })
+UNDEF_RANGE(UnitOrPhysicalConstant, Unit, PhysicalConstant)
+#endif
 
 // 9 - Order dependant expressions
 
+#if POINCARE_PIECEWISE
 NODE(Piecewise, NARY)
+#else
+UNDEF_NODE(Piecewise, NARY)
+#endif
 
 // Dep(expression, DepList(dep1, …, depN))
 NODE(Dep, 2)

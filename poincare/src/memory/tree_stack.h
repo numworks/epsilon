@@ -3,6 +3,7 @@
 
 #include <omg/code_point.h>
 #include <omg/global_box.h>
+#include <omg/unreachable.h>
 #include <string.h>
 
 #include "block_stack.h"
@@ -100,6 +101,18 @@ class AbstractTreeStack : public BlockStack {
 #undef PUSHER
 #undef PUSHER_
 
+#define PUSHER(F)          \
+  template <class... Args> \
+  Tree* push##F(Args...) { \
+    OMG::unreachable();    \
+    return nullptr;        \
+  }
+#define PUSHER_(F) PUSHER(F)
+#define UNDEF_NODE_USE(F) PUSHER_(SCOPED_NODE(F))
+#include "types.h"
+#undef PUSHER
+#undef PUSHER_
+
   // Specialized pushers for nodes with additional value blocks
 
   Tree* pushSingleFloat(float value);
@@ -129,6 +142,7 @@ class AbstractTreeStack : public BlockStack {
     return pushUserNamed(Type::UserFunction, name, size);
   }
 
+#if POINCARE_SEQUENCE
   Tree* pushUserSequence(const char* name) {
     return pushUserSequence(name, strlen(name) + 1);
   }
@@ -136,6 +150,7 @@ class AbstractTreeStack : public BlockStack {
   Tree* pushUserSequence(const char* name, size_t size) {
     return pushUserNamed(Type::UserSequence, name, size);
   }
+#endif
 
   Tree* pushVar(uint8_t id, ComplexSign sign);
 
@@ -143,8 +158,10 @@ class AbstractTreeStack : public BlockStack {
   Tree* pushRandInt(uint8_t seed);
   Tree* pushRandIntNoRep(uint8_t seed);
 
+#if POINCARE_UNIT
   Tree* pushPhysicalConstant(uint8_t constantId);
   Tree* pushUnit(uint8_t representativeId, uint8_t prefixId);
+#endif
 
   Tree* pushAngleUnitContext(AngleUnit angleUnit);
 
@@ -217,7 +234,7 @@ class AbstractTreeStack : public BlockStack {
 
   // type should be UserSequence, UserFunction or UserSymbol
   Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
-};
+};  // namespace Poincare::Internal
 
 template <size_t MaxNumberOfBlocks,
           size_t MaxNumberOfReferences = MaxNumberOfBlocks / 8>

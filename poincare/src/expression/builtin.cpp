@@ -60,6 +60,7 @@ class DistributionBuiltin : public Builtin {
 };
 
 constexpr static DistributionBuiltin s_distributionsBuiltins[] = {
+#if POINCARE_DISTRIBUTION
     {Distribution::Type::Normal, DistributionMethod::Type::CDF, "normcdf"},
     {Distribution::Type::Normal, DistributionMethod::Type::CDFRange,
      "normcdfrange"},
@@ -90,6 +91,7 @@ constexpr static DistributionBuiltin s_distributionsBuiltins[] = {
      "hgeompdf"},
     {Distribution::Type::Hypergeometric, DistributionMethod::Type::Inverse,
      "invhgeom"},
+#endif
 };
 
 Tree* Builtin::pushNode(int numberOfChildren) const {

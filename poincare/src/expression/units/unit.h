@@ -65,7 +65,11 @@ class Representative {
     LongScale,
     All,
   };
+#if POINCARE_UNIT
   constexpr static int k_numberOfDimensions = 25;
+#else
+  constexpr static int k_numberOfDimensions = 0;
+#endif
   // Assigning an id to each accessible representatives
   static uint8_t ToId(const Representative* representative);
   static const Representative* FromId(uint8_t id);

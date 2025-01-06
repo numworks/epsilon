@@ -13,6 +13,7 @@ namespace Poincare::Internal {
 
 bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
                                       Token::Type* returnType) {
+#if POINCARE_BOOLEAN
   if (CompareLayoutSpanWithNullTerminatedString(
           name, Binary::OperatorName(Type::LogicalNot)) == 0) {
     *returnType = Token::Type::Not;
@@ -41,6 +42,7 @@ bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
     }
     return true;
   }
+#endif
   return false;
 }
 

@@ -70,9 +70,9 @@ class StackViewController : public ViewController {
   StackView::Mask previousPageHeaderMask() const;
   /* Compute the number of different pages up to indexOfTopPage, ignoring the
    * pages which should copy the title of their previous page */
-  size_t numberOfDifferentPages(size_t indexOfTopPage) const;
+  uint8_t numberOfDifferentPages(uint8_t indexOfTopPage) const;
   void updateStack(ViewController::TitlesDisplay titleDisplay,
-                   size_t indexOfTopPage);
+                   uint8_t indexOfTopPage);
   void dismissPotentialModal();
   virtual void didExitPage(ViewController* controller) const;
   virtual void willOpenPage(ViewController* controller) const;

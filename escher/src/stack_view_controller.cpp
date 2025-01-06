@@ -181,10 +181,10 @@ StackView::Mask StackViewController::previousPageHeaderMask() const {
   return static_cast<StackView::Mask>(previousPageController->titlesDisplay());
 }
 
-size_t StackViewController::numberOfDifferentPages(
-    size_t indexOfTopPage) const {
-  size_t result = 0;
-  for (size_t i = 0; i < indexOfTopPage; i++) {
+uint8_t StackViewController::numberOfDifferentPages(
+    uint8_t indexOfTopPage) const {
+  uint8_t result = 0;
+  for (uint8_t i = 0; i < indexOfTopPage; i++) {
     if (!(stackSlot(i)->titlesDisplay() ==
           ViewController::TitlesDisplay::SameAsPreviousPage)) {
       result++;
@@ -194,13 +194,13 @@ size_t StackViewController::numberOfDifferentPages(
 }
 
 void StackViewController::updateStack(
-    ViewController::TitlesDisplay titleDisplay, size_t indexOfTopPage) {
+    ViewController::TitlesDisplay titleDisplay, uint8_t indexOfTopPage) {
   /* Load the stack view */
   m_view.resetStack();
 
   // Ignore the SameAsPreviousPage titles
-  size_t pageIndex = 0;
-  for (size_t i = 0; i < indexOfTopPage; i++) {
+  uint8_t pageIndex = 0;
+  for (uint8_t i = 0; i < indexOfTopPage; i++) {
     if (stackSlot(i)->titlesDisplay() ==
         ViewController::TitlesDisplay::SameAsPreviousPage) {
       continue;

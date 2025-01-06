@@ -9,11 +9,10 @@ using namespace Poincare;
 
 namespace Inference {
 
-InputStoreController::InputStoreController(StackViewController* parent,
-                                           ViewController* nextController,
-                                           PageIndex pageIndex,
-                                           Statistic* statistic,
-                                           Poincare::Context* context)
+InputStoreController::InputStoreController(
+    StackViewController* parent, ViewController* nextController,
+    PageIndex pageIndex, InputStoreController* nextInputStoreController,
+    Statistic* statistic, Poincare::Context* context)
     : InputCategoricalController(parent, nextController, statistic),
       m_dropdownCell(&m_selectableListView, &m_dropdownDataSource, this),
       m_extraParameters{
@@ -27,7 +26,8 @@ InputStoreController::InputStoreController(StackViewController* parent,
       m_loadedSubApp(Statistic::SubApp::Test),
       m_loadedDistribution(DistributionType::T),
       m_loadedTest(SignificanceTestType::OneProportion),
-      m_pageIndex(pageIndex) {
+      m_pageIndex(pageIndex),
+      m_nextInputStoreController(nextInputStoreController) {
   m_storeParameterController.selectRow(0);
   m_selectableListView.margins()->setTop(Metric::CommonMargins.top());
   m_storeTableCell.selectableTableView()->margins()->setTop(

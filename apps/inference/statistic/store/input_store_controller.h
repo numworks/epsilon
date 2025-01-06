@@ -17,8 +17,9 @@ class InputStoreController : public InputCategoricalController,
 
   InputStoreController(Escher::StackViewController* parent,
                        Escher::ViewController* nextController,
-                       PageIndex pageIndex, Statistic* statistic,
-                       Poincare::Context* context);
+                       PageIndex pageIndex,
+                       InputStoreController* nextInputStoreController,
+                       Statistic* statistic, Poincare::Context* context);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -170,9 +171,13 @@ class InputStoreController : public InputCategoricalController,
   DistributionType m_loadedDistribution;
   SignificanceTestType m_loadedTest;
 
-  /* For some tests (TwoMeansTest), the InputStoreController is split into two
-   * pages */
+  /* There can be several instances of InputStoreController, each representing a
+   * distinct dataset selection page. This is used only for some test categories
+   * (e.g. TwoMeansTest). */
   PageIndex m_pageIndex;
+  /* This member variable stores the address of another InputStoreController
+   * instance so that we can set m_nextController to point to it when needed. */
+  InputStoreController* m_nextInputStoreController;
 };
 
 }  // namespace Inference

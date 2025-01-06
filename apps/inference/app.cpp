@@ -42,7 +42,7 @@ App::App(Snapshot* snapshot, Poincare::Context* parentContext)
           &m_stackViewController, &m_goodnessResultsController,
           static_cast<GoodnessTest*>(snapshot->statistic())),
       m_inputStoreController(&m_stackViewController, &m_resultsController,
-                             InputStoreController::PageIndex::One,
+                             InputStoreController::PageIndex::One, nullptr,
                              snapshot->statistic(), parentContext),
       m_resultsController(&m_stackViewController, snapshot->statistic(),
                           &m_testGraphController, &m_intervalGraphController),

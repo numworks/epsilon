@@ -6,12 +6,9 @@
 #include "indices.h"
 #include "layout_cursor.h"
 #include "render.h"
+#include "render_metrics.h"
 
 namespace Poincare::Internal {
-
-namespace VerticalOffset {
-constexpr static KDCoordinate IndiceHeight = 10;
-}  // namespace VerticalOffset
 
 const SimpleLayoutCursor* RackLayout::s_cursor = nullptr;
 
@@ -32,17 +29,18 @@ void UpdateChildWithBase(bool isSuperscript, KDCoordinate baseHeight,
                          KDCoordinate* childHeight,
                          KDCoordinate* childY = nullptr) {
   if (isSuperscript) {
-    *childBaseline = baseBaseline + *childHeight - VerticalOffset::IndiceHeight;
+    *childBaseline =
+        baseBaseline + *childHeight - VerticalOffset::k_indiceHeight;
     if (childY) {
       *childY = *childBaseline;
     }
   } else {
     *childBaseline = baseBaseline;
     if (childY) {
-      *childY = baseBaseline - baseHeight + VerticalOffset::IndiceHeight;
+      *childY = baseBaseline - baseHeight + VerticalOffset::k_indiceHeight;
     }
   }
-  *childHeight += baseHeight - VerticalOffset::IndiceHeight;
+  *childHeight += baseHeight - VerticalOffset::k_indiceHeight;
 }
 
 #if 0

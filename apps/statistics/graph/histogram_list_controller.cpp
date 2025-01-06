@@ -135,7 +135,7 @@ void HistogramListController::scrollAndHighlightHistogramBar(int row,
    * range update must be done before setting the bar highlight, because the bar
    * has to be visible when calling setBarHighlight. */
   if (m_histogramRange->scrollToSelectedBarIndex(seriesAtRow, barIndex)) {
-    m_selectableListView.selectedCell()->reloadCell();
+    m_selectableListView.layoutSubviews();
   }
 
   /* The following function will set the bar highlight in the HistogramView

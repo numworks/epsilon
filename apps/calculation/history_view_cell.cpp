@@ -286,7 +286,7 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
                                         bool canChangeDisplayOutput) {
   // Memoization
   m_hasEllipsis = calculation->additionalResultsType().isNotEmpty();
-  m_inputView.setLayout(calculation->createInputLayout());
+  m_inputView.setLayout(calculation->createInputLayout(context));
 
   /* All expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted

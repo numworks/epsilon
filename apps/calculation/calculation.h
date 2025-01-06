@@ -106,10 +106,12 @@ class Calculation {
   Poincare::UserExpression approximateOutput();
 
   // Layouts
-  Poincare::Layout createInputLayout();
-  Poincare::Layout createExactOutputLayout(bool* couldNotCreateExactLayout);
+  Poincare::Layout createInputLayout(Poincare::Context* context);
+  Poincare::Layout createExactOutputLayout(Poincare::Context* context,
+                                           bool* couldNotCreateExactLayout);
   Poincare::Layout createApproximateOutputLayout(
-      bool* couldNotCreateApproximateLayout, bool forEditing = false);
+      Poincare::Context* context, bool* couldNotCreateApproximateLayout,
+      bool forEditing = false);
 
   // Heights
   KDCoordinate height(bool expanded);

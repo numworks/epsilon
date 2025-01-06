@@ -276,7 +276,7 @@ void HistoryController::handleOK() {
   if (m_selectedSubviewType == SubviewType::Input) {
     m_selectableListView.deselectTable();
     editController->insertLayout(
-        calculationAtIndex(focusRow)->createInputLayout());
+        calculationAtIndex(focusRow)->createInputLayout(context));
     return;
   }
 
@@ -292,11 +292,11 @@ void HistoryController::handleOK() {
         displayOutput != Calculation::DisplayOutput::ExactOnly) {
       assert(Calculation::CanDisplayApproximate(displayOutput));
       editController->insertLayout(
-          calculation->createApproximateOutputLayout(&dummy, true));
+          calculation->createApproximateOutputLayout(context, &dummy, true));
     } else {
       assert(Calculation::CanDisplayExact(displayOutput));
       editController->insertLayout(
-          calculation->createExactOutputLayout(&dummy));
+          calculation->createExactOutputLayout(context, &dummy));
     }
     return;
   }

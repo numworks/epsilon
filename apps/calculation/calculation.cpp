@@ -10,8 +10,6 @@
 #include <algorithm>
 #include <cmath>
 
-#include "app.h"
-
 using namespace Poincare;
 using namespace Shared;
 
@@ -87,27 +85,28 @@ UserExpression Calculation::approximateOutput() {
   return e;
 }
 
-Layout Calculation::createInputLayout() {
+Layout Calculation::createInputLayout(Context* context) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     UserExpression e = input();
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
-                            App::app()->localContext());
+                            context);
     }
   }
   return Layout();
 }
 
-Layout Calculation::createExactOutputLayout(bool* couldNotCreateExactLayout) {
+Layout Calculation::createExactOutputLayout(Context* context,
+                                            bool* couldNotCreateExactLayout) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     UserExpression e = exactOutput();
     if (!e.isUninitialized()) {
       return e.createLayout(Preferences::PrintFloatMode::Decimal,
                             PrintFloat::k_maxNumberOfSignificantDigits,
-                            App::app()->localContext());
+                            context);
     }
   }
   *couldNotCreateExactLayout = true;
@@ -115,7 +114,7 @@ Layout Calculation::createExactOutputLayout(bool* couldNotCreateExactLayout) {
 }
 
 Layout Calculation::createApproximateOutputLayout(
-    bool* couldNotCreateApproximateLayout, bool forEditing) {
+    Context* context, bool* couldNotCreateApproximateLayout, bool forEditing) {
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
     UserExpression e = approximateOutput();
@@ -124,7 +123,7 @@ Layout Calculation::createApproximateOutputLayout(
                             forEditing
                                 ? PrintFloat::k_maxNumberOfSignificantDigits
                                 : numberOfSignificantDigits(),
-                            App::app()->localContext());
+                            context);
     }
   }
   *couldNotCreateApproximateLayout = true;
@@ -190,7 +189,7 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
   *exactOutput = Layout();
   if (CanDisplayExact(displayOutput(context))) {
     bool couldNotCreateExactLayout = false;
-    *exactOutput = createExactOutputLayout(&couldNotCreateExactLayout);
+    *exactOutput = createExactOutputLayout(context, &couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
       if (canChangeDisplayOutput &&
           displayOutput(context) != DisplayOutput::ExactOnly) {
@@ -211,8 +210,8 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
   // Create the approximate output layout
   if (CanDisplayApproximate(displayOutput(context))) {
     bool couldNotCreateApproximateLayout = false;
-    *approximateOutput =
-        createApproximateOutputLayout(&couldNotCreateApproximateLayout);
+    *approximateOutput = createApproximateOutputLayout(
+        context, &couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
       if (canChangeDisplayOutput &&
           displayOutput(context) != DisplayOutput::ApproximateOnly) {
@@ -221,8 +220,8 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
         *exactOutput = Layout();
         couldNotCreateApproximateLayout = false;
-        *approximateOutput =
-            createApproximateOutputLayout(&couldNotCreateApproximateLayout);
+        *approximateOutput = createApproximateOutputLayout(
+            context, &couldNotCreateApproximateLayout);
         if (couldNotCreateApproximateLayout) {
           ExceptionCheckpoint::Raise();
         }

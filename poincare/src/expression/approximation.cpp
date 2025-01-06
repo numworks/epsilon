@@ -249,7 +249,8 @@ Tree* Approximation::PrivateToTree(const Tree* e, Dimension dim,
     return ToComplexTree<T>(e, ctx);
   }
   assert(dim.isPoint() || dim.isMatrix());
-  Tree* result = dim.isPoint() ? ToPoint<T>(e, ctx) : ToMatrix<T>(e, ctx);
+  Tree* result =
+      dim.isPoint() ? PrivateToPoint<T>(e, ctx) : ToMatrix<T>(e, ctx);
   Undefined::ShallowBubbleUpUndef(result);
   return result;
 }
@@ -1176,8 +1177,8 @@ Tree* Approximation::ToList(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-Tree* Approximation::ToPoint(const Tree* e, const Context* ctx) {
-  FALLBACK_ON_FLOAT(ToPoint);
+Tree* Approximation::PrivateToPoint(const Tree* e, const Context* ctx) {
+  FALLBACK_ON_FLOAT(PrivateToPoint);
   assert(ctx);
   Context tempCtx(*ctx);
   Tree* point = SharedTreeStack->pushPoint();
@@ -1580,8 +1581,10 @@ template std::complex<float> Approximation::PrivateToComplex(const Tree*,
 template std::complex<double> Approximation::PrivateToComplex(const Tree*,
                                                               const Context*);
 
-template Tree* Approximation::ToPoint<float>(const Tree*, const Context*);
-template Tree* Approximation::ToPoint<double>(const Tree*, const Context*);
+template Tree* Approximation::PrivateToPoint<float>(const Tree*,
+                                                    const Context*);
+template Tree* Approximation::PrivateToPoint<double>(const Tree*,
+                                                     const Context*);
 
 template float Approximation::PrivateTo(const Tree*, const Context*);
 template double Approximation::PrivateTo(const Tree*, const Context*);

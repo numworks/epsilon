@@ -213,7 +213,7 @@ class Approximation final {
 
   // Tree must be of point dimension.
   template <typename T>
-  static Tree* ToPoint(const Tree* e, const Context* ctx);
+  static Tree* PrivateToPoint(const Tree* e, const Context* ctx);
 
   // Tree must be of matrix dimension.
   template <typename T>

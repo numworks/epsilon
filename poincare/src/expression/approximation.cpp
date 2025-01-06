@@ -154,7 +154,8 @@ T Approximation::To(const Tree* e, Parameters params, Context context) {
   if (!(dim.isScalar() || dim.isUnit())) {
     return NAN;
   }
-  assert(context.m_listElement != -1 || !e->isList());
+  assert(context.m_listElement != -1 ||
+         !Dimension::IsList(e, context.m_symbolContext));
   return ToPointOrScalar<T>(e, params, context).toScalar();
 };
 
@@ -1324,7 +1325,8 @@ T Approximation::PrivateTo(const Tree* e, const Context* ctx) {
 #if ASSERTIONS
   Dimension dim = Dimension::Get(e, ctx->m_symbolContext);
 #endif
-  assert((dim.isScalar() && (ctx->m_listElement != -1 || !e->isList())) ||
+  assert((dim.isScalar() && (ctx->m_listElement != -1 ||
+                             !Dimension::IsList(e, ctx->m_symbolContext))) ||
          (dim.isPoint() && ctx->m_pointElement != -1) || dim.isUnit());
   std::complex<T> value = PrivateToComplex<T>(e, ctx);
   // Remove signaling nan

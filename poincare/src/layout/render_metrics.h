@@ -64,7 +64,7 @@ constexpr static KDCoordinate k_width = 3;
 
 namespace VerticalOffset {
 #if POINCARE_SCANDIUM_LAYOUTS
-constexpr KDCoordinate k_verticalOverlap = 8;
+constexpr KDCoordinate k_verticalOverlap = 7;
 #else
 constexpr KDCoordinate k_verticalOverlap = 10;
 #endif

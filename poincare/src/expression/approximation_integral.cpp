@@ -72,8 +72,8 @@ T Approximation::ApproximateIntegral(const Tree* integral, const Context* ctx) {
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* integrand = upperBound->nextTree();
   integrandExpression = integrand;
-  T a = To<T>(lowerBound, ctx);
-  T b = To<T>(upperBound, ctx);
+  T a = PrivateTo<T>(lowerBound, ctx);
+  T b = PrivateTo<T>(upperBound, ctx);
   if (std::isnan(a) || std::isnan(b)) {
     return NAN;
   }

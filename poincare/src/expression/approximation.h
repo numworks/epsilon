@@ -201,7 +201,7 @@ class Approximation final {
 
   // Tree must be of scalar dimension or equivalent, and real.
   template <typename T>
-  static T To(const Tree* e, const Context* ctx);
+  static T PrivateTo(const Tree* e, const Context* ctx);
 
   // Tree must be of boolean dimension.
   template <typename T>

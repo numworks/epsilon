@@ -139,8 +139,8 @@ std::complex<T> Approximation::ApproximatePower(const Tree* power,
      * index of the for Division(Rational,Rational). */
     if (exponent->isDiv() && exponent->child(0)->isInteger() &&
         exponent->child(1)->isInteger()) {
-      p = To<T>(exponent->child(0), ctx);
-      q = To<T>(exponent->child(1), ctx);
+      p = PrivateTo<T>(exponent->child(0), ctx);
+      q = PrivateTo<T>(exponent->child(1), ctx);
     }
     /* We don't handle power that haven't been reduced or simplified as the
      * index can take to many forms and still be equivalent to p/q,

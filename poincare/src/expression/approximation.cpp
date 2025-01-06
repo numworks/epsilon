@@ -110,10 +110,10 @@ PointOrScalar<T> Approximation::ToPointOrScalar(const Tree* e,
     T xScalar;
     if (dim.isPoint()) {
       context.m_pointElement = 0;
-      xScalar = To<T>(target, &context);
+      xScalar = PrivateTo<T>(target, &context);
       context.m_pointElement = 1;
     }
-    T yScalar = To<T>(target, &context);
+    T yScalar = PrivateTo<T>(target, &context);
     result = dim.isPoint() ? PointOrScalar<T>(xScalar, yScalar)
                            : PointOrScalar<T>(yScalar);
   }
@@ -446,13 +446,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::GCD:
     case Type::LCM: {
       const Tree* child = e->child(0);
-      T result = PositiveIntegerApproximation(To<T>(child, ctx));
+      T result = PositiveIntegerApproximation(PrivateTo<T>(child, ctx));
       if (std::isnan(result)) {
         return NAN;
       }
       for (int n = e->numberOfChildren() - 1; n > 0; n--) {
         child = child->nextTree();
-        T current = PositiveIntegerApproximation(To<T>(child, ctx));
+        T current = PositiveIntegerApproximation(PrivateTo<T>(child, ctx));
         if (std::isnan(current)) {
           return NAN;
         }
@@ -614,7 +614,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       return result;
     }
     case Type::UserSequence: {
-      T rank = To<T>(e->child(0), ctx);
+      T rank = PrivateTo<T>(e->child(0), ctx);
       if (std::isnan(rank) || std::floor(rank) != rank) {
         return NAN;
       }
@@ -664,7 +664,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     }
     case Type::Diff: {
       constexpr static int k_maxOrderForApproximation = 4;
-      T orderReal = To<T>(e->child(2), ctx);
+      T orderReal = PrivateTo<T>(e->child(2), ctx);
       if (orderReal != std::floor(orderReal)) {
         return NAN;
       }
@@ -1094,8 +1094,8 @@ bool Approximation::ToBoolean(const Tree* e, const Context* ctx) {
     return false;
   }
   if (e->isInequality()) {
-    T a = To<T>(e->child(0), ctx);
-    T b = To<T>(e->child(1), ctx);
+    T a = PrivateTo<T>(e->child(0), ctx);
+    T b = PrivateTo<T>(e->child(1), ctx);
     if (e->isInferior()) {
       return a < b;
     }
@@ -1264,7 +1264,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
     case Type::PowMatrix: {
       const Tree* base = e->child(0);
       const Tree* index = base->nextTree();
-      T value = To<T>(index, ctx);
+      T value = PrivateTo<T>(index, ctx);
       if (std::isnan(value) || value != std::round(value)) {
         return KUndef->cloneTree();
       }
@@ -1319,7 +1319,7 @@ Tree* Approximation::ToMatrix(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-T Approximation::To(const Tree* e, const Context* ctx) {
+T Approximation::PrivateTo(const Tree* e, const Context* ctx) {
 #if ASSERTIONS
   Dimension dim = Dimension::Get(e, ctx->m_symbolContext);
 #endif
@@ -1336,7 +1336,7 @@ T Approximation::ToLocalContext(const Tree* e, const Context* ctx, T x) {
   Context ctxCopy(*ctx);
   LocalContext localCtx(x, ctxCopy.m_localContext);
   ctxCopy.m_localContext = &localCtx;
-  return To<T>(e, &ctxCopy);
+  return PrivateTo<T>(e, &ctxCopy);
 }
 
 template <typename T>
@@ -1583,8 +1583,8 @@ template std::complex<double> Approximation::PrivateToComplex(const Tree*,
 template Tree* Approximation::ToPoint<float>(const Tree*, const Context*);
 template Tree* Approximation::ToPoint<double>(const Tree*, const Context*);
 
-template float Approximation::To(const Tree*, const Context*);
-template double Approximation::To(const Tree*, const Context*);
+template float Approximation::PrivateTo(const Tree*, const Context*);
+template double Approximation::PrivateTo(const Tree*, const Context*);
 
 template float Approximation::ToLocalContext(const Tree*, const Context*,
                                              float);

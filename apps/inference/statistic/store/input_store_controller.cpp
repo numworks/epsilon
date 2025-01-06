@@ -11,6 +11,7 @@ namespace Inference {
 
 InputStoreController::InputStoreController(StackViewController* parent,
                                            ViewController* nextController,
+                                           PageIndex pageIndex,
                                            Statistic* statistic,
                                            Poincare::Context* context)
     : InputCategoricalController(parent, nextController, statistic),
@@ -25,7 +26,8 @@ InputStoreController::InputStoreController(StackViewController* parent,
       m_storeParameterController(parent, &m_storeTableCell),
       m_loadedSubApp(Statistic::SubApp::Test),
       m_loadedDistribution(DistributionType::T),
-      m_loadedTest(SignificanceTestType::OneProportion) {
+      m_loadedTest(SignificanceTestType::OneProportion),
+      m_pageIndex(pageIndex) {
   m_storeParameterController.selectRow(0);
   m_selectableListView.margins()->setTop(Metric::CommonMargins.top());
   m_storeTableCell.selectableTableView()->margins()->setTop(

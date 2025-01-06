@@ -13,9 +13,12 @@ namespace Inference {
 class InputStoreController : public InputCategoricalController,
                              Escher::DropdownCallback {
  public:
+  enum class PageIndex : bool { One, Two };
+
   InputStoreController(Escher::StackViewController* parent,
                        Escher::ViewController* nextController,
-                       Statistic* statistic, Poincare::Context* context);
+                       PageIndex pageIndex, Statistic* statistic,
+                       Poincare::Context* context);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -166,6 +169,10 @@ class InputStoreController : public InputCategoricalController,
   Statistic::SubApp m_loadedSubApp;
   DistributionType m_loadedDistribution;
   SignificanceTestType m_loadedTest;
+
+  /* For some tests (TwoMeansTest), the InputStoreController is split into two
+   * pages */
+  PageIndex m_pageIndex;
 };
 
 }  // namespace Inference

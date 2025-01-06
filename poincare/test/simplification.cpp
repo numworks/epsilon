@@ -941,6 +941,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   // Decomposition
   simplifies_to("123_m", "undef",
                 {.m_unitDisplay = UnitDisplay::Decomposition});
+  simplifies_to("1241_yd", "undef",
+                {.m_unitDisplay = UnitDisplay::Decomposition});
   simplifies_to("π_year",
                 "3×_year+1×_month+21×_day+6×_h+42×_min+4.3249249999999×_s",
                 {.m_unitDisplay = UnitDisplay::Decomposition});

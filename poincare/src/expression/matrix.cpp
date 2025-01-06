@@ -238,7 +238,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
       Tree* pivotChild = Child(matrix, iPivot_temp, k);
-      float pivot = std::abs(Approximation::ToComplex<float>(pivotChild, ctx));
+      float pivot =
+          std::abs(Approximation::PrivateToComplex<float>(pivotChild, ctx));
       // Handle very low pivots
       if (pivot == 0.0f &&
           !(pivotChild->isZero() ||
@@ -264,8 +265,8 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
      * 1-cos(x)^2-sin(x)^2 would be mishandled. */
     Tree* candidate = Child(matrix, iPivot, k);
     if (candidate->isZero() ||
-        (approximate &&
-         std::abs(Approximation::ToComplex<float>(candidate, ctx)) == 0)) {
+        (approximate && std::abs(Approximation::PrivateToComplex<float>(
+                            candidate, ctx)) == 0)) {
       // No non-null coefficient in this column, skip
       k++;
       if (determinant) {

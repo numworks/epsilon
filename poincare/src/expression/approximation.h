@@ -197,7 +197,7 @@ class Approximation final {
 
   // Tree must be of scalar dimension or equivalent
   template <typename T>
-  static std::complex<T> ToComplex(const Tree* e, const Context* ctx);
+  static std::complex<T> PrivateToComplex(const Tree* e, const Context* ctx);
 
   // Tree must be of scalar dimension or equivalent, and real.
   template <typename T>

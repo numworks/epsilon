@@ -11,7 +11,7 @@ std::complex<T> Approximation::ApproximateTrace(const Tree* matrix,
   std::complex<T> result = std::complex<T>(0);
   const Tree* child = matrix->child(0);
   for (int i = 0; i < n - 1; i++) {
-    result += ToComplex<T>(child, ctx);
+    result += PrivateToComplex<T>(child, ctx);
     if (std::isnan(result.real()) || std::isnan(result.imag())) {
       return std::complex<T>(NAN, NAN);
     }
@@ -19,7 +19,7 @@ std::complex<T> Approximation::ApproximateTrace(const Tree* matrix,
       child = child->nextTree();
     }
   }
-  result += ToComplex<T>(child, ctx);
+  result += PrivateToComplex<T>(child, ctx);
   return result;
 }
 

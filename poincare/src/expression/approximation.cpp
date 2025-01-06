@@ -86,7 +86,7 @@ std::complex<T> Approximation::ToComplex(const Tree* e, Parameters params,
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
-  std::complex<T> c = ToComplex<T>(target, &context);
+  std::complex<T> c = PrivateToComplex<T>(target, &context);
   if (clone) {
     clone->removeTree();
   }
@@ -176,7 +176,7 @@ Coordinate2D<T> Approximation::ToPoint(const Tree* e, Parameters params,
 
 template <typename T>
 Tree* Approximation::ToComplexTree(const Tree* e, const Context* ctx) {
-  std::complex<T> value = ToComplex<T>(e, ctx);
+  std::complex<T> value = PrivateToComplex<T>(e, ctx);
   T re = value.real(), im = value.imag();
   if (std::isnan(re) || std::isnan(im)) {
     return IsNonReal(value) ? KNonReal->cloneTree() : KUndef->cloneTree();
@@ -333,7 +333,7 @@ std::complex<float> Approximation::HelperUndefDependencies(const Tree* dep,
     Dimension dim = Dimension::Get(child, ctx->m_symbolContext);
     if (dim.isScalar()) {
       // Optimize most cases
-      std::complex<float> c = ToComplex<float>(child, ctx);
+      std::complex<float> c = PrivateToComplex<float>(child, ctx);
       // Only update to nonreal if there is no undef to respect priority
       if (IsNonReal(c) && undefValue == std::complex<float>(0)) {
         undefValue = c;
@@ -363,9 +363,10 @@ std::complex<T> Approximation::UndefDependencies(const Tree* dep,
 }
 
 template <typename T>
-std::complex<T> Approximation::ToComplex(const Tree* e, const Context* ctx) {
+std::complex<T> Approximation::PrivateToComplex(const Tree* e,
+                                                const Context* ctx) {
   std::complex<T> value = ToComplexSwitch<T>(e, ctx);
-  FALLBACK_ON_FLOAT(ToComplex);
+  FALLBACK_ON_FLOAT(PrivateToComplex);
   if (ctx && ctx->m_complexFormat == ComplexFormat::Real && value.imag() != 0 &&
       !(Undefined::IsUndefined(value)) && !e->isComplexI()) {
     /* Some operations in reduction can introduce i, but when complex format is
@@ -401,11 +402,11 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
   }
   switch (e->type()) {
     case Type::Parentheses:
-      return ToComplex<T>(e->child(0), ctx);
+      return PrivateToComplex<T>(e->child(0), ctx);
     case Type::AngleUnitContext: {
       Context tempCtx(*ctx);
       tempCtx.m_angleUnit = static_cast<AngleUnit>(e->nodeValue(0));
-      return ToComplex<T>(e->child(0), &tempCtx);
+      return PrivateToComplex<T>(e->child(0), &tempCtx);
     }
     case Type::ComplexI:
       return std::complex<T>(0, 1);
@@ -420,22 +421,24 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::Add: {
       std::complex<T> result = 0;
       for (const Tree* child : e->children()) {
-        result += ToComplex<T>(child, ctx);
+        result += PrivateToComplex<T>(child, ctx);
       }
       return result;
     }
     case Type::Mult: {
       std::complex<T> result = 1;
       for (const Tree* child : e->children()) {
-        result = FloatMultiplication<T>(result, ToComplex<T>(child, ctx));
+        result =
+            FloatMultiplication<T>(result, PrivateToComplex<T>(child, ctx));
       }
       return result;
     }
     case Type::Div:
-      return FloatDivision<T>(ToComplex<T>(e->child(0), ctx),
-                              ToComplex<T>(e->child(1), ctx));
+      return FloatDivision<T>(PrivateToComplex<T>(e->child(0), ctx),
+                              PrivateToComplex<T>(e->child(1), ctx));
     case Type::Sub:
-      return ToComplex<T>(e->child(0), ctx) - ToComplex<T>(e->child(1), ctx);
+      return PrivateToComplex<T>(e->child(0), ctx) -
+             PrivateToComplex<T>(e->child(1), ctx);
     case Type::Pow: {
       return ApproximatePower<T>(
           e, ctx, ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
@@ -463,12 +466,12 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       return result;
     }
     case Type::Sqrt: {
-      std::complex<T> c = ToComplex<T>(e->child(0), ctx);
+      std::complex<T> c = PrivateToComplex<T>(e->child(0), ctx);
       return NeglectRealOrImaginaryPartIfNegligible(std::sqrt(c), c);
     }
     case Type::Root: {
-      std::complex<T> base = ToComplex<T>(e->child(0), ctx);
-      std::complex<T> exp = ToComplex<T>(e->child(1), ctx);
+      std::complex<T> base = PrivateToComplex<T>(e->child(0), ctx);
+      std::complex<T> exp = PrivateToComplex<T>(e->child(1), ctx);
       /* If the complexFormat is Real, we look for nth root of form root(x,q)
        * with x real and q integer because they might have a real form which
        * does not correspond to the principal angle. */
@@ -486,10 +489,10 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
           ctx ? ctx->m_complexFormat : ComplexFormat::Cartesian);
     }
     case Type::Exp:
-      return std::exp(ToComplex<T>(e->child(0), ctx));
+      return std::exp(PrivateToComplex<T>(e->child(0), ctx));
     case Type::Log:
     case Type::Ln: {
-      std::complex<T> c = ToComplex<T>(e->child(0), ctx);
+      std::complex<T> c = PrivateToComplex<T>(e->child(0), ctx);
       /* log has a branch cut on ]-inf, 0]: it is then multi-valued on this cut.
        * We followed the convention chosen by the lib c++ of llvm on ]-inf+0i,
        * 0+0i] (warning: log takes the other side of the cut values on ]-inf-0i,
@@ -501,35 +504,35 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
                                      : std::log(c);
     }
     case Type::LogBase: {
-      std::complex<T> a = ToComplex<T>(e->child(0), ctx);
-      std::complex<T> b = ToComplex<T>(e->child(1), ctx);
+      std::complex<T> a = PrivateToComplex<T>(e->child(0), ctx);
+      std::complex<T> b = PrivateToComplex<T>(e->child(1), ctx);
       // TODO_PCJ: should we use log2 (we previously used log10)
       return a == static_cast<T>(0) || b == static_cast<T>(0)
                  ? NAN
                  : FloatDivision(std::log(a), std::log(b));
     }
     case Type::Abs:
-      return std::abs(ToComplex<T>(e->child(0), ctx));
+      return std::abs(PrivateToComplex<T>(e->child(0), ctx));
     case Type::Arg:
-      return std::arg(ToComplex<T>(e->child(0), ctx));
+      return std::arg(PrivateToComplex<T>(e->child(0), ctx));
     case Type::Inf:
       return INFINITY;
     case Type::Conj:
-      return std::conj(ToComplex<T>(e->child(0), ctx));
+      return std::conj(PrivateToComplex<T>(e->child(0), ctx));
     case Type::Opposite:
-      return FloatMultiplication<T>(-1, ToComplex<T>(e->child(0), ctx));
+      return FloatMultiplication<T>(-1, PrivateToComplex<T>(e->child(0), ctx));
     case Type::Re: {
       /* TODO_PCJ: Complex NAN should be used in most of the code. Make sure a
        * NAN result cannot be lost. */
       // TODO_PCJ: We used to ignore NAN imag part and return just c.real()
       // TODO: undef are not bubbled-up?
-      std::complex<T> c = ToComplex<T>(e->child(0), ctx);
+      std::complex<T> c = PrivateToComplex<T>(e->child(0), ctx);
       return std::isnan(c.imag()) ? NAN : c.real();
     }
     case Type::Im: {
       // TODO: why not use std::im(c)?
       // TODO: undef are not bubbled-up?
-      std::complex<T> c = ToComplex<T>(e->child(0), ctx);
+      std::complex<T> c = PrivateToComplex<T>(e->child(0), ctx);
       return std::isnan(c.real()) ? NAN : c.imag();
     }
 
@@ -546,7 +549,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::ASec:
     case Type::ACsc:
     case Type::ACot:
-      return TrigonometricToComplex(e->type(), ToComplex<T>(e->child(0), ctx),
+      return TrigonometricToComplex(e->type(),
+                                    PrivateToComplex<T>(e->child(0), ctx),
                                     ctx ? ctx->m_angleUnit : AngleUnit::Radian);
     case Type::SinH:
     case Type::CosH:
@@ -554,11 +558,12 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::ArSinH:
     case Type::ArCosH:
     case Type::ArTanH:
-      return HyperbolicToComplex(e->type(), ToComplex<T>(e->child(0), ctx));
+      return HyperbolicToComplex(e->type(),
+                                 PrivateToComplex<T>(e->child(0), ctx));
     case Type::Trig:
     case Type::ATrig: {
-      std::complex<T> a = ToComplex<T>(e->child(0), ctx);
-      std::complex<T> b = ToComplex<T>(e->child(1), ctx);
+      std::complex<T> a = PrivateToComplex<T>(e->child(0), ctx);
+      std::complex<T> b = PrivateToComplex<T>(e->child(1), ctx);
       assert(b == static_cast<T>(0.0) || b == static_cast<T>(1.0));
       bool isCos = b == static_cast<T>(0.0);
       if (e->isTrig()) {
@@ -569,8 +574,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
                                     AngleUnit::Radian);
     }
     case Type::ATanRad:
-      return TrigonometricToComplex(Type::ATan, ToComplex<T>(e->child(0), ctx),
-                                    AngleUnit::Radian);
+      return TrigonometricToComplex(
+          Type::ATan, PrivateToComplex<T>(e->child(0), ctx), AngleUnit::Radian);
     case Type::Var: {
       // Local variable
       if (!ctx || !ctx->m_localContext) {
@@ -591,9 +596,9 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         return NAN;
       }
       if (e->isUserSymbol()) {
-        return ToComplex<T>(definition, ctx);
+        return PrivateToComplex<T>(definition, ctx);
       }
-      std::complex<T> x = ToComplex<T>(e->child(0), ctx);
+      std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         return NAN;
       }
@@ -604,7 +609,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
-      std::complex<T> result = ToComplex<T>(definitionClone, &ctxCopy);
+      std::complex<T> result = PrivateToComplex<T>(definitionClone, &ctxCopy);
       definitionClone->removeTree();
       return result;
     }
@@ -622,13 +627,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::Sum:
     case Type::Product: {
       const Tree* lowerBoundChild = e->child(Parametric::k_lowerBoundIndex);
-      std::complex<T> low = ToComplex<T>(lowerBoundChild, ctx);
+      std::complex<T> low = PrivateToComplex<T>(lowerBoundChild, ctx);
       if (low.imag() != 0 || (int)low.real() != low.real()) {
         return NAN;
       }
       assert(!Undefined::IsUndefined(low));
       const Tree* upperBoundChild = lowerBoundChild->nextTree();
-      std::complex<T> up = ToComplex<T>(upperBoundChild, ctx);
+      std::complex<T> up = PrivateToComplex<T>(upperBoundChild, ctx);
       if (up.imag() != 0 || (int)up.real() != up.real()) {
         return NAN;
       }
@@ -645,7 +650,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         ctxCopy.setLocalValue(k);
         // Reset random context
         ctxCopy.m_randomContext = Random::Context(true);
-        std::complex<T> value = ToComplex<T>(child, &ctxCopy);
+        std::complex<T> value = PrivateToComplex<T>(child, &ctxCopy);
         if (e->isSum()) {
           result += value;
         } else {
@@ -684,7 +689,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
          * */
         return NAN;
       }
-      std::complex<T> at = ToComplex<T>(e->child(1), ctx);
+      std::complex<T> at = PrivateToComplex<T>(e->child(1), ctx);
       if (std::isnan(at.real()) || at.imag() != 0) {
         return NAN;
       }
@@ -708,7 +713,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         assert(e->isNorm());
         value = Vector::Norm(m);
       }
-      std::complex<T> v = ToComplex<T>(value, ctx);
+      std::complex<T> v = PrivateToComplex<T>(value, ctx);
       value->removeTree();
       m->removeTree();
       return v;
@@ -720,7 +725,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       Tree* u = ToMatrix<T>(e->child(0), ctx);
       Tree* v = ToMatrix<T>(e->child(1), ctx);
       Tree* r = Vector::Dot(u, v);
-      std::complex<T> result = ToComplex<T>(r, ctx);
+      std::complex<T> result = PrivateToComplex<T>(r, ctx);
       r->removeTree();
       v->removeTree();
       u->removeTree();
@@ -728,11 +733,11 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     }
     case Type::Point:
       assert(ctx && ctx->m_pointElement != -1);
-      return ToComplex<T>(e->child(ctx->m_pointElement), ctx);
+      return PrivateToComplex<T>(e->child(ctx->m_pointElement), ctx);
     /* Lists */
     case Type::List:
       assert(ctx && ctx->m_listElement != -1);
-      return ToComplex<T>(e->child(ctx->m_listElement), ctx);
+      return PrivateToComplex<T>(e->child(ctx->m_listElement), ctx);
     case Type::ListSequence: {
       assert(ctx && ctx->m_listElement != -1);
       // epsilon sequences starts at one
@@ -742,7 +747,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       ctxCopy.m_localContext = &localCtx;
       // Reset random context
       ctxCopy.m_randomContext = Random::Context();
-      return ToComplex<T>(e->child(2), &ctxCopy);
+      return PrivateToComplex<T>(e->child(2), &ctxCopy);
     }
     case Type::Dim: {
       int n = Dimension::ListLength(e->child(0), ctx->m_symbolContext);
@@ -759,7 +764,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       assert(ctx);
       Context tempCtx(*ctx);
       tempCtx.m_listElement = i;
-      return ToComplex<T>(values, &tempCtx);
+      return PrivateToComplex<T>(values, &tempCtx);
     }
     case Type::ListSlice: {
       assert(ctx && ctx->m_listElement != -1);
@@ -771,7 +776,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       assert(start >= 0);
       Context tempCtx(*ctx);
       tempCtx.m_listElement += start;
-      return ToComplex<T>(values, &tempCtx);
+      return PrivateToComplex<T>(values, &tempCtx);
     }
     case Type::ListSum:
     case Type::ListProduct: {
@@ -782,7 +787,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       std::complex<T> result = e->isListSum() ? 0 : 1;
       for (int i = 0; i < length; i++) {
         tempCtx.m_listElement = i;
-        std::complex<T> v = ToComplex<T>(values, &tempCtx);
+        std::complex<T> v = PrivateToComplex<T>(values, &tempCtx);
         result = e->isListSum() ? result + v : result * v;
       }
       return result;
@@ -796,7 +801,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       T result;
       for (int i = 0; i < length; i++) {
         tempCtx.m_listElement = i;
-        std::complex<T> v = ToComplex<T>(values, &tempCtx);
+        std::complex<T> v = PrivateToComplex<T>(values, &tempCtx);
         if (v.imag() != 0 || std::isnan(v.real())) {
           return NAN;
         }
@@ -821,8 +826,8 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       T coefficientsSum = 0;
       for (int i = 0; i < length; i++) {
         tempCtx.m_listElement = i;
-        std::complex<T> v = ToComplex<T>(values, &tempCtx);
-        std::complex<T> c = ToComplex<T>(coefficients, &tempCtx);
+        std::complex<T> v = PrivateToComplex<T>(values, &tempCtx);
+        std::complex<T> c = PrivateToComplex<T>(coefficients, &tempCtx);
         if (c.imag() != 0 || c.real() < 0) {
           return NAN;
         }
@@ -872,7 +877,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
         }
       }
       list->moveTreeOverTree(sortedList);
-      std::complex<T> result = ToComplex<T>(list, ctx);
+      std::complex<T> result = PrivateToComplex<T>(list, ctx);
       list->removeTree();
       return result;
     }
@@ -892,13 +897,13 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       return median;
     }
     case Type::Piecewise:
-      return ToComplex<T>(SelectPiecewiseBranch<T>(e, ctx), ctx);
+      return PrivateToComplex<T>(SelectPiecewiseBranch<T>(e, ctx), ctx);
     case Type::Distribution: {
       const Tree* child = e->child(0);
       T abscissa[DistributionMethod::k_maxNumberOfParameters];
       DistributionMethod::Type method = DistributionMethod::Get(e);
       for (int i = 0; i < DistributionMethod::numberOfParameters(method); i++) {
-        std::complex<T> c = ToComplex<T>(child, ctx);
+        std::complex<T> c = PrivateToComplex<T>(child, ctx);
         if (c.imag() != 0) {
           return NAN;
         }
@@ -908,7 +913,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
       T parameters[Distribution::k_maxNumberOfParameters];
       Distribution::Type distribution = Distribution::Get(e);
       for (int i = 0; i < Distribution::numberOfParameters(distribution); i++) {
-        std::complex<T> c = ToComplex<T>(child, ctx);
+        std::complex<T> c = PrivateToComplex<T>(child, ctx);
         if (c.imag() != 0) {
           return NAN;
         }
@@ -921,17 +926,17 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::Dep: {
       std::complex<T> undef = UndefDependencies<T>(e, ctx);
       return (undef == std::complex<T>(0))
-                 ? ToComplex<T>(Dependency::Main(e), ctx)
+                 ? PrivateToComplex<T>(Dependency::Main(e), ctx)
                  : undef;
     }
     case Type::NonNull: {
-      std::complex<T> x = ToComplex<T>(e->child(0), ctx);
+      std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       return !std::isnan(x.real()) && x != std::complex<T>(0)
                  ? std::complex<T>(0)
                  : NAN;
     }
     case Type::RealPos: {
-      std::complex<T> x = ToComplex<T>(e->child(0), ctx);
+      std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       return x.real() >= 0 && x.imag() == 0 ? std::complex<T>(0) : NonReal<T>();
     }
     /* Handle units as their scalar value in basic SI so prefix and
@@ -949,7 +954,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
     case Type::PhysicalConstant:
       return PhysicalConstant::GetProperties(e).m_value;
     case Type::LnUser: {
-      std::complex<T> x = ToComplex<T>(e->child(0), ctx);
+      std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       if (ctx && ctx->m_complexFormat == ComplexFormat::Real &&
           (x.real() < 0 || x.imag() != 0)) {
         return NonReal<T>();
@@ -965,7 +970,7 @@ std::complex<T> Approximation::ToComplexSwitch(const Tree* e,
   }
   T child[2];
   for (IndexedChild<const Tree*> childNode : e->indexedChildren()) {
-    std::complex<T> app = ToComplex<T>(childNode, ctx);
+    std::complex<T> app = PrivateToComplex<T>(childNode, ctx);
     if (app.imag() != 0 || std::isnan(app.real())) {
       return NAN;
     }
@@ -1105,8 +1110,8 @@ bool Approximation::ToBoolean(const Tree* e, const Context* ctx) {
   }
   if (e->isComparison()) {
     assert(e->isEqual() || e->isNotEqual());
-    std::complex<T> a = ToComplex<T>(e->child(0), ctx);
-    std::complex<T> b = ToComplex<T>(e->child(1), ctx);
+    std::complex<T> a = PrivateToComplex<T>(e->child(0), ctx);
+    std::complex<T> b = PrivateToComplex<T>(e->child(1), ctx);
     return e->isEqual() == (a == b);
   }
   if (e->isPiecewise()) {
@@ -1320,7 +1325,7 @@ T Approximation::To(const Tree* e, const Context* ctx) {
 #endif
   assert((dim.isScalar() && (ctx->m_listElement != -1 || !e->isList())) ||
          (dim.isPoint() && ctx->m_pointElement != -1) || dim.isUnit());
-  std::complex<T> value = ToComplex<T>(e, ctx);
+  std::complex<T> value = PrivateToComplex<T>(e, ctx);
   // Remove signaling nan
   return value.imag() == 0 && !IsNonReal(value) ? value.real() : NAN;
 }
@@ -1516,7 +1521,7 @@ Tree* Approximation::ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
   if (GetComplexSign(e).isReal()) {
     return e->cloneTree();
   }
-  std::complex<double> value = ToComplex<double>(e, nullptr);
+  std::complex<double> value = PrivateToComplex<double>(e, nullptr);
   constexpr float precision = 100 * OMG::Float::EpsilonLax<double>();
   if (std::abs(value.imag()) < precision) {
     return SharedTreeStack->pushDoubleFloat(value.real());
@@ -1570,10 +1575,10 @@ template Coordinate2D<double> Approximation::ToPoint(const Tree*, Parameters,
 template float Approximation::FloatBinomial(float, float);
 template double Approximation::FloatBinomial(double, double);
 
-template std::complex<float> Approximation::ToComplex(const Tree*,
-                                                      const Context*);
-template std::complex<double> Approximation::ToComplex(const Tree*,
-                                                       const Context*);
+template std::complex<float> Approximation::PrivateToComplex(const Tree*,
+                                                             const Context*);
+template std::complex<double> Approximation::PrivateToComplex(const Tree*,
+                                                              const Context*);
 
 template Tree* Approximation::ToPoint<float>(const Tree*, const Context*);
 template Tree* Approximation::ToPoint<double>(const Tree*, const Context*);

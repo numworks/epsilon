@@ -123,7 +123,7 @@ std::complex<T> Approximation::ApproximatePower(const Tree* power,
                                                 ComplexFormat complexFormat) {
   const Tree* base = power->child(0);
   const Tree* exponent = power->child(1);
-  std::complex<T> c = ToComplex<T>(base, ctx);
+  std::complex<T> c = PrivateToComplex<T>(base, ctx);
   /* Special case: c^(p/q) with p, q integers
    * In real mode, c^(p/q) might have a real root which is not the principal
    * root. We return this value in that case to avoid returning "nonreal". */
@@ -154,7 +154,8 @@ std::complex<T> Approximation::ApproximatePower(const Tree* power,
     }
   }
 defaultApproximation:
-  return ComputeComplexPower<T>(c, ToComplex<T>(exponent, ctx), complexFormat);
+  return ComputeComplexPower<T>(c, PrivateToComplex<T>(exponent, ctx),
+                                complexFormat);
 }
 
 template std::complex<float> Approximation::ApproximatePower(const Tree*,

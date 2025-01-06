@@ -613,7 +613,11 @@ namespace PtPermute {
 using PtCombinatorics::k_symbolHeight, PtCombinatorics::k_symbolWidth;
 }
 
+#if POINCARE_SCANDIUM_LAYOUTS
+constexpr KDCoordinate k_gridEntryMargin = 4;
+#else
 constexpr KDCoordinate k_gridEntryMargin = 6;
+#endif
 
 namespace TwoRows {
 constexpr static KDCoordinate k_point2DRowsSeparator = 2;

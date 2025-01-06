@@ -472,14 +472,13 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
     case LayoutType::Binomial: {
       using namespace TwoRows;
       KDSize size = Size(l);
-      KDCoordinate horizontalCenter = size.width() / 2;
       if (childIndex == k_upperIndex) {
-        return KDPoint(horizontalCenter - Width(UpperLayout(l)) / 2,
+        return KDPoint((size.width() - Width(UpperLayout(l))) / 2,
                        UpperMargin(l, s_font));
       }
       assert(childIndex == k_lowerIndex);
       return KDPoint(
-          horizontalCenter - Width(LowerLayout(l)) / 2,
+          (size.width() - Width(LowerLayout(l))) / 2,
           size.height() - Height(LowerLayout(l)) - LowerMargin(l, s_font));
     }
     case LayoutType::Conj: {

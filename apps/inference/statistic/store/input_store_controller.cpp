@@ -111,6 +111,13 @@ void InputStoreController::viewWillAppear() {
   }
   m_dropdownCell.dropdown()->reloadCell();
 
+  if (hasTwoSeries)
+    // TODO: refactor hideParameterCells because the page index is a member
+    // variable of InputStoreController
+    hideParameterCells(m_pageIndex == PageIndex::One ? 0 : 1);
+  else
+    setAllParameterCellsVisible();
+
   InputCategoricalController::viewWillAppear();
 }
 
@@ -131,10 +138,13 @@ void InputStoreController::initView() {
   m_loadedDistribution = m_statistic->distributionType();
   m_loadedTest = m_statistic->significanceTestType();
 
-  // TODO: this has to be moved in a higher level class
-  // (InputDatasetsController)
-  if (m_loadedTest == SignificanceTestType::TwoMeans) {
-    hideParameterCells(1);
+  bool shouldDisplayTwoPages =
+      m_statistic->significanceTestType() == SignificanceTestType::TwoMeans;
+  if (m_pageIndex == PageIndex::One) {
+    // TODO: no need for setNextController because m_nextController is a class
+    // member
+    setNextController(shouldDisplayTwoPages ? m_nextInputStoreController
+                                            : m_nextController);
   }
 }
 

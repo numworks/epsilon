@@ -1103,7 +1103,7 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     targetRepresentative = isImperial ? &Distance::representatives.foot
                                       : &Distance::representatives.meter;
     // Only display imperial areas in ft^2
-    optimizePrefix = !isImperial;
+    optimizePrefix = isVolume || !isImperial;
     units = KPow->cloneNode();
     Push(targetRepresentative, Prefix::EmptyPrefix());
     Integer::Push(isVolume ? 3 : 2);
@@ -1112,9 +1112,7 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   // Select best prefix
   double value = Approximation::To<double>(e, Approximation::Parameters{}) /
                  Approximation::To<double>(units, Approximation::Parameters{});
-  if (units->isUnit() &&
-      GetRepresentative(units) == &Surface::representatives.acre &&
-      value < 1.0f) {
+  if (targetRepresentative == &Surface::representatives.acre && value < 1.0f) {
     // Do not display values of less than 1 acre
     units->removeTree();
     return false;

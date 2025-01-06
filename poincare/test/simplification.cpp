@@ -987,7 +987,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("3_ft^3", "22.441558441558×_gal",
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
-  simplifies_to("2_gal", "0.26736111111111×_ft^3",
+  simplifies_to("2_gal", "462×_in^3",
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
 

@@ -239,6 +239,8 @@ const Representative* Volume::bestRepresentativeAndPrefix(
     useMetricRepresentative = unitFormat == UnitFormat::Metric;
   }
   if (useMetricRepresentative) {
+    // Convert from m^3 to liter value
+    value = value / representatives.liter.ratio();
     *prefix = representativesOfSameDimension()->findBestPrefix(value, exponent);
     return &representatives.liter;
   }

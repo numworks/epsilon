@@ -53,8 +53,12 @@ constexpr static KDCoordinate k_width = 3;
 }
 
 namespace VerticalOffset {
-constexpr KDCoordinate k_indiceHeight = 10;
-}
+#if POINCARE_SCANDIUM_LAYOUTS
+constexpr KDCoordinate k_verticalOverlap = 8;
+#else
+constexpr KDCoordinate k_verticalOverlap = 10;
+#endif
+}  // namespace VerticalOffset
 
 namespace Pair {
 constexpr KDCoordinate k_lineThickness = 1;
@@ -328,7 +332,7 @@ inline KDCoordinate OrderHeightOffset(const Layout* node, KDFont::Size font) {
   if (node->isDiffLayout() && !node->toDiffLayoutNode()->isNthDerivative) {
     return 0;
   }
-  return Height(node->child(k_orderIndex)) - VerticalOffset::k_indiceHeight;
+  return Height(node->child(k_orderIndex)) - VerticalOffset::k_verticalOverlap;
 }
 
 inline KDCoordinate OrderWidth(const Layout* node, KDFont::Size font) {

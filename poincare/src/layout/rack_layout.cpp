@@ -30,17 +30,17 @@ void UpdateChildWithBase(bool isSuperscript, KDCoordinate baseHeight,
                          KDCoordinate* childY = nullptr) {
   if (isSuperscript) {
     *childBaseline =
-        baseBaseline + *childHeight - VerticalOffset::k_indiceHeight;
+        baseBaseline + *childHeight - VerticalOffset::k_verticalOverlap;
     if (childY) {
       *childY = *childBaseline;
     }
   } else {
     *childBaseline = baseBaseline;
     if (childY) {
-      *childY = baseBaseline - baseHeight + VerticalOffset::k_indiceHeight;
+      *childY = baseBaseline - baseHeight + VerticalOffset::k_verticalOverlap;
     }
   }
-  *childHeight += baseHeight - VerticalOffset::k_indiceHeight;
+  *childHeight += baseHeight - VerticalOffset::k_verticalOverlap;
 }
 
 #if 0

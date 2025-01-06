@@ -966,6 +966,31 @@ QUIZ_CASE(pcj_simplification_unit) {
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Decomposition});
 
+  // Equivalent
+  simplifies_to("3_ft^3", "84.950539776×_L",
+                {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("3_L", "3×_dm^3", {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("3_dm^3", "3×_L", {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("5200_m^2", "0.52×_ha",
+                {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("6.7_ha", "0.067×_km^2",
+                {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("0.3_acre", "13068×_ft^2",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("30000_m^2", "7.413161444015×_acre",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("3000_m^2", "3000×_m^2",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("3_ft^3", "22.441558441558×_gal",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("2_gal", "0.26736111111111×_ft^3",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::Equivalent});
+
   // International System
   simplifies_to("1000000_cm", "10000×_m",
                 {.m_unitDisplay = UnitDisplay::BasicSI});

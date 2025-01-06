@@ -506,6 +506,10 @@ void Unit::ChooseBestRepresentativeAndPrefix(Tree* unit, double* value,
                                              UnitFormat unitFormat,
                                              bool optimizePrefix,
                                              bool optimizeRepresentative) {
+  assert(optimizePrefix || !optimizeRepresentative);
+  if (!optimizePrefix && !optimizeRepresentative) {
+    return;
+  }
   assert(exponent != 0.f);
 
   if ((std::isinf(*value) ||

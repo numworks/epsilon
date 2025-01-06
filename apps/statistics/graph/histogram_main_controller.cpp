@@ -203,6 +203,11 @@ void HistogramMainController::updateBannerView() {
     /* If the banner size has changed, the size of the list view has also
      * changed, so the whole view needs to be reloaded. */
     m_view.reload();
+    /* With the change of list view size, we need to align the last list element
+     * with the new bottom. */
+    m_listController.selectableListView()->scrollToCell(
+        m_listController.selectedSeries());
+
   } else {
     m_view.bannerView()->reload();
   }

@@ -12,11 +12,6 @@ class HistogramCell : public Escher::HighlightCell {
   HistogramCell(HistogramView&& histogram_view)
       : Escher::HighlightCell(), m_view(std::move(histogram_view)) {}
 
-  // Escher::View
-  void drawRect(KDContext* ctx, KDRect rect) const override {
-    m_view.drawRect(ctx, rect);
-  }
-
   // HighlightCell
   void setHighlighted(bool highlight) override;
 

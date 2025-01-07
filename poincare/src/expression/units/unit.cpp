@@ -1098,8 +1098,10 @@ bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits) {
 bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
                                   Dimension dimension, UnitFormat unitFormat) {
   SIVector vector = dimension.unit.vector;
-  // Only Surfaces and Volumes are concerned
-  if (vector.supportSize() != 1 || vector.distance < 2 || vector.distance > 3) {
+  // Only Surfaces, Volumes, Angle and Temperature are concerned
+  if (vector.supportSize() != 1 ||
+      !(vector.distance == 2 || vector.distance == 3 || vector.angle == 1 ||
+        vector.temperature == 1)) {
     inputUnits->removeTree();
     return false;
   }
@@ -1113,26 +1115,44 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   inputUnits->removeTree();
   const Representative* targetRepresentative;
   Tree* units;
-  // TODO: Maybe handle intermediary cases where multiple units are involved.
-  // L <--> m3, ha <--> m2, gal <--> ft3, acre <--> ft2
   bool optimizePrefix = true;
-  if (hasDistanceUnit) {
-    if (isVolume) {
-      targetRepresentative = isImperial ? &Volume::representatives.gallon
-                                        : &Volume::representatives.liter;
-    } else {
-      targetRepresentative = isImperial ? &Surface::representatives.acre
-                                        : &Surface::representatives.hectare;
-    }
+  if (vector.temperature == 1) {
+    // Equivalence to °C and °F
+    targetRepresentative = isImperial ? &Temperature::representatives.fahrenheit
+                                      : &Temperature::representatives.celsius;
     units = Push(targetRepresentative, Prefix::EmptyPrefix());
+    e->moveTreeOverTree(
+        SharedTreeStack->pushDoubleFloat(KelvinValueToRepresentative(
+            Approximation::To<double>(e, Approximation::Parameters{}),
+            targetRepresentative)));
+    e->cloneNodeAtNode(KMult.node<2>);
+    return true;
+  } else if (vector.angle == 1) {
+    // Equivalence to °
+    targetRepresentative = &Angle::representatives.degree;
+    units = Push(targetRepresentative, Prefix::EmptyPrefix());
+    optimizePrefix = false;
   } else {
-    targetRepresentative = isImperial ? &Distance::representatives.foot
-                                      : &Distance::representatives.meter;
-    // Only display imperial areas in ft^2
-    optimizePrefix = isVolume || !isImperial;
-    units = KPow->cloneNode();
-    Push(targetRepresentative, Prefix::EmptyPrefix());
-    Integer::Push(isVolume ? 3 : 2);
+    // TODO: Maybe handle intermediary cases where multiple units are involved.
+    // L <--> m3, ha <--> m2, gal <--> ft3, acre <--> ft2
+    if (hasDistanceUnit) {
+      if (isVolume) {
+        targetRepresentative = isImperial ? &Volume::representatives.gallon
+                                          : &Volume::representatives.liter;
+      } else {
+        targetRepresentative = isImperial ? &Surface::representatives.acre
+                                          : &Surface::representatives.hectare;
+      }
+      units = Push(targetRepresentative, Prefix::EmptyPrefix());
+    } else {
+      targetRepresentative = isImperial ? &Distance::representatives.foot
+                                        : &Distance::representatives.meter;
+      // Only display imperial areas in ft^2
+      optimizePrefix = isVolume || !isImperial;
+      units = KPow->cloneNode();
+      Push(targetRepresentative, Prefix::EmptyPrefix());
+      Integer::Push(isVolume ? 3 : 2);
+    }
   }
   assert(e->nextTree() == units);
   // Select best prefix

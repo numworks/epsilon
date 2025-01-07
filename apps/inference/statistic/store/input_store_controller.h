@@ -19,6 +19,8 @@ class InputStoreController : public InputCategoricalController,
                        InputStoreController* nextInputStoreController,
                        Statistic* statistic, Poincare::Context* context);
 
+  static bool ButtonAction(InputStoreController* controller, void* s);
+
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
 
@@ -49,15 +51,14 @@ class InputStoreController : public InputCategoricalController,
   // CategoricalController
   KDCoordinate separatorBeforeRow(int row) const override;
 
-  void initSeriesSelection() {
-    selectSeriesForDropdownRow(m_dropdownCell.dropdown()->selectedRow());
-  }
-
+  // ListViewDataSource
   bool canSelectCellAtRow(int row) override {
     return explicitCellAtRow(row)->isVisible();
   }
 
-  static bool ButtonAction(InputStoreController* controller, void* s);
+  void initSeriesSelection() {
+    selectSeriesForDropdownRow(m_dropdownCell.dropdown()->selectedRow());
+  }
 
  private:
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {

@@ -96,14 +96,14 @@ void InputStoreController::viewWillAppear() {
   m_dropdownCell.dropdown()->init();
   const RawDataStatistic* model =
       static_cast<const RawDataStatistic*>(m_storeTableCell.tableModel());
-  if (model->numberOfSeries() == 2) {
+
+  if (shouldDisplayTwoPages()) {
     if (m_pageIndex == PageIndex::One) {
       m_dropdownCell.setMessage(I18n::Message::DataSet1);
     } else {
       assert(m_pageIndex == PageIndex::Two);
       m_dropdownCell.setMessage(I18n::Message::DataSet2);
     }
-
   } else {
     assert(model->numberOfSeries() == 1);
     m_dropdownCell.setMessage(I18n::Message::DataSet);
@@ -145,15 +145,12 @@ void InputStoreController::initView() {
   m_loadedSubApp = m_statistic->subApp();
   m_loadedDistribution = m_statistic->distributionType();
   m_loadedTest = m_statistic->significanceTestType();
-
-  bool shouldDisplayTwoPages =
-      m_statistic->significanceTestType() == SignificanceTestType::TwoMeans;
   if (m_pageIndex == PageIndex::One) {
-    m_nextController = shouldDisplayTwoPages ? m_nextInputStoreController
-                                             : m_nextOtherController;
+    m_nextController = shouldDisplayTwoPages() ? m_nextInputStoreController
+                                               : m_nextOtherController;
   }
 
-  if (shouldDisplayTwoPages) {
+  if (shouldDisplayTwoPages()) {
     // TODO: refactor hideParameterCells because the page index is a member
     // variable of InputStoreController
     hideParameterCells(m_pageIndex == PageIndex::One ? 0 : 1);

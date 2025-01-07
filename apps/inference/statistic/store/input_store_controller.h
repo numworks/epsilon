@@ -123,6 +123,11 @@ class InputStoreController : public InputCategoricalController,
 
   void setAllParameterCellsVisible();
 
+  bool shouldDisplayTwoPages() const {
+    return m_statistic->significanceTestType() ==
+           SignificanceTestType::TwoMeans;
+  }
+
   bool areAllParameterCellsInvisible() const;
 
   DropdownDataSource m_dropdownDataSource;

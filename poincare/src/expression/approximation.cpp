@@ -32,15 +32,6 @@
 #include "variables.h"
 #include "vector.h"
 
-#if POINCARE_NO_DOUBLE_APPROXIMATION
-#define FALLBACK_ON_FLOAT(F)         \
-  if (sizeof(T) == sizeof(double)) { \
-    return F<float>(e, ctx);         \
-  }
-#else
-#define FALLBACK_ON_FLOAT(F)
-#endif
-
 namespace Poincare::Internal::Approximation {
 
 using namespace Private;
@@ -374,7 +365,6 @@ std::complex<T> Private::UndefDependencies(const Tree* dep,
 template <typename T>
 std::complex<T> Private::PrivateToComplex(const Tree* e, const Context* ctx) {
   std::complex<T> value = ToComplexSwitch<T>(e, ctx);
-  FALLBACK_ON_FLOAT(PrivateToComplex);
   if (ctx && ctx->m_complexFormat == ComplexFormat::Real && value.imag() != 0 &&
       !(Undefined::IsUndefined(value)) && !e->isComplexI()) {
     /* Some operations in reduction can introduce i, but when complex format is
@@ -390,7 +380,6 @@ std::complex<T> Private::PrivateToComplex(const Tree* e, const Context* ctx) {
 
 template <typename T>
 std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
-  FALLBACK_ON_FLOAT(ToComplexSwitch);
   /* TODO: the second part of this function and several ifs in different cases
    * act differently / more precisely on reals. We should have a dedicated,
    * faster, simpler and more precise real approximation to be used in every
@@ -1084,7 +1073,6 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
 
 template <typename T>
 bool Private::PrivateToBoolean(const Tree* e, const Context* ctx) {
-  FALLBACK_ON_FLOAT(PrivateToBoolean);
   if (e->isTrue()) {
     return true;
   }
@@ -1159,7 +1147,6 @@ bool Private::PrivateToBoolean(const Tree* e, const Context* ctx) {
 
 template <typename T>
 Tree* Private::ToList(const Tree* e, const Context* ctx) {
-  FALLBACK_ON_FLOAT(ToList);
   assert(ctx);
   Dimension dimension = Dimension::Get(e, ctx->m_symbolContext);
   int length = Dimension::ListLength(e, ctx->m_symbolContext);
@@ -1175,7 +1162,6 @@ Tree* Private::ToList(const Tree* e, const Context* ctx) {
 
 template <typename T>
 Tree* Private::PrivateToPoint(const Tree* e, const Context* ctx) {
-  FALLBACK_ON_FLOAT(PrivateToPoint);
   assert(ctx);
   Context tempCtx(*ctx);
   Tree* point = SharedTreeStack->pushPoint();
@@ -1191,7 +1177,6 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
   /* TODO: Normal matrix nodes and operations with approximated children are
    * used to carry matrix approximation. A dedicated node that knows its
    * children have a fixed size would be more efficient. */
-  FALLBACK_ON_FLOAT(ToMatrix);
   if (e->isMatrix()) {
     Tree* m = e->cloneNode();
     for (const Tree* child : e->children()) {

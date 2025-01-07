@@ -56,7 +56,8 @@ class InputStoreController : public InputCategoricalController,
     Escher::HighlightCell* cell(int row) override { return &m_cells[row]; }
 
    private:
-    constexpr static int k_numberOfRows = 3;  // FIXME
+    constexpr static int k_numberOfRows =
+        Shared::DoublePairStore::k_numberOfSeries;
     Escher::SmallBufferTextHighlightCell m_cells[k_numberOfRows];
   };
 

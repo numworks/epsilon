@@ -1098,17 +1098,23 @@ bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits) {
 bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
                                   Dimension dimension, UnitFormat unitFormat) {
   SIVector vector = dimension.unit.vector;
-  // Only Surfaces, Volumes, Angle and Temperature are concerned
-  if (vector.supportSize() != 1 ||
-      !(vector.distance == 2 || vector.distance == 3 || vector.angle == 1 ||
-        vector.temperature == 1)) {
+  if ((vector.supportSize() != 1 ||
+       !(vector.distance == 2 || vector.distance == 3 || vector.angle == 1 ||
+         vector.temperature == 1)) &&
+      (vector.supportSize() != 2 ||
+       !(vector.distance == 1 && vector.time == -1))) {
+    // Only surfaces, volumes, angles, temperatures and speeds are concerned
     inputUnits->removeTree();
     return false;
   }
+
   bool isVolume = (vector.distance == 3);
   bool hasDistanceUnit = inputUnits->hasDescendantSatisfying([](const Tree* e) {
     return e->isUnit() &&
            GetRepresentative(e)->siVector() == Distance::Dimension;
+  });
+  bool hasHours = inputUnits->hasDescendantSatisfying([](const Tree* e) {
+    return e->isUnit() && GetRepresentative(e) == &Time::representatives.hour;
   });
   bool isImperial = unitFormat == UnitFormat::Imperial;
 
@@ -1132,7 +1138,26 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     targetRepresentative = &Angle::representatives.degree;
     units = Push(targetRepresentative, Prefix::EmptyPrefix());
     optimizePrefix = false;
+  } else if (vector.distance == 1 && vector.time == -1) {
+    if (hasHours) {
+      // Equivalence to mph and km/h
+      targetRepresentative = isImperial ? &Distance::representatives.mile
+                                        : &Distance::representatives.meter;
+      const Prefix* distancePrefix =
+          isImperial ? Prefix::EmptyPrefix()
+                     : &Prefix::Prefixes()[k_kiloPrefixIndex];
+      units = KMult.node<2>->cloneNode();
+      Push(targetRepresentative, distancePrefix);
+      KPow->cloneNode();
+      Push(&Time::representatives.hour, Prefix::EmptyPrefix());
+      Integer::Push(-1);
+      optimizePrefix = false;
+    } else {
+      return false;
+    }
   } else {
+    assert(vector.supportSize() == 1 &&
+           (vector.distance == 2 || vector.distance == 3));
     // TODO: Maybe handle intermediary cases where multiple units are involved.
     // L <--> m3, ha <--> m2, gal <--> ft3, acre <--> ft2
     if (hasDistanceUnit) {

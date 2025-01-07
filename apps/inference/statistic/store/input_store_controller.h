@@ -110,13 +110,6 @@ class InputStoreController : public InputCategoricalController,
  private:
   class DropdownDataSource : public Escher::ExplicitListViewDataSource {
    public:
-    // TODO: remove these three methods as they are not needed anymores
-    static int RowForSeriesPair(int s1, int s2) {
-      return s1 == 1 ? 2 : s2 == 1 ? 0 : 1;
-    }
-    static int Series1ForRow(int row) { return row == 2 ? 1 : 0; }
-    static int Series2ForRow(int row) { return row == 0 ? 1 : 2; }
-
     int numberOfRows() const override { return k_numberOfRows; }
     Escher::HighlightCell* cell(int row) override { return &m_cells[row]; }
 

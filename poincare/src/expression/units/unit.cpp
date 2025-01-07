@@ -827,6 +827,18 @@ bool Unit::DisplayImperialUnitsInOutput(const Tree* inputUnits) {
   return hasImperialUnits;
 }
 
+Tree* Unit::ExactConvertToUnit(const Tree* e, TreeRef& targetUnit) {
+  RemoveNonUnits(targetUnit, false);
+  // Multiply e, targetUnit and inverse of targetUnit's SI value.
+  Tree* unitClone = targetUnit->cloneTree();
+  Tree::ApplyShallowTopDown(unitClone, Unit::ShallowRemoveUnit);
+  TreeRef result =
+      PatternMatching::Create(KMult(KA, KB, KPow(KC, -1_e)),
+                              {.KA = e, .KB = targetUnit, .KC = unitClone});
+  unitClone->removeTree();
+  return result;
+}
+
 void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
                                   Dimension dimension, AngleUnit angleUnit) {
   if (dimension.isAngleUnit()) {
@@ -836,7 +848,8 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
     Integer::Push(dimension.unit.vector.angle);
     assert(Dimension::Get(newExtractedUnits) == Dimension::Get(inputUnits));
     MoveTreeOverTree(inputUnits, newExtractedUnits);
-    ApplyAutomaticInputDisplay(e, inputUnits);
+    e->moveTreeOverTree(ExactConvertToUnit(e, inputUnits));
+    inputUnits->removeTree();
     return;
   }
 
@@ -981,11 +994,14 @@ void Unit::ApplyAutomaticDisplay(Tree* e, TreeRef& inputUnits,
   if (dimension.isAngleUnit()) {
     if (IsPureAngleUnit(inputUnits)) {
       // Keep input representative
-      units = inputUnits->cloneTree();
-      value = value / GetRepresentative(units)->ratio();
+      e->moveTreeOverTree(ExactConvertToUnit(e, inputUnits));
     } else {
-      units = GetBaseUnits(vector);
+      // Return base unit
+      inputUnits->moveTreeOverTree(GetBaseUnits(vector));
+      e->moveTreeOverTree(ExactConvertToUnit(e, inputUnits));
     }
+    inputUnits->removeTree();
+    return;
   } else {
     units = SharedTreeStack->pushMult(2);
     ChooseBestDerivedUnits(&vector);
@@ -1044,11 +1060,8 @@ bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits) {
     return true;
   }
   // Multiply e, inputUnits and inverse of inputUnits's SI value.
-  e->cloneNodeAtNode(KMult.node<3>);
-  KPow->cloneNode();
-  Tree* unitClone = inputUnits->cloneTree();
-  Tree::ApplyShallowTopDown(unitClone, ShallowRemoveUnit);
-  (-1_e)->cloneTree();
+  e->moveTreeOverTree(ExactConvertToUnit(e, inputUnits));
+  inputUnits->removeTree();
   return true;
 }
 

@@ -232,6 +232,8 @@ class Unit {
    * has been removed. Only Mult, Pow, and Add (if preserveAdd) are preserved.
    */
   static bool RemoveNonUnits(Tree* e, bool preserveAdd);
+  // Convert tree from base unit to target unit without approximation
+  static Tree* ExactConvertToUnit(const Tree* e, TreeRef& targetUnit);
   // Return true if Imperial units should be used in output
   static bool DisplayImperialUnitsInOutput(const Tree* inputUnits);
   /* This and all following functions remove inputUnits before returning */

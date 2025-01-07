@@ -12,9 +12,7 @@ void TwoMeansStatistic::syncParametersWithStore(const Statistic* stat) {
 void TwoMeansStatistic::syncParametersWithStore(const Statistic* stat,
                                                 uint8_t index) {
   int series = seriesAt(index);
-  if (series < 0) {
-    return;
-  }
+  assert(series >= 0);
 
   /* For T tests, the S parameters are the sample standard deviations, which can
    * be computed from the datasets. For Z tests however, the S parameters are

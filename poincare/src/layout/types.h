@@ -37,7 +37,13 @@ NODE(CombinedCodePoints, 0, {
 NODE(Abs, 1)
 NODE(Ceil, 1)
 NODE(Floor, 1)
+
+#if POINCARE_MATRIX
 NODE(VectorNorm, 1)
+#else
+UNDEF_NODE(VectorNorm, 1)
+#endif
+
 NODE(Parentheses, 1, {
   bool leftIsTemporary : 1;
   bool rightIsTemporary : 1;
@@ -73,21 +79,42 @@ NODE(Product, 4)
 // Sum(Symbol, LowerBound, UpperBound, Function)
 NODE(Sum, 4)
 
+#if POINCARE_LIST
 // TODO replace by subscript ?
 // Sequence(Symbol, SymbolMax, Function)
 NODE(ListSequence, 3)
+#else
+UNDEF_NODE(ListSequence, 3)
+#endif
 
 RANGE(ParametricLayout, DiffLayout, ListSequenceLayout)
 
 NODE(Fraction, 2)
 NODE(Point2D, 2)
 NODE(Binomial, 2)
+#if POINCARE_PT_COMBINATORICS_LAYOUTS
 NODE(PtBinomial, 2)
 NODE(PtPermute, 2)
+#else
+UNDEF_NODE(PtBinomial, 2)
+UNDEF_NODE(PtPermute, 2)
+#endif
 
+#if POINCARE_MATRIX
 NODE(Matrix, NARY2D)
+#else
+UNDEF_NODE(Matrix, NARY2D)
+#endif
+#if POINCARE_PIECEWISE
 NODE(Piecewise, NARY2D)
+#else
+UNDEF_NODE(Piecewise, NARY2D)
+#endif
+#if POINCARE_MATRIX || POINCARE_PIECEWISE
 RANGE(GridLayout, MatrixLayout, PiecewiseLayout)
+#else
+UNDEF_RANGE(GridLayout, MatrixLayout, PiecewiseLayout)
+#endif
 
 NODE(Conj, 1)
 NODE(Root, 2)

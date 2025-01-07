@@ -59,6 +59,7 @@ enum class LayoutType : uint8_t {
  */
 #define ONLY_LAYOUTS 1
 #define NODE_USE(F, N, S) F = static_cast<uint8_t>(Type::F##Layout),
+#define UNDEF_NODE_USE(F) F = static_cast<uint8_t>(Type::F##Layout),
 #include "types.h"
 };
 

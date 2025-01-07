@@ -149,10 +149,8 @@ void InputStoreController::initView() {
   bool shouldDisplayTwoPages =
       m_statistic->significanceTestType() == SignificanceTestType::TwoMeans;
   if (m_pageIndex == PageIndex::One) {
-    // TODO: no need for setNextController because m_nextController is a class
-    // member
-    setNextController(shouldDisplayTwoPages ? m_nextInputStoreController
-                                            : m_nextOtherController);
+    m_nextController = shouldDisplayTwoPages ? m_nextInputStoreController
+                                             : m_nextOtherController;
   }
 
   if (shouldDisplayTwoPages) {

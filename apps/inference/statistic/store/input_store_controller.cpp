@@ -81,18 +81,7 @@ void InputStoreController::createDynamicCells() {
   m_storeTableCell.createCells();
 }
 
-void InputStoreController::viewWillAppear() {
-  for (int i = 0; i < numberOfExtraParameters(); i++) {
-    InputCategoricalCell<LayoutView>& c = m_extraParameters[i];
-    int param = indexOfEditedParameterAtIndex(indexOfFirstExtraParameter() + i);
-    PrintValueInTextHolder(
-        m_statistic->parameterAtIndex(param), c.textField(), true, true,
-        Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
-    c.setMessages(m_statistic->parameterSymbolAtIndex(param),
-                  m_statistic->parameterDefinitionAtIndex(param));
-  }
-
-  // TODO: dedicated function for the dropdown cell view initialization
+void InputStoreController::initializeDropdown() {
   m_dropdownCell.dropdown()->init();
   const RawDataStatistic* model =
       static_cast<const RawDataStatistic*>(m_storeTableCell.tableModel());
@@ -121,6 +110,20 @@ void InputStoreController::viewWillAppear() {
         ->setText(buffer);
   }
   m_dropdownCell.dropdown()->reloadCell();
+}
+
+void InputStoreController::viewWillAppear() {
+  for (int i = 0; i < numberOfExtraParameters(); i++) {
+    InputCategoricalCell<LayoutView>& c = m_extraParameters[i];
+    int param = indexOfEditedParameterAtIndex(indexOfFirstExtraParameter() + i);
+    PrintValueInTextHolder(
+        m_statistic->parameterAtIndex(param), c.textField(), true, true,
+        Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
+    c.setMessages(m_statistic->parameterSymbolAtIndex(param),
+                  m_statistic->parameterDefinitionAtIndex(param));
+  }
+
+  initializeDropdown();
 
   InputCategoricalController::viewWillAppear();
 

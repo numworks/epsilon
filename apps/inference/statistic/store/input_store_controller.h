@@ -117,6 +117,8 @@ class InputStoreController : public InputCategoricalController,
                : 0;
   }
   int indexOfEditedParameterAtIndex(int index) const override;
+
+  void initializeDropdown();
   void selectSeriesForDropdownRow(int row);
 
   void updateParameterCellsVisibility();

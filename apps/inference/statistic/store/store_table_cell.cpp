@@ -26,36 +26,8 @@ StoreTableCell::StoreTableCell(Responder* parentResponder, Statistic* statistic,
 
 bool StoreTableCell::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
-  Table* t = tableModel();
-  if (t->numberOfSeriesInTable() == 1) {
-    return DoubleColumnTableCell::textFieldDidFinishEditing(textField, event);
-  }
-
-  /* NOTE: the following code can be removed if numberOfSeriesInTable() is
-   * always 1 */
-  assert(t->numberOfSeriesInTable() == 2);
-  Shared::DoublePairStore* s = store();
-  int minLength = std::min<int>(s->numberOfPairsOfSeries(t->seriesAt(0)),
-                                s->numberOfPairsOfSeries(t->seriesAt(1)));
-
-  if (!DoubleColumnTableCell::textFieldDidFinishEditing(textField, event)) {
-    return false;
-  }
-  /* Even though the table size may not have changed, reload to update the
-   * visibility of the cells if the shorter series length has changed. */
-
-  int minLength2 = std::min<int>(s->numberOfPairsOfSeries(t->seriesAt(0)),
-                                 s->numberOfPairsOfSeries(t->seriesAt(1)));
-  if (minLength != minLength2) {
-    reload();
-    /* Move the selection, as the next could not be selected since it was
-     * hidden. */
-    if (minLength2 > minLength) {
-      m_selectableTableView.selectCellAtLocation(selectedColumn(),
-                                                 selectedRow() + 1);
-    }
-  }
-  return true;
+  assert(tableModel()->numberOfSeriesInTable() == 1);
+  return DoubleColumnTableCell::textFieldDidFinishEditing(textField, event);
 }
 
 int StoreTableCell::numberOfRowsAtColumn(const SelectableTableView* t,

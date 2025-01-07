@@ -119,8 +119,8 @@ class InputStoreController : public InputCategoricalController,
   int indexOfEditedParameterAtIndex(int index) const override;
   void selectSeriesForDropdownRow(int row);
 
-  void hideParameterCells(uint8_t datasetIndex);
-
+  void updateParameterCellsVisibility();
+  void hideOtherPageParameterCells();
   void setAllParameterCellsVisible();
 
   bool shouldDisplayTwoPages() const {

@@ -149,14 +149,7 @@ void InputStoreController::initView() {
     m_nextController = shouldDisplayTwoPages() ? m_nextInputStoreController
                                                : m_nextOtherController;
   }
-
-  if (shouldDisplayTwoPages()) {
-    // TODO: refactor hideParameterCells because the page index is a member
-    // variable of InputStoreController
-    hideParameterCells(m_pageIndex == PageIndex::One ? 0 : 1);
-  } else {
-    setAllParameterCellsVisible();
-  }
+  updateParameterCellsVisibility();
 }
 
 KDCoordinate InputStoreController::separatorBeforeRow(int row) const {
@@ -200,38 +193,36 @@ void InputStoreController::selectSeriesForDropdownRow(int row) {
   tableModel->setSeriesAt(m_statistic, static_cast<uint8_t>(m_pageIndex), row);
 }
 
-void InputStoreController::hideParameterCells(uint8_t datasetIndex) {
-  // Hiding some of the cells is only relevant for the TwoMeans test type
-  // TODO:
-  // assert(m_statistic->significanceTestType() ==
-  //        SignificanceTestType::TwoMeans);
+void InputStoreController::updateParameterCellsVisibility() {
+  if (!shouldDisplayTwoPages()) {
+    setAllParameterCellsVisible();
+  } else {
+    hideOtherPageParameterCells();
+  }
+}
 
-  if (m_statistic->significanceTestType() == SignificanceTestType::TwoMeans) {
-    // At most, there are two dataset selection pages
-    assert(datasetIndex == 0 || datasetIndex == 1);
-    if (datasetIndex == 0) {
-      // The significance cell is visible only on the second dataset page
-      m_significanceCell.setVisible(false);
-    }
+void InputStoreController::hideOtherPageParameterCells() {
+  assert(shouldDisplayTwoPages());
+  if (m_pageIndex == PageIndex::One) {
+    // The significance cell is visible only on the second page
+    m_significanceCell.setVisible(false);
+  }
 
-    if (m_statistic->distributionType() == DistributionType::Z) {
-      assert(numberOfExtraParameters() == 2);
-      // Hide the parameter of the other dataset
-      m_extraParameters[(datasetIndex + 1) % 2].setVisible(false);
-    }
-
-    else {
-      /* In the TwoMeans test, there are either 2 extra parameters (for the Z
-       * distribution type), or 0 extra parameter */
-      assert(numberOfExtraParameters() == 0);
-    }
+  if (m_statistic->distributionType() == DistributionType::Z) {
+    assert(numberOfExtraParameters() == 2);
+    // Hide the parameter of the other dataset
+    m_extraParameters[(static_cast<uint8_t>(m_pageIndex) + 1) % 2].setVisible(
+        false);
+  } else {
+    /* In the TwoMeans test, there are either 2 extra parameters (for the Z
+     * distribution type), or 0 extra parameter (for the T distribution type)
+     */
+    assert(numberOfExtraParameters() == 0);
   }
 }
 
 void InputStoreController::setAllParameterCellsVisible() {
-  /* TODO: should we assert that we are not in the
-   * SignificanceTestType::TwoMeans case? */
-
+  assert(!shouldDisplayTwoPages());
   std::for_each(m_extraParameters,
                 m_extraParameters + numberOfExtraParameters(),
                 [](InputCategoricalCell<Escher::LayoutView>& cell) {

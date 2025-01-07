@@ -299,16 +299,4 @@ ifneq ($(POINCARE_TREE_LOG),0)
 SFLAGS_poincare += -DPOINCARE_TREE_LOG=1
 endif
 
-# TODO: replace with a config header to avoid cluttering the command line
-ifeq ($(POINCARE_variant),epsilon)
-SFLAGS_poincare += \
-  -DPOINCARE_TREE_STACK_SIZE=1024*16
-endif
-ifeq ($(POINCARE_variant),scandium)
-SFLAGS_poincare += \
-  -DPOINCARE_NO_ADVANCED_REDUCTION=1 \
-  -DPOINCARE_NO_INFINITE_SYSTEMS=1 \
-  -DPOINCARE_NO_POLYNOMIAL_SOLVER=1 \
-  -DPOINCARE_SCANDIUM_LAYOUTS=1 \
-  -DPOINCARE_TREE_STACK_SIZE=1024*8
-endif
+CXXFLAGS += -include $(PATH_poincare)/config.$(POINCARE_variant).h

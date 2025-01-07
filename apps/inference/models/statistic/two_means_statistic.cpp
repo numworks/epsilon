@@ -2,7 +2,7 @@
 
 namespace Inference {
 
-void TwoMeansStatistic::syncParametersWithStore(Statistic* stat) {
+void TwoMeansStatistic::syncParametersWithStore(const Statistic* stat) {
   if (!hasSeries()) {
     return;
   }

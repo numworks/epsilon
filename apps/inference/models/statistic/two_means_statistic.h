@@ -26,8 +26,7 @@ class TwoMeansStatistic : public RawDataStatistic {
     }
   }
 
-  // TODO: const Statistic*
-  void syncParametersWithStore(Statistic* stat) override;
+  void syncParametersWithStore(const Statistic* stat) override;
 
   double m_params[TwoMeans::k_numberOfParams];
 

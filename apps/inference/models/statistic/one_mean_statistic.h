@@ -23,7 +23,7 @@ class OneMeanStatistic : public RawDataStatistic {
     return OneMean::Type::Z;
   }
 
-  void syncParametersWithStore(Statistic* stat) override;
+  void syncParametersWithStore(const Statistic* stat) override;
 
   double m_params[OneMean::k_numberOfParams];
 };

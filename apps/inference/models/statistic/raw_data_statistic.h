@@ -55,7 +55,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
   }
 
  protected:
-  virtual void syncParametersWithStore(Statistic* stat) = 0;
+  virtual void syncParametersWithStore(const Statistic* stat) = 0;
 
   int numberOfResultsAndComputedParameters(const Statistic* stat,
                                            int results) const {

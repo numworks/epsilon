@@ -992,6 +992,15 @@ QUIZ_CASE(pcj_simplification_unit) {
                 {.m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("6.7_ha", "0.067×_km^2",
                 {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("0_°F", "-17.777777777778×_°C",
+                {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("23_°F", "-5×_°C", {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("3_rad", "171.88733853925×_°",
+                {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("3_°+6_gon", "8.4×_°",
+                {.m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("50_mi/_h", "80.4672×_km×_h^(-1)",
+                {.m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("0.3_acre", "13068×_ft^2",
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
@@ -1005,6 +1014,15 @@ QUIZ_CASE(pcj_simplification_unit) {
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
   simplifies_to("2_gal", "462×_in^3",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("35_°C", "95×_°F",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("300_K", "80.33×_°F",
+                {.m_unitFormat = UnitFormat::Imperial,
+                 .m_unitDisplay = UnitDisplay::Equivalent});
+  simplifies_to("30_km/_h", "18.64113576712×_mi×_h^(-1)",
                 {.m_unitFormat = UnitFormat::Imperial,
                  .m_unitDisplay = UnitDisplay::Equivalent});
 

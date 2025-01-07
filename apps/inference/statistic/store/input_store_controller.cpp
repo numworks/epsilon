@@ -109,7 +109,7 @@ void InputStoreController::viewWillAppear() {
     m_dropdownCell.setMessage(I18n::Message::DataSet);
   }
   m_dropdownCell.dropdown()->selectRow(
-      model->seriesAt(toUint(m_pageIndex) - 1));
+      model->seriesAt(static_cast<uint8_t>(m_pageIndex)));
 
   int nRows = m_dropdownDataSource.numberOfRows();
   constexpr size_t bufferSize =
@@ -202,7 +202,7 @@ void InputStoreController::selectSeriesForDropdownRow(int row) {
     row = 0;
   }
   Table* tableModel = m_storeTableCell.tableModel();
-  tableModel->setSeriesAt(m_statistic, toUint(m_pageIndex) - 1, row);
+  tableModel->setSeriesAt(m_statistic, static_cast<uint8_t>(m_pageIndex), row);
 }
 
 bool InputStoreController::areAllParameterCellsInvisible() const {

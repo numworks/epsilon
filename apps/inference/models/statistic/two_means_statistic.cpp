@@ -6,7 +6,7 @@ void TwoMeansStatistic::syncParametersWithStore(Statistic* stat) {
   if (!hasSeries()) {
     return;
   }
-  syncParametersWithStore(stat, toUint(m_activePageIndex) - 1);
+  syncParametersWithStore(stat, static_cast<uint8_t>(m_activePageIndex));
 }
 
 void TwoMeansStatistic::syncParametersWithStore(const Statistic* stat,

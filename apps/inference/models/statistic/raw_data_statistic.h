@@ -3,26 +3,13 @@
 
 #include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/statistics_store.h>
-#include <omg/unreachable.h>
 
 #include "statistic.h"
 #include "table.h"
 
 namespace Inference {
 
-// TODO: uint8_t underlying class for a clearer conversion to an index
-enum class PageIndex : bool { One, Two };
-
-static inline constexpr uint8_t toUint(PageIndex pageIndex) {
-  switch (pageIndex) {
-    case PageIndex::One:
-      return 1;
-    case PageIndex::Two:
-      return 2;
-    default:
-      OMG::unreachable();
-  }
-}
+enum class PageIndex : uint8_t { One, Two };
 
 class RawDataStatistic : public Table, public Shared::StatisticsStore {
  public:
@@ -46,7 +33,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
 
   // DoublePairStore
   int seriesAtColumn(int column) const override {
-    return seriesAt(toUint(m_activePageIndex) - 1);
+    return seriesAt(static_cast<uint8_t>(m_activePageIndex));
   }
 
   void setActivePage(PageIndex pageIndex) { m_activePageIndex = pageIndex; }

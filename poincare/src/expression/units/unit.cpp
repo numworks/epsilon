@@ -828,6 +828,7 @@ bool Unit::DisplayImperialUnitsInOutput(const Tree* inputUnits) {
 }
 
 Tree* Unit::ExactConvertToUnit(const Tree* e, TreeRef& targetUnit) {
+  // Make sure targetUnit does not contain non-units or additions of units.
   RemoveNonUnits(targetUnit, false);
   // Multiply e, targetUnit and inverse of targetUnit's SI value.
   Tree* unitClone = targetUnit->cloneTree();

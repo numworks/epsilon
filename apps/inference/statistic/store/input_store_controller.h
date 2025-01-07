@@ -29,13 +29,16 @@ class InputStoreController : public InputCategoricalController,
     return m_titleBuffer;
   }
   ViewController::TitlesDisplay titlesDisplay() const override {
-    return m_statistic->subApp() == Statistic::SubApp::Interval
-               ? ViewController::TitlesDisplay::DisplayLastTitle
-           : !m_statistic->canChooseDataset()
-               ? ViewController::TitlesDisplay::DisplayLastTwoTitles
-           : m_pageIndex == PageIndex::One
-               ? ViewController::TitlesDisplay::DisplayLastAndThirdToLast
-               : ViewController::TitlesDisplay::SameAsPreviousPage;
+    if (m_statistic->subApp() == Statistic::SubApp::Interval) {
+      return ViewController::TitlesDisplay::DisplayLastTitle;
+    }
+    if (!m_statistic->canChooseDataset()) {
+      return ViewController::TitlesDisplay::DisplayLastTwoTitles;
+    }
+    if (m_pageIndex == PageIndex::One) {
+      return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
+    }
+    return ViewController::TitlesDisplay::SameAsPreviousPage;
   }
   void viewWillAppear() override;
   void initView() override;

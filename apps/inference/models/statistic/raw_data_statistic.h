@@ -24,8 +24,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
         m_series{-1, -1} {}
 
   int seriesAt(int index) const override {
-    assert(index >= 0 && index < numberOfSeries() &&
-           index < k_maxNumberOfSeries);
+    assert(index >= 0 && index < numberOfSeries() && index < m_series.size());
     return m_series[index];
   }
   void setSeriesAt(Statistic* stat, int index, int series) override;
@@ -82,8 +81,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
 
  private:
   Shared::DoublePairStorePreferences m_storePreferences;
-  // TODO: use an std::array to ensure bound safety
-  int m_series[k_maxNumberOfSeries];
+  std::array<int, k_maxNumberOfSeries> m_series;
 };
 
 }  // namespace Inference

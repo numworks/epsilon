@@ -3,6 +3,7 @@
 namespace Inference {
 
 void RawDataStatistic::setSeriesAt(Statistic* stat, int index, int series) {
+  assert(index >= 0 && index < m_series.size());
   m_series[index] = series;
   if (!hasSeries() && !stat->validateInputs()) {
     stat->initParameters();

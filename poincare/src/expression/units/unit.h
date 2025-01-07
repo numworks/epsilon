@@ -66,7 +66,11 @@ class Representative {
     All,
   };
 #if POINCARE_UNIT
+#if POINCARE_UNIT_ONLY_ANGLE_UNITS
+  constexpr static int k_numberOfDimensions = 1;
+#else
   constexpr static int k_numberOfDimensions = 25;
+#endif
 #else
   constexpr static int k_numberOfDimensions = 0;
 #endif

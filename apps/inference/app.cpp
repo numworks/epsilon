@@ -41,9 +41,13 @@ App::App(Snapshot* snapshot, Poincare::Context* parentContext)
       m_inputGoodnessController(
           &m_stackViewController, &m_goodnessResultsController,
           static_cast<GoodnessTest*>(snapshot->statistic())),
-      m_inputStoreController(&m_stackViewController, &m_resultsController,
-                             InputStoreController::PageIndex::One, nullptr,
-                             snapshot->statistic(), parentContext),
+      m_inputStoreController1(&m_stackViewController, &m_resultsController,
+                              InputStoreController::PageIndex::One,
+                              &m_inputStoreController2, snapshot->statistic(),
+                              parentContext),
+      m_inputStoreController2(&m_stackViewController, &m_resultsController,
+                              InputStoreController::PageIndex::Two, nullptr,
+                              snapshot->statistic(), parentContext),
       m_resultsController(&m_stackViewController, snapshot->statistic(),
                           &m_testGraphController, &m_intervalGraphController),
       m_inputController(&m_stackViewController, &m_resultsController,
@@ -55,13 +59,13 @@ App::App(Snapshot* snapshot, Poincare::Context* parentContext)
           &m_stackViewController, static_cast<Chi2Test*>(snapshot->statistic()),
           &m_inputGoodnessController, &m_inputHomogeneityController),
       m_hypothesisController(&m_stackViewController, &m_inputController,
-                             &m_inputStoreController, &m_datasetController,
+                             &m_inputStoreController1, &m_datasetController,
                              static_cast<Test*>(snapshot->statistic())),
       m_datasetController(&m_stackViewController, &m_inputController,
-                          &m_inputStoreController, snapshot->statistic()),
+                          &m_inputStoreController1, snapshot->statistic()),
       m_testController(&m_stackViewController, &m_hypothesisController,
                        &m_typeController, &m_categoricalTypeController,
-                       &m_inputStoreController, &m_inputController,
+                       &m_inputStoreController1, &m_inputController,
                        snapshot->statistic()),
       m_menuController(
           &m_stackViewController, {&m_testController, &m_testController},
@@ -92,7 +96,8 @@ void App::didBecomeActive(Window* window) {
     currentController->stackOpenPage(controller);
     currentController = controller;
 
-    if (currentController == &m_inputStoreController) {
+    if ((currentController == &m_inputStoreController1) ||
+        (currentController == &m_inputStoreController2)) {
       // X1/Y1 data might have changed outside the app.
       if (!snapshot()->statistic()->validateInputs()) {
         // If input were invalidated, just stop here.

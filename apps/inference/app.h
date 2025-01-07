@@ -118,7 +118,8 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   InputHomogeneityController m_inputHomogeneityController;
   ResultsGoodnessTabController m_goodnessResultsController;
   InputGoodnessController m_inputGoodnessController;
-  InputStoreController m_inputStoreController;
+  InputStoreController m_inputStoreController1;
+  InputStoreController m_inputStoreController2;
   ResultsController m_resultsController;
   InputController m_inputController;
   TypeController m_typeController;

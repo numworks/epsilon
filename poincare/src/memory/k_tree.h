@@ -31,7 +31,7 @@ struct KTreesImplementation {
   struct ConstexprTree : public TSC {
     template <class... Blocks>
     consteval ConstexprTree(Block type, Blocks... blocks)
-        : TSC(static_cast<Type>(static_cast<uint8_t>(type))),
+        : TSC(static_cast<EnabledType>(static_cast<uint8_t>(type))),
           m_valueBlocks{
               static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...} {}
 
@@ -90,7 +90,7 @@ struct KTreesImplementation {
   // Helpers
 
   template <Block Tag, Block... ExtraValues>
-    requires(TypeBlock(Type(Tag.m_content)).nodeSize() ==
+    requires(TypeBlock(EnabledType(Tag.m_content)).nodeSize() ==
              sizeof...(ExtraValues) + 1)
   struct KUnary : public KTree<Tag, ExtraValues...> {
     template <Block... B1>

@@ -9,10 +9,11 @@ namespace Poincare::Internal {
 
 class Binary {
  public:
-  static bool IsBinaryLogicalOperator(LayoutSpan name, Type* type);
+  static bool IsBinaryLogicalOperator(LayoutSpan name, EnabledType* type);
   static const char* OperatorName(TypeBlock type);
 
-  static bool IsComparisonOperatorString(LayoutSpan name, Type* returnType,
+  static bool IsComparisonOperatorString(LayoutSpan name,
+                                         EnabledType* returnType,
                                          size_t* returnLength);
   static ComparisonJunior::Operator ComparisonOperatorForType(TypeBlock type);
 
@@ -25,7 +26,7 @@ class Binary {
  private:
   constexpr static const char* k_logicalNotName = "not";
   struct TypeAndName {
-    Type type;
+    EnabledType type;
     const char* name;
   };
   constexpr static int k_numberOfOperators = 5;
@@ -38,7 +39,7 @@ class Binary {
                 "Wrong number of binary logical operators");
 
   struct OperatorForType {
-    Type type;
+    EnabledType type;
     ComparisonJunior::Operator op;
   };
 

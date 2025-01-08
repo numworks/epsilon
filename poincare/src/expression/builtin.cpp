@@ -180,7 +180,7 @@ const Builtin* Builtin::GetSpecialIdentifier(LayoutSpan name) {
   return nullptr;
 }
 
-const Builtin* Builtin::GetSpecialIdentifier(Type type) {
+const Builtin* Builtin::GetSpecialIdentifier(EnabledType type) {
   for (const Builtin& builtin : s_specialIdentifiers) {
     if (builtin.m_type == type) {
       return &builtin;

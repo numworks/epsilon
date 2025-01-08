@@ -24,7 +24,7 @@ class Metric {
  private:
   constexpr static int k_defaultMetric = 2 * 3 * 5;
 
-  static int GetMetric(Type type);
+  static int GetMetric(EnabledType type);
 #endif
 };
 

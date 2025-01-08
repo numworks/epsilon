@@ -14,7 +14,7 @@ class Tree;
 
 class Builtin {
  public:
-  constexpr Builtin(Type type, Aliases aliases)
+  constexpr Builtin(EnabledType type, Aliases aliases)
       : m_type(type), m_aliases(aliases) {}
 
   constexpr TypeBlock type() const { return m_type; }
@@ -29,7 +29,7 @@ class Builtin {
     assert(GetReservedFunction(e));
     return GetReservedFunction(e)->m_aliases;
   }
-  static Aliases SpecialIdentifierName(Type type) {
+  static Aliases SpecialIdentifierName(EnabledType type) {
     assert(GetSpecialIdentifier(type));
     return GetSpecialIdentifier(type)->m_aliases;
   }
@@ -39,18 +39,18 @@ class Builtin {
   static bool HasSpecialIdentifier(LayoutSpan name) {
     return GetSpecialIdentifier(name) != nullptr;
   }
-  static bool HasSpecialIdentifier(Type type) {
+  static bool HasSpecialIdentifier(EnabledType type) {
     return GetSpecialIdentifier(type) != nullptr;
   }
   static bool HasCustomIdentifier(LayoutSpan name);
   static const Builtin* GetReservedFunction(LayoutSpan name);
   static const Builtin* GetReservedFunction(const Tree* e);
-  static constexpr const Builtin* GetReservedFunction(Type type);
+  static constexpr const Builtin* GetReservedFunction(EnabledType type);
   static const Builtin* GetSpecialIdentifier(LayoutSpan name);
-  static const Builtin* GetSpecialIdentifier(Type type);
+  static const Builtin* GetSpecialIdentifier(EnabledType type);
 
  private:
-  Type m_type;
+  EnabledType m_type;
   Aliases m_aliases;
 };
 
@@ -189,7 +189,7 @@ constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
 #endif
 };
 
-constexpr const Builtin* Builtin::GetReservedFunction(Type type) {
+constexpr const Builtin* Builtin::GetReservedFunction(EnabledType type) {
   for (const Builtin& builtin : s_builtins) {
     if (builtin.m_type == type) {
       return &builtin;

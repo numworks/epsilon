@@ -17,7 +17,7 @@ namespace Poincare::Internal {
 
 IntegerHandler Rational::Numerator(const Tree* e) {
   assert(e->isRational());
-  Type type = e->type();
+  EnabledType type = e->type();
   switch (type) {
     case Type::Zero:
       return IntegerHandler(static_cast<int8_t>(0));

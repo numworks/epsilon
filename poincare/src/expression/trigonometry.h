@@ -18,7 +18,7 @@ class Trigonometry final {
   static bool ExpandTrigonometric(Tree* e);
 
   static bool ReduceArgumentToPrincipal(Tree* e);
-  static Type GetInverseType(Type type);
+  static EnabledType GetInverseType(EnabledType type);
 
  private:
   static bool ReduceTrigSecondElement(Tree* e, bool* isOpposed);

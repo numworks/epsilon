@@ -571,7 +571,7 @@ void RackParser::parseComparisonOperator(TreeRef& leftHandSide,
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   TreeRef rightHandSide;
-  Type operatorType;
+  EnabledType operatorType;
   size_t operatorLength;
   bool check = Binary::IsComparisonOperatorString(
       LayoutSpan(Layout::From(m_currentToken.firstLayout()),
@@ -686,7 +686,7 @@ void RackParser::parseLogicalOperatorNot(TreeRef& leftHandSide,
 #endif
 }
 
-void RackParser::parseBinaryLogicalOperator(Type operatorType,
+void RackParser::parseBinaryLogicalOperator(EnabledType operatorType,
                                             TreeRef& leftHandSide,
                                             Token::Type stoppingType) {
   if (leftHandSide.isUninitialized()) {

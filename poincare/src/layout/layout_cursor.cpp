@@ -447,7 +447,7 @@ void TreeStackCursor::insertText(Poincare::Context* context, const void* data) {
 
     // - Step 1 - Handle code points and brackets
     Tree* newChild;
-    TypeBlock bracketType(Type{});
+    TypeBlock bracketType(EnabledType{Type::ParenthesesLayout});
     Side bracketSide;
     if (!linearMode && AutocompletedPair::IsAutoCompletedBracketPairCodePoint(
                            codePoint, &bracketType, &bracketSide)) {

@@ -42,7 +42,7 @@ class Tree : public TypeBlock {
 
   // Consteval constructor to build KTrees
   consteval Tree(Block type)
-      : TypeBlock(static_cast<Type>(static_cast<uint8_t>(type))),
+      : TypeBlock(static_cast<EnabledType>(static_cast<uint8_t>(type))),
         m_valueBlocks{} {}
 
   static const Tree* FromBlocks(const Block* blocks) {
@@ -427,7 +427,8 @@ class Tree : public TypeBlock {
   void remove(bool isTree);
 
   // Forbid tree == Type::Add
-  using TypeBlock::operator==, TypeBlock::operator!=, TypeBlock::operator Type;
+  using TypeBlock::operator==, TypeBlock::operator!=,
+      TypeBlock::operator EnabledType;
 
   // A tree is made of 1 TypeBlock (inherited) and nodeSize()-1 ValueBlocks
   // Should be last - and most likely only - member

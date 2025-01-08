@@ -62,6 +62,7 @@ enum class LayoutType : uint8_t {
 #define UNDEF_NODE_USE(F) F = static_cast<uint8_t>(Type::F##Layout),
 #include "types.h"
 };
+using EnabledType = Type;
 
 class TypeBlock : public Block {
  public:
@@ -154,7 +155,7 @@ class TypeBlock : public Block {
   }
 
   // Their next metaBlock contains the numberOfChildren
-  constexpr static bool IsNAry(Type type) {
+  constexpr static bool IsNAry(EnabledType type) {
     return NumberOfChildrenOrTag(type) == NARY ||
            NumberOfChildrenOrTag(type) == NARY16;
   }
@@ -163,7 +164,7 @@ class TypeBlock : public Block {
   constexpr bool isSimpleNAry() const {
     return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
-  constexpr static bool IsNAry16(Type type) {
+  constexpr static bool IsNAry16(EnabledType type) {
     return NumberOfChildrenOrTag(type) == NARY16;
   }
   constexpr bool isNAry16() const { return IsNAry16(type()); }
@@ -174,7 +175,7 @@ class TypeBlock : public Block {
   constexpr static int NARY16 = -3;
 
  public:
-  constexpr static size_t NumberOfMetaBlocks(Type type) {
+  constexpr static size_t NumberOfMetaBlocks(EnabledType type) {
     switch (type) {
       /* NODE(MinusOne) => DefaultNumberOfMetaBlocks(0) + 0
        * NODE(Mult, NARY) => DefaultNumberOfMetaBlocks(NARY) + 0
@@ -191,7 +192,7 @@ class TypeBlock : public Block {
   }
 
   constexpr size_t nodeSize() const {
-    Type t = type();
+    EnabledType t = type();
     size_t numberOfMetaBlocks = NumberOfMetaBlocks(t);
     // NOTE: Make sure new Types are handled here.
     switch (t) {
@@ -248,14 +249,14 @@ class TypeBlock : public Block {
     }
   }
 
-  constexpr static int NumberOfChildren(Type type) {
+  constexpr static int NumberOfChildren(EnabledType type) {
     assert(NumberOfChildrenOrTag(type) != NARY &&
            NumberOfChildrenOrTag(type) != NARY2D);
     return NumberOfChildrenOrTag(type);
   }
 
  private:
-  constexpr static int NumberOfChildrenOrTag(Type type) {
+  constexpr static int NumberOfChildrenOrTag(EnabledType type) {
     switch (type) {
       /* NODE(MinusOne) => 0
        * NODE(Pow, 2) => 2 */

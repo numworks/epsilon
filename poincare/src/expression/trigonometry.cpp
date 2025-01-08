@@ -130,7 +130,8 @@ static Tree* computeSimplifiedPiFactor(const Tree* piFactor) {
   return res;
 }
 
-static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
+static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor,
+                                              EnabledType type) {
   assert((TypeBlock::IsDirectTrigonometryFunction(type) ||
           TypeBlock::IsArg(type)) &&
          !TypeBlock::IsTrig(type));
@@ -370,7 +371,7 @@ static void preprocessAtanOfTan(Tree* e) {
   add->removeTree();
 }
 
-bool reduceATrigOfTrig(Tree* e, const Tree* piFactor, Type type) {
+bool reduceATrigOfTrig(Tree* e, const Tree* piFactor, EnabledType type) {
   assert(piFactor);
   Tree* reducedPiFactor = computeSimplifiedPiFactorForType(piFactor, type);
   if (!reducedPiFactor) {
@@ -572,7 +573,7 @@ bool Trigonometry::ContractTrigonometric(Tree* e) {
                 KG_s));
 }
 
-Type Trigonometry::GetInverseType(Type type) {
+EnabledType Trigonometry::GetInverseType(EnabledType type) {
   switch (type) {
     case Type::Cos:
       return Type::ACos;

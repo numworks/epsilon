@@ -10,7 +10,7 @@
 
 namespace Poincare::Internal {
 
-bool Binary::IsBinaryLogicalOperator(LayoutSpan name, Type* type) {
+bool Binary::IsBinaryLogicalOperator(LayoutSpan name, EnabledType* type) {
   for (int i = 0; i < k_numberOfOperators; i++) {
     if (CompareLayoutSpanWithNullTerminatedString(
             name, k_operatorNames[i].name) == 0) {
@@ -45,13 +45,14 @@ ComparisonJunior::Operator Binary::ComparisonOperatorForType(TypeBlock type) {
   OMG::unreachable();
 }
 
-bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
+bool Binary::IsComparisonOperatorString(LayoutSpan name,
+                                        EnabledType* returnType,
                                         size_t* returnLength) {
   int maxOperatorLength = name.length;
   int lengthOfFoundOperator = 0;
-  Type typeOfFoundOperator;
+  EnabledType typeOfFoundOperator;
   for (int i = 0; i < k_numberOfComparisons; i++) {
-    Type currentOperatorType = k_operatorForType[i].type;
+    EnabledType currentOperatorType = k_operatorForType[i].type;
     const char* currentOperatorString =
         ComparisonJunior::OperatorString(k_operatorForType[i].op);
     // Loop twice, once on the main string, the other on the alternative string

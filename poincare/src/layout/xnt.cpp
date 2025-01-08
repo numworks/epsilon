@@ -275,7 +275,7 @@ bool FindXNTSymbol2D(const Tree* layout, const Tree* root, char* buffer,
         xntIndex, k_parameteredFunctions[functionIndex].XNTcycle, cycleSize);
     size_t size = UTF8Decoder::CodePointToChars(xnt, buffer, bufferSize);
     buffer[size] = 0;
-    if (childIndex == Parametric::FunctionIndex(static_cast<Type>(
+    if (childIndex == Parametric::FunctionIndex(static_cast<EnabledType>(
                           k_parameteredFunctions[functionIndex].layoutType))) {
       if (isValidXNTParameter(parameterLayout)) {
         Serialize(parameterLayout, buffer, buffer + bufferSize);

@@ -171,9 +171,10 @@ class Tree : public TypeBlock {
   }
 
   constexpr TypeBlock type() const { return *this; }
-  constexpr LayoutType layoutType() const {
+  constexpr EnabledType layoutType() const {
+    // TODO restore LayoutType as a return type
     assert(type().isLayout());
-    return static_cast<LayoutType>(static_cast<Type>(type().type()));
+    return static_cast<EnabledType>(type().type());
   }
 
   typedef bool (*Operation)(Tree* node);

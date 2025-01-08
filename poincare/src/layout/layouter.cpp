@@ -196,8 +196,8 @@ void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
     // Built 2D layout associated with builtin
     const BuiltinWithLayout* builtinWithLayout =
         static_cast<const BuiltinWithLayout*>(builtin);
-    TreeRef layout = SharedTreeStack->pushBlock(
-        static_cast<Type>(builtinWithLayout->layoutType()));
+    TreeRef layout =
+        SharedTreeStack->pushBlock(builtinWithLayout->layoutType());
     layoutChildrenAsRacks(expression);
     NAry::AddChild(layoutParent, layout);
   }

@@ -6,7 +6,7 @@
 
 namespace Poincare::Internal {
 
-static constexpr Type MarkerBlock = Type::Zero;
+static constexpr AnyType MarkerBlock = Type::Zero;
 
 /* An end marker is a small block (a Zero block is used) referred to by a
  * TreeRef. It allows to mark and track the end of a Tree, without modifying

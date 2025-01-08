@@ -9,7 +9,7 @@ using namespace Internal;
  * in constant time. */
 template <typename T>
 Tree *floatNodeAtIndex(const Tree *tree, int index) {
-  constexpr Type type =
+  constexpr AnyType type =
       sizeof(T) == sizeof(float) ? Type::SingleFloat : Type::DoubleFloat;
   constexpr int k_nodeSize = TypeBlock(type).nodeSize();
   assert(index >= 0 && index < tree->numberOfChildren());

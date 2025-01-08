@@ -80,8 +80,8 @@ CodePoint CodePointAtIndexInCycle(int index, const CodePoint* cycle,
 
 // Parametered functions
 constexpr struct {
-  LayoutType layoutType;
-  Type expressionType;
+  LayoutAnyType layoutType;
+  EnabledType expressionType;
   const CodePoint* XNTcycle;
 } k_parameteredFunctions[] = {
     {LayoutType::Diff, Type::Diff, k_defaultContinuousXNTCycle},

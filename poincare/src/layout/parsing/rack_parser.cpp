@@ -819,8 +819,8 @@ void RackParser::parseReservedFunction(TreeRef& leftHandSide,
 
 static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
   TypeBlock type = builtin->type();
-  if (!type.isNAry() &&
-      parameterList->numberOfChildren() < TypeBlock::NumberOfChildren(type)) {
+  if (!type.isNAry() && parameterList->numberOfChildren() <
+                            TypeBlock::NumberOfChildren(type.type())) {
     // Add default parameters
     if (type == Type::Round) {
       NAry::AddChild(parameterList, (0_e)->cloneTree());

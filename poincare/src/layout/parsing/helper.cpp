@@ -19,7 +19,7 @@ bool ParsingHelper::IsLogicalOperator(LayoutSpan name,
     *returnType = Token::Type::Not;
     return true;
   }
-  Type operatorType;
+  EnabledType operatorType;
   if (Binary::IsBinaryLogicalOperator(name, &operatorType)) {
     switch (operatorType) {
       case Type::LogicalAnd:

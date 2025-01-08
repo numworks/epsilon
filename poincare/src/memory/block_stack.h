@@ -42,6 +42,7 @@ class BlockStack {
     insertBlock(lastBlock(), block, true);
     return lastBlock() - 1;
   }
+  Block* pushBlock(AnyType type) { return pushBlock(Block(EnabledType(type))); }
 
   bool insertBlock(Block* destination, Block block, bool at = false) {
     return insertBlocks(destination, &block, 1, at);

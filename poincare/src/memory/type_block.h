@@ -5,6 +5,7 @@
 #include <omg/unaligned.h>
 
 #include "block.h"
+#include "type_enum.h"
 #if __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -43,39 +44,19 @@ namespace CustomTypeStructs {
 #include "types.h"
 }  // namespace CustomTypeStructs
 
-enum class Type : uint8_t {
-/* Add all the types to the enum
- * NODE(MinusOne) => MinusOne,
- * NODE(Fraction) in layout.h => FractionLayout,
- */
-#define NODE_USE(F, N, S) SCOPED_NODE(F),
-#define UNDEF_NODE_USE(F) SCOPED_NODE(F),
-#include "types.h"
-};
-
-enum class LayoutType : uint8_t {
-/* Members of LayoutType have the same values as their Type counterpart
- * NODE(Fraction) => Fraction = Type::FractionLayout,
- */
-#define ONLY_LAYOUTS 1
-#define NODE_USE(F, N, S) F = static_cast<uint8_t>(Type::F##Layout),
-#define UNDEF_NODE_USE(F) F = static_cast<uint8_t>(Type::F##Layout),
-#include "types.h"
-};
-using EnabledType = Type;
-
 class TypeBlock : public Block {
  public:
-  constexpr TypeBlock(Type content) : Block(static_cast<uint8_t>(content)) {
+  constexpr TypeBlock(AnyType content) : Block(static_cast<uint8_t>(content)) {
     assert(m_content < static_cast<uint8_t>(Type::NumberOfTypes));
   }
-  constexpr Type type() const { return static_cast<Type>(m_content); }
+  constexpr TypeBlock(EnabledType content)
+      : Block(static_cast<uint8_t>(content)) {
+    assert(m_content < static_cast<uint8_t>(Type::NumberOfTypes));
+  }
+  constexpr EnabledType type() const { return static_cast<uint8_t>(m_content); }
 
-  bool operator==(const TypeBlock& other) const = default;
-  constexpr bool operator==(Type t) const { return type() == t; }
-  bool operator!=(const TypeBlock& other) const = default;
-  constexpr bool operator!=(Type t) const { return type() != t; }
-  constexpr operator Type() const { return type(); }
+  constexpr operator EnabledType() const { return type(); }
+  constexpr operator uint8_t() const { return static_cast<uint8_t>(m_content); }
 
 #if POINCARE_TREE_LOG
   /* Add an array of names for the Types
@@ -88,16 +69,18 @@ class TypeBlock : public Block {
 #endif
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
-#define RANGE(NAME, FIRST, LAST)                      \
-  static constexpr bool Is##NAME(Type type) {         \
-    static_assert(Type::FIRST <= Type::LAST);         \
-    return Type::FIRST <= type && type <= Type::LAST; \
-  }                                                   \
-                                                      \
+#define RANGE(NAME, FIRST, LAST)                                   \
+  static constexpr bool Is##NAME(EnabledType type) {               \
+    static_assert(static_cast<int>(Type::FIRST) <=                 \
+                  static_cast<int>(Type::LAST));                   \
+    return static_cast<int>(Type::FIRST) <= type &&                \
+           static_cast<int>(type) <= static_cast<int>(Type::LAST); \
+  }                                                                \
+                                                                   \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
 
-#define UNDEF_RANGE(NAME, FIRST, LAST)                        \
-  static constexpr bool Is##NAME(Type type) { return false; } \
+#define UNDEF_RANGE(NAME, FIRST, LAST)                               \
+  static constexpr bool Is##NAME(EnabledType type) { return false; } \
   constexpr bool is##NAME() const { return false; }
 
 #define RANGE1(N) RANGE(N, N, N)
@@ -117,12 +100,12 @@ class TypeBlock : public Block {
   // Add casts to custom node structs
 #define CAST_(F, N, T)                                    \
   CustomTypeStructs::F* to##F() {                         \
-    assert(type() == Type::T);                            \
+    assert(type() == static_cast<int>(Type::T));          \
     return reinterpret_cast<CustomTypeStructs::F*>(       \
         nextNth(DefaultNumberOfMetaBlocks(N)));           \
   }                                                       \
   const CustomTypeStructs::F* to##F() const {             \
-    assert(type() == Type::T);                            \
+    assert(type() == static_cast<int>(Type::T));          \
     return reinterpret_cast<const CustomTypeStructs::F*>( \
         nextNth(DefaultNumberOfMetaBlocks(N)));           \
   }
@@ -132,9 +115,9 @@ class TypeBlock : public Block {
 #undef CAST_
 #undef CAST
 
-  constexpr static bool IsOfType(Type thisType,
-                                 std::initializer_list<Type> types) {
-    for (Type t : types) {
+  constexpr static bool IsOfType(EnabledType thisType,
+                                 std::initializer_list<AnyType> types) {
+    for (AnyType t : types) {
       if (thisType == t) {
         return true;
       }
@@ -142,7 +125,7 @@ class TypeBlock : public Block {
     return false;
   }
 
-  constexpr bool isOfType(std::initializer_list<Type> types) const {
+  constexpr bool isOfType(std::initializer_list<AnyType> types) const {
     return IsOfType(type(), types);
   }
 

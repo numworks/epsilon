@@ -20,12 +20,12 @@ struct BeautificationRule {
   BeautifiedLayoutBuilder layoutBuilder;
 };
 
-template <Type type, Type layoutType>
+template <AnyType type, AnyType layoutType>
 consteval static BeautificationRule ruleHelper() {
   static_assert(TypeBlock::NumberOfChildren(type) ==
                 TypeBlock::NumberOfChildren(layoutType));
   return BeautificationRule{
-      *Builtin::GetReservedFunction(type)->aliases(),
+      *Builtin::GetReservedFunction(EnabledType(type))->aliases(),
       TypeBlock::NumberOfChildren(type), [](TreeRef* parameters) -> Tree* {
         TreeRef ref = SharedTreeStack->pushBlock(layoutType);
         for (int i = 0; i < TypeBlock::NumberOfChildren(layoutType); i++) {

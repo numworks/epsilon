@@ -239,10 +239,11 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(a×x, x, 1)", "a");
   simplifies_to("diff(23, x, 1)", "0");
   simplifies_to("diff(1+x, x, y)", "1");
-  simplifies_to("diff(sin(ln(x)), x, y)", "dep(cos(ln(y))/y,{realPos(y)})");
+  simplifies_to("diff(sin(ln(x)), x, y)",
+                "dep(cos(ln(y))/y,{real(sin(ln(y))),realPos(y)})");
   simplifies_to("diff(((x^4)×ln(x)×e^(3x)), x, y)",
-                "dep((3×y^4×ln(y)+y^3×(1+4×ln(y)))×e^(3×y),{y^4×ln(y)×e^(3×y),"
-                "nonNull(y),realPos(y)})");
+                "dep((3×y^4×ln(y)+y^3×(1+4×ln(y)))×e^(3×y),{nonNull(y),real(y^"
+                "4×ln(y)×e^(3×y)),realPos(y)})");
   simplifies_to("diff(diff(x^2, x, x)^2, x, y)", "8×y");
   simplifies_to("diff(x+x*floor(x), x, y)", "y×diff(floor(x),x,y)+1+floor(y)");
   simplifies_to("diff(ln(x), x, -1)", "undef");
@@ -261,22 +262,22 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff((sin(t),floor(t)),t,t,2)",
                 "(-sin(t),diff(floor(t),t,t,2))");
   simplifies_to("diff(diff(diff(diff(floor(a),a,b,2),b,c),c,d,3),d,x)",
-                "dep(diff(floor(a),a,x,7),{diff(floor(a),a,x,2),diff(floor(a),"
-                "a,x,3),diff(floor(a),a,x,6)})");
+                "dep(diff(floor(a),a,x,7),{real(diff(floor(a),a,x,2)),real("
+                "diff(floor(a),a,x,3)),real(diff(floor(a),a,x,6))})");
   simplifies_to("diff(diff(floor(a)+b*a,a,x),b,x)",
-                "dep(1+diff(diff(floor(a),a,x),b,x),{floor(x)})");
+                "dep(1+diff(diff(floor(a),a,x),b,x),{floor(x),real(x+diff("
+                "floor(a),a,x))})");
   simplifies_to("diff(randint(0,5), x, 2)", "undef");
   simplifies_to("diff(x+floor(random()), x, 2)", "undef");
-  // TODO: fix the following tests:
   // Derivating a complex expression is forbidden
-  // simplifies_to("diff(i,x,2)", "undef");
-  // simplifies_to("diff(e^(i×x),x,3)", "undef");
-  // simplifies_to("diff(ln(x),x,-1)", "undef");
+  simplifies_to("diff(i,x,2)", "undef");
+  simplifies_to("diff(e^(i×x),x,3)", "undef");
+  simplifies_to("diff(ln(x),x,-1)", "undef");
   // Derivating a variable evaluated at a complex value is forbidden
-  // simplifies_to("diff(x,x,-i)", "undef");
-  // simplifies_to("diff(abs(x),x,i)", "undef");
-  // simplifies_to("diff(ln(x),x,i)", "undef");
-  // simplifies_to("diff(x,x,ln(-3))", "undef");
+  simplifies_to("diff(x,x,-i)", "undef");
+  simplifies_to("diff(abs(x),x,i)", "undef");
+  simplifies_to("diff(ln(x),x,i)", "undef");
+  simplifies_to("diff(x,x,ln(-3))", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {
@@ -598,10 +599,8 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("arccot(0)", "π/2");
   simplifies_to("sec(arcsec(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   simplifies_to("csc(arccsc(x))", "dep(x,{nonNull(x)})", cartesianCtx);
-  simplifies_to(
-      "cot(arccot(1+abs(x)))",
-      "dep(1+abs(x),{sin(arctan(1+abs(x))),nonNull(cos(arctan(1+abs(x))))})",
-      cartesianCtx);
+  simplifies_to("cot(arccot(1+abs(x)))",
+                "dep(1+abs(x),{nonNull(cos(arctan(1+abs(x))))})", cartesianCtx);
 
   simplifies_to("sin(x)*(cos(x)^-1)*ln(x)",
                 "dep(tan(x)×ln(x),{nonNull(x),realPos(x)})");
@@ -1051,8 +1050,8 @@ QUIZ_CASE(pcj_simplification_dependencies) {
    * see the dependencies. */
   simplifies_to("f(x)-f(x)", "dep(0,{0×f(x)})");
   simplifies_to("cos(re(f(x)))+inf", "dep(∞,{f(x)})");
-  simplifies_to("diff(1+x, x, f(y))", "dep(1,{f(y)})");
-  simplifies_to("diff(1, x, f(y))", "dep(0,{f(y)})");
+  simplifies_to("diff(1+x, x, f(y))", "dep(1,{real(1+f(y)),real(f(y))})");
+  simplifies_to("diff(1, x, f(y))", "dep(0,{dep(1,{f(y)}),real(f(y))})");
   simplifies_to("im(re(f(x)))", "dep(0,{f(x)})", cartesianCtx);
   simplifies_to("sign(abs(f(x))+1)", "dep(1,{f(x)})");
   simplifies_to("0^(5+ln(5))", "0");

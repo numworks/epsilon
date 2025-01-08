@@ -89,7 +89,7 @@ bool Derivation::Reduce(Tree* e) {
     SharedTreeStack->pushDepList(1);
     SharedTreeStack->pushReal();
     Variables::LeaveScopeWithReplacement(constDerivand->cloneTree(),
-                                         symbolValue, false, true);
+                                         symbolValue, true, true);
     derivative->cloneNodeAtNode(KDep);
     SystematicReduction::ShallowReduce(derivative->child(1));
     SystematicReduction::ShallowReduce(derivative);

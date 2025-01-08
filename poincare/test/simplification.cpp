@@ -267,6 +267,16 @@ QUIZ_CASE(pcj_simplification_derivative) {
                 "dep(1+diff(diff(floor(a),a,x),b,x),{floor(x)})");
   simplifies_to("diff(randint(0,5), x, 2)", "undef");
   simplifies_to("diff(x+floor(random()), x, 2)", "undef");
+  // TODO: fix the following tests:
+  // Derivating a complex expression is forbidden
+  // simplifies_to("diff(i,x,2)", "undef");
+  // simplifies_to("diff(e^(i×x),x,3)", "undef");
+  // simplifies_to("diff(ln(x),x,-1)", "undef");
+  // Derivating a variable evaluated at a complex value is forbidden
+  // simplifies_to("diff(x,x,-i)", "undef");
+  // simplifies_to("diff(abs(x),x,i)", "undef");
+  // simplifies_to("diff(ln(x),x,i)", "undef");
+  // simplifies_to("diff(x,x,ln(-3))", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

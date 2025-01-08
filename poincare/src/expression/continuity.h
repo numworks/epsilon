@@ -7,16 +7,34 @@
 
 namespace Poincare::Internal {
 
+/* WARNING: Everywhere in Poincaré, the term "discontinuity" refers to
+ * "jump-discontinuity" (i.e. finite discontinuities like piecewise, random,
+ * round, floor, ceil, ...).
+ * Infinite/asymptotic discontinuities (like 1/x) are
+ * not handled when calling IsDiscontinuousOnInterval or
+ * InvolvesDiscontinuousFunction (partly because they are more obvious to detect
+ * by numerical algorithms).
+ *
+ * Jump-discontinuity (handled in this file):
+ *      o-----
+ *
+ * -----o
+ *
+ * Asymptotic discontinuity (not handled in this file):
+ *      |
+ *      |
+ *     /
+ * ----    ----
+ *        /
+ *       |
+ *       |
+ *
+ * WARNING: The Abs function is also considered to have a jump-discontinuity in
+ * zero, as it can cause problems in expressions like "|x|/x".
+ */
+
 class Continuity {
  public:
-  /* These functions only return true if the discontinuity is not asymptotic
-   * (i.e. for the functions random, randint, round, floor and ceil).
-   * Functions like 1/x are not handled here since it "obvious" that they are
-   * discontinuous.
-   * They also return true for continuous functions like Abs that are tricky for
-   * the numerical algorithms.
-   */
-
   static bool InvolvesDiscontinuousFunction(const Tree* e) {
     return e->hasDescendantSatisfying(ShallowIsDiscontinuous);
   }

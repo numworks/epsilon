@@ -87,6 +87,7 @@ bool Derivation::Reduce(Tree* e) {
   if (derivationOrder > 0 && !derivative->isUndefined()) {
     // diff(f(y), y, x) -> dep(f'(x), {f(x)})
     SharedTreeStack->pushDepList(1);
+    SharedTreeStack->pushReal();
     Variables::LeaveScopeWithReplacement(constDerivand->cloneTree(),
                                          symbolValue, false, true);
     derivative->cloneNodeAtNode(KDep);

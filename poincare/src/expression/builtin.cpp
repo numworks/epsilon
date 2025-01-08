@@ -97,11 +97,11 @@ constexpr static DistributionBuiltin s_distributionsBuiltins[] = {
 Tree* Builtin::pushNode(int numberOfChildren) const {
   Tree* result = SharedTreeStack->pushBlock(m_type);
   if (TypeBlock(m_type).isNAry()) {
-    SharedTreeStack->pushBlock(numberOfChildren);
+    SharedTreeStack->pushValueBlock(numberOfChildren);
   } else if (TypeBlock(m_type).isRandomized()) {
     // Add random seeds
     assert(result->nodeSize() == 2);
-    SharedTreeStack->pushBlock(0);
+    SharedTreeStack->pushValueBlock(0);
   } else {
     assert(result->nodeSize() == 1);
   }
@@ -110,9 +110,9 @@ Tree* Builtin::pushNode(int numberOfChildren) const {
 
 Tree* DistributionBuiltin::pushNode(int numberOfChildren) const {
   Tree* result = SharedTreeStack->pushBlock(Type::Distribution);
-  SharedTreeStack->pushBlock(numberOfChildren);
-  SharedTreeStack->pushBlock(Type(m_distribution));
-  SharedTreeStack->pushBlock(Type(m_method));
+  SharedTreeStack->pushValueBlock(numberOfChildren);
+  SharedTreeStack->pushValueBlock(static_cast<uint8_t>(m_distribution));
+  SharedTreeStack->pushValueBlock(static_cast<uint8_t>(m_method));
   return result;
 }
 

@@ -23,7 +23,7 @@ namespace Poincare::Internal {
 
 Tree* Polynomial::PushEmpty(const Tree* variable) {
   Tree* pol = SharedTreeStack->pushBlock(Type::Polynomial);
-  SharedTreeStack->pushBlock(1);
+  SharedTreeStack->pushValueBlock(1);
   pol->cloneTreeAfterNode(variable);
   return pol;
 }

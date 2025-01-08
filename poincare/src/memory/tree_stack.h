@@ -52,6 +52,7 @@ class AbstractTreeStack : public BlockStack {
     insertBlock(lastBlock(), block, true);
     return Tree::FromBlocks(lastBlock() - 1);
   }
+  Tree* pushValueBlock(uint8_t value) { return pushBlock(ValueBlock(value)); }
 
   // TODO: factorize with TypeBlock
   constexpr static int NARY = -1;
@@ -82,7 +83,7 @@ class AbstractTreeStack : public BlockStack {
     requires(I == NARY && I == N && S == 0)   \
   Tree* push##F(int nbChildren) {             \
     Tree* result = pushBlock(Type::F);        \
-    pushBlock(nbChildren);                    \
+    pushValueBlock(nbChildren);               \
     return result;                            \
   }                                           \
                                               \
@@ -90,8 +91,8 @@ class AbstractTreeStack : public BlockStack {
     requires(I == NARY2D && I == N && S == 0) \
   Tree* push##F(int nbRows, int nbCols) {     \
     Tree* result = pushBlock(Type::F);        \
-    pushBlock(nbRows);                        \
-    pushBlock(nbCols);                        \
+    pushValueBlock(nbRows);                   \
+    pushValueBlock(nbCols);                   \
     return result;                            \
   }
 

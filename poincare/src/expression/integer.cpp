@@ -133,13 +133,13 @@ Tree* IntegerHandler::pushOnTreeStack() const {
     Tree* e = SharedTreeStack->pushBlock(sign() == NonStrictSign::Negative
                                              ? Type::IntegerNegShort
                                              : Type::IntegerPosShort);
-    SharedTreeStack->pushBlock(digit(0));
+    SharedTreeStack->pushValueBlock(digit(0));
     return e;
   }
   Tree* e = SharedTreeStack->pushBlock(sign() == NonStrictSign::Negative
                                            ? Type::IntegerNegBig
                                            : Type::IntegerPosBig);
-  SharedTreeStack->pushBlock(m_numberOfDigits);
+  SharedTreeStack->pushValueBlock(m_numberOfDigits);
   pushDigitsOnTreeStack();
 #if POINCARE_TREE_STACK_VISUALIZATION
   Log("PushInteger", e->block(), e->treeSize());
@@ -150,7 +150,7 @@ Tree* IntegerHandler::pushOnTreeStack() const {
 void IntegerHandler::pushDigitsOnTreeStack() const {
   assert(m_numberOfDigits <= k_maxNumberOfDigits);
   for (size_t i = 0; i < m_numberOfDigits; i++) {
-    SharedTreeStack->pushBlock(ValueBlock(digit(i)));
+    SharedTreeStack->pushValueBlock(digit(i));
   }
 }
 

@@ -30,23 +30,23 @@ size_t AbstractTreeStack::numberOfTrees() const {
 
 Tree* AbstractTreeStack::pushSingleFloat(float value) {
   Tree* result = pushBlock(Type::SingleFloat);
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 0));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 1));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 2));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 3));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 0));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 1));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 2));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 3));
   return result;
 }
 
 Tree* AbstractTreeStack::pushDoubleFloat(double value) {
   Tree* result = pushBlock(Type::DoubleFloat);
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 0));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 1));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 2));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 3));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 4));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 5));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 6));
-  pushBlock(FloatHelper::SubFloatAtIndex(value, 7));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 0));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 1));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 2));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 3));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 4));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 5));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 6));
+  pushValueBlock(FloatHelper::SubFloatAtIndex(value, 7));
   return result;
 }
 
@@ -62,36 +62,36 @@ Tree* AbstractTreeStack::pushUserNamed(TypeBlock type, const char* name,
                                        size_t size) {
   assert(type.isUserNamed());
   Tree* result = pushBlock(type);
-  pushBlock(size);
+  pushValueBlock(size);
   for (size_t i = 0; i < size - 1; i++) {
-    pushBlock(name[i]);
+    pushValueBlock(name[i]);
   }
-  pushBlock(0);
+  pushValueBlock(0);
   return result;
 }
 
 Tree* AbstractTreeStack::pushVar(uint8_t id, ComplexSign sign) {
   Tree* result = pushBlock(Type::Var);
-  pushBlock(id);
-  pushBlock(sign.getRealValue());
-  pushBlock(sign.getImagValue());
+  pushValueBlock(id);
+  pushValueBlock(sign.getRealValue());
+  pushValueBlock(sign.getImagValue());
   return result;
 }
 
 Tree* AbstractTreeStack::pushRandom(uint8_t seed) {
   Tree* result = pushBlock(Type::Random);
-  pushBlock(seed);
+  pushValueBlock(seed);
   return result;
 }
 
 Tree* AbstractTreeStack::pushRandInt(uint8_t seed) {
   Tree* result = pushBlock(Type::RandInt);
-  pushBlock(seed);
+  pushValueBlock(seed);
   return result;
 }
 Tree* AbstractTreeStack::pushRandIntNoRep(uint8_t seed) {
   Tree* result = pushBlock(Type::RandIntNoRep);
-  pushBlock(seed);
+  pushValueBlock(seed);
   return result;
 }
 
@@ -99,14 +99,14 @@ Tree* AbstractTreeStack::pushRandIntNoRep(uint8_t seed) {
 Tree* AbstractTreeStack::pushPhysicalConstant(uint8_t constantId) {
   assert(constantId < PhysicalConstant::k_numberOfConstants);
   Tree* result = pushBlock(Type::PhysicalConstant);
-  pushBlock(constantId);
+  pushValueBlock(constantId);
   return result;
 }
 
 Tree* AbstractTreeStack::pushUnit(uint8_t representativeId, uint8_t prefixId) {
   Tree* result = pushBlock(Type::Unit);
-  pushBlock(representativeId);
-  pushBlock(prefixId);
+  pushValueBlock(representativeId);
+  pushValueBlock(prefixId);
   return result;
 }
 #endif
@@ -114,14 +114,14 @@ Tree* AbstractTreeStack::pushUnit(uint8_t representativeId, uint8_t prefixId) {
 Tree* AbstractTreeStack::pushAngleUnitContext(AngleUnit angleUnit) {
   Tree* result = pushBlock(Type::AngleUnitContext);
   static_assert(sizeof(AngleUnit) == sizeof(Block));
-  pushBlock(static_cast<uint8_t>(angleUnit));
+  pushValueBlock(static_cast<uint8_t>(angleUnit));
   return result;
 }
 
 Tree* AbstractTreeStack::pushAsciiCodePointLayout(CodePoint codePoint) {
   Tree* result = pushBlock(Type::AsciiCodePointLayout);
   assert(codePoint < 128);
-  pushBlock(int(codePoint));
+  pushValueBlock(int(codePoint));
   return result;
 }
 
@@ -129,10 +129,10 @@ Tree* AbstractTreeStack::pushUnicodeCodePointLayout(CodePoint codePoint) {
   static_assert(sizeof(CodePoint) / sizeof(uint8_t) == 4);
   Tree* result = pushBlock(Type::UnicodeCodePointLayout);
   int first = codePoint;
-  pushBlock(OMG::BitHelper::getByteAtIndex(first, 0));
-  pushBlock(OMG::BitHelper::getByteAtIndex(first, 1));
-  pushBlock(OMG::BitHelper::getByteAtIndex(first, 2));
-  pushBlock(OMG::BitHelper::getByteAtIndex(first, 3));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 0));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 1));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 2));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 3));
   return result;
 }
 
@@ -142,14 +142,14 @@ Tree* AbstractTreeStack::pushCombinedCodePointsLayout(
   Tree* result = pushBlock(Type::CombinedCodePointsLayout);
   int first = codePoint;
   int second = combiningCodePoint;
-  pushBlock(OMG::BitHelper::getByteAtIndex(first, 0));
-  pushBlock(OMG::BitHelper::getByteAtIndex(first, 1));
-  pushBlock(OMG::BitHelper::getByteAtIndex(first, 2));
-  pushBlock(OMG::BitHelper::getByteAtIndex(first, 3));
-  pushBlock(OMG::BitHelper::getByteAtIndex(second, 0));
-  pushBlock(OMG::BitHelper::getByteAtIndex(second, 1));
-  pushBlock(OMG::BitHelper::getByteAtIndex(second, 2));
-  pushBlock(OMG::BitHelper::getByteAtIndex(second, 3));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 0));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 1));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 2));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(first, 3));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(second, 0));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(second, 1));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(second, 2));
+  pushValueBlock(OMG::BitHelper::getByteAtIndex(second, 3));
   return result;
 }
 
@@ -157,33 +157,33 @@ Tree* AbstractTreeStack::pushAutocompletedPairLayout(TypeBlock type,
                                                      bool leftIsTemporary,
                                                      bool rightIsTemporary) {
   Tree* result = pushBlock(type);
-  pushBlock(leftIsTemporary | (rightIsTemporary << 1));
+  pushValueBlock(leftIsTemporary | (rightIsTemporary << 1));
   return result;
 }
 
 Tree* AbstractTreeStack::pushVerticalOffsetLayout(bool isSubscript,
                                                   bool isPrefix) {
   Tree* result = pushBlock(Type::VerticalOffsetLayout);
-  pushBlock(isSubscript | (isPrefix << 1));
+  pushValueBlock(isSubscript | (isPrefix << 1));
   return result;
 }
 
 Tree* AbstractTreeStack::pushRackLayout(int nbChildren) {
   // Move this inside PUSHER if more NARY16 node are added
   Tree* result = pushBlock(Type::RackSimpleLayout);
-  pushBlock(nbChildren % 256);
-  pushBlock(nbChildren / 256);
+  pushValueBlock(nbChildren % 256);
+  pushValueBlock(nbChildren / 256);
   return result;
 }
 
 Tree* AbstractTreeStack::pushRackMemoizedLayout(int nbChildren) {
   // Move this inside PUSHER if more NARY16 node are added
   Tree* result = pushBlock(Type::RackMemoizedLayout);
-  pushBlock(nbChildren % 256);
-  pushBlock(nbChildren / 256);
+  pushValueBlock(nbChildren % 256);
+  pushValueBlock(nbChildren / 256);
   for (size_t i = 0; i < sizeof(CustomTypeStructs::RackMemoizedLayoutNode);
        i++) {
-    pushBlock(0);
+    pushValueBlock(0);
   }
   return result;
 }
@@ -205,11 +205,11 @@ Tree* AbstractTreeStack::pushPointOfInterest(double abscissa, double ordinate,
 
 Tree* AbstractTreeStack::pushArbitrary(uint16_t size, const uint8_t* data) {
   Tree* result = pushBlock(Type::Arbitrary);
-  pushBlock(0);  // nary
-  pushBlock(size & 0xFF);
-  pushBlock(size >> 8);
+  pushValueBlock(0);  // nary
+  pushValueBlock(size & 0xFF);
+  pushValueBlock(size >> 8);
   for (size_t i = 0; i < size; i++) {
-    pushBlock(data[i]);
+    pushValueBlock(data[i]);
   }
   return result;
 }

@@ -300,3 +300,10 @@ SFLAGS_poincare += -DPOINCARE_TREE_LOG=1
 endif
 
 CXXFLAGS += -include $(PATH_poincare)/config.$(POINCARE_variant).h
+
+# TODO: add a compiler family in haussmann
+ifeq ($(PLATFORM_TYPE),simulator)
+PRIVATE_SFLAGS_poincare += -Wno-tautological-constant-out-of-range-compare
+else
+PRIVATE_SFLAGS_poincare += -Wno-switch-outside-range
+endif

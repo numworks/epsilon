@@ -341,6 +341,8 @@ NODE(Dep, 2)
 NODE(DepList, NARY)
 // NonNull(x) = {0 if x ∈ ℂ*, undef} (only used in DepList)
 NODE(NonNull, 1)
+// Real(x) = {0 if x ∈ ℝ, undef} (only used in DepList)
+NODE(Real, 1)
 // RealPos(x) = {0 if x ∈ ℝ+, nonreal} (only used in DepList)
 NODE(RealPos, 1)
 

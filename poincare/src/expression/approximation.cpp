@@ -914,6 +914,10 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
                  ? std::complex<T>(0)
                  : NAN;
     }
+    case Type::Real: {
+      std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
+      return x.imag() == 0 ? std::complex<T>(0) : NAN;
+    }
     case Type::RealPos: {
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       return x.real() >= 0 && x.imag() == 0 ? std::complex<T>(0) : NonReal<T>();

@@ -160,6 +160,7 @@ constexpr static Builtin s_builtins[] = {
     {Type::Piecewise, "piecewise"},  // 2D layout is a grid
     {Type::Dep, "dep"},              // TODO shouldn't be user parsable
     {Type::NonNull, "nonNull"},      // TODO shouldn't be user parsable
+    {Type::Real, "real"},            // TODO shouldn't be user parsable
     {Type::RealPos, "realPos"},      // TODO shouldn't be user parsable
 };
 

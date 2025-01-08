@@ -482,6 +482,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     }
     case Type::UserSequence:
     case Type::NonNull:  // TODO: could be unit
+    case Type::Real:
     case Type::RealPos:
       return childDim[0].isScalar();
     default:

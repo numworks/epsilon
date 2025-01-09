@@ -1,13 +1,11 @@
-#include <poincare/cas.h>
 #include <poincare/preferences.h>
+#include <poincare/src/memory/tree.h>
 
-#include "expression/dimension.h"
-#include "expression/units/unit.h"
-#include "memory/tree.h"
+#include "cas.h"
+#include "dimension.h"
+#include "units/unit.h"
 
-namespace Poincare {
-
-using namespace Internal;
+namespace Poincare::Internal {
 
 namespace {
 
@@ -122,4 +120,4 @@ bool CAS::ShouldOnlyDisplayApproximation(
                                    approximateOutput, context));
 }
 
-}  // namespace Poincare
+}  // namespace Poincare::Internal

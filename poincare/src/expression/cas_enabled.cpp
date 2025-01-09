@@ -1,6 +1,6 @@
-#include <poincare/cas.h>
+#include "cas.h"
 
-namespace Poincare {
+namespace Poincare::Internal {
 
 bool CAS::Enabled() { return true; }
 
@@ -17,4 +17,4 @@ bool CAS::ShouldOnlyDisplayApproximation(
   return false;
 }
 
-}  // namespace Poincare
+}  // namespace Poincare::Internal

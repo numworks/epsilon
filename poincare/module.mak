@@ -1,7 +1,5 @@
 _sources_poincare_minimal := $(addprefix src/, \
   api.cpp:-nopool \
-  cas_disabled.cpp:-cas \
-  cas_enabled.cpp:+cas \
   init.cpp:-nopool \
   init_no_pool.cpp:+nopool \
   trigonometry.cpp \
@@ -55,6 +53,8 @@ $(addprefix expression/, \
   beautification.cpp \
   binary.cpp \
   builtin.cpp \
+  cas_disabled.cpp:-cas \
+  cas_enabled.cpp:+cas \
   continuity.cpp \
   decimal.cpp \
   degree.cpp \
@@ -102,6 +102,7 @@ $(addprefix function_properties/, \
   helper.cpp:-nopool \
 ) \
 $(addprefix helpers/, \
+  cas.cpp:-nopool \
   expression_equal_sign.cpp:-nopool \
   layout.cpp \
   scatter_plot_iterable.cpp:-nopool \

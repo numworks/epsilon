@@ -1,10 +1,10 @@
 #include "simplification.h"
 
 #include <omg/float.h>
-#include <poincare/cas.h>
 
 #include "advanced_reduction.h"
 #include "beautification.h"
+#include "cas.h"
 #include "dependency.h"
 #include "k_tree.h"
 #include "list.h"

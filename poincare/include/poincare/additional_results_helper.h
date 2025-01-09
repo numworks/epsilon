@@ -13,8 +13,8 @@ class AdditionalResultsHelper final {
   /* Shared::ShouldOnlyDisplayApproximation is used in TrigonometryAngleHelper
    * and passed here as parameter. */
   typedef bool (*ShouldOnlyDisplayApproximation)(
-      const Internal::Tree* input, const Internal::Tree* exactOutput,
-      const Internal::Tree* approximateOutput, Context* context);
+      const UserExpression& input, const UserExpression& exactOutput,
+      const UserExpression& approximateOutput, Context* context);
   static void TrigonometryAngleHelper(
       const UserExpression input, const UserExpression exactOutput,
       const UserExpression approximateOutput, bool directTrigonometry,

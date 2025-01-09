@@ -284,6 +284,14 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   bool changed = false;
   Tree* depI = set->child(0);
   for (int i = 0; i < set->numberOfChildren(); i++) {
+    if (depI->isReal() && GetComplexSign(depI->child(0)).isReal()) {
+      // dep(..., {real(x)}) = dep(..., {x}) if x is real
+      depI->moveTreeOverTree(depI->child(0));
+      i--;
+      changed = true;
+      continue;
+    }
+
     /* TODO_PCJ:
      * - if 1 child can be inf and another child can be -inf, then we cannot
      *   split add

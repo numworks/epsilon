@@ -169,9 +169,10 @@ constexpr static LatexTokenChild infinityToken[] = {{"\\infty", k_noChild}};
 constexpr static LatexTokenChild divisionToken[] = {{"\\div", k_noChild}};
 
 // Tokens that do nothing
-constexpr static LatexTokenChild textToken[] = {{"\\text{", k_noChild}};
-constexpr static LatexTokenChild operatorToken[] = {
-    {"\\operatorname{", k_noChild}};
+constexpr static LatexTokenChild textToken[] = {{"\\text{", 0},
+                                                {"}", k_noChild}};
+constexpr static LatexTokenChild operatorToken[] = {{"\\operatorname{", 0},
+                                                    {"}", k_noChild}};
 constexpr static LatexTokenChild spaceToken[] = {{" ", k_noChild}};
 /* TODO: Currently we are working with MathQuill which doesn't recognize the
  * special characters spacings. See
@@ -180,8 +181,8 @@ constexpr static LatexTokenChild spaceToken[] = {{" ", k_noChild}};
 /* constexpr static LatexToken commaToken = {
     { ",",  k_noChild}}; */
 constexpr static LatexTokenChild escapeToken[] = {{"\\", k_noChild}};
-constexpr static LatexTokenChild leftBraceToken[] = {{"{", k_noChild}};
-constexpr static LatexTokenChild rightBraceToken[] = {{"}", k_noChild}};
+constexpr static LatexTokenChild systemBraceToken[] = {{"{", 0},
+                                                       {"}", k_noChild}};
 
 using LayoutDetector = bool (*)(const Tree*);
 using EmptyLayoutBuilder = Tree* (*)();
@@ -222,11 +223,11 @@ struct LatexLayoutRule {
         []() -> Tree* { return KCodePointL<CODEPOINT>()->cloneTree(); } \
   }
 
-#define DO_NOTHING_RULE(LATEX_TOKEN)                 \
-  {                                                  \
-    LATEX_TOKEN, std::size(LATEX_TOKEN),             \
-        [](const Tree* t) -> bool { return false; }, \
-        []() -> Tree* { return nullptr; }            \
+#define DO_NOTHING_RULE(LATEX_TOKEN)                    \
+  {                                                     \
+    LATEX_TOKEN, std::size(LATEX_TOKEN),                \
+        [](const Tree* t) -> bool { return false; },    \
+        []() -> Tree* { return KRackL()->cloneTree(); } \
   }
 
 bool IsDerivativeLayout(const Tree* l, bool withoutOrder, bool withoutVariable);
@@ -335,8 +336,7 @@ constexpr static LatexLayoutRule k_rules[] = {
     DO_NOTHING_RULE(spaceToken),
     // DO_NOTHING_RULE(commaToken),
     DO_NOTHING_RULE(escapeToken),
-    DO_NOTHING_RULE(leftBraceToken),
-    DO_NOTHING_RULE(rightBraceToken),
+    DO_NOTHING_RULE(systemBraceToken),
 };
 
 // ===== Latex to Layout ======
@@ -350,7 +350,7 @@ void ParseLatexOnRackUntilDelimiter(Rack* parent, const char** start,
                           strncmp(*start, rightDelimiter, delimiterLen) != 0)) {
     Tree* child = NextLatexToken(start, rightDelimiter);
     if (child) {
-      NAry::AddChild(parent, child);
+      NAry::AddOrMergeChild(parent, child);
     }
   }
 }
@@ -359,6 +359,14 @@ bool CustomBuildLayoutChildFromLatex(const char** latexString,
                                      const LatexLayoutRule& rule,
                                      int indexInLatexToken, Tree* parentLayout,
                                      const char* parentRightDelimiter);
+
+Tree* ChildRackAtIndex(Tree* parent, int index) {
+  if (parent->isRackLayout()) {
+    assert(index == 0);
+    return parent;
+  }
+  return parent->child(index);
+}
 
 Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
   bool atLeastOneRuleMatched = false;
@@ -399,20 +407,22 @@ Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
         if (indexInLayout == k_noChild) {
           continue;
         }
-        assert(indexInLayout >= 0 &&
-               indexInLayout < parentLayout->numberOfChildren());
+        assert((parentLayout->isRackLayout() && indexInLayout == 0) ||
+               indexInLayout >= 0 &&
+                   (indexInLayout < parentLayout->numberOfChildren()));
         assert(i < rule.latexTokenSize - 1);
         Tree* result = KRackL()->cloneTree();
         const char* rightDelimiter = latexToken[i + 1].leftDelimiter;
         ParseLatexOnRackUntilDelimiter(Rack::From(result), start,
                                        rightDelimiter);
 
+        // --- Step 3. Check if child was already parsed earlier ---
         bool wasAlreadyParsedElsewhere = false;
         for (int j = 0; j < i; j++) {
           if (latexToken[j].indexInLayout == indexInLayout) {
             wasAlreadyParsedElsewhere = true;
             if (!result->treeIsIdenticalTo(
-                    parentLayout->child(indexInLayout))) {
+                    ChildRackAtIndex(parentLayout, indexInLayout))) {
               /* The child was already parsed elsewhere, but the result is
                * different. Thus the latex is invalid.
                * Ex: "\frac{d^{3}}{dx^{4}}x"
@@ -423,8 +433,10 @@ Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
             }
           }
         }
+        // --- Step 4. Clone child ---
         if (!wasAlreadyParsedElsewhere) {
-          parentLayout->child(indexInLayout)->cloneTreeOverTree(result);
+          ChildRackAtIndex(parentLayout, indexInLayout)
+              ->cloneTreeOverTree(result);
         }
       }
 
@@ -784,7 +796,7 @@ void BuildIntegrandChildFromLatex(const char** latexString,
     // Parse the content of the integrand
     Tree* child = NextLatexToken(latexString, "");
     if (child) {
-      NAry::AddChild(integrandRack, child);
+      NAry::AddOrMergeChild(integrandRack, child);
     }
   }
 

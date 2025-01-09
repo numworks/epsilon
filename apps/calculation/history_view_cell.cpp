@@ -143,7 +143,7 @@ View* HistoryViewCell::subviewAtIndex(int index) {
    * However, the order determines the order of redrawing as well. For several
    * reasons listed after, changing subview selection often redraws the entire
    * m_scrollableOutputView even if it seems unecessary:
-   * - Before feeding new Layouts to LayoutViews, we reset the hold layouts
+   * - Before feeding new Layouts to LayoutViews, we reset the old layouts
    *   in order to empty the Poincare pool and have more space to compute new
    *   layouts.
    * - Even if we did not do that, LayoutView::setLayout doesn't avoid

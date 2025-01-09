@@ -32,8 +32,8 @@ void HistoryController::reload() {
     m_calculationStore->deleteCalculationAtIndex(
         m_calculationStore->numberOfCalculations() - 1);
   }
-  /* When reloading, we might not used anymore cell that hold previous layouts.
-   * We clean them all before reloading their content to avoid taking extra
+  /* When reloading, we might not use anymore some cells that hold previous
+   * layouts. We clean them all before reloading their content to avoid taking
    * useless space in the Poincare pool. */
   for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
     m_calculationHistory[i].resetMemoization();

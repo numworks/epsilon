@@ -45,7 +45,7 @@ struct KTreesImplementation {
   /* The KTree template class is the compile time representation of a constexpr
    * tree. Its complete block representation is specified as template parameters
    * in order to be able to use the address of the static singleton (in flash)
-   * as a Tree*. It also eliminated identical trees since their are all using
+   * as a Tree*. It also eliminated identical trees since they are all using
    * the same specialized function. */
   template <Block... Blocks>
   struct KTree : public AbstractKTree {

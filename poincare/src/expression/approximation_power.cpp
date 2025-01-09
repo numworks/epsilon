@@ -143,7 +143,7 @@ std::complex<T> ApproximatePower(const Tree* power, const Context* ctx,
       q = Rational::Denominator(exponent).to<T>();
     }
     /* If the power has been simplified (reduced + beautified), we look for an
-     * index of the for Division(Rational,Rational). */
+     * index of the form Division(Rational,Rational). */
     if (exponent->isDiv() && exponent->child(0)->isInteger() &&
         exponent->child(1)->isInteger()) {
       p = PrivateTo<T>(exponent->child(0), ctx);

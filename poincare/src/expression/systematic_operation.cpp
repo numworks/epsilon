@@ -16,6 +16,64 @@
 
 namespace Poincare::Internal {
 
+static bool SplitRadical(const Tree* e, const Tree** a, const Tree** b) {
+  // Find a and b such that e = a√b, with a and b rationals
+  PatternMatching::Context ctx;
+  if (e->isRational()) {
+    // A -> A*√(1)
+    *a = e;
+    *b = 1_e;
+  } else if (PatternMatching::Match(
+                 e, KMult(KA_s, KExp(KMult(1_e / 2_e, KLn(KB)))), &ctx) &&
+             ctx.getTree(KB)->isRational()) {
+    if (ctx.getNumberOfTrees(KA) == 0) {
+      // √(A) -> 1*√(A)
+      *a = 1_e;
+    } else if (ctx.getNumberOfTrees(KA) == 1 && ctx.getTree(KA)->isRational()) {
+      // General case A√(B)
+      *a = ctx.getTree(KA);
+    } else {
+      return false;
+    }
+    *b = ctx.getTree(KB);
+  } else {
+    return false;
+  }
+
+  return true;
+}
+
+static bool ReduceRadicalsInDenominator(Tree* e) {
+  // 1/(a√b+c√d) = (a√b-c√d)/(a^2*b-c^2*d) if a^2*b ≠ c^2*d
+  PatternMatching::Context ctx;
+  const Tree* a;
+  const Tree* b;
+  const Tree* c;
+  const Tree* d;
+  if (PatternMatching::Match(e, KPow(KAdd(KA, KB), -1_e), &ctx) &&
+      SplitRadical(ctx.getTree(KA), &a, &b) &&
+      SplitRadical(ctx.getTree(KB), &c, &d)) {
+    assert(a && b && c && d);
+    assert(!(b->isOne() && d->isOne()));
+    Tree* denominator = PatternMatching::CreateSimplify(
+        KAdd(KMult(KPow(KA, 2_e), KB), KMult(KPow(KC, 2_e), KD, -1_e)),
+        {.KA = a, .KB = b, .KC = c, .KD = d});
+    if (denominator->isZero()) {
+      denominator->removeTree();
+      return false;
+    }
+    TreeRef result = PatternMatching::CreateSimplify(
+        KMult(KAdd(KMult(KA, KPow(KB, 1_e / 2_e)),
+                   KMult(KC, KPow(KD, 1_e / 2_e), -1_e)),
+              KPow(KE, -1_e)),
+        {.KA = a, .KB = b, .KC = c, .KD = d, .KE = denominator});
+    denominator->removeTree();
+    e->moveTreeOverTree(result);
+    return true;
+  }
+  return false;
+}
+
 bool SystematicOperation::ReducePower(Tree* e) {
   assert(e->isPow());
   // base^n
@@ -184,7 +242,9 @@ bool SystematicOperation::ReducePower(Tree* e) {
                                             KExp(KMult(KA, KB))) ||
       // sign(x)^-1 -> dep(sign(x), {x^-1})
       PatternMatching::MatchReplaceSimplify(
-          e, KPow(KSign(KA), -1_e), KDep(KSign(KA), KDepList(KPow(KA, -1_e))));
+          e, KPow(KSign(KA), -1_e),
+          KDep(KSign(KA), KDepList(KPow(KA, -1_e)))) ||
+      ReduceRadicalsInDenominator(e);
 }
 
 void SystematicOperation::ConvertPowerRealToPower(Tree* e) {
@@ -475,34 +535,6 @@ bool SystematicOperation::ReduceDim(Tree* e) {
     return true;
   }
   return List::ShallowApplyListOperators(e);
-}
-
-static bool SplitRadical(const Tree* e, const Tree** a, const Tree** b) {
-  // Find a and b such that e = a√b, with a and b rationals
-
-  PatternMatching::Context ctx;
-  if (e->isRational()) {
-    // A -> A*√(1)
-    *a = e;
-    *b = 1_e;
-  } else if (PatternMatching::Match(
-                 e, KMult(KA_s, KExp(KMult(1_e / 2_e, KLn(KB)))), &ctx) &&
-             ctx.getTree(KB)->isRational()) {
-    if (ctx.getNumberOfTrees(KA) == 0) {
-      // √(A) -> 1*√(A)
-      *a = 1_e;
-    } else if (ctx.getNumberOfTrees(KA) == 1 && ctx.getTree(KA)->isRational()) {
-      // General case A√(B)
-      *a = ctx.getTree(KA);
-    } else {
-      return false;
-    }
-    *b = ctx.getTree(KB);
-  } else {
-    return false;
-  }
-
-  return true;
 }
 
 static bool ReduceNestedRadicals(Tree* e) {

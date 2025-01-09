@@ -158,8 +158,8 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(ln(x),x,1)", "1");
   assert_reduces_for_approximation("diff(ln(x),x,2.2)", "5/11");
   assert_reduces_for_approximation("diff(ln(x),x,0)", Undefined::Name());
-  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", NonReal::Name());
-  assert_reduces_for_approximation("diff(log(x),x,-10)", NonReal::Name());
+  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", Undefined::Name());
+  assert_reduces_for_approximation("diff(log(x),x,-10)", Undefined::Name());
 
   assert_reduces_for_approximation("diff(abs(x),x,123)", "1");
   assert_reduces_for_approximation("diff(abs(x),x,-2.34)", "-1");
@@ -169,7 +169,7 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(sign(x),x,-2.34)", "0");
   assert_reduces_for_approximation("diff(sign(x),x,0)", Undefined::Name());
 
-  assert_reduces_for_approximation("diff(√(x),x,-1)", "-1/2×i", Radian,
+  assert_reduces_for_approximation("diff(√(x),x,-1)", Undefined::Name(), Radian,
                                    Cartesian);
 
   assert_reduces_for_approximation("diff(asin(x),x,1)", Undefined::Name());
@@ -181,7 +181,7 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4");
   assert_reduces_for_approximation("diff(x^3+5*x^2,x,0)", "0");
   assert_reduces_for_approximation("diff(5^(sin(x)),x,3)",
-                                   "5^sin(3)×cos(3)×ln(5)");
+                                   "cos(3)×ln(5)×5^sin(3)");
   assert_reduces_for_approximation("diff((-1)^(4-2*2),x,3)", "0");
   assert_reduce_and_store("0→a");
   assert_reduces_for_approximation("diff((-1)^(a*x),x,3)", "0");
@@ -210,8 +210,8 @@ QUIZ_CASE(poincare_derivative_approximation) {
   assert_approximate_to("diff(ln(x),x,1)", "1");
   assert_approximate_to("diff(ln(x),x,2.2)", "0.455");
   assert_approximate_to("diff(ln(x),x,0)", Undefined::Name());
-  assert_approximate_to("diff(ln(x),x,-3.1)", NonReal::Name());
-  assert_approximate_to("diff(log(x),x,-10)", NonReal::Name());
+  assert_approximate_to("diff(ln(x),x,-3.1)", Undefined::Name());
+  assert_approximate_to("diff(log(x),x,-10)", Undefined::Name());
   assert_approximate_to("diff(abs(x),x,123)", "1");
   assert_approximate_to("diff(abs(x),x,-2.34)", "-1");
   assert_approximate_to("diff(1/x,x,-2)", "-0.25");

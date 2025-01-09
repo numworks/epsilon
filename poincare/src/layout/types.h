@@ -3,9 +3,9 @@ NODE(RackSimple, NARY16)
 /* RackMemoized is a RackSimple with a struct to store its computed baseline and
  * size. It is used only temporarily inside Render methods. */
 NODE(RackMemoized, NARY16, {
-  uint16_t width;
-  uint16_t height;
-  uint16_t baseline;
+  OMG::unaligned_uint16_t width;
+  OMG::unaligned_uint16_t height;
+  OMG::unaligned_uint16_t baseline;
 })
 RANGE(RackLayout, RackSimpleLayout, RackMemoizedLayout)
 #endif

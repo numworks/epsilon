@@ -1528,8 +1528,10 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("3^(3/2)/(3^(7/2))", "1/9");
   simplifies_to("3^(π/2)/(3^(e/2))", "3^(π/2-e/2)");  // "3^((π-e)/2)"
   // 1/(√a+√b) => (√a-√b)/(a-b)
-  simplifies_to("1/(√(3)+√(5))", "1/(√(3)+√(5))");  // "(√(3)-√(5))/2"
-  simplifies_to("1/(√(3)-√(5))", "1/(√(3)-√(5))");  // "-(√(3)+√(5))/2"
+  simplifies_to("1/(√(3)+√(5))",
+                "-(√(3)-√(5))/2");  // TODO: Metric "(√(3)-√(5))/2"
+  simplifies_to("1/(√(3)-√(5))", "-(√(3)+√(5))/2");
+  simplifies_to("1/(√(120)+2√(30))", "1/(2×√(30)+√(120))");  // "√(30)/120"
   // 1/√a => √a/a
   simplifies_to("1/√(3)", "√(3)/3");
   // TODO: Maybe we want to limit rational power simplification to ration bases.

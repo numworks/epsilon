@@ -884,8 +884,7 @@ bool NewExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
           *hasAngleUnits = true;
         }
         return (e.tree()->isUnitOrPhysicalConstant() &&
-                (!pack->ignoreAngleUnits || !isAngleUnit)) ||
-               e.tree()->isPhysicalConstant();
+                (!pack->ignoreAngleUnits || !isAngleUnit));
       },
       ctx,
       replaceSymbols ? SymbolicComputation::ReplaceDefinedSymbols

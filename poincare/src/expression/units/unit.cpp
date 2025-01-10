@@ -1098,17 +1098,17 @@ bool Unit::ApplyAutomaticInputDisplay(Tree* e, TreeRef& inputUnits) {
 bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
                                   Dimension dimension, UnitFormat unitFormat) {
   SIVector vector = dimension.unit.vector;
-  if ((vector.supportSize() != 1 ||
-       !(vector.distance == 2 || vector.distance == 3 || vector.angle == 1 ||
-         vector.temperature == 1)) &&
-      (vector.supportSize() != 2 ||
-       !(vector.distance == 1 && vector.time == -1))) {
-    // Only surfaces, volumes, angles, temperatures and speeds are concerned
+  bool isSurface = vector.supportSize() == 1 && vector.distance == 2;
+  bool isVolume = vector.supportSize() == 1 && vector.distance == 3;
+  bool isAngle = vector.supportSize() == 1 && vector.angle == 1;
+  bool isTemperature = vector.supportSize() == 1 && vector.temperature == 1;
+  bool isSpeed =
+      vector.supportSize() == 2 && vector.distance == 1 && vector.time == -1;
+  if (!isSurface && !isVolume && !isAngle && !isTemperature && !isSpeed) {
     inputUnits->removeTree();
     return false;
   }
 
-  bool isVolume = (vector.distance == 3);
   bool hasDistanceUnit = inputUnits->hasDescendantSatisfying([](const Tree* e) {
     return e->isUnit() &&
            GetRepresentative(e)->siVector() == Distance::Dimension;
@@ -1122,23 +1122,24 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   const Representative* targetRepresentative;
   Tree* units;
   bool optimizePrefix = true;
-  if (vector.temperature == 1) {
+  if (isTemperature) {
     // Equivalence to °C and °F
     targetRepresentative = isImperial ? &Temperature::representatives.fahrenheit
                                       : &Temperature::representatives.celsius;
     units = Push(targetRepresentative, Prefix::EmptyPrefix());
+    assert(e->nextTree() == units);
     e->moveTreeOverTree(
         SharedTreeStack->pushDoubleFloat(KelvinValueToRepresentative(
             Approximation::To<double>(e, Approximation::Parameters{}),
             targetRepresentative)));
     e->cloneNodeAtNode(KMult.node<2>);
     return true;
-  } else if (vector.angle == 1) {
+  } else if (isAngle) {
     // Equivalence to °
     targetRepresentative = &Angle::representatives.degree;
     units = Push(targetRepresentative, Prefix::EmptyPrefix());
     optimizePrefix = false;
-  } else if (vector.distance == 1 && vector.time == -1) {
+  } else if (isSpeed) {
     if (hasHours) {
       // Equivalence to mph and km/h
       targetRepresentative = isImperial ? &Distance::representatives.mile
@@ -1155,9 +1156,7 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     } else {
       return false;
     }
-  } else {
-    assert(vector.supportSize() == 1 &&
-           (vector.distance == 2 || vector.distance == 3));
+  } else if (isSurface || isVolume) {
     // TODO: Maybe handle intermediary cases where multiple units are involved.
     // L <--> m3, ha <--> m2, gal <--> ft3, acre <--> ft2
     if (hasDistanceUnit) {
@@ -1178,6 +1177,8 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
       Push(targetRepresentative, Prefix::EmptyPrefix());
       Integer::Push(isVolume ? 3 : 2);
     }
+  } else {
+    OMG::unreachable();
   }
   assert(e->nextTree() == units);
   // Select best prefix

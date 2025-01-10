@@ -9,8 +9,6 @@ enum class TypeEnum : uint16_t {
  * NODE(Fraction) in layout.h => FractionLayout,
  */
 #define NODE_USE(F, N, S) SCOPED_NODE(F),
-#include "types.h"
-  DisabledTypesMarker = 256,
 #define UNDEF_NODE_USE(F) SCOPED_NODE(F),
 #include "types.h"
 };
@@ -25,8 +23,9 @@ struct AnyType {
 namespace Type {
 #define NODE_USE(F, N, S) \
   constexpr AnyType SCOPED_NODE(F){TypeEnum::SCOPED_NODE(F)};
-#define UNDEF_NODE_USE(F) \
-  constexpr AnyType SCOPED_NODE(F){TypeEnum::SCOPED_NODE(F)};
+#define UNDEF_NODE_USE(F)                                 \
+  constexpr AnyType SCOPED_NODE(F){static_cast<TypeEnum>( \
+      256 + static_cast<uint16_t>(TypeEnum::SCOPED_NODE(F)))};
 #include "types.h"
 };  // namespace Type
 

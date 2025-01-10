@@ -44,6 +44,20 @@ namespace CustomTypeStructs {
 #include "types.h"
 }  // namespace CustomTypeStructs
 
+consteval bool rangeIsDisabled(uint8_t first, uint8_t last) {
+  constexpr const bool isEnabled[] = {
+#define NODE_USE(F, N, S) true,
+#define UNDEF_NODE_USE(F) false,
+#include "types.h"
+  };
+  for (uint8_t i = first; i <= last; i++) {
+    if (isEnabled[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 class TypeBlock : public Block {
  public:
   constexpr TypeBlock(AnyType content) : Block(static_cast<uint8_t>(content)) {
@@ -68,16 +82,19 @@ class TypeBlock : public Block {
   };
 #endif
 
-  // TODO: discard the range if all the types are undefined
   // Add methods like IsNumber(type) and .isNumber to test range membership
-#define RANGE(NAME, FIRST, LAST)                            \
-  static constexpr bool Is##NAME(EnabledType type) {        \
-    static_assert(static_cast<int>(Type::FIRST) <=          \
-                  static_cast<int>(Type::LAST));            \
-    return static_cast<int>(Type::FIRST) <= (type % 256) && \
-           (type % 256) <= static_cast<int>(Type::LAST);    \
-  }                                                         \
-                                                            \
+#define RANGE(NAME, FIRST, LAST)                                        \
+  static constexpr bool Is##NAME(EnabledType type) {                    \
+    constexpr uint8_t firstIndex = static_cast<int>(Type::FIRST) % 256; \
+    constexpr uint8_t lastIndex = static_cast<int>(Type::LAST) % 256;   \
+    static_assert(firstIndex <= lastIndex);                             \
+    if constexpr (rangeIsDisabled(firstIndex, lastIndex)) {             \
+      return false;                                                     \
+    } else {                                                            \
+      return firstIndex <= type && type <= lastIndex;                   \
+    }                                                                   \
+  }                                                                     \
+                                                                        \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
 
 #define UNDEF_RANGE(NAME, FIRST, LAST)                               \
@@ -98,7 +115,7 @@ class TypeBlock : public Block {
     return N == NARY2D ? 3 : N == NARY ? 2 : N == NARY16 ? 3 : 1;
   }
 
-  // Add casts to custom node structs
+// Add casts to custom node structs
 #define CAST_(F, N, T)                                    \
   CustomTypeStructs::F* to##F() {                         \
     /* assert(type() == static_cast<int>(Type::T)); */    \
@@ -252,7 +269,7 @@ class TypeBlock : public Block {
         return 0;
     }
   }
-};
+};  // namespace Poincare::Internal
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));
 

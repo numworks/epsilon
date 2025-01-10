@@ -160,6 +160,7 @@ bool Projection::IsForbidden(const Tree* e) {
   Poincare::ExamMode examMode =
       Poincare::Preferences::SharedPreferences()->examMode();
   switch (e->type()) {
+    case Type::PhysicalConstant:
     case Type::Unit:
       return examMode.forbidUnits();
     case Type::LogBase:

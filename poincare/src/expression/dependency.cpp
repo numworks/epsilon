@@ -283,6 +283,8 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   assert(set->isDepList());
   bool changed = false;
   Tree* depI = set->child(0);
+  /* TODO: refactor this for-loop to avoid changing the index ("i--") while in
+   * the loop, which is error-prone */
   for (int i = 0; i < set->numberOfChildren(); i++) {
     if (depI->isReal() && GetComplexSign(depI->child(0)).isReal()) {
       // dep(..., {real(x)}) = dep(..., {x}) if x is real
@@ -314,6 +316,7 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
       // dep(..., {x^-r}) = dep(..., {nonNull(x)}) with r rational > 0
       depI->child(1)->removeTree();
       depI->cloneNodeOverNode(KNonNull);
+      i--;
       changed = true;
       continue;
 
@@ -365,6 +368,7 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
         child = child->nextTree();
       }
       mult->removeNode();
+      i--;
       NAry::SetNumberOfChildren(set, set->numberOfChildren() + n - 1);
       changed = true;
       continue;

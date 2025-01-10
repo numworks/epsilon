@@ -3,7 +3,6 @@
 
 #include <poincare/expression.h>
 #include <poincare/old/context.h>
-#include <poincare/src/memory/tree.h>
 
 namespace Poincare {
 

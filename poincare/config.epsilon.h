@@ -21,6 +21,8 @@
 #define POINCARE_TRIGONOMETRY_ADVANCED 1
 #define POINCARE_TRIGONOMETRY_HYPERBOLIC 1
 
+#define POINCARE_COMPLEX_BUILTINS 1
+
 // Matrix and matrix operations blocks
 #define POINCARE_MATRIX 1
 

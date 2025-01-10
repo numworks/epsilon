@@ -142,9 +142,13 @@ class InputBeautification {
       ruleHelper<Type::Binomial, Type::BinomialLayout>(),
       /* ceil( */
       ruleHelper<Type::Ceil, Type::CeilLayout>(),
+#if POINCARE_COMPLEX_BUILTINS
       /* conj( */
       ruleHelper<Type::Conj, Type::ConjLayout>(),
+#endif
+#if POINCARE_DIFF
       /* diff( */ k_derivativeRule,
+#endif
       {/* exp( */
        "exp", 1,
        [](TreeRef* parameters) -> Tree* {
@@ -155,6 +159,7 @@ class InputBeautification {
       /* floor( */
       ruleHelper<Type::Floor, Type::FloorLayout>(),
       /* inf */ k_infRule,
+#if POINCARE_INTEGRAL
       {/* int( */
        "int", 4,
        [](TreeRef* parameters) -> Tree* {
@@ -168,6 +173,7 @@ class InputBeautification {
          }
          return integral;
        }},
+#endif
 #if POINCARE_MATRIX
       /* norm( */
       ruleHelper<Type::Norm, Type::VectorNormLayout>(),
@@ -193,6 +199,7 @@ class InputBeautification {
          return ref;
        }},
 #endif
+#if POINCARE_SUM_AND_PRODUCT
       {/* product( */
        "product", 4,
        [](TreeRef* parameters) -> Tree* {
@@ -207,6 +214,7 @@ class InputBeautification {
          }
          return product;
        }},
+#endif
       /* root( */
       ruleHelper<Type::Root, Type::RootLayout>(),
       /* sqrt( */

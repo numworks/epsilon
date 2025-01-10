@@ -349,6 +349,9 @@ bool InputBeautification::BeautifyPipeKey(Tree* rack, int indexOfPipeKey,
 
 bool InputBeautification::BeautifyFractionIntoDerivative(
     Tree* rack, int indexOfFraction, LayoutCursor* layoutCursor) {
+#if !POINCARE_DIFF
+  return false;
+#else
   assert(indexOfFraction >= 0 &&
          indexOfFraction < rack->numberOfChildren() - 1 &&
          rack->child(indexOfFraction + 1)->isParenthesesLayout());
@@ -359,10 +362,14 @@ bool InputBeautification::BeautifyFractionIntoDerivative(
   }
   return RemoveLayoutsBetweenIndexAndReplaceWithPattern(
       rack, indexOfFraction, indexOfFraction, k_derivativeRule, layoutCursor);
+#endif
 }
 
 bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
     Tree* rack, int indexOfSuperscript, LayoutCursor* layoutCursor) {
+#if !POINCARE_DIFF
+  return false;
+#else
   TreeRef superscript = rack->child(indexOfSuperscript);
   if (!superscript->isVerticalOffsetLayout() ||
       !VerticalOffset::IsSuffixSuperscript(superscript)) {
@@ -389,11 +396,15 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
   }
   firstOrderDerivative->cloneNodeOverNode(KNthDiffL);
   return true;
+#endif
 }
 
 bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
                                       Poincare::Context* context,
                                       LayoutCursor* layoutCursor) {
+#if !POINCARE_SUM_AND_PRODUCT
+  return false;
+#else
   /* The "sum(" function is ambiguous". It can either be:
    *  - The sum of a list, which should not be beautified.
    *  - The sum between k and n, which should be beautified.
@@ -452,6 +463,7 @@ bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
     }
   }
   return result;
+#endif
 }
 
 bool InputBeautification::CompareAndBeautifyIdentifier(

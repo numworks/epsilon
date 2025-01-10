@@ -107,18 +107,22 @@ constexpr static Builtin s_builtins[] = {
     {Type::ACos, BuiltinsAliases::k_acosAliases},
     {Type::ASin, BuiltinsAliases::k_asinAliases},
     {Type::ATan, BuiltinsAliases::k_atanAliases},
+#if POINCARE_TRIGONOMETRY_ADVANCED
     {Type::Sec, "sec"},
     {Type::Csc, "csc"},
     {Type::Cot, "cot"},
     {Type::ASec, "arcsec"},
     {Type::ACsc, "arccsc"},
     {Type::ACot, "arccot"},
+#endif
+#if POINCARE_TRIGONOMETRY_HYPERBOLIC
     {Type::CosH, "cosh"},
     {Type::SinH, "sinh"},
     {Type::TanH, "tanh"},
     {Type::ArCosH, "arcosh"},
     {Type::ArSinH, "arsinh"},
     {Type::ArTanH, "artanh"},
+#endif
     {Type::Exp, "exp"},
     {Type::LogBase, "log"},
     {Type::Log, "log"},
@@ -135,9 +139,11 @@ constexpr static Builtin s_builtins[] = {
     {Type::Trace, "trace"},
     {Type::Transpose, "transpose"},
 #endif
+#if POINCARE_COMPLEX_BUILTINS
     {Type::Arg, "arg"},
     {Type::Re, "re"},
     {Type::Im, "im"},
+#endif
     {Type::GCD, "gcd"},
     {Type::LCM, "lcm"},
     {Type::Quo, "quo"},
@@ -161,8 +167,12 @@ constexpr static Builtin s_builtins[] = {
 #endif
     {Type::Random, "random"},
     {Type::RandInt, "randint"},
+#if POINCARE_LIST
     {Type::RandIntNoRep, "randintnorep"},
+#endif
+#if POINCARE_DIFF
     {Type::Diff, "diff"},  // 2D layout is special
+#endif
 #if POINCARE_PIECEWISE
     {Type::Piecewise, "piecewise"},  // 2D layout is a grid
 #endif
@@ -175,15 +185,21 @@ constexpr static Builtin s_builtins[] = {
 constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
     {Type::Abs, "abs", LayoutType::Abs},
     {Type::Binomial, "binomial", LayoutType::Binomial},
+#if POINCARE_SUM_AND_PRODUCT
     {Type::Sum, "sum", LayoutType::Sum},
     {Type::Product, "product", LayoutType::Product},
+#endif
+#if POINCARE_INTEGRAL
     {Type::Integral, "int", LayoutType::Integral},
+#endif
     {Type::Sqrt, BuiltinsAliases::k_squareRootAliases, LayoutType::Sqrt},
     {Type::Root, "root", LayoutType::Root},
 #if POINCARE_MATRIX
     {Type::Norm, "norm", LayoutType::VectorNorm},
 #endif
+#if POINCARE_COMPLEX_BUILTINS
     {Type::Conj, "conj", LayoutType::Conj},
+#endif
     {Type::Ceil, "ceil", LayoutType::Ceil},
     {Type::Floor, "floor", LayoutType::Floor},
 #if POINCARE_LIST

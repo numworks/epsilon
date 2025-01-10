@@ -364,7 +364,12 @@ std::complex<T> Private::UndefDependencies(const Tree* dep,
 
 template <typename T>
 std::complex<T> Private::PrivateToComplex(const Tree* e, const Context* ctx) {
+#if POINCARE_NO_FLOAT_APPROXIMATION
+  std::complex<T> value;
+  value = ToComplexSwitch<double>(e, ctx);
+#else
   std::complex<T> value = ToComplexSwitch<T>(e, ctx);
+#endif
   if (ctx && ctx->m_complexFormat == ComplexFormat::Real && value.imag() != 0 &&
       !(Undefined::IsUndefined(value)) && !e->isComplexI()) {
     /* Some operations in reduction can introduce i, but when complex format is

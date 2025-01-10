@@ -55,25 +55,25 @@ RANGE(Pair, AbsLayout, CurlyBracesLayout)
 
 // TODO CondensedSum could draw the sigma symbol and have two children
 // CondensedSum(sumSymbol, start, end)
-NODE(CondensedSum, BASE, 3)
+NODE(CondensedSum, SUM_AND_PRODUCT, 3)
 
 // Diff(Symbol, SymbolValue, Order, Derivand)
 /* FIXME isNthDerivative wastes an extra metablock so it can be initialized by
  * the ktree */
-NODE(Diff, BASE, 4, {
+NODE(Diff, DIFF, 4, {
   bool cursorIsOnTheLeft : 1;
   bool cursorIsOnTheBottom : 1;
   bool isNthDerivative;
 })
 
 // Integral(Symbol, LowerBound, UpperBound, Integrand)
-NODE(Integral, BASE, 4)
+NODE(Integral, INTEGRAL, 4)
 
 // Product(Symbol, LowerBound, UpperBound, Function)
-NODE(Product, BASE, 4)
+NODE(Product, SUM_AND_PRODUCT, 4)
 
 // Sum(Symbol, LowerBound, UpperBound, Function)
-NODE(Sum, BASE, 4)
+NODE(Sum, SUM_AND_PRODUCT, 4)
 
 // TODO replace by subscript ?
 // Sequence(Symbol, SymbolMax, Function)

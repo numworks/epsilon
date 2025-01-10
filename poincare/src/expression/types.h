@@ -231,23 +231,23 @@ NODE(Var, BASE, 0, {
 // 4 - Parametric types
 
 // Sum(Symbol, LowerBound, UpperBound, Function)
-NODE(Sum, BASE, 4)
+NODE(Sum, SUM_AND_PRODUCT, 4)
 
 // Product(Symbol, LowerBound, UpperBound, Function)
-NODE(Product, BASE, 4)
+NODE(Product, SUM_AND_PRODUCT, 4)
 
 // Diff(Symbol, SymbolValue, Order, Derivand)
-NODE(Diff, BASE, 4)
+NODE(Diff, DIFF, 4)
 
 // Integral(Symbol, LowerBound, UpperBound, Integrand)
-NODE(Integral, BASE, 4)
+NODE(Integral, INTEGRAL, 4)
 
 // Integral(Symbol, LowerBound, UpperBound, Integrand,
 //          IntegrandNearLowerBound, IntegrandNearUpperBound)
-NODE(IntegralWithAlternatives, BASE, 6)
+NODE(IntegralWithAlternatives, INTEGRAL, 6)
 
 // Sequence(Symbol, SymbolMax, Function)
-NODE(ListSequence, BASE, 3)
+NODE(ListSequence, LIST, 3)
 
 RANGE(Parametric, Sum, ListSequence)
 

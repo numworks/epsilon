@@ -14,6 +14,10 @@
 // User sequence node
 #define POINCARE_SEQUENCE 1
 
+#define POINCARE_SUM_AND_PRODUCT 1
+#define POINCARE_DIFF 1
+#define POINCARE_INTEGRAL 1
+
 // Matrix and matrix operations blocks
 #define POINCARE_MATRIX 1
 

@@ -228,8 +228,13 @@ constexpr KDCoordinate k_heightMargin = 2;
 constexpr KDCoordinate k_widthMargin = 2;
 constexpr KDCoordinate k_radixLineThickness = 1;
 
+#if POINCARE_SCANDIUM_LAYOUTS
+constexpr KDCoordinate k_leftRadixHeight = 6;
+constexpr KDCoordinate k_leftRadixWidth = 3;
+#else
 constexpr KDCoordinate k_leftRadixHeight = 9;
 constexpr KDCoordinate k_leftRadixWidth = 5;
+#endif
 
 inline KDSize AdjustedIndexSize(const Layout* node, KDFont::Size font) {
   return node->isSqrtLayout()

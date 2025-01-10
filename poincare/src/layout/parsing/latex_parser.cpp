@@ -341,16 +341,16 @@ constexpr static LatexLayoutRule k_rules[] = {
 
 // ===== Latex to Layout ======
 
-Tree* NextLatexToken(const char** start, const char* parentRightDelimiter);
+Tree* NextLatexToken(const char** start, const char* rightDelimiter);
 
-void ParseLatexOnRackUntilDelimiter(Rack* parent, const char** start,
+void ParseLatexOnRackUntilDelimiter(Rack* rack, const char** start,
                                     const char* rightDelimiter) {
   size_t delimiterLen = strlen(rightDelimiter);
   while (**start != 0 && (delimiterLen == 0 ||
                           strncmp(*start, rightDelimiter, delimiterLen) != 0)) {
     Tree* child = NextLatexToken(start, rightDelimiter);
     if (child) {
-      NAry::AddOrMergeChild(parent, child);
+      NAry::AddOrMergeChild(rack, child);
     }
   }
 }
@@ -360,15 +360,26 @@ bool CustomBuildLayoutChildFromLatex(const char** latexString,
                                      int indexInLatexToken, Tree* parentLayout,
                                      const char* parentRightDelimiter);
 
-Tree* ChildRackAtIndex(Tree* parent, int index) {
-  if (parent->isRackLayout()) {
+/* This method is used to get a Rack inside a built layout and replace it with a
+ * parsed child.
+ * The layout is either:
+ * - A normal layout, in which case the RackAtIndex is the child at index in the
+ * layout.
+ * - A rack layout, in which case the RackAtIndex is the rack itself and the
+ * index must be 0.
+ * This is useful for DO_NOTHING_RULE, where the layout generated is a Rack,
+ * which should be replaced by the parsed child, instead of having its children
+ * replaced.
+ */
+Tree* RackAtIndex(Tree* layout, int index) {
+  if (layout->isRackLayout()) {
     assert(index == 0);
-    return parent;
+    return layout;
   }
-  return parent->child(index);
+  return layout->child(index);
 }
 
-Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
+Tree* NextLatexToken(const char** start, const char* rightDelimiter) {
   bool atLeastOneRuleMatched = false;
 
   for (const LatexLayoutRule& rule : k_rules) {
@@ -382,47 +393,48 @@ Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
     const char* currentStart = *start;
 
     ExceptionTry {
-      Tree* parentLayout = rule.buildEmptyLayout();
+      Tree* resultLayout = rule.buildEmptyLayout();
 
       // Parse children
       for (int i = 0; i < rule.latexTokenSize; i++) {
         // Check for custom parsing of child
-        if (CustomBuildLayoutChildFromLatex(start, rule, i, parentLayout,
-                                            parentRightDelimiter)) {
+        if (CustomBuildLayoutChildFromLatex(start, rule, i, resultLayout,
+                                            rightDelimiter)) {
           continue;
         }
 
         // Classic parsing
         // --- Step 1. Skip left delimiter ---
-        const char* leftDelimiter = latexToken[i].leftDelimiter;
-        int leftDelimiterLength = strlen(leftDelimiter);
-        if (strncmp(*start, leftDelimiter, leftDelimiterLength) != 0) {
+        const char* childLeftDelimiter = latexToken[i].leftDelimiter;
+        int childLeftDelimiterLength = strlen(childLeftDelimiter);
+        if (strncmp(*start, childLeftDelimiter, childLeftDelimiterLength) !=
+            0) {
           // Left delimiter not found
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
-        *start += leftDelimiterLength;
+        *start += childLeftDelimiterLength;
 
         // --- Step 2. Parse child ---
         int indexInLayout = latexToken[i].indexInLayout;
         if (indexInLayout == k_noChild) {
           continue;
         }
-        assert((parentLayout->isRackLayout() && indexInLayout == 0) ||
+        assert((resultLayout->isRackLayout() && indexInLayout == 0) ||
                indexInLayout >= 0 &&
-                   (indexInLayout < parentLayout->numberOfChildren()));
-        assert(i < rule.latexTokenSize - 1);
-        Tree* result = KRackL()->cloneTree();
-        const char* rightDelimiter = latexToken[i + 1].leftDelimiter;
-        ParseLatexOnRackUntilDelimiter(Rack::From(result), start,
-                                       rightDelimiter);
+                   (indexInLayout < resultLayout->numberOfChildren()));
+        assert(i < rule.latexTokenSize - 1);  // Last should be k_noChild
+        Tree* childResult = KRackL()->cloneTree();
+        const char* childRightDelimiter = latexToken[i + 1].leftDelimiter;
+        ParseLatexOnRackUntilDelimiter(Rack::From(childResult), start,
+                                       childRightDelimiter);
 
         // --- Step 3. Check if child was already parsed earlier ---
         bool wasAlreadyParsedElsewhere = false;
         for (int j = 0; j < i; j++) {
           if (latexToken[j].indexInLayout == indexInLayout) {
             wasAlreadyParsedElsewhere = true;
-            if (!result->treeIsIdenticalTo(
-                    ChildRackAtIndex(parentLayout, indexInLayout))) {
+            if (!childResult->treeIsIdenticalTo(
+                    RackAtIndex(resultLayout, indexInLayout))) {
               /* The child was already parsed elsewhere, but the result is
                * different. Thus the latex is invalid.
                * Ex: "\frac{d^{3}}{dx^{4}}x"
@@ -435,12 +447,12 @@ Tree* NextLatexToken(const char** start, const char* parentRightDelimiter) {
         }
         // --- Step 4. Clone child ---
         if (!wasAlreadyParsedElsewhere) {
-          ChildRackAtIndex(parentLayout, indexInLayout)
-              ->cloneTreeOverTree(result);
+          RackAtIndex(resultLayout, indexInLayout)
+              ->cloneTreeOverTree(childResult);
         }
       }
 
-      return parentLayout;
+      return resultLayout;
     }
     /* When parsing fails, we try the next rule.
      * This is especially useful for rules like diff and frac, for which only

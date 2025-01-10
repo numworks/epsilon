@@ -178,6 +178,9 @@ class AddEmptyLayoutHelpers {
     /* Force the cursor right of the layout. */
     insertLayout(KSuperscriptL("2"_l), context, true, false);
   }
+  void addEmptyNthRootLayout(Poincare::Context* context) {
+    insertLayout(KRootL(""_l, ""_l), context, false, false);
+  }
   void addEmptyExponentialLayout(Poincare::Context* context) {
     insertLayout("e"_l ^ KSuperscriptL(""_l), context, false, false);
   }

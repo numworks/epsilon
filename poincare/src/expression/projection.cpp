@@ -136,6 +136,7 @@ bool Projection::UpdateComplexFormatWithExpressionInput(
     const Tree* e, ProjectionContext* projectionContext) {
   assert(projectionContext);
   if (e && projectionContext->m_complexFormat == ComplexFormat::Real &&
+      !Symbol::InvolvesCircularity(e, projectionContext->m_context) &&
       hasComplexNodes(e, *projectionContext)) {
     projectionContext->m_complexFormat =
         Preferences::k_defaultComplexFormatIfNotReal;

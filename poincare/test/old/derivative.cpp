@@ -31,14 +31,16 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(x^2,x,x)", "2×x");
   assert_reduces_to_formal_expression("diff((x-1)(x-2)(x-3),x,x)",
                                       "3×x^2-12×x+11");
-  assert_reduces_to_formal_expression("diff(√(x),x,x)", "1/(2×√(x))");
+  assert_reduces_to_formal_expression("diff(√(x),x,x)",
+                                      "dep(√(x)/(2×x),{real(√(x))})");
   assert_reduces_to_formal_expression("diff(1/x,x,x)", "-1/x^2");
 
   assert_reduces_to_formal_expression("diff(e^x,x,x)", "e^(x)");
   assert_reduces_to_formal_expression("diff(2^x,x,x)", "ln(2)×2^x");
-  assert_reduces_to_formal_expression("diff(ln(x),x,x)", "1/x");
+  assert_reduces_to_formal_expression("diff(ln(x),x,x)",
+                                      "dep(1/x,{real(ln(x))})");
   assert_reduces_to_formal_expression("diff(log(x),x,x)",
-                                      "dep(1/(x×ln(10)),{log(x)})");
+                                      "dep(1/(x×ln(10)),{real(log(x))})");
 
   assert_reduces_to_formal_expression("diff(sin(x),x,x)", "cos(x)");
   assert_reduces_to_formal_expression("diff(sin(x),x,x)", "(π×cos(x))/180",
@@ -54,17 +56,17 @@ QUIZ_CASE(poincare_derivative_formal) {
 #endif
 
   assert_reduces_to_formal_expression("diff(asin(x),x,x)",
-                                      "dep(1/√(-x^2+1),{arcsin(x)})");
+                                      "dep(1/√(-x^2+1),{real(arcsin(x))})");
   assert_reduces_to_formal_expression(
-      "diff(asin(x),x,x)", "dep(180/(π×√(-x^2+1)),{arcsin(x)})", Degree);
+      "diff(asin(x),x,x)", "dep(180/(π×√(-x^2+1)),{real(arcsin(x))})", Degree);
   assert_reduces_to_formal_expression("diff(acos(x),x,x)",
-                                      "dep(-1/√(-x^2+1),{arccos(x)})");
+                                      "dep(-1/√(-x^2+1),{real(arccos(x))})");
   assert_reduces_to_formal_expression(
-      "diff(acos(x),x,x)", "dep(-180/(π×√(-x^2+1)),{arccos(x)})", Degree);
+      "diff(acos(x),x,x)", "dep(-180/(π×√(-x^2+1)),{real(arccos(x))})", Degree);
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "1/(x^2+1)");
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "π×x^2+π", Degree);
   assert_reduces_to_formal_expression(
-      "diff(arcsec(x),x,x)", "dep(1/(x^2×√((x^2-1)/x^2)),{arccos(1/x)})");
+      "diff(arcsec(x),x,x)", "dep(1/(x^2×√((x^2-1)/x^2)),{real(arccos(1/x))})");
   assert_reduces_to_formal_expression(
       "diff(arccsc(x),x,x)", "dep(-1/(x^2×√((x^2-1)/x^2)),{arcsin(1/x)})");
   assert_reduces_to_formal_expression("diff(arccot(x),x,x)", "-1/(x^2+1)");

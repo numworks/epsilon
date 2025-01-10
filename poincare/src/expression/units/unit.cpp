@@ -1102,20 +1102,25 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
   bool isVolume = vector.supportSize() == 1 && vector.distance == 3;
   bool isAngle = vector.supportSize() == 1 && vector.angle == 1;
   bool isTemperature = vector.supportSize() == 1 && vector.temperature == 1;
-  bool isSpeed =
-      vector.supportSize() == 2 && vector.distance == 1 && vector.time == -1;
-  if (!isSurface && !isVolume && !isAngle && !isTemperature && !isSpeed) {
+  bool isSpeedWithHour =
+      vector.supportSize() == 2 && vector.distance == 1 && vector.time == -1 &&
+      inputUnits->hasDescendantSatisfying([](const Tree* e) {
+        return e->isUnit() &&
+               GetRepresentative(e) == &Time::representatives.hour;
+      });
+  ;
+  if (!isSurface && !isVolume && !isAngle && !isTemperature &&
+      !isSpeedWithHour) {
     inputUnits->removeTree();
     return false;
   }
 
-  bool hasDistanceUnit = inputUnits->hasDescendantSatisfying([](const Tree* e) {
-    return e->isUnit() &&
-           GetRepresentative(e)->siVector() == Distance::Dimension;
-  });
-  bool hasHours = inputUnits->hasDescendantSatisfying([](const Tree* e) {
-    return e->isUnit() && GetRepresentative(e) == &Time::representatives.hour;
-  });
+  bool hasDistanceUnit =
+      (isSurface || isVolume) &&
+      inputUnits->hasDescendantSatisfying([](const Tree* e) {
+        return e->isUnit() &&
+               GetRepresentative(e)->siVector() == Distance::Dimension;
+      });
   bool isImperial = unitFormat == UnitFormat::Imperial;
 
   inputUnits->removeTree();
@@ -1139,23 +1144,19 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
     targetRepresentative = &Angle::representatives.degree;
     units = Push(targetRepresentative, Prefix::EmptyPrefix());
     optimizePrefix = false;
-  } else if (isSpeed) {
-    if (hasHours) {
-      // Equivalence to mph and km/h
-      targetRepresentative = isImperial ? &Distance::representatives.mile
-                                        : &Distance::representatives.meter;
-      const Prefix* distancePrefix =
-          isImperial ? Prefix::EmptyPrefix()
-                     : &Prefix::Prefixes()[k_kiloPrefixIndex];
-      units = KMult.node<2>->cloneNode();
-      Push(targetRepresentative, distancePrefix);
-      KPow->cloneNode();
-      Push(&Time::representatives.hour, Prefix::EmptyPrefix());
-      Integer::Push(-1);
-      optimizePrefix = false;
-    } else {
-      return false;
-    }
+  } else if (isSpeedWithHour) {
+    // Equivalence to mph and km/h
+    targetRepresentative = isImperial ? &Distance::representatives.mile
+                                      : &Distance::representatives.meter;
+    const Prefix* distancePrefix = isImperial
+                                       ? Prefix::EmptyPrefix()
+                                       : &Prefix::Prefixes()[k_kiloPrefixIndex];
+    units = KMult.node<2>->cloneNode();
+    Push(targetRepresentative, distancePrefix);
+    KPow->cloneNode();
+    Push(&Time::representatives.hour, Prefix::EmptyPrefix());
+    Integer::Push(-1);
+    optimizePrefix = false;
   } else if (isSurface || isVolume) {
     // TODO: Maybe handle intermediary cases where multiple units are involved.
     // L <--> m3, ha <--> m2, gal <--> ft3, acre <--> ft2

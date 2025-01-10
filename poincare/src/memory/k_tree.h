@@ -90,8 +90,9 @@ struct KTreesImplementation {
   // Helpers
 
   template <Block Tag, Block... ExtraValues>
-    requires(TypeBlock(EnabledType(Tag.m_content)).nodeSize() ==
-             sizeof...(ExtraValues) + 1)
+  // FIXME: conflict with undefined blocks
+  // requires(TypeBlock(EnabledType(Tag.m_content)).nodeSize() ==
+  // sizeof...(ExtraValues) + 1)
   struct KUnary : public KTree<Tag, ExtraValues...> {
     template <Block... B1>
     consteval auto operator()(KTree<B1...>) const {

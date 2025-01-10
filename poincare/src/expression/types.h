@@ -131,28 +131,28 @@ NODE(ATanRad, BASE, 1)
 RANGE(InverseTrigonometryFunction, ACos, ATanRad)
 RANGE(TrigonometryFunction, Cos, ATanRad)
 
-NODE(Sec, BASE, 1)
-NODE(Csc, BASE, 1)
-NODE(Cot, BASE, 1)
+NODE(Sec, TRIGONOMETRY_ADVANCED, 1)
+NODE(Csc, TRIGONOMETRY_ADVANCED, 1)
+NODE(Cot, TRIGONOMETRY_ADVANCED, 1)
 
 RANGE(DirectAdvancedTrigonometryFunction, Sec, Cot)
 
-NODE(ASec, BASE, 1)
-NODE(ACsc, BASE, 1)
-NODE(ACot, BASE, 1)
+NODE(ASec, TRIGONOMETRY_ADVANCED, 1)
+NODE(ACsc, TRIGONOMETRY_ADVANCED, 1)
+NODE(ACot, TRIGONOMETRY_ADVANCED, 1)
 
 RANGE(InverseAdvancedTrigonometryFunction, ASec, ACot)
 RANGE(AdvancedTrigonometryFunction, Sec, ACot)
 
-NODE(CosH, BASE, 1)
-NODE(SinH, BASE, 1)
-NODE(TanH, BASE, 1)
+NODE(CosH, TRIGONOMETRY_HYPERBOLIC, 1)
+NODE(SinH, TRIGONOMETRY_HYPERBOLIC, 1)
+NODE(TanH, TRIGONOMETRY_HYPERBOLIC, 1)
 
 RANGE(DirectHyperbolicTrigonometryFunction, CosH, TanH)
 
-NODE(ArCosH, BASE, 1)
-NODE(ArSinH, BASE, 1)
-NODE(ArTanH, BASE, 1)
+NODE(ArCosH, TRIGONOMETRY_HYPERBOLIC, 1)
+NODE(ArSinH, TRIGONOMETRY_HYPERBOLIC, 1)
+NODE(ArTanH, TRIGONOMETRY_HYPERBOLIC, 1)
 
 RANGE(InverseHyperbolicTrigonometryFunction, ArCosH, ArTanH)
 RANGE(HyperbolicTrigonometryFunction, CosH, ArTanH)

@@ -257,8 +257,10 @@ bool Trigonometry::ReduceTrig(Tree* e) {
       return changed;
     }
   } else if (PatternMatching::MatchReplace(e, KTrig(KATrig(KA, KB), KB), KA) ||
+#if POINCARE_TRIGONOMETRY_HYPERBOLIC
              PatternMatching::MatchReplace(
                  e, KTrig(KMult(KArCosH(KA), i_e), 0_e), KA) ||
+#endif
              PatternMatching::MatchReplaceSimplify(
                  e, KTrig(KATrig(KA, KB), KC),
                  KPow(KAdd(1_e, KMult(-1_e, KPow(KA, 2_e))), 1_e / 2_e))) {
@@ -526,6 +528,7 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
 }
 
 bool Trigonometry::ReduceArCosH(Tree* e) {
+#if POINCARE_TRIGONOMETRY_HYPERBOLIC
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KArCosH(KTrig(KA, 0_e)), &ctx) &&
       GetComplexSign(ctx.getTree(KA)).isPureIm()) {
@@ -533,6 +536,7 @@ bool Trigonometry::ReduceArCosH(Tree* e) {
     e->moveTreeOverTree(PatternMatching::CreateSimplify(KAbs(KA), ctx));
     return true;
   }
+#endif
   return false;
 }
 

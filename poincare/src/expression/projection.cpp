@@ -300,6 +300,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
                                     KPow(KA, KPow(KB, -1_e))) ||
       // log(A, e) -> ln(A)
       PatternMatching::MatchReplace(e, KLogBase(KA, e_e), KLnUser(KA)) ||
+#if POINCARE_TRIGONOMETRY_ADVANCED
       // Cot(A) -> cos(A)/sin(A)
       PatternMatching::MatchReplace(e, KCot(KA),
                                     KMult(KCos(KA), KPow(KSin(KA), -1_e))) ||
@@ -310,7 +311,9 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // ArcSec(A) -> acos(1/A)
       PatternMatching::MatchReplace(e, KASec(KA), KACos(KPow(KA, -1_e))) ||
       // ArcCsc(A) -> asin(1/A)
-      PatternMatching::MatchReplace(e, KACsc(KA), KASin(KPow(KA, -1_e)))) {
+      PatternMatching::MatchReplace(e, KACsc(KA), KASin(KPow(KA, -1_e))) ||
+#endif
+      false) {
     // e may need to be projected again.
     ShallowSystemProject(e, context);
     return true;
@@ -354,10 +357,13 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // tan(A) -> sin(A)/cos(A)
       PatternMatching::MatchReplace(
           e, KTan(KA), KMult(KTrig(KA, 1_e), KPow(KTrig(KA, 0_e), -1_e))) ||
+#if POINCARE_TRIGONOMETRY_ADVANCED
       /* acot(A) -> π/2 - atan(A)
       using acos(0) instead of π/2 to handle angle */
       PatternMatching::MatchReplace(e, KACot(KA),
                                     KAdd(KACos(0_e), KMult(-1_e, KATan(KA)))) ||
+#endif
+#if POINCARE_TRIGONOMETRY_HYPERBOLIC
       // cosh(A) -> cos(i*A)
       PatternMatching::MatchReplace(e, KCosH(KA), KTrig(KMult(KA, i_e), 0_e)) ||
       // sinh(A) -> -i*sin(i*A)
@@ -376,6 +382,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // ArTanh(A) -> -i*atan(i*A)
       PatternMatching::MatchReplace(
           e, KArTanH(KA), KMult(-1_e, KATanRad(KMult(KA, i_e)), i_e)) ||
+#endif
 #if POINCARE_BOOLEAN
       // A nor B -> not (A or B)
       PatternMatching::MatchReplace(e, KLogicalNor(KA, KB),
@@ -395,10 +402,13 @@ bool Projection::Expand(Tree* e) {
           KATrig(
               KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), KMult(-1_e, 1_e / 2_e))),
               1_e)) ||
+#if POINCARE_TRIGONOMETRY_HYPERBOLIC
       // ArCosh(A) -> ln(A+sqrt(A^2-1))
       PatternMatching::MatchReplaceSimplify(
           e, KArCosH(KA),
-          KLn(KAdd(KA, KPow(KAdd(KPow(KA, 2_e), -1_e), 1_e / 2_e))));
+          KLn(KAdd(KA, KPow(KAdd(KPow(KA, 2_e), -1_e), 1_e / 2_e)))) ||
+#endif
+      false;
 }
 
 }  // namespace Poincare::Internal

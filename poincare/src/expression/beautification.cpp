@@ -150,6 +150,7 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
                                    bool canSystematicReduce) {
   // Beautify System nodes to prevent future simplifications.
   if (e->isTrig()) {
+#if POINCARE_TRIGONOMETRY_HYPERBOLIC
     // Hyperbolic functions
     if (
         // cos(A?*i) -> cosh(A)
@@ -165,6 +166,7 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
       // Hyperbolic trigonometric functions don't need AngleUnitContext
       return true;
     };
+#endif
     if (angleUnit != AngleUnit::Radian) {
       Tree* child = e->child(0);
       child->moveTreeOverTree(PatternMatching::Create(
@@ -181,6 +183,7 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     return true;
   }
   if (e->isATrig() || e->isATanRad()) {
+#if POINCARE_TRIGONOMETRY_HYPERBOLIC
     // Inverse hyperbolic functions
     if (
         // asin(A?*i) -> asinh(A)*i
@@ -196,6 +199,7 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
       // Hyperbolic trigonometric functions don't need AngleUnitContext
       return true;
     }
+#endif
     PatternMatching::MatchReplace(e, KATrig(KA, 0_e), KACos(KA)) ||
         PatternMatching::MatchReplace(e, KATrig(KA, 1_e), KASin(KA)) ||
         PatternMatching::MatchReplace(e, KATanRad(KA), KATan(KA));
@@ -373,14 +377,18 @@ bool ShallowBeautify(Tree* e, void* context) {
              PatternMatching::MatchReplace(
                  e, KMult(KA_s, KPow(KCos(KB), -1_e), KC_s, KSin(KB), KD_s),
                  KMult(KA_s, KC_s, KTan(KB), KD_s)) ||
+#if POINCARE_TRIGONOMETRY_ADVANCED
              // cos(A)/sin(A) -> cot(A)
              PatternMatching::MatchReplace(
                  e, KMult(KA_s, KCos(KB), KC_s, KPow(KSin(KB), -1_e), KD_s),
                  KMult(KA_s, KC_s, KCot(KB), KD_s)) ||
+#endif
+#if POINCARE_TRIGONOMETRY_HYPERBOLIC
              // sinh(A)/cosh(A) -> tanh(A)
              PatternMatching::MatchReplace(
                  e, KMult(KA_s, KPow(KCosH(KB), -1_e), KC_s, KSinH(KB), KD_s),
                  KMult(KA_s, KC_s, KTanH(KB), KD_s)) ||
+#endif
              // Remove 1.0 from multiplications
              PatternMatching::MatchReplace(e, KMult(KA_s, 1.0_de, KB_s),
                                            KMult(KA_s, KB_s)) ||

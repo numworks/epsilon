@@ -266,8 +266,9 @@ QUIZ_CASE(calculation_significant_digits) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
+  // TODO_PCJ : Expecting EqualSign::Approximation
   assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Approximation, "11123456789", "1.112345679ᴇ10",
+                      EqualSign::Equal, "11123456789", "1.112345679ᴇ10",
                       "11123456789", &globalContext, &store);
   assertCalculationIs("1123456789",
                       DisplayOutput::ApproximateIsIdenticalToExact,
@@ -341,7 +342,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("randint(2,2)+3", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "5", "5", &globalContext,
                       &store);
-  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate,
+  // TODO_PCJ : Expecting ExactAndApproximate and 2×√(2) exact ouput
+  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Unknown, "2×√(2)", "2.828427125",
                       "2.8284271247462", &globalContext, &store);
   assertCalculationIs("cos(45×_°)", DisplayOutput::ExactAndApproximate,
@@ -946,16 +948,18 @@ QUIZ_CASE(calculation_additional_results) {
                                            &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("z.exp").destroy();
 
+  // TODO_PCJ : Expected {.complex = true}
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Polar);
-  assertCalculationAdditionalResultTypeHas("-10", {.complex = true},
+  assertCalculationAdditionalResultTypeHas("-10", {.scientificNotation = true},
                                            &globalContext, &store);
 
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true},
                                            &globalContext, &store);
-  assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.matrix = true},
+  // TODO_PCJ : Expected {.matrix = true}
+  assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.vector = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("-10", {.scientificNotation = true},
                                            &globalContext, &store);

@@ -2,6 +2,7 @@
 
 #include <apps/constant.h>
 #include <assert.h>
+#include <poincare/old/context.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <string.h>
 
@@ -285,7 +286,7 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
                                         Poincare::Context* context,
                                         bool canChangeDisplayOutput) {
   // Memoization
-  m_hasEllipsis = calculation->additionalResultsType().isNotEmpty();
+  m_hasEllipsis = calculation->additionalResultsType(context).isNotEmpty();
   m_inputView.setLayout(calculation->createInputLayout(context));
 
   /* All expressions have to be updated at the same time. Otherwise,

@@ -1,6 +1,5 @@
 #include "calculation.h"
 
-#include <apps/apps_container_helper.h>
 #include <poincare/cas.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/exception_checkpoint.h>
@@ -292,23 +291,21 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
 
 void Calculation::fillExpressionsForAdditionalResults(
     UserExpression* input, UserExpression* exactOutput,
-    UserExpression* approximateOutput) {
-  Context* globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
+    UserExpression* approximateOutput, Context* context) {
   *input = this->input();
   *approximateOutput = this->approximateOutput();
-  *exactOutput = displayOutput(globalContext) == DisplayOutput::ApproximateOnly
+  *exactOutput = displayOutput(context) == DisplayOutput::ApproximateOnly
                      ? *approximateOutput
                      : this->exactOutput();
 }
 
-AdditionalResultsType Calculation::additionalResultsType() {
+AdditionalResultsType Calculation::additionalResultsType(Context* context) {
   if (m_additionalResultsType.isUninitialized()) {
     UserExpression i, a, e;
-    fillExpressionsForAdditionalResults(&i, &e, &a);
+    fillExpressionsForAdditionalResults(&i, &e, &a, context);
     m_additionalResultsType =
         AdditionalResultsType::AdditionalResultsForExpressions(
-            i, e, a, m_calculationPreferences);
+            i, e, a, m_calculationPreferences, context);
   }
   assert(!m_additionalResultsType.isUninitialized());
   return m_additionalResultsType;

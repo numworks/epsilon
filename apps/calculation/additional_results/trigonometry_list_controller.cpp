@@ -17,14 +17,14 @@ namespace Calculation {
 void TrigonometryListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
-  assert((m_directTrigonometry &&
-          AdditionalResultsType::HasDirectTrigo(input, exactOutput,
-                                                m_calculationPreferences)) ||
-         (!m_directTrigonometry &&
-          AdditionalResultsType::HasInverseTrigo(input, exactOutput,
-                                                 m_calculationPreferences)));
-
   Context* context = App::app()->localContext();
+  assert((m_directTrigonometry &&
+          AdditionalResultsType::HasDirectTrigo(
+              input, exactOutput, m_calculationPreferences, context)) ||
+         (!m_directTrigonometry &&
+          AdditionalResultsType::HasInverseTrigo(
+              input, exactOutput, m_calculationPreferences, context)));
+
   Internal::ProjectionContext ctx = {
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),

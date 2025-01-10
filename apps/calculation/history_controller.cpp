@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
+#include <poincare/old/context.h>
 #include <poincare/old/exception_checkpoint.h>
 
 #include "app.h"
@@ -306,7 +307,7 @@ void HistoryController::handleOK() {
   ExpiringPointer<Calculation> selectedCalculation =
       calculationAtIndex(focusRow);
   UserExpression i, a, e;
-  selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a);
+  selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a, context);
   assert(Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
              selectedCalculation->calculationPreferences().complexFormat, i,
              context) ==
@@ -315,7 +316,7 @@ void HistoryController::handleOK() {
   /* Reuse the same angle unit and updated complexFormat as when the calculation
    * was computed. */
   m_additionalResultsController.openAdditionalResults(
-      selectedCalculation->additionalResultsType(), i, e, a,
+      selectedCalculation->additionalResultsType(context), i, e, a,
       selectedCalculation->calculationPreferences());
 }
 

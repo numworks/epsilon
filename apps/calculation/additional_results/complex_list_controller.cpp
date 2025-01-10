@@ -16,14 +16,14 @@ namespace Calculation {
 void ComplexListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
+  Context* context = App::app()->localContext();
   /* TODO:
    * - save values of re(z), im(z) during setLineAtIndex to directly use them in
    * setComplex ?
    * - do the same for abs(z) and arg(z) for exponential form ? */
   assert(AdditionalResultsType::HasComplex(approximateOutput,
-                                           m_calculationPreferences));
+                                           m_calculationPreferences, context));
   assert(complexFormat() != Preferences::ComplexFormat::Real);
-  Context* context = App::app()->localContext();
   Internal::ProjectionContext ctx = {
       .m_complexFormat = Preferences::ComplexFormat::Cartesian,
       .m_angleUnit = angleUnit(),

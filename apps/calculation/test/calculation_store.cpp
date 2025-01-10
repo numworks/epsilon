@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <poincare/cas.h>
 #include <poincare/k_tree.h>
+#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
@@ -814,7 +815,8 @@ void assertCalculationAdditionalResultTypeHas(
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   quiz_assert_print_if_failure(
-      lastCalculation->additionalResultsType() == additionalResultsType, input);
+      lastCalculation->additionalResultsType(context) == additionalResultsType,
+      input);
   store->deleteAll();
 }
 

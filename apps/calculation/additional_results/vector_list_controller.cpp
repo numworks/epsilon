@@ -22,13 +22,13 @@ namespace Calculation {
 void VectorListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
+  Context* context = App::app()->localContext();
   assert(AdditionalResultsType::HasVector(exactOutput, approximateOutput,
-                                          m_calculationPreferences));
+                                          m_calculationPreferences, context));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  Context* context = App::app()->localContext();
   Internal::ProjectionContext ctx = {
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),

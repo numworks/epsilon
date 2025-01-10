@@ -128,8 +128,8 @@ class Calculation {
 
   void fillExpressionsForAdditionalResults(
       Poincare::UserExpression* input, Poincare::UserExpression* exactOutput,
-      Poincare::UserExpression* approximateOutput);
-  AdditionalResultsType additionalResultsType();
+      Poincare::UserExpression* approximateOutput, Poincare::Context* context);
+  AdditionalResultsType additionalResultsType(Poincare::Context* context);
 
  private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;

@@ -1,7 +1,7 @@
 #include "additional_results_type.h"
 
-#include <apps/apps_container_helper.h>
 #include <poincare/additional_results_helper.h>
+#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 
 #include <cmath>
@@ -17,14 +17,15 @@ namespace Calculation {
 AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput,
-    const Preferences::CalculationPreferences calculationPreferences) {
+    const Preferences::CalculationPreferences calculationPreferences,
+    Poincare::Context* context) {
   if (ForbidAdditionalResults(input, exactOutput, approximateOutput)) {
     return AdditionalResultsType{.empty = true};
   }
-  if (HasComplex(approximateOutput, calculationPreferences)) {
+  if (HasComplex(approximateOutput, calculationPreferences, context)) {
     return AdditionalResultsType{.complex = true};
   }
-  if (HasComplex(exactOutput, calculationPreferences)) {
+  if (HasComplex(exactOutput, calculationPreferences, context)) {
     // Cf comment in HasComplex
     return AdditionalResultsType{.empty = true};
   }
@@ -42,13 +43,14 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
                ? AdditionalResultsType{.unit = true}
                : AdditionalResultsType{.empty = true};
   }
-  if (HasDirectTrigo(input, exactOutput, calculationPreferences)) {
+  if (HasDirectTrigo(input, exactOutput, calculationPreferences, context)) {
     return AdditionalResultsType{.directTrigonometry = true};
   }
-  if (HasInverseTrigo(input, exactOutput, calculationPreferences)) {
+  if (HasInverseTrigo(input, exactOutput, calculationPreferences, context)) {
     return AdditionalResultsType{.inverseTrigonometry = true};
   }
-  if (HasVector(exactOutput, approximateOutput, calculationPreferences)) {
+  if (HasVector(exactOutput, approximateOutput, calculationPreferences,
+                context)) {
     return AdditionalResultsType{.vector = true};
   }
   if (approximateOutput.dimension().isMatrix()) {
@@ -64,7 +66,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (!inputHasAngleUnit && HasFunction(input, approximateOutput)) {
     type.function = true;
   }
-  if (HasScientificNotation(approximateOutput, calculationPreferences)) {
+  if (HasScientificNotation(approximateOutput, calculationPreferences,
+                            context)) {
     type.scientificNotation = true;
   }
   if (HasInteger(exactOutput)) {
@@ -102,7 +105,8 @@ bool AdditionalResultsType::ForbidAdditionalResults(
 
 bool AdditionalResultsType::HasComplex(
     const UserExpression approximateOutput,
-    const Preferences::CalculationPreferences calculationPreferences) {
+    const Preferences::CalculationPreferences calculationPreferences,
+    Context* context) {
   /* We have 2 edge cases:
    * 1) exact output assessed to scalar complex but not approximate output
    * ex:
@@ -119,28 +123,26 @@ bool AdditionalResultsType::HasComplex(
    *    complex, while the exact output is.
    * We chosed to handle the 2nd case and not to display any additional results
    * in the 1st case. */
-  return approximateOutput.isScalarComplex(
-      calculationPreferences,
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  return approximateOutput.isScalarComplex(calculationPreferences, context);
 }
 
 bool AdditionalResultsType::HasDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
-    const Preferences::CalculationPreferences calculationPreferences) {
+    const Preferences::CalculationPreferences calculationPreferences,
+    Context* context) {
   assert(!exactOutput.hasUnit(true));
-  Context* globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
   Expression exactAngle =
       AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
-          input, exactOutput, globalContext, calculationPreferences);
+          input, exactOutput, context, calculationPreferences);
   return !exactAngle.isUninitialized();
 }
 
 bool AdditionalResultsType::HasInverseTrigo(
     const UserExpression input, const UserExpression exactOutput,
-    const Preferences::CalculationPreferences calculationPreferences) {
+    const Preferences::CalculationPreferences calculationPreferences,
+    Poincare::Context* context) {
   // If the result is complex, it is treated as a complex result instead.
-  assert(!HasComplex(exactOutput, calculationPreferences));
+  assert(!HasComplex(exactOutput, calculationPreferences, context));
   assert(!exactOutput.hasUnit(true));
   return AdditionalResultsHelper::HasInverseTrigo(input, exactOutput);
 }
@@ -196,18 +198,17 @@ bool AdditionalResultsType::HasUnit(
 
 bool AdditionalResultsType::HasVector(
     const UserExpression exactOutput, const UserExpression approximateOutput,
-    const Preferences::CalculationPreferences calculationPreferences) {
-  Context* globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
-  Expression norm = VectorHelper::BuildVectorNorm(
-      exactOutput.clone(), globalContext, calculationPreferences);
+    const Preferences::CalculationPreferences calculationPreferences,
+    Context* context) {
+  Expression norm = VectorHelper::BuildVectorNorm(exactOutput.clone(), context,
+                                                  calculationPreferences);
   if (norm.isUninitialized()) {
     return false;
   }
   assert(!norm.isUndefined());
   int nChildren = approximateOutput.tree()->numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
-    if (HasComplex(approximateOutput, calculationPreferences)) {
+    if (HasComplex(approximateOutput, calculationPreferences, context)) {
       return false;
     }
   }
@@ -235,11 +236,10 @@ bool AdditionalResultsType::HasFunction(
 
 bool AdditionalResultsType::HasScientificNotation(
     const UserExpression approximateOutput,
-    const Preferences::CalculationPreferences calculationPreferences) {
+    const Preferences::CalculationPreferences calculationPreferences,
+    Context* context) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit());
-  Context* globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
   if (approximateOutput.isNonReal() ||
       calculationPreferences.displayMode ==
           Preferences::PrintFloatMode::Scientific) {
@@ -247,10 +247,10 @@ bool AdditionalResultsType::HasScientificNotation(
   }
   Poincare::Layout historyResult = approximateOutput.createLayout(
       calculationPreferences.displayMode,
-      calculationPreferences.numberOfSignificantDigits, globalContext);
+      calculationPreferences.numberOfSignificantDigits, context);
   return !historyResult.isIdenticalTo(
-      AdditionalResultsHelper::ScientificLayout(
-          approximateOutput, globalContext, calculationPreferences),
+      AdditionalResultsHelper::ScientificLayout(approximateOutput, context,
+                                                calculationPreferences),
       true);
 }
 

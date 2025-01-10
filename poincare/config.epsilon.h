@@ -29,9 +29,7 @@
 // True, False, comparisons and logic operators
 #define POINCARE_BOOLEAN 1
 
-#if POINCARE_BOOLEAN
-#define POINCARE_PIECEWISE 1
-#endif
+#define POINCARE_PIECEWISE POINCARE_BOOLEAN
 
 #define POINCARE_DISTRIBUTION 1
 

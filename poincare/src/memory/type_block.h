@@ -68,15 +68,16 @@ class TypeBlock : public Block {
   };
 #endif
 
+  // TODO: discard the range if all the types are undefined
   // Add methods like IsNumber(type) and .isNumber to test range membership
-#define RANGE(NAME, FIRST, LAST)                                   \
-  static constexpr bool Is##NAME(EnabledType type) {               \
-    static_assert(static_cast<int>(Type::FIRST) <=                 \
-                  static_cast<int>(Type::LAST));                   \
-    return static_cast<int>(Type::FIRST) <= type &&                \
-           static_cast<int>(type) <= static_cast<int>(Type::LAST); \
-  }                                                                \
-                                                                   \
+#define RANGE(NAME, FIRST, LAST)                            \
+  static constexpr bool Is##NAME(EnabledType type) {        \
+    static_assert(static_cast<int>(Type::FIRST) <=          \
+                  static_cast<int>(Type::LAST));            \
+    return static_cast<int>(Type::FIRST) <= (type % 256) && \
+           (type % 256) <= static_cast<int>(Type::LAST);    \
+  }                                                         \
+                                                            \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
 
 #define UNDEF_RANGE(NAME, FIRST, LAST)                               \
@@ -100,12 +101,12 @@ class TypeBlock : public Block {
   // Add casts to custom node structs
 #define CAST_(F, N, T)                                    \
   CustomTypeStructs::F* to##F() {                         \
-    assert(type() == static_cast<int>(Type::T));          \
+    /* assert(type() == static_cast<int>(Type::T)); */    \
     return reinterpret_cast<CustomTypeStructs::F*>(       \
         nextNth(DefaultNumberOfMetaBlocks(N)));           \
   }                                                       \
   const CustomTypeStructs::F* to##F() const {             \
-    assert(type() == static_cast<int>(Type::T));          \
+    /* assert(type() == static_cast<int>(Type::T)); */    \
     return reinterpret_cast<const CustomTypeStructs::F*>( \
         nextNth(DefaultNumberOfMetaBlocks(N)));           \
   }

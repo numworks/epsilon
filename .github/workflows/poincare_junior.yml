@@ -28,7 +28,7 @@ jobs:
       # TODO_PCJ: Add ASAN=1 and TIDY=1
       - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin
       # TODO_PCJ: Uncomment all filters, delete this workflow and re-activate ci.yml once they all run.
-      # - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f calculation
+      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f calculation
       - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f calculation_store
       - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f code
       - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f distributions

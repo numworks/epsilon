@@ -277,6 +277,40 @@ bool CanBeUndefWithInfinity(const Tree* e) {
   return false;
 }
 
+bool SimplifyPowReal(Tree* dependency, Tree* dependencies) {
+  assert(dependency->isPowReal());
+  assert(dependencies->isNAry());
+  Tree* exponent = dependency->child(1);
+  if (!exponent->isRational() || exponent->isZero()) {
+    return false;
+  }
+  IntegerHandler p = Rational::Numerator(exponent);
+  IntegerHandler q = Rational::Denominator(exponent);
+  assert(!p.isZero() && q.strictSign() == StrictSign::Positive);
+  exponent->removeTree();
+  if (p.strictSign() == StrictSign::Positive) {
+    if (q.isEven()) {
+      // {powReal(x,p/q)} -> {realPositive(x)}
+      dependency->cloneNodeOverNode(KRealPos);
+    } else {
+      // {powReal(x,p/q)} -> {x}
+      dependency->removeNode();
+    }
+  } else {
+    if (q.isEven()) {
+      // {powReal(x,p/q)} -> {nonNull(x), realPositive(x)}
+      dependency->cloneNodeOverNode(KNonNull);
+      Tree* secondDep = KRealPos->cloneNode();
+      dependency->child(0)->cloneTree();
+      NAry::AddChild(dependencies, secondDep);
+    } else {
+      // {powReal(x,p/q)} -> {nonNull(x)}
+      dependency->cloneNodeOverNode(KNonNull);
+    }
+  }
+  return true;
+}
+
 bool SimplifyDependencies(Tree* dependencies) {
   assert(dependencies->isNAry());
   bool changed = false;
@@ -296,7 +330,6 @@ bool SimplifyDependencies(Tree* dependencies) {
         continue;
       }
     }
-
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
     if ((dependency->isAdd() || dependency->isMult()) &&
         !CanBeUndefWithInfinity(dependency)) {
@@ -307,7 +340,6 @@ bool SimplifyDependencies(Tree* dependencies) {
       changed = true;
       continue;
     }
-
     if (dependency->isPow() &&
         dependency->child(1)->isStrictlyNegativeRational()) {
       // dep(..., {x^-r}) = dep(..., {nonNull(x)}) with r rational > 0
@@ -316,37 +348,10 @@ bool SimplifyDependencies(Tree* dependencies) {
       changed = true;
       continue;
 
-    } else if (dependency->isPowReal()) {
-      Tree* exponent = dependency->child(1);
-      if (!(!exponent->isRational() || exponent->isZero())) {
-        IntegerHandler p = Rational::Numerator(exponent);
-        IntegerHandler q = Rational::Denominator(exponent);
-        assert(!p.isZero() && q.strictSign() == StrictSign::Positive);
-        exponent->removeTree();
-        if (p.strictSign() == StrictSign::Positive) {
-          if (q.isEven()) {
-            // {powReal(x,p/q)} -> {realPositive(x)}
-            dependency->cloneNodeOverNode(KRealPos);
-          } else {
-            // {powReal(x,p/q)} -> {x}
-            dependency->removeNode();
-          }
-        } else {
-          if (q.isEven()) {
-            // {powReal(x,p/q)} -> {nonNull(x), realPositive(x)}
-            dependency->cloneNodeOverNode(KNonNull);
-            Tree* secondDep = KRealPos->cloneNode();
-            dependency->child(0)->cloneTree();
-            NAry::AddChild(dependencies, secondDep);
-          } else {
-            // {powReal(x,p/q)} -> {nonNull(x)}
-            dependency->cloneNodeOverNode(KNonNull);
-          }
-        }
-        changed = true;
-        continue;
-      }
-
+    } else if (dependency->isPowReal() &&
+               SimplifyPowReal(dependency, dependencies)) {
+      changed = true;
+      continue;
     } else if (IsDefinedIfChildIsDefined(dependency)) {
       // dep(..., {f(x)}) = dep(..., {x}) with f always defined if x defined
       dependency->moveTreeOverTree(dependency->child(0));
@@ -396,10 +401,8 @@ bool SimplifyDependencies(Tree* dependencies) {
         continue;
       }
     }
-
     dependency = dependency->nextTree();
   }
-
   return changed;
 }
 

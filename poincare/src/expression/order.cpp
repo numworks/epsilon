@@ -84,6 +84,11 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */
     if (type1 == Type::Pow) {
+      if (type2 == Type::Unit && e1->child(0)->type() == Type::Unit &&
+          order == OrderType::Beautification) {
+        // m^2 < s < K^-1
+        return -Compare(e1->child(1), 1_e, OrderType::System);
+      }
       int comparePowerChild = Compare(e1->child(0), e2, order);
       if (comparePowerChild == 0) {
         if (order == OrderType::Beautification) {

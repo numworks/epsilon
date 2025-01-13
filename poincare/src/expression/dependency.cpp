@@ -277,22 +277,18 @@ bool CanBeUndefWithInfinity(const Tree* e) {
   return false;
 }
 
-bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
-  const Tree* expression = Dependency::Main(dep);
-  Tree* set = Dependency::Dependencies(dep);
-  // TODO: This function uses Set as an Nary which is an implementation detail
-  assert(set->isDepList());
+bool SimplifyDependencies(Tree* dependencies) {
+  assert(dependencies->isNAry());
   bool changed = false;
-  Tree* depI = set->child(0);
+  Tree* depI = dependencies->child(0);
   /* TODO: refactor this for-loop to avoid changing the index ("i--") while in
    * the loop, which is error-prone */
-  for (int i = 0; i < set->numberOfChildren(); i++) {
+  for (int i = 0; i < dependencies->numberOfChildren(); i++) {
     if (depI->isReal()) {
       ComplexSign signX = GetComplexSign(depI->child(0));
       if (signX.isNonReal()) {
-        // dep(..., {real(x)}) = undef if x is non real
-        set->removeTree();
-        dep->cloneTreeOverTree(KUndef->cloneTree());
+        // {real(x)} = {undef} if x is non real
+        depI->cloneTreeOverTree(KUndef);
         return true;
       }
       if (signX.isReal()) {
@@ -314,8 +310,8 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
       if (CanBeUndefWithInfinity(depI)) {
         continue;
       }
-      NAry::SetNumberOfChildren(
-          set, set->numberOfChildren() + depI->numberOfChildren() - 1);
+      NAry::SetNumberOfChildren(dependencies, dependencies->numberOfChildren() +
+                                                  depI->numberOfChildren() - 1);
       depI->removeNode();
       i--;
       changed = true;
@@ -354,7 +350,7 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
           depI->cloneNodeOverNode(KNonNull);
           Tree* secondDep = KRealPos->cloneNode();
           depI->child(0)->cloneTree();
-          NAry::AddChild(set, secondDep);
+          NAry::AddChild(dependencies, secondDep);
         } else {
           // {powReal(x,p/q)} -> {nonNull(x)}
           depI->cloneNodeOverNode(KNonNull);
@@ -372,8 +368,7 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
       ComplexSign sign = GetComplexSign(depI->child(0));
       if (sign.isNull()) {
         // dep(..., {nonNull(x)}) = undef if x is null
-        set->removeTree();
-        dep->cloneTreeOverTree(KUndef->cloneTree());
+        depI->cloneTreeOverTree(KUndef);
         return true;
       }
       if (!sign.canBeNull()) {
@@ -394,7 +389,8 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
         }
         mult->removeNode();
         i--;
-        NAry::SetNumberOfChildren(set, set->numberOfChildren() + n - 1);
+        NAry::SetNumberOfChildren(dependencies,
+                                  dependencies->numberOfChildren() + n - 1);
         changed = true;
         continue;
       }
@@ -419,6 +415,20 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
 
     depI = depI->nextTree();
   }
+
+  return changed;
+}
+
+bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
+  const Tree* expression = Dependency::Main(dep);
+  Tree* set = Dependency::Dependencies(dep);
+
+  bool changed = SimplifyDependencies(set);
+  if (set->hasChildSatisfying([](const Tree* e) { return e->isUndef(); })) {
+    dep->cloneTreeOverTree(KUndef);
+    return true;
+  }
+
   if (changed) {
     NAry::Sort(set);
   }
@@ -451,7 +461,7 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
 
   /* Step 3: Remove dependencies already contained in main expression.
    * dep(x^2+1,{x}) -> x^2+1 */
-  depI = set->nextNode();
+  Tree* depI = set->nextNode();
   int nbChildren = set->numberOfChildren();
   for (int i = 0; i < nbChildren; i++) {
     if (ContainsSameDependency(depI, expression)) {

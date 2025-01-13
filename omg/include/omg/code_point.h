@@ -77,6 +77,7 @@ constexpr static CodePoint UCodePointInfinity                      = 0x221e;  //
 constexpr static CodePoint UCodePointIntegral                      = 0x222b;  // ∫
 constexpr static CodePoint UCodePointInferiorEqual                 = 0x2264;  // ≤
 constexpr static CodePoint UCodePointSuperiorEqual                 = 0x2265;  // ≥
+constexpr static CodePoint UCodePointAssertion                     = 0x22a6;  // ⊦
 constexpr static CodePoint UCodePointLeftAngleBracket              = 0x27E8;  // ⟨
 constexpr static CodePoint UCodePointRightAngleBracket             = 0x27E9;  // ⟩
 constexpr static CodePoint UCodePointReplacement                   = 0xFFFD;  // �

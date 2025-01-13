@@ -157,11 +157,11 @@ void StackViewController::viewDidDisappear() {
   m_view.setContentView(nullptr);
 }
 
-constexpr bool StackViewController::shouldStoreHeaderOnStack(
+constexpr bool StackViewController::ShouldStoreHeaderOnStack(
     const ViewController* controller, uint8_t pageIndex,
     StackView::Mask titlesMask, uint8_t numberOfDifferentPages) {
   /* A SameAsPreviousPage controller should be skipped by the caller of
-   * shouldStoreHeaderOnStack */
+   * ShouldStoreHeaderOnStack */
   assert(controller->titlesDisplay() !=
          ViewController::TitlesDisplay::SameAsPreviousPage);
   /* In general, the titlesDisplay controls how the stack is shown
@@ -204,7 +204,7 @@ void StackViewController::updateStack(
         ViewController::TitlesDisplay::SameAsPreviousPage) {
       continue;
     }
-    if (shouldStoreHeaderOnStack(controller, pageIndex,
+    if (ShouldStoreHeaderOnStack(controller, pageIndex,
                                  static_cast<StackView::Mask>(titleDisplay),
                                  numberOfDifferentPages(indexOfTopPage))) {
       m_view.pushStack(controller);

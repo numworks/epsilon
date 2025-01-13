@@ -60,7 +60,7 @@ class StackViewController : public ViewController {
   /* The StackView::Mask represents the stacks to display, _starting from the
    * end_. titlesMask = 0b11111011   ->  shouldn't display
    * m_stackViews[numberOfStacks - 1 - 2]. */
-  constexpr static bool shouldStoreHeaderOnStack(
+  constexpr static bool ShouldStoreHeaderOnStack(
       const ViewController* controller, uint8_t pageIndex,
       StackView::Mask titlesMask, uint8_t numberOfDifferentPages);
 

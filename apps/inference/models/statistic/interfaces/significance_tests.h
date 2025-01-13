@@ -197,17 +197,17 @@ class TwoMeans : public SignificanceTest {
   static double N2(double* params) { return params[ParamsOrder::n2]; }
   static double S2(double* params) { return params[ParamsOrder::s2]; }
 
-  constexpr static ParamsOrder x(uint8_t index) {
+  constexpr static ParamsOrder X(uint8_t index) {
     assert(index == 0 || index == 1);
     return index == 0 ? ParamsOrder::x1 : ParamsOrder::x2;
   }
 
-  constexpr static ParamsOrder s(uint8_t index) {
+  constexpr static ParamsOrder S(uint8_t index) {
     assert(index == 0 || index == 1);
     return index == 0 ? ParamsOrder::s1 : ParamsOrder::s2;
   }
 
-  constexpr static ParamsOrder n(uint8_t index) {
+  constexpr static ParamsOrder N(uint8_t index) {
     assert(index == 0 || index == 1);
     return index == 0 ? ParamsOrder::n1 : ParamsOrder::n2;
   }

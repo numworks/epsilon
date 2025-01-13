@@ -297,21 +297,15 @@ bool SimplifyDependencies(Tree* dependencies) {
       }
     }
 
-    /* TODO_PCJ:
-     * - if 1 child can be inf and another child can be -inf, then we cannot
-     *   split add
-     * - if 1 child can be zero and another child can be inf, then we cannot
-     *   split mult */
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
-    if (dependency->isAdd() || dependency->isMult()) {
-      if (!CanBeUndefWithInfinity(dependency)) {
-        NAry::SetNumberOfChildren(dependencies,
-                                  dependencies->numberOfChildren() +
-                                      dependency->numberOfChildren() - 1);
-        dependency->removeNode();
-        changed = true;
-        continue;
-      }
+    if ((dependency->isAdd() || dependency->isMult()) &&
+        !CanBeUndefWithInfinity(dependency)) {
+      NAry::SetNumberOfChildren(dependencies,
+                                dependencies->numberOfChildren() +
+                                    dependency->numberOfChildren() - 1);
+      dependency->removeNode();
+      changed = true;
+      continue;
     }
 
     if (dependency->isPow() &&

@@ -149,12 +149,13 @@ class InputStoreController : public InputCategoricalController,
   DistributionType m_loadedDistribution;
   SignificanceTestType m_loadedTest;
 
+  InputStoreController* m_nextInputStoreController;
+  ViewController* m_nextOtherController;
+
   /* There can be several instances of InputStoreController, each representing a
    * distinct dataset selection page. This is used only for some test categories
    * (e.g. TwoMeansTest). */
   PageIndex m_pageIndex;
-  InputStoreController* m_nextInputStoreController;
-  ViewController* m_nextOtherController;
 };
 
 }  // namespace Inference

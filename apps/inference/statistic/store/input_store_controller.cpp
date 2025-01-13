@@ -29,9 +29,9 @@ InputStoreController::InputStoreController(
       m_loadedSubApp(Statistic::SubApp::Test),
       m_loadedDistribution(DistributionType::T),
       m_loadedTest(SignificanceTestType::OneProportion),
-      m_pageIndex(pageIndex),
       m_nextInputStoreController(nextInputStoreController),
-      m_nextOtherController(nextController) {
+      m_nextOtherController(nextController),
+      m_pageIndex(pageIndex) {
   m_storeParameterController.selectRow(0);
   m_selectableListView.margins()->setTop(Metric::CommonMargins.top());
   m_storeTableCell.selectableTableView()->margins()->setTop(

@@ -618,6 +618,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
     return;
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
+  layout = layout.makeEditable();
   if (Poincare::Preferences::SharedPreferences()->editionMode() ==
       Poincare::Preferences::EditionMode::Edition1D) {
     constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
@@ -625,7 +626,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
     /* TODO_PCJ: We shouldn't serialize 2D layouts.
      * We should only be able to serialize 1D layouts. If the layout is in 2D,
      * we should first parse it as an expression and then layout it in 1D. This
-     * way we would have an uniform serialization for one same expression (and
+     * way we would have a uniform serialization for one same expression (and
      * make the most of all the optimizations done when layouting an
      * expression). */
     Expression e = Expression::Parse(layout, nullptr);
@@ -638,9 +639,6 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
     }
     insertText(buffer, false, forceCursorRightOfLayout);
   } else {
-    /* makeEditable is in the else because it only strips separators
-     * and they are also stripped when serializing to a buffer */
-    layout = layout.makeEditable();
     cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
                            forceCursorLeftOfLayout);
   }

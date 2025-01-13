@@ -77,23 +77,24 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
     return CompareNumbers(e1, e2);
   }
   if (type1 < type2) {
+    if (type1 == Type::ComplexI) {
+      // i is always last.
+      return 1;
+    }
     /* Note: nodes with a smaller type than Power (numbers and Multiplication)
      * will not benefit from this exception. */
     if (type1 == Type::Pow) {
-      if (order == OrderType::Beautification) {
-        return -CompareDifferent(e1, e2, OrderType::System);
-      }
       int comparePowerChild = Compare(e1->child(0), e2, order);
       if (comparePowerChild == 0) {
+        if (order == OrderType::Beautification) {
+          // x^2 < x < 1/x
+          return -Compare(e1->child(1), 1_e, OrderType::System);
+        }
         // 1/x < x < x^2
         return Compare(e1->child(1), 1_e, order);
       }
       // w^2 < x < y^2
       return comparePowerChild;
-    }
-    if (type1 == Type::ComplexI) {
-      // i is always last.
-      return 1;
     }
     /* Note: nodes with a smaller type than Addition (numbers, Multiplication
      * and Power) / Multiplication (numbers) will not benefit from this

@@ -373,12 +373,12 @@ bool SimplifyDependencies(Tree* dependencies) {
       if (dependency->child(0)->isMult()) {
         // dep(..., {nonNull(x*y)}) = dep(..., {nonNull(x),nonNull(y)})
         Tree* mult = dependency->child(0);
-        int n = mult->numberOfChildren();
         Tree* child = mult->child(1);
-        for (int i = 1; i < n; i++) {
+        while (child != mult->nextTree()) {
           child->cloneNodeAtNode(KNonNull);
           child = child->nextTree();
         }
+        int n = mult->numberOfChildren();
         mult->removeNode();
         NAry::SetNumberOfChildren(dependencies,
                                   dependencies->numberOfChildren() + n - 1);

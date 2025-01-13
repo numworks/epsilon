@@ -280,21 +280,18 @@ bool CanBeUndefWithInfinity(const Tree* e) {
 bool SimplifyDependencies(Tree* dependencies) {
   assert(dependencies->isNAry());
   bool changed = false;
-  Tree* depI = dependencies->child(0);
-  /* TODO: refactor this for-loop to avoid changing the index ("i--") while in
-   * the loop, which is error-prone */
-  for (int i = 0; i < dependencies->numberOfChildren(); i++) {
-    if (depI->isReal()) {
-      ComplexSign signX = GetComplexSign(depI->child(0));
+  Tree* dependency = dependencies->child(0);
+  while (dependency != dependencies->nextTree()) {
+    if (dependency->isReal()) {
+      ComplexSign signX = GetComplexSign(dependency->child(0));
       if (signX.isNonReal()) {
         // {real(x)} = {undef} if x is non real
-        depI->cloneTreeOverTree(KUndef);
+        dependency->cloneTreeOverTree(KUndef);
         return true;
       }
       if (signX.isReal()) {
         // dep(..., {real(x)}) = dep(..., {x}) if x is real
-        depI->moveTreeOverTree(depI->child(0));
-        i--;
+        dependency->moveTreeOverTree(dependency->child(0));
         changed = true;
         continue;
       }
@@ -306,81 +303,77 @@ bool SimplifyDependencies(Tree* dependencies) {
      * - if 1 child can be zero and another child can be inf, then we cannot
      *   split mult */
     // dep(..,{x*y}) = dep(..,{x+y}) = dep(..,{x ,y})
-    if (depI->isAdd() || depI->isMult()) {
-      if (CanBeUndefWithInfinity(depI)) {
+    if (dependency->isAdd() || dependency->isMult()) {
+      if (!CanBeUndefWithInfinity(dependency)) {
+        NAry::SetNumberOfChildren(dependencies,
+                                  dependencies->numberOfChildren() +
+                                      dependency->numberOfChildren() - 1);
+        dependency->removeNode();
+        changed = true;
         continue;
       }
-      NAry::SetNumberOfChildren(dependencies, dependencies->numberOfChildren() +
-                                                  depI->numberOfChildren() - 1);
-      depI->removeNode();
-      i--;
-      changed = true;
-      continue;
     }
 
-    if (depI->isPow() && depI->child(1)->isStrictlyNegativeRational()) {
+    if (dependency->isPow() &&
+        dependency->child(1)->isStrictlyNegativeRational()) {
       // dep(..., {x^-r}) = dep(..., {nonNull(x)}) with r rational > 0
-      depI->child(1)->removeTree();
-      depI->cloneNodeOverNode(KNonNull);
-      i--;
+      dependency->child(1)->removeTree();
+      dependency->cloneNodeOverNode(KNonNull);
       changed = true;
       continue;
 
-    } else if (depI->isPowReal()) {
-      Tree* exponent = depI->child(1);
-      if (!exponent->isRational() || exponent->isZero()) {
+    } else if (dependency->isPowReal()) {
+      Tree* exponent = dependency->child(1);
+      if (!(!exponent->isRational() || exponent->isZero())) {
+        IntegerHandler p = Rational::Numerator(exponent);
+        IntegerHandler q = Rational::Denominator(exponent);
+        assert(!p.isZero() && q.strictSign() == StrictSign::Positive);
+        exponent->removeTree();
+        if (p.strictSign() == StrictSign::Positive) {
+          if (q.isEven()) {
+            // {powReal(x,p/q)} -> {realPositive(x)}
+            dependency->cloneNodeOverNode(KRealPos);
+          } else {
+            // {powReal(x,p/q)} -> {x}
+            dependency->removeNode();
+          }
+        } else {
+          if (q.isEven()) {
+            // {powReal(x,p/q)} -> {nonNull(x), realPositive(x)}
+            dependency->cloneNodeOverNode(KNonNull);
+            Tree* secondDep = KRealPos->cloneNode();
+            dependency->child(0)->cloneTree();
+            NAry::AddChild(dependencies, secondDep);
+          } else {
+            // {powReal(x,p/q)} -> {nonNull(x)}
+            dependency->cloneNodeOverNode(KNonNull);
+          }
+        }
+        changed = true;
         continue;
       }
-      IntegerHandler p = Rational::Numerator(exponent);
-      IntegerHandler q = Rational::Denominator(exponent);
-      assert(!p.isZero() && q.strictSign() == StrictSign::Positive);
-      exponent->removeTree();
-      if (p.strictSign() == StrictSign::Positive) {
-        if (q.isEven()) {
-          // {powReal(x,p/q)} -> {realPositive(x)}
-          depI->cloneNodeOverNode(KRealPos);
-        } else {
-          // {powReal(x,p/q)} -> {x}
-          depI->removeNode();
-          i--;
-        }
-      } else {
-        if (q.isEven()) {
-          // {powReal(x,p/q)} -> {nonNull(x), realPositive(x)}
-          depI->cloneNodeOverNode(KNonNull);
-          Tree* secondDep = KRealPos->cloneNode();
-          depI->child(0)->cloneTree();
-          NAry::AddChild(dependencies, secondDep);
-        } else {
-          // {powReal(x,p/q)} -> {nonNull(x)}
-          depI->cloneNodeOverNode(KNonNull);
-        }
-      }
-      changed = true;
-      continue;
-    } else if (IsDefinedIfChildIsDefined(depI)) {
+
+    } else if (IsDefinedIfChildIsDefined(dependency)) {
       // dep(..., {f(x)}) = dep(..., {x}) with f always defined if x defined
-      depI->moveTreeOverTree(depI->child(0));
-      i--;
+      dependency->moveTreeOverTree(dependency->child(0));
       changed = true;
       continue;
-    } else if (depI->isNonNull()) {
-      ComplexSign sign = GetComplexSign(depI->child(0));
+    } else if (dependency->isNonNull()) {
+      ComplexSign sign = GetComplexSign(dependency->child(0));
       if (sign.isNull()) {
         // dep(..., {nonNull(x)}) = undef if x is null
-        depI->cloneTreeOverTree(KUndef);
+        dependency->cloneTreeOverTree(KUndef);
         return true;
       }
       if (!sign.canBeNull()) {
         // dep(..., {nonNull(x)}) = dep(..., {x}) if x is non null
-        depI->moveTreeOverTree(depI->child(0));
-        i--;
+        dependency->moveTreeOverTree(dependency->child(0));
         changed = true;
         continue;
       }
-      if (depI->child(0)->isMult()) {
+      if (dependency->child(0)->isMult()) {
         // dep(..., {nonNull(x*y)}) = dep(..., {nonNull(x),nonNull(y)})
-        Tree* mult = depI->child(0);
+        Tree* mult = dependency->child(0);
         int n = mult->numberOfChildren();
         Tree* child = mult->child(1);
         for (int i = 1; i < n; i++) {
@@ -388,32 +381,29 @@ bool SimplifyDependencies(Tree* dependencies) {
           child = child->nextTree();
         }
         mult->removeNode();
-        i--;
         NAry::SetNumberOfChildren(dependencies,
                                   dependencies->numberOfChildren() + n - 1);
         changed = true;
         continue;
       }
-    } else if (depI->isRealPos()) {
-      ComplexSign sign = GetComplexSign(depI->child(0));
+    } else if (dependency->isRealPos()) {
+      ComplexSign sign = GetComplexSign(dependency->child(0));
       if (sign.isNonReal() || sign.realSign().isStrictlyNegative()) {
         /* dep(..., {realPos(x)},) = dep(..., {nonreal}) if x is not real
          * positive */
-        depI->cloneTreeOverTree(KNonReal);
-        i--;
+        dependency->cloneTreeOverTree(KNonReal);
         changed = true;
         continue;
       }
       if (sign.isReal() && sign.realSign().isPositive()) {
         // dep(..., {realPos(x)}) = dep(..., {x}) if x is real and positive
-        depI->moveTreeOverTree(depI->child(0));
-        i--;
+        dependency->moveTreeOverTree(dependency->child(0));
         changed = true;
         continue;
       }
     }
 
-    depI = depI->nextTree();
+    dependency = dependency->nextTree();
   }
 
   return changed;

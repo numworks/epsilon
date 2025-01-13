@@ -21,7 +21,7 @@ namespace Poincare::Internal {
 
 bool Arithmetic::ReduceQuotientOrRemainder(Tree* e) {
   assert(e->numberOfChildren() == 2);
-  bool isQuo = e->isQuo();
+  bool isQuo = e->isQuo() || e->isEuclideanDivision();
   const Tree* num = e->child(0);
   const Tree* denom = num->nextTree();
   OMG::Troolean childrenAreRationalIntegers = OMG::TrooleanAnd(

@@ -38,7 +38,7 @@ static constexpr int k_maxPriority = 20;
 
 /* Priority just after Add for left child of a subtraction that may be an
  * unparenthesed addition */
-static constexpr int k_subLeftChildPriority = 7;
+static constexpr int k_subLeftChildPriority = 8;
 
 static constexpr int OperatorPriority(TypeBlock type) {
   switch (type) {
@@ -49,18 +49,20 @@ static constexpr int OperatorPriority(TypeBlock type) {
       return 1;
     case Type::Div:
       return 2;
-    case Type::Mult:
+    case Type::EuclideanDivision:
       return 3;
+    case Type::Mult:
+      return 4;
     case Type::PercentAddition:
     case Type::MixedFraction:
-      return 4;
+      return 5;
     case Type::Opposite:
     // Opposite could be higher but we prefer to display 2^(-1) instead of 2^-1
     case Type::Sub:
-      return 5;
-    case Type::Add:
       return 6;
-      static_assert(k_subLeftChildPriority == 7);
+    case Type::Add:
+      return 7;
+      static_assert(k_subLeftChildPriority == 8);
 
     case Type::Equal:
     case Type::NotEqual:
@@ -440,6 +442,10 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
           layoutParent, expression,
           m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression),
           true);
+      break;
+    case Type::EuclideanDivision:
+      layoutInfixOperator(layoutParent, expression,
+                          CodePoint(UCodePointAssertion));
       break;
     case Type::Pow:
     case Type::PowMatrix:

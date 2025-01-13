@@ -168,6 +168,7 @@ Tree* RackParser::parseUntil(Token::Type stoppingType, TreeRef leftHandSide) {
       &RackParser::parseSouthEastArrow,      // Token::Type::SouthEastArrow
       &RackParser::parsePlus,                // Token::Type::Plus
       &RackParser::parseMinus,               // Token::Type::Minus
+      &RackParser::parseEuclideanDivision,   // Token::Type::EuclideanDivision
       &RackParser::parseTimes,               // Token::Type::Times
       &RackParser::parseSlash,               // Token::Type::Slash
       &RackParser::parseImplicitTimes,       // Token::Type::ImplicitTimes
@@ -215,6 +216,7 @@ Tree* RackParser::parseUntil(Token::Type stoppingType, TreeRef leftHandSide) {
   assert_order(Token::Type::Plus, parsePlus);
   assert_order(Token::Type::Minus, parseMinus);
   assert_order(Token::Type::Times, parseTimes);
+  assert_order(Token::Type::EuclideanDivision, parseEuclideanDivision);
   assert_order(Token::Type::Slash, parseSlash);
   assert_order(Token::Type::ImplicitTimes, parseImplicitTimes);
   assert_order(Token::Type::Percent, parsePercent);
@@ -537,6 +539,16 @@ void RackParser::parseSlash(TreeRef& leftHandSide, Token::Type stoppingType) {
   TreeRef rightHandSide;
   parseBinaryOperator(leftHandSide, rightHandSide, Token::Type::Slash);
   CloneNodeAtNode(leftHandSide, KDiv);
+}
+
+void RackParser::parseEuclideanDivision(TreeRef& leftHandSide,
+                                        Token::Type stoppingType) {
+#if POINCARE_EUCLIDEAN_DIVISION
+  TreeRef rightHandSide;
+  parseBinaryOperator(leftHandSide, rightHandSide,
+                      Token::Type::EuclideanDivision);
+  CloneNodeAtNode(leftHandSide, KEuclideanDiv);
+#endif
 }
 
 void RackParser::privateParseTimes(TreeRef& leftHandSide,

@@ -24,6 +24,8 @@
 
 #define POINCARE_COMPLEX_BUILTINS 1
 
+#define POINCARE_EUCLIDEAN_DIVISION 0
+
 // Matrix and matrix operations blocks
 #define POINCARE_MATRIX 1
 

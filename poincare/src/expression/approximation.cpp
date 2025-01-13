@@ -996,6 +996,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       T err = std::pow(10, std::round(child[1]));
       return std::round(child[0] * err) / err;
     }
+    case Type::EuclideanDivision:
     case Type::Quo:
     case Type::Rem: {
       T a = child[0];
@@ -1006,7 +1007,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       }
       // TODO: is this really better than std::remainder ?
       T quotient = b >= 0 ? std::floor(a / b) : -std::floor(a / (-b));
-      return e->isQuo() ? quotient : std::round(a - b * quotient);
+      return e->isRem() ? std::round(a - b * quotient) : quotient;
     }
 
     case Type::Fact: {

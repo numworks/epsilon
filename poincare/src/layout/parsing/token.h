@@ -34,6 +34,7 @@ class Token {
     SouthEastArrow,
     Plus,
     Minus,
+    EuclideanDivision,
     Times,
     Slash,
     ImplicitTimes,

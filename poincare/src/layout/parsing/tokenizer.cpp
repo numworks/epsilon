@@ -310,6 +310,8 @@ Token Tokenizer::popToken() {
       return Token(Token::Type::SouthEastArrow, layout);
     case '%':
       return Token(Token::Type::Percent, layout);
+    case UCodePointAssertion:
+      return Token(Token::Type::EuclideanDivision, layout);
     case '[':
       return Token(Token::Type::LeftBracket, layout);
     case ']':

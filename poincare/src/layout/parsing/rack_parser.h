@@ -97,6 +97,8 @@ class RackParser {
                           Token::Type stoppingType = (Token::Type)0);
   void parseImplicitAdditionBetweenUnits(
       TreeRef& leftHandSide, Token::Type stoppingType = (Token::Type)0);
+  void parseEuclideanDivision(TreeRef& leftHandSide,
+                              Token::Type stoppingType = (Token::Type)0);
   void parseCaret(TreeRef& leftHandSide,
                   Token::Type stoppingType = (Token::Type)0);
   void parseComparisonOperator(TreeRef& leftHandSide,

@@ -179,7 +179,10 @@ bool Division::BeautifyIntoDivision(Tree* e) {
   } else {
     den->removeTree();
     assert(needOpposite);
-    if (num->isOne()) {
+    bool outNumStartsWithUnit =
+        outNum->isUnitOrPhysicalConstant() ||
+        (outNum->isMult() && outNum->child(0)->isUnitOrPhysicalConstant());
+    if (num->isOne() && !outNumStartsWithUnit) {
       // return outNum
       num->removeTree();
       e->moveTreeOverTree(outNum);

@@ -273,13 +273,12 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
 
 bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context) {
   if (e->isMult() && e->numberOfChildren() >= 2 &&
-      Dimension::Get(e->child(1)).isUnit()) {
+      Dimension::Get(e->child(1)).isUnit() &&
+      e->child(0)->isStrictlyNegativeRational()) {
     // (-A)*U -> -A*U, with U a unit
-    if (e->child(0)->isStrictlyNegativeRational()) {
-      Rational::SetSign(e->child(0), NonStrictSign::Positive);
-      e->cloneNodeAtNode(KOpposite);
-      return true;
-    }
+    Rational::SetSign(e->child(0), NonStrictSign::Positive);
+    e->cloneNodeAtNode(KOpposite);
+    return true;
   } else if (e->isMult() || e->isPow() || e->isRational()) {
     /* Turn multiplications with negative powers into divisions and negative
      * rationals into opposites */

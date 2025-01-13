@@ -1108,7 +1108,6 @@ bool Unit::ApplyEquivalentDisplay(Tree* e, TreeRef& inputUnits,
         return e->isUnit() &&
                GetRepresentative(e) == &Time::representatives.hour;
       });
-  ;
   if (!isSurface && !isVolume && !isAngle && !isTemperature &&
       !isSpeedWithHour) {
     inputUnits->removeTree();

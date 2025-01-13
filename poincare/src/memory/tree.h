@@ -123,6 +123,8 @@ class Tree : public TypeBlock {
     return const_cast<Tree*>(const_cast<const Tree*>(this)->nextTree());
   }
 
+  const Tree* end() const { return nextTree(); }
+
   // Sizes
   size_t treeSize() const { return nextTree()->block() - block(); }
   // Return the CRC32 hash of the entire tree

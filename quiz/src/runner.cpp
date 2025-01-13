@@ -2,27 +2,16 @@
 #include <escher/init.h>
 #include <ion.h>
 #include <poincare/init.h>
-#include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/pool.h>
 #include <poincare/print.h>
 #include <poincare/test/helper.h>
-#include <poincare/test/old/helper.h>
 
 #include "quiz.h"
+#include "runner_helpers.h"
 #include "symbols.h"
 
 void quiz_print(const char* message) { Ion::Console::writeLine(message); }
 
 bool quiz_print_clear() { return Ion::Console::clear(); }
-
-void flushGlobalData() {
-  /* TODO: Only Pool and GlobalContext are expected to never leak. Uniformize
-   * expectations. */
-  quiz_assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
-  quiz_assert(Poincare::Context::GlobalContext == nullptr);
-  flush_stack();
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
-}
 
 static inline void ion_main_inner(const char* testFilter) {
   int i = 0;
@@ -113,15 +102,6 @@ void ion_main(int argc, const char* const argv[]) {
    * memory pointers could be overlooked during mark procedure. */
   volatile int stackTop;
   Ion::setStackStart((void*)(&stackTop));
-  Poincare::ExceptionCheckpoint ecp;
-  if (ExceptionRun(ecp)) {
-    ion_main_inner(testFilter);
-  } else {
-    // There has been a memory allocation problem
-#if POINCARE_TREE_LOG
-    Poincare::Pool::sharedPool->log();
-#endif
-    quiz_assert(false);
-  }
+  exception_run(ion_main_inner, testFilter);
   Poincare::Shutdown();
 }

@@ -2,6 +2,8 @@ $(call create_module,quiz,1,$(addprefix src/, \
   assertions.cpp \
   i18n.cpp \
   runner.cpp \
+  runner_helpers_pool.cpp:-nopool \
+  runner_helpers_no_pool.cpp:+nopool \
   stopwatch.cpp \
   test_symbols.c \
 ))

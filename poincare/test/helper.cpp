@@ -3,6 +3,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/store.h>
+#include <poincare/print.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
@@ -46,6 +47,20 @@ const char * ApproximatedParsedIntegerString() {
   return s;
 }
 #endif
+
+void quiz_tolerate_print_if_failure(bool test, const char* input,
+                                    const char* expected,
+                                    const char* observed) {
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  int i = Poincare::Print::UnsafeCustomPrintf(
+      buffer, bufferSize, "%s\t%s\t%s", test ? "OK" : "BAD", input, expected);
+  if (!test) {
+    Poincare::Print::UnsafeCustomPrintf(buffer + i, bufferSize - i, "\t%s",
+                                        observed);
+  }
+  quiz_print(buffer);
+}
 
 void quiz_assert_print_if_failure(bool test, const char* information) {
   if (!test) {

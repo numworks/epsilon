@@ -21,6 +21,9 @@ void process_tree_and_compare(const char* input, const char* output,
                               ProcessTree process,
                               ProjectionContext projectionContext);
 
+void quiz_tolerate_print_if_failure(bool test, const char* input,
+                                    const char* expected = "",
+                                    const char* observed = "");
 void quiz_assert_print_if_failure(bool test, const char* information);
 
 void remove_system_codepoints(char* buffer);

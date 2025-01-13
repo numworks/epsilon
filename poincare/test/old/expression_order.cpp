@@ -13,7 +13,9 @@ void assert_greater(const Tree* e1, const Tree* e2) {
 
 void old_assert_greater(const Tree* e1, const Tree* e2) {
   bool test = Order::CompareSystem(e1, e2) == 1;
-
+#if 0
+  quiz_assert(test);
+#else
   constexpr int bufferSize = 256;
   char information[bufferSize] = "";
   char buffer1[bufferSize];
@@ -21,9 +23,9 @@ void old_assert_greater(const Tree* e1, const Tree* e2) {
   serialize_expression(e1, buffer1, bufferSize);
   serialize_expression(e2, buffer2, bufferSize);
   Poincare::Print::UnsafeCustomPrintf(information, bufferSize,
-                                      "%s\t%s greater than %s",
-                                      !test ? "BAD" : "OK", buffer1, buffer2);
-  quiz_print(information);
+                                      "%s greater than %s", buffer1, buffer2);
+  quiz_tolerate_print_if_failure(test, information, "true", "false");
+#endif
 }
 
 QUIZ_CASE(poincare_expression_order_constant) {
@@ -89,24 +91,20 @@ void assert_multiplication_or_addition_is_ordered_as(const Tree* input,
   NAry::Sort(clone, input->isAdd() ? Order::OrderType::AdditionBeautification
                                    : Order::OrderType::Beautification);
   bool test = clone->treeIsIdenticalTo(expected);
-  // quiz_assert(e1->treeIsIdenticalTo(e2));
-
+#if 0
+  quiz_assert(test);
+#else
   constexpr int bufferSize = 256;
-  char information[bufferSize] = "";
-  char buffer1[bufferSize];
-  char buffer2[bufferSize];
+  char buffer1[bufferSize] = "";
+  char buffer2[bufferSize] = "";
+  char buffer3[bufferSize] = "";
   serialize_expression(input, buffer1, bufferSize);
   serialize_expression(expected, buffer2, bufferSize);
-  int i = Poincare::Print::UnsafeCustomPrintf(
-      information, bufferSize, "%s\t%s\t%s", !test ? "BAD" : "OK", buffer1,
-      buffer2);
   if (!test) {
-    serialize_expression(clone, buffer2, bufferSize);
-    Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
-                                        buffer2);
+    serialize_expression(clone, buffer3, bufferSize);
   }
-  quiz_print(information);
-
+  quiz_tolerate_print_if_failure(test, buffer1, buffer2, buffer3);
+#endif
   clone->removeTree();
 }
 

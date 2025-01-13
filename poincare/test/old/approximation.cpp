@@ -2,6 +2,7 @@
 #include <poincare/print.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/test/helper.h>
 
 #include "helper.h"
 
@@ -27,19 +28,24 @@ void assert_expression_approximates_to_scalar(
   e->removeTree();
   bool test =
       roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(), true);
-  bool bad = !test;
+#if 0
+  quiz_assert_print_if_failure(test, expression);
+#else
   constexpr int bufferSize = 500;
-  char information[bufferSize] = "";
-  int used = Poincare::Print::UnsafeCustomPrintf(
-      information, bufferSize, "%s\t%s\t%*.*ed", bad ? "BAD" : "OK", expression,
-      approximation, Preferences::PrintFloatMode::Decimal, 7);
-  if (bad) {
+  char expectedBuffer[bufferSize] = "";
+  Poincare::Print::UnsafeCustomPrintf(expectedBuffer, bufferSize, "%*.*ed",
+                                      approximation,
+                                      Preferences::PrintFloatMode::Decimal, 7);
+  char observedBuffer[bufferSize] = "";
+  if (!test) {
     Poincare::Print::UnsafeCustomPrintf(
-        information + used, bufferSize - used, "\t%*.*ed", result,
+        observedBuffer, bufferSize, "%*.*ed", result,
         Preferences::PrintFloatMode::Decimal, 7);
   }
-  quiz_print(information);
-  // quiz_assert_print_if_failure(test, expression);
+
+  quiz_tolerate_print_if_failure(test, expression, expectedBuffer,
+                                 observedBuffer);
+#endif
 }
 
 QUIZ_CASE(poincare_approximation_decimal) {
@@ -870,12 +876,14 @@ template <typename T>
 void assert_no_duplicates_in_list(const char *expression) {
   Shared::GlobalContext globalContext;
   Internal::Tree *e = parse_expression(expression, &globalContext);
+  // Sort list
   e->cloneNodeAtNode(Poincare::Internal::KListSort);
   e->moveTreeOverTree(Internal::Approximation::ToTree<T>(
       e,
       Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                           .projectLocalVariables = true},
       Internal::Approximation::Context(Radian, Cartesian)));
+  // Find duplicates
   assert(e->isList());
   int n = e->numberOfChildren();
   bool bad = false;
@@ -884,14 +892,13 @@ void assert_no_duplicates_in_list(const char *expression) {
       bad = true;
       break;
     }
-    /* quiz_assert_print_if_failure(!e->child(i)->treeIsIdenticalTo(e->child(i -
-     * 1)), expression); */
   }
-  constexpr int bufferSize = 500;
-  char information[bufferSize] = "";
-  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
-                                      bad ? "BAD" : "OK", expression);
-  quiz_print(information);
+#if 0
+  quiz_assert_print_if_failure(!bad, expression);
+#else
+  quiz_tolerate_print_if_failure(!bad, expression, "no duplicates",
+                                 "duplicates");
+#endif
   e->removeTree();
 }
 

@@ -22,13 +22,13 @@ using Internal::Tokenizer;
 void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
   ParsingContext parsingContext(nullptr,
                                 ParsingContext::ParsingMethod::Classic);
-  bool bad = false;
+  bool test = true;
   Internal::Rack* inputLayout = Internal::RackFromText(string);
   Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
     if (token.type() != *tokenTypes) {
-      bad = true;
+      test = false;
       break;
     }
     if (token.type() == Token::Type::EndOfStream) {
@@ -36,12 +36,13 @@ void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
     }
     tokenTypes++;
   }
+#if 0
+  quiz_assert(test);
+#else
+  quiz_tolerate_print_if_failure(test, string, "expected token",
+                                 "unexpected token");
   inputLayout->removeTree();
-  constexpr int bufferSize = 2048;
-  char information[bufferSize] = "";
-  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
-                                      bad ? "BAD" : "OK", string);
-  quiz_print(information);
+#endif
 }
 
 void assert_tokenizes_as_number(const char* string) {

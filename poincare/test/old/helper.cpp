@@ -104,7 +104,6 @@ void assert_parsed_expression_process_to(
   char buffer[bufferSize];
   char result[bufferSize];
   copy_without_system_chars(result, oldResult);
-  bool bad = false;
   assert(SharedTreeStack->numberOfTrees() == 0);
   Tree *e = parse_expression(expression, &globalContext);
   Tree *m = process(
@@ -115,18 +114,17 @@ void assert_parsed_expression_process_to(
   *Internal::Serialize(l, buffer, buffer + bufferSize) = 0;
   copy_without_system_chars(buffer, buffer);
   l->removeTree();
-  bad = strcmp(buffer, result) != 0;
+  bool test = strcmp(buffer, result) == 0;
   assert(SharedTreeStack->numberOfTrees() == 0);
-
+#if 0
   char information[bufferSize] = "";
-  int i = Poincare::Print::UnsafeCustomPrintf(information, bufferSize,
-                                              "%s\t%s\t%s", bad ? "BAD" : "OK",
-                                              expression, result);
-  if (bad) {
-    Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
-                                        buffer);
+  if (!test) {
+    build_failure_infos(information, bufferSize, expression, buffer, result);
   }
-  quiz_print(information);
+  quiz_assert_print_if_failure(test, information);
+#else
+  quiz_tolerate_print_if_failure(test, expression, result, buffer);
+#endif
 }
 
 Internal::Tree *parse_expression(const char *expression, Context *context,
@@ -147,18 +145,17 @@ void assert_parsed_expression_is(const char *expression,
                                  const Poincare::Internal::Tree *expected,
                                  bool parseForAssignment) {
   Shared::GlobalContext context;
-  bool bad = false;
   Tree *parsed = parse_expression(expression, &context, parseForAssignment);
-  bad = !parsed || !parsed->treeIsIdenticalTo(expected);
+  bool test = parsed && parsed->treeIsIdenticalTo(expected);
   if (parsed) {
     parsed->removeTree();
   }
-
-  constexpr int bufferSize = 2048;
-  char information[bufferSize] = "";
-  Poincare::Print::UnsafeCustomPrintf(information, bufferSize, "%s\t%s",
-                                      bad ? "BAD" : "OK", expression);
-  quiz_print(information);
+#if 0
+  quiz_assert(test);
+#else
+  quiz_tolerate_print_if_failure(test, expression, "parsed and identical",
+                                 parsed ? "not parsed" : "not identical");
+#endif
 }
 
 void assert_parse_to_same_expression(const char *expression1,
@@ -307,7 +304,6 @@ void assert_expression_serializes_to(const Tree *expression,
   Serialize(layout, buffer, buffer + bufferSize);
   bool test = strcmp(serialization, buffer) == 0;
   layout->removeTree();
-  char information[bufferSize] = "";
 #if 0
   if (!test) {
     build_failure_infos(information, bufferSize, "serialized expression",
@@ -315,13 +311,7 @@ void assert_expression_serializes_to(const Tree *expression,
   }
   quiz_assert_print_if_failure(test, information);
 #else
-  int i = Poincare::Print::UnsafeCustomPrintf(
-      information, bufferSize, "%s\t%s", test ? "OK" : "BAD", serialization);
-  if (!test) {
-    Poincare::Print::UnsafeCustomPrintf(information + i, bufferSize - i, "\t%s",
-                                        buffer);
-  }
-  quiz_print(information);
+  quiz_tolerate_print_if_failure(test, serialization, serialization, buffer);
 #endif
 }
 

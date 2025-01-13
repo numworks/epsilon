@@ -84,7 +84,13 @@ void InputStoreController::viewWillAppear() {
   if (tableModel->numberOfSeries() == 2) {
     m_dropdownCell.dropdown()->selectRow(DropdownDataSource::RowForSeriesPair(
         tableModel->seriesAt(0), tableModel->seriesAt(1)));
-    m_dropdownCell.setMessage(I18n::Message::DataSets);
+    if (m_pageIndex == PageIndex::One) {
+      m_dropdownCell.setMessage(I18n::Message::DataSet1);
+    } else {
+      assert(m_pageIndex == PageIndex::Two);
+      m_dropdownCell.setMessage(I18n::Message::DataSet2);
+    }
+
   } else {
     assert(tableModel->numberOfSeries() == 1);
     m_dropdownCell.dropdown()->selectRow(tableModel->seriesAt(0));

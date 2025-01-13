@@ -3,8 +3,10 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/grid.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/layout_span_decoder.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/multiplication_symbol.h>
+#include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/src/layout/render.h>
 #include <poincare/src/layout/serialize.h>
 

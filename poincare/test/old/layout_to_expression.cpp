@@ -2,6 +2,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parser.h>
+#include <poincare/test/helper.h>
 
 #include "helper.h"
 

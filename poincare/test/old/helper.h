@@ -74,7 +74,6 @@ constexpr Poincare::Preferences::PrintFloatMode ScientificMode =
 constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
-void quiz_assert_print_if_failure(bool test, const char* information);
 void quiz_assert_log_if_failure(bool test, Poincare::PoolHandle tree);
 
 void copy_without_system_chars(char* buffer, const char* input);

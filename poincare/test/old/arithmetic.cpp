@@ -1,6 +1,7 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/src/expression/arithmetic.h>
 #include <poincare/src/expression/integer.h>
+#include <poincare/test/helper.h>
 
 #include <utility>
 

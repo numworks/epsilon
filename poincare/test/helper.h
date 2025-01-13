@@ -6,7 +6,6 @@
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
-#include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <quiz.h>

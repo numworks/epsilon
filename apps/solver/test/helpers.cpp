@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <poincare/helpers/store.h>
+#include <poincare/test/helper.h>
 #include <quiz.h>
 #include <string.h>
 

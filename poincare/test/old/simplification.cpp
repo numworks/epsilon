@@ -1,5 +1,6 @@
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
+#include <poincare/src/expression/builtin.h>
 
 #include "../helper.h"
 #include "helper.h"

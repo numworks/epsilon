@@ -3,10 +3,12 @@
 #include <apps/shared/global_context.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/beautification.h>
+#include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layouter.h>
+#include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>

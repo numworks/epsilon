@@ -57,7 +57,7 @@ void InputStoreController::onDropdownSelected(int selectedRow) {
   m_storeTableCell.recomputeDimensionsAndReload(true);
 }
 
-const Escher::HighlightCell* InputStoreController::explicitCellAtRow(
+const Escher::HighlightCell* InputStoreController::privateExplicitCellAtRow(
     int row) const {
   if (row == k_dropdownCellIndex) {
     return &m_dropdownCell;
@@ -68,12 +68,7 @@ const Escher::HighlightCell* InputStoreController::explicitCellAtRow(
   if (indexOfFirstExtraParameter() <= row && row < indexOfSignificanceCell()) {
     return &m_extraParameters[row - indexOfFirstExtraParameter()];
   }
-  return InputCategoricalController::explicitCellAtRow(row);
-}
-
-HighlightCell* InputStoreController::explicitCellAtRow(int row) {
-  return const_cast<HighlightCell*>(
-      const_cast<const InputStoreController*>(this)->explicitCellAtRow(row));
+  return InputCategoricalController::privateExplicitCellAtRow(row);
 }
 
 void InputStoreController::createDynamicCells() {

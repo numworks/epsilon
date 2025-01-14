@@ -189,16 +189,6 @@ HighlightCell* CategoricalController::reusableCell(int index, int type) {
   return explicitCellAtRow(type);
 }
 
-const HighlightCell* CategoricalController::explicitCellAtRow(int row) const {
-  assert(row == indexOfNextCell());
-  return &m_next;
-}
-
-HighlightCell* CategoricalController::explicitCellAtRow(int row) {
-  return const_cast<HighlightCell*>(
-      const_cast<const CategoricalController*>(this)->explicitCellAtRow(row));
-}
-
 KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
   if (row == indexOfTableCell()) {
     return std::min(tableCellFullHeight() - tableCellVerticalOffset(),
@@ -287,18 +277,12 @@ void InputCategoricalController::viewWillAppear() {
   categoricalTableCell()->recomputeDimensionsAndReload(true, true);
 }
 
-const HighlightCell* InputCategoricalController::explicitCellAtRow(
+const HighlightCell* InputCategoricalController::privateExplicitCellAtRow(
     int row) const {
   if (row == indexOfSignificanceCell()) {
     return &m_significanceCell;
   }
-  return CategoricalController::explicitCellAtRow(row);
-}
-
-HighlightCell* InputCategoricalController::explicitCellAtRow(int row) {
-  return const_cast<HighlightCell*>(
-      const_cast<const InputCategoricalController*>(this)->explicitCellAtRow(
-          row));
+  return CategoricalController::privateExplicitCellAtRow(row);
 }
 
 }  // namespace Inference

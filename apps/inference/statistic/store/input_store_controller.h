@@ -91,8 +91,7 @@ class InputStoreController : public InputCategoricalController,
   constexpr static int k_dropdownCellIndex = 0;
   constexpr static int k_maxNumberOfExtraParameters = 2;
 
-  const Escher::HighlightCell* explicitCellAtRow(int row) const override;
-  Escher::HighlightCell* explicitCellAtRow(int row) override;
+  const Escher::HighlightCell* privateExplicitCellAtRow(int row) const override;
   InputCategoricalTableCell* categoricalTableCell() override {
     return &m_storeTableCell;
   }

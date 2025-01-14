@@ -30,11 +30,12 @@ void InputGoodnessController::createDynamicCells() {
   m_inputGoodnessTableCell.createCells();
 }
 
-HighlightCell* InputGoodnessController::explicitCellAtRow(int row) {
+const HighlightCell* InputGoodnessController::privateExplicitCellAtRow(
+    int row) const {
   if (row == k_indexOfDegreeOfFreedom) {
     return &m_degreeOfFreedomCell;
   }
-  return InputCategoricalController::explicitCellAtRow(row);
+  return InputCategoricalController::privateExplicitCellAtRow(row);
 }
 
 int InputGoodnessController::indexOfEditedParameterAtIndex(int index) const {

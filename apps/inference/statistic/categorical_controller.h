@@ -55,8 +55,19 @@ class CategoricalController
  protected:
   KDCoordinate nonMemoizedRowHeight(int row) override final;
 
-  virtual Escher::HighlightCell* explicitCellAtRow(int row);
-  virtual const Escher::HighlightCell* explicitCellAtRow(int row) const;
+  const Escher::HighlightCell* explicitCellAtRow(int row) const {
+    return privateExplicitCellAtRow(row);
+  }
+
+  Escher::HighlightCell* explicitCellAtRow(int row) {
+    return const_cast<Escher::HighlightCell*>(privateExplicitCellAtRow(row));
+  }
+
+  virtual const Escher::HighlightCell* privateExplicitCellAtRow(int row) const {
+    assert(row == indexOfNextCell());
+    return &m_next;
+  }
+
   virtual int indexOfNextCell() const { return indexOfTableCell() + 1; }
   virtual CategoricalTableCell* categoricalTableCell() = 0;
 
@@ -110,8 +121,6 @@ class InputCategoricalController : public CategoricalController,
   }
 
  protected:
-  const Escher::HighlightCell* explicitCellAtRow(int row) const override;
-  Escher::HighlightCell* explicitCellAtRow(int row) override;
   InputCategoricalTableCell* categoricalTableCell() override = 0;
   virtual int indexOfSignificanceCell() const = 0;
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }
@@ -119,6 +128,8 @@ class InputCategoricalController : public CategoricalController,
     assert(index == indexOfSignificanceCell());
     return m_statistic->indexOfThreshold();
   }
+
+  const Escher::HighlightCell* privateExplicitCellAtRow(int row) const override;
 
   Statistic* m_statistic;
   InputCategoricalCell<Escher::MessageTextView> m_significanceCell;

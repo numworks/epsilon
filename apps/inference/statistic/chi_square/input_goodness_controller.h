@@ -34,7 +34,7 @@ class InputGoodnessController : public InputCategoricalController {
     return k_indexOfDegreeOfFreedom + 1;
   }
   int indexOfEditedParameterAtIndex(int index) const override;
-  Escher::HighlightCell* explicitCellAtRow(int row) override;
+  const Escher::HighlightCell* privateExplicitCellAtRow(int row) const override;
 
   InputCategoricalCell<Escher::MessageTextView> m_degreeOfFreedomCell;
   InputGoodnessTableCell m_inputGoodnessTableCell;

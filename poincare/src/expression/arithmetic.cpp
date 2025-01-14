@@ -21,7 +21,7 @@ namespace Poincare::Internal {
 
 bool Arithmetic::ReduceQuotientOrRemainder(Tree* e) {
   assert(e->numberOfChildren() == 2);
-  bool isQuo = e->isQuo() || e->isEuclideanDivision();
+  bool isQuo = e->isQuo();
   const Tree* num = e->child(0);
   const Tree* denom = num->nextTree();
   OMG::Troolean childrenAreRationalIntegers = OMG::TrooleanAnd(
@@ -41,6 +41,25 @@ bool Arithmetic::ReduceQuotientOrRemainder(Tree* e) {
   IntegerHandler d = Integer::Handler(denom);
   e->moveTreeOverTree(isQuo ? IntegerHandler::Quotient(n, d)
                             : IntegerHandler::Remainder(n, d));
+  return true;
+}
+
+bool Arithmetic::ReduceEuclideanDivision(Tree* e) {
+  assert(e->isEuclideanDivision());
+  const Tree* num = e->child(0);
+  const Tree* denom = num->nextTree();
+  if (!num->isInteger() || !denom->isInteger()) {
+    // Unlike quo and rem, simplification has to succeed
+    e->cloneTreeOverTree(KBadType);
+    return true;
+  }
+  if (denom->isZero()) {
+    e->cloneTreeOverTree(KUndefZeroDivision);
+    return true;
+  }
+  Tree* result = KEuclideanDivResult->cloneNode();
+  IntegerHandler::Division(Integer::Handler(num), Integer::Handler(denom));
+  e->moveTreeOverTree(result);
   return true;
 }
 

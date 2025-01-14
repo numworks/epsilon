@@ -28,6 +28,7 @@ class Arithmetic {
   static bool ReduceFactorial(Tree* e);
   static bool ExpandFactorial(Tree* e);
   static bool ReduceQuotientOrRemainder(Tree* e);
+  static bool ReduceEuclideanDivision(Tree* e);
   static bool ReduceFloor(Tree* e);
   static bool ReduceRound(Tree* e);
   static bool ReduceFactor(Tree* e);

@@ -146,11 +146,16 @@ bool Projection::UpdateComplexFormatWithExpressionInput(
 
 bool Projection::DeepSystemProject(Tree* e,
                                    ProjectionContext projectionContext) {
-  bool changed =
-      PatternMatching::MatchReplace(
-          e, KEuclideanDiv(KA, KB),
-          KEuclideanDivResult(KQuo(KA, KB), KRem(KA, KB))) ||
-      Tree::ApplyShallowTopDown(e, ShallowSystemProject, &projectionContext);
+  bool changed = false;
+  if (e->isEuclideanDivision()) {
+    changed |= Tree::ApplyShallowTopDown(e->child(0), ShallowSystemProject,
+                                         &projectionContext);
+    changed |= Tree::ApplyShallowTopDown(e->child(1), ShallowSystemProject,
+                                         &projectionContext);
+  } else {
+    changed |=
+        Tree::ApplyShallowTopDown(e, ShallowSystemProject, &projectionContext);
+  }
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   if (changed) {
     Dependency::DeepBubbleUpDependencies(e);
@@ -395,6 +400,10 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
       // A nand B -> not (A and B)
       PatternMatching::MatchReplace(e, KLogicalNand(KA, KB),
                                     KLogicalNot(KLogicalAnd(KA, KB))) ||
+#endif
+#if POINCARE_EUCLIDEAN_DIVISION
+      // A |- B -> quo(A, B)
+      PatternMatching::MatchReplace(e, KEuclideanDiv(KA, KB), KQuo(KA, KB)) ||
 #endif
       changed;
 }

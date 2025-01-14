@@ -147,8 +147,9 @@ bool SystematicReduction::Switch(Tree* e) {
       return SystematicOperation::ReducePowerReal(e);
     case Type::Quo:
     case Type::Rem:
-    case Type::EuclideanDivision:
       return Arithmetic::ReduceQuotientOrRemainder(e);
+    case Type::EuclideanDivision:
+      return Arithmetic::ReduceEuclideanDivision(e);
     case Type::Round:
       return Arithmetic::ReduceRound(e);
     case Type::Sign:

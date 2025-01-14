@@ -226,10 +226,11 @@ void CategoricalController::initWidth(TableView* tableView) {
 
 InputCategoricalController::InputCategoricalController(
     StackViewController* parent, ViewController* nextController,
-    Statistic* statistic, Invocation invocation)
+    Statistic* statistic, Invocation invocation, PageIndex pageIndex)
     : CategoricalController(parent, nextController, invocation),
       m_statistic(statistic),
-      m_significanceCell(&m_selectableListView, this) {}
+      m_significanceCell(&m_selectableListView, this),
+      m_pageIndex(pageIndex) {}
 
 bool InputCategoricalController::textFieldShouldFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {

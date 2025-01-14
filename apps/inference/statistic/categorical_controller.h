@@ -5,7 +5,7 @@
 
 #include "categorical_cell.h"
 #include "categorical_table_cell.h"
-#include "inference/models/statistic/chi2_test.h"
+#include "inference/models/statistic/raw_data_statistic.h"
 
 namespace Inference {
 
@@ -89,7 +89,8 @@ class InputCategoricalController : public CategoricalController,
   InputCategoricalController(Escher::StackViewController* parent,
                              Escher::ViewController* nextController,
                              Statistic* statistic,
-                             Escher::Invocation invocation);
+                             Escher::Invocation invocation,
+                             PageIndex pageIndex = PageIndex::One);
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
@@ -121,6 +122,11 @@ class InputCategoricalController : public CategoricalController,
 
   Statistic* m_statistic;
   InputCategoricalCell<Escher::MessageTextView> m_significanceCell;
+
+  /* There can be several instances of InputCategoricalController, each
+   * representing a distinct dataset selection page. This is used only for some
+   * test categories (e.g. TwoMeansTest). */
+  PageIndex m_pageIndex;
 };
 
 }  // namespace Inference

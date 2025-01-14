@@ -151,11 +151,6 @@ class InputStoreController : public InputCategoricalController,
 
   InputStoreController* m_nextInputStoreController;
   ViewController* m_nextOtherController;
-
-  /* There can be several instances of InputStoreController, each representing a
-   * distinct dataset selection page. This is used only for some test categories
-   * (e.g. TwoMeansTest). */
-  PageIndex m_pageIndex;
 };
 
 }  // namespace Inference

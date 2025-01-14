@@ -286,12 +286,21 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   /* TODO: refactor this for-loop to avoid changing the index ("i--") while in
    * the loop, which is error-prone */
   for (int i = 0; i < set->numberOfChildren(); i++) {
-    if (depI->isReal() && GetComplexSign(depI->child(0)).isReal()) {
-      // dep(..., {real(x)}) = dep(..., {x}) if x is real
-      depI->moveTreeOverTree(depI->child(0));
-      i--;
-      changed = true;
-      continue;
+    if (depI->isReal()) {
+      ComplexSign signX = GetComplexSign(depI->child(0));
+      if (signX.isNonReal()) {
+        // dep(..., {real(x)}) = undef if x is non real
+        set->removeTree();
+        dep->cloneTreeOverTree(KUndef->cloneTree());
+        return true;
+      }
+      if (signX.isReal()) {
+        // dep(..., {real(x)}) = dep(..., {x}) if x is real
+        depI->moveTreeOverTree(depI->child(0));
+        i--;
+        changed = true;
+        continue;
+      }
     }
 
     /* TODO_PCJ:
@@ -358,20 +367,28 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
       i--;
       changed = true;
       continue;
-    } else if (depI->isNonNull() && depI->child(0)->isMult()) {
-      // dep(..., {nonNull(x*y)}) = dep(..., {nonNull(x),nonNull(y)})
-      Tree* mult = depI->child(0);
-      int n = mult->numberOfChildren();
-      Tree* child = mult->child(1);
-      for (int i = 1; i < n; i++) {
-        child->cloneNodeAtNode(KNonNull);
-        child = child->nextTree();
+    } else if (depI->isNonNull()) {
+      if (GetComplexSign(depI->child(0)).isNull()) {
+        // dep(..., {nonNull(x)}) = undef if x is non null
+        set->removeTree();
+        dep->cloneTreeOverTree(KUndef->cloneTree());
+        return true;
       }
-      mult->removeNode();
-      i--;
-      NAry::SetNumberOfChildren(set, set->numberOfChildren() + n - 1);
-      changed = true;
-      continue;
+      if (depI->child(0)->isMult()) {
+        // dep(..., {nonNull(x*y)}) = dep(..., {nonNull(x),nonNull(y)})
+        Tree* mult = depI->child(0);
+        int n = mult->numberOfChildren();
+        Tree* child = mult->child(1);
+        for (int i = 1; i < n; i++) {
+          child->cloneNodeAtNode(KNonNull);
+          child = child->nextTree();
+        }
+        mult->removeNode();
+        i--;
+        NAry::SetNumberOfChildren(set, set->numberOfChildren() + n - 1);
+        changed = true;
+        continue;
+      }
     }
 
     depI = depI->nextTree();

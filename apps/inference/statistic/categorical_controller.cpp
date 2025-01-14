@@ -264,7 +264,8 @@ bool InputCategoricalController::textFieldDidFinishEditing(
 
 bool InputCategoricalController::ButtonAction(
     InputCategoricalController* controller, void* s) {
-  if (!controller->m_statistic->validateInputs()) {
+  if (!controller->m_statistic->validateInputs(
+          static_cast<uint8_t>(controller->m_pageIndex))) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return false;
   }

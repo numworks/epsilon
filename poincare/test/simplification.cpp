@@ -1634,3 +1634,14 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   // (1+i)/(1-i) => i
   simplifies_to("(1+i)/(1-i)", "i");
 }
+
+QUIZ_CASE(pcj_euclidean_division) {
+#if POINCARE_EUCLIDEAN_DIVISION
+  // FIXME simplifies_to fails when the expected expression is not parsable
+  // simplifies_to("7⊦2", "Q=3,R=1");
+  simplifies_to("2+7⊦2", "5");
+  // simplifies_to("(2+7)⊦2", "Q=4,R=1");
+  simplifies_to("-3⊦2", "-1");  // Parsed as -(3⊦2)
+  // simplifies_to("(-3)⊦2", "Q=3,R=1");
+#endif
+}

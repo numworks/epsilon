@@ -443,10 +443,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
           m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression),
           true);
       break;
-    case Type::EuclideanDivision:
-      layoutInfixOperator(layoutParent, expression,
-                          CodePoint(UCodePointAssertion));
-      break;
     case Type::Pow:
     case Type::PowMatrix:
     case Type::Div:
@@ -494,6 +490,19 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(Type::PercentSimple));
       PushCodePoint(layoutParent, '%');
+      break;
+    case Type::EuclideanDivision:
+      layoutInfixOperator(layoutParent, expression,
+                          CodePoint(UCodePointAssertion));
+      break;
+    case Type::EuclideanDivisionResult:
+      PushCodePoint(layoutParent, 'Q');
+      PushCodePoint(layoutParent, '=');
+      layoutExpression(layoutParent, expression->nextNode(), k_commaPriority);
+      PushCodePoint(layoutParent, ',');
+      PushCodePoint(layoutParent, 'R');
+      PushCodePoint(layoutParent, '=');
+      layoutExpression(layoutParent, expression->nextNode(), k_commaPriority);
       break;
     case Type::Zero:
     case Type::MinusOne:

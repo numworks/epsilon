@@ -189,6 +189,9 @@ NODE(Div, BASE, 2)
 NODE(Exp, BASE, 1)
 
 NODE(EuclideanDivision, EUCLIDEAN_DIVISION, 2)
+// Q=, R= node
+NODE(EuclideanDivisionResult, EUCLIDEAN_DIVISION, 2)
+
 NODE(Fact, BASE, 1)
 NODE(Factor, BASE, 1)
 NODE(Floor, BASE, 1)

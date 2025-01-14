@@ -997,6 +997,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       return std::round(child[0] * err) / err;
     }
     case Type::EuclideanDivision:
+    case Type::EuclideanDivisionResult:  // FIXME: should be unreachable
     case Type::Quo:
     case Type::Rem: {
       T a = child[0];

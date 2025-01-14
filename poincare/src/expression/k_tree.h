@@ -90,6 +90,7 @@ constexpr auto KRoot = KBinary<Type::Root>();
 constexpr auto KPercentAddition = KBinary<Type::PercentAddition>();
 constexpr auto KMixedFraction = KBinary<Type::MixedFraction>();
 constexpr auto KEuclideanDiv = KBinary<Type::EuclideanDivision>();
+constexpr auto KEuclideanDivResult = KBinary<Type::EuclideanDivisionResult>();
 constexpr auto KQuo = KBinary<Type::Quo>();
 constexpr auto KRem = KBinary<Type::Rem>();
 constexpr auto KStore = KBinary<Type::Store>();

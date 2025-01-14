@@ -147,6 +147,9 @@ bool Projection::UpdateComplexFormatWithExpressionInput(
 bool Projection::DeepSystemProject(Tree* e,
                                    ProjectionContext projectionContext) {
   bool changed =
+      PatternMatching::MatchReplace(
+          e, KEuclideanDiv(KA, KB),
+          KEuclideanDivResult(KQuo(KA, KB), KRem(KA, KB))) ||
       Tree::ApplyShallowTopDown(e, ShallowSystemProject, &projectionContext);
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   if (changed) {

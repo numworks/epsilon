@@ -54,7 +54,7 @@ bool Table::hasAllSeries() const {
 }
 
 void Table::unsetSeries(Statistic* stat) {
-  for (int i = 0; i < numberOfSeriesInTable(); i++) {
+  for (int i = 0; i < numberOfSeries(); i++) {
     setSeriesAt(stat, i, -1);
   }
 }

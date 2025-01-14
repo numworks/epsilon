@@ -24,12 +24,6 @@ StoreTableCell::StoreTableCell(Responder* parentResponder, Statistic* statistic,
   }
 }
 
-bool StoreTableCell::textFieldDidFinishEditing(
-    Escher::AbstractTextField* textField, Ion::Events::Event event) {
-  assert(tableModel()->numberOfSeriesInTable() == 1);
-  return DoubleColumnTableCell::textFieldDidFinishEditing(textField, event);
-}
-
 int StoreTableCell::numberOfRowsAtColumn(const SelectableTableView* t,
                                          int column) {
   assert(&m_selectableTableView == t);

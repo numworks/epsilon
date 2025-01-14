@@ -43,9 +43,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
   void deleteParametersInColumn(int column) override;
   bool deleteParameterAtPosition(int row, int column) override;
   void recomputeData() override;
-  int maxNumberOfColumns() const override {
-    return k_numberOfColumnsPerSeries * numberOfSeriesInTable();
-  }
+  int maxNumberOfColumns() const override { return k_numberOfColumnsPerSeries; }
   int maxNumberOfRows() const override {
     return Shared::StatisticsStore::k_maxNumberOfPairs;
   }

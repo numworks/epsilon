@@ -18,10 +18,6 @@ class Table {
 
   // Store functions
   virtual int numberOfSeries() const = 0;
-  /* Number of series to display in the table. By default it is equal to the
-   * number of series of the statistics, but in some cases these two values can
-   * differ (for example in TwoMeans). */
-  virtual int numberOfSeriesInTable() const { return numberOfSeries(); }
   virtual int seriesAt(int index) const { return -1; }
   virtual void setSeriesAt(Statistic*, int index, int series) {}
   bool hasSeries(int pageIndex) const;

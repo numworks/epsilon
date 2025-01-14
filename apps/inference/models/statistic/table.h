@@ -24,7 +24,8 @@ class Table {
   virtual int numberOfSeriesInTable() const { return numberOfSeries(); }
   virtual int seriesAt(int index) const { return -1; }
   virtual void setSeriesAt(Statistic*, int index, int series) {}
-  bool hasSeries() const;
+  bool hasSeries(int pageIndex) const;
+  bool hasAllSeries() const;
   void unsetSeries(Statistic*);
 
   // Matrix special functions

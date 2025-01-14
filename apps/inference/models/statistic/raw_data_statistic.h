@@ -59,13 +59,14 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
 
   int numberOfResultsAndComputedParameters(const Statistic* stat,
                                            int results) const {
-    return results + hasSeries() * stat->numberOfStatisticParameters();
+    return results + static_cast<int>(hasAllSeries()) *
+                         stat->numberOfStatisticParameters();
   }
   bool computedParameterAtIndex(int* index, Statistic* stat, double* value,
                                 Poincare::Layout* message,
                                 I18n::Message* subMessage, int* precision);
   void initDatasetsIfSeries() {
-    if (hasSeries()) {
+    if (hasSeries(static_cast<int>(m_activePageIndex))) {
       initDatasets();
     }
   }

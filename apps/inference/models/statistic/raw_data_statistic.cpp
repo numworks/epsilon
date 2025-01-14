@@ -5,7 +5,7 @@ namespace Inference {
 void RawDataStatistic::setSeriesAt(Statistic* stat, int index, int series) {
   assert(index >= 0 && index < m_series.size());
   m_series[index] = series;
-  if (!hasSeries() && !stat->validateInputs(index)) {
+  if (!hasSeries(index) && !stat->validateInputs(index)) {
     stat->initParameters();
   }
   initDatasetsIfSeries();
@@ -13,7 +13,7 @@ void RawDataStatistic::setSeriesAt(Statistic* stat, int index, int series) {
 
 bool RawDataStatistic::parametersAreValid(Statistic* stat, int index) {
   assert(index >= 0 && index < numberOfSeries());
-  if (hasSeries() && !validateSeries(this, index)) {
+  if (hasSeries(index) && !validateSeries(this, index)) {
     return false;
   }
   syncParametersWithStore(stat);
@@ -70,7 +70,7 @@ bool RawDataStatistic::computedParameterAtIndex(int* index, Statistic* stat,
                                                 Poincare::Layout* message,
                                                 I18n::Message* subMessage,
                                                 int* precision) {
-  if (!hasSeries()) {
+  if (!hasSeries(static_cast<int>(m_activePageIndex))) {
     return false;
   }
   if (*index >= stat->numberOfStatisticParameters()) {

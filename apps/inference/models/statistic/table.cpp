@@ -42,9 +42,11 @@ Table* Table::FromStatistic(Statistic* stat) {
   }
 }
 
-bool Table::hasSeries() const {
-  for (int i = 0; i < numberOfSeriesInTable(); i++) {
-    if (seriesAt(i) < 0) {
+bool Table::hasSeries(int index) const { return seriesAt(index) >= 0; }
+
+bool Table::hasAllSeries() const {
+  for (int i = 0; i < numberOfSeries(); i++) {
+    if (!hasSeries(i)) {
       return false;
     }
   }

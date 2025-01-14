@@ -3,7 +3,7 @@
 namespace Inference {
 
 void OneMeanStatistic::syncParametersWithStore(const Statistic* stat) {
-  if (!hasSeries()) {
+  if (!hasSeries(static_cast<int>(m_activePageIndex))) {
     return;
   }
   m_params[OneMean::ParamsOrder::x] = mean(series());

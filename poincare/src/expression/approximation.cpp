@@ -916,11 +916,14 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     }
     case Type::Real: {
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
-      return x.imag() == 0 ? std::complex<T>(0) : NAN;
+      return !std::isnan(x.real()) && x.imag() == 0 ? x : NAN;
     }
     case Type::RealPos: {
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
-      return x.real() >= 0 && x.imag() == 0 ? std::complex<T>(0) : NonReal<T>();
+      if (std::isnan(x.real())) {
+        return NAN;
+      }
+      return x.real() >= 0 && x.imag() == 0 ? x : NonReal<T>();
     }
     /* Handle units as their scalar value in basic SI so prefix and
      * representative homogeneity isn't necessary. Dimension is expected to be

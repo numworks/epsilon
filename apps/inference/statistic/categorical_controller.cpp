@@ -279,6 +279,7 @@ void InputCategoricalController::viewWillAppear() {
 
 const HighlightCell* InputCategoricalController::privateExplicitCellAtRow(
     int row) const {
+  assert(row != 0);  // the first row is not explicit
   if (row == indexOfSignificanceCell()) {
     return &m_significanceCell;
   }

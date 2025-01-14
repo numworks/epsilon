@@ -52,9 +52,6 @@ class InputStoreController : public InputCategoricalController,
   KDCoordinate separatorBeforeRow(int row) const override;
 
   // ListViewDataSource
-  bool canSelectCellAtRow(int row) override {
-    return explicitCellAtRow(row)->isVisible();
-  }
 
   void initSeriesSelection() {
     selectSeriesForDropdownRow(m_dropdownCell.dropdown()->selectedRow());

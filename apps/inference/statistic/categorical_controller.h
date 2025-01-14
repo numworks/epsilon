@@ -46,6 +46,13 @@ class CategoricalController
   KDCoordinate separatorBeforeRow(int row) const override {
     return row == indexOfNextCell() ? k_defaultRowSeparator : 0;
   }
+  bool canSelectCellAtRow(int row) override {
+    if (row == 0) {
+      // the first row is not explicit
+      return true;
+    }
+    return explicitCellAtRow(row)->isVisible();
+  }
 
   void initView() override;
 

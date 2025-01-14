@@ -24,7 +24,8 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
         m_series{-1, -1} {}
 
   int seriesAt(int index) const override {
-    assert(index >= 0 && index < numberOfSeries() && index < m_series.size());
+    assert(index >= 0 && index < numberOfSeries() &&
+           numberOfSeries() <= m_series.size());
     return m_series[index];
   }
   void setSeriesAt(Statistic* stat, int index, int series) override;

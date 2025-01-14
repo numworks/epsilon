@@ -126,7 +126,7 @@ class Statistic : public Shared::Inference {
     return significanceTestType() == SignificanceTestType::OneMean ||
            significanceTestType() == SignificanceTestType::TwoMeans;
   }
-  virtual bool validateInputs() { return true; };
+  virtual bool validateInputs(int pageIndex = 0) { return true; };
 
   int indexOfThreshold() const { return numberOfStatisticParameters(); }
   virtual I18n::Message thresholdName() const = 0;

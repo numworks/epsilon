@@ -40,7 +40,8 @@ class Table {
   virtual int maxNumberOfColumns() const = 0;
   virtual int maxNumberOfRows() const = 0;
 
-  bool validateSeries(Shared::DoublePairStore* doublePairStore) const;
+  bool validateSeries(Shared::DoublePairStore* doublePairStore,
+                      int index) const;
 
   struct Index2D {
     int row;

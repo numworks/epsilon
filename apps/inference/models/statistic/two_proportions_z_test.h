@@ -43,7 +43,7 @@ class TwoProportionsZTest : public Test {
 
  private:
   // Significance Test: TwoProportions
-  bool validateInputs() override {
+  bool validateInputs(int pageIndex = 0) override {
     return TwoProportions::ValidateInputs(m_params);
   }
   int numberOfStatisticParameters() const override {

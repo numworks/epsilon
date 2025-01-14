@@ -175,7 +175,7 @@ void HomogeneityTest::recomputeData() {
   }
 }
 
-bool HomogeneityTest::validateInputs() {
+bool HomogeneityTest::validateInputs(int pageIndex) {
   Index2D max = computeInnerDimensions();
   if (max.col <= 1 || max.row <= 1) {
     return false;

@@ -29,7 +29,9 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
     return Inference::authorizedParameterAtIndex(p, i) &&
            SlopeTStatistic::authorizedParameterAtIndex(p, i);
   }
-  bool validateInputs() override { return SlopeTStatistic::validateInputs(); }
+  bool validateInputs(int pageIndex) override {
+    return SlopeTStatistic::validateInputs(pageIndex);
+  }
 
   // Distribution: t
   const char* estimateSymbol() const override { return "b"; }

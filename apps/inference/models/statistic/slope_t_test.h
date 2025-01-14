@@ -29,7 +29,9 @@ class SlopeTTest : public Test, public SlopeTStatistic {
     return Inference::authorizedParameterAtIndex(p, i) &&
            SlopeTStatistic::authorizedParameterAtIndex(p, i);
   }
-  bool validateInputs() override { return SlopeTStatistic::validateInputs(); }
+  bool validateInputs(int pageIndex) override {
+    return SlopeTStatistic::validateInputs(pageIndex);
+  }
 
   // Significance Test: Slope
   const char* hypothesisSymbol() const override { return "β"; }

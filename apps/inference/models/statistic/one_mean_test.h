@@ -42,7 +42,9 @@ class OneMeanTest : public Test, public OneMeanStatistic {
     p = OneMean::ProcessParameterForIndex(p, index);
     Test::setParameterAtIndex(p, index);
   }
-  bool validateInputs() override { return parametersAreValid(this); }
+  bool validateInputs(int pageIndex) override {
+    return parametersAreValid(this, pageIndex);
+  }
   int numberOfResults() const override {
     return numberOfResultsAndComputedParameters(this, Test::numberOfResults());
   }

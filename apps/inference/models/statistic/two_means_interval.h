@@ -65,8 +65,8 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
   }
 
  private:
-  bool validateInputs() override {
-    return parametersAreValid(this) &&
+  bool validateInputs(int pageIndex) override {
+    return parametersAreValid(this, pageIndex) &&
            TwoMeans::ValidateInputs(twoMeansType(this), m_params);
   }
   int numberOfStatisticParameters() const override {

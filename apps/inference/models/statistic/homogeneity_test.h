@@ -21,7 +21,7 @@ class HomogeneityTest final : public Chi2Test {
   void setGraphTitle(char* buffer, size_t bufferSize) const override;
 
   // Statistic
-  bool validateInputs() override;
+  bool validateInputs(int pageIndex = 0) override;
   // Test
   void compute() override;
 

@@ -120,15 +120,13 @@ int Table::index2DToIndex(int row, int column) const {
   return column + row * maxNumberOfColumns();
 }
 
-bool Table::validateSeries(Shared::DoublePairStore* doublePairStore) const {
-  for (int i = 0; i < numberOfSeriesInTable(); ++i) {
-    int series = seriesAt(i);
-    if (!doublePairStore->seriesIsValid(series) ||
-        doublePairStore->numberOfPairsOfSeries(series) <= 2) {
-      return false;
-    }
-  }
-  return true;
+// TODO: const Shared::DoublePairStore*
+bool Table::validateSeries(Shared::DoublePairStore* doublePairStore,
+                           int index) const {
+  assert(index >= 0 && index < numberOfSeries());
+  int series = seriesAt(index);
+  return doublePairStore->seriesIsValid(series) &&
+         doublePairStore->numberOfPairsOfSeries(series) > 2;
 }
 
 }  // namespace Inference

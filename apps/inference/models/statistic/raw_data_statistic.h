@@ -28,7 +28,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
     return m_series[index];
   }
   void setSeriesAt(Statistic* stat, int index, int series) override;
-  bool parametersAreValid(Statistic* stat);
+  bool parametersAreValid(Statistic* stat, int index);
 
   // DoublePairStore
   int seriesAtColumn(int column) const override {

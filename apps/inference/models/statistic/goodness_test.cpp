@@ -65,7 +65,7 @@ void GoodnessTest::recomputeData() {
   }
 }
 
-bool GoodnessTest::validateInputs() {
+bool GoodnessTest::validateInputs(int pageIndex) {
   if (numberOfValuePairs() <= 1) {
     return false;
   }

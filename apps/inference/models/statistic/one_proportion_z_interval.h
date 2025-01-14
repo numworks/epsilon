@@ -41,7 +41,7 @@ class OneProportionZInterval : public Interval {
 
  private:
   // Significance Test: OneProportion
-  bool validateInputs() override {
+  bool validateInputs(int pageIndex = 0) override {
     return OneProportion::ValidateInputs(m_params);
   }
   int numberOfStatisticParameters() const override {

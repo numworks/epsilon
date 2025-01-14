@@ -41,7 +41,7 @@ class TwoProportionsZInterval : public Interval {
 
  private:
   // Significance Test: TwoProportions
-  bool validateInputs() override {
+  bool validateInputs(int pageIndex = 0) override {
     return TwoProportions::ValidateInputs(m_params);
   }
   int numberOfStatisticParameters() const override {

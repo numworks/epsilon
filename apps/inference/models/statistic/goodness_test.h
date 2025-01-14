@@ -22,7 +22,7 @@ class GoodnessTest final : public Chi2Test {
                       bool resultIsTopPage) const override;
 
   // Inference
-  bool validateInputs() override;
+  bool validateInputs(int pageIndex = 0) override;
   // Statistic
   int numberOfResults() const override { return 2; }
   void compute() override;

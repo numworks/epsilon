@@ -478,9 +478,9 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
        * 0-0i]). We manually handle the case where the argument is null, as the
        * lib c++ gives log(0) = -inf, which is only a generous shorthand for the
        * limit. */
-      return c == std::complex<T>(0) ? -INFINITY
-             : e->isLog()            ? std::log10(c)
-                                     : std::log(c);
+      return c == std::complex<T>(0.0) ? -INFINITY
+             : e->isLog()              ? std::log10(c)
+                                       : std::log(c);
     }
     case Type::LogBase: {
       std::complex<T> a = PrivateToComplex<T>(e->child(0), ctx);
@@ -904,14 +904,14 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     }
     case Type::Dep: {
       std::complex<T> undef = UndefDependencies<T>(e, ctx);
-      return (undef == std::complex<T>(0))
+      return (undef == std::complex<T>(0.0))
                  ? PrivateToComplex<T>(Dependency::Main(e), ctx)
                  : undef;
     }
     case Type::NonNull: {
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
-      return !std::isnan(x.real()) && x != std::complex<T>(0)
-                 ? std::complex<T>(0)
+      return !std::isnan(x.real()) && x != std::complex<T>(0.0)
+                 ? std::complex<T>(0.0)
                  : NAN;
     }
     case Type::Real: {
@@ -942,7 +942,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
           (x.real() < 0 || x.imag() != 0)) {
         return NonReal<T>();
       }
-      return x == std::complex<T>(0) ? NAN : std::log(x);
+      return x == std::complex<T>(0.0) ? NAN : std::log(x);
     }
     default:;
   }
@@ -1123,7 +1123,7 @@ bool Private::PrivateToBoolean(const Tree* e, const Context* ctx) {
   }
   if (e->isDep()) {
     // TODO: Undefined boolean return false for now.
-    return (UndefDependencies<T>(e, ctx) == std::complex<T>(0));
+    return (UndefDependencies<T>(e, ctx) == std::complex<T>(0.0));
   }
   bool b = PrivateToBoolean<T>(e->child(1), ctx);
   switch (e->type()) {
@@ -1291,7 +1291,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return ToMatrix<T>(SelectPiecewiseBranch<T>(e, ctx), ctx);
     case Type::Dep: {
       std::complex<T> undef = UndefDependencies<T>(e, ctx);
-      return (undef == std::complex<T>(0))
+      return (undef == std::complex<T>(0.0))
                  ? ToMatrix<T>(Dependency::Main(e), ctx)
                  : (IsNonReal(undef) ? KNonReal->cloneTree()
                                      : KUndef->cloneTree());

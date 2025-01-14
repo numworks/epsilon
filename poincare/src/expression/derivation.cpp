@@ -85,6 +85,7 @@ bool Derivation::Reduce(Tree* e) {
 
   // Add a dependency on initial derivand if anything has been derived.
   if (derivationOrder > 0 && !derivative->isUndefined()) {
+    // Derivation is not handled for complex functions and at complex values.
     // diff(f(y), y, x) -> dep(f'(x), {real(f(x)),real(x)})
     SharedTreeStack->pushDepList(2);
     SharedTreeStack->pushReal();

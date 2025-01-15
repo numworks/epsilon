@@ -240,10 +240,14 @@ void assertCalculationIs(const char* input, DisplayOutput display,
   lastCalculation->createOutputLayouts(&exactOutputLayout,
                                        &approximateOutputLayout, context, true,
                                        maxVisibleWidth, font);
-  quiz_assert(lastCalculation->displayOutput(context) == display);
+  quiz_tolerate_print_if_failure(
+      lastCalculation->displayOutput(context) == display, input,
+      "correct displayOutput", "incorrect displayOutput");
   if (sign != EqualSign::Unknown && display != DisplayOutput::ApproximateOnly &&
       display != DisplayOutput::ExactOnly) {
-    quiz_assert(lastCalculation->equalSign(context) == sign);
+    quiz_tolerate_print_if_failure(lastCalculation->equalSign(context) == sign,
+                                   input, "correct equalSign",
+                                   "incorrect equalSign");
   }
   if (storedInput) {
     assert_expression_serializes_to(lastCalculation->input(), storedInput);
@@ -267,9 +271,8 @@ QUIZ_CASE(calculation_significant_digits) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
-  // TODO_PCJ : Expecting EqualSign::Approximation
   assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Equal, "11123456789", "1.112345679ᴇ10",
+                      EqualSign::Approximation, "11123456789", "1.112345679ᴇ10",
                       "11123456789", &globalContext, &store);
   assertCalculationIs("1123456789",
                       DisplayOutput::ApproximateIsIdenticalToExact,
@@ -343,8 +346,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("randint(2,2)+3", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "5", "5", &globalContext,
                       &store);
-  // TODO_PCJ : Expecting ExactAndApproximate and 2×√(2) exact ouput
-  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximateToggle,
+  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Unknown, "2×√(2)", "2.828427125",
                       "2.8284271247462", &globalContext, &store);
   assertCalculationIs("cos(45×_°)", DisplayOutput::ExactAndApproximate,

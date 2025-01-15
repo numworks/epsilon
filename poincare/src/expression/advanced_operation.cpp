@@ -238,4 +238,11 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   return false;
 }
 
+bool AdvancedOperation::ContractFloor(Tree* e) {
+  // -floor(-A) -> ceil(A)
+  return PatternMatching::MatchReplace(
+      e, KMult(-1_e, KA_s, KFloor(KMult(-1_e, KB)), KC_s),
+      KMult(KA_s, KCeil(KB), KC_s));
+}
+
 }  // namespace Poincare::Internal

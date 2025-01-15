@@ -424,10 +424,6 @@ bool ShallowBeautify(Tree* e, void* context) {
       PatternMatching::MatchReplace(e, KExp(1_e), e_e) ||
       // exp(A) -> e^A
       PatternMatching::MatchReplace(e, KExp(KA), KPow(e_e, KA)) ||
-      // -floor(-A) -> ceil(A)
-      PatternMatching::MatchReplace(
-          e, KMult(-1_e, KA_s, KFloor(KMult(-1_e, KB)), KC_s),
-          KMult(KA_s, KCeil(KB), KC_s)) ||
       // A - floor(A) -> frac(A)
       PatternMatching::MatchReplace(
           e, KAdd(KA_s, KB, KC_s, KMult(-1_e, KFloor(KB)), KD_s),

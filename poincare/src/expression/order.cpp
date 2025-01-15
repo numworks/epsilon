@@ -87,16 +87,16 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
       if (type2 == Type::Unit && e1->child(0)->type() == Type::Unit &&
           order == OrderType::Beautification) {
         // m^2 < s < K^-1
-        return -Compare(e1->child(1), 1_e, OrderType::System);
+        return -ComplexLineCompare(e1->child(1), 1_e);
       }
       int comparePowerChild = Compare(e1->child(0), e2, order);
       if (comparePowerChild == 0) {
         if (order == OrderType::Beautification) {
           // x^2 < x < 1/x
-          return -Compare(e1->child(1), 1_e, OrderType::System);
+          return -ComplexLineCompare(e1->child(1), 1_e);
         }
         // 1/x < x < x^2
-        return Compare(e1->child(1), 1_e, order);
+        return ComplexLineCompare(e1->child(1), 1_e);
       }
       // w^2 < x < y^2
       return comparePowerChild;

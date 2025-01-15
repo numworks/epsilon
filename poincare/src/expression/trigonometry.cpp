@@ -362,6 +362,12 @@ static void preprocessAtanOfTan(Tree* e) {
   add->removeTree();
 }
 
+void reduceATrigOfTrig(Tree* e, const Tree* piFactor, Type type) {
+  assert(piFactor);
+  e->moveTreeOverTree(computeSimplifiedPiFactorForType(piFactor, type));
+  PatternMatching::MatchReplaceSimplify(e, KA, KMult(π_e, KA));
+}
+
 static bool simplifyATrigOfTrig(Tree* e) {
   TypeBlock type = Type::Undef;
   bool swapATrig = false;
@@ -394,8 +400,7 @@ static bool simplifyATrigOfTrig(Tree* e) {
     // x = π*y
     const Tree* y = getPiFactor(ctx.getTree(KA));
     if (y) {
-      e->moveTreeOverTree(computeSimplifiedPiFactorForType(y, type));
-      PatternMatching::MatchReplaceSimplify(e, KA, KMult(π_e, KA));
+      reduceATrigOfTrig(e, y, type);
     } else {
       return false;
     }

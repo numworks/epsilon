@@ -52,10 +52,3 @@ ExceptionType TreeStackCheckpoint::GetTypeAndClear() {
 }
 
 }  // namespace Poincare::Internal
-
-extern "C" {
-void TreeStackCheckpointRaise() {
-  Poincare::Internal::TreeStackCheckpoint::Raise(
-      Poincare::Internal::ExceptionType::Other);
-}
-}

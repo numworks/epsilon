@@ -548,6 +548,8 @@ void RackParser::parseEuclideanDivision(TreeRef& leftHandSide,
   parseBinaryOperator(leftHandSide, rightHandSide,
                       Token::Type::EuclideanDivision);
   CloneNodeAtNode(leftHandSide, KEuclideanDiv);
+#else
+  assert(false);
 #endif
 }
 

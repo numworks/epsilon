@@ -148,6 +148,8 @@ bool Projection::DeepSystemProject(Tree* e,
                                    ProjectionContext projectionContext) {
   bool changed = false;
   if (e->isEuclideanDivision()) {
+    /* The euclidian division node is kept only at the root level and
+     * it replaced by quo in ShallowSystemProject otherwise. */
     changed |= Tree::ApplyShallowTopDown(e->child(0), ShallowSystemProject,
                                          &projectionContext);
     changed |= Tree::ApplyShallowTopDown(e->child(1), ShallowSystemProject,

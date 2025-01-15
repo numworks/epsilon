@@ -134,7 +134,7 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
   assert((TypeBlock::IsDirectTrigonometryFunction(type) ||
           TypeBlock::IsArg(type)) &&
          !TypeBlock::IsTrig(type));
-  assert(piFactor && piFactor->isRational());
+  assert(piFactor);
   /* x = piFactor * π
    *
    * For cos: look for equivalent angle in [0,π] (since acos ∈ [0,π])
@@ -163,7 +163,13 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
       : type == Type::Arg ? KMult(-1_e, KFloor(KMult(-1_e, KA)))
                           : KFloor(KAdd(KA, 1_e / 2_e)),
       {.KA = piFactor});
-  assert(res->isInteger());
+  if (!res->isInteger()) {
+    /* If it was not possible to reduce ⌊piFactor + 1/2⌋ or ⌈piFactor⌉, then it
+     * is impossible to know the parity of k, and the reduction cannot be
+     * processed further. */
+    res->removeTree();
+    return nullptr;
+  }
   bool kIsEven = Integer::Handler(res).isEven();
   res->moveTreeOverTree(PatternMatching::CreateSimplify(
       KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
@@ -188,6 +194,9 @@ bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
   if (piFactor) {
     TreeRef simplifiedPiFactor =
         computeSimplifiedPiFactorForType(piFactor, Type::Arg);
+    if (!simplifiedPiFactor) {
+      return false;
+    }
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KMult(KA, π_e), {.KA = simplifiedPiFactor}));
     simplifiedPiFactor->removeTree();
@@ -362,10 +371,15 @@ static void preprocessAtanOfTan(Tree* e) {
   add->removeTree();
 }
 
-void reduceATrigOfTrig(Tree* e, const Tree* piFactor, Type type) {
+bool reduceATrigOfTrig(Tree* e, const Tree* piFactor, Type type) {
   assert(piFactor);
-  e->moveTreeOverTree(computeSimplifiedPiFactorForType(piFactor, type));
+  Tree* reducedPiFactor = computeSimplifiedPiFactorForType(piFactor, type);
+  if (!reducedPiFactor) {
+    return false;
+  }
+  e->moveTreeOverTree(reducedPiFactor);
   PatternMatching::MatchReplaceSimplify(e, KA, KMult(π_e, KA));
+  return true;
 }
 
 static bool simplifyATrigOfTrig(Tree* e) {

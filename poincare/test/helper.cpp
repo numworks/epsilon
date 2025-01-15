@@ -64,12 +64,8 @@ void quiz_tolerate_print_if_failure(bool test, const char* input,
 
 void quiz_assert_print_if_failure(bool test, const char* information) {
   if (!test) {
-#if 0  // TODO_PCJ
     quiz_print("TEST FAILURE WHILE TESTING:");
     quiz_print(information);
-#else
-    TreeStackCheckpoint::Raise(ExceptionType::Other);
-#endif
   }
   quiz_assert(test);
 }

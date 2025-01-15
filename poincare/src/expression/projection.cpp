@@ -334,9 +334,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   /* In following replacements, ref node isn't supposed to be replaced with
    * a node needing further projection. */
   return
-      // ceil(A)  -> -floor(-A)
-      PatternMatching::MatchReplace(e, KCeil(KA),
-                                    KMult(-1_e, KFloor(KMult(-1_e, KA)))) ||
       // frac(A) -> A - floor(A)
       PatternMatching::MatchReplace(e, KFrac(KA),
                                     KAdd(KA, KMult(-1_e, KFloor(KA)))) ||

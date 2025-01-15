@@ -181,7 +181,7 @@ class AdvancedReduction {
       AdvancedOperation::ContractExp,  Trigonometry::ContractTrigonometric,
       Parametric::ContractSum,         Parametric::ContractProductOfExp,
       Parametric::ContractProduct,     AdvancedOperation::ContractMult,
-      AdvancedOperation::ContractImRe, AdvancedOperation::ContractFloor,
+      AdvancedOperation::ContractImRe, AdvancedOperation::ContractCeilFloor,
   };
   constexpr static Tree::Operation k_expandOperations[] = {
       AdvancedOperation::ExpandAbs,   Logarithm::ExpandLn,
@@ -190,7 +190,7 @@ class AdvancedReduction {
       Parametric::ExpandProduct,      Arithmetic::ExpandBinomial,
       Arithmetic::ExpandPermute,      Projection::Expand,
       AdvancedOperation::ExpandPower, AdvancedOperation::ExpandMult,
-      AdvancedOperation::ExpandImRe,
+      AdvancedOperation::ExpandImRe,  AdvancedOperation::ExpandCeilFloor,
   };
   constexpr static Tree::Operation k_expandAlgebraicOperations[] = {
       AdvancedOperation::ExpandPower,

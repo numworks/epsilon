@@ -238,7 +238,14 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
   return false;
 }
 
-bool AdvancedOperation::ContractFloor(Tree* e) {
+bool AdvancedOperation::ExpandCeilFloor(Tree* e) {
+  return
+      // ceil(A)  -> -floor(-A)
+      PatternMatching::MatchReplaceSimplify(
+          e, KCeil(KA), KMult(-1_e, KFloor(KMult(-1_e, KA))));
+}
+
+bool AdvancedOperation::ContractCeilFloor(Tree* e) {
   // -floor(-A) -> ceil(A)
   return PatternMatching::MatchReplace(
       e, KMult(-1_e, KA_s, KFloor(KMult(-1_e, KB)), KC_s),

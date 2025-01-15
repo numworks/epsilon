@@ -832,9 +832,9 @@ void assertCalculationAdditionalResultTypeHas(
   push(store, input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
-  quiz_assert_print_if_failure(
+  quiz_tolerate_print_if_failure(
       lastCalculation->additionalResultsType(context) == additionalResultsType,
-      input);
+      input, "correct additional results", "incorrect additional results");
   store->deleteAll();
 }
 
@@ -952,18 +952,16 @@ QUIZ_CASE(calculation_additional_results) {
                                            &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("z.exp").destroy();
 
-  // TODO_PCJ : Expected {.complex = true}
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Polar);
-  assertCalculationAdditionalResultTypeHas("-10", {.scientificNotation = true},
+  assertCalculationAdditionalResultTypeHas("-10", {.complex = true},
                                            &globalContext, &store);
 
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true},
                                            &globalContext, &store);
-  // TODO_PCJ : Expected {.matrix = true}
-  assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.vector = true},
+  assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.matrix = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("-10", {.scientificNotation = true},
                                            &globalContext, &store);

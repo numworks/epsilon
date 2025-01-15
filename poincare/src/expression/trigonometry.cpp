@@ -412,10 +412,17 @@ static bool simplifyATrigOfTrig(Tree* e) {
     }
   } else {
     // x = π*y
-    const Tree* y = getPiFactor(ctx.getTree(KA));
-    if (y) {
-      reduceATrigOfTrig(e, y, type);
+    const Tree* rationalPiFactor = getPiFactor(ctx.getTree(KA));
+    bool isReduced = false;
+    if (rationalPiFactor) {
+      isReduced = reduceATrigOfTrig(e, rationalPiFactor, type);
     } else {
+      TreeRef genericPiFactor = PatternMatching::CreateSimplify(
+          KMult(KB, KPowReal(π_e, -1_e)), {.KB = ctx.getTree(KA)});
+      isReduced = reduceATrigOfTrig(e, genericPiFactor, type);
+      genericPiFactor->removeTree();
+    }
+    if (!isReduced) {
       return false;
     }
   }

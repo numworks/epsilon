@@ -1333,11 +1333,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("atan(tan(9))", "9", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("acos(cos(9))", "9", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("asin(sin(9))", "9", {.m_angleUnit = AngleUnit::Degree});
-  // TODO: fix the following tests
-  // simplifies_to("acos(atan(tan(cos(9))))", "9",
-  //               {.m_angleUnit = AngleUnit::Degree});
-  // simplifies_to("asin(acos(atan(tan(cos(sin(9))))))", "9",
-  //               {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("acos(atan(tan(cos(9))))", "9",
+                {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("asin(acos(atan(tan(cos(sin(9))))))", "9",
+                {.m_angleUnit = AngleUnit::Degree});
 
   // Angle format with hyperbolic trigonometry
   simplifies_to("cos(2)+cosh(2)+cos(2)", "2×cos(2)+cosh(2)",

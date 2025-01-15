@@ -877,7 +877,7 @@ void Layouter::StripSeparators(Tree* rack) {
   int n = rack->numberOfChildren();
   int i = 0;
   while (i < n) {
-    if (child->isUnitSeparatorLayout() || child->isSeparatorLayout()) {
+    if (child->isSeparatorLayout()) {
       child->removeTree();
       n--;
       continue;

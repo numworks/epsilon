@@ -138,6 +138,14 @@ int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
     float ratioDiff = repr2->ratio() - repr1->ratio();
     return ratioDiff < 0.f ? -1 : ratioDiff == 0.f ? 0 : 1;
   }
+  if (type1 == Type::Pow && e1->child(0)->type() == Type::Unit &&
+      e2->child(0)->type() == Type::Unit &&
+      order == OrderType::Beautification) {
+    // m^2 < s^-1
+    int compareExponents = ComplexLineCompare(e1->child(1), e2->child(1));
+    return compareExponents == 0 ? Compare(e1->child(0), e2->child(0), order)
+                                 : -compareExponents;
+  }
   /* f(0, 1, 4) < f(0, 2, 3)
    * (2 + 3) < (1 + 4)
    * trig(5, 0) < trig(4, 1)   (same order as Type::Cos and Type::Sin)

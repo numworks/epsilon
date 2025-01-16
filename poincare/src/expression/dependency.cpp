@@ -220,7 +220,8 @@ bool IsDefinedIfChildIsDefined(const Tree* e) {
   assert(!e->isOfType({Type::Conj, Type::Decimal, Type::Cos, Type::Sin}));
   return e->isOfType({Type::Trig, Type::Abs, Type::Exp, Type::Re, Type::Im,
                       Type::ATrig, Type::ATanRad, Type::Ln}) ||
-         (e->isPow() && e->child(1)->isStrictlyPositiveRational());
+         (e->isPow() && e->child(1)->isStrictlyPositiveRational()) ||
+         (e->isSign() && GetComplexSign(e->child(0)).isReal());
 }
 
 // Check presence of undefined patterns e.g. inf-inf or inf*0

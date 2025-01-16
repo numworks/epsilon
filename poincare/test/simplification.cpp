@@ -229,7 +229,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(1+i)", "√(2)", cartesianCtx);
   simplifies_to("abs(-2i)+abs(2i)+abs(2)+abs(-2)", "8", cartesianCtx);
   simplifies_to("abs(x^2)", "x^2");
-  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "dep(0,{0×√(c^2)})");
+  simplifies_to("abs(a)*abs(b*c)-abs(a*b)*abs(c)", "0");
   simplifies_to("((abs(x)^(1/2))^(1/2))^8", "x^2");
   simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "3");
   simplifies_to("abs(x)/x", "dep(sign(x),{x^0})");

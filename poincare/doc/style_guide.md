@@ -262,6 +262,32 @@ bool TestSomethingOnPow(const Tree * pow) {
 }
 ```
 
+## Be careful with move/clone before a TreeRef
+
+Sometimes a TreeRef is created to keep track of the end of a Tree, by pointing to the beginning of the next tree.
+```cpp
+TreeRef end = tree->nextTree();
+```
+
+If another node/tree is moved/cloned before this next tree, then the `end` TreeRef will point to the end of this new node/tree, and not to the end of the original tree.
+To avoid this, the *at* move/clone operation should be used instead.
+
+> [!CAUTION]
+> Avoid this:
+
+```cpp
+tree->nextTree()->moveNodeBeforeTree(otherTree);
+// The end TreeRef now points to the end of otherTree
+```
+
+> [!TIP]
+> Prefer this:
+
+```cpp
+tree->nextTree()->moveNodeAtTree(otherTree);
+// The end TreeRef still points to the end of tree
+```
+
 ## Distinguish Trees from Nodes
 
 Childless trees are equivalent to their node. We avoid mixing the definition for clarity, and in case children are added later.

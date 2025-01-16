@@ -6,8 +6,8 @@ namespace Poincare::Internal {
 
 bool Continuity::ShallowIsDiscontinuous(const Tree* e) {
   return e->isRandomized() || e->isPiecewise() ||
-         (e->isOfType(
-              {Type::Floor, Type::Round, Type::Ceil, Type::Frac, Type::Abs}) &&
+         (e->isOfType({Type::Floor, Type::Round, Type::Ceil, Type::Frac,
+                       Type::Abs, Type::Sign}) &&
           Variables::HasVariables(e));
 };
 

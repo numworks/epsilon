@@ -412,10 +412,6 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   Tree* set = Dependency::Dependencies(dep);
 
   bool changed = SimplifyDependencies(set);
-  if (set->hasChildSatisfying([](const Tree* e) { return e->isUndef(); })) {
-    dep->cloneTreeOverTree(KUndef);
-    return true;
-  }
 
   if (changed) {
     NAry::Sort(set);

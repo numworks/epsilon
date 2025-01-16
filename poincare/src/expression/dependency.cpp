@@ -279,7 +279,7 @@ bool CanBeUndefWithInfinity(const Tree* e) {
 
 bool SimplifyPowReal(Tree* dependency, Tree* dependencies) {
   assert(dependency->isPowReal());
-  assert(dependencies->isNAry());
+  assert(dependencies->isDepList());
   Tree* exponent = dependency->child(1);
   if (!exponent->isRational() || exponent->isZero()) {
     return false;
@@ -312,7 +312,7 @@ bool SimplifyPowReal(Tree* dependency, Tree* dependencies) {
 }
 
 bool SimplifyDependencies(Tree* dependencies) {
-  assert(dependencies->isNAry());
+  assert(dependencies->isDepList());
   bool changed = false;
   Tree* dependency = dependencies->child(0);
   while (dependency != dependencies->end()) {

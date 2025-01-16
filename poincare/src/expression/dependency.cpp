@@ -314,7 +314,8 @@ bool SimplifyPowReal(Tree* dependency, Tree* dependencies) {
 bool SimplifyDependencies(Tree* dependencies) {
   assert(dependencies->isDepList());
   bool changed = false;
-  Tree* dependency = dependencies->child(0);
+
+  Tree* dependency = dependencies->nextNode();
   while (dependency != dependencies->end()) {
     if (dependency->isReal()) {
       ComplexSign signX = GetComplexSign(dependency->child(0));

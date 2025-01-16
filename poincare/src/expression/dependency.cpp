@@ -101,7 +101,7 @@ bool Dependency::ShallowBubbleUpDependencies(Tree* e) {
   }
   if (finalSet->numberOfChildren() > 0) {
     e->nextTree()->moveTreeBeforeNode(finalSet);
-    e->cloneNodeBeforeNode(KDep);
+    e->cloneNodeAtNode(KDep);
     return true;
   }
   finalSet->removeTree();

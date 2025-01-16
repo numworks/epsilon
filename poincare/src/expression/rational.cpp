@@ -258,16 +258,16 @@ Tree* Rational::CreateMixedFraction(const Tree* e,
   if (mixedFractionsAreEnabled) {
     integerPart->cloneNodeAtNode(KMixedFraction);
     if (numIsNegative) {
-      integerPart->cloneNodeBeforeNode(KOpposite);
+      integerPart->cloneNodeAtNode(KOpposite);
     }
     return integerPart;
   }
   // If mixed fractions don't exist in this country
   if (numIsNegative) {
     if (!integerPart->isZero()) {
-      integerPart->cloneNodeBeforeNode(KOpposite);
+      integerPart->cloneNodeAtNode(KOpposite);
     }
-    fractionPart->cloneNodeBeforeNode(KOpposite);
+    fractionPart->cloneNodeAtNode(KOpposite);
   }
   integerPart->cloneNodeAtNode(KAdd.node<2>);
   return integerPart;

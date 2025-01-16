@@ -148,7 +148,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     // Shallow reduce the Sum
     SystematicReduction::ShallowReduce(e);
     // Add factor a before the Sum
-    e->moveTreeBeforeNode(a);
+    e->moveTreeAtNode(a);
     // a is already a Mult, increase its number of children to include the Sum
     NAry::SetNumberOfChildren(e, e->numberOfChildren() + 1);
     // Shallow reduce a*Sum
@@ -164,7 +164,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     // If a wasn't an integer, we would need to add Variables::LeaveScope(a)
     assert(!Variables::HasVariable(a, k_localVariableId));
     // Move the node Pow before the Prod
-    e->moveNodeBeforeNode(function);
+    e->moveNodeAtNode(function);
     // Shallow reduce the Prod
     SystematicReduction::ShallowReduce(e->child(0));
     // Shallow reduce Prod^a

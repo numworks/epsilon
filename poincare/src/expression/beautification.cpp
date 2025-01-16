@@ -176,7 +176,7 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     }
     PatternMatching::MatchReplace(e, KTrig(KA, 0_e), KCos(KA)) ||
         PatternMatching::MatchReplace(e, KTrig(KA, 1_e), KSin(KA));
-    e->moveNodeBeforeNode(SharedTreeStack->pushAngleUnitContext(angleUnit));
+    e->moveNodeAtNode(SharedTreeStack->pushAngleUnitContext(angleUnit));
     return true;
   }
   if (e->isATrig() || e->isATanRad()) {
@@ -198,7 +198,7 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     PatternMatching::MatchReplace(e, KATrig(KA, 0_e), KACos(KA)) ||
         PatternMatching::MatchReplace(e, KATrig(KA, 1_e), KASin(KA)) ||
         PatternMatching::MatchReplace(e, KATanRad(KA), KATan(KA));
-    e->moveNodeBeforeNode(SharedTreeStack->pushAngleUnitContext(angleUnit));
+    e->moveNodeAtNode(SharedTreeStack->pushAngleUnitContext(angleUnit));
     if (angleUnit != AngleUnit::Radian) {
       e->moveTreeOverTree(PatternMatching::Create(
           KMult(KA, KB), {.KA = e, .KB = Angle::ToRad(angleUnit)},

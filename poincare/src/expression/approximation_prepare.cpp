@@ -58,10 +58,10 @@ static bool ShallowExpandIntegrals(Tree* e, void* ctx) {
   Tree* insertAt = e->nextTree();
   // Rewrite the integrand to be able to compute it directly at abscissa b - x
   Tree* upperIntegrand = RewriteIntegrandNear(e->child(3), e->child(2));
-  insertAt->moveTreeBeforeNode(upperIntegrand);
+  insertAt->moveTreeAtNode(upperIntegrand);
   // Same near a + x
   Tree* lowerIntegrand = RewriteIntegrandNear(e->child(3), e->child(1));
-  insertAt->moveTreeBeforeNode(lowerIntegrand);
+  insertAt->moveTreeAtNode(lowerIntegrand);
   e->cloneNodeOverNode(KIntegralWithAlternatives);
   return true;
 }

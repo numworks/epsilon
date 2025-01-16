@@ -80,7 +80,7 @@ Tree* List::Fold(const Tree* list, TypeBlock type) {
     }
     if (type.isListSum() || type.isListProduct()) {
       const Tree* node = type.isListSum() ? KAdd.node<2> : KMult.node<2>;
-      result->cloneNodeBeforeNode(node);
+      result->cloneNodeAtNode(node);
       SystematicReduction::ShallowReduce(result);
     } else {
       assert(type.isMin() || type.isMax());

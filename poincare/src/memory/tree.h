@@ -188,7 +188,6 @@ class Tree : public TypeBlock {
   Tree* cloneNode() const;
 
   // Tree motions
-  // TODO
   /* In the following comments aaaa represents several blocks of a tree and u
    * and v are TreeRefs that could be pointing to the targeted trees.
    * Beware that the Node * used in these methods (this and n) may point to a

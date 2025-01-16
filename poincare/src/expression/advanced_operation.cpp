@@ -89,6 +89,12 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
     return true;
   }
   PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KPow(KAbs(KA), 2_e), &ctx) &&
+      GetComplexSign(ctx.getTree(KA)).isReal()) {
+    // abs(A)^2 = A^2 for A real
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KA, 2_e), ctx));
+    return true;
+  }
   if (PatternMatching::Match(e, KAbs(KA), &ctx) &&
       GetComplexSign(ctx.getTree(KA)).isReal()) {
     // abs(A) = A*sign(A) for A real

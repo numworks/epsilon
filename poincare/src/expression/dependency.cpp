@@ -316,7 +316,8 @@ bool SimplifyDependencies(Tree* dependencies) {
   bool changed = false;
 
   Tree* dependency = dependencies->nextNode();
-  while (dependency != dependencies->end()) {
+  TreeRef end = dependencies->end();
+  while (dependency != end) {
     if (dependency->isReal()) {
       ComplexSign signX = GetComplexSign(dependency->child(0));
       if (signX.isNonReal()) {
@@ -375,7 +376,8 @@ bool SimplifyDependencies(Tree* dependencies) {
         // dep(..., {nonNull(x*y)}) = dep(..., {nonNull(x),nonNull(y)})
         Tree* mult = dependency->child(0);
         Tree* child = mult->child(1);
-        while (child != mult->end()) {
+        TreeRef multEnd = mult->end();
+        while (child != multEnd) {
           child->cloneNodeAtNode(KNonNull);
           child = child->nextTree();
         }
@@ -404,6 +406,7 @@ bool SimplifyDependencies(Tree* dependencies) {
     }
     dependency = dependency->nextTree();
   }
+
   return changed;
 }
 

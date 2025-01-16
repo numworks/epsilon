@@ -124,6 +124,7 @@ class Tree : public TypeBlock {
   }
 
   const Tree* end() const { return nextTree(); }
+  Tree* end() { return nextTree(); }
 
   // Sizes
   size_t treeSize() const { return nextTree()->block() - block(); }

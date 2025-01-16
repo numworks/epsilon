@@ -1357,16 +1357,16 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("cos(acos(3/2))", "3/2");
   assert_parsed_expression_simplify_to("cos(acos(2/3))", "2/3");
 
-  assert_parsed_expression_simplify_to("acos(cos(12))", "4×π-12");
+  assert_parsed_expression_simplify_to("acos(cos(12))", "-12+4×π");
   assert_parsed_expression_simplify_to("acos(cos(2*1ᴇ10))",
                                        "arccos(cos(20000000000))");
   assert_parsed_expression_simplify_to("acos(cos(inf))", "arccos(cos(∞))");
-  assert_parsed_expression_simplify_to("acos(cos(9))", "-2×π+9");
+  assert_parsed_expression_simplify_to("acos(cos(9))", "9-2×π");
   assert_parsed_expression_simplify_to("acos(cos(10^125))",
                                        "arccos(cos(10^125))");
   assert_parsed_expression_simplify_to("acos(cos(1/0))", Undefined::Name());
-  assert_parsed_expression_simplify_to("acos(cos(-8.8))", "(-10×π+44)/5");
-  assert_parsed_expression_simplify_to("acos(cos(π+26))", "9×π-26");
+  assert_parsed_expression_simplify_to("acos(cos(-8.8))", "44/5-2×π");
+  assert_parsed_expression_simplify_to("acos(cos(π+26))", "-26+9×π");
   assert_parsed_expression_simplify_to("acos(cos(0))", "0");
   assert_parsed_expression_simplify_to("acos(cos(9π))", "π");
   assert_parsed_expression_simplify_to("acos(cos(2*1ᴇ10))", "160", User,
@@ -1401,12 +1401,12 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("sin(asin(2/3))", "2/3");
   assert_parsed_expression_simplify_to("sin(asin(3/2))", "3/2");
   assert_parsed_expression_simplify_to("asin(sin(3/2))", "3/2");
-  assert_parsed_expression_simplify_to("asin(sin(3.6))", "(5×π-18)/5");
-  assert_parsed_expression_simplify_to("asin(sin(-2.23))", "(-100×π+223)/100");
-  assert_parsed_expression_simplify_to("asin(sin(-18.39))", "(600×π-1839)/100");
+  assert_parsed_expression_simplify_to("asin(sin(3.6))", "-18/5+π");
+  assert_parsed_expression_simplify_to("asin(sin(-2.23))", "223/100-π");
+  assert_parsed_expression_simplify_to("asin(sin(-18.39))", "-1839/100+6×π");
 
-  assert_parsed_expression_simplify_to("asin(sin(12))", "-4×π+12");
-  assert_parsed_expression_simplify_to("asin(sin(2+π))", "-π+2");
+  assert_parsed_expression_simplify_to("asin(sin(12))", "12-4×π");
+  assert_parsed_expression_simplify_to("asin(sin(2+π))", "2-π");
   assert_parsed_expression_simplify_to("asin(sin(90+6800))", "50", User,
                                        Degree);
   assert_parsed_expression_simplify_to("asin(sin(60-9×9×9))", "51", User,
@@ -1435,7 +1435,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(sin(2/3)/cos(2/3))", "2/3",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("tan(atan(5/2))", "5/2");
-  assert_parsed_expression_simplify_to("atan(tan(5/2))", "(-2×π+5)/2");
+  assert_parsed_expression_simplify_to("atan(tan(5/2))", "5/2-π");
   assert_parsed_expression_simplify_to("atan(tan(-π/7))", "-π/7");
   assert_parsed_expression_simplify_to("atan(√(3))", "π/3");
   assert_parsed_expression_simplify_to("atan(tan(-√(2)))", "-√(2)");
@@ -2394,9 +2394,9 @@ QUIZ_CASE(poincare_advanced_trigonometry) {
                                        "sec(-arccos(1/3)+π)");
 
   // arccsc(csc)
-  assert_parsed_expression_simplify_to("arccsc(csc(3))", "π-3");
+  assert_parsed_expression_simplify_to("arccsc(csc(3))", "-3+π");
   assert_parsed_expression_simplify_to("arccsc(csc(0.5))", "1/2");
-  assert_parsed_expression_simplify_to("arccsc(csc(-3))", "-π+3");
+  assert_parsed_expression_simplify_to("arccsc(csc(-3))", "3-π");
 
   // csc(acsc)
   assert_parsed_expression_simplify_to("csc(arccsc(3))", "3");

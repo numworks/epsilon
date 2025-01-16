@@ -108,6 +108,7 @@ int Metric::GetMetric(const Tree* e) {
     case Type::Root:
     case Type::Log:
     case Type::Ln:
+    case Type::Sign:
       childrenCoeff = 2;
       break;
     default:

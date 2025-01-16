@@ -278,6 +278,16 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
   return ComplexSign(sign, sign);
 }
 
+ComplexSign TypeSign(ComplexSign s) {
+  if (!s.isReal()) {
+    return ComplexSign::Unknown();
+  }
+  Sign realSign =
+      Sign(s.realSign().canBeNull(), s.realSign().canBeStrictlyPositive(),
+           s.realSign().canBeStrictlyNegative(), false, false);
+  return ComplexSign(realSign, Sign::Zero());
+}
+
 namespace Internal {
 
 // Note: A complex function plotter can be used to fill in these methods.
@@ -360,6 +370,8 @@ ComplexSign GetComplexSign(const Tree* e) {
       return ComplexSign(Sign::FinitePositive(), Sign::Zero());
     case Type::RandInt:
       return ComplexSign(Sign::FiniteInteger(), Sign::Zero());
+    case Type::Sign:
+      return TypeSign(GetComplexSign(e->child(0)));
 #if 0
     // Activate these cases if necessary
     case Type::ATan:

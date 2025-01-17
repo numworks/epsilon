@@ -2,6 +2,7 @@
 
 #include <poincare/preferences.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree_helpers.h>
 
 #include "angle.h"
 #include "decimal.h"
@@ -29,11 +30,9 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
   }
   bool changed = false;
   /* ShallowReplaceUserNamed may push and remove trees at the end of TreeStack.
-   * We push a temporary tree to preserve TreeRef.
-   * TODO: Maybe find a solution for this unintuitive workaround, the same hack
-   * is used in Projection::PrivateDeepExpand. */
-  TreeRef nextTree = e->nextTree()->cloneTreeBeforeNode(0_e);
-  while (e->block() < nextTree->block()) {
+   * We use a marker to keep track of the initial end position of e. */
+  TreeRef marker = pushMarker(e->end());
+  while (e->block() < marker->block()) {
     if (e->isParametric()) {
       // Skip Parametric node and its variable, never replaced.
       static_assert(Parametric::k_variableIndex == 0);
@@ -42,7 +41,7 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
     changed = ShallowReplaceUserNamed(e, context, symbolic) || changed;
     e = e->nextNode();
   }
-  nextTree->removeTree();
+  removeMarker(marker);
   return changed;
 }
 

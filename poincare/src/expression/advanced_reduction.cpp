@@ -1,6 +1,7 @@
 #include "advanced_reduction.h"
 
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree_helpers.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "k_tree.h"
@@ -501,12 +502,10 @@ bool AdvancedReduction::PrivateDeepExpand(Tree* e,
   // Tree::ApplyShallowTopDown could be used but we need to skip dependencies
   bool changed = false;
   /* ShallowExpand may push and remove trees at the end of TreeStack.
-   * We push a temporary tree to preserve TreeRef.
-   * TODO: Maybe find a solution for this unintuitive workaround, the same hack
-   * is used in Projection::DeepReplaceUserNamed. */
-  TreeRef nextTree = e->nextTree()->cloneTreeBeforeNode(0_e);
+   * We use an end marker to keep track of the initial end position of e.  */
+  TreeRef endMarker = pushMarker(e->end());
   Tree* target = e;
-  while (target->block() < nextTree->block()) {
+  while (target->block() < endMarker->block()) {
     while (target->isDepList()) {
       // Never expand anything in dependency's dependencies set.
       target = target->nextTree();
@@ -516,7 +515,7 @@ bool AdvancedReduction::PrivateDeepExpand(Tree* e,
               changed;
     target = target->nextNode();
   }
-  nextTree->removeTree();
+  endMarker->removeTree();
   if (changed) {
     // Bottom-up systematic reduce is necessary.
     SystematicReduction::DeepReduce(e);

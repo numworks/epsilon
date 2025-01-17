@@ -3,6 +3,7 @@
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree_helpers.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include "approximation.h"
@@ -316,13 +317,14 @@ bool SimplifyDependencies(Tree* dependencies) {
   bool changed = false;
 
   Tree* dependency = dependencies->nextNode();
-  TreeRef end = dependencies->end();
+  TreeRef end = pushMarker(dependencies->end());
   while (dependency != end) {
     if (dependency->isReal()) {
       ComplexSign signX = GetComplexSign(dependency->child(0));
       if (signX.isNonReal()) {
         // {real(x)} = {undef} if x is non real
         dependency->cloneTreeOverTree(KUndef);
+        removeMarker(end);
         return true;
       }
       if (signX.isReal()) {
@@ -364,6 +366,7 @@ bool SimplifyDependencies(Tree* dependencies) {
       if (sign.isNull()) {
         // dep(..., {nonNull(x)}) = undef if x is null
         dependency->cloneTreeOverTree(KUndef);
+        removeMarker(end);
         return true;
       }
       if (!sign.canBeNull()) {
@@ -376,11 +379,12 @@ bool SimplifyDependencies(Tree* dependencies) {
         // dep(..., {nonNull(x*y)}) = dep(..., {nonNull(x),nonNull(y)})
         Tree* mult = dependency->child(0);
         Tree* child = mult->child(1);
-        TreeRef multEnd = mult->end();
+        TreeRef multEnd = pushMarker(mult->end());
         while (child != multEnd) {
           child->cloneNodeAtNode(KNonNull);
           child = child->nextTree();
         }
+        removeMarker(multEnd);
         int n = mult->numberOfChildren();
         mult->removeNode();
         NAry::SetNumberOfChildren(dependencies,
@@ -406,6 +410,7 @@ bool SimplifyDependencies(Tree* dependencies) {
     }
     dependency = dependency->nextTree();
   }
+  removeMarker(end);
 
   return changed;
 }

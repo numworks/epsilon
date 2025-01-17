@@ -390,11 +390,9 @@ bool Unit::CanParse(ForwardUnicodeDecoder* name,
     return false;
   }
   assert(length < bufferSize);
-  size_t offset = (symbol[0] == '_') ? 1 : 0;
-  assert(length > offset && symbol[offset] != '_');
   for (int i = 0; i < Representative::k_numberOfDimensions; i++) {
     if (Representative::DefaultRepresentatives()[i]->canParseWithEquivalents(
-            symbol + offset, length - offset, representative, prefix)) {
+            symbol, length, representative, prefix)) {
       return true;
     }
   }

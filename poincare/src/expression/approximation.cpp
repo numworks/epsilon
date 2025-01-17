@@ -1409,7 +1409,6 @@ bool Private::SkipApproximation(TypeBlock type, TypeBlock parentType,
     case Type::PowMatrix:
     case Type::Pow:
     case Type::PowReal:
-      // Note: After projection, Power's second term should always be integer.
       // Only approximate power's index if the entire tree can be approximated.
       return indexInParent == 1 && !previousChildWasApproximated;
     case Type::ListSlice:

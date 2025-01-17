@@ -39,6 +39,7 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
                                    bool canSystematicReduce);
 bool ShallowBeautifyPercent(Tree* e);
 bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
+bool ShallowBeautifyPowerOfTangent(Tree* e, void* context);
 bool ShallowBeautify(Tree* e, void* context);
 bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
 
@@ -265,6 +266,8 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
       Tree::ApplyShallowTopDown(e, ShallowBeautifyOppositesDivisionsRoots) ||
       changed;
   changed =
+      Tree::ApplyShallowTopDown(e, ShallowBeautifyPowerOfTangent) || changed;
+  changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifySpecialDisplays) || changed;
   changed = Variables::BeautifyToName(e) || changed;
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
@@ -309,6 +312,30 @@ bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context) {
   }
 
   return false;
+}
+
+bool ShallowBeautifyPowerOfTangent(Tree* e, void* context) {
+  if (!e->isDiv()) {
+    return false;
+  }
+  // (sin(A))^n/(cos(A))^n -> (tan(A))^n
+  return PatternMatching::MatchReplace(
+             e,
+             KDiv(KMult(KA_s, KPow(KSin(KB), KC), KD_s),
+                  KMult(KA_s, KPow(KCos(KB), KC), KD_s)),
+             KMult(KA_s, KPow(KTan(KB), KC), KD_s)) ||
+         // (cos(A))^n/(sin(A))^n -> (cot(A))^n
+         PatternMatching::MatchReplace(
+             e,
+             KDiv(KMult(KA_s, KPow(KCos(KB), KC), KD_s),
+                  KMult(KA_s, KPow(KSin(KB), KC), KD_s)),
+             KMult(KA_s, KPow(KCot(KB), KC), KD_s)) ||
+         // (sinh(A))^n/(cosh(A))^n -> (tanh(A))^n
+         PatternMatching::MatchReplace(
+             e,
+             KDiv(KMult(KA_s, KPow(KSinH(KB), KC), KD_s),
+                  KMult(KA_s, KPow(KCosH(KB), KC), KD_s)),
+             KMult(KA_s, KPow(KTanH(KB), KC), KD_s));
 }
 
 // Reverse most system projections to display better expressions

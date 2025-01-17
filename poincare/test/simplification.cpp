@@ -284,20 +284,20 @@ QUIZ_CASE(pcj_simplification_derivative) {
   // TODO: fix derivatives of trigonometric functions
   simplifies_to("diff(sin(x),x,x)", "cos(x)");
   simplifies_to("diff(cos(x),x,x)", "-sin(x)");
-  // simplifies_to("diff(tan(x),x,x)", "dep(tan(x)^2+1,{tan(x)})");
+  simplifies_to("diff(tan(x),x,x)", "tan(x)^2+1");
   // simplifies_to("diff(acos(x),x,x)", "dep(-1/√(-x^2+1),{real(arccos(x))})");
   // simplifies_to("diff(asin(x),x,x)", "dep(1/√(-x^2+1),{real(arcsin(x))})");
   // simplifies_to("diff(atan(x),x,x)", "1/(x^2+1)");
   simplifies_to("diff(sinh(x),x,x)", "cosh(x)");
   simplifies_to("diff(cosh(x),x,x)", "sinh(x)");
-  // simplifies_to("diff(tanh(x),x,x)", "1/cosh(x)^2");
+  simplifies_to("diff(tanh(x),x,x)", "dep(-(tanh(x)^2)+1,{tanh(x)})");
   // simplifies_to("diff(arcosh(x),x,x)", "dep(1/√(x^2-1),{real(arcosh(x))})");
   // simplifies_to("diff(arsinh(x),x,x)", "1/√(x^2+1)");
   // simplifies_to("diff(artanh(x),x,x)", "dep(1/(1-x^2),{real(artanh(x))})");
 
-  // simplifies_to("diff(sec(x),x,x)", "sin(x)/cos(x)^2");
-  // simplifies_to("diff(csc(x),x,x)", "-cos(x)/sin(x)^2");
-  // simplifies_to("diff(cot(x),x,x)", "-1-cot(x)^2");
+  simplifies_to("diff(sec(x),x,x)", "sin(x)/cos(x)^2");
+  simplifies_to("diff(csc(x),x,x)", "-cos(x)/sin(x)^2");
+  simplifies_to("diff(cot(x),x,x)", "-1-cot(x)^2");
   // simplifies_to("diff(arcsec(x),x,x)",
   //               "dep(1/(x^2×√((x^2-1)/x^2)),{real(arccos(1/x))})");
   // simplifies_to("diff(arccsc(x),x,x)",
@@ -596,7 +596,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
   // TODO: Should simplify to 0
   simplifies_to("((1+tanh(x)^2)*tanh(2x)/2)-tanh(x)",
-                "-tanh(x)+((sinh(x)^2/cosh(x)^2+1)×tanh(2×x))/2");
+                "-tanh(x)+((tanh(x)^2+1)×tanh(2×x))/2");
   simplifies_to("arcosh(5)", "arcosh(5)", cartesianCtx);
   simplifies_to("arcosh(5)-ln(5+√(24))", "0", cartesianCtx);
   simplifies_to("arcosh(cosh(x))", "abs(x)", cartesianCtx);

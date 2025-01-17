@@ -255,6 +255,7 @@ void AdvancedReduction::Direction::log() const {
     assert(isExpand());
     std::cout << "Expand";
   }
+  std::cout << std::endl;
 }
 #endif
 
@@ -311,6 +312,7 @@ void AdvancedReduction::Path::log() const {
     m_stack[i].log();
     std::cout << " | ";
   }
+  std::cout << std::endl;
 }
 #endif
 

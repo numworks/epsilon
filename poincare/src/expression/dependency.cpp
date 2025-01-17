@@ -389,6 +389,16 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
         changed = true;
         continue;
       }
+    } else if (depI->isRealPos()) {
+      ComplexSign sign = GetComplexSign(depI->child(0));
+      if (sign.isNonReal() || sign.realSign().isStrictlyNegative()) {
+        /* dep(..., {realPos(x)},) = dep(..., {nonreal}) if x is not real
+         * positive */
+        depI->cloneTreeOverTree(KNonReal);
+        i--;
+        changed = true;
+        continue;
+      }
     }
 
     depI = depI->nextTree();

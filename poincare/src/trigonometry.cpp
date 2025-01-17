@@ -4,6 +4,7 @@
 namespace Poincare {
 
 double Trigonometry::PiInAngleUnit(Preferences::AngleUnit angleUnit) {
+  assert(angleUnit != Preferences::AngleUnit::None);
   switch (angleUnit) {
     case Preferences::AngleUnit::Radian:
       return M_PI;

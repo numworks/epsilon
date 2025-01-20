@@ -239,7 +239,7 @@ class AbstractTreeStack : public BlockStack {
 
   // type should be UserSequence, UserFunction or UserSymbol
   Tree* pushUserNamed(TypeBlock type, const char* name, size_t size);
-};  // namespace Poincare::Internal
+};
 
 template <size_t MaxNumberOfBlocks,
           size_t MaxNumberOfReferences = MaxNumberOfBlocks / 8>

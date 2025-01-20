@@ -1,12 +1,26 @@
 #include <poincare/helpers/trigonometry.h>
 #include <poincare/k_tree.h>
 #include <poincare/src/expression/angle.h>
+#include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/units/representatives.h>
 
 namespace Poincare {
 
 UserExpression Trigonometry::Period(Preferences::AngleUnit angleUnit) {
   return UserExpression::Builder(Internal::Angle::Period(angleUnit));
+}
+
+static void addAngleUnitToExpression(Internal::Tree* e,
+                                     Preferences::AngleUnit angleUnit) {
+  if (e->isAdd() || e->isSub()) {
+    e->cloneNodeAtNode(KParentheses);
+  }
+
+  Internal::TreeRef unit = Internal::Units::Unit::Push(angleUnit);
+
+  e->moveTreeOverTree(
+      Internal::PatternMatching::Create(KMult(KA, KB), {.KA = e, .KB = unit}));
+  unit->removeTree();
 }
 
 static void addAngleUnitToDirectFunctionIfNeeded(
@@ -42,16 +56,7 @@ static void addAngleUnitToDirectFunctionIfNeeded(
      * or if the child does not contain Pi and the angle unit is other. */
     return;
   }
-
-  if (child->isAdd() || child->isSub()) {
-    child->cloneNodeAtNode(KParentheses);
-  }
-
-  Internal::TreeRef unit = Internal::Units::Unit::Push(angleUnit);
-
-  child->moveTreeOverTree(Internal::PatternMatching::Create(
-      KMult(KA, KB), {.KA = child, .KB = unit}));
-  unit->removeTree();
+  addAngleUnitToExpression(child, angleUnit);
 }
 
 static void privateDeepAddAngleUnitToAmbiguousDirectFunctions(
@@ -68,9 +73,12 @@ static void privateDeepAddAngleUnitToAmbiguousDirectFunctions(
 void Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
     UserExpression& e, Preferences::AngleUnit angleUnit) {
   Internal::Tree* clone = e.tree()->cloneTree();
+  if (clone->isUnitConversion() &&
+      !Internal::Dimension::Get(clone->child(0)).isUnit()) {
+    addAngleUnitToExpression(clone->child(0), angleUnit);
+  }
   privateDeepAddAngleUnitToAmbiguousDirectFunctions(clone, angleUnit);
   e = UserExpression::Builder(clone);
-  return;
 }
 
 }  // namespace Poincare

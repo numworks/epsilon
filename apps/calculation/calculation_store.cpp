@@ -17,8 +17,9 @@ namespace Calculation {
 static UserExpression enhancePushedExpression(UserExpression expression) {
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.
-   * Ex: If angleUnit = rad, cos(4)->cos(4rad)
-   *     If angleUnit = deg, cos(π)->cos(π°)
+   * Ex: If angleUnit = rad, cos(4) is enhanced to cos(4rad)
+   *     If angleUnit = deg, cos(π) is enhanced to cos(π°)
+   *     If angleUnit = *, 2->rad is enhanced to 2*->rad
    * */
   if (!Preferences::SharedPreferences()->examMode().forbidUnits()) {
     Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(

@@ -130,7 +130,6 @@ constexpr static Builtin s_builtins[] = {
 #if POINCARE_MATRIX
     {Type::Cross, "cross"},
     {Type::Det, "det"},
-    {Type::Dim, "dim"},
     {Type::Dot, "dot"},
     {Type::Identity, "identity"},
     {Type::Inverse, "inverse"},
@@ -138,6 +137,9 @@ constexpr static Builtin s_builtins[] = {
     {Type::Rref, "rref"},
     {Type::Trace, "trace"},
     {Type::Transpose, "transpose"},
+#endif
+#if POINCARE_MATRIX || POINCARE_LIST
+    {Type::Dim, "dim"},
 #endif
 #if POINCARE_COMPLEX_BUILTINS
     {Type::Arg, "arg"},

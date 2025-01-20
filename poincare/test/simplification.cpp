@@ -1045,6 +1045,10 @@ QUIZ_CASE(pcj_simplification_unit) {
                 {.m_unitDisplay = UnitDisplay::BasicSI});
   simplifies_to("(-1/2)×_'", "-π/21600×_rad",
                 {.m_unitDisplay = UnitDisplay::BasicSI});
+
+  // Conversions
+  simplifies_to("180×_°→_rad", "π×_rad", {.m_angleUnit = AngleUnit::Degree});
+  simplifies_to("91.44_cm→_yd", "1×_yd");
 }
 
 QUIZ_CASE(pcj_simplification_dependencies) {

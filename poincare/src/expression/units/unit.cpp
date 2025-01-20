@@ -740,6 +740,7 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
     MoveTreeOverTree(extractedUnits, extractedUnits->child(1));
     e->moveTreeOverTree(e->child(0));
     unitDisplay = UnitDisplay::AutomaticInput;
+    assert(!Dimension::Get(e).isScalar());
   }
   if (IsNonKelvinTemperature(dimension.unit.representative)) {
     // Temperature units must be removed from root expression

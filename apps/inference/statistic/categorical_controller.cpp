@@ -191,8 +191,9 @@ HighlightCell* CategoricalController::reusableCell(int index, int type) {
 
 KDCoordinate CategoricalController::nonMemoizedRowHeight(int row) {
   if (row == indexOfTableCell()) {
-    return std::min(tableCellFullHeight() - tableCellVerticalOffset(),
-                    static_cast<int>(m_selectableListView.bounds().height()));
+    return std::min<KDCoordinate>(
+        tableCellFullHeight() - tableCellVerticalOffset(),
+        m_selectableListView.bounds().height());
   }
   // The rest of the cells are explicit
   const HighlightCell* cell = explicitCellAtRow(row);

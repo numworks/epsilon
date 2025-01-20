@@ -112,7 +112,7 @@ void assert_parsed_expression_process_to(
   l->removeTree();
   bool test = strcmp(buffer, result) == 0;
   assert(SharedTreeStack->numberOfTrees() == 0);
-#if 0
+#if POINCARE_STRICT_TESTS
   char information[bufferSize] = "";
   if (!test) {
     build_failure_infos(information, bufferSize, expression, buffer, result);
@@ -146,7 +146,7 @@ void assert_parsed_expression_is(const char *expression,
   if (parsed) {
     parsed->removeTree();
   }
-#if 0
+#if POINCARE_STRICT_TESTS
   quiz_assert(test);
 #else
   quiz_tolerate_print_if_failure(test, expression, "parsed and identical",
@@ -300,7 +300,7 @@ void assert_expression_serializes_to(const Tree *expression,
   Serialize(layout, buffer, buffer + bufferSize);
   bool test = strcmp(serialization, buffer) == 0;
   layout->removeTree();
-#if 0
+#if POINCARE_STRICT_TESTS
   if (!test) {
     build_failure_infos(information, bufferSize, "serialized expression",
                         buffer, serialization);

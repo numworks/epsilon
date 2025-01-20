@@ -240,14 +240,22 @@ void assertCalculationIs(const char* input, DisplayOutput display,
   lastCalculation->createOutputLayouts(&exactOutputLayout,
                                        &approximateOutputLayout, context, true,
                                        maxVisibleWidth, font);
+#if POINCARE_STRICT_TESTS
+  quiz_assert(lastCalculation->displayOutput(context) == display);
+#else
   quiz_tolerate_print_if_failure(
       lastCalculation->displayOutput(context) == display, input,
       "correct displayOutput", "incorrect displayOutput");
+#endif
   if (sign != EqualSign::Unknown && display != DisplayOutput::ApproximateOnly &&
       display != DisplayOutput::ExactOnly) {
+#if POINCARE_STRICT_TESTS
+    quiz_assert(lastCalculation->equalSign(context) == sign);
+#else
     quiz_tolerate_print_if_failure(lastCalculation->equalSign(context) == sign,
                                    input, "correct equalSign",
                                    "incorrect equalSign");
+#endif
   }
   if (storedInput) {
     assert_expression_serializes_to(lastCalculation->input(), storedInput);
@@ -834,9 +842,14 @@ void assertCalculationAdditionalResultTypeHas(
   push(store, input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
+#if POINCARE_STRICT_TESTS
+  quiz_assert(lastCalculation->additionalResultsType(context) ==
+              additionalResultsType);
+#else
   quiz_tolerate_print_if_failure(
       lastCalculation->additionalResultsType(context) == additionalResultsType,
       input, "correct additional results", "incorrect additional results");
+#endif
   store->deleteAll();
 }
 

@@ -13,7 +13,7 @@ void assert_greater(const Tree* e1, const Tree* e2) {
 
 void old_assert_greater(const Tree* e1, const Tree* e2) {
   bool test = Order::CompareSystem(e1, e2) == 1;
-#if 0
+#if POINCARE_STRICT_TESTS
   quiz_assert(test);
 #else
   constexpr int bufferSize = 256;
@@ -91,7 +91,7 @@ void assert_multiplication_or_addition_is_ordered_as(const Tree* input,
   NAry::Sort(clone, input->isAdd() ? Order::OrderType::AdditionBeautification
                                    : Order::OrderType::Beautification);
   bool test = clone->treeIsIdenticalTo(expected);
-#if 0
+#if POINCARE_STRICT_TESTS
   quiz_assert(test);
 #else
   constexpr int bufferSize = 256;

@@ -28,7 +28,7 @@ void assert_expression_approximates_to_scalar(
   e->removeTree();
   bool test =
       roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(), true);
-#if 0
+#if POINCARE_STRICT_TESTS
   quiz_assert_print_if_failure(test, expression);
 #else
   constexpr int bufferSize = 500;
@@ -893,7 +893,7 @@ void assert_no_duplicates_in_list(const char *expression) {
       break;
     }
   }
-#if 0
+#if POINCARE_STRICT_TESTS
   quiz_assert_print_if_failure(!bad, expression);
 #else
   quiz_tolerate_print_if_failure(!bad, expression, "no duplicates",

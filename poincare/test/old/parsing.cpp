@@ -36,7 +36,7 @@ void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
     }
     tokenTypes++;
   }
-#if 0
+#if POINCARE_STRICT_TESTS
   quiz_assert(test);
 #else
   quiz_tolerate_print_if_failure(test, string, "expected token",

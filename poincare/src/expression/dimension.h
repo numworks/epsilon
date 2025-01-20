@@ -43,26 +43,16 @@ struct Dimension {
   }
 
   bool isScalar() const { return type == DimensionType::Scalar; }
-#if POINCARE_MATRIX
-  bool isMatrix() const { return type == DimensionType::Matrix; }
-#else
-  bool isMatrix() const { return false; }
-#endif
-#if POINCARE_UNIT
-  bool isUnit() const { return type == DimensionType::Unit; }
-#else
-  bool isUnit() const { return false; }
-#endif
-#if POINCARE_BOOLEAN
-  bool isBoolean() const { return type == DimensionType::Boolean; }
-#else
-  bool isBoolean() const { return false; }
-#endif
-#if POINCARE_POINT
-  bool isPoint() const { return type == DimensionType::Point; }
-#else
-  bool isPoint() const { return false; }
-#endif
+  bool isMatrix() const {
+    return POINCARE_MATRIX && type == DimensionType::Matrix;
+  }
+  bool isUnit() const { return POINCARE_UNIT && type == DimensionType::Unit; }
+  bool isBoolean() const {
+    return POINCARE_BOOLEAN && type == DimensionType::Boolean;
+  }
+  bool isPoint() const {
+    return POINCARE_POINT && type == DimensionType::Point;
+  }
   bool isScalarOrUnit() const {
     return type == DimensionType::Scalar || type == DimensionType::Unit;
   }

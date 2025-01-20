@@ -27,11 +27,12 @@
 /* The named feature set, for instance MATRIX, with be replaced by the
  * value of the macro variable POINCARE_MATRIX. It needs to resolve to
  * 0 or 1 (it cannot an expression). The functions NODE_USE_0 or
- * NODE_USE_1 will call UNDEF_NODE_USE or NODE_USE to allow for
+ * NODE_USE_1 will call DISABLED_NODE_USE or NODE_USE to allow for
  * different behaviors when the feature set is enabled or not. */
 #define POINCARE_BASE 1
 
-#define NODE_USE_0(NAME, NB_CHILDREN, NODE_STRUCT) UNDEF_NODE_USE(NAME)
+#define NODE_USE_0(NAME, NB_CHILDREN, NODE_STRUCT) \
+  DISABLED_NODE_USE(NAME, NB_CHILDREN, NODE_STRUCT)
 #define NODE_USE_1(NAME, NB_CHILDREN, NODE_STRUCT) \
   NODE_USE(NAME, NB_CHILDREN, NODE_STRUCT)
 
@@ -48,10 +49,6 @@
 #define RANGE(NAME, FIRST, LAST)
 #endif
 
-#ifndef UNDEF_RANGE
-#define UNDEF_RANGE(NAME, FIRST, LAST)
-#endif
-
 #ifndef NODE_USE
 #define NODE_USE(NAME, NB_CHILDREN, NODE_SIZE)
 #endif
@@ -60,8 +57,10 @@
 #define NODE_DECL(NAME, NB_CHILDREN, NODE_STRUCT)
 #endif
 
-#ifndef UNDEF_NODE_USE
-#define UNDEF_NODE_USE(NAME)
+#ifndef DISABLED_NODE_USE
+// By default disabled nodes are doing the same as enabled ones
+#define DISABLED_NODE_USE(NAME, NB_CHILDREN, NODE_STRUCT) \
+  NODE_USE(NAME, NB_CHILDREN, NODE_STRUCT)
 #endif
 
 // 1 - Expressions
@@ -98,10 +97,9 @@ NODE(NumberOfTypes, BASE)
 #endif
 
 #undef RANGE
-#undef UNDEF_RANGE
 #undef NODE_USE
 #undef NODE_DECL
-#undef UNDEF_NODE_USE
+#undef DISABLED_NODE_USE
 
 #undef GET5TH
 #undef NODE1

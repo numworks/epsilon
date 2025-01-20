@@ -47,7 +47,7 @@ namespace CustomTypeStructs {
 consteval bool rangeIsDisabled(uint8_t first, uint8_t last) {
   constexpr const bool isEnabled[] = {
 #define NODE_USE(F, N, S) true,
-#define UNDEF_NODE_USE(F) false,
+#define DISABLED_NODE_USE(F, N, S) false,
 #include "types.h"
   };
   for (uint8_t i = first; i <= last; i++) {
@@ -77,7 +77,7 @@ class TypeBlock : public Block {
    * NODE(MinusOne) => "MinusOne", */
   static constexpr const char* names[] = {
 #define NODE_USE(F, N, S) #F,
-#define UNDEF_NODE_USE(F) "",
+#define DISABLED_NODE_USE(F, N, S) "",
 #include "types.h"
   };
 #endif
@@ -97,19 +97,19 @@ class TypeBlock : public Block {
                                                                         \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
 
-#define UNDEF_RANGE(NAME, FIRST, LAST)                               \
+#define DISABLED_RANGE(NAME, FIRST, LAST)                            \
   static constexpr bool Is##NAME(EnabledType type) { return false; } \
   constexpr bool is##NAME() const { return false; }
 
 #define RANGE1(N) RANGE(N, N, N)
-#define UNDEF_RANGE1(N) UNDEF_RANGE(N, N, N)
+#define DISABLED_RANGE1(N) DISABLED_RANGE(N, N, N)
 
 #define NODE_USE(F, N, S) RANGE1(SCOPED_NODE(F))
-#define UNDEF_NODE_USE(F) UNDEF_RANGE1(SCOPED_NODE(F))
+#define DISABLED_NODE_USE(F, N, S) DISABLED_RANGE1(SCOPED_NODE(F))
 
 #include "types.h"
 #undef RANGE1
-#undef UNDEF_RANGE1
+#undef DISABLED_RANGE1
 
   consteval static size_t DefaultNumberOfMetaBlocks(int N) {
     return N == NARY2D ? 3 : N == NARY ? 2 : N == NARY16 ? 3 : 1;
@@ -186,6 +186,7 @@ class TypeBlock : public Block {
 #define NODE_USE(F, N, S)    \
   case Type::SCOPED_NODE(F): \
     return DefaultNumberOfMetaBlocks(N) + S;
+#define DISABLED_NODE_USE(F, N, S)
 #include "types.h"
       default:
         return 1;
@@ -264,6 +265,7 @@ class TypeBlock : public Block {
 #define NODE_USE(F, N, S)    \
   case Type::SCOPED_NODE(F): \
     return N;
+#define DISABLED_NODE_USE(F, N, S)
 #include "types.h"
       default:
         return 0;

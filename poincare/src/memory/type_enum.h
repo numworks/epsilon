@@ -10,7 +10,6 @@ enum class TypeEnum : uint16_t {
  * NODE(Fraction) in layout.h => FractionLayout,
  */
 #define NODE_USE(F, N, S) SCOPED_NODE(F),
-#define UNDEF_NODE_USE(F) SCOPED_NODE(F),
 #include "types.h"
 };
 
@@ -28,7 +27,7 @@ namespace Type {
 #define NODE_USE(F, N, S) \
   constexpr AnyType SCOPED_NODE(F){TypeEnum::SCOPED_NODE(F)};
 // The disabled nodes cast to their value in TypeEnum + 256.
-#define UNDEF_NODE_USE(F)                                 \
+#define DISABLED_NODE_USE(F, N, S)                        \
   constexpr AnyType SCOPED_NODE(F){static_cast<TypeEnum>( \
       256 + static_cast<uint16_t>(TypeEnum::SCOPED_NODE(F)))};
 #include "types.h"
@@ -60,7 +59,6 @@ class EnabledType {
 namespace LayoutType {
 #define ONLY_LAYOUTS 1
 #define NODE_USE(F, N, S) constexpr auto F = Type::F##Layout;
-#define UNDEF_NODE_USE(F) constexpr auto F = Type::F##Layout;
 #include "types.h"
 }  // namespace LayoutType
 using LayoutAnyType = EnabledType;
@@ -72,7 +70,6 @@ enum class LayoutType : uint8_t {
  */
 #define ONLY_LAYOUTS 1
 #define NODE_USE(F, N, S) F = static_cast<uint8_t>(TypeEnum::F##Layout),
-#define UNDEF_NODE_USE(F) F = static_cast<uint8_t>(TypeEnum::F##Layout),
 #include "types.h"
 };
 #endif

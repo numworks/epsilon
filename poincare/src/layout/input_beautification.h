@@ -177,7 +177,9 @@ class InputBeautification {
 #if POINCARE_MATRIX
       /* norm( */
       ruleHelper<Type::Norm, Type::VectorNormLayout>(),
+#endif
       /* pi */ k_piRule,
+#if POINCARE_PIECEWISE
       {/* piecewise( */
        "piecewise", 2,
        [](TreeRef* parameters) -> Tree* {

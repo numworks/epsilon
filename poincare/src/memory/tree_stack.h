@@ -104,6 +104,7 @@ class AbstractTreeStack : public BlockStack {
 #undef PUSHER
 #undef PUSHER_
 
+  // Dummy pusher for disabled nodes
 #define PUSHER(F)          \
   template <class... Args> \
   Tree* push##F(Args...) { \

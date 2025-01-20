@@ -4,7 +4,8 @@
 namespace Poincare::Internal {
 
 enum class TypeEnum : uint16_t {
-/* Add all the types to the enum
+/* Add all the types to the enum,
+ * enabled and disabled types are mixed up:
  * NODE(MinusOne) => MinusOne,
  * NODE(Fraction) in layout.h => FractionLayout,
  */
@@ -20,15 +21,21 @@ struct AnyType {
   TypeEnum m_id;
 };
 
+/* We would like to keep the "case Type::Add:" syntax but with custom
+ * ids. All the elements are of the type AnyType and stored in the
+ * namespace Type to provide an equivalent syntax. */
 namespace Type {
 #define NODE_USE(F, N, S) \
   constexpr AnyType SCOPED_NODE(F){TypeEnum::SCOPED_NODE(F)};
+// The disabled nodes cast to their value in TypeEnum + 256.
 #define UNDEF_NODE_USE(F)                                 \
   constexpr AnyType SCOPED_NODE(F){static_cast<TypeEnum>( \
       256 + static_cast<uint16_t>(TypeEnum::SCOPED_NODE(F)))};
 #include "types.h"
 };  // namespace Type
 
+/* The EnabledType represents only types available at runtime
+ * aka "enabled" and stored in a uint8_t. */
 class EnabledType {
  public:
   constexpr EnabledType() {}

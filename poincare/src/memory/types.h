@@ -20,6 +20,10 @@
 
 // 2 - Handle the features
 
+/* The named feature set, for instance MATRIX, with be replaced by the
+ * value of the macro variable POINCARE_MATRIX. It needs to resolve to
+ * 0 or 1 (it cannot an expression). The function NODE_USE_0 or
+ * NODE_USE_1 will be called accordingly. */
 #define POINCARE_BASE 1
 
 #define NODE_USE_0(F, N, S) UNDEF_NODE_USE(F)

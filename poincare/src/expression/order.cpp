@@ -35,6 +35,13 @@ int Order::Compare(const Tree* e1, const Tree* e2, OrderType order) {
 }
 
 int Order::CompareDifferent(const Tree* e1, const Tree* e2, OrderType order) {
+  // Ignore AngleUnitContext nodes
+  if (e1->isAngleUnitContext()) {
+    return CompareDifferent(e1->child(0), e2, order);
+  }
+  if (e2->isAngleUnitContext()) {
+    return CompareDifferent(e1, e2->child(0), order);
+  }
   if (order == OrderType::AdditionBeautification) {
     /* Repeat twice, once for symbol degree, once for any degree */
     for (bool sortBySymbolDegree : {true, false}) {

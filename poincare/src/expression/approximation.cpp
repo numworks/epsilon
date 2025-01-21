@@ -36,6 +36,11 @@ namespace Poincare::Internal::Approximation {
 
 using namespace Private;
 
+static_assert(
+    !POINCARE_NO_FLOAT_APPROXIMATION || !(POINCARE_MATRIX || POINCARE_LIST ||
+                                          POINCARE_BOOLEAN || POINCARE_POINT),
+    "the double-only approximation is only available with scalars for now");
+
 template <typename T>
 Tree* ToTree(const Tree* e, Parameters params, Context context) {
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {

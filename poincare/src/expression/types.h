@@ -269,7 +269,8 @@ NODE(PowMatrix, MATRIX, 2)
 /* - Matrix M
  * | Number of rows | Number of columns |
  * Children are ordered the row-major way */
-NODE(Matrix, MATRIX, NARY2D)
+NODE(Matrix, BASE, NARY2D)
+// Matrix is in BASE because it is needed by the equation solver
 
 RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 

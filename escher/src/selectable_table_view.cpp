@@ -195,13 +195,22 @@ bool SelectableTableView::handleEvent(Ion::Events::Event event) {
     if (!cell) {
       return false;
     }
-    Poincare::Layout toStore;
-    // Step 1: Determine text to store
     const char* text = cell->text();
     Poincare::Layout layout = cell->layout();
     if (!text && layout.isUninitialized()) {
       return false;
     }
+    if (!App::app()->canStoreLayout()) {
+      /* Apps without a store menu cannot handle layouts, but they can copy or
+       * cut text */
+      assert(text);
+      if (event == Ion::Events::Copy || event == Ion::Events::Cut) {
+        Escher::Clipboard::SharedClipboard()->storeText(text);
+      }
+      return true;
+    }
+    Poincare::Layout toStore;
+    // Step 1: Determine text to store
     if (dataSource()->canStoreCellAtLocation(selectedColumn(), selectedRow())) {
       if (text) {
         toStore = Poincare::Layout::String(text);

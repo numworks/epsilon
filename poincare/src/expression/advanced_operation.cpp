@@ -84,25 +84,22 @@ bool AdvancedOperation::ContractAbs(Tree* e) {
 
 bool AdvancedOperation::ExpandAbs(Tree* e) {
   if (PatternMatching::MatchReplaceSimplify(
-          e, KAbs(KMult(KA, KB_p)), KMult(KAbs(KA), KAbs(KMult(KB_p))))) {
-    // |A*B?| = |A|*|B|
+          e, KAbs(KMult(KA, KB_p)), KMult(KAbs(KA), KAbs(KMult(KB_p)))) ||
+      PatternMatching::MatchReplaceSimplify(
+          e, KPow(KAbs(KA), 2_e),
+          KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e)))) {
+    // |A*B?| = |A|*|B| and |A|^2 = re(A)^2+im(A)^2
     return true;
   }
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KPow(KAbs(KA), 2_e), &ctx) &&
-      GetComplexSign(ctx.getTree(KA)).isReal()) {
-    // abs(A)^2 = A^2 for A real
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KA, 2_e), ctx));
-    return true;
-  }
   if (PatternMatching::Match(e, KAbs(KA), &ctx) &&
       GetComplexSign(ctx.getTree(KA)).isReal()) {
-    // abs(A) = A*sign(A) for A real
+    // |A| = A*sign(A) for A real
     e->moveTreeOverTree(
         PatternMatching::CreateSimplify(KMult(KA, KSign(KA)), ctx));
     return true;
   }
-  // |x| = √(re(x)^2+im(x)^2)
+  // |A| = √(re(A)^2+im(A)^2)
   return PatternMatching::MatchReplaceSimplify(
       e, KAbs(KA),
       KExp(

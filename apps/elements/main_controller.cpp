@@ -141,6 +141,7 @@ bool MainController::textFieldDidReceiveEvent(
 
   if (event == Ion::Events::Copy || event == Ion::Events::Cut ||
       event == Ion::Events::Var || event == Ion::Events::Sto) {
+    assert(App::app()->canStoreLayout());
     Poincare::Layout toStore;
 
     if (dataSource->field()->canBeStored(z)) {

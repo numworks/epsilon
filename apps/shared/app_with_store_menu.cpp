@@ -7,6 +7,7 @@ namespace Shared {
 
 bool AppWithStoreMenu::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
+    assert(this->canStoreLayout());
     storeLayout();
     return true;
   }

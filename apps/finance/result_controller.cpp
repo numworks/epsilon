@@ -42,6 +42,7 @@ bool ResultController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
+    assert(App::app()->canStoreLayout());
     App::app()->storeLayout(Poincare::Layout::String(m_cell.text()));
     return true;
   }

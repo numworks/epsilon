@@ -635,6 +635,7 @@ bool AbstractTextField::storeInClipboard() const {
 }
 
 bool AbstractTextField::handleStoreEvent() {
+  assert(App::app()->canStoreLayout());
   if (!isEditing() && m_delegate && m_delegate->textFieldIsStorable(this)) {
     App::app()->storeLayout(Layout::String(text()));
   } else if (isEditing() && !selectionIsEmpty()) {

@@ -34,6 +34,7 @@ bool CalculationGraphController::handleEvent(Ion::Events::Event event) {
     return true;
   }
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
+    assert(App::app()->canStoreLayout());
     App::app()->storeLayout(
         Layout::String(m_bannerView->abscissaValue()->text()));
     return true;

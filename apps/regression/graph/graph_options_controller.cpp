@@ -137,6 +137,7 @@ bool GraphOptionsController::handleEvent(Ion::Events::Event event) {
   HighlightCell* cell = selectedCell();
   if ((event == Ion::Events::Copy || event == Ion::Events::Cut) ||
       event == Ion::Events::Sto || event == Ion::Events::Var) {
+    assert(App::app()->canStoreLayout());
     if (cell == &m_regressionEquationCell) {
       Layout l = m_regressionEquationCell.label()->layout();
       if (!l.isUninitialized()) {

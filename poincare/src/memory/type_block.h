@@ -97,19 +97,10 @@ class TypeBlock : public Block {
                                                                         \
   constexpr bool is##NAME() const { return Is##NAME(type()); }
 
-#define DISABLED_RANGE(NAME, FIRST, LAST)                            \
-  static constexpr bool Is##NAME(EnabledType type) { return false; } \
-  constexpr bool is##NAME() const { return false; }
-
 #define RANGE1(N) RANGE(N, N, N)
-#define DISABLED_RANGE1(N) DISABLED_RANGE(N, N, N)
-
 #define NODE_USE(F, N, S) RANGE1(SCOPED_NODE(F))
-#define DISABLED_NODE_USE(F, N, S) DISABLED_RANGE1(SCOPED_NODE(F))
-
 #include "types.h"
 #undef RANGE1
-#undef DISABLED_RANGE1
 
   consteval static size_t DefaultNumberOfMetaBlocks(int N) {
     return N == NARY2D ? 3 : N == NARY ? 2 : N == NARY16 ? 3 : 1;

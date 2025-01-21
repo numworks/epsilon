@@ -8,6 +8,7 @@ namespace Shared {
 
 class AppWithStoreMenu : public SharedApp {
  public:
+  bool canStoreLayout() override { return true; }
   void storeLayout(Poincare::Layout layout = {}) override;
   bool isStoreMenuOpen() const;
   Escher::EditableFieldHelpBox* toolbox() override final {

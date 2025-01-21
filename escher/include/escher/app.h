@@ -86,6 +86,7 @@ class App : public Responder {
   ModalViewController* modalViewController() { return &m_modalViewController; }
   virtual void willOpenPage(ViewController* controller) {}
   virtual void didExitPage(ViewController* controller) {}
+  virtual bool canStoreLayout() { return false; }
   virtual void storeLayout(Poincare::Layout layout = {}) {}
   virtual int numberOfTimers() { return 0; }
   virtual Timer* timerAtIndex(int i) {

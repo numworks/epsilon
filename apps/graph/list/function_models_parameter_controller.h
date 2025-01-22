@@ -54,7 +54,7 @@ class FunctionModelsParameterController
   };
 
   constexpr static Model layoutVariant1[] = {
-      // US
+      // US & NL
       Model::Equation,     Model::Function, Model::Inequality, Model::Point,
       Model::ListOfPoints, Model::Inverse,  Model::Piecewise,  Model::Conic,
       Model::Parametric,   Model::Polar,

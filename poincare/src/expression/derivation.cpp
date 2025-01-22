@@ -203,7 +203,7 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
         assert(!Variables::HasVariables(derivand->child(1)));
         return (0_e)->cloneTree();
       }
-      Tree* multiplication;
+      Tree* multiplication = nullptr;
       if (derivand->isPow()) {
         multiplication = SharedTreeStack->pushMult(2);
         derivand->child(1)->cloneTree();

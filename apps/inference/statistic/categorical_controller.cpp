@@ -41,15 +41,15 @@ void CategoricalController::didScroll() {
 
   int tableCellRow = indexOfTableCell();
   KDCoordinate topMargin = m_selectableListView.margins()->top();
-  int firstVisibleRow =
-      rowAfterCumulatedHeight(std::max(listOffset - topMargin, 0));
+  int firstVisibleRow = rowAfterCumulatedHeight(
+      std::max<KDCoordinate>(listOffset - topMargin, 0));
   KDCoordinate heightBeforeTableCell =
       cumulatedHeightBeforeRow(tableCellRow) + topMargin;
 
   assert((firstVisibleRow < tableCellRow) ==
          (listOffset < heightBeforeTableCell));
 
-  KDCoordinate maxTableOffset = std::max(
+  KDCoordinate maxTableOffset = std::max<KDCoordinate>(
       0, tableCellFullHeight() - (m_selectableListView.bounds().height() -
                                   m_selectableListView.margins()->height()));
   assert(tableOffset <= maxTableOffset);
@@ -57,8 +57,8 @@ void CategoricalController::didScroll() {
   if (firstVisibleRow == tableCellRow && listOffset > heightBeforeTableCell &&
       tableOffset < maxTableOffset) {
     // Transfer list's offset to table
-    KDCoordinate translation = std::min(maxTableOffset - tableOffset,
-                                        listOffset - heightBeforeTableCell);
+    KDCoordinate translation = std::min<KDCoordinate>(
+        maxTableOffset - tableOffset, listOffset - heightBeforeTableCell);
     assert(translation > 0);
     // Change table cell offset first (to relayout well the list)
     categoricalTableCell()->selectableTableView()->translateContentOffsetBy(
@@ -73,8 +73,8 @@ void CategoricalController::didScroll() {
   } else if (firstVisibleRow < tableCellRow && tableOffset > 0) {
     assert(listOffset < heightBeforeTableCell);
     // Transfer table's offset to list
-    KDCoordinate translation = std::min(static_cast<int>(tableOffset),
-                                        heightBeforeTableCell - listOffset);
+    KDCoordinate translation = std::min<KDCoordinate>(
+        (tableOffset), heightBeforeTableCell - listOffset);
     assert(translation > 0);
     // Change table cell offset first (to relayout well the list)
     categoricalTableCell()->selectableTableView()->translateContentOffsetBy(

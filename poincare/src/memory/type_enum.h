@@ -3,7 +3,7 @@
 
 namespace Poincare::Internal {
 
-enum class TypeEnum : uint16_t {
+enum class TypeEnum : uint8_t {
 /* Add all the types to the enum,
  * enabled and disabled types are mixed up:
  * NODE(MinusOne) => MinusOne,
@@ -39,20 +39,13 @@ class EnabledType {
  public:
   constexpr EnabledType() {}
   constexpr EnabledType(AnyType type)
-      : m_value(static_cast<Types>(static_cast<uint8_t>(type))) {}
-  constexpr EnabledType(uint8_t value) : m_value(static_cast<Types>(value)) {}
+      : m_value(static_cast<TypeEnum>(static_cast<uint8_t>(type))) {}
+  constexpr EnabledType(uint8_t value)
+      : m_value(static_cast<TypeEnum>(value)) {}
   constexpr operator uint8_t() const { return static_cast<uint8_t>(m_value); }
 
  private:
-  enum class Types : uint8_t {
-/* Add all the types to the enum
- * NODE(MinusOne) => MinusOne,
- * NODE(Fraction) in layout.h => FractionLayout,
- */
-#define NODE_USE(F, N, S) SCOPED_NODE(F),
-#include "types.h"
-  };
-  Types m_value;
+  TypeEnum m_value;
 };
 
 // TODO restore LayoutType behavior

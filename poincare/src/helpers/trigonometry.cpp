@@ -12,12 +12,7 @@ UserExpression Trigonometry::Period(Preferences::AngleUnit angleUnit) {
 
 static void addAngleUnitToExpression(Internal::Tree* e,
                                      Preferences::AngleUnit angleUnit) {
-  if (e->isAdd() || e->isSub()) {
-    e->cloneNodeAtNode(KParentheses);
-  }
-
   Internal::TreeRef unit = Internal::Units::Unit::Push(angleUnit);
-
   e->moveTreeOverTree(
       Internal::PatternMatching::Create(KMult(KA, KB), {.KA = e, .KB = unit}));
   unit->removeTree();

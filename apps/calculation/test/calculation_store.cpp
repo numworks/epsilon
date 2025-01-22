@@ -392,6 +392,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       &globalContext, &store);
   Preferences::SharedPreferences()->setAngleUnit(
       Preferences::AngleUnit::Radian);
+  assertCalculationIs("2+π→_rad", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Unknown, "(2+π)×_rad", "5.141593×_rad",
+                      "5.141593×_rad", &globalContext, &store);
   assertCalculationIs("π/2→°", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "90×_°", "90×_°",
                       &globalContext, &store);

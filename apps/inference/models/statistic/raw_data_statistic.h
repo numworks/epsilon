@@ -9,8 +9,6 @@
 
 namespace Inference {
 
-enum class PageIndex : uint8_t { One, Two };
-
 class RawDataStatistic : public Table, public Shared::StatisticsStore {
  public:
   constexpr static int k_numberOfDatasetOptions = 2;
@@ -20,7 +18,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
 
   RawDataStatistic(Shared::GlobalContext* context)
       : StatisticsStore(context, &m_storePreferences),
-        m_activePageIndex{PageIndex::One},
+        m_activePageIndex{0},
         m_series{-1, -1} {}
 
   int seriesAt(int index) const override {
@@ -33,10 +31,10 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
 
   // DoublePairStore
   int seriesAtColumn(int column) const override {
-    return seriesAt(static_cast<uint8_t>(m_activePageIndex));
+    return seriesAt(m_activePageIndex);
   }
 
-  void setActivePage(PageIndex pageIndex) { m_activePageIndex = pageIndex; }
+  void setActivePage(uint8_t pageIndex) { m_activePageIndex = pageIndex; }
 
   // Table
   void setParameterAtPosition(double value, int row, int column) override;
@@ -65,7 +63,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
                                 Poincare::Layout* message,
                                 I18n::Message* subMessage, int* precision);
   void initDatasetsIfSeries() {
-    if (hasSeries(static_cast<int>(m_activePageIndex))) {
+    if (hasSeries(m_activePageIndex)) {
       initDatasets();
     }
   }
@@ -77,7 +75,7 @@ class RawDataStatistic : public Table, public Shared::StatisticsStore {
 
   /* In some cases (e.g. TwoMeans), the statistic can be displayed on several
    * pages. On each page, the selected series is displayed in a table. */
-  PageIndex m_activePageIndex;
+  uint8_t m_activePageIndex;
 
  private:
   Shared::DoublePairStorePreferences m_storePreferences;

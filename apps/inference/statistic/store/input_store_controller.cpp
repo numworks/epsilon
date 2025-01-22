@@ -11,7 +11,7 @@ namespace Inference {
 
 InputStoreController::InputStoreController(
     StackViewController* parent, ViewController* nextController,
-    PageIndex pageIndex, InputStoreController* nextInputStoreController,
+    uint8_t pageIndex, InputStoreController* nextInputStoreController,
     Statistic* statistic, Poincare::Context* context)
     : InputCategoricalController(parent, nextController, statistic,
                                  Invocation::Builder<InputStoreController>(
@@ -81,10 +81,10 @@ void InputStoreController::initializeDropdown() {
       static_cast<const RawDataStatistic*>(m_storeTableCell.tableModel());
 
   if (shouldDisplayTwoPages()) {
-    if (m_pageIndex == PageIndex::One) {
+    if (m_pageIndex == 0) {
       m_dropdownCell.setMessage(I18n::Message::DataSet1);
     } else {
-      assert(m_pageIndex == PageIndex::Two);
+      assert(m_pageIndex == 1);
       m_dropdownCell.setMessage(I18n::Message::DataSet2);
     }
   } else {
@@ -142,7 +142,7 @@ void InputStoreController::initView() {
   m_loadedSubApp = m_statistic->subApp();
   m_loadedDistribution = m_statistic->distributionType();
   m_loadedTest = m_statistic->significanceTestType();
-  if (m_pageIndex == PageIndex::One) {
+  if (m_pageIndex == 0) {
     m_nextController = shouldDisplayTwoPages() ? m_nextInputStoreController
                                                : m_nextOtherController;
   }
@@ -200,7 +200,7 @@ void InputStoreController::updateParameterCellsVisibility() {
 
 void InputStoreController::hideOtherPageParameterCells() {
   assert(shouldDisplayTwoPages());
-  if (m_pageIndex == PageIndex::One) {
+  if (m_pageIndex == 0) {
     // The significance cell is visible only on the second page
     m_significanceCell.setVisible(false);
   }

@@ -15,7 +15,7 @@ class InputStoreController : public InputCategoricalController,
  public:
   InputStoreController(Escher::StackViewController* parent,
                        Escher::ViewController* nextController,
-                       PageIndex pageIndex,
+                       uint8_t pageIndex,
                        InputStoreController* nextInputStoreController,
                        Statistic* statistic, Poincare::Context* context);
 
@@ -37,7 +37,7 @@ class InputStoreController : public InputCategoricalController,
     if (!m_statistic->canChooseDataset()) {
       return ViewController::TitlesDisplay::DisplayLastTwoTitles;
     }
-    if (m_pageIndex == PageIndex::One) {
+    if (m_pageIndex == 0) {
       return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
     }
     return ViewController::TitlesDisplay::SameAsPreviousPage;

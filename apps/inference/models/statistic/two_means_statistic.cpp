@@ -3,10 +3,10 @@
 namespace Inference {
 
 void TwoMeansStatistic::syncParametersWithStore(const Statistic* stat) {
-  if (!hasSeries(static_cast<int>(m_activePageIndex))) {
+  if (!hasSeries(m_activePageIndex)) {
     return;
   }
-  syncParametersWithStore(stat, static_cast<uint8_t>(m_activePageIndex));
+  syncParametersWithStore(stat, m_activePageIndex);
 }
 
 void TwoMeansStatistic::syncParametersWithStore(const Statistic* stat,

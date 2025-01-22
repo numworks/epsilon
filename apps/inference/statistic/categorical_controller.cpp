@@ -217,7 +217,7 @@ void CategoricalController::initWidth(TableView* tableView) {
 
 InputCategoricalController::InputCategoricalController(
     StackViewController* parent, ViewController* nextController,
-    Statistic* statistic, Invocation invocation, PageIndex pageIndex)
+    Statistic* statistic, Invocation invocation, uint8_t pageIndex)
     : CategoricalController(parent, nextController, invocation),
       m_statistic(statistic),
       m_significanceCell(&m_selectableListView, this),

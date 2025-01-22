@@ -108,7 +108,7 @@ class InputCategoricalController : public CategoricalController,
                              Escher::ViewController* nextController,
                              Statistic* statistic,
                              Escher::Invocation invocation,
-                             PageIndex pageIndex = PageIndex::One);
+                             uint8_t pageIndex = 0);
 
   // TextFieldDelegate
   bool textFieldShouldFinishEditing(Escher::AbstractTextField* textField,
@@ -144,7 +144,7 @@ class InputCategoricalController : public CategoricalController,
   /* There can be several instances of InputCategoricalController, each
    * representing a distinct dataset selection page. This is used only for some
    * test categories (e.g. TwoMeansTest). */
-  PageIndex m_pageIndex;
+  uint8_t m_pageIndex;
 };
 
 }  // namespace Inference

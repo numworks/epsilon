@@ -194,13 +194,12 @@ bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
   if (piFactor) {
     TreeRef simplifiedPiFactor =
         computeSimplifiedPiFactorForType(piFactor, Type::Arg);
-    if (!simplifiedPiFactor) {
-      return false;
+    if (simplifiedPiFactor) {
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KMult(KA, π_e), {.KA = simplifiedPiFactor}));
+      simplifiedPiFactor->removeTree();
+      return true;
     }
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KMult(KA, π_e), {.KA = simplifiedPiFactor}));
-    simplifiedPiFactor->removeTree();
-    return true;
   }
   // arg and atan are already in ]-π,π]
   return e->isArg() || e->isATanRad() ||

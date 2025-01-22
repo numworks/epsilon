@@ -748,13 +748,18 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   Preferences::ComplexFormat complexFormat =
       this->complexFormat(record, context);
   if (!equation.isUndefined()) {
+    bool reductionFailure = false;
     result = PoincareHelpers::CloneAndReduce(
         equation, context,
         {.complexFormat = complexFormat,
          .updateComplexFormatWithExpression = false,
          .target = ReductionTarget::SystemForAnalysis,
          // Symbols have already been replaced.
-         .symbolicComputation = SymbolicComputation::KeepAllSymbols});
+         .symbolicComputation = SymbolicComputation::KeepAllSymbols},
+        &reductionFailure);
+    if (reductionFailure) {
+      result = SystemExpression::Create(KFailedSimplification, {});
+    }
     assert(!result.isUninitialized());
   } else {
     result = SystemExpression::Create(KUndef, {});

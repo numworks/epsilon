@@ -161,7 +161,11 @@ void ContinuousFunctionProperties::update(
 
   assert(!reducedEquation.isUninitialized());
   if (reducedEquation.isUndefined()) {
-    setErrorStatusAndUpdateCaption(Status::Undefined);
+    if (reducedEquation.tree()->isUndefFailedSimplification()) {
+      setErrorStatusAndUpdateCaption(Status::Unhandled);
+    } else {
+      setErrorStatusAndUpdateCaption(Status::Undefined);
+    }
     return;
   }
 

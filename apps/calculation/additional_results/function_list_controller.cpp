@@ -31,6 +31,7 @@ void FunctionListController::computeAdditionalResults(
       AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
           input, k_symbolName, &abscissa);
 
+  bool reductionFailure;
   SystemFunction simplifiedExpression =
       PoincareHelpers::CloneAndReduce(
           inputClone, context,

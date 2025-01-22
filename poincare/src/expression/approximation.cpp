@@ -918,7 +918,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     }
     case Type::RealPos: {
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
-      return x.real() < 0 || x.imag() != 0 ? NonReal<T>() : x;
+      return x.real() < 0.0 || x.imag() != 0.0 ? NonReal<T>() : x;
     }
     /* Handle units as their scalar value in basic SI so prefix and
      * representative homogeneity isn't necessary. Dimension is expected to be

@@ -89,14 +89,18 @@ define rule_label
 @ echo "$(shell printf "%-8s" $(strip $(1)))$(@:$(OUTPUT_DIRECTORY)/%=%)"
 endef
 
+# All generated_headers should depend on this target to make sure they
+# are build before any object file
+generated_headers:
+
 # simple_rule, <label>, <source extension>, <command>
 define rule_for_object
 $(eval \
-$(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_and_special_dir,%).$(strip $2) | $$$$(@D)/.
+$(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$3
 
-$(OUTPUT_DIRECTORY)/%.o: $(OUTPUT_DIRECTORY)/$$$$(call strip_arch_and_special_dir,%).$(strip $2) | $$$$(@D)/.
+$(OUTPUT_DIRECTORY)/%.o: $(OUTPUT_DIRECTORY)/$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$3
 )

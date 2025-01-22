@@ -20,18 +20,13 @@ union IntDouble {
   double d;
 };
 
-#if __EMSCRIPTEN__
-/* Emscripten cannot represent a NaN literal with custom bit pattern in
- * NaN-canonicalizing JS engines. We use a magic number instead. */
-constexpr static IntFloat k_sNanFloat = IntFloat{.f = -1.7014118346e+38};
-constexpr static IntDouble k_sNanDouble = IntDouble{.d = -1.7014118346e+38};
-#else
 /* 0x7fa00000 corresponds to std::numeric_limits<float>::signaling_NaN()
  * 0x7ff4000000000000 corresponds to
- * std::numeric_limits<double>::signaling_NaN() */
+ * std::numeric_limits<double>::signaling_NaN()
+ * Using Wasm for the web application, we can choose any NAN value that is not a
+ * canonical or arithmetic NAN, i.e. first bit of the payload must be 0. */
 constexpr static IntFloat k_sNanFloat = IntFloat{.i = 0x7fa00000};
 constexpr static IntDouble k_sNanDouble = IntDouble{.i = 0x7ff4000000000000};
-#endif
 
 static inline bool IsSignalingNan(float f) {
   return IntFloat{.f = f}.i == k_sNanFloat.i;

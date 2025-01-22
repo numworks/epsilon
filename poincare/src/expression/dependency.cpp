@@ -368,11 +368,19 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
       changed = true;
       continue;
     } else if (depI->isNonNull()) {
-      if (GetComplexSign(depI->child(0)).isNull()) {
+      ComplexSign sign = GetComplexSign(depI->child(0));
+      if (sign.isNull()) {
         // dep(..., {nonNull(x)}) = undef if x is null
         set->removeTree();
         dep->cloneTreeOverTree(KUndef->cloneTree());
         return true;
+      }
+      if (!sign.canBeNull()) {
+        // dep(..., {nonNull(x)}) = dep(..., {x}) if x is non null
+        depI->moveTreeOverTree(depI->child(0));
+        i--;
+        changed = true;
+        continue;
       }
       if (depI->child(0)->isMult()) {
         // dep(..., {nonNull(x*y)}) = dep(..., {nonNull(x),nonNull(y)})
@@ -395,6 +403,13 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
         /* dep(..., {realPos(x)},) = dep(..., {nonreal}) if x is not real
          * positive */
         depI->cloneTreeOverTree(KNonReal);
+        i--;
+        changed = true;
+        continue;
+      }
+      if (sign.isReal() && sign.realSign().isPositive()) {
+        // dep(..., {realPos(x)}) = dep(..., {x}) if x is real and positive
+        depI->moveTreeOverTree(depI->child(0));
         i--;
         changed = true;
         continue;

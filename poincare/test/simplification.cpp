@@ -188,7 +188,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("a*x*y+b*x*y+c*x", "x×(c+(a+b)×y)");
   simplifies_to("(e^(x))^2", "e^(2×x)");
   simplifies_to("e^(ln(x))", "dep(x,{nonNull(x),realPos(x)})");
-  simplifies_to("e^(ln(1+x^2))", "dep(x^2+1,{nonNull(1+x^2),realPos(1+x^2)})");
+  simplifies_to("e^(ln(1+x^2))", "x^2+1");
   simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   simplifies_to("e^(ln(x+x))", "dep(2×x,{nonNull(x+x)})", cartesianCtx);
   simplifies_to("x+1+(-1)(x+1)", "0");
@@ -1418,9 +1418,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("1-ln(x)", "dep(1-ln(x),{nonNull(x)})", cartesianCtx);
   simplifies_to("ln(0)", "undef");
   simplifies_to("ln(0)", "undef", cartesianCtx);
-  simplifies_to(
-      "ln(cos(x)^2+sin(x)^2)",
-      "dep(0,{nonNull(cos(x)^2+sin(x)^2),realPos(cos(x)^2+sin(x)^2)})");
+  simplifies_to("ln(cos(x)^2+sin(x)^2)", "dep(0,{nonNull(cos(x)^2+sin(x)^2)})");
   simplifies_to("ln(-10)-ln(5)", "ln(2)+π×i", cartesianCtx);
   simplifies_to("im(ln(-120))", "π", cartesianCtx);
   simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);
@@ -1443,7 +1441,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
 
   // Simplification with exponential
   simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", cartesianCtx);
-  simplifies_to("ln(e^x)", "dep(x,{nonNull(e^(x))})", cartesianCtx);
+  simplifies_to("ln(e^x)", "x", cartesianCtx);
   simplifies_to("ln(e^(i×π))", "π×i", cartesianCtx);
   simplifies_to("ln(e^(-i×π))", "π×i", cartesianCtx);
   simplifies_to("ln(e^(i×2×π))", "0", cartesianCtx);

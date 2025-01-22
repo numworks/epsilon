@@ -369,7 +369,7 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
       continue;
     } else if (depI->isNonNull()) {
       if (GetComplexSign(depI->child(0)).isNull()) {
-        // dep(..., {nonNull(x)}) = undef if x is non null
+        // dep(..., {nonNull(x)}) = undef if x is null
         set->removeTree();
         dep->cloneTreeOverTree(KUndef->cloneTree());
         return true;

@@ -10,7 +10,8 @@ static constexpr Type MarkerBlock = Type::Zero;
 
 /* A marker is a small block (a Zero block is used) referred to by a TreeRef.
  * It allows to mark and track a certain location in the TreeStack, without
- * modifying existing TreeRefs. */
+ * modifying existing TreeRefs. Note that raw pointers to Trees located after
+ * the marker will become invalid (which is expected). */
 inline TreeRef pushMarker(Tree* location) {
   return location->cloneTreeBeforeNode(KTree<MarkerBlock>());
 }

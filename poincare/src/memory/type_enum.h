@@ -14,10 +14,18 @@ enum class TypeEnum : uint8_t {
 };
 
 struct AnyType {
-  consteval AnyType(TypeEnum id) : m_id(id) {}
-  constexpr operator uint16_t() const { return static_cast<uint16_t>(m_id); }
+  static consteval AnyType Enabled(TypeEnum e) {
+    return {static_cast<uint8_t>(e)};
+  }
+  static consteval AnyType Disabled(TypeEnum e) {
+    /* Types disabled have an id > UINT8_MAX for the compiler to
+     * ignore them when they serve as a switch case on a uint8_t
+     * switch. */
+    return {static_cast<uint16_t>(static_cast<uint8_t>(e) + UINT8_MAX)};
+  }
+  constexpr operator uint16_t() const { return m_id; }
 
-  TypeEnum m_id;
+  uint16_t m_id;
 };
 
 /* We would like to keep the "case Type::Add:" syntax but with custom
@@ -25,11 +33,10 @@ struct AnyType {
  * namespace Type to provide an equivalent syntax. */
 namespace Type {
 #define NODE_USE(F, N, S) \
-  constexpr AnyType SCOPED_NODE(F){TypeEnum::SCOPED_NODE(F)};
-// The disabled nodes cast to their value in TypeEnum + 256.
-#define DISABLED_NODE_USE(F, N, S)                        \
-  constexpr AnyType SCOPED_NODE(F){static_cast<TypeEnum>( \
-      256 + static_cast<uint16_t>(TypeEnum::SCOPED_NODE(F)))};
+  constexpr AnyType SCOPED_NODE(F) = AnyType::Enabled(TypeEnum::SCOPED_NODE(F));
+#define DISABLED_NODE_USE(F, N, S)   \
+  constexpr AnyType SCOPED_NODE(F) = \
+      AnyType::Disabled(TypeEnum::SCOPED_NODE(F));
 #include "types.h"
 };  // namespace Type
 

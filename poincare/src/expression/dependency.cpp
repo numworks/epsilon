@@ -364,7 +364,7 @@ bool SimplifyDependencies(Tree* dependencies) {
     } else if (dependency->isNonNull()) {
       ComplexSign sign = GetComplexSign(dependency->child(0));
       if (sign.isNull()) {
-        // dep(..., {nonNull(x)}) = undef if x is null
+        // dep(..., {nonNull(x)}) = dep(..., {undef}) if x is null
         dependency->cloneTreeOverTree(KUndef);
         removeMarker(end);
         return true;

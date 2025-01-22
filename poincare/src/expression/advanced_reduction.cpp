@@ -503,7 +503,7 @@ bool AdvancedReduction::PrivateDeepExpand(Tree* e,
   bool changed = false;
   /* ShallowExpand may push and remove trees at the end of TreeStack.
    * We use an end marker to keep track of the initial end position of e.  */
-  TreeRef endMarker = pushMarker(e->end());
+  TreeRef endMarker = pushEndMarker(e);
   Tree* target = e;
   while (target->block() < endMarker->block()) {
     while (target->isDepList()) {

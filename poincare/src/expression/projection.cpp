@@ -31,7 +31,7 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
   bool changed = false;
   /* ShallowReplaceUserNamed may push and remove trees at the end of TreeStack.
    * We use a marker to keep track of the initial end position of e. */
-  TreeRef marker = pushMarker(e->end());
+  TreeRef marker = pushEndMarker(e);
   while (e->block() < marker->block()) {
     if (e->isParametric()) {
       // Skip Parametric node and its variable, never replaced.

@@ -385,15 +385,14 @@ bool reduceATrigOfTrig(Tree* e, const Tree* piFactor, EnabledType type) {
 }
 
 static bool simplifyATrigOfTrig(Tree* e) {
-  TypeBlock type = Type::Undef;
+  EnabledType type = Type::Undef;
   bool swapATrig = false;
   PatternMatching::Context ctx;
   preprocessAtanOfTan(e);
   if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
     // asin(sin) or asin(cos) or acos(cos) or acos(sin)
     type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
-    swapATrig =
-        (type != EnabledType(ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos));
+    swapATrig = type != (ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos);
   } else if (PatternMatching::Match(
                  e, KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))),
                  &ctx)) {

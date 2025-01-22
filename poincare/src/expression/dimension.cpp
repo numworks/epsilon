@@ -410,8 +410,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       assert(childDim[0].isUnit() && childDim[1].isUnit());
       /* Not using Dimension operator == because different representatives are
        * allowed. */
-      return childDim[0].isUnit() && childDim[1].isUnit() &&
-             childDim[0].unit.vector == childDim[1].unit.vector;
+      return childDim[0].unit.vector == childDim[1].unit.vector;
     case Type::Dep:
       // Children can have a different dimension : [[x/x]] -> dep([[1]], {1/x})
       return true;

@@ -515,7 +515,7 @@ bool AdvancedReduction::PrivateDeepExpand(Tree* e,
               changed;
     target = target->nextNode();
   }
-  endMarker->removeTree();
+  removeMarker(endMarker);
   if (changed) {
     // Bottom-up systematic reduce is necessary.
     SystematicReduction::DeepReduce(e);

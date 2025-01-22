@@ -220,6 +220,14 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       }
       return derivand->isPow() ? multiplication : newNode;
     }
+    case Type::ATrig: {
+      // Di(acos(x)) = -1/√(-x^2+1)
+      // Di(asin(x)) = 1/√(-x^2+1)
+      return PatternMatching::CreateSimplify(
+          KMult(KA, KPow(KAdd(KMult(-1_e, KPow(KB, 2_e)), 1_e), -1_e / 2_e)),
+          {.KA = derivand->child(1)->isZero() ? -1_e : 1_e,
+           .KB = derivand->child(0)});
+    }
     case Type::Abs: {
       /* Di(|x|) = sign(x) if x != 0 and undef if x = 0
        *         = x / |x| */

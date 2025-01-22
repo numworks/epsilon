@@ -48,7 +48,8 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(cos(x),x,x)", "-sin(x)");
   assert_reduces_to_formal_expression("diff(cos(x),x,x)", "-(π×sin(x))/200",
                                       Gradian);
-  assert_reduces_to_formal_expression("diff(tan(x),x,x)", "tan(x)^2+1");
+  assert_reduces_to_formal_expression("diff(tan(x),x,x)",
+                                      "dep(tan(x)^2+1,{tan(x)})");
 #if TODO_PCJ
   assert_reduces_to_formal_expression(
       "diff(tan(x),x,x)",

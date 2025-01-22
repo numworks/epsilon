@@ -266,7 +266,9 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
     return ComplexSign::RealFiniteStrictlyPositiveInteger();
   }
   bool canBeNonInteger = base.canBeNonInteger() || !exp.realSign().isPositive();
-  bool canBeInfinite = base.canBeInfinite() || exp.canBeInfinite();
+  bool canBeInfinite =
+      base.canBeInfinite() || exp.canBeInfinite() ||
+      (exp.realSign().canBeStrictlyNegative() && base.canBeNull());
   if (base.isReal()) {
     bool canBeNull = base.realSign().canBeNull();
     bool isPositive = expIsTwo || base.realSign().isPositive();

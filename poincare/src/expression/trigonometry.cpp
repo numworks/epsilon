@@ -416,8 +416,8 @@ static bool simplifyATrigOfTrig(Tree* e) {
     if (rationalPiFactor) {
       isReduced = reduceATrigOfTrig(e, rationalPiFactor, type);
     } else {
-      TreeRef genericPiFactor = PatternMatching::CreateSimplify(
-          KMult(KB, KPowReal(π_e, -1_e)), {.KB = ctx.getTree(KA)});
+      TreeRef genericPiFactor =
+          PatternMatching::CreateSimplify(KMult(KA, KPow(π_e, -1_e)), ctx);
       isReduced = reduceATrigOfTrig(e, genericPiFactor, type);
       genericPiFactor->removeTree();
     }

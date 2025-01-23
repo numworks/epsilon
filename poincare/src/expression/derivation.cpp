@@ -233,6 +233,12 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
       return PatternMatching::CreateSimplify(
           KPow(KAdd(KPow(KA, 2_e), 1_e), -1_e), {.KA = derivand->child(0)});
     }
+    case Type::ArCosH: {
+      // Di(acosh(x)) = 1/√(x^2-1)
+      return PatternMatching::CreateSimplify(
+          KPow(KAdd(-1_e, KPow(KA, 2_e)), -1_e / 2_e),
+          {.KA = derivand->child(0)});
+    }
     case Type::Abs: {
       /* Di(|x|) = sign(x) if x != 0 and undef if x = 0
        *         = x / |x| */

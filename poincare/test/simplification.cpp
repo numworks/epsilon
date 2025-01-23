@@ -281,7 +281,6 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(ln(x),x,i)", "undef");
   simplifies_to("diff(x,x,ln(-3))", "undef");
 
-  // TODO: fix derivatives of trigonometric functions
   simplifies_to("diff(sin(x),x,x)", "cos(x)");
   simplifies_to("diff(cos(x),x,x)", "-sin(x)");
   simplifies_to("diff(tan(x),x,x)", "tan(x)^2+1");
@@ -295,7 +294,8 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(sinh(x),x,x)", "cosh(x)");
   simplifies_to("diff(cosh(x),x,x)", "sinh(x)");
   simplifies_to("diff(tanh(x),x,x)", "dep(-(tanh(x)^2)+1,{tanh(x)})");
-  // simplifies_to("diff(arcosh(x),x,x)", "dep(1/√(x^2-1),{real(arcosh(x))})");
+  simplifies_to("diff(arcosh(x),x,x)",
+                "dep(√(x^2-1)/(x^2-1),{real(arcosh(x))})");
   simplifies_to("diff(arsinh(x),x,x)", "√(x^2+1)/(x^2+1)");
   simplifies_to("diff(artanh(x),x,x)", "dep(1/(-x^2+1),{real(artanh(x))})");
 

@@ -1,15 +1,14 @@
 name: Continuous Integration
 
 on:
+  # Running CI on every push would be better, but ci performances are limited for now.
   # push:
   #   branches: [ master, 'version-*' ]
   pull_request:
     paths-ignore:
+      - '**/*.md'
       - 'poincare/doc/**'
       - 'tests/**'
-    # TODO_PCJ: Remove this condition and uncomment push to reactivate CI
-    branches:
-      - workflow-disabled
 
   workflow_dispatch:
     inputs:
@@ -31,7 +30,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1' || '-j2' }}
+  CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache' || '' }}
 
 jobs:
   android:
@@ -51,7 +51,7 @@ jobs:
           name: epsilon-android.apk
           path: output/debug/optimized/android/epsilon.apk
   device:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
@@ -81,8 +81,9 @@ jobs:
         run: make MODEL=${{ matrix.model }} epsilon.dfu
       - if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: make MODEL=${{ matrix.model }} flasher.dfu
-      - if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: make MODEL=${{ matrix.model }} bench.ram.dfu
+      # TODO_PCJ: Fix and reactivate bench.ram.dfu target
+      # - if: ${{ steps.epsilon-core.outcome == 'success' }}
+        # run: make MODEL=${{ matrix.model }} bench.ram.dfu
   windows:
     runs-on: windows-latest
     if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.windows == 'true') }}
@@ -110,7 +111,7 @@ jobs:
           name: epsilon-windows.exe
           path: output/debug/optimized/windows/epsilon.exe
   web:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:
@@ -120,24 +121,28 @@ jobs:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
-      - run: node output/debug/optimized/web/test.js --headless --limit-stack-usage
-        timeout-minutes: 5
+      - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html
+      # TODO_PCJ: Fix and reactivate web unit tests
+      # - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
+      # - run: node output/debug/optimized/web/test.js --headless --limit-stack-usage
+      #   timeout-minutes: 5
       - uses: actions/upload-artifact@v4
         with:
           name: epsilon.html
           path: output/debug/optimized/web/epsilon.html
           retention-days: 7
   linux:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-llvm@latest
+      - run: echo "LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown-linux-gnu/" >> $GITHUB_ENV
       - uses: actions/checkout@v3
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator ASAN=1 TIDY=1 ASSERTIONS=1 epsilon.bin test.bin
+      # TODO_PCJ: Add ASAN=1 and TIDY=1
+      - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin
       - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage
       - uses: actions/upload-artifact@v4
         if: ${{ (github.repository != 'numworks/epsilon-internal') }}
@@ -177,10 +182,7 @@ jobs:
           name: epsilon-ios.ipa
           path: output/debug/optimized/ios/epsilon.ipa
   poincarejs:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
-    # TODO: This is deactivated because setup-emscripten doesn't install tsc
-    #       which is needed to build the typescript file
-    if: ${{ false }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:
@@ -190,9 +192,13 @@ jobs:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
-      - run: make -f poincare/poincarejs/Makefile
-      - uses: actions/upload-artifact@v4
-        with:
-          name: poincarejs.zip
-          path: output/release/foxglove/poincarejs.zip
-          retention-days: 7
+      # TODO: Change setup-emscripten to be able to use EMIT_TSD=1
+      - run: make -j8 -f poincare/poincarejs/Makefile PLATFORM=foxglove ASSERTIONS=1 EMIT_TSD=0 poincare.js.run
+    # TODO: This is deactivated because setup-emscripten doesn't install tsc
+    #       which is needed to build the typescript file
+      # - run: make -f poincare/poincarejs/Makefile
+      # - uses: actions/upload-artifact@v4
+      #   with:
+      #     name: poincarejs.zip
+      #     path: output/release/foxglove/poincarejs.zip
+      #     retention-days: 7

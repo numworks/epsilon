@@ -56,24 +56,30 @@ QUIZ_CASE(poincare_derivative_formal) {
       "dep(\U00000012π×tan(x)^2+π\U00000013/180,{sec(x),sin(x)})", Degree);
 #endif
 
-  assert_reduces_to_formal_expression("diff(asin(x),x,x)",
-                                      "dep(1/√(-x^2+1),{real(arcsin(x))})");
   assert_reduces_to_formal_expression(
-      "diff(asin(x),x,x)", "dep(180/(π×√(-x^2+1)),{real(arcsin(x))})", Degree);
-  assert_reduces_to_formal_expression("diff(acos(x),x,x)",
-                                      "dep(-1/√(-x^2+1),{real(arccos(x))})");
+      "diff(asin(x),x,x)", "dep(√(-x^2+1)/(-x^2+1),{real(arcsin(x))})");
   assert_reduces_to_formal_expression(
-      "diff(acos(x),x,x)", "dep(-180/(π×√(-x^2+1)),{real(arccos(x))})", Degree);
+      "diff(asin(x),x,x)",
+      "dep((180×√(-x^2+1))/(π×(-x^2+1)),{real(arcsin(x))})", Degree);
+  assert_reduces_to_formal_expression(
+      "diff(acos(x),x,x)", "dep(-√(-x^2+1)/(-x^2+1),{real(arccos(x))})");
+  assert_reduces_to_formal_expression(
+      "diff(acos(x),x,x)",
+      "dep(-(180×√(-x^2+1))/(π×(-x^2+1)),{real(arccos(x))})", Degree);
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "1/(x^2+1)");
-  assert_reduces_to_formal_expression("diff(atan(x),x,x)", "π×x^2+π", Degree);
+  assert_reduces_to_formal_expression("diff(atan(x),x,x)", "180/(π×(x^2+1))",
+                                      Degree);
   assert_reduces_to_formal_expression(
-      "diff(arcsec(x),x,x)", "dep(1/(x^2×√((x^2-1)/x^2)),{real(arccos(1/x))})");
+      "diff(arcsec(x),x,x)",
+      "dep(√(1-1/x^2)/(x^2×(1-1/x^2)),{real(arccos(1/x))})");
   assert_reduces_to_formal_expression(
-      "diff(arccsc(x),x,x)", "dep(-1/(x^2×√((x^2-1)/x^2)),{arcsin(1/x)})");
+      "diff(arccsc(x),x,x)",
+      "dep(-√(1-1/x^2)/(x^2×(1-1/x^2)),{real(arcsin(1/x))})");
   assert_reduces_to_formal_expression("diff(arccot(x),x,x)", "-1/(x^2+1)");
   assert_reduces_to_formal_expression("diff(sinh(x),x,x)", "cosh(x)");
   assert_reduces_to_formal_expression("diff(cosh(x),x,x)", "sinh(x)");
-  assert_reduces_to_formal_expression("diff(tanh(x),x,x)", "1/cosh(x)^2");
+  assert_reduces_to_formal_expression("diff(tanh(x),x,x)",
+                                      "dep(-(tanh(x)^2)+1,{tanh(x)})");
   assert_reduces_to_formal_expression("diff(sin(x)^2,x,x)", "sin(2×x)");
 
   assert_reduces_to_formal_expression("diff(diff(x^3,x,x),x,x)", "6×x");

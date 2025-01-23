@@ -228,6 +228,16 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
           {.KA = derivand->child(1)->isZero() ? -1_e : 1_e,
            .KB = derivand->child(0)});
     }
+    /* Note: The derivatives of atan(x) and arccos(x) are given here as a
+     * shortcut. If we wanted to optimize binary size more, they could be
+     * removed, but with the risk of having a less relevant result.
+     *
+     * Indeed, advanced reduction can expand atan and arccos into a combination
+     * of known functions which can be differentiated. However, the resulting
+     * expression is much more complicated in that case. Advanced reduction is
+     * not able to find an expression as simple as the ones given here. The risk
+     * is that the metric will then select diff(f(x)) as the displayed result,
+     * which can give the impression that the derivative was not calculated. */
     case Type::ATanRad: {
       // Di(atan(x)) = 1/(x^2+1)
       return PatternMatching::CreateSimplify(

@@ -266,6 +266,8 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
     return ComplexSign::RealFiniteStrictlyPositiveInteger();
   }
   bool canBeNonInteger = base.canBeNonInteger() || !exp.realSign().isPositive();
+  /* If base can be null and exp can be strictly negative, then the result may
+   * be infinite. Example: sin(x)^(-1) */
   bool canBeInfinite =
       base.canBeInfinite() || exp.canBeInfinite() ||
       (exp.realSign().canBeStrictlyNegative() && base.canBeNull());

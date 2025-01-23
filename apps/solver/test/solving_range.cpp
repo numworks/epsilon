@@ -11,8 +11,9 @@ QUIZ_CASE(solver_solving_range) {
                    -1.5707963267886629, 1.5707963267957366, 4.7123889818623867,
                    7.8539816549519345, 10.995574295553068, 14.137166941154067});
 
-  // TODO_PCJ: unhandled dependency: dep(-11+Ln(a),{nonNull(a)})
-  //   assert_solves_with_auto_solving_range("ln(x)=11", {59874.141715133868});
+#if 0  // TODO_PCJ: unhandled dependency: dep(-11+Ln(a),{nonNull(a)})
+  assert_solves_with_auto_solving_range("ln(x)=11", {59874.141715133868});
+#endif
 
   assert_solves_with_auto_solving_range(
       "(x+24543)^2+cos(x)-0.5^x=123456789123457890", {351339639.64352596});
@@ -26,10 +27,12 @@ QUIZ_CASE(solver_solving_range) {
   assert_solves_with_auto_solving_range(
       "int((e^x+x),x,x,3)=2", {-6.7207635596742206, 2.9097502093514773});
 
-  // TODO_PCJ: unhandled dependency: dep(-13 - 8×Ln(-1 + 2×a), {nonNull(2×a -
-  // 1×1)})
-  //   assert_solves_with_auto_solving_range("1-8*ln(2x-1)=14",
-  //                                         {0.59845583599312557});
+#if 0
+  /* TODO_PCJ: unhandled dependency: dep(-13 - 8×Ln(-1 + 2×a), {nonNull(2×a -
+   * 1×1)}) */
+  assert_solves_with_auto_solving_range("1-8*ln(2x-1)=14",
+                                        {0.59845583599312557});
+#endif
 
   assert_solves_with_auto_solving_range("2^(3-8x)-7=11",
                                         {-0.14624062522874318});

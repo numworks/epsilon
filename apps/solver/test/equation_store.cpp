@@ -13,9 +13,10 @@ QUIZ_CASE(solver_error) {
 
   assert_solves_to_error("x^2+y=0", NonLinearSystem);
 
-  /* TODO_PCJ: currently solves to NoError */
-  // assert_solves_to_error("x^3+x^2+1=int(1/t,t,0,1)", EquationUndefined);
-  // assert_solves_to_error("x×(x^2×int(1/t,t,0,1)+1)=0", EquationUndefined);
+#if 0 /* TODO_PCJ: currently solves to NoError */
+  assert_solves_to_error("x^3+x^2+1=int(1/t,t,0,1)", EquationUndefined);
+  assert_solves_to_error("x×(x^2×int(1/t,t,0,1)+1)=0", EquationUndefined);
+#endif
 
   assert_solves_to_error("x-[[2,3]]=0", EquationUndefined);
   assert_solves_to_error("x[[2,3]]=0", EquationUndefined);
@@ -36,13 +37,14 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to_infinite_solutions("0=0");
   assert_solves_to_infinite_solutions({"x+y=0"}, {"x=-t", "y=t"});
 
-  /* TODO_PCJ: incorrect number of solutions */
-  // assert_solves_to_infinite_solutions({"x-x=0"}, {"x=t"});
-  // assert_solves_to_infinite_solutions(
-  //     {"t*arctan(0000000000000000000000000000000000000000)=0"}, {"t=t1"});
-  // assert_solves_to_infinite_solutions({"4y+(1-√(5))x=0", "x=(1+√(5))y"},
-  //                                     {"x=√(5)t+t", "y=t"});
-  // assert_solves_to_infinite_solutions({"x=x", "y=y"}, {"x=t2", "y=t1"});
+#if 0 /* TODO_PCJ: incorrect number of solutions */
+  assert_solves_to_infinite_solutions({"x-x=0"}, {"x=t"});
+  assert_solves_to_infinite_solutions(
+      {"t*arctan(0000000000000000000000000000000000000000)=0"}, {"t=t1"});
+  assert_solves_to_infinite_solutions({"4y+(1-√(5))x=0", "x=(1+√(5))y"},
+                                      {"x=√(5)t+t", "y=t"});
+  assert_solves_to_infinite_solutions({"x=x", "y=y"}, {"x=t2", "y=t1"});
+#endif
 
   assert_solves_to_infinite_solutions({"x+y+z=0"},
                                       {"x=-t1-t2", "y=t2", "z=t1"});
@@ -87,11 +89,12 @@ QUIZ_CASE(solver_quadratic) {
   assert_solves_to("(x-3)^2=0", {"x=3", "delta=0"});
   assert_solves_to("(x-2π)(x/2-pi)=0", {"x=2π", "delta=0"});
 
-  // TODO_PCJ: the below equations fail to simplify
-  // assert_solves_to("(x-π)(x-ln(2))=0",
-  //                  {"x=ln(2)", "x=π", "delta=ln(2)^2+π^2-2×π×ln(2)"});
-  // assert_solves_to("(x-√(2))(x-√(3))=0",
-  //                  {"x=√(2)", "x=√(3)", "delta=5-2×√(6)"});
+#if 0  // TODO_PCJ: the below equations fail to simplify
+  assert_solves_to("(x-π)(x-ln(2))=0",
+                   {"x=ln(2)", "x=π", "delta=ln(2)^2+π^2-2×π×ln(2)"});
+  assert_solves_to("(x-√(2))(x-√(3))=0",
+                   {"x=√(2)", "x=√(3)", "delta=5-2×√(6)"});
+#endif
 
   assert_solves_to("x^2+1=0", {"x=-i", "x=i", "delta=-4"});
   assert_solves_to("i/5×(x-3)^2=0", {"x=3", "delta=0"});
@@ -116,8 +119,9 @@ QUIZ_CASE(solver_cubic) {
                    {"x=-1.465571232", "x=0.2327856159-0.7925519925×i",
                     "x=0.2327856159+0.7925519925×i", "delta=-31"});
 
-  // TODO_PCJ: integer overflow raised without a TreeStackCheckpoint
-  // assert_solves_to("x^3+x^2=10^200", {"delta=-27×10^400+4×10^200"});
+#if 0  // TODO_PCJ: integer overflow raised without a TreeStackCheckpoint
+  assert_solves_to("x^3+x^2=10^200", {"delta=-27×10^400+4×10^200"});
+#endif
 
   assert_solves_to("x^3-3x-2=0", {"x=-1", "x=2", "delta=0"});
   assert_solves_to("x^3-4x^2+6x-24=0",
@@ -165,14 +169,14 @@ QUIZ_CASE(solver_cubic) {
           "delta=-27×(1-16000000×π)^2+11-224000000×π"  // or approximate value?
       });
 
-  // TODO_PCJ: delta fails to simplify
-  /* assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
-   *                {"x=√(3)/2",
-   *                 "x=1/2-√(-5)/2",  // TODO: "x=1/2-(√(5)/2)i"
-   *                 "x=1/2+√(-5)/2", "delta=(-465+180×√(3))/16"});
-   * assert_solves_to("(x-2i+1)(x+3i-1)(x-i+2)=0",
-   *                {"x=-2+1×i", "x=-1+2×i", "x=1-3×i", "delta=-1288-666×i"});
-   */
+#if 0  // TODO_PCJ: delta fails to simplify
+  assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
+                   {"x=√(3)/2",
+                    "x=1/2-√(-5)/2",  // TODO: "x=1/2-(√(5)/2)i"
+                    "x=1/2+√(-5)/2", "delta=(-465+180×√(3))/16"});
+  assert_solves_to("(x-2i+1)(x+3i-1)(x-i+2)=0",
+                   {"x=-2+1×i", "x=-1+2×i", "x=1-3×i", "delta=-1288-666×i"});
+#endif
 }
 
 QUIZ_CASE(solver_quadratic_real) {
@@ -188,17 +192,19 @@ QUIZ_CASE(solver_quadratic_real) {
   assert_solves_to("(x+i)(x-i)", {"x=-i", "x=i", "delta=-4"});
   assert_solves_to("(x-i)^2", {"x=i", "delta=0"});
 
+#if 0
   // TODO_PCJ: fails to simplify
-  // assert_solves_to("√(2)(x-√(3))(x-√(5))=0", {"x=√(3)",
-  // "x=√(5)","delta=16-4×√(15)"});
-  // assert_solves_to("(x-7/3)(x-π)(x-log(3))=0",
-  //                  {"x=log(3)", "x=7/3", "x=π", "delta=1.598007ᴇ1"});
+  assert_solves_to("√(2)(x-√(3))(x-√(5))=0",
+                   {"x=√(3)", "x=√(5)", "delta=16-4×√(15)"});
+  assert_solves_to("(x-7/3)(x-π)(x-log(3))=0",
+                   {"x=log(3)", "x=7/3", "x=π", "delta=1.598007ᴇ1"});
 
   /* TODO_PCJ: the following expression raises
    * "assert(!layout->isSeparatorLayout())" on a "ThousandSeparator" layout in
    * Tokenizer::popToken(). A possible element of explanation is that a quotient
    * of two IntegerPosBig is created at some point */
-  // assert_solves_to("(x-4.231)^3=0", {"x=4231/1000", "delta=0"});
+  assert_solves_to("(x-4.231)^3=0", {"x=4231/1000", "delta=0"});
+#endif
 }
 
 QUIZ_CASE(solver_cubic_real) {
@@ -207,14 +213,16 @@ QUIZ_CASE(solver_cubic_real) {
   assert_solves_to("x^3-3×x^2+3×x-1=0", {"x=1", "delta=0"});
   assert_solves_to("x^3+x^2-15/4×x-9/2=0", {"x=-3/2", "x=2", "delta=0"});
 
-  // TODO_PCJ: fails to simplify
-  // assert_solves_to("1/9×(x+√(2))^3=0", {"x=-√(2)", "delta=0"});
+#if 0  // TODO_PCJ: fails to simplify
+  assert_solves_to("1/9×(x+√(2))^3=0", {"x=-√(2)", "delta=0"});
+#endif
 
   assert_solves_to("(x-1)(x-2)(x-3)=0", {"x=1", "x=2", "x=3", "delta=4"});
 
-  // TODO_PCJ: delta fails to simplify
-  // assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
-  //                  {"x=√(3)/2", "delta=(-465+180×√(3))/16"});
+#if 0  // TODO_PCJ: delta fails to simplify
+  assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
+                   {"x=√(3)/2", "delta=(-465+180×√(3))/16"});
+#endif
 }
 
 QUIZ_CASE(solver_approximate) {
@@ -245,9 +253,10 @@ QUIZ_CASE(solver_approximate) {
   assert_solves_numerically_to("(x-1.00001)^2×(x+1.00001)^2=0", -1, 1, {});
   assert_solves_numerically_to("sin(x)=0", -180, 180, {-180, 0, 180});
 
-  // TODO_PCJ: currently solves to NoError
-  // assert_solves_to_error("conj(x)*x+1=0", RequireApproximateSolution);
-  // assert_solves_numerically_to("conj(x)*x+1=0", -100, 100, {});
+#if 0  // TODO_PCJ: currently solves to NoError
+  assert_solves_to_error("conj(x)*x+1=0", RequireApproximateSolution);
+  assert_solves_numerically_to("conj(x)*x+1=0", -100, 100, {});
+#endif
 
   assert_solves_to_error("(x-10)^7=0", RequireApproximateSolution);
   assert_solves_numerically_to("(x-10)^7=0", -100, 100, {10});
@@ -264,22 +273,24 @@ QUIZ_CASE(solver_approximate) {
   assert_solves_numerically_to("250e^(1.6x)=10^8", -10, 10, {8.062012});
   // Gentle slope, far from x=0
   assert_solves_numerically_to("10^(-4)×abs(x-10^4)=0", 9000, 11000, {10000});
+#if 0  // TODO_PCJ: the solution is not found
   // Steep slope, close to x=0
-  // TODO_PCJ: the solution is not found
-  // assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
+  assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
+#endif
 
   assert_solves_numerically_to("10^4×abs(x-10^(-4))+0.001=0", -10, 10, {});
+
+#if 0
   /* TODO: This does not work in real-mode because abs(x) is reduced to
-   * sign(x)*x which does not always approximate to the same value.
-   * set_complex_format(Real);
-   * assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
-   */
+   * sign(x)*x which does not always approximate to the same value. */
+  set_complex_format(Real);
+  assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001});
+#endif
 }
 
 void set(const char* variable, const char* expression) {
   /* TODO : Replace all these "set("h", "3")" with store("h→3", &globalCtxt).
    * globalCtxt has to be passed to all the assert_solves_(...) functions. */
-  Shared::GlobalContext globalContext;
   char buffer[50];
   int expressionLen = strlen(expression);
   strlcpy(buffer, expression, expressionLen + 1);
@@ -301,20 +312,23 @@ QUIZ_CASE(solver_complex_real) {
   assert_solves_to_error("x^2-√(-1)=0", EquationNonReal);
   assert_solves_to_error("x+√(-1)×√(-1)=0", EquationNonReal);
 
+#if 0
   // TODO_PCJ: currently solves to EquationUndefined instead of EquationNonReal
-  // assert_solves_to_error("x-arcsin(10)=0", EquationNonReal);
+  assert_solves_to_error("x-arcsin(10)=0", EquationNonReal);
 
   // TODO_PCJ: currently solves to RequireApproximateSolution
-  // assert_solves_to_no_solution("√(x)^(2)=-1");
+  assert_solves_to_no_solution("√(x)^(2)=-1");
 
   // TODO_PCJ: unhandled dependency: "dep(-2+a,{piecewise(1,abs(a)≤1)})"
-  // assert_solves_to_no_solution("sin(asin(x))=2");
+  assert_solves_to_no_solution("sin(asin(x))=2");
+#endif
 
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2");
 
-  // TODO_PCJ: currently solves to NoError (without any solutions)
-  // assert_solves_to_error("x√(cot(4π/5))=0", EquationUndefined);
-  // assert_solves_to_error({"x√(cot(4π/5))=0", "0=0"}, EquationUndefined);
+#if 0  // TODO_PCJ: currently solves to NoError (without any solutions)
+  assert_solves_to_error("x√(cot(4π/5))=0", EquationUndefined);
+  assert_solves_to_error({"x√(cot(4π/5))=0", "0=0"}, EquationUndefined);
+#endif
 
   // With a predefined variable that should be ignored
   set("h", "3");

@@ -1,4 +1,3 @@
-#include <apps/apps_container_helper.h>
 #include <poincare/numeric/random.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
@@ -204,9 +203,9 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
   tests[1].m_standardError = 1.5811388493;
   tests[1].m_marginOfError = 5.1384425163;
 
-  OneMeanTTest test(AppsContainerHelper::sharedAppsContainerGlobalContext());
-  OneMeanTInterval interval(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  Shared::GlobalContext globalContext;
+  OneMeanTTest test(&globalContext);
+  OneMeanTInterval interval(&globalContext);
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
@@ -254,9 +253,9 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   tests[1].m_standardError = 0.4427188933;
   tests[1].m_marginOfError = 1.1403683424;
 
-  OneMeanZTest test(AppsContainerHelper::sharedAppsContainerGlobalContext());
-  OneMeanZInterval interval(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  Shared::GlobalContext globalContext;
+  OneMeanZTest test(&globalContext);
+  OneMeanZInterval interval(&globalContext);
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
@@ -361,9 +360,9 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   tests[1].m_standardError = 2.7415323257;
   tests[1].m_marginOfError = 7.1826281548;
 
-  TwoMeansTTest test(AppsContainerHelper::sharedAppsContainerGlobalContext());
-  TwoMeansTInterval interval(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  Shared::GlobalContext globalContext;
+  TwoMeansTTest test(&globalContext);
+  TwoMeansTInterval interval(&globalContext);
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
@@ -418,10 +417,9 @@ QUIZ_CASE(probability_pooled_t_test) {
   tests[1].m_standardError = 0.3567562103;
   tests[1].m_marginOfError = 0.6126018763;
 
-  PooledTwoMeansTTest test(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
-  PooledTwoMeansTInterval interval(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  Shared::GlobalContext globalContext;
+  PooledTwoMeansTTest test(&globalContext);
+  PooledTwoMeansTInterval interval(&globalContext);
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
@@ -475,9 +473,9 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   tests[1].m_standardError = 98.9949569702;
   tests[1].m_marginOfError = 254.9941253662;
 
-  TwoMeansZTest test(AppsContainerHelper::sharedAppsContainerGlobalContext());
-  TwoMeansZInterval interval(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  Shared::GlobalContext globalContext;
+  TwoMeansZTest test(&globalContext);
+  TwoMeansZInterval interval(&globalContext);
   for (size_t i = 0; i < std::size(tests); i++) {
     inputValues(&test, tests[i], 0.05);
     testTest(&test, tests[i]);
@@ -628,11 +626,11 @@ QUIZ_CASE(probability_slope_t_statistic) {
   testCase.m_standardError = 0.03931119904518827;
   testCase.m_marginOfError = 0.0763887357606289424986;
 
-  SlopeTTest test(AppsContainerHelper::sharedAppsContainerGlobalContext());
+  Shared::GlobalContext globalContext;
+  SlopeTTest test(&globalContext);
   inputTableValues(&test, &test, testCase);
   testTest(&test, testCase);
-  SlopeTInterval interval(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  SlopeTInterval interval(&globalContext);
   inputTableValues(&interval, &interval, testCase);
   testInterval(&interval, testCase);
 }
@@ -655,8 +653,8 @@ QUIZ_CASE(probability_one_mean_t_with_table) {
 
   constexpr int k_series = 0;
 
-  OneMeanTTest rawDataTest(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  Shared::GlobalContext globalContext;
+  OneMeanTTest rawDataTest(&globalContext);
   rawDataTest.setSeries(k_series, &rawDataTest);
   inputTableValues(&rawDataTest, &rawDataTest, rawDataCase);
 
@@ -670,8 +668,7 @@ QUIZ_CASE(probability_one_mean_t_with_table) {
           },
   };
 
-  OneMeanTTest referenceTest(
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+  OneMeanTTest referenceTest(&globalContext);
   inputValues(&referenceTest, parametersCase, 0.05);
   referenceTest.hypothesisParams()->setFirstParam(
       rawDataCase.m_firstHypothesisParam);

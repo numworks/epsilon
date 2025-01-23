@@ -16,8 +16,10 @@ void quiz_print(const char* message) { Ion::Console::writeLine(message); }
 bool quiz_print_clear() { return Ion::Console::clear(); }
 
 void flushGlobalData() {
-  // TODO: Only Pool is expected to never leak. Uniformize expectations.
+  /* TODO: Only Pool and GlobalContext are expected to never leak. Uniformize
+   * expectations. */
   quiz_assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
+  quiz_assert(Poincare::Context::GlobalContext == nullptr);
   flush_stack();
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }

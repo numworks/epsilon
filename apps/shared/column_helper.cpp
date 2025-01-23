@@ -176,12 +176,14 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     }
   }
 
+  bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
       &formula, &storeContext,
       {.target = ReductionTarget::SystemForApproximation,
-       .symbolicComputation = SymbolicComputation::ReplaceAllSymbols});
+       .symbolicComputation = SymbolicComputation::ReplaceAllSymbols},
+      &reductionFailure);
 
-  if (formula.isUndefined()) {
+  if (reductionFailure || formula.isUndefined()) {
     return FillColumnStatus::DataNotSuitable;
   }
 

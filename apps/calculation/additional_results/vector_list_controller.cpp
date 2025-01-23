@@ -58,13 +58,15 @@ void VectorListController::computeAdditionalResults(
   }
   UserExpression normalized =
       UserExpression::Create(KDiv(KA, KB), {.KA = exactClone, .KB = norm});
+  bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
       &normalized, context,
       {.complexFormat = complexFormat(),
        .angleUnit = angleUnit(),
        .target = k_target,
-       .symbolicComputation = k_symbolicComputation});
-  if (!normalized.isMatrix()) {
+       .symbolicComputation = k_symbolicComputation},
+      &reductionFailure);
+  if (reductionFailure || !normalized.isMatrix()) {
     // The reduction might have failed
     return;
   }

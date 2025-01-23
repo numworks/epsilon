@@ -192,14 +192,16 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
   bool storeApproximation = CAS::NeverDisplayReductionOfInput(expression, this);
   PoincareHelpers::ReductionParameters params = {
       .symbolicComputation = SymbolicComputation::ReplaceAllSymbols};
-  PoincareHelpers::CloneAndSimplify(&expression, this, params);
+  bool reductionFailure = false;
+  PoincareHelpers::CloneAndSimplify(&expression, this, params,
+                                    &reductionFailure);
   /* "approximateKeepingUnits" is called because the expression might contain
    * units, and just calling "approximate" would return undef */
   UserExpression approximation =
       PoincareHelpers::ApproximateKeepingUnits<double>(expression, this,
                                                        params);
   // Do not store exact derivative, etc.
-  if (storeApproximation ||
+  if (reductionFailure || storeApproximation ||
       CAS::ShouldOnlyDisplayApproximation(UserExpression(), expression,
                                           approximation, this)) {
     expression = approximation;

@@ -22,13 +22,17 @@ UserExpression BuildVectorNorm(
   }
 
   UserExpression norm = UserExpression::Create(KNorm(KA), {.KA = exactOutput});
+  bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
       &norm, context,
       {.complexFormat = calculationPreferences.complexFormat,
        .angleUnit = calculationPreferences.angleUnit,
        .target = VectorListController::k_target,
-       .symbolicComputation = VectorListController::k_symbolicComputation});
-  return norm.isUninitialized() || norm.isUndefined() ? UserExpression() : norm;
+       .symbolicComputation = VectorListController::k_symbolicComputation},
+      &reductionFailure);
+  return reductionFailure || norm.isUninitialized() || norm.isUndefined()
+             ? UserExpression()
+             : norm;
 }
 
 }  // namespace VectorHelper

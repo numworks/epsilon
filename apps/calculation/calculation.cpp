@@ -267,11 +267,14 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
       /* When the input contains percent or factor, the exact expression is not
        * fully reduced so we need to reduce it again prior to computing equal
        * sign */
+      bool reductionFailure = false;
       PoincareHelpers::CloneAndSimplify(
           &exactOutputExpression, context,
           {.complexFormat = complexFormat(),
            .angleUnit = angleUnit(),
-           .symbolicComputation = SymbolicComputation::ReplaceAllSymbols});
+           .symbolicComputation = SymbolicComputation::ReplaceAllSymbols},
+          &reductionFailure);
+      assert(!reductionFailure);
     }
     // TODO: should we save the system expression in exact output instead ?
     // TODO: need to pass projection context

@@ -30,10 +30,12 @@ SystemExpression Equation::Model::standardForm(
   Context* contextToUse =
       replaceFunctionsButNotSymbols ? &emptyContext : context;
 
-  // Reduce the expr ession
+  // Reduce the expression
   UserExpression simplifiedInput = expressionInputWithoutFunctions;
+  bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse,
-                                    {.target = reductionTarget});
+                                    {.target = reductionTarget}, &reductionFailure);
+  assert(!reductionFailure);
 
   if (simplifiedInput.isNonReal()) {
     returnedExpression = NonReal::Builder();

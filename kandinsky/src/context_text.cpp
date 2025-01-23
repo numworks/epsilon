@@ -122,7 +122,9 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
         KDRect savedClippingRect = clippingRect();
         setClippingRect(
             KDRect(savedClippingRect.origin(),
-                   KDSize(position.x() + width, savedClippingRect.height())));
+                   KDSize(std::min<KDCoordinate>(savedClippingRect.width(),
+                                                 position.x() + width),
+                          savedClippingRect.height())));
 #endif
         /* Push the character on the screen
          * It's OK to trash the content of the color buffer since we'll re-fetch

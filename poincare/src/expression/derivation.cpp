@@ -228,6 +228,11 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
           {.KA = derivand->child(1)->isZero() ? -1_e : 1_e,
            .KB = derivand->child(0)});
     }
+    case Type::ATanRad: {
+      // Di(atan(x)) = 1/(x^2+1)
+      return PatternMatching::CreateSimplify(
+          KPow(KAdd(KPow(KA, 2_e), 1_e), -1_e), {.KA = derivand->child(0)});
+    }
     case Type::Abs: {
       /* Di(|x|) = sign(x) if x != 0 and undef if x = 0
        *         = x / |x| */

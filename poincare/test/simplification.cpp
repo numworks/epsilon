@@ -291,13 +291,13 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(asin(x),x,x)",
                 "dep(√(-x^2+1)/"
                 "(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arcsin(x))})");
-  // simplifies_to("diff(atan(x),x,x)", "1/(x^2+1)");
+  simplifies_to("diff(atan(x),x,x)", "1/(x^2+1)");
   simplifies_to("diff(sinh(x),x,x)", "cosh(x)");
   simplifies_to("diff(cosh(x),x,x)", "sinh(x)");
   simplifies_to("diff(tanh(x),x,x)", "dep(-(tanh(x)^2)+1,{tanh(x)})");
   // simplifies_to("diff(arcosh(x),x,x)", "dep(1/√(x^2-1),{real(arcosh(x))})");
   simplifies_to("diff(arsinh(x),x,x)", "√(x^2+1)/(x^2+1)");
-  // simplifies_to("diff(artanh(x),x,x)", "dep(1/(1-x^2),{real(artanh(x))})");
+  simplifies_to("diff(artanh(x),x,x)", "dep(1/(-x^2+1),{real(artanh(x))})");
 
   simplifies_to("diff(sec(x),x,x)", "sin(x)/cos(x)^2");
   simplifies_to("diff(csc(x),x,x)", "-cos(x)/sin(x)^2");
@@ -308,7 +308,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(arccsc(x),x,x)",
                 "dep(-√(1-1/x^2)/(x^2×(1-1/x^2)),{piecewise(0,abs(1/"
                 "x)≤1,nonreal),real(arcsin(1/x))})");
-  // simplifies_to("diff(arccot(x),x,x)", "-1/(x^2+1)");
+  simplifies_to("diff(arccot(x),x,x)", "-1/(x^2+1)");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

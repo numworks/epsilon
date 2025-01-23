@@ -89,9 +89,9 @@ void Screenshot::capture(Events::Event nextEvent) {
   }
 
   constexpr static int k_maxHeight =
-      Display::Height + k_glyphHeight + 2 * k_margin;
-  constexpr static int k_width = Display::Width;
-  int height = Display::Height;
+      Display::HeightWithBorder + k_glyphHeight + 2 * k_margin;
+  constexpr static int k_width = Display::WidthWithBorder;
+  int height = Display::HeightWithBorder;
 
   KDColor pixelsBuffer[k_maxHeight * k_width];
   for (int i = 0; i < height * k_width; i++) {
@@ -116,11 +116,12 @@ void Screenshot::capture(Events::Event nextEvent) {
 #if DEBUG && ION_LOG_EVENTS_NAME
   if (m_eachStep) {
     height = k_maxHeight;
-    for (int i = Display::Height * k_width; i < height * k_width; i++) {
+    for (int i = Display::HeightWithBorder * k_width; i < height * k_width;
+         i++) {
       pixelsBuffer[i] = k_backgroundColor;
     }
     drawEventNameInBuffer(nextEvent, pixelsBuffer, k_width, height, k_margin,
-                          Display::Height + k_margin);
+                          Display::HeightWithBorder + k_margin);
   }
 #endif
 

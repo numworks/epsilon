@@ -17,32 +17,36 @@
  * This is also very useful when running headless because we can easily log the
  * framebuffer to a PNG file. */
 
-static KDColor sPixels[Ion::Display::Width * Ion::Display::Height];
+static KDColor
+    sPixels[Ion::Display::WidthWithBorder * Ion::Display::HeightWithBorder];
 static bool sFrameBufferActive = false;
+
+constexpr static KDPoint k_frameOrigin{Ion::Display::Border,
+                                       Ion::Display::Border};
 
 namespace Ion {
 namespace Display {
 
 static KDFrameBuffer sFrameBuffer =
-    KDFrameBuffer(sPixels, KDSize(Width, Height));
+    KDFrameBuffer(sPixels, KDSize(WidthWithBorder, HeightWithBorder));
 
 void pushRect(KDRect r, const KDColor* pixels) {
   if (sFrameBufferActive) {
     Simulator::Window::setNeedsRefresh();
-    sFrameBuffer.pushRect(r, pixels);
+    sFrameBuffer.pushRect(r.translatedBy(k_frameOrigin), pixels);
   }
 }
 
 void pushRectUniform(KDRect r, KDColor c) {
   if (sFrameBufferActive) {
     Simulator::Window::setNeedsRefresh();
-    sFrameBuffer.pushRectUniform(r, c);
+    sFrameBuffer.pushRectUniform(r.translatedBy(k_frameOrigin), c);
   }
 }
 
 void pullRect(KDRect r, KDColor* pixels) {
   if (sFrameBufferActive) {
-    sFrameBuffer.pullRect(r, pixels);
+    sFrameBuffer.pullRect(r.translatedBy(k_frameOrigin), pixels);
   }
 }
 

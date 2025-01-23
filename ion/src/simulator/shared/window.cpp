@@ -38,7 +38,7 @@ void init() {
 #if EPSILON_SDL_SCREEN_ONLY
       // When rendering the screen only, make a non-resizeable window whose size
       // matches the screen's
-      Ion::Display::Width, Ion::Display::Height,
+      Ion::Display::WidthWithBorder, Ion::Display::HeightWithBorder,
       0  // Default flags: no high-dpi, not resizeable.
 #else
       perfectWidth, perfectHeight,  // Otherwise use a default size that makes

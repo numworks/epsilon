@@ -11,8 +11,10 @@ $(call create_module,ion,1, $(patsubst %, test/%:+test, \
 
 _ion_display_width_epsilon = 320
 _ion_display_height_epsilon = 240
+_ion_display_border_epsilon = 0
 _ion_display_width_scandium = 200
 _ion_display_height_scandium = 87
+_ion_display_border_scandium = 3
 
 _ion_keyboard_columns = 6
 _ion_keyboard_rows_epsilon = 9
@@ -22,6 +24,7 @@ SFLAGS_ion += \
   -I$(PATH_ion)/include/ion/keyboard/$(ION_layout_variant) \
   -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_layout_variant)) \
   -DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_layout_variant)) \
+  -DION_DISPLAY_BORDER=$(_ion_display_border_$(ION_layout_variant)) \
   -DION_KEYBOARD_COLUMNS=$(_ion_keyboard_columns) \
   -DION_KEYBOARD_ROWS=$(_ion_keyboard_rows_$(ION_layout_variant)) \
 

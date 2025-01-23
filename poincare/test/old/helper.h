@@ -13,6 +13,10 @@
 #include <algorithm>
 #include <cmath>
 
+namespace Shared {
+class GlobalContext;
+}
+
 namespace Poincare::Internal {
 class Tree;
 }
@@ -101,8 +105,13 @@ Poincare::Internal::Tree* parse_expression(const char* expression,
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
                                  bool parseForAssignment = false);
+void assert_parsed_expression_is(const char* expression,
+                                 const Poincare::Internal::Tree* expected,
+                                 Shared::GlobalContext* globalContext,
+                                 bool parseForAssignment = false);
 void assert_parse_to_same_expression(const char* expression1,
-                                     const char* expression2);
+                                     const char* expression2,
+                                     Shared::GlobalContext* globalContext);
 
 // Simplification
 
@@ -163,8 +172,10 @@ void assert_expression_serializes_and_parses_to_itself(
 
 void assert_expression_parses_and_serializes_to(
     const char* expression, const char* result,
+    Shared::GlobalContext* globalContext,
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
-void assert_expression_parses_and_serializes_to_itself(const char* expression);
+void assert_expression_parses_and_serializes_to_itself(
+    const char* expression, Shared::GlobalContext* globalContext);
 
 #endif

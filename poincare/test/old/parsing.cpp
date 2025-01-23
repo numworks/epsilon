@@ -678,45 +678,57 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
                               KMult("f"_e, apostropheUnit, apostropheUnit));
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
 
+  Shared::GlobalContext globalContext;
   // Function defined
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "func", "", 0);
   assert_parsed_expression_is(
-      "f'(x)", KDiff(KUnknownSymbol, "x"_e, 1_e, KFun<"f">(KUnknownSymbol)));
+      "f'(x)", KDiff(KUnknownSymbol, "x"_e, 1_e, KFun<"f">(KUnknownSymbol)),
+      &globalContext);
   assert_parsed_expression_is(
-      "f\"(x)", KDiff(KUnknownSymbol, "x"_e, 2_e, KFun<"f">(KUnknownSymbol)));
-  assert_parse_to_same_expression("f'(x)", "f^(1)(x)");
-  assert_parse_to_same_expression("f\"(x)", "f^(2)(x)");
-  assert_parse_to_same_expression("f''(x)", "f^(2)(x)");
-  assert_parse_to_same_expression("f'''(x)", "f^(3)(x)");
-  assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)");
-  assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)");
+      "f\"(x)", KDiff(KUnknownSymbol, "x"_e, 2_e, KFun<"f">(KUnknownSymbol)),
+      &globalContext);
+  assert_parse_to_same_expression("f'(x)", "f^(1)(x)", &globalContext);
+  assert_parse_to_same_expression("f\"(x)", "f^(2)(x)", &globalContext);
+  assert_parse_to_same_expression("f''(x)", "f^(2)(x)", &globalContext);
+  assert_parse_to_same_expression("f'''(x)", "f^(3)(x)", &globalContext);
+  assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)", &globalContext);
+  assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)", &globalContext);
   assert_parsed_expression_is(
-      "f^(3)(x)", KDiff(KUnknownSymbol, "x"_e, 3_e, KFun<"f">(KUnknownSymbol)));
+      "f^(3)(x)", KDiff(KUnknownSymbol, "x"_e, 3_e, KFun<"f">(KUnknownSymbol)),
+      &globalContext);
   assert_parsed_expression_is(
       "f^(3/2)(x)",
-      KMult(KPow("f"_e, KParentheses(KDiv(3_e, 2_e))), KParentheses("x"_e)));
-  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit));
-  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit));
-  assert_parsed_expression_is("f''",
-                              KMult("f"_e, apostropheUnit, apostropheUnit));
-  assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
+      KMult(KPow("f"_e, KParentheses(KDiv(3_e, 2_e))), KParentheses("x"_e)),
+      &globalContext);
+  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit),
+                              &globalContext);
+  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), &globalContext);
+  assert_parsed_expression_is(
+      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), &globalContext);
+  assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)),
+                              &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // OExpression defined
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "exp", "", 0);
-  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit));
-  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit));
-  assert_parsed_expression_is("f''",
-                              KMult("f"_e, apostropheUnit, apostropheUnit));
-  assert_parsed_expression_is("f^(1)", KPow("f"_e, KParentheses(1_e)));
-  assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)));
-  assert_parsed_expression_is("f^(3)", KPow("f"_e, KParentheses(3_e)));
+  assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit),
+                              &globalContext);
+  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), &globalContext);
+  assert_parsed_expression_is(
+      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), &globalContext);
+  assert_parsed_expression_is("f^(1)", KPow("f"_e, KParentheses(1_e)),
+                              &globalContext);
+  assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)),
+                              &globalContext);
+  assert_parsed_expression_is("f^(3)", KPow("f"_e, KParentheses(3_e)),
+                              &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   assert_text_not_parsable(
-      "→M^\U00000012√\U00000012^\U000000122\U00000013\U00000013\U00000013");
+      "→M^\U00000012√\U00000012^\U000000122\U00000013\U00000013\U00000013",
+      &globalContext);
 }
 
 QUIZ_CASE(poincare_parsing_parse_store) {

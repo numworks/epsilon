@@ -51,8 +51,7 @@ class GlobalContext final : public Poincare::Context {
     // Destroy all static cache and stores
     s_sequenceStore->removeAll();
     s_sequenceCache->resetCache();
-    // TODO : Unit tests expect preservation of s_continuousFunctionStore
-    // s_continuousFunctionStore->removeAll();
+    s_continuousFunctionStore->removeAll();
     Poincare::Context::GlobalContext = nullptr;
   }
 

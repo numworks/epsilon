@@ -141,7 +141,15 @@ void assert_parsed_expression_is(const char *expression,
                                  const Poincare::Internal::Tree *expected,
                                  bool parseForAssignment) {
   Shared::GlobalContext context;
-  Tree *parsed = parse_expression(expression, &context, parseForAssignment);
+  assert_parsed_expression_is(expression, expected, &context,
+                              parseForAssignment);
+}
+
+void assert_parsed_expression_is(const char *expression,
+                                 const Poincare::Internal::Tree *expected,
+                                 Shared::GlobalContext *context,
+                                 bool parseForAssignment) {
+  Tree *parsed = parse_expression(expression, context, parseForAssignment);
   bool test = parsed && parsed->treeIsIdenticalTo(expected);
   if (parsed) {
     parsed->removeTree();
@@ -155,10 +163,10 @@ void assert_parsed_expression_is(const char *expression,
 }
 
 void assert_parse_to_same_expression(const char *expression1,
-                                     const char *expression2) {
-  Shared::GlobalContext context;
-  Tree *e1 = parse_expression(expression1, &context);
-  Tree *e2 = parse_expression(expression2, &context);
+                                     const char *expression2,
+                                     Shared::GlobalContext *globalContext) {
+  Tree *e1 = parse_expression(expression1, globalContext);
+  Tree *e2 = parse_expression(expression2, globalContext);
   quiz_assert(e1);
   quiz_assert(e2);
   quiz_assert(e1->treeIsIdenticalTo(e2));
@@ -330,10 +338,9 @@ void assert_expression_serializes_and_parses_to_itself(
 
 void assert_expression_parses_and_serializes_to(
     const char *expression, const char *result,
-    Preferences::PrintFloatMode mode, int numberOfSignificantDigits,
-    OMG::Base base) {
-  Shared::GlobalContext globalContext;
-  Tree *e = parse_expression(expression, &globalContext);
+    Shared::GlobalContext *globalContext, Preferences::PrintFloatMode mode,
+    int numberOfSignificantDigits, OMG::Base base) {
+  Tree *e = parse_expression(expression, globalContext);
   Tree *l = Internal::Layouter::LayoutExpression(
       e, true, numberOfSignificantDigits, mode, base);
   constexpr int bufferSize = 500;
@@ -348,8 +355,10 @@ void assert_expression_parses_and_serializes_to(
   quiz_assert_print_if_failure(test, information);
 }
 
-void assert_expression_parses_and_serializes_to_itself(const char *expression) {
-  return assert_expression_parses_and_serializes_to(expression, expression);
+void assert_expression_parses_and_serializes_to_itself(
+    const char *expression, Shared::GlobalContext *globalContext) {
+  return assert_expression_parses_and_serializes_to(expression, expression,
+                                                    globalContext);
 }
 
 template void assert_expression_approximates_to<float>(

@@ -25,27 +25,8 @@ endef
 # run_unit_tests, <test_bin>
 define run_unit_tests
 	@echo Running unit tests with executable $1
-	./$1 --headless --limit-stack-usage -f code
-	./$1 --headless --limit-stack-usage -f distributions
-	./$1 --headless --limit-stack-usage -f finance
-	./$1 --headless --limit-stack-usage -f graph
-	./$1 --headless --limit-stack-usage -f ion
-	./$1 --headless --limit-stack-usage -f kandinsky
-	./$1 --headless --limit-stack-usage -f liba
-	./$1 --headless --limit-stack-usage -f omg
-	./$1 --headless --limit-stack-usage -f pcj
-	./$1 --headless --limit-stack-usage -f poincare
-	./$1 --headless --limit-stack-usage -f probability
-	./$1 --headless --limit-stack-usage -f python
-	./$1 --headless --limit-stack-usage -f regression
-	./$1 --headless --limit-stack-usage -f sequence
-	./$1 --headless --limit-stack-usage -f shared
-	./$1 --headless --limit-stack-usage -f solver
-	./$1 --headless --limit-stack-usage -f statistics
+	./$1 --headless --limit-stack-usage
 endef
-# TODO: Put back unit tests that are currently broken
-# ./$1 --headless --limit-stack-usage -f calculation
-# ./$1 --headless --limit-stack-usage -f escher
 
 # run_screenshot_tests, <epsilon_bin>
 define run_screenshot_tests

@@ -1,6 +1,7 @@
 #ifndef APPS_SOLVER_TEST_HELPERS_H
 #define APPS_SOLVER_TEST_HELPERS_H
 
+#include <apps/shared/global_context.h>
 #include <poincare/preferences.h>
 #include <poincare/test/old/helper.h>
 
@@ -21,45 +22,57 @@ bring_in(Solver::SystemOfEquations::Error, TooManyVariables);
 // Custom assertions
 
 void assert_solves_to(std::initializer_list<const char*> equations,
-                      std::initializer_list<const char*> solutions);
+                      std::initializer_list<const char*> solutions,
+                      Shared::GlobalContext* globalContext);
 void assert_solves_numerically_to(const char* equation, double min, double max,
                                   std::initializer_list<double> solutions,
+                                  Shared::GlobalContext* globalContext,
                                   const char* variable = "x");
 void assert_solves_to_error(std::initializer_list<const char*> equations,
-                            Solver::SystemOfEquations::Error error);
+                            Solver::SystemOfEquations::Error error,
+                            Shared::GlobalContext* globalContext);
 void assert_solves_to_infinite_solutions(
     std::initializer_list<const char*> equations,
-    std::initializer_list<const char*> solutions);
+    std::initializer_list<const char*> solutions,
+    Shared::GlobalContext* globalContext);
 
 // Auto solving range
 
 void assert_solves_with_auto_solving_range(
-    const char* equation, std::initializer_list<double> solutions);
-void assert_auto_solving_range_is(const char* equation, double min, double max);
+    const char* equation, std::initializer_list<double> solutions,
+    Shared::GlobalContext* globalContext);
+void assert_auto_solving_range_is(const char* equation, double min, double max,
+                                  Shared::GlobalContext* globalContext);
 
 // Shorthands
-inline void assert_solves_to_no_solution(const char* equation) {
+inline void assert_solves_to_no_solution(const char* equation,
+                                         Shared::GlobalContext* globalContext) {
   /* Note: Doesn't really work with quadratic equations that will always report
    * at least a delta value. */
-  assert_solves_to({equation}, {});
+  assert_solves_to({equation}, {}, globalContext);
 }
 inline void assert_solves_to_no_solution(
-    std::initializer_list<const char*> equations) {
-  assert_solves_to(equations, {});
+    std::initializer_list<const char*> equations,
+    Shared::GlobalContext* globalContext) {
+  assert_solves_to(equations, {}, globalContext);
 }
 inline void assert_solves_to_error(const char* equation,
-                                   Solver::SystemOfEquations::Error error) {
-  assert_solves_to_error({equation}, error);
+                                   Solver::SystemOfEquations::Error error,
+                                   Shared::GlobalContext* globalContext) {
+  assert_solves_to_error({equation}, error, globalContext);
 }
-inline void assert_solves_to_infinite_solutions(const char* equation) {
-  assert_solves_to_infinite_solutions({equation}, {});
+inline void assert_solves_to_infinite_solutions(
+    const char* equation, Shared::GlobalContext* globalContext) {
+  assert_solves_to_infinite_solutions({equation}, {}, globalContext);
 }
-inline void assert_solves_to(const char* equation, const char* solution) {
-  assert_solves_to({equation}, {solution});
+inline void assert_solves_to(const char* equation, const char* solution,
+                             Shared::GlobalContext* globalContext) {
+  assert_solves_to({equation}, {solution}, globalContext);
 }
 inline void assert_solves_to(const char* equation,
-                             std::initializer_list<const char*> solutions) {
-  assert_solves_to({equation}, solutions);
+                             std::initializer_list<const char*> solutions,
+                             Shared::GlobalContext* globalContext) {
+  assert_solves_to({equation}, solutions, globalContext);
 }
 
 // Helpers

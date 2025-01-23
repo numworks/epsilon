@@ -56,9 +56,9 @@ void solve_and(std::initializer_list<const char*> equations,
 
 void assert_solves_with_range_to(const char* equation, double min, double max,
                                  std::initializer_list<double> solutions,
+                                 Shared::GlobalContext* globalContext,
                                  const char* variable = nullptr) {
-  Shared::GlobalContext globalContext;
-  SolverContext solverContext(&globalContext);
+  SolverContext solverContext(globalContext);
   solve_and_process_error(
       {equation}, &solverContext,
       [min, max, solutions, variable, &solverContext](
@@ -86,9 +86,9 @@ void assert_solves_with_range_to(const char* equation, double min, double max,
 // Helpers
 
 void assert_solves_to_error(std::initializer_list<const char*> equations,
-                            SystemOfEquations::Error error) {
-  Shared::GlobalContext globalContext;
-  SolverContext solverContext(&globalContext);
+                            SystemOfEquations::Error error,
+                            Shared::GlobalContext* globalContext) {
+  SolverContext solverContext(globalContext);
   solve_and_process_error(
       equations, &solverContext,
       [error](SystemOfEquations* system, SystemOfEquations::Error e) {
@@ -171,9 +171,9 @@ static void compareSolutions(SystemOfEquations* system,
 
 void assert_solves_to_infinite_solutions(
     std::initializer_list<const char*> equations,
-    std::initializer_list<const char*> solutions) {
-  Shared::GlobalContext globalContext;
-  SolverContext solverContext(&globalContext);
+    std::initializer_list<const char*> solutions,
+    Shared::GlobalContext* globalContext) {
+  SolverContext solverContext(globalContext);
   solve_and(
       equations, &solverContext,
       [solutions, &solverContext](SystemOfEquations* system) {
@@ -184,9 +184,9 @@ void assert_solves_to_infinite_solutions(
 }
 
 void assert_solves_to(std::initializer_list<const char*> equations,
-                      std::initializer_list<const char*> solutions) {
-  Shared::GlobalContext globalContext;
-  SolverContext solverContext(&globalContext);
+                      std::initializer_list<const char*> solutions,
+                      Shared::GlobalContext* globalContext) {
+  SolverContext solverContext(globalContext);
   solve_and(equations, &solverContext,
             [solutions, &solverContext](SystemOfEquations* system) {
               compareSolutions(system, solutions, &solverContext);
@@ -195,20 +195,23 @@ void assert_solves_to(std::initializer_list<const char*> equations,
 
 void assert_solves_numerically_to(const char* equation, double min, double max,
                                   std::initializer_list<double> solutions,
+                                  Shared::GlobalContext* globalContext,
                                   const char* variable) {
   assert(!std::isnan(min) && !std::isnan(max));
-  return assert_solves_with_range_to(equation, min, max, solutions, variable);
+  return assert_solves_with_range_to(equation, min, max, solutions,
+                                     globalContext, variable);
 }
 
 void assert_solves_with_auto_solving_range(
-    const char* equation, std::initializer_list<double> solutions) {
-  return assert_solves_with_range_to(equation, NAN, NAN, solutions);
+    const char* equation, std::initializer_list<double> solutions,
+    Shared::GlobalContext* globalContext) {
+  return assert_solves_with_range_to(equation, NAN, NAN, solutions,
+                                     globalContext);
 }
 
-void assert_auto_solving_range_is(const char* equation, double min,
-                                  double max) {
-  Shared::GlobalContext globalContext;
-  SolverContext solverContext(&globalContext);
+void assert_auto_solving_range_is(const char* equation, double min, double max,
+                                  Shared::GlobalContext* globalContext) {
+  SolverContext solverContext(globalContext);
   solve_and_process_error(
       {equation}, &solverContext,
       [min, max, &solverContext](SystemOfEquations* system,

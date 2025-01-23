@@ -348,7 +348,6 @@ NODE(RealPos, 1)
 
 NODE(Set, NARY)
 NODE(Parentheses, 1)
-NODE(Empty)
 
 // 10 - Undefined expressions
 /* When an expression has multiple undefined children, we bubble up the

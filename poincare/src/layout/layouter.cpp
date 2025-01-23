@@ -632,8 +632,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       break;
     }
-    case Type::Empty:
-      break;
     case Type::Matrix:
       layoutMatrix(layoutParent, expression);
       break;

@@ -12,9 +12,11 @@ $(call create_module,ion,1, $(patsubst %, test/%:+test, \
 _ion_display_width_epsilon = 320
 _ion_display_height_epsilon = 240
 _ion_display_border_epsilon = 0
+_ion_display_border_color_epsilon = KDColor::RGB888(0, 0, 0)
 _ion_display_width_scandium = 200
 _ion_display_height_scandium = 87
 _ion_display_border_scandium = 3
+_ion_display_border_color_scandium = KDColor::RGB888(0x88, 0x96, 0x8C)
 
 _ion_keyboard_columns = 6
 _ion_keyboard_rows_epsilon = 9
@@ -25,6 +27,7 @@ SFLAGS_ion += \
   -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_layout_variant)) \
   -DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_layout_variant)) \
   -DION_DISPLAY_BORDER=$(_ion_display_border_$(ION_layout_variant)) \
+  -DION_DISPLAY_BORDER_COLOR="$(_ion_display_border_color_$(ION_layout_variant))" \
   -DION_KEYBOARD_COLUMNS=$(_ion_keyboard_columns) \
   -DION_KEYBOARD_ROWS=$(_ion_keyboard_rows_$(ION_layout_variant)) \
 

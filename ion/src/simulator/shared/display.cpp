@@ -21,7 +21,7 @@ void init(SDL_Renderer* renderer) {
   assert(sizeof(KDColor) == SDL_BYTESPERPIXEL(texturePixelFormat));
   sFramebufferTexture = SDL_CreateTexture(
       renderer, texturePixelFormat, SDL_TEXTUREACCESS_STREAMING,
-      Ion::Display::Width, Ion::Display::Height);
+      Ion::Display::WidthWithBorder, Ion::Display::HeightWithBorder);
 }
 
 void shutdown() {
@@ -31,7 +31,7 @@ void shutdown() {
 
 void draw(SDL_Renderer* renderer, SDL_Rect* rect) {
   SDL_UpdateTexture(sFramebufferTexture, nullptr, Framebuffer::address(),
-                    sizeof(KDColor) * Ion::Display::Width);
+                    sizeof(KDColor) * Ion::Display::WidthWithBorder);
   SDL_RenderCopy(renderer, sFramebufferTexture, nullptr, rect);
 }
 

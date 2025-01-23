@@ -27,8 +27,17 @@ constexpr static KDPoint k_frameOrigin{Ion::Display::Border,
 namespace Ion {
 namespace Display {
 
-static KDFrameBuffer sFrameBuffer =
-    KDFrameBuffer(sPixels, KDSize(WidthWithBorder, HeightWithBorder));
+class IntializedFrameBuffer : public KDFrameBuffer {
+ public:
+  IntializedFrameBuffer(KDColor* pixels, KDSize size)
+      : KDFrameBuffer(pixels, size) {
+    pushRectUniform(bounds(), k_fillColor);
+  }
+  static constexpr KDColor k_fillColor = ION_DISPLAY_BORDER_COLOR;
+};
+
+static IntializedFrameBuffer sFrameBuffer =
+    IntializedFrameBuffer(sPixels, KDSize(WidthWithBorder, HeightWithBorder));
 
 void pushRect(KDRect r, const KDColor* pixels) {
   if (sFrameBufferActive) {

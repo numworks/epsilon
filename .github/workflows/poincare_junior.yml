@@ -27,27 +27,8 @@ jobs:
       - run: build/setup.sh --only-simulator
       # TODO_PCJ: Add ASAN=1 and TIDY=1
       - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin
-      # TODO_PCJ: Uncomment all filters, delete this workflow and re-activate ci.yml once they all run.
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f calculation
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f calculation_store
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f code
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f distributions
-      # - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f escher
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f finance
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f graph
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f ion
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f kandinsky
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f liba
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f omg
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f pcj
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f poincare
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f probability
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f python
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f regression
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f sequence
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f shared
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f solver
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage -f statistics
+      # TODO_PCJ: Delete this workflow and re-activate ci.yml once they all run.
+      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage
   poincarejs:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
     steps:

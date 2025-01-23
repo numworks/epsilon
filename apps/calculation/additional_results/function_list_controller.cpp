@@ -31,15 +31,16 @@ void FunctionListController::computeAdditionalResults(
       AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
           input, k_symbolName, &abscissa);
 
-  bool reductionFailure;
+  bool reductionFailure = false;
   SystemFunction simplifiedExpression =
       PoincareHelpers::CloneAndReduce(
           inputClone, context,
           {.complexFormat = complexFormat(),
            .angleUnit = angleUnit(),
-           .target = ReductionTarget::SystemForApproximation})
+           .target = ReductionTarget::SystemForApproximation},
+          &reductionFailure)
           .getSystemFunction(k_symbolName, true);
-  assert(!simplifiedExpression.isUninitialized());
+  assert(!simplifiedExpression.isUninitialized() && !reductionFailure);
 
   /* Use the approximate expression to compute the ordinate to ensure that
    * it's coherent with the output of the calculation.

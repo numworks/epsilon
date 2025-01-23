@@ -105,11 +105,16 @@ SystemExpression ExpressionModel::expressionReduced(
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
+      bool reductionFailure = false;
       m_expression = PoincareHelpers::CloneAndReduce(
           m_expression, context,
           {.complexFormat = complexFormat(record, context),
            .updateComplexFormatWithExpression = false,
-           .target = ReductionTarget::SystemForApproximation});
+           .target = ReductionTarget::SystemForApproximation},
+          &reductionFailure);
+      if (reductionFailure) {
+        m_expression = SystemExpression::Create(KFailedSimplification, {});
+      }
       /* TODO_PCJ not the appropriate place but sequences uses their
        * expressionReduced to approximate directly */
       m_expression = m_expression.getSystemFunction(Function::k_unknownName);

@@ -684,14 +684,16 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
        * but it's a good compromise for now.       */
       UserExpression equation = expressionEquation(record, context);
       if (!equation.isUninitialized()) {
+        bool reductionFailure = false;
         SystemExpression resultForApproximation =
             PoincareHelpers::CloneAndReduce(
                 equation, context,
                 {.complexFormat = complexFormat,
                  .updateComplexFormatWithExpression = false,
                  .target = ReductionTarget::SystemForApproximation,
-                 .symbolicComputation = SymbolicComputation::KeepAllSymbols});
-        assert(!resultForApproximation.isUninitialized());
+                 .symbolicComputation = SymbolicComputation::KeepAllSymbols},
+                &reductionFailure);
+        assert(!resultForApproximation.isUninitialized() && !reductionFailure);
         if (resultForApproximation.numberOfDescendants(true) <
             m_expression.numberOfDescendants(true)) {
           m_expression = resultForApproximation;

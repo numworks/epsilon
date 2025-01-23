@@ -2,6 +2,7 @@
 #include <escher/clipboard.h>
 #include <escher/layout_field.h>
 #include <ion/events.h>
+#include <poincare/test/helper.h>
 #include <quiz.h>
 
 using namespace Escher;
@@ -16,8 +17,15 @@ void assert_events_lead_to_selection(
   }
   Clipboard::SharedClipboard()->reset();
   field.handleEvent(Ion::Events::Copy);
-  quiz_assert(strcmp(Clipboard::SharedClipboard()->storedText(),
-                     selectedParsedAndSerializedText) == 0);
+  bool result = strcmp(Clipboard::SharedClipboard()->storedText(),
+                       selectedParsedAndSerializedText) == 0;
+#if POINCARE_STRICT_TESTS
+  quiz_assert(result);
+#else
+  quiz_tolerate_print_if_failure(result, selectedParsedAndSerializedText,
+                                 selectedParsedAndSerializedText,
+                                 Clipboard::SharedClipboard()->storedText());
+#endif
 }
 
 QUIZ_CASE(escher_layout_field_select_left_right) {

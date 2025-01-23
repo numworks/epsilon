@@ -349,17 +349,19 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
       } else {
         /* The system has one variable but might have many solutions: the cell
          * text is variableX, with X the row index + 1 (e.g. x1, x2,...)
-         * Expect in French mode with a double/triple solutions where we want x0
-         * (numberOfSolutions also contains a "solution" for Δ)
-         */
+         * Except with SolverDoubleRootName variant and double/triple
+         * solutions */
         int variableIndex = row + 1;
         CountryPreferences::SolverDoubleRootName doubleRootPref =
             GlobalPreferences::SharedGlobalPreferences()
                 ->solverDoubleRootName();
+        /* numberOfSolutions also contains a "solution" for Δ
+         * => numberOfSolutions == 2 */
         if (doubleRootPref ==
                 CountryPreferences::SolverDoubleRootName::Variant1 &&
             system->numberOfSolutions() == 2 &&
             system->type() == SystemOfEquations::Type::PolynomialMonovariable) {
+          assert(variableIndex == 1);
           variableIndex = 0;
         }
         const char* varName = system->variable(0);

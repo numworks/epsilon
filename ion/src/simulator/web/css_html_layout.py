@@ -77,7 +77,6 @@ def css(layout):
     css += css_rule(
         ".calculator.loading .loader",
         css_declaration("display", "block"),
-        css_declaration("background-color", "#000"),
         css_declaration("position", "absolute"),
     )
     css += css_rule(
@@ -99,8 +98,11 @@ def css(layout):
         css_declaration("height", "64px"),
         css_declaration("margin", "8px"),
         css_declaration("border-radius", "50%"),
-        css_declaration("border", "6px solid #fff"),
-        css_declaration("border-color", "#fff transparent #fff transparent"),
+        css_declaration("border", f"6px solid {layout['loader_color']}"),
+        css_declaration(
+            "border-color",
+            f"{layout['loader_color']} transparent {layout['loader_color']} transparent",
+        ),
         css_declaration("animation", "calculator-loader-rotation 1.2s linear infinite"),
     )
     return css

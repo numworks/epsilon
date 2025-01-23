@@ -506,6 +506,12 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
     e->cloneTreeOverTree(KMult(1_e / 6_e, π_e));
     return true;
   }
+  if (PatternMatching::Match(arg, KAdd(-2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))),
+                             &ctx)) {
+    // atan(-2+√3) = π/12
+    e->cloneTreeOverTree(KMult(1_e / 12_e, π_e));
+    return true;
+  }
   // TODO_PCJ: Reduce atan(1/x) in dep(sign(x)*π/2-atan(x),{1/x})
   return false;
 }

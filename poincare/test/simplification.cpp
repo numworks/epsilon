@@ -1256,6 +1256,7 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("asin((√(6)+√(2))/4)", "5π/12");
   simplifies_to("atan(-1/√(3))", "-π/6");
   simplifies_to("atan(1/√(3))", "π/6");
+  simplifies_to("atan(√(3)-2)", "π/12");
   simplifies_to("atan({-inf, -√(3), -1, -√(3)/3, 0, 1, √(3)/3, √(3), inf})",
                 "{-π/2,-π/3,-π/4,-π/6,0,π/4,π/6,π/3,π/2}");
 

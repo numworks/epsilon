@@ -738,7 +738,11 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
     assert(!ReduceAbs(e));
     return true;
   }
-  // TODO : |e^(i*x)| = 1 when x is real
+  if (child->isExp() && GetComplexSign(child->child(0)).isPureIm()) {
+    // |e^x| = 1 when x is pure imaginary
+    e->cloneNodeOverTree(1_e);
+    return true;
+  }
   ComplexSign complexSign = GetComplexSign(child);
   if (!complexSign.isPure()) {
     return false;

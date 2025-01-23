@@ -412,6 +412,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("3+4i", "5×e^(arctan(4/3)×i)", polarCtx);
   simplifies_to("e^(3.14×i)", "e^(157/50×i)", polarCtx);
   simplifies_to("e^(-2.1×i)", "e^(-21/10×i)", polarCtx);
+  simplifies_to("root(-8,3)", "2×e^(π/3×i)", polarCtx);
   // Not simplified into polars
   simplifies_to("-1+π", "-1+π", polarCtx);
   simplifies_to("1-π", "1-π", polarCtx);

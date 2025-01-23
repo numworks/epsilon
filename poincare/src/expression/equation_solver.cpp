@@ -143,13 +143,12 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   assert(*error == Error::NoError);
   result =
       SolveLinearSystem(reducedEquationSet, numberOfVariables, context, error);
+#if !POINCARE_NO_POLYNOMIAL_SOLVER
   if (*error == Error::NonLinearSystem && numberOfVariables <= 1 &&
       equationsSet->numberOfChildren() <= 1) {
     assert(result.isUninitialized());
-#if !POINCARE_NO_POLYNOMIAL_SOLVER
     result =
         SolvePolynomial(reducedEquationSet, numberOfVariables, context, error);
-#endif
     if (*error == Error::RequireApproximateSolution) {
       context->type = Type::GeneralMonovariable;
       // TODO: Handle GeneralMonovariable solving.
@@ -169,6 +168,11 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
       }
     }
   }
+#else
+  if (*error == Error::NonLinearSystem) {
+    context->type = Type::GeneralMonovariable;
+  }
+#endif
   reducedEquationSet->removeTree();
 
   /* Replace variables back to UserSymbols */

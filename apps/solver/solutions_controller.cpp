@@ -358,7 +358,8 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
                 ->solverDoubleRootName();
         if (doubleRootPref ==
                 CountryPreferences::SolverDoubleRootName::Variant1 &&
-            system->numberOfSolutions() == 2) {
+            system->numberOfSolutions() == 2 &&
+            system->type() == SystemOfEquations::Type::PolynomialMonovariable) {
           variableIndex = 0;
         }
         const char* varName = system->variable(0);

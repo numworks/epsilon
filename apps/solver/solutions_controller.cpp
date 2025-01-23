@@ -348,11 +348,23 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
                                                 varName, strlen(varName));
       } else {
         /* The system has one variable but might have many solutions: the cell
-         * text is variableX, with X the row index + 1 (e.g. x1, x2,...) */
+         * text is variableX, with X the row index + 1 (e.g. x1, x2,...)
+         * Expect in French mode with a double/triple solutions where we want x0
+         * (numberOfSolutions also contains a "solution" for Δ)
+         */
+        int variableIndex = row + 1;
+        CountryPreferences::SolverDoubleRootName doubleRootPref =
+            GlobalPreferences::SharedGlobalPreferences()
+                ->solverDoubleRootName();
+        if (doubleRootPref ==
+                CountryPreferences::SolverDoubleRootName::Variant1 &&
+            system->numberOfSolutions() == 2) {
+          variableIndex = 0;
+        }
         const char* varName = system->variable(0);
         size_t length = SymbolHelper::NameWithoutQuotationMarks(
             bufferSymbol, bufferSize, varName, strlen(varName));
-        length += OMG::Print::IntLeft(row + 1, bufferSymbol + length,
+        length += OMG::Print::IntLeft(variableIndex, bufferSymbol + length,
                                       bufferSize - length);
         bufferSymbol[length] = 0;
       }

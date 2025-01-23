@@ -58,6 +58,11 @@ class CountryPreferences {
     Variant1,
   };
 
+  enum class SolverDoubleRootName : uint8_t {
+    Default,   // x1
+    Variant1,  // x0 (FR)
+  };
+
   constexpr CountryPreferences(
       AvailableExamModes availableExamModes,
       MethodForQuartiles methodForQuartiles,
@@ -74,7 +79,8 @@ class CountryPreferences {
       GraphTemplatesLayout graphTemplatesLayout,
       Poincare::Preferences::LogarithmBasePosition logarithmBasePosition,
       Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent,
-      Poincare::Preferences::ParabolaParameter parabolaParameter)
+      Poincare::Preferences::ParabolaParameter parabolaParameter,
+      SolverDoubleRootName solverDoubleRootName)
       : m_availableExamModes(availableExamModes),
         m_homeAppsLayout(homeAppsLayout),
         m_unitFormat(unitFormat),
@@ -92,7 +98,8 @@ class CountryPreferences {
         m_graphTemplatesLayout(graphTemplatesLayout),
         m_logarithmBasePosition(logarithmBasePosition),
         m_logarithmKeyEvent(logarithmKeyEvent),
-        m_parabolaParameter(parabolaParameter) {}
+        m_parabolaParameter(parabolaParameter),
+        m_solverDoubleRootName(solverDoubleRootName) {}
 
   constexpr AvailableExamModes availableExamModes() const {
     return m_availableExamModes;
@@ -148,6 +155,9 @@ class CountryPreferences {
   constexpr Poincare::Preferences::ParabolaParameter parabolaParameter() const {
     return m_parabolaParameter;
   }
+  constexpr SolverDoubleRootName solverDoubleRootName() const {
+    return m_solverDoubleRootName;
+  }
 
  private:
   const AvailableExamModes m_availableExamModes;
@@ -168,6 +178,7 @@ class CountryPreferences {
   const Poincare::Preferences::LogarithmBasePosition m_logarithmBasePosition;
   const Poincare::Preferences::LogarithmKeyEvent m_logarithmKeyEvent;
   const Poincare::Preferences::ParabolaParameter m_parabolaParameter;
+  const SolverDoubleRootName m_solverDoubleRootName;
 };
 
 #endif

@@ -84,6 +84,9 @@ class __attribute__((packed)) GlobalPreferences {
   Poincare::Preferences::ParabolaParameter parabolaParameter() const {
     return countryPreferences().parabolaParameter();
   }
+  CountryPreferences::SolverDoubleRootName solverDoubleRootName() const {
+    return countryPreferences().solverDoubleRootName();
+  }
   int sequencesInitialRank() const;
 
   const char* openIntervalChar(bool left) const {

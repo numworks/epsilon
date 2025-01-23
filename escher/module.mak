@@ -104,7 +104,6 @@ $(call create_module,escher,1,$(addprefix src/, \
   window.cpp \
 ) \
   image/caret.png \
-  test/clipboard.cpp:+test \
   test/layout_field.cpp:+test \
 )
 

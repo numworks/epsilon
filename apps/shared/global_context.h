@@ -47,7 +47,14 @@ class GlobalContext final : public Poincare::Context {
     Poincare::Context::GlobalContext = this;
   };
 
-  ~GlobalContext() { Poincare::Context::GlobalContext = nullptr; }
+  ~GlobalContext() {
+    // Destroy all static cache and stores
+    s_sequenceStore->removeAll();
+    s_sequenceCache->resetCache();
+    // TODO : Unit tests expect preservation of s_continuousFunctionStore
+    // s_continuousFunctionStore->removeAll();
+    Poincare::Context::GlobalContext = nullptr;
+  }
 
   /* Expression for symbol
    * The expression recorded in global context is already an expression.

@@ -33,11 +33,13 @@ Tree* Matrix::Undef(MatrixDimension d) {
 }
 
 Tree* Matrix::Identity(const Tree* n) {
-  assert(n->isNumber());
-  if (Integer::Handler(n).numberOfDigits() > 1) {
+  assert(n->isInteger());
+  if (Integer::Handler(n).numberOfDigits() > 1 ||
+      Integer::Handler(n).strictSign() != StrictSign::Positive) {
     return KUndefUnhandled->cloneTree();
   }
   uint8_t nb = *Integer::Handler(n).digits();
+  assert(nb > 0);
   Tree* result = SharedTreeStack->pushMatrix(nb, nb);
   for (int i = 0; i < nb - 1; i++) {
     (1_e)->cloneTree();

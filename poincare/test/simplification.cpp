@@ -286,6 +286,9 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("[[1+2]]", "[[3]]");
   simplifies_to("trace([[1,2][3,4]])", "5");
   simplifies_to("identity(2)", "[[1,0][0,1]]");
+  simplifies_to("identity(0)", "undef");
+  simplifies_to("identity(-3)", "undef");
+  simplifies_to("identity(floor(π)-round(3/2))", "[[1]]");
   simplifies_to("transpose([[1][3]])", "[[1,3]]");
   simplifies_to("transpose([[1,2][3,4]])", "[[1,3][2,4]]");
   simplifies_to("dim([[1,2][3,4][5,6]])", "[[3,2]]");

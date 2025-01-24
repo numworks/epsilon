@@ -122,6 +122,16 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
         return Square;
       case SDLK_e:
         return EE;
+      case SDLK_c:
+        return Cosine;
+      case SDLK_s:
+        return Sine;
+      case SDLK_t:
+        return Tangent;
+      case SDLK_o:
+        return Log;
+      case SDLK_l:
+        return Ln;
     }
   }
   switch (sym) {

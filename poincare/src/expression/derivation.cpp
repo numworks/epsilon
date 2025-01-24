@@ -228,7 +228,7 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
           {.KA = derivand->child(1)->isZero() ? -1_e : 1_e,
            .KB = derivand->child(0)});
     }
-    /* Note: The derivatives of atan(x) and arccos(x) are given here as a
+    /* Note: The derivatives of atan(x) and arcosh(x) are given here as a
      * shortcut. If we wanted to optimize binary size more, they could be
      * removed, but with the risk of having a less relevant result.
      *

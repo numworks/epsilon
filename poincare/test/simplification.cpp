@@ -283,7 +283,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
 
   simplifies_to("diff(sin(x),x,x)", "cos(x)");
   simplifies_to("diff(cos(x),x,x)", "-sin(x)");
-  simplifies_to("diff(tan(x),x,x)", "tan(x)^2+1");
+  simplifies_to("diff(tan(x),x,x)", "dep(tan(x)^2+1,{tan(x)})");
   simplifies_to("diff(acos(x),x,x)",
                 "dep(-√(-x^2+1)/"
                 "(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arccos(x))})");
@@ -301,7 +301,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
 
   simplifies_to("diff(sec(x),x,x)", "sin(x)/cos(x)^2");
   simplifies_to("diff(csc(x),x,x)", "-cos(x)/sin(x)^2");
-  simplifies_to("diff(cot(x),x,x)", "-1-cot(x)^2");
+  simplifies_to("diff(cot(x),x,x)", "dep(-1-cot(x)^2,{cot(x)})");
   simplifies_to("diff(arcsec(x),x,x)",
                 "dep(√(1-1/x^2)/(x^2×(1-1/x^2)),{piecewise(0,abs(1/"
                 "x)≤1,nonreal),real(arccos(1/x))})");

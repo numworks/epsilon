@@ -36,7 +36,8 @@ bool IsIntegerExpression(const Tree* e) {
     case Type::Parentheses:
     case Type::Opposite:
     case Type::Mult:
-    case Type::Add: {
+    case Type::Add:
+    case Type::Sub: {
       for (const Tree* child : e->children()) {
         if (!IsIntegerExpression(child)) {
           return false;
@@ -44,6 +45,11 @@ bool IsIntegerExpression(const Tree* e) {
       }
       return true;
     }
+    case Type::Ceil:
+    case Type::Floor:
+      return true;
+    case Type::Round:
+      return e->child(1)->isZero();
     default:
       return false;
   }

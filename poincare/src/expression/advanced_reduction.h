@@ -73,7 +73,7 @@ class AdvancedReduction {
     Direction() : m_type(0) {}
     bool isNextNode() const { return !isContract() && !isExpand(); }
 #if POINCARE_TREE_LOG
-    void log() const;
+    void log(bool addLineReturn = true) const;
 #endif
     // Returns one of the three base direction (NextNode, Contract and Expand).
     static Direction SingleDirectionForIndex(int index) {

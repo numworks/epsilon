@@ -243,7 +243,7 @@ bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
 }
 
 #if POINCARE_TREE_LOG
-void AdvancedReduction::Direction::log() const {
+void AdvancedReduction::Direction::log(bool addLineReturn) const {
   if (isNextNode()) {
     std::cout << "NextNode";
     if (m_type > 1) {
@@ -255,7 +255,9 @@ void AdvancedReduction::Direction::log() const {
     assert(isExpand());
     std::cout << "Expand";
   }
-  std::cout << std::endl;
+  if (addLineReturn) {
+    std::cout << std::endl;
+  }
 }
 #endif
 
@@ -309,7 +311,7 @@ bool AdvancedReduction::Path::append(Direction direction) {
 void AdvancedReduction::Path::log() const {
   std::cout << " | ";
   for (uint8_t i = 0; i < m_length; i++) {
-    m_stack[i].log();
+    m_stack[i].log(false);
     std::cout << " | ";
   }
   std::cout << std::endl;
@@ -354,7 +356,6 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
         LogIndent();
         std::cout << "Can't apply ";
         dir.log();
-        std::cout << ".\n";
 #endif
         continue;
       }
@@ -363,7 +364,6 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
         LogIndent();
         std::cout << "Nothing to ";
         dir.log();
-        std::cout << ".\n";
 #endif
         continue;
       }
@@ -385,7 +385,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
         if (shouldLog) {
           LogIndent();
           std::cout << "Apply ";
-          dir.log();
+          dir.log(false);
           std::cout << ": ";
           if (rootChanged) {
             ctx->m_root->logSerialize();
@@ -425,7 +425,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
       else {
         LogIndent();
         std::cout << "Already applied ";
-        dir.log();
+        dir.log(false);
         std::cout << ": ";
         ctx->m_root->logSerialize();
       }
@@ -455,7 +455,6 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
   LogIndent();
   std::cout << "Path:";
   ctx->m_path.log();
-  std::cout << "\n";
 #endif
 #endif
   // If metric is the same, compare hash to ensure a deterministic result.

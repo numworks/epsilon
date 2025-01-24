@@ -619,9 +619,10 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       assert(!Undefined::IsUndefined(up));
       int lowerBound = low.real();
       int upperBound = up.real();
-      const Tree* child = upperBoundChild->nextTree();
+      Tree* child = upperBoundChild->nextTree()->cloneTree();
       assert(ctx);
       Context ctxCopy = *ctx;
+      ApproximateAndReplaceEveryScalar<T>(child, *ctx);
       LocalContext localCtx = LocalContext(NAN, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
       std::complex<T> result = e->isSum() ? 0 : 1;
@@ -639,6 +640,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
           break;
         }
       }
+      child->removeTree();
       return result;
     }
     case Type::Diff: {

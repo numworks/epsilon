@@ -972,6 +972,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
 
 void RackParser::parseSequence(TreeRef& leftHandSide, const char* name,
                                Token::Type rightDelimiter) {
+#if POINCARE_SEQUENCE
   // assert(m_nextToken.type() ==
   // ((rightDelimiter == Token::Type::RightSystemBrace)
   // ? Token::Type::LeftSystemBrace
@@ -985,6 +986,9 @@ void RackParser::parseSequence(TreeRef& leftHandSide, const char* name,
     leftHandSide = SharedTreeStack->pushUserSequence(name);
     leftHandSide->moveTreeAfterNode(rank);
   }
+#else
+  TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+#endif
 }
 
 void RackParser::parseSpecialIdentifier(TreeRef& leftHandSide,
@@ -1055,6 +1059,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     return;
   }
 
+#if POINCARE_SEQUENCE
   // Parse u(n)
   if (idType == Poincare::Context::UserNamedType::Sequence ||
       (idType == Poincare::Context::UserNamedType::None &&
@@ -1081,6 +1086,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
     parseSequence(leftHandSide, name, Token::Type::RightParenthesis);
     return;
   }
+#endif
   State previousState = currentState();
   // Try to parse aspostrophe as derivative
   if (privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
@@ -1113,6 +1119,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     TreeRef& leftHandSide, const char* name, size_t length,
     Token::Type stoppingType, bool parseApostropheAsDerivative) {
   int derivationOrder = 0;
+#if POINCARE_DIFF
   if (parseApostropheAsDerivative) {
     // Case 1: parse f'''(x)
     if (!parseApostropheDerivationOrder(&derivationOrder)) {
@@ -1124,6 +1131,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     }
     assert(derivationOrder > 0);
   }
+#endif
 
   // If the identifier is not followed by parentheses, it is a symbol
   TreeRef parameter = tryParseFunctionParameters();

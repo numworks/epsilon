@@ -375,7 +375,7 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
     size_t smallE = start + OMG::CodePointSearch(
                                 &decoder, UCodePointLatinLetterSmallCapitalE);
     int expValue = 0;
-    if (smallE != end) {  // smallE exists
+    if (smallE != end) {
       LayoutSpanDecoder exponentDigits(rack, smallE + 1, end);
       Tree* expTree = Integer::Push(exponentDigits, OMG::Base::Decimal);
       IntegerHandler expHandler = Integer::Handler(expTree);

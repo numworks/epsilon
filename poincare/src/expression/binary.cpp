@@ -204,7 +204,8 @@ bool Binary::ReduceComparison(Tree* e) {
   e->cloneTreeOverTree(result);
   return true;
 #else
-  return false;
+  e->cloneTreeOverTree(KUndef);
+  return true;
 #endif
 }
 

@@ -320,21 +320,16 @@ bool ShallowBeautifyPowerOfTangent(Tree* e, void* context) {
   }
   // (sin(A))^n/(cos(A))^n -> (tan(A))^n
   return PatternMatching::MatchReplace(
-             e,
-             KDiv(KMult(KA_s, KPow(KSin(KB), KC), KD_s),
-                  KMult(KA_s, KPow(KCos(KB), KC), KD_s)),
+             e, KDiv(KMult(KA_s, KPow(KSin(KB), KC), KD_s), KPow(KCos(KB), KC)),
              KMult(KA_s, KPow(KTan(KB), KC), KD_s)) ||
          // (cos(A))^n/(sin(A))^n -> (cot(A))^n
          PatternMatching::MatchReplace(
-             e,
-             KDiv(KMult(KA_s, KPow(KCos(KB), KC), KD_s),
-                  KMult(KA_s, KPow(KSin(KB), KC), KD_s)),
+             e, KDiv(KMult(KA_s, KPow(KCos(KB), KC), KD_s), KPow(KSin(KB), KC)),
              KMult(KA_s, KPow(KCot(KB), KC), KD_s)) ||
          // (sinh(A))^n/(cosh(A))^n -> (tanh(A))^n
          PatternMatching::MatchReplace(
              e,
-             KDiv(KMult(KA_s, KPow(KSinH(KB), KC), KD_s),
-                  KMult(KA_s, KPow(KCosH(KB), KC), KD_s)),
+             KDiv(KMult(KA_s, KPow(KSinH(KB), KC), KD_s), KPow(KCosH(KB), KC)),
              KMult(KA_s, KPow(KTanH(KB), KC), KD_s));
 }
 

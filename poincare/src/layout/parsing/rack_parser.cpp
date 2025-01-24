@@ -147,7 +147,7 @@ Tree* RackParser::initializeFirstTokenAndParseUntilEnd() {
 // Private
 
 Tree* RackParser::parseUntil(Token::Type stoppingType, TreeRef leftHandSide) {
-  typedef void (RackParser::*TokenParser)(TreeRef & leftHandSide,
+  typedef void (RackParser::*TokenParser)(TreeRef& leftHandSide,
                                           Token::Type stoppingType);
   constexpr static TokenParser tokenParsers[] = {
       &RackParser::parseUnexpected,          // Token::Type::EndOfStream
@@ -345,49 +345,66 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
     // FIXME
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
+
   /* TODO: RackLayoutDecoder could be implemented without mainLayout, start,
            m_root and parentOfDescendant() call wouldn't be needed. */
   int start = 0;
   const Rack* rack = Rack::From(
       m_root->parentOfDescendant(m_currentToken.firstLayout(), &start));
   size_t end = start + m_currentToken.length();
-  OMG::Base base(OMG::Base::Decimal);
+
   if (m_currentToken.type() == Token::Type::HexadecimalNumber ||
       m_currentToken.type() == Token::Type::BinaryNumber) {
-    start += 2;  // Skip 0b / 0x prefix
-    base = m_currentToken.type() == Token::Type::HexadecimalNumber
-               ? OMG::Base::Hexadecimal
-               : OMG::Base::Binary;
-    LayoutSpanDecoder decoder(rack, start, end);
+    OMG::Base base = m_currentToken.type() == Token::Type::HexadecimalNumber
+                         ? OMG::Base::Hexadecimal
+                         : OMG::Base::Binary;
+    // start + 2 => Skip 0b / 0x prefix
+    LayoutSpanDecoder decoder(rack, start + 2, end);
     leftHandSide = Integer::Push(decoder, base);
   } else {
-    // the tokenizer have already ensured the float is syntactically correct
+    // The tokenizer have already ensured the float is syntactically correct
     LayoutSpanDecoder decoder(rack, start, end);
     LayoutSpanDecoder save = decoder;
     size_t decimalPoint = start + OMG::CodePointSearch(&decoder, '.');
     if (decimalPoint == end) {
-      /* continue with the same decoder since E should be after the decimal
-       * point, except when there is no point */
+      /* If decimalPoint not found, looking for smallE from the start,
+       * else continue with the same decoder since smallE should be after the
+       * decimal point */
       decoder = save;
     }
     size_t smallE = start + OMG::CodePointSearch(
                                 &decoder, UCodePointLatinLetterSmallCapitalE);
+    int expValue = 0;
+    if (smallE != end) {  // smallE exists
+      LayoutSpanDecoder exponentDigits(rack, smallE + 1, end);
+      Tree* expTree = Integer::Push(exponentDigits, OMG::Base::Decimal);
+      IntegerHandler expHandler = Integer::Handler(expTree);
+      if (!expHandler.is<int>()) {
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      expValue = expHandler.to<int>();
+      expTree->removeTree();
+    }
 
     LayoutSpanDecoder integerDigits(rack, start,
                                     std::min(smallE, decimalPoint));
-    LayoutSpanDecoder fractionalDigits(rack, decimalPoint + 1, smallE);
-    LayoutSpanDecoder exponentDigits(rack, smallE + 1, end);
-
+    Tree* integerPart = Integer::Push(integerDigits, OMG::Base::Decimal);
     if (decimalPoint == end || smallE == decimalPoint + 1) {
-      // Decimal integer
-      leftHandSide = Integer::Push(integerDigits, OMG::Base::Decimal);
+      // Integer without fractionalDigits
+      leftHandSide = integerPart;
+      if (expValue != 0) {
+        assert(smallE != end);
+        leftHandSide->moveNodeAtNode(SharedTreeStack->pushDecimal());
+        Integer::Push(-expValue);
+      }
+      // Integer(integerPart) || Decimal(integerPart, -expValue)
     } else {
       int offset = smallE - decimalPoint - 1;
       assert(offset > 0);
-      // Decimal<offset>(integerDigits * 10^offset + fractionalDigits)
+      LayoutSpanDecoder fractionalDigits(rack, decimalPoint + 1, smallE);
+      Tree* fractionalPart =
+          Integer::Push(fractionalDigits, OMG::Base::Decimal);
       leftHandSide = SharedTreeStack->pushDecimal();
-      Tree* integerPart = Integer::Push(integerDigits, base);
-      Tree* fractionalPart = Integer::Push(fractionalDigits, base);
       Tree* result =
           IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));
       result->moveTreeOverTree(IntegerHandler::Multiplication(
@@ -396,29 +413,10 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
           Integer::Handler(result), Integer::Handler(fractionalPart)));
       fractionalPart->removeTree();
       integerPart->removeTree();
-      Integer::Push(offset);
-    }
-    if (smallE != end) {
-      // Shift the decimal number by the exponent after the small E
-      Tree* expTree = Integer::Push(exponentDigits, OMG::Base::Decimal);
-      IntegerHandler expHandler = Integer::Handler(expTree);
-      if (!expHandler.is<int>()) {
-        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-      }
-      int expValue = expHandler.to<int>();
-      expTree->removeTree();
-      if (leftHandSide->isDecimal()) {
-        int oldExp = Integer::Handler(leftHandSide->child(1)).to<int>();
-        leftHandSide->child(1)->moveTreeOverTree(
-            Integer::Push(oldExp - expValue));
-      } else {
-        assert(leftHandSide->isInteger());
-        leftHandSide->moveNodeAtNode(SharedTreeStack->pushDecimal());
-        Integer::Push(-expValue);
-      }
+      Integer::Push(offset - expValue);
+      // Decimal(integerDigits*10^offset + fractionalDigits, offset - expValue)
     }
   }
-
   if (generateMixedFractionIfNeeded(leftHandSide)) {
     return;
   }

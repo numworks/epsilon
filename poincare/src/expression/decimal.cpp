@@ -58,7 +58,6 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
 
   WorkingBuffer workingBuffer;
   // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
-  char tempBuffer[PrintFloat::k_maxNumberOfSignificantDigits + 1];
   IntegerHandler m = Integer::Handler(unsignedMantissa);
   int numberOfDigitsInMantissa =
       m.numberOfBase10DigitsWithoutSign(&workingBuffer);
@@ -122,6 +121,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   }
 
   // Serialize the mantissa
+  char tempBuffer[PrintFloat::k_maxNumberOfSignificantDigits + 1];
   int mantissaLength =
       m.serialize(tempBuffer, PrintFloat::k_maxNumberOfSignificantDigits + 1,
                   &workingBuffer);

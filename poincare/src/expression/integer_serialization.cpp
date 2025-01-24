@@ -10,22 +10,21 @@ using UTF8Helper::WriteCodePoint;
 
 namespace Poincare::Internal {
 
+/* Remove the zeroes at the end of an integer, respecting the minimum number
+ * of digits asked for.
+ *
+ * For instance :
+ *
+ * i = 10000
+ * i.removeZeroAtTheEnd(2)
+ * assert(i==10)
+ *
+ * i = 1000
+ * i.removeZeroAtTheEnd(-1)
+ * assert(i==1)
+ */
 void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
                                         WorkingBuffer* workingBuffer) {
-  /* Remove the zeroes at the end of an integer, respecting the minimum number
-   * of digits asked for.
-   *
-   * For instance :
-   *
-   * i = 10000
-   * i.removeZeroAtTheEnd(2)
-   * assert(i==10)
-   *
-   * i = 1000
-   * i.removeZeroAtTheEnd(-1)
-   * assert(i==1)
-   */
-
   if (isZero()) {
     return;
   }

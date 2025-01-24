@@ -33,9 +33,12 @@ Tree* Matrix::Undef(MatrixDimension d) {
 }
 
 Tree* Matrix::Identity(const Tree* n) {
-  assert(n->isInteger());
-  if (Integer::Handler(n).numberOfDigits() > 1 ||
+  if (!n->isInteger() || Integer::Handler(n).numberOfDigits() > 1 ||
       Integer::Handler(n).strictSign() != StrictSign::Positive) {
+    /* Do not handle:
+     * - non integers (even though expression might approximate to integer)
+     * - long integers
+     * - not strictly positive integers */
     return KUndefUnhandled->cloneTree();
   }
   uint8_t nb = *Integer::Handler(n).digits();

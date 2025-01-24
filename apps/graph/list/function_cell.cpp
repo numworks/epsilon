@@ -6,7 +6,7 @@ using namespace Escher;
 
 namespace Graph {
 
-/* Function cell has the folowing layout :
+/* Function cell has the following layout :
  *  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
  * |####|  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _                   |              |
  * |####|  |                             |                   |              |

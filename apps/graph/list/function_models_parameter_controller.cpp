@@ -50,11 +50,11 @@ const char* FunctionModelsParameterController::title() const {
 
 void FunctionModelsParameterController::viewWillAppear() {
   ViewController::viewWillAppear();
+  const Model* model = Models();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    Model model = Models()[i];
     char buffer[k_maxSizeOfNamedModel];
     Poincare::UserExpression e = UserExpression::Parse(
-        ModelWithDefaultName(model, buffer, k_maxSizeOfNamedModel),
+        ModelWithDefaultName(model[i], buffer, k_maxSizeOfNamedModel),
         nullptr);  // No context needed
     m_layouts[i] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,

@@ -619,9 +619,12 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       assert(!Undefined::IsUndefined(up));
       int lowerBound = low.real();
       int upperBound = up.real();
+      // Cloning here to avoid modifying function argument `e`
       Tree* child = upperBoundChild->nextTree()->cloneTree();
       assert(ctx);
       Context ctxCopy = *ctx;
+      /* We ApproximateAndReplaceEveryScalar here to avoid approximate complex
+       * constants on every round of the sum/product computation */
       ApproximateAndReplaceEveryScalar<T>(child, *ctx);
       LocalContext localCtx = LocalContext(NAN, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;

@@ -200,11 +200,7 @@ bool Variables::ReplaceSymbolWithTree(Tree* e, const Tree* symbol,
     }
   }
   if (symbol->isUserNamed() && symbol->nodeIsIdenticalTo(e)) {
-    if (symbol->isUserSymbol()) {
-      e->cloneTreeOverTree(replacement);
-      return true;
-    }
-    if (symbol->treeIsIdenticalTo(e)) {
+    if (symbol->isUserSymbol() || symbol->treeIsIdenticalTo(e)) {
       e->cloneTreeOverTree(replacement);
       return true;
     }

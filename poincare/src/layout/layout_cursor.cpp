@@ -657,11 +657,14 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
 
   /* If the cursor is selecting, it should not enter a new layout
    * but select all of it. */
-  int newIndex = isSelecting()
-                     ? k_outsideIndex
-                     : CursorMotion::IndexAfterHorizontalCursorMove(
-                           nextLayout, direction, currentIndexInNextLayout);
-  assert(newIndex != k_cantMoveIndex);
+  int newIndex =
+      isSelecting()
+          ? nextLayout->isPrisonLayout() ? k_cantMoveIndex : k_outsideIndex
+          : CursorMotion::IndexAfterHorizontalCursorMove(
+                nextLayout, direction, currentIndexInNextLayout);
+  if (newIndex == k_cantMoveIndex) {
+    return false;
+  }
 
   if (newIndex != k_outsideIndex) {
     /* Enter the next layout child

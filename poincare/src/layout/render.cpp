@@ -344,7 +344,8 @@ KDSize Render::Size(const Layout* l) {
       height = Pair::Height(childSize.height(), Pair::MinVerticalMargin(l));
       break;
     }
-    case LayoutType::VerticalOffset: {
+    case LayoutType::VerticalOffset:
+    case LayoutType::Prison: {
       // VerticalOffset have no size per-se, they are handled by their parent
       KDSize childSize = Size(l->child(0));
       width = childSize.width();
@@ -642,7 +643,8 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
                      VariableSlotBaseline(l, s_font) -
                          Baseline(l->child(k_upperBoundIndex)));
     }
-    case LayoutType::VerticalOffset: {
+    case LayoutType::VerticalOffset:
+    case LayoutType::Prison: {
       return KDPointZero;
     }
     case LayoutType::OperatorSeparator:
@@ -747,6 +749,8 @@ KDCoordinate Render::Baseline(const Layout* l) {
     }
     case LayoutType::VerticalOffset:
       return 0;
+    case LayoutType::Prison:
+      return Baseline(l->child(0));
     case LayoutType::OperatorSeparator:
     case LayoutType::UnitSeparator:
     case LayoutType::ThousandsSeparator:
@@ -1386,6 +1390,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       return;
     }
     case LayoutType::VerticalOffset:
+    case LayoutType::Prison:
     case LayoutType::CondensedSum:
       return;
     case LayoutType::PtBinomial:

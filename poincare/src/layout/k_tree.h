@@ -15,6 +15,7 @@ constexpr auto KSuperscriptL = KUnary<Type::VerticalOffsetLayout, 0>();
 constexpr auto KSubscriptL = KUnary<Type::VerticalOffsetLayout, 1>();
 constexpr auto KPrefixSuperscriptL = KUnary<Type::VerticalOffsetLayout, 2>();
 constexpr auto KPrefixSubscriptL = KUnary<Type::VerticalOffsetLayout, 3>();
+constexpr auto KPrisonL = KUnary<Type::PrisonLayout>();
 
 constexpr auto KOperatorSeparatorL = KTree<Type::OperatorSeparatorLayout>();
 constexpr auto KUnitSeparatorL = KTree<Type::UnitSeparatorLayout>();

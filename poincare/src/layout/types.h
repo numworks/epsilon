@@ -15,6 +15,9 @@ NODE(VerticalOffset, BASE, 1, {
   bool isPrefix : 1;
 })
 
+// An invisible layout that confines the cursor inside its rack
+NODE(Prison, BASE, 1)
+
 // Small spaces around a "+" for instance
 NODE(OperatorSeparator, BASE)
 // Small space between a value and its unit

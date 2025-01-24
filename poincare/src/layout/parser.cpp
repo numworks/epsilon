@@ -64,6 +64,13 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
     case LayoutType::UnicodeCodePoint:
     case LayoutType::CombinedCodePoints:
       assert(false);
+    case LayoutType::Prison: {
+      Tree* parsed = Parse(l->child(0), context, method);
+      if (!parsed) {
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      return parsed;
+    }
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces: {
       Tree* list = RackParser(l->child(0), context, method, true).parse();

@@ -12,6 +12,8 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     Tree* l, OMG::HorizontalDirection direction, int currentIndex) {
   int nChildren = l->numberOfChildren();
   switch (l->layoutType()) {
+    case LayoutType::Prison:
+      return k_cantMoveIndex;
     case LayoutType::Point2D:
     case LayoutType::Binomial:
     case LayoutType::Fraction:
@@ -185,6 +187,8 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     Tree* l, OMG::VerticalDirection direction, int currentIndex,
     PositionInLayout positionAtCurrentIndex) {
   switch (l->layoutType()) {
+    case LayoutType::Prison:
+      return k_cantMoveIndex;
     case LayoutType::Fraction:
       if (currentIndex == k_outsideIndex) {
         return direction.isUp() ? TwoRows::k_upperIndex : TwoRows::k_lowerIndex;
@@ -404,6 +408,8 @@ static DeletionMethod StandardDeletionMethodForLayoutContainingArgument(
 DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     const Tree* l, int childIndex) {
   switch (l->layoutType()) {
+    case LayoutType::Prison:
+      return DeletionMethod::MoveLeft;
     case LayoutType::Point2D:
     case LayoutType::Binomial:
       using namespace TwoRows;

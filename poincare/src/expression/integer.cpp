@@ -159,16 +159,16 @@ T IntegerHandler::to() const {
   assert(is<T>());
   /* TODO: use the previous Integer::approximate implementation which stops when
    * the mantissa is complete */
-  T approximation = 0.0f;
+  T approximation = 0;
   if (numberOfDigits() == 0) {
     return approximation;
   }
   for (uint8_t i = numberOfDigits() - 1; i > 0; i--) {
     approximation += static_cast<T>(digit(i));
-    approximation *= k_digitBase;
+    approximation *= static_cast<T>(k_digitBase);
   }
   approximation += static_cast<T>(digit(0));
-  return static_cast<int8_t>(m_sign) * approximation;
+  return static_cast<T>(m_sign) * approximation;
 }
 
 template <>

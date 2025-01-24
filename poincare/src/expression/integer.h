@@ -198,7 +198,7 @@ class IntegerHandler final {
   }
 
  private:
-  static constexpr float k_digitBase =
+  static constexpr int k_digitBase =
       1 << sizeof(uint8_t) * OMG::BitHelper::k_numberOfBitsInByte;
   static int8_t Ucmp(const IntegerHandler& a,
                      const IntegerHandler& b);  // -1, 0, or 1

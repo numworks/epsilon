@@ -407,11 +407,8 @@ QUIZ_CASE(pcj_integer_cast) {
   assert_integer_cast<uint32_t>(Integer::Handler(4294967295_e), true,
                                 4294967295);
   assert_integer_cast<uint32_t>(Integer::Handler(1234567890123_e), false);
-  /* TODO: the approximated value for numbers only representable by uint64_t is
-   * wrong */
-  // assert_integer_cast<uint64_t>(Integer::Handler(1234567890123_e), true,
-  //                               1234567890123);
-  // assert_integer_cast<uint64_t>(Integer::Handler(9223372036854775807_e),
-  // true,
-  //                               9223372036854775807);
+  assert_integer_cast<uint64_t>(Integer::Handler(1234567890123_e), true,
+                                1234567890123);
+  assert_integer_cast<uint64_t>(Integer::Handler(9223372036854775807_e), true,
+                                9223372036854775807);
 }

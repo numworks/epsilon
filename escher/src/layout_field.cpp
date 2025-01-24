@@ -55,7 +55,9 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
 
 void LayoutField::ContentView::copySelection(Poincare::Context* context,
                                              bool intoStoreMenu) {
-  assert(App::app()->canStoreLayout());
+  // Unit tests use this method without any static app
+  assert((!App::app() && !intoStoreMenu) ||
+         (App::app() && App::app()->canStoreLayout()));
   Poincare::Internal::LayoutSelection selection = m_cursor.selection();
   if (selection.isEmpty()) {
     if (intoStoreMenu) {

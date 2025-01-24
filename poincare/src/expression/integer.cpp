@@ -206,6 +206,11 @@ bool IntegerHandler::is<int>() const {
   return isSignedType<int>();
 }
 
+template <>
+bool IntegerHandler::is<uint64_t>() const {
+  return isUnsignedType<uint64_t>();
+}
+
 /* Getters */
 
 uint8_t* IntegerHandler::digits() {
@@ -815,6 +820,7 @@ OMG::Troolean Integer::IsPositiveRationalInteger(const Tree* e) {
 
 template float IntegerHandler::to<float>() const;
 template double IntegerHandler::to<double>() const;
+template uint64_t IntegerHandler::to<uint64_t>() const;
 template uint32_t IntegerHandler::to<uint32_t>() const;
 template uint8_t IntegerHandler::to<uint8_t>() const;
 template int8_t IntegerHandler::to<int8_t>() const;

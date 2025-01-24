@@ -239,9 +239,9 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
      * to radian loop. */
     if (projectionContext->m_complexFormat == ComplexFormat::Real &&
         !e->isATan()) {
+#if POINCARE_PIECEWISE
       // Only real functions asin and acos have a domain of definition
       // acos(A) -> atrig(A, 0) if -1 <= A <= 1
-#if POINCARE_PIECEWISE
       PatternMatching::MatchReplace(
           e, KACos(KA),
           KDep(KATrig(KA, 0_e),
@@ -254,8 +254,11 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
                    KDepList(KPiecewise(0_e, KInferiorEqual(KAbs(KA), 1_e),
                                        KNonReal))));
 #else
-      // TODO FIXME
-      OMG::unreachable();
+      // TODO fixme
+      // acos(A) -> atrig(A, 0) if -1 <= A <= 1
+      PatternMatching::MatchReplace(e, KACos(KA), KATrig(KA, 0_e)) ||
+          // asin(A) -> atrig(A, 1) if -1 <= A <= 1
+          PatternMatching::MatchReplace(e, KASin(KA), KATrig(KA, 1_e));
 #endif
     } else {
       // acos(A) -> atrig(A, 0)

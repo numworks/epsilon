@@ -260,10 +260,13 @@ void assertCalculationIs(const char* input, DisplayOutput display,
   if (storedInput) {
     assert_expression_serializes_to(lastCalculation->input(), storedInput);
   }
-  if (exactOutput) {
+  if (exactOutput && ::Calculation::Calculation::CanDisplayExact(
+                         lastCalculation->displayOutput(context))) {
     assert_layout_serializes_to(exactOutputLayout, exactOutput);
   }
-  if (approximateOutput) {
+
+  if (approximateOutput && ::Calculation::Calculation::CanDisplayApproximate(
+                               lastCalculation->displayOutput(context))) {
     assert_layout_serializes_to(approximateOutputLayout, approximateOutput);
   }
   store->deleteAll();

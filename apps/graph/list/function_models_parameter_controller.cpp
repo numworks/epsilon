@@ -121,6 +121,13 @@ FunctionModelsParameterController::Models() {
   }
 }
 
+/* Tell if the country prefers y=x or f(x)=x */
+bool FunctionModelsParameterController::EquationsPrefered() {
+  CountryPreferences::GraphTemplateDefault templateDefault =
+      GlobalPreferences::SharedGlobalPreferences()->graphTemplateDefault();
+  return CountryPreferences::GraphTemplateDefault::Equation == templateDefault;
+}
+
 bool FunctionModelsParameterController::ModelIsAllowed(Model model) {
   ExamMode examMode = Preferences::SharedPreferences()->examMode();
   if (examMode.forbidInequalityGraphing() && model == Model::Inequality) {

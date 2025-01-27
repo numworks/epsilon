@@ -87,6 +87,9 @@ class __attribute__((packed)) GlobalPreferences {
   CountryPreferences::SolverDoubleRootName solverDoubleRootName() const {
     return countryPreferences().solverDoubleRootName();
   }
+  CountryPreferences::GraphTemplateDefault graphTemplateDefault() const {
+    return countryPreferences().graphTemplateDefault();
+  }
   int sequencesInitialRank() const;
 
   const char* openIntervalChar(bool left) const {

@@ -63,6 +63,11 @@ class CountryPreferences {
     Variant1,  // x0 (FR)
   };
 
+  enum class GraphTemplateDefault : uint8_t {
+    Function,  // f(x)=x
+    Equation,  // y=x
+  };
+
   constexpr CountryPreferences(
       AvailableExamModes availableExamModes,
       MethodForQuartiles methodForQuartiles,
@@ -80,7 +85,8 @@ class CountryPreferences {
       Poincare::Preferences::LogarithmBasePosition logarithmBasePosition,
       Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent,
       Poincare::Preferences::ParabolaParameter parabolaParameter,
-      SolverDoubleRootName solverDoubleRootName)
+      SolverDoubleRootName solverDoubleRootName,
+      GraphTemplateDefault graphTemplateDefault)
       : m_availableExamModes(availableExamModes),
         m_homeAppsLayout(homeAppsLayout),
         m_unitFormat(unitFormat),
@@ -99,7 +105,8 @@ class CountryPreferences {
         m_logarithmBasePosition(logarithmBasePosition),
         m_logarithmKeyEvent(logarithmKeyEvent),
         m_parabolaParameter(parabolaParameter),
-        m_solverDoubleRootName(solverDoubleRootName) {}
+        m_solverDoubleRootName(solverDoubleRootName),
+        m_graphTemplateDefault(graphTemplateDefault) {}
 
   constexpr AvailableExamModes availableExamModes() const {
     return m_availableExamModes;
@@ -158,6 +165,9 @@ class CountryPreferences {
   constexpr SolverDoubleRootName solverDoubleRootName() const {
     return m_solverDoubleRootName;
   }
+  constexpr GraphTemplateDefault graphTemplateDefault() const {
+    return m_graphTemplateDefault;
+  }
 
  private:
   const AvailableExamModes m_availableExamModes;
@@ -179,6 +189,7 @@ class CountryPreferences {
   const Poincare::Preferences::LogarithmKeyEvent m_logarithmKeyEvent;
   const Poincare::Preferences::ParabolaParameter m_parabolaParameter;
   const SolverDoubleRootName m_solverDoubleRootName;
+  const GraphTemplateDefault m_graphTemplateDefault;
 };
 
 #endif

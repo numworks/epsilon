@@ -26,8 +26,7 @@ class FunctionModelsParameterController
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override;
   Escher::HighlightCell* cell(int row) override;
-  /* Tell if the country prefers y=x or f(x)=x */
-  static bool EquationsPrefered() { return Models()[0] == Model::Equation; }
+  static bool EquationsPrefered();
 
  private:
   enum class Model : uint8_t {

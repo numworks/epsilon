@@ -95,7 +95,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
       approximateOutput.isUninitialized() || input.isStore() ||
       exactOutput.isList() || approximateOutput.isList() ||
       approximateOutput.recursivelyMatches([](const NewExpression e) {
-        return e.isUndefined() || e.isPlusOrMinusInfinity();
+        return e.isUndefinedOrNonReal() || e.isPlusOrMinusInfinity();
       })) {
     return true;
   }

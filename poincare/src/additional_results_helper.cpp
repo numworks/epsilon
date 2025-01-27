@@ -166,7 +166,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
    * because the angle might not be the same modulo 2π. */
   assert(!exactOutput.isScalarComplex(calculationPreferences, context));
   const Tree* directTrigoFunction;
-  if (inputTree->isDirectTrigonometryFunction() &&
+  if ((inputTree->isDirectTrigonometryFunction() ||
+       inputTree->isDirectAdvancedTrigonometryFunction()) &&
       !inputTree->hasChildSatisfying(
           [](const Tree* e) { return e->isUserNamed(); })) {
     /* Do not display trigonometric additional informations, in case the symbol
@@ -174,7 +175,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
      * Ex: 0->x; tan(x); 3->x; => The additional results of tan(x) become
      * inconsistent. And if x is deleted, it crashes. */
     directTrigoFunction = inputTree;
-  } else if (exactTree->isDirectTrigonometryFunction()) {
+  } else if (exactTree->isDirectTrigonometryFunction() ||
+             exactTree->isDirectAdvancedTrigonometryFunction()) {
     directTrigoFunction = exactTree;
   } else {
     return UserExpression();
@@ -203,7 +205,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   if (Simplification::Simplify(exactAngle, projCtx)) {
     if (exactAngleDimension.isUnit()) {
       assert(exactAngleDimension.isSimpleAngleUnit());
-      assert(directTrigoFunction->isDirectTrigonometryFunction());
+      assert(directTrigoFunction->isDirectTrigonometryFunction() ||
+             directTrigoFunction->isDirectAdvancedTrigonometryFunction());
       /* When removing units, angle units are converted to radians, so we
        * manually add the conversion ratio back to preserve the input angleUnit.
        */
@@ -247,6 +250,8 @@ bool AdditionalResultsHelper::expressionIsInterestingFunction(
 bool AdditionalResultsHelper::HasInverseTrigo(
     const UserExpression input, const UserExpression exactOutput) {
   return input.tree()->isInverseTrigonometryFunction() ||
+         input.tree()->isInverseAdvancedTrigonometryFunction() ||
+         exactOutput.tree()->isInverseAdvancedTrigonometryFunction() ||
          exactOutput.tree()->isInverseTrigonometryFunction();
 }
 

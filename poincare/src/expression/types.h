@@ -130,14 +130,14 @@ NODE(ATanRad, 1)
 RANGE(InverseTrigonometryFunction, ACos, ATanRad)
 RANGE(TrigonometryFunction, Cos, ATanRad)
 
-NODE(Csc, 1)
 NODE(Sec, 1)
+NODE(Csc, 1)
 NODE(Cot, 1)
 
 RANGE(DirectAdvancedTrigonometryFunction, Sec, Cot)
 
-NODE(ACsc, 1)
 NODE(ASec, 1)
+NODE(ACsc, 1)
 NODE(ACot, 1)
 
 RANGE(InverseAdvancedTrigonometryFunction, ASec, ACot)

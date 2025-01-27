@@ -363,6 +363,8 @@ void assert_expression_parses_and_serializes_to_itself(
 
 void assert_layout_serializes_to(const Tree *layout,
                                  const char *serialization) {
+  assert(layout);
+  assert(serialization);
   constexpr int bufferSize = 255;
   char buffer[bufferSize];
   char result[bufferSize];

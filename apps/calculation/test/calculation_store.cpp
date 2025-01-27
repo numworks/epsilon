@@ -280,6 +280,13 @@ QUIZ_CASE(calculation_significant_digits) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
+  assertCalculationIs(
+      "123456789123456789", DisplayOutput::ExactAndApproximateToggle,
+      EqualSign::Approximation, "123456789123456789", "1.234567891ᴇ17",
+      "123456789123456789", &globalContext, &store);
+  assertCalculationIs("123123456789", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation, "123123456789",
+                      "1.231234568ᴇ11", "123123456789", &globalContext, &store);
   assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "11123456789", "1.112345679ᴇ10",
                       "11123456789", &globalContext, &store);
@@ -287,6 +294,9 @@ QUIZ_CASE(calculation_significant_digits) {
                       DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Unknown, "1123456789", "1123456789",
                       "1123456789", &globalContext, &store);
+  assertCalculationIs("123456789", DisplayOutput::ApproximateIsIdenticalToExact,
+                      EqualSign::Equal, "123456789", "123456789", "123456789",
+                      &globalContext, &store);
 }
 
 QUIZ_CASE(calculation_display_exact_approximate) {

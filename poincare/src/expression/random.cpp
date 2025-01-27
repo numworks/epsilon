@@ -19,6 +19,17 @@ Random::Context::Context(bool isInitialized) : m_isInitialized(isInitialized) {
   }
 }
 
+bool Random::UnSeedRandomNodes(Tree* e) {
+  bool changed = false;
+  for (Tree* d : e->selfAndDescendants()) {
+    if (d->isRandomized()) {
+      ResetSeed(d);
+      changed = true;
+    }
+  }
+  return changed;
+}
+
 uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
   uint8_t currentSeed = maxSeed;
   int descendants = 1;

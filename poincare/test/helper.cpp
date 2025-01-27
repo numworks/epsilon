@@ -159,11 +159,11 @@ Tree* parse(const char* input, Poincare::Context* context,
   return private_parse(input, context, parseForAssignment);
 }
 
-Tree* parse_and_simplify(const char* input) {
+Tree* parse_and_reduce(const char* input) {
   Tree* e = parse(input);
   assert(e);
   ProjectionContext ctx = {};
-  simplify(e, &ctx);
+  simplify(e, &ctx, false);
   return e;
 }
 

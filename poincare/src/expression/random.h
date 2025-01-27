@@ -41,6 +41,7 @@ class Random {
   /* Takes a Tree containing random nodes (seeded, or not, up to maxSeed) and
    * seed the unseeded nodes. Return the last seed. */
   static uint8_t SeedRandomNodes(Tree* e, uint8_t maxSeed = 0);
+  static bool UnSeedRandomNodes(Tree* e);
   static uint8_t GetSeed(const Tree* randomTree) {
     assert(randomTree->isRandomized());
     return randomTree->nodeValue(0);
@@ -58,6 +59,10 @@ class Random {
   static void SetSeed(Tree* randomTree, uint8_t seed) {
     assert(randomTree->isRandomized() && GetSeed(randomTree) == 0);
     randomTree->setNodeValue(0, seed);
+  }
+  static void ResetSeed(Tree* randomTree) {
+    assert(randomTree->isRandomized());
+    randomTree->setNodeValue(0, 0);
   }
 };
 

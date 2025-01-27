@@ -59,7 +59,7 @@ void simplify_and_compare_approximates(const char* input1, const char* input2,
 // Compares the approximated elements of a list of size 2
 template <typename T>
 void simplify_and_compare_approximates_list(const char* input, bool equal) {
-  Tree* e = parse_and_simplify(input);
+  Tree* e = parse_and_reduce(input);
   assert(Dimension::ListLength(e) == 2);
   Tree* eApproximated = Approximation::ToTree<T>(
       e, Approximation::Parameters{.isRootAndCanHaveRandom = true,

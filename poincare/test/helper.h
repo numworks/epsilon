@@ -133,7 +133,7 @@ const char* ApproximatedParsedIntegerString();
 Tree* parse(const char* input, Poincare::Context* context = nullptr,
             bool parseForAssignment = false);
 
-Tree* parse_and_simplify(const char* input);
+Tree* parse_and_reduce(const char* input);
 
 void assert_text_not_parsable(const char* input,
                               Poincare::Context* context = nullptr);

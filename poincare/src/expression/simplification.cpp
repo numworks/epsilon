@@ -123,7 +123,9 @@ bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext) {
   assert(e->isUndefined() ||
          projectionContext->m_dimension == Dimension::Get(e));
   bool changed = HandleUnits(e, projectionContext);
-  return Beautification::DeepBeautify(e, *projectionContext) || changed;
+  changed = Beautification::DeepBeautify(e, *projectionContext) || changed;
+  changed = Random::UnSeedRandomNodes(e) || changed;
+  return changed;
 }
 
 bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {

@@ -177,27 +177,27 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   }
 
   bool reductionFailure = false;
-  PoincareHelpers::CloneAndSimplify(
-      &formula, &storeContext,
+  SystemExpression reduced = PoincareHelpers::CloneAndReduce(
+      formula, &storeContext,
       {.target = ReductionTarget::SystemForApproximation,
        .symbolicComputation = SymbolicComputation::ReplaceAllSymbols},
       &reductionFailure);
 
-  if (reductionFailure || formula.isUndefined()) {
+  if (reductionFailure || reduced.isUndefined()) {
     return FillColumnStatus::DataNotSuitable;
   }
 
-  if (formula.hasRandomList() || !formula.isList()) {
+  if (reduced.hasRandomList() || !reduced.isList()) {
     // Sometimes the formula is a list but the reduction failed.
-    formula = PoincareHelpers::Approximate<double>(formula, &storeContext);
+    reduced = PoincareHelpers::Approximate<double>(reduced, &storeContext);
   }
 
-  if (formula.isList()) {
+  if (reduced.isList()) {
     bool allChildrenAreUndefined = true;
     int formulaNumberOfChildren =
-        static_cast<List&>(formula).numberOfChildren();
+        static_cast<List&>(reduced).numberOfChildren();
     for (int i = 0; i < formulaNumberOfChildren; i++) {
-      if (!formula.cloneChildAtIndex(i).isUndefined()) {
+      if (!reduced.cloneChildAtIndex(i).isUndefined()) {
         allChildrenAreUndefined = false;
         break;
       }
@@ -209,7 +209,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
      * same time in the pool. We might be working with huge lists right now, so
      * it's better to get out of the scope and destroy the list before storing
      * the data of the double pair store in the storage. */
-    store()->setList(static_cast<Poincare::List&>(formula), *series, *column,
+    store()->setList(static_cast<Poincare::List&>(reduced), *series, *column,
                      true, true);
     return FillColumnStatus::Success;
   }

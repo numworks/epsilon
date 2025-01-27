@@ -1606,6 +1606,11 @@ QUIZ_CASE(pcj_simplification_decimal) {
   (2_e)->cloneTree();
   simplify(tree, &ctx);
   assert_trees_are_equal(tree, KDiv(31_e, 25_e));
+  tree->removeTree();
+  // Decimal with integers larger than ints
+  simplifies_to(
+      ".99999999999999999999999999999999 - 3*.33333333333333333333333333333333",
+      "0");
 }
 
 QUIZ_CASE(pcj_simplification_rational_power) {

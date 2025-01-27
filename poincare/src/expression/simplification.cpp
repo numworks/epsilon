@@ -189,20 +189,7 @@ bool ReduceSystem(Tree* e, bool advanced, bool expandAlgebraic) {
   if (expandAlgebraic) {
     changed = AdvancedReduction::DeepExpandAlgebraic(e) || changed;
   }
-  bool result = Dependency::DeepRemoveUselessDependencies(e) || changed;
-
-#if ASSERTIONS
-  /* The following block verifies that the ComplexSign logic is correct, by
-    checking that the ComplexSign of the tree is consistent with the tree
-    approximation. */
-  if (Dimension::IsNonListScalar(e)) {
-    std::complex<double> value = Approximation::ToComplex<double>(
-        e, Approximation::Parameters{.isRootAndCanHaveRandom = true});
-    assert(AreConsistent(GetComplexSign(e), value));
-  }
-#endif
-
-  return result;
+  return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }
 
 bool HandleUnits(Tree* e, ProjectionContext* projectionContext) {

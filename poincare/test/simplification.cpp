@@ -847,7 +847,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(-3-√(8))", "(1+√(2))×i", cartesianCtx);
   simplifies_to("√(17+4×√(13))", "2+√(13)");
   simplifies_to("√(√(1058)-√(896))", "root(2,4)×(4-√(7))", cartesianCtx);
-  simplifies_to("√(57×√(17)+68×√(10))", "root(17,4)×(2×√(10)+√(17))");
+  simplifies_to("√(57×√(17)+68×√(10))", "2×√(10)×root(17,4)+17^(3/4)");
   simplifies_to("(-8)^(1/3)-1-√(3)×i", "0", cartesianCtx);
   simplifies_to("√(-3)-√(3)×i", "0", cartesianCtx);
 }
@@ -1622,7 +1622,7 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("1/(√(3)+√(5))",
                 "-(√(3)-√(5))/2");  // TODO: Metric "(√(3)-√(5))/2"
   simplifies_to("1/(√(3)-√(5))", "-(√(3)+√(5))/2");
-  simplifies_to("1/(√(120)+2√(30))", "1/(2×√(30)+√(120))");  // "√(30)/120"
+  simplifies_to("1/(√(120)+2√(30))", "√(30)/120");
   // 1/√a => √a/a
   simplifies_to("1/√(3)", "√(3)/3");
   // TODO: Maybe we want to limit rational power simplification to ration bases.

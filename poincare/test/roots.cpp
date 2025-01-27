@@ -103,9 +103,7 @@ QUIZ_CASE(pcj_roots) {
   assert_roots_are("{1, 1, 0, 0}", "{-1,0}");
   assert_roots_are("{1, 0, 0, -8}", "{2,-1-√(3)×i,-1+√(3)×i}");
   assert_roots_are("{2, -4, -1, 2}", "{-√(2)/2,√(2)/2,2}");
-  assert_roots_are("{1, -4, 6, -24}",
-                   "{4,-√(24)/2×i,√(24)/2×i}");  // TODO: this should simplify
-                                                 // to "{4,-√(6)×i,√(6)×i}"
+  assert_roots_are("{1, -4, 6, -24}", "{4,-√(6)×i,√(6)×i}");
   assert_roots_are("{-1, 0, 3, 2}", "{-1,2}");
   assert_roots_are("{4, 0, -12, -8}", "{-1,2}");
   assert_roots_are("{1, -i, -1, i}", "{-1,1,i}");

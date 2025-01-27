@@ -615,42 +615,54 @@ static bool ReduceNestedRadicals(Tree* e) {
   return false;
 }
 
-IntegerHandler SquareRoot(IntegerHandler m) {
-  IntegerHandler res(-1);
-  bool isSquareRoot = true;
+static bool ReduceSquareRoot(Tree* e) {
+  // √(m^2*n) = m√(n)
+  PatternMatching::Context ctx;
+  if (!(PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KA))), &ctx) &&
+        ctx.getTree(KA)->isPositiveInteger())) {
+    return false;
+  }
   Arithmetic::FactorizedInteger factorization =
-      Arithmetic::PrimeFactorization(m);
+      Arithmetic::PrimeFactorization(Rational::Numerator(ctx.getTree(KA)));
   if (factorization.numberOfFactors ==
       Arithmetic::FactorizedInteger::k_factorizationFailed) {
-    return res;
+    return false;
   }
-  Tree* root = SharedTreeStack->pushOne();
+  TreeRef innerTerm = SharedTreeStack->pushOne();
+  TreeRef outerTerm = SharedTreeStack->pushOne();
   for (int i = 0; i < factorization.numberOfFactors; i++) {
+    // √(factor^(2*q+r) * n) = (factor^q) * √(factor^r * n)
     DivisionResult<Tree*> div = IntegerHandler::Division(
         factorization.coefficients[i], IntegerHandler(2));
-    if (Rational::Numerator(div.remainder).isZero()) {
-      TreeRef updatedRoot;
-      Tree* factor = Integer::Push(factorization.factors[i]);
-      Tree* power = Rational::IntegerPower(factor, div.quotient);
-      updatedRoot = Rational::Multiplication(root, power);
-      power->removeTree();
-      factor->removeTree();
-      div.remainder->removeTree();
-      div.quotient->removeTree();
-      root->moveTreeOverTree(updatedRoot);
-    } else {
-      div.remainder->removeTree();
-      div.quotient->removeTree();
-      isSquareRoot = false;
-      break;
-    }
+    Tree* factor = Integer::Push(factorization.factors[i]);
+    TreeRef powerIn = Rational::IntegerPower(factor, div.remainder);
+    TreeRef powerOut = Rational::IntegerPower(factor, div.quotient);
+    factor->removeTree();
+    div.remainder->removeTree();
+    div.quotient->removeTree();
+    innerTerm->moveTreeOverTree(Rational::Multiplication(innerTerm, powerIn));
+    outerTerm->moveTreeOverTree(Rational::Multiplication(outerTerm, powerOut));
+    powerOut->removeTree();
+    powerIn->removeTree();
   }
-  if (isSquareRoot) {
-    assert(root->isInteger());
-    res = Rational::Numerator(root);
+  if (outerTerm->isOne()) {
+    // Cannot move anything out of the root
+    innerTerm->removeTree();
+    outerTerm->removeTree();
+    return false;
   }
-  root->removeTree();
-  return res;
+  if (innerTerm->isOne()) {
+    // m√(1) = m
+    innerTerm->removeTree();
+    e->moveTreeOverTree(outerTerm);
+    return true;
+  }
+  e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      KMult(KA, KExp(KMult(1_e / 2_e, KLn(KB)))),
+      {.KA = outerTerm, .KB = innerTerm}));
+  innerTerm->removeTree();
+  outerTerm->removeTree();
+  return true;
 }
 
 bool SystematicOperation::ReduceExp(Tree* e) {
@@ -685,17 +697,6 @@ bool SystematicOperation::ReduceExp(Tree* e) {
   }
   if (child->isMult()) {
     PatternMatching::Context ctx;
-    if (PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KA))), &ctx) &&
-        ctx.getTree(KA)->isPositiveInteger()) {
-      /* √A = B with B a positive integer, if A is a positive integer and a
-       * perfect square */
-      IntegerHandler m = Rational::Numerator(ctx.getTree(KA));
-      IntegerHandler res = SquareRoot(m);
-      if (!res.isMinusOne()) {
-        e->moveTreeOverTree(res.pushOnTreeStack());
-        return true;
-      }
-    }
     if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
         (ctx.getTree(KB)->isZero() ||
          (ctx.getTree(KA)->isRational() &&
@@ -729,7 +730,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
       e->moveTreeOverTree(PatternMatching::Create(KExp(KA), ctx));
       return true;
     }
-    return ReduceNestedRadicals(e);
+    return ReduceSquareRoot(e) || ReduceNestedRadicals(e);
   }
   return false;
 }

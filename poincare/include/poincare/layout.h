@@ -59,13 +59,13 @@ class LayoutObject final : public PoolObject,
 
 class Layout final : public PoolHandle {
  public:
-  Layout() {}
+  Layout() = default;
 
+  // Implicit conversion from a const Tree*
   Layout(const Internal::Tree* tree) {
     // TODO is copy-elimination guaranteed here ?
     *this = Builder(tree);
   }
-
   template <Internal::KTrees::KTreeConcept T>
   Layout(T t) : Layout(static_cast<const Internal::Tree*>(t)) {
     static_assert(t.type().isRackLayout());
@@ -90,7 +90,8 @@ class Layout final : public PoolHandle {
 
   static Layout Create(const Internal::Tree* structure,
                        Internal::ContextTrees ctx);
-  operator const Internal::Tree*() { return tree(); }
+  // Implicit conversion to a const Tree*
+  operator const Internal::Tree*() const { return tree(); }
 
   static Layout CodePoint(CodePoint cp);
   static Layout String(const char* str, int length = -1);

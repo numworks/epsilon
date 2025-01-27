@@ -238,7 +238,8 @@ NODE(Var, BASE, 0, {
 NODE(Sum, SUM_AND_PRODUCT, 4)
 
 // Product(Symbol, LowerBound, UpperBound, Function)
-NODE(Product, SUM_AND_PRODUCT, 4)
+// FIXME needed by binomial
+NODE(Product, BASE, 4)
 
 // Diff(Symbol, SymbolValue, Order, Derivand)
 NODE(Diff, DIFF, 4)

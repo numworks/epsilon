@@ -147,11 +147,9 @@ QUIZ_CASE(poincare_serialization_decimal) {
       "0.00000099999999999995", "9.9999999999995ᴇ-7", &ctx, ScientificMode, 14);
   assert_expression_parses_and_serializes_to("0.000000999999999999995", "1ᴇ-6",
                                              &ctx, DecimalMode);
-#if 0  // TODO_PCJ
   assert_expression_parses_and_serializes_to(
       "0.000000999999999901200121020102010201201201021099995",
       "9.999999999012ᴇ-7", &ctx, DecimalMode, 14);
-#endif
   assert_expression_parses_and_serializes_to(
       "9999999999999.53", "9999999999999.5", &ctx, DecimalMode, 14);
   assert_expression_parses_and_serializes_to("99999999999999.54", "1ᴇ14", &ctx,

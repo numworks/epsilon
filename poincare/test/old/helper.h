@@ -178,4 +178,7 @@ void assert_expression_parses_and_serializes_to(
 void assert_expression_parses_and_serializes_to_itself(
     const char* expression, Shared::GlobalContext* globalContext);
 
+void assert_layout_serializes_to(const Poincare::Internal::Tree* layout,
+                                 const char* serialization);
+
 #endif

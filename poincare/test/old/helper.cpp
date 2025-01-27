@@ -361,6 +361,26 @@ void assert_expression_parses_and_serializes_to_itself(
                                                     globalContext);
 }
 
+void assert_layout_serializes_to(const Tree *layout,
+                                 const char *serialization) {
+  constexpr int bufferSize = 255;
+  char buffer[bufferSize];
+  char result[bufferSize];
+  copy_without_system_chars(result, serialization);
+  *Serialize(layout, buffer, buffer + bufferSize) = 0;
+  copy_without_system_chars(buffer, buffer);
+  bool success = strcmp(buffer, result) == 0;
+#if POINCARE_TREE_LOG
+  if (!success) {
+    std::cout << "\nSerialization test failure with: \n";
+    layout->log();
+    std::cout << "\nSerialized to " << buffer << " instead of " << result
+              << "\n\n";
+  }
+#endif
+  quiz_assert(success);
+}
+
 template void assert_expression_approximates_to<float>(
     char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
     Preferences::ComplexFormat, int);

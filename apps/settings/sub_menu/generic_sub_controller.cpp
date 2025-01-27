@@ -26,10 +26,11 @@ const char* GenericSubController::title() const {
 void GenericSubController::initView() {
   ViewController::initView();
   m_selectableListView.resetSizeAndOffsetMemoization();
-  /* This can't be done in didEnterResponderChain because we don't want it to
-   * be done everytime the pop-up disappears. For example, if we are editing a
-   * field and a pop-up shows up with a warning, we don't want to reload the
-   * entire table when dismissing the pop-up (that would erase the edition). */
+  /* This can't be done in handleResponderChainEvent(didEnter) because we don't
+   * want it to be done everytime the pop-up disappears. For example, if we are
+   * editing a field and a pop-up shows up with a warning, we don't want to
+   * reload the entire table when dismissing the pop-up (that would erase the
+   * edition). */
   selectRow(initialSelectedRow());
   setOffset(KDPointZero);
 }

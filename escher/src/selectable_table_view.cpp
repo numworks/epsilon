@@ -276,18 +276,18 @@ void SelectableTableView::didBecomeFirstResponder() {
   }
 }
 
-void SelectableTableView::didEnterResponderChain(
-    Responder* previousFirstResponder) {
-  int col = selectedColumn();
-  int row = selectedRow();
-  selectRow(-1);
-  selectCellAtLocation(col, row, false);
-}
-
-void SelectableTableView::willExitResponderChain(
-    Responder* nextFirstResponder) {
-  if (nextFirstResponder != nullptr) {
-    unhighlightSelectedCell();
+void SelectableTableView::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::DidEnter) {
+    int col = selectedColumn();
+    int row = selectedRow();
+    selectRow(-1);
+    selectCellAtLocation(col, row, false);
+  } else {
+    /* WillExit */
+    if (event.nextFirstResponder != nullptr) {
+      unhighlightSelectedCell();
+    }
   }
 }
 

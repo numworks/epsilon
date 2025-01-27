@@ -37,7 +37,7 @@ class InteractiveCurveViewController
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void willExitResponderChain(Responder* nextFirstResponder) override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ViewController
   ViewController::TitlesDisplay titlesDisplay() const override {

@@ -122,9 +122,11 @@ void StackViewController::setupActiveViewController() {
   App::app()->setFirstResponder(vc);
 }
 
-void StackViewController::didEnterResponderChain(
-    Responder* previousFirstResponder) {
-  m_displayedAsModal = App::app()->modalViewController()->isDisplayingModal();
+void StackViewController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::DidEnter) {
+    m_displayedAsModal = App::app()->modalViewController()->isDisplayingModal();
+  }
 }
 
 void StackViewController::didBecomeFirstResponder() {

@@ -26,18 +26,19 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
   return GenericSubController::handleEvent(event);
 }
 
-void ExamModeController::didEnterResponderChain(
-    Responder* previousFirstResponder) {
-  /* When a pop-up is dismissed, the exam mode status might have changed. We
-   * reload the selection as the number of rows might have also changed. We
-   * force to reload the entire data because they might have changed. */
-  selectRow(initialSelectedRow());
-  m_contentView.reload();
-  // We add a message when the mode exam is on
-  m_contentView.setMessage(
-      Preferences::SharedPreferences()->examMode().isActive()
-          ? I18n::Message::ToDeactivateExamMode
-          : I18n::Message::Default);
+void ExamModeController::handleResponderChainEvent(ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::DidEnter) {
+    /* When a pop-up is dismissed, the exam mode status might have changed. We
+     * reload the selection as the number of rows might have also changed. We
+     * force to reload the entire data because they might have changed. */
+    selectRow(initialSelectedRow());
+    m_contentView.reload();
+    // We add a message when the mode exam is on
+    m_contentView.setMessage(
+        Preferences::SharedPreferences()->examMode().isActive()
+            ? I18n::Message::ToDeactivateExamMode
+            : I18n::Message::Default);
+  }
 }
 
 int ExamModeController::numberOfRows() const {

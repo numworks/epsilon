@@ -20,7 +20,8 @@ class PythonVariableBoxController
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
-  void didEnterResponderChain(Responder* previousFirstResponder) override;
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
 
   /* MemoizedListViewDataSource */
   KDCoordinate nonMemoizedRowHeight(int row) override;

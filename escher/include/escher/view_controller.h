@@ -12,14 +12,14 @@ extern "C" {
  *  - Handling user input
  *
  * The methods viewWillAppear is called in the following order relatively to
- * Responder's methods -didBecomeFirstResponder and didEnterResponderChain:
+ * Responder's methods -didBecomeFirstResponder and handleResponderChainEvent:
  * - viewWillAppear
- * - didEnterResponderChain
+ * - handleResponderChainEvent(didEnter)
  * - didBecomeFirstResponder
  * The methods viewWillDisappear is called in the following order relatively to
- * Responder's methods -willResignFirstResponder and willExitResponderChain:
+ * Responder's methods -willResignFirstResponder and handleResponderChainEvent:
  * - viewWillDisappear
- * - willExitResponderChain
+ * - handleResponderChainEvent(wilExit)
  * - willResignFirstResponder
  *
  * Both methods are always called after setting a view and laying its subwiews

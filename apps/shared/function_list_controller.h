@@ -26,8 +26,8 @@ class FunctionListController : public ExpressionModelListController,
       int index, Escher::ButtonRowController::Position position) const override;
 
   /* Responder */
-  void didEnterResponderChain(Escher::Responder* nextFirstResponder) override;
-  void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
   void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 

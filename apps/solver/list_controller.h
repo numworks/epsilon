@@ -30,8 +30,8 @@ class ListController : public Shared::ExpressionModelListController,
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void didEnterResponderChain(
-      Escher::Responder* previousFirstResponder) override;
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
   /* ViewController */
   Escher::View* view() override { return &m_equationListView; }
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,

@@ -95,27 +95,29 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void DataViewController::didEnterResponderChain(Responder* firstResponder) {
-  if (!m_store->hasActiveSeries(activeSeriesMethod()) ||
-      !dataView()->plotViewForSeries(selectedSeries())->hasFocus()) {
-    header()->setSelectedButton(0);
+void DataViewController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::DidEnter) {
+    if (!m_store->hasActiveSeries(activeSeriesMethod()) ||
+        !dataView()->plotViewForSeries(selectedSeries())->hasFocus()) {
+      header()->setSelectedButton(0);
+    } else {
+      assert(activeSeriesMethod()(m_store, selectedSeries()));
+      dataView()->setDisplayBanner(true);
+      dataView()->selectViewForSeries(selectedSeries());
+      highlightSelection();
+    }
   } else {
-    assert(activeSeriesMethod()(m_store, selectedSeries()));
-    dataView()->setDisplayBanner(true);
-    dataView()->selectViewForSeries(selectedSeries());
-    highlightSelection();
-  }
-}
-
-void DataViewController::willExitResponderChain(Responder* nextFirstResponder) {
-  if (nextFirstResponder == m_tabController) {
-    assert(m_tabController != nullptr);
-    if (header()->selectedButton() >= 0) {
-      header()->setSelectedButton(-1);
-    } else if (m_store->hasActiveSeries(activeSeriesMethod())) {
-      assert(selectedSeries() >= 0);
-      dataView()->deselectViewForSeries(selectedSeries());
-      dataView()->setDisplayBanner(false);
+    /* WillExit */
+    if (event.nextFirstResponder == m_tabController) {
+      assert(m_tabController != nullptr);
+      if (header()->selectedButton() >= 0) {
+        header()->setSelectedButton(-1);
+      } else if (m_store->hasActiveSeries(activeSeriesMethod())) {
+        assert(selectedSeries() >= 0);
+        dataView()->deselectViewForSeries(selectedSeries());
+        dataView()->setDisplayBanner(false);
+      }
     }
   }
 }

@@ -27,7 +27,8 @@ class MenuController : public Escher::ViewController,
                  Escher::ButtonRowController* footer);
   ConsoleController* consoleController();
   Escher::StackViewController* stackViewController();
-  void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
   void renameSelectedScript();
   void deleteScript(Script script);
   void reloadConsole();

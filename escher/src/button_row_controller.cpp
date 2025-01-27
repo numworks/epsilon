@@ -201,9 +201,11 @@ void ButtonRowController::didBecomeFirstResponder() {
   App::app()->setFirstResponder(m_contentView.mainViewController());
 }
 
-void ButtonRowController::willExitResponderChain(
-    Responder* nextFirstResponder) {
-  setSelectedButton(-1);
+void ButtonRowController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::WillExit) {
+    setSelectedButton(-1);
+  }
 }
 
 int ButtonRowController::selectedButton() {

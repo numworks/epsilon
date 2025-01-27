@@ -16,11 +16,14 @@ void TabTableController::viewWillAppear() {
   selectableTableView()->reloadData();
 }
 
-void TabTableController::willExitResponderChain(Responder* nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    assert(tabController() != nullptr);
-    selectableTableView()->deselectTable();
-    selectableTableView()->scrollToCell(0, 0);
+void TabTableController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::WillExit) {
+    if (event.nextFirstResponder == tabController()) {
+      assert(tabController() != nullptr);
+      selectableTableView()->deselectTable();
+      selectableTableView()->scrollToCell(0, 0);
+    }
   }
 }
 

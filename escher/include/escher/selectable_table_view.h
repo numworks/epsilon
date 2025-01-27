@@ -47,8 +47,7 @@ class SelectableTableView : public TableView, public Responder {
   void reloadData(bool setFirstResponder = true, bool resetMemoization = true);
 
   void didBecomeFirstResponder() override;
-  void didEnterResponderChain(Responder* previousFirstResponder) override;
-  void willExitResponderChain(Responder* nextFirstResponder) override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  protected:
   void layoutSubviews(bool force = false) override;

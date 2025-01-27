@@ -50,7 +50,7 @@ HighlightCell* ListController::reusableCell(int index, int type) {
 
 void ListController::viewWillAppear() {
   Shared::FunctionListController::viewWillAppear();
-  /* FunctionListcontroller::didEnterResponderChain might not be called,
+  /* FunctionListcontroller::handleResponderChainEvent might not be called,
    * (if the list tab is displayed but not selected using Back-Back)
    * therefore we also need to manually reload the table here. */
   selectableListView()->reloadData(false);

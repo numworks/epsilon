@@ -6,6 +6,7 @@
 #include <poincare/old/circuit_breaker_checkpoint.h>
 
 #include "app.h"
+#include "escher/responder.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -117,10 +118,13 @@ void ListController::didBecomeFirstResponder() {
   App::app()->setFirstResponder(selectableListView());
 }
 
-void ListController::didEnterResponderChain(Responder* previousFirstResponder) {
-  selectableListView()->reloadData(false);
-  // Reload brace if the model store has evolved
-  reloadBrace();
+void ListController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::DidEnter) {
+    selectableListView()->reloadData(false);
+    // Reload brace if the model store has evolved
+    reloadBrace();
+  }
 }
 
 bool ListController::completeEquation(LayoutField* equationField,

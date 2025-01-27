@@ -43,7 +43,8 @@ class HistogramMainController : public Escher::ViewController,
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
   void didBecomeFirstResponder() override;
-  void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
 
   void updateBannerView() override;
 

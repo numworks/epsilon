@@ -55,8 +55,11 @@ StackViewController* MenuController::stackViewController() {
       parentResponder()->parentResponder());
 }
 
-void MenuController::willExitResponderChain(Responder* nextFirstResponder) {
-  forceTextFieldEditionToAbort(false);
+void MenuController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::WillExit) {
+    forceTextFieldEditionToAbort(false);
+  }
 }
 
 void MenuController::didBecomeFirstResponder() {

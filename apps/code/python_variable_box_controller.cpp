@@ -86,16 +86,17 @@ bool PythonVariableBoxController::handleEvent(Ion::Events::Event event) {
   return NestedMenuController::handleEvent(event);
 }
 
-void PythonVariableBoxController::didEnterResponderChain(
-    Responder* previousFirstResponder) {
-  /* Code::PythonVariableBoxController should always be called from an
-   * environment where Python has already been inited. This way, we do not
-   * deinit Python when leaving the PythonVariableBoxController, so we do not
-   * lose the environment that was loaded when entering the
-   * PythonVariableBoxController. */
-  assert(App::app()->pythonIsInited());
-  AlternateEmptyNestedMenuController::didEnterResponderChain(
-      previousFirstResponder);
+void PythonVariableBoxController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::DidEnter) {
+    /* Code::PythonVariableBoxController should always be called from an
+     * environment where Python has already been inited. This way, we do not
+     * deinit Python when leaving the PythonVariableBoxController, so we do not
+     * lose the environment that was loaded when entering the
+     * PythonVariableBoxController. */
+    assert(App::app()->pythonIsInited());
+    AlternateEmptyNestedMenuController::handleResponderChainEvent(event);
+  }
 }
 
 KDCoordinate PythonVariableBoxController::nonMemoizedRowHeight(int row) {

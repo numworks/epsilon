@@ -133,18 +133,20 @@ void HistogramMainController::didBecomeFirstResponder() {
   }
 }
 
-void HistogramMainController::willExitResponderChain(
-    Responder* nextFirstResponder) {
-  if (nextFirstResponder == m_tabController) {
-    /* The tab controller is taking control, but the histogram view is still
-     * visible. We restore the current subview to an unselected state. */
-    assert(m_tabController != nullptr);
-    if (isHeaderSelected()) {
-      exitHeaderView();
-      return;
-    } else {
-      exitListView();
-      return;
+void HistogramMainController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::WillExit) {
+    if (event.nextFirstResponder == m_tabController) {
+      /* The tab controller is taking control, but the histogram view is still
+       * visible. We restore the current subview to an unselected state. */
+      assert(m_tabController != nullptr);
+      if (isHeaderSelected()) {
+        exitHeaderView();
+        return;
+      } else {
+        exitListView();
+        return;
+      }
     }
   }
 }

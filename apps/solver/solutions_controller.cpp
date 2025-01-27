@@ -258,11 +258,12 @@ void SolutionsController::viewDidDisappear() {
   }
 }
 
-void SolutionsController::didEnterResponderChain(
-    Responder* previousFirstResponder) {
-  // Select the most left present subview on all cells and reinitialize scroll
-  for (int i = 0; i < SystemOfEquations::k_maxNumberOfExactSolutions; i++) {
-    m_exactValueCells[i].reinitSelection();
+void SolutionsController::handleResponderChainEvent(ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::DidEnter) {
+    // Select the most left present subview on all cells and reinitialize scroll
+    for (int i = 0; i < SystemOfEquations::k_maxNumberOfExactSolutions; i++) {
+      m_exactValueCells[i].reinitSelection();
+    }
   }
 }
 

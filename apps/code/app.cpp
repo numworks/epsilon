@@ -116,8 +116,10 @@ bool App::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void App::willExitResponderChain(Responder* nextFirstResponder) {
-  m_menuController.willExitApp();
+void App::handleResponderChainEvent(Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::WillExit) {
+    m_menuController.willExitApp();
+  }
 }
 
 bool App::textInputDidReceiveEvent(EditableField* textInput,

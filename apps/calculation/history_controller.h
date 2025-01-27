@@ -23,7 +23,7 @@ class HistoryController : public Escher::ViewController,
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
   void didBecomeFirstResponder() override;
-  void willExitResponderChain(Responder* nextFirstResponder) override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void reload();
   int numberOfRows() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;

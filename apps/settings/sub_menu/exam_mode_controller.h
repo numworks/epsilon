@@ -18,8 +18,8 @@ class ExamModeController : public GenericSubController {
   }
   Escher::View* view() override { return &m_contentView; }
   bool handleEvent(Ion::Events::Event event) override;
-  void didEnterResponderChain(
-      Escher::Responder* previousFirstResponder) override;
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
   int numberOfRows() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;

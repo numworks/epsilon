@@ -64,12 +64,15 @@ void HistoryController::didBecomeFirstResponder() {
   App::app()->setFirstResponder(&m_selectableListView);
 }
 
-void HistoryController::willExitResponderChain(Responder* nextFirstResponder) {
-  if (nextFirstResponder == nullptr) {
-    return;
-  }
-  if (nextFirstResponder == parentResponder()) {
-    m_selectableListView.deselectTable();
+void HistoryController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::WillExit) {
+    if (event.nextFirstResponder == nullptr) {
+      return;
+    }
+    if (event.nextFirstResponder == parentResponder()) {
+      m_selectableListView.deselectTable();
+    }
   }
 }
 

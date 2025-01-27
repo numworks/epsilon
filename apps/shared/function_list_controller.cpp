@@ -63,17 +63,17 @@ ButtonCell* FunctionListController::buttonAtIndex(
 
 /* Responder */
 
-void FunctionListController::didEnterResponderChain(
-    Responder* previousFirstResponder) {
-  selectableListView()->reloadData(false);
-}
-
-void FunctionListController::willExitResponderChain(
-    Responder* nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    assert(tabController() != nullptr);
-    selectableListView()->deselectTable();
-    footer()->setSelectedButton(-1);
+void FunctionListController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::DidEnter) {
+    selectableListView()->reloadData(false);
+  } else {
+    /* WillExit */
+    if (event.nextFirstResponder == tabController()) {
+      assert(tabController() != nullptr);
+      selectableListView()->deselectTable();
+      footer()->setSelectedButton(-1);
+    }
   }
 }
 

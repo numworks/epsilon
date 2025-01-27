@@ -10,10 +10,20 @@ class Responder {
   Responder(Responder* parentResponder) : m_parentResponder(parentResponder) {}
   // Default implementation does nothing
   virtual bool handleEvent(Ion::Events::Event event) { return false; };
+
+  // enum class FirstResponderStatus { DidBecome, WillResign };
   virtual void didBecomeFirstResponder() {}
   virtual void willResignFirstResponder() {}
-  virtual void didEnterResponderChain(Responder* previousFirstResponder) {}
-  virtual void willExitResponderChain(Responder* nextFirstResponder) {}
+
+  enum class ResponderChainEventType { DidEnter, WillExit };
+  struct ResponderChainEvent {
+    union {
+      Responder* nextFirstResponder;
+      Responder* previousFirstResponder;
+    };
+    ResponderChainEventType type;
+  };
+  virtual void handleResponderChainEvent(ResponderChainEvent event) {}
 
   enum class FirstResponderAlteration { WillSpoil, DidRestore };
   void modalViewAltersFirstResponder(FirstResponderAlteration alteration);

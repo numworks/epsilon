@@ -26,9 +26,8 @@ class DataViewController : public Escher::ViewController,
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didEnterResponderChain(
-      Escher::Responder* previousFirstResponder) override;
-  void willExitResponderChain(Escher::Responder* nextFirstResponder) override;
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
 
   int selectedSeries() const;
   void setSelectedSeries(int selectedSeries);

@@ -148,15 +148,17 @@ void InteractiveCurveViewController::refreshCursor(bool ignoreMargins,
   reloadBannerView();
 }
 
-void InteractiveCurveViewController::willExitResponderChain(
-    Responder* nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    assert(tabController() != nullptr);
-    curveView()->setFocus(false);
-    header()->setSelectedButton(-1);
-    /* The curve view controller will not be around to reset interruption when
-     * an OnOff event is fired, so they are reset now. */
-    curveView()->reload(true);
+void InteractiveCurveViewController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::WillExit) {
+    if (event.nextFirstResponder == tabController()) {
+      assert(tabController() != nullptr);
+      curveView()->setFocus(false);
+      header()->setSelectedButton(-1);
+      /* The curve view controller will not be around to reset interruption when
+       * an OnOff event is fired, so they are reset now. */
+      curveView()->reload(true);
+    }
   }
 }
 

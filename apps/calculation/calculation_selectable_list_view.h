@@ -18,7 +18,7 @@ class CalculationSelectableListView : public Escher::SelectableListView {
   void didChangeSelectionAndDidScroll();
   void scrollToSubviewOfTypeOfCellAtRow(
       HistoryViewCellDataSource::SubviewType subviewType, int row);
-  void didEnterResponderChain(Responder* previousFirstResponder) override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 };
 
 }  // namespace Calculation

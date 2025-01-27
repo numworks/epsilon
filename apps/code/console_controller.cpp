@@ -393,8 +393,8 @@ bool ConsoleController::isDisplayingViewController() {
   /* The StackViewController model state is the best way to know wether the
    * console is displaying a View Controller (Sandbox or Matplotlib). Indeed,
    * keeping a boolean or a pointer raises the issue of when updating it - when
-   * 'viewWillAppear' or when 'didEnterResponderChain' - in both cases, the
-   * state would be wrong at some point... */
+   * 'viewWillAppear' or when 'handleResponderChainEvent(didEnter)' - in both
+   * cases, the state would be wrong at some point... */
   return stackViewController()->depth() > 2;
 }
 

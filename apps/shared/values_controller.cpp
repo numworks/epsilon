@@ -111,12 +111,15 @@ void ValuesController::didBecomeFirstResponder() {
   }
 }
 
-void ValuesController::willExitResponderChain(Responder* nextFirstResponder) {
-  if (nextFirstResponder == tabController()) {
-    assert(tabController() != nullptr);
-    selectableTableView()->deselectTable();
-    selectableTableView()->scrollToCell(0, 0);
-    header()->setSelectedButton(-1);
+void ValuesController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::WillExit) {
+    if (event.nextFirstResponder == tabController()) {
+      assert(tabController() != nullptr);
+      selectableTableView()->deselectTable();
+      selectableTableView()->scrollToCell(0, 0);
+      header()->setSelectedButton(-1);
+    }
   }
 }
 

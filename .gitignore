@@ -8,3 +8,4 @@ node_modules/
 /.cache/
 /compile_commands.json
 .DS_Store
+/compare_crc_output/

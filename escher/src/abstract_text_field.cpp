@@ -346,9 +346,14 @@ void AbstractTextField::removePreviousXNT() {
   (void)success;  // Silence compilation warnings
 }
 
-void AbstractTextField::willResignFirstResponder() {
-  contentView()->stallOrStopEditing();
-  TextInput::willResignFirstResponder();
+void AbstractTextField::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::WillResignFirst) {
+    contentView()->stallOrStopEditing();
+    TextInput::handleResponderChainEvent(event);
+  } else {
+    TextInput::handleResponderChainEvent(event);
+  }
 }
 
 bool AbstractTextField::handleEvent(Ion::Events::Event event) {

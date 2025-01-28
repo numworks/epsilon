@@ -17,10 +17,10 @@ extern "C" {
  * - handleResponderChainEvent(didEnter)
  * - didBecomeFirstResponder
  * The methods viewWillDisappear is called in the following order relatively to
- * Responder's methods -willResignFirstResponder and handleResponderChainEvent:
+ * Responder's method handleResponderChainEvent:
  * - viewWillDisappear
- * - handleResponderChainEvent(wilExit)
- * - willResignFirstResponder
+ * - handleResponderChainEvent(willExit)
+ * - handleResponderChainEvent(willResignFirst)
  *
  * Both methods are always called after setting a view and laying its subwiews
  * out.

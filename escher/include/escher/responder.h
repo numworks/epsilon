@@ -13,9 +13,12 @@ class Responder {
 
   // enum class FirstResponderStatus { DidBecome, WillResign };
   virtual void didBecomeFirstResponder() {}
-  virtual void willResignFirstResponder() {}
+  void willResignFirstResponder() {
+    handleResponderChainEvent(
+        {{nullptr}, ResponderChainEventType::WillResignFirst});
+  }
 
-  enum class ResponderChainEventType { DidEnter, WillExit };
+  enum class ResponderChainEventType { DidEnter, WillExit, WillResignFirst };
   struct ResponderChainEvent {
     union {
       Responder* nextFirstResponder;

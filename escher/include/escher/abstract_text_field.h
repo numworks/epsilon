@@ -24,7 +24,7 @@ class AbstractTextField : public TextInput {
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void willResignFirstResponder() override;
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 
   // ScrollView
   void setBackgroundColor(KDColor backgroundColor) override;

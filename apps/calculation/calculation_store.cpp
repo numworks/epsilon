@@ -99,6 +99,27 @@ UserExpression CalculationStore::replaceAnsInExpression(
   return expression;
 }
 
+void CalculationStore::pushOutputs(Calculation** current, char** location,
+                                   UserExpression exactOutputExpression,
+                                   UserExpression approximateOutputExpression) {
+  for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
+    UserExpression e =
+        i == 0 ? exactOutputExpression : approximateOutputExpression;
+    const size_t sizeOfExpression = pushExpressionTree(location, e, current);
+    if (sizeOfExpression == k_pushErrorSize) {
+      assert(*location == k_pushErrorLocation);
+      // not enough space, leave undef
+      continue;
+    }
+    assert((i == 0 &&
+            sizeOfExpression == exactOutputExpression.tree()->treeSize()) ||
+           (i == 1 && sizeOfExpression ==
+                          approximateOutputExpression.tree()->treeSize()));
+    (i == 0 ? (*current)->m_exactOutputTreeSize
+            : (*current)->m_approximatedOutputTreeSize) = sizeOfExpression;
+  }
+}
+
 ExpiringPointer<Calculation> CalculationStore::push(
     Poincare::Layout inputLayout, Poincare::Context* context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
@@ -227,25 +248,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
     exactOutputExpression = Undefined::Builder();
   }
 
-  /* Push exact output and approximate output.
-   * If one is too big for the store, push undef instead. */
-  for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
-    UserExpression e =
-        i == 0 ? exactOutputExpression : approximateOutputExpression;
-    const size_t sizeOfExpression = pushExpressionTree(&cursor, e, &current);
-    if (sizeOfExpression == k_pushErrorSize) {
-      assert(cursor == k_pushErrorLocation);
-      // not enough space, leave undef
-      continue;
-    }
-    assert((i == 0 &&
-            sizeOfExpression == exactOutputExpression.tree()->treeSize()) ||
-           (i == 1 && sizeOfExpression ==
-                          approximateOutputExpression.tree()->treeSize()));
-
-    (i == 0 ? current->m_exactOutputTreeSize
-            : current->m_approximatedOutputTreeSize) = sizeOfExpression;
-  }
+  pushOutputs(&current, &cursor, exactOutputExpression,
+              approximateOutputExpression);
 
   /* All data has been appended, store the pointer to the end of the
    * calculation. */

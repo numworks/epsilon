@@ -105,6 +105,12 @@ class CalculationStore {
   size_t pushExpressionTree(char** location, Poincare::UserExpression e,
                             Calculation** current);
 
+  /* Push exact output and approximate output.
+   * If one is too big for the store, push undef instead. */
+  void pushOutputs(Calculation** current, char** location,
+                   Poincare::UserExpression exactOutputExpression,
+                   Poincare::UserExpression approximateOutputExpression);
+
   char* const m_buffer;
   const size_t m_bufferSize;
   int m_numberOfCalculations;

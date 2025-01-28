@@ -400,15 +400,39 @@ static void assert_integer_cast(IntegerHandler integer, bool isRepresentable,
 
 QUIZ_CASE(pcj_integer_cast) {
   assert_integer_cast<uint8_t>(Integer::Handler(123_e), true, 123);
+  assert_integer_cast<uint32_t>(Integer::Handler(123_e), true, 123);
+  assert_integer_cast<uint64_t>(Integer::Handler(123_e), true, 123);
+  assert_integer_cast<int8_t>(Integer::Handler(123_e), true, 123);
+  assert_integer_cast<int>(Integer::Handler(123_e), true, 123);
+
   assert_integer_cast<uint8_t>(Integer::Handler(-123_e), false);
+  assert_integer_cast<uint32_t>(Integer::Handler(-123_e), false);
+  assert_integer_cast<uint64_t>(Integer::Handler(-123_e), false);
   assert_integer_cast<int8_t>(Integer::Handler(-123_e), true, -123);
+  assert_integer_cast<int>(Integer::Handler(-123_e), true, -123);
+
+  assert_integer_cast<uint8_t>(Integer::Handler(130_e), true, 130);
+  assert_integer_cast<uint32_t>(Integer::Handler(130_e), true, 130);
+  assert_integer_cast<uint64_t>(Integer::Handler(130_e), true, 130);
+  assert_integer_cast<int8_t>(Integer::Handler(130_e), false);
+  assert_integer_cast<int>(Integer::Handler(130_e), true, 130);
+
   assert_integer_cast<uint8_t>(Integer::Handler(300_e), false);
   assert_integer_cast<uint32_t>(Integer::Handler(300_e), true, 300);
+  assert_integer_cast<uint64_t>(Integer::Handler(300_e), true, 300);
+  assert_integer_cast<int8_t>(Integer::Handler(300_e), false);
+  assert_integer_cast<int>(Integer::Handler(300_e), true, 300);
+
   assert_integer_cast<uint32_t>(Integer::Handler(4294967295_e), true,
                                 4294967295);
+  assert_integer_cast<uint64_t>(Integer::Handler(4294967295_e), true,
+                                4294967295);
+  assert_integer_cast<int>(Integer::Handler(4294967295_e), false);
+
   assert_integer_cast<uint32_t>(Integer::Handler(1234567890123_e), false);
   assert_integer_cast<uint64_t>(Integer::Handler(1234567890123_e), true,
                                 1234567890123);
+
   assert_integer_cast<uint64_t>(Integer::Handler(9223372036854775807_e), true,
                                 9223372036854775807);
 }

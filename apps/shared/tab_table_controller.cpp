@@ -24,6 +24,8 @@ void TabTableController::handleResponderChainEvent(
       selectableTableView()->deselectTable();
       selectableTableView()->scrollToCell(0, 0);
     }
+  } else {
+    ViewController::handleResponderChainEvent(event);
   }
 }
 

@@ -59,6 +59,8 @@ void MenuController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::WillExit) {
     forceTextFieldEditionToAbort(false);
+  } else {
+    ViewController::handleResponderChainEvent(event);
   }
 }
 

@@ -120,6 +120,8 @@ void ValuesController::handleResponderChainEvent(
       selectableTableView()->scrollToCell(0, 0);
       header()->setSelectedButton(-1);
     }
+  } else {
+    EditableCellTableViewController::handleResponderChainEvent(event);
   }
 }
 

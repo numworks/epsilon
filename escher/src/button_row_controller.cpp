@@ -205,6 +205,8 @@ void ButtonRowController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::WillExit) {
     setSelectedButton(-1);
+  } else {
+    ViewController::handleResponderChainEvent(event);
   }
 }
 

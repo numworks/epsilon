@@ -264,6 +264,8 @@ void SolutionsController::handleResponderChainEvent(ResponderChainEvent event) {
     for (int i = 0; i < SystemOfEquations::k_maxNumberOfExactSolutions; i++) {
       m_exactValueCells[i].reinitSelection();
     }
+  } else {
+    Escher::ViewController::handleResponderChainEvent(event);
   }
 }
 

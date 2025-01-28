@@ -95,8 +95,8 @@ void PythonVariableBoxController::handleResponderChainEvent(
      * lose the environment that was loaded when entering the
      * PythonVariableBoxController. */
     assert(App::app()->pythonIsInited());
-    AlternateEmptyNestedMenuController::handleResponderChainEvent(event);
   }
+  AlternateEmptyNestedMenuController::handleResponderChainEvent(event);
 }
 
 KDCoordinate PythonVariableBoxController::nonMemoizedRowHeight(int row) {

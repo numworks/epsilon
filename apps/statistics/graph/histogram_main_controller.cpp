@@ -148,6 +148,8 @@ void HistogramMainController::handleResponderChainEvent(
         return;
       }
     }
+  } else {
+    Escher::ViewController::handleResponderChainEvent(event);
   }
 }
 

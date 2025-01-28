@@ -47,11 +47,11 @@ void App::setFirstResponder(Responder* responder, bool force) {
 #if ASSERTIONS
     preventRecursion = true;
 #endif
+    Responder::ResponderChainEvent event = {
+        {m_firstResponder},
+        ResponderChainEventType::WillExit,
+    };
     while (leafResponder != commonAncestor) {
-      Responder::ResponderChainEvent event = {
-          {m_firstResponder},
-          ResponderChainEventType::WillExit,
-      };
       leafResponder->handleResponderChainEvent(event);
       leafResponder = leafResponder->parentResponder();
     }
@@ -75,11 +75,11 @@ void App::setFirstResponder(Responder* responder, bool force) {
       responderStack[index++] = leafResponder;
       leafResponder = leafResponder->parentResponder();
     }
+    ResponderChainEvent event = {
+        {previousResponder},
+        ResponderChainEventType::DidEnter,
+    };
     for (index--; index >= 0; index--) {
-      ResponderChainEvent event = (ResponderChainEvent){
-          {previousResponder},
-          ResponderChainEventType::DidEnter,
-      };
       responderStack[index]->handleResponderChainEvent(event);
     }
 #if ASSERTIONS

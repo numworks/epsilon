@@ -73,6 +73,8 @@ void HistoryController::handleResponderChainEvent(
     if (event.nextFirstResponder == parentResponder()) {
       m_selectableListView.deselectTable();
     }
+  } else {
+    ViewController::handleResponderChainEvent(event);
   }
 }
 

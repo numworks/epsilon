@@ -110,8 +110,8 @@ void CalculationSelectableListView::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::DidEnter) {
     resetSizeAndOffsetMemoization();
-    SelectableTableView::handleResponderChainEvent(event);
   }
+  SelectableListView::handleResponderChainEvent(event);
 }
 
 }  // namespace Calculation

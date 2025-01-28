@@ -124,6 +124,8 @@ void ListController::handleResponderChainEvent(
     selectableListView()->reloadData(false);
     // Reload brace if the model store has evolved
     reloadBrace();
+  } else {
+    Shared::ExpressionModelListController::handleResponderChainEvent(event);
   }
 }
 

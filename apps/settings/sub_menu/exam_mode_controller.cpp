@@ -38,6 +38,8 @@ void ExamModeController::handleResponderChainEvent(ResponderChainEvent event) {
         Preferences::SharedPreferences()->examMode().isActive()
             ? I18n::Message::ToDeactivateExamMode
             : I18n::Message::Default);
+  } else {
+    GenericSubController::handleResponderChainEvent(event);
   }
 }
 

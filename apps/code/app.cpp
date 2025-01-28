@@ -119,6 +119,8 @@ bool App::handleEvent(Ion::Events::Event event) {
 void App::handleResponderChainEvent(Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::WillExit) {
     m_menuController.willExitApp();
+  } else {
+    Shared::SharedApp::handleResponderChainEvent(event);
   }
 }
 

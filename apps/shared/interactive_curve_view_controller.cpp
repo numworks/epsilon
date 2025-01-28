@@ -159,6 +159,8 @@ void InteractiveCurveViewController::handleResponderChainEvent(
        * an OnOff event is fired, so they are reset now. */
       curveView()->reload(true);
     }
+  } else {
+    SimpleInteractiveCurveViewController::handleResponderChainEvent(event);
   }
 }
 

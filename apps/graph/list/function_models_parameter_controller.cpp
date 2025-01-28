@@ -121,7 +121,6 @@ FunctionModelsParameterController::Models() {
   }
 }
 
-/* Tell if the country prefers y=x or f(x)=x */
 bool FunctionModelsParameterController::EquationsPrefered() {
   CountryPreferences::GraphTemplateDefault templateDefault =
       GlobalPreferences::SharedGlobalPreferences()->graphTemplateDefault();

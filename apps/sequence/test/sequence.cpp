@@ -141,6 +141,20 @@ QUIZ_CASE(sequence_evaluation) {
   check_sequences_defined_by(results2ter, types, definitions, conditions1,
                              conditions2);
 
+  // u(n+1) = 8/(1+ln(u(n))), u(0) = 3.55
+  double results2qua[SequenceStore::k_maxNumberOfSequences][10] = {
+      {3.5499999999999998, 3.5289743740408123, 3.5382460108316022,
+       3.5341447216846697, 3.5359564181332125, 3.5351556343558612,
+       3.5355094916101794, 3.5353531074911108, 3.5354222164487332,
+       3.5353916752460468},
+      {},
+      {}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  definitions[0] = "8/(1+ln(u(n)))";
+  conditions1[0] = "3.55";
+  check_sequences_defined_by(results2qua, types, definitions, conditions1,
+                             conditions2);
+
   // u(n+2) = u(n+1)+u(n)+n, u(0) = 0, u(1) = 0
   double results3[SequenceStore::k_maxNumberOfSequences][10] = {
       {0.0, 0.0, 0.0, 1.0, 3.0, 7.0, 14.0, 26.0, 46.0, 79.0}, {}, {}};

@@ -139,6 +139,45 @@ void CalculationStore::pushOutputs(Calculation** current, char** location,
   }
 }
 
+struct OutputExpressions {
+  Poincare::Expression exact;
+  Poincare::Expression approximate;
+};
+
+OutputExpressions compute(const Poincare::Expression& inputExpression,
+                          Poincare::Preferences::ComplexFormat& complexFormat,
+                          Poincare::Context* context) {
+  /* Parse and compute the expression */
+  assert(!inputExpression.isUninitialized());
+  // Update complexFormat with input expression
+  complexFormat =
+      Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
+          complexFormat, inputExpression, context);
+
+  Internal::ProjectionContext projContext = {
+      .m_complexFormat = complexFormat,
+      .m_angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
+      .m_unitFormat =
+          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+      .m_symbolic = CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
+                                   : SymbolicComputation::ReplaceAllSymbols,
+      .m_context = context};
+
+  // TODO: exactOutputExpression and approximateOutputExpression should be
+  // outputs of cloneAndSimplifyAndApproximate
+  Poincare::Expression exactOutputExpression;
+  Poincare::Expression approximateOutputExpression;
+  inputExpression.cloneAndSimplifyAndApproximate(
+      &exactOutputExpression, &approximateOutputExpression, &projContext);
+  assert(!exactOutputExpression.isUninitialized() &&
+         !approximateOutputExpression.isUninitialized());
+
+  /* Post-processing of store expression */
+  exactOutputExpression = enhancePushedExpression(exactOutputExpression);
+
+  return {exactOutputExpression, approximateOutputExpression};
+}
+
 ExpiringPointer<Calculation> CalculationStore::push(
     Poincare::Layout inputLayout, Poincare::Context* context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
@@ -152,8 +191,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
   m_inUsePreferences = *Preferences::SharedPreferences();
   char* cursor = endOfCalculations();
   Calculation* current;
-  UserExpression exactOutputExpression, approximateOutputExpression;
-
+  OutputExpressions outputs;
   {
     CircuitBreakerCheckpoint checkpoint(
         Ion::CircuitBreaker::CheckpointType::Back);
@@ -173,32 +211,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
         return current;
       }
 
-      /* Compute the expression */
-      UserExpression inputExpression = current->input();
-      assert(!inputExpression.isUninitialized());
-      // Update complexFormat with input expression
-      complexFormat =
-          Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-              complexFormat, inputExpression, context);
+      outputs = compute(current->input(), complexFormat, context);
 
-      Internal::ProjectionContext projContext = {
-          .m_complexFormat = complexFormat,
-          .m_angleUnit =
-              Poincare::Preferences::SharedPreferences()->angleUnit(),
-          .m_unitFormat =
-              GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-          .m_symbolic = CAS::Enabled()
-                            ? SymbolicComputation::ReplaceDefinedSymbols
-                            : SymbolicComputation::ReplaceAllSymbols,
-          .m_context = context};
-
-      inputExpression.cloneAndSimplifyAndApproximate(
-          &exactOutputExpression, &approximateOutputExpression, &projContext);
-      assert(!exactOutputExpression.isUninitialized() &&
-             !approximateOutputExpression.isUninitialized());
-
-      /* Post-processing of store expression */
-      exactOutputExpression = enhancePushedExpression(exactOutputExpression);
     } else {
       GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
           checkpoint.endOfPoolBeforeCheckpoint());
@@ -220,11 +234,11 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * e.g. if f(x) = cos(x), the expression "f(x^2)->f(x)" will return
    * "cos(x^2)".
    * */
-  if (exactOutputExpression.isStore()) {
+  if (outputs.exact.isStore()) {
     // TODO: factorize with StoreMenuController::parseAndStore
     // TODO: add circuit breaker?
-    UserExpression value = StoreHelper::Value(exactOutputExpression);
-    UserExpression symbol = StoreHelper::Symbol(exactOutputExpression);
+    UserExpression value = StoreHelper::Value(outputs.exact);
+    UserExpression symbol = StoreHelper::Symbol(outputs.exact);
     UserExpression valueApprox =
         PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
     if (symbol.isUserSymbol() &&
@@ -239,24 +253,23 @@ ExpiringPointer<Calculation> CalculationStore::push(
         [](const NewExpression e) { return e.isUserSymbol(); }));
 #endif
     if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
-      exactOutputExpression = value;
-      approximateOutputExpression = valueApprox;
-      assert(!exactOutputExpression.isUninitialized() &&
-             !approximateOutputExpression.isUninitialized());
+      outputs.exact = value;
+      outputs.approximate = valueApprox;
+      assert(!outputs.exact.isUninitialized() &&
+             !outputs.approximate.isUninitialized());
     } else {
-      exactOutputExpression = Undefined::Builder();
-      approximateOutputExpression = Undefined::Builder();
+      outputs.exact = Undefined::Builder();
+      outputs.approximate = Undefined::Builder();
     }
   }
 
   if (m_inUsePreferences.examMode().forbidUnits() &&
-      approximateOutputExpression.hasUnit()) {
-    approximateOutputExpression = Undefined::Builder();
-    exactOutputExpression = Undefined::Builder();
+      outputs.approximate.hasUnit()) {
+    outputs.approximate = Undefined::Builder();
+    outputs.exact = Undefined::Builder();
   }
 
-  pushOutputs(&current, &cursor, exactOutputExpression,
-              approximateOutputExpression);
+  pushOutputs(&current, &cursor, outputs.exact, outputs.approximate);
 
   /* All data has been appended, store the pointer to the end of the
    * calculation. */

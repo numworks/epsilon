@@ -19,7 +19,7 @@ mp_obj_t modion_keyboard_keydown(mp_obj_t key_o) {
    * WARNING: Do not use Timing::msleep to avoid putting the device to sleep,
    * which alters timings (mostly on N120) */
   uint64_t currentTime = Ion::Timing::millis();
-  Ion::Keyboard::State state = Ion::Keyboard::scan();
+  Ion::Keyboard::State state = Ion::Keyboard::scan(true);
   while (currentTime + 1 > Ion::Timing::millis()) {}
   micropython_port_interrupt_if_needed();
   return mp_obj_new_bool(state.keyDown(key));

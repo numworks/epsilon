@@ -7,7 +7,7 @@ namespace Keyboard {
 
 State scanForInterruptionAndPopState() { return State(0); }
 
-State scan() { return State(0); }
+State scan(bool forPython) { return State(0); }
 
 }  // namespace Keyboard
 }  // namespace Ion

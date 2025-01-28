@@ -66,7 +66,7 @@ class State {
   uint64_t m_bitField;
 };
 
-State scan();
+State scan(bool forPython = false);
 State scanForInterruptionAndPopState();
 State popState();
 

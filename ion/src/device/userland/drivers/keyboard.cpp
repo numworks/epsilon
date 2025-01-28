@@ -11,7 +11,7 @@ uint64_t SVC_ATTRIBUTES privateScan(){
 uint64_t SVC_ATTRIBUTES
     privatePopState(){SVC_RETURNING_R0R1(SVC_KEYBOARD_POP_STATE, State)}
 
-State scan() {
+State scan(bool forPython) {
   return State(privateScan());
 }
 

@@ -220,7 +220,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       Poincare::Preferences::SharedPreferences()->complexFormat();
   m_inUsePreferences = *Preferences::SharedPreferences();
   char* cursor = endOfCalculations();
-  Calculation* current;
+  Calculation* currentCalculation;
   OutputExpressions outputs;
   {
     CircuitBreakerCheckpoint checkpoint(
@@ -233,15 +233,16 @@ ExpiringPointer<Calculation> CalculationStore::push(
        * variable assignment. */
       PoolVariableContext ansContext = createAnsContext(context);
 
-      current = pushEmptyCalculation(&cursor);
-      assert(current);
+      currentCalculation = pushEmptyCalculation(&cursor);
+      assert(currentCalculation);
 
-      if (!pushInput(inputLayout, &current, &cursor, ansContext, context)) {
+      if (!pushInput(inputLayout, &currentCalculation, &cursor, ansContext,
+                     context)) {
         // leave the calculation undefined
-        return current;
+        return currentCalculation;
       }
 
-      outputs = compute(current->input(), complexFormat, context);
+      outputs = compute(currentCalculation->input(), complexFormat, context);
 
     } else {
       GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
@@ -256,7 +257,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * expressions in the Sequence store, which would alter the pool above the
    * checkpoint. */
   if (outputs.exact.isStore()) {
-    processStore(outputs, current->input(), context);
+    processStore(outputs, currentCalculation->input(), context);
   }
 
   if (m_inUsePreferences.examMode().forbidUnits() &&
@@ -265,23 +266,23 @@ ExpiringPointer<Calculation> CalculationStore::push(
     outputs.exact = Undefined::Builder();
   }
 
-  pushOutputs(outputs, &current, &cursor);
+  pushOutputs(outputs, &currentCalculation, &cursor);
 
   /* All data has been appended, store the pointer to the end of the
    * calculation. */
   assert(cursor < pointerArea() - sizeof(Calculation*));
   pointerArray()[-1] = cursor;
-  Calculation* newCalculation =
+  Calculation* nextCalculation =
       reinterpret_cast<Calculation*>(endOfCalculations());
 
-  newCalculation->setComplexFormat(complexFormat);
+  nextCalculation->setComplexFormat(complexFormat);
   /* Now that the calculation is fully built, we can finally update
    * m_numberOfCalculations. As that is the only variable tracking the state
    * of the store, updating it only at the end of the push ensures that,
    * should an interruption occur, all the temporary states are silently
    * discarded and no ill-formed Calculation is stored. */
   m_numberOfCalculations++;
-  return ExpiringPointer(newCalculation);
+  return ExpiringPointer(nextCalculation);
 }
 
 bool CalculationStore::preferencesHaveChanged() {

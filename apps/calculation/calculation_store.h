@@ -105,6 +105,15 @@ class CalculationStore {
   size_t pushExpressionTree(char** location, Poincare::UserExpression e,
                             Calculation** current);
 
+  struct PushInputResult {
+    Poincare::UserExpression expression;
+    bool hasError;
+  };
+  PushInputResult pushInput(Poincare::Layout inputLayout, Calculation** current,
+                            char** location,
+                            Poincare::PoolVariableContext& ansContext,
+                            Poincare::Context* context);
+
   /* Push exact output and approximate output.
    * If one is too big for the store, push undef instead. */
   void pushOutputs(Calculation** current, char** location,

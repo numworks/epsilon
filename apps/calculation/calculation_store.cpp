@@ -99,6 +99,26 @@ UserExpression CalculationStore::replaceAnsInExpression(
   return expression;
 }
 
+CalculationStore::PushInputResult CalculationStore::pushInput(
+    Poincare::Layout inputLayout, Calculation** current, char** location,
+    PoolVariableContext& ansContext, Poincare::Context* context) {
+  UserExpression inputExpression =
+      UserExpression::Parse(inputLayout, &ansContext);
+  inputExpression = replaceAnsInExpression(inputExpression, context);
+  inputExpression = enhancePushedExpression(inputExpression);
+  const size_t sizeOfExpression =
+      pushExpressionTree(location, inputExpression, current);
+  bool hasError = false;
+  if (sizeOfExpression == k_pushErrorSize) {
+    assert(*location == k_pushErrorLocation);
+    hasError = true;
+  } else {
+    assert(sizeOfExpression == inputExpression.tree()->treeSize());
+    (*current)->m_inputTreeSize = sizeOfExpression;
+  }
+  return {inputExpression, hasError};
+}
+
 void CalculationStore::pushOutputs(Calculation** current, char** location,
                                    UserExpression exactOutputExpression,
                                    UserExpression approximateOutputExpression) {
@@ -153,19 +173,13 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       assert(cursor != k_pushErrorLocation);
 
-      /* Push the input */
-      inputExpression = UserExpression::Parse(inputLayout, &ansContext);
-      inputExpression = replaceAnsInExpression(inputExpression, context);
-      inputExpression = enhancePushedExpression(inputExpression);
-      const size_t sizeOfExpression =
-          pushExpressionTree(&cursor, inputExpression, &current);
-      if (sizeOfExpression == k_pushErrorSize) {
-        assert(cursor == k_pushErrorLocation);
+      PushInputResult pushInputResult =
+          pushInput(inputLayout, &current, &cursor, ansContext, context);
+      if (pushInputResult.hasError) {
         // leave the calculation undefined
         return current;
       }
-      assert(sizeOfExpression == inputExpression.tree()->treeSize());
-      current->m_inputTreeSize = sizeOfExpression;
+      inputExpression = std::move(pushInputResult.expression);
 
       /* Parse and compute the expression */
       assert(!inputExpression.isUninitialized());

@@ -204,24 +204,12 @@ def print_key(f, key_values, shape):
 
 def print_keys(f, background_values):
     key_values = background_values["keys"]
-    numpad_start = background_values["numpad_start"]
+    shapes = background_values["shapes"]
 
-    keys = [
-        ["HorizontalArrow", [0]],
-        ["VerticalArrow", [1, 2]],
-        ["HorizontalArrow", [3]],
-        ["Round", [4, 5]],
-        ["LargeSquircle", [6, 7]],
-        ["SmallSquircle", list(range(12, numpad_start))],
-        [
-            "LargeSquircle",
-            list(range(numpad_start, 53)),
-        ],
-    ]
-    for k in keys:
-        for v in k[1]:
-            if str(v) in key_values:
-                print_key(f, key_values[str(v)], k[0])
+    for key, rect in key_values.items():
+        for shape, keys in shapes.items():
+            if int(key) in keys:
+                print_key(f, rect, shape)
 
 
 def print_after_keys(f):

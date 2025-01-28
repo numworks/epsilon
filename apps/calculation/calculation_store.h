@@ -97,11 +97,15 @@ class CalculationStore {
    * some older calculations are cleared. */
   void getEmptySpace(char** location, size_t neededSize, Calculation** current);
 
-  /* Push helper methods take the current location and update it to the end of
-   * the pushed content, or k_pushError if the content was not pushed. They also
-   * update the current calculation if some older calculations are cleared.
-   * Return the size of the pushed content. */
-  size_t pushEmptyCalculation(char** location, Calculation** current);
+  /* Push a new empty calculation at a certain location. The location may be
+   * updated if the getEmptySpace had to make some space. Returns a pointer to
+   * the new Calculation or a null pointer if an error occured.  */
+  Calculation* pushEmptyCalculation(char** location);
+
+  /* Push helper method that takes the current location and updates it to the
+   * end of the pushed content, or k_pushError if the content was not pushed.
+   * They also update the current calculation if some older calculations are
+   * cleared. Return the size of the pushed content. */
   size_t pushExpressionTree(char** location, Poincare::UserExpression e,
                             Calculation** current);
 

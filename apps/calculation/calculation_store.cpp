@@ -170,6 +170,44 @@ OutputExpressions compute(const Poincare::Expression& inputExpression,
   return {exactOutputExpression, approximateOutputExpression};
 }
 
+void processStore(OutputExpressions& outputs,
+                  const Poincare::UserExpression& input,
+                  Poincare::Context* context) {
+  /* The global context performs the store and ensures that no symbol is kept in
+   * the definition of a variable.
+   * Once this is done, the output is replaced with the stored expression. To do
+   * so, the expression of the symbol is retrieved after it is stored because it
+   * can be different from the value in the store expression.
+   * e.g. if f(x) = cos(x), the expression "f(x^2)->f(x)" will return
+   * "cos(x^2)". */
+
+  // TODO: factorize with StoreMenuController::parseAndStore
+  // TODO: add circuit breaker?
+  UserExpression value = StoreHelper::Value(outputs.exact);
+  UserExpression symbol = StoreHelper::Symbol(outputs.exact);
+  UserExpression valueApprox =
+      PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
+  if (symbol.isUserSymbol() &&
+      CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox, context)) {
+    value = valueApprox;
+  }
+#if 0
+    /* TODO_PCJ: restore assert
+     * Handle case of functions (3*x->f(x)): there should be no symbol except x */
+    assert(!value.recursivelyMatches(
+        [](const NewExpression e) { return e.isUserSymbol(); }));
+#endif
+  if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
+    outputs.exact = value;
+    outputs.approximate = valueApprox;
+    assert(!outputs.exact.isUninitialized() &&
+           !outputs.approximate.isUninitialized());
+  } else {
+    outputs.exact = Undefined::Builder();
+    outputs.approximate = Undefined::Builder();
+  }
+}
+
 ExpiringPointer<Calculation> CalculationStore::push(
     Poincare::Layout inputLayout, Poincare::Context* context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
@@ -212,47 +250,13 @@ ExpiringPointer<Calculation> CalculationStore::push(
     }
   }
 
-  /* When an input contains a store, it is kept by the reduction in the
-   * exact output and the actual store is performed here. The global
-   * context will perform the store and ensure that no symbol is kept in
-   * the definition of a variable.
-   * This must be done after the checkpoint because it can delete
-   * some memoized expressions in the Sequence store, which would alter the pool
-   * above the checkpoint.
-   *
-   * Once this is done, replace the output with the stored expression. To do
-   * so, retrieve the expression of the symbol after it is stored because it can
-   * be different from the value in the store expression.
-   * e.g. if f(x) = cos(x), the expression "f(x^2)->f(x)" will return
-   * "cos(x^2)".
-   * */
+  /* When an input contains a store, it is kept by the reduction in the exact
+   * output and the actual store is performed here.
+   * This must be done after the checkpoint because it can delete some memoized
+   * expressions in the Sequence store, which would alter the pool above the
+   * checkpoint. */
   if (outputs.exact.isStore()) {
-    // TODO: factorize with StoreMenuController::parseAndStore
-    // TODO: add circuit breaker?
-    UserExpression value = StoreHelper::Value(outputs.exact);
-    UserExpression symbol = StoreHelper::Symbol(outputs.exact);
-    UserExpression valueApprox =
-        PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
-    if (symbol.isUserSymbol() &&
-        CAS::ShouldOnlyDisplayApproximation(current->input(), value,
-                                            valueApprox, context)) {
-      value = valueApprox;
-    }
-#if 0
-    /* TODO_PCJ: restore assert
-     * Handle case of functions (3*x->f(x)): there should be no symbol except x */
-    assert(!value.recursivelyMatches(
-        [](const NewExpression e) { return e.isUserSymbol(); }));
-#endif
-    if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
-      outputs.exact = value;
-      outputs.approximate = valueApprox;
-      assert(!outputs.exact.isUninitialized() &&
-             !outputs.approximate.isUninitialized());
-    } else {
-      outputs.exact = Undefined::Builder();
-      outputs.approximate = Undefined::Builder();
-    }
+    processStore(outputs, current->input(), context);
   }
 
   if (m_inUsePreferences.examMode().forbidUnits() &&

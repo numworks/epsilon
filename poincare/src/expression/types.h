@@ -385,7 +385,11 @@ RANGE(Undefined, NonReal, Undef)
 NODE(Store, BASE, 2)
 NODE(UnitConversion, BASE, 2)
 
-RANGE(Expression, RationalNegBig, UnitConversion)
+/* Used as intermediary step in beautification to hide context dependant nodes
+ * during context-less simplification and approximation. */
+NODE(AngleUnitContext, BASE, 1, { uint8_t angleUnit; })
+
+RANGE(Expression, RationalNegBig,AngleUnitContext )
 
 // SequenceExplicit(formula, firstRank)
 NODE(SequenceExplicit, BASE, 2)
@@ -397,9 +401,6 @@ NODE(SequenceDoubleRecurrence, BASE, 4)
 
 RANGE(Sequence, SequenceExplicit, SequenceDoubleRecurrence)
 
-/* Used as intermediary step in beautification to hide context dependant nodes
- * during context-less simplification and approximation. */
-NODE(AngleUnitContext, BASE, 1, { uint8_t angleUnit; })
 
 // TODO: should this really be here ?
 NODE(PointOfInterest, BASE, 0, {

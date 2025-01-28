@@ -10,6 +10,12 @@
 #include "calculation.h"
 
 namespace Calculation {
+
+struct OutputExpressions {
+  Poincare::Expression exact;
+  Poincare::Expression approximate;
+};
+
 // clang-format off
 /*
   To optimize the storage space, we use one big buffer for all calculations.
@@ -115,9 +121,8 @@ class CalculationStore {
 
   /* Push exact output and approximate output.
    * If one is too big for the store, push undef instead. */
-  void pushOutputs(Calculation** current, char** location,
-                   Poincare::UserExpression exactOutputExpression,
-                   Poincare::UserExpression approximateOutputExpression);
+  void pushOutputs(OutputExpressions outputs, Calculation** current,
+                   char** location);
 
   char* const m_buffer;
   const size_t m_bufferSize;

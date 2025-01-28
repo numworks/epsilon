@@ -118,31 +118,23 @@ bool CalculationStore::pushInput(Poincare::Layout inputLayout,
   return true;
 }
 
-void CalculationStore::pushOutputs(Calculation** current, char** location,
-                                   UserExpression exactOutputExpression,
-                                   UserExpression approximateOutputExpression) {
+void CalculationStore::pushOutputs(OutputExpressions outputs,
+                                   Calculation** current, char** location) {
   for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
-    UserExpression e =
-        i == 0 ? exactOutputExpression : approximateOutputExpression;
+    UserExpression e = i == 0 ? outputs.exact : outputs.approximate;
     const size_t sizeOfExpression = pushExpressionTree(location, e, current);
     if (sizeOfExpression == k_pushErrorSize) {
       assert(*location == k_pushErrorLocation);
       // not enough space, leave undef
       continue;
     }
-    assert((i == 0 &&
-            sizeOfExpression == exactOutputExpression.tree()->treeSize()) ||
-           (i == 1 && sizeOfExpression ==
-                          approximateOutputExpression.tree()->treeSize()));
+    assert(
+        (i == 0 && sizeOfExpression == outputs.exact.tree()->treeSize()) ||
+        (i == 1 && sizeOfExpression == outputs.approximate.tree()->treeSize()));
     (i == 0 ? (*current)->m_exactOutputTreeSize
             : (*current)->m_approximatedOutputTreeSize) = sizeOfExpression;
   }
 }
-
-struct OutputExpressions {
-  Poincare::Expression exact;
-  Poincare::Expression approximate;
-};
 
 OutputExpressions compute(const Poincare::Expression& inputExpression,
                           Poincare::Preferences::ComplexFormat& complexFormat,
@@ -269,7 +261,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
     outputs.exact = Undefined::Builder();
   }
 
-  pushOutputs(&current, &cursor, outputs.exact, outputs.approximate);
+  pushOutputs(outputs, &current, &cursor);
 
   /* All data has been appended, store the pointer to the end of the
    * calculation. */

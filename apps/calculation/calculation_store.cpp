@@ -99,24 +99,23 @@ UserExpression CalculationStore::replaceAnsInExpression(
   return expression;
 }
 
-CalculationStore::PushInputResult CalculationStore::pushInput(
-    Poincare::Layout inputLayout, Calculation** current, char** location,
-    PoolVariableContext& ansContext, Poincare::Context* context) {
+bool CalculationStore::pushInput(Poincare::Layout inputLayout,
+                                 Calculation** current, char** location,
+                                 PoolVariableContext& ansContext,
+                                 Poincare::Context* context) {
   UserExpression inputExpression =
       UserExpression::Parse(inputLayout, &ansContext);
   inputExpression = replaceAnsInExpression(inputExpression, context);
   inputExpression = enhancePushedExpression(inputExpression);
   const size_t sizeOfExpression =
       pushExpressionTree(location, inputExpression, current);
-  bool hasError = false;
   if (sizeOfExpression == k_pushErrorSize) {
     assert(*location == k_pushErrorLocation);
-    hasError = true;
-  } else {
-    assert(sizeOfExpression == inputExpression.tree()->treeSize());
-    (*current)->m_inputTreeSize = sizeOfExpression;
+    return false;
   }
-  return {inputExpression, hasError};
+  assert(sizeOfExpression == inputExpression.tree()->treeSize());
+  (*current)->m_inputTreeSize = sizeOfExpression;
+  return true;
 }
 
 void CalculationStore::pushOutputs(Calculation** current, char** location,
@@ -153,8 +152,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
   m_inUsePreferences = *Preferences::SharedPreferences();
   char* cursor = endOfCalculations();
   Calculation* current;
-  UserExpression inputExpression, exactOutputExpression,
-      approximateOutputExpression;
+  UserExpression exactOutputExpression, approximateOutputExpression;
 
   {
     CircuitBreakerCheckpoint checkpoint(
@@ -173,15 +171,13 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
       assert(cursor != k_pushErrorLocation);
 
-      PushInputResult pushInputResult =
-          pushInput(inputLayout, &current, &cursor, ansContext, context);
-      if (pushInputResult.hasError) {
+      if (!pushInput(inputLayout, &current, &cursor, ansContext, context)) {
         // leave the calculation undefined
         return current;
       }
-      inputExpression = std::move(pushInputResult.expression);
 
-      /* Parse and compute the expression */
+      /* Compute the expression */
+      UserExpression inputExpression = current->input();
       assert(!inputExpression.isUninitialized());
       // Update complexFormat with input expression
       complexFormat =
@@ -235,8 +231,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
     UserExpression valueApprox =
         PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
     if (symbol.isUserSymbol() &&
-        CAS::ShouldOnlyDisplayApproximation(inputExpression, value, valueApprox,
-                                            context)) {
+        CAS::ShouldOnlyDisplayApproximation(current->input(), value,
+                                            valueApprox, context)) {
       value = valueApprox;
     }
 #if 0

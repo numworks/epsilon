@@ -117,6 +117,8 @@ bool CurveParameterController::parameterAtIndexIsEditable(
              (index == ParameterIndex::Image1);
     case ContinuousFunctionProperties::EditableParametersType::None:
       return false;
+    default:
+      OMG::unreachable();
   }
 }
 

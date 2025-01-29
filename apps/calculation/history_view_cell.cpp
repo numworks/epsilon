@@ -292,15 +292,13 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
   /* All expressions have to be updated at the same time. Otherwise,
    * when updating one layout, if the second one still points to a deleted
    * layout, calling to layoutSubviews() would fail. */
-  Layout exactOutputLayout, approximateOutputLayout;
   KDFont::Size font = m_scrollableOutputView.font();
   KDCoordinate maxVisibleWidth =
       Ion::Display::Width -
       (m_scrollableOutputView.margins()->width() +
        2 * KDFont::GlyphWidth(font));  // > arrow and = sign
-  calculation->createOutputLayouts(&exactOutputLayout, &approximateOutputLayout,
-                                   context, canChangeDisplayOutput,
-                                   maxVisibleWidth, font);
+  Calculation::OutputLayouts outputLayouts = calculation->createOutputLayouts(
+      context, canChangeDisplayOutput, maxVisibleWidth, font);
 
   /* Update m_calculationDisplayOutput. Must be done after createOutputLayouts
    * because calculation->displayOutput can change. */
@@ -315,13 +313,13 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
       m_calculationDisplayOutput ==
           Calculation::DisplayOutput::ExactAndApproximateToggle);
 
-  if (approximateOutputLayout.isUninitialized()) {
+  if (outputLayouts.approximate.isUninitialized()) {
     // The scrollable view expects the right layout to be defined, use exact
-    assert(!exactOutputLayout.isUninitialized());
-    m_scrollableOutputView.setLayouts(Layout(), Layout(), exactOutputLayout);
+    assert(!outputLayouts.exact.isUninitialized());
+    m_scrollableOutputView.setLayouts(Layout(), Layout(), outputLayouts.exact);
   } else {
-    m_scrollableOutputView.setLayouts(Layout(), exactOutputLayout,
-                                      approximateOutputLayout);
+    m_scrollableOutputView.setLayouts(Layout(), outputLayouts.exact,
+                                      outputLayouts.approximate);
   }
   m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(
       calculation->equalSign(context) == Calculation::EqualSign::Equal);

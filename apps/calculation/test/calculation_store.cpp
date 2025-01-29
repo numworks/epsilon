@@ -232,14 +232,12 @@ void assertCalculationIs(const char* input, DisplayOutput display,
   push(store, input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
-  Layout exactOutputLayout = Layout();
-  Layout approximateOutputLayout = Layout();
   KDFont::Size font = KDFont::Size::Large;
   KDCoordinate maxVisibleWidth = 280;
   // Replicate behavior in HistoryViewCell::setNewCalculation
-  lastCalculation->createOutputLayouts(&exactOutputLayout,
-                                       &approximateOutputLayout, context, true,
-                                       maxVisibleWidth, font);
+  ::Calculation::Calculation::OutputLayouts outputLayouts =
+      lastCalculation->createOutputLayouts(context, true, maxVisibleWidth,
+                                           font);
 #if POINCARE_STRICT_TESTS
   quiz_assert(lastCalculation->displayOutput(context) == display);
 #else
@@ -263,13 +261,13 @@ void assertCalculationIs(const char* input, DisplayOutput display,
   if (exactOutput) {
     quiz_assert(::Calculation::Calculation::CanDisplayExact(
         lastCalculation->displayOutput(context)));
-    assert_layout_serializes_to(exactOutputLayout, exactOutput);
+    assert_layout_serializes_to(outputLayouts.exact, exactOutput);
   }
 
   if (approximateOutput) {
     assert(::Calculation::Calculation::CanDisplayApproximate(
         lastCalculation->displayOutput(context)));
-    assert_layout_serializes_to(approximateOutputLayout, approximateOutput);
+    assert_layout_serializes_to(outputLayouts.approximate, approximateOutput);
   }
   store->deleteAll();
 }

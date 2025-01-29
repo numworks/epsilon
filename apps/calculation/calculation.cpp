@@ -176,19 +176,14 @@ Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
   return m_displayOutput;
 }
 
-void Calculation::createOutputLayouts(Layout* exactOutput,
-                                      Layout* approximateOutput,
-                                      Context* context,
-                                      bool canChangeDisplayOutput,
-                                      KDCoordinate maxVisibleWidth,
-                                      KDFont::Size font) {
-  assert(exactOutput && approximateOutput);
-
+Calculation::OutputLayouts Calculation::createOutputLayouts(
+    Context* context, bool canChangeDisplayOutput, KDCoordinate maxVisibleWidth,
+    KDFont::Size font) {
   // Create the exact output layout
-  *exactOutput = Layout();
+  Layout exactOutput = Layout();
   if (CanDisplayExact(displayOutput(context))) {
     bool couldNotCreateExactLayout = false;
-    *exactOutput = createExactOutputLayout(context, &couldNotCreateExactLayout);
+    exactOutput = createExactOutputLayout(context, &couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
       if (canChangeDisplayOutput &&
           displayOutput(context) != DisplayOutput::ExactOnly) {
@@ -201,15 +196,16 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
     }
     if (canChangeDisplayOutput &&
         displayOutput(context) == DisplayOutput::ExactAndApproximate &&
-        (*exactOutput)->layoutSize(font).width() > maxVisibleWidth) {
+        exactOutput->layoutSize(font).width() > maxVisibleWidth) {
       forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
     }
   }
 
   // Create the approximate output layout
+  Layout approximateOutput = Layout();
   if (CanDisplayApproximate(displayOutput(context))) {
     bool couldNotCreateApproximateLayout = false;
-    *approximateOutput = createApproximateOutputLayout(
+    approximateOutput = createApproximateOutputLayout(
         context, &couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
       if (canChangeDisplayOutput &&
@@ -217,9 +213,9 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
         /* Set display the output to ApproximateOnly, make room in the pool by
          * erasing the exact layout, retry to create the approximate layout. */
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
-        *exactOutput = Layout();
+        exactOutput = Layout();
         couldNotCreateApproximateLayout = false;
-        *approximateOutput = createApproximateOutputLayout(
+        approximateOutput = createApproximateOutputLayout(
             context, &couldNotCreateApproximateLayout);
         if (couldNotCreateApproximateLayout) {
           ExceptionCheckpoint::Raise();
@@ -233,9 +229,11 @@ void Calculation::createOutputLayouts(Layout* exactOutput,
   // Hide exact output layout if identical to approximate
   if (CanDisplayExact(displayOutput(context)) &&
       CanDisplayApproximate(displayOutput(context)) &&
-      exactOutput->isIdenticalTo(*approximateOutput)) {
+      exactOutput.isIdenticalTo(approximateOutput)) {
     forceDisplayOutput(DisplayOutput::ApproximateIsIdenticalToExact);
   }
+
+  return {exactOutput, approximateOutput};
 }
 
 Calculation::EqualSign Calculation::equalSign(Context* context) {

@@ -119,11 +119,15 @@ class Calculation {
 
   // Displayed output
   DisplayOutput displayOutput(Poincare::Context* context);
-  void createOutputLayouts(Poincare::Layout* exactOutput,
-                           Poincare::Layout* approximateOutput,
-                           Poincare::Context* context,
-                           bool canChangeDisplayOutput,
-                           KDCoordinate maxVisibleWidth, KDFont::Size font);
+
+  struct OutputLayouts {
+    Poincare::Layout exact;
+    Poincare::Layout approximate;
+  };
+  OutputLayouts createOutputLayouts(Poincare::Context* context,
+                                    bool canChangeDisplayOutput,
+                                    KDCoordinate maxVisibleWidth,
+                                    KDFont::Size font);
   EqualSign equalSign(Poincare::Context* context);
 
   void fillExpressionsForAdditionalResults(

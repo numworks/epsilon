@@ -531,7 +531,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
           }
           cols = dim.matrix.cols;
         } else if (dim.isUnit()) {
-          bool success = unitVector.addAllCoefficients(
+          [[maybe_unused]] bool success = unitVector.addAllCoefficients(
               dim.unit.vector, secondDivisionChild ? -1 : 1);
           assert(success);
           representative = dim.unit.representative;
@@ -562,7 +562,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
                index >= static_cast<float>(INT8_MIN) &&
                std::round(index) == index);
         Units::SIVector unitVector = Units::SIVector::Empty();
-        bool success = unitVector.addAllCoefficients(
+        [[maybe_unused]] bool success = unitVector.addAllCoefficients(
             dim.unit.vector, static_cast<int8_t>(index));
         assert(success);
         dim = unitVector.isEmpty() ? Scalar()

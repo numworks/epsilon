@@ -536,8 +536,8 @@ Tree* GetPolarFormat(const Tree* e,
   if (bubbledUpDependencies) {
     // abs and arg pointers may have been invalidated, find them again.
     PatternMatching::Context ctx;
-    bool find = PatternMatching::Match(polarForm,
-                                       KMult(KA, KExp(KMult(KB_s, i_e))), &ctx);
+    [[maybe_unused]] bool find = PatternMatching::Match(
+        polarForm, KMult(KA, KExp(KMult(KB_s, i_e))), &ctx);
     assert(find);
     abs = const_cast<Tree*>(ctx.getTree(KA));
     argIsNull =
@@ -595,7 +595,7 @@ Tree* GetCartesianFormat(const Tree* e,
   if (bubbledUpDependencies) {
     // im and re pointers may have been invalidated, find them again.
     PatternMatching::Context ctx;
-    bool find =
+    [[maybe_unused]] bool find =
         PatternMatching::Match(cartesianForm, KAdd(KA, KMult(KB, i_e)), &ctx);
     assert(find);
     re = const_cast<Tree*>(ctx.getTree(KA));

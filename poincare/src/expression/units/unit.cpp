@@ -112,7 +112,7 @@ static bool CanSimplifyUnitProduct(const SIVector* unitsExponents,
 
   for (size_t i = 0; i < SIVector::k_numberOfBaseUnits; i++) {
     // Simplify unitsExponents with base units from derived unit
-    bool success = simplifiedExponents.setCoefficientAtIndex(
+    [[maybe_unused]] bool success = simplifiedExponents.setCoefficientAtIndex(
         i, unitsExponents->coefficientAtIndex(i) -
                entryUnitExponent * entryUnitExponents->coefficientAtIndex(i));
     assert(success);
@@ -664,7 +664,7 @@ SIVector Unit::GetSIVector(const Tree* baseUnits) {
     }
     // Fill the vector with the unit's exponent
     assert(factor->isUnit());
-    bool success = vector.addAllCoefficients(
+    [[maybe_unused]] bool success = vector.addAllCoefficients(
         GetRepresentative(factor)->siVector(), exponent);
     assert(success);
     if (++factorIndex >= numberOfFactors) {

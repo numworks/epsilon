@@ -5,7 +5,7 @@
 
 namespace Poincare::Internal {
 
-static bool IsVector(const Tree* e) {
+[[maybe_unused]] static bool IsVector(const Tree* e) {
   return e->isMatrix() &&
          (Matrix::NumberOfRows(e) == 1 || Matrix::NumberOfColumns(e) == 1);
 }

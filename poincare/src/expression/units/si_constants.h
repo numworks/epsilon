@@ -10,14 +10,14 @@ namespace Units {
 
 consteval SIVector operator*(const SIVector& a, const SIVector& b) {
   SIVector r = a;
-  bool success = r.addAllCoefficients(b, 1);
+  [[maybe_unused]] bool success = r.addAllCoefficients(b, 1);
   assert(success);
   return r;
 }
 
 consteval SIVector operator/(const SIVector& a, const SIVector& b) {
   SIVector r = a;
-  bool success = r.addAllCoefficients(b, -1);
+  [[maybe_unused]] bool success = r.addAllCoefficients(b, -1);
   assert(success);
   return r;
 }
@@ -27,7 +27,7 @@ consteval SIVector operator^(const SIVector& a, int p) {
   SIVector r = {};
   int absP = p > 0 ? p : -p;
   for (int i = 0; i < absP; i++) {
-    bool success = r.addAllCoefficients(a, p > 0 ? 1 : -1);
+    [[maybe_unused]] bool success = r.addAllCoefficients(a, p > 0 ? 1 : -1);
     assert(success);
   }
   return r;

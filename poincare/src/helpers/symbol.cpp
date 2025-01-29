@@ -23,7 +23,7 @@ bool SymbolHelper::IsSymbol(NewExpression e, CodePoint c) {
   }
   constexpr size_t bufferSize = CodePoint::MaxCodePointCharLength + 1;
   char buffer[bufferSize];
-  size_t codePointLength =
+  [[maybe_unused]] size_t codePointLength =
       UTF8Helper::WriteCodePoint(buffer, bufferSize - 1, c);
   assert(codePointLength < bufferSize);
   return strcmp(GetName(e), buffer) == 0;

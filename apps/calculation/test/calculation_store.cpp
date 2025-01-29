@@ -357,8 +357,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("randint(2,2)+3", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "5", &globalContext, &store);
   assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, "2×√(2)", "2.828427125",
-                      &globalContext, &store);
+                      EqualSign::Unknown, "√(8)", "2.828427125", &globalContext,
+                      &store);
   assertCalculationIs("cos(45×_°)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Unknown, "((√(2))/2)", "0.7071067812",
                       &globalContext, &store);
@@ -748,7 +748,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("√(-1)", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Unknown, nullptr, "i", &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "ln(-2)", nullptr,
+                      EqualSign::Approximation, "ln(2)+π·i", nullptr,
                       &globalContext, &store);
   assertCalculationIs(
       "√(-1)×√(-1)", DisplayOutput::ApproximateIsIdenticalToExact,

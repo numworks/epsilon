@@ -163,8 +163,8 @@ constexpr static Builtin s_builtins[] = {
     {Type::ListSum, "sum"},
     {Type::ListProduct, "prod"},
     {Type::ListSort, "sort"},
-    {Type::Permute, "permute"},
 #endif
+    {Type::Permute, "permute"},
     {Type::Random, "random"},
     {Type::RandInt, "randint"},
 #if POINCARE_LIST

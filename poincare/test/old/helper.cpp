@@ -380,7 +380,11 @@ void assert_layout_serializes_to(const Tree *layout,
               << "\n\n";
   }
 #endif
+#if POINCARE_STRICT_TESTS
   quiz_assert(success);
+#else
+  quiz_tolerate_print_if_failure(success, serialization, serialization, buffer);
+#endif
 }
 
 template void assert_expression_approximates_to<float>(

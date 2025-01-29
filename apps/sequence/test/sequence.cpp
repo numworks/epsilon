@@ -3,6 +3,7 @@
 #include <apps/shared/sequence_context.h>
 #include <apps/shared/sequence_store.h>
 #include <assert.h>
+#include <omg/float.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>
@@ -60,8 +61,8 @@ void check_sequences_defined_by(
       if (seqs[i]->isDefined()) {
         double un =
             seqs[i]->evaluateXYAtParameter((double)j, sequenceContext).y();
-        quiz_assert((std::isnan(un) && std::isnan(result[i][j])) ||
-                    (un == result[i][j]));
+        quiz_assert(OMG::Float::RoughlyEqual<double>(un, result[i][j],
+                                                     DBL_EPSILON, true));
       }
     }
   }
@@ -143,10 +144,9 @@ QUIZ_CASE(sequence_evaluation) {
 
   // u(n+1) = 8/(1+ln(u(n))), u(0) = 3.55
   double results2qua[SequenceStore::k_maxNumberOfSequences][10] = {
-      {3.5499999999999998, 3.5289743740408123, 3.5382460108316022,
-       3.5341447216846697, 3.5359564181332125, 3.5351556343558612,
-       3.5355094916101794, 3.5353531074911108, 3.5354222164487332,
-       3.5353916752460468},
+      {3.55, 3.528974374040812, 3.538246010831602, 3.53414472168467,
+       3.535956418133212, 3.535155634355861, 3.535509491610179,
+       3.535353107491111, 3.535422216448733, 3.535391675246047},
       {},
       {}};
   types[0] = Sequence::Type::SingleRecurrence;

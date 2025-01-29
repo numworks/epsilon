@@ -179,7 +179,8 @@ Tree* AbstractTreeStack::pushRackMemoizedLayout(int nbChildren) {
   Tree* result = pushBlock(Type::RackMemoizedLayout);
   pushBlock(nbChildren % 256);
   pushBlock(nbChildren / 256);
-  for (int i = 0; i < sizeof(CustomTypeStructs::RackMemoizedLayoutNode); i++) {
+  for (size_t i = 0; i < sizeof(CustomTypeStructs::RackMemoizedLayoutNode);
+       i++) {
     pushBlock(0);
   }
   return result;

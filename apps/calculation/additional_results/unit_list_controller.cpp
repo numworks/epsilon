@@ -133,7 +133,7 @@ void UnitListController::computeAdditionalResults(
       }
       // Skip duplicate layouts
       bool skipLayout = false;
-      for (size_t j = 0; j < m_numberOfExpressionCells; j++) {
+      for (int j = 0; j < m_numberOfExpressionCells; j++) {
         Layout previousLayout =
             m_layouts[j].isUninitialized() ? m_exactLayouts[j] : m_layouts[j];
         if (previousLayout.isIdenticalTo(layout, true)) {

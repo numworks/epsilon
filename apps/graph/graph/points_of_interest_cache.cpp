@@ -240,7 +240,7 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
   NextSolution methodsNext[] = {
       &Solver<double>::nextRoot, &Solver<double>::nextMinimum,
       &Solver<double>::nextMaximum, &Solver<double>::nextDiscontinuity};
-  while (ctx->counter < std::size(methodsNext)) {
+  while (ctx->counter < static_cast<int>(std::size(methodsNext))) {
     NextSolution next = methodsNext[ctx->counter];
     if (next != static_cast<NextSolution>(&Solver<double>::nextRoot) &&
         f->isAlongY()) {

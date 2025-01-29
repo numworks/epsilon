@@ -615,7 +615,7 @@ uint32_t EquationSolver::TagParametersUsedAsVariables(const Context* context) {
       OMG::Print::LengthOfUInt32(OMG::Base::Decimal, k_maxIndex);
   /* Only check local variables that may not have a global definition. The
    * others  will be checked for later. */
-  for (size_t i = 0; i < context->variables.numberOfVariables(); i++) {
+  for (int i = 0; i < context->variables.numberOfVariables(); i++) {
     // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
     const char* variable = context->variables.variable(i);
     if (variable[0] != k_parameterPrefix) {

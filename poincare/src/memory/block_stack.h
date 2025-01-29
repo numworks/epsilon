@@ -16,8 +16,8 @@ class BlockStack {
   friend class TreeStackCheckpoint;
 
  public:
-  int maxNumberOfBlocks() const { return m_maxSize; }
-  int maxNumberOfReferences() const { return maxNumberOfBlocks() / 8; }
+  size_t maxNumberOfBlocks() const { return m_maxSize; }
+  size_t maxNumberOfReferences() const { return maxNumberOfBlocks() / 8; }
   const Block* firstBlock() const { return m_blocks; }
   Block* firstBlock() { return m_blocks; }
   // If BlockStack is empty, first and last blocks are the same one

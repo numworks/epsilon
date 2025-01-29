@@ -304,13 +304,13 @@ QUIZ_CASE(calculation_display_exact_approximate) {
       Preferences::AngleUnit::Degree);
 
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Equal, "1/2", "0.5", &globalContext, &store);
+                      EqualSign::Equal, "(1/2)", "0.5", &globalContext, &store);
   assertCalculationIs("1/3", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Approximation, "1/3", "0.3333333333",
+                      EqualSign::Approximation, "(1/3)", "0.3333333333",
                       &globalContext, &store);
 
   assertCalculationIs("1/(2i)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Equal, "-1/2×i", "-0.5×i", &globalContext,
+                      EqualSign::Equal, "-(1/2)i", "-0.5i", &globalContext,
                       &store);
   assertCalculationIs("1/0", DisplayOutput::ExactOnly, EqualSign::Unknown,
                       "undef", "undef", &globalContext, &store);
@@ -342,7 +342,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Unknown, "3", "3", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3/2→a", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, "3/2", "1.5", &globalContext, &store);
+                      EqualSign::Unknown, "(3/2)", "1.5", &globalContext,
+                      &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown,
                       "3+x", nullptr, &globalContext, &store);
@@ -359,10 +360,10 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Unknown, "2×√(2)", "2.828427125",
                       &globalContext, &store);
   assertCalculationIs("cos(45×_°)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, "√(2)/2", "0.7071067812",
+                      EqualSign::Unknown, "((√(2))/2)", "0.7071067812",
                       &globalContext, &store);
   assertCalculationIs("cos(π/4×_rad)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, "√(2)/2", "0.7071067812",
+                      EqualSign::Unknown, "((√(2))/2)", "0.7071067812",
                       &globalContext, &store);
   assertCalculationIs("cos(50×_°)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Unknown, "cos(50)", "0.6427876097",
@@ -371,10 +372,10 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Unknown, nullptr, "0.375", &globalContext,
                       &store);
   assertCalculationIs("1+2%", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Equal, "1×(1+2/100)", "1.02", &globalContext,
+                      EqualSign::Equal, "1(1+(2/100))", "1.02", &globalContext,
                       &store);
   assertCalculationIs("1-(1/3)%", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Approximation, "1×(1-(1/3)/100)",
+                      EqualSign::Approximation, "1×(1-(((1/3))/100))",
                       "0.9966666667", &globalContext, &store);
 
   // Exact output that have dependencies are not displayed
@@ -390,39 +391,40 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Unknown, nullptr, "1.666666667×_dg×_m^3",
                       &globalContext, &store);
   assertCalculationIs("(π/6)_rad", DisplayOutput::ApproximateOnly,
-                      EqualSign::Approximation, nullptr, "30×_°",
-                      &globalContext, &store);
+                      EqualSign::Approximation, nullptr, "30°", &globalContext,
+                      &store);
   assertCalculationIs("(1/11)_°", DisplayOutput::ApproximateOnly,
-                      EqualSign::Approximation, nullptr, "5.454545455×_'",
+                      // NOTE: unit
+                      EqualSign::Approximation, nullptr, "0.09090909091°",
                       &globalContext, &store);
   assertCalculationIs("180→rad", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "π×_rad", "3.141592654×_rad",
+                      EqualSign::Approximation, "πrad", "3.141592654rad",
                       &globalContext, &store);
   assertCalculationIs("45→gon", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, nullptr, "50×_gon", &globalContext,
+                      EqualSign::Unknown, nullptr, "50gon", &globalContext,
                       &store);
   Preferences::SharedPreferences()->setAngleUnit(
       Preferences::AngleUnit::Radian);
   assertCalculationIs("2+π→_rad", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, "(2+π)×_rad", "5.141593×_rad",
+                      EqualSign::Unknown, "(2+π)rad", "5.141592654rad",
                       &globalContext, &store);
   assertCalculationIs("π/2→°", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, nullptr, "90×_°", &globalContext,
+                      EqualSign::Unknown, nullptr, "90°", &globalContext,
                       &store);
   assertCalculationIs("πrad/2→°", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, nullptr, "90×_°", &globalContext,
+                      EqualSign::Unknown, nullptr, "90°", &globalContext,
                       &store);
   assertCalculationIs("(1/6)_rad^(-1)", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, nullptr, "0.1666666667×_rad^(-1)",
+                      EqualSign::Unknown, nullptr, "0.1666666667rad^(-1)",
                       &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, nullptr, "6×_rad", &globalContext,
+                      EqualSign::Unknown, nullptr, "6rad", &globalContext,
                       &store);
   assertCalculationIs("(1/6)_rad→a", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "1/6×_rad", "0.1666666667×_rad",
+                      EqualSign::Approximation, "(1/6)rad", "0.1666666667rad",
                       &globalContext, &store);
   assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, nullptr, "6×_rad", &globalContext,
+                      EqualSign::Unknown, nullptr, "6rad", &globalContext,
                       &store);
   Preferences::SharedPreferences()->setAngleUnit(
       Preferences::AngleUnit::Degree);
@@ -435,9 +437,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("1+1", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Unknown, nullptr, "2", &globalContext, &store);
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Equal, "1/2", "0.5", &globalContext, &store);
+                      EqualSign::Equal, "(1/2)", "0.5", &globalContext, &store);
   assertCalculationIs("0.5", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Equal, "1/2", "0.5", &globalContext, &store);
+                      EqualSign::Equal, "(1/2)", "0.5", &globalContext, &store);
   assertCalculationIs("√(8)", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "2.828427125",
                       &globalContext, &store);
@@ -753,7 +755,7 @@ QUIZ_CASE(calculation_complex_format) {
       "√(-1)×√(-1)", DisplayOutput::ApproximateIsIdenticalToExact,
       EqualSign::Unknown, nullptr, "-1", &globalContext, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "1+√(3)×i", nullptr,
+                      EqualSign::Approximation, "1+√(3)i", nullptr,
                       &globalContext, &store);
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "-2+2×√(3)×i", nullptr,
@@ -765,16 +767,16 @@ QUIZ_CASE(calculation_complex_format) {
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Polar);
   assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "√(2)×e^(π/4×i)", nullptr,
+                      EqualSign::Approximation, "√(2)e^((π/4)i)", nullptr,
                       &globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "e^(π/2×i)", nullptr,
+                      EqualSign::Approximation, "e^((π/2)i)", nullptr,
                       &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "ln(-2)", nullptr,
                       &globalContext, &store);
   assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, nullptr, "e^(3.141592654×i)",
+                      EqualSign::Unknown, nullptr, "e^(3.141592654i)",
                       &globalContext, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "2×e^(π/3×i)", nullptr,

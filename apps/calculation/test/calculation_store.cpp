@@ -385,16 +385,15 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   assertCalculationIs("(1/6)_g", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, nullptr, "1.666666667×_dg",
+                      EqualSign::Unknown, nullptr, "0.1666666667g",
                       &globalContext, &store);
   assertCalculationIs("(1/6)_L_kg", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, nullptr, "1.666666667×_dg×_m^3",
+                      EqualSign::Unknown, nullptr, "1.666666667ᴇ-4m^3·kg",
                       &globalContext, &store);
   assertCalculationIs("(π/6)_rad", DisplayOutput::ApproximateOnly,
                       EqualSign::Approximation, nullptr, "30°", &globalContext,
                       &store);
   assertCalculationIs("(1/11)_°", DisplayOutput::ApproximateOnly,
-                      // NOTE: unit
                       EqualSign::Approximation, nullptr, "0.09090909091°",
                       &globalContext, &store);
   assertCalculationIs("180→rad", DisplayOutput::ExactAndApproximate,

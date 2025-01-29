@@ -109,6 +109,7 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
             ->setGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
         codePoint = decoder.nextCodePoint();
         while (codePoint.isCombining()) {
+          assert(KDFont::GlyphWidth(style.font, codePoint) == width);
           KDFont::Font(style.font)
               ->accumulateGlyphGrayscalesForCodePoint(codePoint, &glyphBuffer);
           codePointPointer = decoder.stringPosition();

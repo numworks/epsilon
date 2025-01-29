@@ -280,9 +280,11 @@ QUIZ_CASE(calculation_significant_digits) {
                       DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "123456789123456789",
                       "1.234567891ᴇ17", &globalContext, &store);
+  // FIXME: sign is wrong (returns Equal)
   assertCalculationIs("123123456789", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "123123456789",
                       "1.231234568ᴇ11", &globalContext, &store);
+  // FIXME: sign is wrong (returns Equal)
   assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "11123456789", "1.112345679ᴇ10",
                       &globalContext, &store);
@@ -356,6 +358,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       &store);
   assertCalculationIs("randint(2,2)+3", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "5", &globalContext, &store);
+  // FIXME: display output currently returns ExactAndApproximateToggle
   assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Unknown, "√(8)", "2.828427125", &globalContext,
                       &store);
@@ -777,6 +780,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Unknown, nullptr, "e^(3.141592654i)",
                       &globalContext, &store);
+  // TODO: exact polar mode outputs of the three following tests do not work
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "2×e^(π/3×i)", nullptr,
                       &globalContext, &store);

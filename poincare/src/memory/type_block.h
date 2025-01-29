@@ -139,11 +139,7 @@ class TypeBlock : public Block {
   }
 
   bool isScalarOnly() const {
-#if POINCARE_MATRIX
-    return !isAMatrixOrContainsMatricesAsChildren();
-#else
-    return true;
-#endif
+    return !(POINCARE_MATRIX && isAMatrixOrContainsMatricesAsChildren());
   }
 
   // Their next metaBlock contains the numberOfChildren

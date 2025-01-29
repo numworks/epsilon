@@ -33,7 +33,7 @@ SFLAGS_ion += \
 
 PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
-  -DPATCH_LEVEL=\"$(PATCH_LEVEL)\"
+  -DPATCH_LEVEL=\"$(PATCH_LEVEL)\" \
   -DION_KEYBOARD_RICH=$(if $(findstring epsilon,$(ION_layout_variant)),1,0)
 
 ION_LOG_EVENTS_NAME ?= $(DEBUG)

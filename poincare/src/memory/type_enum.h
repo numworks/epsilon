@@ -23,6 +23,7 @@ struct AnyType {
      * switch. */
     return {static_cast<uint16_t>(static_cast<uint8_t>(e) + UINT8_MAX)};
   }
+  constexpr bool isEnabled() const { return m_id < UINT8_MAX; }
   constexpr operator uint16_t() const { return m_id; }
 
   uint16_t m_id;
@@ -43,7 +44,9 @@ class Type {
 
   constexpr Type() {}
   constexpr Type(AnyType type)
-      : m_value(static_cast<TypeEnum>(static_cast<uint8_t>(type))) {}
+      : m_value(static_cast<TypeEnum>(static_cast<uint8_t>(type))) {
+    assert(type.isEnabled());
+  }
   constexpr Type(uint8_t value) : m_value(static_cast<TypeEnum>(value)) {}
   constexpr operator uint8_t() const { return static_cast<uint8_t>(m_value); }
 

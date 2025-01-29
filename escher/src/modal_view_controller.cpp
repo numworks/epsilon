@@ -157,10 +157,15 @@ void ModalViewController::dismissModal() {
   m_currentModalViewController = nullptr;
 }
 
-void ModalViewController::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(isDisplayingModal()
-                                    ? m_currentModalViewController
-                                    : m_regularViewController);
+void ModalViewController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(isDisplayingModal()
+                                      ? m_currentModalViewController
+                                      : m_regularViewController);
+  } else {
+    Escher::ViewController::handleResponderChainEvent(event);
+  }
 }
 
 bool ModalViewController::handleEvent(Ion::Events::Event event) {

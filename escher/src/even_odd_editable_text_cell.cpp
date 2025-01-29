@@ -23,8 +23,13 @@ void AbstractEvenOddEditableTextCell::layoutSubviews(bool force) {
                 force);
 }
 
-void AbstractEvenOddEditableTextCell::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(editableTextCell());
+void AbstractEvenOddEditableTextCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(editableTextCell());
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
 }
 
 }  // namespace Escher

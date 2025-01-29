@@ -414,13 +414,18 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(
                 baseDirtyRect.height());
 }
 
-void PythonTextArea::didBecomeFirstResponder() {
-  TextArea::didBecomeFirstResponder();
-  /* If we are coming from a Varbox opened while autocompleting, the text was
-   * removed to preserve the ScriptNodes name pointers. */
-  if (!m_contentView.isAutocompleting() && m_wasAutocompleting) {
-    addAutocompletion(m_autocompletionResultIndex);
-    m_wasAutocompleting = false;
+void PythonTextArea::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    TextArea::handleResponderChainEvent(event);
+    /* If we are coming from a Varbox opened while autocompleting, the text was
+     * removed to preserve the ScriptNodes name pointers. */
+    if (!m_contentView.isAutocompleting() && m_wasAutocompleting) {
+      addAutocompletion(m_autocompletionResultIndex);
+      m_wasAutocompleting = false;
+    }
+  } else {
+    TextArea::handleResponderChainEvent(event);
   }
 }
 

@@ -11,8 +11,12 @@ InputViewController::ExpressionInputBarController::ExpressionInputBarController(
       m_expressionInputBar(this, inputViewController) {}
 
 void InputViewController::ExpressionInputBarController::
-    didBecomeFirstResponder() {
-  App::app()->setFirstResponder(m_expressionInputBar.layoutField());
+    handleResponderChainEvent(Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(m_expressionInputBar.layoutField());
+  } else {
+    ViewController::handleResponderChainEvent(event);
+  }
 }
 
 InputViewController::InputViewController(

@@ -47,7 +47,7 @@ class InputViewController : public ModalViewController, LayoutFieldDelegate {
         const ExpressionInputBarController& other) = delete;
     ExpressionInputBarController& operator=(
         ExpressionInputBarController&& other) = delete;
-    void didBecomeFirstResponder() override;
+    void handleResponderChainEvent(ResponderChainEvent event) override;
     View* view() override { return &m_expressionInputBar; }
     LayoutField* layoutField() { return m_expressionInputBar.layoutField(); }
 

@@ -20,8 +20,13 @@ PopUpController::PopUpController(Invocation OkInvocation,
 
 View* PopUpController::view() { return &m_contentView; }
 
-void PopUpController::didBecomeFirstResponder() {
-  m_contentView.setSelectedButton(0);
+void PopUpController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_contentView.setSelectedButton(0);
+  } else {
+    ViewController::handleResponderChainEvent(event);
+  }
 }
 
 bool PopUpController::handleEvent(Ion::Events::Event event) {

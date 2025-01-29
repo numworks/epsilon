@@ -36,8 +36,12 @@ class LocalizationController
 
   Escher::View* view() override { return &m_contentView; }
   const char* title() const override;
-  void didBecomeFirstResponder() override {
-    Escher::App::app()->setFirstResponder(selectableListView());
+  void handleResponderChainEvent(ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      Escher::App::app()->setFirstResponder(selectableListView());
+    } else {
+      Escher::ViewController::handleResponderChainEvent(event);
+    }
   }
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;

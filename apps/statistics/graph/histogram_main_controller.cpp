@@ -119,23 +119,21 @@ bool HistogramMainController::handleEvent(Ion::Events::Event event) {
   }
 }
 
-void HistogramMainController::didBecomeFirstResponder() {
-  /* If the HistogramMainController page is being opened, the viewWillAppear
-   * function has already been called, and the list has been initialized. */
-  bool isListAlreadySelected = m_listController.selectedRow() >= 0;
-  if (!isListAlreadySelected) {
-    /* If the HistogramMainController took the first responder ownership from
-     * another element in the page (for instance the TabViewController), the
-     * header should be selected. */
-    enterHeaderView();
-  } else {
-    enterListView();
-  }
-}
-
 void HistogramMainController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::WillExit) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    /* If the HistogramMainController page is being opened, the viewWillAppear
+     * function has already been called, and the list has been initialized. */
+    bool isListAlreadySelected = m_listController.selectedRow() >= 0;
+    if (!isListAlreadySelected) {
+      /* If the HistogramMainController took the first responder ownership from
+       * another element in the page (for instance the TabViewController), the
+       * header should be selected. */
+      enterHeaderView();
+    } else {
+      enterListView();
+    }
+  } else if (event.type == ResponderChainEventType::WillExit) {
     if (event.nextFirstResponder == m_tabController) {
       /* The tab controller is taking control, but the histogram view is still
        * visible. We restore the current subview to an unselected state. */

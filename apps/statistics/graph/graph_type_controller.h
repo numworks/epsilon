@@ -34,7 +34,7 @@ class GraphTypeController
   Escher::Responder* responderWhenEmpty() override;
 
   // UniformSelectableListController
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   const char* title() const override {
     return I18n::translate(I18n::Message::Type);

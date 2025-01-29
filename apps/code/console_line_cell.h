@@ -29,7 +29,7 @@ class ConsoleLineCell : public Escher::HighlightCell, public Escher::Responder {
   void layoutSubviews(bool force = false) override;
 
   /* Responder */
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   class ScrollableConsoleLineView

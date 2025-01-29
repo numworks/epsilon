@@ -51,9 +51,14 @@ void TestController::stackOpenPage(ViewController* nextPage) {
   ViewController::stackOpenPage(nextPage);
 }
 
-void TestController::didBecomeFirstResponder() {
-  m_selectableListView.reloadData();
-  ExplicitSelectableListViewController::didBecomeFirstResponder();
+void TestController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_selectableListView.reloadData();
+    ExplicitSelectableListViewController::handleResponderChainEvent(event);
+  } else {
+    UniformSelectableListController::handleResponderChainEvent(event);
+  }
 }
 
 bool TestController::handleEvent(Ion::Events::Event event) {

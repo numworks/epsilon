@@ -46,7 +46,6 @@ class SelectableTableView : public TableView, public Responder {
   void deselectTable(bool withinTemporarySelection = false);
   void reloadData(bool setFirstResponder = true, bool resetMemoization = true);
 
-  void didBecomeFirstResponder() override;
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  protected:

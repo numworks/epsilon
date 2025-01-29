@@ -7,10 +7,6 @@ namespace Shared {
 TabTableController::TabTableController(Responder* parentResponder)
     : ViewController(parentResponder) {}
 
-void TabTableController::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(selectableTableView());
-}
-
 void TabTableController::viewWillAppear() {
   ViewController::viewWillAppear();
   selectableTableView()->reloadData();
@@ -18,7 +14,9 @@ void TabTableController::viewWillAppear() {
 
 void TabTableController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::WillExit) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(selectableTableView());
+  } else if (event.type == ResponderChainEventType::WillExit) {
     if (event.nextFirstResponder == tabController()) {
       assert(tabController() != nullptr);
       selectableTableView()->deselectTable();

@@ -105,27 +105,29 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   return handleEventOnExpression(event);
 }
 
-void ListController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectRow(0);
-  } else {
-    selectRow(selectedRow());
-  }
-  if (selectedRow() >= numberOfRows()) {
-    selectRow(numberOfRows() - 1);
-  }
-  footer()->setSelectedButton(-1);
-  App::app()->setFirstResponder(selectableListView());
-}
-
 void ListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::DidEnter) {
-    selectableListView()->reloadData(false);
-    // Reload brace if the model store has evolved
-    reloadBrace();
-  } else {
-    Shared::ExpressionModelListController::handleResponderChainEvent(event);
+  switch (event.type) {
+    case ResponderChainEventType::DidEnter:
+      selectableListView()->reloadData(false);
+      // Reload brace if the model store has evolved
+      reloadBrace();
+      break;
+    case ResponderChainEventType::BecameFirst:
+      if (selectedRow() == -1) {
+        selectRow(0);
+      } else {
+        selectRow(selectedRow());
+      }
+      if (selectedRow() >= numberOfRows()) {
+        selectRow(numberOfRows() - 1);
+      }
+      footer()->setSelectedButton(-1);
+      App::app()->setFirstResponder(selectableListView());
+      break;
+    default:
+      Shared::ExpressionModelListController::handleResponderChainEvent(event);
+      break;
   }
 }
 

@@ -53,7 +53,7 @@ class LayoutField : public EditableField {
                              bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;

@@ -67,9 +67,14 @@ void ScriptParameterController::viewWillAppear() {
   m_selectableListView.selectCell(0);
 }
 
-void ScriptParameterController::didBecomeFirstResponder() {
-  selectRow(0);
-  ExplicitSelectableListViewController::didBecomeFirstResponder();
+void ScriptParameterController::handleResponderChainEvent(
+    ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    selectRow(0);
+    ExplicitSelectableListViewController::handleResponderChainEvent(event);
+  } else {
+    ExplicitSelectableListViewController::handleResponderChainEvent(event);
+  }
 }
 
 AbstractMenuCell* ScriptParameterController::cell(int row) {

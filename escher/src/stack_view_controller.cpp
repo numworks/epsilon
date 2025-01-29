@@ -124,16 +124,14 @@ void StackViewController::setupActiveViewController() {
 
 void StackViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::DidEnter) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    ViewController* vc = topViewController();
+    App::app()->setFirstResponder(vc);
+  } else if (event.type == ResponderChainEventType::DidEnter) {
     m_displayedAsModal = App::app()->modalViewController()->isDisplayingModal();
   } else {
     ViewController::handleResponderChainEvent(event);
   }
-}
-
-void StackViewController::didBecomeFirstResponder() {
-  ViewController* vc = topViewController();
-  App::app()->setFirstResponder(vc);
 }
 
 bool StackViewController::handleEvent(Ion::Events::Event event) {

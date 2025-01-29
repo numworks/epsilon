@@ -42,13 +42,18 @@ bool DoublePairTableController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void DoublePairTableController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectCellAtLocation(0, 1);
+void DoublePairTableController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (selectedRow() == -1) {
+      selectCellAtLocation(0, 1);
+    } else {
+      selectCellAtLocation(selectedColumn(), selectedRow());
+    }
+    TabTableController::handleResponderChainEvent(event);
   } else {
-    selectCellAtLocation(selectedColumn(), selectedRow());
+    TabTableController::handleResponderChainEvent(event);
   }
-  TabTableController::didBecomeFirstResponder();
 }
 
 HighlightCell* DoublePairTableController::reusableCell(int index, int type) {

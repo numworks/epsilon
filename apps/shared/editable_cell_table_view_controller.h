@@ -36,7 +36,7 @@ class EditableCellTableViewController
       Poincare::Preferences::PrintFloatMode mode,
       uint8_t numberOfSignificantDigits);
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   bool handleEvent(Ion::Events::Event event) override;
 

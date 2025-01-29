@@ -259,13 +259,28 @@ void SolutionsController::viewDidDisappear() {
 }
 
 void SolutionsController::handleResponderChainEvent(ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::DidEnter) {
-    // Select the most left present subview on all cells and reinitialize scroll
-    for (int i = 0; i < SystemOfEquations::k_maxNumberOfExactSolutions; i++) {
-      m_exactValueCells[i].reinitSelection();
+  switch (event.type) {
+    case ResponderChainEventType::DidEnter: {
+      // Select the most left present subview on all cells and reinitialize
+      // scroll
+      for (int i = 0; i < SystemOfEquations::k_maxNumberOfExactSolutions; i++) {
+        m_exactValueCells[i].reinitSelection();
+      }
+      break;
     }
-  } else {
-    Escher::ViewController::handleResponderChainEvent(event);
+    case ResponderChainEventType::BecameFirst: {
+      SystemOfEquations* system = App::app()->system();
+      if (system->numberOfSolutions() > 0) {
+        App::app()->setFirstResponder(m_contentView.selectableTableView());
+      } else if (solutionsAreApproximate()) {
+        selectIntervalButton();
+      }
+      break;
+    }
+    default: {
+      Escher::ViewController::handleResponderChainEvent(event);
+      break;
+    }
   }
 }
 
@@ -537,15 +552,6 @@ int SolutionsController::typeAtLocation(int column, int row) const {
     return k_approximateValueCellType;
   }
   return k_exactValueCellType;
-}
-
-void SolutionsController::didBecomeFirstResponder() {
-  SystemOfEquations* system = App::app()->system();
-  if (system->numberOfSolutions() > 0) {
-    App::app()->setFirstResponder(m_contentView.selectableTableView());
-  } else if (solutionsAreApproximate()) {
-    selectIntervalButton();
-  }
 }
 
 void SolutionsController::selectIntervalButton() {

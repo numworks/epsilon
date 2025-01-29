@@ -11,14 +11,30 @@ class Responder {
   // Default implementation does nothing
   virtual bool handleEvent(Ion::Events::Event event) { return false; };
 
-  // enum class FirstResponderStatus { DidBecome, WillResign };
-  virtual void didBecomeFirstResponder() {}
+  void didBecomeFirstResponder() {
+    handleResponderChainEvent(
+        {{nullptr}, ResponderChainEventType::BecameFirst});
+  }
   void willResignFirstResponder() {
     handleResponderChainEvent(
         {{nullptr}, ResponderChainEventType::WillResignFirst});
   }
 
-  enum class ResponderChainEventType { DidEnter, WillExit, WillResignFirst };
+  void didEnterResponderChain(Responder* previousFirstResponder) {
+    handleResponderChainEvent(
+        {{previousFirstResponder}, ResponderChainEventType::DidEnter});
+  }
+  void willExitResponderChain(Responder* nextFirstResponder) {
+    handleResponderChainEvent(
+        {{nextFirstResponder}, ResponderChainEventType::WillExit});
+  }
+
+  enum class ResponderChainEventType {
+    DidEnter,
+    WillExit,
+    WillResignFirst,
+    BecameFirst
+  };
   struct ResponderChainEvent {
     union {
       Responder* nextFirstResponder;

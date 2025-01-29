@@ -21,7 +21,7 @@ class MenuController
  public:
   MenuController(Escher::StackViewController* parentResponder,
                  InterestMenuController* interestMenuController);
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event e) override;
 
   constexpr static int k_indexOfSimpleInterest = 0;

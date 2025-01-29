@@ -59,11 +59,6 @@ void HistoryController::viewWillAppear() {
   reload();
 }
 
-void HistoryController::didBecomeFirstResponder() {
-  selectRow(numberOfRows() - 1);
-  App::app()->setFirstResponder(&m_selectableListView);
-}
-
 void HistoryController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::WillExit) {
@@ -73,8 +68,11 @@ void HistoryController::handleResponderChainEvent(
     if (event.nextFirstResponder == parentResponder()) {
       m_selectableListView.deselectTable();
     }
+  } else if (event.type == ResponderChainEventType::BecameFirst) {
+    selectRow(numberOfRows() - 1);
+    App::app()->setFirstResponder(&m_selectableListView);
   } else {
-    ViewController::handleResponderChainEvent(event);
+    Escher::ViewController::handleResponderChainEvent(event);
   }
 }
 

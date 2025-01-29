@@ -65,33 +65,40 @@ ButtonCell* FunctionListController::buttonAtIndex(
 
 void FunctionListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::DidEnter) {
-    selectableListView()->reloadData(false);
-  } else {
-    /* WillExit */
-    if (event.nextFirstResponder == tabController()) {
-      assert(tabController() != nullptr);
-      selectableListView()->deselectTable();
-      footer()->setSelectedButton(-1);
+  switch (event.type) {
+    case ResponderChainEventType::DidEnter: {
+      selectableListView()->reloadData(false);
+      break;
     }
-  }
-}
-
-void FunctionListController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    selectRow(0);
-  } else {
-    selectRow(selectedRow());
-  }
-  if (selectedRow() >= numberOfRows()) {
-    selectRow(numberOfRows() - 1);
-  }
-  footer()->setSelectedButton(-1);
-  if (m_editedCellIndex != -1) {
-    // Resume edition if it was interrupted by a store
-    App::app()->setFirstResponder(layoutField());
-  } else {
-    App::app()->setFirstResponder(selectableListView());
+    case ResponderChainEventType::WillExit: {
+      if (event.nextFirstResponder == tabController()) {
+        assert(tabController() != nullptr);
+        selectableListView()->deselectTable();
+        footer()->setSelectedButton(-1);
+      }
+      break;
+    }
+    case ResponderChainEventType::BecameFirst: {
+      if (selectedRow() == -1) {
+        selectRow(0);
+      } else {
+        selectRow(selectedRow());
+      }
+      if (selectedRow() >= numberOfRows()) {
+        selectRow(numberOfRows() - 1);
+      }
+      footer()->setSelectedButton(-1);
+      if (m_editedCellIndex != -1) {
+        // Resume edition if it was interrupted by a store
+        App::app()->setFirstResponder(layoutField());
+      } else {
+        App::app()->setFirstResponder(selectableListView());
+      }
+    }
+    default: {
+      ExpressionModelListController::handleResponderChainEvent(event);
+      break;
+    }
   }
 }
 

@@ -20,7 +20,7 @@ class TestModeController : public GenericSubController {
   Escher::HighlightCell* reusableCell(int index, int type) override;
   bool handleEvent(Ion::Events::Event event) override;
   int reusableCellCount(int type) const override { return k_numberOfCells; };
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static int k_numberOfCells = 2;

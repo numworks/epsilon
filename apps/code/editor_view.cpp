@@ -46,8 +46,13 @@ View* EditorView::subviewAtIndex(int index) {
   return &m_gutterView;
 }
 
-void EditorView::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(&m_textArea);
+void EditorView::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(&m_textArea);
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
 }
 
 void EditorView::layoutSubviews(bool force) {

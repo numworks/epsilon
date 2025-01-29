@@ -113,13 +113,18 @@ HighlightCell* HypothesisController::cell(int row) {
       const_cast<const HypothesisController*>(this)->cell(row));
 }
 
-void HypothesisController::didBecomeFirstResponder() {
-  selectRow(0);
-  m_haDropdown.selectRow(
-      static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));
-  m_haDropdown.init();
-  loadHypothesisParam();
-  App::app()->setFirstResponder(&m_selectableListView);
+void HypothesisController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    selectRow(0);
+    m_haDropdown.selectRow(
+        static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));
+    m_haDropdown.init();
+    loadHypothesisParam();
+    App::app()->setFirstResponder(&m_selectableListView);
+  } else {
+    ExplicitSelectableListViewController::handleResponderChainEvent(event);
+  }
 }
 
 bool HypothesisController::ButtonAction(HypothesisController* controller,

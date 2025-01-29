@@ -42,11 +42,16 @@ void TangentGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
 }
 
-void TangentGraphController::didBecomeFirstResponder() {
-  if (curveView()->hasFocus()) {
-    m_bannerView->abscissaValue()->setParentResponder(this);
-    m_bannerView->abscissaValue()->setDelegate(this);
-    App::app()->setFirstResponder(m_bannerView->abscissaValue());
+void TangentGraphController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (curveView()->hasFocus()) {
+      m_bannerView->abscissaValue()->setParentResponder(this);
+      m_bannerView->abscissaValue()->setDelegate(this);
+      App::app()->setFirstResponder(m_bannerView->abscissaValue());
+    }
+  } else {
+    SimpleInteractiveCurveViewController::handleResponderChainEvent(event);
   }
 }
 

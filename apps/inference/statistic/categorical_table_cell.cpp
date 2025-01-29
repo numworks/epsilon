@@ -21,14 +21,19 @@ CategoricalTableCell::CategoricalTableCell(
   m_selectableTableView.hideScrollBars();
 }
 
-void CategoricalTableCell::didBecomeFirstResponder() {
-  assert(0 <= selectedColumn() &&
-         selectedColumn() < tableViewDataSource()->numberOfColumns());
-  assert(selectedRow() < tableViewDataSource()->numberOfRows());
-  if (selectedRow() < 0) {
-    selectRow(1);
+void CategoricalTableCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    assert(0 <= selectedColumn() &&
+           selectedColumn() < tableViewDataSource()->numberOfColumns());
+    assert(selectedRow() < tableViewDataSource()->numberOfRows());
+    if (selectedRow() < 0) {
+      selectRow(1);
+    }
+    Escher::App::app()->setFirstResponder(&m_selectableTableView);
+  } else {
+    Escher::Responder::handleResponderChainEvent(event);
   }
-  Escher::App::app()->setFirstResponder(&m_selectableTableView);
 }
 
 bool CategoricalTableCell::handleEvent(Ion::Events::Event e) {

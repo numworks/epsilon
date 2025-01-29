@@ -34,7 +34,7 @@ class ExpressionsListController
 
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewDidDisappear() override;
 
   // MemoizedListViewDataSource
@@ -91,7 +91,7 @@ class ExpressionsListController
       return I18n::translate(I18n::Message::AdditionalResults);
     }
     Escher::View* view() override { return &m_selectableListView; }
-    void didBecomeFirstResponder() override;
+    void handleResponderChainEvent(ResponderChainEvent event) override;
     Escher::SelectableListView* selectableListView() {
       return &m_selectableListView;
     }

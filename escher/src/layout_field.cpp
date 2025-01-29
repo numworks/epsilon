@@ -349,11 +349,16 @@ bool LayoutField::insertText(const char* text, bool indentation,
   return true;
 }
 
-void LayoutField::didBecomeFirstResponder() {
-  m_inputViewMemoizedHeight = inputViewHeight();
-  TextCursorView::WithBlinkingCursor<
-      ScrollableView<ScrollView::NoDecorator>>::didBecomeFirstResponder();
-  scrollToCursor();
+void LayoutField::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_inputViewMemoizedHeight = inputViewHeight();
+    TextCursorView::WithBlinkingCursor<ScrollableView<
+        ScrollView::NoDecorator>>::handleResponderChainEvent(event);
+    scrollToCursor();
+  } else {
+    EditableField::handleResponderChainEvent(event);
+  }
 }
 
 KDSize LayoutField::minimalSizeForOptimalDisplay() const {
@@ -628,9 +633,9 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
     char buffer[bufferSize];
     /* TODO_PCJ: We shouldn't serialize 2D layouts.
      * We should only be able to serialize 1D layouts. If the layout is in 2D,
-     * we should first parse it as an expression and then layout it in 1D. This
-     * way we would have a uniform serialization for one same expression (and
-     * make the most of all the optimizations done when layouting an
+     * we should first parse it as an expression and then layout it in 1D.
+     * This way we would have a uniform serialization for one same expression
+     * (and make the most of all the optimizations done when layouting an
      * expression). */
     Expression e = Expression::Parse(layout, nullptr);
     if (!e.isUninitialized()) {

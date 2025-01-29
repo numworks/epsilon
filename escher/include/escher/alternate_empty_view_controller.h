@@ -16,7 +16,7 @@ class AlternateEmptyViewController : public ViewController {
   View* view() override { return &m_contentView; }
   const char* title() const override;
   ViewController::TitlesDisplay titlesDisplay() const override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

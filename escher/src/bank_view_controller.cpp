@@ -19,8 +19,13 @@ void BankViewController::setActiveIndex(int i) {
   m_view.setSubview(upcomingVC->view());
 }
 
-void BankViewController::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(activeViewController());
+void BankViewController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(activeViewController());
+  } else {
+    ViewController::handleResponderChainEvent(event);
+  }
 }
 
 void BankViewController::initView() {

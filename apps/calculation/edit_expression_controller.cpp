@@ -62,10 +62,15 @@ void EditExpressionController::insertLayout(Layout layout) {
   m_contentView.layoutField()->insertLayoutAtCursor(layout, true);
 }
 
-void EditExpressionController::didBecomeFirstResponder() {
-  m_contentView.mainView()->scrollToBottom();
-  m_contentView.layoutField()->setEditing(true);
-  App::app()->setFirstResponder(m_contentView.layoutField());
+void EditExpressionController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_contentView.mainView()->scrollToBottom();
+    m_contentView.layoutField()->setEditing(true);
+    App::app()->setFirstResponder(m_contentView.layoutField());
+  } else {
+    ViewController::handleResponderChainEvent(event);
+  }
 }
 
 void EditExpressionController::restoreInput() {

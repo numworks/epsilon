@@ -16,7 +16,7 @@ class AlternateEmptyNestedMenuController : public NestedMenuController {
   void viewDidDisappear() override;
 
  protected:
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool returnToPreviousMenu() override;
 
  private:

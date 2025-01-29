@@ -29,8 +29,13 @@ TypeController::TypeController(StackViewController* parent,
   selectRow(0);
 }
 
-void TypeController::didBecomeFirstResponder() {
-  m_selectableListView.reloadData();
+void TypeController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_selectableListView.reloadData();
+  } else {
+    UniformSelectableListController::handleResponderChainEvent(event);
+  }
 }
 
 bool TypeController::handleEvent(Ion::Events::Event event) {

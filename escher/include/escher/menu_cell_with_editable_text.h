@@ -56,9 +56,14 @@ class AbstractWithEditableText : public Responder,
 
   void setEditable(bool isEditable) { m_editable = isEditable; }
 
-  void didBecomeFirstResponder() override {
-    if (m_editable) {
-      App::app()->setFirstResponder(&m_textField);
+  void handleResponderChainEvent(
+      Responder::ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      if (m_editable) {
+        App::app()->setFirstResponder(&m_textField);
+      }
+    } else {
+      Responder::handleResponderChainEvent(event);
     }
   }
   TextField* textField() { return &m_textField; }

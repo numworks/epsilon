@@ -124,11 +124,16 @@ void ListWithTopAndBottomController::listViewDidChangeSelectionAndDidScroll(
   }
 }
 
-void ListWithTopAndBottomController::didBecomeFirstResponder() {
-  if (selectedRow() < firstCellIndex()) {
-    selectFirstCell();
+void ListWithTopAndBottomController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (selectedRow() < firstCellIndex()) {
+      selectFirstCell();
+    }
+    App::app()->setFirstResponder(&m_selectableListView);
+  } else {
+    SelectableViewController::handleResponderChainEvent(event);
   }
-  App::app()->setFirstResponder(&m_selectableListView);
 }
 
 void ListWithTopAndBottomController::viewWillAppear() {

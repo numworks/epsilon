@@ -26,7 +26,7 @@ class StoreMenuController : public Escher::ModalViewController,
   void close();
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ListViewDataSource
   int numberOfRows() const override { return 1; }
@@ -58,7 +58,7 @@ class StoreMenuController : public Escher::ModalViewController,
       return I18n::translate(I18n::Message::DefineVariable);
     }
     Escher::View* view() override { return &m_selectableListView; }
-    void didBecomeFirstResponder() override;
+    void handleResponderChainEvent(ResponderChainEvent event) override;
 
    private:
     Escher::SelectableListView m_selectableListView;

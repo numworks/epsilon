@@ -22,8 +22,13 @@ ExpressionsListController::InnerListController::InnerListController(
   m_selectableListView.hideScrollBars();
 }
 
-void ExpressionsListController::InnerListController::didBecomeFirstResponder() {
-  m_selectableListView.reloadData();
+void ExpressionsListController::InnerListController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_selectableListView.reloadData();
+  } else {
+    ViewController::handleResponderChainEvent(event);
+  }
 }
 
 /* List Controller */
@@ -55,12 +60,17 @@ bool ExpressionsListController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ExpressionsListController::didBecomeFirstResponder() {
-  selectRow(0);
-  m_listController.selectableListView()->resetSizeAndOffsetMemoization();
-  App::app()->setFirstResponder(&m_listController);
-  // Additional outputs should have at least one row to display
-  assert(numberOfRows() > 0);
+void ExpressionsListController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    selectRow(0);
+    m_listController.selectableListView()->resetSizeAndOffsetMemoization();
+    App::app()->setFirstResponder(&m_listController);
+    // Additional outputs should have at least one row to display
+    assert(numberOfRows() > 0);
+  } else {
+    Escher::StackViewController::Default::handleResponderChainEvent(event);
+  }
 }
 
 void ExpressionsListController::viewDidDisappear() {

@@ -47,9 +47,14 @@ void GraphController::viewWillAppear() {
   FunctionGraphController::viewWillAppear();
 }
 
-void GraphController::didBecomeFirstResponder() {
-  FunctionGraphController::didBecomeFirstResponder();
-  m_view.selectRecord(recordAtSelectedCurveIndex());
+void GraphController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    FunctionGraphController::handleResponderChainEvent(event);
+    m_view.selectRecord(recordAtSelectedCurveIndex());
+  } else {
+    FunctionGraphController::handleResponderChainEvent(event);
+  }
 }
 
 bool GraphController::handleEvent(Ion::Events::Event event) {

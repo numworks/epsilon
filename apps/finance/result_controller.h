@@ -18,7 +18,13 @@ class ResultController : public Escher::ListWithTopAndBottomController {
   ResultController(Escher::StackViewController* parentResponder);
 
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override {}
+  void handleResponderChainEvent(ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      // nothing
+    } else {
+      Escher::ListWithTopAndBottomController::handleResponderChainEvent(event);
+    }
+  }
   bool handleEvent(Ion::Events::Event e) override;
   const char* title() const override;
   ViewController::TitlesDisplay titlesDisplay() const override {

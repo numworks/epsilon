@@ -117,11 +117,15 @@ bool Controller::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void Controller::didBecomeFirstResponder() {
-  if (selectionDataSource()->selectedRow() == -1) {
-    selectionDataSource()->selectCellAtLocation(0, 0);
+void Controller::handleResponderChainEvent(ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (selectionDataSource()->selectedRow() == -1) {
+      selectionDataSource()->selectCellAtLocation(0, 0);
+    }
+    App::app()->setFirstResponder(m_view.selectableTableView());
+  } else {
+    ViewController::handleResponderChainEvent(event);
   }
-  App::app()->setFirstResponder(m_view.selectableTableView());
 }
 
 HighlightCell* Controller::reusableCell(int index) {

@@ -50,9 +50,14 @@ void ConsoleEditCell::layoutSubviews(bool force) {
       force);
 }
 
-void ConsoleEditCell::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(&m_textField);
-  setEditing(true);
+void ConsoleEditCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(&m_textField);
+    setEditing(true);
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
 }
 
 void ConsoleEditCell::setEditing(bool isEditing) {

@@ -31,9 +31,15 @@ class ScrollableThreeLayoutsView
   void setHighlightWholeCell(bool highlightWholeCell) {
     m_contentCell.setHighlightWholeCell(highlightWholeCell);
   }
-  void didBecomeFirstResponder() override {
-    setSelectedSubviewPosition(leftMostPosition());
-    reloadScroll();
+  void handleResponderChainEvent(
+      Responder::ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      setSelectedSubviewPosition(leftMostPosition());
+      reloadScroll();
+    } else {
+      Escher::AbstractScrollableMultipleLayoutsView::handleResponderChainEvent(
+          event);
+    }
   }
   void setLayouts(Poincare::Layout formulaLayout, Poincare::Layout exactLayout,
                   Poincare::Layout approximateLayout) override;

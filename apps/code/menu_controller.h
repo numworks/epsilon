@@ -27,8 +27,6 @@ class MenuController : public Escher::ViewController,
                  Escher::ButtonRowController* footer);
   ConsoleController* consoleController();
   Escher::StackViewController* stackViewController();
-  void handleResponderChainEvent(
-      Escher::Responder::ResponderChainEvent event) override;
   void renameSelectedScript();
   void deleteScript(Script script);
   void reloadConsole();
@@ -43,7 +41,7 @@ class MenuController : public Escher::ViewController,
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewWillAppear() override;
 
   /* TableViewDataSource */

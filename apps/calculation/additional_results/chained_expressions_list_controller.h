@@ -24,7 +24,7 @@ class ChainedExpressionsListController : public ExpressionsListController {
 
   // Responder
   void viewDidDisappear() override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ListViewDataSource
   int typeAtRow(int row) const override;

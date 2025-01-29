@@ -28,7 +28,7 @@ class ScriptParameterController
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   /* MemoizedListViewDataSource */
   Escher::AbstractMenuCell* cell(int row) override;

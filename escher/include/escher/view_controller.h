@@ -12,10 +12,10 @@ extern "C" {
  *  - Handling user input
  *
  * The methods viewWillAppear is called in the following order relatively to
- * Responder's methods -didBecomeFirstResponder and handleResponderChainEvent:
+ * Responder's method handleResponderChainEvent:
  * - viewWillAppear
- * - handleResponderChainEvent(didEnter)
- * - didBecomeFirstResponder
+ * - handleResponderChainEvent(DidEnter)
+ * - handleResponderChainEvent(BecameFirst)
  * The methods viewWillDisappear is called in the following order relatively to
  * Responder's method handleResponderChainEvent:
  * - viewWillDisappear

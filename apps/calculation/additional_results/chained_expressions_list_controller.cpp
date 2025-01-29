@@ -15,11 +15,16 @@ void ChainedExpressionsListController::viewDidDisappear() {
   ExpressionsListController::viewDidDisappear();
 }
 
-void ChainedExpressionsListController::didBecomeFirstResponder() {
-  /* Width needs to be reinit if tail of controller changed and wasn't already
-   * initialized. */
-  initWidth(m_listController.selectableListView());
-  ExpressionsListController::didBecomeFirstResponder();
+void ChainedExpressionsListController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    /* Width needs to be reinit if tail of controller changed and wasn't already
+     * initialized. */
+    initWidth(m_listController.selectableListView());
+    ExpressionsListController::handleResponderChainEvent(event);
+  } else {
+    ExpressionsListController::handleResponderChainEvent(event);
+  }
 }
 
 int ChainedExpressionsListController::reusableCellCount(int type) const {

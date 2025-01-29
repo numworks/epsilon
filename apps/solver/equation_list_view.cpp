@@ -42,8 +42,13 @@ View* EquationListView::subviewAtIndex(int index) {
   return subviews[index];
 }
 
-void EquationListView::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(&m_listView);
+void EquationListView::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(&m_listView);
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
 }
 
 void EquationListView::layoutSubviews(bool force) {

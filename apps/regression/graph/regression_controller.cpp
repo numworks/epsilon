@@ -35,23 +35,29 @@ ViewController::TitlesDisplay RegressionController::titlesDisplay() const {
   return ViewController::TitlesDisplay::DisplayLastTwoTitles;
 }
 
-void RegressionController::didBecomeFirstResponder() {
-  Model::Type type = m_store->seriesRegressionType(m_series);
-  int initialIndex = std::max(0, IndexOfModelType(type));
-  if (initialIndex >= numberOfRows()) {
-    assert(
-        type == Model::Type::LinearApbx &&
-        GlobalPreferences::SharedGlobalPreferences()->regressionAppVariant() ==
-            CountryPreferences::RegressionApp::Default);
-    // Type is hidden for selected country, select the first line.
-    initialIndex = 0;
+void RegressionController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    Model::Type type = m_store->seriesRegressionType(m_series);
+    int initialIndex = std::max(0, IndexOfModelType(type));
+    if (initialIndex >= numberOfRows()) {
+      assert(type == Model::Type::LinearApbx &&
+             GlobalPreferences::SharedGlobalPreferences()
+                     ->regressionAppVariant() ==
+                 CountryPreferences::RegressionApp::Default);
+      // Type is hidden for selected country, select the first line.
+      initialIndex = 0;
+    } else {
+      assert(!Store::HasCoefficients(type) ||
+             type == ModelTypeAtIndex(initialIndex));
+    }
+    m_selectableListView.selectCell(initialIndex);
+    SelectableListViewController<
+        MemoizedListViewDataSource>::handleResponderChainEvent(event);
   } else {
-    assert(!Store::HasCoefficients(type) ||
-           type == ModelTypeAtIndex(initialIndex));
+    SelectableListViewController<
+        MemoizedListViewDataSource>::handleResponderChainEvent(event);
   }
-  m_selectableListView.selectCell(initialIndex);
-  SelectableListViewController<
-      MemoizedListViewDataSource>::didBecomeFirstResponder();
 }
 
 bool RegressionController::handleEvent(Ion::Events::Event event) {

@@ -58,8 +58,13 @@ class HistogramListController
   bool handleEvent(Ion::Events::Event event) override;
 
   // Escher::SelectableViewController
-  void didBecomeFirstResponder() override {
-    // Do not transfer the first responder ownership to the SelectableListView
+  void handleResponderChainEvent(ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      // Do not transfer the first responder ownership to the SelectableListView
+    } else {
+      Escher::SelectableListViewController<
+          Escher::ListViewDataSource>::handleResponderChainEvent(event);
+    }
   }
 
  private:

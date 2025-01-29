@@ -27,7 +27,7 @@ class ScrollableTwoLayoutsCell : public EvenOddCell, public Responder {
   KDSize minimalSizeForOptimalDisplay() const override {
     return m_view.minimalSizeForOptimalDisplay();
   }
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void reinitSelection();
 
  private:

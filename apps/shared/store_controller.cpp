@@ -188,11 +188,16 @@ void StoreController::handleDeleteEvent(bool authorizeNonEmptyRowDeletion,
   resetMemoizedFormulasOfEmptyColumns(series);
 }
 
-void StoreController::didBecomeFirstResponder() {
-  if (selectedRow() < 0 || selectedColumn() < 0) {
-    selectCellAtLocation(0, 0);
+void StoreController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (selectedRow() < 0 || selectedColumn() < 0) {
+      selectCellAtLocation(0, 0);
+    }
+    EditableCellTableViewController::handleResponderChainEvent(event);
+  } else {
+    EditableCellTableViewController::handleResponderChainEvent(event);
   }
-  EditableCellTableViewController::didBecomeFirstResponder();
 }
 
 bool StoreController::deleteCellValue(int series, int i, int j,

@@ -17,9 +17,14 @@ void ScrollableTwoLayoutsCell::setEven(bool even) {
   m_view.evenOddCell()->setEven(even);
 }
 
-void ScrollableTwoLayoutsCell::didBecomeFirstResponder() {
-  reinitSelection();
-  App::app()->setFirstResponder(&m_view);
+void ScrollableTwoLayoutsCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    reinitSelection();
+    App::app()->setFirstResponder(&m_view);
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
 }
 
 void ScrollableTwoLayoutsCell::reinitSelection() {

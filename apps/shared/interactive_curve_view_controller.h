@@ -36,7 +36,6 @@ class InteractiveCurveViewController
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ViewController

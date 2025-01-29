@@ -36,7 +36,6 @@ class StackViewController : public ViewController {
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void handleResponderChainEvent(ResponderChainEvent event) override;
-  void didBecomeFirstResponder() override;
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

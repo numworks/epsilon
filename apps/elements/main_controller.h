@@ -22,8 +22,13 @@ class MainController : public Escher::ViewController,
   void viewWillAppear() override { m_view.elementsView()->dirtyBackground(); }
 
   // Escher::Responder
-  void didBecomeFirstResponder() override {
-    Escher::App::app()->setFirstResponder(m_view.bannerView()->textField());
+  void handleResponderChainEvent(
+      Responder::ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      Escher::App::app()->setFirstResponder(m_view.bannerView()->textField());
+    } else {
+      Escher::ViewController::handleResponderChainEvent(event);
+    }
   }
   bool handleEvent(Ion::Events::Event e) override;
 

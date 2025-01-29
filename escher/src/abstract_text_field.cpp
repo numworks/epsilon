@@ -348,7 +348,7 @@ void AbstractTextField::removePreviousXNT() {
 
 void AbstractTextField::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::WillResignFirst) {
+  if (event.type == Responder::ResponderChainEventType::WillResignFirst) {
     contentView()->stallOrStopEditing();
     TextInput::handleResponderChainEvent(event);
   } else {

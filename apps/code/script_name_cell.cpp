@@ -71,8 +71,13 @@ KDSize ScriptNameCell::minimalSizeForOptimalDisplay() const {
   return m_textField.minimalSizeForOptimalDisplay();
 }
 
-void ScriptNameCell::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(&m_textField);
+void ScriptNameCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(&m_textField);
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
 }
 
 void ScriptNameCell::updateSubviewsBackgroundAfterChangingState() {

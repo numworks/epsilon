@@ -22,9 +22,14 @@ StoreMenuController::InnerListController::InnerListController(
   m_selectableListView.hideScrollBars();
 }
 
-void StoreMenuController::InnerListController::didBecomeFirstResponder() {
-  m_selectableListView.selectCell(0);
-  m_selectableListView.reloadData();
+void StoreMenuController::InnerListController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_selectableListView.selectCell(0);
+    m_selectableListView.reloadData();
+  } else {
+    ViewController::handleResponderChainEvent(event);
+  }
 }
 
 StoreMenuController::StoreMenuController()
@@ -62,9 +67,14 @@ StoreMenuController::StoreMenuController()
       m_savedDraftTextBuffer, AbstractTextField::MaxBufferSize());
 }
 
-void StoreMenuController::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(&m_listController);
-  m_cell.layoutField()->reload();
+void StoreMenuController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(&m_listController);
+    m_cell.layoutField()->reload();
+  } else {
+    ModalViewController::handleResponderChainEvent(event);
+  }
 }
 
 void StoreMenuController::setLayout(Poincare::Layout layout) {

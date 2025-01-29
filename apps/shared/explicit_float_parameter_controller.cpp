@@ -16,12 +16,17 @@ ExplicitFloatParameterController::ExplicitFloatParameterController(
     Responder* parentResponder)
     : ExplicitSelectableListViewController(parentResponder) {}
 
-void ExplicitFloatParameterController::didBecomeFirstResponder() {
-  if (selectedRow() >= 0) {
-    int selRow = std::min(selectedRow(), numberOfRows() - 1);
-    selectRow(selRow);
+void ExplicitFloatParameterController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (selectedRow() >= 0) {
+      int selRow = std::min(selectedRow(), numberOfRows() - 1);
+      selectRow(selRow);
+    }
+    ExplicitSelectableListViewController::handleResponderChainEvent(event);
+  } else {
+    ExplicitSelectableListViewController::handleResponderChainEvent(event);
   }
-  ExplicitSelectableListViewController::didBecomeFirstResponder();
 }
 
 void ExplicitFloatParameterController::viewWillAppear() {

@@ -20,7 +20,7 @@ class ExplicitFloatParameterController
       public ParameterTextFieldDelegate {
  public:
   ExplicitFloatParameterController(Escher::Responder* parentResponder);
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;

@@ -59,33 +59,31 @@ void MenuController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::WillExit) {
     forceTextFieldEditionToAbort(false);
-  } else {
-    ViewController::handleResponderChainEvent(event);
-  }
-}
-
-void MenuController::didBecomeFirstResponder() {
-  if (m_reloadConsoleWhenBecomingFirstResponder) {
-    reloadConsole();
-  }
-  if (footer()->selectedButton() == 0) {
-    assert(m_selectableTableView.selectedRow() < 0);
-    App::app()->setFirstResponder(&m_consoleButton);
-    return;
-  }
-  if (m_selectableTableView.selectedRow() < 0) {
-    m_selectableTableView.selectCellAtLocation(0, 0);
-  }
-  assert(m_selectableTableView.selectedRow() <
-         ScriptStore::NumberOfScripts() + 1);
-  App::app()->setFirstResponder(&m_selectableTableView);
+  } else if (event.type == ResponderChainEventType::BecameFirst) {
+    if (m_reloadConsoleWhenBecomingFirstResponder) {
+      reloadConsole();
+    }
+    if (footer()->selectedButton() == 0) {
+      assert(m_selectableTableView.selectedRow() < 0);
+      App::app()->setFirstResponder(&m_consoleButton);
+      return;
+    }
+    if (m_selectableTableView.selectedRow() < 0) {
+      m_selectableTableView.selectCellAtLocation(0, 0);
+    }
+    assert(m_selectableTableView.selectedRow() <
+           ScriptStore::NumberOfScripts() + 1);
+    App::app()->setFirstResponder(&m_selectableTableView);
 #if EPSILON_GETOPT
-  if (consoleController()->locked()) {
-    consoleController()->setAutoImport(true);
-    stackViewController()->push(consoleController());
-    return;
-  }
+    if (consoleController()->locked()) {
+      consoleController()->setAutoImport(true);
+      stackViewController()->push(consoleController());
+      return;
+    }
 #endif
+  } else {
+    Escher::ViewController::handleResponderChainEvent(event);
+  }
 }
 
 void MenuController::viewWillAppear() {

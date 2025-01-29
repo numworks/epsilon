@@ -42,7 +42,7 @@ class StoreController : public EditableCellTableViewController,
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ClearColumnHelper
   size_t fillColumnName(int column, char* buffer) override {

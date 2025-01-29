@@ -27,8 +27,13 @@ class PrefacedTableView : public View,
       PrefacedTableViewDelegate* prefacedTableViewDelegate = nullptr);
 
   // Responder
-  void didBecomeFirstResponder() override {
-    App::app()->setFirstResponder(m_mainTableView);
+  void handleResponderChainEvent(
+      Responder::ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      App::app()->setFirstResponder(m_mainTableView);
+    } else {
+      Responder::handleResponderChainEvent(event);
+    }
   }
 
   // SelectableTableViewDelegate

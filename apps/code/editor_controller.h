@@ -21,7 +21,7 @@ class EditorController : public Escher::ViewController {
   /* ViewController */
   Escher::View* view() override { return &m_editorView; }
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   Escher::ViewController::TitlesDisplay titlesDisplay() const override {

@@ -88,10 +88,15 @@ void CalculationController::reinitCalculation() {
   m_dropdown.selectRow(0);
 }
 
-void CalculationController::didBecomeFirstResponder() {
-  updateTitle();
-  m_dropdown.init();
-  reload();
+void CalculationController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    updateTitle();
+    m_dropdown.init();
+    reload();
+  } else {
+    Escher::ViewController::handleResponderChainEvent(event);
+  }
 }
 
 bool CalculationController::handleEvent(Ion::Events::Event event) {

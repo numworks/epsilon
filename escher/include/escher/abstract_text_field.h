@@ -139,9 +139,9 @@ class AbstractTextField : public TextInput {
 
  private:
   void privateModalViewAltersFirstResponder(
-      FirstResponderAlteration alteration) override {
+      Responder::FirstResponderAlteration alteration) override {
     contentView()->setStalled(alteration ==
-                              FirstResponderAlteration::WillSpoil);
+                              Responder::FirstResponderAlteration::WillSpoil);
   }
   bool prepareToEdit() override;
   bool findXNT(char* buffer, size_t bufferSize, int xntIndex,

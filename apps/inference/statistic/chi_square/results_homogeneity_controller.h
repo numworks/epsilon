@@ -61,8 +61,13 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
         : Escher::ViewController(responder),
           m_tableController(tableController) {}
     Escher::View* view() override { return m_tableController->view(); }
-    void didBecomeFirstResponder() override {
-      m_tableController->didBecomeFirstResponder();
+    void handleResponderChainEvent(
+        Responder::ResponderChainEvent event) override {
+      if (event.type == ResponderChainEventType::BecameFirst) {
+        m_tableController->handleResponderChainEvent(event);
+      } else {
+        Escher::ViewController::handleResponderChainEvent(event);
+      }
     }
     void initView() override { m_tableController->initView(); }
     void viewWillAppear() override { m_tableController->viewWillAppear(); }

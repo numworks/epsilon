@@ -26,7 +26,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
                   int* selectedCurveIndex, Store* store);
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ViewController
   void viewWillAppear() override;

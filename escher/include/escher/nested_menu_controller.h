@@ -29,8 +29,13 @@ class NestedMenuController : public StackViewController::Custom<5>,
 
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override {
-    App::app()->setFirstResponder(&m_listController);
+  void handleResponderChainEvent(
+      Responder::ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      App::app()->setFirstResponder(&m_listController);
+    } else {
+      StackViewController::handleResponderChainEvent(event);
+    }
   }
   void viewWillAppear() override;
 
@@ -110,7 +115,7 @@ class NestedMenuController : public StackViewController::Custom<5>,
     const char* title() const override { return I18n::translate(m_title); }
     void setTitle(I18n::Message title) { m_title = title; }
     View* view() override { return m_selectableListView; }
-    void didBecomeFirstResponder() override;
+    void handleResponderChainEvent(ResponderChainEvent event) override;
 
    private:
     SelectableListView* m_selectableListView;

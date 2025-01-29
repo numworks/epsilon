@@ -35,8 +35,6 @@ class SolutionsController : public Escher::ViewController,
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  void handleResponderChainEvent(
-      Escher::Responder::ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
 
   // ButtonRowDelegate
@@ -71,7 +69,7 @@ class SolutionsController : public Escher::ViewController,
   }
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   // TableViewDataSource

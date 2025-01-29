@@ -21,7 +21,7 @@ class AbstractEditableTextCell : public HighlightCell, public Responder {
   int numberOfSubviews() const override;
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   KDSize minimalSizeForOptimalDisplay() const override;
 
  private:

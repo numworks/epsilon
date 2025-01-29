@@ -328,14 +328,19 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
   updateExpanded(expanded);
 }
 
-void HistoryViewCell::didBecomeFirstResponder() {
-  assert(m_dataSource);
-  if (m_dataSource->selectedSubviewType() ==
-      HistoryViewCellDataSource::SubviewType::Input) {
-    App::app()->setFirstResponder(&m_inputView);
-  } else if (m_dataSource->selectedSubviewType() ==
-             HistoryViewCellDataSource::SubviewType::Output) {
-    App::app()->setFirstResponder(&m_scrollableOutputView);
+void HistoryViewCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    assert(m_dataSource);
+    if (m_dataSource->selectedSubviewType() ==
+        HistoryViewCellDataSource::SubviewType::Input) {
+      App::app()->setFirstResponder(&m_inputView);
+    } else if (m_dataSource->selectedSubviewType() ==
+               HistoryViewCellDataSource::SubviewType::Output) {
+      App::app()->setFirstResponder(&m_scrollableOutputView);
+    }
+  } else {
+    Responder::handleResponderChainEvent(event);
   }
 }
 

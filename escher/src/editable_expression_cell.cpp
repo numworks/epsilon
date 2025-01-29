@@ -29,8 +29,13 @@ void EditableExpressionCell::layoutSubviews(bool force) {
                 force);
 }
 
-void EditableExpressionCell::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(&m_layoutField);
+void EditableExpressionCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(&m_layoutField);
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
 }
 
 KDSize EditableExpressionCell::minimalSizeForOptimalDisplay() const {

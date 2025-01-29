@@ -27,7 +27,7 @@ class EditorView : public Escher::Responder,
   void unloadSyntaxHighlighter() { m_textArea.unloadSyntaxHighlighter(); };
   void scrollViewDidChangeOffset(
       Escher::ScrollViewDataSource* scrollViewDataSource) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   int numberOfSubviews() const override { return 2; }

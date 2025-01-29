@@ -22,7 +22,7 @@ class PythonTextArea : public Escher::TextArea {
         m_wasAutocompleting(false) {}
   void loadSyntaxHighlighter() { m_contentView.loadSyntaxHighlighter(); }
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleSpecialEvent(Ion::Events::Event event);
   bool handleEventWithText(const char* text, bool indentation = false,

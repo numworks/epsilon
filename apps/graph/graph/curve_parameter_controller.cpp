@@ -377,14 +377,19 @@ void CurveParameterController::viewWillAppear() {
   ExplicitFloatParameterController::viewWillAppear();
 }
 
-void CurveParameterController::didBecomeFirstResponder() {
-  if (!function()->isActive()) {
-    stackController()->popUntilDepth(
-        Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
-        true);
-    return;
+void CurveParameterController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (!function()->isActive()) {
+      stackController()->popUntilDepth(
+          Shared::InteractiveCurveViewController::k_graphControllerStackDepth,
+          true);
+      return;
+    }
+    Shared::ExplicitFloatParameterController::handleResponderChainEvent(event);
+  } else {
+    Shared::ExplicitFloatParameterController::handleResponderChainEvent(event);
   }
-  Shared::ExplicitFloatParameterController::didBecomeFirstResponder();
 }
 
 StackViewController* CurveParameterController::stackController() const {

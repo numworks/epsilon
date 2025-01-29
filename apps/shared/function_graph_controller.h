@@ -18,7 +18,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
                           int* selectedCurveIndex);
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ViewController
   void viewWillAppear() override;
@@ -41,7 +41,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
       return graphController()->functionStore()->numberOfActiveFunctions();
     }
     void fillCellForRow(Escher::HighlightCell* cell, int row) override;
-    void didBecomeFirstResponder() override;
+    void handleResponderChainEvent(ResponderChainEvent event) override;
 
    protected:
     KDCoordinate nonMemoizedRowHeight(int row) override;

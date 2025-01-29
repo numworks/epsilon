@@ -115,12 +115,17 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
   }
 }
 
-void EditableCellTableViewController::didBecomeFirstResponder() {
-  if (selectedRow() == -1) {
-    return;
+void EditableCellTableViewController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (selectedRow() == -1) {
+      return;
+    }
+    m_selectableTableView.selectCellAtLocation(selectedColumn(), selectedRow());
+    TabTableController::handleResponderChainEvent(event);
+  } else {
+    TabTableController::handleResponderChainEvent(event);
   }
-  m_selectableTableView.selectCellAtLocation(selectedColumn(), selectedRow());
-  TabTableController::didBecomeFirstResponder();
 }
 
 void EditableCellTableViewController::viewWillAppear() {

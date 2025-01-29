@@ -268,25 +268,32 @@ void SelectableTableView::reloadData(bool setFirstResponder,
   selectCellAtLocation(col, row, setFirstResponder, true);
 }
 
-void SelectableTableView::didBecomeFirstResponder() {
-  HighlightCell* cell = selectedCell();
-  if (cell && cell->responder()) {
-    // Update first responder
-    App::app()->setFirstResponder(cell->responder());
-  }
-}
-
 void SelectableTableView::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::DidEnter) {
-    int col = selectedColumn();
-    int row = selectedRow();
-    selectRow(-1);
-    selectCellAtLocation(col, row, false);
-  } else {
-    /* WillExit */
-    if (event.nextFirstResponder != nullptr) {
-      unhighlightSelectedCell();
+  switch (event.type) {
+    case ResponderChainEventType::BecameFirst: {
+      HighlightCell* cell = selectedCell();
+      if (cell && cell->responder()) {
+        // Update first responder
+        App::app()->setFirstResponder(cell->responder());
+      }
+      break;
+    }
+    case ResponderChainEventType::DidEnter: {
+      int col = selectedColumn();
+      int row = selectedRow();
+      selectRow(-1);
+      selectCellAtLocation(col, row, false);
+      break;
+    }
+    case ResponderChainEventType::WillExit: {
+      if (event.nextFirstResponder != nullptr) {
+        unhighlightSelectedCell();
+      }
+    }
+    default: {
+      Responder::handleResponderChainEvent(event);
+      break;
     }
   }
 }

@@ -22,7 +22,7 @@ class InputHomogeneityTableCell
       Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // InputCategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {

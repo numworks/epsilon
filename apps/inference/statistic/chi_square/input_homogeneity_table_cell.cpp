@@ -20,11 +20,16 @@ InputHomogeneityTableCell::InputHomogeneityTableCell(
           this),
       m_inputHomogeneityController(inputHomogeneityController) {}
 
-void InputHomogeneityTableCell::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    selectColumn(1);
+void InputHomogeneityTableCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (selectedRow() < 0) {
+      selectColumn(1);
+    }
+    CategoricalTableCell::handleResponderChainEvent(event);
+  } else {
+    CategoricalTableCell::handleResponderChainEvent(event);
   }
-  CategoricalTableCell::didBecomeFirstResponder();
 }
 
 void InputHomogeneityTableCell::fillCellForLocation(Escher::HighlightCell* cell,

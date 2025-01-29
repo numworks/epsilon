@@ -30,7 +30,7 @@ class EditExpressionController : public Escher::ViewController,
 
   /* ViewController */
   Escher::View* view() override { return &m_contentView; }
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewWillAppear() override;
 
   /* MathLayoutFieldDelegate */

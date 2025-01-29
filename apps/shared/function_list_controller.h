@@ -28,7 +28,6 @@ class FunctionListController : public ExpressionModelListController,
   /* Responder */
   void handleResponderChainEvent(
       Escher::Responder::ResponderChainEvent event) override;
-  void didBecomeFirstResponder() override;
   bool handleEvent(Ion::Events::Event event) override;
 
   /* ViewController */

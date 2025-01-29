@@ -21,7 +21,7 @@ class TangentGraphController
                          Shared::CurveViewCursor* cursor);
   const char* title() const override;
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record);

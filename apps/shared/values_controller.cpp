@@ -101,19 +101,17 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void ValuesController::didBecomeFirstResponder() {
-  EditableCellTableViewController::didBecomeFirstResponder();
-  if (selectedRow() == -1) {
-    selectableTableView()->deselectTable();
-    header()->setSelectedButton(0);
-  } else {
-    header()->setSelectedButton(-1);
-  }
-}
-
 void ValuesController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::WillExit) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    EditableCellTableViewController::handleResponderChainEvent(event);
+    if (selectedRow() == -1) {
+      selectableTableView()->deselectTable();
+      header()->setSelectedButton(0);
+    } else {
+      header()->setSelectedButton(-1);
+    }
+  } else if (event.type == ResponderChainEventType::WillExit) {
     if (event.nextFirstResponder == tabController()) {
       assert(tabController() != nullptr);
       selectableTableView()->deselectTable();

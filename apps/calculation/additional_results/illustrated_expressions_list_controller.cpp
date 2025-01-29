@@ -12,9 +12,14 @@ using namespace Escher;
 
 namespace Calculation {
 
-void IllustratedExpressionsListController::didBecomeFirstResponder() {
-  selectRow(1);
-  ExpressionsListController::didBecomeFirstResponder();
+void IllustratedExpressionsListController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    selectRow(1);
+    ExpressionsListController::handleResponderChainEvent(event);
+  } else {
+    ChainedExpressionsListController::handleResponderChainEvent(event);
+  }
 }
 
 void IllustratedExpressionsListController::viewWillAppear() {

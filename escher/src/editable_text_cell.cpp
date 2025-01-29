@@ -31,8 +31,13 @@ void AbstractEditableTextCell::layoutSubviews(bool force) {
   setChildFrame(textField(), cellBounds, force);
 }
 
-void AbstractEditableTextCell::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(textField());
+void AbstractEditableTextCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(textField());
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
 }
 
 KDSize AbstractEditableTextCell::minimalSizeForOptimalDisplay() const {

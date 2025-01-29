@@ -18,7 +18,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
                      InteractiveCurveViewRange* range, CurveViewCursor* cursor);
 
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;

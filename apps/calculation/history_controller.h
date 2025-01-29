@@ -22,7 +22,6 @@ class HistoryController : public Escher::ViewController,
   Escher::View* view() override { return &m_selectableListView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override;
   void handleResponderChainEvent(ResponderChainEvent event) override;
   void reload();
   int numberOfRows() const override;

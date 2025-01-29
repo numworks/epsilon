@@ -37,7 +37,7 @@ class HypothesisController
     return ViewController::TitlesDisplay::DisplayLastTitle;
   };
   const char* title() const override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   const Escher::HighlightCell* cell(int i) const;
   Escher::HighlightCell* cell(int i) override;

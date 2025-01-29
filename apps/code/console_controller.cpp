@@ -170,16 +170,21 @@ void ConsoleController::viewWillAppear() {
   reloadData();
 }
 
-void ConsoleController::didBecomeFirstResponder() {
-  if (!isDisplayingViewController()) {
-    App::app()->setFirstResponder(&m_editCell);
+void ConsoleController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (!isDisplayingViewController()) {
+      App::app()->setFirstResponder(&m_editCell);
+    } else {
+      /* A view controller might be displayed: for example, when pushing the
+       * console on the stack controller, we auto-import scripts during the
+       * 'viewWillAppear' and then we set the console as first responder. The
+       * sandbox or the matplotlib controller might have been pushed in the
+       * auto-import. */
+      App::app()->setFirstResponder(stackViewController()->topViewController());
+    }
   } else {
-    /* A view controller might be displayed: for example, when pushing the
-     * console on the stack controller, we auto-import scripts during the
-     * 'viewWillAppear' and then we set the console as first responder. The
-     * sandbox or the matplotlib controller might have been pushed in the
-     * auto-import. */
-    App::app()->setFirstResponder(stackViewController()->topViewController());
+    ViewController::handleResponderChainEvent(event);
   }
 }
 

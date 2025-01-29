@@ -38,7 +38,7 @@ class DoublePairTableController
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // RegularHeightTableViewDataSource
   bool canSelectCellAtLocation(int column, int row) override {

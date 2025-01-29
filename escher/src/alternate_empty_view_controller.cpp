@@ -50,12 +50,17 @@ ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay()
   return m_contentView.mainViewController()->titlesDisplay();
 }
 
-void AlternateEmptyViewController::didBecomeFirstResponder() {
-  if (!m_contentView.isEmpty()) {
-    App::app()->setFirstResponder(m_contentView.mainViewController());
+void AlternateEmptyViewController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (!m_contentView.isEmpty()) {
+      App::app()->setFirstResponder(m_contentView.mainViewController());
+    } else {
+      App::app()->setFirstResponder(
+          m_contentView.alternateEmptyViewDelegate()->responderWhenEmpty());
+    }
   } else {
-    App::app()->setFirstResponder(
-        m_contentView.alternateEmptyViewDelegate()->responderWhenEmpty());
+    Escher::ViewController::handleResponderChainEvent(event);
   }
 }
 

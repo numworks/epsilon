@@ -60,10 +60,15 @@ void TypeParameterController::viewDidDisappear() {
   ViewController::viewDidDisappear();
 }
 
-void TypeParameterController::didBecomeFirstResponder() {
-  selectRow(isNewModel() ? k_indexOfExplicit
-                         : static_cast<uint8_t>(sequence()->type()));
-  SelectableListViewController::didBecomeFirstResponder();
+void TypeParameterController::handleResponderChainEvent(
+    ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    selectRow(isNewModel() ? k_indexOfExplicit
+                           : static_cast<uint8_t>(sequence()->type()));
+    UniformSelectableListController::handleResponderChainEvent(event);
+  } else {
+    UniformSelectableListController::handleResponderChainEvent(event);
+  }
 }
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {

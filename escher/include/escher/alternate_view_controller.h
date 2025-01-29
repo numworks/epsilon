@@ -29,8 +29,13 @@ class AlternateViewController : public ViewController {
   ViewController::TitlesDisplay titlesDisplay() const override {
     return m_delegate->alternateViewTitlesDisplay();
   }
-  void didBecomeFirstResponder() override {
-    m_delegate->activeViewDidBecomeFirstResponder(activeViewController());
+  void handleResponderChainEvent(
+      Responder::ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      m_delegate->activeViewDidBecomeFirstResponder(activeViewController());
+    } else {
+      ViewController::handleResponderChainEvent(event);
+    }
   }
   void initView() override { activeViewController()->initView(); }
   void viewWillAppear() override;

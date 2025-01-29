@@ -24,8 +24,13 @@ void FunctionZoomAndPanCurveViewController::viewWillAppear() {
   ZoomAndPanCurveViewController::viewWillAppear();
 }
 
-void FunctionZoomAndPanCurveViewController::didBecomeFirstResponder() {
-  m_contentView.layoutSubviews();
+void FunctionZoomAndPanCurveViewController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_contentView.layoutSubviews();
+  } else {
+    ZoomAndPanCurveViewController::handleResponderChainEvent(event);
+  }
 }
 
 bool FunctionZoomAndPanCurveViewController::handleEvent(

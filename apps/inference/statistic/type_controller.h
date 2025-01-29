@@ -31,7 +31,7 @@ class TypeController
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   void stackOpenPage(Escher::ViewController* nextPage) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 

@@ -28,7 +28,6 @@ class ButtonRowController : public ViewController {
   View* view() override { return &m_contentView; }
   const char* title() const override;
   ViewController::TitlesDisplay titlesDisplay() const override;
-  void didBecomeFirstResponder() override;
   void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   void initView() override;

@@ -27,7 +27,7 @@ class GraphController : public Shared::FunctionGraphController,
       DerivativeColumnParameterController* derivativeColumnParameterController);
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController

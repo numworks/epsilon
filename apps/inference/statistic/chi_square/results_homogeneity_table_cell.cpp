@@ -20,17 +20,22 @@ ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
   m_selectableTableView.margins()->setBottom(Metric::CellSeparatorThickness);
 }
 
-void ResultsHomogeneityTableCell::didBecomeFirstResponder() {
-  if (selectedRow() < 0) {
-    selectColumn(1);
+void ResultsHomogeneityTableCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (selectedRow() < 0) {
+      selectColumn(1);
+    }
+    // The number of data might have changed
+    if (selectedRow() >= numberOfRows() ||
+        selectedColumn() >= numberOfColumns()) {
+      selectRow(1);
+      selectColumn(1);
+    }
+    CategoricalTableCell::handleResponderChainEvent(event);
+  } else {
+    CategoricalTableCell::handleResponderChainEvent(event);
   }
-  // The number of data might have changed
-  if (selectedRow() >= numberOfRows() ||
-      selectedColumn() >= numberOfColumns()) {
-    selectRow(1);
-    selectColumn(1);
-  }
-  CategoricalTableCell::didBecomeFirstResponder();
 }
 
 void ResultsHomogeneityTableCell::drawRect(KDContext* ctx, KDRect rect) const {

@@ -12,7 +12,7 @@ class ModalViewController : public ViewController {
   View* view() override;
 
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void displayModalViewController(ViewController* vc, float verticalAlignment,
                                   float horizontalAlignment,
                                   KDMargins margins = {},

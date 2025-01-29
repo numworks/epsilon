@@ -197,13 +197,11 @@ ViewController::TitlesDisplay ButtonRowController::titlesDisplay() const {
   return m_contentView.mainViewController()->titlesDisplay();
 }
 
-void ButtonRowController::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(m_contentView.mainViewController());
-}
-
 void ButtonRowController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::WillExit) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(m_contentView.mainViewController());
+  } else if (event.type == ResponderChainEventType::WillExit) {
     setSelectedButton(-1);
   } else {
     ViewController::handleResponderChainEvent(event);

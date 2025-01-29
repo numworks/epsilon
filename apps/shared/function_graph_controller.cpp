@@ -25,15 +25,20 @@ FunctionGraphController::FunctionGraphController(
           parentResponder, header, interactiveRange, curveView, cursor,
           I18n::Message::GraphCalculus, selectedCurveIndex) {}
 
-void FunctionGraphController::didBecomeFirstResponder() {
-  if (curveView()->hasFocus()) {
-    bannerView()->abscissaValue()->setParentResponder(this);
-    bannerView()->abscissaValue()->setDelegate(this);
-    if (!isAlongY(*m_selectedCurveIndex)) {
-      App::app()->setFirstResponder(bannerView()->abscissaValue());
+void FunctionGraphController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (curveView()->hasFocus()) {
+      bannerView()->abscissaValue()->setParentResponder(this);
+      bannerView()->abscissaValue()->setDelegate(this);
+      if (!isAlongY(*m_selectedCurveIndex)) {
+        App::app()->setFirstResponder(bannerView()->abscissaValue());
+      }
+    } else {
+      InteractiveCurveViewController::handleResponderChainEvent(event);
     }
   } else {
-    InteractiveCurveViewController::didBecomeFirstResponder();
+    InteractiveCurveViewController::handleResponderChainEvent(event);
   }
 }
 
@@ -107,15 +112,19 @@ void FunctionGraphController::FunctionSelectionController::fillCellForRow(
 }
 
 void FunctionGraphController::FunctionSelectionController::
-    didBecomeFirstResponder() {
-  if (numberOfRows() <= 1) {
-    /* This can happen if all functions were deactivated within the calculate
-     * menu. The function selection menu is still on the stack but it's now
-     * empty (or has only 1 function, in which case it should not appear.) */
-    static_cast<StackViewController*>(parentResponder())->pop();
-    return;
+    handleResponderChainEvent(Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (numberOfRows() <= 1) {
+      /* This can happen if all functions were deactivated within the calculate
+       * menu. The function selection menu is still on the stack but it's now
+       * empty (or has only 1 function, in which case it should not appear.) */
+      static_cast<StackViewController*>(parentResponder())->pop();
+      return;
+    }
+    CurveSelectionController::handleResponderChainEvent(event);
+  } else {
+    CurveSelectionController::handleResponderChainEvent(event);
   }
-  CurveSelectionController::didBecomeFirstResponder();
 }
 
 void FunctionGraphController::reloadBannerView() {

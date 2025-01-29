@@ -16,7 +16,6 @@ class TabTableController : public Escher::ViewController,
  public:
   TabTableController(Responder* parentResponder);
   Escher::View* view() override { return selectableTableView(); }
-  void didBecomeFirstResponder() override;
   void viewWillAppear() override;
   void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
   ViewController::TitlesDisplay titlesDisplay() const override {

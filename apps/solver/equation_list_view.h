@@ -20,7 +20,7 @@ class EquationListView : public Escher::Responder,
   void setBraceStyle(BraceStyle style);
   void scrollViewDidChangeOffset(
       Escher::ScrollViewDataSource* scrollViewDataSource) override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   Escher::SelectableListView* selectableListView() { return &m_listView; }
   void layoutSubviews(bool force = false) override;
 

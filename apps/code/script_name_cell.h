@@ -30,7 +30,7 @@ class ScriptNameCell : public Escher::EvenOddCell, public Escher::Responder {
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static KDCoordinate k_leftMargin =

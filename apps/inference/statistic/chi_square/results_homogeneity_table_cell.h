@@ -25,7 +25,7 @@ class ResultsHomogeneityTableCell
   void setMode(Mode mode) { m_mode = mode; }
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;

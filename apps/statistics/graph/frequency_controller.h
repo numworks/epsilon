@@ -18,7 +18,7 @@ class FrequencyController : public PlotController,
                       Escher::ViewController* typeViewController, Store* store);
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,

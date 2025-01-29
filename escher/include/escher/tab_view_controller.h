@@ -26,8 +26,7 @@ class TabViewController : public ViewController {
 
   virtual const char* tabName(uint8_t index);
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
-  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;

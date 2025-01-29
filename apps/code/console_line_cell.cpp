@@ -111,8 +111,13 @@ void ConsoleLineCell::layoutSubviews(bool force) {
   setChildFrame(&m_scrollableView, bounds(), force);
 }
 
-void ConsoleLineCell::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(&m_scrollableView);
+void ConsoleLineCell::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(&m_scrollableView);
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
 }
 
 }  // namespace Code

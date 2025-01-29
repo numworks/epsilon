@@ -74,11 +74,16 @@ void GraphController::viewWillAppear() {
   setRoundCrossCursorView();
 }
 
-void GraphController::didBecomeFirstResponder() {
-  if (*m_selectedDotIndex == -1 && curveView()->hasFocus()) {
-    setAbscissaInputAsFirstResponder();
+void GraphController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (*m_selectedDotIndex == -1 && curveView()->hasFocus()) {
+      setAbscissaInputAsFirstResponder();
+    }
+    Shared::InteractiveCurveViewController::handleResponderChainEvent(event);
+  } else {
+    Shared::InteractiveCurveViewController::handleResponderChainEvent(event);
   }
-  Shared::InteractiveCurveViewController::didBecomeFirstResponder();
 }
 
 void GraphController::setAbscissaInputAsFirstResponder() {

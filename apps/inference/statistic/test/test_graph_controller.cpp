@@ -29,12 +29,17 @@ const char* TestGraphController::title() const {
   return m_titleBuffer;
 }
 
-void TestGraphController::didBecomeFirstResponder() {
-  m_zoom = 0;
-  m_zoomSide = true;
-  m_mayBeZoomed = m_test->computeCurveViewRange(0, m_zoomSide);
-  m_graphView.setDisplayHint(m_mayBeZoomed);
-  m_graphView.reload();
+void TestGraphController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_zoom = 0;
+    m_zoomSide = true;
+    m_mayBeZoomed = m_test->computeCurveViewRange(0, m_zoomSide);
+    m_graphView.setDisplayHint(m_mayBeZoomed);
+    m_graphView.reload();
+  } else {
+    Escher::ViewController::handleResponderChainEvent(event);
+  }
 }
 
 bool TestGraphController::handleEvent(Ion::Events::Event event) {

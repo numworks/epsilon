@@ -29,7 +29,7 @@ class CategoricalTableCell : public Escher::HighlightCell,
                        Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event e) override;
 
   // HighlightCell

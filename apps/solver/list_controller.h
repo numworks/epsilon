@@ -29,7 +29,6 @@ class ListController : public Shared::ExpressionModelListController,
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
-  void didBecomeFirstResponder() override;
   void handleResponderChainEvent(
       Escher::Responder::ResponderChainEvent event) override;
   /* ViewController */

@@ -20,7 +20,7 @@ class IllustratedExpressionsListController
                                          highlightWholeCells, this) {}
 
   // Responder
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   // ViewController
   void viewWillAppear() override;
 

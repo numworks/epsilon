@@ -42,7 +42,7 @@ class ConsoleController : public Escher::ViewController,
   // ViewController
   Escher::View* view() override { return &m_selectableListView; }
   void viewWillAppear() override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::ViewController::TitlesDisplay titlesDisplay() const override {
     return Escher::ViewController::TitlesDisplay::DisplayNoTitle;

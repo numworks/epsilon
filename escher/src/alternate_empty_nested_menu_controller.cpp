@@ -10,14 +10,19 @@ void AlternateEmptyNestedMenuController::viewDidDisappear() {
   NestedMenuController::viewDidDisappear();
 }
 
-void AlternateEmptyNestedMenuController::didBecomeFirstResponder() {
-  // If the content is empty, we push an empty controller.
-  m_isEmpty = (numberOfRows() == 0);
-  if (m_isEmpty) {
-    push(&m_emptyController);
-    return;
+void AlternateEmptyNestedMenuController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    // If the content is empty, we push an empty controller.
+    m_isEmpty = (numberOfRows() == 0);
+    if (m_isEmpty) {
+      push(&m_emptyController);
+      return;
+    }
+    NestedMenuController::handleResponderChainEvent(event);
+  } else {
+    NestedMenuController::handleResponderChainEvent(event);
   }
-  NestedMenuController::didBecomeFirstResponder();
 }
 
 bool AlternateEmptyNestedMenuController::returnToPreviousMenu() {

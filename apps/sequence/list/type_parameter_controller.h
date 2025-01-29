@@ -22,7 +22,7 @@ class TypeParameterController
   const char* title() const override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record) { m_record = record; }
 

@@ -45,13 +45,13 @@ class TextCursorView : public View {
 #endif
    public:
     using ResponderType::ResponderType;
-    void didBecomeFirstResponder() override {
-      TextCursorView::sharedTextCursor->setInField(cursorCursorFieldView());
-      ResponderType::didBecomeFirstResponder();
-    }
     void handleResponderChainEvent(
         Responder::ResponderChainEvent event) override {
-      if (event.type == Responder::ResponderChainEventType::WillResignFirst) {
+      if (event.type == Responder::ResponderChainEventType::BecameFirst) {
+        TextCursorView::sharedTextCursor->setInField(cursorCursorFieldView());
+        ResponderType::handleResponderChainEvent(event);
+      } else if (event.type ==
+                 Responder::ResponderChainEventType::WillResignFirst) {
         TextCursorView::sharedTextCursor->setInField(nullptr);
         ResponderType::handleResponderChainEvent(event);
       } else {

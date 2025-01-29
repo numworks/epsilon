@@ -41,11 +41,16 @@ void SumGraphController::viewWillAppear() {
   SimpleInteractiveCurveViewController::viewWillAppear();
 }
 
-void SumGraphController::didBecomeFirstResponder() {
-  /* Do not set the textField as first responder when displaying the result
-   * so that Copy and Sto apply on the result. */
-  if (m_step != Step::Result) {
-    App::app()->setFirstResponder(m_legendView.textField());
+void SumGraphController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    /* Do not set the textField as first responder when displaying the result
+     * so that Copy and Sto apply on the result. */
+    if (m_step != Step::Result) {
+      App::app()->setFirstResponder(m_legendView.textField());
+    }
+  } else {
+    SimpleInteractiveCurveViewController::handleResponderChainEvent(event);
   }
 }
 

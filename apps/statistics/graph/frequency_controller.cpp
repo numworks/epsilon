@@ -22,12 +22,17 @@ FrequencyController::FrequencyController(
   m_curveView.setCursorView(&m_cursorView);
 }
 
-void FrequencyController::didBecomeFirstResponder() {
-  if (m_curveView.hasFocus()) {
-    Escher::App::app()->setFirstResponder(
-        m_bannerViewWithEditableField.value());
+void FrequencyController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (m_curveView.hasFocus()) {
+      Escher::App::app()->setFirstResponder(
+          m_bannerViewWithEditableField.value());
+    }
+    PlotController::handleResponderChainEvent(event);
+  } else {
+    PlotController::handleResponderChainEvent(event);
   }
-  PlotController::didBecomeFirstResponder();
 }
 
 bool FrequencyController::textFieldDidFinishEditing(

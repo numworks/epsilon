@@ -60,8 +60,13 @@ bool EditorController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-void EditorController::didBecomeFirstResponder() {
-  App::app()->setFirstResponder(&m_editorView);
+void EditorController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(&m_editorView);
+  } else {
+    ViewController::handleResponderChainEvent(event);
+  }
 }
 
 void EditorController::viewWillAppear() {

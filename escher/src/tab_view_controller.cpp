@@ -8,7 +8,7 @@ extern "C" {
 namespace Escher {
 
 TabViewController::ContentView::ContentView()
-    : View(), m_activeView(nullptr), m_displayTabs(true){};
+    : View(), m_activeView(nullptr), m_displayTabs(true) {};
 
 void TabViewController::ContentView::setActiveView(View* view) {
   m_activeView = view;
@@ -143,14 +143,12 @@ void TabViewController::setSelectedTab(int8_t i) {
   m_dataSource->setSelectedTab(i);
 }
 
-void TabViewController::didBecomeFirstResponder() {
-  setSelectedTab(m_dataSource->activeTab());
-  setActiveTab(m_dataSource->selectedTab(), !m_isSelected);
-}
-
 void TabViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::WillResignFirst) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    setSelectedTab(m_dataSource->activeTab());
+    setActiveTab(m_dataSource->selectedTab(), !m_isSelected);
+  } else if (event.type == ResponderChainEventType::WillResignFirst) {
     m_isSelected = false;
     setSelectedTab(-1);
   } else {

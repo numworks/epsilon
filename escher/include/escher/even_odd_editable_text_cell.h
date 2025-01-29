@@ -14,7 +14,7 @@ class AbstractEvenOddEditableTextCell : public EvenOddCell, public Responder {
   virtual AbstractEditableTextCell* editableTextCell() = 0;
   Responder* responder() override { return this; }
   const char* text() const override { return editableTextCell()->text(); }
-  void didBecomeFirstResponder() override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static KDCoordinate k_rightMargin = Escher::Metric::SmallCellMargin;

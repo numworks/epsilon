@@ -123,7 +123,7 @@ Tree* Polynomial::Subtraction(Tree* polA, Tree* polB) {
   return Addition(polA, Multiplication(polB, (-1_e)->cloneTree()));
 }
 
-Tree* Polynomial::Operation(Tree* polA, Tree* polB, EnabledType type,
+Tree* Polynomial::Operation(Tree* polA, Tree* polB, Type type,
                             OperationMonomial operationMonomial,
                             OperationReduce operationMonomialAndReduce) {
   if (!polA->isPolynomial()) {
@@ -351,7 +351,7 @@ Tree* PolynomialParser::GetVariables(const Tree* e) {
   if (e->isInteger()) {  // TODO: generic belongToField?
     return variables;
   }
-  EnabledType type = e->type();
+  Type type = e->type();
   // TODO: match
   if (type == Type::Pow) {
     const Tree* base = e->child(0);
@@ -407,7 +407,7 @@ Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
 
 Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
   assert(!AdvancedReduction::DeepExpandAlgebraic(e) && !e->isDep());
-  EnabledType type = e->type();
+  Type type = e->type();
   ExceptionTry {
     TreeRef polynomial;
     polynomial = Polynomial::PushEmpty(variable);

@@ -63,13 +63,12 @@ class TypeBlock : public Block {
   constexpr TypeBlock(AnyType content) : Block(static_cast<uint8_t>(content)) {
     assert(m_content < static_cast<uint8_t>(Type::NumberOfTypes));
   }
-  constexpr TypeBlock(EnabledType content)
-      : Block(static_cast<uint8_t>(content)) {
+  constexpr TypeBlock(Type content) : Block(static_cast<uint8_t>(content)) {
     assert(m_content < static_cast<uint8_t>(Type::NumberOfTypes));
   }
-  constexpr EnabledType type() const { return static_cast<uint8_t>(m_content); }
+  constexpr Type type() const { return static_cast<uint8_t>(m_content); }
 
-  constexpr operator EnabledType() const { return type(); }
+  constexpr operator Type() const { return type(); }
   constexpr operator uint8_t() const { return static_cast<uint8_t>(m_content); }
 
 #if POINCARE_TREE_LOG
@@ -84,7 +83,7 @@ class TypeBlock : public Block {
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
 #define RANGE(NAME, FIRST, LAST)                                      \
-  static constexpr bool Is##NAME(EnabledType type) {                  \
+  static constexpr bool Is##NAME(Type type) {                         \
     constexpr uint8_t firstIndex = static_cast<uint8_t>(Type::FIRST); \
     constexpr uint8_t lastIndex = static_cast<uint8_t>(Type::LAST);   \
     static_assert(firstIndex <= lastIndex);                           \
@@ -124,7 +123,7 @@ class TypeBlock : public Block {
 #undef CAST_
 #undef CAST
 
-  constexpr static bool IsOfType(EnabledType thisType,
+  constexpr static bool IsOfType(Type thisType,
                                  std::initializer_list<AnyType> types) {
     for (AnyType t : types) {
       if (thisType == t) {
@@ -143,7 +142,7 @@ class TypeBlock : public Block {
   }
 
   // Their next metaBlock contains the numberOfChildren
-  constexpr static bool IsNAry(EnabledType type) {
+  constexpr static bool IsNAry(Type type) {
     return NumberOfChildrenOrTag(type) == NARY ||
            NumberOfChildrenOrTag(type) == NARY16;
   }
@@ -152,7 +151,7 @@ class TypeBlock : public Block {
   constexpr bool isSimpleNAry() const {
     return isNAry() && nodeSize() == NumberOfMetaBlocks(type());
   }
-  constexpr static bool IsNAry16(EnabledType type) {
+  constexpr static bool IsNAry16(Type type) {
     return NumberOfChildrenOrTag(type) == NARY16;
   }
   constexpr bool isNAry16() const { return IsNAry16(type()); }
@@ -163,7 +162,7 @@ class TypeBlock : public Block {
   constexpr static int NARY16 = -3;
 
  public:
-  constexpr static size_t NumberOfMetaBlocks(EnabledType type) {
+  constexpr static size_t NumberOfMetaBlocks(Type type) {
     switch (type) {
       /* NODE(MinusOne) => DefaultNumberOfMetaBlocks(0) + 0
        * NODE(Mult, NARY) => DefaultNumberOfMetaBlocks(NARY) + 0
@@ -181,7 +180,7 @@ class TypeBlock : public Block {
   }
 
   constexpr size_t nodeSize() const {
-    EnabledType t = type();
+    Type t = type();
     size_t numberOfMetaBlocks = NumberOfMetaBlocks(t);
     // NOTE: Make sure new Types are handled here.
     switch (t) {
@@ -238,14 +237,14 @@ class TypeBlock : public Block {
     }
   }
 
-  constexpr static int NumberOfChildren(EnabledType type) {
+  constexpr static int NumberOfChildren(Type type) {
     assert(NumberOfChildrenOrTag(type) != NARY &&
            NumberOfChildrenOrTag(type) != NARY2D);
     return NumberOfChildrenOrTag(type);
   }
 
  private:
-  constexpr static int NumberOfChildrenOrTag(EnabledType type) {
+  constexpr static int NumberOfChildrenOrTag(Type type) {
     switch (type) {
       /* NODE(MinusOne) => 0
        * NODE(Pow, 2) => 2 */

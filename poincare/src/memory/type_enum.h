@@ -51,15 +51,13 @@ class Type {
   TypeEnum m_value;
 };
 
-using EnabledType = Type;
-
 // TODO restore LayoutType behavior
 namespace LayoutType {
 #define ONLY_LAYOUTS 1
 #define NODE_USE(F, N, S) constexpr auto F = Type::F##Layout;
 #include "types.h"
 }  // namespace LayoutType
-using LayoutAnyType = EnabledType;
+using LayoutAnyType = Type;
 
 #if 0
 enum class LayoutType : uint8_t {

@@ -767,7 +767,7 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
 
 bool SystematicOperation::ReduceAddOrMult(Tree* e) {
   assert(e->isAdd() || e->isMult());
-  EnabledType type = e->type();
+  Type type = e->type();
   bool changed = NAry::Flatten(e);
   if (changed) {
     /* In case of successful flatten, approximateAndReplaceEveryScalar must be

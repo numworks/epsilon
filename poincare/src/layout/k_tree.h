@@ -170,7 +170,7 @@ constexpr auto operator^(
 
 // rack ^ layout
 template <Block N1, Block... B1, Block T2, Block... B2>
-  requires(EnabledType(uint8_t(T2)) != Type::RackSimpleLayout)
+  requires(Type(uint8_t(T2)) != Type::RackSimpleLayout)
 constexpr auto operator^(
     SimpleKTrees::KTree<Type::RackSimpleLayout, N1, 0, B1...>,
     SimpleKTrees::KTree<T2, B2...>) {
@@ -181,7 +181,7 @@ constexpr auto operator^(
 
 // layout ^ rack
 template <Block T1, Block... B1, Block N2, Block... B2>
-  requires(EnabledType(uint8_t(T1)) != Type::RackSimpleLayout)
+  requires(Type(uint8_t(T1)) != Type::RackSimpleLayout)
 constexpr auto operator^(
     SimpleKTrees::KTree<T1, B1...>,
     SimpleKTrees::KTree<Type::RackSimpleLayout, N2, 0, B2...>) {
@@ -192,8 +192,8 @@ constexpr auto operator^(
 
 // layout ^ layout
 template <Block T1, Block... B1, Block T2, Block... B2>
-  requires(EnabledType(uint8_t(T1)) != Type::RackSimpleLayout &&
-           EnabledType(uint8_t(T2)) != Type::RackSimpleLayout)
+  requires(Type(uint8_t(T1)) != Type::RackSimpleLayout &&
+           Type(uint8_t(T2)) != Type::RackSimpleLayout)
 constexpr auto operator^(SimpleKTrees::KTree<T1, B1...>,
                          SimpleKTrees::KTree<T2, B2...>) {
   return KTree<Type::RackSimpleLayout, 2, 0, T1, B1..., T2, B2...>();

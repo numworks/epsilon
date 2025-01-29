@@ -17,7 +17,7 @@ static bool integer_handler_same_absolute_value(IntegerHandler a,
 }
 
 static void assert_properties(const Tree* numerator, const Tree* denominator,
-                              EnabledType expectedType, Sign sign) {
+                              Type expectedType, Sign sign) {
   Tree* r = Rational::Push(numerator, denominator);
   quiz_assert(r->type() == expectedType);
   quiz_assert(sign == Rational::Sign(r));

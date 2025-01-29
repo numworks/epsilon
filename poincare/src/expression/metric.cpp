@@ -12,7 +12,7 @@
 
 namespace Poincare::Internal {
 
-static EnabledType ShortTypeForBigType(EnabledType t) {
+static Type ShortTypeForBigType(Type t) {
   switch (t) {
     case Type::RationalNegBig:
       return Type::RationalNegShort;
@@ -120,7 +120,7 @@ int Metric::GetMetric(const Tree* e) {
   return result;
 }
 
-int Metric::GetMetric(EnabledType type) {
+int Metric::GetMetric(Type type) {
   switch (type) {
     case Type::Zero:
     case Type::One:

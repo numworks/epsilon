@@ -270,7 +270,7 @@ Token Tokenizer::popToken() {
     return Token(typeForCodePoint[c - '('], start.layout());
   }
 
-  EnabledType comparisonOperatorType;
+  Type comparisonOperatorType;
   size_t comparisonOperatorLength;
   if (Binary::IsComparisonOperatorString(
           start.toSpan(), &comparisonOperatorType, &comparisonOperatorLength)) {

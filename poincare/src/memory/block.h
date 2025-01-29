@@ -22,7 +22,7 @@ class Block {
  public:
   constexpr Block(uint8_t content = 0) : m_content(content) {}
   consteval Block(AnyType type) : m_content(static_cast<uint8_t>(type)) {}
-  constexpr Block(EnabledType type) : m_content(static_cast<uint8_t>(type)) {}
+  constexpr Block(Type type) : m_content(static_cast<uint8_t>(type)) {}
   bool operator==(const Block& b) const { return b.m_content == m_content; }
   bool operator!=(const Block& b) { return b.m_content != m_content; }
 

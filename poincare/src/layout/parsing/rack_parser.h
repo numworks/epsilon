@@ -149,8 +149,7 @@ class RackParser {
                              Token::Type stoppingType = (Token::Type)0);
   bool mergeIntoPercentAdditionIfNeeded(TreeRef& leftHandSide,
                                         TreeRef& rightHandSide, bool plus);
-  void parseBinaryLogicalOperator(EnabledType operatorType,
-                                  TreeRef& leftHandSide,
+  void parseBinaryLogicalOperator(Type operatorType, TreeRef& leftHandSide,
                                   Token::Type stoppingType);
   void parseBinaryOperator(const TreeRef& leftHandSide, TreeRef& rightHandSide,
                            Token::Type stoppingType);

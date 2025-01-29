@@ -26,7 +26,7 @@ Sign RelaxFiniteProperty(Sign s) {
               s.canBeStrictlyNegative(), s.canBeNonInteger(), true);
 }
 
-Sign DecimalFunction(Sign s, Internal::EnabledType type) {
+Sign DecimalFunction(Sign s, Internal::Type type) {
   bool canBeNull = s.canBeNull();
   bool canBeStrictlyPositive = s.canBeStrictlyPositive();
   bool canBeStrictlyNegative = s.canBeStrictlyNegative();
@@ -206,7 +206,7 @@ ComplexSign Ln(ComplexSign s) {
   return ComplexSign(realSign, ComplexArgument(s).realSign());
 }
 
-ComplexSign DecimalFunction(ComplexSign s, Internal::EnabledType type) {
+ComplexSign DecimalFunction(ComplexSign s, Internal::Type type) {
   return ComplexSign(DecimalFunction(s.realSign(), type),
                      DecimalFunction(s.imagSign(), type));
 }

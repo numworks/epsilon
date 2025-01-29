@@ -53,8 +53,8 @@ class AbstractTreeStack : public BlockStack {
     return Tree::FromBlocks(lastBlock() - 1);
   }
   Tree* pushValueBlock(uint8_t value) { return pushBlock(ValueBlock(value)); }
-  Tree* pushBlock(EnabledType type) { return pushBlock(Block(type)); }
-  Tree* pushBlock(AnyType type) { return pushBlock(EnabledType(type)); }
+  Tree* pushBlock(Type type) { return pushBlock(Block(type)); }
+  Tree* pushBlock(AnyType type) { return pushBlock(Type(type)); }
 
   // TODO: factorize with TypeBlock
   constexpr static int NARY = -1;

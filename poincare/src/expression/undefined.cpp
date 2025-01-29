@@ -21,7 +21,7 @@ bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
          (e->isListSequence() && childIndex == 2);
 }
 
-void replaceTreeWithDimensionedType(Tree* e, EnabledType type) {
+void replaceTreeWithDimensionedType(Tree* e, Type type) {
   assert(TypeBlock::IsZero(type) || TypeBlock::IsUndefined(type));
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   int length = Dimension::ListLength(e);
@@ -51,11 +51,11 @@ void replaceTreeWithDimensionedType(Tree* e, EnabledType type) {
 
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {
   uint8_t i = 0;
-  EnabledType worstType = Type::Zero;
+  Type worstType = Type::Zero;
   for (const Tree* child : e->children()) {
     // Piecewise can have undefined branches, but not conditions
     if (child->isUndefined() && !CanHaveUndefinedChild(e, i)) {
-      EnabledType childType = child->type();
+      Type childType = child->type();
       worstType = childType > worstType ? childType : worstType;
     }
     i++;

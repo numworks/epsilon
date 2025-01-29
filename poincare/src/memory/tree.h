@@ -42,7 +42,7 @@ class Tree : public TypeBlock {
 
   // Consteval constructor to build KTrees
   consteval Tree(Block type)
-      : TypeBlock(static_cast<EnabledType>(static_cast<uint8_t>(type))),
+      : TypeBlock(static_cast<Type>(static_cast<uint8_t>(type))),
         m_valueBlocks{} {}
 
   static const Tree* FromBlocks(const Block* blocks) {
@@ -171,10 +171,10 @@ class Tree : public TypeBlock {
   }
 
   constexpr TypeBlock type() const { return *this; }
-  constexpr EnabledType layoutType() const {
+  constexpr Type layoutType() const {
     // TODO restore LayoutType as a return type
     assert(type().isLayout());
-    return static_cast<EnabledType>(type().type());
+    return static_cast<Type>(type().type());
   }
 
   typedef bool (*Operation)(Tree* node);
@@ -428,8 +428,7 @@ class Tree : public TypeBlock {
   void remove(bool isTree);
 
   // Forbid tree == Type::Add
-  using TypeBlock::operator==, TypeBlock::operator!=,
-      TypeBlock::operator EnabledType;
+  using TypeBlock::operator==, TypeBlock::operator!=, TypeBlock::operator Type;
 
   // A tree is made of 1 TypeBlock (inherited) and nodeSize()-1 ValueBlocks
   // Should be last - and most likely only - member

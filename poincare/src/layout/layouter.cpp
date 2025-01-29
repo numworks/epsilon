@@ -279,7 +279,7 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
 
 void Layouter::layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
                                    CodePoint op, bool multiplication) {
-  EnabledType type = expression->type();
+  Type type = expression->type();
   int operatorPriority = OperatorPriority(type);
   int childNumber = expression->numberOfChildren();
   bool previousWasUnit = false;
@@ -361,7 +361,7 @@ void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
 }
 
 void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
-  EnabledType type = expression->type();
+  Type type = expression->type();
   /* Once first child has been converted, this will point to second child. */
   expression = expression->child(0);
   TreeRef createdLayout;

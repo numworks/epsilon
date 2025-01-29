@@ -14,7 +14,7 @@ class Tree;
 
 class Builtin {
  public:
-  constexpr Builtin(EnabledType type, Aliases aliases)
+  constexpr Builtin(Type type, Aliases aliases)
       : m_type(type), m_aliases(aliases) {}
 
   constexpr TypeBlock type() const { return m_type; }
@@ -29,7 +29,7 @@ class Builtin {
     assert(GetReservedFunction(e));
     return GetReservedFunction(e)->m_aliases;
   }
-  static Aliases SpecialIdentifierName(EnabledType type) {
+  static Aliases SpecialIdentifierName(Type type) {
     assert(GetSpecialIdentifier(type));
     return GetSpecialIdentifier(type)->m_aliases;
   }
@@ -39,28 +39,27 @@ class Builtin {
   static bool HasSpecialIdentifier(LayoutSpan name) {
     return GetSpecialIdentifier(name) != nullptr;
   }
-  static bool HasSpecialIdentifier(EnabledType type) {
+  static bool HasSpecialIdentifier(Type type) {
     return GetSpecialIdentifier(type) != nullptr;
   }
   static bool HasCustomIdentifier(LayoutSpan name);
   static const Builtin* GetReservedFunction(LayoutSpan name);
   static const Builtin* GetReservedFunction(const Tree* e);
-  static constexpr const Builtin* GetReservedFunction(EnabledType type);
+  static constexpr const Builtin* GetReservedFunction(Type type);
   static const Builtin* GetSpecialIdentifier(LayoutSpan name);
-  static const Builtin* GetSpecialIdentifier(EnabledType type);
+  static const Builtin* GetSpecialIdentifier(Type type);
 
  private:
-  EnabledType m_type;
+  Type m_type;
   Aliases m_aliases;
 };
 
 class BuiltinWithLayout : public Builtin {
  public:
-  constexpr BuiltinWithLayout(EnabledType type, Aliases aliases,
+  constexpr BuiltinWithLayout(Type type, Aliases aliases,
                               LayoutAnyType layoutType)
       : Builtin(type, aliases), m_layoutType(layoutType) {
-    assert(TypeBlock::NumberOfMetaBlocks(
-               static_cast<EnabledType>(layoutType)) == 1);
+    assert(TypeBlock::NumberOfMetaBlocks(static_cast<Type>(layoutType)) == 1);
   }
   LayoutAnyType layoutType() const { return m_layoutType; }
   bool has2DLayout() const override { return true; }
@@ -209,7 +208,7 @@ constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
 #endif
 };
 
-constexpr const Builtin* Builtin::GetReservedFunction(EnabledType type) {
+constexpr const Builtin* Builtin::GetReservedFunction(Type type) {
   for (const Builtin& builtin : s_builtins) {
     if (builtin.m_type == type) {
       return &builtin;

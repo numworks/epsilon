@@ -29,31 +29,29 @@ struct AnyType {
 };
 
 /* We would like to keep the "case Type::Add:" syntax but with custom
- * ids. All the elements are of the type AnyType and stored in the
- * namespace Type to provide an equivalent syntax. */
-namespace Type {
-#define NODE_USE(F, N, S) \
-  constexpr AnyType SCOPED_NODE(F) = AnyType::Enabled(TypeEnum::SCOPED_NODE(F));
-#define DISABLED_NODE_USE(F, N, S)   \
-  constexpr AnyType SCOPED_NODE(F) = \
+ * ids. All the elements are of the type AnyType and stored as static
+ * members of Type to provide an equivalent syntax. */
+class Type {
+ public:
+#define NODE_USE(F, N, S)                   \
+  static constexpr AnyType SCOPED_NODE(F) = \
+      AnyType::Enabled(TypeEnum::SCOPED_NODE(F));
+#define DISABLED_NODE_USE(F, N, S)          \
+  static constexpr AnyType SCOPED_NODE(F) = \
       AnyType::Disabled(TypeEnum::SCOPED_NODE(F));
 #include "types.h"
-};  // namespace Type
 
-/* The EnabledType represents only types available at runtime
- * aka "enabled" and stored in a uint8_t. */
-class EnabledType {
- public:
-  constexpr EnabledType() {}
-  constexpr EnabledType(AnyType type)
+  constexpr Type() {}
+  constexpr Type(AnyType type)
       : m_value(static_cast<TypeEnum>(static_cast<uint8_t>(type))) {}
-  constexpr EnabledType(uint8_t value)
-      : m_value(static_cast<TypeEnum>(value)) {}
+  constexpr Type(uint8_t value) : m_value(static_cast<TypeEnum>(value)) {}
   constexpr operator uint8_t() const { return static_cast<uint8_t>(m_value); }
 
  private:
   TypeEnum m_value;
 };
+
+using EnabledType = Type;
 
 // TODO restore LayoutType behavior
 namespace LayoutType {

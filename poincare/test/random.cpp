@@ -7,16 +7,11 @@
 using namespace Poincare::Internal;
 
 template <typename T>
-void simplify_and_compare_approximates(const char* input1, const char* input2,
-                                       bool equal) {
-  Tree* e1 = parse_and_simplify(input1);
-  Tree* e2 = parse_and_simplify(input2);
-  T approx1 = Approximation::To<T>(
-      e1, Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                    .projectLocalVariables = true});
-  T approx2 = Approximation::To<T>(
-      e2, Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                    .projectLocalVariables = true});
+void compare_approximates(const Tree* e1, const Tree* e2, bool equal,
+                          Approximation::Parameters params) {
+  Approximation::Context ctx(AngleUnit::Radian);
+  T approx1 = Approximation::To<T>(e1, params, ctx);
+  T approx2 = Approximation::To<T>(e2, params, ctx);
   bool equalResult = OMG::Float::RoughlyEqual<T>(
       approx1, approx2, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -34,6 +29,31 @@ void simplify_and_compare_approximates(const char* input1, const char* input2,
   }
 #endif
   quiz_assert(equalResult == equal);
+}
+
+template <typename T>
+void project_and_compare_approximates(const char* input1, const char* input2,
+                                      bool equal) {
+  ProjectionContext ctx;
+  Tree* e1 = parse(input1);
+  Simplification::ToSystem(e1, &ctx);
+  Tree* e2 = parse(input2);
+  Simplification::ToSystem(e2, &ctx);
+
+  return compare_approximates<T>(
+      e1, e2, equal, Approximation::Parameters{.isRootAndCanHaveRandom = true});
+}
+
+template <typename T>
+void simplify_and_compare_approximates(const char* input1, const char* input2,
+                                       bool equal) {
+  Tree* e1 = parse_and_simplify(input1);
+  Tree* e2 = parse_and_simplify(input2);
+
+  return compare_approximates<T>(
+      e1, e2, equal,
+      Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                .projectLocalVariables = true});
 }
 
 // Compares the approximated elements of a list of size 2
@@ -74,4 +94,7 @@ QUIZ_CASE(pcj_random) {
   simplify_and_compare_approximates_list<double>("sequence(random(), k, 2)",
                                                  false);
   simplify_and_compare_approximates_list<double>("random() + {0,0}", true);
+  // Ensures both numerator and denominator of tan's projection have same seed.
+  project_and_compare_approximates<double>("tan(randint(0,1))", "sin(1)/cos(0)",
+                                           false);
 }

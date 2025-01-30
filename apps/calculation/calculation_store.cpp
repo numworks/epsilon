@@ -118,7 +118,7 @@ bool CalculationStore::pushInput(Poincare::Layout inputLayout,
   return true;
 }
 
-void CalculationStore::pushOutputs(OutputExpressions outputs,
+void CalculationStore::pushOutputs(const OutputExpressions& outputs,
                                    Calculation** current, char** location) {
   for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
     UserExpression e = i == 0 ? outputs.exact : outputs.approximate;

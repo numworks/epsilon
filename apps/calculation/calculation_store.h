@@ -121,7 +121,7 @@ class CalculationStore {
 
   /* Push exact output and approximate output.
    * If one is too big for the store, push undef instead. */
-  void pushOutputs(OutputExpressions outputs, Calculation** current,
+  void pushOutputs(const OutputExpressions& outputs, Calculation** current,
                    char** location);
 
   char* const m_buffer;

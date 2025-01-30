@@ -99,14 +99,8 @@ UserExpression CalculationStore::replaceAnsInExpression(
   return expression;
 }
 
-bool CalculationStore::pushInput(Poincare::Layout inputLayout,
-                                 Calculation** current, char** location,
-                                 PoolVariableContext& ansContext,
-                                 Poincare::Context* context) {
-  UserExpression inputExpression =
-      UserExpression::Parse(inputLayout, &ansContext);
-  inputExpression = replaceAnsInExpression(inputExpression, context);
-  inputExpression = enhancePushedExpression(inputExpression);
+bool CalculationStore::pushInput(const Poincare::Expression& inputExpression,
+                                 Calculation** current, char** location) {
   const size_t sizeOfExpression =
       pushExpressionTree(location, inputExpression, current);
   if (sizeOfExpression == k_pushErrorSize) {
@@ -236,8 +230,11 @@ ExpiringPointer<Calculation> CalculationStore::push(
       currentCalculation = pushEmptyCalculation(&cursor);
       assert(currentCalculation);
 
-      if (!pushInput(inputLayout, &currentCalculation, &cursor, ansContext,
-                     context)) {
+      UserExpression inputExpression =
+          UserExpression::Parse(inputLayout, &ansContext);
+      inputExpression = replaceAnsInExpression(inputExpression, context);
+      inputExpression = enhancePushedExpression(inputExpression);
+      if (!pushInput(inputExpression, &currentCalculation, &cursor)) {
         // leave the calculation undefined
         return currentCalculation;
       }

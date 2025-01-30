@@ -58,9 +58,9 @@ _ion_simulator_background := $(PATH_ion)/src/simulator/assets/$(ION_layout_varia
 _ion_simulator_backgrounds_generated := $(addprefix $(OUTPUT_DIRECTORY)/app/assets/,background.jpg background-no-shadow.webp)
 
 _ion_simulator_background_crop_epsilon := 1005x1975+93+13
-_ion_simulator_background_resize_epsilon := 1160x2220
-_ion_simulator_perfect_width_epsilon := 458
-_ion_simulator_perfect_height_epsilon := 888
+_ion_simulator_background_resize_epsilon := 1130x2220
+_ion_simulator_perfect_width_epsilon := 454
+_ion_simulator_perfect_height_epsilon := 892
 
 _ion_simulator_background_crop_scandium := 569x990+182+128
 _ion_simulator_background_resize_scandium := 1160x2018

@@ -225,7 +225,6 @@ ExpiringPointer<Calculation> CalculationStore::push(
       PoolVariableContext ansContext = createAnsContext(context);
 
       currentCalculation = pushEmptyCalculation(&cursor);
-      assert(currentCalculation);
 
       UserExpression inputExpression =
           UserExpression::Parse(inputLayout, &ansContext);
@@ -366,9 +365,7 @@ void CalculationStore::getEmptySpace(char** location, size_t neededSize,
 Calculation* CalculationStore::pushEmptyCalculation(char** location) {
   Calculation* newCalculation = reinterpret_cast<Calculation*>(*location);
   getEmptySpace(location, k_calculationMinimalSize, &newCalculation);
-  if (*location == k_pushErrorLocation) {
-    return nullptr;
-  }
+  assert(*location != k_pushErrorLocation);
   new (*location) Calculation(
       Poincare::Preferences::SharedPreferences()->calculationPreferences());
   *location += sizeof(Calculation);

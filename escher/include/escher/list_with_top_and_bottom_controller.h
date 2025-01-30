@@ -89,7 +89,6 @@ class ListWithTopAndBottomController : public SelectableViewController,
                 .font = KDFont::Size::Small},
       .horizontalAlignment = KDGlyph::k_alignCenter};
 
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewWillAppear() override;
   int innerRowFromRow(int row) const {
     assert(row >= m_outerDataSource.hasTopView());
@@ -104,6 +103,9 @@ class ListWithTopAndBottomController : public SelectableViewController,
   void setBottomView(View* view) { m_outerDataSource.setBottomView(view); }
 
   SelectableListView m_selectableListView;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   void resetSizeMemoization() override {

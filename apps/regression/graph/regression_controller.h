@@ -25,7 +25,6 @@ class RegressionController : public Escher::SelectableListViewController<
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // MemoizedListViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override;
@@ -39,6 +38,9 @@ class RegressionController : public Escher::SelectableListViewController<
                : k_variantNumberOfRows;
   }
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   /* In all variants, Model::Type::None isn't made available.

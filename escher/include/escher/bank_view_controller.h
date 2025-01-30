@@ -16,10 +16,12 @@ class BankViewController : public ViewController {
   int activeIndex() const { return m_activeIndex; }
 
   View* view() override { return &m_view; }
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   class ContentView : public View {

@@ -29,8 +29,6 @@ class ListController : public Shared::ExpressionModelListController,
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(
-      Escher::Responder::ResponderChainEvent event) override;
   /* ViewController */
   Escher::View* view() override { return &m_equationListView; }
   bool layoutFieldDidFinishEditing(Escher::LayoutField* layoutField,
@@ -47,6 +45,10 @@ class ListController : public Shared::ExpressionModelListController,
   Escher::LayoutField* layoutField() override {
     return m_editableCell.layoutField();
   }
+
+ protected:
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
 
  private:
   constexpr static int k_maxNumberOfRows =

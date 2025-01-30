@@ -29,7 +29,6 @@ class CalculationController : public Escher::ViewController,
   void reinitCalculation();
 
   /* Responder */
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
 
   /* ViewController */
@@ -61,6 +60,9 @@ class CalculationController : public Escher::ViewController,
   void onDropdownSelected(int selectedRow) override;
   bool popupDidReceiveEvent(Ion::Events::Event event,
                             Escher::Responder* responder) override;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static int k_numberOfCalculationCells = 3;

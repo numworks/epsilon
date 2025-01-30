@@ -29,6 +29,8 @@ class ScriptNameCell : public Escher::EvenOddCell, public Escher::Responder {
   const char* text() const override;
   // View
   KDSize minimalSizeForOptimalDisplay() const override;
+
+ protected:
   // Responder
   void handleResponderChainEvent(ResponderChainEvent event) override;
 

@@ -26,7 +26,6 @@ class TabViewController : public ViewController {
 
   virtual const char* tabName(uint8_t index);
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
@@ -61,6 +60,7 @@ class TabViewController : public ViewController {
   virtual ViewController* children(uint8_t index) { return m_children[index]; }
   virtual void updateUnionActiveTab() {}
   virtual void addTabs();
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   constexpr static uint8_t k_maxNumberOfChildren = 3;
   ViewController* m_children[k_maxNumberOfChildren];

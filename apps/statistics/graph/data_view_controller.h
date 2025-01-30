@@ -26,8 +26,6 @@ class DataViewController : public Escher::ViewController,
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(
-      Escher::Responder::ResponderChainEvent event) override;
 
   int selectedSeries() const;
   void setSelectedSeries(int selectedSeries);
@@ -62,6 +60,9 @@ class DataViewController : public Escher::ViewController,
       int previousSelectedSeries) = 0;
 
   Store* m_store;
+
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
 
  private:
   Escher::TabViewController* m_tabController;

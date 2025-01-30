@@ -20,7 +20,6 @@ class ExplicitFloatParameterController
       public ParameterTextFieldDelegate {
  public:
   ExplicitFloatParameterController(Escher::Responder* parentResponder);
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
@@ -35,6 +34,7 @@ class ExplicitFloatParameterController
   }
   virtual double parameterAtIndex(int index) = 0;
   virtual void fillParameterCellAtRow(int row);
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   virtual bool setParameterAtIndex(int parameterIndex, double f) = 0;

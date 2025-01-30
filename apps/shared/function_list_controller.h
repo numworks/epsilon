@@ -26,8 +26,6 @@ class FunctionListController : public ExpressionModelListController,
       int index, Escher::ButtonRowController::Position position) const override;
 
   /* Responder */
-  void handleResponderChainEvent(
-      Escher::Responder::ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
 
   /* ViewController */
@@ -47,6 +45,9 @@ class FunctionListController : public ExpressionModelListController,
   Escher::TabViewController* tabController() const;
 
   bool m_parameterColumnSelected;
+
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
 
  private:
   virtual ListParameterController* parameterController() = 0;

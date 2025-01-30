@@ -34,7 +34,6 @@ class ExpressionsListController
 
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewDidDisappear() override;
 
   // MemoizedListViewDataSource
@@ -103,6 +102,7 @@ class ExpressionsListController
   InnerListController m_listController;
   EditExpressionController* m_editExpressionController;
   Poincare::Preferences::CalculationPreferences m_calculationPreferences;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   virtual I18n::Message messageAtIndex(int index) = 0;

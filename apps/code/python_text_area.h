@@ -22,7 +22,6 @@ class PythonTextArea : public Escher::TextArea {
         m_wasAutocompleting(false) {}
   void loadSyntaxHighlighter() { m_contentView.loadSyntaxHighlighter(); }
   void unloadSyntaxHighlighter() { m_contentView.unloadSyntaxHighlighter(); }
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleSpecialEvent(Ion::Events::Event event);
   bool handleEventWithText(const char* text, bool indentation = false,
@@ -75,6 +74,7 @@ class PythonTextArea : public Escher::TextArea {
     bool m_autocomplete;
     const char* m_autocompletionEnd;
   };
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   void prepareVariableBoxBeforeOpening();

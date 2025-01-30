@@ -22,9 +22,11 @@ class TypeParameterController
   const char* title() const override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   void setRecord(Ion::Storage::Record record) { m_record = record; }
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static int k_indexOfExplicit =

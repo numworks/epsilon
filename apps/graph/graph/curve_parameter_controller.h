@@ -30,7 +30,6 @@ class CurveParameterController
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfRows() const override { return k_numberOfRows; }
   void viewWillAppear() override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayLastTitle;
   }
@@ -45,6 +44,9 @@ class CurveParameterController
                       int derivationOrder) override;
 
   void setRecord(Ion::Storage::Record record, int derivationOrder);
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   using ParameterCell = Escher::MenuCellWithEditableText<

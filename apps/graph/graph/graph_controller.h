@@ -27,7 +27,6 @@ class GraphController : public Shared::FunctionGraphController,
       DerivativeColumnParameterController* derivativeColumnParameterController);
 
   // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
 
   // ViewController
@@ -53,6 +52,9 @@ class GraphController : public Shared::FunctionGraphController,
   PointsOfInterestCache* pointsOfInterestForSelectedRecord() {
     return pointsOfInterestForRecord(recordAtSelectedCurveIndex());
   }
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   class FunctionSelectionController

@@ -42,7 +42,6 @@ class Responder {
     };
     ResponderChainEventType type;
   };
-  virtual void handleResponderChainEvent(ResponderChainEvent event) {}
 
   enum class FirstResponderAlteration { WillSpoil, DidRestore };
   void modalViewAltersFirstResponder(FirstResponderAlteration alteration);
@@ -53,6 +52,9 @@ class Responder {
   void setParentResponder(Responder* responder) {
     m_parentResponder = responder;
   }
+
+ protected:
+  virtual void handleResponderChainEvent(ResponderChainEvent event) {}
 
  private:
   bool privateHasAncestor(Responder* responder) const;

@@ -22,14 +22,6 @@ class MainController : public Escher::ViewController,
   void viewWillAppear() override { m_view.elementsView()->dirtyBackground(); }
 
   // Escher::Responder
-  void handleResponderChainEvent(
-      Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      Escher::App::app()->setFirstResponder(m_view.bannerView()->textField());
-    } else {
-      Escher::ViewController::handleResponderChainEvent(event);
-    }
-  }
   bool handleEvent(Ion::Events::Event e) override;
 
   // ElementsViewDelegate
@@ -44,6 +36,16 @@ class MainController : public Escher::ViewController,
                                  Ion::Events::Event event) override;
   void textFieldDidAbortEditing(Escher::AbstractTextField* textField) override;
   void textFieldDidHandleEvent(Escher::AbstractTextField* textField) override;
+
+ protected:
+  void handleResponderChainEvent(
+      Responder::ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      Escher::App::app()->setFirstResponder(m_view.bannerView()->textField());
+    } else {
+      Escher::ViewController::handleResponderChainEvent(event);
+    }
+  }
 
  private:
   class ContentView : public Escher::View {

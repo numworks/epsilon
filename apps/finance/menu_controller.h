@@ -21,11 +21,13 @@ class MenuController
  public:
   MenuController(Escher::StackViewController* parentResponder,
                  InterestMenuController* interestMenuController);
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event e) override;
 
   constexpr static int k_indexOfSimpleInterest = 0;
   constexpr static int k_indexOfCompoundInterest = 1;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   InterestMenuController* m_interestMenuController;

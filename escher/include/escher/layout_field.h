@@ -53,7 +53,6 @@ class LayoutField : public EditableField {
                              bool forceCursorRightOfText = false) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool handleStoreEvent() override;
-  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 
   /* View */
   KDSize minimalSizeForOptimalDisplay() const override;
@@ -85,6 +84,7 @@ class LayoutField : public EditableField {
   bool insertText(const char* text, bool indentation = false,
                   bool forceCursorRightOfText = false);
   void reload(KDSize previousSize);
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 
  private:
   constexpr static int k_maxNumberOfLayouts = 220;

@@ -17,9 +17,6 @@ class FrequencyController : public PlotController,
                       Escher::StackViewController* stackViewController,
                       Escher::ViewController* typeViewController, Store* store);
 
-  // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
-
   // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
@@ -42,6 +39,10 @@ class FrequencyController : public PlotController,
   float labelStepMultiplicator(OMG::Axis axis) const override {
     return axis == OMG::Axis::Vertical ? 0.5f : 1.0f;
   }
+
+ protected:
+  // Responder
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static float k_numberOfCursorStepsInGradUnit = 5.0f;

@@ -45,8 +45,6 @@ class App : public Shared::SharedApp {
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(
-      Escher::Responder::ResponderChainEvent event) override;
 
   PythonToolboxController* toolbox() override { return &m_toolbox; }
   PythonVariableBoxController* variableBox() override { return &m_variableBox; }
@@ -65,6 +63,10 @@ class App : public Shared::SharedApp {
   void deinitPython();
 
   constexpr static size_t k_pythonHeapSize = 65536;  // 64KiB
+                                                     //
+ protected:
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
 
  private:
   App(Snapshot* snapshot);

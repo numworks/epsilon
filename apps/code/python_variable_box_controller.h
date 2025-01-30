@@ -20,8 +20,6 @@ class PythonVariableBoxController
 
   /* Responder */
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(
-      Escher::Responder::ResponderChainEvent event) override;
 
   /* MemoizedListViewDataSource */
   KDCoordinate nonMemoizedRowHeight(int row) override;
@@ -51,6 +49,10 @@ class PythonVariableBoxController
   void loadVariablesImportedFromScripts();
   void empty();
   void insertAutocompletionResultAtIndex(int index);
+
+ protected:
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
 
  private:
   constexpr static size_t k_maxNumberOfDisplayedItems =

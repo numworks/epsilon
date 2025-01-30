@@ -25,9 +25,6 @@ class GraphController : public Shared::InteractiveCurveViewController {
                   Shared::CurveViewCursor* cursor, int* selectedDotIndex,
                   int* selectedCurveIndex, Store* store);
 
-  // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
-
   // ViewController
   void viewWillAppear() override;
 
@@ -55,6 +52,10 @@ class GraphController : public Shared::InteractiveCurveViewController {
     return seriesIndexFromCurveIndex(*m_selectedCurveIndex);
   }
   Poincare::Context* globalContext() const;
+
+ protected:
+  // Responder
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   class CurveSelectionController : public Shared::CurveSelectionController {

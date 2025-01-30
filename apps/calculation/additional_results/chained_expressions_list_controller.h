@@ -24,7 +24,6 @@ class ChainedExpressionsListController : public ExpressionsListController {
 
   // Responder
   void viewDidDisappear() override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ListViewDataSource
   int typeAtRow(int row) const override;
@@ -40,6 +39,7 @@ class ChainedExpressionsListController : public ExpressionsListController {
  protected:
   Poincare::Layout layoutAtIndex(Escher::HighlightCell* cell,
                                  int index) override;
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   ChainableExpressionsListController* m_tail;

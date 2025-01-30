@@ -22,7 +22,6 @@ class HistoryController : public Escher::ViewController,
   Escher::View* view() override { return &m_selectableListView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void reload();
   int numberOfRows() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
@@ -36,6 +35,9 @@ class HistoryController : public Escher::ViewController,
   KDPoint offsetToRestoreAfterReload(
       const Escher::SelectableTableView* t) const override;
   void recomputeHistoryCellHeightsIfNeeded();
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   KDCoordinate nonMemoizedRowHeight(int row) override;

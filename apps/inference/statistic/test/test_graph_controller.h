@@ -15,8 +15,10 @@ class TestGraphController : public Escher::ViewController {
   ViewController::TitlesDisplay titlesDisplay() const override;
   const char* title() const override;
   Escher::View* view() override { return &m_graphView; }
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static int k_titleBufferSize =

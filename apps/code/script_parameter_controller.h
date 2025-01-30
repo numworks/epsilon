@@ -28,11 +28,13 @@ class ScriptParameterController
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   /* MemoizedListViewDataSource */
   Escher::AbstractMenuCell* cell(int row) override;
   int numberOfRows() const override { return k_totalNumberOfCell; }
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static int k_totalNumberOfCell = 4;

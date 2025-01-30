@@ -18,7 +18,6 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
                      InteractiveCurveViewRange* range, CurveViewCursor* cursor);
 
   void viewWillAppear() override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
@@ -34,6 +33,7 @@ class SumGraphController : public SimpleInteractiveCurveViewController {
   Ion::Storage::Record selectedRecord() {
     return m_graphView->selectedRecord();
   }
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   enum class Step { FirstParameter = 0, SecondParameter = 1, Result = 2 };
 

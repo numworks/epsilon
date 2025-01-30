@@ -24,7 +24,6 @@ class AbstractTextField : public TextInput {
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 
   // ScrollView
   void setBackgroundColor(KDColor backgroundColor) override;
@@ -132,6 +131,7 @@ class AbstractTextField : public TextInput {
     bool m_isStalled;
   };
 
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
   const ContentView* nonEditableContentView() const override = 0;
   ContentView* contentView() {
     return const_cast<ContentView*>(nonEditableContentView());

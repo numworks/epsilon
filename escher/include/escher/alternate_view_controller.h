@@ -29,6 +29,13 @@ class AlternateViewController : public ViewController {
   ViewController::TitlesDisplay titlesDisplay() const override {
     return m_delegate->alternateViewTitlesDisplay();
   }
+  void initView() override { activeViewController()->initView(); }
+  void viewWillAppear() override;
+  void viewDidDisappear() override {
+    activeViewController()->viewDidDisappear();
+  }
+
+ protected:
   void handleResponderChainEvent(
       Responder::ResponderChainEvent event) override {
     if (event.type == ResponderChainEventType::BecameFirst) {
@@ -36,11 +43,6 @@ class AlternateViewController : public ViewController {
     } else {
       ViewController::handleResponderChainEvent(event);
     }
-  }
-  void initView() override { activeViewController()->initView(); }
-  void viewWillAppear() override;
-  void viewDidDisappear() override {
-    activeViewController()->viewDidDisappear();
   }
 
  private:

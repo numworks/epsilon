@@ -17,9 +17,6 @@ class FunctionGraphController : public InteractiveCurveViewController,
                           AbstractPlotView* curveView, CurveViewCursor* cursor,
                           int* selectedCurveIndex);
 
-  // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
-
   // ViewController
   void viewWillAppear() override;
 
@@ -41,9 +38,9 @@ class FunctionGraphController : public InteractiveCurveViewController,
       return graphController()->functionStore()->numberOfActiveFunctions();
     }
     void fillCellForRow(Escher::HighlightCell* cell, int row) override;
-    void handleResponderChainEvent(ResponderChainEvent event) override;
 
    protected:
+    void handleResponderChainEvent(ResponderChainEvent event) override;
     KDCoordinate nonMemoizedRowHeight(int row) override;
     FunctionGraphController* graphController() const {
       return static_cast<FunctionGraphController*>(
@@ -54,6 +51,9 @@ class FunctionGraphController : public InteractiveCurveViewController,
    private:
     constexpr static KDFont::Size k_font = KDFont::Size::Large;
   };
+
+  // Responder
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ZoomCurveViewController
   AbstractPlotView* curveView() override;

@@ -42,7 +42,6 @@ class StoreController : public EditableCellTableViewController,
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ClearColumnHelper
   size_t fillColumnName(int column, char* buffer) override {
@@ -84,6 +83,9 @@ class StoreController : public EditableCellTableViewController,
   Poincare::Layout
       m_memoizedFormulas[DoublePairStore::k_numberOfSeries *
                          DoublePairStore::k_numberOfColumnsPerSeries];
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   bool cellAtLocationIsEditable(int column, int row) override;

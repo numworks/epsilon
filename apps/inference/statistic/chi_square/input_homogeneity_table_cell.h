@@ -21,9 +21,6 @@ class InputHomogeneityTableCell
       InputHomogeneityController* inputHomogeneityController,
       Escher::ScrollViewDelegate* scrollViewDelegate);
 
-  // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
-
   // InputCategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {
     return this;
@@ -43,6 +40,10 @@ class InputHomogeneityTableCell
     return &m_selectableTableView;
   }
   void createCells() override;
+
+ protected:
+  // Responder
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   // ClearColumnHelper

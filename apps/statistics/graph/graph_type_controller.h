@@ -34,11 +34,13 @@ class GraphTypeController
   Escher::Responder* responderWhenEmpty() override;
 
   // UniformSelectableListController
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   const char* title() const override {
     return I18n::translate(I18n::Message::Type);
   }
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   Escher::TabViewController* m_tabController;

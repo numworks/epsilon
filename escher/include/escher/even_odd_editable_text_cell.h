@@ -14,6 +14,8 @@ class AbstractEvenOddEditableTextCell : public EvenOddCell, public Responder {
   virtual AbstractEditableTextCell* editableTextCell() = 0;
   Responder* responder() override { return this; }
   const char* text() const override { return editableTextCell()->text(); }
+
+ protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:

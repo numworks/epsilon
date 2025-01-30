@@ -64,7 +64,6 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   int numberOfSubviews() const override { return 2 + isDisplayingEllipsis(); }
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   Escher::ScrollableTwoLayoutsView* outputView() {
     return &m_scrollableOutputView;
@@ -72,6 +71,9 @@ class HistoryViewCell : public Escher::EvenOddCell, public Escher::Responder {
   Escher::ScrollableLayoutView* inputView() { return &m_inputView; }
   bool hasEllipsis() const { return m_hasEllipsis; }
   KDCoordinate minimalHeightForOptimalDisplay();
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static KDCoordinate k_resultWidth = 80;

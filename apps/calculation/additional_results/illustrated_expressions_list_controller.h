@@ -19,8 +19,6 @@ class IllustratedExpressionsListController
       : ChainedExpressionsListController(editExpressionController,
                                          highlightWholeCells, this) {}
 
-  // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   // ViewController
   void viewWillAppear() override;
 
@@ -47,6 +45,8 @@ class IllustratedExpressionsListController
   void setLineAtIndex(int index, const Poincare::UserExpression formula,
                       const Poincare::UserExpression expression,
                       const Poincare::Internal::ProjectionContext* ctx);
+  // Responder
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   Poincare::Layout layoutAtIndex(Escher::HighlightCell* cell,

@@ -17,7 +17,6 @@ class TabTableController : public Escher::ViewController,
   TabTableController(Responder* parentResponder);
   Escher::View* view() override { return selectableTableView(); }
   void viewWillAppear() override;
-  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
   ViewController::TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
@@ -32,6 +31,8 @@ class TabTableController : public Escher::ViewController,
 
   virtual Escher::SelectableTableView* selectableTableView() = 0;
   virtual Escher::Responder* tabController() const = 0;
+
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 };
 
 }  // namespace Shared

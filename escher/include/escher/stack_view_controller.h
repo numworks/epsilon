@@ -35,7 +35,6 @@ class StackViewController : public ViewController {
   const ViewController* secondTopViewController() const;
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void initView() override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
@@ -52,6 +51,7 @@ class StackViewController : public ViewController {
   StackViewController(Responder* parentResponder, StackView::Style style,
                       bool extendVertically,
                       OMG::AbstractStack<StackHeaderView>* headerViewStack);
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   StackView m_view;

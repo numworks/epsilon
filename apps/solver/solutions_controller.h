@@ -68,6 +68,7 @@ class SolutionsController : public Escher::ViewController,
     return column > 0;
   }
 
+ protected:
   // Responder
   void handleResponderChainEvent(ResponderChainEvent event) override;
 

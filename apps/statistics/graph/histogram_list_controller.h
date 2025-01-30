@@ -57,6 +57,7 @@ class HistogramListController
   // Escher::Responder
   bool handleEvent(Ion::Events::Event event) override;
 
+ protected:
   // Escher::SelectableViewController
   void handleResponderChainEvent(ResponderChainEvent event) override {
     if (event.type == ResponderChainEventType::BecameFirst) {

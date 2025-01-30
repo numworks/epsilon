@@ -29,14 +29,6 @@ class NestedMenuController : public StackViewController::Custom<5>,
 
   // StackViewController
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(
-      Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      App::app()->setFirstResponder(&m_listController);
-    } else {
-      StackViewController::handleResponderChainEvent(event);
-    }
-  }
   void viewWillAppear() override;
 
   // MemoizedListViewDataSource
@@ -46,6 +38,15 @@ class NestedMenuController : public StackViewController::Custom<5>,
 
  protected:
   using NodeCell = MenuCell<MessageTextView, EmptyCellWidget, ChevronView>;
+
+  void handleResponderChainEvent(
+      Responder::ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      App::app()->setFirstResponder(&m_listController);
+    } else {
+      StackViewController::handleResponderChainEvent(event);
+    }
+  }
 
   class StackState {
    public:

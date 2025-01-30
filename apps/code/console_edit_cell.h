@@ -19,9 +19,6 @@ class ConsoleEditCell : public Escher::HighlightCell, public Escher::Responder {
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
-  // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
-
   /* HighlightCell */
   Escher::Responder* responder() override { return this; }
 
@@ -32,6 +29,10 @@ class ConsoleEditCell : public Escher::HighlightCell, public Escher::Responder {
   bool insertText(const char* text);
   void setPrompt(const char* prompt);
   const char* promptText() const { return m_promptView.text(); }
+
+ protected:
+  // Responder
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   Escher::PointerTextView m_promptView;

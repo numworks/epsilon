@@ -42,10 +42,12 @@ class HistogramMainController : public Escher::ViewController,
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(
-      Escher::Responder::ResponderChainEvent event) override;
 
   void updateBannerView() override;
+
+ protected:
+  void handleResponderChainEvent(
+      Escher::Responder::ResponderChainEvent event) override;
 
  private:
   constexpr static int k_maxNumberOfBarsPerWindow = 100;

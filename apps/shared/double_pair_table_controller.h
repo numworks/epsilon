@@ -38,7 +38,6 @@ class DoublePairTableController
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // RegularHeightTableViewDataSource
   bool canSelectCellAtLocation(int column, int row) override {
@@ -78,6 +77,8 @@ class DoublePairTableController
   constexpr static int k_calculationTitleCellType = 2;
   constexpr static int k_calculationSymbolCellType = 3;
   constexpr static int k_calculationCellType = 4;
+
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // TableViewDataSource
   KDCoordinate defaultRowHeight() override { return k_cellHeight; }

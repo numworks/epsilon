@@ -36,13 +36,6 @@ class LocalizationController
 
   Escher::View* view() override { return &m_contentView; }
   const char* title() const override;
-  void handleResponderChainEvent(ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      Escher::App::app()->setFirstResponder(selectableListView());
-    } else {
-      Escher::ViewController::handleResponderChainEvent(event);
-    }
-  }
   void viewWillAppear() override;
   bool handleEvent(Ion::Events::Event event) override;
 
@@ -58,6 +51,13 @@ class LocalizationController
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      Escher::App::app()->setFirstResponder(selectableListView());
+    } else {
+      Escher::ViewController::handleResponderChainEvent(event);
+    }
+  }
   class ContentView : public Escher::View {
    public:
     ContentView(LocalizationController* controller,

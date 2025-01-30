@@ -45,6 +45,8 @@ class TextCursorView : public View {
 #endif
    public:
     using ResponderType::ResponderType;
+
+   protected:
     void handleResponderChainEvent(
         Responder::ResponderChainEvent event) override {
       if (event.type == Responder::ResponderChainEventType::BecameFirst) {

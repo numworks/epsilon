@@ -21,12 +21,14 @@ class EditorController : public Escher::ViewController {
   /* ViewController */
   Escher::View* view() override { return &m_editorView; }
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewWillAppear() override;
   void viewDidDisappear() override;
   Escher::ViewController::TitlesDisplay titlesDisplay() const override {
     return Escher::ViewController::TitlesDisplay::DisplayNoTitle;
   }
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   void cleanStorageEmptySpace();

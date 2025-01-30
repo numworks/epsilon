@@ -36,7 +36,6 @@ class InteractiveCurveViewController
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   // ViewController
   ViewController::TitlesDisplay titlesDisplay() const override {
@@ -116,6 +115,9 @@ class InteractiveCurveViewController
 
   int* m_selectedCurveIndex;
   int m_selectedSubCurveIndex;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static KDFont::Size k_buttonFont = KDFont::Size::Small;

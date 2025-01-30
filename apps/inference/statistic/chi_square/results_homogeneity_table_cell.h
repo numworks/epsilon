@@ -24,9 +24,6 @@ class ResultsHomogeneityTableCell
   enum class Mode : bool { ExpectedValue, Contribution };
   void setMode(Mode mode) { m_mode = mode; }
 
-  // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
-
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
@@ -47,6 +44,10 @@ class ResultsHomogeneityTableCell
     return &m_selectableTableView;
   }
   void createCells() override;
+
+ protected:
+  // Responder
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   // HomogeneityTableViewDataSource

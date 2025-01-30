@@ -17,7 +17,6 @@ class SelectableListView : public SelectableTableView {
       : SelectableTableView(parentResponder, dataSource, selectionDataSource,
                             delegate) {}
 
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void scrollToCell(int row) { return scrollToCell(0, row); }
   void selectCell(int row) { selectCellAtLocation(0, row); }
   void reloadCell(int row, bool forceSetFrame = false) {
@@ -35,6 +34,9 @@ class SelectableListView : public SelectableTableView {
     static_cast<ListViewDataSource*>(dataSource())->initWidth(this);
     SelectableTableView::layoutSubviews(force);
   }
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   // Hide column-related methods

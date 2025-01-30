@@ -41,7 +41,6 @@ class MenuController : public Escher::ViewController,
     return TitlesDisplay::NeverDisplayOwnTitle;
   }
   bool handleEvent(Ion::Events::Event event) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewWillAppear() override;
 
   /* TableViewDataSource */
@@ -83,6 +82,9 @@ class MenuController : public Escher::ViewController,
     assert(index == 0);
     return const_cast<Escher::ButtonCell*>(&m_consoleButton);
   }
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static int k_maxNumberOfDisplayableScriptCells = 5;  // = 240/50

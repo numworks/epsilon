@@ -30,7 +30,6 @@ class EditExpressionController : public Escher::ViewController,
 
   /* ViewController */
   Escher::View* view() override { return &m_contentView; }
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   void viewWillAppear() override;
 
   /* MathLayoutFieldDelegate */
@@ -53,6 +52,9 @@ class EditExpressionController : public Escher::ViewController,
 
   void insertLayout(Poincare::Layout layout);
   void restoreInput();
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   class ContentView : public Escher::View {

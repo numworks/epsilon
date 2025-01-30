@@ -25,8 +25,10 @@ class MenuController
       std::initializer_list<const Escher::Image*> images,
       MenuControllerDelegate* delegate);
   void stackOpenPage(Escher::ViewController* nextPage) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   Escher::ViewController* m_controllers[k_numberOfCells];

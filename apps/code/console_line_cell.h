@@ -28,6 +28,7 @@ class ConsoleLineCell : public Escher::HighlightCell, public Escher::Responder {
   Escher::View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
+ protected:
   /* Responder */
   void handleResponderChainEvent(ResponderChainEvent event) override;
 

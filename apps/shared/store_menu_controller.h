@@ -25,9 +25,6 @@ class StoreMenuController : public Escher::ModalViewController,
   void open();
   void close();
 
-  // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
-
   // ListViewDataSource
   int numberOfRows() const override { return 1; }
   int reusableCellCount(int type) const override { return 1; }
@@ -49,6 +46,10 @@ class StoreMenuController : public Escher::ModalViewController,
       Escher::LayoutField* layoutField) const override {
     return true;
   }
+
+ protected:
+  // Responder
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   class InnerListController : public ViewController {

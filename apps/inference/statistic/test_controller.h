@@ -31,7 +31,6 @@ class TestController
                  InputStoreController* inputStoreController,
                  InputController* inputController, Statistic* statistic);
   void stackOpenPage(Escher::ViewController* nextPage) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event e) override;
   const char* title() const override;
   void viewWillAppear() override;
@@ -42,6 +41,9 @@ class TestController
   constexpr static int k_indexOfTwoMeans = 3;
   constexpr static int k_indexOfChiSquare = 4;
   constexpr static int k_indexOfSlope = 5;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   HypothesisController* m_hypothesisController;

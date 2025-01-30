@@ -28,7 +28,6 @@ class ButtonRowController : public ViewController {
   View* view() override { return &m_contentView; }
   const char* title() const override;
   ViewController::TitlesDisplay titlesDisplay() const override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   void initView() override;
   void viewWillAppear() override;
@@ -38,6 +37,9 @@ class ButtonRowController : public ViewController {
   bool setSelectedButton(int selectedButton);
   void setMessageOfButtonAtIndex(I18n::Message message, int index);
   void reloadButtons() { m_contentView.layoutSubviews(); }
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   class ContentView : public View {

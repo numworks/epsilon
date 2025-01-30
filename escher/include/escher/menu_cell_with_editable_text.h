@@ -56,16 +56,6 @@ class AbstractWithEditableText : public Responder,
 
   void setEditable(bool isEditable) { m_editable = isEditable; }
 
-  void handleResponderChainEvent(
-      Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      if (m_editable) {
-        App::app()->setFirstResponder(&m_textField);
-      }
-    } else {
-      Responder::handleResponderChainEvent(event);
-    }
-  }
   TextField* textField() { return &m_textField; }
   virtual void relayout() = 0;
 
@@ -85,6 +75,16 @@ class AbstractWithEditableText : public Responder,
   TextField m_textField;
   char m_textBody[Poincare::PrintFloat::k_maxFloatCharSize];
   bool m_editable;
+  void handleResponderChainEvent(
+      Responder::ResponderChainEvent event) override {
+    if (event.type == ResponderChainEventType::BecameFirst) {
+      if (m_editable) {
+        App::app()->setFirstResponder(&m_textField);
+      }
+    } else {
+      Responder::handleResponderChainEvent(event);
+    }
+  }
 };
 
 template <typename Label, typename SubLabel = EmptyCellWidget>

@@ -29,7 +29,6 @@ class CategoricalTableCell : public Escher::HighlightCell,
                        Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // Responder
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event e) override;
 
   // HighlightCell
@@ -61,6 +60,8 @@ class CategoricalTableCell : public Escher::HighlightCell,
   virtual CategoricalController* categoricalController() = 0;
 
   Escher::SelectableTableView m_selectableTableView;
+
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   int numberOfSubviews() const override { return 1; }

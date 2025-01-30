@@ -27,6 +27,8 @@ class EditorView : public Escher::Responder,
   void unloadSyntaxHighlighter() { m_textArea.unloadSyntaxHighlighter(); };
   void scrollViewDidChangeOffset(
       Escher::ScrollViewDataSource* scrollViewDataSource) override;
+
+ protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:

@@ -25,8 +25,10 @@ class FunctionZoomAndPanCurveViewController
   TitlesDisplay titlesDisplay() const override {
     return TitlesDisplay::DisplayNoTitle;
   }
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static KDCoordinate k_standardViewHeight = 174;

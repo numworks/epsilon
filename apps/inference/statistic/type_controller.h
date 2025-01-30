@@ -31,13 +31,15 @@ class TypeController
     return ViewController::TitlesDisplay::DisplayLastTitle;
   }
   void stackOpenPage(Escher::ViewController* nextPage) override;
-  void handleResponderChainEvent(ResponderChainEvent event) override;
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
 
   constexpr static int k_indexOfTTest = 0;
   constexpr static int k_indexOfPooledTest = 1;
   constexpr static int k_indexOfZTest = 2;
+
+ protected:
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   HypothesisController* m_hypothesisController;

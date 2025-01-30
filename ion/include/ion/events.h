@@ -185,6 +185,7 @@ enum class EventId : uint8_t {
   ExternalText = Event::Special(6),
   /* This event is fired one time after the getEvent did not find any event. */
   Idle = Event::Special(7),
+  ExternalChar = Event::Special(8),
 
 #include <ion/keys.inc>
 };
@@ -210,7 +211,7 @@ inline bool Event::isSelectionEvent() const {
 }
 
 inline bool Event::isKeyPress() const {
-  return isKeyboardEvent() || *this == ExternalText;
+  return isKeyboardEvent() || *this == ExternalText || *this == ExternalChar;
 }
 
 inline bool Event::isRepeatable() const {

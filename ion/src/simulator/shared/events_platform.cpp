@@ -288,6 +288,9 @@ static Event eventFromSDLTextInputEvent(SDL_TextInputEvent event) {
     }
   }
   strlcpy(sharedExternalTextBuffer(), event.text, sharedExternalTextBufferSize);
+  if (strlen(event.text) == 1) {
+    return ExternalChar;
+  }
   return ExternalText;
 }
 

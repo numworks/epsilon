@@ -75,7 +75,9 @@ bool RunLoop::step() {
       const char* name = event.name();
       if (name != nullptr) {
         Ion::Console::writeLine("Event: ", false);
-        if (event == Ion::Events::ExternalText && event.text() != nullptr) {
+        if ((event == Ion::Events::ExternalText ||
+             event == Ion::Events::ExternalChar) &&
+            event.text() != nullptr) {
           Ion::Console::writeLine(name, false);
           Ion::Console::writeLine(": ", false);
           Ion::Console::writeLine(event.text());

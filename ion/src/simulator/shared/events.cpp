@@ -68,7 +68,7 @@ bool waitForInterruptingEvent(int maximumDelay, int* timeout) {
 // ion/include/ion/events.h
 
 const char* Event::text() const {
-  if (*this == ExternalText) {
+  if (*this == ExternalText || *this == ExternalChar) {
     return const_cast<const char*>(sharedExternalTextBuffer());
   }
   return defaultText();

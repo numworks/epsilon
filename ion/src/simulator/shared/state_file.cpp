@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "events.h"
 #include "journal.h"
 
 namespace Ion {
@@ -52,7 +53,7 @@ static inline bool loadFileHeader(const char* header) {
   return true;
 }
 
-static inline void pushEvent(uint8_t c) {
+static inline Ion::Events::Event reconstructEvent(uint8_t c) {
   Ion::Events::Event e = Ion::Events::Event(c);
   if (!Events::isDefined(static_cast<uint8_t>(
           e))) {  // If not defined, fall back on a normal key event.
@@ -61,14 +62,70 @@ static inline void pushEvent(uint8_t c) {
   }
   assert(Events::isDefined(static_cast<uint8_t>(e)));
 
-  if (e == Ion::Events::None || e == Ion::Events::Termination ||
-      e == Ion::Events::TimerFire || e == Ion::Events::ExternalText) {
+  if (e == Ion::Events::Termination || e == Ion::Events::TimerFire) {
+    return Ion::Events::None;
+  }
+  return e;
+}
+
+static inline void pushEventFromFile(uint8_t c, FILE* f) {
+  Ion::Events::Event e = reconstructEvent(c);
+  if (e == Ion::Events::None) {
     return;
+  } else if (e == Ion::Events::ExternalText) {
+    // Read and load external text into sharedExternalTextBuffer
+    constexpr size_t k_bufferSize = Ion::Events::sharedExternalTextBufferSize;
+    char* buffer = Ion::Events::sharedExternalTextBuffer();
+    for (int i = 0; i < k_bufferSize; ++i) {
+      char c = getc(f);
+      if (c == EOF || c == 0) {
+        buffer[i] = 0;
+        break;
+      }
+      buffer[i] = c;
+    }
+  } else if (e == Ion::Events::ExternalChar) {
+    char c = getc(f);
+    if (c == EOF) {
+      // Should this just be an assert ?
+      /* No character found: do not push event */
+      return;
+    }
+    Ion::Events::sharedExternalTextBuffer()[0] = c;
   }
   /* ExternalText is not yet handled by state files. */
   Journal::replayJournal()->pushEvent(e);
 }
 
+static inline void pushEventFromMemory(uint8_t c, const uint8_t* ptr,
+                                       const uint8_t* bufferEnd) {
+  Ion::Events::Event e = reconstructEvent(c);
+  if (e == Ion::Events::None) {
+    return;
+  } else if (e == Ion::Events::ExternalText) {
+    // Read and load external text into sharedExternalTextBuffer
+    constexpr size_t k_bufferSize = Ion::Events::sharedExternalTextBufferSize;
+    char* buffer = Ion::Events::sharedExternalTextBuffer();
+    for (int i = 0; i < k_bufferSize; ++i) {
+      char c = *ptr;
+      if (ptr++ >= bufferEnd || c == 0) {
+        buffer[i] = 0;
+        break;
+      }
+      buffer[i] = c;
+    }
+  } else if (e == Ion::Events::ExternalChar) {
+    char c = *ptr;
+    if (ptr >= bufferEnd) {
+      /* No character found: do not push event */
+      return;
+    }
+    ptr++;
+    Ion::Events::sharedExternalTextBuffer()[0] = c;
+  }
+  /* ExternalText is not yet handled by state files. */
+  Journal::replayJournal()->pushEvent(e);
+}
 static inline bool loadFile(FILE* f, bool headlessStateFile) {
   if (!headlessStateFile) {
     char header[sHeaderLength + 1];
@@ -83,7 +140,7 @@ static inline bool loadFile(FILE* f, bool headlessStateFile) {
   // Events
   int c = 0;
   while ((c = getc(f)) != EOF) {
-    pushEvent(c);
+    pushEventFromFile(c, f);
   }
 
   Ion::Events::replayFrom(Journal::replayJournal());
@@ -121,8 +178,9 @@ void loadMemory(const char* buffer, size_t length, bool headlessStateFile) {
     e = reinterpret_cast<const uint8_t*>(buffer + sHeaderLength);
   }
   const uint8_t* bufferEnd = reinterpret_cast<const uint8_t*>(buffer + length);
-  while (e != bufferEnd) {
-    pushEvent(*e++);
+  while (e < bufferEnd) {
+    uint8_t ch = *e;
+    pushEventFromMemory(ch, e++, bufferEnd);
   }
   Ion::Events::replayFrom(Journal::replayJournal());
 }
@@ -155,6 +213,16 @@ static inline bool save(FILE* f) {
     uint8_t code = static_cast<uint8_t>(e);
     if (fwrite(&code, 1, 1, f) != 1) {
       return false;
+    }
+    if (e == Ion::Events::ExternalChar) {
+      if (fwrite(Ion::Events::sharedExternalTextBuffer(), 1, 1, f) != 1) {
+        return false;
+      }
+    } else if (e == Ion::Events::ExternalText) {
+      const char* text = Ion::Events::sharedExternalTextBuffer();
+      if (fwrite(text, strlen(text) + 1, 1, f) != 1) {
+        return false;
+      }
     }
   }
   return true;

@@ -223,7 +223,7 @@
 "BatteryCharging",
 "ExternalText",
 "Idle",
-"Minus",
+"ExternalChar",
 "Zero",
 "Dot",
 "EE",

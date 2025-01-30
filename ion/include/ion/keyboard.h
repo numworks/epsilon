@@ -66,6 +66,7 @@ class State {
   uint64_t m_bitField;
 };
 
+// forPython indicate if the scan is used for the `ion.keydown` python function
 State scan(bool forPython = false);
 State scanForInterruptionAndPopState();
 State popState();

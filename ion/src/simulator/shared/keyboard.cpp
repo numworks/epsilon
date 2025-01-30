@@ -96,6 +96,10 @@ State scanForInterruptionAndPopState() {
   return popState();
 }
 
+/* forPython allows gathering more keyboard information when the requester is
+ * python. It is useful because most simulator keys are mapped via ExternalText
+ * while not on Python. But Python does not use this event detection system
+ * and so misses a lot of relevent keypresses via `ion.keydown` */
 State scan(bool forPython) {
   State state(0);
 

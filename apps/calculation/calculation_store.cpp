@@ -146,8 +146,6 @@ OutputExpressions compute(const Poincare::Expression& inputExpression,
                                    : SymbolicComputation::ReplaceAllSymbols,
       .m_context = context};
 
-  // TODO: exactOutputExpression and approximateOutputExpression should be
-  // outputs of cloneAndSimplifyAndApproximate
   Poincare::Expression exactOutputExpression;
   Poincare::Expression approximateOutputExpression;
   inputExpression.cloneAndSimplifyAndApproximate(

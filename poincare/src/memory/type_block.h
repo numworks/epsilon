@@ -82,19 +82,21 @@ class TypeBlock : public Block {
 #endif
 
   // Add methods like IsNumber(type) and .isNumber to test range membership
-#define RANGE(NAME, FIRST, LAST)                                      \
-  static constexpr bool Is##NAME(Type type) {                         \
-    constexpr uint8_t firstIndex = static_cast<uint8_t>(Type::FIRST); \
-    constexpr uint8_t lastIndex = static_cast<uint8_t>(Type::LAST);   \
-    static_assert(firstIndex <= lastIndex);                           \
-    if constexpr (rangeIsDisabled(firstIndex, lastIndex)) {           \
-      return false;                                                   \
-    } else {                                                          \
-      return firstIndex <= type && type <= lastIndex;                 \
-    }                                                                 \
-  }                                                                   \
-                                                                      \
-  constexpr bool is##NAME() const { return Is##NAME(type()); }
+#define RANGE(NAME, FIRST, LAST)                                             \
+  __attribute__((always_inline)) static constexpr bool Is##NAME(Type type) { \
+    constexpr uint8_t firstIndex = static_cast<uint8_t>(Type::FIRST);        \
+    constexpr uint8_t lastIndex = static_cast<uint8_t>(Type::LAST);          \
+    static_assert(firstIndex <= lastIndex);                                  \
+    if constexpr (rangeIsDisabled(firstIndex, lastIndex)) {                  \
+      return false;                                                          \
+    } else {                                                                 \
+      return firstIndex <= type && type <= lastIndex;                        \
+    }                                                                        \
+  }                                                                          \
+                                                                             \
+  __attribute__((always_inline)) constexpr bool is##NAME() const {           \
+    return Is##NAME(type());                                                 \
+  }
 
 #define RANGE1(N) RANGE(N, N, N)
 #define NODE_USE(F, N, S) RANGE1(SCOPED_NODE(F))

@@ -56,19 +56,18 @@ class Builtin {
 
 class BuiltinWithLayout : public Builtin {
  public:
-  constexpr BuiltinWithLayout(Type type, Aliases aliases,
-                              LayoutAnyType layoutType)
+  constexpr BuiltinWithLayout(Type type, Aliases aliases, LayoutType layoutType)
       : Builtin(type, aliases), m_layoutType(layoutType) {
     assert(TypeBlock::NumberOfMetaBlocks(static_cast<Type>(layoutType)) == 1);
   }
-  LayoutAnyType layoutType() const { return m_layoutType; }
+  LayoutType layoutType() const { return m_layoutType; }
   bool has2DLayout() const override { return true; }
 
   static constexpr const BuiltinWithLayout* GetReservedFunction(
-      LayoutAnyType layoutType);
+      LayoutType layoutType);
 
  private:
-  LayoutAnyType m_layoutType;
+  LayoutType m_layoutType;
 };
 
 class BuiltinAns : public Builtin {
@@ -223,7 +222,7 @@ constexpr const Builtin* Builtin::GetReservedFunction(Type type) {
 }
 
 constexpr const BuiltinWithLayout* BuiltinWithLayout::GetReservedFunction(
-    LayoutAnyType LayoutType) {
+    LayoutType LayoutType) {
   for (const BuiltinWithLayout& builtin : s_builtinsWithLayout) {
     if (builtin.m_layoutType == LayoutType) {
       return &builtin;

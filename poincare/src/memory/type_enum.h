@@ -83,7 +83,6 @@ class LayoutType {
   }
   TypeEnum m_value;
 };
-using LayoutAnyType = LayoutType;
 
 }  // namespace Poincare::Internal
 #endif

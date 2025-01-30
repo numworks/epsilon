@@ -12,7 +12,7 @@
 
 namespace Poincare::Internal {
 
-Type ExpressionType(LayoutAnyType type) {
+Type ExpressionType(LayoutType type) {
   switch (type) {
     case LayoutType::Fraction:
       return Type::Div;

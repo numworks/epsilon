@@ -174,7 +174,7 @@ Layout Layout::clone() const {
   return cast;
 }
 
-Layout Layout::cloneWithoutMargins() {
+Layout Layout::cloneWithoutMargins() const {
   Internal::Tree* clone = tree()->cloneTree();
   assert(clone->isRackLayout());
   Internal::Layouter::StripSeparators(clone);

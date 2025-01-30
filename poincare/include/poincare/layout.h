@@ -118,7 +118,7 @@ class Layout final : public PoolHandle {
 
   // Clone
   Layout clone() const;
-  Layout cloneWithoutMargins();
+  Layout cloneWithoutMargins() const;
   // KRackL(KAbsL("x"_l)) -> KRackL(KAbsL(""_l))
   Layout cloneWithoutChildrenRacks();
 

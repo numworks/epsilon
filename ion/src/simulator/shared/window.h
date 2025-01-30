@@ -7,7 +7,7 @@ namespace Ion {
 namespace Simulator {
 namespace Window {
 
-constexpr static int perfectWidth = 458;
+constexpr static int perfectWidth = ION_SIMULATOR_PERFECT_WIDTH;
 constexpr static int perfectHeight = ION_SIMULATOR_PERFECT_HEIGHT;
 
 void init();

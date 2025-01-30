@@ -59,13 +59,22 @@ _ion_simulator_backgrounds_generated := $(addprefix $(OUTPUT_DIRECTORY)/app/asse
 
 _ion_simulator_background_crop_epsilon := 1005x1975+93+13
 _ion_simulator_background_resize_epsilon := 1160x2220
+_ion_simulator_perfect_width_epsilon := 458
 _ion_simulator_perfect_height_epsilon := 888
 
 _ion_simulator_background_crop_scandium := 569x990+182+128
 _ion_simulator_background_resize_scandium := 1160x2018
-_ion_simulator_perfect_height_scandium := 797
 
-PRIVATE_SFLAGS_ion += -DION_SIMULATOR_PERFECT_HEIGHT=$(_ion_simulator_perfect_height_$(ION_layout_variant))
+# perfect width = display_width*resized_background_width/screen_width_in_layout
+# adjusted with some fine tuning to compensate roundings
+# replace with 550, 956 for a zoomed x2 version
+# TODO: is it working on all desktop platforms ?
+_ion_simulator_perfect_width_scandium := 274
+_ion_simulator_perfect_height_scandium := 477
+
+PRIVATE_SFLAGS_ion += \
+  -DION_SIMULATOR_PERFECT_WIDTH=$(_ion_simulator_perfect_width_$(ION_layout_variant)) \
+  -DION_SIMULATOR_PERFECT_HEIGHT=$(_ion_simulator_perfect_height_$(ION_layout_variant))
 
 $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
 	$(call rule_label,CONVERT)

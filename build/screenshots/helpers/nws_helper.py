@@ -1,7 +1,7 @@
 import sys, os
 
 BIN_HEADER = b"NWSF"
-TXT_HEADER = "NWS"
+TXT_HEADER = "NWSF"
 
 events_names = []
 events_names_extended = []
@@ -43,18 +43,31 @@ def convert_nws_to_txt(nwspath, txtpath=None):
     if txtpath is None:
         f = sys.stdout
     else:
-        f = open(txtpath, "w", encoding="ascii")
+        f = open(txtpath, "wb")
 
-    f.write(TXT_HEADER)
-    f.write("\n")
-    f.write(version.decode())
-    f.write("\n")
-    f.write(str(formatVersion[0]))
-    f.write("\n")
-    f.write(language.decode())
-    for c in events:
-        f.write("\n")
-        f.write(events_names_extended[c])
+    f.write(BIN_HEADER)
+    f.write(b"\n")
+    f.write(version)
+    f.write(b"\n")
+    f.write(bytes(str(formatVersion[0]), encoding="ascii"))
+    f.write(b"\n")
+    f.write(language)
+    i = 0
+    while i < len(events):
+        f.write(b"\n")
+        event_name = events_names_extended[events[i]]
+        f.write(bytes(event_name, encoding="ascii"))
+        if event_name == "ExternalChar":
+            f.write(b" ")
+            i+=1
+            f.write(events[i].to_bytes(1))
+        elif event_name == "ExternalText":
+            f.write(b" ")
+            i+=1
+            while events[i] != 0:
+                f.write(events[i].to_bytes(1))
+                i+=1
+        i+=1
     f.close()
 
 
@@ -62,7 +75,7 @@ def convert_txt_to_nws(txtpath, nwspath, filter=[]):
     if not os.path.isfile(txtpath) or os.path.splitext(txtpath)[1] != ".txt":
         raise argparse.ArgumentTypeError(txtpath + " is not a .txt")
 
-    with open(txtpath, encoding="ascii") as f:
+    with open(txtpath, encoding="utf-8") as f:
         if f.readline().strip() != TXT_HEADER:
             print("Error:", txtpath, "is ill formatted")
             sys.exit(1)
@@ -77,18 +90,26 @@ def convert_txt_to_nws(txtpath, nwspath, filter=[]):
             sys.exit(1)
         events = []
         for line in f:
-            event = line.strip()
+            splitted = line.strip().split(' ', 1)
+            event = splitted[0]
             event_id = events_ids.get(event)
             if event_id is None:
                 print("Error:", event, "is not a valid event")
                 sys.exit(1)
             if event in filter:
                 continue
-            events.append(events_ids[event])
+            events.append(events_ids[event].to_bytes(1))
+            if event == "ExternalChar":
+                events.append(bytes(splitted[1][0], encoding="ascii")) # TODO check char is actually 1 byte long
+            elif event == "ExternalText":
+                events.append(bytes(splitted[1], encoding="utf-8"))
+                events.append(b"\x00")
+                pass
 
     with open(nwspath, "wb") as f:
         f.write(BIN_HEADER)
         f.write(version.encode())
         f.write(bytes([formatVersion]))
         f.write(language.encode())
-        f.write(bytes(events))
+        for e in events:
+            f.write(e)

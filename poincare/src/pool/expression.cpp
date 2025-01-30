@@ -307,17 +307,16 @@ int NewExpression::numberOfDescendants(bool includeSelf) const {
 }
 
 bool NewExpression::isOfType(
-    std::initializer_list<Internal::AnyType> types) const {
+    std::initializer_list<Internal::Type> types) const {
   return tree()->isOfType(types);
 }
 
-bool NewExpression::deepIsOfType(std::initializer_list<Internal::AnyType> types,
+bool NewExpression::deepIsOfType(std::initializer_list<Internal::Type> types,
                                  Context* context) const {
   return recursivelyMatches(
       [](const Expression e, Context* context, void* auxiliary) {
-        return e.isOfType(
-                   *static_cast<std::initializer_list<Internal::AnyType>*>(
-                       auxiliary))
+        return e.isOfType(*static_cast<std::initializer_list<Internal::Type>*>(
+                   auxiliary))
                    ? OMG::Troolean::True
                    : OMG::Troolean::Unknown;
       },

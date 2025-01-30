@@ -124,8 +124,8 @@ class TypeBlock : public Block {
 #undef CAST
 
   constexpr static bool IsOfType(Type thisType,
-                                 std::initializer_list<AnyType> types) {
-    for (AnyType t : types) {
+                                 std::initializer_list<Type> types) {
+    for (Type t : types) {
       if (thisType == t) {
         return true;
       }
@@ -133,7 +133,7 @@ class TypeBlock : public Block {
     return false;
   }
 
-  constexpr bool isOfType(std::initializer_list<AnyType> types) const {
+  constexpr bool isOfType(std::initializer_list<Type> types) const {
     return IsOfType(type(), types);
   }
 

@@ -169,8 +169,8 @@ class Expression : public PoolHandle {
 
   // The following two methods should be moved out of Expression's public
   // API.
-  bool isOfType(std::initializer_list<Internal::AnyType> types) const;
-  bool deepIsOfType(std::initializer_list<Internal::AnyType> types,
+  bool isOfType(std::initializer_list<Internal::Type> types) const;
+  bool deepIsOfType(std::initializer_list<Internal::Type> types,
                     Context* context = nullptr) const;
 
   ExpressionObject* object() const {

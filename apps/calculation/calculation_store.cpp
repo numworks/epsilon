@@ -99,35 +99,32 @@ UserExpression CalculationStore::replaceAnsInExpression(
   return expression;
 }
 
-bool CalculationStore::pushInput(const Poincare::Expression& inputExpression,
-                                 Calculation** current, char** location) {
+bool CalculationStore::pushCalculationElement(
+    const Poincare::Expression& expression, Calculation** current,
+    char** location, ElementType elementType) {
   const size_t sizeOfExpression =
-      pushExpressionTree(location, inputExpression, current);
+      pushExpressionTree(location, expression, current);
   if (sizeOfExpression == k_pushErrorSize) {
     assert(*location == k_pushErrorLocation);
     return false;
   }
-  assert(sizeOfExpression == inputExpression.tree()->treeSize());
-  (*current)->m_inputTreeSize = sizeOfExpression;
-  return true;
-}
-
-void CalculationStore::pushOutputs(const OutputExpressions& outputs,
-                                   Calculation** current, char** location) {
-  for (int i = 0; i < Calculation::k_numberOfExpressions - 1; i++) {
-    UserExpression e = i == 0 ? outputs.exact : outputs.approximate;
-    const size_t sizeOfExpression = pushExpressionTree(location, e, current);
-    if (sizeOfExpression == k_pushErrorSize) {
-      assert(*location == k_pushErrorLocation);
-      // not enough space, leave undef
-      continue;
+  assert(sizeOfExpression == expression.tree()->treeSize());
+  switch (elementType) {
+    using enum ElementType;
+    case Input: {
+      (*current)->m_inputTreeSize = sizeOfExpression;
+      break;
     }
-    assert(
-        (i == 0 && sizeOfExpression == outputs.exact.tree()->treeSize()) ||
-        (i == 1 && sizeOfExpression == outputs.approximate.tree()->treeSize()));
-    (i == 0 ? (*current)->m_exactOutputTreeSize
-            : (*current)->m_approximatedOutputTreeSize) = sizeOfExpression;
+    case ExactOutput: {
+      (*current)->m_exactOutputTreeSize = sizeOfExpression;
+      break;
+    }
+    case ApproximateOutput: {
+      (*current)->m_approximatedOutputTreeSize = sizeOfExpression;
+      break;
+    }
   }
+  return true;
 }
 
 OutputExpressions compute(const Poincare::Expression& inputExpression,
@@ -234,7 +231,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
           UserExpression::Parse(inputLayout, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
-      if (!pushInput(inputExpression, &currentCalculation, &cursor)) {
+      if (!pushCalculationElement(inputExpression, &currentCalculation, &cursor,
+                                  ElementType::Input)) {
         // leave the calculation undefined
         return currentCalculation;
       }
@@ -263,7 +261,10 @@ ExpiringPointer<Calculation> CalculationStore::push(
     outputs.exact = Undefined::Builder();
   }
 
-  pushOutputs(outputs, &currentCalculation, &cursor);
+  pushCalculationElement(outputs.exact, &currentCalculation, &cursor,
+                         ElementType::ExactOutput);
+  pushCalculationElement(outputs.approximate, &currentCalculation, &cursor,
+                         ElementType::ApproximateOutput);
 
   /* All data has been appended, store the pointer to the end of the
    * calculation. */

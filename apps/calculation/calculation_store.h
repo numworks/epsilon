@@ -115,13 +115,13 @@ class CalculationStore {
   size_t pushExpressionTree(char** location, Poincare::UserExpression e,
                             Calculation** current);
 
-  bool pushInput(const Poincare::Expression& inputExpression,
-                 Calculation** current, char** location);
+  enum class ElementType : uint8_t { Input, ExactOutput, ApproximateOutput };
 
-  /* Push exact output and approximate output.
-   * If one is too big for the store, push undef instead. */
-  void pushOutputs(const OutputExpressions& outputs, Calculation** current,
-                   char** location);
+  /* Push one of the calculation elements. Returns false if there is not enough
+   * space left in the store for the expression. */
+  bool pushCalculationElement(const Poincare::Expression& expression,
+                              Calculation** current, char** location,
+                              ElementType elementType);
 
   char* const m_buffer;
   const size_t m_bufferSize;

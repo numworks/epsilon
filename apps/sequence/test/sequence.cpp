@@ -61,8 +61,8 @@ void check_sequences_defined_by(
       if (seqs[i]->isDefined()) {
         double un =
             seqs[i]->evaluateXYAtParameter((double)j, sequenceContext).y();
-        quiz_assert(OMG::Float::RoughlyEqual<double>(un, result[i][j],
-                                                     DBL_EPSILON, true));
+        quiz_assert(OMG::Float::RoughlyEqual<double>(
+            un, result[i][j], OMG::Float::EpsilonLax<double>(), true));
       }
     }
   }

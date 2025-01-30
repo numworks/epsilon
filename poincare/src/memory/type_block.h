@@ -259,7 +259,7 @@ class TypeBlock : public Block {
         return 0;
     }
   }
-};  // namespace Poincare::Internal
+};
 
 static_assert(sizeof(TypeBlock) == sizeof(Block));
 

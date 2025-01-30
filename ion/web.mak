@@ -40,7 +40,7 @@ _ion_simulator_files := 0
 
 _ion_web_path := $(PATH_ion)/src/simulator/web
 
-$(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.html: $(addprefix $(PATH_ion)/src/simulator/,shared/layout/$(ION_layout_variant).json web/css_html_layout.py) | $$(@D)/.
+$(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.html: $(addprefix $(PATH_ion)/src/simulator/,shared/$(ION_layout_variant)/layout.json web/css_html_layout.py) | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) --html $@ --css $(basename $@).css $(filter %.json,$^)
 

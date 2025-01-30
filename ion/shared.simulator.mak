@@ -110,7 +110,7 @@ SOURCES_ion += $(_ion_simulator_window_setup)
 
 # Simulator layout
 _sources_ion_simulator_layout := $(PATH_ion)/src/simulator/shared/layout.cpp
-$(OUTPUT_DIRECTORY)/$(_sources_ion_simulator_layout): $(PATH_ion)/src/simulator/shared/layout/$(ION_layout_variant).json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
+$(OUTPUT_DIRECTORY)/$(_sources_ion_simulator_layout): $(PATH_ion)/src/simulator/shared/$(ION_layout_variant)/layout.json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) -i $(filter %.json,$^) -o $@
 SOURCES_ion += $(_sources_ion_simulator_layout)

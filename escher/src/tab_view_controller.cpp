@@ -8,7 +8,7 @@ extern "C" {
 namespace Escher {
 
 TabViewController::ContentView::ContentView()
-    : View(), m_activeView(nullptr), m_displayTabs(true) {};
+    : View(), m_activeView(nullptr), m_displayTabs(true){};
 
 void TabViewController::ContentView::setActiveView(View* view) {
   m_activeView = view;

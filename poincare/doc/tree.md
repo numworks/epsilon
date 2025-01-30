@@ -99,10 +99,9 @@ macro variable `POINCARE_MATRIX`, defined in
 [config.epsilon.h](/poincare/config.epsilon.h).
 It allows us to drop some nodes when building lightweight versions of Poincare.
 
-When a node belongs to a disabled feature set it still appears has a
-member of `Type::` as a `AnyType` but its value is not compatible with
-`Type`. As a result, corresponding `switch` cases will be dropped by
-the compiler, the `Tree::isFoo()` method will always return false and
+When a node belongs to a disabled feature set it still appears as a
+member of `Type::` but `switch` cases using it will be dropped by the
+compiler, the `Tree::isFoo()` method will always return false and
 ranges containing only disabled nodes will be disabled too.
 
 ## How to know what Type a Tree has ?

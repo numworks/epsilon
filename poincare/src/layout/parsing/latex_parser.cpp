@@ -609,7 +609,8 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
     }
 
     // Use common serialization
-    buffer = SerializeLayout(Layout::From(child), buffer, end, serializer);
+    buffer = SerializeLayout(Layout::From(child), buffer, end,
+                             rack->numberOfChildren() == 1, serializer);
     *buffer = 0;
   }
 

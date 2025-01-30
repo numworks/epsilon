@@ -59,7 +59,8 @@ char* SerializeRack(const Rack* rack, char* buffer, char* end) {
   }
   Tree* newRack = rackForSerialization(rack);
   for (const Tree* child : newRack->children()) {
-    buffer = SerializeLayout(Layout::From(child), buffer, end);
+    buffer = SerializeLayout(Layout::From(child), buffer, end,
+                             rack->numberOfChildren() == 1);
     if (buffer == end) {
       newRack->removeTree();
       return end;
@@ -96,7 +97,7 @@ char* serializeWithParentheses(const Rack* rack, char* buffer, char* end,
 }
 
 char* SerializeLayout(const Layout* layout, char* buffer, char* end,
-                      RackSerializer serializer) {
+                      bool isSingleRackChild, RackSerializer serializer) {
   switch (layout->layoutType()) {
     case LayoutType::CombinedCodePoints:
     case LayoutType::AsciiCodePoint:
@@ -126,13 +127,17 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
       break;
     }
     case LayoutType::Fraction: {
-      buffer = append("(", buffer, end);
+      if (!isSingleRackChild) {
+        buffer = append("(", buffer, end);
+      }
       buffer =
           serializeWithParentheses(layout->child(0), buffer, end, serializer);
       buffer = append("/", buffer, end);
       buffer =
           serializeWithParentheses(layout->child(1), buffer, end, serializer);
-      buffer = append(")", buffer, end);
+      if (!isSingleRackChild) {
+        buffer = append(")", buffer, end);
+      }
       break;
     }
     case LayoutType::VerticalOffset: {

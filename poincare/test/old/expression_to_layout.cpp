@@ -186,5 +186,5 @@ QUIZ_CASE(poincare_expression_to_layout_mixed_fraction) {
       KMixedFraction(1_e, KDiv(2_e, 3_e)), "1 2/3", "1(2/3)");
   assert_expression_layouts_and_serializes_to(
       KDiv(KMixedFraction(1_e, KDiv(2_e, 3_e)), 4_e), "(1 2/3)/4",
-      "((1(2/3))/4)");
+      "(1(2/3))/4");
 }

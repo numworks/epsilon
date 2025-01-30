@@ -306,9 +306,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
       Preferences::AngleUnit::Degree);
 
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Equal, "(1/2)", "0.5", &globalContext, &store);
+                      EqualSign::Equal, "1/2", "0.5", &globalContext, &store);
   assertCalculationIs("1/3", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Approximation, "(1/3)", "0.3333333333",
+                      EqualSign::Approximation, "1/3", "0.3333333333",
                       &globalContext, &store);
 
   assertCalculationIs("1/(2i)", DisplayOutput::ExactAndApproximate,
@@ -344,8 +344,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Unknown, "3", "3", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3/2→a", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, "(3/2)", "1.5", &globalContext,
-                      &store);
+                      EqualSign::Unknown, "3/2", "1.5", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3+x→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown,
                       "3+x", nullptr, &globalContext, &store);
@@ -363,10 +362,10 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Unknown, "√(8)", "2.828427125", &globalContext,
                       &store);
   assertCalculationIs("cos(45×_°)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, "((√(2))/2)", "0.7071067812",
+                      EqualSign::Unknown, "(√(2))/2", "0.7071067812",
                       &globalContext, &store);
   assertCalculationIs("cos(π/4×_rad)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, "((√(2))/2)", "0.7071067812",
+                      EqualSign::Unknown, "(√(2))/2", "0.7071067812",
                       &globalContext, &store);
   assertCalculationIs("cos(50×_°)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Unknown, "cos(50)", "0.6427876097",
@@ -378,7 +377,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Equal, "1(1+(2/100))", "1.02", &globalContext,
                       &store);
   assertCalculationIs("1-(1/3)%", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Approximation, "1×(1-(((1/3))/100))",
+                      EqualSign::Approximation, "1×(1-((1/3)/100))",
                       "0.9966666667", &globalContext, &store);
 
   // Exact output that have dependencies are not displayed
@@ -439,9 +438,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("1+1", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Unknown, nullptr, "2", &globalContext, &store);
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Equal, "(1/2)", "0.5", &globalContext, &store);
+                      EqualSign::Equal, "1/2", "0.5", &globalContext, &store);
   assertCalculationIs("0.5", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Equal, "(1/2)", "0.5", &globalContext, &store);
+                      EqualSign::Equal, "1/2", "0.5", &globalContext, &store);
   assertCalculationIs("√(8)", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "2.828427125",
                       &globalContext, &store);
@@ -782,13 +781,13 @@ QUIZ_CASE(calculation_complex_format) {
                       &globalContext, &store);
   // TODO: exact polar mode outputs of the three following tests do not work
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "2×e^(π/3×i)", nullptr,
+                      EqualSign::Approximation, "2e^((π/3)i)", nullptr,
                       &globalContext, &store);
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "4×e^((2×π)/3×i)", nullptr,
+                      EqualSign::Approximation, "4e^(((2π)/3)i)", nullptr,
                       &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "root(2,4)×e^(π/4×i)", nullptr,
+                      EqualSign::Approximation, "root(2,4)e^((π/4)i)", nullptr,
                       &globalContext, &store);
 
   Preferences::SharedPreferences()->setComplexFormat(

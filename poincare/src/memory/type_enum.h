@@ -54,24 +54,36 @@ class Type {
   TypeEnum m_value;
 };
 
-// TODO restore LayoutType behavior
-namespace LayoutType {
-#define ONLY_LAYOUTS 1
-#define NODE_USE(F, N, S) constexpr auto F = Type::F##Layout;
-#include "types.h"
-}  // namespace LayoutType
-using LayoutAnyType = Type;
+class LayoutType {
+  friend class Tree;
 
-#if 0
-enum class LayoutType : uint8_t {
+ public:
+#define ONLY_LAYOUTS 1
 /* Members of LayoutType have the same values as their Type counterpart
  * NODE(Fraction) => Fraction = Type::FractionLayout,
  */
-#define ONLY_LAYOUTS 1
-#define NODE_USE(F, N, S) F = static_cast<uint8_t>(TypeEnum::F##Layout),
+#define NODE_USE(F, N, S) static constexpr auto F = Type::F##Layout;
 #include "types.h"
+
+  constexpr LayoutType(AnyType type)
+      : m_value(static_cast<TypeEnum>(static_cast<uint8_t>(type))) {
+    assert(type.isEnabled());
+  }
+
+  constexpr operator Type() const {
+    return Type(static_cast<uint8_t>(m_value));
+  }
+  constexpr operator uint8_t() const { return static_cast<uint8_t>(m_value); }
+  constexpr bool operator==(const LayoutType&) const = default;
+
+ private:
+  constexpr LayoutType(Type type)
+      : m_value(static_cast<TypeEnum>(static_cast<uint8_t>(type))) {
+    // Tree::layoutType will assert type.isLayout
+  }
+  TypeEnum m_value;
 };
-#endif
+using LayoutAnyType = LayoutType;
 
 }  // namespace Poincare::Internal
 #endif

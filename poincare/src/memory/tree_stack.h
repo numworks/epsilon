@@ -54,7 +54,9 @@ class AbstractTreeStack : public BlockStack {
   }
   Tree* pushValueBlock(uint8_t value) { return pushBlock(ValueBlock(value)); }
   Tree* pushBlock(Type type) { return pushBlock(Block(type)); }
-  Tree* pushBlock(AnyType type) { return pushBlock(Type(type)); }
+  __attribute__((always_inline)) Tree* pushBlock(AnyType type) {
+    return pushBlock(Type(type));
+  }
 
   // TODO: factorize with TypeBlock
   constexpr static int NARY = -1;

@@ -12,8 +12,8 @@
 namespace Calculation {
 
 struct OutputExpressions {
-  Poincare::Expression exact;
-  Poincare::Expression approximate;
+  Poincare::UserExpression exact;
+  Poincare::UserExpression approximate;
 };
 
 // clang-format off
@@ -119,7 +119,7 @@ class CalculationStore {
 
   /* Push one of the calculation elements. Returns false if there is not enough
    * space left in the store for the expression. */
-  bool pushCalculationElement(const Poincare::Expression& expression,
+  bool pushCalculationElement(const Poincare::UserExpression& expression,
                               Calculation** current, char** location,
                               ElementType elementType);
 

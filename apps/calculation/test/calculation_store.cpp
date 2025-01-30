@@ -30,6 +30,9 @@ constexpr static size_t calculationBufferSize =
           sizeof(::Calculation::Calculation*));
 char calculationBuffer[calculationBufferSize];
 
+constexpr static KDFont::Size font = KDFont::Size::Large;
+constexpr static KDCoordinate maxVisibleWidth = 280;
+
 void assert_store_is(CalculationStore* store, const char** result) {
   for (int i = 0; i < store->numberOfCalculations(); i++) {
     assert_expression_serializes_to(store->calculationAtIndex(i)->input(),
@@ -151,12 +154,28 @@ QUIZ_CASE(calculation_store) {
   quiz_assert(store.remainingBufferSize() == store.bufferSize());
 }
 
-void assertAnsIs(const char* input, const char* expectedAnsInputText,
-                 Context* context, CalculationStore* store) {
+void pushAndProcessCalculation(CalculationStore* store, const char* input,
+                               Context* context) {
   push(store, input, context);
-  push(store, "Ans", context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
+  /* Each time a calculation is pushed, its equal sign needs to be computed
+   * (which requires the output layouts). This is what is done in
+   * HistoryViewCell::setNewCalculation(). We need to mimick this behavior in
+   * the unit tests as well. */
+  ::Calculation::Calculation::OutputLayouts outputLayouts =
+      lastCalculation->createOutputLayouts(context, true, maxVisibleWidth,
+                                           font);
+  lastCalculation->equalSign(context, &outputLayouts);
+}
+
+void assertAnsIs(const char* input, const char* expectedAnsInputText,
+                 Context* context, CalculationStore* store) {
+  pushAndProcessCalculation(store, input, context);
+  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
+      store->calculationAtIndex(0);
+  pushAndProcessCalculation(store, "Ans", context);
+  lastCalculation = store->calculationAtIndex(0);
   assert_expression_serializes_to(lastCalculation->input(),
                                   expectedAnsInputText);
 }
@@ -173,15 +192,15 @@ QUIZ_CASE(calculation_ans) {
   Preferences::SharedPreferences()->setExamMode(
       ExamMode(ExamMode::Ruleset::Off));
 
-  push(&store, "1+3/4", &globalContext);
-  push(&store, "ans+2/3", &globalContext);
+  pushAndProcessCalculation(&store, "1+3/4", &globalContext);
+  pushAndProcessCalculation(&store, "ans+2/3", &globalContext);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) ==
               DisplayOutput::ExactAndApproximate);
   assert_expression_serializes_to(lastCalculation->exactOutput(), "29/12");
 
-  push(&store, "ans+0.22", &globalContext);
+  pushAndProcessCalculation(&store, "ans+0.22", &globalContext);
   lastCalculation = store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) ==
               DisplayOutput::ExactAndApproximateToggle);
@@ -215,8 +234,8 @@ QUIZ_CASE(calculation_ans) {
   Preferences::SharedPreferences()->setExamMode(previousExamMode);
   Preferences::SharedPreferences()->setComplexFormat(previousComplexFormat);
 
-  push(&store, "_g0", &globalContext);
-  push(&store, "ans→m*s^-2", &globalContext);
+  pushAndProcessCalculation(&store, "_g0", &globalContext);
+  pushAndProcessCalculation(&store, "ans→m*s^-2", &globalContext);
   lastCalculation = store.calculationAtIndex(0);
   assert_expression_serializes_to(lastCalculation->exactOutput(),
                                   "9.80665×_m×_s^\U00000012-2\U00000013");
@@ -232,8 +251,6 @@ void assertCalculationIs(const char* input, DisplayOutput display,
   push(store, input, context);
   Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
-  KDFont::Size font = KDFont::Size::Large;
-  KDCoordinate maxVisibleWidth = 280;
   // Replicate behavior in HistoryViewCell::setNewCalculation
   ::Calculation::Calculation::OutputLayouts outputLayouts =
       lastCalculation->createOutputLayouts(context, true, maxVisibleWidth,

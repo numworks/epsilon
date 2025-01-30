@@ -236,7 +236,8 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
   return {exactOutput, approximateOutput};
 }
 
-Calculation::EqualSign Calculation::equalSign(Context* context) {
+Calculation::EqualSign Calculation::equalSign(
+    Context* context, const OutputLayouts* outputLayouts) {
   // TODO: implement a UserCircuitBreaker
   if (m_equalSign != EqualSign::Unknown) {
     return m_equalSign;
@@ -248,6 +249,9 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
      * */
     return EqualSign::Approximation;
   }
+
+  assert(outputLayouts);
+
   /* Displaying the right equal symbol is less important than displaying a
    * result, so we do not want equalSign to create a pool failure that would
    * prevent from displaying a result that we managed to compute. We thus
@@ -258,28 +262,17 @@ Calculation::EqualSign Calculation::equalSign(Context* context) {
    * are sure there cannot be a Store in the exactOutput. */
   ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    UserExpression exactOutputExpression = exactOutput();
-    if (input().recursivelyMatches(
-            [](const NewExpression e) { return e.isPercent() || e.isFactor(); },
-            context)) {
-      /* When the input contains percent or factor, the exact expression is not
-       * fully reduced so we need to reduce it again prior to computing equal
-       * sign */
-      bool reductionFailure = false;
-      PoincareHelpers::CloneAndSimplify(
-          &exactOutputExpression, context,
-          {.complexFormat = complexFormat(),
-           .angleUnit = angleUnit(),
-           .symbolicComputation = SymbolicComputation::ReplaceAllSymbols},
-          &reductionFailure);
-      assert(!reductionFailure);
-    }
-    // TODO: should we save the system expression in exact output instead ?
-    // TODO: need to pass projection context
+    /* The output Layouts are converted back to Expressions so that they can be
+     * compared */
+    UserExpression exactDisplayOutput =
+        Expression::Parse(outputLayouts->exact.cloneWithoutMargins(), context);
+    UserExpression approximateDisplayOutput = Expression::Parse(
+        outputLayouts->approximate.cloneWithoutMargins(), context);
+
     Internal::ProjectionContext ctx{.m_complexFormat = complexFormat(),
                                     .m_angleUnit = angleUnit()};
     m_equalSign = Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
-                      exactOutputExpression, approximateOutput(), &ctx)
+                      exactDisplayOutput, approximateDisplayOutput, &ctx)
                       ? EqualSign::Equal
                       : EqualSign::Approximation;
     return m_equalSign;

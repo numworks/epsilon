@@ -250,9 +250,9 @@ void assertCalculationIs(const char* input, DisplayOutput display,
 #if POINCARE_STRICT_TESTS
     quiz_assert(lastCalculation->equalSign(context) == sign);
 #else
-    quiz_tolerate_print_if_failure(lastCalculation->equalSign(context) == sign,
-                                   input, "correct equalSign",
-                                   "incorrect equalSign");
+    quiz_tolerate_print_if_failure(
+        lastCalculation->equalSign(context, &outputLayouts) == sign, input,
+        "correct equalSign", "incorrect equalSign");
 #endif
   }
   if (storedInput) {

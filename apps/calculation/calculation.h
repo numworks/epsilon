@@ -128,7 +128,13 @@ class Calculation {
                                     bool canChangeDisplayOutput,
                                     KDCoordinate maxVisibleWidth,
                                     KDFont::Size font);
-  EqualSign equalSign(Poincare::Context* context);
+
+  /* Compute the sign to be displayed for this calculation by comparing the
+   * output layouts. Passing the output layouts is not necessary if the sign was
+   * already computed. */
+  // TODO: create a separate computeEqualSign method
+  EqualSign equalSign(Poincare::Context* context,
+                      const OutputLayouts* outputLayouts = nullptr);
 
   void fillExpressionsForAdditionalResults(
       Poincare::UserExpression* input, Poincare::UserExpression* exactOutput,

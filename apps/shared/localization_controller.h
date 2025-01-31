@@ -51,13 +51,6 @@ class LocalizationController
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;
 
  protected:
-  void handleResponderChainEvent(ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      Escher::App::app()->setFirstResponder(selectableListView());
-    } else {
-      Escher::ViewController::handleResponderChainEvent(event);
-    }
-  }
   class ContentView : public Escher::View {
    public:
     ContentView(LocalizationController* controller,
@@ -92,6 +85,7 @@ class LocalizationController
   Escher::SelectableListView* selectableListView() {
     return m_contentView.selectableListView();
   }
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
   ContentView m_contentView;
 

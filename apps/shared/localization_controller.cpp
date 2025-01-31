@@ -239,4 +239,13 @@ void LocalizationController::setVerticalMargins() {
       {topMargin, Escher::Metric::CommonMargins.bottom()});
 }
 
+void LocalizationController::handleResponderChainEvent(
+    ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(selectableListView());
+  } else {
+    ViewController::handleResponderChainEvent(event);
+  }
+}
+
 }  // namespace Shared

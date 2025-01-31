@@ -39,7 +39,7 @@ void MenuController::handleResponderChainEvent(
     Escher::UniformSelectableListController<
         Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                          Escher::ChevronView>,
-        2>::handleResponderChainEvent(event);
+        k_numberOfCells>::handleResponderChainEvent(event);
   }
 }
 

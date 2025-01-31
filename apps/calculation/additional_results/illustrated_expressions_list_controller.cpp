@@ -16,10 +16,8 @@ void IllustratedExpressionsListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::BecameFirst) {
     selectRow(1);
-    ExpressionsListController::handleResponderChainEvent(event);
-  } else {
-    ChainedExpressionsListController::handleResponderChainEvent(event);
   }
+  ChainedExpressionsListController::handleResponderChainEvent(event);
 }
 
 void IllustratedExpressionsListController::viewWillAppear() {

@@ -72,7 +72,7 @@ void HistoryController::handleResponderChainEvent(
     selectRow(numberOfRows() - 1);
     App::app()->setFirstResponder(&m_selectableListView);
   } else {
-    Escher::ViewController::handleResponderChainEvent(event);
+    ViewController::handleResponderChainEvent(event);
   }
 }
 

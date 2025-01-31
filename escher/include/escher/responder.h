@@ -29,6 +29,12 @@ class Responder {
         {{nextFirstResponder}, ResponderChainEventType::WillExit});
   }
 
+  /* This struct was created to reduce the size of the vtables of Responder and
+   * descendants, with this, we only have a single virtual class:
+   * handleResponderChainEvent, and the 4 methods above are no longer overridden
+   * by each children. Also the union allow writing event.nextFirstResponder
+   * when reacting to a WillExit event and event.previousFirstResponder when
+   * DidEnter : this allow easier readability of the code */
   enum class ResponderChainEventType {
     DidEnter,
     WillExit,

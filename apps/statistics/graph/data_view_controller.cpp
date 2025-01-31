@@ -107,8 +107,7 @@ void DataViewController::handleResponderChainEvent(
       dataView()->selectViewForSeries(selectedSeries());
       highlightSelection();
     }
-  } else {
-    /* WillExit */
+  } else if (event.type == ResponderChainEventType::WillExit) {
     if (event.nextFirstResponder == m_tabController) {
       assert(m_tabController != nullptr);
       if (header()->selectedButton() >= 0) {
@@ -119,6 +118,8 @@ void DataViewController::handleResponderChainEvent(
         dataView()->setDisplayBanner(false);
       }
     }
+  } else {
+    ViewController::handleResponderChainEvent(event);
   }
 }
 

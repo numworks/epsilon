@@ -359,7 +359,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       &store);
   assertCalculationIs("randint(2,2)+3", DisplayOutput::ApproximateOnly,
                       EqualSign::Unknown, nullptr, "5", &globalContext, &store);
-  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximate,
+  assertCalculationIs("√(8)", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Unknown, "√(8)", "2.828427125", &globalContext,
                       &store);
   assertCalculationIs("cos(45×_°)", DisplayOutput::ExactAndApproximate,

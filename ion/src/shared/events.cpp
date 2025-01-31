@@ -214,8 +214,8 @@ bool sharedIsDefined(uint8_t eventId) {
     return s_dataForEvent[static_cast<uint8_t>(e)].isDefined();
   } else {
     return (e == None || e == Termination || e == USBEnumeration ||
-            e == USBPlug || e == BatteryCharging || e == ExternalText ||
-            e == Idle);
+            e == USBPlug || e == BatteryCharging ||
+            e == DeprecatedExternalText || e == Idle || e == ExternalText);
   }
 }
 

@@ -180,11 +180,15 @@ enum class EventId : uint8_t {
   USBEnumeration = Event::Special(3),
   USBPlug = Event::Special(4),
   BatteryCharging = Event::Special(5),
-  /* This event is only used in the simulator, to handle text that cannot be
-   * associated with a key. */
-  ExternalText = Event::Special(6),
+  /* This event is only here to avoid breaking old simulator state_file
+   * that could contains this event. In this case, it is ignored, just like the
+   * ExternalText event before PR#7228. */
+  DeprecatedExternalText = Event::Special(6),
   /* This event is fired one time after the getEvent did not find any event. */
   Idle = Event::Special(7),
+  /* This event is only used in the simulator, to handle text that cannot be
+   * associated with a key. */
+  ExternalText = Event::Special(8),
 
 #include <ion/keys.inc>
 };

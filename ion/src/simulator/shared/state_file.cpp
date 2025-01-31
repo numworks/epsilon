@@ -62,7 +62,8 @@ static inline Ion::Events::Event reconstructEvent(uint8_t c) {
   }
   assert(Events::isDefined(static_cast<uint8_t>(e)));
 
-  if (e == Ion::Events::Termination || e == Ion::Events::TimerFire) {
+  if (e == Ion::Events::Termination || e == Ion::Events::TimerFire ||
+      e == Ion::Events::DeprecatedExternalText) {
     return Ion::Events::None;
   }
   return e;

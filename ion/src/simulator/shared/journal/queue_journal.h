@@ -17,14 +17,10 @@ class QueueJournal : public Ion::Events::Journal {
     if (e != Ion::Events::None) {
       m_eventStorage.push(e);
     }
-    if (e == Ion::Events::ExternalText || e == Ion::Events::ExternalChar) {
+    if (e == Ion::Events::ExternalText) {
       AdditionalData data;
-      if (e == Ion::Events::ExternalChar) {
-        data.text[0] = Ion::Events::sharedExternalTextBuffer()[0];
-      } else {
-        strlcpy(data.text, Ion::Events::sharedExternalTextBuffer(),
-                Ion::Events::sharedExternalTextBufferSize);
-      }
+      strlcpy(data.text, Ion::Events::sharedExternalTextBuffer(),
+              Ion::Events::sharedExternalTextBufferSize);
       m_externalTextStorage.push(data);
     }
   }
@@ -38,11 +34,6 @@ class QueueJournal : public Ion::Events::Journal {
       strlcpy(Ion::Events::sharedExternalTextBuffer(),
               m_externalTextStorage.front().text,
               Ion::Events::sharedExternalTextBufferSize);
-      m_externalTextStorage.pop();
-    } else if (e == Ion::Events::ExternalChar) {
-      Ion::Events::sharedExternalTextBuffer()[0] =
-          m_externalTextStorage.front().text[0];
-      Ion::Events::sharedExternalTextBuffer()[1] = 0;
       m_externalTextStorage.pop();
     }
     return e;

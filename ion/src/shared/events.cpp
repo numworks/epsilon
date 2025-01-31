@@ -215,7 +215,7 @@ bool sharedIsDefined(uint8_t eventId) {
   } else {
     return (e == None || e == Termination || e == USBEnumeration ||
             e == USBPlug || e == BatteryCharging || e == ExternalText ||
-            e == Idle || e == ExternalChar);
+            e == Idle);
   }
 }
 

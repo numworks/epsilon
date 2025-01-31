@@ -227,7 +227,7 @@
 "BatteryCharging",
 "ExternalText",
 "Idle",
-"ExternalChar",
+"",
 "",
 "",
 "",

@@ -76,24 +76,21 @@ static inline void pushEventFromFile(uint8_t c, FILE* f) {
     // Read and load external text into sharedExternalTextBuffer
     constexpr size_t k_bufferSize = Ion::Events::sharedExternalTextBufferSize;
     char* buffer = Ion::Events::sharedExternalTextBuffer();
-    for (int i = 0; i < k_bufferSize; ++i) {
-      char c = getc(f);
-      if (c == EOF || c == 0) {
-        buffer[i] = 0;
-        break;
+    int i;
+    do {
+      i = 0;
+      for (; i < k_bufferSize - 1; ++i) {
+        char c = getc(f);
+        if (c == EOF || c == 0) {
+          buffer[i] = 0;
+          break;
+        }
+        buffer[i] = c;
       }
-      buffer[i] = c;
-    }
-  } else if (e == Ion::Events::ExternalChar) {
-    char c = getc(f);
-    if (c == EOF) {
-      // Should this just be an assert ?
-      /* No character found: do not push event */
-      return;
-    }
-    Ion::Events::sharedExternalTextBuffer()[0] = c;
+      Journal::replayJournal()->pushEvent(e);
+    } while (i == k_bufferSize - 1);
+    return;
   }
-  /* ExternalText is not yet handled by state files. */
   Journal::replayJournal()->pushEvent(e);
 }
 
@@ -106,24 +103,21 @@ static inline void pushEventFromMemory(uint8_t c, const uint8_t* ptr,
     // Read and load external text into sharedExternalTextBuffer
     constexpr size_t k_bufferSize = Ion::Events::sharedExternalTextBufferSize;
     char* buffer = Ion::Events::sharedExternalTextBuffer();
-    for (int i = 0; i < k_bufferSize; ++i) {
-      char c = *ptr;
-      if (ptr++ >= bufferEnd || c == 0) {
-        buffer[i] = 0;
-        break;
+    int i;
+    do {
+      i = 0;
+      for (; i < k_bufferSize - 1; ++i) {
+        char c = *ptr;
+        if (ptr++ >= bufferEnd || c == 0) {
+          buffer[i] = 0;
+          break;
+        }
+        buffer[i] = c;
       }
-      buffer[i] = c;
-    }
-  } else if (e == Ion::Events::ExternalChar) {
-    char c = *ptr;
-    if (ptr >= bufferEnd) {
-      /* No character found: do not push event */
-      return;
-    }
-    ptr++;
-    Ion::Events::sharedExternalTextBuffer()[0] = c;
+      Journal::replayJournal()->pushEvent(e);
+    } while (i == k_bufferSize - 1);
+    return;
   }
-  /* ExternalText is not yet handled by state files. */
   Journal::replayJournal()->pushEvent(e);
 }
 static inline bool loadFile(FILE* f, bool headlessStateFile) {
@@ -214,11 +208,7 @@ static inline bool save(FILE* f) {
     if (fwrite(&code, 1, 1, f) != 1) {
       return false;
     }
-    if (e == Ion::Events::ExternalChar) {
-      if (fwrite(Ion::Events::sharedExternalTextBuffer(), 1, 1, f) != 1) {
-        return false;
-      }
-    } else if (e == Ion::Events::ExternalText) {
+    if (e == Ion::Events::ExternalText) {
       const char* text = Ion::Events::sharedExternalTextBuffer();
       if (fwrite(text, strlen(text) + 1, 1, f) != 1) {
         return false;

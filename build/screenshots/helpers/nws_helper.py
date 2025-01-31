@@ -57,11 +57,7 @@ def convert_nws_to_txt(nwspath, txtpath=None):
         f.write(b"\n")
         event_name = events_names_extended[events[i]]
         f.write(bytes(event_name, encoding="ascii"))
-        if event_name == "ExternalChar":
-            f.write(b" ")
-            i+=1
-            f.write(events[i].to_bytes(1))
-        elif event_name == "ExternalText":
+        if event_name == "ExternalText":
             f.write(b" ")
             i+=1
             while events[i] != 0:
@@ -99,9 +95,7 @@ def convert_txt_to_nws(txtpath, nwspath, filter=[]):
             if event in filter:
                 continue
             events.append(events_ids[event].to_bytes(1))
-            if event == "ExternalChar":
-                events.append(bytes(splitted[1][0], encoding="ascii")) # TODO check char is actually 1 byte long
-            elif event == "ExternalText":
+            if event == "ExternalText":
                 events.append(bytes(splitted[1], encoding="utf-8"))
                 events.append(b"\x00")
                 pass

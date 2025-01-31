@@ -260,13 +260,15 @@ void assertCalculationIs(const char* input, DisplayOutput display,
   if (storedInput) {
     assert_expression_serializes_to(lastCalculation->input(), storedInput);
   }
-  if (exactOutput && ::Calculation::Calculation::CanDisplayExact(
-                         lastCalculation->displayOutput(context))) {
+  if (exactOutput) {
+    assert(::Calculation::Calculation::CanDisplayExact(
+        lastCalculation->displayOutput(context)));
     assert_layout_serializes_to(exactOutputLayout, exactOutput);
   }
 
-  if (approximateOutput && ::Calculation::Calculation::CanDisplayApproximate(
-                               lastCalculation->displayOutput(context))) {
+  if (approximateOutput) {
+    assert(::Calculation::Calculation::CanDisplayApproximate(
+        lastCalculation->displayOutput(context)));
     assert_layout_serializes_to(approximateOutputLayout, approximateOutput);
   }
   store->deleteAll();
@@ -290,10 +292,10 @@ QUIZ_CASE(calculation_significant_digits) {
                       &globalContext, &store);
   assertCalculationIs(
       "1123456789", DisplayOutput::ApproximateIsIdenticalToExact,
-      EqualSign::Unknown, "1123456789", "1123456789", &globalContext, &store);
+      EqualSign::Unknown, nullptr, "1123456789", &globalContext, &store);
   assertCalculationIs("123456789", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Equal, "123456789", "123456789",
-                      &globalContext, &store);
+                      EqualSign::Equal, nullptr, "123456789", &globalContext,
+                      &store);
 }
 
 QUIZ_CASE(calculation_display_exact_approximate) {
@@ -315,9 +317,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Equal, "-(1/2)i", "-0.5i", &globalContext,
                       &store);
   assertCalculationIs("1/0", DisplayOutput::ExactOnly, EqualSign::Unknown,
-                      "undef", "undef", &globalContext, &store);
+                      "undef", nullptr, &globalContext, &store);
   assertCalculationIs("2x-x", DisplayOutput::ExactOnly, EqualSign::Unknown,
-                      "undef", "undef", &globalContext, &store);
+                      "undef", nullptr, &globalContext, &store);
   assertCalculationIs("[[1,2,3]]", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Unknown, nullptr, "[[1,2,3]]", &globalContext,
                       &store);
@@ -338,10 +340,10 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3+2→a", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Unknown, "5", "5", &globalContext, &store);
+                      EqualSign::Unknown, nullptr, "5", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3→a", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Unknown, "3", "3", &globalContext, &store);
+                      EqualSign::Unknown, nullptr, "3", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3/2→a", DisplayOutput::ExactAndApproximate,
                       EqualSign::Unknown, "3/2", "1.5", &globalContext, &store);
@@ -382,7 +384,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Unknown,
-                      "2", "2", &globalContext, &store);
+                      "2", nullptr, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
@@ -499,28 +501,28 @@ QUIZ_CASE(calculation_symbolic_computation) {
 
   // Derivatives
   assertCalculationIs("foo'(1)", DisplayOutput::ExactOnly, EqualSign::Unknown,
-                      "undef", "undef", &globalContext, &store, "f×o×o×_'×(1)");
+                      "undef", nullptr, &globalContext, &store, "f×o×o×_'×(1)");
   assertCalculationIs("foo\"(1)", DisplayOutput::ExactOnly, EqualSign::Unknown,
-                      "undef", "undef", &globalContext, &store,
+                      "undef", nullptr, &globalContext, &store,
                       "f×o×o×_\"×(1)");
   assertCalculationIs("foo^(3)(1)", DisplayOutput::ExactOnly,
-                      EqualSign::Unknown, "undef", "undef", &globalContext,
+                      EqualSign::Unknown, "undef", nullptr, &globalContext,
                       &store, "f×o×o^(3)×(1)");
   assertMainCalculationOutputIs("x^4→foo(x)", "x^4", &globalContext, &store);
   assertCalculationIs("foo'(1)", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, "4", "4", &globalContext, &store,
+                      EqualSign::Unknown, nullptr, "4", &globalContext, &store,
                       "foo'(1)");
   assertCalculationIs("foo^(1)(1)", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, "4", "4", &globalContext, &store,
+                      EqualSign::Unknown, nullptr, "4", &globalContext, &store,
                       "foo'(1)");
   assertCalculationIs("foo\"(1)", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, "12", "12", &globalContext, &store,
+                      EqualSign::Unknown, nullptr, "12", &globalContext, &store,
                       "foo\"(1)");
   assertCalculationIs("foo^(2)(1)", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, "12", "12", &globalContext, &store,
+                      EqualSign::Unknown, nullptr, "12", &globalContext, &store,
                       "foo\"(1)");
   assertCalculationIs("foo^(3)(1)", DisplayOutput::ApproximateOnly,
-                      EqualSign::Unknown, "24", "24", &globalContext, &store,
+                      EqualSign::Unknown, nullptr, "24", &globalContext, &store,
                       "foo^(3)(1)");
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("foo.func").destroy();
 
@@ -728,9 +730,9 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("√(-1)", DisplayOutput::ExactOnly, EqualSign::Unknown,
                       "nonreal", nullptr, &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactOnly, EqualSign::Unknown,
-                      nullptr, "nonreal", &globalContext, &store);
+                      "nonreal", nullptr, &globalContext, &store);
   assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactOnly,
-                      EqualSign::Unknown, nullptr, "nonreal", &globalContext,
+                      EqualSign::Unknown, "nonreal", nullptr, &globalContext,
                       &store);
   assertCalculationIs(
       "(-8)^(1/3)", DisplayOutput::ApproximateIsIdenticalToExact,
@@ -739,7 +741,7 @@ QUIZ_CASE(calculation_complex_format) {
                       DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Unknown, nullptr, "4", &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactOnly,
-                      EqualSign::Unknown, nullptr, "nonreal", &globalContext,
+                      EqualSign::Unknown, "nonreal", nullptr, &globalContext,
                       &store);
 
   Preferences::SharedPreferences()->setComplexFormat(

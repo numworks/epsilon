@@ -38,14 +38,7 @@ class MainController : public Escher::ViewController,
   void textFieldDidHandleEvent(Escher::AbstractTextField* textField) override;
 
  protected:
-  void handleResponderChainEvent(
-      Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      Escher::App::app()->setFirstResponder(m_view.bannerView()->textField());
-    } else {
-      Escher::ViewController::handleResponderChainEvent(event);
-    }
-  }
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 
  private:
   class ContentView : public Escher::View {

@@ -1,4 +1,6 @@
 #include <escher/blink_timer.h>
+#include <escher/scroll_view.h>
+#include <escher/scrollable_view.h>
 #include <escher/text_cursor_view.h>
 
 namespace Escher {
@@ -63,5 +65,24 @@ void TextCursorView::setVisible(bool visible) {
     m_field->markAbsoluteRectAsDirty(absoluteFrame());
   }
 }
+
+template <typename ResponderType>
+void TextCursorView::WithBlinkingCursor<ResponderType>::
+    handleResponderChainEvent(Responder::ResponderChainEvent event) {
+  if (event.type == Responder::ResponderChainEventType::BecameFirst) {
+    TextCursorView::sharedTextCursor->setInField(cursorCursorFieldView());
+    ResponderType::handleResponderChainEvent(event);
+  } else if (event.type ==
+             Responder::ResponderChainEventType::WillResignFirst) {
+    TextCursorView::sharedTextCursor->setInField(nullptr);
+    ResponderType::handleResponderChainEvent(event);
+  } else {
+    ResponderType::handleResponderChainEvent(event);
+  }
+}
+
+template void TextCursorView::WithBlinkingCursor<
+    Escher::ScrollableView<Escher::ScrollView::Decorator>>::
+    handleResponderChainEvent(Responder::ResponderChainEvent);
 
 }  // namespace Escher

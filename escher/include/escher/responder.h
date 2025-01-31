@@ -29,12 +29,23 @@ class Responder {
         {{nextFirstResponder}, ResponderChainEventType::WillExit});
   }
 
+  enum class FirstResponderAlteration { WillSpoil, DidRestore };
+  void modalViewAltersFirstResponder(FirstResponderAlteration alteration);
+
+  Responder* parentResponder() const { return m_parentResponder; }
+  bool hasAncestor(Responder* responder) const;
+  Responder* commonAncestorWith(Responder* responder);
+  void setParentResponder(Responder* responder) {
+    m_parentResponder = responder;
+  }
+
+ protected:
   /* This struct was created to reduce the size of the vtables of Responder and
-   * descendants, with this, we only have a single virtual class:
+   * descendants, with this, we only have a single virtual method:
    * handleResponderChainEvent, and the 4 methods above are no longer overridden
-   * by each children. Also the union allow writing event.nextFirstResponder
+   * by each children. Also the union allows writing event.nextFirstResponder
    * when reacting to a WillExit event and event.previousFirstResponder when
-   * DidEnter : this allow easier readability of the code */
+   * DidEnter : this allows easier readability of the code */
   enum class ResponderChainEventType {
     DidEnter,
     WillExit,
@@ -48,18 +59,6 @@ class Responder {
     };
     ResponderChainEventType type;
   };
-
-  enum class FirstResponderAlteration { WillSpoil, DidRestore };
-  void modalViewAltersFirstResponder(FirstResponderAlteration alteration);
-
-  Responder* parentResponder() const { return m_parentResponder; }
-  bool hasAncestor(Responder* responder) const;
-  Responder* commonAncestorWith(Responder* responder);
-  void setParentResponder(Responder* responder) {
-    m_parentResponder = responder;
-  }
-
- protected:
   virtual void handleResponderChainEvent(ResponderChainEvent event) {}
 
  private:

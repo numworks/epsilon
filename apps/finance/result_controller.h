@@ -34,13 +34,7 @@ class ResultController : public Escher::ListWithTopAndBottomController {
   }
 
  protected:
-  void handleResponderChainEvent(ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      // nothing
-    } else {
-      Escher::ListWithTopAndBottomController::handleResponderChainEvent(event);
-    }
-  }
+  void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
   constexpr static int k_titleBufferSize =

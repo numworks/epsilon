@@ -179,5 +179,13 @@ KDCoordinate PrefacedTableView::verticalScrollToAddToHidePrefacesInMainTable(
                    0, m_rowPrefaceDataSource.cumulatedHeightAtPrefaceRow(true) -
                           m_mainTableView->invisibleHeight());
 }
+void PrefacedTableView::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(m_mainTableView);
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
+}
 
 }  // namespace Escher

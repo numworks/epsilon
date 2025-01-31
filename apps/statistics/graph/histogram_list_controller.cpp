@@ -262,4 +262,14 @@ int16_t HistogramListController::barIndexAfterSelectingNewSeries(
   return sanitizedSelectedIndex(currentSelectedSeries, newSelectedBarIndex);
 }
 
+void HistogramListController::handleResponderChainEvent(
+    ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    // Do not transfer the first responder ownership to the SelectableListView
+  } else {
+    Escher::SelectableListViewController<
+        Escher::ListViewDataSource>::handleResponderChainEvent(event);
+  }
+}
+
 }  // namespace Statistics

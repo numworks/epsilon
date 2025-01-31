@@ -48,18 +48,7 @@ class TextCursorView : public View {
 
    protected:
     void handleResponderChainEvent(
-        Responder::ResponderChainEvent event) override {
-      if (event.type == Responder::ResponderChainEventType::BecameFirst) {
-        TextCursorView::sharedTextCursor->setInField(cursorCursorFieldView());
-        ResponderType::handleResponderChainEvent(event);
-      } else if (event.type ==
-                 Responder::ResponderChainEventType::WillResignFirst) {
-        TextCursorView::sharedTextCursor->setInField(nullptr);
-        ResponderType::handleResponderChainEvent(event);
-      } else {
-        ResponderType::handleResponderChainEvent(event);
-      }
-    }
+        Responder::ResponderChainEvent event) override;
 
    private:
     virtual CursorFieldView* cursorCursorFieldView() = 0;

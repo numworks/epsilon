@@ -60,14 +60,7 @@ class PrefacedTableView : public View,
 
  protected:
   // Responder
-  void handleResponderChainEvent(
-      Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      App::app()->setFirstResponder(m_mainTableView);
-    } else {
-      Responder::handleResponderChainEvent(event);
-    }
-  }
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 
  private:
   // View

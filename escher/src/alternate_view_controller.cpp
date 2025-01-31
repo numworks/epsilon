@@ -20,5 +20,13 @@ AlternateViewController::AlternateViewController(
 void AlternateViewController::viewWillAppear() {
   activeViewController()->viewWillAppear();
 }
+void AlternateViewController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    m_delegate->activeViewDidBecomeFirstResponder(activeViewController());
+  } else {
+    ViewController::handleResponderChainEvent(event);
+  }
+}
 
 }  // namespace Escher

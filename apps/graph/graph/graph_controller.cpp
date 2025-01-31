@@ -49,11 +49,9 @@ void GraphController::viewWillAppear() {
 
 void GraphController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
+  FunctionGraphController::handleResponderChainEvent(event);
   if (event.type == ResponderChainEventType::BecameFirst) {
-    FunctionGraphController::handleResponderChainEvent(event);
     m_view.selectRecord(recordAtSelectedCurveIndex());
-  } else {
-    FunctionGraphController::handleResponderChainEvent(event);
   }
 }
 

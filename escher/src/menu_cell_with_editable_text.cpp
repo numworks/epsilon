@@ -35,5 +35,15 @@ void AbstractWithEditableText::textFieldDidAbortEditing(
   relayout();
   ChainedTextFieldDelegate::textFieldDidAbortEditing(textField);
 }
+void AbstractWithEditableText::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    if (m_editable) {
+      App::app()->setFirstResponder(&m_textField);
+    }
+  } else {
+    Responder::handleResponderChainEvent(event);
+  }
+}
 
 }  // namespace Escher

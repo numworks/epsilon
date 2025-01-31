@@ -203,4 +203,13 @@ void MainController::endElementSearch(AtomicNumber z) {
   m_view.bannerView()->textField()->setSuggestion(nullptr);
 }
 
+void MainController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    Escher::App::app()->setFirstResponder(m_view.bannerView()->textField());
+  } else {
+    Escher::ViewController::handleResponderChainEvent(event);
+  }
+}
+
 }  // namespace Elements

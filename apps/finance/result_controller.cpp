@@ -101,4 +101,12 @@ const char* ResultController::title() const {
   return m_titleBuffer;
 }
 
+void ResultController::handleResponderChainEvent(ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    // nothing
+  } else {
+    Escher::ListWithTopAndBottomController::handleResponderChainEvent(event);
+  }
+}
+
 }  // namespace Finance

@@ -39,14 +39,7 @@ class NestedMenuController : public StackViewController::Custom<5>,
  protected:
   using NodeCell = MenuCell<MessageTextView, EmptyCellWidget, ChevronView>;
 
-  void handleResponderChainEvent(
-      Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      App::app()->setFirstResponder(&m_listController);
-    } else {
-      StackViewController::handleResponderChainEvent(event);
-    }
-  }
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 
   class StackState {
    public:

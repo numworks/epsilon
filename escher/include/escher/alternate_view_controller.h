@@ -36,14 +36,7 @@ class AlternateViewController : public ViewController {
   }
 
  protected:
-  void handleResponderChainEvent(
-      Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
-      m_delegate->activeViewDidBecomeFirstResponder(activeViewController());
-    } else {
-      ViewController::handleResponderChainEvent(event);
-    }
-  }
+  void handleResponderChainEvent(Responder::ResponderChainEvent event) override;
 
  private:
   constexpr static size_t k_maxNumberOfViewController = 4;

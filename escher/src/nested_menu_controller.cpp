@@ -204,4 +204,12 @@ void NestedMenuController::open() {
                                          Metric::PopUpMarginsNoBottom);
 }
 
+void NestedMenuController::handleResponderChainEvent(
+    Responder::ResponderChainEvent event) {
+  if (event.type == ResponderChainEventType::BecameFirst) {
+    App::app()->setFirstResponder(&m_listController);
+  } else {
+    StackViewController::handleResponderChainEvent(event);
+  }
+}
 }  // namespace Escher

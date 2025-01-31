@@ -18,7 +18,7 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(
   }
   // Approximate is projected to turn Pow(e, …) into Exp(…)
   Internal::Tree* approximateProjected = approximate.tree()->cloneTree();
-  Internal::Simplification::ToSystem(approximateProjected, &ctxCopy);
+  Internal::Simplification::ProjectAndReduce(approximateProjected, &ctxCopy);
   bool result = Internal::ExactAndApproximateExpressionsAreStrictlyEqual(
       exactProjected, approximateProjected);
   approximateProjected->removeTree();

@@ -751,44 +751,44 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("√(-1)", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Unknown, nullptr, "i", &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "ln(2)+π·i", nullptr,
-                      &globalContext, &store);
+                      EqualSign::Approximation, "ln(2)+π·i",
+                      "0.6931471806+3.141592654i", &globalContext, &store);
   assertCalculationIs(
       "√(-1)×√(-1)", DisplayOutput::ApproximateIsIdenticalToExact,
       EqualSign::Unknown, nullptr, "-1", &globalContext, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "1+√(3)i", nullptr,
+                      EqualSign::Approximation, "1+√(3)i", "1+1.732050808i",
                       &globalContext, &store);
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "-2+2×√(3)×i", nullptr,
-                      &globalContext, &store);
+                      EqualSign::Approximation, "-2+2×√(3)×i",
+                      "-2+3.464101615i", &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "root(8,4)/2+root(8,4)/2×i",
-                      nullptr, &globalContext, &store);
+                      "0.8408964153+0.8408964153i", &globalContext, &store);
 
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Polar);
   assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "√(2)e^((π/4)i)", nullptr,
-                      &globalContext, &store);
+                      EqualSign::Approximation, "√(2)e^((π/4)i)",
+                      "1.414213562e^(0.7853981634i)", &globalContext, &store);
   assertCalculationIs("√(-1)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "e^((π/2)i)", nullptr,
-                      &globalContext, &store);
+                      EqualSign::Approximation, "e^((π/2)i)",
+                      "e^(1.570796327i)", &globalContext, &store);
   assertCalculationIs("ln(-2)", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Approximation, "ln(-2)", nullptr,
-                      &globalContext, &store);
+                      EqualSign::Approximation, "ln(-2)",
+                      "3.217150512e^(1.353639845i)", &globalContext, &store);
   assertCalculationIs("√(-1)×√(-1)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Unknown, nullptr, "e^(3.141592654i)",
+                      EqualSign::Unknown, "e^(π·i)", "e^(3.141592654i)",
                       &globalContext, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "2e^((π/3)i)", nullptr,
-                      &globalContext, &store);
+                      EqualSign::Approximation, "2e^((π/3)i)",
+                      "2e^(1.047197551i)", &globalContext, &store);
   assertCalculationIs("(-8)^(2/3)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "4e^(((2π)/3)i)", nullptr,
-                      &globalContext, &store);
+                      EqualSign::Approximation, "4e^(((2π)/3)i)",
+                      "4e^(2.094395102i)", &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactAndApproximate,
-                      EqualSign::Approximation, "root(2,4)e^((π/4)i)", nullptr,
-                      &globalContext, &store);
+                      EqualSign::Approximation, "root(2,4)e^((π/4)i)",
+                      "1.189207115e^(0.7853981634i)", &globalContext, &store);
 
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);

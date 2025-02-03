@@ -153,6 +153,7 @@ QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<float>("([[0]]^(2π))^2×0×[[0]]^(2π)", "undef");
   approximates_to<float>("[[0]]^(2π)", "undef");
   approximates_to<float>("[[1,2]]^2", "undef");
+  approximates_to<float>("[[0]]^2", "[[0]]");
 }
 
 QUIZ_CASE(pcj_approximation_infinity) {

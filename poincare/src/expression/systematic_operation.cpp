@@ -75,7 +75,7 @@ static bool ReduceRadicalsInDenominator(Tree* e) {
 }
 
 bool SystematicOperation::ReducePower(Tree* e) {
-  assert(e->isPow());
+  assert(e->isPow() && !Dimension::Get(e->child(0)).isMatrix());
   // base^n
   Tree* base = e->child(0);
   TreeRef n = base->nextTree();

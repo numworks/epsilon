@@ -66,7 +66,8 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
     // t^m * t^n -> t^(m+n)
     merge = PatternMatching::CreateSimplify(
-        KPow(KA, KAdd(KB, KC)),
+        Dimension::Get(Base(child)).isMatrix() ? KPowMatrix(KA, KAdd(KB, KC))
+                                               : KPow(KA, KAdd(KB, KC)),
         {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.

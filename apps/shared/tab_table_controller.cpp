@@ -14,7 +14,7 @@ void TabTableController::viewWillAppear() {
 
 void TabTableController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(selectableTableView());
   } else if (event.type == ResponderChainEventType::WillExit) {
     if (event.nextFirstResponder == tabController()) {

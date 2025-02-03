@@ -417,7 +417,7 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(
 void PythonTextArea::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   TextArea::handleResponderChainEvent(event);
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     /* If we are coming from a Varbox opened while autocompleting, the text was
      * removed to preserve the ScriptNodes name pointers. */
     if (!m_contentView.isAutocompleting() && m_wasAutocompleting) {

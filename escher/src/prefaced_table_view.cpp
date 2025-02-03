@@ -181,7 +181,7 @@ KDCoordinate PrefacedTableView::verticalScrollToAddToHidePrefacesInMainTable(
 }
 void PrefacedTableView::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(m_mainTableView);
   } else {
     Responder::handleResponderChainEvent(event);

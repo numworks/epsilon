@@ -24,7 +24,7 @@ FrequencyController::FrequencyController(
 
 void FrequencyController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (m_curveView.hasFocus()) {
       Escher::App::app()->setFirstResponder(
           m_bannerViewWithEditableField.value());

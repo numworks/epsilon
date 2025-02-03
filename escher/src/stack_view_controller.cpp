@@ -124,7 +124,7 @@ void StackViewController::setupActiveViewController() {
 
 void StackViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     ViewController* vc = topViewController();
     App::app()->setFirstResponder(vc);
   } else if (event.type == ResponderChainEventType::DidEnter) {

@@ -33,7 +33,7 @@ MenuController::MenuController(Escher::StackViewController* parentResponder,
 
 void MenuController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_selectableListView.reloadData();
   } else {
     Escher::UniformSelectableListController<

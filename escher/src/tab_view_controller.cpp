@@ -145,7 +145,7 @@ void TabViewController::setSelectedTab(int8_t i) {
 
 void TabViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     setSelectedTab(m_dataSource->activeTab());
     setActiveTab(m_dataSource->selectedTab(), !m_isSelected);
   } else if (event.type == ResponderChainEventType::WillResignFirst) {

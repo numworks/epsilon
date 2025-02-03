@@ -59,7 +59,7 @@ void MenuController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::WillExit) {
     forceTextFieldEditionToAbort(false);
-  } else if (event.type == ResponderChainEventType::BecameFirst) {
+  } else if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (m_reloadConsoleWhenBecomingFirstResponder) {
       reloadConsole();
     }

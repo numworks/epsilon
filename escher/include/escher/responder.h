@@ -13,7 +13,7 @@ class Responder {
 
   void didBecomeFirstResponder() {
     handleResponderChainEvent(
-        {{nullptr}, ResponderChainEventType::BecameFirst});
+        {{nullptr}, ResponderChainEventType::HasBecomeFirst});
   }
   void willResignFirstResponder() {
     handleResponderChainEvent(
@@ -50,7 +50,7 @@ class Responder {
     DidEnter,
     WillExit,
     WillResignFirst,
-    BecameFirst
+    HasBecomeFirst
   };
   struct ResponderChainEvent {
     union {

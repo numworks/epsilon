@@ -30,7 +30,7 @@ bool TestModeController::handleEvent(Ion::Events::Event event) {
 
 void TestModeController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     /* After activating an exam mode and going back, this controller shouldn't
      * be available anymore. Skip it and go back to the main settings menu. */
     if (!m_mainController->hasTestModeCell()) {

@@ -102,7 +102,7 @@ const char* ResultController::title() const {
 }
 
 void ResultController::handleResponderChainEvent(ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     // nothing
   } else {
     Escher::ListWithTopAndBottomController::handleResponderChainEvent(event);

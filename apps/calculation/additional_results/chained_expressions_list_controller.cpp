@@ -17,7 +17,7 @@ void ChainedExpressionsListController::viewDidDisappear() {
 
 void ChainedExpressionsListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     /* Width needs to be reinit if tail of controller changed and wasn't already
      * initialized. */
     initWidth(m_listController.selectableListView());

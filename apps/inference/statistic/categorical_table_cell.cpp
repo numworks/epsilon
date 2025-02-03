@@ -23,7 +23,7 @@ CategoricalTableCell::CategoricalTableCell(
 
 void CategoricalTableCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     assert(0 <= selectedColumn() &&
            selectedColumn() < tableViewDataSource()->numberOfColumns());
     assert(selectedRow() < tableViewDataSource()->numberOfRows());

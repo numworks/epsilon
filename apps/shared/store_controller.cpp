@@ -190,7 +190,7 @@ void StoreController::handleDeleteEvent(bool authorizeNonEmptyRowDeletion,
 
 void StoreController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() < 0 || selectedColumn() < 0) {
       selectCellAtLocation(0, 0);
     }

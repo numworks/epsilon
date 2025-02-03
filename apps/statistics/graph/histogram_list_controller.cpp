@@ -264,7 +264,7 @@ int16_t HistogramListController::barIndexAfterSelectingNewSeries(
 
 void HistogramListController::handleResponderChainEvent(
     ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     // Do not transfer the first responder ownership to the SelectableListView
   } else {
     Escher::SelectableListViewController<

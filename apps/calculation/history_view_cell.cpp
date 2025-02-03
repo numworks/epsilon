@@ -330,7 +330,7 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
 
 void HistoryViewCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     assert(m_dataSource);
     if (m_dataSource->selectedSubviewType() ==
         HistoryViewCellDataSource::SubviewType::Input) {

@@ -15,7 +15,7 @@ extern "C" {
  * Responder's method handleResponderChainEvent:
  * - viewWillAppear
  * - handleResponderChainEvent(DidEnter)
- * - handleResponderChainEvent(BecameFirst)
+ * - handleResponderChainEvent(HasBecomeFirst)
  * The methods viewWillDisappear is called in the following order relatively to
  * Responder's method handleResponderChainEvent:
  * - viewWillDisappear

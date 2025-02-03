@@ -44,7 +44,7 @@ bool DoublePairTableController::handleEvent(Ion::Events::Event event) {
 
 void DoublePairTableController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() == -1) {
       selectCellAtLocation(0, 1);
     } else {

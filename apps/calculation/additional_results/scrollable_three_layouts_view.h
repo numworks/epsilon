@@ -37,7 +37,7 @@ class ScrollableThreeLayoutsView
  protected:
   void handleResponderChainEvent(
       Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
+    if (event.type == ResponderChainEventType::HasBecomeFirst) {
       setSelectedSubviewPosition(leftMostPosition());
       reloadScroll();
     } else {

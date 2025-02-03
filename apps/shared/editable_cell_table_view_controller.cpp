@@ -117,7 +117,7 @@ void EditableCellTableViewController::fillCellForLocationWithDisplayMode(
 
 void EditableCellTableViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() == -1) {
       return;
     }

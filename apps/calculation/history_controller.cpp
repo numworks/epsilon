@@ -68,7 +68,7 @@ void HistoryController::handleResponderChainEvent(
     if (event.nextFirstResponder == parentResponder()) {
       m_selectableListView.deselectTable();
     }
-  } else if (event.type == ResponderChainEventType::BecameFirst) {
+  } else if (event.type == ResponderChainEventType::HasBecomeFirst) {
     selectRow(numberOfRows() - 1);
     App::app()->setFirstResponder(&m_selectableListView);
   } else {

@@ -65,7 +65,7 @@ void NestedMenuController::BreadcrumbController::updateTitle() {
 
 void NestedMenuController::ListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_selectableListView->reloadData();
     App::app()->setFirstResponder(m_selectableListView);
   } else {
@@ -206,7 +206,7 @@ void NestedMenuController::open() {
 
 void NestedMenuController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(&m_listController);
   } else {
     StackViewController::handleResponderChainEvent(event);

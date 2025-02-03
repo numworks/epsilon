@@ -22,7 +22,7 @@ View* PopUpController::view() { return &m_contentView; }
 
 void PopUpController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_contentView.setSelectedButton(0);
   } else {
     ViewController::handleResponderChainEvent(event);

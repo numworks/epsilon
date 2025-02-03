@@ -73,7 +73,7 @@ KDSize ScriptNameCell::minimalSizeForOptimalDisplay() const {
 
 void ScriptNameCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(&m_textField);
   } else {
     Responder::handleResponderChainEvent(event);

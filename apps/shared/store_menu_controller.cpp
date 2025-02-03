@@ -24,7 +24,7 @@ StoreMenuController::InnerListController::InnerListController(
 
 void StoreMenuController::InnerListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_selectableListView.selectCell(0);
     m_selectableListView.reloadData();
   } else {
@@ -69,7 +69,7 @@ StoreMenuController::StoreMenuController()
 
 void StoreMenuController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(&m_listController);
     m_cell.layoutField()->reload();
   } else {

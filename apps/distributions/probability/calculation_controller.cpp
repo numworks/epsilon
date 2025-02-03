@@ -90,7 +90,7 @@ void CalculationController::reinitCalculation() {
 
 void CalculationController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     updateTitle();
     m_dropdown.init();
     reload();

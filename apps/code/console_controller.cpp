@@ -172,7 +172,7 @@ void ConsoleController::viewWillAppear() {
 
 void ConsoleController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (!isDisplayingViewController()) {
       App::app()->setFirstResponder(&m_editCell);
     } else {

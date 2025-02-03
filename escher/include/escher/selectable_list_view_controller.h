@@ -41,7 +41,7 @@ class SelectableListViewController : public SelectableViewController,
   SelectableListView m_selectableListView;
   void handleResponderChainEvent(
       Responder::ResponderChainEvent event) override {
-    if (event.type == ResponderChainEventType::BecameFirst) {
+    if (event.type == ResponderChainEventType::HasBecomeFirst) {
       App::app()->setFirstResponder(&m_selectableListView);
     } else {
       SelectableViewController::handleResponderChainEvent(event);

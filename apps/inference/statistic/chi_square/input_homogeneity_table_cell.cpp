@@ -22,7 +22,7 @@ InputHomogeneityTableCell::InputHomogeneityTableCell(
 
 void InputHomogeneityTableCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() < 0) {
       selectColumn(1);
     }

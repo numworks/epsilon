@@ -27,7 +27,7 @@ FunctionGraphController::FunctionGraphController(
 
 void FunctionGraphController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (curveView()->hasFocus()) {
       bannerView()->abscissaValue()->setParentResponder(this);
       bannerView()->abscissaValue()->setDelegate(this);
@@ -113,7 +113,7 @@ void FunctionGraphController::FunctionSelectionController::fillCellForRow(
 
 void FunctionGraphController::FunctionSelectionController::
     handleResponderChainEvent(Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (numberOfRows() <= 1) {
       /* This can happen if all functions were deactivated within the calculate
        * menu. The function selection menu is still on the stack but it's now

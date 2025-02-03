@@ -268,7 +268,7 @@ void SolutionsController::handleResponderChainEvent(ResponderChainEvent event) {
       }
       break;
     }
-    case ResponderChainEventType::BecameFirst: {
+    case ResponderChainEventType::HasBecomeFirst: {
       SystemOfEquations* system = App::app()->system();
       if (system->numberOfSolutions() > 0) {
         App::app()->setFirstResponder(m_contentView.selectableTableView());

@@ -241,7 +241,7 @@ void LocalizationController::setVerticalMargins() {
 
 void LocalizationController::handleResponderChainEvent(
     ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(selectableListView());
   } else {
     ViewController::handleResponderChainEvent(event);

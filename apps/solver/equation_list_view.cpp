@@ -44,7 +44,7 @@ View* EquationListView::subviewAtIndex(int index) {
 
 void EquationListView::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(&m_listView);
   } else {
     Responder::handleResponderChainEvent(event);

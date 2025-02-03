@@ -69,7 +69,7 @@ void ScriptParameterController::viewWillAppear() {
 
 void ScriptParameterController::handleResponderChainEvent(
     ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     selectRow(0);
     ExplicitSelectableListViewController::handleResponderChainEvent(event);
   } else {

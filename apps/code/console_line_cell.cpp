@@ -113,7 +113,7 @@ void ConsoleLineCell::layoutSubviews(bool force) {
 
 void ConsoleLineCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(&m_scrollableView);
   } else {
     Responder::handleResponderChainEvent(event);

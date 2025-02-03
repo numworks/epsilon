@@ -37,7 +37,7 @@ ViewController::TitlesDisplay RegressionController::titlesDisplay() const {
 
 void RegressionController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     Model::Type type = m_store->seriesRegressionType(m_series);
     int initialIndex = std::max(0, IndexOfModelType(type));
     if (initialIndex >= numberOfRows()) {

@@ -351,7 +351,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
 
 void LayoutField::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_inputViewMemoizedHeight = inputViewHeight();
     TextCursorView::WithBlinkingCursor<ScrollableView<
         ScrollView::NoDecorator>>::handleResponderChainEvent(event);

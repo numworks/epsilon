@@ -78,7 +78,7 @@ void FunctionListController::handleResponderChainEvent(
       }
       break;
     }
-    case ResponderChainEventType::BecameFirst: {
+    case ResponderChainEventType::HasBecomeFirst: {
       if (selectedRow() == -1) {
         selectRow(0);
       } else {

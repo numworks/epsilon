@@ -69,7 +69,7 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
     ResultsHomogeneityController* m_tableController;
     void handleResponderChainEvent(
         Responder::ResponderChainEvent event) override {
-      if (event.type == ResponderChainEventType::BecameFirst) {
+      if (event.type == ResponderChainEventType::HasBecomeFirst) {
         m_tableController->didBecomeFirstResponder();
       } else {
         Escher::ViewController::handleResponderChainEvent(event);

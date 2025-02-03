@@ -103,7 +103,7 @@ bool ValuesController::handleEvent(Ion::Events::Event event) {
 
 void ValuesController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     EditableCellTableViewController::handleResponderChainEvent(event);
     if (selectedRow() == -1) {
       selectableTableView()->deselectTable();

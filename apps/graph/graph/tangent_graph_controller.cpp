@@ -44,7 +44,7 @@ void TangentGraphController::viewWillAppear() {
 
 void TangentGraphController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (curveView()->hasFocus()) {
       m_bannerView->abscissaValue()->setParentResponder(this);
       m_bannerView->abscissaValue()->setDelegate(this);

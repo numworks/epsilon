@@ -115,7 +115,7 @@ HighlightCell* HypothesisController::cell(int row) {
 
 void HypothesisController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     selectRow(0);
     m_haDropdown.selectRow(
         static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));

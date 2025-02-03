@@ -118,7 +118,7 @@ bool Controller::handleEvent(Ion::Events::Event event) {
 }
 
 void Controller::handleResponderChainEvent(ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectionDataSource()->selectedRow() == -1) {
       selectionDataSource()->selectCellAtLocation(0, 0);
     }

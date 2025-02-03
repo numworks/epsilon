@@ -53,7 +53,7 @@ void TestController::stackOpenPage(ViewController* nextPage) {
 
 void TestController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_selectableListView.reloadData();
     ExplicitSelectableListViewController::handleResponderChainEvent(event);
   } else {

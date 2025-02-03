@@ -271,7 +271,7 @@ void SelectableTableView::reloadData(bool setFirstResponder,
 void SelectableTableView::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   switch (event.type) {
-    case ResponderChainEventType::BecameFirst: {
+    case ResponderChainEventType::HasBecomeFirst: {
       HighlightCell* cell = selectedCell();
       if (cell && cell->responder()) {
         // Update first responder

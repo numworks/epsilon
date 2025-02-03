@@ -24,7 +24,7 @@ ExpressionsListController::InnerListController::InnerListController(
 
 void ExpressionsListController::InnerListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_selectableListView.reloadData();
   } else {
     ViewController::handleResponderChainEvent(event);
@@ -62,7 +62,7 @@ bool ExpressionsListController::handleEvent(Ion::Events::Event event) {
 
 void ExpressionsListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     selectRow(0);
     m_listController.selectableListView()->resetSizeAndOffsetMemoization();
     App::app()->setFirstResponder(&m_listController);

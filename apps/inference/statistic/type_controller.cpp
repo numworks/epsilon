@@ -31,7 +31,7 @@ TypeController::TypeController(StackViewController* parent,
 
 void TypeController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_selectableListView.reloadData();
   } else {
     UniformSelectableListController::handleResponderChainEvent(event);

@@ -159,7 +159,7 @@ void ModalViewController::dismissModal() {
 
 void ModalViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(isDisplayingModal()
                                       ? m_currentModalViewController
                                       : m_regularViewController);

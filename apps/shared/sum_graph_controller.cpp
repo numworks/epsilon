@@ -43,7 +43,7 @@ void SumGraphController::viewWillAppear() {
 
 void SumGraphController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     /* Do not set the textField as first responder when displaying the result
      * so that Copy and Sto apply on the result. */
     if (m_step != Step::Result) {

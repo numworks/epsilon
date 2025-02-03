@@ -52,7 +52,7 @@ void ConsoleEditCell::layoutSubviews(bool force) {
 
 void ConsoleEditCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(&m_textField);
     setEditing(true);
   } else {

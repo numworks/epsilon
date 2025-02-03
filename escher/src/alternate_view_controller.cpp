@@ -22,7 +22,7 @@ void AlternateViewController::viewWillAppear() {
 }
 void AlternateViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_delegate->activeViewDidBecomeFirstResponder(activeViewController());
   } else {
     ViewController::handleResponderChainEvent(event);

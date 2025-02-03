@@ -113,7 +113,7 @@ void ListController::handleResponderChainEvent(
       // Reload brace if the model store has evolved
       reloadBrace();
       break;
-    case ResponderChainEventType::BecameFirst:
+    case ResponderChainEventType::HasBecomeFirst:
       if (selectedRow() == -1) {
         selectRow(0);
       } else {

@@ -205,7 +205,7 @@ void MainController::endElementSearch(AtomicNumber z) {
 
 void MainController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     Escher::App::app()->setFirstResponder(m_view.bannerView()->textField());
   } else {
     Escher::ViewController::handleResponderChainEvent(event);

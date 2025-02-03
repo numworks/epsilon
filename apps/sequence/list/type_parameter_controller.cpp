@@ -62,7 +62,7 @@ void TypeParameterController::viewDidDisappear() {
 
 void TypeParameterController::handleResponderChainEvent(
     ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     selectRow(isNewModel() ? k_indexOfExplicit
                            : static_cast<uint8_t>(sequence()->type()));
     UniformSelectableListController::handleResponderChainEvent(event);

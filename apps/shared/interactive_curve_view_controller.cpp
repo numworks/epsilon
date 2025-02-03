@@ -69,7 +69,7 @@ bool InteractiveCurveViewController::handleEvent(Ion::Events::Event event) {
 
 void InteractiveCurveViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (!curveView()->hasFocus()) {
       header()->setSelectedButton(0);
     }

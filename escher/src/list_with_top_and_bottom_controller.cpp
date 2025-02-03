@@ -126,7 +126,7 @@ void ListWithTopAndBottomController::listViewDidChangeSelectionAndDidScroll(
 
 void ListWithTopAndBottomController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() < firstCellIndex()) {
       selectFirstCell();
     }

@@ -31,7 +31,7 @@ const char* TestGraphController::title() const {
 
 void TestGraphController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_zoom = 0;
     m_zoomSide = true;
     m_mayBeZoomed = m_test->computeCurveViewRange(0, m_zoomSide);

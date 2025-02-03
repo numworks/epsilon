@@ -379,7 +379,7 @@ void CurveParameterController::viewWillAppear() {
 
 void CurveParameterController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (!function()->isActive()) {
       stackController()->popUntilDepth(
           Shared::InteractiveCurveViewController::k_graphControllerStackDepth,

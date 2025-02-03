@@ -76,7 +76,7 @@ void GraphController::viewWillAppear() {
 
 void GraphController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (*m_selectedDotIndex == -1 && curveView()->hasFocus()) {
       setAbscissaInputAsFirstResponder();
     }

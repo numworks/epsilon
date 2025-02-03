@@ -33,7 +33,7 @@ void AbstractEditableTextCell::layoutSubviews(bool force) {
 
 void AbstractEditableTextCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(textField());
   } else {
     Responder::handleResponderChainEvent(event);

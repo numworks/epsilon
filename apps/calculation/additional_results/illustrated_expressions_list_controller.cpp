@@ -14,7 +14,7 @@ namespace Calculation {
 
 void IllustratedExpressionsListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     selectRow(1);
   }
   ChainedExpressionsListController::handleResponderChainEvent(event);

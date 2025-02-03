@@ -18,7 +18,7 @@ ExplicitFloatParameterController::ExplicitFloatParameterController(
 
 void ExplicitFloatParameterController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (selectedRow() >= 0) {
       int selRow = std::min(selectedRow(), numberOfRows() - 1);
       selectRow(selRow);

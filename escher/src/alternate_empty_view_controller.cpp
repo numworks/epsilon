@@ -52,7 +52,7 @@ ViewController::TitlesDisplay AlternateEmptyViewController::titlesDisplay()
 
 void AlternateEmptyViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (!m_contentView.isEmpty()) {
       App::app()->setFirstResponder(m_contentView.mainViewController());
     } else {

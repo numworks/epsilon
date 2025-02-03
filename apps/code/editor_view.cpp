@@ -48,7 +48,7 @@ View* EditorView::subviewAtIndex(int index) {
 
 void EditorView::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(&m_textArea);
   } else {
     Responder::handleResponderChainEvent(event);

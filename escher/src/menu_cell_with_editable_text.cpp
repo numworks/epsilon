@@ -37,7 +37,7 @@ void AbstractWithEditableText::textFieldDidAbortEditing(
 }
 void AbstractWithEditableText::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     if (m_editable) {
       App::app()->setFirstResponder(&m_textField);
     }

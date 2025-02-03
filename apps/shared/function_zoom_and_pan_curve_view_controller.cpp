@@ -26,7 +26,7 @@ void FunctionZoomAndPanCurveViewController::viewWillAppear() {
 
 void FunctionZoomAndPanCurveViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_contentView.layoutSubviews();
   } else {
     ZoomAndPanCurveViewController::handleResponderChainEvent(event);

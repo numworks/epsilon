@@ -25,7 +25,7 @@ void AbstractEvenOddEditableTextCell::layoutSubviews(bool force) {
 
 void AbstractEvenOddEditableTextCell::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     App::app()->setFirstResponder(editableTextCell());
   } else {
     Responder::handleResponderChainEvent(event);

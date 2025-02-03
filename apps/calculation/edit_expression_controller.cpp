@@ -64,7 +64,7 @@ void EditExpressionController::insertLayout(Layout layout) {
 
 void EditExpressionController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     m_contentView.mainView()->scrollToBottom();
     m_contentView.layoutField()->setEditing(true);
     App::app()->setFirstResponder(m_contentView.layoutField());

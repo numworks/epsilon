@@ -12,7 +12,7 @@ void AlternateEmptyNestedMenuController::viewDidDisappear() {
 
 void AlternateEmptyNestedMenuController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::BecameFirst) {
+  if (event.type == ResponderChainEventType::HasBecomeFirst) {
     // If the content is empty, we push an empty controller.
     m_isEmpty = (numberOfRows() == 0);
     if (m_isEmpty) {

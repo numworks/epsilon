@@ -69,7 +69,7 @@ void TextCursorView::setVisible(bool visible) {
 template <typename ResponderType>
 void TextCursorView::WithBlinkingCursor<ResponderType>::
     handleResponderChainEvent(Responder::ResponderChainEvent event) {
-  if (event.type == Responder::ResponderChainEventType::BecameFirst) {
+  if (event.type == Responder::ResponderChainEventType::HasBecomeFirst) {
     TextCursorView::sharedTextCursor->setInField(cursorCursorFieldView());
     ResponderType::handleResponderChainEvent(event);
   } else if (event.type ==

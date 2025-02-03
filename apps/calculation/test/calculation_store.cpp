@@ -261,7 +261,7 @@ void assertCalculationIs(const char* input, DisplayOutput display,
     assert_expression_serializes_to(lastCalculation->input(), storedInput);
   }
   if (exactOutput) {
-    assert(::Calculation::Calculation::CanDisplayExact(
+    quiz_assert(::Calculation::Calculation::CanDisplayExact(
         lastCalculation->displayOutput(context)));
     assert_layout_serializes_to(exactOutputLayout, exactOutput);
   }

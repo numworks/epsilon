@@ -27,7 +27,10 @@ static bool approximationIsFinite(const Tree* e) {
 }
 
 static bool MergeMultiplicationChildWithNext(Tree* child,
-                                             int* numberOfDependencies) {
+                                             int* numberOfDependencies,
+                                             bool* hasRemovedOneChild) {
+  assert(hasRemovedOneChild);
+  *hasRemovedOneChild = false;
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
   if (child->isZero()) {
@@ -46,6 +49,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
           next->detachTree();
           (*numberOfDependencies)++;
         }
+        *hasRemovedOneChild = true;
         return true;
       }
     }
@@ -54,6 +58,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     // 1 * x -> x
     // inf * inf -> inf
     child->removeTree();
+    *hasRemovedOneChild = true;
     return true;
   } else if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
@@ -63,7 +68,6 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     merge = PatternMatching::CreateSimplify(
         KPow(KA, KAdd(KB, KC)),
         {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
-    assert(!merge->isMult());
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.
     merge = (child->isMatrix()
@@ -76,6 +80,13 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
   // Replace both child and next with merge
   next->moveTreeOverTree(merge);
   child->removeTree();
+  if (child->isMult()) {
+    assert(child->numberOfChildren() == 2);
+    // Move children into parent multiplication
+    child->removeNode();
+  } else {
+    *hasRemovedOneChild = true;
+  }
   return true;
 }
 
@@ -84,13 +95,17 @@ static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
                                             int* numberOfDependencies) {
   assert(*numberOfSiblings > 0);
   bool changed = false;
+  bool hasRemovedOneChild = false;
   while (index < *numberOfSiblings) {
     if (!(index + 1 < *numberOfSiblings &&
-          MergeMultiplicationChildWithNext(child, numberOfDependencies))) {
+          MergeMultiplicationChildWithNext(child, numberOfDependencies,
+                                           &hasRemovedOneChild))) {
       // Child is neither 0, 1 and can't be merged with next child (or is last).
       return changed;
     }
-    (*numberOfSiblings)--;
+    if (hasRemovedOneChild) {
+      (*numberOfSiblings)--;
+    }
     assert(*numberOfSiblings > 0);
     changed = true;
   }

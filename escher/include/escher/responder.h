@@ -22,7 +22,7 @@ class Responder {
 
   void didEnterResponderChain(Responder* previousFirstResponder) {
     handleResponderChainEvent(
-        {{previousFirstResponder}, ResponderChainEventType::DidEnter});
+        {{previousFirstResponder}, ResponderChainEventType::HasEntered});
   }
   void willExitResponderChain(Responder* nextFirstResponder) {
     handleResponderChainEvent(
@@ -45,9 +45,9 @@ class Responder {
    * handleResponderChainEvent, and the 4 methods above are no longer overridden
    * by each children. Also the union allows writing event.nextFirstResponder
    * when reacting to a WillExit event and event.previousFirstResponder when
-   * DidEnter : this allows easier readability of the code */
+   * HasEntered : this allows easier readability of the code */
   enum class ResponderChainEventType {
-    DidEnter,
+    HasEntered,
     WillExit,
     WillResignFirst,
     HasBecomeFirst

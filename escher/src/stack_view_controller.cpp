@@ -127,7 +127,7 @@ void StackViewController::handleResponderChainEvent(
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     ViewController* vc = topViewController();
     App::app()->setFirstResponder(vc);
-  } else if (event.type == ResponderChainEventType::DidEnter) {
+  } else if (event.type == ResponderChainEventType::HasEntered) {
     m_displayedAsModal = App::app()->modalViewController()->isDisplayingModal();
   } else {
     ViewController::handleResponderChainEvent(event);

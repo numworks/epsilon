@@ -88,7 +88,7 @@ bool PythonVariableBoxController::handleEvent(Ion::Events::Event event) {
 
 void PythonVariableBoxController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::DidEnter) {
+  if (event.type == ResponderChainEventType::HasEntered) {
     /* Code::PythonVariableBoxController should always be called from an
      * environment where Python has already been inited. This way, we do not
      * deinit Python when leaving the PythonVariableBoxController, so we do not

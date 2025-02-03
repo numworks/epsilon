@@ -279,7 +279,7 @@ void SelectableTableView::handleResponderChainEvent(
       }
       break;
     }
-    case ResponderChainEventType::DidEnter: {
+    case ResponderChainEventType::HasEntered: {
       int col = selectedColumn();
       int row = selectedRow();
       selectRow(-1);

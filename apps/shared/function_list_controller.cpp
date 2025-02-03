@@ -66,7 +66,7 @@ ButtonCell* FunctionListController::buttonAtIndex(
 void FunctionListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   switch (event.type) {
-    case ResponderChainEventType::DidEnter: {
+    case ResponderChainEventType::HasEntered: {
       selectableListView()->reloadData(false);
       break;
     }

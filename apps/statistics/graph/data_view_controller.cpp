@@ -97,7 +97,7 @@ bool DataViewController::handleEvent(Ion::Events::Event event) {
 
 void DataViewController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::DidEnter) {
+  if (event.type == ResponderChainEventType::HasEntered) {
     if (!m_store->hasActiveSeries(activeSeriesMethod()) ||
         !dataView()->plotViewForSeries(selectedSeries())->hasFocus()) {
       header()->setSelectedButton(0);

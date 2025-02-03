@@ -260,7 +260,7 @@ void SolutionsController::viewDidDisappear() {
 
 void SolutionsController::handleResponderChainEvent(ResponderChainEvent event) {
   switch (event.type) {
-    case ResponderChainEventType::DidEnter: {
+    case ResponderChainEventType::HasEntered: {
       // Select the most left present subview on all cells and reinitialize
       // scroll
       for (int i = 0; i < SystemOfEquations::k_maxNumberOfExactSolutions; i++) {

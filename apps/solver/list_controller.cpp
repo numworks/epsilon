@@ -108,7 +108,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
 void ListController::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   switch (event.type) {
-    case ResponderChainEventType::DidEnter:
+    case ResponderChainEventType::HasEntered:
       selectableListView()->reloadData(false);
       // Reload brace if the model store has evolved
       reloadBrace();

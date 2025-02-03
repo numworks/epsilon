@@ -108,7 +108,7 @@ void CalculationSelectableListView::scrollToSubviewOfTypeOfCellAtRow(
 
 void CalculationSelectableListView::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::DidEnter) {
+  if (event.type == ResponderChainEventType::HasEntered) {
     resetSizeAndOffsetMemoization();
   }
   SelectableListView::handleResponderChainEvent(event);

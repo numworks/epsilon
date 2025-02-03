@@ -27,7 +27,7 @@ bool ExamModeController::handleEvent(Ion::Events::Event event) {
 }
 
 void ExamModeController::handleResponderChainEvent(ResponderChainEvent event) {
-  if (event.type == ResponderChainEventType::DidEnter) {
+  if (event.type == ResponderChainEventType::HasEntered) {
     /* When a pop-up is dismissed, the exam mode status might have changed. We
      * reload the selection as the number of rows might have also changed. We
      * force to reload the entire data because they might have changed. */

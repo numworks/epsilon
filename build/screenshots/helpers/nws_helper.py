@@ -59,11 +59,11 @@ def convert_nws_to_txt(nwspath, txtpath=None):
         f.write(bytes(event_name, encoding="ascii"))
         if event_name == "ExternalText":
             f.write(b" ")
-            i+=1
+            i += 1
             while events[i] != 0:
                 f.write(events[i].to_bytes(1))
-                i+=1
-        i+=1
+                i += 1
+        i += 1
     f.close()
 
 
@@ -86,7 +86,7 @@ def convert_txt_to_nws(txtpath, nwspath, filter=[]):
             sys.exit(1)
         events = []
         for line in f:
-            splitted = line.strip().split(' ', 1)
+            splitted = line.strip().split(" ", 1)
             event = splitted[0]
             event_id = events_ids.get(event)
             if event_id is None:

@@ -383,7 +383,7 @@ void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
     TreeRef rack = SharedTreeStack->pushRackLayout(0);
     layoutExpression(rack, expression, k_maxPriority);
   } else {
-    assert(type == Type::Pow || type == Type::PowMatrix);
+    assert(type == Type::Pow);
     layoutExpression(layoutParent, expression, OperatorPriority(type));
     createdLayout = KSuperscriptL->cloneNode();
   }
@@ -446,7 +446,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
           true);
       break;
     case Type::Pow:
-    case Type::PowMatrix:
     case Type::Div:
       layoutPowerOrDivision(layoutParent, expression);
       break;

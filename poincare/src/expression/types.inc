@@ -269,7 +269,6 @@ NODE(Inverse, MATRIX, 1)
 NODE(Ref, MATRIX, 1)
 NODE(Rref, MATRIX, 1)
 NODE(Transpose, MATRIX, 1)
-NODE(PowMatrix, MATRIX, 2)
 
 /* - Matrix M
  * | Number of rows | Number of columns |

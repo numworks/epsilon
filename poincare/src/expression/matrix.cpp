@@ -527,15 +527,6 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
     case Type::Norm:
       result = Vector::Norm(child);
       break;
-    case Type::PowMatrix: {
-      Tree* index = child->nextTree();
-      if (!Integer::Is<int>(index)) {
-        // TODO: Raise to rely on approximation.
-        return false;
-      }
-      result = Power(child, Integer::Handler(index).to<int>());
-      break;
-    }
     case Type::Trace:
       result = Trace(child);
       break;

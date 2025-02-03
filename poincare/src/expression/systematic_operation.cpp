@@ -9,6 +9,7 @@
 #include "infinity.h"
 #include "k_tree.h"
 #include "list.h"
+#include "matrix.h"
 #include "rational.h"
 #include "sign.h"
 #include "systematic_reduction.h"
@@ -75,10 +76,22 @@ static bool ReduceRadicalsInDenominator(Tree* e) {
 }
 
 bool SystematicOperation::ReducePower(Tree* e) {
-  assert(e->isPow() && !Dimension::Get(e->child(0)).isMatrix());
+  assert(e->isPow());
   // base^n
   Tree* base = e->child(0);
   TreeRef n = base->nextTree();
+
+  /* Note: if this Dimension check is too costly, we could have two distinct
+   * power nodes. One general that will handle both matrices and scalars, and
+   * one for scalar only, that can skip this check. */
+  if (Dimension::Get(base).isMatrix()) {
+    if (!base->isMatrix() || !Integer::Is<int>(n)) {
+      return false;
+    }
+    e->moveTreeOverTree(Matrix::Power(base, Integer::Handler(n).to<int>()));
+    return true;
+  }
+
   if (Infinity::IsPlusOrMinusInfinity(n) &&
       (base->isOne() || base->isMinusOne() ||
        GetComplexSign(base).isNonReal())) {
@@ -265,10 +278,14 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
    */
   Tree* x = e->child(0);
   Tree* y = x->nextTree();
-  ComplexSign xSign = GetComplexSign(x);
   ComplexSign ySign = GetComplexSign(y);
+  if (Infinity::IsPlusOrMinusInfinity(y) || ySign.isInteger()) {
+    ConvertPowerRealToPower(e);
+    return true;
+  }
+  assert(Dimension::Get(e).isScalarOrUnit());
+  ComplexSign xSign = GetComplexSign(x);
   if (Infinity::IsPlusOrMinusInfinity(x) ||
-      Infinity::IsPlusOrMinusInfinity(y) || ySign.isInteger() ||
       (xSign.isReal() && xSign.realSign().isPositive())) {
     ConvertPowerRealToPower(e);
     return true;

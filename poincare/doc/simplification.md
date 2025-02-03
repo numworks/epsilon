@@ -93,9 +93,9 @@ We want to respect the following properties:
 - $tan(random())$ should be well distributed
 - $sequence(random(),k,10)$ should not be reduced to $random()*sequence(1,k,10)$
 
-A possible solution would be to seed random nodes via a child containing an expression evaluating to an integer, so that we could seed nodes inside parametrics with a formula dependant on k. This would mean forbidding randomized nodes in integrals and diff, and having a solution for a too high number of seeds (for instance always returning a different result). 
+A possible solution would be to seed random nodes via a child containing an expression evaluating to an integer, so that we could seed nodes inside parametrics with a formula dependant on k. This would mean forbidding randomized nodes in integrals and diff, and having a solution for a too high number of seeds (for instance always returning a different result).
 
-This solution was deemed too heavy for now, which is why parametrics are only handled at approximation. 
+This solution was deemed too heavy for now, which is why parametrics are only handled at approximation.
 
 <details>
 <summary>Other solutions we thought of</summary>
@@ -229,7 +229,6 @@ $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 | atan(A) | atanRad(A)×RadToAngleUnit |
 | sqrt(A) | A^0.5 |
 | e^A | exp(A) |
-| A^B (with A matrix) | powerMatrix(A, B) |
 | A^B (with real complex format) | powerReal(A, B) |
 | ceil(A) | -floor(-A) |
 | frac(A) | A - floor(A) |
@@ -553,15 +552,15 @@ See examples in [annex](advanced-reduction-examples).
 
 ### Metric
 
-To decide which form of an expression is best for us, we implement our own metric on expressions. We call a metric any function assigning a score to a given expression. In our case, we want the metric to give a sense of the "size" or "simplicity" of our expression, so that, in advanced reduction, we aim to minimize this metric. The metric is thus called at each leaf of the advanced reduction search, to compare the leaf expression to the best expression found until then (i.e. expression with the lowest metric). 
+To decide which form of an expression is best for us, we implement our own metric on expressions. We call a metric any function assigning a score to a given expression. In our case, we want the metric to give a sense of the "size" or "simplicity" of our expression, so that, in advanced reduction, we aim to minimize this metric. The metric is thus called at each leaf of the advanced reduction search, to compare the leaf expression to the best expression found until then (i.e. expression with the lowest metric).
 
 Ideally, a metric should yield a different result for different expressions. We currently fallback on hash comparison in advanced-reduction.
 
-A simple metric consists in counting the size of an expression, but it would not take into account that some nodes appear or disappear at beautification (also, calling beautification at each step of the advanced reduction would be too costly). Some nodes are also less desirable than others and having our own metric gives us more power to decide which expression we want to display. 
+A simple metric consists in counting the size of an expression, but it would not take into account that some nodes appear or disappear at beautification (also, calling beautification at each step of the advanced reduction would be too costly). Some nodes are also less desirable than others and having our own metric gives us more power to decide which expression we want to display.
 
 #### Examples
 
-Let's call $m: E \longrightarrow \mathbb{N}$ our metric on $E$ the set of all expressions. The basic metric gives a default cost to all nodes and goes recursively through the expression to add the cost of the main node and all of its descendants. 
+Let's call $m: E \longrightarrow \mathbb{N}$ our metric on $E$ the set of all expressions. The basic metric gives a default cost to all nodes and goes recursively through the expression to add the cost of the main node and all of its descendants.
 
 For some functions, we aim to reduce the size of the expression inside them, so we increase the cost of all of their children with a multiplicative coefficient. Also, the metric of some expressions is reduced to other metrics.
 

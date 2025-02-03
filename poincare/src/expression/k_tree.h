@@ -108,7 +108,6 @@ constexpr auto KRef = KUnary<Type::Ref>();
 constexpr auto KRref = KUnary<Type::Rref>();
 constexpr auto KTranspose = KUnary<Type::Transpose>();
 
-constexpr auto KPowMatrix = KBinary<Type::PowMatrix>();
 constexpr auto KDot = KBinary<Type::Dot>();
 constexpr auto KCross = KBinary<Type::Cross>();
 

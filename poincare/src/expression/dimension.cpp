@@ -332,8 +332,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       return unitVector.isEmpty() || cols == 0;
     }
     case Type::Pow:
-    case Type::PowReal:
-    case Type::PowMatrix: {
+    case Type::PowReal: {
       if (!childDim[1].isScalar()) {
         return false;
       }
@@ -551,7 +550,6 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       return Get(e->child(Parametric::FunctionIndex(e)), ctx);
     case Type::Dep:
       return Get(Dependency::Main(e), ctx);
-    case Type::PowMatrix:
     case Type::PowReal:
     case Type::Pow: {
       Dimension dim = Get(e->child(0), ctx);

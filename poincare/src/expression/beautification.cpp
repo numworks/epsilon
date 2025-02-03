@@ -400,13 +400,8 @@ bool ShallowBeautify(Tree* e, void* context) {
   }
 
   // PowerReal(A,B) -> A^B
-  // PowerMatrix(A,B) -> A^B
   // exp(A? * ln(B) * C?) -> B^(A*C)
-  if (
-#if POINCARE_MATRIX
-      PatternMatching::MatchReplace(e, KPowMatrix(KA, KB), KPow(KA, KB)) ||
-#endif
-      PatternMatching::MatchReplace(e, KPowReal(KA, KB), KPow(KA, KB)) ||
+  if (PatternMatching::MatchReplace(e, KPowReal(KA, KB), KPow(KA, KB)) ||
       PatternMatching::MatchReplace(e, KExp(KMult(KA_s, KLn(KB), KC_s)),
                                     KPow(KB, KMult(KA_s, KC_s)))) {
     changed = true;

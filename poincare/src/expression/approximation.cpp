@@ -1248,8 +1248,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       a->removeTree();
       return a;
     }
-    case Type::Pow:
-    case Type::PowMatrix: {
+    case Type::Pow: {
       const Tree* base = e->child(0);
       const Tree* index = base->nextTree();
       T value = PrivateTo<T>(index, ctx);
@@ -1415,7 +1414,6 @@ bool Private::SkipApproximation(TypeBlock type, TypeBlock parentType,
     case Type::Trig:
       // Do not approximate second term in case tree isn't replaced.
       return indexInParent == 1;
-    case Type::PowMatrix:
     case Type::Pow:
     case Type::PowReal:
       // Only approximate power's index if the entire tree can be approximated.

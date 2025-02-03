@@ -115,6 +115,7 @@ class Test : public Statistic {
 
  private:
   enum ResultOrder { Z, PValue, TestDegree };
+  virtual bool shouldForbidZoom(float alpha, float criticalValue);
 };
 
 }  // namespace Inference

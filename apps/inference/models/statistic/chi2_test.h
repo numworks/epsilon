@@ -60,6 +60,9 @@ class Chi2Test : public Test, public Table {
   float computeXMax() const override {
     return DistribChi2.xMax(m_degreesOfFreedom);
   }
+  bool shouldForbidZoom(float alpha, float criticalValue) override {
+    return false;
+  }
 };
 
 }  // namespace Inference

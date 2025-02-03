@@ -117,6 +117,15 @@ bool Test::hasTwoSides() {
          Poincare::ComparisonJunior::Operator::NotEqual;
 }
 
+bool Test::shouldForbidZoom(float alpha, float criticalValue) {
+  /* This method only applies on standardardized normal distribution, otherwise
+   * the method needs to be overridden. */
+  // Alpha or criticalValue is out of the view or their signs differ
+  return std::abs(alpha) > k_displayWidthToSTDRatio ||
+         std::abs(criticalValue) > k_displayWidthToSTDRatio ||
+         alpha * criticalValue < 0;
+}
+
 bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;
@@ -135,13 +144,11 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   } else {
     alpha = thresholdAbscissa(hypothesisParams()->comparisonOperator());
   }
-  float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;
-  if (std::abs(alpha) > k_displayWidthToSTDRatio ||
-      std::abs(z) > k_displayWidthToSTDRatio || alpha * z < 0) {
-    // Alpha or z is out of the view or their signs differ, don't try to zoom
+  if (shouldForbidZoom(alpha, z)) {
     Shared::Inference::computeCurveViewRange();
     return false;
   }
+  float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;
   if (alpha == z) {
     // Arbitrary value to provide some zoom if we can't separate α and z
     margin = 0.1;

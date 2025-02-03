@@ -31,8 +31,8 @@ class TestGraphController : public Escher::ViewController {
   Test* m_test;
   /* When the test curve has two interesting sides, we can choose to zoom on
    * the left or the right side. */
-  bool m_mayBeZoomed;
   bool m_zoomSide;
+  bool m_mayBeZoomed;
   int m_zoom;
 };
 

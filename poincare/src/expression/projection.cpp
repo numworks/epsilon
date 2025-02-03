@@ -8,6 +8,7 @@
 #include "decimal.h"
 #include "dependency.h"
 #include "physical_constant.h"
+#include "sign.h"
 #include "symbol.h"
 #include "units/representatives.h"
 #include "units/unit.h"
@@ -411,20 +412,29 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
 }
 
 bool Projection::Expand(Tree* e) {
-  return
-      // atan(A) -> asin(A/Sqrt(1 + A^2))
-      PatternMatching::MatchReplaceSimplify(
-          e, KATanRad(KA),
-          KATrig(
-              KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), KMult(-1_e, 1_e / 2_e))),
-              1_e)) ||
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KATanRad(KA), &ctx) &&
+      GetComplexSign(ctx.getTree(KA)).isReal()) {
+    // atan(A) -> asin(A/Sqrt(1 + A^2)) for A real
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KATrig(
+            KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), KMult(-1_e, 1_e / 2_e))),
+            1_e),
+        ctx));
+    return true;
+  }
 #if POINCARE_TRIGONOMETRY_HYPERBOLIC
-      // ArCosh(A) -> ln(A+sqrt(A^2-1))
-      PatternMatching::MatchReplaceSimplify(
-          e, KArCosH(KA),
-          KLn(KAdd(KA, KPow(KAdd(KPow(KA, 2_e), -1_e), 1_e / 2_e)))) ||
+  if (PatternMatching::Match(e, KArCosH(KA), &ctx)) {
+    ComplexSign signOfChild = GetComplexSign(ctx.getTree(KA));
+    if (signOfChild.isReal() && signOfChild.realSign().isPositive()) {
+      // ArCosh(A) -> ln(A+sqrt(A^2-1)) for A real and positive
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KLn(KAdd(KA, KPow(KAdd(KPow(KA, 2_e), -1_e), 1_e / 2_e))), ctx));
+      return true;
+    }
+  }
 #endif
-      false;
+  return false;
 }
 
 }  // namespace Poincare::Internal

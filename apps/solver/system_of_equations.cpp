@@ -128,6 +128,14 @@ void SystemOfEquations::setApproximateSolvingRange(
   m_approximateSolvingRange = approximateSolvingRange;
 }
 
+void SystemOfEquations::cancelApproximateSolve() {
+  m_solverContext.hasMoreSolutions = true;
+  m_autoApproximateSolvingRange = false;
+  // Warning : A default range is given, but solutions have not been computed.
+  m_approximateSolvingRange = k_fallbackRange;
+  m_numberOfSolutions = 0;
+}
+
 void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   // TODO: factor with approximateSolve to avoid preparing the equation twice
   Internal::Tree* set = equationSet(m_store);

@@ -69,6 +69,9 @@ class SystemOfEquations {
   // Solving methods
   Error exactSolve(Poincare::Context* context);
   void approximateSolve(Poincare::Context* context);
+  /* Cancel intermediate results of setApproximateSolvingRange and
+   * approximateSolve */
+  void cancelApproximateSolve();
 
   // Solutions getters
   size_t numberOfSolutions() const { return m_numberOfSolutions; }
@@ -82,6 +85,8 @@ class SystemOfEquations {
 
  private:
   constexpr static char k_parameterPrefix = 't';
+  constexpr static Poincare::Range1D<double> k_fallbackRange =
+      Poincare::Range1D<double>(-10.0, 10.0);
 
   class ContextWithoutT : public Poincare::ContextWithParent {
    public:

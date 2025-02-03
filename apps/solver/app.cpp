@@ -34,14 +34,21 @@ void App::storageDidChangeForRecord(Ion::Storage::Record record) {
   equationStore()->storageDidChangeForRecord(record);
 }
 
-void App::openSolutionsController(bool approximateSolve) {
+void App::openSolutionsController(bool approximateSolve,
+                                  bool forceIntervalSelection) {
   if (!approximateSolve) {
+    assert(!forceIntervalSelection);
     m_stackViewController.push(&m_solutionsController);
     return;
   }
   // stackViewController.push clears parentResponder, it must be reset.
   m_solutionsController.setParentResponder(&m_solutionHeader);
   m_stackViewController.push(&m_solutionHeader);
+  if (forceIntervalSelection) {
+    // Open the interval controller and force solve when it is popped.
+    m_intervalController.forceSolveOnPop();
+    App::app()->openIntervalController();
+  }
 }
 
 void App::openIntervalController() {

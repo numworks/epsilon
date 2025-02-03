@@ -18,7 +18,8 @@ IntervalController::IntervalController(Responder* parentResponder)
             controller->stackController()->pop();
             return true;
           },
-          this)) {
+          this)),
+      m_forceSolveOnPop(false) {
   m_okButton.setMessage(I18n::Message::ResolveEquation);
 }
 
@@ -63,13 +64,15 @@ bool IntervalController::parametersAreDifferent() {
 
 void IntervalController::setAutoRange() {
   SystemOfEquations* system = App::app()->system();
+  // TODO: Add circuit breaker checkpoint here.
   system->autoComputeApproximateSolvingRange(App::app()->localContext());
   m_rangeParam = system->approximateSolvingRange();
 }
 
 void IntervalController::pop(bool onConfirmation) {
-  if (onConfirmation) {
+  if (onConfirmation || m_forceSolveOnPop) {
     App::app()->system()->approximateSolve(App::app()->localContext());
+    m_forceSolveOnPop = false;
   }
   StackViewController* stack = stackController();
   stack->pop();

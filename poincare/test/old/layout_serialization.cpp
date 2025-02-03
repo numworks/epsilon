@@ -45,11 +45,8 @@ QUIZ_CASE(poincare_layout_serialization) {
   // Floor
   assert_layout_serializes_to(KRackL(KFloorL("8"_l)), "floor(8)");
 
-// Fraction
-#if 0  // TODO_PCJ
-  assert_layout_serializes_to(KRackL(KFracL("1"_l, "2+3"_l)),
-                              "1/(2+3)");
-#endif
+  // Fraction
+  assert_layout_serializes_to(KRackL(KFracL("1"_l, "2+3"_l)), "1/(2+3)");
 
   // Rack
   assert_layout_serializes_to(KRackL("a"_cl, "b"_cl, "c"_cl, "d"_cl), "abcd");

@@ -83,6 +83,8 @@ $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$(KANDINSKY_font_variant)/$1.cpp: $(
 
 $(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/,codepoint_to_glyph_index.cpp $1.h): $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$(KANDINSKY_font_variant)/$1.cpp
 )
+
+generated_headers: $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.h
 endef
 
 ifeq ($(KANDINSKY_font_variant),epsilon)

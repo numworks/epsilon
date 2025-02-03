@@ -31,8 +31,10 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {Type::NonReal, "nonreal"},
     {Type::ComplexI, "i"},
     {Type::Inf, BuiltinsAliases::k_infinityAliases},
+#if POINCARE_BOOLEAN
     {Type::False, BuiltinsAliases::k_falseAliases},
     {Type::True, BuiltinsAliases::k_trueAliases},
+#endif
     {Type::Pi, BuiltinsAliases::k_piAliases},
     {Type::EulerE, "e"},
 };

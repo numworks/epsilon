@@ -28,6 +28,7 @@ class Binary {
     Type type;
     const char* name;
   };
+#if POINCARE_BOOLEAN
   constexpr static int k_numberOfOperators = 5;
   constexpr static TypeAndName k_operatorNames[] = {{Type::LogicalAnd, "and"},
                                                     {Type::LogicalOr, "or"},
@@ -36,12 +37,17 @@ class Binary {
                                                     {Type::LogicalNor, "nor"}};
   static_assert(std::size(k_operatorNames) == k_numberOfOperators,
                 "Wrong number of binary logical operators");
+#else
+  constexpr static int k_numberOfOperators = 0;
+  constexpr static TypeAndName k_operatorNames[0] = {};
+#endif
 
   struct OperatorForType {
     Type type;
     ComparisonJunior::Operator op;
   };
 
+#if POINCARE_BOOLEAN
   constexpr static int k_numberOfComparisons = 6;
   constexpr static OperatorForType k_operatorForType[] = {
       {Type::Equal, ComparisonJunior::Operator::Equal},
@@ -53,6 +59,10 @@ class Binary {
   };
   static_assert(std::size(k_operatorForType) == k_numberOfComparisons,
                 "Missing comparison  operator for type.");
+#else
+  constexpr static int k_numberOfComparisons = 0;
+  constexpr static OperatorForType k_operatorForType[0] = {};
+#endif
 };
 
 }  // namespace Poincare::Internal

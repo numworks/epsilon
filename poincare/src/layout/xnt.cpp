@@ -84,13 +84,25 @@ constexpr struct {
   Type expressionType;
   const CodePoint* XNTcycle;
 } k_parameteredFunctions[] = {
+#if POINCARE_DIFF
     {LayoutType::Diff, Type::Diff, k_defaultContinuousXNTCycle},
+#endif
+#if POINCARE_INTEGRAL
     {LayoutType::Integral, Type::Integral, k_defaultContinuousXNTCycle},
+#endif
+#if POINCARE_SUM_AND_PRODUCT
     {LayoutType::Sum, Type::Sum, k_defaultDiscreteXNTCycle},
     {LayoutType::Product, Type::Product, k_defaultDiscreteXNTCycle},
+#endif
+#if POINCARE_LIST
     {LayoutType::ListSequence, Type::ListSequence, k_defaultDiscreteXNTCycle},
+#endif
 };
+#if POINCARE_DIFF | POINCARE_INTEGRAL | POINCARE_SUM_AND_PRODUCT | POINCARE_LIST
 constexpr int k_numberOfFunctions = std::size(k_parameteredFunctions);
+#else
+constexpr int k_numberOfFunctions = 0;
+#endif
 
 static bool Contains(UnicodeDecoder& string, UnicodeDecoder& pattern) {
   while (CodePoint c = pattern.nextCodePoint()) {

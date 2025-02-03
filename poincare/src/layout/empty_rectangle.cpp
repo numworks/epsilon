@@ -5,7 +5,7 @@ namespace Poincare::Internal {
 constexpr static KDCoordinate k_marginWidth = 1;
 
 #if POINCARE_SCANDIUM_LAYOUTS
-constexpr static KDCoordinate k_marginTop = 1;
+constexpr static KDCoordinate k_marginTop = 2;
 constexpr static KDCoordinate k_marginBottom = 3;
 #else
 constexpr static KDCoordinate k_marginTop = 3;

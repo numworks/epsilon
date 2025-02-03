@@ -37,6 +37,10 @@ int main(int argc, char * argv[]) {
 
   int glyphWidth = maxWidth;
   int glyphHeight = maxAboveBaseline + maxBelowBaseline;
+  if (packedGlyphHeight > glyphHeight) {
+    maxAboveBaseline += packedGlyphHeight - glyphHeight;
+    glyphHeight = packedGlyphHeight;
+  }
   checkGlyphDimensions(glyphWidth, packedGlyphWidth, glyphHeight, packedGlyphHeight);
 
   int glyphDataOffsetLength = 0, glyphDataLength = 0;

@@ -104,6 +104,6 @@ SFLAGS += -DKANDINSKY_FONT_VARIABLE_WIDTH=1
 # This flag remove some unsuitable codepoints glyphs from the set to
 # be rasterized, should we reduce the set aggressively to save flash ?
 TOOLS_CFLAGS += -DKANDINSKY_CODEPOINTS_SCANDIUM=1
-$(call raster_font,SmallFont,12,8,12)
+$(call raster_font,SmallFont,12,8,13)
 endif
 

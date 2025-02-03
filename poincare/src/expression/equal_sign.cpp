@@ -55,9 +55,6 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
     approxChild = approxChild->nextTree();
   }
 
-  /* The node content is ignored but should not matter, unless exact can be a
-   * float. */
-  assert(exact->nodeIsIdenticalTo(approximate));
-  return true;
+  return exact->nodeIsIdenticalTo(approximate);
 }
 }  // namespace Poincare::Internal

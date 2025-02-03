@@ -12,12 +12,15 @@ namespace Poincare::Internal {
 
 class Layouter {
  public:
+  static constexpr int k_undefinedNumberOfSignificantDigits = -1;
+
   // Eats expression to built its layout inplace.
-  static Tree* LayoutExpression(Tree* expression, bool linearMode = false,
-                                int numberOfSignificantDigits = -1,
-                                Preferences::PrintFloatMode floatMode =
-                                    Preferences::PrintFloatMode::Decimal,
-                                OMG::Base base = OMG::Base::Decimal);
+  static Tree* LayoutExpression(
+      Tree* expression, bool linearMode = false,
+      int numberOfSignificantDigits = k_undefinedNumberOfSignificantDigits,
+      Preferences::PrintFloatMode floatMode =
+          Preferences::PrintFloatMode::Decimal,
+      OMG::Base base = OMG::Base::Decimal);
 
   static bool AddThousandsSeparators(Tree* rack);
 
@@ -34,11 +37,12 @@ class Layouter {
         m_floatMode(floatMode),
         m_base(base) {}
   // Eats expression to built its layout inplace. May raise TreeStack exceptions
-  static Tree* UnsafeLayoutExpression(Tree* expression, bool linearMode = false,
-                                      int numberOfSignificantDigits = -1,
-                                      Preferences::PrintFloatMode floatMode =
-                                          Preferences::PrintFloatMode::Decimal,
-                                      OMG::Base base = OMG::Base::Decimal);
+  static Tree* UnsafeLayoutExpression(
+      Tree* expression, bool linearMode = false,
+      int numberOfSignificantDigits = k_undefinedNumberOfSignificantDigits,
+      Preferences::PrintFloatMode floatMode =
+          Preferences::PrintFloatMode::Decimal,
+      OMG::Base base = OMG::Base::Decimal);
   void addOperatorSeparator(Tree* layoutParent);
   void addUnitSeparator(Tree* layoutParent);
   bool requireSeparators(const Tree* expression);

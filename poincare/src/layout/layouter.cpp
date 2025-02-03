@@ -397,7 +397,8 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
   assert(expression->isOfType(
       {Type::Decimal, Type::DoubleFloat, Type::SingleFloat}));
   int numberOfSignificantDigits =
-      m_numberOfSignificantDigits != -1 ? m_numberOfSignificantDigits
+      m_numberOfSignificantDigits != k_undefinedNumberOfSignificantDigits
+          ? m_numberOfSignificantDigits
       : expression->isSingleFloat()
           ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
           : Poincare::PrintFloat::SignificantDecimalDigits<double>();

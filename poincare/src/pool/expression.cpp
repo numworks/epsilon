@@ -524,7 +524,7 @@ bool UserExpression::hasDefinedComplexApproximation(
   return true;
 }
 
-bool UserExpression::isScalarComplex(
+bool UserExpression::isComplexScalar(
     Preferences::CalculationPreferences calculationPreferences,
     Context* context) const {
   Preferences::ComplexFormat complexFormat =

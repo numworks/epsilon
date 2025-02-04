@@ -143,7 +143,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   assert(*error == Error::NoError);
   result =
       SolveLinearSystem(reducedEquationSet, numberOfVariables, context, error);
-#if !POINCARE_NO_POLYNOMIAL_SOLVER
+#if POINCARE_POLYNOMIAL_SOLVER
   if (*error == Error::NonLinearSystem && numberOfVariables <= 1 &&
       equationsSet->numberOfChildren() <= 1) {
     assert(result.isUninitialized());

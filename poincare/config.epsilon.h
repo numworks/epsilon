@@ -4,6 +4,7 @@
 ///// General configuration
 
 #define POINCARE_NO_FLOAT_APPROXIMATION 0
+#define POINCARE_POLYNOMIAL_SOLVER 1
 #define POINCARE_TREE_STACK_SIZE (1024 * 16)
 
 /////  Block subsets

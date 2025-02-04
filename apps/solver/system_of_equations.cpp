@@ -282,17 +282,14 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
   }
 }
 
+#if 0
 SystemExpression SystemOfEquations::equationStandardFormForApproximateSolve(
     Context* context) {
-  assert(false);
-#if 0
  return m_store->modelForRecord(m_store->definedRecordAtIndex(0))
       ->standardForm(context, overrideUserVariables(),
                      ReductionTarget::SystemForApproximation);
-#endif
 }
 
-#if 0
 SystemOfEquations::Error SystemOfEquations::privateExactSolve(
     Context* context) {
   m_numberOfSolutions = 0;

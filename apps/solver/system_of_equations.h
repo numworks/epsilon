@@ -92,8 +92,10 @@ class SystemOfEquations {
         const Poincare::Internal::Tree* symbol) override;
   };
 
+#if 0
   Poincare::SystemExpression equationStandardFormForApproximateSolve(
       Poincare::Context* context);
+#endif
   Error privateExactSolve(Poincare::Context* context);
   Error simplifyAndFindVariables(
       Poincare::Context* context,

@@ -115,9 +115,10 @@ QUIZ_CASE(calculation_store) {
     }
     text[textSize - 1] = 0;
 
-    const int emptyStoreSize = store.remainingBufferSize();
+    const size_t emptyStoreSize = store.remainingBufferSize();
     store.push(Layout::String(text), &globalContext);
-    const int calculationSize = emptyStoreSize - store.remainingBufferSize();
+    assert(emptyStoreSize > store.remainingBufferSize());
+    const size_t calculationSize = emptyStoreSize - store.remainingBufferSize();
 
     // Push big calculations until approaching the limit
     while (store.remainingBufferSize() > 2 * calculationSize) {

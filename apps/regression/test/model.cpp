@@ -424,7 +424,7 @@ void assert_trigonometric_regression_is(
       Poincare::Preferences::AngleUnit::Radian,
       Poincare::Preferences::AngleUnit::Degree,
       Poincare::Preferences::AngleUnit::Gradian};
-  for (int i = 0; i < k_numberOfUnits; ++i) {
+  for (size_t i = 0; i < k_numberOfUnits; ++i) {
     Poincare::Preferences::AngleUnit unit = units[i];
     Poincare::Preferences::SharedPreferences()->setAngleUnit(unit);
     double unitFactor = Trigonometry::PiInAngleUnit(unit) /

@@ -9,3 +9,5 @@ node_modules/
 /compile_commands.json
 .DS_Store
 /compare_crc_output/
+.vscode/
+.devcontainer/

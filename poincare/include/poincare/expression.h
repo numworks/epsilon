@@ -248,7 +248,7 @@ class Expression : public PoolHandle {
   bool hasDefinedComplexApproximation(
       const ApproximationContext& approximationContext,
       T* returnRealPart = nullptr, T* returnImagPart = nullptr) const;
-  bool isScalarComplex(
+  bool isComplexScalar(
       Preferences::CalculationPreferences calculationPreferences,
       Context* context) const;
   bool involvesDiscontinuousFunction() const;

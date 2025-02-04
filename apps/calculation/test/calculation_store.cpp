@@ -307,6 +307,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Preferences::SharedPreferences()->setAngleUnit(
       Preferences::AngleUnit::Degree);
 
+  uint8_t previousNumberOfSignificantDigits =
+      Preferences::SharedPreferences()->numberOfSignificantDigits();
   Preferences::SharedPreferences()->setNumberOfSignificantDigits(
       PrintFloat::k_maxNumberOfSignificantDigits);
 
@@ -461,6 +463,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 
   Preferences::SharedPreferences()->setExamMode(previousExamMode);
   Preferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
+
+  Preferences::SharedPreferences()->setNumberOfSignificantDigits(
+      previousNumberOfSignificantDigits);
 }
 
 void assertMainCalculationOutputIs(const char* input, const char* output,
@@ -724,6 +729,8 @@ QUIZ_CASE(calculation_complex_format) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
+  uint8_t previousNumberOfSignificantDigits =
+      Preferences::SharedPreferences()->numberOfSignificantDigits();
   Preferences::SharedPreferences()->setNumberOfSignificantDigits(
       PrintFloat::k_maxNumberOfSignificantDigits);
 
@@ -802,6 +809,9 @@ QUIZ_CASE(calculation_complex_format) {
 
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
+
+  Preferences::SharedPreferences()->setNumberOfSignificantDigits(
+      previousNumberOfSignificantDigits);
 }
 
 QUIZ_CASE(calculation_involving_sequence) {

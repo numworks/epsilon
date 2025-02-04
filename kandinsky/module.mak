@@ -92,7 +92,6 @@ $(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/,codepoint_to_glyph_inde
 generated_headers: $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.h
 endef
 
-generated_headers: $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/LargeFont.h $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/SmallFont.h
 
 ifeq ($(KANDINSKY_font_variant),epsilon)
 SFLAGS_kandinsky += -DKANDINSKY_FONT_LARGE_FONT=1

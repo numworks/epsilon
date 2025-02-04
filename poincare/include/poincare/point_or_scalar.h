@@ -9,17 +9,17 @@ namespace Poincare {
 
 /* Using SignalingNan, this structure can store either a scalar or a point. */
 template <typename T>
-class PointOrScalar {
+class PointOrRealScalar {
  public:
-  PointOrScalar(T x, T y) : m_x(x), m_y(y) { assert(isPoint()); }
-  PointOrScalar(T y) : m_x(OMG::SignalingNan<T>()), m_y(y) {
-    assert(isScalar());
+  PointOrRealScalar(T x, T y) : m_x(x), m_y(y) { assert(isPoint()); }
+  PointOrRealScalar(T y) : m_x(OMG::SignalingNan<T>()), m_y(y) {
+    assert(isRealScalar());
   }
-  bool isScalar() const { return OMG::IsSignalingNan(m_x); }
-  bool isPoint() const { return !isScalar(); }
+  bool isRealScalar() const { return OMG::IsSignalingNan(m_x); }
+  bool isPoint() const { return !isRealScalar(); }
 
-  T toScalar() const {
-    assert(isScalar());
+  T toRealScalar() const {
+    assert(isRealScalar());
     return m_y;
   }
   Coordinate2D<T> toPoint() const {

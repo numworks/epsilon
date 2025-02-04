@@ -73,7 +73,7 @@ class ListComplex final : public Evaluation<T>, public DatasetColumn<T> {
 
   // DataSetColumn
   T valueAtIndex(int index) const override {
-    return ComplexNode<T>::ToScalar(complexAtIndex(index));
+    return ComplexNode<T>::ToRealScalar(complexAtIndex(index));
   }
   int length() const override { return numberOfChildren(); }
 

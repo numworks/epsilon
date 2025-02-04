@@ -91,16 +91,16 @@ std::complex<T> ToComplex(const Tree* e, Parameters params, Context context) {
 };
 
 template <typename T>
-PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameters params,
-                                 Context context) {
+PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
+                                         Context context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
   Dimension dim = Dimension::Get(target, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
-  PointOrScalar<T> result =
-      dim.isScalar() ? PointOrScalar<T>(NAN) : PointOrScalar<T>(NAN, NAN);
+  PointOrRealScalar<T> result = dim.isScalar() ? PointOrRealScalar<T>(NAN)
+                                               : PointOrRealScalar<T>(NAN, NAN);
   if (!context.m_localContext || !(std::isnan(context.variable(0).real()) ||
                                    std::isnan(context.variable(0).imag()))) {
     T xScalar;
@@ -110,8 +110,8 @@ PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameters params,
       context.m_pointElement = 1;
     }
     T yScalar = PrivateTo<T>(target, &context);
-    result = dim.isPoint() ? PointOrScalar<T>(xScalar, yScalar)
-                           : PointOrScalar<T>(yScalar);
+    result = dim.isPoint() ? PointOrRealScalar<T>(xScalar, yScalar)
+                           : PointOrRealScalar<T>(yScalar);
   }
   if (clone) {
     clone->removeTree();
@@ -120,11 +120,11 @@ PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameters params,
 };
 
 template <typename T>
-PointOrScalar<T> ToPointOrScalar(const Tree* e, T abscissa, Parameters params,
-                                 Context context) {
+PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
+                                         Parameters params, Context context) {
   LocalContext localContext(abscissa, context.m_localContext);
   context.m_localContext = &localContext;
-  return ToPointOrScalar<T>(e, params, context);
+  return ToPointOrRealScalar<T>(e, params, context);
 }
 
 template <typename T>
@@ -150,7 +150,7 @@ T To(const Tree* e, Parameters params, Context context) {
   }
   assert(context.m_listElement != -1 ||
          !Dimension::IsList(e, context.m_symbolContext));
-  return ToPointOrScalar<T>(e, params, context).toScalar();
+  return ToPointOrRealScalar<T>(e, params, context).toRealScalar();
 };
 
 template <typename T>
@@ -164,7 +164,7 @@ template <typename T>
 Coordinate2D<T> ToPoint(const Tree* e, Parameters params, Context context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
          Dimension::Get(e, context.m_symbolContext).isPoint());
-  return ToPointOrScalar<T>(e, params, context).toPoint();
+  return ToPointOrRealScalar<T>(e, params, context).toPoint();
 };
 
 template <typename T>
@@ -1531,14 +1531,15 @@ template Tree* ToTree<double>(const Tree*, Parameters, Context);
 template std::complex<float> ToComplex(const Tree*, Parameters, Context);
 template std::complex<double> ToComplex(const Tree*, Parameters, Context);
 
-template PointOrScalar<float> ToPointOrScalar(const Tree*, Parameters, Context);
-template PointOrScalar<double> ToPointOrScalar(const Tree*, Parameters,
-                                               Context);
+template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, Parameters,
+                                                      Context);
+template PointOrRealScalar<double> ToPointOrRealScalar(const Tree*, Parameters,
+                                                       Context);
 
-template PointOrScalar<float> ToPointOrScalar(const Tree*, float, Parameters,
-                                              Context);
-template PointOrScalar<double> ToPointOrScalar(const Tree*, double, Parameters,
-                                               Context);
+template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, float,
+                                                      Parameters, Context);
+template PointOrRealScalar<double> ToPointOrRealScalar(const Tree*, double,
+                                                       Parameters, Context);
 
 template bool ToBoolean<float>(const Tree*, Parameters, Context);
 template bool ToBoolean<double>(const Tree*, Parameters, Context);

@@ -93,10 +93,10 @@ void TangentGraphController::reloadBannerView() {
 
   double coefficientA;
   if (m_bannerView->showFirstDerivative()) {
-    PointOrScalar<double> derivative =
+    PointOrRealScalar<double> derivative =
         reloadDerivativeInBannerViewForCursorOnFunction(m_cursor, m_record, 1);
-    assert(derivative.isScalar());
-    coefficientA = derivative.toScalar();
+    assert(derivative.isRealScalar());
+    coefficientA = derivative.toRealScalar();
   } else {
     assert(m_bannerView->showSlope());
     coefficientA =

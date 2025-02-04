@@ -200,11 +200,11 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
     *slope = NAN;
     *intercept = NAN;
   } else {
-    *intercept = coefficients[0].approximateToScalar<double>();
+    *intercept = coefficients[0].approximateToRealScalar<double>();
     if (d == 0) {
       *slope = 0.0;
     } else {
-      *slope = coefficients[1].approximateToScalar<double>();
+      *slope = coefficients[1].approximateToRealScalar<double>();
     }
   }
 }
@@ -355,20 +355,20 @@ void ContinuousFunction::valuesToDisplayOnDerivativeCurve(
 }
 
 template <typename T>
-PointOrScalar<T> ContinuousFunction::approximateDerivative(
+PointOrRealScalar<T> ContinuousFunction::approximateDerivative(
     T t, Context* context, int derivationOrder, bool useDomain) const {
   assert(canDisplayDerivative());
   assert(!isAlongY());
   assert(numberOfSubCurves() == 1);
   if (useDomain && (t < tMin() || t > tMax())) {
     if (properties().isParametric()) {
-      return PointOrScalar<T>(NAN, NAN);
+      return PointOrRealScalar<T>(NAN, NAN);
     }
-    return PointOrScalar<T>(NAN);
+    return PointOrRealScalar<T>(NAN);
   }
   // Derivative is simplified once and for all
   SystemFunction derivate = expressionApproximated(context, derivationOrder);
-  return derivate.approximateToPointOrScalarWithValue(t);
+  return derivate.approximateToPointOrRealScalarWithValue(t);
 }
 
 double ContinuousFunction::approximateSlope(double t,
@@ -377,7 +377,7 @@ double ContinuousFunction::approximateSlope(double t,
     return NAN;
   }
   // Slope is simplified once and for all
-  return expressionSlopeReduced(context).approximateToScalarWithValue(t);
+  return expressionSlopeReduced(context).approximateToRealScalarWithValue(t);
 }
 
 void ContinuousFunction::setTMin(float tMin) {
@@ -522,7 +522,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       assert(e.isList());
       assert(static_cast<List&>(e).numberOfChildren() > subCurveIndex);
     }
-    T value = e.approximateToScalarWithValue<T>(t, subCurveIndex);
+    T value = e.approximateToRealScalarWithValue<T>(t, subCurveIndex);
     if (isAlongY()) {
       // Invert x and y with vertical lines so it can be scrolled vertically
       return Coordinate2D<T>(value, t);
@@ -533,7 +533,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     return Coordinate2D<T>();
   }
   assert(e.isPoint());
-  return e.approximateToPointOrScalarWithValue<T>(t).toPoint();
+  return e.approximateToPointOrRealScalarWithValue<T>(t).toPoint();
 }
 
 ContinuousFunction::RecordDataBuffer::RecordDataBuffer(KDColor color)
@@ -1174,7 +1174,7 @@ ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Context*,
 template Coordinate2D<double>
 ContinuousFunction::privateEvaluateXYAtParameter<double>(double, Context*,
                                                          int) const;
-template PointOrScalar<double> ContinuousFunction::approximateDerivative(
+template PointOrRealScalar<double> ContinuousFunction::approximateDerivative(
     double t, Context* context, int derivationOrder, bool useDomain) const;
 
 }  // namespace Shared

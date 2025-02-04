@@ -11,7 +11,7 @@ class Complex;
 template <typename T>
 class ComplexNode final : public EvaluationNode<T>, public std::complex<T> {
  public:
-  static T ToScalar(const std::complex<T> c);
+  static T ToRealScalar(const std::complex<T> c);
   ComplexNode(std::complex<T> c);
 
   std::complex<T> complexAtIndex(int index) const override {
@@ -36,7 +36,7 @@ class ComplexNode final : public EvaluationNode<T>, public std::complex<T> {
   bool isUndefined() const override {
     return (std::isnan(this->real()) || std::isnan(this->imag()));
   }
-  T toScalar() const override;
+  T toRealScalar() const override;
   OExpression complexToExpression(
       Preferences::Preferences::ComplexFormat complexFormat) const override;
 };

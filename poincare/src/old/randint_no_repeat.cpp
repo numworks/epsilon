@@ -32,9 +32,9 @@ Evaluation<T> RandintNoRepeatNode::templatedApproximate(
     // Return NAN to prevent the reduction from assuming anything at this point
     return Complex<T>::Undefined();
   }
-  T ta = childAtIndex(0)->approximate(T(), approximationContext).toScalar();
-  T tb = childAtIndex(1)->approximate(T(), approximationContext).toScalar();
-  T tn = childAtIndex(2)->approximate(T(), approximationContext).toScalar();
+  T ta = childAtIndex(0)->approximate(T(), approximationContext).toRealScalar();
+  T tb = childAtIndex(1)->approximate(T(), approximationContext).toRealScalar();
+  T tn = childAtIndex(2)->approximate(T(), approximationContext).toRealScalar();
   int a = static_cast<int>(ta), b = static_cast<int>(tb),
       n = static_cast<int>(tn);
   /* In all cases where b < a is true, b - a + 1 < n is also true unless we take

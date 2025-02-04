@@ -61,15 +61,15 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     double slopeMultiplicator = 1.0;
     if (function->canDisplayDerivative()) {
       // Use the local derivative to slow down the cursor's step if needed
-      double slope =
-          function->approximateDerivative<double>(tCursor, context).toScalar();
+      double slope = function->approximateDerivative<double>(tCursor, context)
+                         .toRealScalar();
       if ((!subCurveIndex || *subCurveIndex == 0) && std::isnan(slope)) {
         /* If the derivative could not bet computed, compute the derivative one
          * step further. */
         slope = function
                     ->approximateDerivative<double>(
                         tCursor + dir * step * pixelWidth, context)
-                    .toScalar();
+                    .toRealScalar();
         if (std::isnan(slope)) {
           /* If the derivative is still NAN, it might mean that it's NAN
            * everywhere, so just set slope to a default value */
@@ -189,13 +189,14 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
   return true;
 }
 
-PointOrScalar<double>
+PointOrRealScalar<double>
 GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
     CurveViewCursor* cursor, Ion::Storage::Record record, int derivationOrder) {
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
-  PointOrScalar<double> derivative = function->approximateDerivative<double>(
-      cursor->t(), App::app()->localContext(), derivationOrder);
+  PointOrRealScalar<double> derivative =
+      function->approximateDerivative<double>(
+          cursor->t(), App::app()->localContext(), derivationOrder);
 
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
@@ -212,24 +213,24 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
                         "=(%*.*ed;%*.*ed)", xy.x(), mode, precision, xy.y(),
                         mode, precision);
   } else {
-    assert(derivative.isScalar());
+    assert(derivative.isRealScalar());
     /* Force derivative to 0 if cursor is at an extremum where the function is
      * differentiable. */
     if (derivationOrder == 1) {
       PointsOfInterestCache* pointsOfInterest =
           App::app()->graphController()->pointsOfInterestForRecord(record);
-      if (std::isfinite(derivative.toScalar()) &&
+      if (std::isfinite(derivative.toRealScalar()) &&
           (pointsOfInterest->hasInterestAtCoordinates(
                cursor->x(), cursor->y(),
                Solver<double>::Interest::LocalMaximum) ||
            pointsOfInterest->hasInterestAtCoordinates(
                cursor->x(), cursor->y(),
                Solver<double>::Interest::LocalMinimum))) {
-        derivative = PointOrScalar<double>(0.);
+        derivative = PointOrRealScalar<double>(0.);
       }
     }
     Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
-                        "=%*.*ed", derivative.toScalar(), mode, precision);
+                        "=%*.*ed", derivative.toRealScalar(), mode, precision);
   }
   if (derivationOrder == 1) {
     bannerView()->firstDerivativeView()->setText(buffer);

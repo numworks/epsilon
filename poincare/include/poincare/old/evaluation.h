@@ -37,7 +37,7 @@ class EvaluationNode : public PoolObject {
   virtual ~EvaluationNode() = default;
   virtual bool isUndefined() const = 0;
   virtual std::complex<T> complexAtIndex(int index) const = 0;
-  virtual T toScalar() const { return NAN; }
+  virtual T toRealScalar() const { return NAN; }
   virtual OExpression complexToExpression(
       Preferences::ComplexFormat complexFormat) const = 0;
 
@@ -78,7 +78,7 @@ class Evaluation : public PoolHandle {
   std::complex<T> complexAtIndex(int index) const {
     return node()->complexAtIndex(index);
   }
-  T toScalar() const { return node()->toScalar(); }
+  T toRealScalar() const { return node()->toRealScalar(); }
   OExpression complexToExpression(
       Preferences::ComplexFormat complexFormat) const;
 

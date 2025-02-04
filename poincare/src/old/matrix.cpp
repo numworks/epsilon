@@ -186,8 +186,9 @@ bool OMatrix::isCanonizable(const ReductionContext &reductionContext) {
   int n = numberOfColumns();
   for (int i = 0; i < m; i++) {
     for (int j = 0; j < n; j++) {
-      if (std::isnan(AbsoluteValue::Builder(matrixChild(i, j).clone())
-                         .approximateToScalar<float>(approximationContext))) {
+      if (std::isnan(
+              AbsoluteValue::Builder(matrixChild(i, j).clone())
+                  .approximateToRealScalar<float>(approximationContext))) {
         return false;
       }
     }
@@ -232,7 +233,7 @@ OMatrix OMatrix::rowCanonize(const ReductionContext &reductionContext,
     while (iPivot_temp < m) {
       // Using float to find the biggest pivot is sufficient.
       float pivot = AbsoluteValue::Builder(matrixChild(iPivot_temp, k).clone())
-                        .approximateToScalar<float>(approximationContext);
+                        .approximateToRealScalar<float>(approximationContext);
       // Handle very low pivots
       if (pivot == 0.0f &&
           matrixChild(iPivot_temp, k).isNull(reductionContext.context()) !=

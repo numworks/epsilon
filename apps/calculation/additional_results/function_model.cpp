@@ -32,7 +32,7 @@ template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model) {
   const SystemFunctionScalar* f =
       static_cast<const SystemFunctionScalar*>(model);
-  return Coordinate2D<T>(t, f->approximateToScalarWithValue(t));
+  return Coordinate2D<T>(t, f->approximateToRealScalarWithValue(t));
 }
 
 void FunctionModel::recomputeViewRange() {

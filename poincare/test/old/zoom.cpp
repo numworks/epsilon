@@ -64,12 +64,12 @@ Coordinate2D<T> expressionEvaluator(T t, const void* model) {
   ApproximationContext approximationContext(context, Real, Radian);
   if (e->otype() == ExpressionNode::Type::OMatrix) {
     return Coordinate2D<T>(
-        e->childAtIndex(0).approximateToScalarWithValueForSymbol(
+        e->childAtIndex(0).approximateToRealScalarWithValueForSymbol(
             k_symbol, t, approximationContext),
-        e->childAtIndex(1).approximateToScalarWithValueForSymbol(
+        e->childAtIndex(1).approximateToRealScalarWithValueForSymbol(
             k_symbol, t, approximationContext));
   }
-  return Coordinate2D<T>(t, e->approximateToScalarWithValueForSymbol(
+  return Coordinate2D<T>(t, e->approximateToRealScalarWithValueForSymbol(
                                 k_symbol, t, approximationContext));
 #endif
   return Coordinate2D<T>(

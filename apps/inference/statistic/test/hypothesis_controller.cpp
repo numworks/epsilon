@@ -71,7 +71,7 @@ bool HypothesisController::textFieldDidReceiveEvent(
 bool HypothesisController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
-      Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<double>(
+      Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<double>(
           textField->draftText(),
           AppsContainerHelper::sharedAppsContainerGlobalContext(),
           Poincare::Preferences::SharedPreferences()->complexFormat(),

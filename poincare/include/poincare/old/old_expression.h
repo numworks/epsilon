@@ -444,7 +444,7 @@ class OExpression : public PoolHandle {
   OExpression approximateKeepingUnits(
       const ReductionContext& reductionContext) const;
   template <typename U>
-  U approximateToScalar(
+  U approximateToRealScalar(
       const ApproximationContext& approximationContext) const {
     assert(false);
     return NAN;

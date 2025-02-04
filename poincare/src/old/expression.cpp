@@ -412,7 +412,7 @@ OExpression OExpression::shallowReduceUsingApproximation(
   double approx =
       node()
           ->approximate(double(), ApproximationContext(reductionContext, true))
-          .toScalar();
+          .toRealScalar();
   /* If approx is capped by the largest integer such as all smaller integers can
    * be exactly represented in IEEE754, approx is the exact result (no
    * precision were loss). */

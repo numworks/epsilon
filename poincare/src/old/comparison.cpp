@@ -244,9 +244,9 @@ Evaluation<T> ComparisonNode::templatedApproximate(
     }
     std::complex<T> difference = firstChildApprox.complexAtIndex(0) -
                                  secondChildApprox.complexAtIndex(0);
-    T scalarDifference = ComplexNode<T>::ToScalar(difference);
-    T epsilon = std::max(std::fabs(firstChildApprox.toScalar()),
-                         std::fabs(secondChildApprox.toScalar())) *
+    T scalarDifference = ComplexNode<T>::ToRealScalar(difference);
+    T epsilon = std::max(std::fabs(firstChildApprox.toRealScalar()),
+                         std::fabs(secondChildApprox.toRealScalar())) *
                 OMG::Float::Epsilon<T>();
     OMG::Troolean chidlrenAreEqual;
     OMG::Troolean leftChildIsGreater;

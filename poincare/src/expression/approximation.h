@@ -113,12 +113,13 @@ std::complex<T> ToComplex(const Tree* e, Parameters params,
                           Context context = Context());
 
 template <typename T>
-PointOrScalar<T> ToPointOrScalar(const Tree* e, Parameters params,
-                                 Context context = Context());
+PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
+                                         Context context = Context());
 // Approximate with given value for VarX
 template <typename T>
-PointOrScalar<T> ToPointOrScalar(const Tree* e, T abscissa, Parameters params,
-                                 Context context = Context());
+PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
+                                         Parameters params,
+                                         Context context = Context());
 
 template <typename T>
 Coordinate2D<T> ToPoint(const Tree* e, Parameters params,

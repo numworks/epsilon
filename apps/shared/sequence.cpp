@@ -165,7 +165,7 @@ double Sequence::approximateAtContextRank(Context* ctx, int rank,
     return NAN;
   }
   if (rank >= firstNonInitialRank()) {
-    return expressionReduced(ctx).approximateToScalarWithValue(
+    return expressionReduced(ctx).approximateToRealScalarWithValue(
         static_cast<double>(rank - order()));
   }
   assert(type() != Type::Explicit);
@@ -176,7 +176,7 @@ double Sequence::approximateAtContextRank(Context* ctx, int rank,
     assert(type() == Type::DoubleRecurrence);
     e = secondInitialConditionExpressionReduced(ctx);
   }
-  return e.approximateToScalar<double>();
+  return e.approximateToRealScalar<double>();
 }
 
 UserExpression Sequence::sumBetweenBounds(double start, double end,

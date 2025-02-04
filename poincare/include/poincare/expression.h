@@ -147,7 +147,7 @@ class Expression : public PoolHandle {
   template <typename T>
   static SystemExpression Builder(Coordinate2D<T> point);
   template <typename T>
-  static SystemExpression Builder(PointOrScalar<T> pointOrScalar);
+  static SystemExpression Builder(PointOrRealScalar<T> pointOrReal);
 
   static SystemExpression DecimalBuilderFromDouble(double v);
   static SystemExpression RationalBuilder(int32_t numerator,
@@ -192,34 +192,35 @@ class Expression : public PoolHandle {
 
   SystemExpression getReducedDerivative(const char* symbolName,
                                         int derivationOrder = 1) const;
-  /* Replace some UserSymbol into Var0 for approximateToPointOrScalarWithValue
-   * Returns undef if the expression's dimension is not point or scalar.
-   * If scalarsOnly = true, returns undef if it's a point or a list. */
+  /* Replace some UserSymbol into Var0 for
+   * approximateToPointOrRealScalarWithValue Returns undef if the expression's
+   * dimension is not point or scalar. If scalarsOnly = true, returns undef if
+   * it's a point or a list. */
   SystemFunction getSystemFunction(const char* symbolName,
                                    bool scalarsOnly = false) const;
-  // Approximate scalar or unit
+  // Approximate real scalar or unit
   template <typename T>
-  T approximateToScalar(
+  T approximateToRealScalar(
       Preferences::AngleUnit angleUnit = Preferences::AngleUnit::None,
       Preferences::ComplexFormat complexFormat =
           Preferences::ComplexFormat::None,
       Context* context = nullptr) const;
-  // Approximate to scalar replacing Var0 with value.
+  // Approximate to real scalar replacing Var0 with value.
   template <typename T>
-  T approximateToScalarWithValue(T x, int listElement = -1) const;
-  // Approximate to PointOrScalar replacing Var0 with value.
+  T approximateToRealScalarWithValue(T x, int listElement = -1) const;
+  // Approximate to PointOrRealScalar replacing Var0 with value.
   template <typename T>
-  PointOrScalar<T> approximateToPointOrScalarWithValue(T x) const;
+  PointOrRealScalar<T> approximateToPointOrRealScalarWithValue(T x) const;
 
   template <typename T>
-  T approximateSystemToScalar() const;
+  T approximateSystemToRealScalar() const;
 
   template <typename T>
   Coordinate2D<T> approximateToPoint() const;
 
   template <typename T>
-  T approximateIntegralToScalar(const SystemExpression& lowerBound,
-                                const SystemExpression& upperBound) const;
+  T approximateIntegralToRealScalar(const SystemExpression& lowerBound,
+                                    const SystemExpression& upperBound) const;
 
   // Return SystemExpression with sorted approximated elements.
   template <typename T>
@@ -233,9 +234,9 @@ class Expression : public PoolHandle {
     return object()->approximateToTree<T>(approximationContext);
   }
   /* Approximation Helper
-   * Return NAN for all non scalar expressions. */
+   * Return NAN for all non real scalar expressions. */
   template <typename T>
-  static T ParseAndSimplifyAndApproximateToScalar(
+  static T ParseAndSimplifyAndApproximateToRealScalar(
       const char* text, Context* context,
       Preferences::ComplexFormat complexFormat,
       Preferences::AngleUnit angleUnit,

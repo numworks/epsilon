@@ -44,7 +44,7 @@ int ListNode::extremumIndex(const ApproximationContext& approximationContext,
     ExpressionNode* child = childAtIndex(i);
     float newValue =
         child->approximate(static_cast<float>(0), approximationContext)
-            .toScalar();
+            .toRealScalar();
     if (std::isnan(newValue)) {
       return -1;
     }

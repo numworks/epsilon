@@ -72,11 +72,11 @@ Evaluation<T> RandintNode::templateApproximate(
         T b;
         if (numberOfComplexes == 1) {
           a = static_cast<T>(k_defaultMinBound);
-          b = ComplexNode<T>::ToScalar(c[0]);
+          b = ComplexNode<T>::ToRealcalar(c[0]);
         } else {
           assert(numberOfComplexes == 2);
-          a = ComplexNode<T>::ToScalar(c[0]);
-          b = ComplexNode<T>::ToScalar(c[1]);
+          a = ComplexNode<T>::ToRealScalar(c[0]);
+          b = ComplexNode<T>::ToRealScalar(c[1]);
         }
         /* randint is undefined if:
          * - one of the bounds is NAN or INF

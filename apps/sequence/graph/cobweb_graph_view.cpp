@@ -75,7 +75,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   Curve2DEvaluation<float> evaluateFunction = [](float t, void* model,
                                                  void* context) {
     Poincare::SystemFunction* e = (Poincare::SystemFunction*)model;
-    return Poincare::Coordinate2D<float>(t, e->approximateToScalarWithValue(t));
+    return Poincare::Coordinate2D<float>(
+        t, e->approximateToRealScalarWithValue(t));
   };
   if (!shouldUpdate()) {
     float xMin = plotView->range()->xMin();

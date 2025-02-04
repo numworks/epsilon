@@ -58,7 +58,7 @@ int Polynomial::QuadraticPolynomialRoots(OExpression a, OExpression b,
   OMG::Troolean deltaNull = delta->isNull(context);
   if (deltaNull == OMG::Troolean::True ||
       (deltaNull == OMG::Troolean::Unknown &&
-       delta->approximateToScalar<double>(approximationContext) == 0.)) {
+       delta->approximateToRealScalar<double>(approximationContext) == 0.)) {
     *root1 = Division::Builder(
         Opposite::Builder(b.clone()),
         Multiplication::Builder(Rational::Builder(2), a.clone()));
@@ -70,7 +70,7 @@ int Polynomial::QuadraticPolynomialRoots(OExpression a, OExpression b,
     OMG::Troolean aPositive = a.isPositive(context);
     if (aPositive != OMG::Troolean::True &&
         (aPositive == OMG::Troolean::False ||
-         a.approximateToScalar<double>(approximationContext) < 0.)) {
+         a.approximateToRealScalar<double>(approximationContext) < 0.)) {
       // Coefficient a is negative, swap root1 and root 2 to preseverve order.
       offset = 1;
     }
@@ -123,8 +123,8 @@ static bool rootSmallerThan(const OExpression *root1, const OExpression *root2,
   if (root1->isUndefined()) {
     return false;
   }
-  float r1 = root1->approximateToScalar<float>(*approximationContext);
-  float r2 = root2->approximateToScalar<float>(*approximationContext);
+  float r1 = root1->approximateToRealScalar<float>(*approximationContext);
+  float r2 = root2->approximateToRealScalar<float>(*approximationContext);
 
   if (!std::isnan(r1) || !std::isnan(r2)) {
     // std::isnan(r1) => (r1 <= r2) is false
@@ -133,9 +133,9 @@ static bool rootSmallerThan(const OExpression *root1, const OExpression *root2,
 
   // r1 and r2 aren't finite, compare the real part
   float rr1 = RealPart::Builder(root1->clone())
-                  .approximateToScalar<float>(*approximationContext);
+                  .approximateToRealScalar<float>(*approximationContext);
   float rr2 = RealPart::Builder(root2->clone())
-                  .approximateToScalar<float>(*approximationContext);
+                  .approximateToRealScalar<float>(*approximationContext);
 
   if (rr1 != rr2) {
     return rr1 <= rr2;
@@ -143,9 +143,9 @@ static bool rootSmallerThan(const OExpression *root1, const OExpression *root2,
 
   // Compare the imaginary part
   float ir1 = ImaginaryPart::Builder(root1->clone())
-                  .approximateToScalar<float>(*approximationContext);
+                  .approximateToRealScalar<float>(*approximationContext);
   float ir2 = ImaginaryPart::Builder(root2->clone())
-                  .approximateToScalar<float>(*approximationContext);
+                  .approximateToRealScalar<float>(*approximationContext);
   return ir1 <= ir2;
 }
 
@@ -236,16 +236,16 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
    * (even though in most case it would be caught by the following case) in
    * case c is null. */
   if (d.isNull(context) == OMG::Troolean::True ||
-      d.approximateToScalar<double>(approximationContext) == 0.) {
+      d.approximateToRealScalar<double>(approximationContext) == 0.) {
     *root1 = Rational::Builder(0);
   }
   /* Polynoms of the form "ax^3+d=0" have a simple solutions : x1 = sqrt(-d/a,3)
    * x2 = roots[1] * x1 and x3 = roots[2] * x1. */
   if (root1->isUninitialized() &&
       (b.isNull(context) == OMG::Troolean::True ||
-       b.approximateToScalar<double>(approximationContext) == 0.) &&
+       b.approximateToRealScalar<double>(approximationContext) == 0.) &&
       (c.isNull(context) == OMG::Troolean::True ||
-       c.approximateToScalar<double>(approximationContext) == 0.)) {
+       c.approximateToRealScalar<double>(approximationContext) == 0.)) {
     *root1 = NthRoot::Builder(
         Division::Builder(Opposite::Builder(d.clone()), a.clone()),
         Rational::Builder(3));
@@ -318,7 +318,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
       deltaSign = 0;
     } else {
       double deltaValue =
-          delta->approximateToScalar<double>(approximationContext);
+          delta->approximateToRealScalar<double>(approximationContext);
       /* A complex delta (NAN deltaValue) must be handled like a negative delta
        * This ternary operator's condition order is important here. */
       deltaSign = deltaValue == 0. ? 0 : deltaValue > 0. ? 1 : -1;
@@ -332,7 +332,7 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
             .cloneAndSimplify(reductionContext);
     if (deltaSign == 0) {
       if (delta0.isNull(context) == OMG::Troolean::True ||
-          delta0.approximateToScalar<double>(approximationContext) == 0.) {
+          delta0.approximateToRealScalar<double>(approximationContext) == 0.) {
         // -b / 3a
         *root1 = Division::Builder(
             b.clone(),
@@ -442,9 +442,9 @@ int Polynomial::CubicPolynomialRoots(OExpression a, OExpression b,
                * have an infinitesimal imaginary size. As such, we strip the
                * imaginary part from the root with the smallest imaginary part.
                */
-              float im = std::fabs(
-                  ImaginaryPart::Builder(roots[i]).approximateToScalar<float>(
-                      approximationComplexContext));
+              float im = std::fabs(ImaginaryPart::Builder(roots[i])
+                                       .approximateToRealScalar<float>(
+                                           approximationComplexContext));
               if (im < minimalImaginaryPart) {
                 minimalImaginaryPart = im;
                 loneRealRootIndex = i;
@@ -681,7 +681,7 @@ OExpression Polynomial::CardanoNumber(
             Rational::Builder(4),
             Power::Builder(delta0.clone(), Rational::Builder(3)))));
     OExpression diff;
-    if (SignFunction::Builder(delta1).approximateToScalar<double>(
+    if (SignFunction::Builder(delta1).approximateToRealScalar<double>(
             approximationContext) <= 0.0) {
       diff = Subtraction::Builder(delta1.clone(), rootDeltaDifference);
     } else {

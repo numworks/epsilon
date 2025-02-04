@@ -344,7 +344,8 @@ OExpression Multiplication::shallowBeautify(
     if (units.isPureAngleUnit()) {
       if (unitConversionMode == UnitConversion::Default) {
         // Pure angle unit is the only unit allowed to be evaluated exactly
-        double value = self.approximateToScalar<double>(approximationContext);
+        double value =
+            self.approximateToRealScalar<double>(approximationContext);
         OExpression toUnit = units.clone();
         OUnit::ChooseBestRepresentativeAndPrefixForValue(toUnit, &value,
                                                          reductionContext);
@@ -467,7 +468,7 @@ OExpression Multiplication::shallowBeautify(
      * most relevant.
      */
 
-    double value = self.approximateToScalar<double>(approximationContext);
+    double value = self.approximateToRealScalar<double>(approximationContext);
     if (std::isnan(value)) {
       // If the value is undefined, return "undef" without any unit
       result = Undefined::Builder();

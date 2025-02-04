@@ -154,7 +154,7 @@ bool AdditionalResultsType::HasUnit(
   assert(exactOutput.hasUnit());
 #if 1  // TODO_PCJ
   // Assume units that cancel themselves have been removed by simplification.
-  double value = exactOutput.approximateToScalar<double>(
+  double value = exactOutput.approximateToRealScalar<double>(
       calculationPreferences.angleUnit, calculationPreferences.complexFormat);
   /* TODO_PCJ: For now we assume there will always be AdditionalOutputs to
    * display if approximation is finite. We should simplify the exact output
@@ -176,7 +176,8 @@ bool AdditionalResultsType::HasUnit(
        .angleUnit = angleUnit,
        .symbolicComputation = SymbolicComputation::ReplaceAllSymbols,
        .unitConversion = UnitConversion::None});
-  double value = clone.approximateToScalar<double>(angleUnit, complexFormat);
+  double value =
+      clone.approximateToRealScalar<double>(angleUnit, complexFormat);
   if (!unit.isUninitialized() &&
       (Unit::ShouldDisplayAdditionalOutputs(
            value, unit,

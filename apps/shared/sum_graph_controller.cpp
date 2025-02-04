@@ -216,7 +216,7 @@ void SumGraphController::reloadBannerView() {
     Poincare::Context* context = FunctionApp::app()->localContext();
     Poincare::SystemExpression sum =
         createSumExpression(m_startSum, endSum, context);
-    result = sum.approximateToScalar<double>();
+    result = sum.approximateToRealScalar<double>();
     functionLayout = createFunctionLayout();
   } else {
     m_legendView.setEditableZone(m_cursor->x());

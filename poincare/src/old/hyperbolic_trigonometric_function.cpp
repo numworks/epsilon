@@ -47,7 +47,7 @@ OExpression HyperbolicTrigonometricFunction::shallowReduce(
                 Preferences::ComplexFormat::Real ||
             (e.isReal(reductionContext.context(),
                       reductionContext.shouldCheckMatrices()) &&
-             e.approximateToScalar<double>(approximationContext) >= 1.0)) {
+             e.approximateToRealScalar<double>(approximationContext) >= 1.0)) {
           result = e;
         }
       }
@@ -58,7 +58,7 @@ OExpression HyperbolicTrigonometricFunction::shallowReduce(
                 Preferences::ComplexFormat::Real ||
             (e.isReal(reductionContext.context(),
                       reductionContext.shouldCheckMatrices()) &&
-             e.approximateToScalar<double>(approximationContext) >= 0.0)) {
+             e.approximateToRealScalar<double>(approximationContext) >= 0.0)) {
           result = e;
         }
       }
@@ -77,8 +77,8 @@ OExpression HyperbolicTrigonometricFunction::shallowReduce(
                 Preferences::ComplexFormat::Real ||
             (e.isReal(reductionContext.context(),
                       reductionContext.shouldCheckMatrices()) &&
-             std::fabs(e.approximateToScalar<double>(approximationContext)) <
-                 1.0)) {
+             std::fabs(e.approximateToRealScalar<double>(
+                 approximationContext)) < 1.0)) {
           result = e;
         }
       }

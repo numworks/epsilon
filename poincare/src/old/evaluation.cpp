@@ -9,7 +9,7 @@ namespace Poincare {
 
 template <typename T>
 bool EvaluationNode<T>::isDefinedScalar() const {
-  return !std::isnan(toScalar());
+  return !std::isnan(toRealScalar());
 }
 
 template <typename T>

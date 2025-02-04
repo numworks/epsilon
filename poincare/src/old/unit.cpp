@@ -1136,7 +1136,7 @@ static void chooseBestRepresentativeAndPrefixForValueOnSingleUnit(
     assert(factor.childAtIndex(1).otype() == ExpressionNode::Type::Rational);
     ApproximationContext approximationContext(reductionContext);
     exponent = static_cast<Rational&>(childExponent)
-                   .approximateToScalar<double>(approximationContext);
+                   .approximateToRealScalar<double>(approximationContext);
     factor = factor.childAtIndex(0);
   }
   assert(factor.otype() == ExpressionNode::Type::OUnit);
@@ -1263,7 +1263,7 @@ OExpression OUnit::ConvertTemperatureUnits(
 
   const Prefix* startPrefix = static_cast<OUnit&>(startUnit).node()->prefix();
   ApproximationContext approximationContext(reductionContext);
-  double value = e.approximateToScalar<double>(approximationContext);
+  double value = e.approximateToRealScalar<double>(approximationContext);
   return Multiplication::Builder(
       Float<double>::Builder(TemperatureRepresentative::ConvertTemperatures(
                                  value * std::pow(10., startPrefix->exponent()),

@@ -24,7 +24,7 @@ class GraphControllerHelper {
                                      double start, double end,
                                      int subCurveIndex);
   // Returns the derivative displayed in banner
-  Poincare::PointOrScalar<double>
+  Poincare::PointOrRealScalar<double>
   reloadDerivativeInBannerViewForCursorOnFunction(
       Shared::CurveViewCursor* cursor, Ion::Storage::Record record,
       int derivationOrder);

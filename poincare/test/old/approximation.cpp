@@ -2224,7 +2224,7 @@ void assert_expression_approximates_with_value_for_symbol(
   Internal::Tree *e = parse_expression(expression, &globalContext);
   ApproximationContext approximationContext(&globalContext, complexFormat,
                                             angleUnit);
-  T result = e.approximateToScalarWithValueForSymbol<T>(symbol, symbolValue,
+  T result = e.approximateToRealScalarWithValueForSymbol<T>(symbol, symbolValue,
                                                         approximationContext);
   quiz_assert_print_if_failure(
       roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(),

@@ -31,7 +31,7 @@ class ParameteredExpressionNode : public ExpressionNode {
   T firstChildScalarValueForArgument(
       T x, const ApproximationContext& approximationContext) const {
     return approximateFirstChildWithArgument(x, approximationContext)
-        .toScalar();
+        .toRealScalar();
   }
   template <typename T>
   Evaluation<T> approximateExpressionWithArgument(

@@ -26,7 +26,7 @@ OExpression ListMedian::shallowReduce(ReductionContext reductionContext) {
       if (std::isnan(listChild.childAtIndex(i)
                          .node()
                          ->approximate(0.0f, approximationContext)
-                         .toScalar())) {
+                         .toRealScalar())) {
         /* One of the children can't be approximated for now, but could be
          * later: let approximation handle this */
         return *this;

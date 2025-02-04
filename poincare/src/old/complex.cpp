@@ -37,13 +37,13 @@ ComplexNode<T>::ComplexNode(std::complex<T> c)
 }
 
 template <typename T>
-T ComplexNode<T>::ToScalar(const std::complex<T> c) {
+T ComplexNode<T>::ToRealScalar(const std::complex<T> c) {
   return c.imag() == static_cast<T>(0.0) ? c.real() : NAN;
 }
 
 template <typename T>
-T ComplexNode<T>::toScalar() const {
-  return ToScalar(*this);
+T ComplexNode<T>::toRealScalar() const {
+  return ToRealScalar(*this);
 }
 
 template <typename T>

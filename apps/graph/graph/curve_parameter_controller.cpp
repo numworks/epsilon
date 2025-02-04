@@ -192,11 +192,12 @@ double CurveParameterController::evaluateDerivativeAt(ParameterIndex index,
   assert(derivationOrder == 1 || derivationOrder == 2);
   assert(function()->canDisplayDerivative());
   bool firstComponent = parameterAtIndexIsFirstComponent(index);
-  PointOrScalar<double> derivative = function()->approximateDerivative<double>(
-      m_cursor->t(), context, derivationOrder);
-  if (derivative.isScalar()) {
+  PointOrRealScalar<double> derivative =
+      function()->approximateDerivative<double>(m_cursor->t(), context,
+                                                derivationOrder);
+  if (derivative.isRealScalar()) {
     assert(firstComponent);
-    return derivative.toScalar();
+    return derivative.toRealScalar();
   }
   assert(derivative.isPoint());
   Coordinate2D<double> xy = derivative.toPoint();

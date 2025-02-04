@@ -215,7 +215,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   }
   /* Formula isn't a list and has already been approximated with context, which
    * is no longer needed. Set each cell to the same value */
-  double evaluation = formula.approximateToScalar<double>();
+  double evaluation = formula.approximateToRealScalar<double>();
   if (std::isnan(evaluation)) {
     return FillColumnStatus::DataNotSuitable;
   }
@@ -229,7 +229,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   for (int j = 0; j < numberOfPairs; j++) {
     store()->set(evaluation, *series, *column, j, true, true);
     if (evaluateForEachPairs) {
-      evaluation = formula.approximateToScalar<double>();
+      evaluation = formula.approximateToRealScalar<double>();
     }
   }
   return FillColumnStatus::Success;

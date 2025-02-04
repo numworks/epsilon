@@ -253,11 +253,12 @@ SystemExpression SystemExpression::Builder(Coordinate2D<T> point) {
 }
 
 template <typename T>
-SystemExpression SystemExpression::Builder(PointOrScalar<T> pointOrScalar) {
-  if (pointOrScalar.isScalar()) {
-    return Builder<T>(pointOrScalar.toScalar());
+SystemExpression SystemExpression::Builder(
+    PointOrRealScalar<T> pointOrRealScalar) {
+  if (pointOrRealScalar.isRealScalar()) {
+    return Builder<T>(pointOrRealScalar.toRealScalar());
   }
-  return Builder<T>(pointOrScalar.toPoint());
+  return Builder<T>(pointOrRealScalar.toPoint());
 }
 
 SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
@@ -447,9 +448,9 @@ SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
 }
 
 template <typename T>
-T UserExpression::approximateToScalar(AngleUnit angleUnit,
-                                      ComplexFormat complexFormat,
-                                      Context* context) const {
+T UserExpression::approximateToRealScalar(AngleUnit angleUnit,
+                                          ComplexFormat complexFormat,
+                                          Context* context) const {
   assert(Poincare::Dimension(*this, context).isScalar() ||
          Poincare::Dimension(*this, context).isUnit());
   return Approximation::To<T>(
@@ -460,8 +461,8 @@ T UserExpression::approximateToScalar(AngleUnit angleUnit,
 }
 
 template <typename T>
-T SystemFunctionScalar::approximateToScalarWithValue(T x,
-                                                     int listElement) const {
+T SystemFunctionScalar::approximateToRealScalarWithValue(
+    T x, int listElement) const {
   return Approximation::To<T>(
       tree(), x, Approximation::Parameters{.isRootAndCanHaveRandom = true},
       Approximation::Context(AngleUnit::None, ComplexFormat::None, nullptr,
@@ -469,7 +470,7 @@ T SystemFunctionScalar::approximateToScalarWithValue(T x,
 }
 
 template <typename T>
-T UserExpression::ParseAndSimplifyAndApproximateToScalar(
+T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
     const char* text, Context* context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     SymbolicComputation symbolicComputation) {
@@ -486,7 +487,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToScalar(
   if (!Poincare::Dimension(exp, context).isScalar()) {
     return NAN;
   }
-  return exp.approximateToScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat);
+  return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat);
 }
 
 template <typename T>
@@ -548,14 +549,14 @@ bool SystemFunction::isDiscontinuousOnInterval(T minBound, T maxBound) const {
 }
 
 template <typename T>
-PointOrScalar<T> SystemFunction::approximateToPointOrScalarWithValue(
+PointOrRealScalar<T> SystemFunction::approximateToPointOrRealScalarWithValue(
     T x) const {
-  return Internal::Approximation::ToPointOrScalar<T>(
+  return Internal::Approximation::ToPointOrRealScalar<T>(
       tree(), x, Approximation::Parameters{.isRootAndCanHaveRandom = true});
 }
 
 template <typename T>
-T SystemExpression::approximateSystemToScalar() const {
+T SystemExpression::approximateSystemToRealScalar() const {
   return Approximation::To<T>(
       tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                         .prepare = true});
@@ -569,7 +570,7 @@ Coordinate2D<T> SystemExpression::approximateToPoint() const {
 }
 
 template <typename T>
-T SystemFunction::approximateIntegralToScalar(
+T SystemFunction::approximateIntegralToRealScalar(
     const SystemExpression& lowerBound,
     const SystemExpression& upperBound) const {
   Tree* integralTree = PatternMatching::Create(
@@ -1156,23 +1157,23 @@ template SystemExpression SystemExpression::Builder<float>(Coordinate2D<float>);
 template SystemExpression SystemExpression::Builder<double>(
     Coordinate2D<double>);
 template SystemExpression SystemExpression::Builder<float>(
-    PointOrScalar<float>);
+    PointOrRealScalar<float>);
 template SystemExpression SystemExpression::Builder<double>(
-    PointOrScalar<double>);
+    PointOrRealScalar<double>);
 
-template PointOrScalar<float>
-SystemFunction::approximateToPointOrScalarWithValue<float>(float) const;
-template PointOrScalar<double>
-SystemFunction::approximateToPointOrScalarWithValue<double>(double) const;
+template PointOrRealScalar<float>
+SystemFunction::approximateToPointOrRealScalarWithValue<float>(float) const;
+template PointOrRealScalar<double>
+SystemFunction::approximateToPointOrRealScalarWithValue<double>(double) const;
 
 template SystemExpression SystemExpression::approximateListAndSort<float>()
     const;
 template SystemExpression SystemExpression::approximateListAndSort<double>()
     const;
 
-template float SystemFunctionScalar::approximateToScalarWithValue<float>(
+template float SystemFunctionScalar::approximateToRealScalarWithValue<float>(
     float, int) const;
-template double SystemFunctionScalar::approximateToScalarWithValue<double>(
+template double SystemFunctionScalar::approximateToRealScalarWithValue<double>(
     double, int) const;
 
 template bool SystemFunction::isDiscontinuousOnInterval<float>(float,
@@ -1180,36 +1181,36 @@ template bool SystemFunction::isDiscontinuousOnInterval<float>(float,
 template bool SystemFunction::isDiscontinuousOnInterval<double>(double,
                                                                 double) const;
 
-template float SystemExpression::approximateSystemToScalar<float>() const;
-template double SystemExpression::approximateSystemToScalar<double>() const;
+template float SystemExpression::approximateSystemToRealScalar<float>() const;
+template double SystemExpression::approximateSystemToRealScalar<double>() const;
 
 template Coordinate2D<float> SystemExpression::approximateToPoint<float>()
     const;
 template Coordinate2D<double> SystemExpression::approximateToPoint<double>()
     const;
 
-template float SystemFunction::approximateIntegralToScalar<float>(
+template float SystemFunction::approximateIntegralToRealScalar<float>(
     const SystemExpression& upperBound,
     const SystemExpression& lowerBound) const;
-template double SystemFunction::approximateIntegralToScalar<double>(
+template double SystemFunction::approximateIntegralToRealScalar<double>(
     const SystemExpression& upperBound,
     const SystemExpression& lowerBound) const;
 
-template float UserExpression::ParseAndSimplifyAndApproximateToScalar<float>(
-    const char*, Context*, Preferences::ComplexFormat, Preferences::AngleUnit,
-    SymbolicComputation);
-template double UserExpression::ParseAndSimplifyAndApproximateToScalar<double>(
-    const char*, Context*, Preferences::ComplexFormat, Preferences::AngleUnit,
-    SymbolicComputation);
+template float UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
+    float>(const char*, Context*, Preferences::ComplexFormat,
+           Preferences::AngleUnit, SymbolicComputation);
+template double UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
+    double>(const char*, Context*, Preferences::ComplexFormat,
+            Preferences::AngleUnit, SymbolicComputation);
 
 template bool UserExpression::hasDefinedComplexApproximation<float>(
     const ApproximationContext&, float*, float*) const;
 template bool UserExpression::hasDefinedComplexApproximation<double>(
     const ApproximationContext&, double*, double*) const;
 
-template float UserExpression::approximateToScalar<float>(
+template float UserExpression::approximateToRealScalar<float>(
     Preferences::AngleUnit, Preferences::ComplexFormat, Context*) const;
-template double UserExpression::approximateToScalar<double>(
+template double UserExpression::approximateToRealScalar<double>(
     Preferences::AngleUnit, Preferences::ComplexFormat, Context*) const;
 
 }  // namespace Poincare

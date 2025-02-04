@@ -44,8 +44,8 @@ Evaluation<T> IntegralNode::templatedApproximate(
       childAtIndex(2)->approximate(T(), approximationContext);
   Evaluation<T> bInput =
       childAtIndex(3)->approximate(T(), approximationContext);
-  T a = aInput.toScalar();
-  T b = bInput.toScalar();
+  T a = aInput.toRealScalar();
+  T b = bInput.toRealScalar();
   if (std::isnan(a) || std::isnan(b)) {
     return Complex<T>::RealUndefined();
   }
@@ -204,7 +204,7 @@ T IntegralNode::integrandNearBound(
       return approximateExpressionWithArgument(
                  alternativeIntegrand.integrandNearA.node(), arg,
                  approximationContext)
-                 .toScalar() *
+                 .toRealScalar() *
              scale;
     }
     arg = arg + alternativeIntegrand.a;
@@ -213,7 +213,7 @@ T IntegralNode::integrandNearBound(
       return approximateExpressionWithArgument(
                  alternativeIntegrand.integrandNearB.node(), -arg,
                  approximationContext)
-                 .toScalar() *
+                 .toRealScalar() *
              scale;
     }
     arg = alternativeIntegrand.b - arg;

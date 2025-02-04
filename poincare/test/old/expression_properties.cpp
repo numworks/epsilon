@@ -424,11 +424,11 @@ void assert_sign_sets_to(
   ReductionContext reductionContext(&context, complexFormat, angleUnit,
                                     unitFormat, User);
   ApproximationContext approximationContext(reductionContext);
-  double eValue = e.approximateToScalar<double>(approximationContext);
+  double eValue = e.approximateToRealScalar<double>(approximationContext);
   OExpression f =
       e.setSign(isPositive == OMG::Troolean::True, reductionContext);
   quiz_assert(f.isPositive(&context) == isPositive);
-  double fValue = f.approximateToScalar<double>(approximationContext);
+  double fValue = f.approximateToRealScalar<double>(approximationContext);
   quiz_assert(fValue == (eSign == isPositive ? eValue : -eValue) ||
               (std::isnan(fValue) == std::isnan(eValue)));
 }
@@ -876,7 +876,7 @@ void assert_additional_results_compute_to(
   OExpression units;
   OExpression e = parse_expression(expression, &globalContext)
                       .cloneAndReduceAndRemoveUnit(reductionContext, &units);
-  double value = e.approximateToScalar<double>(approximationContext);
+  double value = e.approximateToRealScalar<double>(approximationContext);
 
   if (!OUnit::ShouldDisplayAdditionalOutputs(value, units, unitFormat)) {
     quiz_assert(length == 0);

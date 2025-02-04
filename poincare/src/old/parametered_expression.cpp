@@ -71,8 +71,8 @@ Evaluation<T> ParameteredExpressionNode::approximateExpressionWithArgument(
   PoolVariableContext variableContext =
       PoolVariableContext(symbol.name(), approximationContext.context());
   variableContext.setApproximationForVariable<T>(x);
-  /* Here we cannot use OExpression::approximateToScalarWithValueForSymbol which
-   * would reset the sApproximationEncounteredComplex flag. */
+  /* Here we cannot use OExpression::approximateToRealScalarWithValueForSymbol
+   * which would reset the sApproximationEncounteredComplex flag. */
   ApproximationContext childContext = approximationContext;
   childContext.setContext(&variableContext);
   return expression->approximate(T(), childContext);

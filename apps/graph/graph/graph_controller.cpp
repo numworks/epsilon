@@ -88,7 +88,7 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model) {
   assert(coordinate == 0 || coordinate == 1);
   // TODO: Approximating the other coordinate could be skipped for performances.
   Coordinate2D<T> value =
-      e->approximateToPointOrScalarWithValue<T>(t).toPoint();
+      e->approximateToPointOrRealScalarWithValue<T>(t).toPoint();
   return Coordinate2D<T>(t, (coordinate == 0) ? value.x() : value.y());
 }
 

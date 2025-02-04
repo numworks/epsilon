@@ -176,7 +176,7 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
   // Silence compiler warnings for assert
   (void)numberOfChar;
   // Extract displayed value
-  return Poincare::Expression::ParseAndSimplifyAndApproximateToScalar<T>(
+  return Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<T>(
       buffer, context,
       Poincare::Preferences::SharedPreferences()->complexFormat(),
       Poincare::Preferences::SharedPreferences()->angleUnit());

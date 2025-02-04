@@ -69,7 +69,7 @@ void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
 
   Curve2DEvaluation<float> evaluateFunction = [](float t, void* model, void*) {
     SystemFunctionScalar* e = (Expression*)model;
-    return Coordinate2D<float>(t, e->approximateToScalarWithValue(t));
+    return Coordinate2D<float>(t, e->approximateToRealScalarWithValue(t));
   };
 
   // Draw the curve

@@ -8,7 +8,7 @@ They return the approximated input under the requested dimension :
 - `ToTree` : Return a Tree.
 - `To` : Return a `double` or `float`, it is also overloaded to take an abscissa as parameter and replace Var0 with this value.
 - `ToComplex` :  Return a `std::complex`.
-- `ToPointOrScalar` : Return a `PointOrScalar`, also overloaded to take an abscissa.
+- `ToPointOrRealScalar` : Return a `PointOrRealScalar`, also overloaded to take an abscissa.
 - `ToPoint` : Return a `Point`.
 - `ToBoolean` : Return a `bool`.
 

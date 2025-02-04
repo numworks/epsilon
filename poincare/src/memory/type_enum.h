@@ -21,9 +21,9 @@ struct AnyType {
     /* Types disabled have an id > UINT8_MAX for the compiler to
      * ignore them when they serve as a switch case on a uint8_t
      * switch. */
-    return {static_cast<uint16_t>(static_cast<uint8_t>(e) + UINT8_MAX)};
+    return {static_cast<uint16_t>(static_cast<uint8_t>(e) + 256)};
   }
-  constexpr bool isEnabled() const { return m_id < UINT8_MAX; }
+  constexpr bool isEnabled() const { return m_id < 256; }
   constexpr operator uint16_t() const { return m_id; }
 
   uint16_t m_id;

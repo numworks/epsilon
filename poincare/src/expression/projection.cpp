@@ -428,6 +428,9 @@ bool Projection::Expand(Tree* e) {
     ComplexSign signOfChild = GetComplexSign(ctx.getTree(KA));
     if (signOfChild.isReal() && signOfChild.realSign().isPositive()) {
       // ArCosh(A) -> ln(A+sqrt(A^2-1)) for A real and positive
+      /* Warning: formula holds for x real and ≥ 1, but it seems to work for x ≥
+       * -1 using the principal branches of acosh and ln. TODO: Find a proof of
+       * that. */
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
           KLn(KAdd(KA, KPow(KAdd(KPow(KA, 2_e), -1_e), 1_e / 2_e))), ctx));
       return true;

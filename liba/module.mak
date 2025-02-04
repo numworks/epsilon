@@ -134,6 +134,7 @@ _sources_liba_test += $(addprefix test/, \
   double.c \
   float.c \
   ieee754.c \
+  limits.c \
   long.c \
   math.c \
   setjmp.c \

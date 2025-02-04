@@ -268,7 +268,7 @@ void SystematicOperation::ConvertPowerRealToPower(Tree* e) {
 bool SystematicOperation::ReducePowerReal(Tree* e) {
   assert(e->isPowReal());
   /* Return :
-   * - x^y if x is complex or positive or y is integer
+   * - x^y if y is integer or infinity, or if x is infinity or real and positive
    * - PowerReal(x,y) if y is not a rational
    * - Looking at y's reduced rational form p/q :
    *   * PowerReal(x,y) if x is of unknown sign and p odd
@@ -279,10 +279,12 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
   Tree* x = e->child(0);
   Tree* y = x->nextTree();
   ComplexSign ySign = GetComplexSign(y);
+  // x can be a matrix. This is handled with Pow.
   if (Infinity::IsPlusOrMinusInfinity(y) || ySign.isInteger()) {
     ConvertPowerRealToPower(e);
     return true;
   }
+  // Matrix of non-integer power has been ruled out in dimension check.
   assert(Dimension::Get(e).isScalarOrUnit());
   ComplexSign xSign = GetComplexSign(x);
   if (Infinity::IsPlusOrMinusInfinity(x) ||

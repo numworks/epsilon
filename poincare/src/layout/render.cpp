@@ -198,10 +198,6 @@ void Render::DrawRack(const Rack* l, KDContext* ctx, KDPoint p,
 #if POINCARE_SCANDIUM_LAYOUTS
       childStyle.backgroundColor = context->style.selectionColor;
       childStyle.glyphColor = context->style.backgroundColor;
-      childStyle.requiredPlaceholderColor =
-          context->style.optionalPlaceholderColor;
-      childStyle.optionalPlaceholderColor =
-          context->style.requiredPlaceholderColor;
 #else
       childStyle.backgroundColor = context->style.selectionColor;
 #endif

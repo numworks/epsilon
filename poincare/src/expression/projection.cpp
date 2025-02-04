@@ -281,12 +281,12 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   bool realMode = projectionContext->m_complexFormat == ComplexFormat::Real;
   if (e->isPow()) {
     if (PatternMatching::MatchReplace(e, KPow(e_e, KA), KExp(KA))) {
+      changed = true;
     } else if (realMode) {
       e->cloneNodeOverNode(KPowReal);
-    } else {
-      return changed;
+      changed = true;
     }
-    return true;
+    return changed;
   }
 
   if (e->isLnUser()) {

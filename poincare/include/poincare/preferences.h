@@ -71,6 +71,8 @@ class __attribute__((packed)) Preferences final {
           k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode -
           1 - k_numberOfBitsForComplexFormat;
     uint8_t numberOfSignificantDigits;
+
+    bool operator==(const CalculationPreferences&) const = default;
   };
 
   // Other preferences
@@ -98,6 +100,8 @@ class __attribute__((packed)) Preferences final {
   Preferences();
   static void Init();
   static Preferences* SharedPreferences();
+
+  bool operator==(const Preferences&) const = default;
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const Internal::Tree* e, Context* context,

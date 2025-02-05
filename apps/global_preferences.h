@@ -27,6 +27,8 @@ class __attribute__((packed)) GlobalPreferences {
 
   static GlobalPreferences* SharedGlobalPreferences();
 
+  bool operator==(const GlobalPreferences&) const = default;
+
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }

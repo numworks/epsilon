@@ -16,6 +16,9 @@ void flushGlobalDataNoPool() {
   Poincare::Internal::SharedTreeStack->flush();
   quiz_assert(Poincare::Context::GlobalContext == nullptr);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  // Check that preferences are at default values after each test
   quiz_assert(*Poincare::Preferences::SharedPreferences() ==
               Poincare::Preferences());
+  quiz_assert(*GlobalPreferences::SharedGlobalPreferences() ==
+              GlobalPreferencesTestBuilder::build());
 }

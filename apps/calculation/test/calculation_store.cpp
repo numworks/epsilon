@@ -265,7 +265,7 @@ void assertCalculationIs(const char* input, DisplayOutput display,
   if (sign != EqualSign::Unknown && display != DisplayOutput::ApproximateOnly &&
       display != DisplayOutput::ExactOnly) {
 #if POINCARE_STRICT_TESTS
-    quiz_assert(lastCalculation->equalSign(context) == sign);
+    quiz_assert(lastCalculation->equalSign(context, &outputLayouts) == sign);
 #else
     quiz_tolerate_print_if_failure(
         lastCalculation->equalSign(context, &outputLayouts) == sign, input,

@@ -389,7 +389,7 @@ NODE(UnitConversion, BASE, 2)
  * during context-less simplification and approximation. */
 NODE(AngleUnitContext, BASE, 1, { uint8_t angleUnit; })
 
-RANGE(Expression, RationalNegBig,AngleUnitContext )
+RANGE(Expression, RationalNegBig, AngleUnitContext)
 
 // SequenceExplicit(formula, firstRank)
 NODE(SequenceExplicit, BASE, 2)
@@ -400,7 +400,6 @@ NODE(SequenceSingleRecurrence, BASE, 3)
 NODE(SequenceDoubleRecurrence, BASE, 4)
 
 RANGE(Sequence, SequenceExplicit, SequenceDoubleRecurrence)
-
 
 // TODO: should this really be here ?
 NODE(PointOfInterest, BASE, 0, {

@@ -10,4 +10,6 @@ void flushGlobalDataNoPool() {
   Poincare::Internal::SharedTreeStack->flush();
   quiz_assert(Poincare::Context::GlobalContext == nullptr);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  quiz_assert(*Poincare::Preferences::SharedPreferences() ==
+              Poincare::Preferences());
 }

@@ -4,6 +4,7 @@
 #include "apps_container.h"
 #include "global_preferences.h"
 #include "init.h"
+#include "preferences_default_checker.h"
 
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN

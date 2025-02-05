@@ -27,6 +27,11 @@ class __attribute__((packed)) GlobalPreferences {
 
   constexpr static I18n::Country k_defaultCountry = I18n::Country::WW;
 
+  static constexpr const CountryPreferences& defaultCountryPreferences() {
+    return I18n::CountryPreferencesArray[static_cast<uint8_t>(
+        k_defaultCountry)];
+  }
+
   static GlobalPreferences* SharedGlobalPreferences();
 
   bool operator==(const GlobalPreferences&) const = default;

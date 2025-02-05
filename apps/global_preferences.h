@@ -18,6 +18,10 @@ class __attribute__((packed)) GlobalPreferences {
   friend OMG::GlobalBox<GlobalPreferences>;
   friend Ion::Storage::FileSystem;
 
+  /* Friend class for test purposes that can access the GlobalPreferences
+   * private constructor. */
+  friend class GlobalPreferencesTestBuilder;
+
  public:
   constexpr static char k_recordName[] = "gp";
 
@@ -120,6 +124,10 @@ class __attribute__((packed)) GlobalPreferences {
  private:
   constexpr static uint8_t k_version = 1;
 
+  /* GlobalPreferences is a singleton, hence the private constructor. The unique
+   * instance can be accessed through the
+   * GlobalPreferences::SharedGlobalPreferences() pointer.
+   */
   GlobalPreferences()
       : m_version(k_version),
         m_brightnessLevel(Ion::Backlight::MaxBrightness),

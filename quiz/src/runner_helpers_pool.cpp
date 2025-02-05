@@ -1,7 +1,5 @@
-#include <ion/storage/file_system.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/pool.h>
-#include <poincare/src/memory/tree_stack.h>
 
 #include "quiz.h"
 #include "runner_helpers.h"
@@ -9,10 +7,8 @@
 void flushGlobalData() {
   /* TODO: Only Pool and GlobalContext are expected to never leak. Uniformize
    * expectations. */
+  flushGlobalDataNoPool();
   quiz_assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
-  quiz_assert(Poincare::Context::GlobalContext == nullptr);
-  Poincare::Internal::SharedTreeStack->flush();
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 void exception_run(void (*inner_main)(const char*, const char*, const char*),

@@ -67,14 +67,14 @@
 
 #ifndef ONLY_LAYOUTS
 #define SCOPED_NODE(F) F
-#include <poincare/src/expression/types.h>
+#include <poincare/src/expression/types.inc>
 #undef SCOPED_NODE
 #endif
 
 // 2 - Layouts
 
 #define SCOPED_NODE(F) F##Layout
-#include <poincare/src/layout/types.h>
+#include <poincare/src/layout/types.inc>
 #undef SCOPED_NODE
 
 // 3 - Shared types

@@ -334,7 +334,7 @@ bool IsTrigoHyperbolic(const Tree *t) {
 > Prefer this:
 
 ```cpp
-// in types.h
+// in types.inc
 NODE(CosH, 1)
 NODE(SinH, 1)
 NODE(TanH, 1)

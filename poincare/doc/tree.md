@@ -60,8 +60,8 @@ with leaves (trees with no children) and their value is contained inside their n
 > stored in the following blocks.
 >
 
-You will find all the available types in [expression/types.h](/poincare/src/expression/types.h) and
- [layout/types.h](/poincare/src/layout/types.h).
+You will find all the available types in [expression/types.inc](/poincare/src/expression/types.inc) and
+ [layout/types.inc](/poincare/src/layout/types.inc).
 
 There is no class hierarchy corresponding to the types and they are intended to
 be used in a C-style manner:
@@ -90,7 +90,7 @@ depending on where your tree is or what its siblings are.
 
 ### Feature sets
 
-You will see in [expression/types.h](/poincare/src/expression/types.h)
+You will see in [expression/types.inc](/poincare/src/expression/types.inc)
 that most types have a `BASE` argument but some have another name here,
 such as `MATRIX`.
 

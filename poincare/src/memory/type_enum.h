@@ -10,7 +10,7 @@ enum class TypeEnum : uint8_t {
  * NODE(Fraction) in layout.h => FractionLayout,
  */
 #define NODE_USE(F, N, S) SCOPED_NODE(F),
-#include "types.h"
+#include "types.inc"
 };
 
 struct AnyType {
@@ -40,7 +40,7 @@ class Type {
 #define DISABLED_NODE_USE(F, N, S)          \
   static constexpr AnyType SCOPED_NODE(F) = \
       AnyType::Disabled(TypeEnum::SCOPED_NODE(F));
-#include "types.h"
+#include "types.inc"
 
   constexpr Type() {}
   constexpr Type(AnyType type)
@@ -63,7 +63,7 @@ class LayoutType {
  * NODE(Fraction) => Fraction = Type::FractionLayout,
  */
 #define NODE_USE(F, N, S) static constexpr auto F = Type::F##Layout;
-#include "types.h"
+#include "types.inc"
 
   constexpr LayoutType(AnyType type)
       : m_value(static_cast<TypeEnum>(static_cast<uint8_t>(type))) {

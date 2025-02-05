@@ -103,7 +103,7 @@ class AbstractTreeStack : public BlockStack {
 #define PUSHER_(F, N, S) PUSHER(F, N, S)
 #define NODE_USE(F, N, S) PUSHER_(SCOPED_NODE(F), N, S)
 #define DISABLED_NODE_USE(F, N, S)
-#include "types.h"
+#include "types.inc"
 #undef PUSHER
 #undef PUSHER_
 
@@ -116,7 +116,7 @@ class AbstractTreeStack : public BlockStack {
   }
 #define PUSHER_(F) PUSHER(F)
 #define DISABLED_NODE_USE(F, N, S) PUSHER_(SCOPED_NODE(F))
-#include "types.h"
+#include "types.inc"
 #undef PUSHER
 #undef PUSHER_
 

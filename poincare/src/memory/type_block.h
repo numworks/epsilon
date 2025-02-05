@@ -41,14 +41,14 @@ namespace CustomTypeStructs {
  */
 
 #define NODE_DECL(F, N, S) struct NODE_NAME(F) S;
-#include "types.h"
+#include "types.inc"
 }  // namespace CustomTypeStructs
 
 consteval bool rangeIsDisabled(uint8_t first, uint8_t last) {
   constexpr const bool isEnabled[] = {
 #define NODE_USE(F, N, S) true,
 #define DISABLED_NODE_USE(F, N, S) false,
-#include "types.h"
+#include "types.inc"
   };
   for (uint8_t i = first; i <= last; i++) {
     if (isEnabled[i]) {
@@ -77,7 +77,7 @@ class TypeBlock : public Block {
   static constexpr const char* names[] = {
 #define NODE_USE(F, N, S) #F,
 #define DISABLED_NODE_USE(F, N, S) "",
-#include "types.h"
+#include "types.inc"
   };
 #endif
 
@@ -100,7 +100,7 @@ class TypeBlock : public Block {
 
 #define RANGE1(N) RANGE(N, N, N)
 #define NODE_USE(F, N, S) RANGE1(SCOPED_NODE(F))
-#include "types.h"
+#include "types.inc"
 #undef RANGE1
 
   consteval static size_t DefaultNumberOfMetaBlocks(int N) {
@@ -121,7 +121,7 @@ class TypeBlock : public Block {
   }
 #define CAST(F, N, T) CAST_(F, N, T)
 #define NODE_DECL(F, N, S) CAST(NODE_NAME(F), N, SCOPED_NODE(F))
-#include "types.h"
+#include "types.inc"
 #undef CAST_
 #undef CAST
 
@@ -175,7 +175,7 @@ class TypeBlock : public Block {
   case Type::SCOPED_NODE(F): \
     return DefaultNumberOfMetaBlocks(N) + S;
 #define DISABLED_NODE_USE(F, N, S)
-#include "types.h"
+#include "types.inc"
       default:
         return 1;
     }
@@ -254,7 +254,7 @@ class TypeBlock : public Block {
   case Type::SCOPED_NODE(F): \
     return N;
 #define DISABLED_NODE_USE(F, N, S)
-#include "types.h"
+#include "types.inc"
       default:
         return 0;
     }

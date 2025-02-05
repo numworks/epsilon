@@ -640,19 +640,20 @@ bool AbstractTextField::storeInClipboard() const {
 }
 
 bool AbstractTextField::handleStoreEvent() {
-  assert(App::app()->canStoreLayout());
-  if (!isEditing() && m_delegate && m_delegate->textFieldIsStorable(this)) {
-    App::app()->storeLayout(Layout::String(text()));
-  } else if (isEditing() && !selectionIsEmpty()) {
-    const char* start = nonEditableContentView()->selectionLeft();
-    static_assert(TextField::MaxBufferSize() ==
-                  Escher::Clipboard::k_bufferSize);
-    char buffer[Escher::Clipboard::k_bufferSize];
-    strlcpy(buffer, start,
-            nonEditableContentView()->selectionRight() - start + 1);
-    App::app()->storeLayout(Layout::String(buffer));
-  } else {
-    App::app()->storeLayout();
+  if (App::app()->canStoreLayout()) {
+    if (!isEditing() && m_delegate && m_delegate->textFieldIsStorable(this)) {
+      App::app()->storeLayout(Layout::String(text()));
+    } else if (isEditing() && !selectionIsEmpty()) {
+      const char* start = nonEditableContentView()->selectionLeft();
+      static_assert(TextField::MaxBufferSize() ==
+                    Escher::Clipboard::k_bufferSize);
+      char buffer[Escher::Clipboard::k_bufferSize];
+      strlcpy(buffer, start,
+              nonEditableContentView()->selectionRight() - start + 1);
+      App::app()->storeLayout(Layout::String(buffer));
+    } else {
+      App::app()->storeLayout();
+    }
   }
   return true;
 }

@@ -25,6 +25,8 @@ class __attribute__((packed)) GlobalPreferences {
  public:
   constexpr static char k_recordName[] = "gp";
 
+  constexpr static I18n::Country k_defaultCountry = I18n::Country::WW;
+
   static GlobalPreferences* SharedGlobalPreferences();
 
   bool operator==(const GlobalPreferences&) const = default;
@@ -137,7 +139,7 @@ class __attribute__((packed)) GlobalPreferences {
         m_font(KDFont::Size::Large),
         m_dimmingTime(k_defaultDimmingTime) {
     setLanguage(I18n::Language::EN);
-    setCountry(I18n::Country::WW, false);
+    setCountry(k_defaultCountry, false);
   }
 
   const CountryPreferences& countryPreferences() const {

@@ -107,6 +107,12 @@ class __attribute__((packed)) Preferences final {
   enum class LogarithmKeyEvent : uint8_t { Default, WithBaseTen };
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
 
+  constexpr static MixedFractions k_defaultMixedFraction =
+      MixedFractions::Disabled;
+
+  constexpr static LogarithmBasePosition k_defaultLogarithmBasePosition =
+      LogarithmBasePosition::BottomRight;
+
   static void Init();
   static Preferences* SharedPreferences();
 

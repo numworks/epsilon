@@ -24,8 +24,8 @@ Preferences::Preferences()
       m_examMode(Ion::ExamMode::Configuration(Ion::ExamMode::Ruleset::Off)),
       m_forceExamModeReload(false),
       m_combinatoricSymbols(CombinatoricSymbols::Default),
-      m_mixedFractionsAreEnabled(false),
-      m_logarithmBasePosition(LogarithmBasePosition::BottomRight),
+      m_mixedFractionsAreEnabled(static_cast<bool>(k_defaultMixedFraction)),
+      m_logarithmBasePosition(k_defaultLogarithmBasePosition),
       m_logarithmKeyEvent(LogarithmKeyEvent::Default),
       m_parabolaParameter(ParabolaParameter::Default) {}
 

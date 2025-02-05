@@ -853,6 +853,8 @@ QUIZ_CASE(poincare_parsing_with_missing_parentheses) {
 }
 
 QUIZ_CASE(poincare_parsing_mixed_fraction) {
+  Preferences::SharedPreferences()->enableMixedFractions(
+      Poincare::Preferences::MixedFractions::Enabled);
   assert_parsed_expression_is("1 2/3", KMixedFraction(1_e, KDiv(2_e, 3_e)));
   assert_parsed_expression_is(
       "1((2)/(3))",
@@ -866,6 +868,9 @@ QUIZ_CASE(poincare_parsing_mixed_fraction) {
                               KMult(1_e, KParentheses(KDiv(e_e, 3_e))));
   assert_parsed_expression_is("1(2.5/3)",
                               KMult(1_e, KParentheses(KDiv(2.5_e, 3_e))));
+
+  Preferences::SharedPreferences()->enableMixedFractions(
+      Poincare::Preferences::MixedFractions::Disabled);
 }
 
 QUIZ_CASE(poincare_parsing_function_assignment) {

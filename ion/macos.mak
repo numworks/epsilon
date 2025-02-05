@@ -17,6 +17,7 @@ SOURCES_ion += $(PATH_ion)/src/shared/collect_registers.cpp
 
 _ion_simulator_window_setup := $(PATH_ion)/src/simulator/macos/window.mm
 _ion_simulator_files := 1
+_ion_external_apps := 1
 
 # Packaged simulator assets
 

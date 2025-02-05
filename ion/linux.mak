@@ -23,6 +23,7 @@ SFLAGS_ion += $(_ion_libjpeg_cflags)
 LDFLAGS_ion += $(_ion_libjpeg_libs)
 
 _ion_simulator_files := 1
+_ion_external_apps := 1
 
 # Generate simulator assets
 

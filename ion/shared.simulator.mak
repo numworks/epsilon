@@ -108,8 +108,10 @@ SOURCES_ion += $(_ion_simulator_window_setup)
 
 # Simulator files - end
 
+ifeq ($(_ion_external_apps),1)
 # External app simulator with dlopen
 PRIVATE_SFLAGS_ion += -DION_SIMULATOR_EXTERNAL_APP=1
+endif
 
 # Simulator layout
 _sources_ion_simulator_layout := $(PATH_ion)/src/simulator/shared/layout.cpp

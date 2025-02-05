@@ -1,3 +1,6 @@
+# Command line flags :
+# WEB_EXTERNAL_APP: add support for nwb files loaded with dlopen
+
 SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
   shared/dummy/haptics_enabled.cpp \
   shared/dummy/language.cpp \
@@ -42,9 +45,14 @@ LDFLAGS += -sASYNCIFY_STACK_SIZE=16384
 else
 endif
 
+ifeq ($(WEB_EXTERNAL_APPS),1)
+_ion_external_apps := 1
 # This flags allows side modules (compiled with SIDE_MODULE=2) to be dynamically
 # loaded.
 SFLAGS_ion += -sMAIN_MODULE=2
+else
+_ion_external_apps := 0
+endif
 
 _ion_simulator_files := 0
 

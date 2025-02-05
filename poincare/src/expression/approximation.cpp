@@ -398,11 +398,12 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
   if (e->isRandomized()) {
     return ApproximateRandom<T>(e, ctx);
   }
+  Context ctxCopy;
+  Context tempCtx(*ctx);
   switch (e->type()) {
     case Type::Parentheses:
       return PrivateToComplex<T>(e->child(0), ctx);
     case Type::AngleUnitContext: {
-      Context tempCtx(*ctx);
       tempCtx.m_angleUnit = static_cast<AngleUnit>(e->nodeValue(0));
       return PrivateToComplex<T>(e->child(0), &tempCtx);
     }
@@ -588,7 +589,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       // Only approximate child once and use local context.
       Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
                                ComplexSign::Unknown());
-      Context ctxCopy = *ctx;
+      ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
       std::complex<T> result = PrivateToComplex<T>(definitionClone, &ctxCopy);
@@ -625,7 +626,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       // Cloning here to avoid modifying function argument `e`
       Tree* child = upperBoundChild->nextTree()->cloneTree();
       assert(ctx);
-      Context ctxCopy = *ctx;
+      ctxCopy = *ctx;
       /* We ApproximateAndReplaceEveryScalar here to avoid approximate complex
        * constants on every round of the sum/product computation */
       ApproximateAndReplaceEveryScalar<T>(child, *ctx);
@@ -728,7 +729,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     case Type::ListSequence: {
       assert(ctx && ctx->m_listElement != -1);
       // epsilon sequences starts at one
-      Context ctxCopy = *ctx;
+      ctxCopy = *ctx;
       LocalContext localCtx =
           LocalContext(ctx->m_listElement + 1, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
@@ -749,7 +750,6 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
         return NAN;
       }
       assert(ctx);
-      Context tempCtx(*ctx);
       tempCtx.m_listElement = i;
       return PrivateToComplex<T>(values, &tempCtx);
     }
@@ -761,7 +761,6 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       assert(Integer::Is<uint8_t>(e->child(2)));
       int start = std::max(Integer::Handler(startIndex).to<uint8_t>() - 1, 0);
       assert(start >= 0);
-      Context tempCtx(*ctx);
       tempCtx.m_listElement += start;
       return PrivateToComplex<T>(values, &tempCtx);
     }
@@ -770,7 +769,6 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       assert(ctx);
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values, ctx->m_symbolContext);
-      Context tempCtx(*ctx);
       std::complex<T> result = e->isListSum() ? 0 : 1;
       for (int i = 0; i < length; i++) {
         tempCtx.m_listElement = i;
@@ -784,7 +782,6 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       assert(ctx);
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values, ctx->m_symbolContext);
-      Context tempCtx(*ctx);
       T result;
       for (int i = 0; i < length; i++) {
         tempCtx.m_listElement = i;
@@ -807,7 +804,6 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       const Tree* values = e->child(0);
       const Tree* coefficients = e->child(1);
       int length = Dimension::ListLength(values, ctx->m_symbolContext);
-      Context tempCtx(*ctx);
       std::complex<T> sum = 0;
       std::complex<T> sumOfSquares = 0;
       T coefficientsSum = 0;

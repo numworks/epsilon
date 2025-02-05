@@ -10,6 +10,12 @@
 #include <poincare/src/expression/context.h>
 #include <stdint.h>
 
+// Forward-declarations of friend classes in other namespaces
+class PreferencesTestBuilder;
+namespace Ion::Storage {
+class FileSystem;
+}
+
 namespace Poincare {
 
 using SymbolicComputation = Internal::SymbolicComputation;
@@ -18,6 +24,10 @@ using SymbolicComputation = Internal::SymbolicComputation;
  * attribute ensures the compiler will not emit instructions that require the
  * data to be aligned. */
 class __attribute__((packed)) Preferences final {
+  friend Ion::Storage::FileSystem;
+  friend PreferencesTestBuilder;
+  friend OMG::GlobalBox<Poincare::Preferences>;
+
  public:
   constexpr static int DefaultNumberOfPrintedSignificantDigits = 10;
   constexpr static int VeryLargeNumberOfSignificantDigits = 7;
@@ -97,7 +107,6 @@ class __attribute__((packed)) Preferences final {
   enum class LogarithmKeyEvent : uint8_t { Default, WithBaseTen };
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
 
-  Preferences();
   static void Init();
   static Preferences* SharedPreferences();
 
@@ -198,6 +207,11 @@ class __attribute__((packed)) Preferences final {
 
  private:
   constexpr static uint8_t k_version = 0;
+
+  /* Preferences is a singleton, hence the private constructor. The unique
+   * instance can be accessed through the Preferences::SharedPreferences()
+   * pointer. */
+  Preferences();
 
   CODE_GUARD(poincare_preferences, 524861357,  //
              uint8_t m_version;

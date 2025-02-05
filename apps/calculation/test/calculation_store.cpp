@@ -814,7 +814,7 @@ QUIZ_CASE(calculation_complex_format) {
                       &store);
 
   Preferences::SharedPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Cartesian);
+      Preferences::ComplexFormat::Real);
 
   Preferences::SharedPreferences()->setNumberOfSignificantDigits(
       previousNumberOfSignificantDigits);
@@ -997,4 +997,7 @@ QUIZ_CASE(calculation_additional_results) {
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("-10", {.scientificNotation = true},
                                            &globalContext, &store);
+
+  Preferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Real);
 }

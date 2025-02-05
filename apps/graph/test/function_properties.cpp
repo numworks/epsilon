@@ -872,7 +872,6 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties(
         "f(t)=(t,[[tan(tan(tan(tan(tan(tan(tan(tan(tan(4)))))))))]])",
         k_undefinedParametric);
-
     // === Updated complex format ===
 
     assert(Poincare::Preferences::SharedPreferences()->complexFormat() ==
@@ -888,7 +887,7 @@ QUIZ_CASE(graph_function_properties) {
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);
     assert_check_function_properties("y=im(i*x+1)", k_lineProperties);
-    // Restore preferences
+    // Restore cartesian complex format
     Poincare::Preferences::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Cartesian);
 
@@ -896,6 +895,10 @@ QUIZ_CASE(graph_function_properties) {
     Poincare::Preferences::SharedPreferences()->setExamMode(
         ExamMode(ExamMode::Ruleset::Off));
   }
+
+  // Restore default preferences
+  Poincare::Preferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Real);
 }
 
 QUIZ_CASE(graph_function_properties_with_predefined_variables) {

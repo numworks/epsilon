@@ -26,6 +26,9 @@ QUIZ_CASE(solver_error) {
   assert_solves_to_error("x{2,3}=0", EquationUndefined, &globalContext);
 
   assert_solves_to_error("x-random()=0", EquationUndefined, &globalContext);
+
+  // Restore default preferences
+  setComplexFormatAndAngleUnit(Real, Radian);
 }
 
 QUIZ_CASE(solver_linear_system) {
@@ -90,6 +93,9 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to("sin(asin(x))=2", {"x=2"}, &globalContext);
 
   assert_solves_to("x+cos(π/2)y=0", {"x=0"}, &globalContext);
+
+  // Restore default preferences
+  setComplexFormatAndAngleUnit(Real, Radian);
 }
 
 QUIZ_CASE(solver_quadratic) {
@@ -120,6 +126,9 @@ QUIZ_CASE(solver_quadratic) {
                    {"x=-(-1+π+√((1-π)^2+8+8×√(5)))/4",
                     "x=(1-π+√((1-π)^2+8+8×√(5)))/4", "delta=(1-π)^2+8+8×√(5)"},
                    &globalContext);
+
+  // Restore default preferences
+  setComplexFormatAndAngleUnit(Real, Radian);
 }
 
 QUIZ_CASE(solver_cubic) {
@@ -204,6 +213,9 @@ QUIZ_CASE(solver_cubic) {
   assert_solves_to("(x-2i+1)(x+3i-1)(x-i+2)=0",
                    {"x=-2+1×i", "x=-1+2×i", "x=1-3×i", "delta=-1288-666×i"}, &globalContext);
 #endif
+
+  // Restore default preferences
+  setComplexFormatAndAngleUnit(Real, Radian);
 }
 
 QUIZ_CASE(solver_quadratic_real) {
@@ -334,6 +346,9 @@ QUIZ_CASE(solver_approximate) {
   set_complex_format(Real, &globalContext);
   assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001}, &globalContext);
 #endif
+
+  // Restore default preferences
+  setComplexFormatAndAngleUnit(Real, Radian);
 }
 
 void set(const char* variable, const char* expression,
@@ -419,6 +434,9 @@ QUIZ_CASE(solver_complex_cartesian) {
   /* TODO_PCJ: The next equation finds x=0 as a solution (and not x=1), which is
    * mathematically incorrect. */
   // assert_solves_to("x^2*(x-1)/x=0", {"x=1", "delta=1"}, &globalContext);
+
+  // Restore default preferences
+  setComplexFormatAndAngleUnit(Real, Radian);
 }
 
 QUIZ_CASE(solver_complex_polar) {
@@ -459,6 +477,9 @@ QUIZ_CASE(solver_complex_polar) {
        "x=((root(1+e^(((2π)/7)i),3)(-1-√(3)i))/2)", "x=root(1+e^(((2π)/7)i),3)",
        "delta=-27(1+e^(((2π)/7)i))^2"}, &globalContext);
 #endif
+
+  // Restore default preferences
+  setComplexFormatAndAngleUnit(Real, Radian);
 }
 
 QUIZ_CASE(solver_symbolic_computation) {
@@ -579,4 +600,7 @@ QUIZ_CASE(solver_symbolic_computation) {
   set("c", "arcsin(10)cb=0", &globalContext);
   assert_solves_to_error("arcsin(10)cb=0", NonLinearSystem, &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Restore default preferences
+  setComplexFormatAndAngleUnit(Real, Radian);
 }

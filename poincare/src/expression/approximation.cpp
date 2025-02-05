@@ -381,32 +381,10 @@ std::complex<T> Private::PrivateToComplex(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
-  /* TODO: the second part of this function and several ifs in different cases
-   * act differently / more precisely on reals. We should have a dedicated,
-   * faster, simpler and more precise real approximation to be used in every
-   * cases where we know for sure there are no complexes. */
-  assert(e->isExpression());
-  if (e->isUndefined()) {
-    // TODO: Find a way to pass exact undef type up to ToComplexTree.
-    return e->isNonReal() ? NonReal<T>() : NAN;
-  }
-  if (e->isRational()) {
-    return Rational::Numerator(e).to<T>() / Rational::Denominator(e).to<T>();
-  }
-
-  if (e->isRandomized()) {
-    return ApproximateRandom<T>(e, ctx);
-  }
-  Context ctxCopy;
-  Context tempCtx(*ctx);
+std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
   switch (e->type()) {
     case Type::Parentheses:
       return PrivateToComplex<T>(e->child(0), ctx);
-    case Type::AngleUnitContext: {
-      tempCtx.m_angleUnit = static_cast<AngleUnit>(e->nodeValue(0));
-      return PrivateToComplex<T>(e->child(0), &tempCtx);
-    }
     case Type::ComplexI:
       return std::complex<T>(0, 1);
     case Type::Pi:
@@ -518,8 +496,14 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       std::complex<T> c = PrivateToComplex<T>(e->child(0), ctx);
       return std::isnan(c.real()) ? NAN : c.imag();
     }
+  }
+  assert(false);
+  return NAN;
+}
 
-    /* Trigonometry */
+template <typename T>
+std::complex<T> AllTrigToComplex(const Tree* e, const Context* ctx) {
+  switch (e->type()) {
     case Type::Cos:
     case Type::Sin:
     case Type::Tan:
@@ -559,12 +543,20 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     case Type::ATanRad:
       return TrigonometricToComplex(
           Type::ATan, PrivateToComplex<T>(e->child(0), ctx), AngleUnit::Radian);
+  }
+  assert(false);
+  return NAN;
+}
+
+template <typename T>
+std::complex<T> UserStuffToComplex(const Tree* e, const Context* ctx) {
+  switch (e->type()) {
     case Type::Var: {
       // Local variable
       if (!ctx || !ctx->m_localContext) {
         return NAN;
       }
-      // TODO_Hugo: Use template with LocalContext
+      // TODO: Use template with LocalContext
       std::complex<double> z = ctx->variable(Variables::Id(e));
       return std::complex<T>(z.real(), z.imag());
     }
@@ -589,7 +581,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       // Only approximate child once and use local context.
       Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
                                ComplexSign::Unknown());
-      ctxCopy = *ctx;
+      Context ctxCopy = *ctx;
       LocalContext localCtx = LocalContext(x, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
       std::complex<T> result = PrivateToComplex<T>(definitionClone, &ctxCopy);
@@ -606,7 +598,14 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       return Poincare::Context::GlobalContext->approximateSequenceAtRank(
           Symbol::GetName(e), rank);
     }
-    /* Analysis */
+  }
+  assert(false);
+  return NAN;
+}
+
+template <typename T>
+std::complex<T> AnalysisToComplex(const Tree* e, const Context* ctx) {
+  switch (e->type()) {
     case Type::Sum:
     case Type::Product: {
       const Tree* lowerBoundChild = e->child(Parametric::k_lowerBoundIndex);
@@ -626,7 +625,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       // Cloning here to avoid modifying function argument `e`
       Tree* child = upperBoundChild->nextTree()->cloneTree();
       assert(ctx);
-      ctxCopy = *ctx;
+      Context ctxCopy = *ctx;
       /* We ApproximateAndReplaceEveryScalar here to avoid approximate complex
        * constants on every round of the sum/product computation */
       ApproximateAndReplaceEveryScalar<T>(child, *ctx);
@@ -689,8 +688,14 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       // TODO: assert(false) if we enforce preparation before approximation
     case Type::IntegralWithAlternatives:
       return ApproximateIntegral<T>(e, ctx);
+  }
+  assert(false);
+  return NAN;
+}
 
-    /* Matrices */
+template <typename T>
+std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
+  switch (e->type()) {
     case Type::Norm:
     case Type::Det: {
       Tree* m = ToMatrix<T>(e->child(0), ctx);
@@ -722,14 +727,22 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     case Type::Point:
       assert(ctx && ctx->m_pointElement != -1);
       return PrivateToComplex<T>(e->child(ctx->m_pointElement), ctx);
-    /* Lists */
+  }
+  assert(false);
+  return NAN;
+}
+
+template <typename T>
+std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
+  Context tempCtx(*ctx);
+  switch (e->type()) {
     case Type::List:
       assert(ctx && ctx->m_listElement != -1);
       return PrivateToComplex<T>(e->child(ctx->m_listElement), ctx);
     case Type::ListSequence: {
       assert(ctx && ctx->m_listElement != -1);
       // epsilon sequences starts at one
-      ctxCopy = *ctx;
+      Context ctxCopy = *ctx;
       LocalContext localCtx =
           LocalContext(ctx->m_listElement + 1, ctx->m_localContext);
       ctxCopy.m_localContext = &localCtx;
@@ -879,6 +892,19 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       list->removeTree();
       return median;
     }
+  }
+  assert(false);
+  return NAN;
+}
+
+template <typename T>
+std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
+  switch (e->type()) {
+    case Type::AngleUnitContext: {
+      Context tempCtx(*ctx);
+      tempCtx.m_angleUnit = static_cast<AngleUnit>(e->nodeValue(0));
+      return PrivateToComplex<T>(e->child(0), &tempCtx);
+    }
     case Type::Piecewise:
       return PrivateToComplex<T>(SelectPiecewiseBranch<T>(e, ctx), ctx);
     case Type::Distribution: {
@@ -946,13 +972,13 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       }
       return x == std::complex<T>(0.0) ? NAN : std::log(x);
     }
-    default:;
   }
-  // The remaining operators are defined only on reals
-  // assert(e->numberOfChildren() <= 2);
-  if (e->numberOfChildren() > 2) {
-    return NAN;
-  }
+  assert(false);
+  return NAN;
+}
+
+template <typename T>
+std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
   T child[2];
   for (IndexedChild<const Tree*> childNode : e->indexedChildren()) {
     std::complex<T> app = PrivateToComplex<T>(childNode, ctx);
@@ -1069,6 +1095,128 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
       assert(false);
       return NAN;
   }
+}
+
+template <typename T>
+std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
+  /* TODO: the second part of this function and several ifs in different cases
+   * act differently / more precisely on reals. We should have a dedicated,
+   * faster, simpler and more precise real approximation to be used in every
+   * cases where we know for sure there are no complexes. */
+  assert(e->isExpression());
+  if (e->isUndefined()) {
+    // TODO: Find a way to pass exact undef type up to ToComplexTree.
+    return e->isNonReal() ? NonReal<T>() : NAN;
+  }
+  if (e->isRational()) {
+    return Rational::Numerator(e).to<T>() / Rational::Denominator(e).to<T>();
+  }
+
+  if (e->isRandomized()) {
+    return ApproximateRandom<T>(e, ctx);
+  }
+  switch (e->type()) {
+    case Type::Parentheses:
+    case Type::ComplexI:
+    case Type::Pi:
+    case Type::EulerE:
+    case Type::SingleFloat:
+    case Type::DoubleFloat:
+    case Type::Add:
+    case Type::Mult:
+    case Type::Div:
+    case Type::Sub:
+    case Type::Pow:
+    case Type::GCD:
+    case Type::LCM:
+    case Type::Sqrt:
+    case Type::Root:
+    case Type::Exp:
+    case Type::Log:
+    case Type::Ln:
+    case Type::LogBase:
+    case Type::Abs:
+    case Type::Arg:
+    case Type::Inf:
+    case Type::Conj:
+    case Type::Opposite:
+    case Type::Re:
+    case Type::Im:
+      return BasicToComplex<T>(e, ctx);
+    case Type::Cos:
+    case Type::Sin:
+    case Type::Tan:
+    case Type::Sec:
+    case Type::Csc:
+    case Type::Cot:
+    case Type::ACos:
+    case Type::ASin:
+    case Type::ATan:
+    case Type::ASec:
+    case Type::ACsc:
+    case Type::ACot:
+    case Type::SinH:
+    case Type::CosH:
+    case Type::TanH:
+    case Type::ArSinH:
+    case Type::ArCosH:
+    case Type::ArTanH:
+    case Type::Trig:
+    case Type::ATrig:
+    case Type::ATanRad:
+      return AllTrigToComplex<T>(e, ctx);
+    case Type::Var:
+    case Type::UserFunction:
+    case Type::UserSymbol:
+    case Type::UserSequence:
+      return UserStuffToComplex<T>(e, ctx);
+    case Type::Sum:
+    case Type::Product:
+    case Type::Diff:
+    case Type::Integral:
+    case Type::IntegralWithAlternatives:
+      return AnalysisToComplex<T>(e, ctx);
+    case Type::Norm:
+    case Type::Det:
+    case Type::Trace:
+    case Type::Dot:
+    case Type::Point:
+      return MatrixToComplex<T>(e, ctx);
+    case Type::List:
+    case Type::ListSequence:
+    case Type::Dim:
+    case Type::ListElement:
+    case Type::ListSlice:
+    case Type::ListSum:
+    case Type::ListProduct:
+    case Type::Min:
+    case Type::Max:
+    case Type::Mean:
+    case Type::StdDev:
+    case Type::SampleStdDev:
+    case Type::Variance:
+    case Type::ListSort:
+    case Type::Median:
+      return ListToComplex<T>(e, ctx);
+    case Type::AngleUnitContext:
+    case Type::Piecewise:
+    case Type::Distribution:
+    case Type::Dep:
+    case Type::NonNull:
+    case Type::Real:
+    case Type::RealPos:
+    case Type::Unit:
+    case Type::PhysicalConstant:
+    case Type::LnUser:
+      return MiscToComplex<T>(e, ctx);
+    default:;
+  }
+  // The remaining operators are defined only on reals
+  // assert(e->numberOfChildren() <= 2);
+  if (e->numberOfChildren() > 2) {
+    return NAN;
+  }
+  return ToComplexSwitchOnlyReal<T>(e, ctx);
 }
 
 template <typename T>

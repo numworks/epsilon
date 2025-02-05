@@ -9,6 +9,7 @@
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/systematic_reduction.h>
 #include <poincare/src/expression/units/representatives.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/layouter.h>
@@ -124,22 +125,6 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
       Trigonometry::ConvertAngleToRadian(*approximatedAngle, ctx->m_angleUnit);
 }
 
-/* Returns a (unreduced) division between pi in each unit, or 1 if the units
- * are the same. */
-Tree* PushUnitConversionFactor(Preferences::AngleUnit fromUnit,
-                               Preferences::AngleUnit toUnit) {
-  if (fromUnit == toUnit) {
-    // Just an optimisation to gain some time at reduction
-    return (1_e)->cloneTree();
-  }
-  return PatternMatching::Create(
-      KDiv(KA, KB),
-      {.KA = Units::Angle::DefaultRepresentativeForAngleUnit(fromUnit)
-                 ->ratioExpression(),
-       .KB = Units::Angle::DefaultRepresentativeForAngleUnit(toUnit)
-                 ->ratioExpression()});
-}
-
 UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
     Context* context,
@@ -202,24 +187,20 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 
   /* TODO: Second Simplify could be avoided by calling
    * intermediate steps, and handle units right after projection. */
-  if (Simplification::Simplify(exactAngle, projCtx)) {
-    if (exactAngleDimension.isUnit()) {
-      assert(exactAngleDimension.isSimpleAngleUnit());
-      assert(directTrigoFunction->isDirectTrigonometryFunction() ||
-             directTrigoFunction->isDirectAdvancedTrigonometryFunction());
-      /* When removing units, angle units are converted to radians, so we
-       * manually add the conversion ratio back to preserve the input angleUnit.
-       */
-      // exactAngle * angleUnitRatio / RadianUnitRatio
-      Tree::ApplyShallowTopDown(exactAngle, Units::Unit::ShallowRemoveUnit);
-      exactAngle->cloneNodeAtNode(KMult.node<2>);
-      PushUnitConversionFactor(AngleUnit::Radian, angleUnit);
-      // Simplify again
-      reductionFailure =
-          !Simplification::Simplify(exactAngle, projCtx) || reductionFailure;
-    }
-  } else {
-    reductionFailure = true;
+  reductionFailure = !Simplification::Simplify(exactAngle, projCtx);
+  if (!reductionFailure && exactAngleDimension.isUnit()) {
+    assert(exactAngleDimension.isSimpleAngleUnit());
+    assert(directTrigoFunction->isDirectTrigonometryFunction() ||
+           directTrigoFunction->isDirectAdvancedTrigonometryFunction());
+    /* When removing units, angle units are converted to radians, so we
+     * manually add the conversion ratio back to preserve the input angleUnit.
+     */
+    // exactAngle / angleUnitRatio
+    Tree::ApplyShallowTopDown(exactAngle, Units::Unit::ShallowRemoveUnit);
+    exactAngle->cloneNodeAtNode(KMult.node<2>);
+    Angle::RadTo(angleUnit)->cloneTree();
+    // Simplify again
+    SystematicReduction::ShallowReduce(exactAngle);
   }
 
   // The angle must be real and finite.

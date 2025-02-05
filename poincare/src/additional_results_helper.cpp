@@ -134,9 +134,9 @@ Tree* PushUnitConversionFactor(Preferences::AngleUnit fromUnit,
   }
   return PatternMatching::Create(
       KDiv(KA, KB),
-      {.KA = Units::Angle::DefaultRepresentativeForAngleUnit(toUnit)
+      {.KA = Units::Angle::DefaultRepresentativeForAngleUnit(fromUnit)
                  ->ratioExpression(),
-       .KB = Units::Angle::DefaultRepresentativeForAngleUnit(fromUnit)
+       .KB = Units::Angle::DefaultRepresentativeForAngleUnit(toUnit)
                  ->ratioExpression()});
 }
 

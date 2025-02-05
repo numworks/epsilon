@@ -47,13 +47,11 @@ void project_and_compare_approximates(const char* input1, const char* input2,
 template <typename T>
 void simplify_and_compare_approximates(const char* input1, const char* input2,
                                        bool equal) {
-  Tree* e1 = parse_and_simplify(input1);
-  Tree* e2 = parse_and_simplify(input2);
+  Tree* e1 = parse_and_reduce(input1);
+  Tree* e2 = parse_and_reduce(input2);
 
   return compare_approximates<T>(
-      e1, e2, equal,
-      Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                .projectLocalVariables = true});
+      e1, e2, equal, Approximation::Parameters{.isRootAndCanHaveRandom = true});
 }
 
 // Compares the approximated elements of a list of size 2

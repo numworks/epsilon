@@ -12,12 +12,8 @@ template <typename T>
 void assert_expression_approximates_to_scalar(
     const char *expression, T approximation,
     Preferences::AngleUnit angleUnit = Degree,
-    Preferences::ComplexFormat complexFormat = Cartesian,
-    Preferences::MixedFractions mixedFractionsParameter =
-        Poincare::Preferences::MixedFractions::Enabled) {
+    Preferences::ComplexFormat complexFormat = Cartesian) {
   Shared::GlobalContext globalContext;
-  Preferences::SharedPreferences()->enableMixedFractions(
-      mixedFractionsParameter);
   Internal::Tree *e = parse_expression(expression, &globalContext);
   T result = Internal::Approximation::To<T>(
       e,

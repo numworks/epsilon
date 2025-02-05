@@ -217,21 +217,33 @@ class __attribute__((packed)) Preferences final {
   /* Preferences is a singleton, hence the private constructor. The unique
    * instance can be accessed through the Preferences::SharedPreferences()
    * pointer. */
-  Preferences();
+  Preferences() = default;
 
-  CODE_GUARD(poincare_preferences, 524861357,  //
-             uint8_t m_version;
-             CalculationPreferences m_calculationPreferences;
-             mutable ExamMode m_examMode;
+  CODE_GUARD(poincare_preferences, 2201273708,  //
+             uint8_t m_version = k_version;
+             CalculationPreferences m_calculationPreferences =
+                 {.angleUnit = AngleUnit::Radian,
+                  .displayMode = Preferences::PrintFloatMode::Decimal,
+                  .editionMode = EditionMode::Edition2D,
+                  .complexFormat = Preferences::ComplexFormat::Real,
+                  .numberOfSignificantDigits =
+                      Preferences::DefaultNumberOfPrintedSignificantDigits};
+             mutable ExamMode m_examMode = ExamMode(
+                 Ion::ExamMode::Configuration(Ion::ExamMode::Ruleset::Off));
              /* This flag can only be asserted by writing it via DFU. When set,
               * it will force the reactivation of the exam mode after leaving
               * DFU to synchronize the persisting bytes with the Preferences. */
-             bool m_forceExamModeReload;
-             mutable CombinatoricSymbols m_combinatoricSymbols;
-             mutable bool m_mixedFractionsAreEnabled;
-             mutable LogarithmBasePosition m_logarithmBasePosition;
-             mutable LogarithmKeyEvent m_logarithmKeyEvent;
-             mutable ParabolaParameter m_parabolaParameter;)
+             bool m_forceExamModeReload = false;
+             mutable CombinatoricSymbols m_combinatoricSymbols =
+                 CombinatoricSymbols::Default;
+             mutable bool m_mixedFractionsAreEnabled =
+                 static_cast<bool>(k_defaultMixedFraction);
+             mutable LogarithmBasePosition m_logarithmBasePosition =
+                 k_defaultLogarithmBasePosition;
+             mutable LogarithmKeyEvent m_logarithmKeyEvent =
+                 LogarithmKeyEvent::Default;
+             mutable ParabolaParameter m_parabolaParameter =
+                 ParabolaParameter::Default;)
 
 #if POINCARE_TRANSLATE_BUILTINS
   mutable TranslateBuiltins m_translatedBuiltins;

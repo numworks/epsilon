@@ -12,23 +12,6 @@ constexpr int Preferences::MediumNumberOfSignificantDigits;
 constexpr int Preferences::ShortNumberOfSignificantDigits;
 constexpr int Preferences::VeryShortNumberOfSignificantDigits;
 
-Preferences::Preferences()
-    : m_version(k_version),
-      m_calculationPreferences{
-          .angleUnit = AngleUnit::Radian,
-          .displayMode = Preferences::PrintFloatMode::Decimal,
-          .editionMode = EditionMode::Edition2D,
-          .complexFormat = Preferences::ComplexFormat::Real,
-          .numberOfSignificantDigits =
-              Preferences::DefaultNumberOfPrintedSignificantDigits},
-      m_examMode(Ion::ExamMode::Configuration(Ion::ExamMode::Ruleset::Off)),
-      m_forceExamModeReload(false),
-      m_combinatoricSymbols(CombinatoricSymbols::Default),
-      m_mixedFractionsAreEnabled(static_cast<bool>(k_defaultMixedFraction)),
-      m_logarithmBasePosition(k_defaultLogarithmBasePosition),
-      m_logarithmKeyEvent(LogarithmKeyEvent::Default),
-      m_parabolaParameter(ParabolaParameter::Default) {}
-
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Internal::Tree* exp, Context* context,
     SymbolicComputation replaceSymbols) {

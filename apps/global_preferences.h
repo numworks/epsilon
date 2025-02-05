@@ -40,62 +40,68 @@ class __attribute__((packed)) GlobalPreferences {
   }
   void countryHasChanged(bool updateSnapshots = true);
 
-  CountryPreferences::AvailableExamModes availableExamModes() const {
+  constexpr CountryPreferences::AvailableExamModes availableExamModes() const {
     return countryPreferences().availableExamModes();
   }
-  CountryPreferences::MethodForQuartiles methodForQuartiles() const {
+  constexpr CountryPreferences::MethodForQuartiles methodForQuartiles() const {
     return countryPreferences().methodForQuartiles();
   }
-  CountryPreferences::OutlierDefaultVisibility outliersStatus() const {
+  constexpr CountryPreferences::OutlierDefaultVisibility outliersStatus()
+      const {
     return countryPreferences().outliersStatus();
   }
-  CountryPreferences::HistogramsOffset histogramOffset() const {
+  constexpr CountryPreferences::HistogramsOffset histogramOffset() const {
     return countryPreferences().histogramOffset();
   }
-  Poincare::Preferences::UnitFormat unitFormat() const {
+  constexpr Poincare::Preferences::UnitFormat unitFormat() const {
     return countryPreferences().unitFormat();
   }
-  CountryPreferences::HomeAppsLayout homeAppsLayout() const {
+  constexpr CountryPreferences::HomeAppsLayout homeAppsLayout() const {
     return countryPreferences().homeAppsLayout();
   }
-  const char* discriminantSymbol() const {
+  constexpr const char* discriminantSymbol() const {
     return countryPreferences().discriminantSymbol();
   }
-  const char* yPredictedSymbol() const {
+  constexpr const char* yPredictedSymbol() const {
     return countryPreferences().yPredictedSymbol();
   }
-  CountryPreferences::StatsRowsLayout statsRowsLayout() const {
+  constexpr CountryPreferences::StatsRowsLayout statsRowsLayout() const {
     return countryPreferences().statsRowsLayout();
   }
-  Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols() const {
+  constexpr Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols()
+      const {
     return countryPreferences().combinatoricSymbols();
   }
-  CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox()
-      const {
+  constexpr CountryPreferences::ListsStatsOrderInToolbox
+  listsStatsOrderInToolbox() const {
     return countryPreferences().listsStatsOrderInToolbox();
   }
-  Poincare::Preferences::MixedFractions mixedFractions() const {
+  constexpr Poincare::Preferences::MixedFractions mixedFractions() const {
     return countryPreferences().mixedFractions();
   }
-  CountryPreferences::RegressionApp regressionAppVariant() const {
+  constexpr CountryPreferences::RegressionApp regressionAppVariant() const {
     return countryPreferences().regressionAppVariant();
   }
-  CountryPreferences::GraphTemplatesLayout graphTemplatesLayout() const {
+  constexpr CountryPreferences::GraphTemplatesLayout graphTemplatesLayout()
+      const {
     return countryPreferences().graphTemplatesLayout();
   }
-  Poincare::Preferences::LogarithmBasePosition logarithmBasePosition() const {
+  constexpr Poincare::Preferences::LogarithmBasePosition logarithmBasePosition()
+      const {
     return countryPreferences().logarithmBasePosition();
   }
-  Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent() const {
+  constexpr Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent() const {
     return countryPreferences().logarithmKeyEvent();
   }
-  Poincare::Preferences::ParabolaParameter parabolaParameter() const {
+  constexpr Poincare::Preferences::ParabolaParameter parabolaParameter() const {
     return countryPreferences().parabolaParameter();
   }
-  CountryPreferences::SolverDoubleRootName solverDoubleRootName() const {
+  constexpr CountryPreferences::SolverDoubleRootName solverDoubleRootName()
+      const {
     return countryPreferences().solverDoubleRootName();
   }
-  CountryPreferences::GraphTemplateDefault graphTemplateDefault() const {
+  constexpr CountryPreferences::GraphTemplateDefault graphTemplateDefault()
+      const {
     return countryPreferences().graphTemplateDefault();
   }
   int sequencesInitialRank() const;

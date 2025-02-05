@@ -143,14 +143,7 @@ class __attribute__((packed)) GlobalPreferences {
    * instance can be accessed through the
    * GlobalPreferences::SharedGlobalPreferences() pointer.
    */
-  GlobalPreferences()
-      : m_version(k_version),
-        m_brightnessLevel(Ion::Backlight::MaxBrightness),
-        m_language(k_defaultLanguage),
-        m_country(k_defaultCountry),
-        m_showPopUp(true),
-        m_font(KDFont::Size::Large),
-        m_dimmingTime(k_defaultDimmingTime) {}
+  GlobalPreferences() = default;
 
   const CountryPreferences& countryPreferences() const {
     return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)];
@@ -173,16 +166,17 @@ class __attribute__((packed)) GlobalPreferences {
   using DimmingTimeType = uint32_t;
 #endif
 
-  CODE_GUARD(global_preferences, 3087701149,    //
-             uint8_t m_version;                 //
-             BrightnessType m_brightnessLevel;  //
-             I18n::Language m_language;         //
-             I18n::Country m_country;           //
-             bool m_showPopUp;                  //
-             KDFont::Size m_font;               //
-             DimmingTimeType m_dimmingTime;     // in milliseconds
-             public
-             : static constexpr int k_objectSize = 13;)
+  CODE_GUARD(
+      global_preferences, 2711671592,                                    //
+      uint8_t m_version = k_version;                                     //
+      BrightnessType m_brightnessLevel = Ion::Backlight::MaxBrightness;  //
+      I18n::Language m_language = I18n::Language::EN;                    //
+      I18n::Country m_country = k_defaultCountry;                        //
+      bool m_showPopUp = true;                                           //
+      KDFont::Size m_font = KDFont::Size::Large;                         //
+      DimmingTimeType m_dimmingTime = k_defaultDimmingTime;              //
+      public
+      : static constexpr int k_objectSize = 13;)
 };
 
 #if PLATFORM_DEVICE

@@ -144,6 +144,7 @@ inline void CloneAndSimplify(
     Poincare::Expression* e, Poincare::Context* context,
     const ReductionParameters& reductionParameters = {},
     bool* reductionFailure = nullptr) {
+  assert(reductionFailure);
   Poincare::Internal::ProjectionContext ctx =
       ProjectionContextForParameters(*e, context, reductionParameters);
   *e = e->cloneAndSimplify(&ctx, reductionFailure);
@@ -154,6 +155,7 @@ inline Poincare::SystemExpression CloneAndReduce(
     Poincare::UserExpression e, Poincare::Context* context,
     const ReductionParameters& reductionParameters = {},
     bool* reductionFailure = nullptr) {
+  assert(reductionFailure);
   return e.cloneAndReduce(
       ReductionContextForParameters(e, context, reductionParameters),
       reductionFailure);

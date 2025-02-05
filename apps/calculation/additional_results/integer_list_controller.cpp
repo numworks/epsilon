@@ -37,10 +37,13 @@ void IntegerListController::computeAdditionalResults(
   }
   // Computing factorExpression
   Expression factor = UserExpression::Create(KFactor(KA), {.KA = exactOutput});
+  bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
       &factor, App::app()->localContext(),
-      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
-  if (!factor.isUndefined() && !factor.tree()->treeIsIdenticalTo(1_e) &&
+      {.complexFormat = complexFormat(), .angleUnit = angleUnit()},
+      &reductionFailure);
+  if (!reductionFailure && !factor.isUndefined() &&
+      !factor.tree()->treeIsIdenticalTo(1_e) &&
       !factor.tree()->treeIsIdenticalTo(0_e)) {
     m_layouts[k_indexOfFactorExpression] =
         PoincareHelpers::CreateLayout(factor, App::app()->localContext());

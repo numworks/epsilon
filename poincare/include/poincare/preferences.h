@@ -202,7 +202,7 @@ class __attribute__((packed)) Preferences final {
   void setLogarithmKeyEvent(LogarithmKeyEvent logarithmKeyEvent) {
     m_logarithmKeyEvent = logarithmKeyEvent;
   }
-  ParabolaParameter parabolaParameter() { return m_parabolaParameter; }
+  ParabolaParameter parabolaParameter() const { return m_parabolaParameter; }
   void setParabolaParameter(ParabolaParameter parameter) {
     m_parabolaParameter = parameter;
   }

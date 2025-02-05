@@ -21,7 +21,13 @@ Preferences::Preferences()
           .complexFormat = Preferences::ComplexFormat::Real,
           .numberOfSignificantDigits =
               Preferences::DefaultNumberOfPrintedSignificantDigits},
-      m_forceExamModeReload(false) {}
+      m_examMode(Ion::ExamMode::Configuration(Ion::ExamMode::Ruleset::Off)),
+      m_forceExamModeReload(false),
+      m_combinatoricSymbols(CombinatoricSymbols::Default),
+      m_mixedFractionsAreEnabled(false),
+      m_logarithmBasePosition(LogarithmBasePosition::BottomRight),
+      m_logarithmKeyEvent(LogarithmKeyEvent::Default),
+      m_parabolaParameter(ParabolaParameter::Default) {}
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Internal::Tree* exp, Context* context,

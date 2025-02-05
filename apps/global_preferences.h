@@ -146,12 +146,11 @@ class __attribute__((packed)) GlobalPreferences {
   GlobalPreferences()
       : m_version(k_version),
         m_brightnessLevel(Ion::Backlight::MaxBrightness),
+        m_language(k_defaultLanguage),
         m_country(k_defaultCountry),
         m_showPopUp(true),
         m_font(KDFont::Size::Large),
-        m_dimmingTime(k_defaultDimmingTime) {
-    setLanguage(I18n::Language::EN);
-  }
+        m_dimmingTime(k_defaultDimmingTime) {}
 
   const CountryPreferences& countryPreferences() const {
     return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)];

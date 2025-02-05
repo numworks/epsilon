@@ -54,12 +54,7 @@ class Configuration {
   Configuration() : Configuration(-1) {}
   Configuration(Int raw) : m_bits(raw) {}
 
-  bool operator==(const Configuration& other) const {
-    return m_bits == other.m_bits;
-  }
-  bool operator!=(const Configuration& other) const {
-    return !(*this == other);
-  }
+  bool operator==(const Configuration&) const = default;
 
   Ruleset ruleset() const;
   Int flags() const;

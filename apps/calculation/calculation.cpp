@@ -147,46 +147,19 @@ static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
   return input.isStore() && input.cloneChildAtIndex(1).isUserFunction();
 }
 
-Calculation::DisplayOutput Calculation::displayOutput(Context* context) {
-  if (m_displayOutput != DisplayOutput::Unknown) {
-    return m_displayOutput;
-  }
-  UserExpression inputExp = input();
-  UserExpression outputExp = exactOutput();
-  if (inputExp.isUninitialized() || outputExp.isUninitialized() ||
-      ShouldOnlyDisplayExactOutput(inputExp) ||
-      exactOutputTree()->isUndefined()) {
-    m_displayOutput = DisplayOutput::ExactOnly;
-  } else if (approximatedOutputTree()->isNonReal() ||
-             approximatedOutputTree()->isUndefined() ||
-             // Other conditions are factorized in CAS
-             CAS::ShouldOnlyDisplayApproximation(
-                 inputExp, outputExp, approximateOutput(), context)) {
-    m_displayOutput = DisplayOutput::ApproximateOnly;
-  } else if (inputExp.isIdenticalTo(outputExp) ||
-             inputExp.recursivelyMatches(&NewExpression::isApproximate,
-                                         context) ||
-             outputExp.recursivelyMatches(&NewExpression::isApproximate,
-                                          context) ||
-             inputExp.recursivelyMatches(&NewExpression::isPercent, context)) {
-    m_displayOutput = DisplayOutput::ExactAndApproximateToggle;
-  } else {
-    m_displayOutput = DisplayOutput::ExactAndApproximate;
-  }
-  return m_displayOutput;
-}
-
 Calculation::OutputLayouts Calculation::createOutputLayouts(
     Context* context, bool canChangeDisplayOutput, KDCoordinate maxVisibleWidth,
     KDFont::Size font) {
+  assert(m_displayOutput != DisplayOutput::Unknown);
+
   // Create the exact output layout
   Layout exactOutput = Layout();
-  if (CanDisplayExact(displayOutput(context))) {
+  if (CanDisplayExact(m_displayOutput)) {
     bool couldNotCreateExactLayout = false;
     exactOutput = createExactOutputLayout(context, &couldNotCreateExactLayout);
     if (couldNotCreateExactLayout) {
       if (canChangeDisplayOutput &&
-          displayOutput(context) != DisplayOutput::ExactOnly) {
+          m_displayOutput != DisplayOutput::ExactOnly) {
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
       } else {
         /* We should only display the exact result, but we cannot create it
@@ -195,7 +168,7 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
       }
     }
     if (canChangeDisplayOutput &&
-        displayOutput(context) == DisplayOutput::ExactAndApproximate &&
+        m_displayOutput == DisplayOutput::ExactAndApproximate &&
         exactOutput->layoutSize(font).width() > maxVisibleWidth) {
       forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
     }
@@ -203,13 +176,13 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
 
   // Create the approximate output layout
   Layout approximateOutput = Layout();
-  if (CanDisplayApproximate(displayOutput(context))) {
+  if (CanDisplayApproximate(m_displayOutput)) {
     bool couldNotCreateApproximateLayout = false;
     approximateOutput = createApproximateOutputLayout(
         context, &couldNotCreateApproximateLayout);
     if (couldNotCreateApproximateLayout) {
       if (canChangeDisplayOutput &&
-          displayOutput(context) != DisplayOutput::ApproximateOnly) {
+          m_displayOutput != DisplayOutput::ApproximateOnly) {
         /* Set display the output to ApproximateOnly, make room in the pool by
          * erasing the exact layout, retry to create the approximate layout. */
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
@@ -227,13 +200,37 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
   }
 
   // Hide exact output layout if identical to approximate
-  if (CanDisplayExact(displayOutput(context)) &&
-      CanDisplayApproximate(displayOutput(context)) &&
+  if (CanDisplayExact(m_displayOutput) &&
+      CanDisplayApproximate(m_displayOutput) &&
       exactOutput.isIdenticalTo(approximateOutput)) {
     forceDisplayOutput(DisplayOutput::ApproximateIsIdenticalToExact);
   }
 
   return {exactOutput, approximateOutput};
+}
+
+Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
+    UserExpression input, UserExpression exactOutput,
+    UserExpression approximateOutput, Poincare::Context* context) {
+  using enum Calculation::Calculation::DisplayOutput;
+  if (input.isUninitialized() || exactOutput.isUninitialized() ||
+      ShouldOnlyDisplayExactOutput(input) ||
+      exactOutput.isUndefinedOrNonReal()) {
+    return ExactOnly;
+  }
+  if (approximateOutput.isUndefinedOrNonReal() ||
+      // Other conditions are factorized in CAS
+      CAS::ShouldOnlyDisplayApproximation(input, exactOutput, approximateOutput,
+                                          context)) {
+    return ApproximateOnly;
+  }
+  if (input.isIdenticalTo(exactOutput) ||
+      input.recursivelyMatches(&NewExpression::isApproximate, context) ||
+      exactOutput.recursivelyMatches(&NewExpression::isApproximate, context) ||
+      input.recursivelyMatches(&NewExpression::isPercent, context)) {
+    return ExactAndApproximateToggle;
+  }
+  return ExactAndApproximate;
 }
 
 Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
@@ -280,7 +277,7 @@ void Calculation::fillExpressionsForAdditionalResults(
     UserExpression* approximateOutput, Context* context) {
   *input = this->input();
   *approximateOutput = this->approximateOutput();
-  *exactOutput = displayOutput(context) == DisplayOutput::ApproximateOnly
+  *exactOutput = m_displayOutput == DisplayOutput::ApproximateOnly
                      ? *approximateOutput
                      : this->exactOutput();
 }

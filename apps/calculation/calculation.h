@@ -107,7 +107,18 @@ class Calculation {
   void setHeights(KDCoordinate height, KDCoordinate expandedHeight);
 
   // Displayed output
-  DisplayOutput displayOutput(Poincare::Context* context);
+  DisplayOutput displayOutput() const {
+    assert(m_displayOutput != DisplayOutput::Unknown);
+    return m_displayOutput;
+  }
+  void computeDisplayOutput(Poincare::Context* context) {
+    if (m_displayOutput != DisplayOutput::Unknown) {
+      return;
+    }
+    m_displayOutput = ComputeDisplayOutput(input(), exactOutput(),
+                                           approximateOutput(), context);
+    assert(m_displayOutput != DisplayOutput::Unknown);
+  }
 
   struct OutputLayouts {
     Poincare::Layout exact;
@@ -146,6 +157,10 @@ class Calculation {
 
  private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
+
+  static DisplayOutput ComputeDisplayOutput(
+      Poincare::UserExpression input, Poincare::UserExpression exactOutput,
+      Poincare::UserExpression approximateOutput, Poincare::Context* context);
 
   static EqualSign ComputeEqualSignFromOutputs(
       const OutputLayouts& outputLayouts,

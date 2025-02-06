@@ -37,7 +37,6 @@ void assert_store_is(CalculationStore* store, const char** result) {
 struct CalculationResult {
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation;
   OutputLayouts layouts;
-  DisplayOutput displayOutput;
 };
 
 CalculationResult pushAndProcessCalculation(CalculationStore* store,
@@ -52,6 +51,8 @@ CalculationResult pushAndProcessCalculation(CalculationStore* store,
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 
+  lastCalculation->computeDisplayOutput(context);
+
   /* Each time a calculation is pushed, its equal sign needs to be computed
    * (which requires the output layouts). This is what is done in
    * HistoryViewCell::setNewCalculation(). We need to mimick this behavior in
@@ -61,12 +62,7 @@ CalculationResult pushAndProcessCalculation(CalculationStore* store,
 
   lastCalculation->computeEqualSign(outputLayouts, context);
 
-  /* Beware that createOutputLayouts can force the display output in some cases,
-   * so the display output has to be retrieved after the output layouts are
-   * computed. */
-  DisplayOutput displayOutput = lastCalculation->displayOutput(context);
-
-  return {lastCalculation, std::move(outputLayouts), displayOutput};
+  return {lastCalculation, std::move(outputLayouts)};
 }
 
 QUIZ_CASE(calculation_store) {
@@ -117,7 +113,7 @@ QUIZ_CASE(calculation_store) {
      * Trying to push a new one should delete the oldest one. Alter new text to
      * distinguish it from previously pushed ones. */
     text[0] = '9';
-    auto [pushedCalculation, _, __] =
+    auto [pushedCalculation, _] =
         pushAndProcessCalculation(&store, text, &globalContext);
     // Assert pushed text is correct
     char buffer[4096];
@@ -168,7 +164,7 @@ QUIZ_CASE(calculation_store) {
      * Trying to push a new one should delete older ones. Alter new text to
      * distinguish it from previously pushed ones. */
     text[0] = '9';
-    auto [pushedCalculation, _, __] =
+    auto [pushedCalculation, _] =
         pushAndProcessCalculation(&store, text, &globalContext);
     char buffer[8192];
     store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
@@ -210,13 +206,13 @@ QUIZ_CASE(calculation_ans) {
   pushAndProcessCalculation(&store, "ans+2/3", &globalContext);
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store.calculationAtIndex(0);
-  quiz_assert(lastCalculation->displayOutput(&globalContext) ==
+  quiz_assert(lastCalculation->displayOutput() ==
               DisplayOutput::ExactAndApproximate);
   assert_expression_serializes_to(lastCalculation->exactOutput(), "29/12");
 
   pushAndProcessCalculation(&store, "ans+0.22", &globalContext);
   lastCalculation = store.calculationAtIndex(0);
-  quiz_assert(lastCalculation->displayOutput(&globalContext) ==
+  quiz_assert(lastCalculation->displayOutput() ==
               DisplayOutput::ExactAndApproximateToggle);
   assert_expression_serializes_to(lastCalculation->approximateOutput(),
                                   "2.6366666666667");
@@ -263,15 +259,15 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                          const char* expectedApproximateOutput,
                          Context* context, CalculationStore* store,
                          const char* expectedStoredInput = nullptr) {
-  auto [lastCalculation, outputLayouts, displayOutput] =
+  auto [lastCalculation, outputLayouts] =
       pushAndProcessCalculation(store, input, context);
 
 #if POINCARE_STRICT_TESTS
   quiz_assert(displayOutput == expectedDisplay);
 #else
-  quiz_tolerate_print_if_failure(displayOutput == expectedDisplay, input,
-                                 "correct displayOutput",
-                                 "incorrect displayOutput");
+  quiz_tolerate_print_if_failure(
+      lastCalculation->displayOutput() == expectedDisplay, input,
+      "correct displayOutput", "incorrect displayOutput");
 #endif
 
 #if POINCARE_STRICT_TESTS
@@ -287,12 +283,14 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                                     expectedStoredInput);
   }
   if (expectedExactOutput) {
-    quiz_assert(Calculation::Calculation::CanDisplayExact(displayOutput));
+    quiz_assert(Calculation::Calculation::CanDisplayExact(
+        lastCalculation->displayOutput()));
     assert_layout_serializes_to(outputLayouts.exact, expectedExactOutput);
   }
 
   if (expectedApproximateOutput) {
-    assert(Calculation::Calculation::CanDisplayApproximate(displayOutput));
+    assert(Calculation::Calculation::CanDisplayApproximate(
+        lastCalculation->displayOutput()));
     assert_layout_serializes_to(outputLayouts.approximate,
                                 expectedApproximateOutput);
   }
@@ -504,7 +502,7 @@ void assertMainCalculationOutputIs(const char* input, const char* output,
   pushAndProcessCalculation(store, input, context);
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
-  switch (lastCalculation->displayOutput(context)) {
+  switch (lastCalculation->displayOutput()) {
     case DisplayOutput::ApproximateOnly:
       assert_expression_serializes_to(lastCalculation->approximateOutput(),
                                       output);

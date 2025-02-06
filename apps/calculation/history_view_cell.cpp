@@ -297,12 +297,15 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
       Ion::Display::Width -
       (m_scrollableOutputView.margins()->width() +
        2 * KDFont::GlyphWidth(font));  // > arrow and = sign
+
+  calculation->computeDisplayOutput(context);
+
   Calculation::OutputLayouts outputLayouts = calculation->createOutputLayouts(
       context, canChangeDisplayOutput, maxVisibleWidth, font);
 
   /* Update m_calculationDisplayOutput. Must be done after createOutputLayouts
    * because calculation->displayOutput can change. */
-  m_calculationDisplayOutput = calculation->displayOutput(context);
+  m_calculationDisplayOutput = calculation->displayOutput();
 
   calculation->computeEqualSign(outputLayouts, context);
 

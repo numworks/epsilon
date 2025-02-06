@@ -207,7 +207,7 @@ KDCoordinate HistoryController::nonMemoizedRowHeight(int row) {
 bool HistoryController::calculationAtIndexToggles(int index) const {
   Context* context = App::app()->localContext();
   return index >= 0 && index < m_calculationStore->numberOfCalculations() &&
-         calculationAtIndex(index)->displayOutput(context) ==
+         calculationAtIndex(index)->displayOutput() ==
              Calculation::DisplayOutput::ExactAndApproximateToggle;
 }
 
@@ -271,7 +271,7 @@ void HistoryController::handleOK() {
   Context* context = App::app()->localContext();
   int focusRow = selectedRow();
   Calculation::DisplayOutput displayOutput =
-      calculationAtIndex(focusRow)->displayOutput(context);
+      calculationAtIndex(focusRow)->displayOutput();
   HistoryViewCell* selectedCell =
       static_cast<HistoryViewCell*>(m_selectableListView.selectedCell());
   EditExpressionController* editController =

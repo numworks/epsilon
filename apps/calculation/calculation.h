@@ -39,7 +39,7 @@ class Calculation {
 
  public:
   constexpr static int k_numberOfExpressions = 3;
-  enum class EqualSign : uint8_t { Unknown, Approximation, Equal };
+  enum class EqualSign : uint8_t { Unknown, Undefined, Approximation, Equal };
 
   enum class DisplayOutput : uint8_t {
     Unknown,
@@ -124,14 +124,11 @@ class Calculation {
    * output layout and the approximate output layout. */
   void computeEqualSign(const OutputLayouts& outputLayouts,
                         Poincare::Context* context) {
-    // Do not compute the equal sign if not needed.
     assert(m_displayOutput != DisplayOutput::Unknown);
     if (m_displayOutput == DisplayOutput::ExactOnly ||
-        m_displayOutput == DisplayOutput::ApproximateOnly) {
-      m_equalSign = EqualSign::Approximation;
-    } else if (m_displayOutput ==
-               DisplayOutput::ApproximateIsIdenticalToExact) {
-      m_equalSign = EqualSign::Equal;
+        m_displayOutput == DisplayOutput::ApproximateOnly ||
+        m_displayOutput == DisplayOutput::ApproximateIsIdenticalToExact) {
+      m_equalSign = EqualSign::Undefined;
     } else {
       m_equalSign = ComputeEqualSignFromOutputs(
           outputLayouts, m_calculationPreferences.complexFormat,

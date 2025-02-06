@@ -425,8 +425,10 @@ UserExpression ProjectedExpression::cloneAndBeautify(
 SystemExpression SystemExpression::getReducedDerivative(
     const char* symbolName, int derivationOrder) const {
   Tree* result = SharedTreeStack->pushDiff();
-  SharedTreeStack->pushUserSymbol(symbolName);
+  // Symbol (so that local variable is layouted to symbolName)
   const Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+  // Symbol value (so that the derivative is evaluated at symbolName's value)
+  SharedTreeStack->pushUserSymbol(symbolName);
   Integer::Push(derivationOrder);
   Tree* derivand = tree()->cloneTree();
   Variables::ReplaceSymbol(derivand, symbol, 0,

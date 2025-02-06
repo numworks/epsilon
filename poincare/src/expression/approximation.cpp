@@ -1189,6 +1189,8 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     return m;
   }
   switch (e->type()) {
+    case Type::Parentheses:
+      return ToMatrix<T>(e->child(0), ctx);
     case Type::Add: {
       const Tree* child = e->child(0);
       int n = e->numberOfChildren() - 1;

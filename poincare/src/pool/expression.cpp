@@ -327,10 +327,11 @@ bool NewExpression::deepIsOfType(std::initializer_list<Internal::Type> types,
 void UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
-    Internal::ProjectionContext* context, bool* reductionFailure) const {
+    Internal::ProjectionContext* context) const {
   // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
-  *simplifiedExpression = cloneAndSimplify(context, reductionFailure);
+  bool reductionFailure = false;
+  *simplifiedExpression = cloneAndSimplify(context, &reductionFailure);
   assert(!simplifiedExpression->isUninitialized());
   // Step 2: approximate
   assert(!approximatedExpression || approximatedExpression->isUninitialized());

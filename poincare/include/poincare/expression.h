@@ -179,10 +179,10 @@ class Expression : public PoolHandle {
     return static_cast<ExpressionObject*>(PoolHandle::object());
   }
 
-  void cloneAndSimplifyAndApproximate(UserExpression* simplifiedExpression,
-                                      UserExpression* approximatedExpression,
-                                      Internal::ProjectionContext* context,
-                                      bool* reductionFailure = nullptr) const;
+  void cloneAndSimplifyAndApproximate(
+      UserExpression* simplifiedExpression,
+      UserExpression* approximatedExpression,
+      Internal::ProjectionContext* context) const;
   UserExpression cloneAndSimplify(Internal::ProjectionContext* context,
                                   bool* reductionFailure = nullptr) const;
   SystemExpression cloneAndReduce(ReductionContext reductionContext,

@@ -408,7 +408,7 @@ NewExpression UserExpression::privateCloneAndReduceOrSimplify(
   return Builder(e);
 }
 
-UserExpression ProjectedExpression::cloneAndBeautify(
+UserExpression SystemExpression::cloneAndBeautify(
     const ReductionContext& reductionContext) const {
   ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),

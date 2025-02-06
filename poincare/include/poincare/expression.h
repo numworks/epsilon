@@ -195,6 +195,7 @@ class Expression : public PoolHandle {
   UserExpression cloneAndApproximate(
       Internal::ProjectionContext* context) const;
 
+  // Only on SystemExpression
   UserExpression cloneAndBeautify(
       const ReductionContext& reductionContext) const;
 

@@ -252,6 +252,8 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
   if (ExceptionRun(ecp)) {
     /* The output Layouts are converted back to Expressions so that they can be
      * compared */
+    assert(!outputLayouts.exact.isUninitialized());
+    assert(!outputLayouts.approximate.isUninitialized());
     UserExpression exactDisplayOutput =
         Expression::Parse(outputLayouts.exact.cloneWithoutMargins(), context);
     UserExpression approximateDisplayOutput = Expression::Parse(

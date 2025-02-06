@@ -196,6 +196,11 @@ class Expression : public PoolHandle {
       Internal::ProjectionContext* context) const;
 
   // Only on SystemExpression
+  void cloneAndBeautifyAndApproximate(
+      UserExpression* beautifiedExpression,
+      UserExpression* approximatedExpression,
+      Internal::ProjectionContext* context) const;
+  // Only on SystemExpression
   UserExpression cloneAndBeautify(
       const ReductionContext& reductionContext) const;
   // Only on SystemExpression

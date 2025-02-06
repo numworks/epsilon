@@ -408,6 +408,19 @@ NewExpression UserExpression::privateCloneAndReduceOrSimplify(
   return Builder(e);
 }
 
+void SystemExpression::cloneAndBeautifyAndApproximate(
+    UserExpression* beautifiedExpression,
+    UserExpression* approximatedExpression,
+    Internal::ProjectionContext* context) const {
+  assert(beautifiedExpression && beautifiedExpression->isUninitialized());
+  *beautifiedExpression = cloneAndBeautify(context);
+  assert(!approximatedExpression || approximatedExpression->isUninitialized());
+  if (approximatedExpression) {
+    *approximatedExpression =
+        beautifiedExpression->cloneAndApproximate(context);
+  }
+}
+
 UserExpression SystemExpression::cloneAndBeautify(
     const ReductionContext& reductionContext) const {
   ProjectionContext context = {

@@ -234,6 +234,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("(2+x)*(2-x)+(x+1)*(x-1)", "3");
   simplifies_to("abs(x)/x", "dep(sign(x),{x^0})");
   simplifies_to("x^(1+abs(x)/x)", "dep(x^(1+sign(x)),{x^0})");
+  simplifies_to("abs((-3)^ln(5))", "3^ln(5)", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {

@@ -113,6 +113,13 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
     return true;
   }
   PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KAbs(KExp(KMult(KA, KLn(KB)))), &ctx) &&
+      GetComplexSign(ctx.getTree(KA)).isReal()) {
+    // |B^A| = |B|^A for A real
+    e->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KExp(KMult(KA, KLn(KAbs(KB)))), ctx));
+    return true;
+  }
   if (PatternMatching::Match(e, KAbs(KA), &ctx) &&
       GetComplexSign(ctx.getTree(KA)).isReal()) {
     // |A| = A*sign(A) for A real

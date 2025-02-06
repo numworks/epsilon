@@ -118,11 +118,11 @@ Layout Calculation::createApproximateOutputLayout(
   if (ExceptionRun(ecp)) {
     UserExpression e = approximateOutput();
     if (!e.isUninitialized()) {
-      return e.createLayout(displayMode(),
-                            forEditing
-                                ? PrintFloat::k_maxNumberOfSignificantDigits
-                                : numberOfSignificantDigits(),
-                            context);
+      return e.createLayout(
+          m_calculationPreferences.displayMode,
+          forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
+                     : m_calculationPreferences.numberOfSignificantDigits,
+          context);
     }
   }
   *couldNotCreateApproximateLayout = true;

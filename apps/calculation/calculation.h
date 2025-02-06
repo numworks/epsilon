@@ -84,20 +84,9 @@ class Calculation {
   Poincare::Preferences::CalculationPreferences calculationPreferences() const {
     return m_calculationPreferences;
   }
-  Poincare::Preferences::AngleUnit angleUnit() const {
-    return m_calculationPreferences.angleUnit;
-  }
-  Poincare::Preferences::PrintFloatMode displayMode() const {
-    return m_calculationPreferences.displayMode;
-  }
-  Poincare::Preferences::ComplexFormat complexFormat() const {
-    return m_calculationPreferences.complexFormat;
-  }
+
   void setComplexFormat(Poincare::Preferences::ComplexFormat complexFormat) {
     m_calculationPreferences.complexFormat = complexFormat;
-  }
-  uint8_t numberOfSignificantDigits() const {
-    return m_calculationPreferences.numberOfSignificantDigits;
   }
 
   // Expressions

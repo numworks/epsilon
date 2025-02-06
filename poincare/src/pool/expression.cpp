@@ -345,28 +345,32 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   // Step 2: approximate
   assert(!approximatedExpression || approximatedExpression->isUninitialized());
   if (approximatedExpression) {
-    const Tree* e = simplifiedExpression->tree();
-    Approximation::Context approxCtx(
-        context->m_angleUnit, context->m_complexFormat, context->m_context);
-    if (CAS::Enabled()) {
-      Tree* a = e->cloneTree();
-      /* We are using ApproximateAndReplaceEveryScalar to approximate
-       * expressions with symbols such as π*x → 3.14*x. */
-      Approximation::ApproximateAndReplaceEveryScalar<double>(a, approxCtx);
-      *approximatedExpression = UserExpression::Builder(a);
-    } else {
-      // Note: The non-beautified expression could be approximated instead.
-      Tree* a = Approximation::ToTree<double>(
-          e,
-          Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                    .projectLocalVariables = true},
-          approxCtx);
-      context->m_dimension = Internal::Dimension::Get(a);
-      Beautification::DeepBeautify(a, *context);
-      *approximatedExpression = UserExpression::Builder(a);
-    }
+    *approximatedExpression =
+        simplifiedExpression->cloneAndApproximate(context);
   }
-  return;
+}
+
+UserExpression UserExpression::cloneAndApproximate(
+    Internal::ProjectionContext* context) const {
+  Approximation::Context approxCtx(
+      context->m_angleUnit, context->m_complexFormat, context->m_context);
+  Tree* a;
+  if (CAS::Enabled()) {
+    a = tree()->cloneTree();
+    /* We are using ApproximateAndReplaceEveryScalar to approximate
+     * expressions with symbols such as π*x → 3.14*x. */
+    Approximation::ApproximateAndReplaceEveryScalar<double>(a, approxCtx);
+  } else {
+    // Note: The non-beautified expression could be approximated instead.
+    a = Approximation::ToTree<double>(
+        tree(),
+        Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                  .projectLocalVariables = true},
+        approxCtx);
+    context->m_dimension = Internal::Dimension::Get(a);
+    Beautification::DeepBeautify(a, *context);
+  }
+  return UserExpression::Builder(a);
 }
 
 UserExpression UserExpression::cloneAndSimplify(

@@ -12,22 +12,23 @@
 #include <quiz.h>
 #include <string.h>
 
-typedef ::Calculation::AdditionalResultsType AdditionalResultsType;
-typedef ::Calculation::Calculation::DisplayOutput DisplayOutput;
-typedef ::Calculation::Calculation::EqualSign EqualSign;
+using AdditionalResultsType = Calculation::AdditionalResultsType;
+using DisplayOutput = Calculation::Calculation::DisplayOutput;
+using EqualSign = Calculation::Calculation::EqualSign;
+using OutputLayouts = Calculation::Calculation::OutputLayouts;
+using CalculationStore = Calculation::CalculationStore;
 
 using namespace Poincare;
-using namespace Calculation;
 
 void push(CalculationStore* store, const char* input, Context* context) {
   store->push(Layout::String(input), context);
 }
 
 constexpr static size_t calculationBufferSize =
-    10 * (sizeof(::Calculation::Calculation) +
-          ::Calculation::Calculation::k_numberOfExpressions *
+    10 * (sizeof(Calculation::Calculation) +
+          Calculation::Calculation::k_numberOfExpressions *
               ::Constant::MaxSerializedExpressionSize +
-          sizeof(::Calculation::Calculation*));
+          sizeof(Calculation::Calculation*));
 char calculationBuffer[calculationBufferSize];
 
 /* These two variables mirror the "font" and "maxVisibleWidth" variables in
@@ -65,8 +66,8 @@ QUIZ_CASE(calculation_store) {
 
   /* Checking if the store handles correctly the delete of older calculations
    * when full. */
-  constexpr size_t minimalSize = ::CalculationStore::k_calculationMinimalSize +
-                                 sizeof(::Calculation::Calculation*);
+  constexpr size_t minimalSize = CalculationStore::k_calculationMinimalSize +
+                                 sizeof(Calculation::Calculation*);
   constexpr const char* pattern = "1234567890123456789+";
   constexpr size_t patternSize = 20;
   assert(strlen(pattern) == patternSize);
@@ -90,7 +91,7 @@ QUIZ_CASE(calculation_store) {
      * Trying to push a new one should delete the oldest one. Alter new text to
      * distinguish it from previously pushed ones. */
     text[0] = '9';
-    Shared::ExpiringPointer<::Calculation::Calculation> pushedCalculation =
+    Shared::ExpiringPointer<Calculation::Calculation> pushedCalculation =
         store.push(Layout::String(text), &globalContext);
     // Assert pushed text is correct
     char buffer[4096];
@@ -141,7 +142,7 @@ QUIZ_CASE(calculation_store) {
      * Trying to push a new one should delete older ones. Alter new text to
      * distinguish it from previously pushed ones. */
     text[0] = '9';
-    Shared::ExpiringPointer<::Calculation::Calculation> pushedCalculation =
+    Shared::ExpiringPointer<Calculation::Calculation> pushedCalculation =
         store.push(Layout::String(text), &globalContext);
     char buffer[8192];
     store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
@@ -159,22 +160,21 @@ QUIZ_CASE(calculation_store) {
 void pushAndProcessCalculation(CalculationStore* store, const char* input,
                                Context* context) {
   push(store, input, context);
-  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   /* Each time a calculation is pushed, its equal sign needs to be computed
    * (which requires the output layouts). This is what is done in
    * HistoryViewCell::setNewCalculation(). We need to mimick this behavior in
    * the unit tests as well. */
-  ::Calculation::Calculation::OutputLayouts outputLayouts =
-      lastCalculation->createOutputLayouts(context, true, maxVisibleWidth,
-                                           font);
+  OutputLayouts outputLayouts = lastCalculation->createOutputLayouts(
+      context, true, maxVisibleWidth, font);
   lastCalculation->equalSign(context, &outputLayouts);
 }
 
 void assertAnsIs(const char* input, const char* expectedAnsInputText,
                  Context* context, CalculationStore* store) {
   pushAndProcessCalculation(store, input, context);
-  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   pushAndProcessCalculation(store, "Ans", context);
   lastCalculation = store->calculationAtIndex(0);
@@ -196,7 +196,7 @@ QUIZ_CASE(calculation_ans) {
 
   pushAndProcessCalculation(&store, "1+3/4", &globalContext);
   pushAndProcessCalculation(&store, "ans+2/3", &globalContext);
-  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput(&globalContext) ==
               DisplayOutput::ExactAndApproximate);
@@ -251,12 +251,11 @@ void assertCalculationIs(const char* input, DisplayOutput display,
                          CalculationStore* store,
                          const char* storedInput = nullptr) {
   push(store, input, context);
-  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   // Replicate behavior in HistoryViewCell::setNewCalculation
-  ::Calculation::Calculation::OutputLayouts outputLayouts =
-      lastCalculation->createOutputLayouts(context, true, maxVisibleWidth,
-                                           font);
+  OutputLayouts outputLayouts = lastCalculation->createOutputLayouts(
+      context, true, maxVisibleWidth, font);
 #if POINCARE_STRICT_TESTS
   quiz_assert(lastCalculation->displayOutput(context) == display);
 #else
@@ -278,13 +277,13 @@ void assertCalculationIs(const char* input, DisplayOutput display,
     assert_expression_serializes_to(lastCalculation->input(), storedInput);
   }
   if (exactOutput) {
-    quiz_assert(::Calculation::Calculation::CanDisplayExact(
+    quiz_assert(Calculation::Calculation::CanDisplayExact(
         lastCalculation->displayOutput(context)));
     assert_layout_serializes_to(outputLayouts.exact, exactOutput);
   }
 
   if (approximateOutput) {
-    assert(::Calculation::Calculation::CanDisplayApproximate(
+    assert(Calculation::Calculation::CanDisplayApproximate(
         lastCalculation->displayOutput(context)));
     assert_layout_serializes_to(outputLayouts.approximate, approximateOutput);
   }
@@ -489,7 +488,7 @@ void assertMainCalculationOutputIs(const char* input, const char* output,
                                    Context* context, CalculationStore* store) {
   // For the next test, we only need to checkout input and output text.
   push(store, input, context);
-  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   switch (lastCalculation->displayOutput(context)) {
     case DisplayOutput::ApproximateOnly:
@@ -868,7 +867,7 @@ void assertCalculationAdditionalResultTypeHas(
     const char* input, const AdditionalResultsType additionalResultsType,
     Context* context, CalculationStore* store) {
   push(store, input, context);
-  Shared::ExpiringPointer<::Calculation::Calculation> lastCalculation =
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 #if POINCARE_STRICT_TESTS
   quiz_assert(lastCalculation->additionalResultsType(context) ==

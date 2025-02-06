@@ -261,7 +261,7 @@ SystemExpression SystemExpression::Builder(
   return Builder<T>(pointOrRealScalar.toPoint());
 }
 
-SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
+SystemExpression Expression::DecimalBuilderFromDouble(double value) {
   // TODO: this is a workaround until we port old Decimal::Builder(double)
   char buffer[PrintFloat::k_maxFloatCharSize];
   PrintFloat::PrintFloat::ConvertFloatToText(
@@ -269,7 +269,15 @@ SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
       PrintFloat::k_maxFloatGlyphLength,
       PrintFloat::k_maxNumberOfSignificantDigits,
       Preferences::PrintFloatMode::Decimal);
-  return UserExpression::Parse(buffer, nullptr);
+  assert(buffer[0] != 0);
+  Tree* layout = RackFromText(buffer);
+  assert(layout);
+  TreeRef expression = Parser::Parse(layout, nullptr);
+  // expression is only made of numbers and simple nodes, no need for contextes.
+  layout->removeTree();
+  ProjectionContext context = {};
+  Simplification::ProjectAndReduce(expression, &context);
+  return SystemExpression::Builder(static_cast<Tree*>(expression));
 }
 
 SystemExpression SystemExpression::RationalBuilder(int32_t numerator,

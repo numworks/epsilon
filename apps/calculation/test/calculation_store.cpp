@@ -153,9 +153,8 @@ QUIZ_CASE(calculation_store) {
 }
 
 struct CalculationResult {
-  Poincare::UserExpression storedInput;
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation;
   OutputLayouts layouts;
-  EqualSign equalSign;
   DisplayOutput displayOutput;
 };
 
@@ -170,7 +169,6 @@ CalculationResult pushAndProcessCalculation(CalculationStore* store,
   push(store, input, context);
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
-  auto storedInput = lastCalculation->input();
 
   /* Each time a calculation is pushed, its equal sign needs to be computed
    * (which requires the output layouts). This is what is done in
@@ -178,13 +176,15 @@ CalculationResult pushAndProcessCalculation(CalculationStore* store,
    * the unit tests as well. */
   OutputLayouts outputLayouts = lastCalculation->createOutputLayouts(
       context, true, maxVisibleWidth, font);
-  EqualSign equalSign = lastCalculation->equalSign(context, &outputLayouts);
+
+  lastCalculation->computeEqualSign(outputLayouts, context);
 
   /* Beware that createOutputLayouts can force the display output in some cases,
    * so the display output has to be retrieved after the output layouts are
    * computed. */
   DisplayOutput displayOutput = lastCalculation->displayOutput(context);
-  return {storedInput, std::move(outputLayouts), equalSign, displayOutput};
+
+  return {lastCalculation, std::move(outputLayouts), displayOutput};
 }
 
 void assertAnsIs(const char* input, const char* expectedAnsInputText,
@@ -267,7 +267,7 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                          const char* expectedApproximateOutput,
                          Context* context, CalculationStore* store,
                          const char* expectedStoredInput = nullptr) {
-  auto [storedInput, outputLayouts, equalSign, displayOutput] =
+  auto [lastCalculation, outputLayouts, displayOutput] =
       pushAndProcessCalculation(store, input, context);
 
 #if POINCARE_STRICT_TESTS
@@ -283,12 +283,14 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
 #if POINCARE_STRICT_TESTS
     quiz_assert(equalSign == expectedSign);
 #else
-    quiz_tolerate_print_if_failure(equalSign == expectedSign, input,
-                                   "correct equalSign", "incorrect equalSign");
+    quiz_tolerate_print_if_failure(lastCalculation->equalSign() == expectedSign,
+                                   input, "correct equalSign",
+                                   "incorrect equalSign");
 #endif
   }
   if (expectedStoredInput) {
-    assert_expression_serializes_to(storedInput, expectedStoredInput);
+    assert_expression_serializes_to(lastCalculation->input(),
+                                    expectedStoredInput);
   }
   if (expectedExactOutput) {
     quiz_assert(Calculation::Calculation::CanDisplayExact(displayOutput));

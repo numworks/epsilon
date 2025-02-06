@@ -236,25 +236,13 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
   return {exactOutput, approximateOutput};
 }
 
-Calculation::EqualSign Calculation::equalSign(
-    Context* context, const OutputLayouts* outputLayouts) {
-  // TODO: implement a UserCircuitBreaker
-  if (m_equalSign != EqualSign::Unknown) {
-    return m_equalSign;
-  }
-  if (m_displayOutput == DisplayOutput::ExactOnly ||
-      m_displayOutput == DisplayOutput::ApproximateOnly) {
-    /* Do not compute the equal sign if not needed.
-     * We don't override m_equalSign here in case it needs to be computed later
-     * */
-    return EqualSign::Approximation;
-  }
-
-  assert(outputLayouts);
-
+Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
+    const OutputLayouts& outputLayouts,
+    Poincare::Internal::ComplexFormat complexFormat,
+    Poincare::Internal::AngleUnit angleUnit, Poincare::Context* context) {
   /* Displaying the right equal symbol is less important than displaying a
-   * result, so we do not want equalSign to create a pool failure that would
-   * prevent from displaying a result that we managed to compute. We thus
+   * result, so we do not want computeEqualSign to create a pool failure that
+   * would prevent from displaying a result that we managed to compute. We thus
    * encapsulate the method in an exception checkpoint: if there was not enough
    * memory on the pool to compute the equal sign, just return
    * EqualSign::Approximation. We can safely use an exception checkpoint here
@@ -265,22 +253,24 @@ Calculation::EqualSign Calculation::equalSign(
     /* The output Layouts are converted back to Expressions so that they can be
      * compared */
     UserExpression exactDisplayOutput =
-        Expression::Parse(outputLayouts->exact.cloneWithoutMargins(), context);
+        Expression::Parse(outputLayouts.exact.cloneWithoutMargins(), context);
     UserExpression approximateDisplayOutput = Expression::Parse(
-        outputLayouts->approximate.cloneWithoutMargins(), context);
+        outputLayouts.approximate.cloneWithoutMargins(), context);
 
-    Internal::ProjectionContext ctx{.m_complexFormat = complexFormat(),
-                                    .m_angleUnit = angleUnit()};
-    m_equalSign = Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
-                      exactDisplayOutput, approximateDisplayOutput, &ctx)
-                      ? EqualSign::Equal
-                      : EqualSign::Approximation;
-    return m_equalSign;
+    Internal::ProjectionContext ctx{.m_complexFormat = complexFormat,
+                                    .m_angleUnit = angleUnit};
+    return Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
+               exactDisplayOutput, approximateDisplayOutput, &ctx)
+               ? EqualSign::Equal
+               : EqualSign::Approximation;
   } else {
-    /* Do not override m_equalSign in case there is enough room in the pool
-     * later to compute it. */
     return EqualSign::Approximation;
   }
+}
+
+Calculation::EqualSign Calculation::equalSign() const {
+  assert(m_equalSign != EqualSign::Unknown);
+  return m_equalSign;
 }
 
 void Calculation::fillExpressionsForAdditionalResults(

@@ -118,12 +118,23 @@ class Calculation {
                                     KDCoordinate maxVisibleWidth,
                                     KDFont::Size font);
 
-  /* Compute the sign to be displayed for this calculation by comparing the
-   * output layouts. Passing the output layouts is not necessary if the sign was
-   * already computed. */
-  // TODO: create a separate computeEqualSign method
-  EqualSign equalSign(Poincare::Context* context,
-                      const OutputLayouts* outputLayouts = nullptr);
+  EqualSign equalSign() const;
+
+  /* Compute the sign to be displayed for this expression by comparing the exact
+   * output layout and the approximate output layout. */
+  void computeEqualSign(const OutputLayouts& outputLayouts,
+                        Poincare::Context* context) {
+    assert(m_displayOutput != DisplayOutput::Unknown);
+    if (m_displayOutput == DisplayOutput::ExactOnly ||
+        m_displayOutput == DisplayOutput::ApproximateOnly) {
+      // Do not compute the equal sign if not needed.
+      m_equalSign = EqualSign::Approximation;
+    } else {
+      m_equalSign = ComputeEqualSignFromOutputs(
+          outputLayouts, m_calculationPreferences.complexFormat,
+          m_calculationPreferences.angleUnit, context);
+    }
+  }
 
   void fillExpressionsForAdditionalResults(
       Poincare::UserExpression* input, Poincare::UserExpression* exactOutput,
@@ -132,6 +143,12 @@ class Calculation {
 
  private:
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
+
+  static EqualSign ComputeEqualSignFromOutputs(
+      const OutputLayouts& outputLayouts,
+      Poincare::Internal::ComplexFormat complexFormat,
+      Poincare::Internal::AngleUnit angleUnit, Poincare::Context* context);
+
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
   const Poincare::Internal::Tree* inputTree() const {
@@ -166,8 +183,8 @@ class Calculation {
    */
   DisplayOutput m_displayOutput;
   EqualSign m_equalSign;
-  /* Memoize the CalculationPreferences used for computing the outputs in case
-   * they change later in the shared preferences and we need to compute
+  /* Memoize the CalculationPreferences used for computing the outputs in
+   * case they change later in the shared preferences and we need to compute
    * additional results. */
   Poincare::Preferences::CalculationPreferences m_calculationPreferences;
   AdditionalResultsType m_additionalResultsType;

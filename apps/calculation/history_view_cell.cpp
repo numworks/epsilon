@@ -304,6 +304,8 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
    * because calculation->displayOutput can change. */
   m_calculationDisplayOutput = calculation->displayOutput(context);
 
+  calculation->computeEqualSign(outputLayouts, context);
+
   /* Update m_scrollableOutputView. Must be done once m_calculationDisplayOutput
    * has been updated. We must set which subviews are displayed before
    * setLayouts to mark the right rectangle as dirty. */
@@ -322,8 +324,7 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
                                       outputLayouts.approximate);
   }
   m_scrollableOutputView.setExactAndApproximateAreStriclyEqual(
-      calculation->equalSign(context, &outputLayouts) ==
-      Calculation::EqualSign::Equal);
+      calculation->equalSign() == Calculation::EqualSign::Equal);
   updateExpanded(expanded);
 }
 

@@ -75,7 +75,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
       ansExpr = ansExpr.cloneChildAtIndex(0);
     }
   } else if (input.recursivelyMatches(&NewExpression::isApproximate, context) &&
-             mostRecentCalculation->equalSign(context) ==
+             mostRecentCalculation->equalSign() ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.
      * If the user used a decimal in the input and the exact output is equal to

@@ -30,6 +30,8 @@ constexpr static size_t calculationBufferSize =
           sizeof(::Calculation::Calculation*));
 char calculationBuffer[calculationBufferSize];
 
+/* These two variables mirror the "font" and "maxVisibleWidth" variables in
+ * HistoryViewCell::setNewCalculation */
 constexpr static KDFont::Size font = KDFont::Size::Large;
 constexpr static KDCoordinate maxVisibleWidth = 280;
 

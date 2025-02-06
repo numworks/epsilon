@@ -198,6 +198,8 @@ class Expression : public PoolHandle {
   // Only on SystemExpression
   UserExpression cloneAndBeautify(
       const ReductionContext& reductionContext) const;
+  // Only on SystemExpression
+  UserExpression cloneAndBeautify(Internal::ProjectionContext* context) const;
 
   SystemExpression getReducedDerivative(const char* symbolName,
                                         int derivationOrder = 1) const;

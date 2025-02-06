@@ -420,9 +420,14 @@ UserExpression SystemExpression::cloneAndBeautify(
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
+  return cloneAndBeautify(&context);
+}
+
+UserExpression SystemExpression::cloneAndBeautify(
+    Internal::ProjectionContext* context) const {
   Tree* e = tree()->cloneTree();
-  context.m_dimension = Internal::Dimension::Get(e);
-  Simplification::BeautifyReduced(e, &context);
+  context->m_dimension = Internal::Dimension::Get(e);
+  Simplification::BeautifyReduced(e, context);
   return Builder(e);
 }
 

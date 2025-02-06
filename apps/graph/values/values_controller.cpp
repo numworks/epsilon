@@ -9,7 +9,6 @@
 #include <poincare/helpers/layout.h>
 #include <poincare/layout.h>
 #include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/pool_variable_context.h>
 
 #include "../app.h"
 
@@ -375,27 +374,21 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     // Compute exact result
     assert(derivationOrder == 0);
     SystemExpression e = function->expressionReduced(context);
-    PoolVariableContext abscissaContext =
-        PoolVariableContext(Shared::Function::k_unknownName, context);
-    UserExpression abscissaExpression =
-        UserExpression::DecimalBuilderFromDouble(abscissa);
-    abscissaContext.setExpressionForUserNamed(
-        abscissaExpression,
-        SymbolHelper::BuildSymbol(Shared::Function::k_unknownName,
-                                  strlen(Shared::Function::k_unknownName)));
+    SystemExpression abscissaExpression =
+        Expression::DecimalBuilderFromDouble(abscissa);
     bool simplificationFailure = false;
+    e = e.cloneAndReplaceSymbolWithExpression(Shared::Function::k_unknownName,
+                                              abscissaExpression,
+                                              &simplificationFailure);
     UserExpression approximation;
-    // TODO_PCJ: e is a SystemExpression, we don't need to project again
     Poincare::Internal::ProjectionContext projectionContext = {
         .m_complexFormat =
             Poincare::Preferences::SharedPreferences()->complexFormat(),
         .m_angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
         .m_unitFormat =
-            GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-        .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-        .m_context = &abscissaContext};
-    e.cloneAndSimplifyAndApproximate(
-        &result, &approximation, &projectionContext, &simplificationFailure);
+            GlobalPreferences::SharedGlobalPreferences()->unitFormat()};
+    e.cloneAndBeautifyAndApproximate(&result, &approximation,
+                                     &projectionContext);
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */
     if (simplificationFailure || !m_exactValuesAreActivated ||

@@ -444,6 +444,19 @@ UserExpression SystemExpression::cloneAndBeautify(
   return Builder(e);
 }
 
+SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
+    const char* symbolName, SystemExpression e, bool* reductionFailure) const {
+  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+  assert(Internal::Dimension::Get(e) == Internal::Dimension::Get(symbol));
+  TreeRef result = tree()->cloneTree();
+  result->deepReplaceWith(symbol, e);
+  symbol->removeTree();
+  // TODO: Handle reductionFailure.
+  // Note: Advanced reduction could be allowed for slower but better reduction.
+  Simplification::ReduceSystem(result, false);
+  return SystemExpression::Builder(static_cast<Tree*>(result));
+}
+
 SystemExpression SystemExpression::getReducedDerivative(
     const char* symbolName, int derivationOrder) const {
   Tree* result = SharedTreeStack->pushDiff();

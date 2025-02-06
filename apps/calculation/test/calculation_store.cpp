@@ -20,10 +20,6 @@ using CalculationStore = Calculation::CalculationStore;
 
 using namespace Poincare;
 
-void push(CalculationStore* store, const char* input, Context* context) {
-  store->push(Layout::String(input), context);
-}
-
 constexpr static size_t calculationBufferSize =
     10 * (sizeof(Calculation::Calculation) +
           Calculation::Calculation::k_numberOfExpressions *
@@ -38,6 +34,41 @@ void assert_store_is(CalculationStore* store, const char** result) {
   }
 }
 
+struct CalculationResult {
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation;
+  OutputLayouts layouts;
+  DisplayOutput displayOutput;
+};
+
+CalculationResult pushAndProcessCalculation(CalculationStore* store,
+                                            const char* input,
+                                            Context* context) {
+  /* These two variables mirror the "font" and "maxVisibleWidth" variables in
+   * HistoryViewCell::setNewCalculation */
+  constexpr static KDFont::Size font = KDFont::Size::Large;
+  constexpr static KDCoordinate maxVisibleWidth = 280;
+
+  store->push(Layout::String(input), context);
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
+      store->calculationAtIndex(0);
+
+  /* Each time a calculation is pushed, its equal sign needs to be computed
+   * (which requires the output layouts). This is what is done in
+   * HistoryViewCell::setNewCalculation(). We need to mimick this behavior in
+   * the unit tests as well. */
+  OutputLayouts outputLayouts = lastCalculation->createOutputLayouts(
+      context, true, maxVisibleWidth, font);
+
+  lastCalculation->computeEqualSign(outputLayouts, context);
+
+  /* Beware that createOutputLayouts can force the display output in some cases,
+   * so the display output has to be retrieved after the output layouts are
+   * computed. */
+  DisplayOutput displayOutput = lastCalculation->displayOutput(context);
+
+  return {lastCalculation, std::move(outputLayouts), displayOutput};
+}
+
 QUIZ_CASE(calculation_store) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
@@ -45,7 +76,7 @@ QUIZ_CASE(calculation_store) {
   const char* result[] = {"9", "8", "7", "6", "5", "4", "3", "2", "1", "0"};
   for (int i = 0; i < 10; i++) {
     char text[2] = {(char)(i + '0'), 0};
-    push(&store, text, &globalContext);
+    pushAndProcessCalculation(&store, text, &globalContext);
     quiz_assert(store.numberOfCalculations() == i + 1);
   }
   assert_store_is(&store, result);
@@ -79,15 +110,15 @@ QUIZ_CASE(calculation_store) {
     text[calculationSize - 1] = 0;
 
     while (store.remainingBufferSize() >= minimalSize) {
-      store.push(Layout::String(text), &globalContext);
+      pushAndProcessCalculation(&store, text, &globalContext);
     }
     int numberOfCalculations1 = store.numberOfCalculations();
     /* The buffer is now too full to push a new calculation.
      * Trying to push a new one should delete the oldest one. Alter new text to
      * distinguish it from previously pushed ones. */
     text[0] = '9';
-    Shared::ExpiringPointer<Calculation::Calculation> pushedCalculation =
-        store.push(Layout::String(text), &globalContext);
+    auto [pushedCalculation, _, __] =
+        pushAndProcessCalculation(&store, text, &globalContext);
     // Assert pushed text is correct
     char buffer[4096];
     store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
@@ -117,18 +148,18 @@ QUIZ_CASE(calculation_store) {
     text[textSize - 1] = 0;
 
     const size_t emptyStoreSize = store.remainingBufferSize();
-    store.push(Layout::String(text), &globalContext);
+    pushAndProcessCalculation(&store, text, &globalContext);
     assert(emptyStoreSize > store.remainingBufferSize());
     const size_t calculationSize = emptyStoreSize - store.remainingBufferSize();
 
     // Push big calculations until approaching the limit
     while (store.remainingBufferSize() > 2 * calculationSize) {
-      store.push(Layout::String(text), &globalContext);
+      pushAndProcessCalculation(&store, text, &globalContext);
     }
     /* Push small calculations so that remainingBufferSize remain bigger, but
      * gets closer to minimalSize */
     while (store.remainingBufferSize() > minimalSize + minimalSize / 4) {
-      store.push(Layout::String("1"), &globalContext);
+      pushAndProcessCalculation(&store, "1", &globalContext);
     }
     assert(store.remainingBufferSize() < calculationSize);
     assert(store.remainingBufferSize() > minimalSize);
@@ -137,8 +168,8 @@ QUIZ_CASE(calculation_store) {
      * Trying to push a new one should delete older ones. Alter new text to
      * distinguish it from previously pushed ones. */
     text[0] = '9';
-    Shared::ExpiringPointer<Calculation::Calculation> pushedCalculation =
-        store.push(Layout::String(text), &globalContext);
+    auto [pushedCalculation, _, __] =
+        pushAndProcessCalculation(&store, text, &globalContext);
     char buffer[8192];
     store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
     quiz_assert(strcmp(buffer, text) == 0);
@@ -150,41 +181,6 @@ QUIZ_CASE(calculation_store) {
   }
   store.deleteAll();
   quiz_assert(store.remainingBufferSize() == store.bufferSize());
-}
-
-struct CalculationResult {
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation;
-  OutputLayouts layouts;
-  DisplayOutput displayOutput;
-};
-
-CalculationResult pushAndProcessCalculation(CalculationStore* store,
-                                            const char* input,
-                                            Context* context) {
-  /* These two variables mirror the "font" and "maxVisibleWidth" variables in
-   * HistoryViewCell::setNewCalculation */
-  constexpr static KDFont::Size font = KDFont::Size::Large;
-  constexpr static KDCoordinate maxVisibleWidth = 280;
-
-  push(store, input, context);
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
-      store->calculationAtIndex(0);
-
-  /* Each time a calculation is pushed, its equal sign needs to be computed
-   * (which requires the output layouts). This is what is done in
-   * HistoryViewCell::setNewCalculation(). We need to mimick this behavior in
-   * the unit tests as well. */
-  OutputLayouts outputLayouts = lastCalculation->createOutputLayouts(
-      context, true, maxVisibleWidth, font);
-
-  lastCalculation->computeEqualSign(outputLayouts, context);
-
-  /* Beware that createOutputLayouts can force the display output in some cases,
-   * so the display output has to be retrieved after the output layouts are
-   * computed. */
-  DisplayOutput displayOutput = lastCalculation->displayOutput(context);
-
-  return {lastCalculation, std::move(outputLayouts), displayOutput};
 }
 
 void assertAnsIs(const char* input, const char* expectedAnsInputText,
@@ -505,7 +501,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
 void assertMainCalculationOutputIs(const char* input, const char* output,
                                    Context* context, CalculationStore* store) {
   // For the next test, we only need to checkout input and output text.
-  push(store, input, context);
+  pushAndProcessCalculation(store, input, context);
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   switch (lastCalculation->displayOutput(context)) {
@@ -717,12 +713,12 @@ QUIZ_CASE(calculation_symbolic_computation) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 
   // 8 - Circularly with symbols
-  push(&store, "x→f(x)", &globalContext);
+  pushAndProcessCalculation(&store, "x→f(x)", &globalContext);
   assertMainCalculationOutputIs("f(Ans)→A", "undef", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   // Derivatives condensed form
-  push(&store, "2→c(x)", &globalContext);
+  pushAndProcessCalculation(&store, "2→c(x)", &globalContext);
   assertMainCalculationOutputIs("c''(0)→c(x)", "diff(2,x,0,2)", &globalContext,
                                 &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("c.func").destroy();
@@ -893,7 +889,7 @@ bool operator==(const AdditionalResultsType& a,
 void assertCalculationAdditionalResultTypeHas(
     const char* input, const AdditionalResultsType additionalResultsType,
     Context* context, CalculationStore* store) {
-  push(store, input, context);
+  pushAndProcessCalculation(store, input, context);
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 #if POINCARE_STRICT_TESTS

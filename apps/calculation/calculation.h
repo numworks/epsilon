@@ -111,14 +111,8 @@ class Calculation {
     assert(m_displayOutput != DisplayOutput::Unknown);
     return m_displayOutput;
   }
-  void computeDisplayOutput(Poincare::Context* context) {
-    if (m_displayOutput != DisplayOutput::Unknown) {
-      return;
-    }
-    m_displayOutput = ComputeDisplayOutput(input(), exactOutput(),
-                                           approximateOutput(), context);
-    assert(m_displayOutput != DisplayOutput::Unknown);
-  }
+
+  void computeDisplayOutput(Poincare::Context* context);
 
   struct OutputLayouts {
     Poincare::Layout exact;
@@ -134,21 +128,7 @@ class Calculation {
   /* Compute the sign to be displayed for this expression by comparing the exact
    * output layout and the approximate output layout. */
   void computeEqualSign(const OutputLayouts& outputLayouts,
-                        Poincare::Context* context) {
-    if (m_equalSign != EqualSign::Unknown) {
-      return;
-    }
-    if (m_displayOutput == DisplayOutput::ExactOnly ||
-        m_displayOutput == DisplayOutput::ApproximateOnly ||
-        m_displayOutput == DisplayOutput::ApproximateIsIdenticalToExact) {
-      m_equalSign = EqualSign::Undefined;
-    } else {
-      m_equalSign = ComputeEqualSignFromOutputs(
-          outputLayouts, m_calculationPreferences.complexFormat,
-          m_calculationPreferences.angleUnit, context);
-    }
-    assert(m_equalSign != EqualSign::Unknown);
-  }
+                        Poincare::Context* context);
 
   void fillExpressionsForAdditionalResults(
       Poincare::UserExpression* input, Poincare::UserExpression* exactOutput,

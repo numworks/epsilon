@@ -124,7 +124,9 @@ class Calculation {
    * output layout and the approximate output layout. */
   void computeEqualSign(const OutputLayouts& outputLayouts,
                         Poincare::Context* context) {
-    assert(m_displayOutput != DisplayOutput::Unknown);
+    if (m_equalSign != EqualSign::Unknown) {
+      return;
+    }
     if (m_displayOutput == DisplayOutput::ExactOnly ||
         m_displayOutput == DisplayOutput::ApproximateOnly ||
         m_displayOutput == DisplayOutput::ApproximateIsIdenticalToExact) {
@@ -134,6 +136,7 @@ class Calculation {
           outputLayouts, m_calculationPreferences.complexFormat,
           m_calculationPreferences.angleUnit, context);
     }
+    assert(m_equalSign != EqualSign::Unknown);
   }
 
   void fillExpressionsForAdditionalResults(

@@ -31,11 +31,6 @@ constexpr static size_t calculationBufferSize =
           sizeof(Calculation::Calculation*));
 char calculationBuffer[calculationBufferSize];
 
-/* These two variables mirror the "font" and "maxVisibleWidth" variables in
- * HistoryViewCell::setNewCalculation */
-constexpr static KDFont::Size font = KDFont::Size::Large;
-constexpr static KDCoordinate maxVisibleWidth = 280;
-
 void assert_store_is(CalculationStore* store, const char** result) {
   for (int i = 0; i < store->numberOfCalculations(); i++) {
     assert_expression_serializes_to(store->calculationAtIndex(i)->input(),
@@ -157,18 +152,39 @@ QUIZ_CASE(calculation_store) {
   quiz_assert(store.remainingBufferSize() == store.bufferSize());
 }
 
-void pushAndProcessCalculation(CalculationStore* store, const char* input,
-                               Context* context) {
+struct CalculationResult {
+  Poincare::UserExpression storedInput;
+  OutputLayouts layouts;
+  EqualSign equalSign;
+  DisplayOutput displayOutput;
+};
+
+CalculationResult pushAndProcessCalculation(CalculationStore* store,
+                                            const char* input,
+                                            Context* context) {
+  /* These two variables mirror the "font" and "maxVisibleWidth" variables in
+   * HistoryViewCell::setNewCalculation */
+  constexpr static KDFont::Size font = KDFont::Size::Large;
+  constexpr static KDCoordinate maxVisibleWidth = 280;
+
   push(store, input, context);
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
+  auto storedInput = lastCalculation->input();
+
   /* Each time a calculation is pushed, its equal sign needs to be computed
    * (which requires the output layouts). This is what is done in
    * HistoryViewCell::setNewCalculation(). We need to mimick this behavior in
    * the unit tests as well. */
   OutputLayouts outputLayouts = lastCalculation->createOutputLayouts(
       context, true, maxVisibleWidth, font);
-  lastCalculation->equalSign(context, &outputLayouts);
+  EqualSign equalSign = lastCalculation->equalSign(context, &outputLayouts);
+
+  /* Beware that createOutputLayouts can force the display output in some cases,
+   * so the display output has to be retrieved after the output layouts are
+   * computed. */
+  DisplayOutput displayOutput = lastCalculation->displayOutput(context);
+  return {storedInput, std::move(outputLayouts), equalSign, displayOutput};
 }
 
 void assertAnsIs(const char* input, const char* expectedAnsInputText,
@@ -245,47 +261,44 @@ QUIZ_CASE(calculation_ans) {
   store.deleteAll();
 }
 
-void assertCalculationIs(const char* input, DisplayOutput display,
-                         EqualSign sign, const char* exactOutput,
-                         const char* approximateOutput, Context* context,
-                         CalculationStore* store,
-                         const char* storedInput = nullptr) {
-  push(store, input, context);
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
-      store->calculationAtIndex(0);
-  // Replicate behavior in HistoryViewCell::setNewCalculation
-  OutputLayouts outputLayouts = lastCalculation->createOutputLayouts(
-      context, true, maxVisibleWidth, font);
+void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
+                         EqualSign expectedSign,
+                         const char* expectedExactOutput,
+                         const char* expectedApproximateOutput,
+                         Context* context, CalculationStore* store,
+                         const char* expectedStoredInput = nullptr) {
+  auto [storedInput, outputLayouts, equalSign, displayOutput] =
+      pushAndProcessCalculation(store, input, context);
+
 #if POINCARE_STRICT_TESTS
-  quiz_assert(lastCalculation->displayOutput(context) == display);
+  quiz_assert(displayOutput == expectedDisplay);
 #else
-  quiz_tolerate_print_if_failure(
-      lastCalculation->displayOutput(context) == display, input,
-      "correct displayOutput", "incorrect displayOutput");
+  quiz_tolerate_print_if_failure(displayOutput == expectedDisplay, input,
+                                 "correct displayOutput",
+                                 "incorrect displayOutput");
 #endif
-  if (sign != EqualSign::Unknown && display != DisplayOutput::ApproximateOnly &&
-      display != DisplayOutput::ExactOnly) {
+  if (expectedSign != EqualSign::Unknown &&
+      expectedDisplay != DisplayOutput::ApproximateOnly &&
+      expectedDisplay != DisplayOutput::ExactOnly) {
 #if POINCARE_STRICT_TESTS
-    quiz_assert(lastCalculation->equalSign(context, &outputLayouts) == sign);
+    quiz_assert(equalSign == expectedSign);
 #else
-    quiz_tolerate_print_if_failure(
-        lastCalculation->equalSign(context, &outputLayouts) == sign, input,
-        "correct equalSign", "incorrect equalSign");
+    quiz_tolerate_print_if_failure(equalSign == expectedSign, input,
+                                   "correct equalSign", "incorrect equalSign");
 #endif
   }
-  if (storedInput) {
-    assert_expression_serializes_to(lastCalculation->input(), storedInput);
+  if (expectedStoredInput) {
+    assert_expression_serializes_to(storedInput, expectedStoredInput);
   }
-  if (exactOutput) {
-    quiz_assert(Calculation::Calculation::CanDisplayExact(
-        lastCalculation->displayOutput(context)));
-    assert_layout_serializes_to(outputLayouts.exact, exactOutput);
+  if (expectedExactOutput) {
+    quiz_assert(Calculation::Calculation::CanDisplayExact(displayOutput));
+    assert_layout_serializes_to(outputLayouts.exact, expectedExactOutput);
   }
 
-  if (approximateOutput) {
-    assert(Calculation::Calculation::CanDisplayApproximate(
-        lastCalculation->displayOutput(context)));
-    assert_layout_serializes_to(outputLayouts.approximate, approximateOutput);
+  if (expectedApproximateOutput) {
+    assert(Calculation::Calculation::CanDisplayApproximate(displayOutput));
+    assert_layout_serializes_to(outputLayouts.approximate,
+                                expectedApproximateOutput);
   }
   store->deleteAll();
 }

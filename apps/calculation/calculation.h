@@ -119,6 +119,8 @@ class Calculation {
     Poincare::Layout approximate;
   };
 
+  /* Processes the calculation to compute the output layouts. The
+   * m_displayOutput and m_equalSign members are also computed. */
   OutputLayouts layoutCalculation(KDFont::Size font,
                                   KDCoordinate maxVisibleWidth,
                                   Poincare::Context* context,

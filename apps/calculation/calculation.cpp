@@ -159,6 +159,8 @@ static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
 Calculation::OutputLayouts Calculation::layoutCalculation(
     KDFont::Size font, KDCoordinate maxVisibleWidth, Poincare::Context* context,
     bool canChangeDisplayOutput) {
+  /* This processing* has do be done in a certain order (1. display output, 2.
+   * output layouts, 3. equal sign). */
   computeDisplayOutput(context);
   OutputLayouts outputLayouts = createOutputLayouts(
       context, canChangeDisplayOutput, maxVisibleWidth, font);
@@ -293,6 +295,7 @@ Calculation::EqualSign Calculation::equalSign() const {
 
 void Calculation::computeEqualSign(const OutputLayouts& outputLayouts,
                                    Poincare::Context* context) {
+  assert(m_displayOutput != DisplayOutput::Unknown);
   if (m_equalSign != EqualSign::Unknown) {
     return;
   }

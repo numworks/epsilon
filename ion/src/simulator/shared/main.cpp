@@ -1,5 +1,7 @@
 #include <assert.h>
 #include <ion.h>
+#include <unistd.h>
+
 #if ION_LOG_EVENTS_NAME
 #include <ion/keyboard/layout_events.h>
 #endif
@@ -158,11 +160,50 @@ int main(int argc, char* argv[]) {
   Args args(argc, argv);
 
 #ifndef __WIN32__
-  if (args.popFlag("--limit-stack-usage")) {
-    // Limit stack usage
-    constexpr int kStackSize = 32768;
-    struct rlimit stackLimits = {kStackSize, kStackSize};
-    setrlimit(RLIMIT_STACK, &stackLimits);
+  /* The goal of this parameter is to limit the stack size on simulator to more
+   * closely match the limited stack size of the device, which is 0x8000 bytes
+   * (32Ko).
+   * To do so, we can call `setrlimit(RLIMIT_STACK, &limit)`. For this new limit
+   * to take effect, we need to restart the process with an execv. This is
+   * because by the time we make the call to `setrlimit`, the stack is already
+   * allocated with a size of 0x7FC000.
+   *
+   * Unfortunatly, setting a RLIMIT_STACK of 0x8000 produces an EXC_BAD_ACCESS
+   * in dyld (iOS Dynamic Link Editor). This is because dyld process exceeds
+   * this stack limit. At the time of writing, dyld process takes up at least
+   * 0x1C3A0 on the stack, hence reducing the stack size past this limit
+   * prohibits the simulator from starting. Because of this, the minimum value
+   * possible for the stack limit is 0x1C000+1 which allocate a stack of size
+   * 0x20000 (the stack is allocated by increments of 0x4000)
+   *
+   * Warning: this is pobably dependent of the users architecture.
+   * If there is an issue with this parameter going forward, one could try
+   * increasing this limit further, maybe dyld takes up more stack space.
+   *
+   * Debugging tip: While trying to debug with --limit-stack-usage flag on, lldb
+   * will automatically stop at the exec call. To bypass this behaviour, write
+   * "settings set target.process.stop-on-exec false" in ~/.lldbinit */
+
+  constexpr int k_stackLimit = 0x20000;
+  const char* lsuFlag = "--limit-stack-usage";
+  if (args.popFlag(lsuFlag)) {
+    struct rlimit stackLimits = {0, 0};
+    if (getrlimit(RLIMIT_STACK, &stackLimits) == 0) {
+      if (stackLimits.rlim_cur > k_stackLimit) {
+        stackLimits = {k_stackLimit, k_stackLimit};
+        if (setrlimit(RLIMIT_STACK, &stackLimits) == 0) {
+          execv(argv[0], argv);
+        }
+        fprintf(stderr, "Unable to SET stack limit: ignoring flag %s\n",
+                lsuFlag);
+      } else {
+        fprintf(stdout,
+                "Successfully reduce stack size, now limited to 0x%llX\n",
+                stackLimits.rlim_cur);
+      }
+    } else {
+      fprintf(stderr, "Unable to GET stack limit: ignoring flag %s\n", lsuFlag);
+    }
   }
 #endif
 

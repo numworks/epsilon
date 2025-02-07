@@ -27,6 +27,9 @@ on:
       ios:
        type: boolean
        default: 'true'
+      web:
+       type: boolean
+       default: 'true'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -116,6 +119,7 @@ jobs:
           path: output/debug/optimized/windows/epsilon.exe
   web:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.web == 'true') }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:

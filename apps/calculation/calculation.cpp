@@ -156,6 +156,16 @@ static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
   return input.isStore() && input.cloneChildAtIndex(1).isUserFunction();
 }
 
+Calculation::OutputLayouts Calculation::layoutCalculation(
+    KDFont::Size font, KDCoordinate maxVisibleWidth, Poincare::Context* context,
+    bool canChangeDisplayOutput) {
+  computeDisplayOutput(context);
+  OutputLayouts outputLayouts = createOutputLayouts(
+      context, canChangeDisplayOutput, maxVisibleWidth, font);
+  computeEqualSign(outputLayouts, context);
+  return outputLayouts;
+}
+
 Calculation::OutputLayouts Calculation::createOutputLayouts(
     Context* context, bool canChangeDisplayOutput, KDCoordinate maxVisibleWidth,
     KDFont::Size font) {

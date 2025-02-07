@@ -112,23 +112,17 @@ class Calculation {
     return m_displayOutput;
   }
 
-  void computeDisplayOutput(Poincare::Context* context);
+  EqualSign equalSign() const;
 
   struct OutputLayouts {
     Poincare::Layout exact;
     Poincare::Layout approximate;
   };
-  OutputLayouts createOutputLayouts(Poincare::Context* context,
-                                    bool canChangeDisplayOutput,
-                                    KDCoordinate maxVisibleWidth,
-                                    KDFont::Size font);
 
-  EqualSign equalSign() const;
-
-  /* Compute the sign to be displayed for this expression by comparing the exact
-   * output layout and the approximate output layout. */
-  void computeEqualSign(const OutputLayouts& outputLayouts,
-                        Poincare::Context* context);
+  OutputLayouts layoutCalculation(KDFont::Size font,
+                                  KDCoordinate maxVisibleWidth,
+                                  Poincare::Context* context,
+                                  bool canChangeDisplayOutput);
 
   void fillExpressionsForAdditionalResults(
       Poincare::UserExpression* input, Poincare::UserExpression* exactOutput,
@@ -164,6 +158,7 @@ class Calculation {
                : Poincare::Internal::Tree::FromBlocks(
                      m_trees + m_inputTreeSize + m_exactOutputTreeSize);
   }
+
   bool exactAndApproximatedAreEqual() const {
     return m_exactOutputTreeSize == m_approximatedOutputTreeSize &&
            memcmp(exactOutputTree(), approximatedOutputTree(),
@@ -174,6 +169,18 @@ class Calculation {
     return m_inputTreeSize + m_exactOutputTreeSize +
            m_approximatedOutputTreeSize;
   }
+
+  void computeDisplayOutput(Poincare::Context* context);
+
+  OutputLayouts createOutputLayouts(Poincare::Context* context,
+                                    bool canChangeDisplayOutput,
+                                    KDCoordinate maxVisibleWidth,
+                                    KDFont::Size font);
+
+  /* Compute the sign to be displayed for this expression by comparing the exact
+   * output layout and the approximate output layout. */
+  void computeEqualSign(const OutputLayouts& outputLayouts,
+                        Poincare::Context* context);
 
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::MaxBufferSize()) because when we

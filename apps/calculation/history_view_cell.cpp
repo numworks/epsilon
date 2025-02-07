@@ -298,16 +298,10 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
       (m_scrollableOutputView.margins()->width() +
        2 * KDFont::GlyphWidth(font));  // > arrow and = sign
 
-  calculation->computeDisplayOutput(context);
+  Calculation::OutputLayouts outputLayouts = calculation->layoutCalculation(
+      font, maxVisibleWidth, context, canChangeDisplayOutput);
 
-  Calculation::OutputLayouts outputLayouts = calculation->createOutputLayouts(
-      context, canChangeDisplayOutput, maxVisibleWidth, font);
-
-  /* Update m_calculationDisplayOutput. Must be done after createOutputLayouts
-   * because calculation->displayOutput can change. */
   m_calculationDisplayOutput = calculation->displayOutput();
-
-  calculation->computeEqualSign(outputLayouts, context);
 
   /* Update m_scrollableOutputView. Must be done once m_calculationDisplayOutput
    * has been updated. We must set which subviews are displayed before

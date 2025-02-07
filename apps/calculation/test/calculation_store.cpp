@@ -51,16 +51,8 @@ CalculationResult pushAndProcessCalculation(CalculationStore* store,
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 
-  lastCalculation->computeDisplayOutput(context);
-
-  /* Each time a calculation is pushed, its equal sign needs to be computed
-   * (which requires the output layouts). This is what is done in
-   * HistoryViewCell::setNewCalculation(). We need to mimick this behavior in
-   * the unit tests as well. */
-  OutputLayouts outputLayouts = lastCalculation->createOutputLayouts(
-      context, true, maxVisibleWidth, font);
-
-  lastCalculation->computeEqualSign(outputLayouts, context);
+  OutputLayouts outputLayouts =
+      lastCalculation->layoutCalculation(font, maxVisibleWidth, context, true);
 
   return {lastCalculation, std::move(outputLayouts)};
 }

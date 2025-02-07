@@ -34,14 +34,8 @@ void assert_store_is(CalculationStore* store, const char** result) {
   }
 }
 
-struct CalculationResult {
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation;
-  OutputLayouts layouts;
-};
-
-CalculationResult pushAndProcessCalculation(CalculationStore* store,
-                                            const char* input,
-                                            Context* context) {
+OutputLayouts pushAndProcessCalculation(CalculationStore* store,
+                                        const char* input, Context* context) {
   /* These two variables mirror the "font" and "maxVisibleWidth" variables in
    * HistoryViewCell::setNewCalculation */
   constexpr static KDFont::Size font = KDFont::Size::Large;
@@ -51,10 +45,8 @@ CalculationResult pushAndProcessCalculation(CalculationStore* store,
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 
-  OutputLayouts outputLayouts =
-      lastCalculation->layoutCalculation(font, maxVisibleWidth, context, true);
-
-  return {lastCalculation, std::move(outputLayouts)};
+  return lastCalculation->layoutCalculation(font, maxVisibleWidth, context,
+                                            true);
 }
 
 QUIZ_CASE(calculation_store) {
@@ -105,13 +97,12 @@ QUIZ_CASE(calculation_store) {
      * Trying to push a new one should delete the oldest one. Alter new text to
      * distinguish it from previously pushed ones. */
     text[0] = '9';
-    auto [pushedCalculation, _] =
-        pushAndProcessCalculation(&store, text, &globalContext);
+    pushAndProcessCalculation(&store, text, &globalContext);
     // Assert pushed text is correct
     char buffer[4096];
     store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
     quiz_assert(strcmp(buffer, text) == 0);
-    pushedCalculation->input().serialize(buffer, std::size(buffer));
+    store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
     quiz_assert(strcmp(buffer, text) == 0);
     int numberOfCalculations2 = store.numberOfCalculations();
     // The numberOfCalculations should be the same
@@ -161,7 +152,7 @@ QUIZ_CASE(calculation_store) {
     char buffer[8192];
     store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
     quiz_assert(strcmp(buffer, text) == 0);
-    pushedCalculation->input().serialize(buffer, std::size(buffer));
+    store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
     quiz_assert(strcmp(buffer, text) == 0);
     int numberOfCalculations2 = store.numberOfCalculations();
     // The numberOfCalculations should be the equal or smaller
@@ -251,8 +242,10 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                          const char* expectedApproximateOutput,
                          Context* context, CalculationStore* store,
                          const char* expectedStoredInput = nullptr) {
-  auto [lastCalculation, outputLayouts] =
+  OutputLayouts outputLayouts =
       pushAndProcessCalculation(store, input, context);
+  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
+      store->calculationAtIndex(0);
 
 #if POINCARE_STRICT_TESTS
   quiz_assert(displayOutput == expectedDisplay);

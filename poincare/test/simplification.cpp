@@ -235,6 +235,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs(x)/x", "dep(sign(x),{x^0})");
   simplifies_to("x^(1+abs(x)/x)", "dep(x^(1+sign(x)),{x^0})");
   simplifies_to("abs((-3)^ln(5))", "3^ln(5)", cartesianCtx);
+  simplifies_to("abs(acos(2)^4)", "abs(acos(2))^4", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {
@@ -411,7 +412,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("arg(exp(-i*π/7))", "-π/7", ctx);
   simplifies_to("arg(exp(i*π*10))", "0", ctx);
   simplifies_to("arg(exp(-i*π))", "π", ctx);
-  simplifies_to("abs(arccos(z)^2)", "abs(arccos(z)^2)", ctx);
+  simplifies_to("abs(arccos(z)^2)", "abs(arccos(z))^2", ctx);
   simplifies_to("e^(arg(e^(x×i))×i)", "e^(x×i)", PolarCtx);
   simplifies_to("e^(arg(e^(x×i))×i)", "cos(x)+sin(x)×i", ctx);
   simplifies_to("arg(abs(x)×e^(arg(z)×i))", "dep(arg(z),{nonNull(abs(x))})",

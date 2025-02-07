@@ -145,7 +145,7 @@ class __attribute__((packed)) GlobalPreferences {
    */
   GlobalPreferences() = default;
 
-  const CountryPreferences& countryPreferences() const {
+  constexpr const CountryPreferences& countryPreferences() const {
     return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)];
   }
 

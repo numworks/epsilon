@@ -147,8 +147,7 @@ QUIZ_CASE(calculation_store) {
      * Trying to push a new one should delete older ones. Alter new text to
      * distinguish it from previously pushed ones. */
     text[0] = '9';
-    auto [pushedCalculation, _] =
-        pushAndProcessCalculation(&store, text, &globalContext);
+    pushAndProcessCalculation(&store, text, &globalContext);
     char buffer[8192];
     store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
     quiz_assert(strcmp(buffer, text) == 0);

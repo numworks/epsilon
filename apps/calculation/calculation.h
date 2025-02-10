@@ -112,7 +112,10 @@ class Calculation {
     return m_displayOutput;
   }
 
-  EqualSign equalSign() const;
+  EqualSign equalSign() const {
+    assert(m_equalSign != EqualSign::Unknown);
+    return m_equalSign;
+  }
 
   struct OutputLayouts {
     Poincare::Layout exact;

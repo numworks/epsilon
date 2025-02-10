@@ -288,11 +288,6 @@ Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
   }
 }
 
-Calculation::EqualSign Calculation::equalSign() const {
-  assert(m_equalSign != EqualSign::Unknown);
-  return m_equalSign;
-}
-
 void Calculation::computeEqualSign(const OutputLayouts& outputLayouts,
                                    Poincare::Context* context) {
   assert(m_displayOutput != DisplayOutput::Unknown);

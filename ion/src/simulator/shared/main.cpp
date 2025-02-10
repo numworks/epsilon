@@ -38,6 +38,7 @@ constexpr static const char* k_loadStateFileKeys[] = {"--load-state-file",
                                                       "-l"};
 constexpr static const char* k_headlessFlags[] = {"--headless", "-h"};
 constexpr static const char* k_languageFlag = "--language";
+constexpr static const char* k_limitStackUsageFlag = "--limit-stack-usage";
 
 /* The Args class allows parsing and editing command-line arguments
  * The editing part allows us to add/remove arguments before forwarding them to
@@ -183,10 +184,8 @@ int main(int argc, char* argv[]) {
    * Debugging tip: While trying to debug with --limit-stack-usage flag on, lldb
    * will automatically stop at the exec call. To bypass this behaviour, write
    * "settings set target.process.stop-on-exec false" in ~/.lldbinit */
-
   constexpr int k_stackLimit = 0x20000;
-  const char* lsuFlag = "--limit-stack-usage";
-  if (args.popFlag(lsuFlag)) {
+  if (args.popFlag(k_limitStackUsageFlag)) {
     struct rlimit stackLimits = {0, 0};
     if (getrlimit(RLIMIT_STACK, &stackLimits) == 0) {
       if (stackLimits.rlim_cur > k_stackLimit) {
@@ -195,14 +194,15 @@ int main(int argc, char* argv[]) {
           execv(argv[0], argv);
         }
         fprintf(stderr, "Unable to SET stack limit: ignoring flag %s\n",
-                lsuFlag);
+                k_limitStackUsageFlag);
       } else {
         fprintf(stdout,
-                "Successfully reduce stack size, now limited to 0x%llX\n",
+                "Successfully reduced stack size, now limited to 0x%llX\n",
                 stackLimits.rlim_cur);
       }
     } else {
-      fprintf(stderr, "Unable to GET stack limit: ignoring flag %s\n", lsuFlag);
+      fprintf(stderr, "Unable to GET stack limit: ignoring flag %s\n",
+              k_limitStackUsageFlag);
     }
   }
 #endif

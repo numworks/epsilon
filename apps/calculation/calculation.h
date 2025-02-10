@@ -174,6 +174,8 @@ class Calculation {
 
   void computeDisplayOutput(Poincare::Context* context);
 
+  /* Returns the output layouts (exact and approximate). Optionally
+   * (canChangeDisplayOutput), can change the m_displayOutput member variable */
   OutputLayouts createOutputLayouts(Poincare::Context* context,
                                     bool canChangeDisplayOutput,
                                     KDCoordinate maxVisibleWidth,

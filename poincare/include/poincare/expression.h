@@ -401,7 +401,7 @@ class Expression : public PoolHandle {
 #endif
 
  private:
-  SystemExpression cloneAndReduceAndBeautify(
+  NewExpression privateCloneAndReduceOrSimplify(
       Internal::ProjectionContext* context, bool beautify,
       bool* reductionFailure = nullptr) const;
 };

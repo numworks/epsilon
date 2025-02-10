@@ -362,7 +362,7 @@ void UserExpression::cloneAndSimplifyAndApproximate(
 
 UserExpression UserExpression::cloneAndSimplify(
     Internal::ProjectionContext* context, bool* reductionFailure) const {
-  return cloneAndReduceAndBeautify(context, true, reductionFailure);
+  return privateCloneAndReduceOrSimplify(context, true, reductionFailure);
 }
 
 SystemExpression UserExpression::cloneAndReduce(
@@ -377,13 +377,10 @@ SystemExpression UserExpression::cloneAndReduce(
       .m_unitFormat = reductionContext.unitFormat(),
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
-  return cloneAndReduceAndBeautify(&context, false, reductionFailure);
+  return privateCloneAndReduceOrSimplify(&context, false, reductionFailure);
 }
 
-/* TODO_PCJ: refactor into cloneAndReduce and cloneAndReduceAndBeautify to
- * return correct expression type (UserExpression if beautified,
- * SystemExpression otherwise) */
-SystemExpression UserExpression::cloneAndReduceAndBeautify(
+NewExpression UserExpression::privateCloneAndReduceOrSimplify(
     Internal::ProjectionContext* context, bool beautify,
     bool* reductionFailure) const {
   assert(!isUninitialized());

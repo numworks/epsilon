@@ -416,8 +416,15 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       /* Not using Dimension operator == because different representatives are
        * allowed. */
       return childDim[0].unit.vector == childDim[1].unit.vector;
+    case Type::DepList:
+      /* For now units are allowed in depLists. For a later refactoring, it
+       * would be better to have a dependency creation function that ensures in
+       * advance that no units are injected in a dependency. */
+      unitsAllowed = true;
+      break;
     case Type::Dep:
-      // Children can have a different dimension : [[x/x]] -> dep([[1]], {1/x})
+      // Children can have a different dimension : [[x/x]] -> dep([[1]],
+      // {1/x})
       return true;
     case Type::Set:
     case Type::List:

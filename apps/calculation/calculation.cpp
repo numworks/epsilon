@@ -159,7 +159,7 @@ static bool ShouldOnlyDisplayExactOutput(UserExpression input) {
 Calculation::OutputLayouts Calculation::layoutCalculation(
     KDFont::Size font, KDCoordinate maxVisibleWidth, Poincare::Context* context,
     bool canChangeDisplayOutput) {
-  /* This processing* has do be done in a certain order (1. display output, 2.
+  /* This processing has do be done in a certain order (1. display output, 2.
    * output layouts, 3. equal sign). */
   computeDisplayOutput(context);
   OutputLayouts outputLayouts = createOutputLayouts(

@@ -39,7 +39,7 @@ class Calculation {
 
  public:
   constexpr static int k_numberOfExpressions = 3;
-  enum class EqualSign : uint8_t { Unknown, Undefined, Approximation, Equal };
+  enum class EqualSign : uint8_t { Unknown, Hidden, Approximation, Equal };
 
   enum class DisplayOutput : uint8_t {
     Unknown,

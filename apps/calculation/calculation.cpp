@@ -297,7 +297,7 @@ void Calculation::computeEqualSign(const OutputLayouts& outputLayouts,
   if (m_displayOutput == DisplayOutput::ExactOnly ||
       m_displayOutput == DisplayOutput::ApproximateOnly ||
       m_displayOutput == DisplayOutput::ApproximateIsIdenticalToExact) {
-    m_equalSign = EqualSign::Undefined;
+    m_equalSign = EqualSign::Hidden;
   } else {
     m_equalSign = ComputeEqualSignFromOutputs(
         outputLayouts, m_calculationPreferences.complexFormat,

@@ -81,6 +81,11 @@ static void printInConsole(uint32_t crc) {
   Ion::Console::writeLine(crcBuffer);
 }
 
+constexpr static int k_maxHeight =
+    Display::HeightWithBorder + k_glyphHeight + 2 * k_margin;
+constexpr static int k_width = Display::WidthWithBorder;
+KDColor pixelsBuffer[k_maxHeight * k_width];
+
 void Screenshot::capture(Events::Event nextEvent) {
   m_stepNumber++;
   bool isLastScreenshot = nextEvent == Events::None;
@@ -88,12 +93,7 @@ void Screenshot::capture(Events::Event nextEvent) {
     return;
   }
 
-  constexpr static int k_maxHeight =
-      Display::HeightWithBorder + k_glyphHeight + 2 * k_margin;
-  constexpr static int k_width = Display::WidthWithBorder;
   int height = Display::HeightWithBorder;
-
-  KDColor pixelsBuffer[k_maxHeight * k_width];
   for (int i = 0; i < height * k_width; i++) {
     pixelsBuffer[i] = Simulator::Framebuffer::address()[i];
   }

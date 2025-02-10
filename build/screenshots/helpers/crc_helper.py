@@ -9,7 +9,7 @@ def compute_crc32_process(state_file, executable):
         + executable
         + " --headless --load-state-file "
         + state_file
-        + " --compute-hash --hide-events",
+        + " --limit-stack-usage --compute-hash --hide-events",
         shell=True,
         stdout=PIPE,
         stderr=DEVNULL,

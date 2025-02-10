@@ -195,10 +195,6 @@ int main(int argc, char* argv[]) {
         }
         fprintf(stderr, "Unable to SET stack limit: ignoring flag %s\n",
                 k_limitStackUsageFlag);
-      } else {
-        fprintf(stdout,
-                "Successfully reduced stack size, now limited to 0x%llX\n",
-                stackLimits.rlim_cur);
       }
     } else {
       fprintf(stderr, "Unable to GET stack limit: ignoring flag %s\n",

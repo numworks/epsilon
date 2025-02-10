@@ -1115,6 +1115,17 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
   if (e->isRandomized()) {
     return ApproximateRandom<T>(e, ctx);
   }
+  /* This method was split into many smaller method to reduce its stack frame.
+   * When a method is called, it takes up a certain amount of space on the
+   * stack. This amount is particularly relevent here, in a recursive function.
+   * Before the split, this method had a stack frame of ~4200 bytes in release,
+   * and ~8500 bytes in debug (the impact of the -Os flag), knowing that our
+   * stack size on device is 32K, we could only make a couple of calls before
+   * overflowing in the previous section (.heap according the readelf).
+   * This led to issue #7163.
+   * Splitting this method in many smaller one ensure the compiler manage to
+   * better optimize the stack frame, and drastically increase the amount a
+   * recursive calls doable before reaching the stack limit. */
   switch (e->type()) {
     case Type::Parentheses:
     case Type::ComplexI:

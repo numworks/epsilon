@@ -9,12 +9,14 @@
 
 class PreferencesTestBuilder {
  public:
-  static Poincare::Preferences build() { return Poincare::Preferences(); }
+  static Poincare::Preferences buildDefault() {
+    return Poincare::Preferences();
+  }
 };
 
 class GlobalPreferencesTestBuilder {
  public:
-  static GlobalPreferences build() { return GlobalPreferences(); }
+  static GlobalPreferences buildDefault() { return GlobalPreferences(); }
 };
 
 void flushGlobalDataNoPool() {
@@ -23,7 +25,7 @@ void flushGlobalDataNoPool() {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   // Check that preferences are at default values after each test
   quiz_assert(*Poincare::Preferences::SharedPreferences() ==
-              PreferencesTestBuilder::build());
+              PreferencesTestBuilder::buildDefault());
   quiz_assert(*GlobalPreferences::SharedGlobalPreferences() ==
-              GlobalPreferencesTestBuilder::build());
+              GlobalPreferencesTestBuilder::buildDefault());
 }

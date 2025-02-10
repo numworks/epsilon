@@ -362,6 +362,7 @@ void UserExpression::cloneAndSimplifyAndApproximate(
 
 UserExpression UserExpression::cloneAndSimplify(
     Internal::ProjectionContext* context, bool* reductionFailure) const {
+  assert(reductionFailure);
   return privateCloneAndReduceOrSimplify(context, true, reductionFailure);
 }
 
@@ -481,7 +482,8 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
                            .m_angleUnit = angleUnit,
                            .m_symbolic = symbolicComputation,
                            .m_context = context};
-  exp = exp.cloneAndSimplify(&ctx);
+  bool reductionFailure;
+  exp = exp.cloneAndSimplify(&ctx, &reductionFailure);
   assert(!exp.isUninitialized());
   if (!Poincare::Dimension(exp, context).isScalar()) {
     return NAN;

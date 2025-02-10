@@ -184,7 +184,7 @@ class Expression : public PoolHandle {
       UserExpression* approximatedExpression,
       Internal::ProjectionContext* context) const;
   UserExpression cloneAndSimplify(Internal::ProjectionContext* context,
-                                  bool* reductionFailure = nullptr) const;
+                                  bool* reductionFailure) const;
   SystemExpression cloneAndReduce(ReductionContext reductionContext,
                                   bool* reductionFailure = nullptr) const;
   UserExpression cloneAndBeautify(

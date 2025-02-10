@@ -91,27 +91,32 @@ void UnitListController::computeAdditionalResults(
   }
 
   // Build an expression for each relevant unit display mode
+  bool reductionFailure;
   int numberOfExpressions = 0;
   ctx.m_unitDisplay = (unitFormat == Preferences::UnitFormat::Metric)
                           ? Internal::UnitDisplay::AutomaticMetric
                           : Internal::UnitDisplay::AutomaticImperial;
-  expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+  expressions[numberOfExpressions++] =
+      input.cloneAndSimplify(&ctx, &reductionFailure);
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 #if 0  // TODO: correctly implement AutomaticInput and reenable it
   ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticInput;
-  expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+  expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx, &reductionFailure);
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 #endif
   ctx.m_unitDisplay = Internal::UnitDisplay::Decomposition;
-  expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+  expressions[numberOfExpressions++] =
+      input.cloneAndSimplify(&ctx, &reductionFailure);
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
   ctx.m_unitDisplay = Internal::UnitDisplay::Equivalent;
-  expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+  expressions[numberOfExpressions++] =
+      input.cloneAndSimplify(&ctx, &reductionFailure);
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 
   if (unitFormat != Preferences::UnitFormat::Metric) {
     ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticMetric;
-    expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx);
+    expressions[numberOfExpressions++] =
+        input.cloneAndSimplify(&ctx, &reductionFailure);
     assert(!expressions[numberOfExpressions - 1].isUninitialized());
   }
   ctx.m_unitDisplay = Internal::UnitDisplay::BasicSI;

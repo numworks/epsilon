@@ -246,19 +246,20 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 
+  bool displayOutputTest = lastCalculation->displayOutput() == expectedDisplay;
 #if POINCARE_STRICT_TESTS
-  quiz_assert(displayOutput == expectedDisplay);
+  quiz_assert(displayOutputTest);
 #else
-  quiz_tolerate_print_if_failure(
-      lastCalculation->displayOutput() == expectedDisplay, input,
-      "correct displayOutput", "incorrect displayOutput");
+  quiz_tolerate_print_if_failure(displayOutputTest, input,
+                                 "correct displayOutput",
+                                 "incorrect displayOutput");
 #endif
 
+  bool equalSignTest = lastCalculation->equalSign() == expectedSign;
 #if POINCARE_STRICT_TESTS
-  quiz_assert(equalSign == expectedSign);
+  quiz_assert(equalSignTest);
 #else
-  quiz_tolerate_print_if_failure(lastCalculation->equalSign() == expectedSign,
-                                 input, "correct equalSign",
+  quiz_tolerate_print_if_failure(equalSignTest, input, "correct equalSign",
                                  "incorrect equalSign");
 #endif
 

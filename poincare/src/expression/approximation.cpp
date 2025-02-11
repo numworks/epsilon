@@ -496,9 +496,9 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
       std::complex<T> c = PrivateToComplex<T>(e->child(0), ctx);
       return std::isnan(c.real()) ? NAN : c.imag();
     }
+    default:
+      OMG::unreachable();
   }
-  assert(false);
-  return NAN;
 }
 
 template <typename T>
@@ -543,13 +543,13 @@ std::complex<T> AllTrigToComplex(const Tree* e, const Context* ctx) {
     case Type::ATanRad:
       return TrigonometricToComplex(
           Type::ATan, PrivateToComplex<T>(e->child(0), ctx), AngleUnit::Radian);
+    default:
+      OMG::unreachable();
   }
-  assert(false);
-  return NAN;
 }
 
 template <typename T>
-std::complex<T> UserStuffToComplex(const Tree* e, const Context* ctx) {
+std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
   switch (e->type()) {
     case Type::Var: {
       // Local variable
@@ -598,9 +598,9 @@ std::complex<T> UserStuffToComplex(const Tree* e, const Context* ctx) {
       return Poincare::Context::GlobalContext->approximateSequenceAtRank(
           Symbol::GetName(e), rank);
     }
+    default:
+      OMG::unreachable();
   }
-  assert(false);
-  return NAN;
 }
 
 template <typename T>
@@ -688,9 +688,9 @@ std::complex<T> AnalysisToComplex(const Tree* e, const Context* ctx) {
       // TODO: assert(false) if we enforce preparation before approximation
     case Type::IntegralWithAlternatives:
       return ApproximateIntegral<T>(e, ctx);
+    default:
+      OMG::unreachable();
   }
-  assert(false);
-  return NAN;
 }
 
 template <typename T>
@@ -727,9 +727,9 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
     case Type::Point:
       assert(ctx && ctx->m_pointElement != -1);
       return PrivateToComplex<T>(e->child(ctx->m_pointElement), ctx);
+    default:
+      OMG::unreachable();
   }
-  assert(false);
-  return NAN;
 }
 
 template <typename T>
@@ -892,9 +892,9 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       list->removeTree();
       return median;
     }
+    default:
+      OMG::unreachable();
   }
-  assert(false);
-  return NAN;
 }
 
 template <typename T>
@@ -972,9 +972,9 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
       }
       return x == std::complex<T>(0.0) ? NAN : std::log(x);
     }
+    default:
+      OMG::unreachable();
   }
-  assert(false);
-  return NAN;
 }
 
 template <typename T>
@@ -1117,15 +1117,17 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
   }
   /* This method was split into many smaller method to reduce its stack frame.
    * When a method is called, it takes up a certain amount of space on the
-   * stack. This amount is particularly relevent here, in a recursive function.
+   * stack. This amount is particularly relevant here, in a recursive function.
    * Before the split, this method had a stack frame of ~4200 bytes in release,
-   * and ~8500 bytes in debug (the impact of the -Os flag), knowing that our
-   * stack size on device is 32K, we could only make a couple of calls before
-   * overflowing in the previous section (.heap according the readelf).
-   * This led to issue #7163.
-   * Splitting this method in many smaller one ensure the compiler manage to
-   * better optimize the stack frame, and drastically increase the amount a
-   * recursive calls doable before reaching the stack limit. */
+   * and ~8500 bytes in debug (the impact of the -Os flag). Our stack size on
+   * device is 32K, so we could only make a couple of calls before overflowing
+   * in the previous section (the buffer zone .heap). This led to a stack
+   * overflow crash when approximating deep trees, which could append easily
+   * when computing the term of a sequence (i.e.: √(6Ans+19))
+   *
+   * Splitting this method in many smaller one ensures the compiler
+   * manages to better optimize the stack frame, and drastically increases the
+   * amount a recursive calls doable before reaching the stack limit. */
   switch (e->type()) {
     case Type::Parentheses:
     case Type::ComplexI:
@@ -1180,7 +1182,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     case Type::UserFunction:
     case Type::UserSymbol:
     case Type::UserSequence:
-      return UserStuffToComplex<T>(e, ctx);
+      return UserNamedToComplex<T>(e, ctx);
     case Type::Sum:
     case Type::Product:
     case Type::Diff:

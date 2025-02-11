@@ -1122,12 +1122,13 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
    * and ~8500 bytes in debug (the impact of the -Os flag). Our stack size on
    * device is 32K, so we could only make a couple of calls before overflowing
    * in the previous section (the buffer zone .heap). This led to a stack
-   * overflow crash when approximating deep trees, which could append easily
-   * when computing the term of a sequence (i.e.: √(6Ans+19))
+   * overflow crash when approximating deep trees, which could happen easily
+   * when entering a formula with Ans and repeatedly pressing EXE
+   * (i.e.: √(6Ans+19) EXE EXE EXE ...)
    *
    * Splitting this method in many smaller one ensures the compiler
    * manages to better optimize the stack frame, and drastically increases the
-   * amount a recursive calls doable before reaching the stack limit. */
+   * amount of recursive calls doable before reaching the stack limit. */
   switch (e->type()) {
     case Type::Parentheses:
     case Type::ComplexI:

@@ -82,6 +82,8 @@ def format_diff(diff: FullDiff):
 
 
 def parse_summary(output_txt: str):
+    line_summary = None
+    function_summary = None
     with open(output_txt, "r") as f:
         lines = f.readlines()
     for line in lines:

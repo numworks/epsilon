@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
+#include <poincare/old/circuit_breaker_checkpoint.h>
 #include <string.h>
 
 #include "app.h"
@@ -63,14 +64,31 @@ bool IntervalController::parametersAreDifferent() {
 
 void IntervalController::setAutoRange() {
   SystemOfEquations* system = App::app()->system();
-  // TODO: Add circuit breaker checkpoint here.
-  system->autoComputeApproximateSolvingRange(App::app()->localContext());
-  m_rangeParam = system->approximateSolvingRange();
+  Poincare::CircuitBreakerCheckpoint checkpoint(
+      Ion::CircuitBreaker::CheckpointType::Back);
+  if (CircuitBreakerRun(checkpoint)) {
+    system->autoComputeApproximateSolvingRange(App::app()->localContext());
+    m_rangeParam = system->approximateSolvingRange();
+  } else {
+    App::app()->equationStore()->tidyDownstreamPoolFrom(
+        checkpoint.endOfPoolBeforeCheckpoint());
+    system->cancelApproximateSolve();
+    m_autoParam = false;
+  }
 }
 
 void IntervalController::pop(bool onConfirmation) {
   if (onConfirmation) {
-    App::app()->system()->approximateSolve(App::app()->localContext());
+    SystemOfEquations* system = App::app()->system();
+    Poincare::CircuitBreakerCheckpoint checkpoint(
+        Ion::CircuitBreaker::CheckpointType::Back);
+    if (CircuitBreakerRun(checkpoint)) {
+      system->approximateSolve(App::app()->localContext());
+    } else {
+      App::app()->equationStore()->tidyDownstreamPoolFrom(
+          checkpoint.endOfPoolBeforeCheckpoint());
+      system->cancelApproximateSolve();
+    }
   }
   StackViewController* stack = stackController();
   stack->pop();

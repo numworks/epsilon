@@ -71,16 +71,19 @@ class __attribute__((packed)) Preferences final {
           static_cast<uint8_t>(ComplexFormat::NFormats));
 
   struct CalculationPreferences {
-    AngleUnit angleUnit : k_numberOfBitsForAngleUnit;
-    PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
-    EditionMode editionMode : 1;
-    ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
+    AngleUnit angleUnit : k_numberOfBitsForAngleUnit = AngleUnit::Radian;
+    PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode =
+                                     Preferences::PrintFloatMode::Decimal;
+    EditionMode editionMode : 1 = EditionMode::Edition2D;
+    ComplexFormat complexFormat : k_numberOfBitsForComplexFormat =
+                                      Preferences::ComplexFormat::Real;
     /* Explicitly declare padding bits to avoid uninitalized values. */
     uint8_t padding
         : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
           k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode -
           1 - k_numberOfBitsForComplexFormat;
-    uint8_t numberOfSignificantDigits;
+    uint8_t numberOfSignificantDigits =
+        Preferences::DefaultNumberOfPrintedSignificantDigits;
 
     bool operator==(const CalculationPreferences&) const = default;
   };
@@ -219,16 +222,11 @@ class __attribute__((packed)) Preferences final {
    * pointer. */
   Preferences() = default;
 
+  // TODO: change default value of ExamMode
   CODE_GUARD(
-      poincare_preferences, 1736977874,  //
+      poincare_preferences, 1846766448,  //
       uint8_t m_version = k_version;
-      CalculationPreferences m_calculationPreferences =
-          {.angleUnit = AngleUnit::Radian,
-           .displayMode = Preferences::PrintFloatMode::Decimal,
-           .editionMode = EditionMode::Edition2D,
-           .complexFormat = Preferences::ComplexFormat::Real,
-           .numberOfSignificantDigits =
-               Preferences::DefaultNumberOfPrintedSignificantDigits};
+      CalculationPreferences m_calculationPreferences = {};
       mutable ExamMode m_examMode =
           ExamMode(Ion::ExamMode::Configuration(Ion::ExamMode::Ruleset::Off));
       /* This flag can only be asserted by writing it via DFU. When set,

@@ -139,6 +139,20 @@ class __attribute__((packed)) GlobalPreferences {
  private:
   constexpr static uint8_t k_version = 1;
 
+#if __EMSCRIPTEN__
+  using BrightnessType = emscripten_align1_int;
+  using DimmingTimeType = emscripten_align1_int;
+#else
+  using BrightnessType = int;
+  using DimmingTimeType = uint32_t;
+#endif
+
+  constexpr static BrightnessType k_defaultBrightnessLevel =
+      Ion::Backlight::MaxBrightness;
+  constexpr static I18n::Language k_defaultLanguage = I18n::Language::EN;  //
+  constexpr static bool k_defaultShowPopUp = true;                         //
+  constexpr static KDFont::Size k_defaultFont = KDFont::Size::Large;       //
+
   /* GlobalPreferences is a singleton, hence the private constructor. The unique
    * instance can be accessed through the
    * GlobalPreferences::SharedGlobalPreferences() pointer.
@@ -158,25 +172,16 @@ class __attribute__((packed)) GlobalPreferences {
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
 
-#if __EMSCRIPTEN__
-  using BrightnessType = emscripten_align1_int;
-  using DimmingTimeType = emscripten_align1_int;
-#else
-  using BrightnessType = int;
-  using DimmingTimeType = uint32_t;
-#endif
-
-  CODE_GUARD(
-      global_preferences, 2711671592,                                    //
-      uint8_t m_version = k_version;                                     //
-      BrightnessType m_brightnessLevel = Ion::Backlight::MaxBrightness;  //
-      I18n::Language m_language = I18n::Language::EN;                    //
-      I18n::Country m_country = k_defaultCountry;                        //
-      bool m_showPopUp = true;                                           //
-      KDFont::Size m_font = KDFont::Size::Large;                         //
-      DimmingTimeType m_dimmingTime = k_defaultDimmingTime;              //
-      public
-      : static constexpr int k_objectSize = 13;)
+  CODE_GUARD(global_preferences, 265131171,                                //
+             uint8_t m_version = k_version;                                //
+             BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;  //
+             I18n::Language m_language = k_defaultLanguage;                //
+             I18n::Country m_country = k_defaultCountry;                   //
+             bool m_showPopUp = k_defaultShowPopUp;                        //
+             KDFont::Size m_font = k_defaultFont;                          //
+             DimmingTimeType m_dimmingTime = k_defaultDimmingTime;         //
+             public
+             : static constexpr int k_objectSize = 13;)
 };
 
 #if PLATFORM_DEVICE

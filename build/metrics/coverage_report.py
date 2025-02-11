@@ -61,12 +61,12 @@ class FullDiff:
         }
 
 
-def format_summary(summary: FullSummary):
+def format_summary(base_summary: FullSummary, head_summary: FullSummary):
     return f"""
-  |                     |   **Lines**                                   | **Functions**                                         |
-  |---------------------|:---------------------------------------------:|:-----------------------------------------------------:|
-  |    Coverage rate    |          {summary.lines.percentage} %         |            {summary.functions.percentage} %           |
-  |    Hits / Total     | {summary.lines.hits} / {summary.lines.total}  | {summary.functions.hits} / {summary.functions.total}  |"""
+  |                       |                        **BASE**                         |                        **HEAD**                         |
+  |-----------------------|:-------------------------------------------------------:|:-------------------------------------------------------:|
+  |  Line coverage rate   |           {base_summary.lines.percentage} %             |            {head_summary.lines.percentage} %            |
+  |     Hits / Total      | {base_summary.lines.hits} / {base_summary.lines.total}  | {head_summary.lines.hits} / {head_summary.lines.total}  |"""
 
 
 def format_diff(diff: FullDiff):
@@ -81,8 +81,8 @@ def format_diff(diff: FullDiff):
     return output
 
 
-def parse_summary(genhtml_txt: str):
-    with open(genhtml_txt, "r") as f:
+def parse_summary(output_txt: str):
+    with open(output_txt, "r") as f:
         lines = f.readlines()
     for line in lines:
         if line.lstrip().startswith("lines"):
@@ -123,6 +123,10 @@ if __name__ == "__main__":
         help="file containing the text output of the genhtml command (starting from 'Overall coverage rate')",
     )
     parser.add_argument(
+        "--base_output",
+        help="file containing the text output of the base coverage build (starting from 'Summary coverage rate')",
+    )
+    parser.add_argument(
         "--summary", help="parse the coverage summary", action="store_true"
     )
     parser.add_argument(
@@ -131,7 +135,11 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.summary:
-        print(format_summary(parse_summary(args.genhtml_txt)))
+        print(
+            format_summary(
+                parse_summary(args.base_output), parse_summary(args.genhtml_txt)
+            )
+        )
 
     if args.diff:
         print(format_diff(parse_diff(args.genhtml_txt)))

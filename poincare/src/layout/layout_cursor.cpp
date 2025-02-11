@@ -225,7 +225,7 @@ void TreeStackCursor::insertLayout(Poincare::Context* context,
   Tree* copy = SharedTreeStack->contains(tree)
                    ? const_cast<Tree*>(insertLayoutContext->m_tree)
                    : tree->cloneTree();
-  // We need to keep track of the node which must live in the edition pool
+  // We need to keep track of the node which must live in the TreeStack
   // TODO: do we need ConstReferences on const Nodes in the pool ?
   TreeRef ref(copy);
   if (!copy->isRackLayout()) {

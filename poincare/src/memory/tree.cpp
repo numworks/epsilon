@@ -182,17 +182,17 @@ void Tree::copyTreeTo(void* address) const {
 
 /* When navigating between nodes, assert that no undefined node is reached.
  * Also ensure that there is no navigation:
- * - crossing the borders of the Edition pool
+ * - crossing the borders of the TreeStack
  * - going across a TreeBorder
  * Here are the situations indicating nextNode navigation must stop:
  * (1) From a TreeBorder
- * (2) To the Edition first block
- * (3) From the Edition pool last block
+ * (2) To the TreeStack's first block
+ * (3) From the TreeStack's last block
  *
  * Some notes :
- * - It is expected in (2) and (3) that any tree out of the pool ends with a
+ * - It is expected in (2) and (3) that any tree out of the stack ends with a
  *   TreeBorder block.
- * - In the edition pool, the last block is the very first out of limit block.
+ * - In the TreeStack, the last block is the very first out of limit block.
  * - Source node is always expected to be defined. Allowing checks on
  *   nextNode's destination. */
 

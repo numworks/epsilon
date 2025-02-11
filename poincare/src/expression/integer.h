@@ -60,7 +60,7 @@ class WorkingBuffer {
   uint8_t* const localStart() const { return m_start; }
 
  private:
-  /* We let an offset at the end of the edition pool before the working buffer
+  /* We let an offset at the end of the TreeStack before the working buffer
    * to be able to push either:
    * - the meta blocks of a Big Int before moving the digits from the
    *   WorkingBuffer to the TreeStack,

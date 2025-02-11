@@ -10,7 +10,7 @@ namespace Poincare {
 // TODO_PCJ: See comment in pool_object.h
 #define PCJ_DELETE 1
 
-/* A PoolHandle references a PoolObject stored somewhere is the OExpression
+/* A PoolHandle references a PoolObject stored somewhere in the OExpression
  * Pool, and identified by its identifier. Any method that can possibly move the
  * object ("break the this") therefore needs to be implemented in the Handle
  * rather than the Node.

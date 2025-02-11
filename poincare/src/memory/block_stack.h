@@ -72,12 +72,12 @@ class BlockStack {
   BlockStack& operator=(const BlockStack&) = delete;
 
  protected:
-  /* The reference table stores the offset of the tree in the edition pool.
-   * - We assume (and assert) that we never referenced more then
+  /* The reference table stores the offset of the tree in the TreeStack.
+   * - We assume (and assert) that we never referenced more than
    *   k_maxNumberOfTreeRefs at the same time. We make sure of if by
    *   regularly flushing the reference table.
    * - The order of identifiers gives no guarantee on the order of the trees
-   * in the pool.
+   *   in the pool.
    */
   class ReferenceTable {
    public:

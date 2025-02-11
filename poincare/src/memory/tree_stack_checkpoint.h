@@ -75,7 +75,7 @@ class TreeStackCheckpoint final {
 
   jmp_buf m_jumpBuffer;
   TreeStackCheckpoint* m_parent;
-  /* TODO: Assert no operation are performed on the Edition pool on blocks below
+  /* TODO: Assert no operation are performed on the TreeStack on blocks below
    * s_topmostTreeStackCheckpoint->m_rightmostBlock. */
   Block* m_rightmostBlock;
   /* We need to track the number of references to restore it on rollback

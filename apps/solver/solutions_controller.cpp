@@ -216,15 +216,18 @@ void SolutionsController::viewWillAppear() {
   bool requireWarning = true;
   SystemOfEquations* system = App::app()->system();
 
-  if (system->numberOfSolutions() == 0) {
+  if (system->numberOfSolutions() == 0 &&
+      system->solutionStatus() !=
+          SystemOfEquations::SolutionStatus::Interrupted) {
     // There are no solutions
     m_contentView.setWarningMessage(noSolutionMessage());
   } else if (solutionsAreApproximate()) {
-    system->hasMoreSolutions() ? m_contentView.setWarningMessageWithNumber(
-                                     I18n::Message::OnlyFirstSolutionsDisplayed,
-                                     system->numberOfSolutions())
-                               : m_contentView.setWarningMessage(
-                                     I18n::Message::OtherSolutionsMayExist);
+    // TODO: Add a special message to indicate the solver has been interrupted
+    system->solutionStatus() == SystemOfEquations::SolutionStatus::Complete
+        ? m_contentView.setWarningMessage(I18n::Message::OtherSolutionsMayExist)
+        : m_contentView.setWarningMessageWithNumber(
+              I18n::Message::OnlyFirstSolutionsDisplayed,
+              system->numberOfSolutions());
   } else if (system->type() ==
                  SystemOfEquations::Type::PolynomialMonovariable &&
              system->numberOfSolutions() == 1) {
@@ -239,7 +242,8 @@ void SolutionsController::viewWillAppear() {
       m_contentView.setWarningMessage(I18n::Message::NoSolutionInterval);
     }
   } else if (system->type() == SystemOfEquations::Type::LinearSystem &&
-             system->hasMoreSolutions()) {
+             system->solutionStatus() ==
+                 SystemOfEquations::SolutionStatus::Incomplete) {
     m_contentView.setWarningMessage(I18n::Message::InfiniteNumberOfSolutions);
   } else {
     requireWarning = false;

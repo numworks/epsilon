@@ -30,6 +30,8 @@ class SystemOfEquations {
 
   using Error = Poincare::Internal::EquationSolver::Error;
 
+  using SolutionStatus = Poincare::Internal::EquationSolver::SolutionStatus;
+
   SystemOfEquations(EquationStore* store) : m_store(store) {}
 
   constexpr static int k_maxNumberOfExactSolutions =
@@ -79,7 +81,9 @@ class SystemOfEquations {
     assert(index < m_numberOfSolutions);
     return m_solutions + index;
   }
-  bool hasMoreSolutions() const { return m_solverContext.hasMoreSolutions; }
+  SolutionStatus solutionStatus() const {
+    return m_solverContext.solutionStatus;
+  }
 
   void tidy(Poincare::PoolObject* treePoolCursor = nullptr);
 

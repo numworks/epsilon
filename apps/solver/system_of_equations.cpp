@@ -61,10 +61,12 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   if (error == Error::NoError) {
     assert(result);
     m_numberOfSolutions = 0;
+    SolutionType solutionType = solutionStatus() == SolutionStatus::Incomplete
+                                    ? SolutionType::Formal
+                                    : SolutionType::Exact;
     for (const Internal::Tree* solution : result->children()) {
-      registerSolution(
-          UserExpression::Builder(solution), context,
-          hasMoreSolutions() ? SolutionType::Formal : SolutionType::Exact);
+      registerSolution(UserExpression::Builder(solution), context,
+                       solutionType);
     }
     result->removeTree();
   } else {
@@ -124,12 +126,12 @@ static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
 void SystemOfEquations::setApproximateSolvingRange(
     Poincare::Range1D<double> approximateSolvingRange) {
   m_autoApproximateSolvingRange = false;
-  m_solverContext.hasMoreSolutions = false;
+  m_solverContext.solutionStatus = SolutionStatus::Complete;
   m_approximateSolvingRange = approximateSolvingRange;
 }
 
 void SystemOfEquations::cancelApproximateSolve() {
-  m_solverContext.hasMoreSolutions = true;
+  m_solverContext.solutionStatus = SolutionStatus::Interrupted;
   m_autoApproximateSolvingRange = false;
   // Warning : A default range is given, but solutions have not been computed.
   m_approximateSolvingRange = k_fallbackRange;
@@ -187,8 +189,9 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
    * of 0 and 5 solutions right of zero. This means that sometimes, for a
    * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
    * displayed. We still want to notify the user that more solutions exist. */
-  m_hasMoreSolutions = !finiteNumberOfSolutions;
-  zoom.fitBounds(evaluator<float>, static_cast<void*>(model), false);
+  m_solverContext.solutionStatus = finiteNumberOfSolutions ?
+                          SolutionStatus::Complete : SolutionStatus::Incomplete;
+  zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
   Range1D<float> finalRange = *(zoom.range(false, false).x());
   if (didFitRoots) {
     /* The range was computed from the solution found with a solver in float. We
@@ -269,7 +272,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
     }
 
     if (i == k_maxNumberOfApproximateSolutions) {
-      m_hasMoreSolutions = true;
+      m_solutionStatus = SolutionStatus::Incomplete;
     } else {
       if (std::isnan(root)) {
         break;
@@ -424,7 +427,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   m_degree = 1;
   m_type = Type::LinearSystem;
 
-  m_hasMoreSolutions = false;
+  m_solutionStatus = SolutionStatus::Complete;
   // n unknown variables and m equations
   int n = m_numberOfSolvingVariables;
   // Create the matrix (A|b) for the equation Ax=b;
@@ -476,7 +479,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
   if (rank != n || n <= 0) {
     /* The system is insufficiently qualified: bind the value of n-rank
      * variables to parameters. */
-    m_hasMoreSolutions = true;
+    m_solutionStatus = SolutionStatus::Incomplete;
 
     context = &noTContext;
 
@@ -586,8 +589,10 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
     }
   }
 
-  SolutionType solutionType =
-      m_hasMoreSolutions ? SolutionType::Formal : SolutionType::Exact;
+  assert(m_solutionStatus != SolutionStatus::Interrupted);
+  SolutionType solutionType = m_solutionStatus == SolutionStatus::Incomplete
+                                  ? SolutionType::Formal
+                                  : SolutionType::Exact;
   for (int i = 0; i < n; i++) {
     Error error = registerSolution(ab.matrixChild(i, n), context, solutionType);
     if (error != Error::NoError) {

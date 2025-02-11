@@ -235,7 +235,9 @@ Range1D<double> EquationSolver::AutomaticInterval(const Tree* preparedEquation,
    * of 0 and 5 solutions right of zero. This means that sometimes, for a
    * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
    * displayed. We still want to notify the user that more solutions exist. */
-  context->hasMoreSolutions = !finiteNumberOfSolutions;
+  context->solutionStatus = finiteNumberOfSolutions
+                                ? SolutionStatus::Complete
+                                : SolutionStatus::Incomplete;
   zoom.fitBounds(evaluator<float>, model, false);
   Range1D<float> finalRange = *(zoom.range(false, false).x());
   if (didFitRoots) {
@@ -275,7 +277,7 @@ Tree* EquationSolver::ApproximateSolve(const Tree* preparedEquation,
     }
 
     if (i == k_maxNumberOfApproximateSolutions) {
-      context->hasMoreSolutions = true;
+      context->solutionStatus = SolutionStatus::Incomplete;
     } else {
       if (std::isnan(root)) {
         break;
@@ -370,14 +372,14 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   if (rank != n || n <= 0) {
 #if POINCARE_NO_INFINITE_SYSTEMS
     (void)m;
-    context->hasMoreSolutions = true;
+    context->solutionStatus = SolutionStatus::Incomplete;
     matrix->removeTree();
     *error = Error::NoError;
     return SharedTreeStack->pushSet(0);
 #else
     /* The system is insufficiently qualified: bind the value of n-rank
      * variables to parameters. */
-    context->hasMoreSolutions = true;
+    context->solutionStatus = SolutionStatus::Incomplete;
     int variable = n - 1;
     int row = m - 1;
     int firstVariableInRow = -1;
@@ -432,7 +434,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     }
 #endif
   } else {
-    context->hasMoreSolutions = false;
+    context->solutionStatus = SolutionStatus::Complete;
   }
   assert(rank == n);
 

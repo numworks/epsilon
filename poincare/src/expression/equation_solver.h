@@ -52,6 +52,12 @@ class EquationSolver {
     DisabledInExamMode,  // TODO_PCJ
   };
 
+  enum class SolutionStatus : uint8_t {
+    Complete,     // All solutions have been found in the interval
+    Incomplete,   // There are other solutions
+    Interrupted,  // The solver has been interrupted
+  };
+
   struct Context {
     ComplexFormat complexFormat;
     Type type;
@@ -60,7 +66,7 @@ class EquationSolver {
     // If true, defined userVariables are ignored.
     bool overrideUserVariables = false;
     bool exactResults = true;
-    bool hasMoreSolutions = false;
+    SolutionStatus solutionStatus = SolutionStatus::Complete;
     VariableArray<k_maxNumberOfExactSolutions> variables;
     VariableArray<k_maxNumberOfExactSolutions> userVariables;
   };

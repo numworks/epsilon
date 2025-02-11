@@ -238,6 +238,8 @@ _sources_poincare_test := $(addprefix test/, \
   old/rational.cpp \
   old/regularized_function.cpp \
   old/simplification.cpp \
+  old/tree/helpers.cpp \
+  old/tree/tree_handle.cpp \
   old/zoom.cpp \
   api.cpp \
   approximation.cpp \

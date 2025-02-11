@@ -12,15 +12,13 @@ using namespace Poincare;
 QUIZ_CASE(poincare_pool_handle_are_discared_after_block) {
   int initialPoolSize = pool_size();
   {
-    BlobByReference b = BlobByReference::Builder(0);
+    PoolHandle t = BlobByReference::Builder(0);
     assert_pool_size(initialPoolSize + 1);
   }
   assert_pool_size(initialPoolSize);
 }
 
-static void make_temp_blob() {
-  BlobByReference b = BlobByReference::Builder(5);
-}
+static void make_temp_blob() { PoolHandle t = BlobByReference::Builder(5); }
 QUIZ_CASE(poincare_pool_handle_are_discared_after_function_call) {
   int initialPoolSize = pool_size();
   make_temp_blob();
@@ -30,9 +28,9 @@ QUIZ_CASE(poincare_pool_handle_are_discared_after_function_call) {
 QUIZ_CASE(poincare_pool_handle_can_be_copied) {
   int initialPoolSize = pool_size();
   {
-    BlobByReference b = BlobByReference::Builder(123);
+    PoolHandle t1 = BlobByReference::Builder(123);
     assert_pool_size(initialPoolSize + 1);
-    PoolHandle t = b;
+    PoolHandle t2 = t1;
     assert_pool_size(initialPoolSize + 1);
   }
   assert_pool_size(initialPoolSize);
@@ -43,10 +41,22 @@ QUIZ_CASE(poincare_pool_handle_can_be_moved) {
   {
     PoolHandle t = BlobByReference::Builder(123);
     assert_pool_size(initialPoolSize + 1);
-  }
-  {
-    PoolHandle t = BlobByReference::Builder(123);
     t = BlobByReference::Builder(456);
+    assert_pool_size(initialPoolSize + 1);
+  }
+  assert_pool_size(initialPoolSize);
+}
+
+QUIZ_CASE(poincare_pool_object_release) {
+  int initialPoolSize = pool_size();
+  {
+    PoolHandle t1 = BlobByReference::Builder(123);
+    assert_pool_size(initialPoolSize + 1);
+    PoolHandle t2 = t1;
+    assert_pool_size(initialPoolSize + 1);
+    t1 = BlobByReference::Builder(456);
+    assert_pool_size(initialPoolSize + 2);
+    t2 = t1;
     assert_pool_size(initialPoolSize + 1);
   }
   assert_pool_size(initialPoolSize);
@@ -56,7 +66,7 @@ static PoolHandle blob_with_data_3() { return BlobByReference::Builder(3); }
 
 QUIZ_CASE(poincare_pool_handle_can_be_returned) {
   int initialPoolSize = pool_size();
-  PoolHandle b = blob_with_data_3();
+  PoolHandle t = blob_with_data_3();
   assert_pool_size(initialPoolSize + 1);
 }
 
@@ -78,11 +88,11 @@ QUIZ_CASE(poincare_pool_handle_memory_failure) {
 
 QUIZ_CASE(poincare_pool_handle_does_not_copy) {
   int initialPoolSize = pool_size();
-  BlobByReference b1 = BlobByReference::Builder(1);
-  BlobByReference b2 = BlobByReference::Builder(2);
+  PoolHandle t1 = BlobByReference::Builder(1);
+  PoolHandle t2 = BlobByReference::Builder(2);
   assert_pool_size(initialPoolSize + 2);
-  PairByReference p = PairByReference::Builder(b1, b2);
+  PoolHandle p1 = PairByReference::Builder(t1, t2);
   assert_pool_size(initialPoolSize + 3);
-  PairByReference p2 = p;
+  PoolHandle p2 = p1;
   assert_pool_size(initialPoolSize + 3);
 }

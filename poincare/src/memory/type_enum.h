@@ -15,18 +15,22 @@ enum class TypeEnum : uint8_t {
 
 struct AnyType {
   static consteval AnyType Enabled(TypeEnum e) {
-    return {static_cast<uint8_t>(e)};
+    return AnyType(static_cast<uint8_t>(e));
   }
   static consteval AnyType Disabled(TypeEnum e) {
     /* Types disabled have an id > UINT8_MAX for the compiler to
      * ignore them when they serve as a switch case on a uint8_t
      * switch. */
-    return {static_cast<uint16_t>(static_cast<uint8_t>(e) + 256)};
+    return AnyType(static_cast<uint16_t>(static_cast<uint8_t>(e) + 256));
   }
   constexpr bool isEnabled() const { return m_id < 256; }
   constexpr operator uint16_t() const { return m_id; }
 
+  constexpr uint16_t id() const { return m_id; }
   uint16_t m_id;
+
+ private:
+  consteval AnyType(uint16_t id) : m_id(id) {}
 };
 
 /* We would like to keep the "case Type::Add:" syntax but with custom
@@ -76,7 +80,7 @@ class LayoutType {
   constexpr operator uint8_t() const { return static_cast<uint8_t>(m_value); }
   constexpr bool operator==(const LayoutType&) const = default;
   constexpr bool operator==(const AnyType& type) const {
-    return static_cast<uint8_t>(m_value) == static_cast<uint16_t>(type);
+    return static_cast<uint8_t>(m_value) == type.id();
   }
 
  private:

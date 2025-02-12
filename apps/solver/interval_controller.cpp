@@ -87,7 +87,7 @@ void IntervalController::pop(bool onConfirmation) {
     } else {
       App::app()->equationStore()->tidyDownstreamPoolFrom(
           checkpoint.endOfPoolBeforeCheckpoint());
-      system->cancelApproximateSolve();
+      system->cancelApproximateSolve(m_autoParam, m_rangeParam);
     }
   }
   StackViewController* stack = stackController();

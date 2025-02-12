@@ -130,11 +130,12 @@ void SystemOfEquations::setApproximateSolvingRange(
   m_approximateSolvingRange = approximateSolvingRange;
 }
 
-void SystemOfEquations::cancelApproximateSolve() {
+void SystemOfEquations::cancelApproximateSolve(
+    bool autoApproximate, Poincare::Range1D<double> range) {
   m_solverContext.solutionStatus = SolutionStatus::Interrupted;
-  m_autoApproximateSolvingRange = false;
+  m_autoApproximateSolvingRange = autoApproximate;
   // Warning : A default range is given, but solutions have not been computed.
-  m_approximateSolvingRange = k_fallbackRange;
+  m_approximateSolvingRange = range;
   m_numberOfSolutions = 0;
 }
 

@@ -73,8 +73,9 @@ class SystemOfEquations {
   void approximateSolve(Poincare::Context* context);
   /* Cancel intermediate results of setApproximateSolvingRange and
    * approximateSolve */
-  void cancelApproximateSolve();
-
+  void cancelApproximateSolve(
+      bool autoApproximate = false,
+      Poincare::Range1D<double> range = k_fallbackRange);
   // Solutions getters
   size_t numberOfSolutions() const { return m_numberOfSolutions; }
   const Solution* solution(size_t index) const {

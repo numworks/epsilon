@@ -11,6 +11,7 @@
 #include "matrix.h"
 #include "parametric.h"
 #include "physical_constant.h"
+#include "projection.h"
 #include "symbol.h"
 #include "units/representatives.h"
 #include "variables.h"
@@ -109,12 +110,13 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
       return true;
     }
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->expressionForUserNamed(e) : nullptr;
-      if (definition) {
+      if (ctx) {
         Tree* clone = e->cloneTree();
-        // Replace function's symbol with definition
-        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
-        bool result = DeepCheckListLength(clone, ctx);
+        // Replace every nested defined symbols and functions
+        Projection::DeepReplaceUserNamed(
+            clone, ctx, SymbolicComputation::ReplaceDefinedSymbols);
+        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
+        bool result = DeepCheckListLength(clone, nullptr);
         clone->removeTree();
         return result;
       }
@@ -200,12 +202,13 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       return k_nonListListLength;
     }
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->expressionForUserNamed(e) : nullptr;
-      if (definition) {
+      if (ctx) {
         Tree* clone = e->cloneTree();
-        // Replace function's symbol with definition
-        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
-        int result = ListLength(clone, ctx);
+        // Replace every nested defined symbols and functions
+        Projection::DeepReplaceUserNamed(
+            clone, ctx, SymbolicComputation::ReplaceDefinedSymbols);
+        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
+        int result = ListLength(clone, nullptr);
         clone->removeTree();
         return result;
       }
@@ -445,12 +448,13 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       return Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2));
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->expressionForUserNamed(e) : nullptr;
-      if (definition) {
+      if (ctx) {
         Tree* clone = e->cloneTree();
-        // Replace function's symbol with definition
-        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
-        bool result = DeepCheckDimensions(clone, ctx);
+        // Replace every nested defined symbols and functions
+        Projection::DeepReplaceUserNamed(
+            clone, ctx, SymbolicComputation::ReplaceDefinedSymbols);
+        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
+        bool result = DeepCheckDimensions(clone, nullptr);
         clone->removeTree();
         return result;
       }
@@ -626,12 +630,13 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       return Scalar();
     }
     case Type::UserFunction: {
-      const Tree* definition = ctx ? ctx->expressionForUserNamed(e) : nullptr;
-      if (definition) {
+      if (ctx) {
         Tree* clone = e->cloneTree();
-        // Replace function's symbol with definition
-        Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
-        Dimension result = Get(clone, ctx);
+        // Replace every nested defined symbols and functions
+        Projection::DeepReplaceUserNamed(
+            clone, ctx, SymbolicComputation::ReplaceDefinedSymbols);
+        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
+        Dimension result = Get(clone, nullptr);
         clone->removeTree();
         return result;
       }

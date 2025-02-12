@@ -186,7 +186,7 @@ class Expression : public PoolHandle {
   UserExpression cloneAndSimplify(Internal::ProjectionContext* context,
                                   bool* reductionFailure) const;
   SystemExpression cloneAndReduce(ReductionContext reductionContext,
-                                  bool* reductionFailure = nullptr) const;
+                                  bool* reductionFailure) const;
   UserExpression cloneAndBeautify(
       const ReductionContext& reductionContext) const;
 

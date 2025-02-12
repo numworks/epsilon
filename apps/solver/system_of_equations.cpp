@@ -566,12 +566,13 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
       Preferences::SharedPreferences()->angleUnit(),
       GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       ReductionTarget::SystemForAnalysis);
+  bool reductionFailure = false;
   for (int i = 0; i < numberOfOriginalEquations; i++) {
     if (!simplifiedEquations[i].isDep()) {
       continue;
     }
     if (simplifiedEquations[i]
-            .cloneAndReduce(reductionContextWithSolutions)
+            .cloneAndReduce(reductionContextWithSolutions, &reductionFailure)
             .isUndefined()) {
       return Error::NoError;
     }
@@ -629,6 +630,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
   SolutionType type =
       solutionsAreApproximate ? SolutionType::Approximate : SolutionType::Exact;
 
+  bool reductionFailure = false;
   for (size_t i = 0; i < numberOfSolutions; i++) {
     /* Since getPolynomialReducedCoefficients passes right through dependencies,
      * we need to handle them now. */
@@ -639,7 +641,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
       ReductionContext reductionContextWithSolution = reductionContext;
       reductionContextWithSolution.setContext(&contextWithSolution);
       if (simplifiedEquations[0]
-              .cloneAndReduce(reductionContextWithSolution)
+              .cloneAndReduce(reductionContextWithSolution, &reductionFailure)
               .isUndefined()) {
         continue;
       }

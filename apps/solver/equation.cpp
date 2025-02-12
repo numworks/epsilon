@@ -54,8 +54,8 @@ SystemExpression Equation::Model::standardForm(
         PoincareHelpers::ReductionContextForParameters(
             expressionInputWithoutFunctions, contextToUse,
             {.target = reductionTarget});
-    returnedExpression = returnedExpression.cloneAndReduce(reductionContext);
-  assert(!returnedExpression.isUninitialized());
+    returnedExpression = returnedExpression.cloneAndReduce(reductionContext, &reductionFailure);
+  assert(!reductionFailure && !returnedExpression.isUninitialized());
   } else {
     assert(simplifiedInput.isBoolean() || simplifiedInput.isList());
     /* The equality has disappeared after reduction. This may be because:

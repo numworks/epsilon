@@ -16,9 +16,11 @@ void assert_cartesian_function_type_is(
   const char* symbol = "x";
   Shared::GlobalContext context;
   Expression e = Expression::Builder(parse_expression(expression, &context));
+  bool reductionFailure = false;
   e = e.cloneAndReduce(
-      ReductionContext::DefaultReductionContextForAnalysis(&context));
-  assert(!e.isUninitialized());
+      ReductionContext::DefaultReductionContextForAnalysis(&context),
+      &reductionFailure);
+  assert(!reductionFailure && !e.isUninitialized());
   FunctionType::CartesianType type =
       FunctionType::CartesianFunctionType(e, symbol);
   quiz_assert_print_if_failure(type == expectedType, expression);
@@ -52,9 +54,11 @@ void assert_polar_line_type_is(const char* expression,
   const char* symbol = "θ";
   Shared::GlobalContext context;
   Expression e = Expression::Builder(parse_expression(expression, &context));
+  bool reductionFailure = false;
   e = e.cloneAndReduce(
-      ReductionContext::DefaultReductionContextForAnalysis(&context));
-  assert(!e.isUninitialized());
+      ReductionContext::DefaultReductionContextForAnalysis(&context),
+      &reductionFailure);
+  assert(!reductionFailure && !e.isUninitialized());
   FunctionType::LineType type = FunctionType::PolarLineType(e, symbol);
   quiz_assert_print_if_failure(type == expectedType, expression);
 }

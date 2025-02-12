@@ -1054,7 +1054,9 @@ void assert_is_continuous_on_interval(const char* expression, float x1,
   Shared::GlobalContext context;
   UserExpression e1 = UserExpression::Builder(parse(expression, &context));
   ReductionContext reductionContext(&context);
-  SystemExpression e2 = e1.cloneAndReduce(reductionContext);
+  bool reductionFailure = false;
+  SystemExpression e2 = e1.cloneAndReduce(reductionContext, &reductionFailure);
+  quiz_assert(!reductionFailure);
   SystemFunction e3 = e2.getSystemFunction("x", true);
   quiz_assert_print_if_failure(
       !isContinuous ==

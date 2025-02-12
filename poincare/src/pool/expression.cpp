@@ -368,6 +368,7 @@ UserExpression UserExpression::cloneAndSimplify(
 
 SystemExpression UserExpression::cloneAndReduce(
     ReductionContext reductionContext, bool* reductionFailure) const {
+  assert(reductionFailure);
   ProjectionContext context = {
       .m_complexFormat = reductionContext.complexFormat(),
       .m_angleUnit = reductionContext.angleUnit(),

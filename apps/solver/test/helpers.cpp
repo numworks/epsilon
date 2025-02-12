@@ -137,10 +137,11 @@ static void compareSolutions(SystemOfEquations* system,
      * a const char * we need to add parentheses that are not necessary when
      * creating an expression from a layout. */
 
+    bool reductionFailure = false;
     Expression expectedExpression =
         Expression::Parse(expectedValue, solverContext, false)
-            .cloneAndReduce(ReductionContext{});
-    quiz_assert(!expectedExpression.isUninitialized());
+            .cloneAndReduce(ReductionContext{}, &reductionFailure);
+    quiz_assert(!reductionFailure && !expectedExpression.isUninitialized());
 
     Layout obtainedLayout = system->solution(i)->exactLayout();
     if (obtainedLayout.isUninitialized()) {
@@ -153,8 +154,8 @@ static void compareSolutions(SystemOfEquations* system,
         Expression::Parse(obtainedLayoutBuffer, solverContext, false);
     quiz_assert(!parsedExpression.isUninitialized());
     Expression obtainedExpression =
-        parsedExpression.cloneAndReduce(ReductionContext{});
-    quiz_assert(!obtainedExpression.isUninitialized());
+        parsedExpression.cloneAndReduce(ReductionContext{}, &reductionFailure);
+    quiz_assert(!reductionFailure && !obtainedExpression.isUninitialized());
 #if 0
     quiz_assert(
         !expectedExpression.isUninitialized() &&

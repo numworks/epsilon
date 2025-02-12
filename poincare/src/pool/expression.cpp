@@ -448,7 +448,8 @@ UserExpression SystemExpression::cloneAndBeautify(
 /* If reductionFailure is true, skip simplification. TODO: Like similar methods,
  * returned expression is not actually SystemExpression if reduction failed. */
 SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
-    const char* symbolName, SystemExpression e, bool* reductionFailure) const {
+    const char* symbolName, const SystemExpression& e,
+    bool* reductionFailure) const {
   assert(reductionFailure);
   ExceptionTry {
     Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);

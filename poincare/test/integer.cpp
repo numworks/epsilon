@@ -89,6 +89,10 @@ QUIZ_CASE(pcj_integer_properties) {
   quiz_assert(max.numberOfBase10DigitsWithoutSign() == 309);
 }
 
+static void assert_equal(IntegerHandler a, IntegerHandler b) {
+  quiz_assert(IntegerHandler::Compare(a, b) == 0);
+}
+
 static void assert_equal(const char* a, const char* b) {
   quiz_assert(IntegerHandler::Compare(CreateIntegerHandler(a),
                                       CreateIntegerHandler(b)) == 0);
@@ -110,9 +114,12 @@ static void assert_greater(const char* a, const char* b) {
 
 QUIZ_CASE(pcj_integer_compare) {
   assert_equal("123", "123");
+  assert_equal(CreateIntegerHandler("123"), IntegerHandler(123));
+  assert_equal(CreateIntegerHandler("123"), Integer::Handler(123_e));
   assert_equal("-123", "-123");
+  assert_equal(CreateIntegerHandler("-123"),
+               IntegerHandler(123, NonStrictSign::Negative));
   assert_not_equal("-123", "123");
-  assert_equal("1234567891011121314", "1234567891011121314");
   assert_equal("1234567891011121314", "1234567891011121314");
   assert_not_equal("-1234567891011121314", "1234567891011121314");
   assert_lower("123", "456");
@@ -126,6 +133,7 @@ QUIZ_CASE(pcj_integer_compare) {
   assert_greater("123456789123456789", "123456789123456788");
   assert_equal("0x2BABE", "178878");
   assert_equal("0b1011", "11");
+  assert_greater(MaxIntegerString(), AlmostMaxIntegerString());
 }
 
 static void assert_set_sign_to(const Tree* i, NonStrictSign sign,
@@ -403,17 +411,26 @@ static void assert_integer_cast(IntegerHandler integer, bool isRepresentable,
 }
 
 QUIZ_CASE(pcj_integer_cast) {
+  assert_integer_cast<float_t>(Integer::Handler(0_e), true, 0.0f);
+  assert_integer_cast<double_t>(Integer::Handler(0_e), true, 0.0);
+  assert_integer_cast<float_t>(Integer::Handler(-0_e), true, 0.0f);
+  assert_integer_cast<double_t>(Integer::Handler(-0_e), true, 0.0);
+
   assert_integer_cast<uint8_t>(Integer::Handler(123_e), true, 123);
   assert_integer_cast<uint32_t>(Integer::Handler(123_e), true, 123);
   assert_integer_cast<uint64_t>(Integer::Handler(123_e), true, 123);
   assert_integer_cast<int8_t>(Integer::Handler(123_e), true, 123);
   assert_integer_cast<int>(Integer::Handler(123_e), true, 123);
+  assert_integer_cast<float_t>(Integer::Handler(123_e), true, 123.0f);
+  assert_integer_cast<double_t>(Integer::Handler(123_e), true, 123.0);
 
   assert_integer_cast<uint8_t>(Integer::Handler(-123_e), false);
   assert_integer_cast<uint32_t>(Integer::Handler(-123_e), false);
   assert_integer_cast<uint64_t>(Integer::Handler(-123_e), false);
   assert_integer_cast<int8_t>(Integer::Handler(-123_e), true, -123);
   assert_integer_cast<int>(Integer::Handler(-123_e), true, -123);
+  assert_integer_cast<float_t>(Integer::Handler(-123_e), true, -123.0f);
+  assert_integer_cast<double_t>(Integer::Handler(-123_e), true, -123.0);
 
   assert_integer_cast<uint8_t>(Integer::Handler(130_e), true, 130);
   assert_integer_cast<uint32_t>(Integer::Handler(130_e), true, 130);
@@ -440,6 +457,20 @@ QUIZ_CASE(pcj_integer_cast) {
   assert_integer_cast<uint64_t>(Integer::Handler(9223372036854775807_e), true,
                                 9223372036854775807);
 
+  assert_integer_cast<double_t>(
+      CreateIntegerHandler("179769313486230000002930519078902473361797697894230"
+                           "657273430081157732675"
+                           "805500963132708477322407536021120113879871393357658"
+                           "789768814416622492847"
+                           "430639474124377767893424865485276302219601246094119"
+                           "453082952085005768838"
+                           "150682342462881473913110540827237163350510684586298"
+                           "239947245938479716304"
+                           "835356329624224137215"),
+      true, 1.7976931348622999E+308);
+
+  assert_integer_cast<double_t>(CreateIntegerHandler(MaxIntegerString()), true,
+                                INFINITY);
 }
 
 static void assert_integer_serializes_to(const IntegerHandler integer,

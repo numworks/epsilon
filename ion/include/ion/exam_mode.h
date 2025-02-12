@@ -28,6 +28,13 @@ CODE_GUARD(exam_mode_rulesets, 2664271436,  //
                NumberOfRulesets,
            };)
 
+// Number of exam modes (TODO: -1 for Uninitialized)
+static constexpr size_t k_numberOfModes =
+    static_cast<size_t>(Ruleset::NumberOfRulesets);
+
+// Number of active exam modes (-2 for Off and PressToTest)
+static constexpr size_t k_numberOfActiveModes = k_numberOfModes - 2;
+
 /* Encode exam mode permissions on a 16 bits integer.
  * The first bit "configurable" is set to 1 if "data" encodes press-to-test
  * flags. If it set to 0, "data" contains the index of the preset rules (Off,

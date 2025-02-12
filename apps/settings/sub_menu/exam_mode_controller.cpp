@@ -157,8 +157,6 @@ ExamMode::Ruleset ExamModeController::examModeRulesetAtIndex(
 
 I18n::Message ExamModeController::examModeActivationMessage(
     size_t index) const {
-  constexpr size_t numberOfModes =
-      static_cast<size_t>(ExamMode::Ruleset::NumberOfRulesets);
   constexpr size_t messagesPerMode = 2;
   constexpr I18n::Message messages[] = {
       // Off, used to specify french exam mode type
@@ -195,8 +193,9 @@ I18n::Message ExamModeController::examModeActivationMessage(
       I18n::Message::ActivateNorthCarolinaExamMode,
       I18n::Message::ReactivateNorthCarolinaExamMode,
   };
-  static_assert(std::size(messages) == numberOfModes * messagesPerMode,
-                "messages size is invalid");
+  static_assert(
+      std::size(messages) == Ion::ExamMode::k_numberOfModes * messagesPerMode,
+      "messages size is invalid");
 
   ExamMode::Ruleset examMode =
       Preferences::SharedPreferences()->examMode().ruleset();
@@ -214,7 +213,8 @@ I18n::Message ExamModeController::examModeActivationMessage(
     // Specify french exam mode type
     messageIndex -= messagesPerMode;
   }
-  assert(messageIndex >= 0 && messageIndex < numberOfModes * messagesPerMode);
+  assert(messageIndex >= 0 &&
+         messageIndex < Ion::ExamMode::k_numberOfModes * messagesPerMode);
   return messages[messageIndex];
 }
 

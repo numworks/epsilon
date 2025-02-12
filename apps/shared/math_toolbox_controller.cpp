@@ -236,7 +236,7 @@ int MathToolboxController::controlChecksum() const {
              GlobalPreferences::SharedGlobalPreferences()->country()) +
          +(m_extraCellsDataSource ? m_extraCellsDataSource->numberOfExtraCells()
                                   : 0) *
-             static_cast<int>(Ion::ExamMode::Ruleset::NumberOfRulesets) *
+             static_cast<int>(Ion::ExamMode::k_numberOfModes) *
              I18n::NumberOfCountries;
 }
 

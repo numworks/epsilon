@@ -29,9 +29,8 @@ class ExamModeController : public GenericSubController {
 
  private:
   constexpr static int k_numberOfDeactivationMessageLines = 3;
-  // -2 for ExamMode::Ruleset::Off and ExamMode::Ruleset::Press-to-test
   constexpr static int k_maxNumberOfCells =
-      static_cast<size_t>(Ion::ExamMode::Ruleset::NumberOfRulesets) - 2;
+      Ion::ExamMode::k_numberOfActiveModes;
 
   int initialSelectedRow() const override;
   Poincare::ExamMode examMode();

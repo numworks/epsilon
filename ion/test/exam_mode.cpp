@@ -9,8 +9,7 @@ QUIZ_CASE(ion_exam_mode_uninitialized) {
 }
 
 QUIZ_CASE(ion_exam_mode) {
-  constexpr Int numberOfRulesets = static_cast<Int>(Ruleset::NumberOfRulesets);
-  for (Int i = 0; i < numberOfRulesets; i++) {
+  for (Int i = 0; i < k_numberOfModes; i++) {
     Ruleset rules = static_cast<Ruleset>(i);
     set(Configuration(rules));
     Configuration config = get();

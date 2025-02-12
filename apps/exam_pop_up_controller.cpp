@@ -42,8 +42,6 @@ void ExamPopUpController::viewDidDisappear() {
 }
 
 I18n::Message ExamPopUpController::activationWarningMessage() const {
-  constexpr size_t numberOfModes =
-      static_cast<size_t>(ExamMode::Ruleset::NumberOfRulesets);
   constexpr size_t messagesPerMode = 2;
   constexpr I18n::Message messages[] = {
       // Off
@@ -80,8 +78,9 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
       I18n::Message::ActiveUSAExamModeMessage,
       I18n::Message::ActiveTxPaScIbExamModeWithResetMessage,
   };
-  static_assert(std::size(messages) == numberOfModes * messagesPerMode,
-                "messages size is invalid");
+  static_assert(
+      std::size(messages) == Ion::ExamMode::k_numberOfModes * messagesPerMode,
+      "messages size is invalid");
   ExamMode::Ruleset rules = m_targetExamMode.ruleset();
   size_t index = static_cast<size_t>(rules) * messagesPerMode;
   index += (rules == ExamMode::Ruleset::Off &&
@@ -89,7 +88,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
                 ExamMode::Ruleset::PressToTest) ||
            Ion::Authentication::clearanceLevel() !=
                Ion::Authentication::ClearanceLevel::NumWorks;
-  assert(index < numberOfModes * messagesPerMode);
+  assert(index < Ion::ExamMode::k_numberOfModes * messagesPerMode);
   return messages[index];
 }
 

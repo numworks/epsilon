@@ -61,7 +61,7 @@ class __attribute__((packed)) ExamMode : public Ion::ExamMode::Configuration {
 
   explicit ExamMode(Ruleset rules, PressToTestFlags flags = {})
       : Configuration(rules, PressToTestUnion{.flags = flags}.value) {}
-  ExamMode(Configuration config) : Configuration(config) {}
+  explicit ExamMode(Configuration config) : Configuration(config) {}
 
   PressToTestFlags flags() const {
     return PressToTestUnion{.value = Configuration::flags()}.flags;

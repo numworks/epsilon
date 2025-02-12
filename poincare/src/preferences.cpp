@@ -27,7 +27,7 @@ Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
 
 ExamMode Preferences::examMode() const {
   if (m_examMode.isUninitialized()) {
-    m_examMode = Ion::ExamMode::get();
+    m_examMode = ExamMode(Ion::ExamMode::get());
   }
   return m_examMode;
 }

@@ -70,6 +70,7 @@ QUIZ_CASE(pcj_integer_properties) {
   IntegerHandler minusOne(-1);
   IntegerHandler a = CreateIntegerHandler("254");
   IntegerHandler b = CreateIntegerHandler("-13");
+  IntegerHandler max = CreateIntegerHandler(MaxIntegerString());
 
   quiz_assert(a.strictSign() == StrictSign::Positive);
   quiz_assert(b.strictSign() == StrictSign::Negative);
@@ -83,6 +84,9 @@ QUIZ_CASE(pcj_integer_properties) {
               static_cast<int8_t>(b) == -13);
   quiz_assert(!b.isUnsignedType<uint8_t>() && a.isUnsignedType<uint8_t>() &&
               static_cast<uint8_t>(a) == 254);
+  quiz_assert(a.numberOfBase10DigitsWithoutSign() == 3);
+  quiz_assert(b.numberOfBase10DigitsWithoutSign() == 2);
+  quiz_assert(max.numberOfBase10DigitsWithoutSign() == 309);
 }
 
 static void assert_equal(const char* a, const char* b) {

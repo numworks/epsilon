@@ -197,6 +197,11 @@ class IntegerHandler final {
     return serialize(buffer, bufferSize, &workingBuffer, base);
   }
 
+  int numberOfBase10DigitsWithoutSign() const {
+    WorkingBuffer workingBuffer;
+    return numberOfBase10DigitsWithoutSign(&workingBuffer);
+  };
+
  private:
   static constexpr int k_digitBase =
       1 << sizeof(uint8_t) * OMG::BitHelper::k_numberOfBitsInByte;

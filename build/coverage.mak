@@ -11,8 +11,6 @@ _coverage_excludes := \
   '**/test/**' \
   '**/python/src/**' \
   '**/quiz/src/**' \
-  '/Applications/**' \
-  '/Library/**' \
   '/usr/**' \
 
 # initialize_diagnosis, <file_name>, <coverage_dir>
@@ -39,7 +37,7 @@ define generate_coverage_info
 	@echo Generating coverage info for files in $2. Result will be stored in $2/$1.info.
 	lcov -j 32 --capture --directory $2 --output-file $2/$1.info \
 	$$(foreach pattern,$$(_coverage_excludes),--exclude $$(pattern)) \
-	-no-function-coverage --rc check_data_consistency=0
+	--rc function_coverage=0 --rc geninfo_unexecuted_blocks=1
 endef
 
 # rule_for_coverage,<coverage_dir>

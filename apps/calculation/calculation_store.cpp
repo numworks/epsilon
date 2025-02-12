@@ -16,6 +16,7 @@ using namespace Shared;
 namespace Calculation {
 
 static UserExpression enhancePushedExpression(UserExpression expression) {
+  assert(!expression.isUninitialized());
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.
    * Ex: If angleUnit = rad, cos(4) is enhanced to cos(4rad)
@@ -102,6 +103,7 @@ UserExpression CalculationStore::replaceAnsInExpression(
 bool CalculationStore::pushCalculationElement(
     const Poincare::Expression& expression, Calculation** current,
     char** location, ElementType elementType) {
+  assert(!expression.isUninitialized());
   const size_t sizeOfExpression =
       pushExpressionTree(location, expression, current);
   if (sizeOfExpression == k_pushErrorSize) {

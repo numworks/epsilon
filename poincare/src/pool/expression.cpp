@@ -34,6 +34,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include <complex>
 
@@ -444,17 +445,40 @@ UserExpression SystemExpression::cloneAndBeautify(
   return Builder(e);
 }
 
+/* If reductionFailure is true, skip simplification. TODO: Like similar methods,
+ * returned expression is not actually SystemExpression if reduction failed. */
 SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
     const char* symbolName, SystemExpression e, bool* reductionFailure) const {
-  Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
-  assert(Internal::Dimension::Get(e) == Internal::Dimension::Get(symbol));
-  TreeRef result = tree()->cloneTree();
-  result->deepReplaceWith(symbol, e);
-  symbol->removeTree();
-  // TODO: Handle reductionFailure.
-  // Note: Advanced reduction could be allowed for slower but better reduction.
-  Simplification::ReduceSystem(result, false);
-  return SystemExpression::Builder(static_cast<Tree*>(result));
+  assert(reductionFailure);
+  ExceptionTry {
+    Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
+    assert(Internal::Dimension::Get(e) == Internal::Dimension::Get(symbol));
+    TreeRef result = tree()->cloneTree();
+    result->deepReplaceWith(symbol, e);
+    symbol->removeTree();
+    if (!*reductionFailure) {
+      /* Note: Advanced reduction could be allowed for slower but better
+       * reduction. */
+      Simplification::ReduceSystem(result, false);
+    }
+    return SystemExpression::Builder(static_cast<Tree*>(result));
+  }
+  ExceptionCatch(exc) {
+    switch (exc) {
+      case ExceptionType::TreeStackOverflow:
+      case ExceptionType::IntegerOverflow:
+        if (!*reductionFailure) {
+          *reductionFailure = true;
+          // Try again without simplification
+          return cloneAndReplaceSymbolWithExpression(symbolName, e,
+                                                     reductionFailure);
+        }
+        [[fallthrough]];
+      default:
+        TreeStackCheckpoint::Raise(exc);
+    }
+  }
+  OMG::unreachable();
 }
 
 SystemExpression SystemExpression::getReducedDerivative(

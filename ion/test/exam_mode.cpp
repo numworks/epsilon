@@ -10,7 +10,7 @@ QUIZ_CASE(ion_exam_mode_uninitialized) {
 
 QUIZ_CASE(ion_exam_mode) {
   for (Int i = 0; i < k_numberOfModes; i++) {
-    Ruleset rules = static_cast<Ruleset>(i);
+    Ruleset rules = toRuleset(i);
     set(Configuration(rules));
     Configuration config = get();
 

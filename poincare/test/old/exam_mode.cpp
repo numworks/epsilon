@@ -362,7 +362,7 @@ void assert_press_to_test() {
 
 QUIZ_CASE(poincare_exam_modes) {
   for (Ion::ExamBytes::Int i = 0; i < Ion::ExamMode::k_numberOfModes; i++) {
-    assert_exam_mode(static_cast<ExamMode::Ruleset>(i));
+    assert_exam_mode(Ion::ExamMode::toRuleset(i));
   }
   assert_press_to_test();
 }

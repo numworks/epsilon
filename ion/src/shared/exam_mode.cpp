@@ -72,7 +72,7 @@ Configuration::Configuration(Ruleset rules, Int flags) : m_bits(0) {
 
 Ruleset Configuration::ruleset() const {
   assert(!isUninitialized());
-  return configurable() ? Ruleset::PressToTest : static_cast<Ruleset>(data());
+  return configurable() ? Ruleset::PressToTest : toRuleset(data());
 }
 
 Int Configuration::flags() const {

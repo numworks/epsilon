@@ -35,6 +35,11 @@ static constexpr size_t k_numberOfModes =
 // Number of active exam modes (-2 for Off and PressToTest)
 static constexpr size_t k_numberOfActiveModes = k_numberOfModes - 2;
 
+constexpr Ruleset toRuleset(Int value) {
+  assert(value < static_cast<Int>(Ruleset::NumberOfRulesets));
+  return static_cast<Ruleset>(value);
+}
+
 /* Encode exam mode permissions on a 16 bits integer.
  * The first bit "configurable" is set to 1 if "data" encodes press-to-test
  * flags. If it set to 0, "data" contains the index of the preset rules (Off,

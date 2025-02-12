@@ -117,6 +117,9 @@ void ion_main(int argc, const char* const argv[]) {
   Escher::Init();
   Apps::Init();
 
+  // Initialize the exam mode to "Off" before running the tests
+  Poincare::Preferences::SharedPreferences()->examMode();
+
   const char* testFilter = nullptr;
   const char* fromFilter = nullptr;
   const char* untilFilter = nullptr;

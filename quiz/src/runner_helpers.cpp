@@ -10,7 +10,10 @@
 class PreferencesTestBuilder {
  public:
   static Poincare::Preferences buildDefault() {
-    return Poincare::Preferences();
+    Poincare::Preferences defaultPreferences{};
+    // Initialize the exam mode to "Off"
+    defaultPreferences.examMode();
+    return defaultPreferences;
   }
 };
 

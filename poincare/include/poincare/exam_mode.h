@@ -59,7 +59,6 @@ class __attribute__((packed)) ExamMode : public Ion::ExamMode::Configuration {
   };
   static_assert(sizeof(PressToTestFlags) == sizeof(Ion::ExamMode::Int));
 
-  ExamMode() : Configuration() {}
   explicit ExamMode(Ruleset rules, PressToTestFlags flags = {})
       : Configuration(rules, PressToTestUnion{.flags = flags}.value) {}
   ExamMode(Configuration config) : Configuration(config) {}

@@ -51,7 +51,6 @@ class Configuration {
                                        static_cast<size_t>(Bits::DataFirst) + 1;
 
   explicit Configuration(Ruleset rules, Int flags = 0);
-  Configuration() : Configuration(-1) {}
   Configuration(Int raw) : m_bits(raw) {}
 
   bool operator==(const Configuration&) const = default;

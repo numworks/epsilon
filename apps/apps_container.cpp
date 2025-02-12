@@ -272,7 +272,9 @@ void AppsContainer::run() {
   Preferences* poincarePreferences = Preferences::SharedPreferences();
   Poincare::ExamMode examMode = poincarePreferences->examMode();
   if (examMode.isActive()) {
-    setExamMode(examMode, Poincare::ExamMode());
+    setExamMode(examMode,
+                // TODO: Ion::ExamMode::Uninitialized
+                Poincare::ExamMode(Ion::ExamMode::Ruleset::Off));
   } else {
     refreshPreferences();
   }

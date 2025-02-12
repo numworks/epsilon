@@ -19,7 +19,9 @@ class ExamPopUpController : public Shared::MessagePopUpController {
   I18n::Message activationWarningMessage() const;
   bool handleButton() const;
 
-  Poincare::ExamMode m_targetExamMode;
+  // TODO: initialize to Ion::ExamMode::Ruleset::Uninitialized
+  Poincare::ExamMode m_targetExamMode =
+      Poincare::ExamMode(Ion::ExamMode::Ruleset::Off);
 };
 
 #endif

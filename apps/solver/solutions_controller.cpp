@@ -222,12 +222,22 @@ void SolutionsController::viewWillAppear() {
     // There are no solutions
     m_contentView.setWarningMessage(noSolutionMessage());
   } else if (solutionsAreApproximate()) {
-    // TODO: Add a special message to indicate the solver has been interrupted
-    system->solutionStatus() == SystemOfEquations::SolutionStatus::Complete
-        ? m_contentView.setWarningMessage(I18n::Message::OtherSolutionsMayExist)
-        : m_contentView.setWarningMessageWithNumber(
-              I18n::Message::OnlyFirstSolutionsDisplayed,
-              system->numberOfSolutions());
+    switch (system->solutionStatus()) {
+      case SystemOfEquations::SolutionStatus::Complete:
+        m_contentView.setWarningMessage(I18n::Message::OtherSolutionsMayExist);
+        break;
+      case SystemOfEquations::SolutionStatus::Incomplete:
+        m_contentView.setWarningMessageWithNumber(
+            I18n::Message::OnlyFirstSolutionsDisplayed,
+            system->numberOfSolutions());
+        break;
+      default:
+        assert(system->solutionStatus() ==
+               SystemOfEquations::SolutionStatus::Interrupted);
+        m_contentView.setWarningMessage(
+            I18n::Message::InterruptedApproximateSolver);
+        break;
+    }
   } else if (system->type() ==
                  SystemOfEquations::Type::PolynomialMonovariable &&
              system->numberOfSolutions() == 1) {

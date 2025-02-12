@@ -439,4 +439,22 @@ QUIZ_CASE(pcj_integer_cast) {
 
   assert_integer_cast<uint64_t>(Integer::Handler(9223372036854775807_e), true,
                                 9223372036854775807);
+
+}
+
+static void assert_integer_serializes_to(const IntegerHandler integer,
+                                         const char* serialization) {
+  size_t bufferSize = 500;
+  char buffer[bufferSize];
+  integer.serialize(buffer, bufferSize);
+  quiz_assert(strcmp(buffer, serialization) == 0);
+}
+
+QUIZ_CASE(pcj_integer_serialize) {
+  assert_integer_serializes_to(Integer::Handler(0_e), "0");
+  assert_integer_serializes_to(Integer::Handler(-2_e), "-2");
+  assert_integer_serializes_to(Integer::Handler(2345678909876_e),
+                               "2345678909876");
+  assert_integer_serializes_to(Integer::Handler(-2345678909876_e),
+                               "-2345678909876");
 }

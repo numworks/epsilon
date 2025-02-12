@@ -59,8 +59,16 @@ void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
   // assert(!isOverflow());
 }
 
-size_t IntegerHandler::serializeInDecimal(char* buffer, size_t bufferSize,
-                                          WorkingBuffer* workingBuffer) const {
+size_t IntegerHandler::serialize(char* buffer, size_t bufferSize,
+                                 WorkingBuffer* workingBuffer) const {
+  if (bufferSize == 0) {
+    return bufferSize - 1;
+  }
+  buffer[bufferSize - 1] = 0;
+  if (bufferSize == 1) {
+    return bufferSize - 1;
+  }
+
   IntegerHandler base(10);
   DivisionResult<IntegerHandler> d = Udiv(*this, base, workingBuffer);
 
@@ -95,40 +103,6 @@ size_t IntegerHandler::serializeInDecimal(char* buffer, size_t bufferSize,
     buffer[j] = c;
   }
   return length;
-}
-
-size_t IntegerHandler::serialize(char* buffer, size_t bufferSize,
-                                 WorkingBuffer* workingBuffer,
-                                 OMG::Base base) const {
-  if (bufferSize == 0) {
-    return bufferSize - 1;
-  }
-  buffer[bufferSize - 1] = 0;
-  if (bufferSize == 1) {
-    return bufferSize - 1;
-  }
-#if 0
-  if (isOverflow()) {
-    return PrintFloat::ConvertFloatToText<float>(
-               m_negative ? -INFINITY : INFINITY, buffer, bufferSize,
-               PrintFloat::k_maxFloatGlyphLength,
-               PrintFloat::k_maxNumberOfSignificantDigits,
-               Preferences::PrintFloatMode::Decimal)
-        .CharLength;
-  }
-  assert(base == OMG::Base::Decimal);
-  switch (base) {
-    case OMG::Base::Binary:
-      return serializeInBinaryBase(buffer, bufferSize, 'b', OMG::Base::Binary);
-    case OMG::Base::Decimal:
-      return serializeInDecimal(buffer, bufferSize);
-    default:
-      assert(base == OMG::Base::Hexadecimal);
-      return serializeInBinaryBase(buffer, bufferSize, 'x',
-                                   OMG::Base::Hexadecimal);
-  }
-#endif
-  return serializeInDecimal(buffer, bufferSize, workingBuffer);
 }
 
 }  // namespace Poincare::Internal

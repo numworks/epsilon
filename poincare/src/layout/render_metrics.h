@@ -82,37 +82,31 @@ constexpr KDCoordinate k_minimalChildHeight = 16;
 constexpr uint8_t k_temporaryBlendAlpha = 0x60;
 
 constexpr KDCoordinate VerticalMargin(KDCoordinate childHeight,
-                                      KDCoordinate minVerticalMargin,
-                                      bool top) {
+                                      KDCoordinate minVerticalMargin) {
   /* If the child height is below the threshold, make it bigger so that
    * The bracket pair maintains the right height */
   KDCoordinate verticalMargin = minVerticalMargin;
 
   if (childHeight < k_minimalChildHeight) {
     verticalMargin += (k_minimalChildHeight - childHeight) / 2;
-    if (top && (k_minimalChildHeight - childHeight) % 2) {
-      verticalMargin++;
-    }
   }
   return verticalMargin;
 }
 constexpr KDCoordinate Height(KDCoordinate childHeight,
                               KDCoordinate minVerticalMargin) {
-  return childHeight + VerticalMargin(childHeight, minVerticalMargin, true) +
-         VerticalMargin(childHeight, minVerticalMargin, false);
+  return childHeight + 2 * VerticalMargin(childHeight, minVerticalMargin);
 }
 
 constexpr KDCoordinate Baseline(KDCoordinate childHeight,
                                 KDCoordinate childBaseline,
                                 KDCoordinate minVerticalMargin) {
-  return childBaseline + VerticalMargin(childHeight, minVerticalMargin, true);
+  return childBaseline + VerticalMargin(childHeight, minVerticalMargin);
 }
 
 constexpr KDPoint ChildOffset(KDCoordinate minVerticalMargin,
                               KDCoordinate bracketWidth,
                               KDCoordinate childHeight) {
-  return KDPoint(bracketWidth,
-                 VerticalMargin(childHeight, minVerticalMargin, true));
+  return KDPoint(bracketWidth, VerticalMargin(childHeight, minVerticalMargin));
 }
 }  // namespace Pair
 
@@ -189,11 +183,11 @@ constexpr KDCoordinate Height(KDCoordinate childHeight) {
 
 constexpr KDCoordinate Baseline(KDCoordinate childHeight,
                                 KDCoordinate childBaseline) {
-  return Pair::Baseline(childHeight, childBaseline, k_minVerticalMargin) + 1;
+  return Pair::Baseline(childHeight, childBaseline, k_minVerticalMargin);
 }
 
-constexpr KDCoordinate VerticalMargin(KDCoordinate childHeight, bool top) {
-  return Pair::VerticalMargin(childHeight, k_minVerticalMargin, top);
+constexpr KDCoordinate VerticalMargin(KDCoordinate childHeight) {
+  return Pair::VerticalMargin(childHeight, k_minVerticalMargin);
 }
 }  // namespace Parenthesis
 
@@ -670,13 +664,13 @@ inline KDCoordinate RowsWidth(const Layout* node, KDFont::Size font) {
 
 inline KDCoordinate UpperMargin(const Layout* node, KDFont::Size font) {
   return node->isPoint2DLayout()
-             ? Parenthesis::VerticalMargin(Height(UpperLayout(node)), true)
+             ? Parenthesis::VerticalMargin(Height(UpperLayout(node)))
              : 0;
 }
 
 inline KDCoordinate LowerMargin(const Layout* node, KDFont::Size font) {
   return node->isPoint2DLayout()
-             ? Parenthesis::VerticalMargin(Height(LowerLayout(node)), false)
+             ? Parenthesis::VerticalMargin(Height(LowerLayout(node)))
              : 0;
 }
 }  // namespace TwoRows
@@ -685,8 +679,7 @@ namespace Point2D {
 constexpr KDSize SizeGivenChildSize(KDSize childSize) {
   return KDSize(childSize.width() + 2 * Parenthesis::k_parenthesisWidth,
                 2 * childSize.height() + TwoRows::k_point2DRowsSeparator +
-                    Parenthesis::VerticalMargin(childSize.height(), true) +
-                    Parenthesis::VerticalMargin(childSize.height(), false));
+                    2 * Parenthesis::VerticalMargin(childSize.height()));
 }
 }  // namespace Point2D
 

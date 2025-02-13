@@ -805,8 +805,8 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("root(-8,3)", "-2");
   simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
   simplifies_to("1-e^(-(0.09/(5.63*10^-7)))", "1-e^(-90000000/563)");
-  simplifies_to("(100/3)^(1/3)", "(3^(2/3)×root(100,3))/3");
-  simplifies_to("(200/3)^(1/3)", "root(1800,3)/3");
+  simplifies_to("(100/3)^(1/3)", "30^(2/3)/3");
+  simplifies_to("(200/3)^(1/3)", "(2×15^(2/3))/3");
 
   // Real powers
   simplifies_to("√(x)^2", "√(x)^2");
@@ -854,7 +854,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(-3-√(8))", "(1+√(2))×i", cartesianCtx);
   simplifies_to("√(17+4×√(13))", "2+√(13)");
   simplifies_to("√(√(1058)-√(896))", "root(2,4)×(4-√(7))", cartesianCtx);
-  simplifies_to("√(57×√(17)+68×√(10))", "2×√(10)×root(17,4)+17^(3/4)");
+  simplifies_to("√(57×√(17)+68×√(10))", "17^(3/4)×(1+(2×√(170))/17)");
   simplifies_to("(-8)^(1/3)-1-√(3)×i", "0", cartesianCtx);
   simplifies_to("√(-3)-√(3)×i", "0", cartesianCtx);
 }

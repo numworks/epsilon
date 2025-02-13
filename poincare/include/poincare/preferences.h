@@ -222,12 +222,12 @@ class __attribute__((packed)) Preferences final {
    * pointer. */
   Preferences() = default;
 
-  // TODO: change default value of ExamMode
   CODE_GUARD(
-      poincare_preferences, 3092885088,  //
+      poincare_preferences, 3082544720,  //
       uint8_t m_version = k_version;
       CalculationPreferences m_calculationPreferences = {};
-      mutable ExamMode m_examMode = ExamMode(Ion::ExamMode::Ruleset::Off);
+      mutable ExamMode m_examMode =
+          ExamMode(Ion::ExamMode::Ruleset::Uninitialized);
       /* This flag can only be asserted by writing it via DFU. When set,
        * it will force the reactivation of the exam mode after leaving
        * DFU to synchronize the persisting bytes with the Preferences. */

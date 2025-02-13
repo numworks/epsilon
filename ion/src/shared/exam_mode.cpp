@@ -68,8 +68,6 @@ Configuration::Configuration(Ruleset rules, Int flags) : m_bits(0) {
       m_bits, static_cast<size_t>(Bits::DataLast),
       static_cast<size_t>(Bits::DataFirst),
       configurable ? flags : static_cast<Int>(rules));
-
-  assert(!isUninitialized());
 }
 
 Ruleset Configuration::ruleset() const {
@@ -89,7 +87,7 @@ bool Configuration::isUninitialized() const {
   if (configurable()) {
     return false;
   }
-  return data() >= static_cast<Int>(Ruleset::NumberOfRulesets);
+  return toRuleset(data()) == Ruleset::Uninitialized;
 }
 
 bool Configuration::isActive() const {

@@ -11,7 +11,7 @@ namespace ExamMode {
 
 using Int = ExamBytes::Int;
 
-CODE_GUARD(exam_mode_rulesets, 2664271436,  //
+CODE_GUARD(exam_mode_rulesets, 2206142180,  //
            enum class Ruleset
            : Int{
                Off = 0,
@@ -25,12 +25,13 @@ CODE_GUARD(exam_mode_rulesets, 2664271436,  //
                Pennsylvania,
                SouthCarolina,
                NorthCarolina,
+               Uninitialized,
                NumberOfRulesets,
            };)
 
-// Number of exam modes (TODO: -1 for Uninitialized)
+// Number of exam modes (-1 for Uninitialized)
 static constexpr size_t k_numberOfModes =
-    static_cast<size_t>(Ruleset::NumberOfRulesets);
+    static_cast<size_t>(Ruleset::NumberOfRulesets) - 1;
 
 // Number of active exam modes (-2 for Off and PressToTest)
 static constexpr size_t k_numberOfActiveModes = k_numberOfModes - 2;

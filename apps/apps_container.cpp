@@ -273,8 +273,7 @@ void AppsContainer::run() {
   Poincare::ExamMode examMode = poincarePreferences->examMode();
   if (examMode.isActive()) {
     setExamMode(examMode,
-                // TODO: Ion::ExamMode::Uninitialized
-                Poincare::ExamMode(Ion::ExamMode::Ruleset::Off));
+                Poincare::ExamMode(Ion::ExamMode::Ruleset::Uninitialized));
   } else {
     refreshPreferences();
   }

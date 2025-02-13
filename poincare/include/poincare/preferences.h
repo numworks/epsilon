@@ -71,22 +71,27 @@ class __attribute__((packed)) Preferences final {
           static_cast<uint8_t>(ComplexFormat::NFormats));
 
   struct CalculationPreferences {
-    AngleUnit angleUnit : k_numberOfBitsForAngleUnit = AngleUnit::Radian;
-    PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode =
-                                     Preferences::PrintFloatMode::Decimal;
-    EditionMode editionMode : 1 = EditionMode::Edition2D;
-    ComplexFormat complexFormat : k_numberOfBitsForComplexFormat =
-                                      Preferences::ComplexFormat::Real;
+    AngleUnit angleUnit : k_numberOfBitsForAngleUnit;
+    PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
+    EditionMode editionMode : 1;
+    ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
     /* Explicitly declare padding bits to avoid uninitalized values. */
     uint8_t padding
         : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
           k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode -
           1 - k_numberOfBitsForComplexFormat;
-    uint8_t numberOfSignificantDigits =
-        Preferences::DefaultNumberOfPrintedSignificantDigits;
+    uint8_t numberOfSignificantDigits;
 
     bool operator==(const CalculationPreferences&) const = default;
   };
+
+  constexpr static CalculationPreferences k_defaultCalculationPreferences = {
+      .angleUnit = AngleUnit::Radian,
+      .displayMode = Preferences::PrintFloatMode::Decimal,
+      .editionMode = EditionMode::Edition2D,
+      .complexFormat = Preferences::ComplexFormat::Real,
+      .numberOfSignificantDigits =
+          Preferences::DefaultNumberOfPrintedSignificantDigits};
 
   // Other preferences
   using UnitFormat = Internal::UnitFormat;
@@ -223,9 +228,10 @@ class __attribute__((packed)) Preferences final {
   Preferences() = default;
 
   CODE_GUARD(
-      poincare_preferences, 3082544720,  //
+      poincare_preferences, 2067043470,  //
       uint8_t m_version = k_version;
-      CalculationPreferences m_calculationPreferences = {};
+      CalculationPreferences m_calculationPreferences =
+          k_defaultCalculationPreferences;
       mutable ExamMode m_examMode =
           ExamMode(Ion::ExamMode::Ruleset::Uninitialized);
       /* This flag can only be asserted by writing it via DFU. When set,

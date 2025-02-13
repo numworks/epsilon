@@ -206,8 +206,8 @@ class Expression : public PoolHandle {
   UserExpression cloneAndBeautify(Internal::ProjectionContext* context) const;
   // Only on SystemExpression. Replace symbol and reduce.
   SystemExpression cloneAndReplaceSymbolWithExpression(
-      const char* symbolName, const SystemExpression& e,
-      bool* reductionFailure) const;
+      const char* symbolName, const SystemExpression& e, bool* reductionFailure,
+      SymbolicComputation symbolic) const;
 
   SystemExpression getReducedDerivative(const char* symbolName,
                                         int derivationOrder = 1) const;

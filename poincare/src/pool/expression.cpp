@@ -448,8 +448,8 @@ UserExpression SystemExpression::cloneAndBeautify(
 /* If reductionFailure is true, skip simplification. TODO: Like similar methods,
  * returned expression is not actually SystemExpression if reduction failed. */
 SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
-    const char* symbolName, const SystemExpression& e,
-    bool* reductionFailure) const {
+    const char* symbolName, const SystemExpression& e, bool* reductionFailure,
+    SymbolicComputation symbolic) const {
   assert(reductionFailure);
   ExceptionTry {
     Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
@@ -457,6 +457,11 @@ SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
     TreeRef result = tree()->cloneTree();
     result->deepReplaceWith(symbol, e);
     symbol->removeTree();
+    if (Variables::HasUserSymbols(result, true)) {
+      // TODO: Only this case is used and handled for now.
+      assert(symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+      result->cloneTreeOverTree(KUndef);
+    }
     if (!*reductionFailure) {
       /* Note: Advanced reduction could be allowed for slower but better
        * reduction. */
@@ -471,8 +476,8 @@ SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
         if (!*reductionFailure) {
           *reductionFailure = true;
           // Try again without simplification
-          return cloneAndReplaceSymbolWithExpression(symbolName, e,
-                                                     reductionFailure);
+          return cloneAndReplaceSymbolWithExpression(
+              symbolName, e, reductionFailure, symbolic);
         }
         [[fallthrough]];
       default:

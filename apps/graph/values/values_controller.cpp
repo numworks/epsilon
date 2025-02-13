@@ -377,9 +377,11 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     SystemExpression abscissaExpression =
         Expression::DecimalBuilderFromDouble(abscissa);
     bool simplificationFailure = false;
-    e = e.cloneAndReplaceSymbolWithExpression(Shared::Function::k_unknownName,
-                                              abscissaExpression,
-                                              &simplificationFailure);
+    // Additional symbols should have been replaced at this point.
+    e = e.cloneAndReplaceSymbolWithExpression(
+        Shared::Function::k_unknownName, abscissaExpression,
+        &simplificationFailure,
+        SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     UserExpression approximation;
     Poincare::Internal::ProjectionContext projectionContext = {
         .m_complexFormat =

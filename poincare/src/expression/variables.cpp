@@ -71,8 +71,8 @@ void Variables::Private::GetUserSymbols(const Tree* e, Tree* set) {
   }
 }
 
-bool Variables::HasUserSymbols(const Tree* e) {
-  if (e->isUserSymbol()) {
+bool Variables::HasUserSymbols(const Tree* e, bool checkForUserFunctions) {
+  if (e->isUserSymbol() || (checkForUserFunctions && e->isUserFunction())) {
     return true;
   }
   bool isParametric = e->isParametric();
@@ -80,7 +80,7 @@ bool Variables::HasUserSymbols(const Tree* e) {
     if (isParametric && child.index == Parametric::k_variableIndex) {
       continue;
     }
-    if (HasUserSymbols(child)) {
+    if (HasUserSymbols(child, checkForUserFunctions)) {
       return true;
     }
   }

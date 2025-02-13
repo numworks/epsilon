@@ -8,6 +8,8 @@ static constexpr Int k_clearedBits = static_cast<Int>(-1);
 QUIZ_CASE(ion_exam_mode_uninitialized) {
   Configuration clearedConfig(k_clearedBits);
   quiz_assert(clearedConfig.isUninitialized());
+  Configuration defaultConfig(Ruleset::Uninitialized);
+  quiz_assert(defaultConfig.isUninitialized());
 }
 
 QUIZ_CASE(ion_exam_mode) {

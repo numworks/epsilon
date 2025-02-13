@@ -62,6 +62,8 @@ class Configuration {
   constexpr static size_t k_dataSize = static_cast<size_t>(Bits::DataLast) -
                                        static_cast<size_t>(Bits::DataFirst) + 1;
 
+  static_assert(static_cast<size_t>(Ruleset::NumberOfRulesets) <= k_dataSize);
+
   explicit Configuration(Ruleset rules, Int flags = 0);
   explicit Configuration(Int raw) : m_bits(raw) {}
 

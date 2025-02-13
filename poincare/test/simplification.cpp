@@ -450,6 +450,10 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("root(-8,3)", "2×e^(π/3×i)", polarCtx);
   // TODO: Parentheses should not be here √(2)×e^(-π/12×i)
   simplifies_to("e^(π/6×i)+e^(-π/3×i)", "√(2)×e^((-π/12)×i)", polarCtx);
+  // TODO: Improve result should be (√(2)+√(6))/2×e^(π/4×i)
+  // or at least √(2)×(1+√(3))/2×e^(π/4×i)
+  simplifies_to("e^(π/6×i)+e^(-10π/6×i)", "√(2×(1+√(3))^2)/2×e^(π/4×i)",
+                polarCtx);
   // Not simplified into polars
   simplifies_to("-1+π", "-1+π", polarCtx);
   simplifies_to("1-π", "1-π", polarCtx);

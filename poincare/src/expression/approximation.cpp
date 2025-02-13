@@ -972,6 +972,8 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
       }
       return x == std::complex<T>(0.0) ? NAN : std::log(x);
     }
+    case Type::Store:
+      return PrivateToComplex<T>(e->child(0), ctx);
     default:
       OMG::unreachable();
   }
@@ -1222,6 +1224,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     case Type::Unit:
     case Type::PhysicalConstant:
     case Type::LnUser:
+    case Type::Store:
       return MiscToComplex<T>(e, ctx);
     default:;
   }

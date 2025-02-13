@@ -125,17 +125,19 @@ class TypeBlock : public Block {
 #undef CAST_
 #undef CAST
 
+  /* IsOfType takes AnyType and not Type because we want to allow some
+   * disabled types in an IsOfType list. */
   constexpr static bool IsOfType(Type thisType,
-                                 std::initializer_list<Type> types) {
-    for (Type t : types) {
-      if (thisType == t) {
+                                 std::initializer_list<AnyType> types) {
+    for (AnyType t : types) {
+      if (t.isEnabled() && thisType == t) {
         return true;
       }
     }
     return false;
   }
 
-  constexpr bool isOfType(std::initializer_list<Type> types) const {
+  constexpr bool isOfType(std::initializer_list<AnyType> types) const {
     return IsOfType(type(), types);
   }
 

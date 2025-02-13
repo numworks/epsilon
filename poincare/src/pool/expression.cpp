@@ -1055,7 +1055,7 @@ bool NewExpression::allChildrenAreUndefined() const {
 
 bool NewExpression::hasRandomNumber() const {
   return !tree()->hasDescendantSatisfying(
-      [](const Tree* e) { return !e->isRandom() || e->isRandInt(); });
+      [](const Tree* e) { return !e->isRandom() || !e->isRandInt(); });
 }
 
 bool NewExpression::hasRandomList() const {

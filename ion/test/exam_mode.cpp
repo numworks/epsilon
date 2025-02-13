@@ -3,9 +3,11 @@
 
 using namespace Ion::ExamMode;
 
+static constexpr Int k_clearedBits = static_cast<Int>(-1);
+
 QUIZ_CASE(ion_exam_mode_uninitialized) {
-  Configuration config(static_cast<Int>(-1));
-  quiz_assert(config.isUninitialized());
+  Configuration clearedConfig(k_clearedBits);
+  quiz_assert(clearedConfig.isUninitialized());
 }
 
 QUIZ_CASE(ion_exam_mode) {
@@ -18,8 +20,8 @@ QUIZ_CASE(ion_exam_mode) {
     quiz_assert(config.ruleset() == rules);
     quiz_assert(config.flags() == 0);
     quiz_assert(config.isActive() == (rules != Ruleset::Off));
-    quiz_assert(config.raw() != static_cast<Int>(-1));
+    quiz_assert(config.raw() != k_clearedBits);
 
-    set(Configuration(0));
+    set(Configuration(Ruleset::Off));
   }
 }

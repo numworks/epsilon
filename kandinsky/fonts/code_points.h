@@ -164,9 +164,7 @@ constexpr
         0x2197,  // ↗ // NORTH EAST ARROW
         0x2198,  // ↘ // SOUTH EAST ARROW
         0x2211,  // ∑ // N-ARY SUMMATION
-#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x221a,  // √ // SQUARE ROOT
-#endif
         0x221e,  // ∞ // INFINITY
         0x222b,  // ∫ // INTEGRAL
         0x2248,  // ≈ // ALMOST EQUAL TO

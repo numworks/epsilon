@@ -1,3 +1,4 @@
+#include <poincare/include/poincare/expression.h>
 #include <poincare/init.h>
 #include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/pool_handle.h>
@@ -95,4 +96,24 @@ QUIZ_CASE(poincare_pool_handle_does_not_copy) {
   assert_pool_size(initialPoolSize + 3);
   PoolHandle p2 = p1;
   assert_pool_size(initialPoolSize + 3);
+}
+
+QUIZ_CASE(poincare_pool_expression_can_start_uninitialized) {
+  int initialPoolSize = pool_size();
+  Expression e;
+  assert_pool_size(initialPoolSize);
+  {
+    Expression i = Expression::Builder(1);
+    assert_pool_size(initialPoolSize + 1);
+    e = i;
+    assert_pool_size(initialPoolSize + 1);
+  }
+}
+
+QUIZ_CASE(poincare_pool_expression_can_be_copied_even_if_uninitialized) {
+  int initialPoolSize = pool_size();
+  Expression e;
+  Expression f;
+  f = e;
+  assert_pool_size(initialPoolSize);
 }

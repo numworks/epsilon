@@ -83,6 +83,9 @@ class Configuration {
   bool configurable() const {
     return OMG::BitHelper::bitAtIndex(m_bits, Bits::Configurable);
   }
+  bool cleared() const {
+    return OMG::BitHelper::bitAtIndex(m_bits, Bits::Cleared);
+  }
   Int data() const {
     return OMG::BitHelper::bitsBetweenIndexes(m_bits, Bits::DataLast,
                                               Bits::DataFirst);

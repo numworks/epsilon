@@ -59,9 +59,11 @@ void set(Configuration config) {
 
 Configuration::Configuration(Ruleset rules, Int flags) : m_bits(0) {
   bool configurable = rules == Ruleset::PressToTest;
+  // Store "configurable" boolean at Bits::Configurable
   m_bits = OMG::BitHelper::withBitsBetweenIndexes(
       m_bits, static_cast<size_t>(Bits::Configurable),
       static_cast<size_t>(Bits::Configurable), static_cast<Int>(configurable));
+  // Store flags or ruleset between Bits::DataFirst and Bits::DataLast
   m_bits = OMG::BitHelper::withBitsBetweenIndexes(
       m_bits, static_cast<size_t>(Bits::DataLast),
       static_cast<size_t>(Bits::DataFirst),
@@ -81,9 +83,13 @@ Int Configuration::flags() const {
 }
 
 bool Configuration::isUninitialized() const {
-  bool clearBit = OMG::BitHelper::bitAtIndex(m_bits, Bits::Cleared);
-  return clearBit || (!configurable() &&
-                      data() >= static_cast<Int>(Ruleset::NumberOfRulesets));
+  if (cleared()) {
+    return true;
+  }
+  if (configurable()) {
+    return false;
+  }
+  return data() >= static_cast<Int>(Ruleset::NumberOfRulesets);
 }
 
 bool Configuration::isActive() const {

@@ -36,10 +36,10 @@ namespace Poincare::Internal::Approximation {
 
 using namespace Private;
 
-static_assert(
-    !POINCARE_NO_FLOAT_APPROXIMATION || !(POINCARE_MATRIX || POINCARE_LIST ||
-                                          POINCARE_BOOLEAN || POINCARE_POINT),
-    "the double-only approximation is only available with scalars for now");
+static_assert(!POINCARE_NO_FLOAT_APPROXIMATION ||
+                  !(POINCARE_MATRIX || POINCARE_LIST || POINCARE_POINT),
+              "the double-only approximation is only available with scalars "
+              "and booleans");
 
 template <typename T>
 Tree* ToTree(const Tree* e, Parameters params, Context context) {
@@ -1235,6 +1235,11 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
 
 template <typename T>
 bool Private::PrivateToBoolean(const Tree* e, const Context* ctx) {
+#if POINCARE_NO_FLOAT_APPROXIMATION
+  if (sizeof(T) == sizeof(float)) {
+    return PrivateToBoolean<double>(e, ctx);
+  }
+#endif
   if (e->isTrue()) {
     return true;
   }

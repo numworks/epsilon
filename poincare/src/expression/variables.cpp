@@ -72,8 +72,19 @@ void Variables::Private::GetUserSymbols(const Tree* e, Tree* set) {
 }
 
 bool Variables::HasUserSymbols(const Tree* e) {
-  return e->hasDescendantSatisfying(
-      [](const Tree* e) { return e->isUserSymbol(); });
+  if (e->isUserSymbol()) {
+    return true;
+  }
+  bool isParametric = e->isParametric();
+  for (IndexedChild<const Tree*> child : e->indexedChildren()) {
+    if (isParametric && child.index == Parametric::k_variableIndex) {
+      continue;
+    }
+    if (HasUserSymbols(child)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 bool Variables::LeaveScopeWithReplacement(Tree* e, const Tree* value,

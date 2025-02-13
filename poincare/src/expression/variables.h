@@ -37,6 +37,7 @@ const Tree* ToSymbol(const Tree* variables, uint8_t id);
 
 // Push a Set with the free user symbols of the expression
 Tree* GetUserSymbols(const Tree* e);
+// Ignore UserSymbols in parametric's variable
 bool HasUserSymbols(const Tree* e);
 
 bool ProjectLocalVariablesToId(Tree* e, uint8_t depth = 0);

@@ -77,17 +77,16 @@ def parse_diff(genhtml_txt: str):
     with open(genhtml_txt, "r") as f:
         lines = f.readlines()
         diff = Diff()
-        editing = None
+        is_editing = False
         for line in lines:
-            if line.lstrip().startswith("lines"):
-                editing = diff.line_counts
-                continue
             if line.lstrip().startswith("Message"):
                 break
-            if editing:
+            if is_editing:
                 category, count = parse.parse("{}...: {}", line.lstrip())
                 if category in categories_to_display:
-                    editing[category] = int(count)
+                    diff.line_counts[category] = int(count)
+            if line.lstrip().startswith("lines"):
+                is_editing = True
     return diff
 
 

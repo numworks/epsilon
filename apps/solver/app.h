@@ -44,8 +44,7 @@ class App : public Shared::MathApp {
   EquationStore* equationStore() { return &m_equationStore; }
   SystemOfEquations* system() { return &m_system; }
 
-  void openSolutionsController(bool approximateSolve,
-                               bool forceIntervalSelection);
+  void openSolutionsController(bool approximateSolve);
   void openIntervalController();
 
   void storageDidChangeForRecord(Ion::Storage::Record record) override;

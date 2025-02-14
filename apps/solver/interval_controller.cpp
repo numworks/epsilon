@@ -18,8 +18,7 @@ IntervalController::IntervalController(Responder* parentResponder)
             controller->stackController()->pop();
             return true;
           },
-          this)),
-      m_forceSolveOnPop(false) {
+          this)) {
   m_okButton.setMessage(I18n::Message::ResolveEquation);
 }
 
@@ -70,9 +69,8 @@ void IntervalController::setAutoRange() {
 }
 
 void IntervalController::pop(bool onConfirmation) {
-  if (onConfirmation || m_forceSolveOnPop) {
+  if (onConfirmation) {
     App::app()->system()->approximateSolve(App::app()->localContext());
-    m_forceSolveOnPop = false;
   }
   StackViewController* stack = stackController();
   stack->pop();

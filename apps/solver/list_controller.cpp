@@ -190,7 +190,6 @@ void ListController::resolveEquations() {
   if (CircuitBreakerRun(checkpoint)) {
     using Error = SystemOfEquations::Error;
     Error e = App::app()->system()->exactSolve(context);
-    bool canceledApproximateSolve = false;
     switch (e) {
       case Error::EquationUndefined:
         App::app()->displayWarning(I18n::Message::UndefinedEquation);
@@ -219,14 +218,13 @@ void ListController::resolveEquations() {
           modelStore()->tidyDownstreamPoolFrom(
               subCheckpoint.endOfPoolBeforeCheckpoint());
           App::app()->system()->cancelApproximateSolve();
-          canceledApproximateSolve = true;
         }
         [[fallthrough]];
       }
       default: {
         assert(e == Error::NoError || e == Error::RequireApproximateSolution);
-        App::app()->openSolutionsController(
-            e == Error::RequireApproximateSolution, canceledApproximateSolve);
+        App::app()->openSolutionsController(e ==
+                                            Error::RequireApproximateSolution);
       }
     }
   } else {

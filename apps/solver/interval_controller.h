@@ -14,7 +14,6 @@ class IntervalController : public Shared::SingleRangeController<double> {
   IntervalController(Escher::Responder* parentResponder);
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
-  void forceSolveOnPop() { m_forceSolveOnPop = true; }
 
  private:
   I18n::Message parameterMessage(int index) const override;
@@ -25,10 +24,6 @@ class IntervalController : public Shared::SingleRangeController<double> {
   void setAutoRange() override;
   void pop(bool onConfirmation) override;
   Shared::MessagePopUpController m_confirmPopUpController;
-  /* This forces the call to approximateSolve when the IntervalController is
-   * closed. Used when the system->approximateSolvingRange() does not match
-   * system's computed solutions.*/
-  bool m_forceSolveOnPop;
 };
 
 }  // namespace Solver

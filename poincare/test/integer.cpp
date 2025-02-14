@@ -416,6 +416,16 @@ QUIZ_CASE(pcj_integer_cast) {
   assert_integer_cast<float_t>(Integer::Handler(-0_e), true, 0.0f);
   assert_integer_cast<double_t>(Integer::Handler(-0_e), true, 0.0);
 
+  assert_integer_cast<float_t>(Integer::Handler(1_e), true, 1.0f);
+  assert_integer_cast<double_t>(Integer::Handler(1_e), true, 1.0);
+  assert_integer_cast<float_t>(Integer::Handler(-1_e), true, -1.0f);
+  assert_integer_cast<double_t>(Integer::Handler(-1_e), true, -1.0);
+
+  assert_integer_cast<float_t>(Integer::Handler(2_e), true, 2.0f);
+  assert_integer_cast<double_t>(Integer::Handler(2_e), true, 2.0);
+  assert_integer_cast<float_t>(Integer::Handler(4_e), true, 4.0f);
+  assert_integer_cast<double_t>(Integer::Handler(4_e), true, 4.0);
+
   assert_integer_cast<uint8_t>(Integer::Handler(123_e), true, 123);
   assert_integer_cast<uint32_t>(Integer::Handler(123_e), true, 123);
   assert_integer_cast<uint64_t>(Integer::Handler(123_e), true, 123);
@@ -444,18 +454,58 @@ QUIZ_CASE(pcj_integer_cast) {
   assert_integer_cast<int8_t>(Integer::Handler(300_e), false);
   assert_integer_cast<int>(Integer::Handler(300_e), true, 300);
 
+  assert_integer_cast<float_t>(Integer::Handler(12345678_e), true, 12345678.0f);
+  assert_integer_cast<double_t>(Integer::Handler(12345678_e), true, 12345678.0);
+
+  assert_integer_cast<float_t>(Integer::Handler(33554432_e), true, 33554432.0f);
+  assert_integer_cast<double_t>(Integer::Handler(33554432_e), true, 33554432.0);
+
+  assert_integer_cast<float_t>(Integer::Handler(67108864_e), true, 67108864.0f);
+  assert_integer_cast<double_t>(Integer::Handler(67108864_e), true, 67108864.0);
+
+  assert_integer_cast<float_t>(Integer::Handler(134217720_e), true,
+                               134217720.0f);
+  assert_integer_cast<double_t>(Integer::Handler(134217720_e), true,
+                                134217720.0);
+
+  assert_integer_cast<float_t>(Integer::Handler(2147483648_e), true,
+                               2147483648.0f);
+  assert_integer_cast<double_t>(Integer::Handler(2147483648_e), true,
+                                2147483648.0);
+
   assert_integer_cast<uint32_t>(Integer::Handler(4294967295_e), true,
                                 4294967295);
   assert_integer_cast<uint64_t>(Integer::Handler(4294967295_e), true,
                                 4294967295);
   assert_integer_cast<int>(Integer::Handler(4294967295_e), false);
+  assert_integer_cast<float_t>(Integer::Handler(4294967295_e), true,
+                               4294967295.0f);
+  assert_integer_cast<double_t>(Integer::Handler(4294967295_e), true,
+                                4294967295.0);
+  assert_integer_cast<float_t>(Integer::Handler(-4294967295_e), true,
+                               -4294967295.0f);
+  assert_integer_cast<double_t>(Integer::Handler(-4294967295_e), true,
+                                -4294967295.0);
 
   assert_integer_cast<uint32_t>(Integer::Handler(1234567890123_e), false);
   assert_integer_cast<uint64_t>(Integer::Handler(1234567890123_e), true,
                                 1234567890123);
 
+  assert_integer_cast<float_t>(CreateIntegerHandler("-18446744073709551615"),
+                               true, -18446744073709551615.0f);
+  assert_integer_cast<double_t>(CreateIntegerHandler("-18446744073709551615"),
+                                true, -18446744073709551615.0);
+  assert_integer_cast<float_t>(CreateIntegerHandler("-18446744073709551616"),
+                               true, -18446744073709551616.0f);
+  assert_integer_cast<double_t>(CreateIntegerHandler("-18446744073709551616"),
+                                true, -18446744073709551616.0);
+
   assert_integer_cast<uint64_t>(Integer::Handler(9223372036854775807_e), true,
                                 9223372036854775807);
+  assert_integer_cast<float_t>(Integer::Handler(9223372036854775807_e), true,
+                               9223372036854775807.0f);
+  assert_integer_cast<double_t>(Integer::Handler(9223372036854775807_e), true,
+                                9223372036854775807.0);
 
   assert_integer_cast<double_t>(
       CreateIntegerHandler("179769313486230000002930519078902473361797697894230"

@@ -241,38 +241,6 @@ bool Rational::IsStrictlyPositiveUnderOne(const Tree* e) {
          IntegerHandler::Compare(num, Denominator(e)) < 0;
 }
 
-Tree* Rational::CreateMixedFraction(const Tree* e,
-                                    bool mixedFractionsAreEnabled) {
-  IntegerHandler num = Numerator(e);
-  IntegerHandler den = Denominator(e);
-  bool numIsNegative = num.strictSign() == StrictSign::Negative;
-  num.setSign(NonStrictSign::Positive);
-  // Push quotient and remainder
-  DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
-  Tree* integerPart = division.quotient;
-  // Push the fraction
-  TreeRef fractionPart =
-      Rational::Push(Integer::Handler(division.remainder), den);
-  division.remainder->removeTree();
-  // If mixed fractions are enabled
-  if (mixedFractionsAreEnabled) {
-    integerPart->cloneNodeAtNode(KMixedFraction);
-    if (numIsNegative) {
-      integerPart->cloneNodeAtNode(KOpposite);
-    }
-    return integerPart;
-  }
-  // If mixed fractions don't exist in this country
-  if (numIsNegative) {
-    if (!integerPart->isZero()) {
-      integerPart->cloneNodeAtNode(KOpposite);
-    }
-    fractionPart->cloneNodeAtNode(KOpposite);
-  }
-  integerPart->cloneNodeAtNode(KAdd.node<2>);
-  return integerPart;
-}
-
 int Rational::CompareHandlers(IntegerHandler num1, IntegerHandler denom1,
                               IntegerHandler num2, IntegerHandler denom2) {
   assert(denom1.strictSign() == StrictSign::Positive &&

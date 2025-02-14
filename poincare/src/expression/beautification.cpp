@@ -561,7 +561,7 @@ Tree* GetPolarFormat(const Tree* e,
 
 Tree* GetCartesianFormat(const Tree* e,
                          const ProjectionContext& projectionContext) {
-  /* Try to turn a scalar x into re(x)+i×arg(x)
+  /* Try to turn a scalar x into re(x)+i×im(x)
    * If re or im stays unreduced, leave x as it was. */
   Tree* result = SharedTreeStack->pushAdd(2);
   Tree* re = SharedTreeStack->pushRe();

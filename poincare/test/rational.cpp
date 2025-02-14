@@ -1,3 +1,4 @@
+#include <poincare/include/poincare/additional_results_helper.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
@@ -151,26 +152,32 @@ QUIZ_CASE(pcj_rational_integer_power) {
                    9_e);
 }
 
+static const Tree* GetMixedFractionTree(const Tree* rational,
+                                        bool mixedFractionsEnabled) {
+  return AdditionalResultsHelper::CreateMixedFraction(
+             Expression::Builder(rational), mixedFractionsEnabled)
+      .tree();
+}
+
 QUIZ_CASE(pcj_rational_create_mixed_fraction) {
   // 7/5 = 1 2/5
-  assert_trees_are_equal(Rational::CreateMixedFraction(7_e / 5_e, true),
-                         KMixedFraction(1_e, 2_e / 5_e));
-  assert_trees_are_equal(Rational::CreateMixedFraction(7_e / 5_e, false),
-                         KAdd(1_e, 2_e / 5_e));
+  assert_trees_are_equal(GetMixedFractionTree(7_e / 5_e, true),
+                         KMixedFraction(1_e, KDiv(2_e, 5_e)));
+  assert_trees_are_equal(GetMixedFractionTree(7_e / 5_e, false),
+                         KAdd(1_e, KDiv(2_e, 5_e)));
   // -7/5 = -1 2/5
-  assert_trees_are_equal(Rational::CreateMixedFraction(-7_e / 5_e, true),
-                         KOpposite(KMixedFraction(1_e, 2_e / 5_e)));
-  assert_trees_are_equal(Rational::CreateMixedFraction(-7_e / 5_e, false),
-                         KAdd(KOpposite(1_e), KOpposite(2_e / 5_e)));
+  assert_trees_are_equal(GetMixedFractionTree(-7_e / 5_e, true),
+                         KOpposite(KMixedFraction(1_e, KDiv(2_e, 5_e))));
+  assert_trees_are_equal(GetMixedFractionTree(-7_e / 5_e, false),
+                         KSub(KOpposite(1_e), KDiv(2_e, 5_e)));
   // 2/3 = 0 2/3
-  assert_trees_are_equal(Rational::CreateMixedFraction(2_e / 3_e, true),
-                         KMixedFraction(0_e, 2_e / 3_e));
-  assert_trees_are_equal(Rational::CreateMixedFraction(-2_e / 3_e, false),
-                         KAdd(0_e, KOpposite(2_e / 3_e)));
-
+  assert_trees_are_equal(GetMixedFractionTree(2_e / 3_e, true),
+                         KMixedFraction(0_e, KDiv(2_e, 3_e)));
+  assert_trees_are_equal(GetMixedFractionTree(-2_e / 3_e, false),
+                         KSub(0_e, KDiv(2_e, 3_e)));
   // -28/101 = -0 28/101
-  assert_trees_are_equal(Rational::CreateMixedFraction(-28_e / 101_e, true),
-                         KOpposite(KMixedFraction(0_e, 28_e / 101_e)));
-  assert_trees_are_equal(Rational::CreateMixedFraction(-28_e / 101_e, false),
-                         KAdd(0_e, KOpposite(28_e / 101_e)));
+  assert_trees_are_equal(GetMixedFractionTree(-28_e / 101_e, true),
+                         KOpposite(KMixedFraction(0_e, KDiv(28_e, 101_e))));
+  assert_trees_are_equal(GetMixedFractionTree(-28_e / 101_e, false),
+                         KSub(0_e, KDiv(28_e, 101_e)));
 }

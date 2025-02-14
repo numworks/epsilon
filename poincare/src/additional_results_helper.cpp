@@ -343,9 +343,10 @@ SystemExpression AdditionalResultsHelper::CreateRational(const UserExpression e,
 
 // Take a rational a/b and create the euclidean division a=b*q+r
 UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
-    SystemExpression e) {
-  IntegerHandler num = Rational::Numerator(e);
-  IntegerHandler den = Rational::Denominator(e);
+    SystemExpression rational) {
+  assert(rational.isRational());
+  IntegerHandler num = Rational::Numerator(rational);
+  IntegerHandler den = Rational::Denominator(rational);
   DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
   Tree* numTree = num.pushOnTreeStack();
   Tree* denTree = den.pushOnTreeStack();
@@ -370,10 +371,41 @@ UserExpression AdditionalResultsHelper::CreateEuclideanDivision(
   return result;
 }
 
-SystemExpression AdditionalResultsHelper::CreateMixedFraction(
+UserExpression AdditionalResultsHelper::CreateMixedFraction(
     SystemExpression rational, bool mixedFractionsEnabled) {
-  return SystemExpression::Builder(
-      Rational::CreateMixedFraction(rational, mixedFractionsEnabled));
+  assert(rational.isRational());
+  IntegerHandler num = Rational::Numerator(rational);
+  IntegerHandler den = Rational::Denominator(rational);
+  bool numIsNegative = num.strictSign() == StrictSign::Negative;
+  num.setSign(NonStrictSign::Positive);
+  // Push quotient and remainder
+  DivisionResult<Tree*> division = IntegerHandler::Division(num, den);
+  Tree* integerPart = division.quotient;
+  // Push the fraction
+  TreeRef fractionPart =
+      Rational::Push(Integer::Handler(division.remainder), den);
+  division.remainder->removeTree();
+  // Beautify components separately
+  Beautification::DeepBeautify(integerPart);
+  Beautification::DeepBeautify(fractionPart);
+  // If mixed fractions are enabled
+  if (mixedFractionsEnabled) {
+    integerPart->cloneNodeAtNode(KMixedFraction);
+    if (numIsNegative) {
+      integerPart->cloneNodeAtNode(KOpposite);
+    }
+    return UserExpression::Builder(integerPart);
+  }
+  // If mixed fractions don't exist in this country
+  if (numIsNegative) {
+    if (!integerPart->isZero()) {
+      integerPart->cloneNodeAtNode(KOpposite);
+    }
+    integerPart->cloneNodeAtNode(KSub);
+  } else {
+    integerPart->cloneNodeAtNode(KAdd.node<2>);
+  }
+  return UserExpression::Builder(integerPart);
 }
 
 // Eat reduced expression's tree and return a beautified layout

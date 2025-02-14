@@ -52,8 +52,6 @@ class Rational final {
 
   static bool IsGreaterThanOne(const Tree* e);
   static bool IsStrictlyPositiveUnderOne(const Tree* e);
-  static Tree* CreateMixedFraction(const Tree* e,
-                                   bool mixedFractionsAreEnabled);
   static OMG::Troolean AbsSmallerThanPi(const Tree* e);
 
  private:

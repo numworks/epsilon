@@ -44,7 +44,7 @@ void RationalListController::computeAdditionalResults(
 
   SystemExpression rational =
       AdditionalResultsHelper::CreateRational(div, negative);
-  SystemExpression mixedFraction = AdditionalResultsHelper::CreateMixedFraction(
+  UserExpression mixedFraction = AdditionalResultsHelper::CreateMixedFraction(
       rational,
       GlobalPreferences::SharedGlobalPreferences()->mixedFractions() ==
           Preferences::MixedFractions::Enabled);
@@ -52,8 +52,8 @@ void RationalListController::computeAdditionalResults(
       AdditionalResultsHelper::CreateEuclideanDivision(rational);
 
   int index = 0;
-  m_layouts[index++] = PoincareHelpers::CreateLayout(
-      mixedFraction.cloneAndBeautify({}), App::app()->localContext());
+  m_layouts[index++] =
+      PoincareHelpers::CreateLayout(mixedFraction, App::app()->localContext());
   m_layouts[index++] =
       PoincareHelpers::CreateLayout(euclideanDiv, App::app()->localContext());
 }

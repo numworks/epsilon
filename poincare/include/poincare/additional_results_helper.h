@@ -43,10 +43,10 @@ class AdditionalResultsHelper final {
 
   /* Rational additional results */
   static bool HasRational(const UserExpression exactOutput);
-  static SystemExpression CreateEuclideanDivision(SystemExpression e);
   static SystemExpression CreateRational(const UserExpression e, bool negative);
-  static SystemExpression CreateMixedFraction(SystemExpression rational,
-                                              bool mixedFractionsEnabled);
+  static UserExpression CreateEuclideanDivision(SystemExpression rational);
+  static UserExpression CreateMixedFraction(SystemExpression rational,
+                                            bool mixedFractionsEnabled);
 
   /* Scientific notation additional results */
   static Layout ScientificLayout(

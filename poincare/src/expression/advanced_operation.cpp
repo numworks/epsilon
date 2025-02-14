@@ -268,11 +268,19 @@ bool AdvancedOperation::ContractMult(Tree* e) {
     return true;
   }
 
-  // A? + B?*C*D? + E? + F?*C*G? + H? = A + C*(B*D+F*G) + E + H
-  return PatternMatching::MatchReplaceSimplify(
-      e, KAdd(KA_s, KMult(KB_s, KC, KD_s), KE_s, KMult(KF_s, KC, KG_s), KH_s),
-      KAdd(KA_s, KMult(KC, KAdd(KMult(KB_s, KD_s), KMult(KF_s, KG_s))), KE_s,
-           KH_s));
+  return
+      // A + BC + DE + CE = A-BD + (C+D)*(B+E) mainly useful when A == BD
+      PatternMatching::MatchReplaceSimplify(
+          e, KAdd(KA, KMult(KB_s, KC_s), KMult(KD_s, KE_s), KMult(KC_s, KE_s)),
+          KAdd(KA, KMult(-1_e, KB_s, KD_s),
+               KMult(KAdd(KMult(KB_s), KMult(KE_s)),
+                     KAdd(KMult(KD_s), KMult(KC_s))))) ||
+      // A? + B?*C*D? + E? + F?*C*G? + H? = A + C*(B*D+F*G) + E + H
+      PatternMatching::MatchReplaceSimplify(
+          e,
+          KAdd(KA_s, KMult(KB_s, KC, KD_s), KE_s, KMult(KF_s, KC, KG_s), KH_s),
+          KAdd(KA_s, KMult(KC, KAdd(KMult(KB_s, KD_s), KMult(KF_s, KG_s))),
+               KE_s, KH_s));
 }
 
 bool AdvancedOperation::ExpandPower(Tree* e) {

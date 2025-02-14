@@ -167,7 +167,9 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
 }
 
 #if 0
-void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
+Range1D<float> SystemOfEquations::AutoComputeApproximateSolvingRange(
+    Expression equationStandardForm, Context* context, char* variables,
+    bool* finiteNumberOfSolutions) {
   SystemExpression equationStandardForm =
       equationStandardFormForApproximateSolve(context);
   constexpr static float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
@@ -178,20 +180,14 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
                  k_maxFloatForAutoApproximateSolvingRange);
   zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
                            k_maxNumberOfApproximateSolutions / 2);
+  // TODO: variables should be passed as a const char *
   void* model[2] = {static_cast<void*>(&equationStandardForm),
-                    static_cast<void*>(m_variables[0])};
-  bool finiteNumberOfSolutions = true;
+                    static_cast<void*>(variables)};
+  assert(finiteNumberOfSolutions);
   bool didFitRoots =
       zoom.fitRoots(evaluator<float>, static_cast<void*>(model), false,
-                    evaluator<double>, &finiteNumberOfSolutions);
-  /* When there are more than k_maxNumberOfApproximateSolutions on one side of
-   * 0, the zoom is setting the interval to have a maximum of 5 solutions left
-   * of 0 and 5 solutions right of zero. This means that sometimes, for a
-   * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
-   * displayed. We still want to notify the user that more solutions exist. */
-  m_solverContext.solutionStatus = finiteNumberOfSolutions ?
-                          SolutionStatus::Complete : SolutionStatus::Incomplete;
-  zoom.fitBounds(evaluator<float>, static_cast<void *>(model), false);
+                    evaluator<double>, finiteNumberOfSolutions);
+  zoom.fitBounds(evaluator<float>, static_cast<void*>(model), false);
   Range1D<float> finalRange = *(zoom.range(false, false).x());
   if (didFitRoots) {
     /* The range was computed from the solution found with a solver in float. We
@@ -204,10 +200,25 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
     finalRange.stretchEachBoundBy(securityMargin,
                                   k_maxFloatForAutoApproximateSolvingRange);
   }
+  return finalRange;
+}
+
+void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
+  bool finiteNumberOfSolutions = true;
+  Range1D<float> finalRange = AutoComputeApproximateSolvingRange(
+      equationStandardFormForApproximateSolve(context), context, m_variables[0],
+      &finiteNumberOfSolutions);
   m_autoApproximateSolvingRange = true;
   m_approximateSolvingRange =
       Range1D<double>(static_cast<double>(finalRange.min()),
                       static_cast<double>(finalRange.max()));
+  /* When there are more than k_maxNumberOfApproximateSolutions on one side of
+   * 0, the zoom is setting the interval to have a maximum of 5 solutions left
+   * of 0 and 5 solutions right of zero. This means that sometimes, for a
+   * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
+   * displayed. We still want to notify the user that more solutions exist. */
+  m_solutionStatus = finiteNumberOfSolutions ? SolutionStatus::Complete
+                                             : SolutionStatus::Incomplete;
 }
 #endif
 

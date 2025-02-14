@@ -102,6 +102,9 @@ class SystemOfEquations {
   };
 
 #if 0
+  Poincare::Range1D<float> AutoComputeApproximateSolvingRange(
+      Poincare::SystemExpression equationStandardForm, Poincare::Context* context,
+      char* variables, bool* finiteNumberOfSolutions);
   Poincare::SystemExpression equationStandardFormForApproximateSolve(
       Poincare::Context* context);
 #endif

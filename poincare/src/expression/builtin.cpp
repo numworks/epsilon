@@ -96,6 +96,12 @@ constexpr static DistributionBuiltin s_distributionsBuiltins[] = {
 #endif
 };
 
+bool Builtin::canBeTranslated() const {
+  return m_type == Type::GCD || m_type == Type::LCM;
+}
+
+const char* Builtin::translation() const { return *(++aliases()->begin()); }
+
 Tree* Builtin::pushNode(int numberOfChildren) const {
   Tree* result = SharedTreeStack->pushBlock(m_type);
   if (TypeBlock(m_type).isNAry()) {

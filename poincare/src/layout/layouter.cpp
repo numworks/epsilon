@@ -192,8 +192,13 @@ void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
       expression->child(0)->moveTreeBeforeNode(
           expression->child(expression->numberOfChildren() - 1));
     }
-    layoutFunctionCall(layoutParent, expression,
-                       builtin->aliases()->mainAlias());
+    const char* name = builtin->aliases()->mainAlias();
+    if (Preferences::SharedPreferences()->translateBuiltins() ==
+            Preferences::TranslateBuiltins::TranslateToFrench &&
+        builtin->canBeTranslated()) {
+      name = builtin->translation();
+    }
+    layoutFunctionCall(layoutParent, expression, name);
   } else {
     // Built 2D layout associated with builtin
     const BuiltinWithLayout* builtinWithLayout =

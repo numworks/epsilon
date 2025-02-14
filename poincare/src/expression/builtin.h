@@ -48,6 +48,8 @@ class Builtin {
   static constexpr const Builtin* GetReservedFunction(Type type);
   static const Builtin* GetSpecialIdentifier(LayoutSpan name);
   static const Builtin* GetSpecialIdentifier(Type type);
+  bool canBeTranslated() const;
+  const char* translation() const;
 
  private:
   Type m_type;
@@ -144,8 +146,13 @@ constexpr static Builtin s_builtins[] = {
     {Type::Re, "re"},
     {Type::Im, "im"},
 #endif
+#if POINCARE_TRANSLATE_BUILTINS
+    {Type::GCD, Aliases("\01gcd\00PGCD\00")},
+    {Type::LCM, Aliases("\01lcm\00PPCM\00")},
+#else
     {Type::GCD, "gcd"},
     {Type::LCM, "lcm"},
+#endif
     {Type::Quo, "quo"},
     {Type::Rem, "rem"},
     {Type::Factor, "factor"},

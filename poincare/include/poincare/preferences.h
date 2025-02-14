@@ -86,6 +86,11 @@ class __attribute__((packed)) Preferences final {
     BottomRight = 0,
     TopLeft,
   };
+  enum class TranslateBuiltins : uint8_t {
+    No = 0,
+    TranslateToFrench,
+    // TODO: support other languages
+  };
   // This is in Poincare and not in Apps because it's used in Escher
   enum class LogarithmKeyEvent : uint8_t { Default, WithBaseTen };
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
@@ -162,6 +167,18 @@ class __attribute__((packed)) Preferences final {
   void setLogarithmBasePosition(LogarithmBasePosition position) {
     m_logarithmBasePosition = position;
   }
+  TranslateBuiltins translateBuiltins() const {
+#if POINCARE_TRANSLATE_BUILTINS
+    return m_translatedBuiltins;
+#else
+    return TranslateBuiltins::No;
+#endif
+  }
+  void setTranslateBuiltins(TranslateBuiltins translate) {
+#if POINCARE_TRANSLATE_BUILTINS
+    m_translatedBuiltins = translate;
+#endif
+  }
   LogarithmKeyEvent logarithmKeyEvent() const { return m_logarithmKeyEvent; }
   void setLogarithmKeyEvent(LogarithmKeyEvent logarithmKeyEvent) {
     m_logarithmKeyEvent = logarithmKeyEvent;
@@ -192,11 +209,15 @@ class __attribute__((packed)) Preferences final {
              mutable LogarithmKeyEvent m_logarithmKeyEvent;
              mutable ParabolaParameter m_parabolaParameter;)
 
+#if POINCARE_TRANSLATE_BUILTINS
+  mutable TranslateBuiltins m_translatedBuiltins;
+#endif
+
   /* Settings that alter layouts should be tracked by
    * CalculationStore::preferencesMightHaveChanged */
 };
 
-#if PLATFORM_DEVICE
+#if PLATFORM_DEVICE && !POINCARE_TRANSLATE_BUILTINS
 static_assert(sizeof(Preferences) == 11, "Class Preferences changed size");
 #endif
 

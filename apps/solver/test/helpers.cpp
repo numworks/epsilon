@@ -180,7 +180,7 @@ void assert_solves_to_infinite_solutions(
       [solutions, &solverContext](SystemOfEquations* system) {
         quiz_assert(system->type() == SystemOfEquations::Type::LinearSystem &&
                     system->solutionStatus() ==
-                        SystemOfEquations::SolutionStatus::Complete);
+                        SystemOfEquations::SolutionStatus::Incomplete);
         compareSolutions(system, solutions, &solverContext);
       });
 }

@@ -123,8 +123,9 @@ KDPoint KDContext::drawString(const char* text, KDPoint p, KDGlyph::Style style,
         KDRect savedClippingRect = clippingRect();
         setClippingRect(
             KDRect(savedClippingRect.origin(),
-                   KDSize(std::min<KDCoordinate>(savedClippingRect.width(),
-                                                 position.x() + width),
+                   KDSize(std::min<KDCoordinate>(
+                              savedClippingRect.width(),
+                              position.x() - savedClippingRect.x() + width),
                           savedClippingRect.height())));
 #endif
         /* Push the character on the screen

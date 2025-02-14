@@ -1,5 +1,6 @@
 #include "advanced_operation.h"
 
+#include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "k_tree.h"
@@ -220,6 +221,53 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
 bool AdvancedOperation::ContractMult(Tree* e) {
   /* TODO: With  N and M positive, contract
    * A + B*A*C + A^N + D*A^M*E into A*(1 + B*C + A^(N-1) + D*A^(M-1)*E) */
+  if (!e->isAdd()) {
+    return false;
+  }
+  assert(e->numberOfChildren() > 1);
+
+  // Find a common factor in an addition of multiplications
+  // Only look for first term of each multiplication.
+  // A + A*B + A * C + A * D + ... = A * (1 + B + C + D + ...)
+  const Tree* commonFactor = nullptr;
+  const Tree* currentCommonFactor = nullptr;
+  bool commonFactorIsEverywhere = true;
+  for (const Tree* child : e->children()) {
+    if (child->isMult()) {
+      currentCommonFactor = child->child(0);
+    } else {
+      currentCommonFactor = child;
+    }
+    if (commonFactor == nullptr) {
+      commonFactor = currentCommonFactor;
+      continue;
+    }
+    if (!commonFactor->treeIsIdenticalTo(currentCommonFactor)) {
+      commonFactorIsEverywhere = false;
+      break;
+    }
+  }
+  if (commonFactorIsEverywhere) {
+    Tree* result = SharedTreeStack->pushMult(2);
+    commonFactor->cloneTree();
+    Tree* subResult = SharedTreeStack->pushAdd(e->numberOfChildren());
+    for (const Tree* child : e->children()) {
+      if (child->isMult() && child->numberOfChildren() > 2) {
+        Tree* subMult = child->cloneTree();
+        NAry::RemoveChildAtIndex(subMult, 0);
+        assert(!SystematicReduction::ShallowReduce(subMult));
+      } else if (child->isMult() && child->numberOfChildren() == 2) {
+        child->child(1)->cloneTree();
+      } else {
+        SharedTreeStack->pushOne();
+      }
+    }
+    SystematicReduction::ShallowReduce(subResult);
+    SystematicReduction::ShallowReduce(result);
+    e->moveTreeOverTree(result);
+    return true;
+  }
+
   // A? + B?*C*D? + E? + F?*C*G? + H? = A + C*(B*D+F*G) + E + H
   return PatternMatching::MatchReplaceSimplify(
       e, KAdd(KA_s, KMult(KB_s, KC, KD_s), KE_s, KMult(KF_s, KC, KG_s), KH_s),

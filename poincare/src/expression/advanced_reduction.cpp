@@ -13,6 +13,7 @@ namespace Poincare::Internal {
 #define LOG_NEW_ADVANCED_REDUCTION_VERBOSE 0
 
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE > 0
+bool s_logIndividualPathStep = false;
 size_t s_indent = 0;
 
 void LogIndent() {
@@ -89,8 +90,12 @@ bool AdvancedReduction::ReduceIndependantElement(Tree* e) {
     best_path = {};
   }
 
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+  s_logIndividualPathStep = true;
+#endif
   bool result = best_path.apply(e);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+  s_logIndividualPathStep = false;
   s_indent = 0;
   std::cout << "Final tree is : ";
   e->logSerialize();
@@ -281,10 +286,23 @@ bool AdvancedReduction::Direction::decrement() {
 bool AdvancedReduction::Path::apply(Tree* root) const {
   Tree* e = root;
   bool rootChanged = false;
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE > 0
+  if (s_logIndividualPathStep) {
+    std::cout << "Best path is: ";
+    e->logSerialize();
+  }
+#endif
   for (uint8_t i = 0; i < length(); i++) {
     bool didApply = m_stack[i].apply(&e, root, &rootChanged);
     (void)didApply;
     assert(didApply);
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE > 0
+    if (s_logIndividualPathStep && !m_stack[i].isNextNode()) {
+      m_stack[i].log(false);
+      std::cout << ": ";
+      e->logSerialize();
+    }
+#endif
   }
   return rootChanged;
 }
@@ -447,9 +465,12 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   LogIndent();
   std::cout << "Leaf reached (" << metric << " VS " << ctx->m_bestMetric << ")";
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE <= 1
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 1
   std::cout << ": ";
   ctx->m_root->logSerialize();
+#endif
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 2
+  std::cout << "\n";
 #endif
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
   LogIndent();

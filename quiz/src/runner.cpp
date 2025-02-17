@@ -13,10 +13,32 @@ void quiz_print(const char* message) { Ion::Console::writeLine(message); }
 
 bool quiz_print_clear() { return Ion::Console::clear(); }
 
-static inline void ion_main_inner(const char* testFilter) {
+/* [testFilter] if set: only run tests starting with [testFilter]
+ *
+ * [fromFilter]
+ * if set: run all tests located after any test starting with [fromFilter]
+ *
+ * [untilFilter]
+ * if set: run all tests but quits when any test start with [untilFilter]
+ *
+ * Those 3 conditions can be mixed and matched to obtain the desired test filter
+ * Exemple:
+ * `--from aaa --filter bbb`
+ *  => run tests starting with bbb located after aaa
+ * `--from aaa --until bbb`
+ *  => run tests located inbetween aaa and bbb
+ * `--from aaa --until bbb --filter ccc`
+ *  => run tests starting with ccc located inbetween aaa and bbb
+ */
+static inline void ion_main_inner(const char* testFilter,
+                                  const char* fromFilter,
+                                  const char* untilFilter) {
   int i = 0;
   int time = Ion::Timing::millis();
   int totalCases = 0;
+#ifndef PLATFORM_DEVICE
+  bool afterFrom = fromFilter == nullptr;
+#endif
 
   // First pass to count the number of quiz cases
   while (quiz_cases[i] != NULL) {
@@ -38,6 +60,18 @@ static inline void ion_main_inner(const char* testFilter) {
   int caseIndex = 0;
   while (quiz_cases[i] != NULL) {
 #ifndef PLATFORM_DEVICE
+    if (fromFilter &&
+        strstr(quiz_case_names[i], fromFilter) == quiz_case_names[i]) {
+      afterFrom = true;
+    }
+    if (!afterFrom) {
+      i++;
+      continue;
+    }
+    if (untilFilter &&
+        strstr(quiz_case_names[i], untilFilter) == quiz_case_names[i]) {
+      break;
+    }
     if (testFilter &&
         strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
       i++;
@@ -84,10 +118,18 @@ void ion_main(int argc, const char* const argv[]) {
   Apps::Init();
 
   const char* testFilter = nullptr;
+  const char* fromFilter = nullptr;
+  const char* untilFilter = nullptr;
   sSkipAssertions = false;
 #if !PLATFORM_DEVICE
   for (int i = 1; i < argc; i++) {
-    if (strcmp(argv[i], "--filter") == 0 || strcmp(argv[i], "-f") == 0) {
+    if (strcmp(argv[i], "--until") == 0) {
+      assert(i + 1 < argc);
+      untilFilter = argv[i + 1];
+    } else if (strcmp(argv[i], "--from") == 0) {
+      assert(i + 1 < argc);
+      fromFilter = argv[i + 1];
+    } else if (strcmp(argv[i], "--filter") == 0 || strcmp(argv[i], "-f") == 0) {
       assert(i + 1 < argc);
       testFilter = argv[i + 1];
     } else if (strcmp(argv[i], "--skip-assertions") == 0 ||
@@ -102,6 +144,6 @@ void ion_main(int argc, const char* const argv[]) {
    * memory pointers could be overlooked during mark procedure. */
   volatile int stackTop;
   Ion::setStackStart((void*)(&stackTop));
-  exception_run(ion_main_inner, testFilter);
+  exception_run(ion_main_inner, testFilter, fromFilter, untilFilter);
   Poincare::Shutdown();
 }

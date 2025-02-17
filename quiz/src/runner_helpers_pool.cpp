@@ -15,10 +15,12 @@ void flushGlobalData() {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
-void exception_run(void (*inner_main)(const char*), const char* testFilter) {
+void exception_run(void (*inner_main)(const char*, const char*, const char*),
+                   const char* testFilter, const char* fromFilter,
+                   const char* untilFilter) {
   Poincare::ExceptionCheckpoint ecp;
   if (ExceptionRun(ecp)) {
-    inner_main(testFilter);
+    inner_main(testFilter, fromFilter, untilFilter);
   } else {
     // There has been a memory allocation problem
 #if POINCARE_TREE_LOG

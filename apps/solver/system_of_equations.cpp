@@ -573,7 +573,7 @@ SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
     }
     if (simplifiedEquations[i]
             .cloneAndReduce(reductionContextWithSolutions, &reductionFailure)
-            .isUndefined()) {
+            .isUndefined() || reductionFailure) {
       return Error::NoError;
     }
   }
@@ -642,7 +642,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
       reductionContextWithSolution.setContext(&contextWithSolution);
       if (simplifiedEquations[0]
               .cloneAndReduce(reductionContextWithSolution, &reductionFailure)
-              .isUndefined()) {
+              .isUndefined() || reductionFailure) {
         continue;
       }
     }

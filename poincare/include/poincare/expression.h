@@ -179,7 +179,7 @@ class Expression : public PoolHandle {
     return static_cast<ExpressionObject*>(PoolHandle::object());
   }
 
-  // Only on UserExpression
+  // Only on UserExpression. Expressions in parameters are outputs.
   void cloneAndSimplifyAndApproximate(
       UserExpression* simplifiedExpression,
       UserExpression* approximatedExpression,
@@ -194,7 +194,7 @@ class Expression : public PoolHandle {
   UserExpression cloneAndApproximate(
       Internal::ProjectionContext* context) const;
 
-  // Only on SystemExpression
+  // Only on SystemExpression. Expressions in parameters are outputs.
   void cloneAndBeautifyAndApproximate(
       UserExpression* beautifiedExpression,
       UserExpression* approximatedExpression,
@@ -206,8 +206,8 @@ class Expression : public PoolHandle {
   UserExpression cloneAndBeautify(Internal::ProjectionContext* context) const;
   // Only on SystemExpression. Replace symbol and reduce.
   SystemExpression cloneAndReplaceSymbolWithExpression(
-      const char* symbolName, const SystemExpression& e, bool* reductionFailure,
-      SymbolicComputation symbolic) const;
+      const char* symbolName, const SystemExpression& replaceSymbolWith,
+      bool* reductionFailure, SymbolicComputation symbolic) const;
 
   SystemExpression getReducedDerivative(const char* symbolName,
                                         int derivationOrder = 1) const;

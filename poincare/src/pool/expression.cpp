@@ -441,22 +441,23 @@ UserExpression SystemExpression::cloneAndBeautify(
 
 /* If reductionFailure is true, skip simplification. TODO: Like similar methods,
  * returned expression is not actually SystemExpression if reduction failed. */
-SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
-    const char* symbolName, const SystemExpression& e, bool* reductionFailure,
-    SymbolicComputation symbolic) const {
-  assert(reductionFailure);
+SystemExpression ReplaceSymbolAndReduce(
+    const SystemExpression& e, const char* symbolName,
+    const SystemExpression& replaceSymbolWith, bool* reductionFailure,
+    SymbolicComputation symbolic, bool reduce) {
   ExceptionTry {
     Tree* symbol = SharedTreeStack->pushUserSymbol(symbolName);
-    assert(Internal::Dimension::Get(e) == Internal::Dimension::Get(symbol));
-    TreeRef result = tree()->cloneTree();
-    result->deepReplaceWith(symbol, e);
+    assert(Internal::Dimension::Get(replaceSymbolWith) ==
+           Internal::Dimension::Get(symbol));
+    TreeRef result = e.tree()->cloneTree();
+    result->deepReplaceWith(symbol, replaceSymbolWith);
     symbol->removeTree();
     if (Variables::HasUserSymbols(result, true)) {
       // TODO: Only this case is used and handled for now.
       assert(symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined);
       result->cloneTreeOverTree(KUndef);
     }
-    if (!*reductionFailure) {
+    if (reduce) {
       /* Note: Advanced reduction could be allowed for slower but better
        * reduction. */
       Simplification::ReduceSystem(result, false);
@@ -467,11 +468,11 @@ SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
     switch (exc) {
       case ExceptionType::TreeStackOverflow:
       case ExceptionType::IntegerOverflow:
-        if (!*reductionFailure) {
+        if (reduce) {
           *reductionFailure = true;
           // Try again without simplification
-          return cloneAndReplaceSymbolWithExpression(
-              symbolName, e, reductionFailure, symbolic);
+          return ReplaceSymbolAndReduce(e, symbolName, replaceSymbolWith,
+                                        reductionFailure, symbolic, false);
         }
         [[fallthrough]];
       default:
@@ -479,6 +480,17 @@ SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
     }
   }
   OMG::unreachable();
+}
+
+/* TODO: Like similar methods, returned expression is not actually
+ * SystemExpression if reduction failed. */
+SystemExpression SystemExpression::cloneAndReplaceSymbolWithExpression(
+    const char* symbolName, const SystemExpression& replaceSymbolWith,
+    bool* reductionFailure, SymbolicComputation symbolic) const {
+  assert(reductionFailure);
+  *reductionFailure = false;
+  return ReplaceSymbolAndReduce(*this, symbolName, replaceSymbolWith,
+                                reductionFailure, symbolic, true);
 }
 
 SystemExpression SystemExpression::getReducedDerivative(

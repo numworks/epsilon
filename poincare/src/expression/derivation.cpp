@@ -49,7 +49,8 @@ bool Derivation::Reduce(Tree* e) {
     e->cloneTreeOverTree(KUndefUnhandled);
     return true;
   }
-  if (validOrder == OMG::Troolean::Unknown) {
+  if (validOrder == OMG::Troolean::Unknown ||
+      !Integer::Handler(order).is<uint8_t>()) {
     return false;
   }
   int derivationOrder = Integer::Handler(order).to<uint8_t>();

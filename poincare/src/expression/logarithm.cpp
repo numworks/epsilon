@@ -170,6 +170,9 @@ bool CanGetArgSumModulo(const Tree* a, const Tree* b, int* k) {
 // If possible, find k such that B*arg(A) = arg(A^B) + 2iπk
 bool CanGetArgProdModulo(const Tree* a, const Tree* b, int* k) {
   assert(b->isInteger() && !a->isZero() && !b->isOne());
+  if (!Integer::Handler(b).is<int>()) {
+    return false;
+  }
   int bValue = Integer::Handler(b).to<int>();
   PiInterval interval =
       PiInterval::Mult(PiInterval::Arg(GetComplexSign(a)), bValue);

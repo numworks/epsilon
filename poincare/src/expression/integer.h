@@ -309,7 +309,12 @@ class Integer {
   }
   static void SetSign(Tree* e, NonStrictSign sign);
 
+  /* Return True for rational integers, Unknown for potential non-rational
+   * integers and False for non-integers */
   static OMG::Troolean IsRationalInteger(const Tree* e);
+  /* Return True for positive rational integers, Unknown for potential
+   * non-rational positive integers and False for non-integers or negative
+   * integers */
   static OMG::Troolean IsPositiveRationalInteger(const Tree* e);
 };
 

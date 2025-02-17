@@ -177,7 +177,7 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       return e->numberOfChildren();
     case Type::ListSequence:
       assert(Integer::Is<uint8_t>(e->child(1)));
-      return Approximation::To<float>(e->child(1), Approximation::Parameters{});
+      return Integer::Handler(e->child(1)).to<uint8_t>();
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2)));

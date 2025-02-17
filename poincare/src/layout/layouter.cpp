@@ -545,8 +545,9 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
                expression->lastChild()->child(0)->treeIsIdenticalTo(
                    KUnknownSymbol));
         layoutText(layoutParent, Symbol::GetName(expression->lastChild()));
+        assert(expression->child(2)->isInteger() &&
+               Integer::Handler(expression->child(2)).is<uint8_t>());
         int order = Integer::Handler(expression->child(2)).to<int>();
-        assert(order > 0);
         if (order <= 2) {
           PushCodePoint(layoutParent, order == 1
                                           ? Derivation::k_firstOrderSymbol

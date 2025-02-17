@@ -344,11 +344,8 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   *simplifiedExpression = cloneAndSimplify(context, &reductionFailure);
   assert(!simplifiedExpression->isUninitialized());
   // Step 2: approximate
-  assert(!approximatedExpression || approximatedExpression->isUninitialized());
-  if (approximatedExpression) {
-    *approximatedExpression =
-        simplifiedExpression->cloneAndApproximate(context);
-  }
+  assert(approximatedExpression && approximatedExpression->isUninitialized());
+  *approximatedExpression = simplifiedExpression->cloneAndApproximate(context);
 }
 
 UserExpression UserExpression::cloneAndApproximate(
@@ -415,11 +412,8 @@ void SystemExpression::cloneAndBeautifyAndApproximate(
     Internal::ProjectionContext* context) const {
   assert(beautifiedExpression && beautifiedExpression->isUninitialized());
   *beautifiedExpression = cloneAndBeautify(context);
-  assert(!approximatedExpression || approximatedExpression->isUninitialized());
-  if (approximatedExpression) {
-    *approximatedExpression =
-        beautifiedExpression->cloneAndApproximate(context);
-  }
+  assert(approximatedExpression && approximatedExpression->isUninitialized());
+  *approximatedExpression = beautifiedExpression->cloneAndApproximate(context);
 }
 
 UserExpression SystemExpression::cloneAndBeautify(

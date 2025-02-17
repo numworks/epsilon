@@ -658,6 +658,7 @@ SystemOfEquations::Error SystemOfEquations::solvePolynomial(
 }
 #endif
 
+// approximate is an optional parameter
 static void simplifyAndApproximateSolution(
     UserExpression e, UserExpression* exact, UserExpression* approximate,
     bool approximateDuringReduction, Context* context,
@@ -674,7 +675,12 @@ static void simplifyAndApproximateSolution(
       .m_unitFormat = unitFormat,
       .m_symbolic = symbolicComputation,
       .m_context = context};
-  e.cloneAndSimplifyAndApproximate(exact, approximate, &projCtx);
+  if (approximate) {
+    e.cloneAndSimplifyAndApproximate(exact, approximate, &projCtx);
+  } else {
+    bool reductionFailure = false;
+    *exact = e.cloneAndSimplify(&projCtx, &reductionFailure);
+  }
   assert(!exact->isUninitialized() &&
          (!approximate || !approximate->isUninitialized()));
   if (exact->isDep()) {

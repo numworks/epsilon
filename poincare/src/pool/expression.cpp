@@ -1065,13 +1065,13 @@ bool NewExpression::allChildrenAreUndefined() const {
 }
 
 bool NewExpression::hasRandomNumber() const {
-  return !tree()->hasDescendantSatisfying(
-      [](const Tree* e) { return !e->isRandom() || !e->isRandInt(); });
+  return tree()->hasDescendantSatisfying(
+      [](const Tree* e) { return e->isRandom() || e->isRandInt(); });
 }
 
 bool NewExpression::hasRandomList() const {
-  return !tree()->hasDescendantSatisfying(
-      [](const Tree* e) { return !e->isRandIntNoRep(); });
+  return tree()->hasDescendantSatisfying(
+      [](const Tree* e) { return e->isRandIntNoRep(); });
 }
 
 ComparisonJunior::Operator NewExpression::comparisonOperator() const {

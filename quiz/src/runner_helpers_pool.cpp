@@ -5,8 +5,8 @@
 #include "runner_helpers.h"
 
 void flushGlobalData() {
-  /* Some global data are asserted to be preserved while others are reset here,
-   * unifomize expectations. */
+  /* TODO: Some global data are asserted to be preserved while others are reset
+   * here, unifomize expectations. */
 
   flushGlobalDataNoPool();
   quiz_assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);

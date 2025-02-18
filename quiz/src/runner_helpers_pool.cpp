@@ -5,8 +5,9 @@
 #include "runner_helpers.h"
 
 void flushGlobalData() {
-  /* TODO: Only Pool and GlobalContext are expected to never leak. Uniformize
-   * expectations. */
+  /* Some global data are asserted to be preserved while others are reset here,
+   * unifomize expectations. */
+
   flushGlobalDataNoPool();
   quiz_assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
 }

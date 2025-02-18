@@ -1501,6 +1501,11 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(e^(i×2×π))", "0", cartesianCtx);
 }
 
+QUIZ_CASE(pcj_simplification_large_integer_no_crash) {
+  simplifies_to("diff(x,x,0,100000000000)", "diff(x,x,0,100000000000)");
+  simplifies_to("40000000000ln(10)", "40000000000ln(10)");
+}
+
 QUIZ_CASE(pcj_simplification_boolean) {
   simplifies_to("true", "true");
   simplifies_to("true and false", "false");

@@ -466,6 +466,14 @@ Tree* Tree::cloneOver(const Tree* newNode, bool oldIsTree, bool newIsTree) {
   if (oldBlock == newBlock && oldSize == newSize) {
     return Tree::FromBlocks(oldBlock);
   }
+  /* This assert prevents cloning a parent onto a child, indeed this could lead
+   * to a malformed tree, for example:
+   * | Abs | One |
+   *   new   old
+   * Should lead to | Abs | Abs | One | but indeed leads to | Abs | Abs | Abs |
+   * The reverse (cloning a child onto a parent) is allowed and used
+   */
+  assert(!(newBlock < oldBlock && oldBlock < newBlock + newSize));
   size_t minSize = std::min(oldSize, newSize);
   SharedTreeStack->replaceBlocks(oldBlock, newBlock, minSize);
   if (oldSize > newSize) {

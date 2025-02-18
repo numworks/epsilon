@@ -378,7 +378,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         Expression::DecimalBuilderFromDouble(abscissa);
     bool simplificationFailure = false;
     /* Defined symbols should have been replaced at this point. Remaining ones
-     * are undefined will be replaced as such. */
+     * are undefined and will be replaced as such. */
     e = e.cloneAndReplaceSymbolWithExpression(
         Shared::Function::k_unknownName, abscissaExpression,
         &simplificationFailure,

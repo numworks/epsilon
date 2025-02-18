@@ -161,6 +161,11 @@ int main(int argc, char* argv[]) {
   Args args(argc, argv);
 
 #ifndef __WIN32__
+#ifdef ASAN
+  if (args.popFlag(k_limitStackUsageFlag)) {
+    fprintf(stderr, "Unable to have stack limit with ASAN\n");
+  }
+#else
   /* The goal of this parameter is to limit the stack size on simulator to more
    * closely match the limited stack size of the device, which is 0x8000 bytes
    * (32Ko).
@@ -201,6 +206,7 @@ int main(int argc, char* argv[]) {
               k_limitStackUsageFlag);
     }
   }
+#endif
 #endif
 
 #if ION_SIMULATOR_FILES

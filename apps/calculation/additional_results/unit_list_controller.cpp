@@ -99,16 +99,14 @@ void UnitListController::computeAdditionalResults(
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(&ctx, &reductionFailure);
   if (reductionFailure) {
-    expressions[numberOfExpressions] = Expression();
-    numberOfExpressions--;
+    expressions[--numberOfExpressions] = Expression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 #if 0  // TODO: correctly implement AutomaticInput and reenable it
   ctx.m_unitDisplay = Internal::UnitDisplay::AutomaticInput;
   expressions[numberOfExpressions++] = input.cloneAndSimplify(&ctx, &reductionFailure);
   if (reductionFailure) {
-    expressions[numberOfExpressions] = Expression();
-    numberOfExpressions--;
+    expressions[--numberOfExpressions] = Expression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 #endif
@@ -116,16 +114,14 @@ void UnitListController::computeAdditionalResults(
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(&ctx, &reductionFailure);
   if (reductionFailure) {
-    expressions[numberOfExpressions] = Expression();
-    numberOfExpressions--;
+    expressions[--numberOfExpressions] = Expression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
   ctx.m_unitDisplay = Internal::UnitDisplay::Equivalent;
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(&ctx, &reductionFailure);
   if (reductionFailure) {
-    expressions[numberOfExpressions] = Expression();
-    numberOfExpressions--;
+    expressions[--numberOfExpressions] = Expression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 
@@ -134,8 +130,7 @@ void UnitListController::computeAdditionalResults(
     expressions[numberOfExpressions++] =
         input.cloneAndSimplify(&ctx, &reductionFailure);
     if (reductionFailure) {
-      expressions[numberOfExpressions] = Expression();
-      numberOfExpressions--;
+      expressions[--numberOfExpressions] = Expression();
     }
     assert(!expressions[numberOfExpressions - 1].isUninitialized());
   }
@@ -144,8 +139,7 @@ void UnitListController::computeAdditionalResults(
   input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
                                        &approximatedSIExpression, &ctx);
   if (reductionFailure) {
-    expressions[numberOfExpressions] = Expression();
-    numberOfExpressions--;
+    expressions[--numberOfExpressions] = Expression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 

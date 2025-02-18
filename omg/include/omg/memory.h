@@ -31,6 +31,8 @@ constexpr uint32_t crc32String(const char* str) {
   return crc;
 }
 
+int memcmp(const void* s1, const void* s2, size_t n);
+
 }  // namespace OMG::Memory
 
 #endif

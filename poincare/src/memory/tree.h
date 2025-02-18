@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "indexed_child.h"
+#include "omg/memory.h"
 #include "type_block.h"
 #include "value_block.h"
 
@@ -54,11 +55,15 @@ class Tree : public TypeBlock {
   }
 
   bool treeIsIdenticalTo(const Tree* other) const {
-    return memcmp(this, other, treeSize()) == 0;
+    /* We use a custom memcmp here because when comparing a big tree `this` to a
+     * small tree `other`, ASAN can detect a tree stack overflow */
+    return OMG::Memory::memcmp(this, other, treeSize()) == 0;
   }
 
   bool nodeIsIdenticalTo(const Tree* other) const {
-    return memcmp(this, other, nodeSize()) == 0;
+    /* We use a custom memcmp here because when comparing a big node `this` to a
+     * small node `other`, ASAN can detect a tree stack overflow */
+    return OMG::Memory::memcmp(this, other, nodeSize()) == 0;
   }
 
 #if POINCARE_TREE_LOG

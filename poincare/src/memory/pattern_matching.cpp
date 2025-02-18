@@ -257,7 +257,9 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
                                            Placeholder::Filter::One));
         // Tag has already been set. Check the trees are the same.
         for (int i = 0; i < context->getNumberOfTrees(tag); i++) {
-          if (onlyEmptyPlaceholders || !tagNode->treeIsIdenticalTo(source)) {
+          if (onlyEmptyPlaceholders ||
+              matchContext.reachedLimit(source, false, true) ||
+              !tagNode->treeIsIdenticalTo(source)) {
             return false;
           }
           tagNode = tagNode->nextTree();

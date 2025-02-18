@@ -47,7 +47,7 @@ void BlockStack::replaceBlock(Block* previousBlock, Block newBlock, bool at) {
 
 void BlockStack::replaceBlocks(Block* destination, const Block* source,
                                size_t numberOfBlocks, bool at) {
-  memcpy(destination, source, numberOfBlocks * sizeof(Block));
+  memmove(destination, source, numberOfBlocks * sizeof(Block));
   m_referenceTable.updateNodes(
       [](uint16_t* offset, Block* block, const Block* destination,
          const Block* source, int size) {

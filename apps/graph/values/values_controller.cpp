@@ -377,7 +377,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     SystemExpression abscissaExpression =
         Expression::DecimalBuilderFromDouble(abscissa);
     bool simplificationFailure = false;
-    // Additional symbols should have been replaced at this point.
+    /* Defined symbols should have been replaced at this point. Remaining ones
+     * are undefined will be replaced as such. */
     e = e.cloneAndReplaceSymbolWithExpression(
         Shared::Function::k_unknownName, abscissaExpression,
         &simplificationFailure,
@@ -391,6 +392,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
             GlobalPreferences::SharedGlobalPreferences()->unitFormat()};
     e.cloneAndBeautifyAndApproximate(&result, &approximation,
                                      &projectionContext);
+    assert(!approximation.isUninitialized());
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */
     if (simplificationFailure || !m_exactValuesAreActivated ||
@@ -400,6 +402,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
       result = approximation;
     }
   }
+  assert(!result.isUninitialized());
   Layout layout =
       result.createLayout(preferences->displayMode(),
                           preferences->numberOfSignificantDigits(), context);

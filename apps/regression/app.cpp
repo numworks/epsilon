@@ -29,7 +29,8 @@ App::Snapshot::Snapshot()
     : m_graphSelectedDotIndex(-1),
       m_selectedCurveIndex(-1),
       m_regressionTypes{Model::Type::None, Model::Type::None,
-                        Model::Type::None} {
+                        Model::Type::None, Model::Type::None,
+                        Model::Type::None, Model::Type::None} {
   /* Register X1, X2, X3, ..., Y1, Y2, Y3, ... as reserved lists to the
    * sharedStorage. */
   static_assert(std::size(DoublePairStore::k_regressionColumNames) == 2,

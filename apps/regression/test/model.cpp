@@ -40,7 +40,8 @@ void assert_regression_is(const double* xi, const double* yi,
   int series = 0;
   Shared::GlobalContext globalContext;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
-                                   Model::Type::None};
+                                   Model::Type::None, Model::Type::None,
+                                   Model::Type::None, Model::Type::None};
   Shared::DoublePairStorePreferences storePreferences;
   Store store(&globalContext, &storePreferences, regressionTypes);
 
@@ -666,7 +667,8 @@ void assert_column_calculations_is(const double* xi, int numberOfPoints,
   Shared::GlobalContext globalContext;
   Shared::DoublePairStorePreferences storePreferences;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
-                                   Model::Type::None};
+                                   Model::Type::None, Model::Type::None,
+                                   Model::Type::None, Model::Type::None};
   Store store(&globalContext, &storePreferences, regressionTypes);
 
   setRegressionPoints(&store, series, numberOfPoints, xi);
@@ -724,7 +726,8 @@ void assert_regression_calculations_is(const double* xi, const double* yi,
   Shared::GlobalContext globalContext;
   Shared::DoublePairStorePreferences storePreferences;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
-                                   Model::Type::None};
+                                   Model::Type::None, Model::Type::None,
+                                   Model::Type::None, Model::Type::None};
   Store store(&globalContext, &storePreferences, regressionTypes);
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);

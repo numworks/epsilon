@@ -56,6 +56,14 @@ bool IsIntegerExpression(const Tree* e) {
   }
 }
 
+Tree* CloneAndReplaceSymbols(const Tree* e, Context* ctx) {
+  Tree* clone = e->cloneTree();
+  // Replace every nested defined symbols and functions
+  Projection::DeepReplaceUserNamed(clone, ctx,
+                                   SymbolicComputation::ReplaceDefinedSymbols);
+  return clone;
+}
+
 bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
   // TODO complexity should be linear
   // TODO: remove the VLA as it is non-standard
@@ -111,10 +119,7 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
     }
     case Type::UserFunction: {
       if (ctx) {
-        Tree* clone = e->cloneTree();
-        // Replace every nested defined symbols and functions
-        Projection::DeepReplaceUserNamed(
-            clone, ctx, SymbolicComputation::ReplaceDefinedSymbols);
+        Tree* clone = CloneAndReplaceSymbols(e, ctx);
         // Ignore ctx to prevent infinite loops, nothing else can be replaced.
         bool result = DeepCheckListLength(clone, nullptr);
         clone->removeTree();
@@ -203,10 +208,7 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
     }
     case Type::UserFunction: {
       if (ctx) {
-        Tree* clone = e->cloneTree();
-        // Replace every nested defined symbols and functions
-        Projection::DeepReplaceUserNamed(
-            clone, ctx, SymbolicComputation::ReplaceDefinedSymbols);
+        Tree* clone = CloneAndReplaceSymbols(e, ctx);
         // Ignore ctx to prevent infinite loops, nothing else can be replaced.
         int result = ListLength(clone, nullptr);
         clone->removeTree();
@@ -449,10 +451,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
              Integer::Is<uint8_t>(e->child(2));
     case Type::UserFunction: {
       if (ctx) {
-        Tree* clone = e->cloneTree();
-        // Replace every nested defined symbols and functions
-        Projection::DeepReplaceUserNamed(
-            clone, ctx, SymbolicComputation::ReplaceDefinedSymbols);
+        Tree* clone = CloneAndReplaceSymbols(e, ctx);
         // Ignore ctx to prevent infinite loops, nothing else can be replaced.
         bool result = DeepCheckDimensions(clone, nullptr);
         clone->removeTree();
@@ -631,10 +630,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     }
     case Type::UserFunction: {
       if (ctx) {
-        Tree* clone = e->cloneTree();
-        // Replace every nested defined symbols and functions
-        Projection::DeepReplaceUserNamed(
-            clone, ctx, SymbolicComputation::ReplaceDefinedSymbols);
+        Tree* clone = CloneAndReplaceSymbols(e, ctx);
         // Ignore ctx to prevent infinite loops, nothing else can be replaced.
         Dimension result = Get(clone, nullptr);
         clone->removeTree();

@@ -10,5 +10,9 @@ ifeq ($(ASSERTIONS),0)
 $(error host-afl toolchain must be used with ASSERTIONS=1)
 endif
 
+ifeq ($(ASAN),1)
+export AFL_USE_ASAN = 1
+endif
+
 LDFLAGS += -lc++
 CXXFLAGS += -stdlib=libc++

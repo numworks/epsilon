@@ -27,7 +27,6 @@ endif
 
 ifeq ($(ASAN),1)
 SFLAGS += -fsanitize=address -DASAN
-LDFLAGS += -fsanitize=address
 endif
 
 CFLAGS := -std=c11

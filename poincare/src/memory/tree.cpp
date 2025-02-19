@@ -202,31 +202,25 @@ uint32_t Tree::nextNodeInPoolCount = 0;
 #endif
 
 bool Tree::treeIsIdenticalTo(const Tree* other) const {
-  assert(this != SharedTreeStack->lastBlock());
-  assert(other != SharedTreeStack->lastBlock());
-  assert(this + nodeSize() != SharedTreeStack->firstBlock());
-  assert(other + other->nodeSize() != SharedTreeStack->firstBlock());
   if (this == other) {
     return true;
   }
   const Tree* self = this;
-  int nbOfChildrenToScan = 1;
-  while (nbOfChildrenToScan > 0) {
-    if (*reinterpret_cast<const uint8_t*>(self) !=
-        *reinterpret_cast<const uint8_t*>(other)) {
+  size_t offset = self - other;
+  int nbOfNodeToScan = 1;
+  while (nbOfNodeToScan > 0) {
+    const Tree* selfNextNode = self->nextNode();
+    const Tree* otherNextNode = other->nextNode();
+    /* This next if is basically an inlined version of nodeIsIdenticalTo
+     * selfNextNode - otherNextNode != offset is  the faster equivalent of
+     * other->nodeSize() != self->nodeSize() */
+    if (selfNextNode - otherNextNode != offset ||
+        memcmp(self, other, selfNextNode - self) != 0) {
       return false;
     }
-    int nbOfChildren = self->numberOfChildren();
-    if (nbOfChildren != other->numberOfChildren()) {
-      return false;
-    }
-    nbOfChildrenToScan += nbOfChildren - 1;
-    size_t nodeSize = self->nodeSize();
-    if (nodeSize != other->nodeSize() || memcmp(self, other, nodeSize)) {
-      return false;
-    }
-    self += nodeSize;
-    other += nodeSize;
+    nbOfNodeToScan += self->numberOfChildren() - 1;
+    self = selfNextNode;
+    other = otherNextNode;
   }
   return true;
 }

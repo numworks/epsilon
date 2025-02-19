@@ -201,6 +201,41 @@ uint32_t Tree::nextNodeCount = 0;
 uint32_t Tree::nextNodeInPoolCount = 0;
 #endif
 
+bool Tree::treeIsIdenticalTo(const Tree* other) const {
+  assert(this != SharedTreeStack->lastBlock());
+  assert(other != SharedTreeStack->lastBlock());
+  assert(this + nodeSize() != SharedTreeStack->firstBlock());
+  assert(other + other->nodeSize() != SharedTreeStack->firstBlock());
+  if (this == other) {
+    return true;
+  }
+  const Tree* self = this;
+  int nbOfChildrenToScan = 1;
+  while (nbOfChildrenToScan > 0) {
+    if (*reinterpret_cast<const uint8_t*>(self) !=
+        *reinterpret_cast<const uint8_t*>(other)) {
+      return false;
+    }
+    int nbOfChildren = self->numberOfChildren();
+    if (nbOfChildren != other->numberOfChildren()) {
+      return false;
+    }
+    nbOfChildrenToScan += nbOfChildren - 1;
+    size_t nodeSize = self->nodeSize();
+    if (nodeSize != other->nodeSize() || memcmp(self, other, nodeSize)) {
+      return false;
+    }
+    self += nodeSize;
+    other += nodeSize;
+  }
+  return true;
+}
+
+bool Tree::nodeIsIdenticalTo(const Tree* other) const {
+  size_t size = nodeSize();
+  return size == other->nodeSize() && memcmp(this, other, size) == 0;
+}
+
 const Tree* Tree::nextNode() const {
 #if ASSERTIONS
   assert(!isTreeBorder());

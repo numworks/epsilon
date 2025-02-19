@@ -2,8 +2,6 @@
 #include <omg/arithmetic.h>
 #include <omg/memory.h>
 
-#include "liba/include/string.h"
-
 namespace OMG::Memory {
 
 size_t AlignedSize(size_t realSize, size_t alignment) {
@@ -85,24 +83,5 @@ bool Rotate(T* dst, T* src, size_t len) {
 
 template bool Rotate(uint8_t* dst, uint8_t* src, size_t len);
 template bool Rotate(uint32_t* dst, uint32_t* src, size_t len);
-
-int memcmp(const void* s1, const void* s2, size_t n) {
-#ifdef PLATFORM_DEVICE
-  return ::memcmp(s1, s2, n);
-#else
-  /* When on host, we reimplement memcmp here to avoid preemptive ASAN warnings
-   * related to buffer overflows */
-  char* source1 = (char*)s1;
-  char* source2 = (char*)s2;
-  while (n--) {
-    if (*source1 != *source2) {
-      return *source1 - *source2;
-    }
-    source1++;
-    source2++;
-  }
-  return 0;
-#endif
-}
 
 }  // namespace OMG::Memory

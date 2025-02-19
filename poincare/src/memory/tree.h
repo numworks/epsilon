@@ -54,17 +54,9 @@ class Tree : public TypeBlock {
     return reinterpret_cast<Tree*>(blocks);
   }
 
-  bool treeIsIdenticalTo(const Tree* other) const {
-    /* We use a custom memcmp here because when comparing a big tree `this` to a
-     * small tree `other`, ASAN can detect a tree stack overflow */
-    return OMG::Memory::memcmp(this, other, treeSize()) == 0;
-  }
+  bool treeIsIdenticalTo(const Tree* other) const;
 
-  bool nodeIsIdenticalTo(const Tree* other) const {
-    /* We use a custom memcmp here because when comparing a big node `this` to a
-     * small node `other`, ASAN can detect a tree stack overflow */
-    return OMG::Memory::memcmp(this, other, nodeSize()) == 0;
-  }
+  bool nodeIsIdenticalTo(const Tree* other) const;
 
 #if POINCARE_TREE_LOG
   __attribute__((__used__)) void log() const { log(std::cout); }

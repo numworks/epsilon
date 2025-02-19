@@ -4,8 +4,10 @@
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
+#include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <quiz.h>
@@ -79,8 +81,6 @@ inline void assertionsWarn() {
             << std::endl;
 #endif
 }
-
-#define PCJ_METRICS 0
 
 #if PCJ_METRICS
 #define METRICS(F)                                                        \

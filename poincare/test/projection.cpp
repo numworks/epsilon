@@ -3,6 +3,8 @@
 
 #include "helper.h"
 
+using namespace Poincare::Internal;
+
 QUIZ_CASE(pcj_projection) {
   TreeRef ref(KCos(KSin(KPow(
       KPow(KPow(e_e, KLogBase(KLogBase(KLog(π_e), 2_e), e_e)), π_e), 3_e))));

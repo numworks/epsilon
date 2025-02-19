@@ -6,6 +6,7 @@
 #include "helper.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal;
 
 QUIZ_CASE(poincare_simplification_based_integer) {
   assert_parsed_expression_simplify_to("0b10011", "19");

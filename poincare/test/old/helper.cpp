@@ -15,6 +15,7 @@
 #include <poincare/test/helper.h>
 
 using namespace Poincare;
+using namespace Poincare::Internal;
 
 const char *MaxIntegerString() {
   // (2^32)^k_maxNumberOfDigits-1

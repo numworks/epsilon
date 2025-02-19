@@ -11,6 +11,8 @@
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
+using namespace Poincare::Internal;
+
 const char* AlmostMaxIntegerString() {
   static const char* s =
       "179769313486231590772930519078902473361797697894230657273430081157732675"

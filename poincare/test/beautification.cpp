@@ -3,6 +3,8 @@
 
 #include "helper.h"
 
+using namespace Poincare::Internal;
+
 QUIZ_CASE(pcj_beautification) {
   Tree* e1 = KMult(3_e, KPow("x"_e, -2_e))->cloneTree();
   Beautification::DeepBeautify(e1);

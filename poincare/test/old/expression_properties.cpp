@@ -1011,6 +1011,7 @@ QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
 #include "../helper.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal;
 
 void assert_is_list_of_points(const char* definition, Context* context,
                               bool truth = true) {

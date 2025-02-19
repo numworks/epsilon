@@ -8,6 +8,7 @@
 #include "helper.h"
 
 using namespace Poincare;
+using namespace Poincare::Internal;
 
 void assert_beautifies_serializes_to(
     const Tree* rational, const char* serialization,

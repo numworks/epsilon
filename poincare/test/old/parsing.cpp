@@ -15,6 +15,7 @@
 #include "tree/helpers.h"
 
 using namespace Poincare;
+using namespace Internal;
 using Internal::ParsingContext;
 using Internal::Token;
 using Internal::Tokenizer;

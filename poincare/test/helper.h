@@ -16,12 +16,12 @@
 #include <iostream>
 #endif
 
-using namespace Poincare::Internal;
-
-typedef void (*ProcessTree)(Tree*, ProjectionContext projectionContext);
-void process_tree_and_compare(const char* input, const char* output,
-                              ProcessTree process,
-                              ProjectionContext projectionContext);
+typedef void (*ProcessTree)(
+    Poincare::Internal::Tree*,
+    Poincare::Internal::ProjectionContext projectionContext);
+void process_tree_and_compare(
+    const char* input, const char* output, ProcessTree process,
+    Poincare::Internal::ProjectionContext projectionContext);
 
 void quiz_tolerate_print_if_failure(bool test, const char* input,
                                     const char* expected = "",
@@ -30,17 +30,19 @@ void quiz_assert_print_if_failure(bool test, const char* information);
 
 void remove_system_codepoints(char* buffer);
 
-inline void assert_tree_equals_blocks(const Tree* tree,
-                                      std::initializer_list<Block> blocks) {
-  const Block* block = tree->block();
-  for (Block b : blocks) {
+inline void assert_tree_equals_blocks(
+    const Poincare::Internal::Tree* tree,
+    std::initializer_list<Poincare::Internal::Block> blocks) {
+  const Poincare::Internal::Block* block = tree->block();
+  for (Poincare::Internal::Block b : blocks) {
     quiz_assert(*block == b);
     block = block->next();
   }
   quiz_assert(tree->treeSize() == blocks.size());
 }
 
-inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
+inline void assert_trees_are_equal(const Poincare::Internal::Tree* tree0,
+                                   const Poincare::Internal::Tree* tree1) {
   quiz_assert((tree0 == nullptr) == (tree1 == nullptr));
   if (!tree0->treeIsIdenticalTo(tree1)) {
 #if POINCARE_TREE_LOG
@@ -50,17 +52,19 @@ inline void assert_trees_are_equal(const Tree* tree0, const Tree* tree1) {
   }
 }
 
-inline void flush_stack() { SharedTreeStack->flush(); }
+inline void flush_stack() { Poincare::Internal::SharedTreeStack->flush(); }
 
 inline void assert_tree_stack_contains(
-    std::initializer_list<const Tree*> trees) {
-  quiz_assert(SharedTreeStack->size() > 0);
-  Tree* tree = Tree::FromBlocks(SharedTreeStack->firstBlock());
-  for (const Tree* t : trees) {
+    std::initializer_list<const Poincare::Internal::Tree*> trees) {
+  quiz_assert(Poincare::Internal::SharedTreeStack->size() > 0);
+  Poincare::Internal::Tree* tree = Poincare::Internal::Tree::FromBlocks(
+      Poincare::Internal::SharedTreeStack->firstBlock());
+  for (const Poincare::Internal::Tree* t : trees) {
     assert_trees_are_equal(t, tree);
     tree = tree->nextTree();
   }
-  quiz_assert(tree->block() == SharedTreeStack->lastBlock());
+  quiz_assert(tree->block() ==
+              Poincare::Internal::SharedTreeStack->lastBlock());
 }
 
 #if PLATFORM_DEVICE
@@ -85,11 +89,11 @@ inline void assertionsWarn() {
 #if PCJ_METRICS
 #define METRICS(F)                                                        \
   {                                                                       \
-    Tree::nextNodeCount = 0;                                              \
-    Tree::nextNodeInTreeStackCount = 0;                                   \
+    Poincare::Internal::Tree::nextNodeCount = 0;                          \
+    Poincare::Internal::Tree::nextNodeInTreeStackCount = 0;               \
     int refId;                                                            \
     {                                                                     \
-      TreeRef r(0_e);                                                     \
+      Poincare::Internal::TreeRef r(0_e);                                 \
       refId = r.identifier();                                             \
       r->removeNode();                                                    \
     }                                                                     \
@@ -97,7 +101,7 @@ inline void assertionsWarn() {
     F;                                                                    \
     auto elapsed = std::chrono::high_resolution_clock::now() - startTime; \
     {                                                                     \
-      TreeRef r(0_e);                                                     \
+      Poincare::Internal::TreeRef r(0_e);                                 \
       refId = r.identifier() - refId;                                     \
       r->removeNode();                                                    \
     }                                                                     \
@@ -106,9 +110,9 @@ inline void assertionsWarn() {
     }                                                                     \
     std::cout << "Metrics [" << #F << "]\n"                               \
               << "  nextNode:      " << std::right << std::setw(6)        \
-              << Tree::nextNodeCount                                      \
+              << Poincare::Internal::Tree::nextNodeCount                  \
               << "\n  nextNodeInTreeStack:" << std::right << std::setw(6) \
-              << Tree::nextNodeInTreeStackCount                           \
+              << Poincare::Internal::Tree::nextNodeInTreeStackCount       \
               << "\n  microseconds:  " << std::right << std::setw(6)      \
               << std::chrono::duration_cast<std::chrono::microseconds>(   \
                      elapsed)                                             \
@@ -131,10 +135,11 @@ const char* ApproximatedParsedIntegerString();
 
 // Parsing
 
-Tree* parse(const char* input, Poincare::Context* context = nullptr,
-            bool parseForAssignment = false);
+Poincare::Internal::Tree* parse(const char* input,
+                                Poincare::Context* context = nullptr,
+                                bool parseForAssignment = false);
 
-Tree* parse_and_reduce(const char* input);
+Poincare::Internal::Tree* parse_and_reduce(const char* input);
 
 void assert_text_not_parsable(const char* input,
                               Poincare::Context* context = nullptr);
@@ -143,22 +148,23 @@ void assert_parse_to_integer_overflow(const char* input,
 
 void store(const char* storeExpression, Poincare::Context* ctx);
 
-inline Tree* parseAndPrepareForApproximation(const char* function,
-                                             ProjectionContext ctx = {}) {
+inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
+    const char* function, Poincare::Internal::ProjectionContext ctx = {}) {
   constexpr const char* k_symbol = "x";
-  Tree* e = parse(function, ctx.m_context);
-  Simplification::ToSystem(e, &ctx);
-  Approximation::PrepareFunctionForApproximation(e, k_symbol,
-                                                 ctx.m_complexFormat);
+  Poincare::Internal::Tree* e = parse(function, ctx.m_context);
+  Poincare::Internal::Simplification::ToSystem(e, &ctx);
+  Poincare::Internal::Approximation::PrepareFunctionForApproximation(
+      e, k_symbol, ctx.m_complexFormat);
   return e;
 }
 
 // Serialization
 
-void serialize_expression(const Tree* expression, char* buffer,
-                          size_t bufferSize);
+void serialize_expression(const Poincare::Internal::Tree* expression,
+                          char* buffer, size_t bufferSize);
 
 // Simplification
-void simplify(Tree* e, ProjectionContext* ctx, bool beautify = true);
+void simplify(Poincare::Internal::Tree* e,
+              Poincare::Internal::ProjectionContext* ctx, bool beautify = true);
 
 #endif

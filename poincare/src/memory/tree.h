@@ -34,7 +34,7 @@ class Tree : public TypeBlock {
  public:
 #if PCJ_METRICS
   static uint32_t nextNodeCount;
-  static uint32_t nextNodeInPoolCount;
+  static uint32_t nextNodeInTreeStackCount;
 #endif
 
   // Prevent using Tree objects directly

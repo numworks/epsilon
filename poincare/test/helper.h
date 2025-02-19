@@ -83,37 +83,38 @@ inline void assertionsWarn() {
 #define PCJ_METRICS 0
 
 #if PCJ_METRICS
-#define METRICS(F)                                                          \
-  {                                                                         \
-    Tree::nextNodeCount = 0;                                                \
-    Tree::nextNodeInPoolCount = 0;                                          \
-    int refId;                                                              \
-    {                                                                       \
-      TreeRef r(0_e);                                                       \
-      refId = r.identifier();                                               \
-      r->removeNode();                                                      \
-    }                                                                       \
-    auto startTime = std::chrono::high_resolution_clock::now();             \
-    F;                                                                      \
-    auto elapsed = std::chrono::high_resolution_clock::now() - startTime;   \
-    {                                                                       \
-      TreeRef r(0_e);                                                       \
-      refId = r.identifier() - refId;                                       \
-      r->removeNode();                                                      \
-    }                                                                       \
-    if (refId != 0) {                                                       \
-      std::cout << "WARNING ! " << refId << " references have leaked.\n";   \
-    }                                                                       \
-    std::cout << "Metrics [" << #F << "]\n"                                 \
-              << "  nextNode:      " << std::right << std::setw(6)          \
-              << Tree::nextNodeCount << "\n  nextNodeInPool:" << std::right \
-              << std::setw(6) << Tree::nextNodeInPoolCount                  \
-              << "\n  microseconds:  " << std::right << std::setw(6)        \
-              << std::chrono::duration_cast<std::chrono::microseconds>(     \
-                     elapsed)                                               \
-                     .count()                                               \
-              << std::endl;                                                 \
-    assertionsWarn();                                                       \
+#define METRICS(F)                                                        \
+  {                                                                       \
+    Tree::nextNodeCount = 0;                                              \
+    Tree::nextNodeInTreeStackCount = 0;                                   \
+    int refId;                                                            \
+    {                                                                     \
+      TreeRef r(0_e);                                                     \
+      refId = r.identifier();                                             \
+      r->removeNode();                                                    \
+    }                                                                     \
+    auto startTime = std::chrono::high_resolution_clock::now();           \
+    F;                                                                    \
+    auto elapsed = std::chrono::high_resolution_clock::now() - startTime; \
+    {                                                                     \
+      TreeRef r(0_e);                                                     \
+      refId = r.identifier() - refId;                                     \
+      r->removeNode();                                                    \
+    }                                                                     \
+    if (refId != 0) {                                                     \
+      std::cout << "WARNING ! " << refId << " references have leaked.\n"; \
+    }                                                                     \
+    std::cout << "Metrics [" << #F << "]\n"                               \
+              << "  nextNode:      " << std::right << std::setw(6)        \
+              << Tree::nextNodeCount                                      \
+              << "\n  nextNodeInTreeStack:" << std::right << std::setw(6) \
+              << Tree::nextNodeInTreeStackCount                           \
+              << "\n  microseconds:  " << std::right << std::setw(6)      \
+              << std::chrono::duration_cast<std::chrono::microseconds>(   \
+                     elapsed)                                             \
+                     .count()                                             \
+              << std::endl;                                               \
+    assertionsWarn();                                                     \
   }
 #endif
 #endif

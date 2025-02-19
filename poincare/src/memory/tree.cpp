@@ -198,7 +198,7 @@ void Tree::copyTreeTo(void* address) const {
 
 #if PCJ_METRICS
 uint32_t Tree::nextNodeCount = 0;
-uint32_t Tree::nextNodeInPoolCount = 0;
+uint32_t Tree::nextNodeInTreeStackCount = 0;
 #endif
 
 bool Tree::treeIsIdenticalTo(const Tree* other) const {
@@ -239,7 +239,7 @@ const Tree* Tree::nextNode() const {
 #if PCJ_METRICS
   if (SharedTreeStack->firstBlock() <= this &&
       this <= SharedTreeStack->lastBlock()) {
-    nextNodeInPoolCount++;
+    nextNodeInTreeStackCount++;
   }
   nextNodeCount++;
 #endif

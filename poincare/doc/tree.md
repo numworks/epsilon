@@ -531,3 +531,32 @@ TreeRefs allow a safer and more readable tree manipulation.
 Since they are being tracked at each TreeStack movements, we try to not to use them when efficiency is critical.
 
 Also remember that there is a limit to the number of `TreeRef` used at the same time (`TreeStack::k_maxNumberOfReferences`).
+
+
+## Tools
+
+### Monitoring usage of NextNode
+
+Tree's method `nextNode()` is at the heart of each of tree manipulations.
+
+It's usage directly correlate with our computation speed, and optimizing its calls is a good practice.
+
+To count its usage, there is a `METRICS` macro that will count and log how many `nextNode()` are used.
+
+To use it, set `PCJ_METRICS` to `1` in [tree.h](/poincare/src/memory/tree.h), and surround the call to be monitored with `METRICS(...)` :
+
+#### Example
+To monitor `nextNode()` usage in the unit tests, target `exception_run` in [runner.cpp](/quiz/src/runner.cpp) :
+
+```cpp
+  METRICS(exception_run(ion_main_inner, testFilter, fromFilter, untilFilter));
+```
+
+The tests will then output
+
+```
+Metrics [exception_run(ion_main_inner, testFilter, fromFilter, untilFilter)]
+  nextNode:           440191178
+  nextNodeInTreeStack:324743180
+  microseconds:       4560989
+```

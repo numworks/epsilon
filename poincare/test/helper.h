@@ -4,7 +4,6 @@
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
-#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/memory/tree.h>
@@ -93,7 +92,8 @@ inline void assertionsWarn() {
     Poincare::Internal::Tree::nextNodeInTreeStackCount = 0;               \
     int refId;                                                            \
     {                                                                     \
-      Poincare::Internal::TreeRef r(0_e);                                 \
+      Poincare::Internal::TreeRef r =                                     \
+          Poincare::Internal::SharedTreeStack->pushZero();                \
       refId = r.identifier();                                             \
       r->removeNode();                                                    \
     }                                                                     \
@@ -101,7 +101,8 @@ inline void assertionsWarn() {
     F;                                                                    \
     auto elapsed = std::chrono::high_resolution_clock::now() - startTime; \
     {                                                                     \
-      Poincare::Internal::TreeRef r(0_e);                                 \
+      Poincare::Internal::TreeRef r =                                     \
+          Poincare::Internal::SharedTreeStack->pushZero();                \
       refId = r.identifier() - refId;                                     \
       r->removeNode();                                                    \
     }                                                                     \

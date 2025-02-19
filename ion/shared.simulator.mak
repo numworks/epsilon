@@ -78,10 +78,9 @@ PRIVATE_SFLAGS_ion += \
 
 $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
 	$(call rule_label,CONVERT)
-	convert \
+	magick $< \
 		-crop $(_ion_simulator_background_crop_$(ION_layout_variant)) \
-		-resize $(_ion_simulator_background_resize_$(ION_layout_variant)) \
-		$< $@
+		-resize $(_ion_simulator_background_resize_$(ION_layout_variant)) $@
 
 # Simulator backgrounds - end
 

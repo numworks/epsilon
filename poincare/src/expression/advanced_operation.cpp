@@ -162,7 +162,7 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
 
 bool AdvancedOperation::ContractExp(Tree* e) {
   // A? * exp(B * Ln(C)) * D? * exp(B * Ln(E)) * F? =>
-  // A * exp(B * Ln(C * E)) * D * F with B C and E real
+  // A * exp(B * Ln(C * E)) * D * F with C and E real
   // This steps shortcuts 3 contract steps
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e,

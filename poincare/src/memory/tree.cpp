@@ -196,7 +196,7 @@ void Tree::copyTreeTo(void* address) const {
  * - Source node is always expected to be defined. Allowing checks on
  *   nextNode's destination. */
 
-#if PCJ_METRICS
+#if POINCARE_METRICS
 uint32_t Tree::nextNodeCount = 0;
 uint32_t Tree::nextNodeInTreeStackCount = 0;
 #endif
@@ -236,7 +236,7 @@ const Tree* Tree::nextNode() const {
 #endif
   assert(this + nodeSize() != SharedTreeStack->firstBlock());
   assert(this != SharedTreeStack->lastBlock());
-#if PCJ_METRICS
+#if POINCARE_METRICS
   if (SharedTreeStack->firstBlock() <= this &&
       this <= SharedTreeStack->lastBlock()) {
     nextNodeInTreeStackCount++;

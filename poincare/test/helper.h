@@ -85,7 +85,7 @@ inline void assertionsWarn() {
 #endif
 }
 
-#if PCJ_METRICS
+#if POINCARE_METRICS
 #define METRICS(F)                                                        \
   {                                                                       \
     Poincare::Internal::Tree::nextNodeCount = 0;                          \

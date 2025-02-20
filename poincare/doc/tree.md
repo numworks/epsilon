@@ -539,7 +539,7 @@ Also remember that there is a limit to the number of `TreeRef` used at the same 
 
 Tree's method `nextNode()` is at the heart of each of tree manipulations.
 
-It's usage directly correlate with our computation speed, and optimizing its calls is a good practice.
+Its usage directly correlates with our computation speed, and optimizing its calls is a good practice.
 
 To count its usage, there is a `METRICS` macro that will count and log how many `nextNode()` are used.
 

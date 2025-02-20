@@ -290,6 +290,11 @@ POINCARE_TREE_LOG := 1
 SFLAGS_poincare += -DPOINCARE_TREE_STACK_VISUALIZATION=1
 endif
 
+PCJ_METRICS ?= 0
+ifneq ($(PCJ_METRICS),0)
+SFLAGS_poincare += -DPCJ_METRICS=1
+endif
+
 POINCARE_TREE_LOG ?= 0
 ifeq ($(PLATFORM_TYPE),simulator)
 ifneq ($(DEBUG),0)

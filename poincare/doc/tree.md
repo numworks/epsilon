@@ -543,7 +543,7 @@ Its usage directly correlates with our computation speed, and optimizing its cal
 
 To count its usage, there is a `METRICS` macro that will count and log how many `nextNode()` are used.
 
-To use it, set `PCJ_METRICS` to `1` in [tree.h](/poincare/src/memory/tree.h), and surround the call to be monitored with `METRICS(...)` :
+To use it, make with `PCJ_METRICS=1` and surround the call to be monitored with `METRICS(...)` :
 
 #### Example
 To monitor `nextNode()` usage in the unit tests, target `exception_run` in [runner.cpp](/quiz/src/runner.cpp) :

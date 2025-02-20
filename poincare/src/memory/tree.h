@@ -32,7 +32,6 @@ class TreeRef;
 
 class Tree : public TypeBlock {
  public:
-#define PCJ_METRICS 0
 #if PCJ_METRICS
   static uint32_t nextNodeCount;
   static uint32_t nextNodeInTreeStackCount;

@@ -32,7 +32,6 @@ void TrigonometryListController::computeAdditionalResults(
       .m_context = context};
 
   UserExpression exactAngle;
-  UserExpression approximateAngle;
   float approximatedAngle;
   AdditionalResultsHelper::TrigonometryAngleHelper(
       input, exactOutput, approximateOutput, m_directTrigonometry,

@@ -58,12 +58,12 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
 
   /* Approximate the angle if:
    * - Reduction was unsuccessful
-   * - The fractional part could not be reduced (because the angle is not a
-   * multiple of pi)
+   * - The fractional part could not be reduced
    * - Displaying the exact expression is forbidden. */
   if (!reductionSuccess ||
-      simplifiedAngle->hasDescendantSatisfying(
-          [](const Tree* e) { return e->isFrac(); }) ||
+      simplifiedAngle->hasDescendantSatisfying([](const Tree* e) {
+        return e->isFrac() || e->isCeil() || e->isFloor();
+      }) ||
       shouldOnlyDisplayApproximation(
           exactAngle,
           UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
@@ -94,7 +94,9 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
     assert(approximateAngleTree);
     approximateAngleTree->moveTreeOverTree(Approximation::ToTree<double>(
         approximateAngleTree,
-        Approximation::Parameters{.projectLocalVariables = true}));
+        Approximation::Parameters{.projectLocalVariables = true},
+        Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
+                               ctx->m_context)));
     Beautification::DeepBeautify(approximateAngleTree, *ctx);
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));

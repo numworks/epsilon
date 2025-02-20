@@ -60,6 +60,7 @@ install_macos_binary_deps() {
   fi
 
   brew install \
+    llvm \
     clang-format \
     freetype \
     imagemagick \

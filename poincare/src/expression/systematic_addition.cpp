@@ -92,6 +92,8 @@ static bool MergeAdditionChildWithNext(Tree* child, Tree* next) {
 }
 
 bool SystematicOperation::ReduceSortedAddition(Tree* e) {
+  /* If this assert breaks, check if e->isAdd()
+   * is needed before the recursive call below */
   assert(e->isAdd());
   bool changed = false;
   bool didSquashChildren = false;
@@ -127,11 +129,10 @@ bool SystematicOperation::ReduceSortedAddition(Tree* e) {
       return true;
     }
   }
-  if (didSquashChildren) {
+  if (didSquashChildren && NAry::Sort(e)) {
     /* Newly squashed children should be sorted again and they may allow new
-     * simplifications. NOTE: Further simplification could theoretically be
-     * unlocked, see following assertion. */
-    NAry::Sort(e);
+     * simplifications. */
+    ReduceSortedAddition(e);
   }
   return changed;
 }

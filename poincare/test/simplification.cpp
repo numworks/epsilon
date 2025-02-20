@@ -385,6 +385,7 @@ QUIZ_CASE(pcj_simplification_complex) {
                 "y1+y2+im(arccos(z1))+im(arccos(z2))", ctx);
   simplifies_to("arccos(z)-i×im(arccos(z))", "re(arccos(z))", ctx);
   simplifies_to("i×im(arccos(z))+re(arccos(z))", "arccos(z)", ctx);
+  simplifies_to("conj(√(i))", "√(2)/2-√(2)/2×i", ctx);
   simplifies_to("re(conj(arccos(z)))-re(arccos(z))", "0", ctx);
   simplifies_to("conj(conj(arccos(z)))", "arccos(z)", ctx);
   simplifies_to("re(arccos(z)+y)-y", "re(arccos(z))", ctx);

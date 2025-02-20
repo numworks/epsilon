@@ -206,15 +206,16 @@ bool Tree::treeIsIdenticalTo(const Tree* other) const {
     return true;
   }
   const Tree* self = this;
+  // Overflow is valid here
   size_t offset = self - other;
   int nbOfNodeToScan = 1;
   while (nbOfNodeToScan > 0) {
     const Tree* selfNextNode = self->nextNode();
     const Tree* otherNextNode = other->nextNode();
     /* This next if is basically an inlined version of nodeIsIdenticalTo
-     * selfNextNode - otherNextNode != offset is  the faster equivalent of
+     * selfNextNode - otherNextNode != offset is the faster equivalent of
      * other->nodeSize() != self->nodeSize() */
-    if (selfNextNode - otherNextNode != offset ||
+    if (static_cast<size_t>(selfNextNode - otherNextNode) != offset ||
         memcmp(self, other, selfNextNode - self) != 0) {
       return false;
     }

@@ -1,3 +1,9 @@
 [submodule "ion/src/device/epsilon-core"]
 	path = ion/src/device/epsilon-core
 	url = git@github.com:numworks/epsilon-core.git
+[submodule "scandium/haussmann"]
+	path = scandium/haussmann
+	url = git@github.com:Numworks/haussmann.git
+[submodule "scandium/src/epsilon-internal"]
+	path = scandium/src/epsilon-internal
+	url = git@github.com:Numworks/epsilon-internal.git

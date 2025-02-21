@@ -416,8 +416,8 @@ Range2D<float> GraphController::optimalRange(
   }
   Range2D<float> result(computeX ? xRange : *originalRange.x(),
                         computeY ? yRange : *originalRange.y());
-  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(),
-                        k_maxFloat);
+  return Zoom<float>::Sanitize(
+      result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
 }
 
 double GraphController::dotCoordinate(int curveIndex, int dotIndex,

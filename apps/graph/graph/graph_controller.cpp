@@ -136,10 +136,10 @@ Range2D<float> GraphController::optimalRange(
           Shared::Function::k_unknownName);
       // Compute the ordinate range of x(t) and y(t)
       Range1D<float> ranges[2];
-      Zoom::Function2D<float> floatEvaluators[2] = {
+      Function2D<float> floatEvaluators[2] = {
           parametricExpressionEvaluator<float, 0>,
           parametricExpressionEvaluator<float, 1>};
-      Zoom::Function2D<double> doubleEvaluators[2] = {
+      Function2D<double> doubleEvaluators[2] = {
           parametricExpressionEvaluator<double, 0>,
           parametricExpressionEvaluator<double, 1>};
       for (int coordinate = 0; coordinate < 2; coordinate++) {

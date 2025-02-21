@@ -166,21 +166,23 @@ QUIZ_CASE(poincare_zoom_fit_intersections) {
 
 void assert_sanitized_range_is(Range2D<float> inputRange,
                                Range2D<float> expectedRange) {
-  assert_ranges_equal(Zoom::Sanitize(inputRange, k_normalRatio, k_maxFloat),
-                      expectedRange);
+  assert_ranges_equal(
+      Zoom<float>::Sanitize(inputRange, k_normalRatio, k_maxFloat),
+      expectedRange);
 }
 
 QUIZ_CASE(poincare_zoom_sanitation) {
-  assert_ranges_equal(Zoom::DefaultRange(k_normalRatio, k_maxFloat),
+  assert_ranges_equal(Zoom<float>::DefaultRange(k_normalRatio, k_maxFloat),
                       Range2D<float>(-10, 10, -4.42358822, 4.42358822));
-  assert_ranges_equal(Zoom::DefaultRange(1, k_maxFloat),
+  assert_ranges_equal(Zoom<float>::DefaultRange(1, k_maxFloat),
                       Range2D<float>(-10, 10, -10, 10));
 
   assert_sanitized_range_is(
       Range2D<float>(Range1D<float>(-5, 5), Range1D<float>()),
       Range2D<float>(-5, 5, -2.211794, 2.211794));
-  assert_sanitized_range_is(Range2D<float>(),
-                            Zoom::DefaultRange(k_normalRatio, k_maxFloat));
-  assert_sanitized_range_is(Range2D<float>(0, 0, 0, 0),
-                            Zoom::DefaultRange(k_normalRatio, k_maxFloat));
+  assert_sanitized_range_is(
+      Range2D<float>(), Zoom<float>::DefaultRange(k_normalRatio, k_maxFloat));
+  assert_sanitized_range_is(
+      Range2D<float>(0, 0, 0, 0),
+      Zoom<float>::DefaultRange(k_normalRatio, k_maxFloat));
 }

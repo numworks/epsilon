@@ -116,8 +116,8 @@ Range2D<float> GraphController::optimalRange(
     }
     *result.y() = *zoom.range(true, false).y();
   }
-  return Zoom::Sanitize(result, InteractiveCurveViewRange::NormalYXRatio(),
-                        k_maxFloat);
+  return Zoom<float>::Sanitize(
+      result, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
 }
 
 const Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(

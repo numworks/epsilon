@@ -369,7 +369,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
         }
       } else {
         m_delegate->tidyModels(checkpoint.endOfPoolBeforeCheckpoint());
-        newRange = Zoom::DefaultRange(NormalYXRatio(), k_maxFloat);
+        newRange = Zoom<float>::DefaultRange(NormalYXRatio(), k_maxFloat);
       }
     }
 

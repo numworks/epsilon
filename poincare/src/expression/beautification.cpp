@@ -491,6 +491,12 @@ Tree* GetPolarFormat(const Tree* e,
   Tree* abs = SharedTreeStack->pushAbs();
   e->cloneTree();
   bool hasReduced = SystematicReduction::ShallowReduce(abs);
+  if (hasReduced && Dependency::MainTreeIsIdenticalToMain(e, abs)) {
+    // Early escape positive real expressions
+    abs->removeTree();
+    result->removeNode();
+    return nullptr;
+  }
   if (projectionContext.m_advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(abs) || hasReduced;
   }
@@ -571,6 +577,12 @@ Tree* GetCartesianFormat(const Tree* e,
   Tree* re = SharedTreeStack->pushRe();
   e->cloneTree();
   bool hasReduced = SystematicReduction::ShallowReduce(re);
+  if (hasReduced && Dependency::MainTreeIsIdenticalToMain(e, re)) {
+    // Early escape real expressions
+    re->removeTree();
+    result->removeNode();
+    return nullptr;
+  }
   if (projectionContext.m_advanceReduce) {
     hasReduced = AdvancedReduction::Reduce(re) || hasReduced;
   }

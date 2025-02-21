@@ -22,6 +22,10 @@ void LogIndent() {
   }
 }
 
+void LogExpression(const Tree* e, bool displayDependencies = false) {
+  (!displayDependencies && e->isDep() ? e->child(0) : e)->logSerialize();
+}
+
 #endif
 
 AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
@@ -38,7 +42,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
   ctx.m_crcCollection.add(CrcCollection::AdvancedHash(e), 0);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   std::cout << "\nReduce\nInitial tree (" << ctx.m_bestMetric << ") is : ";
-  e->logSerialize();
+  LogExpression(e, true);
   s_indent = 1;
 #endif
   ReduceRec(editedExpression, &ctx);
@@ -98,7 +102,7 @@ bool AdvancedReduction::ReduceIndependantElement(Tree* e) {
   s_logIndividualPathStep = false;
   s_indent = 0;
   std::cout << "Final tree is : ";
-  e->logSerialize();
+  LogExpression(e, true);
 #endif
   return result;
 }
@@ -289,7 +293,7 @@ bool AdvancedReduction::Path::apply(Tree* root) const {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE > 0
   if (s_logIndividualPathStep) {
     std::cout << "Best path is: ";
-    e->logSerialize();
+    LogExpression(e);
   }
 #endif
   for (uint8_t i = 0; i < length(); i++) {
@@ -300,7 +304,7 @@ bool AdvancedReduction::Path::apply(Tree* root) const {
     if (s_logIndividualPathStep && !m_stack[i].isNextNode()) {
       m_stack[i].log(false);
       std::cout << ": ";
-      e->logSerialize();
+      LogExpression(e);
     }
 #endif
   }
@@ -341,7 +345,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
   LogIndent();
   std::cout << "ReduceRec on subtree: ";
-  e->logSerialize();
+  LogExpression(e);
 #endif
   if (!ctx->m_path.canAddNewDirection()) {
     fullExploration = false;
@@ -406,7 +410,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
           dir.log(false);
           std::cout << ": ";
           if (rootChanged) {
-            ctx->m_root->logSerialize();
+            LogExpression(ctx->m_root);
           } else {
             std::cout << "\n";
           }
@@ -445,7 +449,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
         std::cout << "Already applied ";
         dir.log(false);
         std::cout << ": ";
-        ctx->m_root->logSerialize();
+        LogExpression(ctx->m_root);
       }
 #endif
       if (rootChanged) {
@@ -467,7 +471,7 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
   std::cout << "Leaf reached (" << metric << " VS " << ctx->m_bestMetric << ")";
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 1
   std::cout << ": ";
-  ctx->m_root->logSerialize();
+  LogExpression(ctx->m_root);
 #endif
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 2
   std::cout << "\n";

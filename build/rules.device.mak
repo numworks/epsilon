@@ -50,6 +50,16 @@ $(call create_goal,kernel, \
 )
 endif
 
+$(call create_goal,bench, \
+  ion.bench \
+  kandinsky \
+  liba.armv7m.openbsd \
+  libaxx \
+  omg \
+	poincare.nopool.nostorage \
+,, \
+)
+
 $(OUTPUT_DIRECTORY)/kernel/%.elf: SFLAGS += -fstack-protector-strong
 
 ifneq ($(DEBUG),0)

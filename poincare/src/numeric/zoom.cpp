@@ -720,7 +720,7 @@ bool Zoom<T>::fitWithSolverHelper(
   bool didFit = false;
   while (std::isfinite((p = solver.next(evaluator, aux, test, hone))
                            .x())) {  // assignment in condition
-    if (fDouble != nullptr &&
+    if (sizeof(T) < sizeof(double) && fDouble != nullptr &&
         p.interest() == Solver<T>::Interest::Discontinuity &&
         std::isnan(p.y()) && std::isfinite(fDouble(p.x(), aux))) {
       /* The function evaluates to NAN in single-precision only. It is likely

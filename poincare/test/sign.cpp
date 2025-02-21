@@ -303,7 +303,7 @@ void assert_sign(const char* input, ComplexSign expectedSign,
   ProjectionContext ctx = {.m_complexFormat = complexFormat,
                            .m_strategy = strategy,
                            .m_advanceReduce = false};
-  Simplification::ProjectAndReduce(expression, &ctx);
+  Simplification::ToSystem(expression, &ctx);
   bool result = GetComplexSign(expression) == expectedSign;
 #if POINCARE_TREE_LOG
   if (!result) {
@@ -392,7 +392,7 @@ QUIZ_CASE(pcj_sign) {
   // arg
   assert_sign("arg(5)", Sign::Zero());
   assert_sign("arg(-5)", Sign::FiniteStrictlyPositive());
-  assert_sign("arg(ln(3+i*inf))", Sign::Finite());
+  assert_sign("arg(ln(3+i*inf))", Sign::FiniteStrictlyPositive());
   assert_sign("arg(3+i)", Sign::FiniteStrictlyPositive());
   assert_sign("arg(3 - i)", Sign::FiniteStrictlyNegative());
 

@@ -536,6 +536,10 @@ Tree* GetPolarFormat(const Tree* e,
     Dependency::DeepRemoveUselessDependencies(result);
   }
   Tree* polarForm = result->isDep() ? Dependency::Main(result) : result;
+  if (polarForm->isUndef()) {
+    polarForm->removeTree();
+    return nullptr;
+  }
   bool argIsNull = false;
   if (bubbledUpDependencies) {
     // abs and arg pointers may have been invalidated, find them again.
@@ -596,6 +600,10 @@ Tree* GetCartesianFormat(const Tree* e,
     Dependency::DeepRemoveUselessDependencies(result);
   }
   Tree* cartesianForm = result->isDep() ? Dependency::Main(result) : result;
+  if (cartesianForm->isUndef()) {
+    cartesianForm->removeTree();
+    return nullptr;
+  }
   if (bubbledUpDependencies) {
     // im and re pointers may have been invalidated, find them again.
     PatternMatching::Context ctx;

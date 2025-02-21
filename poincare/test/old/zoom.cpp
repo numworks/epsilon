@@ -15,17 +15,18 @@ constexpr float k_rangeTolerance = 0.05f;
 constexpr float k_maxFloat = 1e8f;
 
 /* Class befriended by Poincare::Zoom to be able to read its members. */
+template <typename T>
 class ZoomTest {
  public:
-  ZoomTest(Range1D<float> bounds)
+  ZoomTest(Range1D<T> bounds)
       : m_zoom(bounds.min(), bounds.max(), k_normalRatio,
-               Range1D<float>::k_maxFloat) {}
+               Range1D<T>::k_maxFloat) {}
 
-  Zoom* zoom() { return &m_zoom; }
-  Range2D<float> interestingRange() const { return m_zoom.m_interestingRange; }
+  Zoom<T>* zoom() { return &m_zoom; }
+  Range2D<T> interestingRange() const { return m_zoom.m_interestingRange; }
 
  private:
-  Zoom m_zoom;
+  Zoom<T> m_zoom;
 };
 
 void assert_ranges_equal(Range1D<float> observed, Range1D<float> expected,

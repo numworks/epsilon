@@ -163,6 +163,7 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
   }
   const Tree* childM1Row0 = matrix1->child(0);
   const Tree* childM1RowK;
+  assert(rows > 0 && cols > 0);
   for (int row = 0; row < rows; row++) {
     for (int col = 0; col < cols; col++) {
       Tree* add = SharedTreeStack->pushAdd(internal);

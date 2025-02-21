@@ -795,6 +795,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       assert(ctx);
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values, ctx->m_symbolContext);
+      assert(length > 0);
       T result;
       for (int i = 0; i < length; i++) {
         tempCtx.m_listElement = i;

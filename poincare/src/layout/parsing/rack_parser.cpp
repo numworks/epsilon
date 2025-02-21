@@ -862,8 +862,8 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
 
 void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
                                               const Builtin* builtin) {
-  const Aliases* aliasesList = builtin->aliases();
-  if (aliasesList->contains("log") && popTokenIfType(Token::Type::Subscript)) {
+  if (builtin->aliases()->contains("log") &&
+      popTokenIfType(Token::Type::Subscript)) {
     // Special case for the log function (e.g. "log₂(8)")
     TreeRef base = Parser::Parse(m_currentToken.firstLayout()->child(0),
                                  m_parsingContext.context(),
@@ -896,7 +896,6 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
         // This function has no inverse
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
-      aliasesList = builtin->aliases();
     } else {
       // Detect cos^n(x) with n!=-1 --> (cos(x))^n
       if (!ParsingHelper::IsPowerableFunction(builtin)) {
@@ -1464,14 +1463,16 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
     m_waitingSlashForMixedFraction = true;
     Tree* rightHandSide = parseUntil(Token::Type::LeftBrace);
     m_waitingSlashForMixedFraction = false;
-    if (rightHandSide && rightHandSide->isDiv() &&
-        IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(0)) &&
-        IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(1))) {
-      // The following expression looks like "int/int" -> it's a mixedFraction
-      CloneNodeAtNode(leftHandSide, KMixedFraction);
-      return true;
+    if (rightHandSide) {
+      if (rightHandSide->isDiv() &&
+          IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(0)) &&
+          IsIntegerBaseTenOrEmptyExpression(rightHandSide->child(1))) {
+        // The following expression looks like "int/int" -> it's a mixedFraction
+        CloneNodeAtNode(leftHandSide, KMixedFraction);
+        return true;
+      }
+      rightHandSide->removeTree();
     }
-    rightHandSide->removeTree();
   }
 
   setState(previousState);

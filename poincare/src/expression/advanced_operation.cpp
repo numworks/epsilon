@@ -224,7 +224,6 @@ bool AdvancedOperation::ContractMult(Tree* e) {
   if (!e->isAdd()) {
     return false;
   }
-  assert(e->numberOfChildren() > 1);
 
   // Find a common factor in an addition of multiplications
   // Only look for first term of each multiplication.
@@ -232,12 +231,9 @@ bool AdvancedOperation::ContractMult(Tree* e) {
   const Tree* commonFactor = nullptr;
   const Tree* currentCommonFactor = nullptr;
   bool commonFactorIsEverywhere = true;
+  assert(e->numberOfChildren() > 1);
   for (const Tree* child : e->children()) {
-    if (child->isMult()) {
-      currentCommonFactor = child->child(0);
-    } else {
-      currentCommonFactor = child;
-    }
+    currentCommonFactor = child->isMult() ? child->child(0) : child;
     if (commonFactor == nullptr) {
       commonFactor = currentCommonFactor;
       continue;

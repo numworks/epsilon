@@ -407,6 +407,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
     if (treesToInsert == 0) {
       /* Insert nothing and decrement the number of children which accounted for
        * the empty placeholder. */
+      assert(insertedNAry);
       NAry::SetNumberOfChildren(insertedNAry,
                                 insertedNAry->numberOfChildren() - 1);
       // Since withinNAry is true, insertedNAry will be sanitized afterward
@@ -414,6 +415,7 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       continue;
     }
     if (treesToInsert > 1) {
+      assert(insertedNAry);
       NAry::SetNumberOfChildren(
           insertedNAry, insertedNAry->numberOfChildren() + treesToInsert - 1);
       // Since withinNAry is true, insertedNAry will be sanitized afterward

@@ -808,11 +808,13 @@ bool GetUnits(Tree* extractedUnits, Tree** unit1, Tree** unit2) {
   for (Tree* e : extractedUnits->selfAndDescendants()) {
     if (e->isUnitOrPhysicalConstant()) {
       if (*unit2) {
+        assert(*unit1);
         return false;
       }
       (*unit1 ? *unit2 : *unit1) = e;
     }
   }
+  assert(*unit1);
   return true;
 }
 

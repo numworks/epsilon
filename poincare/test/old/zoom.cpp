@@ -11,8 +11,10 @@ using namespace Poincare::Internal;
 
 // When adding the graph window margins, this ratio gives an orthonormal window
 constexpr float k_normalRatio = 0.442358822;
-constexpr float k_rangeTolerance = 0.05f;
+constexpr float k_floatRangeTolerance = 0.05f;
 constexpr float k_maxFloat = 1e8f;
+
+constexpr double k_doubleRangeTolerance = 0.01;
 
 /* Class befriended by Poincare::Zoom to be able to read its members. */
 template <typename T>
@@ -29,7 +31,8 @@ class ZoomTest {
   Zoom<T> m_zoom;
 };
 
-void assert_ranges_equal(Range1D<float> observed, Range1D<float> expected,
+template <typename T>
+void assert_ranges_equal(Range1D<T> observed, Range1D<T> expected,
                          const char* errorMessage = "") {
   /* The range computed by Poincare::Zoom can differ from the ideal range
    * because:
@@ -42,16 +45,22 @@ void assert_ranges_equal(Range1D<float> observed, Range1D<float> expected,
   if (expected.isNan()) {
     return;
   }
-  float dl = std::max(k_rangeTolerance * std::max(expected.length(),
-                                                  std::fabs(expected.center())),
-                      FLT_EPSILON);
+
+  T rangeTolerance = sizeof(T) == sizeof(float) ? k_floatRangeTolerance
+                                                : k_doubleRangeTolerance;
+  T epsilon = sizeof(T) == sizeof(float) ? FLT_EPSILON : DBL_EPSILON;
+
+  T dl = std::max(rangeTolerance *
+                      std::max(expected.length(), std::fabs(expected.center())),
+                  epsilon);
   quiz_assert_print_if_failure(std::fabs(observed.min() - expected.min()) <= dl,
                                errorMessage);
   quiz_assert_print_if_failure(std::fabs(observed.max() - expected.max()) <= dl,
                                errorMessage);
 }
 
-void assert_ranges_equal(Range2D<float> observed, Range2D<float> expected,
+template <typename T>
+void assert_ranges_equal(Range2D<T> observed, Range2D<T> expected,
                          const char* errorMessage = "") {
   assert_ranges_equal(*observed.x(), *expected.x(), errorMessage);
   assert_ranges_equal(*observed.y(), *expected.y(), errorMessage);
@@ -78,13 +87,14 @@ Coordinate2D<T> expressionEvaluator(T t, const void* model) {
              e, t, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
 }
 
+template <typename T>
 void assert_points_of_interest_range_is(const char* expression,
-                                        Range2D<float> expectedRange) {
+                                        Range2D<T> expectedRange) {
   Shared::GlobalContext context;
   Tree* e =
       parseAndPrepareForApproximation(expression, {.m_context = &context});
-  ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat));
-  zoom.zoom()->fitPointsOfInterest(expressionEvaluator<float>, e, false,
+  ZoomTest zoom(Range1D<T>(-k_maxFloat, k_maxFloat));
+  zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e, false,
                                    expressionEvaluator<double>);
   e->removeTree();
   assert_ranges_equal(zoom.interestingRange(), expectedRange, expression);
@@ -141,6 +151,9 @@ QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
   assert_points_of_interest_range_is(
       "200e^(x/5)(7+e^(x/5))^(-1)",
       Range2D<float>(-18.68, 38.84, 0.6786, 199.4));
+
+  assert_points_of_interest_range_is("x*ln(x)",
+                                     Range2D<double>(0, 1, -0.368, 0));
 }
 
 void assert_intersections_range_is(const char* expression1,

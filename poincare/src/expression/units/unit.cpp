@@ -954,10 +954,13 @@ bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
       e->moveTreeOverTree(e->child(Parametric::FunctionIndex(e->type())));
       didRemovedTree = RemoveNonUnits(e, preserveAdd);
       break;
+#if 0
+    // See comment in DeepCheckDimensions
     case Type::Abs:
       e->removeNode();
       didRemovedTree = RemoveNonUnits(e, preserveAdd);
       break;
+#endif
     case Type::PowReal:
       // Ignore PowReal nodes
       e->cloneNodeOverNode(KPow);

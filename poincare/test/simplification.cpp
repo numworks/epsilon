@@ -907,6 +907,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1_m+1_s", "undef");
   simplifies_to("1_m+1_yd", "1.9144×_m");
   simplifies_to("1_m+x", "undef");
+  simplifies_to("1_m+0", "undef");
   simplifies_to("1_mm+1_km", "1000.001×_m");
   simplifies_to("2_month×7_dm", "3681720×_s×_m");
   simplifies_to("2×_m/_m", "2");
@@ -914,7 +915,10 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("cos(0_rad)", "1");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
   simplifies_to("_s^-1", "1×_s^(-1)");
+#if 0
+  // See comment in DeepCheckDimensions
   simplifies_to("abs(-3.3_m)", "3.3×_m");
+#endif
   simplifies_to("10^(-6)_m^3", "1ᴇ-6×_m^3");
   simplifies_to("1000000_cm", "1000000×_cm");
   simplifies_to("normcdf(0,20,3)×_s", "1.3083978345207ᴇ-11×_s");

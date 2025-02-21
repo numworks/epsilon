@@ -1,3 +1,4 @@
+#include <omg/unreachable.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
@@ -51,7 +52,7 @@ Sign DecimalFunction(Sign s, Internal::Type type) {
       canBeNull = true;
       break;
     default:
-      assert(false);
+      OMG::unreachable();
   }
   return Sign(canBeNull, canBeStrictlyPositive, canBeStrictlyNegative,
               canBeNonInteger, canBeInfinite);
@@ -292,6 +293,10 @@ ComplexSign TypeSign(ComplexSign s) {
   return ComplexSign(realSign, Sign::Zero());
 }
 
+ComplexSign PercentAddition(ComplexSign s1, ComplexSign s2) {
+  return Add(s1, Mult(s1, s2));
+}
+
 namespace Internal {
 
 // Note: A complex function plotter can be used to fill in these methods.
@@ -376,14 +381,17 @@ ComplexSign GetComplexSign(const Tree* e) {
       return ComplexSign(Sign::FiniteInteger(), Sign::Zero());
     case Type::Sign:
       return TypeSign(GetComplexSign(e->child(0)));
+    case Type::Factor:
+      return GetComplexSign(e->child(0));
+    case Type::PercentAddition:
+      return PercentAddition(GetComplexSign(e->child(0)),
+                             GetComplexSign(e->child(1)));
+    case Type::Fact:
+      return ComplexSign::RealStrictlyPositiveInteger();
 #if 0
     // Activate these cases if necessary
     case Type::ATan:
       return ArcTangent(GetComplexSign(e->child(0)));
-    case Type::Fact:
-      assert(GetComplexSign(e->child(0)) ==
-             ComplexSign(Sign::PositiveInteger(), Sign::Zero()));
-      return ComplexSign::RealStrictlyPositiveInteger();
     case Type::PercentSimple:
       return RelaxIntegerProperty(GetComplexSign(e->child(0)));
     case Type::MixedFraction:

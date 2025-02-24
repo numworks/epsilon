@@ -15,11 +15,28 @@ namespace Poincare::Internal {
 
 bool Logarithm::ReduceLn(Tree* e) {
   Tree* child = e->child(0);
-  if (child->isExp() && GetComplexSign(child->child(0)).isReal()) {
-    // ln(exp(x)) -> x if x is real
-    e->removeNode();
-    e->removeNode();
-    return true;
+  if (child->isExp()) {
+    const Tree* x = child->child(0);
+    if (GetComplexSign(child->child(0)).isReal()) {
+      // ln(exp(x)) -> x if x is real
+      e->removeNode();
+      e->removeNode();
+      return true;
+    }
+    PatternMatching::Context ctx;
+    if (PatternMatching::Match(x, KMult(KA, KLn(KB)), &ctx)) {
+      const Tree* A = ctx.getTree(KA);
+      assert(!A->isOne());
+      if (A->isRational() && Rational::CompareAbs(A, 1_e) < 0) {
+        /* ln(exp(A*ln(B))) -> A*ln(B) if A is real and -1 < A <= 1
+         * This can be proven using B in exponential form, the formula
+         * ln(exp(C)) = re(C) + i*arg(exp(i*im(C))), and the fact that
+         * arg(exp(i*D))) = D if D real and -π < D <= π
+         * This probably shortcuts several advanced reduction steps. */
+        e->moveTreeOverTree(PatternMatching::Create(KMult(KA, KLn(KB)), ctx));
+        return true;
+      }
+    }
   }
   if (child->isInf()) {
     // ln(inf) -> inf

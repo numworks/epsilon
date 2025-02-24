@@ -5,31 +5,6 @@
 
 using namespace Poincare;
 
-QUIZ_DISABLED_CASE(poincare_properties_is_random) {
-  quiz_assert(Random::Builder().isRandom());
-  quiz_assert(
-      Randint::Builder(Rational::Builder(1), Rational::Builder(2)).isRandom());
-  quiz_assert(!Symbol::Builder('a').isRandom());
-  quiz_assert(!Rational::Builder(2, 3).isRandom());
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_is_parametered_expression) {
-  quiz_assert(Derivative::Builder(Rational::Builder(1), Symbol::Builder('x'),
-                                  Rational::Builder(2))
-                  .isParameteredExpression());
-  quiz_assert(Integral::Builder(Rational::Builder(1), Symbol::Builder('x'),
-                                Rational::Builder(2), Rational::Builder(2))
-                  .isParameteredExpression());
-  quiz_assert(Sum::Builder(Rational::Builder(1), Symbol::Builder('n'),
-                           Rational::Builder(2), Rational::Builder(2))
-                  .isParameteredExpression());
-  quiz_assert(Product::Builder(Rational::Builder(1), Symbol::Builder('n'),
-                               Rational::Builder(2), Rational::Builder(2))
-                  .isParameteredExpression());
-  quiz_assert(!Symbol::Builder('a').isParameteredExpression());
-  quiz_assert(!Rational::Builder(2, 3).isParameteredExpression());
-}
-
 QUIZ_DISABLED_CASE(poincare_properties_is_rational_number) {
   quiz_assert(BasedInteger::Builder("2", OMG::Base::Binary)
                   .isAlternativeFormOfRationalNumber());
@@ -966,6 +941,39 @@ QUIZ_CASE(poincare_properties_is_number) {
   assert_reduced_is_number("[[0]]", &globalContext, false);
   assert_is_number("(1,2)", &globalContext, false);
   assert_reduced_is_number("(1,2)", &globalContext, false);
+}
+
+void assert_has_random(const char* input, bool hasRandom = true) {
+  Shared::GlobalContext context;
+  UserExpression e = UserExpression::Builder(parse(input, &context));
+  quiz_assert_print_if_failure(e.hasRandomNumber() == hasRandom, input);
+}
+
+QUIZ_CASE(poincare_properties_has_random) {
+  assert_has_random("random()");
+  assert_has_random("randint(1,2)");
+  assert_has_random("cos(random())");
+  assert_has_random("random()-random()");
+  assert_has_random("a", false);
+  assert_has_random("2/3", false);
+}
+
+void assert_is_parametered_expression(const char* input,
+                                      bool isParametered = true) {
+  Shared::GlobalContext context;
+  UserExpression e = UserExpression::Builder(parse(input, &context));
+  quiz_assert_print_if_failure(e.isParametric() == isParametered, input);
+}
+
+QUIZ_CASE(poincare_properties_is_parametered_expression) {
+  assert_is_parametered_expression("diff(2x,x,2)");
+  assert_is_parametered_expression("diff(1,x,2,3)");
+  assert_is_parametered_expression("int(x,x,2,4)");
+  assert_is_parametered_expression("sum(n+1,n,0,10)");
+  assert_is_parametered_expression("product(2,n,2,2)");
+  assert_is_parametered_expression("sequence(x,x,10)");
+  assert_is_parametered_expression("a", false);
+  assert_is_parametered_expression("2/3", false);
 }
 
 void assert_is_list_of_points(const char* definition, Context* context,

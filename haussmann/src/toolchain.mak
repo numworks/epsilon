@@ -29,6 +29,10 @@ ifeq ($(ASAN),1)
 SFLAGS += -fsanitize=address -DASAN
 endif
 
+ifeq ($(STATIC_ANALYZER),1)
+SFLAGS += --analyze
+endif
+
 CFLAGS := -std=c11
 
 CXXFLAGS := \

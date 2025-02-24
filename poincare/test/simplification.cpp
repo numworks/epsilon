@@ -430,6 +430,10 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("e^(π*i/6)+e^(-π*i/3)", "(1+√(3))/2+(1/2-√(3)/2)×i",
                 cartesianCtx);
   simplifies_to("e^(π*i/6)*e^(-π*i/3)", "√(3)/2-1/2×i", cartesianCtx);
+  // TODO: Simplify to root(2,4)
+  simplifies_to("re(√(√(-8)))", "re(√(√(-8)))", cartesianCtx);
+  // TODO: Simplify to √(30+2×√(229))/2
+  simplifies_to("re(√(15+2×i))", "re(√(15+2×i))", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {

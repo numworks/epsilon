@@ -460,9 +460,9 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       [[fallthrough]];
     }
 #if 0
-    // TODO: Should be handled but caused dimensional issues later on,
-    // notably because of Re and Im not being handle
-    // Once reactivated, should also reactivate unit.cpp and pcj_simp_unit
+    /* TODO: Should be handled but caused dimensional issues later on,
+     * notably because of Re and Im not being handle
+     * Once reactivated, should also reactivate unit.cpp and pcj_simp_unit */
     case Type::Abs:
       // case Type::Sqrt:  TODO: Handle _m^(1/2)
       unitsAllowed = true;

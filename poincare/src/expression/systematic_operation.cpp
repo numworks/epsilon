@@ -717,10 +717,11 @@ bool SystematicOperation::ReduceExp(Tree* e) {
   if (child->isMult()) {
     PatternMatching::Context ctx;
     if (PatternMatching::Match(child, KMult(KA, KLn(KB)), &ctx)) {
-      assert(!ctx.getTree(KB)->isZero());
-      if (ctx.getTree(KA)->isRational() &&
-          ((ctx.getTree(KB)->isRational() && !ctx.getTree(KB)->isInteger()) ||
-           !Rational::IsStrictlyPositiveUnderOne(ctx.getTree(KA)))) {
+      const Tree* A = ctx.getTree(KA);
+      const Tree* B = ctx.getTree(KB);
+      assert(!B->isZero() && !A->isOne());
+      if (A->isRational() && ((B->isRational() && !B->isInteger()) ||
+                              !Rational::IsStrictlyPositiveUnderOne(A))) {
         /* x^(a/b) is expected to have a unique representation :
          * - (p/q)^(a/b) is p^(a/b)*q^(-a/b) (and then fallback on next step)
          * - x^(a/b) is x^n * exp(ln(x)*c/b) with n integer, c and b positive

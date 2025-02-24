@@ -1,6 +1,7 @@
 #include <omg/unreachable.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/regression/regression.h>
 
 #include "cubic_regression.h"
 #include "exponential_regression.h"
@@ -13,7 +14,6 @@
 #include "proportional_regression.h"
 #include "quadratic_regression.h"
 #include "quartic_regression.h"
-#include "regression.h"
 #include "trigonometric_regression.h"
 
 namespace Poincare::Regression {

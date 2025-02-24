@@ -3,7 +3,7 @@
 
 #include <escher/i18n.h>
 #include <poincare/expression.h>
-#include <poincare/src/regression/regression.h>
+#include <poincare/regression/regression.h>
 
 namespace Regression {
 

@@ -3,11 +3,10 @@
 
 #include <poincare/api.h>
 #include <poincare/old/context.h>
+#include <poincare/regression/series.h>
 #include <stdint.h>
 
 #include <array>
-
-#include "series.h"
 
 namespace Poincare::Regression {
 

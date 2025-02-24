@@ -1,4 +1,4 @@
-#include "series.h"
+#include <poincare/regression/series.h>
 
 #include "dataset_adapter.h"
 

@@ -4,7 +4,6 @@
 #include <apps/shared/store_context.h>
 #include <assert.h>
 #include <omg/list.h>
-#include <poincare/src/regression/trigonometric_regression.h>
 #include <poincare/test/old/helper.h>
 #include <poincare/trigonometry.h>
 #include <quiz.h>

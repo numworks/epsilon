@@ -1,7 +1,7 @@
 #ifndef POINCARE_REGRESSION_LOGISTIC_REGRESSION_H
 #define POINCARE_REGRESSION_LOGISTIC_REGRESSION_H
 
-#include "regression.h"
+#include <poincare/regression/regression.h>
 
 namespace Poincare::Regression {
 

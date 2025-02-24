@@ -283,7 +283,8 @@ bool Logarithm::ExpandLn(Tree* e) {
     c->removeTree();
     return true;
   }
-  // ln(exp(A)) -> re(A) + i*arg(exp(i*im(A)))
+  /* ln(exp(A)) -> re(A) + ln(exp(i*im(A)) -> re(A) + i*arg(exp(i*im(A)))
+   * This essentially bring back im(A) within ]-π,π] */
   return PatternMatching::MatchReplaceSimplify(
       e, KLn(KExp(KA)),
       KAdd(KRe(KA), KMult(i_e, KArg(KExp(KMult(i_e, KIm(KA)))))));

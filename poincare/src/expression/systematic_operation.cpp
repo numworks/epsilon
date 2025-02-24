@@ -741,7 +741,8 @@ bool SystematicOperation::ReduceExp(Tree* e) {
             KMult(KExp(KMult(1_e / 2_e, KAdd(KA_s, KB_s))), i_e))) {
       return true;
     }
-    /* With A real, although arg(exp(A*i)) -> A is only true if A is in ]-π,π],
+    /* Follow-up on ln(exp(A)) -> re(A) + i*arg(exp(i*im(A))) in ExpandLn
+     * With A real, although arg(exp(A*i)) -> A is only true if A is in ]-π,π],
      * exp(arg(exp(A*i))*i) -> exp(A*i) is always true.
      * TODO: Bring A back in ]-π,π] if possible. */
     if (PatternMatching::Match(e, KExp(KMult(KArg(KExp(KA)), i_e)), &ctx) &&

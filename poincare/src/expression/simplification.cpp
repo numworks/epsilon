@@ -124,14 +124,14 @@ bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext) {
          projectionContext->m_dimension == Dimension::Get(e));
   bool changed = HandleUnits(e, projectionContext);
   changed = Beautification::DeepBeautify(e, *projectionContext) || changed;
-  changed = Random::UnSeedRandomNodes(e) || changed;
   return changed;
 }
 
 bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
   // Seed random nodes before anything is merged/duplicated.
-  int maxRandomSeed = Random::SeedRandomNodes(e, 0);
-  bool changed = maxRandomSeed > 0;
+  int previousMaxRandomSeed = Random::GetMaxSeed(e);
+  int maxRandomSeed = Random::SeedRandomNodes(e, previousMaxRandomSeed);
+  bool changed = maxRandomSeed > previousMaxRandomSeed;
   // Replace functions and variable before dimension check
   changed = Variables::ProjectLocalVariablesToId(e) || changed;
   // Replace local variables before user named

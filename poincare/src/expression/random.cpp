@@ -19,15 +19,14 @@ Random::Context::Context(bool isInitialized) : m_isInitialized(isInitialized) {
   }
 }
 
-bool Random::UnSeedRandomNodes(Tree* e) {
-  bool changed = false;
-  for (Tree* d : e->selfAndDescendants()) {
-    if (d->isRandomized()) {
-      ResetSeed(d);
-      changed = true;
+uint8_t Random::GetMaxSeed(const Tree* e) {
+  uint8_t maxSeed = 0;
+  for (const Tree* child : e->selfAndDescendants()) {
+    if (child->isRandomized()) {
+      maxSeed = std::max(maxSeed, GetSeed(child));
     }
   }
-  return changed;
+  return maxSeed;
 }
 
 uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {

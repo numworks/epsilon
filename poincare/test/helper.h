@@ -140,7 +140,8 @@ Poincare::Internal::Tree* parse(const char* input,
                                 Poincare::Context* context = nullptr,
                                 bool parseForAssignment = false);
 
-Poincare::Internal::Tree* parse_and_reduce(const char* input);
+Poincare::Internal::Tree* parse_and_reduce(const char* input,
+                                           bool beautify = false);
 
 void assert_text_not_parsable(const char* input,
                               Poincare::Context* context = nullptr);

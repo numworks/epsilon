@@ -1113,6 +1113,9 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("diff(1, x, f(y))", "dep(0,{dep(1,{f(y)}),real(f(y))})");
   simplifies_to("im(re(f(x)))", "dep(0,{f(x)})", cartesianCtx);
   simplifies_to("sign(abs(f(x))+1)", "dep(1,{f(x)})");
+  // TODO: Should be "dep(0,{nonNull(abs(x))})");
+  simplifies_to("arg(1+1/abs(x))", "0");
+  simplifies_to("arg(-i/abs(y))", "dep(-π/2,{-1/abs(y)×i,nonNull(1/abs(y))})");
   simplifies_to("0^(5+ln(5))", "0");
   simplifies_to("[[x/x]]", "[[dep(1,{x^0})]]");
   simplifies_to("lcm(undef, 2+x/x)", "undef");

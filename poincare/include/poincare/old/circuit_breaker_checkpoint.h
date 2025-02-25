@@ -15,7 +15,7 @@ class CircuitBreakerCheckpoint final : public PoolCheckpoint {
  public:
   CircuitBreakerCheckpoint(Ion::CircuitBreaker::CheckpointType type)
       : m_type(type) {}
-  /* The desctructor will call ~PoolCheckpoint, and thus
+  /* The destructor will call ~PoolCheckpoint, and thus
    * PoolCheckpoint::discard(), so we call unset instead of discard. */
   virtual ~CircuitBreakerCheckpoint() { unset(); }
 

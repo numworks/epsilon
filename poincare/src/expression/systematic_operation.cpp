@@ -387,16 +387,20 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
       /* atan2(y, 0) = undef if y = 0
        *               π/2 if y > 0
        *               -π/2 if y < 0 */
-      e->cloneTreeOverTree(imagSign.isNull() ? KOutOfDefinition
-                           : imagSign.isStrictlyPositive()
-                               ? KMult(1_e / 2_e, π_e)
-                               : KMult(-1_e / 2_e, π_e));
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KDep(KB, KDepList(KA)),
+          {.KA = child,
+           .KB = imagSign.isNull()               ? KOutOfDefinition
+                 : imagSign.isStrictlyPositive() ? KMult(1_e / 2_e, π_e)
+                                                 : KMult(-1_e / 2_e, π_e)}));
       return true;
     } else if (imagSign.isNull()) {
       /* atan2(0, x) = 0      if x > 0
        *               π      if x < 0 */
       assert(!realSign.isNull());
-      e->cloneTreeOverTree(realSign.isStrictlyPositive() ? 0_e : π_e);
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KDep(KB, KDepList(KA)),
+          {.KA = child, .KB = realSign.isStrictlyPositive() ? 0_e : π_e}));
       return true;
     }
   }

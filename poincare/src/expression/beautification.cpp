@@ -530,7 +530,6 @@ Tree* GetPolarFormat(const Tree* e,
     result->removeTree();
     return nullptr;
   }
-  NAry::Flatten(mult);
   /* exp is not ShallowReduced to preserve exp(A*i) form with A within ]-π,π]
    * because of exp(arg(exp(A*i))*i) -> exp(A*i) reduction. */
   // Bubble up dependencies that appeared during reduction.
@@ -559,6 +558,11 @@ Tree* GetPolarFormat(const Tree* e,
   } else {
     argIsNull = Number::IsNull(arg);
   }
+  /* arg may be a multiplication, flatten the parent multiplication after having
+   * bubbled up dependencies. */
+  assert(polarForm->child(1)->isExp() &&
+         polarForm->child(1)->child(0)->isMult());
+  NAry::Flatten(polarForm->child(1)->child(0));
   if (Number::IsNull(abs) || argIsNull) {
     NAry::RemoveChildAtIndex(polarForm, 1);
   }

@@ -445,8 +445,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("2i", "2×e^(π/2×i)", polarCtx);
   simplifies_to("cos(i)", "cosh(1)", polarCtx);
   simplifies_to("[[42, -2/3][1+i, -iπ]]",
-                "[[42,(2×e^(π×i))/3][√(2)×e^(π/4×i),π×e^((-π/2)×i)]]",
-                polarCtx);
+                "[[42,(2×e^(π×i))/3][√(2)×e^(π/4×i),π×e^(-π/2×i)]]", polarCtx);
   simplifies_to("-2×_m", "-2×_m", polarCtx);
   simplifies_to("(-2,i)", "(-2,i)", polarCtx);
   simplifies_to("{-2,-i}", "{2×e^(π×i),e^(-π/2×i)}", polarCtx);
@@ -455,8 +454,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("e^(3.14×i)", "e^(157/50×i)", polarCtx);
   simplifies_to("e^(-2.1×i)", "e^(-21/10×i)", polarCtx);
   simplifies_to("root(-8,3)", "2×e^(π/3×i)", polarCtx);
-  // TODO: Parentheses should not be here √(2)×e^(-π/12×i)
-  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "√(2)×e^((-π/12)×i)", polarCtx);
+  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "√(2)×e^(-π/12×i)", polarCtx);
   // TODO: Result could be improved to (√(2)+√(6))/2×e^(π/4×i)
   simplifies_to("e^(π/6×i)+e^(-10π/6×i)", "(√(2)×(1+√(3)))/2×e^(π/4×i)",
                 polarCtx);

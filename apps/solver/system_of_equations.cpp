@@ -61,6 +61,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   if (error == Error::NoError) {
     assert(result);
     m_numberOfSolutions = 0;
+    assert(solutionStatus() != SolutionStatus::Interrupted);
     SolutionType solutionType = solutionStatus() == SolutionStatus::Incomplete
                                     ? SolutionType::Formal
                                     : SolutionType::Exact;

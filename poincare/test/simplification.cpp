@@ -784,6 +784,8 @@ QUIZ_CASE(pcj_simplification_list) {
 QUIZ_CASE(pcj_simplification_random) {
   // TODO: Handle them with {.m_strategy = Strategy::ApproximateToFloat}
   simplifies_to("randintnorep(1,10,5)", "randintnorep(1,10,5)");
+  simplifies_to("randintnorep(1,10,11)", "undef");
+  simplifies_to("randintnorep(1.5,10, 10)", "undef");
   simplifies_to("random()", "random()");
   simplifies_to("randint(1,10)", "randint(1,10)");
   simplifies_to("diff(random()+1,x,2)", "undef");

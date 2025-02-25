@@ -22,11 +22,6 @@ SOURCES_sdl += $(addprefix $(PATH_sdl)/sdl/src/, \
   main/windows/SDL_windows_main.c \
   misc/windows/SDL_sysurl.c \
   power/windows/SDL_syspower.c \
-  render/direct3d/SDL_render_d3d.c \
-  render/direct3d/SDL_shaders_d3d.c \
-  render/direct3d11/SDL_render_d3d11.c \
-  render/direct3d11/SDL_shaders_d3d11.c \
-  render/SDL_d3dmath.c \
   sensor/windows/SDL_windowssensor.c \
   thread/generic/SDL_syscond.c \
   thread/windows/SDL_sysmutex.c \

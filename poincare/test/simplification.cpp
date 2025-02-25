@@ -404,11 +404,11 @@ QUIZ_CASE(pcj_simplification_complex) {
       ctx);
   simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
-  simplifies_to("arg(-π+i×2)", "π+arctan(-2/π)", ctx);
+  simplifies_to("arg(-π+i×2)-π", "arctan(-2/π)", ctx);
   simplifies_to("arg(i×2)", "π/2", ctx);
   simplifies_to("arg(-i×2)", "-π/2", ctx);
   simplifies_to("arg(0)", "undef", ctx);
-  simplifies_to("arg(-π+i×abs(y))", "π-arctan(abs(y)/π)", ctx);
+  simplifies_to("π-arg(-π+i×abs(y))", "arctan(abs(y)/π)", ctx);
   simplifies_to("arg(exp(i*π/7))", "π/7", ctx);
   simplifies_to("arg(exp(-i*π/7))", "-π/7", ctx);
   simplifies_to("arg(exp(i*π*10))", "0", ctx);

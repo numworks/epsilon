@@ -382,7 +382,6 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   ComplexSign childSign = GetComplexSign(child);
   Sign realSign = childSign.realSign();
   if (realSign.hasKnownStrictSign()) {
-    // TODO: Maybe move this in advanced reduction
     Sign imagSign = childSign.imagSign();
     if (realSign.isNull() && imagSign.hasKnownStrictSign()) {
       /* atan2(y, 0) = undef if y = 0
@@ -393,17 +392,11 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
                                ? KMult(1_e / 2_e, π_e)
                                : KMult(-1_e / 2_e, π_e));
       return true;
-    } else if (realSign.isStrictlyPositive() || imagSign.isPositive() ||
-               imagSign.isStrictlyNegative()) {
-      /* atan2(y, x) = arctan(y/x)      if x > 0
-       *               arctan(y/x) + π  if y >= 0 and x < 0
-       *               arctan(y/x) - π  if y < 0  and x < 0 */
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KAdd(KATanRad(KMult(KIm(KA), KPow(KRe(KA), -1_e))), KMult(KB, π_e)),
-          {.KA = child,
-           .KB = realSign.isStrictlyPositive()
-                     ? 0_e
-                     : (imagSign.isPositive() ? 1_e : -1_e)}));
+    } else if (imagSign.isNull()) {
+      /* atan2(0, x) = 0      if x > 0
+       *               π      if x < 0 */
+      assert(!realSign.isNull());
+      e->cloneTreeOverTree(realSign.isStrictlyPositive() ? 0_e : π_e);
       return true;
     }
   }

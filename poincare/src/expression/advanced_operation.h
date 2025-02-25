@@ -18,6 +18,7 @@ class AdvancedOperation {
   static bool ExpandPower(Tree* e);
   static bool ContractCeilFloor(Tree* e);
   static bool ExpandCeilFloor(Tree* e);
+  static bool ExpandComplexArgument(Tree* e);
 };
 
 }  // namespace Poincare::Internal

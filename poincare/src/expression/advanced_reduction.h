@@ -184,13 +184,21 @@ class AdvancedReduction {
       AdvancedOperation::ContractImRe, AdvancedOperation::ContractCeilFloor,
   };
   constexpr static Tree::Operation k_expandOperations[] = {
-      AdvancedOperation::ExpandAbs,   Logarithm::ExpandLn,
-      AdvancedOperation::ExpandExp,   Trigonometry::ExpandTrigonometric,
-      Parametric::ExpandExpOfSum,     Parametric::ExpandSum,
-      Parametric::ExpandProduct,      Arithmetic::ExpandBinomial,
-      Arithmetic::ExpandPermute,      Projection::Expand,
-      AdvancedOperation::ExpandPower, AdvancedOperation::ExpandMult,
-      AdvancedOperation::ExpandImRe,  AdvancedOperation::ExpandCeilFloor,
+      AdvancedOperation::ExpandAbs,
+      Logarithm::ExpandLn,
+      AdvancedOperation::ExpandExp,
+      Trigonometry::ExpandTrigonometric,
+      Parametric::ExpandExpOfSum,
+      Parametric::ExpandSum,
+      Parametric::ExpandProduct,
+      Arithmetic::ExpandBinomial,
+      Arithmetic::ExpandPermute,
+      Projection::Expand,
+      AdvancedOperation::ExpandPower,
+      AdvancedOperation::ExpandMult,
+      AdvancedOperation::ExpandImRe,
+      AdvancedOperation::ExpandCeilFloor,
+      AdvancedOperation::ExpandComplexArgument,
   };
   constexpr static Tree::Operation k_expandAlgebraicOperations[] = {
       AdvancedOperation::ExpandPower,

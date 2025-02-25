@@ -340,4 +340,34 @@ bool AdvancedOperation::ContractCeilFloor(Tree* e) {
           e, KFloor(KA), KMult(-1_e, KCeil(KMult(-1_e, KA))));
 }
 
+bool AdvancedOperation::ExpandComplexArgument(Tree* e) {
+  if (!e->isArg()) {
+    return false;
+  }
+  // arg(x + iy) = atan2(y, x)
+  const Tree* child = e->child(0);
+  ComplexSign childSign = GetComplexSign(child);
+  Sign realSign = childSign.realSign();
+  if (realSign.hasKnownStrictSign()) {
+    Sign imagSign = childSign.imagSign();
+    // Cases handled in systematic simplification
+    assert(!(realSign.isNull() && imagSign.hasKnownStrictSign()) &&
+           !imagSign.isNull());
+    if (realSign.isStrictlyPositive() || imagSign.isPositive() ||
+        imagSign.isStrictlyNegative()) {
+      /* atan2(y, x) = arctan(y/x)      if x > 0
+       *               arctan(y/x) + π  if y >= 0 and x < 0
+       *               arctan(y/x) - π  if y < 0  and x < 0 */
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KAdd(KATanRad(KMult(KIm(KA), KPow(KRe(KA), -1_e))), KMult(KB, π_e)),
+          {.KA = child,
+           .KB = realSign.isStrictlyPositive()
+                     ? 0_e
+                     : (imagSign.isPositive() ? 1_e : -1_e)}));
+      return true;
+    }
+  }
+  return false;
+}
+
 }  // namespace Poincare::Internal

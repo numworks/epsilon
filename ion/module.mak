@@ -43,7 +43,7 @@ SFLAGS_ion += -DION_LOG_EVENTS_NAME=1
 endif
 
 ifeq ($(PLATFORM),u0-discovery)
-include $(PATH_ion)/scandium.firmware.mak
+include $(PATH_ion)/scandium.bootloader.mak
 else
 include $(PATH_ion)/shared.$(PLATFORM_TYPE).mak
 endif

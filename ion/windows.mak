@@ -35,8 +35,8 @@ $(addprefix $(PATH_ion)/src/simulator/assets/, \
   small_squircle.png \
   vertical_arrow.png \
 ) \
-  $(_ion_simulator_background)
-# $(_ion_simulator_backgrounds_generated)
+  $(_ion_simulator_background) \
+  $(_ion_simulator_backgrounds_generated)
 
 $(addprefix $(OUTPUT_DIRECTORY)/$(PATH_ion)/src/simulator/windows/,resources_gen.rc images.h): $(_ion_simulator_assets) | $$(@D)/.
 	$(call rule_label,RESGEN)

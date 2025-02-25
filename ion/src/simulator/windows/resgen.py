@@ -6,6 +6,7 @@ import sys
 import re
 import argparse
 import io
+import os
 
 parser = argparse.ArgumentParser(description="Process some windows resources.")
 parser.add_argument(
@@ -16,7 +17,7 @@ args = parser.parse_args()
 
 
 def print_declaration(f, asset, identifier):
-    f.write(str(identifier) + " RCDATA " + '"ion/src/simulator/assets/' + asset + '"\n')
+    f.write(str(identifier) + " RCDATA " + '"' + asset + '"\n')
 
 
 def print_mapping(f, asset, identifier):
@@ -62,5 +63,9 @@ if args.o.endswith(".rc"):
 
 if args.o.endswith(".h"):
     print(
-        args.assets, args.o, print_mapping_header, print_mapping_footer, print_mapping
+        [os.path.basename(a) for a in args.assets],
+        args.o,
+        print_mapping_header,
+        print_mapping_footer,
+        print_mapping,
     )

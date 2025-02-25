@@ -13,6 +13,21 @@ $(OUTPUT_ROOT)%/.:
 	mkdir -p $@
 
 # Rules for executable applications
+ifeq ($(OS),Windows_NT)
+# Work around command-line length limit
+# On Msys2 the max command line is 32 000 characters. Our standard LD command
+# can be longer than that because we have quite a lot of object files. To work
+# around this issue, we write the object list in a "target.objs" file, and tell
+# the linker to read its arguments from this file.
+$(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) $$(call lddeps_for_flavored_goal,%) | $$(@D)/.
+	$(call rule_label,LD)
+	$(call LD_WRAPPER_$(GOAL), \
+		echo "$(foreach l,$(filter %.a,$^),$(call objects_for_flavored_module,$(patsubst $(OUTPUT_DIRECTORY)/%.a,%,$l)))" > $@.objs && \
+		$(LD) $(PRIORITY_SFLAGS) $(SFLAGS) \
+		@$@.objs \
+		$(call ldflags_for_flavored_goal,$*) \
+		-o $@ && rm $@.objs)
+else
 $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_goal,%) $$(call lddeps_for_flavored_goal,%) | $$(@D)/.
 	$(call rule_label,LD)
 	$(call LD_WRAPPER_$(GOAL),$(LD) \
@@ -20,6 +35,7 @@ $(OUTPUT_DIRECTORY)/%.$(EXECUTABLE_EXTENSION): $$(call libraries_for_flavored_go
 		$(foreach l,$(filter %.a,$^),$(call objects_for_flavored_module,$(patsubst $(OUTPUT_DIRECTORY)/%.a,%,$l))) \
 		$(call ldflags_for_flavored_goal,$*) \
 		-o $@)
+endif
 
 $(call document_extension,$(EXECUTABLE_EXTENSION))
 
@@ -49,6 +65,11 @@ $(call rule_for_object, \
 $(call rule_for_object, \
   AS, s, \
   $$(CC) $$(PRIORITY_SFLAGS) $$(SFLAGS) -c $$< -o $$@ \
+)
+
+$(call rule_for_object, \
+  WINDRES, rc, \
+  $$(WINDRES) $$(WRFLAGS) $$< -O coff -o $$@ \
 )
 
 # Lock files, ensure that modules versions match

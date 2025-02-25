@@ -118,7 +118,7 @@ install_windows_binary_deps() {
 
   if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
     pacman -S --noconfirm \
-      mingw-w64-x86_64-python-pyusb
+      mingw-w64-x86_64-python-pyusb \
       mingw-w64-x86_64-arm-none-eabi-gcc
   fi
 }

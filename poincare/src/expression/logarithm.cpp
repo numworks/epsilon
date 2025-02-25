@@ -25,9 +25,9 @@ bool Logarithm::ReduceLn(Tree* e) {
     }
     PatternMatching::Context ctx;
     if (PatternMatching::Match(x, KMult(KA, KLn(KB)), &ctx)) {
-      const Tree* A = ctx.getTree(KA);
-      assert(!A->isOne());
-      if (A->isRational() && Rational::CompareAbs(A, 1_e) < 0) {
+      const Tree* a = ctx.getTree(KA);
+      assert(!a->isOne());
+      if (a->isRational() && Rational::CompareAbs(a, 1_e) < 0) {
         /* ln(exp(A*ln(B))) -> A*ln(B) if A is real and -1 < A <= 1
          * This can be proven using B in exponential form, the formula
          * ln(exp(C)) = re(C) + i*arg(exp(i*im(C))), and the fact that

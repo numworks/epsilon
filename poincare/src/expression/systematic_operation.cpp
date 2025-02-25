@@ -333,7 +333,6 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
 bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   assert(e->isArg());
   Tree* child = e->child(0);
-  ComplexSign childSign = GetComplexSign(child);
   // arg(e^(iA)) = A reduced to ]-π,π] when A real
   PatternMatching::Context ctx;
   if (PatternMatching::Match(child, KExp(KMult(KA_p, i_e)), &ctx)) {
@@ -380,6 +379,7 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   }
 
   // arg(x + iy) = atan2(y, x)
+  ComplexSign childSign = GetComplexSign(child);
   Sign realSign = childSign.realSign();
   if (realSign.hasKnownStrictSign()) {
     // TODO: Maybe move this in advanced reduction

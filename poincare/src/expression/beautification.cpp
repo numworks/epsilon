@@ -535,9 +535,18 @@ Tree* GetPolarFormat(const Tree* e,
   // Bubble up dependencies that appeared during reduction.
   bool bubbledUpDependencies = Dependency::ShallowBubbleUpDependencies(mult) &&
                                Dependency::ShallowBubbleUpDependencies(exp);
+  // Invalidate Tree pointers that are unused and may get corrupted
+  if (bubbledUpDependencies) {
+    arg = nullptr;
+  }
+  mult = nullptr;
   bubbledUpDependencies =
       Dependency::ShallowBubbleUpDependencies(result) || bubbledUpDependencies;
+  exp = nullptr;
   if (bubbledUpDependencies) {
+    // abs and ard pointer are preserved if no dependencies are bubbled up
+    arg = nullptr;
+    abs = nullptr;
     Dependency::DeepRemoveUselessDependencies(result);
   }
   Tree* polarForm = result->isDep() ? Dependency::Main(result) : result;
@@ -610,9 +619,15 @@ Tree* GetCartesianFormat(const Tree* e,
   }
   // Bubble up dependencies that appeared during reduction.
   bool bubbledUpDependencies = Dependency::ShallowBubbleUpDependencies(mult);
+  if (bubbledUpDependencies) {
+    // Invalidate Tree pointers that may get corrupted
+    im = nullptr;
+  }
   bubbledUpDependencies =
       Dependency::ShallowBubbleUpDependencies(result) || bubbledUpDependencies;
   if (bubbledUpDependencies) {
+    mult = nullptr;
+    re = nullptr;
     Dependency::DeepRemoveUselessDependencies(result);
   }
   Tree* cartesianForm = result->isDep() ? Dependency::Main(result) : result;

@@ -105,37 +105,49 @@ QUIZ_CASE(pcj_random_seeds) {
                                            false);
 }
 
-void assert_approximate_is_float(const char* input, float lowerBound = 0.0f,
-                                 float upperBound = 1.0f) {
-  Tree* e = parse_and_reduce(input, true);
+template <typename T>
+bool approximate_is_between_bounds(const Tree* e, T lowerBound, T upperBound) {
+  bool result = true;
   float approx = Approximation::To<float>(
       e, Approximation::Parameters{.isRootAndCanHaveRandom = true},
       Approximation::Context(AngleUnit::Radian));
+  if (std::is_same<T, int>::value) {
+    result = OMG::Float::RoughlyEqual(approx, std::round(approx),
+                                      OMG::Float::EpsilonLax<float>());
+  }
+  return result && approx >= lowerBound && approx <= upperBound;
+}
+
+void assert_approximate_is_float(const char* input, float lowerBound = 0.0f,
+                                 float upperBound = 1.0f) {
+  Tree* e = parse_and_reduce(input, true);
+  assert(!Dimension::IsList(e));
+  quiz_assert_print_if_failure(
+      approximate_is_between_bounds<float>(e, lowerBound, upperBound), input);
   e->removeTree();
-  quiz_assert_print_if_failure(approx >= lowerBound && approx <= upperBound,
-                               input);
 }
 
 void assert_approximate_is_int(const char* input, int lowerBound,
                                int upperBound) {
   Tree* e = parse_and_reduce(input, true);
   if (Dimension::IsList(e)) {
-    assert(Dimension::ListLength(e) > 0);
-    // Only check first element of list
-    TreeRef eApproximated = Approximation::ToTree<float>(
+    int length = Dimension::ListLength(e);
+    Tree* eApproximated = Approximation::ToTree<float>(
         e, Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                      .projectLocalVariables = true});
-    e->cloneTreeOverTree(eApproximated->child(0));
+    assert(length > 0);
+    for (int i = 0; i < length; i++) {
+      quiz_assert_print_if_failure(
+          approximate_is_between_bounds<int>(eApproximated->child(i),
+                                             lowerBound, upperBound),
+          input);
+    }
     eApproximated->removeTree();
+  } else {
+    quiz_assert_print_if_failure(
+        approximate_is_between_bounds<int>(e, lowerBound, upperBound), input);
   }
-  float approx = Approximation::To<float>(
-      e, Approximation::Parameters{.isRootAndCanHaveRandom = true},
-      Approximation::Context(AngleUnit::Radian));
-  quiz_assert_print_if_failure(
-      OMG::Float::RoughlyEqual(approx, std::round(approx),
-                               OMG::Float::EpsilonLax<float>()) &&
-          approx >= lowerBound && approx <= upperBound,
-      input);
+  e->removeTree();
 }
 
 QUIZ_CASE(pcj_random_range_values) {

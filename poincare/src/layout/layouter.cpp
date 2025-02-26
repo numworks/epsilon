@@ -801,8 +801,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
             layoutParent, expression,
             TypeBlock::names[static_cast<uint8_t>(*expression->block())]);
 #else
-        assert(false);
-        PushCodePoint(layoutParent, '?');
+        OMG::unreachable();
 #endif
         break;
       }

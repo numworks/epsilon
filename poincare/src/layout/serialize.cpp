@@ -205,10 +205,7 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
       } else {
         const BuiltinWithLayout* builtin =
             BuiltinWithLayout::GetReservedFunction(layout->layoutType());
-        if (!builtin) {
-          assert(false);
-          buffer = append("?", buffer, end);
-        }
+        assert(builtin);
         buffer = append(builtin->aliases()->mainAlias(), buffer, end);
       }
       buffer = append("(", buffer, end);

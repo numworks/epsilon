@@ -126,6 +126,7 @@ constexpr static Builtin s_builtins[] = {
     {Type::Exp, "exp"},
     {Type::LogBase, "log"},
     {Type::Log, "log"},
+    // No Builtins for Type::Ln because it's a system tree.
     {Type::LnUser, "ln"},
 #if POINCARE_MATRIX
     {Type::Cross, "cross"},

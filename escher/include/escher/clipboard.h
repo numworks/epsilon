@@ -18,6 +18,9 @@ class Clipboard {
 
  protected:
   Clipboard() { reset(); }
+  void updateTextFromTree();
+  Poincare::Layout privateStoredLayout() const;
+
   /* TODO store either text or layout in an union and convert as needed ? */
   char m_textBuffer[k_bufferSize];
   char m_treeBuffer[k_bufferSize];

@@ -43,7 +43,7 @@ void Clipboard::storeLayout(Poincare::Layout layout) {
     memcpy(m_treeBuffer, layout.tree(), size);
   }
   // Serialize in case we need it in a text field/area or outside epsilon
-  layout.serialize(m_textBuffer, k_bufferSize);
+  updateTextFromTree();
   // TODO_PCJ check that it fits
   Ion::Clipboard::write(m_textBuffer);
 }
@@ -86,8 +86,7 @@ Poincare::Layout Clipboard::storedLayout() {
                       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
                       nullptr);
   }
-  return Poincare::Layout::Builder(
-      reinterpret_cast<const Poincare::Internal::Tree*>(m_treeBuffer));
+  return privateStoredLayout();
 }
 
 void Clipboard::reset() {
@@ -96,6 +95,15 @@ void Clipboard::reset() {
   memcpy(m_treeBuffer, emptyRack, emptyRack->treeSize());
   /* As we do not want to empty the user's computer's clipboard when entering
    * exam mode, we do not reset Ion::Clipboard. */
+}
+
+void Clipboard::updateTextFromTree() {
+  privateStoredLayout().serialize(m_textBuffer, k_bufferSize);
+}
+
+Poincare::Layout Clipboard::privateStoredLayout() const {
+  return Poincare::Layout::Builder(
+      reinterpret_cast<const Poincare::Internal::Tree*>(m_treeBuffer));
 }
 
 }  // namespace Escher

@@ -544,7 +544,7 @@ Tree* GetPolarFormat(const Tree* e,
       Dependency::ShallowBubbleUpDependencies(result) || bubbledUpDependencies;
   exp = nullptr;
   if (bubbledUpDependencies) {
-    // abs and ard pointer are preserved if no dependencies are bubbled up
+    // abs and arg pointer are preserved if no dependencies are bubbled up
     arg = nullptr;
     abs = nullptr;
     Dependency::DeepRemoveUselessDependencies(result);

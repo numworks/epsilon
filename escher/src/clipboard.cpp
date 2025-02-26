@@ -35,6 +35,7 @@ void Clipboard::storeText(const char* text, int length) {
          UTF8Decoder::IsTheEndOfACodePoint(&text[length - 1], text));
   strlcpy(m_textBuffer, text, length + 1);
   Ion::Clipboard::write(m_textBuffer);
+  m_bufferState = TextUpToDate;
 }
 
 void Clipboard::storeLayout(Poincare::Layout layout) {
@@ -43,9 +44,10 @@ void Clipboard::storeLayout(Poincare::Layout layout) {
     memcpy(m_treeBuffer, layout.tree(), size);
   }
   // Serialize in case we need it in a text field/area or outside epsilon
-  updateTextFromTree();
+  // updateTextFromTree();
   // TODO_PCJ check that it fits
   Ion::Clipboard::write(m_textBuffer);
+  m_bufferState = TreeUpToDate;
 }
 
 const char* Clipboard::storedText() {
@@ -54,15 +56,21 @@ const char* Clipboard::storedText() {
     return systemText;
   }
 
+  if (m_bufferState == TreeUpToDate) {
+    updateTextFromTree();
+  }
+#if 0
+  // TODO remove if nothing is broken
   /* In order to allow copy/paste of empty formulas, we need to add empty
    * layouts between empty system parenthesis. This way, when the expression
    * is parsed, it is recognized as a proper formula and appears with the
-   * correct visual layout. Without this process, copying an empty integral then
-   * pasting it gives : int((), x, (), ()) instead of drawing an empty integral.
+   * correct visual layout. Without this process, copying an empty integral
+   * then pasting it gives : int((), x, (), ()) instead of drawing an empty
+   * integral.
    *
-   * Furthermore, in case the user switches from linear to natural writing mode
-   * we need to add an empty layout between parenthesis to allow proper layout
-   * construction. */
+   * Furthermore, in case the user switches from linear to natural writing
+   * mode we need to add an empty layout between parenthesis to allow proper
+   * layout construction. */
   constexpr int numberOfPairs = 6;
   constexpr UTF8Helper::TextPair textPairs[numberOfPairs] = {
       UTF8Helper::TextPair("()", "(\x11)"),
@@ -73,19 +81,28 @@ const char* Clipboard::storedText() {
       UTF8Helper::TextPair("\x12\x13", "\x12\x11\x13"),
   };
 
+  // TODO : Maybe this isn't necessary anymore ?
+  std::cout << "StoredText: " << m_textBuffer << std::endl;
   UTF8Helper::TryAndReplacePatternsInStringByPatterns(
       m_textBuffer, TextField::MaxBufferSize(), textPairs, numberOfPairs, true);
+  std::cout << "StoredText: " << m_textBuffer << std::endl;
+#endif
   return m_textBuffer;
 }
 
 Poincare::Layout Clipboard::storedLayout() {
   const char* systemText = Ion::Clipboard::read();
   if (systemText) {
+    // TODO: Is it needed to use an expression here ? why not layout directly ?
     return Poincare::Expression::Parse(systemText, nullptr)
         .createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
                       nullptr);
   }
+  if (m_bufferState != TextUpToDate) {
+    return privateStoredLayout();
+  }
+  updateTreeFromText();
   return privateStoredLayout();
 }
 
@@ -97,11 +114,22 @@ void Clipboard::reset() {
    * exam mode, we do not reset Ion::Clipboard. */
 }
 
+void Clipboard::updateTreeFromText() {
+  Poincare::Layout layout = Poincare::Layout::Parse(m_textBuffer);
+  int size = layout.tree()->treeSize();
+  if (size < k_bufferSize) {
+    memcpy(m_treeBuffer, layout.tree(), size);
+  }
+  m_bufferState = BothUpToDate;
+}
+
 void Clipboard::updateTextFromTree() {
   privateStoredLayout().serialize(m_textBuffer, k_bufferSize);
+  m_bufferState = BothUpToDate;
 }
 
 Poincare::Layout Clipboard::privateStoredLayout() const {
+  // TODO: Assert that SharedTreeStack is initialized
   return Poincare::Layout::Builder(
       reinterpret_cast<const Poincare::Internal::Tree*>(m_treeBuffer));
 }

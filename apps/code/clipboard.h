@@ -14,7 +14,7 @@ class Clipboard : public Escher::Clipboard {
   static const UTF8Helper::TextPair* PythonTextPairs();
   static bool ShouldReplaceLetterE(const char* text, size_t length,
                                    size_t position);
-  void enterPython() { replaceCharForPython(true); }
+  void enterPython();
   void exitPython() { replaceCharForPython(false); }
 
  private:

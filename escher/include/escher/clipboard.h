@@ -18,12 +18,24 @@ class Clipboard {
 
  protected:
   Clipboard() { reset(); }
+  void updateTreeFromText();
   void updateTextFromTree();
   Poincare::Layout privateStoredLayout() const;
 
   /* TODO store either text or layout in an union and convert as needed ? */
   char m_textBuffer[k_bufferSize];
   char m_treeBuffer[k_bufferSize];
+
+  enum BufferState {
+    TextUpToDate,
+    TreeUpToDate,
+    BothUpToDate,
+  };
+
+  BufferState bufferState() { return m_bufferState; }
+
+ private:
+  BufferState m_bufferState = BothUpToDate;
 };
 
 }  // namespace Escher

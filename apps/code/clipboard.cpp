@@ -16,6 +16,13 @@ Clipboard* Clipboard::sharedClipboard() {
   return static_cast<Clipboard*>(Escher::Clipboard::SharedClipboard());
 }
 
+void Clipboard::enterPython() {
+  if (bufferState() == TreeUpToDate) {
+    updateTextFromTree();
+  }
+  replaceCharForPython(true);
+}
+
 bool Clipboard::ShouldReplaceLetterE(const char* text, size_t length,
                                      size_t position) {
   if (text[position] != 'e') {

@@ -1,38 +1,36 @@
 #ifndef POINCARE_REGRESSION_DATASET_ADAPTER_H
 #define POINCARE_REGRESSION_DATASET_ADAPTER_H
 
-#include "series.h"
+#include "data_table.h"
 #include "statistics_dataset.h"
 
 namespace Poincare::Internal {
 
-class DatasetColumnSeriesAdapter : public Internal::DatasetColumn<double> {
+class DatasetColumnAdapter : public Internal::DatasetColumn<double> {
  public:
-  DatasetColumnSeriesAdapter(const Series* series, int column)
-      : m_series(series), m_column(column) {
-    assert(column == 0 || column == 1);
-  }
+  DatasetColumnAdapter(const DataTable* data, int column)
+      : m_dataTable(data), m_column(column) {}
 
   double valueAtIndex(int index) const override {
-    return m_series->get(m_column, index);
+    return m_dataTable->get(m_column, index);
   }
-  int length() const override { return m_series->numberOfPairs(); }
+  int length() const override { return m_dataTable->numberOfRows(); }
 
  private:
-  const Series* m_series;
+  const DataTable* m_dataTable;
   int m_column;
 };
 
-class StatisticsDatasetFromSeriesColumn : public StatisticsDataset<double> {
+class StatisticsDatasetFromColumn : public StatisticsDataset<double> {
  public:
-  StatisticsDatasetFromSeriesColumn(const Series* series, int column,
-                                    bool lnOfValues = false,
-                                    bool oppositeOfValues = false)
+  StatisticsDatasetFromColumn(const DataTable* data, int column,
+                              bool lnOfValues = false,
+                              bool oppositeOfValues = false)
       : StatisticsDataset(&m_columnAdapter, lnOfValues, oppositeOfValues),
-        m_columnAdapter(series, column) {}
+        m_columnAdapter(data, column) {}
 
  private:
-  const DatasetColumnSeriesAdapter m_columnAdapter;
+  const DatasetColumnAdapter m_columnAdapter;
 };
 
 }  // namespace Poincare::Internal

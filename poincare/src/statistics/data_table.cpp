@@ -1,8 +1,24 @@
-#include "series.h"
+#include "data_table.h"
 
 #include "dataset_adapter.h"
 
 namespace Poincare::Internal {
+
+StatisticsDatasetFromColumn DataTable::createDatasetFromColumn(
+    int i, StatisticsCalculationOptions options) const {
+  return StatisticsDatasetFromColumn(this, i, options.lnOfValues(i),
+                                     options.oppositeOfValues(i));
+}
+
+double DataTable::meanOfColumn(int i,
+                               StatisticsCalculationOptions options) const {
+  return createDatasetFromColumn(i, options).mean();
+}
+
+double DataTable::varianceOfColumn(int i,
+                                   StatisticsCalculationOptions options) const {
+  return createDatasetFromColumn(i, options).variance();
+}
 
 bool Series::numberOfDistinctAbscissaeGreaterOrEqualTo(int i) const {
   int count = 0;
@@ -23,12 +39,6 @@ bool Series::numberOfDistinctAbscissaeGreaterOrEqualTo(int i) const {
     }
   }
   return count >= i;
-}
-
-StatisticsDatasetFromSeriesColumn Series::createDatasetFromColumn(
-    int i, StatisticsCalculationOptions options) const {
-  return StatisticsDatasetFromSeriesColumn(this, i, options.lnOfValues(i),
-                                           options.oppositeOfValues(i));
 }
 
 double Series::columnProductSum(StatisticsCalculationOptions options) const {
@@ -55,15 +65,6 @@ double Series::yIntercept(StatisticsCalculationOptions options) const {
   double meanOfX = meanOfColumn(0, options);
   double meanOfY = meanOfColumn(1, options);
   return meanOfY - slope(options) * meanOfX;
-}
-
-double Series::meanOfColumn(int i, StatisticsCalculationOptions options) const {
-  return createDatasetFromColumn(i, options).mean();
-}
-
-double Series::varianceOfColumn(int i,
-                                StatisticsCalculationOptions options) const {
-  return createDatasetFromColumn(i, options).variance();
 }
 
 }  // namespace Poincare::Internal

@@ -202,7 +202,7 @@ $(addprefix statistics/, \
     transformed_regression.cpp \
     trigonometric_regression.cpp \
   )) \
-  series.cpp \
+  data_table.cpp \
   statistics_dataset.cpp \
   statistics_dataset_column.cpp \
 ) \

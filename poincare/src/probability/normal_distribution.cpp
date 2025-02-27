@@ -2,7 +2,7 @@
 #include <float.h>
 #include <omg/float.h>
 #include <poincare/probability/normal_distribution.h>
-#include <poincare/src/numeric/erf_inv.h>
+#include <poincare/src/solver/erf_inv.h>
 
 #include <cmath>
 

@@ -1,7 +1,7 @@
 #include "function_model.h"
 
 #include <apps/shared/interactive_curve_view_range.h>
-#include <poincare/numeric/zoom.h>
+#include <poincare/solver/zoom.h>
 
 #include <algorithm>
 

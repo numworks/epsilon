@@ -2,7 +2,7 @@
 #define SHARED_LINEAR_REGRESSION_STORE_H
 
 #include <float.h>
-#include <poincare/numeric/statistics.h>
+#include <poincare/solver/statistics.h>
 
 #include "double_pair_store.h"
 

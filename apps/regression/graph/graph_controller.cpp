@@ -5,9 +5,9 @@
 #include <apps/shared/poincare_helpers.h>
 #include <omg/utf8_helper.h>
 #include <poincare/layout.h>
-#include <poincare/numeric/zoom.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
+#include <poincare/solver/zoom.h>
 
 #include <algorithm>
 #include <cmath>

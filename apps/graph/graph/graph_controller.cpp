@@ -2,7 +2,7 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/layout.h>
-#include <poincare/numeric/zoom.h>
+#include <poincare/solver/zoom.h>
 
 #include <algorithm>
 

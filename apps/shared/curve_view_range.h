@@ -2,7 +2,7 @@
 #define SHARED_CURVE_VIEW_RANGE_H
 
 #include <omg/enums.h>
-#include <poincare/numeric/zoom.h>
+#include <poincare/solver/zoom.h>
 #include <stdint.h>
 
 namespace Shared {

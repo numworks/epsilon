@@ -3,8 +3,8 @@
 #include <omg/float.h>
 #include <omg/unreachable.h>
 #include <poincare/src/memory/n_ary.h>
-#include <poincare/src/numeric/statistics_dataset.h>
 #include <poincare/src/probability/distribution_method.h>
+#include <poincare/src/solver/statistics_dataset.h>
 #include <poincare/trigonometry.h>
 
 #include <bit>

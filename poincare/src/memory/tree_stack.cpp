@@ -2,7 +2,7 @@
 
 #include <assert.h>
 #include <omg/memory.h>
-#include <poincare/numeric/point_of_interest.h>
+#include <poincare/solver/point_of_interest.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/physical_constant.h>

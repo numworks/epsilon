@@ -2,7 +2,7 @@
 #define POINCARE_PROBABILITY_DISTRIBUTION_H
 
 #include <poincare/src/memory/tree.h>
-#include <poincare/src/numeric/solver_algorithms.h>
+#include <poincare/src/solver/solver_algorithms.h>
 
 namespace Poincare {
 

@@ -7,8 +7,8 @@
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/numeric/roots.h>
 #include <poincare/print.h>
+#include <poincare/solver/roots.h>
 #include <poincare/src/expression/derivation.h>
 #include <poincare/trigonometry.h>
 

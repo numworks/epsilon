@@ -1,8 +1,8 @@
 #ifndef POINCARE_REGRESSION_DATASET_ADAPTER_H
 #define POINCARE_REGRESSION_DATASET_ADAPTER_H
 
-#include <poincare/numeric/statistics.h>
 #include <poincare/regression/series.h>
+#include <poincare/solver/statistics.h>
 
 namespace Poincare::Regression {
 

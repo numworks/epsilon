@@ -1,6 +1,6 @@
 #include <float.h>
 #include <omg/float.h>
-#include <poincare/src/numeric/erf_inv.h>
+#include <poincare/src/solver/erf_inv.h>
 #include <quiz.h>
 
 #include <cmath>

@@ -9,7 +9,7 @@
 #include <poincare/probability/poisson_distribution.h>
 #include <poincare/probability/student_distribution.h>
 #include <poincare/probability/uniform_distribution.h>
-#include <poincare/src/numeric/solver_algorithms.h>
+#include <poincare/src/solver/solver_algorithms.h>
 
 #include <algorithm>
 

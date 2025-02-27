@@ -3,7 +3,7 @@
 #include <apps/i18n.h>
 #include <float.h>
 #include <limits.h>
-#include <poincare/numeric/zoom.h>
+#include <poincare/solver/zoom.h>
 
 #include <algorithm>
 #include <cmath>

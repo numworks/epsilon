@@ -1,9 +1,9 @@
 #include "cobweb_controller.h"
 
 #include <poincare/layout.h>
-#include <poincare/numeric/zoom.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
+#include <poincare/solver/zoom.h>
 
 #include "../app.h"
 #include "apps/sequence/graph/cobweb_graph_view.h"

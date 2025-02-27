@@ -1,7 +1,7 @@
 #ifndef SHARED_STATISTICS_STORE_H
 #define SHARED_STATISTICS_STORE_H
 
-#include <poincare/numeric/statistics.h>
+#include <poincare/solver/statistics.h>
 
 #include "double_pair_store.h"
 

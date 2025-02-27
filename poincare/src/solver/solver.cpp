@@ -1,4 +1,4 @@
-#include <poincare/numeric/solver.h>
+#include <poincare/solver/solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/dependency.h>

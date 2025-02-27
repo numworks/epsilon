@@ -1,7 +1,7 @@
 #ifndef POINCARE_NUMERIC_POINT_OF_INTEREST_H
 #define POINCARE_NUMERIC_POINT_OF_INTEREST_H
 
-#include <poincare/numeric/solver.h>
+#include <poincare/solver/solver.h>
 
 namespace Poincare {
 

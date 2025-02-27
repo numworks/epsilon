@@ -62,7 +62,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
 
 double Regression::evaluate(const double* modelCoefficients, double x) const {
   Coefficients coefficients;
-  memcpy(coefficients.begin(), modelCoefficients,
+  memcpy(coefficients.data(), modelCoefficients,
          numberOfCoefficients() * sizeof(double));
   return privateEvaluate(coefficients, x);
 }
@@ -71,12 +71,12 @@ void Regression::fit(const Series* series, double* modelCoefficients,
                      Poincare::Context* context) const {
   if (!dataSuitableForFit(series)) {
     Coefficients initialCoefficients = initCoefficientsForFit(NAN, true, 0);
-    memmove(modelCoefficients, initialCoefficients.begin(),
+    memmove(modelCoefficients, initialCoefficients.data(),
             numberOfCoefficients() * sizeof(double));
     return;
   }
   Coefficients coefficients = privateFit(series, context);
-  memmove(modelCoefficients, coefficients.begin(),
+  memmove(modelCoefficients, coefficients.data(),
           numberOfCoefficients() * sizeof(double));
 }
 
@@ -405,7 +405,7 @@ double Regression::residualAtIndex(const Series* series,
 double Regression::residualStandardDeviation(
     const Series* series, const double* modelCoefficients) const {
   Coefficients coefficients;
-  memcpy(coefficients.begin(), modelCoefficients,
+  memcpy(coefficients.data(), modelCoefficients,
          numberOfCoefficients() * sizeof(double));
   return privateResidualStandardDeviation(series, coefficients);
 }

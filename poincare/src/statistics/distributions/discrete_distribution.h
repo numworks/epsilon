@@ -45,8 +45,6 @@ class DiscreteDistribution : public Distribution {
 
 }  // namespace Internal
 
-using DiscreteDistribution = Internal::DiscreteDistribution;
-
 }  // namespace Poincare
 
 #endif

@@ -90,8 +90,6 @@ class NormalDistribution final : public ContinuousDistribution {
 
 }  // namespace Internal
 
-using NormalDistribution = Internal::NormalDistribution;
-
 }  // namespace Poincare
 
 #endif

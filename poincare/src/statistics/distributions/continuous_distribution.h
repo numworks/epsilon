@@ -33,8 +33,6 @@ class ContinuousDistribution : public Distribution {
 
 }  // namespace Internal
 
-using ContinuousDistribution = Internal::ContinuousDistribution;
-
 }  // namespace Poincare
 
 #endif

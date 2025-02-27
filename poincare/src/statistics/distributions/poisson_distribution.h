@@ -60,8 +60,6 @@ class PoissonDistribution final : public DiscreteDistribution {
 
 }  // namespace Internal
 
-using PoissonDistribution = Internal::PoissonDistribution;
-
 }  // namespace Poincare
 
 #endif

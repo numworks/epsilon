@@ -63,8 +63,6 @@ class GeometricDistribution final : public DiscreteDistribution {
 
 }  // namespace Internal
 
-using GeometricDistribution = Internal::GeometricDistribution;
-
 }  // namespace Poincare
 
 #endif

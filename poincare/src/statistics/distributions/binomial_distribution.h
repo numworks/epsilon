@@ -79,8 +79,6 @@ class BinomialDistribution final : public DiscreteDistribution {
 
 }  // namespace Internal
 
-using BinomialDistribution = Internal::BinomialDistribution;
-
 }  // namespace Poincare
 
 #endif

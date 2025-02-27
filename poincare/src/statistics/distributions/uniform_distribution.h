@@ -80,8 +80,6 @@ class UniformDistribution final : public ContinuousDistribution {
 
 }  // namespace Internal
 
-using UniformDistribution = Internal::UniformDistribution;
-
 }  // namespace Poincare
 
 #endif

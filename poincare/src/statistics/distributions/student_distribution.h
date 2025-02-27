@@ -70,8 +70,6 @@ class StudentDistribution final : public ContinuousDistribution {
 
 }  // namespace Internal
 
-using StudentDistribution = Internal::StudentDistribution;
-
 }  // namespace Poincare
 
 #endif

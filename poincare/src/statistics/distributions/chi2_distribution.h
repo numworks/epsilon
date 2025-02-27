@@ -69,8 +69,6 @@ class Chi2Distribution final : public ContinuousDistribution {
 
 }  // namespace Internal
 
-using Chi2Distribution = Internal::Chi2Distribution;
-
 }  // namespace Poincare
 
 #endif

@@ -70,8 +70,6 @@ class ExponentialDistribution final : public ContinuousDistribution {
 
 }  // namespace Internal
 
-using ExponentialDistribution = Internal::ExponentialDistribution;
-
 }  // namespace Poincare
 
 #endif

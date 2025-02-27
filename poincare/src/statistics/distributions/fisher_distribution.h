@@ -80,8 +80,6 @@ class FisherDistribution final : public ContinuousDistribution {
 
 }  // namespace Internal
 
-using FisherDistribution = Internal::FisherDistribution;
-
 }  // namespace Poincare
 
 #endif

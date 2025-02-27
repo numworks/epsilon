@@ -67,8 +67,6 @@ class HypergeometricDistribution final : public DiscreteDistribution {
 
 }  // namespace Internal
 
-using HypergeometricDistribution = Internal::HypergeometricDistribution;
-
 }  // namespace Poincare
 
 #endif

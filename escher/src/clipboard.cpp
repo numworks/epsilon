@@ -10,11 +10,6 @@
 
 namespace Escher {
 
-Clipboard::Clipboard() {
-  const Poincare::Internal::Tree* emptyRack = Poincare::Internal::KRackL();
-  memcpy(m_treeBuffer, emptyRack, emptyRack->treeSize());
-}
-
 Clipboard* Clipboard::SharedClipboard() {
   static Clipboard s_clipboard;
   return &s_clipboard;
@@ -97,6 +92,8 @@ Poincare::Layout Clipboard::storedLayout() {
 
 void Clipboard::reset() {
   strlcpy(m_textBuffer, "", 1);
+  const Poincare::Internal::Tree* emptyRack = Poincare::Internal::KRackL();
+  memcpy(m_treeBuffer, emptyRack, emptyRack->treeSize());
   /* As we do not want to empty the user's computer's clipboard when entering
    * exam mode, we do not reset Ion::Clipboard. */
 }

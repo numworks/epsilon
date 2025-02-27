@@ -29,7 +29,7 @@ MenuController::MenuController(
   }
   i = 0;
   for (std::initializer_list<I18n::Message> mess : messages) {
-    assert(mess.end() - mess.begin() == 2);
+    assert(mess.size() == 2);
     cell(i++)->setMessages(*mess.begin(), *(mess.begin() + 1));
   }
   i = 0;

@@ -9,21 +9,18 @@ namespace Inference {
 
 float Distribution::canonicalDensityFunction(float x,
                                              double degreesOfFreedom) const {
-  assert(degreesOfFreedom > 0);
   return distribution()->evaluateAtAbscissa(
       x, constParametersArray(&degreesOfFreedom));
 }
 
 double Distribution::cumulativeNormalizedDistributionFunction(
     double x, double degreesOfFreedom) const {
-  assert(degreesOfFreedom > 0);
   return distribution()->cumulativeDistributiveFunctionAtAbscissa(
       x, constParametersArray(&degreesOfFreedom));
 }
 
 double Distribution::cumulativeNormalizedInverseDistributionFunction(
     double proba, double degreesOfFreedom) const {
-  assert(degreesOfFreedom > 0);
   return distribution()->cumulativeDistributiveInverseForProbability(
       proba, constParametersArray(&degreesOfFreedom));
 }

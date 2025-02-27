@@ -42,6 +42,7 @@ class DistributionT : public Distribution {
   }
 
   const double* constParametersArray(double* degreesOfFreedom) const override {
+    assert(*degreesOfFreedom > 0);
     return degreesOfFreedom;
   }
 };
@@ -80,6 +81,7 @@ class DistributionChi2 : public Distribution {
   }
 
   const double* constParametersArray(double* degreesOfFreedom) const override {
+    assert(*degreesOfFreedom > 0);
     return degreesOfFreedom;
   }
 };

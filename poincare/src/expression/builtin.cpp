@@ -3,7 +3,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <poincare/src/memory/type_block.h>
-#include <poincare/src/probability/distribution_method.h>
+#include <poincare/src/statistics/distributions/distribution_method.h>
 #include <poincare/statistics/distribution.h>
 
 #include "k_tree.h"

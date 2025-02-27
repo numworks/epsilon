@@ -1,6 +1,6 @@
 #include <ion.h>
 #include <omg/ieee754.h>
-#include <poincare  //random.h>
+#include <poincare/random.h>
 
 namespace Poincare {
 

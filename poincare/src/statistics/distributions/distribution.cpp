@@ -1,6 +1,5 @@
-#include "distribution.h"
-
 #include <poincare/src/solver/solver_algorithms.h>
+#include <poincare/statistics/distribution.h>
 
 #include <algorithm>
 

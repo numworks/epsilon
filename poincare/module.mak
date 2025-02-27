@@ -146,45 +146,10 @@ $(addprefix memory/, \
   value_block.cpp \
   visualization.cpp \
 ) \
-$(addprefix numeric/, \
-  beta_function.cpp \
-  erf_inv.cpp \
-  matrix_array.cpp \
-  point_of_interest_list.cpp:-nopool \
-  random.cpp \
-  regularized_gamma_function.cpp \
-  regularized_incomplete_beta_function.cpp \
-  roots.cpp \
-  solver.cpp \
-  solver_algorithms.cpp \
-  statistics_dataset.cpp \
-  statistics_dataset_column.cpp \
-  zoom.cpp \
-) \
 $(addprefix pool/, \
   expression.cpp:-nopool \
   layout.cpp:-nopool \
   pool_layout_cursor.cpp:-nopool \
-) \
-$(addprefix probability/, \
-  binomial_distribution.cpp \
-  cdf_method.cpp \
-  cdf_range_method.cpp \
-  chi2_distribution.cpp \
-  discrete_distribution.cpp \
-  distribution.cpp \
-  distribution_method.cpp \
-  domain.cpp \
-  exponential_distribution.cpp \
-  fisher_distribution.cpp \
-  geometric_distribution.cpp \
-  hypergeometric_distribution.cpp \
-  inv_method.cpp \
-  normal_distribution.cpp \
-  pdf_method.cpp \
-  poisson_distribution.cpp \
-  student_distribution.cpp \
-  uniform_distribution.cpp \
 ) \
 $(addprefix regression/, \
   $(addsuffix :-nopool, \
@@ -205,9 +170,46 @@ $(addprefix regression/, \
   transformed_regression.cpp \
   trigonometric_regression.cpp \
 )) \
+$(addprefix solver/, \
+  beta_function.cpp \
+  erf_inv.cpp \
+  matrix_array.cpp \
+  point_of_interest_list.cpp:-nopool \
+  regularized_gamma_function.cpp \
+  regularized_incomplete_beta_function.cpp \
+  roots.cpp \
+  solver.cpp \
+  solver_algorithms.cpp \
+  zoom.cpp \
+) \
+$(addprefix statistics/, \
+  $(addprefix distributions/, \
+    binomial_distribution.cpp \
+    cdf_method.cpp \
+    cdf_range_method.cpp \
+    chi2_distribution.cpp \
+    discrete_distribution.cpp \
+    distribution.cpp \
+    distribution_method.cpp \
+    domain.cpp \
+    exponential_distribution.cpp \
+    fisher_distribution.cpp \
+    geometric_distribution.cpp \
+    hypergeometric_distribution.cpp \
+    inv_method.cpp \
+    normal_distribution.cpp \
+    pdf_method.cpp \
+    poisson_distribution.cpp \
+    student_distribution.cpp \
+    uniform_distribution.cpp \
+  ) \
+  statistics_dataset.cpp \
+  statistics_dataset_column.cpp \
+) \
   additional_results_helper.cpp:-nopool \
   comparison_operator.cpp \
   print.cpp \
+  random.cpp \
   range.cpp \
 )
 

@@ -1,6 +1,6 @@
 #include "random.h"
 
-#include <poincare  //random.h>
+#include <poincare/random.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>
 

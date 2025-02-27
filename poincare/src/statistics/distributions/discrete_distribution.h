@@ -1,7 +1,7 @@
 #ifndef POINCARE_STATISTICS_PROBABILITY_DISCRETE_DISTRIBUTION_H
 #define POINCARE_STATISTICS_PROBABILITY_DISCRETE_DISTRIBUTION_H
 
-#include "distribution.h"
+#include <poincare/statistics/distribution.h>
 
 namespace Poincare {
 

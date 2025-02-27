@@ -1,5 +1,5 @@
-#ifndef POINCARE_NUMERIC_SOLVER_H
-#define POINCARE_NUMERIC_SOLVER_H
+#ifndef POINCARE_SOLVER_SOLVER_H
+#define POINCARE_SOLVER_SOLVER_H
 
 #include <omg/float.h>
 #include <omg/troolean.h>

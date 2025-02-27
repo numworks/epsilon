@@ -1,5 +1,5 @@
-#ifndef POINCARE_NUMERIC_ROOTS_H
-#define POINCARE_NUMERIC_ROOTS_H
+#ifndef POINCARE_SOLVER_ROOTS_H
+#define POINCARE_SOLVER_ROOTS_H
 
 #include <poincare/k_tree.h>
 #include <poincare/src/memory/tree.h>

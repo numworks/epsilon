@@ -1,5 +1,5 @@
-#ifndef POINCARE_NUMERIC_ZOOM_H
-#define POINCARE_NUMERIC_ZOOM_H
+#ifndef POINCARE_SOLVER_ZOOM_H
+#define POINCARE_SOLVER_ZOOM_H
 
 #include <ion/display.h>
 #include <poincare/range.h>

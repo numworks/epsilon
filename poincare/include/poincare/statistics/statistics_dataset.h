@@ -1,5 +1,5 @@
-#ifndef POINCARE_STATISTICS_STATISTICS_H
-#define POINCARE_STATISTICS_STATISTICS_H
+#ifndef POINCARE_STATISTICS_STATISTICS_DATASET_H
+#define POINCARE_STATISTICS_STATISTICS_DATASET_H
 
 #include <poincare/src/statistics/statistics_dataset.h>
 #include <poincare/src/statistics/statistics_dataset_column.h>

@@ -1,5 +1,5 @@
-#ifndef POINCARE_NUMERIC_RANDOM_H
-#define POINCARE_NUMERIC_RANDOM_H
+#ifndef POINCARE_RANDOM_H
+#define POINCARE_RANDOM_H
 
 namespace Poincare {
 

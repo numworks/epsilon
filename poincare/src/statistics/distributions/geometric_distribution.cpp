@@ -3,8 +3,8 @@
 #include <omg/float.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/solver/solver_algorithms.h>
-#include <poincare/statistics/distributions/distribution.h>
-#include <poincare/statistics/distributions/geometric_distribution.h>
+#include <poincare/src/statistics/distributions/geometric_distribution.h>
+#include <poincare/statistics/distribution.h>
 
 #include <cmath>
 

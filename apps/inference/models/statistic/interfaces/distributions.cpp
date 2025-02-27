@@ -4,34 +4,31 @@
 #include <inference/models/statistic/test.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/statistics/distributions/chi2_distribution.h>
-#include <poincare/statistics/distributions/normal_distribution.h>
-#include <poincare/statistics/distributions/student_distribution.h>
 
 namespace Inference {
 
-/* Distribution t */
-
-float DistributionT::canonicalDensityFunction(float x,
-                                              double degreesOfFreedom) const {
+float Distribution::canonicalDensityFunction(float x,
+                                             double degreesOfFreedom) const {
   assert(degreesOfFreedom > 0);
-  return Poincare::StudentDistribution::EvaluateAtAbscissa<float>(
-      x, degreesOfFreedom);
+  return distribution()->evaluateAtAbscissa(
+      x, constParametersArray(&degreesOfFreedom));
 }
 
-double DistributionT::cumulativeNormalizedDistributionFunction(
+double Distribution::cumulativeNormalizedDistributionFunction(
     double x, double degreesOfFreedom) const {
   assert(degreesOfFreedom > 0);
-  return Poincare::StudentDistribution::
-      CumulativeDistributiveFunctionAtAbscissa(x, degreesOfFreedom);
+  return distribution()->cumulativeDistributiveFunctionAtAbscissa(
+      x, constParametersArray(&degreesOfFreedom));
 }
 
-double DistributionT::cumulativeNormalizedInverseDistributionFunction(
+double Distribution::cumulativeNormalizedInverseDistributionFunction(
     double proba, double degreesOfFreedom) const {
   assert(degreesOfFreedom > 0);
-  return Poincare::StudentDistribution::
-      CumulativeDistributiveInverseForProbability(proba, degreesOfFreedom);
+  return distribution()->cumulativeDistributiveInverseForProbability(
+      proba, constParametersArray(&degreesOfFreedom));
 }
+
+/* Distribution t */
 
 float DistributionT::yMax(double degreesOfFreedom) const {
   return (1 + Shared::Inference::k_displayTopMarginRatio) *
@@ -39,23 +36,6 @@ float DistributionT::yMax(double degreesOfFreedom) const {
 }
 
 /* Distribution z */
-
-float DistributionZ::canonicalDensityFunction(float x,
-                                              double degreesOfFreedom) const {
-  return Poincare::NormalDistribution::EvaluateAtAbscissa<float>(x, 0, 1);
-}
-
-double DistributionZ::cumulativeNormalizedDistributionFunction(
-    double x, double degreesOfFreedom) const {
-  return Poincare::NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<
-      double>(x, 0, 1);
-}
-
-double DistributionZ::cumulativeNormalizedInverseDistributionFunction(
-    double proba, double degreesOfFreedom) const {
-  return Poincare::NormalDistribution::
-      CumulativeDistributiveInverseForProbability<double>(proba, 0, 1);
-}
 
 float DistributionZ::yMax(double degreesOfFreedom) const {
   return (1 + Shared::Inference::k_displayTopMarginRatio) *
@@ -66,27 +46,6 @@ float DistributionZ::yMax(double degreesOfFreedom) const {
 
 Poincare::Layout DistributionChi2::criticalValueSymbolLayout() const {
   return "χ"_l ^ KSuperscriptL("2"_l);
-}
-
-float DistributionChi2::canonicalDensityFunction(
-    float x, double degreesOfFreedom) const {
-  assert(degreesOfFreedom > 0);
-  return Poincare::Chi2Distribution::EvaluateAtAbscissa(
-      x, static_cast<float>(degreesOfFreedom));
-}
-
-double DistributionChi2::cumulativeNormalizedDistributionFunction(
-    double x, double degreesOfFreedom) const {
-  assert(degreesOfFreedom > 0);
-  return Poincare::Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(
-      x, degreesOfFreedom);
-}
-
-double DistributionChi2::cumulativeNormalizedInverseDistributionFunction(
-    double proba, double degreesOfFreedom) const {
-  assert(degreesOfFreedom > 0);
-  return Poincare::Chi2Distribution::
-      CumulativeDistributiveInverseForProbability(proba, degreesOfFreedom);
 }
 
 float DistributionChi2::xMin(double degreesOfFreedom) const {

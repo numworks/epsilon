@@ -3,7 +3,7 @@
 #include <omg/float.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/solver/solver_algorithms.h>
-#include <poincare/statistics/distributions/hypergeometric_distribution.h>
+#include <poincare/src/statistics/distributions/hypergeometric_distribution.h>
 
 #include <cmath>
 

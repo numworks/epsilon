@@ -22,7 +22,6 @@ class BinomialDistribution final : public TwoParametersDistribution {
   double defaultParameterAtIndex(int index) const override {
     return index == 0 ? k_defaultN : k_defaultP;
   }
-  double cumulativeDistributiveInverseForProbability(double p) const override;
   double rightIntegralInverseForProbability(double p) const override;
 
  protected:
@@ -34,7 +33,6 @@ class BinomialDistribution final : public TwoParametersDistribution {
   float privateComputeXMin() const override;
   float privateComputeXMax() const override;
   float computeYMax() const override;
-  double evaluateAtDiscreteAbscissa(int k) const override;
 };
 
 }  // namespace Distributions

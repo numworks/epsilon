@@ -1,6 +1,6 @@
 #include <float.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
-#include <poincare/statistics/distributions/exponential_distribution.h>
+#include <poincare/src/statistics/distributions/exponential_distribution.h>
 
 #include <cmath>
 

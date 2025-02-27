@@ -1,4 +1,4 @@
-#include <poincare/statistics/distributions/discrete_distribution.h>
+#include <poincare/src/statistics/distributions/discrete_distribution.h>
 
 namespace Poincare::Internal {
 

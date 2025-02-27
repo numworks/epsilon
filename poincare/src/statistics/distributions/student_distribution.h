@@ -59,9 +59,6 @@ class StudentDistribution final : public ContinuousDistribution {
     return ExpressionKIsOK(result, parameters[0]);
   }
 
-  template <typename T>
-  static T lnCoefficient(T k);
-
  private:
   template <typename T>
   static T parameterK(T* parameters) {

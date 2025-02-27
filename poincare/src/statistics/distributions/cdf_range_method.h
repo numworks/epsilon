@@ -1,7 +1,7 @@
 #ifndef POINCARE_STATISTICS_PROBABILITY_CDF_RANGE_METHOD_H
 #define POINCARE_STATISTICS_PROBABILITY_CDF_RANGE_METHOD_H
 
-#include <poincare/statistics/distributions/distribution.h>
+#include <poincare/statistics/distribution.h>
 
 #include "distribution_method.h"
 

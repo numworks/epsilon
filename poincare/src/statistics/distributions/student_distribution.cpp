@@ -1,6 +1,6 @@
 #include <float.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
-#include <poincare/statistics/distributions/student_distribution.h>
+#include <poincare/src/statistics/distributions/student_distribution.h>
 
 #include <cmath>
 
@@ -10,8 +10,9 @@ namespace Poincare::Internal {
 
 template <typename T>
 T StudentDistribution::EvaluateAtAbscissa(T x, T k) {
-  return std::exp(lnCoefficient(k) -
-                  (k + 1.0) / 2.0 * std::log(1.0 + x * x / k));
+  T lnCoefficient = std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) -
+                    std::log(std::sqrt(k * M_PI));
+  return std::exp(lnCoefficient - (k + 1.0) / 2.0 * std::log(1.0 + x * x / k));
 }
 
 template <typename T>
@@ -74,17 +75,9 @@ bool StudentDistribution::ExpressionKIsOK(bool* result, const Tree* k) {
   return Domain::ExpressionIsIn(result, k, Domain::Type::RPlusStar);
 }
 
-template <typename T>
-T StudentDistribution::lnCoefficient(T k) {
-  return std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) -
-         std::log(std::sqrt(k * M_PI));
-}
-
 // Specialisations
 template float StudentDistribution::EvaluateAtAbscissa<float>(float, float);
 template double StudentDistribution::EvaluateAtAbscissa<double>(double, double);
-template float StudentDistribution::lnCoefficient<float>(float);
-template double StudentDistribution::lnCoefficient<double>(double);
 template float
 StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float,
                                                                      float);

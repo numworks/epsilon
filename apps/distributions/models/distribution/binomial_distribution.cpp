@@ -2,7 +2,6 @@
 
 #include <assert.h>
 #include <poincare/layout.h>
-#include <poincare/statistics/distributions/binomial_distribution.h>
 
 #include <cmath>
 
@@ -23,13 +22,6 @@ bool BinomialDistribution::authorizedParameterAtIndex(double x,
   return (x >= 0.0) && (x <= 1.0);
 }
 
-double BinomialDistribution::cumulativeDistributiveInverseForProbability(
-    double p) const {
-  return Poincare::BinomialDistribution::
-      CumulativeDistributiveInverseForProbability(p, m_parameters[0],
-                                                  m_parameters[1]);
-}
-
 double BinomialDistribution::rightIntegralInverseForProbability(
     double p) const {
   if (m_parameters[0] == 0.0 &&
@@ -40,11 +32,6 @@ double BinomialDistribution::rightIntegralInverseForProbability(
     return m_parameters[0];
   }
   return Distribution::rightIntegralInverseForProbability(p);
-}
-
-double BinomialDistribution::evaluateAtDiscreteAbscissa(int k) const {
-  return Poincare::BinomialDistribution::EvaluateAtAbscissa<double>(
-      (double)k, m_parameters[0], m_parameters[1]);
 }
 
 ParameterRepresentation BinomialDistribution::paramRepresentationAtIndex(

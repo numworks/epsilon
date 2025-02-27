@@ -11,9 +11,6 @@ namespace Internal {
 
 class NormalDistribution final : public ContinuousDistribution {
  public:
-  constexpr static double k_standardMu = 0.;
-  constexpr static double k_standardSigma = 1.;
-
   Type type() const override { return Type::Normal; }
   bool isSymmetrical() const override { return true; }
 

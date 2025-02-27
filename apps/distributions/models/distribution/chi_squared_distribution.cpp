@@ -1,14 +1,8 @@
 #include "chi_squared_distribution.h"
 
-#include <poincare/statistics/distributions/chi2_distribution.h>
-
 #include <cmath>
 
 namespace Distributions {
-
-float ChiSquaredDistribution::evaluateAtAbscissa(float x) const {
-  return Poincare::Chi2Distribution::EvaluateAtAbscissa<float>(x, m_parameter);
-}
 
 bool ChiSquaredDistribution::authorizedParameterAtIndex(double x,
                                                         int index) const {
@@ -17,18 +11,6 @@ bool ChiSquaredDistribution::authorizedParameterAtIndex(double x,
     return false;
   }
   return x > 0.0 && x == (double)((int)x) && x <= k_maxK;
-}
-
-double ChiSquaredDistribution::cumulativeDistributiveFunctionAtAbscissa(
-    double x) const {
-  return Poincare::Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(
-      x, m_parameter);
-}
-
-double ChiSquaredDistribution::cumulativeDistributiveInverseForProbability(
-    double p) const {
-  return Poincare::Chi2Distribution::
-      CumulativeDistributiveInverseForProbability(p, m_parameter);
 }
 
 float ChiSquaredDistribution::privateComputeXMax() const {

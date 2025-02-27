@@ -1,7 +1,5 @@
 #include "student_distribution.h"
 
-#include <poincare/statistics/distributions/student_distribution.h>
-
 #include <cmath>
 
 namespace Distributions {
@@ -22,8 +20,7 @@ float StudentDistribution::privateComputeXMin() const {
 float StudentDistribution::privateComputeXMax() const { return 5.0f; }
 
 float StudentDistribution::computeYMax() const {
-  return std::exp(
-             Poincare::StudentDistribution::lnCoefficient<float>(m_parameter)) *
+  return m_distribution->evaluateAtAbscissa(0.0f, &m_parameter) *
          (1.0f + k_displayTopMarginRatio);
 }
 

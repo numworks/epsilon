@@ -111,9 +111,16 @@ class Distribution {
       double p, double ax, double bx, double* parameters) const;
 };
 
+namespace DistributionConstant {
+// For NormalDistribution
+constexpr static double k_standardMu = 0.;
+constexpr static double k_standardSigma = 1.;
+}  // namespace DistributionConstant
+
 }  // namespace Internal
 
 using Distribution = Internal::Distribution;
+namespace DistributionConstant = Internal::DistributionConstant;
 
 }  // namespace Poincare
 

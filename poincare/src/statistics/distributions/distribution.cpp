@@ -1,17 +1,19 @@
+#include "distribution.h"
+
 #include <poincare/src/solver/solver_algorithms.h>
-#include <poincare/statistics/distributions/binomial_distribution.h>
-#include <poincare/statistics/distributions/chi2_distribution.h>
-#include <poincare/statistics/distributions/distribution.h>
-#include <poincare/statistics/distributions/exponential_distribution.h>
-#include <poincare/statistics/distributions/fisher_distribution.h>
-#include <poincare/statistics/distributions/geometric_distribution.h>
-#include <poincare/statistics/distributions/hypergeometric_distribution.h>
-#include <poincare/statistics/distributions/normal_distribution.h>
-#include <poincare/statistics/distributions/poisson_distribution.h>
-#include <poincare/statistics/distributions/student_distribution.h>
-#include <poincare/statistics/distributions/uniform_distribution.h>
 
 #include <algorithm>
+
+#include "binomial_distribution.h"
+#include "chi2_distribution.h"
+#include "exponential_distribution.h"
+#include "fisher_distribution.h"
+#include "geometric_distribution.h"
+#include "hypergeometric_distribution.h"
+#include "normal_distribution.h"
+#include "poisson_distribution.h"
+#include "student_distribution.h"
+#include "uniform_distribution.h"
 
 namespace Poincare::Internal {
 

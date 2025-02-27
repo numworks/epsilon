@@ -2,7 +2,7 @@
 #include <float.h>
 #include <omg/float.h>
 #include <poincare/src/solver/erf_inv.h>
-#include <poincare/statistics/distributions/normal_distribution.h>
+#include <poincare/src/statistics/distributions/normal_distribution.h>
 
 #include <cmath>
 
@@ -65,13 +65,14 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(
     return NAN;
   }
   if (std::isinf(abscissa)) {
-    return abscissa > static_cast<T>(k_standardMu) ? static_cast<T>(1.0)
-                                                   : static_cast<T>(0.0);
+    return abscissa > static_cast<T>(DistributionConstant::k_standardMu)
+               ? static_cast<T>(1.0)
+               : static_cast<T>(0.0);
   }
-  if (abscissa == static_cast<T>(k_standardMu)) {
+  if (abscissa == static_cast<T>(DistributionConstant::k_standardMu)) {
     return static_cast<T>(0.5);
   }
-  if (abscissa < static_cast<T>(k_standardMu)) {
+  if (abscissa < static_cast<T>(DistributionConstant::k_standardMu)) {
     return (static_cast<T>(1.0)) -
            StandardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
   }
@@ -122,7 +123,7 @@ double NormalDistribution::evaluateParameterForProbabilityAndBound(
   if (abscissaForStandardDistribution == 0) {
     if (bound == parameters[0]) {
       // Return default value if there is an infinity of possible sigma
-      return k_standardSigma;
+      return DistributionConstant::k_standardSigma;
     }
     return NAN;
   }

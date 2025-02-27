@@ -19,13 +19,10 @@ class ChiSquaredDistribution : public OneParameterDistribution {
     return I18n::Message::ChiSquareDistribution;
   }
   const char* parameterNameAtIndex(int index) const override { return "k"; }
-  float evaluateAtAbscissa(float x) const override;
   bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultParameterAtIndex(int index) const override {
     return k_defaultK;
   }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
-  double cumulativeDistributiveInverseForProbability(double p) const override;
 
  private:
   constexpr static double k_maxK = 31500.0;

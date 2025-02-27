@@ -58,7 +58,7 @@ void assert_regression_is(const double* xi, const double* yi,
 
   // Move the double* to an std::array for easier debugging
   Poincare::Regression::Regression::Coefficients coefficientsArray;
-  memmove(coefficientsArray.begin(), coefficients,
+  memmove(coefficientsArray.data(), coefficients,
           numberOfCoefs * sizeof(double));
 
   /* TODO: we could use the std::equal or std::for_each algorithms here, to

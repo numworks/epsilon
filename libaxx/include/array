@@ -29,6 +29,9 @@ class array {
   constexpr U& operator[](unsigned int n) { return m_array[n]; }
   constexpr const U& operator[](unsigned int n) const { return m_array[n]; }
 
+  constexpr const U* data() const { return m_array; }
+  constexpr U* data() { return m_array; }
+
   constexpr const_iterator cbegin() const { return m_array; }
   constexpr const_iterator cend() const { return m_array + N; }
   constexpr iterator begin() { return m_array; }

@@ -1,0 +1,20 @@
+#include "exponential_regression.h"
+
+#include <assert.h>
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
+
+namespace Poincare::Internal {
+using namespace API;
+
+UserExpression ExponentialRegression::privateExpression(
+    const double* modelCoefficients) const {
+  // if m_isAbxForm -> a*b^x, else a*e^bx
+  return UserExpression::Create(
+      m_isAbxForm ? KMult(KA, KPow(KB, "x"_e))
+                  : KMult(KA, KPow(e_e, KMult(KB, "x"_e))),
+      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
+       .KB = UserExpression::FromDouble(modelCoefficients[1])});
+}
+
+}  // namespace Poincare::Internal

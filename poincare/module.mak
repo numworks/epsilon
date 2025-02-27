@@ -151,25 +151,6 @@ $(addprefix pool/, \
   layout.cpp:-nopool \
   pool_layout_cursor.cpp:-nopool \
 ) \
-$(addprefix regression/, \
-  $(addsuffix :-nopool, \
-  affine_regression.cpp \
-  cubic_regression.cpp \
-  exponential_regression.cpp \
-  linear_regression.cpp \
-  logarithmic_regression.cpp \
-  logistic_regression.cpp \
-  median_regression.cpp \
-  power_regression.cpp \
-  proportional_regression.cpp \
-  quadratic_regression.cpp \
-  quartic_regression.cpp \
-  regression.cpp \
-  regression_switch.cpp \
-  series.cpp \
-  transformed_regression.cpp \
-  trigonometric_regression.cpp \
-)) \
 $(addprefix solver/, \
   beta_function.cpp \
   erf_inv.cpp \
@@ -203,6 +184,25 @@ $(addprefix statistics/, \
     student_distribution.cpp \
     uniform_distribution.cpp \
   ) \
+  $(addprefix regression/, \
+    $(addsuffix :-nopool, \
+    affine_regression.cpp \
+    cubic_regression.cpp \
+    exponential_regression.cpp \
+    linear_regression.cpp \
+    logarithmic_regression.cpp \
+    logistic_regression.cpp \
+    median_regression.cpp \
+    power_regression.cpp \
+    proportional_regression.cpp \
+    quadratic_regression.cpp \
+    quartic_regression.cpp \
+    regression.cpp \
+    regression_switch.cpp \
+    series.cpp \
+    transformed_regression.cpp \
+    trigonometric_regression.cpp \
+  )) \
   statistics_dataset.cpp \
   statistics_dataset_column.cpp \
 ) \

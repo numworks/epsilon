@@ -3,13 +3,13 @@
 
 #include <escher/i18n.h>
 #include <poincare/expression.h>
-#include <poincare/regression/regression.h>
+#include <poincare/statistics/regression.h>
 
 namespace Regression {
 
 class Store;
 
-class StoreToSeries : public Poincare::Regression::Series {
+class StoreToSeries : public Poincare::Series {
  public:
   StoreToSeries(const Store* store, int series)
       : m_store(store), m_series(series) {}
@@ -24,7 +24,7 @@ class StoreToSeries : public Poincare::Regression::Series {
 
 class Model {
  public:
-  using Type = Poincare::Regression::Regression::Type;
+  using Type = Poincare::Regression::Type;
 
   Model(Type type) : m_type(type) {}
 
@@ -94,15 +94,15 @@ class Model {
   }
 
   constexpr static auto k_numberOfModels =
-      Poincare::Regression::Regression::k_numberOfModels;
-  constexpr static auto k_xSymbol = Poincare::Regression::Regression::k_xSymbol;
+      Poincare::Regression::k_numberOfModels;
+  constexpr static auto k_xSymbol = Poincare::Regression::k_xSymbol;
   constexpr static auto k_maxNumberOfCoefficients =
-      Poincare::Regression::Regression::k_maxNumberOfCoefficients;
+      Poincare::Regression::k_maxNumberOfCoefficients;
 
  private:
   bool useLinearMxpbForm() const;
-  const Poincare::Regression::Regression* regression() const {
-    return Poincare::Regression::Regression::Get(
+  const Poincare::Regression* regression() const {
+    return Poincare::Regression::Get(
         m_type, Poincare::Preferences::SharedPreferences()->angleUnit());
   }
   Type m_type;

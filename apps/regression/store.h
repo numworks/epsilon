@@ -76,16 +76,16 @@ class Store : public Shared::LinearRegressionStore {
   // Type-specific properties
   typedef bool (*TypeProperty)(Model::Type type);
   static bool HasCoefficients(Model::Type type) {
-    return Poincare::Regression::Regression::HasCoefficients(type);
+    return Poincare::Regression::HasCoefficients(type);
   }
   static bool DisplayR(Model::Type type) {
-    return Poincare::Regression::Regression::HasR(type);
+    return Poincare::Regression::HasR(type);
   }
   static bool DisplayRSquared(Model::Type type) {
-    return Poincare::Regression::Regression::HasRSquared(type);
+    return Poincare::Regression::HasRSquared(type);
   }
   static bool DisplayR2(Model::Type type) {
-    return Poincare::Regression::Regression::HasR2(type);
+    return Poincare::Regression::HasR2(type);
   }
   static bool DisplayResidualStandardDeviation(Model::Type type) {
     return HasCoefficients(type) &&

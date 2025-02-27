@@ -199,10 +199,10 @@ $(addprefix statistics/, \
     quartic_regression.cpp \
     regression.cpp \
     regression_switch.cpp \
-    series.cpp \
     transformed_regression.cpp \
     trigonometric_regression.cpp \
   )) \
+  series.cpp \
   statistics_dataset.cpp \
   statistics_dataset_column.cpp \
 ) \

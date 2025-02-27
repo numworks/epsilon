@@ -2,7 +2,8 @@
 #define POINCARE_REGRESSION_SERIES_H
 
 #include <assert.h>
-#include <poincare/statistics/statistics_dataset.h>
+
+#include "statistics_dataset.h"
 
 namespace Poincare {
 namespace Internal {
@@ -40,8 +41,6 @@ class Series {
 };
 
 }  // namespace Internal
-
-using Series = Internal::Series;
 
 }  // namespace Poincare
 #endif

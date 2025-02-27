@@ -5,11 +5,10 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/solver/matrix_array.h>
+#include <poincare/src/statistics/dataset_adapter.h>
 #include <poincare/statistics/regression.h>
 
 #include <cmath>
-
-#include "dataset_adapter.h"
 
 using namespace Poincare::Internal;
 namespace Poincare::Internal {

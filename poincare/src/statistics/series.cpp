@@ -1,4 +1,4 @@
-#include <poincare/statistics/series.h>
+#include "series.h"
 
 #include "dataset_adapter.h"
 

@@ -1,6 +1,7 @@
 #ifndef POINCARE_STATISTICS_STATISTICS_DATASET_H
 #define POINCARE_STATISTICS_STATISTICS_DATASET_H
 
+#include <poincare/src/statistics/series.h>
 #include <poincare/src/statistics/statistics_dataset.h>
 #include <poincare/src/statistics/statistics_dataset_column.h>
 
@@ -17,6 +18,8 @@ using StatisticsCalculationOptions = Internal::StatisticsCalculationOptions;
 // Cf internal documentation
 template <typename T>
 using StatisticsDataset = Internal::StatisticsDataset<T>;
+
+using Series = Internal::Series;
 
 }  // namespace Poincare
 #endif

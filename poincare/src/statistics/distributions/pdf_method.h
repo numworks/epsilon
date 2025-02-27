@@ -1,0 +1,27 @@
+#ifndef POINCARE_STATISTICS_PROBABILITY_PDF_METHOD_H
+#define POINCARE_STATISTICS_PROBABILITY_PDF_METHOD_H
+
+#include <poincare/statistics/distributions/distribution.h>
+
+#include "distribution_method.h"
+
+namespace Poincare::Internal {
+
+class PDFMethod final : public DistributionMethod {
+  float EvaluateAtAbscissa(float* x, const Distribution* distribution,
+                           const float* parameters) const override {
+    return distribution->evaluateAtAbscissa(x[0], parameters);
+  }
+
+  double EvaluateAtAbscissa(double* x, const Distribution* distribution,
+                            const double* parameters) const override {
+    return distribution->evaluateAtAbscissa(x[0], parameters);
+  }
+
+  bool shallowReduce(const Tree** abscissae, const Distribution* distribution,
+                     const Tree** parameters, Tree* expression) const override;
+};
+
+}  // namespace Poincare::Internal
+
+#endif

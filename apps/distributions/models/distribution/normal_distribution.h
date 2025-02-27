@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_NORMAL_DISTRIBUTION_H
 #define PROBABILITE_NORMAL_DISTRIBUTION_H
 
-#include <poincare/probability/normal_distribution.h>
+#include <poincare/statistics/distributions/normal_distribution.h>
 
 #include "two_parameters_distribution.h"
 

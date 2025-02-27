@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <float.h>
 #include <limits.h>
-#include <poincare/probability/normal_distribution.h>
+#include <poincare/statistics/distributions/normal_distribution.h>
 #include <string.h>
 
 #include <algorithm>

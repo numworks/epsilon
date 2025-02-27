@@ -4,9 +4,9 @@
 #include <inference/models/statistic/test.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/probability/chi2_distribution.h>
-#include <poincare/probability/normal_distribution.h>
-#include <poincare/probability/student_distribution.h>
+#include <poincare/statistics/distributions/chi2_distribution.h>
+#include <poincare/statistics/distributions/normal_distribution.h>
+#include <poincare/statistics/distributions/student_distribution.h>
 
 namespace Inference {
 

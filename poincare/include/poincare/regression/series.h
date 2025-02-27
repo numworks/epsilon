@@ -2,7 +2,7 @@
 #define POINCARE_REGRESSION_SERIES_H
 
 #include <assert.h>
-#include <poincare/solver/statistics.h>
+#include <poincare/statistics/statistics_dataset.h>
 
 namespace Poincare::Regression {
 

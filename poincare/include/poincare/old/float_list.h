@@ -2,7 +2,7 @@
 #define POINCARE_FLOAT_LIST_H
 
 #include <poincare/expression.h>
-#include <poincare/numeric/statistics.h>
+#include <poincare/statistics/statistics_dataset.h>
 
 namespace Poincare {
 

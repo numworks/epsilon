@@ -1,8 +1,8 @@
-#ifndef POINCARE_NUMERIC_STATISTICS_H
-#define POINCARE_NUMERIC_STATISTICS_H
+#ifndef POINCARE_STATISTICS_STATISTICS_H
+#define POINCARE_STATISTICS_STATISTICS_H
 
-#include <poincare/src/solver/statistics_dataset.h>
-#include <poincare/src/solver/statistics_dataset_column.h>
+#include <poincare/src/statistics/statistics_dataset.h>
+#include <poincare/src/statistics/statistics_dataset_column.h>
 
 namespace Poincare {
 

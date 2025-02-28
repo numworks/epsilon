@@ -28,10 +28,14 @@ bool exactExpressionIsForbidden(const Tree* exactOutput) {
   if (exactOutput->isOpposite()) {
     return exactExpressionIsForbidden(exactOutput->child(0));
   }
+  // Allow numbers but not π and e
   bool isFraction = exactOutput->isDiv() && exactOutput->child(0)->isNumber() &&
-                    exactOutput->child(1)->isNumber();
-  return !(exactOutput->isNumber() || isFraction ||
-           isPrimeFactorization(exactOutput));
+                    !exactOutput->child(0)->isMathematicalConstant() &&
+                    exactOutput->child(1)->isNumber() &&
+                    !exactOutput->child(1)->isMathematicalConstant();
+  return !(
+      (exactOutput->isNumber() && !exactOutput->isMathematicalConstant()) ||
+      isFraction || isPrimeFactorization(exactOutput));
 }
 
 bool neverDisplayExactOutput(const Tree* exactOutput, Context* context) {

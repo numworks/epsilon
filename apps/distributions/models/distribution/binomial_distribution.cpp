@@ -9,19 +9,6 @@ using namespace Shared;
 
 namespace Distributions {
 
-bool BinomialDistribution::authorizedParameterAtIndex(double x,
-                                                      int index) const {
-  if (!TwoParametersDistribution::authorizedParameterAtIndex(x, index)) {
-    return false;
-  }
-  if (index == 0) {
-    // n must be a positive integer
-    return (x == (int)x) && x >= 0.0;
-  }
-  // p must be between 0 and 1
-  return (x >= 0.0) && (x <= 1.0);
-}
-
 double BinomialDistribution::rightIntegralInverseForProbability(
     double p) const {
   if (m_parameters[0] == 0.0 &&

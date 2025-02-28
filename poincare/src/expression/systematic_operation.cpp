@@ -1,5 +1,6 @@
 #include "systematic_operation.h"
 
+#include <omg/troolean.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/statistics/distributions/distribution_method.h>
@@ -520,25 +521,22 @@ bool SystematicOperation::ReduceDistribution(Tree* e) {
     abscissae[i] = child;
     child = child->nextTree();
   }
-  Distribution::Type distributionType = Distribution::Get(e);
+  Distribution distribution = Distribution(e);
   const Tree* parameters[Distribution::k_maxNumberOfParameters];
-  for (int i = 0; i < Distribution::numberOfParameters(distributionType); i++) {
+  for (int i = 0; i < distribution.numberOfParameters(); i++) {
     parameters[i] = child;
     child = child->nextTree();
   }
   const DistributionMethod* method = DistributionMethod::Get(methodType);
-  const Distribution* distribution = Distribution::Get(distributionType);
-  bool parametersAreOk;
-  bool couldCheckParameters =
-      distribution->expressionParametersAreOK(&parametersAreOk, parameters);
-  if (!couldCheckParameters) {
+  OMG::Troolean parametersAreOk = distribution.areParametersValid(parameters);
+  if (parametersAreOk == OMG::Troolean::Unknown) {
     return false;
   }
-  if (!parametersAreOk) {
+  if (parametersAreOk == OMG::Troolean::False) {
     e->cloneTreeOverTree(KOutOfDefinition);
     return true;
   }
-  return method->shallowReduce(abscissae, distribution, parameters, e);
+  return method->shallowReduce(abscissae, &distribution, parameters, e);
 }
 
 bool SystematicOperation::ReduceDim(Tree* e) {

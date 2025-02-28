@@ -1,21 +1,15 @@
 #include <assert.h>
-#include <float.h>
 #include <omg/float.h>
 #include <poincare/src/solver/beta_function.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/statistics/distributions/uniform_distribution.h>
 
-#include <cmath>
-
-#include "domain.h"
-
-namespace Poincare::Internal {
+namespace Poincare::Internal::UniformDistribution {
 
 template <typename T>
-T UniformDistribution::EvaluateAtAbscissa(T x, T d1, T d2) {
-  if (std::isnan(x) || std::isinf(x) || !D1AndD2AreOK(d1, d2)) {
-    return NAN;
-  }
+T EvaluateAtAbscissa(T x, const T* params) {
+  const T d1 = params[0];
+  const T d2 = params[1];
   if (d1 <= x && x <= d2) {
     return (1.0 / (d2 - d1));
   }
@@ -23,11 +17,9 @@ T UniformDistribution::EvaluateAtAbscissa(T x, T d1, T d2) {
 }
 
 template <typename T>
-T UniformDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T d1,
-                                                                T d2) {
-  if (!D1AndD2AreOK(d1, d2)) {
-    return NAN;
-  }
+T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
+  const T d1 = params[0];
+  const T d2 = params[1];
   if (x <= d1) {
     return 0.0;
   }
@@ -38,11 +30,9 @@ T UniformDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T d1,
 }
 
 template <typename T>
-T UniformDistribution::CumulativeDistributiveInverseForProbability(
-    T probability, T d1, T d2) {
-  if (!D1AndD2AreOK(d1, d2)) {
-    return NAN;
-  }
+T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
+  const T d1 = params[0];
+  const T d2 = params[1];
   if (probability >= 1.0f) {
     return d2;
   }
@@ -52,38 +42,15 @@ T UniformDistribution::CumulativeDistributiveInverseForProbability(
   return d1 * (1 - probability) + probability * d2;
 }
 
-template <typename T>
-bool UniformDistribution::D1AndD2AreOK(T d1, T d2) {
-  return Domain::Contains(d1, Domain::Type::R) &&
-         Domain::Contains(d2, Domain::Type::R) && d1 <= d2;
-}
+template float EvaluateAtAbscissa<float>(float, const float*);
+template double EvaluateAtAbscissa<double>(double, const double*);
+template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
+                                                               const float*);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
+                                                                 const double*);
+template float CumulativeDistributiveInverseForProbability<float>(float,
+                                                                  const float*);
+template double CumulativeDistributiveInverseForProbability<double>(
+    double, const double*);
 
-bool UniformDistribution::ExpressionD1AndD2AreOK(bool* result, const Tree* d1,
-                                                 const Tree* d2) {
-  return Domain::ExpressionsAreIn(result, d2, Domain::Type::R, d1,
-                                  Domain::Type::R);
-}
-
-template float UniformDistribution::EvaluateAtAbscissa<float>(float, float,
-                                                              float);
-template double UniformDistribution::EvaluateAtAbscissa<double>(double, double,
-                                                                double);
-template float
-UniformDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                                     float,
-                                                                     float);
-template double
-UniformDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                      double,
-                                                                      double);
-template float
-UniformDistribution::CumulativeDistributiveInverseForProbability<float>(float,
-                                                                        float,
-                                                                        float);
-template double
-UniformDistribution::CumulativeDistributiveInverseForProbability<double>(
-    double, double, double);
-template bool UniformDistribution::D1AndD2AreOK(float d1, float d2);
-template bool UniformDistribution::D1AndD2AreOK(double d1, double d2);
-
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::UniformDistribution

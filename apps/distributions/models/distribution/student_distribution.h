@@ -1,7 +1,6 @@
 #ifndef DISTRIBUTION_STUDENT_DISTRIBUTION_H
 #define DISTRIBUTION_STUDENT_DISTRIBUTION_H
 
-#include <float.h>
 #include <poincare/layout.h>
 
 #include "one_parameter_distribution.h"
@@ -19,7 +18,6 @@ class StudentDistribution : public OneParameterDistribution {
     return I18n::Message::StudentDistribution;
   }
   const char* parameterNameAtIndex(int index) const override { return "k"; }
-  double meanAbscissa() override { return 0.0; }
   bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultParameterAtIndex(int index) const override {
     return k_defaultK;

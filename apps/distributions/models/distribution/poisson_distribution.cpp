@@ -8,8 +8,8 @@ namespace Distributions {
 
 bool PoissonDistribution::authorizedParameterAtIndex(double x,
                                                      int index) const {
-  return OneParameterDistribution::authorizedParameterAtIndex(x, index) &&
-         x > 0.0 && x <= 999.0;
+  return Distribution::authorizedParameterAtIndex(x, index) && x > 0.0 &&
+         x <= 999.0;
 }
 
 float PoissonDistribution::privateComputeXMax() const {

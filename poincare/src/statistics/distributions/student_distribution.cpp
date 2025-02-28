@@ -1,22 +1,24 @@
 #include <float.h>
+#include <poincare/solver/solver.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/statistics/distributions/student_distribution.h>
+#include <poincare/statistics/distribution.h>
 
 #include <cmath>
 
-#include "domain.h"
-
-namespace Poincare::Internal {
+namespace Poincare::Internal::StudentDistribution {
 
 template <typename T>
-T StudentDistribution::EvaluateAtAbscissa(T x, T k) {
+T EvaluateAtAbscissa(T x, const T* params) {
+  const T k = params[0];
   T lnCoefficient = std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) -
                     std::log(std::sqrt(k * M_PI));
   return std::exp(lnCoefficient - (k + 1.0) / 2.0 * std::log(1.0 + x * x / k));
 }
 
 template <typename T>
-T StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
+T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
+  const T k = params[0];
   if (x == 0.0) {
     return static_cast<T>(0.5);
   }
@@ -32,8 +34,7 @@ T StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
 }
 
 template <typename T>
-T StudentDistribution::CumulativeDistributiveInverseForProbability(
-    T probability, T k) {
+T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
   if (probability == 0.5) {
     return static_cast<T>(0.0);
   } else if (probability > 1.0 - DBL_EPSILON) {
@@ -41,7 +42,7 @@ T StudentDistribution::CumulativeDistributiveInverseForProbability(
   } else if (probability < DBL_EPSILON) {
     return -INFINITY;
   }
-
+  const T k = params[0];
   struct Args {
     T proba;
     T k;
@@ -50,12 +51,13 @@ T StudentDistribution::CumulativeDistributiveInverseForProbability(
   Solver<double>::FunctionEvaluation evaluation = [](double x,
                                                      const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
+    const T k = args->k;
     return static_cast<double>(
-        CumulativeDistributiveFunctionAtAbscissa<T>(x, args->k) - args->proba);
+        CumulativeDistributiveFunctionAtAbscissa<T>(x, &k) - args->proba);
   };
 
   double xmin, xmax;
-  FindBoundsForBinarySearch(evaluation, &args, xmin, xmax);
+  Distribution::FindBoundsForBinarySearch(evaluation, &args, xmin, xmax);
   assert((xmin < xmax) && std::isfinite(xmin) && std::isfinite(xmax));
 
   // Compute inverse using SolverAlgorithms::IncreasingFunctionRoot
@@ -64,33 +66,16 @@ T StudentDistribution::CumulativeDistributiveInverseForProbability(
   return result.x();
 }
 
-template <typename T>
-bool StudentDistribution::KIsOK(T k) {
-  return Domain::Contains(k, Domain::Type::RPlusStar) &&
-         k <= static_cast<T>(200.0);
-  // We cannot draw the curve for k > 200 (coefficient() is too small)
-}
-
-bool StudentDistribution::ExpressionKIsOK(bool* result, const Tree* k) {
-  return Domain::ExpressionIsIn(result, k, Domain::Type::RPlusStar);
-}
-
 // Specialisations
-template float StudentDistribution::EvaluateAtAbscissa<float>(float, float);
-template double StudentDistribution::EvaluateAtAbscissa<double>(double, double);
-template float
-StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                                     float);
-template double
-StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                      double);
-template float
-StudentDistribution::CumulativeDistributiveInverseForProbability<float>(float,
-                                                                        float);
-template double
-StudentDistribution::CumulativeDistributiveInverseForProbability<double>(
-    double, double);
-template bool StudentDistribution::KIsOK(float k);
-template bool StudentDistribution::KIsOK(double k);
+template float EvaluateAtAbscissa<float>(float, const float*);
+template double EvaluateAtAbscissa<double>(double, const double*);
+template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
+                                                               const float*);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
+                                                                 const double*);
+template float CumulativeDistributiveInverseForProbability<float>(float,
+                                                                  const float*);
+template double CumulativeDistributiveInverseForProbability<double>(
+    double, const double*);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::StudentDistribution

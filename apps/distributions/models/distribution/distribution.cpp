@@ -1,6 +1,5 @@
 #include "distribution.h"
 
-#include <float.h>
 #include <poincare/statistics/distribution.h>
 
 #include <cmath>
@@ -12,6 +11,7 @@
 #include "geometric_distribution.h"
 #include "hypergeometric_distribution.h"
 #include "normal_distribution.h"
+#include "omg/troolean.h"
 #include "poisson_distribution.h"
 #include "student_distribution.h"
 #include "uniform_distribution.h"
@@ -37,7 +37,7 @@ bool Distribution::Initialize(Distribution* distribution,
     case Poincare::Distribution::Type::Normal:
       new (distribution) NormalDistribution();
       break;
-    case Poincare::Distribution::Type::ChiSquared:
+    case Poincare::Distribution::Type::Chi2:
       new (distribution) ChiSquaredDistribution();
       break;
     case Poincare::Distribution::Type::Student:
@@ -62,7 +62,7 @@ bool Distribution::Initialize(Distribution* distribution,
 }
 
 float Distribution::evaluateAtAbscissa(float x) const {
-  return m_distribution->evaluateAtAbscissa(x, constParametersArray());
+  return m_distribution.evaluateAtAbscissa(x, constFloatParametersArray());
 }
 
 bool Distribution::authorizedParameterAtIndex(double x, int index) const {
@@ -73,7 +73,10 @@ bool Distribution::authorizedParameterAtIndex(double x, int index) const {
     // Accept only one uninitialized parameter
     return true;
   }
-  return Inference::authorizedParameterAtIndex(x, index);
+  return Inference::authorizedParameterAtIndex(x, index) &&
+         OMG::TrooleanToBool(
+             m_distribution.isParameterValid(x, index, constParametersArray()));
+  ;
 }
 
 void Distribution::setParameterAtIndex(double f, int index) {
@@ -97,7 +100,7 @@ void Distribution::setParameterAtIndexWithoutComputingCurveViewRange(
 }
 
 double Distribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return m_distribution->cumulativeDistributiveFunctionAtAbscissa(
+  return m_distribution.cumulativeDistributiveFunctionAtAbscissa(
       x, constParametersArray());
 }
 
@@ -138,7 +141,7 @@ double Distribution::finiteIntegralBetweenAbscissas(double a, double b) const {
 
 double Distribution::cumulativeDistributiveInverseForProbability(
     double p) const {
-  return m_distribution->cumulativeDistributiveInverseForProbability(
+  return m_distribution.cumulativeDistributiveInverseForProbability(
       p, constParametersArray());
 }
 
@@ -178,15 +181,15 @@ double Distribution::evaluateAtDiscreteAbscissa(int k) const {
   if (isContinuous()) {
     return 0.0;
   }
-  return m_distribution->evaluateAtAbscissa(static_cast<double>(k),
-                                            constParametersArray());
+  return m_distribution.evaluateAtAbscissa(static_cast<double>(k),
+                                           constParametersArray());
 }
 
 void Distribution::computeUnknownParameterForProbabilityAndBound(
     double probability, double bound, bool isUpperBound) {
   assert(m_indexOfUninitializedParameter != k_allParametersAreInitialized &&
          canHaveUninitializedParameter());
-  double paramValue = m_distribution->evaluateParameterForProbabilityAndBound(
+  double paramValue = m_distribution.evaluateParameterForProbabilityAndBound(
       m_indexOfUninitializedParameter, parametersArray(), probability, bound,
       isUpperBound);
   Inference::setParameterAtIndex(paramValue, m_indexOfUninitializedParameter);
@@ -219,6 +222,16 @@ float Distribution::computeXExtremum(bool min) const {
   }
 
   return result;
+}
+
+static float floatParameters[Poincare::Distribution::k_maxNumberOfParameters];
+
+const float* Distribution::constFloatParametersArray() const {
+  const double* parameters = constParametersArray();
+  for (int i = 0; i < m_distribution.numberOfParameters(); i++) {
+    floatParameters[i] = static_cast<float>(parameters[i]);
+  }
+  return floatParameters;
 }
 
 }  // namespace Distributions

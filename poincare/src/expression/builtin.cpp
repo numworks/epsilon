@@ -165,7 +165,7 @@ const Builtin* Builtin::GetReservedFunction(const Tree* e) {
   }
   if (e->isDistribution()) {
     DistributionMethod::Type method = DistributionMethod::Get(e);
-    Distribution::Type distribution = Distribution::Get(e);
+    Distribution::Type distribution = Distribution(e).type();
     for (const DistributionBuiltin& builtin : s_distributionsBuiltins) {
       if (builtin.method() == method &&
           builtin.distribution() == distribution) {
@@ -220,7 +220,7 @@ bool Builtin::checkNumberOfParameters(int n) const {
 }
 
 bool DistributionBuiltin::checkNumberOfParameters(int n) const {
-  return n == Distribution::numberOfParameters(m_distribution) +
+  return n == Distribution::NumberOfParameters(m_distribution) +
                   DistributionMethod::numberOfParameters(m_method);
 }
 

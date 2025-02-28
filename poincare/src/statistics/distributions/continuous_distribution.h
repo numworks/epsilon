@@ -7,29 +7,17 @@ namespace Poincare {
 
 namespace Internal {
 
-class ContinuousDistribution : public Distribution {
- public:
-  bool isContinuous() const override { return true; }
+namespace ContinuousDistribution {
+// The range is inclusive on both ends
+template <typename T>
+T CumulativeDistributiveFunctionForRange(Distribution::Type distribType, T x,
+                                         T y, const T* parameters) {
+  Distribution distribution(distribType);
+  return distribution.cumulativeDistributiveFunctionAtAbscissa(y, parameters) -
+         distribution.cumulativeDistributiveFunctionAtAbscissa(x, parameters);
+}
 
-  // The range is inclusive on both ends
-  float cumulativeDistributiveFunctionForRange(
-      float x, float y, const float* parameters) const override {
-    if (y <= x) {
-      return 0.0f;
-    }
-    return cumulativeDistributiveFunctionAtAbscissa(y, parameters) -
-           cumulativeDistributiveFunctionAtAbscissa(x, parameters);
-  }
-
-  double cumulativeDistributiveFunctionForRange(
-      double x, double y, const double* parameters) const override {
-    if (y <= x) {
-      return 0.0;
-    }
-    return cumulativeDistributiveFunctionAtAbscissa(y, parameters) -
-           cumulativeDistributiveFunctionAtAbscissa(x, parameters);
-  }
-};
+};  // namespace ContinuousDistribution
 
 }  // namespace Internal
 

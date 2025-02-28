@@ -8,40 +8,20 @@ namespace Poincare {
 namespace Internal {
 
 // More precisely distributions deriving from this should be defined on N
-class DiscreteDistribution : public Distribution {
- public:
-  bool isContinuous() const override { return false; }
+namespace DiscreteDistribution {
+template <typename T>
+T CumulativeDistributiveFunctionAtAbscissa(Distribution::Type distribType, T x,
+                                           const T* parameters);
 
-  template <typename T>
-  T CumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters) const;
-  float cumulativeDistributiveFunctionAtAbscissa(
-      float x, const float* parameters) const override {
-    return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(
-      double x, const double* parameters) const override {
-    return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters);
-  }
-
-  // The range is inclusive on both ends
-  float cumulativeDistributiveFunctionForRange(
-      float x, float y, const float* parameters) const override {
-    if (y < x) {
-      return 0.0f;
-    }
-    return CumulativeDistributiveFunctionAtAbscissa(y, parameters) -
-           CumulativeDistributiveFunctionAtAbscissa(x - 1.0f, parameters);
-  }
-
-  double cumulativeDistributiveFunctionForRange(
-      double x, double y, const double* parameters) const override {
-    if (y < x) {
-      return 0.0;
-    }
-    return CumulativeDistributiveFunctionAtAbscissa(y, parameters) -
-           CumulativeDistributiveFunctionAtAbscissa(x - 1.0, parameters);
-  }
-};
+// The range is inclusive on both ends
+template <typename T>
+T CumulativeDistributiveFunctionForRange(Distribution::Type distribType, T x,
+                                         T y, const T* parameters) {
+  return CumulativeDistributiveFunctionAtAbscissa(distribType, y, parameters) -
+         CumulativeDistributiveFunctionAtAbscissa(distribType, x - 1.0f,
+                                                  parameters);
+}
+};  // namespace DiscreteDistribution
 
 }  // namespace Internal
 

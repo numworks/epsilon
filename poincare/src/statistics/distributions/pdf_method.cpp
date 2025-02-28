@@ -22,10 +22,10 @@ bool PDFMethod::shallowReduce(const Tree** abscissae,
   }
 
   if (Rational::Sign(x).isStrictlyNegative() &&
-      (distribution->hasType(Distribution::Type::Binomial) ||
-       distribution->hasType(Distribution::Type::Poisson) ||
-       distribution->hasType(Distribution::Type::Geometric) ||
-       distribution->hasType(Distribution::Type::Hypergeometric))) {
+      (distribution->type() == Distribution::Type::Binomial ||
+       distribution->type() == Distribution::Type::Poisson ||
+       distribution->type() == Distribution::Type::Geometric ||
+       distribution->type() == Distribution::Type::Hypergeometric)) {
     expression->cloneTreeOverTree(0_e);
     return true;
   }

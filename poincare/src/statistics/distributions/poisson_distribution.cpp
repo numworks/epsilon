@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <float.h>
 #include <omg/float.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/solver/solver_algorithms.h>
@@ -8,31 +7,22 @@
 
 #include <cmath>
 
-#include "domain.h"
-
-namespace Poincare::Internal {
+namespace Poincare::Internal::PoissonDistribution {
 
 template <typename T>
-T PoissonDistribution::EvaluateAtAbscissa(T x, T lambda) {
-  if (std::isnan(x) || std::isinf(x) || !LambdaIsOK(lambda)) {
-    return NAN;
-  }
+T EvaluateAtAbscissa(T x, const T* parameters) {
   if (x < 0) {
     return NAN;
   }
+  const T lambda = parameters[0];
   T lResult = -lambda + std::floor(x) * std::log(lambda) -
               std::lgamma(std::floor(x) + 1);
   return std::exp(lResult);
 }
 
 template <typename T>
-T PoissonDistribution::CumulativeDistributiveInverseForProbability(
-    T probability, T lambda) {
-  if (!LambdaIsOK(lambda) || std::isnan(probability) ||
-      std::isinf(probability) || probability < static_cast<T>(0.0) ||
-      probability > static_cast<T>(1.0)) {
-    return NAN;
-  }
+T CumulativeDistributiveInverseForProbability(T probability,
+                                              const T* parameters) {
   constexpr T precision = OMG::Float::Epsilon<T>();
   if (std::abs(probability) < precision) {
     return NAN;
@@ -41,36 +31,20 @@ T PoissonDistribution::CumulativeDistributiveInverseForProbability(
     return INFINITY;
   }
   T proba = probability;
-  const void* pack[1] = {&lambda};
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const void* const* pack = static_cast<const void* const*>(auxiliary);
-        T lambda = *static_cast<const T*>(pack[0]);
-        return PoissonDistribution::EvaluateAtAbscissa(x, lambda);
+        const T* params = static_cast<const T*>(auxiliary);
+        return EvaluateAtAbscissa(x, params);
       },
-      pack);
+      parameters);
 }
 
-template <typename T>
-bool PoissonDistribution::LambdaIsOK(T lambda) {
-  return Domain::Contains(lambda, Domain::Type::RPlusStar);
-}
+template float EvaluateAtAbscissa<float>(float, const float*);
+template double EvaluateAtAbscissa<double>(double, const double*);
+template float CumulativeDistributiveInverseForProbability<float>(float,
+                                                                  const float*);
+template double CumulativeDistributiveInverseForProbability<double>(
+    double, const double*);
 
-bool PoissonDistribution::ExpressionLambdaIsOK(bool* result,
-                                               const Tree* lambda) {
-  return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlusStar);
-}
-
-template float PoissonDistribution::EvaluateAtAbscissa<float>(float, float);
-template double PoissonDistribution::EvaluateAtAbscissa<double>(double, double);
-template float
-PoissonDistribution::CumulativeDistributiveInverseForProbability<float>(float,
-                                                                        float);
-template double
-PoissonDistribution::CumulativeDistributiveInverseForProbability<double>(
-    double, double);
-template bool PoissonDistribution::LambdaIsOK(float);
-template bool PoissonDistribution::LambdaIsOK(double);
-
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::PoissonDistribution

@@ -22,7 +22,6 @@ class GeometricDistribution final : public OneParameterDistribution {
     return I18n::Message::GeometricDistribution;
   }
   const char* parameterNameAtIndex(int index) const override { return "p"; }
-  bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultParameterAtIndex(int index) const override {
     return k_defaultP;
   }

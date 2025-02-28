@@ -2,16 +2,7 @@
 
 #include <assert.h>
 
-#include <cmath>
-
 namespace Distributions {
-
-bool GeometricDistribution::authorizedParameterAtIndex(double x,
-                                                       int index) const {
-  assert(index == 0);
-  return OneParameterDistribution::authorizedParameterAtIndex(x, index) &&
-         x > 0.0 && x <= 1.0;
-}
 
 float GeometricDistribution::privateComputeXMax() const {
   assert(m_parameter != 0.0f);

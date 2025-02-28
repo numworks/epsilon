@@ -18,7 +18,6 @@ class NormalDistribution final : public TwoParametersDistribution {
   const char* parameterNameAtIndex(int index) const override {
     return index == 0 ? "μ" : "σ";
   }
-  double meanAbscissa() override { return m_parameters[0]; }
   bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultParameterAtIndex(int index) const override {
     return index == 0 ? k_defaultMu : k_defaultSigma;

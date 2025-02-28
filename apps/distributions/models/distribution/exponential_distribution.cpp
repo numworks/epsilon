@@ -4,39 +4,14 @@
 
 #include <cmath>
 
-namespace Distributions {
+#include "distributions/models/distribution/distribution.h"
 
-float ExponentialDistribution::evaluateAtAbscissa(float x) const {
-  if (x < 0.0f) {
-    return NAN;
-  }
-  float parameter = m_parameter;
-  return parameter * std::exp(-parameter * x);
-}
+namespace Distributions {
 
 bool ExponentialDistribution::authorizedParameterAtIndex(double x,
                                                          int index) const {
-  return OneParameterDistribution::authorizedParameterAtIndex(x, index) &&
-         x > 0.0 && x <= 7500.0;
-}
-
-double ExponentialDistribution::cumulativeDistributiveFunctionAtAbscissa(
-    double x) const {
-  if (x < 0.0) {
-    return 0.0;
-  }
-  return 1.0 - std::exp((-m_parameter * x));
-}
-
-double ExponentialDistribution::cumulativeDistributiveInverseForProbability(
-    double p) const {
-  if (p >= 1.0) {
-    return INFINITY;
-  }
-  if (p <= 0.0) {
-    return 0.0;
-  }
-  return -std::log(1.0 - p) / m_parameter;
+  return Distribution::authorizedParameterAtIndex(x, index) && x > 0.0 &&
+         x <= 7500.0;
 }
 
 float ExponentialDistribution::privateComputeXMax() const {

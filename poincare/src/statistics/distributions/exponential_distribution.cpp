@@ -1,69 +1,44 @@
-#include <float.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/statistics/distributions/exponential_distribution.h>
 
 #include <cmath>
 
-#include "domain.h"
-
-namespace Poincare::Internal {
+namespace Poincare::Internal::ExponentialDistribution {
 
 template <typename T>
-T ExponentialDistribution::EvaluateAtAbscissa(T x, T lambda) {
+T EvaluateAtAbscissa(T x, const T* params) {
   if (x < static_cast<T>(0.0)) {
     return NAN;
   }
+  const T lambda = params[0];
   return lambda * std::exp(-lambda * x);
 }
 
 template <typename T>
-T ExponentialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x,
-                                                                    T lambda) {
+T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
   if (x < 0.0) {
     return static_cast<T>(0.0);
   }
+  const T lambda = params[0];
   return static_cast<T>(1.0) - std::exp((-lambda * x));
 }
 
 template <typename T>
-T ExponentialDistribution::CumulativeDistributiveInverseForProbability(
-    T probability, T lambda) {
-  if (probability >= static_cast<T>(1.0)) {
-    return INFINITY;
-  }
-  if (probability <= static_cast<T>(0.0)) {
-    return static_cast<T>(0.0);
-  }
+T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
+  const T lambda = params[0];
   return -std::log(1.0 - probability) / lambda;
 }
 
-template <typename T>
-bool ExponentialDistribution::LambdaIsOK(T lambda) {
-  return Domain::Contains(lambda, Domain::Type::RPlus);
-}
-
-bool ExponentialDistribution::ExpressionLambdaIsOK(bool* result,
-                                                   const Tree* lambda) {
-  return Domain::ExpressionIsIn(result, lambda, Domain::Type::RPlus);
-}
-
 // Specialisations
-template float ExponentialDistribution::EvaluateAtAbscissa<float>(float, float);
-template double ExponentialDistribution::EvaluateAtAbscissa<double>(double,
-                                                                    double);
-template float
-ExponentialDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                                         float);
-template double
-ExponentialDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(
-    double, double);
-template float
-ExponentialDistribution::CumulativeDistributiveInverseForProbability<float>(
-    float, float);
-template double
-ExponentialDistribution::CumulativeDistributiveInverseForProbability<double>(
-    double, double);
-template bool ExponentialDistribution::LambdaIsOK(float);
-template bool ExponentialDistribution::LambdaIsOK(double);
+template float EvaluateAtAbscissa<float>(float, const float*);
+template double EvaluateAtAbscissa<double>(double, const double*);
+template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
+                                                               const float*);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
+                                                                 const double*);
+template float CumulativeDistributiveInverseForProbability<float>(float,
+                                                                  const float*);
+template double CumulativeDistributiveInverseForProbability<double>(
+    double, const double*);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::ExponentialDistribution

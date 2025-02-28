@@ -23,12 +23,6 @@ float UniformDistribution::evaluateAtAbscissa(float t) const {
   return Distribution::evaluateAtAbscissa(t);
 }
 
-bool UniformDistribution::authorizedParameterAtIndex(double x,
-                                                     int index) const {
-  return TwoParametersDistribution::authorizedParameterAtIndex(x, index) &&
-         (index == 0 || m_parameters[0] <= x);
-}
-
 void UniformDistribution::setParameterAtIndex(double f, int index) {
   setParameterAtIndexWithoutComputingCurveViewRange(f, index);
   if (index == 0 && m_parameters[1] < m_parameters[0]) {

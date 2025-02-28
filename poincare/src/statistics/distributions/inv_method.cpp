@@ -32,7 +32,7 @@ bool InverseMethod::shallowReduce(const Tree** x,
 
   if (is0 || is1) {
     // TODO: for all distributions with finite support
-    if (distribution->hasType(Distribution::Type::Binomial)) {
+    if (distribution->type() == Distribution::Type::Binomial) {
       if (is0) {
         const Tree* p = parameters[1];
         if (!p->isRational()) {
@@ -51,7 +51,7 @@ bool InverseMethod::shallowReduce(const Tree** x,
       return true;
     }
 
-    if (distribution->hasType(Distribution::Type::Geometric)) {
+    if (distribution->type() == Distribution::Type::Geometric) {
       if (is0) {
         expression->cloneTreeOverTree(KOutOfDefinition);
         return true;
@@ -70,8 +70,8 @@ bool InverseMethod::shallowReduce(const Tree** x,
       return true;
     }
 
-    if (distribution->hasType(Distribution::Type::Normal) ||
-        distribution->hasType(Distribution::Type::Student)) {
+    if (distribution->type() == Distribution::Type::Normal ||
+        distribution->type() == Distribution::Type::Student) {
       // Normal and Student (all distributions with real line support)
       expression->cloneTreeOverTree(is0 ? KMult(-1_e, KInf) : KInf);
       return true;
@@ -80,12 +80,12 @@ bool InverseMethod::shallowReduce(const Tree** x,
 
   // expectedValue if a == 0.5 and continuous and symmetrical
   if (a->isHalf()) {
-    if (distribution->hasType(Distribution::Type::Normal)) {
+    if (distribution->type() == Distribution::Type::Normal) {
       const Tree* mu = parameters[0];
       expression->cloneTreeOverTree(mu);
       return true;
     }
-    if (distribution->hasType(Distribution::Type::Student)) {
+    if (distribution->type() == Distribution::Type::Student) {
       expression->cloneTreeOverTree(0_e);
       return true;
     }

@@ -22,7 +22,6 @@ class HypergeometricDistribution final : public ThreeParametersDistribution {
     const char* parametersNames[] = {"N", "K", "n"};
     return parametersNames[index];
   }
-  bool authorizedParameterAtIndex(double x, int index) const override;
   void setParameterAtIndex(double f, int index) override;
   double defaultParameterAtIndex(int index) const override {
     return index == 0 ? k_defaultN : (index == 1 ? k_defaultK : k_defaultn);

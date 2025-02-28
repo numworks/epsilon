@@ -4,15 +4,6 @@
 
 namespace Distributions {
 
-bool ChiSquaredDistribution::authorizedParameterAtIndex(double x,
-                                                        int index) const {
-  assert(index == 0);
-  if (!OneParameterDistribution::authorizedParameterAtIndex(x, index)) {
-    return false;
-  }
-  return x > 0.0 && x == (double)((int)x) && x <= k_maxK;
-}
-
 float ChiSquaredDistribution::privateComputeXMax() const {
   assert(m_parameter != 0.0);
   return (m_parameter + 5.0f * std::sqrt(m_parameter)) *

@@ -2,21 +2,6 @@
 
 namespace Distributions {
 
-bool HypergeometricDistribution::authorizedParameterAtIndex(double x,
-                                                            int index) const {
-  if (!ThreeParametersDistribution::authorizedParameterAtIndex(x, index)) {
-    return false;
-  }
-  if (!std::isfinite(x) || std::floor(x) != x || x < 0) {
-    return false;
-  }
-  if (index == 0) {  // N
-    return x > 0;
-  }
-  // K or n
-  return x <= m_parameters[0];
-}
-
 void HypergeometricDistribution::setParameterAtIndex(double f, int index) {
   setParameterAtIndexWithoutComputingCurveViewRange(f, index);
   if (index == 0) {

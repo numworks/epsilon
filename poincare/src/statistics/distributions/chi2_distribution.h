@@ -1,71 +1,32 @@
 #ifndef POINCARE_STATISTICS_PROBABILITY_CHI2_DISTRIBUTION_H
 #define POINCARE_STATISTICS_PROBABILITY_CHI2_DISTRIBUTION_H
 
-#include <float.h>
+#include <omg/troolean.h>
 #include <poincare/src/memory/tree.h>
 
-#include "continuous_distribution.h"
+#include "domain.h"
 
 namespace Poincare {
 
 namespace Internal {
 
-class Chi2Distribution final : public ContinuousDistribution {
- public:
-  Type type() const override { return Type::ChiSquared; }
-  bool isSymmetrical() const override { return false; }
+namespace Chi2Distribution {
+template <typename U>
+OMG::Troolean IsParameterValid(U val, int index, const U* parameters) {
+  return Domain::Contains(val, Domain::Type::NStar);
+}
 
-  template <typename T>
-  static T EvaluateAtAbscissa(T x, T k);
-  float evaluateAtAbscissa(float x, const float* parameters) const override {
-    return EvaluateAtAbscissa<float>(x, parameters[0]);
-  }
-  double evaluateAtAbscissa(double x, const double* parameters) const override {
-    return EvaluateAtAbscissa<double>(x, parameters[0]);
-  }
+template <typename T>
+T EvaluateAtAbscissa(T x, const T* parameters);
 
-  template <typename T>
-  static T CumulativeDistributiveFunctionAtAbscissa(T x, T k);
-  float cumulativeDistributiveFunctionAtAbscissa(
-      float x, const float* parameters) const override {
-    return CumulativeDistributiveFunctionAtAbscissa<float>(x, parameters[0]);
-  }
-  double cumulativeDistributiveFunctionAtAbscissa(
-      double x, const double* parameters) const override {
-    return CumulativeDistributiveFunctionAtAbscissa<double>(x, parameters[0]);
-  }
+template <typename T>
+T CumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters);
 
-  template <typename T>
-  static T CumulativeDistributiveInverseForProbability(T probability, T k);
-  float cumulativeDistributiveInverseForProbability(
-      float x, const float* parameters) const override {
-    return CumulativeDistributiveInverseForProbability<float>(x, parameters[0]);
-  }
-  double cumulativeDistributiveInverseForProbability(
-      double x, const double* parameters) const override {
-    return CumulativeDistributiveInverseForProbability<double>(x,
-                                                               parameters[0]);
-  }
+template <typename T>
+T CumulativeDistributiveInverseForProbability(T probability,
+                                              const T* parameters);
 
-  bool parametersAreOK(const float* parameters) const override {
-    return KIsOK(parameters[0]);
-  }
-  bool parametersAreOK(const double* parameters) const override {
-    return KIsOK(parameters[0]);
-  }
-
-  static bool ExpressionKIsOK(bool* result, const Tree* k);
-  bool expressionParametersAreOK(bool* result,
-                                 const Tree** parameters) const override {
-    return ExpressionKIsOK(result, parameters[0]);
-  }
-
- private:
-  constexpr static int k_maxRegularizedGammaIterations = 1000;
-  constexpr static double k_regularizedGammaPrecision = DBL_EPSILON;
-  template <typename T>
-  static bool KIsOK(T k);
-};
+};  // namespace Chi2Distribution
 
 }  // namespace Internal
 

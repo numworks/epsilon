@@ -3,9 +3,12 @@
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 
-namespace Poincare::Internal {
+#include "omg/troolean.h"
 
-OMG::Troolean Domain::ExpressionIsIn(const Tree* e, Type type) {
+namespace Poincare::Internal::Domain {
+
+template <>
+OMG::Troolean Contains<const Tree*>(const Tree* e, Type type) {
   if (e->isUndefined() || e->isInf()) {
     return OMG::Troolean::False;
   }
@@ -59,4 +62,33 @@ OMG::Troolean Domain::ExpressionIsIn(const Tree* e, Type type) {
   return OMG::Troolean::True;
 }
 
-}  // namespace Poincare::Internal
+template <>
+OMG::Troolean Contains<float>(const float val, Type domain) {
+  return OMG::BoolToTroolean(ContainsFloat(val, domain));
+}
+
+template <>
+OMG::Troolean Contains<double>(const double val, Type domain) {
+  return OMG::BoolToTroolean(ContainsFloat(val, domain));
+}
+
+template <>
+OMG::Troolean IsAGreaterThanB<float>(const float a, const float b,
+                                     bool orEqual) {
+  return OMG::BoolToTroolean(a > b || (orEqual && a == b));
+}
+
+template <>
+OMG::Troolean IsAGreaterThanB<double>(const double a, const double b,
+                                      bool orEqual) {
+  return OMG::BoolToTroolean(a > b || (orEqual && a == b));
+}
+
+template <>
+OMG::Troolean IsAGreaterThanB<const Tree*>(const Tree* a, const Tree* b,
+                                           bool orEqual) {
+  // TODO_PCJ: If needed this can be implemented
+  return OMG::Troolean::Unknown;
+}
+
+}  // namespace Poincare::Internal::Domain

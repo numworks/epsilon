@@ -1,14 +1,17 @@
 #ifndef POINCARE_STATISTICS_PROBABILITY_DISTRIBUTION_H
 #define POINCARE_STATISTICS_PROBABILITY_DISTRIBUTION_H
 
+#include <omg/troolean.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/solver/solver_algorithms.h>
+
+#include "omg/unreachable.h"
 
 namespace Poincare {
 
 namespace Internal {
 
-class Distribution {
+class Distribution final {
  public:
   enum class Type : uint8_t {
     // Order matters (used as displayed order in apps/inference)
@@ -16,7 +19,7 @@ class Distribution {
     Uniform,
     Exponential,
     Normal,
-    ChiSquared,
+    Chi2,
     Student,
     Geometric,
     Hypergeometric,
@@ -24,81 +27,77 @@ class Distribution {
     Fisher,
   };
 
+  constexpr Distribution(Type type) : m_type(type) {}
+
+  static Type DistributionType(const Tree* tree) {
+    assert(tree->isDistribution());
+    return tree->nodeValueBlock(1)->get<Type>();
+  }
+  Distribution(const Tree* tree) : Distribution(DistributionType(tree)) {}
+
+  constexpr Type type() const { return m_type; }
+
   constexpr static int k_maxNumberOfParameters = 3;
-  constexpr static int numberOfParameters(Type type) {
+  constexpr static int NumberOfParameters(Type type) {
     switch (type) {
       case Type::Student:
       case Type::Poisson:
       case Type::Geometric:
       case Type::Exponential:
-      case Type::ChiSquared:
+      case Type::Chi2:
         return 1;
       case Type::Hypergeometric:
         return 3;
-      default:
-        assert(type == Type::Binomial || type == Type::Uniform ||
-               type == Type::Fisher || type == Type::Normal);
+      case Type::Binomial:
+      case Type::Uniform:
+      case Type::Fisher:
+      case Type::Normal:
         return 2;
+      default:
+        OMG::unreachable();
     }
   }
 
-  static Type Get(const Tree* tree) {
-    assert(tree->isDistribution());
-    return tree->nodeValueBlock(1)->get<Type>();
+  constexpr int numberOfParameters() const {
+    return NumberOfParameters(m_type);
   }
 
-  static const Distribution* Get(Type type);
+  template <typename U>  // float, double or const Tree*
+  OMG::Troolean isParameterValid(U val, int index, const U* parameters) const;
+  template <typename U>  // float, double or const Tree*
+  OMG::Troolean areParametersValid(const U* parameters) const;
 
-  virtual Type type() const = 0;
-  bool hasType(Type type) const {
-    /* assumes no distribution has been constructed outside of Get which is
-     * enforced by the protected constructor */
-    return this == Get(type);
+  template <typename U>  // float, double or const Tree*
+  static OMG::Troolean AreParametersValid(Type distribType,
+                                          const U* parameters) {
+    return Distribution(distribType).areParametersValid(parameters);
   }
 
-  virtual bool isContinuous() const = 0;
-  virtual bool isSymmetrical() const = 0;
-  virtual double meanAbscissa() {
-    assert(false);
-    return NAN;
-  }  // Must be implemented by all symmetrical and continouous distributions.
+  bool isContinuous() const;
+  bool isSymmetrical() const;
 
-  virtual float evaluateAtAbscissa(float x, const float* parameters) const = 0;
-  virtual double evaluateAtAbscissa(double x,
-                                    const double* parameters) const = 0;
+  template <typename T>
+  T evaluateAtAbscissa(T x, const T* parameters) const;
 
-  virtual float cumulativeDistributiveFunctionAtAbscissa(
-      float x, const float* parameters) const = 0;
-  virtual double cumulativeDistributiveFunctionAtAbscissa(
-      double x, const double* parameters) const = 0;
+  template <typename T>
+  T meanAbscissa(const T* parameters) const;
 
-  virtual float cumulativeDistributiveInverseForProbability(
-      float x, const float* parameters) const = 0;
-  virtual double cumulativeDistributiveInverseForProbability(
-      double x, const double* parameters) const = 0;
+  template <typename T>
+  T cumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters) const;
 
-  virtual float cumulativeDistributiveFunctionForRange(
-      float x, float y, const float* parameters) const = 0;
-  virtual double cumulativeDistributiveFunctionForRange(
-      double x, double y, const double* parameters) const = 0;
+  template <typename T>
+  T cumulativeDistributiveInverseForProbability(T probability,
+                                                const T* parameters) const;
 
-  virtual bool parametersAreOK(const float* parameters) const = 0;
-  virtual bool parametersAreOK(const double* parameters) const = 0;
+  template <typename T>
+  T cumulativeDistributiveFunctionForRange(T x, T y, const T* parameters) const;
 
-  /* expressionParametersAreOK returns true if the expression could be verified.
-   * The result of the verification is *result. */
-  virtual bool expressionParametersAreOK(bool* result,
-                                         const Tree** parameters) const = 0;
+  double evaluateParameterForProbabilityAndBound(int parameterIndex,
+                                                 const double* parameters,
+                                                 double probability,
+                                                 double bound,
+                                                 bool isUpperBound) const;
 
-  virtual double evaluateParameterForProbabilityAndBound(
-      int parameterIndex, const double* parameters, double probability,
-      double bound, bool isUpperBound) const {
-    assert(false);
-    return 0.0;
-  }
-
- protected:
-  constexpr Distribution() {}
   /* This method looks for bounds such that:
    * cumulativeDistributionEvaluation(xmin) < 0 <
    * cumulativeDistributionEvaluation(xmax)
@@ -107,8 +106,9 @@ class Distribution {
   static void FindBoundsForBinarySearch(
       typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation,
       const void* auxiliary, T& xmin, T& xmax);
-  double cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(
-      double p, double ax, double bx, double* parameters) const;
+
+ private:
+  Type m_type;
 };
 
 namespace DistributionConstant {

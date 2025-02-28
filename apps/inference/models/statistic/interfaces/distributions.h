@@ -20,8 +20,8 @@ class Distribution {
 
  protected:
   virtual Poincare::Distribution::Type distributionType() const = 0;
-  const Poincare::Distribution* distribution() const {
-    return Poincare::Distribution::Get(distributionType());
+  const Poincare::Distribution distribution() const {
+    return Poincare::Distribution(distributionType());
   }
   virtual const double* constParametersArray(
       double* degreesOfFreedom) const = 0;
@@ -77,7 +77,7 @@ class DistributionChi2 : public Distribution {
 
  protected:
   Poincare::Distribution::Type distributionType() const override {
-    return Poincare::Distribution::Type::ChiSquared;
+    return Poincare::Distribution::Type::Chi2;
   }
 
   const double* constParametersArray(double* degreesOfFreedom) const override {

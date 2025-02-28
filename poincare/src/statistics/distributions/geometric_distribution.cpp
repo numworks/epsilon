@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <float.h>
 #include <omg/float.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/solver/solver_algorithms.h>
@@ -8,19 +7,18 @@
 
 #include <cmath>
 
-#include "domain.h"
-
-namespace Poincare::Internal {
+namespace Poincare::Internal::GeometricDistribution {
 
 template <typename T>
-T GeometricDistribution::EvaluateAtAbscissa(T x, T p) {
-  if (std::isnan(x) || std::isinf(x) || !PIsOK(p)) {
+T EvaluateAtAbscissa(T x, const T* params) {
+  if (std::isinf(x)) {
     return NAN;
   }
   constexpr T castedOne = static_cast<T>(1.0);
   if (x < castedOne) {
     return static_cast<T>(0.0);
   }
+  const T p = params[0];
   if (p == castedOne) {
     return x == castedOne ? castedOne : static_cast<T>(0.0);
   }
@@ -30,16 +28,12 @@ T GeometricDistribution::EvaluateAtAbscissa(T x, T p) {
 }
 
 template <typename T>
-T GeometricDistribution::CumulativeDistributiveInverseForProbability(
-    T probability, T p) {
-  if (!PIsOK(p) || std::isnan(probability) || std::isinf(probability) ||
-      probability < static_cast<T>(0.0) || probability > static_cast<T>(1.0)) {
-    return NAN;
-  }
+T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
   constexpr T precision = OMG::Float::Epsilon<T>();
   if (std::abs(probability) < precision) {
     return NAN;
   }
+  const T p = params[0];
   if (std::abs(probability - static_cast<T>(1.0)) < precision) {
     if (std::abs(p - static_cast<T>(1.0)) < precision) {
       return static_cast<T>(1.0);
@@ -47,38 +41,21 @@ T GeometricDistribution::CumulativeDistributiveInverseForProbability(
     return INFINITY;
   }
   T proba = probability;
-  const void* pack[1] = {&p};
   /* It works even if G(p) is defined on N* and not N because G(0) returns 0 and
    * not undef */
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const void* const* pack = static_cast<const void* const*>(auxiliary);
-        T p = *static_cast<const T*>(pack[0]);
-        return GeometricDistribution::EvaluateAtAbscissa(x, p);
+        return EvaluateAtAbscissa(x, static_cast<const T*>(auxiliary));
       },
-      pack);
+      params);
 }
 
-template <typename T>
-bool GeometricDistribution::PIsOK(T p) {
-  return Domain::Contains(p, Domain::Type::ZeroExcludedToOne);
-}
+template float EvaluateAtAbscissa<float>(float, const float*);
+template double EvaluateAtAbscissa<double>(double, const double*);
+template float CumulativeDistributiveInverseForProbability<float>(float,
+                                                                  const float*);
+template double CumulativeDistributiveInverseForProbability<double>(
+    double, const double*);
 
-bool GeometricDistribution::ExpressionPIsOK(bool* result, const Tree* p) {
-  return Domain::ExpressionIsIn(result, p, Domain::Type::ZeroExcludedToOne);
-}
-
-template float GeometricDistribution::EvaluateAtAbscissa<float>(float, float);
-template double GeometricDistribution::EvaluateAtAbscissa<double>(double,
-                                                                  double);
-template float
-GeometricDistribution::CumulativeDistributiveInverseForProbability<float>(
-    float, float);
-template double
-GeometricDistribution::CumulativeDistributiveInverseForProbability<double>(
-    double, double);
-template bool GeometricDistribution::PIsOK(float);
-template bool GeometricDistribution::PIsOK(double);
-
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::GeometricDistribution

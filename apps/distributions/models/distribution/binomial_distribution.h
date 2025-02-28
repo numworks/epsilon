@@ -18,7 +18,6 @@ class BinomialDistribution final : public TwoParametersDistribution {
   const char* parameterNameAtIndex(int index) const override {
     return index == 0 ? "n" : "p";
   }
-  bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultParameterAtIndex(int index) const override {
     return index == 0 ? k_defaultN : k_defaultP;
   }

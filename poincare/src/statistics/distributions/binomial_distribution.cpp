@@ -1,20 +1,17 @@
 #include <assert.h>
-#include <float.h>
 #include <omg/float.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
+#include <poincare/src/solver/solver_algorithms.h>
 #include <poincare/src/statistics/distributions/binomial_distribution.h>
 
 #include <cmath>
 
-#include "domain.h"
-
-namespace Poincare::Internal {
+namespace Poincare::Internal::BinomialDistribution {
 
 template <typename T>
-T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
-  if (std::isnan(x) || std::isinf(x) || !ParametersAreOK(n, p)) {
-    return NAN;
-  }
+T EvaluateAtAbscissa(T x, const T* parameters) {
+  const T n = parameters[0];
+  const T p = parameters[1];
   constexpr T precision = OMG::Float::Epsilon<T>();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
@@ -46,11 +43,10 @@ T BinomialDistribution::EvaluateAtAbscissa(T x, T n, T p) {
 }
 
 template <typename T>
-T BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T n,
-                                                                 T p) {
-  if (!ParametersAreOK(n, p) || std::isnan(x)) {
-    return NAN;
-  }
+T CumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters) {
+  T n = parameters[k_nIndex];
+  T p = parameters[k_pIndex];
+
   if (std::isinf(x)) {
     return x > static_cast<T>(0.0) ? static_cast<T>(1.0) : static_cast<T>(0.0);
   }
@@ -65,13 +61,10 @@ T BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T n,
 }
 
 template <typename T>
-T BinomialDistribution::CumulativeDistributiveInverseForProbability(
-    T probability, T n, T p) {
-  if (!ParametersAreOK(n, p) || std::isnan(probability) ||
-      std::isinf(probability) || probability < static_cast<T>(0.0) ||
-      probability > static_cast<T>(1.0)) {
-    return NAN;
-  }
+T CumulativeDistributiveInverseForProbability(T probability,
+                                              const T* parameters) {
+  const T n = parameters[0];
+  const T p = parameters[1];
   constexpr T precision = OMG::Float::Epsilon<T>();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
@@ -89,51 +82,26 @@ T BinomialDistribution::CumulativeDistributiveInverseForProbability(
     return n;
   }
   T proba = probability;
-  const void* pack[2] = {&n, &p};
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const void* const* pack = static_cast<const void* const*>(auxiliary);
-        T n = *static_cast<const T*>(pack[0]);
-        T p = *static_cast<const T*>(pack[1]);
-        return BinomialDistribution::EvaluateAtAbscissa(x, n, p);
+        const T* params = reinterpret_cast<const T*>(auxiliary);
+        return BinomialDistribution::EvaluateAtAbscissa(x, params);
       },
-      pack);
+      parameters);
 }
 
-template <typename T>
-bool BinomialDistribution::ParametersAreOK(T n, T p) {
-  return Domain::Contains(n, Domain::Type::N) &&
-         Domain::Contains(p, Domain::Type::ZeroToOne);
-}
+template float EvaluateAtAbscissa<float>(float, const float*);
+template double EvaluateAtAbscissa<double>(double, const double*);
 
-bool BinomialDistribution::expressionParametersAreOK(bool* result,
-                                                     const Tree* n,
-                                                     const Tree* p) {
-  return Domain::ExpressionsAreIn(result, n, Domain::Type::N, p,
-                                  Domain::Type::ZeroToOne);
-}
+template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
+                                                               const float*);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
+                                                                 const double*);
 
-template float BinomialDistribution::EvaluateAtAbscissa<float>(float, float,
-                                                               float);
-template double BinomialDistribution::EvaluateAtAbscissa<double>(double, double,
-                                                                 double);
-template float
-BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                                      float,
-                                                                      float);
-template double
-BinomialDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                       double,
-                                                                       double);
-template float
-BinomialDistribution::CumulativeDistributiveInverseForProbability<float>(float,
-                                                                         float,
-                                                                         float);
-template double
-BinomialDistribution::CumulativeDistributiveInverseForProbability<double>(
-    double, double, double);
-template bool BinomialDistribution::ParametersAreOK(float, float);
-template bool BinomialDistribution::ParametersAreOK(double, double);
+template float CumulativeDistributiveInverseForProbability<float>(float,
+                                                                  const float*);
+template double CumulativeDistributiveInverseForProbability<double>(
+    double, const double*);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::BinomialDistribution

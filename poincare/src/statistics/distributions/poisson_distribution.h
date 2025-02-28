@@ -3,60 +3,26 @@
 
 #include <poincare/src/memory/tree.h>
 
-#include "discrete_distribution.h"
+#include "domain.h"
 
 namespace Poincare {
 
 namespace Internal {
 
-class PoissonDistribution final : public DiscreteDistribution {
- public:
-  Type type() const override { return Type::Poisson; }
-  bool isSymmetrical() const override { return false; }
+namespace PoissonDistribution {
+template <typename U>
+OMG::Troolean IsParameterValid(U val, int index, const U* parameters) {
+  return Domain::Contains(val, Domain::Type::RPlusStar);
+}
 
-  template <typename T>
-  static T EvaluateAtAbscissa(T x, const T lambda);
-  float evaluateAtAbscissa(float x, const float* parameters) const override {
-    return EvaluateAtAbscissa<float>(x, parameters[0]);
-  }
-  double evaluateAtAbscissa(double x, const double* parameters) const override {
-    return EvaluateAtAbscissa<double>(x, parameters[0]);
-  }
+template <typename T>
+T EvaluateAtAbscissa(T x, const T* parameters);
 
-  template <typename T>
-  static T CumulativeDistributiveInverseForProbability(T probability,
-                                                       const T lambda);
-  float cumulativeDistributiveInverseForProbability(
-      float x, const float* parameters) const override {
-    return CumulativeDistributiveInverseForProbability<float>(x, parameters[0]);
-  }
-  double cumulativeDistributiveInverseForProbability(
-      double x, const double* parameters) const override {
-    return CumulativeDistributiveInverseForProbability<double>(x,
-                                                               parameters[0]);
-  }
+template <typename T>
+T CumulativeDistributiveInverseForProbability(T probability,
+                                              const T* parameters);
 
-  bool parametersAreOK(const float* parameters) const override {
-    return LambdaIsOK(parameters[0]);
-  }
-  bool parametersAreOK(const double* parameters) const override {
-    return LambdaIsOK(parameters[0]);
-  }
-
-  static bool ExpressionLambdaIsOK(bool* result, const Tree* lambda);
-  bool expressionParametersAreOK(bool* result,
-                                 const Tree** parameters) const override {
-    return ExpressionLambdaIsOK(result, parameters[0]);
-  }
-
- private:
-  template <typename T>
-  static T parameterLambda(T* parameters) {
-    return parameters[0];
-  }
-  template <typename T>
-  static bool LambdaIsOK(T lambda);
-};
+};  // namespace PoissonDistribution
 
 }  // namespace Internal
 

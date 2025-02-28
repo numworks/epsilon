@@ -19,13 +19,10 @@ class ExponentialDistribution final : public OneParameterDistribution {
     return I18n::Message::ExponentialDistribution;
   }
   const char* parameterNameAtIndex(int index) const override { return "λ"; }
-  float evaluateAtAbscissa(float x) const override;
   bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultParameterAtIndex(int index) const override {
     return k_defaultLambda;
   }
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
-  double cumulativeDistributiveInverseForProbability(double p) const override;
 
  private:
   constexpr static double k_defaultLambda = 1.0;

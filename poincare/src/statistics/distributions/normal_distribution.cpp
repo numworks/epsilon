@@ -1,22 +1,19 @@
 #include <assert.h>
-#include <float.h>
 #include <omg/float.h>
 #include <poincare/src/solver/erf_inv.h>
 #include <poincare/src/statistics/distributions/normal_distribution.h>
+#include <poincare/statistics/distribution.h>
 
 #include <cmath>
 
-#include "domain.h"
-
 #define M_SQRT_2PI 2.506628274631000502415765284811
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::NormalDistribution {
 
 template <typename T>
-T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T sigma) {
-  if (std::isnan(x) || std::isinf(x) || !MuAndSigmaAreOK(mu, sigma)) {
-    return NAN;
-  }
+T EvaluateAtAbscissa(T x, const T* params) {
+  const T mu = params[k_muIndex];
+  const T sigma = params[k_sigmaIndex];
   const float xMinusMuOverVar = (x - mu) / sigma;
   return (static_cast<T>(1.0)) /
          (std::fabs(sigma) * static_cast<T>(M_SQRT_2PI)) *
@@ -24,43 +21,7 @@ T NormalDistribution::EvaluateAtAbscissa(T x, T mu, T sigma) {
 }
 
 template <typename T>
-T NormalDistribution::CumulativeDistributiveFunctionAtAbscissa(T x, T mu,
-                                                               T sigma) {
-  if (!MuAndSigmaAreOK(mu, sigma)) {
-    return NAN;
-  }
-  return StandardNormalCumulativeDistributiveFunctionAtAbscissa<T>(
-      (x - mu) / std::fabs(sigma));
-}
-
-template <typename T>
-T NormalDistribution::CumulativeDistributiveInverseForProbability(T probability,
-                                                                  T mu,
-                                                                  T sigma) {
-  if (!MuAndSigmaAreOK(mu, sigma)) {
-    return NAN;
-  }
-  return StandardNormalCumulativeDistributiveInverseForProbability(
-             probability) *
-             std::fabs(sigma) +
-         mu;
-}
-
-template <typename T>
-bool NormalDistribution::MuAndSigmaAreOK(T mu, T sigma) {
-  return Domain::Contains(mu, Domain::Type::R) &&
-         Domain::Contains(sigma, Domain::Type::RPlusStar);
-}
-
-bool NormalDistribution::ExpressionMuAndSigmaAreOK(bool* result, const Tree* mu,
-                                                   const Tree* sigma) {
-  return Domain::ExpressionsAreIn(result, mu, Domain::Type::R, sigma,
-                                  Domain::Type::RPlusStar);
-}
-
-template <typename T>
-T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(
-    T abscissa) {
+static T standardNormalCumulativeDistributiveFunctionAtAbscissa(T abscissa) {
   if (std::isnan(abscissa)) {
     return NAN;
   }
@@ -74,14 +35,14 @@ T NormalDistribution::StandardNormalCumulativeDistributiveFunctionAtAbscissa(
   }
   if (abscissa < static_cast<T>(DistributionConstant::k_standardMu)) {
     return (static_cast<T>(1.0)) -
-           StandardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
+           standardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
   }
   return (static_cast<T>(0.5)) +
          (static_cast<T>(0.5)) * std::erf(abscissa / static_cast<T>(M_SQRT2));
 }
 
 template <typename T>
-T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
+static T standardNormalCumulativeDistributiveInverseForProbability(
     T probability) {
   if (probability > static_cast<T>(1.0) || probability < static_cast<T>(0.0) ||
       std::isnan(probability) || std::isinf(probability)) {
@@ -95,16 +56,35 @@ T NormalDistribution::StandardNormalCumulativeDistributiveInverseForProbability(
     return -INFINITY;
   }
   if (probability < static_cast<T>(0.5)) {
-    return -StandardNormalCumulativeDistributiveInverseForProbability(
+    return -standardNormalCumulativeDistributiveInverseForProbability(
         (static_cast<T>(1.0)) - probability);
   }
   return static_cast<T>(M_SQRT2) *
          erfInv((static_cast<T>(2.0)) * probability - static_cast<T>(1.0));
 }
 
-double NormalDistribution::evaluateParameterForProbabilityAndBound(
-    int parameterIndex, const double* parameters, double probability,
-    double bound, bool isUpperBound) const {
+template <typename T>
+T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
+  const T mu = params[k_muIndex];
+  const T sigma = params[k_sigmaIndex];
+  return standardNormalCumulativeDistributiveFunctionAtAbscissa<T>(
+      (x - mu) / std::fabs(sigma));
+}
+
+template <typename T>
+T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
+  const T mu = params[k_muIndex];
+  const T sigma = params[k_sigmaIndex];
+  return standardNormalCumulativeDistributiveInverseForProbability(
+             probability) *
+             std::fabs(sigma) +
+         mu;
+}
+
+double EvaluateParameterForProbabilityAndBound(int parameterIndex,
+                                               const double* parameters,
+                                               double probability, double bound,
+                                               bool isUpperBound) {
   if (std::isnan(probability)) {
     return NAN;
   }
@@ -115,7 +95,7 @@ double NormalDistribution::evaluateParameterForProbabilityAndBound(
   /* If X following (mu, sigma) is inferior to bound, then Z following (0, 1)
    * is inferior to (bound - mu)/sigma. */
   double abscissaForStandardDistribution =
-      StandardNormalCumulativeDistributiveInverseForProbability(probability);
+      standardNormalCumulativeDistributiveInverseForProbability(probability);
   if (parameterIndex == 0) {  // mu
     return bound - parameters[1] * abscissaForStandardDistribution;
   }
@@ -131,27 +111,15 @@ double NormalDistribution::evaluateParameterForProbabilityAndBound(
   return result > 0.0 ? result : NAN;  // Sigma can't be negative or null
 }
 
-template float NormalDistribution::EvaluateAtAbscissa<float>(float, float,
-                                                             float);
-template double NormalDistribution::EvaluateAtAbscissa<double>(double, double,
-                                                               double);
-template float
-NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                                    float,
-                                                                    float);
-template double
-NormalDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                     double,
-                                                                     double);
-template float
-NormalDistribution::CumulativeDistributiveInverseForProbability<float>(float,
-                                                                       float,
-                                                                       float);
-template double
-NormalDistribution::CumulativeDistributiveInverseForProbability<double>(double,
-                                                                        double,
-                                                                        double);
-template bool NormalDistribution::MuAndSigmaAreOK(float mu, float sigma);
-template bool NormalDistribution::MuAndSigmaAreOK(double mu, double sigma);
+template float EvaluateAtAbscissa<float>(float, const float*);
+template double EvaluateAtAbscissa<double>(double, const double*);
+template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
+                                                               const float*);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
+                                                                 const double*);
+template float CumulativeDistributiveInverseForProbability<float>(float,
+                                                                  const float*);
+template double CumulativeDistributiveInverseForProbability<double>(
+    double, const double*);
 
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::NormalDistribution

@@ -1,14 +1,18 @@
+#include <poincare/solver/solver.h>
 #include <poincare/src/solver/regularized_gamma_function.h>
+#include <poincare/src/solver/solver_algorithms.h>
 #include <poincare/src/statistics/distributions/chi2_distribution.h>
+#include <poincare/statistics/distribution.h>
 
 #include <cmath>
 
-#include "domain.h"
+namespace Poincare::Internal::Chi2Distribution {
 
-namespace Poincare::Internal {
+constexpr static int k_maxRegularizedGammaIterations = 1000;
+constexpr static double k_regularizedGammaPrecision = DBL_EPSILON;
 
 template <typename T>
-T Chi2Distribution::EvaluateAtAbscissa(T x, T k) {
+T EvaluateAtAbscissa(T x, const T* parameters) {
   if (x < 0.0) {
     return NAN;
   }
@@ -18,6 +22,7 @@ T Chi2Distribution::EvaluateAtAbscissa(T x, T k) {
   if (std::isinf(x)) {
     return 0.0;
   }
+  const T k = parameters[0];
   const T halfk = k / 2.0;
   const T halfX = x / 2.0;
   return std::exp(-lgamma(halfk) - halfX + (halfk - 1.0) * std::log(halfX)) /
@@ -25,10 +30,11 @@ T Chi2Distribution::EvaluateAtAbscissa(T x, T k) {
 }
 
 template <typename T>
-T Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
+T CumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters) {
   if (x < DBL_EPSILON) {
     return 0.0;
   }
+  const T k = parameters[0];
   double result = 0.0;
   if (RegularizedGammaFunction(k / 2.0, x / 2.0, k_regularizedGammaPrecision,
                                k_maxRegularizedGammaIterations, &result)) {
@@ -38,14 +44,16 @@ T Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(T x, T k) {
 }
 
 template <typename T>
-T Chi2Distribution::CumulativeDistributiveInverseForProbability(T probability,
-                                                                T k) {
+T CumulativeDistributiveInverseForProbability(T probability,
+                                              const T* parameters) {
   // Compute inverse using SolverAlgorithms::IncreasingFunctionRoot
   if (probability > 1.0 - DBL_EPSILON) {
     return INFINITY;
   } else if (probability < DBL_EPSILON) {
-    return 0;
+    return 0.;
   }
+
+  const T k = parameters[0];
 
   struct Args {
     T proba;
@@ -56,42 +64,31 @@ T Chi2Distribution::CumulativeDistributiveInverseForProbability(T probability,
   Solver<double>::FunctionEvaluation evaluation = [](double x,
                                                      const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
-    return CumulativeDistributiveFunctionAtAbscissa<double>(x, args->k) -
+    double dblK = static_cast<double>(args->k);
+    return CumulativeDistributiveFunctionAtAbscissa<double>(x, &dblK) -
            args->proba;
   };
 
   double xmin, xmax;
-  FindBoundsForBinarySearch(evaluation, &args, xmin, xmax);
+  Distribution::FindBoundsForBinarySearch(evaluation, &args, xmin, xmax);
 
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
       xmin, xmax, DBL_EPSILON, evaluation, &args);
-  return result.x();
-}
-
-template <typename T>
-bool Chi2Distribution::KIsOK(T k) {
-  return Domain::Contains(k, Domain::Type::NStar);
-}
-
-bool Chi2Distribution::ExpressionKIsOK(bool* result, const Tree* k) {
-  return Domain::ExpressionIsIn(result, k, Domain::Type::NStar);
+  return static_cast<T>(result.x());
 }
 
 // Specialisations
-template float Chi2Distribution::EvaluateAtAbscissa<float>(float, float);
-template double Chi2Distribution::EvaluateAtAbscissa<double>(double, double);
-template float
-Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(float, float);
-template double
-Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                   double);
-template float
-Chi2Distribution::CumulativeDistributiveInverseForProbability<float>(float,
-                                                                     float);
-template double
-Chi2Distribution::CumulativeDistributiveInverseForProbability<double>(double,
-                                                                      double);
-template bool Chi2Distribution::KIsOK(float k);
-template bool Chi2Distribution::KIsOK(double k);
+template float EvaluateAtAbscissa<float>(float, const float*);
+template double EvaluateAtAbscissa<double>(double, const double*);
 
-}  // namespace Poincare::Internal
+template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
+                                                               const float*);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
+                                                                 const double*);
+
+template float CumulativeDistributiveInverseForProbability<float>(float,
+                                                                  const float*);
+template double CumulativeDistributiveInverseForProbability<double>(
+    double, const double*);
+
+}  // namespace Poincare::Internal::Chi2Distribution

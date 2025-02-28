@@ -3,7 +3,6 @@
 #include <float.h>
 #include <poincare/layout.h>
 
-#include <algorithm>
 #include <cmath>
 
 using namespace Shared;
@@ -12,10 +11,8 @@ namespace Distributions {
 
 bool FisherDistribution::authorizedParameterAtIndex(double x, int index) const {
   assert(index == 0 || index == 1);
-  if (!TwoParametersDistribution::authorizedParameterAtIndex(x, index)) {
-    return false;
-  }
-  return x > DBL_MIN && x <= k_maxParameter;
+  return Distribution::authorizedParameterAtIndex(x, index) && x > DBL_MIN &&
+         x <= k_maxParameter;
 }
 
 float FisherDistribution::mode() const {

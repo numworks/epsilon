@@ -1,7 +1,6 @@
 #ifndef DISTRIBUTION_CHI_SQUARED_DISTRIBUTION_H
 #define DISTRIBUTION_CHI_SQUARED_DISTRIBUTION_H
 
-#include <float.h>
 #include <poincare/layout.h>
 
 #include "one_parameter_distribution.h"
@@ -11,7 +10,7 @@ namespace Distributions {
 class ChiSquaredDistribution : public OneParameterDistribution {
  public:
   ChiSquaredDistribution()
-      : OneParameterDistribution(Poincare::Distribution::Type::ChiSquared,
+      : OneParameterDistribution(Poincare::Distribution::Type::Chi2,
                                  k_defaultK) {
     computeCurveViewRange();
   }
@@ -19,7 +18,6 @@ class ChiSquaredDistribution : public OneParameterDistribution {
     return I18n::Message::ChiSquareDistribution;
   }
   const char* parameterNameAtIndex(int index) const override { return "k"; }
-  bool authorizedParameterAtIndex(double x, int index) const override;
   double defaultParameterAtIndex(int index) const override {
     return k_defaultK;
   }

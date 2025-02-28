@@ -4,8 +4,6 @@
 #include <apps/shared/inference.h>
 #include <poincare/statistics/distribution.h>
 
-#include <new>
-
 #include "distributions/models/calculation/discrete_calculation.h"
 #include "distributions/models/calculation/finite_integral_calculation.h"
 #include "distributions/models/calculation/left_integral_calculation.h"
@@ -17,21 +15,20 @@ class Distribution : public Shared::Inference {
  public:
   Distribution(Poincare::Distribution::Type type)
       : m_calculationBuffer(),
-        m_distribution(Poincare::Distribution::Get(type)),
+        m_distribution(type),
         m_indexOfUninitializedParameter(-1) {
     m_calculationBuffer.init(this);
   }
 
   static bool Initialize(Distribution* distribution,
                          Poincare::Distribution::Type type);
-  Poincare::Distribution::Type type() const { return m_distribution->type(); };
+  Poincare::Distribution::Type type() const { return m_distribution.type(); };
 
-  virtual double meanAbscissa() {
-    assert(false);
-    return NAN;
-  }  // Must be implemented by all symmetrical and continouous distributions.
-  bool isContinuous() const { return m_distribution->isContinuous(); }
-  bool isSymmetrical() const { return m_distribution->isSymmetrical(); }
+  bool isContinuous() const { return m_distribution.isContinuous(); }
+  bool isSymmetrical() const { return m_distribution.isSymmetrical(); }
+  double meanAbscissa() const {
+    return m_distribution.meanAbscissa(constParametersArray());
+  }
 
   // Parameters
   bool authorizedParameterAtIndex(double x, int index) const override;
@@ -50,12 +47,14 @@ class Distribution : public Shared::Inference {
 
   // Evaluation
   float evaluateAtAbscissa(float x) const override;
-  double cumulativeDistributiveFunctionAtAbscissa(double x) const override;
+  double cumulativeDistributiveFunctionAtAbscissa(
+      double x) const override final;
   double rightIntegralFromAbscissa(double x) const;
   double finiteIntegralBetweenAbscissas(double a, double b) const;
-  double cumulativeDistributiveInverseForProbability(double p) const override;
+  double cumulativeDistributiveInverseForProbability(
+      double p) const override final;
   virtual double rightIntegralInverseForProbability(double p) const;
-  virtual double evaluateAtDiscreteAbscissa(int k) const;
+  double evaluateAtDiscreteAbscissa(int k) const;
   constexpr static int k_maxNumberOfOperations = 1000000;
   virtual double defaultComputedValue() const { return 0.0f; }
   void computeUnknownParameterForProbabilityAndBound(double probability,
@@ -72,6 +71,9 @@ class Distribution : public Shared::Inference {
                 "LargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static int k_allParametersAreInitialized = -1;
+
+  // WARNING: This method populates a shared buffer.
+  const float* constFloatParametersArray() const;
 
   float computeXMax() const override final { return computeXExtremum(false); }
   float computeXMin() const override final { return computeXExtremum(true); }
@@ -107,7 +109,7 @@ class Distribution : public Shared::Inference {
   };
 
   CalculationBuffer m_calculationBuffer;
-  const Poincare::Distribution* m_distribution;
+  const Poincare::Distribution m_distribution;
   // Used if one of the parameters is not input by the user
   int m_indexOfUninitializedParameter;
 };

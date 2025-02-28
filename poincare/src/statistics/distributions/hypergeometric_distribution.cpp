@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <float.h>
 #include <omg/float.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/solver/solver_algorithms.h>
@@ -7,12 +6,14 @@
 
 #include <cmath>
 
-#include "domain.h"
-
-namespace Poincare::Internal {
+namespace Poincare::Internal::HypergeometricDistribution {
 
 template <typename T>
-T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
+T EvaluateAtAbscissa(T k, const T* parameters) {
+  const T N = parameters[k_NIndex];
+  const T K = parameters[k_KIndex];
+  const T n = parameters[k_nIndex];
+
   if (!std::isfinite(k) || n > N || K > N ||
       (N - K == N && K != static_cast<T>(0.))) {
     /* `N - K == N` checks if K is negligible compared to N, to avoid precision
@@ -42,12 +43,12 @@ T HypergeometricDistribution::EvaluateAtAbscissa(T k, T N, T K, T n) {
 }
 
 template <typename T>
-T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(
-    T probability, T N, T K, T n) {
-  if (!std::isfinite(probability) || probability < static_cast<T>(0.0) ||
-      probability > static_cast<T>(1.0)) {
-    return NAN;
-  }
+T CumulativeDistributiveInverseForProbability(T probability,
+                                              const T* parameters) {
+  const T N = parameters[k_NIndex];
+  const T K = parameters[k_KIndex];
+  const T n = parameters[k_nIndex];
+
   constexpr T precision = OMG::Float::Epsilon<T>();
   if (probability < precision) {
     // We can have 0 successes only if there are enough failures
@@ -60,65 +61,20 @@ T HypergeometricDistribution::CumulativeDistributiveInverseForProbability(
     return std::min(n, K);
   }
   T proba = probability;
-  const void* pack[3] = {&N, &K, &n};
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const void* const* pack = static_cast<const void* const*>(auxiliary);
-        T N = *static_cast<const T*>(pack[0]);
-        T K = *static_cast<const T*>(pack[1]);
-        T n = *static_cast<const T*>(pack[2]);
-        return HypergeometricDistribution::EvaluateAtAbscissa(x, N, K, n);
+        const T* params = static_cast<const T*>(auxiliary);
+        return EvaluateAtAbscissa(x, params);
       },
-      pack);
+      parameters);
 }
 
-template <typename T>
-bool HypergeometricDistribution::NIsOK(T N) {
-  return Domain::Contains(N, Domain::Type::N);
-}
+template float EvaluateAtAbscissa<float>(float, const float*);
+template double EvaluateAtAbscissa<double>(double, const double*);
+template float CumulativeDistributiveInverseForProbability<float>(float,
+                                                                  const float*);
+template double CumulativeDistributiveInverseForProbability<double>(
+    double, const double*);
 
-template <typename T>
-bool HypergeometricDistribution::KIsOK(T K) {
-  return Domain::Contains(K, Domain::Type::N);  // && K <= N
-}
-
-template <typename T>
-bool HypergeometricDistribution::nIsOK(T n) {
-  return Domain::Contains(n, Domain::Type::N);  // && n <= N
-}
-
-bool HypergeometricDistribution::ExpressionNIsOK(bool* result, const Tree* N) {
-  return Domain::ExpressionIsIn(result, N, Domain::Type::N);
-}
-
-bool HypergeometricDistribution::ExpressionKIsOK(bool* result, const Tree* K) {
-  return Domain::ExpressionIsIn(result, K, Domain::Type::N);
-}
-
-bool HypergeometricDistribution::ExpressionnIsOK(bool* result, const Tree* n) {
-  return Domain::ExpressionIsIn(result, n, Domain::Type::N);
-}
-
-template float HypergeometricDistribution::EvaluateAtAbscissa<float>(float,
-                                                                     float,
-                                                                     float,
-                                                                     float);
-template double HypergeometricDistribution::EvaluateAtAbscissa<double>(double,
-                                                                       double,
-                                                                       double,
-                                                                       double);
-template float
-HypergeometricDistribution::CumulativeDistributiveInverseForProbability<float>(
-    float, float, float, float);
-template double
-HypergeometricDistribution::CumulativeDistributiveInverseForProbability<double>(
-    double, double, double, double);
-template bool HypergeometricDistribution::NIsOK(float);
-template bool HypergeometricDistribution::NIsOK(double);
-template bool HypergeometricDistribution::KIsOK(float);
-template bool HypergeometricDistribution::KIsOK(double);
-template bool HypergeometricDistribution::nIsOK(float);
-template bool HypergeometricDistribution::nIsOK(double);
-
-}  // namespace Poincare::Internal
+}  // namespace Poincare::Internal::HypergeometricDistribution

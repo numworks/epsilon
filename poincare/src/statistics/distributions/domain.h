@@ -65,9 +65,9 @@ static bool ContainsFloat(T value, Type type) {
 template <typename T>
 OMG::Troolean Contains(const T val, Type domain);
 
-// Returns true if val1 > val2
+// Returns true if val1 >= val2
 template <typename T>
-OMG::Troolean IsAGreaterThanB(const T a, const T b, bool orEqual = false);
+OMG::Troolean IsAGreaterThanB(const T a, const T b, bool strictly = false);
 
 };  // namespace Domain
 

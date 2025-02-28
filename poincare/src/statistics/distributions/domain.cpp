@@ -74,19 +74,19 @@ OMG::Troolean Contains<double>(const double val, Type domain) {
 
 template <>
 OMG::Troolean IsAGreaterThanB<float>(const float a, const float b,
-                                     bool orEqual) {
-  return OMG::BoolToTroolean(a > b || (orEqual && a == b));
+                                     bool strictly) {
+  return OMG::BoolToTroolean(a > b || (!strictly && a == b));
 }
 
 template <>
 OMG::Troolean IsAGreaterThanB<double>(const double a, const double b,
-                                      bool orEqual) {
-  return OMG::BoolToTroolean(a > b || (orEqual && a == b));
+                                      bool strictly) {
+  return OMG::BoolToTroolean(a > b || (!strictly && a == b));
 }
 
 template <>
 OMG::Troolean IsAGreaterThanB<const Tree*>(const Tree* a, const Tree* b,
-                                           bool orEqual) {
+                                           bool strictly) {
   // TODO_PCJ: If needed this can be implemented
   return OMG::Troolean::Unknown;
 }

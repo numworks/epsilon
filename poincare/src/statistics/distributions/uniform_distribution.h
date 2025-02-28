@@ -13,12 +13,11 @@ namespace Internal {
 namespace UniformDistribution {
 template <typename U>
 OMG::Troolean IsParameterValid(U val, int index, const U* parameters) {
-  return OMG::TrooleanAnd(
-      Domain::Contains(val, Domain::Type::R),
-      index == 0
-          // d1 <= d2
-          ? Domain::IsAGreaterThanB(parameters[1], val, true)
-          : Domain::IsAGreaterThanB(val, parameters[0], true));
+  return OMG::TrooleanAnd(Domain::Contains(val, Domain::Type::R),
+                          index == 0
+                              // d1 <= d2
+                              ? Domain::IsAGreaterThanB(parameters[1], val)
+                              : Domain::IsAGreaterThanB(val, parameters[0]));
 }
 
 template <typename T>

@@ -62,7 +62,14 @@ bool Distribution::Initialize(Distribution* distribution,
 }
 
 float Distribution::evaluateAtAbscissa(float x) const {
-  return m_distribution.evaluateAtAbscissa(x, constFloatParametersArray());
+  /* We need to call the double method because constParametersArray() is a
+   * double *.
+   * The other solution would be to create a constFloatParametersArray(), but
+   * this would lose precision since the calculation have been done in double
+   * for a long time.
+   * Should this method juste return double ? */
+  return static_cast<float>(m_distribution.evaluateAtAbscissa(
+      static_cast<double>(x), constParametersArray()));
 }
 
 bool Distribution::authorizedParameterAtIndex(double x, int index) const {
@@ -222,16 +229,6 @@ float Distribution::computeXExtremum(bool min) const {
   }
 
   return result;
-}
-
-static float floatParameters[Poincare::Distribution::k_maxNumberOfParameters];
-
-const float* Distribution::constFloatParametersArray() const {
-  const double* parameters = constParametersArray();
-  for (int i = 0; i < m_distribution.numberOfParameters(); i++) {
-    floatParameters[i] = static_cast<float>(parameters[i]);
-  }
-  return floatParameters;
 }
 
 }  // namespace Distributions

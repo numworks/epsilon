@@ -46,6 +46,8 @@ class Distribution : public Shared::Inference {
   }
 
   // Evaluation
+  /* This does computation in double and then converts to float.
+   * TODO: Should this just return double? */
   float evaluateAtAbscissa(float x) const override;
   double cumulativeDistributiveFunctionAtAbscissa(
       double x) const override final;
@@ -71,9 +73,6 @@ class Distribution : public Shared::Inference {
                 "LargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static int k_allParametersAreInitialized = -1;
-
-  // WARNING: This method populates a shared buffer.
-  const float* constFloatParametersArray() const;
 
   float computeXMax() const override final { return computeXExtremum(false); }
   float computeXMin() const override final { return computeXExtremum(true); }

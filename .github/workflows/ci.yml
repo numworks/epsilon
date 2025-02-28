@@ -88,9 +88,8 @@ jobs:
         run: make MODEL=${{ matrix.model }} epsilon.dfu
       - if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: make MODEL=${{ matrix.model }} flasher.dfu
-      # TODO_PCJ: Fix and reactivate bench.ram.dfu target
-      # - if: ${{ steps.epsilon-core.outcome == 'success' }}
-        # run: make MODEL=${{ matrix.model }} bench.ram.dfu
+      - if: ${{ steps.epsilon-core.outcome == 'success' }}
+        run: make MODEL=${{ matrix.model }} bench.ram.dfu
   windows:
     runs-on: windows-latest
     if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.windows == 'true') }}

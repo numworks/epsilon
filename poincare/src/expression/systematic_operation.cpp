@@ -516,8 +516,8 @@ bool SystematicOperation::ReduceSign(Tree* e) {
 bool SystematicOperation::ReduceDistribution(Tree* e) {
   const Tree* child = e->child(0);
   const Tree* abscissae[DistributionMethod::k_maxNumberOfParameters];
-  DistributionMethod::Type methodType = DistributionMethod::Get(e);
-  for (int i = 0; i < DistributionMethod::numberOfParameters(methodType); i++) {
+  DistributionMethod method = DistributionMethod(e);
+  for (int i = 0; i < method.numberOfParameters(); i++) {
     abscissae[i] = child;
     child = child->nextTree();
   }
@@ -527,7 +527,6 @@ bool SystematicOperation::ReduceDistribution(Tree* e) {
     parameters[i] = child;
     child = child->nextTree();
   }
-  const DistributionMethod* method = DistributionMethod::Get(methodType);
   OMG::Troolean parametersAreOk = distribution.areParametersValid(parameters);
   if (parametersAreOk == OMG::Troolean::Unknown) {
     return false;
@@ -536,7 +535,7 @@ bool SystematicOperation::ReduceDistribution(Tree* e) {
     e->cloneTreeOverTree(KOutOfDefinition);
     return true;
   }
-  return method->shallowReduce(abscissae, &distribution, parameters, e);
+  return method.shallowReduce(abscissae, distribution, parameters, e);
 }
 
 bool SystematicOperation::ReduceDim(Tree* e) {

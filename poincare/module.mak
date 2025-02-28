@@ -166,8 +166,6 @@ $(addprefix solver/, \
 $(addprefix statistics/, \
   $(addprefix distributions/, \
     binomial_distribution.cpp \
-    cdf_method.cpp \
-    cdf_range_method.cpp \
     chi2_distribution.cpp \
     discrete_distribution.cpp \
     distribution.cpp \
@@ -177,9 +175,7 @@ $(addprefix statistics/, \
     fisher_distribution.cpp \
     geometric_distribution.cpp \
     hypergeometric_distribution.cpp \
-    inv_method.cpp \
     normal_distribution.cpp \
-    pdf_method.cpp \
     poisson_distribution.cpp \
     student_distribution.cpp \
     uniform_distribution.cpp \

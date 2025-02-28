@@ -911,8 +911,8 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
     case Type::Distribution: {
       const Tree* child = e->child(0);
       T abscissa[DistributionMethod::k_maxNumberOfParameters];
-      DistributionMethod::Type method = DistributionMethod::Get(e);
-      for (int i = 0; i < DistributionMethod::numberOfParameters(method); i++) {
+      DistributionMethod method(e);
+      for (int i = 0; i < method.numberOfParameters(); i++) {
         std::complex<T> c = PrivateToComplex<T>(child, ctx);
         if (c.imag() != 0) {
           return NAN;
@@ -930,8 +930,7 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
         parameters[i] = c.real();
         child = child->nextTree();
       }
-      return DistributionMethod::Get(method)->EvaluateAtAbscissa(
-          abscissa, &distribution, parameters);
+      return method.evaluateAtAbscissa(abscissa, distribution, parameters);
     }
     case Type::Dep: {
       std::complex<T> undef = UndefDependencies<T>(e, ctx);

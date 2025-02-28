@@ -12,6 +12,7 @@ namespace Poincare {
 
 namespace Internal {
 
+// TODO: Should this follow the Distributions path and remove all inheritance ?
 class Regression {
  public:
   // TODO: the order is used by the regression app menu, make it independant

@@ -167,6 +167,7 @@ $(addprefix statistics/, \
   $(addprefix distributions/, \
     binomial_distribution.cpp \
     chi2_distribution.cpp \
+    continuous_distribution.cpp \
     discrete_distribution.cpp \
     distribution.cpp \
     distribution_method.cpp \

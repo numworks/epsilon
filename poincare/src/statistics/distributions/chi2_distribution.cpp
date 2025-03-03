@@ -6,6 +6,8 @@
 
 #include <cmath>
 
+#include "continuous_distribution.h"
+
 namespace Poincare::Internal::Chi2Distribution {
 
 constexpr static int k_maxRegularizedGammaIterations = 1000;
@@ -70,7 +72,8 @@ T CumulativeDistributiveInverseForProbability(T probability,
   };
 
   double xmin, xmax;
-  Distribution::FindBoundsForBinarySearch(evaluation, &args, xmin, xmax);
+  ContinuousDistribution::FindBoundsForBinarySearch(evaluation, &args, xmin,
+                                                    xmax);
 
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
       xmin, xmax, DBL_EPSILON, evaluation, &args);

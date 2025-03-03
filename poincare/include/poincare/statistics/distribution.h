@@ -98,15 +98,6 @@ class Distribution final {
                                                  double bound,
                                                  bool isUpperBound) const;
 
-  /* This method looks for bounds such that:
-   * cumulativeDistributionEvaluation(xmin) < 0 <
-   * cumulativeDistributionEvaluation(xmax)
-   */
-  template <typename T>
-  static void FindBoundsForBinarySearch(
-      typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation,
-      const void* auxiliary, T& xmin, T& xmax);
-
  private:
   Type m_type;
 };

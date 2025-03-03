@@ -20,6 +20,15 @@ T CumulativeDistributiveFunctionForRange(Distribution::Type distribType, T x,
          distribution.cumulativeDistributiveFunctionAtAbscissa(x, parameters);
 }
 
+/* This method looks for bounds such that:
+ * cumulativeDistributionEvaluation(xmin) < 0 <
+ * cumulativeDistributionEvaluation(xmax)
+ */
+template <typename T>
+void FindBoundsForBinarySearch(
+    typename Solver<T>::FunctionEvaluation cumulativeDistributionEvaluation,
+    const void* auxiliary, T& xmin, T& xmax);
+
 };  // namespace ContinuousDistribution
 
 }  // namespace Internal

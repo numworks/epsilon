@@ -6,6 +6,8 @@
 
 #include <cmath>
 
+#include "continuous_distribution.h"
+
 namespace Poincare::Internal::StudentDistribution {
 
 template <typename T>
@@ -57,7 +59,8 @@ T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
   };
 
   double xmin, xmax;
-  Distribution::FindBoundsForBinarySearch(evaluation, &args, xmin, xmax);
+  ContinuousDistribution::FindBoundsForBinarySearch(evaluation, &args, xmin,
+                                                    xmax);
   assert((xmin < xmax) && std::isfinite(xmin) && std::isfinite(xmax));
 
   // Compute inverse using SolverAlgorithms::IncreasingFunctionRoot

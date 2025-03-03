@@ -156,9 +156,9 @@ QUIZ_CASE(distributions_parameters_hypergeometric) {
   constexpr int k_indexOfN = 0;
   constexpr int k_indexOfK = 1;
   constexpr int k_indexOfn = 2;
-  // N can be any integer in ]0,+inf[
+  // N can be any integer in [0,+inf[
   quiz_assert(!distribution.authorizedParameterAtIndex(-3.0, k_indexOfN));
-  quiz_assert(!distribution.authorizedParameterAtIndex(0.0, k_indexOfN));
+  quiz_assert(distribution.authorizedParameterAtIndex(0.0, k_indexOfN));
   quiz_assert(distribution.authorizedParameterAtIndex(3.0, k_indexOfN));
   quiz_assert(!distribution.authorizedParameterAtIndex(4.2, k_indexOfN));
   // K can be any integer in [0,N]

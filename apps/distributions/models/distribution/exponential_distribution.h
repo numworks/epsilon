@@ -26,6 +26,7 @@ class ExponentialDistribution final : public OneParameterDistribution {
 
  private:
   constexpr static double k_defaultLambda = 1.0;
+  constexpr static double k_maxLambda = 7500.0;
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {
     return Shared::ParameterRepresentation{

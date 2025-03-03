@@ -51,9 +51,9 @@ QUIZ_CASE(distributions_parameters_uniform) {
   assert_parameters_are(&distribution, {-1, 1});
   constexpr int k_indexOfA = 0;
   constexpr int k_indexOfB = 1;
-  // a can be any value (if superior to b, setParameterAtIndex will change b)
+  // a must be inferior to b
   quiz_assert(distribution.authorizedParameterAtIndex(0.0, k_indexOfA));
-  quiz_assert(distribution.authorizedParameterAtIndex(2.5, k_indexOfA));
+  quiz_assert(!distribution.authorizedParameterAtIndex(2.5, k_indexOfA));
   // b must me superior to a
   quiz_assert(distribution.authorizedParameterAtIndex(5.5, k_indexOfB));
   quiz_assert(!distribution.authorizedParameterAtIndex(-2.0, k_indexOfB));

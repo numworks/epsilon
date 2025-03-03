@@ -21,6 +21,7 @@ class ChiSquaredDistribution : public OneParameterDistribution {
   double defaultParameterAtIndex(int index) const override {
     return k_defaultK;
   }
+  bool authorizedParameterAtIndex(double x, int index) const override;
 
  private:
   constexpr static double k_maxK = 31500.0;

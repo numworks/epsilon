@@ -13,7 +13,7 @@ namespace Internal {
 namespace ExponentialDistribution {
 template <typename U>
 OMG::Troolean IsParameterValid(U val, int index, const U* parameters) {
-  return Domain::Contains(val, Domain::Type::RPlus);
+  return Domain::Contains(val, Domain::Type::RPlusStar);
 }
 
 template <typename T>

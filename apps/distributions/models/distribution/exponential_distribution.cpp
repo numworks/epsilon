@@ -10,8 +10,7 @@ namespace Distributions {
 
 bool ExponentialDistribution::authorizedParameterAtIndex(double x,
                                                          int index) const {
-  return Distribution::authorizedParameterAtIndex(x, index) && x > 0.0 &&
-         x <= 7500.0;
+  return Distribution::authorizedParameterAtIndex(x, index) && x <= k_maxLambda;
 }
 
 float ExponentialDistribution::privateComputeXMax() const {

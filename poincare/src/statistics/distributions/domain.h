@@ -59,6 +59,9 @@ static bool ContainsFloat(T value, Type type) {
   if (value == static_cast<T>(1.0) && type & (ZeroExcludedToOneExcluded)) {
     return false;
   }
+  if (std::floor(value) != value && type & k_onlyIntegers) {
+    return false;
+  }
   return true;
 }
 

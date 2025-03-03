@@ -219,9 +219,6 @@ T Distribution::cumulativeDistributiveInverseForProbability(
 template <typename T>
 T Distribution::cumulativeDistributiveFunctionForRange(
     T x, T y, const T* parameters) const {
-  if (y <= x) {
-    return 0.0f;
-  }
   if (isContinuous()) {
     return ContinuousDistribution::CumulativeDistributiveFunctionForRange<T>(
         m_type, x, y, parameters);

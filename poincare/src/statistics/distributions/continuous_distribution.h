@@ -12,6 +12,9 @@ namespace ContinuousDistribution {
 template <typename T>
 T CumulativeDistributiveFunctionForRange(Distribution::Type distribType, T x,
                                          T y, const T* parameters) {
+  if (y <= x) {
+    return 0.0f;
+  }
   Distribution distribution(distribType);
   return distribution.cumulativeDistributiveFunctionAtAbscissa(y, parameters) -
          distribution.cumulativeDistributiveFunctionAtAbscissa(x, parameters);

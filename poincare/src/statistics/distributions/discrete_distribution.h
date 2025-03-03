@@ -17,6 +17,9 @@ T CumulativeDistributiveFunctionAtAbscissa(Distribution::Type distribType, T x,
 template <typename T>
 T CumulativeDistributiveFunctionForRange(Distribution::Type distribType, T x,
                                          T y, const T* parameters) {
+  if (y < x) {
+    return 0.0f;
+  }
   return CumulativeDistributiveFunctionAtAbscissa(distribType, y, parameters) -
          CumulativeDistributiveFunctionAtAbscissa(distribType, x - 1.0f,
                                                   parameters);

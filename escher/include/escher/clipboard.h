@@ -27,15 +27,15 @@ class Clipboard {
   char m_treeBuffer[k_bufferSize];
 
   enum BufferState {
-    TextUpToDate,
-    TreeUpToDate,
-    BothUpToDate,
+    TextOutdated,
+    TreeOutdated,
+    Updated,
   };
 
   BufferState bufferState() { return m_bufferState; }
 
  private:
-  BufferState m_bufferState = BothUpToDate;
+  BufferState m_bufferState = Updated;
 };
 
 }  // namespace Escher

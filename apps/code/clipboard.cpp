@@ -17,10 +17,15 @@ Clipboard* Clipboard::sharedClipboard() {
 }
 
 void Clipboard::enterPython() {
-  if (bufferState() == TreeUpToDate) {
+  if (bufferState() == TextOutdated) {
     updateTextFromTree();
   }
   replaceCharForPython(true);
+}
+
+void Clipboard::exitPython() {
+  assert(bufferState() != TextOutdated);
+  replaceCharForPython(false);
 }
 
 bool Clipboard::ShouldReplaceLetterE(const char* text, size_t length,

@@ -15,7 +15,7 @@ class Clipboard : public Escher::Clipboard {
   static bool ShouldReplaceLetterE(const char* text, size_t length,
                                    size_t position);
   void enterPython();
-  void exitPython() { replaceCharForPython(false); }
+  void exitPython();
 
  private:
   static int s_replacementRuleStartingPoint;

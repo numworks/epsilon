@@ -35,7 +35,7 @@ void Clipboard::storeText(const char* text, int length) {
          UTF8Decoder::IsTheEndOfACodePoint(&text[length - 1], text));
   strlcpy(m_textBuffer, text, length + 1);
   Ion::Clipboard::write(m_textBuffer);
-  m_bufferState = TextUpToDate;
+  m_bufferState = TreeOutdated;
 }
 
 void Clipboard::storeLayout(Poincare::Layout layout) {
@@ -47,7 +47,7 @@ void Clipboard::storeLayout(Poincare::Layout layout) {
   // updateTextFromTree();
   // TODO_PCJ check that it fits
   Ion::Clipboard::write(m_textBuffer);
-  m_bufferState = TreeUpToDate;
+  m_bufferState = TextOutdated;
 }
 
 const char* Clipboard::storedText() {
@@ -56,7 +56,7 @@ const char* Clipboard::storedText() {
     return systemText;
   }
 
-  if (m_bufferState == TreeUpToDate) {
+  if (m_bufferState == TextOutdated) {
     updateTextFromTree();
   }
 #if 0
@@ -81,11 +81,8 @@ const char* Clipboard::storedText() {
       UTF8Helper::TextPair("\x12\x13", "\x12\x11\x13"),
   };
 
-  // TODO : Maybe this isn't necessary anymore ?
-  std::cout << "StoredText: " << m_textBuffer << std::endl;
   UTF8Helper::TryAndReplacePatternsInStringByPatterns(
       m_textBuffer, TextField::MaxBufferSize(), textPairs, numberOfPairs, true);
-  std::cout << "StoredText: " << m_textBuffer << std::endl;
 #endif
   return m_textBuffer;
 }
@@ -99,10 +96,9 @@ Poincare::Layout Clipboard::storedLayout() {
                       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
                       nullptr);
   }
-  if (m_bufferState != TextUpToDate) {
-    return privateStoredLayout();
+  if (m_bufferState == TreeOutdated) {
+    updateTreeFromText();
   }
-  updateTreeFromText();
   return privateStoredLayout();
 }
 
@@ -120,12 +116,12 @@ void Clipboard::updateTreeFromText() {
   if (size < k_bufferSize) {
     memcpy(m_treeBuffer, layout.tree(), size);
   }
-  m_bufferState = BothUpToDate;
+  m_bufferState = Updated;
 }
 
 void Clipboard::updateTextFromTree() {
   privateStoredLayout().serialize(m_textBuffer, k_bufferSize);
-  m_bufferState = BothUpToDate;
+  m_bufferState = Updated;
 }
 
 Poincare::Layout Clipboard::privateStoredLayout() const {

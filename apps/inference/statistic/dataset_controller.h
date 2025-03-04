@@ -4,7 +4,7 @@
 #include <escher/chevron_view.h>
 #include <escher/menu_cell.h>
 #include <escher/selectable_list_view_controller.h>
-#include <inference/models/statistic/raw_data_statistic.h>
+#include <inference/models/statistic/table_from_store.h>
 #include <inference/statistic/input_controller.h>
 #include <inference/statistic/store/input_store_controller.h>
 

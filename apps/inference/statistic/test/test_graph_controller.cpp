@@ -14,8 +14,9 @@ TestGraphController::TestGraphController(Escher::StackViewController* stack,
 Escher::ViewController::TitlesDisplay TestGraphController::titlesDisplay()
     const {
   // TODO: improve StackViewController way of picking Stack titles to display
-  if (m_test->significanceTestType() == SignificanceTestType::Categorical &&
-      m_test->categoricalType() == CategoricalType::GoodnessOfFit) {
+  if (m_test->testType() == Poincare::Inference::TestType::Chi2 &&
+      m_test->categoricalType() ==
+          Poincare::Inference::CategoricalType::GoodnessOfFit) {
     return ViewController::TitlesDisplay::DisplayLastAndThirdToLast;
   }
   if (m_test->canChooseDataset()) {

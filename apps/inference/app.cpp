@@ -138,9 +138,8 @@ void App::cleanBuffer(DynamicCellsDataSourceDestructor* destructor) {
 }
 
 void App::selectSubApp(int subAppIndex) {
-  if (subAppIndex >= 0 &&
-      Statistic::Initialize(snapshot()->statistic(),
-                            static_cast<Statistic::SubApp>(subAppIndex))) {
+  if (subAppIndex >= 0 && snapshot()->statistic()->initializeSubApp(
+                              static_cast<Statistic::SubApp>(subAppIndex))) {
     m_testController.selectRow(0);
     m_hypothesisController.selectRow(0);
     m_typeController.selectRow(0);

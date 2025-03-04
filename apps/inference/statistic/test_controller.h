@@ -6,9 +6,8 @@
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
+#include <inference/models/statistic/statistic.h>
 #include <ion/events.h>
-
-#include "inference/models/statistic/statistic.h"
 
 namespace Inference {
 
@@ -22,7 +21,7 @@ class TestController
     : public Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                            Escher::ChevronView>,
-          Statistic::k_numberOfSignificanceTestType> {
+          Poincare::Inference::k_numberOfTestTYpes> {
  public:
   TestController(Escher::StackViewController* parentResponder,
                  HypothesisController* hypothesisController,

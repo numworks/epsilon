@@ -17,8 +17,7 @@ namespace Inference {
 void TestPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
                               KDRect rect) const {
   float z = static_cast<float>(m_test->testCriticalValue());
-  ComparisonJunior::Operator op =
-      m_test->hypothesisParams()->comparisonOperator();
+  ComparisonJunior::Operator op = m_test->hypothesis()->m_alternative;
   drawZLabelAndZGraduation(plotView, ctx, rect, z, op);
   drawTestCurve(plotView, ctx, rect, z, op);
 }
@@ -28,13 +27,13 @@ void TestPlotPolicy::drawZLabelAndZGraduation(
     ComparisonJunior::Operator op) const {
   if (op == ComparisonJunior::Operator::NotEqual) {
     Layout absolute =
-        Layout::Create(KAbsL(KA), {.KA = m_test->criticalValueSymbolLayout()});
+        Layout::Create(KAbsL(KA), {.KA = m_test->criticalValueLayout()});
     drawLabelAndGraduation(plotView, ctx, rect, std::abs(z), absolute);
     drawLabelAndGraduation(plotView, ctx, rect, -std::abs(z),
                            Layout::Create("-"_l ^ KA, {.KA = absolute}));
   } else {
     drawLabelAndGraduation(plotView, ctx, rect, z,
-                           m_test->criticalValueSymbolLayout());
+                           m_test->criticalValueLayout());
   }
 }
 

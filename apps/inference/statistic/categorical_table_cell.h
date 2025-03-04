@@ -97,7 +97,7 @@ class InputCategoricalTableCell
   virtual bool recomputeDimensionsAndReload(bool forceReloadTable = false,
                                             bool forceReloadPage = false,
                                             bool forceReloadCell = false);
-  Table* tableModel() { return Table::FromStatistic(m_statistic); }
+  Table* tableModel() { return m_statistic->table(); }
 
  protected:
   // ClearColumnHelper

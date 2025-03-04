@@ -8,14 +8,8 @@
 #include <poincare/print.h>
 
 #include <algorithm>
-#include <new>
 
-#include "goodness_test.h"
-#include "one_mean_test.h"
-#include "one_proportion_z_test.h"
-#include "slope_t_test.h"
-#include "two_means_test.h"
-#include "two_proportions_z_test.h"
+#include "statistic.h"
 
 namespace Inference {
 
@@ -29,37 +23,9 @@ void Test::setGraphTitle(char* buffer, size_t bufferSize) const {
       Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-bool Test::initializeSignificanceTest(SignificanceTestType testType,
-                                      Shared::GlobalContext* context) {
-  if (!Statistic::initializeSignificanceTest(testType, context)) {
-    return false;
-  }
-  this->~Test();
-  switch (testType) {
-    case SignificanceTestType::OneMean:
-      new (this)
-          OneMeanTTest(AppsContainerHelper::sharedAppsContainerGlobalContext());
-      break;
-    case SignificanceTestType::TwoMeans:
-      new (this) TwoMeansTTest(
-          AppsContainerHelper::sharedAppsContainerGlobalContext());
-      break;
-    case SignificanceTestType::OneProportion:
-      new (this) OneProportionZTest();
-      break;
-    case SignificanceTestType::TwoProportions:
-      new (this) TwoProportionsZTest();
-      break;
-    case SignificanceTestType::Slope:
-      new (this) SlopeTTest(context);
-      break;
-    default:
-      assert(testType == SignificanceTestType::Categorical);
-      new (this) GoodnessTest();
-      break;
-  }
-  initParameters();
-  return true;
+void Test::initParameters() {
+  m_hypothesis = PcrInference::DefaultHyphothesis(testType());
+  Statistic::initParameters();
 }
 
 bool Test::canRejectNull() {
@@ -75,8 +41,9 @@ double Test::thresholdAbscissa(Poincare::ComparisonJunior::Operator op,
       op == Poincare::ComparisonJunior::Operator::Inferior ? t : 1.0 - t);
 }
 
-void Test::resultAtIndex(int index, double* value, Poincare::Layout* message,
-                         I18n::Message* subMessage, int* precision) {
+void Test::inferenceResultAtIndex(int index, double* value,
+                                  Poincare::Layout* message,
+                                  I18n::Message* subMessage, int* precision) {
   if (index < numberOfEstimates()) {
     *value = estimateValue(index);
     *message = estimateLayout(index);
@@ -87,7 +54,7 @@ void Test::resultAtIndex(int index, double* value, Poincare::Layout* message,
   switch (index) {
     case ResultOrder::Z:
       *value = testCriticalValue();
-      *message = criticalValueSymbolLayout();
+      *message = criticalValueLayout();
       *subMessage = I18n::Message::TestStatistic;
       break;
     case ResultOrder::PValue:
@@ -108,18 +75,29 @@ void Test::resultAtIndex(int index, double* value, Poincare::Layout* message,
   }
 }
 
+void Test::compute() {
+  const PcrInference::ParametersArray params = constParametersArray();
+  PcrInference::Type type = this->type();
+  PcrInference::SignificanceTestResults results =
+      PcrInference::ComputeSignificanceTest(type, m_hypothesis, params);
+  m_degreesOfFreedom = results.degreesOfFreedom;
+  m_testCriticalValue = results.criticalValue;
+  m_pValue = results.pValue;
+  m_estimates = results.estimates;
+}
+
 static float interpolate(float a, float b, float alpha) {
   return alpha * (b - a) + a;
 }
 
 bool Test::hasTwoSides() {
-  return hypothesisParams()->comparisonOperator() ==
+  return m_hypothesis.m_alternative ==
          Poincare::ComparisonJunior::Operator::NotEqual;
 }
 
 bool Test::shouldForbidZoom(float alpha, float criticalValue) {
-  /* This method only applies on standardardized normal distribution, otherwise
-   * the method needs to be overridden. */
+  /* This method only applies on standardardized normal distribution,
+   * otherwise the method needs to be overridden. */
   // Alpha or criticalValue is out of the view or their signs differ
   return std::abs(alpha) > k_displayWidthToSTDRatio ||
          std::abs(criticalValue) > k_displayWidthToSTDRatio ||
@@ -130,7 +108,7 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;
   float z = testCriticalValue();
-  if (hypothesisParams()->comparisonOperator() ==
+  if (hypothesis()->m_alternative ==
       Poincare::ComparisonJunior::Operator::NotEqual) {
     if (zoomSide) {
       alpha = thresholdAbscissa(Poincare::ComparisonJunior::Operator::Superior,
@@ -142,7 +120,7 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
       z = -std::abs(z);
     }
   } else {
-    alpha = thresholdAbscissa(hypothesisParams()->comparisonOperator());
+    alpha = thresholdAbscissa(hypothesis()->m_alternative);
   }
   if (shouldForbidZoom(alpha, z)) {
     Shared::Inference::computeCurveViewRange();
@@ -189,10 +167,6 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
   protectedSetXRange(xMin, xMax);
   protectedSetYRange(yMin, yMax);
   return true;
-}
-
-const char* Test::criticalValueSymbol() const {
-  return distribution()->criticalValueSymbol();
 }
 
 }  // namespace Inference

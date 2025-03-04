@@ -8,13 +8,10 @@ namespace Inference {
 class GoodnessTest final : public Chi2Test {
  public:
   GoodnessTest();
-  CategoricalType categoricalType() const override {
-    return CategoricalType::GoodnessOfFit;
+  constexpr PcrInference::CategoricalType categoricalType() const override {
+    return PcrInference::CategoricalType::GoodnessOfFit;
   }
-  I18n::Message title() const override {
-    return I18n::Message::InputGoodnessControllerTitle;
-  }
-  int numberOfStatisticParameters() const override {
+  int numberOfTestParameters() const override {
     return k_maxNumberOfRows * k_maxNumberOfColumns;
   }
   void setGraphTitle(char* buffer, size_t bufferSize) const override;
@@ -23,8 +20,6 @@ class GoodnessTest final : public Chi2Test {
 
   // Inference
   bool validateInputs(int pageIndex = 0) override;
-  // Statistic
-  int numberOfResults() const override { return 2; }
   void compute() override;
 
   // Table
@@ -34,7 +29,7 @@ class GoodnessTest final : public Chi2Test {
 
   // Chi2Test
   // Returns the contribution for column = 2
-  double parameterAtPosition(int row, int column) const override;
+  double valueAtPosition(int row, int column) const override;
 
   // GoodnessTest
   int indexOfDegreeOfFreedom() const { return indexOfThreshold() + 1; }
@@ -59,6 +54,7 @@ class GoodnessTest final : public Chi2Test {
   constexpr static int k_maxDegreeOfFreedom = 10000;
 
   // Statistic
+  int numberOfInferenceResults() const override { return 2; }
   void setParameterAtIndex(double p, int i) override;
   bool authorizedParameterAtIndex(double p, int i) const override;
 

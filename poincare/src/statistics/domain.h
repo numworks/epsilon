@@ -22,17 +22,19 @@ enum Type : uint16_t {
   ZeroToOne = 1 << 7,                  // [0, 1]
   ZeroExcludedToOne = 1 << 8,          // ]0, 1]
   ZeroExcludedToOneExcluded = 1 << 9,  // ]0, 1[
+  ZeroToOneExcluded = 1 << 10,         // [0, 1[
 };
 
 constexpr static Type k_nonZero = static_cast<Type>(
     NStar | RStar | RPlusStar | ZeroExcludedToOne | ZeroExcludedToOneExcluded);
-constexpr static Type k_finite = static_cast<Type>(
-    ZeroToOne | ZeroExcludedToOne | ZeroExcludedToOneExcluded);
+constexpr static Type k_finite =
+    static_cast<Type>(ZeroToOne | ZeroExcludedToOne |
+                      ZeroExcludedToOneExcluded | ZeroToOneExcluded);
 constexpr static Type k_onlyIntegers = static_cast<Type>(N | NStar);
 constexpr static Type k_onlyNegative = static_cast<Type>(RMinus);
-constexpr static Type k_onlyPositive =
-    static_cast<Type>(N | NStar | RPlus | RPlusStar | ZeroToOne |
-                      ZeroExcludedToOne | ZeroExcludedToOneExcluded);
+constexpr static Type k_onlyPositive = static_cast<Type>(
+    N | NStar | RPlus | RPlusStar | ZeroToOne | ZeroExcludedToOne |
+    ZeroExcludedToOneExcluded | ZeroToOneExcluded);
 
 template <typename T>
 static bool ContainsFloat(T value, Type type) {
@@ -56,7 +58,8 @@ static bool ContainsFloat(T value, Type type) {
       type & (ZeroToOne | ZeroExcludedToOne | ZeroExcludedToOneExcluded)) {
     return false;
   }
-  if (value == static_cast<T>(1.0) && type & (ZeroExcludedToOneExcluded)) {
+  if (value == static_cast<T>(1.0) &&
+      type & (ZeroExcludedToOneExcluded | ZeroToOneExcluded)) {
     return false;
   }
   if (std::floor(value) != value && type & k_onlyIntegers) {

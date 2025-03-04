@@ -6,9 +6,9 @@
 #include <escher/container.h>
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
+#include <poincare/statistics/inference.h>
 
 #include "chi_square/categorical_type_controller.h"
-#include "inference/app.h"
 #include "test/hypothesis_controller.h"
 #include "type_controller.h"
 
@@ -46,7 +46,7 @@ const char* TestController::title() const {
 }
 
 void TestController::stackOpenPage(ViewController* nextPage) {
-  SignificanceTestType type = m_statistic->significanceTestType();
+  PcrInference::TestType type = m_statistic->testType();
   selectRow(static_cast<int>(type));
   ViewController::stackOpenPage(nextPage);
 }
@@ -67,40 +67,39 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
   SelectableViewController* controller = nullptr;
-  SignificanceTestType testType;
+  PcrInference::TestType testType;
   int row = selectedRow();
   if (row == k_indexOfOneProp) {
-    testType = SignificanceTestType::OneProportion;
+    testType = PcrInference::TestType::OneProportion;
     controller = m_inputController;
     if (m_statistic->hasHypothesisParameters()) {
       controller = m_hypothesisController;
     }
   } else if (row == k_indexOfTwoProps) {
-    testType = SignificanceTestType::TwoProportions;
+    testType = PcrInference::TestType::TwoProportions;
     controller = m_inputController;
     if (m_statistic->hasHypothesisParameters()) {
       controller = m_hypothesisController;
     }
   } else if (row == k_indexOfOneMean) {
-    testType = SignificanceTestType::OneMean;
+    testType = PcrInference::TestType::OneMean;
     controller = m_typeController;
   } else if (row == k_indexOfTwoMeans) {
-    testType = SignificanceTestType::TwoMeans;
+    testType = PcrInference::TestType::TwoMeans;
     controller = m_typeController;
   } else if (row == k_indexOfSlope) {
-    testType = SignificanceTestType::Slope;
+    testType = PcrInference::TestType::Slope;
     controller = m_inputStoreController;
     if (m_statistic->hasHypothesisParameters()) {
       controller = m_hypothesisController;
     }
   } else {
     assert(selectedRow() == k_indexOfChiSquare);
-    testType = SignificanceTestType::Categorical;
+    testType = PcrInference::TestType::Chi2;
     controller = m_categoricalController;
   }
   assert(controller != nullptr);
-  if (m_statistic->initializeSignificanceTest(
-          testType, AppsContainerHelper::sharedAppsContainerGlobalContext())) {
+  if (m_statistic->initializeTest(testType)) {
     controller->selectRow(0);
   }
   stackOpenPage(controller);
@@ -121,7 +120,7 @@ void TestController::viewWillAppear() {
       ->subLabel()
       ->setMessage(m_statistic->tOrZStatisticMessage());
   cell(k_indexOfChiSquare)
-      ->setVisible(m_statistic->numberOfSignificancesTestTypes() ==
+      ->setVisible(m_statistic->numberOfSignificanceTestTypes() ==
                    numberOfRows());
   cell(k_indexOfSlope)
       ->subLabel()

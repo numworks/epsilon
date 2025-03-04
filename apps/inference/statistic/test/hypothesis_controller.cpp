@@ -82,7 +82,7 @@ bool HypothesisController::textFieldDidFinishEditing(
     return false;
   }
 
-  m_test->hypothesisParams()->setFirstParam(h0);
+  m_test->hypothesis()->m_h0 = h0;
   loadHypothesisParam();
   m_selectableListView.selectCell(k_indexOfHa);
   return true;
@@ -95,8 +95,8 @@ void HypothesisController::textFieldDidAbortEditing(
 }
 
 void HypothesisController::onDropdownSelected(int selectedRow) {
-  m_test->hypothesisParams()->setComparisonOperator(
-      ComparisonOperatorPopupDataSource::OperatorTypeForRow(selectedRow));
+  m_test->hypothesis()->m_alternative =
+      ComparisonOperatorPopupDataSource::OperatorTypeForRow(selectedRow);
 }
 
 const char* HypothesisController::symbolPrefix() {
@@ -118,7 +118,7 @@ void HypothesisController::handleResponderChainEvent(
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
     selectRow(0);
     m_haDropdown.selectRow(
-        static_cast<int>(m_test->hypothesisParams()->comparisonOperator()));
+        static_cast<int>(m_test->hypothesis()->m_alternative));
     m_haDropdown.init();
     loadHypothesisParam();
     App::app()->setFirstResponder(&m_selectableListView);
@@ -130,8 +130,7 @@ void HypothesisController::handleResponderChainEvent(
 bool HypothesisController::ButtonAction(HypothesisController* controller,
                                         void* s) {
   ViewController* nextController = controller->m_inputController;
-  if (controller->m_test->significanceTestType() ==
-      SignificanceTestType::Slope) {
+  if (controller->m_test->testType() == Poincare::Inference::TestType::Slope) {
     nextController = controller->m_inputStoreController;
   } else if (controller->m_test->canChooseDataset()) {
     /* Reset row of DatasetController here and not in
@@ -149,7 +148,7 @@ void HypothesisController::loadHypothesisParam() {
   char buffer[bufferSize];
   Poincare::Print::CustomPrintf(
       buffer, bufferSize, "%s=%*.*ed", symbolPrefix(),
-      m_test->hypothesisParams()->firstParam(),
+      m_test->hypothesis()->m_h0,
       Poincare::Preferences::PrintFloatMode::Decimal,
       Poincare::Preferences::ShortNumberOfSignificantDigits);
   m_h0.textField()->setText(buffer);

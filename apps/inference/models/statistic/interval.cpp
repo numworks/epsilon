@@ -7,14 +7,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/print.h>
-
-#include <new>
-
-#include "one_mean_interval.h"
-#include "one_proportion_z_interval.h"
-#include "slope_t_interval.h"
-#include "two_means_interval.h"
-#include "two_proportions_z_interval.h"
+#include <poincare/statistics/inference.h>
 
 using namespace Poincare;
 
@@ -51,43 +44,6 @@ void Interval::setResultTitleForValues(double estimate, double threshold,
   }
 }
 
-bool Interval::initializeSignificanceTest(SignificanceTestType testType,
-                                          Shared::GlobalContext* context) {
-  if (!Statistic::initializeSignificanceTest(testType, context)) {
-    return false;
-  }
-  this->~Interval();
-  switch (testType) {
-    case SignificanceTestType::OneMean:
-      new (this) OneMeanTInterval(
-          AppsContainerHelper::sharedAppsContainerGlobalContext());
-      break;
-    case SignificanceTestType::TwoMeans:
-      new (this) TwoMeansTInterval(
-          AppsContainerHelper::sharedAppsContainerGlobalContext());
-      break;
-    case SignificanceTestType::OneProportion:
-      new (this) OneProportionZInterval();
-      break;
-    case SignificanceTestType::TwoProportions:
-      new (this) TwoProportionsZInterval();
-      break;
-    default:
-      assert(testType == SignificanceTestType::Slope);
-      new (this) SlopeTInterval(context);
-      break;
-  }
-  initParameters();
-  return true;
-}
-
-void Interval::tidy() { m_estimateLayout = Poincare::Layout(); }
-
-Poincare::Layout Interval::intervalCriticalValueSymbol() {
-  return Layout::Create(KA ^ KSuperscriptL("*"_l),
-                        {.KA = criticalValueSymbolLayout()});
-}
-
 bool Interval::isGraphable() const {
   double SE = standardError();
   assert(std::isnan(SE) || SE >= 0);
@@ -104,11 +60,6 @@ float Interval::computeXMax() const {
   assert(const_cast<Interval*>(this)->largestMarginOfError() >= 0);
   return estimate() + const_cast<Interval*>(this)->largestMarginOfError() *
                           k_intervalMarginRatio;
-}
-
-double Interval::computeIntervalCriticalValue() {
-  double value = 0.5 + m_threshold / 2;
-  return cumulativeDistributiveInverseForProbability(value);
 }
 
 float Interval::largestMarginOfError() {
@@ -165,11 +116,14 @@ int Interval::MainDisplayedIntervalThresholdIndex(float mainThreshold) {
   return k_numberOfDisplayedIntervals - 1;
 }
 
-void Interval::resultAtIndex(int index, double* value,
-                             Poincare::Layout* message,
-                             I18n::Message* subMessage, int* precision) {
+void Interval::inferenceResultAtIndex(int index, double* value,
+                                      Poincare::Layout* message,
+                                      I18n::Message* subMessage,
+                                      int* precision) {
   // Estimate cell is not displayed -> shift i
-  index += estimateLayout().isUninitialized();
+  if (!showEstimate()) {
+    index += 1;
+  }
   switch (index) {
     case ResultOrder::Estimate:
       *value = estimate();
@@ -178,7 +132,7 @@ void Interval::resultAtIndex(int index, double* value,
       break;
     case ResultOrder::Critical:
       *value = intervalCriticalValue();
-      *message = intervalCriticalValueSymbol();
+      *message = criticalValueLayout();
       *subMessage = I18n::Message::CriticalValue;
       break;
     case ResultOrder::SE:
@@ -205,9 +159,15 @@ void Interval::resultAtIndex(int index, double* value,
 }
 
 void Interval::compute() {
-  privateCompute();
-  m_zCritical = computeIntervalCriticalValue();
-  m_marginOfError = m_zCritical * m_SE;
+  const PcrInference::ParametersArray params = constParametersArray();
+  PcrInference::Type type = this->type();
+  PcrInference::ConfidenceIntervalResults results =
+      PcrInference::ComputeConfidenceInterval(type, m_threshold, params);
+  m_degreesOfFreedom = results.degreesOfFreedom;
+  m_estimate = results.estimate;
+  m_SE = results.standardError;
+  m_zCritical = results.zCritical;
+  m_marginOfError = results.marginOfError;
 }
 
 }  // namespace Inference

@@ -98,7 +98,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
     return static_cast<int>(snapshot()->statistic()->subApp());
   }
   int numberOfSubApps() const override {
-    return static_cast<int>(Statistic::SubApp::NumberOfSubApps);
+    return static_cast<int>(Statistic::k_numberOfSubApps);
   }
 
   Escher::InputViewController* inputViewController() {

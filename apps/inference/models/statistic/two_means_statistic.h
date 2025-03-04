@@ -1,35 +1,32 @@
 #ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_STATISTIC_H
 #define INFERENCE_MODELS_STATISTIC_TWO_MEANS_STATISTIC_H
 
-#include "raw_data_statistic.h"
+#include <poincare/statistics/inference.h>
+
+#include "table_from_store.h"
 
 namespace Inference {
 
-class TwoMeansStatistic : public RawDataStatistic {
+class TwoMeansStatistic : public TableFromStatisticStore {
  public:
-  using RawDataStatistic::RawDataStatistic;
+  using TableFromStatisticStore::TableFromStatisticStore;
 
   int numberOfSeries() const override { return 2; }
 
  protected:
-  TwoMeans::Type twoMeansType(const Statistic* stat) const {
-    switch (stat->distributionType()) {
-      case DistributionType::T:
-        return TwoMeans::Type::T;
-      case DistributionType::TPooled:
-        return TwoMeans::Type::TPooled;
-      default:
-        assert(stat->distributionType() == DistributionType::Z);
-        return TwoMeans::Type::Z;
+  void computeParametersFromSeries(const Statistic* stat,
+                                   int pageIndex) override;
+
+  double preProcessTwoMeansParameter(double p, int index) const {
+    if (index == PcrInference::Params::TwoMeans::N1 ||
+        index == PcrInference::Params::TwoMeans::N2) {
+      return std::round(p);
     }
+    return p;
   }
 
-  void syncParametersWithStore(const Statistic* stat) override;
-
-  double m_params[TwoMeans::k_numberOfParams];
-
- private:
-  void syncParametersWithStore(const Statistic* stat, uint8_t index);
+  double m_params[PcrInference::NumberOfParameters(
+      PcrInference::TestType::TwoMeans)];
 };
 
 }  // namespace Inference

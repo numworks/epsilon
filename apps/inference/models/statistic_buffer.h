@@ -5,17 +5,13 @@
 
 #include "statistic/goodness_test.h"
 #include "statistic/homogeneity_test.h"
-#include "statistic/hypothesis_params.h"
 #include "statistic/one_mean_interval.h"
 #include "statistic/one_mean_test.h"
-#include "statistic/one_proportion_z_interval.h"
-#include "statistic/one_proportion_z_test.h"
-#include "statistic/slope_t_interval.h"
-#include "statistic/slope_t_test.h"
+#include "statistic/one_proportion_statistic.h"
+#include "statistic/slope_t_statistic.h"
 #include "statistic/two_means_interval.h"
 #include "statistic/two_means_test.h"
-#include "statistic/two_proportions_z_interval.h"
-#include "statistic/two_proportions_z_test.h"
+#include "statistic/two_proportions_statistic.h"
 
 namespace Inference {
 

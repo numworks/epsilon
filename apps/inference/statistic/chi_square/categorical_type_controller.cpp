@@ -2,6 +2,7 @@
 
 #include <apps/i18n.h>
 #include <escher/stack_view_controller.h>
+#include <poincare/statistics/inference.h>
 
 #include "inference/app.h"
 #include "input_goodness_controller.h"
@@ -42,16 +43,16 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
   if (cell(0)->canBeActivatedByEvent(event)) {
     InputCategoricalController* controller = nullptr;
-    CategoricalType type;
+    PcrInference::CategoricalType type;
     switch (selectedRow()) {
       case k_indexOfGoodnessCell:
         controller = m_inputGoodnessController;
-        type = CategoricalType::GoodnessOfFit;
+        type = PcrInference::CategoricalType::GoodnessOfFit;
         break;
       default:
         assert(selectedRow() == k_indexOfHomogeneityCell);
         controller = m_inputHomogeneityController;
-        type = CategoricalType::Homogeneity;
+        type = PcrInference::CategoricalType::Homogeneity;
         break;
     }
     assert(controller != nullptr);

@@ -9,17 +9,12 @@
 #include "inference/models/statistic/homogeneity_test.h"
 #include "inference/models/statistic/one_mean_interval.h"
 #include "inference/models/statistic/one_mean_test.h"
-#include "inference/models/statistic/one_proportion_z_interval.h"
-#include "inference/models/statistic/one_proportion_z_test.h"
-#include "inference/models/statistic/slope_t_interval.h"
+#include "inference/models/statistic/one_proportion_statistic.h"
 #include "inference/models/statistic/slope_t_statistic.h"
-#include "inference/models/statistic/slope_t_test.h"
 #include "inference/models/statistic/statistic.h"
 #include "inference/models/statistic/two_means_interval.h"
 #include "inference/models/statistic/two_means_test.h"
-#include "inference/models/statistic/two_proportions_z_interval.h"
-#include "inference/models/statistic/two_proportions_z_test.h"
-#include "inference/models/statistic_buffer.h"
+#include "inference/models/statistic/two_proportions_statistic.h"
 
 using namespace Inference;
 using namespace Poincare;
@@ -73,18 +68,18 @@ void inputTableValues(Table* table, Statistic* stat,
   stat->initParameters();
   for (int i = 0; i < testCase.m_numberOfInputs; i++) {
     Table::Index2D rowCol = table->indexToIndex2D(i);
-    table->setParameterAtPosition(testCase.m_inputs[i], rowCol.row, rowCol.col);
-    quiz_assert((table->parameterAtPosition(rowCol.row, rowCol.col) &&
+    table->setValueAtPosition(testCase.m_inputs[i], rowCol.row, rowCol.col);
+    quiz_assert((table->valueAtPosition(rowCol.row, rowCol.col) &&
                  testCase.m_inputs[i]) ||
-                (table->parameterAtPosition(rowCol.row, rowCol.col) ==
+                (table->valueAtPosition(rowCol.row, rowCol.col) ==
                  testCase.m_inputs[i]));
   }
 }
 
 void testTest(Test* test, StatisticTestCase& testCase) {
   inputThreshold(test, testCase.m_significanceLevel);
-  test->hypothesisParams()->setFirstParam(testCase.m_firstHypothesisParam);
-  test->hypothesisParams()->setComparisonOperator(testCase.m_op);
+  test->hypothesis()->m_h0 = testCase.m_firstHypothesisParam;
+  test->hypothesis()->m_alternative = testCase.m_op;
 
   test->compute();
 
@@ -655,7 +650,7 @@ QUIZ_CASE(probability_one_mean_t_with_table) {
 
   Shared::GlobalContext globalContext;
   OneMeanTTest rawDataTest(&globalContext);
-  rawDataTest.setSeries(k_series, &rawDataTest);
+  rawDataTest.setSeriesAt(&rawDataTest, 0, k_series);
   inputTableValues(&rawDataTest, &rawDataTest, rawDataCase);
 
   StatisticTestCase parametersCase{
@@ -670,8 +665,7 @@ QUIZ_CASE(probability_one_mean_t_with_table) {
 
   OneMeanTTest referenceTest(&globalContext);
   inputValues(&referenceTest, parametersCase, 0.05);
-  referenceTest.hypothesisParams()->setFirstParam(
-      rawDataCase.m_firstHypothesisParam);
+  referenceTest.hypothesis()->m_h0 = rawDataCase.m_firstHypothesisParam;
   referenceTest.compute();
 
   rawDataCase.m_numberOfParameters = referenceTest.numberOfParameters();

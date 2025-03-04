@@ -2,6 +2,7 @@
 
 #include <omg/utf8_helper.h>
 
+#include "inference/models/statistic/table_from_store.h"
 #include "inference/text_helpers.h"
 
 using namespace Escher;
@@ -26,9 +27,9 @@ InputStoreController::InputStoreController(
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_storeTableCell),
-      m_loadedSubApp(Statistic::SubApp::Test),
-      m_loadedDistribution(DistributionType::T),
-      m_loadedTest(SignificanceTestType::OneProportion),
+      m_loadedSubApp(Statistic::SubApp::SignificanceTest),
+      m_loadedStatistic(Poincare::Inference::StatisticType::T),
+      m_loadedTest(Poincare::Inference::TestType::OneProportion),
       m_nextInputStoreController(nextInputStoreController),
       m_nextOtherController(nextController) {
   m_storeParameterController.selectRow(0);
@@ -77,8 +78,8 @@ void InputStoreController::createDynamicCells() {
 
 void InputStoreController::initializeDropdown() {
   m_dropdownCell.dropdown()->init();
-  const RawDataStatistic* model =
-      static_cast<const RawDataStatistic*>(m_storeTableCell.tableModel());
+  const TableFromStore* model =
+      static_cast<const TableFromStore*>(m_storeTableCell.tableModel());
 
   if (shouldDisplayTwoPages()) {
     if (m_pageIndex == 0) {
@@ -126,13 +127,13 @@ void InputStoreController::viewWillAppear() {
 
 void InputStoreController::initView() {
   InputCategoricalController::initView();
-  static_cast<RawDataStatistic*>(m_storeTableCell.tableModel())
+  static_cast<TableFromStore*>(m_storeTableCell.tableModel())
       ->setActivePage(m_pageIndex);
   categoricalTableCell()->recomputeDimensions();
 
   if (m_loadedSubApp != m_statistic->subApp() ||
-      m_loadedDistribution != m_statistic->distributionType() ||
-      m_loadedTest != m_statistic->significanceTestType()) {
+      m_loadedStatistic != m_statistic->statisticType() ||
+      m_loadedTest != m_statistic->testType()) {
     categoricalTableCell()->selectRow(-1);
     categoricalTableCell()->selectColumn(0);
     categoricalTableCell()->selectableTableView()->resetScroll();
@@ -140,8 +141,8 @@ void InputStoreController::initView() {
     m_selectableListView.resetScroll();
   }
   m_loadedSubApp = m_statistic->subApp();
-  m_loadedDistribution = m_statistic->distributionType();
-  m_loadedTest = m_statistic->significanceTestType();
+  m_loadedStatistic = m_statistic->statisticType();
+  m_loadedTest = m_statistic->testType();
   if (m_pageIndex == 0) {
     m_nextController = shouldDisplayTwoPages() ? m_nextInputStoreController
                                                : m_nextOtherController;
@@ -172,14 +173,15 @@ int InputStoreController::indexOfEditedParameterAtIndex(int index) const {
   if (index >= indexOfFirstExtraParameter() + numberOfExtraParameters()) {
     return InputCategoricalController::indexOfEditedParameterAtIndex(index);
   }
-  assert(m_statistic->distributionType() == DistributionType::Z);
-  if (m_statistic->significanceTestType() == SignificanceTestType::OneMean) {
+  assert(m_statistic->statisticType() == Poincare::Inference::StatisticType::Z);
+  if (m_statistic->testType() == Poincare::Inference::TestType::OneMean) {
     assert(index == indexOfFirstExtraParameter());
-    return OneMean::ParamsOrder::s;
+    return PcrInference::Params::OneMean::S;
   }
-  assert(m_statistic->significanceTestType() == SignificanceTestType::TwoMeans);
-  return index == indexOfFirstExtraParameter() ? TwoMeans::ParamsOrder::s1
-                                               : TwoMeans::ParamsOrder::s2;
+  assert(m_statistic->testType() == Poincare::Inference::TestType::TwoMeans);
+  return index == indexOfFirstExtraParameter()
+             ? Poincare::Inference::Params::TwoMeans::S1
+             : Poincare::Inference::Params::TwoMeans::S2;
 }
 
 void InputStoreController::selectSeriesForDropdownRow(int row) {
@@ -205,7 +207,7 @@ void InputStoreController::hideOtherPageParameterCells() {
     m_significanceCell.setVisible(false);
   }
 
-  if (m_statistic->distributionType() == DistributionType::Z) {
+  if (m_statistic->statisticType() == Poincare::Inference::StatisticType::Z) {
     assert(numberOfExtraParameters() == 2);
     // Hide the parameter of the other dataset
     m_extraParameters[(static_cast<uint8_t>(m_pageIndex) + 1) % 2].setVisible(

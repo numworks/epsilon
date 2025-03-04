@@ -1,8 +1,6 @@
 #ifndef INFERENCE_MODELS_STATISTIC_CHI2_TEST_H
 #define INFERENCE_MODELS_STATISTIC_CHI2_TEST_H
 
-#include <cmath>
-
 #include "table.h"
 #include "test.h"
 
@@ -12,39 +10,32 @@ class Chi2Test : public Test, public Table {
  public:
   Chi2Test();
 
-  SignificanceTestType significanceTestType() const override {
-    return SignificanceTestType::Categorical;
+  constexpr PcrInference::TestType testType() const override {
+    return PcrInference::TestType::Chi2;
   }
-  DistributionType distributionType() const override {
-    return DistributionType::Chi2;
+  constexpr PcrInference::StatisticType statisticType() const override {
+    return PcrInference::StatisticType::Chi2;
   }
-  bool initializeCategoricalType(CategoricalType type);
+  Table* table() override { return this; }
 
   // Table
   int numberOfSeries() const override { return 0; }
 
-  void setParameterAtPosition(double value, int row, int column) override {
-    assert(index2DToIndex(row, column) < numberOfStatisticParameters());
+  void setValueAtPosition(double value, int row, int column) override {
+    assert(index2DToIndex(row, column) < numberOfTestParameters());
     setParameterAtIndex(value, index2DToIndex(row, column));
   }
-  double parameterAtPosition(int row, int column) const override {
+  double valueAtPosition(int row, int column) const override {
     return parameterAtIndex(index2DToIndex(row, column));
   }
-  bool authorizedParameterAtPosition(double p, int row,
-                                     int column) const override {
+  bool authorizedValueAtPosition(double p, int row, int column) const override {
     return authorizedParameterAtIndex(p, index2DToIndex(row, column));
   }
-
-  bool authorizedParameterAtIndex(double p, int i) const override;
 
   virtual int numberOfValuePairs() const = 0;
 
  protected:
   using Test::parameterAtIndex;  // Hidden
-
-  // Instantiate unused abstract class
-  Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override;
 
   // Chi2 specific
   virtual double expectedValue(int index) const = 0;
@@ -54,12 +45,8 @@ class Chi2Test : public Test, public Table {
 
  private:
   // Inference
-  float computeXMin() const override {
-    return DistribChi2.xMin(m_degreesOfFreedom);
-  }
-  float computeXMax() const override {
-    return DistribChi2.xMax(m_degreesOfFreedom);
-  }
+  float computeXMax() const override;
+  float computeXMin() const override;
   bool shouldForbidZoom(float alpha, float criticalValue) override {
     return false;
   }

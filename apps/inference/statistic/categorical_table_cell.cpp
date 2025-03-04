@@ -1,7 +1,6 @@
 #include "categorical_table_cell.h"
 
-#include <inference/models/statistic/slope_t_interval.h>
-#include <inference/models/statistic/slope_t_test.h>
+#include <inference/models/statistic/slope_t_statistic.h>
 
 #include "categorical_controller.h"
 #include "inference/app.h"
@@ -105,13 +104,12 @@ bool InputCategoricalTableCell::textFieldDidFinishEditing(
   }
   int row = m_selectableTableView.selectedRow(),
       column = m_selectableTableView.selectedColumn();
-  if (!tableModel()->authorizedParameterAtPosition(p, relativeRow(row),
-                                                   relativeColumn(column))) {
+  if (!tableModel()->authorizedValueAtPosition(p, relativeRow(row),
+                                               relativeColumn(column))) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  tableModel()->setParameterAtPosition(p, relativeRow(row),
-                                       relativeColumn(column));
+  tableModel()->setValueAtPosition(p, relativeRow(row), relativeColumn(column));
   recomputeDimensionsAndReload(false, false, true);
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
     event = Ion::Events::Down;
@@ -148,7 +146,7 @@ bool InputCategoricalTableCell::deleteSelectedValue() {
       col = m_selectableTableView.selectedColumn();
   assert(relativeRow(row) >= 0 && relativeColumn(col) >= 0);
   // Remove value
-  bool shouldDeleteRowOrCol = tableModel()->deleteParameterAtPosition(
+  bool shouldDeleteRowOrCol = tableModel()->deleteValueAtPosition(
       relativeRow(row), relativeColumn(col));
   if (!shouldDeleteRowOrCol) {
     // Only one cell needs to reload.
@@ -169,14 +167,14 @@ int InputCategoricalTableCell::numberOfElementsInColumn(int column) const {
   column = relativeColumn(column);
   int res = 0;
   for (int row = 0; row < n; row++) {
-    res += std::isfinite(constTableModel()->parameterAtPosition(row, column));
+    res += std::isfinite(constTableModel()->valueAtPosition(row, column));
   }
   return res;
 }
 
 void InputCategoricalTableCell::clearSelectedColumn() {
   int column = m_selectableTableView.selectedColumn();
-  tableModel()->deleteParametersInColumn(relativeColumn(column));
+  tableModel()->deleteValuesInColumn(relativeColumn(column));
   tableModel()->recomputeData();
   m_selectableTableView.resetScroll();
   selectRow(1);

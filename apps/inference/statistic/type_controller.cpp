@@ -5,9 +5,9 @@
 #include <escher/view_controller.h>
 #include <ion/events.h>
 #include <poincare/print.h>
+#include <poincare/statistics/inference.h>
 
-#include "inference/app.h"
-#include "inference/text_helpers.h"
+#include "inference/models/statistic/statistic.h"
 #include "test/hypothesis_controller.h"
 
 using namespace Escher;
@@ -43,15 +43,15 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
   if (!cell(0)->canBeActivatedByEvent(event)) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
-  DistributionType type;
+  PcrInference::StatisticType type;
   int selRow = selectedRow();
   if (selRow == k_indexOfTTest) {
-    type = DistributionType::T;
+    type = PcrInference::StatisticType::T;
   } else if (selRow == k_indexOfZTest) {
-    type = DistributionType::Z;
+    type = PcrInference::StatisticType::Z;
   } else {
     assert(selRow == k_indexOfPooledTest);
-    type = DistributionType::TPooled;
+    type = PcrInference::StatisticType::TPooled;
   }
   ViewController* controller = m_inputController;
   if (m_statistic->hasHypothesisParameters()) {
@@ -79,15 +79,16 @@ const char* TypeController::title() const {
 }
 
 void TypeController::stackOpenPage(ViewController* nextPage) {
-  switch (m_statistic->distributionType()) {
-    case DistributionType::T:
+  switch (m_statistic->statisticType()) {
+    case Poincare::Inference::StatisticType::T:
       selectRow(k_indexOfTTest);
       break;
-    case DistributionType::TPooled:
+    case Poincare::Inference::StatisticType::TPooled:
       selectRow(k_indexOfPooledTest);
       break;
     default:
-      assert(m_statistic->distributionType() == DistributionType::Z);
+      assert(m_statistic->statisticType() ==
+             Poincare::Inference::StatisticType::Z);
       selectRow(k_indexOfZTest);
       break;
   }
@@ -101,7 +102,7 @@ void TypeController::viewWillAppear() {
       ->setMessage(m_statistic->tPooledDistributionName());
   cell(k_indexOfZTest)->label()->setMessage(m_statistic->zDistributionName());
   cell(k_indexOfPooledTest)
-      ->setVisible(m_statistic->numberOfAvailableDistributions() ==
+      ->setVisible(m_statistic->numberOfAvailableStatistics() ==
                    numberOfRows());
 }
 

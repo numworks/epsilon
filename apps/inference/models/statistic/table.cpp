@@ -2,47 +2,16 @@
 
 #include <algorithm>
 
-#include "chi2_test.h"
 #include "one_mean_interval.h"
 #include "one_mean_test.h"
-#include "slope_t_interval.h"
-#include "slope_t_test.h"
+#include "slope_t_statistic.h"
 #include "statistic.h"
 #include "two_means_interval.h"
 #include "two_means_test.h"
 
 namespace Inference {
 
-Table* Table::FromStatistic(Statistic* stat) {
-  // FIXME Ugly, inferences models need a new class hierarchy
-
-  bool intervalApp = stat->subApp() == Statistic::SubApp::Interval;
-  switch (stat->significanceTestType()) {
-    case SignificanceTestType::OneMean:
-      if (intervalApp) {
-        return static_cast<OneMeanInterval*>(stat);
-      } else {
-        return static_cast<OneMeanTest*>(stat);
-      }
-    case SignificanceTestType::TwoMeans:
-      if (intervalApp) {
-        return static_cast<TwoMeansInterval*>(stat);
-      } else {
-        return static_cast<TwoMeansTest*>(stat);
-      }
-    case SignificanceTestType::Slope:
-      if (intervalApp) {
-        return static_cast<SlopeTInterval*>(stat);
-      } else {
-        return static_cast<SlopeTTest*>(stat);
-      }
-    default:
-      assert(stat->significanceTestType() == SignificanceTestType::Categorical);
-      return static_cast<Chi2Test*>(stat);
-  }
-}
-
-bool Table::hasSeries(int index) const { return seriesAt(index) >= 0; }
+bool Table::hasSeries(int pageIndex) const { return seriesAt(pageIndex) >= 0; }
 
 bool Table::hasAllSeries() const {
   for (int i = 0; i < numberOfSeries(); i++) {
@@ -59,21 +28,21 @@ void Table::unsetSeries(Statistic* stat) {
   }
 }
 
-void Table::deleteParametersInColumn(int column) {
+void Table::deleteValuesInColumn(int column) {
   int nbOfRows = computeInnerDimensions().row;
   for (int j = nbOfRows - 1; j >= 0; j--) {
-    setParameterAtPosition(k_undefinedValue, j, column);
+    setValueAtPosition(k_undefinedValue, j, column);
   }
 }
 
-bool Table::deleteParameterAtPosition(int row, int column) {
-  if (std::isnan(parameterAtPosition(row, column))) {
-    // Param is already deleted
+bool Table::deleteValueAtPosition(int row, int column) {
+  if (std::isnan(valueAtPosition(row, column))) {
+    // Value is already deleted
     return false;
   }
-  setParameterAtPosition(k_undefinedValue, row, column);
+  setValueAtPosition(k_undefinedValue, row, column);
   for (int i = 0; i < maxNumberOfColumns(); i++) {
-    if (i != column && !std::isnan(parameterAtPosition(row, i))) {
+    if (i != column && !std::isnan(valueAtPosition(row, i))) {
       // There is another non deleted value in this row
       return false;
     }
@@ -95,7 +64,7 @@ Table::Index2D Table::computeInnerDimensions() const {
   int maxCol = -1, maxRow = -1;
   for (int row = 0; row < maxNumberOfRows(); row++) {
     for (int col = 0; col < maxNumberOfColumns(); col++) {
-      double p = parameterAtPosition(row, col);
+      double p = valueAtPosition(row, col);
       if (!std::isnan(p)) {
         if (row > maxRow) {
           maxRow = row;

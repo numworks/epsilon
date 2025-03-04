@@ -41,7 +41,9 @@ void GoodnessTest::setResultTitle(char* buffer, size_t bufferSize,
 
 void GoodnessTest::compute() {
   m_testCriticalValue = computeChi2();
-  m_pValue = SignificanceTest::ComputePValue(this);
+  m_pValue =
+      PcrInference::ComputePValue(testType(), m_hypothesis.m_alternative,
+                                  m_testCriticalValue, degreeOfFreedom());
 }
 
 void GoodnessTest::recomputeData() {
@@ -87,7 +89,7 @@ void GoodnessTest::setParameterAtIndex(double p, int i) {
 }
 
 bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
-  if (i < numberOfStatisticParameters() && i % k_maxNumberOfColumns == 1 &&
+  if (i < numberOfTestParameters() && i % k_maxNumberOfColumns == 1 &&
       std::fabs(p) < DBL_MIN) {
     // Expected value should not be null
     return false;
@@ -99,13 +101,13 @@ bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
   return Chi2Test::authorizedParameterAtIndex(p, i);
 }
 
-double GoodnessTest::parameterAtPosition(int row, int column) const {
+double GoodnessTest::valueAtPosition(int row, int column) const {
   if (column == ResultGoodnessContributionsTable::ContributionColumnIndex) {
     // Contribution column
     return computeContribution(row);
   }
 
-  return Chi2Test::parameterAtPosition(row, column);
+  return Chi2Test::valueAtPosition(row, column);
 }
 
 int GoodnessTest::numberOfValuePairs() const {

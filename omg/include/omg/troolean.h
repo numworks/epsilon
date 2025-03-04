@@ -71,9 +71,11 @@ inline Troolean BoolToTroolean(bool b) {
   return b ? Troolean::True : Troolean::False;
 }
 
+inline bool SafeTrooleanToBool(Troolean b) { return b == Troolean::True; }
+
 inline bool TrooleanToBool(Troolean b) {
   assert(b != Troolean::Unknown);
-  return b == Troolean::True;
+  return SafeTrooleanToBool(b);
 }
 
 }  // namespace OMG

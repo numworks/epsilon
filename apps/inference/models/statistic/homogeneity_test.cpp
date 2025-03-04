@@ -7,7 +7,7 @@
 namespace Inference {
 
 HomogeneityTest::HomogeneityTest() {
-  for (int i = 0; i < numberOfStatisticParameters(); i++) {
+  for (int i = 0; i < numberOfTestParameters(); i++) {
     m_input[i] = k_undefinedValue;
     m_expectedValues[i] = k_undefinedValue;
   }
@@ -28,19 +28,19 @@ void HomogeneityTest::setGraphTitle(char* buffer, size_t bufferSize) const {
 }
 
 bool HomogeneityTest::authorizedParameterAtIndex(double p, int i) const {
-  if (i < numberOfStatisticParameters() && p < 0.0) {
+  if (i < numberOfTestParameters() && p < 0.0) {
     // Frequencies should be >= 0
     return false;
   }
   return Chi2Test::authorizedParameterAtIndex(p, i);
 }
 
-bool HomogeneityTest::deleteParameterAtPosition(int row, int column) {
-  if (Chi2Test::deleteParameterAtPosition(row, column)) {
+bool HomogeneityTest::deleteValueAtPosition(int row, int column) {
+  if (Chi2Test::deleteValueAtPosition(row, column)) {
     return true;
   }
   for (int j = 0; j < k_maxNumberOfRows; j++) {
-    if (j != row && !std::isnan(parameterAtPosition(j, column))) {
+    if (j != row && !std::isnan(valueAtPosition(j, column))) {
       // There is another non deleted value in this column
       return false;
     }
@@ -55,7 +55,9 @@ void HomogeneityTest::compute() {
   computeExpectedValues(max);
   m_testCriticalValue = computeChi2();
   m_degreesOfFreedom = computeDegreesOfFreedom(max);
-  m_pValue = SignificanceTest::ComputePValue(this);
+  m_pValue =
+      PcrInference::ComputePValue(testType(), m_hypothesis.m_alternative,
+                                  m_testCriticalValue, m_degreesOfFreedom);
 }
 
 double HomogeneityTest::expectedValueAtLocation(int row, int column) {
@@ -64,7 +66,7 @@ double HomogeneityTest::expectedValueAtLocation(int row, int column) {
 
 double HomogeneityTest::contributionAtLocation(int row, int column) {
   double eV = expectedValueAtLocation(row, column);
-  double oV = parameterAtPosition(row, column);
+  double oV = valueAtPosition(row, column);
   return std::pow(eV - oV, 2.) / eV;
 }
 
@@ -109,7 +111,7 @@ void HomogeneityTest::computeExpectedValues(Index2D max) {
       if (col == 0) {
         m_rowTotals[row] = 0;
       }
-      double p = parameterAtPosition(row, col);
+      double p = valueAtPosition(row, col);
       m_columnTotals[col] += p;
       m_rowTotals[row] += p;
       m_total += p;
@@ -134,7 +136,7 @@ void HomogeneityTest::recomputeData() {
   while (i < dimensions.row) {
     bool rowIsEmpty = true;
     for (int col = 0; col < dimensions.col; col++) {
-      if (!std::isnan(parameterAtPosition(i, col))) {
+      if (!std::isnan(valueAtPosition(i, col))) {
         rowIsEmpty = false;
         break;
       }
@@ -143,8 +145,8 @@ void HomogeneityTest::recomputeData() {
       if (i != j) {
         // Copy row from i to j
         for (int col = 0; col < dimensions.col; col++) {
-          setParameterAtPosition(parameterAtPosition(i, col), j, col);
-          setParameterAtPosition(k_undefinedValue, i, col);
+          setValueAtPosition(valueAtPosition(i, col), j, col);
+          setValueAtPosition(k_undefinedValue, i, col);
         }
       }
       j++;
@@ -157,7 +159,7 @@ void HomogeneityTest::recomputeData() {
   while (i < dimensions.col) {
     bool colIsEmpty = true;
     for (int row = 0; row < dimensions.row; row++) {
-      if (!std::isnan(parameterAtPosition(row, i))) {
+      if (!std::isnan(valueAtPosition(row, i))) {
         colIsEmpty = false;
         break;
       }
@@ -165,8 +167,8 @@ void HomogeneityTest::recomputeData() {
     if (!colIsEmpty) {
       if (i != j) {
         for (int row = 0; row < dimensions.row; row++) {
-          setParameterAtPosition(parameterAtPosition(row, i), row, j);
-          setParameterAtPosition(k_undefinedValue, row, i);
+          setValueAtPosition(valueAtPosition(row, i), row, j);
+          setValueAtPosition(k_undefinedValue, row, i);
         }
       }
       j++;
@@ -194,7 +196,7 @@ bool HomogeneityTest::validateInputs(int pageIndex) {
     // Init nullRow array
     nullRow[row] = true;
     for (int col = 0; col < max.col; col++) {
-      double value = parameterAtPosition(row, col);
+      double value = valueAtPosition(row, col);
       total += value;
       nullRow[row] = nullRow[row] && std::fabs(value) < DBL_MIN;
       nullColumn[col] = nullColumn[col] && std::fabs(value) < DBL_MIN;

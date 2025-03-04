@@ -25,7 +25,7 @@ ComparisonOperatorPopupDataSource::OperatorTypeForRow(int row) {
 
 void ComparisonOperatorPopupDataSource::updateMessages() {
   const char* symbol = m_test->hypothesisSymbol();
-  double firstParam = m_test->hypothesisParams()->firstParam();
+  double firstParam = m_test->hypothesis()->m_h0;
   constexpr int bufferSize = 7 /* μ1-μ2 */ + 3 /* ≠ */ +
                              Constants::k_shortFloatNumberOfChars /* float */ +
                              1 /* \0 */;

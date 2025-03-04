@@ -3,6 +3,7 @@
 
 #include "inference/models/statistic/one_mean_statistic.h"
 #include "inference/models/statistic/slope_t_statistic.h"
+#include "inference/models/statistic/table_from_store.h"
 #include "inference/statistic/categorical_table_cell.h"
 #include "shared/buffer_function_title_cell.h"
 #include "shared/column_helper.h"
@@ -28,13 +29,12 @@ class StoreTableCell : public DoubleColumnTableCell,
 
   // StoreColumnHelper
   Shared::DoublePairStore* store() override {
-    if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
+    if (m_statistic->testType() == Poincare::Inference::TestType::Slope) {
       return static_cast<SlopeTStatistic*>(tableModel());
     }
-    assert(
-        m_statistic->significanceTestType() == SignificanceTestType::OneMean ||
-        m_statistic->significanceTestType() == SignificanceTestType::TwoMeans);
-    return static_cast<RawDataStatistic*>(tableModel());
+    assert(m_statistic->testType() == Poincare::Inference::TestType::OneMean ||
+           m_statistic->testType() == Poincare::Inference::TestType::TwoMeans);
+    return static_cast<TableFromStatisticStore*>(tableModel());
   }
   const Shared::DoublePairStore* store() const {
     return const_cast<StoreTableCell*>(this)->store();

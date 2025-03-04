@@ -31,7 +31,7 @@ class InputStoreController : public InputCategoricalController,
     return m_titleBuffer;
   }
   ViewController::TitlesDisplay titlesDisplay() const override {
-    if (m_statistic->subApp() == Statistic::SubApp::Interval) {
+    if (m_statistic->subApp() == Statistic::SubApp::ConfidenceInterval) {
       return ViewController::TitlesDisplay::DisplayLastTitle;
     }
     if (!m_statistic->canChooseDataset()) {
@@ -105,9 +105,9 @@ class InputStoreController : public InputCategoricalController,
     return m_storeTableCell.store();
   }
   int numberOfExtraParameters() const {
-    return m_statistic->distributionType() == DistributionType::Z
-               ? m_statistic->significanceTestType() ==
-                         SignificanceTestType::TwoMeans
+    return m_statistic->statisticType() == Poincare::Inference::StatisticType::Z
+               ? m_statistic->testType() ==
+                         Poincare::Inference::TestType::TwoMeans
                      ? 2
                      : 1
                : 0;
@@ -122,8 +122,7 @@ class InputStoreController : public InputCategoricalController,
   void setAllParameterCellsVisible();
 
   bool shouldDisplayTwoPages() const {
-    return m_statistic->significanceTestType() ==
-           SignificanceTestType::TwoMeans;
+    return m_statistic->testType() == PcrInference::TestType::TwoMeans;
   }
 
   bool areAllParameterCellsInvisible() const;
@@ -142,8 +141,8 @@ class InputStoreController : public InputCategoricalController,
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[InputController::k_titleBufferSize];
   Statistic::SubApp m_loadedSubApp;
-  DistributionType m_loadedDistribution;
-  SignificanceTestType m_loadedTest;
+  Poincare::Inference::StatisticType m_loadedStatistic;
+  Poincare::Inference::TestType m_loadedTest;
 
   InputStoreController* m_nextInputStoreController;
   ViewController* m_nextOtherController;

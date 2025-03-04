@@ -12,11 +12,8 @@ class HomogeneityTest final : public Chi2Test {
   constexpr static int k_maxNumberOfRows = 9;
 
   HomogeneityTest();
-  CategoricalType categoricalType() const override {
-    return CategoricalType::Homogeneity;
-  }
-  I18n::Message title() const override {
-    return I18n::Message::InputHomogeneityControllerTitle;
+  constexpr PcrInference::CategoricalType categoricalType() const override {
+    return PcrInference::CategoricalType::Homogeneity;
   }
   void setGraphTitle(char* buffer, size_t bufferSize) const override;
 
@@ -26,12 +23,12 @@ class HomogeneityTest final : public Chi2Test {
   void compute() override;
 
   // Chi2Test
-  bool deleteParameterAtPosition(int row, int column) override;
+  bool deleteValueAtPosition(int row, int column) override;
   void recomputeData() override;
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };
   int maxNumberOfRows() const override { return k_maxNumberOfRows; };
 
-  int numberOfStatisticParameters() const override {
+  int numberOfTestParameters() const override {
     return k_maxNumberOfColumns * k_maxNumberOfRows;
   }
 

@@ -1,6 +1,8 @@
 #ifndef INFERENCE_MODELS_STATISTIC_INTERVAL_H
 #define INFERENCE_MODELS_STATISTIC_INTERVAL_H
 
+#include <poincare/statistics/inference.h>
+
 #include "statistic.h"
 
 namespace Inference {
@@ -21,40 +23,8 @@ class Interval : public Statistic {
         m_zCritical(NAN),
         m_marginOfError(NAN) {}
   virtual ~Interval();
-  SubApp subApp() const override { return SubApp::Interval; }
+  SubApp subApp() const override { return SubApp::ConfidenceInterval; }
 
-  bool initializeSignificanceTest(SignificanceTestType type,
-                                  Shared::GlobalContext* context) override;
-  void tidy() override;
-  I18n::Message statisticTitle() const override {
-    return I18n::Message::IntervalDescr;
-  }
-  I18n::Message statisticBasicTitle() const override {
-    return I18n::Message::Interval;
-  }
-  // Don't show Categorical cell for Interval
-  int numberOfSignificancesTestTypes() const override {
-    return k_numberOfSignificanceTestType - 1;
-  }
-  // TODO: factorize with tests!
-  I18n::Message tStatisticMessage() const override {
-    return I18n::Message::TInterval;
-  }
-  I18n::Message zStatisticMessage() const override {
-    return I18n::Message::ZInterval;
-  }
-  I18n::Message tOrZStatisticMessage() const override {
-    return I18n::Message::TOrZInterval;
-  }
-  I18n::Message tDistributionName() const override {
-    return I18n::Message::TInterval;
-  }
-  I18n::Message tPooledDistributionName() const override {
-    return I18n::Message::PooledTInterval;
-  }
-  I18n::Message zDistributionName() const override {
-    return I18n::Message::ZInterval;
-  }
   void setGraphTitle(char* buffer, size_t bufferSize) const override final {
     setGraphTitleForValue(marginOfError(), buffer, bufferSize);
   }
@@ -71,21 +41,22 @@ class Interval : public Statistic {
   float evaluateAtAbscissa(float x) const override {
     return canonicalDensityFunction((x - estimate()) / standardError());
   }
-  void initParameters() override { m_threshold = 0.95; }
-  I18n::Message thresholdName() const override {
-    return I18n::Message::ConfidenceLevel;
-  }
-  I18n::Message thresholdDescription() const override {
-    return I18n::Message::Default;
-  }
 
-  virtual const char* estimateSymbol() const = 0;
-  virtual Poincare::Layout estimateLayout() const { return m_estimateLayout; }
-  virtual I18n::Message estimateDescription() { return I18n::Message::Default; }
+  bool showEstimate() const {
+    return PcrInference::ShowIntervalEstimate(testType());
+  }
+  const char* estimateSymbol() const {
+    return PcrInference::IntervalEstimateSymbol(testType());
+  }
+  Poincare::Layout estimateLayout() const {
+    return PcrInference::IntervalEstimateLayout(type());
+  }
+  I18n::Message estimateDescription() const {
+    return IntervalEstimateDescription(testType());
+  }
   /* The estimate is the center of the confidence interval,
    * and estimates the parameter of interest. */
   double estimate() const { return m_estimate; };
-  Poincare::Layout intervalCriticalValueSymbol();
   /* Returns the critical value above which the probability
    * of landing is inferior to a given confidence level,
    * for the normalized distribution. */
@@ -102,12 +73,6 @@ class Interval : public Statistic {
   };
 
   // Output
-  int numberOfResults() const override {
-    return 3 + hasDegreeOfFreedom() + !estimateLayout().isUninitialized();
-  }
-  void resultAtIndex(int index, double* value, Poincare::Layout* message,
-                     I18n::Message* subMessage, int* precision) override;
-
   void compute() override;
 
   // CurveViewRange
@@ -125,15 +90,20 @@ class Interval : public Statistic {
   float computeXMin() const override;
   float computeXMax() const override;
 
-  mutable Poincare::Layout m_estimateLayout;
   double m_estimate;
   double m_SE;
 
  private:
   enum ResultOrder { Estimate, Critical, SE, ME, IntervalDegree };
+  int numberOfInferenceResults() const override {
+    return 3 + hasDegreeOfFreedom() + showEstimate();
+  }
+  void inferenceResultAtIndex(int index, double* value,
+                              Poincare::Layout* message,
+                              I18n::Message* subMessage,
+                              int* precision) override;
+
   float largestMarginOfError();
-  double computeIntervalCriticalValue();
-  virtual void privateCompute() = 0;
 
   double m_zCritical;
   double m_marginOfError;

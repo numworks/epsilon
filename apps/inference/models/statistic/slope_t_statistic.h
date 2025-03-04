@@ -3,58 +3,85 @@
 
 #include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/linear_regression_store.h>
+#include <poincare/statistics/inference.h>
 
+#include "interval.h"
 #include "table.h"
+#include "table_from_store.h"
+#include "test.h"
 
 namespace Inference {
 
-class SlopeTStatistic : public Table, public Shared::LinearRegressionStore {
+class SlopeTStatistic : public TableFromRegressionStore {
  public:
-  constexpr static int k_maxNumberOfColumns = 2;
-
   SlopeTStatistic(Shared::GlobalContext* context)
-      : Shared::LinearRegressionStore(context, &m_concreteStorePreferences),
-        m_series(0) {
+      : TableFromRegressionStore(context) {
+    m_series[0] = 0;
     initListsFromStorage();
   }
-
-  I18n::Message title() const {
-    return I18n::Message::HypothesisControllerTitleSlope;
-  }
   int numberOfSeries() const override { return 1; }
-  int seriesAt(int) const override { return m_series; }
-  void setSeriesAt(Statistic*, int index, int series) override {
-    m_series = series;
-  }
-
-  // DoublePairStore
-  int seriesAtColumn(int column) const override { return m_series; }
-
-  // Table
-  void setParameterAtPosition(double value, int row, int column) override {
-    set(value, m_series, column, row, false);
-  }
-  double parameterAtPosition(int row, int column) const override;
-  bool deleteParameterAtPosition(int row, int column) override;
-  void recomputeData() override { updateSeries(m_series); }
-  int maxNumberOfColumns() const override { return k_maxNumberOfColumns; }
-  int maxNumberOfRows() const override { return k_maxNumberOfPairs; }
 
  protected:
-  int numberOfTableParameters() const {
-    return k_maxNumberOfPairs * k_maxNumberOfColumns;
-  }
-  bool authorizedParameterAtIndex(double p, int i) const;
-  double computeStandardError() const;
-  bool validateInputs(int pageIndex) { return validateSeries(this, pageIndex); }
+  void computeParametersFromSeries(const Statistic* stat,
+                                   int pageIndex) override;
 
-  // Table
-  Index2D initialDimensions() const override {
-    return Index2D{.row = 1, .col = 2};
+  double m_params[Poincare::Inference::NumberOfParameters(
+      Poincare::Inference::TestType::Slope)];
+};
+
+class SlopeTInterval : public Interval, public SlopeTStatistic {
+ public:
+  using SlopeTStatistic::SlopeTStatistic;
+  Table* table() override { return this; }
+  void init() override { DoublePairStore::initListsFromStorage(); }
+  void tidy() override { DoublePairStore::tidy(); }
+  constexpr PcrInference::TestType testType() const override {
+    return PcrInference::TestType::Slope;
+  }
+  constexpr PcrInference::StatisticType statisticType() const override {
+    return PcrInference::StatisticType::T;
   }
 
-  Shared::DoublePairStorePreferences m_concreteStorePreferences;
-  int m_series;
+  bool validateInputs(int pageIndex) override {
+    return SlopeTStatistic::validateInputs(this, pageIndex);
+  }
+
+ private:
+  // Slope
+  constexpr static int k_numberOfExtraResults = 1;
+  int numberOfExtraResults() const override { return k_numberOfExtraResults; }
+  void extraResultAtIndex(int index, double* value, Poincare::Layout* message,
+                          I18n::Message* subMessage, int* precision) override;
+
+  double* parametersArray() override { return m_params; }
+};
+
+class SlopeTTest : public Test, public SlopeTStatistic {
+ public:
+  using SlopeTStatistic::SlopeTStatistic;
+  Table* table() override { return this; }
+  void init() override { DoublePairStore::initListsFromStorage(); }
+  void tidy() override { DoublePairStore::tidy(); }
+
+  constexpr PcrInference::TestType testType() const override {
+    return PcrInference::TestType::Slope;
+  }
+  constexpr PcrInference::StatisticType statisticType() const override {
+    return PcrInference::StatisticType::T;
+  }
+
+  bool validateInputs(int pageIndex) override {
+    return SlopeTStatistic::validateInputs(this, pageIndex);
+  }
+
+ private:
+  // Slope and SE
+  constexpr static int k_numberOfExtraResults = 2;
+  int numberOfExtraResults() const override { return k_numberOfExtraResults; }
+  void extraResultAtIndex(int index, double* value, Poincare::Layout* message,
+                          I18n::Message* subMessage, int* precision) override;
+
+  double* parametersArray() override { return m_params; }
 };
 
 }  // namespace Inference

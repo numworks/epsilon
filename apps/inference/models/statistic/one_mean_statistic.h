@@ -1,31 +1,30 @@
 #ifndef INFERENCE_MODELS_STATISTIC_ONE_MEAN_STATISTIC_H
 #define INFERENCE_MODELS_STATISTIC_ONE_MEAN_STATISTIC_H
 
-#include "raw_data_statistic.h"
+#include <poincare/statistics/inference.h>
+
+#include "table_from_store.h"
 
 namespace Inference {
 
-class OneMeanStatistic : public RawDataStatistic {
+class OneMeanStatistic : public TableFromStatisticStore {
  public:
-  using RawDataStatistic::RawDataStatistic;
-
+  using TableFromStatisticStore::TableFromStatisticStore;
   int numberOfSeries() const override { return 1; }
 
-  int series() const { return seriesAt(0); }
-  void setSeries(int series, Statistic* stat) { setSeriesAt(stat, 0, series); }
-
  protected:
-  OneMean::Type oneMeanType(const Statistic* s) const {
-    if (s->distributionType() == DistributionType::T) {
-      return OneMean::Type::T;
+  void computeParametersFromSeries(const Statistic* stat,
+                                   int pageIndex) override;
+
+  double preProcessOneMeanParameter(double p, int index) const {
+    if (index == PcrInference::Params::OneMean::N) {
+      return std::round(p);
     }
-    assert(s->distributionType() == DistributionType::Z);
-    return OneMean::Type::Z;
+    return p;
   }
 
-  void syncParametersWithStore(const Statistic* stat) override;
-
-  double m_params[OneMean::k_numberOfParams];
+  double m_params[PcrInference::NumberOfParameters(
+      PcrInference::TestType::OneMean)];
 };
 
 }  // namespace Inference

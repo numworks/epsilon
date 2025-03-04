@@ -1,76 +1,45 @@
 #ifndef INFERENCE_MODELS_STATISTIC_TEST_H
 #define INFERENCE_MODELS_STATISTIC_TEST_H
 
+#include <poincare/statistics/inference.h>
+
 #include "statistic.h"
 
 namespace Inference {
 
 class Test : public Statistic {
-  friend class SignificanceTest;
-  friend class OneMean;
-  friend class OneProportion;
-  friend class TwoMeans;
-  friend class TwoProportions;
-
  public:
   Test() : Statistic(), m_testCriticalValue(NAN), m_pValue(NAN) {}
-  SubApp subApp() const override { return SubApp::Test; }
 
-  bool initializeSignificanceTest(SignificanceTestType type,
-                                  Shared::GlobalContext* context) override;
-  I18n::Message statisticTitle() const override {
-    return I18n::Message::TestDescr;
-  }
-  I18n::Message statisticBasicTitle() const override {
-    return I18n::Message::Test;
-  }
-  // TODO: factorize with intervals!
-  I18n::Message tStatisticMessage() const override {
-    return I18n::Message::TTest;
-  }
-  I18n::Message zStatisticMessage() const override {
-    return I18n::Message::ZTest;
-  }
-  I18n::Message tOrZStatisticMessage() const override {
-    return I18n::Message::TOrZTest;
-  }
-  I18n::Message tDistributionName() const override {
-    return I18n::Message::TTest;
-  }
-  I18n::Message tPooledDistributionName() const override {
-    return I18n::Message::PooledTTest;
-  }
-  I18n::Message zDistributionName() const override {
-    return I18n::Message::ZTest;
-  }
+  SubApp subApp() const override { return SubApp::SignificanceTest; }
+
   void setGraphTitle(char* buffer, size_t bufferSize) const override;
 
   // Evaluation
   float evaluateAtAbscissa(float x) const override {
     return canonicalDensityFunction(x);
   }
-  void initParameters() override { m_threshold = 0.05; }
-  I18n::Message thresholdName() const override {
-    return I18n::Message::GreekAlpha;
-  }
-  I18n::Message thresholdDescription() const override {
-    return I18n::Message::SignificanceLevel;
-  }
 
   // Input
-  bool hasHypothesisParameters() const override { return true; }
-  HypothesisParams* hypothesisParams() override { return &m_hypothesisParams; }
-  const HypothesisParams* hypothesisParams() const override {
-    return &m_hypothesisParams;
+  PcrInference::Hypothesis* hypothesis() { return &m_hypothesis; }
+  const PcrInference::Hypothesis* hypothesis() const { return &m_hypothesis; }
+  const char* hypothesisSymbol() const {
+    return PcrInference::HypothesisSymbol(testType());
   }
-  virtual bool isValidH0(double h0) { return true; }
+  bool isValidH0(double h0) { return PcrInference::IsH0Valid(testType(), h0); }
+
+  void initParameters() override;
 
   // Additional estimates
-  virtual int numberOfEstimates() const { return 0; }
-  virtual double estimateValue(int index) { return 0; }
-  virtual Poincare::Layout estimateLayout(int index) const { return {}; }
-  virtual I18n::Message estimateDescription(int index) {
-    return I18n::Message::Default;
+  int numberOfEstimates() const {
+    return PcrInference::NumberOfTestEstimates(testType());
+  };
+  double estimateValue(int index) { return m_estimates[index]; }
+  Poincare::Layout estimateLayout(int index) const {
+    return PcrInference::TestEstimateLayout(testType(), index);
+  }
+  I18n::Message estimateDescription(int index) const {
+    return TestEstimateDescription(testType(), index);
   }
 
   // Test statistic
@@ -90,11 +59,7 @@ class Test : public Statistic {
   }
 
   // Output
-  int numberOfResults() const override {
-    return 2 + numberOfEstimates() + hasDegreeOfFreedom();
-  }
-  void resultAtIndex(int index, double* value, Poincare::Layout* message,
-                     I18n::Message* subMessage, int* precision) override;
+  void compute() override;
 
   // Range
   constexpr static float k_displayWidthToSTDRatio = 5.f;
@@ -104,12 +69,20 @@ class Test : public Statistic {
   bool hasTwoSides();
 
  protected:
+  int numberOfInferenceResults() const override {
+    return 2 + numberOfEstimates() + hasDegreeOfFreedom();
+  }
+  void inferenceResultAtIndex(int index, double* value,
+                              Poincare::Layout* message,
+                              I18n::Message* subMessage,
+                              int* precision) override;
+
   float computeXMin() const override { return -k_displayWidthToSTDRatio; }
   float computeXMax() const override { return k_displayWidthToSTDRatio; }
-  const char* criticalValueSymbol() const;
   // Hypothesis chosen
-  HypothesisParams m_hypothesisParams;
+  PcrInference::Hypothesis m_hypothesis;
   // Cached values
+  PcrInference::Estimates m_estimates;
   double m_testCriticalValue;
   double m_pValue;
 

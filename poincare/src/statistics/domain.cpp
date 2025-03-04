@@ -1,9 +1,8 @@
 #include "domain.h"
 
+#include <omg/troolean.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
-
-#include "omg/troolean.h"
 
 namespace Poincare::Internal::Domain {
 

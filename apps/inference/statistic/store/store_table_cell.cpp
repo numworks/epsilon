@@ -47,13 +47,12 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell* cell,
         store()->colorOfSeriesAtIndex(store()->seriesAtColumn(column)));
 
     char columnName[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
-    if (m_statistic->significanceTestType() == SignificanceTestType::Slope) {
+    if (m_statistic->testType() == Poincare::Inference::TestType::Slope) {
       fillColumnName(column, const_cast<char*>(headerCell->text()));
     } else {
-      assert(m_statistic->significanceTestType() ==
-                 SignificanceTestType::OneMean ||
-             m_statistic->significanceTestType() ==
-                 SignificanceTestType::TwoMeans);
+      assert(
+          m_statistic->testType() == Poincare::Inference::TestType::OneMean ||
+          m_statistic->testType() == Poincare::Inference::TestType::TwoMeans);
       fillColumnName(column, columnName);
       I18n::Message prefix = store()->relativeColumn(column) == 0
                                  ? I18n::Message::Values

@@ -3,6 +3,7 @@
 #include <apps/shared/float_parameter_controller.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/print.h>
+#include <poincare/statistics/inference.h>
 
 #include "inference/app.h"
 #include "inference/constants.h"
@@ -46,12 +47,14 @@ void InputController::InputTitle(const Escher::ViewController* vc,
                                  const Statistic* statistic, char* titleBuffer,
                                  size_t titleBufferSize) {
   if (statistic->hasHypothesisParameters()) {
+    assert(statistic->subApp() == PcrInference::Method::SignificanceTest);
+    const Test* signifTest = static_cast<const Test*>(statistic);
     /* H0:<first symbol>=<firstParam>
      * Ha:<first symbol><operator symbol><firstParams>
      * α=<threshold> */
-    const char* symbol = statistic->hypothesisSymbol();
+    const char* symbol = signifTest->hypothesisSymbol();
     const char* op = Poincare::ComparisonJunior::OperatorString(
-        statistic->hypothesisParams()->comparisonOperator());
+        signifTest->hypothesis()->m_alternative);
     StackViewController* stackViewControllerResponder =
         static_cast<StackViewController*>(vc->parentResponder());
     constexpr int k_maxNumberOfGlyphs =
@@ -60,19 +63,19 @@ void InputController::InputTitle(const Escher::ViewController* vc,
       Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
           titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
           k_maxNumberOfGlyphs, "H0:%s=%*.*ed Ha:%s%s%*.*ed α=%*.*ed", symbol,
-          statistic->hypothesisParams()->firstParam(),
+          signifTest->hypothesis()->m_h0,
           Poincare::Preferences::PrintFloatMode::Decimal, symbol, op,
-          statistic->hypothesisParams()->firstParam(),
+          signifTest->hypothesis()->m_h0,
           Poincare::Preferences::PrintFloatMode::Decimal,
-          statistic->threshold(),
+          signifTest->threshold(),
           Poincare::Preferences::PrintFloatMode::Decimal);
     } else {
       Poincare::Print::CustomPrintfWithMaxNumberOfGlyphs(
           titleBuffer, titleBufferSize, k_numberOfTitleSignificantDigits,
           k_maxNumberOfGlyphs, "H0:%s=%*.*ed Ha:%s%s%*.*ed", symbol,
-          statistic->hypothesisParams()->firstParam(),
+          signifTest->hypothesis()->m_h0,
           Poincare::Preferences::PrintFloatMode::Decimal, symbol, op,
-          statistic->hypothesisParams()->firstParam(),
+          signifTest->hypothesis()->m_h0,
           Poincare::Preferences::PrintFloatMode::Decimal);
     }
   } else {

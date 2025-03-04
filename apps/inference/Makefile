@@ -39,19 +39,14 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   models/statistic/chi2_test.cpp \
   models/statistic/goodness_test.cpp \
   models/statistic/homogeneity_test.cpp \
-  models/statistic/interfaces/distributions.cpp \
-  models/statistic/interfaces/significance_tests.cpp \
   models/statistic/interval.cpp \
   models/statistic/one_mean_statistic.cpp \
-  models/statistic/raw_data_statistic.cpp \
-  models/statistic/slope_t_interval.cpp \
   models/statistic/slope_t_statistic.cpp \
-  models/statistic/slope_t_test.cpp \
   models/statistic/statistic.cpp \
   models/statistic/table.cpp \
+  models/statistic/table_from_store.cpp \
   models/statistic/test.cpp \
   models/statistic/two_means_statistic.cpp \
-  models/statistic/two_proportions_z_test.cpp \
   test/statistics.cpp:+test \
 )
 

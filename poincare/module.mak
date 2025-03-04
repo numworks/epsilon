@@ -171,7 +171,9 @@ $(addprefix statistics/, \
     distribution_method.cpp \
     distribution_parameters.cpp \
     distribution.cpp \
-    domain.cpp \
+  ) \
+  $(addprefix inference/, \
+    inference.cpp \
   ) \
   $(addprefix regression/, \
     $(addsuffix :-nopool, \
@@ -192,6 +194,7 @@ $(addprefix statistics/, \
     trigonometric_regression.cpp \
   )) \
   data_table.cpp \
+  domain.cpp \
   statistics_dataset.cpp \
   statistics_dataset_column.cpp \
 ) \

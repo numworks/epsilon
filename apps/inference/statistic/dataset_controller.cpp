@@ -22,7 +22,7 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
   }
   int row = selectedRow();
 
-  Table* tableModel = Table::FromStatistic(m_statistic);
+  Table* tableModel = m_statistic->table();
   if (row == k_indexOfInputStatisticsCell) {
     tableModel->unsetSeries(m_statistic);
     stackOpenPage(m_inputController);

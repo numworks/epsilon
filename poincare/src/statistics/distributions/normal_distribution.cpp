@@ -26,14 +26,13 @@ static T standardNormalCumulativeDistributiveFunctionAtAbscissa(T abscissa) {
     return NAN;
   }
   if (std::isinf(abscissa)) {
-    return abscissa > static_cast<T>(DistributionConstant::k_standardMu)
-               ? static_cast<T>(1.0)
-               : static_cast<T>(0.0);
+    return abscissa > static_cast<T>(k_standardMu) ? static_cast<T>(1.0)
+                                                   : static_cast<T>(0.0);
   }
-  if (abscissa == static_cast<T>(DistributionConstant::k_standardMu)) {
+  if (abscissa == static_cast<T>(k_standardMu)) {
     return static_cast<T>(0.5);
   }
-  if (abscissa < static_cast<T>(DistributionConstant::k_standardMu)) {
+  if (abscissa < static_cast<T>(k_standardMu)) {
     return (static_cast<T>(1.0)) -
            standardNormalCumulativeDistributiveFunctionAtAbscissa(-abscissa);
   }
@@ -103,7 +102,7 @@ double EvaluateParameterForProbabilityAndBound(int parameterIndex,
   if (abscissaForStandardDistribution == 0) {
     if (bound == parameters[0]) {
       // Return default value if there is an infinity of possible sigma
-      return DistributionConstant::k_standardSigma;
+      return k_standardSigma;
     }
     return NAN;
   }

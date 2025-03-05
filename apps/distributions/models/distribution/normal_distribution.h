@@ -1,6 +1,8 @@
 #ifndef PROBABILITE_NORMAL_DISTRIBUTION_H
 #define PROBABILITE_NORMAL_DISTRIBUTION_H
 
+#include <poincare/statistics/distribution_constants.h>
+
 #include "two_parameters_distribution.h"
 
 namespace Distributions {
@@ -27,9 +29,10 @@ class NormalDistribution final : public TwoParametersDistribution {
 
  private:
   constexpr static double k_defaultMu =
-      Poincare::DistributionConstant::k_standardMu;
+      Poincare::DistributionConstants::NormalDistribution::k_standardMu;
   constexpr static double k_defaultSigma =
-      Poincare::DistributionConstant::k_standardSigma;
+      Poincare::DistributionConstants::NormalDistribution::k_standardSigma;
+
   constexpr static double k_maxRatioMuSigma = 1000000.0f;
   enum ParamsOrder { Mu, Sigma };
   Shared::ParameterRepresentation paramRepresentationAtIndex(

@@ -10,10 +10,16 @@ template <typename T>
 T EvaluateAtAbscissa(T x, const T* params) {
   const T d1 = params[0];
   const T d2 = params[1];
+  if (d1 - d2 < OMG::Float::Epsilon<T>()) {
+    if (d1 - k_diracWidth <= x && x <= d2 + k_diracWidth) {
+      return 2.0 * k_diracMaximum;
+    }
+    return 0.0;
+  }
   if (d1 <= x && x <= d2) {
     return (1.0 / (d2 - d1));
   }
-  return 0.0f;
+  return 0.0;
 }
 
 template <typename T>

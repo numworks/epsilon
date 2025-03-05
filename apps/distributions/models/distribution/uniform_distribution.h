@@ -19,7 +19,6 @@ class UniformDistribution final : public TwoParametersDistribution {
     return index == 0 ? "a" : "b";
   }
 
-  float evaluateAtAbscissa(float x) const override;
   double defaultParameterAtIndex(int index) const override {
     return index == 0 ? k_defaultA : k_defaultB;
   }
@@ -28,8 +27,7 @@ class UniformDistribution final : public TwoParametersDistribution {
  private:
   constexpr static double k_defaultA = -1.0;
   constexpr static double k_defaultB = 1.0;
-  constexpr static float k_diracMaximum = 10.0f;
-  constexpr static float k_diracWidth = 0.005f;
+
   enum ParamsOrder { A, B };
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override;

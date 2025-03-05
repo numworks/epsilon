@@ -34,6 +34,10 @@ T CumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters);
 template <typename T>
 T CumulativeDistributiveInverseForProbability(T probability,
                                               const T* parameters);
+
+constexpr static double k_diracWidth = 0.005;
+constexpr static double k_diracMaximum = 10.0;
+
 };  // namespace UniformDistribution
 
 }  // namespace Internal

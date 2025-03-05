@@ -48,7 +48,7 @@ class Distribution : public Shared::Inference {
   // Evaluation
   /* This does computation in double and then converts to float.
    * TODO: Should this just return double? */
-  float evaluateAtAbscissa(float x) const override;
+  float evaluateAtAbscissa(float x) const override final;
   double cumulativeDistributiveFunctionAtAbscissa(
       double x) const override final;
   double rightIntegralFromAbscissa(double x) const;

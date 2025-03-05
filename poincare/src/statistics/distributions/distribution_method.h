@@ -14,10 +14,7 @@ enum class Type : uint8_t {
   Inverse,
 };
 
-constexpr Type GetType(const Tree* tree) {
-  assert(tree->isDistribution());
-  return tree->nodeValueBlock(2)->get<Type>();
-}
+Type GetType(const Tree* tree);
 
 constexpr static int k_maxNumberOfParameters = 2;
 template <typename T>

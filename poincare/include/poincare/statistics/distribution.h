@@ -27,10 +27,7 @@ enum class Type : uint8_t {
   Fisher,
 };
 
-constexpr Type GetType(const Tree* tree) {
-  assert(tree->isDistribution());
-  return tree->nodeValueBlock(1)->get<Type>();
-}
+Type GetType(const Tree* tree);
 
 constexpr int k_maxNumberOfParameters = 3;
 struct TypeDescription {

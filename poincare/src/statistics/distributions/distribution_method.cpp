@@ -8,6 +8,11 @@
 
 namespace Poincare::Internal::DistributionMethod {
 
+Type GetType(const Tree* tree) {
+  assert(tree->isDistribution());
+  return tree->nodeValueBlock(2)->get<Type>();
+}
+
 template <typename T>
 T EvaluateAtAbscissa(Type method, const Abscissae<T> x,
                      Distribution::Type distribType,

@@ -18,6 +18,11 @@
 
 namespace Poincare::Internal::Distribution {
 
+Type GetType(const Tree* tree) {
+  assert(tree->isDistribution());
+  return tree->nodeValueBlock(1)->get<Type>();
+}
+
 template <typename U>
 OMG::Troolean IsParameterValid(Type type, U val, int index,
                                const ParametersArray<U> parameters) {

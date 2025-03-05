@@ -17,20 +17,23 @@ OMG::Troolean IsParameterValid(Type type, U val, int index,
   assert(index >= 0 && index < NumberOfParameters(type));
   switch (type) {
     case Type::Binomial:
-      return index == 0 ? Domain::Contains(val, Domain::Type::N)
-                        : Domain::Contains(val, Domain::Type::ZeroToOne);
+      return index == BinomialParamsOrder::N
+                 ? Domain::Contains(val, Domain::Type::N)
+                 : Domain::Contains(val, Domain::Type::ZeroToOne);
     case Type::Uniform:
       return OMG::TrooleanAnd(
           Domain::Contains(val, Domain::Type::R),
-          index == 0
-              // d1 <= d2
-              ? Domain::IsAGreaterThanB(parameters[1], val)
-              : Domain::IsAGreaterThanB(val, parameters[0]));
+          index == UniformParamsOrder::A
+              // a <= b
+              ? Domain::IsAGreaterThanB(parameters[UniformParamsOrder::B], val)
+              : Domain::IsAGreaterThanB(val,
+                                        parameters[UniformParamsOrder::A]));
     case Type::Exponential:
       return Domain::Contains(val, Domain::Type::RPlusStar);
     case Type::Normal:
-      return index == 0 ? Domain::Contains(val, Domain::Type::R)
-                        : Domain::Contains(val, Domain::Type::RPlusStar);
+      return index == NormalParamsOrder::Mu
+                 ? Domain::Contains(val, Domain::Type::R)
+                 : Domain::Contains(val, Domain::Type::RPlusStar);
     case Type::Chi2:
       return Domain::Contains(val, Domain::Type::NStar);
     case Type::Student:
@@ -40,8 +43,10 @@ OMG::Troolean IsParameterValid(Type type, U val, int index,
     case Type::Hypergeometric:
       return OMG::TrooleanAnd(
           Domain::Contains(val, Domain::Type::N),
-          index == 0 ? OMG::Troolean::True
-                     : Domain::IsAGreaterThanB(parameters[0], val));
+          index == HypergeometricParamsOrder::NPop
+              ? OMG::Troolean::True
+              : Domain::IsAGreaterThanB(
+                    parameters[HypergeometricParamsOrder::NPop], val));
     case Type::Poisson:
       return Domain::Contains(val, Domain::Type::RPlusStar);
     case Type::Fisher:

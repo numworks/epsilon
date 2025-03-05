@@ -14,11 +14,13 @@ template <typename T>
 T MeanAbscissa(Type type, const ParametersArray<T> parameters) {
   switch (type) {
     case Type::Normal:
-      return parameters[0];
+      return parameters[NormalParamsOrder::Mu];
     case Type::Student:
       return 0.0;
     case Type::Uniform:
-      return (parameters[0] + parameters[1]) / 2.0;
+      return (parameters[UniformParamsOrder::A] +
+              parameters[UniformParamsOrder::B]) /
+             2.0;
     default:
       OMG::unreachable();
   }
@@ -33,6 +35,10 @@ double EvaluateParameterForProbabilityAndBound(
   if (std::isnan(probability)) {
     return NAN;
   }
+
+  double mu = parameters[NormalParamsOrder::Mu];
+  double sigma = parameters[NormalParamsOrder::Sigma];
+
   assert(probability >= 0.0 && probability <= 1.0);
   if (!isUpperBound) {
     probability = 1.0 - probability;
@@ -42,19 +48,19 @@ double EvaluateParameterForProbabilityAndBound(
   double abscissaForStandardDistribution =
       CumulativeDistributiveInverseForProbability(Type::Normal, probability,
                                                   {0.0, 1.0});
-  if (parameterIndex == 0) {  // mu
-    return bound - parameters[1] * abscissaForStandardDistribution;
+  if (parameterIndex == NormalParamsOrder::Mu) {
+    return bound - sigma * abscissaForStandardDistribution;
   }
-  assert(parameterIndex == 1);  // sigma
+  assert(parameterIndex == NormalParamsOrder::Sigma);
   if (abscissaForStandardDistribution == 0) {
-    if (bound == parameters[0]) {
+    if (bound == mu) {
       // Return default value if there is an infinity of possible sigma
       return Distribution::DefaultParameterAtIndex(Distribution::Type::Normal,
-                                                   1);
+                                                   NormalParamsOrder::Sigma);
     }
     return NAN;
   }
-  double result = (bound - parameters[0]) / abscissaForStandardDistribution;
+  double result = (bound - mu) / abscissaForStandardDistribution;
   return result > 0.0 ? result : NAN;  // Sigma can't be negative or null
 }
 

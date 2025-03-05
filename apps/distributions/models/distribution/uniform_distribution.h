@@ -1,6 +1,7 @@
 #ifndef PROBABILITE_UNIFORM_DISTRIBUTION_H
 #define PROBABILITE_UNIFORM_DISTRIBUTION_H
 
+#include "poincare/statistics/distribution.h"
 #include "two_parameters_distribution.h"
 
 namespace Distributions {
@@ -22,12 +23,11 @@ class UniformDistribution final : public TwoParametersDistribution {
   constexpr static float k_diracMaximum = 10.0f;
   constexpr static float k_diracWidth = 0.005f;
 
-  enum ParamsOrder { A, B };
   I18n::Message messageForParameterAtIndex(int index) const override {
     switch (index) {
-      case ParamsOrder::A:
+      case Poincare::Distribution::UniformParamsOrder::A:
         return I18n::Message::IntervalADescr;
-      case ParamsOrder::B:
+      case Poincare::Distribution::UniformParamsOrder::B:
         return I18n::Message::IntervalBDescr;
       default:
         OMG::unreachable();

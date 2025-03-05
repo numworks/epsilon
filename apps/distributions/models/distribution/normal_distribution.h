@@ -1,6 +1,7 @@
 #ifndef PROBABILITE_NORMAL_DISTRIBUTION_H
 #define PROBABILITE_NORMAL_DISTRIBUTION_H
 
+#include "poincare/statistics/distribution.h"
 #include "two_parameters_distribution.h"
 
 namespace Distributions {
@@ -20,12 +21,11 @@ class NormalDistribution final : public TwoParametersDistribution {
 
  private:
   constexpr static double k_maxRatioMuSigma = 1000000.0f;
-  enum ParamsOrder { Mu, Sigma };
   I18n::Message messageForParameterAtIndex(int index) const override {
     switch (index) {
-      case ParamsOrder::Mu:
+      case Poincare::Distribution::NormalParamsOrder::Mu:
         return I18n::Message::MeanDefinition;
-      case ParamsOrder::Sigma:
+      case Poincare::Distribution::NormalParamsOrder::Sigma:
         return I18n::Message::StandardDeviationDefinition;
       default:
         OMG::unreachable();

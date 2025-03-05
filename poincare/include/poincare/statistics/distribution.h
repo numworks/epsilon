@@ -52,6 +52,12 @@ constexpr TypeDescription k_typeDescriptions[] = {
     {Type::Fisher, 2, {"d1", "d2"}, {1., 1.}, true, false},
 };
 
+enum BinomialParamsOrder { N, P };
+enum UniformParamsOrder { A, B };
+enum NormalParamsOrder { Mu, Sigma };
+enum HypergeometricParamsOrder { NPop, K, NSample };
+enum FisherParamsOrder { D1, D2 };
+
 constexpr TypeDescription DescriptionForType(Type type) {
   for (const TypeDescription& desc : k_typeDescriptions) {
     if (desc.type == type) {

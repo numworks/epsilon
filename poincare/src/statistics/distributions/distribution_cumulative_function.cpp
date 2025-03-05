@@ -13,8 +13,8 @@ namespace Poincare::Internal::Distribution {
 template <typename T>
 T binomialCumulativeDistributiveFunction(T x,
                                          const ParametersArray<T> parameters) {
-  T n = parameters[0];
-  T p = parameters[1];
+  T n = parameters[BinomialParamsOrder::N];
+  T p = parameters[BinomialParamsOrder::P];
 
   if (std::isinf(x)) {
     return x > static_cast<T>(0.0) ? static_cast<T>(1.0) : static_cast<T>(0.0);
@@ -59,8 +59,8 @@ T exponentialCumulativeDistributiveFunction(T x,
 
 template <typename T>
 T fischerCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
-  const T d1 = params[0];
-  const T d2 = params[1];
+  const T d1 = params[FisherParamsOrder::D1];
+  const T d2 = params[FisherParamsOrder::D2];
   return RegularizedIncompleteBetaFunction(d1 / 2.0, d2 / 2.0,
                                            d1 * x / (d1 * x + d2));
 }
@@ -87,8 +87,8 @@ static T standardNormalCumulativeDistributiveFunction(T abscissa) {
 
 template <typename T>
 T normalCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
-  const T mu = params[0];
-  const T sigma = params[1];
+  const T mu = params[NormalParamsOrder::Mu];
+  const T sigma = params[NormalParamsOrder::Sigma];
   return standardNormalCumulativeDistributiveFunction<T>((x - mu) /
                                                          std::fabs(sigma));
 }
@@ -112,13 +112,13 @@ T studentCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
 
 template <typename T>
 T uniformCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
-  const T d1 = params[0];
-  const T d2 = params[1];
-  if (x <= d1) {
+  const T a = params[UniformParamsOrder::A];
+  const T b = params[UniformParamsOrder::B];
+  if (x <= a) {
     return 0.0;
   }
-  if (x < d2) {
-    return (x - d1) / (d2 - d1);
+  if (x < b) {
+    return (x - a) / (b - a);
   }
   return 1.0;
 }

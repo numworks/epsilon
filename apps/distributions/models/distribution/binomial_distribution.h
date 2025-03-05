@@ -2,6 +2,7 @@
 #define PROBABILITE_BINOMIAL_DISTRIBUTION_H
 
 #include "omg/unreachable.h"
+#include "poincare/statistics/distribution.h"
 #include "two_parameters_distribution.h"
 
 namespace Distributions {
@@ -18,14 +19,13 @@ class BinomialDistribution final : public TwoParametersDistribution {
   double rightIntegralInverseForProbability(double p) const override;
 
  protected:
-  enum ParamsOrder { N, P };
   constexpr static double k_defaultN = 20.0;
   constexpr static double k_defaultP = 0.5;
   I18n::Message messageForParameterAtIndex(int index) const override {
     switch (index) {
-      case ParamsOrder::N:
+      case Poincare::Distribution::BinomialParamsOrder::N:
         return I18n::Message::RepetitionNumber;
-      case ParamsOrder::P:
+      case Poincare::Distribution::BinomialParamsOrder::P:
         return I18n::Message::SuccessProbability;
       default:
         OMG::unreachable();

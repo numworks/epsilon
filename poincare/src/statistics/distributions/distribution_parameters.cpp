@@ -35,7 +35,7 @@ OMG::Troolean IsParameterValid(Type type, U val, int index,
                  ? Domain::Contains(val, Domain::Type::R)
                  : Domain::Contains(val, Domain::Type::RPlusStar);
     case Type::Chi2:
-      return Domain::Contains(val, Domain::Type::NStar);
+      return Domain::Contains(val, Domain::Type::RPlusStar);
     case Type::Student:
       return Domain::Contains(val, Domain::Type::RPlusStar);
     case Type::Geometric:

@@ -191,6 +191,36 @@ QUIZ_CASE(distributions_results_chi_squared) {
       &distribution, 4.987,
       0.97446155200631878745554104170878417789936065673828125);
 
+  // Chi Squared distribution with 1.3 degrees of freedom
+  distribution.setParameterAtIndex(1.3, 0);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1), 0.98f,
+                              1e-5);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 1.3,
+      0.66209429400375563457004091105773113667964935302734375);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 2.9874567,
+      0.878804860316481750714956433512270450592041015625);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 4.987,
+      0.96090315938362369507785842870362102985382080078125);
+
+  // Chi Squared distribution with 5.4 degrees of freedom
+  distribution.setParameterAtIndex(5.4, 0);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1),
+                              0.001890880662848345f, 1e-6);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 1.3,
+      0.047059684573231390369851823152202996425330638885498046875);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 2.9874567,
+      0.250530060451470470983537097708904184401035308837890625);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 4.987,
+      0.53051693435084168459781039928202517330646514892578125);
+  assert_cumulative_distributive_function_direct_and_inverse_is(
+      &distribution, 20, 0.9982594816610862);
+
   // Chi Squared distribution with 6 degrees of freedom
   distribution.setParameterAtIndex(6.0, 0);
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.1),

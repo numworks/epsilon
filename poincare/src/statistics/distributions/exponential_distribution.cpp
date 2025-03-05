@@ -6,7 +6,7 @@
 namespace Poincare::Internal::ExponentialDistribution {
 
 template <typename T>
-T EvaluateAtAbscissa(T x, const T* params) {
+T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> params) {
   if (x < static_cast<T>(0.0)) {
     return NAN;
   }
@@ -15,7 +15,8 @@ T EvaluateAtAbscissa(T x, const T* params) {
 }
 
 template <typename T>
-T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
+T CumulativeDistributiveFunctionAtAbscissa(
+    T x, const Distribution::ParametersArray<T> params) {
   if (x < 0.0) {
     return static_cast<T>(0.0);
   }
@@ -24,21 +25,24 @@ T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
 }
 
 template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
+T CumulativeDistributiveInverseForProbability(
+    T probability, const Distribution::ParametersArray<T> params) {
   const T lambda = params[0];
   return -std::log(1.0 - probability) / lambda;
 }
 
 // Specialisations
-template float EvaluateAtAbscissa<float>(float, const float*);
-template double EvaluateAtAbscissa<double>(double, const double*);
-template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                               const float*);
-template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                 const double*);
-template float CumulativeDistributiveInverseForProbability<float>(float,
-                                                                  const float*);
+template float EvaluateAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double EvaluateAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
+template float CumulativeDistributiveFunctionAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
+template float CumulativeDistributiveInverseForProbability<float>(
+    float, const Distribution::ParametersArray<float>);
 template double CumulativeDistributiveInverseForProbability<double>(
-    double, const double*);
+    double, const Distribution::ParametersArray<double>);
 
 }  // namespace Poincare::Internal::ExponentialDistribution

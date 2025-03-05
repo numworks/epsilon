@@ -10,8 +10,9 @@ namespace Internal {
 namespace ContinuousDistribution {
 // The range is inclusive on both ends
 template <typename T>
-T CumulativeDistributiveFunctionForRange(Distribution::Type distribType, T x,
-                                         T y, const T* parameters) {
+T CumulativeDistributiveFunctionForRange(
+    Distribution::Type distribType, T x, T y,
+    const Distribution::ParametersArray<T> parameters) {
   if (y <= x) {
     return 0.0f;
   }

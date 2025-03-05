@@ -10,7 +10,7 @@
 namespace Poincare::Internal::GeometricDistribution {
 
 template <typename T>
-T EvaluateAtAbscissa(T x, const T* params) {
+T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> params) {
   if (std::isinf(x)) {
     return NAN;
   }
@@ -28,7 +28,8 @@ T EvaluateAtAbscissa(T x, const T* params) {
 }
 
 template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
+T CumulativeDistributiveInverseForProbability(
+    T probability, const Distribution::ParametersArray<T> params) {
   constexpr T precision = OMG::Float::Epsilon<T>();
   if (std::abs(probability) < precision) {
     return NAN;
@@ -46,16 +47,20 @@ T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        return EvaluateAtAbscissa(x, static_cast<const T*>(auxiliary));
+        return EvaluateAtAbscissa(
+            x,
+            *static_cast<const Distribution::ParametersArray<T>*>(auxiliary));
       },
-      params);
+      &params);
 }
 
-template float EvaluateAtAbscissa<float>(float, const float*);
-template double EvaluateAtAbscissa<double>(double, const double*);
-template float CumulativeDistributiveInverseForProbability<float>(float,
-                                                                  const float*);
+template float EvaluateAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double EvaluateAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
+template float CumulativeDistributiveInverseForProbability<float>(
+    float, const Distribution::ParametersArray<float>);
 template double CumulativeDistributiveInverseForProbability<double>(
-    double, const double*);
+    double, const Distribution::ParametersArray<double>);
 
 }  // namespace Poincare::Internal::GeometricDistribution

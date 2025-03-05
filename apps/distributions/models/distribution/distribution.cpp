@@ -197,8 +197,8 @@ void Distribution::computeUnknownParameterForProbabilityAndBound(
   assert(m_indexOfUninitializedParameter != k_allParametersAreInitialized &&
          canHaveUninitializedParameter());
   double paramValue = m_distribution.evaluateParameterForProbabilityAndBound(
-      m_indexOfUninitializedParameter, parametersArray(), probability, bound,
-      isUpperBound);
+      m_indexOfUninitializedParameter, constParametersArray(), probability,
+      bound, isUpperBound);
   Inference::setParameterAtIndex(paramValue, m_indexOfUninitializedParameter);
   if (std::isfinite(paramValue)) {
     computeCurveViewRange();

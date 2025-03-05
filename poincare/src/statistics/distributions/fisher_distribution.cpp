@@ -12,7 +12,7 @@
 namespace Poincare::Internal::FisherDistribution {
 
 template <typename T>
-T EvaluateAtAbscissa(T x, const T* params) {
+T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> params) {
   const T d1 = params[0];
   const T d2 = params[1];
 
@@ -26,7 +26,8 @@ T EvaluateAtAbscissa(T x, const T* params) {
 }
 
 template <typename T>
-T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
+T CumulativeDistributiveFunctionAtAbscissa(
+    T x, const Distribution::ParametersArray<T> params) {
   const T d1 = params[0];
   const T d2 = params[1];
   return RegularizedIncompleteBetaFunction(d1 / 2.0, d2 / 2.0,
@@ -34,12 +35,14 @@ T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
 }
 
 template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
+T CumulativeDistributiveInverseForProbability(
+    T probability, const Distribution::ParametersArray<T> params) {
   const T d1 = params[0];
   const T d2 = params[1];
-  const double dbleParameters[2] = {static_cast<double>(d1),
-                                    static_cast<double>(d2)};
+  const Distribution::ParametersArray<double> dbleParameters(
+      {static_cast<double>(d1), static_cast<double>(d2)});
   const double p = static_cast<double>(probability);
+
   if (p > 1.0 - DBL_EPSILON) {
     return INFINITY;
   }
@@ -48,15 +51,17 @@ T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
   }
   double ax = DBL_EPSILON;
   double bx = 100.0;  // Arbitrary value
-  const void* pack[2] = {&p, dbleParameters};
+  const void* pack[2] = {&p, &dbleParameters};
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
       ax, bx, DBL_EPSILON,
       [](double x, const void* auxiliary) {
         const void* const* pack = static_cast<const void* const*>(auxiliary);
         const double* proba = static_cast<const double*>(pack[0]);
-        const double* parameters = static_cast<const double*>(pack[1]);
+        const Distribution::ParametersArray<double>* parameters =
+            static_cast<const Distribution::ParametersArray<double>*>(pack[1]);
         // This needs to be an increasing function
-        return CumulativeDistributiveFunctionAtAbscissa(x, parameters) - *proba;
+        return CumulativeDistributiveFunctionAtAbscissa(x, *parameters) -
+               *proba;
       },
       pack);
   /* Either no result was found, the precision is ok or the result was outside
@@ -75,17 +80,19 @@ T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
   return result.x();
 }
 
-template float EvaluateAtAbscissa<float>(float, const float*);
-template double EvaluateAtAbscissa<double>(double, const double*);
+template float EvaluateAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double EvaluateAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
 
-template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                               const float*);
-template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                 const double*);
+template float CumulativeDistributiveFunctionAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
 
-template float CumulativeDistributiveInverseForProbability<float>(float,
-                                                                  const float*);
+template float CumulativeDistributiveInverseForProbability<float>(
+    float, const Distribution::ParametersArray<float>);
 template double CumulativeDistributiveInverseForProbability<double>(
-    double, const double*);
+    double, const Distribution::ParametersArray<double>);
 
 }  // namespace Poincare::Internal::FisherDistribution

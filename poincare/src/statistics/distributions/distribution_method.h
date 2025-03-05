@@ -29,6 +29,9 @@ class DistributionMethod {
   constexpr Type type() const { return m_type; }
 
   constexpr static int k_maxNumberOfParameters = 2;
+  template <typename T>
+  using Abscissae = std::array<T, k_maxNumberOfParameters>;
+
   constexpr static int NumberOfParameters(Type f) {
     switch (f) {
       case Type::PDF:
@@ -46,27 +49,30 @@ class DistributionMethod {
   }
 
   template <typename T>
-  T evaluateAtAbscissa(T* x, Distribution distribution,
-                       const T* parameters) const {
+  T evaluateAtAbscissa(
+      const Abscissae<T> x, Distribution distribution,
+      const Distribution::ParametersArray<T> parameters) const {
     switch (m_type) {
       case Type::PDF:
-        return distribution.evaluateAtAbscissa(*x, parameters);
+        return distribution.evaluateAtAbscissa(x[0], parameters);
       case Type::CDF:
         return distribution.cumulativeDistributiveFunctionAtAbscissa(
-            *x, parameters);
+            x[0], parameters);
       case Type::CDFRange:
-        return distribution.cumulativeDistributiveFunctionForRange(*x, *(x + 1),
+        return distribution.cumulativeDistributiveFunctionForRange(x[0], x[1],
                                                                    parameters);
       case Type::Inverse:
         return distribution.cumulativeDistributiveInverseForProbability(
-            *x, parameters);
+            x[0], parameters);
       default:
         OMG::unreachable();
     }
   }
 
-  bool shallowReduce(const Tree** abscissae, Distribution distribution,
-                     const Tree** parameters, Tree* expression) const;
+  bool shallowReduce(
+      const Abscissae<const Tree*> abscissae, Distribution distribution,
+      const Distribution::ParametersArray<const Tree*> parameters,
+      Tree* expression) const;
 
  private:
   Type m_type;

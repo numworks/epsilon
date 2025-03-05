@@ -3,6 +3,7 @@
 
 #include <omg/troolean.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/statistics/distribution.h>
 
 #include "domain.h"
 
@@ -16,20 +17,22 @@ constexpr int k_nIndex = 0;
 constexpr int k_pIndex = 1;
 
 template <typename T>
-OMG::Troolean IsParameterValid(T val, int index, const T* parameters) {
+OMG::Troolean IsParameterValid(
+    T val, int index, const Distribution::ParametersArray<T> parameters) {
   return index == k_nIndex ? Domain::Contains(val, Domain::Type::N)
                            : Domain::Contains(val, Domain::Type::ZeroToOne);
 }
 
 template <typename T>
-T EvaluateAtAbscissa(T x, const T* parameters);
+T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> parameters);
 
 template <typename T>
-T CumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters);
+T CumulativeDistributiveFunctionAtAbscissa(
+    T x, const Distribution::ParametersArray<T> parameters);
 
 template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability,
-                                              const T* parameters);
+T CumulativeDistributiveInverseForProbability(
+    T probability, const Distribution::ParametersArray<T> parameters);
 
 };  // namespace BinomialDistribution
 

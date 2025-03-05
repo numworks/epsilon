@@ -65,7 +65,16 @@ class Distribution : public Shared::Inference {
 
   Calculation* calculation() { return m_calculationBuffer.calculation(); }
 
-  virtual const double* constParametersArray() const = 0;
+  using ParametersArray = Poincare::Distribution::ParametersArray<double>;
+  const ParametersArray constParametersArray() const {
+    ParametersArray array;
+    const double* paramsArray =
+        const_cast<Distribution*>(this)->parametersArray();
+    std::copy(paramsArray,
+              paramsArray + Poincare::Distribution::k_maxNumberOfParameters,
+              array.data());
+    return array;
+  }
 
  protected:
   static_assert(Poincare::Preferences::VeryLargeNumberOfSignificantDigits == 7,

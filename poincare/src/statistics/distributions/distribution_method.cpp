@@ -4,11 +4,15 @@
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
+#include <poincare/statistics/distribution.h>
 
 namespace Poincare::Internal {
 
-bool shallowReducePDF(const Tree** abscissae, Distribution distribution,
-                      const Tree** parameters, Tree* expression) {
+bool shallowReducePDF(
+    const DistributionMethod::Abscissae<const Tree*> abscissae,
+    Distribution distribution,
+    const Distribution::ParametersArray<const Tree*> parameters,
+    Tree* expression) {
   const Tree* x = abscissae[0];
 
   if (Infinity::IsPlusOrMinusInfinity(x)) {
@@ -41,8 +45,11 @@ bool shallowReducePDF(const Tree** abscissae, Distribution distribution,
   return false;
 }
 
-bool shallowReduceCDF(const Tree** abscissae, Distribution distribution,
-                      const Tree** parameters, Tree* expression) {
+bool shallowReduceCDF(
+    const DistributionMethod::Abscissae<const Tree*> abscissae,
+    Distribution distribution,
+    const Distribution::ParametersArray<const Tree*> parameters,
+    Tree* expression) {
   const Tree* x = abscissae[0];
 
   if (x->isInf()) {
@@ -57,8 +64,11 @@ bool shallowReduceCDF(const Tree** abscissae, Distribution distribution,
   return false;
 }
 
-bool shallowReduceCDFRange(const Tree** abscissae, Distribution distribution,
-                           const Tree** parameters, Tree* expression) {
+bool shallowReduceCDFRange(
+    const DistributionMethod::Abscissae<const Tree*> abscissae,
+    Distribution distribution,
+    const Distribution::ParametersArray<const Tree*> parameters,
+    Tree* expression) {
   const Tree* x = abscissae[0];
   const Tree* y = abscissae[1];
 
@@ -78,9 +88,12 @@ bool shallowReduceCDFRange(const Tree** abscissae, Distribution distribution,
   return false;
 }
 
-bool shallowReduceInverse(const Tree** x, Distribution distribution,
-                          const Tree** parameters, Tree* expression) {
-  const Tree* a = x[0];
+bool shallowReduceInverse(
+    const DistributionMethod::Abscissae<const Tree*> abscissae,
+    Distribution distribution,
+    const Distribution::ParametersArray<const Tree*> parameters,
+    Tree* expression) {
+  const Tree* a = abscissae[0];
   // Check a
   if (!a->isRational()) {
     return false;
@@ -165,10 +178,10 @@ bool shallowReduceInverse(const Tree** x, Distribution distribution,
   return false;
 }
 
-bool DistributionMethod::shallowReduce(const Tree** abscissae,
-                                       Distribution distribution,
-                                       const Tree** parameters,
-                                       Tree* expression) const {
+bool DistributionMethod::shallowReduce(
+    const Abscissae<const Tree*> abscissae, Distribution distribution,
+    const Distribution::ParametersArray<const Tree*> parameters,
+    Tree* expression) const {
   switch (m_type) {
     case Type::PDF:
       return shallowReducePDF(abscissae, distribution, parameters, expression);

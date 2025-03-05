@@ -626,7 +626,8 @@ double Store::normalProbabilityResultAtIndex(int series, int i) const {
   assert(i >= 0 && total > 0.0 && static_cast<double>(i) < total);
   // invnorm((i-0.5)/total,0,1)
   double plottingPosition = (static_cast<double>(i) + 0.5) / total;
-  constexpr double k_distribParams[] = {0.0, 1.0};
+  constexpr Poincare::Distribution::ParametersArray<double> k_distribParams = {
+      0.0, 1.0};
   return Poincare::Distribution(Poincare::Distribution::Type::Normal)
       .cumulativeDistributiveInverseForProbability(plottingPosition,
                                                    k_distribParams);

@@ -11,7 +11,7 @@
 namespace Poincare::Internal::NormalDistribution {
 
 template <typename T>
-T EvaluateAtAbscissa(T x, const T* params) {
+T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> params) {
   const T mu = params[k_muIndex];
   const T sigma = params[k_sigmaIndex];
   const float xMinusMuOverVar = (x - mu) / sigma;
@@ -63,7 +63,8 @@ static T standardNormalCumulativeDistributiveInverseForProbability(
 }
 
 template <typename T>
-T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
+T CumulativeDistributiveFunctionAtAbscissa(
+    T x, const Distribution::ParametersArray<T> params) {
   const T mu = params[k_muIndex];
   const T sigma = params[k_sigmaIndex];
   return standardNormalCumulativeDistributiveFunctionAtAbscissa<T>(
@@ -71,7 +72,8 @@ T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
 }
 
 template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
+T CumulativeDistributiveInverseForProbability(
+    T probability, const Distribution::ParametersArray<T> params) {
   const T mu = params[k_muIndex];
   const T sigma = params[k_sigmaIndex];
   return standardNormalCumulativeDistributiveInverseForProbability(
@@ -80,10 +82,9 @@ T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
          mu;
 }
 
-double EvaluateParameterForProbabilityAndBound(int parameterIndex,
-                                               const double* parameters,
-                                               double probability, double bound,
-                                               bool isUpperBound) {
+double EvaluateParameterForProbabilityAndBound(
+    int parameterIndex, const Distribution::ParametersArray<double> parameters,
+    double probability, double bound, bool isUpperBound) {
   if (std::isnan(probability)) {
     return NAN;
   }
@@ -110,15 +111,17 @@ double EvaluateParameterForProbabilityAndBound(int parameterIndex,
   return result > 0.0 ? result : NAN;  // Sigma can't be negative or null
 }
 
-template float EvaluateAtAbscissa<float>(float, const float*);
-template double EvaluateAtAbscissa<double>(double, const double*);
-template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                               const float*);
-template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                 const double*);
-template float CumulativeDistributiveInverseForProbability<float>(float,
-                                                                  const float*);
+template float EvaluateAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double EvaluateAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
+template float CumulativeDistributiveFunctionAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
+template float CumulativeDistributiveInverseForProbability<float>(
+    float, const Distribution::ParametersArray<float>);
 template double CumulativeDistributiveInverseForProbability<double>(
-    double, const double*);
+    double, const Distribution::ParametersArray<double>);
 
 }  // namespace Poincare::Internal::NormalDistribution

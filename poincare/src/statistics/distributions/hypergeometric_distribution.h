@@ -1,10 +1,11 @@
 #ifndef POINCARE_STATISTICS_PROBABILITY_HYPERGEOMETRIC_DISTRIBUTION_H
 #define POINCARE_STATISTICS_PROBABILITY_HYPERGEOMETRIC_DISTRIBUTION_H
 
+#include <omg/troolean.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/statistics/distribution.h>
 
 #include "domain.h"
-#include "omg/troolean.h"
 
 namespace Poincare {
 
@@ -16,7 +17,8 @@ constexpr int k_KIndex = 1;
 constexpr int k_nIndex = 2;
 
 template <typename U>
-OMG::Troolean IsParameterValid(U val, int index, const U* parameters) {
+OMG::Troolean IsParameterValid(
+    U val, int index, const Distribution::ParametersArray<U> parameters) {
   return OMG::TrooleanAnd(
       Domain::Contains(val, Domain::Type::N),
       index == k_NIndex ? OMG::Troolean::True
@@ -25,11 +27,11 @@ OMG::Troolean IsParameterValid(U val, int index, const U* parameters) {
 }
 
 template <typename T>
-T EvaluateAtAbscissa(T x, const T* parameters);
+T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> parameters);
 
 template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability,
-                                              const T* parameters);
+T CumulativeDistributiveInverseForProbability(
+    T probability, const Distribution::ParametersArray<T> parameters);
 
 };  // namespace HypergeometricDistribution
 

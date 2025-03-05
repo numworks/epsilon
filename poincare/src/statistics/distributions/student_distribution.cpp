@@ -11,7 +11,7 @@
 namespace Poincare::Internal::StudentDistribution {
 
 template <typename T>
-T EvaluateAtAbscissa(T x, const T* params) {
+T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> params) {
   const T k = params[0];
   T lnCoefficient = std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) -
                     std::log(std::sqrt(k * M_PI));
@@ -19,7 +19,8 @@ T EvaluateAtAbscissa(T x, const T* params) {
 }
 
 template <typename T>
-T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
+T CumulativeDistributiveFunctionAtAbscissa(
+    T x, const Distribution::ParametersArray<T> params) {
   const T k = params[0];
   if (x == 0.0) {
     return static_cast<T>(0.5);
@@ -36,7 +37,8 @@ T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
 }
 
 template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
+T CumulativeDistributiveInverseForProbability(
+    T probability, const Distribution::ParametersArray<T> params) {
   if (probability == 0.5) {
     return static_cast<T>(0.0);
   } else if (probability > 1.0 - DBL_EPSILON) {
@@ -54,8 +56,9 @@ T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
                                                      const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
     const T k = args->k;
-    return static_cast<double>(
-        CumulativeDistributiveFunctionAtAbscissa<T>(x, &k) - args->proba);
+    return static_cast<double>(CumulativeDistributiveFunctionAtAbscissa<T>(
+                                   x, Distribution::ParametersArray<T>({k})) -
+                               args->proba);
   };
 
   double xmin, xmax;
@@ -70,15 +73,17 @@ T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
 }
 
 // Specialisations
-template float EvaluateAtAbscissa<float>(float, const float*);
-template double EvaluateAtAbscissa<double>(double, const double*);
-template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                               const float*);
-template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                 const double*);
-template float CumulativeDistributiveInverseForProbability<float>(float,
-                                                                  const float*);
+template float EvaluateAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double EvaluateAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
+template float CumulativeDistributiveFunctionAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
+template float CumulativeDistributiveInverseForProbability<float>(
+    float, const Distribution::ParametersArray<float>);
 template double CumulativeDistributiveInverseForProbability<double>(
-    double, const double*);
+    double, const Distribution::ParametersArray<double>);
 
 }  // namespace Poincare::Internal::StudentDistribution

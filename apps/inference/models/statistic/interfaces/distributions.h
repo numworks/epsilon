@@ -23,8 +23,10 @@ class Distribution {
   const Poincare::Distribution distribution() const {
     return Poincare::Distribution(distributionType());
   }
-  virtual const double* constParametersArray(
-      double* degreesOfFreedom) const = 0;
+
+  using ParametersArray = Poincare::Distribution::ParametersArray<double>;
+  virtual const ParametersArray constParametersArray(
+      double degreesOfFreedom) const = 0;
 };
 
 class DistributionT : public Distribution {
@@ -41,9 +43,10 @@ class DistributionT : public Distribution {
     return Poincare::Distribution::Type::Student;
   }
 
-  const double* constParametersArray(double* degreesOfFreedom) const override {
-    assert(*degreesOfFreedom > 0);
-    return degreesOfFreedom;
+  const ParametersArray constParametersArray(
+      double degreesOfFreedom) const override {
+    assert(degreesOfFreedom > 0);
+    return ParametersArray({degreesOfFreedom});
   }
 };
 
@@ -60,8 +63,9 @@ class DistributionZ : public Distribution {
   Poincare::Distribution::Type distributionType() const override {
     return Poincare::Distribution::Type::Normal;
   }
-  constexpr static double k_params[] = {0, 1};
-  const double* constParametersArray(double* degreesOfFreedom) const override {
+  constexpr static ParametersArray k_params = {0, 1};
+  const ParametersArray constParametersArray(
+      double degreesOfFreedom) const override {
     return k_params;
   }
 };
@@ -80,9 +84,10 @@ class DistributionChi2 : public Distribution {
     return Poincare::Distribution::Type::Chi2;
   }
 
-  const double* constParametersArray(double* degreesOfFreedom) const override {
-    assert(*degreesOfFreedom > 0);
-    return degreesOfFreedom;
+  const ParametersArray constParametersArray(
+      double degreesOfFreedom) const override {
+    assert(degreesOfFreedom > 0);
+    return ParametersArray({degreesOfFreedom});
   }
 };
 

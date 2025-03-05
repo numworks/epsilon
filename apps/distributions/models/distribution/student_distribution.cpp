@@ -1,5 +1,7 @@
 #include "student_distribution.h"
 
+#include <poincare/statistics/distribution.h>
+
 namespace Distributions {
 
 bool StudentDistribution::authorizedParameterAtIndex(double x,
@@ -17,7 +19,9 @@ float StudentDistribution::privateComputeXMax() const { return 5.0f; }
 
 float StudentDistribution::computeYMax() const {
   const float floatParam = static_cast<float>(m_parameter);
-  return m_distribution.evaluateAtAbscissa(0.0f, &floatParam) *
+  return m_distribution.evaluateAtAbscissa(
+             0.0f,
+             Poincare::Distribution::ParametersArray<float>({floatParam})) *
          (1.0f + k_displayTopMarginRatio);
 }
 

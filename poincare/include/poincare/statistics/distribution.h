@@ -2,10 +2,11 @@
 #define POINCARE_STATISTICS_PROBABILITY_DISTRIBUTION_H
 
 #include <omg/troolean.h>
+#include <omg/unreachable.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/solver/solver_algorithms.h>
 
-#include "omg/unreachable.h"
+#include <array>
 
 namespace Poincare {
 
@@ -38,6 +39,9 @@ class Distribution final {
   constexpr Type type() const { return m_type; }
 
   constexpr static int k_maxNumberOfParameters = 3;
+  template <typename T>
+  using ParametersArray = std::array<T, k_maxNumberOfParameters>;
+
   constexpr static int NumberOfParameters(Type type) {
     switch (type) {
       case Type::Student:
@@ -63,13 +67,14 @@ class Distribution final {
   }
 
   template <typename U>  // float, double or const Tree*
-  OMG::Troolean isParameterValid(U val, int index, const U* parameters) const;
+  OMG::Troolean isParameterValid(U val, int index,
+                                 const ParametersArray<U> parameters) const;
   template <typename U>  // float, double or const Tree*
-  OMG::Troolean areParametersValid(const U* parameters) const;
+  OMG::Troolean areParametersValid(const ParametersArray<U> parameters) const;
 
   template <typename U>  // float, double or const Tree*
   static OMG::Troolean AreParametersValid(Type distribType,
-                                          const U* parameters) {
+                                          const ParametersArray<U> parameters) {
     return Distribution(distribType).areParametersValid(parameters);
   }
 
@@ -77,27 +82,27 @@ class Distribution final {
   bool isSymmetrical() const;
 
   template <typename T>
-  T evaluateAtAbscissa(T x, const T* parameters) const;
+  T evaluateAtAbscissa(T x, const ParametersArray<T> parameters) const;
 
   template <typename T>
-  T meanAbscissa(const T* parameters) const;
+  T meanAbscissa(const ParametersArray<T> parameters) const;
 
   template <typename T>
-  T cumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters) const;
+  T cumulativeDistributiveFunctionAtAbscissa(
+      T x, const ParametersArray<T> parameters) const;
 
   template <typename T>
-  T cumulativeDistributiveInverseForProbability(T probability,
-                                                const T* parameters) const;
+  T cumulativeDistributiveInverseForProbability(
+      T probability, const ParametersArray<T> parameters) const;
 
   template <typename T>
-  T cumulativeDistributiveFunctionForRange(T x, T y, const T* parameters) const;
+  T cumulativeDistributiveFunctionForRange(
+      T x, T y, const ParametersArray<T> parameters) const;
 
   // Only implemented for NormalDistribution
-  double evaluateParameterForProbabilityAndBound(int parameterIndex,
-                                                 const double* parameters,
-                                                 double probability,
-                                                 double bound,
-                                                 bool isUpperBound) const;
+  double evaluateParameterForProbabilityAndBound(
+      int parameterIndex, const ParametersArray<double> parameters,
+      double probability, double bound, bool isUpperBound) const;
 
  private:
   Type m_type;

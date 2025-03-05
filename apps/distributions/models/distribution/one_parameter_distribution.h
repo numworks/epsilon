@@ -13,7 +13,6 @@ class OneParameterDistribution : public Distribution {
                            double parameterValue)
       : Distribution(type), m_parameter(parameterValue) {}
   int numberOfParameters() override { return 1; }
-  const double* constParametersArray() const override { return &m_parameter; }
 
  protected:
   double* parametersArray() override { return &m_parameter; }

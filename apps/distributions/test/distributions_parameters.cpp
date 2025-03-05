@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <float.h>
+#include <poincare/statistics/distribution.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>
@@ -21,7 +22,8 @@ void assert_parameters_are(Distributions::Distribution* distribution,
                            std::initializer_list<double> parameters) {
   assert(static_cast<int>(parameters.size()) ==
          distribution->numberOfParameters());
-  const double* parametersArray = distribution->constParametersArray();
+  const Poincare::Distribution::ParametersArray<double> parametersArray =
+      distribution->constParametersArray();
   size_t i = 0;
   for (double param : parameters) {
     quiz_assert(parametersArray[i++] == param);

@@ -9,7 +9,7 @@
 namespace Poincare::Internal::HypergeometricDistribution {
 
 template <typename T>
-T EvaluateAtAbscissa(T k, const T* parameters) {
+T EvaluateAtAbscissa(T k, const Distribution::ParametersArray<T> parameters) {
   const T N = parameters[k_NIndex];
   const T K = parameters[k_KIndex];
   const T n = parameters[k_nIndex];
@@ -43,8 +43,8 @@ T EvaluateAtAbscissa(T k, const T* parameters) {
 }
 
 template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability,
-                                              const T* parameters) {
+T CumulativeDistributiveInverseForProbability(
+    T probability, const Distribution::ParametersArray<T> parameters) {
   const T N = parameters[k_NIndex];
   const T K = parameters[k_KIndex];
   const T n = parameters[k_nIndex];
@@ -64,17 +64,20 @@ T CumulativeDistributiveInverseForProbability(T probability,
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const T* params = static_cast<const T*>(auxiliary);
-        return EvaluateAtAbscissa(x, params);
+        const Distribution::ParametersArray<T>* params =
+            static_cast<const Distribution::ParametersArray<T>*>(auxiliary);
+        return EvaluateAtAbscissa(x, *params);
       },
-      parameters);
+      &parameters);
 }
 
-template float EvaluateAtAbscissa<float>(float, const float*);
-template double EvaluateAtAbscissa<double>(double, const double*);
-template float CumulativeDistributiveInverseForProbability<float>(float,
-                                                                  const float*);
+template float EvaluateAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double EvaluateAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
+template float CumulativeDistributiveInverseForProbability<float>(
+    float, const Distribution::ParametersArray<float>);
 template double CumulativeDistributiveInverseForProbability<double>(
-    double, const double*);
+    double, const Distribution::ParametersArray<double>);
 
 }  // namespace Poincare::Internal::HypergeometricDistribution

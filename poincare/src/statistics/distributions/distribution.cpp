@@ -20,8 +20,8 @@
 namespace Poincare::Internal {
 
 template <typename U>
-OMG::Troolean Distribution::isParameterValid(U val, int index,
-                                             const U* parameters) const {
+OMG::Troolean Distribution::isParameterValid(
+    U val, int index, const ParametersArray<U> parameters) const {
   assert(index < numberOfParameters());
   switch (m_type) {
     case Type::Binomial:
@@ -51,7 +51,8 @@ OMG::Troolean Distribution::isParameterValid(U val, int index,
 }
 
 template <typename U>
-OMG::Troolean Distribution::areParametersValid(const U* parameters) const {
+OMG::Troolean Distribution::areParametersValid(
+    const ParametersArray<U> parameters) const {
   int nParams = numberOfParameters();
   OMG::Troolean result = OMG::Troolean::True;
   for (int i = 0; i < nParams; i++) {
@@ -90,7 +91,8 @@ bool Distribution::isSymmetrical() const {
 }
 
 template <typename T>
-T Distribution::evaluateAtAbscissa(T x, const T* parameters) const {
+T Distribution::evaluateAtAbscissa(T x,
+                                   const ParametersArray<T> parameters) const {
   if (!std::isfinite(x) ||
       areParametersValid(parameters) != OMG::Troolean::True) {
     return NAN;
@@ -122,7 +124,7 @@ T Distribution::evaluateAtAbscissa(T x, const T* parameters) const {
 }
 
 template <typename T>
-T Distribution::meanAbscissa(const T* parameters) const {
+T Distribution::meanAbscissa(const ParametersArray<T> parameters) const {
   switch (m_type) {
     case Type::Normal:
       return NormalDistribution::MeanAbscissa(parameters);
@@ -137,7 +139,7 @@ T Distribution::meanAbscissa(const T* parameters) const {
 
 template <typename T>
 T Distribution::cumulativeDistributiveFunctionAtAbscissa(
-    T x, const T* parameters) const {
+    T x, const ParametersArray<T> parameters) const {
   if (areParametersValid(parameters) != OMG::Troolean::True || std::isnan(x)) {
     return NAN;
   }
@@ -173,7 +175,7 @@ T Distribution::cumulativeDistributiveFunctionAtAbscissa(
 
 template <typename T>
 T Distribution::cumulativeDistributiveInverseForProbability(
-    T probability, const T* parameters) const {
+    T probability, const ParametersArray<T> parameters) const {
   if (areParametersValid(parameters) != OMG::Troolean::True ||
       !std::isfinite(probability) || probability < static_cast<T>(0.0) ||
       probability > static_cast<T>(1.0)) {
@@ -217,7 +219,7 @@ T Distribution::cumulativeDistributiveInverseForProbability(
 
 template <typename T>
 T Distribution::cumulativeDistributiveFunctionForRange(
-    T x, T y, const T* parameters) const {
+    T x, T y, const ParametersArray<T> parameters) const {
   if (areParametersValid(parameters) != OMG::Troolean::True || std::isnan(x) ||
       std::isnan(y)) {
     return NAN;
@@ -231,48 +233,57 @@ T Distribution::cumulativeDistributiveFunctionForRange(
 }
 
 double Distribution::evaluateParameterForProbabilityAndBound(
-    int parameterIndex, const double* parameters, double probability,
-    double bound, bool isUpperBound) const {
+    int parameterIndex, const ParametersArray<double> parameters,
+    double probability, double bound, bool isUpperBound) const {
   assert(m_type == Type::Normal);
   return NormalDistribution::EvaluateParameterForProbabilityAndBound(
       parameterIndex, parameters, probability, bound, isUpperBound);
 }
 
 template OMG::Troolean Distribution::isParameterValid(
-    float val, int index, const float* parameters) const;
+    float val, int index,
+    const Distribution::ParametersArray<float> parameters) const;
 template OMG::Troolean Distribution::isParameterValid(
-    double val, int index, const double* parameters) const;
+    double val, int index,
+    const Distribution::ParametersArray<double> parameters) const;
 template OMG::Troolean Distribution::isParameterValid(
-    const Tree* val, int index, const Tree* const* parameters) const;
+    const Tree* val, int index,
+    const Distribution::ParametersArray<const Tree*> parameters) const;
 
 template OMG::Troolean Distribution::areParametersValid(
-    const float* parameters) const;
+    const Distribution::ParametersArray<float> parameters) const;
 template OMG::Troolean Distribution::areParametersValid(
-    const double* parameters) const;
+    const Distribution::ParametersArray<double> parameters) const;
 template OMG::Troolean Distribution::areParametersValid(
-    const Tree* const* parameters) const;
+    const Distribution::ParametersArray<const Tree*> parameters) const;
 
-template float Distribution::evaluateAtAbscissa(float x,
-                                                const float* parameters) const;
+template float Distribution::evaluateAtAbscissa(
+    float x, const Distribution::ParametersArray<float> parameters) const;
 template double Distribution::evaluateAtAbscissa(
-    double x, const double* parameters) const;
+    double x, const Distribution::ParametersArray<double> parameters) const;
 
-template float Distribution::meanAbscissa(const float* parameters) const;
-template double Distribution::meanAbscissa(const double* parameters) const;
+template float Distribution::meanAbscissa(
+    const Distribution::ParametersArray<float> parameters) const;
+template double Distribution::meanAbscissa(
+    const Distribution::ParametersArray<double> parameters) const;
 
 template float Distribution::cumulativeDistributiveFunctionAtAbscissa(
-    float x, const float* parameters) const;
+    float x, const Distribution::ParametersArray<float> parameters) const;
 template double Distribution::cumulativeDistributiveFunctionAtAbscissa(
-    double x, const double* parameters) const;
+    double x, const Distribution::ParametersArray<double> parameters) const;
 
 template float Distribution::cumulativeDistributiveInverseForProbability(
-    float probability, const float* parameters) const;
+    float probability,
+    const Distribution::ParametersArray<float> parameters) const;
 template double Distribution::cumulativeDistributiveInverseForProbability(
-    double probability, const double* parameters) const;
+    double probability,
+    const Distribution::ParametersArray<double> parameters) const;
 
 template float Distribution::cumulativeDistributiveFunctionForRange(
-    float x, float y, const float* parameters) const;
+    float x, float y,
+    const Distribution::ParametersArray<float> parameters) const;
 template double Distribution::cumulativeDistributiveFunctionForRange(
-    double x, double y, const double* parameters) const;
+    double x, double y,
+    const Distribution::ParametersArray<double> parameters) const;
 
 }  // namespace Poincare::Internal

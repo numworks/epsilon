@@ -4,6 +4,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/statistics/distributions/distribution_method.h>
+#include <poincare/statistics/distribution.h>
 
 #include "approximation.h"
 #include "arithmetic.h"
@@ -515,14 +516,14 @@ bool SystematicOperation::ReduceSign(Tree* e) {
 
 bool SystematicOperation::ReduceDistribution(Tree* e) {
   const Tree* child = e->child(0);
-  const Tree* abscissae[DistributionMethod::k_maxNumberOfParameters];
+  DistributionMethod::Abscissae<const Tree*> abscissae;
   DistributionMethod method = DistributionMethod(e);
   for (int i = 0; i < method.numberOfParameters(); i++) {
     abscissae[i] = child;
     child = child->nextTree();
   }
   Distribution distribution = Distribution(e);
-  const Tree* parameters[Distribution::k_maxNumberOfParameters];
+  Distribution::ParametersArray<const Tree*> parameters;
   for (int i = 0; i < distribution.numberOfParameters(); i++) {
     parameters[i] = child;
     child = child->nextTree();

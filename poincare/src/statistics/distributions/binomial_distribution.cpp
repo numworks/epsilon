@@ -3,13 +3,14 @@
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/solver/solver_algorithms.h>
 #include <poincare/src/statistics/distributions/binomial_distribution.h>
+#include <poincare/statistics/distribution.h>
 
 #include <cmath>
 
 namespace Poincare::Internal::BinomialDistribution {
 
 template <typename T>
-T EvaluateAtAbscissa(T x, const T* parameters) {
+T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> parameters) {
   const T n = parameters[0];
   const T p = parameters[1];
   constexpr T precision = OMG::Float::Epsilon<T>();
@@ -43,7 +44,8 @@ T EvaluateAtAbscissa(T x, const T* parameters) {
 }
 
 template <typename T>
-T CumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters) {
+T CumulativeDistributiveFunctionAtAbscissa(
+    T x, const Distribution::ParametersArray<T> parameters) {
   T n = parameters[k_nIndex];
   T p = parameters[k_pIndex];
 
@@ -61,8 +63,8 @@ T CumulativeDistributiveFunctionAtAbscissa(T x, const T* parameters) {
 }
 
 template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability,
-                                              const T* parameters) {
+T CumulativeDistributiveInverseForProbability(
+    T probability, const Distribution::ParametersArray<T> parameters) {
   const T n = parameters[0];
   const T p = parameters[1];
   constexpr T precision = OMG::Float::Epsilon<T>();
@@ -85,23 +87,27 @@ T CumulativeDistributiveInverseForProbability(T probability,
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const T* params = reinterpret_cast<const T*>(auxiliary);
-        return BinomialDistribution::EvaluateAtAbscissa(x, params);
+        const Distribution::ParametersArray<T>* params =
+            reinterpret_cast<const Distribution::ParametersArray<T>*>(
+                auxiliary);
+        return BinomialDistribution::EvaluateAtAbscissa(x, *params);
       },
-      parameters);
+      &parameters);
 }
 
-template float EvaluateAtAbscissa<float>(float, const float*);
-template double EvaluateAtAbscissa<double>(double, const double*);
+template float EvaluateAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double EvaluateAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
 
-template float CumulativeDistributiveFunctionAtAbscissa<float>(float,
-                                                               const float*);
-template double CumulativeDistributiveFunctionAtAbscissa<double>(double,
-                                                                 const double*);
+template float CumulativeDistributiveFunctionAtAbscissa<float>(
+    float, const Distribution::ParametersArray<float>);
+template double CumulativeDistributiveFunctionAtAbscissa<double>(
+    double, const Distribution::ParametersArray<double>);
 
-template float CumulativeDistributiveInverseForProbability<float>(float,
-                                                                  const float*);
+template float CumulativeDistributiveInverseForProbability<float>(
+    float, const Distribution::ParametersArray<float>);
 template double CumulativeDistributiveInverseForProbability<double>(
-    double, const double*);
+    double, const Distribution::ParametersArray<double>);
 
 }  // namespace Poincare::Internal::BinomialDistribution

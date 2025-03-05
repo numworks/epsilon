@@ -8,6 +8,9 @@ namespace Poincare::Internal::UniformDistribution {
 
 template <typename T>
 T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> params) {
+  if (std::isinf(x)) {
+    return NAN;
+  }
   const T d1 = params[0];
   const T d2 = params[1];
   if (d1 <= x && x <= d2) {

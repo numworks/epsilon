@@ -74,7 +74,7 @@ OMG::Troolean AreParametersValid(Type type,
 
 template <typename T>
 T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T> parameters) {
-  if (!std::isfinite(x) ||
+  if (std::isnan(x) ||
       AreParametersValid(type, parameters) != OMG::Troolean::True) {
     return NAN;
   }
@@ -159,7 +159,7 @@ template <typename T>
 T CumulativeDistributiveInverseForProbability(
     Type type, T probability, const ParametersArray<T> parameters) {
   if (AreParametersValid(type, parameters) != OMG::Troolean::True ||
-      !std::isfinite(probability) || probability < static_cast<T>(0.0) ||
+      std::isnan(probability) || probability < static_cast<T>(0.0) ||
       probability > static_cast<T>(1.0)) {
     return NAN;
   }

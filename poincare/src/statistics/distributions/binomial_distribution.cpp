@@ -11,6 +11,9 @@ namespace Poincare::Internal::BinomialDistribution {
 
 template <typename T>
 T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> parameters) {
+  if (std::isinf(x)) {
+    return NAN;
+  }
   const T n = parameters[0];
   const T p = parameters[1];
   constexpr T precision = OMG::Float::Epsilon<T>();

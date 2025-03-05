@@ -11,7 +11,7 @@ namespace Poincare::Internal::PoissonDistribution {
 
 template <typename T>
 T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> parameters) {
-  if (x < 0) {
+  if (x < 0 || std::isinf(x)) {
     return NAN;
   }
   const T lambda = parameters[0];

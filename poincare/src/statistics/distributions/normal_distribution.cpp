@@ -12,6 +12,9 @@ namespace Poincare::Internal::NormalDistribution {
 
 template <typename T>
 T EvaluateAtAbscissa(T x, const Distribution::ParametersArray<T> params) {
+  if (std::isinf(x)) {
+    return NAN;
+  }
   const T mu = params[k_muIndex];
   const T sigma = params[k_sigmaIndex];
   const float xMinusMuOverVar = (x - mu) / sigma;

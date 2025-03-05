@@ -6,11 +6,32 @@
 #include <poincare/src/expression/rational.h>
 #include <poincare/statistics/distribution.h>
 
-namespace Poincare::Internal {
+namespace Poincare::Internal::DistributionMethod {
+
+template <typename T>
+T EvaluateAtAbscissa(Type method, const Abscissae<T> x,
+                     Distribution::Type distribType,
+                     const Distribution::ParametersArray<T> parameters) {
+  switch (method) {
+    case Type::PDF:
+      return Distribution::EvaluateAtAbscissa(distribType, x[0], parameters);
+    case Type::CDF:
+      return Distribution::CumulativeDistributiveFunctionAtAbscissa(
+          distribType, x[0], parameters);
+    case Type::CDFRange:
+      return Distribution::CumulativeDistributiveFunctionForRange(
+          distribType, x[0], x[1], parameters);
+    case Type::Inverse:
+      return Distribution::CumulativeDistributiveInverseForProbability(
+          distribType, x[0], parameters);
+    default:
+      OMG::unreachable();
+  }
+}
 
 bool shallowReducePDF(
     const DistributionMethod::Abscissae<const Tree*> abscissae,
-    Distribution distribution,
+    Distribution::Type distribType,
     const Distribution::ParametersArray<const Tree*> parameters,
     Tree* expression) {
   const Tree* x = abscissae[0];
@@ -25,15 +46,15 @@ bool shallowReducePDF(
   }
 
   if (Rational::Sign(x).isStrictlyNegative() &&
-      (distribution.type() == Distribution::Type::Binomial ||
-       distribution.type() == Distribution::Type::Poisson ||
-       distribution.type() == Distribution::Type::Geometric ||
-       distribution.type() == Distribution::Type::Hypergeometric)) {
+      (distribType == Distribution::Type::Binomial ||
+       distribType == Distribution::Type::Poisson ||
+       distribType == Distribution::Type::Geometric ||
+       distribType == Distribution::Type::Hypergeometric)) {
     expression->cloneTreeOverTree(0_e);
     return true;
   }
 
-  if (!distribution.isContinuous() && !x->isInteger()) {
+  if (!Distribution::IsContinuous(distribType) && !x->isInteger()) {
     Tree* floorX = IntegerHandler::Quotient(Rational::Numerator(x),
                                             Rational::Denominator(x));
     // Replacing x in expression by its floor
@@ -47,7 +68,7 @@ bool shallowReducePDF(
 
 bool shallowReduceCDF(
     const DistributionMethod::Abscissae<const Tree*> abscissae,
-    Distribution distribution,
+    Distribution::Type distribType,
     const Distribution::ParametersArray<const Tree*> parameters,
     Tree* expression) {
   const Tree* x = abscissae[0];
@@ -66,7 +87,7 @@ bool shallowReduceCDF(
 
 bool shallowReduceCDFRange(
     const DistributionMethod::Abscissae<const Tree*> abscissae,
-    Distribution distribution,
+    Distribution::Type distribType,
     const Distribution::ParametersArray<const Tree*> parameters,
     Tree* expression) {
   const Tree* x = abscissae[0];
@@ -90,7 +111,7 @@ bool shallowReduceCDFRange(
 
 bool shallowReduceInverse(
     const DistributionMethod::Abscissae<const Tree*> abscissae,
-    Distribution distribution,
+    Distribution::Type distribType,
     const Distribution::ParametersArray<const Tree*> parameters,
     Tree* expression) {
   const Tree* a = abscissae[0];
@@ -116,7 +137,7 @@ bool shallowReduceInverse(
 
   if (is0 || is1) {
     // TODO: for all distributions with finite support
-    if (distribution.type() == Distribution::Type::Binomial) {
+    if (distribType == Distribution::Type::Binomial) {
       if (is0) {
         const Tree* p = parameters[1];
         if (!p->isRational()) {
@@ -135,7 +156,7 @@ bool shallowReduceInverse(
       return true;
     }
 
-    if (distribution.type() == Distribution::Type::Geometric) {
+    if (distribType == Distribution::Type::Geometric) {
       if (is0) {
         expression->cloneTreeOverTree(KOutOfDefinition);
         return true;
@@ -154,8 +175,8 @@ bool shallowReduceInverse(
       return true;
     }
 
-    if (distribution.type() == Distribution::Type::Normal ||
-        distribution.type() == Distribution::Type::Student) {
+    if (distribType == Distribution::Type::Normal ||
+        distribType == Distribution::Type::Student) {
       // Normal and Student (all distributions with real line support)
       expression->cloneTreeOverTree(is0 ? KMult(-1_e, KInf) : KInf);
       return true;
@@ -164,12 +185,12 @@ bool shallowReduceInverse(
 
   // expectedValue if a == 0.5 and continuous and symmetrical
   if (a->isHalf()) {
-    if (distribution.type() == Distribution::Type::Normal) {
+    if (distribType == Distribution::Type::Normal) {
       const Tree* mu = parameters[0];
       expression->cloneTreeOverTree(mu);
       return true;
     }
-    if (distribution.type() == Distribution::Type::Student) {
+    if (distribType == Distribution::Type::Student) {
       expression->cloneTreeOverTree(0_e);
       return true;
     }
@@ -178,24 +199,31 @@ bool shallowReduceInverse(
   return false;
 }
 
-bool DistributionMethod::shallowReduce(
-    const Abscissae<const Tree*> abscissae, Distribution distribution,
-    const Distribution::ParametersArray<const Tree*> parameters,
-    Tree* expression) const {
-  switch (m_type) {
+bool ShallowReduce(Type method, const Abscissae<const Tree*> abscissae,
+                   Distribution::Type distribType,
+                   const Distribution::ParametersArray<const Tree*> parameters,
+                   Tree* expression) {
+  switch (method) {
     case Type::PDF:
-      return shallowReducePDF(abscissae, distribution, parameters, expression);
+      return shallowReducePDF(abscissae, distribType, parameters, expression);
     case Type::CDF:
-      return shallowReduceCDF(abscissae, distribution, parameters, expression);
+      return shallowReduceCDF(abscissae, distribType, parameters, expression);
     case Type::CDFRange:
-      return shallowReduceCDFRange(abscissae, distribution, parameters,
+      return shallowReduceCDFRange(abscissae, distribType, parameters,
                                    expression);
     case Type::Inverse:
-      return shallowReduceInverse(abscissae, distribution, parameters,
+      return shallowReduceInverse(abscissae, distribType, parameters,
                                   expression);
     default:
       OMG::unreachable();
   }
 }
 
-}  // namespace Poincare::Internal
+template float EvaluateAtAbscissa(
+    Type method, const Abscissae<float> x, Distribution::Type distribType,
+    const Distribution::ParametersArray<float> parameters);
+template double EvaluateAtAbscissa(
+    Type method, const Abscissae<double> x, Distribution::Type distribType,
+    const Distribution::ParametersArray<double> parameters);
+
+}  // namespace Poincare::Internal::DistributionMethod

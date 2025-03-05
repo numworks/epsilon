@@ -61,6 +61,26 @@ bool Distribution::Initialize(Distribution* distribution,
   return true;
 }
 
+bool Distribution::isContinuous() const {
+  return Poincare::Distribution::IsContinuous(m_distribution);
+}
+bool Distribution::isSymmetrical() const {
+  return Poincare::Distribution::IsSymmetrical(m_distribution);
+}
+double Distribution::meanAbscissa() const {
+  return Poincare::Distribution::MeanAbscissa(m_distribution,
+                                              constParametersArray());
+}
+int Distribution::numberOfParameters() {
+  return Poincare::Distribution::NumberOfParameters(m_distribution);
+}
+const char* Distribution::parameterNameAtIndex(int index) const {
+  return Poincare::Distribution::ParameterNameAtIndex(m_distribution, index);
+}
+double Distribution::defaultParameterAtIndex(int index) const {
+  return Poincare::Distribution::DefaultParameterAtIndex(m_distribution, index);
+}
+
 float Distribution::evaluateAtAbscissa(float x) const {
   /* We need to call the double method because constParametersArray() is a
    * double *.
@@ -68,8 +88,8 @@ float Distribution::evaluateAtAbscissa(float x) const {
    * this would lose precision since the calculation have been done in double
    * for a long time.
    * Should this method just return double ? */
-  return static_cast<float>(m_distribution.evaluateAtAbscissa(
-      static_cast<double>(x), constParametersArray()));
+  return static_cast<float>(Poincare::Distribution::EvaluateAtAbscissa(
+      m_distribution, static_cast<double>(x), constParametersArray()));
 }
 
 bool Distribution::authorizedParameterAtIndex(double x, int index) const {
@@ -81,8 +101,8 @@ bool Distribution::authorizedParameterAtIndex(double x, int index) const {
     return true;
   }
   return Inference::authorizedParameterAtIndex(x, index) &&
-         OMG::TrooleanToBool(
-             m_distribution.isParameterValid(x, index, constParametersArray()));
+         OMG::TrooleanToBool(Poincare::Distribution::IsParameterValid(
+             m_distribution, x, index, constParametersArray()));
   ;
 }
 
@@ -107,8 +127,8 @@ void Distribution::setParameterAtIndexWithoutComputingCurveViewRange(
 }
 
 double Distribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
-  return m_distribution.cumulativeDistributiveFunctionAtAbscissa(
-      x, constParametersArray());
+  return Poincare::Distribution::CumulativeDistributiveFunctionAtAbscissa(
+      m_distribution, x, constParametersArray());
 }
 
 double Distribution::rightIntegralFromAbscissa(double x) const {
@@ -148,8 +168,8 @@ double Distribution::finiteIntegralBetweenAbscissas(double a, double b) const {
 
 double Distribution::cumulativeDistributiveInverseForProbability(
     double p) const {
-  return m_distribution.cumulativeDistributiveInverseForProbability(
-      p, constParametersArray());
+  return Poincare::Distribution::CumulativeDistributiveInverseForProbability(
+      m_distribution, p, constParametersArray());
 }
 
 double Distribution::rightIntegralInverseForProbability(
@@ -188,17 +208,18 @@ double Distribution::evaluateAtDiscreteAbscissa(int k) const {
   if (isContinuous()) {
     return 0.0;
   }
-  return m_distribution.evaluateAtAbscissa(static_cast<double>(k),
-                                           constParametersArray());
+  return Poincare::Distribution::EvaluateAtAbscissa(
+      m_distribution, static_cast<double>(k), constParametersArray());
 }
 
 void Distribution::computeUnknownParameterForProbabilityAndBound(
     double probability, double bound, bool isUpperBound) {
   assert(m_indexOfUninitializedParameter != k_allParametersAreInitialized &&
          canHaveUninitializedParameter());
-  double paramValue = m_distribution.evaluateParameterForProbabilityAndBound(
-      m_indexOfUninitializedParameter, constParametersArray(), probability,
-      bound, isUpperBound);
+  double paramValue =
+      Poincare::Distribution::EvaluateParameterForProbabilityAndBound(
+          m_distribution, m_indexOfUninitializedParameter,
+          constParametersArray(), probability, bound, isUpperBound);
   Inference::setParameterAtIndex(paramValue, m_indexOfUninitializedParameter);
   if (std::isfinite(paramValue)) {
     computeCurveViewRange();

@@ -22,24 +22,16 @@ class Distribution : public Shared::Inference {
 
   static bool Initialize(Distribution* distribution,
                          Poincare::Distribution::Type type);
-  Poincare::Distribution::Type type() const { return m_distribution.type(); };
 
-  bool isContinuous() const { return m_distribution.isContinuous(); }
-  bool isSymmetrical() const { return m_distribution.isSymmetrical(); }
-  double meanAbscissa() const {
-    return m_distribution.meanAbscissa(constParametersArray());
-  }
+  Poincare::Distribution::Type type() const { return m_distribution; }
+  bool isContinuous() const;
+  bool isSymmetrical() const;
+  double meanAbscissa() const;
 
   // Parameters
-  int numberOfParameters() override {
-    return m_distribution.numberOfParameters();
-  }
-  const char* parameterNameAtIndex(int index) const {
-    return m_distribution.parameterNameAtIndex(index);
-  }
-  double defaultParameterAtIndex(int index) const {
-    return m_distribution.defaultParameterAtIndex(index);
-  }
+  int numberOfParameters() override;
+  const char* parameterNameAtIndex(int index) const;
+  double defaultParameterAtIndex(int index) const;
   bool authorizedParameterAtIndex(double x, int index) const override;
   void setParameterAtIndex(double f, int index) override;
 
@@ -124,7 +116,7 @@ class Distribution : public Shared::Inference {
   };
 
   CalculationBuffer m_calculationBuffer;
-  const Poincare::Distribution m_distribution;
+  const Poincare::Distribution::Type m_distribution;
   // Used if one of the parameters is not input by the user
   int m_indexOfUninitializedParameter;
 };

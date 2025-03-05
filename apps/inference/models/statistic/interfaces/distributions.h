@@ -20,9 +20,6 @@ class Distribution {
 
  protected:
   virtual Poincare::Distribution::Type distributionType() const = 0;
-  const Poincare::Distribution distribution() const {
-    return Poincare::Distribution(distributionType());
-  }
 
   using ParametersArray = Poincare::Distribution::ParametersArray<double>;
   virtual const ParametersArray constParametersArray(

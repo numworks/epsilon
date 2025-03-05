@@ -628,9 +628,8 @@ double Store::normalProbabilityResultAtIndex(int series, int i) const {
   double plottingPosition = (static_cast<double>(i) + 0.5) / total;
   constexpr Poincare::Distribution::ParametersArray<double> k_distribParams = {
       0.0, 1.0};
-  return Poincare::Distribution(Poincare::Distribution::Type::Normal)
-      .cumulativeDistributiveInverseForProbability(plottingPosition,
-                                                   k_distribParams);
+  return Poincare::Distribution::CumulativeDistributiveInverseForProbability(
+      Poincare::Distribution::Type::Normal, plottingPosition, k_distribParams);
 }
 
 uint8_t Store::valueIndexAtSortedIndex(int series, int i) const {

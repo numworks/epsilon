@@ -22,7 +22,7 @@ T CumulativeDistributiveFunctionAtAbscissa(
             static_cast<const Distribution::Type*>(pack[0]));
         const Distribution::ParametersArray<T>* parameters =
             static_cast<const Distribution::ParametersArray<T>*>(pack[1]);
-        return Distribution(*type).evaluateAtAbscissa(k, *parameters);
+        return Distribution::EvaluateAtAbscissa(*type, k, *parameters);
       },
       pack);
 }

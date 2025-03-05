@@ -16,9 +16,10 @@ T CumulativeDistributiveFunctionForRange(
   if (y <= x) {
     return 0.0f;
   }
-  Distribution distribution(distribType);
-  return distribution.cumulativeDistributiveFunctionAtAbscissa(y, parameters) -
-         distribution.cumulativeDistributiveFunctionAtAbscissa(x, parameters);
+  return Distribution::CumulativeDistributiveFunctionAtAbscissa(distribType, y,
+                                                                parameters) -
+         Distribution::CumulativeDistributiveFunctionAtAbscissa(distribType, x,
+                                                                parameters);
 }
 
 /* This method looks for bounds such that:

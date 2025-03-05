@@ -22,6 +22,7 @@
 #include "matrix.h"
 #include "number.h"
 #include "physical_constant.h"
+#include "poincare/statistics/distribution.h"
 #include "random.h"
 #include "rational.h"
 #include "simplification.h"
@@ -911,8 +912,8 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
     case Type::Distribution: {
       const Tree* child = e->child(0);
       DistributionMethod::Abscissae<T> abscissae;
-      DistributionMethod method(e);
-      for (int i = 0; i < method.numberOfParameters(); i++) {
+      DistributionMethod::Type method = DistributionMethod::GetType(e);
+      for (int i = 0; i < DistributionMethod::NumberOfParameters(method); i++) {
         std::complex<T> c = PrivateToComplex<T>(child, ctx);
         if (c.imag() != 0) {
           return NAN;
@@ -921,8 +922,8 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
         child = child->nextTree();
       }
       Distribution::ParametersArray<T> parameters;
-      Distribution distribution(e);
-      for (int i = 0; i < distribution.numberOfParameters(); i++) {
+      Distribution::Type distribType = Distribution::GetType(e);
+      for (int i = 0; i < Distribution::NumberOfParameters(distribType); i++) {
         std::complex<T> c = PrivateToComplex<T>(child, ctx);
         if (c.imag() != 0) {
           return NAN;
@@ -930,7 +931,8 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
         parameters[i] = c.real();
         child = child->nextTree();
       }
-      return method.evaluateAtAbscissa(abscissae, distribution, parameters);
+      return DistributionMethod::EvaluateAtAbscissa<T>(method, abscissae,
+                                                       distribType, parameters);
     }
     case Type::Dep: {
       std::complex<T> undef = UndefDependencies<T>(e, ctx);

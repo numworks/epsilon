@@ -164,9 +164,8 @@ const Builtin* Builtin::GetReservedFunction(const Tree* e) {
     return builtin;
   }
   if (e->isDistribution()) {
-    DistributionMethod::Type method =
-        DistributionMethod::DistributionMethodType(e);
-    Distribution::Type distribution = Distribution::DistributionType(e);
+    DistributionMethod::Type method = DistributionMethod::GetType(e);
+    Distribution::Type distribution = Distribution::GetType(e);
     for (const DistributionBuiltin& builtin : s_distributionsBuiltins) {
       if (builtin.method() == method &&
           builtin.distribution() == distribution) {

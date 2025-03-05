@@ -42,9 +42,6 @@ double EvaluateParameterForProbabilityAndBound(
     int parameterIndex, const Distribution::ParametersArray<double> parameters,
     double probability, double bound, bool isUpperBound);
 
-constexpr static double k_standardMu = 0.;
-constexpr static double k_standardSigma = 1.;
-
 };  // namespace NormalDistribution
 
 }  // namespace Internal

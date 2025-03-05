@@ -6,15 +6,6 @@
 
 namespace Poincare::DistributionConstants {
 
-namespace NormalDistribution {
-
-constexpr static double k_standardMu =
-    Internal::NormalDistribution::k_standardMu;
-constexpr static double k_standardSigma =
-    Internal::NormalDistribution::k_standardSigma;
-
-}  // namespace NormalDistribution
-
 namespace UniformDistribution {
 
 constexpr static double k_diracWidth =

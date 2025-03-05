@@ -31,10 +31,17 @@ class Distribution : public Shared::Inference {
   }
 
   // Parameters
+  int numberOfParameters() override {
+    return m_distribution.numberOfParameters();
+  }
+  const char* parameterNameAtIndex(int index) const {
+    return m_distribution.parameterNameAtIndex(index);
+  }
+  double defaultParameterAtIndex(int index) const {
+    return m_distribution.defaultParameterAtIndex(index);
+  }
   bool authorizedParameterAtIndex(double x, int index) const override;
   void setParameterAtIndex(double f, int index) override;
-  virtual const char* parameterNameAtIndex(int index) const = 0;
-  virtual double defaultParameterAtIndex(int index) const = 0;
 
   // Unknown parameter
   virtual bool canHaveUninitializedParameter() const { return false; }

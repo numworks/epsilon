@@ -10,22 +10,16 @@ namespace Distributions {
 class ChiSquaredDistribution : public OneParameterDistribution {
  public:
   ChiSquaredDistribution()
-      : OneParameterDistribution(Poincare::Distribution::Type::Chi2,
-                                 k_defaultK) {
+      : OneParameterDistribution(Poincare::Distribution::Type::Chi2) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {
     return I18n::Message::ChiSquareDistribution;
   }
-  const char* parameterNameAtIndex(int index) const override { return "k"; }
-  double defaultParameterAtIndex(int index) const override {
-    return k_defaultK;
-  }
   bool authorizedParameterAtIndex(double x, int index) const override;
 
  private:
   constexpr static double k_maxK = 31500.0;
-  constexpr static double k_defaultK = 1.0;
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {
     return Shared::ParameterRepresentation{

@@ -10,18 +10,13 @@ namespace Distributions {
 class StudentDistribution : public OneParameterDistribution {
  public:
   StudentDistribution()
-      : OneParameterDistribution(Poincare::Distribution::Type::Student,
-                                 k_defaultK) {
+      : OneParameterDistribution(Poincare::Distribution::Type::Student) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {
     return I18n::Message::StudentDistribution;
   }
-  const char* parameterNameAtIndex(int index) const override { return "k"; }
   bool authorizedParameterAtIndex(double x, int index) const override;
-  double defaultParameterAtIndex(int index) const override {
-    return k_defaultK;
-  }
 
  private:
   constexpr static double k_defaultK = 1.0;

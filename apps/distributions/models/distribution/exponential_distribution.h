@@ -11,21 +11,15 @@ namespace Distributions {
 class ExponentialDistribution final : public OneParameterDistribution {
  public:
   ExponentialDistribution()
-      : OneParameterDistribution(Poincare::Distribution::Type::Exponential,
-                                 k_defaultLambda) {
+      : OneParameterDistribution(Poincare::Distribution::Type::Exponential) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {
     return I18n::Message::ExponentialDistribution;
   }
-  const char* parameterNameAtIndex(int index) const override { return "λ"; }
   bool authorizedParameterAtIndex(double x, int index) const override;
-  double defaultParameterAtIndex(int index) const override {
-    return k_defaultLambda;
-  }
 
  private:
-  constexpr static double k_defaultLambda = 1.0;
   constexpr static double k_maxLambda = 7500.0;
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override {

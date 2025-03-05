@@ -9,10 +9,9 @@ namespace Distributions {
 
 class OneParameterDistribution : public Distribution {
  public:
-  OneParameterDistribution(Poincare::Distribution::Type type,
-                           double parameterValue)
-      : Distribution(type), m_parameter(parameterValue) {}
-  int numberOfParameters() override { return 1; }
+  OneParameterDistribution(Poincare::Distribution::Type type)
+      : Distribution(type),
+        m_parameter(Poincare::Distribution::DefaultParameterAtIndex(type, 0)) {}
 
  protected:
   double* parametersArray() override { return &m_parameter; }

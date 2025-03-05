@@ -39,32 +39,61 @@ class Distribution final {
   constexpr Type type() const { return m_type; }
 
   constexpr static int k_maxNumberOfParameters = 3;
-  template <typename T>
-  using ParametersArray = std::array<T, k_maxNumberOfParameters>;
+  struct TypeDescription {
+    Distribution::Type type;
+    int numberOfParameters;
+    std::array<const char*, Distribution::k_maxNumberOfParameters>
+        parameterNames;
+    std::array<double, Distribution::k_maxNumberOfParameters> defaultParameters;
+  };
 
-  constexpr static int NumberOfParameters(Type type) {
-    switch (type) {
-      case Type::Student:
-      case Type::Poisson:
-      case Type::Geometric:
-      case Type::Exponential:
-      case Type::Chi2:
-        return 1;
-      case Type::Hypergeometric:
-        return 3;
-      case Type::Binomial:
-      case Type::Uniform:
-      case Type::Fisher:
-      case Type::Normal:
-        return 2;
-      default:
-        OMG::unreachable();
+  constexpr static TypeDescription k_typeDescriptions[] = {
+      {Type::Binomial, 2, {"n", "p"}, {20., 0.5}},
+      {Type::Uniform, 2, {"a", "b"}, {-1., 1.}},
+      {Type::Exponential, 1, {"λ"}, {1.0}},
+      {Type::Normal, 2, {"μ", "σ"}, {0., 1.}},
+      {Type::Chi2, 1, {"k"}, {1.}},
+      {Type::Student, 1, {"k"}, {1.}},
+      {Type::Geometric, 1, {"p"}, {0.5}},
+      {Type::Hypergeometric, 3, {"N", "K", "n"}, {100., 60., 50.}},
+      {Type::Poisson, 1, {"λ"}, {4.}},
+      {Type::Fisher, 2, {"d1", "d2"}, {1., 1.}},
+  };
+
+  constexpr static TypeDescription DescriptionForType(Type type) {
+    for (const TypeDescription& desc : k_typeDescriptions) {
+      if (desc.type == type) {
+        return desc;
+      }
     }
+    OMG::unreachable();
   }
 
+  constexpr static int NumberOfParameters(Type type) {
+    return DescriptionForType(type).numberOfParameters;
+  }
   constexpr int numberOfParameters() const {
     return NumberOfParameters(m_type);
   }
+
+  constexpr static const char* ParameterNameAtIndex(Type type, int index) {
+    assert(index >= 0 && index < NumberOfParameters(type));
+    return DescriptionForType(type).parameterNames[index];
+  }
+  const char* parameterNameAtIndex(int index) const {
+    return ParameterNameAtIndex(m_type, index);
+  }
+
+  constexpr static double DefaultParameterAtIndex(Type type, int index) {
+    assert(index >= 0 && index < NumberOfParameters(type));
+    return DescriptionForType(type).defaultParameters[index];
+  }
+  double defaultParameterAtIndex(int index) const {
+    return DefaultParameterAtIndex(m_type, index);
+  }
+
+  template <typename T>
+  using ParametersArray = std::array<T, k_maxNumberOfParameters>;
 
   template <typename U>  // float, double or const Tree*
   OMG::Troolean isParameterValid(U val, int index,

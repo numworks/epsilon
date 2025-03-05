@@ -8,18 +8,11 @@ namespace Distributions {
 class BinomialDistribution final : public TwoParametersDistribution {
  public:
   BinomialDistribution()
-      : TwoParametersDistribution(Poincare::Distribution::Type::Binomial,
-                                  k_defaultN, k_defaultP) {
+      : TwoParametersDistribution(Poincare::Distribution::Type::Binomial) {
     computeCurveViewRange();
   }
   I18n::Message title() const override {
     return I18n::Message::BinomialDistribution;
-  }
-  const char* parameterNameAtIndex(int index) const override {
-    return index == 0 ? "n" : "p";
-  }
-  double defaultParameterAtIndex(int index) const override {
-    return index == 0 ? k_defaultN : k_defaultP;
   }
   double rightIntegralInverseForProbability(double p) const override;
 

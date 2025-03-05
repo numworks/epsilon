@@ -3,7 +3,6 @@
 #include <assert.h>
 #include <float.h>
 #include <poincare/layout.h>
-#include <poincare/statistics/distribution_constants.h>
 
 #include <algorithm>
 #include <cmath>
@@ -11,6 +10,18 @@
 using namespace Shared;
 
 namespace Distributions {
+
+float UniformDistribution::evaluateAtAbscissa(float t) const {
+  float parameter1 = m_parameters[0];
+  float parameter2 = m_parameters[1];
+  if (parameter2 - parameter1 < FLT_EPSILON) {
+    if (parameter1 - k_diracWidth <= t && t <= parameter2 + k_diracWidth) {
+      return 2.0f * k_diracMaximum;
+    }
+    return 0.0f;
+  }
+  return Distribution::evaluateAtAbscissa(t);
+}
 
 void UniformDistribution::setParameterAtIndex(double f, int index) {
   setParameterAtIndexWithoutComputingCurveViewRange(f, index);
@@ -62,10 +73,9 @@ float UniformDistribution::privateComputeXMax() const {
 }
 
 float UniformDistribution::computeYMax() const {
-  float result =
-      m_parameters[1] - m_parameters[0] < FLT_EPSILON
-          ? Poincare::DistributionConstants::UniformDistribution::k_diracMaximum
-          : 1.0f / (m_parameters[1] - m_parameters[0]);
+  float result = m_parameters[1] - m_parameters[0] < FLT_EPSILON
+                     ? k_diracMaximum
+                     : 1.0f / (m_parameters[1] - m_parameters[0]);
   if (result <= 0.0f || std::isnan(result) || std::isinf(result)) {
     result = 1.0f;
   }

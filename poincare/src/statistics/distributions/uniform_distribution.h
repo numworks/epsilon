@@ -38,9 +38,6 @@ template <typename T>
 T CumulativeDistributiveInverseForProbability(
     T probability, const Distribution::ParametersArray<T> parameters);
 
-constexpr static double k_diracWidth = 0.005;
-constexpr static double k_diracMaximum = 10.0;
-
 };  // namespace UniformDistribution
 
 }  // namespace Internal

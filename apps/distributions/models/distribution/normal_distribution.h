@@ -1,8 +1,6 @@
 #ifndef PROBABILITE_NORMAL_DISTRIBUTION_H
 #define PROBABILITE_NORMAL_DISTRIBUTION_H
 
-#include <poincare/statistics/distribution_constants.h>
-
 #include "two_parameters_distribution.h"
 
 namespace Distributions {

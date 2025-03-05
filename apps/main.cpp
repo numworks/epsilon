@@ -28,7 +28,11 @@ void ion_main(int argc, const char* const argv[]) {
     txtbuf[1] = '.';
     txtbuf[2] = digit_to_char(static_cast<int>(volt * 10));
     txtbuf[3] = digit_to_char(static_cast<int>(volt * 100));
-    txtbuf[4] = '\0';
+    txtbuf[4] = digit_to_char(static_cast<int>(volt * 1000));
+    txtbuf[5] = digit_to_char(static_cast<int>(volt * 10000));
+    txtbuf[6] = digit_to_char(static_cast<int>(volt * 100000));
+    txtbuf[7] = digit_to_char(static_cast<int>(volt * 1000000));
+    txtbuf[8] = '\0';
     Ion::Console::writeLine(txtbuf);
 
     Ion::Timing::msleep(1000);

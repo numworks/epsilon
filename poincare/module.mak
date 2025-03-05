@@ -165,21 +165,13 @@ $(addprefix solver/, \
 ) \
 $(addprefix statistics/, \
   $(addprefix distributions/, \
-    binomial_distribution.cpp \
-    chi2_distribution.cpp \
-    continuous_distribution.cpp \
-    discrete_distribution.cpp \
-    distribution.cpp \
+    distribution_cumulative_function.cpp \
+    distribution_cumulative_inverse.cpp \
+    distribution_evaluate.cpp \
     distribution_method.cpp \
+    distribution_parameters.cpp \
+    distribution.cpp \
     domain.cpp \
-    exponential_distribution.cpp \
-    fisher_distribution.cpp \
-    geometric_distribution.cpp \
-    hypergeometric_distribution.cpp \
-    normal_distribution.cpp \
-    poisson_distribution.cpp \
-    student_distribution.cpp \
-    uniform_distribution.cpp \
   ) \
   $(addprefix regression/, \
     $(addsuffix :-nopool, \

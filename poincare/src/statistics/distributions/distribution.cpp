@@ -91,7 +91,7 @@ bool Distribution::isSymmetrical() const {
 
 template <typename T>
 T Distribution::evaluateAtAbscissa(T x, const T* parameters) const {
-  if (std::isnan(x) || std::isinf(x) ||
+  if (!std::isfinite(x) ||
       areParametersValid(parameters) != OMG::Troolean::True) {
     return NAN;
   }
@@ -175,8 +175,8 @@ template <typename T>
 T Distribution::cumulativeDistributiveInverseForProbability(
     T probability, const T* parameters) const {
   if (areParametersValid(parameters) != OMG::Troolean::True ||
-      std::isnan(probability) || std::isinf(probability) ||
-      probability < static_cast<T>(0.0) || probability > static_cast<T>(1.0)) {
+      !std::isfinite(probability) || probability < static_cast<T>(0.0) ||
+      probability > static_cast<T>(1.0)) {
     return NAN;
   }
   switch (m_type) {
@@ -218,6 +218,10 @@ T Distribution::cumulativeDistributiveInverseForProbability(
 template <typename T>
 T Distribution::cumulativeDistributiveFunctionForRange(
     T x, T y, const T* parameters) const {
+  if (areParametersValid(parameters) != OMG::Troolean::True || std::isnan(x) ||
+      std::isnan(y)) {
+    return NAN;
+  }
   if (isContinuous()) {
     return ContinuousDistribution::CumulativeDistributiveFunctionForRange<T>(
         m_type, x, y, parameters);

@@ -20,9 +20,9 @@ T CumulativeDistributiveFunctionForRange(Distribution::Type distribType, T x,
   if (y < x) {
     return 0.0f;
   }
-  return CumulativeDistributiveFunctionAtAbscissa(distribType, y, parameters) -
-         CumulativeDistributiveFunctionAtAbscissa(distribType, x - 1.0f,
-                                                  parameters);
+  Distribution distrib = Distribution(distribType);
+  return distrib.cumulativeDistributiveFunctionAtAbscissa(y, parameters) -
+         distrib.cumulativeDistributiveFunctionAtAbscissa(x - 1.0f, parameters);
 }
 };  // namespace DiscreteDistribution
 

@@ -44,7 +44,7 @@ template <typename T>
 static T standardNormalCumulativeDistributiveInverseForProbability(
     T probability) {
   if (probability > static_cast<T>(1.0) || probability < static_cast<T>(0.0) ||
-      std::isnan(probability) || std::isinf(probability)) {
+      !std::isfinite(probability)) {
     return NAN;
   }
   constexpr T precision = OMG::Float::Epsilon<T>();

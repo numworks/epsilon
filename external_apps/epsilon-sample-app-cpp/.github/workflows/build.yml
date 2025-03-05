@@ -1,0 +1,13 @@
+name: Build
+on: [pull_request, push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install C++ toolchain
+        uses: numworks/setup-arm-toolchain@latest
+      - name: Run make
+        run: make

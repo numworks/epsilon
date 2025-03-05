@@ -1,0 +1,6 @@
+[target.thumbv7em-none-eabihf]
+runner = 'npx --yes -- nwlink@0.0.15 install-nwa'
+rustflags = ["-C", "link-arg=--relocatable", "-C", "link-arg=-no-gc-sections"]
+
+[build]
+target = "thumbv7em-none-eabihf"

@@ -3,8 +3,6 @@
 #include <poincare/src/solver/solver_algorithms.h>
 #include <poincare/statistics/distribution.h>
 
-#include <algorithm>
-
 #include "binomial_distribution.h"
 #include "chi2_distribution.h"
 #include "continuous_distribution.h"
@@ -118,6 +116,8 @@ T Distribution::evaluateAtAbscissa(T x, const T* parameters) const {
       return PoissonDistribution::EvaluateAtAbscissa(x, parameters);
     case Type::Fisher:
       return FisherDistribution::EvaluateAtAbscissa(x, parameters);
+    default:
+      OMG::unreachable();
   }
 }
 
@@ -131,8 +131,7 @@ T Distribution::meanAbscissa(const T* parameters) const {
     case Type::Uniform:
       return UniformDistribution::MeanAbscissa(parameters);
     default:
-      assert(false);
-      return 0.0;
+      OMG::unreachable();
   }
 }
 
@@ -230,12 +229,9 @@ T Distribution::cumulativeDistributiveFunctionForRange(
 double Distribution::evaluateParameterForProbabilityAndBound(
     int parameterIndex, const double* parameters, double probability,
     double bound, bool isUpperBound) const {
-  if (m_type == Type::Normal) {
-    return NormalDistribution::EvaluateParameterForProbabilityAndBound(
-        parameterIndex, parameters, probability, bound, isUpperBound);
-  }
-  assert(false);
-  return 0.0;
+  assert(m_type == Type::Normal);
+  return NormalDistribution::EvaluateParameterForProbabilityAndBound(
+      parameterIndex, parameters, probability, bound, isUpperBound);
 }
 
 template OMG::Troolean Distribution::isParameterValid(

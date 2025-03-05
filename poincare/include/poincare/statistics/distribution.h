@@ -92,6 +92,7 @@ class Distribution final {
   template <typename T>
   T cumulativeDistributiveFunctionForRange(T x, T y, const T* parameters) const;
 
+  // Only implemented for NormalDistribution
   double evaluateParameterForProbabilityAndBound(int parameterIndex,
                                                  const double* parameters,
                                                  double probability,

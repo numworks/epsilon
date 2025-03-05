@@ -67,7 +67,7 @@ float Distribution::evaluateAtAbscissa(float x) const {
    * The other solution would be to create a constFloatParametersArray(), but
    * this would lose precision since the calculation have been done in double
    * for a long time.
-   * Should this method juste return double ? */
+   * Should this method just return double ? */
   return static_cast<float>(m_distribution.evaluateAtAbscissa(
       static_cast<double>(x), constParametersArray()));
 }

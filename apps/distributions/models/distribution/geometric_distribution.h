@@ -24,11 +24,8 @@ class GeometricDistribution final : public OneParameterDistribution {
   double defaultComputedValue() const override { return 1.0; }
 
  private:
-  Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override {
-    return Shared::ParameterRepresentation{
-        Poincare::Layout::String(parameterNameAtIndex(0)),
-        I18n::Message::SuccessProbability};
+  I18n::Message messageForParameterAtIndex(int index) const override {
+    return I18n::Message::SuccessProbability;
   }
   float privateComputeXMax() const override;
   float computeYMax() const override;

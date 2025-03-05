@@ -34,25 +34,6 @@ void UniformDistribution::setParameterAtIndex(double f, int index) {
   computeCurveViewRange();
 }
 
-ParameterRepresentation UniformDistribution::paramRepresentationAtIndex(
-    int i) const {
-  switch (i) {
-    case ParamsOrder::A: {
-      Poincare::Layout a =
-          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::A));
-      return ParameterRepresentation{a, I18n::Message::IntervalADescr};
-    }
-    case ParamsOrder::B: {
-      Poincare::Layout b =
-          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::B));
-      return ParameterRepresentation{b, I18n::Message::IntervalBDescr};
-    }
-    default:
-      assert(false);
-      return ParameterRepresentation{};
-  }
-}
-
 float UniformDistribution::privateComputeXMin() const {
   assert(m_parameters[1] >= m_parameters[0]);
   if (m_parameters[1] - m_parameters[0] < FLT_EPSILON) {

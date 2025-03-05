@@ -23,8 +23,17 @@ class UniformDistribution final : public TwoParametersDistribution {
   constexpr static float k_diracWidth = 0.005f;
 
   enum ParamsOrder { A, B };
-  Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override;
+  I18n::Message messageForParameterAtIndex(int index) const override {
+    switch (index) {
+      case ParamsOrder::A:
+        return I18n::Message::IntervalADescr;
+      case ParamsOrder::B:
+        return I18n::Message::IntervalBDescr;
+      default:
+        OMG::unreachable();
+    }
+  }
+
   float privateComputeXMin() const override;
   float privateComputeXMax() const override;
   float computeYMax() const override;

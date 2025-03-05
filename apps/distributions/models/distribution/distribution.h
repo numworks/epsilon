@@ -4,6 +4,7 @@
 #include <apps/shared/inference.h>
 #include <poincare/statistics/distribution.h>
 
+#include "apps/i18n.h"
 #include "distributions/models/calculation/discrete_calculation.h"
 #include "distributions/models/calculation/finite_integral_calculation.h"
 #include "distributions/models/calculation/left_integral_calculation.h"
@@ -81,6 +82,15 @@ class Distribution : public Shared::Inference {
                 "LargeNumberOfSignificantDigits");
   constexpr static double k_maxProbability = 0.9999995;
   constexpr static int k_allParametersAreInitialized = -1;
+
+  virtual I18n::Message messageForParameterAtIndex(int index) const = 0;
+
+  Shared::ParameterRepresentation paramRepresentationAtIndex(
+      int i) const override final {
+    return Shared::ParameterRepresentation{
+        Poincare::Layout::String(parameterNameAtIndex(i)),
+        messageForParameterAtIndex(i)};
+  }
 
   float computeXMax() const override final { return computeXExtremum(false); }
   float computeXMin() const override final { return computeXExtremum(true); }

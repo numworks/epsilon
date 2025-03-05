@@ -21,25 +21,6 @@ double BinomialDistribution::rightIntegralInverseForProbability(
   return Distribution::rightIntegralInverseForProbability(p);
 }
 
-ParameterRepresentation BinomialDistribution::paramRepresentationAtIndex(
-    int i) const {
-  switch (i) {
-    case ParamsOrder::N: {
-      Poincare::Layout n =
-          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::N));
-      return ParameterRepresentation{n, I18n::Message::RepetitionNumber};
-    }
-    case ParamsOrder::P: {
-      Poincare::Layout p =
-          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::P));
-      return ParameterRepresentation{p, I18n::Message::SuccessProbability};
-    }
-    default:
-      assert(false);
-      return ParameterRepresentation{};
-  }
-}
-
 float BinomialDistribution::privateComputeXMin() const {
   float min = 0.0f;
   float max = m_parameters[0] > min ? m_parameters[0] : 1.0f;

@@ -20,11 +20,8 @@ class ChiSquaredDistribution : public OneParameterDistribution {
 
  private:
   constexpr static double k_maxK = 31500.0;
-  Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override {
-    return Shared::ParameterRepresentation{
-        Poincare::Layout::String(parameterNameAtIndex(0)),
-        I18n::Message::DegreesOfFreedomDefinition};
+  I18n::Message messageForParameterAtIndex(int index) const override {
+    return I18n::Message::DegreesOfFreedomDefinition;
   }
   float privateComputeXMax() const override;
   float computeYMax() const override;

@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <poincare/layout.h>
 
+#include "apps/i18n.h"
 #include "one_parameter_distribution.h"
 
 namespace Distributions {
@@ -21,11 +22,8 @@ class ExponentialDistribution final : public OneParameterDistribution {
 
  private:
   constexpr static double k_maxLambda = 7500.0;
-  Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override {
-    return Shared::ParameterRepresentation{
-        Poincare::Layout::String(parameterNameAtIndex(0)),
-        I18n::Message::LambdaExponentialDefinition};
+  I18n::Message messageForParameterAtIndex(int i) const override {
+    return I18n::Message::LambdaExponentialDefinition;
   }
   float privateComputeXMax() const override;
   float computeYMax() const override;

@@ -21,8 +21,16 @@ class NormalDistribution final : public TwoParametersDistribution {
  private:
   constexpr static double k_maxRatioMuSigma = 1000000.0f;
   enum ParamsOrder { Mu, Sigma };
-  Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override;
+  I18n::Message messageForParameterAtIndex(int index) const override {
+    switch (index) {
+      case ParamsOrder::Mu:
+        return I18n::Message::MeanDefinition;
+      case ParamsOrder::Sigma:
+        return I18n::Message::StandardDeviationDefinition;
+      default:
+        OMG::unreachable();
+    }
+  }
   float privateXExtremum(bool min) const;
   float privateComputeXMin() const override { return privateXExtremum(true); }
   float privateComputeXMax() const override { return privateXExtremum(false); }

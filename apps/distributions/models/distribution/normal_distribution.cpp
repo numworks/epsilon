@@ -36,26 +36,6 @@ float NormalDistribution::privateXExtremum(bool min) const {
   return m_parameters[0] + coefficient * 5.0f * std::fabs(m_parameters[1]);
 }
 
-ParameterRepresentation NormalDistribution::paramRepresentationAtIndex(
-    int i) const {
-  switch (i) {
-    case ParamsOrder::Mu: {
-      Poincare::Layout u =
-          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::Mu));
-      return ParameterRepresentation{u, I18n::Message::MeanDefinition};
-    }
-    case ParamsOrder::Sigma: {
-      Poincare::Layout s =
-          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::Sigma));
-      return ParameterRepresentation{
-          s, I18n::Message::StandardDeviationDefinition};
-    }
-    default:
-      assert(false);
-      return ParameterRepresentation{};
-  }
-}
-
 float NormalDistribution::computeYMax() const {
   float maxAbscissa = m_parameters[0];
   float result = evaluateAtAbscissa(maxAbscissa);

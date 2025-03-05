@@ -3,6 +3,7 @@
 
 #include <poincare/layout.h>
 
+#include "apps/i18n.h"
 #include "one_parameter_distribution.h"
 
 namespace Distributions {
@@ -19,11 +20,8 @@ class PoissonDistribution final : public OneParameterDistribution {
   bool authorizedParameterAtIndex(double x, int index) const override;
 
  private:
-  Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override {
-    return Shared::ParameterRepresentation{
-        Poincare::Layout::String(parameterNameAtIndex(0)),
-        I18n::Message::LambdaPoissonDefinition};
+  I18n::Message messageForParameterAtIndex(int index) const override {
+    return I18n::Message::LambdaPoissonDefinition;
   }
   float privateComputeXMax() const override;
   float computeYMax() const override;

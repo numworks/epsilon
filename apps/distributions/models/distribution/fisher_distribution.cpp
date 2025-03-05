@@ -24,25 +24,6 @@ float FisherDistribution::mode() const {
   return NAN;
 }
 
-ParameterRepresentation FisherDistribution::paramRepresentationAtIndex(
-    int i) const {
-  switch (i) {
-    case ParamsOrder::D1: {
-      Poincare::Layout d1 =
-          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::D1));
-      return ParameterRepresentation{d1, I18n::Message::D1FisherDefinition};
-    }
-    case ParamsOrder::D2: {
-      Poincare::Layout d2 =
-          Poincare::Layout::String(parameterNameAtIndex(ParamsOrder::D2));
-      return ParameterRepresentation{d2, I18n::Message::D2FisherDefinition};
-    }
-    default:
-      assert(false);
-      return ParameterRepresentation{};
-  }
-}
-
 float FisherDistribution::privateComputeXMax() const {
   return 5.0f;  // The mode is always < 1
 }

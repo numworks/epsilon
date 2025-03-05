@@ -3,6 +3,7 @@
 
 #include <poincare/layout.h>
 
+#include "apps/i18n.h"
 #include "three_parameters_distribution.h"
 
 namespace Distributions {
@@ -22,13 +23,11 @@ class HypergeometricDistribution final : public ThreeParametersDistribution {
   double defaultComputedValue() const override { return 1.0; }
 
  private:
-  Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override {
+  I18n::Message messageForParameterAtIndex(int i) const override {
     I18n::Message parameterTexts[] = {I18n::Message::PopulationSize,
                                       I18n::Message::TotalItemsWithFeature,
                                       I18n::Message::SampleSize};
-    return Shared::ParameterRepresentation{
-        Poincare::Layout::String(parameterNameAtIndex(i)), parameterTexts[i]};
+    return parameterTexts[i];
   }
   float privateComputeXMax() const override;
   float computeYMax() const override;

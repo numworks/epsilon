@@ -21,8 +21,16 @@ class FisherDistribution final : public TwoParametersDistribution {
   constexpr static double k_maxParameter = 144.0;
   constexpr static float k_defaultMax = 3.0f;
   enum ParamsOrder { D1, D2 };
-  Shared::ParameterRepresentation paramRepresentationAtIndex(
-      int i) const override;
+  I18n::Message messageForParameterAtIndex(int index) const override {
+    switch (index) {
+      case ParamsOrder::D1:
+        return I18n::Message::D1FisherDefinition;
+      case ParamsOrder::D2:
+        return I18n::Message::D2FisherDefinition;
+      default:
+        OMG::unreachable();
+    }
+  }
   float mode() const;
   float privateComputeXMax() const override;
   float computeYMax() const override;

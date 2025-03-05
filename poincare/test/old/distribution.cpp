@@ -129,88 +129,90 @@ DistributionTestCase getStudentTestCase(int i) {
 }
 
 QUIZ_CASE(poincare_student_distribution) {
+  Distribution::Type student = Distribution::Type::Student;
   for (int i = 0; i < k_numberOfStudentTestCases; i++) {
     DistributionTestCase t = getStudentTestCase(i);
+    Distribution::ParametersArray<double> params = {t.k};
     // double
-    assert_roughly_equal(StudentDistribution::EvaluateAtAbscissa(t.x, &t.k),
+    assert_roughly_equal(Distribution::EvaluateAtAbscissa(student, t.x, params),
                          t.density, t.precision);
+    assert_roughly_equal(Distribution::CumulativeDistributiveFunctionAtAbscissa(
+                             student, t.x, params),
+                         t.probability, t.precision);
     assert_roughly_equal(
-        StudentDistribution::CumulativeDistributiveFunctionAtAbscissa(t.x,
-                                                                      &t.k),
-        t.probability, t.precision);
-    assert_roughly_equal(
-        StudentDistribution::CumulativeDistributiveInverseForProbability(
-            t.probability, &t.k),
+        Distribution::CumulativeDistributiveInverseForProbability(
+            student, t.probability, params),
         t.x, t.precision / 10);
 
     // floats
-    float fltK = static_cast<float>(t.k);
+    Distribution::ParametersArray<float> fltParams = {static_cast<float>(t.k)};
+
     assert_roughly_equal<float>(
-        StudentDistribution::EvaluateAtAbscissa<float>(t.x, &fltK), t.density,
-        std::sqrt(t.precision));
+        Distribution::EvaluateAtAbscissa<float>(student, t.x, fltParams),
+        t.density, std::sqrt(t.precision));
     assert_roughly_equal<float>(
-        StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(
-            t.x, &fltK),
+        Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(
+            student, t.x, fltParams),
         t.probability, std::sqrt(t.precision));
     assert_roughly_equal<float>(
-        StudentDistribution::CumulativeDistributiveInverseForProbability<float>(
-            t.probability, &fltK),
+        Distribution::CumulativeDistributiveInverseForProbability<float>(
+            student, t.probability, fltParams),
         t.x, std::sqrt(t.precision));
   }
 
   // Special cases p=0
   // double
-  double param[] = {5.};
+  Distribution::ParametersArray<double> param = {5.};
   assert_roughly_equal<double>(
-      StudentDistribution::EvaluateAtAbscissa<double>(INFINITY, param), 0);
+      Distribution::EvaluateAtAbscissa<double>(student, INFINITY, param), 0);
   assert_roughly_equal<double>(
-      StudentDistribution::EvaluateAtAbscissa<double>(-INFINITY, param), 0);
+      Distribution::EvaluateAtAbscissa<double>(student, -INFINITY, param), 0);
 
   param[0] = 3.;
   assert_roughly_equal<double>(
-      StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(
-          INFINITY, param),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(
+          student, INFINITY, param),
       1.);
   assert_roughly_equal<double>(
-      StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<double>(
-          -INFINITY, param),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(
+          student, -INFINITY, param),
       0.);
 
   param[0] = 5.;
   assert_roughly_equal<double>(
-      StudentDistribution::CumulativeDistributiveInverseForProbability<double>(
-          0, param),
+      Distribution::CumulativeDistributiveInverseForProbability<double>(
+          student, 0, param),
       -INFINITY);
   assert_roughly_equal<double>(
-      StudentDistribution::CumulativeDistributiveInverseForProbability<double>(
-          1, param),
+      Distribution::CumulativeDistributiveInverseForProbability<double>(
+          student, 1, param),
       INFINITY);
 
   // floats
-  float fltParam[] = {5.};
+  Distribution::ParametersArray<float> fltParam = {5.};
   assert_roughly_equal<float>(
-      StudentDistribution::EvaluateAtAbscissa<float>(INFINITY, fltParam), 0);
+      Distribution::EvaluateAtAbscissa<float>(student, INFINITY, fltParam), 0);
   assert_roughly_equal<float>(
-      StudentDistribution::EvaluateAtAbscissa<float>(-INFINITY, fltParam), 0);
+      Distribution::EvaluateAtAbscissa<float>(student, -INFINITY, fltParam), 0);
 
   fltParam[0] = 3.;
   assert_roughly_equal<float>(
-      StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(
-          INFINITY, fltParam),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(
+          student, INFINITY, fltParam),
       1.);
   assert_roughly_equal<float>(
-      StudentDistribution::CumulativeDistributiveFunctionAtAbscissa<float>(
-          -INFINITY, fltParam),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(
+          student, -INFINITY, fltParam),
       0.);
 
   fltParam[0] = 5.;
   assert_roughly_equal<float>(
-      StudentDistribution::CumulativeDistributiveInverseForProbability<float>(
-          0, fltParam),
+      Distribution::CumulativeDistributiveInverseForProbability<float>(
+          student, 0, fltParam),
       -INFINITY);
   assert_roughly_equal<float>(
-      StudentDistribution::CumulativeDistributiveInverseForProbability<float>(
-          1, fltParam),
+      Distribution::CumulativeDistributiveInverseForProbability<float>(
+          student, 1, fltParam),
       INFINITY);
 }
 
@@ -282,136 +284,138 @@ DistributionTestCase getChi2TestCase(int i) {
 }
 
 QUIZ_CASE(poincare_chi2_distribution) {
+  Distribution::Type chi2 = Distribution::Type::Chi2;
   for (unsigned int i = 0; i < k_numberOfChi2TestCases; i++) {
     DistributionTestCase t = getChi2TestCase(i);
+    Distribution::ParametersArray<double> params = {t.k};
     // double
-    assert_roughly_equal(Chi2Distribution::EvaluateAtAbscissa(t.x, &t.k),
+    assert_roughly_equal(Distribution::EvaluateAtAbscissa(chi2, t.x, params),
                          t.density, t.precision);
+    assert_roughly_equal(Distribution::CumulativeDistributiveFunctionAtAbscissa(
+                             chi2, t.x, params),
+                         t.probability, t.precision);
     assert_roughly_equal(
-        Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa(t.x, &t.k),
-        t.probability, t.precision);
-    assert_roughly_equal(
-        Chi2Distribution::CumulativeDistributiveInverseForProbability(
-            t.probability, &t.k),
+        Distribution::CumulativeDistributiveInverseForProbability(
+            chi2, t.probability, params),
         t.x, t.precision / 10);
 
     // floats
-    const float floatK = static_cast<float>(t.k);
+    Distribution::ParametersArray<float> fltParams = {static_cast<float>(t.k)};
     assert_roughly_equal<float>(
-        Chi2Distribution::EvaluateAtAbscissa<float>(t.x, &floatK), t.density,
-        sqrt(t.precision));
+        Distribution::EvaluateAtAbscissa<float>(chi2, t.x, fltParams),
+        t.density, sqrt(t.precision));
     assert_roughly_equal<float>(
-        Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(
-            t.x, &floatK),
+        Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(
+            chi2, t.x, fltParams),
         t.probability, sqrt(t.precision));
     assert_roughly_equal<float>(
-        Chi2Distribution::CumulativeDistributiveInverseForProbability<float>(
-            t.probability, &floatK),
+        Distribution::CumulativeDistributiveInverseForProbability<float>(
+            chi2, t.probability, fltParams),
         t.x, sqrt(t.precision));
   }
   // Special cases
   // double
-  double param[] = {5.};
+  Distribution::ParametersArray<double> param = {5.};
   quiz_assert(
-      std::isnan(Chi2Distribution::EvaluateAtAbscissa<double>(-1, param)));
+      std::isnan(Distribution::EvaluateAtAbscissa<double>(chi2, -1, param)));
   assert_roughly_equal<double>(
-      Chi2Distribution::EvaluateAtAbscissa<double>(INFINITY, param), 0);
+      Distribution::EvaluateAtAbscissa<double>(chi2, INFINITY, param), 0);
 
   param[0] = 2.;
   assert_roughly_equal<double>(
-      Chi2Distribution::EvaluateAtAbscissa<double>(0, param), 0);
+      Distribution::EvaluateAtAbscissa<double>(chi2, 0, param), 0);
 
   param[0] = 3.;
   assert_roughly_equal<double>(
-      Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(
-          INFINITY, param),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(
+          chi2, INFINITY, param),
       1.);
   assert_roughly_equal<double>(
-      Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(0,
-                                                                         param),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(chi2, 0,
+                                                                     param),
       0.);
 
   param[0] = .3;
   assert_roughly_equal<double>(
-      Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(0,
-                                                                         param),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(chi2, 0,
+                                                                     param),
       0.);
 
   param[0] = 5.;
   assert_roughly_equal<double>(
-      Chi2Distribution::CumulativeDistributiveInverseForProbability<double>(
-          0, param),
+      Distribution::CumulativeDistributiveInverseForProbability<double>(chi2, 0,
+                                                                        param),
       0.);
   assert_roughly_equal<double>(
-      Chi2Distribution::CumulativeDistributiveInverseForProbability<double>(
-          1, param),
+      Distribution::CumulativeDistributiveInverseForProbability<double>(chi2, 1,
+                                                                        param),
       INFINITY);
 
   // floats
-  float fltParam[] = {5.f};
+  Distribution::ParametersArray<float> fltParam = {5.f};
   quiz_assert(
-      std::isnan(Chi2Distribution::EvaluateAtAbscissa<float>(-1, fltParam)));
+      std::isnan(Distribution::EvaluateAtAbscissa<float>(chi2, -1, fltParam)));
   assert_roughly_equal<float>(
-      Chi2Distribution::EvaluateAtAbscissa<float>(INFINITY, fltParam), 0);
+      Distribution::EvaluateAtAbscissa<float>(chi2, INFINITY, fltParam), 0);
 
   fltParam[0] = 2.f;
   assert_roughly_equal<float>(
-      Chi2Distribution::EvaluateAtAbscissa<float>(0, fltParam), 0);
+      Distribution::EvaluateAtAbscissa<float>(chi2, 0, fltParam), 0);
 
   fltParam[0] = 3.f;
   assert_roughly_equal<float>(
-      Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(
-          INFINITY, fltParam),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(
+          chi2, INFINITY, fltParam),
       1.f);
   assert_roughly_equal<float>(
-      Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(
-          0, fltParam),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(chi2, 0,
+                                                                    fltParam),
       0.f);
 
   fltParam[0] = .3f;
   assert_roughly_equal<float>(
-      Chi2Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(
-          0, fltParam),
+      Distribution::CumulativeDistributiveFunctionAtAbscissa<float>(chi2, 0,
+                                                                    fltParam),
       0.f);
 
   fltParam[0] = 5.f;
   assert_roughly_equal<float>(
-      Chi2Distribution::CumulativeDistributiveInverseForProbability<float>(
-          0, fltParam),
+      Distribution::CumulativeDistributiveInverseForProbability<float>(
+          chi2, 0, fltParam),
       0.f);
   assert_roughly_equal<float>(
-      Chi2Distribution::CumulativeDistributiveInverseForProbability<float>(
-          1, fltParam),
+      Distribution::CumulativeDistributiveInverseForProbability<float>(
+          chi2, 1, fltParam),
       INFINITY);
 }
 
 QUIZ_CASE(poincare_normal_distribution_find_parameters) {
-  Distribution normalDistribution(Distribution::Type::Normal);
+  Distribution::Type normal = Distribution::Type::Normal;
   // Compute mu
-  double parameters1[2] = {NAN, 3.};
+  Distribution::ParametersArray<double> parameters1 = {NAN, 3.};
   assert_roughly_equal<double>(
-      normalDistribution.evaluateParameterForProbabilityAndBound(
-          0, parameters1, 0.75, 2., true),
+      Distribution::EvaluateParameterForProbabilityAndBound(
+          normal, 0, parameters1, 0.75, 2., true),
       -0.02347, 1.e-3);
   assert_roughly_equal<double>(
-      normalDistribution.evaluateParameterForProbabilityAndBound(
-          0, parameters1, 0.75, 2., false),
+      Distribution::EvaluateParameterForProbabilityAndBound(
+          normal, 0, parameters1, 0.75, 2., false),
       4.023, 1.e-3);
 
   // Compute sigma
-  double parameters2[2] = {1., NAN};
+  Distribution::ParametersArray<double> parameters2 = {1., NAN};
   assert_roughly_equal<double>(
-      normalDistribution.evaluateParameterForProbabilityAndBound(
-          1, parameters2, 0.8, -3., false),
+      Distribution::EvaluateParameterForProbabilityAndBound(
+          normal, 1, parameters2, 0.8, -3., false),
       4.753, 1.e-3);
   // Impossible value for mu
   assert_roughly_equal<double>(
-      normalDistribution.evaluateParameterForProbabilityAndBound(
-          1, parameters2, 0.8, -3., true),
+      Distribution::EvaluateParameterForProbabilityAndBound(
+          normal, 1, parameters2, 0.8, -3., true),
       NAN, 1.e-3, true);
   // Infinite values for mu -> mu = 1.
   assert_roughly_equal<double>(
-      normalDistribution.evaluateParameterForProbabilityAndBound(1, parameters2,
-                                                                 0.5, 1., true),
+      Distribution::EvaluateParameterForProbabilityAndBound(
+          normal, 1, parameters2, 0.5, 1., true),
       1., 1.e-3, false);
 }

@@ -33,17 +33,22 @@ T CumulativeDistributiveFunctionAtAbscissa(T x, const T* params) {
                                            d1 * x / (d1 * x + d2));
 }
 
-static double
-cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(
-    double p, double ax, double bx, const double* parameters) {
-  assert(ax < bx);
+template <typename T>
+T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
+  const T d1 = params[0];
+  const T d2 = params[1];
+  const double dbleParameters[2] = {static_cast<double>(d1),
+                                    static_cast<double>(d2)};
+  const double p = static_cast<double>(probability);
   if (p > 1.0 - DBL_EPSILON) {
     return INFINITY;
   }
   if (p < DBL_EPSILON) {
     return -INFINITY;
   }
-  const void* pack[2] = {&p, parameters};
+  double ax = DBL_EPSILON;
+  double bx = 100.0;  // Arbitrary value
+  const void* pack[2] = {&p, dbleParameters};
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
       ax, bx, DBL_EPSILON,
       [](double x, const void* auxiliary) {
@@ -68,16 +73,6 @@ cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(
     return p > 0.5 ? INFINITY : -INFINITY;
   }
   return result.x();
-}
-
-template <typename T>
-T CumulativeDistributiveInverseForProbability(T probability, const T* params) {
-  const T d1 = params[0];
-  const T d2 = params[1];
-  const double dbleParameters[2] = {static_cast<double>(d1),
-                                    static_cast<double>(d2)};
-  return cumulativeDistributiveInverseForProbabilityUsingIncreasingFunctionRoot(
-      probability, DBL_EPSILON, 100.0, dbleParameters);  // Ad-hoc value;
 }
 
 template float EvaluateAtAbscissa<float>(float, const float*);

@@ -20,6 +20,8 @@ void ion_main(int argc, const char* const argv[]) {
   constexpr int bufsiz = 32;
   char txtbuf[bufsiz];
 
+  Escher::Init();
+
   while (1) {
     float volt = Ion::Battery::voltage();
     txtbuf[0] = digit_to_char(static_cast<int>(volt));

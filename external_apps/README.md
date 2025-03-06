@@ -16,3 +16,11 @@ See instructions to build them from epsilon's root :
 - Update and uniformize each external apps
 - Factorize relevant files
 - Add a general tutorial in this README
+
+## License
+
+These sample apps are distributed under the terms of the BSD License. See LICENSE for details.
+
+## Trademarks
+
+NumWorks is a registered trademark.

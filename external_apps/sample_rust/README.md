@@ -4,7 +4,9 @@
 
 <img src="/doc/screenshots.gif?raw=true" alt="Sample Rust app for the NumWorks graphing calculator" width="300" align="right">
 
-This is a sample [Rust](https://www.rust-lang.org) app to use on a [NumWorks calculator](https://www.numworks.com). Yes, you can now use Rust to write code for a graphing calculator!
+This is a sample [Rust](https://www.rust-lang.org) app.
+
+Yes, you can now use Rust to write code for a graphing calculator!
 
 ```rust
 fn eadk_main() {
@@ -44,11 +46,3 @@ The NumWorks calculator runs [Epsilon](http://github.com/numworks/epsilon), a ta
 Due to the embedded nature of Epsilon, the Rust app has to be `no_std`. The interface that an app can use to interact with the OS is essentially a short list of system calls. Feel free to browse the [code of Epsilon](http://github.com/numworks/epsilon) itself if you want to get an in-depth look.
 
 Please note that any custom app is removed when resetting the calculator.
-
-## License
-
-This sample app is distributed under the terms of the BSD License. See LICENSE for details.
-
-## Trademarks
-
-NumWorks and Rust are a registered trademarks.

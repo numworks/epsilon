@@ -1,10 +1,8 @@
 # Sample C++ app for Epsilon
 
-[![Build](https://github.com/numworks/epsilon-sample-app-cpp/actions/workflows/build.yml/badge.svg)](https://github.com/numworks/epsilon-sample-app-cpp/actions/workflows/build.yml)
-
 <img src="/doc/screenshots.gif?raw=true" alt="Sample C++ app for the NumWorks graphing calculator" width="300" align="right">
 
-This is a sample C++ app to use on a [NumWorks calculator](https://www.numworks.com).
+This is a sample C++ app.
 
 ```cpp
 
@@ -47,11 +45,3 @@ To run the app on your development machine, you can use the following command
 # Now connect your NumWorks calculator to your computer using the USB cable
 make run
 ```
-
-## License
-
-This sample app is distributed under the terms of the BSD License. See LICENSE for details.
-
-## Trademarks
-
-NumWorks is a registered trademark.

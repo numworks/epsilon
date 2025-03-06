@@ -1,8 +1,6 @@
 # Sample C app for Epsilon
 
-[![Build](https://github.com/numworks/epsilon-sample-app-c/actions/workflows/build.yml/badge.svg)](https://github.com/numworks/epsilon-sample-app-c/actions/workflows/build.yml)
-
-This is a sample C app to use on a [NumWorks calculator](https://www.numworks.com).
+This is a sample C app.
 
 ```c
 #include <eadk.h>
@@ -32,11 +30,3 @@ To run the app on your development machine, you can use the following command
 # Now connect your NumWorks calculator to your computer using the USB cable
 make run
 ```
-
-## License
-
-This sample app is distributed under the terms of the BSD License. See LICENSE for details.
-
-## Trademarks
-
-NumWorks is a registered trademark.

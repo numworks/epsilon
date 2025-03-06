@@ -147,15 +147,6 @@ $(BUILD_DIR)/app.nwb: $(call object_for,$(SOURCES)) $(SIMULATOR)
 
 ifeq ($(PLATFORM),simulator)
 
-$(SIMULATOR):
-	@echo "UNZIP   $<"
-ifeq ($(OS),Windows_NT)
-	$(Q) powershell -Command "Expand-Archive -Path epsilon_simulators.zip -DestinationPath ."
-else
-	$(Q) unzip epsilon_simulators.zip
-	$(Q) chmod +x $(SIMULATOR)
-endif
-
 .PHONY: run
 run: $(BUILD_DIR)/app.nwb $(SIMULATOR)
 	@echo "RUN     $<"
@@ -167,14 +158,6 @@ debug: $(BUILD_DIR)/app.nwb $(SIMULATOR)
 	$(Q) $(GDB) $(SIMULATOR) --nwb $<
 
 else # PLATFORM=web
-
-$(SIMULATOR):
-	@echo "UNZIP   $<"
-ifeq ($(OS),Windows_NT)
-	$(Q) powershell -Command "Expand-Archive -Path web_simulator.zip -DestinationPath ."
-else
-	$(Q) unzip web_simulator.zip
-endif
 
 .PHONY: server
 server: $(SIMULATOR)

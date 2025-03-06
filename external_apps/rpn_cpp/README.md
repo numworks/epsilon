@@ -55,6 +55,10 @@ Plug in a calculator, without exiting the `CALCULATOR IS CONNECTED` screen, run
 make PLATFORM=device run
 ```
 
+You should now have a `output/device/rpn.nwa` file that you can distribute!
+
+Anyone can now install it on their calculator from the [NumWorks online uploader](https://my.numworks.com/apps).
+
 ### On a web simulator
 
 On a separate shell, run

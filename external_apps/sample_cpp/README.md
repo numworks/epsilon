@@ -4,44 +4,63 @@
 
 This is a sample C++ app.
 
-```cpp
+## Setup
 
-using namespace EADK;
-
-void eadk_main() {
-  Display::pushRectUniform(
-    Display::Rect(0, 0, 320, 240),
-    Display::Color(0x000000)
-  );
-  while (1) {
-    Keyboard::State kbd = Keyboard::scan();
-    if (kbd.keyDown(Keyboard::Key::OK)) {
-      spaceship.createRockets();
-    }
-    if (kbd.keyDown(Keyboard::Key::Up)) {
-      spaceship.move(0, -Spaceship::k_step);
-    }
-    refreshScene();
-  }
-}
-```
-
-## Build the app
-
-To build this sample app, you will need to install the [embedded ARM toolchain](https://developer.arm.com/Tools%20and%20Software/GNU%20Toolchain) and [Node.js](https://nodejs.org/en/). The C SDK for Epsilon apps is shipped as an npm module called [nwlink](https://www.npmjs.com/package/nwlink) that will automatically be installed at compile time.
+To build this app on a simulator, you'll just need a C compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS).
 
 ```shell
-brew install numworks/tap/arm-none-eabi-gcc node # Or equivalent on your OS
-make
+./setup.sh
 ```
 
-You should now have a `target/voord.nwa` file that you can distribute! Anyone can now install it on their calculator from the [NumWorks online uploader](https://my.numworks.com/apps).
+### Prepare web and native simulators
 
-## Run the app locally
+To run the apps on web or native simulators, an `epsilon_simulators` folder is expected in the same root as this folder by default.
 
-To run the app on your development machine, you can use the following command
+It should contain the target epsilon simulator, see [instructions to build it](../README.md).
+
+Simulator path can also be overridden with the `SIMULATOR` compilation flag :
+```shell
+make PLATFORM=web SIMULATOR=epsilon.html run
+make PLATFORM=simulator HOST=linux SIMULATOR=epsilon.bin run
+make PLATFORM=simulator HOST=macos SIMULATOR=epsilon.app/Contents/MacOS/Epsilon run
+make PLATFORM=simulator HOST=windows SIMULATOR=epsilon.exe run
+```
+
+## Run the app
+
+Launch the app on the platform of your choice.
+
+### On a device
+
+Plug in a calculator, without exiting the `CALCULATOR IS CONNECTED` screen, run
+```shell
+make PLATFORM=device run
+```
+
+You should now have a `output/device/voord.nwa` file that you can distribute! Anyone can now install it on their calculator from the [NumWorks online uploader](https://my.numworks.com/apps).
+
+### On a web simulator
+
+On a separate shell, run
+```shell
+make server
+```
+
+In the other shell, run
+```shell
+source "./emsdk/emsdk_env.sh"
+make PLATFORM=web run
+```
+
+A navigator should open on a web simulator of your app.
+
+### On native simulator (MacOS, Linux, Windows)
 
 ```shell
-# Now connect your NumWorks calculator to your computer using the USB cable
-make run
+make PLATFORM=simulator run
+```
+
+You can also debug your app using
+```shell
+make PLATFORM=simulator debug
 ```

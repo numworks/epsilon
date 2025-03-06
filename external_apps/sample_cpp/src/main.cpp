@@ -4,10 +4,17 @@
 #include "palette.h"
 #include "spaceship.h"
 
-extern const char eadk_app_name[]
-    __attribute__((section(".rodata.eadk_app_name"))) = "Voord";
-extern const uint32_t eadk_api_level
-    __attribute__((section(".rodata.eadk_api_level"))) = 0;
+const char eadk_app_name[]
+#if PLATFORM_DEVICE
+    __attribute__((section(".rodata.eadk_app_name")))
+#endif
+    = "Voord";
+
+const uint32_t eadk_api_level
+#if PLATFORM_DEVICE
+    __attribute__((section(".rodata.eadk_api_level")))
+#endif
+    = 0;
 
 void checkForSpaceshipAlienCollisions(Alien aliens[], int numberOfAliens,
                                       Spaceship* spaceship) {

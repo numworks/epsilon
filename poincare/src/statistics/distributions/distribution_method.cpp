@@ -4,7 +4,6 @@
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
-#include <poincare/statistics/distribution.h>
 
 namespace Poincare::Internal::DistributionMethod {
 

@@ -1,7 +1,8 @@
+#include "distribution.h"
+
 #include <omg/troolean.h>
 #include <omg/unreachable.h>
 #include <poincare/src/solver/solver_algorithms.h>
-#include <poincare/statistics/distribution.h>
 
 namespace Poincare::Internal::Distribution {
 

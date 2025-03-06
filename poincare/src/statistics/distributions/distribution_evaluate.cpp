@@ -6,7 +6,8 @@
 #include <poincare/src/solver/beta_function.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/solver/solver_algorithms.h>
-#include <poincare/statistics/distribution.h>
+
+#include "distribution.h"
 
 #define M_SQRT_2PI 2.506628274631000502415765284811
 

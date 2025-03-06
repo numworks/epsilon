@@ -5,8 +5,8 @@
 #include <poincare/src/solver/beta_function.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/solver/solver_algorithms.h>
-#include <poincare/statistics/distribution.h>
 
+#include "distribution.h"
 #include "domain.h"
 
 namespace Poincare::Internal::Distribution {

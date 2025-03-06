@@ -2,7 +2,8 @@
 #define POINCARE_STATISTICS_PROBABILITY_DISTRIBUTION_METHOD_H
 
 #include <poincare/src/memory/tree.h>
-#include <poincare/statistics/distribution.h>
+
+#include "distribution.h"
 
 namespace Poincare::Internal {
 

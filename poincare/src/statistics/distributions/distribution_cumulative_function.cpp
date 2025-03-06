@@ -6,7 +6,8 @@
 #include <poincare/src/solver/regularized_gamma_function.h>
 #include <poincare/src/solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/solver/solver_algorithms.h>
-#include <poincare/statistics/distribution.h>
+
+#include "distribution.h"
 
 namespace Poincare::Internal::Distribution {
 

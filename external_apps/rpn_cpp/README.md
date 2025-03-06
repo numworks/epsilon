@@ -1,6 +1,6 @@
-# RPN app for Epsilon written in C
+# RPN app for Epsilon written in C++
 
-This is a basic RPN app written in C.
+This is a basic RPN app written in C++.
 
 ## Complete the application
 

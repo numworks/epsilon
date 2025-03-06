@@ -14,12 +14,11 @@ template <typename T>
 T MeanAbscissa(Type type, const ParametersArray<T> parameters) {
   switch (type) {
     case Type::Normal:
-      return parameters[NormalParamsOrder::Mu];
+      return parameters[Params::Normal::Mu];
     case Type::Student:
       return 0.0;
     case Type::Uniform:
-      return (parameters[UniformParamsOrder::A] +
-              parameters[UniformParamsOrder::B]) /
+      return (parameters[Params::Uniform::A] + parameters[Params::Uniform::B]) /
              2.0;
     default:
       OMG::unreachable();
@@ -36,8 +35,8 @@ double EvaluateParameterForProbabilityAndBound(
     return NAN;
   }
 
-  double mu = parameters[NormalParamsOrder::Mu];
-  double sigma = parameters[NormalParamsOrder::Sigma];
+  double mu = parameters[Params::Normal::Mu];
+  double sigma = parameters[Params::Normal::Sigma];
 
   assert(probability >= 0.0 && probability <= 1.0);
   if (!isUpperBound) {
@@ -48,15 +47,15 @@ double EvaluateParameterForProbabilityAndBound(
   double abscissaForStandardDistribution =
       CumulativeDistributiveInverseForProbability(Type::Normal, probability,
                                                   {0.0, 1.0});
-  if (parameterIndex == NormalParamsOrder::Mu) {
+  if (parameterIndex == Params::Normal::Mu) {
     return bound - sigma * abscissaForStandardDistribution;
   }
-  assert(parameterIndex == NormalParamsOrder::Sigma);
+  assert(parameterIndex == Params::Normal::Sigma);
   if (abscissaForStandardDistribution == 0) {
     if (bound == mu) {
       // Return default value if there is an infinity of possible sigma
       return Distribution::DefaultParameterAtIndex(Distribution::Type::Normal,
-                                                   NormalParamsOrder::Sigma);
+                                                   Params::Normal::Sigma);
     }
     return NAN;
   }

@@ -23,9 +23,9 @@ class NormalDistribution final : public TwoParametersDistribution {
   constexpr static double k_maxRatioMuSigma = 1000000.0f;
   I18n::Message messageForParameterAtIndex(int index) const override {
     switch (index) {
-      case Poincare::Distribution::NormalParamsOrder::Mu:
+      case Poincare::Distribution::Params::Normal::Mu:
         return I18n::Message::MeanDefinition;
-      case Poincare::Distribution::NormalParamsOrder::Sigma:
+      case Poincare::Distribution::Params::Normal::Sigma:
         return I18n::Message::StandardDeviationDefinition;
       default:
         OMG::unreachable();

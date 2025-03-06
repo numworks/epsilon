@@ -49,8 +49,8 @@ void findBoundsForBinarySearch(
 template <typename T>
 T binomialCumulativeDistributiveInverse(
     T probability, const Distribution::ParametersArray<T> parameters) {
-  const T n = parameters[BinomialParamsOrder::N];
-  const T p = parameters[BinomialParamsOrder::P];
+  const T n = parameters[Params::Binomial::N];
+  const T p = parameters[Params::Binomial::P];
   constexpr T precision = OMG::Float::Epsilon<T>();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
@@ -124,8 +124,8 @@ T exponentialCumulativeDistributiveInverse(
 template <typename T>
 T fischerCumulativeDistributiveInverse(
     T probability, const Distribution::ParametersArray<T> params) {
-  const T d1 = params[FisherParamsOrder::D1];
-  const T d2 = params[FisherParamsOrder::D2];
+  const T d1 = params[Params::Fisher::D1];
+  const T d2 = params[Params::Fisher::D2];
   const Distribution::ParametersArray<double> dbleParameters(
       {static_cast<double>(d1), static_cast<double>(d2)});
   const double p = static_cast<double>(probability);
@@ -198,9 +198,9 @@ T geometricCumulativeDistributiveInverse(
 template <typename T>
 T hypergeomCumulativeDistributiveInverse(
     T probability, const Distribution::ParametersArray<T> parameters) {
-  const T N = parameters[HypergeometricParamsOrder::NPop];
-  const T K = parameters[HypergeometricParamsOrder::K];
-  const T n = parameters[HypergeometricParamsOrder::NSample];
+  const T N = parameters[Params::Hypergeometric::NPop];
+  const T K = parameters[Params::Hypergeometric::K];
+  const T n = parameters[Params::Hypergeometric::NSample];
 
   constexpr T precision = OMG::Float::Epsilon<T>();
   if (probability < precision) {
@@ -248,8 +248,8 @@ static T standardNormalCumulativeDistributiveInverse(T probability) {
 template <typename T>
 T normalCumulativeDistributiveInverse(
     T probability, const Distribution::ParametersArray<T> params) {
-  const T mu = params[NormalParamsOrder::Mu];
-  const T sigma = params[NormalParamsOrder::Sigma];
+  const T mu = params[Params::Normal::Mu];
+  const T sigma = params[Params::Normal::Sigma];
   return standardNormalCumulativeDistributiveInverse(probability) *
              std::fabs(sigma) +
          mu;
@@ -315,8 +315,8 @@ T studentCumulativeDistributiveInverse(
 template <typename T>
 T uniformCumulativeDistributiveInverse(
     T probability, const Distribution::ParametersArray<T> params) {
-  const T a = params[UniformParamsOrder::A];
-  const T b = params[UniformParamsOrder::B];
+  const T a = params[Params::Uniform::A];
+  const T b = params[Params::Uniform::B];
   if (probability >= 1.0f) {
     return b;
   }

@@ -52,11 +52,42 @@ constexpr TypeDescription k_typeDescriptions[] = {
     {Type::Fisher, 2, {"d1", "d2"}, {1., 1.}, true, false},
 };
 
-enum BinomialParamsOrder { N, P };
-enum UniformParamsOrder { A, B };
-enum NormalParamsOrder { Mu, Sigma };
-enum HypergeometricParamsOrder { NPop, K, NSample };
-enum FisherParamsOrder { D1, D2 };
+namespace Params {
+/* We have to wrap enum in struct because enums are unscoped, so the various N,
+ * K, etc. would conflict with each other. enum class is not an option either
+ * because it doesn't allow implicit conversion to int.
+ */
+struct Binomial {
+  enum { N, P };
+};
+struct Uniform {
+  enum { A, B };
+};
+struct Normal {
+  enum { Mu, Sigma };
+};
+struct Exponential {
+  enum { Lambda };
+};
+struct Chi2 {
+  enum { K };
+};
+struct Student {
+  enum { K };
+};
+struct Geometric {
+  enum { P };
+};
+struct Hypergeometric {
+  enum { NPop, K, NSample };
+};
+struct Poisson {
+  enum { Lambda };
+};
+struct Fisher {
+  enum { D1, D2 };
+};
+};  // namespace Params
 
 constexpr TypeDescription DescriptionForType(Type type) {
   for (const TypeDescription& desc : k_typeDescriptions) {

@@ -17,8 +17,8 @@ T evalBinomial(T x, const Distribution::ParametersArray<T> parameters) {
   if (std::isinf(x)) {
     return NAN;
   }
-  const T n = parameters[BinomialParamsOrder::N];
-  const T p = parameters[BinomialParamsOrder::P];
+  const T n = parameters[Params::Binomial::N];
+  const T p = parameters[Params::Binomial::P];
   constexpr T precision = OMG::Float::Epsilon<T>();
   bool nIsZero = std::abs(n) < precision;
   bool pIsZero = std::abs(p) < precision;
@@ -81,8 +81,8 @@ T evalFischer(T x, const Distribution::ParametersArray<T> params) {
   if (std::isinf(x)) {
     return NAN;
   }
-  const T d1 = params[FisherParamsOrder::D1];
-  const T d2 = params[FisherParamsOrder::D2];
+  const T d1 = params[Params::Fisher::D1];
+  const T d2 = params[Params::Fisher::D2];
 
   const T f = d1 * x / (d1 * x + d2);
   const T numerator =
@@ -113,9 +113,9 @@ T evalGeometric(T x, const Distribution::ParametersArray<T> params) {
 
 template <typename T>
 T evalHyperGeometric(T k, const Distribution::ParametersArray<T> parameters) {
-  const T N = parameters[HypergeometricParamsOrder::NPop];
-  const T K = parameters[HypergeometricParamsOrder::K];
-  const T n = parameters[HypergeometricParamsOrder::NSample];
+  const T N = parameters[Params::Hypergeometric::NPop];
+  const T K = parameters[Params::Hypergeometric::K];
+  const T n = parameters[Params::Hypergeometric::NSample];
 
   if (!std::isfinite(k) || n > N || K > N ||
       (N - K == N && K != static_cast<T>(0.))) {
@@ -150,8 +150,8 @@ T evalNormal(T x, const Distribution::ParametersArray<T> params) {
   if (std::isinf(x)) {
     return NAN;
   }
-  const T mu = params[NormalParamsOrder::Mu];
-  const T sigma = params[NormalParamsOrder::Sigma];
+  const T mu = params[Params::Normal::Mu];
+  const T sigma = params[Params::Normal::Sigma];
   const float xMinusMuOverVar = (x - mu) / sigma;
   return (static_cast<T>(1.0)) /
          (std::fabs(sigma) * static_cast<T>(M_SQRT_2PI)) *
@@ -182,8 +182,8 @@ T evaluateUniform(T x, const Distribution::ParametersArray<T> params) {
   if (std::isinf(x)) {
     return NAN;
   }
-  const T a = params[UniformParamsOrder::A];
-  const T b = params[UniformParamsOrder::B];
+  const T a = params[Params::Uniform::A];
+  const T b = params[Params::Uniform::B];
   if (a <= x && x <= b) {
     return (1.0 / (b - a));
   }

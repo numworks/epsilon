@@ -23,9 +23,9 @@ class BinomialDistribution final : public TwoParametersDistribution {
   constexpr static double k_defaultP = 0.5;
   I18n::Message messageForParameterAtIndex(int index) const override {
     switch (index) {
-      case Poincare::Distribution::BinomialParamsOrder::N:
+      case Poincare::Distribution::Params::Binomial::N:
         return I18n::Message::RepetitionNumber;
-      case Poincare::Distribution::BinomialParamsOrder::P:
+      case Poincare::Distribution::Params::Binomial::P:
         return I18n::Message::SuccessProbability;
       default:
         OMG::unreachable();

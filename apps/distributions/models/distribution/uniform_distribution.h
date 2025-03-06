@@ -25,9 +25,9 @@ class UniformDistribution final : public TwoParametersDistribution {
 
   I18n::Message messageForParameterAtIndex(int index) const override {
     switch (index) {
-      case Poincare::Distribution::UniformParamsOrder::A:
+      case Poincare::Distribution::Params::Uniform::A:
         return I18n::Message::IntervalADescr;
-      case Poincare::Distribution::UniformParamsOrder::B:
+      case Poincare::Distribution::Params::Uniform::B:
         return I18n::Message::IntervalBDescr;
       default:
         OMG::unreachable();

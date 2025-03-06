@@ -17,21 +17,20 @@ OMG::Troolean IsParameterValid(Type type, U val, int index,
   assert(index >= 0 && index < NumberOfParameters(type));
   switch (type) {
     case Type::Binomial:
-      return index == BinomialParamsOrder::N
+      return index == Params::Binomial::N
                  ? Domain::Contains(val, Domain::Type::N)
                  : Domain::Contains(val, Domain::Type::ZeroToOne);
     case Type::Uniform:
       return OMG::TrooleanAnd(
           Domain::Contains(val, Domain::Type::R),
-          index == UniformParamsOrder::A
+          index == Params::Uniform::A
               // a <= b
-              ? Domain::IsAGreaterThanB(parameters[UniformParamsOrder::B], val)
-              : Domain::IsAGreaterThanB(val,
-                                        parameters[UniformParamsOrder::A]));
+              ? Domain::IsAGreaterThanB(parameters[Params::Uniform::B], val)
+              : Domain::IsAGreaterThanB(val, parameters[Params::Uniform::A]));
     case Type::Exponential:
       return Domain::Contains(val, Domain::Type::RPlusStar);
     case Type::Normal:
-      return index == NormalParamsOrder::Mu
+      return index == Params::Normal::Mu
                  ? Domain::Contains(val, Domain::Type::R)
                  : Domain::Contains(val, Domain::Type::RPlusStar);
     case Type::Chi2:
@@ -43,10 +42,10 @@ OMG::Troolean IsParameterValid(Type type, U val, int index,
     case Type::Hypergeometric:
       return OMG::TrooleanAnd(
           Domain::Contains(val, Domain::Type::N),
-          index == HypergeometricParamsOrder::NPop
+          index == Params::Hypergeometric::NPop
               ? OMG::Troolean::True
               : Domain::IsAGreaterThanB(
-                    parameters[HypergeometricParamsOrder::NPop], val));
+                    parameters[Params::Hypergeometric::NPop], val));
     case Type::Poisson:
       return Domain::Contains(val, Domain::Type::RPlusStar);
     case Type::Fisher:

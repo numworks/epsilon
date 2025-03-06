@@ -8,7 +8,7 @@
 #include "score.h"
 
 class Spaceship {
-public:
+ public:
   Spaceship();
   int x() const { return m_x; }
   int y() const { return m_y; }
@@ -20,13 +20,16 @@ public:
   static constexpr int k_step = 10;
   static constexpr int k_width = 35;
   static constexpr int k_height = 20;
-private:
-  static constexpr int k_maxNumberOfRockets = 3*50;
+
+ private:
+  static constexpr int k_maxNumberOfRockets = 3 * 50;
   static constexpr int k_maxNumberOfLives = 3;
   static constexpr int k_xLowerBound = Display::CommonHorizontalMargin;
-  static constexpr int k_xUpperBound = EADK::Screen::Width - Display::CommonHorizontalMargin;
-  static constexpr int k_yLowerBound = 3*Display::CommonVerticalMargin;
-  static constexpr int k_yUpperBound = EADK::Screen::Height - Display::CommonVerticalMargin;
+  static constexpr int k_xUpperBound =
+      EADK::Screen::Width - Display::CommonHorizontalMargin;
+  static constexpr int k_yLowerBound = 3 * Display::CommonVerticalMargin;
+  static constexpr int k_yUpperBound =
+      EADK::Screen::Height - Display::CommonVerticalMargin;
   void draw(const EADK::Color c) const;
   void redrawLives();
   int m_x;

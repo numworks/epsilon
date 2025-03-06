@@ -1,19 +1,15 @@
-#include "converter.h"
 #include "input_field.h"
+
 #include <string.h>
 
-InputField::InputField() {
-}
+#include "converter.h"
 
-const char * InputField::text() const {
-  return "123";
-}
+InputField::InputField() {}
 
-void InputField::setValue(int value) {
-}
+const char* InputField::text() const { return "123"; }
 
-void InputField::append(const char * text) {
-}
+void InputField::setValue(int value) {}
 
-void InputField::remove(int numberOfChars) {
-}
+void InputField::append(const char* text) {}
+
+void InputField::remove(int numberOfChars) {}

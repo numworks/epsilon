@@ -6,70 +6,81 @@ extern "C" {
 #include <eadk.h>
 extern const char eadk_app_name[];
 extern const uint32_t eadk_api_level;
-
 }
 
 namespace EADK {
 
 class Color {
-public:
-  constexpr Color(uint32_t rgb) : m_value(((rgb&0xF80000)>>8)|((rgb&0x00FC00)>>5)|((rgb&0x0000F8)>>3)) {}
+ public:
+  constexpr Color(uint32_t rgb)
+      : m_value(((rgb & 0xF80000) >> 8) | ((rgb & 0x00FC00) >> 5) |
+                ((rgb & 0x0000F8) >> 3)) {}
   constexpr operator eadk_color_t() const { return (eadk_color_t)m_value; }
-private:
+
+ private:
   uint16_t m_value;
 };
-static_assert(sizeof(EADK::Color) == sizeof(eadk_color_t), "EADK::Color should match eadk_color_t");
+static_assert(sizeof(EADK::Color) == sizeof(eadk_color_t),
+              "EADK::Color should match eadk_color_t");
 
 class Point {
-public:
-  constexpr Point(int x, int y) :
-    m_x(x), m_y(y) {}
+ public:
+  constexpr Point(int x, int y) : m_x(x), m_y(y) {}
   uint16_t x() const { return m_x; }
   uint16_t y() const { return m_y; }
-  operator eadk_point_t() const { return *reinterpret_cast<const eadk_point_t *>(this); }
-private:
+  operator eadk_point_t() const {
+    return *reinterpret_cast<const eadk_point_t*>(this);
+  }
+
+ private:
   uint16_t m_x;
   uint16_t m_y;
 };
-static_assert(sizeof(EADK::Point) == sizeof(eadk_point_t), "EADK::Point should match eadk_point_t");
+static_assert(sizeof(EADK::Point) == sizeof(eadk_point_t),
+              "EADK::Point should match eadk_point_t");
 
 class Rect {
-public:
-  constexpr Rect(int x, int y, int width, int height) :
-    m_x(x), m_y(y), m_width(width), m_height(height) {}
+ public:
+  constexpr Rect(int x, int y, int width, int height)
+      : m_x(x), m_y(y), m_width(width), m_height(height) {}
   uint16_t x() const { return m_x; }
   uint16_t y() const { return m_y; }
   uint16_t width() const { return m_width; }
   uint16_t height() const { return m_height; }
-  operator eadk_rect_t() const { return *reinterpret_cast<const eadk_rect_t *>(this); }
-private:
+  operator eadk_rect_t() const {
+    return *reinterpret_cast<const eadk_rect_t*>(this);
+  }
+
+ private:
   uint16_t m_x;
   uint16_t m_y;
   uint16_t m_width;
   uint16_t m_height;
 };
-static_assert(sizeof(EADK::Rect) == sizeof(eadk_rect_t), "EADK::Rect should match eadk_rect_t");
+static_assert(sizeof(EADK::Rect) == sizeof(eadk_rect_t),
+              "EADK::Rect should match eadk_rect_t");
 
 namespace Screen {
-  constexpr uint16_t Width = EADK_SCREEN_WIDTH;
-  constexpr uint16_t Height = EADK_SCREEN_HEIGHT;
-  constexpr Rect Rect(0, 0, Width, Height);
-}
+constexpr uint16_t Width = EADK_SCREEN_WIDTH;
+constexpr uint16_t Height = EADK_SCREEN_HEIGHT;
+constexpr Rect Rect(0, 0, Width, Height);
+}  // namespace Screen
 
 namespace Display {
 
-static inline void pushRect(Rect rect, const Color * pixels) {
-  eadk_display_push_rect(rect, reinterpret_cast<const eadk_color_t *>(pixels));
+static inline void pushRect(Rect rect, const Color* pixels) {
+  eadk_display_push_rect(rect, reinterpret_cast<const eadk_color_t*>(pixels));
 }
 
 static inline void pushRectUniform(Rect rect, Color color) {
   eadk_display_push_rect_uniform(rect, color);
 }
-static inline void drawString(const char * text, Point point, bool largeFont, Color textColor, Color backgroundColor) {
+static inline void drawString(const char* text, Point point, bool largeFont,
+                              Color textColor, Color backgroundColor) {
   eadk_display_draw_string(text, point, largeFont, textColor, backgroundColor);
 }
 
-}
+}  // namespace Display
 
 namespace Keyboard {
 
@@ -124,14 +135,14 @@ enum class Key : uint8_t {
 enum class Event : uint8_t {
   Left = 0,
   Up = 1,
-  Down  = 2,
+  Down = 2,
   Right = 3,
-  Ok    = 4,
-  Back  = 5,
+  Ok = 4,
+  Back = 5,
   Shift = 12,
   Alpha = 13,
-  Xnt   = 14,
-  Var   = 15,
+  Xnt = 14,
+  Var = 15,
   Toolbox = 16,
   Backspace = 17,
   Exp = 18,
@@ -156,7 +167,7 @@ enum class Event : uint8_t {
   Six = 38,
   Multiplication = 39,
   Division = 40,
-  One  = 42,
+  One = 42,
   Two = 43,
   Three = 44,
   Plus = 45,
@@ -167,9 +178,9 @@ enum class Event : uint8_t {
   Ans = 51,
   Exe = 52,
   // Shift
-  Shift_left  = 54,
-  Shift_up    = 55,
-  Shift_down  = 56,
+  Shift_left = 54,
+  Shift_up = 55,
+  Shift_down = 56,
   Shift_right = 57,
   Alpha_lock = 67,
   Cut = 68,
@@ -183,7 +194,7 @@ enum class Event : uint8_t {
   Underscore = 76,
   Sto = 77,
   Arcsine = 78,
-  Arccosine =   79,
+  Arccosine = 79,
   Arctangent = 80,
   Equal = 81,
   Lower = 82,
@@ -258,8 +269,8 @@ enum class Event : uint8_t {
   Idle = 223
 };
 
-static const char * EventText[] = {
-   // Plain
+static const char* EventText[] = {
+    // Plain
     "",
     "",
     "",
@@ -491,45 +502,40 @@ static const char * EventText[] = {
 };
 
 class State {
-public:
-  constexpr State(uint64_t s = 0) : m_bitField(s) { }
+ public:
+  constexpr State(uint64_t s = 0) : m_bitField(s) {}
   inline bool keyDown(Key k) const {
-     return eadk_keyboard_key_down(*this, (eadk_key_t)k);
-    //return (m_bitField>>(uint8_t)k) & 1;
+    return eadk_keyboard_key_down(*this, (eadk_key_t)k);
+    // return (m_bitField>>(uint8_t)k) & 1;
   }
-  operator eadk_keyboard_state_t() const { return *reinterpret_cast<const eadk_keyboard_state_t *>(this); }
-private:
+  operator eadk_keyboard_state_t() const {
+    return *reinterpret_cast<const eadk_keyboard_state_t*>(this);
+  }
+
+ private:
   uint64_t m_bitField;
 };
-static_assert(sizeof(EADK::Keyboard::State) == sizeof(eadk_keyboard_state_t), "EADK::Keyboard::State should match eadk_keyboard_state_t");
+static_assert(sizeof(EADK::Keyboard::State) == sizeof(eadk_keyboard_state_t),
+              "EADK::Keyboard::State should match eadk_keyboard_state_t");
 
+static inline State scan() { return State(eadk_keyboard_scan()); }
 
-static inline State scan() {
-  return State(eadk_keyboard_scan());
-}
-
-static inline Event getEvent(int32_t * timeout) {
+static inline Event getEvent(int32_t* timeout) {
   return (Event)eadk_event_get(timeout);
 }
 
-static inline const char * getText(Event e) {
-  return EventText[(int)e];
-}
+static inline const char* getText(Event e) { return EventText[(int)e]; }
 
-}
+}  // namespace Keyboard
 
 namespace Timing {
 
-static inline void msleep(uint32_t ms) {
-  return eadk_timing_msleep(ms);
-}
+static inline void msleep(uint32_t ms) { return eadk_timing_msleep(ms); }
 
-}
+}  // namespace Timing
 
-static inline uint32_t random() {
-  return eadk_random();
-}
+static inline uint32_t random() { return eadk_random(); }
 
-}
+}  // namespace EADK
 
 #endif

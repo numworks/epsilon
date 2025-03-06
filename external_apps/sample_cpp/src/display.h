@@ -2,7 +2,7 @@
 #define DISPLAY_H
 
 class Display {
-public:
+ public:
   constexpr static int CommonVerticalMargin = 20;
   constexpr static int CommonHorizontalMargin = 20;
 };

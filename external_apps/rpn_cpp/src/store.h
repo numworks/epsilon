@@ -2,7 +2,7 @@
 #define STORE_H
 
 class Store {
-public:
+ public:
   Store();
   // Setters
   void push(int number);

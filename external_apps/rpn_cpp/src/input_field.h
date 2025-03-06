@@ -2,13 +2,12 @@
 #define INPUT_FIELD_H
 
 class InputField {
-public:
+ public:
   InputField();
-  const char * text() const;
+  const char* text() const;
   void setValue(int value);
-  void append(const char * text);
+  void append(const char* text);
   void remove(int numberOfChars);
 };
 
 #endif
-

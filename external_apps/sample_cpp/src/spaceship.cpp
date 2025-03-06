@@ -1,13 +1,12 @@
 #include "spaceship.h"
+
 #include "alien.h"
 #include "palette.h"
 
-Spaceship::Spaceship() :
-  m_x(EADK::Screen::Width/2),
-  m_y(EADK::Screen::Height - Display::CommonVerticalMargin),
-  m_numberOfLives(k_maxNumberOfLives)
-{
-
+Spaceship::Spaceship()
+    : m_x(EADK::Screen::Width / 2),
+      m_y(EADK::Screen::Height - Display::CommonVerticalMargin),
+      m_numberOfLives(k_maxNumberOfLives) {
   draw(Yellow);
   for (int i = 0; i < k_maxNumberOfLives; i++) {
     m_lives[i].setIndex(i);
@@ -16,13 +15,16 @@ Spaceship::Spaceship() :
 }
 
 void Spaceship::draw(const EADK::Color color) const {
-  int xMin = m_x - k_width/2;
+  int xMin = m_x - k_width / 2;
   int xMax = xMin + k_width;
-  int yMin = m_y - k_height/2;
-  EADK::Display::pushRectUniform(EADK::Rect(xMin + 11, yMin + 10, 13, 11), color);
+  int yMin = m_y - k_height / 2;
+  EADK::Display::pushRectUniform(EADK::Rect(xMin + 11, yMin + 10, 13, 11),
+                                 color);
   // Wings
-  EADK::Display::pushRectUniform(EADK::Rect(xMin, yMin + 14, k_width, 2), color);
-  EADK::Display::pushRectUniform(EADK::Rect(xMin + 3, yMin + 17, k_width - 6, 2), color);
+  EADK::Display::pushRectUniform(EADK::Rect(xMin, yMin + 14, k_width, 2),
+                                 color);
+  EADK::Display::pushRectUniform(
+      EADK::Rect(xMin + 3, yMin + 17, k_width - 6, 2), color);
   EADK::Display::pushRectUniform(EADK::Rect(xMin + 2, yMin + 8, 1, 6), color);
   EADK::Display::pushRectUniform(EADK::Rect(xMax - 3, yMin + 8, 1, 6), color);
   // Nose
@@ -81,7 +83,6 @@ void Spaceship::rocketsAction(Alien aliens[], int numberOfAliens) {
   }
   checkForRocketsAliensCollisions(aliens, numberOfAliens);
   redrawLives();
-
 }
 
 void Spaceship::redrawLives() {
@@ -90,7 +91,8 @@ void Spaceship::redrawLives() {
   }
 }
 
-void Spaceship::checkForRocketsAliensCollisions(Alien aliens[], int numberOfAliens) {
+void Spaceship::checkForRocketsAliensCollisions(Alien aliens[],
+                                                int numberOfAliens) {
   for (int i = 0; i < k_maxNumberOfRockets; i++) {
     for (int j = 0; j < numberOfAliens; j++) {
       if (m_rockets[i].tryToKill(&aliens[j])) {

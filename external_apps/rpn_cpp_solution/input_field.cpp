@@ -1,22 +1,19 @@
-#include "converter.h"
 #include "input_field.h"
+
 #include <string.h>
 
-InputField::InputField() :
-  m_input("0")
-{
-}
+#include "converter.h"
 
-const char * InputField::text() const {
-  return m_input;
-}
+InputField::InputField() : m_input("0") {}
+
+const char* InputField::text() const { return m_input; }
 
 void InputField::setValue(int value) {
   remove(k_maxNumberOfCharacters);
   Converter::Serialize(value, m_input, k_maxNumberOfCharacters);
 }
 
-void InputField::append(const char * text) {
+void InputField::append(const char* text) {
   int currentLength = strlen(m_input);
   int addedLength = strlen(text);
   if (currentLength + addedLength + 1 > k_maxNumberOfCharacters) {

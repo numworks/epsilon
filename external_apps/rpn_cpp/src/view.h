@@ -5,12 +5,12 @@
 #include "store.h"
 
 class View {
-public:
+ public:
   void drawLayout();
   void drawStore(Store* store);
   void drawInputField(const char* input);
 
-private:
+ private:
   constexpr static int k_horizontalMargin = 0;
   constexpr static int k_verticalMargin = 20;
   constexpr static int k_characterWidth = 10;

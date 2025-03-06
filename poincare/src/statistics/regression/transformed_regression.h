@@ -1,7 +1,7 @@
 #ifndef POINCARE_REGRESSION_TRANSFORMED_REGRESSION_H
 #define POINCARE_REGRESSION_TRANSFORMED_REGRESSION_H
 
-#include <poincare/statistics/regression.h>
+#include "regression.h"
 
 namespace Poincare::Internal {
 

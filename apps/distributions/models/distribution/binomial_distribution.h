@@ -19,8 +19,6 @@ class BinomialDistribution final : public TwoParametersDistribution {
   double rightIntegralInverseForProbability(double p) const override;
 
  protected:
-  constexpr static double k_defaultN = 20.0;
-  constexpr static double k_defaultP = 0.5;
   I18n::Message messageForParameterAtIndex(int index) const override {
     switch (index) {
       case Poincare::Distribution::Params::Binomial::N:

@@ -19,7 +19,6 @@ class StudentDistribution : public OneParameterDistribution {
   bool authorizedParameterAtIndex(double x, int index) const override;
 
  private:
-  constexpr static double k_defaultK = 1.0;
   I18n::Message messageForParameterAtIndex(int index) const override {
     return I18n::Message::DegreesOfFreedomDefinition;
   }

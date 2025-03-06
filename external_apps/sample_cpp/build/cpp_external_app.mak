@@ -25,7 +25,7 @@ ifeq ($(PLATFORM),simulator)
   endif
 endif
 
-DEFAULT_EPSILON_SIMULATORS = ../epsilon_simulators/
+SIMULATORS_DIR = ../epsilon_simulators
 
 ifeq ($(PLATFORM),device)
   CC = arm-none-eabi-gcc
@@ -45,7 +45,7 @@ else ifeq ($(PLATFORM),simulator)
     CXX = $(MINGW_TOOLCHAIN_PREFIX)g++
     GDB = $(MINGW_TOOLCHAIN_PREFIX)gdb --args
     EXE = exe
-    LD_DYNAMIC_LOOKUP_FLAG = -L$(DEFAULT_EPSILON_SIMULATORS)$(HOST) -lepsilon
+    LD_DYNAMIC_LOOKUP_FLAG = -L$(SIMULATORS_DIR)/$(HOST) -lepsilon
   else ifeq ($(HOST),linux)
     CC = gcc
     CXX = g++
@@ -59,17 +59,17 @@ else ifeq ($(PLATFORM),simulator)
   endif
   LINK_GC = 0
   LTO = 0
-  SIMULATOR ?= $(DEFAULT_EPSILON_SIMULATORS)$(HOST)/epsilon.$(EXE)$(SIMULATOR_PATH)
+  SIMULATOR ?= $(SIMULATORS_DIR)/$(HOST)/epsilon.$(EXE)$(SIMULATOR_PATH)
 else # PLATFORM=web
   CC = emcc
   CXX = em++
   LINK_GC = 0
   LTO = 0
-  SIMULATOR ?= $(DEFAULT_EPSILON_SIMULATORS)web/epsilon.html
+  SIMULATOR ?= $(SIMULATORS_DIR)/web/epsilon.html
 endif
 
 NWLINK = npx --yes -- nwlink@0.0.19
-BUILD_DIR = $(OUTPUT_PATH)$(PLATFORM)
+BUILD_DIR = $(OUTPUT_DIR)/$(PLATFORM)
 
 define object_for
 $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(1))))
@@ -176,7 +176,7 @@ $(addprefix $(BUILD_DIR)/,%.o): %.cpp | $(BUILD_DIR)
 	@echo "CC      $^"
 	$(Q) $(CXX) $(CXXFLAGS) -c $^ -o $@
 
-$(BUILD_DIR)/icon.o: $(APP_ICON_PATH)
+$(BUILD_DIR)/icon.o: $(APP_ICON)
 	@echo "ICON    $<"
 	$(Q) $(NWLINK) png-icon-o $< $@
 

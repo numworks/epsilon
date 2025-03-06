@@ -1,7 +1,7 @@
 APP_NAME = rpn
-APP_ICON_PATH = src/icon.png
+APP_ICON = src/icon.png
 
-OUTPUT_PATH = output/
+OUTPUT_DIR = output
 
 SOURCES = $(addprefix src/,\
   converter.cpp \

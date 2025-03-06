@@ -1,6 +1,15 @@
+APP_NAME = app
+APP_ICON = src/icon.png
+
+OUTPUT_DIR = output
+
+SOURCES = $(addprefix src/,\
+  main.c \
+)
+
 Q ?= @
 CC = arm-none-eabi-gcc
-BUILD_DIR = output
+BUILD_DIR = $(OUTPUT_DIR)
 NWLINK = npx --yes -- nwlink@0.0.16
 LINK_GC = 1
 LTO = 1
@@ -8,10 +17,6 @@ LTO = 1
 define object_for
 $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(1))))
 endef
-
-src = $(addprefix src/,\
-  main.c \
-)
 
 CFLAGS = -std=c99
 CFLAGS += $(shell $(NWLINK) eadk-cflags)
@@ -36,13 +41,13 @@ LDFLAGS += -flinker-output=nolto-rel
 endif
 
 .PHONY: build
-build: $(BUILD_DIR)/app.nwa
+build: $(BUILD_DIR)/$(APP_NAME).nwa
 
 .PHONY: check
-check: $(BUILD_DIR)/app.bin
+check: $(BUILD_DIR)/$(APP_NAME).bin
 
 .PHONY: run
-run: $(BUILD_DIR)/app.nwa src/input.txt
+run: $(BUILD_DIR)/$(APP_NAME).nwa src/input.txt
 	@echo "INSTALL $<"
 	$(Q) $(NWLINK) install-nwa --external-data src/input.txt $<
 
@@ -54,7 +59,7 @@ $(BUILD_DIR)/%.elf: $(BUILD_DIR)/%.nwa src/input.txt
 	@echo "ELF     $@"
 	$(Q) $(NWLINK) nwa-elf --external-data src/input.txt $< $@
 
-$(BUILD_DIR)/app.nwa: $(call object_for,$(src)) $(BUILD_DIR)/icon.o
+$(BUILD_DIR)/$(APP_NAME).nwa: $(call object_for,$(SOURCES)) $(BUILD_DIR)/icon.o
 	@echo "LD      $@"
 	$(Q) $(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@
 
@@ -62,7 +67,7 @@ $(addprefix $(BUILD_DIR)/,%.o): %.c | $(BUILD_DIR)
 	@echo "CC      $^"
 	$(Q) $(CC) $(CFLAGS) -c $^ -o $@
 
-$(BUILD_DIR)/icon.o: src/icon.png
+$(BUILD_DIR)/icon.o: $(APP_ICON)
 	@echo "ICON    $<"
 	$(Q) $(NWLINK) png-icon-o $< $@
 

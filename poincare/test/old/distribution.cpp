@@ -1,3 +1,5 @@
+#include "poincare/src/statistics/distributions/distribution.h"
+
 #include <poincare/statistics/distribution.h>
 
 #include <algorithm>
@@ -415,4 +417,36 @@ QUIZ_CASE(poincare_normal_distribution_find_parameters) {
       Distribution::EvaluateParameterForProbabilityAndBound(
           normal, 1, parameters2, 0.5, 1., true),
       1., 1.e-3, false);
+}
+
+QUIZ_CASE(poincare_distribution_infinity) {
+  Distribution::Type distributions[] = {
+      Distribution::Type::Student,   Distribution::Type::Chi2,
+      Distribution::Type::Normal,    Distribution::Type::Poisson,
+      Distribution::Type::Uniform,   Distribution::Type::Exponential,
+      Distribution::Type::Binomial,  Distribution::Type::Fisher,
+      Distribution::Type::Geometric, Distribution::Type::Hypergeometric};
+  Distribution::ParametersArray<double> params = {};
+  for (Distribution::Type distrib : distributions) {
+    int n = Distribution::NumberOfParameters(distrib);
+    for (int i = 0; i < n; i++) {
+      params[i] = Distribution::DefaultParameterAtIndex(distrib, i);
+    }
+    assert_roughly_equal<double>(
+        Distribution::EvaluateAtAbscissa<double>(distrib, INFINITY, params),
+        0.);
+    if (!Distribution::AcceptsOnlyPositiveAbscissa(distrib)) {
+      assert_roughly_equal<double>(
+          Distribution::EvaluateAtAbscissa<double>(distrib, -INFINITY, params),
+          0.);
+    }
+    assert_roughly_equal<double>(
+        Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(
+            distrib, INFINITY, params),
+        1.);
+    assert_roughly_equal<double>(
+        Distribution::CumulativeDistributiveFunctionAtAbscissa<double>(
+            distrib, -INFINITY, params),
+        0.);
+  }
 }

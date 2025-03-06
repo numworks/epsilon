@@ -130,6 +130,9 @@ template <typename U>  // float, double or const Tree*
 OMG::Troolean AreParametersValid(Type type,
                                  const ParametersArray<U> parameters);
 
+constexpr bool AcceptsOnlyPositiveAbscissa(Type type) {
+  return type == Type::Exponential || type == Type::Chi2;
+}
 template <typename T>
 T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T> parameters);
 
@@ -140,6 +143,8 @@ template <typename T>
 T CumulativeDistributiveFunctionAtAbscissa(Type type, T x,
                                            const ParametersArray<T> parameters);
 
+/* WARNING: This has inconsistent behavior for p~0. or p~1 depending on the
+ * Distribution type. It should be reworked */
 template <typename T>
 T CumulativeDistributiveInverseForProbability(
     Type type, T probability, const ParametersArray<T> parameters);

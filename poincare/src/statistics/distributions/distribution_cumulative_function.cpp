@@ -16,15 +16,11 @@ T binomialCumulativeDistributiveFunction(T x,
                                          const ParametersArray<T> parameters) {
   T n = parameters[Params::Binomial::N];
   T p = parameters[Params::Binomial::P];
-
-  if (std::isinf(x)) {
-    return x > static_cast<T>(0.0) ? static_cast<T>(1.0) : static_cast<T>(0.0);
-  }
   if (x < static_cast<T>(0.0)) {
-    return static_cast<T>(0.0);
+    return 0.;
   }
   if (x >= n) {
-    return static_cast<T>(1.0);
+    return 1.;
   }
   T floorX = std::floor(x);
   return RegularizedIncompleteBetaFunction(n - floorX, floorX + 1.0, 1.0 - p);
@@ -32,13 +28,8 @@ T binomialCumulativeDistributiveFunction(T x,
 
 template <typename T>
 T chi2CumulativeDistributiveFunction(T x, const ParametersArray<T> parameters) {
-  if (x < DBL_EPSILON) {
-    return 0.0;
-  }
-
   constexpr static int k_maxRegularizedGammaIterations = 1000;
   constexpr static double k_regularizedGammaPrecision = DBL_EPSILON;
-
   const T k = parameters[Params::Chi2::K];
   double result = 0.0;
   if (RegularizedGammaFunction(k / 2.0, x / 2.0, k_regularizedGammaPrecision,
@@ -73,9 +64,7 @@ static T standardNormalCumulativeDistributiveFunction(T abscissa) {
   }
   constexpr static T k_standardMu =
       DefaultParameterAtIndex(Type::Normal, Params::Normal::Mu);
-  if (std::isinf(abscissa)) {
-    return abscissa > k_standardMu ? static_cast<T>(1.0) : static_cast<T>(0.0);
-  }
+
   if (abscissa == k_standardMu) {
     return static_cast<T>(0.5);
   }
@@ -101,9 +90,6 @@ T studentCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
   if (x == 0.0) {
     return static_cast<T>(0.5);
   }
-  if (std::isinf(x)) {
-    return x > 0 ? static_cast<T>(1.0) : static_cast<T>(0.0);
-  }
   /* TODO There are some computation errors, where the probability falsly jumps
    * to 1. k = 0.001 and P(x < 42000000) (for 41000000 it is around 0.5) k =
    * 0.01 and P(x < 8400000) (for 41000000 it is around 0.6) */
@@ -128,9 +114,6 @@ T uniformCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
 template <typename T>
 T discreteCumulativeDistributiveFunction(Type distribType, T x,
                                          const ParametersArray<T> parameters) {
-  if (std::isinf(x)) {
-    return x > static_cast<T>(0.0) ? static_cast<T>(1.0) : static_cast<T>(0.0);
-  }
   if (x < static_cast<T>(0.0)) {
     return static_cast<T>(0.0);
   }
@@ -154,7 +137,12 @@ T CumulativeDistributiveFunctionAtAbscissa(
       std::isnan(x)) {
     return NAN;
   }
-
+  if (std::isinf(x)) {
+    return x > 0. ? 1. : 0.;
+  }
+  if (AcceptsOnlyPositiveAbscissa(type) && x <= static_cast<T>(0.0)) {
+    return 0.0;
+  }
   switch (type) {
     case Type::Binomial:
       return binomialCumulativeDistributiveFunction(x, parameters);

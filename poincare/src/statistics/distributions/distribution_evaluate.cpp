@@ -15,9 +15,6 @@ namespace Poincare::Internal::Distribution {
 
 template <typename T>
 T evalBinomial(T x, const Distribution::ParametersArray<T> parameters) {
-  if (std::isinf(x)) {
-    return NAN;
-  }
   const T n = parameters[Params::Binomial::N];
   const T p = parameters[Params::Binomial::P];
   constexpr T precision = OMG::Float::Epsilon<T>();
@@ -52,14 +49,8 @@ T evalBinomial(T x, const Distribution::ParametersArray<T> parameters) {
 
 template <typename T>
 T evalChi2(T x, const Distribution::ParametersArray<T> parameters) {
-  if (x < 0.0) {
-    return NAN;
-  }
   if (x == 0.0) {
-    return 0.0;
-  }
-  if (std::isinf(x)) {
-    return 0.0;
+    return 0.;
   }
   const T k = parameters[Params::Chi2::K];
   const T halfk = k / 2.0;
@@ -70,21 +61,14 @@ T evalChi2(T x, const Distribution::ParametersArray<T> parameters) {
 
 template <typename T>
 T evalExponential(T x, const Distribution::ParametersArray<T> params) {
-  if (x < static_cast<T>(0.0)) {
-    return NAN;
-  }
   const T lambda = params[Params::Exponential::Lambda];
   return lambda * std::exp(-lambda * x);
 }
 
 template <typename T>
 T evalFischer(T x, const Distribution::ParametersArray<T> params) {
-  if (std::isinf(x)) {
-    return NAN;
-  }
   const T d1 = params[Params::Fisher::D1];
   const T d2 = params[Params::Fisher::D2];
-
   const T f = d1 * x / (d1 * x + d2);
   const T numerator =
       std::pow(f, d1 / static_cast<T>(2.0)) *
@@ -96,9 +80,6 @@ T evalFischer(T x, const Distribution::ParametersArray<T> params) {
 
 template <typename T>
 T evalGeometric(T x, const Distribution::ParametersArray<T> params) {
-  if (std::isinf(x)) {
-    return NAN;
-  }
   constexpr T castedOne = static_cast<T>(1.0);
   if (x < castedOne) {
     return static_cast<T>(0.0);
@@ -118,8 +99,7 @@ T evalHyperGeometric(T k, const Distribution::ParametersArray<T> parameters) {
   const T K = parameters[Params::Hypergeometric::K];
   const T n = parameters[Params::Hypergeometric::NSample];
 
-  if (!std::isfinite(k) || n > N || K > N ||
-      (N - K == N && K != static_cast<T>(0.))) {
+  if (n > N || K > N || (N - K == N && K != static_cast<T>(0.))) {
     /* `N - K == N` checks if K is negligible compared to N, to avoid precision
      * errors. */
     return NAN;
@@ -148,9 +128,6 @@ T evalHyperGeometric(T k, const Distribution::ParametersArray<T> parameters) {
 
 template <typename T>
 T evalNormal(T x, const Distribution::ParametersArray<T> params) {
-  if (std::isinf(x)) {
-    return NAN;
-  }
   const T mu = params[Params::Normal::Mu];
   const T sigma = params[Params::Normal::Sigma];
   const float xMinusMuOverVar = (x - mu) / sigma;
@@ -161,9 +138,6 @@ T evalNormal(T x, const Distribution::ParametersArray<T> params) {
 
 template <typename T>
 T evalPoisson(T x, const Distribution::ParametersArray<T> parameters) {
-  if (x < 0 || std::isinf(x)) {
-    return NAN;
-  }
   const T lambda = parameters[Params::Poisson::Lambda];
   T lResult = -lambda + std::floor(x) * std::log(lambda) -
               std::lgamma(std::floor(x) + 1);
@@ -180,9 +154,6 @@ T evalStudent(T x, const Distribution::ParametersArray<T> params) {
 
 template <typename T>
 T evaluateUniform(T x, const Distribution::ParametersArray<T> params) {
-  if (std::isinf(x)) {
-    return NAN;
-  }
   const T a = params[Params::Uniform::A];
   const T b = params[Params::Uniform::B];
   if (a <= x && x <= b) {
@@ -194,8 +165,12 @@ T evaluateUniform(T x, const Distribution::ParametersArray<T> params) {
 template <typename T>
 T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T> parameters) {
   if (std::isnan(x) ||
-      AreParametersValid(type, parameters) != OMG::Troolean::True) {
+      AreParametersValid(type, parameters) != OMG::Troolean::True ||
+      (AcceptsOnlyPositiveAbscissa(type) && x < static_cast<T>(0.))) {
     return NAN;
+  }
+  if (std::isinf(x)) {
+    return 0.;
   }
   switch (type) {
     case Type::Binomial:

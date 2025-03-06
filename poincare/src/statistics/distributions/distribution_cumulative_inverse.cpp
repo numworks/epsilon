@@ -320,10 +320,10 @@ T uniformCumulativeDistributiveInverse(
     T probability, const Distribution::ParametersArray<T> params) {
   const T a = params[Params::Uniform::A];
   const T b = params[Params::Uniform::B];
-  if (probability >= 1.0f) {
+  if (probability >= static_cast<T>(1.)) {
     return b;
   }
-  if (probability <= 0.0f) {
+  if (probability <= static_cast<T>(0.)) {
     return a;
   }
   return a * (1 - probability) + probability * b;

@@ -32,9 +32,13 @@ To build this app on a simulator, you'll just need a C compiler (`gcc` is expect
 
 ### Prepare web and native simulators
 
-To run the apps on web or native simulators, you need to add them in an `epsilon_simulators` folder.
+To run the apps on web or native simulators, you need to build and add the target simulator in `epsilon_simulators` folder.
 
-<!-- TODO : Complete this section -->
+See specific instructions depending on the platform :
+- [Web](epsilon_simulators/web/README.md)
+- [Linux](epsilon_simulators/linux/README.md)
+- [MacOS](epsilon_simulators/macos/README.md)
+- [Windows](epsilon_simulators/windows/README.md)
 
 ## Run the app
 

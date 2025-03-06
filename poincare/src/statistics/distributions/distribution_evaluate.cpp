@@ -60,7 +60,7 @@ T evalChi2(T x, const Distribution::ParametersArray<T> parameters) {
   if (std::isinf(x)) {
     return 0.0;
   }
-  const T k = parameters[0];
+  const T k = parameters[Params::Chi2::K];
   const T halfk = k / 2.0;
   const T halfX = x / 2.0;
   return std::exp(-lgamma(halfk) - halfX + (halfk - 1.0) * std::log(halfX)) /
@@ -72,7 +72,7 @@ T evalExponential(T x, const Distribution::ParametersArray<T> params) {
   if (x < static_cast<T>(0.0)) {
     return NAN;
   }
-  const T lambda = params[0];
+  const T lambda = params[Params::Exponential::Lambda];
   return lambda * std::exp(-lambda * x);
 }
 
@@ -102,7 +102,7 @@ T evalGeometric(T x, const Distribution::ParametersArray<T> params) {
   if (x < castedOne) {
     return static_cast<T>(0.0);
   }
-  const T p = params[0];
+  const T p = params[Params::Geometric::P];
   if (p == castedOne) {
     return x == castedOne ? castedOne : static_cast<T>(0.0);
   }
@@ -163,7 +163,7 @@ T evalPoisson(T x, const Distribution::ParametersArray<T> parameters) {
   if (x < 0 || std::isinf(x)) {
     return NAN;
   }
-  const T lambda = parameters[0];
+  const T lambda = parameters[Params::Poisson::Lambda];
   T lResult = -lambda + std::floor(x) * std::log(lambda) -
               std::lgamma(std::floor(x) + 1);
   return std::exp(lResult);
@@ -171,7 +171,7 @@ T evalPoisson(T x, const Distribution::ParametersArray<T> parameters) {
 
 template <typename T>
 T evalStudent(T x, const Distribution::ParametersArray<T> params) {
-  const T k = params[0];
+  const T k = params[Params::Student::K];
   T lnCoefficient = std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) -
                     std::log(std::sqrt(k * M_PI));
   return std::exp(lnCoefficient - (k + 1.0) / 2.0 * std::log(1.0 + x * x / k));

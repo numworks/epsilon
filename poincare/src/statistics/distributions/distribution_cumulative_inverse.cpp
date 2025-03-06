@@ -89,7 +89,7 @@ T chi2CumulativeDistributiveInverse(
     return 0.;
   }
 
-  const T k = parameters[0];
+  const T k = parameters[Params::Chi2::K];
 
   struct Args {
     T proba;
@@ -117,7 +117,7 @@ T chi2CumulativeDistributiveInverse(
 template <typename T>
 T exponentialCumulativeDistributiveInverse(
     T probability, const Distribution::ParametersArray<T> params) {
-  const T lambda = params[0];
+  const T lambda = params[Params::Exponential::Lambda];
   return -std::log(1.0 - probability) / lambda;
 }
 
@@ -126,8 +126,10 @@ T fischerCumulativeDistributiveInverse(
     T probability, const Distribution::ParametersArray<T> params) {
   const T d1 = params[Params::Fisher::D1];
   const T d2 = params[Params::Fisher::D2];
-  const Distribution::ParametersArray<double> dbleParameters(
-      {static_cast<double>(d1), static_cast<double>(d2)});
+  Distribution::ParametersArray<double> dbleParameters{};
+  dbleParameters[Params::Fisher::D1] = static_cast<double>(d1);
+  dbleParameters[Params::Fisher::D2] = static_cast<double>(d2);
+
   const double p = static_cast<double>(probability);
 
   if (p > 1.0 - DBL_EPSILON) {
@@ -175,7 +177,7 @@ T geometricCumulativeDistributiveInverse(
   if (std::abs(probability) < precision) {
     return NAN;
   }
-  const T p = params[0];
+  const T p = params[Params::Geometric::P];
   if (std::abs(probability - static_cast<T>(1.0)) < precision) {
     if (std::abs(p - static_cast<T>(1.0)) < precision) {
       return static_cast<T>(1.0);
@@ -286,7 +288,7 @@ T studentCumulativeDistributiveInverse(
   } else if (probability < DBL_EPSILON) {
     return -INFINITY;
   }
-  const T k = params[0];
+  const T k = params[Params::Student::K];
   struct Args {
     T proba;
     T k;

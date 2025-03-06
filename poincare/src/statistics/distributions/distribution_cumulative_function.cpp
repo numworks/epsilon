@@ -38,7 +38,7 @@ T chi2CumulativeDistributiveFunction(T x, const ParametersArray<T> parameters) {
   constexpr static int k_maxRegularizedGammaIterations = 1000;
   constexpr static double k_regularizedGammaPrecision = DBL_EPSILON;
 
-  const T k = parameters[0];
+  const T k = parameters[Params::Chi2::K];
   double result = 0.0;
   if (RegularizedGammaFunction(k / 2.0, x / 2.0, k_regularizedGammaPrecision,
                                k_maxRegularizedGammaIterations, &result)) {
@@ -53,7 +53,7 @@ T exponentialCumulativeDistributiveFunction(T x,
   if (x < 0.0) {
     return static_cast<T>(0.0);
   }
-  const T lambda = params[0];
+  const T lambda = params[Params::Exponential::Lambda];
   return static_cast<T>(1.0) - std::exp((-lambda * x));
 }
 
@@ -70,7 +70,8 @@ static T standardNormalCumulativeDistributiveFunction(T abscissa) {
   if (std::isnan(abscissa)) {
     return NAN;
   }
-  constexpr static T k_standardMu = DefaultParameterAtIndex(Type::Normal, 0);
+  constexpr static T k_standardMu =
+      DefaultParameterAtIndex(Type::Normal, Params::Normal::Mu);
   if (std::isinf(abscissa)) {
     return abscissa > k_standardMu ? static_cast<T>(1.0) : static_cast<T>(0.0);
   }
@@ -95,7 +96,7 @@ T normalCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
 
 template <typename T>
 T studentCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
-  const T k = params[0];
+  const T k = params[Params::Student::K];
   if (x == 0.0) {
     return static_cast<T>(0.5);
   }

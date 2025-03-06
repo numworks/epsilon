@@ -33,6 +33,8 @@ ifeq ($(PLATFORM),simulator)
   endif
 endif
 
+DEFAULT_EPSILON_SIMULATORS = ../epsilon_simulators/
+
 ifeq ($(PLATFORM),device)
   CC = arm-none-eabi-gcc
   CXX = arm-none-eabi-g++
@@ -51,7 +53,7 @@ else ifeq ($(PLATFORM),simulator)
     CXX = $(MINGW_TOOLCHAIN_PREFIX)g++
     GDB = $(MINGW_TOOLCHAIN_PREFIX)gdb --args
     EXE = exe
-    LD_DYNAMIC_LOOKUP_FLAG = -Lepsilon_simulators/$(HOST) -lepsilon
+    LD_DYNAMIC_LOOKUP_FLAG = -L$(DEFAULT_EPSILON_SIMULATORS)$(HOST) -lepsilon
   else ifeq ($(HOST),linux)
     CC = gcc
     CXX = g++
@@ -65,13 +67,13 @@ else ifeq ($(PLATFORM),simulator)
   endif
   LINK_GC = 0
   LTO = 0
-  SIMULATOR ?= epsilon_simulators/$(HOST)/epsilon.$(EXE)$(SIMULATOR_PATH)
+  SIMULATOR ?= $(DEFAULT_EPSILON_SIMULATORS)$(HOST)/epsilon.$(EXE)$(SIMULATOR_PATH)
 else # PLATFORM=web
   CC = emcc
   CXX = em++
   LINK_GC = 0
   LTO = 0
-  SIMULATOR ?= epsilon_simulators/web/epsilon.html
+  SIMULATOR ?= $(DEFAULT_EPSILON_SIMULATORS)web/epsilon.html
 endif
 
 NWLINK = npx --yes -- nwlink@0.0.19

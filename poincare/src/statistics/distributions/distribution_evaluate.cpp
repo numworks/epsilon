@@ -27,7 +27,7 @@ T evalBinomial(T x, const Distribution::ParametersArray<T> parameters) {
     if (pIsZero || pIsOne) {
       return NAN;
     }
-    if (std::floor(x) == 0) {
+    if (std::floor(x) == 0.) {
       return static_cast<T>(1.0);
     }
     return static_cast<T>(0.0);

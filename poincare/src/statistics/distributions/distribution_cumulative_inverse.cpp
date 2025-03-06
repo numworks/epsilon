@@ -60,7 +60,7 @@ T binomialCumulativeDistributiveInverse(
   }
   if (std::abs(probability) < precision) {
     if (pIsOne) {
-      return 0;
+      return 0.;
     }
     return NAN;
   }
@@ -208,7 +208,7 @@ T hypergeomCumulativeDistributiveInverse(
   if (probability < precision) {
     // We can have 0 successes only if there are enough failures
     if (n > N - K) {
-      return 0;
+      return 0.;
     }
     return NAN;
   }

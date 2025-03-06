@@ -51,7 +51,7 @@ double EvaluateParameterForProbabilityAndBound(
     return bound - sigma * abscissaForStandardDistribution;
   }
   assert(parameterIndex == Params::Normal::Sigma);
-  if (abscissaForStandardDistribution == 0) {
+  if (abscissaForStandardDistribution == 0.) {
     if (bound == mu) {
       // Return default value if there is an infinity of possible sigma
       return Distribution::DefaultParameterAtIndex(Distribution::Type::Normal,

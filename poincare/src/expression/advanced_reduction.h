@@ -43,6 +43,9 @@ class AdvancedReduction {
       return (e->isDep() ? e->child(0) : e)->hash();
     }
     uint8_t maxDepth() const { return m_maxDepth; }
+#if POINCARE_TREE_LOG
+    void log() const { std::cout << "Max depth is " << (int)m_maxDepth << "."; }
+#endif
 
    private:
     /* Discard the hashes encountered with the highest depth, to continue
@@ -65,10 +68,14 @@ class AdvancedReduction {
   class Direction {
    public:
     constexpr static uint8_t k_numberOfBaseDirections = 3;
-    // Return true if direction was applied.
-    bool apply(Tree** e, Tree* root, bool* rootChanged) const;
     // Return true if can apply direction.
-    bool canApply(const Tree* e, const Tree* root) const;
+    bool canApplyNextNode(const Tree* e, const Tree* root) const;
+    // Return true if direction was applied.
+    bool apply(Tree** e, Tree* root, bool* treeChanged) const;
+    // Return true if direction was applied.
+    bool applyNextNode(Tree** e, const Tree* root) const;
+    // Return true if direction was applied.
+    bool applyContractOrExpand(Tree** e, Tree* root) const;
     // Constructor needed for Path::m_stack
     Direction() : m_type(0) {}
     bool isNextNode() const { return !isContract() && !isExpand(); }
@@ -110,12 +117,15 @@ class AdvancedReduction {
     bool apply(Tree* root) const;
     // Pop NextNode directions one at a time.
     void popBaseDirection();
-    // Return if any base direction can be added.
-    bool canAddNewDirection() const { return m_length < k_size; }
+    // Pop all adjacent and equal directions.
+    void popWholeDirection();
     // Return true if direction was appended
     bool append(Direction direction);
     uint8_t length() const { return m_length; }
 #if POINCARE_TREE_LOG
+    void logBaseDir(bool addNewLine = false) {
+      m_stack[m_length - 1].log(addNewLine);
+    }
     void log() const;
 #endif
 
@@ -142,15 +152,25 @@ class AdvancedReduction {
     uint32_t m_bestHash;
     CrcCollection m_crcCollection;
     bool m_mustResetRoot;
+    bool canAddDirToPath() const {
+      return this->m_path.length() < this->m_crcCollection.maxDepth();
+    }
   };
 
   [[nodiscard]] static Path FindBestReduction(const Tree* e);
 
   static bool ReduceIndependantElement(Tree* e);
 
-  /* Recursive advanced reduction. Return true if advanced reduction
-   * possibilities have all been explored. */
-  static bool ReduceRec(Tree* e, Context* ctx);
+  /* Internal entrypoint for AdvancedReduction. Handles NextNode operations.
+   * Return true if advanced reduction possibilities have all been explored. */
+  static bool ReduceRec(Tree* e, Context* ctx, bool zeroNextNodeAllowed = true);
+  /* Auxiliary method to [ReduceRec], handles Contract and Expand operations.
+   * Return true if advanced reduction possibilities have all been explored. */
+  static bool ReduceCE(Tree* e, Context* ctx);
+  /* Compute the metric of ctx->m_root and update ctx accordingly */
+  static void UpdateBestMetric(Context* ctx);
+  /* Reset ctx->m_root to current [Path] if needed */
+  static void ResetRootIfNeeded(Context* ctx);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
   static bool UpwardSystematicReduce(Tree* root, const Tree* tree);
 

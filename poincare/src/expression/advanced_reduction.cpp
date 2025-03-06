@@ -113,6 +113,8 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
      * (by returning false) to prevent going further. */
     return false;
   }
+  // Hugo: Here we should check if the crc is not already in db before
+  // decreasing size ?
   if (isFull()) {
     decreaseMaxDepth();
     return !isFull() && add(crc, depth);
@@ -156,11 +158,11 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
 }
 
 void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
   LogIndent();
   assert(isFull());
   std::cout << "CrcCollection had a " << (int)m_maxDepth
-            << " max depth and is full. ";
+            << " max depth and is full. \n";
 #endif
   // Find the smallest available depth in CRC collection
   m_maxDepth = 0;
@@ -217,26 +219,29 @@ const Tree* NextNode(const Tree* e) {
   return next;
 }
 
-bool AdvancedReduction::Direction::canApply(const Tree* e,
-                                            const Tree* root) const {
+bool AdvancedReduction::Direction::applyNextNode(Tree** u,
+                                                 const Tree* root) const {
   // Optimization: No trees are expected after root, so we can use lastBlock()
-  assert(!isNextNode() ||
-         (NextNode(e)->block() < SharedTreeStack->lastBlock()) ==
-             NextNode(e)->hasAncestor(root, false));
-  return !isNextNode() || NextNode(e)->block() < SharedTreeStack->lastBlock();
+  assert(isNextNode());
+  assert(m_type >= k_baseNextNodeType);
+  // TODO this assert only test application for m_type == 1
+  // not for any m_type > 1
+  assert((NextNode(*u)->block() < SharedTreeStack->lastBlock()) ==
+         NextNode(*u)->hasAncestor(root, false));
+  if (!(NextNode(*u)->block() < SharedTreeStack->lastBlock())) {
+    return false;
+  }
+  for (uint8_t i = m_type; i >= k_baseNextNodeType; i--) {
+    *u = NextNode(*u);
+  }
+  return true;
 }
 
-bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
-                                         bool* rootChanged) const {
-  if (isNextNode()) {
-    assert(m_type >= k_baseNextNodeType);
-    for (uint8_t i = m_type; i >= k_baseNextNodeType; i--) {
-      *u = NextNode(*u);
-    }
-    return true;
-  }
+bool AdvancedReduction::Direction::applyContractOrExpand(Tree** u,
+                                                         Tree* root) const {
   assert(isContract() || isExpand());
   if ((*u)->numberOfChildren() == 0) {
+    // TODO move this test in canApply ?
     // Trees without children cannot be contracted or expanded.
     return false;
   }
@@ -247,8 +252,16 @@ bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
   UpwardSystematicReduce(root, *u);
   // Move back to root so we only move down trees.
   *u = root;
-  *rootChanged = true;
   return true;
+}
+
+bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
+                                         bool* rootChanged) const {
+  if (isNextNode()) {
+    return applyNextNode(u, root);
+  }
+  *rootChanged = applyContractOrExpand(u, root);
+  return *rootChanged;
 }
 
 #if POINCARE_TREE_LOG
@@ -297,8 +310,7 @@ bool AdvancedReduction::Path::apply(Tree* root) const {
   }
 #endif
   for (uint8_t i = 0; i < length(); i++) {
-    bool didApply = m_stack[i].apply(&e, root, &rootChanged);
-    (void)didApply;
+    [[maybe_unused]] bool didApply = m_stack[i].apply(&e, root, &rootChanged);
     assert(didApply);
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE > 0
     if (s_logIndividualPathStep && !m_stack[i].isNextNode()) {
@@ -316,6 +328,10 @@ void AdvancedReduction::Path::popBaseDirection() {
   if (!m_stack[m_length - 1].decrement()) {
     m_length--;
   }
+}
+void AdvancedReduction::Path::popWholeDirection() {
+  assert(m_length > 0);
+  --m_length;
 }
 
 bool AdvancedReduction::Path::append(Direction direction) {
@@ -340,148 +356,24 @@ void AdvancedReduction::Path::log() const {
 }
 #endif
 
-bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
-  bool fullExploration = true;
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
-  LogIndent();
-  std::cout << "ReduceRec on subtree: ";
-  LogExpression(e);
-#endif
-  if (!ctx->m_path.canAddNewDirection()) {
-    fullExploration = false;
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-    LogIndent();
-    std::cout << "Full path.\n";
-#endif
-  } else {
-    bool isLeaf = true;
-    for (uint8_t i = 0; i < Direction::k_numberOfBaseDirections; i++) {
-      if (ctx->m_crcCollection.maxDepth() < ctx->m_path.length()) {
-        fullExploration = false;
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-        LogIndent();
-        std::cout << "CRC maxDepth has been reduced.\n";
-#endif
-        break;
-      }
-      Direction dir = Direction::SingleDirectionForIndex(i);
-      if (ctx->m_mustResetRoot) {
-        // Reset root to current path
-        ctx->m_root->cloneTreeOverTree(ctx->m_original);
-        ctx->m_path.apply(ctx->m_root);
-        ctx->m_mustResetRoot = false;
-      }
-      Tree* target = e;
-      bool rootChanged = false;
-      if (!dir.canApply(target, ctx->m_root)) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-        LogIndent();
-        std::cout << "Can't apply ";
-        dir.log();
-#endif
-        continue;
-      }
-      if (!dir.apply(&target, ctx->m_root, &rootChanged)) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-        LogIndent();
-        std::cout << "Nothing to ";
-        dir.log();
-#endif
-        continue;
-      }
-      uint32_t hash;
-      if (rootChanged) {
-        // No need to recompute hash if root did not change.
-        hash = CrcCollection::AdvancedHash(ctx->m_root);
-      }
-      /* If unchanged or unexplored, recursively advanced reduce. Otherwise, do
-       * not go further. */
-      if (!rootChanged ||
-          ctx->m_crcCollection.add(hash, ctx->m_path.length())) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-        bool shouldLog = true;
-#else
-        bool shouldLog = !dir.isNextNode();
-#endif
-        if (shouldLog) {
-          LogIndent();
-          std::cout << "Apply ";
-          dir.log(false);
-          std::cout << ": ";
-          if (rootChanged) {
-            LogExpression(ctx->m_root);
-          } else {
-            std::cout << "\n";
-          }
-          s_indent++;
-        }
-#endif
-        isLeaf = false;
-        assert(ctx->m_crcCollection.maxDepth() >= ctx->m_path.length());
-        bool canAddDir = ctx->m_path.append(dir);
-
-        assert(canAddDir);
-        (void)canAddDir;
-        if (!ReduceRec(target, ctx)) {
-          fullExploration = false;
-        } else if (rootChanged) {
-          // No need to explore this again, even at smaller lengths.
-          ctx->m_crcCollection.add(hash, 0);
-        }
-        ctx->m_path.popBaseDirection();
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
-        if (shouldLog) {
-          assert(s_indent > 0);
-          s_indent--;
-        }
-#endif
-      }
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-      else if (ctx->m_crcCollection.isFull()) {
-        LogIndent();
-        std::cout << "Full CRC collection.\n";
-      }
-#endif
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-      else {
-        LogIndent();
-        std::cout << "Already applied ";
-        dir.log(false);
-        std::cout << ": ";
-        LogExpression(ctx->m_root);
-      }
-#endif
-      if (rootChanged) {
-        // root will be reset to current path if needed later.
-        ctx->m_mustResetRoot = true;
-      }
-    }
-    if (!isLeaf) {
-      return fullExploration;
-    }
+void inline AdvancedReduction::ResetRootIfNeeded(Context* ctx) {
+  if (ctx->m_mustResetRoot) {
+    // Reset root to current path
+    ctx->m_root->cloneTreeOverTree(ctx->m_original);
+    ctx->m_path.apply(ctx->m_root);
+    ctx->m_mustResetRoot = false;
   }
+}
+
+void AdvancedReduction::UpdateBestMetric(Context* ctx) {
   // Otherwise, root should be reset to current path.
   assert(!ctx->m_mustResetRoot);
-  // All directions are impossible, we are at a leaf. Compare metrics.
   int metric = Metric::GetMetric(ctx->m_root);
-
 #if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-  LogIndent();
-  std::cout << "Leaf reached (" << metric << " VS " << ctx->m_bestMetric << ")";
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 1
-  std::cout << ": ";
-  LogExpression(ctx->m_root);
+  const int oldMetric = ctx->m_bestMetric;
+  const char* label = "Metric (";
 #endif
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 2
-  std::cout << "\n";
-#endif
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-  LogIndent();
-  std::cout << "Path:";
-  ctx->m_path.log();
-#endif
-#endif
+
   // If metric is the same, compare hash to ensure a deterministic result.
   if (metric < ctx->m_bestMetric ||
       (metric == ctx->m_bestMetric &&
@@ -489,6 +381,185 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx) {
     ctx->m_bestMetric = metric;
     ctx->m_bestPath = ctx->m_path;
     ctx->m_bestHash = CrcCollection::AdvancedHash(ctx->m_root);
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+    label = "Improved metric (";
+#endif
+  }
+
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+  LogIndent();
+  std::cout << label << metric << " VS " << oldMetric << ")";
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 1
+  std::cout << ": ";
+  LogExpression(ctx->m_root);
+#endif
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 2
+  std::cout << std::endl;
+#endif
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+  ctx->m_path.log();
+#endif
+#endif
+}
+
+bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx,
+                                  bool zeroNextNodeAllowed) {
+  bool fullExploration = true;
+  // Hugo: maybe we could make the Direction constructor public ?
+  Direction nextNode = Direction::SingleDirectionForIndex(0);
+  uint8_t i = 0;
+  Tree* target = e;
+  Tree* targets[UINT8_MAX - 1] = {};
+  // Checking if we can add 2 direction to path (NN + C||E)
+  if (ctx->m_path.length() + 1 >= ctx->m_crcCollection.maxDepth()) {
+    fullExploration = false;
+    goto noNextNode;
+  }
+  /* 254 to 1 NextNode handled here */
+  while (i < UINT8_MAX - 1 && nextNode.applyNextNode(&target, ctx->m_root)) {
+    targets[i++] = target;
+    // TODO: could be a single append outside the while
+    // requires public Direction constructor
+    [[maybe_unused]] bool hasAppendPath = ctx->m_path.append(nextNode);
+    assert(hasAppendPath);
+  }
+  if (i == UINT8_MAX - 1) {
+    /* More than 254 NextNode handle here */
+    fullExploration = ReduceRec(target, ctx, false) && fullExploration;
+  } else if (i == 0) {
+    goto noNextNode;
+  }
+  assert(i > 0 && i < UINT8_MAX);
+  --i;
+  for (; i != UINT8_MAX; --i) {
+    ResetRootIfNeeded(ctx);
+    assert(ctx->m_path.length() < ctx->m_crcCollection.maxDepth());
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+    LogIndent();
+    std::cout << "Apply ";
+    ctx->m_path.logBaseDir(true);
+#endif
+    ++s_indent;
+#endif
+    // fullExploration = NewReduceCE(*nextNodeTarget, ctx) && fullExploration;
+    fullExploration = ReduceCE(targets[i], ctx) && fullExploration;
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
+    --s_indent;
+#endif
+    // It will be impossible to add C||E after our NextNodes: stop here
+    if (!ctx->canAddDirToPath()) {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+      LogIndent();
+      std::cout << "CRC maxDepth reduced. ";
+      ctx->m_crcCollection.log();
+#endif
+      ctx->m_path.popWholeDirection();
+      // not sure this is required to be set at false
+      fullExploration = false;
+      break;
+    }
+    ctx->m_path.popBaseDirection();
+  }
+
+noNextNode:
+  /* 0 NextNode handle here */
+  if (zeroNextNodeAllowed && ctx->canAddDirToPath()) {
+    fullExploration = ReduceCE(e, ctx) && fullExploration;
+  }
+  return fullExploration;
+}
+
+bool AdvancedReduction::ReduceCE(Tree* e, Context* ctx) {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 2
+  bool printPreviousNN = true;
+#endif
+  bool fullExploration = true;
+  for (uint8_t i = 1; i < Direction::k_numberOfBaseDirections; i++) {
+    assert(ctx->m_path.length() < ctx->m_crcCollection.maxDepth());
+    ResetRootIfNeeded(ctx);
+    // Hugo: maybe we should make the Direction constructer public ?
+    Direction dir = Direction::SingleDirectionForIndex(i);
+    Tree* target = e;
+    // Hugo: We could avoid doing this apply if we somehow know that the
+    // resulting path is outisde scope (length > maxDepth). But do we want to ?
+    if (!dir.applyContractOrExpand(&target, ctx->m_root)) {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+      LogIndent();
+      std::cout << "Nothing to ";
+      dir.log();
+#endif
+      continue;
+    }
+    // Hugo: If m_root is last on treestack we could avoid using treeSize in
+    // hash
+    uint32_t hash = CrcCollection::AdvancedHash(ctx->m_root);
+    /* If explored, do not go further. */
+    // Hugo: it's slower(why?) with this +1 but it's more correct right ?
+    if (!ctx->m_crcCollection.add(hash, ctx->m_path.length() + 1)) {
+      ctx->m_mustResetRoot = true;
+      if (!ctx->canAddDirToPath()) {
+        // Not able to add due to decreased maxDepth (probably?)
+        fullExploration = false;
+        break;
+      }
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+      LogIndent();
+      std::cout << "Already applied ";
+      dir.log(false);
+      std::cout << ": ";
+      LogExpression(ctx->m_root);
+#endif
+      continue;
+    }
+    /* Otherwise, recursively advanced reduce */
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 2
+    if (printPreviousNN && ctx->m_path.length() > 0) {
+      --s_indent;
+      LogIndent();
+      ++s_indent;
+      std::cout << "Apply ";
+      ctx->m_path.logBaseDir(true);
+      printPreviousNN = false;
+    }
+#endif
+    LogIndent();
+    std::cout << "Apply ";
+    dir.log(false);
+    std::cout << ": ";
+    LogExpression(ctx->m_root);
+    s_indent++;
+#endif
+
+    assert(ctx->m_path.length() < ctx->m_crcCollection.maxDepth());
+    [[maybe_unused]] bool canAddDir = ctx->m_path.append(dir);
+    assert(canAddDir);
+
+    // Successfully applied C||E dir and result is unexplored: compute metric
+    UpdateBestMetric(ctx);
+
+    if (ReduceRec(target, ctx)) {
+      // No need to explore this again, even at smaller lengths.
+      ctx->m_crcCollection.add(hash, 0);
+    } else {
+      fullExploration = false;
+    }
+    ctx->m_path.popWholeDirection();
+    ctx->m_mustResetRoot = true;
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
+    assert(s_indent > 0);
+    s_indent--;
+#endif
+    if (i == 1 && !ctx->canAddDirToPath()) {
+#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+      LogIndent();
+      std::cout << "CRC maxDepth reduced. ";
+      ctx->m_crcCollection.log();
+      std::cout << "\n";
+#endif
+      break;
+    }
   }
   return fullExploration;
 }

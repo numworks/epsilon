@@ -1,5 +1,8 @@
 # Sample Rust app for Epsilon
 
+> [!WARNING]
+> This external app has not been maintained up to date
+
 [![Build](https://github.com/numworks/epsilon-sample-app-rust/actions/workflows/build.yml/badge.svg)](https://github.com/numworks/epsilon-sample-app-rust/actions/workflows/build.yml)
 
 <img src="/doc/screenshots.gif?raw=true" alt="Sample Rust app for the NumWorks graphing calculator" width="300" align="right">

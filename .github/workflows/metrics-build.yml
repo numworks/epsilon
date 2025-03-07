@@ -8,7 +8,7 @@ on:
       - 'tests/**'
       - 'ion/src/simulator/**'
       - 'scandium'
-
+      - 'external_apps/**'
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=n0120
   CCACHE_DIR: ${{ vars.CCACHE_DOCKER_DIR }}

@@ -10,6 +10,7 @@ on:
       - 'poincare/doc/**'
       - 'tests/**'
       - 'scandium'
+      - 'external_apps/**'
 
   workflow_dispatch:
     inputs:

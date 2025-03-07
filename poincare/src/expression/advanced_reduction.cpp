@@ -10,9 +10,41 @@
 
 namespace Poincare::Internal {
 
-#define LOG_NEW_ADVANCED_REDUCTION_VERBOSE 0
+#define VERBOSE_REDUCTION 0
 
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE > 0
+#if VERBOSE_REDUCTION > 0
+#define INCR_INDENT(lvl)            \
+  if (VERBOSE_REDUCTION >= (lvl)) { \
+    ++s_indent;                     \
+  }
+#define DECR_INDENT(lvl)            \
+  if (VERBOSE_REDUCTION >= (lvl)) { \
+    --s_indent;                     \
+  }
+
+#define LOG_NL(lvl, str, object, nl, default, ...) \
+  if (VERBOSE_REDUCTION >= (lvl)) {                \
+    LogIndent();                                   \
+    std::cout << str;                              \
+    object;                                        \
+    if (nl) std::cout << std::endl;                \
+  }
+
+#define LOG_NL2(lvl, str, object, str2, object2, nl, default, ...) \
+  if (VERBOSE_REDUCTION >= (lvl)) {                                \
+    LogIndent();                                                   \
+    std::cout << str;                                              \
+    object;                                                        \
+    std::cout << str2;                                             \
+    object2;                                                       \
+    if (nl) std::cout << std::endl;                                \
+  }
+
+#define LOG(lvl, str, object, ...) \
+  LOG_NL(lvl, str, object, ##__VA_ARGS__, false, )
+#define LOG2(lvl, str, object, str2, object2, ...) \
+  LOG_NL2(lvl, str, object, str2, object2, ##__VA_ARGS__, false, )
+
 bool s_logIndividualPathStep = false;
 size_t s_indent = 0;
 
@@ -25,6 +57,11 @@ void LogIndent() {
 void LogExpression(const Tree* e, bool displayDependencies = false) {
   (!displayDependencies && e->isDep() ? e->child(0) : e)->logSerialize();
 }
+#else
+#define INCR_INDENT(_)
+#define DECR_INDENT(_)
+#define LOG(...)
+#define LOG2(...)
 
 #endif
 
@@ -40,7 +77,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
               CrcCollection::AdvancedHash(e));
   // Add initial root
   ctx.m_crcCollection.add(CrcCollection::AdvancedHash(e), 0);
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+#if VERBOSE_REDUCTION >= 1
   std::cout << "\nReduce\nInitial tree (" << ctx.m_bestMetric << ") is : ";
   LogExpression(e, true);
   s_indent = 1;
@@ -48,7 +85,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
   ReduceRec(editedExpression, &ctx);
   editedExpression->removeTree();
 
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+#if VERBOSE_REDUCTION >= 1
   s_indent = 0;
   std::cout << "Best path metric is: " << ctx.m_bestMetric << "\n";
 #endif
@@ -87,22 +124,21 @@ bool AdvancedReduction::ReduceIndependantElement(Tree* e) {
           type == ExceptionType::IntegerOverflow)) {
       TreeStackCheckpoint::Raise(type);
     }
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+#if VERBOSE_REDUCTION >= 1
     s_indent = 0;
     std::cout << "\nTree stack overflow,  advanced reduction failed.\n";
 #endif
     best_path = {};
   }
 
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+#if VERBOSE_REDUCTION >= 1
   s_logIndividualPathStep = true;
 #endif
   bool result = best_path.apply(e);
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+#if VERBOSE_REDUCTION >= 1
   s_logIndividualPathStep = false;
-  s_indent = 0;
-  std::cout << "Final tree is : ";
-  LogExpression(e, true);
+  assert(s_indent == 0);
+  LOG(1, "Final tree is : ", LogExpression(e, true));
 #endif
   return result;
 }
@@ -158,7 +194,7 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
 }
 
 void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+#if VERBOSE_REDUCTION >= 4
   LogIndent();
   assert(isFull());
   std::cout << "CrcCollection had a " << (int)m_maxDepth
@@ -191,7 +227,7 @@ void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
       i++;
     }
   }
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 4
+#if VERBOSE_REDUCTION >= 4
   std::cout << "Remove " << (int)(k_size - m_length)
             << " elements of depth bigger than " << (int)m_maxDepth << ".\n";
 #endif
@@ -303,19 +339,21 @@ bool AdvancedReduction::Direction::decrement() {
 bool AdvancedReduction::Path::apply(Tree* root) const {
   Tree* e = root;
   bool rootChanged = false;
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE > 0
+#if VERBOSE_REDUCTION > 0
   if (s_logIndividualPathStep) {
-    std::cout << "Best path is: ";
+    std::cout << "Best path is";
+    this->log();
+    std::cout << "Start\t\t";
     LogExpression(e);
   }
 #endif
   for (uint8_t i = 0; i < length(); i++) {
     [[maybe_unused]] bool didApply = m_stack[i].apply(&e, root, &rootChanged);
     assert(didApply);
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE > 0
+#if VERBOSE_REDUCTION > 0
     if (s_logIndividualPathStep && !m_stack[i].isNextNode()) {
       m_stack[i].log(false);
-      std::cout << ": ";
+      std::cout << "  \t";
       LogExpression(e);
     }
 #endif
@@ -369,7 +407,7 @@ void AdvancedReduction::UpdateBestMetric(Context* ctx) {
   // Otherwise, root should be reset to current path.
   assert(!ctx->m_mustResetRoot);
   int metric = Metric::GetMetric(ctx->m_root);
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+#if VERBOSE_REDUCTION >= 1
   const int oldMetric = ctx->m_bestMetric;
   const char* label = "Metric (";
 #endif
@@ -381,24 +419,25 @@ void AdvancedReduction::UpdateBestMetric(Context* ctx) {
     ctx->m_bestMetric = metric;
     ctx->m_bestPath = ctx->m_path;
     ctx->m_bestHash = CrcCollection::AdvancedHash(ctx->m_root);
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
+#if VERBOSE_REDUCTION >= 1
     label = "Improved metric (";
 #endif
   }
 
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-  LogIndent();
-  std::cout << label << metric << " VS " << oldMetric << ")";
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 1
+  DECR_INDENT(3);
+  INCR_INDENT(2);
+  LOG(1, label << metric << " VS " << oldMetric << ")", );
+  DECR_INDENT(2);
+  INCR_INDENT(3);
+#if VERBOSE_REDUCTION == 1
   std::cout << ": ";
   LogExpression(ctx->m_root);
 #endif
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 2
+#if VERBOSE_REDUCTION == 2
   std::cout << std::endl;
 #endif
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
+#if VERBOSE_REDUCTION >= 3
   ctx->m_path.log();
-#endif
 #endif
 }
 
@@ -434,32 +473,17 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx,
   for (; i != UINT8_MAX; --i) {
     ResetRootIfNeeded(ctx);
     assert(ctx->m_path.length() < ctx->m_crcCollection.maxDepth());
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-    LogIndent();
-    std::cout << "Apply ";
-    ctx->m_path.logBaseDir(true);
-#endif
-    ++s_indent;
-#endif
+    LOG(3, "Apply ", ctx->m_path.logBaseDir());
     // fullExploration = NewReduceCE(*nextNodeTarget, ctx) && fullExploration;
     fullExploration = ReduceCE(targets[i], ctx) && fullExploration;
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
-    --s_indent;
-#endif
+    ctx->m_path.popBaseDirection();
     // It will be impossible to add C||E after our NextNodes: stop here
-    if (!ctx->canAddDirToPath()) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-      LogIndent();
-      std::cout << "CRC maxDepth reduced. ";
-      ctx->m_crcCollection.log();
-#endif
+    if (!ctx->canAddDirToPath() && i > 0) {
+      LOG(1, "CRC ", ctx->m_crcCollection.log());
       ctx->m_path.popWholeDirection();
-      // not sure this is required to be set at false
       fullExploration = false;
       break;
     }
-    ctx->m_path.popBaseDirection();
   }
 
 noNextNode:
@@ -471,9 +495,7 @@ noNextNode:
 }
 
 bool AdvancedReduction::ReduceCE(Tree* e, Context* ctx) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 2
-  bool printPreviousNN = true;
-#endif
+  INCR_INDENT(2);
   bool fullExploration = true;
   for (uint8_t i = 1; i < Direction::k_numberOfBaseDirections; i++) {
     assert(ctx->m_path.length() < ctx->m_crcCollection.maxDepth());
@@ -484,11 +506,7 @@ bool AdvancedReduction::ReduceCE(Tree* e, Context* ctx) {
     // Hugo: We could avoid doing this apply if we somehow know that the
     // resulting path is outisde scope (length > maxDepth). But do we want to ?
     if (!dir.applyContractOrExpand(&target, ctx->m_root)) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-      LogIndent();
-      std::cout << "Nothing to ";
-      dir.log();
-#endif
+      LOG(3, "Nothing to ", dir.log());
       continue;
     }
     // Hugo: If m_root is last on treestack we could avoid using treeSize in
@@ -503,34 +521,12 @@ bool AdvancedReduction::ReduceCE(Tree* e, Context* ctx) {
         fullExploration = false;
         break;
       }
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 3
-      LogIndent();
-      std::cout << "Already applied ";
-      dir.log(false);
-      std::cout << ": ";
-      LogExpression(ctx->m_root);
-#endif
+      LOG2(3, "Seen before ", dir.log(false), ": ", LogExpression(ctx->m_root));
       continue;
     }
     /* Otherwise, recursively advanced reduce */
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE == 2
-    if (printPreviousNN && ctx->m_path.length() > 0) {
-      --s_indent;
-      LogIndent();
-      ++s_indent;
-      std::cout << "Apply ";
-      ctx->m_path.logBaseDir(true);
-      printPreviousNN = false;
-    }
-#endif
-    LogIndent();
-    std::cout << "Apply ";
-    dir.log(false);
-    std::cout << ": ";
-    LogExpression(ctx->m_root);
-    s_indent++;
-#endif
+    LOG2(2, "", dir.log(false), ": ", LogExpression(ctx->m_root));
+    INCR_INDENT(3);
 
     assert(ctx->m_path.length() < ctx->m_crcCollection.maxDepth());
     [[maybe_unused]] bool canAddDir = ctx->m_path.append(dir);
@@ -547,20 +543,13 @@ bool AdvancedReduction::ReduceCE(Tree* e, Context* ctx) {
     }
     ctx->m_path.popWholeDirection();
     ctx->m_mustResetRoot = true;
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 2
-    assert(s_indent > 0);
-    s_indent--;
-#endif
+    DECR_INDENT(3);
     if (i == 1 && !ctx->canAddDirToPath()) {
-#if LOG_NEW_ADVANCED_REDUCTION_VERBOSE >= 1
-      LogIndent();
-      std::cout << "CRC maxDepth reduced. ";
-      ctx->m_crcCollection.log();
-      std::cout << "\n";
-#endif
+      LOG(1, "CRC ", ctx->m_crcCollection.log());
       break;
     }
   }
+  DECR_INDENT(2);
   return fullExploration;
 }
 

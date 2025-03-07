@@ -44,7 +44,9 @@ class AdvancedReduction {
     }
     uint8_t maxDepth() const { return m_maxDepth; }
 #if POINCARE_TREE_LOG
-    void log() const { std::cout << "Max depth is " << (int)m_maxDepth << "."; }
+    void log() const {
+      std::cout << "Max depth is " << (int)m_maxDepth << "\n";
+    }
 #endif
 
    private:
@@ -123,7 +125,8 @@ class AdvancedReduction {
     bool append(Direction direction);
     uint8_t length() const { return m_length; }
 #if POINCARE_TREE_LOG
-    void logBaseDir(bool addNewLine = false) {
+    bool baseDirIsNextNode() { return m_stack[m_length - 1].isNextNode(); }
+    void logBaseDir(bool addNewLine = true) {
       m_stack[m_length - 1].log(addNewLine);
     }
     void log() const;

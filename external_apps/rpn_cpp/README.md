@@ -26,8 +26,14 @@ Make this ugly app beautiful.
 
 To build this app on a simulator, you'll just need a C compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS).
 
+### Windows
 ```shell
-./setup.sh
+./setup.ps1
+```
+
+### Others
+```shell
+chmod +x setup.sh & ./setup.sh
 ```
 
 ### Prepare web and native simulators
@@ -67,12 +73,24 @@ make server
 ```
 
 In the other shell, run
+
+#### Windows
 ```shell
-source "./emsdk/emsdk_env.sh"
+emsdk/emsdk_env.ps1
+```
+
+#### Others
+```shell
+source emsdk/emsdk_env.sh
+```
+
+Finally, run
+
+```shell
 make PLATFORM=web run
 ```
 
-A navigator should open on a web simulator of your app.
+Your browser should display the simulator with the app inside.
 
 ### On native simulator (MacOS, Linux, Windows)
 

@@ -1,0 +1,42 @@
+name: External Apps Build
+on:
+  pull_request:
+    paths:
+      - 'external_apps/**'
+
+env:
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1' || '-j2' }}
+  CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache' || '' }}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  c_cpp_apps:
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install toolchain
+        uses: numworks/setup-arm-toolchain@latest
+      - name: Build for device
+        run: make -C external_apps/sample_c PLATFORM=device build
+        run: make -C external_apps/sample_cpp PLATFORM=device build
+        run: make -C external_apps/rpn_cpp PLATFORM=device build
+  rust_app:
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Go to rust external app directory
+        run: cd external_apps/sample_rust
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: thumbv7em-none-eabihf
+      - name: Run cargo build
+        uses: actions-rs/cargo@v1
+        with:
+          command: build

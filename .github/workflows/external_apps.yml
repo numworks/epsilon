@@ -27,7 +27,8 @@ jobs:
       - name: Build rpn_cpp for device
         run: make -C external_apps/rpn_cpp PLATFORM=device build
   rust_app:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
+    if: ${{ github.repository != 'numworks/epsilon-internal' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

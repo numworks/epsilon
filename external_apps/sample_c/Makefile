@@ -3,8 +3,10 @@ APP_ICON = src/icon.png
 
 OUTPUT_DIR = output
 
+EXTERNAL_DATA = src/input.txt
+
 SOURCES = $(addprefix src/,\
   main.c \
 )
 
-include build/c_external_app.mak
+include ../build/external_app.mak

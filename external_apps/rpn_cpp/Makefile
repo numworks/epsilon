@@ -11,4 +11,4 @@ SOURCES = $(addprefix src/,\
   view.cpp \
 )
 
-include ../build/cpp_external_app.mak
+include ../build/external_app.mak

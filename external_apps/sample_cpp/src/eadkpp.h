@@ -505,11 +505,9 @@ class State {
  public:
   constexpr State(uint64_t s = 0) : m_bitField(s) {}
   inline bool keyDown(Key k) const {
-    return eadk_keyboard_key_down(*this, (eadk_key_t)k);
+    return eadk_keyboard_key_down(
+        *reinterpret_cast<const eadk_keyboard_state_t*>(this), (eadk_key_t)k);
     // return (m_bitField>>(uint8_t)k) & 1;
-  }
-  operator eadk_keyboard_state_t() const {
-    return *reinterpret_cast<const eadk_keyboard_state_t*>(this);
   }
 
  private:

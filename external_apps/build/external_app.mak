@@ -174,15 +174,21 @@ server: $(SIMULATOR)
 	@echo "STARTING SERVER"
 	$(Q) python3 -m http.server
 
+# Simulator is copied because python http server cannot access files outside of the current directory.
 .PHONY: run
 run: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR)
+ifeq ($(OS),Windows_NT)
+	copy $(SIMULATOR) $(BUILD_DIR)/epsilon.html
+else
+	cp $(SIMULATOR) $(BUILD_DIR)/epsilon.html
+endif
 	@echo "RUN     $<"
 ifeq ($(OS),Windows_NT)
-	$(Q) powershell -Command "Start-Process http://localhost:8000/$(SIMULATOR)?nwb=/$<"
+	$(Q) powershell -Command "Start-Process http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<"
 else ifeq ($(HOST),linux)
-	$(Q) xdg-open http://localhost:8000/$(SIMULATOR)?nwb=/$<
+	$(Q) xdg-open http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<
 else
-	$(Q) open http://localhost:8000/$(SIMULATOR)?nwb=/$<
+	$(Q) open http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<
 endif
 
 endif

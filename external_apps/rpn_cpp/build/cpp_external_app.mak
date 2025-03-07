@@ -105,6 +105,14 @@ CXXFLAGS += -fvisibility=internal
 LDFLAGS += -flinker-output=nolto-rel
 endif
 
+# External data
+ifdef EXTERNAL_DATA
+EXTERNAL_DATA_INPUT = --external-data $(EXTERNAL_DATA)
+else
+EXTERNAL_DATA =
+EXTERNAL_DATA_INPUT =
+endif
+
 ifeq ($(PLATFORM),device)
 
 .PHONY: build
@@ -114,17 +122,17 @@ build: $(BUILD_DIR)/$(APP_NAME).nwa
 check: $(BUILD_DIR)/$(APP_NAME).bin
 
 .PHONY: run
-run: $(BUILD_DIR)/$(APP_NAME).nwa
+run: $(BUILD_DIR)/$(APP_NAME).nwa $(EXTERNAL_DATA)
 	@echo "INSTALL $<"
-	$(Q) $(NWLINK) install-nwa $<
+	$(Q) $(NWLINK) install-nwa $(EXTERNAL_DATA_INPUT) $<
 
-$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.nwa
+$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.nwa $(EXTERNAL_DATA)
 	@echo "BIN     $@"
-	$(Q) $(NWLINK) nwa-bin $< $@
+	$(Q) $(NWLINK) nwa-bin $(EXTERNAL_DATA_INPUT) $< $@
 
-$(BUILD_DIR)/%.elf: $(BUILD_DIR)/%.nwa
+$(BUILD_DIR)/%.elf: $(BUILD_DIR)/%.nwa $(EXTERNAL_DATA)
 	@echo "ELF     $@"
-	$(Q) $(NWLINK) nwa-elf $< $@
+	$(Q) $(NWLINK) nwa-elf $(EXTERNAL_DATA_INPUT) $< $@
 
 $(BUILD_DIR)/$(APP_NAME).nwa: $(call object_for,$(SOURCES)) $(BUILD_DIR)/icon.o
 	@echo "LD      $@"

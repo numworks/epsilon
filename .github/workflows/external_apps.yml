@@ -16,10 +16,12 @@ jobs:
   c_cpp_apps:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: Install toolchain
         uses: numworks/setup-arm-toolchain@latest
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Setup
+        run: build/setup.sh
       - name: Build sample_c for device
         run: make -C external_apps/sample_c PLATFORM=device build
       - name: Build sample_cpp for device

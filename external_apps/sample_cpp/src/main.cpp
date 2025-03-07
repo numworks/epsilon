@@ -40,7 +40,8 @@ int main(int argc, char* argv[]) {
   int alienMaterializationTimer = 0;
   while (1) {
     EADK::Keyboard::State keyboardState = EADK::Keyboard::scan();
-    if (keyboardState.keyDown(EADK::Keyboard::Key::OK)) {
+    if (keyboardState.keyDown(EADK::Keyboard::Key::OK) ||
+        keyboardState.keyDown(EADK::Keyboard::Key::EXE)) {
       spaceship.createRockets();
     }
     if (keyboardState.keyDown(EADK::Keyboard::Key::Up)) {

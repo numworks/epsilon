@@ -3,10 +3,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char eadk_app_name[] __attribute__((section(".rodata.eadk_app_name"))) =
-    "App";
+const char eadk_app_name[]
+#if PLATFORM_DEVICE
+    __attribute__((section(".rodata.eadk_app_name")))
+#endif
+    = "App";
+
 const uint32_t eadk_api_level
-    __attribute__((section(".rodata.eadk_api_level"))) = 0;
+#if PLATFORM_DEVICE
+    __attribute__((section(".rodata.eadk_api_level")))
+#endif
+    = 0;
 
 eadk_color_t random_color() { return (eadk_color_t)eadk_random(); }
 
@@ -73,7 +80,7 @@ int main(int argc, char* argv[]) {
   eadk_timing_msleep(3000);
   draw_random_colorful_rectangles();
   draw_random_buffer();
-  eadk_display_draw_string("Hello, world!", (eadk_point_t){0, 0}, true,
+  eadk_display_draw_string(eadk_external_data, (eadk_point_t){0, 0}, true,
                            eadk_color_black, eadk_color_white);
   move_pointer();
 }

@@ -107,7 +107,15 @@ endif
 
 # External data
 ifdef EXTERNAL_DATA
-EXTERNAL_DATA_INPUT = --external-data $(EXTERNAL_DATA)
+  ifeq ($(PLATFORM),device)
+  EXTERNAL_DATA_INPUT = --external-data $(EXTERNAL_DATA)
+  else ifeq ($(PLATFORM),simulator)
+  EXTERNAL_DATA_INPUT = --nwb-external-data $(EXTERNAL_DATA)
+  else # PLATFORM=web
+  # TODO
+  EXTERNAL_DATA =
+  EXTERNAL_DATA_INPUT =
+  endif
 else
 EXTERNAL_DATA =
 EXTERNAL_DATA_INPUT =
@@ -150,14 +158,14 @@ $(BUILD_DIR)/$(APP_NAME).nwb: $(call object_for,$(SOURCES)) $(SIMULATOR)
 ifeq ($(PLATFORM),simulator)
 
 .PHONY: run
-run: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR)
+run: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR) $(EXTERNAL_DATA)
 	@echo "RUN     $<"
-	$(Q) $(SIMULATOR) --nwb $<
+	$(Q) $(SIMULATOR) --nwb $< $(EXTERNAL_DATA_INPUT)
 
 .PHONY: debug
-debug: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR)
+debug: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR) $(EXTERNAL_DATA)
 	@echo "DEBUG   $<"
-	$(Q) $(GDB) $(SIMULATOR) --nwb $<
+	$(Q) $(GDB) $(SIMULATOR) --nwb $< $(EXTERNAL_DATA_INPUT)
 
 else # PLATFORM=web
 

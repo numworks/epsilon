@@ -176,6 +176,10 @@ $(addprefix $(BUILD_DIR)/,%.o): %.cpp | $(BUILD_DIR)
 	@echo "CC      $^"
 	$(Q) $(CXX) $(CXXFLAGS) -c $^ -o $@
 
+$(addprefix $(BUILD_DIR)/,%.o): %.c | $(BUILD_DIR)
+	@echo "CC      $^"
+	$(Q) $(CC) $(CFLAGS) -c $^ -o $@
+
 $(BUILD_DIR)/icon.o: $(APP_ICON)
 	@echo "ICON    $<"
 	$(Q) $(NWLINK) png-icon-o $< $@

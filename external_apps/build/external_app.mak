@@ -112,9 +112,7 @@ ifdef EXTERNAL_DATA
   else ifeq ($(PLATFORM),simulator)
   EXTERNAL_DATA_INPUT = --nwb-external-data $(EXTERNAL_DATA)
   else # PLATFORM=web
-  # TODO
-  EXTERNAL_DATA =
-  EXTERNAL_DATA_INPUT =
+  EXTERNAL_DATA_INPUT = "&nwbdata=/$(EXTERNAL_DATA)"
   endif
 else
 EXTERNAL_DATA =
@@ -170,13 +168,13 @@ debug: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR) $(EXTERNAL_DATA)
 else # PLATFORM=web
 
 .PHONY: server
-server: $(SIMULATOR)
+server: $(SIMULATOR) $(EXTERNAL_DATA)
 	@echo "STARTING SERVER"
 	$(Q) python3 -m http.server
 
 # Simulator is copied because python http server cannot access files outside of the current directory.
 .PHONY: run
-run: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR)
+run: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR) $(EXTERNAL_DATA)
 ifeq ($(OS),Windows_NT)
 	copy $(SIMULATOR) $(BUILD_DIR)/epsilon.html
 else
@@ -184,11 +182,11 @@ else
 endif
 	@echo "RUN     $<"
 ifeq ($(OS),Windows_NT)
-	$(Q) powershell -Command "Start-Process http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<"
+	$(Q) powershell -Command "Start-Process http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<$(EXTERNAL_DATA_INPUT)"
 else ifeq ($(HOST),linux)
-	$(Q) xdg-open http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<
+	$(Q) xdg-open http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<$(EXTERNAL_DATA_INPUT)
 else
-	$(Q) open http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<
+	$(Q) open http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<$(EXTERNAL_DATA_INPUT)
 endif
 
 endif

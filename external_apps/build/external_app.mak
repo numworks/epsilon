@@ -68,7 +68,7 @@ else # PLATFORM=web
   SIMULATOR ?= $(SIMULATORS_DIR)/web/epsilon.html
 endif
 
-NWLINK = npx --yes -- nwlink@0.0.19
+NWLINK = npx --yes -- nwlink
 BUILD_DIR = $(OUTPUT_DIR)/$(PLATFORM)
 
 define object_for
@@ -77,7 +77,12 @@ endef
 
 
 CFLAGS = $(shell $(NWLINK) eadk-cflags-$(PLATFORM))
+ifeq ($(PLATFORM),web)
+# TODO: Update nwlink's eadk-ldflags-web : eadk_keyboard_scan_do_scan is actually _eadk_keyboard_scan_do_scan
+LDFLAGS = -sSIDE_MODULE=2 -sEXPORTED_FUNCTIONS=_main -sASYNCIFY=1 -sASYNCIFY_IMPORTS=eadk_event_get,_eadk_keyboard_scan_do_scan,eadk_timing_msleep,eadk_display_wait_for_vblank
+else
 LDFLAGS = $(shell $(NWLINK) eadk-ldflags-$(PLATFORM))
+endif
 CXXFLAGS = $(CFLAGS) -std=c++11 -fno-exceptions -Wno-nullability-completeness -Wall -ggdb
 
 ifeq ($(PLATFORM),device)
@@ -125,7 +130,7 @@ ifeq ($(PLATFORM),device)
 build: $(BUILD_DIR)/$(APP_NAME).nwa
 
 .PHONY: check
-check: $(BUILD_DIR)/$(APP_NAME).bin
+check: $(BUILD_DIR)/$(APP_NAME).nwa
 
 .PHONY: run
 run: $(BUILD_DIR)/$(APP_NAME).nwa $(EXTERNAL_DATA)

@@ -149,8 +149,8 @@ bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
      * (by returning false) to prevent going further. */
     return false;
   }
-  // Hugo: Here we should check if the crc is not already in db before
-  // decreasing size ?
+  // TODO Here we could check if crc is not already in db before decreasing size
+  // But impact is probably minimal either way
   if (isFull()) {
     decreaseMaxDepth();
     return !isFull() && add(crc, depth);
@@ -260,15 +260,15 @@ bool AdvancedReduction::Direction::applyNextNode(Tree** u,
   // Optimization: No trees are expected after root, so we can use lastBlock()
   assert(isNextNode());
   assert(m_type >= k_baseNextNodeType);
-  // TODO this assert only test application for m_type == 1
-  // not for any m_type > 1
   assert((NextNode(*u)->block() < SharedTreeStack->lastBlock()) ==
          NextNode(*u)->hasAncestor(root, false));
+  assert(root->nextTree() == SharedTreeStack->lastBlock() && *u >= root);
   if (!(NextNode(*u)->block() < SharedTreeStack->lastBlock())) {
     return false;
   }
   for (uint8_t i = m_type; i >= k_baseNextNodeType; i--) {
     *u = NextNode(*u);
+    assert((*u)->block() < SharedTreeStack->lastBlock());
   }
   return true;
 }
@@ -277,7 +277,6 @@ bool AdvancedReduction::Direction::applyContractOrExpand(Tree** u,
                                                          Tree* root) const {
   assert(isContract() || isExpand());
   if ((*u)->numberOfChildren() == 0) {
-    // TODO move this test in canApply ?
     // Trees without children cannot be contracted or expanded.
     return false;
   }
@@ -367,6 +366,7 @@ void AdvancedReduction::Path::popBaseDirection() {
     m_length--;
   }
 }
+
 void AdvancedReduction::Path::popWholeDirection() {
   assert(m_length > 0);
   --m_length;
@@ -394,12 +394,12 @@ void AdvancedReduction::Path::log() const {
 }
 #endif
 
-void inline AdvancedReduction::ResetRootIfNeeded(Context* ctx) {
-  if (ctx->m_mustResetRoot) {
+void inline AdvancedReduction::Context::resetIfNeeded() {
+  if (m_mustResetRoot) {
     // Reset root to current path
-    ctx->m_root->cloneTreeOverTree(ctx->m_original);
-    ctx->m_path.apply(ctx->m_root);
-    ctx->m_mustResetRoot = false;
+    m_root->cloneTreeOverTree(m_original);
+    m_path.apply(m_root);
+    m_mustResetRoot = false;
   }
 }
 
@@ -444,49 +444,52 @@ void AdvancedReduction::UpdateBestMetric(Context* ctx) {
 bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx,
                                   bool zeroNextNodeAllowed) {
   bool fullExploration = true;
-  // Hugo: maybe we could make the Direction constructor public ?
-  Direction nextNode = Direction::SingleDirectionForIndex(0);
-  uint8_t i = 0;
-  Tree* target = e;
-  Tree* targets[UINT8_MAX - 1] = {};
-  // Checking if we can add 2 direction to path (NN + C||E)
   if (ctx->m_path.length() + 1 >= ctx->m_crcCollection.maxDepth()) {
+    // Skip nextNode direction if we can't add a contract or expand after
     fullExploration = false;
-    goto noNextNode;
-  }
-  /* 254 to 1 NextNode handled here */
-  while (i < UINT8_MAX - 1 && nextNode.applyNextNode(&target, ctx->m_root)) {
-    targets[i++] = target;
-    // TODO: could be a single append outside the while
-    // requires public Direction constructor
-    [[maybe_unused]] bool hasAppendPath = ctx->m_path.append(nextNode);
-    assert(hasAppendPath);
-  }
-  if (i == UINT8_MAX - 1) {
-    /* More than 254 NextNode handle here */
-    fullExploration = ReduceRec(target, ctx, false) && fullExploration;
-  } else if (i == 0) {
-    goto noNextNode;
-  }
-  assert(i > 0 && i < UINT8_MAX);
-  --i;
-  for (; i != UINT8_MAX; --i) {
-    ResetRootIfNeeded(ctx);
-    assert(ctx->m_path.length() < ctx->m_crcCollection.maxDepth());
-    LOG(3, "Apply ", ctx->m_path.logBaseDir());
-    // fullExploration = NewReduceCE(*nextNodeTarget, ctx) && fullExploration;
-    fullExploration = ReduceCE(targets[i], ctx) && fullExploration;
-    ctx->m_path.popBaseDirection();
-    // It will be impossible to add C||E after our NextNodes: stop here
-    if (!ctx->canAddDirToPath() && i > 0) {
-      LOG(1, "CRC ", ctx->m_crcCollection.log());
-      ctx->m_path.popWholeDirection();
-      fullExploration = false;
-      break;
+  } else {
+    Direction nextNode = Direction(Direction::k_baseNextNodeType);
+    int i = 0;
+    Tree* target = e;
+    /* [targets] caches all intermediate node obtained when doing the maximum
+     * number of nextNode direction. This is useful because we want to iterate
+     * over this list in reverse order. Caching the intermediate trees avoids
+     * recomputing the same nextNode direction twice. */
+    Tree* targets[Direction::k_maxNextNodeAmount] = {};
+    while (i < Direction::k_maxNextNodeAmount &&
+           nextNode.applyNextNode(&target, ctx->m_root)) {
+      targets[i++] = target;
+    }
+    if (i > 0) {
+      [[maybe_unused]] bool hasAppendPath = ctx->m_path.append(Direction(i));
+      assert(hasAppendPath);
+    }
+    if (i == Direction::k_maxNextNodeAmount) {
+      /* NextNode direction has to be split in two whole directions in the
+       * path to handle more than 254 consecutive NextNode */
+      assert(fullExploration);
+      fullExploration = ReduceRec(target, ctx, false);
+    }
+    /* 254 to 1 NextNode handled here */
+    assert(i <= Direction::k_maxNextNodeAmount);
+    --i;
+    for (; i >= 0; --i) {
+      ctx->resetIfNeeded();
+      assert(ctx->canAddDirToPath());
+      LOG(3, "Apply ", ctx->m_path.logBaseDir());
+      fullExploration = ReduceCE(targets[i], ctx) && fullExploration;
+      ctx->m_path.popBaseDirection();
+      // It will be impossible to add C||E after our NextNodes: stop here
+      if (!ctx->canAddDirToPath() && i > 0) {
+        LOG(1, "CRC ", ctx->m_crcCollection.log());
+        ctx->m_path.popWholeDirection();
+        fullExploration = false;
+        break;
+      }
     }
   }
+  DECR_INDENT(3);
 
-noNextNode:
   /* 0 NextNode handle here */
   if (zeroNextNodeAllowed && ctx->canAddDirToPath()) {
     fullExploration = ReduceCE(e, ctx) && fullExploration;
@@ -494,61 +497,58 @@ noNextNode:
   return fullExploration;
 }
 
+bool inline AdvancedReduction::ReduceDir(Tree* e, Context* ctx, Direction dir) {
+  assert(!dir.isNextNode());
+  assert(ctx->canAddDirToPath());
+  ctx->resetIfNeeded();
+  Tree* target = e;
+  if (!dir.applyContractOrExpand(&target, ctx->m_root)) {
+    LOG(3, "Nothing to ", dir.log());
+    return true;
+  }
+  uint32_t hash = CrcCollection::AdvancedHash(ctx->m_root);
+  /* If explored, do not go further. */
+  // Hugo: it's slower(why?) with this +1 but it's more correct right ?
+  if (!ctx->m_crcCollection.add(hash, ctx->m_path.length() + 1)) {
+    ctx->m_mustResetRoot = true;
+    if (!ctx->canAddDirToPath()) {
+      // Not able to add due to decreased maxDepth
+      return false;
+    }
+    LOG2(3, "Seen before ", dir.log(false), ": ", LogExpression(ctx->m_root));
+    return true;
+  }
+  /* Otherwise, recursively advanced reduce */
+  LOG2(2, "", dir.log(false), ": ", LogExpression(ctx->m_root));
+  INCR_INDENT(3);
+
+  assert(ctx->canAddDirToPath());
+  [[maybe_unused]] bool canAddDir = ctx->m_path.append(dir);
+  assert(canAddDir);
+
+  // Successfully applied C||E dir and result is unexplored: compute metric
+  UpdateBestMetric(ctx);
+
+  bool fullExploration = ReduceRec(target, ctx);
+  if (fullExploration) {
+    // No need to explore this again, even at smaller lengths.
+    ctx->m_crcCollection.add(hash, 0);
+  }
+  ctx->m_path.popWholeDirection();
+  ctx->m_mustResetRoot = true;
+  return fullExploration;
+}
+
 bool AdvancedReduction::ReduceCE(Tree* e, Context* ctx) {
   INCR_INDENT(2);
-  bool fullExploration = true;
-  for (uint8_t i = 1; i < Direction::k_numberOfBaseDirections; i++) {
-    assert(ctx->m_path.length() < ctx->m_crcCollection.maxDepth());
-    ResetRootIfNeeded(ctx);
-    // Hugo: maybe we should make the Direction constructer public ?
-    Direction dir = Direction::SingleDirectionForIndex(i);
-    Tree* target = e;
-    // Hugo: We could avoid doing this apply if we somehow know that the
-    // resulting path is outisde scope (length > maxDepth). But do we want to ?
-    if (!dir.applyContractOrExpand(&target, ctx->m_root)) {
-      LOG(3, "Nothing to ", dir.log());
-      continue;
-    }
-    // Hugo: If m_root is last on treestack we could avoid using treeSize in
-    // hash
-    uint32_t hash = CrcCollection::AdvancedHash(ctx->m_root);
-    /* If explored, do not go further. */
-    // Hugo: it's slower(why?) with this +1 but it's more correct right ?
-    if (!ctx->m_crcCollection.add(hash, ctx->m_path.length() + 1)) {
-      ctx->m_mustResetRoot = true;
-      if (!ctx->canAddDirToPath()) {
-        // Not able to add due to decreased maxDepth (probably?)
-        fullExploration = false;
-        break;
-      }
-      LOG2(3, "Seen before ", dir.log(false), ": ", LogExpression(ctx->m_root));
-      continue;
-    }
-    /* Otherwise, recursively advanced reduce */
-    LOG2(2, "", dir.log(false), ": ", LogExpression(ctx->m_root));
-    INCR_INDENT(3);
-
-    assert(ctx->m_path.length() < ctx->m_crcCollection.maxDepth());
-    [[maybe_unused]] bool canAddDir = ctx->m_path.append(dir);
-    assert(canAddDir);
-
-    // Successfully applied C||E dir and result is unexplored: compute metric
-    UpdateBestMetric(ctx);
-
-    if (ReduceRec(target, ctx)) {
-      // No need to explore this again, even at smaller lengths.
-      ctx->m_crcCollection.add(hash, 0);
-    } else {
-      fullExploration = false;
-    }
-    ctx->m_path.popWholeDirection();
-    ctx->m_mustResetRoot = true;
-    DECR_INDENT(3);
-    if (i == 1 && !ctx->canAddDirToPath()) {
-      LOG(1, "CRC ", ctx->m_crcCollection.log());
-      break;
-    }
+  bool fullExploration =
+      ReduceDir(e, ctx, Direction(Direction::k_contractType));
+  if (!ctx->canAddDirToPath()) {
+    LOG(1, "CRC ", ctx->m_crcCollection.log());
+    return false;
   }
+  fullExploration =
+      ReduceDir(e, ctx, Direction(Direction::k_expandType)) && fullExploration;
   DECR_INDENT(2);
   return fullExploration;
 }

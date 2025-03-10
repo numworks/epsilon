@@ -69,9 +69,7 @@ class AdvancedReduction {
   // Store a direction. NextNode can be applied multiple times.
   class Direction {
    public:
-    constexpr static uint8_t k_numberOfBaseDirections = 3;
-    // Return true if can apply direction.
-    bool canApplyNextNode(const Tree* e, const Tree* root) const;
+    Direction(uint8_t type) : m_type(type) {}
     // Return true if direction was applied.
     bool apply(Tree** e, Tree* root, bool* treeChanged) const;
     // Return true if direction was applied.
@@ -84,26 +82,19 @@ class AdvancedReduction {
 #if POINCARE_TREE_LOG
     void log(bool addLineReturn = true) const;
 #endif
-    // Returns one of the three base direction (NextNode, Contract and Expand).
-    static Direction SingleDirectionForIndex(int index) {
-      assert(index >= 0 && index < k_numberOfBaseDirections);
-      return Direction(index == 0
-                           ? k_baseNextNodeType
-                           : (index == 1 ? k_contractType : k_expandType));
-    }
     // If possible, combine the other direction into this one and return true.
     bool combine(Direction other);
     // If possible, decrement the weight of the direction and return true.
     bool decrement();
 
-   private:
     /* Contract and Expand use 0 and UINT8_MAX so that NextNode can be weighted
      * between 1 and UINT8_MAX-1. */
     constexpr static uint8_t k_contractType = 0;
     constexpr static uint8_t k_baseNextNodeType = 1;
     constexpr static uint8_t k_expandType = UINT8_MAX;
+    constexpr static uint8_t k_maxNextNodeAmount = k_expandType - 1;
 
-    Direction(uint8_t type) : m_type(type) {}
+   private:
     bool isContract() const { return m_type == k_contractType; }
     bool isExpand() const { return m_type == k_expandType; }
 
@@ -155,6 +146,8 @@ class AdvancedReduction {
     uint32_t m_bestHash;
     CrcCollection m_crcCollection;
     bool m_mustResetRoot;
+    /* Reset ctx->m_root to current [Path] if needed */
+    void resetIfNeeded();
     bool canAddDirToPath() const {
       return this->m_path.length() < this->m_crcCollection.maxDepth();
     }
@@ -170,10 +163,9 @@ class AdvancedReduction {
   /* Auxiliary method to [ReduceRec], handles Contract and Expand operations.
    * Return true if advanced reduction possibilities have all been explored. */
   static bool ReduceCE(Tree* e, Context* ctx);
+  static inline bool ReduceDir(Tree* e, Context* ctx, Direction dir);
   /* Compute the metric of ctx->m_root and update ctx accordingly */
   static void UpdateBestMetric(Context* ctx);
-  /* Reset ctx->m_root to current [Path] if needed */
-  static void ResetRootIfNeeded(Context* ctx);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.
   static bool UpwardSystematicReduce(Tree* root, const Tree* tree);
 

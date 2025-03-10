@@ -35,12 +35,15 @@ QUIZ_DISABLED_CASE(poincare_properties_is_rational_number) {
 
 QUIZ_DISABLED_CASE(poincare_properties_is_infinity) {
   Shared::GlobalContext context;
-  assert_expression_has_property("3.4+inf", &context, OExpression::IsPlusOrMinusInfinity);
+  assert_expression_has_property("3.4+inf", &context,
+                                 OExpression::IsPlusOrMinusInfinity);
   assert_expression_has_not_property("2.3+1", &context,
                                      OExpression::IsPlusOrMinusInfinity);
-  assert_expression_has_not_property("a", &context, OExpression::IsPlusOrMinusInfinity);
+  assert_expression_has_not_property("a", &context,
+                                     OExpression::IsPlusOrMinusInfinity);
   assert_reduce_and_store("42.3+inf→a");
-  assert_expression_has_property("a", &context, OExpression::IsPlusOrMinusInfinity);
+  assert_expression_has_property("a", &context,
+                                 OExpression::IsPlusOrMinusInfinity);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 }
 
@@ -52,7 +55,8 @@ QUIZ_DISABLED_CASE(poincare_properties_in_parametric) {
   assert_expression_has_property("diff(y^2+x^2,x,3)", &context,
                                  OExpression::IsSymbolic);
   assert_reduce_and_store("1+inf→x");
-  assert_expression_has_property("x", &context, OExpression::IsPlusOrMinusInfinity);
+  assert_expression_has_property("x", &context,
+                                 OExpression::IsPlusOrMinusInfinity);
   assert_expression_has_not_property("diff(x^2,x,3)", &context,
                                      OExpression::IsPlusOrMinusInfinity);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
@@ -70,98 +74,6 @@ void assert_reduced_expression_sign(
                                         SystemForApproximation));
   quiz_assert_print_if_failure(e.isPositive(&globalContext) == isPositive,
                                expression);
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_decimal_sign) {
-  quiz_assert(Decimal::Builder(-2, 3).isPositive() == OMG::Troolean::False);
-  quiz_assert(Decimal::Builder(-2, -3).isPositive() == OMG::Troolean::False);
-  quiz_assert(Decimal::Builder(2, -3).isPositive() == OMG::Troolean::True);
-  quiz_assert(Decimal::Builder(2, 3).isPositive() == OMG::Troolean::True);
-  quiz_assert(Decimal::Builder(0, 1).isPositive() == OMG::Troolean::True);
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_based_integer_sign) {
-  quiz_assert(BasedInteger::Builder(2, OMG::Base::Binary).isPositive() ==
-              OMG::Troolean::True);
-  quiz_assert(BasedInteger::Builder(2, OMG::Base::Decimal).isPositive() ==
-              OMG::Troolean::True);
-  quiz_assert(BasedInteger::Builder(2, OMG::Base::Hexadecimal).isPositive() ==
-              OMG::Troolean::True);
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_rational_sign) {
-  quiz_assert(Rational::Builder(-2).isPositive() == OMG::Troolean::False);
-  quiz_assert(Rational::Builder(-2, 3).isPositive() == OMG::Troolean::False);
-  quiz_assert(Rational::Builder(2, 3).isPositive() == OMG::Troolean::True);
-  quiz_assert(Rational::Builder(0, 3).isPositive() == OMG::Troolean::True);
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_expression_sign) {
-  Shared::GlobalContext context;
-  quiz_assert(
-      ArcCosine::Builder(Rational::Builder(-1, 7)).isPositive(&context) ==
-      OMG::Troolean::True);
-  quiz_assert(ArcCosine::Builder(Symbol::Builder('a')).isPositive(&context) ==
-              OMG::Troolean::Unknown);
-  quiz_assert(ArcSine::Builder(Rational::Builder(-1, 7)).isPositive(&context) ==
-              OMG::Troolean::False);
-  quiz_assert(
-      ArcTangent::Builder(Rational::Builder(1, 7)).isPositive(&context) ==
-      OMG::Troolean::True);
-  quiz_assert(Ceiling::Builder(Rational::Builder(7, 3)).isPositive(&context) ==
-              OMG::Troolean::Unknown);
-  quiz_assert(Floor::Builder(Rational::Builder(7, 3)).isPositive(&context) ==
-              OMG::Troolean::Unknown);
-  quiz_assert(Round::Builder(Rational::Builder(7, 3), Rational::Builder(1))
-                  .isPositive(&context) == OMG::Troolean::True);
-  quiz_assert(
-      Conjugate::Builder(ComplexCartesian::Builder(
-                             Rational::Builder(2, 3),
-                             BasedInteger::Builder(0, OMG::Base::Binary)))
-          .isPositive(&context) == OMG::Troolean::True);
-  quiz_assert(
-      DivisionRemainder::Builder(Decimal::Builder(2.0), Decimal::Builder(3.0))
-          .isPositive(&context) == OMG::Troolean::True);
-  quiz_assert(
-      AbsoluteValue::Builder(Rational::Builder(-14)).isPositive(&context) ==
-      OMG::Troolean::True);
-  quiz_assert(
-      FracPart::Builder(Rational::Builder(-7, 3)).isPositive(&context) ==
-      OMG::Troolean::True);
-  quiz_assert(GreatCommonDivisor::Builder(
-                  {Rational::Builder(-7), Rational::Builder(-7)})
-                  .isPositive(&context) == OMG::Troolean::True);
-  quiz_assert(LeastCommonMultiple::Builder(
-                  {Rational::Builder(-7), Rational::Builder(-7)})
-                  .isPositive(&context) == OMG::Troolean::True);
-  quiz_assert(Opposite::Builder(Rational::Builder(7)).isPositive(&context) ==
-              OMG::Troolean::False);
-  quiz_assert(
-      Parenthesis::Builder(Rational::Builder(-7)).isPositive(&context) ==
-      OMG::Troolean::False);
-  quiz_assert(
-      PermuteCoefficient::Builder(Rational::Builder(7), Rational::Builder(8))
-          .isPositive(&context) == OMG::Troolean::True);
-  quiz_assert(RealPart::Builder(Rational::Builder(-7)).isPositive(&context) ==
-              OMG::Troolean::False);
-  quiz_assert(
-      SignFunction::Builder(Rational::Builder(-7)).isPositive(&context) ==
-      OMG::Troolean::False);
-  quiz_assert(OUnit::Builder(OUnit::k_powerRepresentatives,
-                             OUnit::Prefix::EmptyPrefix())
-                  .isPositive(&context) == OMG::Troolean::True);
-  quiz_assert(
-      VectorNorm::Builder(BasedInteger::Builder(1)).isPositive(&context) ==
-      OMG::Troolean::True);
-  quiz_assert(Division::Builder(Rational::Builder(7, 3), Rational::Builder(-1))
-                  .isPositive(&context) == OMG::Troolean::False);
-  quiz_assert(
-      DivisionQuotient::Builder(Rational::Builder(-7), Rational::Builder(-1))
-          .isPositive(&context) == OMG::Troolean::True);
-  quiz_assert(
-      ArcSine::Builder(ArcTangent::Builder(Opposite::Builder(RealPart::Builder(
-                           ArcCosine::Builder(Constant::PiBuilder())))))
-          .isPositive(&context) == OMG::Troolean::False);
 }
 
 constexpr OMG::Troolean Positive = OMG::Troolean::True;
@@ -552,8 +464,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
     Preferences::ComplexFormat complexFormat = Cartesian,
     Preferences::AngleUnit angleUnit = Radian,
     Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    SymbolicComputation symbolicComputation =
-        ReplaceDefinedSymbols) {
+    SymbolicComputation symbolicComputation = ReplaceDefinedSymbols) {
   Shared::GlobalContext globalContext;
   OExpression e = parse_expression(expression, &globalContext);
   e = e.cloneAndReduce(
@@ -611,8 +522,7 @@ QUIZ_DISABLED_CASE(poincare_properties_get_polynomial_coefficients) {
                                                        coefficient7);
   const char* coefficient8[] = {"2", "1", 0};
   assert_reduced_expression_has_polynomial_coefficient(
-      "x+2", "x", coefficient8, Real, Radian, MetricUnitFormat,
-      KeepAllSymbols);
+      "x+2", "x", coefficient8, Real, Radian, MetricUnitFormat, KeepAllSymbols);
   assert_reduced_expression_has_polynomial_coefficient(
       "x+2", "x", coefficient8, Real, Radian, MetricUnitFormat,
       ReplaceDefinedFunctions);

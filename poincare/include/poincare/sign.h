@@ -87,6 +87,11 @@ class Sign {
            : isNull()   ? OMG::Troolean::True
                         : OMG::Troolean::Unknown;
   }
+  constexpr OMG::Troolean trooleanIsPositive() const {
+    return isPositive()           ? OMG::Troolean::True
+           : isStrictlyNegative() ? OMG::Troolean::False
+                                  : OMG::Troolean::Unknown;
+  }
   constexpr OMG::Troolean trooleanIsStrictlyPositive() const {
     return !canBeStrictlyPositive() ? OMG::Troolean::False
            : isStrictlyPositive()   ? OMG::Troolean::True
@@ -168,6 +173,12 @@ class Sign {
   }
   constexpr static Sign FiniteInteger() {
     return Sign(true, true, true, false, false);
+  }
+  constexpr static Sign FinitePositiveInteger() {
+    return Sign(true, true, false, false, false);
+  }
+  constexpr static Sign FiniteNegativeInteger() {
+    return Sign(true, false, true, false, false);
   }
   constexpr static Sign FiniteStrictlyPositiveInteger() {
     return Sign(false, true, false, false, false);

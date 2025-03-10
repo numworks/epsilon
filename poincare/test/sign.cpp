@@ -406,12 +406,22 @@ QUIZ_CASE(pcj_sign) {
               ComplexSign(Sign::Finite(), Sign::FiniteInteger()));
   assert_sign("1+floor(x)*(1+i)",
               ComplexSign(Sign::FiniteInteger(), Sign::FiniteInteger()));
+
+  // euclidean division
+  assert_sign("quo(5, 2)", Sign::FinitePositiveInteger());
+  assert_sign("rem(5, 2)", Sign::FinitePositiveInteger());
+  assert_sign("quo(5, -2)", Sign::FiniteNegativeInteger());
+  assert_sign("rem(5, -2)", Sign::FinitePositiveInteger());
+  assert_sign("quo(-5, -2)", Sign::FinitePositiveInteger());
+  assert_sign("rem(-5, -2)", Sign::FinitePositiveInteger());
+  assert_sign("quo(-5, 2)", Sign::FiniteNegativeInteger());
+  assert_sign("rem(-5, 2)", Sign::FinitePositiveInteger());
 }
 
-void assert_projected_is_null(const char* input, ProjectionContext* context,
-                              OMG::Troolean isNull) {
-  Tree* e = parse(input, context->m_context);
-  Simplification::ToSystem(e, context);
+void assert_projected_is_null(const char* input, OMG::Troolean isNull) {
+  ProjectionContext context;
+  Tree* e = parse(input, context.m_context);
+  Simplification::ToSystem(e, &context);
   ComplexSign sign = GetComplexSign(e);
   quiz_assert_print_if_failure(
       OMG::TrooleanAnd(sign.imagSign().trooleanIsNull(),
@@ -420,40 +430,92 @@ void assert_projected_is_null(const char* input, ProjectionContext* context,
 }
 
 QUIZ_CASE(pcj_sign_is_zero) {
+  assert_projected_is_null("2", OMG::Troolean::False);
+  assert_projected_is_null("0b10", OMG::Troolean::False);
+  assert_projected_is_null("0x2", OMG::Troolean::False);
+  assert_projected_is_null("0", OMG::Troolean::True);
+  assert_projected_is_null("0b0", OMG::Troolean::True);
+  assert_projected_is_null("0x0", OMG::Troolean::True);
+  assert_projected_is_null("2.3", OMG::Troolean::False);
+  assert_projected_is_null("0.0", OMG::Troolean::True);
+  assert_projected_is_null("π", OMG::Troolean::False);
+  assert_projected_is_null("inf", OMG::Troolean::False);
+  assert_projected_is_null("undef", OMG::Troolean::Unknown);
+  assert_projected_is_null("2/3", OMG::Troolean::False);
+  assert_projected_is_null("0/1", OMG::Troolean::True);
+  assert_projected_is_null("a", OMG::Troolean::Unknown);
+  assert_projected_is_null("1*0", OMG::Troolean::True);
+  assert_projected_is_null("1-1", OMG::Troolean::Unknown);
+  assert_projected_is_null("abs(0)", OMG::Troolean::True);
+  assert_projected_is_null("arcsin(1/7)", OMG::Troolean::False);
+  assert_projected_is_null("0+3/2*i", OMG::Troolean::False);
+  assert_projected_is_null("0+0i", OMG::Troolean::True);
+  assert_projected_is_null("2/3+3/2*i", OMG::Troolean::False);
+  assert_projected_is_null("factor(0)", OMG::Troolean::True);
+  assert_projected_is_null("0!", OMG::Troolean::False);
+  assert_projected_is_null("im(14)", OMG::Troolean::True);
+  assert_projected_is_null("re(0)", OMG::Troolean::True);
+  assert_projected_is_null("(-7)", OMG::Troolean::False);
+  assert_projected_is_null("sign(0)", OMG::Troolean::True);
+  // TODO: Should be false
+  assert_projected_is_null("_W", OMG::Troolean::Unknown);
+  assert_projected_is_null("0/(3/7)", OMG::Troolean::True);
+  // TODO: Should be false
+  assert_projected_is_null("sqrt(2/5)", OMG::Troolean::Unknown);
+  assert_projected_is_null("0+1%", OMG::Troolean::True);
+  assert_projected_is_null("1+1%", OMG::Troolean::False);
+  assert_projected_is_null("1-1%", OMG::Troolean::Unknown);
+}
+
+void assert_projected_is_positive(const char* input, OMG::Troolean isPositive) {
   ProjectionContext context;
-  assert_projected_is_null("2", &context, OMG::Troolean::False);
-  assert_projected_is_null("0b10", &context, OMG::Troolean::False);
-  assert_projected_is_null("0x2", &context, OMG::Troolean::False);
-  assert_projected_is_null("0", &context, OMG::Troolean::True);
-  assert_projected_is_null("0b0", &context, OMG::Troolean::True);
-  assert_projected_is_null("0x0", &context, OMG::Troolean::True);
-  assert_projected_is_null("2.3", &context, OMG::Troolean::False);
-  assert_projected_is_null("0.0", &context, OMG::Troolean::True);
-  assert_projected_is_null("π", &context, OMG::Troolean::False);
-  assert_projected_is_null("inf", &context, OMG::Troolean::False);
-  assert_projected_is_null("undef", &context, OMG::Troolean::Unknown);
-  assert_projected_is_null("2/3", &context, OMG::Troolean::False);
-  assert_projected_is_null("0/1", &context, OMG::Troolean::True);
-  assert_projected_is_null("a", &context, OMG::Troolean::Unknown);
-  assert_projected_is_null("1*0", &context, OMG::Troolean::True);
-  assert_projected_is_null("1-1", &context, OMG::Troolean::Unknown);
-  assert_projected_is_null("abs(0)", &context, OMG::Troolean::True);
-  assert_projected_is_null("arcsin(1/7)", &context, OMG::Troolean::False);
-  assert_projected_is_null("0+3/2*i", &context, OMG::Troolean::False);
-  assert_projected_is_null("0+0i", &context, OMG::Troolean::True);
-  assert_projected_is_null("2/3+3/2*i", &context, OMG::Troolean::False);
-  assert_projected_is_null("factor(0)", &context, OMG::Troolean::True);
-  assert_projected_is_null("0!", &context, OMG::Troolean::False);
-  assert_projected_is_null("im(14)", &context, OMG::Troolean::True);
-  assert_projected_is_null("re(0)", &context, OMG::Troolean::True);
-  assert_projected_is_null("(-7)", &context, OMG::Troolean::False);
-  assert_projected_is_null("sign(0)", &context, OMG::Troolean::True);
+  Tree* e = parse(input, context.m_context);
+  Simplification::ToSystem(e, &context);
+  ComplexSign sign = GetComplexSign(e);
+  quiz_assert_print_if_failure(
+      OMG::TrooleanAnd(sign.imagSign().trooleanIsNull(),
+                       sign.realSign().trooleanIsPositive()) == isPositive,
+      input);
+}
+
+QUIZ_CASE(pcj_sign_is_positive) {
+  assert_projected_is_positive("-0.002", OMG::Troolean::False);
+  assert_projected_is_positive("-2000", OMG::Troolean::False);
+  assert_projected_is_positive("0.002", OMG::Troolean::True);
+  assert_projected_is_positive("2000", OMG::Troolean::True);
+  assert_projected_is_positive("0", OMG::Troolean::True);
+  assert_projected_is_positive("2", OMG::Troolean::True);
+  assert_projected_is_positive("0b10", OMG::Troolean::True);
+  assert_projected_is_positive("0x2", OMG::Troolean::True);
+  assert_projected_is_positive("-2/3", OMG::Troolean::False);
+  assert_projected_is_positive("2/3", OMG::Troolean::True);
+  assert_projected_is_positive("0/3", OMG::Troolean::True);
+  // TODO: Should be true
+  assert_projected_is_positive("arccos(-1/7)", OMG::Troolean::Unknown);
+  assert_projected_is_positive("arccos(a)", OMG::Troolean::Unknown);
+  assert_projected_is_positive("arcsin(-1/7)", OMG::Troolean::False);
+  assert_projected_is_positive("arctan(1/7)", OMG::Troolean::True);
+  assert_projected_is_positive("ceil(7/3)", OMG::Troolean::True);
+  assert_projected_is_positive("floor(7/3)", OMG::Troolean::True);
+  assert_projected_is_positive("round(7/3,1)", OMG::Troolean::True);
+  assert_projected_is_positive("conj(2/3+0*i)", OMG::Troolean::True);
+  assert_projected_is_positive("rem(2.0,3.0)", OMG::Troolean::True);
+  assert_projected_is_positive("abs(-14)", OMG::Troolean::True);
+  // TODO: Should be true
+  assert_projected_is_positive("frac(-7/3)", OMG::Troolean::Unknown);
+  assert_projected_is_positive("gcd(-7,-7)", OMG::Troolean::True);
+  assert_projected_is_positive("lcm(-7,-7)", OMG::Troolean::True);
+  assert_projected_is_positive("-7", OMG::Troolean::False);
+  assert_projected_is_positive("(-7)", OMG::Troolean::False);
+  assert_projected_is_positive("permute(7,8)", OMG::Troolean::True);
+  assert_projected_is_positive("re(-7)", OMG::Troolean::False);
+  assert_projected_is_positive("sign(-7)", OMG::Troolean::False);
+  assert_projected_is_positive("_W", OMG::Troolean::True);
+  assert_projected_is_positive("norm([[1]])", OMG::Troolean::True);
   // TODO: Should be false
-  assert_projected_is_null("_W", &context, OMG::Troolean::Unknown);
-  assert_projected_is_null("0/(3/7)", &context, OMG::Troolean::True);
-  // TODO: Should be false
-  assert_projected_is_null("sqrt(2/5)", &context, OMG::Troolean::Unknown);
-  assert_projected_is_null("0+1%", &context, OMG::Troolean::True);
-  assert_projected_is_null("1+1%", &context, OMG::Troolean::False);
-  assert_projected_is_null("1-1%", &context, OMG::Troolean::Unknown);
+  assert_projected_is_positive("(7/3)/(-1)", OMG::Troolean::Unknown);
+  assert_projected_is_positive("quo(-7,-1)", OMG::Troolean::True);
+  // TODO: Should be true
+  assert_projected_is_positive("arcsin(arctan(-re(arccos(π))))",
+                               OMG::Troolean::Unknown);
 }

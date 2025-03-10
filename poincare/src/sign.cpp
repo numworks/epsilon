@@ -297,6 +297,25 @@ ComplexSign PercentAddition(ComplexSign s1, ComplexSign s2) {
   return Add(s1, Mult(s1, s2));
 }
 
+ComplexSign Quotient(ComplexSign s1, ComplexSign s2) {
+  // a = q*b + r with 0 ≤ r < |b| and a, b, q, r integers and b ≠ 0
+  if (!s1.isReal() || !s2.isReal() || !s1.realSign().isInteger() ||
+      !s2.realSign().isInteger() || s2.realSign().canBeNull()) {
+    return ComplexSign::Unknown();
+  }
+  /* If a and b have the same sign, q is positive.
+   * If a and b have opposite signs, q is negative. */
+  if ((s1.realSign().isPositive() && s2.realSign().isPositive()) ||
+      (s1.realSign().isNegative() && s2.realSign().isNegative())) {
+    return ComplexSign(Sign::FinitePositiveInteger(), Sign::Zero());
+  }
+  if ((s1.realSign().isPositive() && s2.realSign().isNegative()) ||
+      (s1.realSign().isNegative() && s2.realSign().isPositive())) {
+    return ComplexSign(Sign::FiniteNegativeInteger(), Sign::Zero());
+  }
+  return ComplexSign(Sign::FiniteInteger(), Sign::Zero());
+}
+
 namespace Internal {
 
 // Note: A complex function plotter can be used to fill in these methods.
@@ -383,6 +402,13 @@ ComplexSign GetComplexSign(const Tree* e) {
       return TypeSign(GetComplexSign(e->child(0)));
     case Type::Factor:
       return GetComplexSign(e->child(0));
+    case Type::GCD:
+    case Type::LCM:
+    case Type::Permute:
+    case Type::Rem:
+      return ComplexSign(Sign::FinitePositiveInteger(), Sign::Zero());
+    case Type::Quo:
+      return Quotient(GetComplexSign(e->child(0)), GetComplexSign(e->child(1)));
     case Type::PercentAddition:
       return PercentAddition(GetComplexSign(e->child(0)),
                              GetComplexSign(e->child(1)));

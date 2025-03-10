@@ -33,96 +33,6 @@ QUIZ_DISABLED_CASE(poincare_properties_is_rational_number) {
                    .isAlternativeFormOfRationalNumber());
 }
 
-void assert_expression_has_property_or_not(const char* expression,
-                                           Context* context,
-                                           OExpression::ExpressionTest test,
-                                           bool hasProperty) {
-  OExpression e = parse_expression(expression, context);
-  quiz_assert_print_if_failure(
-      e.recursivelyMatches(test, context) == hasProperty, expression);
-}
-
-void assert_expression_has_property_or_not(
-    const char* expression, Context* context,
-    OExpression::SimpleExpressionTest test, bool hasProperty) {
-  OExpression e = parse_expression(expression, context);
-  quiz_assert_print_if_failure(
-      e.recursivelyMatches(test, context) == hasProperty, expression);
-}
-
-void assert_expression_has_property(const char* expression, Context* context,
-                                    OExpression::ExpressionTest test) {
-  assert_expression_has_property_or_not(expression, context, test, true);
-}
-
-void assert_expression_has_property(const char* expression, Context* context,
-                                    OExpression::SimpleExpressionTest test) {
-  assert_expression_has_property_or_not(expression, context, test, true);
-}
-
-void assert_expression_has_not_property(const char* expression,
-                                        Context* context,
-                                        OExpression::ExpressionTest test) {
-  assert_expression_has_property_or_not(expression, context, test, false);
-}
-
-void assert_expression_has_not_property(
-    const char* expression, Context* context,
-    OExpression::SimpleExpressionTest test) {
-  assert_expression_has_property_or_not(expression, context, test, false);
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_is_approximate) {
-  Shared::GlobalContext context;
-  assert_expression_has_property("3.4", &context, OExpression::IsApproximate);
-  assert_expression_has_property("2.3+1", &context, OExpression::IsApproximate);
-  assert_expression_has_not_property("a", &context, OExpression::IsApproximate);
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_is_matrix) {
-  Shared::GlobalContext context;
-  assert_expression_has_property("[[1,2][3,4]]", &context,
-                                 OExpression::IsMatrix);
-  assert_expression_has_property("dim([[1,2][3,4]])/3", &context,
-                                 OExpression::IsMatrix);
-  assert_expression_has_property("[[1,2][3,4]]^(-1)", &context,
-                                 OExpression::IsMatrix);
-  assert_expression_has_property("inverse([[1,2][3,4]])", &context,
-                                 OExpression::IsMatrix);
-  assert_expression_has_property("3*identity(4)", &context,
-                                 OExpression::IsMatrix);
-  assert_expression_has_property("transpose([[1,2][3,4]])", &context,
-                                 OExpression::IsMatrix);
-  assert_expression_has_property("ref([[1,2][3,4]])", &context,
-                                 OExpression::IsMatrix);
-  assert_expression_has_property("rref([[1,2][3,4]])", &context,
-                                 OExpression::IsMatrix);
-  assert_expression_has_property("cross([[1][2][3]],[[3][4][5]])", &context,
-                                 OExpression::IsMatrix);
-  assert_expression_has_not_property("2*3+1", &context, OExpression::IsMatrix);
-}
-
-void assert_expression_is_deep_matrix(const char* expression) {
-  Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context);
-  quiz_assert_print_if_failure(e.deepIsMatrix(&context), expression);
-}
-
-void assert_expression_is_not_deep_matrix(const char* expression) {
-  Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context);
-  quiz_assert_print_if_failure(!e.deepIsMatrix(&context), expression);
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_deep_is_matrix) {
-  assert_expression_is_not_deep_matrix("diff([[1,2][3,4]],x,2)");
-  assert_expression_is_not_deep_matrix("sign([[1,2][3,4]])");
-  assert_expression_is_not_deep_matrix("trace([[1,2][3,4]])");
-  assert_expression_is_not_deep_matrix("det([[1,2][3,4]])");
-  assert_expression_is_not_deep_matrix("3");
-  assert_expression_is_deep_matrix("2*dim(2)");
-}
-
 QUIZ_DISABLED_CASE(poincare_properties_is_infinity) {
   Shared::GlobalContext context;
   assert_expression_has_property("3.4+inf", &context, OExpression::IsPlusOrMinusInfinity);
@@ -974,6 +884,63 @@ QUIZ_CASE(poincare_properties_is_parametered_expression) {
   assert_is_parametered_expression("sequence(x,x,10)");
   assert_is_parametered_expression("a", false);
   assert_is_parametered_expression("2/3", false);
+}
+
+template <typename T>
+void assert_expression_has_property_or_not(const char* expression, T test,
+                                           bool hasProperty) {
+  Shared::GlobalContext context;
+  UserExpression e = UserExpression::Builder(parse(expression, &context));
+  quiz_assert_print_if_failure(
+      e.recursivelyMatches(test, &context) == hasProperty, expression);
+}
+
+template <typename T>
+void assert_expression_has_property(const char* input, T test) {
+  assert_expression_has_property_or_not<T>(input, test, true);
+}
+
+template <typename T>
+void assert_expression_has_not_property(const char* input, T test) {
+  assert_expression_has_property_or_not<T>(input, test, false);
+}
+
+QUIZ_CASE(poincare_properties_has_approximate) {
+  assert_expression_has_property("3.4", &NewExpression::isApproximate);
+  assert_expression_has_property("2.3+1", &NewExpression::isApproximate);
+  assert_expression_has_property("0.1f", &NewExpression::isApproximate);
+  assert_expression_has_not_property("a", &NewExpression::isApproximate);
+}
+
+QUIZ_CASE(poincare_properties_has_matrix) {
+  assert_expression_has_property("[[1,2][3,4]]",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("dim([[1,2][3,4]])/3",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("[[1,2][3,4]]^(-1)",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("inverse([[1,2][3,4]])",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("3*identity(4)",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("transpose([[1,2][3,4]])",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("ref([[1,2][3,4]])",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("rref([[1,2][3,4]])",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("cross([[1][2][3]],[[3][4][5]])",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("diff([[1,2][3,4]],x,2)",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("sign([[1,2][3,4]])",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("trace([[1,2][3,4]])",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_property("det([[1,2][3,4]])",
+                                 &NewExpression::isOfMatrixDimension);
+  assert_expression_has_not_property("2*3+1",
+                                     &NewExpression::isOfMatrixDimension);
 }
 
 void assert_is_list_of_points(const char* definition, Context* context,

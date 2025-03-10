@@ -382,6 +382,8 @@ class Expression : public PoolHandle {
   bool isStore() const;
   bool isFactor() const;
   bool isPoint() const;
+  bool isMatrix() const;
+  bool isOfMatrixDimension() const;
   bool isNonReal() const;
   bool isOpposite() const;
   bool isDiv() const;
@@ -398,15 +400,9 @@ class Expression : public PoolHandle {
   bool hasRandomList() const;
 
   // More complex bool properties
-  bool isMatrix(Context* context = nullptr) const;
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
                bool replaceSymbols = false, Context* ctx = nullptr) const;
   bool isInRadians(Context* context) const;
-
-  // This function can be used with recursivelyMatches
-  static bool IsMatrix(const NewExpression e, Context* context = nullptr) {
-    return e.isMatrix(context);
-  }
 
   ComparisonJunior::Operator comparisonOperator() const;
 

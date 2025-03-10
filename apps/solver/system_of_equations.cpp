@@ -380,7 +380,7 @@ SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
     if (simplifiedEquations[i].isUninitialized() ||
         simplifiedEquations[i].isUndefined() ||
         simplifiedEquations[i].recursivelyMatches(
-            NewExpression::IsMatrix, context,
+            &NewExpression::isMatrix, context,
             m_overrideUserVariables
                 ? SymbolicComputation::ReplaceDefinedFunctions
                 : SymbolicComputation::

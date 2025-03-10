@@ -986,13 +986,10 @@ bool NewExpression::isUndefinedOrNonReal() const {
   return tree()->isUndefined();
 }
 
-bool NewExpression::isMatrix(Context* context) const {
-  if (context) {
-    // TODO_PCJ: implement isMatrix check with a context
-    assert(false);
-    return false;
-  }
-  return tree()->isMatrix();
+bool NewExpression::isMatrix() const { return tree()->isMatrix(); }
+
+bool NewExpression::isOfMatrixDimension() const {
+  return dimension().isMatrix();
 }
 
 bool NewExpression::isNAry() const { return tree()->isNAry(); }

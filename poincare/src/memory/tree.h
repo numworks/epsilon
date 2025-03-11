@@ -36,6 +36,7 @@ class Tree : public TypeBlock {
   static uint32_t nextNodeCount;
   static uint32_t nextNodeInTreeStackCount;
 #endif
+  static void Init();
 
   // Prevent using Tree objects directly
   Tree() = delete;
@@ -90,6 +91,7 @@ class Tree : public TypeBlock {
     return setNodeValue(index, static_cast<uint8_t>(value));
   }
   void setNodeValue(uint8_t index, uint8_t value) {
+    ResetCache(this);
     assert(index + 1 < static_cast<uint8_t>(nodeSize()));
     m_valueBlocks[index] = value;
   }
@@ -102,20 +104,14 @@ class Tree : public TypeBlock {
   constexpr Block* block() { return this; }
   void copyTreeTo(void* address) const;
 
+  static void ResetCache(const void* after = nullptr);
+
   // Tree Navigation
   const Tree* nextNode() const;
   Tree* nextNode() {
     return const_cast<Tree*>(const_cast<const Tree*>(this)->nextNode());
   }
-  const Tree* nextTree() const {
-    const Tree* result = this;
-    int nbOfChildrenToScan = 1;
-    while (nbOfChildrenToScan > 0) {
-      nbOfChildrenToScan += result->numberOfChildren() - 1;
-      result = result->nextNode();
-    }
-    return result;
-  }
+  const Tree* nextTree() const;
   Tree* nextTree() {
     return const_cast<Tree*>(const_cast<const Tree*>(this)->nextTree());
   }

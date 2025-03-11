@@ -1,6 +1,7 @@
 #include "tree.h"
 
 #include <ion.h>
+#include <omg/global_box.h>
 
 #include "tree_ref.h"
 
@@ -230,6 +231,97 @@ bool Tree::nodeIsIdenticalTo(const Tree* other) const {
   size_t size = nodeSize();
   return size == other->nodeSize() && memcmp(this, other, size) == 0;
 }
+
+const Tree* nextTreeCacheless(const Tree* result) {
+  int nbOfChildrenToScan = 1;
+  while (nbOfChildrenToScan > 0) {
+    nbOfChildrenToScan += result->numberOfChildren() - 1;
+    result = result->nextNode();
+  }
+  return result;
+}
+
+struct CacheEntry {
+  const Tree* key;
+  const Tree* value;
+};
+
+constexpr static size_t k_cacheSize = 20;
+struct Cache {
+ public:
+  Cache(size_t size) : actualSize(size) {};
+
+  bool FindInCache(const Tree* key, const Tree** result) {
+    for (size_t i = 0; i < cacheLength; ++i) {
+      if (data[i].key == key) {
+        assert(data[i].value == nextTreeCacheless(key));
+        *result = data[i].value;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  void UpdateCache(const Tree* key, const Tree* value) {
+    data[cacheIndex].value = value;
+    data[cacheIndex].key = key;
+    ++cacheIndex %= actualSize;
+    if (cacheLength < actualSize) {
+      ++cacheLength;
+    }
+  }
+
+  void ResetCache() {
+    cacheLength = 0;
+    cacheIndex = 0;
+  }
+
+ public:
+  size_t cacheLength;
+  const size_t actualSize;
+  CacheEntry data[k_cacheSize];
+  size_t cacheIndex;
+};
+
+OMG::GlobalBox<Cache> TreeStackCache;
+OMG::GlobalBox<Cache> FlashCache;
+
+void Tree::Init() {
+  TreeStackCache.init(20);
+  FlashCache.init(5);
+}
+
+void Tree::ResetCache(const void* after) { TreeStackCache->ResetCache(); }
+
+const Tree* Tree::nextTree() const {
+  if (Ion::ReadOnlyMemory::IncludesAddress(this)) {
+    const Tree* result;
+    if (!FlashCache->FindInCache(this, &result)) {
+      result = nextTreeCacheless(this);
+      FlashCache->UpdateCache(this, result);
+    }
+    return result;
+  } else if (SharedTreeStack->firstBlock() <= this &&
+             this < SharedTreeStack->lastBlock()) {
+    const Tree* result;
+    if (!TreeStackCache->FindInCache(this, &result)) {
+      result = nextTreeCacheless(this);
+      TreeStackCache->UpdateCache(this, result);
+    }
+    return result;
+  }
+  return nextTreeCacheless(this);
+}
+
+#if POINCARE_TREE_LOG
+template <size_t t>
+void LogC(Cache* c) {
+  std::cout << "Cache has " << c->cacheLength << " elements\n";
+  for (int i = 0; i < c->cacheLength; ++i) {
+    std::cout << c->data[i].key << " => " << c->data[i].value << std::endl;
+  }
+}
+#endif
 
 const Tree* Tree::nextNode() const {
 #if ASSERTIONS

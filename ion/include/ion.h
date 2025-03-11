@@ -17,6 +17,7 @@
 #include <ion/keyboard.h>
 #include <ion/led.h>
 #include <ion/power.h>
+#include <ion/read_only_memory.h>
 #include <ion/reset.h>
 #include <ion/storage/file_system.h>
 #include <ion/timing.h>

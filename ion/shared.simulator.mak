@@ -46,6 +46,7 @@ $(addprefix simulator/shared/, \
   random.cpp \
   timing.cpp \
   window.cpp \
+  dummy/read_only_memory.cpp \
 ) \
 )
 

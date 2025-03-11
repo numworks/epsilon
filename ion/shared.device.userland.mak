@@ -51,6 +51,7 @@ $(addprefix device/shared/drivers/, \
   board_unprivileged.cpp \
   console_display.cpp:+consoledisplay \
   flash_information.cpp \
+  read_only_memory.cpp \
   trampoline.cpp \
   usb_unprivileged.cpp \
 ) \

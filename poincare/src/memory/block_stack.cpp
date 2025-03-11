@@ -47,6 +47,7 @@ void BlockStack::replaceBlock(Block* previousBlock, Block newBlock, bool at) {
 
 void BlockStack::replaceBlocks(Block* destination, const Block* source,
                                size_t numberOfBlocks, bool at) {
+  Tree::ResetCache(destination);
   memmove(destination, source, numberOfBlocks * sizeof(Block));
   m_referenceTable.updateNodes(
       [](uint16_t* offset, Block* block, const Block* destination,
@@ -64,6 +65,7 @@ bool BlockStack::insertBlocks(Block* destination, const Block* source,
   if (numberOfBlocks == 0) {
     return true;
   }
+  Tree::ResetCache(destination);
   if (m_size + numberOfBlocks > maxNumberOfBlocks()) {
     TreeStackCheckpoint::Raise(ExceptionType::TreeStackOverflow);
   }
@@ -94,6 +96,7 @@ bool BlockStack::insertBlocks(Block* destination, const Block* source,
 }
 
 void BlockStack::removeBlocks(Block* address, size_t numberOfBlocks, bool at) {
+  Tree::ResetCache(address);
   // If this assert triggers, add an escape case
   assert(numberOfBlocks != 0);
   int deletionSize = numberOfBlocks * sizeof(Block);
@@ -132,6 +135,7 @@ void BlockStack::moveBlocks(Block* destination, Block* source,
   if (destination == source || numberOfBlocks == 0) {
     return;
   }
+  Tree::ResetCache(destination < source ? destination : source);
   uint8_t* src = reinterpret_cast<uint8_t*>(source);
   uint8_t* dst = reinterpret_cast<uint8_t*>(destination);
   size_t len = numberOfBlocks * sizeof(Block);
@@ -166,6 +170,7 @@ void BlockStack::moveBlocks(Block* destination, Block* source,
 }
 
 void BlockStack::flush() {
+  Tree::ResetCache();
   m_size = 0;
   m_referenceTable.reset();
 #if POINCARE_TREE_STACK_VISUALIZATION
@@ -180,6 +185,7 @@ void BlockStack::flushFromBlock(const Block* block) {
    * catch. This condition was removed and it is the responsability of the catch
    * to leave the stack in a state similar to what would have happened with no
    * raise. */
+  Tree::ResetCache(block);
   m_size = block - m_blocks;
   m_referenceTable.invalidateIdentifiersAfterBlock(block);
 #if POINCARE_TREE_STACK_VISUALIZATION

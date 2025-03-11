@@ -13,6 +13,7 @@ void Init() {
   Preferences::Init();
   Pool::sharedPool.init();
   Internal::SharedTreeStack.init();
+  Internal::Tree::Init();
 }
 
 void Shutdown() {

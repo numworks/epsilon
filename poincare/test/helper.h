@@ -114,6 +114,9 @@ inline void assertionsWarn() {
               << Poincare::Internal::Tree::nextNodeCount                  \
               << "\n  nextNodeInTreeStack:" << std::right << std::setw(6) \
               << Poincare::Internal::Tree::nextNodeInTreeStackCount       \
+              << "\n  nextNodeOutOfStack:" << std::right << std::setw(6)  \
+              << Poincare::Internal::Tree::nextNodeCount -                \
+                     Poincare::Internal::Tree::nextNodeInTreeStackCount   \
               << "\n  microseconds:  " << std::right << std::setw(6)      \
               << std::chrono::duration_cast<std::chrono::microseconds>(   \
                      elapsed)                                             \

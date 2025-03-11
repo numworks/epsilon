@@ -85,9 +85,14 @@ $(call strip_directory,$(ALL_SPECIAL_SUBDIRECTORIES),$(call strip_directory,$(AR
 endef
 
 # rule_label, <label>
+ifeq ($(VERBOSE), 0)
+define rule_label
+endef
+else
 define rule_label
 @ echo "$(shell printf "%-8s" $(strip $(1)))$(@:$(OUTPUT_DIRECTORY)/%=%)"
 endef
+endif
 
 # All generated_headers should depend on this target to make sure they
 # are build before any object file

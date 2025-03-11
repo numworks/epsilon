@@ -72,8 +72,8 @@ OUTPUT_DIRECTORY ?= $(OUTPUT_ROOT)/$(_build_type)/$(PLATFORM)
 
 TOOLS_DIRECTORY ?= $(OUTPUT_ROOT)/tools
 
-VERBOSE ?= 0
-ifeq ($(VERBOSE),0)
+VERBOSE ?= 1
+ifneq ($(VERBOSE),2)
 .SILENT:
 endif
 

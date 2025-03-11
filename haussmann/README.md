@@ -16,7 +16,7 @@ Build is controlled by variables that can be supplied on the command line:
 - `ASSERTIONS`: optional, defaults to `DEBUG`. 0 or 1 otherwise.
 - `PLATFORM`: one of the supported platforms (e.g. `n0110`, `macos`...). The special values `simulator` and `host` will cause PLATFORM to become the name of the host environment.
 - `ARCHS`: optional, platform-specific. A list of architectures to build for.
-- `VERBOSE`: set to 1 to print the commands as they are exectuted
+- `VERBOSE`: 0 makes the build completely silent, 1 shows building target, 2 prints the commands as they are exectuted. (defaults to 1)
 
 By default, files will be built in a customizable output directory, with sub-directories depending on build parameters.
 - First sub-directory depends on the `DEBUG` and `ASSERTIONS` variables:

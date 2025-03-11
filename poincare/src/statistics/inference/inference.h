@@ -13,12 +13,9 @@ namespace Poincare::Internal {
 
 namespace Inference {
 
-enum class Method : bool {
-  SignificanceTest,
-  ConfidenceInterval,
-};
+// ===== Test types =====
 
-constexpr int k_numberOfTestTYpes = 6;
+constexpr int k_numberOfTestTypes = 6;
 enum class TestType : uint8_t {
   // Order matter for cells order
   OneProportion,
@@ -29,11 +26,6 @@ enum class TestType : uint8_t {
   Slope,
 };
 
-constexpr bool IsMethodCompatibleWithTest(Method method, TestType testType) {
-  return testType != TestType::Chi2 || method != Method::ConfidenceInterval;
-}
-int NumberOfTestsForMethod(Method method);
-
 enum class StatisticType : uint8_t { T, TPooled, Z, Chi2 };
 
 enum class CategoricalType : uint8_t {
@@ -41,10 +33,6 @@ enum class CategoricalType : uint8_t {
   GoodnessOfFit,
   Homogeneity
 };
-
-Distribution::Type DistributionType(StatisticType statisticType);
-Distribution::ParametersArray<double> DistributionParameters(
-    StatisticType statisticType, double degreesOfFreedom);
 
 constexpr bool IsTestCompatibleWithStatistic(TestType testType,
                                              StatisticType statisticType) {
@@ -99,6 +87,15 @@ struct Type {
   operator CategoricalType() const { return categoricalType; }
 };
 
+// ===== Distribution =====
+
+Distribution::Type DistributionType(StatisticType statisticType);
+Distribution::ParametersArray<double> DistributionParameters(
+    StatisticType statisticType, double degreesOfFreedom);
+const char* CriticalValueSymbol(StatisticType statisticType);
+
+// ===== Parameters =====
+
 namespace Params {
 /* We have to wrap enum in struct because enums are unscoped, so the various X,
  * N, S, etc. would conflict with each other. enum class is not an option either
@@ -145,122 +142,24 @@ constexpr int NumberOfParameters(TestType testType) {
   }
 }
 
+Poincare::Layout ParameterLayout(Type type, int index);
+bool IsParameterValidAtIndex(Type type, double p, int index);
+bool AreParametersValid(Type type, const ParametersArray& parameters);
+
 // ===== Degrees of freedom =====
 
 bool HasDegreesOfFreedom(Type type);
 // Returns NAN if the type doesn't have degrees of freedom
 double ComputeDegreesOfFreedom(Type type, const ParametersArray parameters);
 
-// ===== Significance test =====
-
-struct Hypothesis {
-  double m_h0;
-  Poincare::ComparisonJunior::Operator m_alternative;
-  constexpr Hypothesis(double h0,
-                       Poincare::ComparisonJunior::Operator alternative)
-      : m_h0(h0), m_alternative(alternative) {
-    assert(alternative == Poincare::ComparisonJunior::Operator::Inferior ||
-           alternative == Poincare::ComparisonJunior::Operator::Superior ||
-           alternative == Poincare::ComparisonJunior::Operator::NotEqual);
-  }
-  constexpr Hypothesis()
-      : Hypothesis(0.0, Poincare::ComparisonJunior::Operator::Superior) {}
-};
-
-constexpr bool HasHyphothesis(TestType testType) {
-  return testType != TestType::Chi2;
-}
-bool IsH0Valid(TestType testType, double h0);
-
-constexpr int k_maxNumberOfEstimates = 3;
-using Estimates = std::array<double, k_maxNumberOfEstimates>;
-
-constexpr int NumberOfTestEstimates(TestType testType) {
-  switch (testType) {
-    case TestType::OneProportion:
-      return 1;
-    case TestType::TwoProportions:
-      return 3;
-    default:
-      return 0;
-  }
-}
-
-namespace EstimatesOrder {
-struct OneProportion {
-  enum { P };
-};
-struct TwoProportions {
-  enum { P1, P2, Pooled };
-};
-};  // namespace EstimatesOrder
-
-struct SignificanceTestResults {
-  Estimates estimates;
-  double criticalValue;
-  double pValue;
-  double degreesOfFreedom;
-};
-SignificanceTestResults ComputeSignificanceTest(
-    Type type, Hypothesis hypothesis, const ParametersArray parameters);
-Estimates ComputeTestEstimates(TestType testType,
-                               const ParametersArray parameters);
-double ComputeTestCriticalValue(Type type, double h0,
-                                const ParametersArray parameters);
-double ComputePValue(Type type, ComparisonJunior::Operator haOperator,
-                     double criticalValue, double degreesOfFreedom);
-
-// ===== Confidence interval =====
-
-struct ConfidenceIntervalResults {
-  double estimate;
-  double zCritical;
-  double standardError;
-  double marginOfError;
-  double degreesOfFreedom;
-};
-ConfidenceIntervalResults ComputeConfidenceInterval(
-    Type type, double threshold, const ParametersArray parameters);
-
-double ComputeIntervalCriticalValue(Type type, double threshold,
-                                    double degreesOfFreedom);
-bool ShowIntervalEstimate(TestType testType);
-double ComputeIntervalEstimate(TestType testType,
-                               const ParametersArray parameters);
-double ComputeStandardError(Type type, const ParametersArray parameters);
-constexpr double ComputeMarginOfError(double intervalCriticalValue,
-                                      double standardError) {
-  return intervalCriticalValue * standardError;
-}
-
-// ===== Layout and Symbols =====
-
-Poincare::Layout ParameterLayout(Type type, int index);
-
-const char* HypothesisSymbol(TestType testType);
-Poincare::Layout HypothesisLayout(TestType testType);
-
-const char* CriticalValueSymbol(StatisticType statisticType);
-Poincare::Layout CriticalValueLayout(Method method,
-                                     StatisticType statisticType);
-
-Poincare::Layout TestEstimateLayout(TestType testType, int index);
-
-const char* IntervalEstimateSymbol(TestType testType);
-Poincare::Layout IntervalEstimateLayout(Type type);
-
-// ===== Parameters =====
-
-constexpr double DefaultThreshold(Method method) {
-  return method == Method::SignificanceTest ? 0.05 : 0.95;
-}
-Hypothesis DefaultHyphothesis(TestType testType);
-
-double DefaultParameterAtIndex(Method method, Type type, int index);
+// ===== Threshold =====
 
 bool IsThresholdValid(double threshold);
-bool IsParameterValidAtIndex(Type type, double p, int index);
-bool AreParametersValid(Type type, const ParametersArray& parameters);
+
+// ===== PRIVATE =====
+
+double TwoMeansStandardError(StatisticType statisticType,
+                             const ParametersArray parameters);
 
 };  // namespace Inference
 

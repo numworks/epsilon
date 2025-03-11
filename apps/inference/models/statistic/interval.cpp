@@ -44,6 +44,14 @@ void Interval::setResultTitleForValues(double estimate, double threshold,
   }
 }
 
+void Interval::initParameters() {
+  for (int i = 0; i < numberOfTestParameters(); i++) {
+    parametersArray()[i] =
+        ConfidenceInterval::DefaultParameterAtIndex(type(), i);
+  }
+  m_threshold = ConfidenceInterval::DefaultThreshold();
+}
+
 bool Interval::isGraphable() const {
   double SE = standardError();
   assert(std::isnan(SE) || SE >= 0);
@@ -159,10 +167,10 @@ void Interval::inferenceResultAtIndex(int index, double* value,
 }
 
 void Interval::compute() {
-  const PcrInference::ParametersArray params = constParametersArray();
-  PcrInference::Type type = this->type();
-  PcrInference::ConfidenceIntervalResults results =
-      PcrInference::ComputeConfidenceInterval(type, m_threshold, params);
+  const Poincare::Inference::ParametersArray params = constParametersArray();
+  Poincare::Inference::Type type = this->type();
+  ConfidenceInterval::Results results =
+      ConfidenceInterval::Compute(type, m_threshold, params);
   m_degreesOfFreedom = results.degreesOfFreedom;
   m_estimate = results.estimate;
   m_SE = results.standardError;

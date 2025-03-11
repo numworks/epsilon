@@ -21,22 +21,26 @@ class Test : public Statistic {
   }
 
   // Input
-  PcrInference::Hypothesis* hypothesis() { return &m_hypothesis; }
-  const PcrInference::Hypothesis* hypothesis() const { return &m_hypothesis; }
-  const char* hypothesisSymbol() const {
-    return PcrInference::HypothesisSymbol(testType());
+  SignificanceTest::Hypothesis* hypothesis() { return &m_hypothesis; }
+  const SignificanceTest::Hypothesis* hypothesis() const {
+    return &m_hypothesis;
   }
-  bool isValidH0(double h0) { return PcrInference::IsH0Valid(testType(), h0); }
+  const char* hypothesisSymbol() const {
+    return SignificanceTest::HypothesisSymbol(testType());
+  }
+  bool isValidH0(double h0) {
+    return SignificanceTest::IsH0Valid(testType(), h0);
+  }
 
   void initParameters() override;
 
   // Additional estimates
   int numberOfEstimates() const {
-    return PcrInference::NumberOfTestEstimates(testType());
+    return SignificanceTest::NumberOfEstimates(testType());
   };
   double estimateValue(int index) { return m_estimates[index]; }
   Poincare::Layout estimateLayout(int index) const {
-    return PcrInference::TestEstimateLayout(testType(), index);
+    return SignificanceTest::EstimateLayoutAtIndex(testType(), index);
   }
   I18n::Message estimateDescription(int index) const {
     return TestEstimateDescription(testType(), index);
@@ -80,9 +84,9 @@ class Test : public Statistic {
   float computeXMin() const override { return -k_displayWidthToSTDRatio; }
   float computeXMax() const override { return k_displayWidthToSTDRatio; }
   // Hypothesis chosen
-  PcrInference::Hypothesis m_hypothesis;
+  SignificanceTest::Hypothesis m_hypothesis;
   // Cached values
-  PcrInference::Estimates m_estimates;
+  SignificanceTest::Estimates m_estimates;
   double m_testCriticalValue;
   double m_pValue;
 

@@ -10,11 +10,9 @@ class Chi2Test : public Test, public Table {
  public:
   Chi2Test();
 
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::Chi2;
-  }
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::Chi2;
+  constexpr TestType testType() const override { return TestType::Chi2; }
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::Chi2;
   }
   Table* table() override { return this; }
 

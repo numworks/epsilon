@@ -9,24 +9,24 @@ namespace Inference {
 class OneProportionStatistic {
  protected:
   double preProcessOnePropParameter(double p, int index) const {
-    if (index == PcrInference::Params::OneProportion::N ||
-        index == PcrInference::Params::OneProportion::X) {
+    if (index == Params::OneProportion::N ||
+        index == Params::OneProportion::X) {
       return std::round(p);
     }
     return p;
   }
 
-  double m_params[PcrInference::NumberOfParameters(
-      PcrInference::TestType::OneProportion)];
+  double m_params[Poincare::Inference::NumberOfParameters(
+      TestType::OneProportion)];
 };
 
 class OneProportionZTest : public Test, public OneProportionStatistic {
  public:
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::OneProportion;
+  constexpr TestType testType() const override {
+    return TestType::OneProportion;
   }
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::Z;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::Z;
   }
 
   double preProcessParameter(double p, int index) const override {
@@ -39,11 +39,11 @@ class OneProportionZTest : public Test, public OneProportionStatistic {
 
 class OneProportionZInterval : public Interval, public OneProportionStatistic {
  public:
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::OneProportion;
+  constexpr TestType testType() const override {
+    return TestType::OneProportion;
   }
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::Z;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::Z;
   }
 
   double preProcessParameter(double p, int index) const override {

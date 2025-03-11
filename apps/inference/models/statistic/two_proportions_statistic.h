@@ -9,27 +9,27 @@ namespace Inference {
 class TwoProportionsStatistic {
  protected:
   double preProcessTwoPropsParameter(double p, int index) const {
-    if (index == PcrInference::Params::TwoProportions::N1 ||
-        index == PcrInference::Params::TwoProportions::X1 ||
-        index == PcrInference::Params::TwoProportions::N2 ||
-        index == PcrInference::Params::TwoProportions::X2) {
+    if (index == Params::TwoProportions::N1 ||
+        index == Params::TwoProportions::X1 ||
+        index == Params::TwoProportions::N2 ||
+        index == Params::TwoProportions::X2) {
       return std::round(p);
     }
     return p;
   }
 
-  double m_params[PcrInference::NumberOfParameters(
-      PcrInference::TestType::TwoProportions)];
+  double m_params[Poincare::Inference::NumberOfParameters(
+      TestType::TwoProportions)];
 };
 
 class TwoProportionsZInterval : public Interval,
                                 public TwoProportionsStatistic {
  public:
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::TwoProportions;
+  constexpr TestType testType() const override {
+    return TestType::TwoProportions;
   }
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::Z;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::Z;
   }
 
   double preProcessParameter(double p, int index) const override {
@@ -42,11 +42,11 @@ class TwoProportionsZInterval : public Interval,
 
 class TwoProportionsZTest : public Test, public TwoProportionsStatistic {
  public:
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::TwoProportions;
+  constexpr TestType testType() const override {
+    return TestType::TwoProportions;
   }
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::Z;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::Z;
   }
 
   double preProcessParameter(double p, int index) const override {

@@ -27,9 +27,9 @@ InputStoreController::InputStoreController(
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_storeTableCell),
-      m_loadedSubApp(Statistic::SubApp::SignificanceTest),
-      m_loadedStatistic(Poincare::Inference::StatisticType::T),
-      m_loadedTest(Poincare::Inference::TestType::OneProportion),
+      m_loadedSubApp(SubApp::SignificanceTest),
+      m_loadedStatistic(StatisticType::T),
+      m_loadedTest(TestType::OneProportion),
       m_nextInputStoreController(nextInputStoreController),
       m_nextOtherController(nextController) {
   m_storeParameterController.selectRow(0);
@@ -173,15 +173,14 @@ int InputStoreController::indexOfEditedParameterAtIndex(int index) const {
   if (index >= indexOfFirstExtraParameter() + numberOfExtraParameters()) {
     return InputCategoricalController::indexOfEditedParameterAtIndex(index);
   }
-  assert(m_statistic->statisticType() == Poincare::Inference::StatisticType::Z);
-  if (m_statistic->testType() == Poincare::Inference::TestType::OneMean) {
+  assert(m_statistic->statisticType() == StatisticType::Z);
+  if (m_statistic->testType() == TestType::OneMean) {
     assert(index == indexOfFirstExtraParameter());
-    return PcrInference::Params::OneMean::S;
+    return Params::OneMean::S;
   }
-  assert(m_statistic->testType() == Poincare::Inference::TestType::TwoMeans);
-  return index == indexOfFirstExtraParameter()
-             ? Poincare::Inference::Params::TwoMeans::S1
-             : Poincare::Inference::Params::TwoMeans::S2;
+  assert(m_statistic->testType() == TestType::TwoMeans);
+  return index == indexOfFirstExtraParameter() ? Params::TwoMeans::S1
+                                               : Params::TwoMeans::S2;
 }
 
 void InputStoreController::selectSeriesForDropdownRow(int row) {
@@ -207,7 +206,7 @@ void InputStoreController::hideOtherPageParameterCells() {
     m_significanceCell.setVisible(false);
   }
 
-  if (m_statistic->statisticType() == Poincare::Inference::StatisticType::Z) {
+  if (m_statistic->statisticType() == StatisticType::Z) {
     assert(numberOfExtraParameters() == 2);
     // Hide the parameter of the other dataset
     m_extraParameters[(static_cast<uint8_t>(m_pageIndex) + 1) % 2].setVisible(

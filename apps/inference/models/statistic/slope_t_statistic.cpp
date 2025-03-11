@@ -15,9 +15,9 @@ void SlopeTStatistic::computeParametersFromSeries(const Statistic* stat,
   double SE = std::sqrt((1.0 / (n - 2.0)) * leastSquaredSum(series) /
                         squaredOffsettedValueSumOfColumn(series, 0, xMean));
 
-  m_params[Poincare::Inference::Params::Slope::N] = n;
-  m_params[Poincare::Inference::Params::Slope::SE] = OMG::LaxToZero(SE);
-  m_params[Poincare::Inference::Params::Slope::B] = slope(series);
+  m_params[Params::Slope::N] = n;
+  m_params[Params::Slope::SE] = OMG::LaxToZero(SE);
+  m_params[Params::Slope::B] = slope(series);
 }
 
 void SlopeTTest::extraResultAtIndex(int index, double* value,
@@ -25,16 +25,14 @@ void SlopeTTest::extraResultAtIndex(int index, double* value,
                                     I18n::Message* subMessage, int* precision) {
   enum ResultOrder { B, SE };
   if (index == ResultOrder::B) {
-    *value = m_params[Poincare::Inference::Params::Slope::B];
-    *message =
-        PcrInference::ParameterLayout(type(), PcrInference::Params::Slope::B);
+    *value = m_params[Params::Slope::B];
+    *message = Poincare::Inference::ParameterLayout(type(), Params::Slope::B);
     *subMessage = I18n::Message::SampleSlope;
     return;
   }
   assert(index == ResultOrder::SE);
-  *value = m_params[Poincare::Inference::Params::Slope::SE];
-  *message =
-      PcrInference::ParameterLayout(type(), PcrInference::Params::Slope::SE);
+  *value = m_params[Params::Slope::SE];
+  *message = Poincare::Inference::ParameterLayout(type(), Params::Slope::SE);
   *subMessage = I18n::Message::StandardError;
 }
 
@@ -43,9 +41,8 @@ void SlopeTInterval::extraResultAtIndex(int index, double* value,
                                         I18n::Message* subMessage,
                                         int* precision) {
   assert(index == 0);
-  *value = m_params[Poincare::Inference::Params::Slope::B];
-  *message =
-      PcrInference::ParameterLayout(type(), PcrInference::Params::Slope::B);
+  *value = m_params[Params::Slope::B];
+  *message = Poincare::Inference::ParameterLayout(type(), Params::Slope::B);
   *subMessage = I18n::Message::SampleSlope;
 }
 

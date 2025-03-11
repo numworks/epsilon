@@ -23,42 +23,42 @@ static Shared::GlobalContext* getContext() {
   return AppsContainerHelper::sharedAppsContainerGlobalContext();
 }
 
-static void* initialize(PcrInference::Method method, PcrInference::Type type,
+static void* initialize(SubApp subApp, Poincare::Inference::Type type,
                         Statistic* target) {
-  switch (method) {
-    case PcrInference::Method::SignificanceTest:
+  switch (subApp) {
+    case SubApp::SignificanceTest:
       switch (type.testType) {
-        case PcrInference::TestType::OneMean:
+        case TestType::OneMean:
           switch (type.statisticType) {
-            case PcrInference::StatisticType::T:
+            case StatisticType::T:
               return new (target) OneMeanTTest(getContext());
-            case PcrInference::StatisticType::Z:
+            case StatisticType::Z:
               return new (target) OneMeanZTest(getContext());
             default:
               OMG::unreachable();
           }
-        case PcrInference::TestType::TwoMeans:
+        case TestType::TwoMeans:
           switch (type.statisticType) {
-            case PcrInference::StatisticType::T:
+            case StatisticType::T:
               return new (target) TwoMeansTTest(getContext());
-            case PcrInference::StatisticType::TPooled:
+            case StatisticType::TPooled:
               return new (target) PooledTwoMeansTTest(getContext());
-            case PcrInference::StatisticType::Z:
+            case StatisticType::Z:
               return new (target) TwoMeansZTest(getContext());
             default:
               OMG::unreachable();
           }
-        case PcrInference::TestType::OneProportion:
+        case TestType::OneProportion:
           return new (target) OneProportionZTest();
-        case PcrInference::TestType::TwoProportions:
+        case TestType::TwoProportions:
           return new (target) TwoProportionsZTest();
-        case PcrInference::TestType::Slope:
+        case TestType::Slope:
           return new (target) SlopeTTest(getContext());
-        case PcrInference::TestType::Chi2:
+        case TestType::Chi2:
           switch (type.categoricalType) {
-            case PcrInference::CategoricalType::GoodnessOfFit:
+            case CategoricalType::GoodnessOfFit:
               return new (target) GoodnessTest();
-            case PcrInference::CategoricalType::Homogeneity:
+            case CategoricalType::Homogeneity:
               return new (target) HomogeneityTest();
             default:
               OMG::unreachable();
@@ -66,33 +66,33 @@ static void* initialize(PcrInference::Method method, PcrInference::Type type,
         default:
           OMG::unreachable();
       }
-    case PcrInference::Method::ConfidenceInterval:
+    case SubApp::ConfidenceInterval:
       switch (type.testType) {
-        case PcrInference::TestType::OneMean:
+        case TestType::OneMean:
           switch (type.statisticType) {
-            case PcrInference::StatisticType::T:
+            case StatisticType::T:
               return new (target) OneMeanTInterval(getContext());
-            case PcrInference::StatisticType::Z:
+            case StatisticType::Z:
               return new (target) OneMeanZInterval(getContext());
             default:
               OMG::unreachable();
           }
-        case PcrInference::TestType::TwoMeans:
+        case TestType::TwoMeans:
           switch (type.statisticType) {
-            case PcrInference::StatisticType::T:
+            case StatisticType::T:
               return new (target) TwoMeansTInterval(getContext());
-            case PcrInference::StatisticType::TPooled:
+            case StatisticType::TPooled:
               return new (target) PooledTwoMeansTInterval(getContext());
-            case PcrInference::StatisticType::Z:
+            case StatisticType::Z:
               return new (target) TwoMeansZInterval(getContext());
             default:
               OMG::unreachable();
           }
-        case PcrInference::TestType::OneProportion:
+        case TestType::OneProportion:
           return new (target) OneProportionZInterval();
-        case PcrInference::TestType::TwoProportions:
+        case TestType::TwoProportions:
           return new (target) TwoProportionsZInterval();
-        case PcrInference::TestType::Slope:
+        case TestType::Slope:
           return new (target) SlopeTInterval(getContext());
         default:
           OMG::unreachable();
@@ -100,41 +100,40 @@ static void* initialize(PcrInference::Method method, PcrInference::Type type,
   }
 }
 
-static bool initializeStatistic(PcrInference::Method subApp,
-                                PcrInference::Type type, Statistic* target) {
+static bool initializeStatistic(SubApp subApp, Poincare::Inference::Type type,
+                                Statistic* target) {
   if (target->subApp() == subApp && target->type().testType == type.testType &&
       target->type().statisticType == type.statisticType &&
       target->type().categoricalType == type.categoricalType) {
     return false;
   }
   target->~Statistic();
-  assert(PcrInference::IsMethodCompatibleWithTest(subApp, type));
-  assert(PcrInference::IsTestCompatibleWithStatistic(type, type));
+  assert(subApp != SubApp::ConfidenceInterval ||
+         ConfidenceInterval::IsTypeCompatibleWithConfidenceInterval(type));
+  assert(Poincare::Inference::IsTestCompatibleWithStatistic(type, type));
   initialize(subApp, type, target);
   target->initParameters();
   return true;
 }
 
 bool Statistic::initializeSubApp(SubApp subApp) {
-  PcrInference::Type dummyType(PcrInference::TestType::OneMean);
+  Poincare::Inference::Type dummyType(TestType::OneMean);
   return initializeStatistic(subApp, dummyType, this);
 }
 
-bool Statistic::initializeTest(PcrInference::TestType testType) {
-  PcrInference::Type partialType(testType);
+bool Statistic::initializeTest(TestType testType) {
+  Poincare::Inference::Type partialType(testType);
   return initializeStatistic(subApp(), partialType, this);
 }
 
-bool Statistic::initializeDistribution(
-    PcrInference::StatisticType statisticType) {
-  PcrInference::Type type(testType(), statisticType);
+bool Statistic::initializeDistribution(StatisticType statisticType) {
+  Poincare::Inference::Type type(testType(), statisticType);
   return initializeStatistic(subApp(), type, this);
 }
 
-bool Statistic::initializeCategoricalType(
-    PcrInference::CategoricalType categoricalType) {
-  assert(testType() == PcrInference::TestType::Chi2);
-  PcrInference::Type type(testType(), statisticType(), categoricalType);
+bool Statistic::initializeCategoricalType(CategoricalType categoricalType) {
+  assert(testType() == TestType::Chi2);
+  Poincare::Inference::Type type(testType(), statisticType(), categoricalType);
   return initializeStatistic(subApp(), type, this);
 }
 
@@ -142,18 +141,19 @@ bool Statistic::authorizedParameterAtIndex(double p, int i) const {
   if (i == indexOfThreshold()) {
     /* Since p will be converted to float later, we need to ensure that
      * it's not too close to 1.0 */
-    return PcrInference::IsThresholdValid(p) &&
+    return Poincare::Inference::IsThresholdValid(p) &&
            static_cast<float>(p) < 1.0 - OMG::Float::EpsilonLax<float>();
   }
   /* p might be pre-processed when set so we need to check if it's valid after
    * pre-processing */
   p = preProcessParameter(p, i);
   return Shared::Inference::authorizedParameterAtIndex(p, i) &&
-         PcrInference::IsParameterValidAtIndex(type(), p, i);
+         Poincare::Inference::IsParameterValidAtIndex(type(), p, i);
 }
 
 bool Statistic::areParametersValid() {
-  return PcrInference::AreParametersValid(type(), constParametersArray());
+  return Poincare::Inference::AreParametersValid(type(),
+                                                 constParametersArray());
 }
 
 double Statistic::parameterAtIndex(int i) const {
@@ -173,14 +173,6 @@ void Statistic::setParameterAtIndex(double f, int i) {
     f = preProcessParameter(f, i);
     parametersArray()[i] = f;
   }
-}
-
-void Statistic::initParameters() {
-  for (int i = 0; i < numberOfTestParameters(); i++) {
-    parametersArray()[i] =
-        PcrInference::DefaultParameterAtIndex(subApp(), type(), i);
-  }
-  m_threshold = PcrInference::DefaultThreshold(subApp());
 }
 
 double Statistic::cumulativeDistributiveFunctionAtAbscissa(double x) const {

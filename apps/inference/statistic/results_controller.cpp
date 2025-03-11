@@ -27,10 +27,9 @@ ResultsController::ResultsController(
              ButtonCell::Style::EmbossedLight) {}
 
 ViewController::TitlesDisplay ResultsController::titlesDisplay() const {
-  if (m_statistic->subApp() == Statistic::SubApp::ConfidenceInterval ||
-      (m_statistic->testType() == Poincare::Inference::TestType::Chi2 &&
-       m_statistic->categoricalType() ==
-           Poincare::Inference::CategoricalType::GoodnessOfFit)) {
+  if (m_statistic->subApp() == SubApp::ConfidenceInterval ||
+      (m_statistic->testType() == TestType::Chi2 &&
+       m_statistic->categoricalType() == CategoricalType::GoodnessOfFit)) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
   return m_statistic->canChooseDataset()
@@ -44,8 +43,7 @@ const char* ResultsController::title() const {
       static_cast<StackViewController*>(parentResponder());
   bool resultsIsTopPage =
       stackViewControllerResponder->topViewController() != this;
-  if (resultsIsTopPage &&
-      m_statistic->subApp() == Statistic::SubApp::ConfidenceInterval) {
+  if (resultsIsTopPage && m_statistic->subApp() == SubApp::ConfidenceInterval) {
     m_intervalGraphController->setResultTitleForCurrentValues(
         m_titleBuffer, sizeof(m_titleBuffer), resultsIsTopPage);
   } else {
@@ -69,8 +67,7 @@ bool ResultsController::ButtonAction(ResultsController* controller, void* s) {
     return false;
   }
   ViewController* graph;
-  if (controller->m_statistic->subApp() ==
-      Statistic::SubApp::SignificanceTest) {
+  if (controller->m_statistic->subApp() == SubApp::SignificanceTest) {
     graph = controller->m_testGraphController;
   } else {
     graph = controller->m_intervalGraphController;

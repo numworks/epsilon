@@ -41,9 +41,9 @@ void GoodnessTest::setResultTitle(char* buffer, size_t bufferSize,
 
 void GoodnessTest::compute() {
   m_testCriticalValue = computeChi2();
-  m_pValue =
-      PcrInference::ComputePValue(testType(), m_hypothesis.m_alternative,
-                                  m_testCriticalValue, degreeOfFreedom());
+  m_pValue = SignificanceTest::ComputePValue(
+      statisticType(), m_hypothesis.m_alternative, m_testCriticalValue,
+      degreeOfFreedom());
 }
 
 void GoodnessTest::recomputeData() {

@@ -18,15 +18,13 @@ class TwoMeansStatistic : public TableFromStatisticStore {
                                    int pageIndex) override;
 
   double preProcessTwoMeansParameter(double p, int index) const {
-    if (index == PcrInference::Params::TwoMeans::N1 ||
-        index == PcrInference::Params::TwoMeans::N2) {
+    if (index == Params::TwoMeans::N1 || index == Params::TwoMeans::N2) {
       return std::round(p);
     }
     return p;
   }
 
-  double m_params[PcrInference::NumberOfParameters(
-      PcrInference::TestType::TwoMeans)];
+  double m_params[Poincare::Inference::NumberOfParameters(TestType::TwoMeans)];
 };
 
 }  // namespace Inference

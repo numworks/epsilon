@@ -43,15 +43,15 @@ bool TypeController::handleEvent(Ion::Events::Event event) {
   if (!cell(0)->canBeActivatedByEvent(event)) {
     return popFromStackViewControllerOnLeftEvent(event);
   }
-  PcrInference::StatisticType type;
+  StatisticType type;
   int selRow = selectedRow();
   if (selRow == k_indexOfTTest) {
-    type = PcrInference::StatisticType::T;
+    type = StatisticType::T;
   } else if (selRow == k_indexOfZTest) {
-    type = PcrInference::StatisticType::Z;
+    type = StatisticType::Z;
   } else {
     assert(selRow == k_indexOfPooledTest);
-    type = PcrInference::StatisticType::TPooled;
+    type = StatisticType::TPooled;
   }
   ViewController* controller = m_inputController;
   if (m_statistic->hasHypothesisParameters()) {
@@ -80,15 +80,14 @@ const char* TypeController::title() const {
 
 void TypeController::stackOpenPage(ViewController* nextPage) {
   switch (m_statistic->statisticType()) {
-    case Poincare::Inference::StatisticType::T:
+    case StatisticType::T:
       selectRow(k_indexOfTTest);
       break;
-    case Poincare::Inference::StatisticType::TPooled:
+    case StatisticType::TPooled:
       selectRow(k_indexOfPooledTest);
       break;
     default:
-      assert(m_statistic->statisticType() ==
-             Poincare::Inference::StatisticType::Z);
+      assert(m_statistic->statisticType() == StatisticType::Z);
       selectRow(k_indexOfZTest);
       break;
   }

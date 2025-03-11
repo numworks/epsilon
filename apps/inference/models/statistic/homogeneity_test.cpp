@@ -55,9 +55,9 @@ void HomogeneityTest::compute() {
   computeExpectedValues(max);
   m_testCriticalValue = computeChi2();
   m_degreesOfFreedom = computeDegreesOfFreedom(max);
-  m_pValue =
-      PcrInference::ComputePValue(testType(), m_hypothesis.m_alternative,
-                                  m_testCriticalValue, m_degreesOfFreedom);
+  m_pValue = SignificanceTest::ComputePValue(
+      statisticType(), m_hypothesis.m_alternative, m_testCriticalValue,
+      m_degreesOfFreedom);
 }
 
 double HomogeneityTest::expectedValueAtLocation(int row, int column) {

@@ -8,12 +8,6 @@
 namespace Inference {
 
 class Interval : public Statistic {
-  friend class SignificanceTest;
-  friend class OneMean;
-  friend class OneProportion;
-  friend class TwoMeans;
-  friend class TwoProportions;
-
  public:
   Interval()
       : m_estimate(NAN),
@@ -38,18 +32,20 @@ class Interval : public Statistic {
   void setResultTitleForValues(double estimate, double threshold, char* buffer,
                                size_t bufferSize, bool resultIsTopPage) const;
 
+  void initParameters() override;
+
   float evaluateAtAbscissa(float x) const override {
     return canonicalDensityFunction((x - estimate()) / standardError());
   }
 
   bool showEstimate() const {
-    return PcrInference::ShowIntervalEstimate(testType());
+    return ConfidenceInterval::ShowEstimate(testType());
   }
   const char* estimateSymbol() const {
-    return PcrInference::IntervalEstimateSymbol(testType());
+    return ConfidenceInterval::EstimateSymbol(testType());
   }
   Poincare::Layout estimateLayout() const {
-    return PcrInference::IntervalEstimateLayout(type());
+    return ConfidenceInterval::EstimateLayout(type());
   }
   I18n::Message estimateDescription() const {
     return IntervalEstimateDescription(testType());

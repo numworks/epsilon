@@ -47,7 +47,7 @@ void InputController::InputTitle(const Escher::ViewController* vc,
                                  const Statistic* statistic, char* titleBuffer,
                                  size_t titleBufferSize) {
   if (statistic->hasHypothesisParameters()) {
-    assert(statistic->subApp() == PcrInference::Method::SignificanceTest);
+    assert(statistic->subApp() == SubApp::SignificanceTest);
     const Test* signifTest = static_cast<const Test*>(statistic);
     /* H0:<first symbol>=<firstParam>
      * Ha:<first symbol><operator symbol><firstParams>

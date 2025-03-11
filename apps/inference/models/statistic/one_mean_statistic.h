@@ -17,14 +17,13 @@ class OneMeanStatistic : public TableFromStatisticStore {
                                    int pageIndex) override;
 
   double preProcessOneMeanParameter(double p, int index) const {
-    if (index == PcrInference::Params::OneMean::N) {
+    if (index == Params::OneMean::N) {
       return std::round(p);
     }
     return p;
   }
 
-  double m_params[PcrInference::NumberOfParameters(
-      PcrInference::TestType::OneMean)];
+  double m_params[Poincare::Inference::NumberOfParameters(TestType::OneMean)];
 };
 
 }  // namespace Inference

@@ -8,8 +8,8 @@ namespace Inference {
 class GoodnessTest final : public Chi2Test {
  public:
   GoodnessTest();
-  constexpr PcrInference::CategoricalType categoricalType() const override {
-    return PcrInference::CategoricalType::GoodnessOfFit;
+  constexpr CategoricalType categoricalType() const override {
+    return CategoricalType::GoodnessOfFit;
   }
   int numberOfTestParameters() const override {
     return k_maxNumberOfRows * k_maxNumberOfColumns;

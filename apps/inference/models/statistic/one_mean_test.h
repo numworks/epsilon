@@ -15,9 +15,7 @@ class OneMeanTest : public Test, public OneMeanStatistic {
   void init() override { initDatasetsIfSeries(); }
   void tidy() override { tidyDatasets(); }
 
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::OneMean;
-  }
+  constexpr TestType testType() const override { return TestType::OneMean; }
 
   double preProcessParameter(double p, int index) const override {
     return preProcessOneMeanParameter(p, index);
@@ -42,8 +40,8 @@ class OneMeanTTest : public OneMeanTest {
  public:
   using OneMeanTest::OneMeanTest;
 
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::T;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::T;
   }
 };
 
@@ -51,8 +49,8 @@ class OneMeanZTest : public OneMeanTest {
  public:
   using OneMeanTest::OneMeanTest;
 
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::Z;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::Z;
   }
 };
 

@@ -43,16 +43,16 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
   // canBeActivatedByEvent can be called on any cell with chevron
   if (cell(0)->canBeActivatedByEvent(event)) {
     InputCategoricalController* controller = nullptr;
-    PcrInference::CategoricalType type;
+    CategoricalType type;
     switch (selectedRow()) {
       case k_indexOfGoodnessCell:
         controller = m_inputGoodnessController;
-        type = PcrInference::CategoricalType::GoodnessOfFit;
+        type = CategoricalType::GoodnessOfFit;
         break;
       default:
         assert(selectedRow() == k_indexOfHomogeneityCell);
         controller = m_inputHomogeneityController;
-        type = PcrInference::CategoricalType::Homogeneity;
+        type = CategoricalType::Homogeneity;
         break;
     }
     assert(controller != nullptr);

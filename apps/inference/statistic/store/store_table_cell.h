@@ -29,11 +29,11 @@ class StoreTableCell : public DoubleColumnTableCell,
 
   // StoreColumnHelper
   Shared::DoublePairStore* store() override {
-    if (m_statistic->testType() == Poincare::Inference::TestType::Slope) {
+    if (m_statistic->testType() == TestType::Slope) {
       return static_cast<SlopeTStatistic*>(tableModel());
     }
-    assert(m_statistic->testType() == Poincare::Inference::TestType::OneMean ||
-           m_statistic->testType() == Poincare::Inference::TestType::TwoMeans);
+    assert(m_statistic->testType() == TestType::OneMean ||
+           m_statistic->testType() == TestType::TwoMeans);
     return static_cast<TableFromStatisticStore*>(tableModel());
   }
   const Shared::DoublePairStore* store() const {

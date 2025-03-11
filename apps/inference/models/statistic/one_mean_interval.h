@@ -16,9 +16,7 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   void init() override { initDatasetsIfSeries(); }
   void tidy() override { tidyDatasets(); }
 
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::OneMean;
-  }
+  constexpr TestType testType() const override { return TestType::OneMean; }
 
   double preProcessParameter(double p, int index) const override {
     return preProcessOneMeanParameter(p, index);
@@ -42,16 +40,16 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
 class OneMeanTInterval : public OneMeanInterval {
  public:
   using OneMeanInterval::OneMeanInterval;
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::T;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::T;
   }
 };
 
 class OneMeanZInterval : public OneMeanInterval {
  public:
   using OneMeanInterval::OneMeanInterval;
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::Z;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::Z;
   }
 };
 

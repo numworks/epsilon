@@ -14,9 +14,7 @@ class TwoMeansTest : public Test, public TwoMeansStatistic {
   void init() override { initDatasetsIfSeries(); }
   void tidy() override { tidyDatasets(); }
 
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::TwoMeans;
-  }
+  constexpr TestType testType() const override { return TestType::TwoMeans; }
 
   double preProcessParameter(double p, int index) const override {
     return preProcessTwoMeansParameter(p, index);
@@ -42,8 +40,8 @@ class TwoMeansTTest : public TwoMeansTest {
  public:
   using TwoMeansTest::TwoMeansTest;
 
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::T;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::T;
   }
 };
 
@@ -51,8 +49,8 @@ class PooledTwoMeansTTest : public TwoMeansTest {
  public:
   using TwoMeansTest::TwoMeansTest;
 
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::TPooled;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::TPooled;
   }
 };
 
@@ -60,8 +58,8 @@ class TwoMeansZTest : public TwoMeansTest {
  public:
   using TwoMeansTest::TwoMeansTest;
 
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::Z;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::Z;
   }
 };
 

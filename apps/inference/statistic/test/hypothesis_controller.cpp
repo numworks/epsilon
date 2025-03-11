@@ -130,7 +130,7 @@ void HypothesisController::handleResponderChainEvent(
 bool HypothesisController::ButtonAction(HypothesisController* controller,
                                         void* s) {
   ViewController* nextController = controller->m_inputController;
-  if (controller->m_test->testType() == Poincare::Inference::TestType::Slope) {
+  if (controller->m_test->testType() == TestType::Slope) {
     nextController = controller->m_inputStoreController;
   } else if (controller->m_test->canChooseDataset()) {
     /* Reset row of DatasetController here and not in

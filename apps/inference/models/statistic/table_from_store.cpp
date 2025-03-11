@@ -85,13 +85,13 @@ bool TableFromStatisticStore::computedParameterAtIndex(
   *precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
 
   constexpr int k_oneMeanNumberOfParams =
-      PcrInference::NumberOfParameters(PcrInference::TestType::OneMean);
+      Poincare::Inference::NumberOfParameters(TestType::OneMean);
 
   /* For Z distribution, the computed parameter at index 1 (and 4 in case of
    * TwoMeans) is not the parameter at that index (which is the population
    * standard deviation).*/
-  if (stat->statisticType() != PcrInference::StatisticType::Z ||
-      index % k_oneMeanNumberOfParams != PcrInference::Params::OneMean::S) {
+  if (stat->statisticType() != StatisticType::Z ||
+      index % k_oneMeanNumberOfParams != Params::OneMean::S) {
     *value = stat->parameterAtIndex(index);
     *message = stat->parameterSymbolAtIndex(index);
     *subMessage = stat->parameterDefinitionAtIndex(index);
@@ -101,9 +101,8 @@ bool TableFromStatisticStore::computedParameterAtIndex(
   /* Weave sample standard deviation between mean and population. */
   *value = sampleStandardDeviation(seriesAt(index / k_oneMeanNumberOfParams));
 
-  PcrInference::Type tType(stat->type().testType,
-                           PcrInference::StatisticType::T);
-  *message = PcrInference::ParameterLayout(tType, index);
+  Poincare::Inference::Type tType(stat->type().testType, StatisticType::T);
+  *message = Poincare::Inference::ParameterLayout(tType, index);
   *subMessage = ParameterDescriptionAtIndex(tType, index);
 
   return true;

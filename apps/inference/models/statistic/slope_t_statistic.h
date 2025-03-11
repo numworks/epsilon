@@ -25,8 +25,7 @@ class SlopeTStatistic : public TableFromRegressionStore {
   void computeParametersFromSeries(const Statistic* stat,
                                    int pageIndex) override;
 
-  double m_params[Poincare::Inference::NumberOfParameters(
-      Poincare::Inference::TestType::Slope)];
+  double m_params[Poincare::Inference::NumberOfParameters(TestType::Slope)];
 };
 
 class SlopeTInterval : public Interval, public SlopeTStatistic {
@@ -35,11 +34,9 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
   Table* table() override { return this; }
   void init() override { DoublePairStore::initListsFromStorage(); }
   void tidy() override { DoublePairStore::tidy(); }
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::Slope;
-  }
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::T;
+  constexpr TestType testType() const override { return TestType::Slope; }
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::T;
   }
 
   bool validateInputs(int pageIndex) override {
@@ -63,11 +60,9 @@ class SlopeTTest : public Test, public SlopeTStatistic {
   void init() override { DoublePairStore::initListsFromStorage(); }
   void tidy() override { DoublePairStore::tidy(); }
 
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::Slope;
-  }
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::T;
+  constexpr TestType testType() const override { return TestType::Slope; }
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::T;
   }
 
   bool validateInputs(int pageIndex) override {

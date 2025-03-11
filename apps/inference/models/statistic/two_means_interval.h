@@ -13,9 +13,7 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
   void init() override { initDatasetsIfSeries(); }
   void tidy() override { tidyDatasets(); }
 
-  constexpr PcrInference::TestType testType() const override {
-    return PcrInference::TestType::TwoMeans;
-  }
+  constexpr TestType testType() const override { return TestType::TwoMeans; }
 
   double preProcessParameter(double p, int index) const override {
     return preProcessTwoMeansParameter(p, index);
@@ -40,8 +38,8 @@ class TwoMeansTInterval : public TwoMeansInterval {
  public:
   using TwoMeansInterval::TwoMeansInterval;
 
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::T;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::T;
   }
 };
 
@@ -49,8 +47,8 @@ class PooledTwoMeansTInterval : public TwoMeansInterval {
  public:
   using TwoMeansInterval::TwoMeansInterval;
 
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::TPooled;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::TPooled;
   }
 };
 
@@ -58,8 +56,8 @@ class TwoMeansZInterval : public TwoMeansInterval {
  public:
   using TwoMeansInterval::TwoMeansInterval;
 
-  constexpr PcrInference::StatisticType statisticType() const override {
-    return PcrInference::StatisticType::Z;
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::Z;
   }
 };
 

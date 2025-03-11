@@ -9,8 +9,6 @@
 
 #include <algorithm>
 
-#include "statistic.h"
-
 namespace Inference {
 
 void Test::setGraphTitle(char* buffer, size_t bufferSize) const {
@@ -24,8 +22,11 @@ void Test::setGraphTitle(char* buffer, size_t bufferSize) const {
 }
 
 void Test::initParameters() {
-  m_hypothesis = PcrInference::DefaultHyphothesis(testType());
-  Statistic::initParameters();
+  m_hypothesis = SignificanceTest::DefaultHyphothesis(testType());
+  for (int i = 0; i < numberOfTestParameters(); i++) {
+    parametersArray()[i] = SignificanceTest::DefaultParameterAtIndex(type(), i);
+  }
+  m_threshold = SignificanceTest::DefaultThreshold();
 }
 
 bool Test::canRejectNull() {
@@ -76,10 +77,10 @@ void Test::inferenceResultAtIndex(int index, double* value,
 }
 
 void Test::compute() {
-  const PcrInference::ParametersArray params = constParametersArray();
-  PcrInference::Type type = this->type();
-  PcrInference::SignificanceTestResults results =
-      PcrInference::ComputeSignificanceTest(type, m_hypothesis, params);
+  const Poincare::Inference::ParametersArray params = constParametersArray();
+  Poincare::Inference::Type type = this->type();
+  SignificanceTest::Results results =
+      SignificanceTest::Compute(type, m_hypothesis, params);
   m_degreesOfFreedom = results.degreesOfFreedom;
   m_testCriticalValue = results.criticalValue;
   m_pValue = results.pValue;

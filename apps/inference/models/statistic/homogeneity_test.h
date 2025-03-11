@@ -12,8 +12,8 @@ class HomogeneityTest final : public Chi2Test {
   constexpr static int k_maxNumberOfRows = 9;
 
   HomogeneityTest();
-  constexpr PcrInference::CategoricalType categoricalType() const override {
-    return PcrInference::CategoricalType::Homogeneity;
+  constexpr CategoricalType categoricalType() const override {
+    return CategoricalType::Homogeneity;
   }
   void setGraphTitle(char* buffer, size_t bufferSize) const override;
 

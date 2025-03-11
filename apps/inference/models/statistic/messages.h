@@ -4,6 +4,8 @@
 #include <omg/unreachable.h>
 #include <poincare/statistics/inference.h>
 
+#include "aliases.h"
+
 namespace Inference {
 
 enum class Message {
@@ -19,8 +21,7 @@ enum class Message {
   ThresholdDescription,
 };
 
-constexpr I18n::Message GetMessage(Poincare::Inference::Method method,
-                                   Message message) {
+constexpr I18n::Message GetMessage(SubApp subApp, Message message) {
   // Same order as in the enum Message
   constexpr I18n::Message testMessages[] = {
       I18n::Message::TestDescr,   I18n::Message::Test,
@@ -37,17 +38,15 @@ constexpr I18n::Message GetMessage(Poincare::Inference::Method method,
       I18n::Message::ConfidenceInterval, I18n::Message::Default,
   };
   int index = static_cast<int>(message);
-  return method == Poincare::Inference::Method::SignificanceTest
-             ? testMessages[index]
-             : intervalMessages[index];
+  return subApp == SubApp::SignificanceTest ? testMessages[index]
+                                            : intervalMessages[index];
 }
 
-constexpr I18n::Message DistributionTitle(
-    Poincare::Inference::TestType testType) {
-  if (testType == Poincare::Inference::TestType::OneMean) {
+constexpr I18n::Message DistributionTitle(TestType testType) {
+  if (testType == TestType::OneMean) {
     return I18n::Message::TypeControllerTitleOne;
   }
-  if (testType == Poincare::Inference::TestType::TwoMeans) {
+  if (testType == TestType::TwoMeans) {
     return I18n::Message::TypeControllerTitleTwo;
   }
   return I18n::Message::Default;
@@ -55,32 +54,32 @@ constexpr I18n::Message DistributionTitle(
 
 constexpr I18n::Message Title(Poincare::Inference::Type type) {
   switch (type.testType) {
-    case Poincare::Inference::TestType::OneMean:
-      return type.statisticType == Poincare::Inference::StatisticType::T
+    case TestType::OneMean:
+      return type.statisticType == StatisticType::T
                  ? I18n::Message::HypothesisControllerTitleOneMeanT
                  : I18n::Message::HypothesisControllerTitleOneMeanZ;
-    case Poincare::Inference::TestType::TwoMeans:
+    case TestType::TwoMeans:
       switch (type.statisticType) {
-        case Poincare::Inference::StatisticType::T:
+        case StatisticType::T:
           return I18n::Message::HypothesisControllerTitleTwoMeansT;
-        case Poincare::Inference::StatisticType::TPooled:
+        case StatisticType::TPooled:
           return I18n::Message::HypothesisControllerTitleTwoMeansPooledT;
-        case Poincare::Inference::StatisticType::Z:
+        case StatisticType::Z:
           return I18n::Message::HypothesisControllerTitleTwoMeansZ;
         default:
           OMG::unreachable();
       }
-    case Poincare::Inference::TestType::OneProportion:
+    case TestType::OneProportion:
       return I18n::Message::HypothesisControllerTitleOneProp;
-    case Poincare::Inference::TestType::TwoProportions:
+    case TestType::TwoProportions:
       return I18n::Message::HypothesisControllerTitleTwoProps;
-    case Poincare::Inference::TestType::Slope:
+    case TestType::Slope:
       return I18n::Message::HypothesisControllerTitleSlope;
-    case Poincare::Inference::TestType::Chi2:
+    case TestType::Chi2:
       switch (type.categoricalType) {
-        case Poincare::Inference::CategoricalType::GoodnessOfFit:
+        case CategoricalType::GoodnessOfFit:
           return I18n::Message::InputGoodnessControllerTitle;
-        case Poincare::Inference::CategoricalType::Homogeneity:
+        case CategoricalType::Homogeneity:
           return I18n::Message::InputHomogeneityControllerTitle;
         default:
           OMG::unreachable();
@@ -92,67 +91,67 @@ constexpr I18n::Message Title(Poincare::Inference::Type type) {
 
 constexpr I18n::Message ParameterDescriptionAtIndex(
     Poincare::Inference::Type type, int index) {
-  bool isZ = type.statisticType == Poincare::Inference::StatisticType::Z;
+  bool isZ = type.statisticType == StatisticType::Z;
   switch (type.testType) {
-    case Poincare::Inference::TestType::OneMean:
+    case TestType::OneMean:
       switch (index) {
-        case Poincare::Inference::Params::OneMean::X:
+        case Params::OneMean::X:
           return I18n::Message::SampleMean;
-        case Poincare::Inference::Params::OneMean::S:
+        case Params::OneMean::S:
           return isZ ? I18n::Message::PopulationStd : I18n::Message::SampleSTD;
-        case Poincare::Inference::Params::OneMean::N:
+        case Params::OneMean::N:
           return I18n::Message::SampleSize;
         default:
           OMG::unreachable();
       }
-    case Poincare::Inference::TestType::TwoMeans:
+    case TestType::TwoMeans:
       switch (index) {
-        case Poincare::Inference::Params::TwoMeans::X1:
+        case Params::TwoMeans::X1:
           return I18n::Message::Sample1Mean;
-        case Poincare::Inference::Params::TwoMeans::S1:
+        case Params::TwoMeans::S1:
           return isZ ? I18n::Message::Population1Std
                      : I18n::Message::Sample1Std;
-        case Poincare::Inference::Params::TwoMeans::N1:
+        case Params::TwoMeans::N1:
           return I18n::Message::Sample1Size;
-        case Poincare::Inference::Params::TwoMeans::X2:
+        case Params::TwoMeans::X2:
           return I18n::Message::Sample2Mean;
-        case Poincare::Inference::Params::TwoMeans::S2:
+        case Params::TwoMeans::S2:
           return isZ ? I18n::Message::Population2Std
                      : I18n::Message::Sample2Std;
-        case Poincare::Inference::Params::TwoMeans::N2:
+        case Params::TwoMeans::N2:
           return I18n::Message::Sample2Size;
         default:
           OMG::unreachable();
       }
-    case Poincare::Inference::TestType::OneProportion:
+    case TestType::OneProportion:
       switch (index) {
-        case Poincare::Inference::Params::OneProportion::X:
+        case Params::OneProportion::X:
           return I18n::Message::NumberOfSuccesses;
-        case Poincare::Inference::Params::OneProportion::N:
+        case Params::OneProportion::N:
           return I18n::Message::SampleSize;
         default:
           OMG::unreachable();
       }
-    case Poincare::Inference::TestType::TwoProportions:
+    case TestType::TwoProportions:
       switch (index) {
-        case Poincare::Inference::Params::TwoProportions::X1:
+        case Params::TwoProportions::X1:
           return I18n::Message::SuccessSample1;
-        case Poincare::Inference::Params::TwoProportions::N1:
+        case Params::TwoProportions::N1:
           return I18n::Message::Sample1Size;
-        case Poincare::Inference::Params::TwoProportions::X2:
+        case Params::TwoProportions::X2:
           return I18n::Message::SuccessSample2;
-        case Poincare::Inference::Params::TwoProportions::N2:
+        case Params::TwoProportions::N2:
           return I18n::Message::Sample2Size;
         default:
           OMG::unreachable();
       }
-    case Poincare::Inference::TestType::Slope:
+    case TestType::Slope:
       switch (index) {
-        case Poincare::Inference::Params::Slope::N:
+        case Params::Slope::N:
           return I18n::Message::SampleSize;
-        case Poincare::Inference::Params::Slope::B:
+        case Params::Slope::B:
           return I18n::Message::SampleSlope;
-        case Poincare::Inference::Params::Slope::SE:
+        case Params::Slope::SE:
           return I18n::Message::StandardError;
         default:
           OMG::unreachable();
@@ -162,32 +161,30 @@ constexpr I18n::Message ParameterDescriptionAtIndex(
   }
 }
 
-constexpr I18n::Message IntervalEstimateDescription(
-    Poincare::Inference::TestType testType) {
+constexpr I18n::Message IntervalEstimateDescription(TestType testType) {
   switch (testType) {
-    case Poincare::Inference::TestType::TwoMeans:
+    case TestType::TwoMeans:
       return I18n::Message::SampleTwoMeans;
-    case Poincare::Inference::TestType::OneProportion:
+    case TestType::OneProportion:
       return I18n::Message::SampleProportion;
-    case Poincare::Inference::TestType::TwoProportions:
+    case TestType::TwoProportions:
       return I18n::Message::SampleTwoProportions;
     default:
       return I18n::Message::Default;
   }
 }
 
-constexpr I18n::Message TestEstimateDescription(
-    Poincare::Inference::TestType testType, int index) {
+constexpr I18n::Message TestEstimateDescription(TestType testType, int index) {
   switch (testType) {
-    case Poincare::Inference::TestType::OneProportion:
+    case TestType::OneProportion:
       return IntervalEstimateDescription(testType);
-    case Poincare::Inference::TestType::TwoProportions:
+    case TestType::TwoProportions:
       switch (index) {
-        case Poincare::Inference::EstimatesOrder::TwoProportions::P1:
+        case SignificanceTest::EstimatesOrder::TwoProportions::P1:
           return I18n::Message::Sample1Proportion;
-        case Poincare::Inference::EstimatesOrder::TwoProportions::P2:
+        case SignificanceTest::EstimatesOrder::TwoProportions::P2:
           return I18n::Message::Sample2Proportion;
-        case Poincare::Inference::EstimatesOrder::TwoProportions::Pooled:
+        case SignificanceTest::EstimatesOrder::TwoProportions::Pooled:
           return I18n::Message::PooledProportion;
         default:
           OMG::unreachable();

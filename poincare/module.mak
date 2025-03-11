@@ -173,7 +173,9 @@ $(addprefix statistics/, \
     distribution.cpp \
   ) \
   $(addprefix inference/, \
+    confidence_interval.cpp \
     inference.cpp \
+    significance_test.cpp \
   ) \
   $(addprefix regression/, \
     $(addsuffix :-nopool, \

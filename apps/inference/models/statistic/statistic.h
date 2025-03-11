@@ -6,12 +6,11 @@
 #include <poincare/statistics/distribution.h>
 #include <poincare/statistics/inference.h>
 
+#include "aliases.h"
 #include "messages.h"
 #include "table.h"
 
 namespace Inference {
-
-namespace PcrInference = Poincare::Inference;
 
 /* A Statistic is something that is computed from a sample and whose
  * distribution is known. From its distribution, we can compute statistical test
@@ -32,32 +31,32 @@ class Statistic : public Shared::Inference {
   virtual void init() {}
   virtual void tidy() {}
 
-  using SubApp = PcrInference::Method;
-  constexpr static int k_numberOfSubApps = 2;
-
   /* This poor man's RTTI is required only to avoid reinitializing the model
    * everytime we enter a subapp. */
   constexpr virtual SubApp subApp() const = 0;
-  constexpr virtual PcrInference::TestType testType() const = 0;
-  constexpr virtual PcrInference::StatisticType statisticType() const = 0;
-  constexpr virtual PcrInference::CategoricalType categoricalType() const {
+  constexpr virtual TestType testType() const = 0;
+  constexpr virtual StatisticType statisticType() const = 0;
+  constexpr virtual CategoricalType categoricalType() const {
     // Default value
-    return PcrInference::CategoricalType::Homogeneity;
+    return CategoricalType::Homogeneity;
   }
-  constexpr PcrInference::Type type() const {
-    return PcrInference::Type(testType(), statisticType(), categoricalType());
+  constexpr Poincare::Inference::Type type() const {
+    return Poincare::Inference::Type(testType(), statisticType(),
+                                     categoricalType());
   }
 
   bool initializeSubApp(SubApp subApp);
-  bool initializeTest(PcrInference::TestType testType);
-  bool initializeDistribution(PcrInference::StatisticType statisticType);
-  bool initializeCategoricalType(PcrInference::CategoricalType type);
+  bool initializeTest(TestType testType);
+  bool initializeDistribution(StatisticType statisticType);
+  bool initializeCategoricalType(CategoricalType type);
 
-  int numberOfSignificanceTestTypes() const {
-    return PcrInference::NumberOfTestsForMethod(subApp());
+  int numberOfTestTypes() const {
+    // Confidence interval does not have Chi2
+    return Poincare::Inference::k_numberOfTestTypes -
+           (subApp() == SubApp::SignificanceTest ? 0 : 1);
   }
   int numberOfAvailableStatistics() const {
-    return PcrInference::NumberOfStatisticsForTest(testType());
+    return Poincare::Inference::NumberOfStatisticsForTest(testType());
   }
 
   constexpr I18n::Message statisticTitle() const {
@@ -101,7 +100,7 @@ class Statistic : public Shared::Inference {
 
   bool hasHypothesisParameters() const {
     return subApp() == SubApp::SignificanceTest &&
-           PcrInference::HasHyphothesis(testType());
+           SignificanceTest::HasHyphothesis(testType());
   }
 
   // Input
@@ -109,7 +108,7 @@ class Statistic : public Shared::Inference {
     return numberOfTestParameters() + 1 /* threshold */;
   }
   virtual int numberOfTestParameters() const {
-    return PcrInference::NumberOfParameters(testType());
+    return Poincare::Inference::NumberOfParameters(testType());
   }
   int indexOfThreshold() const { return numberOfTestParameters(); }
 
@@ -122,7 +121,7 @@ class Statistic : public Shared::Inference {
 
   virtual double preProcessParameter(double p, int index) const { return p; }
   void setParameterAtIndex(double f, int i) override;
-  virtual void initParameters();
+  virtual void initParameters() = 0;
 
   double cumulativeDistributiveFunctionAtAbscissa(
       double x) const override final;
@@ -135,12 +134,11 @@ class Statistic : public Shared::Inference {
   void setThreshold(double s) { m_threshold = s; }
 
   bool canChooseDataset() const {
-    return testType() == PcrInference::TestType::OneMean ||
-           testType() == PcrInference::TestType::TwoMeans ||
-           testType() == PcrInference::TestType::Slope;
+    return testType() == TestType::OneMean ||
+           testType() == TestType::TwoMeans || testType() == TestType::Slope;
   }
   bool hasTable() const {
-    return canChooseDataset() || testType() == PcrInference::TestType::Chi2;
+    return canChooseDataset() || testType() == TestType::Chi2;
   }
   virtual Table* table() {
     assert(false);
@@ -148,10 +146,12 @@ class Statistic : public Shared::Inference {
   }
 
   const char* criticalValueSymbol() const {
-    return PcrInference::CriticalValueSymbol(statisticType());
+    return Poincare::Inference::CriticalValueSymbol(statisticType());
   }
   Poincare::Layout criticalValueLayout() const {
-    return PcrInference::CriticalValueLayout(subApp(), statisticType());
+    return subApp() == SubApp::SignificanceTest
+               ? SignificanceTest::CriticalValueLayout(statisticType())
+               : ConfidenceInterval::CriticalValueLayout(statisticType());
   }
 
   // Outputs
@@ -164,7 +164,7 @@ class Statistic : public Shared::Inference {
                      I18n::Message* subMessage, int* precision);
 
   bool hasDegreeOfFreedom() const {
-    return PcrInference::HasDegreesOfFreedom(type());
+    return Poincare::Inference::HasDegreesOfFreedom(type());
   }
   double degreeOfFreedom() const { return m_degreesOfFreedom; }
 
@@ -177,18 +177,18 @@ class Statistic : public Shared::Inference {
 
  protected:
   Poincare::Distribution::Type distributionType() const {
-    return PcrInference::DistributionType(statisticType());
+    return Poincare::Inference::DistributionType(statisticType());
   }
   Poincare::Distribution::ParametersArray<double> distributionParameters()
       const {
-    return PcrInference::DistributionParameters(statisticType(),
-                                                m_degreesOfFreedom);
+    return Poincare::Inference::DistributionParameters(statisticType(),
+                                                       m_degreesOfFreedom);
   }
 
   Shared::ParameterRepresentation paramRepresentationAtIndex(
       int i) const override final {
     return Shared::ParameterRepresentation{
-        PcrInference::ParameterLayout(type(), i),
+        Poincare::Inference::ParameterLayout(type(), i),
         ParameterDescriptionAtIndex(type(), i)};
   }
 
@@ -210,10 +210,11 @@ class Statistic : public Shared::Inference {
   float canonicalDensityFunction(float x) const;
 
   // TODO: WARNING not working with Chi2
-  const PcrInference::ParametersArray constParametersArray() const {
-    PcrInference::ParametersArray array;
+  const Poincare::Inference::ParametersArray constParametersArray() const {
+    Poincare::Inference::ParametersArray array;
     const double* paramsArray = const_cast<Statistic*>(this)->parametersArray();
-    std::copy(paramsArray, paramsArray + PcrInference::k_maxNumberOfParameters,
+    std::copy(paramsArray,
+              paramsArray + Poincare::Inference::k_maxNumberOfParameters,
               array.data());
     return array;
   }

@@ -303,17 +303,17 @@ ComplexSign Quotient(ComplexSign s1, ComplexSign s2) {
       !s2.realSign().isInteger() || s2.realSign().canBeNull()) {
     return ComplexSign::Unknown();
   }
+  Sign s1Real = s1.realSign();
+  Sign s2Real = s2.realSign();
+  if (!s1Real.hasKnownSign() || !s2Real.hasKnownSign()) {
+    return ComplexSign(Sign::FiniteInteger(), Sign::Zero());
+  }
   /* If a and b have the same sign, q is positive.
    * If a and b have opposite signs, q is negative. */
-  if ((s1.realSign().isPositive() && s2.realSign().isPositive()) ||
-      (s1.realSign().isNegative() && s2.realSign().isNegative())) {
-    return ComplexSign(Sign::FinitePositiveInteger(), Sign::Zero());
-  }
-  if ((s1.realSign().isPositive() && s2.realSign().isNegative()) ||
-      (s1.realSign().isNegative() && s2.realSign().isPositive())) {
-    return ComplexSign(Sign::FiniteNegativeInteger(), Sign::Zero());
-  }
-  return ComplexSign(Sign::FiniteInteger(), Sign::Zero());
+  return ComplexSign(s1Real.isPositive() == s2Real.isPositive()
+                         ? Sign::FinitePositiveInteger()
+                         : Sign::FiniteNegativeInteger(),
+                     Sign::Zero());
 }
 
 namespace Internal {

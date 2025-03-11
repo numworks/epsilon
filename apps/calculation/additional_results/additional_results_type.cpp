@@ -153,6 +153,9 @@ bool AdditionalResultsType::HasUnit(
   // HasUnit is only called when exactOutput has Units
   assert(exactOutput.hasUnit());
 #if 1  // TODO_PCJ
+  if (!exactOutput.dimension().isUnit()) {
+    return false;
+  }
   // Assume units that cancel themselves have been removed by simplification.
   double value = exactOutput.approximateToRealScalar<double>(
       calculationPreferences.angleUnit, calculationPreferences.complexFormat);
@@ -160,7 +163,7 @@ bool AdditionalResultsType::HasUnit(
    * display if approximation is finite. We should simplify the exact output
    * with each relevant UnitDisplay and return false if all of them produce the
    * same as exactOutput. */
-  return std::isfinite(value) && exactOutput.dimension().isUnit();
+  return std::isfinite(value);
 #else
   assert(exactOutput.dimension().isUnit());
   Context* globalContext =

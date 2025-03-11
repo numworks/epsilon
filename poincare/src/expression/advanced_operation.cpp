@@ -219,6 +219,21 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
 }
 
 bool AdvancedOperation::ContractMult(Tree* e) {
+  /* A? * B^C * D^C * E? = A? * (BD)^C * E? with B or D addition as there is a
+   * systematic operation that expands back the Pow if B*D is kept as a Mult
+   * node */
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KMult(KA_s, KPow(KB, KC), KPow(KD, KC), KE_s),
+                             &ctx) &&
+      (ctx.getTree(KB)->isAdd() || ctx.getTree(KD)->isAdd())) {
+    Tree* mult = PatternMatching::CreateSimplify(KMult(KB, KD), ctx);
+    ExpandMult(mult);
+    ctx.setNode(KB, mult, 1, false);
+    mult->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KMult(KA_s, KPow(KB, KC), KE_s), ctx));
+    e->moveTreeOverTree(mult);
+    return true;
+  }
   /* TODO: With  N and M positive, contract
    * A + B*A*C + A^N + D*A^M*E into A*(1 + B*C + A^(N-1) + D*A^(M-1)*E) */
   if (!e->isAdd()) {

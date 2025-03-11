@@ -821,6 +821,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("1-e^(-(0.09/(5.63*10^-7)))", "1-e^(-90000000/563)");
   simplifies_to("(100/3)^(1/3)", "30^(2/3)/3");
   simplifies_to("(200/3)^(1/3)", "(2×15^(2/3))/3");
+  simplifies_to("ln((2-√(3))^10)+ln((2+√(3))^10)", "0");
 
   // Real powers
   simplifies_to("√(x)^2", "√(x)^2");

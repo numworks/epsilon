@@ -166,34 +166,28 @@ bool Binary::ReduceComparison(Tree* e) {
   } else {
     assert(complexSign.isReal());
     Sign sign = complexSign.realSign();
+    OMG::Troolean isPositive = sign.trooleanIsPositive();
+    OMG::Troolean isStrictlyPositive = sign.trooleanIsStrictlyPositive();
     switch (e->type()) {
       case Type::InferiorEqual:
-        if (sign.isNegative()) {
-          result = KTrue;
-        } else if (sign.isStrictlyPositive()) {
-          result = KFalse;
-        }
+        result = isStrictlyPositive == OMG::Troolean::True    ? KFalse
+                 : isStrictlyPositive == OMG::Troolean::False ? KTrue
+                                                              : result;
         break;
       case Type::SuperiorEqual:
-        if (sign.isPositive()) {
-          result = KTrue;
-        } else if (sign.isStrictlyNegative()) {
-          result = KFalse;
-        }
+        result = isPositive == OMG::Troolean::True    ? KTrue
+                 : isPositive == OMG::Troolean::False ? KFalse
+                                                      : result;
         break;
       case Type::Inferior:
-        if (sign.isStrictlyNegative()) {
-          result = KTrue;
-        } else if (sign.isPositive()) {
-          result = KFalse;
-        }
+        result = isPositive == OMG::Troolean::True    ? KFalse
+                 : isPositive == OMG::Troolean::False ? KTrue
+                                                      : result;
         break;
       case Type::Superior:
-        if (sign.isStrictlyPositive()) {
-          result = KTrue;
-        } else if (sign.isNegative()) {
-          result = KFalse;
-        }
+        result = isStrictlyPositive == OMG::Troolean::True    ? KTrue
+                 : isStrictlyPositive == OMG::Troolean::False ? KFalse
+                                                              : result;
         break;
       default:;
     }

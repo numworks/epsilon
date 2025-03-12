@@ -16,11 +16,11 @@ import os
 # We can sort sections on their address prefix or on their name suffix
 def loadable_sections(elf_file, address_prefix="", name_suffix=""):
     objdump_section_headers_pattern = re.compile(
-        "^\s+\d+\s+(\.[\w\.]*"
+        r"^\s+\d+\s+(\.[\w\.]*"
         + name_suffix
-        + ")\s+([0-9a-f]+)\s+([0-9a-f]+)\s+("
+        + r")\s+([0-9a-f]+)\s+([0-9a-f]+)\s+("
         + address_prefix
-        + "[0-9a-f]+)\s+([0-9a-f]+).*LOAD",
+        + r"[0-9a-f]+)\s+([0-9a-f]+).*LOAD",
         flags=re.MULTILINE,
     )
     objdump_output = subprocess.check_output(

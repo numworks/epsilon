@@ -12,6 +12,7 @@
 namespace Poincare::Internal::Inference::ConfidenceInterval {
 
 Results Compute(Type type, double threshold, const ParametersArray params) {
+  assert(IsTypeCompatibleWithConfidenceInterval(type));
   double degreesOfFreedom = ComputeDegreesOfFreedom(type, params);
   double estimate = ComputeEstimate(type, params);
   double standardError = ComputeStandardError(type, params);
@@ -69,11 +70,8 @@ double ComputeEstimate(TestType testType, const ParametersArray parameters) {
     case TestType::TwoMeans:
       return parameters[Params::TwoMeans::X1] -
              parameters[Params::TwoMeans::X2];
-    case TestType::Chi2:
-      // TODO
-      assert(false);
-      return NAN;
     default:
+      // Chi2 doesn't have an interval estimate
       OMG::unreachable();
   }
 }
@@ -101,11 +99,8 @@ double ComputeStandardError(Type type, const ParametersArray parameters) {
       return TwoMeansStandardError(type, parameters);
     case TestType::Slope:
       return parameters[Params::Slope::SE];
-    case TestType::Chi2:
-      // TODO
-      assert(false);
-      return NAN;
     default:
+      // Chi2 doesn't have an interval estimate
       OMG::unreachable();
   }
 }
@@ -151,10 +146,8 @@ Poincare::Layout EstimateLayout(Type type) {
       return KPHat ^ KSubscriptL("1"_l) ^ "-"_l ^ KPHat ^ KSubscriptL("2"_l);
     case TestType::TwoMeans:
       return KXBar ^ KSubscriptL("1"_l) ^ "-"_l ^ KXBar ^ KSubscriptL("2"_l);
-    case TestType::Chi2:
-      // TODO
-      assert(false);
     default:
+      // Chi2 doesn't have an interval estimate
       OMG::unreachable();
   }
 }
@@ -203,10 +196,8 @@ double DefaultParameterAtIndex(Type type, int index) {
       defaultParameters[Params::Slope::B] = 0.5;
       defaultParameters[Params::Slope::SE] = 0.1;
       break;
-    case TestType::Chi2:
-      // TODO
-      assert(false);
     default:
+      // Chi2 doesn't have an interval estimate
       OMG::unreachable();
   }
   return defaultParameters[index];

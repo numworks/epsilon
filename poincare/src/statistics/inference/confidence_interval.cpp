@@ -41,11 +41,8 @@ int IndexOfParameterToUseAsEstimate(TestType testType) {
       return Params::OneMean::X;
     case TestType::Slope:
       return Params::Slope::B;
-    case TestType::Chi2:
-      // TODO
-      assert(false);
     default:
-      OMG::unreachable();
+      return -1;
   }
 }
 

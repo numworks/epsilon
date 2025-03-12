@@ -24,14 +24,14 @@ class InputGoodnessController : public InputCategoricalController {
   }
 
  private:
-  constexpr static int k_indexOfDegreeOfFreedom = 1;
+  constexpr static int k_indexOfDegreesOfFreedom = 1;
 
   InputCategoricalTableCell* categoricalTableCell() override {
     return &m_inputGoodnessTableCell;
   }
   void createDynamicCells() override;
   int indexOfSignificanceCell() const override {
-    return k_indexOfDegreeOfFreedom + 1;
+    return k_indexOfDegreesOfFreedom + 1;
   }
   int indexOfEditedParameterAtIndex(int index) const override;
   const Escher::HighlightCell* privateExplicitCellAtRow(int row) const override;

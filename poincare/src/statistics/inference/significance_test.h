@@ -9,6 +9,8 @@ namespace Inference {
 
 namespace SignificanceTest {
 
+// WARNING: Chi2 is in another file (chi2_test.h)
+
 struct Hypothesis {
   double m_h0;
   Poincare::ComparisonJunior::Operator m_alternative;
@@ -23,7 +25,8 @@ struct Hypothesis {
       : Hypothesis(0.0, Poincare::ComparisonJunior::Operator::Superior) {}
 };
 
-constexpr bool HasHyphothesis(TestType testType) {
+Hypothesis DefaultHypothesis(TestType testType);
+constexpr bool HasHypothesis(TestType testType) {
   return testType != TestType::Chi2;
 }
 bool IsH0Valid(TestType testType, double h0);
@@ -70,7 +73,6 @@ Poincare::Layout CriticalValueLayout(StatisticType statisticType);
 Poincare::Layout EstimateLayoutAtIndex(TestType testType, int index);
 
 constexpr double DefaultThreshold() { return 0.05; }
-Hypothesis DefaultHyphothesis(TestType testType);
 double DefaultParameterAtIndex(Type type, int index);
 
 // ===== PRIVATE =====

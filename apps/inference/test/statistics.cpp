@@ -575,9 +575,10 @@ QUIZ_CASE(probability_homogeneity_test) {
     for (int j = 0; j < HomogeneityTest::k_maxNumberOfColumns *
                             HomogeneityTest::k_maxNumberOfRows;
          j++) {
-      double expected = test.expectedValueAtLocation(
-          j / HomogeneityTest::k_maxNumberOfColumns,
-          j % HomogeneityTest::k_maxNumberOfColumns);
+      double expected =
+          test.dataValueAtLocation(Chi2Test::DataType::Expected,
+                                   j % HomogeneityTest::k_maxNumberOfColumns,
+                                   j / HomogeneityTest::k_maxNumberOfColumns);
       double real = expectedValues[i][j];
       assert_roughly_equal(real, expected, 1E-4, true);
     }

@@ -173,6 +173,7 @@ $(addprefix statistics/, \
     distribution.cpp \
   ) \
   $(addprefix inference/, \
+    chi2_test.cpp \
     confidence_interval.cpp \
     inference.cpp \
     significance_test.cpp \

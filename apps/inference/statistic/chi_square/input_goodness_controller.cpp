@@ -32,15 +32,15 @@ void InputGoodnessController::createDynamicCells() {
 
 const HighlightCell* InputGoodnessController::privateExplicitCellAtRow(
     int row) const {
-  if (row == k_indexOfDegreeOfFreedom) {
+  if (row == k_indexOfDegreesOfFreedom) {
     return &m_degreeOfFreedomCell;
   }
   return InputCategoricalController::privateExplicitCellAtRow(row);
 }
 
 int InputGoodnessController::indexOfEditedParameterAtIndex(int index) const {
-  if (index == k_indexOfDegreeOfFreedom) {
-    return static_cast<GoodnessTest*>(m_statistic)->indexOfDegreeOfFreedom();
+  if (index == k_indexOfDegreesOfFreedom) {
+    return static_cast<GoodnessTest*>(m_statistic)->indexOfDegreesOfFreedom();
   }
   return InputCategoricalController::indexOfEditedParameterAtIndex(index);
 }

@@ -1,6 +1,7 @@
 #ifndef POINCARE_STATISTICS_INFERENCE_H
 #define POINCARE_STATISTICS_INFERENCE_H
 
+#include <poincare/src/statistics/inference/chi2_test.h>
 #include <poincare/src/statistics/inference/confidence_interval.h>
 #include <poincare/src/statistics/inference/inference.h>
 #include <poincare/src/statistics/inference/significance_test.h>
@@ -42,7 +43,7 @@ using Internal::Inference::IsThresholdValid;
 
 namespace SignificanceTest {
 
-using Internal::Inference::SignificanceTest::HasHyphothesis;
+using Internal::Inference::SignificanceTest::HasHypothesis;
 using Internal::Inference::SignificanceTest::Hypothesis;
 using Internal::Inference::SignificanceTest::HypothesisLayout;
 using Internal::Inference::SignificanceTest::HypothesisSymbol;
@@ -61,9 +62,30 @@ using Internal::Inference::SignificanceTest::Results;
 using Internal::Inference::SignificanceTest::CriticalValueLayout;
 using Internal::Inference::SignificanceTest::EstimateLayoutAtIndex;
 
-using Internal::Inference::SignificanceTest::DefaultHyphothesis;
+using Internal::Inference::SignificanceTest::DefaultHypothesis;
 using Internal::Inference::SignificanceTest::DefaultParameterAtIndex;
 using Internal::Inference::SignificanceTest::DefaultThreshold;
+
+namespace Chi2 {
+
+using Internal::Inference::SignificanceTest::Chi2::AreGoodnessInputsValid;
+using Internal::Inference::SignificanceTest::Chi2::AreHomogeneityInputsValid;
+using Internal::Inference::SignificanceTest::Chi2::IsExpectedValueValid;
+using Internal::Inference::SignificanceTest::Chi2::IsObservedValueValid;
+
+using Internal::Inference::SignificanceTest::Chi2::
+    ComputeGoodnessOfFitDegreesOfFreedom;
+using Internal::Inference::SignificanceTest::Chi2::
+    ComputeHomogeneityDegreesOfFreedom;
+using Internal::Inference::SignificanceTest::Chi2::IsDegreesOfFreedomValid;
+
+using Internal::Inference::SignificanceTest::Chi2::
+    FillHomogeneityExpectedValues;
+
+using Internal::Inference::SignificanceTest::Chi2::ComputeCriticalValue;
+using Internal::Inference::SignificanceTest::Chi2::FillContributions;
+
+}  // namespace Chi2
 
 }  // namespace SignificanceTest
 

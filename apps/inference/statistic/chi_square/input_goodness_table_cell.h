@@ -6,9 +6,7 @@
 #include <escher/metric.h>
 
 #include "inference/models/statistic/goodness_test.h"
-#include "inference/shared/dynamic_cells_data_source.h"
 #include "inference/statistic/categorical_table_cell.h"
-#include "inference/statistic/categorical_table_view_data_source.h"
 
 namespace Inference {
 
@@ -29,11 +27,11 @@ class InputGoodnessTableCell : public DoubleColumnTableCell {
                                     bool forceReloadCell = false) override;
 
  private:
-  static_assert(GoodnessTest::k_maxNumberOfColumns <=
+  static_assert(GoodnessTest::k_numberOfInputColumns <=
                     DoubleColumnTableCell::k_maxNumberOfColumns,
                 "GoodnessTest is not adjusted to the DoubleColumnTableCell");
   constexpr static I18n::Message
-      k_columnHeaders[GoodnessTest::k_maxNumberOfColumns] = {
+      k_columnHeaders[GoodnessTest::k_numberOfInputColumns] = {
           I18n::Message::Observed, I18n::Message::Expected};
 
   // ClearColumnHelper

@@ -1,22 +1,41 @@
 #include "goodness_test.h"
 
-#include <float.h>
 #include <inference/statistic/chi_square/results_goodness_table_cell.h>
 #include <poincare/print.h>
 #include <string.h>
 
-#include "homogeneity_test.h"
+#include "inference/models/statistic/chi2_test.h"
 
 namespace Inference {
 
-static_assert(sizeof(GoodnessTest) < sizeof(HomogeneityTest),
-              "Make sure this size increase was decided");
+GoodnessTest::Column GoodnessTest::ColumnIndexForDataType(DataType type) {
+  if (type == DataType::Observed) {
+    return Column::Observed;
+  }
+  if (type == DataType::Expected) {
+    return Column::Expected;
+  }
+  assert(type == DataType::Contribution);
+  return Column::Contribution;
+}
 
 GoodnessTest::GoodnessTest() {
-  for (int i = 0; i < k_maxNumberOfRows * k_maxNumberOfColumns; i++) {
-    m_input[i] = k_undefinedValue;
+  invalidateNumberOfRows();
+  for (int i = 0; i < k_maxNumberOfRows; i++) {
+    m_input[Column::Observed][i] = k_undefinedValue;
+    m_input[Column::Expected][i] = k_undefinedValue;
+  }
+  init();
+}
+
+void GoodnessTest::init() {
+  m_contributions = Poincare::FloatList<double>::Builder();
+  for (int j = 0; j < k_maxNumberOfRows; j++) {
+    m_contributions.addValueAtIndex(k_undefinedValue, j);
   }
 }
+
+void GoodnessTest::tidy() { m_contributions = Poincare::FloatList<double>(); }
 
 void GoodnessTest::setGraphTitle(char* buffer, size_t bufferSize) const {
   Poincare::Print::CustomPrintf(
@@ -39,11 +58,75 @@ void GoodnessTest::setResultTitle(char* buffer, size_t bufferSize,
   strlcpy(buffer, I18n::translate(I18n::Message::CalculatedValues), bufferSize);
 }
 
-void GoodnessTest::compute() {
-  m_testCriticalValue = computeChi2();
-  m_pValue = SignificanceTest::ComputePValue(
-      statisticType(), m_hypothesis.m_alternative, m_testCriticalValue,
-      degreeOfFreedom());
+double GoodnessTest::parameterAtIndex(int i) const {
+  if (i == indexOfDegreesOfFreedom()) {
+    return degreeOfFreedom();
+  }
+  return Chi2Test::parameterAtIndex(i);
+}
+void GoodnessTest::setParameterAtIndex(double f, int i) {
+  if (i == indexOfDegreesOfFreedom()) {
+    setDegreeOfFreedom(f);
+    return;
+  }
+  Chi2Test::setParameterAtIndex(f, i);
+}
+bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
+  if (i == indexOfDegreesOfFreedom()) {
+    return SignificanceTest::Chi2::IsDegreesOfFreedomValid(p);
+  }
+  return Chi2Test::authorizedParameterAtIndex(p, i);
+}
+
+bool GoodnessTest::validateInputs(int pageIndex) {
+  return SignificanceTest::Chi2::AreGoodnessInputsValid(&m_observedValuesData,
+                                                        &m_expectedValuesData);
+}
+
+int GoodnessTest::numberOfDataRows() const {
+  if (m_numberOfDataRows < 0) {
+    computeNumberOfRows();
+  }
+  return m_numberOfDataRows;
+}
+
+double GoodnessTest::dataValueAtLocation(DataType type, int col,
+                                         int row) const {
+  assert(col == 0 && row < k_maxNumberOfRows);
+  return valueAtPosition(row, ColumnIndexForDataType(type));
+}
+
+void GoodnessTest::setDataValueAtLocation(DataType type, double value, int col,
+                                          int row) {
+  assert(col == 0 && row < k_maxNumberOfRows);
+  return setValueAtPosition(value, row, ColumnIndexForDataType(type));
+}
+
+double GoodnessTest::valueAtPosition(int row, int column) const {
+  if (column == Column::Contribution) {
+    return m_contributions.valueAtIndex(row);
+  }
+  assert(column < k_numberOfInputColumns && row < k_maxNumberOfRows);
+  return m_input[column][row];
+}
+
+void GoodnessTest::setValueAtPosition(double value, int row, int column) {
+  if (column == Column::Contribution) {
+    m_contributions.replaceValueAtIndex(value, row);
+    return;
+  }
+  invalidateNumberOfRows();
+  assert(column < k_numberOfInputColumns && row < k_maxNumberOfRows);
+  m_input[column][row] = value;
+}
+
+bool GoodnessTest::authorizedValueAtPosition(double p, int row,
+                                             int column) const {
+  if (column == Column::Observed) {
+    return SignificanceTest::Chi2::IsObservedValueValid(p);
+  }
+  assert(column == Column::Expected);
+  return SignificanceTest::Chi2::IsExpectedValueValid(p);
 }
 
 void GoodnessTest::recomputeData() {
@@ -51,83 +134,33 @@ void GoodnessTest::recomputeData() {
   int j = 0;
   int lastNonEmptyRow = -1;
   for (int i = 0; i < k_maxNumberOfRows; i++) {
-    if (!(std::isnan(expectedValue(i)) && std::isnan(observedValue(i)))) {
+    double expected = valueAtPosition(i, Column::Expected);
+    double observed = valueAtPosition(i, Column::Observed);
+    if (!(std::isnan(expected) && std::isnan(observed))) {
       if (i != j) {
-        setExpectedValue(j, expectedValue(i));
-        setObservedValue(j, observedValue(i));
+        setValueAtPosition(expected, i, Column::Expected);
+        setValueAtPosition(observed, i, Column::Observed);
       }
       j++;
       lastNonEmptyRow = i;
     }
   }
   while (j <= lastNonEmptyRow) {
-    setExpectedValue(j, k_undefinedValue);
-    setObservedValue(j, k_undefinedValue);
+    setValueAtPosition(k_undefinedValue, j, Column::Expected);
+    setValueAtPosition(k_undefinedValue, j, Column::Observed);
     j++;
   }
+  invalidateNumberOfRows();
 }
 
-bool GoodnessTest::validateInputs(int pageIndex) {
-  if (numberOfValuePairs() <= 1) {
-    return false;
-  }
-  int n = computeInnerDimensions().row;
-  for (int row = 0; row < n; row++) {
-    if (std::isnan(expectedValue(row)) || std::isnan(observedValue(row))) {
-      return false;
-    }
-  }
-  return true;
+int GoodnessTest::computeDegreesOfFreedom() {
+  return SignificanceTest::Chi2::ComputeGoodnessOfFitDegreesOfFreedom(
+      &m_observedValuesData);
 }
 
-void GoodnessTest::setParameterAtIndex(double p, int i) {
-  if (i == indexOfDegreeOfFreedom()) {
-    m_degreesOfFreedom = p;
-  } else {
-    return Statistic::setParameterAtIndex(p, i);
-  }
-}
-
-bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
-  if (i < numberOfTestParameters() && i % k_maxNumberOfColumns == 1 &&
-      std::fabs(p) < DBL_MIN) {
-    // Expected value should not be null
-    return false;
-  }
-  if (i == indexOfDegreeOfFreedom() &&
-      (p != std::round(p) || p < 1.0 || p > k_maxDegreeOfFreedom)) {
-    return false;
-  }
-  return Chi2Test::authorizedParameterAtIndex(p, i);
-}
-
-double GoodnessTest::valueAtPosition(int row, int column) const {
-  if (column == ResultGoodnessContributionsTable::ContributionColumnIndex) {
-    // Contribution column
-    return computeContribution(row);
-  }
-
-  return Chi2Test::valueAtPosition(row, column);
-}
-
-int GoodnessTest::numberOfValuePairs() const {
-  return computeInnerDimensions().row;
-}
-
-double GoodnessTest::expectedValue(int index) const {
-  return m_input[index2DToIndex(index, 1)];
-}
-
-double GoodnessTest::observedValue(int index) const {
-  return m_input[index2DToIndex(index, 0)];
-}
-
-void GoodnessTest::setExpectedValue(int index, double value) {
-  parametersArray()[index2DToIndex(index, 1)] = value;
-}
-
-void GoodnessTest::setObservedValue(int index, double value) {
-  parametersArray()[index2DToIndex(index, 0)] = value;
+void GoodnessTest::computeNumberOfRows() const {
+  Index2D dimensions = computeInnerDimensions();
+  m_numberOfDataRows = dimensions.row;
 }
 
 }  // namespace Inference

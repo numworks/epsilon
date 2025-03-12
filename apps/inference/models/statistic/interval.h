@@ -16,7 +16,6 @@ class Interval : public Statistic {
         m_SE(NAN),
         m_zCritical(NAN),
         m_marginOfError(NAN) {}
-  virtual ~Interval();
   SubApp subApp() const override { return SubApp::ConfidenceInterval; }
 
   void setGraphTitle(char* buffer, size_t bufferSize) const override final {

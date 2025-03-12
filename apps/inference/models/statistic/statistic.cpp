@@ -102,11 +102,6 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
 
 static bool initializeStatistic(SubApp subApp, Poincare::Inference::Type type,
                                 Statistic* target) {
-  if (target->subApp() == subApp && target->type().testType == type.testType &&
-      target->type().statisticType == type.statisticType &&
-      target->type().categoricalType == type.categoricalType) {
-    return false;
-  }
   target->~Statistic();
   assert(subApp != SubApp::ConfidenceInterval ||
          ConfidenceInterval::IsTypeCompatibleWithConfidenceInterval(type));
@@ -117,21 +112,33 @@ static bool initializeStatistic(SubApp subApp, Poincare::Inference::Type type,
 }
 
 bool Statistic::initializeSubApp(SubApp subApp) {
+  if (subApp == this->subApp()) {
+    return false;
+  }
   Poincare::Inference::Type dummyType(TestType::OneMean);
   return initializeStatistic(subApp, dummyType, this);
 }
 
 bool Statistic::initializeTest(TestType testType) {
+  if (testType == this->testType()) {
+    return false;
+  }
   Poincare::Inference::Type partialType(testType);
   return initializeStatistic(subApp(), partialType, this);
 }
 
 bool Statistic::initializeDistribution(StatisticType statisticType) {
+  if (statisticType == this->statisticType()) {
+    return false;
+  }
   Poincare::Inference::Type type(testType(), statisticType);
   return initializeStatistic(subApp(), type, this);
 }
 
 bool Statistic::initializeCategoricalType(CategoricalType categoricalType) {
+  if (categoricalType == this->categoricalType()) {
+    return false;
+  }
   assert(testType() == TestType::Chi2);
   Poincare::Inference::Type type(testType(), statisticType(), categoricalType);
   return initializeStatistic(subApp(), type, this);

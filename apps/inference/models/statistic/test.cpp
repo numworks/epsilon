@@ -22,7 +22,7 @@ void Test::setGraphTitle(char* buffer, size_t bufferSize) const {
 }
 
 void Test::initParameters() {
-  m_hypothesis = SignificanceTest::DefaultHyphothesis(testType());
+  m_hypothesis = SignificanceTest::DefaultHypothesis(testType());
   for (int i = 0; i < numberOfTestParameters(); i++) {
     parametersArray()[i] = SignificanceTest::DefaultParameterAtIndex(type(), i);
   }

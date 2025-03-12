@@ -4,6 +4,33 @@
 
 namespace Poincare::Internal {
 
+double DataTable::totalSum() const {
+  double result = 0.;
+  int n = numberOfColumns();
+  for (int k = 0; k < n; k++) {
+    result += columnSum(k);
+  }
+  return result;
+}
+
+double DataTable::rowSum(int row) const {
+  double result = 0.;
+  int n = numberOfColumns();
+  for (int k = 0; k < n; k++) {
+    result += get(k, row);
+  }
+  return result;
+}
+
+double DataTable::columnSum(int column) const {
+  double result = 0.;
+  int n = numberOfRows();
+  for (int k = 0; k < n; k++) {
+    result += get(column, k);
+  }
+  return result;
+}
+
 StatisticsDatasetFromColumn DataTable::createDatasetFromColumn(
     int i, StatisticsCalculationOptions options) const {
   return StatisticsDatasetFromColumn(this, i, options.lnOfValues(i),

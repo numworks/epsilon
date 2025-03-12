@@ -13,8 +13,6 @@ using namespace Poincare;
 
 namespace Inference {
 
-Interval::~Interval() { tidy(); }
-
 void Interval::setGraphTitleForValue(double marginOfError, char* buffer,
                                      size_t bufferSize) const {
   const char* format = I18n::translate(

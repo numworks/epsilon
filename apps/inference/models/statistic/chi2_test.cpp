@@ -4,24 +4,23 @@
 
 #include <cmath>
 
+#include "poincare/comparison_operator.h"
+
 namespace Inference {
 
-Chi2Test::Chi2Test() {
-  m_hypothesis.m_alternative =
-      Poincare::ComparisonJunior::Operator::Superior;  // Always higher
+void Chi2Test::compute() {
+  computeContributions();
+  m_testCriticalValue =
+      SignificanceTest::Chi2::ComputeCriticalValue(&m_contributionsData);
+  // Always use the superior operator for the chi2 test
+  m_pValue = SignificanceTest::ComputePValue(
+      statisticType(), Poincare::ComparisonJunior::Operator::Superior,
+      m_testCriticalValue, degreeOfFreedom());
 }
 
-double Chi2Test::computeChi2() {
-  double z = 0;
-  int n = numberOfValuePairs();
-  for (int i = 0; i < n; i++) {
-    z += computeContribution(i);
-  }
-  return z;
-}
-
-double Chi2Test::computeContribution(int i) const {
-  return std::pow(expectedValue(i) - observedValue(i), 2) / expectedValue(i);
+void Chi2Test::computeContributions() {
+  SignificanceTest::Chi2::FillContributions(
+      &m_observedValuesData, &m_expectedValuesData, &m_contributionsData);
 }
 
 float Chi2Test::computeXMax() const {

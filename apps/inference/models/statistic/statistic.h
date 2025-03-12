@@ -26,8 +26,8 @@ namespace Inference {
 
 class Statistic : public Shared::Inference {
  public:
-  Statistic() : m_threshold(-1), m_degreesOfFreedom(NAN) {}
-
+  Statistic() : m_threshold(-1), m_degreesOfFreedom(NAN) { init(); }
+  ~Statistic() { tidy(); }
   virtual void init() {}
   virtual void tidy() {}
 
@@ -100,14 +100,14 @@ class Statistic : public Shared::Inference {
 
   bool hasHypothesisParameters() const {
     return subApp() == SubApp::SignificanceTest &&
-           SignificanceTest::HasHyphothesis(testType());
+           SignificanceTest::HasHypothesis(testType());
   }
 
   // Input
   int numberOfParameters() override {
     return numberOfTestParameters() + 1 /* threshold */;
   }
-  virtual int numberOfTestParameters() const {
+  int numberOfTestParameters() const {
     return Poincare::Inference::NumberOfParameters(testType());
   }
   int indexOfThreshold() const { return numberOfTestParameters(); }
@@ -209,7 +209,6 @@ class Statistic : public Shared::Inference {
   float computeYMax() const override final;
   float canonicalDensityFunction(float x) const;
 
-  // TODO: WARNING not working with Chi2
   const Poincare::Inference::ParametersArray constParametersArray() const {
     Poincare::Inference::ParametersArray array;
     const double* paramsArray = const_cast<Statistic*>(this)->parametersArray();

@@ -92,10 +92,9 @@ double ComputeDegreesOfFreedom(Type type, const ParametersArray parameters) {
     }
     case TestType::Slope:
       return parameters[Params::Slope::N] - 2;
-    case TestType::Chi2:
-      // TODO: Implement
     default:
       // OneProportion, TwoProportions
+      // Chi2 is handled separately
       OMG::unreachable();
   }
 }

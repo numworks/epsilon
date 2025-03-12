@@ -1,5 +1,6 @@
 #include "results_homogeneity_table_cell.h"
 
+#include "inference/models/statistic/chi2_test.h"
 #include "results_homogeneity_controller.h"
 
 using namespace Escher;
@@ -69,19 +70,21 @@ void ResultsHomogeneityTableCell::fillInnerCellForLocation(
 
   double value;
   if (m_mode == Mode::ExpectedValue) {
-    if (column == m_statistic->numberOfResultColumns() &&
-        row == m_statistic->numberOfResultRows()) {
+    if (column == m_statistic->numberOfDataColumns() &&
+        row == m_statistic->numberOfDataRows()) {
       value = m_statistic->total();
-    } else if (column == m_statistic->numberOfResultColumns()) {
+    } else if (column == m_statistic->numberOfDataColumns()) {
       value = m_statistic->rowTotal(row);
-    } else if (row == m_statistic->numberOfResultRows()) {
+    } else if (row == m_statistic->numberOfDataRows()) {
       value = m_statistic->columnTotal(column);
     } else {
-      value = m_statistic->expectedValueAtLocation(row, column);
+      value = m_statistic->dataValueAtLocation(Chi2Test::DataType::Expected,
+                                               column, row);
     }
   } else {
     assert(m_mode == Mode::Contribution);
-    value = m_statistic->contributionAtLocation(row, column);
+    value = m_statistic->dataValueAtLocation(Chi2Test::DataType::Contribution,
+                                             column, row);
   }
   PrintValueInTextHolder(value, myCell);
   myCell->setEven(row % 2 == 1);

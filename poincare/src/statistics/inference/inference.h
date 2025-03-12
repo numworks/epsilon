@@ -117,7 +117,6 @@ struct Slope {
   // Number of points, Slope, Standard error
   enum { N, B, SE };
 };
-// TODO: Chi2
 };  // namespace Params
 
 constexpr int k_maxNumberOfParameters = 6;
@@ -135,8 +134,8 @@ constexpr int NumberOfParameters(TestType testType) {
     case TestType::TwoMeans:
       return 6;
     case TestType::Chi2:
-      // TODO Special case
-      return -1;
+      // Special case
+      return 0;
     default:
       OMG::unreachable();
   }

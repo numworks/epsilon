@@ -50,12 +50,10 @@ class ResultGoodnessContributionsTable
 
   // TableViewDataSource
   int numberOfRows() const override {
-    return 1 + m_statistic->numberOfValuePairs();
+    return 1 + m_statistic->numberOfDataRows();
   }
   int numberOfColumns() const override { return 3; }
   int typeAtLocation(int column, int row) const override { return 0; }
-
-  static constexpr int ContributionColumnIndex = 2;
 
  private:
   static constexpr I18n::Message k_titles[] = {I18n::Message::Observed,

@@ -12,13 +12,19 @@ class StatisticsDatasetFromColumn;
 
 class DataTable {
  public:
-  virtual int numberOfColumns() const = 0;
-  virtual int numberOfRows() const = 0;
-  virtual double get(int column, int row) const = 0;
-
 #if TARGET_POINCARE_JS
   virtual ~DataTable() = default;
 #endif
+
+  virtual int numberOfColumns() const = 0;
+  virtual int numberOfRows() const = 0;
+
+  virtual double get(int column, int row) const = 0;
+  virtual void set(double value, int column, int row) { assert(false); }
+
+  double totalSum() const;
+  double rowSum(int row) const;
+  double columnSum(int column) const;
 
   // Statistics
   StatisticsDatasetFromColumn createDatasetFromColumn(

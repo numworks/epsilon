@@ -1,15 +1,35 @@
 #include "homogeneity_test.h"
 
 #include <assert.h>
-#include <float.h>
 #include <poincare/print.h>
 
 namespace Inference {
 
 HomogeneityTest::HomogeneityTest() {
-  for (int i = 0; i < numberOfTestParameters(); i++) {
-    m_input[i] = k_undefinedValue;
-    m_expectedValues[i] = k_undefinedValue;
+  invalidateDataDimensions();
+  for (int col = 0; col < k_maxNumberOfColumns; col++) {
+    for (int row = 0; row < k_maxNumberOfRows; row++) {
+      m_input[col][row] = k_undefinedValue;
+    }
+  }
+  init();
+}
+
+void HomogeneityTest::init() {
+  for (int i = 0; i < k_maxNumberOfColumns; i++) {
+    m_expectedValues[i] = Poincare::FloatList<double>::Builder();
+    m_contributions[i] = Poincare::FloatList<double>::Builder();
+    for (int j = 0; j < k_maxNumberOfRows; j++) {
+      m_expectedValues[i].addValueAtIndex(k_undefinedValue, j);
+      m_contributions[i].addValueAtIndex(k_undefinedValue, j);
+    }
+  }
+}
+
+void HomogeneityTest::tidy() {
+  for (int i = 0; i < k_maxNumberOfColumns; i++) {
+    m_expectedValues[i] = Poincare::FloatList<double>();
+    m_contributions[i] = Poincare::FloatList<double>();
   }
 }
 
@@ -27,12 +47,65 @@ void HomogeneityTest::setGraphTitle(char* buffer, size_t bufferSize) const {
       Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-bool HomogeneityTest::authorizedParameterAtIndex(double p, int i) const {
-  if (i < numberOfTestParameters() && p < 0.0) {
-    // Frequencies should be >= 0
-    return false;
+int HomogeneityTest::numberOfDataRows() const {
+  if (m_numberOfDataRows < 0) {
+    computeDataDimensions();
   }
-  return Chi2Test::authorizedParameterAtIndex(p, i);
+  return m_numberOfDataRows;
+}
+
+int HomogeneityTest::numberOfDataColumns() const {
+  if (m_numberOfDataColumns < 0) {
+    computeDataDimensions();
+  }
+  return m_numberOfDataColumns;
+}
+
+double HomogeneityTest::dataValueAtLocation(DataType type, int col,
+                                            int row) const {
+  assert(col < k_maxNumberOfColumns && row < k_maxNumberOfRows);
+  if (type == DataType::Observed) {
+    return m_input[col][row];
+  }
+  if (type == DataType::Expected) {
+    return m_expectedValues[col].valueAtIndex(row);
+  }
+  assert(type == DataType::Contribution);
+  return m_contributions[col].valueAtIndex(row);
+}
+
+void HomogeneityTest::setDataValueAtLocation(DataType type, double value,
+                                             int col, int row) {
+  assert(col < k_maxNumberOfColumns && row < k_maxNumberOfRows);
+  if (type == DataType::Observed) {
+    m_input[col][row] = value;
+    return;
+  }
+  if (type == DataType::Expected) {
+    m_expectedValues[col].replaceValueAtIndex(value, row);
+    return;
+  }
+  assert(type == DataType::Contribution);
+  m_contributions[col].replaceValueAtIndex(value, row);
+}
+
+bool HomogeneityTest::validateInputs(int pageIndex) {
+  return SignificanceTest::Chi2::AreHomogeneityInputsValid(
+      &m_observedValuesData);
+}
+
+void HomogeneityTest::compute() {
+  computeDataDimensions();
+  computeExpectedValues();
+  m_degreesOfFreedom =
+      SignificanceTest::Chi2::ComputeHomogeneityDegreesOfFreedom(
+          &m_observedValuesData);
+  Chi2Test::compute();
+}
+
+bool HomogeneityTest::authorizedValueAtPosition(double p, int row,
+                                                int column) const {
+  return SignificanceTest::Chi2::IsObservedValueValid(p);
 }
 
 bool HomogeneityTest::deleteValueAtPosition(int row, int column) {
@@ -46,86 +119,6 @@ bool HomogeneityTest::deleteValueAtPosition(int row, int column) {
     }
   }
   return true;
-}
-
-void HomogeneityTest::compute() {
-  Index2D max = computeInnerDimensions();
-  m_numberOfResultRows = max.row;
-  m_numberOfResultColumns = max.col;
-  computeExpectedValues(max);
-  m_testCriticalValue = computeChi2();
-  m_degreesOfFreedom = computeDegreesOfFreedom(max);
-  m_pValue = SignificanceTest::ComputePValue(
-      statisticType(), m_hypothesis.m_alternative, m_testCriticalValue,
-      m_degreesOfFreedom);
-}
-
-double HomogeneityTest::expectedValueAtLocation(int row, int column) {
-  return m_expectedValues[index2DToIndex(row, column)];
-}
-
-double HomogeneityTest::contributionAtLocation(int row, int column) {
-  double eV = expectedValueAtLocation(row, column);
-  double oV = valueAtPosition(row, column);
-  return std::pow(eV - oV, 2.) / eV;
-}
-
-double HomogeneityTest::observedValue(int resultsIndex) const {
-  return parameterAtIndex(resultsIndexToArrayIndex(resultsIndex));
-}
-
-double HomogeneityTest::expectedValue(int resultsIndex) const {
-  return m_expectedValues[resultsIndexToArrayIndex(resultsIndex)];
-}
-
-int HomogeneityTest::computeDegreesOfFreedom(Index2D max) {
-  return (max.row - 1) * (max.col - 1);
-}
-
-int HomogeneityTest::numberOfValuePairs() const {
-  Index2D max = computeInnerDimensions();
-  return max.row * max.col;
-}
-
-HomogeneityTest::Index2D HomogeneityTest::resultsIndexToIndex2D(
-    int resultsIndex) const {
-  assert(m_numberOfResultColumns > 0);
-  return HomogeneityTest::Index2D{
-      .row = resultsIndex / m_numberOfResultColumns,
-      .col = resultsIndex % m_numberOfResultColumns};
-}
-
-int HomogeneityTest::resultsIndexToArrayIndex(int resultsIndex) const {
-  return index2DToIndex(resultsIndexToIndex2D(resultsIndex));
-}
-
-void HomogeneityTest::computeExpectedValues(Index2D max) {
-  // Compute row, column and overall sums
-  m_total = 0;
-  for (int row = 0; row < max.row; row++) {
-    for (int col = 0; col < max.col; col++) {
-      // int index = index2DToIndex(row, col);
-      if (row == 0) {
-        m_columnTotals[col] = 0;
-      }
-      if (col == 0) {
-        m_rowTotals[row] = 0;
-      }
-      double p = valueAtPosition(row, col);
-      m_columnTotals[col] += p;
-      m_rowTotals[row] += p;
-      m_total += p;
-    }
-  }
-  // Then fill array
-  for (int row = 0; row < max.row; row++) {
-    for (int col = 0; col < max.col; col++) {
-      int index = index2DToIndex(row, col);
-      // Note : Divide before multiplying to avoid some cases of double overflow
-      m_expectedValues[index] =
-          (m_rowTotals[row] / m_total) * m_columnTotals[col];
-    }
-  }
 }
 
 void HomogeneityTest::recomputeData() {
@@ -175,47 +168,23 @@ void HomogeneityTest::recomputeData() {
     }
     i++;
   }
+  invalidateDataDimensions();
 }
 
-bool HomogeneityTest::validateInputs(int pageIndex) {
-  Index2D max = computeInnerDimensions();
-  if (max.col <= 1 || max.row <= 1) {
-    return false;
-  }
-  /* - No value should be undef
-   * - Neither a whole row nor a whole column should be null.
-   * - The whole population should not be null. */
-  bool nullRow[k_maxNumberOfRows];
-  bool nullColumn[k_maxNumberOfColumns];
-  double total = 0.;
-  for (int col = 0; col < max.col; col++) {
-    // Init nullColumn array
-    nullColumn[col] = true;
-  }
-  for (int row = 0; row < max.row; row++) {
-    // Init nullRow array
-    nullRow[row] = true;
-    for (int col = 0; col < max.col; col++) {
-      double value = valueAtPosition(row, col);
-      total += value;
-      nullRow[row] = nullRow[row] && std::fabs(value) < DBL_MIN;
-      nullColumn[col] = nullColumn[col] && std::fabs(value) < DBL_MIN;
-      if (std::isnan(value)) {
-        return false;
-      }
-      if (row == max.row - 1) {
-        // Check column nullity
-        if (nullColumn[col]) {
-          return false;
-        }
-      }
-    }
-    // Check row nullity
-    if (nullRow[row]) {
-      return false;
-    }
-  }
-  return std::fabs(total) >= DBL_MIN;
+void HomogeneityTest::invalidateDataDimensions() const {
+  m_numberOfDataRows = -1;
+  m_numberOfDataColumns = -1;
+}
+
+void HomogeneityTest::computeDataDimensions() const {
+  Index2D dimensions = computeInnerDimensions();
+  m_numberOfDataRows = dimensions.row;
+  m_numberOfDataColumns = dimensions.col;
+}
+
+void HomogeneityTest::computeExpectedValues() {
+  SignificanceTest::Chi2::FillHomogeneityExpectedValues(&m_observedValuesData,
+                                                        &m_expectedValuesData);
 }
 
 }  // namespace Inference

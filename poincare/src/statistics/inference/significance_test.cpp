@@ -13,15 +13,15 @@ namespace Poincare::Internal::Inference::SignificanceTest {
 bool IsH0Valid(TestType testType, double h0) {
   switch (testType) {
     case TestType::OneProportion:
-      return h0 >= 0 && h0 <= 1;
+      return h0 >= 0. && h0 <= 1.;
     case TestType::TwoProportions:
-      return h0 >= -1 && h0 <= 1;
+      return h0 >= -1. && h0 <= 1.;
     case TestType::OneMean:
     case TestType::TwoMeans:
     case TestType::Slope:
+    case TestType::Chi2:
       return true;
     default:
-      // Chi2 doesn't have a hypothesis
       OMG::unreachable();
   }
 }
@@ -39,7 +39,7 @@ const char* HypothesisSymbol(TestType testType) {
     case TestType::Slope:
       return "β";
     default:
-      // Chi2 doesn't have a hypothesis
+      // Chi2 doesn't have a visible hypothesis
       OMG::unreachable();
   }
 }
@@ -56,6 +56,7 @@ Poincare::Layout HypothesisLayout(TestType testType) {
 
 Results Compute(Type type, Hypothesis hypothesis,
                 const ParametersArray params) {
+  assert(type.testType != TestType::Chi2);
   Estimates estimates = ComputeEstimates(type, params);
   double degreesOfFreedom = ComputeDegreesOfFreedom(type, params);
   double criticalValue = ComputeCriticalValue(type, hypothesis.m_h0, params);
@@ -126,11 +127,8 @@ double ComputeCriticalValue(Type type, double h0,
     case TestType::Slope:
       return (parameters[Params::Slope::B] - h0) /
              parameters[Params::Slope::SE];
-    case TestType::Chi2:
-      // TODO
-      assert(false);
-      return NAN;
     default:
+      // Chi2 is special
       OMG::unreachable();
   }
 }
@@ -187,7 +185,7 @@ Poincare::Layout EstimateLayoutAtIndex(TestType testType, int index) {
   }
 }
 
-Hypothesis DefaultHyphothesis(TestType testType) {
+Hypothesis DefaultHypothesis(TestType testType) {
   switch (testType) {
     case TestType::OneProportion:
       return Hypothesis{0.08, ComparisonJunior::Operator::Superior};
@@ -197,9 +195,9 @@ Hypothesis DefaultHyphothesis(TestType testType) {
       return Hypothesis{50., ComparisonJunior::Operator::Inferior};
     case TestType::TwoMeans:
     case TestType::Slope:
+    case TestType::Chi2:
       return Hypothesis{0., ComparisonJunior::Operator::Superior};
     default:
-      // Chi2 doesn't have a hypothesis
       OMG::unreachable();
   }
 }
@@ -235,10 +233,8 @@ double DefaultParameterAtIndex(Type type, int index) {
       defaultParameters[Params::Slope::SE] = 0.1;
       defaultParameters[Params::Slope::N] = 10.;
       break;
-    case TestType::Chi2:
-      // TODO
-      assert(false);
     default:
+      // Chi2 has no default parameters
       OMG::unreachable();
   }
   return defaultParameters[index];

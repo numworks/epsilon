@@ -2,6 +2,7 @@
 #define INFERENCE_MODELS_STATISTIC_HOMOGENEITY_TEST_H
 
 #include "chi2_test.h"
+#include "poincare/old/float_list.h"
 
 namespace Inference {
 
@@ -12,59 +13,60 @@ class HomogeneityTest final : public Chi2Test {
   constexpr static int k_maxNumberOfRows = 9;
 
   HomogeneityTest();
+  void init() override;
+  void tidy() override;
+
   constexpr CategoricalType categoricalType() const override {
     return CategoricalType::Homogeneity;
   }
   void setGraphTitle(char* buffer, size_t bufferSize) const override;
 
+  // Chi2Test
+  int numberOfDataRows() const override;
+  int numberOfDataColumns() const override;
+  double dataValueAtLocation(DataType type, int col, int row) const override;
+  void setDataValueAtLocation(DataType type, double value, int col,
+                              int row) override;
+
   // Statistic
   bool validateInputs(int pageIndex = 0) override;
-  // Test
   void compute() override;
 
-  // Chi2Test
-  bool deleteValueAtPosition(int row, int column) override;
+  // Table
   void recomputeData() override;
   int maxNumberOfColumns() const override { return k_maxNumberOfColumns; };
   int maxNumberOfRows() const override { return k_maxNumberOfRows; };
+  double valueAtPosition(int row, int column) const override {
+    return dataValueAtLocation(DataType::Observed, column, row);
+  }
+  void setValueAtPosition(double value, int row, int column) override {
+    setDataValueAtLocation(DataType::Observed, value, column, row);
+  }
+  bool authorizedValueAtPosition(double p, int row, int column) const override;
+  bool deleteValueAtPosition(int row, int column) override;
 
-  int numberOfTestParameters() const override {
-    return k_maxNumberOfColumns * k_maxNumberOfRows;
+  // HomogeneityTest
+  double total() { return m_observedValuesData.totalSum(); }
+  double rowTotal(int row) { return m_observedValuesData.rowSum(row); }
+  double columnTotal(int column) {
+    return m_observedValuesData.columnSum(column);
   }
 
-  int numberOfResultRows() { return m_numberOfResultRows; }
-  int numberOfResultColumns() { return m_numberOfResultColumns; }
-  double expectedValueAtLocation(int row, int column);
-  double contributionAtLocation(int row, int column);
-
-  double total() { return m_total; }
-  double rowTotal(int row) { return m_rowTotals[row]; }
-  double columnTotal(int column) { return m_columnTotals[column]; }
-
  private:
-  bool authorizedParameterAtIndex(double p, int i) const override;
-  Index2D resultsIndexToIndex2D(int resultsIndex) const;
-  int resultsIndexToArrayIndex(int resultsIndex) const;
-
-  // Chi2Test
-  double expectedValue(int resultsIndex) const override;
-  double observedValue(int resultsIndex) const override;
-  int numberOfValuePairs() const override;
-
-  int computeDegreesOfFreedom(Index2D max);
-  double* parametersArray() override { return m_input; }
-  void computeExpectedValues(Index2D max);
   Index2D initialDimensions() const override {
     return Index2D{.row = 2, .col = 2};
   }
+  void invalidateDataDimensions() const;
+  void computeDataDimensions() const;
 
-  double m_input[k_maxNumberOfColumns * k_maxNumberOfRows];
-  double m_expectedValues[k_maxNumberOfColumns * k_maxNumberOfRows];
-  double m_rowTotals[k_maxNumberOfRows];
-  double m_columnTotals[k_maxNumberOfColumns];
-  double m_total;
-  int m_numberOfResultRows;
-  int m_numberOfResultColumns;
+  void computeExpectedValues();
+
+  std::array<std::array<double, k_maxNumberOfRows>, k_maxNumberOfColumns>
+      m_input;
+  Poincare::FloatList<double> m_expectedValues[k_maxNumberOfColumns];
+  Poincare::FloatList<double> m_contributions[k_maxNumberOfColumns];
+  mutable int m_numberOfDataRows;
+  mutable int m_numberOfDataColumns;
 };
 
 }  // namespace Inference

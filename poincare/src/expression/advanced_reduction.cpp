@@ -13,39 +13,29 @@ namespace Poincare::Internal {
 #define VERBOSE_REDUCTION 0
 
 #if VERBOSE_REDUCTION > 0
-#define INCR_INDENT(lvl)            \
+#define VERBOSE_INDENT(lvl)         \
   if (VERBOSE_REDUCTION >= (lvl)) { \
     ++s_indent;                     \
   }
-#define DECR_INDENT(lvl)            \
+#define VERBOSE_OUTDENT(lvl)        \
   if (VERBOSE_REDUCTION >= (lvl)) { \
     --s_indent;                     \
   }
 
-#define LOG_NL(lvl, str, object, nl, default, ...) \
-  if (VERBOSE_REDUCTION >= (lvl)) {                \
-    LogIndent();                                   \
-    std::cout << str;                              \
-    object;                                        \
-    if (nl) std::cout << std::endl;                \
-  }
-
-#define LOG_NL2(lvl, str, object, str2, object2, nl, default, ...) \
-  if (VERBOSE_REDUCTION >= (lvl)) {                                \
-    LogIndent();                                                   \
-    std::cout << str;                                              \
-    object;                                                        \
-    std::cout << str2;                                             \
-    object2;                                                       \
-    if (nl) std::cout << std::endl;                                \
+/* LOG_INDENT should not be used directly, it is only there as a way to create
+ * the LOG macro with the default paramets indent=true
+ * LOG(1, "Test", ()) => print Test with indent
+ * LOG(1, "Test", (), false) => print Test without indent */
+#define LOG_INDENT(lvl, str, object, indent, default, ...) \
+  if (VERBOSE_REDUCTION >= (lvl)) {                        \
+    if (indent) LogIndent();                               \
+    std::cout << str;                                      \
+    object;                                                \
   }
 
 #define LOG(lvl, str, object, ...) \
-  LOG_NL(lvl, str, object, ##__VA_ARGS__, false, )
-#define LOG2(lvl, str, object, str2, object2, ...) \
-  LOG_NL2(lvl, str, object, str2, object2, ##__VA_ARGS__, false, )
+  LOG_INDENT(lvl, str, object, ##__VA_ARGS__, true, )
 
-bool s_logIndividualPathStep = false;
 size_t s_indent = 0;
 
 void LogIndent() {
@@ -58,10 +48,9 @@ void LogExpression(const Tree* e, bool displayDependencies = false) {
   (!displayDependencies && e->isDep() ? e->child(0) : e)->logSerialize();
 }
 #else
-#define INCR_INDENT(_)
-#define DECR_INDENT(_)
+#define VERBOSE_INDENT(_)
+#define VERBOSE_OUTDENT(_)
 #define LOG(...)
-#define LOG2(...)
 
 #endif
 
@@ -80,13 +69,13 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
 #if VERBOSE_REDUCTION >= 1
   std::cout << "\nReduce\nInitial tree (" << ctx.m_bestMetric << ") is : ";
   LogExpression(e, true);
-  s_indent = 1;
+  s_indent = 0;
 #endif
-  ReduceRec(editedExpression, &ctx);
+  PrivateReduce(editedExpression, &ctx);
   editedExpression->removeTree();
 
 #if VERBOSE_REDUCTION >= 1
-  s_indent = 0;
+  assert(s_indent == 0);
   std::cout << "Best path metric is: " << ctx.m_bestMetric << "\n";
 #endif
 
@@ -132,15 +121,27 @@ bool AdvancedReduction::ReduceIndependantElement(Tree* e) {
   }
 
 #if VERBOSE_REDUCTION >= 1
-  s_logIndividualPathStep = true;
-#endif
-  bool result = best_path.apply(e);
-#if VERBOSE_REDUCTION >= 1
-  s_logIndividualPathStep = false;
+  bool changed;
+  Tree* logTree = e->cloneTree();
+  Tree* logRoot = logTree;
+  std::cout << "Best path is";
+  best_path.log();
+  std::cout << "Start\t\t";
+  LogExpression(e);
+  for (int i = 0; i < best_path.length(); ++i) {
+    Direction d = best_path.getStack()[i];
+    d.apply(&logTree, logRoot, &changed);
+    if (!d.isNextNode()) {
+      d.log(false);
+      std::cout << "  \t";
+      LogExpression(logTree);
+    }
+  }
+  LOG(1, "Final tree is : ", LogExpression(logTree, true));
+  logTree->removeTree();
   assert(s_indent == 0);
-  LOG(1, "Final tree is : ", LogExpression(e, true));
 #endif
-  return result;
+  return best_path.apply(e);
 }
 
 bool AdvancedReduction::CrcCollection::add(uint32_t crc, uint8_t depth) {
@@ -237,7 +238,7 @@ bool SkipTree(const Tree* e) {
   return e->block() < SharedTreeStack->lastBlock() && e->isDepList();
 }
 
-Tree* NextNode(Tree* e) {
+Tree* NextNodeSkippingDepList(Tree* e) {
   assert(!SkipTree(e));
   Tree* next = e->nextNode();
   while (SkipTree(next)) {
@@ -246,7 +247,7 @@ Tree* NextNode(Tree* e) {
   return next;
 }
 
-const Tree* NextNode(const Tree* e) {
+const Tree* NextNodeSkippingDepList(const Tree* e) {
   assert(!SkipTree(e));
   const Tree* next = e->nextNode();
   while (SkipTree(next)) {
@@ -259,15 +260,18 @@ bool AdvancedReduction::Direction::applyNextNode(Tree** u,
                                                  const Tree* root) const {
   // Optimization: No trees are expected after root, so we can use lastBlock()
   assert(isNextNode());
-  assert(m_type >= k_baseNextNodeType);
-  assert((NextNode(*u)->block() < SharedTreeStack->lastBlock()) ==
-         NextNode(*u)->hasAncestor(root, false));
-  assert(root->nextTree() == SharedTreeStack->lastBlock() && *u >= root);
-  if (!(NextNode(*u)->block() < SharedTreeStack->lastBlock())) {
+  assert(
+      (NextNodeSkippingDepList(*u)->block() < SharedTreeStack->lastBlock()) ==
+      NextNodeSkippingDepList(*u)->hasAncestor(root, false));
+  /* TODO We would like this second assert instead of the one above. But we
+   * cannot because we apply a path in [ReduceIndependantElement], and there the
+   * tree is not guaranteed to be last on TreeStack
+   * assert(root->nextTree() == SharedTreeStack->lastBlock() && *u >= root); */
+  if (!(NextNodeSkippingDepList(*u)->block() < SharedTreeStack->lastBlock())) {
     return false;
   }
   for (uint8_t i = m_type; i >= k_baseNextNodeType; i--) {
-    *u = NextNode(*u);
+    *u = NextNodeSkippingDepList(*u);
     assert((*u)->block() < SharedTreeStack->lastBlock());
   }
   return true;
@@ -338,24 +342,9 @@ bool AdvancedReduction::Direction::decrement() {
 bool AdvancedReduction::Path::apply(Tree* root) const {
   Tree* e = root;
   bool rootChanged = false;
-#if VERBOSE_REDUCTION > 0
-  if (s_logIndividualPathStep) {
-    std::cout << "Best path is";
-    this->log();
-    std::cout << "Start\t\t";
-    LogExpression(e);
-  }
-#endif
   for (uint8_t i = 0; i < length(); i++) {
     [[maybe_unused]] bool didApply = m_stack[i].apply(&e, root, &rootChanged);
     assert(didApply);
-#if VERBOSE_REDUCTION > 0
-    if (s_logIndividualPathStep && !m_stack[i].isNextNode()) {
-      m_stack[i].log(false);
-      std::cout << "  \t";
-      LogExpression(e);
-    }
-#endif
   }
   return rootChanged;
 }
@@ -424,11 +413,9 @@ void AdvancedReduction::UpdateBestMetric(Context* ctx) {
 #endif
   }
 
-  DECR_INDENT(3);
-  INCR_INDENT(2);
+  VERBOSE_INDENT(1);
   LOG(1, label << metric << " VS " << oldMetric << ")", );
-  DECR_INDENT(2);
-  INCR_INDENT(3);
+  VERBOSE_OUTDENT(1);
 #if VERBOSE_REDUCTION == 1
   std::cout << ": ";
   LogExpression(ctx->m_root);
@@ -441,14 +428,15 @@ void AdvancedReduction::UpdateBestMetric(Context* ctx) {
 #endif
 }
 
-bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx,
-                                  bool zeroNextNodeAllowed) {
+bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
+                                      bool zeroNextNodeAllowed) {
+  VERBOSE_INDENT(3);
   bool fullExploration = true;
   if (ctx->m_path.length() + 1 >= ctx->m_crcCollection.maxDepth()) {
     // Skip nextNode direction if we can't add a contract or expand after
     fullExploration = false;
   } else {
-    Direction nextNode = Direction(Direction::k_baseNextNodeType);
+    Direction nextNode = Direction::NextNode(1);
     int i = 0;
     Tree* target = e;
     /* [targets] caches all intermediate node obtained when doing the maximum
@@ -461,45 +449,46 @@ bool AdvancedReduction::ReduceRec(Tree* e, Context* ctx,
       targets[i++] = target;
     }
     if (i > 0) {
-      [[maybe_unused]] bool hasAppendPath = ctx->m_path.append(Direction(i));
+      [[maybe_unused]] bool hasAppendPath =
+          ctx->m_path.append(Direction::NextNode(i));
       assert(hasAppendPath);
     }
     if (i == Direction::k_maxNextNodeAmount) {
       /* NextNode direction has to be split in two whole directions in the
        * path to handle more than 254 consecutive NextNode */
       assert(fullExploration);
-      fullExploration = ReduceRec(target, ctx, false);
+      fullExploration = PrivateReduce(target, ctx, false);
     }
     /* 254 to 1 NextNode handled here */
     assert(i <= Direction::k_maxNextNodeAmount);
-    --i;
-    for (; i >= 0; --i) {
+    for (; i >= 1; --i) {
       ctx->resetIfNeeded();
-      assert(ctx->canAddDirToPath());
-      LOG(3, "Apply ", ctx->m_path.logBaseDir());
-      fullExploration = ReduceCE(targets[i], ctx) && fullExploration;
-      ctx->m_path.popBaseDirection();
       // It will be impossible to add C||E after our NextNodes: stop here
-      if (!ctx->canAddDirToPath() && i > 0) {
+      if (!ctx->canAppendDirection()) {
         LOG(1, "CRC ", ctx->m_crcCollection.log());
         ctx->m_path.popWholeDirection();
         fullExploration = false;
         break;
       }
+      LOG(3, "Apply ", ctx->m_path.logLastDirection());
+      fullExploration =
+          ReduceContractThenExpand(targets[i - 1], ctx) && fullExploration;
+      ctx->m_path.popBaseDirection();
     }
   }
-  DECR_INDENT(3);
+  VERBOSE_OUTDENT(3);
 
   /* 0 NextNode handle here */
-  if (zeroNextNodeAllowed && ctx->canAddDirToPath()) {
-    fullExploration = ReduceCE(e, ctx) && fullExploration;
+  if (zeroNextNodeAllowed && ctx->canAppendDirection()) {
+    fullExploration = ReduceContractThenExpand(e, ctx) && fullExploration;
   }
   return fullExploration;
 }
 
-bool inline AdvancedReduction::ReduceDir(Tree* e, Context* ctx, Direction dir) {
+bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
+                                               Direction dir) {
   assert(!dir.isNextNode());
-  assert(ctx->canAddDirToPath());
+  assert(ctx->canAppendDirection());
   ctx->resetIfNeeded();
   Tree* target = e;
   if (!dir.applyContractOrExpand(&target, ctx->m_root)) {
@@ -508,28 +497,28 @@ bool inline AdvancedReduction::ReduceDir(Tree* e, Context* ctx, Direction dir) {
   }
   uint32_t hash = CrcCollection::AdvancedHash(ctx->m_root);
   /* If explored, do not go further. */
-  // Hugo: it's slower(why?) with this +1 but it's more correct right ?
   if (!ctx->m_crcCollection.add(hash, ctx->m_path.length() + 1)) {
     ctx->m_mustResetRoot = true;
-    if (!ctx->canAddDirToPath()) {
+    if (!ctx->canAppendDirection()) {
       // Not able to add due to decreased maxDepth
       return false;
     }
-    LOG2(3, "Seen before ", dir.log(false), ": ", LogExpression(ctx->m_root));
+    LOG(3, "Seen before ", dir.log(false));
+    LOG(3, ": ", LogExpression(ctx->m_root), false);
     return true;
   }
-  /* Otherwise, recursively advanced reduce */
-  LOG2(2, "", dir.log(false), ": ", LogExpression(ctx->m_root));
-  INCR_INDENT(3);
+  /* Otherwise, recursively advance reduce */
+  LOG(2, "", dir.log(false));
+  LOG(2, ": ", LogExpression(ctx->m_root), false);
 
-  assert(ctx->canAddDirToPath());
+  assert(ctx->canAppendDirection());
   [[maybe_unused]] bool canAddDir = ctx->m_path.append(dir);
   assert(canAddDir);
 
   // Successfully applied C||E dir and result is unexplored: compute metric
   UpdateBestMetric(ctx);
 
-  bool fullExploration = ReduceRec(target, ctx);
+  bool fullExploration = PrivateReduce(target, ctx);
   if (fullExploration) {
     // No need to explore this again, even at smaller lengths.
     ctx->m_crcCollection.add(hash, 0);
@@ -539,17 +528,16 @@ bool inline AdvancedReduction::ReduceDir(Tree* e, Context* ctx, Direction dir) {
   return fullExploration;
 }
 
-bool AdvancedReduction::ReduceCE(Tree* e, Context* ctx) {
-  INCR_INDENT(2);
-  bool fullExploration =
-      ReduceDir(e, ctx, Direction(Direction::k_contractType));
-  if (!ctx->canAddDirToPath()) {
+bool AdvancedReduction::ReduceContractThenExpand(Tree* e, Context* ctx) {
+  VERBOSE_INDENT(2);
+  bool fullExploration = ReduceDirection(e, ctx, Direction::Contract());
+  if (!ctx->canAppendDirection()) {
     LOG(1, "CRC ", ctx->m_crcCollection.log());
     return false;
   }
   fullExploration =
-      ReduceDir(e, ctx, Direction(Direction::k_expandType)) && fullExploration;
-  DECR_INDENT(2);
+      ReduceDirection(e, ctx, Direction::Expand()) && fullExploration;
+  VERBOSE_OUTDENT(2);
   return fullExploration;
 }
 

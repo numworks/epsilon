@@ -45,7 +45,8 @@ class AdvancedReduction {
     uint8_t maxDepth() const { return m_maxDepth; }
 #if POINCARE_TREE_LOG
     void log() const {
-      std::cout << "Max depth is " << (int)m_maxDepth << "\n";
+      std::cout << "Max depth is " << (int)m_maxDepth << ". Capacity is "
+                << m_length << '/' << k_size << ".\n";
     }
 #endif
 
@@ -69,7 +70,12 @@ class AdvancedReduction {
   // Store a direction. NextNode can be applied multiple times.
   class Direction {
    public:
-    Direction(uint8_t type) : m_type(type) {}
+    static Direction Contract() { return Direction(k_contractType); }
+    static Direction Expand() { return Direction(k_expandType); }
+    static Direction NextNode(uint8_t i) {
+      assert(i >= k_baseNextNodeType && i <= k_maxNextNodeAmount);
+      return Direction(i);
+    }
     // Return true if direction was applied.
     bool apply(Tree** e, Tree* root, bool* treeChanged) const;
     // Return true if direction was applied.
@@ -87,18 +93,20 @@ class AdvancedReduction {
     // If possible, decrement the weight of the direction and return true.
     bool decrement();
 
+   private:
+    Direction(uint8_t type) : m_type(type) {}
+    bool isContract() const { return m_type == k_contractType; }
+    bool isExpand() const { return m_type == k_expandType; }
+
     /* Contract and Expand use 0 and UINT8_MAX so that NextNode can be weighted
      * between 1 and UINT8_MAX-1. */
     constexpr static uint8_t k_contractType = 0;
     constexpr static uint8_t k_baseNextNodeType = 1;
     constexpr static uint8_t k_expandType = UINT8_MAX;
-    constexpr static uint8_t k_maxNextNodeAmount = k_expandType - 1;
-
-   private:
-    bool isContract() const { return m_type == k_contractType; }
-    bool isExpand() const { return m_type == k_expandType; }
-
     uint8_t m_type;
+
+   public:
+    constexpr static uint8_t k_maxNextNodeAmount = k_expandType - 1;
   };
   static_assert(sizeof(uint8_t) == sizeof(Direction));
 
@@ -108,19 +116,21 @@ class AdvancedReduction {
     Path() : m_length(0) {}
     // Return true if tree has changed. Path is expected to be valid on root.
     bool apply(Tree* root) const;
-    // Pop NextNode directions one at a time.
+    // Pop last direction if it is [NextNode x1], [Contract] or [Expand].
+    // If it is [NextNode xN], reduce [NextNode] amount by 1.
     void popBaseDirection();
-    // Pop all adjacent and equal directions.
+    // Remove last direction of [Path]. Could be [Contract], [Expand] or
+    // [NextNode xN].
     void popWholeDirection();
     // Return true if direction was appended
     bool append(Direction direction);
     uint8_t length() const { return m_length; }
 #if POINCARE_TREE_LOG
-    bool baseDirIsNextNode() { return m_stack[m_length - 1].isNextNode(); }
-    void logBaseDir(bool addNewLine = true) {
+    void logLastDirection(bool addNewLine = true) {
       m_stack[m_length - 1].log(addNewLine);
     }
     void log() const;
+    Direction* getStack() { return m_stack; }
 #endif
 
    private:
@@ -148,8 +158,8 @@ class AdvancedReduction {
     bool m_mustResetRoot;
     /* Reset ctx->m_root to current [Path] if needed */
     void resetIfNeeded();
-    bool canAddDirToPath() const {
-      return this->m_path.length() < this->m_crcCollection.maxDepth();
+    bool canAppendDirection() const {
+      return m_path.length() < m_crcCollection.maxDepth();
     }
   };
 
@@ -158,12 +168,19 @@ class AdvancedReduction {
   static bool ReduceIndependantElement(Tree* e);
 
   /* Internal entrypoint for AdvancedReduction. Handles NextNode operations.
+   * After each NextNode, calls [ReduceContractThenExpand].
    * Return true if advanced reduction possibilities have all been explored. */
-  static bool ReduceRec(Tree* e, Context* ctx, bool zeroNextNodeAllowed = true);
-  /* Auxiliary method to [ReduceRec], handles Contract and Expand operations.
-   * Return true if advanced reduction possibilities have all been explored. */
-  static bool ReduceCE(Tree* e, Context* ctx);
-  static inline bool ReduceDir(Tree* e, Context* ctx, Direction dir);
+  static bool PrivateReduce(Tree* e, Context* ctx,
+                            bool zeroNextNodeAllowed = true);
+  /* Try one reduction step with given [direction], if successful calls
+   * [PrivateReduce].
+   * [direction] should be Contract or Expand only. NextNode are handled in
+   * [PrivateReduce]. */
+  static bool ReduceDirection(Tree* e, Context* ctx, Direction direction);
+  /* Auxiliary method to [PrivateReduce], handles Contract and Expand
+   * operations. Return true if advanced reduction possibilities have all been
+   * explored. */
+  static bool ReduceContractThenExpand(Tree* e, Context* ctx);
   /* Compute the metric of ctx->m_root and update ctx accordingly */
   static void UpdateBestMetric(Context* ctx);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.

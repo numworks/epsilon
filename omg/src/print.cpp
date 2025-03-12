@@ -1,5 +1,4 @@
 #include <limits.h>
-#include <omg/ieee754.h>
 #include <omg/print.h>
 
 namespace OMG::Print {
@@ -24,8 +23,15 @@ int UInt32(Base base, uint32_t integer, LeadingZeros printLeadingZeros,
 
 static int PrintIntInBuffer(uint32_t integer, char* buffer, int bufferLength,
                             bool left) {
-  int wantedLength = OMG::IEEE754<double>::exponentBase10((double)integer) + 1;
-  assert(wantedLength > 0);
+  // UINT32_MAX has 10 decimal digits
+  constexpr int k_maxWantedLength = 10;
+  int wantedLength = 1;
+  uint32_t reference = 10;
+  while (wantedLength < k_maxWantedLength && reference <= integer) {
+    reference *= 10;
+    wantedLength++;
+  }
+
   if (bufferLength == 0 || wantedLength > bufferLength) {
     return wantedLength;
   }

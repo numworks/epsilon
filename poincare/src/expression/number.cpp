@@ -79,9 +79,9 @@ Sign Number::Sign(const Tree* e) {
 bool Number::SetSign(Tree* e, NonStrictSign sign) {
   assert(e->isNumber());
   if (e->isRational()) {
-    return Rational::SetSign(e, NonStrictSign::Positive);
+    return Rational::SetSign(e, sign);
   } else if (e->isFloat()) {
-    return FloatHelper::SetSign(e, NonStrictSign::Positive);
+    return FloatHelper::SetSign(e, sign);
   }
   assert(Number::Sign(e).isNull() ||
          Number::Sign(e).isPositive() == (sign == NonStrictSign::Positive));

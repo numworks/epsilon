@@ -777,6 +777,10 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{3,4}(2,2/3)", "undef");
   simplifies_to("{3,4}(2,true)", "undef");
   simplifies_to("{3,4}(2,[[2]])", "undef");
+  simplifies_to("{{0}}", "undef");
+  simplifies_to("{0,{}}", "undef");
+  simplifies_to("{0,{1}}", "undef");
+  simplifies_to("{0,1,2,3,4,5,6,7,8,{9}}", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_random) {

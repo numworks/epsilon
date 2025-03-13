@@ -102,7 +102,7 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
     case Type::Set:
     case Type::List: {
       for (int i = 0; i < e->numberOfChildren(); i++) {
-        if (childLength[i++] >= 0) {
+        if (childLength[i] >= 0) {
           // List of lists are forbidden
           return false;
         }

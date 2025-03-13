@@ -122,7 +122,7 @@ double ComputeCriticalValue(Type type, double h0,
     case TestType::TwoMeans: {
       double x1 = parameters[Params::TwoMeans::X1];
       double x2 = parameters[Params::TwoMeans::X2];
-      return ((x1 - x2) - h0) / TwoMeansStandardError(type, parameters);
+      return (x1 - x2 - h0) / TwoMeansStandardError(type, parameters);
     }
     case TestType::Slope:
       return (parameters[Params::Slope::B] - h0) /

@@ -84,11 +84,13 @@ double ComputeStandardError(Type type, const ParametersArray parameters) {
       return OMG::LaxToZero(std::sqrt(estimate * (1 - estimate) / n));
     }
     case TestType::TwoProportions: {
-      double estimate = ComputeEstimate(type, parameters);
+      double x1 = parameters[Params::TwoProportions::X1];
       double n1 = parameters[Params::TwoProportions::N1];
+      double x2 = parameters[Params::TwoProportions::X2];
       double n2 = parameters[Params::TwoProportions::N2];
-      return OMG::LaxToZero(
-          std::sqrt(estimate * (1 - estimate) * (1. / n1 + 1. / n2)));
+      double p1 = x1 / n1;
+      double p2 = x2 / n2;
+      return OMG::LaxToZero(std::sqrt(p1 * (1 - p1) / n1 + p2 * (1 - p2) / n2));
     }
     case TestType::OneMean: {
       double s = parameters[Params::OneMean::S];

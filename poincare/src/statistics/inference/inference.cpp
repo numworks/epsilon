@@ -65,9 +65,7 @@ const char* CriticalValueSymbol(StatisticType statisticType) {
 }
 
 bool HasDegreesOfFreedom(Type type) {
-  return type.statisticType != StatisticType::Z &&
-         (type.statisticType != StatisticType::Chi2 ||
-          type.categoricalType != CategoricalType::GoodnessOfFit);
+  return type.statisticType != StatisticType::Z;
 }
 
 double ComputeDegreesOfFreedom(Type type, const ParametersArray parameters) {

@@ -91,7 +91,7 @@ class Interval : public Statistic {
  private:
   enum ResultOrder { Estimate, Critical, SE, ME, IntervalDegree };
   int numberOfInferenceResults() const override {
-    return 3 + hasDegreeOfFreedom() + showEstimate();
+    return 3 + showDegreesOfFreedomInResults() + showEstimate();
   }
   void inferenceResultAtIndex(int index, double* value,
                               Poincare::Layout* message,

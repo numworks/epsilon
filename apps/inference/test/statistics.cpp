@@ -33,7 +33,7 @@ struct StatisticTestCase {
 
   // Results
   int m_numberOfParameters;
-  bool m_hasDegreeOfFreedom;
+  bool m_showDegreesOfFreedom;
   double m_degreesOfFreedom;
   bool m_testPassed;
   double m_testCriticalValue;
@@ -74,6 +74,10 @@ void inputTableValues(Table* table, Statistic* stat,
                 (table->valueAtPosition(rowCol.row, rowCol.col) ==
                  testCase.m_inputs[i]));
   }
+  // Compute parameters from the table if needed
+  for (int p = 0; p < table->numberOfSeries(); p++) {
+    stat->validateInputs(0);
+  }
 }
 
 void testTest(Test* test, StatisticTestCase& testCase) {
@@ -88,8 +92,9 @@ void testTest(Test* test, StatisticTestCase& testCase) {
   assert_roughly_equal<double>(test->testCriticalValue(),
                                testCase.m_testCriticalValue, tolerance());
   assert_roughly_equal<double>(test->pValue(), testCase.m_pValue, tolerance());
-  quiz_assert(test->hasDegreeOfFreedom() == testCase.m_hasDegreeOfFreedom);
-  if (test->hasDegreeOfFreedom()) {
+  quiz_assert(test->showDegreesOfFreedomInResults() ==
+              testCase.m_showDegreesOfFreedom);
+  if (test->showDegreesOfFreedomInResults()) {
     assert_roughly_equal(test->degreeOfFreedom(), testCase.m_degreesOfFreedom,
                          tolerance());
   }
@@ -120,7 +125,7 @@ QUIZ_CASE(probability_one_proportion_statistic) {
   tests[0].m_significanceLevel = 0.05;
   tests[0].m_confidenceLevel = 0.95;
   tests[0].m_numberOfParameters = 3;
-  tests[0].m_hasDegreeOfFreedom = false;
+  tests[0].m_showDegreesOfFreedom = false;
   tests[0].m_testPassed = true;
   tests[0].m_testCriticalValue = -2.309401076758503;
   tests[0].m_pValue = 0.0104606676688970144527;
@@ -139,7 +144,7 @@ QUIZ_CASE(probability_one_proportion_statistic) {
   tests[1].m_significanceLevel = 0.01;
   tests[1].m_confidenceLevel = 0.99;
   tests[1].m_numberOfParameters = 3;
-  tests[1].m_hasDegreeOfFreedom = false;
+  tests[1].m_showDegreesOfFreedom = false;
   tests[1].m_testPassed = false;
   tests[1].m_testCriticalValue = -2.0;
   tests[1].m_pValue = 0.04550026389635841440056;
@@ -169,7 +174,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
   tests[0].m_significanceLevel = 0.05;
   tests[0].m_confidenceLevel = 0.95;
   tests[0].m_numberOfParameters = 4;
-  tests[0].m_hasDegreeOfFreedom = true;
+  tests[0].m_showDegreesOfFreedom = true;
   tests[0].m_degreesOfFreedom = 50.0 - 1.0;
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = -0.4419349730;
@@ -188,7 +193,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
   tests[1].m_significanceLevel = 0.01;
   tests[1].m_confidenceLevel = 0.99;
   tests[1].m_numberOfParameters = 4;
-  tests[1].m_hasDegreeOfFreedom = true;
+  tests[1].m_showDegreesOfFreedom = true;
   tests[1].m_degreesOfFreedom = 10 - 1;
   tests[1].m_testPassed = true;
   tests[1].m_testCriticalValue = 3.4152598381;
@@ -220,7 +225,7 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   tests[0].m_significanceLevel = 0.05;
   tests[0].m_confidenceLevel = 0.95;
   tests[0].m_numberOfParameters = 4;
-  tests[0].m_hasDegreeOfFreedom = false;
+  tests[0].m_showDegreesOfFreedom = false;
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = -0.4419349730;
   tests[0].m_pValue = 0.3292681310859755967358;
@@ -238,7 +243,7 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   tests[1].m_significanceLevel = 0.01;
   tests[1].m_confidenceLevel = 0.99;
   tests[1].m_numberOfParameters = 4;
-  tests[1].m_hasDegreeOfFreedom = false;
+  tests[1].m_showDegreesOfFreedom = false;
   tests[1].m_testPassed = true;
   tests[1].m_testCriticalValue =
       3.1622776601683793319988935444327185337195551393252168268;
@@ -271,7 +276,7 @@ QUIZ_CASE(probability_two_proportions_statistic) {
   tests[0].m_significanceLevel = 0.05;
   tests[0].m_confidenceLevel = 0.95;
   tests[0].m_numberOfParameters = 5;
-  tests[0].m_hasDegreeOfFreedom = false;
+  tests[0].m_showDegreesOfFreedom = false;
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = 1.0940510035;
   tests[0].m_pValue = 0.1369662881;
@@ -290,7 +295,7 @@ QUIZ_CASE(probability_two_proportions_statistic) {
   tests[1].m_significanceLevel = 0.01;
   tests[1].m_confidenceLevel = 0.99;
   tests[1].m_numberOfParameters = 5;
-  tests[1].m_hasDegreeOfFreedom = false;
+  tests[1].m_showDegreesOfFreedom = false;
   tests[1].m_testPassed = true;
   tests[1].m_testCriticalValue = -2.6117918491;
   tests[1].m_pValue = 0.0045034885;
@@ -323,7 +328,7 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   tests[0].m_significanceLevel = 0.05;
   tests[0].m_confidenceLevel = 0.95;
   tests[0].m_numberOfParameters = 7;
-  tests[0].m_hasDegreeOfFreedom = true;
+  tests[0].m_showDegreesOfFreedom = true;
   tests[0].m_degreesOfFreedom = 60.7450408936;
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = -1.7087153196;
@@ -345,7 +350,7 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   tests[1].m_significanceLevel = 0.01;
   tests[1].m_confidenceLevel = 0.99;
   tests[1].m_numberOfParameters = 7;
-  tests[1].m_hasDegreeOfFreedom = true;
+  tests[1].m_showDegreesOfFreedom = true;
   tests[1].m_degreesOfFreedom = 113.2706527710;
   tests[1].m_testPassed = false;
   tests[1].m_testCriticalValue = -0.6401526332;
@@ -380,7 +385,7 @@ QUIZ_CASE(probability_pooled_t_test) {
   tests[0].m_significanceLevel = 0.02;
   tests[0].m_confidenceLevel = 0.876;
   tests[0].m_numberOfParameters = 7;
-  tests[0].m_hasDegreeOfFreedom = true;
+  tests[0].m_showDegreesOfFreedom = true;
   tests[0].m_degreesOfFreedom = 296;
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = -0.0446507446;
@@ -402,7 +407,7 @@ QUIZ_CASE(probability_pooled_t_test) {
   tests[1].m_significanceLevel = 0.1;
   tests[1].m_confidenceLevel = 0.9;
   tests[1].m_numberOfParameters = 7;
-  tests[1].m_hasDegreeOfFreedom = true;
+  tests[1].m_showDegreesOfFreedom = true;
   tests[1].m_degreesOfFreedom = 22;
   tests[1].m_testPassed = true;
   tests[1].m_testCriticalValue = 2.887125562;
@@ -437,7 +442,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   tests[0].m_significanceLevel = 0.1;
   tests[0].m_confidenceLevel = 0.9;
   tests[0].m_numberOfParameters = 7;
-  tests[0].m_hasDegreeOfFreedom = false;
+  tests[0].m_showDegreesOfFreedom = false;
   tests[0].m_testPassed = true;
   tests[0].m_testCriticalValue =
       3.4569679750017427679395672327548454397723101938825021184918;
@@ -459,7 +464,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   tests[1].m_significanceLevel = 0.01;
   tests[1].m_confidenceLevel = 0.99;
   tests[1].m_numberOfParameters = 7;
-  tests[1].m_hasDegreeOfFreedom = false;
+  tests[1].m_showDegreesOfFreedom = false;
   tests[1].m_testPassed = false;
   tests[1].m_testCriticalValue = 1.9819186926;
   tests[1].m_pValue = 0.0474883318;
@@ -494,8 +499,8 @@ QUIZ_CASE(probability_goodness_test) {
   tests[0].m_inputs[7] = 3;
   tests[0].m_significanceLevel = 0.03;
   tests[0].m_confidenceLevel = 0.9;
-  tests[0].m_numberOfParameters = stat.maxNumberOfRows() * 2 + 1;
-  tests[0].m_hasDegreeOfFreedom = true;
+  tests[0].m_numberOfParameters = 2;
+  tests[0].m_showDegreesOfFreedom = false;
   tests[0].m_degreesOfFreedom = 3;
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = 2.0833332539;
@@ -546,9 +551,8 @@ QUIZ_CASE(probability_homogeneity_test) {
   tests[0].m_inputs[2 * 9 + 2] = 2;
   tests[0].m_significanceLevel = 0.03;
   tests[0].m_confidenceLevel = 0.9;
-  tests[0].m_numberOfParameters =
-          HomogeneityTest::k_maxNumberOfColumns * HomogeneityTest::k_maxNumberOfRows + 1;
-  tests[0].m_hasDegreeOfFreedom = true;
+  tests[0].m_numberOfParameters = 1;
+  tests[0].m_showDegreesOfFreedom = true;
   tests[0].m_degreesOfFreedom = 4;
   tests[0].m_testPassed = false;
   tests[0].m_testCriticalValue = 3.5017316341;
@@ -589,7 +593,7 @@ QUIZ_CASE(probability_slope_t_statistic) {
   StatisticTestCase testCase;
   testCase.m_firstHypothesisParam = 0.;
   testCase.m_op = ComparisonJunior::Operator::NotEqual;
-  testCase.m_numberOfInputs = SlopeTStatistic::k_maxNumberOfColumns * 8;
+  testCase.m_numberOfInputs = 16;
   testCase.m_inputs[0] = 7;
   testCase.m_inputs[1] = 7.10;
   testCase.m_inputs[2] = 8;
@@ -608,11 +612,8 @@ QUIZ_CASE(probability_slope_t_statistic) {
   testCase.m_inputs[15] = 6.46;
   testCase.m_significanceLevel = 0.1;
   testCase.m_confidenceLevel = 0.9;
-  testCase.m_numberOfParameters =
-      SlopeTStatistic::k_maxNumberOfColumns *
-          Shared::DoublePairStore::k_maxNumberOfPairs +
-      1;
-  testCase.m_hasDegreeOfFreedom = true;
+  testCase.m_numberOfParameters = 4;
+  testCase.m_showDegreesOfFreedom = true;
   testCase.m_degreesOfFreedom = 6;
   testCase.m_testPassed = true;
   testCase.m_testCriticalValue = -0.0916667 / 0.03931119904518827;
@@ -670,7 +671,8 @@ QUIZ_CASE(probability_one_mean_t_with_table) {
   referenceTest.compute();
 
   rawDataCase.m_numberOfParameters = referenceTest.numberOfParameters();
-  rawDataCase.m_hasDegreeOfFreedom = referenceTest.hasDegreeOfFreedom();
+  rawDataCase.m_showDegreesOfFreedom =
+      referenceTest.showDegreesOfFreedomInResults();
   rawDataCase.m_degreesOfFreedom = referenceTest.degreeOfFreedom();
   rawDataCase.m_testPassed = referenceTest.canRejectNull();
   rawDataCase.m_testCriticalValue = referenceTest.testCriticalValue();

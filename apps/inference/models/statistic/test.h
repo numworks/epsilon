@@ -74,7 +74,7 @@ class Test : public Statistic {
 
  protected:
   int numberOfInferenceResults() const override {
-    return 2 + numberOfEstimates() + hasDegreeOfFreedom();
+    return 2 + numberOfEstimates() + showDegreesOfFreedomInResults();
   }
   void inferenceResultAtIndex(int index, double* value,
                               Poincare::Layout* message,

@@ -163,8 +163,10 @@ class Statistic : public Shared::Inference {
   void resultAtIndex(int index, double* value, Poincare::Layout* message,
                      I18n::Message* subMessage, int* precision);
 
-  bool hasDegreeOfFreedom() const {
-    return Poincare::Inference::HasDegreesOfFreedom(type());
+  bool showDegreesOfFreedomInResults() const {
+    return Poincare::Inference::HasDegreesOfFreedom(type()) &&
+           !(testType() == TestType::Chi2 &&
+             categoricalType() == CategoricalType::GoodnessOfFit);
   }
   double degreeOfFreedom() const { return m_degreesOfFreedom; }
 

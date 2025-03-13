@@ -1,11 +1,10 @@
-#include "endpoint0.h"
-
 #include <shared/regs/otg.h>
 #include <string.h>
 
 #include <algorithm>
 
 #include "device.h"
+#include "endpoint0.h"
 #include "interface.h"
 #include "request_recipient.h"
 

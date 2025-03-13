@@ -17,7 +17,8 @@ endif
 _sources_ion_usb := $(addprefix device/shared/usb/, \
 $(addprefix stack/, \
   device.cpp \
-  endpoint0.cpp \
+  device_otg.cpp \
+  endpoint0_otg.cpp \
   interface.cpp \
   request_recipient.cpp \
   setup_packet.cpp \

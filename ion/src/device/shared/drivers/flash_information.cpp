@@ -35,8 +35,8 @@ int SectorAtAddress(uint32_t address) {
 
 bool IncludesAddress(uint32_t address) {
   return address >= Board::Config::ExternalFlashOrigin &&
-         address <= Board::Config::ExternalFlashOrigin +
-                        Board::Config::ExternalFlashLength;
+         address < Board::Config::ExternalFlashOrigin +
+                       Board::Config::ExternalFlashLength;
 }
 
 }  // namespace Flash

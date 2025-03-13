@@ -181,7 +181,10 @@ class DFUInterface : public Interface {
   uint32_t m_addressPointer;
   uint32_t m_potentialNewAddressPointer;
   int32_t m_erasePage;
-  uint8_t m_largeBuffer[Endpoint0::MaxTransferSize];
+  /* Since the m_largeBuffer holds data to be copied in flash and the U0 flash
+   * can be only written by 64bits, it is convenient to align it to 64bits as
+   * well. */
+  alignas(uint64_t) uint8_t m_largeBuffer[Endpoint0::MaxTransferSize];
   uint16_t m_largeBufferLength;
   uint32_t m_writeAddress;
   uint8_t m_bInterfaceAlternateSetting;

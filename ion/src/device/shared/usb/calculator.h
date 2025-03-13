@@ -121,8 +121,14 @@ class Calculator : public Device {
                                    k_webUSBLandingPageIndex),
         m_bosDescriptor(
             // wTotalLength
+            m_bosDescriptor.BLength(),
+            0,  // bNumDeviceCapabilities
+#if 0
+            /* TODO: The WebUSB descriptor is currently broken on scandium but
+             * does not seem required.*/
             m_bosDescriptor.BLength() + m_webUSBPlatformDescriptor.BLength(),
             1,  // bNumDeviceCapabilities
+#endif
             &m_webUSBPlatformDescriptor),
         m_manufacturerStringDescriptor("NumWorks"),
         // TODO NumWorks Scientific Calculator
@@ -146,7 +152,8 @@ class Calculator : public Device {
             &m_interfaceSRAMStringDescriptor,   // Type = String, Index = 5
             &m_bosDescriptor                    // Type = BOS, Index = 0
         },
-        m_dfuInterface(this, &m_ep0, k_dfuFlashInterfaceAlternateSetting) {}
+        m_dfuInterface(this, &m_ep0, k_dfuFlashInterfaceAlternateSetting) {
+  }
   void leave(uint32_t leaveAddress) override;
   uint32_t addressPointer() const { return m_dfuInterface.addressPointer(); }
   bool isErasingAndWriting() const {

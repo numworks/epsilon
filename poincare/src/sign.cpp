@@ -294,7 +294,7 @@ ComplexSign TypeSign(ComplexSign s) {
 }
 
 ComplexSign PercentAddition(ComplexSign s1, ComplexSign s2) {
-  return Add(s1, Mult(s1, s2));
+  return Add(s1, Mult(s1, RelaxIntegerProperty(s2)));
 }
 
 ComplexSign Quotient(ComplexSign s1, ComplexSign s2) {
@@ -409,6 +409,8 @@ ComplexSign GetComplexSign(const Tree* e) {
       return ComplexSign(Sign::FinitePositiveInteger(), Sign::Zero());
     case Type::Quo:
       return Quotient(GetComplexSign(e->child(0)), GetComplexSign(e->child(1)));
+    case Type::PercentSimple:
+      return RelaxIntegerProperty(GetComplexSign(e->child(0)));
     case Type::PercentAddition:
       return PercentAddition(GetComplexSign(e->child(0)),
                              GetComplexSign(e->child(1)));
@@ -418,8 +420,6 @@ ComplexSign GetComplexSign(const Tree* e) {
     // Activate these cases if necessary
     case Type::ATan:
       return ArcTangent(GetComplexSign(e->child(0)));
-    case Type::PercentSimple:
-      return RelaxIntegerProperty(GetComplexSign(e->child(0)));
     case Type::MixedFraction:
       return Add(GetComplexSign(e->child(0)), GetComplexSign(e->child(1)));
     case Type::Parentheses:

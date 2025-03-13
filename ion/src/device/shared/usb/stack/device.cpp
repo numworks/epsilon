@@ -28,6 +28,8 @@ bool Device::processSetupInRequest(SetupPacket* request,
       /* According to the reference manual, the address should be set after the
        * Status stage of the current transaction, but this is not true.
        * It should be set here, after the Data stage. */
+      /* Warning: this is true on USBFS devices and the setAddress is delayed
+       * until the next poll. */
       setAddress(request->wValue());
       *transferBufferLength = 0;
       return true;

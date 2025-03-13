@@ -26,6 +26,7 @@ import usb.core
 import usb.util
 import zlib
 from functools import reduce
+from time import sleep
 
 # VID/PID
 __Identifiers = [
@@ -168,6 +169,9 @@ def get_status():
     """Get the status of the last operation."""
     stat = __dev.ctrl_transfer(0xA1, __DFU_GETSTATUS, 0, __DFU_INTERFACE, 6, 20000)
     # print (__DFU_STAT[stat[4]], stat)
+
+    # Sleep for pollTimeout ms
+    sleep(stat[1] / 1000)
     return stat[4]
 
 

@@ -222,6 +222,11 @@ bool AdvancedOperation::ContractMult(Tree* e) {
   /* A? * B^C * D^C * E? = A? * (BD)^C * E? with B or D addition as there is a
    * systematic operation that expands back the Pow if B*D is kept as a Mult
    * node */
+  // TODO experiment: directly match KPow(KAdd(KB_p), KC) and
+  // KPow(KAdd(KD_p), KC). This will remove cases like x^5 * (x+y)^5
+  // but allow x^5 * y^5 * (x+y)^5 * (x-y)^5 to match
+  // TODO experiment: match on different exponent KC and KF and extract
+  // pow with exponent min(KC, KF) to handle cases like (x+y)^5(x-y)^6
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KMult(KA_s, KPow(KB, KC), KPow(KD, KC), KE_s),
                              &ctx) &&

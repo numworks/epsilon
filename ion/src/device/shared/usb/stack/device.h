@@ -18,6 +18,7 @@ class Device : public RequestRecipient {
       : RequestRecipient(&m_ep0),
         m_ep0(this, interface),
         m_resetOnDisconnect(false),
+        m_softDisconnect(false),
         m_addressToSet(0) {}
   void flushFIFOs();
   void poll();
@@ -62,6 +63,7 @@ class Device : public RequestRecipient {
   bool setConfiguration(SetupPacket* request);
 
   bool m_resetOnDisconnect;
+  bool m_softDisconnect;
   uint8_t m_addressToSet;
 };
 

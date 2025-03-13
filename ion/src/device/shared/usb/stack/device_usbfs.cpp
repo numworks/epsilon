@@ -63,13 +63,14 @@ void Device::poll() {
 }
 
 bool Device::isSoftDisconnected() const {
-  return false;
   // SUSB::BCDR::Read().getDPPU_DPD();
+  return m_softDisconnect;
 }
 
 void Device::detach() {
   // Get in soft-disconnected state
   // SUSB::BCDR::Read().setDPPU_DPD(false).write();
+  m_softDisconnect = true;
 }
 
 void Device::setAddress(uint8_t address) { m_addressToSet = address; }

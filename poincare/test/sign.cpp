@@ -1,3 +1,4 @@
+#include <apps/shared/global_context.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/systematic_reduction.h>
@@ -518,4 +519,67 @@ QUIZ_CASE(pcj_sign_is_positive) {
   // TODO: Should be true
   assert_projected_is_positive("arcsin(arctan(-re(arccos(π))))",
                                OMG::Troolean::Unknown);
+}
+
+void assert_reduced_is_positive(
+    const char* input, OMG::Troolean isPositive,
+    Shared::GlobalContext* globalContext,
+    Preferences::ComplexFormat complexFormat =
+        Preferences::ComplexFormat::Cartesian,
+    Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian) {
+  ProjectionContext projCtx = {
+      .m_complexFormat = ComplexFormat::Cartesian,
+      .m_angleUnit = angleUnit,
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .m_context = globalContext,
+      .m_advanceReduce = false};
+  Tree* e = parse(input, globalContext);
+  Simplification::ProjectAndReduce(e, &projCtx);
+  ComplexSign sign = GetComplexSign(e);
+  quiz_assert_print_if_failure(
+      OMG::TrooleanAnd(sign.imagSign().trooleanIsNull(),
+                       sign.realSign().trooleanIsPositive()) == isPositive,
+      input);
+}
+
+QUIZ_CASE(pcj_sign_reduced_is_positive) {
+  Shared::GlobalContext globalContext;
+  assert_reduced_is_positive("abs(-cos(2)+i)", OMG::Troolean::True,
+                             &globalContext);
+  assert_reduced_is_positive("2.345ᴇ-23", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("-2.345ᴇ-23", OMG::Troolean::False,
+                             &globalContext);
+  assert_reduced_is_positive("2×(-3)×abs(-32)", OMG::Troolean::False,
+                             &globalContext);
+  assert_reduced_is_positive("2×(-3)×abs(-32)×cos(3)", OMG::Troolean::Unknown,
+                             &globalContext);
+  assert_reduced_is_positive("x", OMG::Troolean::Unknown, &globalContext);
+  assert_reduced_is_positive("2^(-abs(3))", OMG::Troolean::True,
+                             &globalContext);
+  assert_reduced_is_positive("(-2)^4", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("(-2)^3", OMG::Troolean::False, &globalContext);
+  assert_reduced_is_positive("random()", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("42/3", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("-23/32", OMG::Troolean::False, &globalContext);
+  assert_reduced_is_positive("i", OMG::Troolean::False, &globalContext);
+  assert_reduced_is_positive("-π", OMG::Troolean::False, &globalContext);
+  assert_reduced_is_positive("π", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("e", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("0", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("cos(π/2)", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("cos(90)", OMG::Troolean::True, &globalContext,
+                             Preferences::ComplexFormat::Cartesian,
+                             Preferences::AngleUnit::Degree);
+  assert_reduced_is_positive("√(-1)", OMG::Troolean::Unknown, &globalContext);
+  assert_reduced_is_positive("√(-1)", OMG::Troolean::Unknown, &globalContext,
+                             Preferences::ComplexFormat::Real);
+  assert_reduced_is_positive("sign(π)", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("sign(-π)", OMG::Troolean::False, &globalContext);
+  assert_reduced_is_positive("1%", OMG::Troolean::True, &globalContext);
+  assert_reduced_is_positive("-1+1%", OMG::Troolean::False, &globalContext);
+  assert_reduced_is_positive("1-1%", OMG::Troolean::Unknown, &globalContext);
+  assert_reduced_is_positive("a", OMG::Troolean::Unknown, &globalContext);
+  store("42→a", &globalContext);
+  assert_reduced_is_positive("a", OMG::Troolean::True, &globalContext);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 }

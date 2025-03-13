@@ -62,57 +62,6 @@ QUIZ_DISABLED_CASE(poincare_properties_in_parametric) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 }
 
-void assert_reduced_expression_sign(
-    const char* expression, OMG::Troolean isPositive,
-    Preferences::ComplexFormat complexFormat = Cartesian,
-    Preferences::AngleUnit angleUnit = Radian,
-    Preferences::UnitFormat unitFormat = MetricUnitFormat) {
-  Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext);
-  e = e.cloneAndReduce(ReductionContext(&globalContext, complexFormat,
-                                        angleUnit, unitFormat,
-                                        SystemForApproximation));
-  quiz_assert_print_if_failure(e.isPositive(&globalContext) == isPositive,
-                               expression);
-}
-
-constexpr OMG::Troolean Positive = OMG::Troolean::True;
-constexpr OMG::Troolean Negative = OMG::Troolean::False;
-constexpr OMG::Troolean Unknown = OMG::Troolean::Unknown;
-
-QUIZ_DISABLED_CASE(poincare_properties_sign) {
-  assert_reduced_expression_sign("abs(-cos(2)+i)", Positive);
-  assert_reduced_expression_sign("2.345ᴇ-23", Positive);
-  assert_reduced_expression_sign("-2.345ᴇ-23", Negative);
-  assert_reduced_expression_sign("2×(-3)×abs(-32)", Negative);
-  assert_reduced_expression_sign("2×(-3)×abs(-32)×cos(3)", Unknown);
-  assert_reduced_expression_sign("x", Unknown);
-  assert_reduced_expression_sign("2^(-abs(3))", Positive);
-  assert_reduced_expression_sign("(-2)^4", Positive);
-  assert_reduced_expression_sign("(-2)^3", Negative);
-  assert_reduced_expression_sign("random()", Positive);
-  assert_reduced_expression_sign("42/3", Positive);
-  assert_reduced_expression_sign("-23/32", Negative);
-  assert_reduced_expression_sign("i", Unknown);
-  assert_reduced_expression_sign("-π", Negative);
-  assert_reduced_expression_sign("π", Positive);
-  assert_reduced_expression_sign("e", Positive);
-  assert_reduced_expression_sign("0", Positive);
-  assert_reduced_expression_sign("cos(π/2)", Positive);
-  assert_reduced_expression_sign("cos(90)", Positive, Cartesian, Degree);
-  assert_reduced_expression_sign("√(-1)", Unknown);
-  assert_reduced_expression_sign("√(-1)", Unknown, Real);
-  assert_reduced_expression_sign("sign(π)", Positive);
-  assert_reduced_expression_sign("sign(-π)", Negative);
-  assert_reduced_expression_sign("1%", Positive);
-  assert_reduced_expression_sign("-1-1%", Negative);
-  assert_reduced_expression_sign("1-1%", Unknown);
-  assert_reduced_expression_sign("a", Unknown);
-  assert_reduce_and_store("42→a");
-  assert_reduced_expression_sign("a", Positive);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-}
-
 void assert_sign_sets_to(
     OExpression e, OMG::Troolean isPositive,
     Preferences::ComplexFormat complexFormat = Cartesian,

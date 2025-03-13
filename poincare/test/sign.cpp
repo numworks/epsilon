@@ -1,4 +1,5 @@
 #include <apps/shared/global_context.h>
+#include <poincare/src/expression/number.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/systematic_reduction.h>
@@ -428,6 +429,7 @@ void assert_projected_is_null(const char* input, OMG::Troolean isNull) {
       OMG::TrooleanAnd(sign.imagSign().trooleanIsNull(),
                        sign.realSign().trooleanIsNull()) == isNull,
       input);
+  e->removeTree();
 }
 
 QUIZ_CASE(pcj_sign_is_zero) {
@@ -477,6 +479,7 @@ void assert_projected_is_positive(const char* input, OMG::Troolean isPositive) {
       OMG::TrooleanAnd(sign.imagSign().trooleanIsNull(),
                        sign.realSign().trooleanIsPositive()) == isPositive,
       input);
+  e->removeTree();
 }
 
 QUIZ_CASE(pcj_sign_is_positive) {
@@ -528,7 +531,7 @@ void assert_reduced_is_positive(
         Preferences::ComplexFormat::Cartesian,
     Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian) {
   ProjectionContext projCtx = {
-      .m_complexFormat = ComplexFormat::Cartesian,
+      .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = globalContext,
@@ -540,6 +543,7 @@ void assert_reduced_is_positive(
       OMG::TrooleanAnd(sign.imagSign().trooleanIsNull(),
                        sign.realSign().trooleanIsPositive()) == isPositive,
       input);
+  e->removeTree();
 }
 
 QUIZ_CASE(pcj_sign_reduced_is_positive) {
@@ -582,4 +586,53 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
   store("42→a", &globalContext);
   assert_reduced_is_positive("a", OMG::Troolean::True, &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+}
+
+void assert_sign_sets_to(const char* input,
+                         NonStrictSign isPositive = NonStrictSign::Positive) {
+  ProjectionContext projCtx;
+  Tree* e = parse(input, projCtx.m_context);
+  Simplification::ProjectAndReduce(e, &projCtx);
+  ComplexSign eSign = GetComplexSign(e);
+  bool eIsPositive = OMG::TrooleanToBool(
+      OMG::TrooleanAnd(eSign.imagSign().trooleanIsNull(),
+                       eSign.realSign().trooleanIsPositive()));
+  double eValue = Approximation::To<double>(e, Approximation::Parameters{});
+
+  assert(e->isNumber());
+  Number::SetSign(e, isPositive);
+  ComplexSign newSign = GetComplexSign(e);
+  bool newIsPositive = OMG::TrooleanToBool(
+      OMG::TrooleanAnd(newSign.imagSign().trooleanIsNull(),
+                       newSign.realSign().trooleanIsPositive()));
+  double eNewValue = Approximation::To<double>(e, Approximation::Parameters{});
+
+  quiz_assert(newIsPositive == (isPositive == NonStrictSign::Positive));
+  bool isOpposite = (isPositive == NonStrictSign::Positive) != eIsPositive;
+  quiz_assert_print_if_failure(eNewValue == (isOpposite ? -eValue : eValue),
+                               input);
+  e->removeTree();
+}
+
+QUIZ_CASE(pcj_sign_set) {
+  assert_sign_sets_to("-2");
+  assert_sign_sets_to("3!");
+  assert_sign_sets_to("rem(33,-5)");
+  assert_sign_sets_to("(-2)^5");
+  assert_sign_sets_to("-1.234");
+  assert_sign_sets_to("-2.468");
+  assert_sign_sets_to("2/7");
+  assert_sign_sets_to("-3/2");
+  assert_sign_sets_to("re(3/2+0*i)");
+  assert_sign_sets_to("frac(-34/5)");
+  assert_sign_sets_to("round(67/34,1)");
+  assert_sign_sets_to("quo(-23,12)");
+  assert_sign_sets_to("(-3/5)*2*(-7/4)");
+  assert_sign_sets_to("sign(pi)");
+  assert_sign_sets_to("sign(-e)");
+
+  assert_sign_sets_to("2", NonStrictSign::Negative);
+  assert_sign_sets_to("10/3", NonStrictSign::Negative);
+  assert_sign_sets_to("abs(-3)", NonStrictSign::Negative);
+  assert_sign_sets_to("0.123", NonStrictSign::Negative);
 }

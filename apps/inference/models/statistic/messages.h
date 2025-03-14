@@ -31,11 +31,11 @@ constexpr I18n::Message GetMessage(SubApp subApp, Message message) {
       I18n::Message::GreekAlpha,  I18n::Message::SignificanceLevel,
   };
   constexpr I18n::Message intervalMessages[] = {
-      I18n::Message::IntervalDescr,      I18n::Message::Interval,
-      I18n::Message::TInterval,          I18n::Message::ZInterval,
-      I18n::Message::TOrZInterval,       I18n::Message::TInterval,
-      I18n::Message::PooledTInterval,    I18n::Message::ZInterval,
-      I18n::Message::ConfidenceInterval, I18n::Message::Default,
+      I18n::Message::IntervalDescr,   I18n::Message::Interval,
+      I18n::Message::TInterval,       I18n::Message::ZInterval,
+      I18n::Message::TOrZInterval,    I18n::Message::TInterval,
+      I18n::Message::PooledTInterval, I18n::Message::ZInterval,
+      I18n::Message::ConfidenceLevel, I18n::Message::Default,
   };
   int index = static_cast<int>(message);
   return subApp == SubApp::SignificanceTest ? testMessages[index]

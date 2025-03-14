@@ -134,11 +134,11 @@ class Statistic : public Shared::Inference {
   void setThreshold(double s) { m_threshold = s; }
 
   bool canChooseDataset() const {
-    return testType() == TestType::OneMean ||
-           testType() == TestType::TwoMeans || testType() == TestType::Slope;
+    return testType() == TestType::OneMean || testType() == TestType::TwoMeans;
   }
   bool hasTable() const {
-    return canChooseDataset() || testType() == TestType::Chi2;
+    return canChooseDataset() || testType() == TestType::Slope ||
+           testType() == TestType::Chi2;
   }
   virtual Table* table() {
     assert(false);

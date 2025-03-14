@@ -146,9 +146,6 @@ Poincare::Layout ParameterLayout(Type type, int index) {
                  : k_twoMeansTTestLayouts[index];
     case TestType::Slope:
       return k_slopeLayouts[index];
-    case TestType::Chi2:
-      // TODO
-      assert(false);
     default:
       OMG::unreachable();
   }
@@ -196,9 +193,6 @@ bool IsParameterValidAtIndex(Type type, double p, int index) {
         default:
           OMG::unreachable();
       }
-    case TestType::Chi2:
-      // TODO
-      assert(false);
     default:
       OMG::unreachable();
   }

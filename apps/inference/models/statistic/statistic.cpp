@@ -193,6 +193,11 @@ double Statistic::cumulativeDistributiveInverseForProbability(
       distributionType(), probability, distributionParameters());
 }
 
+int Statistic::secondResultSectionStart() const {
+  int n = numberOfExtraResults();
+  return n == 0 ? -1 : n;
+}
+
 void Statistic::resultAtIndex(int index, double* value,
                               Poincare::Layout* message,
                               I18n::Message* subMessage, int* precision) {

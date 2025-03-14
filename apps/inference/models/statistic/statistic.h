@@ -159,7 +159,7 @@ class Statistic : public Shared::Inference {
     return numberOfInferenceResults() + numberOfExtraResults();
   }
   // Extra results are the first section
-  int secondResultSectionStart() const { return numberOfExtraResults(); }
+  int secondResultSectionStart() const;
   void resultAtIndex(int index, double* value, Poincare::Layout* message,
                      I18n::Message* subMessage, int* precision);
 

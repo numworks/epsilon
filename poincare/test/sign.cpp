@@ -636,3 +636,158 @@ QUIZ_CASE(pcj_sign_set) {
   assert_sign_sets_to("abs(-3)", NonStrictSign::Negative);
   assert_sign_sets_to("0.123", NonStrictSign::Negative);
 }
+
+void assert_projected_is_real_or_not(const char* input, bool isReal = true) {
+  ProjectionContext context;
+  Tree* e = parse(input, context.m_context);
+  Simplification::ToSystem(e, &context);
+  ComplexSign sign = GetComplexSign(e);
+  quiz_assert_print_if_failure(sign.isReal() == isReal, input);
+  e->removeTree();
+}
+
+void assert_projected_is_real(const char* input) {
+  assert_projected_is_real_or_not(input, true);
+}
+
+void assert_projected_is_not_real(const char* input) {
+  assert_projected_is_real_or_not(input, false);
+}
+
+QUIZ_CASE(pcj_sign_is_real) {
+  // Numbers
+  assert_projected_is_real("2.3");
+  assert_projected_is_not_real("2.3i");
+  assert_projected_is_real("random()");
+  assert_projected_is_not_real("nonreal");
+  assert_projected_is_not_real(Undefined::Name());
+
+  // Real if does not contain a matrix
+  assert_projected_is_real("abs(2)");
+  assert_projected_is_real("abs(2i)");
+  assert_projected_is_real("abs({2,3})");
+  assert_projected_is_not_real("abs([[2,3]])");
+  assert_projected_is_real("abs(sum({0}×k,k,0,0))");
+  assert_projected_is_real("binomial(2,3)");
+  assert_projected_is_real("binomial(2i,3)");
+  assert_projected_is_real("binomial(2,3i)");
+  assert_projected_is_real("binomial({2,3},4)");
+  assert_projected_is_real("binomial(2,{3,4})");
+  assert_projected_is_not_real("binomial([[2,3]],4)");
+  assert_projected_is_not_real("binomial(2,[[3,4]])");
+  assert_projected_is_real("ceil(2)");
+  assert_projected_is_real("ceil(2i)");
+  assert_projected_is_real("ceil({2,3})");
+  assert_projected_is_not_real("ceil([[2,3]])");
+  assert_projected_is_real("arg(2)");
+  assert_projected_is_real("arg(2i)");
+  assert_projected_is_real("arg({2,3})");
+  assert_projected_is_not_real("arg([[2,3]])");
+  assert_projected_is_real("quo(2,3)");
+  assert_projected_is_real("quo(2i,3)");
+  assert_projected_is_real("quo(2,3i)");
+  assert_projected_is_real("quo(2,3+a)");
+  assert_projected_is_real("quo({2,3},4)");
+  assert_projected_is_real("quo(2,{3,4})");
+  assert_projected_is_not_real("quo([[2,3]],4)");
+  assert_projected_is_not_real("quo(2,[[3,4]])");
+  assert_projected_is_real("rem(2,3)");
+  assert_projected_is_real("rem(2i,3)");
+  assert_projected_is_real("rem(2,3i)");
+  assert_projected_is_real("rem({2,3},4)");
+  assert_projected_is_real("rem(2,{3,4})");
+  assert_projected_is_not_real("rem([[2,3]],4)");
+  assert_projected_is_not_real("rem(2,[[3,4]])");
+  assert_projected_is_real("(2)!");
+  assert_projected_is_real("(2i)!");
+  assert_projected_is_real("({2,3})!");
+  assert_projected_is_not_real("([[2,3]])!");
+  assert_projected_is_real("floor(2)");
+  assert_projected_is_real("floor(2i)");
+  assert_projected_is_real("floor({2,3})");
+  assert_projected_is_not_real("floor([[2,3]])");
+  assert_projected_is_real("frac(2)");
+  assert_projected_is_not_real(
+      "frac(2i)");  // frac(2i) -> 2i - floor(2i) so sign is not real
+  assert_projected_is_not_real("frac({2,3})");
+  assert_projected_is_not_real("frac([[2,3]])");
+  assert_projected_is_real("gcd(2,3)");
+  assert_projected_is_real("gcd(2i,3)");
+  assert_projected_is_real("gcd(2,3i)");
+  assert_projected_is_real("gcd({2,3},4)");
+  assert_projected_is_real("gcd(2,{3,4})");
+  assert_projected_is_not_real("gcd([[2,3]],4)");
+  assert_projected_is_not_real("gcd(2,[[3,4]])");
+  assert_projected_is_real("im(2)");
+  assert_projected_is_real("im(2i)");
+  assert_projected_is_real("im({2,3})");
+  assert_projected_is_not_real("im([[2,3]])");
+  assert_projected_is_real("lcm(2,3)");
+  assert_projected_is_real("lcm(2i,3)");
+  assert_projected_is_real("lcm(2,3i)");
+  assert_projected_is_real("lcm({2,3},4)");
+  assert_projected_is_real("lcm(2,{3,4})");
+  assert_projected_is_not_real("lcm([[2,3]],4)");
+  assert_projected_is_not_real("lcm(2,[[3,4]])");
+  assert_projected_is_real("permute(2,3)");
+  assert_projected_is_real("permute(2i,3)");
+  assert_projected_is_real("permute(2,3i)");
+  assert_projected_is_real("permute({2,3},4)");
+  assert_projected_is_real("permute(2,{3,4})");
+  assert_projected_is_not_real("permute([[2,3]],4)");
+  assert_projected_is_not_real("permute(2,[[3,4]])");
+  assert_projected_is_real("randint(2,3)");
+  assert_projected_is_real("randint(2i,3)");
+  assert_projected_is_real("randint(2,3i)");
+  assert_projected_is_real("randint({2,3},4)");
+  assert_projected_is_real("randint(2,{3,4})");
+  assert_projected_is_not_real("randint([[2,3]],4)");
+  assert_projected_is_not_real("randint(2,[[3,4]])");
+  assert_projected_is_real("randint(randintnorep(0,0,0)×i,0)");
+  assert_projected_is_real("re(2)");
+  assert_projected_is_real("re(2i)");
+  assert_projected_is_real("re({2,3})");
+  assert_projected_is_not_real("re([[2,3]])");
+  assert_projected_is_real("round(2)");
+  assert_projected_is_real("round(2i)");
+  assert_projected_is_real("round({2,3})");
+  assert_projected_is_not_real("round([[2,3]])");
+  assert_projected_is_real("sign(2)");
+  assert_projected_is_real("sign(2i)");
+  assert_projected_is_real("sign({2,3})");
+  assert_projected_is_not_real("sign([[2,3]])");
+
+  // Depends on children
+  assert_projected_is_real("diff(2x,x,1)");
+  assert_projected_is_not_real("diff(2*i*x,x,1)");
+  assert_projected_is_not_real("diff({2,3}x,x,1)");
+  assert_projected_is_not_real("diff([[2,3]]x,x,1)");
+  assert_projected_is_real("2×_mg");
+  assert_projected_is_not_real("2i×_mg");
+  assert_projected_is_not_real("{2,3}×_mg");
+  assert_projected_is_not_real("[[2,3]]×_mg");
+  assert_projected_is_not_real("1+2+3+3×i");
+  assert_projected_is_real("atan(4)");
+  assert_projected_is_not_real("atan(i)");
+  assert_projected_is_real("conj(4)");
+  assert_projected_is_not_real("conj(i)");
+  assert_projected_is_real("cos(4)");
+  assert_projected_is_real("cos(i)");
+  assert_projected_is_real("sin(4)");
+  assert_projected_is_not_real("sin(i)");
+  assert_projected_is_real("tan(4)");
+  assert_projected_is_not_real("tan(i)");
+
+  // Constant
+  assert_projected_is_real("π");
+  assert_projected_is_real("e");
+  assert_projected_is_not_real("i");
+
+  // Power
+  /* TODO: Should be real
+   * assert_projected_is_real("2^3.4"); */
+  assert_projected_is_real("(-2)^(-3)");
+  assert_projected_is_not_real("i^3.4");
+  assert_projected_is_not_real("2^(3.4i)");
+  assert_projected_is_not_real("(-2)^0.4");
+}

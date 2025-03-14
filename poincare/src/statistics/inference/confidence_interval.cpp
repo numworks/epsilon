@@ -176,8 +176,8 @@ double DefaultParameterAtIndex(Type type, int index) {
           break;
         case StatisticType::Z:
           defaultParameters[Params::OneMean::X] = 240.8;
-          defaultParameters[Params::OneMean::S] = 16.;
-          defaultParameters[Params::OneMean::N] = 20.;
+          defaultParameters[Params::OneMean::S] = 20.;
+          defaultParameters[Params::OneMean::N] = 16.;
           break;
         default:
           OMG::unreachable();

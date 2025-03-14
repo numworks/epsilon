@@ -269,11 +269,10 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff((sin(t),floor(t)),t,t,2)",
                 "(-sin(t),diff(floor(t),t,t,2))");
   simplifies_to("diff(diff(diff(diff(floor(a),a,b,2),b,c),c,d,3),d,x)",
-                "dep(diff(floor(a),a,x,7),{real(diff(floor(a),a,x,2)),real("
-                "diff(floor(a),a,x,3)),real(diff(floor(a),a,x,6))})");
+                "dep(diff(floor(a),a,x,7),{diff(floor(a),a,x,2),diff(floor(a),"
+                "a,x,3),diff(floor(a),a,x,6)})");
   simplifies_to("diff(diff(floor(a)+b*a,a,x),b,x)",
-                "dep(1+diff(diff(floor(a),a,x),b,x),{floor(x),real(x+diff("
-                "floor(a),a,x))})");
+                "dep(1+diff(diff(floor(a),a,x),b,x),{floor(x)})");
   simplifies_to("diff(randint(0,5), x, 2)", "undef");
   simplifies_to("diff(x+floor(random()), x, 2)", "undef");
   // Derivating a complex expression is forbidden

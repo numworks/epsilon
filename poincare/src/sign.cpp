@@ -316,6 +316,13 @@ ComplexSign Quotient(ComplexSign s1, ComplexSign s2) {
                      Sign::Zero());
 }
 
+ComplexSign Diff(ComplexSign sSymbolValue, ComplexSign sDerivand) {
+  return ComplexSign(Sign::Unknown(),
+                     sSymbolValue.isReal() && sDerivand.isReal()
+                         ? Sign::Zero()
+                         : Sign::Unknown());
+}
+
 namespace Internal {
 
 // Note: A complex function plotter can be used to fill in these methods.
@@ -415,7 +422,10 @@ ComplexSign GetComplexSign(const Tree* e) {
       return PercentAddition(GetComplexSign(e->child(0)),
                              GetComplexSign(e->child(1)));
     case Type::Fact:
+    case Type::Binomial:
       return ComplexSign::RealStrictlyPositiveInteger();
+    case Type::Diff:
+      return Diff(GetComplexSign(e->child(1)), GetComplexSign(e->child(3)));
 #if 0
     // Activate these cases if necessary
     case Type::ATan:

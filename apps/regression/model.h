@@ -10,19 +10,6 @@ namespace Regression {
 
 class Store;
 
-class StoreToSeries : public Poincare::Series {
- public:
-  StoreToSeries(const Store* store, int series)
-      : m_store(store), m_series(series) {}
-  double getX(int i) const override;
-  double getY(int i) const override;
-  int numberOfPairs() const override;
-
- private:
-  const Store* m_store;
-  int m_series;
-};
-
 class Model {
  public:
   using Type = Poincare::Regression::Type;
@@ -66,33 +53,14 @@ class Model {
     return regression()->levelSet(modelCoefficients, xMin, xMax, y, context);
   };
   void fit(const Store* store, int series, double* modelCoefficients,
-           Poincare::Context* context) {
-    StoreToSeries bridge(store, series);
-    return regression()->fit(&bridge, modelCoefficients, context);
-  }
-
-  double correlationCoefficient(const Store* store, int series) {
-    StoreToSeries bridge(store, series);
-    return regression()->correlationCoefficient(&bridge);
-  }
-
+           Poincare::Context* context);
+  double correlationCoefficient(const Store* store, int series);
   double determinationCoefficient(const Store* store, int series,
-                                  const double* modelCoefficients) {
-    StoreToSeries bridge(store, series);
-    return regression()->determinationCoefficient(&bridge, modelCoefficients);
-  }
-
+                                  const double* modelCoefficients);
   double residualAtIndex(const Store* store, int series,
-                         const double* modelCoefficients, int index) {
-    StoreToSeries bridge(store, series);
-    return regression()->residualAtIndex(&bridge, modelCoefficients, index);
-  }
-
+                         const double* modelCoefficients, int index);
   double residualStandardDeviation(const Store* store, int series,
-                                   const double* modelCoefficients) {
-    StoreToSeries bridge(store, series);
-    return regression()->residualStandardDeviation(&bridge, modelCoefficients);
-  }
+                                   const double* modelCoefficients);
 
   constexpr static auto k_numberOfModels =
       Poincare::Regression::k_numberOfModels;

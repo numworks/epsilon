@@ -47,6 +47,12 @@ double DataTable::varianceOfColumn(int i,
   return createDatasetFromColumn(i, options).variance();
 }
 
+StatisticsDatasetFromSeries Series::createDatasetFromSeries(
+    StatisticsCalculationOptions options) const {
+  return StatisticsDatasetFromSeries(this, options.lnOfValues(0),
+                                     options.oppositeOfValues(0));
+}
+
 bool Series::numberOfDistinctAbscissaeGreaterOrEqualTo(int i) const {
   int count = 0;
   for (int j = 0; j < numberOfPairs(); j++) {

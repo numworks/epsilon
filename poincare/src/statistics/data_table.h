@@ -9,6 +9,7 @@ namespace Poincare {
 namespace Internal {
 
 class StatisticsDatasetFromColumn;
+class StatisticsDatasetFromSeries;
 
 class DataTable {
  public:
@@ -52,6 +53,8 @@ class Series : public DataTable {
   bool numberOfDistinctAbscissaeGreaterOrEqualTo(int i) const;
 
   // Statistics
+  StatisticsDatasetFromSeries createDatasetFromSeries(
+      StatisticsCalculationOptions options = {}) const;
   double columnProductSum(StatisticsCalculationOptions options = {}) const;
   double covariance(StatisticsCalculationOptions options = {}) const;
   double slope(StatisticsCalculationOptions options = {}) const;

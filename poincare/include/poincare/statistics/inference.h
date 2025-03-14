@@ -36,6 +36,9 @@ using Internal::Inference::IsParameterValidAtIndex;
 using Internal::Inference::NumberOfParameters;
 using Internal::Inference::ParameterLayout;
 
+using Internal::Inference::ComputeOneMeanParametersFromSeries;
+using Internal::Inference::ComputeSlopeParametersFromSeries;
+
 using Internal::Inference::ComputeDegreesOfFreedom;
 using Internal::Inference::HasDegreesOfFreedom;
 

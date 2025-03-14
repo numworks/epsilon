@@ -7,6 +7,7 @@
 #include <poincare/comparison_operator.h>
 #include <poincare/layout.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/statistics/data_table.h>
 #include <poincare/statistics/distribution.h>
 
 namespace Poincare::Internal {
@@ -144,6 +145,9 @@ constexpr int NumberOfParameters(TestType testType) {
 Poincare::Layout ParameterLayout(Type type, int index);
 bool IsParameterValidAtIndex(Type type, double p, int index);
 bool AreParametersValid(Type type, const ParametersArray& parameters);
+
+ParametersArray ComputeOneMeanParametersFromSeries(const Series& series);
+ParametersArray ComputeSlopeParametersFromSeries(const Series& series);
 
 // ===== Degrees of freedom =====
 

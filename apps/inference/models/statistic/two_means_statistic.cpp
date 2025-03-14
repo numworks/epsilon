@@ -1,11 +1,16 @@
 #include "two_means_statistic.h"
 
+#include <apps/shared/store_to_series.h>
+
 namespace Inference {
 
 void TwoMeansStatistic::computeParametersFromSeries(const Statistic* stat,
                                                     int pageIndex) {
-  int series = seriesAt(pageIndex);
-  assert(series >= 0);
+  assert(hasSeries(pageIndex));
+  int seriesIndex = seriesAt(pageIndex);
+  Shared::StoreToSeries seriesModel(this, seriesIndex);
+  Poincare::Inference::ParametersArray oneMeanArray =
+      Poincare::Inference::ComputeOneMeanParametersFromSeries(seriesModel);
 
   int xIndex = 0;
   int sIndex = 0;
@@ -24,11 +29,11 @@ void TwoMeansStatistic::computeParametersFromSeries(const Statistic* stat,
   /* For T tests, the S parameters are the sample standard deviations, which can
    * be computed from the datasets. For Z tests however, the S parameters are
    * the population standard deviations, which are given by the user. */
-  m_params[xIndex] = mean(series);
+  m_params[xIndex] = oneMeanArray[Params::OneMean::X];
   if (stat->statisticType() != StatisticType::Z) {
-    m_params[sIndex] = sampleStandardDeviation(series);
+    m_params[sIndex] = oneMeanArray[Params::OneMean::S];
   }
-  m_params[nIndex] = sumOfOccurrences(series);
+  m_params[nIndex] = oneMeanArray[Params::OneMean::N];
 }
 
 }  // namespace Inference

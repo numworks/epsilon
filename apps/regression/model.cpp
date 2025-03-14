@@ -2,18 +2,40 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/shared/store_to_series.h>
 #include <omg/unreachable.h>
 
 #include "store.h"
 
 namespace Regression {
 
-double StoreToSeries::getX(int i) const { return m_store->get(m_series, 0, i); }
+void Model::fit(const Store* store, int series, double* modelCoefficients,
+                Poincare::Context* context) {
+  Shared::StoreToSeries bridge(store, series);
+  return regression()->fit(&bridge, modelCoefficients, context);
+}
 
-double StoreToSeries::getY(int i) const { return m_store->get(m_series, 1, i); }
+double Model::correlationCoefficient(const Store* store, int series) {
+  Shared::StoreToSeries bridge(store, series);
+  return regression()->correlationCoefficient(&bridge);
+}
 
-int StoreToSeries::numberOfPairs() const {
-  return m_store->numberOfPairsOfSeries(m_series);
+double Model::determinationCoefficient(const Store* store, int series,
+                                       const double* modelCoefficients) {
+  Shared::StoreToSeries bridge(store, series);
+  return regression()->determinationCoefficient(&bridge, modelCoefficients);
+}
+
+double Model::residualAtIndex(const Store* store, int series,
+                              const double* modelCoefficients, int index) {
+  Shared::StoreToSeries bridge(store, series);
+  return regression()->residualAtIndex(&bridge, modelCoefficients, index);
+}
+
+double Model::residualStandardDeviation(const Store* store, int series,
+                                        const double* modelCoefficients) {
+  Shared::StoreToSeries bridge(store, series);
+  return regression()->residualStandardDeviation(&bridge, modelCoefficients);
 }
 
 bool Model::useLinearMxpbForm() const {

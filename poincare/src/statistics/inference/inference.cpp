@@ -3,10 +3,11 @@
 #include <omg/round.h>
 #include <omg/unreachable.h>
 #include <poincare/k_tree.h>
+#include <poincare/src/layout/k_tree.h>
+#include <poincare/src/statistics/dataset_adapter.h>
 #include <poincare/src/statistics/domain.h>
+#include <poincare/src/statistics/statistics_dataset.h>
 #include <poincare/statistics/distribution.h>
-
-#include "poincare/src/layout/k_tree.h"
 
 namespace Poincare::Internal::Inference {
 
@@ -229,6 +230,42 @@ bool AreParametersValid(Type type, const ParametersArray& parameters) {
     default:
       return true;
   }
+}
+
+ParametersArray ComputeOneMeanParametersFromSeries(const Series& series) {
+  StatisticsDatasetFromSeries dataset = series.createDatasetFromSeries();
+  double mean = dataset.mean();
+  double smplStdDev = dataset.sampleStandardDeviation();
+  double N = dataset.totalWeight();
+
+  ParametersArray params;
+  params[Params::OneMean::X] = mean;
+  params[Params::OneMean::S] = smplStdDev;
+  params[Params::OneMean::N] = N;
+  return params;
+}
+
+ParametersArray ComputeSlopeParametersFromSeries(const Series& series) {
+  double n = static_cast<double>(series.numberOfPairs());
+
+  StatisticsDatasetFromColumn xDataset = series.createDatasetFromColumn(0);
+  double xMean = xDataset.mean();
+
+  double yIntercept = series.yIntercept();
+  double slope = series.slope();
+
+  StatisticsDatasetFromColumn yDataset = series.createDatasetFromColumn(1);
+  double leastSquaredSum =
+      yDataset.squaredSumOffsettedByLinearTransformationOfDataset(
+          &xDataset, yIntercept, slope);
+  double SE = std::sqrt((1.0 / (n - 2.0)) * leastSquaredSum /
+                        xDataset.offsettedSquaredSum(xMean));
+
+  ParametersArray params;
+  params[Params::Slope::N] = n;
+  params[Params::Slope::B] = slope;
+  params[Params::Slope::SE] = SE;
+  return params;
 }
 
 bool IsThresholdValid(double threshold) {

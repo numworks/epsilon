@@ -1,7 +1,9 @@
 #include "slope_t_statistic.h"
 
+#include <apps/shared/store_to_series.h>
 #include <omg/round.h>
 
+#include "inference/models/statistic/aliases.h"
 #include "poincare/src/statistics/inference/inference.h"
 
 namespace Inference {
@@ -9,15 +11,15 @@ namespace Inference {
 void SlopeTStatistic::computeParametersFromSeries(const Statistic* stat,
                                                   int pageIndex) {
   assert(hasSeries(pageIndex));
-  int series = seriesAt(pageIndex);
-  double n = doubleCastedNumberOfPairsOfSeries(series);
-  double xMean = meanOfColumn(series, 0);
-  double SE = std::sqrt((1.0 / (n - 2.0)) * leastSquaredSum(series) /
-                        squaredOffsettedValueSumOfColumn(series, 0, xMean));
-
-  m_params[Params::Slope::N] = n;
-  m_params[Params::Slope::SE] = OMG::LaxToZero(SE);
-  m_params[Params::Slope::B] = slope(series);
+  int seriesIndex = seriesAt(pageIndex);
+  Shared::StoreToSeries seriesModel(this, seriesIndex);
+  Poincare::Inference::ParametersArray array =
+      Poincare::Inference::ComputeSlopeParametersFromSeries(seriesModel);
+  constexpr int nParams =
+      Poincare::Inference::NumberOfParameters(TestType::Slope);
+  for (int i = 0; i < nParams; i++) {
+    m_params[i] = array[i];
+  }
 }
 
 void SlopeTTest::extraResultAtIndex(int index, double* value,

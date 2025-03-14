@@ -390,9 +390,12 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     case Type::Trace:
     case Type::Inverse:
       return childDim[0].isSquareMatrix();
-    case Type::Identity:
+    case Type::Identity: {
       // TODO check for unknowns and display error message if not integral
-      return childDim[0].isScalar() && IsIntegerExpression(e->child(0));
+      return childDim[0].isScalar() && IsIntegerExpression(e->child(0)) &&
+             Approximation::To<float>(e->child(0),
+                                      Approximation::Parameters{}) > 0;
+    }
     case Type::Norm:
       return childDim[0].isVector();
     case Type::Dot:

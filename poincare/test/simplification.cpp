@@ -353,6 +353,10 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("[[1/0][4]]", "[[undef][4]]");
   simplifies_to("[[1,2]]^2", "undef");
   simplifies_to("[[1]]^π", "undef");
+
+  simplifies_to("transpose(undef)", "undef");
+  simplifies_to("transpose(identity(0))", "undef");
+  simplifies_to("transpose(identity(-1))", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_complex) {

@@ -449,17 +449,6 @@ double Store::computeModes(int series, int i, double* modeFreq,
   return ithValue;
 }
 
-bool Store::deleteValueAtIndex(int series, int i, int j,
-                               bool authorizeNonEmptyRowDeletion,
-                               bool delayUpdate) {
-  if (authorizeNonEmptyRowDeletion) {
-    deletePairOfSeriesAtIndex(series, j, delayUpdate);
-    return true;
-  }
-  return DoublePairStore::deleteValueAtIndex(
-      series, i, j, authorizeNonEmptyRowDeletion, delayUpdate);
-}
-
 /* Private methods */
 
 int Store::computeRelativeColumnAndSeries(int* i) const {

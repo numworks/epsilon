@@ -80,7 +80,7 @@ class DoublePairStore {
 
   // Delete and reset
   virtual bool deleteValueAtIndex(int series, int i, int j,
-                                  bool authorizeNonEmptyRowDeletion,
+                                  bool authorizeNonEmptyRowDeletion = true,
                                   bool delayUpdate = false);
   void deletePairOfSeriesAtIndex(int series, int j, bool delayUpdate = false);
   void deleteColumn(int series, int i, bool delayUpdate = false);

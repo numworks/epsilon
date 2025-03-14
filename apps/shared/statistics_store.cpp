@@ -45,6 +45,17 @@ double StatisticsStore::sampleStandardDeviation(int series) const {
   return m_datasets[series].sampleStandardDeviation();
 }
 
+bool StatisticsStore::deleteValueAtIndex(int series, int i, int j,
+                                         bool authorizeNonEmptyRowDeletion,
+                                         bool delayUpdate) {
+  if (authorizeNonEmptyRowDeletion) {
+    deletePairOfSeriesAtIndex(series, j, delayUpdate);
+    return true;
+  }
+  return DoublePairStore::deleteValueAtIndex(
+      series, i, j, authorizeNonEmptyRowDeletion, delayUpdate);
+}
+
 bool StatisticsStore::updateSeries(int series, bool delayUpdate) {
   assert(series >= 0);
   m_datasets[series].setHasBeenModified();

@@ -48,15 +48,13 @@ double TableFromStore::valueAtPosition(int row, int column) const {
 }
 
 bool TableFromStore::deleteValueAtPosition(int row, int column) {
-  if (std::isnan(valueAtPosition(row, column))) {
-    // Param is already deleted
+  int series = seriesAt(m_activePageIndex);
+  int col = doublePairStore()->relativeColumn(column);
+  if (row >= doublePairStore()->lengthOfColumn(series, col)) {
     return false;
   }
-  int series = seriesAt(m_activePageIndex);
-  int numberOfPairs = doublePairStore()->numberOfPairsOfSeries(series);
-  doublePairStore()->deletePairOfSeriesAtIndex(series, row);
-  // DoublePairStore::updateSeries has handled the deletion of empty rows
-  return numberOfPairs != doublePairStore()->numberOfPairsOfSeries(series);
+  return doublePairStore()->deleteValueAtIndex(
+      series, doublePairStore()->relativeColumn(column), row);
 }
 
 void TableFromStore::recomputeData() {
@@ -106,6 +104,11 @@ bool TableFromStatisticStore::computedParameterAtIndex(
   *subMessage = ParameterDescriptionAtIndex(tType, index);
 
   return true;
+}
+
+void TableFromRegressionStore::deleteValuesInColumn(int column) {
+  deleteColumn(seriesAt(m_activePageIndex),
+               doublePairStore()->relativeColumn(column));
 }
 
 }  // namespace Inference

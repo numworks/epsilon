@@ -116,9 +116,6 @@ class Store : public Shared::StatisticsStore {
 
   // DoublePairStore
   void updateSeriesValidity(int series) override;
-  bool deleteValueAtIndex(int series, int i, int j,
-                          bool authorizeNonEmptyRowDeletion = true,
-                          bool delayUpdate = false) override;
   bool updateSeries(int series, bool delayUpdate = false) override;
 
   typedef double (Store::*CalculPointer)(int) const;

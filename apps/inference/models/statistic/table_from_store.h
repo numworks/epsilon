@@ -102,6 +102,8 @@ class TableFromRegressionStore : public TableFromStore,
       : TableFromStore(),
         Shared::LinearRegressionStore(context, &m_dblePairStorePreferences) {}
 
+  void deleteValuesInColumn(int column) override;
+
   // DoublePairStore
   int seriesAtColumn(int column) const override {
     return seriesAt(m_activePageIndex);

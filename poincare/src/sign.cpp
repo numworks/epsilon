@@ -207,11 +207,6 @@ ComplexSign Ln(ComplexSign s) {
   return ComplexSign(realSign, ComplexArgument(s).realSign());
 }
 
-ComplexSign DecimalFunction(ComplexSign s, Internal::Type type) {
-  return ComplexSign(DecimalFunction(s.realSign(), type),
-                     DecimalFunction(s.imagSign(), type));
-}
-
 ComplexSign Trig(ComplexSign s, bool isSin) {
   if (s.isPureIm()) {
     return isSin ? ComplexSign(Sign::Zero(), RelaxIntegerProperty(s.imagSign()))
@@ -284,9 +279,6 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
 }
 
 ComplexSign TypeSign(ComplexSign s) {
-  if (!s.isReal()) {
-    return ComplexSign::Unknown();
-  }
   Sign realSign =
       Sign(s.realSign().canBeNull(), s.realSign().canBeStrictlyPositive(),
            s.realSign().canBeStrictlyNegative(), false, false);
@@ -299,10 +291,6 @@ ComplexSign PercentAddition(ComplexSign s1, ComplexSign s2) {
 
 ComplexSign Quotient(ComplexSign s1, ComplexSign s2) {
   // a = q*b + r with 0 ≤ r < |b| and a, b, q, r integers and b ≠ 0
-  if (!s1.isReal() || !s2.isReal() || !s1.realSign().isInteger() ||
-      !s2.realSign().isInteger() || s2.realSign().canBeNull()) {
-    return ComplexSign::Unknown();
-  }
   Sign s1Real = s1.realSign();
   Sign s2Real = s2.realSign();
   if (!s1Real.hasKnownSign() || !s2Real.hasKnownSign()) {
@@ -400,7 +388,9 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Floor:
     case Type::Frac:
     case Type::Round:
-      return DecimalFunction(GetComplexSign(e->child(0)), e->type());
+      return ComplexSign(
+          DecimalFunction(GetComplexSign(e->child(0)).realSign(), e->type()),
+          Sign::Zero());
     case Type::Random:
       return ComplexSign(Sign::FinitePositive(), Sign::Zero());
     case Type::RandInt:

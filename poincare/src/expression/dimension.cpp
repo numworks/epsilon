@@ -505,8 +505,10 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
      * Once reactivated, should also reactivate unit.cpp and pcj_simp_unit */
     case Type::Abs:
       // case Type::Sqrt:  TODO: Handle _m^(1/2)
-      unitsAllowed = true;
-      break;
+      return childDim[0].isScalar() || childDim[0].isUnit();
+#else
+    case Type::Abs:
+      return childDim[0].isScalar();
 #endif
     case Type::Matrix:
       break;

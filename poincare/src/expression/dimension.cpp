@@ -1,7 +1,6 @@
 #include "dimension.h"
 
 #include <poincare/old/context.h>
-#include <poincare/src/memory/tree.h>
 
 #include <algorithm>
 
@@ -17,6 +16,37 @@
 #include "variables.h"
 
 namespace Poincare::Internal {
+
+template <typename T>
+class LazyArray {
+ public:
+  LazyArray(const Tree* root, Poincare::Context* ctx,
+            T (*getter)(const Tree* e, Poincare::Context* ctx))
+      : m_root(root), m_ctx(ctx), m_getter(getter), m_lastAccessedIndex(0) {
+    if (m_root->numberOfChildren() > 0) {
+      m_element0 = m_getter(m_root->child(0), m_ctx);
+    }
+  }
+  const T operator[](size_t index) {
+    if (index == 0) {
+      return m_element0;
+    }
+    if (index == m_lastAccessedIndex) {
+      return m_lastAccessedElement;
+    }
+    m_lastAccessedElement = m_getter(m_root->child(index), m_ctx);
+    m_lastAccessedIndex = index;
+    return m_lastAccessedElement;
+  }
+
+ private:
+  T m_element0;
+  T m_lastAccessedElement;
+  const Tree* m_root;
+  Poincare::Context* m_ctx;
+  T (*m_getter)(const Tree* e, Poincare::Context* ctx);
+  size_t m_lastAccessedIndex;
+};
 
 Dimension Dimension::Unit(const Tree* unit) {
   return Unit(Units::Unit::GetSIVector(unit),
@@ -66,13 +96,11 @@ Tree* CloneAndReplaceSymbols(const Tree* e, Context* ctx) {
 
 bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
   // TODO complexity should be linear
-  // TODO: remove the VLA as it is non-standard
-  int childLength[e->numberOfChildren() == 0 ? 1 : e->numberOfChildren()];
+  LazyArray<int> childLength(e, ctx, ListLength);
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
     if (!DeepCheckListLength(child, ctx)) {
       return false;
     }
-    childLength[child.index] = ListLength(child, ctx);
   }
   switch (e->type()) {
     case Type::SampleStdDev:
@@ -231,23 +259,20 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
 }
 
 bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
-  // TODO: remove the VLA as it is non-standard
-  Dimension childDim[e->numberOfChildren() == 0 ? 1 : e->numberOfChildren()];
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
     if (!DeepCheckDimensions(child, ctx)) {
       return false;
     }
-    childDim[child.index] = Get(child, ctx);
-    if (childDim[child.index].isUnit()) {
+    Dimension childDim = Get(child, ctx);
+    if (childDim.isUnit()) {
       // Cannot mix non-Kelvin temperature unit with any unit.
       // TODO: UnitConvert should be able to handle this.
       if (hasNonKelvinChild) {
         return false;
       }
-      if (childDim[child.index].hasNonKelvinTemperatureUnit() &&
-          !e->isUnitConversion()) {
+      if (childDim.hasNonKelvinTemperatureUnit() && !e->isUnitConversion()) {
         if (hasUnitChild) {
           return false;
         }
@@ -257,12 +282,12 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
     }
     if (!e->isPiecewise() && !e->isParentheses() && !e->isDep() &&
         !e->isList() && !e->isListSort() &&
-        childDim[child.index].isBoolean() != e->isLogicalOperatorOrBoolean()) {
+        childDim.isBoolean() != e->isLogicalOperatorOrBoolean()) {
       /* Only piecewises, parenthesis, dependencies, lists and boolean operators
        * can have boolean child. Boolean operators must have boolean child. */
       return false;
     }
-    if (childDim[child.index].isPoint()) {
+    if (childDim.isPoint()) {
       // A few operations are allowed on points.
       switch (e->type()) {
         case Type::Piecewise:
@@ -292,8 +317,20 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
           return false;
       }
     }
-    assert(childDim[child.index].isSanitized());
+    assert(childDim.isSanitized());
   }
+  return DeepCheckDimensionsAux(e, ctx, hasUnitChild, hasNonKelvinChild);
+}
+
+/* To reduce the stack frame of the recursive method [DeepCheckDimensions], the
+ * (unexplicably big) local varialbe [childDim] had to be located elsewhere.
+ * The separation of the 2 functions allows this method to have a big stack
+ * frame without risking a stack overflow on big Trees when evaluating the
+ * recursive part of [DeepCheckDimensions] */
+bool __attribute__((noinline)) Dimension::DeepCheckDimensionsAux(
+    const Tree* e, Poincare::Context* ctx, bool hasUnitChild,
+    bool hasNonKelvinChild) {
+  LazyArray<Dimension> childDim(e, ctx, Get);
   bool unitsAllowed = false;
   bool angleUnitsAllowed = e->isDirectTrigonometryFunction() ||
                            e->isDirectAdvancedTrigonometryFunction();

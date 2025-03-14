@@ -1,6 +1,8 @@
 #ifndef POINCARE_EXPRESSION_DIMENSION_H
 #define POINCARE_EXPRESSION_DIMENSION_H
 
+#include <poincare/src/memory/tree.h>
+
 #include "dimension_type.h"
 
 namespace Poincare {
@@ -95,6 +97,8 @@ struct Dimension {
  private:
   static bool DeepCheckDimensions(const Tree* e,
                                   Poincare::Context* ctx = nullptr);
+  static bool DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
+                                     bool hasUnitChild, bool hasNonKelvinChild);
   static bool DeepCheckListLength(const Tree* e,
                                   Poincare::Context* ctx = nullptr);
 };

@@ -71,35 +71,31 @@ bool TestController::handleEvent(Ion::Events::Event event) {
   int row = selectedRow();
   if (row == k_indexOfOneProp) {
     testType = TestType::OneProportion;
-    controller = m_inputController;
-    if (m_statistic->hasHypothesisParameters()) {
-      controller = m_hypothesisController;
-    }
   } else if (row == k_indexOfTwoProps) {
     testType = TestType::TwoProportions;
-    controller = m_inputController;
-    if (m_statistic->hasHypothesisParameters()) {
-      controller = m_hypothesisController;
-    }
   } else if (row == k_indexOfOneMean) {
     testType = TestType::OneMean;
-    controller = m_typeController;
   } else if (row == k_indexOfTwoMeans) {
     testType = TestType::TwoMeans;
-    controller = m_typeController;
   } else if (row == k_indexOfSlope) {
     testType = TestType::Slope;
-    controller = m_inputStoreController;
-    if (m_statistic->hasHypothesisParameters()) {
-      controller = m_hypothesisController;
-    }
   } else {
     assert(selectedRow() == k_indexOfChiSquare);
     testType = TestType::Chi2;
-    controller = m_categoricalController;
   }
-  assert(controller != nullptr);
-  if (m_statistic->initializeTest(testType)) {
+  bool statChanged = m_statistic->initializeTest(testType);
+  if (m_statistic->testType() == TestType::Chi2) {
+    controller = m_categoricalController;
+  } else if (m_statistic->numberOfAvailableStatistics() > 1) {
+    controller = m_typeController;
+  } else if (m_statistic->hasHypothesisParameters()) {
+    controller = m_hypothesisController;
+  } else if (m_statistic->testType() == TestType::Slope) {
+    controller = m_inputStoreController;
+  } else {
+    controller = m_inputController;
+  }
+  if (statChanged) {
     controller->selectRow(0);
   }
   stackOpenPage(controller);

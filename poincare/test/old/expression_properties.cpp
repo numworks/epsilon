@@ -593,16 +593,16 @@ QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
 using namespace Poincare;
 using namespace Poincare::Internal;
 
-void assert_is_number(const char* input, Context* context,
-                      bool isNumber = true) {
-  UserExpression e = UserExpression::Builder(parse(input, context));
+void assert_is_number(const char* input, bool isNumber = true) {
+  Shared::GlobalContext context;
+  UserExpression e = UserExpression::Builder(parse(input, &context));
   quiz_assert_print_if_failure(e.isConstantNumber() == isNumber, input);
 }
 
-void assert_reduced_is_number(const char* input, Context* context,
-                              bool isNumber = true) {
-  UserExpression e1 = UserExpression::Builder(parse(input, context));
-  ReductionContext reductionContext(context);
+void assert_reduced_is_number(const char* input, bool isNumber = true) {
+  Shared::GlobalContext context;
+  UserExpression e1 = UserExpression::Builder(parse(input, &context));
+  ReductionContext reductionContext(&context);
   bool reductionFailure = false;
   SystemExpression e2 = e1.cloneAndReduce(reductionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
@@ -610,39 +610,37 @@ void assert_reduced_is_number(const char* input, Context* context,
 }
 
 QUIZ_CASE(poincare_properties_is_number) {
-  Shared::GlobalContext globalContext;
-
   // Always a number from parsing
-  assert_is_number("2", &globalContext);
-  assert_is_number("0b10", &globalContext);
-  assert_is_number("0x2", &globalContext);
-  assert_is_number("2.3", &globalContext);
-  assert_is_number("π", &globalContext);
-  assert_is_number("inf", &globalContext);
-  assert_is_number("undef", &globalContext);
-  assert_reduced_is_number("2", &globalContext);
-  assert_reduced_is_number("0b10", &globalContext);
-  assert_reduced_is_number("0x2", &globalContext);
-  assert_reduced_is_number("2.3", &globalContext);
-  assert_reduced_is_number("π", &globalContext);
-  assert_reduced_is_number("inf", &globalContext);
-  assert_reduced_is_number("undef", &globalContext);
+  assert_is_number("2");
+  assert_is_number("0b10");
+  assert_is_number("0x2");
+  assert_is_number("2.3");
+  assert_is_number("π");
+  assert_is_number("inf");
+  assert_is_number("undef");
+  assert_reduced_is_number("2");
+  assert_reduced_is_number("0b10");
+  assert_reduced_is_number("0x2");
+  assert_reduced_is_number("2.3");
+  assert_reduced_is_number("π");
+  assert_reduced_is_number("inf");
+  assert_reduced_is_number("undef");
 
   // Number after reduction
-  assert_is_number("2/3", &globalContext, false);
-  assert_is_number("1*2", &globalContext, false);
-  assert_is_number("1+2", &globalContext, false);
-  assert_reduced_is_number("2/3", &globalContext);
-  assert_reduced_is_number("1*2", &globalContext);
-  assert_reduced_is_number("1+2", &globalContext);
+  assert_is_number("2/3", false);
+  assert_is_number("1*2", false);
+  assert_is_number("1+2", false);
+  assert_reduced_is_number("2/3");
+  assert_reduced_is_number("1*2");
+  assert_reduced_is_number("1+2");
 
   // Not a number
-  assert_is_number("a", &globalContext, false);
-  assert_reduced_is_number("a", &globalContext, false);
-  assert_is_number("[[0]]", &globalContext, false);
-  assert_reduced_is_number("[[0]]", &globalContext, false);
-  assert_is_number("(1,2)", &globalContext, false);
-  assert_reduced_is_number("(1,2)", &globalContext, false);
+  assert_is_number("a", false);
+  assert_reduced_is_number("a", false);
+  assert_is_number("[[0]]", false);
+  assert_reduced_is_number("[[0]]", false);
+  assert_is_number("(1,2)", false);
+  assert_reduced_is_number("(1,2)", false);
 }
 
 void assert_has_random(const char* input, bool hasRandom = true) {

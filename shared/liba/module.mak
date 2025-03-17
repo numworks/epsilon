@@ -1,4 +1,5 @@
 _sources_liba_minimal := $(addprefix src/, \
+  memclr.c \
   memcmp.c \
   memcpy.c \
   memmove.c \

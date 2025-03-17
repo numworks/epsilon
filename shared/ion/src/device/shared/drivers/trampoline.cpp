@@ -37,3 +37,21 @@ TRAMPOLINE_INTERFACE(TRAMPOLINE_STRLCPY, strlcpy, (a, b, c), size_t, char* a,
 TRAMPOLINE_INTERFACE(TRAMPOLINE_STRLEN, strlen, (a), size_t, const char* a)
 TRAMPOLINE_INTERFACE(TRAMPOLINE_STRNCMP, strncmp, (a, b, c), int, const char* a,
                      const char* b, size_t c)
+
+extern "C" {
+void* __aeabi_memclr(void* b, size_t len) { return memset(b, 0, len); }
+void* __aeabi_memclr8(void* b, size_t len) { return memset(b, 0, len); }
+void* __aeabi_memclr4(void* b, size_t len) { return memset(b, 0, len); }
+void* __aeabi_memcpy(void* dst, const void* src, size_t n) {
+  return memcpy(dst, src, n);
+}
+void* __aeabi_memcpy8(void* dst, const void* src, size_t n) {
+  return memcpy(dst, src, n);
+}
+void* __aeabi_memcpy4(void* dst, const void* src, size_t n) {
+  return memcpy(dst, src, n);
+}
+void* __aeabi_memmove8(void* dst, const void* src, size_t n) {
+  return memmove(dst, src, n);
+}
+}

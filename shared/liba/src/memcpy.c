@@ -14,3 +14,15 @@ void* __attribute__((noinline)) memcpy(void* dst, const void* src, size_t n) {
 
   return dst;
 }
+
+void* __aeabi_memcpy(void* dst, const void* src, size_t n) {
+  return memcpy(dst, src, n);
+}
+
+void* __aeabi_memcpy8(void* dst, const void* src, size_t n) {
+  return memcpy(dst, src, n);
+}
+
+void* __aeabi_memcpy4(void* dst, const void* src, size_t n) {
+  return memcpy(dst, src, n);
+}

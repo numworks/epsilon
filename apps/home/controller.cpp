@@ -192,7 +192,7 @@ void Controller::switchToSelectedApp() {
       container->switchToBuiltinApp(selectedSnapshot);
     }
   } else {
-    assert(Preferences::SharedPreferences()->examMode().ruleset() !=
+    assert(Preferences::SharedPreferences()->examMode().ruleset() ==
            ExamMode::Ruleset::Off);
     m_view.reload();
     Ion::ExternalApps::App a = container->externalAppAtIndex(

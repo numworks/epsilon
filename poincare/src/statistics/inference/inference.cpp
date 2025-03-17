@@ -151,7 +151,7 @@ Poincare::Layout ParameterLayout(Type type, int index) {
   }
 }
 
-bool IsParameterValidAtIndex(Type type, double p, int index) {
+bool IsParameterValid(Type type, double p, int index) {
   switch (type.testType) {
     case TestType::OneProportion:
     case TestType::TwoProportions: {
@@ -200,7 +200,7 @@ bool IsParameterValidAtIndex(Type type, double p, int index) {
 
 bool AreParametersValid(Type type, const ParametersArray& parameters) {
   for (int i = 0; i < NumberOfParameters(type); i++) {
-    if (!IsParameterValidAtIndex(type, parameters[i], i)) {
+    if (!IsParameterValid(type, parameters[i], i)) {
       return false;
     }
   }

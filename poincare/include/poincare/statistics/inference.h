@@ -32,7 +32,7 @@ using ParametersArray = Internal::Inference::ParametersArray;
 constexpr int k_maxNumberOfParameters =
     Internal::Inference::k_maxNumberOfParameters;
 using Internal::Inference::AreParametersValid;
-using Internal::Inference::IsParameterValidAtIndex;
+using Internal::Inference::IsParameterValid;
 using Internal::Inference::NumberOfParameters;
 using Internal::Inference::ParameterLayout;
 

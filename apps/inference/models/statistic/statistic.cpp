@@ -155,7 +155,7 @@ bool Statistic::authorizedParameterAtIndex(double p, int i) const {
    * pre-processing */
   p = preProcessParameter(p, i);
   return Shared::Inference::authorizedParameterAtIndex(p, i) &&
-         Poincare::Inference::IsParameterValidAtIndex(type(), p, i);
+         Poincare::Inference::IsParameterValid(type(), p, i);
 }
 
 bool Statistic::areParametersValid() {

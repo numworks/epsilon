@@ -533,6 +533,7 @@ bool AdvancedReduction::ReduceContractThenExpand(Tree* e, Context* ctx) {
   bool fullExploration = ReduceDirection(e, ctx, Direction::Contract());
   if (!ctx->canAppendDirection()) {
     LOG(1, "CRC ", ctx->m_crcCollection.log());
+    VERBOSE_OUTDENT(2);
     return false;
   }
   fullExploration =

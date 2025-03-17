@@ -1,6 +1,3 @@
-"softfloat": Unaltered files from SoftFloat v3c.
-http://www.jhauser.us/arithmetic/SoftFloat.html
-
 "openbsd": Unaltered files from OpenBSD 4.9. Original path is "lib/libm/src"
 "openbsd/include": Compatibility headers needed to build files from OpenBSD.
 http://www.openbsd.org

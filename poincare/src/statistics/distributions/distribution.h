@@ -130,6 +130,17 @@ template <typename U>  // float, double or const Tree*
 OMG::Troolean AreParametersValid(Type type,
                                  const ParametersArray<U> parameters);
 
+template <typename U>  // float, double or const Tree*
+bool IsParameterValidBool(Type type, U val, int index,
+                          const ParametersArray<U> parameters) {
+  return OMG::SafeTrooleanToBool(
+      IsParameterValid(type, val, index, parameters));
+}
+template <typename U>  // float, double or const Tree*
+bool AreParametersValidBool(Type type, const ParametersArray<U> parameters) {
+  return OMG::SafeTrooleanToBool(AreParametersValid(type, parameters));
+}
+
 constexpr bool AcceptsOnlyPositiveAbscissa(Type type) {
   return type == Type::Exponential || type == Type::Chi2;
 }

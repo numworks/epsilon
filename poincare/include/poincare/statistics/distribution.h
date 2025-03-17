@@ -24,7 +24,9 @@ using Internal::Distribution::IsContinuous;
 using Internal::Distribution::IsSymmetrical;
 
 using Internal::Distribution::AreParametersValid;
+using Internal::Distribution::AreParametersValidBool;
 using Internal::Distribution::IsParameterValid;
+using Internal::Distribution::IsParameterValidBool;
 
 using Internal::Distribution::AcceptsOnlyPositiveAbscissa;
 using Internal::Distribution::CumulativeDistributiveFunctionAtAbscissa;

@@ -101,8 +101,8 @@ bool Distribution::authorizedParameterAtIndex(double x, int index) const {
     return true;
   }
   return Inference::authorizedParameterAtIndex(x, index) &&
-         OMG::SafeTrooleanToBool(Poincare::Distribution::IsParameterValid(
-             m_distribution, x, index, constParametersArray()));
+         Poincare::Distribution::IsParameterValidBool(m_distribution, x, index,
+                                                      constParametersArray());
   ;
 }
 

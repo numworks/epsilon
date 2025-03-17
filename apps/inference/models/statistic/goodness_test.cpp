@@ -154,8 +154,8 @@ void GoodnessTest::recomputeData() {
 }
 
 int GoodnessTest::computeDegreesOfFreedom() {
-  return SignificanceTest::Chi2::ComputeGoodnessOfFitDegreesOfFreedom(
-      &m_observedValuesData);
+  return SignificanceTest::Chi2::ComputeDegreesOfFreedom(categoricalType(),
+                                                         &m_observedValuesData);
 }
 
 void GoodnessTest::computeNumberOfRows() const {

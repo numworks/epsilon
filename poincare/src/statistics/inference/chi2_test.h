@@ -19,12 +19,14 @@ void FillHomogeneityExpectedValues(const DataTable* observedValues,
                                    DataTable* expectedValues);
 
 bool IsDegreesOfFreedomValid(double p);
-int ComputeHomogeneityDegreesOfFreedom(const DataTable* observedValues);
-int ComputeGoodnessOfFitDegreesOfFreedom(const DataTable* observedValues);
+int ComputeDegreesOfFreedom(CategoricalType categoricalType,
+                            const DataTable* contributions);
 
 void FillContributions(const DataTable* observedValues,
                        const DataTable* expectedValues,
                        DataTable* contributions);
+
+Results Compute(const DataTable* contributions, double degreesOfFreedom);
 double ComputeCriticalValue(const DataTable* contributions);
 
 }  // namespace Chi2

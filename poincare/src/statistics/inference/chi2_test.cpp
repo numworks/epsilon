@@ -111,14 +111,15 @@ bool IsDegreesOfFreedomValid(double p) {
   return p == std::round(p) && p >= 1.0;
 }
 
-int ComputeHomogeneityDegreesOfFreedom(const DataTable* observedValues) {
+int ComputeDegreesOfFreedom(CategoricalType categoricalType,
+                            const DataTable* observedValues) {
+  if (categoricalType == CategoricalType::GoodnessOfFit) {
+    return observedValues->numberOfRows() - 1;
+  }
+  assert(categoricalType == CategoricalType::Homogeneity);
   int maxRow = observedValues->numberOfRows();
   int maxCol = observedValues->numberOfColumns();
   return (maxRow - 1) * (maxCol - 1);
-}
-
-int ComputeGoodnessOfFitDegreesOfFreedom(const DataTable* observedValues) {
-  return observedValues->numberOfRows() - 1;
 }
 
 void FillContributions(const DataTable* observedValues,
@@ -150,6 +151,20 @@ double ComputeCriticalValue(const DataTable* contributions) {
     }
   }
   return chi2;
+}
+
+Results Compute(const DataTable* contributions, double degreesOfFreedom) {
+  Results results;
+
+  results.degreesOfFreedom = degreesOfFreedom;
+
+  results.criticalValue = ComputeCriticalValue(contributions);
+
+  // Always use the superior operator for the chi2 test
+  results.pValue =
+      ComputePValue(StatisticType::Chi2, ComparisonJunior::Operator::Superior,
+                    results.criticalValue, degreesOfFreedom);
+  return results;
 }
 
 }  // namespace Poincare::Internal::Inference::SignificanceTest::Chi2

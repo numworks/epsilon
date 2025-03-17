@@ -39,7 +39,6 @@ using Internal::Inference::ParameterLayout;
 using Internal::Inference::ComputeOneMeanParametersFromSeries;
 using Internal::Inference::ComputeSlopeParametersFromSeries;
 
-using Internal::Inference::ComputeDegreesOfFreedom;
 using Internal::Inference::HasDegreesOfFreedom;
 
 using Internal::Inference::IsThresholdValid;
@@ -76,17 +75,15 @@ using Internal::Inference::SignificanceTest::Chi2::AreHomogeneityInputsValid;
 using Internal::Inference::SignificanceTest::Chi2::IsExpectedValueValid;
 using Internal::Inference::SignificanceTest::Chi2::IsObservedValueValid;
 
-using Internal::Inference::SignificanceTest::Chi2::
-    ComputeGoodnessOfFitDegreesOfFreedom;
-using Internal::Inference::SignificanceTest::Chi2::
-    ComputeHomogeneityDegreesOfFreedom;
+using Internal::Inference::SignificanceTest::Chi2::ComputeDegreesOfFreedom;
 using Internal::Inference::SignificanceTest::Chi2::IsDegreesOfFreedomValid;
 
 using Internal::Inference::SignificanceTest::Chi2::
     FillHomogeneityExpectedValues;
 
-using Internal::Inference::SignificanceTest::Chi2::ComputeCriticalValue;
 using Internal::Inference::SignificanceTest::Chi2::FillContributions;
+
+using Internal::Inference::SignificanceTest::Chi2::Compute;
 
 }  // namespace Chi2
 

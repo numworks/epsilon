@@ -4,18 +4,14 @@
 
 #include <cmath>
 
-#include "poincare/comparison_operator.h"
-
 namespace Inference {
 
 void Chi2Test::compute() {
   computeContributions();
-  m_testCriticalValue =
-      SignificanceTest::Chi2::ComputeCriticalValue(&m_contributionsData);
-  // Always use the superior operator for the chi2 test
-  m_pValue = SignificanceTest::ComputePValue(
-      statisticType(), Poincare::ComparisonJunior::Operator::Superior,
-      m_testCriticalValue, degreeOfFreedom());
+  SignificanceTest::Results results =
+      SignificanceTest::Chi2::Compute(&m_contributionsData, degreeOfFreedom());
+  m_testCriticalValue = results.criticalValue;
+  m_pValue = results.pValue;
 }
 
 void Chi2Test::computeContributions() {

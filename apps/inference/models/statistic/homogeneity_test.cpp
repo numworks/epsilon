@@ -97,9 +97,8 @@ bool HomogeneityTest::validateInputs(int pageIndex) {
 void HomogeneityTest::compute() {
   computeDataDimensions();
   computeExpectedValues();
-  m_degreesOfFreedom =
-      SignificanceTest::Chi2::ComputeHomogeneityDegreesOfFreedom(
-          &m_observedValuesData);
+  m_degreesOfFreedom = SignificanceTest::Chi2::ComputeDegreesOfFreedom(
+      categoricalType(), &m_observedValuesData);
   Chi2Test::compute();
 }
 

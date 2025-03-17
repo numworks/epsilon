@@ -120,8 +120,14 @@ void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext) {
 bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext) {
   assert(!e->isStore());
   // TODO: Should this be recomputed here ?
+  /* Empty list has every type (kinda).
+   * Example: Input `{}=1` is simplified to `{}`.
+   * projectionContext->m_dimension is Boolean but Dimension::Get(e) is Scalar
+   */
   assert(e->isUndefined() ||
-         projectionContext->m_dimension == Dimension::Get(e));
+         projectionContext->m_dimension == Dimension::Get(e) ||
+         (e->isList() &&
+          (e->numberOfChildren() == 0 || e->child(0)->isUndefined())));
   bool changed = HandleUnits(e, projectionContext);
   changed = Beautification::DeepBeautify(e, *projectionContext) || changed;
   return changed;

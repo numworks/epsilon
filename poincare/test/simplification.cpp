@@ -19,6 +19,9 @@ constexpr ProjectionContext polarCtx = {.m_complexFormat =
 // Default complex format
 constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 
+constexpr ProjectionContext replaceSymbolCtx = {
+    .m_symbolic = SymbolicComputation::ReplaceAllSymbols};
+
 void deepSystematicReduce_and_operation_to(const Tree* input,
                                            Tree::Operation operation,
                                            const Tree* output) {
@@ -731,6 +734,8 @@ QUIZ_CASE(pcj_simplification_list_bubble_up) {
 QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");
+  simplifies_to("{0,1}=0", "{True,False}");
+  simplifies_to("{}=1", "{}");
   simplifies_to("sequence(2*k, k, 3)+1", "{3,5,7}");
   simplifies_to("sum(sequence(2*k*t, k, 3)+1, t, 1, 3)", "{15,27,39}");
   simplifies_to("mean({1,3*x,2})", "x+1");
@@ -784,6 +789,8 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("{{0}}", "undef");
   simplifies_to("{0,{}}", "undef");
   simplifies_to("{0,{1}}", "undef");
+  simplifies_to("{0}=x", "{undef}", replaceSymbolCtx);
+  simplifies_to("{0,x}=1", "{False,undef}", replaceSymbolCtx);
   simplifies_to("{0,1,2,3,4,5,6,7,8,{9}}", "undef");
 }
 

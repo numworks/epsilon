@@ -471,6 +471,7 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
   SystematicReduction::DeepReduce(eq);
   AdvancedReduction::DeepExpandAlgebraic(eq);
   Dependency::DeepRemoveUselessDependencies(eq);
+  /* TODO If [eq] still has dependency, they will not be handled by Parse */
   for (uint8_t i = 0; i < numberOfVariables; i++) {
     // TODO: PolynomialParser::Parse may need to handle more block types.
     // TODO: Use user settings for a RealUnkown sign ?
@@ -536,6 +537,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   SystematicReduction::DeepReduce(equation);
   AdvancedReduction::DeepExpandAlgebraic(equation);
   Dependency::DeepRemoveUselessDependencies(equation);
+  /* TODO If [eq] still has dependency, they will not be handled by Parse */
   Tree* polynomial = PolynomialParser::Parse(
       equation, Variables::Variable(0, ComplexSign::Finite()));
   if (!polynomial) {

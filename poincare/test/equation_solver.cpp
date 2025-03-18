@@ -68,6 +68,8 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"x+y", "2x+2y"}, {"-t", "t"}, projCtx);
 
   check_solutions({"1"}, {}, projCtx);
+  check_solutions({"0^P"}, {}, projCtx,
+                  EquationSolver::Error::RequireApproximateSolution);
   check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},
                   {"-1/6", "-1/6", "-1/6", "-1/6", "-1/6", "-1/6"}, projCtx);
   // User variables

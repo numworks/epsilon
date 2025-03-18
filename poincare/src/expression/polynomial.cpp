@@ -394,6 +394,7 @@ Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
     // e is not a polynomial of variables
     return e;
   }
+  assert(!e->isDep());
   e = Parse(e, variable);
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
     if (child.index == 0) {
@@ -406,7 +407,7 @@ Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
 }
 
 Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
-  assert(!AdvancedReduction::DeepExpandAlgebraic(e) && !e->isDep());
+  assert(!AdvancedReduction::DeepExpandAlgebraic(e));
   Type type = e->type();
   ExceptionTry {
     TreeRef polynomial;

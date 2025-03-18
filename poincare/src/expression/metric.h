@@ -20,6 +20,7 @@ class Metric {
 
 #else
   static int GetMetric(const Tree* e);
+  static bool WeWontDoBetterThanThat(const Tree* e);
 
  private:
   constexpr static int k_defaultMetric = 2 * 3 * 5;

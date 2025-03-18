@@ -395,6 +395,13 @@ void inline AdvancedReduction::Context::resetIfNeeded() {
 void AdvancedReduction::UpdateBestMetric(Context* ctx) {
   // Otherwise, root should be reset to current path.
   assert(!ctx->m_mustResetRoot);
+  if (Metric::WeWontDoBetterThanThat(ctx->m_root)) {
+    ctx->m_bestMetric = -1;
+    ctx->m_bestPath = ctx->m_path;
+    ctx->m_bestHash = CrcCollection::AdvancedHash(ctx->m_root);
+    LOG(2, "Early exit with: ", LogExpression(ctx->m_root));
+    return;
+  }
   int metric = Metric::GetMetric(ctx->m_root);
 #if VERBOSE_REDUCTION >= 1
   const int oldMetric = ctx->m_bestMetric;
@@ -458,6 +465,10 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
        * path to handle more than 254 consecutive NextNode */
       assert(fullExploration);
       fullExploration = PrivateReduce(target, ctx, false);
+      if (ctx->shouldEarlyExit()) {
+        VERBOSE_OUTDENT(3);
+        return false;
+      }
     }
     /* 254 to 1 NextNode handled here */
     assert(i <= Direction::k_maxNextNodeAmount);
@@ -473,6 +484,10 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
       LOG(3, "Apply ", ctx->m_path.logLastDirection());
       fullExploration =
           ReduceContractThenExpand(targets[i - 1], ctx) && fullExploration;
+      if (ctx->shouldEarlyExit()) {
+        VERBOSE_OUTDENT(3);
+        return false;
+      }
       ctx->m_path.popBaseDirection();
     }
   }
@@ -519,6 +534,9 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
   UpdateBestMetric(ctx);
 
   bool fullExploration = PrivateReduce(target, ctx);
+  if (ctx->shouldEarlyExit()) {
+    return false;
+  }
   if (fullExploration) {
     // No need to explore this again, even at smaller lengths.
     ctx->m_crcCollection.add(hash, 0);
@@ -531,6 +549,10 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
 bool AdvancedReduction::ReduceContractThenExpand(Tree* e, Context* ctx) {
   VERBOSE_INDENT(2);
   bool fullExploration = ReduceDirection(e, ctx, Direction::Contract());
+  if (ctx->shouldEarlyExit()) {
+    VERBOSE_OUTDENT(2);
+    return false;
+  }
   if (!ctx->canAppendDirection()) {
     LOG(1, "CRC ", ctx->m_crcCollection.log());
     VERBOSE_OUTDENT(2);

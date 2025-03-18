@@ -142,6 +142,20 @@ int Metric::GetMetric(Type type) {
   }
 }
 
+bool Metric::WeWontDoBetterThanThat(const Tree* e) {
+  PatternMatching::Context ctx;
+  if (e->isNumber()) {
+    return true;
+  } else if (PatternMatching::Match(e, KMult(KA, π_e), &ctx) &&
+             ctx.getTree(KA)->isRational()) {
+    return true;
+  } else if (PatternMatching::Match(e, KAdd(KA, KMult(KB, i_e)), &ctx) &&
+             ctx.getTree(KA)->isRational() && ctx.getTree(KB)->isRational()) {
+    return true;
+  }
+  return false;
+}
+
 }  // namespace Poincare::Internal
 
 #endif

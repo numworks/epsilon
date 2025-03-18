@@ -418,6 +418,11 @@ QUIZ_CASE(pcj_sign) {
   assert_sign("rem(-5, -2)", Sign::FinitePositiveInteger());
   assert_sign("quo(-5, 2)", Sign::FiniteNegativeInteger());
   assert_sign("rem(-5, 2)", Sign::FinitePositiveInteger());
+
+  // binomial
+  assert_sign("binomial(4,3)", Sign::Integer());
+  assert_sign("binomial(-2,-1)", Sign::Integer());
+  assert_sign("binomial(0.25,1)", Sign::Unknown());
 }
 
 void assert_projected_is_null(const char* input, OMG::Troolean isNull) {

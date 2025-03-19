@@ -103,7 +103,6 @@ bool Distribution::authorizedParameterAtIndex(double x, int index) const {
   return Inference::authorizedParameterAtIndex(x, index) &&
          Poincare::Distribution::IsParameterValidBool(m_distribution, x, index,
                                                       constParametersArray());
-  ;
 }
 
 void Distribution::setParameterAtIndex(double f, int index) {

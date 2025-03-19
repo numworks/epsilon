@@ -3,8 +3,8 @@
 
 #include <escher/view.h>
 
-#include "inference/controllers/interval/interval_conclusion_view.h"
-#include "inference/controllers/interval/interval_curve_view.h"
+#include "inference/controllers/confidence_interval/interval_conclusion_view.h"
+#include "inference/controllers/confidence_interval/interval_curve_view.h"
 
 namespace Inference {
 

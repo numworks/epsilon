@@ -9,7 +9,7 @@
 #include <poincare/statistics/inference.h>
 
 #include "chi_square/categorical_type_controller.h"
-#include "test/hypothesis_controller.h"
+#include "significance_test/hypothesis_controller.h"
 #include "type_controller.h"
 
 using namespace Escher;

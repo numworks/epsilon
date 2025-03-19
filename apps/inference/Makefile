@@ -11,18 +11,18 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   controllers/chi_square/results_goodness_table_cell.cpp \
   controllers/chi_square/results_homogeneity_controller.cpp \
   controllers/chi_square/results_homogeneity_table_cell.cpp \
-  controllers/interval/interval_conclusion_view.cpp \
-  controllers/interval/interval_curve_view.cpp \
-  controllers/interval/interval_graph_controller.cpp \
-  controllers/interval/interval_graph_view.cpp \
+  controllers/confidence_interval/interval_conclusion_view.cpp \
+  controllers/confidence_interval/interval_curve_view.cpp \
+  controllers/confidence_interval/interval_graph_controller.cpp \
+  controllers/confidence_interval/interval_graph_view.cpp \
   controllers/store/input_store_controller.cpp \
   controllers/store/store_table_cell.cpp \
-  controllers/test/hypothesis_controller.cpp \
-  controllers/test/legend_view.cpp \
-  controllers/test/test_curve_view.cpp \
-  controllers/test/test_graph_controller.cpp \
-  controllers/test/test_graph_view.cpp \
-  controllers/test/zoom_hint_view.cpp \
+  controllers/significance_test/hypothesis_controller.cpp \
+  controllers/significance_test/legend_view.cpp \
+  controllers/significance_test/test_curve_view.cpp \
+  controllers/significance_test/test_graph_controller.cpp \
+  controllers/significance_test/test_graph_view.cpp \
+  controllers/significance_test/zoom_hint_view.cpp \
   controllers/categorical_cell.cpp \
   controllers/categorical_controller.cpp \
   controllers/categorical_table_cell.cpp \

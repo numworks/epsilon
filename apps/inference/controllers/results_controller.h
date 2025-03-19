@@ -8,10 +8,10 @@
 #include <escher/menu_cell.h>
 #include <escher/stack_view_controller.h>
 
+#include "confidence_interval/interval_graph_controller.h"
 #include "inference/controllers/dynamic_cells_data_source.h"
 #include "inference/models/statistic.h"
-#include "interval/interval_graph_controller.h"
-#include "test/test_graph_controller.h"
+#include "significance_test/test_graph_controller.h"
 
 namespace Inference {
 

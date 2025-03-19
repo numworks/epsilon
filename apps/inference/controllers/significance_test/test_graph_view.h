@@ -3,9 +3,9 @@
 
 #include <escher/view.h>
 
-#include "inference/controllers/test/legend_view.h"
-#include "inference/controllers/test/test_curve_view.h"
-#include "inference/controllers/test/zoom_hint_view.h"
+#include "inference/controllers/significance_test/legend_view.h"
+#include "inference/controllers/significance_test/test_curve_view.h"
+#include "inference/controllers/significance_test/zoom_hint_view.h"
 
 namespace Inference {
 

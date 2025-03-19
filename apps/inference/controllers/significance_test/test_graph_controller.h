@@ -5,7 +5,7 @@
 #include <escher/view_controller.h>
 
 #include "inference/constants.h"
-#include "inference/controllers/test/test_graph_view.h"
+#include "inference/controllers/significance_test/test_graph_view.h"
 
 namespace Inference {
 

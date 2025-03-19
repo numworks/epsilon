@@ -8,7 +8,7 @@
 #include <poincare/statistics/inference.h>
 
 #include "inference/models/statistic.h"
-#include "test/hypothesis_controller.h"
+#include "significance_test/hypothesis_controller.h"
 
 using namespace Escher;
 

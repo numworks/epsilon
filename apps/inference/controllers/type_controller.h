@@ -12,7 +12,7 @@
 
 #include "dataset_controller.h"
 #include "input_controller.h"
-#include "test/hypothesis_controller.h"
+#include "significance_test/hypothesis_controller.h"
 
 namespace Inference {
 

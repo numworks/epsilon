@@ -1,6 +1,8 @@
 #ifndef POINCARE_POOL_CHECKPOINT_H
 #define POINCARE_POOL_CHECKPOINT_H
 
+#include <poincare/src/memory/tree_stack.h>
+
 /* Usage:
  *
  * CAUTION : A scope MUST be created directly around the PoolCheckpoint, to
@@ -39,7 +41,10 @@ class PoolCheckpoint {
 
   PoolCheckpoint();
   PoolCheckpoint(const PoolCheckpoint &) = delete;
-  virtual ~PoolCheckpoint() { protectedDiscard(); }
+  virtual ~PoolCheckpoint() {
+    assert(Poincare::Internal::TreeStack::SharedTreeStack->size() == 0);
+    protectedDiscard();
+  }
   PoolCheckpoint &operator=(const PoolCheckpoint &) = delete;
 
   PoolObject *const endOfPoolBeforeCheckpoint() { return m_endOfPool; }

@@ -2,7 +2,6 @@
 #include <poincare/old/pool.h>
 #include <poincare/old/pool_checkpoint.h>
 #include <poincare/old/pool_object.h>
-#include <poincare/src/memory/tree_stack.h>
 
 namespace Poincare {
 
@@ -15,7 +14,6 @@ PoolCheckpoint::PoolCheckpoint()
 }
 
 void PoolCheckpoint::protectedDiscard() const {
-  assert(Internal::TreeStack::SharedTreeStack->size() == 0);
   if (s_topmost == this) {
     s_topmost = m_parent;
   }

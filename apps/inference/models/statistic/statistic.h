@@ -156,7 +156,7 @@ class Statistic : public Shared::Inference {
 
   // Outputs
   int numberOfResults() const {
-    return numberOfInferenceResults() + numberOfExtraResults();
+    return numberOfExtraResults() + numberOfInferenceResults();
   }
   // Extra results are the first section
   int secondResultSectionStart() const;

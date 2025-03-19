@@ -4,7 +4,7 @@
 #include <escher/even_odd_cell.h>
 #include <escher/table_view_data_source.h>
 
-#include "inference/models/statistic/table.h"
+#include "inference/models/table.h"
 #include "inference/text_helpers.h"
 
 namespace Inference {

@@ -5,7 +5,7 @@
 #include <escher/even_odd_message_text_cell.h>
 #include <escher/metric.h>
 
-#include "inference/models/statistic/goodness_test.h"
+#include "inference/models/goodness_test.h"
 #include "inference/statistic/categorical_table_cell.h"
 
 namespace Inference {

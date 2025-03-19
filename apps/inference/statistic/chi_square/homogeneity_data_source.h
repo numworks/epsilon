@@ -7,7 +7,7 @@
 
 #include <algorithm>
 
-#include "inference/models/statistic/homogeneity_test.h"
+#include "inference/models/homogeneity_test.h"
 #include "inference/shared/dynamic_cells_data_source.h"
 #include "inference/statistic/categorical_table_view_data_source.h"
 

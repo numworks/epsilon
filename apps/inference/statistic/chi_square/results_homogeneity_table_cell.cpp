@@ -1,6 +1,6 @@
 #include "results_homogeneity_table_cell.h"
 
-#include "inference/models/statistic/chi2_test.h"
+#include "inference/models/chi2_test.h"
 #include "results_homogeneity_controller.h"
 
 using namespace Escher;

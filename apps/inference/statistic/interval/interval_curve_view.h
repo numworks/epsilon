@@ -3,7 +3,7 @@
 
 #include <apps/shared/plot_view_policies.h>
 
-#include "inference/models/statistic/interval.h"
+#include "inference/models/interval.h"
 
 namespace Inference {
 

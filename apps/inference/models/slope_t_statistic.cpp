@@ -3,7 +3,7 @@
 #include <apps/shared/store_to_series.h>
 #include <omg/round.h>
 
-#include "inference/models/statistic/aliases.h"
+#include "inference/models/aliases.h"
 
 namespace Inference {
 

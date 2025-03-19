@@ -6,7 +6,7 @@
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include <inference/models/statistic/statistic.h>
+#include <inference/models/statistic.h>
 #include <ion/events.h>
 
 namespace Inference {

@@ -6,7 +6,7 @@
 #include "images/confidence_interval.h"
 #include "images/significance_test.h"
 #include "inference_icon.h"
-#include "models/statistic/homogeneity_test.h"
+#include "models/homogeneity_test.h"
 
 using namespace Escher;
 

@@ -3,15 +3,15 @@
 
 #include <new>
 
-#include "statistic/goodness_test.h"
-#include "statistic/homogeneity_test.h"
-#include "statistic/one_mean_interval.h"
-#include "statistic/one_mean_test.h"
-#include "statistic/one_proportion_statistic.h"
-#include "statistic/slope_t_statistic.h"
-#include "statistic/two_means_interval.h"
-#include "statistic/two_means_test.h"
-#include "statistic/two_proportions_statistic.h"
+#include "goodness_test.h"
+#include "homogeneity_test.h"
+#include "one_mean_interval.h"
+#include "one_mean_test.h"
+#include "one_proportion_statistic.h"
+#include "slope_t_statistic.h"
+#include "two_means_interval.h"
+#include "two_means_test.h"
+#include "two_proportions_statistic.h"
 
 namespace Inference {
 

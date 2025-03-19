@@ -5,16 +5,16 @@
 #include <array>
 #include <cmath>
 
-#include "inference/models/statistic/goodness_test.h"
-#include "inference/models/statistic/homogeneity_test.h"
-#include "inference/models/statistic/one_mean_interval.h"
-#include "inference/models/statistic/one_mean_test.h"
-#include "inference/models/statistic/one_proportion_statistic.h"
-#include "inference/models/statistic/slope_t_statistic.h"
-#include "inference/models/statistic/statistic.h"
-#include "inference/models/statistic/two_means_interval.h"
-#include "inference/models/statistic/two_means_test.h"
-#include "inference/models/statistic/two_proportions_statistic.h"
+#include "inference/models/goodness_test.h"
+#include "inference/models/homogeneity_test.h"
+#include "inference/models/one_mean_interval.h"
+#include "inference/models/one_mean_test.h"
+#include "inference/models/one_proportion_statistic.h"
+#include "inference/models/slope_t_statistic.h"
+#include "inference/models/statistic.h"
+#include "inference/models/two_means_interval.h"
+#include "inference/models/two_means_test.h"
+#include "inference/models/two_proportions_statistic.h"
 
 using namespace Inference;
 using namespace Poincare;

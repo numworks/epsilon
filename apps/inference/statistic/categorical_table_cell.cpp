@@ -1,6 +1,6 @@
 #include "categorical_table_cell.h"
 
-#include <inference/models/statistic/slope_t_statistic.h>
+#include <inference/models/slope_t_statistic.h>
 
 #include "categorical_controller.h"
 #include "inference/app.h"

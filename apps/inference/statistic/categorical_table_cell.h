@@ -11,8 +11,8 @@
 #include <shared/parameter_text_field_delegate.h>
 
 #include "categorical_table_view_data_source.h"
-#include "inference/models/statistic/statistic.h"
-#include "inference/models/statistic/table.h"
+#include "inference/models/statistic.h"
+#include "inference/models/table.h"
 #include "inference/shared/dynamic_cells_data_source.h"
 
 namespace Inference {

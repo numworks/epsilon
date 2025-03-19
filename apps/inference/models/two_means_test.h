@@ -1,26 +1,25 @@
-#ifndef INFERENCE_MODELS_STATISTIC_ONE_MEAN_INTERVAL_H
-#define INFERENCE_MODELS_STATISTIC_ONE_MEAN_INTERVAL_H
+#ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_TEST_H
+#define INFERENCE_MODELS_STATISTIC_TWO_MEANS_TEST_H
 
-#include <poincare/statistics/inference.h>
-
-#include "inference/models/statistic/table_from_store.h"
-#include "interval.h"
-#include "one_mean_statistic.h"
+#include "inference/models/table_from_store.h"
+#include "test.h"
+#include "two_means_statistic.h"
 
 namespace Inference {
 
-class OneMeanInterval : public Interval, public OneMeanStatistic {
+class TwoMeansTest : public Test, public TwoMeansStatistic {
  public:
-  using OneMeanStatistic::OneMeanStatistic;
+  using TwoMeansStatistic::TwoMeansStatistic;
   Table* table() override { return this; }
   void init() override { initDatasetsIfSeries(); }
   void tidy() override { tidyDatasets(); }
 
-  constexpr TestType testType() const override { return TestType::OneMean; }
+  constexpr TestType testType() const override { return TestType::TwoMeans; }
 
   double preProcessParameter(double p, int index) const override {
-    return preProcessOneMeanParameter(p, index);
+    return preProcessTwoMeansParameter(p, index);
   }
+
   bool validateInputs(int pageIndex) override {
     return TableFromStatisticStore::validateInputs(this, pageIndex);
   }
@@ -37,22 +36,33 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
   double* parametersArray() override { return m_params; }
 };
 
-class OneMeanTInterval : public OneMeanInterval {
+class TwoMeansTTest : public TwoMeansTest {
  public:
-  using OneMeanInterval::OneMeanInterval;
+  using TwoMeansTest::TwoMeansTest;
+
   constexpr StatisticType statisticType() const override {
     return StatisticType::T;
   }
 };
 
-class OneMeanZInterval : public OneMeanInterval {
+class PooledTwoMeansTTest : public TwoMeansTest {
  public:
-  using OneMeanInterval::OneMeanInterval;
+  using TwoMeansTest::TwoMeansTest;
+
+  constexpr StatisticType statisticType() const override {
+    return StatisticType::TPooled;
+  }
+};
+
+class TwoMeansZTest : public TwoMeansTest {
+ public:
+  using TwoMeansTest::TwoMeansTest;
+
   constexpr StatisticType statisticType() const override {
     return StatisticType::Z;
   }
 };
 
-}  // namespace Inference
+};  // namespace Inference
 
 #endif

@@ -5,7 +5,7 @@
 #include <escher/explicit_list_view_data_source.h>
 
 #include "inference/constants.h"
-#include "inference/models/statistic/test.h"
+#include "inference/models/test.h"
 
 namespace Inference {
 

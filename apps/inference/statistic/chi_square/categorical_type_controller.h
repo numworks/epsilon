@@ -10,7 +10,7 @@
 #include <escher/stack_view_controller.h>
 #include <ion/events.h>
 
-#include "inference/models/statistic/chi2_test.h"
+#include "inference/models/chi2_test.h"
 
 namespace Inference {
 

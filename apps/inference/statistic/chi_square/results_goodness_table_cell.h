@@ -1,7 +1,7 @@
 #ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULT_GOODNESS_TABLE_CELL_H
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULT_GOODNESS_TABLE_CELL_H
 
-#include "inference/models/statistic/goodness_test.h"
+#include "inference/models/goodness_test.h"
 #include "inference/statistic/categorical_controller.h"
 
 namespace Inference {

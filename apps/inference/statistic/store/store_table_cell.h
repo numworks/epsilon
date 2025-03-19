@@ -1,9 +1,9 @@
 #ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
 
-#include "inference/models/statistic/one_mean_statistic.h"
-#include "inference/models/statistic/slope_t_statistic.h"
-#include "inference/models/statistic/table_from_store.h"
+#include "inference/models/one_mean_statistic.h"
+#include "inference/models/slope_t_statistic.h"
+#include "inference/models/table_from_store.h"
 #include "inference/statistic/categorical_table_cell.h"
 #include "shared/buffer_function_title_cell.h"
 #include "shared/column_helper.h"

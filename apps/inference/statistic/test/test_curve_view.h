@@ -3,7 +3,7 @@
 
 #include <apps/shared/plot_view_policies.h>
 
-#include "inference/models/statistic/test.h"
+#include "inference/models/test.h"
 
 namespace Inference {
 

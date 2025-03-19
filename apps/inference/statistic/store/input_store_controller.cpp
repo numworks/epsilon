@@ -2,7 +2,7 @@
 
 #include <omg/utf8_helper.h>
 
-#include "inference/models/statistic/table_from_store.h"
+#include "inference/models/table_from_store.h"
 #include "inference/text_helpers.h"
 
 using namespace Escher;

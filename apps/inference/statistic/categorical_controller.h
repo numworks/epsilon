@@ -5,7 +5,7 @@
 
 #include "categorical_cell.h"
 #include "categorical_table_cell.h"
-#include "inference/models/statistic/table_from_store.h"
+#include "inference/models/table_from_store.h"
 
 namespace Inference {
 

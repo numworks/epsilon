@@ -35,6 +35,11 @@ constexpr static Type k_onlyNegative = static_cast<Type>(RMinus);
 constexpr static Type k_onlyPositive = static_cast<Type>(
     N | NStar | RPlus | RPlusStar | ZeroToOne | ZeroExcludedToOne |
     ZeroExcludedToOneExcluded | ZeroToOneExcluded);
+constexpr static Type k_betweenZeroAndOne =
+    static_cast<Type>(ZeroToOne | ZeroExcludedToOne |
+                      ZeroExcludedToOneExcluded | ZeroToOneExcluded);
+constexpr static Type k_nonOne =
+    static_cast<Type>(ZeroExcludedToOneExcluded | ZeroToOneExcluded | RMinus);
 
 template <typename T>
 static bool ContainsFloat(T value, Type type) {
@@ -54,12 +59,10 @@ static bool ContainsFloat(T value, Type type) {
   if (value < static_cast<T>(0.0) && type & k_onlyPositive) {
     return false;
   }
-  if (value > static_cast<T>(1.0) &&
-      type & (ZeroToOne | ZeroExcludedToOne | ZeroExcludedToOneExcluded)) {
+  if (value > static_cast<T>(1.0) && type & k_betweenZeroAndOne) {
     return false;
   }
-  if (value == static_cast<T>(1.0) &&
-      type & (ZeroExcludedToOneExcluded | ZeroToOneExcluded)) {
+  if (value == static_cast<T>(1.0) && type & k_nonOne) {
     return false;
   }
   if (std::floor(value) != value && type & k_onlyIntegers) {

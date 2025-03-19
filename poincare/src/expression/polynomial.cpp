@@ -559,21 +559,17 @@ bool PolynomialParser::HasNonNullCoefficients(
   int degree = coefList->numberOfChildren() - 1;
   assert(0 <= degree && degree <= Polynomial::k_maxPolynomialDegree);
 
-  if (highestDegreeCoefficientIsPositive) {
-    const Tree* child = coefList->child(degree);
-    ComplexSign sign = GetComplexSign(child);
-#if ASSERTIONS
-    /* We should assert sign.isReal() but the sign is not always precise enough,
-     * so check approximation is real. */
-    std::complex<double> value =
-        Approximation::ToComplex<double>(e, Approximation::Parameters{});
-    assert(Dimension::IsNonListScalar(child) &&
-           (value.imag() == 0 || std::isnan(value.imag())));
-    assert(sign.realSign().trooleanIsNull() != OMG::Troolean::True);
-#endif
-    OMG::Troolean isPositive = sign.realSign().trooleanIsStrictlyPositive();
+  assert(highestDegreeCoefficientIsPositive);
+  const Tree* child = coefList->child(degree);
+  ComplexSign sign = GetComplexSign(child);
+  if (!sign.isReal()) {
+    *highestDegreeCoefficientIsPositive = OMG::Troolean::Unknown;
+  } else {
+    Sign realSign = sign.realSign();
+    OMG::Troolean isPositive = realSign.trooleanIsStrictlyPositive();
     if (isPositive == OMG::Troolean::Unknown) {
-      // Approximate for a better estimation. Nan if coefficient depends on x/y.
+      // Approximate for a better estimation.
+      // Nan if coefficient depends on x/y.
       double approximation =
           Approximation::To<double>(child, Approximation::Parameters{});
       if (!std::isnan(approximation)) {
@@ -585,24 +581,16 @@ bool PolynomialParser::HasNonNullCoefficients(
 
   for (const Tree* child : coefList->children()) {
     ComplexSign sign = GetComplexSign(child);
-#if ASSERTIONS
-    /* We should assert sign.isReal() but the sign is not always precise enough,
-     * so check approximation is real. */
-    std::complex<double> value =
-        Approximation::ToComplex<double>(e, Approximation::Parameters{});
-    assert(Dimension::IsNonListScalar(child) &&
-           (value.imag() == 0 || std::isnan(value.imag())));
-#endif
-    OMG::Troolean isNull = sign.realSign().trooleanIsNull();
-    if (isNull == OMG::Troolean::Unknown) {
-      // Same comment as above
-      double approximation =
-          Approximation::To<double>(child, Approximation::Parameters{});
-      if (!std::isnan(approximation)) {
-        isNull = OMG::BoolToTroolean(approximation != 0.0);
-      }
+    bool isNull = sign.isNull();
+    if (!isNull && sign.canBeNull()) {
+      // Unsure if null, approximation to be more precise, assuming nan is null
+      std::complex<double> approximation =
+          Approximation::ToComplex<double>(child, Approximation::Parameters{});
+      isNull = std::isnan(approximation.real()) ||
+               std::isnan(approximation.imag()) ||
+               (approximation.real() == 0.0 && approximation.imag() == 0.0);
     }
-    if (isNull == OMG::Troolean::False) {
+    if (!isNull) {
       coefList->removeTree();
       return true;
     }

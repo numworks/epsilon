@@ -1,19 +1,19 @@
-#ifndef INFERENCE_MODELS_STATISTIC_ONE_MEAN_STATISTIC_H
-#define INFERENCE_MODELS_STATISTIC_ONE_MEAN_STATISTIC_H
+#ifndef INFERENCE_MODELS_ONE_MEAN_STATISTIC_H
+#define INFERENCE_MODELS_ONE_MEAN_STATISTIC_H
 
 #include <poincare/statistics/inference.h>
 
-#include "table_from_store.h"
+#include "input_table_from_store.h"
 
 namespace Inference {
 
-class OneMeanStatistic : public TableFromStatisticStore {
+class OneMeanStatistic : public InputTableFromStatisticStore {
  public:
-  using TableFromStatisticStore::TableFromStatisticStore;
+  using InputTableFromStatisticStore::InputTableFromStatisticStore;
   int numberOfSeries() const override { return 1; }
 
  protected:
-  void computeParametersFromSeries(const Statistic* stat,
+  void computeParametersFromSeries(const Inference* stat,
                                    int pageIndex) override;
 
   double preProcessOneMeanParameter(double p, int index) const {

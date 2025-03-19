@@ -1,4 +1,4 @@
-#include "interval.h"
+#include "confidence_interval.h"
 
 #include <apps/apps_container_helper.h>
 #include <assert.h>
@@ -13,8 +13,9 @@ using namespace Poincare;
 
 namespace Inference {
 
-void Interval::setGraphTitleForValue(double marginOfError, char* buffer,
-                                     size_t bufferSize) const {
+void ConfidenceInterval::setGraphTitleForValue(double marginOfError,
+                                               char* buffer,
+                                               size_t bufferSize) const {
   const char* format = I18n::translate(
       I18n::Message::StatisticGraphControllerIntervalTitleFormat);
   Poincare::Print::CustomPrintf(
@@ -23,9 +24,10 @@ void Interval::setGraphTitleForValue(double marginOfError, char* buffer,
       Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-void Interval::setResultTitleForValues(double estimate, double threshold,
-                                       char* buffer, size_t bufferSize,
-                                       bool resultIsTopPage) const {
+void ConfidenceInterval::setResultTitleForValues(double estimate,
+                                                 double threshold, char* buffer,
+                                                 size_t bufferSize,
+                                                 bool resultIsTopPage) const {
   const char* confidence = I18n::translate(I18n::Message::Confidence);
   if (resultIsTopPage) {
     Poincare::Print::CustomPrintf(
@@ -42,33 +44,36 @@ void Interval::setResultTitleForValues(double estimate, double threshold,
   }
 }
 
-void Interval::initParameters() {
+void ConfidenceInterval::initParameters() {
   for (int i = 0; i < numberOfTestParameters(); i++) {
     parametersArray()[i] =
-        ConfidenceInterval::DefaultParameterAtIndex(type(), i);
+        Poincare::Inference::ConfidenceInterval::DefaultParameterAtIndex(type(),
+                                                                         i);
   }
-  m_threshold = ConfidenceInterval::DefaultThreshold();
+  m_threshold = Poincare::Inference::ConfidenceInterval::DefaultThreshold();
 }
 
-bool Interval::isGraphable() const {
+bool ConfidenceInterval::isGraphable() const {
   double SE = standardError();
   assert(std::isnan(SE) || SE >= 0);
   return !std::isnan(SE) && SE >= FLT_MIN;
 }
 
-float Interval::computeXMin() const {
-  assert(const_cast<Interval*>(this)->largestMarginOfError() >= 0);
-  return estimate() - const_cast<Interval*>(this)->largestMarginOfError() *
-                          k_intervalMarginRatio;
+float ConfidenceInterval::computeXMin() const {
+  assert(const_cast<ConfidenceInterval*>(this)->largestMarginOfError() >= 0);
+  return estimate() -
+         const_cast<ConfidenceInterval*>(this)->largestMarginOfError() *
+             k_intervalMarginRatio;
 }
 
-float Interval::computeXMax() const {
-  assert(const_cast<Interval*>(this)->largestMarginOfError() >= 0);
-  return estimate() + const_cast<Interval*>(this)->largestMarginOfError() *
-                          k_intervalMarginRatio;
+float ConfidenceInterval::computeXMax() const {
+  assert(const_cast<ConfidenceInterval*>(this)->largestMarginOfError() >= 0);
+  return estimate() +
+         const_cast<ConfidenceInterval*>(this)->largestMarginOfError() *
+             k_intervalMarginRatio;
 }
 
-float Interval::largestMarginOfError() {
+float ConfidenceInterval::largestMarginOfError() {
   /* Temporarily sets the statistic's threshold to the largest displayed
    * interval to compute the margin of error needed to display all intervals. */
   double previousThreshold = threshold();
@@ -83,8 +88,8 @@ float Interval::largestMarginOfError() {
   return error;
 }
 
-float Interval::DisplayedIntervalThresholdAtIndex(float mainThreshold,
-                                                  int index) {
+float ConfidenceInterval::DisplayedIntervalThresholdAtIndex(float mainThreshold,
+                                                            int index) {
   int direction = index - MainDisplayedIntervalThresholdIndex(mainThreshold);
   if (direction == 0) {
     return mainThreshold;
@@ -110,7 +115,8 @@ float Interval::DisplayedIntervalThresholdAtIndex(float mainThreshold,
   return k_significantThresholds[nextIndex];
 }
 
-int Interval::MainDisplayedIntervalThresholdIndex(float mainThreshold) {
+int ConfidenceInterval::MainDisplayedIntervalThresholdIndex(
+    float mainThreshold) {
   constexpr float k_thresholdLimits[k_numberOfDisplayedIntervals - 1] = {
       0.1f, 0.2f, 0.99f};
   // If mainThreshold is in ]0.2, 0.99], it is the third displayed interval
@@ -122,10 +128,10 @@ int Interval::MainDisplayedIntervalThresholdIndex(float mainThreshold) {
   return k_numberOfDisplayedIntervals - 1;
 }
 
-void Interval::inferenceResultAtIndex(int index, double* value,
-                                      Poincare::Layout* message,
-                                      I18n::Message* subMessage,
-                                      int* precision) {
+void ConfidenceInterval::inferenceResultAtIndex(int index, double* value,
+                                                Poincare::Layout* message,
+                                                I18n::Message* subMessage,
+                                                int* precision) {
   // Estimate cell is not displayed -> shift i
   if (!showEstimate()) {
     index += 1;
@@ -164,11 +170,12 @@ void Interval::inferenceResultAtIndex(int index, double* value,
   }
 }
 
-void Interval::compute() {
+void ConfidenceInterval::compute() {
   const Poincare::Inference::ParametersArray params = constParametersArray();
   Poincare::Inference::Type type = this->type();
-  ConfidenceInterval::Results results =
-      ConfidenceInterval::Compute(type, m_threshold, params);
+  Poincare::Inference::ConfidenceInterval::Results results =
+      Poincare::Inference::ConfidenceInterval::Compute(type, m_threshold,
+                                                       params);
   m_degreesOfFreedom = results.degreesOfFreedom;
   m_estimate = results.estimate;
   m_SE = results.standardError;

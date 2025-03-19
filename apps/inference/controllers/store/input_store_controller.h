@@ -17,7 +17,7 @@ class InputStoreController : public InputCategoricalController,
                        Escher::ViewController* nextController,
                        uint8_t pageIndex,
                        InputStoreController* nextInputStoreController,
-                       Statistic* statistic, Poincare::Context* context);
+                       Inference* statistic, Poincare::Context* context);
 
   static bool ButtonAction(InputStoreController* controller, void* s);
 

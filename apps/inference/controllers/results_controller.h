@@ -10,7 +10,7 @@
 
 #include "confidence_interval/interval_graph_controller.h"
 #include "inference/controllers/dynamic_cells_data_source.h"
-#include "inference/models/statistic.h"
+#include "inference/models/inference.h"
 #include "significance_test/test_graph_controller.h"
 
 namespace Inference {
@@ -23,7 +23,7 @@ class ResultsController
       public DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>,
       public DynamicCellsDataSourceDelegate<ResultCell> {
  public:
-  ResultsController(Escher::Responder* parent, Statistic* statistic,
+  ResultsController(Escher::Responder* parent, Inference* statistic,
                     TestGraphController* testGraphController,
                     IntervalGraphController* intervalGraphController,
                     bool enableHeadline = true);
@@ -56,7 +56,7 @@ class ResultsController
 
  protected:
   Escher::MessageTextView m_title;
-  Statistic* m_statistic;
+  Inference* m_statistic;
 
   TestGraphController* m_testGraphController;
   IntervalGraphController* m_intervalGraphController;

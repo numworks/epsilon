@@ -5,7 +5,7 @@
 
 #include "categorical_cell.h"
 #include "categorical_table_cell.h"
-#include "inference/models/table_from_store.h"
+#include "inference/models/input_table_from_store.h"
 
 namespace Inference {
 
@@ -106,7 +106,7 @@ class InputCategoricalController : public CategoricalController,
  public:
   InputCategoricalController(Escher::StackViewController* parent,
                              Escher::ViewController* nextController,
-                             Statistic* statistic,
+                             Inference* statistic,
                              Escher::Invocation invocation,
                              uint8_t pageIndex = 0);
 
@@ -138,7 +138,7 @@ class InputCategoricalController : public CategoricalController,
 
   const Escher::HighlightCell* privateExplicitCellAtRow(int row) const override;
 
-  Statistic* m_statistic;
+  Inference* m_statistic;
   InputCategoricalCell<Escher::MessageTextView> m_significanceCell;
 
   /* There can be several instances of InputCategoricalController, each

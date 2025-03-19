@@ -6,7 +6,7 @@
 #include <escher/selectable_list_view_controller.h>
 #include <inference/controllers/input_controller.h>
 #include <inference/controllers/store/input_store_controller.h>
-#include <inference/models/table_from_store.h>
+#include <inference/models/input_table_from_store.h>
 
 namespace Inference {
 
@@ -19,7 +19,7 @@ class DatasetController
   DatasetController(Escher::StackViewController* parent,
                     InputController* inputController,
                     InputStoreController* storeController,
-                    Statistic* statistic);
+                    Inference* statistic);
 
   const char* title() const override {
     InputController::InputTitle(this, m_statistic, m_titleBuffer,
@@ -39,7 +39,7 @@ class DatasetController
 
   InputController* m_inputController;
   InputStoreController* m_storeController;
-  Statistic* m_statistic;
+  Inference* m_statistic;
 
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */

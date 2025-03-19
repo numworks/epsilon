@@ -1,15 +1,15 @@
-#ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_INTERVAL_H
-#define INFERENCE_MODELS_STATISTIC_TWO_MEANS_INTERVAL_H
+#ifndef INFERENCE_MODELS_TWO_MEANS_INTERVAL_H
+#define INFERENCE_MODELS_TWO_MEANS_INTERVAL_H
 
-#include "interval.h"
+#include "confidence_interval.h"
 #include "two_means_statistic.h"
 
 namespace Inference {
 
-class TwoMeansInterval : public Interval, public TwoMeansStatistic {
+class TwoMeansInterval : public ConfidenceInterval, public TwoMeansStatistic {
  public:
   using TwoMeansStatistic::TwoMeansStatistic;
-  Table* table() override { return this; }
+  InputTable* table() override { return this; }
   void init() override { initDatasetsIfSeries(); }
   void tidy() override { tidyDatasets(); }
 
@@ -19,7 +19,7 @@ class TwoMeansInterval : public Interval, public TwoMeansStatistic {
     return preProcessTwoMeansParameter(p, index);
   }
   bool validateInputs(int pageIndex) override {
-    return TableFromStatisticStore::validateInputs(this, pageIndex);
+    return InputTableFromStatisticStore::validateInputs(this, pageIndex);
   }
 
  private:

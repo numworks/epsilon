@@ -5,7 +5,7 @@
 #include <escher/explicit_list_view_data_source.h>
 
 #include "inference/constants.h"
-#include "inference/models/test.h"
+#include "inference/models/significance_test.h"
 
 namespace Inference {
 
@@ -14,7 +14,7 @@ class ComparisonOperatorPopupDataSource
  public:
   static Poincare::ComparisonJunior::Operator OperatorTypeForRow(int row);
 
-  ComparisonOperatorPopupDataSource(Test* test) : m_test(test) {}
+  ComparisonOperatorPopupDataSource(SignificanceTest* test) : m_test(test) {}
   int numberOfRows() const override { return k_numberOfOperators; }
   Escher::HighlightCell* cell(int row) override { return &m_cells[row]; }
   void updateMessages();
@@ -22,7 +22,7 @@ class ComparisonOperatorPopupDataSource
  private:
   constexpr static int k_numberOfOperators = 3;
   Escher::SmallBufferTextHighlightCell m_cells[k_numberOfOperators];
-  Test* m_test;
+  SignificanceTest* m_test;
 };
 
 }  // namespace Inference

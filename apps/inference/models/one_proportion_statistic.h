@@ -1,8 +1,8 @@
-#ifndef INFERENCE_MODELS_STATISTIC_ONE_PROPORTION_Z_TEST_H
-#define INFERENCE_MODELS_STATISTIC_ONE_PROPORTION_Z_TEST_H
+#ifndef INFERENCE_MODELS_ONE_PROPORTION_Z_TEST_H
+#define INFERENCE_MODELS_ONE_PROPORTION_Z_TEST_H
 
-#include "interval.h"
-#include "test.h"
+#include "confidence_interval.h"
+#include "significance_test.h"
 
 namespace Inference {
 
@@ -20,7 +20,8 @@ class OneProportionStatistic {
       TestType::OneProportion)];
 };
 
-class OneProportionZTest : public Test, public OneProportionStatistic {
+class OneProportionZTest : public SignificanceTest,
+                           public OneProportionStatistic {
  public:
   constexpr TestType testType() const override {
     return TestType::OneProportion;
@@ -37,7 +38,8 @@ class OneProportionZTest : public Test, public OneProportionStatistic {
   double* parametersArray() override { return m_params; }
 };
 
-class OneProportionZInterval : public Interval, public OneProportionStatistic {
+class OneProportionZInterval : public ConfidenceInterval,
+                               public OneProportionStatistic {
  public:
   constexpr TestType testType() const override {
     return TestType::OneProportion;

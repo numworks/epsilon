@@ -25,7 +25,7 @@ class TypeController
   TypeController(Escher::StackViewController* parent,
                  HypothesisController* hypothesisController,
                  InputController* intervalInputController,
-                 DatasetController* datasetController, Statistic* statistic);
+                 DatasetController* datasetController, Inference* statistic);
   const char* title() const override;
   ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTitle;
@@ -52,7 +52,7 @@ class TypeController
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
 
-  Statistic* m_statistic;
+  Inference* m_statistic;
 };
 
 }  // namespace Inference

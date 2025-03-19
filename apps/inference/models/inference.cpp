@@ -1,17 +1,16 @@
-#include "statistic.h"
+#include "inference.h"
 
 #include <apps/apps_container_helper.h>
+#include <apps/shared/global_context.h>
 #include <inference/app.h>
+#include <omg/unreachable.h>
 #include <poincare/statistics/inference.h>
 
 #include "goodness_test.h"
 #include "homogeneity_test.h"
-#include "omg/unreachable.h"
 #include "one_mean_interval.h"
 #include "one_mean_test.h"
 #include "one_proportion_statistic.h"
-#include "shared/global_context.h"
-#include "shared/inference.h"
 #include "slope_t_statistic.h"
 #include "two_means_interval.h"
 #include "two_means_test.h"
@@ -24,7 +23,7 @@ static Shared::GlobalContext* getContext() {
 }
 
 static void* initialize(SubApp subApp, Poincare::Inference::Type type,
-                        Statistic* target) {
+                        Inference* target) {
   switch (subApp) {
     case SubApp::SignificanceTest:
       switch (type.testType) {
@@ -101,17 +100,18 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
 }
 
 static bool initializeStatistic(SubApp subApp, Poincare::Inference::Type type,
-                                Statistic* target) {
-  target->~Statistic();
+                                Inference* target) {
+  target->~Inference();
   assert(subApp != SubApp::ConfidenceInterval ||
-         ConfidenceInterval::IsTypeCompatibleWithConfidenceInterval(type));
+         Poincare::Inference::ConfidenceInterval::
+             IsTypeCompatibleWithConfidenceInterval(type));
   assert(Poincare::Inference::IsTestCompatibleWithStatistic(type, type));
   initialize(subApp, type, target);
   target->initParameters();
   return true;
 }
 
-bool Statistic::initializeSubApp(SubApp subApp) {
+bool Inference::initializeSubApp(SubApp subApp) {
   if (subApp == this->subApp()) {
     return false;
   }
@@ -119,7 +119,7 @@ bool Statistic::initializeSubApp(SubApp subApp) {
   return initializeStatistic(subApp, dummyType, this);
 }
 
-bool Statistic::initializeTest(TestType testType) {
+bool Inference::initializeTest(TestType testType) {
   if (testType == this->testType()) {
     return false;
   }
@@ -127,7 +127,7 @@ bool Statistic::initializeTest(TestType testType) {
   return initializeStatistic(subApp(), partialType, this);
 }
 
-bool Statistic::initializeDistribution(StatisticType statisticType) {
+bool Inference::initializeDistribution(StatisticType statisticType) {
   if (statisticType == this->statisticType()) {
     return false;
   }
@@ -135,7 +135,7 @@ bool Statistic::initializeDistribution(StatisticType statisticType) {
   return initializeStatistic(subApp(), type, this);
 }
 
-bool Statistic::initializeCategoricalType(CategoricalType categoricalType) {
+bool Inference::initializeCategoricalType(CategoricalType categoricalType) {
   if (categoricalType == this->categoricalType()) {
     return false;
   }
@@ -144,7 +144,7 @@ bool Statistic::initializeCategoricalType(CategoricalType categoricalType) {
   return initializeStatistic(subApp(), type, this);
 }
 
-bool Statistic::authorizedParameterAtIndex(double p, int i) const {
+bool Inference::authorizedParameterAtIndex(double p, int i) const {
   if (i == indexOfThreshold()) {
     /* Since p will be converted to float later, we need to ensure that
      * it's not too close to 1.0 */
@@ -154,24 +154,24 @@ bool Statistic::authorizedParameterAtIndex(double p, int i) const {
   /* p might be pre-processed when set so we need to check if it's valid after
    * pre-processing */
   p = preProcessParameter(p, i);
-  return Shared::Inference::authorizedParameterAtIndex(p, i) &&
+  return Shared::StatisticalDistribution::authorizedParameterAtIndex(p, i) &&
          Poincare::Inference::IsParameterValid(type(), p, i);
 }
 
-bool Statistic::areParametersValid() {
+bool Inference::areParametersValid() {
   return Poincare::Inference::AreParametersValid(type(),
                                                  constParametersArray());
 }
 
-double Statistic::parameterAtIndex(int i) const {
+double Inference::parameterAtIndex(int i) const {
   assert(i <= indexOfThreshold() &&
          indexOfThreshold() == numberOfTestParameters());
   return i == indexOfThreshold()
              ? m_threshold
-             : const_cast<Statistic*>(this)->parametersArray()[i];
+             : const_cast<Inference*>(this)->parametersArray()[i];
 }
 
-void Statistic::setParameterAtIndex(double f, int i) {
+void Inference::setParameterAtIndex(double f, int i) {
   assert(i <= indexOfThreshold() &&
          indexOfThreshold() == numberOfTestParameters());
   if (i == indexOfThreshold()) {
@@ -182,23 +182,23 @@ void Statistic::setParameterAtIndex(double f, int i) {
   }
 }
 
-double Statistic::cumulativeDistributiveFunctionAtAbscissa(double x) const {
+double Inference::cumulativeDistributiveFunctionAtAbscissa(double x) const {
   return Poincare::Distribution::CumulativeDistributiveFunctionAtAbscissa(
       distributionType(), x, distributionParameters());
 }
 
-double Statistic::cumulativeDistributiveInverseForProbability(
+double Inference::cumulativeDistributiveInverseForProbability(
     double probability) const {
   return Poincare::Distribution::CumulativeDistributiveInverseForProbability(
       distributionType(), probability, distributionParameters());
 }
 
-int Statistic::secondResultSectionStart() const {
+int Inference::secondResultSectionStart() const {
   int n = numberOfExtraResults();
   return n == 0 ? -1 : n;
 }
 
-void Statistic::resultAtIndex(int index, double* value,
+void Inference::resultAtIndex(int index, double* value,
                               Poincare::Layout* message,
                               I18n::Message* subMessage, int* precision) {
   if (index < numberOfExtraResults()) {
@@ -209,7 +209,7 @@ void Statistic::resultAtIndex(int index, double* value,
   inferenceResultAtIndex(index, value, message, subMessage, precision);
 }
 
-float Statistic::computeYMax() const {
+float Inference::computeYMax() const {
   float max = 0;
   switch (distributionType()) {
     case Poincare::Distribution::Type::Student:
@@ -224,10 +224,10 @@ float Statistic::computeYMax() const {
     default:
       OMG::unreachable();
   }
-  return (1 + Shared::Inference::k_displayTopMarginRatio) * max;
+  return (1 + Shared::StatisticalDistribution::k_displayTopMarginRatio) * max;
 }
 
-float Statistic::canonicalDensityFunction(float x) const {
+float Inference::canonicalDensityFunction(float x) const {
   return Poincare::Distribution::EvaluateAtAbscissa<double>(
       distributionType(), x, distributionParameters());
 }

@@ -4,7 +4,7 @@
 #include <escher/even_odd_cell.h>
 #include <escher/table_view_data_source.h>
 
-#include "inference/models/table.h"
+#include "inference/models/input_table.h"
 #include "inference/text_helpers.h"
 
 namespace Inference {
@@ -15,7 +15,7 @@ class CategoricalTableViewDataSource : public Escher::TableViewDataSource {
   template <typename TextHolder>
   void fillValueCellForLocation(TextHolder* textHolder,
                                 Escher::EvenOddCell* evenOddCell, int column,
-                                int row, Table* tableModel) {
+                                int row, InputTable* tableModel) {
     double p = tableModel->valueAtPosition(row, column);
     PrintValueInTextHolder(p, textHolder);
     evenOddCell->setEven(row % 2 == 1);

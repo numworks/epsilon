@@ -23,7 +23,7 @@
 #include "controllers/store/input_store_controller.h"
 #include "controllers/test_controller.h"
 #include "controllers/type_controller.h"
-#include "models/statistic_buffer.h"
+#include "models/inference_buffer.h"
 
 namespace Inference {
 
@@ -49,7 +49,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
     void tidy() override;
     void reset() override;
 
-    Statistic* statistic() { return m_statisticBuffer.statistic(); }
+    Inference* inference() { return m_inferenceBuffer.inference(); }
 
     OMG::RingBuffer<Escher::ViewController*,
                     LargeStackViewController::k_maxNumberOfChildren>*
@@ -63,7 +63,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
     OMG::RingBuffer<Escher::ViewController*,
                     LargeStackViewController::k_maxNumberOfChildren>
         m_pageQueue;
-    StatisticBuffer m_statisticBuffer;
+    InferenceBuffer m_inferenceBuffer;
   };
 
   static App* app() { return static_cast<App*>(Escher::App::app()); }
@@ -95,7 +95,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   // Shared::MenuControllerDelegate
   void selectSubApp(int subAppIndex) override;
   int selectedSubApp() const override {
-    return static_cast<int>(snapshot()->statistic()->subApp());
+    return static_cast<int>(snapshot()->inference()->subApp());
   }
   int numberOfSubApps() const override {
     return static_cast<int>(k_numberOfSubApps);

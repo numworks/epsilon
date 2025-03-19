@@ -1,15 +1,15 @@
-#ifndef INFERENCE_MODELS_STATISTIC_INTERVAL_H
-#define INFERENCE_MODELS_STATISTIC_INTERVAL_H
+#ifndef INFERENCE_MODELS_CONFIDENCE_INTERVAL_H
+#define INFERENCE_MODELS_CONFIDENCE_INTERVAL_H
 
 #include <poincare/statistics/inference.h>
 
-#include "statistic.h"
+#include "inference.h"
 
 namespace Inference {
 
-class Interval : public Statistic {
+class ConfidenceInterval : public Inference {
  public:
-  Interval()
+  ConfidenceInterval()
       : m_estimate(NAN),
         /* Initialize to make sure m_SE != 0 by default and test-statistics are
          * graphable. */
@@ -38,13 +38,13 @@ class Interval : public Statistic {
   }
 
   bool showEstimate() const {
-    return ConfidenceInterval::ShowEstimate(testType());
+    return Poincare::Inference::ConfidenceInterval::ShowEstimate(testType());
   }
   const char* estimateSymbol() const {
-    return ConfidenceInterval::EstimateSymbol(testType());
+    return Poincare::Inference::ConfidenceInterval::EstimateSymbol(testType());
   }
   Poincare::Layout estimateLayout() const {
-    return ConfidenceInterval::EstimateLayout(type());
+    return Poincare::Inference::ConfidenceInterval::EstimateLayout(type());
   }
   I18n::Message estimateDescription() const {
     return IntervalEstimateDescription(testType());

@@ -1,18 +1,18 @@
-#ifndef INFERENCE_MODELS_STATISTIC_ONE_MEAN_INTERVAL_H
-#define INFERENCE_MODELS_STATISTIC_ONE_MEAN_INTERVAL_H
+#ifndef INFERENCE_MODELS_ONE_MEAN_INTERVAL_H
+#define INFERENCE_MODELS_ONE_MEAN_INTERVAL_H
 
 #include <poincare/statistics/inference.h>
 
-#include "inference/models/table_from_store.h"
-#include "interval.h"
+#include "confidence_interval.h"
+#include "inference/models/input_table_from_store.h"
 #include "one_mean_statistic.h"
 
 namespace Inference {
 
-class OneMeanInterval : public Interval, public OneMeanStatistic {
+class OneMeanInterval : public ConfidenceInterval, public OneMeanStatistic {
  public:
   using OneMeanStatistic::OneMeanStatistic;
-  Table* table() override { return this; }
+  InputTable* table() override { return this; }
   void init() override { initDatasetsIfSeries(); }
   void tidy() override { tidyDatasets(); }
 
@@ -22,7 +22,7 @@ class OneMeanInterval : public Interval, public OneMeanStatistic {
     return preProcessOneMeanParameter(p, index);
   }
   bool validateInputs(int pageIndex) override {
-    return TableFromStatisticStore::validateInputs(this, pageIndex);
+    return InputTableFromStatisticStore::validateInputs(this, pageIndex);
   }
 
  private:

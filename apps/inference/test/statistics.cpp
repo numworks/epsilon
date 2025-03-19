@@ -7,11 +7,11 @@
 
 #include "inference/models/goodness_test.h"
 #include "inference/models/homogeneity_test.h"
+#include "inference/models/inference.h"
 #include "inference/models/one_mean_interval.h"
 #include "inference/models/one_mean_test.h"
 #include "inference/models/one_proportion_statistic.h"
 #include "inference/models/slope_t_statistic.h"
-#include "inference/models/statistic.h"
 #include "inference/models/two_means_interval.h"
 #include "inference/models/two_means_test.h"
 #include "inference/models/two_proportions_statistic.h"
@@ -46,12 +46,12 @@ struct StatisticTestCase {
 
 double tolerance() { return 1E11 * DBL_EPSILON; }
 
-void inputThreshold(Statistic* stat, double threshold) {
+void inputThreshold(Inference* stat, double threshold) {
   stat->setThreshold(threshold);
   assert_roughly_equal<double>(stat->threshold(), threshold, tolerance());
 }
 
-void inputValues(Statistic* stat, StatisticTestCase& testCase,
+void inputValues(Inference* stat, StatisticTestCase& testCase,
                  double initialThreshold) {
   stat->initParameters();
   assert_roughly_equal<double>(stat->threshold(), initialThreshold,
@@ -63,11 +63,11 @@ void inputValues(Statistic* stat, StatisticTestCase& testCase,
   }
 }
 
-void inputTableValues(Table* table, Statistic* stat,
+void inputTableValues(InputTable* table, Inference* stat,
                       StatisticTestCase& testCase) {
   stat->initParameters();
   for (int i = 0; i < testCase.m_numberOfInputs; i++) {
-    Table::Index2D rowCol = table->indexToIndex2D(i);
+    InputTable::Index2D rowCol = table->indexToIndex2D(i);
     table->setValueAtPosition(testCase.m_inputs[i], rowCol.row, rowCol.col);
     quiz_assert((table->valueAtPosition(rowCol.row, rowCol.col) &&
                  testCase.m_inputs[i]) ||
@@ -80,7 +80,7 @@ void inputTableValues(Table* table, Statistic* stat,
   }
 }
 
-void testTest(Test* test, StatisticTestCase& testCase) {
+void testTest(SignificanceTest* test, StatisticTestCase& testCase) {
   inputThreshold(test, testCase.m_significanceLevel);
   test->hypothesis()->m_h0 = testCase.m_firstHypothesisParam;
   test->hypothesis()->m_alternative = testCase.m_op;
@@ -100,7 +100,7 @@ void testTest(Test* test, StatisticTestCase& testCase) {
   }
 }
 
-void testInterval(Interval* interval, StatisticTestCase& testCase) {
+void testInterval(ConfidenceInterval* interval, StatisticTestCase& testCase) {
   inputThreshold(interval, testCase.m_confidenceLevel);
 
   interval->compute();

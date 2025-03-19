@@ -72,7 +72,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   function.cpp \
   function_name_helper.cpp \
   global_context.cpp \
-  inference.cpp \
   interactive_curve_view_range.cpp \
   interactive_curve_view_range_delegate.cpp \
   interval.cpp \
@@ -82,9 +81,10 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   plot_view.cpp \
   plot_view_axes.cpp \
   sequence.cpp \
-	sequence_cache.cpp \
+  sequence_cache.cpp \
   sequence_context.cpp \
   sequence_store.cpp \
+  statistical_distribution.cpp \
   statistics_store.cpp \
   toolbox_helpers.cpp \
   zoom_and_pan_curve_view_controller.cpp \

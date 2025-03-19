@@ -73,14 +73,15 @@ void GoodnessTest::setParameterAtIndex(double f, int i) {
 }
 bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
   if (i == indexOfDegreesOfFreedom()) {
-    return SignificanceTest::Chi2::IsDegreesOfFreedomValid(p);
+    return Poincare::Inference::SignificanceTest::Chi2::IsDegreesOfFreedomValid(
+        p);
   }
   return Chi2Test::authorizedParameterAtIndex(p, i);
 }
 
 bool GoodnessTest::validateInputs(int pageIndex) {
-  return SignificanceTest::Chi2::AreGoodnessInputsValid(&m_observedValuesData,
-                                                        &m_expectedValuesData);
+  return Poincare::Inference::SignificanceTest::Chi2::AreGoodnessInputsValid(
+      &m_observedValuesData, &m_expectedValuesData);
 }
 
 int GoodnessTest::numberOfDataRows() const {
@@ -123,10 +124,10 @@ void GoodnessTest::setValueAtPosition(double value, int row, int column) {
 bool GoodnessTest::authorizedValueAtPosition(double p, int row,
                                              int column) const {
   if (column == Column::Observed) {
-    return SignificanceTest::Chi2::IsObservedValueValid(p);
+    return Poincare::Inference::SignificanceTest::Chi2::IsObservedValueValid(p);
   }
   assert(column == Column::Expected);
-  return SignificanceTest::Chi2::IsExpectedValueValid(p);
+  return Poincare::Inference::SignificanceTest::Chi2::IsExpectedValueValid(p);
 }
 
 void GoodnessTest::recomputeData() {
@@ -154,8 +155,8 @@ void GoodnessTest::recomputeData() {
 }
 
 int GoodnessTest::computeDegreesOfFreedom() {
-  return SignificanceTest::Chi2::ComputeDegreesOfFreedom(categoricalType(),
-                                                         &m_observedValuesData);
+  return Poincare::Inference::SignificanceTest::Chi2::ComputeDegreesOfFreedom(
+      categoricalType(), &m_observedValuesData);
 }
 
 void GoodnessTest::computeNumberOfRows() const {

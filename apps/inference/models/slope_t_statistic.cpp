@@ -7,7 +7,7 @@
 
 namespace Inference {
 
-void SlopeTStatistic::computeParametersFromSeries(const Statistic* stat,
+void SlopeTStatistic::computeParametersFromSeries(const Inference* stat,
                                                   int pageIndex) {
   assert(hasSeries(pageIndex));
   int seriesIndex = seriesAt(pageIndex);

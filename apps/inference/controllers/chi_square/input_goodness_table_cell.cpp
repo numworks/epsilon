@@ -22,11 +22,11 @@ InputGoodnessTableCell::InputGoodnessTableCell(
 
 bool InputGoodnessTableCell::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
-  int previousDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
+  int previousDegreeOfFreedom = inference()->computeDegreesOfFreedom();
   if (InputCategoricalTableCell::textFieldDidFinishEditing(textField, event)) {
-    int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
+    int newDegreeOfFreedom = inference()->computeDegreesOfFreedom();
     if (previousDegreeOfFreedom != newDegreeOfFreedom) {
-      statistic()->setDegreeOfFreedom(newDegreeOfFreedom);
+      inference()->setDegreeOfFreedom(newDegreeOfFreedom);
       m_inputGoodnessController->updateDegreeOfFreedomCell();
     }
     return true;
@@ -39,8 +39,8 @@ bool InputGoodnessTableCell::recomputeDimensionsAndReload(
   // Update degree of freedom if Number of non-empty rows changed
   if (InputCategoricalTableCell::recomputeDimensionsAndReload(
           forceReloadTable, forceReloadPage, forceReloadCell)) {
-    int newDegreeOfFreedom = statistic()->computeDegreesOfFreedom();
-    statistic()->setDegreeOfFreedom(newDegreeOfFreedom);
+    int newDegreeOfFreedom = inference()->computeDegreesOfFreedom();
+    inference()->setDegreeOfFreedom(newDegreeOfFreedom);
     m_inputGoodnessController->updateDegreeOfFreedomCell();
     return true;
   }

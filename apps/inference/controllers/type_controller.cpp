@@ -7,7 +7,7 @@
 #include <poincare/print.h>
 #include <poincare/statistics/inference.h>
 
-#include "inference/models/statistic.h"
+#include "inference/models/inference.h"
 #include "significance_test/hypothesis_controller.h"
 
 using namespace Escher;
@@ -18,7 +18,7 @@ TypeController::TypeController(StackViewController* parent,
                                HypothesisController* hypothesisController,
                                InputController* inputController,
                                DatasetController* datasetController,
-                               Statistic* statistic)
+                               Inference* statistic)
     : UniformSelectableListController(parent),
       m_hypothesisController(hypothesisController),
       m_inputController(inputController),

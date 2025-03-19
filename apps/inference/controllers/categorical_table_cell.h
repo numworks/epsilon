@@ -12,8 +12,8 @@
 
 #include "categorical_table_view_data_source.h"
 #include "inference/controllers/dynamic_cells_data_source.h"
-#include "inference/models/statistic.h"
-#include "inference/models/table.h"
+#include "inference/models/inference.h"
+#include "inference/models/input_table.h"
 
 namespace Inference {
 
@@ -78,7 +78,7 @@ class InputCategoricalTableCell
  public:
   InputCategoricalTableCell(Escher::Responder* parentResponder,
                             Escher::TableViewDataSource* dataSource,
-                            Statistic* statistic,
+                            Inference* statistic,
                             Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // TextFieldDelegate
@@ -97,7 +97,7 @@ class InputCategoricalTableCell
   virtual bool recomputeDimensionsAndReload(bool forceReloadTable = false,
                                             bool forceReloadPage = false,
                                             bool forceReloadCell = false);
-  Table* tableModel() { return m_statistic->table(); }
+  InputTable* tableModel() { return m_statistic->table(); }
 
  protected:
   // ClearColumnHelper
@@ -113,11 +113,11 @@ class InputCategoricalTableCell
   virtual int relativeColumn(int column) const = 0;
   int relativeRow(int row) { return row - 1; }
   bool deleteSelectedValue();
-  const Table* constTableModel() const {
+  const InputTable* constTableModel() const {
     return const_cast<InputCategoricalTableCell*>(this)->tableModel();
   }
 
-  Statistic* m_statistic;
+  Inference* m_statistic;
   int m_numberOfRows;
   int m_numberOfColumns;
 };
@@ -129,7 +129,7 @@ class DoubleColumnTableCell
                                     k_doubleColumnTableNumberOfReusableCells> {
  public:
   DoubleColumnTableCell(Escher::Responder* parentResponder,
-                        Statistic* statistic,
+                        Inference* statistic,
                         Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // InputCategoricalTableCell

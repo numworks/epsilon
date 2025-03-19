@@ -180,11 +180,14 @@ constexpr I18n::Message TestEstimateDescription(TestType testType, int index) {
       return IntervalEstimateDescription(testType);
     case TestType::TwoProportions:
       switch (index) {
-        case SignificanceTest::EstimatesOrder::TwoProportions::P1:
+        case Poincare::Inference::SignificanceTest::EstimatesOrder::
+            TwoProportions::P1:
           return I18n::Message::Sample1Proportion;
-        case SignificanceTest::EstimatesOrder::TwoProportions::P2:
+        case Poincare::Inference::SignificanceTest::EstimatesOrder::
+            TwoProportions::P2:
           return I18n::Message::Sample2Proportion;
-        case SignificanceTest::EstimatesOrder::TwoProportions::Pooled:
+        case Poincare::Inference::SignificanceTest::EstimatesOrder::
+            TwoProportions::Pooled:
           return I18n::Message::PooledProportion;
         default:
           OMG::unreachable();

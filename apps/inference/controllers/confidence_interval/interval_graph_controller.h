@@ -6,14 +6,14 @@
 
 #include "inference/constants.h"
 #include "inference/controllers/confidence_interval/interval_graph_view.h"
-#include "inference/models/statistic_buffer.h"
+#include "inference/models/inference_buffer.h"
 
 namespace Inference {
 
 class IntervalGraphController : public Escher::ViewController {
  public:
   IntervalGraphController(Escher::StackViewController* stack,
-                          Interval* interval);
+                          ConfidenceInterval* interval);
   ViewController::TitlesDisplay titlesDisplay() const override;
   const char* title() const override;
   Escher::View* view() override { return &m_graphView; }
@@ -34,7 +34,7 @@ class IntervalGraphController : public Escher::ViewController {
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
   IntervalGraphView m_graphView;
-  Interval* m_interval;
+  ConfidenceInterval* m_interval;
   double m_currentEstimate;
   double m_currentMarginOfError;
   double m_currentThreshold;

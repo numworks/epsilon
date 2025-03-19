@@ -1,5 +1,5 @@
-#ifndef INFERENCE_MODELS_STATISTIC_GOODNESS_TEST_H
-#define INFERENCE_MODELS_STATISTIC_GOODNESS_TEST_H
+#ifndef INFERENCE_MODELS_GOODNESS_TEST_H
+#define INFERENCE_MODELS_GOODNESS_TEST_H
 
 #include "chi2_test.h"
 #include "poincare/old/float_list.h"
@@ -62,7 +62,8 @@ class GoodnessTest final : public Chi2Test {
    * the user. */
   int computeDegreesOfFreedom();
   bool isDegreesOfFreedomAuthorized(double p) const {
-    return SignificanceTest::Chi2::IsDegreesOfFreedomValid(p);
+    return Poincare::Inference::SignificanceTest::Chi2::IsDegreesOfFreedomValid(
+        p);
   }
 
   // Chi2Test

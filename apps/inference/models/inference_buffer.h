@@ -1,5 +1,5 @@
-#ifndef INFERENCE_MODELS_STATISTIC_BUFFER_H
-#define INFERENCE_MODELS_STATISTIC_BUFFER_H
+#ifndef INFERENCE_MODELS_BUFFER_H
+#define INFERENCE_MODELS_BUFFER_H
 
 #include <new>
 
@@ -17,20 +17,20 @@ namespace Inference {
 
 // Buffers for dynamic allocation
 
-union StatisticBuffer {
+union InferenceBuffer {
  public:
-  StatisticBuffer() {
+  InferenceBuffer() {
     new (&m_oneMeanTInterval) OneMeanTInterval(nullptr);
-    statistic()->initParameters();
+    inference()->initParameters();
   }
-  ~StatisticBuffer() { statistic()->~Statistic(); }
+  ~InferenceBuffer() { inference()->~Inference(); }
   // Rule of 5
-  StatisticBuffer(const StatisticBuffer& other) = delete;
-  StatisticBuffer(StatisticBuffer&& other) = delete;
-  StatisticBuffer& operator=(const StatisticBuffer& other) = delete;
-  StatisticBuffer& operator=(StatisticBuffer&& other) = delete;
+  InferenceBuffer(const InferenceBuffer& other) = delete;
+  InferenceBuffer(InferenceBuffer&& other) = delete;
+  InferenceBuffer& operator=(const InferenceBuffer& other) = delete;
+  InferenceBuffer& operator=(InferenceBuffer&& other) = delete;
 
-  Statistic* statistic() { return reinterpret_cast<Statistic*>(this); }
+  Inference* inference() { return reinterpret_cast<Inference*>(this); }
 
  private:
   // Tests

@@ -11,7 +11,8 @@ namespace Inference {
 
 class TestGraphController : public Escher::ViewController {
  public:
-  TestGraphController(Escher::StackViewController* stack, Test* test);
+  TestGraphController(Escher::StackViewController* stack,
+                      SignificanceTest* test);
   ViewController::TitlesDisplay titlesDisplay() const override;
   const char* title() const override;
   Escher::View* view() override { return &m_graphView; }
@@ -28,7 +29,7 @@ class TestGraphController : public Escher::ViewController {
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
   TestGraphView m_graphView;
-  Test* m_test;
+  SignificanceTest* m_test;
   /* When the test curve has two interesting sides, we can choose to zoom on
    * the left or the right side. */
   bool m_zoomSide;

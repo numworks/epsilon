@@ -74,7 +74,7 @@ void CategoricalTableCell::layoutSubviews(bool force) {
 
 InputCategoricalTableCell::InputCategoricalTableCell(
     Escher::Responder* parentResponder, Escher::TableViewDataSource* dataSource,
-    Statistic* statistic, Escher::ScrollViewDelegate* scrollViewDelegate)
+    Inference* statistic, Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parentResponder, dataSource, scrollViewDelegate),
       m_statistic(statistic),
       m_numberOfRows(0),
@@ -226,7 +226,7 @@ bool InputCategoricalTableCell::recomputeDimensionsAndReload(
 /* DoubleColumnTableCell */
 
 DoubleColumnTableCell::DoubleColumnTableCell(
-    Escher::Responder* parentResponder, Statistic* statistic,
+    Escher::Responder* parentResponder, Inference* statistic,
     Escher::ScrollViewDelegate* scrollViewDelegate)
     : InputCategoricalTableCell(parentResponder, this, statistic,
                                 scrollViewDelegate),

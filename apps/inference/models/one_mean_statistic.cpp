@@ -5,7 +5,7 @@
 
 namespace Inference {
 
-void OneMeanStatistic::computeParametersFromSeries(const Statistic* stat,
+void OneMeanStatistic::computeParametersFromSeries(const Inference* stat,
                                                    int pageIndex) {
   assert(hasSeries(pageIndex));
   int seriesIndex = seriesAt(pageIndex);

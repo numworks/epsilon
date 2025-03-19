@@ -1,14 +1,14 @@
-#ifndef INFERENCE_MODELS_STATISTIC_CHI2_TEST_H
-#define INFERENCE_MODELS_STATISTIC_CHI2_TEST_H
+#ifndef INFERENCE_MODELS_CHI2_TEST_H
+#define INFERENCE_MODELS_CHI2_TEST_H
 
 #include <poincare/statistics/inference.h>
 
-#include "table.h"
-#include "test.h"
+#include "input_table.h"
+#include "significance_test.h"
 
 namespace Inference {
 
-class Chi2Test : public Test, public Table {
+class Chi2Test : public SignificanceTest, public InputTable {
  public:
   Chi2Test()
       : m_observedValuesData(this),
@@ -19,7 +19,7 @@ class Chi2Test : public Test, public Table {
   constexpr StatisticType statisticType() const override {
     return StatisticType::Chi2;
   }
-  Table* table() override { return this; }
+  InputTable* table() override { return this; }
 
   enum class DataType { Observed, Expected, Contribution };
 

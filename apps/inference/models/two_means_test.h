@@ -1,16 +1,16 @@
-#ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_TEST_H
-#define INFERENCE_MODELS_STATISTIC_TWO_MEANS_TEST_H
+#ifndef INFERENCE_MODELS_TWO_MEANS_TEST_H
+#define INFERENCE_MODELS_TWO_MEANS_TEST_H
 
-#include "inference/models/table_from_store.h"
-#include "test.h"
+#include "inference/models/input_table_from_store.h"
+#include "significance_test.h"
 #include "two_means_statistic.h"
 
 namespace Inference {
 
-class TwoMeansTest : public Test, public TwoMeansStatistic {
+class TwoMeansTest : public SignificanceTest, public TwoMeansStatistic {
  public:
   using TwoMeansStatistic::TwoMeansStatistic;
-  Table* table() override { return this; }
+  InputTable* table() override { return this; }
   void init() override { initDatasetsIfSeries(); }
   void tidy() override { tidyDatasets(); }
 
@@ -21,7 +21,7 @@ class TwoMeansTest : public Test, public TwoMeansStatistic {
   }
 
   bool validateInputs(int pageIndex) override {
-    return TableFromStatisticStore::validateInputs(this, pageIndex);
+    return InputTableFromStatisticStore::validateInputs(this, pageIndex);
   }
 
  private:

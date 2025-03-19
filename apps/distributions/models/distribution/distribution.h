@@ -1,7 +1,7 @@
 #ifndef PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 #define PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 
-#include <apps/shared/inference.h>
+#include <apps/shared/statistical_distribution.h>
 #include <poincare/statistics/distribution.h>
 
 #include "apps/i18n.h"
@@ -12,7 +12,7 @@
 
 namespace Distributions {
 
-class Distribution : public Shared::Inference {
+class Distribution : public Shared::StatisticalDistribution {
  public:
   Distribution(Poincare::Distribution::Type type)
       : m_calculationBuffer(),

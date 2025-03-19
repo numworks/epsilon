@@ -1,18 +1,18 @@
-#ifndef INFERENCE_MODELS_STATISTIC_STATISTIC_H
-#define INFERENCE_MODELS_STATISTIC_STATISTIC_H
+#ifndef INFERENCE_MODELS_STATISTIC_H
+#define INFERENCE_MODELS_STATISTIC_H
 
 #include <apps/shared/global_context.h>
-#include <apps/shared/inference.h>
+#include <apps/shared/statistical_distribution.h>
 #include <poincare/statistics/distribution.h>
 #include <poincare/statistics/inference.h>
 
 #include "aliases.h"
+#include "input_table.h"
 #include "messages.h"
-#include "table.h"
 
 namespace Inference {
 
-/* A Statistic is something that is computed from a sample and whose
+/* A Inference is something that is computed from a sample and whose
  * distribution is known. From its distribution, we can compute statistical test
  * results and confidence intervals.
  */
@@ -20,14 +20,14 @@ namespace Inference {
 /* TODO: The whole class hierarchy below this is very cumbersome.
  * I already partially simplified it but it could be further simplified.
  * The main problem is that we have a diamond between subclasses that inherit
- * from Table and Test/Interval.
+ * from Table and SignificanceTest/ConfidenceInterval.
  * This whole thing should use composition instead of inheritance.
  * */
 
-class Statistic : public Shared::Inference {
+class Inference : public Shared::StatisticalDistribution {
  public:
-  Statistic() : m_threshold(-1), m_degreesOfFreedom(NAN) { init(); }
-  ~Statistic() { tidy(); }
+  Inference() : m_threshold(-1), m_degreesOfFreedom(NAN) { init(); }
+  ~Inference() { tidy(); }
   virtual void init() {}
   virtual void tidy() {}
 
@@ -100,7 +100,7 @@ class Statistic : public Shared::Inference {
 
   bool hasHypothesisParameters() const {
     return subApp() == SubApp::SignificanceTest &&
-           SignificanceTest::HasHypothesis(testType());
+           Poincare::Inference::SignificanceTest::HasHypothesis(testType());
   }
 
   // Input
@@ -140,7 +140,7 @@ class Statistic : public Shared::Inference {
     return canChooseDataset() || testType() == TestType::Slope ||
            testType() == TestType::Chi2;
   }
-  virtual Table* table() {
+  virtual InputTable* table() {
     assert(false);
     return nullptr;
   }
@@ -150,8 +150,10 @@ class Statistic : public Shared::Inference {
   }
   Poincare::Layout criticalValueLayout() const {
     return subApp() == SubApp::SignificanceTest
-               ? SignificanceTest::CriticalValueLayout(statisticType())
-               : ConfidenceInterval::CriticalValueLayout(statisticType());
+               ? Poincare::Inference::SignificanceTest::CriticalValueLayout(
+                     statisticType())
+               : Poincare::Inference::ConfidenceInterval::CriticalValueLayout(
+                     statisticType());
   }
 
   // Outputs
@@ -172,7 +174,7 @@ class Statistic : public Shared::Inference {
 
   // Computation
   virtual void compute() = 0;
-  using Inference::computeCurveViewRange;
+  using StatisticalDistribution::computeCurveViewRange;
 
   // CurveViewRange
   virtual bool isGraphable() const = 0;
@@ -213,7 +215,7 @@ class Statistic : public Shared::Inference {
 
   const Poincare::Inference::ParametersArray constParametersArray() const {
     Poincare::Inference::ParametersArray array;
-    const double* paramsArray = const_cast<Statistic*>(this)->parametersArray();
+    const double* paramsArray = const_cast<Inference*>(this)->parametersArray();
     std::copy(paramsArray,
               paramsArray + Poincare::Inference::k_maxNumberOfParameters,
               array.data());

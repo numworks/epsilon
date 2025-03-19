@@ -7,7 +7,7 @@
 namespace Inference {
 
 IntervalGraphController::IntervalGraphController(
-    Escher::StackViewController* stack, Interval* interval)
+    Escher::StackViewController* stack, ConfidenceInterval* interval)
     : Escher::ViewController(stack),
       m_graphView(interval, &m_selectedIntervalIndex),
       m_interval(interval),
@@ -54,7 +54,8 @@ bool IntervalGraphController::handleEvent(Ion::Events::Event event) {
   }
   if ((event == Ion::Events::Up && m_selectedIntervalIndex > 0) ||
       (event == Ion::Events::Down &&
-       m_selectedIntervalIndex + 1 < Interval::k_numberOfDisplayedIntervals)) {
+       m_selectedIntervalIndex + 1 <
+           ConfidenceInterval::k_numberOfDisplayedIntervals)) {
     selectAdjacentInterval(event == Ion::Events::Up);
     static_cast<Escher::StackViewController*>(parentResponder())
         ->view()
@@ -75,8 +76,9 @@ void IntervalGraphController::selectAdjacentInterval(bool goUp) {
   double currentThreshold = m_interval->threshold();
   /* Temporarily change the threshold to compute the values displayed in
    * conclusionView, in titles and in the clipboard */
-  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(
-      currentThreshold, m_selectedIntervalIndex));
+  m_interval->setThreshold(
+      ConfidenceInterval::DisplayedIntervalThresholdAtIndex(
+          currentThreshold, m_selectedIntervalIndex));
   m_interval->compute();
   saveIntervalValues();
   m_interval->setThreshold(currentThreshold);
@@ -86,7 +88,8 @@ void IntervalGraphController::selectAdjacentInterval(bool goUp) {
 
 void IntervalGraphController::resetSelectedInterval() {
   m_selectedIntervalIndex =
-      Interval::MainDisplayedIntervalThresholdIndex(m_interval->threshold());
+      ConfidenceInterval::MainDisplayedIntervalThresholdIndex(
+          m_interval->threshold());
   saveIntervalValues();
   intervalDidChange();
 }

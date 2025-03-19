@@ -47,7 +47,7 @@ void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView* plotView,
 }
 
 static Coordinate2D<float> evaluate(float x, void* model, void*) {
-  Test* test = reinterpret_cast<Test*>(model);
+  SignificanceTest* test = reinterpret_cast<SignificanceTest*>(model);
   return Coordinate2D<float>(x, test->evaluateAtAbscissa(x));
 }
 
@@ -161,7 +161,7 @@ void TestXAxis::drawLabel(int i, float t, const AbstractPlotView* plotView,
 
 // TestCurveView
 
-TestCurveView::TestCurveView(Test* test) : PlotView(test) {
+TestCurveView::TestCurveView(SignificanceTest* test) : PlotView(test) {
   // TestPlotPolicy
   m_test = test;
 }

@@ -6,7 +6,7 @@
 #include <escher/menu_cell_with_editable_text.h>
 
 #include "inference/controllers/dynamic_cells_data_source.h"
-#include "inference/models/statistic.h"
+#include "inference/models/inference.h"
 #include "results_controller.h"
 
 namespace Inference {
@@ -33,11 +33,11 @@ class InputController
       2;
 
   static void InputTitle(const Escher::ViewController* vc,
-                         const Statistic* statistic, char* titleBuffer,
+                         const Inference* statistic, char* titleBuffer,
                          size_t titleBufferSize);
 
   InputController(Escher::StackViewController* parent,
-                  ResultsController* resultsController, Statistic* statistic);
+                  ResultsController* resultsController, Inference* statistic);
   int numberOfRows() const override {
     return m_statistic->numberOfParameters() + 1 /* button */;
   }
@@ -75,7 +75,7 @@ class InputController
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
-  Statistic* m_statistic;
+  Inference* m_statistic;
   ResultsController* m_resultsController;
 
   constexpr static int k_significanceCellType = 2;

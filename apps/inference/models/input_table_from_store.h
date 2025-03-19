@@ -1,17 +1,17 @@
-#ifndef INFERENCE_MODELS_STATISTIC_RAW_DATA_STATISTIC_H
-#define INFERENCE_MODELS_STATISTIC_RAW_DATA_STATISTIC_H
+#ifndef INFERENCE_MODELS_RAW_DATA_STATISTIC_H
+#define INFERENCE_MODELS_RAW_DATA_STATISTIC_H
 
 #include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/linear_regression_store.h>
 #include <apps/shared/statistics_store.h>
 
+#include "inference.h"
+#include "input_table.h"
 #include "shared/double_pair_store.h"
-#include "statistic.h"
-#include "table.h"
 
 namespace Inference {
 
-class TableFromStore : public Table {
+class InputTableFromStore : public InputTable {
  public:
   constexpr static int k_numberOfColumnsPerSeries =
       Shared::DoublePairStore::k_numberOfColumnsPerSeries;
@@ -20,15 +20,15 @@ class TableFromStore : public Table {
   constexpr static int k_maxNumberOfColumns =
       k_maxNumberOfSeries * k_numberOfColumnsPerSeries;
 
-  TableFromStore() : m_series{-1, -1}, m_activePageIndex{0} {}
+  InputTableFromStore() : m_series{-1, -1}, m_activePageIndex{0} {}
 
   int seriesAt(int pageIndex) const override {
     assert(pageIndex >= 0 && pageIndex < numberOfSeries() &&
            numberOfSeries() <= m_series.size());
     return m_series[pageIndex];
   }
-  void setSeriesAt(Statistic* stat, int pageIndex, int series) override;
-  bool validateInputs(Statistic* stat, int pageIndex);
+  void setSeriesAt(Inference* stat, int pageIndex, int series) override;
+  bool validateInputs(Inference* stat, int pageIndex);
   bool authorizedValueAtPosition(double p, int row, int column) const override;
 
   void setActivePage(uint8_t pageIndex) { m_activePageIndex = pageIndex; }
@@ -44,10 +44,10 @@ class TableFromStore : public Table {
   }
 
  protected:
-  virtual void computeParametersFromSeries(const Statistic* stat,
+  virtual void computeParametersFromSeries(const Inference* stat,
                                            int pageIndex) = 0;
 
-  int numberOfComputedParameters(const Statistic* stat) const {
+  int numberOfComputedParameters(const Inference* stat) const {
     return static_cast<int>(hasAllSeries()) * stat->numberOfTestParameters();
   }
 
@@ -66,11 +66,11 @@ class TableFromStore : public Table {
   uint8_t m_activePageIndex;
 };
 
-class TableFromStatisticStore : public TableFromStore,
-                                public Shared::StatisticsStore {
+class InputTableFromStatisticStore : public InputTableFromStore,
+                                     public Shared::StatisticsStore {
  public:
-  TableFromStatisticStore(Shared::GlobalContext* context)
-      : TableFromStore(),
+  InputTableFromStatisticStore(Shared::GlobalContext* context)
+      : InputTableFromStore(),
         Shared::StatisticsStore(context, &m_dblePairStorePreferences) {}
 
   // DoublePairStore
@@ -78,7 +78,7 @@ class TableFromStatisticStore : public TableFromStore,
     return seriesAt(m_activePageIndex);
   }
 
-  void setSeriesAt(Statistic* stat, int pageIndex, int series) override;
+  void setSeriesAt(Inference* stat, int pageIndex, int series) override;
   void deleteValuesInColumn(int column) override;
 
  protected:
@@ -88,18 +88,18 @@ class TableFromStatisticStore : public TableFromStore,
     }
   }
 
-  bool computedParameterAtIndex(int index, Statistic* stat, double* value,
+  bool computedParameterAtIndex(int index, Inference* stat, double* value,
                                 Poincare::Layout* message,
                                 I18n::Message* subMessage, int* precision);
 
   Shared::DoublePairStore* doublePairStore() override { return this; }
 };
 
-class TableFromRegressionStore : public TableFromStore,
-                                 public Shared::LinearRegressionStore {
+class InputTableFromRegressionStore : public InputTableFromStore,
+                                      public Shared::LinearRegressionStore {
  public:
-  TableFromRegressionStore(Shared::GlobalContext* context)
-      : TableFromStore(),
+  InputTableFromRegressionStore(Shared::GlobalContext* context)
+      : InputTableFromStore(),
         Shared::LinearRegressionStore(context, &m_dblePairStorePreferences) {}
 
   void deleteValuesInColumn(int column) override;

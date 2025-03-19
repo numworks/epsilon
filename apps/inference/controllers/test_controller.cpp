@@ -22,7 +22,7 @@ TestController::TestController(StackViewController* parentResponder,
                                CategoricalTypeController* categoricalController,
                                InputStoreController* inputStoreController,
                                InputController* inputController,
-                               Statistic* statistic)
+                               Inference* statistic)
     : UniformSelectableListController(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),

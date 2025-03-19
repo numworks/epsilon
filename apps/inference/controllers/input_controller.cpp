@@ -15,7 +15,7 @@ using namespace Inference;
 
 InputController::InputController(Escher::StackViewController* parent,
                                  ResultsController* resultsController,
-                                 Statistic* statistic)
+                                 Inference* statistic)
     : FloatParameterController<double>(parent, &m_messageView),
       DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>(this),
       m_statistic(statistic),
@@ -44,11 +44,12 @@ void InputController::initCell(ParameterCell, void* cell, int index) {
 }
 
 void InputController::InputTitle(const Escher::ViewController* vc,
-                                 const Statistic* statistic, char* titleBuffer,
+                                 const Inference* statistic, char* titleBuffer,
                                  size_t titleBufferSize) {
   if (statistic->hasHypothesisParameters()) {
     assert(statistic->subApp() == SubApp::SignificanceTest);
-    const Test* signifTest = static_cast<const Test*>(statistic);
+    const SignificanceTest* signifTest =
+        static_cast<const SignificanceTest*>(statistic);
     /* H0:<first symbol>=<firstParam>
      * Ha:<first symbol><operator symbol><firstParams>
      * α=<threshold> */

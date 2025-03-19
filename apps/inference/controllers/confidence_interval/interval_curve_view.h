@@ -3,7 +3,7 @@
 
 #include <apps/shared/plot_view_policies.h>
 
-#include "inference/models/interval.h"
+#include "inference/models/confidence_interval.h"
 
 namespace Inference {
 
@@ -24,8 +24,8 @@ class IntervalAxis : public Shared::PlotPolicy::SimpleAxis {
  private:
   constexpr static int k_numberOfLabels = 2;
 
-  Interval* interval(const Shared::AbstractPlotView* plotView) const {
-    return static_cast<Interval*>(plotView->range());
+  ConfidenceInterval* interval(const Shared::AbstractPlotView* plotView) const {
+    return static_cast<ConfidenceInterval*>(plotView->range());
   }
 
   float m_ticks[k_numberOfLabels];
@@ -46,7 +46,7 @@ class IntervalPlotPolicy {
   void drawPlot(const Shared::AbstractPlotView* plotView, KDContext* ctx,
                 KDRect rect) const;
 
-  Interval* m_interval;
+  ConfidenceInterval* m_interval;
   const int* m_selectedIntervalIndex;
 };
 
@@ -55,7 +55,7 @@ class IntervalCurveView
                               Shared::PlotPolicy::NoBanner,
                               Shared::PlotPolicy::NoCursor> {
  public:
-  IntervalCurveView(Interval* interval, const int* selectedIndex);
+  IntervalCurveView(ConfidenceInterval* interval, const int* selectedIndex);
 
   // AbstractPlotView
   void reload(bool resetInterruption = false, bool force = false) override;

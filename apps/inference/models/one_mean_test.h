@@ -1,17 +1,17 @@
-#ifndef INFERENCE_MODELS_STATISTIC_ONE_MEAN_TEST_H
-#define INFERENCE_MODELS_STATISTIC_ONE_MEAN_TEST_H
+#ifndef INFERENCE_MODELS_ONE_MEAN_TEST_H
+#define INFERENCE_MODELS_ONE_MEAN_TEST_H
 
 #include <poincare/statistics/inference.h>
 
 #include "one_mean_statistic.h"
-#include "test.h"
+#include "significance_test.h"
 
 namespace Inference {
 
-class OneMeanTest : public Test, public OneMeanStatistic {
+class OneMeanTest : public SignificanceTest, public OneMeanStatistic {
  public:
   using OneMeanStatistic::OneMeanStatistic;
-  Table* table() override { return this; }
+  InputTable* table() override { return this; }
   void init() override { initDatasetsIfSeries(); }
   void tidy() override { tidyDatasets(); }
 
@@ -21,7 +21,7 @@ class OneMeanTest : public Test, public OneMeanStatistic {
     return preProcessOneMeanParameter(p, index);
   }
   bool validateInputs(int pageIndex) override {
-    return TableFromStatisticStore::validateInputs(this, pageIndex);
+    return InputTableFromStatisticStore::validateInputs(this, pageIndex);
   }
 
  private:

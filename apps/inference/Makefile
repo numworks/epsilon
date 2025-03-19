@@ -37,15 +37,15 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   images/significance_test.png \
 ) \
   models/chi2_test.cpp \
+  models/confidence_interval.cpp \
   models/goodness_test.cpp \
   models/homogeneity_test.cpp \
-  models/interval.cpp \
+  models/inference.cpp \
   models/one_mean_statistic.cpp \
+  models/significance_test.cpp \
   models/slope_t_statistic.cpp \
-  models/statistic.cpp \
-  models/table.cpp \
-  models/table_from_store.cpp \
-  models/test.cpp \
+  models/input_table.cpp \
+  models/input_table_from_store.cpp \
   models/two_means_statistic.cpp \
   test/statistics.cpp:+test \
 )

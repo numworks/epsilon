@@ -1,5 +1,5 @@
-#ifndef SHARED_INFERENCE_H
-#define SHARED_INFERENCE_H
+#ifndef SHARED_STATISTICAL_DISTRIBUTION_H
+#define SHARED_STATISTICAL_DISTRIBUTION_H
 
 #include <apps/i18n.h>
 #include <poincare/layout.h>
@@ -8,7 +8,7 @@
 
 #include "memoized_curve_view_range.h"
 
-// Inference is the common ancestor of Statistic and Distribution
+// StatisticalDistribution is the common ancestor of Inference and Distribution
 
 namespace Shared {
 
@@ -17,17 +17,17 @@ struct ParameterRepresentation {
   I18n::Message m_description;
 };
 
-class Inference : public MemoizedCurveViewRange {
+class StatisticalDistribution : public MemoizedCurveViewRange {
  public:
-  Inference();
-  virtual ~Inference() = default;
+  StatisticalDistribution();
+  virtual ~StatisticalDistribution() = default;
 
   virtual I18n::Message title() const = 0;
 
   // Input parameters
   virtual int numberOfParameters() = 0;
   virtual double parameterAtIndex(int i) const {
-    return const_cast<Inference*>(this)->parametersArray()[i];
+    return const_cast<StatisticalDistribution*>(this)->parametersArray()[i];
   }
   virtual void setParameterAtIndex(double f, int i) {
     parametersArray()[i] = f;

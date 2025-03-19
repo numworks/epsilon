@@ -100,7 +100,7 @@ bool Distribution::authorizedParameterAtIndex(double x, int index) const {
     // Accept only one uninitialized parameter
     return true;
   }
-  return Inference::authorizedParameterAtIndex(x, index) &&
+  return StatisticalDistribution::authorizedParameterAtIndex(x, index) &&
          Poincare::Distribution::IsParameterValidBool(m_distribution, x, index,
                                                       constParametersArray());
 }
@@ -122,7 +122,7 @@ void Distribution::setParameterAtIndexWithoutComputingCurveViewRange(
   }
   assert(canHaveUninitializedParameter() ||
          m_indexOfUninitializedParameter == k_allParametersAreInitialized);
-  Inference::setParameterAtIndex(x, index);
+  StatisticalDistribution::setParameterAtIndex(x, index);
 }
 
 double Distribution::cumulativeDistributiveFunctionAtAbscissa(double x) const {
@@ -219,7 +219,8 @@ void Distribution::computeUnknownParameterForProbabilityAndBound(
       Poincare::Distribution::EvaluateParameterForProbabilityAndBound(
           m_distribution, m_indexOfUninitializedParameter,
           constParametersArray(), probability, bound, isUpperBound);
-  Inference::setParameterAtIndex(paramValue, m_indexOfUninitializedParameter);
+  StatisticalDistribution::setParameterAtIndex(paramValue,
+                                               m_indexOfUninitializedParameter);
   if (std::isfinite(paramValue)) {
     computeCurveViewRange();
   }

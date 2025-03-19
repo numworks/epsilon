@@ -3,7 +3,7 @@
 
 #include <apps/shared/plot_view_policies.h>
 
-#include "inference/models/test.h"
+#include "inference/models/significance_test.h"
 
 namespace Inference {
 
@@ -25,7 +25,7 @@ class TestPlotPolicy : Shared::PlotPolicy::WithCurves {
                      Poincare::ComparisonJunior::Operator op,
                      double factor = 1.0) const;
 
-  Test* m_test;
+  SignificanceTest* m_test;
 };
 
 class TestXAxis : public Shared::PlotPolicy::HorizontalLabeledAxis {
@@ -43,9 +43,9 @@ class TestCurveView : public Shared::PlotView<TestAxes, TestPlotPolicy,
                                               Shared::PlotPolicy::NoBanner,
                                               Shared::PlotPolicy::NoCursor> {
  public:
-  TestCurveView(Test* test);
+  TestCurveView(SignificanceTest* test);
 
-  Test* test() const { return m_test; }
+  SignificanceTest* test() const { return m_test; }
 };
 
 }  // namespace Inference

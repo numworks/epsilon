@@ -1,10 +1,10 @@
-#include "inference.h"
+#include "statistical_distribution.h"
 
 namespace Shared {
 
-Inference::Inference() : MemoizedCurveViewRange() {}
+StatisticalDistribution::StatisticalDistribution() : MemoizedCurveViewRange() {}
 
-void Inference::computeCurveViewRange() {
+void StatisticalDistribution::computeCurveViewRange() {
   // x range
   protectedSetXRange(computeXMin(), computeXMax());
 
@@ -16,7 +16,8 @@ void Inference::computeCurveViewRange() {
   protectedSetYRange(yRange);
 }
 
-bool Inference::authorizedParameterAtIndex(double x, int index) const {
+bool StatisticalDistribution::authorizedParameterAtIndex(double x,
+                                                         int index) const {
   return std::isfinite(static_cast<float>(x));
 }
 

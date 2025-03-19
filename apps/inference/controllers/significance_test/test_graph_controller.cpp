@@ -5,7 +5,7 @@
 namespace Inference {
 
 TestGraphController::TestGraphController(Escher::StackViewController* stack,
-                                         Test* test)
+                                         SignificanceTest* test)
     : Escher::ViewController(stack),
       m_graphView(test),
       m_test(test),

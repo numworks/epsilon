@@ -1,5 +1,5 @@
-#ifndef INFERENCE_MODELS_STATISTIC_TABLE_H
-#define INFERENCE_MODELS_STATISTIC_TABLE_H
+#ifndef INFERENCE_MODELS_INPUT_TABLE_H
+#define INFERENCE_MODELS_INPUT_TABLE_H
 
 #include <apps/shared/double_pair_store.h>
 #include <assert.h>
@@ -8,19 +8,19 @@
 
 namespace Inference {
 
-class Statistic;
+class Inference;
 
-class Table {
+class InputTable {
  public:
   constexpr static int k_maxNumberOfStoreColumns = 4;
 
   // Store functions
   virtual int numberOfSeries() const = 0;
   virtual int seriesAt(int pageIndex) const { return -1; }
-  virtual void setSeriesAt(Statistic*, int pageIndex, int series) {}
+  virtual void setSeriesAt(Inference*, int pageIndex, int series) {}
   bool hasSeries(int pageIndex) const;
   bool hasAllSeries() const;
-  void unsetSeries(Statistic*);
+  void unsetSeries(Inference*);
 
   // Matrix special functions
   virtual void setValueAtPosition(double value, int row, int column) = 0;

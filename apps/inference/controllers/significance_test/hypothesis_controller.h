@@ -29,7 +29,8 @@ class HypothesisController
   HypothesisController(Escher::StackViewController* parent,
                        InputController* inputController,
                        InputStoreController* inputStoreController,
-                       DatasetController* datasetController, Test* test);
+                       DatasetController* datasetController,
+                       SignificanceTest* test);
   static bool ButtonAction(HypothesisController* controller, void* s);
 
   // SelectableListViewController
@@ -94,7 +95,7 @@ class HypothesisController
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
-  Test* m_test;
+  SignificanceTest* m_test;
 };
 
 }  // namespace Inference

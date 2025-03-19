@@ -2,7 +2,7 @@
 
 #include <omg/utf8_helper.h>
 
-#include "inference/models/table_from_store.h"
+#include "inference/models/input_table_from_store.h"
 #include "inference/text_helpers.h"
 
 using namespace Escher;
@@ -13,7 +13,7 @@ namespace Inference {
 InputStoreController::InputStoreController(
     StackViewController* parent, ViewController* nextController,
     uint8_t pageIndex, InputStoreController* nextInputStoreController,
-    Statistic* statistic, Poincare::Context* context)
+    Inference* statistic, Poincare::Context* context)
     : InputCategoricalController(parent, nextController, statistic,
                                  Invocation::Builder<InputStoreController>(
                                      &InputStoreController::ButtonAction, this),
@@ -78,8 +78,8 @@ void InputStoreController::createDynamicCells() {
 
 void InputStoreController::initializeDropdown() {
   m_dropdownCell.dropdown()->init();
-  const TableFromStore* model =
-      static_cast<const TableFromStore*>(m_storeTableCell.tableModel());
+  const InputTableFromStore* model =
+      static_cast<const InputTableFromStore*>(m_storeTableCell.tableModel());
 
   if (shouldDisplayTwoPages()) {
     if (m_pageIndex == 0) {
@@ -127,7 +127,7 @@ void InputStoreController::viewWillAppear() {
 
 void InputStoreController::initView() {
   InputCategoricalController::initView();
-  static_cast<TableFromStore*>(m_storeTableCell.tableModel())
+  static_cast<InputTableFromStore*>(m_storeTableCell.tableModel())
       ->setActivePage(m_pageIndex);
   categoricalTableCell()->recomputeDimensions();
 
@@ -187,7 +187,7 @@ void InputStoreController::selectSeriesForDropdownRow(int row) {
   if (row < 0) {
     row = 0;
   }
-  Table* tableModel = m_storeTableCell.tableModel();
+  InputTable* tableModel = m_storeTableCell.tableModel();
   tableModel->setSeriesAt(m_statistic, static_cast<uint8_t>(m_pageIndex), row);
 }
 

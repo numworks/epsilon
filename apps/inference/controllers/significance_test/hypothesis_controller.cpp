@@ -22,7 +22,7 @@ namespace Inference {
 HypothesisController::HypothesisController(
     Escher::StackViewController* parent, InputController* inputController,
     InputStoreController* inputStoreController,
-    DatasetController* datasetController, Test* test)
+    DatasetController* datasetController, SignificanceTest* test)
     : Escher::ExplicitSelectableListViewController(parent),
       m_inputController(inputController),
       m_inputStoreController(inputStoreController),

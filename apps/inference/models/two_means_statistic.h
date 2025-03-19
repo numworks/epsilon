@@ -1,20 +1,20 @@
-#ifndef INFERENCE_MODELS_STATISTIC_TWO_MEANS_STATISTIC_H
-#define INFERENCE_MODELS_STATISTIC_TWO_MEANS_STATISTIC_H
+#ifndef INFERENCE_MODELS_TWO_MEANS_STATISTIC_H
+#define INFERENCE_MODELS_TWO_MEANS_STATISTIC_H
 
 #include <poincare/statistics/inference.h>
 
-#include "table_from_store.h"
+#include "input_table_from_store.h"
 
 namespace Inference {
 
-class TwoMeansStatistic : public TableFromStatisticStore {
+class TwoMeansStatistic : public InputTableFromStatisticStore {
  public:
-  using TableFromStatisticStore::TableFromStatisticStore;
+  using InputTableFromStatisticStore::InputTableFromStatisticStore;
 
   int numberOfSeries() const override { return 2; }
 
  protected:
-  void computeParametersFromSeries(const Statistic* stat,
+  void computeParametersFromSeries(const Inference* stat,
                                    int pageIndex) override;
 
   double preProcessTwoMeansParameter(double p, int index) const {

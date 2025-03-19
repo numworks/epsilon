@@ -1,37 +1,37 @@
-#ifndef INFERENCE_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
-#define INFERENCE_MODELS_STATISTIC_SLOPE_T_STATISTIC_H
+#ifndef INFERENCE_MODELS_SLOPE_T_STATISTIC_H
+#define INFERENCE_MODELS_SLOPE_T_STATISTIC_H
 
 #include <apps/shared/double_pair_store_preferences.h>
 #include <apps/shared/linear_regression_store.h>
 #include <poincare/statistics/inference.h>
 
-#include "interval.h"
-#include "table.h"
-#include "table_from_store.h"
-#include "test.h"
+#include "confidence_interval.h"
+#include "input_table.h"
+#include "input_table_from_store.h"
+#include "significance_test.h"
 
 namespace Inference {
 
-class SlopeTStatistic : public TableFromRegressionStore {
+class SlopeTStatistic : public InputTableFromRegressionStore {
  public:
   SlopeTStatistic(Shared::GlobalContext* context)
-      : TableFromRegressionStore(context) {
+      : InputTableFromRegressionStore(context) {
     m_series[0] = 0;
     initListsFromStorage();
   }
   int numberOfSeries() const override { return 1; }
 
  protected:
-  void computeParametersFromSeries(const Statistic* stat,
+  void computeParametersFromSeries(const Inference* stat,
                                    int pageIndex) override;
 
   double m_params[Poincare::Inference::NumberOfParameters(TestType::Slope)];
 };
 
-class SlopeTInterval : public Interval, public SlopeTStatistic {
+class SlopeTInterval : public ConfidenceInterval, public SlopeTStatistic {
  public:
   using SlopeTStatistic::SlopeTStatistic;
-  Table* table() override { return this; }
+  InputTable* table() override { return this; }
   void init() override { DoublePairStore::initListsFromStorage(); }
   void tidy() override { DoublePairStore::tidy(); }
   constexpr TestType testType() const override { return TestType::Slope; }
@@ -53,10 +53,10 @@ class SlopeTInterval : public Interval, public SlopeTStatistic {
   double* parametersArray() override { return m_params; }
 };
 
-class SlopeTTest : public Test, public SlopeTStatistic {
+class SlopeTTest : public SignificanceTest, public SlopeTStatistic {
  public:
   using SlopeTStatistic::SlopeTStatistic;
-  Table* table() override { return this; }
+  InputTable* table() override { return this; }
   void init() override { DoublePairStore::initListsFromStorage(); }
   void tidy() override { DoublePairStore::tidy(); }
 

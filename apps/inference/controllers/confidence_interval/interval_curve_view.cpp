@@ -19,7 +19,7 @@ static void convertFloatToText(float f, char* buffer, int bufferSize) {
 }
 
 void IntervalAxis::reloadAxis(AbstractPlotView* plotView, OMG::Axis axis) {
-  Interval* plotInterval = interval(plotView);
+  ConfidenceInterval* plotInterval = interval(plotView);
   float low = plotInterval->estimate() - plotInterval->marginOfError();
   float high = plotInterval->estimate() + plotInterval->marginOfError();
 
@@ -84,12 +84,10 @@ void IntervalAxis::drawLabel(int i, float t, const AbstractPlotView* plotView,
 
 void IntervalPlotPolicy::drawPlot(const AbstractPlotView* plotView,
                                   KDContext* ctx, KDRect rect) const {
-  /* Distribute the Interval::k_numberOfDisplayedIntervals intervals between top
-   * of rect and axis: i   isMainInterval |10%| 0       false |▔▔▔| |    20% |
-   *  1       false                         |▔▔▔▔▔▔▔▔▔▔▔|
-   *                                     |      25.4%      |
-   *  2       true                       |▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔|
-   *                               |            40%                |
+  /* Distribute the ConfidenceInterval::k_numberOfDisplayedIntervals intervals
+   * between top of rect and axis: i   isMainInterval |10%| 0       false |▔▔▔|
+   * |    20% | 1       false                         |▔▔▔▔▔▔▔▔▔▔▔| |      25.4%
+   * | 2       true                       |▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔| |            40% |
    *  3       false                |▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔|
    *
    *  axis                   ------------|-----------------|-------------------
@@ -104,12 +102,12 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   float estimate = m_interval->estimate();
   float mainThreshold = m_interval->threshold();
   // Draw each intervals
-  for (int i = 0; i < Interval::k_numberOfDisplayedIntervals; i++) {
+  for (int i = 0; i < ConfidenceInterval::k_numberOfDisplayedIntervals; i++) {
     float verticalPosition =
-        top -
-        (top - bot) * (i + 1) / (Interval::k_numberOfDisplayedIntervals + 1);
+        top - (top - bot) * (i + 1) /
+                  (ConfidenceInterval::k_numberOfDisplayedIntervals + 1);
     float threshold =
-        Interval::DisplayedIntervalThresholdAtIndex(mainThreshold, i);
+        ConfidenceInterval::DisplayedIntervalThresholdAtIndex(mainThreshold, i);
     bool isMainInterval = (i == *m_selectedIntervalIndex);
     // Temporarily set the interval to compute the margin of error
     m_interval->setThreshold(threshold);
@@ -165,7 +163,7 @@ void IntervalPlotPolicy::drawPlot(const AbstractPlotView* plotView,
 
 // IntervalCurveView
 
-IntervalCurveView::IntervalCurveView(Interval* interval,
+IntervalCurveView::IntervalCurveView(ConfidenceInterval* interval,
                                      const int* selectedIndex)
     : PlotView(interval) {
   // IntervalPlotPolicy
@@ -177,8 +175,9 @@ void IntervalCurveView::reload(bool resetInterruption, bool force) {
   /* Temporarily set the interval with selected threshold so that the axis
    * displays the right bounds */
   float mainThreshold = m_interval->threshold();
-  m_interval->setThreshold(Interval::DisplayedIntervalThresholdAtIndex(
-      m_interval->threshold(), *m_selectedIntervalIndex));
+  m_interval->setThreshold(
+      ConfidenceInterval::DisplayedIntervalThresholdAtIndex(
+          m_interval->threshold(), *m_selectedIntervalIndex));
   m_interval->compute();
   AbstractPlotView::reload(resetInterruption, force);
 

@@ -1,8 +1,8 @@
-#ifndef INFERENCE_MODELS_STATISTIC_TWO_PROPORTIONS_Z_INTERVAL_H
-#define INFERENCE_MODELS_STATISTIC_TWO_PROPORTIONS_Z_INTERVAL_H
+#ifndef INFERENCE_MODELS_TWO_PROPORTIONS_Z_INTERVAL_H
+#define INFERENCE_MODELS_TWO_PROPORTIONS_Z_INTERVAL_H
 
-#include "interval.h"
-#include "test.h"
+#include "confidence_interval.h"
+#include "significance_test.h"
 
 namespace Inference {
 
@@ -22,7 +22,7 @@ class TwoProportionsStatistic {
       TestType::TwoProportions)];
 };
 
-class TwoProportionsZInterval : public Interval,
+class TwoProportionsZInterval : public ConfidenceInterval,
                                 public TwoProportionsStatistic {
  public:
   constexpr TestType testType() const override {
@@ -40,7 +40,8 @@ class TwoProportionsZInterval : public Interval,
   double* parametersArray() override { return m_params; }
 };
 
-class TwoProportionsZTest : public Test, public TwoProportionsStatistic {
+class TwoProportionsZTest : public SignificanceTest,
+                            public TwoProportionsStatistic {
  public:
   constexpr TestType testType() const override {
     return TestType::TwoProportions;

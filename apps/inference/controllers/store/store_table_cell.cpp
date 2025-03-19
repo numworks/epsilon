@@ -11,7 +11,7 @@ using namespace Escher;
 
 namespace Inference {
 
-StoreTableCell::StoreTableCell(Responder* parentResponder, Statistic* statistic,
+StoreTableCell::StoreTableCell(Responder* parentResponder, Inference* statistic,
                                Poincare::Context* parentContext,
                                InputStoreController* inputStoreController,
                                Escher::ScrollViewDelegate* scrollViewDelegate)
@@ -42,7 +42,7 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell* cell,
     Shared::BufferFunctionTitleCell* headerCell =
         static_cast<Shared::BufferFunctionTitleCell*>(cell);
     assert(m_header <= headerCell &&
-           headerCell < m_header + Table::k_maxNumberOfStoreColumns);
+           headerCell < m_header + InputTable::k_maxNumberOfStoreColumns);
     headerCell->setColor(
         store()->colorOfSeriesAtIndex(store()->seriesAtColumn(column)));
 

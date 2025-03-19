@@ -10,7 +10,7 @@ using namespace Escher;
 namespace Inference {
 
 ResultsController::ResultsController(
-    Responder* parent, Statistic* statistic,
+    Responder* parent, Inference* statistic,
     TestGraphController* testGraphController,
     IntervalGraphController* intervalGraphController, bool enableHeadline)
     : ListWithTopAndBottomController(parent,

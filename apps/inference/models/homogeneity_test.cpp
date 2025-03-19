@@ -90,21 +90,22 @@ void HomogeneityTest::setDataValueAtLocation(DataType type, double value,
 }
 
 bool HomogeneityTest::validateInputs(int pageIndex) {
-  return SignificanceTest::Chi2::AreHomogeneityInputsValid(
+  return Poincare::Inference::SignificanceTest::Chi2::AreHomogeneityInputsValid(
       &m_observedValuesData);
 }
 
 void HomogeneityTest::compute() {
   computeDataDimensions();
   computeExpectedValues();
-  m_degreesOfFreedom = SignificanceTest::Chi2::ComputeDegreesOfFreedom(
-      categoricalType(), &m_observedValuesData);
+  m_degreesOfFreedom =
+      Poincare::Inference::SignificanceTest::Chi2::ComputeDegreesOfFreedom(
+          categoricalType(), &m_observedValuesData);
   Chi2Test::compute();
 }
 
 bool HomogeneityTest::authorizedValueAtPosition(double p, int row,
                                                 int column) const {
-  return SignificanceTest::Chi2::IsObservedValueValid(p);
+  return Poincare::Inference::SignificanceTest::Chi2::IsObservedValueValid(p);
 }
 
 bool HomogeneityTest::deleteValueAtPosition(int row, int column) {
@@ -182,8 +183,8 @@ void HomogeneityTest::computeDataDimensions() const {
 }
 
 void HomogeneityTest::computeExpectedValues() {
-  SignificanceTest::Chi2::FillHomogeneityExpectedValues(&m_observedValuesData,
-                                                        &m_expectedValuesData);
+  Poincare::Inference::SignificanceTest::Chi2::FillHomogeneityExpectedValues(
+      &m_observedValuesData, &m_expectedValuesData);
 }
 
 }  // namespace Inference

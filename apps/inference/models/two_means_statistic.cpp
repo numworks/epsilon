@@ -4,7 +4,7 @@
 
 namespace Inference {
 
-void TwoMeansStatistic::computeParametersFromSeries(const Statistic* stat,
+void TwoMeansStatistic::computeParametersFromSeries(const Inference* stat,
                                                     int pageIndex) {
   assert(hasSeries(pageIndex));
   int seriesIndex = seriesAt(pageIndex);

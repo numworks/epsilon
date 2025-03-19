@@ -2,9 +2,9 @@
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_SLOPE_TABLE_CELL_H
 
 #include "inference/controllers/categorical_table_cell.h"
+#include "inference/models/input_table_from_store.h"
 #include "inference/models/one_mean_statistic.h"
 #include "inference/models/slope_t_statistic.h"
-#include "inference/models/table_from_store.h"
 #include "shared/buffer_function_title_cell.h"
 #include "shared/column_helper.h"
 
@@ -15,13 +15,13 @@ class InputStoreController;
 class StoreTableCell : public DoubleColumnTableCell,
                        public Shared::StoreColumnHelper {
  public:
-  StoreTableCell(Escher::Responder* parentResponder, Statistic* statistic,
+  StoreTableCell(Escher::Responder* parentResponder, Inference* statistic,
                  Poincare::Context* parentContext,
                  InputStoreController* inputStoreController,
                  Escher::ScrollViewDelegate* scrollViewDelegate);
 
   constexpr static int k_numberOfReusableCells =
-      Table::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
+      InputTable::k_maxNumberOfStoreColumns * k_maxNumberOfReusableRows;
 
   // SelectableTableViewDelegate
   int numberOfRowsAtColumn(const Escher::SelectableTableView* t,
@@ -34,7 +34,7 @@ class StoreTableCell : public DoubleColumnTableCell,
     }
     assert(m_statistic->testType() == TestType::OneMean ||
            m_statistic->testType() == TestType::TwoMeans);
-    return static_cast<TableFromStatisticStore*>(tableModel());
+    return static_cast<InputTableFromStatisticStore*>(tableModel());
   }
   const Shared::DoublePairStore* store() const {
     return const_cast<StoreTableCell*>(this)->store();
@@ -57,7 +57,8 @@ class StoreTableCell : public DoubleColumnTableCell,
   void reload() override;
   CategoricalController* categoricalController() override;
 
-  Shared::BufferFunctionTitleCell m_header[Table::k_maxNumberOfStoreColumns];
+  Shared::BufferFunctionTitleCell
+      m_header[InputTable::k_maxNumberOfStoreColumns];
   InputStoreController* m_inputStoreController;
 };
 

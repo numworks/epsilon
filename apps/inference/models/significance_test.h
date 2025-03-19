@@ -1,15 +1,15 @@
-#ifndef INFERENCE_MODELS_STATISTIC_TEST_H
-#define INFERENCE_MODELS_STATISTIC_TEST_H
+#ifndef INFERENCE_MODELS_SIGNIFICANCE_TEST_H
+#define INFERENCE_MODELS_SIGNIFICANCE_TEST_H
 
 #include <poincare/statistics/inference.h>
 
-#include "statistic.h"
+#include "inference.h"
 
 namespace Inference {
 
-class Test : public Statistic {
+class SignificanceTest : public Inference {
  public:
-  Test() : Statistic(), m_testCriticalValue(NAN), m_pValue(NAN) {}
+  SignificanceTest() : Inference(), m_testCriticalValue(NAN), m_pValue(NAN) {}
 
   SubApp subApp() const override { return SubApp::SignificanceTest; }
 
@@ -21,26 +21,29 @@ class Test : public Statistic {
   }
 
   // Input
-  SignificanceTest::Hypothesis* hypothesis() { return &m_hypothesis; }
-  const SignificanceTest::Hypothesis* hypothesis() const {
+  Poincare::Inference::SignificanceTest::Hypothesis* hypothesis() {
+    return &m_hypothesis;
+  }
+  const Poincare::Inference::SignificanceTest::Hypothesis* hypothesis() const {
     return &m_hypothesis;
   }
   const char* hypothesisSymbol() const {
-    return SignificanceTest::HypothesisSymbol(testType());
+    return Poincare::Inference::SignificanceTest::HypothesisSymbol(testType());
   }
   bool isValidH0(double h0) {
-    return SignificanceTest::IsH0Valid(testType(), h0);
+    return Poincare::Inference::SignificanceTest::IsH0Valid(testType(), h0);
   }
 
   void initParameters() override;
 
   // Additional estimates
   int numberOfEstimates() const {
-    return SignificanceTest::NumberOfEstimates(testType());
+    return Poincare::Inference::SignificanceTest::NumberOfEstimates(testType());
   };
   double estimateValue(int index) { return m_estimates[index]; }
   Poincare::Layout estimateLayout(int index) const {
-    return SignificanceTest::EstimateLayoutAtIndex(testType(), index);
+    return Poincare::Inference::SignificanceTest::EstimateLayoutAtIndex(
+        testType(), index);
   }
   I18n::Message estimateDescription(int index) const {
     return TestEstimateDescription(testType(), index);
@@ -84,9 +87,9 @@ class Test : public Statistic {
   float computeXMin() const override { return -k_displayWidthToSTDRatio; }
   float computeXMax() const override { return k_displayWidthToSTDRatio; }
   // Hypothesis chosen
-  SignificanceTest::Hypothesis m_hypothesis;
+  Poincare::Inference::SignificanceTest::Hypothesis m_hypothesis;
   // Cached values
-  SignificanceTest::Estimates m_estimates;
+  Poincare::Inference::SignificanceTest::Estimates m_estimates;
   double m_testCriticalValue;
   double m_pValue;
 

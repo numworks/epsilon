@@ -1,4 +1,4 @@
-#include "test.h"
+#include "significance_test.h"
 
 #include <apps/apps_container_helper.h>
 #include <assert.h>
@@ -11,7 +11,7 @@
 
 namespace Inference {
 
-void Test::setGraphTitle(char* buffer, size_t bufferSize) const {
+void SignificanceTest::setGraphTitle(char* buffer, size_t bufferSize) const {
   Poincare::Print::CustomPrintf(
       buffer, bufferSize, "%s=%*.*ed %s=%*.*ed", criticalValueSymbol(),
       testCriticalValue(), Poincare::Preferences::PrintFloatMode::Decimal,
@@ -21,30 +21,34 @@ void Test::setGraphTitle(char* buffer, size_t bufferSize) const {
       Poincare::Preferences::ShortNumberOfSignificantDigits);
 }
 
-void Test::initParameters() {
-  m_hypothesis = SignificanceTest::DefaultHypothesis(testType());
+void SignificanceTest::initParameters() {
+  m_hypothesis =
+      Poincare::Inference::SignificanceTest::DefaultHypothesis(testType());
   for (int i = 0; i < numberOfTestParameters(); i++) {
-    parametersArray()[i] = SignificanceTest::DefaultParameterAtIndex(type(), i);
+    parametersArray()[i] =
+        Poincare::Inference::SignificanceTest::DefaultParameterAtIndex(type(),
+                                                                       i);
   }
-  m_threshold = SignificanceTest::DefaultThreshold();
+  m_threshold = Poincare::Inference::SignificanceTest::DefaultThreshold();
 }
 
-bool Test::canRejectNull() {
+bool SignificanceTest::canRejectNull() {
   assert(m_threshold >= 0 && m_threshold <= 1);
   return pValue() <= m_threshold;
 }
 
-double Test::thresholdAbscissa(Poincare::ComparisonJunior::Operator op,
-                               double factor) const {
+double SignificanceTest::thresholdAbscissa(
+    Poincare::ComparisonJunior::Operator op, double factor) const {
   assert(op != Poincare::ComparisonJunior::Operator::NotEqual);
   double t = factor * threshold();
   return cumulativeDistributiveInverseForProbability(
       op == Poincare::ComparisonJunior::Operator::Inferior ? t : 1.0 - t);
 }
 
-void Test::inferenceResultAtIndex(int index, double* value,
-                                  Poincare::Layout* message,
-                                  I18n::Message* subMessage, int* precision) {
+void SignificanceTest::inferenceResultAtIndex(int index, double* value,
+                                              Poincare::Layout* message,
+                                              I18n::Message* subMessage,
+                                              int* precision) {
   if (index < numberOfEstimates()) {
     *value = estimateValue(index);
     *message = estimateLayout(index);
@@ -76,11 +80,12 @@ void Test::inferenceResultAtIndex(int index, double* value,
   }
 }
 
-void Test::compute() {
+void SignificanceTest::compute() {
   const Poincare::Inference::ParametersArray params = constParametersArray();
   Poincare::Inference::Type type = this->type();
-  SignificanceTest::Results results =
-      SignificanceTest::Compute(type, m_hypothesis, params);
+  Poincare::Inference::SignificanceTest::Results results =
+      Poincare::Inference::SignificanceTest::Compute(type, m_hypothesis,
+                                                     params);
   m_degreesOfFreedom = results.degreesOfFreedom;
   m_testCriticalValue = results.criticalValue;
   m_pValue = results.pValue;
@@ -91,12 +96,12 @@ static float interpolate(float a, float b, float alpha) {
   return alpha * (b - a) + a;
 }
 
-bool Test::hasTwoSides() {
+bool SignificanceTest::hasTwoSides() {
   return m_hypothesis.m_alternative ==
          Poincare::ComparisonJunior::Operator::NotEqual;
 }
 
-bool Test::shouldForbidZoom(float alpha, float criticalValue) {
+bool SignificanceTest::shouldForbidZoom(float alpha, float criticalValue) {
   /* This method only applies on standardardized normal distribution,
    * otherwise the method needs to be overridden. */
   // Alpha or criticalValue is out of the view or their signs differ
@@ -105,7 +110,7 @@ bool Test::shouldForbidZoom(float alpha, float criticalValue) {
          alpha * criticalValue < 0;
 }
 
-bool Test::computeCurveViewRange(float transition, bool zoomSide) {
+bool SignificanceTest::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;
   float z = testCriticalValue();
@@ -124,7 +129,7 @@ bool Test::computeCurveViewRange(float transition, bool zoomSide) {
     alpha = thresholdAbscissa(hypothesis()->m_alternative);
   }
   if (shouldForbidZoom(alpha, z)) {
-    Shared::Inference::computeCurveViewRange();
+    Shared::StatisticalDistribution::computeCurveViewRange();
     return false;
   }
   float margin = std::abs(alpha - z) * k_displayZoomedInHorizontalMarginRatio;

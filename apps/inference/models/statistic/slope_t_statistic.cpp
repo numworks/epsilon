@@ -4,7 +4,6 @@
 #include <omg/round.h>
 
 #include "inference/models/statistic/aliases.h"
-#include "poincare/src/statistics/inference/inference.h"
 
 namespace Inference {
 

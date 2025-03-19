@@ -5,9 +5,9 @@
 #include <escher/stack_view_controller.h>
 #include <omg/ring_buffer.h>
 
+#include "controllers/distribution_controller.h"
+#include "controllers/parameters_controller.h"
 #include "models/distribution_buffer.h"
-#include "probability/distribution_controller.h"
-#include "probability/parameters_controller.h"
 
 namespace Distributions {
 

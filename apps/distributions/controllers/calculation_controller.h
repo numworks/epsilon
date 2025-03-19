@@ -9,11 +9,11 @@
 #include <escher/view_controller.h>
 
 #include "distributions/constants.h"
+#include "distributions/controllers/calculation_cell.h"
+#include "distributions/controllers/calculation_popup_data_source.h"
+#include "distributions/controllers/distribution_curve_view.h"
 #include "distributions/models/calculation/calculation.h"
 #include "distributions/models/distribution/distribution.h"
-#include "distributions/probability/calculation_cell.h"
-#include "distributions/probability/calculation_popup_data_source.h"
-#include "distributions/probability/distribution_curve_view.h"
 
 namespace Distributions {
 

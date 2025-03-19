@@ -1,11 +1,11 @@
 SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
   app.cpp \
-  probability/calculation_cell.cpp \
-  probability/calculation_controller.cpp \
-  probability/calculation_popup_data_source.cpp \
-  probability/distribution_controller.cpp \
-  probability/distribution_curve_view.cpp \
-  probability/parameters_controller.cpp \
+  controllers/calculation_cell.cpp \
+  controllers/calculation_controller.cpp \
+  controllers/calculation_popup_data_source.cpp \
+  controllers/distribution_controller.cpp \
+  controllers/distribution_curve_view.cpp \
+  controllers/parameters_controller.cpp \
   distributions_icon.png \
   images/binomial_icon.png \
   images/chi_squared_icon.png \
@@ -45,7 +45,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
 $(call depends_on_image,$(PATH_apps)/distributions/app.cpp,$(PATH_apps)/distributions/distributions_icon.png)
 
 $(call depends_on_transparent_image, \
-$(PATH_apps)/distributions/probability/distribution_controller.cpp, \
+$(PATH_apps)/distributions/controllers/distribution_controller.cpp, \
 $(addprefix $(PATH_apps)/distributions/images/,\
   binomial_icon.png \
   chi_squared_icon.png \
@@ -60,7 +60,7 @@ $(addprefix $(PATH_apps)/distributions/images/,\
 ))
 
 $(call depends_on_transparent_image, \
-$(addprefix $(PATH_apps)/distributions/probability/, \
+$(addprefix $(PATH_apps)/distributions/controllers/, \
   calculation_controller.cpp \
   calculation_popup_data_source.cpp \
 ), \

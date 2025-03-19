@@ -14,10 +14,10 @@
 #include <escher/text_field_delegate.h>
 #include <escher/view.h>
 
-#include "inference/statistic/comparison_operator_popup_data_source.h"
-#include "inference/statistic/dataset_controller.h"
-#include "inference/statistic/input_controller.h"
-#include "inference/statistic/store/input_store_controller.h"
+#include "inference/controllers/comparison_operator_popup_data_source.h"
+#include "inference/controllers/dataset_controller.h"
+#include "inference/controllers/input_controller.h"
+#include "inference/controllers/store/input_store_controller.h"
 
 namespace Inference {
 

@@ -7,9 +7,9 @@
 
 #include <algorithm>
 
+#include "inference/controllers/categorical_table_view_data_source.h"
+#include "inference/controllers/dynamic_cells_data_source.h"
 #include "inference/models/homogeneity_test.h"
-#include "inference/statistic/categorical_table_view_data_source.h"
-#include "inference/statistic/dynamic_cells_data_source.h"
 
 namespace Inference {
 

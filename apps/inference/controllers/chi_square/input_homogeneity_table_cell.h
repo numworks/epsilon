@@ -1,31 +1,25 @@
-#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULTS_HOMOGENEITY_TABLE_CELL_H
-#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_RESULTS_HOMOGENEITY_TABLE_CELL_H
+#ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_TABLE_CELL_H
+#define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_TABLE_CELL_H
 
 #include "homogeneity_data_source.h"
+#include "inference/controllers/categorical_table_cell.h"
 #include "inference/models/homogeneity_test.h"
-#include "inference/statistic/categorical_table_cell.h"
 
 namespace Inference {
 
-class ResultsHomogeneityController;
+class InputHomogeneityController;
 
-class ResultsHomogeneityTableCell
-    : public CategoricalTableCell,
+class InputHomogeneityTableCell
+    : public InputCategoricalTableCell,
       public HomogeneityTableDataSource,
       public DynamicCellsDataSource<
-          InferenceEvenOddBufferCell,
+          InferenceEvenOddEditableCell,
           k_homogeneityTableNumberOfReusableInnerCells> {
  public:
-  ResultsHomogeneityTableCell(
+  InputHomogeneityTableCell(
       Escher::Responder* parentResponder, HomogeneityTest* test,
-      ResultsHomogeneityController* resultsTableController,
+      InputHomogeneityController* inputHomogeneityController,
       Escher::ScrollViewDelegate* scrollViewDelegate);
-
-  enum class Mode : bool { ExpectedValue, Contribution };
-  void setMode(Mode mode) { m_mode = mode; }
-
-  // View
-  void drawRect(KDContext* ctx, KDRect rect) const override;
 
   // InputCategoricalTableCell
   CategoricalTableViewDataSource* tableViewDataSource() override {
@@ -33,6 +27,8 @@ class ResultsHomogeneityTableCell
   }
 
   // DataSource
+  int innerNumberOfRows() const override { return m_numberOfRows; }
+  int innerNumberOfColumns() const override { return m_numberOfColumns; }
   void fillCellForLocation(Escher::HighlightCell* cell, int column,
                            int row) override;
   bool canStoreCellAtLocation(int column, int row) override {
@@ -50,17 +46,16 @@ class ResultsHomogeneityTableCell
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
+  // ClearColumnHelper
+  size_t fillColumnName(int column, char* buffer) override;
+
+  // CategoricalTableViewDataSource
+  int relativeColumn(int column) const override { return column - 1; }
+
   // HomogeneityTableViewDataSource
-  /* The totals are not displayed when in Contribution mode. */
-  int innerNumberOfRows() const override {
-    return m_statistic->numberOfDataRows() + (m_mode == Mode::ExpectedValue);
-  }
-  int innerNumberOfColumns() const override {
-    return m_statistic->numberOfDataColumns() + (m_mode == Mode::ExpectedValue);
-  }
   Escher::HighlightCell* innerCell(int i) override {
     return DynamicCellsDataSource<
-        InferenceEvenOddBufferCell,
+        InferenceEvenOddEditableCell,
         k_homogeneityTableNumberOfReusableInnerCells>::cell(i);
   }
   void fillInnerCellForLocation(Escher::HighlightCell* cell, int column,
@@ -69,10 +64,7 @@ class ResultsHomogeneityTableCell
 
   // DynamicCellsDataSource
   void destroyCells() override;
-
-  HomogeneityTest* m_statistic;
-  Mode m_mode;
-  ResultsHomogeneityController* m_resultsTableController;
+  InputHomogeneityController* m_inputHomogeneityController;
 };
 
 }  // namespace Inference

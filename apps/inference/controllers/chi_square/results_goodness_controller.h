@@ -3,8 +3,8 @@
 
 #include <escher/tab_view_controller.h>
 
-#include "inference/statistic/categorical_controller.h"
-#include "inference/statistic/results_controller.h"
+#include "inference/controllers/categorical_controller.h"
+#include "inference/controllers/results_controller.h"
 #include "results_goodness_table_cell.h"
 
 namespace Inference {

@@ -12,7 +12,7 @@
 #include <string.h>
 
 #include "inference/app.h"
-#include "inference/statistic/input_controller.h"
+#include "inference/controllers/input_controller.h"
 #include "inference/text_helpers.h"
 
 using namespace Escher;

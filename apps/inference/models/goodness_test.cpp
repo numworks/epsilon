@@ -1,6 +1,6 @@
 #include "goodness_test.h"
 
-#include <inference/statistic/chi_square/results_goodness_table_cell.h>
+#include <inference/controllers/chi_square/results_goodness_table_cell.h>
 #include <poincare/print.h>
 #include <string.h>
 

@@ -1,7 +1,7 @@
 #ifndef INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_CONTROLLER_H
 #define INFERENCE_STATISTIC_CHI_SQUARE_AND_SLOPE_INPUT_HOMOGENEITY_CONTROLLER_H
 
-#include "inference/statistic/categorical_controller.h"
+#include "inference/controllers/categorical_controller.h"
 #include "input_homogeneity_table_cell.h"
 
 namespace Inference {

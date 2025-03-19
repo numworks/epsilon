@@ -4,7 +4,7 @@
 #include <poincare/print.h>
 
 #include "inference/app.h"
-#include "inference/statistic/chi_square/input_goodness_controller.h"
+#include "inference/controllers/chi_square/input_goodness_controller.h"
 #include "input_store_controller.h"
 
 using namespace Escher;

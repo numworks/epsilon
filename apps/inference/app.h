@@ -8,22 +8,22 @@
 #include <escher/stack_view_controller.h>
 #include <omg/ring_buffer.h>
 
+#include "controllers/chi_square/categorical_type_controller.h"
+#include "controllers/chi_square/input_goodness_controller.h"
+#include "controllers/chi_square/input_homogeneity_controller.h"
+#include "controllers/chi_square/results_goodness_controller.h"
+#include "controllers/chi_square/results_homogeneity_controller.h"
+#include "controllers/dataset_controller.h"
+#include "controllers/dynamic_cells_data_source.h"
+#include "controllers/input_controller.h"
+#include "controllers/interval/interval_graph_controller.h"
+#include "controllers/results_controller.h"
+#include "controllers/store/input_store_controller.h"
+#include "controllers/test/hypothesis_controller.h"
+#include "controllers/test/test_graph_controller.h"
+#include "controllers/test_controller.h"
+#include "controllers/type_controller.h"
 #include "models/statistic_buffer.h"
-#include "statistic/chi_square/categorical_type_controller.h"
-#include "statistic/chi_square/input_goodness_controller.h"
-#include "statistic/chi_square/input_homogeneity_controller.h"
-#include "statistic/chi_square/results_goodness_controller.h"
-#include "statistic/chi_square/results_homogeneity_controller.h"
-#include "statistic/dataset_controller.h"
-#include "statistic/dynamic_cells_data_source.h"
-#include "statistic/input_controller.h"
-#include "statistic/interval/interval_graph_controller.h"
-#include "statistic/results_controller.h"
-#include "statistic/store/input_store_controller.h"
-#include "statistic/test/hypothesis_controller.h"
-#include "statistic/test/test_graph_controller.h"
-#include "statistic/test_controller.h"
-#include "statistic/type_controller.h"
 
 namespace Inference {
 

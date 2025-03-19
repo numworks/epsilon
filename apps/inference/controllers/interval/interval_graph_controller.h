@@ -5,8 +5,8 @@
 #include <escher/view_controller.h>
 
 #include "inference/constants.h"
+#include "inference/controllers/interval/interval_graph_view.h"
 #include "inference/models/statistic_buffer.h"
-#include "inference/statistic/interval/interval_graph_view.h"
 
 namespace Inference {
 

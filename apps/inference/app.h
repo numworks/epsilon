@@ -9,13 +9,13 @@
 #include <omg/ring_buffer.h>
 
 #include "models/statistic_buffer.h"
-#include "shared/dynamic_cells_data_source.h"
 #include "statistic/chi_square/categorical_type_controller.h"
 #include "statistic/chi_square/input_goodness_controller.h"
 #include "statistic/chi_square/input_homogeneity_controller.h"
 #include "statistic/chi_square/results_goodness_controller.h"
 #include "statistic/chi_square/results_homogeneity_controller.h"
 #include "statistic/dataset_controller.h"
+#include "statistic/dynamic_cells_data_source.h"
 #include "statistic/input_controller.h"
 #include "statistic/interval/interval_graph_controller.h"
 #include "statistic/results_controller.h"

@@ -1,6 +1,6 @@
 SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   app.cpp \
-  shared/dynamic_cells_data_source.cpp \
+  statistic/dynamic_cells_data_source.cpp \
   statistic/chi_square/categorical_type_controller.cpp \
   statistic/chi_square/homogeneity_data_source.cpp \
   statistic/chi_square/input_goodness_controller.cpp \

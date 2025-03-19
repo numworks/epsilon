@@ -6,7 +6,7 @@
 #include <escher/menu_cell_with_editable_text.h>
 
 #include "inference/models/statistic.h"
-#include "inference/shared/dynamic_cells_data_source.h"
+#include "inference/statistic/dynamic_cells_data_source.h"
 #include "results_controller.h"
 
 namespace Inference {

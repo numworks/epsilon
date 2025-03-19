@@ -9,7 +9,7 @@
 #include <escher/stack_view_controller.h>
 
 #include "inference/models/statistic.h"
-#include "inference/shared/dynamic_cells_data_source.h"
+#include "inference/statistic/dynamic_cells_data_source.h"
 #include "interval/interval_graph_controller.h"
 #include "test/test_graph_controller.h"
 

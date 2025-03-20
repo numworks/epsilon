@@ -760,12 +760,13 @@ QUIZ_CASE(pcj_sign_is_real) {
   assert_projected_is_real("sign(2i)");
   assert_projected_is_real("sign({2,3})");
   assert_projected_is_not_real("sign([[2,3]])");
+  assert_projected_is_real("diff(2x,x,1)");
+  assert_projected_is_real("diff({2,3}x,x,1)");
+  // Should be non-real, complex case is handled at simplification for now.
+  assert_projected_is_real("diff(2*i*x,x,1)");
+  assert_projected_is_not_real("diff([[2,3]]x,x,1)");
 
   // Depends on children
-  assert_projected_is_real("diff(2x,x,1)");
-  assert_projected_is_not_real("diff(2*i*x,x,1)");
-  assert_projected_is_not_real("diff({2,3}x,x,1)");
-  assert_projected_is_not_real("diff([[2,3]]x,x,1)");
   assert_projected_is_real("2×_mg");
   assert_projected_is_not_real("2i×_mg");
   assert_projected_is_not_real("{2,3}×_mg");

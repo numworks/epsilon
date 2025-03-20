@@ -40,7 +40,7 @@ class InputGoodnessTableCell : public DoubleColumnTableCell {
   Escher::HighlightCell* headerCell(int index) override {
     return &m_header[index];
   }
-  GoodnessTest* inference() { return static_cast<GoodnessTest*>(m_statistic); }
+  GoodnessTest* inference() { return static_cast<GoodnessTest*>(m_inference); }
   CategoricalController* categoricalController() override;
 
   Escher::EvenOddMessageTextCell m_header[k_maxNumberOfColumns];

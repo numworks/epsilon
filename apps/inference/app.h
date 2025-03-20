@@ -49,7 +49,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
     void tidy() override;
     void reset() override;
 
-    Inference* inference() { return m_inferenceBuffer.inference(); }
+    InferenceModel* inference() { return m_inferenceBuffer.inference(); }
 
     OMG::RingBuffer<Escher::ViewController*,
                     LargeStackViewController::k_maxNumberOfChildren>*

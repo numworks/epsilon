@@ -9,8 +9,8 @@
 namespace Inference {
 
 enum class Message {
-  Title,
-  BasicTitle,
+  SubAppTitle,
+  SubAppBasicTitle,
   TStatisticMessage,
   ZStatisticMessage,
   TOrZStatisticMessage,

@@ -11,11 +11,12 @@ using namespace Escher;
 
 namespace Inference {
 
-StoreTableCell::StoreTableCell(Responder* parentResponder, Inference* statistic,
+StoreTableCell::StoreTableCell(Responder* parentResponder,
+                               InferenceModel* inference,
                                Poincare::Context* parentContext,
                                InputStoreController* inputStoreController,
                                Escher::ScrollViewDelegate* scrollViewDelegate)
-    : DoubleColumnTableCell(parentResponder, statistic, scrollViewDelegate),
+    : DoubleColumnTableCell(parentResponder, inference, scrollViewDelegate),
       StoreColumnHelper(this, parentContext, this),
       m_inputStoreController(inputStoreController) {
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
@@ -47,11 +48,11 @@ void StoreTableCell::fillCellForLocation(Escher::HighlightCell* cell,
         store()->colorOfSeriesAtIndex(store()->seriesAtColumn(column)));
 
     char columnName[Shared::ClearColumnHelper::k_maxSizeOfColumnName];
-    if (m_statistic->testType() == TestType::Slope) {
+    if (m_inference->testType() == TestType::Slope) {
       fillColumnName(column, const_cast<char*>(headerCell->text()));
     } else {
-      assert(m_statistic->testType() == TestType::OneMean ||
-             m_statistic->testType() == TestType::TwoMeans);
+      assert(m_inference->testType() == TestType::OneMean ||
+             m_inference->testType() == TestType::TwoMeans);
       fillColumnName(column, columnName);
       I18n::Message prefix = store()->relativeColumn(column) == 0
                                  ? I18n::Message::Values

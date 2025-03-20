@@ -5,7 +5,7 @@
 #include <apps/shared/linear_regression_store.h>
 #include <apps/shared/statistics_store.h>
 
-#include "inference.h"
+#include "inference_model.h"
 #include "input_table.h"
 #include "shared/double_pair_store.h"
 
@@ -27,8 +27,9 @@ class InputTableFromStore : public InputTable {
            numberOfSeries() <= m_series.size());
     return m_series[pageIndex];
   }
-  void setSeriesAt(Inference* stat, int pageIndex, int series) override;
-  bool validateInputs(Inference* stat, int pageIndex);
+  void setSeriesAt(InferenceModel* inference, int pageIndex,
+                   int series) override;
+  bool validateInputs(InferenceModel* inference, int pageIndex);
   bool authorizedValueAtPosition(double p, int row, int column) const override;
 
   void setActivePage(uint8_t pageIndex) { m_activePageIndex = pageIndex; }
@@ -44,11 +45,12 @@ class InputTableFromStore : public InputTable {
   }
 
  protected:
-  virtual void computeParametersFromSeries(const Inference* stat,
+  virtual void computeParametersFromSeries(const InferenceModel* inference,
                                            int pageIndex) = 0;
 
-  int numberOfComputedParameters(const Inference* stat) const {
-    return static_cast<int>(hasAllSeries()) * stat->numberOfTestParameters();
+  int numberOfComputedParameters(const InferenceModel* inference) const {
+    return static_cast<int>(hasAllSeries()) *
+           inference->numberOfTestParameters();
   }
 
   // Table
@@ -60,7 +62,7 @@ class InputTableFromStore : public InputTable {
 
   Shared::DoublePairStorePreferences m_dblePairStorePreferences;
   std::array<int, k_maxNumberOfSeries> m_series;
-  /* In some cases (e.g. TwoMeans), the statistic can be displayed on several
+  /* In some cases (e.g. TwoMeans), the inference can be displayed on several
    * pages. On each page, the selected series is displayed in a table. */
 
   uint8_t m_activePageIndex;
@@ -78,7 +80,8 @@ class InputTableFromStatisticStore : public InputTableFromStore,
     return seriesAt(m_activePageIndex);
   }
 
-  void setSeriesAt(Inference* stat, int pageIndex, int series) override;
+  void setSeriesAt(InferenceModel* inference, int pageIndex,
+                   int series) override;
   void deleteValuesInColumn(int column) override;
 
  protected:
@@ -88,8 +91,8 @@ class InputTableFromStatisticStore : public InputTableFromStore,
     }
   }
 
-  bool computedParameterAtIndex(int index, Inference* stat, double* value,
-                                Poincare::Layout* message,
+  bool computedParameterAtIndex(int index, InferenceModel* inference,
+                                double* value, Poincare::Layout* message,
                                 I18n::Message* subMessage, int* precision);
 
   Shared::DoublePairStore* doublePairStore() override { return this; }

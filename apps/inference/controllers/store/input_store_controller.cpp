@@ -13,8 +13,8 @@ namespace Inference {
 InputStoreController::InputStoreController(
     StackViewController* parent, ViewController* nextController,
     uint8_t pageIndex, InputStoreController* nextInputStoreController,
-    Inference* statistic, Poincare::Context* context)
-    : InputCategoricalController(parent, nextController, statistic,
+    InferenceModel* inference, Poincare::Context* context)
+    : InputCategoricalController(parent, nextController, inference,
                                  Invocation::Builder<InputStoreController>(
                                      &InputStoreController::ButtonAction, this),
                                  pageIndex),
@@ -23,7 +23,7 @@ InputStoreController::InputStoreController(
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),
       },
-      m_storeTableCell(&m_selectableListView, statistic, context, this, this),
+      m_storeTableCell(&m_selectableListView, inference, context, this, this),
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_storeTableCell),
@@ -112,10 +112,10 @@ void InputStoreController::viewWillAppear() {
     InputCategoricalCell<LayoutView>& c = m_extraParameters[i];
     int param = indexOfEditedParameterAtIndex(indexOfFirstExtraParameter() + i);
     PrintValueInTextHolder(
-        m_statistic->parameterAtIndex(param), c.textField(), true, true,
+        m_inference->parameterAtIndex(param), c.textField(), true, true,
         Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
-    c.setMessages(m_statistic->parameterSymbolAtIndex(param),
-                  m_statistic->parameterDefinitionAtIndex(param));
+    c.setMessages(m_inference->parameterSymbolAtIndex(param),
+                  m_inference->parameterDefinitionAtIndex(param));
   }
 
   initializeDropdown();
@@ -131,18 +131,18 @@ void InputStoreController::initView() {
       ->setActivePage(m_pageIndex);
   categoricalTableCell()->recomputeDimensions();
 
-  if (m_loadedSubApp != m_statistic->subApp() ||
-      m_loadedStatistic != m_statistic->statisticType() ||
-      m_loadedTest != m_statistic->testType()) {
+  if (m_loadedSubApp != m_inference->subApp() ||
+      m_loadedStatistic != m_inference->statisticType() ||
+      m_loadedTest != m_inference->testType()) {
     categoricalTableCell()->selectRow(-1);
     categoricalTableCell()->selectColumn(0);
     categoricalTableCell()->selectableTableView()->resetScroll();
     m_selectableListView.selectRow(0);
     m_selectableListView.resetScroll();
   }
-  m_loadedSubApp = m_statistic->subApp();
-  m_loadedStatistic = m_statistic->statisticType();
-  m_loadedTest = m_statistic->testType();
+  m_loadedSubApp = m_inference->subApp();
+  m_loadedStatistic = m_inference->statisticType();
+  m_loadedTest = m_inference->testType();
   if (m_pageIndex == 0) {
     m_nextController = shouldDisplayTwoPages() ? m_nextInputStoreController
                                                : m_nextOtherController;
@@ -173,12 +173,12 @@ int InputStoreController::indexOfEditedParameterAtIndex(int index) const {
   if (index >= indexOfFirstExtraParameter() + numberOfExtraParameters()) {
     return InputCategoricalController::indexOfEditedParameterAtIndex(index);
   }
-  assert(m_statistic->statisticType() == StatisticType::Z);
-  if (m_statistic->testType() == TestType::OneMean) {
+  assert(m_inference->statisticType() == StatisticType::Z);
+  if (m_inference->testType() == TestType::OneMean) {
     assert(index == indexOfFirstExtraParameter());
     return Params::OneMean::S;
   }
-  assert(m_statistic->testType() == TestType::TwoMeans);
+  assert(m_inference->testType() == TestType::TwoMeans);
   return index == indexOfFirstExtraParameter() ? Params::TwoMeans::S1
                                                : Params::TwoMeans::S2;
 }
@@ -188,7 +188,7 @@ void InputStoreController::selectSeriesForDropdownRow(int row) {
     row = 0;
   }
   InputTable* tableModel = m_storeTableCell.tableModel();
-  tableModel->setSeriesAt(m_statistic, static_cast<uint8_t>(m_pageIndex), row);
+  tableModel->setSeriesAt(m_inference, static_cast<uint8_t>(m_pageIndex), row);
 }
 
 void InputStoreController::updateParameterCellsVisibility() {
@@ -206,7 +206,7 @@ void InputStoreController::hideOtherPageParameterCells() {
     m_significanceCell.setVisible(false);
   }
 
-  if (m_statistic->statisticType() == StatisticType::Z) {
+  if (m_inference->statisticType() == StatisticType::Z) {
     assert(numberOfExtraParameters() == 2);
     // Hide the parameter of the other dataset
     m_extraParameters[(static_cast<uint8_t>(m_pageIndex) + 1) % 2].setVisible(

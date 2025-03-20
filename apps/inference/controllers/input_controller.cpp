@@ -15,10 +15,10 @@ using namespace Inference;
 
 InputController::InputController(Escher::StackViewController* parent,
                                  ResultsController* resultsController,
-                                 Inference* statistic)
+                                 InferenceModel* inference)
     : FloatParameterController<double>(parent, &m_messageView),
       DynamicCellsDataSource<ParameterCell, k_maxNumberOfParameterCell>(this),
-      m_statistic(statistic),
+      m_inference(inference),
       m_resultsController(resultsController),
       m_significanceCell(&m_selectableListView, this),
       m_messageView(I18n::Message::InputStatistics, k_messageFormat) {
@@ -44,12 +44,12 @@ void InputController::initCell(ParameterCell, void* cell, int index) {
 }
 
 void InputController::InputTitle(const Escher::ViewController* vc,
-                                 const Inference* statistic, char* titleBuffer,
-                                 size_t titleBufferSize) {
-  if (statistic->hasHypothesisParameters()) {
-    assert(statistic->subApp() == SubApp::SignificanceTest);
+                                 const InferenceModel* inference,
+                                 char* titleBuffer, size_t titleBufferSize) {
+  if (inference->hasHypothesisParameters()) {
+    assert(inference->subApp() == SubApp::SignificanceTest);
     const SignificanceTest* signifTest =
-        static_cast<const SignificanceTest*>(statistic);
+        static_cast<const SignificanceTest*>(inference);
     /* H0:<first symbol>=<firstParam>
      * Ha:<first symbol><operator symbol><firstParams>
      * α=<threshold> */
@@ -81,14 +81,14 @@ void InputController::InputTitle(const Escher::ViewController* vc,
     }
   } else {
     Poincare::Print::CustomPrintf(titleBuffer, titleBufferSize,
-                                  I18n::translate(statistic->title()),
+                                  I18n::translate(inference->title()),
                                   I18n::translate(I18n::Message::Interval));
   }
 }
 
 ViewController::TitlesDisplay InputController::titlesDisplay() const {
-  return m_statistic->hasHypothesisParameters()
-             ? m_statistic->canChooseDataset()
+  return m_inference->hasHypothesisParameters()
+             ? m_inference->canChooseDataset()
                    ? TitlesDisplay::DisplayLastAndThirdToLast
                    : TitlesDisplay::DisplayLastTwoTitles
              : TitlesDisplay::DisplayLastTitle;
@@ -100,25 +100,25 @@ void InputController::initView() {
 }
 
 void InputController::viewWillAppear() {
-  m_significanceCell.label()->setMessage(m_statistic->thresholdName());
+  m_significanceCell.label()->setMessage(m_inference->thresholdName());
   m_significanceCell.subLabel()->setMessage(
-      m_statistic->thresholdDescription());
+      m_inference->thresholdDescription());
   FloatParameterController::viewWillAppear();
 }
 
 int InputController::typeAtRow(int row) const {
-  if (row == m_statistic->indexOfThreshold()) {
+  if (row == m_inference->indexOfThreshold()) {
     return k_significanceCellType;
   }
   return FloatParameterController<double>::typeAtRow(row);
 }
 
 void InputController::buttonAction() {
-  if (!m_statistic->validateInputs()) {
+  if (!m_inference->validateInputs()) {
     App::app()->displayWarning(I18n::Message::InvalidInputs);
     return;
   }
-  m_statistic->compute();
+  m_inference->compute();
   stackOpenPage(m_resultsController);
 }
 
@@ -126,8 +126,8 @@ void InputController::fillCellForRow(Escher::HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type == k_parameterCellType) {
     ParameterCell* mCell = static_cast<ParameterCell*>(cell);
-    mCell->label()->setLayout(m_statistic->parameterSymbolAtIndex(row));
-    mCell->subLabel()->setMessage(m_statistic->parameterDefinitionAtIndex(row));
+    mCell->label()->setLayout(m_inference->parameterSymbolAtIndex(row));
+    mCell->subLabel()->setMessage(m_inference->parameterDefinitionAtIndex(row));
   }
   FloatParameterController<double>::fillCellForRow(cell, row);
 }
@@ -168,15 +168,15 @@ TextField* InputController::textFieldOfCellAtIndex(HighlightCell* cell,
 bool InputController::handleEvent(Ion::Events::Event event) {
   /* If the previous controller was the hypothesis controller, the pop on Left
    * event is unable. */
-  return !m_statistic->hasHypothesisParameters() &&
+  return !m_inference->hasHypothesisParameters() &&
          popFromStackViewControllerOnLeftEvent(event);
 }
 
 bool InputController::setParameterAtIndex(int parameterIndex, double f) {
-  if (!m_statistic->authorizedParameterAtIndex(f, parameterIndex)) {
+  if (!m_inference->authorizedParameterAtIndex(f, parameterIndex)) {
     App::app()->displayWarning(I18n::Message::ForbiddenValue);
     return false;
   }
-  m_statistic->setParameterAtIndex(f, parameterIndex);
+  m_inference->setParameterAtIndex(f, parameterIndex);
   return true;
 }

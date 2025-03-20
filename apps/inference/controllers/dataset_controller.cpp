@@ -5,11 +5,11 @@ namespace Inference {
 DatasetController::DatasetController(Escher::StackViewController* parent,
                                      InputController* inputController,
                                      InputStoreController* storeController,
-                                     Inference* statistic)
+                                     InferenceModel* inference)
     : UniformSelectableListController(parent),
       m_inputController(inputController),
       m_storeController(storeController),
-      m_statistic(statistic) {
+      m_inference(inference) {
   cell(k_indexOfInputStatisticsCell)
       ->label()
       ->setMessage(I18n::Message::InputStatistics);
@@ -22,9 +22,9 @@ bool DatasetController::handleEvent(Ion::Events::Event event) {
   }
   int row = selectedRow();
 
-  InputTable* tableModel = m_statistic->table();
+  InputTable* tableModel = m_inference->table();
   if (row == k_indexOfInputStatisticsCell) {
-    tableModel->unsetSeries(m_statistic);
+    tableModel->unsetSeries(m_inference);
     stackOpenPage(m_inputController);
   } else {
     assert(row == k_indexOfDatasetCell);

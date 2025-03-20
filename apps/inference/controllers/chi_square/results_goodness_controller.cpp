@@ -6,12 +6,12 @@ namespace Inference {
 
 ResultsGoodnessTabController::ResultsGoodnessTabController(
     Escher::Responder* parent, TestGraphController* testGraphController,
-    IntervalGraphController* intervalGraphController, GoodnessTest* statistic)
+    IntervalGraphController* intervalGraphController, GoodnessTest* inference)
     : TabViewController(parent, this, &m_resultsController,
                         &m_contributionsController, nullptr),
-      m_resultsController(this, statistic, testGraphController,
+      m_resultsController(this, inference, testGraphController,
                           intervalGraphController, false),
-      m_contributionsController(this, testGraphController, statistic) {}
+      m_contributionsController(this, testGraphController, inference) {}
 
 bool ResultsGoodnessTabController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Up) {
@@ -24,7 +24,7 @@ bool ResultsGoodnessTabController::handleEvent(Ion::Events::Event event) {
 // ResultsGoodnessTabController::MainResultsController
 
 const char* ResultsGoodnessTabController::MainResultsController::title() const {
-  m_statistic->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), true);
+  m_inference->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer), true);
   return m_titleBuffer;
 }
 
@@ -32,11 +32,11 @@ const char* ResultsGoodnessTabController::MainResultsController::title() const {
 
 ResultsGoodnessTabController::ContributionsController::ContributionsController(
     Escher::Responder* parentResponder, Escher::ViewController* nextController,
-    GoodnessTest* statistic)
+    GoodnessTest* inference)
     : CategoricalController(parentResponder, nextController,
                             Escher::Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
-      m_table(&m_selectableListView, this, statistic, this) {}
+      m_table(&m_selectableListView, this, inference, this) {}
 
 void ResultsGoodnessTabController::ContributionsController::
     createDynamicCells() {

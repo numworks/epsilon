@@ -3,13 +3,14 @@
 
 #include <poincare/statistics/inference.h>
 
-#include "inference.h"
+#include "inference_model.h"
 
 namespace Inference {
 
-class SignificanceTest : public Inference {
+class SignificanceTest : public InferenceModel {
  public:
-  SignificanceTest() : Inference(), m_testCriticalValue(NAN), m_pValue(NAN) {}
+  SignificanceTest()
+      : InferenceModel(), m_testCriticalValue(NAN), m_pValue(NAN) {}
 
   SubApp subApp() const override { return SubApp::SignificanceTest; }
 
@@ -49,7 +50,7 @@ class SignificanceTest : public Inference {
     return TestEstimateDescription(testType(), index);
   }
 
-  // Test statistic
+  // Test inference
   /* Returns the abscissa on the normalized density curve
    * corresponding to the input sample. */
   double testCriticalValue() const { return m_testCriticalValue; }

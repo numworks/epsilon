@@ -58,7 +58,7 @@ class GoodnessTest final : public Chi2Test {
     m_degreesOfFreedom = degreeOfFreedom;
   }
   /* Return the DegreesOfFreedom computed from the numberOfValuesPairs. Actual
-   * statistic's degree of freedom may differ because it can be overridden by
+   * inference's degree of freedom may differ because it can be overridden by
    * the user. */
   int computeDegreesOfFreedom();
   bool isDegreesOfFreedomAuthorized(double p) const {

@@ -3,11 +3,11 @@
 
 #include <poincare/statistics/inference.h>
 
-#include "inference.h"
+#include "inference_model.h"
 
 namespace Inference {
 
-class ConfidenceInterval : public Inference {
+class ConfidenceInterval : public InferenceModel {
  public:
   ConfidenceInterval()
       : m_estimate(NAN),

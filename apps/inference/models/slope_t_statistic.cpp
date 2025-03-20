@@ -7,8 +7,8 @@
 
 namespace Inference {
 
-void SlopeTStatistic::computeParametersFromSeries(const Inference* stat,
-                                                  int pageIndex) {
+void SlopeTStatistic::computeParametersFromSeries(
+    const InferenceModel* inference, int pageIndex) {
   assert(hasSeries(pageIndex));
   int seriesIndex = seriesAt(pageIndex);
   Shared::StoreToSeries seriesModel(this, seriesIndex);

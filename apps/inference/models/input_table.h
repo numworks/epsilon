@@ -8,7 +8,7 @@
 
 namespace Inference {
 
-class Inference;
+class InferenceModel;
 
 class InputTable {
  public:
@@ -17,10 +17,10 @@ class InputTable {
   // Store functions
   virtual int numberOfSeries() const = 0;
   virtual int seriesAt(int pageIndex) const { return -1; }
-  virtual void setSeriesAt(Inference*, int pageIndex, int series) {}
+  virtual void setSeriesAt(InferenceModel*, int pageIndex, int series) {}
   bool hasSeries(int pageIndex) const;
   bool hasAllSeries() const;
-  void unsetSeries(Inference*);
+  void unsetSeries(InferenceModel*);
 
   // Matrix special functions
   virtual void setValueAtPosition(double value, int row, int column) = 0;

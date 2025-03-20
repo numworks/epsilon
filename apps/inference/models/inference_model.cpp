@@ -1,4 +1,4 @@
-#include "inference.h"
+#include "inference_model.h"
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/global_context.h>
@@ -23,7 +23,7 @@ static Shared::GlobalContext* getContext() {
 }
 
 static void* initialize(SubApp subApp, Poincare::Inference::Type type,
-                        Inference* target) {
+                        InferenceModel* target) {
   switch (subApp) {
     case SubApp::SignificanceTest:
       switch (type.testType) {
@@ -99,9 +99,10 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
   }
 }
 
-static bool initializeStatistic(SubApp subApp, Poincare::Inference::Type type,
-                                Inference* target) {
-  target->~Inference();
+static bool initializeInferenceModel(SubApp subApp,
+                                     Poincare::Inference::Type type,
+                                     InferenceModel* target) {
+  target->~InferenceModel();
   assert(subApp != SubApp::ConfidenceInterval ||
          Poincare::Inference::ConfidenceInterval::
              IsTypeCompatibleWithConfidenceInterval(type));
@@ -111,40 +112,41 @@ static bool initializeStatistic(SubApp subApp, Poincare::Inference::Type type,
   return true;
 }
 
-bool Inference::initializeSubApp(SubApp subApp) {
+bool InferenceModel::initializeSubApp(SubApp subApp) {
   if (subApp == this->subApp()) {
     return false;
   }
   Poincare::Inference::Type dummyType(TestType::OneMean);
-  return initializeStatistic(subApp, dummyType, this);
+  return initializeInferenceModel(subApp, dummyType, this);
 }
 
-bool Inference::initializeTest(TestType testType) {
+bool InferenceModel::initializeTest(TestType testType) {
   if (testType == this->testType()) {
     return false;
   }
   Poincare::Inference::Type partialType(testType);
-  return initializeStatistic(subApp(), partialType, this);
+  return initializeInferenceModel(subApp(), partialType, this);
 }
 
-bool Inference::initializeDistribution(StatisticType statisticType) {
+bool InferenceModel::initializeDistribution(StatisticType statisticType) {
   if (statisticType == this->statisticType()) {
     return false;
   }
   Poincare::Inference::Type type(testType(), statisticType);
-  return initializeStatistic(subApp(), type, this);
+  return initializeInferenceModel(subApp(), type, this);
 }
 
-bool Inference::initializeCategoricalType(CategoricalType categoricalType) {
+bool InferenceModel::initializeCategoricalType(
+    CategoricalType categoricalType) {
   if (categoricalType == this->categoricalType()) {
     return false;
   }
   assert(testType() == TestType::Chi2);
   Poincare::Inference::Type type(testType(), statisticType(), categoricalType);
-  return initializeStatistic(subApp(), type, this);
+  return initializeInferenceModel(subApp(), type, this);
 }
 
-bool Inference::authorizedParameterAtIndex(double p, int i) const {
+bool InferenceModel::authorizedParameterAtIndex(double p, int i) const {
   if (i == indexOfThreshold()) {
     /* Since p will be converted to float later, we need to ensure that
      * it's not too close to 1.0 */
@@ -158,20 +160,20 @@ bool Inference::authorizedParameterAtIndex(double p, int i) const {
          Poincare::Inference::IsParameterValid(type(), p, i);
 }
 
-bool Inference::areParametersValid() {
+bool InferenceModel::areParametersValid() {
   return Poincare::Inference::AreParametersValid(type(),
                                                  constParametersArray());
 }
 
-double Inference::parameterAtIndex(int i) const {
+double InferenceModel::parameterAtIndex(int i) const {
   assert(i <= indexOfThreshold() &&
          indexOfThreshold() == numberOfTestParameters());
   return i == indexOfThreshold()
              ? m_threshold
-             : const_cast<Inference*>(this)->parametersArray()[i];
+             : const_cast<InferenceModel*>(this)->parametersArray()[i];
 }
 
-void Inference::setParameterAtIndex(double f, int i) {
+void InferenceModel::setParameterAtIndex(double f, int i) {
   assert(i <= indexOfThreshold() &&
          indexOfThreshold() == numberOfTestParameters());
   if (i == indexOfThreshold()) {
@@ -182,25 +184,26 @@ void Inference::setParameterAtIndex(double f, int i) {
   }
 }
 
-double Inference::cumulativeDistributiveFunctionAtAbscissa(double x) const {
+double InferenceModel::cumulativeDistributiveFunctionAtAbscissa(
+    double x) const {
   return Poincare::Distribution::CumulativeDistributiveFunctionAtAbscissa(
       distributionType(), x, distributionParameters());
 }
 
-double Inference::cumulativeDistributiveInverseForProbability(
+double InferenceModel::cumulativeDistributiveInverseForProbability(
     double probability) const {
   return Poincare::Distribution::CumulativeDistributiveInverseForProbability(
       distributionType(), probability, distributionParameters());
 }
 
-int Inference::secondResultSectionStart() const {
+int InferenceModel::secondResultSectionStart() const {
   int n = numberOfExtraResults();
   return n == 0 ? -1 : n;
 }
 
-void Inference::resultAtIndex(int index, double* value,
-                              Poincare::Layout* message,
-                              I18n::Message* subMessage, int* precision) {
+void InferenceModel::resultAtIndex(int index, double* value,
+                                   Poincare::Layout* message,
+                                   I18n::Message* subMessage, int* precision) {
   if (index < numberOfExtraResults()) {
     extraResultAtIndex(index, value, message, subMessage, precision);
     return;
@@ -209,7 +212,7 @@ void Inference::resultAtIndex(int index, double* value,
   inferenceResultAtIndex(index, value, message, subMessage, precision);
 }
 
-float Inference::computeYMax() const {
+float InferenceModel::computeYMax() const {
   float max = 0;
   switch (distributionType()) {
     case Poincare::Distribution::Type::Student:
@@ -227,7 +230,7 @@ float Inference::computeYMax() const {
   return (1 + Shared::StatisticalDistribution::k_displayTopMarginRatio) * max;
 }
 
-float Inference::canonicalDensityFunction(float x) const {
+float InferenceModel::canonicalDensityFunction(float x) const {
   return Poincare::Distribution::EvaluateAtAbscissa<double>(
       distributionType(), x, distributionParameters());
 }

@@ -15,7 +15,7 @@ class ResultsGoodnessTabController : public Escher::TabViewController,
   ResultsGoodnessTabController(Escher::Responder* parent,
                                TestGraphController* testGraphController,
                                IntervalGraphController* intervalGraphController,
-                               GoodnessTest* statistic);
+                               GoodnessTest* inference);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -45,7 +45,7 @@ class ResultsGoodnessTabController : public Escher::TabViewController,
    public:
     ContributionsController(Escher::Responder* parentResponder,
                             Escher::ViewController* nextController,
-                            GoodnessTest* statistic);
+                            GoodnessTest* inference);
     // ViewController
     void viewWillAppear() override;
     void stackOpenPage(ViewController* nextPage) override {

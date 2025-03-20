@@ -15,7 +15,7 @@ ResultsHomogeneityTableCell::ResultsHomogeneityTableCell(
       DynamicCellsDataSource<InferenceEvenOddBufferCell,
                              k_homogeneityTableNumberOfReusableInnerCells>(
           this),
-      m_statistic(test),
+      m_inference(test),
       m_mode(Mode::ExpectedValue),
       m_resultsTableController(resultsTableController) {
   m_selectableTableView.margins()->setBottom(Metric::CellSeparatorThickness);
@@ -70,20 +70,20 @@ void ResultsHomogeneityTableCell::fillInnerCellForLocation(
 
   double value;
   if (m_mode == Mode::ExpectedValue) {
-    if (column == m_statistic->numberOfDataColumns() &&
-        row == m_statistic->numberOfDataRows()) {
-      value = m_statistic->total();
-    } else if (column == m_statistic->numberOfDataColumns()) {
-      value = m_statistic->rowTotal(row);
-    } else if (row == m_statistic->numberOfDataRows()) {
-      value = m_statistic->columnTotal(column);
+    if (column == m_inference->numberOfDataColumns() &&
+        row == m_inference->numberOfDataRows()) {
+      value = m_inference->total();
+    } else if (column == m_inference->numberOfDataColumns()) {
+      value = m_inference->rowTotal(row);
+    } else if (row == m_inference->numberOfDataRows()) {
+      value = m_inference->columnTotal(column);
     } else {
-      value = m_statistic->dataValueAtLocation(Chi2Test::DataType::Expected,
+      value = m_inference->dataValueAtLocation(Chi2Test::DataType::Expected,
                                                column, row);
     }
   } else {
     assert(m_mode == Mode::Contribution);
-    value = m_statistic->dataValueAtLocation(Chi2Test::DataType::Contribution,
+    value = m_inference->dataValueAtLocation(Chi2Test::DataType::Contribution,
                                              column, row);
   }
   PrintValueInTextHolder(value, myCell);

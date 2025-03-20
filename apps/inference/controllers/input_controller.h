@@ -6,7 +6,7 @@
 #include <escher/menu_cell_with_editable_text.h>
 
 #include "inference/controllers/dynamic_cells_data_source.h"
-#include "inference/models/inference.h"
+#include "inference/models/inference_model.h"
 #include "results_controller.h"
 
 namespace Inference {
@@ -33,16 +33,17 @@ class InputController
       2;
 
   static void InputTitle(const Escher::ViewController* vc,
-                         const Inference* statistic, char* titleBuffer,
+                         const InferenceModel* inference, char* titleBuffer,
                          size_t titleBufferSize);
 
   InputController(Escher::StackViewController* parent,
-                  ResultsController* resultsController, Inference* statistic);
+                  ResultsController* resultsController,
+                  InferenceModel* inference);
   int numberOfRows() const override {
-    return m_statistic->numberOfParameters() + 1 /* button */;
+    return m_inference->numberOfParameters() + 1 /* button */;
   }
   const char* title() const override {
-    InputTitle(this, m_statistic, m_titleBuffer, k_titleBufferSize);
+    InputTitle(this, m_inference, m_titleBuffer, k_titleBufferSize);
     return m_titleBuffer;
   }
   ViewController::TitlesDisplay titlesDisplay() const override;
@@ -62,7 +63,7 @@ class InputController
 
  protected:
   double parameterAtIndex(int i) override {
-    return m_statistic->parameterAtIndex(i);
+    return m_inference->parameterAtIndex(i);
   }
 
  private:
@@ -75,7 +76,7 @@ class InputController
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */
   mutable char m_titleBuffer[k_titleBufferSize];
-  Inference* m_statistic;
+  InferenceModel* m_inference;
   ResultsController* m_resultsController;
 
   constexpr static int k_significanceCellType = 2;

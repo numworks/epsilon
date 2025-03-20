@@ -10,14 +10,14 @@ using namespace Escher;
 namespace Inference {
 
 ResultsController::ResultsController(
-    Responder* parent, Inference* statistic,
+    Responder* parent, InferenceModel* inference,
     TestGraphController* testGraphController,
     IntervalGraphController* intervalGraphController, bool enableHeadline)
     : ListWithTopAndBottomController(parent,
                                      enableHeadline ? &m_title : nullptr),
       DynamicCellsDataSource<ResultCell, k_maxNumberOfResultCells>(this),
       m_title(I18n::Message::CalculatedValues, k_messageFormat),
-      m_statistic(statistic),
+      m_inference(inference),
       m_testGraphController(testGraphController),
       m_intervalGraphController(intervalGraphController),
       m_titleBuffer{0},
@@ -27,12 +27,12 @@ ResultsController::ResultsController(
              ButtonCell::Style::EmbossedLight) {}
 
 ViewController::TitlesDisplay ResultsController::titlesDisplay() const {
-  if (m_statistic->subApp() == SubApp::ConfidenceInterval ||
-      (m_statistic->testType() == TestType::Chi2 &&
-       m_statistic->categoricalType() == CategoricalType::GoodnessOfFit)) {
+  if (m_inference->subApp() == SubApp::ConfidenceInterval ||
+      (m_inference->testType() == TestType::Chi2 &&
+       m_inference->categoricalType() == CategoricalType::GoodnessOfFit)) {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;
   }
-  return m_statistic->canChooseDataset()
+  return m_inference->canChooseDataset()
              ? TitlesDisplay(0b1011)
              : ViewController::TitlesDisplay::DisplayLastThreeTitles;
 }
@@ -43,11 +43,11 @@ const char* ResultsController::title() const {
       static_cast<StackViewController*>(parentResponder());
   bool resultsIsTopPage =
       stackViewControllerResponder->topViewController() != this;
-  if (resultsIsTopPage && m_statistic->subApp() == SubApp::ConfidenceInterval) {
+  if (resultsIsTopPage && m_inference->subApp() == SubApp::ConfidenceInterval) {
     m_intervalGraphController->setResultTitleForCurrentValues(
         m_titleBuffer, sizeof(m_titleBuffer), resultsIsTopPage);
   } else {
-    m_statistic->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer),
+    m_inference->setResultTitle(m_titleBuffer, sizeof(m_titleBuffer),
                                 resultsIsTopPage);
   }
   if (m_titleBuffer[0] == 0) {
@@ -62,12 +62,12 @@ void ResultsController::initView() {
 }
 
 bool ResultsController::ButtonAction(ResultsController* controller, void* s) {
-  if (!controller->m_statistic->isGraphable()) {
+  if (!controller->m_inference->isGraphable()) {
     App::app()->displayWarning(I18n::Message::InvalidValues);
     return false;
   }
   ViewController* graph;
-  if (controller->m_statistic->subApp() == SubApp::SignificanceTest) {
+  if (controller->m_inference->subApp() == SubApp::SignificanceTest) {
     graph = controller->m_testGraphController;
   } else {
     graph = controller->m_intervalGraphController;
@@ -77,7 +77,7 @@ bool ResultsController::ButtonAction(ResultsController* controller, void* s) {
 }
 
 int ResultsController::numberOfRows() const {
-  return m_statistic->numberOfResults() + 1 /* button */;
+  return m_inference->numberOfResults() + 1 /* button */;
 }
 
 void ResultsController::fillCellForRow(HighlightCell* cell, int row) {
@@ -89,7 +89,7 @@ void ResultsController::fillCellForRow(HighlightCell* cell, int row) {
   Poincare::Layout message;
   I18n::Message subMessage;
   int precision = Poincare::Preferences::VeryLargeNumberOfSignificantDigits;
-  m_statistic->resultAtIndex(row, &value, &message, &subMessage, &precision);
+  m_inference->resultAtIndex(row, &value, &message, &subMessage, &precision);
   constexpr int bufferSize = Constants::k_largeBufferSize;
   char buffer[bufferSize];
   Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode(

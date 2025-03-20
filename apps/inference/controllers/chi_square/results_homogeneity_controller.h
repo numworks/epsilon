@@ -11,7 +11,7 @@ namespace Inference {
 class ResultsHomogeneityController : public CategoricalController {
  public:
   ResultsHomogeneityController(Escher::ViewController* nextController,
-                               HomogeneityTest* statistic);
+                               HomogeneityTest* inference);
 
   // Responder
   bool handleEvent(Ion::Events::Event event) override;
@@ -44,7 +44,7 @@ class ResultsHomogeneityTabController : public Escher::TabViewController,
  public:
   ResultsHomogeneityTabController(Escher::StackViewController* parent,
                                   Escher::ViewController* nextController,
-                                  HomogeneityTest* statistic);
+                                  HomogeneityTest* inference);
 
   ViewController::TitlesDisplay titlesDisplay() const override {
     return ViewController::TitlesDisplay::DisplayLastTwoTitles;

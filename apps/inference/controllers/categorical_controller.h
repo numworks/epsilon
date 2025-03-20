@@ -106,7 +106,7 @@ class InputCategoricalController : public CategoricalController,
  public:
   InputCategoricalController(Escher::StackViewController* parent,
                              Escher::ViewController* nextController,
-                             Inference* statistic,
+                             InferenceModel* inference,
                              Escher::Invocation invocation,
                              uint8_t pageIndex = 0);
 
@@ -133,12 +133,12 @@ class InputCategoricalController : public CategoricalController,
   int indexOfNextCell() const override { return indexOfSignificanceCell() + 1; }
   virtual int indexOfEditedParameterAtIndex(int index) const {
     assert(index == indexOfSignificanceCell());
-    return m_statistic->indexOfThreshold();
+    return m_inference->indexOfThreshold();
   }
 
   const Escher::HighlightCell* privateExplicitCellAtRow(int row) const override;
 
-  Inference* m_statistic;
+  InferenceModel* m_inference;
   InputCategoricalCell<Escher::MessageTextView> m_significanceCell;
 
   /* There can be several instances of InputCategoricalController, each

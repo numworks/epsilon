@@ -24,7 +24,7 @@ class CategoricalTypeController
           2> {
  public:
   CategoricalTypeController(
-      Escher::StackViewController* parent, Chi2Test* statistic,
+      Escher::StackViewController* parent, Chi2Test* inference,
       InputGoodnessController* inputGoodnessController,
       InputHomogeneityController* inputHomogeneityController);
   ViewController::TitlesDisplay titlesDisplay() const override {
@@ -40,7 +40,7 @@ class CategoricalTypeController
   constexpr static int k_indexOfHomogeneityCell = 1;
 
  private:
-  Chi2Test* m_statistic;
+  Chi2Test* m_inference;
   InputGoodnessController* m_inputGoodnessController;
   InputHomogeneityController* m_inputHomogeneityController;
 };

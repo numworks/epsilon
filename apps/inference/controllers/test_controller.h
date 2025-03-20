@@ -6,7 +6,7 @@
 #include <escher/message_text_view.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
-#include <inference/models/inference.h>
+#include <inference/models/inference_model.h>
 #include <ion/events.h>
 
 namespace Inference {
@@ -28,7 +28,7 @@ class TestController
                  TypeController* typeController,
                  CategoricalTypeController* categoricalController,
                  InputStoreController* inputStoreController,
-                 InputController* inputController, Inference* statistic);
+                 InputController* inputController, InferenceModel* inference);
   void stackOpenPage(Escher::ViewController* nextPage) override;
   bool handleEvent(Ion::Events::Event e) override;
   const char* title() const override;
@@ -50,7 +50,7 @@ class TestController
   InputController* m_inputController;
   CategoricalTypeController* m_categoricalController;
   InputStoreController* m_inputStoreController;
-  Inference* m_statistic;
+  InferenceModel* m_inference;
 };
 
 }  // namespace Inference

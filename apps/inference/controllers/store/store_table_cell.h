@@ -15,7 +15,7 @@ class InputStoreController;
 class StoreTableCell : public DoubleColumnTableCell,
                        public Shared::StoreColumnHelper {
  public:
-  StoreTableCell(Escher::Responder* parentResponder, Inference* statistic,
+  StoreTableCell(Escher::Responder* parentResponder, InferenceModel* inference,
                  Poincare::Context* parentContext,
                  InputStoreController* inputStoreController,
                  Escher::ScrollViewDelegate* scrollViewDelegate);
@@ -29,11 +29,11 @@ class StoreTableCell : public DoubleColumnTableCell,
 
   // StoreColumnHelper
   Shared::DoublePairStore* store() override {
-    if (m_statistic->testType() == TestType::Slope) {
+    if (m_inference->testType() == TestType::Slope) {
       return static_cast<SlopeTStatistic*>(tableModel());
     }
-    assert(m_statistic->testType() == TestType::OneMean ||
-           m_statistic->testType() == TestType::TwoMeans);
+    assert(m_inference->testType() == TestType::OneMean ||
+           m_inference->testType() == TestType::TwoMeans);
     return static_cast<InputTableFromStatisticStore*>(tableModel());
   }
   const Shared::DoublePairStore* store() const {

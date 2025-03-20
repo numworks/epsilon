@@ -53,10 +53,10 @@ class ResultsHomogeneityTableCell
   // HomogeneityTableViewDataSource
   /* The totals are not displayed when in Contribution mode. */
   int innerNumberOfRows() const override {
-    return m_statistic->numberOfDataRows() + (m_mode == Mode::ExpectedValue);
+    return m_inference->numberOfDataRows() + (m_mode == Mode::ExpectedValue);
   }
   int innerNumberOfColumns() const override {
-    return m_statistic->numberOfDataColumns() + (m_mode == Mode::ExpectedValue);
+    return m_inference->numberOfDataColumns() + (m_mode == Mode::ExpectedValue);
   }
   Escher::HighlightCell* innerCell(int i) override {
     return DynamicCellsDataSource<
@@ -70,7 +70,7 @@ class ResultsHomogeneityTableCell
   // DynamicCellsDataSource
   void destroyCells() override;
 
-  HomogeneityTest* m_statistic;
+  HomogeneityTest* m_inference;
   Mode m_mode;
   ResultsHomogeneityController* m_resultsTableController;
 };

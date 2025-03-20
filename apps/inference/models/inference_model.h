@@ -1,5 +1,5 @@
-#ifndef INFERENCE_MODELS_STATISTIC_H
-#define INFERENCE_MODELS_STATISTIC_H
+#ifndef INFERENCE_MODELS_INFERENCE_MODEL_H
+#define INFERENCE_MODELS_INFERENCE_MODEL_H
 
 #include <apps/shared/global_context.h>
 #include <apps/shared/statistical_distribution.h>
@@ -24,10 +24,10 @@ namespace Inference {
  * This whole thing should use composition instead of inheritance.
  * */
 
-class Inference : public Shared::StatisticalDistribution {
+class InferenceModel : public Shared::StatisticalDistribution {
  public:
-  Inference() : m_threshold(-1), m_degreesOfFreedom(NAN) { init(); }
-  ~Inference() { tidy(); }
+  InferenceModel() : m_threshold(-1), m_degreesOfFreedom(NAN) { init(); }
+  ~InferenceModel() { tidy(); }
   virtual void init() {}
   virtual void tidy() {}
 
@@ -59,11 +59,11 @@ class Inference : public Shared::StatisticalDistribution {
     return Poincare::Inference::NumberOfStatisticsForTest(testType());
   }
 
-  constexpr I18n::Message statisticTitle() const {
-    return GetMessage(subApp(), Message::Title);
+  constexpr I18n::Message subAppTitle() const {
+    return GetMessage(subApp(), Message::SubAppTitle);
   }
-  constexpr I18n::Message statisticBasicTitle() const {
-    return GetMessage(subApp(), Message::BasicTitle);
+  constexpr I18n::Message subAppBasicTitle() const {
+    return GetMessage(subApp(), Message::SubAppBasicTitle);
   }
   constexpr I18n::Message tStatisticMessage() const {
     return GetMessage(subApp(), Message::TStatisticMessage);
@@ -215,7 +215,8 @@ class Inference : public Shared::StatisticalDistribution {
 
   const Poincare::Inference::ParametersArray constParametersArray() const {
     Poincare::Inference::ParametersArray array;
-    const double* paramsArray = const_cast<Inference*>(this)->parametersArray();
+    const double* paramsArray =
+        const_cast<InferenceModel*>(this)->parametersArray();
     std::copy(paramsArray,
               paramsArray + Poincare::Inference::k_maxNumberOfParameters,
               array.data());

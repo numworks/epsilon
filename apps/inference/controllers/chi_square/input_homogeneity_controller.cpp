@@ -6,12 +6,12 @@ namespace Inference {
 
 InputHomogeneityController::InputHomogeneityController(
     StackViewController* parent, Escher::ViewController* resultsController,
-    HomogeneityTest* statistic)
+    HomogeneityTest* inference)
     : InputCategoricalController(
-          parent, resultsController, statistic,
+          parent, resultsController, inference,
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
-      m_inputHomogeneityTable(&m_selectableListView, statistic, this, this) {}
+      m_inputHomogeneityTable(&m_selectableListView, inference, this, this) {}
 
 void InputHomogeneityController::createDynamicCells() {
   m_inputHomogeneityTable.createCells();

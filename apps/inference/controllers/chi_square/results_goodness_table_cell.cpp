@@ -6,12 +6,12 @@ namespace Inference {
 
 ResultGoodnessContributionsTable::ResultGoodnessContributionsTable(
     Escher::Responder* parent, CategoricalController* parentController,
-    GoodnessTest* statistic, Escher::ScrollViewDelegate* scrollViewDelegate)
+    GoodnessTest* inference, Escher::ScrollViewDelegate* scrollViewDelegate)
     : CategoricalTableCell(parent, this, scrollViewDelegate),
       DynamicCellsDataSource<InferenceEvenOddBufferCell,
                              k_goodnessContributionsTableNumberOfReusableCells>(
           this),
-      m_statistic(statistic),
+      m_inference(inference),
       m_parentController(parentController) {
   m_selectableTableView.margins()->setBottom(0);
 }
@@ -37,7 +37,7 @@ void ResultGoodnessContributionsTable::fillCellForLocation(
     myCell->setText(I18n::translate(k_titles[column]));
     myCell->setEven(true);
   } else {
-    fillValueCellForLocation(myCell, myCell, column, row - 1, m_statistic);
+    fillValueCellForLocation(myCell, myCell, column, row - 1, m_inference);
   }
 }
 

@@ -13,7 +13,7 @@ class OneMeanStatistic : public InputTableFromStatisticStore {
   int numberOfSeries() const override { return 1; }
 
  protected:
-  void computeParametersFromSeries(const Inference* stat,
+  void computeParametersFromSeries(const InferenceModel* inference,
                                    int pageIndex) override;
 
   double preProcessOneMeanParameter(double p, int index) const {

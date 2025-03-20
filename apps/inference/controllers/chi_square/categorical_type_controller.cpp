@@ -11,14 +11,14 @@
 using namespace Inference;
 
 CategoricalTypeController::CategoricalTypeController(
-    Escher::StackViewController* parent, Chi2Test* statistic,
+    Escher::StackViewController* parent, Chi2Test* inference,
     InputGoodnessController* inputGoodnessController,
     InputHomogeneityController* inputHomogeneityController)
     : Escher::UniformSelectableListController<
           Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                            Escher::ChevronView>,
           k_numberOfCells>(parent),
-      m_statistic(statistic),
+      m_inference(inference),
       m_inputGoodnessController(inputGoodnessController),
       m_inputHomogeneityController(inputHomogeneityController) {
   selectRow(0);  // Select first row by default
@@ -35,7 +35,7 @@ CategoricalTypeController::CategoricalTypeController(
 
 void CategoricalTypeController::stackOpenPage(
     Escher::ViewController* nextPage) {
-  selectRow(static_cast<int>(m_statistic->categoricalType()));
+  selectRow(static_cast<int>(m_inference->categoricalType()));
   ViewController::stackOpenPage(nextPage);
 }
 
@@ -56,7 +56,7 @@ bool CategoricalTypeController::handleEvent(Ion::Events::Event event) {
         break;
     }
     assert(controller != nullptr);
-    if (m_statistic->initializeCategoricalType(type)) {
+    if (m_inference->initializeCategoricalType(type)) {
       controller->selectRow(0);
     }
     stackOpenPage(controller);

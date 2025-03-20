@@ -14,7 +14,7 @@ class TwoMeansStatistic : public InputTableFromStatisticStore {
   int numberOfSeries() const override { return 2; }
 
  protected:
-  void computeParametersFromSeries(const Inference* stat,
+  void computeParametersFromSeries(const InferenceModel* inference,
                                    int pageIndex) override;
 
   double preProcessTwoMeansParameter(double p, int index) const {

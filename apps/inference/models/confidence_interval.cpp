@@ -74,7 +74,7 @@ float ConfidenceInterval::computeXMax() const {
 }
 
 float ConfidenceInterval::largestMarginOfError() {
-  /* Temporarily sets the statistic's threshold to the largest displayed
+  /* Temporarily sets the inference's threshold to the largest displayed
    * interval to compute the margin of error needed to display all intervals. */
   double previousThreshold = threshold();
   float intervalTemp = DisplayedIntervalThresholdAtIndex(
@@ -82,7 +82,7 @@ float ConfidenceInterval::largestMarginOfError() {
   m_threshold = intervalTemp;
   compute();
   double error = marginOfError();
-  // Restore the statistic
+  // Restore the inference
   setThreshold(previousThreshold);
   compute();
   return error;

@@ -6,18 +6,18 @@ namespace Inference {
 
 InputGoodnessController::InputGoodnessController(
     StackViewController* parent, ViewController* resultsController,
-    GoodnessTest* statistic)
+    GoodnessTest* inference)
     : InputCategoricalController(
-          parent, resultsController, statistic,
+          parent, resultsController, inference,
           Invocation::Builder<InputCategoricalController>(
               &InputCategoricalController::ButtonAction, this)),
       m_degreeOfFreedomCell(&m_selectableListView, this),
-      m_inputGoodnessTableCell(&m_selectableListView, statistic, this, this) {
+      m_inputGoodnessTableCell(&m_selectableListView, inference, this, this) {
   m_degreeOfFreedomCell.setMessages(I18n::Message::DegreesOfFreedom);
 }
 
 void InputGoodnessController::updateDegreeOfFreedomCell() {
-  PrintValueInTextHolder(m_statistic->degreeOfFreedom(),
+  PrintValueInTextHolder(m_inference->degreeOfFreedom(),
                          m_degreeOfFreedomCell.textField(), true, true);
 }
 
@@ -40,7 +40,7 @@ const HighlightCell* InputGoodnessController::privateExplicitCellAtRow(
 
 int InputGoodnessController::indexOfEditedParameterAtIndex(int index) const {
   if (index == k_indexOfDegreesOfFreedom) {
-    return static_cast<GoodnessTest*>(m_statistic)->indexOfDegreesOfFreedom();
+    return static_cast<GoodnessTest*>(m_inference)->indexOfDegreesOfFreedom();
   }
   return InputCategoricalController::indexOfEditedParameterAtIndex(index);
 }

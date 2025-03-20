@@ -19,15 +19,15 @@ class DatasetController
   DatasetController(Escher::StackViewController* parent,
                     InputController* inputController,
                     InputStoreController* storeController,
-                    Inference* statistic);
+                    InferenceModel* inference);
 
   const char* title() const override {
-    InputController::InputTitle(this, m_statistic, m_titleBuffer,
+    InputController::InputTitle(this, m_inference, m_titleBuffer,
                                 InputController::k_titleBufferSize);
     return m_titleBuffer;
   }
   TitlesDisplay titlesDisplay() const override {
-    return m_statistic->hasHypothesisParameters()
+    return m_inference->hasHypothesisParameters()
                ? TitlesDisplay::DisplayLastTwoTitles
                : TitlesDisplay::DisplayLastTitle;
   }
@@ -39,7 +39,7 @@ class DatasetController
 
   InputController* m_inputController;
   InputStoreController* m_storeController;
-  Inference* m_statistic;
+  InferenceModel* m_inference;
 
   /* m_titleBuffer is declared as mutable so that ViewController::title() can
    * remain const-qualified in the generic case. */

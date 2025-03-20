@@ -2,7 +2,7 @@
 
 #include <algorithm>
 
-#include "inference.h"
+#include "inference_model.h"
 #include "one_mean_interval.h"
 #include "one_mean_test.h"
 #include "slope_t_statistic.h"
@@ -24,9 +24,9 @@ bool InputTable::hasAllSeries() const {
   return true;
 }
 
-void InputTable::unsetSeries(Inference* stat) {
+void InputTable::unsetSeries(InferenceModel* inference) {
   for (int i = 0; i < numberOfSeries(); i++) {
-    setSeriesAt(stat, i, -1);
+    setSeriesAt(inference, i, -1);
   }
 }
 

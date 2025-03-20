@@ -11,7 +11,7 @@ class InputHomogeneityController : public InputCategoricalController {
   InputHomogeneityController(
       Escher::StackViewController* parent,
       Escher::ViewController* homogeneityResultsController,
-      HomogeneityTest* statistic);
+      HomogeneityTest* inference);
 
   // ViewController
   const char* title() const override {

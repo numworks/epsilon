@@ -7,7 +7,7 @@
 
 #include "inference/models/goodness_test.h"
 #include "inference/models/homogeneity_test.h"
-#include "inference/models/inference.h"
+#include "inference/models/inference_model.h"
 #include "inference/models/one_mean_interval.h"
 #include "inference/models/one_mean_test.h"
 #include "inference/models/one_proportion_statistic.h"
@@ -46,26 +46,26 @@ struct InferenceTestCase {
 
 double tolerance() { return 1E11 * DBL_EPSILON; }
 
-void inputThreshold(Inference* stat, double threshold) {
-  stat->setThreshold(threshold);
-  assert_roughly_equal<double>(stat->threshold(), threshold, tolerance());
+void inputThreshold(InferenceModel* inference, double threshold) {
+  inference->setThreshold(threshold);
+  assert_roughly_equal<double>(inference->threshold(), threshold, tolerance());
 }
 
-void inputValues(Inference* stat, InferenceTestCase& testCase,
+void inputValues(InferenceModel* inference, InferenceTestCase& testCase,
                  double initialThreshold) {
-  stat->initParameters();
-  assert_roughly_equal<double>(stat->threshold(), initialThreshold,
+  inference->initParameters();
+  assert_roughly_equal<double>(inference->threshold(), initialThreshold,
                                tolerance());
   for (int i = 0; i < testCase.m_numberOfInputs; i++) {
-    stat->setParameterAtIndex(testCase.m_inputs[i], i);
-    quiz_assert((stat->parameterAtIndex(i) && testCase.m_inputs[i]) ||
-                (stat->parameterAtIndex(i) == testCase.m_inputs[i]));
+    inference->setParameterAtIndex(testCase.m_inputs[i], i);
+    quiz_assert((inference->parameterAtIndex(i) && testCase.m_inputs[i]) ||
+                (inference->parameterAtIndex(i) == testCase.m_inputs[i]));
   }
 }
 
-void inputTableValues(InputTable* table, Inference* stat,
+void inputTableValues(InputTable* table, InferenceModel* inference,
                       InferenceTestCase& testCase) {
-  stat->initParameters();
+  inference->initParameters();
   for (int i = 0; i < testCase.m_numberOfInputs; i++) {
     InputTable::Index2D rowCol = table->indexToIndex2D(i);
     table->setValueAtPosition(testCase.m_inputs[i], rowCol.row, rowCol.col);
@@ -76,7 +76,7 @@ void inputTableValues(InputTable* table, Inference* stat,
   }
   // Compute parameters from the table if needed
   for (int p = 0; p < table->numberOfSeries(); p++) {
-    stat->validateInputs(0);
+    inference->validateInputs(0);
   }
 }
 
@@ -485,7 +485,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
 }
 
 QUIZ_CASE(probability_goodness_test) {
-  GoodnessTest stat;
+  GoodnessTest inference;
   InferenceTestCase tests[1];
   tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 8;
@@ -507,18 +507,18 @@ QUIZ_CASE(probability_goodness_test) {
   tests[0].m_pValue = 0.5552918911;
 
   for (size_t i = 0; i < std::size(tests); i++) {
-    stat.recomputeData();
+    inference.recomputeData();
     // Initialize values before calling computeDegreesOfFreedom
-    inputTableValues(&stat, &stat, tests[i]);
+    inputTableValues(&inference, &inference, tests[i]);
     /* Degree of freedom is either overridden or computed as the user inputs
      * values in the UI table. It must be set here to replicate this. */
-    stat.setDegreeOfFreedom(stat.computeDegreesOfFreedom());
-    testTest(&stat, tests[i]);
+    inference.setDegreeOfFreedom(inference.computeDegreesOfFreedom());
+    testTest(&inference, tests[i]);
     // Simulate user-input degree of freedom
     tests[i].m_degreesOfFreedom = 5;
-    stat.setDegreeOfFreedom(tests[i].m_degreesOfFreedom);
+    inference.setDegreeOfFreedom(tests[i].m_degreesOfFreedom);
     tests[i].m_pValue = 0.837503;
-    testTest(&stat, tests[i]);
+    testTest(&inference, tests[i]);
   }
 }
 

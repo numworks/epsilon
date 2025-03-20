@@ -5,24 +5,25 @@
 
 namespace Inference {
 
-void InputTableFromStore::setSeriesAt(Inference* stat, int pageIndex,
+void InputTableFromStore::setSeriesAt(InferenceModel* inference, int pageIndex,
                                       int series) {
   assert(pageIndex >= 0 && pageIndex < m_series.size());
   m_series[pageIndex] = series;
-  if (!hasSeries(pageIndex) && !stat->areParametersValid()) {
-    stat->initParameters();
+  if (!hasSeries(pageIndex) && !inference->areParametersValid()) {
+    inference->initParameters();
   }
 }
 
-bool InputTableFromStore::validateInputs(Inference* stat, int pageIndex) {
+bool InputTableFromStore::validateInputs(InferenceModel* inference,
+                                         int pageIndex) {
   assert(pageIndex >= 0 && pageIndex < numberOfSeries());
   if (hasSeries(pageIndex)) {
     if (!validateSeries(doublePairStore(), pageIndex)) {
       return false;
     }
-    computeParametersFromSeries(stat, pageIndex);
+    computeParametersFromSeries(inference, pageIndex);
   }
-  return stat->areParametersValid();
+  return inference->areParametersValid();
 }
 
 bool InputTableFromStore::authorizedValueAtPosition(double p, int row,
@@ -68,9 +69,9 @@ void InputTableFromStore::recomputeData() {
   }
 }
 
-void InputTableFromStatisticStore::setSeriesAt(Inference* stat, int pageIndex,
-                                               int series) {
-  InputTableFromStore::setSeriesAt(stat, pageIndex, series);
+void InputTableFromStatisticStore::setSeriesAt(InferenceModel* inference,
+                                               int pageIndex, int series) {
+  InputTableFromStore::setSeriesAt(inference, pageIndex, series);
   initDatasetsIfSeries();
 }
 
@@ -80,8 +81,8 @@ void InputTableFromStatisticStore::deleteValuesInColumn(int column) {
 }
 
 bool InputTableFromStatisticStore::computedParameterAtIndex(
-    int index, Inference* stat, double* value, Poincare::Layout* message,
-    I18n::Message* subMessage, int* precision) {
+    int index, InferenceModel* inference, double* value,
+    Poincare::Layout* message, I18n::Message* subMessage, int* precision) {
   *precision = Poincare::Preferences::MediumNumberOfSignificantDigits;
 
   constexpr int k_oneMeanNumberOfParams =
@@ -90,18 +91,18 @@ bool InputTableFromStatisticStore::computedParameterAtIndex(
   /* For Z distribution, the computed parameter at index 1 (and 4 in case of
    * TwoMeans) is not the parameter at that index (which is the population
    * standard deviation).*/
-  if (stat->statisticType() != StatisticType::Z ||
+  if (inference->statisticType() != StatisticType::Z ||
       index % k_oneMeanNumberOfParams != Params::OneMean::S) {
-    *value = stat->parameterAtIndex(index);
-    *message = stat->parameterSymbolAtIndex(index);
-    *subMessage = stat->parameterDefinitionAtIndex(index);
+    *value = inference->parameterAtIndex(index);
+    *message = inference->parameterSymbolAtIndex(index);
+    *subMessage = inference->parameterDefinitionAtIndex(index);
     return true;
   }
 
   /* Weave sample standard deviation between mean and population. */
   *value = sampleStandardDeviation(seriesAt(index / k_oneMeanNumberOfParams));
 
-  Poincare::Inference::Type tType(stat->type().testType, StatisticType::T);
+  Poincare::Inference::Type tType(inference->type().testType, StatisticType::T);
   *message = Poincare::Inference::ParameterLayout(tType, index);
   *subMessage = ParameterDescriptionAtIndex(tType, index);
 

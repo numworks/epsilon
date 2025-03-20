@@ -4,8 +4,8 @@
 
 namespace Inference {
 
-void TwoMeansStatistic::computeParametersFromSeries(const Inference* stat,
-                                                    int pageIndex) {
+void TwoMeansStatistic::computeParametersFromSeries(
+    const InferenceModel* inference, int pageIndex) {
   assert(hasSeries(pageIndex));
   int seriesIndex = seriesAt(pageIndex);
   Shared::StoreToSeries seriesModel(this, seriesIndex);
@@ -30,7 +30,7 @@ void TwoMeansStatistic::computeParametersFromSeries(const Inference* stat,
    * be computed from the datasets. For Z tests however, the S parameters are
    * the population standard deviations, which are given by the user. */
   m_params[xIndex] = oneMeanArray[Params::OneMean::X];
-  if (stat->statisticType() != StatisticType::Z) {
+  if (inference->statisticType() != StatisticType::Z) {
     m_params[sIndex] = oneMeanArray[Params::OneMean::S];
   }
   m_params[nIndex] = oneMeanArray[Params::OneMean::N];

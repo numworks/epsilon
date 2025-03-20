@@ -22,14 +22,14 @@ TestController::TestController(StackViewController* parentResponder,
                                CategoricalTypeController* categoricalController,
                                InputStoreController* inputStoreController,
                                InputController* inputController,
-                               Inference* statistic)
+                               InferenceModel* inference)
     : UniformSelectableListController(parentResponder),
       m_hypothesisController(hypothesisController),
       m_typeController(typeController),
       m_inputController(inputController),
       m_categoricalController(categoricalController),
       m_inputStoreController(inputStoreController),
-      m_statistic(statistic) {
+      m_inference(inference) {
   cell(k_indexOfOneProp)->label()->setMessage(I18n::Message::OneProportion);
   cell(k_indexOfOneMean)->label()->setMessage(I18n::Message::OneMean);
   cell(k_indexOfTwoProps)->label()->setMessage(I18n::Message::TwoProportions);
@@ -42,11 +42,11 @@ TestController::TestController(StackViewController* parentResponder,
 }
 
 const char* TestController::title() const {
-  return I18n::translate(m_statistic->statisticTitle());
+  return I18n::translate(m_inference->subAppTitle());
 }
 
 void TestController::stackOpenPage(ViewController* nextPage) {
-  TestType type = m_statistic->testType();
+  TestType type = m_inference->testType();
   selectRow(static_cast<int>(type));
   ViewController::stackOpenPage(nextPage);
 }
@@ -83,14 +83,14 @@ bool TestController::handleEvent(Ion::Events::Event event) {
     assert(selectedRow() == k_indexOfChiSquare);
     testType = TestType::Chi2;
   }
-  bool statChanged = m_statistic->initializeTest(testType);
-  if (m_statistic->testType() == TestType::Chi2) {
+  bool statChanged = m_inference->initializeTest(testType);
+  if (m_inference->testType() == TestType::Chi2) {
     controller = m_categoricalController;
-  } else if (m_statistic->numberOfAvailableStatistics() > 1) {
+  } else if (m_inference->numberOfAvailableStatistics() > 1) {
     controller = m_typeController;
-  } else if (m_statistic->hasHypothesisParameters()) {
+  } else if (m_inference->hasHypothesisParameters()) {
     controller = m_hypothesisController;
-  } else if (m_statistic->testType() == TestType::Slope) {
+  } else if (m_inference->testType() == TestType::Slope) {
     controller = m_inputStoreController;
   } else {
     controller = m_inputController;
@@ -105,21 +105,21 @@ bool TestController::handleEvent(Ion::Events::Event event) {
 void TestController::viewWillAppear() {
   cell(k_indexOfOneProp)
       ->subLabel()
-      ->setMessage(m_statistic->zStatisticMessage());
+      ->setMessage(m_inference->zStatisticMessage());
   cell(k_indexOfOneMean)
       ->subLabel()
-      ->setMessage(m_statistic->tOrZStatisticMessage());
+      ->setMessage(m_inference->tOrZStatisticMessage());
   cell(k_indexOfTwoProps)
       ->subLabel()
-      ->setMessage(m_statistic->zStatisticMessage());
+      ->setMessage(m_inference->zStatisticMessage());
   cell(k_indexOfTwoMeans)
       ->subLabel()
-      ->setMessage(m_statistic->tOrZStatisticMessage());
+      ->setMessage(m_inference->tOrZStatisticMessage());
   cell(k_indexOfChiSquare)
-      ->setVisible(m_statistic->numberOfTestTypes() == numberOfRows());
+      ->setVisible(m_inference->numberOfTestTypes() == numberOfRows());
   cell(k_indexOfSlope)
       ->subLabel()
-      ->setMessage(m_statistic->tStatisticMessage());
+      ->setMessage(m_inference->tStatisticMessage());
 }
 
 }  // namespace Inference

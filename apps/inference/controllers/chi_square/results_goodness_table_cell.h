@@ -19,7 +19,7 @@ class ResultGoodnessContributionsTable
  public:
   ResultGoodnessContributionsTable(
       Escher::Responder* parent, CategoricalController* parentController,
-      GoodnessTest* statistic, Escher::ScrollViewDelegate* scrollViewDelegate);
+      GoodnessTest* inference, Escher::ScrollViewDelegate* scrollViewDelegate);
 
   // View
   void drawRect(KDContext* ctx, KDRect rect) const override;
@@ -50,7 +50,7 @@ class ResultGoodnessContributionsTable
 
   // TableViewDataSource
   int numberOfRows() const override {
-    return 1 + m_statistic->numberOfDataRows();
+    return 1 + m_inference->numberOfDataRows();
   }
   int numberOfColumns() const override { return 3; }
   int typeAtLocation(int column, int row) const override { return 0; }
@@ -62,7 +62,7 @@ class ResultGoodnessContributionsTable
 
   static constexpr KDCoordinate k_columnsWidth[] = {95, 95, 100};
 
-  GoodnessTest* m_statistic;
+  GoodnessTest* m_inference;
   CategoricalController* m_parentController;
 };
 }  // namespace Inference

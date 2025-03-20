@@ -23,14 +23,16 @@ union InferenceBuffer {
     new (&m_oneMeanTInterval) OneMeanTInterval(nullptr);
     inference()->initParameters();
   }
-  ~InferenceBuffer() { inference()->~Inference(); }
+  ~InferenceBuffer() { inference()->~InferenceModel(); }
   // Rule of 5
   InferenceBuffer(const InferenceBuffer& other) = delete;
   InferenceBuffer(InferenceBuffer&& other) = delete;
   InferenceBuffer& operator=(const InferenceBuffer& other) = delete;
   InferenceBuffer& operator=(InferenceBuffer&& other) = delete;
 
-  Inference* inference() { return reinterpret_cast<Inference*>(this); }
+  InferenceModel* inference() {
+    return reinterpret_cast<InferenceModel*>(this);
+  }
 
  private:
   // Tests

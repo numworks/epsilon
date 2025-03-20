@@ -8,21 +8,21 @@ namespace Inference {
 
 ResultsHomogeneityTabController::ResultsHomogeneityTabController(
     Escher::StackViewController* parent, Escher::ViewController* nextController,
-    HomogeneityTest* statistic)
+    HomogeneityTest* inference)
     : TabViewController(parent, this, &m_expectedValuesController,
                         &m_contributionsController, nullptr),
-      m_tableController(nextController, statistic),
+      m_tableController(nextController, inference),
       m_expectedValuesController(this, &m_tableController),
       m_contributionsController(this, &m_tableController) {}
 
 // ResultsHomogeneityController
 
 ResultsHomogeneityController::ResultsHomogeneityController(
-    Escher::ViewController* resultsController, HomogeneityTest* statistic)
+    Escher::ViewController* resultsController, HomogeneityTest* inference)
     : CategoricalController(nullptr, resultsController,
                             Invocation::Builder<CategoricalController>(
                                 &CategoricalController::ButtonAction, this)),
-      m_resultsHomogeneityTable(&m_selectableListView, statistic, this, this) {}
+      m_resultsHomogeneityTable(&m_selectableListView, inference, this, this) {}
 
 void ResultsHomogeneityController::createDynamicCells() {
   m_resultsHomogeneityTable.createCells();

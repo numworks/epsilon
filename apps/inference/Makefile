@@ -40,7 +40,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   models/confidence_interval.cpp \
   models/goodness_test.cpp \
   models/homogeneity_test.cpp \
-  models/inference.cpp \
+  models/inference_model.cpp \
   models/one_mean_statistic.cpp \
   models/significance_test.cpp \
   models/slope_t_statistic.cpp \

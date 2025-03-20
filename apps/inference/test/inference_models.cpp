@@ -17,12 +17,12 @@
 #include "inference/models/two_proportions_statistic.h"
 
 using namespace Inference;
-using namespace Poincare;
+using ComparisonJunior = Poincare::ComparisonJunior;
 
 /* TODO: some values have been computed from an approximative source of
  * truth... It should be double-checked. */
 
-struct StatisticTestCase {
+struct InferenceTestCase {
   // Inputs
   double m_firstHypothesisParam;
   ComparisonJunior::Operator m_op;
@@ -51,7 +51,7 @@ void inputThreshold(Inference* stat, double threshold) {
   assert_roughly_equal<double>(stat->threshold(), threshold, tolerance());
 }
 
-void inputValues(Inference* stat, StatisticTestCase& testCase,
+void inputValues(Inference* stat, InferenceTestCase& testCase,
                  double initialThreshold) {
   stat->initParameters();
   assert_roughly_equal<double>(stat->threshold(), initialThreshold,
@@ -64,7 +64,7 @@ void inputValues(Inference* stat, StatisticTestCase& testCase,
 }
 
 void inputTableValues(InputTable* table, Inference* stat,
-                      StatisticTestCase& testCase) {
+                      InferenceTestCase& testCase) {
   stat->initParameters();
   for (int i = 0; i < testCase.m_numberOfInputs; i++) {
     InputTable::Index2D rowCol = table->indexToIndex2D(i);
@@ -80,7 +80,7 @@ void inputTableValues(InputTable* table, Inference* stat,
   }
 }
 
-void testTest(SignificanceTest* test, StatisticTestCase& testCase) {
+void testTest(SignificanceTest* test, InferenceTestCase& testCase) {
   inputThreshold(test, testCase.m_significanceLevel);
   test->hypothesis()->m_h0 = testCase.m_firstHypothesisParam;
   test->hypothesis()->m_alternative = testCase.m_op;
@@ -100,7 +100,7 @@ void testTest(SignificanceTest* test, StatisticTestCase& testCase) {
   }
 }
 
-void testInterval(ConfidenceInterval* interval, StatisticTestCase& testCase) {
+void testInterval(ConfidenceInterval* interval, InferenceTestCase& testCase) {
   inputThreshold(interval, testCase.m_confidenceLevel);
 
   interval->compute();
@@ -116,7 +116,7 @@ void testInterval(ConfidenceInterval* interval, StatisticTestCase& testCase) {
 }
 
 QUIZ_CASE(probability_one_proportion_statistic) {
-  StatisticTestCase tests[2];
+  InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.4;
   tests[0].m_op = ComparisonJunior::Operator::Inferior;
   tests[0].m_numberOfInputs = 2;
@@ -164,7 +164,7 @@ QUIZ_CASE(probability_one_proportion_statistic) {
 }
 
 QUIZ_CASE(probability_one_mean_t_statistic) {
-  StatisticTestCase tests[2];
+  InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 128;
   tests[0].m_op = ComparisonJunior::Operator::Inferior;
   tests[0].m_numberOfInputs = 3;
@@ -215,7 +215,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
 }
 
 QUIZ_CASE(probability_one_mean_z_statistic) {
-  StatisticTestCase tests[2];
+  InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 128;
   tests[0].m_op = ComparisonJunior::Operator::Inferior;
   tests[0].m_numberOfInputs = 3;
@@ -265,7 +265,7 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
 }
 
 QUIZ_CASE(probability_two_proportions_statistic) {
-  StatisticTestCase tests[2];
+  InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0;
   tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 4;
@@ -315,7 +315,7 @@ QUIZ_CASE(probability_two_proportions_statistic) {
 }
 
 QUIZ_CASE(probability_two_means_t_statistic) {
-  StatisticTestCase tests[2];
+  InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0;
   tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 6;
@@ -372,7 +372,7 @@ QUIZ_CASE(probability_two_means_t_statistic) {
 }
 
 QUIZ_CASE(probability_pooled_t_test) {
-  StatisticTestCase tests[2];
+  InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.3;
   tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 6;
@@ -429,7 +429,7 @@ QUIZ_CASE(probability_pooled_t_test) {
 }
 
 QUIZ_CASE(probability_two_means_z_statistic) {
-  StatisticTestCase tests[2];
+  InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.;
   tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 6;
@@ -486,7 +486,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
 
 QUIZ_CASE(probability_goodness_test) {
   GoodnessTest stat;
-  StatisticTestCase tests[1];
+  InferenceTestCase tests[1];
   tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = 8;
   tests[0].m_inputs[0] = 1;
@@ -524,7 +524,7 @@ QUIZ_CASE(probability_goodness_test) {
 
 QUIZ_CASE(probability_homogeneity_test) {
   // clang-format off
-  StatisticTestCase tests[1];
+  InferenceTestCase tests[1];
   tests[0].m_op = ComparisonJunior::Operator::Superior;
   tests[0].m_numberOfInputs = HomogeneityTest::k_maxNumberOfColumns *
                           HomogeneityTest::k_maxNumberOfRows;
@@ -590,7 +590,7 @@ QUIZ_CASE(probability_homogeneity_test) {
 }
 
 QUIZ_CASE(probability_slope_t_statistic) {
-  StatisticTestCase testCase;
+  InferenceTestCase testCase;
   testCase.m_firstHypothesisParam = 0.;
   testCase.m_op = ComparisonJunior::Operator::NotEqual;
   testCase.m_numberOfInputs = 16;
@@ -636,7 +636,7 @@ QUIZ_CASE(probability_one_mean_t_with_table) {
   /* Create a random dataset and make sure the computed values match whether the
    * raw data or their statistics are the inputs. */
 
-  StatisticTestCase rawDataCase{
+  InferenceTestCase rawDataCase{
       .m_firstHypothesisParam = 128,
       .m_op = ComparisonJunior::Operator::Inferior,
       .m_numberOfInputs = 100,
@@ -655,7 +655,7 @@ QUIZ_CASE(probability_one_mean_t_with_table) {
   rawDataTest.setSeriesAt(&rawDataTest, 0, k_series);
   inputTableValues(&rawDataTest, &rawDataTest, rawDataCase);
 
-  StatisticTestCase parametersCase{
+  InferenceTestCase parametersCase{
       .m_numberOfInputs = 3,
       .m_inputs =
           {

@@ -47,7 +47,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/inference/,$(addsuffix :-test, \
   models/input_table.cpp \
   models/input_table_from_store.cpp \
   models/two_means_statistic.cpp \
-  test/statistics.cpp:+test \
+  test/inference_models.cpp:+test \
 )
 
 $(call depends_on_image,$(PATH_apps)/inference/app.cpp,$(PATH_apps)/inference/inference_icon.png)

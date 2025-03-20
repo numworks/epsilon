@@ -96,6 +96,8 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
         default:
           OMG::unreachable();
       }
+    default:
+      OMG::unreachable();
   }
 }
 

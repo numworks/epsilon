@@ -36,7 +36,6 @@ class Tree : public TypeBlock {
   static uint32_t nextNodeCount;
   static uint32_t nextNodeInTreeStackCount;
 #endif
-  static void Init();
 
   // Prevent using Tree objects directly
   Tree() = delete;

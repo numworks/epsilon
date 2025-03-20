@@ -232,7 +232,7 @@ bool Tree::nodeIsIdenticalTo(const Tree* other) const {
   return size == other->nodeSize() && memcmp(this, other, size) == 0;
 }
 
-const Tree* nextTreeCacheless(const Tree* result) {
+const Tree* NextTreeNoCache(const Tree* result) {
   int nbOfChildrenToScan = 1;
   while (nbOfChildrenToScan > 0) {
     nbOfChildrenToScan += result->numberOfChildren() - 1;
@@ -241,84 +241,81 @@ const Tree* nextTreeCacheless(const Tree* result) {
   return result;
 }
 
-struct CacheEntry {
-  const Tree* key;
-  const Tree* value;
-};
-
-constexpr static size_t k_cacheSize = 20;
-struct Cache {
+template <size_t k_size>
+class Cache {
  public:
-  Cache(size_t size) : actualSize(size) {};
-
   bool FindInCache(const Tree* key, const Tree** result) {
-    for (size_t i = 0; i < cacheLength; ++i) {
-      if (data[i].key == key) {
-        assert(data[i].value == nextTreeCacheless(key));
-        *result = data[i].value;
+    for (size_t i = 0; i < m_cacheLength; ++i) {
+      if (m_data[i].key == key) {
+        assert(m_data[i].value == NextTreeNoCache(key));
+        *result = m_data[i].value;
         return true;
+      } else if (m_data[i].key == 0) {
+        break;
       }
     }
     return false;
   }
 
   void UpdateCache(const Tree* key, const Tree* value) {
-    data[cacheIndex].value = value;
-    data[cacheIndex].key = key;
-    ++cacheIndex %= actualSize;
-    if (cacheLength < actualSize) {
-      ++cacheLength;
+    m_data[m_cacheIndex].value = value;
+    m_data[m_cacheIndex].key = key;
+    ++m_cacheIndex %= k_size;
+    if (m_cacheLength < k_size) {
+      ++m_cacheLength;
     }
+    assert(m_cacheIndex < k_size && m_cacheIndex <= m_cacheLength);
   }
 
   void ResetCache() {
-    cacheLength = 0;
-    cacheIndex = 0;
+    m_cacheLength = 0;
+    m_cacheIndex = 0;
   }
 
- public:
-  size_t cacheLength;
-  const size_t actualSize;
-  CacheEntry data[k_cacheSize];
-  size_t cacheIndex;
+  struct Entry {
+    const Tree* key;
+    const Tree* value;
+  };
+
+ private:
+  Entry m_data[k_size];
+  size_t m_cacheLength;
+  size_t m_cacheIndex;
 };
 
-OMG::GlobalBox<Cache> TreeStackCache;
-OMG::GlobalBox<Cache> FlashCache;
+Cache<20> TreeStackCache;
+Cache<5> ReadOnlyCache;
 
-void Tree::Init() {
-  TreeStackCache.init(20);
-  FlashCache.init(5);
+/* We tried using the [after] argument to only clear the cache located after
+ * this address. Ensuring that cache information from trees that did not changed
+ * stayed on cache. But this lead to a drastic slow down on the cache reset */
+void Tree::ResetCache(const void* after) { TreeStackCache.ResetCache(); }
+
+template <size_t s>
+const Tree* NextTreeWithCache(const Tree* e, Cache<s>* cache) {
+  const Tree* result;
+  if (!cache->FindInCache(e, &result)) {
+    result = NextTreeNoCache(e);
+    cache->UpdateCache(e, result);
+  }
+  return result;
 }
 
-void Tree::ResetCache(const void* after) { TreeStackCache->ResetCache(); }
-
 const Tree* Tree::nextTree() const {
-  if (Ion::ReadOnlyMemory::IncludesAddress(this)) {
-    const Tree* result;
-    if (!FlashCache->FindInCache(this, &result)) {
-      result = nextTreeCacheless(this);
-      FlashCache->UpdateCache(this, result);
-    }
-    return result;
-  } else if (SharedTreeStack->firstBlock() <= this &&
-             this < SharedTreeStack->lastBlock()) {
-    const Tree* result;
-    if (!TreeStackCache->FindInCache(this, &result)) {
-      result = nextTreeCacheless(this);
-      TreeStackCache->UpdateCache(this, result);
-    }
-    return result;
+  if (SharedTreeStack->contains(this)) {
+    return NextTreeWithCache(this, &TreeStackCache);
+  } else if (Ion::ReadOnlyMemory::IncludesAddress(this)) {
+    return NextTreeWithCache(this, &ReadOnlyCache);
   }
-  return nextTreeCacheless(this);
+  return NextTreeNoCache(this);
 }
 
 #if POINCARE_TREE_LOG
 template <size_t t>
-void LogC(Cache* c) {
-  std::cout << "Cache has " << c->cacheLength << " elements\n";
-  for (int i = 0; i < c->cacheLength; ++i) {
-    std::cout << c->data[i].key << " => " << c->data[i].value << std::endl;
+void LogC(Cache<t>* c) {
+  std::cout << "Cache has " << c->m_cacheLength << " elements\n";
+  for (int i = 0; i < c->m_cacheLength; ++i) {
+    std::cout << c->m_data[i].key << " => " << c->m_data[i].value << std::endl;
   }
 }
 #endif

@@ -7,14 +7,23 @@
 #include <poincare/src/solver/solver_algorithms.h>
 #include <poincare/src/statistics/domain.h>
 
+#include <cmath>
+
 #include "distribution.h"
 
 namespace Poincare::Internal::Distribution {
+
+bool IsNan(double val) { return std::isnan(val); }
+bool IsNan(float val) { return std::isnan(val); }
+bool IsNan(const Tree* val) { return val == nullptr; }
 
 template <typename U>
 OMG::Troolean IsParameterValid(Type type, U val, int index,
                                const ParametersArray<U> parameters) {
   assert(index >= 0 && index < NumberOfParameters(type));
+  if (IsNan(val)) {
+    return OMG::Troolean::False;
+  }
   switch (type) {
     case Type::Binomial:
       return index == Params::Binomial::N

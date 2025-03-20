@@ -152,6 +152,9 @@ Poincare::Layout ParameterLayout(Type type, int index) {
 }
 
 bool IsParameterValid(Type type, double p, int index) {
+  if (std::isnan(p)) {
+    return false;
+  }
   switch (type.testType) {
     case TestType::OneProportion:
     case TestType::TwoProportions: {

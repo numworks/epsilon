@@ -151,7 +151,7 @@ ParametersArray ComputeSlopeParametersFromSeries(const Series& series);
 
 // ===== Degrees of freedom =====
 
-bool HasDegreesOfFreedom(Type type);
+bool HasDegreesOfFreedom(StatisticType statisticType);
 // Returns NAN if the type doesn't have degrees of freedom
 double ComputeDegreesOfFreedom(Type type, const ParametersArray parameters);
 

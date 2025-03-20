@@ -65,8 +65,8 @@ const char* CriticalValueSymbol(StatisticType statisticType) {
   }
 }
 
-bool HasDegreesOfFreedom(Type type) {
-  return type.statisticType != StatisticType::Z;
+bool HasDegreesOfFreedom(StatisticType statisticType) {
+  return statisticType != StatisticType::Z;
 }
 
 double ComputeDegreesOfFreedom(Type type, const ParametersArray parameters) {

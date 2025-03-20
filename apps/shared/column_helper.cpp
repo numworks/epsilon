@@ -157,7 +157,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
                                                 int* series, int* column) {
   StoreContext storeContext(store(), m_parentContext);
   UserExpression formula =
-      UserExpression::Parse(formulaLayout.tree(), &storeContext);
+      UserExpression::Parse(formulaLayout.tree(), &storeContext, true, true);
   if (formula.isUninitialized()) {
     return FillColumnStatus::SyntaxError;
   }
@@ -193,6 +193,11 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   }
 
   if (reduced.isList()) {
+    if (!Poincare::Dimension(reduced.cloneChildAtIndex(0), m_parentContext)
+             .isScalar()) {
+      return FillColumnStatus::DataNotSuitable;
+    }
+
     bool allChildrenAreUndefined = true;
     int formulaNumberOfChildren =
         static_cast<List&>(reduced).numberOfChildren();

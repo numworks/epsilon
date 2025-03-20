@@ -83,7 +83,7 @@ void PrepareFunctionForApproximation(Tree* e, const char* variable,
                                      ComplexFormat complexFormat) {
   Variables::ReplaceSymbol(e, variable, 0,
                            complexFormat == ComplexFormat::Real
-                               ? ComplexSign::RealUnknown()
+                               ? ComplexSign::Real()
                                : ComplexSign::Unknown());
   /* All symbols should already have been replaced by their definition.
    * Leftover symbols can be replaced by undefined. */

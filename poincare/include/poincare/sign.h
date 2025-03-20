@@ -245,13 +245,13 @@ class ComplexSign {
 
   bool operator==(const ComplexSign&) const = default;
   /* OR operator on both real and imaginary signs. See Sign operators.
-   * RealUnknown() || Zero() = RealUnknown() */
+   * Real() || Zero() = Real() */
   ComplexSign operator||(const ComplexSign& other) const {
     return ComplexSign(realSign() || other.realSign(),
                        imagSign() || other.imagSign());
   }
   /* AND operator on both real and imaginary signs. See Sign operators.
-   * RealUnknown() && Zero() = Zero() */
+   * Real() && Zero() = Zero() */
   ComplexSign operator&&(const ComplexSign& other) const {
     return ComplexSign(realSign() && other.realSign(),
                        imagSign() && other.imagSign());
@@ -260,7 +260,7 @@ class ComplexSign {
   static constexpr ComplexSign RealInteger() {
     return ComplexSign(Sign::Integer(), Sign::Zero());
   }
-  static constexpr ComplexSign RealUnknown() {
+  static constexpr ComplexSign Real() {
     return ComplexSign(Sign::Unknown(), Sign::Zero());
   }
   static constexpr ComplexSign RealFinite() {

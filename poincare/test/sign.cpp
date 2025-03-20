@@ -15,15 +15,14 @@ static_assert(
     ComplexSign::FromValue(ComplexSign::RealInteger().getRealValue(),
                            ComplexSign::RealInteger().getImagValue()) ==
     ComplexSign::RealInteger());
-static_assert(
-    ComplexSign::FromValue(ComplexSign::RealUnknown().getRealValue(),
-                           ComplexSign::RealUnknown().getImagValue()) ==
-    ComplexSign::RealUnknown());
+static_assert(ComplexSign::FromValue(ComplexSign::Real().getRealValue(),
+                                     ComplexSign::Real().getImagValue()) ==
+              ComplexSign::Real());
 static_assert(ComplexSign::FromValue(ComplexSign::Unknown().getRealValue(),
                                      ComplexSign::Unknown().getImagValue()) ==
               ComplexSign::Unknown());
 static_assert(ComplexSign::Unknown().isUnknown());
-static_assert(ComplexSign::RealUnknown().isReal());
+static_assert(ComplexSign::Real().isReal());
 static_assert(ComplexSign::RealInteger().isReal() &&
               ComplexSign::RealInteger().isInteger());
 

@@ -32,8 +32,7 @@ class Parametric {
       ComplexSign::RealInteger();
   /* TODO: Should instead depend on the bounds for integral and symbol value for
    * derivation */
-  constexpr static ComplexSign k_continuousVariableSign =
-      ComplexSign::RealUnknown();
+  constexpr static ComplexSign k_continuousVariableSign = ComplexSign::Real();
 
   static constexpr uint8_t k_localVariableId = 0;
   static constexpr uint8_t k_variableIndex = 0;

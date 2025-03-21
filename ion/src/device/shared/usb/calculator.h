@@ -51,8 +51,8 @@ class Calculator : public Device {
             0,   // bDeviceSUBClass: The subclass is defined by the interface.
             0,   // bDeviceProtocol: The protocol is defined by the interface.
             64,  // bMaxPacketSize0: Maximum packet size for endpoint 0
-            0x0483,             // idVendor
-            0xA291,             // idProduct
+            0x0483,             // idVendor: STMicroelectronics
+            Config::PID,        // idProduct
             Config::BCDDevice,  // bcdDevice: Device Release Number
             1,   /* iManufacturer: Index of the manufacturer name string, see
                   * m_descriptor */

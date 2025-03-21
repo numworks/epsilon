@@ -7,8 +7,9 @@ namespace USB {
 namespace Config {
 
 constexpr static int BCDDevice = 0x0120;
+constexpr static int PID = 0xA291;
 
-}
+}  // namespace Config
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion

@@ -250,8 +250,6 @@ class Cache {
         assert(m_data[i].value == NextTreeNoCache(key));
         *result = m_data[i].value;
         return true;
-      } else if (m_data[i].key == 0) {
-        break;
       }
     }
     return false;
@@ -287,8 +285,8 @@ Cache<20> TreeStackCache;
 Cache<5> ReadOnlyCache;
 
 /* We tried using the [after] argument to only clear the cache located after
- * this address. Ensuring that cache information from trees that did not changed
- * stayed on cache. But this lead to a drastic slow down on the cache reset */
+ * this address. Ensuring that cache information from trees that did not change
+ * stayed on cache. But this lead to a drastic slow down on the cache reset. */
 void Tree::ResetCache(const void* after) { TreeStackCache.ResetCache(); }
 
 template <size_t s>

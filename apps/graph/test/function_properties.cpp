@@ -519,6 +519,9 @@ QUIZ_CASE(graph_function_properties) {
                   .m_areaType =
                       ContinuousFunctionProperties::AreaType::Outside});
 
+    assert_check_function_properties(
+        "(x+i)*y^2=x", noImplicitPlot ? k_bannedProperties : k_twoSubCurves);
+
     // === Polar functions ===
 
     assert_same_function_properties("r=θ", "r(θ)=θ");

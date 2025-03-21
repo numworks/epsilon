@@ -31,11 +31,7 @@ class QueueJournal : public Ion::Events::Journal {
     Ion::Events::Event e = m_eventStorage.front();
     m_eventStorage.pop();
     if (e == Ion::Events::ExternalText) {
-      // Will this assert break fuzzer or web simulator ?
       assert(!m_externalTextStorage.empty());
-      if (m_externalTextStorage.empty()) {
-        return Ion::Events::None;
-      }
       strlcpy(Ion::Events::sharedExternalTextBuffer(),
               m_externalTextStorage.front().text,
               Ion::Events::sharedExternalTextBufferSize);

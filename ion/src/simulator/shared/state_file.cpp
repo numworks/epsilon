@@ -77,20 +77,22 @@ static inline void pushEventFromFile(uint8_t c, FILE* f) {
     // Read and load external text into sharedExternalTextBuffer
     constexpr size_t k_bufferSize = Ion::Events::sharedExternalTextBufferSize;
     char* buffer = Ion::Events::sharedExternalTextBuffer();
-    int i;
-    do {
-      i = 0;
-      for (; i < k_bufferSize - 1; ++i) {
-        char c = getc(f);
-        if (c == EOF || c == 0) {
-          buffer[i] = 0;
-          break;
-        }
-        buffer[i] = c;
+    int i = 0;
+    char ch;
+    while (true) {
+      ch = getc(f);
+      buffer[i++] = ch;
+      if (ch == 0 || ch == EOF) {
+        break;
       }
-      Journal::replayJournal()->pushEvent(e);
-    } while (i == k_bufferSize - 1);
-    return;
+      if (i == k_bufferSize - 1) {
+        /* If [f] contains a long ExternalTextEvent, split it in [k_bufferSize]
+         * chunks */
+        buffer[i] = 0;
+        i = 0;
+        Journal::replayJournal()->pushEvent(e);
+      }
+    }
   }
   Journal::replayJournal()->pushEvent(e);
 }
@@ -104,20 +106,22 @@ static inline void pushEventFromMemory(uint8_t c, const uint8_t* ptr,
     // Read and load external text into sharedExternalTextBuffer
     constexpr size_t k_bufferSize = Ion::Events::sharedExternalTextBufferSize;
     char* buffer = Ion::Events::sharedExternalTextBuffer();
-    int i;
-    do {
-      i = 0;
-      for (; i < k_bufferSize - 1; ++i) {
-        char c = *ptr;
-        if (ptr++ >= bufferEnd || c == 0) {
-          buffer[i] = 0;
-          break;
-        }
-        buffer[i] = c;
+    int i = 0;
+    char ch;
+    while (true) {
+      ch = *ptr;
+      buffer[i++] = ch;
+      if (ch == 0 || ptr++ >= bufferEnd) {
+        break;
       }
-      Journal::replayJournal()->pushEvent(e);
-    } while (i == k_bufferSize - 1);
-    return;
+      if (i == k_bufferSize - 1) {
+        /* If [f] contains a long ExternalTextEvent, split it in [k_bufferSize]
+         * chunks */
+        buffer[i] = 0;
+        i = 0;
+        Journal::replayJournal()->pushEvent(e);
+      }
+    }
   }
   Journal::replayJournal()->pushEvent(e);
 }

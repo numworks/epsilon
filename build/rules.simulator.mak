@@ -69,3 +69,12 @@ $(OUTPUT_DIRECTORY)/epsilon%html: $(addprefix $(OUTPUT_DIRECTORY)/,epsilon%js io
 
 $(call document_other_target,epsilon.<flavors>.html)
 endif
+
+ifeq ($(PLATFORM),android)
+
+$(OUTPUT_DIRECTORY)/%.apk: $(simulator_app_deps) $(apk_deps)
+	$(call rule_label,GRADLE)
+	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) OUTPUT_DIRECTORY=$(OUTPUT_DIRECTORY) NDK_BUNDLE_VERSION=$(NDK_BUNDLE_VERSION) EPSILON_VARIANT=$* ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle assembleRelease
+	$(Q) cp $(OUTPUT_DIRECTORY)/app/outputs/apk/release/android-release*.apk $@
+
+endif

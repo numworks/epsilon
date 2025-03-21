@@ -14,8 +14,8 @@ namespace Solver {
 
 /* SystemOfEquations provides an interface to solve the system described by
  * EquationStore. The two main methods are:
- * - exactSolve, which identify and compute exact solutions of linear systems,
- *   and polynomial equations of degree 2 or 3.
+ * - exactSolve, which identifies and computes exact solutions of linear
+ *   systems, and polynomial equations of degree 2 or 3.
  * - approximateSolve, which computes numerical solutions for one equation of
  *   one variable, using an implementation of Brent's algorithm.
  *
@@ -103,16 +103,9 @@ class SystemOfEquations {
   };
 
 #if 0
-  Poincare::Range1D<float> AutoComputeApproximateSolvingRange(
-      Poincare::SystemExpression equationStandardForm, Poincare::Context* context,
-      char* variables, bool* finiteNumberOfSolutions);
   Poincare::SystemExpression equationStandardFormForApproximateSolve(
       Poincare::Context* context);
 #endif
-  Error privateExactSolve(Poincare::Context* context);
-  Error simplifyAndFindVariables(
-      Poincare::Context* context,
-      Poincare::SystemExpression* simplifiedEquations);
   Error solveLinearSystem(Poincare::Context* context,
                           Poincare::SystemExpression* simplifiedEquations);
   Error solvePolynomial(Poincare::Context* context,

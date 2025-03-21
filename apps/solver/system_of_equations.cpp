@@ -88,42 +88,6 @@ SystemOfEquations::ContextWithoutT::expressionForUserNamed(
   return ContextWithParent::expressionForUserNamed(symbol);
 }
 
-#if 0
-SystemOfEquations::Error SystemOfEquations::exactSolve(Context* context) {
-  m_overrideUserVariables = false;
-  Error firstError = privateExactSolve(context);
-  if (firstError == Error::RequireApproximateSolution ||
-      (firstError == Error::NoError && m_numberOfSolutions > 0)) {
-    return firstError;
-  }
-
-  m_overrideUserVariables = true;
-  Error secondError = privateExactSolve(context);
-  if (firstError == Error::NoError && secondError != Error::NoError &&
-      secondError != Error::RequireApproximateSolution) {
-    /* The system becomes invalid when overriding the user variables: the first
-     * solution was better. */
-    m_numberOfSolutions = 0;
-    return firstError;
-  }
-  return secondError;
-}
-
-template <typename T>
-static Coordinate2D<T> evaluator(T t, const void* model, Context* context) {
-  void** modelArray = reinterpret_cast<void**>(const_cast<void*>(model));
-  const SystemFunction* e =
-      reinterpret_cast<const SystemFunction*>(modelArray[0]);
-  const char* variable = reinterpret_cast<const char*>(modelArray[1]);
-  return Coordinate2D<T>(
-      t, e->approximateToRealScalarWithValueForSymbol<T>(
-             variable, t,
-             ApproximationContext(
-                 context, Preferences::SharedPreferences()->complexFormat(),
-                 Preferences::SharedPreferences()->angleUnit())));
-}
-#endif
-
 void SystemOfEquations::setApproximateSolvingRange(
     Poincare::Range1D<double> approximateSolvingRange) {
   m_autoApproximateSolvingRange = false;
@@ -167,62 +131,6 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   m_autoApproximateSolvingRange = true;
   set->removeTree();
 }
-
-#if 0
-Range1D<float> SystemOfEquations::AutoComputeApproximateSolvingRange(
-    Expression equationStandardForm, Context* context, char* variables,
-    bool* finiteNumberOfSolutions) {
-  SystemExpression equationStandardForm =
-      equationStandardFormForApproximateSolve(context);
-  constexpr static float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
-  Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), context,
-            k_maxFloatForAutoApproximateSolvingRange);
-  // Use the intersection between the definition domain of f and the bounds
-  zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
-                 k_maxFloatForAutoApproximateSolvingRange);
-  zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
-                           k_maxNumberOfApproximateSolutions / 2);
-  // TODO: variables should be passed as a const char *
-  void* model[2] = {static_cast<void*>(&equationStandardForm),
-                    static_cast<void*>(variables)};
-  assert(finiteNumberOfSolutions);
-  bool didFitRoots =
-      zoom.fitRoots(evaluator<float>, static_cast<void*>(model), false,
-                    evaluator<double>, finiteNumberOfSolutions);
-  zoom.fitBounds(evaluator<float>, static_cast<void*>(model), false);
-  Range1D<float> finalRange = *(zoom.range(false, false).x());
-  if (didFitRoots) {
-    /* The range was computed from the solution found with a solver in float. We
-     * need to strech the range in case it does not cover the solution found
-     * with a solver in double. */
-    constexpr static float k_securityMarginCoef = 1 / 10.0;
-    float securityMargin =
-        std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) *
-        k_securityMarginCoef;
-    finalRange.stretchEachBoundBy(securityMargin,
-                                  k_maxFloatForAutoApproximateSolvingRange);
-  }
-  return finalRange;
-}
-
-void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
-  bool finiteNumberOfSolutions = true;
-  Range1D<float> finalRange = AutoComputeApproximateSolvingRange(
-      equationStandardFormForApproximateSolve(context), context, m_variables[0],
-      &finiteNumberOfSolutions);
-  m_autoApproximateSolvingRange = true;
-  m_approximateSolvingRange =
-      Range1D<double>(static_cast<double>(finalRange.min()),
-                      static_cast<double>(finalRange.max()));
-  /* When there are more than k_maxNumberOfApproximateSolutions on one side of
-   * 0, the zoom is setting the interval to have a maximum of 5 solutions left
-   * of 0 and 5 solutions right of zero. This means that sometimes, for a
-   * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
-   * displayed. We still want to notify the user that more solutions exist. */
-  m_solutionStatus = finiteNumberOfSolutions ? SolutionStatus::Complete
-                                             : SolutionStatus::Incomplete;
-}
-#endif
 
 void SystemOfEquations::approximateSolve(Context* context) {
   Internal::Tree* set = equationSet(m_store);
@@ -312,105 +220,6 @@ SystemExpression SystemOfEquations::equationStandardFormForApproximateSolve(
  return m_store->modelForRecord(m_store->definedRecordAtIndex(0))
       ->standardForm(context, overrideUserVariables(),
                      ReductionTarget::SystemForApproximation);
-}
-
-SystemOfEquations::Error SystemOfEquations::privateExactSolve(
-    Context* context) {
-  m_numberOfSolutions = 0;
-  SystemExpression simplifiedEquations[EquationStore::k_maxNumberOfEquations];
-  Error error = simplifyAndFindVariables(context, simplifiedEquations);
-  if (error != Error::NoError) {
-    return error;
-  }
-  error = solveLinearSystem(context, simplifiedEquations);
-  if (error != Error::NonLinearSystem || m_numberOfSolvingVariables > 1 ||
-      m_store->numberOfDefinedModels() > 1) {
-    return error;
-  }
-  error = solvePolynomial(context, simplifiedEquations);
-  if (error == Error::RequireApproximateSolution) {
-    m_type = Type::GeneralMonovariable;
-  }
-  assert(error != Error::NoError || m_type == Type::PolynomialMonovariable);
-  return error;
-}
-
-SystemOfEquations::Error SystemOfEquations::simplifyAndFindVariables(
-    Context* context, SystemExpression* simplifiedEquations) {
-  m_numberOfSolvingVariables = 0;
-  m_numberOfUserVariables = 0;
-  m_variables[0][0] = 0;
-  m_userVariables[0][0] = 0;
-  m_complexFormat = Preferences::SharedPreferences()->complexFormat();
-
-  bool forbidSimultaneousEquation = Preferences::SharedPreferences()
-                                        ->examMode()
-                                        .forbidSimultaneousEquationSolver();
-
-  EquationStore* store = m_store;
-  int nEquations = store->numberOfDefinedModels();
-  if (forbidSimultaneousEquation && nEquations > 1) {
-    return Error::DisabledInExamMode;
-  }
-  for (int i = 0; i < nEquations; i++) {
-    ExpiringPointer<Equation> equation =
-        store->modelForRecord(store->definedRecordAtIndex(i));
-    SystemExpression equationsWithUserVariables = equation->standardForm(
-        context, true, ReductionTarget::SystemForAnalysis);
-
-    // Gather user variables
-    int nVariables = equationsWithUserVariables.getVariables(
-        context,
-        [](const char* s, Context* c) {
-          return c->expressionTypeForIdentifier(s, strlen(s)) ==
-                 Context::UserNamedType::Symbol;
-        },
-        &m_userVariables[0][0], SymbolHelper::k_maxNameSize,
-        m_numberOfUserVariables);
-    /* Don't abort if there are more the k_maxNumberOfVariables defined user
-     * variables. */
-    m_numberOfUserVariables =
-        nVariables >= 0 ? nVariables : Expression::k_maxNumberOfVariables;
-
-    simplifiedEquations[i] =
-        m_overrideUserVariables
-            ? equationsWithUserVariables
-            : equation->standardForm(context, false,
-                                     ReductionTarget::SystemForAnalysis);
-    if (simplifiedEquations[i].isUninitialized() ||
-        simplifiedEquations[i].isUndefined() ||
-        simplifiedEquations[i].recursivelyMatches(
-            &NewExpression::isMatrix, context,
-            m_overrideUserVariables
-                ? SymbolicComputation::ReplaceDefinedFunctions
-                : SymbolicComputation::
-                      ReplaceDefinedSymbols)) {
-      return Error::EquationUndefined;
-    } else if (simplifiedEquations[i].isNonReal()) {
-      return Error::EquationNonReal;
-    }
-
-    m_complexFormat = Preferences::UpdatedComplexFormatWithExpressionInput(
-        m_complexFormat, simplifiedEquations[i], nullptr);
-
-    // Gather solving variables
-    int nbSolvingVariables = simplifiedEquations[i].getVariables(
-        context, [](const char*, Context*) { return true; }, &m_variables[0][0],
-        SymbolHelper::k_maxNameSize, m_numberOfSolvingVariables);
-    /* The equation has been parsed, so there should not be any variable with a
-     * name that is too long. */
-    // FIXME Special return values of getVariables should be named.
-    assert(nbSolvingVariables != -2);
-    if (nbSolvingVariables == -1) {
-      return Error::TooManyVariables;
-    }
-    m_numberOfSolvingVariables = nbSolvingVariables;
-  }
-
-  if (forbidSimultaneousEquation && m_numberOfSolvingVariables > 1) {
-    return Error::DisabledInExamMode;
-  }
-  return Error::NoError;
 }
 
 SystemOfEquations::Error SystemOfEquations::solveLinearSystem(
@@ -819,11 +628,6 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
 }
 
 #if 0
-void SystemOfEquations::registerSolution(double f) {
-  if (std::isfinite(f)) {
-    m_solutions[m_numberOfSolutions++] = Solution(Layout(), Layout(), f, false);
-  }
-}
 
 uint32_t SystemOfEquations::tagParametersUsedAsVariables() const {
   uint32_t tags = 0;

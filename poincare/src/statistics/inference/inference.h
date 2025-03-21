@@ -29,12 +29,6 @@ enum class TestType : uint8_t {
 
 enum class StatisticType : uint8_t { T, TPooled, Z, Chi2 };
 
-enum class CategoricalType : uint8_t {
-  // Order matter for cells order
-  GoodnessOfFit,
-  Homogeneity
-};
-
 constexpr bool IsTestCompatibleWithStatistic(TestType testType,
                                              StatisticType statisticType) {
   switch (testType) {
@@ -60,32 +54,23 @@ constexpr bool IsTestCompatibleWithStatistic(TestType testType,
 int NumberOfStatisticsForTest(TestType testType);
 
 struct Type {
-  const TestType testType;
-  const StatisticType statisticType;
-  const CategoricalType categoricalType;
-  constexpr Type(TestType testType, StatisticType statisticType,
-                 CategoricalType categoricalType)
-      : testType(testType),
-        statisticType(statisticType),
-        categoricalType(categoricalType) {
+  TestType testType;
+  StatisticType statisticType;
+  constexpr Type(TestType testType, StatisticType statisticType)
+      : testType(testType), statisticType(statisticType) {
     assert(IsTestCompatibleWithStatistic(testType, statisticType));
   }
-  constexpr Type(TestType testType, StatisticType statisticType)
-      : Type(testType, statisticType, CategoricalType::GoodnessOfFit) {}
-  constexpr Type(CategoricalType categoricalType)
-      : Type(TestType::Chi2, StatisticType::Chi2, categoricalType) {}
   constexpr Type(TestType testType)
       : Type(testType,
              IsTestCompatibleWithStatistic(testType, StatisticType::T)
                  ? StatisticType::T
                  : (IsTestCompatibleWithStatistic(testType, StatisticType::Z)
                         ? StatisticType::Z
-                        : StatisticType::Chi2),
-             CategoricalType::GoodnessOfFit) {}
+                        : StatisticType::Chi2)) {}
+  constexpr Type() : Type(TestType::OneMean) {}
 
   operator TestType() const { return testType; }
   operator StatisticType() const { return statisticType; }
-  operator CategoricalType() const { return categoricalType; }
 };
 
 // ===== Distribution =====

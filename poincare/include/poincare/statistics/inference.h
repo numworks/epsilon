@@ -10,7 +10,6 @@ namespace Poincare {
 
 namespace Inference {
 
-using Internal::Inference::CategoricalType;
 using Internal::Inference::StatisticType;
 using Internal::Inference::TestType;
 
@@ -69,6 +68,8 @@ using Internal::Inference::SignificanceTest::DefaultParameterAtIndex;
 using Internal::Inference::SignificanceTest::DefaultThreshold;
 
 namespace Chi2 {
+
+using Internal::Inference::SignificanceTest::Chi2::CategoricalType;
 
 using Internal::Inference::SignificanceTest::Chi2::AreGoodnessInputsValid;
 using Internal::Inference::SignificanceTest::Chi2::AreHomogeneityInputsValid;

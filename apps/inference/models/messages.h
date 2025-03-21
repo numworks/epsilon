@@ -52,7 +52,8 @@ constexpr I18n::Message DistributionTitle(TestType testType) {
   return I18n::Message::Default;
 }
 
-constexpr I18n::Message Title(Poincare::Inference::Type type) {
+constexpr I18n::Message Title(Poincare::Inference::Type type,
+                              CategoricalType categoricalType) {
   switch (type.testType) {
     case TestType::OneMean:
       return type.statisticType == StatisticType::T
@@ -76,7 +77,7 @@ constexpr I18n::Message Title(Poincare::Inference::Type type) {
     case TestType::Slope:
       return I18n::Message::HypothesisControllerTitleSlope;
     case TestType::Chi2:
-      switch (type.categoricalType) {
+      switch (categoricalType) {
         case CategoricalType::GoodnessOfFit:
           return I18n::Message::InputGoodnessControllerTitle;
         case CategoricalType::Homogeneity:

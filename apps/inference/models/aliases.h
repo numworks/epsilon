@@ -14,7 +14,8 @@ constexpr static int k_numberOfSubApps = 2;
 
 using TestType = Poincare::Inference::TestType;
 using StatisticType = Poincare::Inference::StatisticType;
-using CategoricalType = Poincare::Inference::CategoricalType;
+using CategoricalType =
+    Poincare::Inference::SignificanceTest::Chi2::CategoricalType;
 
 namespace Params = Poincare::Inference::Params;
 }  // namespace Inference

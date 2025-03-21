@@ -41,8 +41,7 @@ class InferenceModel : public Shared::StatisticalDistribution {
     return CategoricalType::Homogeneity;
   }
   constexpr Poincare::Inference::Type type() const {
-    return Poincare::Inference::Type(testType(), statisticType(),
-                                     categoricalType());
+    return Poincare::Inference::Type(testType(), statisticType());
   }
 
   bool initializeSubApp(SubApp subApp);
@@ -92,7 +91,9 @@ class InferenceModel : public Shared::StatisticalDistribution {
   constexpr I18n::Message distributionTitle() const {
     return DistributionTitle(testType());
   }
-  I18n::Message title() const override final { return Title(type()); }
+  I18n::Message title() const override final {
+    return Title(type(), categoricalType());
+  }
 
   virtual void setGraphTitle(char* buffer, size_t bufferSize) const = 0;
   virtual void setResultTitle(char* buffer, size_t bufferSize,

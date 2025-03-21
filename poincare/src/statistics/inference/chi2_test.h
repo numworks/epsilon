@@ -9,6 +9,12 @@ namespace Poincare::Internal::Inference::SignificanceTest {
 
 namespace Chi2 {
 
+enum class CategoricalType : uint8_t {
+  // Order matter for cells order
+  GoodnessOfFit,
+  Homogeneity
+};
+
 bool IsObservedValueValid(double value);
 bool IsExpectedValueValid(double value);
 bool AreHomogeneityInputsValid(const DataTable* observedValues);

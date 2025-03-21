@@ -23,6 +23,7 @@ static Shared::GlobalContext* getContext() {
 }
 
 static void* initialize(SubApp subApp, Poincare::Inference::Type type,
+                        CategoricalType categoricalType,
                         InferenceModel* target) {
   switch (subApp) {
     case SubApp::SignificanceTest:
@@ -54,7 +55,7 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
         case TestType::Slope:
           return new (target) SlopeTTest(getContext());
         case TestType::Chi2:
-          switch (type.categoricalType) {
+          switch (categoricalType) {
             case CategoricalType::GoodnessOfFit:
               return new (target) GoodnessTest();
             case CategoricalType::Homogeneity:
@@ -103,15 +104,24 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
 
 static bool initializeInferenceModel(SubApp subApp,
                                      Poincare::Inference::Type type,
+                                     CategoricalType categoricalType,
                                      InferenceModel* target) {
   target->~InferenceModel();
   assert(subApp != SubApp::ConfidenceInterval ||
          Poincare::Inference::ConfidenceInterval::
              IsTypeCompatibleWithConfidenceInterval(type));
   assert(Poincare::Inference::IsTestCompatibleWithStatistic(type, type));
-  initialize(subApp, type, target);
+  initialize(subApp, type, categoricalType, target);
   target->initParameters();
   return true;
+}
+
+// Initializer without categorical type
+static bool initializeInferenceModel(SubApp subApp,
+                                     Poincare::Inference::Type type,
+                                     InferenceModel* target) {
+  return initializeInferenceModel(subApp, type, target->categoricalType(),
+                                  target);
 }
 
 bool InferenceModel::initializeSubApp(SubApp subApp) {
@@ -144,8 +154,8 @@ bool InferenceModel::initializeCategoricalType(
     return false;
   }
   assert(testType() == TestType::Chi2);
-  Poincare::Inference::Type type(testType(), statisticType(), categoricalType);
-  return initializeInferenceModel(subApp(), type, this);
+  Poincare::Inference::Type type(testType(), statisticType());
+  return initializeInferenceModel(subApp(), type, categoricalType, this);
 }
 
 bool InferenceModel::authorizedParameterAtIndex(double p, int i) const {

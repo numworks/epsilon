@@ -94,6 +94,9 @@ bool Controller::handleEvent(Ion::Events::Event event) {
     } else {
       iconIndex = eventText[0] - '1';
     }
+    if (iconIndex >= AppsContainer::sharedAppsContainer()->numberOfApps()) {
+      return false;
+    }
     int col = columnOfIconAtIndex(iconIndex);
     int row = rowOfIconAtIndex(iconIndex);
     if (col == m_view.selectableTableView()->selectedColumn() &&

@@ -26,7 +26,7 @@ void FillHomogeneityExpectedValues(const DataTable* observedValues,
 
 bool IsDegreesOfFreedomValid(double p);
 int ComputeDegreesOfFreedom(CategoricalType categoricalType,
-                            const DataTable* contributions);
+                            const DataTable* observedValues);
 
 void FillContributions(const DataTable* observedValues,
                        const DataTable* expectedValues,

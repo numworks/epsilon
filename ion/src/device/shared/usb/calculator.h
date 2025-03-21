@@ -41,7 +41,8 @@ class Calculator : public Device {
       __attribute__((section(".dfu_entry_point")))
       // Make sure this symbol is not discarded at link time
       __attribute__((used));
-  Calculator(const char* serialNumber, const char* stringDescriptor)
+  Calculator(const char* serialNumber, const char* flashStringDescriptor,
+             const char* SRAMStringDescriptor)
       : Device(&m_dfuInterface),
         m_deviceDescriptor(
             0x0210, /* bcdUSB: USB Specification Number which the device
@@ -128,9 +129,9 @@ class Calculator : public Device {
         // TODO NumWorks Scientific Calculator
         m_productStringDescriptor("NumWorks Calculator"),
         m_serialNumberStringDescriptor(serialNumber),
-        m_interfaceFlashStringDescriptor(stringDescriptor),
+        m_interfaceFlashStringDescriptor(flashStringDescriptor),
         // See note at the end of the file
-        m_interfaceSRAMStringDescriptor(Config::InterfaceSRAMStringDescriptor),
+        m_interfaceSRAMStringDescriptor(SRAMStringDescriptor),
         m_microsoftOSStringDescriptor(k_microsoftOSVendorCode),
         m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS,
                                 "my.numworks.com"),

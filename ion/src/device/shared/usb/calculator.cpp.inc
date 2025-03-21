@@ -1,8 +1,8 @@
-#include "calculator.h"
-
 #include <ion.h>
 #include <ion/usb.h>
 #include <shared/drivers/serial_number.h>
+
+#include "calculator.h"
 
 namespace Ion {
 namespace Device {
@@ -13,7 +13,8 @@ void Calculator::PollAndReset(Ion::USB::DFUParameters parameters) {
    * dfu. */
   char serialNumber[Ion::k_serialNumberLength + 1];
   SerialNumber::copy(serialNumber);
-  Calculator c(serialNumber, USB::stringDescriptor());
+  Calculator c(serialNumber, USB::FlashStringDescriptor(),
+               USB::SRAMStringDescriptor());
   // Ensure FIFOs are clean before starting polling.
   c.flushFIFOs();
   while (Ion::USB::isPlugged() && !c.isSoftDisconnected() &&

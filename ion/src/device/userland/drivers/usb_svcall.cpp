@@ -22,7 +22,7 @@ bool SVC_ATTRIBUTES shouldInterruptDFU(Keyboard::State exitKeys,
   SVC_RETURNING_R0(SVC_USB_SHOULD_INTERRUPT, bool)
 }
 
-const char* stringDescriptor() {
+const char* FlashStringDescriptor() {
   if (Authentication::clearanceLevel() ==
           Ion::Authentication::ClearanceLevel::NumWorks ||
       Authentication::clearanceLevel() ==
@@ -35,6 +35,10 @@ const char* stringDescriptor() {
                ? Config::InterfaceFlashStringDescriptorThirdPartySlotA
                : Config::InterfaceFlashStringDescriptorThirdPartySlotB;
   }
+}
+
+const char* SRAMStringDescriptor() {
+  return Config::InterfaceSRAMStringDescriptor;
 }
 
 }  // namespace USB

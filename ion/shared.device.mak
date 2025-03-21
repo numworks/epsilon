@@ -40,12 +40,13 @@ $(addprefix stack/descriptor/, \
   url_descriptor.cpp \
   webusb_platform_descriptor.cpp \
 ) \
+  calculator.cpp \
   calculator_bootloader.cpp:+bootloader \
   calculator_flasher_$(_ion_mcu_suffix).cpp:+flasher \
-  calculator_userland.cpp:+userland \
   calculator_userland_leave.cpp:+userland:+allow3rdparty \
   calculator_userland_leave_reset.cpp:+userland:-allow3rdparty \
   dfu_interface.cpp \
+  dfu_xip.cpp \
 )
 
 _sources_ion_usb := $(addsuffix :-kernel:-bench,$(_sources_ion_usb))

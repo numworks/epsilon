@@ -1,7 +1,5 @@
 #include <flasher/drivers/usb.h>
-
-#include "calculator.cpp.inc"
-#include "dfu_xip.cpp.inc"
+#include <shared/usb/calculator.h>
 
 namespace Ion {
 namespace Device {

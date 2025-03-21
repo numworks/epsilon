@@ -1,17 +1,9 @@
 #ifndef ION_DEVICE_SHARED_USB_CALCULATOR_H
 #define ION_DEVICE_SHARED_USB_CALCULATOR_H
 
-#ifndef ION_DEVICE_USERLAND_DRIVERS_USB_H
-#ifndef ION_DEVICE_BOOTLOADER_DRIVERS_USB_H
-#ifndef ION_DEVICE_CORE_FLASHER_DRIVERS_USB_H
-#error \
-    "calculator.h should include the file drivers/usb.h for the current firmware component"
-#endif
-#endif
-#endif
-
 #include <assert.h>
 #include <config/internal_flash.h>
+#include <config/usb.h>
 #include <ion/usb.h>
 #include <stddef.h>
 

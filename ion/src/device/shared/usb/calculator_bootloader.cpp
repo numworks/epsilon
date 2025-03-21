@@ -2,9 +2,7 @@
 #include <bootloader/drivers/usb.h>
 #include <config/board.h>
 #include <shared-core/drivers/reset.h>
-
-#include "calculator.cpp.inc"
-#include "dfu_xip.cpp.inc"
+#include <shared/usb/calculator.h>
 
 namespace Ion {
 namespace Device {

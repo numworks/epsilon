@@ -155,7 +155,7 @@ double ComputeCriticalValue(const DataTable* contributions) {
 
 Results Compute(const DataTable* contributions, double degreesOfFreedom) {
   Results results;
-
+  results.estimates = Estimates({NAN, NAN, NAN});
   results.degreesOfFreedom = degreesOfFreedom;
 
   results.criticalValue = ComputeCriticalValue(contributions);

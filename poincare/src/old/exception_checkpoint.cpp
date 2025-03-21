@@ -19,6 +19,7 @@ bool ExceptionCheckpoint::setActive(bool interruption) {
 
 void ExceptionCheckpoint::rollbackException() {
   rollback();
+  assert(Poincare::Internal::TreeStack::SharedTreeStack->size() == 0);
   longjmp(m_jumpBuffer, 1);
 }
 

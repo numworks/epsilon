@@ -13,11 +13,11 @@ namespace Poincare {
 
 class CircuitBreakerCheckpoint final : public PoolCheckpoint {
  public:
-  CircuitBreakerCheckpoint(Ion::CircuitBreaker::CheckpointType type)
+  explicit CircuitBreakerCheckpoint(Ion::CircuitBreaker::CheckpointType type)
       : m_type(type) {}
   /* The destructor will call ~PoolCheckpoint, and thus
    * PoolCheckpoint::discard(), so we call unset instead of discard. */
-  virtual ~CircuitBreakerCheckpoint() { unset(); }
+  ~CircuitBreakerCheckpoint() { unset(); }
 
   Ion::CircuitBreaker::CheckpointType otype() const { return m_type; }
   bool setActive(Ion::CircuitBreaker::Status status);

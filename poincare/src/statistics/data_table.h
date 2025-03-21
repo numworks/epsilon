@@ -8,8 +8,7 @@
 namespace Poincare {
 namespace Internal {
 
-class StatisticsDatasetFromColumn;
-class StatisticsDatasetFromSeries;
+class StatisticsDatasetFromTable;
 
 class DataTable {
  public:
@@ -28,8 +27,12 @@ class DataTable {
   double columnSum(int column) const;
 
   // Statistics
-  StatisticsDatasetFromColumn createDatasetFromColumn(
-      int i, StatisticsCalculationOptions options = {}) const;
+  StatisticsDatasetFromTable createDatasetFromColumns(
+      int valuesColumnIndex, int weightColumnIndex,
+      StatisticsCalculationOptions options = {}) const;
+  StatisticsDatasetFromTable createDatasetFromColumn(
+      int valuesColumnIndex, StatisticsCalculationOptions options = {}) const;
+
   double meanOfColumn(int i, StatisticsCalculationOptions options) const;
   double varianceOfColumn(int i, StatisticsCalculationOptions options) const;
 };
@@ -38,9 +41,9 @@ class DataTable {
  * They are mainly used in Regressions */
 class Series : public DataTable {
  public:
-  virtual int numberOfPairs() const = 0;
+  int numberOfColumns() const override final { return 2; }
 
-  int numberOfColumns() const override { return 2; }
+  virtual int numberOfPairs() const = 0;
   int numberOfRows() const override { return numberOfPairs(); }
 
   virtual double getX(int i) const = 0;
@@ -53,7 +56,7 @@ class Series : public DataTable {
   bool numberOfDistinctAbscissaeGreaterOrEqualTo(int i) const;
 
   // Statistics
-  StatisticsDatasetFromSeries createDatasetFromSeries(
+  StatisticsDatasetFromTable createDataset(
       StatisticsCalculationOptions options = {}) const;
   double columnProductSum(StatisticsCalculationOptions options = {}) const;
   double covariance(StatisticsCalculationOptions options = {}) const;

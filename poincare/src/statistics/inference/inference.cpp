@@ -230,7 +230,7 @@ bool AreParametersValid(Type type, const ParametersArray& parameters) {
 }
 
 ParametersArray ComputeOneMeanParametersFromSeries(const Series& series) {
-  StatisticsDatasetFromSeries dataset = series.createDatasetFromSeries();
+  StatisticsDatasetFromTable dataset = series.createDataset();
   double mean = dataset.mean();
   double smplStdDev = dataset.sampleStandardDeviation();
   double N = dataset.totalWeight();
@@ -245,13 +245,13 @@ ParametersArray ComputeOneMeanParametersFromSeries(const Series& series) {
 ParametersArray ComputeSlopeParametersFromSeries(const Series& series) {
   double n = static_cast<double>(series.numberOfPairs());
 
-  StatisticsDatasetFromColumn xDataset = series.createDatasetFromColumn(0);
+  StatisticsDatasetFromTable xDataset = series.createDatasetFromColumn(0);
   double xMean = xDataset.mean();
 
   double yIntercept = series.yIntercept();
   double slope = series.slope();
 
-  StatisticsDatasetFromColumn yDataset = series.createDatasetFromColumn(1);
+  StatisticsDatasetFromTable yDataset = series.createDatasetFromColumn(1);
   double leastSquaredSum =
       yDataset.squaredSumOffsettedByLinearTransformationOfDataset(
           &xDataset, yIntercept, slope);

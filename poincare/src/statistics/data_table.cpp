@@ -31,10 +31,18 @@ double DataTable::columnSum(int column) const {
   return result;
 }
 
-StatisticsDatasetFromColumn DataTable::createDatasetFromColumn(
-    int i, StatisticsCalculationOptions options) const {
-  return StatisticsDatasetFromColumn(this, i, options.lnOfValues(i),
-                                     options.oppositeOfValues(i));
+StatisticsDatasetFromTable DataTable::createDatasetFromColumns(
+    int valuesColumnIndex, int weightsColumnIndex,
+    StatisticsCalculationOptions options) const {
+  return StatisticsDatasetFromTable(
+      this, valuesColumnIndex, weightsColumnIndex,
+      options.lnOfValues(valuesColumnIndex),
+      options.oppositeOfValues(valuesColumnIndex));
+}
+
+StatisticsDatasetFromTable DataTable::createDatasetFromColumn(
+    int valuesColumnIndex, StatisticsCalculationOptions options) const {
+  return createDatasetFromColumns(valuesColumnIndex, -1, options);
 }
 
 double DataTable::meanOfColumn(int i,
@@ -47,10 +55,9 @@ double DataTable::varianceOfColumn(int i,
   return createDatasetFromColumn(i, options).variance();
 }
 
-StatisticsDatasetFromSeries Series::createDatasetFromSeries(
+StatisticsDatasetFromTable Series::createDataset(
     StatisticsCalculationOptions options) const {
-  return StatisticsDatasetFromSeries(this, options.lnOfValues(0),
-                                     options.oppositeOfValues(0));
+  return createDatasetFromColumns(0, 1, options);
 }
 
 bool Series::numberOfDistinctAbscissaeGreaterOrEqualTo(int i) const {

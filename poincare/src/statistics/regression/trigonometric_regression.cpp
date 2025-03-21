@@ -95,7 +95,7 @@ static void findExtrema(double* xMinExtremum, double* xMaxExtremum,
   int numberOfPairs = series->numberOfPairs();
   assert(numberOfPairs >= 3);
   // Use a StatisticsDataset to memoize the sorted index
-  StatisticsDatasetFromColumn dataset = series->createDatasetFromColumn(0);
+  StatisticsDatasetFromTable dataset = series->createDatasetFromColumn(0);
   // Compute values at index 0 and 1
   int firstIndex = dataset.indexAtSortedIndex(0);
   int secondIndex = dataset.indexAtSortedIndex(1);

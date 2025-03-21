@@ -14,41 +14,35 @@ class DatasetColumnAdapter : public Internal::DatasetColumn<double> {
   }
 
   double valueAtIndex(int index) const override {
+    assert(m_column >= 0);
     return m_dataTable->get(m_column, index);
   }
-  int length() const override { return m_dataTable->numberOfRows(); }
+  int length() const override {
+    assert(m_column >= 0);
+    return m_dataTable->numberOfRows();
+  }
 
  private:
   const DataTable* m_dataTable;
   int m_column;
 };
 
-class StatisticsDatasetFromColumn : public StatisticsDataset<double> {
+class StatisticsDatasetFromTable : public StatisticsDataset<double> {
  public:
-  StatisticsDatasetFromColumn(const DataTable* data, int column,
-                              bool lnOfValues = false,
-                              bool oppositeOfValues = false)
-      : StatisticsDataset(&m_columnAdapter, lnOfValues, oppositeOfValues),
-        m_columnAdapter(data, column) {}
+  // Use weightsColumnIndex = -1 to create a dataset with all weights equal to 1
+  StatisticsDatasetFromTable(const DataTable* data, int valuesColumnIndex,
+                             int weightsColumnIndex = -1,
+                             bool lnOfValues = false,
+                             bool oppositeOfValues = false)
+      : StatisticsDataset(&m_valuesAdapter,
+                          weightsColumnIndex >= 0 ? &m_weigthsAdapter : nullptr,
+                          lnOfValues, oppositeOfValues),
+        m_valuesAdapter(data, valuesColumnIndex),
+        m_weigthsAdapter(data, weightsColumnIndex) {}
 
  private:
-  const DatasetColumnAdapter m_columnAdapter;
-};
-
-class StatisticsDatasetFromSeries : public StatisticsDataset<double> {
- public:
-  StatisticsDatasetFromSeries(const DataTable* data, bool lnOfValues = false,
-                              bool oppositeOfValues = false)
-      : StatisticsDataset(&m_xAdapter, &m_yAdapter, lnOfValues,
-                          oppositeOfValues),
-        m_xAdapter(data, 0),
-        m_yAdapter(data, 1) {
-    assert(data->numberOfColumns() == 2);
-  }
-
- private:
-  const DatasetColumnAdapter m_xAdapter;
-  const DatasetColumnAdapter m_yAdapter;
+  const DatasetColumnAdapter m_valuesAdapter;
+  const DatasetColumnAdapter m_weigthsAdapter;
 };
 
 }  // namespace Poincare::Internal

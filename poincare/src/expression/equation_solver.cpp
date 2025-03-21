@@ -217,6 +217,10 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
 
 Range1D<double> EquationSolver::AutomaticInterval(const Tree* preparedEquation,
                                                   Context* context) {
+  /* Interval search is done in float to gain some time, since precision does
+   * not matter as much as for the actual solve. The computed interval is
+   * stretched and converted to double because the actual solver works on
+   * double. */
   constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
   // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();
   constexpr float k_yxRatio = 3.06f / 5.76f;

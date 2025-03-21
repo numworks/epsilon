@@ -62,126 +62,6 @@ QUIZ_DISABLED_CASE(poincare_properties_in_parametric) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 }
 
-void assert_expression_has_variables(const char* expression,
-                                     const char* variables[],
-                                     int trueNumberOfVariables) {
-  Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext);
-  constexpr static int k_maxVariableSize =
-      Poincare::SymbolHelper::k_maxNameSize;
-  char variableBuffer[OExpression::k_maxNumberOfVariables][k_maxVariableSize] =
-      {{0}};
-  int numberOfVariables = e.getVariables(
-      &globalContext,
-      [](const char* symbol, Poincare::Context* context) { return true; },
-      (char*)variableBuffer, k_maxVariableSize);
-  quiz_assert_print_if_failure(trueNumberOfVariables == numberOfVariables,
-                               expression);
-  if (numberOfVariables < 0) {
-    // Too many variables
-    return;
-  }
-  int index = 0;
-  while (index < OExpression::k_maxNumberOfVariables &&
-         (variableBuffer[index][0] != 0 || variables[index][0] != 0)) {
-    quiz_assert_print_if_failure(
-        strcmp(variableBuffer[index], variables[index]) == 0, expression);
-    index++;
-  }
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_get_variables) {
-  /* Warning: Theses tests are weird because you need to avoid a lot of
-   * reserved identifiers like:
-   * - e and i
-   * - m, g, h, A which are units and can be parsed without '_' now. */
-  const char* variableBuffer1[] = {"x", "y", ""};
-  assert_expression_has_variables("x+y", variableBuffer1, 2);
-  const char* variableBuffer2[] = {"x", "y", "z", "w", ""};
-  assert_expression_has_variables("x+y+z+2×w", variableBuffer2, 4);
-  const char* variableBuffer3[] = {"a", "x", "y", "k", "B", ""};
-  assert_expression_has_variables("a+x^2+2×y+k!×B", variableBuffer3, 5);
-  assert_reduce_and_store("x→BABA");
-  assert_reduce_and_store("y→abab");
-  const char* variableBuffer4[] = {"BABA", "abab", ""};
-  assert_expression_has_variables("BABA+abab", variableBuffer4, 2);
-  assert_reduce_and_store("z→BBBBBB");
-  const char* variableBuffer5[] = {"BBBBBB", ""};
-  assert_expression_has_variables("BBBBBB", variableBuffer5, 1);
-  const char* variableBuffer6[] = {""};
-  assert_expression_has_variables(
-      "a+b+c+d+f+g+h+j+k+l+m+n+o+p+q+r+s+t+aa+bb+cc+dd+ee+ff+gg+hh+ii+jj+kk+ll+"
-      "mm+nn+oo",
-      variableBuffer6, -1);
-  assert_expression_has_variables("a+b+c+d+f+j+k", variableBuffer6, -1);
-  // f: x → 1+πx+x^2+toto
-  assert_reduce_and_store("1+π×x+x^2+\"toto\"→f(x)");
-  const char* variableBuffer7[] = {"\"tata\"", "\"toto\"", ""};
-  assert_expression_has_variables("f(\"tata\")", variableBuffer7, 2);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("BABA.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("abab.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("BBBBBB.exp")
-      .destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-
-  const char* variableBuffer8[] = {"y", ""};
-  assert_expression_has_variables("diff(3x,x,0)y-2", variableBuffer8, 1);
-  const char* variableBuffer9[] = {"a", "b", "c", "d", "f", "j"};
-  assert_expression_has_variables("a+b+c+d+f+j", variableBuffer9, 6);
-
-  const char* variableBuffer10[] = {"c", "z", "a", "b", ""};
-  assert_expression_has_variables("int(c×x×z, x, a, b)", variableBuffer10, 4);
-  const char* variableBuffer11[] = {"\"box\"", "y", "z", "a", ""};
-  assert_expression_has_variables("\"box\"+y×int(z,x,a,0)", variableBuffer11,
-                                  4);
-
-  // f: x → 0
-  assert_reduce_and_store("0→f(x)");
-  assert_reduce_and_store("x→va");
-  const char* variableBuffer12[] = {"va", ""};
-  assert_expression_has_variables("f(va)", variableBuffer12, 1);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  // f: x → a, with a = 12
-  assert_reduce_and_store("12→a");
-  assert_reduce_and_store("a→f(x)");
-  const char* variableBuffer13[] = {"a", "x", ""};
-  assert_expression_has_variables("f(x)", variableBuffer13, 2);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  // f: x → 1, g: x → 2
-  assert_reduce_and_store("1→f(x)");
-  assert_reduce_and_store("2→g(x)");
-  const char* variableBuffer14[] = {"x", "y", ""};
-  assert_expression_has_variables("f(g(x)+y)", variableBuffer14, 2);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
-
-  // x = 1
-  assert_reduce_and_store("1→x");
-  const char* variableBuffer15[] = {"x", "y", ""};
-  assert_expression_has_variables("x+y", variableBuffer15, 2);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
-
-  // x = a + b
-  assert_reduce_and_store("1→a");
-  assert_reduce_and_store("a+b+c→x");
-  const char* variableBuffer16[] = {"x", "y", ""};
-  assert_expression_has_variables("x+y", variableBuffer16, 2);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-
-  // f: x → a+g(y+x), g: x → x+b, a = b + c + x
-  assert_reduce_and_store("b+c+x→a");
-  assert_reduce_and_store("x+b→g(x)");
-  assert_reduce_and_store("a+g(x+y)→f(x)");
-  const char* variableBuffer17[] = {"a", "x", "y", "b", ""};
-  assert_expression_has_variables("f(x)", variableBuffer17, 4);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("va.exp").destroy();
-}
-
 void assert_reduced_expression_has_polynomial_coefficient(
     const char* expression, const char* symbolName, const char** coefficients,
     Preferences::ComplexFormat complexFormat = Cartesian,
@@ -428,6 +308,7 @@ QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
 #include <poincare/src/expression/continuity.h>
+#include <poincare/src/expression/variables.h>
 
 #include "../helper.h"
 
@@ -572,6 +453,102 @@ QUIZ_CASE(poincare_properties_has_matrix) {
                                  &NewExpression::isOfMatrixDimension);
   assert_expression_has_not_property("2*3+1",
                                      &NewExpression::isOfMatrixDimension);
+}
+
+void assert_expression_has_variables(const char* expression,
+                                     const Tree* expectedVariables,
+                                     ProjectionContext* projCtx) {
+  Tree* e = parse(expression, projCtx->m_context);
+  Simplification::ToSystem(e, projCtx);
+  const Tree* variables = Variables::GetUserSymbols(e);
+  assert_trees_are_equal(variables, expectedVariables);
+}
+
+QUIZ_CASE(poincare_properties_get_variables) {
+  /* Warning: Theses tests are weird because you need to avoid a lot of
+   * reserved identifiers like:
+   * - e and i
+   * - m, g, h, l, s, t, A which are units and can be parsed without '_' now. */
+  Shared::GlobalContext globalContext;
+  ProjectionContext projCtx = {
+      .m_symbolic = SymbolicComputation::ReplaceDefinedFunctions,
+      .m_context = &globalContext,
+  };
+  assert(
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
+      Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+          "sys"));
+
+  assert_expression_has_variables("x+y", KSet("x"_e, "y"_e), &projCtx);
+  assert_expression_has_variables("x+y+z+2w", KSet("w"_e, "x"_e, "y"_e, "z"_e),
+                                  &projCtx);
+  assert_expression_has_variables(
+      "a+x^2+2y+k!B", KSet("B"_e, "a"_e, "k"_e, "x"_e, "y"_e), &projCtx);
+
+  store("x→BABA", &globalContext);
+  store("y→abab", &globalContext);
+  assert_expression_has_variables("BABA+abab", KSet("BABA"_e, "abab"_e),
+                                  &projCtx);
+  store("z→BBBBBB", &globalContext);
+  assert_expression_has_variables("BBBBBB", KSet("BBBBBB"_e), &projCtx);
+  assert_expression_has_variables(
+      "a+b+c+d+f+j+k+n+o+p+q+r",
+      KSet("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e, "k"_e, "n"_e, "o"_e, "p"_e,
+           "q"_e, "r"_e),
+      &projCtx);
+  store("1+π×x+x^2+\"toto\"→f(x)", &globalContext);
+  assert_expression_has_variables("f(\"tata\")",
+                                  KSet("\"tata\""_e, "\"toto\""_e), &projCtx);
+
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("BABA.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("abab.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("BBBBBB.exp")
+      .destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+
+  assert_expression_has_variables("diff(3x,x,0)y-2", KSet("y"_e), &projCtx);
+  assert_expression_has_variables(
+      "a+b+c+d+f+j", KSet("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e), &projCtx);
+  assert_expression_has_variables("\"box\"+y×int(z,x,a,0)",
+                                  KSet("\"box\""_e, "a"_e, "y"_e, "z"_e),
+                                  &projCtx);
+
+  store("0→f(x)", &globalContext);
+  store("x→va", &globalContext);
+  assert_expression_has_variables("f(va)", KSet("va"_e), &projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+
+  store("12→a", &globalContext);
+  store("a→f(x)", &globalContext);
+  assert_expression_has_variables("f(x)", KSet("a"_e, "x"_e), &projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+
+  store("1→f(x)", &globalContext);
+  store("2→g(x)", &globalContext);
+  assert_expression_has_variables("f(g(x)+y)", KSet("x"_e, "y"_e), &projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
+
+  store("1→x", &globalContext);
+  assert_expression_has_variables("x+y", KSet("x"_e, "y"_e), &projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
+
+  store("1→a", &globalContext);
+  store("a+b+c→x", &globalContext);
+  assert_expression_has_variables("x+y", KSet("x"_e, "y"_e), &projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+
+  store("b+c+x→a", &globalContext);
+  store("x+b→g(x)", &globalContext);
+  store("a+g(x+y)→f(x)", &globalContext);
+  assert_expression_has_variables("f(x)", KSet("a"_e, "b"_e, "x"_e, "y"_e),
+                                  &projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("va.exp").destroy();
 }
 
 void assert_is_list_of_points(const char* definition, Context* context,

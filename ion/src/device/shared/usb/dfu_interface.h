@@ -19,14 +19,14 @@ class DFUInterface : public Interface {
   DFUInterface(Device* device, Endpoint0* ep0,
                uint8_t bInterfaceAlternateSetting)
       : Interface(ep0),
-        m_device(device),
+        m_largeBuffer{0},
+        m_largeBufferLength(0),
         m_status(Status::OK),
         m_state(State::dfuIDLE),
+        m_device(device),
         m_addressPointer(0),
         m_potentialNewAddressPointer(k_nullAddress),
         m_erasePage(-1),
-        m_largeBuffer{0},
-        m_largeBufferLength(0),
         m_writeAddress(0),
         m_bInterfaceAlternateSetting(bInterfaceAlternateSetting),
         m_isErasingAndWriting(false) {}
@@ -175,17 +175,17 @@ class DFUInterface : public Interface {
    * pressing back". */
   void willErase() { m_isErasingAndWriting = true; }
 
-  Device* m_device;
-  Status m_status;
-  State m_state;
-  uint32_t m_addressPointer;
-  uint32_t m_potentialNewAddressPointer;
-  int32_t m_erasePage;
   /* Since the m_largeBuffer holds data to be copied in flash and the U0 flash
    * can be only written by 64bits, it is convenient to align it to 64bits as
    * well. */
   alignas(uint64_t) uint8_t m_largeBuffer[Endpoint0::MaxTransferSize];
   uint16_t m_largeBufferLength;
+  Status m_status;
+  State m_state;
+  Device* m_device;
+  uint32_t m_addressPointer;
+  uint32_t m_potentialNewAddressPointer;
+  int32_t m_erasePage;
   uint32_t m_writeAddress;
   uint8_t m_bInterfaceAlternateSetting;
   bool m_isErasingAndWriting;

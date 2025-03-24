@@ -124,8 +124,8 @@ class Calculator : public Device {
             m_bosDescriptor.BLength(),
             0,  // bNumDeviceCapabilities
 #if 0
-            /* TODO: The WebUSB descriptor is currently broken on scandium but
-             * does not seem required.*/
+            /* TODO BOOTLOADER: The WebUSB descriptor is currently broken on
+             * scandium but does not seem required. */
             m_bosDescriptor.BLength() + m_webUSBPlatformDescriptor.BLength(),
             1,  // bNumDeviceCapabilities
 #endif

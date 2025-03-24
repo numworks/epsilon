@@ -59,7 +59,7 @@ void Device::poll() {
            CHEP0R::GetSTATTX() == Status::Valid);
   }
 
-  // TODO: Handle USB RESET
+  // TODO BOOTLOADER: Handle USB RESET
 }
 
 bool Device::isSoftDisconnected() const {

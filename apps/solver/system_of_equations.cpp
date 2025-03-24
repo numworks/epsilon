@@ -110,19 +110,25 @@ Internal::Tree* SystemOfEquations::prepareEquationForApproximateSolve(
   assert(set->numberOfChildren() == 1);
   set->removeNode();
   Internal::Tree* equation = set;
-  Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
-  assert(variables->numberOfChildren() == 1);
-  m_solverContext.variables.fillWithList(variables);
-  variables->removeTree();
-  m_solverContext.overrideUserVariables = false;
+
+  // Project and replace user variables if needed
   Internal::ProjectionContext ctx{
       .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
       .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
-      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .m_symbolic = (m_solverContext.overrideUserVariables
+                         ? SymbolicComputation::ReplaceDefinedFunctions
+                         : SymbolicComputation::ReplaceDefinedSymbols),
       .m_context = context};
   Internal::Projection::UpdateComplexFormatWithExpressionInput(equation, &ctx);
   m_solverContext.complexFormat = ctx.m_complexFormat;
   Internal::Simplification::ToSystem(equation, &ctx);
+
+  // Find remaining variable
+  Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
+  assert(variables->numberOfChildren() == 1);
+  m_solverContext.variables.fillWithList(variables);
+  variables->removeTree();
+
   Internal::Approximation::PrepareFunctionForApproximation(
       equation, m_solverContext.variables.variable(0),
       Preferences::ComplexFormat::Real);

@@ -44,6 +44,7 @@ void VariableArray<N>::fillWithList(const Tree* list) {
 Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
                                  ProjectionContext projectionContext,
                                  Error* error) {
+  // Try solving while using user variables
   // TODO: Context is quite large and this copy could be optimized.
   Context firstContext = *context;
   projectionContext.m_symbolic = SymbolicComputation::ReplaceDefinedSymbols;
@@ -59,6 +60,7 @@ Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
     result->removeTree();
   }
 
+  // Try solving while overriding user variables
   Error secondError = Error::NoError;
   projectionContext.m_symbolic = SymbolicComputation::ReplaceDefinedFunctions;
   result =

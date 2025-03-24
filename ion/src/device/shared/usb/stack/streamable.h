@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 namespace Ion {
 namespace Device {
@@ -16,20 +17,29 @@ class Streamable {
   class Channel {
    public:
     Channel(void* pointer, size_t maxSize)
-        : m_pointer(pointer), m_sizeLeft(maxSize) {}
+        : m_pointer(static_cast<uint8_t*>(pointer)), m_sizeLeft(maxSize) {}
     template <typename T>
     void push(T data) {
       if (m_sizeLeft >= sizeof(T)) {
-        T* typedPointer = static_cast<T*>(m_pointer);
-        *typedPointer++ = data;  // Actually push the data
-        m_pointer = static_cast<void*>(typedPointer);
+        memcpy(m_pointer, &data, sizeof(T));
+        m_pointer += sizeof(T);
         m_sizeLeft -= sizeof(T);
       }
     }
+
+    template <typename T>
+      requires(sizeof(T) == 1)
+    void push(T data) {
+      if (m_sizeLeft >= 1) {
+        *m_pointer++ = *reinterpret_cast<const uint8_t*>(&data);
+        m_sizeLeft -= 1;
+      }
+    }
+
     size_t sizeLeft() { return m_sizeLeft; }
 
    private:
-    void* m_pointer;
+    uint8_t* m_pointer;
     size_t m_sizeLeft;
   };
   virtual void push(Channel* c) const = 0;

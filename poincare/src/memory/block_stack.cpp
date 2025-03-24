@@ -27,6 +27,7 @@ bool BlockStack::isRootBlock(const Block* block, bool allowLast) const {
 
 Block* BlockStack::initFromAddress(const void* address, bool isTree) {
   const Tree* node = Tree::FromBlocks(reinterpret_cast<const Block*>(address));
+  assert(node != nullptr);
   size_t size = isTree ? node->treeSize() : node->nodeSize();
   Block* copiedTree = lastBlock();
   if (!insertBlocks(copiedTree, static_cast<const Block*>(address),

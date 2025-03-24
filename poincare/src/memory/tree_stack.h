@@ -228,6 +228,7 @@ class AbstractTreeStack : public BlockStack {
 
  protected:
   Tree* clone(const Tree* node, bool isTree = true) {
+    assert(node != nullptr);
     return initFromAddress(static_cast<const void*>(node->block()), isTree);
   }
 

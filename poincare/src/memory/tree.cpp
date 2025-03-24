@@ -233,6 +233,7 @@ bool Tree::nodeIsIdenticalTo(const Tree* other) const {
 }
 
 const Tree* NextTreeNoCache(const Tree* result) {
+  assert(result != nullptr);
   int nbOfChildrenToScan = 1;
   while (nbOfChildrenToScan > 0) {
     nbOfChildrenToScan += result->numberOfChildren() - 1;

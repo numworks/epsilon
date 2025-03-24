@@ -65,7 +65,7 @@ make PLATFORM=simulator epsilon_run
 
 ## Run Epsilon on your calculator as a third-party software
 
-You can also update your NumWorks calculator easily. Please note that after a reset, your calculator will exclusively run an offical NumWorks software.
+You can also update your NumWorks calculator easily. Please note that after a reset, your calculator will exclusively run an official NumWorks software.
 
 You'll first need to plug your calculator to the computer via USB, and check that there is a message "The calculator is connected" displayed on the calculator screen.
 Then open your terminal, navigate to the epsilon folder and type the following commands:

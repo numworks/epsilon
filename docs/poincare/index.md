@@ -16,7 +16,7 @@ According to their types, expressions are childless (`Type::Rational`) or store 
 
 The type of a C++ object is used by the compiler to generate a vtable. A vtable is a lookup table that tells which function to call for a given object class, hence creating polymorphism. Once the vtable has been built, the compiler completely discards the type information of a given object.
 
-The problem with vtables is that they allow polyphormism based on a single class only: you can have different code called on a Node depending on whether it's an addition or a multiplication. But vtables can't handle dynamic behavior based on two parameters. For example, if you want to call a function depending on the type of two parameters, vtables can't do that.
+The problem with vtables is that they allow polymorphism based on a single class only: you can have different code called on a Node depending on whether it's an addition or a multiplication. But vtables can't handle dynamic behavior based on two parameters. For example, if you want to call a function depending on the type of two parameters, vtables can't do that.
 
 That case happens quite often in Poincare: for example, if an expression contains the addition of another addition, we can merge both nodes in a single one ($$1+(\pi+x)$$ is $$1+\pi+x$$), see figure below). And we want to implement this behavior only if both nodes are additions.
 

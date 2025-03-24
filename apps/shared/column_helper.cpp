@@ -221,9 +221,9 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
                      true, true);
     return FillColumnStatus::Success;
   }
-  /* Formula isn't a list and has already been approximated with context, which
-   * is no longer needed. Set each cell to the same value */
-  double evaluation = formula.approximateToRealScalar<double>();
+  /* Formula isn't a list and has already been reduced with context, which is no
+   * longer needed. Set each cell to the same value */
+  double evaluation = reduced.approximateToRealScalar<double>();
   if (std::isnan(evaluation)) {
     return FillColumnStatus::DataNotSuitable;
   }

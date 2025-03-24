@@ -107,6 +107,10 @@ $(call create_goal,flasher, \
 ,,Building flasher.flash will automatically jump at the right address \
 )
 
+# Jump to the installed firmware by default
+userland.A%flash: DFULEAVE := 0x90010000
+userland.B%flash: DFULEAVE := 0x90410000
+
 ifeq ($(PLATFORM),n0120)
 flasher%flash: DFULEAVE := 0x24030000
 else

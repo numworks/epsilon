@@ -59,6 +59,8 @@ class StatisticsCalculationOptions {
 
 template <typename T>
 class StatisticsDataset {
+  friend class StatisticsDatasetFromTable;
+
  public:
 #if TODO_PCJ
   static StatisticsDataset<T> BuildFromChildren(
@@ -88,6 +90,32 @@ class StatisticsDataset {
       delete[] m_sortedIndex;
       m_sortedIndex = nullptr;
     }
+  }
+
+  // Rule of 3
+
+  StatisticsDataset(const StatisticsDataset& other)
+      : m_values(other.m_values),
+        m_weights(other.m_weights),
+        m_recomputeSortedIndex(other.m_recomputeSortedIndex),
+        m_memoizedTotalWeight(other.m_memoizedTotalWeight),
+        m_lnOfValues(other.m_lnOfValues),
+        m_oppositeOfValues(other.m_oppositeOfValues) {
+    deleteSortedIndex();
+  }
+
+  StatisticsDataset& operator=(const StatisticsDataset& other) {
+    if (this == &other) {
+      return *this;
+    }
+    m_values = other.m_values;
+    m_weights = other.m_weights;
+    m_recomputeSortedIndex = other.m_recomputeSortedIndex;
+    m_memoizedTotalWeight = other.m_memoizedTotalWeight;
+    m_lnOfValues = other.m_lnOfValues;
+    m_oppositeOfValues = other.m_oppositeOfValues;
+    deleteSortedIndex();
+    return *this;
   }
 
   ~StatisticsDataset() { deleteSortedIndex(); }

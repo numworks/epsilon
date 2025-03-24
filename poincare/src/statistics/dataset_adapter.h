@@ -40,9 +40,40 @@ class StatisticsDatasetFromTable : public StatisticsDataset<double> {
         m_valuesAdapter(data, valuesColumnIndex),
         m_weigthsAdapter(data, weightsColumnIndex) {}
 
+  /* Copy operations needs to be defined so that m_values and m_weights point to
+   * its own column adapters. */
+
+  // Copy constructor
+  StatisticsDatasetFromTable(const StatisticsDatasetFromTable& other)
+      : StatisticsDataset(other),
+        m_valuesAdapter(other.m_valuesAdapter),
+        m_weigthsAdapter(other.m_weigthsAdapter) {
+    // Adjust m_values and m_weights to point to the corresponding adapters
+    m_values = &m_valuesAdapter;
+    m_weights = other.m_weights ? &m_weigthsAdapter : nullptr;
+  }
+
+  // Copy assignment operator
+  StatisticsDatasetFromTable& operator=(
+      const StatisticsDatasetFromTable& other) {
+    if (this == &other) {
+      return *this;
+    }
+    StatisticsDataset::operator=(other);
+    m_valuesAdapter = other.m_valuesAdapter;
+    m_weigthsAdapter = other.m_weigthsAdapter;
+    // Adjust m_values and m_weights to point to the corresponding adapters
+    m_values = &m_valuesAdapter;
+    m_weights = other.m_weights ? &m_weigthsAdapter : nullptr;
+    return *this;
+  }
+
+  // Destructor not needed (rule of 3)
+  ~StatisticsDatasetFromTable() = default;
+
  private:
-  const DatasetColumnAdapter m_valuesAdapter;
-  const DatasetColumnAdapter m_weigthsAdapter;
+  DatasetColumnAdapter m_valuesAdapter;
+  DatasetColumnAdapter m_weigthsAdapter;
 };
 
 }  // namespace Poincare::Internal

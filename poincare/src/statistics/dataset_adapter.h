@@ -35,10 +35,10 @@ class StatisticsDatasetFromTable : public StatisticsDataset<double> {
                              bool lnOfValues = false,
                              bool oppositeOfValues = false)
       : StatisticsDataset(&m_valuesAdapter,
-                          weightsColumnIndex >= 0 ? &m_weigthsAdapter : nullptr,
+                          weightsColumnIndex >= 0 ? &m_weightsAdapter : nullptr,
                           lnOfValues, oppositeOfValues),
         m_valuesAdapter(data, valuesColumnIndex),
-        m_weigthsAdapter(data, weightsColumnIndex) {}
+        m_weightsAdapter(data, weightsColumnIndex) {}
 
   /* Copy operations needs to be defined so that m_values and m_weights point to
    * its own column adapters. */
@@ -47,10 +47,10 @@ class StatisticsDatasetFromTable : public StatisticsDataset<double> {
   StatisticsDatasetFromTable(const StatisticsDatasetFromTable& other)
       : StatisticsDataset(other),
         m_valuesAdapter(other.m_valuesAdapter),
-        m_weigthsAdapter(other.m_weigthsAdapter) {
+        m_weightsAdapter(other.m_weightsAdapter) {
     // Adjust m_values and m_weights to point to the corresponding adapters
     m_values = &m_valuesAdapter;
-    m_weights = other.m_weights ? &m_weigthsAdapter : nullptr;
+    m_weights = other.m_weights ? &m_weightsAdapter : nullptr;
   }
 
   // Copy assignment operator
@@ -61,10 +61,10 @@ class StatisticsDatasetFromTable : public StatisticsDataset<double> {
     }
     StatisticsDataset::operator=(other);
     m_valuesAdapter = other.m_valuesAdapter;
-    m_weigthsAdapter = other.m_weigthsAdapter;
+    m_weightsAdapter = other.m_weightsAdapter;
     // Adjust m_values and m_weights to point to the corresponding adapters
     m_values = &m_valuesAdapter;
-    m_weights = other.m_weights ? &m_weigthsAdapter : nullptr;
+    m_weights = other.m_weights ? &m_weightsAdapter : nullptr;
     return *this;
   }
 
@@ -73,7 +73,7 @@ class StatisticsDatasetFromTable : public StatisticsDataset<double> {
 
  private:
   DatasetColumnAdapter m_valuesAdapter;
-  DatasetColumnAdapter m_weigthsAdapter;
+  DatasetColumnAdapter m_weightsAdapter;
 };
 
 }  // namespace Poincare::Internal

@@ -204,13 +204,13 @@ bool List::ShallowApplyListOperators(Tree* e) {
       if (!valuesList->isList()) {
         return false;
       }
-      Tree* weigthsList = e->child(1);
+      Tree* weightsList = e->child(1);
       if (hasWeightList) {
-        // weigths are approximated in place
-        BubbleUp(weigthsList, SystematicReduction::ShallowReduce);
-        weigthsList->moveTreeOverTree(
-            Approximation::ToTree<T>(weigthsList, Approximation::Parameters{}));
-        assert(weigthsList->isList());
+        // weights are approximated in place
+        BubbleUp(weightsList, SystematicReduction::ShallowReduce);
+        weightsList->moveTreeOverTree(
+            Approximation::ToTree<T>(weightsList, Approximation::Parameters{}));
+        assert(weightsList->isList());
       }
       /* values are not approximated in place since we need to keep the exact
        * values to return the exact median */
@@ -224,7 +224,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
         lowerMedianIndex =
             StatisticsDataset<T>(&values).medianIndex(&upperMedianIndex);
       } else {
-        TreeDatasetColumn<T> weights(weigthsList);
+        TreeDatasetColumn<T> weights(weightsList);
         lowerMedianIndex = StatisticsDataset<T>(&values, &weights)
                                .medianIndex(&upperMedianIndex);
       }

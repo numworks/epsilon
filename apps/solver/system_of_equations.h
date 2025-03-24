@@ -106,6 +106,8 @@ class SystemOfEquations {
   Poincare::SystemExpression equationStandardFormForApproximateSolve(
       Poincare::Context* context);
 #endif
+  Poincare::Internal::Tree* prepareEquationForApproximateSolve(
+      Poincare::Context* context);
   Error solveLinearSystem(Poincare::Context* context,
                           Poincare::SystemExpression* simplifiedEquations);
   Error solvePolynomial(Poincare::Context* context,

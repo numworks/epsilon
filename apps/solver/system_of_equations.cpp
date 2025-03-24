@@ -104,11 +104,12 @@ void SystemOfEquations::cancelApproximateSolve(
   m_numberOfSolutions = 0;
 }
 
-void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
-  // TODO: factor with approximateSolve to avoid preparing the equation twice
+Internal::Tree* SystemOfEquations::prepareEquationForApproximateSolve(
+    Context* context) {
   Internal::Tree* set = equationSet(m_store);
   assert(set->numberOfChildren() == 1);
-  Internal::Tree* equation = set->child(0);
+  set->removeNode();
+  Internal::Tree* equation = set;
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
   assert(variables->numberOfChildren() == 1);
   m_solverContext.variables.fillWithList(variables);
@@ -117,42 +118,32 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   Internal::ProjectionContext ctx{
       .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
       .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = context};
-  Internal::Projection::UpdateComplexFormatWithExpressionInput(set, &ctx);
+  Internal::Projection::UpdateComplexFormatWithExpressionInput(equation, &ctx);
   m_solverContext.complexFormat = ctx.m_complexFormat;
   Internal::Simplification::ToSystem(equation, &ctx);
   Internal::Approximation::PrepareFunctionForApproximation(
       equation, m_solverContext.variables.variable(0),
       Preferences::ComplexFormat::Real);
+  return equation;
+}
 
+void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
+  Internal::Tree* preparedEquation =
+      prepareEquationForApproximateSolve(context);
   m_approximateSolvingRange =
-      Poincare::Internal::EquationSolver::AutomaticInterval(equation,
+      Poincare::Internal::EquationSolver::AutomaticInterval(preparedEquation,
                                                             &m_solverContext);
   m_autoApproximateSolvingRange = true;
-  set->removeTree();
+  preparedEquation->removeTree();
 }
 
 void SystemOfEquations::approximateSolve(Context* context) {
-  Internal::Tree* set = equationSet(m_store);
-  assert(set->numberOfChildren() == 1);
-  Internal::Tree* equation = set->child(0);
-  Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);
-  assert(variables->numberOfChildren() == 1);
-  m_solverContext.variables.fillWithList(variables);
-  variables->removeTree();
-  m_solverContext.overrideUserVariables = false;
-  Internal::ProjectionContext ctx{
-      .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
-      .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
-      .m_context = context};
-  Internal::Projection::UpdateComplexFormatWithExpressionInput(set, &ctx);
-  m_solverContext.complexFormat = ctx.m_complexFormat;
-  Internal::Simplification::ToSystem(equation, &ctx);
-  Internal::Approximation::PrepareFunctionForApproximation(
-      equation, m_solverContext.variables.variable(0),
-      Preferences::ComplexFormat::Real);
+  Internal::Tree* preparedEquation =
+      prepareEquationForApproximateSolve(context);
   Internal::Tree* result = Poincare::Internal::EquationSolver::ApproximateSolve(
-      equation, m_approximateSolvingRange, &m_solverContext);
+      preparedEquation, m_approximateSolvingRange, &m_solverContext);
 
   assert(result && result->isList());
   // Update member variables for LinearSystem
@@ -164,7 +155,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
                  Poincare::Internal::FloatHelper::To(solution), false);
   }
   result->removeTree();
-  set->removeTree();
+  preparedEquation->removeTree();
 }
 
 #if 0

@@ -395,14 +395,14 @@ void inline AdvancedReduction::Context::resetIfNeeded() {
 void AdvancedReduction::UpdateBestMetric(Context* ctx) {
   // Otherwise, root should be reset to current path.
   assert(!ctx->m_mustResetRoot);
-  if (Metric::WeWontDoBetterThanThat(ctx->m_root)) {
-    ctx->m_bestMetric = -1;
+  int metric = Metric::GetMetric(ctx->m_root);
+  if (metric == Metric::k_perfectMetric) {
+    ctx->m_bestMetric = Metric::k_perfectMetric;
     ctx->m_bestPath = ctx->m_path;
-    ctx->m_bestHash = CrcCollection::AdvancedHash(ctx->m_root);
+    // Skip unnecessary ctx->m_bestHash update
     LOG(2, "Early exit with: ", LogExpression(ctx->m_root));
     return;
   }
-  int metric = Metric::GetMetric(ctx->m_root);
 #if VERBOSE_REDUCTION >= 1
   const int oldMetric = ctx->m_bestMetric;
   const char* label = "Metric (";

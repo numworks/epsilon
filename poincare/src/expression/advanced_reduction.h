@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_ADVANCED_REDUCTION_H
 #define POINCARE_EXPRESSION_ADVANCED_REDUCTION_H
 
+#include <poincare/src/expression/metric.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 
@@ -158,7 +159,9 @@ class AdvancedReduction {
     bool m_mustResetRoot;
     /* Reset ctx->m_root to current [Path] if needed */
     void resetIfNeeded();
-    bool shouldEarlyExit() const { return this->m_bestMetric < 0; }
+    bool shouldEarlyExit() const {
+      return this->m_bestMetric == Metric::k_perfectMetric;
+    }
     bool canAppendDirection() const {
       return m_path.length() < m_crcCollection.maxDepth();
     }

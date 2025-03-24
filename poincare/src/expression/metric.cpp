@@ -12,7 +12,8 @@
 
 namespace Poincare::Internal {
 
-static Type ShortTypeForBigType(Type t) {
+namespace {
+Type ShortTypeForBigType(Type t) {
   switch (t) {
     case Type::RationalNegBig:
       return Type::RationalNegShort;
@@ -26,8 +27,9 @@ static Type ShortTypeForBigType(Type t) {
       OMG::unreachable();
   }
 }
+}  // namespace
 
-int Metric::GetMetric(const Tree* e) {
+int Metric::GetTrueMetric(const Tree* e) {
   int result = GetMetric(e->type());
   /* Some functions must have the smallest children possible, so we increase the
    * cost of all children inside the parent expression with a coefficient. */
@@ -72,7 +74,7 @@ int Metric::GetMetric(const Tree* e) {
         Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
         if (!exponent->isHalf()) {
           // Ignore cost of exponent for squareroot
-          result += GetMetric(exponent);
+          result += GetTrueMetric(exponent);
         }
         exponent->removeTree();
         childrenCoeff = 2;
@@ -83,17 +85,17 @@ int Metric::GetMetric(const Tree* e) {
           // Increase cost of negative children in roots
           childrenCoeff = 4;
         }
-        return result + GetMetric(base) * childrenCoeff;
+        return result + GetTrueMetric(base) * childrenCoeff;
       }
       break;
     }
     case Type::Dep:
-      return result + GetMetric(Dependency::Main(e));
+      return result + GetTrueMetric(Dependency::Main(e));
     case Type::Trig:
     case Type::ATrig:
       childrenCoeff = 2;
       // Ignore second child
-      return result + GetMetric(e->child(0)) * childrenCoeff;
+      return result + GetTrueMetric(e->child(0)) * childrenCoeff;
     case Type::Abs:
     case Type::Arg:
     case Type::Im:
@@ -115,9 +117,16 @@ int Metric::GetMetric(const Tree* e) {
       break;
   }
   for (const Tree* child : e->children()) {
-    result += GetMetric(child) * childrenCoeff;
+    result += GetTrueMetric(child) * childrenCoeff;
   }
   return result;
+}
+
+int Metric::GetMetric(const Tree* e) {
+  if (CannotBeReducedFurther(e)) {
+    return k_perfectMetric;
+  }
+  return GetTrueMetric(e);
 }
 
 int Metric::GetMetric(Type type) {
@@ -142,18 +151,50 @@ int Metric::GetMetric(Type type) {
   }
 }
 
-bool Metric::WeWontDoBetterThanThat(const Tree* e) {
-  PatternMatching::Context ctx;
+namespace {
+bool IsMultOfNumbers(const Tree* e) {
   if (e->isNumber()) {
     return true;
-  } else if (PatternMatching::Match(e, KMult(KA, π_e), &ctx) &&
-             ctx.getTree(KA)->isRational()) {
-    return true;
-  } else if (PatternMatching::Match(e, KAdd(KA, KMult(KB, i_e)), &ctx) &&
-             ctx.getTree(KA)->isRational() && ctx.getTree(KB)->isRational()) {
+  }
+  if (!e->isMult()) {
+    return false;
+  }
+  for (const Tree* child : e->children()) {
+    if (!child->isNumber()) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool IsMultOfNumbersOrI(const Tree* e) {
+  if (e->isNumber() || e->isComplexI()) {
     return true;
   }
-  return false;
+  if (!e->isMult()) {
+    return false;
+  }
+  for (const Tree* child : e->children()) {
+    if (!child->isNumber() && !child->isComplexI()) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool HasCartisianForm(const Tree* e) {
+  if (IsMultOfNumbersOrI(e)) {
+    return true;
+  }
+  if (!e->isAdd() || e->numberOfChildren() != 2) {
+    return false;
+  }
+  return IsMultOfNumbers(e->child(0)) && IsMultOfNumbersOrI(e->child(1));
+}
+}  // namespace
+
+bool Metric::CannotBeReducedFurther(const Tree* e) {
+  return HasCartisianForm(e);
 }
 
 }  // namespace Poincare::Internal

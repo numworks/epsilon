@@ -460,7 +460,7 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
    *  - It has a better metric than the original expression
    *  - It simplified all the introduced re/im/arg/abs nodes */
   if (result && !Dependency::MainTreeIsIdenticalToMain(result, e) &&
-      (Metric::GetMetric(e) >= Metric::GetMetric(result) ||
+      (Metric::GetTrueMetric(e) >= Metric::GetTrueMetric(result) ||
        !Dependency::SafeMain(result)->hasDescendantSatisfying(
            [](const Tree* e) {
              return e->isRe() || e->isIm() || e->isArg() || e->isAbs();

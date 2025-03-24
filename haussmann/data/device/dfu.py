@@ -512,8 +512,27 @@ def get_memory_layout(device):
     return result
 
 
+def list_dfu_active_slots(vid_pids):
+    """Prints a list of devices detected in DFU mode and their active slot."""
+    devices = get_dfu_devices_with_vid_pids(__Identifiers)
+    if not devices:
+        print("No DFU capable devices found")
+        return
+    for device in devices:
+        isSlotA, isSlotB = False, False
+        layout = get_memory_layout(device)
+        print("{}".format(device.serial_number), end=" ")
+        for entry in layout:
+            isSlotB |= entry["addr"] == int("0x90000000", 16)
+            isSlotA |= entry["addr"] == int("0x90400000", 16)
+        if isSlotA == isSlotB:
+            print("Rescue mode" if isSlotA else "Unknown")
+        else:
+            print("Active on slot", "A" if isSlotA else "B")
+
+
 def list_dfu_devices(vid_pids):
-    """Prints a lits of devices detected in DFU mode."""
+    """Prints a list of devices detected in DFU mode."""
     devices = get_dfu_devices_with_vid_pids(__Identifiers)
     if not devices:
         print("No DFU capable devices found")
@@ -601,6 +620,12 @@ def main():
         default=False,
     )
     parser.add_argument(
+        "--slots",
+        help="List currently attached DFU devices and their current state",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
         "-D",
         "--download",
         help="Write firmware from file to DFU device",
@@ -627,6 +652,10 @@ def main():
 
     if args.list:
         list_dfu_devices(__Identifiers)
+        return
+
+    if args.slots:
+        list_dfu_active_slots(__Identifiers)
         return
 
     init()

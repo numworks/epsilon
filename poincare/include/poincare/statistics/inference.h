@@ -57,7 +57,6 @@ namespace EstimatesOrder =
     Internal::Inference::SignificanceTest::EstimatesOrder;
 
 using Internal::Inference::SignificanceTest::Compute;
-using Internal::Inference::SignificanceTest::ComputePValue;
 using Internal::Inference::SignificanceTest::Results;
 
 using Internal::Inference::SignificanceTest::CriticalValueLayout;

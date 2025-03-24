@@ -65,9 +65,6 @@ struct Results {
 
 Results Compute(Type type, Hypothesis hypothesis,
                 const ParametersArray parameters);
-double ComputePValue(StatisticType statisticType,
-                     ComparisonJunior::Operator haOperator,
-                     double criticalValue, double degreesOfFreedom);
 
 Poincare::Layout CriticalValueLayout(StatisticType statisticType);
 Poincare::Layout EstimateLayoutAtIndex(TestType testType, int index);
@@ -77,6 +74,9 @@ double DefaultParameterAtIndex(Type type, int index);
 
 // ===== PRIVATE =====
 
+double ComputePValue(StatisticType statisticType,
+                     ComparisonJunior::Operator haOperator,
+                     double criticalValue, double degreesOfFreedom);
 Estimates ComputeEstimates(TestType testType, const ParametersArray parameters);
 double ComputeCriticalValue(Type type, double h0,
                             const ParametersArray parameters);

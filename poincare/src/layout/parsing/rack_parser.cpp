@@ -525,7 +525,7 @@ void RackParser::parseImplicitAdditionBetweenUnits(TreeRef& leftHandSide,
    * ParsingMethod::ImplicitAdditionBetweenUnits. */
   int start = m_root->indexOfChild(m_currentToken.firstLayout());
   RackParser subParser(
-      m_root, m_parsingContext.context(),
+      m_root, false, m_parsingContext.context(),
       ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits, false, start,
       start + m_currentToken.length());
   leftHandSide = subParser.parse();
@@ -1274,7 +1274,7 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
       m_nextToken.firstLayout()->isParenthesesLayout()) {
     assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
     // Parse the RackLayout as a comma separated list.
-    RackParser subParser(m_nextToken.firstLayout()->nextNode(),
+    RackParser subParser(m_nextToken.firstLayout()->nextNode(), false,
                          m_parsingContext.context(),
                          m_parsingContext.parsingMethod(), true);
     popToken();

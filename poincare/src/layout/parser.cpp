@@ -53,10 +53,10 @@ Type ExpressionType(LayoutType type) {
 }
 
 Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
-                    ParsingContext::ParsingMethod method) {
+                    bool isTopLevelRack, ParsingContext::ParsingMethod method) {
   if (l->isRackLayout()) {
     // TODO: should be inlined in the caller
-    return RackParser(l, context, method).parse();
+    return RackParser(l, context, isTopLevelRack, method).parse();
   }
   switch (l->layoutType()) {
     case LayoutType::VerticalOffset:
@@ -65,7 +65,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
     case LayoutType::CombinedCodePoints:
       assert(false);
     case LayoutType::Prison: {
-      Tree* parsed = Parse(l->child(0), context, method);
+      Tree* parsed = Parse(l->child(0), context, false, method);
       if (!parsed) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -73,7 +73,8 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
     }
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces: {
-      Tree* list = RackParser(l->child(0), context, method, true).parse();
+      Tree* list =
+          RackParser(l->child(0), context, false, method, true).parse();
       if (!list) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }

@@ -127,7 +127,7 @@ void assert_parsed_expression_process_to(
 Internal::Tree *parse_expression(const char *expression, Context *context,
                                  bool parseForAssignment) {
   Tree *inputLayout = RackFromText(expression);
-  RackParser parser(inputLayout, context,
+  RackParser parser(inputLayout, context, true,
                     parseForAssignment
                         ? Internal::ParsingContext::ParsingMethod::Assignment
                         : Internal::ParsingContext::ParsingMethod::Classic);

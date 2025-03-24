@@ -191,7 +191,7 @@ UserExpression UserExpression::Parse(const Tree* layout, Context* context,
                                      bool addMissingParenthesis,
                                      bool parseForAssignment) {
   // TODO_PCJ: Use addMissingParenthesis
-  return Builder(Parser::Parse(layout, context,
+  return Builder(Parser::Parse(layout, context, true,
                                parseForAssignment
                                    ? ParsingContext::ParsingMethod::Assignment
                                    : ParsingContext::ParsingMethod::Classic));

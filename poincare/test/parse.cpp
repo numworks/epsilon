@@ -18,7 +18,7 @@ void assertLayoutParsesTo(const Tree* layout, const Tree* expected,
                           Poincare::Context* context = nullptr,
                           ParsingContext::ParsingMethod parsingMethod =
                               ParsingContext::ParsingMethod::Classic) {
-  Tree* expression = RackParser(layout, context, parsingMethod).parse();
+  Tree* expression = RackParser(layout, context, true, parsingMethod).parse();
   assert_trees_are_equal(expression, expected);
 }
 
@@ -68,7 +68,7 @@ QUIZ_CASE(pcj_parse_layout_tokenize) {
 }
 
 bool is_parsable(const Tree* layout, Poincare::Context* context = nullptr) {
-  TreeRef expression = RackParser(layout, context).parse();
+  TreeRef expression = RackParser(layout, context, true).parse();
   return !expression.isUninitialized();
 }
 

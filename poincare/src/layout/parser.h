@@ -11,6 +11,7 @@ namespace Poincare::Internal {
 
 namespace Parser {
 Tree* Parse(const Tree* l, Poincare::Context* context,
+            bool isTopLevelRack = false,
             ParsingContext::ParsingMethod method =
                 ParsingContext::ParsingMethod::Classic);
 }

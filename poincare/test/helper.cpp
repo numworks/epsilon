@@ -142,7 +142,7 @@ Tree* private_parse(const char* input, Poincare::Context* context,
                     bool parseForAssignment = false,
                     bool assertNotParsable = false) {
   Tree* layout = RackFromText(input);
-  RackParser parser(layout, context,
+  RackParser parser(layout, context, true,
                     parseForAssignment
                         ? ParsingContext::ParsingMethod::Assignment
                         : ParsingContext::ParsingMethod::Classic);

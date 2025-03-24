@@ -34,6 +34,7 @@ class RackParser {
    * "=". (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as
    * f(x)=xy) */
   RackParser(const Tree* rack, Poincare::Context* context,
+             bool isTopLevelRack = false,
              ParsingContext::ParsingMethod parsingMethod =
                  ParsingContext::ParsingMethod::Classic,
              bool commaSeparatedList = false, int textStart = 0,
@@ -45,6 +46,7 @@ class RackParser {
         m_pendingImplicitOperator(false),
         m_waitingSlashForMixedFraction(false),
         m_commaSeparatedList(commaSeparatedList),
+        m_isTopLevelRack(isTopLevelRack),
         m_root(rack) {}
 
   Tree* parse();
@@ -202,6 +204,7 @@ class RackParser {
   bool m_pendingImplicitOperator;
   bool m_waitingSlashForMixedFraction;
   bool m_commaSeparatedList;
+  bool m_isTopLevelRack;
   const Tree* m_root;
 };
 

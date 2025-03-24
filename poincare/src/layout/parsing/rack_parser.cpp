@@ -1124,7 +1124,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     if (!parseApostropheDerivationOrder(&derivationOrder)) {
       // Case 2: parse f^(3)(x)
       if (!parseIntegerCaretForFunction(true, &derivationOrder) ||
-          derivationOrder < 0) {
+          derivationOrder <= 0) {
         return false;
       }
     }

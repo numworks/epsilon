@@ -869,7 +869,8 @@ void Unit::ApplyMainOutputDisplay(Tree* e, TreeRef& inputUnits,
       ((!unit2 && !unit1->isPhysicalConstant()) ||
        (unit2 && dimension.unit.vector == Speed::Dimension))) {
     assert(!dimension.isAngleUnit());
-    double value = Approximation::To<double>(e, Approximation::Parameters{});
+    double value = Approximation::To<double>(
+        e, Approximation::Parameters{.isRootAndCanHaveRandom = true});
     if (IsNonKelvinTemperature(GetRepresentative(unit1))) {
       value = KelvinValueToRepresentative(value, GetRepresentative(unit1));
     } else {
@@ -909,6 +910,10 @@ bool Unit::ShallowRemoveUnit(Tree* e, void*) {
 }
 
 bool Unit::RemoveNonUnits(Tree* e, bool preserveAdd) {
+  if (e->isDep()) {
+    // Ignoring Dep and DepList here
+    e->cloneTreeOverTree(e->child(0));
+  }
 #if ASSERTIONS
   bool wasUnit = Dimension::Get(e).isUnit();
 #endif

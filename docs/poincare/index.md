@@ -100,8 +100,7 @@ Here is a short tour of the reduction rules for the main `Expression` subclasses
 * $$(a^b)^c \rightarrow a^{b*c} \;if\; a > 0 \;or\; c \in \mathbb{Z}$$
 * $$(a*b*c*...)^n \rightarrow a^n*b^n*c^n*... \;if\; n \in \mathbb{Z}$$
 * $$(a*b*c*...)^r \rightarrow \mid a\mid^r*(sign(a)*b*c*...)^r \;if\; a \in \mathbb{Q}$$
-* $$a^{b+c} \rightarrow (a^b)*b^c \;if\; a, b \in \mathbb{Z}$$
-* $$a^{b+c} \rightarrow (a^b)*b^c \;if\; a, b \in \mathbb{Z}$$
+* $$a^{b+c} \rightarrow a^b*a^c \;if\; a, b \in \mathbb{Z}$$
 * $$r^s\;with\; r, s \in \mathbb{Q}$$ can be simplified using the factorisation in primes of $$r$$ (ie, $$8^{\frac{1}{2}} \rightarrow 2*2^{\frac{1}{2}}$$)
 * $$i^{\frac{p}{q}} \rightarrow e^{\frac{i*\pi*p}{2*q}} \;with\; p, q \in \mathbb{Z}$$
 * $$e^{\frac{i*\pi*p}{q}} \rightarrow cos(\frac{\pi*p}{q})+i*sin(\frac{\pi*p}{q}) \;with\; p, q \in \mathbb{Z}$$

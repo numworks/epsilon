@@ -1,5 +1,8 @@
 # Poincaré
 
+> [!WARNING]
+> This documentation is now outdated, Poincaré has been reworked, and proper documentation now lives [here](/poincare/README.md).
+
 ## Structure
 
 Poincare takes text input such as `1+2*3` and turns it into a tree structure, that can be simplified, approximated and pretty-printed.

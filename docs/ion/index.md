@@ -1,6 +1,3 @@
----
-title: Ion
----
 # Ion
 
 ## Overview
@@ -15,11 +12,11 @@ This is the reference platform corresponding to the actual device. To really und
 
 ### Boot
 
-On boot, the Cortex core interprets the beginning of Flash memory as an array of addresses, each having a specific meaning. For example, the first value gives the address of the stack and the second one the address the processor jumps to right after reset. This list of addresses is called the [ISR table](https://github.com/numworks/epsilon/blob/master/ion/src/device/shared/boot/isr.c).
+On boot, the Cortex core interprets the beginning of Flash memory as an array of addresses, each having a specific meaning. For example, the first value gives the address of the stack and the second one the address the processor jumps to right after reset. This list of addresses is called the [ISR table](/ion/src/device/shared/boot/isr.c).
 
 ### Memory layout
 
-Like we saw in the previous paragraph, the MCU has a specific memory layout (for example, Flash starts at address 0x08000000) and expects certain values at certain addresses. To ensure the firmware is laid out in memory exactly how the processor expects it, we use a custom [linker script](https://github.com/numworks/epsilon/blob/master/ion/src/device/n0110/flash.ld).
+Like we saw in the previous paragraph, the MCU has a specific memory layout (for example, Flash starts at address 0x08000000) and expects certain values at certain addresses. To ensure the firmware is laid out in memory exactly how the processor expects it, we use a custom [linker script](/ion/src/device/n0110/flash.ld).
 
 ## Simulator
 

@@ -1,24 +1,20 @@
----
-title: Software Engineering
-breadcrumb: Software
----
 # Epsilon
 
 Epsilon is a high-performance graphing calculator operating system. It includes eight apps that cover the high school mathematics curriculum.
 
 ## Build your own version of Epsilon
 
-First of all, you should learn [how to build and run](build/) your very own version of Epsilon. Note that you don't need an actual NumWorks calculator to do this. Indeed, Epsilon can be compiled as a standalone application that will run on your computer.
+First of all, you should learn [how to build and run](build/index.md) your very own version of Epsilon. Note that you don't need an actual NumWorks calculator to do this. Indeed, Epsilon can be compiled as a standalone application that will run on your computer.
 
 ## Discover Epsilon's architecture
 
-Epsilon's code is comprehensive, as it goes from a keyboard driver up to a math engine. Epsilon is made out of five main bricks: [Ion](<%= p "ion" %>), Kandinsky, [Poincaré](<%= p "poincare" %>), Escher, and Apps.
+Epsilon's code is comprehensive, as it goes from a keyboard driver up to a math engine. Epsilon is made out of five main bricks: [Ion](ion/index.md), Kandinsky, [Poincaré](poincare/index.md), Escher, and Apps.
 
-![Epsilon's architecture](<%= p "architecture.svg" %>)
+![Epsilon's architecture](architecture.svg)
 
 ### Ion — Hardware abstraction layer
 
-Ion is the underlying library that [abstracts all the hardware operations](ion/). It performs tasks such as setting the backlight intensity, configuring the LED or setting pixel colors on the screen. It also answers to questions such as "tell me which keys are pressed" and "what is the battery voltage?".
+Ion is the underlying library that [abstracts all the hardware operations](/ion/). It performs tasks such as setting the backlight intensity, configuring the LED or setting pixel colors on the screen. It also answers to questions such as "tell me which keys are pressed" and "what is the battery voltage?".
 
 ### Kandinsky — Graphics engine
 
@@ -69,12 +65,9 @@ Unfortunately, local variables can't answer all use cases, and sometimes one nee
 
 This raises a lot of potential problems that can trigger unpredictable dynamic behaviors:
 
-  <dl class="dl-horizontal">
-    <dt>Memory leaks</dt>
-    <dd class="text-justify">If one forgets to free memory that is no longer used, the system will eventually run out of available memory.</dd>
-    <dt>Memory fragmentation</dt>
-    <dd class="text-justify">Memory allocation has to be contiguous. So the allocation algorithm has to use a smart heuristic to ensure that it will not fragment its allocated space too much.</dd>
-  </dl>
+- **Memory leaks**: If one forgets to free memory that is no longer used, the system will eventually run out of available memory.
+
+- **Memory fragmentation**: Memory allocation has to be contiguous. So the allocation algorithm has to use a smart heuristic to ensure that it will not fragment its allocated space too much.
 
 We decided to avoid `malloc` altogether and to use a mix of static allocation and a pool of relocatable garbage-collected nodes for manipulating mathematical expressions.
 
@@ -89,8 +82,10 @@ In practice, this means that the firmware will need to know in advance how the m
 - Where will we store read-only variables?
 - Where will the code live in memory?
 
-The firmware will also need to take special care of the system initialization. There is no such thing as a "main" function on a firmware. Instead, on Cortex-M devices, after reset the CPU simply jumps to the address contained at address 0x00000000 (which happens to be the first bytes of flash memory). So if your firmware starts by 0x12345678, code execution will start at address 0x12345678.
+The firmware will also need to take special care of the system initialization. There is no such thing as a "main" function on a firmware. Instead, on Cortex-M devices, after reset the CPU simply jumps to the address contained at address `0x00000000` (which happens to be the first bytes of flash memory). So if your firmware starts by `0x12345678`, code execution will start at address `0x12345678`.
 
-Enforcing such a careful memory layout would be an impossible job without the proper tool. Fortunately, embedded linkers can be scripted and allow this kind of tailor-made configuration. You'll find Epsilon's linker script in [ion/src/device/userland/flash/userland_shared.ld](https://github.com/numworks/epsilon/blob/master/ion/src/device/userland/flash/userland_shared.ld) - it is heavily commented and should be self-explanatory.
+Enforcing such a careful memory layout would be an impossible job without the proper tool. Fortunately, embedded linkers can be scripted and allow this kind of tailor-made configuration.
 
-That being said, there are additional things the OS usually takes care of which we need to do ourselves : for example, initialize global variables to zero. This is done in the [ion/src/device/shared/boot/rt0.cpp](https://github.com/numworks/epsilon/blob/master/ion/src/device/shared/boot/rt0.cpp) file, which is worth reading too.
+You'll find Epsilon's linker script in [ion/src/device/userland/flash/userland_shared.ld](/ion/src/device/userland/flash/userland_shared.ld) - it is heavily commented and should be self-explanatory.
+
+That being said, there are additional things the OS usually takes care of which we need to do ourselves : for example, initialize global variables to zero. This is done in the [ion/src/device/shared/boot/rt0.cpp](/ion/src/device/shared/boot/rt0.cpp) file, which is worth reading too.

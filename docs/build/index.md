@@ -1,7 +1,3 @@
----
-title: Installing the SDK
-breadcrumb: SDK
----
 # Build and run your own version of Epsilon
 
 ## Install the SDK
@@ -16,7 +12,7 @@ echo "export PATH=/mingw64/bin:$PATH" >> .bashrc
 pip3 install lz4 pypng stringcase
 ```
 
-Last but not least, download and install the latest [GCC toolchain from ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for an install location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your $PATH in Msys2 by running this command: `echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc` and restarting Msys2.
+Last but not least, download and install the latest [GCC toolchain from ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for an install location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your \$PATH in Msys2 by running this command: `echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc` and restarting Msys2.
 
 ### macOS
 
@@ -35,11 +31,11 @@ apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreety
 pip3 install lz4 pypng stringcase
 ```
 
-You'll also need to install the latest version of GCC and make it available in your $PATH:
+You'll also need to install the latest version of GCC and make it available in your \$PATH:
 
 1. Download the [GCC toolchain distributed by ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). You should obtain a `gcc-arm-none-eabi-x-linux.tar.bz2` file.
 2. Decompress that file with `tar xvfj gcc-arm-none-eabi-*-linux.tar.bz2`
-3. Add the resulting folder to your $PATH. If you use bash, ``echo "export PATH=\$PATH:`find $(pwd)/gcc-arm-none-eabi-*-update/bin -type d`" >> ~/.bashrc`` should do what you need (you'll need to restart your terminal afterwards).
+3. Add the resulting folder to your \$PATH. If you use bash, ``echo "export PATH=\$PATH:`find $(pwd)/gcc-arm-none-eabi-*-update/bin -type d`" >> ~/.bashrc`` should do what you need (you'll need to restart your terminal afterwards).
 
 Alternatively, on Debian 10 and later you can directly install a sufficiently modern cross-toolchain:
 ```

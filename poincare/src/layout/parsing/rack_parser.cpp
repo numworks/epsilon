@@ -62,6 +62,11 @@ static inline void turnIntoBinaryNode(const Tree* node, TreeRef& leftHandSide,
 
 Tree* RackParser::parseExpressionWithRightwardsArrow(
     size_t rightwardsArrowPosition) {
+  // Rightwards arrow are only allowed in the root rack of the layout
+  if (!m_isTopLevelRack) {
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+
   /* If the string contains an arrow, try to parse as unit conversion first.
    * We have to do this here because the parsing of the leftSide and the one
    * of the rightSide are both impacted by the fact that it is a unitConversion
@@ -525,7 +530,7 @@ void RackParser::parseImplicitAdditionBetweenUnits(TreeRef& leftHandSide,
    * ParsingMethod::ImplicitAdditionBetweenUnits. */
   int start = m_root->indexOfChild(m_currentToken.firstLayout());
   RackParser subParser(
-      m_root, false, m_parsingContext.context(),
+      m_root, m_parsingContext.context(), false,
       ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits, false, start,
       start + m_currentToken.length());
   leftHandSide = subParser.parse();
@@ -866,7 +871,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       popTokenIfType(Token::Type::Subscript)) {
     // Special case for the log function (e.g. "log₂(8)")
     TreeRef base = Parser::Parse(m_currentToken.firstLayout()->child(0),
-                                 m_parsingContext.context(),
+                                 m_parsingContext.context(), false,
                                  m_parsingContext.parsingMethod());
     if (!base) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1274,8 +1279,8 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
       m_nextToken.firstLayout()->isParenthesesLayout()) {
     assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
     // Parse the RackLayout as a comma separated list.
-    RackParser subParser(m_nextToken.firstLayout()->nextNode(), false,
-                         m_parsingContext.context(),
+    RackParser subParser(m_nextToken.firstLayout()->nextNode(),
+                         m_parsingContext.context(), false,
                          m_parsingContext.parsingMethod(), true);
     popToken();
     return subParser.parse();
@@ -1342,7 +1347,7 @@ void RackParser::parseLayout(TreeRef& leftHandSide, Token::Type stoppingType) {
   /* Parse standalone layouts */
   leftHandSide =
       Parser::Parse(m_currentToken.firstLayout(), m_parsingContext.context(),
-                    m_parsingContext.parsingMethod());
+                    false, m_parsingContext.parsingMethod());
   isThereImplicitOperator();
 }
 
@@ -1353,7 +1358,7 @@ void RackParser::parseSuperscript(TreeRef& leftHandSide,
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   TreeRef rightHandSide =
-      Parser::Parse(layout->child(0), m_parsingContext.context(),
+      Parser::Parse(layout->child(0), m_parsingContext.context(), false,
                     m_parsingContext.parsingMethod());
   if (rightHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -1374,7 +1379,7 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
   }
   const Tree* layout = m_currentToken.firstLayout();
   TreeRef base = Parser::Parse(layout->child(0), m_parsingContext.context(),
-                               m_parsingContext.parsingMethod());
+                               false, m_parsingContext.parsingMethod());
   if (base.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1417,7 +1422,7 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
     }
   } else if (popTokenIfType(Token::Type::Superscript)) {
     const Tree* layout = m_currentToken.firstLayout();
-    result = Parser::Parse(layout->child(0), m_parsingContext.context(),
+    result = Parser::Parse(layout->child(0), m_parsingContext.context(), false,
                            m_parsingContext.parsingMethod());
     if (!result) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

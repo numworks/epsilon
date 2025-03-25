@@ -126,7 +126,9 @@ int Metric::GetMetric(const Tree* e) {
   if (CannotBeReducedFurther(e)) {
     return k_perfectMetric;
   }
-  return GetTrueMetric(e);
+  int metric = GetTrueMetric(e);
+  assert(metric > k_perfectMetric);
+  return metric;
 }
 
 int Metric::GetMetric(Type type) {
@@ -152,49 +154,33 @@ int Metric::GetMetric(Type type) {
 }
 
 namespace {
-bool IsMultOfNumbers(const Tree* e) {
-  if (e->isNumber()) {
+bool IsMultOfNumbers(const Tree* e, bool withI) {
+  if (e->isNumber() || (withI && e->isComplexI())) {
     return true;
   }
   if (!e->isMult()) {
     return false;
   }
   for (const Tree* child : e->children()) {
-    if (!child->isNumber()) {
+    if (!(child->isNumber() || (withI && child->isComplexI()))) {
       return false;
     }
   }
   return true;
 }
 
-bool IsMultOfNumbersOrI(const Tree* e) {
-  if (e->isNumber() || e->isComplexI()) {
+bool HasCartesianForm(const Tree* e) {
+  if (IsMultOfNumbers(e, true)) {
     return true;
   }
-  if (!e->isMult()) {
-    return false;
-  }
-  for (const Tree* child : e->children()) {
-    if (!child->isNumber() && !child->isComplexI()) {
-      return false;
-    }
-  }
-  return true;
-}
-
-bool HasCartisianForm(const Tree* e) {
-  if (IsMultOfNumbersOrI(e)) {
-    return true;
-  }
-  if (!e->isAdd() || e->numberOfChildren() != 2) {
-    return false;
-  }
-  return IsMultOfNumbers(e->child(0)) && IsMultOfNumbersOrI(e->child(1));
+  return e->isAdd() && e->numberOfChildren() == 2 &&
+         IsMultOfNumbers(e->child(0), false) &&
+         IsMultOfNumbers(e->child(1), true);
 }
 }  // namespace
 
 bool Metric::CannotBeReducedFurther(const Tree* e) {
-  return HasCartisianForm(e);
+  return HasCartesianForm(e);
 }
 
 }  // namespace Poincare::Internal

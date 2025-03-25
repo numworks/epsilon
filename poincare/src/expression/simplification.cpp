@@ -90,11 +90,10 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
     /* Store is an expression only for convenience. Only first child is to
      * be simplified. */
     e = firstChild->cloneTree();
-  } else if (dataTree->hasDescendantSatisfying(
-                 [](const Tree* tree) { return tree->isStore(); })) {
-    // Stores are not allowed inside of trees
-    e = KUndefUnhandled->cloneTree();
   } else {
+    // Stores are not allowed inside of trees
+    assert(!dataTree->hasDescendantSatisfying(
+        [](const Tree* tree) { return tree->isStore(); }));
     e = dataTree->cloneTree();
   }
 

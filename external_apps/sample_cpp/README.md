@@ -2,4 +2,4 @@
 
 <img src="./doc/screenshots.gif?raw=true" alt="Sample C++ app for the NumWorks graphing calculator" width="300" align="right">
 
-This is a sample C++ app.
+This is a sample C++ app to use on a [NumWorks calculator](https://www.numworks.com).

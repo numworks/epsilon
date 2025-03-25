@@ -1,6 +1,6 @@
 # RPN app for Epsilon written in C++
 
-This is a basic RPN app written in C++.
+This is a basic RPN app written in C++ to use on a [NumWorks calculator](https://www.numworks.com).
 
 ## Complete the application
 

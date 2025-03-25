@@ -5,9 +5,9 @@
 
 [![Build](https://github.com/numworks/epsilon-sample-app-rust/actions/workflows/build.yml/badge.svg)](https://github.com/numworks/epsilon-sample-app-rust/actions/workflows/build.yml)
 
-<img src="/doc/screenshots.gif?raw=true" alt="Sample Rust app for the NumWorks graphing calculator" width="300" align="right">
+<img src="doc/screenshots.gif?raw=true" alt="Sample Rust app for the NumWorks graphing calculator" width="300" align="right">
 
-This is a sample [Rust](https://www.rust-lang.org) app.
+This is a sample [Rust](https://www.rust-lang.org) app to use on a [NumWorks calculator](https://www.numworks.com).
 
 Yes, you can now use Rust to write code for a graphing calculator!
 

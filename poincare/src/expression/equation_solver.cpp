@@ -5,6 +5,7 @@
 #include <poincare/solver/solver.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree_helpers.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/solver/zoom.h>
 
@@ -326,17 +327,25 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   context->type = Type::LinearSystem;
   context->degree = 1;
 
+  // Solve without dependencies
+  Tree* equationSetWithoutDep =
+      SharedTreeStack->pushSet(reducedEquationSet->numberOfChildren());
+  for (const Tree* equation : reducedEquationSet->children()) {
+    (equation->isDep() ? equation->child(0) : equation)->cloneTree();
+  }
+
   // n unknown variables and rows equations
   uint8_t cols = n + 1;
   uint8_t rows = reducedEquationSet->numberOfChildren();
-  Tree* matrix = SharedTreeStack->pushMatrix(0, 0);
+  TreeRef matrix = SharedTreeStack->pushMatrix(0, 0);
   int m = reducedEquationSet->numberOfChildren();
 
   // Create the matrix (A|b) for the equation Ax=b;
-  for (const Tree* equation : reducedEquationSet->children()) {
+  for (const Tree* equation : equationSetWithoutDep->children()) {
     Tree* coefficients = GetLinearCoefficients(equation, n, context);
     if (!coefficients) {
       *error = Error::NonLinearSystem;
+      equationSetWithoutDep->removeTree();
       matrix->removeTree();
       return nullptr;
     }
@@ -353,6 +362,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   int rank = Matrix::CanonizeAndRank(matrix);
   if (rank == Matrix::k_failedToCanonizeRank) {
     *error = Error::EquationUndefined;
+    equationSetWithoutDep->removeTree();
     matrix->removeTree();
     return nullptr;
   }
@@ -368,6 +378,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     if (allCoefficientsNull && !GetSign(coefficient).isNull()) {
       /* Row j describes an equation of the form '0=b', the system has no
        * solution. */
+      equationSetWithoutDep->removeTree();
       matrix->removeTree();
       *error = Error::NoError;
       return SharedTreeStack->pushSet(0);
@@ -379,6 +390,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
 #if POINCARE_NO_INFINITE_SYSTEMS
     (void)m;
     context->solutionStatus = SolutionStatus::Incomplete;
+    equationSetWithoutDep->removeTree();
     matrix->removeTree();
     *error = Error::NoError;
     return SharedTreeStack->pushSet(0);
@@ -435,6 +447,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     rank = Matrix::CanonizeAndRank(matrix, true);
     if (rank == Matrix::k_failedToCanonizeRank) {
       *error = Error::EquationUndefined;
+      equationSetWithoutDep->removeTree();
       matrix->removeTree();
       return nullptr;
     }
@@ -444,16 +457,17 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   }
   assert(rank == n);
 
-  // TODO: Make sure the solution satisfies dependencies in equations
-
   /* The rank is equal to the number of variables: the system has n
    * solutions, and after canonization their values are the first n values on
    * the last column. */
+  TreeRef equationSetClone = reducedEquationSet->cloneTree();
   Tree* child = matrix->child(0);
   for (uint8_t row = 0; row < rows; row++) {
     for (uint8_t col = 0; col < cols; col++) {
       if (row < n && col == cols - 1) {
         if (*error == Error::NoError) {
+          Variables::Replace(equationSetClone, row, child);
+          Dependency::DeepRemoveUselessDependencies(equationSetClone);
           *error = EnhanceSolution(child, context);
           // Continue anyway to preserve TreeStack integrity
         }
@@ -464,6 +478,27 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     }
   }
   matrix->moveNodeOverNode(SharedTreeStack->pushSet(n));
+
+  // Make sure the solution satisfies dependencies in equations
+  for (const Tree* equation : equationSetClone->children()) {
+    if (equation->isUndefined()) {
+      *error = Error::NoError;
+      equationSetClone->removeTree();
+      equationSetWithoutDep->removeTree();
+      matrix->removeTree();
+      return SharedTreeStack->pushSet(0);
+    }
+    if (equation->isDep()) {
+      *error = Error::RequireApproximateSolution;
+      equationSetClone->removeTree();
+      equationSetWithoutDep->removeTree();
+      matrix->removeTree();
+      return nullptr;
+    }
+  }
+  equationSetClone->removeTree();
+
+  equationSetWithoutDep->removeTree();
   return matrix;
 }
 
@@ -543,9 +578,11 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   SystematicReduction::DeepReduce(equation);
   AdvancedReduction::DeepExpandAlgebraic(equation);
   Dependency::DeepRemoveUselessDependencies(equation);
-  /* TODO If [eq] still has dependency, they will not be handled by Parse */
+  // Solve without dependencies
+  Tree* equationWithoutDep =
+      (equation->isDep() ? equation->child(0) : equation)->cloneTree();
   Tree* polynomial = PolynomialParser::Parse(
-      equation, Variables::Variable(0, ComplexSign::Finite()));
+      equationWithoutDep, Variables::Variable(0, ComplexSign::Finite()));
   if (!polynomial) {
     *error = Error::RequireApproximateSolution;
     SharedTreeStack->dropBlocksFrom(equation);
@@ -595,17 +632,47 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
                              discriminant)
           : Roots::Cubic(coefficients[3], coefficients[2], coefficients[1],
                          coefficients[0], discriminant, true);
-
   /* TODO: When all coefficients are real, the number of real solutions needs to
    * be checked in an assert (looking at the discrimant sign). The verification
    * function would be similar to Roots::ApproximateRootsOfRealCubic, but
    * without approximation. */
-
   polynomial->removeTree();
-  for (Tree* solution : solutionList->children()) {
-    // TODO_PCJ: restore dependencies handling here
+
+  // Enhance solutions and make sure they satisfy dependencies in the equation
+  size_t numberOfSolutions = solutionList->numberOfChildren();
+  Tree* solution = solutionList->child(0);
+  TreeRef end = pushEndMarker(solutionList);
+  while (solution != end) {
+    if (equation->isDep()) {
+      /* Replace the solution in the equation and check that all dependencies
+       * are resolved.
+       * For optimization, replace the main expression with zero
+       * because we only want to check dependencies. */
+      Tree* clonedEquation = equation->cloneTree();
+      clonedEquation->child(0)->cloneNodeOverTree(0_e);
+      Variables::Replace(clonedEquation, 0, solution);
+      Dependency::DeepRemoveUselessDependencies(clonedEquation);
+      bool invalidSolution = clonedEquation->isUndefined();
+      bool remainingDependency = clonedEquation->isDep();
+      clonedEquation->removeTree();
+      if (invalidSolution) {
+        solution->removeTree();
+        numberOfSolutions--;
+        continue;
+      }
+      if (remainingDependency) {
+        *error = Error::RequireApproximateSolution;
+        SharedTreeStack->dropBlocksFrom(equation);
+        return nullptr;
+      }
+    }
     EnhanceSolution(solution, context);
+    solution = solution->nextTree();
   }
+  removeMarker(end);
+  NAry::SetNumberOfChildren(solutionList, numberOfSolutions);
+  equation->removeTree();
+
   NAry::AddChild(solutionList, discriminant);
   *error = Error::NoError;
   return solutionList;

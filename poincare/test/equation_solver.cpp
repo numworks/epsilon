@@ -105,6 +105,10 @@ QUIZ_CASE(pcj_equation_solver) {
   store("x+1→f(x)", &globalContext);
   check_solutions({"f(a)+x", "f(x)"}, {"0", "-1"}, projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Dependency
+  check_solutions({"x^2*(x-1)/x"}, {"1", "1"}, projCtx);
+  check_solutions({"x/x-1+x"}, {}, projCtx);
 }
 
 void check_range(const char* input, double min, double max) {

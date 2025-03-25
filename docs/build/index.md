@@ -2,50 +2,20 @@
 
 ## Install the SDK
 
-### Windows
+> [!NOTE]
+> For **Windows** users, we recommend using the [Msys2](https://www.msys2.org/) environment to install most of the required tools.
 
-We recommend using the [Msys2](https://www.msys2.org/) environment to install most of the required tools. We support Windows 7 and up. Once Msys2 has been installed, launch the Msys2 terminal application, and enter the following commands
-
-```
-pacman -S mingw-w64-x86_64-gcc mingw-w64-x86_64-freetype mingw-w64-x86_64-pkg-config mingw-w64-x86_64-libusb make mingw-w64-x86_64-python3 mingw-w64-x86_64-libjpeg-turbo mingw-w64-x86_64-libpng mingw-w64-x86_64-imagemagick mingw-w64-x86_64-librsvg mingw-w64-x86_64-inkscape mingw-w64-x86_64-python3-pip
-echo "export PATH=/mingw64/bin:$PATH" >> .bashrc
-pip3 install lz4 pypng stringcase
+To build and run epsilon, setup your device using the following command in your terminal (Msys2, Terminal.app, xterm…)
+```shell
+chmod +x build/setup.sh & build/setup.sh
 ```
 
-Last but not least, download and install the latest [GCC toolchain from ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). When prompted for an install location, choose `C:\msys64\home\User\gcc-arm\`. You'll then need to add this folder to your \$PATH in Msys2 by running this command: `echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc` and restarting Msys2.
-
-### macOS
-
-We recommend using [Homebrew](https://brew.sh) to install all dependencies. Once you have installed Homebrew, install all the dependencies with the following command:
-
-```
-brew install numworks/tap/epsilon-sdk
-```
-
-### Debian or Ubuntu
-
-Most of the required tools are available as apt packages:
-
-```
-apt-get install build-essential git imagemagick libx11-dev libxext-dev libfreetype6-dev libpng-dev libjpeg-dev pkg-config python3 python3-pip
-pip3 install lz4 pypng stringcase
-```
-
-You'll also need to install the latest version of GCC and make it available in your \$PATH:
-
-1. Download the [GCC toolchain distributed by ARM](https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads). You should obtain a `gcc-arm-none-eabi-x-linux.tar.bz2` file.
-2. Decompress that file with `tar xvfj gcc-arm-none-eabi-*-linux.tar.bz2`
-3. Add the resulting folder to your \$PATH. If you use bash, ``echo "export PATH=\$PATH:`find $(pwd)/gcc-arm-none-eabi-*-update/bin -type d`" >> ~/.bashrc`` should do what you need (you'll need to restart your terminal afterwards).
-
-Alternatively, on Debian 10 and later you can directly install a sufficiently modern cross-toolchain:
-```
-apt-get install gcc-arm-none-eabi binutils-arm-none-eabi
-```
+> [!NOTE]
+> For **Windows** users, You'll then need to add this folder to your \$PATH in Msys2 by running this command: `echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc` and restarting Msys2.
 
 ## Retrieve the source code
 
-The code is hosted on <a href="https://github.com/numworks/epsilon">GitHub</a>. You can retrieve it using the following command in your terminal (Msys2, Terminal.app, xterm…).
-
+The code is hosted on <a href="https://github.com/numworks/epsilon">GitHub</a>. You can retrieve it using with
 ```
 git clone https://github.com/numworks/epsilon.git
 ```
@@ -56,23 +26,98 @@ Once the SDK has been installed, just open your terminal, navigate to the epsilo
 
 ```
 make PLATFORM=simulator clean
-make PLATFORM=simulator epsilon_run
+make -j8 PLATFORM=simulator epsilon.app.run
 ```
 
-## Run Epsilon on your calculator as a third-party software
+## Run Epsilon on your calculator as a third-party firmware
 
-You can also update your NumWorks calculator easily. Please note that after a reset, your calculator will exclusively run an official NumWorks software.
+You can also update your NumWorks calculator with our own custom firmware.
 
-You'll first need to plug your calculator to the computer via USB, and check that there is a message "The calculator is connected" displayed on the calculator screen.
-Then open your terminal, navigate to the epsilon folder and type the following commands:
+> [!WARNING]
+> Flashing a custom firmware will erase most of your calculator's data. Save your python scripts beforehand.
+
+> [!NOTE]
+> After a reset, your calculator will exclusively run an official NumWorks software.
+
+### Calculator's slots
+
+You calculator actually holds two copies of the firmware, on two slots :
+- Slot **A**: Its userland is at the address `0x90010000`.
+- Slot **B**: Its userland is at the address `0x90410000`.
+
+This allows the update of one of the slots while running the firmware of the other slots.
+
+On a reboot, the calculator jumps on the slots containing the most recent version of the official NumWorks firmware.
+
+To know which slot you are currently running on, you can :
+- While the calculator is plugged on the `The calculator is connected` menu, run
+`python3 build/device/dfu.py --slots` to display the active slot.
+- In the `About` settings menu, press `OK` three time on the software version line. If the last figure is greater than 8, you are running on the slot A.
+
+Example:
+| Value | Last figure | Slot |
+|-|-|-|
+| 0008000C | C | A |
+| 00080004 | 4 | B |
+
+### Prerequisites
+
+To install your custom firmware :
+- Your calculator must be running on a [slot](#calculators-slots) containing an official firmware.
+- Your custom firmware must have the same version number `APP_VERSION` (you can change it in [root's Makefile](/Makefile))
+
+### Installation steps
+
+Plug your calculator to the `The calculator is connected` menu.
+
+![Calculator is connected screenshot](calculator_connected.png)
+
+Find out your calculator's model, and its [active slot](#calculators-slots).
+
+Build and flash the custom userland on the other slot with the command
+```bash
+make -j8 PLATFORM=[MODEL] userland.[INACTIVE_SLOT].flash
 ```
-make clean
-if [ "$(python3 build/device/dfu.py -l | grep '0x90000000')" ]; then make userland.A.dfu; python3 build/device/dfu.py -s 0x90010000:leave -D output/release/device/n0110/userland/userland.A.dfu; else make userland.B.dfu; python3 build/device/dfu.py -s 0x90410000:leave -D output/release/device/n0110/userland/userland.B.dfu; fi;
+
+**Examples**
+For example, on a N0120 running on slot A, run :
+```bash
+make -j8 PLATFORM=n0120 userland.B.flash
 ```
+
+The software should jump on your custom firmware with an `UNOFFICIAL SOFTWARE` warning :
+
+![Unofficial software screenshot](unofficial_software.png)
 
 Congratulations, you're running your very own version of Epsilon!
 
+<details>
+<summary>Detailed steps</summary>
+
+When using the target `userland.B.flash`, you actually build the `userland.B.dfu` firmware and then flash it at the expected address.
+
+The individual steps are
+```bash
+make -j8 PLATFORM=n0120 userland.B.dfu
+python3 build/device/dfu.py -s 0x90410000:leave -D output/release/n0120/userland.B.dfu
+```
+With slot B, the address to jump on changes to :
+```bash
+make -j8 PLATFORM=n0120 userland.A.dfu
+python3 build/device/dfu.py -s 0x90010000:leave -D output/release/n0120/userland.A.dfu
+```
+</details>
+
 ## Troubleshooting
 
-If you encounter an error when flashing the device (`python3 build/device/dfu.py -s 0x90010000:leave -D ...`), make sure you've closed all web pages that could interact with the calculator (such as https://my.numworks.com/).
-If your device is not detected (`python3 build/device/dfu.py -l` failing), try with another cable and another port of your computer.
+- If you encounter an error when flashing the device, make sure you've closed all web pages that could interact with the calculator (such as https://my.numworks.com/).
+
+- If your device is not detected (`python3 build/device/dfu.py -l` failing), try with another cable and another port of your computer.
+
+<img style="float: right;" src="official_upgrade_required.png">
+
+- After a custom firmware installation, if the screen displays the warning `OFFICIAL UPGRADE REQUIRED`, it means the custom firmware is incompatible with you current official firmware version, you may need to clean your output folder to re-build with the proper version.
+
+```bash
+make clean PLATFORM=[MODEL]
+```

@@ -1323,7 +1323,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   /* Should be nonreal, TODO return NonReal when evaluating PowReal(x) with x
    * non real */
   simplifies_to("log(inf,-3)", "undef");
-  simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);
+  simplifies_to("log(inf,-3)", "undef", cartesianCtx);
   simplifies_to("log(0,inf)", "undef");
   simplifies_to("log(0,-inf)", "undef", cartesianCtx);
   simplifies_to("log(1,inf)", "0");
@@ -1565,6 +1565,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("log(27,3)", "3");
   simplifies_to("ln(i)", "π/2×i", cartesianCtx);
   simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
+  simplifies_to("ln(1/999999)", "-ln(999999)");
   // TODO: Metric: 1+ln(x×y)
   simplifies_to("1+ln(x)+ln(y)",
                 "dep(1+ln(x)+ln(y),{nonNull(x),nonNull(y),realPos(x),"

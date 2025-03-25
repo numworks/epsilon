@@ -47,9 +47,6 @@ bool Logarithm::ReduceLn(Tree* e) {
     e->cloneTreeOverTree(KMult(1_e / 2_e, π_e, i_e));
     return true;
   }
-  if (!child->isInteger()) {
-    return false;
-  }
   if (child->isMinusOne()) {
     // ln(-1) -> iπ - Necessary so that sqrt(-1)->i
     e->cloneTreeOverTree(KMult(π_e, i_e));
@@ -61,6 +58,16 @@ bool Logarithm::ReduceLn(Tree* e) {
   }
   if (child->isZero()) {
     e->cloneTreeOverTree(KMult(-1_e, KInf));
+    return true;
+  }
+  if (child->isStrictlyPositiveRational() &&
+      Rational::Numerator(child).isOne()) {
+    // ln(1/n) = -ln(n)
+    Tree* res = SharedTreeStack->pushMult(2);
+    SharedTreeStack->pushMinusOne();
+    SharedTreeStack->pushLn();
+    Rational::Denominator(child).pushOnTreeStack();
+    e->moveTreeOverTree(res);
     return true;
   }
   return false;

@@ -370,11 +370,10 @@ QUIZ_CASE(pcj_sign) {
 
   // ln
   assert_sign("ln(0)", ComplexSign::Unknown());
-  assert_sign("ln(3)", Sign::Finite());
+  assert_sign("ln(3)", Sign::FiniteStrictlyPositive());
   assert_sign("ln(-3)",
               ComplexSign(Sign::Finite(), Sign::FiniteStrictlyPositive()));
-  assert_sign("ln(ln(3))",
-              ComplexSign(Sign::Unknown(), Sign::FinitePositive()));
+  assert_sign("ln(ln(3))", ComplexSign(Sign::Finite(), Sign::Zero()));
   assert_sign("ln(4+i)",
               ComplexSign(Sign::Finite(), Sign::FiniteStrictlyPositive()));
   assert_sign("ln(4-i)",

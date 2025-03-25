@@ -5,6 +5,7 @@
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/number.h>
+#include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -198,10 +199,20 @@ ComplexSign ComplexArgument(ComplexSign s) {
       Sign::Zero());
 }
 
-ComplexSign Ln(ComplexSign s) {
+ComplexSign Ln(const Internal::Tree* child) {
+  if (child->isOne()) {
+    return ComplexSign(Sign::Zero(), Sign::Zero());
+  }
+  if (child->isStrictlyPositiveRational()) {
+    Sign sign = Internal::Rational::IsGreaterThanOne(child)
+                    ? Sign::FiniteStrictlyPositive()
+                    : Sign::FiniteStrictlyNegative();
+    return ComplexSign(sign, Sign::Zero());
+  }
   /* z = |z|e^(i*arg(z))
    * re(ln(z)) = ln(|z|)
    * im(ln(z)) = arg(z) */
+  ComplexSign s = GetComplexSign(child);
   Sign realSign =
       (s.isFinite() && !s.canBeNull()) ? Sign::Finite() : Sign::Unknown();
   return ComplexSign(realSign, ComplexArgument(s).realSign());
@@ -357,7 +368,7 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Exp:
       return Exponential(GetComplexSign(e->child(0)));
     case Type::Ln:
-      return Ln(GetComplexSign(e->child(0)));
+      return Ln(e->child(0));
     case Type::Re:
       return ComplexSign(GetComplexSign(e->child(0)).realSign(), Sign::Zero());
     case Type::Im:

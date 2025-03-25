@@ -490,22 +490,18 @@ bool SystematicOperation::ReduceSign(Tree* e) {
   assert(e->isSign());
   const Tree* child = e->child(0);
   ComplexSign sign = GetComplexSign(child);
+  if (sign.isNonReal()) {
+    // Could use sign(z) = exp(i*arg(z)) but undef for now
+    e->cloneTreeOverTree(KUndefUnhandled);
+    return true;
+  }
   const Tree* result;
   if (sign.isNull()) {
     result = 0_e;
-  } else if (!sign.isReal()) {
-    // Could use sign(z) = exp(i*arg(z)) but sign(z) is preferred. Advanced ?
-    return false;
   } else if (sign.realSign().isStrictlyPositive()) {
     result = 1_e;
   } else if (sign.realSign().isStrictlyNegative()) {
     result = -1_e;
-  } else if (child->isLn() && child->child(0)->isRational()) {
-    // sign(ln(x)) = 1 if x > 1, = 0 if x = 1, = -1 if 0 < x < 1
-    child = child->child(0);
-    assert(Rational::Sign(child).isPositive());  // otherwise !sign.isReal()
-    result =
-        child->isOne() ? 0_e : (Rational::IsGreaterThanOne(child) ? 1_e : -1_e);
   } else {
     return false;
   }

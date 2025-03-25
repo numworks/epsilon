@@ -101,6 +101,16 @@ QUIZ_CASE(pcj_parse_layout) {
   assertLayoutParsesTo("sum"_l ^ KParenthesesL(KRackL(KCurlyBracesL("2"_l))),
                        KListSum(KList(2_e)));
   quiz_assert(!is_parsable("a0123456789012345678901234567890123456789"_l));
+
+  // Rightwards arrow
+  quiz_assert(is_parsable("0→a"_l));
+  quiz_assert(is_parsable("2+3→b"_l));
+  quiz_assert(!is_parsable("2+(3→b)"_l));
+  quiz_assert(!is_parsable("2→b+3"_l));
+  quiz_assert(!is_parsable("a→b-c"_l));
+  quiz_assert(is_parsable("a-b→c"_l));
+  quiz_assert(!is_parsable("2^(0→a)"_l));
+  quiz_assert(!is_parsable("log(1→c)"_l));
 }
 
 QUIZ_CASE(pcj_parse_unit) {

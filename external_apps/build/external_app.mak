@@ -10,7 +10,7 @@ ifeq ("$(origin V)", "command line")
 endif
 
 # Host detection
-ifeq ($(PLATFORM),simulator)
+ifndef HOST
   ifeq ($(OS),Windows_NT)
     HOST = windows
   else
@@ -25,6 +25,17 @@ ifeq ($(PLATFORM),simulator)
   endif
 endif
 
+# Providing PLATFORM=simulator will automatically select the host platform.
+ifneq ($(filter simulator host,$(PLATFORM)),)
+  override PLATFORM := $(HOST)
+endif
+
+ifeq ($(PLATFORM),device)
+  PLATFORM_CATEGORY = device
+else
+  PLATFORM_CATEGORY = simulator
+endif
+
 SIMULATORS_DIR = ../epsilon_simulators
 
 ifeq ($(PLATFORM),device)
@@ -32,7 +43,13 @@ ifeq ($(PLATFORM),device)
   CXX = arm-none-eabi-g++
   LINK_GC = 1
   LTO = 1
-else ifeq ($(PLATFORM),simulator)
+else ifeq ($(PLATFORM),web)
+  CC = emcc
+  CXX = em++
+  LINK_GC = 0
+  LTO = 0
+  SIMULATOR ?= $(SIMULATORS_DIR)/$(PLATFORM)/epsilon.html
+else
   SIMULATOR_PATH =
   LD_DYNAMIC_LOOKUP_FLAG = -Wl,-undefined,dynamic_lookup
   ifeq ($(HOST),windows)
@@ -45,7 +62,7 @@ else ifeq ($(PLATFORM),simulator)
     CXX = $(MINGW_TOOLCHAIN_PREFIX)g++
     GDB = $(MINGW_TOOLCHAIN_PREFIX)gdb --args
     EXE = exe
-    LD_DYNAMIC_LOOKUP_FLAG = -L$(SIMULATORS_DIR)/$(HOST) -lepsilon
+    LD_DYNAMIC_LOOKUP_FLAG = -L$(SIMULATORS_DIR)/$(PLATFORM) -lepsilon
   else ifeq ($(HOST),linux)
     CC = gcc
     CXX = g++
@@ -59,13 +76,7 @@ else ifeq ($(PLATFORM),simulator)
   endif
   LINK_GC = 0
   LTO = 0
-  SIMULATOR ?= $(SIMULATORS_DIR)/$(HOST)/epsilon.$(EXE)$(SIMULATOR_PATH)
-else # PLATFORM=web
-  CC = emcc
-  CXX = em++
-  LINK_GC = 0
-  LTO = 0
-  SIMULATOR ?= $(SIMULATORS_DIR)/web/epsilon.html
+  SIMULATOR ?= $(SIMULATORS_DIR)/$(PLATFORM)/epsilon.$(EXE)$(SIMULATOR_PATH)
 endif
 
 NWLINK = npx --yes -- nwlink
@@ -76,12 +87,12 @@ $(addprefix $(BUILD_DIR)/,$(addsuffix .o,$(basename $(1))))
 endef
 
 
-CFLAGS = $(shell $(NWLINK) eadk-cflags-$(PLATFORM))
+CFLAGS = $(shell $(NWLINK) eadk-cflags-$(PLATFORM_CATEGORY))
 ifeq ($(PLATFORM),web)
 # TODO: Update nwlink's eadk-ldflags-web : eadk_keyboard_scan_do_scan is actually _eadk_keyboard_scan_do_scan
 LDFLAGS = -sSIDE_MODULE=2 -sEXPORTED_FUNCTIONS=_main -sASYNCIFY=1 -sASYNCIFY_IMPORTS=eadk_event_get,_eadk_keyboard_scan_do_scan,eadk_timing_msleep,eadk_display_wait_for_vblank
 else
-LDFLAGS = $(shell $(NWLINK) eadk-ldflags-$(PLATFORM))
+LDFLAGS = $(shell $(NWLINK) eadk-ldflags-$(PLATFORM_CATEGORY))
 endif
 CXXFLAGS = $(CFLAGS) -std=c++11 -fno-exceptions -Wno-nullability-completeness -Wall -ggdb
 
@@ -89,12 +100,13 @@ ifeq ($(PLATFORM),device)
 CXXFLAGS += -Os
 LDFLAGS += --specs=nano.specs
 # LDFLAGS += --specs=nosys.specs # Alternatively, use full-fledged newlib
-else ifeq ($(PLATFORM),simulator)
+else
 CXXFLAGS += -O0 -g
-LDFLAGS += $(LD_DYNAMIC_LOOKUP_FLAG)
-else # PLATFORM=web
-CXXFLAGS += -O0 -g
+ifeq ($(PLATFORM),web)
 LDFLAGS += -lc
+else
+LDFLAGS += $(LD_DYNAMIC_LOOKUP_FLAG)
+endif
 endif
 
 ifeq ($(LINK_GC),1)
@@ -114,10 +126,10 @@ endif
 ifdef EXTERNAL_DATA
   ifeq ($(PLATFORM),device)
   EXTERNAL_DATA_INPUT = --external-data $(EXTERNAL_DATA)
-  else ifeq ($(PLATFORM),simulator)
-  EXTERNAL_DATA_INPUT = --nwb-external-data $(EXTERNAL_DATA)
-  else # PLATFORM=web
+  else ifeq ($(PLATFORM),web)
   EXTERNAL_DATA_INPUT = "&nwbdata=/$(EXTERNAL_DATA)"
+  else
+  EXTERNAL_DATA_INPUT = --nwb-external-data $(EXTERNAL_DATA)
   endif
 else
 EXTERNAL_DATA =
@@ -158,19 +170,7 @@ $(BUILD_DIR)/$(APP_NAME).nwb: $(call object_for,$(SOURCES)) $(SIMULATOR)
 	@echo "LD      $@"
 	$(Q) $(CC) $(CXXFLAGS) $(call object_for,$(SOURCES)) $(LDFLAGS) -o $@
 
-ifeq ($(PLATFORM),simulator)
-
-.PHONY: run
-run: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR) $(EXTERNAL_DATA)
-	@echo "RUN     $<"
-	$(Q) $(SIMULATOR) --nwb $< $(EXTERNAL_DATA_INPUT)
-
-.PHONY: debug
-debug: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR) $(EXTERNAL_DATA)
-	@echo "DEBUG   $<"
-	$(Q) $(GDB) $(SIMULATOR) --nwb $< $(EXTERNAL_DATA_INPUT)
-
-else # PLATFORM=web
+ifeq ($(PLATFORM),web)
 
 .PHONY: server
 server: $(SIMULATOR) $(EXTERNAL_DATA)
@@ -193,6 +193,18 @@ else ifeq ($(HOST),linux)
 else
 	$(Q) open http://localhost:8000/$(BUILD_DIR)/epsilon.html?nwb=/$<$(EXTERNAL_DATA_INPUT)
 endif
+
+else
+
+.PHONY: run
+run: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR) $(EXTERNAL_DATA)
+	@echo "RUN     $<"
+	$(Q) $(SIMULATOR) --nwb $< $(EXTERNAL_DATA_INPUT)
+
+.PHONY: debug
+debug: $(BUILD_DIR)/$(APP_NAME).nwb $(SIMULATOR) $(EXTERNAL_DATA)
+	@echo "DEBUG   $<"
+	$(Q) $(GDB) $(SIMULATOR) --nwb $< $(EXTERNAL_DATA_INPUT)
 
 endif
 endif

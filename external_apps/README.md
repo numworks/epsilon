@@ -24,13 +24,16 @@ npm install -g nwlink
 
 This will build and load your app on a plugged in calculator.
 
-The calculator ust be on the `CALCULATOR IS CONNECTED` screen.
+The calculator must be on the `CALCULATOR IS CONNECTED` screen.
+![Calculator is connected screenshot](docs/calculator_connected.png)
 
 ```shell
 make -C rpn_cpp PLATFORM=device run
 ```
 
-A `THIRD PART APPLICATIONS` message will appear, and the app should be accessible at the end of the Home menu.
+A `THIRD PARTY APPLICATIONS` message will appear, and the app should be accessible at the end of the Home menu.
+
+![Third party application screenshot](docs/third_party_applications.png)
 
 ### Distribute your .nwa app
 

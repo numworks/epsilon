@@ -27,6 +27,10 @@ QUIZ_CASE(solver_error) {
 
   assert_solves_to_error("x-random()=0", EquationUndefined, &globalContext);
 
+  // Dependency
+  assert_solves_to_error("x^2*(x-1)/x", RequireApproximateSolution,
+                         &globalContext);
+
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
 }
@@ -355,6 +359,9 @@ QUIZ_CASE(solver_approximate) {
        -155711277972396.22, -148748023905798.31, -146630700198228.09,
        -109102528932569.69},
       &globalContext);
+
+  // Dependency
+  assert_solves_numerically_to("x^2*(x-1)/x", -10, 10, {1}, &globalContext);
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);

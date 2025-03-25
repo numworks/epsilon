@@ -104,7 +104,8 @@ bool DeepBeautifyAngleFunctions(Tree* e,
   bool changed = BottomUpBeautifyAngleFunctions(e, projectionContext, &dummy);
   if (changed && projectionContext.m_advanceReduce &&
       projectionContext.m_angleUnit != AngleUnit::Radian) {
-    // Expands possibilities may have been added.
+    // Expands possibilities and dependencies may have been added.
+    SystematicReduction::DeepReduce(e);
     AdvancedReduction::Reduce(e);
     Dependency::DeepRemoveUselessDependencies(e);
   }

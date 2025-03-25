@@ -68,6 +68,16 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     merge = PatternMatching::CreateSimplify(
         KPow(KA, KAdd(KB, KC)),
         {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
+    if (merge->isDep()) {
+      merge->removeNode();
+      *numberOfDependencies += merge->nextTree()->numberOfChildren();
+      merge->nextTree()->removeNode();
+    }
+    // dep(t^(m+n), {t^m}) if m <= 0
+    if (!GetComplexSign(Exponent(child)).realSign().isStrictlyPositive()) {
+      child->cloneTree();
+      (*numberOfDependencies)++;
+    }
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.
     merge = (child->isMatrix()

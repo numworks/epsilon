@@ -142,9 +142,6 @@ ifeq ($(PLATFORM),device)
 .PHONY: build
 build: $(BUILD_DIR)/$(APP_NAME).nwa
 
-.PHONY: check
-check: $(BUILD_DIR)/$(APP_NAME).nwa
-
 .PHONY: run
 run: $(BUILD_DIR)/$(APP_NAME).nwa $(EXTERNAL_DATA)
 	@echo "INSTALL $<"

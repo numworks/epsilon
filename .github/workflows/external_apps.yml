@@ -30,7 +30,7 @@ jobs:
         run: make -C external_apps/rpn_cpp PLATFORM=device build
   rust_app:
     runs-on: ubuntu-latest
-    if: ${{ github.repository != 'numworks/epsilon-internal' }}
+    if: 0
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

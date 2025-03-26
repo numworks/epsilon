@@ -107,9 +107,17 @@ $(call create_goal,flasher, \
 ,,Building flasher.flash will automatically jump at the right address \
 )
 
-# Jump to the installed firmware by default
-userland.A%flash: DFULEAVE := 0x90010000
-userland.B%flash: DFULEAVE := 0x90410000
+.PHONY: custom_userland.flash
+custom_userland.flash:
+	@echo "Finding connected device model and inactive slot."
+	$(eval MODEL := $(shell $(PYTHON) build/device/dfu.py --model))
+	$(eval SLOT := $(shell $(PYTHON) build/device/dfu.py --inactive_slot))
+	$(eval DFULEAVE := $(shell if [[ "$(SLOT)" == "A" ]]; then echo "0x90010000"; elif [[ "$(SLOT)" == "B" ]]; then echo "0x90410000"; fi))
+	@echo "DETECTED MODEL\t$(MODEL)"
+	@echo "LEAVE AT\t$(DFULEAVE)"
+	@ $(MAKE) MODEL=$(MODEL) DFULEAVE=$(DFULEAVE) userland.$(SLOT).flash
+
+$(call document_other_target,custom_userland.flash,Write firmware as a custom userland to a connected device in its inactive slot. APP_VERSION must match the official version of the device's official software.)
 
 ifeq ($(PLATFORM),n0120)
 flasher%flash: DFULEAVE := 0x24030000

@@ -22,6 +22,11 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup
         run: build/setup.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Setup nwlink
+        run: npm install -g nwlink
       - name: Build sample_c for device
         run: make -C external_apps/sample_c PLATFORM=device build
       - name: Build sample_cpp for device

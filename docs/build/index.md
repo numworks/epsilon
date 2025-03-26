@@ -46,7 +46,7 @@ This allows the update of one of the slots while running the firmware of the oth
 
 On a reboot, the calculator jumps on the slots containing the most recent version of the official NumWorks firmware.
 
-To know which slot you are currently running on, plug you calculator on the `The calculator is connected` menu and run `python3 build/device/dfu.py --slots` to display the active slot.
+To know which slot you are currently running on, plug you calculator on the `The calculator is connected` menu and run `python3 build/device/dfu.py -l` to display the active slot of connected device.
 
 <details>
 <summary>Other method</summary>

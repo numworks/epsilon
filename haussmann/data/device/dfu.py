@@ -116,15 +116,20 @@ def get_dfu_devices_with_vid_pids(vid_pids):
     return devices
 
 
-def init():
-    """Initializes the found DFU device so that we can program it."""
-    global __dev, __cfg_descr
+def get_unique_dfu_device():
+    """Return only DFU device detected, raise otherwise."""
     devices = get_dfu_devices_with_vid_pids(__Identifiers)
     if not devices:
         raise ValueError("No DFU device found")
     if len(devices) > 1:
         raise ValueError("Multiple DFU devices found")
-    __dev = devices[0]
+    return devices[0]
+
+
+def init():
+    """Initializes the found DFU device so that we can program it."""
+    global __dev, __cfg_descr
+    __dev = get_unique_dfu_device()
     __dev.set_configuration()
 
     # Claim DFU interface
@@ -512,23 +517,41 @@ def get_memory_layout(device):
     return result
 
 
-def list_dfu_active_slots(vid_pids):
-    """Prints a list of devices detected in DFU mode and their active slot."""
-    devices = get_dfu_devices_with_vid_pids(__Identifiers)
-    if not devices:
-        print("No DFU capable devices found")
-        return
-    for device in devices:
-        isSlotA, isSlotB = False, False
-        layout = get_memory_layout(device)
-        print("{}".format(device.serial_number), end=" ")
-        for entry in layout:
-            isSlotB |= entry["addr"] == int("0x90000000", 16)
-            isSlotA |= entry["addr"] == int("0x90400000", 16)
-        if isSlotA == isSlotB:
-            print("Rescue mode" if isSlotA else "Unknown")
-        else:
-            print("Active on slot", "A" if isSlotA else "B")
+def get_model(device):
+    """Return device's model."""
+    return "n{:04x}".format(device.bcdDevice)
+
+
+def get_active_slot(device):
+    """Return device's active slot: A, B, rescue or unknown."""
+    isSlotA, isSlotB = False, False
+    for entry in get_memory_layout(device):
+        isSlotB |= entry["addr"] == int("0x90000000", 16)
+        isSlotA |= entry["addr"] == int("0x90400000", 16)
+    if isSlotA and isSlotB:
+        return "rescue"
+    if isSlotA:
+        return "A"
+    if isSlotB:
+        return "B"
+    return "unknown"
+
+
+def display_inactive_slot():
+    """Display detected DFU device inactive slot, raise otherwise."""
+    active_slot = get_active_slot(get_unique_dfu_device())
+    opposite_slot = {"A": "B", "B": "A"}
+    if not (active_slot in opposite_slot.keys()):
+        raise ValueError("Unhandled state: {}".format(active_slot))
+    print(opposite_slot[active_slot])
+
+
+def display_model():
+    """Display detected DFU device model, raise otherwise."""
+    model = get_model(get_unique_dfu_device())
+    if not (model in ["n0100", "n0110", "n0115", "n0120"]):
+        raise ValueError("Unknown model: {}".format(model))
+    print(model)
 
 
 def list_dfu_devices(vid_pids):
@@ -544,13 +567,16 @@ def list_dfu_devices(vid_pids):
             )
         )
         layout = get_memory_layout(device)
-        print("Memory Layout")
+        print("Memory Layout:")
         for entry in layout:
             print(
                 "    0x{:x} {:2d} pages of {:3d}K bytes".format(
                     entry["addr"], entry["num_pages"], entry["page_size"] // 1024
                 )
             )
+        print("Model: \t\t{}".format(get_model(device)))
+        print("Active slot: \t{}".format(get_active_slot(device)))
+        print("Serial Number: \t{}".format(device.serial_number))
 
 
 def write_elements(elements, mass_erase_used, progress=None):
@@ -620,8 +646,14 @@ def main():
         default=False,
     )
     parser.add_argument(
-        "--slots",
-        help="List currently attached DFU devices and their current state",
+        "--inactive_slot",
+        help="Display attached device's inactive slot",
+        action="store_true",
+        default=False,
+    )
+    parser.add_argument(
+        "--model",
+        help="Display attached device's model",
         action="store_true",
         default=False,
     )
@@ -654,8 +686,12 @@ def main():
         list_dfu_devices(__Identifiers)
         return
 
-    if args.slots:
-        list_dfu_active_slots(__Identifiers)
+    if args.inactive_slot:
+        display_inactive_slot()
+        return
+
+    if args.model:
+        display_model()
         return
 
     init()

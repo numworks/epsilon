@@ -3,15 +3,12 @@
 ## Install the SDK
 
 > [!NOTE]
-> For **Windows** users, we recommend using the [Msys2](https://www.msys2.org/) environment to install most of the required tools.
+> For **Windows** users, we recommend using the [Msys2](https://www.msys2.org/) environment and use `MINGW64` terminal to install most of the required tools.
 
 To build and run epsilon, setup your device using the following command in your terminal (Msys2, Terminal.app, xterm…)
 ```shell
 chmod +x build/setup.sh & build/setup.sh
 ```
-
-> [!NOTE]
-> For **Windows** users, You'll then need to add this folder to your \$PATH in Msys2 by running this command: `echo "export PATH=$PATH:$HOME/gcc-arm/bin" >> .bashrc` and restarting Msys2.
 
 ## Retrieve the source code
 
@@ -49,16 +46,20 @@ This allows the update of one of the slots while running the firmware of the oth
 
 On a reboot, the calculator jumps on the slots containing the most recent version of the official NumWorks firmware.
 
-To know which slot you are currently running on, you can :
-- While the calculator is plugged on the `The calculator is connected` menu, run
-`python3 build/device/dfu.py --slots` to display the active slot.
-- In the `About` settings menu, press `OK` three time on the software version line. If the last figure is greater than 8, you are running on the slot A.
+To know which slot you are currently running on, plug you calculator on the `The calculator is connected` menu and run `python3 build/device/dfu.py --slots` to display the active slot.
+
+<details>
+<summary>Other method</summary>
+
+In the `About` settings menu, press `OK` three time on the software version line. If the last figure is 8 or greater, you are running on the slot A.
 
 Example:
 | Value | Last figure | Slot |
 |-|-|-|
 | 0008000C | C | A |
 | 00080004 | 4 | B |
+
+</details>
 
 ### Prerequisites
 

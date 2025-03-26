@@ -62,82 +62,6 @@ QUIZ_DISABLED_CASE(poincare_properties_in_parametric) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 }
 
-void assert_reduced_expression_has_polynomial_coefficient(
-    const char* expression, const char* symbolName, const char** coefficients,
-    Preferences::ComplexFormat complexFormat = Cartesian,
-    Preferences::AngleUnit angleUnit = Radian,
-    Preferences::UnitFormat unitFormat = MetricUnitFormat,
-    SymbolicComputation symbolicComputation = ReplaceDefinedSymbols) {
-  Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(expression, &globalContext);
-  e = e.cloneAndReduce(
-      ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
-                       SystemForAnalysis, symbolicComputation));
-  OExpression coefficientBuffer
-      [Poincare::OExpression::k_maxNumberOfPolynomialCoefficients];
-  int d = e.getPolynomialReducedCoefficients(
-      symbolName, coefficientBuffer, &globalContext, complexFormat, Radian,
-      unitFormat, symbolicComputation);
-  for (int i = 0; i <= d; i++) {
-    OExpression f = parse_expression(coefficients[i], &globalContext);
-    coefficientBuffer[i] = coefficientBuffer[i].cloneAndReduce(
-        ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
-                         SystemForAnalysis, symbolicComputation));
-    f = f.cloneAndReduce(
-        ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
-                         SystemForAnalysis, symbolicComputation));
-    quiz_assert_print_if_failure(coefficientBuffer[i].isIdenticalTo(f),
-                                 expression);
-  }
-  quiz_assert_print_if_failure(coefficients[d + 1] == 0, expression);
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_get_polynomial_coefficients) {
-  const char* coefficient0[] = {"2", "1", "1", 0};
-  assert_reduced_expression_has_polynomial_coefficient("x^2+x+2", "x",
-                                                       coefficient0);
-  const char* coefficient1[] = {"12+(-6)×π", "12", "3", 0};
-  assert_reduced_expression_has_polynomial_coefficient("3×(x+2)^2-6×π", "x",
-                                                       coefficient1);
-  const char* coefficient2[] = {"2+32×x", "2", "6", "2", 0};
-  assert_reduced_expression_has_polynomial_coefficient("2×(n+1)^3-4n+32×x", "n",
-                                                       coefficient2);
-  const char* coefficient3[] = {"1", "-π", "1", 0};
-  assert_reduced_expression_has_polynomial_coefficient("x^2-π×x+1", "x",
-                                                       coefficient3);
-
-  // f: x→x^2+Px+1
-  assert_reduce_and_store("1+π×x+x^2→f(x)");
-  const char* coefficient4[] = {"1", "π", "1", 0};
-  assert_reduced_expression_has_polynomial_coefficient("f(x)", "x",
-                                                       coefficient4);
-  const char* coefficient5[] = {"0", "i", 0};
-  assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
-                                                       coefficient5);
-  const char* coefficient6[] = {NonReal::Name(), 0};
-  assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
-                                                       coefficient6, Real);
-
-  // 3 -> x
-  assert_reduce_and_store("3→x");
-  const char* coefficient7[] = {"4", 0};
-  assert_reduced_expression_has_polynomial_coefficient("x+1", "x",
-                                                       coefficient7);
-  const char* coefficient8[] = {"2", "1", 0};
-  assert_reduced_expression_has_polynomial_coefficient(
-      "x+2", "x", coefficient8, Real, Radian, MetricUnitFormat, KeepAllSymbols);
-  assert_reduced_expression_has_polynomial_coefficient(
-      "x+2", "x", coefficient8, Real, Radian, MetricUnitFormat,
-      ReplaceDefinedFunctions);
-  assert_reduced_expression_has_polynomial_coefficient(
-      "f(x)", "x", coefficient4, Cartesian, Radian, MetricUnitFormat,
-      ReplaceDefinedFunctions);
-
-  // Clear the storage
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
-}
-
 void assert_reduced_expression_unit_is(const char* expression,
                                        const char* unit) {
   Shared::GlobalContext globalContext;
@@ -292,6 +216,7 @@ QUIZ_DISABLED_CASE(poincare_expression_additional_results) {
 #include <poincare/expression.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/variables.h>
 
 #include "../helper.h"
@@ -533,6 +458,74 @@ QUIZ_CASE(poincare_properties_get_variables) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("va.exp").destroy();
+}
+
+void assert_reduced_expression_has_polynomial_coefficient(
+    const char* expression, const char* symbolName,
+    const Tree* expectedCoefficients, Shared::GlobalContext* globalContext,
+    Preferences::ComplexFormat complexFormat =
+        Preferences::ComplexFormat::Cartesian,
+    Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian,
+    Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
+    SymbolicComputation symbolicComputation =
+        SymbolicComputation::ReplaceDefinedSymbols) {
+  ReductionContext redContext =
+      ReductionContext(globalContext, complexFormat, angleUnit, unitFormat,
+                       ReductionTarget::SystemForAnalysis, symbolicComputation);
+  UserExpression e = UserExpression::Builder(parse(expression, globalContext));
+  bool reductionFailure = false;
+  e = e.cloneAndReduce(redContext, &reductionFailure);
+  quiz_assert(!reductionFailure);
+  Tree* coefficients = PolynomialParser::GetReducedCoefficients(e, symbolName);
+  quiz_assert_print_if_failure(
+      coefficients->treeIsIdenticalTo(expectedCoefficients), expression);
+}
+
+QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
+  Shared::GlobalContext globalContext;
+  assert_reduced_expression_has_polynomial_coefficient(
+      "x^2+x+2", "x", KList(2_e, 1_e, 1_e), &globalContext);
+  assert_reduced_expression_has_polynomial_coefficient(
+      "3×(x+2)^2-6×π", "x", KList(KAdd(12_e, KMult(-6_e, π_e)), 12_e, 3_e),
+      &globalContext);
+  assert_reduced_expression_has_polynomial_coefficient(
+      "2×(n+1)^3-4n+32×x", "n",
+      KList(KAdd(2_e, KMult(32_e, "x"_e)), 2_e, 6_e, 2_e), &globalContext);
+  assert_reduced_expression_has_polynomial_coefficient(
+      "x^2-π×x+1", "x", KList(1_e, KMult(-1_e, π_e), 1_e), &globalContext);
+
+  // f: x→x^2+Px+1
+  store("1+π×x+x^2→f(x)", &globalContext);
+  assert_reduced_expression_has_polynomial_coefficient(
+      "f(x)", "x", KList(1_e, π_e, 1_e), &globalContext);
+  assert_reduced_expression_has_polynomial_coefficient(
+      "√(-1)x", "x", KList(0_e, i_e), &globalContext);
+  assert_reduced_expression_has_polynomial_coefficient(
+      "√(-1)x", "x", KList(KNonReal), &globalContext,
+      Preferences::ComplexFormat::Real);
+
+  // 3 -> x
+  store("3→x", &globalContext);
+  assert_reduced_expression_has_polynomial_coefficient("x+1", "x", KList(4_e),
+                                                       &globalContext);
+  assert_reduced_expression_has_polynomial_coefficient(
+      "x+2", "x", KList(2_e, 1_e), &globalContext,
+      Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian,
+      Preferences::UnitFormat::Metric, SymbolicComputation::KeepAllSymbols);
+  assert_reduced_expression_has_polynomial_coefficient(
+      "x+2", "x", KList(2_e, 1_e), &globalContext,
+      Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian,
+      Preferences::UnitFormat::Metric,
+      SymbolicComputation::ReplaceDefinedFunctions);
+  assert_reduced_expression_has_polynomial_coefficient(
+      "f(x)", "x", KList(1_e, π_e, 1_e), &globalContext,
+      Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit::Radian,
+      Preferences::UnitFormat::Metric,
+      SymbolicComputation::ReplaceDefinedFunctions);
+
+  // Clear the storage
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 }
 
 void assert_list_length_in_children_is(const char* definition,

@@ -285,29 +285,13 @@ QUIZ_DISABLED_CASE(poincare_expression_additional_results) {
   assert_additional_results_compute_to("rad×s^(1/2)", nullptr, 0);
 }
 
-void assert_list_length_in_children_is(const char* definition,
-                                       int targetLength) {
-  Shared::GlobalContext globalContext;
-  OExpression e = parse_expression(definition, &globalContext);
-  quiz_assert_print_if_failure(e.lengthOfListChildren() == targetLength,
-                               definition);
-}
-
-QUIZ_DISABLED_CASE(poincare_expression_children_list_length) {
-  assert_list_length_in_children_is("1+1", OExpression::k_noList);
-  assert_list_length_in_children_is("1+{}", 0);
-  assert_list_length_in_children_is("1*{2,3,4}*5*{6,7,8}", 3);
-  assert_list_length_in_children_is("{1,-2,3,-4}^2", 4);
-  assert_list_length_in_children_is("{1,2}+{3,4,5}",
-                                    OExpression::k_mismatchedLists);
-}
-
 #endif
 
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
 #include <poincare/src/expression/continuity.h>
+#include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/variables.h>
 
 #include "../helper.h"
@@ -549,6 +533,32 @@ QUIZ_CASE(poincare_properties_get_variables) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("va.exp").destroy();
+}
+
+void assert_list_length_in_children_is(const char* definition,
+                                       int targetLength) {
+  Shared::GlobalContext context;
+  UserExpression e = UserExpression::Builder(parse(definition, &context));
+  bool isValid = targetLength != -2;
+  quiz_assert_print_if_failure(
+      Poincare::Internal::Dimension::DeepCheck(e.tree(), &context) == isValid,
+      definition);
+  if (isValid) {
+    quiz_assert_print_if_failure(Poincare::Internal::Dimension::ListLength(
+                                     e.tree(), &context) == targetLength,
+                                 definition);
+  }
+}
+
+constexpr int k_mismatchedLists = -2;
+
+QUIZ_CASE(poincare_expression_children_list_length) {
+  assert_list_length_in_children_is(
+      "1+1", Poincare::Internal::Dimension::k_nonListListLength);
+  assert_list_length_in_children_is("1+{}", 0);
+  assert_list_length_in_children_is("1*{2,3,4}*5*{6,7,8}", 3);
+  assert_list_length_in_children_is("{1,-2,3,-4}^2", 4);
+  assert_list_length_in_children_is("{1,2}+{3,4,5}", k_mismatchedLists);
 }
 
 void assert_is_list_of_points(const char* definition, Context* context,

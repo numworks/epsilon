@@ -11,7 +11,7 @@ This folder contains apps to run on a [NumWorks calculator](https://www.numworks
 
 Here are the instructions to run the app [rpn_cpp](rpn_cpp) on a Numworks calculator.
 
-You can swap `rpn_cpp` for any other  C/C++ based external app.
+You can swap `rpn_cpp` for any other C/C++ based external app.
 
 ### Setup nwlink
 
@@ -48,13 +48,11 @@ Anyone can now install it on their calculator from the [NumWorks online uploader
 
 ## Try your app on an Epsilon simulator
 
-
-
 ### Setup
 
 You'll just need a C compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS).
 
-Depending on you file system :
+Depending on you system :
 - Windows :
 ```shell
 ./setup.ps1

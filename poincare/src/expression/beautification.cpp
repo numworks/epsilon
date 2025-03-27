@@ -28,15 +28,8 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
 Tree* GetPolarFormat(const Tree* e, const ProjectionContext& projectionContext);
 Tree* GetCartesianFormat(const Tree* e,
                          const ProjectionContext& projectionContext);
-bool DeepBeautifyAngleFunctions(Tree* e,
-                                const ProjectionContext& projectionContext);
-bool BottomUpBeautifyAngleFunctions(Tree* e,
-                                    const ProjectionContext& projectionContext,
-                                    bool* simplifyParent,
-                                    bool canSystematicReduce = true);
-bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
-                                   bool* simplifyParent,
-                                   bool canSystematicReduce);
+bool DeepBeautifyAngleFunctions(Tree* e, ProjectionContext* projectionContext);
+bool ShallowBeautifyAngleFunctions(Tree* e, void* context);
 bool ShallowBeautifyPercent(Tree* e);
 bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
 bool ShallowBeautifyPowerOfTangent(Tree* e, void* context);
@@ -92,21 +85,19 @@ float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
 }
 
 /* Find and beautify trigonometric system nodes while converting the angles.
- * Simplifications are needed, this has to be done before beautification.
- * A bottom-up pattern is also needed because inverse trigonometric must
- * simplify its parents. */
-bool DeepBeautifyAngleFunctions(Tree* e,
-                                const ProjectionContext& projectionContext) {
-  bool dummy = false;
-  /* BottomUpBeautifyAngleFunctions temporarily introduces AngleUnitContext
+ * Simplifications are needed, this has to be done before beautification. */
+bool DeepBeautifyAngleFunctions(Tree* e, ProjectionContext* projectionContext) {
+  /* ShallowBeautifyAngleFunctions temporarily introduces AngleUnitContext
    * nodes to allow simplification and approximation of beautified angle
    * functions. */
-  bool changed = BottomUpBeautifyAngleFunctions(e, projectionContext, &dummy);
-  if (changed && projectionContext.m_advanceReduce &&
-      projectionContext.m_angleUnit != AngleUnit::Radian) {
-    // Expands possibilities and dependencies may have been added.
+  bool changed = Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions,
+                                           projectionContext);
+  if (changed) {
     SystematicReduction::DeepReduce(e);
-    AdvancedReduction::Reduce(e);
+    if (projectionContext->m_advanceReduce &&
+        projectionContext->m_angleUnit != AngleUnit::Radian) {
+      AdvancedReduction::Reduce(e);
+    }
     Dependency::DeepRemoveUselessDependencies(e);
   }
   // Remove AngleUnitContext nodes
@@ -120,35 +111,9 @@ bool DeepBeautifyAngleFunctions(Tree* e,
   return changed;
 }
 
-bool BottomUpBeautifyAngleFunctions(Tree* e,
-                                    const ProjectionContext& projectionContext,
-                                    bool* simplifyParent,
-                                    bool canSystematicReduce) {
-  bool modified = false;
-  bool mustSystematicReduce = false;
-  // Do not use systematicReduction in dependency lists
-  canSystematicReduce &= !e->isDepList();
-  for (Tree* child : e->children()) {
-    bool tempMustSystematicReduce = false;
-    modified |= BottomUpBeautifyAngleFunctions(child, projectionContext,
-                                               &tempMustSystematicReduce,
-                                               canSystematicReduce);
-    mustSystematicReduce |= tempMustSystematicReduce;
-  }
-  if (ShallowBeautifyAngleFunctions(e, projectionContext.m_angleUnit,
-                                    simplifyParent, canSystematicReduce)) {
-    modified = true;
-  } else if (mustSystematicReduce) {
-    assert(modified);
-    *simplifyParent = SystematicReduction::ShallowReduce(e);
-  }
-  return modified;
-}
-
-// At this stage of the simplification, advanced reductions are expected.
-bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
-                                   bool* simplifyParent,
-                                   bool canSystematicReduce) {
+// Advanced reduction may be performed after this step.
+bool ShallowBeautifyAngleFunctions(Tree* e, void* context) {
+  AngleUnit angleUnit = static_cast<ProjectionContext*>(context)->m_angleUnit;
   // Beautify System nodes to prevent future simplifications.
   if (e->isTrig()) {
 #if POINCARE_TRIGONOMETRY_HYPERBOLIC
@@ -156,14 +121,10 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     if (
         // cos(A?*i) -> cosh(A)
         PatternMatching::MatchReplace(e, KTrig(KMult(KA_s, i_e), 0_e),
-                                      KCosH(KMult(KA_s)),
-                                      canSystematicReduce) ||
+                                      KCosH(KMult(KA_s))) ||
         // sin(A?*i) -> sinh(A)*i
         PatternMatching::MatchReplace(e, KTrig(KMult(KA_s, i_e), 1_e),
-                                      KMult(KSinH(KMult(KA_s)), i_e),
-                                      canSystematicReduce)) {
-      // Necessary to simplify i introduced here
-      *simplifyParent = true;
+                                      KMult(KSinH(KMult(KA_s)), i_e))) {
       // Hyperbolic trigonometric functions don't need AngleUnitContext
       return true;
     };
@@ -171,12 +132,11 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     if (angleUnit != AngleUnit::Radian) {
       Tree* child = e->child(0);
       child->moveTreeOverTree(PatternMatching::Create(
-          KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)},
-          canSystematicReduce));
-      /* This adds new potential multiplication expansions. Another advanced
-       * reduction in DeepBeautify may be needed.
-       * TODO: Call AdvancedReduction::Reduce in DeepBeautify only if we went
-       * here. */
+          KMult(KA, KB), {.KA = child, .KB = Angle::RadTo(angleUnit)}));
+      /* This adds new potential multiplication expansions. An advanced
+       * reduction in DeepBeautifyAngleFunctions may be needed.
+       * TODO: Call AdvancedReduction::Reduce in DeepBeautifyAngleFunctions only
+       * if we went here. */
     }
     PatternMatching::MatchReplace(e, KTrig(KA, 0_e), KCos(KA)) ||
         PatternMatching::MatchReplace(e, KTrig(KA, 1_e), KSin(KA));
@@ -189,14 +149,10 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     if (
         // asin(A?*i) -> asinh(A)*i
         PatternMatching::MatchReplace(e, KATrig(KMult(KA_s, i_e), 1_e),
-                                      KMult(KArSinH(KMult(KA_s)), i_e),
-                                      canSystematicReduce) ||
+                                      KMult(KArSinH(KMult(KA_s)), i_e)) ||
         // atan(A?*i) -> atanh(A)*i
         PatternMatching::MatchReplace(e, KATanRad(KMult(KA_s, i_e)),
-                                      KMult(KArTanH(KMult(KA_s)), i_e),
-                                      canSystematicReduce)) {
-      // Necessary to simplify i introduced here
-      *simplifyParent = true;
+                                      KMult(KArTanH(KMult(KA_s)), i_e))) {
       // Hyperbolic trigonometric functions don't need AngleUnitContext
       return true;
     }
@@ -207,9 +163,7 @@ bool ShallowBeautifyAngleFunctions(Tree* e, AngleUnit angleUnit,
     e->moveNodeAtNode(SharedTreeStack->pushAngleUnitContext(angleUnit));
     if (angleUnit != AngleUnit::Radian) {
       e->moveTreeOverTree(PatternMatching::Create(
-          KMult(KA, KB), {.KA = e, .KB = Angle::ToRad(angleUnit)},
-          canSystematicReduce));
-      *simplifyParent = true;
+          KMult(KA, KB), {.KA = e, .KB = Angle::ToRad(angleUnit)}));
     }
     return true;
   }
@@ -264,7 +218,7 @@ bool DeepBeautifyUnits(Tree* e) {
 bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   bool changed =
       ApplyComplexFormat(e, projectionContext.m_dimension, projectionContext);
-  changed = DeepBeautifyAngleFunctions(e, projectionContext) || changed;
+  changed = DeepBeautifyAngleFunctions(e, &projectionContext) || changed;
   changed = Tree::ApplyShallowTopDown(e, ShallowBeautify) || changed;
   changed = DeepBeautifyUnits(e) || changed;
   /* Divisions are created after the main beautification since they work top

@@ -41,14 +41,10 @@ install_binary_deps() {
 }
 
 install_python_deps() {
-  if [[ $OSTYPE == "msys" ]]; then
-    # using system lz4 since pip install fails
-    python3 -m venv .venv --system-site-packages
-  else
-    python3 -m venv .venv
-    .venv/bin/pip3 install lz4
-  fi
+  python3 -m venv .venv
   .venv/bin/pip3 install \
+    setuptools \
+    lz4 \
     pyelftools \
     pypng \
     stringcase \
@@ -121,9 +117,7 @@ install_windows_binary_deps() {
     mingw-w64-x86_64-libpng \
     mingw-w64-x86_64-librsvg \
     mingw-w64-x86_64-pkg-config \
-    mingw-w64-x86_64-python3 \
-    mingw-w64-x86_64-python3-lz4 \
-    mingw-w64-x86_64-python3-pip
+    mingw-w64-x86_64-python3
 
   if [[ "${INSTALL_ARM_GCC-0}" == "1" ]]; then
     pacman -S --noconfirm \

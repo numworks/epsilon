@@ -331,7 +331,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   Tree* equationSetWithoutDep =
       SharedTreeStack->pushSet(reducedEquationSet->numberOfChildren());
   for (const Tree* equation : reducedEquationSet->children()) {
-    (equation->isDep() ? equation->child(0) : equation)->cloneTree();
+    Dependency::SafeMain(equation)->cloneTree();
   }
 
   // n unknown variables and rows equations
@@ -581,8 +581,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   AdvancedReduction::DeepExpandAlgebraic(equation);
   Dependency::DeepRemoveUselessDependencies(equation);
   // Solve without dependencies
-  Tree* equationWithoutDep =
-      (equation->isDep() ? equation->child(0) : equation)->cloneTree();
+  Tree* equationWithoutDep = Dependency::SafeMain(equation)->cloneTree();
   Tree* polynomial = PolynomialParser::Parse(
       equationWithoutDep, Variables::Variable(0, ComplexSign::Finite()));
   if (!polynomial) {
@@ -652,7 +651,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
        * because we only want to check dependencies. */
       Tree* clonedEquation = SharedTreeStack->pushDep();
       (0_e)->cloneNode();
-      equation->child(1)->cloneTree();
+      Dependency::Dependencies(equation)->cloneTree();
       Variables::Replace(clonedEquation, 0, solution);
       Dependency::DeepRemoveUselessDependencies(clonedEquation);
       bool invalidSolution = clonedEquation->isUndefined();

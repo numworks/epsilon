@@ -14,12 +14,8 @@ QUIZ_CASE(solver_solving_range) {
        4.7123889818623867, 7.8539816549519345, 10.995574295553068,
        14.137166941154067},
       &globalContext);
-
-#if 0  // TODO_PCJ: unhandled dependency: dep(-11+Ln(a),{nonNull(a)})
   assert_solves_with_auto_solving_range("ln(x)=11", {59874.141715133868},
                                         &globalContext);
-#endif
-
   assert_solves_with_auto_solving_range(
       "(x+24543)^2+cos(x)-0.5^x=123456789123457890", {351339639.64352596},
       &globalContext);

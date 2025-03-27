@@ -82,9 +82,7 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to_no_solution("e=1", &globalContext);
   assert_solves_to_no_solution("i=5", &globalContext);
   assert_solves_to_no_solution("x-x+2=0", &globalContext);
-
-  // TODO_PCJ: dependency management (dep(a,{a^0}))
-  // assert_solves_to_no_solution("x/x-1+x=0", &globalContext);
+  assert_solves_to_no_solution("x/x-1+x=0", &globalContext);
 
   /* TODO_PCJ: currently solves to EquationUndefined */
   // assert_solves_to_no_solution("x+y=0*diff(tan(2x),x,0,x)", &globalContext);
@@ -390,10 +388,9 @@ QUIZ_CASE(solver_complex_real) {
 
   // TODO_PCJ: currently solves to RequireApproximateSolution
   assert_solves_to_no_solution("√(x)^(2)=-1", &globalContext);
-
-  // TODO_PCJ: unhandled dependency: "dep(-2+a,{piecewise(1,abs(a)≤1)})"
-  assert_solves_to_no_solution("sin(asin(x))=2", &globalContext);
 #endif
+
+  assert_solves_to_no_solution("sin(asin(x))=2", &globalContext);
 
   assert_solves_to("root(-8,3)*x+3=0", "x=3/2", &globalContext);
 
@@ -436,9 +433,7 @@ QUIZ_CASE(solver_complex_cartesian) {
   assert_solves_to("x+√(-1)×√(-1)=0", "x=1", &globalContext);
   assert_solves_to("root(-8,3)*x+3=0", "x=(3×(-8)^(2/3))/8",
                    &globalContext);  //  TODO_PCJ: force cartesian format
-
-  // TODO_PCJ: dependency management (dep(a^2,{a^0}))
-  // assert_solves_to("x^2+x/x-1=0", {"delta=0"}, &globalContext);
+  assert_solves_to("x^2+x/x-1=0", {"delta=0"}, &globalContext);
 
   /* TODO_PCJ: The next equation finds x=0 as a solution (and not x=1), which is
    * mathematically incorrect. */

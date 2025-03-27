@@ -44,6 +44,8 @@ jobs:
   android:
     runs-on: ubuntu-latest
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || github.event.inputs.android) }}
+    env:
+      MAKEFLAGS: '-j2'
     steps:
       - run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v4
@@ -60,6 +62,8 @@ jobs:
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
+    env:
+      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - uses: actions/checkout@v4
 
@@ -93,6 +97,8 @@ jobs:
     defaults:
        run:
          shell: msys2 {0}
+    env:
+      MAKEFLAGS: '-j2'
     steps:
       - uses: msys2/setup-msys2@v2
         with:
@@ -114,6 +120,8 @@ jobs:
   web:
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || github.event.inputs.web) }}
+    env:
+      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:
@@ -130,6 +138,8 @@ jobs:
           retention-days: 7
   linux:
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
+    env:
+      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - uses: actions/checkout@v4
 
@@ -148,6 +158,8 @@ jobs:
   macos:
     runs-on: macOS-latest
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || github.event.inputs.macos) }}
+    env:
+      MAKEFLAGS: '-j2'
     steps:
       - uses: actions/checkout@v4
       - run: build/setup.sh --only-simulator
@@ -161,6 +173,8 @@ jobs:
   ios:
     runs-on: macOS-latest
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || github.event.inputs.ios) }}
+    env:
+      MAKEFLAGS: '-j2'
     steps:
       - uses: actions/checkout@v4
       - run: build/setup.sh --only-simulator
@@ -173,6 +187,8 @@ jobs:
           path: output/debug/optimized/ios/epsilon.ipa
   poincarejs:
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
+    env:
+      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:

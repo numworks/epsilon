@@ -345,8 +345,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     Tree* coefficients = GetLinearCoefficients(equation, n, context);
     if (!coefficients) {
       *error = Error::NonLinearSystem;
-      equationSetWithoutDep->removeTree();
       matrix->removeTree();
+      equationSetWithoutDep->removeTree();
       return nullptr;
     }
     assert(coefficients->numberOfChildren() == cols);
@@ -362,8 +362,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   int rank = Matrix::CanonizeAndRank(matrix);
   if (rank == Matrix::k_failedToCanonizeRank) {
     *error = Error::EquationUndefined;
-    equationSetWithoutDep->removeTree();
     matrix->removeTree();
+    equationSetWithoutDep->removeTree();
     return nullptr;
   }
   const Tree* coefficient = matrix->child(0);
@@ -378,8 +378,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     if (allCoefficientsNull && !GetSign(coefficient).isNull()) {
       /* Row j describes an equation of the form '0=b', the system has no
        * solution. */
-      equationSetWithoutDep->removeTree();
       matrix->removeTree();
+      equationSetWithoutDep->removeTree();
       *error = Error::NoError;
       return SharedTreeStack->pushSet(0);
     }
@@ -390,8 +390,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
 #if POINCARE_NO_INFINITE_SYSTEMS
     (void)m;
     context->solutionStatus = SolutionStatus::Incomplete;
-    equationSetWithoutDep->removeTree();
     matrix->removeTree();
+    equationSetWithoutDep->removeTree();
     *error = Error::NoError;
     return SharedTreeStack->pushSet(0);
 #else
@@ -447,8 +447,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     rank = Matrix::CanonizeAndRank(matrix, true);
     if (rank == Matrix::k_failedToCanonizeRank) {
       *error = Error::EquationUndefined;
-      equationSetWithoutDep->removeTree();
       matrix->removeTree();
+      equationSetWithoutDep->removeTree();
       return nullptr;
     }
 #endif
@@ -466,8 +466,9 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     for (uint8_t col = 0; col < cols; col++) {
       if (row < n && col == cols - 1) {
         if (*error == Error::NoError) {
+          /* Replace the solution in the equation set to check later that it
+           * respects the dependencies. */
           Variables::Replace(equationSetClone, row, child);
-          Dependency::DeepRemoveUselessDependencies(equationSetClone);
           *error = EnhanceSolution(child, context);
           // Continue anyway to preserve TreeStack integrity
         }
@@ -478,21 +479,22 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     }
   }
   matrix->moveNodeOverNode(SharedTreeStack->pushSet(n));
+  Dependency::DeepRemoveUselessDependencies(equationSetClone);
 
   // Make sure the solution satisfies dependencies in equations
   for (const Tree* equation : equationSetClone->children()) {
     if (equation->isUndefined()) {
       *error = Error::NoError;
       equationSetClone->removeTree();
-      equationSetWithoutDep->removeTree();
       matrix->removeTree();
+      equationSetWithoutDep->removeTree();
       return SharedTreeStack->pushSet(0);
     }
     if (equation->isDep()) {
       *error = Error::RequireApproximateSolution;
       equationSetClone->removeTree();
-      equationSetWithoutDep->removeTree();
       matrix->removeTree();
+      equationSetWithoutDep->removeTree();
       return nullptr;
     }
   }
@@ -648,8 +650,9 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
        * are resolved.
        * For optimization, replace the main expression with zero
        * because we only want to check dependencies. */
-      Tree* clonedEquation = equation->cloneTree();
-      clonedEquation->child(0)->cloneNodeOverTree(0_e);
+      Tree* clonedEquation = SharedTreeStack->pushDep();
+      (0_e)->cloneNode();
+      equation->child(1)->cloneTree();
       Variables::Replace(clonedEquation, 0, solution);
       Dependency::DeepRemoveUselessDependencies(clonedEquation);
       bool invalidSolution = clonedEquation->isUndefined();

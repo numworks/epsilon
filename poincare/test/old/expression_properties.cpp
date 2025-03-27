@@ -547,7 +547,7 @@ void assert_list_length_in_children_is(const char* definition,
 
 constexpr int k_mismatchedLists = -2;
 
-QUIZ_CASE(poincare_expression_children_list_length) {
+QUIZ_CASE(poincare_properties_children_list_length) {
   assert_list_length_in_children_is(
       "1+1", Poincare::Internal::Dimension::k_nonListListLength);
   assert_list_length_in_children_is("1+{}", 0);
@@ -563,7 +563,7 @@ void assert_is_list_of_points(const char* input, Context* context,
   quiz_assert_print_if_failure(isListOfPoints == truth, input);
 }
 
-QUIZ_CASE(poincare_expression_list_of_points) {
+QUIZ_CASE(poincare_properties_list_of_points) {
   Shared::GlobalContext globalContext;
   assert(
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
@@ -608,7 +608,7 @@ void assert_is_continuous_on_interval(const char* input, float x1, float x2,
       input);
 }
 
-QUIZ_CASE(poincare_expression_continuous) {
+QUIZ_CASE(poincare_properties_is_continuous) {
   assert_is_continuous_on_interval("x+x^2", 2.43f, 2.45f, true);
   assert_is_continuous_on_interval("x+x^2", 2.45f, 2.47f, true);
   assert_is_continuous_on_interval("x+floor(x^2)", 2.43f, 2.45f, false);
@@ -626,27 +626,28 @@ QUIZ_CASE(poincare_expression_continuous) {
                                    1.0f, false);
 }
 
-#if 0
-
-void assert_deep_is_symbolic(const char* input, bool isSymbolic) {
+void assert_reduced_deep_is_symbolic(const char* input,
+                                     bool isSymbolic = true) {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(input, &context);
-  e = e.cloneAndReduce(
-      ReductionContext::DefaultReductionContextForAnalysis(&context));
+  UserExpression e1 = UserExpression::Builder(parse(input, &context));
+  ReductionContext reductionContext(&context);
+  bool reductionFailure = false;
+  SystemExpression e2 = e1.cloneAndReduce(reductionContext, &reductionFailure);
+  quiz_assert(!reductionFailure);
   quiz_assert_print_if_failure(
-      e.deepIsSymbolic(&context, KeepAllSymbols) == isSymbolic,
+      e2.deepIsOfType(
+          {Type::UserSymbol, Type::UserFunction, Type::UserSequence},
+          &context) == isSymbolic,
       input);
 }
 
-QUIZ_DISABLED_CASE(poincare_expression_deep_is_symbolic) {
-  assert_deep_is_symbolic("2/cos(3x+2)", true);
-  assert_deep_is_symbolic("2/int(5x, x, 3, 4)", false);
-  assert_deep_is_symbolic("2/int(5xy, x, 3, 4)", true);
-  assert_deep_is_symbolic("2/int(diff(xy, y, 2), x, 3, 4)", false);
-  assert_deep_is_symbolic("2/int(diff(xy^n, y, 2), x, 3, 4)", true);
-  assert_deep_is_symbolic("2x+1", true);
-  assert_deep_is_symbolic("diff(x^2,x,3)", false);
-  assert_deep_is_symbolic("diff(y^2+x^2,x,3)", true);
+QUIZ_CASE(poincare_properties_deep_is_symbolic) {
+  assert_reduced_deep_is_symbolic("2/cos(3x+2)");
+  assert_reduced_deep_is_symbolic("2/int(5x, x, 3, 4)", false);
+  assert_reduced_deep_is_symbolic("2/int(5xy, x, 3, 4)");
+  assert_reduced_deep_is_symbolic("2/int(diff(xy, y, 2), x, 3, 4)", false);
+  assert_reduced_deep_is_symbolic("2/int(diff(xy^n, y, 2), x, 3, 4)");
+  assert_reduced_deep_is_symbolic("2x+1");
+  assert_reduced_deep_is_symbolic("diff(x^2,x,3)", false);
+  assert_reduced_deep_is_symbolic("diff(y^2+x^2,x,3)", false);
 }
-
-#endif

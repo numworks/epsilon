@@ -33,6 +33,9 @@ install_binary_deps() {
     msys)
       install_windows_binary_deps
       ;;
+    cygwin)
+      install_windows_binary_deps
+      ;;
     *)
       echo "Unknown operating system $OSTYPE" >&2
       exit 1

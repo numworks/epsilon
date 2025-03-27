@@ -33,35 +33,6 @@ QUIZ_DISABLED_CASE(poincare_properties_is_rational_number) {
                    .isAlternativeFormOfRationalNumber());
 }
 
-QUIZ_DISABLED_CASE(poincare_properties_is_infinity) {
-  Shared::GlobalContext context;
-  assert_expression_has_property("3.4+inf", &context,
-                                 OExpression::IsPlusOrMinusInfinity);
-  assert_expression_has_not_property("2.3+1", &context,
-                                     OExpression::IsPlusOrMinusInfinity);
-  assert_expression_has_not_property("a", &context,
-                                     OExpression::IsPlusOrMinusInfinity);
-  assert_reduce_and_store("42.3+inf→a");
-  assert_expression_has_property("a", &context,
-                                 OExpression::IsPlusOrMinusInfinity);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_in_parametric) {
-  Shared::GlobalContext context;
-  assert_expression_has_property("2x+1", &context, OExpression::IsSymbolic);
-  assert_expression_has_not_property("diff(x^2,x,3)", &context,
-                                     OExpression::IsSymbolic);
-  assert_expression_has_property("diff(y^2+x^2,x,3)", &context,
-                                 OExpression::IsSymbolic);
-  assert_reduce_and_store("1+inf→x");
-  assert_expression_has_property("x", &context,
-                                 OExpression::IsPlusOrMinusInfinity);
-  assert_expression_has_not_property("diff(x^2,x,3)", &context,
-                                     OExpression::IsPlusOrMinusInfinity);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
-}
-
 void assert_reduced_expression_unit_is(const char* expression,
                                        const char* unit) {
   Shared::GlobalContext globalContext;
@@ -308,12 +279,12 @@ QUIZ_CASE(poincare_properties_is_parametered_expression) {
 }
 
 template <typename T>
-void assert_expression_has_property_or_not(const char* expression, T test,
+void assert_expression_has_property_or_not(const char* input, T test,
                                            bool hasProperty) {
   Shared::GlobalContext context;
-  UserExpression e = UserExpression::Builder(parse(expression, &context));
+  UserExpression e = UserExpression::Builder(parse(input, &context));
   quiz_assert_print_if_failure(
-      e.recursivelyMatches(test, &context) == hasProperty, expression);
+      e.recursivelyMatches(test, &context) == hasProperty, input);
 }
 
 template <typename T>
@@ -364,10 +335,42 @@ QUIZ_CASE(poincare_properties_has_matrix) {
                                      &NewExpression::isOfMatrixDimension);
 }
 
-void assert_expression_has_variables(const char* expression,
+void assert_projected_is_infinity(const char* input, ProjectionContext* projCtx,
+                                  bool isInfinity = true) {
+  Tree* e = parse(input, projCtx->m_context);
+  Simplification::ToSystem(e, projCtx);
+  SystemExpression expr = SystemExpression::Builder(e);
+  quiz_assert_print_if_failure(
+      expr.recursivelyMatches(&SystemExpression::isPlusOrMinusInfinity,
+                              projCtx->m_context) == isInfinity,
+      input);
+}
+
+QUIZ_CASE(poincare_properties_is_infinity) {
+  Shared::GlobalContext globalContext;
+  ProjectionContext projCtx = {
+      .m_symbolic = SymbolicComputation::ReplaceDefinedFunctions,
+      .m_context = &globalContext,
+  };
+  assert_projected_is_infinity("3.4+inf", &projCtx);
+  assert_projected_is_infinity("2.3+1", &projCtx, false);
+  assert_projected_is_infinity("a", &projCtx, false);
+
+  store("42.3+inf→a", &globalContext);
+  assert_projected_is_infinity("a", &projCtx);
+
+  store("1+inf→x", &globalContext);
+  assert_projected_is_infinity("x", &projCtx);
+  assert_projected_is_infinity("diff(x^2,x,3)", &projCtx, false);
+
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
+}
+
+void assert_expression_has_variables(const char* input,
                                      const Tree* expectedVariables,
                                      ProjectionContext* projCtx) {
-  Tree* e = parse(expression, projCtx->m_context);
+  Tree* e = parse(input, projCtx->m_context);
   Simplification::ToSystem(e, projCtx);
   const Tree* variables = Variables::GetUserSymbols(e);
   assert_trees_are_equal(variables, expectedVariables);
@@ -461,8 +464,8 @@ QUIZ_CASE(poincare_properties_get_variables) {
 }
 
 void assert_reduced_expression_has_polynomial_coefficient(
-    const char* expression, const char* symbolName,
-    const Tree* expectedCoefficients, Shared::GlobalContext* globalContext,
+    const char* input, const char* symbolName, const Tree* expectedCoefficients,
+    Shared::GlobalContext* globalContext,
     Preferences::ComplexFormat complexFormat =
         Preferences::ComplexFormat::Cartesian,
     Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian,
@@ -472,13 +475,12 @@ void assert_reduced_expression_has_polynomial_coefficient(
   ReductionContext redContext =
       ReductionContext(globalContext, complexFormat, angleUnit, unitFormat,
                        ReductionTarget::SystemForAnalysis, symbolicComputation);
-  UserExpression e = UserExpression::Builder(parse(expression, globalContext));
+  UserExpression e = UserExpression::Builder(parse(input, globalContext));
   bool reductionFailure = false;
   e = e.cloneAndReduce(redContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   Tree* coefficients = PolynomialParser::GetReducedCoefficients(e, symbolName);
-  quiz_assert_print_if_failure(
-      coefficients->treeIsIdenticalTo(expectedCoefficients), expression);
+  assert_trees_are_equal(coefficients, expectedCoefficients);
 }
 
 QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
@@ -554,11 +556,11 @@ QUIZ_CASE(poincare_expression_children_list_length) {
   assert_list_length_in_children_is("{1,2}+{3,4,5}", k_mismatchedLists);
 }
 
-void assert_is_list_of_points(const char* definition, Context* context,
+void assert_is_list_of_points(const char* input, Context* context,
                               bool truth = true) {
-  UserExpression e = UserExpression::Builder(parse(definition, context));
+  UserExpression e = UserExpression::Builder(parse(input, context));
   bool isListOfPoints = e.dimension(context).isListOfPoints();
-  quiz_assert_print_if_failure(isListOfPoints == truth, definition);
+  quiz_assert_print_if_failure(isListOfPoints == truth, input);
 }
 
 QUIZ_CASE(poincare_expression_list_of_points) {
@@ -591,10 +593,10 @@ QUIZ_CASE(poincare_expression_list_of_points) {
   assert_is_list_of_points("{a,x,(3,4)}", &globalContext, false);
 }
 
-void assert_is_continuous_on_interval(const char* expression, float x1,
-                                      float x2, bool isContinuous) {
+void assert_is_continuous_on_interval(const char* input, float x1, float x2,
+                                      bool isContinuous) {
   Shared::GlobalContext context;
-  UserExpression e1 = UserExpression::Builder(parse(expression, &context));
+  UserExpression e1 = UserExpression::Builder(parse(input, &context));
   ReductionContext reductionContext(&context);
   bool reductionFailure = false;
   SystemExpression e2 = e1.cloneAndReduce(reductionContext, &reductionFailure);
@@ -603,7 +605,7 @@ void assert_is_continuous_on_interval(const char* expression, float x1,
   quiz_assert_print_if_failure(
       !isContinuous ==
           Continuity::IsDiscontinuousOnInterval<float>(e3.tree(), x1, x2),
-      expression);
+      input);
 }
 
 QUIZ_CASE(poincare_expression_continuous) {
@@ -626,14 +628,14 @@ QUIZ_CASE(poincare_expression_continuous) {
 
 #if 0
 
-void assert_deep_is_symbolic(const char* expression, bool isSymbolic) {
+void assert_deep_is_symbolic(const char* input, bool isSymbolic) {
   Shared::GlobalContext context;
-  OExpression e = parse_expression(expression, &context);
+  OExpression e = parse_expression(input, &context);
   e = e.cloneAndReduce(
       ReductionContext::DefaultReductionContextForAnalysis(&context));
   quiz_assert_print_if_failure(
       e.deepIsSymbolic(&context, KeepAllSymbols) == isSymbolic,
-      expression);
+      input);
 }
 
 QUIZ_DISABLED_CASE(poincare_expression_deep_is_symbolic) {
@@ -642,6 +644,9 @@ QUIZ_DISABLED_CASE(poincare_expression_deep_is_symbolic) {
   assert_deep_is_symbolic("2/int(5xy, x, 3, 4)", true);
   assert_deep_is_symbolic("2/int(diff(xy, y, 2), x, 3, 4)", false);
   assert_deep_is_symbolic("2/int(diff(xy^n, y, 2), x, 3, 4)", true);
+  assert_deep_is_symbolic("2x+1", true);
+  assert_deep_is_symbolic("diff(x^2,x,3)", false);
+  assert_deep_is_symbolic("diff(y^2+x^2,x,3)", true);
 }
 
 #endif

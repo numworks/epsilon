@@ -77,6 +77,11 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     if (!GetComplexSign(Exponent(child)).realSign().isStrictlyPositive()) {
       child->cloneTree();
       (*numberOfDependencies)++;
+      // dep(t^(m+n), {t^m, t^n}) if n <= 0 also
+      if (!GetComplexSign(Exponent(next)).realSign().isStrictlyPositive()) {
+        next->cloneTree();
+        (*numberOfDependencies)++;
+      }
     }
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.

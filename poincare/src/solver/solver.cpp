@@ -809,8 +809,16 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
       return false;
     }
     if (leftIsDiscontinuous) {
+      if (end->x() == middle->x()) {
+        // start and end are too big and end-start is too small
+        return false;
+      }
       *end = *middle;
     } else {
+      if (start->x() == middle->x()) {
+        // start and end are too big and end-start is too small
+        return false;
+      }
       assert(rightIsDiscontinuous);
       *start = *middle;
     }

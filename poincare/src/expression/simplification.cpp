@@ -91,11 +91,11 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
      * be simplified. */
     e = firstChild->cloneTree();
   } else {
-    // Stores are not allowed inside of trees
-    assert(!dataTree->hasDescendantSatisfying(
-        [](const Tree* tree) { return tree->isStore(); }));
     e = dataTree->cloneTree();
   }
+
+  assert(!e->hasDescendantSatisfying(
+      [](const Tree* tree) { return tree->isStore(); }));
 
   ProjectAndReduce(e, projectionContext);
   if (beautify) {

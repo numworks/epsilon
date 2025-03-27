@@ -107,6 +107,8 @@ QUIZ_CASE(pcj_equation_solver) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Dependency
+  check_solutions({"x-1", "x+y^2/y-1"}, {}, projCtx);
+  check_solutions({"abs(1-x)/abs(1-x)-x", "y-3", "z+y"}, {}, projCtx);
   check_solutions({"x^2*(x-1)/x"}, {"1", "1"}, projCtx);
   check_solutions({"x/x-1+x"}, {}, projCtx);
 }

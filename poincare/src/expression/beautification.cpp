@@ -28,7 +28,8 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
 Tree* GetPolarFormat(const Tree* e, const ProjectionContext& projectionContext);
 Tree* GetCartesianFormat(const Tree* e,
                          const ProjectionContext& projectionContext);
-bool DeepBeautifyAngleFunctions(Tree* e, ProjectionContext* projectionContext);
+bool DeepBeautifyAngleFunctions(Tree* e,
+                                const ProjectionContext& projectionContext);
 bool ShallowBeautifyAngleFunctions(Tree* e, void* context);
 bool ShallowBeautifyPercent(Tree* e);
 bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
@@ -86,16 +87,17 @@ float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
 
 /* Find and beautify trigonometric system nodes while converting the angles.
  * Simplifications are needed, this has to be done before beautification. */
-bool DeepBeautifyAngleFunctions(Tree* e, ProjectionContext* projectionContext) {
+bool DeepBeautifyAngleFunctions(Tree* e,
+                                const ProjectionContext& projectionContext) {
   /* ShallowBeautifyAngleFunctions temporarily introduces AngleUnitContext
    * nodes to allow simplification and approximation of beautified angle
    * functions. */
-  bool changed = Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions,
-                                           projectionContext);
+  AngleUnit angleUnit = projectionContext.m_angleUnit;
+  bool changed =
+      Tree::ApplyShallowTopDown(e, ShallowBeautifyAngleFunctions, &angleUnit);
   if (changed) {
     SystematicReduction::DeepReduce(e);
-    if (projectionContext->m_advanceReduce &&
-        projectionContext->m_angleUnit != AngleUnit::Radian) {
+    if (projectionContext.m_advanceReduce && angleUnit != AngleUnit::Radian) {
       AdvancedReduction::Reduce(e);
     }
     Dependency::DeepRemoveUselessDependencies(e);
@@ -113,7 +115,7 @@ bool DeepBeautifyAngleFunctions(Tree* e, ProjectionContext* projectionContext) {
 
 // Advanced reduction may be performed after this step.
 bool ShallowBeautifyAngleFunctions(Tree* e, void* context) {
-  AngleUnit angleUnit = static_cast<ProjectionContext*>(context)->m_angleUnit;
+  AngleUnit angleUnit = *(static_cast<AngleUnit*>(context));
   // Beautify System nodes to prevent future simplifications.
   if (e->isTrig()) {
 #if POINCARE_TRIGONOMETRY_HYPERBOLIC
@@ -218,7 +220,7 @@ bool DeepBeautifyUnits(Tree* e) {
 bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   bool changed =
       ApplyComplexFormat(e, projectionContext.m_dimension, projectionContext);
-  changed = DeepBeautifyAngleFunctions(e, &projectionContext) || changed;
+  changed = DeepBeautifyAngleFunctions(e, projectionContext) || changed;
   changed = Tree::ApplyShallowTopDown(e, ShallowBeautify) || changed;
   changed = DeepBeautifyUnits(e) || changed;
   /* Divisions are created after the main beautification since they work top

@@ -284,7 +284,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
                                        "[[82,123][178,267]]");
   assert_parsed_expression_simplify_to("0*[[1,0][0,1]]^500",
                                        "0×[[1,0][0,1]]^500");
-  assert_parsed_expression_simplify_to("x^5/x^3", "dep(x^2,{1/x^3})");
+  assert_parsed_expression_simplify_to("x^5/x^3", "dep(x^2,{nonNull(x)})");
   assert_parsed_expression_simplify_to("x^5*x^3", "x^8");
   assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2");
   assert_parsed_expression_simplify_to("x^0", "dep(1,{x^0})");
@@ -293,7 +293,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("π^3/π^5", "1/π^2", SystemForAnalysis);
   assert_parsed_expression_simplify_to("π^0", "1", SystemForAnalysis);
   assert_parsed_expression_simplify_to("π^π/π^(π-1)", "π", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^5/x^3", "dep(x^2,{1/x^3})",
+  assert_parsed_expression_simplify_to("x^5/x^3", "dep(x^2,{nonNull(x)})",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^5×x^3", "x^8", SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2", SystemForAnalysis);

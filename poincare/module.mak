@@ -238,7 +238,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/tree/helpers.cpp \
   old/tree/tree_handle.cpp \
   old/zoom.cpp \
-  api.cpp \
   approximation.cpp \
   beautification.cpp \
   dimension.cpp \

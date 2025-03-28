@@ -492,8 +492,7 @@ bool SystematicOperation::ReduceSign(Tree* e) {
   ComplexSign sign = GetComplexSign(child);
   if (sign.isNonReal()) {
     // Could use sign(z) = exp(i*arg(z)) but undef for now
-    e->cloneTreeOverTree(KUndefUnhandled);
-    return true;
+    return false;
   }
   const Tree* result;
   if (sign.isNull()) {

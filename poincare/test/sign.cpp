@@ -371,6 +371,8 @@ QUIZ_CASE(pcj_sign) {
   // ln
   assert_sign("ln(0)", ComplexSign::Unknown());
   assert_sign("ln(3)", Sign::FiniteStrictlyPositive());
+  // TODO? simplify as ln(-3) (IntegerNegShort) instead of ln(-1 * 3) to get
+  // more precise sign
   assert_sign("ln(-3)",
               ComplexSign(Sign::Finite(), Sign::FiniteStrictlyPositive()));
   assert_sign("ln(ln(3))", ComplexSign(Sign::Finite(), Sign::Zero()));

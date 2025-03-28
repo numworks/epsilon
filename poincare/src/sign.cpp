@@ -209,6 +209,16 @@ ComplexSign Ln(const Internal::Tree* child) {
                     : Sign::FiniteStrictlyNegative();
     return ComplexSign(sign, Sign::Zero());
   }
+  if (child->isStrictlyNegativeRational()) {
+    using namespace Internal;
+    IntegerHandler numerator = Rational::Numerator(child);
+    numerator.setSign(NonStrictSign::Positive);
+    Sign sign =
+        IntegerHandler::Compare(numerator, Rational::Denominator(child)) > 0
+            ? Sign::FiniteStrictlyPositive()
+            : Sign::FiniteStrictlyNegative();
+    return ComplexSign(sign, Sign::FiniteStrictlyPositive());
+  }
   /* z = |z|e^(i*arg(z))
    * re(ln(z)) = ln(|z|)
    * im(ln(z)) = arg(z) */

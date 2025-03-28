@@ -1,187 +1,3 @@
-#if 0
-#include <apps/shared/global_context.h>
-
-#include "helper.h"
-
-using namespace Poincare;
-
-QUIZ_DISABLED_CASE(poincare_properties_is_rational_number) {
-  quiz_assert(BasedInteger::Builder("2", OMG::Base::Binary)
-                  .isAlternativeFormOfRationalNumber());
-  quiz_assert(BasedInteger::Builder("2", OMG::Base::Decimal)
-                  .isAlternativeFormOfRationalNumber());
-  quiz_assert(BasedInteger::Builder("2", OMG::Base::Hexadecimal)
-                  .isAlternativeFormOfRationalNumber());
-  quiz_assert(Decimal::Builder("2", 3).isAlternativeFormOfRationalNumber());
-  quiz_assert(Rational::Builder(2, 3).isAlternativeFormOfRationalNumber());
-  quiz_assert(Opposite::Builder(Rational::Builder(2, 3))
-                  .isAlternativeFormOfRationalNumber());
-  quiz_assert(Division::Builder(BasedInteger::Builder(1), Rational::Builder(2))
-                  .isAlternativeFormOfRationalNumber());
-  quiz_assert(Division::Builder(Opposite::Builder(BasedInteger::Builder(1)),
-                                Rational::Builder(2))
-                  .isAlternativeFormOfRationalNumber());
-  quiz_assert(!Float<float>::Builder(1.0f).isAlternativeFormOfRationalNumber());
-  quiz_assert(!Float<double>::Builder(1.0).isAlternativeFormOfRationalNumber());
-  quiz_assert(!Infinity::Builder(true).isAlternativeFormOfRationalNumber());
-  quiz_assert(!Undefined::Builder().isAlternativeFormOfRationalNumber());
-  quiz_assert(!Symbol::Builder('a').isAlternativeFormOfRationalNumber());
-  quiz_assert(
-      !Multiplication::Builder(Rational::Builder(1), Rational::Builder(2))
-           .isAlternativeFormOfRationalNumber());
-  quiz_assert(!Addition::Builder(Rational::Builder(1), Rational::Builder(2))
-                   .isAlternativeFormOfRationalNumber());
-}
-
-void assert_reduced_expression_unit_is(const char* expression,
-                                       const char* unit) {
-  Shared::GlobalContext globalContext;
-  ReductionContext redContext(&globalContext, Real, Degree, MetricUnitFormat,
-                              SystemForApproximation);
-  OExpression e = parse_expression(expression, &globalContext);
-  OExpression u1;
-  e = e.cloneAndReduceAndRemoveUnit(redContext, &u1);
-  OExpression e2 = parse_expression(unit, &globalContext);
-  OExpression u2;
-  e2.cloneAndReduceAndRemoveUnit(redContext, &u2);
-  quiz_assert_print_if_failure(
-      u1.isUninitialized() == u2.isUninitialized() &&
-          (u1.isUninitialized() || u1.isIdenticalTo(u2)),
-      expression);
-}
-
-QUIZ_DISABLED_CASE(poincare_properties_remove_unit) {
-  assert_reduced_expression_unit_is("_km", "_m");
-  assert_reduced_expression_unit_is("_min/_km", "_m^(-1)×_s");
-  assert_reduced_expression_unit_is("_km^3", "_m^3");
-  assert_reduced_expression_unit_is("1_m+_km", "_m");
-  assert_reduced_expression_unit_is("_L^2×3×_s", "_m^6×_s");
-}
-
-void assert_additional_results_compute_to(
-    const char* expression, const char** results, int length,
-    Preferences::UnitFormat unitFormat = MetricUnitFormat) {
-  Shared::GlobalContext globalContext;
-  constexpr int maxNumberOfResults = 5;
-  assert(length <= maxNumberOfResults);
-  OExpression additional[maxNumberOfResults];
-  ReductionContext reductionContext(
-      &globalContext, Cartesian, Degree, unitFormat, User,
-      ReplaceAllSymbolsWithUndefined, DefaultUnitConversion);
-  ApproximationContext approximationContext(reductionContext);
-  OExpression units;
-  OExpression e = parse_expression(expression, &globalContext)
-                      .cloneAndReduceAndRemoveUnit(reductionContext, &units);
-  double value = e.approximateToRealScalar<double>(approximationContext);
-
-  if (!OUnit::ShouldDisplayAdditionalOutputs(value, units, unitFormat)) {
-    quiz_assert(length == 0);
-    return;
-  }
-  const int numberOfResults = OUnit::SetAdditionalExpressions(
-      units, value, additional, maxNumberOfResults, reductionContext,
-      OExpression());
-
-  quiz_assert(numberOfResults == length);
-  for (int i = 0; i < length; i++) {
-    assert_expression_serializes_to(additional[i], results[i], DecimalMode);
-  }
-}
-
-QUIZ_DISABLED_CASE(poincare_expression_additional_results) {
-  // Time
-  assert_additional_results_compute_to("3×_s", nullptr, 0);
-  {
-    const char* array[1] = {"1×_min+1×_s"};
-    assert_additional_results_compute_to("61×_s", array, 1);
-  }
-  {
-    const char* array[1] = {"1×_day+10×_h+17×_min+36×_s"};
-    assert_additional_results_compute_to("123456×_s", array, 1);
-  }
-  {
-    const char* array[1] = {"7×_day"};
-    assert_additional_results_compute_to("1×_week", array, 1);
-  }
-
-  // Distance
-  {
-    const char* array[1] = {"19×_mi+853×_yd+1×_ft+7×_in"};
-    assert_additional_results_compute_to("1234567×_in", array, 1, Imperial);
-  }
-  {
-    const char* array[1] = {"1×_yd+7.700787×_in"};
-    assert_additional_results_compute_to("1.11×_m", array, 1, Imperial);
-  }
-  assert_additional_results_compute_to("1.11×_m", nullptr, 0, MetricUnitFormat);
-
-  // Masses
-  {
-    const char* array[1] = {"1×_shtn+240×_lb"};
-    assert_additional_results_compute_to("1×_lgtn", array, 1, Imperial);
-  }
-  {
-    const char* array[1] = {"2×_lb+3.273962×_oz"};
-    assert_additional_results_compute_to("1×_kg", array, 1, Imperial);
-  }
-  assert_additional_results_compute_to("1×_kg", nullptr, 0, MetricUnitFormat);
-
-  // Temperatures
-  {
-    const char* array[2] = {"-273.15×_°C", "-459.67×_°F"};
-    assert_additional_results_compute_to("0×_K", array, 2, MetricUnitFormat);
-  }
-  {
-    const char* array[2] = {"-279.67×_°F", "-173.15×_°C"};
-    assert_additional_results_compute_to("100×_K", array, 2, Imperial);
-  }
-  {
-    const char* array[2] = {"12.02×_°F", "262.05×_K"};
-    assert_additional_results_compute_to("-11.1×_°C", array, 2);
-  }
-  {
-    const char* array[2] = {"-20×_°C", "253.15×_K"};
-    assert_additional_results_compute_to("-4×_°F", array, 2);
-  }
-
-  // Energy
-  {
-    const char* array[3] = {"3.6×_MJ", "1×_kW×_h", "2.246943ᴇ13×_TeV"};
-    assert_additional_results_compute_to("3.6×_MN_m", array, 3);
-  }
-
-  // Volume
-  {
-    const char* array[2] = {"264×_gal+1×_pt+0.7528377×_cup", "1000×_L"};
-    assert_additional_results_compute_to("1×_m^3", array, 2, Imperial);
-  }
-  {
-    const char* array[2] = {"48×_gal+1×_pt+1.5625×_cup", "182.5426×_L"};
-    assert_additional_results_compute_to("12345×_tbsp", array, 2, Imperial);
-  }
-  {
-    const char* array[2] = {"182.5426×_L"};
-    assert_additional_results_compute_to("12345×_tbsp", array, 1,
-                                         MetricUnitFormat);
-  }
-
-  // Speed
-  {
-    const char* array[1] = {"3.6×_km×_h^\x12-1\x13"};
-    assert_additional_results_compute_to("1×_m/_s", array, 1, MetricUnitFormat);
-  }
-  {
-    const char* array[2] = {"2.236936×_mi×_h^\x12-1\x13",
-                            "3.6×_km×_h^\x12-1\x13"};
-    assert_additional_results_compute_to("1×_m/_s", array, 2, Imperial);
-  }
-
-  // No additional result
-  assert_additional_results_compute_to("rad×s^(1/2)", nullptr, 0);
-}
-
-#endif
-
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
@@ -243,6 +59,32 @@ QUIZ_CASE(poincare_properties_is_number) {
   assert_reduced_is_number("[[0]]", false);
   assert_is_number("(1,2)", false);
   assert_reduced_is_number("(1,2)", false);
+}
+
+void assert_reduced_is_rational(const char* input, bool isRational = true) {
+  Shared::GlobalContext context;
+  UserExpression e1 = UserExpression::Builder(parse(input, &context));
+  ReductionContext reductionContext(&context);
+  bool reductionFailure = false;
+  SystemExpression e2 = e1.cloneAndReduce(reductionContext, &reductionFailure);
+  quiz_assert(!reductionFailure);
+  quiz_assert_print_if_failure(e2.isRational() == isRational, input);
+}
+
+QUIZ_CASE(poincare_properties_is_rational_number) {
+  assert_reduced_is_rational("0b20");
+  assert_reduced_is_rational("2");
+  assert_reduced_is_rational("0x2");
+  assert_reduced_is_rational("2.3");
+  assert_reduced_is_rational("2/3");
+  assert_reduced_is_rational("-2/3");
+  assert_reduced_is_rational("(-1)/2");
+  assert_reduced_is_rational("1*2");
+  assert_reduced_is_rational("1+2");
+  assert_reduced_is_rational("1.0f", false);
+  assert_reduced_is_rational("inf", false);
+  assert_reduced_is_rational("undef", false);
+  assert_reduced_is_rational("a", false);
 }
 
 void assert_has_random(const char* input, bool hasRandom = true) {

@@ -346,18 +346,15 @@ QUIZ_CASE(solver_approximate) {
   set_complex_format(Real, &globalContext);
   assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001}, &globalContext);
 #endif
-#if 0
-  /* TODO: This test is deactivated because it would take too much time (~30s in
-   * debug) */
   setComplexFormatAndAngleUnit(Real, Radian);
+  /* This tests triggers the escape case [end->x() == middle->x()] in
+   * Solver::FindMinimalIntervalContainingDiscontinuity */
   assert_solves_numerically_to(
-      "√(cos(x))=0", -224802933571584, 224802933571584,
-      {-221058545187024.16, -215501111038307.22, -209943676889590.28,
-       -204386242740873.34, -159307359170310.97, -101610266728570.94,
-       -96052832579854, -79380530133703.188, -73823095984986.25,
-       -68265661836269.289},
+      "√(cos(x))=0", -224802933571584, -100000000000000,
+      {-183733033544272.53, -180686366844276.72, -163039143925925.81,
+       -155711277972396.22, -148748023905798.31, -146630700198228.09,
+       -109102528932569.69},
       &globalContext);
-#endif
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);

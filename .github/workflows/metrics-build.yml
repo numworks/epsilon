@@ -8,7 +8,7 @@ on:
       - 'tests/**'
       - 'ion/src/simulator/**'
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1' || '-j2' }}
+  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1 PLATFORM=n0120' || '-j2 PLATFORM=n0120' }}
   CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache' || '' }}
 
 concurrency:
@@ -41,10 +41,10 @@ jobs:
         id: epsilon-core
         run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
         continue-on-error: true
-      - name: Build common ancestor bootloader and kernel for N0110
+      - name: Build common ancestor bootloader and kernel for N0120
         if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: cd base && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf
-      - name: Build common ancestor userland for N0110
+      - name: Build common ancestor userland for N0120
         run: cd base && make userland.onboarding.beta.allow3rdparty.A.elf
       - name: Find head of PR
         uses: actions/checkout@v3
@@ -55,10 +55,10 @@ jobs:
           path: head
       - name: Install dependencies
         run: cd head && build/setup.sh
-      - name: Build head bootloader and kernel for N0110
+      - name: Build head bootloader and kernel for N0120
         if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: cd head && make bootloader.elf && make kernel.onboarding.beta.allow3rdparty.A.elf
-      - name: Build head userland for N0110
+      - name: Build head userland for N0120
         run: cd head && make userland.onboarding.beta.allow3rdparty.A.elf
       - name: Initialize metrics output
         run: |
@@ -66,18 +66,18 @@ jobs:
           echo ${{ github.event.number }} > ./metrics-output/PR_number
       - name: Binary size summary
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0120/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0120/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
       - name: Binary size summary (userland only)
         if: ${{ steps.epsilon-core.outcome != 'success' }}
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
       - name: App sizes
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes)" > ./metrics-output/app_sizes
-      - name: Binary size N0110
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes)" > ./metrics-output/app_sizes
+      - name: Binary size N0120
         if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/bootloader/bootloader.elf base/output/release/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/bootloader/bootloader.elf head/output/release/n0110/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0110
-      - name: Binary size N0110 (userland only)
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0120/bootloader/bootloader.elf base/output/release/n0120/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0120/bootloader/bootloader.elf head/output/release/n0120/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0120
+      - name: Binary size N0120 (userland only)
         if: ${{ steps.epsilon-core.outcome != 'success' }}
-        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0110/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0110
+        run: echo "$(head/.venv/bin/python3 head/build/metrics/binary_size.py @Base base/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf @Head head/output/release/n0120/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data)" > ./metrics-output/binary_size_n0120
       - name: Upload metrics output
         uses: actions/upload-artifact@v4
         with:

@@ -36,6 +36,8 @@ bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
 bool ShallowBeautifyPowerOfTangent(Tree* e, void* context);
 bool ShallowBeautify(Tree* e, void* context);
 bool ShallowBeautifySpecialDisplays(Tree* e, void* context);
+bool ApplyBeautificationSteps(Tree* e,
+                              const ProjectionContext& projectionContext);
 
 float DegreeForSortingAddition(const Tree* e, bool symbolsOnly) {
   switch (e->type()) {
@@ -220,7 +222,26 @@ bool DeepBeautifyUnits(Tree* e) {
 bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   bool changed =
       ApplyComplexFormat(e, projectionContext.m_dimension, projectionContext);
-  changed = DeepBeautifyAngleFunctions(e, projectionContext) || changed;
+
+  PatternMatching::Context ctx;
+  if ((projectionContext.m_complexFormat == ComplexFormat::Polar &&
+       PatternMatching::Match(e, KMult(KA, KExp(KMult(KB, i_e))), &ctx)) ||
+      (projectionContext.m_complexFormat == ComplexFormat::Cartesian &&
+       PatternMatching::Match(e, KAdd(KA, KMult(KB, i_e)), &ctx))) {
+    changed =
+        ApplyBeautificationSteps(e->child(0), projectionContext) || changed;
+    changed =
+        ApplyBeautificationSteps(e->child(1), projectionContext) || changed;
+  } else {
+    changed = ApplyBeautificationSteps(e, projectionContext) || changed;
+  }
+  assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
+  return changed;
+}
+
+bool ApplyBeautificationSteps(Tree* e,
+                              const ProjectionContext& projectionContext) {
+  bool changed = DeepBeautifyAngleFunctions(e, projectionContext);
   changed = Tree::ApplyShallowTopDown(e, ShallowBeautify) || changed;
   changed = DeepBeautifyUnits(e) || changed;
   /* Divisions are created after the main beautification since they work top
@@ -233,7 +254,6 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifySpecialDisplays) || changed;
   changed = Variables::BeautifyToName(e) || changed;
-  assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   return changed;
 }
 
@@ -532,7 +552,7 @@ Tree* GetPolarFormat(const Tree* e,
   if (Number::IsNull(abs) || argIsNull) {
     NAry::RemoveChildAtIndex(polarForm, 1);
   }
-  if (abs->isOne()) {
+  if (Number::IsOne(abs)) {
     NAry::RemoveChildAtIndex(polarForm, 0);
   }
   NAry::SquashIfPossible(polarForm);

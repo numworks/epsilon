@@ -98,6 +98,8 @@ T StatisticsDataset<T>::weightedSum() const {
 
 template <typename T>
 T StatisticsDataset<T>::offsettedSquaredSum(T offset) const {
+  /* Use [this] as a dummy offset dataset, values will be accessed and
+   * multiplied by 0. */
   return squaredSumOffsettedByLinearTransformationOfDataset(this, offset, 0.0);
 }
 

@@ -18,11 +18,11 @@ constexpr KDColor KDGrayscaleToKDColor(KDGrayscale color) {
     case KDGrayscale::Darkest:
       return KDColorBlack;
     case KDGrayscale::Dark:
-      return KDColor::RGB888(0x32, 0x34, 0x32);
+      return KDColor::RGB24(0x404441);
     case KDGrayscale::Bright:
-      return KDColor::RGB888(0x66, 0x6D, 0x68);
+      return KDColor::RGB24(0x6B736D);
     case KDGrayscale::Brightest:
-      return KDColor::RGB888(0x88, 0x96, 0x8C);
+      return KDColor::RGB24(0x88968C);
     default:
       OMG::unreachable();
   }

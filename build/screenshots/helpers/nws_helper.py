@@ -41,7 +41,7 @@ def convert_nws_to_txt(nwspath, txtpath=None):
         events = f.read()
 
     if txtpath is None:
-        f = sys.stdout
+        f = sys.stdout.buffer
     else:
         f = open(txtpath, "wb")
 

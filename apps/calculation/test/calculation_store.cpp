@@ -906,6 +906,8 @@ QUIZ_CASE(calculation_additional_results) {
       &store);
   assertCalculationAdditionalResultTypeHas("tan(π/2)", {}, &globalContext,
                                            &store);
+  assertCalculationAdditionalResultTypeHas("atan(i)", {}, &globalContext,
+                                           &store);
   assertCalculationAdditionalResultTypeHas(
       "atan(∞)", {.inverseTrigonometry = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas(

@@ -232,10 +232,21 @@ bool AdditionalResultsHelper::expressionIsInterestingFunction(
 
 bool AdditionalResultsHelper::HasInverseTrigo(
     const UserExpression input, const UserExpression exactOutput) {
-  return input.tree()->isInverseTrigonometryFunction() ||
-         input.tree()->isInverseAdvancedTrigonometryFunction() ||
-         exactOutput.tree()->isInverseAdvancedTrigonometryFunction() ||
-         exactOutput.tree()->isInverseTrigonometryFunction();
+  bool result = input.tree()->isInverseTrigonometryFunction() ||
+                input.tree()->isInverseAdvancedTrigonometryFunction() ||
+                exactOutput.tree()->isInverseAdvancedTrigonometryFunction() ||
+                exactOutput.tree()->isInverseTrigonometryFunction();
+  if (result) {
+    /* Projection is needed here for an accurate sign prediction, to avoid
+     * additional result on complex inverse trigo */
+    Tree* output = exactOutput.tree()->cloneTree();
+    Internal::ProjectionContext ctx = Internal::ProjectionContext{
+        .m_complexFormat = ComplexFormat::Cartesian};
+    Internal::Simplification::ToSystem(output, &ctx);
+    result = GetComplexSign(output).isReal();
+    output->removeTree();
+  }
+  return result;
 }
 
 // Return the only numerical value found in e, nullptr if there are none or more

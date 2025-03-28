@@ -482,6 +482,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   Dependency::DeepRemoveUselessDependencies(equationSetClone);
 
   // Make sure the solution satisfies dependencies in equations
+  assert(equationSetClone->isList());
   for (const Tree* equation : equationSetClone->children()) {
     if (equation->isUndefined()) {
       *error = Error::NoError;
@@ -640,8 +641,9 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   polynomial->removeTree();
 
   // Enhance solutions and make sure they satisfy dependencies in the equation
+  assert(solutionList->isList());
   size_t numberOfSolutions = solutionList->numberOfChildren();
-  Tree* solution = solutionList->child(0);
+  Tree* solution = solutionList->nextNode();  // solutionList could be empty
   TreeRef end = pushEndMarker(solutionList);
   while (solution != end) {
     if (equation->isDep()) {

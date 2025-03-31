@@ -201,9 +201,6 @@ class Expression : public PoolHandle {
       UserExpression* approximatedExpression,
       Internal::ProjectionContext* context) const;
   // Only on SystemExpression
-  UserExpression cloneAndBeautify(
-      const ReductionContext& reductionContext) const;
-  // Only on SystemExpression
   UserExpression cloneAndBeautify(Internal::ProjectionContext* context) const;
   // Only on SystemExpression. Replace symbol and reduce.
   SystemExpression cloneAndReplaceSymbolWithExpression(

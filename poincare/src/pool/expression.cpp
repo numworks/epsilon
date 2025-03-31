@@ -409,21 +409,6 @@ void SystemExpression::cloneAndBeautifyAndApproximate(
 }
 
 UserExpression SystemExpression::cloneAndBeautify(
-    const ReductionContext& reductionContext) const {
-  ProjectionContext context = {
-      .m_complexFormat = reductionContext.complexFormat(),
-      .m_angleUnit = reductionContext.angleUnit(),
-      .m_expansionStrategy =
-          (reductionContext.target() == ReductionTarget::SystemForAnalysis)
-              ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
-              : Poincare::Internal::ExpansionStrategy::None,
-      .m_unitFormat = reductionContext.unitFormat(),
-      .m_symbolic = reductionContext.symbolicComputation(),
-      .m_context = reductionContext.context()};
-  return cloneAndBeautify(&context);
-}
-
-UserExpression SystemExpression::cloneAndBeautify(
     Internal::ProjectionContext* context) const {
   Tree* e = tree()->cloneTree();
   context->m_dimension = Internal::Dimension::Get(e);

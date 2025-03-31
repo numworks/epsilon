@@ -156,9 +156,9 @@ inline Poincare::SystemExpression CloneAndReduce(
     const ReductionParameters& reductionParameters = {},
     bool* reductionFailure = nullptr) {
   assert(reductionFailure);
-  return e.cloneAndReduce(
-      ReductionContextForParameters(e, context, reductionParameters),
-      reductionFailure);
+  Poincare::Internal::ProjectionContext ctx =
+      ProjectionContextForParameters(e, context, reductionParameters);
+  return e.cloneAndReduce(&ctx, reductionFailure);
 }
 
 // ===== Misc =====

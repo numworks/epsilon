@@ -27,6 +27,16 @@ struct ProjectionContext {
 
 class Projection {
  public:
+  static ProjectionContext DefaultProjectionContextForAnalysis(
+      Poincare::Context* context) {
+    ProjectionContext projCtx{
+        .m_complexFormat = ComplexFormat::Cartesian,
+        .m_angleUnit = AngleUnit::Radian,
+        .m_unitFormat = UnitFormat::Metric,
+        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+        .m_context = context};
+    return projCtx;
+  }
   /* Update complexFormat if tree contains i, Re, Im, Arg or Conj. Return true
    * if updated. */
   static bool UpdateComplexFormatWithExpressionInput(

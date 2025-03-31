@@ -20,9 +20,10 @@ void assert_is_number(const char* input, bool isNumber = true) {
 void assert_reduced_is_number(const char* input, bool isNumber = true) {
   Shared::GlobalContext context;
   UserExpression e1 = UserExpression::Builder(parse(input, &context));
-  ReductionContext reductionContext(&context);
+  ProjectionContext projectionContext{.m_context = &context};
   bool reductionFailure = false;
-  SystemExpression e2 = e1.cloneAndReduce(reductionContext, &reductionFailure);
+  SystemExpression e2 =
+      e1.cloneAndReduce(&projectionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   quiz_assert_print_if_failure(e2.isConstantNumber() == isNumber, input);
 }
@@ -64,9 +65,10 @@ QUIZ_CASE(poincare_properties_is_number) {
 void assert_reduced_is_rational(const char* input, bool isRational = true) {
   Shared::GlobalContext context;
   UserExpression e1 = UserExpression::Builder(parse(input, &context));
-  ReductionContext reductionContext(&context);
+  ProjectionContext projectionContext{.m_context = &context};
   bool reductionFailure = false;
-  SystemExpression e2 = e1.cloneAndReduce(reductionContext, &reductionFailure);
+  SystemExpression e2 =
+      e1.cloneAndReduce(&projectionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   quiz_assert_print_if_failure(e2.isRational() == isRational, input);
 }
@@ -314,12 +316,13 @@ void assert_reduced_expression_has_polynomial_coefficient(
     Preferences::UnitFormat unitFormat = Preferences::UnitFormat::Metric,
     SymbolicComputation symbolicComputation =
         SymbolicComputation::ReplaceDefinedSymbols) {
-  ReductionContext redContext =
-      ReductionContext(globalContext, complexFormat, angleUnit, unitFormat,
-                       ReductionTarget::SystemForAnalysis, symbolicComputation);
+  ProjectionContext projContext{.m_complexFormat = complexFormat,
+                                .m_angleUnit = angleUnit,
+                                .m_symbolic = symbolicComputation,
+                                .m_context = globalContext};
   UserExpression e = UserExpression::Builder(parse(input, globalContext));
   bool reductionFailure = false;
-  e = e.cloneAndReduce(redContext, &reductionFailure);
+  e = e.cloneAndReduce(&projContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   Tree* coefficients = PolynomialParser::GetReducedCoefficients(e, symbolName);
   assert_trees_are_equal(coefficients, expectedCoefficients);
@@ -439,9 +442,10 @@ void assert_is_continuous_on_interval(const char* input, float x1, float x2,
                                       bool isContinuous) {
   Shared::GlobalContext context;
   UserExpression e1 = UserExpression::Builder(parse(input, &context));
-  ReductionContext reductionContext(&context);
+  ProjectionContext projectionContext{.m_context = &context};
   bool reductionFailure = false;
-  SystemExpression e2 = e1.cloneAndReduce(reductionContext, &reductionFailure);
+  SystemExpression e2 =
+      e1.cloneAndReduce(&projectionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   SystemFunction e3 = e2.getSystemFunction("x", true);
   quiz_assert_print_if_failure(
@@ -472,9 +476,10 @@ void assert_reduced_deep_is_symbolic(const char* input,
                                      bool isSymbolic = true) {
   Shared::GlobalContext context;
   UserExpression e1 = UserExpression::Builder(parse(input, &context));
-  ReductionContext reductionContext(&context);
+  ProjectionContext projectionContext{.m_context = &context};
   bool reductionFailure = false;
-  SystemExpression e2 = e1.cloneAndReduce(reductionContext, &reductionFailure);
+  SystemExpression e2 =
+      e1.cloneAndReduce(&projectionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   quiz_assert_print_if_failure(
       e2.deepIsOfType(

@@ -378,19 +378,11 @@ UserExpression UserExpression::cloneAndSimplify(
 }
 
 SystemExpression UserExpression::cloneAndReduce(
-    ReductionContext reductionContext, bool* reductionFailure) const {
+    Internal::ProjectionContext* projectionContext,
+    bool* reductionFailure) const {
   assert(reductionFailure);
-  ProjectionContext context = {
-      .m_complexFormat = reductionContext.complexFormat(),
-      .m_angleUnit = reductionContext.angleUnit(),
-      .m_expansionStrategy =
-          (reductionContext.target() == ReductionTarget::SystemForAnalysis)
-              ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
-              : Poincare::Internal::ExpansionStrategy::None,
-      .m_unitFormat = reductionContext.unitFormat(),
-      .m_symbolic = reductionContext.symbolicComputation(),
-      .m_context = reductionContext.context()};
-  return privateCloneAndReduceOrSimplify(&context, false, reductionFailure);
+  return privateCloneAndReduceOrSimplify(projectionContext, false,
+                                         reductionFailure);
 }
 
 NewExpression UserExpression::privateCloneAndReduceOrSimplify(

@@ -34,7 +34,8 @@ SystemExpression Equation::Model::standardForm(
   UserExpression simplifiedInput = expressionInputWithoutFunctions;
   bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(&simplifiedInput, contextToUse,
-                                    {.target = reductionTarget}, &reductionFailure);
+                                    {.target = reductionTarget},
+                                    &reductionFailure);
   assert(!reductionFailure);
 
   if (simplifiedInput.isNonReal()) {
@@ -50,12 +51,13 @@ SystemExpression Equation::Model::standardForm(
     returnedExpression =
         Subtraction::Builder(simplifiedInput.cloneChildAtIndex(0),
                              simplifiedInput.cloneChildAtIndex(1));
-    ReductionContext reductionContext =
-        PoincareHelpers::ReductionContextForParameters(
+    Internal::ProjectionContext projCtx =
+        PoincareHelpers::ProjectionContextForParameters(
             expressionInputWithoutFunctions, contextToUse,
             {.target = reductionTarget});
-    returnedExpression = returnedExpression.cloneAndReduce(reductionContext, &reductionFailure);
-  assert(!reductionFailure && !returnedExpression.isUninitialized());
+    returnedExpression =
+        returnedExpression.cloneAndReduce(&projCtx, &reductionFailure);
+    assert(!reductionFailure && !returnedExpression.isUninitialized());
   } else {
     assert(simplifiedInput.isBoolean() || simplifiedInput.isList());
     /* The equality has disappeared after reduction. This may be because:

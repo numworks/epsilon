@@ -12,6 +12,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
+#include <poincare/src/expression/projection.h>
 
 #include <cmath>
 
@@ -66,11 +67,14 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
           name, Poincare::SymbolHelper::SystemSymbol());
   function.replaceSymbolWithUnknown(sequenceSymbol);
   bool reductionFailure = false;
-  function = function.cloneAndReduce(
-      {App::app()->localContext(),
-       Poincare::Preferences::SharedPreferences()->complexFormat(),
-       Poincare::Preferences::SharedPreferences()->angleUnit()},
-      &reductionFailure);
+  Poincare::Internal::ProjectionContext projCtx = {
+      .m_complexFormat =
+          Poincare::Preferences::SharedPreferences()->complexFormat(),
+      .m_angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
+      .m_symbolic =
+          Poincare::Internal::SymbolicComputation::ReplaceDefinedSymbols,
+      .m_context = App::app()->localContext()};
+  function = function.cloneAndReduce(&projCtx, &reductionFailure);
   assert(!reductionFailure);
   function = function.getSystemFunction(Shared::Function::k_unknownName);
   Curve2DEvaluation<float> evaluateFunction = [](float t, void* model,

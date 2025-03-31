@@ -35,7 +35,7 @@ android {
   compileSdkVersion 33
   defaultConfig {
     applicationId "com.numworks.calculator"
-    minSdkVersion 16
+    minSdkVersion 21
     targetSdkVersion 33
     def appVersion = project.getProperty("appVersion")
     def (major, minor, patch) = appVersion.toLowerCase().tokenize('.').collect{it.toInteger()}

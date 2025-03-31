@@ -72,7 +72,10 @@ endif
 
 ifeq ($(PLATFORM),android)
 
-$(OUTPUT_DIRECTORY)/%.apk: $(simulator_app_deps) $(apk_deps)
+epsilon.apk: $(OUTPUT_DIRECTORY)/epsilon.apk
+	@ :
+
+$(OUTPUT_DIRECTORY)/epsilon.apk: $(simulator_app_deps) $(apk_deps)
 	$(call rule_label,GRADLE)
 	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) OUTPUT_DIRECTORY=$(OUTPUT_DIRECTORY) NDK_BUNDLE_VERSION=$(NDK_BUNDLE_VERSION) EPSILON_VARIANT=$* ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle assembleRelease
 	$(Q) cp $(OUTPUT_DIRECTORY)/app/outputs/apk/release/android-release*.apk $@

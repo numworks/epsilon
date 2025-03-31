@@ -75,6 +75,25 @@ ifeq ($(PLATFORM),android)
 epsilon.apk: $(OUTPUT_DIRECTORY)/epsilon.apk
 	@ :
 
+# Android resources
+# Some android resources needs to be filtered through ImageMagick. Others are
+# simply copied over.
+
+$(OUTPUT_DIRECTORY)/app/res/mipmap/ic_launcher.png: ion/src/simulator/assets/logo.svg | $$(@D)/.
+	$(call rule_label,CONVERT)
+	$(Q) convert -background "#FFB734" MSVG:$< $@
+
+$(OUTPUT_DIRECTORY)/app/res/mipmap-v26/ic_launcher_foreground.png: ion/src/simulator/assets/logo.svg | $$(@D)/.
+	$(call rule_label,CONVERT)
+	$(Q) convert -background none MSVG:$< -resize 512x512 -gravity center -background none -extent 1024x1024 $@
+
+$(OUTPUT_DIRECTORY)/app/res/%.xml: ion/src/simulator/android/src/res/%.xml | $$(@D)/.
+	$(call rule_label,COPY)
+	$(Q) cp $< $@
+
+apk_deps = $(subst ion/src/simulator/android/src/res,$(OUTPUT_DIRECTORY)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
+apk_deps += $(addprefix $(OUTPUT_DIRECTORY)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
+
 $(OUTPUT_DIRECTORY)/epsilon.apk: $(simulator_app_deps) $(apk_deps)
 	$(call rule_label,GRADLE)
 	$(Q) ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle -PappVersion=$(APP_VERSION) -PoutputDirectory=$(OUTPUT_DIRECTORY) -PndkBundleVersion=$(NDK_BUNDLE_VERSION) assembleRelease

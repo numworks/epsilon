@@ -70,6 +70,36 @@ QUIZ_CASE(pcj_rational_set_sign) {
   assert_set_sign(-3_e, 4_e, NonStrictSign::Positive, 3_e, 4_e);
 }
 
+QUIZ_CASE(pcj_rational_sign_of_ln) {
+  quiz_assert(Rational::ComplexSignOfLn(KLn(0_e)) == ComplexSign::Unknown());
+  quiz_assert(Rational::ComplexSignOfLn(KLn(1_e)) == ComplexSign::Zero());
+  quiz_assert(Rational::ComplexSignOfLn(KLn(2_e)) ==
+              ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero()));
+  quiz_assert(Rational::ComplexSignOfLn(KLn(1_e / 4_e)) ==
+              ComplexSign(Sign::FiniteStrictlyNegative(), Sign::Zero()));
+  quiz_assert(Rational::ComplexSignOfLn(KLn(10_e / 11_e)) ==
+              ComplexSign(Sign::FiniteStrictlyNegative(), Sign::Zero()));
+  IntegerHandler veryBig = IntegerHandler(
+      reinterpret_cast<const uint8_t*>("\xff\xff\xff\xff\xff"), 5);
+  IntegerHandler lessBig = IntegerHandler(
+      reinterpret_cast<const uint8_t*>("\xff\xff\xff\xff\xfe"), 5);
+  const Tree* ln = SharedTreeStack->pushLn();
+  Tree* rational = Rational::Push(veryBig, lessBig);
+  quiz_assert(Rational::ComplexSignOfLn(ln) ==
+              ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero()));
+  quiz_assert(Rational::ComplexSignOfLn(KLn(-1_e)) ==
+              ComplexSign(Sign::Zero(), Sign::FiniteStrictlyPositive()));
+  quiz_assert(Rational::ComplexSignOfLn(KLn(-4_e / 3_e)) ==
+              ComplexSign(Sign::FiniteStrictlyPositive(),
+                          Sign::FiniteStrictlyPositive()));
+  rational->removeTree();
+  lessBig.setSign(NonStrictSign::Negative);
+  rational = Rational::Push(lessBig, veryBig);
+  quiz_assert(Rational::ComplexSignOfLn(ln) ==
+              ComplexSign(Sign::FiniteStrictlyNegative(),
+                          Sign::FiniteStrictlyPositive()));
+}
+
 static void assert_irreducible_form(const Tree* iNumerator,
                                     const Tree* iDenominator,
                                     const Tree* resNumerator,

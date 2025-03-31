@@ -283,4 +283,36 @@ OMG::Troolean Rational::AbsSmallerThanPi(const Tree* e) {
                                      : OMG::Troolean::False;
 }
 
+ComplexSign Rational::ComplexSignOfLn(const Tree* e) {
+  assert(e->isLn());
+  const Tree* child = e->child(0);
+  assert(child->isRational());
+  if (child->isOne()) {
+    return ComplexSign(Sign::Zero(), Sign::Zero());
+  }
+  if (child->isStrictlyPositiveRational()) {
+    /* Check if the child is greater than one to determine sign */
+    class Sign realSign = Internal::Rational::IsGreaterThanOne(child)
+                              ? Sign::FiniteStrictlyPositive()
+                              : Sign::FiniteStrictlyNegative();
+    return ComplexSign(realSign, Sign::Zero());
+  }
+  if (child->isMinusOne()) {
+    return ComplexSign(Sign::Zero(), Sign::FiniteStrictlyPositive());
+  }
+  if (child->isStrictlyNegativeRational()) {
+    /* Reverse the sign of Numerator to be able to compare it with Denominator
+     * and see if the absolute value is greater than one */
+    IntegerHandler numerator = Rational::Numerator(child);
+    numerator.setSign(NonStrictSign::Positive);
+    class Sign realSign =
+        IntegerHandler::Compare(numerator, Rational::Denominator(child)) > 0
+            ? Sign::FiniteStrictlyPositive()
+            : Sign::FiniteStrictlyNegative();
+    return ComplexSign(realSign, Sign::FiniteStrictlyPositive());
+  }
+  assert(child->isZero());
+  return ComplexSign::Unknown();
+}
+
 }  // namespace Poincare::Internal

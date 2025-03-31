@@ -54,6 +54,8 @@ class Rational final {
   static bool IsStrictlyPositiveUnderOne(const Tree* e);
   static OMG::Troolean AbsSmallerThanPi(const Tree* e);
 
+  static Poincare::ComplexSign ComplexSignOfLn(const Tree* e);
+
  private:
   static bool IsIrreducible(const Tree* e);
   static Tree* PushIrreducible(IntegerHandler numerator,

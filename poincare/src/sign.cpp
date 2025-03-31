@@ -199,25 +199,10 @@ ComplexSign ComplexArgument(ComplexSign s) {
       Sign::Zero());
 }
 
-ComplexSign Ln(const Internal::Tree* child) {
-  if (child->isOne()) {
-    return ComplexSign(Sign::Zero(), Sign::Zero());
-  }
-  if (child->isStrictlyPositiveRational()) {
-    Sign sign = Internal::Rational::IsGreaterThanOne(child)
-                    ? Sign::FiniteStrictlyPositive()
-                    : Sign::FiniteStrictlyNegative();
-    return ComplexSign(sign, Sign::Zero());
-  }
-  if (child->isStrictlyNegativeRational()) {
-    using namespace Internal;
-    IntegerHandler numerator = Rational::Numerator(child);
-    numerator.setSign(NonStrictSign::Positive);
-    Sign sign =
-        IntegerHandler::Compare(numerator, Rational::Denominator(child)) > 0
-            ? Sign::FiniteStrictlyPositive()
-            : Sign::FiniteStrictlyNegative();
-    return ComplexSign(sign, Sign::FiniteStrictlyPositive());
+ComplexSign Ln(const Internal::Tree* e) {
+  const Internal::Tree* child = e->child(0);
+  if (child->isRational()) {
+    return Internal::Rational::ComplexSignOfLn(e);
   }
   /* z = |z|e^(i*arg(z))
    * re(ln(z)) = ln(|z|)
@@ -378,7 +363,7 @@ ComplexSign GetComplexSign(const Tree* e) {
     case Type::Exp:
       return Exponential(GetComplexSign(e->child(0)));
     case Type::Ln:
-      return Ln(e->child(0));
+      return Ln(e);
     case Type::Re:
       return ComplexSign(GetComplexSign(e->child(0)).realSign(), Sign::Zero());
     case Type::Im:

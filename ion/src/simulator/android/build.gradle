@@ -32,11 +32,11 @@ allprojects {
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 33
+  compileSdkVersion 34
   defaultConfig {
     applicationId "com.numworks.calculator"
     minSdkVersion 21
-    targetSdkVersion 33
+    targetSdkVersion 34
     def appVersion = project.getProperty("appVersion")
     def (major, minor, patch) = appVersion.toLowerCase().tokenize('.').collect{it.toInteger()}
     versionCode major*1000000 + minor*10000 + patch * 100

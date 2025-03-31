@@ -1323,7 +1323,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   /* Should be nonreal, TODO return NonReal when evaluating PowReal(x) with x
    * non real */
   simplifies_to("log(inf,-3)", "undef");
-  simplifies_to("log(inf,-3)", "undef", cartesianCtx);
+  simplifies_to("log(inf,-3)", "∞×sign(1/ln(-3))", cartesianCtx);
   simplifies_to("log(0,inf)", "undef");
   simplifies_to("log(0,-inf)", "undef", cartesianCtx);
   simplifies_to("log(1,inf)", "0");

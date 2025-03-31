@@ -490,8 +490,8 @@ bool SystematicOperation::ReduceSign(Tree* e) {
   assert(e->isSign());
   const Tree* child = e->child(0);
   ComplexSign sign = GetComplexSign(child);
-  if (sign.isNonReal()) {
-    // Could use sign(z) = exp(i*arg(z)) but undef for now
+  if (sign.canBeNonReal()) {
+    // Could use sign(z) = exp(i*arg(z)) but ignore for now
     return false;
   }
   const Tree* result;

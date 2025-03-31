@@ -17,8 +17,6 @@ class VectorListController : public IllustratedExpressionsListController {
       const Poincare::UserExpression exactOutput,
       const Poincare::UserExpression approximateOutput) override;
 
-  constexpr static Poincare::ReductionTarget k_target =
-      Poincare::ReductionTarget::SystemForApproximation;
   constexpr static Poincare::SymbolicComputation k_symbolicComputation =
       Poincare::SymbolicComputation::ReplaceAllSymbols;
 

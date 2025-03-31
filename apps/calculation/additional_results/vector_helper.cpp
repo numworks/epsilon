@@ -27,7 +27,6 @@ UserExpression BuildVectorNorm(
       &norm, context,
       {.complexFormat = calculationPreferences.complexFormat,
        .angleUnit = calculationPreferences.angleUnit,
-       .target = VectorListController::k_target,
        .symbolicComputation = VectorListController::k_symbolicComputation},
       &reductionFailure);
   return reductionFailure || norm.isUninitialized() || norm.isUndefined()

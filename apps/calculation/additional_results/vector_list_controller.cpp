@@ -63,7 +63,6 @@ void VectorListController::computeAdditionalResults(
       &normalized, context,
       {.complexFormat = complexFormat(),
        .angleUnit = angleUnit(),
-       .target = k_target,
        .symbolicComputation = k_symbolicComputation},
       &reductionFailure);
   if (reductionFailure || !normalized.isMatrix()) {

@@ -35,9 +35,7 @@ void FunctionListController::computeAdditionalResults(
   SystemFunction simplifiedExpression =
       PoincareHelpers::CloneAndReduce(
           inputClone, context,
-          {.complexFormat = complexFormat(),
-           .angleUnit = angleUnit(),
-           .target = ReductionTarget::SystemForApproximation},
+          {.complexFormat = complexFormat(), .angleUnit = angleUnit()},
           &reductionFailure)
           .getSystemFunction(k_symbolName, true);
   assert(!simplifiedExpression.isUninitialized() && !reductionFailure);
@@ -47,6 +45,7 @@ void FunctionListController::computeAdditionalResults(
    * Sometimes when the reduction has some mistakes, the approximation of
    * simplifiedExpression(abscissa) can differ for the approximateOutput.
    */
+  // TODO_CONTEXT: prepare for approximation ?
   float ordinate = approximateOutput.approximateToRealScalar<float>(
       angleUnit(), complexFormat(), context);
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);

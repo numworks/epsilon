@@ -109,8 +109,7 @@ SystemExpression ExpressionModel::expressionReduced(
       m_expression = PoincareHelpers::CloneAndReduce(
           m_expression, context,
           {.complexFormat = complexFormat(record, context),
-           .updateComplexFormatWithExpression = false,
-           .target = ReductionTarget::SystemForApproximation},
+           .updateComplexFormatWithExpression = false},
           &reductionFailure);
       if (reductionFailure) {
         m_expression = SystemExpression::Create(KFailedSimplification, {});

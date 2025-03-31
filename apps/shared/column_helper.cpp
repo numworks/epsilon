@@ -179,8 +179,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   bool reductionFailure = false;
   SystemExpression reduced = PoincareHelpers::CloneAndReduce(
       formula, &storeContext,
-      {.target = ReductionTarget::SystemForApproximation,
-       .symbolicComputation = SymbolicComputation::ReplaceAllSymbols},
+      {.symbolicComputation = SymbolicComputation::ReplaceAllSymbols},
       &reductionFailure);
 
   if (reductionFailure || reduced.isUndefined()) {
@@ -189,6 +188,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
 
   if (reduced.hasRandomList() || !reduced.isList()) {
     // Sometimes the formula is a list but the reduction failed.
+    // TODO_CONTEXT: prepare for approximation ?
     reduced = PoincareHelpers::Approximate<double>(reduced, &storeContext);
   }
 

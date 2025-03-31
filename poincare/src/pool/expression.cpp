@@ -510,8 +510,6 @@ SystemExpression SystemExpression::getReducedDerivative(
   } else {
     Simplification::ReduceSystem(result, false);
   }
-  /* TODO_PCJ: Derivative used to be simplified with SystemForApproximation, but
-   * getSystemFunction is expected to be called on it later. */
   return SystemExpression::Builder(result);
 }
 

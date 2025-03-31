@@ -642,9 +642,6 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
         return m_expression;
       }
       assert(!willBeAlongX || degree == yDegree);
-      ReductionContext reductionContext(context, complexFormat, angleUnit,
-                                        Preferences::UnitFormat::Metric,
-                                        ReductionTarget::SystemForAnalysis);
       if (degree == 1) {
         m_expression = SystemExpression::Builder(
             Poincare::Roots::Linear(coefficients[1], coefficients[0]));
@@ -672,16 +669,16 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       }
     } else {
       /* m_expression is resulting of a simplification with the target
-       * SystemForAnalysis. But SystemForApproximation can be sometimes way
-       * simpler than the one from SystemForAnalysis. For example (x+9)^6 is
-       * fully developped in SystemForAnalysis, which results in approximation
-       * inaccuracy. On the other hand, the expression (x+1)^2-x^2-2x-1 should
-       * be developped so that we understand that it's equal to zero, and is
-       * better handled by SystemForAnalysis. To solve this problem, we try to
-       * simplify both ways and compare the number of nodes of each expression.
-       * We take the one that has the less node. This is not ideal because an
-       * expression with less node does not always mean a simpler expression,
-       * but it's a good compromise for now.       */
+       * SystemForAnalysis. But a User target can be simpler than the one from
+       * SystemForAnalysis. For example (x+9)^6 is fully developped in
+       * SystemForAnalysis, which results in approximation inaccuracy. On the
+       * other hand, the expression (x+1)^2-x^2-2x-1 should be developped so
+       * that we understand that it's equal to zero, and is better handled by
+       * SystemForAnalysis. To solve this problem, we try to simplify both ways
+       * and compare the number of nodes of each expression. We take the one
+       * that has the less node. This is not ideal because an expression with
+       * less node does not always mean a simpler expression, but it's a good
+       * compromise for now.       */
       UserExpression equation = expressionEquation(record, context);
       if (!equation.isUninitialized()) {
         bool reductionFailure = false;
@@ -689,8 +686,8 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
             PoincareHelpers::CloneAndReduce(
                 equation, context,
                 {.complexFormat = complexFormat,
+                 .angleUnit = angleUnit,
                  .updateComplexFormatWithExpression = false,
-                 .target = ReductionTarget::SystemForApproximation,
                  .symbolicComputation = SymbolicComputation::KeepAllSymbols},
                 &reductionFailure);
         assert(!resultForApproximation.isUninitialized() && !reductionFailure);

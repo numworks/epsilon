@@ -21,6 +21,7 @@ $(call all_objects_for,$(PATH_ion)/src/simulator/shared/main.cpp) : SFLAGS += -D
 
 LDFLAGS_ion += -ljnigraphics -llog
 
+_ion_simulator_files := 0
 
 # move and adapt this in haussmann/src/rules/android.mak
 

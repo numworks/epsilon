@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <ion/external_apps.h>
 
 namespace Ion {
@@ -26,6 +27,8 @@ int numberOfApps() { return 0; }
 void deleteApps() {}
 
 bool allowThirdParty() { return false; }
+
+void updateClearanceLevel() { assert(numberOfApps() == 0); }
 
 }  // namespace ExternalApps
 }  // namespace Ion

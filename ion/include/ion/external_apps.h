@@ -70,6 +70,9 @@ int numberOfApps();
 void deleteApps();
 bool allowThirdParty();
 
+// Update clearance level if there are external apps
+void updateClearanceLevel();
+
 }  // namespace ExternalApps
 }  // namespace Ion
 

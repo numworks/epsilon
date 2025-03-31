@@ -152,5 +152,11 @@ void deleteApps() {
 
 bool allowThirdParty() { return true; }
 
+void updateClearanceLevel() {
+  if (numberOfApps() > 0) {
+    Device::Board::updateClearanceLevelForExternalApps();  // Display pop-up
+  }
+}
+
 }  // namespace ExternalApps
 }  // namespace Ion

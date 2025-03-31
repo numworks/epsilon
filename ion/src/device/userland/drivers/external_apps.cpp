@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <config/board.h>
+#include <ion/exam_mode.h>
 #include <ion/external_apps.h>
 #include <shared/drivers/flash_write_with_interruptions.h>
 
@@ -126,16 +127,21 @@ AppIterator& AppIterator::operator++() {
   return *this;
 }
 
+bool hideExternalApps() { return ExamMode::get().isActive(); }
+
 AppIterator Apps::begin() const {
   uint8_t* storageStart = &_external_apps_flash_start;
   assert(nextSectorAlignedAddress(storageStart) == storageStart);
-  if (!appAtAddress(storageStart)) {
+  if (hideExternalApps() || !appAtAddress(storageStart)) {
     return end();
   }
   return AppIterator(storageStart);
 }
 
 int numberOfApps() {
+  if (hideExternalApps()) {
+    return 0;
+  }
   int counter = 0;
   for (App a : Apps()) {
     (void)a;
@@ -145,6 +151,9 @@ int numberOfApps() {
 }
 
 void deleteApps() {
+  if (hideExternalApps()) {
+    return;
+  }
   for (App a : Apps()) {
     a.eraseMagicCode();
   }

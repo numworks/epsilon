@@ -66,7 +66,9 @@ class Apps {
   AppIterator end() const { return AppIterator(nullptr); };
 };
 
+// Apps are hidden during an active exam mode.
 int numberOfApps();
+// During exam mode, apps are hidden and will not be deleted.
 void deleteApps();
 bool allowThirdParty();
 

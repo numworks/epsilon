@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <ion/authentication.h>
 #include <ion/exam_mode.h>
+#include <ion/external_apps.h>
 #include <ion/reset.h>
 
 #include "led.h"
@@ -45,6 +46,9 @@ Configuration get() {
 
 void set(Configuration config) {
   assert(!config.isUninitialized());
+#if ASSERTIONS
+  Configuration previousConfig(ExamBytes::read());
+#endif
   ExamBytes::write(config.raw());
   if (config.isActive() && Authentication::clearanceLevel() !=
                                Authentication::ClearanceLevel::NumWorks) {
@@ -53,6 +57,15 @@ void set(Configuration config) {
     Reset::core();
   }
   updateLed(config);
+  if (!config.isActive()) {
+#if ASSERTIONS
+    assert(previousConfig.isActive());
+    assert(Authentication::activeConfigurationAllowed(
+        Authentication::clearanceLevel()));
+#endif
+    // Apps are visible again, it may require a clearance level update.
+    Ion::ExternalApps::updateClearanceLevel();
+  }
 }
 
 // Class Configuration

@@ -13,6 +13,7 @@ From future versions :
 - `97c71371f21187f146872d41f94a5593c0a374ba` (release-2.0.22)
 - `3c703f20611356913d6feee422ee6a3491529dde` (after release-2.28.1, date: 08/04/23)
 - `dfd80f3d762441e34e501c18a20b50c09fe3730f` (after release-2.28.1, date: 12/05/23)
+- `3ddbeab88fcf5bc1b09fb664403b1240d342a6ae` (SDL 3, release-3.2.0, commit date: 20/06/2023 only a subpart of this commit is applied: emptying unused function `SDL_ANDROID_SensorUpdate`)
 
 ## Updating SDL
 

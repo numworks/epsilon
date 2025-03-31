@@ -1,4 +1,4 @@
-def EPSILON_BUILD_DIR = '../../../../'+System.getenv('BUILD_DIR')
+def EPSILON_BUILD_DIR = '../../../../'+project.getProperty("outputDirectory")
 def BUILD_DIR = EPSILON_BUILD_DIR+'/app'
 
 def projectVariable(name) {
@@ -37,9 +37,10 @@ android {
     applicationId "com.numworks.calculator"
     minSdkVersion 16
     targetSdkVersion 33
-    def (major, minor, patch) = System.getenv('EPSILON_VERSION').toLowerCase().tokenize('.').collect{it.toInteger()}
+    def appVersion = project.getProperty("appVersion")
+    def (major, minor, patch) = appVersion.toLowerCase().tokenize('.').collect{it.toInteger()}
     versionCode major*1000000 + minor*10000 + patch * 100
-    versionName System.getenv('EPSILON_VERSION')
+    versionName appVersion
   }
   signingConfigs {
     environment {
@@ -66,7 +67,7 @@ android {
       manifest.srcFile 'src/AndroidManifest.xml'
       res.srcDir BUILD_DIR + '/res'
       java.srcDir 'src'
-      jniLibs.srcDir BUILD_DIR + '/libs/' + System.getenv('EPSILON_VARIANT')
+      jniLibs.srcDir BUILD_DIR + '/libs/epsilon'
       assets.srcDirs = ['../assets', EPSILON_BUILD_DIR + '/ion/src/simulator/assets']
     }
   }
@@ -74,7 +75,7 @@ android {
     abortOnError false
     checkReleaseBuilds false
   }
-  ndkVersion System.getenv('NDK_BUNDLE_VERSION')
+  ndkVersion project.getProperty("ndkBundleVersion")
 }
 
 dependencies {

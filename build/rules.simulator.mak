@@ -77,7 +77,7 @@ epsilon.apk: $(OUTPUT_DIRECTORY)/epsilon.apk
 
 $(OUTPUT_DIRECTORY)/epsilon.apk: $(simulator_app_deps) $(apk_deps)
 	$(call rule_label,GRADLE)
-	$(Q) ANDROID_HOME=$(ANDROID_HOME) EPSILON_VERSION=$(EPSILON_VERSION) OUTPUT_DIRECTORY=$(OUTPUT_DIRECTORY) NDK_BUNDLE_VERSION=$(NDK_BUNDLE_VERSION) EPSILON_VARIANT=$* ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle assembleRelease
+	$(Q) ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle -PappVersion=$(APP_VERSION) -PoutputDirectory=$(OUTPUT_DIRECTORY) -PndkBundleVersion=$(NDK_BUNDLE_VERSION) assembleRelease
 	$(Q) cp $(OUTPUT_DIRECTORY)/app/outputs/apk/release/android-release*.apk $@
 
 endif

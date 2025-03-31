@@ -114,7 +114,7 @@ SystemExpression ExpressionModel::expressionReduced(
       if (reductionFailure) {
         m_expression = SystemExpression::Create(KFailedSimplification, {});
       }
-      /* TODO_PCJ not the appropriate place but sequences uses their
+      /* TODO_PCJ not the appropriate place but sequences use their
        * expressionReduced to approximate directly */
       m_expression = m_expression.getSystemFunction(Function::k_unknownName);
     }

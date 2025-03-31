@@ -376,7 +376,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       coefficient = coefficient->nextTree();
     }
     if (allCoefficientsNull && !GetSign(coefficient).isNull()) {
-      /* Row j describes an equation of the form '0=b', the system has no
+      /* Row describes an equation of the form '0=b', the system has no
        * solution. */
       matrix->removeTree();
       equationSetWithoutDep->removeTree();

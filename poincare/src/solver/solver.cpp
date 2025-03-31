@@ -184,11 +184,10 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   }
   assert(memoizedDifference);
   if (*memoizedDifference == nullptr) {
-    /* TODO simplify with if
-     * we decide that functions should be simplified
-     * Either Pass ReductionContext(m_context, m_complexFormat,
-     * m_angleUnit, UnitFormat::Metric, ReductionTarget::SystemForAnalysis) or
-     * ensure expression is projected. */
+    /* TODO: simplify if we decide that functions should be simplified.
+     * Either pass ProjectionContext(m_complexFormat,
+     * m_angleUnit, ExpansionStrategy::ExpandAlgebraic, UnitFormat::Metric,
+     * m_context) or ensure expression is projected. */
     *memoizedDifference = PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)),
                                                   {.KA = e1, .KB = e2});
   }

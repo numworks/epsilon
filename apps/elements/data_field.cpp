@@ -37,7 +37,7 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
     return DataField::UnknownValueLayout();
   }
 
-  UserExpression value = NewExpression::Builder<double>(v);
+  UserExpression value = Expression::Builder<double>(v);
   /* Check the global context to know whether units need an underscore. */
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
@@ -49,7 +49,7 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   }
 
   UserExpression result =
-      NewExpression::Create(KMult(KA, KB), {.KA = value, .KB = unit});
+      Expression::Create(KMult(KA, KB), {.KA = value, .KB = unit});
   return result.createLayout(floatDisplayMode, significantDigits,
                              globalContext);
 }
@@ -104,7 +104,7 @@ Poincare::Layout ZDataField::getLayout(AtomicNumber z,
       Preferences::SharedPreferences()->displayMode();
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
-  return NewExpression::Builder(static_cast<int>(z))
+  return Expression::Builder(static_cast<int>(z))
       .createLayout(floatDisplayMode, significantDigits, globalContext);
 }
 
@@ -119,7 +119,7 @@ Layout ADataField::getLayout(AtomicNumber z, int significantDigits) const {
       Preferences::SharedPreferences()->displayMode();
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
-  return NewExpression::Builder(static_cast<int>(a))
+  return Expression::Builder(static_cast<int>(a))
       .createLayout(floatDisplayMode, significantDigits, globalContext);
 }
 
@@ -216,10 +216,10 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z,
       res = Layout::Create(
           KA ^ KB ^ KC ^ KSuperscriptL(KD),
           {.KA = res,
-           .KB = NewExpression::Builder(n).createLayout(
+           .KB = Expression::Builder(n).createLayout(
                floatDisplayMode, significantDigits, globalContext),
            .KC = Layout::CodePoint(k_lSymbols[l]),
-           .KD = NewExpression::Builder(conf[index])
+           .KD = Expression::Builder(conf[index])
                      .createLayout(floatDisplayMode, significantDigits,
                                    globalContext)});
     }

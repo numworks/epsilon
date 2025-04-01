@@ -157,7 +157,7 @@ Layout ValuesController::functionTitleLayout(int column) {
   sequence->nameWithoutExtension(sequenceName, SymbolHelper::k_maxNameSize);
   UserExpression sumExpression = UserExpression::Create(
       KSum("k"_e, KA, "n"_e, KB),
-      {.KA = NewExpression::Builder(sequence->initialRank()),
+      {.KA = Expression::Builder(sequence->initialRank()),
        .KB = Poincare::SymbolHelper::BuildSequence(
            sequenceName, UserExpression::Builder("k"_e))});
   return sumExpression.createLayout(preferences->displayMode(),
@@ -180,7 +180,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   } else {
     Coordinate2D<double> xy =
         sequence->evaluateXYAtParameter(abscissa, context);
-    result = NewExpression::Builder<double>(xy.y());
+    result = Expression::Builder<double>(xy.y());
   }
   *memoizedLayoutAtIndex(index) =
       result.createLayout(preferences->displayMode(),

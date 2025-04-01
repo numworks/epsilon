@@ -27,8 +27,7 @@ Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
       functionStore()->modelForRecord(m_record)->expressionApproximated(
           context);
   return solver
-      .nextIntersection(NewExpression::Builder<double>(m_image).tree(),
-                        f.tree())
+      .nextIntersection(Expression::Builder<double>(m_image).tree(), f.tree())
       .xy();
 }
 

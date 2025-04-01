@@ -25,12 +25,11 @@ namespace Poincare {
 /* Aliases used to specify a Expression's type. TODO_PCJ: split them into
  * actual classes to prevent casting one into another. */
 
-// Can be applied to different types of Expressions
-using NewExpression = Expression;
+// Expression : Can be applied to different types of Expressions
 // Can be layoutted (Not projected)
-using UserExpression = NewExpression;
+using UserExpression = Expression;
 // Can be approximated without context
-using NoContextExpression = NewExpression;
+using NoContextExpression = Expression;
 // Must have been projected
 using ProjectedExpression = NoContextExpression;
 // Must have been systematic simplified
@@ -44,7 +43,7 @@ using SystemFunctionPoint = SystemFunction;
 
 class Dimension {
  public:
-  Dimension(const NewExpression e, Context* context = nullptr);
+  Dimension(const Expression e, Context* context = nullptr);
 
   bool isScalar();
   bool isMatrix();
@@ -114,13 +113,13 @@ class Expression : public PoolHandle {
   Expression() : PoolHandle() {}
   Expression(const ExpressionObject* n) : PoolHandle(n) {}
 
-  NewExpression clone() const {
+  Expression clone() const {
     PoolHandle clone = PoolHandle::clone();
-    return static_cast<NewExpression&>(clone);
+    return static_cast<Expression&>(clone);
   }
   bool isIdenticalTo(const Expression e) const;
 
-  static NewExpression ExpressionFromAddress(const void* address, size_t size);
+  static Expression ExpressionFromAddress(const void* address, size_t size);
 
   /* Get a Tree from the storage, more efficient and safer than
    * ExpressionFromAddress.tree() because it points to the storage directly. */
@@ -136,8 +135,8 @@ class Expression : public PoolHandle {
                                    bool addMissingParenthesis = true,
                                    bool parseForAssignment = false);
 
-  static NewExpression Create(const Internal::Tree* structure,
-                              Internal::ContextTrees ctx);
+  static Expression Create(const Internal::Tree* structure,
+                           Internal::ContextTrees ctx);
   static SystemExpression CreateReduce(const Internal::Tree* structure,
                                        Internal::ContextTrees ctx);
   operator const Internal::Tree*() const { return tree(); }
@@ -155,17 +154,17 @@ class Expression : public PoolHandle {
                                           int32_t denominator);
 
   template <Internal::KTrees::KTreeConcept T>
-  static NewExpression Builder(T x) {
+  static Expression Builder(T x) {
     return Builder(static_cast<const Internal::Tree*>(x));
   }
-  static NewExpression Builder(const Internal::Tree* tree);
+  static Expression Builder(const Internal::Tree* tree);
   // Eat the tree
-  static NewExpression Builder(Internal::Tree* tree);
+  static Expression Builder(Internal::Tree* tree);
 
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : object()->tree();
   }
-  NewExpression cloneChildAtIndex(int i) const;
+  Expression cloneChildAtIndex(int i) const;
   int numberOfDescendants(bool includeSelf) const;
 
   // The following two methods should be moved out of Expression's public
@@ -310,7 +309,7 @@ class Expression : public PoolHandle {
                        PrintFloat::k_maxNumberOfSignificantDigits) const;
 
   bool replaceSymbolWithExpression(const UserExpression& symbol,
-                                   const NewExpression& expression,
+                                   const Expression& expression,
                                    bool onlySecondTerm = false);
   bool replaceSymbolWithUnknown(const UserExpression& symbol,
                                 bool onlySecondTerm = false);
@@ -320,11 +319,11 @@ class Expression : public PoolHandle {
                       SymbolicComputation symbolic =
                           SymbolicComputation::ReplaceDefinedSymbols);
 
-  typedef OMG::Troolean (*ExpressionTrinaryTest)(const NewExpression e,
+  typedef OMG::Troolean (*ExpressionTrinaryTest)(const Expression e,
                                                  Context* context,
                                                  void* auxiliary);
   struct IgnoredSymbols {
-    NewExpression* head;
+    Expression* head;
     void* tail;
   };
   bool recursivelyMatches(ExpressionTrinaryTest test,
@@ -334,12 +333,12 @@ class Expression : public PoolHandle {
                           void* auxiliary = nullptr,
                           IgnoredSymbols* ignoredSymbols = nullptr) const;
 
-  typedef bool (*ExpressionTest)(const NewExpression e, Context* context);
+  typedef bool (*ExpressionTest)(const Expression e, Context* context);
   bool recursivelyMatches(ExpressionTest test, Context* context = nullptr,
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
 
-  typedef bool (*SimpleExpressionTest)(const NewExpression e);
+  typedef bool (*SimpleExpressionTest)(const Expression e);
   bool recursivelyMatches(SimpleExpressionTest test, Context* context = nullptr,
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
@@ -350,8 +349,8 @@ class Expression : public PoolHandle {
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
 
-  typedef bool (*ExpressionTestAuxiliary)(const NewExpression e,
-                                          Context* context, void* auxiliary);
+  typedef bool (*ExpressionTestAuxiliary)(const Expression e, Context* context,
+                                          void* auxiliary);
   bool recursivelyMatches(ExpressionTestAuxiliary test,
                           Context* context = nullptr,
                           SymbolicComputation replaceSymbols =
@@ -415,7 +414,7 @@ class Expression : public PoolHandle {
 #endif
 
  private:
-  NewExpression privateCloneAndReduceOrSimplify(
+  Expression privateCloneAndReduceOrSimplify(
       Internal::ProjectionContext* context, bool beautify,
       bool* reductionFailure = nullptr) const;
 };
@@ -431,9 +430,9 @@ class Matrix final : public Expression {
   bool isVector() const;
   int numberOfRows() const;
   int numberOfColumns() const;
-  void addChildAtIndexInPlace(NewExpression t, int index,
+  void addChildAtIndexInPlace(Expression t, int index,
                               int currentNumberOfChildren);
-  NewExpression matrixChild(int i, int j);
+  Expression matrixChild(int i, int j);
   // rank returns -1 if the rank cannot be computed
   int rank(Context* context, bool forceCanonization = false);
 };
@@ -441,7 +440,7 @@ class Matrix final : public Expression {
 class Point final : public Expression {
  public:
   static Point Builder(const Internal::Tree* x, const Internal::Tree* y);
-  static Point Builder(const NewExpression x, const NewExpression y) {
+  static Point Builder(const Expression x, const Expression y) {
     return Builder(x.tree(), y.tree());
   }
   Layout create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
@@ -455,16 +454,16 @@ class List : public Expression {
   int numberOfChildren() const;
 
   void removeChildAtIndexInPlace(int i);
-  void addChildAtIndexInPlace(NewExpression t, int index,
+  void addChildAtIndexInPlace(Expression t, int index,
                               int currentNumberOfChildren);
 };
 
 class Unit final {
  public:
   // Build default unit for given angleUnit preference.
-  static NewExpression Builder(Preferences::AngleUnit angleUnit);
-  static bool IsPureAngleUnit(NewExpression expression, bool radianOnly);
-  static bool HasAngleDimension(NewExpression expression);
+  static Expression Builder(Preferences::AngleUnit angleUnit);
+  static bool IsPureAngleUnit(Expression expression, bool radianOnly);
+  static bool HasAngleDimension(Expression expression);
 };
 
 class Undefined final : public Expression {

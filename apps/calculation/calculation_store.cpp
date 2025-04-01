@@ -75,7 +75,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
        * calculation. */
       ansExpr = ansExpr.cloneChildAtIndex(0);
     }
-  } else if (input.recursivelyMatches(&NewExpression::isApproximate, context) &&
+  } else if (input.recursivelyMatches(&Expression::isApproximate, context) &&
              mostRecentCalculation->equalSign() ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.
@@ -186,7 +186,7 @@ void processStore(OutputExpressions& outputs,
     /* TODO_PCJ: restore assert
      * Handle case of functions (3*x->f(x)): there should be no symbol except x */
     assert(!value.recursivelyMatches(
-        [](const NewExpression e) { return e.isUserSymbol(); }));
+        [](const Expression e) { return e.isUserSymbol(); }));
 #endif
   if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
     outputs.exact = value;

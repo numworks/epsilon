@@ -110,13 +110,13 @@ AreaBetweenCurvesGraphController::createSumExpression(
       secondSelectedRecord());
   Poincare::SystemExpression expressionG =
       function->expressionReduced(context).clone();
-  Poincare::SystemExpression result = Poincare::NewExpression::Create(
-      KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
-      {.KA = SymbolHelper::SystemSymbol(),
-       .KB = NewExpression::Builder<double>(startSum),
-       .KC = NewExpression::Builder<double>(endSum),
-       .KD = expressionF,
-       .KE = expressionG});
+  Poincare::SystemExpression result =
+      Poincare::Expression::Create(KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
+                                   {.KA = SymbolHelper::SystemSymbol(),
+                                    .KB = Expression::Builder<double>(startSum),
+                                    .KC = Expression::Builder<double>(endSum),
+                                    .KD = expressionF,
+                                    .KE = expressionG});
   return result;
 }
 

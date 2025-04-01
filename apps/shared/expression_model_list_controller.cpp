@@ -234,7 +234,7 @@ void ExpressionModelListController::finishEdition() {
 static CodePoint symbolForEquation(UserExpression expression) {
   CodePoint symbol = CodePoints::k_cartesianSymbol;
   expression.recursivelyMatches(
-      [](const NewExpression e, Context* context, void* auxiliary) {
+      [](const Expression e, Context* context, void* auxiliary) {
         CodePoint* symbol = static_cast<CodePoint*>(auxiliary);
         assert(symbol);
         if (SymbolHelper::IsSymbol(e, CodePoints::k_polarSymbol)) {

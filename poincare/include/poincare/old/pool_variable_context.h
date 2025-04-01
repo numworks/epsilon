@@ -33,7 +33,7 @@ class PoolVariableContext : public ContextWithParent {
 
  private:
   const char* m_name;
-  NewExpression m_value;
+  Expression m_value;
 };
 
 }  // namespace Poincare

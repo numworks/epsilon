@@ -17,9 +17,9 @@ size_t NameWithoutQuotationMarks(char* buffer, size_t bufferSize,
                                  const char* name, size_t nameLength);
 
 const char* AnsMainAlias();
-bool IsTheta(NewExpression e);
-bool IsSymbol(NewExpression e, CodePoint c);
-const char* GetName(NewExpression e);
+bool IsTheta(Expression e);
+bool IsSymbol(Expression e, CodePoint c);
+const char* GetName(Expression e);
 
 // Builders
 UserExpression BuildSymbol(const char* name, int length = -1);

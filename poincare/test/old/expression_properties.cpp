@@ -142,41 +142,40 @@ void assert_expression_has_not_property(const char* input, T test) {
 }
 
 QUIZ_CASE(poincare_properties_has_approximate) {
-  assert_expression_has_property("3.4", &NewExpression::isApproximate);
-  assert_expression_has_property("2.3+1", &NewExpression::isApproximate);
-  assert_expression_has_property("0.1f", &NewExpression::isApproximate);
-  assert_expression_has_not_property("a", &NewExpression::isApproximate);
+  assert_expression_has_property("3.4", &Expression::isApproximate);
+  assert_expression_has_property("2.3+1", &Expression::isApproximate);
+  assert_expression_has_property("0.1f", &Expression::isApproximate);
+  assert_expression_has_not_property("a", &Expression::isApproximate);
 }
 
 QUIZ_CASE(poincare_properties_has_matrix) {
   assert_expression_has_property("[[1,2][3,4]]",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("dim([[1,2][3,4]])/3",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("[[1,2][3,4]]^(-1)",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("inverse([[1,2][3,4]])",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("3*identity(4)",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("transpose([[1,2][3,4]])",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("ref([[1,2][3,4]])",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("rref([[1,2][3,4]])",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("cross([[1][2][3]],[[3][4][5]])",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("diff([[1,2][3,4]],x,2)",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("sign([[1,2][3,4]])",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("trace([[1,2][3,4]])",
-                                 &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
   assert_expression_has_property("det([[1,2][3,4]])",
-                                 &NewExpression::isOfMatrixDimension);
-  assert_expression_has_not_property("2*3+1",
-                                     &NewExpression::isOfMatrixDimension);
+                                 &Expression::isOfMatrixDimension);
+  assert_expression_has_not_property("2*3+1", &Expression::isOfMatrixDimension);
 }
 
 void assert_projected_is_infinity(const char* input, ProjectionContext* projCtx,

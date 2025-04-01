@@ -12,7 +12,7 @@ namespace Calculation {
 void FunctionModel::setParameters(SystemFunctionScalar function, float abscissa,
                                   float ordinate) {
   // We do not want to display additional results for sequences.
-  assert(!function.recursivelyMatches(&NewExpression::isSequence));
+  assert(!function.recursivelyMatches(&Expression::isSequence));
   m_function = function;
   m_abscissa = abscissa;
   m_ordinate = ordinate;
@@ -40,7 +40,7 @@ void FunctionModel::recomputeViewRange() {
   Zoom zoom(-k_maxFloat, k_maxFloat, 1 / k_xyRatio, k_maxFloat);
 
   // fitPointsOfInterest is not suited for sequences
-  assert(!m_function.recursivelyMatches(&NewExpression::isSequence));
+  assert(!m_function.recursivelyMatches(&Expression::isSequence));
   zoom.fitPointsOfInterest(evaluator<float>, &m_function, false,
                            evaluator<double>);
 

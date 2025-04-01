@@ -512,7 +512,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
   return equation.isComparison() &&
          SymbolHelper::IsSymbol(equation.cloneChildAtIndex(0), symbol) &&
          !equation.cloneChildAtIndex(1).recursivelyMatches(
-             [](const NewExpression e, Context* context, void* auxiliary) {
+             [](const Expression e, Context* context, void* auxiliary) {
                const CodePoint* symbol =
                    static_cast<const CodePoint*>(auxiliary);
                return (!e.isUninitialized() &&

@@ -428,7 +428,7 @@ float ContinuousFunction::autoTMin() const {
 bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
     Context* context) const {
   return expressionApproximated(context).recursivelyMatches(
-      [](const NewExpression e) {
+      [](const Expression e) {
         return !e.isUninitialized() && (e.isSequence() || e.isParametric());
       });
 }
@@ -447,8 +447,8 @@ UserExpression ContinuousFunction::sumBetweenBounds(double start, double end,
   end = std::min<double>(end, tMax());
   // Integral takes ownership of args
   return UserExpression::Create(KIntegral(KUnknownSymbol, KA, KB, KC),
-                                {.KA = NewExpression::Builder<double>(start),
-                                 .KB = NewExpression::Builder<double>(end),
+                                {.KA = Expression::Builder<double>(start),
+                                 .KB = Expression::Builder<double>(end),
                                  .KC = expressionReduced(context)});
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in

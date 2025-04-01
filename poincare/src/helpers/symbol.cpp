@@ -12,12 +12,12 @@ const char* SymbolHelper::AnsMainAlias() {
   return BuiltinsAliases::k_ansAliases.mainAlias();
 }
 
-bool SymbolHelper::IsTheta(NewExpression e) {
+bool SymbolHelper::IsTheta(Expression e) {
   return e.isUserSymbol() &&
          BuiltinsAliases::k_thetaAliases.contains(GetName(e));
 }
 
-bool SymbolHelper::IsSymbol(NewExpression e, CodePoint c) {
+bool SymbolHelper::IsSymbol(Expression e, CodePoint c) {
   if (!e.isUserSymbol()) {
     return false;
   }
@@ -29,7 +29,7 @@ bool SymbolHelper::IsSymbol(NewExpression e, CodePoint c) {
   return strcmp(GetName(e), buffer) == 0;
 }
 
-const char* SymbolHelper::GetName(NewExpression e) {
+const char* SymbolHelper::GetName(Expression e) {
   return Internal::Symbol::GetName(e.tree());
 }
 
@@ -75,7 +75,7 @@ UserExpression SymbolHelper::BuildFunction(const char* name, Expression child) {
       Internal::SharedTreeStack->pushUserFunction(name, strlen(name) + 1);
   assert(!child.isUninitialized());
   child.tree()->cloneTree();
-  return NewExpression::Builder(e);
+  return Expression::Builder(e);
 }
 
 UserExpression SymbolHelper::BuildSequence(const char* name, Expression child) {
@@ -85,7 +85,7 @@ UserExpression SymbolHelper::BuildSequence(const char* name, Expression child) {
       Internal::SharedTreeStack->pushUserSequence(name, strlen(name) + 1);
   assert(!child.isUninitialized());
   child.tree()->cloneTree();
-  return NewExpression::Builder(e);
+  return Expression::Builder(e);
 }
 
 }  // namespace Poincare

@@ -32,7 +32,7 @@ Calculation* Calculation::next() const {
 }
 
 UserExpression Calculation::input() {
-  UserExpression e = NewExpression::Builder(inputTree());
+  UserExpression e = Expression::Builder(inputTree());
   assert(!e.isUninitialized());
   return e;
 }
@@ -246,9 +246,9 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
     return ApproximateOnly;
   }
   if (input.isIdenticalTo(exactOutput) ||
-      input.recursivelyMatches(&NewExpression::isApproximate, context) ||
-      exactOutput.recursivelyMatches(&NewExpression::isApproximate, context) ||
-      input.recursivelyMatches(&NewExpression::isPercent, context)) {
+      input.recursivelyMatches(&Expression::isApproximate, context) ||
+      exactOutput.recursivelyMatches(&Expression::isApproximate, context) ||
+      input.recursivelyMatches(&Expression::isPercent, context)) {
     return ExactAndApproximateToggle;
   }
   return ExactAndApproximate;

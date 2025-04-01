@@ -158,17 +158,24 @@ const Representative* Distance::bestRepresentativeAndPrefix(
                  representatives.end(), prefix);
 }
 
-#if 0
 const Representative* Angle::bestRepresentativeAndPrefix(
-    double value, double exponent, UnitFormat unitFormat,
-    const Prefix** prefix, const Representative* forcedRepr) const {
-  if (reductionContext.angleUnit() == AngleUnit::Degree) {
-    return defaultFindBestRepresentativeAndPrefix(value, exponent, &arcSecond, 3,
-                                         prefix);
+    double value, double exponent, UnitFormat unitFormat, const Prefix** prefix,
+    const Representative* forcedRepr) const {
+  if (forcedRepr) {
+    if (forcedRepr == &representatives.degree ||
+        forcedRepr == &representatives.arcMinute ||
+        forcedRepr == &representatives.arcSecond) {
+      return defaultFindBestRepresentativeAndPrefix(
+          value, exponent, &representatives.arcSecond, &representatives.gradian,
+          prefix);
+    } else {
+      return Representative::bestRepresentativeAndPrefix(
+          value, exponent, unitFormat, prefix, forcedRepr);
+    }
   }
-  return DefaultRepresentativeForAngleUnit(reductionContext.angleUnit());
+  return defaultFindBestRepresentativeAndPrefix(
+      value, exponent, &representatives.radian, representatives.end(), prefix);
 }
-#endif
 
 const Representative* Angle::DefaultRepresentativeForAngleUnit(
     AngleUnit angleUnit) {

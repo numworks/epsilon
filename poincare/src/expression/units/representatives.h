@@ -104,11 +104,9 @@ class Angle : public Helper<Angle> {
   static const Representative* DefaultRepresentativeForAngleUnit(
       AngleUnit angleUnit);
 
-#if 0
   const Representative* bestRepresentativeAndPrefix(
       double value, double exponent, UnitFormat unitFormat,
       const Prefix** prefix, const Representative* forcedRepr) const override;
-#endif
 
   using Helper::Helper;
   const static Representatives<const Self> representatives;

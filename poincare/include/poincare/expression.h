@@ -2,7 +2,6 @@
 #define POINCARE_EXPRESSION_H
 
 #include <omg/enums.h>
-#include <poincare/api.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/layout.h>
 #include <poincare/old/computation_context.h>
@@ -114,7 +113,6 @@ class Expression : public PoolHandle {
  public:
   Expression() : PoolHandle() {}
   Expression(const ExpressionObject* n) : PoolHandle(n) {}
-  Expression(const API::UserExpression& ue) { *this = Builder(ue.tree()); }
 
   NewExpression clone() const {
     PoolHandle clone = PoolHandle::clone();

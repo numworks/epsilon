@@ -1,5 +1,4 @@
 _sources_poincare_minimal := $(addprefix src/, \
-  api.cpp:-nopool \
   init.cpp:-nopool \
   init_no_pool.cpp:+nopool \
   trigonometry.cpp \

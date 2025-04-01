@@ -526,8 +526,8 @@ def get_active_slot(device):
     """Return device's active slot: A, B, rescue or unknown."""
     isSlotA, isSlotB = False, False
     for entry in get_memory_layout(device):
-        isSlotB |= entry["addr"] == int("0x90000000", 16)
-        isSlotA |= entry["addr"] == int("0x90400000", 16)
+        isSlotB |= entry["addr"] == 0x90000000
+        isSlotA |= entry["addr"] == 0x90400000
     if isSlotA and isSlotB:
         return "rescue"
     if isSlotA:
@@ -541,7 +541,7 @@ def display_inactive_slot():
     """Display detected DFU device inactive slot, raise otherwise."""
     active_slot = get_active_slot(get_unique_dfu_device())
     opposite_slot = {"A": "B", "B": "A"}
-    if not (active_slot in opposite_slot.keys()):
+    if active_slot not in opposite_slot.keys():
         raise ValueError("Unhandled state: {}".format(active_slot))
     print(opposite_slot[active_slot])
 
@@ -549,7 +549,7 @@ def display_inactive_slot():
 def display_model():
     """Display detected DFU device model, raise otherwise."""
     model = get_model(get_unique_dfu_device())
-    if not (model in ["n0100", "n0110", "n0115", "n0120"]):
+    if model not in ["n0100", "n0110", "n0115", "n0120"]:
         raise ValueError("Unknown model: {}".format(model))
     print(model)
 

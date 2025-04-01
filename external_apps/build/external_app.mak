@@ -172,7 +172,7 @@ $(BUILD_DIR)/$(APP_NAME).nwb: $(call object_for,$(SOURCES)) $(SIMULATOR)
 
   ifeq ($(PLATFORM),web)
 .PHONY: server
-server: $(SIMULATOR) $(EXTERNAL_DATA)
+server:
 	@echo "STARTING SERVER"
 	$(Q) python3 -m http.server
 

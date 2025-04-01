@@ -71,6 +71,7 @@ inline Poincare::ApproximationContext ApproximationContextForParameters(
   return approximationContext;
 }
 
+// Approximate to tree and keep units
 template <class T>
 inline Poincare::Expression Approximate(
     const Poincare::Expression e, Poincare::Context* context,
@@ -125,19 +126,6 @@ inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
       .m_symbolic = reductionContext.symbolicComputation(),
       .m_context = reductionContext.context()};
   return projectionContext;
-}
-
-template <class T>
-inline Poincare::Expression ApproximateKeepingUnits(
-    const Poincare::Expression e, Poincare::Context* context,
-    const ReductionParameters& reductionParameters = {}) {
-#if 0  // TODO_PCJ
-  return e.approximateKeepingUnits<T>(
-      ReductionContextForParameters(e, context, reductionParameters));
-#else
-  return Approximate<T>(e, context);
-
-#endif
 }
 
 inline void CloneAndSimplify(

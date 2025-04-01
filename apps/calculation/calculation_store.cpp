@@ -177,7 +177,7 @@ void processStore(OutputExpressions& outputs,
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   UserExpression valueApprox =
-      PoincareHelpers::ApproximateKeepingUnits<double>(value, context);
+      PoincareHelpers::Approximate<double>(value, context);
   if (symbol.isUserSymbol() &&
       CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox, context)) {
     value = valueApprox;

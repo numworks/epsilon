@@ -64,18 +64,18 @@ Congratulations, you're running your very own version of Epsilon!
 
 You calculator actually holds two copies of the firmware, on two slots: **A** and **B**.
 
-This allows the update of one of the slots while running the firmware of the other slots.
+This allows the update of one of the slots while running the firmware of the other slot.
 
 While on a official firmware, you can jump on the inactive slot to run a custom firmware.
 
-On a reboot, the calculator jumps on the slots containing the most recent version of the official NumWorks firmware.
+After a reset, the calculator jumps on the slots containing the most recent version of the official NumWorks firmware.
 
 To know which slot and model you are currently running on, plug your calculator on the `The calculator is connected` menu and run
 ```shell
 python3 build/device/dfu.py -l
 ```
 
-The `custom_userland.flash` target detect the model and inactive slot of connected device. It then flashes the appropriate firmware and jumps at the expected address.
+The `custom_userland.flash` target detects the model and inactive slot of connected device. It then flashes the appropriate firmware and jumps at the expected address.
 
 For example, with a `n0120` model, and an inactive slot B.
 - Build the corresponding target:

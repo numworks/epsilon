@@ -891,6 +891,8 @@ QUIZ_CASE(calculation_additional_results) {
       "cos(45°)", {.directTrigonometry = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas(
       "acos(0.5)", {.inverseTrigonometry = true}, &globalContext, &store);
+  assertCalculationAdditionalResultTypeHas(
+      "acos(e/5)", {.inverseTrigonometry = true}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("sin(iπ)", {.complex = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas(

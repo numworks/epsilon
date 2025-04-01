@@ -46,7 +46,8 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   if (HasDirectTrigo(input, exactOutput, calculationPreferences, context)) {
     return AdditionalResultsType{.directTrigonometry = true};
   }
-  if (HasInverseTrigo(input, exactOutput, calculationPreferences, context)) {
+  if (HasInverseTrigo(input, exactOutput, approximateOutput,
+                      calculationPreferences, context)) {
     return AdditionalResultsType{.inverseTrigonometry = true};
   }
   if (HasVector(exactOutput, approximateOutput, calculationPreferences,
@@ -139,12 +140,14 @@ bool AdditionalResultsType::HasDirectTrigo(
 
 bool AdditionalResultsType::HasInverseTrigo(
     const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
     Poincare::Context* context) {
   // If the result is complex, it is treated as a complex result instead.
   assert(!HasComplex(exactOutput, calculationPreferences, context));
   assert(!exactOutput.hasUnit(true));
-  return AdditionalResultsHelper::HasInverseTrigo(input, exactOutput);
+  return AdditionalResultsHelper::HasInverseTrigo(input, exactOutput,
+                                                  approximateOutput);
 }
 
 bool AdditionalResultsType::HasUnit(

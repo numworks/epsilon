@@ -31,7 +31,8 @@ class AdditionalResultsHelper final {
   static bool expressionIsInterestingFunction(const UserExpression e);
 
   static bool HasInverseTrigo(const UserExpression input,
-                              const UserExpression exactOutput);
+                              const UserExpression exactOutput,
+                              const UserExpression approximateOutput);
 
   /* Function additional results */
   static bool HasSingleNumericalValue(const UserExpression input);

@@ -231,7 +231,8 @@ bool AdditionalResultsHelper::expressionIsInterestingFunction(
 }
 
 bool AdditionalResultsHelper::HasInverseTrigo(
-    const UserExpression input, const UserExpression exactOutput) {
+    const UserExpression input, const UserExpression exactOutput,
+    const UserExpression approximateOutput) {
   bool result = input.tree()->isInverseTrigonometryFunction() ||
                 input.tree()->isInverseAdvancedTrigonometryFunction() ||
                 exactOutput.tree()->isInverseAdvancedTrigonometryFunction() ||
@@ -239,7 +240,7 @@ bool AdditionalResultsHelper::HasInverseTrigo(
   if (result) {
     /* Projection is needed here for an accurate sign prediction, to avoid
      * additional result on complex inverse trigo */
-    Tree* output = exactOutput.tree()->cloneTree();
+    Tree* output = approximateOutput.tree()->cloneTree();
     Internal::ProjectionContext ctx = Internal::ProjectionContext{
         .m_complexFormat = ComplexFormat::Cartesian};
     Internal::Simplification::ToSystem(output, &ctx);

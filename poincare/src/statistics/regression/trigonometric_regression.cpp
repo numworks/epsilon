@@ -15,15 +15,15 @@ double TrigonometricRegression::toRadiansCoeff() const {
   return M_PI / Poincare::Trigonometry::PiInAngleUnit(m_angleUnit);
 }
 
-API::UserExpression TrigonometricRegression::privateExpression(
+UserExpression TrigonometricRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*sin(bx+c)+d
-  return API::UserExpression::Create(
+  return UserExpression::Create(
       KAdd(KMult(KA, KSin(KAdd(KMult(KB, "x"_e), KC))), KD),
-      {.KA = API::UserExpression::FromDouble(modelCoefficients[0]),
-       .KB = API::UserExpression::FromDouble(modelCoefficients[1]),
-       .KC = API::UserExpression::FromDouble(modelCoefficients[2]),
-       .KD = API::UserExpression::FromDouble(modelCoefficients[3])});
+      {.KA = UserExpression::Builder(modelCoefficients[0]),
+       .KB = UserExpression::Builder(modelCoefficients[1]),
+       .KC = UserExpression::Builder(modelCoefficients[2]),
+       .KD = UserExpression::Builder(modelCoefficients[3])});
 }
 
 double TrigonometricRegression::privateEvaluate(

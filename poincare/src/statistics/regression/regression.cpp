@@ -11,9 +11,7 @@
 
 #include <cmath>
 
-using namespace Poincare::Internal;
 namespace Poincare::Internal {
-using namespace API;
 
 Layout Regression::equationLayout(
     const double* modelCoefficients, const char* ySymbol, int significantDigits,
@@ -22,13 +20,11 @@ Layout Regression::equationLayout(
   if (formula.isUninitialized()) {
     return Layout();
   }
-  UserExpression equation = UserExpression::Create(
-      KEqual(KA, KB),
-      {.KA = UserExpression::FromSymbol(ySymbol), .KB = formula});
-  return equation.createLayout({
-      .numberOfSignificantDigits = static_cast<int8_t>(significantDigits),
-      .floatMode = displayMode,
-  });
+  Tree* expr = SharedTreeStack->pushEqual();
+  SharedTreeStack->pushUserSymbol(ySymbol);
+  formula.tree()->cloneTree();
+  return UserExpression::Builder(expr).createLayout(displayMode,
+                                                    significantDigits, nullptr);
 }
 
 UserExpression Regression::expression(const double* modelCoefficients) const {

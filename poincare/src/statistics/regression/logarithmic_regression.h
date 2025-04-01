@@ -10,7 +10,7 @@ class LogarithmicRegression : public TransformedRegression {
   Type type() const override { return Type::Logarithmic; }
 
  private:
-  Poincare::API::UserExpression privateExpression(
+  Poincare::UserExpression privateExpression(
       const double* modelCoefficients) const override;
 };
 

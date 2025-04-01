@@ -4,7 +4,6 @@
 #include <poincare/src/statistics/dataset_adapter.h>
 
 namespace Poincare::Internal {
-using namespace API;
 
 UserExpression LinearRegression::privateExpression(
     const double* modelCoefficients) const {
@@ -14,8 +13,8 @@ UserExpression LinearRegression::privateExpression(
   // a+b*x
   return UserExpression::Create(
       KAdd(KA, KMult(KB, "x"_e)),
-      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
-       .KB = UserExpression::FromDouble(modelCoefficients[1])});
+      {.KA = UserExpression::Builder(modelCoefficients[0]),
+       .KB = UserExpression::Builder(modelCoefficients[1])});
 }
 
 Regression::Coefficients LinearRegression::privateFit(const Series* series,

@@ -5,7 +5,6 @@
 #include <poincare/layout.h>
 
 namespace Poincare::Internal {
-using namespace API;
 
 UserExpression ExponentialRegression::privateExpression(
     const double* modelCoefficients) const {
@@ -13,8 +12,8 @@ UserExpression ExponentialRegression::privateExpression(
   return UserExpression::Create(
       m_isAbxForm ? KMult(KA, KPow(KB, "x"_e))
                   : KMult(KA, KPow(e_e, KMult(KB, "x"_e))),
-      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
-       .KB = UserExpression::FromDouble(modelCoefficients[1])});
+      {.KA = UserExpression::Builder(modelCoefficients[0]),
+       .KB = UserExpression::Builder(modelCoefficients[1])});
 }
 
 }  // namespace Poincare::Internal

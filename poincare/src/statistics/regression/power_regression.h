@@ -10,7 +10,7 @@ class PowerRegression : public TransformedRegression {
   Type type() const override { return Type::Power; }
 
  private:
-  Poincare::API::UserExpression privateExpression(
+  Poincare::UserExpression privateExpression(
       const double* modelCoefficients) const override;
 };
 

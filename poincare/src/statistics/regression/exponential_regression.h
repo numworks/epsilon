@@ -15,7 +15,7 @@ class ExponentialRegression : public TransformedRegression {
   }
 
  private:
-  Poincare::API::UserExpression privateExpression(
+  Poincare::UserExpression privateExpression(
       const double* modelCoefficients) const override;
 
   /* In a*b^x form, modelCoefficients[1] contains the b, and is transformed via

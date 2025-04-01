@@ -4,14 +4,11 @@
 
 namespace Poincare::Internal {
 
-using namespace API;
-
 UserExpression ProportionalRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x
   return UserExpression::Create(
-      KMult(KA, "x"_e),
-      {.KA = UserExpression::FromDouble(modelCoefficients[0])});
+      KMult(KA, "x"_e), {.KA = UserExpression::Builder(modelCoefficients[0])});
 }
 
 double ProportionalRegression::privateEvaluate(

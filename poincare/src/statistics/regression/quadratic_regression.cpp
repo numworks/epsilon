@@ -4,16 +4,15 @@
 #include <poincare/layout.h>
 
 namespace Poincare::Internal {
-using namespace API;
 
 UserExpression QuadraticRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x^2+b*x+c
   return UserExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 2_e)), KMult(KB, "x"_e), KC),
-      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
-       .KB = UserExpression::FromDouble(modelCoefficients[1]),
-       .KC = UserExpression::FromDouble(modelCoefficients[2])});
+      {.KA = UserExpression::Builder(modelCoefficients[0]),
+       .KB = UserExpression::Builder(modelCoefficients[1]),
+       .KC = UserExpression::Builder(modelCoefficients[2])});
 }
 
 double QuadraticRegression::privateEvaluate(

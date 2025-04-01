@@ -5,7 +5,6 @@
 #include <poincare/layout.h>
 
 namespace Poincare::Internal {
-using namespace API;
 
 UserExpression QuarticRegression::privateExpression(
     const double* modelCoefficients) const {
@@ -13,11 +12,11 @@ UserExpression QuarticRegression::privateExpression(
   return UserExpression::Create(
       KAdd(KMult(KA, KPow("x"_e, 4_e)), KMult(KB, KPow("x"_e, 3_e)),
            KMult(KC, KPow("x"_e, 2_e)), KMult(KD, "x"_e), KE),
-      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
-       .KB = UserExpression::FromDouble(modelCoefficients[1]),
-       .KC = UserExpression::FromDouble(modelCoefficients[2]),
-       .KD = UserExpression::FromDouble(modelCoefficients[3]),
-       .KE = UserExpression::FromDouble(modelCoefficients[4])});
+      {.KA = UserExpression::Builder(modelCoefficients[0]),
+       .KB = UserExpression::Builder(modelCoefficients[1]),
+       .KC = UserExpression::Builder(modelCoefficients[2]),
+       .KD = UserExpression::Builder(modelCoefficients[3]),
+       .KE = UserExpression::Builder(modelCoefficients[4])});
 }
 
 double QuarticRegression::privateEvaluate(const Coefficients& modelCoefficients,

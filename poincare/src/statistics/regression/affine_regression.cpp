@@ -1,18 +1,16 @@
 #include "affine_regression.h"
 
-#include <poincare/api.h>
 #include <poincare/k_tree.h>
 
 namespace Poincare::Internal {
-using namespace API;
 
 UserExpression AffineRegression::privateExpression(
     const double* modelCoefficients) const {
   // a*x+b
   return UserExpression::Create(
       KAdd(KMult(KA, "x"_e), KB),
-      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
-       .KB = UserExpression::FromDouble(modelCoefficients[1])});
+      {.KA = UserExpression::Builder(modelCoefficients[0]),
+       .KB = UserExpression::Builder(modelCoefficients[1])});
 }
 
 double AffineRegression::privateEvaluate(const Coefficients& modelCoefficients,

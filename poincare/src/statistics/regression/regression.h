@@ -1,7 +1,6 @@
 #ifndef POINCARE_REGRESSION_REGRESSION_H
 #define POINCARE_REGRESSION_REGRESSION_H
 
-#include <poincare/api.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>
 #include <poincare/old/context.h>
@@ -133,8 +132,7 @@ class Regression {
       const double* modelCoefficients, const char* ySymbol,
       int significantDigits,
       Poincare::Preferences::PrintFloatMode displayMode) const;
-  Poincare::API::UserExpression expression(
-      const double* modelCoefficients) const;
+  Poincare::UserExpression expression(const double* modelCoefficients) const;
 
   double evaluate(const double* modelCoefficients, double x) const;
 
@@ -154,7 +152,7 @@ class Regression {
                                    const double* modelCoefficients) const;
 
  protected:
-  virtual Poincare::API::UserExpression privateExpression(
+  virtual Poincare::UserExpression privateExpression(
       const double* modelCoefficients) const = 0;
 
   /* Evaluate cannot use the expression and approximate it since it would be

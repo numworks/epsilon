@@ -8,16 +8,15 @@
 #include <cmath>
 
 namespace Poincare::Internal {
-using namespace API;
 
 UserExpression LogisticRegression::privateExpression(
     const double* modelCoefficients) const {
   // c/(1+a*e^(-b*x))
   return UserExpression::Create(
       KDiv(KC, KAdd(1_e, KMult(KA, KPow(e_e, KMult(-1_e, KB, "x"_e))))),
-      {.KA = UserExpression::FromDouble(modelCoefficients[0]),
-       .KB = UserExpression::FromDouble(modelCoefficients[1]),
-       .KC = UserExpression::FromDouble(modelCoefficients[2])});
+      {.KA = UserExpression::Builder(modelCoefficients[0]),
+       .KB = UserExpression::Builder(modelCoefficients[1]),
+       .KC = UserExpression::Builder(modelCoefficients[2])});
 }
 
 double LogisticRegression::privateEvaluate(

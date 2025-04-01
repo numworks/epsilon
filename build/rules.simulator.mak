@@ -75,6 +75,15 @@ ifeq ($(PLATFORM),android)
 epsilon.apk: $(OUTPUT_DIRECTORY)/epsilon.apk
 	@ :
 
+# Simulator resources
+
+simulator_app_deps = $(addprefix ion/src/simulator/assets/,epsilon/background-with-shadow.webp horizontal_arrow.png vertical_arrow.png round.png small_squircle.png large_squircle.png)
+$(addprefix $(OUTPUT_DIRECTORY)/,$(addprefix ion/src/simulator/assets/,background.jpg background-no-shadow.webp)): ion/src/simulator/assets/epsilon/background-with-shadow.webp
+	$(call rule_label,CONVERT)
+	$(Q) mkdir -p $(dir $@)
+	$(Q) convert -crop 1005x1975+93+13 -resize 1160x2220 $< $@
+simulator_app_deps += $(addprefix $(OUTPUT_DIRECTORY)/,$(addprefix ion/src/simulator/assets/,background.jpg background-no-shadow.webp))
+
 # Android resources
 # Some android resources needs to be filtered through ImageMagick. Others are
 # simply copied over.

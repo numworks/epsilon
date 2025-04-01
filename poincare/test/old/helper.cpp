@@ -91,21 +91,27 @@ void copy_without_system_chars(char *buffer, const char *input) {
 }
 
 void assert_parsed_expression_process_to(
-    const char *expression, const char *oldResult, ReductionTarget target,
-    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
-    Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
-    UnitConversion unitConversion, ProcessExpression process,
-    int numberOfSignificantDigits) {
-  Shared::GlobalContext globalContext;
+    const char *expression, const char *oldResult, Context *ctx,
+    ReductionTarget target, Preferences::ComplexFormat complexFormat,
+    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    SymbolicComputation symbolicComputation, UnitConversion unitConversion,
+    ProcessExpression process, int numberOfSignificantDigits) {
   constexpr int bufferSize = 2048;
   char buffer[bufferSize];
   char result[bufferSize];
   copy_without_system_chars(result, oldResult);
   assert(SharedTreeStack->numberOfTrees() == 0);
-  Tree *e = parse_expression(expression, &globalContext);
-  Tree *m = process(
-      e, ReductionContext(&globalContext, complexFormat, angleUnit, unitFormat,
-                          target, symbolicComputation, unitConversion));
+  Tree *e = parse_expression(expression, ctx);
+  Internal::ProjectionContext projCtx = {
+      .m_complexFormat = complexFormat,
+      .m_angleUnit = angleUnit,
+      .m_expansionStrategy = (target == ReductionTarget::SystemForAnalysis)
+                                 ? Internal::ExpansionStrategy::ExpandAlgebraic
+                                 : Internal::ExpansionStrategy::None,
+      .m_unitFormat = unitFormat,
+      .m_symbolic = symbolicComputation,
+      .m_context = ctx};
+  Tree *m = process(e, &projCtx);
   Tree *l =
       Internal::Layouter::LayoutExpression(m, true, numberOfSignificantDigits);
   *Internal::Serialize(l, buffer, buffer + bufferSize) = 0;
@@ -195,22 +201,12 @@ void assert_parsed_expression_simplify_to(
     Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat,
     SymbolicComputation symbolicComputation, UnitConversion unitConversion) {
+  Shared::GlobalContext globalContext;
   assert_parsed_expression_process_to(
-      expression, simplifiedExpression, target, complexFormat, angleUnit,
-      unitFormat, symbolicComputation, unitConversion,
-      [](Tree *e, ReductionContext reductionContext) {
-        Internal::ProjectionContext context = {
-            .m_complexFormat = reductionContext.complexFormat(),
-            .m_angleUnit = reductionContext.angleUnit(),
-            .m_expansionStrategy =
-                (reductionContext.target() ==
-                 ReductionTarget::SystemForAnalysis)
-                    ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
-                    : Poincare::Internal::ExpansionStrategy::None,
-            .m_unitFormat = reductionContext.unitFormat(),
-            .m_symbolic = reductionContext.symbolicComputation(),
-            .m_context = reductionContext.context()};
-        simplify(e, &context);
+      expression, simplifiedExpression, &globalContext, target, complexFormat,
+      angleUnit, unitFormat, symbolicComputation, unitConversion,
+      [](Tree *e, Internal::ProjectionContext *projCtx) {
+        simplify(e, projCtx);
         // TODO_PCJ also approximate to see if it crashes
         return e;
       });
@@ -223,32 +219,23 @@ void assert_expression_approximates_to(const char *expression,
                                        Preferences::UnitFormat unitFormat,
                                        Preferences::ComplexFormat complexFormat,
                                        int numberOfSignificantDigits) {
+  Shared::GlobalContext globalContext;
   assert_parsed_expression_process_to(
-      expression, approximation, SystemForApproximation, complexFormat,
-      angleUnit, unitFormat, ReplaceAllSymbols, DefaultUnitConversion,
-      [](Tree *e, ReductionContext reductionContext) -> Tree * {
-        Internal::ProjectionContext context = {
-            .m_complexFormat = reductionContext.complexFormat(),
-            .m_angleUnit = reductionContext.angleUnit(),
-            .m_expansionStrategy =
-                (reductionContext.target() ==
-                 ReductionTarget::SystemForAnalysis)
-                    ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
-                    : Poincare::Internal::ExpansionStrategy::None,
-            .m_unitFormat = reductionContext.unitFormat(),
-            .m_symbolic = reductionContext.symbolicComputation(),
-            .m_context = reductionContext.context()};
-        /* tree is projected beforehand so we can prepare it for approximation,
-         * and have better results on integrals for example. */
-        Simplification::ToSystem(e, &context);
+      expression, approximation, &globalContext, SystemForApproximation,
+      complexFormat, angleUnit, unitFormat, ReplaceAllSymbols,
+      DefaultUnitConversion,
+      [](Tree *e, Internal::ProjectionContext *projCtx) -> Tree * {
+        /* tree is projected beforehand so we can prepare it for
+         * approximation, and have better results on integrals for example. */
+        Simplification::ToSystem(e, projCtx);
         TreeRef result = Internal::Approximation::ToTree<T>(
             e,
             Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                                 .prepare = true},
-            Internal::Approximation::Context(reductionContext.angleUnit(),
-                                             reductionContext.complexFormat(),
-                                             reductionContext.context()));
-        Beautification::DeepBeautify(result, context);
+            Internal::Approximation::Context(projCtx->m_angleUnit,
+                                             projCtx->m_complexFormat,
+                                             projCtx->m_context));
+        Beautification::DeepBeautify(result, *projCtx);
         e->removeTree();
         return result;
       },
@@ -259,18 +246,16 @@ void assert_expression_approximates_keeping_symbols_to(
     const char *expression, const char *simplifiedExpression,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+  Shared::GlobalContext globalContext;
   assert_parsed_expression_process_to(
-      expression, simplifiedExpression, SystemForApproximation, complexFormat,
-      angleUnit, unitFormat, ReplaceDefinedSymbols, DefaultUnitConversion,
-      [](Tree *e, ReductionContext reductionContext) {
+      expression, simplifiedExpression, &globalContext, SystemForApproximation,
+      complexFormat, angleUnit, unitFormat, ReplaceDefinedSymbols,
+      DefaultUnitConversion,
+      [](Tree *e, Internal::ProjectionContext *projCtx) -> Tree * {
 #if 0
         Tree *simplifiedExpression;
         e.cloneAndSimplifyAndApproximate(
-            &simplifiedExpression, nullptr, reductionContext.context(),
-            reductionContext.complexFormat(), reductionContext.angleUnit(),
-            reductionContext.unitFormat(),
-            reductionContext.symbolicComputation(),
-            reductionContext.unitConversion(), true);
+            &simplifiedExpression, nullptr, projCtx);
         return simplifiedExpression;
 #endif
         return e;
@@ -280,21 +265,26 @@ void assert_expression_approximates_keeping_symbols_to(
 
 template <typename T>
 void assert_expression_simplifies_approximates_to(
-    const char *expression, const char *approximation,
+    const char *expression, const char *approximation, Context *context,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
-#if 0
   assert_parsed_expression_process_to(
-      expression, approximation, SystemForApproximation, complexFormat,
-      angleUnit, unitFormat, ReplaceAllSymbols,
-      DefaultUnitConversion,
-      [](Tree *e, ReductionContext reductionContext) {
-        e = e.cloneAndSimplify(reductionContext);
-       quiz_assert(!e.isUninitialized());
-        return e.approximate<T>(ApproximationContext(reductionContext));
+      expression, approximation, context, SystemForApproximation, complexFormat,
+      angleUnit, unitFormat, ReplaceAllSymbols, DefaultUnitConversion,
+      [](Tree *e, Internal::ProjectionContext *projCtx) -> Tree * {
+        simplify(e, projCtx, false);
+        TreeRef result = Internal::Approximation::ToTree<T>(
+            e,
+            Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                                .prepare = true},
+            Internal::Approximation::Context(projCtx->m_angleUnit,
+                                             projCtx->m_complexFormat,
+                                             projCtx->m_context));
+        Beautification::DeepBeautify(result, *projCtx);
+        e->removeTree();
+        return result;
       },
       numberOfSignificantDigits);
-#endif
 }
 
 void assert_expression_serializes_to(const Tree *expression,
@@ -395,8 +385,8 @@ template void assert_expression_approximates_to<double>(
     char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
     Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<float>(
-    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
-    Preferences::ComplexFormat, int);
+    char const *, char const *, Context *context, Preferences::AngleUnit,
+    Preferences::UnitFormat, Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<double>(
-    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
-    Preferences::ComplexFormat, int);
+    char const *, char const *, Context *context, Preferences::AngleUnit,
+    Preferences::UnitFormat, Preferences::ComplexFormat, int);

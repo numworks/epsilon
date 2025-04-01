@@ -1894,15 +1894,15 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   // Power have to be simplified first in order to spot the right form c^(p/q)
   // with p, q integers
   assert_expression_simplifies_approximates_to<double>(
-      "(-8)^(1/3)", "-2", Radian, MetricUnitFormat, Real);
+      "(-8)^(1/3)", "-2", nullptr, Radian, MetricUnitFormat, Real);
   // Root approximates to the first REAL root in Real mode
   assert_expression_approximates_to<double>("root(-8,3)", "-2", Radian,
                                             MetricUnitFormat, Real);
   assert_expression_approximates_to<double>("8^(1/3)", "2", Radian,
                                             MetricUnitFormat, Real);
   // Power have to be simplified first (cf previous comment)
-  assert_expression_simplifies_approximates_to<float>("(-8)^(2/3)", "4", Radian,
-                                                      MetricUnitFormat, Real);
+  assert_expression_simplifies_approximates_to<float>(
+      "(-8)^(2/3)", "4", nullptr, Radian, MetricUnitFormat, Real);
   assert_expression_approximates_to<float>("root(-8, 3)^2", "4", Radian,
                                            MetricUnitFormat, Real);
   assert_expression_approximates_to<double>("root(-8,3)", "-2", Radian,
@@ -2070,11 +2070,11 @@ QUIZ_CASE(poincare_approximation_mix) {
   assert_expression_simplifies_approximates_to<double>("1.0092^(20)",
                                                        "1.2010050593402");
   assert_expression_simplifies_approximates_to<double>(
-      "1.0092^(50)×ln(3/2)", "0.6409373488899", Degree, MetricUnitFormat,
-      Cartesian, 13);
+      "1.0092^(50)×ln(3/2)", "0.6409373488899", nullptr, Degree,
+      MetricUnitFormat, Cartesian, 13);
   assert_expression_simplifies_approximates_to<double>(
-      "1.0092^(50)×ln(1.0092)", "0.01447637354655", Degree, MetricUnitFormat,
-      Cartesian, 13);
+      "1.0092^(50)×ln(1.0092)", "0.01447637354655", nullptr, Degree,
+      MetricUnitFormat, Cartesian, 13);
   assert_expression_approximates_to<double>("1.0092^(20)", "1.2010050593402");
   assert_expression_approximates_to<double>("1.0092^(50)×ln(3/2)",
                                             "0.6409373488899", Degree,
@@ -2085,8 +2085,8 @@ QUIZ_CASE(poincare_approximation_mix) {
   assert_expression_simplifies_approximates_to<double>("1.0092^(20)",
                                                        "1.2010050593402");
   assert_expression_simplifies_approximates_to<double>(
-      "1.0092^(50)×ln(3/2)", "0.6409373488899", Degree, MetricUnitFormat,
-      Cartesian, 13);
+      "1.0092^(50)×ln(3/2)", "0.6409373488899", nullptr, Degree,
+      MetricUnitFormat, Cartesian, 13);
   // assert_expression_approximates_to<float>("1.0092^(20)", "1.201005"); TODO
   // does not work
   assert_expression_approximates_to<float>("1.0092^(50)×ln(3/2)", "0.6409366");

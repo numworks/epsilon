@@ -717,26 +717,31 @@ QUIZ_CASE(sequence_context) {
   SequenceContext* sequenceContext = globalContext.sequenceContext();
 
   assert_reduce_and_store("3→f(x)");
-  assert_expression_simplifies_approximates_to<double>("f(u(0))", "undef");
+  assert_expression_simplifies_approximates_to<double>("f(u(0))", "undef",
+                                                       &globalContext);
 
   addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr,
               sequenceContext);
-  assert_expression_simplifies_approximates_to<double>("f(u(2))", "3");
+  assert_expression_simplifies_approximates_to<double>("f(u(2))", "3",
+                                                       &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   store->removeAll();
   addSequence(store, Sequence::Type::Explicit, "1/0", nullptr, nullptr,
               sequenceContext);
-  assert_expression_simplifies_approximates_to<double>("f(u(2))", "undef");
+  assert_expression_simplifies_approximates_to<double>("f(u(2))", "undef",
+                                                       &globalContext);
 
   store->removeAll();
   assert_reduce_and_store("3→a");
   addSequence(store, Sequence::Type::Explicit, "a+1", nullptr, nullptr,
               sequenceContext);
-  assert_expression_simplifies_approximates_to<double>("u(34)", "4");
+  assert_expression_simplifies_approximates_to<double>("u(34)", "4",
+                                                       &globalContext);
   assert_reduce_and_store("-3→a");
   globalContext.storageDidChangeForRecord(Ion::Storage::Record("a.exp"));
-  assert_expression_simplifies_approximates_to<double>("u(34)", "-2");
+  assert_expression_simplifies_approximates_to<double>("u(34)", "-2",
+                                                       &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   store->removeAll();

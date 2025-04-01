@@ -2289,8 +2289,8 @@ QUIZ_CASE(poincare_simplification_mix) {
   // TODO: get rid of complex at denominator?
   assert_parsed_expression_simplify_to("1/√(i) × (√(2)-i×√(2))", "-2×i");
   assert_expression_simplifies_approximates_to<double>(
-      "abs(√(300000.0003^23))", "9.702740901018ᴇ62", Degree, MetricUnitFormat,
-      Cartesian, 13);
+      "abs(√(300000.0003^23))", "9.702740901018ᴇ62", nullptr, Degree,
+      MetricUnitFormat, Cartesian, 13);
 }
 
 QUIZ_CASE(poincare_hyperbolic_trigonometry) {

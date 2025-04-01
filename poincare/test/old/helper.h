@@ -6,6 +6,7 @@
 #include <poincare/old/computation_context.h>
 #include <poincare/old/pool_handle.h>
 #include <poincare/print_float.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/test/float_helper.h>
 #include <quiz.h>
@@ -83,10 +84,11 @@ void quiz_assert_log_if_failure(bool test, Poincare::PoolHandle tree);
 void copy_without_system_chars(char* buffer, const char* input);
 
 typedef Poincare::Internal::Tree* (*ProcessExpression)(
-    Poincare::Internal::Tree*, Poincare::ReductionContext reductionContext);
+    Poincare::Internal::Tree*,
+    Poincare::Internal::ProjectionContext* projectionContext);
 
 void assert_parsed_expression_process_to(
-    const char* expression, const char* result,
+    const char* expression, const char* result, Poincare::Context* ctx,
     Poincare::ReductionTarget target,
     Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::Preferences::AngleUnit angleUnit,
@@ -151,6 +153,7 @@ void assert_expression_approximates_keeping_symbols_to(
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char* expression, const char* approximation,
+    Poincare::Context* context = nullptr,
     Poincare::Preferences::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,

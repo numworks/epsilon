@@ -95,36 +95,25 @@ struct ReductionParameters {
   Poincare::UnitConversion unitConversion = Poincare::UnitConversion::Default;
 };
 
-inline Poincare::ReductionContext ReductionContextForParameters(
-    const Poincare::Expression e, Poincare::Context* context,
-    const ReductionParameters& reductionParameters) {
-  Poincare::ReductionContext reductionContext(
-      context, reductionParameters.complexFormat, reductionParameters.angleUnit,
-      GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      reductionParameters.target, reductionParameters.symbolicComputation,
-      reductionParameters.unitConversion);
-  if (reductionParameters.updateComplexFormatWithExpression) {
-    reductionContext.updateComplexFormat(e);
-  }
-  return reductionContext;
-}
-
 inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
     const Poincare::Expression e, Poincare::Context* context,
     const ReductionParameters& reductionParameters) {
-  Poincare::ReductionContext reductionContext =
-      ReductionContextForParameters(e, context, reductionParameters);
   Poincare::Internal::ProjectionContext projectionContext = {
-      .m_complexFormat = reductionContext.complexFormat(),
-      .m_angleUnit = reductionContext.angleUnit(),
+      .m_complexFormat = reductionParameters.complexFormat,
+      .m_angleUnit = reductionParameters.angleUnit,
       .m_expansionStrategy =
-          (reductionContext.target() ==
+          (reductionParameters.target ==
            Poincare::ReductionTarget::SystemForAnalysis)
               ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
               : Poincare::Internal::ExpansionStrategy::None,
-      .m_unitFormat = reductionContext.unitFormat(),
-      .m_symbolic = reductionContext.symbolicComputation(),
-      .m_context = reductionContext.context()};
+      .m_unitFormat =
+          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+      .m_symbolic = reductionParameters.symbolicComputation,
+      .m_context = context};
+  if (reductionParameters.updateComplexFormatWithExpression) {
+    Poincare::Internal::Projection::UpdateComplexFormatWithExpressionInput(
+        e, &projectionContext);
+  }
   return projectionContext;
 }
 

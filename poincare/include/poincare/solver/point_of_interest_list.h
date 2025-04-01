@@ -1,7 +1,7 @@
 #ifndef POINCARE_SOLVER_POINT_OF_INTEREST_LIST_H
 #define POINCARE_SOLVER_POINT_OF_INTEREST_LIST_H
 
-#include <poincare/api.h>
+#include <poincare/expression.h>
 
 #include "point_of_interest.h"
 
@@ -15,15 +15,15 @@ class PointsOfInterestList {
   PointOfInterest pointAtIndex(int) const;
 
   using Provider = PointOfInterest (*)(void*);
-  static API::JuniorPoolHandle BuildStash(Provider, void* providerContext);
+  static Expression BuildStash(Provider, void* providerContext);
   /* Consume the argument, and steal its children. */
-  bool merge(API::JuniorPoolHandle&);
+  bool merge(Expression&);
 
   void sort();
   void filterOutOfBounds(double start, double end);
 
  private:
-  API::JuniorPoolHandle m_list;
+  Expression m_list;
 };
 
 }  // namespace Poincare

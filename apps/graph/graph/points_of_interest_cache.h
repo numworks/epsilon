@@ -64,7 +64,7 @@ class PointsOfInterestCache {
   float step() const;
 
   void stripOutOfBounds();
-  Poincare::API::JuniorPoolHandle computeBetween(float start, float end);
+  Poincare::Expression computeBetween(float start, float end);
   void tidyDownstreamPoolFrom(Poincare::PoolObject* treePoolCursor) const;
 
   Ion::Storage::Record

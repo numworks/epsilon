@@ -152,7 +152,7 @@ void PointsOfInterestCache::stripOutOfBounds() {
 }
 
 bool PointsOfInterestCache::computeNextStep(bool allowUserInterruptions) {
-  API::JuniorPoolHandle newPoints;
+  Expression newPoints;
   {
     CircuitBreakerCheckpoint cbcp(Ion::CircuitBreaker::CheckpointType::AnyKey);
     if (!allowUserInterruptions || CircuitBreakerRun(cbcp)) {
@@ -343,8 +343,7 @@ PointOfInterest findPoints(void* searchContext) {
 
 }  // namespace
 
-API::JuniorPoolHandle PointsOfInterestCache::computeBetween(float start,
-                                                            float end) {
+Expression PointsOfInterestCache::computeBetween(float start, float end) {
   assert(!m_record.isNull());
   assert(m_checksum == Ion::Storage::FileSystem::sharedFileSystem->checksum());
   assert(!m_list.isUninitialized());

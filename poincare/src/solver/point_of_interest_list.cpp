@@ -38,9 +38,7 @@ PointOfInterest pointFromTree(const Internal::Tree* t) {
 
 }  // namespace
 
-void PointsOfInterestList::init() {
-  m_list = API::JuniorPoolHandle::Builder(KList());
-}
+void PointsOfInterestList::init() { m_list = Expression::Builder(KList()); }
 
 int PointsOfInterestList::numberOfPoints() const {
   if (m_list.isUninitialized()) {
@@ -69,7 +67,7 @@ void PointsOfInterestList::sort() {
                pointFromTree(pointAddressInTree(l, j)).abscissa;
       },
       editableList, numberOfPoints());
-  m_list = API::JuniorPoolHandle::Builder(editableList);
+  m_list = Expression::Builder(editableList);
 }
 
 void PointsOfInterestList::filterOutOfBounds(double start, double end) {
@@ -80,11 +78,11 @@ void PointsOfInterestList::filterOutOfBounds(double start, double end) {
       Internal::NAry::AddChild(editableList, child->cloneTree());
     }
   }
-  m_list = API::JuniorPoolHandle::Builder(editableList);
+  m_list = Expression::Builder(editableList);
 }
 
-API::JuniorPoolHandle PointsOfInterestList::BuildStash(Provider provider,
-                                                       void* providerContext) {
+Expression PointsOfInterestList::BuildStash(Provider provider,
+                                            void* providerContext) {
   {
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
@@ -92,7 +90,7 @@ API::JuniorPoolHandle PointsOfInterestList::BuildStash(Provider provider,
       {
         using namespace Internal;
         ExceptionTry {
-          stash = List::PushEmpty();
+          stash = Internal::List::PushEmpty();
           PointOfInterest point;
           while (!(point = provider(providerContext)).isUninitialized()) {
             Tree* pointTree =
@@ -111,14 +109,14 @@ API::JuniorPoolHandle PointsOfInterestList::BuildStash(Provider provider,
         }
       }
 
-      return API::JuniorPoolHandle::Builder(stash);
+      return Expression::Builder(stash);
     } else {
       return {};
     }
   }
 }
 
-bool PointsOfInterestList::merge(API::JuniorPoolHandle& stash) {
+bool PointsOfInterestList::merge(Expression& stash) {
   assert(!stash.isUninitialized());
   // Merge list and stash together in the stack.
   Internal::Tree* stackedList;
@@ -141,7 +139,7 @@ bool PointsOfInterestList::merge(API::JuniorPoolHandle& stash) {
              [](const Internal::Tree* t) { return !t->isPointOfInterest(); }));
   /* No need for a checkpoint, since the combined pool object is smaller
    * than both list and stash separate. */
-  m_list = API::JuniorPoolHandle::Builder(stackedList);
+  m_list = Expression::Builder(stackedList);
   return true;
 }
 

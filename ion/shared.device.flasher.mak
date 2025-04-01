@@ -42,6 +42,7 @@ $(addprefix device/epsilon-core/device/flasher/drivers/, \
   board_ram.cpp \
   flash_write.cpp \
   flash_information.cpp \
+  led.cpp \
   reset.cpp \
   usb.cpp \
 ) \

@@ -2,6 +2,7 @@
 #define POINCARE_MEMORY_TREE_STACK_CHECKPOINT_H
 
 #include <assert.h>
+#include <poincare/src/memory/tree_stack.h>
 #include <setjmp.h>
 
 #include "block.h"

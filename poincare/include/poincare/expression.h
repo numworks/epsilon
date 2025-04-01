@@ -1,9 +1,12 @@
 #ifndef POINCARE_EXPRESSION_H
 #define POINCARE_EXPRESSION_H
 
+#include <omg/enums.h>
 #include <poincare/api.h>
 #include <poincare/comparison_operator.h>
+#include <poincare/layout.h>
 #include <poincare/old/computation_context.h>
+#include <poincare/old/pool_object.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/print_float.h>
 #include <poincare/sign.h>

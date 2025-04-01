@@ -2,7 +2,10 @@
 #define POINCARE_REGRESSION_REGRESSION_H
 
 #include <poincare/api.h>
+#include <poincare/expression.h>
+#include <poincare/layout.h>
 #include <poincare/old/context.h>
+#include <poincare/preferences.h>
 #include <poincare/src/statistics/data_table.h>
 #include <stdint.h>
 
@@ -15,7 +18,7 @@ namespace Internal {
 // TODO: Should this follow the Distributions path and remove all inheritance ?
 class Regression {
  public:
-  // TODO: the order is used by the regression app menu, make it independant
+  // TODO: the order is used by the regression app menu, make it independent
   enum class Type : uint8_t {
     None = 0,
     LinearAxpb,

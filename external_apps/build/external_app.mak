@@ -32,6 +32,8 @@ endif
 
 ifeq ($(PLATFORM),device)
   PLATFORM_CATEGORY = device
+else ifeq ($(PLATFORM),web)
+  PLATFORM_CATEGORY = web
 else
   PLATFORM_CATEGORY = simulator
 endif

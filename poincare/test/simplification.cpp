@@ -490,7 +490,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(a*b,k,1,n)", "a×b×n");
   simplifies_to("sum(k,k,n,j)", "(j^2-n^2+j+n)/2");
   simplifies_to("2×sum(k,k,0,n)+n", "n×(n+2)");
-  simplifies_to("2×sum(k,k,3,n)+n", "n×(n+2)-6");
+  simplifies_to("2×sum(k,k,3,n)+n", "(n+1)^2-7");
   simplifies_to("sum(k^2,k,n,j)", "(j×(j+1)×(2×j+1)-n×(n-1)×(2×n-1))/6");
   simplifies_to("sum(k^2,k,2,5)", "54");
   simplifies_to("sum((2k)^2,k,2,5)", "216");
@@ -1547,6 +1547,12 @@ QUIZ_CASE(pcj_simplification_advanced) {
 #endif
   simplifies_to("1-cos(x)^2-sin(x)^2", "0");
   simplifies_to("(a+b)^2", "(a+b)^2");
+  simplifies_to("a^2+2a*b+b^2", "(a+b)^2");
+  simplifies_to("a^2+b^2-2a*b", "(-a+b)^2");
+  simplifies_to("1-2a+a^2", "(a-1)^2");
+  simplifies_to("π^2-2*π*ln(2)+ln(2)^2", "(-π+ln(2))^2");
+  simplifies_to("√(1/4+π+π^2)", "1/2+π");
+  simplifies_to("√(1/4-π+π^2)", "√((-1/2+π)^2)");
   simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
   simplifies_to("e^(a*c)*e^(b*c)+(a+b)^2-a*(a+2*b)", "b^2+e^((a+b)×c)");
   // TODO: Should be 0

@@ -15,7 +15,9 @@ QUIZ_CASE(ion_exam_mode_uninitialized) {
 QUIZ_CASE(ion_exam_mode) {
   for (Int i = 0; i < k_numberOfModes; i++) {
     Ruleset rules = toRuleset(i);
-    set(Configuration(rules));
+    if (get() != Configuration(rules)) {
+      set(Configuration(rules));
+    }
     Configuration config = get();
 
     quiz_assert(!config.isUninitialized());
@@ -24,6 +26,8 @@ QUIZ_CASE(ion_exam_mode) {
     quiz_assert(config.isActive() == (rules != Ruleset::Off));
     quiz_assert(config.raw() != k_clearedBits);
 
-    set(Configuration(Ruleset::Off));
+    if (rules != Ruleset::Off) {
+      set(Configuration(Ruleset::Off));
+    }
   }
 }

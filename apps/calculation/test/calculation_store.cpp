@@ -135,9 +135,10 @@ QUIZ_CASE(calculation_ans) {
   ExamMode previousExamMode = Preferences::SharedPreferences()->examMode();
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
-  Preferences::SharedPreferences()->setExamMode(
-      ExamMode(ExamMode::Ruleset::Off));
-
+  if (previousExamMode != ExamMode(ExamMode::Ruleset::Off)) {
+    Preferences::SharedPreferences()->setExamMode(
+        ExamMode(ExamMode::Ruleset::Off));
+  }
   pushAndProcessCalculation(&store, "1+3/4", &globalContext);
   pushAndProcessCalculation(&store, "ans+2/3", &globalContext);
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =

@@ -191,7 +191,9 @@ QUIZ_CASE(graph_function_properties) {
           ContinuousFunctionProperties::CurveParameterType::Line};
 
   for (const ExamMode examMode : examModes) {
-    Preferences::SharedPreferences()->setExamMode(examMode);
+    if (Preferences::SharedPreferences()->examMode() != examMode) {
+      Preferences::SharedPreferences()->setExamMode(examMode);
+    }
     bool noInequations = examMode.forbidInequalityGraphing();
     bool noImplicitPlot = examMode.forbidImplicitPlots();
 
@@ -902,8 +904,11 @@ QUIZ_CASE(graph_function_properties) {
         Preferences::ComplexFormat::Cartesian);
 
     // Restore an Off exam mode.
-    Poincare::Preferences::SharedPreferences()->setExamMode(
-        ExamMode(ExamMode::Ruleset::Off));
+    if (Preferences::SharedPreferences()->examMode() !=
+        ExamMode(ExamMode::Ruleset::Off)) {
+      Preferences::SharedPreferences()->setExamMode(
+          ExamMode(ExamMode::Ruleset::Off));
+    }
   }
 
   // Restore default preferences

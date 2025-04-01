@@ -100,7 +100,7 @@ SystemExpression ExpressionModel::expressionReduced(
     if (isCircularlyDefined(record, context)) {
       m_expression = Undefined::Builder();
     } else {
-      m_expression = Expression::ExpressionFromAddress(
+      m_expression = SystemExpression::ExpressionFromAddress(
           expressionAddress(record), expressionSize(record));
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
@@ -127,8 +127,8 @@ UserExpression ExpressionModel::expressionClone(
   assert(record->fullName() != nullptr);
   /* A new Expression has to be created at each call (because it might be
    * tempered with after calling) */
-  return Expression::ExpressionFromAddress(expressionAddress(record),
-                                           expressionSize(record));
+  return UserExpression::ExpressionFromAddress(expressionAddress(record),
+                                               expressionSize(record));
   /* TODO
    * The substitution of UCodePointUnknown back and forth is done in the
    * methods layout, setContent (through buildExpressionFromLayout), layout and

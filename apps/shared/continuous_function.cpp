@@ -447,8 +447,8 @@ UserExpression ContinuousFunction::sumBetweenBounds(double start, double end,
   end = std::min<double>(end, tMax());
   // Integral takes ownership of args
   return UserExpression::Create(KIntegral(KUnknownSymbol, KA, KB, KC),
-                                {.KA = Expression::Builder<double>(start),
-                                 .KB = Expression::Builder<double>(end),
+                                {.KA = UserExpression::Builder<double>(start),
+                                 .KB = UserExpression::Builder<double>(end),
                                  .KC = expressionReduced(context)});
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in

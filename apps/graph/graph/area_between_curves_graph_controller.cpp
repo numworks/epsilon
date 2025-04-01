@@ -66,7 +66,7 @@ double AreaBetweenCurvesGraphController::cursorNextStep(
   return nextX;
 }
 
-Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
+Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   constexpr size_t bufferSize =
       Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small) + 1;
   char buffer[bufferSize];
@@ -97,26 +97,23 @@ Poincare::Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   return Layout::Create(KAbsL(KA) ^ "dx"_l, {.KA = Layout::String(buffer)});
 }
 
-Poincare::SystemExpression
-AreaBetweenCurvesGraphController::createSumExpression(
-    double startSum, double endSum, Poincare::Context* context) {
+SystemExpression AreaBetweenCurvesGraphController::createSumExpression(
+    double startSum, double endSum, Context* context) {
   // Get the expression of the first function
   ExpiringPointer<Shared::Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
-  Poincare::SystemExpression expressionF =
-      function->expressionReduced(context).clone();
+  SystemExpression expressionF = function->expressionReduced(context).clone();
   // Get the expression of the second function
   function = FunctionApp::app()->functionStore()->modelForRecord(
       secondSelectedRecord());
-  Poincare::SystemExpression expressionG =
-      function->expressionReduced(context).clone();
-  Poincare::SystemExpression result =
-      Poincare::Expression::Create(KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
-                                   {.KA = SymbolHelper::SystemSymbol(),
-                                    .KB = Expression::Builder<double>(startSum),
-                                    .KC = Expression::Builder<double>(endSum),
-                                    .KD = expressionF,
-                                    .KE = expressionG});
+  SystemExpression expressionG = function->expressionReduced(context).clone();
+  SystemExpression result =
+      Expression::Create(KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
+                         {.KA = SymbolHelper::SystemSymbol(),
+                          .KB = SystemExpression::Builder<double>(startSum),
+                          .KC = SystemExpression::Builder<double>(endSum),
+                          .KD = expressionF,
+                          .KE = expressionG});
   return result;
 }
 

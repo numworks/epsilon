@@ -32,7 +32,7 @@ Calculation* Calculation::next() const {
 }
 
 UserExpression Calculation::input() {
-  UserExpression e = Expression::Builder(inputTree());
+  UserExpression e = UserExpression::Builder(inputTree());
   assert(!e.isUninitialized());
   return e;
 }

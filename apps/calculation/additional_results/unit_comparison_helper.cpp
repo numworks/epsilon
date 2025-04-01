@@ -613,7 +613,7 @@ UserExpression BuildComparisonExpression(double value,
   return UserExpression::Create(
       KMult(KA, KB, KC),
       {.KA = UserExpression::Builder<double>(ratio),
-       .KB = Expression::Builder<double>(referenceValue->value),
+       .KB = UserExpression::Builder<double>(referenceValue->value),
        .KC = unit});
 }
 

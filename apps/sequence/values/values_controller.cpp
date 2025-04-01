@@ -157,7 +157,7 @@ Layout ValuesController::functionTitleLayout(int column) {
   sequence->nameWithoutExtension(sequenceName, SymbolHelper::k_maxNameSize);
   UserExpression sumExpression = UserExpression::Create(
       KSum("k"_e, KA, "n"_e, KB),
-      {.KA = Expression::Builder(sequence->initialRank()),
+      {.KA = UserExpression::Builder(sequence->initialRank()),
        .KB = Poincare::SymbolHelper::BuildSequence(
            sequenceName, UserExpression::Builder("k"_e))});
   return sumExpression.createLayout(preferences->displayMode(),

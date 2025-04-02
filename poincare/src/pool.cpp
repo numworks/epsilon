@@ -85,7 +85,7 @@ int Pool::numberOfObjects() const {
   PoolObject* lastObject = last();
   while (firstObject != lastObject) {
     count++;
-    firstObject = firstObject->next();
+    firstObject = NextObject(firstObject);
   }
   return count;
 }
@@ -204,7 +204,7 @@ void Pool::freePoolFromObject(PoolObject* firstObjectToDiscard) {
   PoolObject* currentObject = first();
   while (currentObject < firstObjectToDiscard) {
     m_identifiers.remove(currentObject->identifier());
-    currentObject = currentObject->next();
+    currentObject = NextObject(currentObject);
   }
   assert(currentObject == firstObjectToDiscard);
   m_identifiers.resetObjectForIdentifierOffsets(m_objectForIdentifierOffset);

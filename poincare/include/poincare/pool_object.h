@@ -67,9 +67,6 @@ class PoolObject {
     return this >= PoolCheckpoint::TopmostEndOfPool();
   }
 
-  // Hierarchy
-  PoolObject* next() const;
-
 #if POINCARE_TREE_LOG
   virtual void logObjectName(std::ostream& stream) const = 0;
   virtual void logAttributes(std::ostream& stream) const {}

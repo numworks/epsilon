@@ -107,6 +107,14 @@ class Pool final {
     assert(object->isAfterTopmostCheckpoint());
     object->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
+  // Return next object
+  static PoolObject* NextObject(PoolObject* object) {
+    /* Simple version would be "return this + 1;", with pointer arithmetics
+     * taken care of by the compiler. Unfortunately, we want PoolObject to have
+     * a VARIABLE size */
+    return reinterpret_cast<PoolObject*>(reinterpret_cast<char*>(object) +
+                                         AlignedSize(object->size()));
+  }
 
   // Iterators
   PoolObject* first() const {
@@ -121,7 +129,7 @@ class Pool final {
         : m_object(const_cast<PoolObject*>(object)) {}
     PoolObject* operator*() { return m_object; }
     Iterator& operator++() {
-      m_object = m_object->next();
+      m_object = NextObject(m_object);
       return *this;
     }
     bool operator!=(const Iterator& it) const {

@@ -50,6 +50,7 @@ $(addprefix expression/, \
   approximation_trigonometry.cpp \
   beautification.cpp \
   binary.cpp \
+  bounds.cpp \
   builtin.cpp \
   cas_disabled.cpp:-cas \
   cas_enabled.cpp:+cas \

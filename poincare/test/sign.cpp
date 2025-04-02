@@ -333,7 +333,10 @@ QUIZ_CASE(pcj_sign) {
               ComplexFormat::Cartesian, Strategy::ApproximateToFloat);
 
   assert_sign("2+π", Sign::FiniteStrictlyPositive());
-  assert_sign("2-π", Sign::Finite());
+  assert_sign("√(2)-2", Sign::FiniteStrictlyNegative());
+  assert_sign("π-2*ln(π)", Sign::FiniteStrictlyPositive());
+  assert_sign("√(535)-e^π+log(2)", Sign::FiniteStrictlyPositive());
+  assert_sign("π-22/7", Sign::FiniteStrictlyNegative());
   assert_sign("3 * abs(cos(x)) * -2", Sign::FiniteNegative());
 
   assert_sign("x", ComplexSign::RealFinite());

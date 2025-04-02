@@ -2,6 +2,7 @@
 #include <poincare/sign.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/bounds.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/number.h>
@@ -357,6 +358,14 @@ ComplexSign GetComplexSign(const Tree* e) {
         s = Add(s, GetComplexSign(c));
         if (s.isUnknown()) {
           break;
+        }
+      }
+      if (s.isReal() && s.realSign().isFinite() &&
+          (!(s.realSign().hasKnownStrictSign() || s.realSign().isNull()))) {
+        assert(s.imagSign().isNull());
+        Sign realSign = Bounds::Sign(e);
+        if (realSign != Sign::Unknown()) {
+          return ComplexSign(realSign, Sign::Zero());
         }
       }
       return s;

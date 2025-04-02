@@ -122,17 +122,6 @@ class Pool final {
   };
   Nodes allNodes() { return Nodes(first()); }
 
-  class RootNodes final {
-   public:
-    RootNodes(PoolObject *node) : m_node(node) {}
-    Iterator begin() const { return Iterator(m_node); }
-    Iterator end() const { return Iterator(Pool::sharedPool->last()); }
-
-   private:
-    PoolObject *m_node;
-  };
-  RootNodes roots() { return RootNodes(first()); }
-
   // Pool memory
   void dealloc(PoolObject *ptr, size_t size);
   void moveNodes(PoolObject *destination, PoolObject *source,

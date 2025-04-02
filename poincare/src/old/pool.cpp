@@ -75,7 +75,7 @@ void Pool::flatLog(std::ostream &stream) {
 void Pool::treeLog(std::ostream &stream, bool verbose) {
   stream << "<Pool format=\"tree\" size=\"" << (int)(m_cursor - buffer())
          << "\">";
-  for (PoolObject *node : roots()) {
+  for (PoolObject *node : allNodes()) {
     node->log(stream, 1, verbose);
   }
   stream << std::endl;

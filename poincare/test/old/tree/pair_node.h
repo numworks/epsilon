@@ -25,7 +25,7 @@ class PairByReference : public PoolHandle {
   static PairByReference Builder(PoolHandle t1, PoolHandle t2) {
     void *bufferNode = Pool::sharedPool->alloc(sizeof(PairNode));
     PairNode *node = new (bufferNode) PairNode(t1, t2);
-    PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
+    PoolHandle h = PoolHandle::Build(node);
     return static_cast<PairByReference &>(h);
   }
   PairByReference() = delete;

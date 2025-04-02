@@ -293,7 +293,7 @@ Expression Expression::Builder(const Tree* tree) {
   size_t size = tree->treeSize();
   void* bufferNode = Pool::sharedPool->alloc(sizeof(ExpressionObject) + size);
   ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
-  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::Build(node);
   return static_cast<Expression&>(h);
 }
 

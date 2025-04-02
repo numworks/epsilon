@@ -44,15 +44,12 @@ template <class U>
 PoolHandle PoolHandle::Builder() {
   void *bufferNode = Pool::sharedPool->alloc(sizeof(U));
   U *node = new (bufferNode) U();
-  return PoolHandle::BuildWithGhostChildren(node);
+  return PoolHandle::Build(node);
 }
 
-PoolHandle PoolHandle::BuildWithGhostChildren(PoolObject *node) {
+PoolHandle PoolHandle::Build(PoolObject *node) {
   assert(node != nullptr);
-  Pool *pool = Pool::sharedPool;
-  /* Ensure the pool is syntaxically correct by creating ghost children for
-   * nodes that have a fixed, non-zero number of children. */
-  uint16_t nodeIdentifier = pool->generateIdentifier();
+  uint16_t nodeIdentifier = Pool::sharedPool->generateIdentifier();
   node->rename(nodeIdentifier, false, true);
   return PoolHandle(node);
 }

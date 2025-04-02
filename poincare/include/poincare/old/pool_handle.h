@@ -114,9 +114,7 @@ class PoolHandle {
     }
   }
 
-#if PCJ_DELETE
-  static PoolHandle BuildWithGhostChildren(PoolObject* node);
-#endif
+  static PoolHandle Build(PoolObject* node);
 
   void setIdentifierAndRetain(uint16_t newId);
   void setTo(const PoolHandle& tr);

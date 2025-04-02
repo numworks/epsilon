@@ -76,7 +76,7 @@ Layout Layout::Builder(const Internal::Tree* tree) {
   size_t size = tree->treeSize();
   void* bufferNode = Pool::sharedPool->alloc(sizeof(LayoutObject) + size);
   LayoutObject* node = new (bufferNode) LayoutObject(tree, size);
-  PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
+  PoolHandle h = PoolHandle::Build(node);
   return static_cast<Layout&>(h);
 }
 

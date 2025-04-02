@@ -23,7 +23,7 @@ class BlobByReference : public PoolHandle {
   static BlobByReference Builder(int data = 0) {
     void *bufferNode = Pool::sharedPool->alloc(sizeof(BlobNode));
     BlobNode *node = new (bufferNode) BlobNode(data);
-    PoolHandle h = PoolHandle::BuildWithGhostChildren(node);
+    PoolHandle h = PoolHandle::Build(node);
     return static_cast<BlobByReference &>(h);
   }
   BlobByReference() = delete;

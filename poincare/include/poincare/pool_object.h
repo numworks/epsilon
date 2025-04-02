@@ -9,7 +9,6 @@
 #include <iostream>
 #include <ostream>
 #endif
-#include <omg/memory.h>
 
 #include "pool_checkpoint.h"
 
@@ -23,19 +22,6 @@
  * PoolObjects to be a multiple of 4. */
 
 namespace Poincare {
-
-#if __EMSCRIPTEN__
-/* Emscripten memory representation assumes loads and stores are aligned.
- * Because the Pool buffer is going to store double values, Object addresses
- * have to be aligned on 8 bytes (provided that emscripten addresses are 8 bytes
- * long which ensures that v-tables are also aligned). */
-typedef uint64_t AlignedObjectBuffer;
-#else
-/* Memory copies are done quicker on 4 bytes aligned data. We force the Pool
- * to allocate 4-byte aligned range to leverage this. */
-typedef uint32_t AlignedObjectBuffer;
-#endif
-constexpr static int ByteAlignment = sizeof(AlignedObjectBuffer);
 
 class PoolObject {
   friend class Pool;
@@ -54,7 +40,6 @@ class PoolObject {
   virtual size_t size() const = 0;
   uint16_t identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
-  size_t deepSize() const;
 
   // Object operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
@@ -83,14 +68,7 @@ class PoolObject {
   }
 
   // Hierarchy
-  PoolObject* next() const {
-    /* Simple version would be "return this + 1;", with pointer arithmetics
-     * taken care of by the compiler. Unfortunately, we want PoolObject to have
-     * a VARIABLE size */
-    return reinterpret_cast<PoolObject*>(
-        reinterpret_cast<char*>(const_cast<PoolObject*>(this)) +
-        OMG::Memory::AlignedSize(size(), ByteAlignment));
-  }
+  PoolObject* next() const;
 
 #if POINCARE_TREE_LOG
   virtual void logObjectName(std::ostream& stream) const = 0;

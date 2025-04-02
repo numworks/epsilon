@@ -20,7 +20,7 @@ PoolObject* PoolHandle::object() const {
   return Pool::sharedPool->object(m_identifier);
 }
 
-size_t PoolHandle::size() const { return object()->deepSize(); }
+size_t PoolHandle::size() const { return Pool::AlignedSize(object()->size()); }
 
 #if POINCARE_TREE_LOG
 void PoolHandle::log() const {

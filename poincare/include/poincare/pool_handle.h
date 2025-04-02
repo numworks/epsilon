@@ -5,10 +5,6 @@
 
 #include "pool.h"
 
-/* TODO:
- * - Clarify difference between size and deepSize
- */
-
 namespace Poincare {
 
 /* A PoolHandle references a PoolObject stored somewhere in the OExpression

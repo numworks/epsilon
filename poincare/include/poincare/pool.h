@@ -1,6 +1,7 @@
 #ifndef POINCARE_TREE_POOL_H
 #define POINCARE_TREE_POOL_H
 
+#include <omg/memory.h>
 #include <stddef.h>
 #include <string.h>
 
@@ -10,6 +11,19 @@
 #endif
 
 namespace Poincare {
+
+#if __EMSCRIPTEN__
+/* Emscripten memory representation assumes loads and stores are aligned.
+ * Because the Pool buffer is going to store double values, Object addresses
+ * have to be aligned on 8 bytes (provided that emscripten addresses are 8 bytes
+ * long which ensures that v-tables are also aligned). */
+typedef uint64_t AlignedObjectBuffer;
+#else
+/* Memory copies are done quicker on 4 bytes aligned data. We force the Pool
+ * to allocate 4-byte aligned range to leverage this. */
+typedef uint32_t AlignedObjectBuffer;
+#endif
+constexpr static int ByteAlignment = sizeof(AlignedObjectBuffer);
 
 class PoolHandle;
 
@@ -77,6 +91,10 @@ class Pool final {
 #if ASSERTIONS
   static bool s_treePoolLocked;
 #endif
+  // Object size, taking the pool alignement into account
+  static size_t AlignedSize(size_t size) {
+    return OMG::Memory::AlignedSize(size, ByteAlignment);
+  }
 
   // PoolObject
   void discardPoolObject(PoolObject* object);

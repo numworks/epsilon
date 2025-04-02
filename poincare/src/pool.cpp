@@ -23,13 +23,11 @@ void Pool::freeIdentifier(uint16_t identifier) {
 }
 
 void Pool::move(PoolObject* destination, PoolObject* source) {
-  size_t moveSize = source->deepSize();
-  moveObjects(destination, source, moveSize);
+  moveObjects(destination, source, AlignedSize(source->size()));
 }
 
 PoolObject* Pool::deepCopy(PoolObject* object) {
-  size_t size = object->deepSize();
-  return copyTreeFromAddress(static_cast<void*>(object), size);
+  return copyTreeFromAddress(static_cast<void*>(object), object->size());
 }
 
 PoolObject* Pool::copyTreeFromAddress(const void* address, size_t size) {
@@ -102,7 +100,7 @@ void* Pool::alloc(size_t size) {
   assert(!s_treePoolLocked);
 #endif
 
-  size = OMG::Memory::AlignedSize(size, ByteAlignment);
+  size = AlignedSize(size);
   if (m_cursor + size > buffer() + BufferSize) {
     ExceptionCheckpoint::Raise();
   }
@@ -117,7 +115,7 @@ void Pool::dealloc(PoolObject* object, size_t size) {
   assert(!s_treePoolLocked);
 #endif
 
-  size = OMG::Memory::AlignedSize(size, ByteAlignment);
+  size = AlignedSize(size);
   char* ptr = reinterpret_cast<char*>(object);
   assert(ptr >= buffer() && ptr < m_cursor);
 

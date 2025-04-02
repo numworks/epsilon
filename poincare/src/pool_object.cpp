@@ -31,6 +31,15 @@ void PoolObject::rename(uint16_t identifier,
   Pool::sharedPool->registerObject(this);
 }
 
+PoolObject* PoolObject::next() const {
+  /* Simple version would be "return this + 1;", with pointer arithmetics
+   * taken care of by the compiler. Unfortunately, we want PoolObject to have
+   * a VARIABLE size */
+  return reinterpret_cast<PoolObject*>(
+      reinterpret_cast<char*>(const_cast<PoolObject*>(this)) +
+      Pool::AlignedSize(size()));
+}
+
 // Protected
 
 #if POINCARE_TREE_LOG
@@ -61,9 +70,5 @@ void PoolObject::log(std::ostream& stream, int indentation, bool verbose) {
   }
 }
 #endif
-
-size_t PoolObject::deepSize() const {
-  return reinterpret_cast<char*>(next()) - reinterpret_cast<const char*>(this);
-}
 
 }  // namespace Poincare

@@ -85,17 +85,6 @@ class PoolObject {
   }
 
   // Hierarchy
-  template <typename T>
-  class Iterator {
-   public:
-    Iterator(const T *node) : m_node(const_cast<T *>(node)) {}
-    T *operator*() { return m_node; }
-    bool operator!=(const Iterator &it) const { return (m_node != it.m_node); }
-
-   protected:
-    T *m_node;
-  };
-
   PoolObject *next() const {
     /* Simple version would be "return this + 1;", with pointer arithmetics
      * taken care of by the compiler. Unfortunately, we want PoolObject to have

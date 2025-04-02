@@ -97,18 +97,23 @@ class Pool final {
   PoolObject *last() const {
     return reinterpret_cast<PoolObject *>(const_cast<char *>(m_cursor));
   }
+  class Iterator {
+   public:
+    Iterator(const PoolObject *node) : m_node(const_cast<PoolObject *>(node)) {}
+    PoolObject *operator*() { return m_node; }
+    Iterator &operator++() {
+      m_node = m_node->next();
+      return *this;
+    }
+    bool operator!=(const Iterator &it) const { return (m_node != it.m_node); }
+
+   protected:
+    PoolObject *m_node;
+  };
 
   class Nodes final {
    public:
     Nodes(PoolObject *node) : m_node(node) {}
-    class Iterator : public PoolObject::Iterator<PoolObject> {
-     public:
-      using PoolObject::Iterator<PoolObject>::Iterator;
-      Iterator &operator++() {
-        m_node = m_node->next();
-        return *this;
-      }
-    };
     Iterator begin() const { return Iterator(m_node); }
     Iterator end() const { return Iterator(Pool::sharedPool->last()); }
 
@@ -120,14 +125,6 @@ class Pool final {
   class RootNodes final {
    public:
     RootNodes(PoolObject *node) : m_node(node) {}
-    class Iterator : public PoolObject::Iterator<PoolObject> {
-     public:
-      using PoolObject::Iterator<PoolObject>::Iterator;
-      Iterator &operator++() {
-        m_node = m_node->next();
-        return *this;
-      }
-    };
     Iterator begin() const { return Iterator(m_node); }
     Iterator end() const { return Iterator(Pool::sharedPool->last()); }
 

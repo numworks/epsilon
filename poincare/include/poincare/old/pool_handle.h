@@ -6,7 +6,6 @@
 #include "pool.h"
 
 /* TODO: With numberOfChildren being 0, simplify the following methods
- * - PoolObject::DepthFirst
  * - Pool::deepCopy
  * - PoolObject::deleteParentIdentifierInChildren
  *

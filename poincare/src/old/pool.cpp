@@ -37,10 +37,6 @@ PoolObject *Pool::copyTreeFromAddress(const void *address, size_t size) {
   memcpy(ptr, address, size);
   PoolObject *copy = reinterpret_cast<PoolObject *>(ptr);
   renameNode(copy, false);
-  for (PoolObject *child : copy->depthFirstChildren()) {
-    renameNode(child, false);
-    child->retain();
-  }
   return copy;
 }
 

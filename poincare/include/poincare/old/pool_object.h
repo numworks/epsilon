@@ -154,30 +154,7 @@ class PoolObject {
     int m_firstIndex;
   };
 
-  template <typename T>
-  class DepthFirst final {
-   public:
-    DepthFirst(const PoolObject *node)
-        : m_node(const_cast<PoolObject *>(node)) {}
-    class Iterator : public PoolObject::Iterator<T> {
-     public:
-      using PoolObject::Iterator<T>::Iterator;
-      Iterator &operator++() {
-        this->m_node = this->m_node->next();
-        return *this;
-      }
-    };
-    Iterator begin() const { return Iterator(m_node->next()); }
-    Iterator end() const { return Iterator(m_node->next()); }
-
-   private:
-    T *m_node;
-  };
-
   Direct<PoolObject> directChildren() const { return Direct<PoolObject>(this); }
-  DepthFirst<PoolObject> depthFirstChildren() const {
-    return DepthFirst<PoolObject>(this);
-  }
 #endif
 
   PoolObject *next() const {

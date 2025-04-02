@@ -9,6 +9,7 @@
  * - PoolObject::deepSize
  * - Pool::removeChildren
  * - Pool::removeChildrenAndDestroy
+ * - PoolObject::DepthFirst
  */
 
 namespace Poincare {

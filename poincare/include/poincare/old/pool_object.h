@@ -134,20 +134,18 @@ class PoolObject {
      public:
       using PoolObject::Iterator<T>::Iterator;
       Iterator &operator++() {
-        this->m_node = static_cast<T *>(this->m_node->nextSibling());
+        this->m_node = static_cast<T *>(this->m_node->next());
         return *this;
       }
     };
     Iterator begin() const {
       PoolObject *n = m_node->next();
       for (int i = 0; i < m_firstIndex; i++) {
-        n = n->nextSibling();
+        n = n->next();
       }
       return Iterator(static_cast<T *>(n));
     }
-    Iterator end() const {
-      return Iterator(static_cast<T *>(m_node->nextSibling()));
-    }
+    Iterator end() const { return Iterator(static_cast<T *>(m_node->next())); }
 
     T *node() const { return m_node; }
 
@@ -170,7 +168,7 @@ class PoolObject {
       }
     };
     Iterator begin() const { return Iterator(m_node->next()); }
-    Iterator end() const { return Iterator(m_node->nextSibling()); }
+    Iterator end() const { return Iterator(m_node->next()); }
 
    private:
     T *m_node;
@@ -190,9 +188,6 @@ class PoolObject {
         reinterpret_cast<char *>(const_cast<PoolObject *>(this)) +
         OMG::Memory::AlignedSize(size(), ByteAlignment));
   }
-#if PCJ_DELETE
-  PoolObject *nextSibling() const;
-#endif
 
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream &stream) const = 0;

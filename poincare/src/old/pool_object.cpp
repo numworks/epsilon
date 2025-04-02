@@ -36,12 +36,6 @@ void PoolObject::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
   updateParentIdentifierInChildren();
 }
 
-// Hierarchy
-
-PoolObject *PoolObject::nextSibling() const {
-  return const_cast<PoolObject *>(this)->next();
-}
-
 // Protected
 
 #if POINCARE_TREE_LOG
@@ -85,12 +79,12 @@ void PoolObject::log(std::ostream &stream, bool recursive, int indentation,
 
 size_t PoolObject::deepSize(int realNumberOfChildren) const {
   if (realNumberOfChildren == -1) {
-    return reinterpret_cast<char *>(nextSibling()) -
+    return reinterpret_cast<char *>(next()) -
            reinterpret_cast<const char *>(this);
   }
   PoolObject *realNextSibling = next();
   for (int i = 0; i < realNumberOfChildren; i++) {
-    realNextSibling = realNextSibling->nextSibling();
+    realNextSibling = realNextSibling->next();
   }
   return reinterpret_cast<char *>(realNextSibling) -
          reinterpret_cast<const char *>(this);

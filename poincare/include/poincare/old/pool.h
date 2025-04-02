@@ -133,7 +133,7 @@ class Pool final {
      public:
       using PoolObject::Iterator<PoolObject>::Iterator;
       Iterator &operator++() {
-        m_node = m_node->nextSibling();
+        m_node = m_node->next();
         return *this;
       }
     };

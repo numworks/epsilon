@@ -7,7 +7,8 @@
 
 /* TODO: With numberOfChildren being 0, simplify the following methods
  * - Pool::deepCopy
- * - PoolObject::deleteParentIdentifierInChildren
+ * - PoolObject::log (recursive parameter)
+ * - PoolObject::rename (skipChildrenUpdate parameter)
  *
  * Also:
  * - Clarify difference between size and deepSize
@@ -91,9 +92,6 @@ class PoolHandle {
 #if PCJ_DELETE
   void setParentIdentifier(uint16_t id) { object()->setParentIdentifier(id); }
   void deleteParentIdentifier() { object()->deleteParentIdentifier(); }
-  void deleteParentIdentifierInChildren() {
-    object()->deleteParentIdentifierInChildren();
-  }
 #endif
 
   /* Logging */

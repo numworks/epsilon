@@ -409,7 +409,6 @@ class Expression : public PoolHandle {
    * they are still used. */
   void setParentIdentifier(uint16_t id) { assert(false); }
   void deleteParentIdentifier() { assert(false); }
-  void deleteParentIdentifierInChildren() { assert(false); }
 #endif
 
  private:

@@ -99,12 +99,6 @@ class PoolObject {
 
 // Hierarchy
 #if PCJ_DELETE
-  /* The following methods are only used for nodes that have a variable number
-   * of children like OList, HorizontalLayout or Randint */
-  void deleteParentIdentifierInChildren() const {
-    changeParentIdentifierInChildren(NoNodeIdentifier);
-  }
-
   /* Serialization
    * Return the number of chars written, without the null-terminating char. */
   virtual size_t serialize(char *buffer, size_t bufferSize,
@@ -113,7 +107,6 @@ class PoolObject {
     assert(false);
     return 0;
   }
-
   template <typename T>
   class Iterator {
    public:
@@ -124,37 +117,6 @@ class PoolObject {
    protected:
     T *m_node;
   };
-
-  template <typename T>
-  class Direct final {
-   public:
-    Direct(const T *node, int firstIndex = 0)
-        : m_node(const_cast<T *>(node)), m_firstIndex(firstIndex) {}
-    class Iterator : public PoolObject::Iterator<T> {
-     public:
-      using PoolObject::Iterator<T>::Iterator;
-      Iterator &operator++() {
-        this->m_node = static_cast<T *>(this->m_node->next());
-        return *this;
-      }
-    };
-    Iterator begin() const {
-      PoolObject *n = m_node->next();
-      for (int i = 0; i < m_firstIndex; i++) {
-        n = n->next();
-      }
-      return Iterator(static_cast<T *>(n));
-    }
-    Iterator end() const { return Iterator(static_cast<T *>(m_node->next())); }
-
-    T *node() const { return m_node; }
-
-   private:
-    T *m_node;
-    int m_firstIndex;
-  };
-
-  Direct<PoolObject> directChildren() const { return Direct<PoolObject>(this); }
 #endif
 
   PoolObject *next() const {
@@ -186,12 +148,6 @@ class PoolObject {
         m_referenceCounter(0) {}
 
  private:
-#if PCJ_DELETE
-  void updateParentIdentifierInChildren() const {
-    changeParentIdentifierInChildren(m_identifier);
-  }
-  void changeParentIdentifierInChildren(uint16_t id) const;
-#endif
   uint16_t m_identifier;
 #if PCJ_DELETE
   uint16_t m_parentIdentifier;

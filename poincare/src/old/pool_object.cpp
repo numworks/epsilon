@@ -14,7 +14,6 @@ void PoolObject::release() {
   }
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
-    deleteParentIdentifierInChildren();
     Pool::sharedPool->discardPoolObject(this);
   }
 }
@@ -30,10 +29,6 @@ void PoolObject::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
   m_identifier = identifier;
   m_referenceCounter = 0;
   Pool::sharedPool->registerNode(this);
-  if (skipChildrenUpdate) {
-    return;
-  }
-  updateParentIdentifierInChildren();
 }
 
 // Protected
@@ -54,15 +49,6 @@ void PoolObject::log(std::ostream &stream, bool recursive, int indentation,
   }
   logAttributes(stream);
   bool tagIsClosed = false;
-  if (recursive) {
-    for (PoolObject *child : directChildren()) {
-      if (!tagIsClosed) {
-        stream << ">";
-        tagIsClosed = true;
-      }
-      child->log(stream, recursive, indentation + 1, verbose);
-    }
-  }
   if (tagIsClosed) {
     stream << "\n";
     for (int i = 0; i < indentation; ++i) {
@@ -80,12 +66,6 @@ void PoolObject::log(std::ostream &stream, bool recursive, int indentation,
 size_t PoolObject::deepSize() const {
   return reinterpret_cast<char *>(next()) -
          reinterpret_cast<const char *>(this);
-}
-
-void PoolObject::changeParentIdentifierInChildren(uint16_t id) const {
-  for (PoolObject *c : directChildren()) {
-    c->setParentIdentifier(id);
-  }
 }
 
 }  // namespace Poincare

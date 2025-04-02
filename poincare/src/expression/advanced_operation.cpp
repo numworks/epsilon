@@ -291,12 +291,12 @@ bool AdvancedOperation::ContractMult(Tree* e) {
           KAdd(KA, KMult(-1_e, KB_s, KD_s),
                KMult(KAdd(KMult(KB_s), KMult(KE_s)),
                      KAdd(KMult(KD_s), KMult(KC_s))))) ||
-      /* A? + B?*C + D? + C^2 + F? = (B/2 + C)^2 - B^2/4 + A + D + F
-       * useful to find notable identities, when A = B^2/4 */
+      /* A? + B?*C*D? + E? + C^2 + F? = (BD/2 + C)^2 - (BD)^2/4 + A + E + F
+       * useful to find notable identities, when A + E + F = B^2/4 */
       PatternMatching::MatchReplaceSimplify(
-          e, KAdd(KA_s, KMult(KB_s, KC), KD_s, KPow(KC, 2_e), KF_s),
-          KAdd(KPow(KAdd(KC, KMult(1_e / 2_e, KB_s)), 2_e), KA_s, KD_s, KF_s,
-               KMult(-1_e / 4_e, KPow(KMult(KB_s), 2_e)))) ||
+          e, KAdd(KA_s, KMult(KB_s, KC, KD_s), KE_s, KPow(KC, 2_e), KF_s),
+          KAdd(KPow(KAdd(KC, KMult(1_e / 2_e, KB_s, KD_s)), 2_e), KA_s, KE_s,
+               KF_s, KMult(-1_e / 4_e, KPow(KMult(KB_s, KD_s), 2_e)))) ||
       // A? + B?*C*D? + E? + F?*C*G? + H? = A + C*(B*D+F*G) + E + H
       PatternMatching::MatchReplaceSimplify(
           e,

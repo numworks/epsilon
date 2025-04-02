@@ -77,16 +77,8 @@ void PoolObject::log(std::ostream &stream, bool recursive, int indentation,
 }
 #endif
 
-size_t PoolObject::deepSize(int realNumberOfChildren) const {
-  if (realNumberOfChildren == -1) {
-    return reinterpret_cast<char *>(next()) -
-           reinterpret_cast<const char *>(this);
-  }
-  PoolObject *realNextSibling = next();
-  for (int i = 0; i < realNumberOfChildren; i++) {
-    realNextSibling = realNextSibling->next();
-  }
-  return reinterpret_cast<char *>(realNextSibling) -
+size_t PoolObject::deepSize() const {
+  return reinterpret_cast<char *>(next()) -
          reinterpret_cast<const char *>(this);
 }
 

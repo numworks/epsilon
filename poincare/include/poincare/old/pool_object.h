@@ -65,7 +65,7 @@ class PoolObject {
   uint16_t identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
 #if PCJ_DELETE
-  size_t deepSize(int realNumberOfChildren) const;
+  size_t deepSize() const;
 #endif
   // Ghost
   virtual bool isGhost() const { return false; }

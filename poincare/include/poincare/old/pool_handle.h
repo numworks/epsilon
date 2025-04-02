@@ -6,10 +6,13 @@
 #include "pool.h"
 
 /* TODO: With numberOfChildren being 0, simplify the following methods
- * - PoolObject::deepSize
  * - Pool::removeChildren
  * - Pool::removeChildrenAndDestroy
  * - PoolObject::DepthFirst
+ * - Pool::deepCopy
+ *
+ * Also:
+ * - Clarify difference between size and deepSize
  */
 
 namespace Poincare {

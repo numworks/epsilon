@@ -23,7 +23,7 @@ void Pool::freeIdentifier(uint16_t identifier) {
 }
 
 void Pool::move(PoolObject *destination, PoolObject *source) {
-  size_t moveSize = source->deepSize(0);
+  size_t moveSize = source->deepSize();
   moveNodes(destination, source, moveSize);
 }
 
@@ -33,14 +33,14 @@ void Pool::removeChildren(PoolObject *node, int nodeNumberOfChildren) {
     /* The new child will be put at the address last(), but removed from its
      * previous position, hence the newAddress we use. */
     PoolObject *newAddress =
-        (PoolObject *)((char *)last() - (char *)child->deepSize(0));
+        (PoolObject *)((char *)last() - (char *)child->deepSize());
     move(last(), child);
     newAddress->release();
   }
 }
 
 PoolObject *Pool::deepCopy(PoolObject *node) {
-  size_t size = node->deepSize(-1);
+  size_t size = node->deepSize();
   return copyTreeFromAddress(static_cast<void *>(node), size);
 }
 

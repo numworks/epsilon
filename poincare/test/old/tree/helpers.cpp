@@ -3,7 +3,7 @@
 #include <poincare/old/pool.h>
 #include <quiz.h>
 
-int pool_size() { return Poincare::Pool::sharedPool->numberOfNodes(); }
+int pool_size() { return Poincare::Pool::sharedPool->numberOfObjects(); }
 
 void assert_pool_size(int i) {
 #if POINCARE_TREE_LOG

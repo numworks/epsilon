@@ -16,32 +16,32 @@ OMG::GlobalBox<Pool> Pool::sharedPool;
 
 void Pool::freeIdentifier(uint16_t identifier) {
   if (PoolObject::IsValidIdentifier(identifier) &&
-      identifier < MaxNumberOfNodes) {
-    m_nodeForIdentifierOffset[identifier] = UINT16_MAX;
+      identifier < MaxNumberOfObjects) {
+    m_objectForIdentifierOffset[identifier] = UINT16_MAX;
     m_identifiers.push(identifier);
   }
 }
 
 void Pool::move(PoolObject *destination, PoolObject *source) {
   size_t moveSize = source->deepSize();
-  moveNodes(destination, source, moveSize);
+  moveObjects(destination, source, moveSize);
 }
 
-PoolObject *Pool::deepCopy(PoolObject *node) {
-  size_t size = node->deepSize();
-  return copyTreeFromAddress(static_cast<void *>(node), size);
+PoolObject *Pool::deepCopy(PoolObject *object) {
+  size_t size = object->deepSize();
+  return copyTreeFromAddress(static_cast<void *>(object), size);
 }
 
 PoolObject *Pool::copyTreeFromAddress(const void *address, size_t size) {
   void *ptr = alloc(size);
   memcpy(ptr, address, size);
   PoolObject *copy = reinterpret_cast<PoolObject *>(ptr);
-  renameNode(copy, false);
+  renameObject(copy, false);
   return copy;
 }
 
-void Pool::moveNodes(PoolObject *destination, PoolObject *source,
-                     size_t moveSize) {
+void Pool::moveObjects(PoolObject *destination, PoolObject *source,
+                       size_t moveSize) {
   assert(destination->isAfterTopmostCheckpoint());
   assert(source->isAfterTopmostCheckpoint());
   assert(moveSize % 4 == 0);
@@ -57,7 +57,7 @@ void Pool::moveNodes(PoolObject *destination, PoolObject *source,
   size_t len = moveSize / 4;
 
   if (OMG::Memory::Rotate(dst, src, len)) {
-    updateNodeForIdentifierFromNode(dst < src ? destination : source);
+    updateObjectForIdentifierFromObject(dst < src ? destination : source);
   }
 }
 
@@ -65,8 +65,8 @@ void Pool::moveNodes(PoolObject *destination, PoolObject *source,
 void Pool::flatLog(std::ostream &stream) {
   size_t size = static_cast<char *>(m_cursor) - static_cast<char *>(buffer());
   stream << "<Pool format=\"flat\" size=\"" << size << "\">";
-  for (PoolObject *node : allNodes()) {
-    node->log(stream);
+  for (PoolObject *object : allObjects()) {
+    object->log(stream);
   }
   stream << "</Pool>";
   stream << std::endl;
@@ -75,8 +75,8 @@ void Pool::flatLog(std::ostream &stream) {
 void Pool::treeLog(std::ostream &stream, bool verbose) {
   stream << "<Pool format=\"tree\" size=\"" << (int)(m_cursor - buffer())
          << "\">";
-  for (PoolObject *node : allNodes()) {
-    node->log(stream, 1, verbose);
+  for (PoolObject *object : allObjects()) {
+    object->log(stream, 1, verbose);
   }
   stream << std::endl;
   stream << "</Pool>";
@@ -85,13 +85,13 @@ void Pool::treeLog(std::ostream &stream, bool verbose) {
 
 #endif
 
-int Pool::numberOfNodes() const {
+int Pool::numberOfObjects() const {
   int count = 0;
-  PoolObject *firstNode = first();
-  PoolObject *lastNode = last();
-  while (firstNode != lastNode) {
+  PoolObject *firstObject = first();
+  PoolObject *lastObject = last();
+  while (firstObject != lastObject) {
     count++;
-    firstNode = firstNode->next();
+    firstObject = firstObject->next();
   }
   return count;
 }
@@ -111,59 +111,59 @@ void *Pool::alloc(size_t size) {
   return result;
 }
 
-void Pool::dealloc(PoolObject *node, size_t size) {
-  assert(node->isAfterTopmostCheckpoint());
+void Pool::dealloc(PoolObject *object, size_t size) {
+  assert(object->isAfterTopmostCheckpoint());
 #if ASSERTIONS
   assert(!s_treePoolLocked);
 #endif
 
   size = OMG::Memory::AlignedSize(size, ByteAlignment);
-  char *ptr = reinterpret_cast<char *>(node);
+  char *ptr = reinterpret_cast<char *>(object);
   assert(ptr >= buffer() && ptr < m_cursor);
 
   // Step 1 - Compact the pool
   memmove(ptr, ptr + size, m_cursor - (ptr + size));
   m_cursor -= size;
 
-  // Step 2: Update m_nodeForIdentifierOffset for all nodes downstream
-  updateNodeForIdentifierFromNode(node);
+  // Step 2: Update m_objectForIdentifierOffset for all objects downstream
+  updateObjectForIdentifierFromObject(object);
 }
 
-void Pool::discardPoolObject(PoolObject *node) {
-  uint16_t nodeIdentifier = node->identifier();
-  size_t size = node->size();
-  node->~PoolObject();
-  dealloc(node, size);
-  freeIdentifier(nodeIdentifier);
+void Pool::discardPoolObject(PoolObject *object) {
+  uint16_t objectIdentifier = object->identifier();
+  size_t size = object->size();
+  object->~PoolObject();
+  dealloc(object, size);
+  freeIdentifier(objectIdentifier);
 }
 
-void Pool::registerNode(PoolObject *node) {
-  uint16_t nodeID = node->identifier();
-  assert(nodeID < MaxNumberOfNodes);
-  const int nodeOffset =
-      (((char *)node) - (char *)m_alignedBuffer) / ByteAlignment;
+void Pool::registerObject(PoolObject *object) {
+  uint16_t objectID = object->identifier();
+  assert(objectID < MaxNumberOfObjects);
+  const int objectOffset =
+      (((char *)object) - (char *)m_alignedBuffer) / ByteAlignment;
   // Check that the offset can be stored in a uint16_t
-  assert(nodeOffset < k_maxNodeOffset);
-  m_nodeForIdentifierOffset[nodeID] = nodeOffset;
+  assert(objectOffset < k_maxObjectOffset);
+  m_objectForIdentifierOffset[objectID] = objectOffset;
 }
 
-void Pool::updateNodeForIdentifierFromNode(PoolObject *node) {
-  for (PoolObject *n : Nodes(node)) {
-    registerNode(n);
+void Pool::updateObjectForIdentifierFromObject(PoolObject *object) {
+  for (PoolObject *n : Objects(object)) {
+    registerObject(n);
   }
 }
 
 // Reset IdentifierStack, make all identifiers available
 void Pool::IdentifierStack::reset() {
-  for (uint16_t i = 0; i < MaxNumberOfNodes; i++) {
+  for (uint16_t i = 0; i < MaxNumberOfObjects; i++) {
     m_availableIdentifiers[i] = i;
   }
-  m_currentIndex = MaxNumberOfNodes;
+  m_currentIndex = MaxNumberOfObjects;
 }
 
 void Pool::IdentifierStack::push(uint16_t i) {
   assert(PoolObject::IsValidIdentifier(m_currentIndex) &&
-         m_currentIndex < MaxNumberOfNodes);
+         m_currentIndex < MaxNumberOfObjects);
   m_availableIdentifiers[m_currentIndex++] = i;
 }
 
@@ -172,7 +172,7 @@ uint16_t Pool::IdentifierStack::pop() {
     assert(false);
     return 0;
   }
-  assert(m_currentIndex > 0 && m_currentIndex <= MaxNumberOfNodes);
+  assert(m_currentIndex > 0 && m_currentIndex <= MaxNumberOfObjects);
   return m_availableIdentifiers[--m_currentIndex];
 }
 
@@ -191,30 +191,30 @@ void Pool::IdentifierStack::remove(uint16_t j) {
   assert(false);
 }
 
-// Reset m_nodeForIdentifierOffset for all available identifiers
-void Pool::IdentifierStack::resetNodeForIdentifierOffsets(
-    uint16_t *nodeForIdentifierOffset) const {
+// Reset m_objectForIdentifierOffset for all available identifiers
+void Pool::IdentifierStack::resetObjectForIdentifierOffsets(
+    uint16_t *objectForIdentifierOffset) const {
   for (uint16_t i = 0; i < m_currentIndex; i++) {
-    nodeForIdentifierOffset[m_availableIdentifiers[i]] = UINT16_MAX;
+    objectForIdentifierOffset[m_availableIdentifiers[i]] = UINT16_MAX;
   }
 }
 
-// Discard all nodes after firstNodeToDiscard
-void Pool::freePoolFromNode(PoolObject *firstNodeToDiscard) {
-  assert(firstNodeToDiscard != nullptr);
-  assert(firstNodeToDiscard >= first());
-  assert(firstNodeToDiscard <= last());
+// Discard all objects after firstObjectToDiscard
+void Pool::freePoolFromObject(PoolObject *firstObjectToDiscard) {
+  assert(firstObjectToDiscard != nullptr);
+  assert(firstObjectToDiscard >= first());
+  assert(firstObjectToDiscard <= last());
 
   // Free all identifiers
   m_identifiers.reset();
-  PoolObject *currentNode = first();
-  while (currentNode < firstNodeToDiscard) {
-    m_identifiers.remove(currentNode->identifier());
-    currentNode = currentNode->next();
+  PoolObject *currentObject = first();
+  while (currentObject < firstObjectToDiscard) {
+    m_identifiers.remove(currentObject->identifier());
+    currentObject = currentObject->next();
   }
-  assert(currentNode == firstNodeToDiscard);
-  m_identifiers.resetNodeForIdentifierOffsets(m_nodeForIdentifierOffset);
-  m_cursor = reinterpret_cast<char *>(currentNode);
+  assert(currentObject == firstObjectToDiscard);
+  m_identifiers.resetObjectForIdentifierOffsets(m_objectForIdentifierOffset);
+  m_cursor = reinterpret_cast<char *>(currentObject);
   // TODO: Assert that no tree continues into the discarded pool zone
 }
 

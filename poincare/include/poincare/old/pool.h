@@ -41,13 +41,13 @@ class Pool final {
     return reinterpret_cast<PoolObject *>(m_cursor);
   }
 
-  // Node
-  PoolObject *node(uint16_t identifier) const {
+  // Object
+  PoolObject *object(uint16_t identifier) const {
     assert(PoolObject::IsValidIdentifier(identifier) &&
-           identifier < MaxNumberOfNodes);
-    if (m_nodeForIdentifierOffset[identifier] != UINT16_MAX) {
+           identifier < MaxNumberOfObjects);
+    if (m_objectForIdentifierOffset[identifier] != UINT16_MAX) {
       return const_cast<PoolObject *>(reinterpret_cast<const PoolObject *>(
-          m_alignedBuffer + m_nodeForIdentifierOffset[identifier]));
+          m_alignedBuffer + m_objectForIdentifierOffset[identifier]));
     }
     return nullptr;
   }
@@ -55,7 +55,7 @@ class Pool final {
   // Pool memory
   void *alloc(size_t size);
   void move(PoolObject *destination, PoolObject *source);
-  PoolObject *deepCopy(PoolObject *node);
+  PoolObject *deepCopy(PoolObject *object);
   PoolObject *copyTreeFromAddress(const void *address, size_t size);
 
 #if POINCARE_TREE_LOG
@@ -64,7 +64,7 @@ class Pool final {
   __attribute__((__used__)) void log() { treeLog(std::cout, false); }
   __attribute__((__used__)) void verboseLog() { treeLog(std::cout, true); }
 #endif
-  int numberOfNodes() const;
+  int numberOfObjects() const;
 
  private:
 #ifdef SMALL_POINCARE_POOL
@@ -74,20 +74,23 @@ class Pool final {
    * This can still be increased if needed */
   constexpr static int BufferSize = 32768 + 8192;
 #endif
-  constexpr static int MaxNumberOfNodes = BufferSize / sizeof(PoolObject);
-  constexpr static int k_maxNodeOffset = BufferSize / ByteAlignment;
+  constexpr static int MaxNumberOfObjects = BufferSize / sizeof(PoolObject);
+  constexpr static int k_maxObjectOffset = BufferSize / ByteAlignment;
 #if ASSERTIONS
   static bool s_treePoolLocked;
 #endif
 
   // PoolObject
-  void discardPoolObject(PoolObject *node);
-  void registerNode(PoolObject *node);
-  void unregisterNode(PoolObject *node) { freeIdentifier(node->identifier()); }
-  void updateNodeForIdentifierFromNode(PoolObject *node);
-  void renameNode(PoolObject *node, bool unregisterPreviousIdentifier = true) {
-    assert(node->isAfterTopmostCheckpoint());
-    node->rename(generateIdentifier(), unregisterPreviousIdentifier);
+  void discardPoolObject(PoolObject *object);
+  void registerObject(PoolObject *object);
+  void unregisterObject(PoolObject *object) {
+    freeIdentifier(object->identifier());
+  }
+  void updateObjectForIdentifierFromObject(PoolObject *object);
+  void renameObject(PoolObject *object,
+                    bool unregisterPreviousIdentifier = true) {
+    assert(object->isAfterTopmostCheckpoint());
+    object->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
 
   // Iterators
@@ -99,33 +102,36 @@ class Pool final {
   }
   class Iterator {
    public:
-    Iterator(const PoolObject *node) : m_node(const_cast<PoolObject *>(node)) {}
-    PoolObject *operator*() { return m_node; }
+    Iterator(const PoolObject *object)
+        : m_object(const_cast<PoolObject *>(object)) {}
+    PoolObject *operator*() { return m_object; }
     Iterator &operator++() {
-      m_node = m_node->next();
+      m_object = m_object->next();
       return *this;
     }
-    bool operator!=(const Iterator &it) const { return (m_node != it.m_node); }
+    bool operator!=(const Iterator &it) const {
+      return (m_object != it.m_object);
+    }
 
    protected:
-    PoolObject *m_node;
+    PoolObject *m_object;
   };
 
-  class Nodes final {
+  class Objects final {
    public:
-    Nodes(PoolObject *node) : m_node(node) {}
-    Iterator begin() const { return Iterator(m_node); }
+    Objects(PoolObject *object) : m_object(object) {}
+    Iterator begin() const { return Iterator(m_object); }
     Iterator end() const { return Iterator(Pool::sharedPool->last()); }
 
    private:
-    PoolObject *m_node;
+    PoolObject *m_object;
   };
-  Nodes allNodes() { return Nodes(first()); }
+  Objects allObjects() { return Objects(first()); }
 
   // Pool memory
   void dealloc(PoolObject *ptr, size_t size);
-  void moveNodes(PoolObject *destination, PoolObject *source,
-                 size_t moveLength);
+  void moveObjects(PoolObject *destination, PoolObject *source,
+                   size_t moveLength);
 
   // Identifiers
   uint16_t generateIdentifier() { return m_identifiers.pop(); }
@@ -138,29 +144,30 @@ class Pool final {
     void push(uint16_t i);
     uint16_t pop();
     void remove(uint16_t j);
-    void resetNodeForIdentifierOffsets(uint16_t *nodeForIdentifierOffset) const;
+    void resetObjectForIdentifierOffsets(
+        uint16_t *objectForIdentifierOffset) const;
 
    private:
     uint16_t m_currentIndex;
-    uint16_t m_availableIdentifiers[MaxNumberOfNodes];
-    static_assert(MaxNumberOfNodes < INT16_MAX &&
+    uint16_t m_availableIdentifiers[MaxNumberOfObjects];
+    static_assert(MaxNumberOfObjects < INT16_MAX &&
                       sizeof(m_availableIdentifiers[0]) == sizeof(uint16_t),
-                  "Tree node identifiers do not have the right data size.");
+                  "Tree object identifiers do not have the right data size.");
   };
 
-  void freePoolFromNode(PoolObject *firstNodeToDiscard);
+  void freePoolFromObject(PoolObject *firstObjectToDiscard);
 
   char *buffer() { return reinterpret_cast<char *>(m_alignedBuffer); }
   const char *constBuffer() const {
     return reinterpret_cast<const char *>(m_alignedBuffer);
   }
-  AlignedNodeBuffer m_alignedBuffer[BufferSize / ByteAlignment];
+  AlignedObjectBuffer m_alignedBuffer[BufferSize / ByteAlignment];
   char *m_cursor;
   IdentifierStack m_identifiers;
-  uint16_t m_nodeForIdentifierOffset[MaxNumberOfNodes];
-  static_assert(k_maxNodeOffset < UINT16_MAX &&
-                    sizeof(m_nodeForIdentifierOffset[0]) == sizeof(uint16_t),
-                "The tree pool node offsets in m_nodeForIdentifierOffset "
+  uint16_t m_objectForIdentifierOffset[MaxNumberOfObjects];
+  static_assert(k_maxObjectOffset < UINT16_MAX &&
+                    sizeof(m_objectForIdentifierOffset[0]) == sizeof(uint16_t),
+                "The tree pool object offsets in m_objectForIdentifierOffset "
                 "cannot be written with the chosen data size (uint16_t)");
 };
 

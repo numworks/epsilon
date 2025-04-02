@@ -451,7 +451,7 @@ a->removeTree();
 ## How to track Trees in the TreeStack ?
 
 A **`TreeRef`** is a smart pointer used to track a `Tree` as it moves inside the
-`TreeStack`. It is not needed in the `Pool` since nodes cannot be edited there.
+`TreeStack`. It is not needed in the `Pool` since objects cannot be edited there.
 
 For this purpose, the `TreeStack` owns a table of all the alive `TreeRef` and
 updates each of them after each modification of a `Tree` inside the `TreeStack`. For this

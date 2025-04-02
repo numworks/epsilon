@@ -4,9 +4,9 @@
 #include <poincare/old/pool_handle.h>
 #include <quiz.h>
 
-#include "blob_node.h"
+#include "blob_object.h"
 #include "helpers.h"
-#include "pair_node.h"
+#include "pair_object.h"
 
 using namespace Poincare;
 

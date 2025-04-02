@@ -79,7 +79,7 @@ class ExpressionObject final : public PoolObject {
   // PoolObject
   size_t size() const override;
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream& stream) const override {
+  void logObjectName(std::ostream& stream) const override {
     stream << "Expression";
   }
   void logAttributes(std::ostream& stream) const override;
@@ -174,7 +174,7 @@ class Expression : public PoolHandle {
                     Context* context = nullptr) const;
 
   ExpressionObject* object() const {
-    assert(identifier() != PoolObject::NoNodeIdentifier &&
+    assert(identifier() != PoolObject::NoObjectIdentifier &&
            !PoolHandle::object()->isGhost());
     return static_cast<ExpressionObject*>(PoolHandle::object());
   }

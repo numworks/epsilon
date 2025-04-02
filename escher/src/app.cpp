@@ -10,7 +10,7 @@ namespace Escher {
 void App::Snapshot::pack(App* app) {
   tidy();
   app->~App();
-  assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
+  assert(Poincare::Pool::sharedPool->numberOfObjects() == 0);
 }
 
 bool App::processEvent(Ion::Events::Event event) {

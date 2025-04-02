@@ -10,14 +10,14 @@ namespace Poincare {
 
 PoolHandle PoolHandle::clone() const {
   assert(!isUninitialized());
-  PoolObject *nodeCopy = Pool::sharedPool->deepCopy(object());
-  return PoolHandle(nodeCopy);
+  PoolObject *objectCopy = Pool::sharedPool->deepCopy(object());
+  return PoolHandle(objectCopy);
 }
 
 /* Hierarchy operations */
 PoolObject *PoolHandle::object() const {
-  assert(hasNode(m_identifier));
-  return Pool::sharedPool->node(m_identifier);
+  assert(hasObject(m_identifier));
+  return Pool::sharedPool->object(m_identifier);
 }
 
 size_t PoolHandle::size() const { return object()->deepSize(); }
@@ -33,24 +33,24 @@ void PoolHandle::log() const {
 
 /* Private */
 
-PoolHandle::PoolHandle(const PoolObject *node) : PoolHandle() {
-  if (node != nullptr) {
-    setIdentifierAndRetain(node->identifier());
+PoolHandle::PoolHandle(const PoolObject *object) : PoolHandle() {
+  if (object != nullptr) {
+    setIdentifierAndRetain(object->identifier());
   }
 }
 
 template <class U>
 PoolHandle PoolHandle::Builder() {
-  void *bufferNode = Pool::sharedPool->alloc(sizeof(U));
-  U *node = new (bufferNode) U();
-  return PoolHandle::Build(node);
+  void *bufferObject = Pool::sharedPool->alloc(sizeof(U));
+  U *object = new (bufferObject) U();
+  return PoolHandle::Build(object);
 }
 
-PoolHandle PoolHandle::Build(PoolObject *node) {
-  assert(node != nullptr);
-  uint16_t nodeIdentifier = Pool::sharedPool->generateIdentifier();
-  node->rename(nodeIdentifier, false);
-  return PoolHandle(node);
+PoolHandle PoolHandle::Build(PoolObject *object) {
+  assert(object != nullptr);
+  uint16_t objectIdentifier = Pool::sharedPool->generateIdentifier();
+  object->rename(objectIdentifier, false);
+  return PoolHandle(object);
 }
 
 void PoolHandle::setIdentifierAndRetain(uint16_t newId) {
@@ -72,17 +72,17 @@ void PoolHandle::setTo(const PoolHandle &tr) {
 }
 
 void PoolHandle::release(uint16_t identifier) {
-  if (!hasNode(identifier)) {
+  if (!hasObject(identifier)) {
     return;
   }
-  PoolObject *node = Pool::sharedPool->node(identifier);
-  if (node == nullptr) {
-    /* The identifier is valid, but not the node: there must have been an
+  PoolObject *object = Pool::sharedPool->object(identifier);
+  if (object == nullptr) {
+    /* The identifier is valid, but not the object: there must have been an
      * exception that deleted the pool. */
     return;
   }
-  assert(node->identifier() == identifier);
-  node->release();
+  assert(object->identifier() == identifier);
+  object->release();
 }
 
 }  // namespace Poincare

@@ -4,7 +4,7 @@
 
 namespace Poincare {
 
-// Node operations
+// Object operations
 
 void PoolObject::release() {
   if (!isAfterTopmostCheckpoint()) {
@@ -22,13 +22,13 @@ void PoolObject::rename(uint16_t identifier,
                         bool unregisterPreviousIdentifier) {
   if (unregisterPreviousIdentifier) {
     /* The previous identifier should not always be unregistered. For instance,
-     * if the node is a clone and still has the original node's identifier,
-     * unregistering it would lose the access to the original node. */
-    Pool::sharedPool->unregisterNode(this);
+     * if the object is a clone and still has the original object's identifier,
+     * unregistering it would lose the access to the original object. */
+    Pool::sharedPool->unregisterObject(this);
   }
   m_identifier = identifier;
   m_referenceCounter = 0;
-  Pool::sharedPool->registerNode(this);
+  Pool::sharedPool->registerObject(this);
 }
 
 // Protected
@@ -40,7 +40,7 @@ void PoolObject::log(std::ostream &stream, int indentation, bool verbose) {
     stream << "  ";
   }
   stream << "<";
-  logNodeName(stream);
+  logObjectName(stream);
   if (verbose) {
     stream << " id=\"" << m_identifier << "\"";
     stream << " refCount=\"" << (int16_t)m_referenceCounter << "\"";
@@ -54,7 +54,7 @@ void PoolObject::log(std::ostream &stream, int indentation, bool verbose) {
       stream << "  ";
     }
     stream << "</";
-    logNodeName(stream);
+    logObjectName(stream);
     stream << ">";
   } else {
     stream << "/>";

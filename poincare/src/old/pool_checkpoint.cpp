@@ -21,7 +21,7 @@ void PoolCheckpoint::protectedDiscard() const {
 
 void PoolCheckpoint::rollback() const {
   Internal::TreeStack::SharedTreeStack->flush();
-  Pool::sharedPool->freePoolFromNode(m_endOfPool);
+  Pool::sharedPool->freePoolFromObject(m_endOfPool);
 }
 
 void PoolCheckpoint::rollbackException() {

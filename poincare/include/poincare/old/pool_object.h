@@ -19,32 +19,32 @@
  *  - a reference counter
  */
 
-/* CAUTION: To make node operations faster, the pool needs all addresses and
- * sizes of PoolObjects to be a multiple of 4. */
+/* CAUTION: To make operations faster, the pool needs all addresses and sizes of
+ * PoolObjects to be a multiple of 4. */
 
 namespace Poincare {
 
 #if __EMSCRIPTEN__
 /* Emscripten memory representation assumes loads and stores are aligned.
- * Because the Pool buffer is going to store double values, Node addresses
+ * Because the Pool buffer is going to store double values, Object addresses
  * have to be aligned on 8 bytes (provided that emscripten addresses are 8 bytes
  * long which ensures that v-tables are also aligned). */
-typedef uint64_t AlignedNodeBuffer;
+typedef uint64_t AlignedObjectBuffer;
 #else
 /* Memory copies are done quicker on 4 bytes aligned data. We force the Pool
  * to allocate 4-byte aligned range to leverage this. */
-typedef uint32_t AlignedNodeBuffer;
+typedef uint32_t AlignedObjectBuffer;
 #endif
-constexpr static int ByteAlignment = sizeof(AlignedNodeBuffer);
+constexpr static int ByteAlignment = sizeof(AlignedObjectBuffer);
 
 class PoolObject {
   friend class Pool;
 
  public:
-  constexpr static uint16_t NoNodeIdentifier = -2;
+  constexpr static uint16_t NoObjectIdentifier = -2;
   // Used for Integer
   constexpr static uint16_t OverflowIdentifier =
-      PoolObject::NoNodeIdentifier + 1;
+      PoolObject::NoObjectIdentifier + 1;
 
   // Constructor and destructor
   virtual ~PoolObject() {}
@@ -58,7 +58,7 @@ class PoolObject {
   // Ghost
   virtual bool isGhost() const { return false; }
 
-  // Node operations
+  // Object operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }
   /* Do not increase reference counters outside of the current checkpoint since
    * they won't be decreased if an exception is raised.
@@ -95,7 +95,7 @@ class PoolObject {
   }
 
 #if POINCARE_TREE_LOG
-  virtual void logNodeName(std::ostream &stream) const = 0;
+  virtual void logObjectName(std::ostream &stream) const = 0;
   virtual void logAttributes(std::ostream &stream) const {}
   void log(std::ostream &stream, int indentation = 0, bool verbose = true);
   void log() {
@@ -104,10 +104,10 @@ class PoolObject {
   }
 #endif
 
-  static bool IsValidIdentifier(uint16_t id) { return id < NoNodeIdentifier; }
+  static bool IsValidIdentifier(uint16_t id) { return id < NoObjectIdentifier; }
 
  protected:
-  PoolObject() : m_identifier(NoNodeIdentifier), m_referenceCounter(0) {}
+  PoolObject() : m_identifier(NoObjectIdentifier), m_referenceCounter(0) {}
 
  private:
   uint16_t m_identifier;

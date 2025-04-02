@@ -9,7 +9,7 @@ void flushGlobalData() {
    * here, unifomize expectations. */
 
   flushGlobalDataNoPool();
-  quiz_assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
+  quiz_assert(Poincare::Pool::sharedPool->numberOfObjects() == 0);
 }
 
 void exception_run(void (*inner_main)(const char*, const char*, const char*),

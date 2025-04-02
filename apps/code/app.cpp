@@ -137,7 +137,7 @@ bool App::textInputDidReceiveEvent(EditableField* textInput,
 void App::initPythonWithUser(const void* pythonUser) {
   if (!m_pythonUser) {
     /* The Poincare Pool and TreeStack are used as an extension of the heap. */
-    assert(Poincare::Pool::sharedPool->numberOfNodes() == 0);
+    assert(Poincare::Pool::sharedPool->numberOfObjects() == 0);
     Poincare::Pool::sharedPool.deinit();
     assert(Poincare::Internal::TreeStack::SharedTreeStack->size() == 0);
     Poincare::Internal::TreeStack::SharedTreeStack.deinit();

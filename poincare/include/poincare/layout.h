@@ -32,7 +32,9 @@ class LayoutObject final : public PoolObject,
   // PoolObject
   size_t size() const override;
 #if POINCARE_TREE_LOG
-  void logNodeName(std::ostream& stream) const override { stream << "Layout"; }
+  void logObjectName(std::ostream& stream) const override {
+    stream << "Layout";
+  }
   void logAttributes(std::ostream& stream) const override;
 #endif
 

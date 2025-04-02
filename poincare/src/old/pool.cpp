@@ -27,18 +27,6 @@ void Pool::move(PoolObject *destination, PoolObject *source) {
   moveNodes(destination, source, moveSize);
 }
 
-void Pool::removeChildren(PoolObject *node, int nodeNumberOfChildren) {
-  for (int i = 0; i < nodeNumberOfChildren; i++) {
-    PoolObject *child = node->next();
-    /* The new child will be put at the address last(), but removed from its
-     * previous position, hence the newAddress we use. */
-    PoolObject *newAddress =
-        (PoolObject *)((char *)last() - (char *)child->deepSize());
-    move(last(), child);
-    newAddress->release();
-  }
-}
-
 PoolObject *Pool::deepCopy(PoolObject *node) {
   size_t size = node->deepSize();
   return copyTreeFromAddress(static_cast<void *>(node), size);
@@ -54,12 +42,6 @@ PoolObject *Pool::copyTreeFromAddress(const void *address, size_t size) {
     child->retain();
   }
   return copy;
-}
-
-void Pool::removeChildrenAndDestroy(PoolObject *nodeToDestroy,
-                                    int nodeNumberOfChildren) {
-  removeChildren(nodeToDestroy, nodeNumberOfChildren);
-  discardPoolObject(nodeToDestroy);
 }
 
 void Pool::moveNodes(PoolObject *destination, PoolObject *source,

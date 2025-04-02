@@ -15,7 +15,7 @@ void PoolObject::release() {
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     deleteParentIdentifierInChildren();
-    Pool::sharedPool->removeChildrenAndDestroy(this, 0);
+    Pool::sharedPool->discardPoolObject(this);
   }
 }
 

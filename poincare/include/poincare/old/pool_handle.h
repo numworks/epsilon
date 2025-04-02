@@ -6,10 +6,9 @@
 #include "pool.h"
 
 /* TODO: With numberOfChildren being 0, simplify the following methods
- * - Pool::removeChildren
- * - Pool::removeChildrenAndDestroy
  * - PoolObject::DepthFirst
  * - Pool::deepCopy
+ * - PoolObject::deleteParentIdentifierInChildren
  *
  * Also:
  * - Clarify difference between size and deepSize

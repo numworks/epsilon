@@ -58,11 +58,6 @@ class Pool final {
   // Pool memory
   void *alloc(size_t size);
   void move(PoolObject *destination, PoolObject *source);
-#if PCJ_DELETE
-  void removeChildren(PoolObject *node, int nodeNumberOfChildren);
-  void removeChildrenAndDestroy(PoolObject *nodeToDestroy,
-                                int nodeNumberOfChildren);
-#endif
   PoolObject *deepCopy(PoolObject *node);
   PoolObject *copyTreeFromAddress(const void *address, size_t size);
 

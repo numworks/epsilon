@@ -11,7 +11,6 @@ namespace Poincare {
 PoolHandle PoolHandle::clone() const {
   assert(!isUninitialized());
   PoolObject *nodeCopy = Pool::sharedPool->deepCopy(object());
-  nodeCopy->deleteParentIdentifier();
   return PoolHandle(nodeCopy);
 }
 

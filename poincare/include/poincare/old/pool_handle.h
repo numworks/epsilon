@@ -86,12 +86,6 @@ class PoolHandle {
            (object() == nullptr || object() >= treePoolCursor);
   }
 
-/* Hierarchy */
-#if PCJ_DELETE
-  void setParentIdentifier(uint16_t id) { object()->setParentIdentifier(id); }
-  void deleteParentIdentifier() { object()->deleteParentIdentifier(); }
-#endif
-
   /* Logging */
 #if POINCARE_TREE_LOG
   void log() const;

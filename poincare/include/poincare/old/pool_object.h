@@ -16,7 +16,6 @@
 /* What's in a PoolObject, really?
  *  - a vtable pointer
  *  - an identifier
- *  - a parent identifier
  *  - a reference counter
  */
 
@@ -55,11 +54,7 @@ class PoolObject {
   virtual ~PoolObject() {}
   typedef PoolObject *(*const Initializer)(void *);
 
-// Attributes
-#if PCJ_DELETE
-  void setParentIdentifier(uint16_t parentID) { m_parentIdentifier = parentID; }
-  void deleteParentIdentifier() { m_parentIdentifier = NoNodeIdentifier; }
-#endif
+  // Attributes
   virtual size_t size() const = 0;
   uint16_t identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
@@ -131,16 +126,10 @@ class PoolObject {
   static bool IsValidIdentifier(uint16_t id) { return id < NoNodeIdentifier; }
 
  protected:
-  PoolObject()
-      : m_identifier(NoNodeIdentifier),
-        m_parentIdentifier(NoNodeIdentifier),
-        m_referenceCounter(0) {}
+  PoolObject() : m_identifier(NoNodeIdentifier), m_referenceCounter(0) {}
 
  private:
   uint16_t m_identifier;
-#if PCJ_DELETE
-  uint16_t m_parentIdentifier;
-#endif
   int8_t m_referenceCounter;
 };
 

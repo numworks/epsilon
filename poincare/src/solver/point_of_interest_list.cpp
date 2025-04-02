@@ -86,7 +86,7 @@ Expression PointsOfInterestList::BuildStash(Provider provider,
   {
     ExceptionCheckpoint ecp;
     if (ExceptionRun(ecp)) {
-      Internal::Tree* stash;
+      Internal::Tree* stash = nullptr;
       {
         using namespace Internal;
         ExceptionTry {
@@ -119,7 +119,7 @@ Expression PointsOfInterestList::BuildStash(Provider provider,
 bool PointsOfInterestList::merge(Expression& stash) {
   assert(!stash.isUninitialized());
   // Merge list and stash together in the stack.
-  Internal::Tree* stackedList;
+  Internal::Tree* stackedList = nullptr;
   {
     using namespace Internal;
     ExceptionTry {

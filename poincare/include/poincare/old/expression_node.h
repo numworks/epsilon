@@ -12,6 +12,8 @@
 
 namespace Poincare {
 
+static_assert(false, "This file is unused and should not be included.");
+
 /* Methods preceded by '*!*' interfere with the expression pool, which can make
  * 'this' outdated. They should only be called in a wrapper on OExpression. */
 

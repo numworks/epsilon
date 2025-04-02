@@ -17,6 +17,8 @@
 
 namespace Poincare {
 
+static_assert(false, "This file is unused and should not be included.");
+
 class Context;
 
 class OExpression : public PoolHandle {

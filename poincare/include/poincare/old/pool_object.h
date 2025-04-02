@@ -24,10 +24,6 @@
 
 namespace Poincare {
 
-/* TODO_PCJ: This marks methods that are bound to be removed with new Poincare
- * Indeed, PoolObject will no longer be related, or have parents, or children.*/
-#define PCJ_DELETE 1
-
 #if __EMSCRIPTEN__
 /* Emscripten memory representation assumes loads and stores are aligned.
  * Because the Pool buffer is going to store double values, Node addresses
@@ -58,9 +54,7 @@ class PoolObject {
   virtual size_t size() const = 0;
   uint16_t identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
-#if PCJ_DELETE
   size_t deepSize() const;
-#endif
   // Ghost
   virtual bool isGhost() const { return false; }
 
@@ -90,8 +84,7 @@ class PoolObject {
     return this >= PoolCheckpoint::TopmostEndOfPool();
   }
 
-// Hierarchy
-#if PCJ_DELETE
+  // Hierarchy
   template <typename T>
   class Iterator {
    public:
@@ -102,7 +95,6 @@ class PoolObject {
    protected:
     T *m_node;
   };
-#endif
 
   PoolObject *next() const {
     /* Simple version would be "return this + 1;", with pointer arithmetics

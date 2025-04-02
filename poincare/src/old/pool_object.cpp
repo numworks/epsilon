@@ -18,8 +18,8 @@ void PoolObject::release() {
   }
 }
 
-void PoolObject::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
-                        bool skipChildrenUpdate) {
+void PoolObject::rename(uint16_t identifier,
+                        bool unregisterPreviousIdentifier) {
   if (unregisterPreviousIdentifier) {
     /* The previous identifier should not always be unregistered. For instance,
      * if the node is a clone and still has the original node's identifier,
@@ -34,8 +34,7 @@ void PoolObject::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
 // Protected
 
 #if POINCARE_TREE_LOG
-void PoolObject::log(std::ostream &stream, bool recursive, int indentation,
-                     bool verbose) {
+void PoolObject::log(std::ostream &stream, int indentation, bool verbose) {
   stream << "\n";
   for (int i = 0; i < indentation; ++i) {
     stream << "  ";

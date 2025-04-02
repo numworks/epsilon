@@ -50,7 +50,7 @@ PoolHandle PoolHandle::Builder() {
 PoolHandle PoolHandle::Build(PoolObject *node) {
   assert(node != nullptr);
   uint16_t nodeIdentifier = Pool::sharedPool->generateIdentifier();
-  node->rename(nodeIdentifier, false, true);
+  node->rename(nodeIdentifier, false);
   return PoolHandle(node);
 }
 

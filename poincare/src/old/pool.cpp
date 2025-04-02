@@ -66,7 +66,7 @@ void Pool::flatLog(std::ostream &stream) {
   size_t size = static_cast<char *>(m_cursor) - static_cast<char *>(buffer());
   stream << "<Pool format=\"flat\" size=\"" << size << "\">";
   for (PoolObject *node : allNodes()) {
-    node->log(stream, false);
+    node->log(stream);
   }
   stream << "</Pool>";
   stream << std::endl;
@@ -76,7 +76,7 @@ void Pool::treeLog(std::ostream &stream, bool verbose) {
   stream << "<Pool format=\"tree\" size=\"" << (int)(m_cursor - buffer())
          << "\">";
   for (PoolObject *node : roots()) {
-    node->log(stream, true, 1, verbose);
+    node->log(stream, 1, verbose);
   }
   stream << std::endl;
   stream << "</Pool>";

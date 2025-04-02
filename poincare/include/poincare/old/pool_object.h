@@ -89,8 +89,7 @@ class PoolObject {
    * */
   void retain() { m_referenceCounter += isAfterTopmostCheckpoint(); }
   void release();
-  void rename(uint16_t identifier, bool unregisterPreviousIdentifier,
-              bool skipChildrenUpdate = false);
+  void rename(uint16_t identifier, bool unregisterPreviousIdentifier);
 
   // PoolCheckpoint
   bool isAfterTopmostCheckpoint() const {
@@ -131,8 +130,7 @@ class PoolObject {
 #if POINCARE_TREE_LOG
   virtual void logNodeName(std::ostream &stream) const = 0;
   virtual void logAttributes(std::ostream &stream) const {}
-  void log(std::ostream &stream, bool recursive = true, int indentation = 0,
-           bool verbose = true);
+  void log(std::ostream &stream, int indentation = 0, bool verbose = true);
   void log() {
     log(std::cout);
     std::cout << std::endl;

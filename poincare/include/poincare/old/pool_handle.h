@@ -7,8 +7,6 @@
 
 /* TODO: With numberOfChildren being 0, simplify the following methods
  * - Pool::deepCopy
- * - PoolObject::log (recursive parameter)
- * - PoolObject::rename (skipChildrenUpdate parameter)
  *
  * Also:
  * - Clarify difference between size and deepSize

@@ -174,8 +174,7 @@ class Expression : public PoolHandle {
                     Context* context = nullptr) const;
 
   ExpressionObject* object() const {
-    assert(identifier() != PoolObject::NoObjectIdentifier &&
-           !PoolHandle::object()->isGhost());
+    assert(identifier() != PoolObject::NoObjectIdentifier);
     return static_cast<ExpressionObject*>(PoolHandle::object());
   }
 

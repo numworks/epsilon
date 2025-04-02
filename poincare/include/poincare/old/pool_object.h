@@ -55,8 +55,6 @@ class PoolObject {
   uint16_t identifier() const { return m_identifier; }
   int retainCount() const { return m_referenceCounter; }
   size_t deepSize() const;
-  // Ghost
-  virtual bool isGhost() const { return false; }
 
   // Object operations
   void setReferenceCounter(int refCount) { m_referenceCounter = refCount; }

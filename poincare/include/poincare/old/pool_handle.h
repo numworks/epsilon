@@ -71,7 +71,6 @@ class PoolHandle {
   size_t size() const;
   void* addressInPool() const { return reinterpret_cast<void*>(object()); }
 
-  bool isGhost() const { return object()->isGhost(); }
   bool isUninitialized() const {
     return m_identifier == PoolObject::NoObjectIdentifier;
   }

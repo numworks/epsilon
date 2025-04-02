@@ -74,14 +74,12 @@ class Layout final : public PoolHandle {
   }
 
   const LayoutObject* operator->() const {
-    assert(isUninitialized() ||
-           (PoolHandle::object() && !PoolHandle::object()->isGhost()));
+    assert(isUninitialized() || (PoolHandle::object()));
     return static_cast<const LayoutObject*>(PoolHandle::object());
   }
 
   LayoutObject* operator->() {
-    assert(isUninitialized() ||
-           (PoolHandle::object() && !PoolHandle::object()->isGhost()));
+    assert(isUninitialized() || (PoolHandle::object()));
     return static_cast<LayoutObject*>(PoolHandle::object());
   }
 

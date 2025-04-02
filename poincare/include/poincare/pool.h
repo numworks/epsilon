@@ -67,7 +67,6 @@ class Pool final {
   // Pool memory
   void* alloc(size_t size);
   void move(PoolObject* destination, PoolObject* source);
-  PoolObject* deepCopy(PoolObject* object);
   PoolObject* copyTreeFromAddress(const void* address, size_t size);
 
 #if POINCARE_TREE_LOG

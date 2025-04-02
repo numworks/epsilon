@@ -10,7 +10,9 @@ namespace Poincare {
 
 PoolHandle PoolHandle::clone() const {
   assert(!isUninitialized());
-  PoolObject* objectCopy = Pool::sharedPool->deepCopy(object());
+  PoolObject* objectSource = object();
+  PoolObject* objectCopy = Pool::sharedPool->copyTreeFromAddress(
+      static_cast<void*>(objectSource), objectSource->size());
   return PoolHandle(objectCopy);
 }
 

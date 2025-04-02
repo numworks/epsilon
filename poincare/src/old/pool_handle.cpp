@@ -1,5 +1,4 @@
 #include <omg/memory.h>
-#include <poincare/old/ghost.h>
 #include <poincare/old/pool_handle.h>
 #if POINCARE_TREE_LOG
 #include <iostream>
@@ -53,20 +52,11 @@ PoolHandle PoolHandle::Builder() {
 PoolHandle PoolHandle::BuildWithGhostChildren(PoolObject *node) {
   assert(node != nullptr);
   Pool *pool = Pool::sharedPool;
-  int expectedNumberOfChildren = node->numberOfChildren();
+  assert(node->numberOfChildren() == 0);
   /* Ensure the pool is syntaxically correct by creating ghost children for
    * nodes that have a fixed, non-zero number of children. */
   uint16_t nodeIdentifier = pool->generateIdentifier();
   node->rename(nodeIdentifier, false, true);
-  for (int i = 0; i < expectedNumberOfChildren; i++) {
-    GhostNode *ghost = new (pool->alloc(sizeof(GhostNode))) GhostNode();
-    ghost->rename(pool->generateIdentifier(), false);
-    ghost->setParentIdentifier(nodeIdentifier);
-    ghost->retain();
-    assert((char *)ghost ==
-           (char *)node->next() +
-               i * OMG::Memory::AlignedSize(sizeof(GhostNode), ByteAlignment));
-  }
   return PoolHandle(node);
 }
 

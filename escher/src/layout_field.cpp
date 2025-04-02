@@ -312,8 +312,8 @@ bool LayoutField::insertText(const char* text, bool indentation,
     return false;
   }
   // Do not enter parentheses of expression that take no argument like random()
-  forceCursorRightOfText =
-      forceCursorRightOfText || resultExpression.numberOfChildren() == 0;
+  forceCursorRightOfText = forceCursorRightOfText ||
+                           resultExpression.tree()->numberOfChildren() == 0;
 
   /* If the inserted layout is of the form "function()", we want to make
    * the right parenthesis temporary to insert "function(".

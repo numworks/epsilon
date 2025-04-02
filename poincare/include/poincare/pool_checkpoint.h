@@ -35,34 +35,34 @@ class PoolCheckpoint {
   friend class ExceptionCheckpoint;
 
  public:
-  static PoolObject *TopmostEndOfPool() {
+  static PoolObject* TopmostEndOfPool() {
     return s_topmost ? s_topmost->m_endOfPool : nullptr;
   }
 
   PoolCheckpoint();
-  PoolCheckpoint(const PoolCheckpoint &) = delete;
+  PoolCheckpoint(const PoolCheckpoint&) = delete;
   virtual ~PoolCheckpoint() {
     assert(Poincare::Internal::TreeStack::SharedTreeStack->size() == 0);
     protectedDiscard();
   }
-  PoolCheckpoint &operator=(const PoolCheckpoint &) = delete;
+  PoolCheckpoint& operator=(const PoolCheckpoint&) = delete;
 
-  PoolObject *const endOfPoolBeforeCheckpoint() { return m_endOfPool; }
+  PoolObject* const endOfPoolBeforeCheckpoint() { return m_endOfPool; }
 
   virtual void discard() const { protectedDiscard(); }
 
  protected:
-  static PoolCheckpoint *s_topmost;
+  static PoolCheckpoint* s_topmost;
 
   void rollback() const;
   void protectedDiscard() const;
 
-  PoolCheckpoint *const m_parent;
+  PoolCheckpoint* const m_parent;
 
  private:
   virtual void rollbackException();
 
-  PoolObject *const m_endOfPool;
+  PoolObject* const m_endOfPool;
 };
 
 }  // namespace Poincare

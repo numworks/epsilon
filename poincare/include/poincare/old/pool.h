@@ -57,8 +57,7 @@ class Pool final {
 
   // Pool memory
   void *alloc(size_t size);
-  void move(PoolObject *destination, PoolObject *source,
-            int realNumberOfSourceChildren);
+  void move(PoolObject *destination, PoolObject *source);
 #if PCJ_DELETE
   void removeChildren(PoolObject *node, int nodeNumberOfChildren);
   void removeChildrenAndDestroy(PoolObject *nodeToDestroy,

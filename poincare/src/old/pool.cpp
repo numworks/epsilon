@@ -22,9 +22,8 @@ void Pool::freeIdentifier(uint16_t identifier) {
   }
 }
 
-void Pool::move(PoolObject *destination, PoolObject *source,
-                int realNumberOfSourceChildren) {
-  size_t moveSize = source->deepSize(realNumberOfSourceChildren);
+void Pool::move(PoolObject *destination, PoolObject *source) {
+  size_t moveSize = source->deepSize(0);
   moveNodes(destination, source, moveSize);
 }
 
@@ -35,7 +34,7 @@ void Pool::removeChildren(PoolObject *node, int nodeNumberOfChildren) {
      * previous position, hence the newAddress we use. */
     PoolObject *newAddress =
         (PoolObject *)((char *)last() - (char *)child->deepSize(0));
-    move(last(), child, 0);
+    move(last(), child);
     newAddress->release();
   }
 }

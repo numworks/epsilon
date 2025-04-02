@@ -88,7 +88,7 @@ class PoolObject {
    * towards it.
    * */
   void retain() { m_referenceCounter += isAfterTopmostCheckpoint(); }
-  void release(int currentNumberOfChildren);
+  void release();
   void rename(uint16_t identifier, bool unregisterPreviousIdentifier,
               bool skipChildrenUpdate = false);
 

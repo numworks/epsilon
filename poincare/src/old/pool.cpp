@@ -36,7 +36,7 @@ void Pool::removeChildren(PoolObject *node, int nodeNumberOfChildren) {
     PoolObject *newAddress =
         (PoolObject *)((char *)last() - (char *)child->deepSize(0));
     move(last(), child, 0);
-    newAddress->release(0);
+    newAddress->release();
   }
 }
 

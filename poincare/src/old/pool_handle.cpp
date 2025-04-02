@@ -86,7 +86,7 @@ void PoolHandle::release(uint16_t identifier) {
     return;
   }
   assert(node->identifier() == identifier);
-  node->release(0);
+  node->release();
 }
 
 }  // namespace Poincare

@@ -6,9 +6,9 @@
 #include "pool.h"
 
 /* TODO: With numberOfChildren being 0, simplify the following methods
- * - PoolObject::release
  * - PoolObject::deepSize
  * - Pool::removeChildren
+ * - Pool::removeChildrenAndDestroy
  */
 
 namespace Poincare {

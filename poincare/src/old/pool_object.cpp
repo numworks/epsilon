@@ -6,7 +6,7 @@ namespace Poincare {
 
 // Node operations
 
-void PoolObject::release(int currentNumberOfChildren) {
+void PoolObject::release() {
   if (!isAfterTopmostCheckpoint()) {
     /* Do not decrease reference counters outside of the current checkpoint
      * since they were not increased. */
@@ -15,7 +15,7 @@ void PoolObject::release(int currentNumberOfChildren) {
   m_referenceCounter--;
   if (m_referenceCounter == 0) {
     deleteParentIdentifierInChildren();
-    Pool::sharedPool->removeChildrenAndDestroy(this, currentNumberOfChildren);
+    Pool::sharedPool->removeChildrenAndDestroy(this, 0);
   }
 }
 

@@ -11,7 +11,6 @@ class BlobNode : public PoolObject {
   BlobNode(int data) : m_data(data) {}
   size_t size() const override { return sizeof(BlobNode); }
   int data() { return m_data; }
-  int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream &stream) const override { stream << "Blob"; }
 #endif

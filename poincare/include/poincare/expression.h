@@ -77,7 +77,6 @@ class ExpressionObject final : public PoolObject {
 
   // PoolObject
   size_t size() const override;
-  int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream& stream) const override {
     stream << "Expression";

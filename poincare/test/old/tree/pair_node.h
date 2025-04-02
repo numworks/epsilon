@@ -12,7 +12,6 @@ class PairNode : public PoolObject {
   PoolHandle t1() { return m_t1; }
   PoolHandle t2() { return m_t2; }
   size_t size() const override { return sizeof(PairNode); }
-  int numberOfChildren() const override { return 0; }
 #if POINCARE_TREE_LOG
   void logNodeName(std::ostream &stream) const override { stream << "Pair"; }
 #endif

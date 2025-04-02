@@ -99,7 +99,6 @@ class PoolObject {
 
 // Hierarchy
 #if PCJ_DELETE
-  int numberOfChildren() const { return 0; }
   /* The following methods are only used for nodes that have a variable number
    * of children like OList, HorizontalLayout or Randint */
   void deleteParentIdentifierInChildren() const {

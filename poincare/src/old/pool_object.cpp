@@ -39,14 +39,7 @@ void PoolObject::rename(uint16_t identifier, bool unregisterPreviousIdentifier,
 // Hierarchy
 
 PoolObject *PoolObject::nextSibling() const {
-  int remainingNodesToVisit = numberOfChildren();
-  PoolObject *node = const_cast<PoolObject *>(this)->next();
-  while (remainingNodesToVisit > 0) {
-    remainingNodesToVisit += node->numberOfChildren();
-    node = node->next();
-    remainingNodesToVisit--;
-  }
-  return node;
+  return const_cast<PoolObject *>(this)->next();
 }
 
 // Protected

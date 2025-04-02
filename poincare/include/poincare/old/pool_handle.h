@@ -5,6 +5,12 @@
 
 #include "pool.h"
 
+/* TODO: With numberOfChildren being 0, simplify the following methods
+ * - PoolObject::release
+ * - PoolObject::deepSize
+ * - Pool::removeChildren
+ */
+
 namespace Poincare {
 
 // TODO_PCJ: See comment in pool_object.h
@@ -81,7 +87,6 @@ class PoolHandle {
 
 /* Hierarchy */
 #if PCJ_DELETE
-  int numberOfChildren() const { return object()->numberOfChildren(); }
   void setParentIdentifier(uint16_t id) { object()->setParentIdentifier(id); }
   void deleteParentIdentifier() { object()->deleteParentIdentifier(); }
   void deleteParentIdentifierInChildren() {

@@ -21,9 +21,7 @@ PoolObject *PoolHandle::object() const {
   return Pool::sharedPool->node(m_identifier);
 }
 
-size_t PoolHandle::size() const {
-  return object()->deepSize(object()->numberOfChildren());
-}
+size_t PoolHandle::size() const { return object()->deepSize(0); }
 
 #if POINCARE_TREE_LOG
 void PoolHandle::log() const {
@@ -52,7 +50,6 @@ PoolHandle PoolHandle::Builder() {
 PoolHandle PoolHandle::BuildWithGhostChildren(PoolObject *node) {
   assert(node != nullptr);
   Pool *pool = Pool::sharedPool;
-  assert(node->numberOfChildren() == 0);
   /* Ensure the pool is syntaxically correct by creating ghost children for
    * nodes that have a fixed, non-zero number of children. */
   uint16_t nodeIdentifier = pool->generateIdentifier();
@@ -89,7 +86,7 @@ void PoolHandle::release(uint16_t identifier) {
     return;
   }
   assert(node->identifier() == identifier);
-  node->release(node->numberOfChildren());
+  node->release(0);
 }
 
 }  // namespace Poincare

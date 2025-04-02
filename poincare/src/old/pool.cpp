@@ -31,14 +31,12 @@ void Pool::move(PoolObject *destination, PoolObject *source,
 void Pool::removeChildren(PoolObject *node, int nodeNumberOfChildren) {
   for (int i = 0; i < nodeNumberOfChildren; i++) {
     PoolObject *child = node->next();
-    int childNumberOfChildren = child->numberOfChildren();
     /* The new child will be put at the address last(), but removed from its
      * previous position, hence the newAddress we use. */
     PoolObject *newAddress =
-        (PoolObject *)((char *)last() -
-                       (char *)child->deepSize(childNumberOfChildren));
-    move(last(), child, childNumberOfChildren);
-    newAddress->release(newAddress->numberOfChildren());
+        (PoolObject *)((char *)last() - (char *)child->deepSize(0));
+    move(last(), child, 0);
+    newAddress->release(0);
   }
 }
 

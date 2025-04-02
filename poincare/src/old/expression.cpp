@@ -1,6 +1,7 @@
 #include <float.h>
 #include <ion.h>
 #include <omg/float.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>
@@ -10,7 +11,6 @@
 #include <poincare/old/decimal.h>
 #include <poincare/old/dependency.h>
 #include <poincare/old/derivative.h>
-#include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/expression_node.h>
 #include <poincare/old/float.h>
 #include <poincare/old/ghost.h>

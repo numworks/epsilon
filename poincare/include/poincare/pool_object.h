@@ -48,7 +48,7 @@ class PoolObject {
 
   // Constructor and destructor
   virtual ~PoolObject() {}
-  typedef PoolObject *(*const Initializer)(void *);
+  typedef PoolObject* (*const Initializer)(void*);
 
   // Attributes
   virtual size_t size() const = 0;
@@ -83,19 +83,19 @@ class PoolObject {
   }
 
   // Hierarchy
-  PoolObject *next() const {
+  PoolObject* next() const {
     /* Simple version would be "return this + 1;", with pointer arithmetics
      * taken care of by the compiler. Unfortunately, we want PoolObject to have
      * a VARIABLE size */
-    return reinterpret_cast<PoolObject *>(
-        reinterpret_cast<char *>(const_cast<PoolObject *>(this)) +
+    return reinterpret_cast<PoolObject*>(
+        reinterpret_cast<char*>(const_cast<PoolObject*>(this)) +
         OMG::Memory::AlignedSize(size(), ByteAlignment));
   }
 
 #if POINCARE_TREE_LOG
-  virtual void logObjectName(std::ostream &stream) const = 0;
-  virtual void logAttributes(std::ostream &stream) const {}
-  void log(std::ostream &stream, int indentation = 0, bool verbose = true);
+  virtual void logObjectName(std::ostream& stream) const = 0;
+  virtual void logAttributes(std::ostream& stream) const {}
+  void log(std::ostream& stream, int indentation = 0, bool verbose = true);
   void log() {
     log(std::cout);
     std::cout << std::endl;
@@ -113,7 +113,7 @@ class PoolObject {
 };
 
 template <typename T>
-static PoolObject *Initializer(void *buffer) {
+static PoolObject* Initializer(void* buffer) {
   return new (buffer) T;
 }
 

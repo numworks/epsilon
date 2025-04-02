@@ -6,9 +6,9 @@
 #include <escher/clipboard.h>
 #include <omg/utf8_helper.h>
 #include <poincare/cas.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/layout.h>
-#include <poincare/old/circuit_breaker_checkpoint.h>
 
 #include "../app.h"
 

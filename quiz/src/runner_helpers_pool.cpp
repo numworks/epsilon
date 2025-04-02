@@ -1,5 +1,5 @@
-#include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/pool.h>
+#include <poincare/exception_checkpoint.h>
+#include <poincare/pool.h>
 
 #include "quiz.h"
 #include "runner_helpers.h"

@@ -1,6 +1,6 @@
-#include <poincare/old/pool.h>
-#include <poincare/old/pool_handle.h>
-#include <poincare/old/pool_object.h>
+#include <poincare/pool.h>
+#include <poincare/pool_handle.h>
+#include <poincare/pool_object.h>
 
 namespace Poincare {
 
@@ -34,7 +34,7 @@ void PoolObject::rename(uint16_t identifier,
 // Protected
 
 #if POINCARE_TREE_LOG
-void PoolObject::log(std::ostream &stream, int indentation, bool verbose) {
+void PoolObject::log(std::ostream& stream, int indentation, bool verbose) {
   stream << "\n";
   for (int i = 0; i < indentation; ++i) {
     stream << "  ";
@@ -63,8 +63,7 @@ void PoolObject::log(std::ostream &stream, int indentation, bool verbose) {
 #endif
 
 size_t PoolObject::deepSize() const {
-  return reinterpret_cast<char *>(next()) -
-         reinterpret_cast<const char *>(this);
+  return reinterpret_cast<char*>(next()) - reinterpret_cast<const char*>(this);
 }
 
 }  // namespace Poincare

@@ -1,6 +1,6 @@
 #include "layout_memoization.h"
 
-#include <poincare/old/exception_checkpoint.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/src/layout/layout_cursor.h>
 
 #include "rack_layout.h"

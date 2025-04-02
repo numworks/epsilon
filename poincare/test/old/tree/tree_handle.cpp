@@ -1,7 +1,7 @@
+#include <poincare/exception_checkpoint.h>
 #include <poincare/include/poincare/expression.h>
 #include <poincare/init.h>
-#include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/pool_handle.h>
+#include <poincare/pool_handle.h>
 #include <quiz.h>
 
 #include "blob_object.h"

@@ -3,7 +3,7 @@
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <float.h>
-#include <poincare/old/circuit_breaker_checkpoint.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 
 #include <cmath>
 

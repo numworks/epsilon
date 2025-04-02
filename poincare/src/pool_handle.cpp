@@ -1,5 +1,5 @@
 #include <omg/memory.h>
-#include <poincare/old/pool_handle.h>
+#include <poincare/pool_handle.h>
 #if POINCARE_TREE_LOG
 #include <iostream>
 #endif
@@ -10,12 +10,12 @@ namespace Poincare {
 
 PoolHandle PoolHandle::clone() const {
   assert(!isUninitialized());
-  PoolObject *objectCopy = Pool::sharedPool->deepCopy(object());
+  PoolObject* objectCopy = Pool::sharedPool->deepCopy(object());
   return PoolHandle(objectCopy);
 }
 
 /* Hierarchy operations */
-PoolObject *PoolHandle::object() const {
+PoolObject* PoolHandle::object() const {
   assert(hasObject(m_identifier));
   return Pool::sharedPool->object(m_identifier);
 }
@@ -33,7 +33,7 @@ void PoolHandle::log() const {
 
 /* Private */
 
-PoolHandle::PoolHandle(const PoolObject *object) : PoolHandle() {
+PoolHandle::PoolHandle(const PoolObject* object) : PoolHandle() {
   if (object != nullptr) {
     setIdentifierAndRetain(object->identifier());
   }
@@ -41,12 +41,12 @@ PoolHandle::PoolHandle(const PoolObject *object) : PoolHandle() {
 
 template <class U>
 PoolHandle PoolHandle::Builder() {
-  void *bufferObject = Pool::sharedPool->alloc(sizeof(U));
-  U *object = new (bufferObject) U();
+  void* bufferObject = Pool::sharedPool->alloc(sizeof(U));
+  U* object = new (bufferObject) U();
   return PoolHandle::Build(object);
 }
 
-PoolHandle PoolHandle::Build(PoolObject *object) {
+PoolHandle PoolHandle::Build(PoolObject* object) {
   assert(object != nullptr);
   uint16_t objectIdentifier = Pool::sharedPool->generateIdentifier();
   object->rename(objectIdentifier, false);
@@ -60,7 +60,7 @@ void PoolHandle::setIdentifierAndRetain(uint16_t newId) {
   }
 }
 
-void PoolHandle::setTo(const PoolHandle &tr) {
+void PoolHandle::setTo(const PoolHandle& tr) {
   /* We cannot use (*this)==tr because tr would need to be casted to
    * PoolHandle, which calls setTo and triggers an infinite loop */
   if (identifier() == tr.identifier()) {
@@ -75,7 +75,7 @@ void PoolHandle::release(uint16_t identifier) {
   if (!hasObject(identifier)) {
     return;
   }
-  PoolObject *object = Pool::sharedPool->object(identifier);
+  PoolObject* object = Pool::sharedPool->object(identifier);
   if (object == nullptr) {
     /* The identifier is valid, but not the object: there must have been an
      * exception that deleted the pool. */

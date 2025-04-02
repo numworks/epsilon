@@ -1,9 +1,9 @@
 #include "history_controller.h"
 
 #include <assert.h>
-#include <poincare/old/circuit_breaker_checkpoint.h>
+#include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/old/context.h>
-#include <poincare/old/exception_checkpoint.h>
 
 #include "app.h"
 

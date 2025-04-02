@@ -1,6 +1,6 @@
 #include <apps/shared/global_context.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/init.h>
-#include <poincare/old/exception_checkpoint.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>

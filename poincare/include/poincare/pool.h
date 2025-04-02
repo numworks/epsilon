@@ -37,30 +37,28 @@ class Pool final {
 
   Pool() : m_cursor(buffer()) {}
 
-  PoolObject *cursor() const {
-    return reinterpret_cast<PoolObject *>(m_cursor);
-  }
+  PoolObject* cursor() const { return reinterpret_cast<PoolObject*>(m_cursor); }
 
   // Object
-  PoolObject *object(uint16_t identifier) const {
+  PoolObject* object(uint16_t identifier) const {
     assert(PoolObject::IsValidIdentifier(identifier) &&
            identifier < MaxNumberOfObjects);
     if (m_objectForIdentifierOffset[identifier] != UINT16_MAX) {
-      return const_cast<PoolObject *>(reinterpret_cast<const PoolObject *>(
+      return const_cast<PoolObject*>(reinterpret_cast<const PoolObject*>(
           m_alignedBuffer + m_objectForIdentifierOffset[identifier]));
     }
     return nullptr;
   }
 
   // Pool memory
-  void *alloc(size_t size);
-  void move(PoolObject *destination, PoolObject *source);
-  PoolObject *deepCopy(PoolObject *object);
-  PoolObject *copyTreeFromAddress(const void *address, size_t size);
+  void* alloc(size_t size);
+  void move(PoolObject* destination, PoolObject* source);
+  PoolObject* deepCopy(PoolObject* object);
+  PoolObject* copyTreeFromAddress(const void* address, size_t size);
 
 #if POINCARE_TREE_LOG
-  void flatLog(std::ostream &stream);
-  void treeLog(std::ostream &stream, bool verbose = true);
+  void flatLog(std::ostream& stream);
+  void treeLog(std::ostream& stream, bool verbose = true);
   __attribute__((__used__)) void log() { treeLog(std::cout, false); }
   __attribute__((__used__)) void verboseLog() { treeLog(std::cout, true); }
 #endif
@@ -81,56 +79,56 @@ class Pool final {
 #endif
 
   // PoolObject
-  void discardPoolObject(PoolObject *object);
-  void registerObject(PoolObject *object);
-  void unregisterObject(PoolObject *object) {
+  void discardPoolObject(PoolObject* object);
+  void registerObject(PoolObject* object);
+  void unregisterObject(PoolObject* object) {
     freeIdentifier(object->identifier());
   }
-  void updateObjectForIdentifierFromObject(PoolObject *object);
-  void renameObject(PoolObject *object,
+  void updateObjectForIdentifierFromObject(PoolObject* object);
+  void renameObject(PoolObject* object,
                     bool unregisterPreviousIdentifier = true) {
     assert(object->isAfterTopmostCheckpoint());
     object->rename(generateIdentifier(), unregisterPreviousIdentifier);
   }
 
   // Iterators
-  PoolObject *first() const {
-    return reinterpret_cast<PoolObject *>(const_cast<char *>(constBuffer()));
+  PoolObject* first() const {
+    return reinterpret_cast<PoolObject*>(const_cast<char*>(constBuffer()));
   }
-  PoolObject *last() const {
-    return reinterpret_cast<PoolObject *>(const_cast<char *>(m_cursor));
+  PoolObject* last() const {
+    return reinterpret_cast<PoolObject*>(const_cast<char*>(m_cursor));
   }
   class Iterator {
    public:
-    Iterator(const PoolObject *object)
-        : m_object(const_cast<PoolObject *>(object)) {}
-    PoolObject *operator*() { return m_object; }
-    Iterator &operator++() {
+    Iterator(const PoolObject* object)
+        : m_object(const_cast<PoolObject*>(object)) {}
+    PoolObject* operator*() { return m_object; }
+    Iterator& operator++() {
       m_object = m_object->next();
       return *this;
     }
-    bool operator!=(const Iterator &it) const {
+    bool operator!=(const Iterator& it) const {
       return (m_object != it.m_object);
     }
 
    protected:
-    PoolObject *m_object;
+    PoolObject* m_object;
   };
 
   class Objects final {
    public:
-    Objects(PoolObject *object) : m_object(object) {}
+    Objects(PoolObject* object) : m_object(object) {}
     Iterator begin() const { return Iterator(m_object); }
     Iterator end() const { return Iterator(Pool::sharedPool->last()); }
 
    private:
-    PoolObject *m_object;
+    PoolObject* m_object;
   };
   Objects allObjects() { return Objects(first()); }
 
   // Pool memory
-  void dealloc(PoolObject *ptr, size_t size);
-  void moveObjects(PoolObject *destination, PoolObject *source,
+  void dealloc(PoolObject* ptr, size_t size);
+  void moveObjects(PoolObject* destination, PoolObject* source,
                    size_t moveLength);
 
   // Identifiers
@@ -145,7 +143,7 @@ class Pool final {
     uint16_t pop();
     void remove(uint16_t j);
     void resetObjectForIdentifierOffsets(
-        uint16_t *objectForIdentifierOffset) const;
+        uint16_t* objectForIdentifierOffset) const;
 
    private:
     uint16_t m_currentIndex;
@@ -155,14 +153,14 @@ class Pool final {
                   "Tree object identifiers do not have the right data size.");
   };
 
-  void freePoolFromObject(PoolObject *firstObjectToDiscard);
+  void freePoolFromObject(PoolObject* firstObjectToDiscard);
 
-  char *buffer() { return reinterpret_cast<char *>(m_alignedBuffer); }
-  const char *constBuffer() const {
-    return reinterpret_cast<const char *>(m_alignedBuffer);
+  char* buffer() { return reinterpret_cast<char*>(m_alignedBuffer); }
+  const char* constBuffer() const {
+    return reinterpret_cast<const char*>(m_alignedBuffer);
   }
   AlignedObjectBuffer m_alignedBuffer[BufferSize / ByteAlignment];
-  char *m_cursor;
+  char* m_cursor;
   IdentifierStack m_identifiers;
   uint16_t m_objectForIdentifierOffset[MaxNumberOfObjects];
   static_assert(k_maxObjectOffset < UINT16_MAX &&

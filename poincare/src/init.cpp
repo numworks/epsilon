@@ -1,5 +1,5 @@
 #include <poincare/init.h>
-#include <poincare/old/pool.h>
+#include <poincare/pool.h>
 #include <poincare/preferences.h>
 #include <poincare/src/memory/tree_stack.h>
 

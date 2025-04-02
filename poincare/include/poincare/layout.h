@@ -3,8 +3,8 @@
 
 #include <kandinsky/context.h>
 #include <poincare/layout_style.h>
-#include <poincare/old/pool_handle.h>
-#include <poincare/old/pool_object.h>
+#include <poincare/pool_handle.h>
+#include <poincare/pool_object.h>
 #include <poincare/preferences.h>
 #include <poincare/src/layout/layout_memoization.h>
 #include <poincare/src/memory/block.h>

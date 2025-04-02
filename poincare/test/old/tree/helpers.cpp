@@ -1,6 +1,6 @@
 #include "helpers.h"
 
-#include <poincare/old/pool.h>
+#include <poincare/pool.h>
 #include <quiz.h>
 
 int pool_size() { return Poincare::Pool::sharedPool->numberOfObjects(); }

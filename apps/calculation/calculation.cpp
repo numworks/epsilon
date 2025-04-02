@@ -1,8 +1,8 @@
 #include "calculation.h"
 
 #include <poincare/cas.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/helpers/expression_equal_sign.h>
-#include <poincare/old/exception_checkpoint.h>
 #include <poincare/src/expression/projection.h>
 #include <string.h>
 

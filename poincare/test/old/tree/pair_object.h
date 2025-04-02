@@ -1,8 +1,8 @@
 #ifndef POINCARE_TEST_PAIR_NODE_H
 #define POINCARE_TEST_PAIR_NODE_H
 
-#include <poincare/old/pool_handle.h>
-#include <poincare/old/pool_object.h>
+#include <poincare/pool_handle.h>
+#include <poincare/pool_object.h>
 
 namespace Poincare {
 

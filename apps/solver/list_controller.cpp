@@ -1,9 +1,9 @@
 #include "list_controller.h"
 
 #include <assert.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/layout.h>
-#include <poincare/old/circuit_breaker_checkpoint.h>
 
 #include "app.h"
 #include "escher/responder.h"

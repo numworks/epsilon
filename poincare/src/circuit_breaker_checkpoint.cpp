@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <poincare/old/circuit_breaker_checkpoint.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 
 namespace Poincare {
 

@@ -5,19 +5,19 @@ _sources_poincare_minimal := $(addprefix src/, \
   preferences.cpp \
   print_float.cpp \
   sign.cpp \
-  old/pool_handle.cpp:-nopool \
-  old/pool_object.cpp:-nopool \
-  old/pool.cpp:-nopool \
+  pool_handle.cpp:-nopool \
+  pool_object.cpp:-nopool \
+  pool.cpp:-nopool \
 )
 
 _sources_poincare_checkpoint := $(addprefix src/, \
   $(addsuffix :-nocheckpoint, \
     memory/tree_stack_checkpoint.cpp \
-    old/pool_checkpoint.cpp:-nopool \
-    old/circuit_breaker_checkpoint.cpp:-nopool \
-    old/exception_checkpoint.cpp:-nopool \
+    pool_checkpoint.cpp:-nopool \
+    circuit_breaker_checkpoint.cpp:-nopool \
+    exception_checkpoint.cpp:-nopool \
   ) \
-  old/pool_checkpoint_dummy.cpp:+nocheckpoint \
+  pool_checkpoint_dummy.cpp:+nocheckpoint \
 )
 
 _sources_poincare_storage := $(addprefix src/, \

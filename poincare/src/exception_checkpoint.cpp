@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <poincare/old/exception_checkpoint.h>
+#include <poincare/exception_checkpoint.h>
 
 namespace Poincare {
 

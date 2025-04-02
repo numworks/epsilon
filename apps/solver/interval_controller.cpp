@@ -2,7 +2,7 @@
 
 #include <apps/i18n.h>
 #include <assert.h>
-#include <poincare/old/circuit_breaker_checkpoint.h>
+#include <poincare/circuit_breaker_checkpoint.h>
 #include <string.h>
 
 #include "app.h"

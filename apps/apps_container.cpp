@@ -3,9 +3,9 @@
 #include <escher/clipboard.h>
 #include <ion.h>
 #include <omg/unreachable.h>
+#include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/init.h>
-#include <poincare/old/circuit_breaker_checkpoint.h>
-#include <poincare/old/exception_checkpoint.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "apps_container_storage.h"

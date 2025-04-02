@@ -1,5 +1,5 @@
-#include <poincare/old/exception_checkpoint.h>
-#include <poincare/old/pool_checkpoint.h>
+#include <poincare/exception_checkpoint.h>
+#include <poincare/pool_checkpoint.h>
 
 namespace Poincare {
 

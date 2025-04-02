@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/arc_tangent.h>
 #include <poincare/old/binomial_coefficient.h>
@@ -6,7 +7,6 @@
 #include <poincare/old/constant.h>
 #include <poincare/old/cosine.h>
 #include <poincare/old/division.h>
-#include <poincare/old/exception_checkpoint.h>
 #include <poincare/old/multiplication.h>
 #include <poincare/old/naperian_logarithm.h>
 #include <poincare/old/power.h>

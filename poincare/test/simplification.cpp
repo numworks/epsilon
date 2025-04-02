@@ -1630,6 +1630,20 @@ QUIZ_CASE(pcj_simplification_boolean) {
   simplifies_to("60>5≥1+3=4≤2+2<50", "True");
   simplifies_to("(x>y)>z", "undef");
   simplifies_to("(x and y)>z", "undef");
+  simplifies_to("undef<0", "undef");
+  simplifies_to("undef<0<1", "undef");
+  simplifies_to("{0,1}<1", "{True,False}");
+  simplifies_to("1<{1,2,3}<3", "{False,True,False}");
+  simplifies_to("1<2<{1,2,3}<4", "{False,False,True}");
+  simplifies_to("{undef,undef}<1", "{undef,undef}");
+  simplifies_to("{1,2}<undef", "{undef,undef}");
+  simplifies_to("0<{undef,undef}<1", "{undef,undef}");
+  simplifies_to("{1,2}<3<undef", "{undef,undef}");
+  simplifies_to("0<undef<{1,2}", "{undef,undef}");
+  simplifies_to("1<i", "undef");
+  // TODO: fix
+  // simplifies_to("not ((i<1) and {True,False})", "{undef,undef}");
+  // simplifies_to("undef<{0,1}<1", "{undef,undef}");
 }
 
 QUIZ_CASE(pcj_simplification_point) {

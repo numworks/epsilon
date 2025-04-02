@@ -7,6 +7,7 @@
 #include <poincare/old/computation_context.h>
 #include <poincare/old/pool_object.h>
 #include <poincare/point_or_scalar.h>
+#include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/dimension_type.h>
@@ -96,7 +97,7 @@ class ExpressionObject final : public PoolObject {
                       OMG::Base base = OMG::Base::Decimal) const;
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
-                   int numberOfSignificantDigits) const override;
+                   int numberOfSignificantDigits) const;
 
  private:
   // PCJ

@@ -5,6 +5,7 @@
 #include <poincare/layout_style.h>
 #include <poincare/old/pool_handle.h>
 #include <poincare/old/pool_object.h>
+#include <poincare/preferences.h>
 #include <poincare/src/layout/layout_memoization.h>
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
@@ -38,7 +39,7 @@ class LayoutObject final : public PoolObject,
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode =
                        Preferences::PrintFloatMode::Decimal,
-                   int numberOfSignificantDigits = 0) const override;
+                   int numberOfSignificantDigits = 0) const;
 
   // LayoutNode
   KDSize computeSize(KDFont::Size font,

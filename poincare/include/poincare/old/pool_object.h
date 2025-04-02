@@ -10,7 +10,6 @@
 #include <ostream>
 #endif
 #include <omg/memory.h>
-#include <poincare/preferences.h>
 
 #include "pool_checkpoint.h"
 
@@ -98,14 +97,6 @@ class PoolObject {
 
 // Hierarchy
 #if PCJ_DELETE
-  /* Serialization
-   * Return the number of chars written, without the null-terminating char. */
-  virtual size_t serialize(char *buffer, size_t bufferSize,
-                           Preferences::PrintFloatMode floatDisplayMode,
-                           int numberOfSignificantDigits) const {
-    assert(false);
-    return 0;
-  }
   template <typename T>
   class Iterator {
    public:

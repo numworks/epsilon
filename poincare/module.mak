@@ -5,7 +5,6 @@ _sources_poincare_minimal := $(addprefix src/, \
   preferences.cpp \
   print_float.cpp \
   sign.cpp \
-  old/integer.cpp:-nopool \
   old/pool_handle.cpp:-nopool \
   old/pool_object.cpp:-nopool \
   old/pool.cpp:-nopool \

@@ -146,7 +146,7 @@ bool Binary::ReduceComparison(Tree* e) {
     ComplexSign signA = GetComplexSign(e->child(0));
     ComplexSign signB = GetComplexSign(e->child(1));
     if (signA.isNonReal() || signB.isNonReal()) {
-      e->cloneTreeOverTree(KBadType);
+      e->cloneTreeOverTree(KUndefBoolean);
       return true;
     }
     // Do not reduce inequalities if we are not sure to have reals

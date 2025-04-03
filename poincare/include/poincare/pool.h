@@ -81,9 +81,9 @@ class Pool final {
 #ifdef SMALL_POINCARE_POOL
   constexpr static int BufferSize = 32768;
 #else
-  /* 32kb (previous size) + 8kb (newly available size)
-   * This can still be increased if needed */
-  constexpr static int BufferSize = 32768 + 8192;
+  /* 32kb (previous size) + 8kb (newly available size) - 4kb (allowed by
+   * Poincare update). This can still be increased if needed */
+  constexpr static int BufferSize = 32768 + 8192 - 4096;
 #endif
   constexpr static int MaxNumberOfObjects = BufferSize / sizeof(PoolObject);
   constexpr static int k_maxObjectOffset = BufferSize / ByteAlignment;

@@ -1642,8 +1642,7 @@ QUIZ_CASE(pcj_simplification_boolean) {
   simplifies_to("0<undef<{1,2}", "{undef,undef}");
   simplifies_to("1<i", "undef");
   simplifies_to("not ((i<1) and {True,False})", "{undef,undef}");
-  // TODO: fix
-  // simplifies_to("undef<{0,1}<1", "{undef,undef}");
+  simplifies_to("undef<{0,1}<1", "{undef,undef}");
 }
 
 QUIZ_CASE(pcj_simplification_point) {

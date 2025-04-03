@@ -43,6 +43,9 @@ void replaceTreeWithDimensionedType(Tree* e, Type type) {
     SharedTreeStack->pushPoint();
     SharedTreeStack->pushBlock(type);
     SharedTreeStack->pushBlock(type);
+  } else if (dim.isBoolean()) {
+    assert(TypeBlock::IsUndefined(type));
+    SharedTreeStack->pushBlock(Type::UndefBoolean);
   } else {
     SharedTreeStack->pushBlock(type);
   }

@@ -50,7 +50,7 @@ class NormalProbabilityController : public PlotController,
                            int precision) override;
   /* Hide series having invalid total values. Since this method can be called
    * from the rescue of a checkpoint, it must check for handles without their
-   * nodes. */
+   * objects. */
   Shared::DoublePairStore::ActiveSeriesTest activeSeriesMethod()
       const override {
     return [](const Shared::DoublePairStore* store, int i) {

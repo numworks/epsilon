@@ -312,15 +312,15 @@ void AppsContainer::run() {
       }
     } else {
       /* Normal execution. The exception checkpoint must be created before
-       * switching to the first app, because the first app might create nodes on
-       * the pool. */
+       * switching to the first app, because the first app might create objects
+       * on the pool. */
       switchToBuiltinApp(initialAppSnapshot());
     }
   } else {
     /* We lock the Poincare pool until the application is destroyed (the pool
      * is then asserted empty). This prevents from allocating new handles
      * with the same identifiers as potential dangling handles (that have
-     * lost their nodes in the exception). */
+     * lost their objects in the exception). */
     Pool::Lock();
     handleRunException();
     Pool::Unlock();

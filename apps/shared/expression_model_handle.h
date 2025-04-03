@@ -34,7 +34,7 @@ class ExpressionModelHandle : public Ion::Storage::Record {
   virtual bool isDefined() const;
   virtual bool isEmpty() const;
   /* tidyDownstreamPoolFrom tidy the model if its members are located downstream
-   * in Poincare pool of the node given as arguments. */
+   * in Poincare pool of the object given as arguments. */
   virtual void tidyDownstreamPoolFrom(
       Poincare::PoolObject* treePoolCursor = nullptr) const {
     model()->tidyDownstreamPoolFrom(treePoolCursor);

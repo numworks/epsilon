@@ -10,7 +10,7 @@ They return the approximated input under the requested dimension :
 - `ToComplex` :  Return a `std::complex`.
 - `ToPointOrRealScalar` : Return a `PointOrRealScalar`, also overloaded to take an abscissa.
 - `ToPoint` : Return a `Point`.
-- `ToBoolean` : Return a `bool`.
+- `ToBoolean` : Return an `Approximation::BooleanOrUndefined` value.
 
 ### Parameters
 

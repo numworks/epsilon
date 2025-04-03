@@ -129,12 +129,13 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
 }
 
 template <typename T>
-bool ToBoolean(const Tree* e, Parameters params, Context context) {
+BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
+                             Context context) {
   assert(Dimension::DeepCheck(e) && Dimension::Get(e).isBoolean());
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
-  bool b = PrivateToBoolean<T>(target, &context);
+  BooleanOrUndefined b = PrivateToBoolean<T>(target, &context);
   if (clone) {
     clone->removeTree();
   }
@@ -231,7 +232,11 @@ Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
   assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
   if (dim.isBoolean()) {
 #if POINCARE_BOOLEAN
-    return (PrivateToBoolean<T>(e, ctx) ? KTrue : KFalse)->cloneTree();
+    BooleanOrUndefined boolean = PrivateToBoolean<T>(e, ctx);
+    if (boolean.isUndefined()) {
+      return KUndefBoolean->cloneTree();
+    }
+    return (boolean.value() ? KTrue : KFalse)->cloneTree();
 #else
     OMG::unreachable();
 #endif
@@ -1239,7 +1244,8 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
 }
 
 template <typename T>
-bool Private::PrivateToBoolean(const Tree* e, const Context* ctx) {
+BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
+                                             const Context* ctx) {
 #if POINCARE_NO_FLOAT_APPROXIMATION
   if (sizeof(T) == sizeof(float)) {
     return PrivateToBoolean<double>(e, ctx);
@@ -1287,31 +1293,40 @@ bool Private::PrivateToBoolean(const Tree* e, const Context* ctx) {
      * elements, this is awful */
     Tree* list = ToList<T>(e->child(0), ctx);
     NAry::Sort(list);
-    bool result = PrivateToBoolean<T>(list, ctx);
+    BooleanOrUndefined result = PrivateToBoolean<T>(list, ctx);
     list->removeTree();
     return result;
   }
+  if (e->isUndefBoolean()) {
+    return BooleanOrUndefined(BooleanOrUndefined::Undef{});
+  }
   assert(e->isLogicalOperator());
-  bool a = PrivateToBoolean<T>(e->child(0), ctx);
+  BooleanOrUndefined a = PrivateToBoolean<T>(e->child(0), ctx);
+  if (a.isUndefined()) {
+    return a;
+  }
   if (e->isLogicalNot()) {
-    return !a;
+    return !(a.value());
   }
   if (e->isDep()) {
     // TODO: Undefined boolean return false for now.
     return (UndefDependencies<T>(e, ctx) == std::complex<T>(0.0));
   }
-  bool b = PrivateToBoolean<T>(e->child(1), ctx);
+  BooleanOrUndefined b = PrivateToBoolean<T>(e->child(1), ctx);
+  if (b.isUndefined()) {
+    return b;
+  }
   switch (e->type()) {
     case Type::LogicalAnd:
-      return a && b;
+      return a.value() && b.value();
     case Type::LogicalNand:
-      return !(a && b);
+      return !(a.value() && b.value());
     case Type::LogicalOr:
-      return a || b;
+      return a.value() || b.value();
     case Type::LogicalNor:
-      return !(a || b);
+      return !(a.value() || b.value());
     case Type::LogicalXor:
-      return a ^ b;
+      return a.value() ^ b.value();
     default:
       OMG::unreachable();
   }
@@ -1507,7 +1522,16 @@ const Tree* Private::SelectPiecewiseBranch(const Tree* piecewise,
   while (i < n) {
     const Tree* condition = child->nextTree();
     i++;
-    if (i == n || PrivateToBoolean<T>(condition, ctx)) {
+    if (i == n) {
+      return child;
+    }
+    const BooleanOrUndefined conditionEvaluation =
+        PrivateToBoolean<T>(condition, ctx);
+    if (conditionEvaluation.isUndefined()) {
+      // TODO: return a dimensioned Undef
+      return KUndef;
+    }
+    if (conditionEvaluation.value()) {
       return child;
     }
     child = condition->nextTree();
@@ -1710,8 +1734,8 @@ template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, float,
 template PointOrRealScalar<double> ToPointOrRealScalar(const Tree*, double,
                                                        Parameters, Context);
 
-template bool ToBoolean<float>(const Tree*, Parameters, Context);
-template bool ToBoolean<double>(const Tree*, Parameters, Context);
+template BooleanOrUndefined ToBoolean<float>(const Tree*, Parameters, Context);
+template BooleanOrUndefined ToBoolean<double>(const Tree*, Parameters, Context);
 
 template float To(const Tree*, Parameters, Context);
 template double To(const Tree*, Parameters, Context);

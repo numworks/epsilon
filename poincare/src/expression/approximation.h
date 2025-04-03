@@ -93,6 +93,26 @@ class Context {
   ComplexFormat m_complexFormat;
 };
 
+class BooleanOrUndefined {
+ public:
+  struct Undef {};
+
+  BooleanOrUndefined(bool value) : m_value{value} {}
+  BooleanOrUndefined(Undef) : m_isUndefined{true} {}
+
+  bool isUndefined() const { return m_isUndefined; }
+  bool value() const {
+    assert(!m_isUndefined);
+    return m_value;
+  }
+
+ private:
+  bool m_isUndefined = false;
+  /* In case of an undefined, the stored value is false (but it should not be
+   * fetched) */
+  bool m_value = false;
+};
+
 /* Approximation methods (with Parameters) */
 
 template <typename T>
@@ -126,7 +146,8 @@ Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
                         Context context = Context());
 
 template <typename T>
-bool ToBoolean(const Tree* e, Parameters params, Context context = Context());
+BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
+                             Context context = Context());
 
 /* Helpers */
 
@@ -191,7 +212,7 @@ T PrivateTo(const Tree* e, const Context* ctx);
 
 // Tree must be of boolean dimension.
 template <typename T>
-bool PrivateToBoolean(const Tree* e, const Context* ctx);
+BooleanOrUndefined PrivateToBoolean(const Tree* e, const Context* ctx);
 
 // Tree must be of point dimension.
 template <typename T>

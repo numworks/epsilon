@@ -60,8 +60,8 @@ void set(Configuration config) {
   if (!config.isActive()) {
 #if ASSERTIONS
     assert(previousConfig.isActive());
-    assert(Authentication::activeConfigurationAllowed(
-        Authentication::clearanceLevel()));
+    assert(Authentication::clearanceLevel() ==
+           Authentication::ClearanceLevel::NumWorks);
 #endif
     // Apps are visible again, it may require a clearance level update.
     Ion::ExternalApps::updateClearanceLevel();

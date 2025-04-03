@@ -162,10 +162,6 @@ void Pool::IdentifierStack::push(uint16_t i) {
 }
 
 uint16_t Pool::IdentifierStack::pop() {
-  if (m_currentIndex == 0) {
-    assert(false);
-    return 0;
-  }
   assert(m_currentIndex > 0 && m_currentIndex <= MaxNumberOfObjects);
   return m_availableIdentifiers[--m_currentIndex];
 }
@@ -182,7 +178,7 @@ void Pool::IdentifierStack::remove(uint16_t j) {
       return;
     }
   }
-  assert(false);
+  OMG::unreachable();
 }
 
 // Reset m_objectForIdentifierOffset for all available identifiers

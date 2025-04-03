@@ -256,6 +256,16 @@ ComplexSign Exponential(ComplexSign s) {
 
 // Note: we could get more info on canBeInfinite
 ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
+  if (base.isReal() && base.realSign().isStrictlyPositive() && exp.isReal() &&
+      exp.realSign().isStrictlyPositive()) {
+    // b^e with b and e strictly positive reals gives strictly positive real,
+    // integer only if both b and e are integer
+    return ComplexSign(Sign(false, true, false,
+                            base.realSign().canBeNonInteger() ||
+                                exp.realSign().canBeNonInteger(),
+                            false),
+                       Sign::Zero());
+  }
   if (exp.canBeNonReal() || exp.canBeNonInteger()) {
     return ComplexSign::Unknown();
   }

@@ -466,8 +466,7 @@ QUIZ_CASE(pcj_sign_is_zero) {
   // TODO: Should be false
   assert_projected_is_null("_W", OMG::Troolean::Unknown);
   assert_projected_is_null("0/(3/7)", OMG::Troolean::True);
-  // TODO: Should be false
-  assert_projected_is_null("sqrt(2/5)", OMG::Troolean::Unknown);
+  assert_projected_is_null("sqrt(2/5)", OMG::Troolean::False);
   assert_projected_is_null("0+1%", OMG::Troolean::True);
   assert_projected_is_null("1+1%", OMG::Troolean::False);
   assert_projected_is_null("1-1%", OMG::Troolean::Unknown);

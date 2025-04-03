@@ -1,5 +1,5 @@
-#ifndef POINCARE_TREE_POOL_H
-#define POINCARE_TREE_POOL_H
+#ifndef POINCARE_POOL_H
+#define POINCARE_POOL_H
 
 #include <omg/memory.h>
 #include <stddef.h>

@@ -1,5 +1,5 @@
-#ifndef POINCARE_TREE_HANDLE_H
-#define POINCARE_TREE_HANDLE_H
+#ifndef POINCARE_POOL_HANDLE_H
+#define POINCARE_POOL_HANDLE_H
 
 #include <initializer_list>
 

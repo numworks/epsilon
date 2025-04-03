@@ -1,5 +1,5 @@
-#ifndef POINCARE_TEST_BLOB_NODE_H
-#define POINCARE_TEST_BLOB_NODE_H
+#ifndef POINCARE_TEST_BLOB_OBJECT_H
+#define POINCARE_TEST_BLOB_OBJECT_H
 
 #include <poincare/pool_handle.h>
 #include <poincare/pool_object.h>

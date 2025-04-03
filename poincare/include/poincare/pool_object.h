@@ -1,5 +1,5 @@
-#ifndef POINCARE_TREE_NODE_H
-#define POINCARE_TREE_NODE_H
+#ifndef POINCARE_POOL_OBJECT_H
+#define POINCARE_POOL_OBJECT_H
 
 #include <assert.h>
 #include <stddef.h>

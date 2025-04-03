@@ -81,6 +81,14 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(hasInvalidDimOrLen("min({True, False, True})"));
   QUIZ_ASSERT(dim("{True, False, True} or {True, True, False}", Boolean));
 
+  QUIZ_ASSERT(dim(KUndef, Scalar));
+  QUIZ_ASSERT(dim(KUndefBoolean, Boolean));
+  QUIZ_ASSERT(dim(KInferiorEqual(KUndef, 1_e), Boolean));
+  QUIZ_ASSERT(dim(KInferiorEqual(1_e, i_e), Boolean));
+  QUIZ_ASSERT(hasInvalidDimOrLen(KLogicalNot(KBadType)));
+  QUIZ_ASSERT(hasInvalidDimOrLen(KLogicalOr(KTrue, KUndef)));
+  QUIZ_ASSERT(dim(KLogicalAnd(KTrue, KUndefBoolean), Boolean));
+
   QUIZ_ASSERT(len("1", Dimension::k_nonListListLength));
   QUIZ_ASSERT(len("{1,2}", 2));
   QUIZ_ASSERT(len("2*cos({1,2})+3", 2));

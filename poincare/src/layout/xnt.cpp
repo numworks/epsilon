@@ -219,7 +219,8 @@ bool FindXNTSymbol1D(UnicodeDecoder& decoder, char* buffer, size_t bufferSize,
       size_t parameterStart;
       size_t parameterLength;
       if (ParsingHelper::ParameterText(decoder, &parameterStart,
-                                       &parameterLength)) {
+                                       &parameterLength) &&
+          parameterLength != 0) {
         decoder.printInBuffer(buffer, bufferSize, parameterLength);
         assert(buffer[parameterLength] == 0);
         *cycleSize = 1;
@@ -264,7 +265,9 @@ static bool findParameteredFunction2D(const Tree* layout, const Tree* root,
 }
 
 static bool isValidXNTParameter(const Tree* xnt) {
-  if (xnt->hasChildSatisfying(
+  assert(xnt->isRackLayout());
+  if (xnt->numberOfChildren() == 0 ||
+      xnt->hasChildSatisfying(
           [](const Tree* e) { return !e->isCodePointLayout(); })) {
     return false;
   }

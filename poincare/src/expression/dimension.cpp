@@ -687,6 +687,9 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       // TODO: Maybe scalar ?
       return Get(e->child(0), ctx);
     }
+    case Type::UndefBoolean: {
+      return Boolean();
+    }
     default:
       if (e->isLogicalOperatorOrBoolean() || e->isComparison()) {
         return Boolean();

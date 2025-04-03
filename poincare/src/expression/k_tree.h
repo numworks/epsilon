@@ -16,6 +16,7 @@ namespace KTrees {
 
 constexpr auto KNonReal = KTree<Type::NonReal>();
 constexpr auto KUndef = KTree<Type::Undef>();
+constexpr auto KUndefBoolean = KTree<Type::UndefBoolean>();
 constexpr auto KUndefZeroPowerZero = KTree<Type::UndefZeroPowerZero>();
 constexpr auto KUndefZeroDivision = KTree<Type::UndefZeroDivision>();
 constexpr auto KUndefUnhandled = KTree<Type::UndefUnhandled>();

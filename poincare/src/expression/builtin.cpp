@@ -21,6 +21,7 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {Type::Undef, BuiltinsAliases::k_undefinedAlias},
     {Type::UndefZeroPowerZero, BuiltinsAliases::k_undefinedAlias},
     {Type::UndefZeroDivision, BuiltinsAliases::k_undefinedAlias},
+    {Type::UndefBoolean, BuiltinsAliases::k_undefinedAlias},
     {Type::UndefUnhandled, BuiltinsAliases::k_undefinedAlias},
     {Type::UndefUnhandledDimension, BuiltinsAliases::k_undefinedAlias},
     {Type::UndefBadType, BuiltinsAliases::k_undefinedAlias},

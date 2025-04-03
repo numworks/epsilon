@@ -369,6 +369,7 @@ NODE(UndefFailedSimplification,
      BASE)                      // raised TreeStackOverFlow or IntegerOverFlow
 NODE(UndefZeroPowerZero, BASE)  // 0^0
 NODE(UndefZeroDivision, BASE)   // 1/0, tan(nπ/2)
+NODE(UndefBoolean, BASE)  // undefined with Boolean dimension
 NODE(UndefUnhandled, BASE)      // inf - inf, 0 * inf, unimplemented
 NODE(UndefUnhandledDimension, BASE)  // [[1,2]] + [[1],[2]]
 NODE(UndefBadType, BASE)             // non-integers in gcd,lcm,...

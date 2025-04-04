@@ -89,6 +89,11 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
     app->modalViewController()->dismissModal();
     if (app->snapshot() != onBoardingAppSnapshot()) {
       switchToBuiltinApp(homeAppSnapshot());
+      if (app->snapshot() == homeAppSnapshot()) {
+        /* Window needs to be redrawn if a warning display has been shown, it is
+         * not done when switching from Home app to Home app. */
+        window()->redraw(true);
+      }
     }
   }
 }

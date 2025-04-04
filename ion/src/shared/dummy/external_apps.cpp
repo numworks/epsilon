@@ -22,13 +22,15 @@ AppIterator& AppIterator::operator++() { return *this; }
 
 AppIterator Apps::begin() const { return AppIterator(nullptr); }
 
-int numberOfApps() { return 0; }
+int numberOfApps(bool isExamModeActive) { return 0; }
 
-void deleteApps() {}
+void deleteApps(bool isExamModeActive) {}
 
 bool allowThirdParty() { return false; }
 
-void updateClearanceLevel() { assert(numberOfApps() == 0); }
+void updateClearanceLevel(bool isExamModeActive) {
+  assert(numberOfApps(isExamModeActive) == 0);
+}
 
 }  // namespace ExternalApps
 }  // namespace Ion

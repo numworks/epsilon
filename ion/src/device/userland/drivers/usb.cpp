@@ -1,3 +1,4 @@
+#include <ion/exam_mode.h>
 #include <ion/external_apps.h>
 #include <shared/drivers/board_shared.h>
 #include <shared/drivers/usb.h>
@@ -17,7 +18,7 @@ void SVC_ATTRIBUTES willExecuteDFU() {
 }
 
 void SVC_ATTRIBUTES didExecuteDFU() {
-  Ion::ExternalApps::updateClearanceLevel();
+  Ion::ExternalApps::updateClearanceLevel(Ion::ExamMode::get().isActive());
   SVC_RETURNING_VOID(SVC_USB_DID_EXECUTE_DFU)
 }
 

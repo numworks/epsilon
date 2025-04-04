@@ -64,7 +64,7 @@ void set(Configuration config) {
            Authentication::ClearanceLevel::NumWorks);
 #endif
     // Apps are visible again, it may require a clearance level update.
-    Ion::ExternalApps::updateClearanceLevel();
+    Ion::ExternalApps::updateClearanceLevel(config.isActive());
   }
 }
 

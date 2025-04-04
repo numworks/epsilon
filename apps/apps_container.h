@@ -25,7 +25,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   AppsContainer();
   virtual int numberOfBuiltinApps() = 0;
   int numberOfApps() { return numberOfExternalApps() + numberOfBuiltinApps(); }
-  int numberOfExternalApps() { return Ion::ExternalApps::numberOfApps(); }
+  int numberOfExternalApps();
   virtual Escher::App::Snapshot* appSnapshotAtIndex(int index) = 0;
   Ion::ExternalApps::App externalAppAtIndex(int index);
   Escher::App::Snapshot* initialAppSnapshot();

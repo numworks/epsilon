@@ -43,8 +43,14 @@ AppsContainer::AppsContainer()
       registerRestrictiveExtensionsToSharedStorage();
 }
 
+int AppsContainer::numberOfExternalApps() {
+  return Ion::ExternalApps::numberOfApps(
+      Preferences::SharedPreferences()->examMode().isActive());
+}
+
 Ion::ExternalApps::App AppsContainer::externalAppAtIndex(int index) {
-  for (Ion::ExternalApps::App a : Ion::ExternalApps::Apps()) {
+  for (Ion::ExternalApps::App a : Ion::ExternalApps::Apps(
+           Preferences::SharedPreferences()->examMode().isActive())) {
     if (index == 0) {
       return a;
     }

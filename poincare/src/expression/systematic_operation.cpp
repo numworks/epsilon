@@ -757,10 +757,40 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
     assert(!ReduceAbs(e));
     return true;
   }
-  if (child->isExp() && GetComplexSign(child->child(0)).isPureIm()) {
-    // |e^x| = 1 when x is pure imaginary
-    e->cloneNodeOverTree(1_e);
-    return true;
+  if (child->isExp()) {
+    Tree* expChild = child->child(0);
+    // |e^(x+y+z)| = |e^(x+z)| if y is pure imaginary
+    if (expChild->isAdd()) {
+      int numberChildren = expChild->numberOfChildren();
+      int currentChild = 0;
+      Tree* c = expChild->child(0);
+      bool flagRemoved = false;
+      while (currentChild < numberChildren) {
+        if (GetComplexSign(c).isPureIm()) {
+          c->removeTree();
+          --numberChildren;
+          flagRemoved = true;
+        } else {
+          c = c->nextTree();
+          ++currentChild;
+        }
+      }
+      if (flagRemoved) {
+        if (numberChildren == 1) {
+          expChild->removeNode();
+        } else {
+          NAry::SetNumberOfChildren(expChild, numberChildren);
+          ReduceAddOrMult(expChild);
+        }
+        ReduceExp(child);
+        ReduceAbs(e);
+      }
+      return flagRemoved;
+    } else if (GetComplexSign(expChild).isPureIm()) {
+      // |e^x| = 1 when x is pure imaginary
+      e->cloneNodeOverTree(1_e);
+      return true;
+    }
   }
   ComplexSign complexSign = GetComplexSign(child);
   if (!complexSign.isPure()) {

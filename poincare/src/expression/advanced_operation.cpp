@@ -153,10 +153,12 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
 
 bool AdvancedOperation::ExpandExp(Tree* e) {
   return
-      // exp(A?*i) = cos(A) + sin(A)*i
+      // exp(A?+B?i+C?) = exp(A+C)*(cos(A) + sin(A)*i)
       PatternMatching::MatchReplaceSimplify(
-          e, KExp(KMult(KA_s, i_e)),
-          KAdd(KTrig(KMult(KA_s), 0_e), KMult(KTrig(KMult(KA_s), 1_e), i_e))) ||
+          e, KExp(KAdd(KA_s, KMult(KB_s, i_e), KC_s)),
+          KMult(KExp(KAdd(KA_s, KC_s)),
+                KAdd(KTrig(KMult(KB_s), 0_e),
+                     KMult(KTrig(KMult(KB_s), 1_e), i_e)))) ||
       // exp(A+B?) = exp(A) * exp(B)
       PatternMatching::MatchReplaceSimplify(e, KExp(KAdd(KA, KB_p)),
                                             KMult(KExp(KA), KExp(KAdd(KB_p))));

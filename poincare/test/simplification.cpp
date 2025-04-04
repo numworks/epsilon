@@ -439,7 +439,7 @@ QUIZ_CASE(pcj_simplification_complex) {
                 cartesianCtx);
   simplifies_to("e^(π*i/6)*e^(-π*i/3)", "√(3)/2-1/2×i", cartesianCtx);
   // TODO: Simplify to root(2,4)
-  simplifies_to("re(√(√(-8)))", "re(root(-8,4))", cartesianCtx);
+  simplifies_to("re(√(√(-8)))", "(√(2)×2^(3/4))/2", cartesianCtx);
   // TODO: Simplify to √(30+2×√(229))/2
   simplifies_to("re(√(15+2×i))", "re(√(15+2×i))", cartesianCtx);
   simplifies_to("5*ln(1+i)-ln(exp(5*ln(1+i)))", "2×π×i", cartesianCtx);

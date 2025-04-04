@@ -105,8 +105,17 @@ bool AdvancedOperation::ContractAbs(Tree* e) {
 }
 
 bool AdvancedOperation::ExpandAbs(Tree* e) {
+  if (PatternMatching::MatchReplaceSimplify(
+          e, KPow(KAbs(KA), 2_e),
+          KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e)))) {
+    // |A|^2 = re(A)^2+im(A)^2
+    return true;
+  }
+  if (!e->isAbs()) {
+    return false;
+  }
   PatternMatching::Context ctx;
-  if (e->isAbs() && e->child(0)->isMult()) {
+  if (e->child(0)->isMult()) {
     // |A*B*C*...| = |A|*|B|*|C|*.. expand abs of mult deeply
     const Tree* mult = e->child(0);
     Tree* result = mult->cloneNode();
@@ -115,13 +124,6 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
     }
     SystematicReduction::ShallowReduce(result);
     e->moveTreeOverTree(result);
-    return true;
-  }
-
-  if (PatternMatching::MatchReplaceSimplify(
-          e, KPow(KAbs(KA), 2_e),
-          KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e)))) {
-    // |A|^2 = re(A)^2+im(A)^2
     return true;
   }
   if ((PatternMatching::Match(e, KAbs(KExp(KMult(KA, KLn(KB)))), &ctx) ||

@@ -138,11 +138,9 @@ AppIterator Apps::begin() const {
 }
 
 int numberOfApps(bool isExamModeActive) {
-  if (hideExternalApps(isExamModeActive)) {
-    return 0;
-  }
   int counter = 0;
   for (App a : Apps(isExamModeActive)) {
+    assert(!hideExternalApps(isExamModeActive));
     (void)a;
     counter++;
   }
@@ -150,10 +148,8 @@ int numberOfApps(bool isExamModeActive) {
 }
 
 void deleteApps(bool isExamModeActive) {
-  if (hideExternalApps(isExamModeActive)) {
-    return;
-  }
   for (App a : Apps(isExamModeActive)) {
+    assert(!hideExternalApps(isExamModeActive));
     a.eraseMagicCode();
   }
 }

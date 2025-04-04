@@ -63,12 +63,14 @@ jobs:
       matrix:
         model: [n0110, n0115, n0120]
     steps:
-      - uses: numworks/setup-arm-toolchain@latest
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
-      - run: build/setup.sh
+
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
+
       - name: Check for epsilon-core
         id: epsilon-core
         run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
@@ -80,16 +82,16 @@ jobs:
         # Since both slots have the exact same amount of Flash reserved, it is pointless to build both the A and B elfs for every variant.
         # As an exception,  because we'll build epsilon.dfu that on both userland.A.elf and userland.B.elf, we still build those here
         # TODO: It is also probably useless to build so many variants
-        run: make MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf
+        run: $DOCKER_RUN "make MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf"
       - name: Restore epsilon-core submodule
         if: ${{ steps.epsilon-core.outcome == 'success' }}
         run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
       - if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: make MODEL=${{ matrix.model }} epsilon.dfu
+        run: $DOCKER_RUN "make MODEL=${{ matrix.model }} epsilon.dfu"
       - if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: make MODEL=${{ matrix.model }} flasher.dfu
+        run: $DOCKER_RUN "make MODEL=${{ matrix.model }} flasher.dfu"
       - if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: make MODEL=${{ matrix.model }} bench.ram.dfu
+        run: $DOCKER_RUN "make MODEL=${{ matrix.model }} bench.ram.dfu"
   windows:
     runs-on: windows-latest
     if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.windows == 'true') }}
@@ -139,16 +141,17 @@ jobs:
   linux:
     runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
     steps:
-      - uses: numworks/setup-llvm@latest
-      - run: echo "LD_LIBRARY_PATH=$LLVM_PATH/lib/x86_64-unknown-linux-gnu/" >> $GITHUB_ENV
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
           submodules: ${{ secrets.PAT != null }}
-      - run: build/setup.sh --only-simulator
+
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
+
       # TODO_PCJ: Add ASAN=1 and TIDY=1
-      - run: make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin
-      - run: output/debug/optimized/linux/test.bin --headless --limit-stack-usage
+      - run: $DOCKER_RUN "make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin"
+      - run: $DOCKER_RUN "output/debug/optimized/linux/test.bin --headless --limit-stack-usage"
       - uses: actions/upload-artifact@v4
         if: ${{ (github.repository != 'numworks/epsilon-internal') }}
         with:

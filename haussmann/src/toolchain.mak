@@ -29,6 +29,10 @@ ifeq ($(ASAN),1)
 SFLAGS += -fsanitize=address -DASAN
 endif
 
+ifeq ($(CUSTOM_FIRMWARE),1)
+SFLAGS += -DCUSTOM_FIRMWARE
+endif
+
 ifeq ($(STATIC_ANALYZER),1)
 SFLAGS += --analyze
 endif

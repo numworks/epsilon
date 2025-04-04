@@ -115,7 +115,7 @@ custom_userland.flash:
 	DFULEAVE=$$(if [[ "$$SLOT" == "A" ]]; then echo "0x90010000"; elif [[ "$$SLOT" == "B" ]]; then echo "0x90410000"; fi) && \
 	echo "DETECTED MODEL\t$$MODEL" && \
 	echo "LEAVE AT\t$$DFULEAVE" && \
-	$(MAKE) MODEL=$$MODEL DFULEAVE=$$DFULEAVE userland.$$SLOT.flash
+	$(MAKE) MODEL=$$MODEL DFULEAVE=$$DFULEAVE CUSTOM_FIRMWARE=1 userland.$$SLOT.flash
 
 $(call document_other_target,custom_userland.flash,Write firmware as a custom userland to a connected device in its inactive slot. APP_VERSION must match the official version of the device's official software.)
 

@@ -135,7 +135,9 @@ void MainController::pushModel(const Escher::MessageTree* messageTreeModel) {
 }
 
 int MainController::numberOfRows() const {
+#if !CUSTOM_FIRMWARE
   assert(hasExamModeCell() + hasPressToTestCell() + hasTestModeCell() == 1);
+#endif
   return model()->numberOfChildren() + hasExamModeCell() +
          hasPressToTestCell() + hasTestModeCell() - 3;
 };
@@ -328,22 +330,34 @@ ViewController* MainController::subControllerForCell(
 
 bool MainController::hasExamModeCell() const {
   // If only exam modes are available
+#if CUSTOM_FIRMWARE
+  return false;
+#else
   return !hasTestModeCell() && m_examModeController.numberOfRows() > 0;
+#endif
 }
 
 bool MainController::hasPressToTestCell() const {
   // If only press to test is available
+#if CUSTOM_FIRMWARE
+  return false;
+#else
   return m_examModeController.numberOfRows() == 0;
+#endif
 }
 
 bool MainController::hasTestModeCell() const {
   // If both exam mode and press to test are available
+#if CUSTOM_FIRMWARE
+  return false;
+#else
   CountryPreferences::AvailableExamModes examMode =
       GlobalPreferences::SharedGlobalPreferences()->availableExamModes();
   return (examMode == CountryPreferences::AvailableExamModes::All ||
           examMode == CountryPreferences::AvailableExamModes::AmericanAll) &&
          Preferences::SharedPreferences()->examMode().ruleset() ==
              ExamMode::Ruleset::Off;
+#endif
 }
 
 int MainController::getModelIndex(int index) const {
@@ -352,16 +366,26 @@ int MainController::getModelIndex(int index) const {
    * Then, either the exam mode or the press-to-test cell is hidden. */
   assert(index >= 0 && index < numberOfRows());
   if (index > k_indexOfExamModeCell) {
+#if CUSTOM_FIRMWARE
+    index += 3 - hasExamModeCell() - hasPressToTestCell() - hasTestModeCell();
+#else
     // 2 of the 3 exam mode cells are hidden.
     index += 2;
+#endif
   } else if (index == k_indexOfExamModeCell) {
     if (!hasExamModeCell()) {
       // Hidden exam mode cell
       index += 1;
       if (!hasPressToTestCell()) {
         // Hidden press-to-test cell
-        assert(hasTestModeCell());
         index += 1;
+#if CUSTOM_FIRMWARE
+        if (!hasTestModeCell()) {
+          index += 1;
+        }
+#else
+        assert(hasTestModeCell());
+#endif
       }
     }
   }

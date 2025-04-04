@@ -1538,6 +1538,7 @@ const Tree* Private::SelectPiecewiseBranch(const Tree* piecewise,
     i++;
   }
   // No clause matched
+  // TODO: return a dimensioned Undef
   return KUndef;
 }
 

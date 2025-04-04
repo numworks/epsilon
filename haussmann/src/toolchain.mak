@@ -1,6 +1,6 @@
 # Compiler commands and parameters
 
-PYTHON := $(if $(shell test -d '.venv' || echo 1),python3,.venv/bin/python3)
+PYTHON := $(if $(PYTHON),$(PYTHON), $(if $(shell test -d '.venv' || echo 1),python3,.venv/bin/python3))
 
 HOSTCC := gcc
 HOSTCXX := g++

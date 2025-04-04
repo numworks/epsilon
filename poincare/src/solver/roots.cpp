@@ -92,6 +92,7 @@ Tree* Roots::CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
       KMult(-4_e, KD, KPow(KB, 3_e))),
     {.KA = a, .KB = b, .KC = c, .KD = d});
   // clang-format on
+  AdvancedReduction::DeepExpandAlgebraic(delta);
   AdvancedReduction::Reduce(delta);
   return delta;
 }
@@ -208,6 +209,7 @@ Tree* Roots::PolynomialEvaluation(const Tree* value, const Tree* a,
       KD),
     {.KA = a, .KB = b, .KC = c, .KD = d, .KH = value});
   // clang-format on
+  AdvancedReduction::DeepExpandAlgebraic(e);
   AdvancedReduction::Reduce(e);
   return e;
 }

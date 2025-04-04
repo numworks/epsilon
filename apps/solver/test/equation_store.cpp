@@ -192,14 +192,13 @@ QUIZ_CASE(solver_cubic) {
       },
       &globalContext);
 
-#if 0  // TODO_PCJ: delta fails to simplify
   assert_solves_to("(x-√(3)/2)(x^2-x+6/4)=0",
-                   {"x=√(3)/2",
-                    "x=1/2-√(-5)/2",  // TODO: "x=1/2-(√(5)/2)i"
-                    "x=1/2+√(-5)/2", "delta=(-465+180×√(3))/16"}, &globalContext);
+                   {"x=√(3)/2", "x=1/2-√(5)i/2", "x=1/2+√(5)i/2",
+                    "delta=-465/16+45/4×exp(1/2×ln(3))"},
+                   &globalContext);
   assert_solves_to("(x-2i+1)(x+3i-1)(x-i+2)=0",
-                   {"x=-2+1×i", "x=-1+2×i", "x=1-3×i", "delta=-1288-666×i"}, &globalContext);
-#endif
+                   {"x=-2+1×i", "x=-1+2×i", "x=1-3×i", "delta=-1288-666×i"},
+                   &globalContext);
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);

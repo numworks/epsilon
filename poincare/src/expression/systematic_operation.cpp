@@ -699,6 +699,11 @@ bool SystematicOperation::ReduceExp(Tree* e) {
     e->cloneTreeOverTree(1_e);
     return true;
   }
+  if (child->isMult() && PatternMatching::MatchReplaceSimplify(
+                             e, KExp(KMult(2_e, π_e, i_e)), 1_e)) {
+    // exp(2πi) = 1
+    return true;
+  }
   // This step shortcuts an advanced reduction step.
   // exp(A+ln(B)+C) -> B*exp(A+C)
   if (child->isAdd() && PatternMatching::MatchReplaceSimplify(

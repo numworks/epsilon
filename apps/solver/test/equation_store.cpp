@@ -148,9 +148,7 @@ QUIZ_CASE(solver_cubic) {
 
   assert_solves_to("x^3-3x-2=0", {"x=-1", "x=2", "delta=0"}, &globalContext);
   assert_solves_to("x^3-4x^2+6x-24=0",
-                   {"x=4",
-                    "x=-(√(-24))/(2)",  // TODO_PCJ: simplify
-                    "x=√(-24)/(2)", "delta=-11616"},
+                   {"x=4", "x=-√(6)i", "x=√(6)i", "delta=-11616"},
                    &globalContext);
 
   assert_solves_to("4×x^3+3×x+i=0", {"x=-i/2", "x=i", "delta=0"},
@@ -159,12 +157,8 @@ QUIZ_CASE(solver_cubic) {
                    {"x=2", "x=-1-√(3)×i", "x=-1+√(3)×i", "delta=-1728"},
                    &globalContext);
 
-  assert_solves_to(
-      "x^3-8i=0",
-      {"x=-√(3)+i",
-       "x=-e^(π/6×i)×(1+√(3)×i)",  // TODO_PCJ: simplify to "x=-2×i"
-       "x=√(3)+i", "delta=1728"},
-      &globalContext);
+  assert_solves_to("x^3-8i=0", {"x=-√(3)+i", "x=-2i", "x=√(3)+i", "delta=1728"},
+                   &globalContext);
 
   /* NOTE: we used to only display the approximate form for the below case, this
    * can be discussed. */
@@ -175,11 +169,7 @@ QUIZ_CASE(solver_cubic) {
       &globalContext);
 
   assert_solves_to("x^3-(2+i)×x^2-2×i×x-2+4×i=0",
-                   {
-                       "x=-1-i", "x=1+i", "x=2+i",
-                       "delta=312+384i-4(-2+4i)(-2-i)^3-36·i·(-2-i)·(-2+4i)"
-                       // TODO_PCJ : advanced reduction fails to simplify delta
-                   },
+                   {"x=-1-i", "x=1+i", "x=2+i", "delta=-96+40×i"},
                    &globalContext);
   assert_solves_to("x^3+3×x^2+3×x+0.7=0",
                    {"x=-0.3305670499", "x=-1.334716475-0.5797459409i",
@@ -449,13 +439,10 @@ QUIZ_CASE(solver_complex_polar) {
   assert_solves_to("x+i=0", "x=e^(-(π/2)i)", &globalContext);
   assert_solves_to("x+√(-1)=0", "x=e^(-(π/2)i)", &globalContext);
 
-#if 0
-  /* TODO_PCJ: Improve polar format reduction (currently solves to
-   * ((abs(1+√(-3)))/2)e^(arg(((abs(1+√(-3))e^(arg(-((1+√(-3))/2))i))/2))i)
-   */
   assert_solves_to("x^2+x+1=0",
-                   {"x=e^(-(2π/3)i)", "x=e^((2π/3)i)", "delta=3e^(πi)"}, &globalContext);
-
+                   {"x=e^(-(2π/3)i)", "x=e^((2π/3)i)", "delta=3e^(πi)"},
+                   &globalContext);
+#if 0
   /* TODO_PCJ: Improve polar format reduction (with double beautification in the
    * solver, currently solves to
    * (abs(3/8×abs(exp(2/3×Ln(-8)))×exp(arg(3/8×exp(2/3×Ln(-8)))×i))×

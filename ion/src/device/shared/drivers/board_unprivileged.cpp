@@ -2,6 +2,9 @@
 #include <shared/drivers/board_shared.h>
 #include <shared/drivers/kernel_header.h>
 #include <shared/drivers/userland_header.h>
+#if CUSTOM_FIRMWARE
+#include <ion/authentication.h>
+#endif
 
 namespace Ion {
 namespace Device {
@@ -40,8 +43,14 @@ uint32_t userlandEnd(Slot slot) {
 }
 
 uint32_t securityLevel() {
+#if CUSTOM_FIRMWARE
+  assert(Authentication::clearanceLevel() ==
+         Authentication::ClearanceLevel::ThirdParty);
+  return 0;
+#else
   return *(reinterpret_cast<uint32_t*>(isRunningSlotA() ? Config::SlotAOrigin
                                                         : Config::SlotBOrigin));
+#endif
 }
 
 }  // namespace Board

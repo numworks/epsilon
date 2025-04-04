@@ -469,11 +469,12 @@ void AppsContainer::openDFU(bool blocking) {
   if (activeExamMode.isActive() &&
       Ion::Authentication::clearanceLevel() !=
           Ion::Authentication::ClearanceLevel::NumWorks) {
-    setExamMode(ExamMode(ExamMode::Ruleset::Off),
-                ExamMode(Ion::ExamMode::get()));
+    assert(Ion::ExamMode::get() == activeExamMode);
+    setExamMode(ExamMode(ExamMode::Ruleset::Off), activeExamMode);
   } else if (preferences->examMode() != activeExamMode ||
              preferences->forceExamModeReload()) {
-    setExamMode(preferences->examMode(), ExamMode(Ion::ExamMode::get()));
+    assert(Ion::ExamMode::get() == activeExamMode);
+    setExamMode(preferences->examMode(), activeExamMode);
     m_firstUSBEnumeration = true;
   }
   // Update LED when exiting DFU mode

@@ -103,6 +103,15 @@ class CalculationStore {
    * some older calculations are cleared. */
   void getEmptySpace(char** location, size_t neededSize, Calculation** current);
 
+  struct CalculationElements {
+    Poincare::UserExpression input;
+    OutputExpressions outputs;
+    Poincare::Preferences::ComplexFormat complexFormat;
+  };
+
+  CalculationElements processAndCompute(Poincare::Layout input,
+                                        Poincare::Context* context);
+
   /* Push a new empty calculation at a certain location. The location may be
    * updated if the getEmptySpace had to make some space. Returns a pointer to
    * the new Calculation or a null pointer if an error occured.  */

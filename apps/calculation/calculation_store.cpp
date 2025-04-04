@@ -199,7 +199,7 @@ void processStore(OutputExpressions& outputs,
   }
 }
 
-ExpiringPointer<Calculation> CalculationStore::push(
+CalculationStore::CalculationElements CalculationStore::processAndCompute(
     Poincare::Layout inputLayout, Poincare::Context* context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
    * simplification, we could still try to display the approximate result? When
@@ -207,12 +207,12 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * result. If we do so, don't forget to force the Calculation sign to be
    * approximative to avoid long computation to determine it.
    */
+
+  m_inUsePreferences = *Preferences::SharedPreferences();
+  UserExpression inputExpression;
+  OutputExpressions outputs;
   Poincare::Preferences::ComplexFormat complexFormat =
       Poincare::Preferences::SharedPreferences()->complexFormat();
-  m_inUsePreferences = *Preferences::SharedPreferences();
-  char* cursor = endOfCalculations();
-  Calculation* currentCalculation;
-  OutputExpressions outputs;
   {
     CircuitBreakerCheckpoint checkpoint(
         Ion::CircuitBreaker::CheckpointType::Back);
@@ -224,24 +224,16 @@ ExpiringPointer<Calculation> CalculationStore::push(
        * variable assignment. */
       PoolVariableContext ansContext = createAnsContext(context);
 
-      currentCalculation = pushEmptyCalculation(&cursor);
-
-      UserExpression inputExpression =
-          UserExpression::Parse(inputLayout, &ansContext);
+      inputExpression = UserExpression::Parse(inputLayout, &ansContext);
       inputExpression = replaceAnsInExpression(inputExpression, context);
       inputExpression = enhancePushedExpression(inputExpression);
-      if (!pushCalculationElement(inputExpression, &currentCalculation, &cursor,
-                                  ElementType::Input)) {
-        // leave the calculation undefined
-        return currentCalculation;
-      }
 
-      outputs = compute(currentCalculation->input(), complexFormat, context);
+      outputs = compute(inputExpression, complexFormat, context);
 
     } else {
       GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
           checkpoint.endOfPoolBeforeCheckpoint());
-      return nullptr;
+      outputs = {Undefined::Builder(), Undefined::Builder()};
     }
   }
 
@@ -251,19 +243,37 @@ ExpiringPointer<Calculation> CalculationStore::push(
    * expressions in the Sequence store, which would alter the pool above the
    * checkpoint. */
   if (outputs.exact.isStore()) {
-    processStore(outputs, currentCalculation->input(), context);
+    processStore(outputs, inputExpression, context);
   }
 
   if (m_inUsePreferences.examMode().forbidUnits() &&
       outputs.approximate.hasUnit()) {
-    outputs.approximate = Undefined::Builder();
-    outputs.exact = Undefined::Builder();
+    outputs = {Undefined::Builder(), Undefined::Builder()};
   }
 
-  pushCalculationElement(outputs.exact, &currentCalculation, &cursor,
-                         ElementType::ExactOutput);
-  pushCalculationElement(outputs.approximate, &currentCalculation, &cursor,
-                         ElementType::ApproximateOutput);
+  return CalculationElements{inputExpression, outputs, complexFormat};
+}
+
+ExpiringPointer<Calculation> CalculationStore::push(
+    Poincare::Layout inputLayout, Poincare::Context* context) {
+  CalculationElements calculationToPush =
+      processAndCompute(inputLayout, context);
+
+  char* cursor = endOfCalculations();
+  Calculation* currentCalculation = pushEmptyCalculation(&cursor);
+
+  if (!pushCalculationElement(calculationToPush.input, &currentCalculation,
+                              &cursor, ElementType::Input) ||
+      !pushCalculationElement(calculationToPush.outputs.exact,
+                              &currentCalculation, &cursor,
+                              ElementType::ExactOutput) ||
+      !pushCalculationElement(calculationToPush.outputs.approximate,
+                              &currentCalculation, &cursor,
+                              ElementType::ApproximateOutput)) {
+    // The calculation to push was too big to hold on the calculation buffer
+    assert(cursor == k_pushErrorLocation);
+    return nullptr;
+  }
 
   /* All data has been appended, store the pointer to the end of the
    * calculation. */
@@ -272,7 +282,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
   Calculation* nextCalculation =
       reinterpret_cast<Calculation*>(endOfCalculations());
 
-  nextCalculation->setComplexFormat(complexFormat);
+  nextCalculation->setComplexFormat(calculationToPush.complexFormat);
   /* Now that the calculation is fully built, we can finally update
    * m_numberOfCalculations. As that is the only variable tracking the state
    * of the store, updating it only at the end of the push ensures that,

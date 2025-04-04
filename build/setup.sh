@@ -104,6 +104,7 @@ install_linux_binary_deps() {
   fi
 
   if [[ $CI == "1" ]]; then
+    sudo apt-get install parallel
     install_latest_lcov
   fi
 }

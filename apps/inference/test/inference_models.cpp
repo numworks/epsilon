@@ -115,7 +115,7 @@ void testInterval(ConfidenceInterval* interval, InferenceTestCase& testCase) {
                                testCase.m_marginOfError, tolerance());
 }
 
-QUIZ_CASE(probability_one_proportion_statistic) {
+QUIZ_CASE(inference_one_proportion_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.4;
   tests[0].m_op = ComparisonJunior::Operator::Inferior;
@@ -163,7 +163,7 @@ QUIZ_CASE(probability_one_proportion_statistic) {
   }
 }
 
-QUIZ_CASE(probability_one_mean_t_statistic) {
+QUIZ_CASE(inference_one_mean_t_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 128;
   tests[0].m_op = ComparisonJunior::Operator::Inferior;
@@ -214,7 +214,7 @@ QUIZ_CASE(probability_one_mean_t_statistic) {
   }
 }
 
-QUIZ_CASE(probability_one_mean_z_statistic) {
+QUIZ_CASE(inference_one_mean_z_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 128;
   tests[0].m_op = ComparisonJunior::Operator::Inferior;
@@ -264,7 +264,7 @@ QUIZ_CASE(probability_one_mean_z_statistic) {
   }
 }
 
-QUIZ_CASE(probability_two_proportions_statistic) {
+QUIZ_CASE(inference_two_proportions_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0;
   tests[0].m_op = ComparisonJunior::Operator::Superior;
@@ -314,7 +314,7 @@ QUIZ_CASE(probability_two_proportions_statistic) {
   }
 }
 
-QUIZ_CASE(probability_two_means_t_statistic) {
+QUIZ_CASE(inference_two_means_t_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0;
   tests[0].m_op = ComparisonJunior::Operator::Superior;
@@ -371,7 +371,7 @@ QUIZ_CASE(probability_two_means_t_statistic) {
   }
 }
 
-QUIZ_CASE(probability_pooled_t_test) {
+QUIZ_CASE(inference_pooled_t_test) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.3;
   tests[0].m_op = ComparisonJunior::Operator::Superior;
@@ -428,7 +428,7 @@ QUIZ_CASE(probability_pooled_t_test) {
   }
 }
 
-QUIZ_CASE(probability_two_means_z_statistic) {
+QUIZ_CASE(inference_two_means_z_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.;
   tests[0].m_op = ComparisonJunior::Operator::Superior;
@@ -484,7 +484,7 @@ QUIZ_CASE(probability_two_means_z_statistic) {
   }
 }
 
-QUIZ_CASE(probability_goodness_test) {
+QUIZ_CASE(inference_goodness_test) {
   GoodnessTest inference;
   InferenceTestCase tests[1];
   tests[0].m_op = ComparisonJunior::Operator::Superior;
@@ -522,7 +522,7 @@ QUIZ_CASE(probability_goodness_test) {
   }
 }
 
-QUIZ_CASE(probability_homogeneity_test) {
+QUIZ_CASE(inference_homogeneity_test) {
   // clang-format off
   InferenceTestCase tests[1];
   tests[0].m_op = ComparisonJunior::Operator::Superior;
@@ -589,7 +589,7 @@ QUIZ_CASE(probability_homogeneity_test) {
   }
 }
 
-QUIZ_CASE(probability_slope_t_statistic) {
+QUIZ_CASE(inference_slope_t_statistic) {
   InferenceTestCase testCase;
   testCase.m_firstHypothesisParam = 0.;
   testCase.m_op = ComparisonJunior::Operator::NotEqual;
@@ -632,7 +632,7 @@ QUIZ_CASE(probability_slope_t_statistic) {
   testInterval(&interval, testCase);
 }
 
-QUIZ_CASE(probability_one_mean_t_with_table) {
+QUIZ_CASE(inference_one_mean_t_with_table) {
   /* Create a random dataset and make sure the computed values match whether the
    * raw data or their statistics are the inputs. */
 

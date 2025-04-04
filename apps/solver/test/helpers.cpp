@@ -167,8 +167,17 @@ static void compareSolutions(SystemOfEquations* system,
         !expectedExpression.isUninitialized() &&
         expectedExpression.isIdenticalToWithoutParentheses(obtainedExpression));
 #else
-    quiz_assert(!expectedExpression.isUninitialized() &&
-                expectedExpression.isIdenticalTo(obtainedExpression));
+    bool result = (!expectedExpression.isUninitialized() &&
+                   expectedExpression.isIdenticalTo(obtainedExpression));
+#if POINCARE_TREE_LOG
+    if (!result) {
+      std::cout << "\tWrong Solution: ";
+      obtainedExpression.tree()->logSerialize();
+      std::cout << "\tInstead of: ";
+      expectedExpression.tree()->logSerialize();
+    }
+#endif
+    quiz_assert(result);
 #endif
 
     i++;

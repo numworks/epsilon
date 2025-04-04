@@ -14,6 +14,13 @@ Tree* Vector::Norm(const Tree* e) {
   // Norm is defined on vectors only
   assert(IsVector(e));
   int childrenNumber = e->numberOfChildren();
+  if (childrenNumber == 1) {
+    // Avoids having to simplify sqrt(abs(child)^2) for nothing
+    Tree* result = (KAbs)->cloneNode();
+    e->child(0)->cloneTree();
+    SystematicReduction::ShallowReduce(result);
+    return result;
+  }
   Tree* result = KPow->cloneNode();
   Tree* sum = SharedTreeStack->pushAdd(childrenNumber);
   for (const Tree* child : e->children()) {

@@ -70,7 +70,7 @@ endif
 
 OUTPUT_DIRECTORY ?= $(OUTPUT_ROOT)/$(_build_type)/$(PLATFORM)
 
-TOOLS_DIRECTORY ?= $(OUTPUT_ROOT)/tools
+TOOLS_DIRECTORY ?= $(OUTPUT_ROOT)/tools/$(HOST)
 
 VERBOSE ?= 1
 ifneq ($(VERBOSE),2)

@@ -286,7 +286,6 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
                                         Poincare::Context* context,
                                         bool canChangeDisplayOutput) {
   // Memoization
-  m_hasEllipsis = calculation->additionalResultsType(context).isNotEmpty();
   m_inputView.setLayout(calculation->createInputLayout(context));
 
   /* All expressions have to be updated at the same time. Otherwise,
@@ -302,6 +301,10 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
       font, maxVisibleWidth, context, canChangeDisplayOutput);
 
   m_calculationDisplayOutput = calculation->displayOutput();
+  /* m_calculationDisplayOutput must have been updated before computing the
+   * additional results type (a forbidden expression could hide the exact
+   * results). */
+  m_hasEllipsis = calculation->additionalResultsType(context).isNotEmpty();
 
   /* Update m_scrollableOutputView. Must be done once m_calculationDisplayOutput
    * has been updated. We must set which subviews are displayed before

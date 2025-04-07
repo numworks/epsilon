@@ -22,17 +22,23 @@ bool quiz_print_clear() { return Ion::Console::clear(); }
  * if set: run all tests but quits when any test start with [untilFilter]
  *
  * Those 3 conditions can be mixed and matched to obtain the desired test filter
- * Exemple:
+ * Example:
  * `--from aaa --filter bbb`
  *  => run tests starting with bbb located after aaa
  * `--from aaa --until bbb`
  *  => run tests located inbetween aaa and bbb
  * `--from aaa --until bbb --filter ccc`
  *  => run tests starting with ccc located inbetween aaa and bbb
+ *
+ * [chunk-id and number-of-chunks]
+ * Split the list of tests into [number-of-chunks] chunks and run only the tests
+ * of the [chunk-id] chunk. These flags are used to parallelize the test run
+ * among several processes.
  */
 static inline void ion_main_inner(const char* testFilter,
                                   const char* fromFilter,
-                                  const char* untilFilter) {
+                                  const char* untilFilter, int chunkId,
+                                  int numberOfChunks) {
   int i = 0;
   int time = Ion::Timing::millis();
   int totalCases = 0;
@@ -53,12 +59,20 @@ static inline void ion_main_inner(const char* testFilter,
     totalCases++;
   }
 
+  int start = 0;
+  int end = totalCases;
+  if (numberOfChunks != 1) {
+    int chunkSize = (totalCases + numberOfChunks - 1) / numberOfChunks;
+    start = chunkId * chunkSize;
+    end = std::min(start + chunkSize, end);
+  }
+
   // Second pass to test quiz cases
   constexpr int k_bufferSize = 30;
   char buffer[k_bufferSize];
-  i = 0;
+  i = start;
   int caseIndex = 0;
-  while (quiz_cases[i] != NULL) {
+  while (quiz_cases[i] != NULL && i < end) {
 #ifndef PLATFORM_DEVICE
     if (fromFilter &&
         strstr(quiz_case_names[i], fromFilter) == quiz_case_names[i]) {
@@ -123,6 +137,8 @@ void ion_main(int argc, const char* const argv[]) {
   const char* testFilter = nullptr;
   const char* fromFilter = nullptr;
   const char* untilFilter = nullptr;
+  int chunkId = 0;
+  int numberOfChunks = 1;
   sSkipAssertions = false;
 #if !PLATFORM_DEVICE
   for (int i = 1; i < argc; i++) {
@@ -138,15 +154,23 @@ void ion_main(int argc, const char* const argv[]) {
     } else if (strcmp(argv[i], "--skip-assertions") == 0 ||
                strcmp(argv[i], "-s") == 0) {
       sSkipAssertions = true;
+    } else if (strcmp(argv[i], "--chunk-id") == 0) {
+      assert(i + 1 < argc);
+      chunkId = atoi(argv[i + 1]);
+    } else if (strcmp(argv[i], "--number-of-chunks") == 0) {
+      assert(i + 1 < argc);
+      numberOfChunks = atoi(argv[i + 1]);
     }
   }
 #endif
+  assert(chunkId < numberOfChunks);
   /* s_stackStart must be defined as early as possible to ensure that there
    * cannot be allocated memory pointers before. Otherwise, with MicroPython for
    * example, stack pointer could go backward after initialization and allocated
    * memory pointers could be overlooked during mark procedure. */
   volatile int stackTop;
   Ion::setStackStart((void*)(&stackTop));
-  exception_run(ion_main_inner, testFilter, fromFilter, untilFilter);
+  exception_run(ion_main_inner, testFilter, fromFilter, untilFilter, chunkId,
+                numberOfChunks);
   Poincare::Shutdown();
 }

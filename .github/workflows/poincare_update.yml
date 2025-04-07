@@ -43,7 +43,7 @@ jobs:
       - name: Run head
         shell: bash
         run: |
-          $DOCKER_RUN "parallel -n 2 --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --from {1} --until {2} ::: shared graph graph solver solver poincare poincare pcj pcj zzz" | tee out
+          $DOCKER_RUN "parallel --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | tee out
 
       - name: Filter output
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv

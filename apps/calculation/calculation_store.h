@@ -95,7 +95,7 @@ class CalculationStore {
   }
   char* endOfCalculationAtIndex(int index) const;
   /* Account for the size of an additional pointer at the end of the buffer. */
-  size_t spaceForNewCalculations(char* currentEndOfCalculations) const;
+  size_t spaceForNewCalculations(const char* currentEndOfCalculations) const;
 
   size_t privateDeleteCalculationAtIndex(int index, char* shiftedMemoryEnd);
   size_t deleteOldestCalculation(char* endOfTemporaryData) {

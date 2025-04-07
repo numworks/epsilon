@@ -248,10 +248,6 @@ ExpiringPointer<Calculation> CalculationStore::push(
     return nullptr;
   }
   getEmptySpace(&cursor, neededSize);
-  /* TODO: check that the cursor is in the "good" range, this would be more
-   * meaningful than k_pushErrorLocation that cannot occur anymore */
-  assert(cursor != k_pushErrorLocation);
-
   Calculation* pushedCalculation = pushCalculation(calculationToPush, &cursor);
   assert(pushedCalculation);
   return ExpiringPointer(pushedCalculation);
@@ -290,7 +286,7 @@ char* CalculationStore::endOfCalculationAtIndex(int index) const {
 }
 
 size_t CalculationStore::spaceForNewCalculations(
-    char* currentEndOfCalculations) const {
+    const char* currentEndOfCalculations) const {
   // Be careful with size_t: negative values are not handled
   return currentEndOfCalculations + sizeof(Calculation*) < pointerArea()
              ? (pointerArea() - currentEndOfCalculations) - sizeof(Calculation*)
@@ -351,11 +347,9 @@ size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
 
 Calculation* CalculationStore::pushCalculation(
     const CalculationElements& calculationToPush, char** location) {
-  const size_t neededSize = neededSizeForCalculation(calculationToPush.size());
-
-  // TODO: more meaningful assertion on the cursor location
-  assert(*location != k_pushErrorLocation);
-  assert(spaceForNewCalculations(*location) >= neededSize);
+  assert(*location >= m_buffer &&
+         *location < pointerArea() -
+                         neededSizeForCalculation(calculationToPush.size()));
 
   // Push an empty Calculation instance (takes sizeof(Calculation))
   Calculation* newCalculation = pushEmptyCalculation(location);

@@ -4,6 +4,12 @@ $(OUTPUT_DIRECTORY)/%.bin: $(OUTPUT_DIRECTORY)/%.elf
 
 $(call document_extension,bin,Extract plain binary from ELF file)
 
+$(OUTPUT_DIRECTORY)/%.hex: $(OUTPUT_DIRECTORY)/%.elf
+	$(call rule_label,OBJCOPY)
+	$(OBJCOPY) -O ihex $< $@
+
+$(call document_extension,hex,Extract Intel .hex from ELF file)
+
 $(OUTPUT_DIRECTORY)/%.dfu: $(OUTPUT_DIRECTORY)/%.elf
 	$(call rule_label,DFU)
 	$(PYTHON) $(PATH_haussmann)/data/device/elf2dfu.py -i $< -o $@

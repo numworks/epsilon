@@ -38,6 +38,11 @@ struct OutputExpressions {
 m_buffer        p3              p2              p1              p0                                       a
 
 a = pointerArea()
+
+Each calculation in the buffer is composed of a Calculation instance directly
+followed by some Poincare expressions, one for each element of the calculation
+(in order: input, exact output, approximate output). See the m_trees member
+variable of Calculation for more details on this memory layout.
 */
 // clang-format on
 
@@ -67,17 +72,16 @@ class CalculationStore {
 
   Poincare::PoolVariableContext createAnsContext(Poincare::Context* context);
 
-  /* It is not really the minimal size, but it clears enough space for most
-   * calculations instead of clearing less space, then fail to serialize, clear
-   * more space, fail to serialize, clear more space, etc., until reaching
-   * sufficient free space. */
-  static constexpr size_t k_calculationMinimalSize =
-      sizeof(Calculation) + Calculation::k_numberOfExpressions *
-                                ::Constant::MaxSerializedExpressionSize;
-
  private:
   static constexpr char* k_pushErrorLocation = nullptr;
   static constexpr size_t k_pushErrorSize = 0;
+
+  static constexpr size_t neededSizeForCalculation(size_t sizeOfExpressions) {
+    /* See the "memory layout" section in the description of the
+     * CalculationStore class for more details on how calculations are stored.
+     */
+    return sizeof(Calculation) + sizeOfExpressions + sizeof(Calculation*);
+  }
 
   char* pointerArea() const {
     return m_buffer + m_bufferSize -
@@ -126,8 +130,13 @@ class CalculationStore {
    * expression tree. Returns the size of the pushed content. */
   size_t pushExpressionTree(char** location, Poincare::UserExpression e);
 
-  bool pushCalculation(const CalculationElements& expressionsToPush,
-                       char** location);
+  /* Push a Calculation with its expressions (input, exact and approximate
+   * output), and updates the calculation buffer to hold this new calculation
+   * (see the memory layout in the CalculationStore class description).
+   * Note: this method assumes that enough space was freed after "location" to
+   * contain the new calculation. */
+  Calculation* pushCalculation(const CalculationElements& calculationToPush,
+                               char** location);
 
   char* const m_buffer;
   const size_t m_bufferSize;

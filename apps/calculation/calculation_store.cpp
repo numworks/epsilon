@@ -239,27 +239,17 @@ ExpiringPointer<Calculation> CalculationStore::push(
       processAndCompute(inputLayout, context);
 
   char* cursor = endOfCalculations();
-  if (!pushCalculation(calculationToPush, &cursor)) {
+  /* TODO: test first that the incoming calculation can hold on the buffer, and
+   * if it is not the case, do not erase the whole calculation history, but push
+   * an undef calculation output instead */
+  Calculation* pushedCalculation = pushCalculation(calculationToPush, &cursor);
+  if (!pushedCalculation) {
     // The calculation to push was too big to hold on the calculation buffer
     assert(cursor == k_pushErrorLocation);
     return nullptr;
   }
 
-  /* All data has been appended, store the pointer to the end of the
-   * calculation. */
-  assert(cursor < pointerArea() - sizeof(Calculation*));
-  pointerArray()[-1] = cursor;
-  Calculation* nextCalculation =
-      reinterpret_cast<Calculation*>(endOfCalculations());
-
-  nextCalculation->setComplexFormat(calculationToPush.complexFormat);
-  /* Now that the calculation is fully built, we can finally update
-   * m_numberOfCalculations. As that is the only variable tracking the state
-   * of the store, updating it only at the end of the push ensures that,
-   * should an interruption occur, all the temporary states are silently
-   * discarded and no ill-formed Calculation is stored. */
-  m_numberOfCalculations++;
-  return ExpiringPointer(nextCalculation);
+  return ExpiringPointer(pushedCalculation);
 }
 
 bool CalculationStore::preferencesHaveChanged() {
@@ -357,31 +347,48 @@ size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
   return length;
 }
 
-bool CalculationStore::pushCalculation(
-    const CalculationElements& expressionsToPush, char** location) {
-  // Free space for new calculation
-  size_t neededSize =
-      sizeof(Calculation) + expressionsToPush.size() + sizeof(Calculation*);
+Calculation* CalculationStore::pushCalculation(
+    const CalculationElements& calculationToPush, char** location) {
+  // Free space for the new calculation
+  const size_t neededSize = neededSizeForCalculation(calculationToPush.size());
   getEmptySpace(location, neededSize,
                 reinterpret_cast<Calculation**>(*location));
   if (*location == k_pushErrorLocation) {
-    return false;
+    return nullptr;
   }
 
   assert(*location != k_pushErrorLocation);
   assert(spaceForNewCalculations(*location) >= neededSize);
 
+  // Push an empty Calculation instance (takes sizeof(Calculation))
   Calculation* newCalculation = pushEmptyCalculation(location);
-  assert(!expressionsToPush.input.isUninitialized() &&
-         !expressionsToPush.outputs.exact.isUninitialized() &&
-         !expressionsToPush.outputs.approximate.isUninitialized());
+  // Set the complex format
+  newCalculation->setComplexFormat(calculationToPush.complexFormat);
+
+  // Push the input and output expressions after the Calculation
+  assert(!calculationToPush.input.isUninitialized() &&
+         !calculationToPush.outputs.exact.isUninitialized() &&
+         !calculationToPush.outputs.approximate.isUninitialized());
   newCalculation->m_inputTreeSize =
-      pushExpressionTree(location, expressionsToPush.input);
+      pushExpressionTree(location, calculationToPush.input);
   newCalculation->m_exactOutputTreeSize =
-      pushExpressionTree(location, expressionsToPush.outputs.exact);
+      pushExpressionTree(location, calculationToPush.outputs.exact);
   newCalculation->m_approximatedOutputTreeSize =
-      pushExpressionTree(location, expressionsToPush.outputs.approximate);
-  return true;
+      pushExpressionTree(location, calculationToPush.outputs.approximate);
+
+  /* Write the pointer to the new calculation at pointerArea() (takes
+   * sizeof(Calculation*)) */
+  assert(*location < pointerArea() - sizeof(Calculation*));
+  pointerArray()[-1] = *location;
+  /* Now that the calculation is fully built, we can finally update
+   * m_numberOfCalculations. As that is the only variable tracking the state
+   * of the store, updating it only at the end of the push ensures that,
+   * should an interruption occur, all the temporary states are silently
+   * discarded and no ill-formed Calculation is stored. */
+  m_numberOfCalculations++;
+  assert(calculationAtIndex(0).pointer() == newCalculation);
+
+  return newCalculation;
 }
 
 }  // namespace Calculation

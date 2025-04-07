@@ -12,6 +12,10 @@ class PreferencesTestBuilder {
     Poincare::Preferences defaultPreferences{};
     // Initialize the exam mode to "Off"
     defaultPreferences.examMode();
+#if POINCARE_TRANSLATE_BUILTINS
+    defaultPreferences.setTranslateBuiltins(
+        Poincare::Preferences::TranslateBuiltins::TranslateToFrench);
+#endif
     return defaultPreferences;
   }
 };

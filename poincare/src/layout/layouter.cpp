@@ -38,31 +38,33 @@ static constexpr int k_maxPriority = 20;
 
 /* Priority just after Add for left child of a subtraction that may be an
  * unparenthesed addition */
-static constexpr int k_subLeftChildPriority = 8;
+static constexpr int k_subLeftChildPriority = 9;
 
 static constexpr int OperatorPriority(TypeBlock type) {
   switch (type) {
+    case Type::ListElement:
+      return 0;
     case Type::Fact:
     case Type::PercentSimple:
-      return 0;
-    case Type::Pow:
       return 1;
-    case Type::Div:
+    case Type::Pow:
       return 2;
-    case Type::EuclideanDivision:
+    case Type::Div:
       return 3;
-    case Type::Mult:
+    case Type::EuclideanDivision:
       return 4;
+    case Type::Mult:
+      return 5;
     case Type::PercentAddition:
     case Type::MixedFraction:
-      return 5;
+      return 6;
     case Type::Opposite:
     // Opposite could be higher but we prefer to display 2^(-1) instead of 2^-1
     case Type::Sub:
-      return 6;
-    case Type::Add:
       return 7;
-      static_assert(k_subLeftChildPriority == 8);
+    case Type::Add:
+      return 8;
+      static_assert(k_subLeftChildPriority == 9);
 
     case Type::Equal:
     case Type::NotEqual:
@@ -748,6 +750,12 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         layoutInfixOperator(rack, expression, ',');
         break;
       }
+    case Type::ListElement:
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      layoutExpression(layoutParent, expression->nextNode(),
+                       k_forceParentheses);
+      break;
     case Type::Parentheses:
       layoutExpression(layoutParent, expression->nextNode(),
                        k_forceParentheses);

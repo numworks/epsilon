@@ -132,20 +132,20 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       TreeVariableContext parameterContext;  // For parametric
 
       for (int i = 0; i < n; i++) {
-        Context* chidContext = context;
+        Context* childContext = context;
 
         if (useParameterContext) {
           if (i == Parametric::k_variableIndex) {
             /* Set the context to nullptr for the variable so that it's properly
              * parsed as a symbol, and not as a unit or a product. */
-            chidContext = nullptr;
+            childContext = nullptr;
           } else if (Parametric::IsFunctionIndex(i, ref)) {
             // Use the parameter context for the function child
-            chidContext = &parameterContext;
+            childContext = &parameterContext;
           }
         }
 
-        TreeRef parsedChild = Parse(l->child(i), chidContext);
+        TreeRef parsedChild = Parse(l->child(i), childContext);
         if (!parsedChild) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }

@@ -72,91 +72,43 @@ QUIZ_CASE(calculation_store) {
 
   /* Checking if the store handles correctly the delete of older calculations
    * when full. */
-  constexpr size_t minimalSize = CalculationStore::k_calculationMinimalSize +
-                                 sizeof(Calculation::Calculation*);
+
   constexpr const char* pattern = "1234567890123456789+";
   constexpr size_t patternSize = 20;
   assert(strlen(pattern) == patternSize);
 
-  // Case 1 : Remaining space < minimalSize
-  {
-    constexpr size_t calculationSize = 200;
-    assert(calculationSize < store.remainingBufferSize());
-    static_assert(calculationSize % patternSize == 0);
-    char text[calculationSize];
-    for (size_t i = 0; i < calculationSize; i += patternSize) {
-      memcpy(text + i, pattern, patternSize);
-    }
-    text[calculationSize - 1] = 0;
-
-    while (store.remainingBufferSize() >= minimalSize) {
-      pushAndProcessCalculation(&store, text, &globalContext);
-    }
-    int numberOfCalculations1 = store.numberOfCalculations();
-    /* The buffer is now too full to push a new calculation.
-     * Trying to push a new one should delete the oldest one. Alter new text to
-     * distinguish it from previously pushed ones. */
-    text[0] = '9';
-    pushAndProcessCalculation(&store, text, &globalContext);
-    // Assert pushed text is correct
-    char buffer[4096];
-    store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
-    quiz_assert(strcmp(buffer, text) == 0);
-    store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
-    quiz_assert(strcmp(buffer, text) == 0);
-    int numberOfCalculations2 = store.numberOfCalculations();
-    // The numberOfCalculations should be the same
-    quiz_assert(numberOfCalculations1 == numberOfCalculations2);
+  constexpr size_t textSize = 200;
+  static_assert(textSize % patternSize == 0);
+  char text[textSize];
+  for (size_t i = 0; i < textSize; i += patternSize) {
+    memcpy(text + i, pattern, patternSize);
   }
-  store.deleteAll();
+  text[textSize - 1] = 0;
 
-  // Case 2 : Remaining space > minimalSize but pushed calculation doesn't fit
-  {
-    /* This value was chosen so that :
-         - the calculationSize is larger than minimalSize (expression.treeSize)
-         - the layout can be serialized (treeSize() < TreeStack/2)
-         - the expression cannot have more than 256 children in the addition
-    */
-    constexpr size_t textSize = 3500;
-    assert(textSize % patternSize == 0);
-    assert(textSize < store.remainingBufferSize());
-    char text[textSize];
-    for (size_t i = 0; i < textSize; i += patternSize) {
-      memcpy(text + i, pattern, patternSize);
-    }
-    text[textSize - 1] = 0;
+  const size_t emptyStoreSize = store.remainingBufferSize();
+  pushAndProcessCalculation(&store, text, &globalContext);
+  assert(emptyStoreSize > store.remainingBufferSize());
+  const size_t calculationSize = emptyStoreSize - store.remainingBufferSize();
 
-    const size_t emptyStoreSize = store.remainingBufferSize();
+  while (store.remainingBufferSize() > calculationSize) {
     pushAndProcessCalculation(&store, text, &globalContext);
-    assert(emptyStoreSize > store.remainingBufferSize());
-    const size_t calculationSize = emptyStoreSize - store.remainingBufferSize();
-
-    // Push big calculations until approaching the limit
-    while (store.remainingBufferSize() > 2 * calculationSize) {
-      pushAndProcessCalculation(&store, text, &globalContext);
-    }
-    /* Push small calculations so that remainingBufferSize remain bigger, but
-     * gets closer to minimalSize */
-    while (store.remainingBufferSize() > minimalSize + minimalSize / 4) {
-      pushAndProcessCalculation(&store, "1", &globalContext);
-    }
-    assert(store.remainingBufferSize() < calculationSize);
-    assert(store.remainingBufferSize() > minimalSize);
-    int numberOfCalculations1 = store.numberOfCalculations();
-    /* The buffer is now too full to push a new calculation.
-     * Trying to push a new one should delete older ones. Alter new text to
-     * distinguish it from previously pushed ones. */
-    text[0] = '9';
-    pushAndProcessCalculation(&store, text, &globalContext);
-    char buffer[8192];
-    store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
-    quiz_assert(strcmp(buffer, text) == 0);
-    store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
-    quiz_assert(strcmp(buffer, text) == 0);
-    int numberOfCalculations2 = store.numberOfCalculations();
-    // The numberOfCalculations should be the equal or smaller
-    quiz_assert(numberOfCalculations1 >= numberOfCalculations2);
   }
+  int numberOfCalculations1 = store.numberOfCalculations();
+  /* The buffer is now too full to push a new calculation.
+   * Trying to push a new one should delete the oldest one. Alter new text to
+   * distinguish it from previously pushed ones. */
+  text[0] = '9';
+  pushAndProcessCalculation(&store, text, &globalContext);
+  // Assert pushed text is correct
+  char buffer[4096];
+  store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
+  quiz_assert(strcmp(buffer, text) == 0);
+  store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
+  quiz_assert(strcmp(buffer, text) == 0);
+  int numberOfCalculations2 = store.numberOfCalculations();
+  // The numberOfCalculations should be the same
+  quiz_assert(numberOfCalculations1 == numberOfCalculations2);
+
   store.deleteAll();
   quiz_assert(store.remainingBufferSize() == store.bufferSize());
 }

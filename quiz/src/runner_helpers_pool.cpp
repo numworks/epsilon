@@ -1,8 +1,14 @@
+#include <apps/global_preferences.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/pool.h>
 
 #include "quiz.h"
 #include "runner_helpers.h"
+
+class GlobalPreferencesTestBuilder {
+ public:
+  static GlobalPreferences buildDefault() { return GlobalPreferences(); }
+};
 
 void flushGlobalData() {
   /* TODO: Some global data are asserted to be preserved while others are reset
@@ -10,6 +16,8 @@ void flushGlobalData() {
 
   flushGlobalDataNoPool();
   quiz_assert(Poincare::Pool::sharedPool->numberOfObjects() == 0);
+  quiz_assert(*GlobalPreferences::SharedGlobalPreferences() ==
+              GlobalPreferencesTestBuilder::buildDefault());
 }
 
 void exception_run(void (*inner_main)(const char*, const char*, const char*,

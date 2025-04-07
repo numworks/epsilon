@@ -9,6 +9,7 @@ on:
       - '**/*.md'
       - 'poincare/doc/**'
       - 'tests/**'
+      - 'scandium'
 
   workflow_dispatch:
     inputs:

@@ -7,6 +7,8 @@ on:
       - 'poincare/doc/**'
       - 'tests/**'
       - 'ion/src/simulator/**'
+      - 'scandium'
+
 env:
   MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1 PLATFORM=n0120' || '-j2 PLATFORM=n0120' }}
   CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache_docker' || '' }}

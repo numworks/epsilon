@@ -6,6 +6,7 @@ on:
       - 'poincare/doc/**'
       - 'tests/**'
       - 'ion/src/device/**'
+      - 'scandium'
 
 env:
   MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1' || '-j2' }}

@@ -12,6 +12,7 @@
 #include "../parametric.h"
 #include "../physical_constant.h"
 #include "../simplification.h"
+#include "../systematic_reduction.h"
 #include "representatives.h"
 
 namespace Poincare::Internal {
@@ -754,6 +755,10 @@ bool Unit::ProjectToBestUnits(Tree* e, Dimension dimension,
   }
   // Turn e into its SI value. 2_m + _yd -> 3.8288
   Tree::ApplyShallowTopDown(e, ShallowRemoveUnit);
+  /* Reduce the dimension-less expression, this could be skipped since e will
+   * just be approximated, but it allows better approximation, especially when
+   * the expected result is 0. */
+  SystematicReduction::DeepReduce(e);
   assert(extractedUnits && e->nextTree() == extractedUnits);
   bool treeRemoved = RemoveNonUnits(extractedUnits, true);
   // Warning : extractedUnits isn't just e's dimension. 2_m + _yd -> _m + _yd

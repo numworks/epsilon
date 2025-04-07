@@ -1036,6 +1036,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("0×_K×_s×_s×(_g+4×_kg)", "0×_s^2×_kg×_K");
   simplifies_to("0×_L-0×_L", "0×_L");
   simplifies_to("3×_dm-3×_dm", "0×_dm");
+  simplifies_to("30×_cm-3×_dm", "0×_m");
+  simplifies_to("6×_dm-60×_cm", "0×_m");
 
   // Angles
   simplifies_to("_rad", "1×_rad");

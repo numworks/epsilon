@@ -107,30 +107,27 @@ class CalculationStore {
     Poincare::UserExpression input;
     OutputExpressions outputs;
     Poincare::Preferences::ComplexFormat complexFormat;
+
+    size_t size() const {
+      return input.size() + outputs.exact.size() + outputs.approximate.size();
+    }
   };
 
   CalculationElements processAndCompute(Poincare::Layout input,
                                         Poincare::Context* context);
 
-  /* Push a new empty calculation at a certain location. The location may be
-   * updated if the getEmptySpace had to make some space. Returns a pointer to
-   * the new Calculation or a null pointer if an error occured.  */
+  /* Push an empty calculation at a certain location. Assumes there is enough
+   * space to push an empty calculation. Returns a pointer to the new
+   * Calculation. */
   Calculation* pushEmptyCalculation(char** location);
 
   /* Push helper method that takes the current location and updates it to the
-   * end of the pushed content, or k_pushError if the content was not pushed.
-   * They also update the current calculation if some older calculations are
-   * cleared. Return the size of the pushed content. */
-  size_t pushExpressionTree(char** location, Poincare::UserExpression e,
-                            Calculation** current);
+   * end of the pushed content. Assumes there is enough space to push the
+   * expression tree. Returns the size of the pushed content. */
+  size_t pushExpressionTree(char** location, Poincare::UserExpression e);
 
-  enum class ElementType : uint8_t { Input, ExactOutput, ApproximateOutput };
-
-  /* Push one of the calculation elements. Returns false if there is not enough
-   * space left in the store for the expression. */
-  bool pushCalculationElement(const Poincare::UserExpression& expression,
-                              Calculation** current, char** location,
-                              ElementType elementType);
+  bool pushCalculation(const CalculationElements& expressionsToPush,
+                       char** location);
 
   char* const m_buffer;
   const size_t m_bufferSize;

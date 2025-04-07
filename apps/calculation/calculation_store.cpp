@@ -100,35 +100,6 @@ UserExpression CalculationStore::replaceAnsInExpression(
   return expression;
 }
 
-bool CalculationStore::pushCalculationElement(
-    const Poincare::Expression& expression, Calculation** current,
-    char** location, ElementType elementType) {
-  assert(!expression.isUninitialized());
-  const size_t sizeOfExpression =
-      pushExpressionTree(location, expression, current);
-  if (sizeOfExpression == k_pushErrorSize) {
-    assert(*location == k_pushErrorLocation);
-    return false;
-  }
-  assert(sizeOfExpression == expression.tree()->treeSize());
-  switch (elementType) {
-    using enum ElementType;
-    case Input: {
-      (*current)->m_inputTreeSize = sizeOfExpression;
-      break;
-    }
-    case ExactOutput: {
-      (*current)->m_exactOutputTreeSize = sizeOfExpression;
-      break;
-    }
-    case ApproximateOutput: {
-      (*current)->m_approximatedOutputTreeSize = sizeOfExpression;
-      break;
-    }
-  }
-  return true;
-}
-
 static OutputExpressions compute(
     const Poincare::Expression& inputExpression,
     Poincare::Preferences::ComplexFormat& complexFormat,
@@ -268,16 +239,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
       processAndCompute(inputLayout, context);
 
   char* cursor = endOfCalculations();
-  Calculation* currentCalculation = pushEmptyCalculation(&cursor);
-
-  if (!pushCalculationElement(calculationToPush.input, &currentCalculation,
-                              &cursor, ElementType::Input) ||
-      !pushCalculationElement(calculationToPush.outputs.exact,
-                              &currentCalculation, &cursor,
-                              ElementType::ExactOutput) ||
-      !pushCalculationElement(calculationToPush.outputs.approximate,
-                              &currentCalculation, &cursor,
-                              ElementType::ApproximateOutput)) {
+  if (!pushCalculation(calculationToPush, &cursor)) {
     // The calculation to push was too big to hold on the calculation buffer
     assert(cursor == k_pushErrorLocation);
     return nullptr;
@@ -361,11 +323,6 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
   return deletedSize;
 }
 
-/* TODO:
- * We should replace pushEmptyCalculation and pushExpressionTree with a
- * single pushCalculation that would safely set the trees and their sizes.
- */
-
 void CalculationStore::getEmptySpace(char** location, size_t neededSize,
                                      Calculation** current) {
   while (spaceForNewCalculations(*location) < neededSize) {
@@ -381,9 +338,9 @@ void CalculationStore::getEmptySpace(char** location, size_t neededSize,
 }
 
 Calculation* CalculationStore::pushEmptyCalculation(char** location) {
-  Calculation* newCalculation = reinterpret_cast<Calculation*>(*location);
-  getEmptySpace(location, k_calculationMinimalSize, &newCalculation);
   assert(*location != k_pushErrorLocation);
+  Calculation* newCalculation = reinterpret_cast<Calculation*>(*location);
+  assert(spaceForNewCalculations(*location) >= sizeof(Calculation));
   new (*location) Calculation(
       Poincare::Preferences::SharedPreferences()->calculationPreferences());
   *location += sizeof(Calculation);
@@ -391,16 +348,40 @@ Calculation* CalculationStore::pushEmptyCalculation(char** location) {
   return newCalculation;
 }
 
-size_t CalculationStore::pushExpressionTree(char** location, UserExpression e,
-                                            Calculation** current) {
+size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
+  assert(*location != k_pushErrorLocation);
   size_t length = e.tree()->treeSize();
-  getEmptySpace(location, length, current);
-  if (*location == k_pushErrorLocation) {
-    return k_pushErrorSize;
-  }
+  assert(spaceForNewCalculations(*location) >= length);
   memcpy(*location, e.tree(), length);
   *location += length;
   return length;
+}
+
+bool CalculationStore::pushCalculation(
+    const CalculationElements& expressionsToPush, char** location) {
+  // Free space for new calculation
+  size_t neededSize =
+      sizeof(Calculation) + expressionsToPush.size() + sizeof(Calculation*);
+  getEmptySpace(location, neededSize,
+                reinterpret_cast<Calculation**>(*location));
+  if (*location == k_pushErrorLocation) {
+    return false;
+  }
+
+  assert(*location != k_pushErrorLocation);
+  assert(spaceForNewCalculations(*location) >= neededSize);
+
+  Calculation* newCalculation = pushEmptyCalculation(location);
+  assert(!expressionsToPush.input.isUninitialized() &&
+         !expressionsToPush.outputs.exact.isUninitialized() &&
+         !expressionsToPush.outputs.approximate.isUninitialized());
+  newCalculation->m_inputTreeSize =
+      pushExpressionTree(location, expressionsToPush.input);
+  newCalculation->m_exactOutputTreeSize =
+      pushExpressionTree(location, expressionsToPush.outputs.exact);
+  newCalculation->m_approximatedOutputTreeSize =
+      pushExpressionTree(location, expressionsToPush.outputs.approximate);
+  return true;
 }
 
 }  // namespace Calculation

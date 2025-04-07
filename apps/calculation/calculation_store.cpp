@@ -238,17 +238,22 @@ ExpiringPointer<Calculation> CalculationStore::push(
   CalculationElements calculationToPush =
       processAndCompute(inputLayout, context);
 
+  // Free space for the new calculation and move cursor if needed
   char* cursor = endOfCalculations();
-  /* TODO: test first that the incoming calculation can hold on the buffer, and
-   * if it is not the case, do not erase the whole calculation history, but push
-   * an undef calculation output instead */
-  Calculation* pushedCalculation = pushCalculation(calculationToPush, &cursor);
-  if (!pushedCalculation) {
-    // The calculation to push was too big to hold on the calculation buffer
-    assert(cursor == k_pushErrorLocation);
+  const size_t neededSize = neededSizeForCalculation(calculationToPush.size());
+  if (neededSize > m_bufferSize) {
+    /* The calculation is too big to hold on the buffer, even if all previous
+     * calculations were deleted. */
+    // TODO: push an undef calculation output
     return nullptr;
   }
+  getEmptySpace(&cursor, neededSize);
+  /* TODO: check that the cursor is in the "good" range, this would be more
+   * meaningful than k_pushErrorLocation that cannot occur anymore */
+  assert(cursor != k_pushErrorLocation);
 
+  Calculation* pushedCalculation = pushCalculation(calculationToPush, &cursor);
+  assert(pushedCalculation);
   return ExpiringPointer(pushedCalculation);
 }
 
@@ -313,8 +318,7 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
   return deletedSize;
 }
 
-void CalculationStore::getEmptySpace(char** location, size_t neededSize,
-                                     Calculation** current) {
+void CalculationStore::getEmptySpace(char** location, size_t neededSize) {
   while (spaceForNewCalculations(*location) < neededSize) {
     if (numberOfCalculations() == 0) {
       *location = k_pushErrorLocation;
@@ -322,8 +326,6 @@ void CalculationStore::getEmptySpace(char** location, size_t neededSize,
     }
     int deleted = deleteOldestCalculation(*location);
     *location -= deleted;
-    *current = reinterpret_cast<Calculation*>(
-        reinterpret_cast<char*>(*current) - deleted);
   }
 }
 
@@ -349,14 +351,9 @@ size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
 
 Calculation* CalculationStore::pushCalculation(
     const CalculationElements& calculationToPush, char** location) {
-  // Free space for the new calculation
   const size_t neededSize = neededSizeForCalculation(calculationToPush.size());
-  getEmptySpace(location, neededSize,
-                reinterpret_cast<Calculation**>(*location));
-  if (*location == k_pushErrorLocation) {
-    return nullptr;
-  }
 
+  // TODO: more meaningful assertion on the cursor location
   assert(*location != k_pushErrorLocation);
   assert(spaceForNewCalculations(*location) >= neededSize);
 

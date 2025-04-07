@@ -76,6 +76,9 @@ bool IsIntegerExpression(const Tree* e) {
       }
       return true;
     }
+    case Type::Pow:
+      return IsIntegerExpression(e->child(0)) &&
+             Integer::Is<uint8_t>(e->child(1));
     case Type::Ceil:
     case Type::Floor:
       return true;
@@ -485,10 +488,9 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
       return true;
     case Type::ListElement:
     case Type::ListSequence:
-      if (hasUnitChild) {
-        return false;
-      }
-      return Integer::Is<uint8_t>(e->child(1));
+      return !hasUnitChild && IsIntegerExpression(e->child(1)) &&
+             Approximation::To<float>(e->child(1),
+                                      Approximation::Parameters{}) > 0;
     case Type::ListSlice:
       return Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2));

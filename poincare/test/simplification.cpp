@@ -1708,6 +1708,9 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   store("{5,4,3,2,1}→l", &globalContext);
   simplifies_to("sum(l)", "15", projCtx);
   simplifies_to("l(2)", "4", projCtx);
+  simplifies_to("l(3^2-4)", "1", projCtx);
+  simplifies_to("l(log(3))", "undef", projCtx);
+  simplifies_to("l(-2) ", "undef", projCtx);
   simplifies_to("l(1,3)", "{5,4,3}", projCtx);
   // TODO: Properly parse list slices on variables
   // TODO_PCJ: implement list access and list slice on lists of points

@@ -107,6 +107,55 @@ Bounds Bounds::Mult(const Tree* e) {
   return bounds;
 }
 
+Bounds Bounds::Pow(const Tree* e) {
+  Bounds base = Bounds::Compute(e->child(0));
+  Bounds exp = Bounds::Compute(e->child(1));
+  if (base.exists() && exp.hasKnownStrictSign()) {
+    if (base.isStrictlyPositive()) {
+      /* 1. 0 < e
+       *    1 < b       => b-^e- < b+^e+    2^2 < 10^3
+       *    b- < 1 < b+ => b-^e- < b+^e+   .5^2 < 10^3
+       *    b < 1       => b-^e+ < b+^e-   .1^3 < .5^2
+       * 2. e < 0
+       *    1 < b       => b+^e- < b-^e+   10^-3 <  2^-2
+       *    b- < 1 < b+ => b+^e+ < b-^e-   10^-2 < .5^-3
+       *    b < 1       => b+^e+ < b-^e-   .5^-2 < .1^-3
+       * */
+      if (exp.isStrictlyPositive() && base.m_upper <= 1) {
+        exp.flip();
+      } else if (exp.isStrictlyNegative()) {
+        base.flip();
+        if (base.m_lower <= 1) {
+          exp.flip();
+        }
+      }
+      Bounds res(std::pow(base.m_lower, exp.m_lower),
+                 std::pow(base.m_upper, exp.m_upper), 0);
+      assert(res.m_lower <= res.m_upper);
+      /* OpenBSD pow become less precise on large values.
+       * The doc states around 2ulp of error for moderate magnitude and below
+       * 300ulp otherwise.
+       * We set an arbitrary cut-off for moderate magnitude at 2**30, and a safe
+       * margin of 5ulp instead of 2. */
+      res.spread(res.m_upper < std::pow(2., 30.) ? 5 : 300);
+      return res;
+    }
+    // TODO: handle base < 0 if we could preserve "int-ness" of exp
+    // To handle cases like (-1/2)^(-3), (-pi)^2
+  }
+  return Invalid();
+}
+
+void Bounds::applyMonotoneFunction(double (*f)(double), bool decreasing,
+                                   uint8_t ulp_precision) {
+  m_lower = f(m_lower);
+  m_upper = f(m_upper);
+  if (decreasing) {
+    flip();
+  }
+  spread(ulp_precision);
+}
+
 static void nthNextafter(double& value, const double& spreadDirection,
                          const unsigned int nth) {
   for (unsigned int i = 0; i < nth; ++i) {
@@ -129,37 +178,6 @@ void Bounds::spread(unsigned int ulp) {
   assert(m_lower <= m_upper);
   nthNextafter(m_lower, -DBL_MAX, ulp);
   nthNextafter(m_upper, DBL_MAX, ulp);
-}
-
-void Bounds::applyMonotoneFunction(double (*f)(double), bool decreasing,
-                                   uint8_t ulp_precision) {
-  m_lower = f(m_lower);
-  m_upper = f(m_upper);
-  if (decreasing) {
-    flip();
-  }
-  spread(ulp_precision);
-}
-
-Bounds Bounds::Pow(const Tree* e) {
-  Bounds base = Bounds::Compute(e->child(0));
-  Bounds exp = Bounds::Compute(e->child(1));
-  if (base.hasKnownStrictSign() && exp.hasKnownStrictSign()) {
-    if (base.isStrictlyPositive()) {
-      Bounds res = Bounds(std::pow(base.m_lower, exp.m_lower),
-                          std::pow(base.m_upper, exp.m_upper), 0);
-      /* OpenBSD pow become less precise on large values.
-       * The doc states around 2ulp of error for moderate magnitude and below
-       * 300ulp otherwise.
-       * We set an arbitrary cut-off for moderate magnitude at 2**30, and a safe
-       * margin of 5ulp instead of 2. */
-      res.spread(res.m_upper < std::pow(2., 30.) ? 5 : 300);
-      return res;
-    }
-    // TODO: handle base < 0 if we could preserve "int-ness" of exp
-    // To handle cases like (-1/2)^(-3), (-pi)^2
-  }
-  return Invalid();
 }
 
 void Bounds::flip() {

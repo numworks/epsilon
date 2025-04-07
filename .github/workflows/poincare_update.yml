@@ -58,7 +58,8 @@ jobs:
         run: $DOCKER_RUN "make PLATFORM=simulator ASSERTIONS=1 test.bin"
       - name: Run ancestor
         shell: bash
-        run: $DOCKER_RUN "output/debug/optimized/linux/test.bin --headless --limit-stack-usage" | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
+        run: |
+          $DOCKER_RUN "parallel --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
 
       - name: Compare logs
         id: compare_logs

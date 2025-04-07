@@ -699,11 +699,6 @@ bool SystematicOperation::ReduceExp(Tree* e) {
     e->cloneTreeOverTree(1_e);
     return true;
   }
-  if (child->isMult() && PatternMatching::MatchReplaceSimplify(
-                             e, KExp(KMult(2_e, π_e, i_e)), 1_e)) {
-    // exp(2πi) = 1
-    return true;
-  }
   // This step shortcuts an advanced reduction step.
   // exp(A+ln(B)+C) -> B*exp(A+C)
   if (child->isAdd() && PatternMatching::MatchReplaceSimplify(
@@ -764,36 +759,45 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
   }
   if (child->isExp()) {
     Tree* expChild = child->child(0);
-    // |e^(x+y+z)| = |e^(x+z)| if y is pure imaginary
+    /* |e^(x+y+z)| = dep(|e^(x+z)|, {y}) if y is pure imaginary
+     * This shortcuts at least two advanced reduction step:
+     * ExpandExp + ExpandAbs */
     if (expChild->isAdd()) {
-      int numberChildren = expChild->numberOfChildren();
+      TreeRef depList = KDepList.node<1>->cloneNode();
+      KAbs->cloneNode();
+      KExp->cloneNode();
+      TreeRef depListAdd = KAdd.node<0>->cloneNode();
+      int numberOfChildren = expChild->numberOfChildren();
+      int numberOfDep = 0;
       int currentChild = 0;
       Tree* c = expChild->child(0);
-      bool flagRemoved = false;
-      while (currentChild < numberChildren) {
+      while (currentChild < numberOfChildren) {
         if (GetComplexSign(c).isPureIm()) {
-          c->removeTree();
-          --numberChildren;
-          flagRemoved = true;
+          c->detachTree();
+          --numberOfChildren;
+          ++numberOfDep;
         } else {
           c = c->nextTree();
           ++currentChild;
         }
       }
-      if (flagRemoved) {
-        if (numberChildren == 1) {
-          expChild->removeNode();
-        } else {
-          NAry::SetNumberOfChildren(expChild, numberChildren);
-          ReduceAddOrMult(expChild);
-        }
+      if (numberOfDep) {
+        NAry::SetNumberOfChildren(expChild, numberOfChildren);
+        NAry::SetNumberOfChildren(depListAdd, numberOfDep);
+        ReduceAddOrMult(expChild);
         ReduceExp(child);
         ReduceAbs(e);
+        e->nextTree()->moveTreeBeforeNode(depList);
+        e->cloneNodeAtNode(KDep);
+      } else {
+        SharedTreeStack->flushFromBlock(depList);
       }
-      return flagRemoved;
+      return numberOfDep;
     } else if (GetComplexSign(expChild).isPureIm()) {
-      // |e^x| = 1 when x is pure imaginary
-      e->cloneNodeOverTree(1_e);
+      // |e^x| = dep(1, {|e^x|}) when x is pure imaginary
+      e->cloneNodeAtNode(KDepList.node<1>);
+      e->cloneNodeAtNode(1_e);
+      e->cloneNodeAtNode(KDep);
       return true;
     }
   }

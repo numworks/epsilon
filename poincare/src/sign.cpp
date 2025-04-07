@@ -264,7 +264,7 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
     return ComplexSign(Sign(false, true, false,
                             base.realSign().canBeNonInteger() ||
                                 exp.realSign().canBeNonInteger(),
-                            false),
+                            !(base.isFinite() && exp.isFinite())),
                        Sign::Zero());
   }
   if (exp.canBeNonReal() || exp.canBeNonInteger()) {
@@ -361,7 +361,7 @@ ComplexSign GetComplexSign(const Tree* e) {
         }
       }
       if (s.isReal() && s.realSign().isFinite() &&
-          (!(s.realSign().hasKnownStrictSign() || s.realSign().isNull()))) {
+          !s.realSign().hasKnownStrictSign()) {
         assert(s.imagSign().isNull());
         Sign realSign = Bounds::Sign(e);
         if (realSign != Sign::Unknown()) {

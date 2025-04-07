@@ -1118,7 +1118,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     return e->isNonReal() ? NonReal<T>() : NAN;
   }
   if (e->isRational()) {
-    return Rational::Numerator(e).to<T>() / Rational::Denominator(e).to<T>();
+    return Rational::To<T>(e);
   }
 
   if (e->isRandomized()) {

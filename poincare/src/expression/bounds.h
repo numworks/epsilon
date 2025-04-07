@@ -19,22 +19,26 @@ class Bounds {
       : m_lower(lower), m_upper(upper) {
     spread(ulp);
   };
-  Bounds() : m_lower(std::nan("")), m_upper(std::nan("")){};
-  static Bounds Null() { return Bounds(); }
+  Bounds() : m_lower(NAN), m_upper(NAN){};
+  static Bounds Invalid() { return Bounds(); }
   static Bounds Compute(const Tree* e);
-  static Bounds ComputeRational(const Tree* e);
+  static Bounds ComputeNumber(const Tree* e);
   static Bounds Mult(const Tree* e);
   static Bounds Add(const Tree* e);
   static Bounds Pow(const Tree* e);
   void remove();
   void flip();
   bool isStrictlyPositive() {
-    assert(isValid());
+    assert(exists());
     return 0 < m_lower;
   }
   bool isStrictlyNegative() {
-    assert(isValid());
+    assert(exists());
     return m_upper < 0;
+  }
+  bool isNull() {
+    assert(exists());
+    return m_lower == 0 && m_upper == 0;
   }
   void applyMonotoneFunction(double (*f)(double), bool decreasing = false,
                              uint8_t ulp_precision = 1);
@@ -50,7 +54,7 @@ class Bounds {
    * [lower <= upper < 0],
    * [0 < lower <= upper],
    * [lower == upper == 0]. */
-  bool isValid() {
+  bool hasKnownStrictSign() {
     return exists() && ((m_lower <= m_upper && (m_upper < 0 || 0 < m_lower)) ||
                         (m_lower == 0 && m_upper == 0));
   }

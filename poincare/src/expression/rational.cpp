@@ -15,6 +15,13 @@ namespace Poincare::Internal {
 
 // TODO: tests
 
+template float Rational::To<float>(const Tree* e);
+template double Rational::To<double>(const Tree* e);
+template <typename T>
+T Rational::To(const Tree* e) {
+  return Rational::Numerator(e).to<T>() / Rational::Denominator(e).to<T>();
+}
+
 IntegerHandler Rational::Numerator(const Tree* e) {
   assert(e->isRational());
   Type type = e->type();

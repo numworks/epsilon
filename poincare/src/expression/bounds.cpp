@@ -3,46 +3,43 @@
 #include <float.h>
 #include <poincare/src/expression/rational.h>
 
+#include "poincare/src/expression/float_helper.h"
+
 namespace Poincare::Internal {
 
 Sign Bounds::Sign(const Tree* e) {
   Bounds bounds = Compute(e);
   Poincare::Sign sign = Sign::Unknown();
-  if (bounds.isValid()) {
+  if (bounds.hasKnownStrictSign()) {
     sign = Poincare::Sign(bounds.m_lower == 0, bounds.isStrictlyPositive(),
                           bounds.isStrictlyNegative(), true, false);
   }
   return sign;
 }
 
-Bounds Bounds::ComputeRational(const Tree* e) {
-  assert(e->isRational());
-  switch (e->type()) {
-    case Type::Zero:
-      return Bounds(0., 0., 0);
-    case Type::One:
-      return Bounds(1., 1., 0);
-    case Type::Two:
-      return Bounds(2., 2., 0);
-    case Type::Half:
-      return Bounds(.5, .5, 0);
-    case Type::MinusOne:
-      return Bounds(-1., -1., 0);
-    default:
-      double value = Rational::Numerator(e).to<double>() /
-                     Rational::Denominator(e).to<double>();
-      return Bounds(value, value);
+Bounds Bounds::ComputeNumber(const Tree* e) {
+  unsigned int ulp = 1;
+  double value = NAN;
+  if (e->isRational()) {
+    value = Rational::To<double>(e);
+    if (e->isOfType(
+            {Type::Zero, Type::One, Type::Two, Type::Half, Type::MinusOne})) {
+      ulp = 0;
+    }
+  } else if (e->isMathematicalConstant()) {
+    value = e->isPi() ? M_PI : M_E;
+  } else if (e->isFloat()) {
+    value = FloatHelper::To(e);
   }
-  OMG::unreachable();
+  assert(!std::isnan(value));
+  return Bounds(value, value, ulp);
 }
 
 Bounds Bounds::Compute(const Tree* e) {
-  if (e->isRational()) {
-    return Bounds::ComputeRational(e);
+  if (e->isNumber()) {
+    return Bounds::ComputeNumber(e);
   }
   switch (e->type()) {
-    case Type::Pi:
-      return Bounds(M_PI, M_PI);
     case Type::Mult:
       return Mult(e);
     case Type::Add:
@@ -52,61 +49,59 @@ Bounds Bounds::Compute(const Tree* e) {
       return Pow(e);
     case Type::Ln: {
       Bounds b = Bounds::Compute(e->child(0));
-      if (b.isValid()) {
+      if (b.exists()) {
         b.applyMonotoneFunction(std::log);
       }
       return b;
     }
     case Type::Exp: {
       Bounds b = Bounds::Compute(e->child(0));
-      if (b.isValid()) {
+      if (b.exists()) {
         b.applyMonotoneFunction(std::exp);
       }
       return b;
     }
     default:
-      return Bounds();
+      return Invalid();
   }
 }
 
 Bounds Bounds::Add(const Tree* e) {
+  assert(e->numberOfChildren() > 0);
   Bounds bounds = Bounds(0., 0., 0);
   for (const Tree* child : e->children()) {
     Bounds childBounds = Compute(child);
-    if (!childBounds.isValid()) {
-      return Null();
+    if (!childBounds.exists()) {
+      return Invalid();
     }
     bounds.m_lower += childBounds.m_lower;
     bounds.m_upper += childBounds.m_upper;
   }
-  if (!bounds.isValid()) {
-    return Null();
+  if (!bounds.exists()) {
+    return Invalid();
   }
   bounds.spread(e->numberOfChildren() - 1);
   return bounds;
 }
 
 Bounds Bounds::Mult(const Tree* e) {
+  assert(e->numberOfChildren() > 0);
   Bounds bounds = Bounds(1., 1., 0);
   for (const Tree* child : e->children()) {
     Bounds childBounds = Compute(child);
-    if (!childBounds.isValid()) {
-      return Null();
+    if (!childBounds.exists()) {
+      return Invalid();
     }
     bounds.m_lower *= childBounds.m_lower;
     bounds.m_upper *= childBounds.m_upper;
     // Cannot spread after each operation because we ignore the final sign yet
   }
   if (!bounds.exists()) {
-    return Null();
+    return Invalid();
   }
-  /* Not valid bounds could result from negative multiplication, so try "fixing"
-   * the issue with a flip before discarding with Null */
-  if (!bounds.isValid()) {
+  /* A negative multiplication can cause the bounds to be flipped */
+  if (bounds.m_upper < bounds.m_lower) {
     bounds.flip();
-    if (!bounds.isValid()) {
-      return Null();
-    }
   }
   bounds.spread(e->numberOfChildren() - 1);
   return bounds;
@@ -131,6 +126,7 @@ void Bounds::spread(unsigned int ulp) {
    * been below 300 ulps for IEEE 754 Double. Moderate values of pow() are
    * accurate enough that pow(integer, integer) is exact until it is bigger than
    * 2**53 for IEEE 754. */
+  assert(m_lower <= m_upper);
   nthNextafter(m_lower, -DBL_MAX, ulp);
   nthNextafter(m_upper, DBL_MAX, ulp);
 }
@@ -148,7 +144,7 @@ void Bounds::applyMonotoneFunction(double (*f)(double), bool decreasing,
 Bounds Bounds::Pow(const Tree* e) {
   Bounds base = Bounds::Compute(e->child(0));
   Bounds exp = Bounds::Compute(e->child(1));
-  if (base.isValid() && exp.isValid()) {
+  if (base.hasKnownStrictSign() && exp.hasKnownStrictSign()) {
     if (base.isStrictlyPositive()) {
       Bounds res = Bounds(std::pow(base.m_lower, exp.m_lower),
                           std::pow(base.m_upper, exp.m_upper), 0);
@@ -163,7 +159,7 @@ Bounds Bounds::Pow(const Tree* e) {
     // TODO: handle base < 0 if we could preserve "int-ness" of exp
     // To handle cases like (-1/2)^(-3), (-pi)^2
   }
-  return Null();
+  return Invalid();
 }
 
 void Bounds::flip() {

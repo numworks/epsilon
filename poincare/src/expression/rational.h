@@ -20,6 +20,8 @@ class Rational final {
   static Tree* Push(const Tree* numerator, const Tree* denominator) {
     return Push(Integer::Handler(numerator), Integer::Handler(denominator));
   }
+  template <typename T>
+  static T To(const Tree* e);
   static IntegerHandler Numerator(const Tree* e);
   static IntegerHandler Denominator(const Tree* e);
   static Poincare::Sign Sign(const Tree* e) {

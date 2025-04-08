@@ -107,8 +107,6 @@ class Polynomial final {
 
 class PolynomialParser final {
  public:
-  static bool ContainsVariable(const Tree* e);
-  static Tree* GetVariables(const Tree* e);
   static Tree* RecursivelyParse(Tree* e, const Tree* variables,
                                 size_t variableIndex = 0);
   /* Eat e and return a Polynomial node.  If e is not a polynomial of variable,
@@ -124,7 +122,6 @@ class PolynomialParser final {
       OMG::Troolean* highestDegreeCoefficientIsPositive = nullptr);
 
  private:
-  static void AddVariable(Tree* set, const Tree* variable);
   static std::pair<Tree*, uint8_t> ParseMonomial(Tree* e, const Tree* variable);
 #if 0
   Tree* PolynomialInterpretation

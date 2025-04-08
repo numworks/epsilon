@@ -11,6 +11,10 @@ QUIZ_CASE(solver_error) {
   assert_solves_to_error("cos(x)=0", RequireApproximateSolution,
                          &globalContext);
 
+  // TODO could be linear with better reduction
+  assert_solves_to_error("x=1+int(xe^(-2t),t,0,inf)",
+                         RequireApproximateSolution, &globalContext);
+
   assert_solves_to_error("x+y+z+a+b+c+d=0", TooManyVariables, &globalContext);
 
   assert_solves_to_error("x^2+y=0", NonLinearSystem, &globalContext);
@@ -44,6 +48,9 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to_infinite_solutions("0=0", &globalContext);
   assert_solves_to_infinite_solutions({"x+y=0"}, {"x=-t", "y=t"},
                                       &globalContext);
+
+  assert_solves_to({"x=int(e^(-t),t,0,inf)"}, {"x=1"}, &globalContext);
+  assert_solves_to({"x*int(e^(-2t),t,0,inf)=1"}, {"x=2"}, &globalContext);
 
 #if 0 /* TODO_PCJ: incorrect number of solutions */
   assert_solves_to_infinite_solutions({"x-x=0"}, {"x=t"}, &globalContext);
@@ -324,6 +331,10 @@ QUIZ_CASE(solver_approximate) {
 #endif
 
   assert_solves_numerically_to("10^4×abs(x-10^(-4))+0.001=0", -10, 10, {},
+                               &globalContext);
+
+  // TODO could be linear with better reduction
+  assert_solves_numerically_to("x=1+int(xe^(-2t),t,0,inf)", -10, 10, {2},
                                &globalContext);
 
 #if 0

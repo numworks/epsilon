@@ -11,55 +11,6 @@
 
 using namespace Poincare::Internal;
 
-void assert_polynomial_is_parsed(const Tree* e, const Tree* expectedVariables,
-                                 const Tree* expectedPolynomial) {
-  SharedTreeStack->flush();
-  Tree* variables = PolynomialParser::GetVariables(e);
-  assert_trees_are_equal(variables, expectedVariables);
-  Tree* clone = e->cloneTree();
-  SystematicReduction::DeepReduce(clone);
-  AdvancedReduction::DeepExpandAlgebraic(clone);
-  Tree* polynomial = PolynomialParser::RecursivelyParse(clone, variables);
-  assert_trees_are_equal(polynomial, expectedPolynomial);
-}
-
-QUIZ_CASE(pcj_polynomial_parsing) {
-  assert_polynomial_is_parsed(
-      /* 42 */ 42_e,
-      /* variables = {} */ KSet(),
-      /* polynomial */ 42_e);
-  assert_polynomial_is_parsed(
-      /* x^3 + 3*x^2*y + 3*x*y^2 + y^3 */ KAdd(
-          KPow("x"_e, 3_e), KMult(3_e, KPow("x"_e, 2_e), "y"_e),
-          KMult(3_e, KPow("y"_e, 2_e), "x"_e), KPow("y"_e, 3_e)),
-      /* variables = {x, y} */ KSet("x"_e, "y"_e),
-      /* polynomial */
-      KPol(Exponents<3, 2, 1, 0>(), "x"_e, 1_e,
-           KPol(Exponents<1>(), "y"_e, 3_e), KPol(Exponents<2>(), "y"_e, 3_e),
-           KPol(Exponents<3>(), "y"_e, 1_e)));
-  // TODO: parse polynomial with float coefficients?
-}
-
-QUIZ_CASE(pcj_polynomial_variables) {
-  assert_trees_are_equal(
-      PolynomialParser::GetVariables(KMult(2_e, "x"_e, "y"_e)),
-      KSet("x"_e, "y"_e));
-  assert_trees_are_equal(
-      PolynomialParser::GetVariables(KAdd(KPow("x"_e, 2_e), KLn("x"_e))),
-      KSet("x"_e, KLn("x"_e)));
-  assert_trees_are_equal(PolynomialParser::GetVariables(
-                             KAdd(KPow("x"_e, 2_e), KPow("y"_e, 2_e),
-                                  KMult(-1_e, KPow(KAdd("x"_e, "y"_e), 2_e)))),
-                         KSet("x"_e, "y"_e, KAdd("x"_e, "y"_e)));
-  assert_trees_are_equal(
-      PolynomialParser::GetVariables(KAdd("x"_e, KPow("y"_e, -1_e))),
-      KSet("x"_e, KPow("y"_e, -1_e)));
-  assert_trees_are_equal(
-      PolynomialParser::GetVariables(KAdd(
-          KMult(KExp(KMult(1_e / 2_e, KLn(2_e))), "x"_e), KMult(π_e, i_e))),
-      KSet("x"_e));
-}
-
 QUIZ_CASE(pcj_polynomial_operations) {
   /* A = x^2 + 3*x*y + y + 1 */
   const Tree* polA =

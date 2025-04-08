@@ -549,9 +549,8 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
     polynomial->removeTree();  // Remove Variable : [Coeff1][?Coeff0]
     // Update eq to follow [Coeff0] if it exists for next variables.
     eq = nullConstant ? SharedTreeStack->pushZero() : polynomial->nextTree();
-    if (PolynomialParser::ContainsVariable(polynomial) ||
-        (i == numberOfVariables - 1 &&
-         PolynomialParser::ContainsVariable(eq))) {
+    if (Variables::HasVariables(polynomial) ||
+        (i == numberOfVariables - 1 && Variables::HasVariables(eq))) {
       /* The expression can be linear on all coefficients taken one by one but
        * non-linear (ex: xy = 2). We delete the results and return false if one
        * of the coefficients (or last constant term) contains a variable. */

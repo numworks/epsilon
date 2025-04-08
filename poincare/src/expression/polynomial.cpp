@@ -16,6 +16,7 @@
 #include "sign.h"
 #include "simplification.h"
 #include "systematic_reduction.h"
+#include "variables.h"
 
 namespace Poincare::Internal {
 
@@ -322,59 +323,6 @@ Tree* Polynomial::Sanitize(Tree* polynomial) {
 
 /* PolynomialParser */
 
-bool PolynomialParser::ContainsVariable(const Tree* e) {
-  int numberOfChildren = e->numberOfChildren();
-  if (numberOfChildren == 0) {
-    /* TODO: we used to consider π and e as variables, restore them if
-     * polynomial interpretation is to be implemented */
-    return e->isOfType(
-        {Type::UserFunction, Type::UserSequence, Type::UserSymbol, Type::Var});
-  }
-  const Tree* child = e->child(0);
-  for (int i = 0; i < numberOfChildren; i++) {
-    if (ContainsVariable(child)) {
-      return true;
-    }
-    child = child->nextTree();
-  }
-  return false;
-}
-
-void PolynomialParser::AddVariable(Tree* set, const Tree* variable) {
-  if (ContainsVariable(variable)) {
-    Set::Add(set, variable);
-  }
-}
-
-Tree* PolynomialParser::GetVariables(const Tree* e) {
-  Tree* variables = SharedTreeStack->pushSet(0);
-  if (e->isInteger()) {  // TODO: generic belongToField?
-    return variables;
-  }
-  Type type = e->type();
-  // TODO: match
-  if (type == Type::Pow) {
-    const Tree* base = e->child(0);
-    const Tree* exponent = base->nextTree();
-    assert(exponent->isInteger());
-    assert(!Integer::Is<uint8_t>(exponent) ||
-           Integer::Handler(exponent).to<uint8_t>() > 1);
-    AddVariable(variables, Integer::Is<uint8_t>(exponent) ? base : e);
-  } else if (type == Type::Add || type == Type::Mult) {
-    for (const Tree* child : e->children()) {
-      if (child->isAdd() && type != Type::Add) {
-        AddVariable(variables, child);
-      } else {
-        // TODO: variables isn't expected to actually change.
-        variables = Set::Union(variables, GetVariables(child));
-      }
-    }
-  } else {
-    AddVariable(variables, e);
-  }
-  return variables;
-}
-
 Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
                                          size_t variableIndex) {
   const Tree* variable = nullptr;
@@ -474,7 +422,12 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
       childCoefficient->removeTree();
     }
   }
-  if (Order::ContainsSubtree(e, variable)) {
+  /* TODO Order::ContainsSubtree ignores Parametric,
+   * but is need for HasNonNullCoefficients atm.
+   * When variable->isVar(), uses the more precise HasVariable */
+  if ((variable->isVar() && Variables::HasVariable(e, variable)) ||
+      Order::ContainsSubtree(e, variable)) {
+    // TODO for HasVariable: assert e is not a child of a parametric node?
     TreeStackCheckpoint::Raise(ExceptionType::NonPolynomial);
   }
   return std::make_pair(e, static_cast<uint8_t>(0));

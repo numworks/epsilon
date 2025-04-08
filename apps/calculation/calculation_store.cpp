@@ -143,6 +143,9 @@ static OutputExpressions computeInterruptible(
   } else {
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
+    // If the output computation is interrupted, return undef
+    /* TODO: split into two Checkpoints, one for the exact computation and one
+     * for the approximate computation */
     outputs = {Undefined::Builder(), Undefined::Builder()};
   }
 
@@ -173,10 +176,10 @@ static void processStore(OutputExpressions& outputs,
     value = valueApprox;
   }
 #if 0
-    /* TODO_PCJ: restore assert
-     * Handle case of functions (3*x->f(x)): there should be no symbol except x */
-    assert(!value.recursivelyMatches(
-        [](const Expression e) { return e.isUserSymbol(); }));
+/* TODO_PCJ: restore assert
+* Handle case of functions (3*x->f(x)): there should be no symbol except x */
+assert(!value.recursivelyMatches(
+[](const Expression e) { return e.isUserSymbol(); }));
 #endif
   if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
     outputs.exact = value;
@@ -189,51 +192,90 @@ static void processStore(OutputExpressions& outputs,
   }
 }
 
-CalculationStore::CalculationElements CalculationStore::processAndCompute(
+static OutputExpressions postProcessOutputs(
+    const OutputExpressions& outputs,
+    const Poincare::Expression& inputExpression, bool unitsForbidden,
+    Poincare::Context* context) {
+  OutputExpressions processedOutputs = outputs;
+
+  CircuitBreakerCheckpoint checkpoint(
+      Ion::CircuitBreaker::CheckpointType::Back);
+  if (CircuitBreakerRun(checkpoint)) {
+    if (unitsForbidden && outputs.approximate.hasUnit()) {
+      processedOutputs = {Undefined::Builder(), Undefined::Builder()};
+    }
+    processedOutputs.exact = enhancePushedExpression(outputs.exact);
+  } else {
+    GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
+        checkpoint.endOfPoolBeforeCheckpoint());
+    /* If an interruption occurs during output post-processing (which is
+     * unlikely to happen), silently fail and keep the non-processed outputs */
+    return outputs;
+  }
+
+  /* When an input contains a store, it is kept by the reduction in the exact
+   * output and the actual store is performed here.
+   * This must be done outside of a checkpoint because it can delete some
+   * memoized expressions in the Sequence store, which would alter the pool
+   * above the checkpoint. */
+  // TODO: improve the safety of the store operation
+  if (processedOutputs.exact.isStore()) {
+    processStore(processedOutputs, inputExpression, context);
+  }
+
+  return processedOutputs;
+}
+
+Poincare::UserExpression CalculationStore::parseInput(
     Poincare::Layout inputLayout, Poincare::Context* context) {
   m_inUsePreferences = *Preferences::SharedPreferences();
 
-  /* Compute Ans now before the store is updated or the last calculation
-   * deleted.
-   * Setting Ans in the context makes it available during the parsing of the
-   * input, namely to know if a rightwards arrow is a unit conversion or a
-   * variable assignment. */
-  PoolVariableContext ansContext = createAnsContext(context);
+  CircuitBreakerCheckpoint checkpoint(
+      Ion::CircuitBreaker::CheckpointType::Back);
+  if (CircuitBreakerRun(checkpoint)) {
+    /* Compute Ans now before the store is updated or the last calculation
+     * deleted.
+     * Setting Ans in the context makes it available during the parsing of the
+     * input, namely to know if a rightwards arrow is a unit conversion or a
+     * variable assignment. */
+    PoolVariableContext ansContext = createAnsContext(context);
+    UserExpression inputExpression =
+        UserExpression::Parse(inputLayout, &ansContext);
+    inputExpression = replaceAnsInExpression(inputExpression, context);
+    inputExpression = enhancePushedExpression(inputExpression);
+    return inputExpression;
+  } else {
+    GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
+        checkpoint.endOfPoolBeforeCheckpoint());
+    return {};
+  }
+}
 
-  UserExpression inputExpression =
-      UserExpression::Parse(inputLayout, &ansContext);
-  inputExpression = replaceAnsInExpression(inputExpression, context);
-  inputExpression = enhancePushedExpression(inputExpression);
-  assert(!inputExpression.isUninitialized());
-
+CalculationStore::CalculationElements CalculationStore::computeAndProcess(
+    const Poincare::Expression& inputExpression, Poincare::Context* context) {
   Poincare::Preferences::ComplexFormat complexFormat =
       Poincare::Preferences::SharedPreferences()->complexFormat();
-
   OutputExpressions outputs =
       computeInterruptible(inputExpression, complexFormat, context);
 
-  /* Output post-processing */
-  outputs.exact = enhancePushedExpression(outputs.exact);
-  /* When an input contains a store, it is kept by the reduction in the exact
-   * output and the actual store is performed here.
-   * This must be done after the checkpoint because it can delete some memoized
-   * expressions in the Sequence store, which would alter the pool above the
-   * checkpoint. */
-  if (outputs.exact.isStore()) {
-    processStore(outputs, inputExpression, context);
-  }
-  if (m_inUsePreferences.examMode().forbidUnits() &&
-      outputs.approximate.hasUnit()) {
-    outputs = {Undefined::Builder(), Undefined::Builder()};
-  }
+  outputs =
+      postProcessOutputs(outputs, inputExpression,
+                         m_inUsePreferences.examMode().forbidUnits(), context);
 
-  return CalculationElements{inputExpression, outputs, complexFormat};
+  return {inputExpression, outputs, complexFormat};
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(
     Poincare::Layout inputLayout, Poincare::Context* context) {
+  Poincare::UserExpression inputExpression = parseInput(inputLayout, context);
+  if (inputExpression.isUninitialized()) {
+    /* If parsing was interrupted (which is unlikely to happen), do not update
+     * the calculation store */
+    return nullptr;
+  }
+
   CalculationElements calculationToPush =
-      processAndCompute(inputLayout, context);
+      computeAndProcess(inputExpression, context);
 
   size_t neededSize = neededSizeForCalculation(calculationToPush.size());
   if (neededSize > m_bufferSize) {

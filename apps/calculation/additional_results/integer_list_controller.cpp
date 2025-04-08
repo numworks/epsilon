@@ -1,6 +1,7 @@
 #include "integer_list_controller.h"
 
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/additional_results_helper.h>
 #include <poincare/k_tree.h>
 
 #include "../app.h"
@@ -28,15 +29,16 @@ void IntegerListController::computeAdditionalResults(
   static_assert(
       k_maxNumberOfRows >= k_indexOfFactorExpression + 1,
       "k_maxNumberOfRows must be greater than k_indexOfFactorExpression");
-  assert(AdditionalResultsType::HasInteger(exactOutput));
+  const UserExpression integer =
+      AdditionalResultsHelper::EquivalentInteger(exactOutput);
   for (int index = 0; index < k_indexOfFactorExpression; ++index) {
     m_layouts[index] =
-        exactOutput.createLayout(Preferences::PrintFloatMode::Decimal,
-                                 Preferences::LargeNumberOfSignificantDigits,
-                                 nullptr, baseAtIndex(index));
+        integer.createLayout(Preferences::PrintFloatMode::Decimal,
+                             Preferences::LargeNumberOfSignificantDigits,
+                             nullptr, baseAtIndex(index));
   }
   // Computing factorExpression
-  Expression factor = UserExpression::Create(KFactor(KA), {.KA = exactOutput});
+  Expression factor = UserExpression::Create(KFactor(KA), {.KA = integer});
   bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
       &factor, App::app()->localContext(),

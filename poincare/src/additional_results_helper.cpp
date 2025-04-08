@@ -1,7 +1,9 @@
+#include <omg/ieee754.h>
 #include <poincare/additional_results_helper.h>
 #include <poincare/src/expression/angle.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/matrix.h>
@@ -313,8 +315,25 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
   return UserExpression::Builder(clone);
 }
 
+UserExpression AdditionalResultsHelper::EquivalentInteger(
+    const Poincare::UserExpression exactOutput) {
+  assert(HasInteger(exactOutput));
+  if (exactOutput.tree()->isPositiveInteger()) {
+    return exactOutput;
+  }
+  float value = FloatHelper::To(exactOutput.tree());
+  return UserExpression::Builder(Integer::Push(static_cast<int32_t>(value)));
+}
+
 bool AdditionalResultsHelper::HasInteger(
     const Poincare::UserExpression exactOutput) {
+  if (exactOutput.tree()->isFloat()) {
+    // Downcast to float to handle both double and float trees.
+    float value = FloatHelper::To(exactOutput.tree());
+    return std::isfinite(value) && value > 0 && value == std::round(value) &&
+           value < OMG::IEEE754<float>::NonExactIntegerLimit() &&
+           value < 10000000000000000.f;
+  }
   return exactOutput.tree()->isPositiveInteger() &&
          Internal::IntegerHandler::Compare(
              Internal::Integer::Handler(exactOutput),

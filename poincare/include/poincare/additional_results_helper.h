@@ -40,6 +40,10 @@ class AdditionalResultsHelper final {
       const UserExpression input, const char* symbol, float* value);
 
   /* Integer additional results */
+  /* Return the integer UserExpression from exactOutput representing an
+   * integer (Float, Double or Integer) */
+  static UserExpression EquivalentInteger(const UserExpression exactOutput);
+  // Return true if exactOutput represents an integer (Float, Double or Integer)
   static bool HasInteger(const UserExpression exactOutput);
 
   /* Rational additional results */

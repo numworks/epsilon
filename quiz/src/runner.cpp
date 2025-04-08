@@ -70,10 +70,13 @@ static inline void ion_main_inner(const char* testFilter,
   // Second pass to test quiz cases
   constexpr int k_bufferSize = 30;
   char buffer[k_bufferSize];
-  i = start;
+  i = 0;
   int caseIndex = 0;
-  while (quiz_cases[i] != NULL && i < end) {
+  while (quiz_cases[i] != NULL) {
 #ifndef PLATFORM_DEVICE
+    if (caseIndex >= end) {
+      break;
+    }
     if (fromFilter &&
         strstr(quiz_case_names[i], fromFilter) == quiz_case_names[i]) {
       afterFrom = true;
@@ -89,6 +92,11 @@ static inline void ion_main_inner(const char* testFilter,
     if (testFilter &&
         strstr(quiz_case_names[i], testFilter) != quiz_case_names[i]) {
       i++;
+      continue;
+    }
+    if (caseIndex < start) {
+      i++;
+      caseIndex++;
       continue;
     }
 #endif

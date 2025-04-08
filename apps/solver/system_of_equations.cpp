@@ -111,7 +111,7 @@ Internal::Tree* SystemOfEquations::prepareEquationForApproximateSolve(
   set->removeNode();
   Internal::Tree* equation = set;
 
-  // Project and replace user variables if needed
+  // Reduce and replace user variables if needed
   Internal::ProjectionContext ctx{
       .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
       .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
@@ -121,7 +121,7 @@ Internal::Tree* SystemOfEquations::prepareEquationForApproximateSolve(
       .m_context = context};
   Internal::Projection::UpdateComplexFormatWithExpressionInput(equation, &ctx);
   m_solverContext.complexFormat = ctx.m_complexFormat;
-  Internal::Simplification::ToSystem(equation, &ctx);
+  Internal::Simplification::ProjectAndReduce(equation, &ctx);
 
   // Find remaining variable
   Internal::Tree* variables = Internal::Variables::GetUserSymbols(equation);

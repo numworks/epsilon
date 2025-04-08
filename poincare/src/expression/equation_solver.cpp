@@ -152,27 +152,30 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
     assert(result.isUninitialized());
     result =
         SolvePolynomial(reducedEquationSet, numberOfVariables, context, error);
-    if (*error == Error::RequireApproximateSolution) {
-      context->type = Type::GeneralMonovariable;
-      // TODO: Handle GeneralMonovariable solving.
-      assert(result.isUninitialized());
-      reducedEquationSet->removeTree();
-      userSymbols->removeTree();
-      return result;
-    }
-    /* Remove non real solutions of a polynomial if the equation was projected
-     * with a "Real" Complex format */
-    assert(result->isList());
-    if (projectionContext.m_complexFormat == ComplexFormat::Real) {
-      for (int i = result->numberOfChildren() - 1; i >= 0; i--) {
-        if (!SignOfTreeOrApproximation(result->child(i)).isReal()) {
-          NAry::RemoveChildAtIndex(result, i);
+    if (*error != Error::RequireApproximateSolution) {
+      /* Remove non real solutions of a polynomial if the equation was projected
+       * with a "Real" Complex format */
+      assert(result->isList());
+      if (projectionContext.m_complexFormat == ComplexFormat::Real) {
+        for (int i = result->numberOfChildren() - 1; i >= 0; i--) {
+          if (!SignOfTreeOrApproximation(result->child(i)).isReal()) {
+            NAry::RemoveChildAtIndex(result, i);
+          }
         }
       }
     }
   }
+  if (*error == Error::RequireApproximateSolution) {
+    context->type = Type::GeneralMonovariable;
+    // TODO: Handle GeneralMonovariable solving.
+    assert(result.isUninitialized());
+    reducedEquationSet->removeTree();
+    userSymbols->removeTree();
+    return result;
+  }
 #else
-  if (*error == Error::NonLinearSystem) {
+  if (*error == Error::NonLinearSystem ||
+      *error == Error::RequireApproximateSolution) {
     context->type = Type::GeneralMonovariable;
   }
 #endif
@@ -492,7 +495,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       return SharedTreeStack->pushSet(0);
     }
     if (equation->isDep()) {
-      *error = Error::RequireApproximateSolution;
+      *error =
+          (n == 1) ? Error::RequireApproximateSolution : Error::NonLinearSystem;
       equationSetClone->removeTree();
       matrix->removeTree();
       equationSetWithoutDep->removeTree();

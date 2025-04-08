@@ -209,7 +209,20 @@ CalculationStore::CalculationElements CalculationStore::processAndCompute(
    */
 
   m_inUsePreferences = *Preferences::SharedPreferences();
-  UserExpression inputExpression;
+
+  /* Compute Ans now before the store is updated or the last calculation
+   * deleted.
+   * Setting Ans in the context makes it available during the parsing of the
+   * input, namely to know if a rightwards arrow is a unit conversion or a
+   * variable assignment. */
+  PoolVariableContext ansContext = createAnsContext(context);
+
+  UserExpression inputExpression =
+      UserExpression::Parse(inputLayout, &ansContext);
+  inputExpression = replaceAnsInExpression(inputExpression, context);
+  inputExpression = enhancePushedExpression(inputExpression);
+  assert(!inputExpression.isUninitialized());
+
   OutputExpressions outputs;
   Poincare::Preferences::ComplexFormat complexFormat =
       Poincare::Preferences::SharedPreferences()->complexFormat();
@@ -217,17 +230,6 @@ CalculationStore::CalculationElements CalculationStore::processAndCompute(
     CircuitBreakerCheckpoint checkpoint(
         Ion::CircuitBreaker::CheckpointType::Back);
     if (CircuitBreakerRun(checkpoint)) {
-      /* Compute Ans now before the store is updated or the last calculation
-       * deleted.
-       * Setting Ans in the context makes it available during the parsing of the
-       * input, namely to know if a rightwards arrow is a unit conversion or a
-       * variable assignment. */
-      PoolVariableContext ansContext = createAnsContext(context);
-
-      inputExpression = UserExpression::Parse(inputLayout, &ansContext);
-      inputExpression = replaceAnsInExpression(inputExpression, context);
-      inputExpression = enhancePushedExpression(inputExpression);
-
       outputs = compute(inputExpression, complexFormat, context);
 
     } else {

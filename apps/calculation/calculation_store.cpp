@@ -238,16 +238,27 @@ ExpiringPointer<Calculation> CalculationStore::push(
   CalculationElements calculationToPush =
       processAndCompute(inputLayout, context);
 
-  // Free space for the new calculation and move cursor if needed
-  char* cursor = endOfCalculations();
-  const size_t neededSize = neededSizeForCalculation(calculationToPush.size());
+  size_t neededSize = neededSizeForCalculation(calculationToPush.size());
   if (neededSize > m_bufferSize) {
     /* The calculation is too big to hold on the buffer, even if all previous
-     * calculations were deleted. */
-    // TODO: push an undef calculation output
-    return nullptr;
+     * calculations were deleted. Replace its outputs by undefined, it should
+     * now fit on the calculation buffer. */
+    calculationToPush.outputs.exact = Undefined::Builder();
+    calculationToPush.outputs.approximate = Undefined::Builder();
+    neededSize = neededSizeForCalculation(calculationToPush.size());
+    if (neededSize > m_bufferSize) {
+      /* If the calculation with undefined outputs is still too big, it means
+       * that the input expression was too big, which is very unlikely to happen
+       * in a real usecase. In that hypothetical case, do not update the
+       * calculation store at all */
+      return nullptr;
+    }
   }
+
+  // Free space for the new calculation and move cursor if needed
+  char* cursor = endOfCalculations();
   getEmptySpace(&cursor, neededSize);
+
   Calculation* pushedCalculation = pushCalculation(calculationToPush, &cursor);
   assert(pushedCalculation);
   return ExpiringPointer(pushedCalculation);

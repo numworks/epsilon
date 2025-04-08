@@ -13,4 +13,4 @@ runs:
     - name: Define DOCKER_RUN environment variable
       shell: bash
       run: |
-        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) --env MAKEFLAGS --env CCACHE_DIR=/cache --mount type=bind,source=$CCACHE_DIR,target=/cache --mount type=bind,source=.,target=/epsilon epsilon-builder:latest sh -c" >> $GITHUB_ENV
+        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) --env MAKEFLAGS --env CCACHE_DIR=/cache --mount type=bind,source=$CCACHE_DIR,target=/cache --mount type=bind,source=.,target=`pwd` epsilon-builder:latest sh -c" >> $GITHUB_ENV

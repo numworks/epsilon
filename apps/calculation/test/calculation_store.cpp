@@ -898,6 +898,9 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas(
       "400", {.integer = true, .scientificNotation = true}, &globalContext,
       &store);
+  assertCalculationAdditionalResultTypeHas(
+      "sum(k,k,0,5)", {.integer = true, .scientificNotation = true},
+      &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("π+π", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas(
       "e^(2+3)", {.scientificNotation = true}, &globalContext, &store);

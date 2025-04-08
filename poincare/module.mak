@@ -67,6 +67,7 @@ $(addprefix expression/, \
   infinity.cpp \
   integer.cpp \
   integer_serialization.cpp \
+  integration.cpp \
   list.cpp \
   logarithm.cpp \
   matrix.cpp \

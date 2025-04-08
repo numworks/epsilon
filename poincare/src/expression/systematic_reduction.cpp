@@ -7,6 +7,7 @@
 #include "binary.h"
 #include "dependency.h"
 #include "derivation.h"
+#include "integration.h"
 #include "k_tree.h"
 #include "list.h"
 #include "logarithm.h"
@@ -113,6 +114,8 @@ bool SystematicReduction::Switch(Tree* e) {
       return SystematicOperation::ReduceComplexArgument(e);
     case Type::Diff:
       return Derivation::Reduce(e);
+    case Type::Integral:
+      return Integration::Reduce(e);
     case Type::Dim:
       return SystematicOperation::ReduceDim(e);
     case Type::Distribution:

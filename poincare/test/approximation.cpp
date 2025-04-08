@@ -58,6 +58,26 @@ void approximates_to(const char* input, const char* output,
       projectionContext);
 }
 
+template <typename T>
+void simplified_approximates_to(
+    const char* input, const char* output,
+    const ProjectionContext& projectionContext = realCtx) {
+  process_tree_and_compare(
+      input, output,
+      [](Tree* tree, ProjectionContext projectionContext) {
+        simplify(tree, &projectionContext, false);
+        tree->moveTreeOverTree(Approximation::ToTree<T>(
+            tree,
+            Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                      .projectLocalVariables = true},
+            Approximation::Context(projectionContext.m_angleUnit,
+                                   projectionContext.m_complexFormat,
+                                   projectionContext.m_context)));
+        Beautification::DeepBeautify(tree, projectionContext);
+      },
+      projectionContext);
+}
+
 QUIZ_CASE(pcj_approximation_can_approximate) {
   quiz_assert(Approximation::CanApproximate(KAdd(2_e, 3_e)));
   quiz_assert(!Approximation::CanApproximate(KAdd(2_e, "x"_e)));
@@ -339,6 +359,8 @@ QUIZ_CASE(pcj_approximation_integrals) {
   approximates_to<float>("710*int(x×e^(-710×x), x, 0, 10)", "0.001408451");
   approximates_to<double>("int(√(5-x^2), x, -√(5), √(5))", "7.8539816339745",
                           {.m_complexFormat = ComplexFormat::Real});
+
+  simplified_approximates_to<double>("int(3x^2+x-4,x,-2,2)", "0");
 }
 
 QUIZ_CASE(pcj_approximation_derivatives) {

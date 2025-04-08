@@ -129,9 +129,10 @@ bool CalculationStore::pushCalculationElement(
   return true;
 }
 
-OutputExpressions compute(const Poincare::Expression& inputExpression,
-                          Poincare::Preferences::ComplexFormat& complexFormat,
-                          Poincare::Context* context) {
+static OutputExpressions compute(
+    const Poincare::Expression& inputExpression,
+    Poincare::Preferences::ComplexFormat& complexFormat,
+    Poincare::Context* context) {
   /* Parse and compute the expression */
   assert(!inputExpression.isUninitialized());
   // Update complexFormat with input expression
@@ -161,7 +162,7 @@ OutputExpressions compute(const Poincare::Expression& inputExpression,
   return {exactOutputExpression, approximateOutputExpression};
 }
 
-OutputExpressions computeInterruptible(
+static OutputExpressions computeInterruptible(
     const Poincare::Expression& inputExpression,
     Poincare::Preferences::ComplexFormat& complexFormat,
     Poincare::Context* context) {
@@ -183,9 +184,9 @@ OutputExpressions computeInterruptible(
   }
 }
 
-void processStore(OutputExpressions& outputs,
-                  const Poincare::UserExpression& input,
-                  Poincare::Context* context) {
+static void processStore(OutputExpressions& outputs,
+                         const Poincare::UserExpression& input,
+                         Poincare::Context* context) {
   /* The global context performs the store and ensures that no symbol is kept in
    * the definition of a variable.
    * Once this is done, the output is replaced with the stored expression. To do

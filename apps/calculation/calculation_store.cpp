@@ -161,6 +161,28 @@ OutputExpressions compute(const Poincare::Expression& inputExpression,
   return {exactOutputExpression, approximateOutputExpression};
 }
 
+OutputExpressions computeInterruptible(
+    const Poincare::Expression& inputExpression,
+    Poincare::Preferences::ComplexFormat& complexFormat,
+    Poincare::Context* context) {
+  /* TODO: we could refine this UserCircuitBreaker. When interrupted during
+   * simplification, we could still try to display the approximate result? When
+   * interrupted during approximation, we could at least display the exact
+   * result. If we do so, don't forget to force the Calculation sign to be
+   * approximative to avoid long computation to determine it.
+   */
+  CircuitBreakerCheckpoint checkpoint(
+      Ion::CircuitBreaker::CheckpointType::Back);
+  if (CircuitBreakerRun(checkpoint)) {
+    return compute(inputExpression, complexFormat, context);
+
+  } else {
+    GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
+        checkpoint.endOfPoolBeforeCheckpoint());
+    return {Undefined::Builder(), Undefined::Builder()};
+  }
+}
+
 void processStore(OutputExpressions& outputs,
                   const Poincare::UserExpression& input,
                   Poincare::Context* context) {
@@ -201,13 +223,6 @@ void processStore(OutputExpressions& outputs,
 
 CalculationStore::CalculationElements CalculationStore::processAndCompute(
     Poincare::Layout inputLayout, Poincare::Context* context) {
-  /* TODO: we could refine this UserCircuitBreaker. When interrupted during
-   * simplification, we could still try to display the approximate result? When
-   * interrupted during approximation, we could at least display the exact
-   * result. If we do so, don't forget to force the Calculation sign to be
-   * approximative to avoid long computation to determine it.
-   */
-
   m_inUsePreferences = *Preferences::SharedPreferences();
 
   /* Compute Ans now before the store is updated or the last calculation
@@ -223,21 +238,11 @@ CalculationStore::CalculationElements CalculationStore::processAndCompute(
   inputExpression = enhancePushedExpression(inputExpression);
   assert(!inputExpression.isUninitialized());
 
-  OutputExpressions outputs;
   Poincare::Preferences::ComplexFormat complexFormat =
       Poincare::Preferences::SharedPreferences()->complexFormat();
-  {
-    CircuitBreakerCheckpoint checkpoint(
-        Ion::CircuitBreaker::CheckpointType::Back);
-    if (CircuitBreakerRun(checkpoint)) {
-      outputs = compute(inputExpression, complexFormat, context);
 
-    } else {
-      GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
-          checkpoint.endOfPoolBeforeCheckpoint());
-      outputs = {Undefined::Builder(), Undefined::Builder()};
-    }
-  }
+  OutputExpressions outputs =
+      computeInterruptible(inputExpression, complexFormat, context);
 
   /* When an input contains a store, it is kept by the reduction in the exact
    * output and the actual store is performed here.

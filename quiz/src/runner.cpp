@@ -119,7 +119,7 @@ static inline void ion_main_inner(const char* testFilter,
 
   // Display test results
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, "ALL %i TESTS FINISHED",
-                                caseIndex);
+                                end - start);
   quiz_print(buffer);
 
   // Display test duration

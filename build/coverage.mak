@@ -23,7 +23,7 @@ endef
 # run_unit_tests, <test_bin>
 define run_unit_tests
 	@echo Running unit tests with executable $1
-	./$1 --headless --limit-stack-usage
+	parallel --keep-order ./$1 --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: $$$$(seq 0 31)
 endef
 
 # run_screenshot_tests, <epsilon_bin>

@@ -4,6 +4,7 @@
 
 #else
 
+#include <limits.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "dependency.h"
@@ -127,8 +128,9 @@ int Metric::GetMetric(const Tree* e) {
     return k_perfectMetric;
   }
   int metric = GetTrueMetric(e);
-  assert(metric > k_perfectMetric);
-  return metric;
+  assert(metric != k_perfectMetric);
+  // INT_MAX in case of overflow
+  return metric > 0 ? metric : INT_MAX;
 }
 
 int Metric::GetMetric(Type type) {

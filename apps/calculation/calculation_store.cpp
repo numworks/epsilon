@@ -100,11 +100,11 @@ UserExpression CalculationStore::replaceAnsInExpression(
   return expression;
 }
 
-static OutputExpressions compute(
-    const Poincare::Expression& inputExpression,
-    Poincare::Preferences::ComplexFormat& complexFormat,
-    Poincare::Context* context) {
-  /* Parse and compute the expression */
+static void compute(const Poincare::Expression& inputExpression,
+                    Poincare::Expression& exactOutputExpression,
+                    Poincare::Expression& approximateOutputExpression,
+                    Poincare::Preferences::ComplexFormat& complexFormat,
+                    Poincare::Context* context) {
   assert(!inputExpression.isUninitialized());
   // Update complexFormat with input expression
   complexFormat =
@@ -120,17 +120,8 @@ static OutputExpressions compute(
                                    : SymbolicComputation::ReplaceAllSymbols,
       .m_context = context};
 
-  Poincare::Expression exactOutputExpression;
-  Poincare::Expression approximateOutputExpression;
   inputExpression.cloneAndSimplifyAndApproximate(
       &exactOutputExpression, &approximateOutputExpression, &projContext);
-  assert(!exactOutputExpression.isUninitialized() &&
-         !approximateOutputExpression.isUninitialized());
-
-  /* Post-processing of store expression */
-  exactOutputExpression = enhancePushedExpression(exactOutputExpression);
-
-  return {exactOutputExpression, approximateOutputExpression};
 }
 
 static OutputExpressions computeInterruptible(
@@ -143,16 +134,21 @@ static OutputExpressions computeInterruptible(
    * result. If we do so, don't forget to force the Calculation sign to be
    * approximative to avoid long computation to determine it.
    */
+  OutputExpressions outputs;
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
-    return compute(inputExpression, complexFormat, context);
-
+    compute(inputExpression, outputs.exact, outputs.approximate, complexFormat,
+            context);
   } else {
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
-    return {Undefined::Builder(), Undefined::Builder()};
+    outputs = {Undefined::Builder(), Undefined::Builder()};
   }
+
+  assert(!outputs.exact.isUninitialized() &&
+         !outputs.approximate.isUninitialized());
+  return outputs;
 }
 
 static void processStore(OutputExpressions& outputs,
@@ -216,6 +212,8 @@ CalculationStore::CalculationElements CalculationStore::processAndCompute(
   OutputExpressions outputs =
       computeInterruptible(inputExpression, complexFormat, context);
 
+  /* Output post-processing */
+  outputs.exact = enhancePushedExpression(outputs.exact);
   /* When an input contains a store, it is kept by the reduction in the exact
    * output and the actual store is performed here.
    * This must be done after the checkpoint because it can delete some memoized
@@ -224,7 +222,6 @@ CalculationStore::CalculationElements CalculationStore::processAndCompute(
   if (outputs.exact.isStore()) {
     processStore(outputs, inputExpression, context);
   }
-
   if (m_inUsePreferences.examMode().forbidUnits() &&
       outputs.approximate.hasUnit()) {
     outputs = {Undefined::Builder(), Undefined::Builder()};

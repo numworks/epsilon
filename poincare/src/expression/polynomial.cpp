@@ -323,37 +323,6 @@ Tree* Polynomial::Sanitize(Tree* polynomial) {
 
 /* PolynomialParser */
 
-Tree* PolynomialParser::RecursivelyParse(Tree* e, const Tree* variables,
-                                         size_t variableIndex) {
-  const Tree* variable = nullptr;
-  for (IndexedChild<const Tree*> indexedVariable :
-       variables->indexedChildren()) {
-    if (indexedVariable.index < static_cast<int>(variableIndex)) {
-      // Skip previously handled variable
-      continue;
-    }
-    variableIndex += 1;
-    if (Order::ContainsSubtree(e, indexedVariable)) {
-      variable = indexedVariable;
-      break;
-    }
-  }
-  if (!variable) {
-    // e is not a polynomial of variables
-    return e;
-  }
-  assert(!e->isDep());
-  e = Parse(e, variable);
-  for (IndexedChild<Tree*> child : e->indexedChildren()) {
-    if (child.index == 0) {
-      // Pass variable child
-      continue;
-    }
-    RecursivelyParse(child, variables, variableIndex);
-  }
-  return e;
-}
-
 Tree* PolynomialParser::Parse(Tree* e, const Tree* variable) {
   assert(!AdvancedReduction::DeepExpandAlgebraic(e));
   Type type = e->type();

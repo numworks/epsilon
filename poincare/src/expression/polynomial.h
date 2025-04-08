@@ -107,8 +107,6 @@ class Polynomial final {
 
 class PolynomialParser final {
  public:
-  static Tree* RecursivelyParse(Tree* e, const Tree* variables,
-                                size_t variableIndex = 0);
   /* Eat e and return a Polynomial node.  If e is not a polynomial of variable,
    * return nullptr and leave e half-eaten. TODO: clean-up this API */
   static Tree* Parse(Tree* e, const Tree* variable);

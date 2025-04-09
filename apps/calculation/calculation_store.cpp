@@ -194,20 +194,16 @@ static void postProcessOutputs(OutputExpressions& outputs,
                                Poincare::Expression inputExpression,
                                bool unitsForbidden,
                                Poincare::Context* context) {
-  CircuitBreakerCheckpoint checkpoint(
-      Ion::CircuitBreaker::CheckpointType::Back);
-  if (CircuitBreakerRun(checkpoint)) {
-    if (unitsForbidden && outputs.approximate.hasUnit()) {
-      outputs = {Undefined::Builder(), Undefined::Builder()};
-    }
-    enhancePushedExpression(outputs.exact);
-  } else {
-    GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
-        checkpoint.endOfPoolBeforeCheckpoint());
-    /* If an interruption occurs during output post-processing (which is
-     * unlikely to happen), silently fail and keep the non-processed outputs
-     */
+  /* TODO: the two following operations should be performed in a
+   * CircuitBreakerCheckpoint to handle the "Back" interruption properly,
+   * although it is very unlikely to happen because these operations are fast.
+   * However, having a CircuitBreakerCheckpoint here causes unexpected and
+   * unexplained problems that should be investigated in more details.
+   */
+  if (unitsForbidden && outputs.approximate.hasUnit()) {
+    outputs = {Undefined::Builder(), Undefined::Builder()};
   }
+  enhancePushedExpression(outputs.exact);
 
   /* When an input contains a store, it is kept by the reduction in the exact
    * output and the actual store is performed here.

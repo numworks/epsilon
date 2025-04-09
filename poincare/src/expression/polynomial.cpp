@@ -392,7 +392,7 @@ std::pair<Tree*, uint8_t> PolynomialParser::ParseMonomial(
     }
   }
   /* TODO Order::ContainsSubtree ignores Parametric,
-   * but is need for HasNonNullCoefficients atm.
+   * but is needed for HasNonNullCoefficients atm.
    * When variable->isVar(), uses the more precise HasVariable */
   if ((variable->isVar() && Variables::HasVariable(e, variable)) ||
       Order::ContainsSubtree(e, variable)) {

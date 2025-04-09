@@ -184,7 +184,7 @@ bool EditExpressionController::isAcceptableExpression(
   }
   // Replace ans with its value and check layout
   UserExpression exp = expression.clone();
-  exp = m_calculationStore->replaceAnsInExpression(exp, context);
+  m_calculationStore->replaceAnsInExpression(exp, context);
   assert(!exp.isUninitialized());
   Layout layout =
       exp.createLayout(Preferences::PrintFloatMode::Decimal,

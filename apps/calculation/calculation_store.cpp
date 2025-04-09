@@ -91,12 +91,11 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
   return ansExpr.isUninitialized() ? defaultAns : ansExpr;
 }
 
-UserExpression CalculationStore::replaceAnsInExpression(
-    UserExpression expression, Context* context) const {
+void CalculationStore::replaceAnsInExpression(UserExpression& expression,
+                                              Context* context) const {
   UserExpression ansSymbol = SymbolHelper::Ans();
   UserExpression ansExpression = this->ansExpression(context);
   expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
-  return expression;
 }
 
 static void compute(Poincare::Expression inputExpression,
@@ -236,7 +235,7 @@ Poincare::UserExpression CalculationStore::parseInput(
     PoolVariableContext ansContext = createAnsContext(context);
     UserExpression inputExpression =
         UserExpression::Parse(inputLayout, &ansContext);
-    inputExpression = replaceAnsInExpression(inputExpression, context);
+    replaceAnsInExpression(inputExpression, context);
     enhancePushedExpression(inputExpression);
     return inputExpression;
   } else {

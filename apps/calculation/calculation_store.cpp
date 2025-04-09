@@ -191,24 +191,23 @@ assert(!value.recursivelyMatches(
   }
 }
 
-static OutputExpressions postProcessOutputs(
-    const OutputExpressions& outputs, Poincare::Expression inputExpression,
-    bool unitsForbidden, Poincare::Context* context) {
-  OutputExpressions processedOutputs = outputs;
-
+static void postProcessOutputs(OutputExpressions& outputs,
+                               Poincare::Expression inputExpression,
+                               bool unitsForbidden,
+                               Poincare::Context* context) {
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     if (unitsForbidden && outputs.approximate.hasUnit()) {
-      processedOutputs = {Undefined::Builder(), Undefined::Builder()};
+      outputs = {Undefined::Builder(), Undefined::Builder()};
     }
-      enhancePushedExpression(outputs.exact);
+    enhancePushedExpression(outputs.exact);
   } else {
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
     /* If an interruption occurs during output post-processing (which is
-     * unlikely to happen), silently fail and keep the non-processed outputs */
-    return outputs;
+     * unlikely to happen), silently fail and keep the non-processed outputs
+     */
   }
 
   /* When an input contains a store, it is kept by the reduction in the exact
@@ -217,11 +216,9 @@ static OutputExpressions postProcessOutputs(
    * memoized expressions in the Sequence store, which would alter the pool
    * above the checkpoint. */
   // TODO: improve the safety of the store operation
-  if (processedOutputs.exact.isStore()) {
-    processStore(processedOutputs, inputExpression, context);
+  if (outputs.exact.isStore()) {
+    processStore(outputs, inputExpression, context);
   }
-
-  return processedOutputs;
 }
 
 Poincare::UserExpression CalculationStore::parseInput(
@@ -256,9 +253,8 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
   OutputExpressions outputs =
       computeInterruptible(inputExpression, complexFormat, context);
 
-  outputs =
-      postProcessOutputs(outputs, inputExpression,
-                         m_inUsePreferences.examMode().forbidUnits(), context);
+  postProcessOutputs(outputs, inputExpression,
+                     m_inUsePreferences.examMode().forbidUnits(), context);
 
   return {inputExpression, outputs, complexFormat};
 }

@@ -781,7 +781,7 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
           ++currentChild;
         }
       }
-      if (numberOfDep) {
+      if (numberOfDep > 0) {
         NAry::SetNumberOfChildren(expChild, numberOfChildren);
         NAry::SetNumberOfChildren(depListAdd, numberOfDep);
         ReduceAddOrMult(expChild);
@@ -792,11 +792,11 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
       } else {
         SharedTreeStack->flushFromBlock(depList);
       }
-      return numberOfDep;
+      return numberOfDep > 0;
     } else if (GetComplexSign(expChild).isPureIm()) {
       // |e^x| = dep(1, {|e^x|}) when x is pure imaginary
       e->cloneNodeAtNode(KDepList.node<1>);
-      e->cloneNodeAtNode(1_e);
+      e->cloneTreeAtNode(1_e);
       e->cloneNodeAtNode(KDep);
       return true;
     }

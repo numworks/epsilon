@@ -154,6 +154,9 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
 bool AdvancedOperation::ExpandExp(Tree* e) {
   return
       // exp(A?+B?i+C?) = exp(A+C)*(cos(B) + sin(B)*i)
+      /* This is a more generic form of the previous exp(ai) => cos(b)+sin(b)i.
+       * It shortcuts what could be done in 2/3 Advanced operation before:
+       * exp(a+bi) => exp(a)exp(bi) => exp(a)(cos(b)+sin(b)i) */
       PatternMatching::MatchReplaceSimplify(
           e, KExp(KAdd(KA_s, KMult(KB_s, i_e), KC_s)),
           KMult(KExp(KAdd(KA_s, KC_s)),

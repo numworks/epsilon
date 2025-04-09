@@ -92,6 +92,11 @@ Tree* Roots::CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
       KMult(-4_e, KD, KPow(KB, 3_e))),
     {.KA = a, .KB = b, .KC = c, .KD = d});
   // clang-format on
+  /* This DeepExpandAlgebraic is here to make sure the delta is simple enough to
+   * reduce. In most case it will not be useful (eg. ax3+bx2+cx+d=0) but when
+   * the coefs are addition, the delta is harder to simplify and expanding the
+   * KPow helps.
+   * Eg: user input (x-e)(fx2+gx+h) expands to fx3+(g-ef)x2+(h-ge)x-eh. */
   AdvancedReduction::DeepExpandAlgebraic(delta);
   AdvancedReduction::Reduce(delta);
   return delta;
@@ -209,7 +214,6 @@ Tree* Roots::PolynomialEvaluation(const Tree* value, const Tree* a,
       KD),
     {.KA = a, .KB = b, .KC = c, .KD = d, .KH = value});
   // clang-format on
-  AdvancedReduction::DeepExpandAlgebraic(e);
   AdvancedReduction::Reduce(e);
   return e;
 }

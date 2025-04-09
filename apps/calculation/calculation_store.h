@@ -55,6 +55,10 @@ class CalculationStore {
   int numberOfCalculations() const { return m_numberOfCalculations; }
   Shared::ExpiringPointer<Calculation> calculationAtIndex(int index) const;
   Poincare::UserExpression ansExpression(Poincare::Context* context) const;
+
+  /* TODO: clarify the semantics: the internal value (tree) that "expression"
+   * points to is modified, and "expression" is also returned. This can be
+   * confusing as the expression is both returned and modified in place. */
   Poincare::UserExpression replaceAnsInExpression(
       Poincare::UserExpression expression, Poincare::Context* context) const;
   size_t bufferSize() const { return m_bufferSize; }

@@ -15,7 +15,7 @@ using namespace Shared;
 
 namespace Calculation {
 
-static UserExpression enhancePushedExpression(UserExpression expression) {
+static void enhancePushedExpression(UserExpression& expression) {
   assert(!expression.isUninitialized());
   /* Add an angle unit in trigonometric functions if the user could have
    * forgotten to change the angle unit in the preferences.
@@ -27,7 +27,6 @@ static UserExpression enhancePushedExpression(UserExpression expression) {
     Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
         expression, Preferences::SharedPreferences()->angleUnit());
   }
-  return expression;
 }
 
 // Public
@@ -203,7 +202,7 @@ static OutputExpressions postProcessOutputs(
     if (unitsForbidden && outputs.approximate.hasUnit()) {
       processedOutputs = {Undefined::Builder(), Undefined::Builder()};
     }
-    processedOutputs.exact = enhancePushedExpression(outputs.exact);
+      enhancePushedExpression(outputs.exact);
   } else {
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
@@ -241,7 +240,7 @@ Poincare::UserExpression CalculationStore::parseInput(
     UserExpression inputExpression =
         UserExpression::Parse(inputLayout, &ansContext);
     inputExpression = replaceAnsInExpression(inputExpression, context);
-    inputExpression = enhancePushedExpression(inputExpression);
+    enhancePushedExpression(inputExpression);
     return inputExpression;
   } else {
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(

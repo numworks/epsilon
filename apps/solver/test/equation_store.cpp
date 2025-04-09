@@ -347,10 +347,9 @@ QUIZ_CASE(solver_approximate) {
   /* This tests triggers the escape case [end->x() == middle->x()] in
    * Solver::FindMinimalIntervalContainingDiscontinuity */
   assert_solves_numerically_to(
-      "√(cos(x))=0", -224802933571584, -100000000000000,
-      {-183733033544272.53, -180686366844276.72, -163039143925925.81,
-       -155711277972396.22, -148748023905798.31, -146630700198228.09,
-       -109102528932569.69},
+      "√(cos(x))=0.1", -224802933571584, -90000000000000,
+      {-2.18499e+14, -2.12789e+14, -1.66872e+14, -1.64543e+14, -1.38559e+14,
+       -1.14107e+14, -1.13126e+14},
       &globalContext);
 
   // Restore default preferences

@@ -22,7 +22,6 @@ class Bounds {
   Bounds() : m_lower(NAN), m_upper(NAN){};
   static Bounds Invalid() { return Bounds(); }
   static Bounds Compute(const Tree* e);
-  static Bounds ComputeNumber(const Tree* e);
   static Bounds Mult(const Tree* e);
   static Bounds Add(const Tree* e);
   static Bounds Pow(const Tree* e);

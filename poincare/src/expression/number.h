@@ -10,6 +10,8 @@ namespace Poincare::Internal {
 
 class Number {
  public:
+  template <typename T>
+  static T To(const Tree* e);
   // Return true if e is zero or a null float.
   static bool IsNull(const Tree* e);
   // Return true if e is one or a float 1.

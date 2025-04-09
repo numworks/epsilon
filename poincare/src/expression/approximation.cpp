@@ -393,14 +393,6 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
       return PrivateToComplex<T>(e->child(0), ctx);
     case Type::ComplexI:
       return std::complex<T>(0, 1);
-    case Type::Pi:
-      return M_PI;
-    case Type::EulerE:
-      return M_E;
-    case Type::SingleFloat:
-      return FloatHelper::FloatTo(e);
-    case Type::DoubleFloat:
-      return FloatHelper::DoubleTo(e);
     case Type::Add: {
       std::complex<T> result = 0;
       for (const Tree* child : e->children()) {
@@ -1117,8 +1109,8 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     // TODO: Find a way to pass exact undef type up to ToComplexTree.
     return e->isNonReal() ? NonReal<T>() : NAN;
   }
-  if (e->isRational()) {
-    return Rational::To<T>(e);
+  if (e->isNumber()) {
+    return Number::To<T>(e);
   }
 
   if (e->isRandomized()) {
@@ -1141,10 +1133,6 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
   switch (e->type()) {
     case Type::Parentheses:
     case Type::ComplexI:
-    case Type::Pi:
-    case Type::EulerE:
-    case Type::SingleFloat:
-    case Type::DoubleFloat:
     case Type::Add:
     case Type::Mult:
     case Type::Div:

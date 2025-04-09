@@ -11,6 +11,26 @@
 
 namespace Poincare::Internal {
 
+template <typename T>
+T Number::To(const Tree* e) {
+  assert(e->isNumber());
+  if (e->isRational()) {
+    return Rational::To<T>(e);
+  }
+  switch (e->type()) {
+    case Type::Pi:
+      return M_PI;
+    case Type::EulerE:
+      return M_E;
+    case Type::SingleFloat:
+      return FloatHelper::FloatTo(e);
+    case Type::DoubleFloat:
+      return FloatHelper::DoubleTo(e);
+    default:
+      OMG::unreachable();
+  }
+}
+
 bool Number::IsNull(const Tree* e) {
   if (!e->isFloat()) {
     return e->isZero();
@@ -87,5 +107,8 @@ bool Number::SetSign(Tree* e, NonStrictSign sign) {
          Number::Sign(e).isPositive() == (sign == NonStrictSign::Positive));
   return false;
 }
+
+template float Number::To<float>(const Tree* e);
+template double Number::To<double>(const Tree* e);
 
 }  // namespace Poincare::Internal

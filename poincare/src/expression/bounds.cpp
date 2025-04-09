@@ -3,7 +3,7 @@
 #include <float.h>
 #include <poincare/src/expression/rational.h>
 
-#include "poincare/src/expression/float_helper.h"
+#include "number.h"
 
 namespace Poincare::Internal {
 
@@ -17,27 +17,16 @@ Sign Bounds::Sign(const Tree* e) {
   return sign;
 }
 
-Bounds Bounds::ComputeNumber(const Tree* e) {
-  unsigned int ulp = 1;
-  double value = NAN;
-  if (e->isRational()) {
-    value = Rational::To<double>(e);
-    if (e->isOfType(
-            {Type::Zero, Type::One, Type::Two, Type::Half, Type::MinusOne})) {
-      ulp = 0;
-    }
-  } else if (e->isMathematicalConstant()) {
-    value = e->isPi() ? M_PI : M_E;
-  } else if (e->isFloat()) {
-    value = FloatHelper::To(e);
-  }
-  assert(!std::isnan(value));
-  return Bounds(value, value, ulp);
-}
-
 Bounds Bounds::Compute(const Tree* e) {
   if (e->isNumber()) {
-    return Bounds::ComputeNumber(e);
+    unsigned int ulp =
+        e->isOfType({Type::Zero, Type::One, Type::Two, Type::Half,
+                     Type::MinusOne, Type::IntegerNegShort,
+                     Type::IntegerPosShort})
+            ? 0
+            : 1;
+    double value = Number::To<double>(e);
+    return Bounds(value, value, ulp);
   }
   switch (e->type()) {
     case Type::Mult:

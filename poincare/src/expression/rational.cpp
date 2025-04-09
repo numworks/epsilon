@@ -13,10 +13,6 @@
 
 namespace Poincare::Internal {
 
-// TODO: tests
-
-template float Rational::To<float>(const Tree* e);
-template double Rational::To<double>(const Tree* e);
 template <typename T>
 T Rational::To(const Tree* e) {
   return Rational::Numerator(e).to<T>() / Rational::Denominator(e).to<T>();
@@ -321,5 +317,8 @@ ComplexSign Rational::ComplexSignOfLn(const Tree* e) {
   assert(child->isZero());
   return ComplexSign::Unknown();
 }
+
+template float Rational::To<float>(const Tree* e);
+template double Rational::To<double>(const Tree* e);
 
 }  // namespace Poincare::Internal

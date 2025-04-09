@@ -59,17 +59,22 @@ void Device::poll() {
            CHEP0R::GetSTATTX() == Status::Valid);
   }
 
+  if (USBFS::ISTR::Read().getSUSP()) {
+    // Suspend event, no traffic was received for 3ms
+    USBFS::CNTR::Read().setSUSPEN(true).write();
+    while (!USBFS::CNTR::Read().getSUSPRDY())
+      ;
+    m_softDisconnect = true;
+  }
+
   // TODO BOOTLOADER: Handle USB RESET
 }
 
-bool Device::isSoftDisconnected() const {
-  // SUSB::BCDR::Read().getDPPU_DPD();
-  return m_softDisconnect;
-}
+bool Device::isSoftDisconnected() const { return m_softDisconnect; }
 
 void Device::detach() {
   // Get in soft-disconnected state
-  // SUSB::BCDR::Read().setDPPU_DPD(false).write();
+  USBFS::BCDR::Read().setDPPU_DPD(false).write();
   m_softDisconnect = true;
 }
 

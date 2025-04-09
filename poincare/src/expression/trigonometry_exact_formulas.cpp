@@ -80,24 +80,6 @@ constexpr ExactFormula ExactFormulas[] = {
            KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
      KMult(1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
            KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(3_e)))))},
-    /* Additional negative angles
-     * Use KUndef for formulas that have been caught earlier
-     * TODO : - Remove them with better sign detection in simplifyATrigOfTrig */
-    // -π/10, √((5+√5)/8), -(√5-1)/4
-    {KMult(-1_e / 10_e, π_e), KUndef,
-     KMult(-1_e / 4_e, KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))},
-    // -π/12, 1/4×√2×(1+√3), -1/4×√2×(-1+√3)
-    {KMult(-1_e / 12_e, π_e), KUndef,
-     KMult(-1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
-           KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e)))))},
-    // 3π/5, -(√5-1)/4, √((5+√5)/8)
-    {KMult(3_e / 5_e, π_e),
-     KMult(-1_e / 4_e, KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))), KUndef},
-    // 7π/12, -1/4×√2×(-1+√3), 1/4×√2×(1+√3)
-    {KMult(7_e / 12_e, π_e),
-     KMult(-1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
-           KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
-     KUndef},
 };
 
 ExactFormula ExactFormula::GetExactFormulaAtIndex(int n) {

@@ -24,11 +24,9 @@ class ExactFormula {
  private:
   static ExactFormula GetExactFormulaAtIndex(int n);
 
-  constexpr static int k_totalNumberOfFormula = 17;
+  constexpr static int k_totalNumberOfFormula = 13;
   // Only formulas for angles in [0, π/4] are used when simplifying Trig
   constexpr static int k_numberOfFormulaForTrig = 7;
-  // There are additional formulas to handle unknown signs
-  constexpr static int k_indexOfFirstUnknownSignFormula = 19;
 
   const Tree* m_angle;
   const Tree* m_cos;

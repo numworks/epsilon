@@ -25,35 +25,26 @@ class Poincare::Internal::ExactFormulaTest {
       a->cloneTreeOverTree(ef.m_sin);
       quiz_assert(!SystematicReduction::DeepReduce(a));
       a->removeTree();
-      if (i >= ExactFormula::k_indexOfFirstUnknownSignFormula) {
-        // If sign of these formulas can be computed, they  must be removed.
-        assert(ef.m_cos->isUndef() != ef.m_sin->isUndef());
-        Sign sign = ef.m_sin->isUndef() ? GetSign(ef.m_cos) : GetSign(ef.m_sin);
-        quiz_assert(sign.canBeStrictlyNegative() &&
-                    sign.canBeStrictlyPositive());
-      } else {
-        // assert(!ef.m_cos->isUndef() && !ef.m_sin->isUndef());
-      }
+      assert(!ef.m_cos->isUndef() && !ef.m_sin->isUndef());
+
       // Check with approximation that exact formulas are correct.
       float angle =
           Approximation::To<float>(ef.m_angle, Approximation::Parameters{});
       float epsilon = OMG::Float::EpsilonLax<float>();
-      if (!ef.m_cos->isUndef()) {
-        float cos =
-            Approximation::To<float>(ef.m_cos, Approximation::Parameters{});
-        quiz_assert(
-            OMG::Float::RoughlyEqual<float>(std::cos(angle), cos, epsilon));
-        quiz_assert(
-            OMG::Float::RoughlyEqual<float>(std::acos(cos), angle, epsilon));
-      }
-      if (!ef.m_sin->isUndef()) {
-        float sin =
-            Approximation::To<float>(ef.m_sin, Approximation::Parameters{});
-        quiz_assert(
-            OMG::Float::RoughlyEqual<float>(std::sin(angle), sin, epsilon));
-        quiz_assert(
-            OMG::Float::RoughlyEqual<float>(std::asin(sin), angle, epsilon));
-      }
+
+      float cos =
+          Approximation::To<float>(ef.m_cos, Approximation::Parameters{});
+      quiz_assert(
+          OMG::Float::RoughlyEqual<float>(std::cos(angle), cos, epsilon));
+      quiz_assert(
+          OMG::Float::RoughlyEqual<float>(std::acos(cos), angle, epsilon));
+
+      float sin =
+          Approximation::To<float>(ef.m_sin, Approximation::Parameters{});
+      quiz_assert(
+          OMG::Float::RoughlyEqual<float>(std::sin(angle), sin, epsilon));
+      quiz_assert(
+          OMG::Float::RoughlyEqual<float>(std::asin(sin), angle, epsilon));
     }
     /* If pi/2 - asin(x) => acos(x) and pi/2 - acos(x) => asin(x), exact
      * formulas for angles in ]π/4, π/2] must be removed. */

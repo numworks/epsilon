@@ -31,6 +31,9 @@ QUIZ_CASE(solver_error) {
 
   assert_solves_to_error("x-random()=0", EquationUndefined, &globalContext);
 
+  assert_solves_to_error("0*√(x)=0", EquationUnhandled, &globalContext);
+  assert_solves_to_error("x+0/a=0", EquationUnhandled, &globalContext);
+
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
 }

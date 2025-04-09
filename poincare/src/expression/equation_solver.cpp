@@ -495,8 +495,9 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       return SharedTreeStack->pushSet(0);
     }
     if (equation->isDep()) {
-      *error =
-          (n == 1) ? Error::RequireApproximateSolution : Error::NonLinearSystem;
+      *error = (n == 1 && !Dependency::Main(equation)->isZero())
+                   ? Error::RequireApproximateSolution
+                   : Error::EquationUnhandled;
       equationSetClone->removeTree();
       matrix->removeTree();
       equationSetWithoutDep->removeTree();

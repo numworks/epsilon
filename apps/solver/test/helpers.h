@@ -18,6 +18,7 @@ bring_in(Solver::SystemOfEquations::Error, NoError);
 bring_in(Solver::SystemOfEquations::Error, NonLinearSystem);
 bring_in(Solver::SystemOfEquations::Error, RequireApproximateSolution);
 bring_in(Solver::SystemOfEquations::Error, TooManyVariables);
+bring_in(Solver::SystemOfEquations::Error, EquationUnhandled);
 
 // Custom assertions
 

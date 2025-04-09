@@ -100,7 +100,11 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to("√(x)^(2)=-1", {"x=-1"}, &globalContext);
   assert_solves_to("sin(asin(x))=2", {"x=2"}, &globalContext);
 
-  assert_solves_to("x+cos(π/2)y=0", {"x=0"}, &globalContext);
+  assert_solves_to("x-0y=0", {"x=0", "y=t"}, &globalContext);
+  assert_solves_to("x+cos(π/2)y=0", {"x=0", "y=t"}, &globalContext);
+  assert_solves_to("x-x=0", {"x=t"}, &globalContext);
+  // Technically solved in SolveLinearSystem, since the variable is reduced out
+  assert_solves_to("0x^2=0", {"x=t"}, &globalContext);
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);

@@ -203,6 +203,9 @@ void ListController::resolveEquations() {
       case Error::NonLinearSystem:
         App::app()->displayWarning(I18n::Message::NonLinearSystem);
         return;
+      case Error::EquationUnhandled:
+        App::app()->displayWarning(I18n::Message::EquationUnhandled);
+        return;
       case Error::DisabledInExamMode:
         App::app()->displayWarning(I18n::Message::DisabledFeatureInExamMode);
         return;

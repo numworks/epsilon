@@ -49,6 +49,7 @@ class EquationSolver {
     TooManyVariables = 3,
     NonLinearSystem = 4,
     RequireApproximateSolution = 5,
+    EquationUnhandled = 6,
     DisabledInExamMode,  // TODO_PCJ
   };
 

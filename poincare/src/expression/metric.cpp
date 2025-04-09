@@ -129,7 +129,10 @@ int Metric::GetMetric(const Tree* e) {
   }
   int metric = GetTrueMetric(e);
   assert(metric != k_perfectMetric);
-  // INT_MAX in case of overflow
+  /* INT_MAX in case of overflow
+   * NOTE this does not completely prevent overflows as we could circle back
+   * above 0
+   * TODO a long-term solution could be to use a float metric instead */
   return metric > 0 ? metric : INT_MAX;
 }
 

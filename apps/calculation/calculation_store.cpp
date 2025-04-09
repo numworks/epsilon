@@ -100,7 +100,7 @@ UserExpression CalculationStore::replaceAnsInExpression(
   return expression;
 }
 
-static void compute(const Poincare::Expression& inputExpression,
+static void compute(Poincare::Expression inputExpression,
                     Poincare::Expression& exactOutputExpression,
                     Poincare::Expression& approximateOutputExpression,
                     Poincare::Preferences::ComplexFormat& complexFormat,
@@ -125,7 +125,7 @@ static void compute(const Poincare::Expression& inputExpression,
 }
 
 static OutputExpressions computeInterruptible(
-    const Poincare::Expression& inputExpression,
+    Poincare::Expression inputExpression,
     Poincare::Preferences::ComplexFormat& complexFormat,
     Poincare::Context* context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
@@ -155,7 +155,7 @@ static OutputExpressions computeInterruptible(
 }
 
 static void processStore(OutputExpressions& outputs,
-                         const Poincare::UserExpression& input,
+                         Poincare::UserExpression input,
                          Poincare::Context* context) {
   /* The global context performs the store and ensures that no symbol is kept in
    * the definition of a variable.
@@ -193,9 +193,8 @@ assert(!value.recursivelyMatches(
 }
 
 static OutputExpressions postProcessOutputs(
-    const OutputExpressions& outputs,
-    const Poincare::Expression& inputExpression, bool unitsForbidden,
-    Poincare::Context* context) {
+    const OutputExpressions& outputs, Poincare::Expression inputExpression,
+    bool unitsForbidden, Poincare::Context* context) {
   OutputExpressions processedOutputs = outputs;
 
   CircuitBreakerCheckpoint checkpoint(
@@ -252,7 +251,7 @@ Poincare::UserExpression CalculationStore::parseInput(
 }
 
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
-    const Poincare::Expression& inputExpression, Poincare::Context* context) {
+    Poincare::Expression inputExpression, Poincare::Context* context) {
   Poincare::Preferences::ComplexFormat complexFormat =
       Poincare::Preferences::SharedPreferences()->complexFormat();
   OutputExpressions outputs =

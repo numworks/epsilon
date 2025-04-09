@@ -344,8 +344,8 @@ QUIZ_CASE(solver_approximate) {
   assert_solves_numerically_to("10^4×abs(x-10^(-4))=0", -10, 10, {0.0001}, &globalContext);
 #endif
   setComplexFormatAndAngleUnit(Real, Radian);
-  /* This tests triggers the escape case [end->x() == middle->x()] in
-   * Solver::FindMinimalIntervalContainingDiscontinuity */
+  /* This tests triggers the escape case [std::fabs(end->x() - middle->x()) ==
+   * 0] in Solver::FindMinimalIntervalContainingDiscontinuity */
   assert_solves_numerically_to(
       "√(cos(x))=0.1", -224802933571584, -90000000000000,
       {-2.18499e+14, -2.12789e+14, -1.66872e+14, -1.64543e+14, -1.38559e+14,

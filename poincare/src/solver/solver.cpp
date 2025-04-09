@@ -474,7 +474,7 @@ T Solver<T>::nextX(T x, T direction, T slope) const {
                 std::exp(growthSpeedAcceleration *
                          -std::pow(magnitudeDelta, static_cast<T>(3.)));
   }
-  /* If the next step is toward zero, divide the postion, overwise multiply. */
+  /* If the next step is toward zero, divide the postion, otherwise multiply. */
   assert(ratio > static_cast<T>(1.));
   T x2 = (x < direction) == (x < k_zero) ? x / ratio : x * ratio;
   if (std::fabs(x - x2) > maxStep) {
@@ -799,34 +799,34 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
     middle->setY(f(middle->x(), aux));
   }
 
-  while (end->x() - start->x() >= minimalSizeOfInterval) {
-    bool leftIsDiscontinuous = discontinuityTest(*start, *middle, aux);
-    bool rightIsDiscontinuous = discontinuityTest(*middle, *end, aux);
-    if (leftIsDiscontinuous == rightIsDiscontinuous) {
+  while (std::fabs(end->x() - start->x()) >= minimalSizeOfInterval) {
+    bool firstAreaIsDiscontinuous = discontinuityTest(*start, *middle, aux);
+    bool secondAreaIsDiscontinuous = discontinuityTest(*middle, *end, aux);
+    if (firstAreaIsDiscontinuous == secondAreaIsDiscontinuous) {
       /* Either too many discontinuities and/or step is too big
        * Or couldn't find any discontinuities */
       return false;
     }
-    if (leftIsDiscontinuous) {
-      if (end->x() == middle->x()) {
+    if (firstAreaIsDiscontinuous) {
+      if (std::fabs(end->x() - middle->x()) == 0) {
         // start and end are too big and end-start is too small
         return false;
       }
       *end = *middle;
     } else {
-      if (start->x() == middle->x()) {
+      if (std::fabs(start->x() - middle->x()) == 0) {
         // start and end are too big and end-start is too small
         return false;
       }
-      assert(rightIsDiscontinuous);
+      assert(secondAreaIsDiscontinuous);
       *start = *middle;
     }
     middle->setX((start->x() + end->x()) / 2.0);
     middle->setY(f(middle->x(), aux));
     assert(discontinuityTest(*start, *end, aux));
   }
-  assert(start->x() <= end->x() &&
-         end->x() - start->x() <= minimalSizeOfInterval &&
+  assert(std::fabs(end->x() - start->x()) > 0 &&
+         std::fabs(end->x() - start->x()) <= minimalSizeOfInterval &&
          discontinuityTest(*start, *end, aux));
   return true;
 }

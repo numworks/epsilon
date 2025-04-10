@@ -709,8 +709,12 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
       m->removeTree();
       return v;
     }
-    case Type::Trace:
-      return ApproximateTrace<T>(e->child(0), ctx);
+    case Type::Trace: {
+      Tree* matrix = ToMatrix<T>(e->child(0), ctx);
+      std::complex<T> trace = ApproximateTrace<T>(matrix, ctx);
+      matrix->removeTree();
+      return trace;
+    }
     case Type::Dot: {
       // TODO use complex conjugate ?
       Tree* u = ToMatrix<T>(e->child(0), ctx);

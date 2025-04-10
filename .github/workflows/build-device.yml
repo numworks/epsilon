@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' && `epsilon` || 'ubuntu-latest' }}
     steps:
       - name: Download toolchain
         uses: numworks/setup-arm-toolchain@latest

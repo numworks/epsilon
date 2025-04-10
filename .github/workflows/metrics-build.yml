@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   binary-size:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' && `epsilon` || 'ubuntu-latest' }}
     steps:
       - name: Fetch target branch and PR branch
         uses: actions/checkout@v4

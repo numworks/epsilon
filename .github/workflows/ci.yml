@@ -58,7 +58,7 @@ jobs:
           name: epsilon-android.apk
           path: output/debug/optimized/android/epsilon.apk
   device:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' && `epsilon` || 'ubuntu-latest' }}
     if : ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.device == 'true') }}
     strategy:
       matrix:
@@ -120,7 +120,7 @@ jobs:
           name: epsilon-windows.exe
           path: output/debug/optimized/windows/epsilon.exe
   web:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' && `epsilon` || 'ubuntu-latest' }}
     if: ${{ (github.repository != 'numworks/epsilon-internal' || github.event.inputs.web == 'true') }}
     steps:
       - uses: numworks/setup-emscripten@latest
@@ -140,7 +140,7 @@ jobs:
           path: output/debug/optimized/web/epsilon.html
           retention-days: 7
   linux:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' && `epsilon` || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -192,7 +192,7 @@ jobs:
           name: epsilon-ios.ipa
           path: output/debug/optimized/ios/epsilon.ipa
   poincarejs:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' && `epsilon` || 'ubuntu-latest' }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:

@@ -18,7 +18,7 @@ concurrency:
 jobs:
   build:
     name: Lint Code Base
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' || 'ubuntu-latest' }}
+    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' && `epsilon` || 'ubuntu-latest' }}
 
     steps:
       - name: Fetch target branch and PR branch

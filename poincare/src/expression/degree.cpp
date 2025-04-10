@@ -36,6 +36,11 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
     if (childDegree == k_unknown) {
       return childDegree;
     }
+    if (childDegree >= k_maxPolynomialDegree) {
+      /* Early return the maximum authorized value, this also avoids potential
+       * overflows when adding or multiplying degrees */
+      return k_maxPolynomialDegree;
+    }
     switch (e->type()) {
       case Type::Dep:
         assert(i == 0);
@@ -44,7 +49,6 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
         degree = degree > childDegree ? degree : childDegree;
         break;
       case Type::Mult:
-        // TODO: Check overflow
         degree += childDegree;
         break;
       case Type::PowReal:
@@ -60,7 +64,6 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
                 GetComplexSign(child).realSign().canBeStrictlyNegative()) {
               return k_unknown;
             }
-            // TODO: Check overflow
             degree *= Integer::Handler(child).to<int>();
           }
         }
@@ -70,6 +73,11 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
           // not handled
           return k_unknown;
         }
+    }
+    if (degree >= k_maxPolynomialDegree) {
+      /* Early return the maximum authorized value, this also avoids potential
+       * overflows when adding or multiplying degrees */
+      return k_maxPolynomialDegree;
     }
     i++;
   }

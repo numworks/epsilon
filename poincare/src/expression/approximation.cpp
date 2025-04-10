@@ -1384,6 +1384,11 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       a->removeTree();
       return a;
     }
+    case Type::Opposite: {
+      Tree* a = ToMatrix<T>(e->child(0), ctx);
+      return a->moveTreeOverTree(
+          Matrix::ScalarMultiplication(-1_e, a, true, ctx));
+    }
     case Type::Mult: {
       bool resultIsMatrix = false;
       Tree* result = nullptr;

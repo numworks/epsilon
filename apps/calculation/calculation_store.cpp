@@ -142,8 +142,6 @@ static OutputExpressions computeInterruptible(
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
     // If the output computation is interrupted, return undef
-    /* TODO: split into two Checkpoints, one for the exact computation and one
-     * for the approximate computation */
     outputs = {Undefined::Builder(), Undefined::Builder()};
   }
 

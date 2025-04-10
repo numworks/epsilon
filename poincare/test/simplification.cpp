@@ -349,6 +349,10 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("trace([[√(2)+log(3)]])", "√(2)+log(3)");
   simplifies_to("transpose([[√(4)]])", "[[2]]");
   simplifies_to("[[0]]*[[0]]", "[[0]]");
+  simplifies_to("sum([[k,0]],k,0,5)", "[[15,0]]");
+  simplifies_to("sum([[k,0]],k,5,0)", "[[0,0]]");
+  simplifies_to("product([[0,k][k,0]],k,1,5)", "[[0,120][120,0]]");
+  simplifies_to("product([[0,k][k,0]],k,5,1)", "[[1,0][0,1]]");
 
   simplifies_to("0*[[2][4]]×[[1,2]]", "[[0,0][0,0]]");
   simplifies_to("0*[[2][inf]]", "[[0][undef]]");

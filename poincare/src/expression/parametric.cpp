@@ -73,6 +73,18 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
 
   // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1
   if (sign.realSign().isStrictlyPositive()) {
+    Dimension dim = Dimension::Get(e->child(3));
+    if (dim.isMatrix()) {
+      if (isSum) {
+        e->moveTreeOverTree(Matrix::Zero(dim.matrix));
+        return true;
+      }
+      Tree* size = IntegerHandler(dim.matrix.rows).pushOnTreeStack();
+      Matrix::Identity(size);
+      size->removeTree();
+      e->moveTreeOverTree(size);
+      return true;
+    }
     e->cloneTreeOverTree(isSum ? 0_e : 1_e);
     return true;
   }

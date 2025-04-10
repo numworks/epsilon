@@ -408,7 +408,7 @@ int Matrix::RankOfCanonized(const Tree* matrix) {
 Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
                       const Approximation::Context* ctx) {
   assert(NumberOfRows(matrix) == NumberOfColumns(matrix));
-  int dim = NumberOfRows(matrix);
+  uint8_t dim = NumberOfRows(matrix);
   /* Create the matrix (A|I) with A is the input matrix and I the dim
    * identity matrix */
   Tree* matrixAI = SharedTreeStack->pushMatrix(dim, dim * 2);
@@ -425,7 +425,7 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
   // Compute the inverse
   bool canonized = RowCanonize(matrixAI, true, nullptr, approximate, ctx);
   if (!canonized && !approximate) {
-    matrixAI->cloneTreeOverTree(KUndefUnhandled);
+    matrixAI->moveTreeOverTree(Matrix::Undef({dim, dim}));
     return matrixAI;
   }
 
@@ -433,7 +433,7 @@ Tree* Matrix::Inverse(const Tree* matrix, bool approximate,
   if (canonized) {
     for (int i = 0; i < dim; i++) {
       if (!Child(matrixAI, i, i)->isOne()) {
-        matrixAI->cloneTreeOverTree(KOutOfDefinition);
+        matrixAI->moveTreeOverTree(Matrix::Undef({dim, dim}));
         return matrixAI;
       }
     }

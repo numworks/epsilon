@@ -352,8 +352,8 @@ QUIZ_CASE(pcj_simplification_matrix) {
 
   simplifies_to("0*[[2][4]]×[[1,2]]", "[[0,0][0,0]]");
   simplifies_to("0*[[2][inf]]", "[[0][undef]]");
-  simplifies_to("0*inf*[[2][3]]", "[[undef][undef]]");
-  simplifies_to("undef*[[2][4]]", "[[undef][undef]]");
+  simplifies_to("0*inf*[[2][3]]", "undef");
+  simplifies_to("undef*[[2][4]]", "undef");
   simplifies_to("[[1/0][4]]", "[[undef][4]]");
   simplifies_to("[[1,2]]^2", "undef");
   simplifies_to("[[1]]^π", "undef");
@@ -361,6 +361,8 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("transpose(undef)", "undef");
   simplifies_to("transpose(identity(0))", "undef");
   simplifies_to("transpose(identity(-1))", "undef");
+  simplifies_to("transpose(inverse([[0]]))", "undef");
+  simplifies_to("dot([[1]], inverse([[0]]))", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_complex) {

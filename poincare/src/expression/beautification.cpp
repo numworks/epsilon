@@ -389,6 +389,21 @@ bool ShallowBeautify(Tree* e, void* context) {
     return true;
   }
 
+  /* A matrix full of undef is a simple undef */
+  if (e->isMatrix()) {
+    bool allUndef = true;
+    for (const Tree* child : e->children()) {
+      if (!child->isUndef()) {
+        allUndef = false;
+        break;
+      }
+    }
+    if (allUndef) {
+      e->cloneTreeOverTree(KUndef);
+      return true;
+    }
+  }
+
   return
       // ln(x) -> lnUser(x)
       PatternMatching::MatchReplace(e, KLn(KA), KLnUser(KA)) ||

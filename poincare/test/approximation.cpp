@@ -154,6 +154,9 @@ QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<float>("[[0]]^(2π)", "undef");
   approximates_to<float>("[[1,2]]^2", "undef");
   approximates_to<float>("[[0]]^2", "[[0]]");
+  approximates_to<float>("det(inverse([[0]]))", "undef");
+  approximates_to<float>("transpose(inverse([[0]]))", "undef");
+  approximates_to<float>("dot([[1]], inverse([[0]]))", "undef");
 }
 
 QUIZ_CASE(pcj_approximation_infinity) {

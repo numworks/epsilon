@@ -237,7 +237,7 @@ Poincare::UserExpression CalculationStore::parseInput(
   } else {
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
-    return {};
+    return Poincare::UserExpression();
   }
 }
 

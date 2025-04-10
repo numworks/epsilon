@@ -234,6 +234,13 @@ QUIZ_CASE(graph_function_properties) {
                                    CurveParameterType::CartesianFunction});
 
     assert_check_function_properties(
+        "f(x)=x^1000",
+        FunctionProperties{.m_caption = I18n::Message::PolynomialType,
+                           .m_curveParameterType =
+                               ContinuousFunctionProperties::
+                                   CurveParameterType::CartesianFunction});
+
+    assert_check_function_properties(
         "f(x)=3x^5+(1/π-3)-(4x^3)/π",
         FunctionProperties{.m_caption = I18n::Message::PolynomialType,
                            .m_curveParameterType =

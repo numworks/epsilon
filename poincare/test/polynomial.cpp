@@ -132,6 +132,9 @@ QUIZ_CASE(pcj_polynomial_degree) {
   assert_polynomial_degree_is(projCtx, "2-x-x^3", 3);
   assert_polynomial_degree_is(projCtx, "π×x", 1);
   assert_polynomial_degree_is(projCtx, "x+π^(-3)", 1);
+  assert_polynomial_degree_is(projCtx, "x^256", 256);
+  // polynomial degree is clamped to a maximum value
+  assert_polynomial_degree_is(projCtx, "x^257", Degree::k_maxPolynomialDegree);
 
   // f: y→y^2+πy+1
   store("1+π×y+y^2→f(y)", &globalContext);

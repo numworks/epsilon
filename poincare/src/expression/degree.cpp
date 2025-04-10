@@ -61,7 +61,7 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
               return k_unknown;
             }
             // TODO: Check overflow
-            degree *= Integer::Handler(child).to<uint8_t>();
+            degree *= Integer::Handler(child).to<int>();
           }
         }
         break;

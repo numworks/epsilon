@@ -1799,3 +1799,13 @@ QUIZ_CASE(pcj_euclidean_division) {
   // simplifies_to("(-3)⊦2", "Q=3,R=1");
 #endif
 }
+
+QUIZ_CASE(pcj_simplification_integral) {
+  simplifies_to("int(3*π,x,0,1)", "3×π");
+  simplifies_to("int(3a,x,-2,2)", "12×a");
+  simplifies_to("int(x+x,x,-1,1)", "2×int(x,x,-1,1)");
+  simplifies_to("int(3x^2+x-15,x,-2,1)", "-45+3×int(x^2,x,-2,1)+int(x,x,-2,1)");
+  simplifies_to("int(6e^x+sin(x),x,1,3)",
+                "int(sin(x),x,1,3)+6×int(e^(x),x,1,3)");
+  simplifies_to("int(x*e^x,x,0,0)", "int(e^(x)×x,x,0,0)");
+}

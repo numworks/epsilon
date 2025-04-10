@@ -2704,10 +2704,8 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
   assert_parsed_expression_simplify_to("tanh({0,π})", "{0,tanh(π)}");
   assert_parsed_expression_simplify_to("im({1/√(2),1/2,1,-1})", "{0,0,0,0}");
   assert_parsed_expression_simplify_to("im({1,1+i})", "{0,1}");
-  assert_parsed_expression_simplify_to("int({0,180},x,1,2)",
-                                       "{int(0,x,1,2),int(180,x,1,2)}");
-  assert_parsed_expression_simplify_to("int(1,x,{0,1},1)",
-                                       "{int(1,x,0,1),int(1,x,1,1)}");
+  assert_parsed_expression_simplify_to("int({0,180},x,1,2)", "{0,180}");
+  assert_parsed_expression_simplify_to("int(1,x,{0,1},1)", "{1,0}");
   assert_parsed_expression_simplify_to("log({2,3})", "{log(2),log(3)}");
   assert_parsed_expression_simplify_to("log({2,3},5)", "{log(2,5),log(3,5)}");
   assert_parsed_expression_simplify_to("log(5,{2,3})", "{log(5,2),log(5,3)}");

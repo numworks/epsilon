@@ -7,12 +7,12 @@ on:
        default: 'false'
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ vars.MAKEFLAGS }}
   BETA: ${{ fromJSON('["", ".beta"]')[github.event.inputs.beta == 'true'] }}
 
 jobs:
   build:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' && `epsilon` || 'ubuntu-latest' }}
+    runs-on: ${{ vars.EPSILON_RUNNER_LABELS }}
     steps:
       - name: Download toolchain
         uses: numworks/setup-arm-toolchain@latest

@@ -9,8 +9,8 @@ on:
       - 'scandium'
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1' || '-j2' }}
-  CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache_docker' || '' }}
+  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+  CCACHE_DIR: ${{ vars.CCACHE_DOCKER_DIR }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   linux:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' && `epsilon` || 'ubuntu-latest' }}
+    runs-on: ${{ vars.EPSILON_CACHED_RUNNER_LABELS }}
     steps:
       - name: Fetch PR branch
         uses: actions/checkout@v4

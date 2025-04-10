@@ -7,13 +7,13 @@ on:
        default: 'false'
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32' || '-j2' }}
+  MAKEFLAGS: ${{ vars.MAKEFLAGS }}
   DEBUG: ${{ fromJSON('["0", "1"]')[github.event.inputs.debug == 'true'] }}
   OUTPUT_PATH: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug == 'true'] }}/simulator/android
 
 jobs:
   build:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'self-hosted' && `epsilon` || 'ubuntu-latest' }}
+    runs-on: ${{ vars.EPSILON_RUNNER_LABELS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4

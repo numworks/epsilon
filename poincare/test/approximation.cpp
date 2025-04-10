@@ -363,6 +363,7 @@ QUIZ_CASE(pcj_approximation_with_context) {
   Shared::GlobalContext globalContext;
   store("2x+5→f(x)", &globalContext);
   store("π+1→a", &globalContext);
+  store("[[4]]→b", &globalContext);
   ProjectionContext ctx = {
       .m_complexFormat = ComplexFormat::Cartesian,
       .m_context = &globalContext,
@@ -372,6 +373,7 @@ QUIZ_CASE(pcj_approximation_with_context) {
   approximates_to<float>("f(a)", "13.28319", ctx);
   approximates_to<float>("f(a+i)", "13.28319+2×i", ctx);
   approximates_to<float>("z", "undef", ctx);
+  approximates_to<float>("b*[[5]]", "[[20]]", ctx);
 }
 
 // Use projected trees

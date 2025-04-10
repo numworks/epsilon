@@ -1482,6 +1482,43 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
                  : (IsNonReal(undef) ? KNonReal->cloneTree()
                                      : KUndef->cloneTree());
     }
+    case Type::UserFunction:
+    case Type::UserSymbol: {
+      // Global variable
+      if (e->isUserFunction()) {
+        assert(false);  // TODO
+        return KUndef->cloneTree();
+      }
+      if (!ctx || !ctx->m_symbolContext) {
+        assert(false);
+        /* NOTE: this is problematic as the returned tree is not isMatrix */
+        return KUndef->cloneTree();
+      }
+      const Tree* definition = ctx->m_symbolContext->expressionForUserNamed(e);
+      if (!definition) {
+        /* NOTE: this is problematic as the returned tree is not isMatrix */
+        assert(false);
+        return KUndef->cloneTree();
+      }
+      if (e->isUserSymbol()) {
+        return ToMatrix<T>(definition, ctx);
+      }
+      // TODO: incomplete code for UserFunction
+      // Dimension dim = Dimension::Get(e->child(0));
+      // /* x could be scalar or matrix */
+      // Tree* x = PrivateToTree<T>(e->child(0), dim, ctx);
+      // Tree* definitionClone = definition->cloneTree();
+      // // Only approximate child once and use local context.
+      // Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
+      //                          ComplexSign::Unknown());
+      // Context ctxCopy = *ctx;
+      // // LocalContext localCtx = LocalContext(x, ctx->m_localContext);
+      // // ctxCopy.m_localContext = &localCtx;
+      // Tree* result = ToMatrix<T>(definitionClone, &ctxCopy);
+      // definitionClone->removeTree();
+      // x->removeTree();
+      // return result;
+    }
     default:;
   }
   return KUndef->cloneTree();

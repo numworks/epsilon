@@ -33,7 +33,7 @@ int Sequence::InitialRank(const Tree* sequence) {
 bool Sequence::MainExpressionContainsForbiddenTerms(
     const Tree* e, const char* name, Type type, int initialRank, bool recursion,
     bool systemSymbol, bool otherSequences) {
-  if (!Dimension::IsNonListScalar(e)) {
+  if (!Dimension::DeepCheck(e) || !Dimension::IsNonListScalar(e)) {
     return true;
   }
   const Tree* skipUntil = e;

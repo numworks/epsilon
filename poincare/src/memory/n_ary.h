@@ -7,6 +7,8 @@ namespace Poincare::Internal {
 
 namespace NAry {
 
+static constexpr size_t k_maxNumberOfChildren = 255;
+
 void AddChildAtIndex(Tree* nary, Tree* child, int index);
 inline void AddChild(Tree* nary, Tree* child) {
   AddChildAtIndex(nary, child, nary->numberOfChildren());

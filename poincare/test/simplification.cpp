@@ -749,6 +749,9 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("sequence(k<0, k, 2)", "{False,False}");
   simplifies_to("sequence(2*k, k, 3)+1", "{3,5,7}");
   simplifies_to("sum(sequence(2*k*t, k, 3)+1, t, 1, 3)", "{15,27,39}");
+  simplifies_to("sum(sequence(1, k, 255))", "255");
+  simplifies_to("sequence(1, k, 256)", "undef");
+  simplifies_to("sequence(k,k,0)", "undef");  // TODO_PCJ: should be {}
   simplifies_to("mean({1,3*x,2})", "x+1");
   simplifies_to("sum({1,3*x,2})", "3×(x+1)");
   simplifies_to("min({1,-4/7,2,-2})", "-2");
@@ -1720,6 +1723,8 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   simplifies_to("l(3^2-4)", "1", projCtx);
   simplifies_to("l(log(3))", "undef", projCtx);
   simplifies_to("l(-2) ", "undef", projCtx);
+  simplifies_to("l(0)", "undef", projCtx);
+  simplifies_to("l(256)", "undef", projCtx);
   simplifies_to("l(1,3)", "{5,4,3}", projCtx);
   // TODO: Properly parse list slices on variables
   // TODO_PCJ: implement list access and list slice on lists of points

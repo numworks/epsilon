@@ -1,6 +1,7 @@
 #include "dimension.h"
 
 #include <poincare/old/context.h>
+#include <poincare/src/memory/n_ary.h>
 
 #include <algorithm>
 
@@ -492,10 +493,15 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
       }
       return true;
     case Type::ListElement:
-    case Type::ListSequence:
-      return !hasUnitChild && IsIntegerExpression(e->child(1)) &&
-             Approximation::To<float>(e->child(1),
-                                      Approximation::Parameters{}) > 0;
+    case Type::ListSequence: {
+      if (hasUnitChild || !IsIntegerExpression(e->child(1))) {
+        return false;
+      }
+      int n =
+          Approximation::To<float>(e->child(1), Approximation::Parameters{});
+      assert(std::floor(n) == n);
+      return n >= 1 && n <= NAry::k_maxNumberOfChildren;
+    }
     case Type::ListSlice:
       return Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2));

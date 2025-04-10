@@ -10,8 +10,6 @@
 
 namespace Poincare::Internal {
 
-static constexpr size_t k_maxNumberOfChildren = 255;
-
 void NAry::AddChildAtIndex(Tree* nary, Tree* child, int index) {
   assert(nary->isNAry());
   Tree* insertionPoint =
@@ -51,8 +49,8 @@ void NAry::RemoveChildAtIndex(Tree* nary, int index) {
 void NAry::SetNumberOfChildren(Tree* nary, size_t numberOfChildren) {
   assert(nary->isNAry());
   // TODO: Maybe handle it by spliting the nary in two (if it can be flatten).
-  if (numberOfChildren >= UINT16_MAX ||
-      (!nary->isNAry16() && numberOfChildren >= UINT8_MAX)) {
+  if (numberOfChildren > UINT16_MAX ||
+      (!nary->isNAry16() && numberOfChildren > UINT8_MAX)) {
     // TODO: Raise a special type of expression, handled the same for now.
     TreeStackCheckpoint::Raise(ExceptionType::TreeStackOverflow);
   }

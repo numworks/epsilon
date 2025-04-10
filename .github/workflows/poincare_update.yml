@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   linux:
-    runs-on: ${{ vars.EPSILON_CACHED_RUNNER_LABELS }}
+    runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     steps:
       - name: Fetch PR branch
         uses: actions/checkout@v4

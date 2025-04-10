@@ -18,7 +18,7 @@ concurrency:
 jobs:
   build:
     name: Lint Code Base
-    runs-on: ${{ vars.EPSILON_RUNNER_LABELS }}
+    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
 
     steps:
       - name: Fetch target branch and PR branch

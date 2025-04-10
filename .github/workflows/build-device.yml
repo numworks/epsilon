@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    runs-on: ${{ vars.EPSILON_RUNNER_LABELS }}
+    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     steps:
       - name: Download toolchain
         uses: numworks/setup-arm-toolchain@latest

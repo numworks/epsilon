@@ -12,6 +12,7 @@
 #include "parametric.h"
 #include "physical_constant.h"
 #include "projection.h"
+#include "random.h"
 #include "rational.h"
 #include "symbol.h"
 #include "units/representatives.h"
@@ -544,7 +545,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
           Approximation::To<float>(e->child(1), Approximation::Parameters{});
       assert(std::floor(b) == b);
       uint8_t n = Integer::Handler(e->child(2)).to<uint8_t>();
-      return a <= b && n <= b - a + 1;
+      return n <= Random::k_maxNumberOfSeeds && a <= b && n <= b - a + 1;
     }
     case Type::UserSymbol: {
       // UserSymbols in context should always be well defined

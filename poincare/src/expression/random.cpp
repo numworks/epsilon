@@ -43,7 +43,7 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
         int size = e->isRandIntNoRep() && Dimension::DeepCheck(e)
                        ? Dimension::ListLength(e)
                        : 1;
-        assert(static_cast<int>(currentSeed) + size < UINT8_MAX);
+        assert(static_cast<int>(currentSeed) + size < k_maxNumberOfSeeds);
         if (currentSeed + size > Context::k_maxNumberOfVariables) {
           assert(GetSeed(e) == 0);
           return currentSeed;

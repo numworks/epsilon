@@ -427,6 +427,14 @@ QUIZ_CASE(calculation_display_exact_approximate) {
       previousNumberOfSignificantDigits);
 }
 
+QUIZ_CASE(calculation_big_expressions) {
+  Shared::GlobalContext globalContext;
+  CalculationStore store(calculationBuffer, calculationBufferSize);
+  assertCalculationIs("identity(37)", DisplayOutput::ExactOnly,
+                      EqualSign::Hidden, "undef", nullptr, &globalContext,
+                      &store);
+}
+
 void assertMainCalculationOutputIs(const char* input, const char* output,
                                    Context* context, CalculationStore* store) {
   // For the next test, we only need to checkout input and output text.

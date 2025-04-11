@@ -15,22 +15,22 @@ on:
     inputs:
       device:
        type: boolean
-       default: true
+       default: false
       android:
        type: boolean
-       default: true
+       default: false
       windows:
        type: boolean
-       default: true
+       default: false
       macos:
        type: boolean
-       default: true
+       default: false
       ios:
        type: boolean
-       default: true
+       default: false
       web:
        type: boolean
-       default: true
+       default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

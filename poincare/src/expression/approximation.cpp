@@ -709,12 +709,8 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
       m->removeTree();
       return v;
     }
-    case Type::Trace: {
-      Tree* matrix = ToMatrix<T>(e->child(0), ctx);
-      std::complex<T> trace = ApproximateTrace<T>(matrix, ctx);
-      matrix->removeTree();
-      return trace;
-    }
+    case Type::Trace:
+      return ApproximateTrace<T>(e->child(0), ctx);
     case Type::Dot: {
       // TODO use complex conjugate ?
       Tree* u = ToMatrix<T>(e->child(0), ctx);
@@ -1503,21 +1499,23 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       if (e->isUserSymbol()) {
         return ToMatrix<T>(definition, ctx);
       }
+#if 0
       // TODO: incomplete code for UserFunction
-      // Dimension dim = Dimension::Get(e->child(0));
-      // /* x could be scalar or matrix */
-      // Tree* x = PrivateToTree<T>(e->child(0), dim, ctx);
-      // Tree* definitionClone = definition->cloneTree();
-      // // Only approximate child once and use local context.
-      // Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
-      //                          ComplexSign::Unknown());
-      // Context ctxCopy = *ctx;
-      // // LocalContext localCtx = LocalContext(x, ctx->m_localContext);
-      // // ctxCopy.m_localContext = &localCtx;
-      // Tree* result = ToMatrix<T>(definitionClone, &ctxCopy);
-      // definitionClone->removeTree();
-      // x->removeTree();
-      // return result;
+      Dimension dim = Dimension::Get(e->child(0));
+      /* x could be scalar or matrix */
+      Tree* x = PrivateToTree<T>(e->child(0), dim, ctx);
+      Tree* definitionClone = definition->cloneTree();
+      // Only approximate child once and use local context.
+      Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
+                               ComplexSign::Unknown());
+      Context ctxCopy = *ctx;
+      // LocalContext localCtx = LocalContext(x, ctx->m_localContext);
+      // ctxCopy.m_localContext = &localCtx;
+      Tree* result = ToMatrix<T>(definitionClone, &ctxCopy);
+      definitionClone->removeTree();
+      x->removeTree();
+      return result;
+#endif
     }
     default:;
   }
@@ -1758,6 +1756,9 @@ template Tree* ToTree<double>(const Tree*, Parameters, Context);
 
 template std::complex<float> ToComplex(const Tree*, Parameters, Context);
 template std::complex<double> ToComplex(const Tree*, Parameters, Context);
+
+template Tree* Private::ToMatrix<float>(const Tree*, const Context*);
+template Tree* Private::ToMatrix<double>(const Tree*, const Context*);
 
 template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, Parameters,
                                                       Context);

@@ -390,18 +390,10 @@ bool ShallowBeautify(Tree* e, void* context) {
   }
 
   /* A matrix full of undef is a simple undef */
-  if (e->isMatrix()) {
-    bool allUndef = true;
-    for (const Tree* child : e->children()) {
-      if (!child->isUndef()) {
-        allUndef = false;
-        break;
-      }
-    }
-    if (allUndef) {
-      e->cloneTreeOverTree(KUndef);
-      return true;
-    }
+  if (e->isMatrix() &&
+      !e->hasChildSatisfying([](const Tree* e) { return !e->isUndef(); })) {
+    e->cloneTreeOverTree(KUndef);
+    return true;
   }
 
   return

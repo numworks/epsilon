@@ -663,7 +663,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
 #endif
       const Tree* child = e->child(0);
       assert(child->isOne() || child->isTwo() || child->isIntegerPosShort());
-      uint8_t size = Rational::Numerator(child).digits()[0];
+      uint8_t size = Rational::Numerator(child).to<uint8_t>();
       return Matrix(size, size);
     }
     case Type::UnitConversion:

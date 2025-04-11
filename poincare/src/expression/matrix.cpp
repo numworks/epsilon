@@ -42,7 +42,12 @@ Tree* Matrix::Identity(const Tree* n) {
     return KUndefUnhandled->cloneTree();
   }
   uint8_t nb = *Integer::Handler(n).digits();
-  assert(nb > 0);
+  return Identity({nb, nb});
+}
+
+Tree* Matrix::Identity(MatrixDimension d) {
+  assert(d.cols == d.rows && d.cols > 0);
+  uint8_t nb = d.cols;
   Tree* result = SharedTreeStack->pushMatrix(nb, nb);
   for (int i = 0; i < nb - 1; i++) {
     (1_e)->cloneTree();

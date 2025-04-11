@@ -4,7 +4,8 @@
 namespace Poincare::Internal::Approximation::Private {
 
 template <typename T>
-std::complex<T> ApproximateTrace(const Tree* matrix, const Context* ctx) {
+std::complex<T> ApproximateTrace(const Tree* e, const Context* ctx) {
+  Tree* matrix = ToMatrix<T>(e, ctx);
   int n = Matrix::NumberOfRows(matrix);
   assert(n == Matrix::NumberOfColumns(matrix));
   std::complex<T> result = std::complex<T>(0);
@@ -12,6 +13,7 @@ std::complex<T> ApproximateTrace(const Tree* matrix, const Context* ctx) {
   for (int i = 0; i < n - 1; i++) {
     result += PrivateToComplex<T>(child, ctx);
     if (std::isnan(result.real()) || std::isnan(result.imag())) {
+      matrix->removeTree();
       return std::complex<T>(NAN, NAN);
     }
     for (int j = 0; j < n + 1; j++) {
@@ -19,6 +21,7 @@ std::complex<T> ApproximateTrace(const Tree* matrix, const Context* ctx) {
     }
   }
   result += PrivateToComplex<T>(child, ctx);
+  matrix->removeTree();
   return result;
 }
 

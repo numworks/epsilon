@@ -10,7 +10,7 @@ on:
       - 'scandium'
 
 env:
-  MAKEFLAGS: ${{ vars.MAKFLAGS_CACHED }} PLATFORM=n0120
+  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=n0120
   CCACHE_DIR: ${{ vars.CCACHE_DOCKER_DIR }}
 
 concurrency:

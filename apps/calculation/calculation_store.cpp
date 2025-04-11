@@ -3,6 +3,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/cas.h>
 #include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/exception_checkpoint.h>
 #include <poincare/helpers/store.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/helpers/trigonometry.h>
@@ -277,9 +278,8 @@ ExpiringPointer<Calculation> CalculationStore::push(
     if (neededSize > m_bufferSize) {
       /* If the calculation with undefined outputs is still too big, it means
        * that the input expression was too big, which is very unlikely to happen
-       * in a real usecase. In that hypothetical case, do not update the
-       * calculation store at all */
-      return nullptr;
+       * in a real usecase. */
+      ExceptionCheckpoint::Raise();
     }
   }
 

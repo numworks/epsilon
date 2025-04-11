@@ -44,7 +44,7 @@ class AdditionalResultsHelper final {
    * integer (Float, Double or Integer) */
   static UserExpression EquivalentInteger(const UserExpression exactOutput);
   // Return true if exactOutput represents an integer (Float, Double or Integer)
-  static bool HasInteger(const UserExpression exactOutput);
+  static bool HasPositiveInteger(const UserExpression exactOutput);
 
   /* Rational additional results */
   static bool HasRational(const UserExpression exactOutput);

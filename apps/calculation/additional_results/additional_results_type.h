@@ -77,7 +77,7 @@ struct AdditionalResultsType {
       const Poincare::Preferences::CalculationPreferences
           calculationPreferences,
       Poincare::Context* context);
-  static bool HasInteger(const Poincare::UserExpression);
+  static bool HasPositiveInteger(const Poincare::UserExpression);
   static bool HasRational(const Poincare::UserExpression);
 };
 

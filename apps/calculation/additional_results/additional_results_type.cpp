@@ -71,7 +71,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
                             context)) {
     type.scientificNotation = true;
   }
-  if (HasInteger(exactOutput)) {
+  if (HasPositiveInteger(exactOutput)) {
     type.integer = true;
   } else if (HasRational(exactOutput)) {
     type.rational = true;
@@ -261,10 +261,10 @@ bool AdditionalResultsType::HasScientificNotation(
       true);
 }
 
-bool AdditionalResultsType::HasInteger(
+bool AdditionalResultsType::HasPositiveInteger(
     const Poincare::UserExpression exactOutput) {
   assert(!exactOutput.hasUnit());
-  return Poincare::AdditionalResultsHelper::HasInteger(exactOutput);
+  return Poincare::AdditionalResultsHelper::HasPositiveInteger(exactOutput);
 }
 
 bool AdditionalResultsType::HasRational(

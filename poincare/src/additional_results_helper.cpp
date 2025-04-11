@@ -317,8 +317,8 @@ UserExpression AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
 
 UserExpression AdditionalResultsHelper::EquivalentInteger(
     const Poincare::UserExpression exactOutput) {
-  assert(HasInteger(exactOutput));
-  if (exactOutput.tree()->isPositiveInteger()) {
+  assert(HasPositiveInteger(exactOutput));
+  if (exactOutput.tree()->isInteger()) {
     return exactOutput;
   }
   float value = FloatHelper::To(exactOutput.tree());
@@ -326,7 +326,7 @@ UserExpression AdditionalResultsHelper::EquivalentInteger(
   return UserExpression::Builder(Integer::Push(static_cast<int32_t>(value)));
 }
 
-bool AdditionalResultsHelper::HasInteger(
+bool AdditionalResultsHelper::HasPositiveInteger(
     const Poincare::UserExpression exactOutput) {
   if (exactOutput.tree()->isFloat()) {
     // Downcast to float to handle both double and float trees.

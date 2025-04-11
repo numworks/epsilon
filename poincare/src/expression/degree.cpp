@@ -64,7 +64,13 @@ int Degree::PrivateGet(const Tree* e, const Tree* symbol) {
                 GetComplexSign(child).realSign().canBeStrictlyNegative()) {
               return k_unknown;
             }
-            degree *= Integer::Handler(child).to<int>();
+            int power = Integer::Handler(child).to<int>();
+            if (power >= k_maxPolynomialDegree) {
+              /* Early return the maximum authorized value to avoid an overflow.
+               */
+              return k_maxPolynomialDegree;
+            }
+            degree *= power;
           }
         }
         break;

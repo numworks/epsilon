@@ -6,6 +6,8 @@
 #include <shared/drivers/flash_write_with_interruptions.h>
 #include <string.h>
 
+#include "dfu_interfaces.h"
+
 namespace Ion {
 namespace Device {
 namespace USB {
@@ -161,16 +163,17 @@ bool DFUInterface::processUploadRequest(SetupPacket* request,
     m_ep0->stallTransaction();
     return false;
   } else {
-    /* We decided to never protect Read operation. Else we would have to check
-     * here it is not protected before reading. */
-
     // Compute the reading address
     uint32_t readAddress =
         (request->wValue() - 2) * Endpoint0::MaxTransferSize + m_addressPointer;
+
     // Copy the requested memory zone into the transfer buffer.
     uint16_t copySize = minUint32T(transferBufferMaxLength, request->wLength());
-    memcpy(transferBuffer, (void*)readAddress, copySize);
-    *transferBufferLength = copySize;
+
+    if (interface(m_bInterfaceAlternateSetting)
+            ->read(readAddress, copySize, transferBuffer)) {
+      *transferBufferLength = copySize;
+    }
   }
   m_state = State::dfuUPLOADIDLE;
   return true;
@@ -231,6 +234,22 @@ void DFUInterface::eraseMemoryIfNeeded() {
     return;
   }
 
+  // TODO this expects an address and we pass a page
+  bool erased = interface(m_bInterfaceAlternateSetting)->erase(m_erasePage);
+  if (erased) {
+    /* Put an out of range value in m_erasePage to indicate that no erase is
+     * waiting. */
+    m_erasePage = -1;
+    // Change the interface state and status
+    m_state = State::dfuDNLOADIDLE;
+    m_status = Status::OK;
+  } else {
+    // Unrecognized or unwritable sector
+    m_state = State::dfuERROR;
+    m_status = Status::errTARGET;
+  }
+  return;
+#if 0
   bool erased = true;
   if (m_erasePage == Flash::TotalNumberOfSectors()) {
     Flash::MassEraseWithInterruptions(false);
@@ -248,9 +267,27 @@ void DFUInterface::eraseMemoryIfNeeded() {
   m_erasePage = -1;
   m_state = State::dfuDNLOADIDLE;
   m_status = Status::OK;
+#endif
 }
 
 void DFUInterface::writeOnMemory() {
+  bool written =
+      interface(m_bInterfaceAlternateSetting)
+          ->write(m_writeAddress, m_largeBufferLength, m_largeBuffer);
+  if (written) {
+    // Reset the buffer length
+    m_largeBufferLength = 0;
+    // Change the interface state and status
+    m_state = State::dfuDNLOADIDLE;
+    m_status = Status::OK;
+  } else {
+    // Invalid write address
+    m_largeBufferLength = 0;
+    m_state = State::dfuERROR;
+    m_status = Status::errTARGET;
+  }
+  return;
+
   if (m_writeAddress >= Board::writableSRAMStartAddress() &&
       m_writeAddress + m_largeBufferLength < Board::writableSRAMEndAddress()) {
     // Write on SRAM
@@ -321,6 +358,46 @@ bool DFUInterface::dfuAbort(uint16_t* transferBufferLength) {
 void DFUInterface::leaveDFUAndReset() {
   m_device->setResetOnDisconnect(true);
   m_device->detach();
+}
+
+bool DFUMemoryBackend::rangeIsValid(uint32_t address, uint32_t length) const {
+  return m_base <= address && address + length <= m_base + m_length;
+}
+
+bool DFUMemoryBackend::read(uint32_t address, uint32_t length,
+                            uint8_t* destination) const {
+  if (!rangeIsValid(address, length)) {
+    return false;
+  }
+  assert(length <= 2048);
+  memcpy(destination, reinterpret_cast<uint8_t*>(address), length);
+  return true;
+}
+
+bool DFURAMBackend::write(uint32_t address, uint32_t length,
+                          const uint8_t* source) const {
+  if (!rangeIsValid(address, length)) {
+    return false;
+  }
+  memcpy(reinterpret_cast<uint8_t*>(address), source, length);
+  return true;
+}
+
+bool DFUFlashBackend::write(uint32_t address, uint32_t length,
+                            const uint8_t* source) const {
+  if (!rangeIsValid(address, length)) {
+    return false;
+  }
+  return Flash::WriteMemoryWithInterruptions(
+      reinterpret_cast<uint8_t*>(address), source, length, false);
+}
+
+bool DFUFlashBackend::erase(uint32_t address) const {
+  if (!rangeIsValid(address, 0)) {
+    return false;
+  }
+  // TODO erase
+  return true;
 }
 
 }  // namespace USB

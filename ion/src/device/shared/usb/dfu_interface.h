@@ -191,6 +191,65 @@ class DFUInterface : public Interface {
   bool m_isErasingAndWriting;
 };
 
+class DFUInterfaceBackend {
+ public:
+  virtual bool erase(uint32_t address) const = 0;
+  virtual bool write(uint32_t address, uint32_t length,
+                     const uint8_t* source) const = 0;
+  virtual bool read(uint32_t address, uint32_t length,
+                    uint8_t* destination) const = 0;
+};
+
+class DFUMemoryBackend : public DFUInterfaceBackend {
+ public:
+  constexpr DFUMemoryBackend(uint32_t base, uint32_t length)
+      : m_base(base), m_length(length) {}
+  constexpr ~DFUMemoryBackend() = default;
+
+ protected:
+  bool rangeIsValid(uint32_t address, uint32_t length) const;
+
+ private:
+  bool erase(uint32_t address) const override;
+  bool write(uint32_t address, uint32_t length,
+             const uint8_t* source) const override;
+  bool read(uint32_t address, uint32_t length,
+            uint8_t* destination) const override;
+
+  const uint32_t m_base;
+  const uint32_t m_length;
+};
+
+class DFUFlashBackend : public DFUMemoryBackend {
+ public:
+  using DFUMemoryBackend::DFUMemoryBackend;
+
+ private:
+  bool erase(uint32_t address) const override;
+  bool write(uint32_t address, uint32_t length,
+             const uint8_t* source) const override;
+};
+
+class DFURAMBackend : public DFUMemoryBackend {
+ public:
+  using DFUMemoryBackend::DFUMemoryBackend;
+
+ private:
+  bool erase(uint32_t address) const override { return false; };
+  bool write(uint32_t address, uint32_t length,
+             const uint8_t* source) const override;
+};
+
+class DFUSecureBackend : public DFUInterfaceBackend {
+  bool erase(uint32_t address) const override { return false; }
+  bool write(uint32_t address, uint32_t length,
+             const uint8_t* source) const override;
+  bool read(uint32_t address, uint32_t length,
+            uint8_t* destination) const override {
+    return false;
+  }
+};
+
 }  // namespace USB
 }  // namespace Device
 }  // namespace Ion

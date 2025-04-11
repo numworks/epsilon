@@ -85,6 +85,8 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     }
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.
+    /* TODO: This isMatrix is not enough as the child tree could be of dimension
+     * matrix without beinf a matrix. Like Pow([[x]],20000000000) */
     merge = (child->isMatrix()
                  ? Matrix::Multiplication
                  : Matrix::ScalarMultiplication)(child, next, false, nullptr);

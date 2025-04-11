@@ -11,6 +11,7 @@
 #include "parametric.h"
 #include "physical_constant.h"
 #include "projection.h"
+#include "rational.h"
 #include "symbol.h"
 #include "units/representatives.h"
 #include "variables.h"
@@ -431,10 +432,14 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
     case Type::Inverse:
       return childDim[0].isSquareMatrix();
     case Type::Identity: {
+#if 0
       // TODO check for unknowns and display error message if not integral
       return childDim[0].isScalar() && IsIntegerExpression(e->child(0)) &&
              Approximation::To<float>(e->child(0),
                                       Approximation::Parameters{}) > 0;
+#endif
+      const Tree* size = e->child(0);
+      return size->isOne() || size->isTwo() || size->isIntegerPosShort();
     }
     case Type::Norm:
       return childDim[0].isVector();
@@ -652,9 +657,14 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       return Matrix(dim.matrix.cols, dim.matrix.rows);
     }
     case Type::Identity: {
-      int n =
+#if 0
+      uint8_t n =
           Approximation::To<float>(e->child(0), Approximation::Parameters{});
-      return Matrix(n, n);
+#endif
+      const Tree* child = e->child(0);
+      assert(child->isOne() || child->isTwo() || child->isIntegerPosShort());
+      uint8_t size = Rational::Numerator(child).digits()[0];
+      return Matrix(size, size);
     }
     case Type::UnitConversion:
       /* Use first child because it's representative is needed in

@@ -155,7 +155,7 @@ jobs:
       - run: |
           $DOCKER_RUN "parallel --keep-order output/debug/optimized/linux/test.bin --headless --limgit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | tee out
       - uses: actions/upload-artifact@v4
-        if: ${{ (${{ vars.ADVANCED_JOBS }}) }}
+        if: ${{ vars.ADVANCED_JOBS }}
         with:
           name: epsilon-linux.bin
           path: output/debug/optimized/linux/epsilon.bin

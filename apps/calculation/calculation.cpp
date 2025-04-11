@@ -313,6 +313,7 @@ void Calculation::fillExpressionsForAdditionalResults(
     UserExpression* approximateOutput, Context* context) {
   *input = this->input();
   *approximateOutput = this->approximateOutput();
+  assert(m_displayOutput != DisplayOutput::Unknown);
   *exactOutput = m_displayOutput == DisplayOutput::ApproximateOnly
                      ? *approximateOutput
                      : this->exactOutput();

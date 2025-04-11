@@ -495,6 +495,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       return SharedTreeStack->pushSet(0);
     }
     if (equation->isDep()) {
+      // Approximate if the equation is monovariable and different from 0=0
       *error = (n == 1 && !Dependency::Main(equation)->isZero())
                    ? Error::RequireApproximateSolution
                    : Error::EquationUnhandled;

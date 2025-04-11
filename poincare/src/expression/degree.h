@@ -23,7 +23,7 @@ class Degree {
    * worst integer overflow is when computing (x^n)^m. All intermediate degree
    * calculations need to return a value for which n*m will be representable by
    * the "int" type.  */
-  static_assert(k_maxPolynomialDegree * k_maxPolynomialDegree < INT_MAX);
+  static_assert(k_maxPolynomialDegree < INT_MAX / k_maxPolynomialDegree);
 
  private:
   static int PrivateGet(const Tree* e, const Tree* symbol);

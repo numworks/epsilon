@@ -498,7 +498,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
       if (hasUnitChild || !IsIntegerExpression(e->child(1))) {
         return false;
       }
-      int n =
+      float n =
           Approximation::To<float>(e->child(1), Approximation::Parameters{});
       assert(std::floor(n) == n);
       return n >= 1 && n <= NAry::k_maxNumberOfChildren;

@@ -30,7 +30,7 @@ class Random {
    * A null seed indicates a un-seeded node.
    * For simplicity, distinct nodes cannot have a same seed. */
  public:
-  static constexpr int k_maxNumberOfSeeds = 255;
+  static constexpr int k_maxNumberOfSeeds = UINT8_MAX;
   class Context {
    public:
     using VariableType = double;

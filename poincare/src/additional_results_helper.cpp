@@ -333,12 +333,13 @@ bool AdditionalResultsHelper::HasPositiveInteger(
     float value = FloatHelper::To(exactOutput.tree());
     return std::isfinite(value) && value > 0 && value == std::round(value) &&
            value < OMG::IEEE754<float>::NonExactIntegerLimit() &&
-           value < 10000000000000000.f;
+           value < static_cast<float>(k_maxPositiveInteger);
   }
   return exactOutput.tree()->isPositiveInteger() &&
          Internal::IntegerHandler::Compare(
              Internal::Integer::Handler(exactOutput),
-             Internal::Integer::Handler(10000000000000000_e)) < 0;
+             Internal::Integer::Handler(
+                 IntegerLiteral<k_maxPositiveInteger>{})) < 0;
 }
 
 bool AdditionalResultsHelper::HasRational(

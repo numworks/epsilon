@@ -43,8 +43,10 @@ class AdditionalResultsHelper final {
   /* Return the integer UserExpression from exactOutput representing an
    * integer (Float, Double or Integer) */
   static UserExpression EquivalentInteger(const UserExpression exactOutput);
-  // Return true if exactOutput represents an integer (Float, Double or Integer)
+  /* Return true if exactOutput represents a positive integer (Float, Double or
+   * Integer) */
   static bool HasPositiveInteger(const UserExpression exactOutput);
+  constexpr static uint64_t k_maxPositiveInteger = 10000000000000000;
 
   /* Rational additional results */
   static bool HasRational(const UserExpression exactOutput);

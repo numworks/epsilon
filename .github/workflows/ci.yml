@@ -43,7 +43,7 @@ env:
 jobs:
   android:
     runs-on: ubuntu-latest
-    if: ${{ (${{ vars.ADVANCED_JOBS }} || github.event.inputs.android == 'true') }}
+    if: ${{ (vars.ADVANCED_JOBS || github.event.inputs.android == 'true') }}
     steps:
       - run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
           path: output/debug/optimized/android/epsilon.apk
   device:
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
-    if : ${{ (${{ vars.ADVANCED_JOBS }} || github.event.inputs.device == 'true') }}
+    if : ${{ (vars.ADVANCED_JOBS || github.event.inputs.device == 'true') }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
@@ -95,7 +95,7 @@ jobs:
         run: $DOCKER_RUN "make MODEL=${{ matrix.model }} bench.ram.dfu"
   windows:
     runs-on: windows-latest
-    if: ${{ (${{ vars.ADVANCED_JOBS }} || github.event.inputs.windows == 'true') }}
+    if: ${{ (vars.ADVANCED_JOBS || github.event.inputs.windows == 'true') }}
     defaults:
        run:
          shell: msys2 {0}
@@ -121,7 +121,7 @@ jobs:
           path: output/debug/optimized/windows/epsilon.exe
   web:
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
-    if: ${{ (${{ vars.ADVANCED_JOBS }} || github.event.inputs.web == 'true') }}
+    if: ${{ (vars.ADVANCED_JOBS || github.event.inputs.web == 'true') }}
     steps:
       - uses: numworks/setup-emscripten@latest
         with:
@@ -161,7 +161,7 @@ jobs:
           path: output/debug/optimized/linux/epsilon.bin
   macos:
     runs-on: macOS-latest
-    if: ${{ (${{ vars.ADVANCED_JOBS }} || github.event.inputs.macos == 'true') }}
+    if: ${{ (vars.ADVANCED_JOBS || github.event.inputs.macos == 'true') }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -177,7 +177,7 @@ jobs:
           path: output/debug/optimized/macos/epsilon.app
   ios:
     runs-on: macOS-latest
-    if: ${{ (${{ vars.ADVANCED_JOBS }} || github.event.inputs.ios == 'true') }}
+    if: ${{ (vars.ADVANCED_JOBS || github.event.inputs.ios == 'true') }}
     steps:
       - uses: actions/checkout@v4
         with:

@@ -322,6 +322,7 @@ UserExpression AdditionalResultsHelper::EquivalentInteger(
     return exactOutput;
   }
   float value = FloatHelper::To(exactOutput.tree());
+  assert(std::isfinite(value) && value == std::round(value));
   return UserExpression::Builder(Integer::Push(static_cast<int32_t>(value)));
 }
 

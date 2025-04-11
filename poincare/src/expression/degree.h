@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_DEGREE_H
 #define POINCARE_EXPRESSION_DEGREE_H
 
+#include <limits.h>
 #include <poincare/src/memory/tree.h>
 
 #include "projection.h"
@@ -18,6 +19,11 @@ class Degree {
   static int Get(const Tree* e, const char* symbolName);
   constexpr static int k_unknown = -1;
   constexpr static int k_maxPolynomialDegree = 256;
+  /* When computing the degree of an expression, the case that could lead to the
+   * worst integer overflow is when computing (x^n)^m. All intermediate degree
+   * calculations need to return a value for which n*m will be representable by
+   * the "int" type.  */
+  static_assert(k_maxPolynomialDegree * k_maxPolynomialDegree < INT_MAX);
 
  private:
   static int PrivateGet(const Tree* e, const Tree* symbol);

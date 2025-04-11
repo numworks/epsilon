@@ -4,11 +4,11 @@ on:
     inputs:
       beta:
        type: boolean
-       default: 'false'
+       default: false
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}
-  BETA: ${{ fromJSON('["", ".beta"]')[github.event.inputs.beta == 'true'] }}
+  BETA: ${{ fromJSON('["", ".beta"]')[github.event.inputs.beta] }}
 
 jobs:
   build:

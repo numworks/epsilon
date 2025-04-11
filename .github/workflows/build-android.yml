@@ -4,12 +4,12 @@ on:
     inputs:
       debug:
        type: boolean
-       default: 'false'
+       default: false
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}
-  DEBUG: ${{ fromJSON('["0", "1"]')[github.event.inputs.debug == 'true'] }}
-  OUTPUT_PATH: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug == 'true'] }}/simulator/android
+  DEBUG: ${{ fromJSON('["0", "1"]')[github.event.inputs.debug] }}
+  OUTPUT_PATH: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug] }}/simulator/android
 
 jobs:
   build:

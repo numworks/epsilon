@@ -4,11 +4,11 @@ on:
     inputs:
       debug:
        type: boolean
-       default: 'false'
+       default: false
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}
-  DEBUG: ${{ fromJSON('["0", "1"]')[github.event.inputs.debug == 'true'] }}
+  DEBUG: ${{ fromJSON('["0", "1"]')[github.event.inputs.debug] }}
 
 jobs:
   build:
@@ -31,11 +31,11 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: epsilon.html
-          path: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug == 'true'] }}/web/epsilon.html
+          path: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug] }}/web/epsilon.html
           retention-days: 7
       - name: Upload htmlpack.zip
         uses: actions/upload-artifact@v4
         with:
           name: htmlpack.zip
-          path: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug == 'true'] }}/web/htmlpack.zip
+          path: output/${{ fromJSON('["release", "debug"]')[github.event.inputs.debug] }}/web/htmlpack.zip
           retention-days: 7

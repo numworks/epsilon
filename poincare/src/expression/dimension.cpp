@@ -287,7 +287,8 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
       hasUnitChild = true;
     }
     if (!e->isPiecewise() && !e->isParentheses() && !e->isDep() &&
-        !e->isList() && !e->isListSort() && !e->isListSequence() &&
+        !e->isDepList() && !e->isList() && !e->isListSort() &&
+        !e->isListSequence() &&
         childDim.isBoolean() != e->isLogicalOperatorOrBoolean()) {
       /* Only piecewises, parenthesis, dependencies, lists and boolean operators
        * can have boolean child. Boolean operators must have boolean child. */
@@ -329,7 +330,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
 }
 
 /* To reduce the stack frame of the recursive method [DeepCheckDimensions], the
- * (unexplicably big) local varialbe [childDim] had to be located elsewhere.
+ * (unexplicably big) local variable [childDim] had to be located elsewhere.
  * The separation of the 2 functions allows this method to have a big stack
  * frame without risking a stack overflow on big Trees when evaluating the
  * recursive part of [DeepCheckDimensions] */
@@ -472,11 +473,11 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
        * allowed. */
       return childDim[0].unit.vector == childDim[1].unit.vector;
     case Type::DepList:
-      /* For now units are allowed in depLists. For a later refactoring, it
-       * would be better to have a dependency creation function that ensures in
-       * advance that no units are injected in a dependency. */
-      unitsAllowed = true;
-      break;
+      /* For now units and booleans are allowed in depLists. For a later
+       * refactoring, it would be better to have a dependency creation function
+       * that ensures in advance that no units or booleans are injected in a
+       * dependency. */
+      return true;
     case Type::Dep:
       // Children can have a different dimension : [[x/x]] -> dep([[1]],
       // {1/x})

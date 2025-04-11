@@ -341,11 +341,11 @@ bool ShallowBeautify(Tree* e, void* context) {
   // ln(A)       * ln(10)^(-1) -> log(A)
   // ln(10)^(-1) * ln(A)       -> log(A)
   changed = PatternMatching::MatchReplace(
-                e, KMult(KA_s, KLn(KB), KPow(KLn(10_e), -1_e), KC_s),
-                KMult(KA_s, KLog(KB), KC_s)) ||
+                e, KMult(KA_s, KLn(KB), KC_s, KPow(KLn(10_e), -1_e), KD_s),
+                KMult(KA_s, KLog(KB), KC_s, KD_s)) ||
             PatternMatching::MatchReplace(
-                e, KMult(KA_s, KPow(KLn(10_e), -1_e), KLn(KB), KC_s),
-                KMult(KA_s, KLog(KB), KC_s));
+                e, KMult(KA_s, KPow(KLn(10_e), -1_e), KC_s, KLn(KB), KD_s),
+                KMult(KA_s, KLog(KB), KC_s, KD_s));
 
   int n = e->numberOfChildren();
   while (e->isMult() && n > 1 &&

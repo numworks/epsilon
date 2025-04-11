@@ -16,22 +16,24 @@ bool ShallowPrepareForApproximation(Tree* e, void* ctx) {
   // TODO: Ensure no node is duplicated (random not may have not been seeded)
   bool changed = PatternMatching::MatchReplace(
       e, KExp(KMult(KA_s, KLn(KB), KC_s)), KPow(KB, KMult(KA_s, KC_s)));
+  /* Do exp => pow here to allow pow => sqrt/div to take effect in a single
+   * shallow call */
+  /* TODO: e^ is better than exp because we have code to handle special
+   * cases in pow, exp is probably more precise on normal values */
+  changed =
+      PatternMatching::MatchReplace(e, KExp(KA), KPow(e_e, KA)) || changed;
   return PatternMatching::MatchReplace(e, KPowReal(KA, -1_e), KDiv(1_e, KA)) ||
          PatternMatching::MatchReplace(e, KPow(KA, -1_e), KDiv(1_e, KA)) ||
          PatternMatching::MatchReplace(
              e, KPowReal(KA, 1_e / 2_e),
              KDep(KSqrt(KA), KDepList(KRealPos(KA)))) ||
          PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
-         /* TODO: e^ is better than exp because we have code to handle special
-          * cases in pow, exp is probably more precise on normal values */
-         PatternMatching::MatchReplace(e, KExp(KA), KPow(e_e, KA)) ||
          PatternMatching::MatchReplace(
              e, KMult(KA_s, KLn(KB), KPow(KLn(10_e), -1_e), KC_s),
              KMult(KA_s, KLog(KB), KC_s)) ||
          PatternMatching::MatchReplace(
              e, KMult(KA_s, KPow(KLn(10_e), -1_e), KLn(KB), KC_s),
              KMult(KA_s, KLog(KB), KC_s)) ||
-
          changed;
 }
 

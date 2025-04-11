@@ -5,8 +5,8 @@ on:
       - 'external_apps/**'
 
 env:
-  MAKEFLAGS: ${{ (github.repository == 'numworks/epsilon-internal') && '-j32 CCACHE=1' || '-j2' }}
-  CCACHE_DIR: ${{ (github.repository == 'numworks/epsilon-internal') && '/home/usain/_work/ccache' || '' }}
+  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+  CCACHE_DIR: ${{ vars.CCACHE_DOCKER_DIR }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,7 +14,7 @@ concurrency:
 
 jobs:
   c_cpp_apps:
-    runs-on: ${{ (github.repository == 'numworks/epsilon-internal') && 'with-cache' || 'ubuntu-latest' }}
+    runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     steps:
       - name: Install toolchain
         uses: numworks/setup-arm-toolchain@latest

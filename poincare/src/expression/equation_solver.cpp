@@ -102,7 +102,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   uint8_t numberOfVariables = userSymbols->numberOfChildren();
   /* When ReplaceDefinedSymbols, when a symbol in the expression is defined by
    * the user, remove it from possible unkowns */
-  if (projectionContext.m_context) {
+  if (projectionContext.m_context && userSymbols->numberOfChildren() > 0) {
     Tree* userSymbol = userSymbols->child(0);
     uint8_t index = 0;
     while (index < numberOfVariables) {

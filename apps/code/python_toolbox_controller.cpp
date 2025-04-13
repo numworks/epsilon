@@ -583,6 +583,8 @@ constexpr ToolboxMessage catalogChildren[] = {
                        I18n::Message::PythonSingleQuote, false),
     ToolboxMessageLeaf(I18n::Message::PythonCommandAt, I18n::Message::PythonAt,
                        false),
+    ToolboxMessageLeaf(I18n::Message::PythonCommandTilde,
+                       I18n::Message::PythonTilde, false),
     ToolboxMessageLeaf(I18n::Message::AbsCommandWithArg,
                        I18n::Message::PythonAbs),
     ToolboxMessageLeaf(I18n::Message::PythonCommandAcos,

@@ -118,8 +118,7 @@ class Calculator : public Device {
             1,  // bNumDeviceCapabilities
             &m_webUSBPlatformDescriptor),
         m_manufacturerStringDescriptor("NumWorks"),
-        // TODO NumWorks Scientific Calculator
-        m_productStringDescriptor("NumWorks Calculator"),
+        m_productStringDescriptor(Config::ProductString),
         m_serialNumberStringDescriptor(serialNumber),
         m_interfaceFlashStringDescriptor(flashStringDescriptor),
         // See note at the end of the file

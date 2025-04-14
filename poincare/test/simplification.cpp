@@ -1807,5 +1807,6 @@ QUIZ_CASE(pcj_simplification_integral) {
   simplifies_to("int(3x^2+x-15,x,-2,1)", "-45+3×int(x^2,x,-2,1)+int(x,x,-2,1)");
   simplifies_to("int(6e^x+sin(x),x,1,3)",
                 "int(sin(x),x,1,3)+6×int(e^(x),x,1,3)");
+  simplifies_to("int((x-3)(x+1),x,1,2)", "-3+int(x^2,x,1,2)-2×int(x,x,1,2)");
   simplifies_to("int(x*e^x,x,0,0)", "int(e^(x)×x,x,0,0)");
 }

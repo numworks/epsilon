@@ -8,7 +8,7 @@ on:
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}
-  BETA: ${{ fromJSON('["", ".beta"]')[github.event.inputs.beta] }}
+  BETA: ${{ fromJSON(github.event.inputs.beta) && '.beta' || ''  }}
 
 jobs:
   build:

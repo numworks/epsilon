@@ -29,7 +29,7 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   void layoutSubviews(bool force = false) override;
 
  protected:
-  static constexpr KDCoordinate k_titlesColmunWidth = 65;
+  static constexpr KDCoordinate k_titlesColumnWidth = 65;
   void setEven(bool even) override;
   VerticalSequenceTitleCell m_sequenceTitleCell;
   KDColor m_expressionBackground;

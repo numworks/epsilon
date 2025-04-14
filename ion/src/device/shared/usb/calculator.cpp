@@ -39,6 +39,11 @@ Descriptor* Calculator::descriptor(uint8_t type, uint8_t index) {
   if (type == m_microsoftOSStringDescriptor.type() && index == 0xEE) {
     return &m_microsoftOSStringDescriptor;
   }
+  if (type == StringDescriptor("").type() &&
+      index >= k_interfaceStringDescriptorsOffset) {
+    return const_cast<StringDescriptor*>(
+        stringDescriptor(index - k_interfaceStringDescriptorsOffset));
+  }
   int typeCount = 0;
   for (size_t i = 0; i < sizeof(m_descriptors) / sizeof(m_descriptors[0]);
        i++) {

@@ -8,6 +8,7 @@
 #include <stddef.h>
 
 #include "dfu_interface.h"
+#include "dfu_interfaces.h"
 #include "stack/descriptor/bos_descriptor.h"
 #include "stack/descriptor/configuration_descriptor.h"
 #include "stack/descriptor/descriptor.h"
@@ -71,34 +72,10 @@ class Calculator : public Device {
             2048, /* wTransferSize: Maximum number of bytes that the device can
                    * accept per control-write transaction */
             0x0100),  // bcdDFUVersion
-        m_interfaceFlashDescriptor(
-            0,                                    // bInterfaceNumber
-            k_dfuFlashInterfaceAlternateSetting,  // bAlternateSetting
-            0,    // bNumEndpoints: Other than endpoint 0
-            0xFE, /* bInterfaceClass: DFU
-                   * (https://www.usb.org/defined-class-codes) */
-            1,    // bInterfaceSubClass: DFU
-            2,  /* bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be
-                 * 1) */
-            4,  // iInterface: Index of the Interface string, see m_descriptor
-            &m_interfaceSRAMDescriptor),
-        m_interfaceSRAMDescriptor(
-            0,                                   // bInterfaceNumber
-            k_dfuSRAMInterfaceAlternateSetting,  // bAlternateSetting
-            0,    // bNumEndpoints: Other than endpoint 0
-            0xFE, /* bInterfaceClass: DFU
-                   * (http://www.usb.org/developers/defined_class) */
-            1,    // bInterfaceSubClass: DFU
-            2,  /* bInterfaceProtocol: DFU Mode (not DFU Runtime, which would be
-                 * 1) */
-            5,  // iInterface: Index of the Interface string, see m_descriptor
-            &m_dfuFunctionalDescriptor),
         m_configurationDescriptor(
             // wTotalLength
             m_configurationDescriptor.BLength() +
-                m_interfaceFlashDescriptor.BLength() +
-                m_interfaceSRAMDescriptor.BLength() +
-                m_dfuFunctionalDescriptor.BLength(),
+                interfaceDescriptorsTotalLength(),
             1,                      // bNumInterfaces
             k_bConfigurationValue,  // bConfigurationValue
             0,     // iConfiguration: No string descriptor for the configuration
@@ -109,7 +86,7 @@ class Calculator : public Device {
                     *        when the host is in suspend)
                     * Bit 4..0: Reserved, set to 0 */
             0x32,  // bMaxPower: half of the Maximum Power Consumption
-            &m_interfaceFlashDescriptor),
+            firstInterfaceDescriptor()),
         m_webUSBPlatformDescriptor(k_webUSBVendorCode,
                                    k_webUSBLandingPageIndex),
         m_bosDescriptor(
@@ -134,9 +111,7 @@ class Calculator : public Device {
             &m_manufacturerStringDescriptor,  // Type = String, Index = 1
             &m_productStringDescriptor,       // Type = String, Index = 2
             &m_serialNumberStringDescriptor,  // Type = String, Index = 3
-            &m_interfaceFlashStringDescriptor,  // Type = String, Index = 4
-            &m_interfaceSRAMStringDescriptor,   // Type = String, Index = 5
-            &m_bosDescriptor                    // Type = BOS, Index = 0
+            &m_bosDescriptor                  // Type = BOS, Index = 0
         },
         m_dfuInterface(this, &m_ep0, k_dfuFlashInterfaceAlternateSetting) {}
   void leave(uint32_t leaveAddress) override;
@@ -173,8 +148,6 @@ class Calculator : public Device {
   // Descriptors
   DeviceDescriptor m_deviceDescriptor;
   DFUFunctionalDescriptor m_dfuFunctionalDescriptor;
-  InterfaceDescriptor m_interfaceFlashDescriptor;
-  InterfaceDescriptor m_interfaceSRAMDescriptor;
   ConfigurationDescriptor m_configurationDescriptor;
   WebUSBPlatformDescriptor m_webUSBPlatformDescriptor;
   BOSDescriptor m_bosDescriptor;
@@ -213,7 +186,8 @@ class Calculator : public Device {
  * ● 1 digit for the sector type as follows:
  * – a (0x41): Readable
  * – b (0x42): Erasable
- * – c (0x43): Readable and Erasabled (0x44): Writeable
+ * – c (0x43): Readable and Erasable
+ * - d (0x44): Writeable
  * – e (0x45): Readable and Writeable
  * – f (0x46): Erasable and Writeable
  * – g (0x47): Readable, Erasable and Writeable

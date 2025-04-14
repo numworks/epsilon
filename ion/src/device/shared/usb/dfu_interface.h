@@ -241,6 +241,11 @@ class DFURAMBackend : public DFUMemoryBackend {
 };
 
 class DFUSecureBackend : public DFUInterfaceBackend {
+ public:
+  constexpr DFUSecureBackend(uint32_t virtualBase, uint32_t actualBase)
+      : m_virtualBase(virtualBase), m_actualBase(actualBase) {}
+
+ private:
   bool erase(uint32_t address) const override { return false; }
   bool write(uint32_t address, uint32_t length,
              const uint8_t* source) const override;
@@ -248,6 +253,9 @@ class DFUSecureBackend : public DFUInterfaceBackend {
             uint8_t* destination) const override {
     return false;
   }
+
+  const uint32_t m_virtualBase;
+  const uint32_t m_actualBase;
 };
 
 }  // namespace USB

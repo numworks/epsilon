@@ -18,7 +18,7 @@ class InterfaceDescriptor : public Descriptor {
                                 uint8_t bNumEndpoints, uint8_t bInterfaceClass,
                                 uint8_t bInterfaceSubClass,
                                 uint8_t bInterfaceProtocol, uint8_t iInterface,
-                                Descriptor* additionalDescriptor)
+                                const Descriptor* additionalDescriptor)
       : Descriptor(0x04),
         m_bInterfaceNumber(bInterfaceNumber),
         m_bAlternateSetting(bAlternateSetting),

@@ -11,17 +11,24 @@
 
 namespace Poincare::Internal {
 
-static bool ExtractConstantFromIntegral(Tree* e) {
-  assert(e->isIntegral());
-  const Tree* integrand = e->child(Parametric::k_integrandIndex);
-
+static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
+                       const Tree* integrand, bool force) {
   if (!Variables::HasVariable(integrand, 0)) {
     // int(c, x, a, b) = c*(b-a) if c does not depend on x
-    PatternMatching::MatchReplaceSimplify(e, KIntegral(KA, KB, KC, KD),
-                                          KMult(KD, KAdd(KC, KMult(-1_e, KB))));
-    return true;
+    return PatternMatching::CreateSimplify(KMult(KC, KAdd(KB, KMult(-1_e, KA))),
+                                           {.KA = a, .KB = b, .KC = integrand});
   }
-
+  if (integrand->isAdd()) {
+    Tree* result = SharedTreeStack->pushAdd(integrand->numberOfChildren());
+    for (const Tree* child : integrand->children()) {
+      Integrate(symbol, a, b, child, true);
+    }
+    SystematicReduction::ShallowReduce(result);
+    return result;
+  }
+  static_assert(
+      Parametric::k_variableIndex == 0 && Parametric::k_lowerBoundIndex == 1 &&
+      Parametric::k_upperBoundIndex == 2 && Parametric::k_integrandIndex == 3);
   if (integrand->isMult()) {
     // Separate the constant part of the integrand
     TreeRef constant = SharedTreeStack->pushMult(0);
@@ -34,52 +41,48 @@ static bool ExtractConstantFromIntegral(Tree* e) {
         NAry::AddChild(constant, childClone);
       }
     }
-    NAry::SquashIfPossible(constant);
-    NAry::SquashIfPossible(remainingIntegrand);
-
-    if (constant->isOne()) {
-      // No constant part
-      remainingIntegrand->removeTree();
-      constant->removeTree();
-      return false;
+    if (constant->numberOfChildren() > 0) {
+      assert(remainingIntegrand->numberOfChildren() > 0);
+      assert(constant->nextTree() == remainingIntegrand);
+      // int(c * f(x), x, a, b) = c * int(f(x), x, a, b)
+      SystematicReduction::ShallowReduce(remainingIntegrand);
+      (KIntegral)->cloneNode();
+      symbol->cloneTree();
+      a->cloneTree();
+      b->cloneTree();
+      remainingIntegrand->detachTree();
+      NAry::SetNumberOfChildren(constant, constant->numberOfChildren() + 1);
+      SystematicReduction::ShallowReduce(constant);
+      return constant;
     }
-
-    // int(c * f(x), x, a, b) = c * int(f(x), x, a, b)
-    assert(!remainingIntegrand->isOne());
-    TreeRef remainingIntegral = e->cloneTree();
-    remainingIntegral->child(Parametric::k_integrandIndex)
-        ->moveTreeOverTree(remainingIntegrand);
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KMult(KA, KB), {.KA = constant, .KB = remainingIntegral}));
-    remainingIntegral->removeTree();
+    // No constant part, fall back to default case
+    remainingIntegrand->removeTree();
     constant->removeTree();
-    return true;
   }
-
-  return false;
+  // Not handled
+  return force ? PatternMatching::Create(
+                     KIntegral(KA, KB, KC, KD),
+                     {.KA = symbol, .KB = a, .KC = b, .KD = integrand})
+               : nullptr;
 }
 
 bool Integration::Reduce(Tree* e) {
   assert(e->isIntegral());
   Tree* integrandExpanded = e->child(Parametric::k_integrandIndex)->cloneTree();
+  /* Expand the integrand to improve output's approximation. This step could
+   * rely on advanced reduction, or be moved in the multiplication case in
+   * Integrate. */
   AdvancedReduction::DeepExpandAlgebraic(integrandExpanded);
-
-  if (integrandExpanded->isAdd()) {
-    TreeRef splitIntegral =
-        SharedTreeStack->pushAdd(integrandExpanded->numberOfChildren());
-    for (const Tree* child : integrandExpanded->children()) {
-      Tree* newChild = e->cloneTree();
-      newChild->child(Parametric::k_integrandIndex)->cloneTreeOverTree(child);
-      Integration::Reduce(newChild);
-    }
-    integrandExpanded->removeTree();
-    SystematicReduction::ShallowReduce(splitIntegral);
-    e->moveTreeOverTree(splitIntegral);
+  TreeRef result = Integrate(e->child(Parametric::k_variableIndex),
+                             e->child(Parametric::k_lowerBoundIndex),
+                             e->child(Parametric::k_upperBoundIndex),
+                             integrandExpanded, false);
+  integrandExpanded->removeTree();
+  if (result) {
+    e->moveTreeOverTree(result);
     return true;
   }
-  integrandExpanded->removeTree();
-
-  return ExtractConstantFromIntegral(e);
+  return false;
 }
 
 }  // namespace Poincare::Internal

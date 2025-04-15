@@ -30,10 +30,8 @@ By default, files will be built in a customizable output directory, with sub-dir
 
 ## Including Haussmann in a project
 
-In your application, add this repository as a submodule.
-
 In your makefile, define the following variables:
-- `PATH_haussmann`: the path to the submodule in the project
+- `PATH_haussmann`: the path of the haussmann directory relative to the project
 - `OUTPUT_ROOT`: where to place the built files
 - `APP_NAME`
 - `APP_VERSION`

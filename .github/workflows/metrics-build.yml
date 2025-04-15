@@ -37,7 +37,7 @@ jobs:
 
       - name: Check for core
         id: core
-        run: "[[ -e ion/src/device/core/.gitignore ]]"
+        run: "[[ -e ion/src/device/core ]]"
         continue-on-error: true
       - name: Build common ancestor bootloader and kernel for N0120
         if: ${{ steps.core.outcome == 'success' }}

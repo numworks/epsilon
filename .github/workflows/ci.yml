@@ -69,9 +69,9 @@ jobs:
 
       - name: Check for core
         id: core
-        run: "[[ -e ion/src/device/core/.gitignore ]]"
+        run: "[[ -e ion/src/device/core ]]"
         continue-on-error: true
-      - name: Disable core submodule
+      - name: Disable core directory
         if: ${{ steps.core.outcome == 'success' }}
         run: mv ion/src/device/core ion/src/device/core-disable
       - name: Build userlands
@@ -79,7 +79,7 @@ jobs:
         # As an exception,  because we'll build epsilon.dfu that on both userland.A.elf and userland.B.elf, we still build those here
         # TODO: It is also probably useless to build so many variants
         run: $DOCKER_RUN "make MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf"
-      - name: Restore core submodule
+      - name: Restore core directory
         if: ${{ steps.core.outcome == 'success' }}
         run: mv ion/src/device/core-disable ion/src/device/core
       - if: ${{ steps.core.outcome == 'success' }}

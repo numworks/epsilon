@@ -1044,8 +1044,8 @@ static_assert(
 static_assert(catalogContainsAllChildren(TimeModuleChildren,
                                          std::size(TimeModuleChildren)),
               "Some functions of time module are not in the python catalog.");
-/* Most of Ion key functions are not in catalog so this is not asserted for
- * Ion submodule. */
+/* Most of Ion key functions are not in the catalog so this is not asserted for
+ * Ion module. */
 
 PythonToolboxController::PythonToolboxController()
     : Toolbox(nullptr, rootModel()->label()) {}

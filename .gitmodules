@@ -1,3 +1,0 @@
-[submodule "ion/src/device/epsilon-core"]
-	path = ion/src/device/epsilon-core
-	url = git@github.com:numworks/epsilon-core.git

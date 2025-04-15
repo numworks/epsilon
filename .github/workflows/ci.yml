@@ -48,9 +48,6 @@ jobs:
     steps:
       - run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 test.apk
       - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk
@@ -66,9 +63,6 @@ jobs:
         model: [n0110, n0115, n0120]
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          submodules: ${{ secrets.PAT != null }}
 
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
@@ -108,9 +102,6 @@ jobs:
             git
             mingw-w64-x86_64-arm-none-eabi-gcc
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh
       - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.exe
       - run: make PLATFORM=simulator ASSERTIONS=1 test.exe
@@ -128,9 +119,6 @@ jobs:
         with:
           sdk: 3.1.61
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
       - run: node output/debug/optimized/web/test.js --headless --limit-stack-usage
@@ -144,9 +132,6 @@ jobs:
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          submodules: ${{ secrets.PAT != null }}
 
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
@@ -165,9 +150,6 @@ jobs:
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || github.event.inputs.macos) }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
       - run: output/debug/optimized/macos/x86_64/test.bin --headless --limit-stack-usage
@@ -181,9 +163,6 @@ jobs:
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || github.event.inputs.ios) }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
       - run: make PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
@@ -199,9 +178,6 @@ jobs:
         with:
           sdk: 3.1.61
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAT || secrets.GITHUB_TOKEN }}
-          submodules: ${{ secrets.PAT != null }}
       - run: build/setup.sh --only-simulator
       # TODO: Change setup-emscripten to be able to use EMIT_TSD=1
       - run: make -j8 -f poincare/poincarejs/Makefile PLATFORM=foxglove ASSERTIONS=1 EMIT_TSD=0 poincare.js.run

@@ -32,7 +32,7 @@
 #define POINCARE_MATRIX 1
 
 // List related operations
-// Nb: the List block is always present as an helper
+// Nb: the List block is always present as a helper
 #define POINCARE_LIST 1
 
 #define POINCARE_POINT 1

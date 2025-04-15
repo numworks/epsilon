@@ -69,6 +69,7 @@ void Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
     UserExpression& e, Preferences::AngleUnit angleUnit) {
   Internal::Tree* clone = e.tree()->cloneTree();
   if (clone->isUnitConversion() &&
+      Internal::Dimension::DeepCheck(clone->child(0)) &&
       !Internal::Dimension::Get(clone->child(0)).isUnit()) {
     addAngleUnitToExpression(clone->child(0), angleUnit);
   }

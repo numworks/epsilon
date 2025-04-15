@@ -22,7 +22,7 @@ $(addprefix device/shared/drivers/, \
   trampoline.cpp \
   usb_unprivileged.cpp \
 ) \
-$(addprefix device/epsilon-core/device/shared-core/drivers/, \
+$(addprefix device/core/device/shared-core/drivers/, \
   backlight.cpp \
   backlight_advanced.cpp \
   battery_$(_ion_mcu_suffix).cpp \
@@ -54,15 +54,15 @@ $(addprefix device/epsilon-core/device/shared-core/drivers/, \
   usb_gpio_$(PLATFORM).cpp \
   wakeup.cpp \
 ) \
-$(addprefix device/epsilon-core/device/kernel/, \
+$(addprefix device/core/device/kernel/, \
   main.cpp \
   warning_display.cpp:+allow3rdparty \
 ) \
-$(addprefix device/epsilon-core/device/kernel/boot/, \
+$(addprefix device/core/device/kernel/boot/, \
   isr_$(_ion_mcu_suffix).c \
   rt0.cpp \
 ) \
-$(addprefix device/epsilon-core/device/kernel/drivers/, \
+$(addprefix device/core/device/kernel/drivers/, \
   authentication.cpp:+allow3rdparty \
   authentication_$(_ion_mcu_suffix).cpp:+allow3rdparty \
   authentication_strict.cpp:-allow3rdparty \
@@ -99,7 +99,7 @@ $(addprefix device/epsilon-core/device/kernel/drivers/, \
 ) \
 
 ifeq ($(PLATFORM),n0120)
-_sources_ion_kernel += $(addprefix device/epsilon-core/device/shared-core/drivers/, \
+_sources_ion_kernel += $(addprefix device/core/device/shared-core/drivers/, \
   board_power_supply_stm32h.cpp \
   keyboard_pins_stm32h.cpp \
 )
@@ -120,10 +120,10 @@ $(OUTPUT_DIRECTORY)/kernel/$(PATH_ion)/src/bootloader.o: $(OUTPUT_DIRECTORY)/boo
 endif
 
 _ldflags_ion_kernel := \
-  -Wl,-T,$(PATH_ion)/src/device/epsilon-core/device/kernel/flash/kernel_A.ld:+A \
-  -Wl,-T,$(PATH_ion)/src/device/epsilon-core/device/kernel/flash/kernel_B.ld:+B \
-  -L$(PATH_ion)/src/device/epsilon-core/device/kernel/flash
+  -Wl,-T,$(PATH_ion)/src/device/core/device/kernel/flash/kernel_A.ld:+A \
+  -Wl,-T,$(PATH_ion)/src/device/core/device/kernel/flash/kernel_B.ld:+B \
+  -L$(PATH_ion)/src/device/core/device/kernel/flash
 
 _lddeps_ion_kernel := \
-  $(PATH_ion)/src/device/epsilon-core/device/kernel/flash/kernel_A.ld:+A \
-  $(PATH_ion)/src/device/epsilon-core/device/kernel/flash/kernel_B.ld:+B
+  $(PATH_ion)/src/device/core/device/kernel/flash/kernel_A.ld:+A \
+  $(PATH_ion)/src/device/core/device/kernel/flash/kernel_B.ld:+B

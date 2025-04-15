@@ -35,12 +35,12 @@ jobs:
       - name: Checkout to most recent ancestor
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
 
-      - name: Check for epsilon-core
-        id: epsilon-core
-        run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
+      - name: Check for core
+        id: core
+        run: "[[ -e ion/src/device/core/.gitignore ]]"
         continue-on-error: true
       - name: Build common ancestor bootloader and kernel for N0120
-        if: ${{ steps.epsilon-core.outcome == 'success' }}
+        if: ${{ steps.core.outcome == 'success' }}
         run: $DOCKER_RUN "make bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
       - name: Build common ancestor userland for N0120
         run: $DOCKER_RUN "make userland.onboarding.beta.allow3rdparty.A.elf"
@@ -51,7 +51,7 @@ jobs:
         run: git checkout ${{ github.event.pull_request.head.sha }}
 
       - name: Build head bootloader and kernel for N0120
-        if: ${{ steps.epsilon-core.outcome == 'success' }}
+        if: ${{ steps.core.outcome == 'success' }}
         run: $DOCKER_RUN "make bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
       - name: Build head userland for N0120
         run: $DOCKER_RUN "make userland.onboarding.beta.allow3rdparty.A.elf"
@@ -63,18 +63,18 @@ jobs:
           mkdir -p ./metrics-output
           echo ${{ github.event.number }} > ./metrics-output/PR_number
       - name: Binary size summary
-        if: ${{ steps.epsilon-core.outcome == 'success' }}
+        if: ${{ steps.core.outcome == 'success' }}
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
       - name: Binary size summary (userland only)
-        if: ${{ steps.epsilon-core.outcome != 'success' }}
+        if: ${{ steps.core.outcome != 'success' }}
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
       - name: App sizes
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" > ./metrics-output/app_sizes
       - name: Binary size N0120
-        if: ${{ steps.epsilon-core.outcome == 'success' }}
+        if: ${{ steps.core.outcome == 'success' }}
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/bootloader/bootloader.elf base/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/bootloader/bootloader.elf head/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data" > ./metrics-output/binary_size_n0120
       - name: Binary size N0120 (userland only)
-        if: ${{ steps.epsilon-core.outcome != 'success' }}
+        if: ${{ steps.core.outcome != 'success' }}
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data" > ./metrics-output/binary_size_n0120
       - name: Upload metrics output
         uses: actions/upload-artifact@v4

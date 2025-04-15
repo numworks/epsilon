@@ -13,8 +13,8 @@ endif
 # Ensure kandinsky fonts are generated first
 $(call object_for,$(kernel_src)): $(kandinsky_deps)
 
-KERNEL_LDFLAGS = -Lion/src/$(PLATFORM)/epsilon-core/device/kernel/flash
-KERNEL_LDDEPS += ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_shared.ld
+KERNEL_LDFLAGS = -Lion/src/$(PLATFORM)/core/device/kernel/flash
+KERNEL_LDDEPS += ion/src/$(PLATFORM)/core/device/kernel/flash/kernel_shared.ld
 
 # stack protector
 SFLAGS += -fstack-protector-strong
@@ -35,7 +35,7 @@ $(foreach target,$(kernel_targets),$(eval $(call embed_extra_data_dependencies,$
 
 $(kernel_targets): LDFLAGS += $(KERNEL_LDFLAGS)
 
-$(filter %.A.$(EXE),$(kernel_targets)): LDSCRIPT = ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_A.ld
-$(filter %.B.$(EXE),$(kernel_targets)): LDSCRIPT = ion/src/$(PLATFORM)/epsilon-core/device/kernel/flash/kernel_B.ld
+$(filter %.A.$(EXE),$(kernel_targets)): LDSCRIPT = ion/src/$(PLATFORM)/core/device/kernel/flash/kernel_A.ld
+$(filter %.B.$(EXE),$(kernel_targets)): LDSCRIPT = ion/src/$(PLATFORM)/core/device/kernel/flash/kernel_B.ld
 
 $(kernel_targets): LDDEPS += $(KERNEL_LDDEPS) $(LDSCRIPT)

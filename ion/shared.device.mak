@@ -69,18 +69,18 @@ PRIVATE_SFLAGS_ion += \
   -DSIGNATURE_INDEX=$(SIGNATURE_INDEX) \
 
 PRIVATE_SFLAGS_ion += \
-  -I$(PATH_ion)/src/device/epsilon-core/device/include/$(PLATFORM) \
+  -I$(PATH_ion)/src/device/core/device/include/$(PLATFORM) \
   -I$(PATH_ion)/src/device/include/$(PLATFORM) \
   -I$(PATH_ion)/src/device \
   -I$(PATH_ion)/src/device/shared \
-  -I$(PATH_ion)/src/device/epsilon-core/device \
-  -I$(PATH_ion)/src/device/epsilon-core/device/shared-core
+  -I$(PATH_ion)/src/device/core/device \
+  -I$(PATH_ion)/src/device/core/device/shared-core
 
 LDFLAGS_ion += \
   $(foreach c,$(_ion_firmware_components),$(addsuffix :+$c,$(_ldflags_ion_$c))) \
-  -L$(PATH_ion)/src/device/epsilon-core/device/shared-core/flash \
+  -L$(PATH_ion)/src/device/core/device/shared-core/flash \
   -L$(PATH_ion)/src/device/shared/flash \
-  -L$(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/epsilon-core/device/shared-core/flash \
+  -L$(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/core/device/shared-core/flash \
   -L$(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/shared/flash
 
 # Prevent building kernel or userland without a slot.

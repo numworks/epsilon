@@ -12,11 +12,11 @@ SFLAGS += -DREAD_ONLY=$(READ_ONLY)
 
 flasher_src = $(ion_device_flasher_src) $(liba_src) $(liba_flasher_src) $(kandinsky_src)
 $(BUILD_DIR)/flasher.$(EXE): $(call flavored_object_for,$(flasher_src),$(MODEL))
-$(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/epsilon-core/device/flasher
-$(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/epsilon-core/device/shared-core/flash
+$(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/core/device/flasher
+$(BUILD_DIR)/flasher.$(EXE): LDFLAGS += -Lion/src/$(PLATFORM)/core/device/shared-core/flash
 ifeq ($(SIGNABLE),1)
-$(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/epsilon-core/device/flasher/signable_ram.ld
+$(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/core/device/flasher/signable_ram.ld
 else
-$(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/epsilon-core/device/flasher/ram.ld
+$(BUILD_DIR)/flasher.$(EXE): LDSCRIPT = ion/src/$(PLATFORM)/core/device/flasher/ram.ld
 endif
 $(BUILD_DIR)/flasher.$(EXE): LDDEPS += $(LDSCRIPT)

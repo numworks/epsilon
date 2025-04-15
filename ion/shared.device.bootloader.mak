@@ -9,7 +9,7 @@ $(addprefix device/shared/, \
   drivers/usb_unprivileged.cpp \
   post_and_hardware_tests.cpp \
 ) \
-$(addprefix device/epsilon-core/device/shared-core/drivers/, \
+$(addprefix device/core/device/shared-core/drivers/, \
   backlight.cpp \
   backlight_basic.cpp \
   battery_$(_ion_mcu_suffix).cpp \
@@ -44,11 +44,11 @@ $(addprefix device/epsilon-core/device/shared-core/drivers/, \
   usb_gpio_$(PLATFORM).cpp \
   logo_image.png \
 ) \
-$(addprefix device/epsilon-core/device/bootloader/boot/, \
+$(addprefix device/core/device/bootloader/boot/, \
   isr.c \
   rt0.cpp \
 ) \
-$(addprefix device/epsilon-core/device/bootloader/drivers/, \
+$(addprefix device/core/device/bootloader/drivers/, \
   authentication.cpp \
   battery.cpp \
   board.cpp \
@@ -67,27 +67,27 @@ $(addprefix device/epsilon-core/device/bootloader/drivers/, \
   text_rescue_image.png \
   wire_rescue_image.png \
 ) \
-device/epsilon-core/device/bootloader/main.cpp
+device/core/device/bootloader/main.cpp
 
 ifeq ($(PLATFORM),n0120)
 _sources_ion_bootloader += \
-  device/epsilon-core/device/shared-core/drivers/board_power_supply_stm32h.cpp \
-  device/epsilon-core/device/bootloader/drivers/keyboard_pins_stm32h.cpp
+  device/core/device/shared-core/drivers/board_power_supply_stm32h.cpp \
+  device/core/device/bootloader/drivers/keyboard_pins_stm32h.cpp
 else
 _sources_ion_bootloader += \
-  device/epsilon-core/device/shared-core/drivers/external_flash_qspi_$(PLATFORM).cpp
+  device/core/device/shared-core/drivers/external_flash_qspi_$(PLATFORM).cpp
 endif
 
 _ldflags_ion_bootloader := \
-  -Wl,-T,$(PATH_ion)/src/device/epsilon-core/device/bootloader/flash/bootloader_flash.ld \
-  -L$(PATH_ion)/src/device/epsilon-core/device/bootloader/flash/$(PLATFORM)
+  -Wl,-T,$(PATH_ion)/src/device/core/device/bootloader/flash/bootloader_flash.ld \
+  -L$(PATH_ion)/src/device/core/device/bootloader/flash/$(PLATFORM)
 
 _lddeps_ion_bootloader := \
-  $(PATH_ion)/src/device/epsilon-core/device/bootloader/flash/bootloader_flash.ld \
+  $(PATH_ion)/src/device/core/device/bootloader/flash/bootloader_flash.ld \
 
 # Libsodium module
 
-$(call import_module,libsodium,$(PATH_ion)/src/device/epsilon-core/external/libsodium)
+$(call import_module,libsodium,$(PATH_ion)/src/device/core/external/libsodium)
 
 # Image dependencies
 # TODO factor with escher/inliner
@@ -110,13 +110,13 @@ $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): %.cpp: %.h
 endef
 
 $(call depends_on_compressed_png, \
-  $(PATH_ion)/src/device/epsilon-core/device/shared-core/drivers/display_image.cpp, \
-  $(PATH_ion)/src/device/epsilon-core/device/shared-core/drivers/logo_image.png \
+  $(PATH_ion)/src/device/core/device/shared-core/drivers/display_image.cpp, \
+  $(PATH_ion)/src/device/core/device/shared-core/drivers/logo_image.png \
 )
 
 $(call depends_on_compressed_png, \
-  $(PATH_ion)/src/device/epsilon-core/device/bootloader/drivers/display_image.cpp, \
-  $(addprefix $(PATH_ion)/src/device/epsilon-core/device/bootloader/drivers/, \
+  $(PATH_ion)/src/device/core/device/bootloader/drivers/display_image.cpp, \
+  $(addprefix $(PATH_ion)/src/device/core/device/bootloader/drivers/, \
     screen_rescue_image.png \
     text_rescue_image.png \
     wire_rescue_image.png \

@@ -73,26 +73,26 @@ jobs:
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
 
-      - name: Check for epsilon-core
-        id: epsilon-core
-        run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
+      - name: Check for core
+        id: core
+        run: "[[ -e ion/src/device/core/.gitignore ]]"
         continue-on-error: true
-      - name: Disable epsilon-core submodule
-        if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: mv ion/src/device/epsilon-core ion/src/device/epsilon-core-disable
+      - name: Disable core submodule
+        if: ${{ steps.core.outcome == 'success' }}
+        run: mv ion/src/device/core ion/src/device/core-disable
       - name: Build userlands
         # Since both slots have the exact same amount of Flash reserved, it is pointless to build both the A and B elfs for every variant.
         # As an exception,  because we'll build epsilon.dfu that on both userland.A.elf and userland.B.elf, we still build those here
         # TODO: It is also probably useless to build so many variants
         run: $DOCKER_RUN "make MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf"
-      - name: Restore epsilon-core submodule
-        if: ${{ steps.epsilon-core.outcome == 'success' }}
-        run: mv ion/src/device/epsilon-core-disable ion/src/device/epsilon-core
-      - if: ${{ steps.epsilon-core.outcome == 'success' }}
+      - name: Restore core submodule
+        if: ${{ steps.core.outcome == 'success' }}
+        run: mv ion/src/device/core-disable ion/src/device/core
+      - if: ${{ steps.core.outcome == 'success' }}
         run: $DOCKER_RUN "make MODEL=${{ matrix.model }} epsilon.dfu"
-      - if: ${{ steps.epsilon-core.outcome == 'success' }}
+      - if: ${{ steps.core.outcome == 'success' }}
         run: $DOCKER_RUN "make MODEL=${{ matrix.model }} flasher.dfu"
-      - if: ${{ steps.epsilon-core.outcome == 'success' }}
+      - if: ${{ steps.core.outcome == 'success' }}
         run: $DOCKER_RUN "make MODEL=${{ matrix.model }} bench.ram.dfu"
   windows:
     runs-on: windows-latest

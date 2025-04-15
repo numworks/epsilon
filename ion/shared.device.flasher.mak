@@ -9,11 +9,11 @@ $(addprefix device/shared/, \
   drivers/serial_number.cpp \
   drivers/usb_unprivileged.cpp \
 ) \
-$(addprefix device/epsilon-core/device/shared-core/boot/, \
+$(addprefix device/core/device/shared-core/boot/, \
   isr.c \
   rt0_start.cpp \
 ) \
-$(addprefix device/epsilon-core/device/shared-core/drivers/, \
+$(addprefix device/core/device/shared-core/drivers/, \
   backlight.cpp \
   backlight_basic.cpp \
   board_frequency_$(_ion_mcu_suffix).cpp \
@@ -36,7 +36,7 @@ $(addprefix device/epsilon-core/device/shared-core/drivers/, \
   usb.cpp \
   usb_gpio_$(PLATFORM).cpp \
 ) \
-$(addprefix device/epsilon-core/device/flasher/drivers/, \
+$(addprefix device/core/device/flasher/drivers/, \
   board.cpp \
   board_ram.cpp \
   flash_write.cpp \
@@ -45,15 +45,15 @@ $(addprefix device/epsilon-core/device/flasher/drivers/, \
   reset.cpp \
   usb.cpp \
 ) \
-  device/epsilon-core/device/flasher/main.cpp
+  device/core/device/flasher/main.cpp
 
 ifneq ($(PLATFORM),n0120)
 _sources_ion_flasher += \
-  device/epsilon-core/device/shared-core/drivers/external_flash_qspi_$(PLATFORM).cpp
+  device/core/device/shared-core/drivers/external_flash_qspi_$(PLATFORM).cpp
 endif
 
 _ldflags_ion_flasher := \
-  -Wl,-T,$(PATH_ion)/src/device/epsilon-core/device/flasher/ram.ld
+  -Wl,-T,$(PATH_ion)/src/device/core/device/flasher/ram.ld
 
 _lddeps_ion_flasher := \
-  $(PATH_ion)/src/device/epsilon-core/device/flasher/ram.ld
+  $(PATH_ion)/src/device/core/device/flasher/ram.ld

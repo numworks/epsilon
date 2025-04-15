@@ -23,8 +23,8 @@ jobs:
           submodules: ${{ secrets.PAT != null }}
       - name: Setup
         run: build/setup.sh
-      - name: Check for epsilon-core
-        run: "[[ -e ion/src/device/epsilon-core/.gitignore ]]"
+      - name: Check for core
+        run: "[[ -e ion/src/device/core/.gitignore ]]"
       # Not using matrix strategy to avoid multiplying setups and uploads.
       - name: Build n0110
         run: make MODEL=n0110 epsilon.onboarding$BETA.dfu

@@ -14,7 +14,7 @@ uint32_t crc32Word(const uint16_t* data, size_t length);
 uint32_t crc32Byte(const uint8_t* data, size_t length);
 
 /* FIXME TODO_PCJ This function only exists to avoid having to update
- * epsilon-core, remove it when appropriate. */
+ * core, remove it when appropriate. */
 constexpr uint32_t crc32EatByte(uint32_t crc, uint8_t data) {
   return OMG::Memory::crc32EatByte(crc, data);
 }

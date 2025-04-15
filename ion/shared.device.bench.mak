@@ -1,4 +1,4 @@
-_sources_ion_bench := $(addprefix device/epsilon-core/device/bench/command/, \
+_sources_ion_bench := $(addprefix device/core/device/bench/command/, \
   adc.cpp \
   backlight.cpp \
   charge.cpp \
@@ -27,19 +27,19 @@ _sources_ion_bench := $(addprefix device/epsilon-core/device/bench/command/, \
   usb_plugged.cpp \
   vblank.cpp \
 ) \
-$(addprefix device/epsilon-core/device/bench/, \
+$(addprefix device/core/device/bench/, \
   boot/isr.c:+ram \
   boot/rt0.cpp:+ram \
   command_handler.cpp \
   command_list.cpp \
   main.cpp \
 ) \
-$(addprefix device/epsilon-core/device/bench/drivers/, \
+$(addprefix device/core/device/bench/drivers/, \
   board.cpp \
   board_$(PLATFORM).cpp \
   console.cpp \
 ) \
-$(addprefix device/epsilon-core/device/shared-core/drivers/, \
+$(addprefix device/core/device/shared-core/drivers/, \
   backlight.cpp \
   backlight_advanced.cpp \
   backup_ram_$(PLATFORM).cpp \
@@ -90,7 +90,7 @@ $(addprefix shared/, \
 ) \
 
 _ldflags_ion_bench := \
-  -Wl,-T,$(PATH_ion)/src/device/epsilon-core/device/bench/ram.ld
+  -Wl,-T,$(PATH_ion)/src/device/core/device/bench/ram.ld
 
 _lddeps_ion_bench := \
-  $(PATH_ion)/src/device/epsilon-core/device/bench/ram.ld
+  $(PATH_ion)/src/device/core/device/bench/ram.ld

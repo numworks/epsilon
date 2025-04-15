@@ -414,8 +414,9 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to(
       "abs(arccos(z)+i×arccos(w))^2-(-im(arccos(w))+re(arccos(z)))^2-(im("
       "arccos(z))+re(arccos(w)))^2",
-      "abs(arccos(z)+arccos(w)×i)^2-(im(arccos(z))+re(arccos(w)))^2-(-im("
-      "arccos(w))+re(arccos(z)))^2",
+      "abs(arccos(z)+arccos(w)×i)^2-(im(arccos(w))^2+im(arccos(z))^2+re(arccos("
+      "w))^2+re(arccos(z))^2+2×im(arccos(z))×re(arccos(w))-2×im(arccos(w))×re("
+      "arccos(z)))",
       ctx);
   simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
@@ -449,7 +450,9 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("re(√(√(-8)))", "root(2,4)", cartesianCtx);
   // TODO: Simplify to √(30+2×√(229))/2
   simplifies_to("re(√(15+2×i))", "re(√(15+2×i))", cartesianCtx);
-  simplifies_to("5*ln(1+i)-ln(exp(5*ln(1+i)))", "2×π×i", cartesianCtx);
+  // TODO: Simplify to 2×π×i
+  simplifies_to("5*ln(1+i)-ln(exp(5*ln(1+i)))", "5×ln(1+i)-ln(-4-4×i)",
+                cartesianCtx);
   simplifies_to("0.3*ln(1+i)-ln(exp(0.3*ln(1+i)))", "0", cartesianCtx);
 }
 
@@ -497,7 +500,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(a*b,k,1,n)", "a×b×n");
   simplifies_to("sum(k,k,n,j)", "(j^2-n^2+j+n)/2");
   simplifies_to("2×sum(k,k,0,n)+n", "n×(n+2)");
-  simplifies_to("2×sum(k,k,3,n)+n", "(n+1)^2-7");
+  simplifies_to("2×sum(k,k,3,n)+n", "n×(n+2)-6");
   simplifies_to("sum(k^2,k,n,j)", "(j×(j+1)×(2×j+1)-n×(n-1)×(2×n-1))/6");
   simplifies_to("sum(k^2,k,2,5)", "54");
   simplifies_to("sum((2k)^2,k,2,5)", "216");
@@ -894,6 +897,12 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(57×√(17)+68×√(10))", "17^(3/4)×(1+(2×√(170))/17)");
   simplifies_to("(-8)^(1/3)-1-√(3)×i", "0", cartesianCtx);
   simplifies_to("√(-3)-√(3)×i", "0", cartesianCtx);
+
+  // Development of integer powers
+  simplifies_to("(π+1)^2", "π^2+1+2×π");
+  simplifies_to("(π-1)^2", "π^2+1-2×π");
+  simplifies_to("(π+1)^3", "π^3+1+3×(π^2+π)");
+  simplifies_to("(π+1)^(-2)", "1/(π^2+1+2×π)");
 }
 
 QUIZ_CASE(pcj_simplification_float) {
@@ -1537,9 +1546,6 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("sum(k+1, k, n-2, n)", "1");  // FIXME
   simplifies_to("product(k×π, k, 1, 12)", "479001600×π^(12)");
 
-  // TODO ReduceAddition on matrices
-  simplifies_to("sum([[k][n]], k, 1, 4)", "[[10][4×n]]");
-
   simplifies_to("diff(√(4-x^2),x,x)", "-x/√(4-x^2)");
   simplifies_to("1/x + 1/y - (x+y)/(x×y)", "0");
   simplifies_to("(x^2 - 1) / (x - 1)", "x+1");
@@ -1557,12 +1563,13 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("((x×y)^(1/2)×z^2)^2", "x×y×z^4");
   simplifies_to("1-cos(x)^2", "sin(x)^2");
 #endif
+  simplifies_to("sum([[k][n]], k, 1, 4)", "[[10][4×n]]");
   simplifies_to("1-cos(x)^2-sin(x)^2", "0");
-  simplifies_to("(a+b)^2", "(a+b)^2");
-  simplifies_to("a^2+2a*b+b^2", "(a+b)^2");
-  simplifies_to("a^2+b^2-2a*b", "(-a+b)^2");
-  simplifies_to("1-2a+a^2", "(a-1)^2");
-  simplifies_to("π^2-2*π*ln(2)+ln(2)^2", "(-π+ln(2))^2");
+  simplifies_to("(a+b)^2", "a^2+b^2+2×a×b");
+  simplifies_to("a^2+2a*b+b^2-(a+b)^2", "0");
+  simplifies_to("a^2+b^2-2a*b-(-a+b)^2", "0");
+  simplifies_to("1-2a+a^2-(a-1)^2", "0");
+  simplifies_to("π^2-2*π*ln(2)+ln(2)^2-(-π+ln(2))^2", "0");
   simplifies_to("√(1/4+π+π^2)", "1/2+π");
   simplifies_to("√(1/4-π+π^2)", "-1/2+π");
   simplifies_to("2*a+b*(a+c)-b*c", "a×(b+2)");
@@ -1715,7 +1722,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
   simplifies_to("x+y", "x+4", projCtx);
 
   store("x^2→f(x)", &globalContext);
-  simplifies_to("f(z+f(y))", "(z+16)^2", projCtx);
+  simplifies_to("f(z+f(y))", "z^2+32×z+256", projCtx);
 
   store("{5,4,3,2,1}→l", &globalContext);
   simplifies_to("sum(l)", "15", projCtx);

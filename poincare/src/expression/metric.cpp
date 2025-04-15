@@ -90,6 +90,14 @@ int Metric::GetTrueMetric(const Tree* e) {
       }
       break;
     }
+    case Type::Pow: {
+      if (e->child(0)->isAdd() && e->child(1)->isInteger() &&
+          !e->child(1)->isMinusOne()) {
+        // Increase cost of factorized expressions as integer power
+        childrenCoeff = 4;
+      }
+      break;
+    }
     case Type::Dep:
       return result + GetTrueMetric(Dependency::Main(e));
     case Type::Trig:

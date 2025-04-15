@@ -33,6 +33,7 @@ void ion_main(int argc, const char* const argv[]) {
     txtbuf[6] = digit_to_char(static_cast<int>(volt * 100000));
     txtbuf[7] = digit_to_char(static_cast<int>(volt * 1000000));
     txtbuf[8] = '\0';
+    // On device, Ion::Console::writeLine only works with consoledisplay flavor.
     Ion::Console::writeLine(txtbuf);
 
     Ion::Timing::msleep(1000);

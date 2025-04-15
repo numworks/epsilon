@@ -34,18 +34,16 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
     TreeRef constant = SharedTreeStack->pushMult(0);
     TreeRef remainingIntegrand = SharedTreeStack->pushMult(0);
     for (const Tree* child : integrand->children()) {
-      Tree* childClone = child->cloneTree();
-      if (Variables::HasVariable(childClone, 0)) {
-        NAry::AddChild(remainingIntegrand, childClone);
-      } else {
-        NAry::AddChild(constant, childClone);
-      }
+      NAry::AddChild(
+          Variables::HasVariable(child, 0) ? remainingIntegrand : constant,
+          child->cloneTree());
     }
     if (constant->numberOfChildren() > 0) {
       assert(remainingIntegrand->numberOfChildren() > 0);
       assert(constant->nextTree() == remainingIntegrand);
       // int(c * f(x), x, a, b) = c * int(f(x), x, a, b)
-      SystematicReduction::ShallowReduce(remainingIntegrand);
+      NAry::SquashIfUnary(remainingIntegrand);
+      assert(!SystematicReduction::ShallowReduce(remainingIntegrand));
       (KIntegral)->cloneNode();
       symbol->cloneTree();
       a->cloneTree();

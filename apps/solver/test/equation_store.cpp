@@ -102,6 +102,16 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to("x-x=0", {"x=t"}, &globalContext);
   // Technically solved in SolveLinearSystem, since the variable is reduced out
   assert_solves_to("0x^2=0", {"x=t"}, &globalContext);
+  setComplexFormatAndAngleUnit(Cartesian, Radian);
+  // TODO_PCJ: Should be 3/2+(-3-3√3/2)×i and 3+3/2×√3+3/2×i
+  assert_solves_to({"x+i×y=0", "x+y×exp(i×π/3)=3"},
+                   {"x=-3×i×(exp(i×π/3)-i)^-1", "y=3×(exp(i×π/3)-i)^-1"},
+                   &globalContext);
+  setComplexFormatAndAngleUnit(Polar, Radian);
+  // TODO_PCJ: Should be 3/2×(√2+√6)×exp(-i×π×5/12) and 3/2×(√2+√6)×exp(i×π/12)
+  assert_solves_to({"x+i×y=0", "x+y×exp(i×π/3)=3"},
+                   {"x=-3×i×(exp(i×π/3)-i)^-1", "y=3×(exp(i×π/3)-i)^-1"},
+                   &globalContext);
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);

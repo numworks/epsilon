@@ -1818,3 +1818,28 @@ QUIZ_CASE(pcj_simplification_integral) {
   simplifies_to("int((x-3)(x+1),x,1,2)", "-3+int(x^2,x,1,2)-2×int(x,x,1,2)");
   simplifies_to("int(x*e^x,x,0,0)", "int(e^(x)×x,x,0,0)");
 }
+
+void reduces_to_tree(const Tree* input, const Tree* output) {
+  Tree* reduced = input->cloneTree();
+  ProjectionContext projCtx;
+  simplify(reduced, &projCtx, false);
+  assert_trees_are_equal(reduced, output);
+  reduced->removeTree();
+}
+
+QUIZ_CASE(pcj_simplification_undef) {
+  reduces_to_tree(KUndef, KUndef);
+  reduces_to_tree(KSub(KInf, KInf), KUndef);
+  reduces_to_tree(KSqrt(-1_e), KNonReal);
+  reduces_to_tree(KDiv(1_e, 0_e), KOutOfDefinition);
+  reduces_to_tree(KPow(0_e, 0_e), KOutOfDefinition);
+  reduces_to_tree(KAdd(1_e, KTrue), KUndefUnhandledDimension);
+  reduces_to_tree(KAdd(KList(1_e, 2_e), KList(3_e)), KUndefUnhandledDimension);
+
+  // Bubble up
+  reduces_to_tree(KDep(1_e, KDepList(KUndef)), KUndef);
+  reduces_to_tree(KDep(KUndef, KDepList(KNonReal)), KUndef);
+  reduces_to_tree(KDep(KNonReal, KDepList(KUndef)), KUndef);
+  reduces_to_tree(KDep(KTrue, KDepList(KUndef)), KUndefBoolean);
+  reduces_to_tree(KDep(1_e, KDepList(KUndefBoolean)), KUndef);
+}

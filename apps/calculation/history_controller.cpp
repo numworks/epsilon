@@ -26,7 +26,7 @@ HistoryController::HistoryController(
   }
 }
 
-void HistoryController::reload() {
+void HistoryController::reload(bool resetMemoization) {
   // Ensure that the total height never overflows KDCoordinate
   while (m_selectableListView.minimalSizeForOptimalDisplay().height() >=
          KDCOORDINATE_MAX - 2 * HistoryViewCell::k_maxCellHeight) {
@@ -36,8 +36,10 @@ void HistoryController::reload() {
   /* When reloading, we might not use anymore some cells that hold previous
    * layouts. We clean them all before reloading their content to avoid taking
    * useless space in the Poincare pool. */
-  for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
-    m_calculationHistory[i].resetMemoization();
+  if (resetMemoization) {
+    for (int i = 0; i < k_maxNumberOfDisplayedRows; i++) {
+      m_calculationHistory[i].resetMemoization();
+    }
   }
 
   m_selectableListView.reloadData();
@@ -56,7 +58,7 @@ void HistoryController::reload() {
 
 void HistoryController::viewWillAppear() {
   ViewController::viewWillAppear();
-  reload();
+  reload(false);
 }
 
 void HistoryController::handleResponderChainEvent(
@@ -95,7 +97,10 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
     SubviewType subviewType = m_selectedSubviewType;
     m_selectableListView.deselectTable();
     m_calculationStore->deleteCalculationAtIndex(storeIndex(focusRow));
-    reload();
+    /* No memoization reset here, as it doesn't seems worth: it would only
+     * removes 1 unused layout from the Pool at the cost of recomputing all
+     * other visible layouts */
+    reload(false);
     if (numberOfRows() == 0) {
       App::app()->setFirstResponder(parentResponder());
       return true;

@@ -153,7 +153,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
       m_calculationStore->push(layout, context).pointer();
   if (calculation) {
     HistoryViewCell::ComputeCalculationHeights(calculation, context);
-    m_historyController->reload();
+    m_historyController->reload(false);
     layoutField->clearAndSetEditing(true);
     return true;
   }
@@ -198,7 +198,7 @@ bool EditExpressionController::isAcceptableExpression(
 
 void EditExpressionController::reloadView() {
   m_contentView.reload();
-  m_historyController->reload();
+  m_historyController->reload(false);
 }
 
 }  // namespace Calculation

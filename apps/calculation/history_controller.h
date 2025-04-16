@@ -22,7 +22,7 @@ class HistoryController : public Escher::ViewController,
   Escher::View* view() override { return &m_selectableListView; }
   bool handleEvent(Ion::Events::Event event) override;
   void viewWillAppear() override;
-  void reload();
+  void reload(bool resetMemoization = true);
   int numberOfRows() const override;
   Escher::HighlightCell* reusableCell(int index, int type) override;
   int reusableCellCount(int type) const override;

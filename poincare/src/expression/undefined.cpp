@@ -32,22 +32,27 @@ void replaceTreeWithDimensionedType(Tree* e, Type type) {
     Integer::Push(length);
   }
   Dimension dim = Dimension::Get(e);
-  if (dim.isMatrix()) {
-    int nRows = dim.matrix.rows;
-    int nCols = dim.matrix.cols;
-    SharedTreeStack->pushMatrix(nRows, nCols);
-    for (int i = 0; i < nRows * nCols; i++) {
-      SharedTreeStack->pushBlock(type);
-    }
-  } else if (dim.isPoint()) {
-    SharedTreeStack->pushPoint();
-    SharedTreeStack->pushBlock(type);
-    SharedTreeStack->pushBlock(type);
-  } else if (dim.isBoolean()) {
+  if (dim.isBoolean()) {
     assert(TypeBlock::IsUndefined(type));
     SharedTreeStack->pushBlock(Type::UndefBoolean);
   } else {
-    SharedTreeStack->pushBlock(type);
+    if (type == Type::UndefBoolean) {
+      type = Type::Undef;
+    }
+    if (dim.isMatrix()) {
+      int nRows = dim.matrix.rows;
+      int nCols = dim.matrix.cols;
+      SharedTreeStack->pushMatrix(nRows, nCols);
+      for (int i = 0; i < nRows * nCols; i++) {
+        SharedTreeStack->pushBlock(type);
+      }
+    } else if (dim.isPoint()) {
+      SharedTreeStack->pushPoint();
+      SharedTreeStack->pushBlock(type);
+      SharedTreeStack->pushBlock(type);
+    } else {
+      SharedTreeStack->pushBlock(type);
+    }
   }
   e->moveTreeOverTree(result);
 }

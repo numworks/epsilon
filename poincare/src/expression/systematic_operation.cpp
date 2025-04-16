@@ -409,80 +409,80 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   return false;
 }
 
+bool ReduceSimpleComplexPart(Tree* e, bool childIsPure, bool childIsPureReal) {
+  PatternMatching::Context ctx;
+  if (childIsPure) {
+    bool isRe = e->isRe();
+    e->removeNode();
+    if (childIsPureReal != isRe) {
+      // re(A) = dep(0, {A}) if A pure imaginary, im(A) = dep(0, {A}) if A real
+      e->cloneNodeAtNode(KDepList.node<1>);
+      e->cloneTreeAtNode(0_e);
+      e->cloneNodeAtNode(KDep);
+    } else if (!childIsPureReal) {
+      // im(A) = -i*A if A pure imaginary
+      e->cloneTreeAtNode(i_e);
+      e->cloneTreeAtNode(-1_e);
+      e->cloneNodeAtNode(KMult.node<3>);
+      SystematicReduction::ShallowReduce(e);
+    }
+    // re(A) = A if A pure real
+    return true;
+  }
+  return false;
+}
+
 bool SystematicOperation::ReduceComplexPart(Tree* e) {
   /* Note : We could rely on advanced reduction step re(A+B) <-> re(A) + re(B)
    * instead of handling addition here, but this makes some obvious
    * simplifications too hard to reach consistently. */
+  assert(e->isRe() || e->isIm());
+  const Tree* mainChild = e->child(0);
+  // Note : We could also escape here if addition's complex sign is pure.
+  if (!mainChild->isAdd()) {
+    ComplexSign childSign = GetComplexSign(mainChild);
+    return ReduceSimpleComplexPart(e, childSign.isPure(), childSign.isReal());
+  }
   /* With A not pure, B real and C imaginary pure :
    * re(A+B+C) = dep(re(A) + B, {C}) and im(A+B+C) = dep(im(A) - i*C, {B}) */
-  assert(e->isRe() || e->isIm());
-  bool isRe = e->isRe();
-  Tree* child = e->child(0);
-  // Handle both re(A) and re(A+B+C).
-  bool childIsAdd = child->isAdd();
-  // Note : childIsAdd could be set to false if addition's complex sign is pure.
-  int nbChildren = 1;
-  if (childIsAdd) {
-    nbChildren = child->numberOfChildren();
-    child = child->child(0);
+  Tree* result = SharedTreeStack->pushAdd(3);
+
+  TreeRef realChildren = e->cloneNode();
+  SharedTreeStack->pushAdd(0);
+  TreeRef imaginaryChildren = e->cloneNode();
+  SharedTreeStack->pushAdd(0);
+  TreeRef otherChildren = e->cloneNode();
+  SharedTreeStack->pushAdd(0);
+
+  for (const Tree* addChild : mainChild->children()) {
+    ComplexSign sign = GetComplexSign(addChild);
+    NAry::AddChild(
+        (sign.isPure() ? sign.isReal() ? realChildren : imaginaryChildren
+                       : otherChildren)
+            ->child(0),
+        addChild->cloneTree());
   }
 
-  TreeRef extractedChildren = SharedTreeStack->pushAdd(0);
-  TreeRef deletedChildren = SharedTreeStack->pushAdd(0);
+  if (otherChildren->child(0)->numberOfChildren() ==
+      mainChild->numberOfChildren()) {
+    // No pure imaginary or real children, fallback to ReduceSimpleComplexPart
+    result->removeTree();
+    return ReduceSimpleComplexPart(e, false, false);
+  }
 
-  int detachedChildrenCount = 0;
-  for (int i = 0; i < nbChildren; i++) {
-    ComplexSign childSign = GetComplexSign(child);
-    if (childSign.isPure()) {
-      // re(A) = A or 0, im(A) = 0 or -i*A
-      /* Detach child before casting TreeRef deletedChildren or
-       * extractedChildren into Tree *. */
-      Tree* detachedChild = child->detachTree();
-      NAry::AddChild(
-          (isRe != childSign.isReal()) ? deletedChildren : extractedChildren,
-          detachedChild);
-      detachedChildrenCount++;
-    } else {
-      child = child->nextTree();
-    }
-  }
-  if (detachedChildrenCount == 0) {
-    // Nothing changed.
-    deletedChildren->removeTree();
-    extractedChildren->removeTree();
-    return false;
-  }
-  if (childIsAdd) {
-    if (detachedChildrenCount == nbChildren) {
-      // Remove emptied out Addition node
-      e->child(0)->removeNode();
-    } else {
-      // Update number of children
-      NAry::SetNumberOfChildren(e->child(0),
-                                nbChildren - detachedChildrenCount);
-      NAry::SquashIfUnary(e->child(0));
-    }
-  }
-  if (detachedChildrenCount == nbChildren) {
-    // ComplexPart has been pilfered of its child, it's now 0.
-    e->cloneTreeOverNode(0_e);
-  }
-  /* Optimize a SystematicReduction::ShallowReduce call, as only squash could be
-   * needed here (children are already ordered and shouldn't reduce further) */
-  NAry::SquashIfPossible(extractedChildren);
-  NAry::SquashIfPossible(deletedChildren);
+  /* Squash each additions before reducing them with ReduceSimpleComplexPart. If
+   * they had no children (isZero), handle them as pure reals. */
+  NAry::SquashIfPossible(otherChildren->child(0));
+  ReduceSimpleComplexPart(otherChildren, otherChildren->child(0)->isZero(),
+                          otherChildren->child(0)->isZero());
+  NAry::SquashIfPossible(imaginaryChildren->child(0));
+  ReduceSimpleComplexPart(imaginaryChildren, true,
+                          imaginaryChildren->child(0)->isZero());
+  NAry::SquashIfPossible(realChildren->child(0));
+  ReduceSimpleComplexPart(realChildren, true, true);
 
-  if (!isRe) {
-    // Add -i factor to children extracted from imaginary part
-    PatternMatching::MatchReplaceSimplify(extractedChildren, KA,
-                                          KMult(-1_e, KA, i_e));
-  }
-  // Combine remaining children with detached ones
-  e->moveTreeOverTree(PatternMatching::CreateSimplify(
-      KDep(KAdd(KA, KB), KDepList(KC)),
-      {.KA = e, .KB = extractedChildren, .KC = deletedChildren}));
-  deletedChildren->removeTree();
-  extractedChildren->removeTree();
+  SystematicReduction::ShallowReduce(result);
+  e->moveTreeOverTree(result);
   return true;
 }
 

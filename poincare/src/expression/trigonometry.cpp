@@ -394,32 +394,6 @@ static bool PreprocessAtanOfTan(Tree* e) {
   return false;
 }
 
-static Tree* simplifyATrigOfTrig2(const Tree* arg, Type type, bool swapATrig);
-
-static bool simplifyATrigOfTrig(Tree* e) {
-  Type type = Type::Undef;
-  bool swapATrig = false;
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
-    // asin(sin) or asin(cos) or acos(cos) or acos(sin)
-    type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
-    swapATrig = type != (ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos);
-  } else if (PatternMatching::Match(
-                 e, KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))),
-                 &ctx)) {
-    // atan(sin/cos)
-    type = Type::Tan;
-  } else {
-    return false;
-  }
-  Tree* result = simplifyATrigOfTrig2(ctx.getTree(KA), type, swapATrig);
-  if (!result) {
-    return false;
-  }
-  e->moveTreeOverTree(result);
-  return true;
-}
-
 static Tree* simplifyATrigOfTrig2(const Tree* arg, Type type, bool swapATrig) {
   assert(type != Type::Undef);
   /* asin(sin(i*x)) = i*x, acos(cos(i*x)) = i*abs(i*x) and atan(tan(i*x)) = i*x
@@ -460,6 +434,30 @@ static Tree* simplifyATrigOfTrig2(const Tree* arg, Type type, bool swapATrig) {
         result, KA, KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)));
   }
   return result;
+}
+
+static bool simplifyATrigOfTrig(Tree* e) {
+  Type type = Type::Undef;
+  bool swapATrig = false;
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
+    // asin(sin) or asin(cos) or acos(cos) or acos(sin)
+    type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
+    swapATrig = type != (ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos);
+  } else if (PatternMatching::Match(
+                 e, KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))),
+                 &ctx)) {
+    // atan(sin/cos)
+    type = Type::Tan;
+  } else {
+    return false;
+  }
+  Tree* result = simplifyATrigOfTrig2(ctx.getTree(KA), type, swapATrig);
+  if (!result) {
+    return false;
+  }
+  e->moveTreeOverTree(result);
+  return true;
 }
 
 bool Trigonometry::ReduceATrig(Tree* e) {

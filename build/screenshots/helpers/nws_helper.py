@@ -71,6 +71,7 @@ def convert_txt_to_nws(txtpath, nwspath, filter=[]):
     if not os.path.isfile(txtpath) or os.path.splitext(txtpath)[1] != ".txt":
         raise argparse.ArgumentTypeError(txtpath + " is not a .txt")
 
+    filteredEvents = 0
     with open(txtpath, encoding="utf-8") as f:
         if f.readline().strip() != TXT_HEADER:
             print("Error:", txtpath, "is ill formatted")
@@ -93,6 +94,7 @@ def convert_txt_to_nws(txtpath, nwspath, filter=[]):
                 print("Error:", event, "is not a valid event")
                 sys.exit(1)
             if event in filter:
+                filteredEvents += 1
                 continue
             events.append(events_ids[event].to_bytes(1))
             if event == "ExternalText":
@@ -107,3 +109,5 @@ def convert_txt_to_nws(txtpath, nwspath, filter=[]):
         f.write(language.encode())
         for e in events:
             f.write(e)
+
+    return filteredEvents

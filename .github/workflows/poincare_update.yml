@@ -43,7 +43,7 @@ jobs:
       - name: Run head
         shell: bash
         run: |
-          $DOCKER_RUN "parallel --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | tee out
+          $DOCKER_RUN "parallel --halt soon,fail=1 --retries 1 --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | tee out
 
       - name: Filter output
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
@@ -59,7 +59,7 @@ jobs:
       - name: Run ancestor
         shell: bash
         run: |
-          $DOCKER_RUN "parallel --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
+          $DOCKER_RUN "parallel --halt soon,fail=1 --retries 1 --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
 
       - name: Compare logs
         id: compare_logs

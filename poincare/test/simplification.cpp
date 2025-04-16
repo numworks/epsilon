@@ -469,9 +469,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("e^(3.14×i)", "e^(157/50×i)", polarCtx);
   simplifies_to("e^(-2.1×i)", "e^(-21/10×i)", polarCtx);
   simplifies_to("root(-8,3)", "2×e^(π/3×i)", polarCtx);
-  // TODO_PCJ: Should be √(2)×e^(-π/12×i)
-  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "√(2)×e^(-arctan(-(-2+√(3)))×i)",
-                polarCtx);
+  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "√(2)×e^(-π/12×i)", polarCtx);
   // TODO: Result could be improved to (√(2)+√(6))/2×e^(π/4×i)
   simplifies_to("e^(π/6×i)+e^(-10π/6×i)", "(√(2)×(1+√(3)))/2×e^(π/4×i)",
                 polarCtx);
@@ -1506,9 +1504,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 {.m_angleUnit = AngleUnit::Gradian});
   simplifies_to("acos(sin({π*23/7, -23*π/7}))/π", "{11/14,3/14}");
   simplifies_to("asin(cos({π*23/7, -23*π/7}))/π", "{-3/14,-3/14}");
-  // TODO_PCJ: Should be {-3π/13,-3π/13}
   simplifies_to("atan({tan(-3π/13), -sin(3π/13)/cos(3π/13)})",
-                "{-(3×π)/13,arctan(-tan((3×π)/13))}");
+                "{-3π/13,-3π/13}");
   simplifies_to("atan({sin(55π/13)/cos(3π/13),sin(55π/13)/cos(-101π/13)})",
                 "{3π/13,3π/13}");
   simplifies_to("atan(sin({3,10,3,16,3,23}π/13)/cos({36,55,42,55,75,55}π/13))",

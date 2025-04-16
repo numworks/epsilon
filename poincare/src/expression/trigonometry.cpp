@@ -4,6 +4,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "advanced_operation.h"
 #include "degree.h"
 #include "infinity.h"
 #include "k_tree.h"
@@ -313,9 +314,13 @@ bool Trigonometry::ReduceTrigSecondElement(Tree* e, bool* isOpposed) {
 
 // Transform atan(sin(a)/cos(b)) in atan(sin(x)/cos(x)) if possible
 static bool PreprocessAtanOfTan(Tree* e) {
+  // Match atan(sin(a)/cos(b)) or atan(-sin(a)/cos(b))
   PatternMatching::Context ctx;
-  // Match atan(sin(a)/cos(b))
-  if (!PatternMatching::Match(
+  bool opposeA = PatternMatching::Match(
+      e, KATanRad(KMult(-1_e, KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
+      &ctx);
+  if (!opposeA &&
+      !PatternMatching::Match(
           e, KATanRad(KMult(KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
           &ctx)) {
     return false;
@@ -335,38 +340,54 @@ static bool PreprocessAtanOfTan(Tree* e) {
    * a = π - b  ==>  sin(a)/cos(b) = sin(b)/cos(b)
    * a = π + b  ==>  sin(a)/cos(b) = sin(-a)/cos(-a) = sin(-b)/cos(-b) */
 
-  Tree* sub = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
-                                              {.KA = aFactor, .KB = bFactor});
+  Tree* sub = PatternMatching::CreateSimplify(
+      KAdd(KMult(KA, KC), KMult(-1_e, KB)),
+      {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
   sub->moveTreeOverTree(computeSimplifiedPiFactor(sub));
   assert(sub->isRational());
   if (sub->treeIsIdenticalTo(0_e)) {
     // a = b ==> sin(a)/cos(a)
     sub->removeTree();
-    b->cloneTreeOverTree(a);
+    a->cloneTreeOverTree(b);
+    if (opposeA) {
+      NAry::RemoveChildAtIndex(e->child(0), 0);
+    }
     return true;
   } else if (sub->treeIsIdenticalTo(1_e)) {
     // a = π + b ==> sin(-a)/cos(-a)
     sub->removeTree();
-    a->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = a}));
+    a->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KMult(KC, KA), {.KA = a, .KC = opposeA ? 1_e : -1_e}));
     b->cloneTreeOverTree(a);
+    if (opposeA) {
+      NAry::RemoveChildAtIndex(e->child(0), 0);
+    }
     return true;
   }
   sub->removeTree();
 
-  Tree* add = PatternMatching::CreateSimplify(KAdd(KA, KB),
-                                              {.KA = aFactor, .KB = bFactor});
+  Tree* add = PatternMatching::CreateSimplify(
+      KAdd(KMult(KA, KC), KB),
+      {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
   add->moveTreeOverTree(computeSimplifiedPiFactor(add));
   assert(add->isRational());
   if (add->treeIsIdenticalTo(0_e)) {
     // a = -b ==> sin(a)/cos(a)
     add->removeTree();
+    a->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e}));
     b->cloneTreeOverTree(a);
+    if (opposeA) {
+      NAry::RemoveChildAtIndex(e->child(0), 0);
+    }
     return true;
   } else if (add->treeIsIdenticalTo(1_e)) {
     // a = π - b ==> sin(b)/cos(b)
     add->removeTree();
     a->cloneTreeOverTree(b);
+    if (opposeA) {
+      NAry::RemoveChildAtIndex(e->child(0), 0);
+    }
     return true;
   }
   add->removeTree();
@@ -490,7 +511,13 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   bool argIsOpposed = !argSign.isNull() && argSign.realSign().isNegative();
   if (argIsOpposed) {
     changed = true;
+    bool argIsAdd = arg->isAdd();
     PatternMatching::MatchReplaceSimplify(arg, KA, KMult(-1_e, KA));
+    if (argIsAdd) {
+      /* Expand the -1 to directly catch exact values such as (-1)*(-2+√3).
+       * Advanced reduction will factorize it later if needed. */
+      AdvancedOperation::ExpandMult(arg);
+    }
   }
   if (arg->isInf()) {
     changed = true;

@@ -715,6 +715,14 @@ bool SystematicOperation::ReduceExp(Tree* e) {
                             KMult(KB, KExp(KAdd(KA_s, KC_s))))) {
     return true;
   }
+  // Turn exp(a*ln(b)) into pow(b, a) if the power is an integer
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
+      ctx.getTree(KA)->isInteger()) {
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KPow(KB, KA), {.KA = ctx.getTree(KA), .KB = ctx.getTree(KB)}));
+    return true;
+  }
   if (child->isMult()) {
     PatternMatching::Context ctx;
     if (PatternMatching::Match(child, KMult(KA, KLn(KB)), &ctx)) {

@@ -50,6 +50,7 @@ $(addprefix device/shared/drivers/, \
   assert.cpp \
   board_unprivileged.cpp \
   console_display.cpp:+consoledisplay \
+  dfu_interfaces.cpp \
   flash_information.cpp \
   read_only_memory.cpp \
   trampoline.cpp \

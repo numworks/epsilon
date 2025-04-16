@@ -4,6 +4,7 @@ $(addprefix device/shared/, \
   boot/rt0.cpp \
   boot/ssp.c \
   drivers/base64.cpp \
+  drivers/dfu_interfaces.cpp \
   drivers/flash_information.cpp \
   drivers/serial_number.cpp \
   drivers/usb_unprivileged.cpp \

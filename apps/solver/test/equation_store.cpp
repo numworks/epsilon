@@ -107,11 +107,10 @@ QUIZ_CASE(solver_linear_system) {
                    {"x=3/2+(-3-3√(3)/2)×i", "y=3+3/2×√(3)+3/2×i"},
                    &globalContext);
   setComplexFormatAndAngleUnit(Polar, Radian);
-  // TODO_PCJ: Should be 3/2×(√2+√6)×exp(-i×π×5/12) and 3/2×(√2+√6)×exp(i×π/12)
-  assert_solves_to({"x+i×y=0", "x+y×exp(i×π/3)=3"},
-                   {"x=3/2×(√(2)+√(6))×exp(arctan(-2-√(3))×i)",
-                    "y=3/2×(√(2)+√(6))×exp(i×π/12)"},
-                   &globalContext);
+  assert_solves_to(
+      {"x+i×y=0", "x+y×exp(i×π/3)=3"},
+      {"x=3/2×(√(2)+√(6))×exp(-i×π×5/12)", "y=3/2×(√(2)+√(6))×exp(i×π/12)"},
+      &globalContext);
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);

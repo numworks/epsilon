@@ -8,58 +8,72 @@ namespace Poincare::Internal {
 
 constexpr ExactFormula ExactFormulas[] = {
     /* Angles in [0, π/4] */
-    // θ, cos(θ), sin(θ)
-    {0_e, 1_e, 0_e},
-    // π/4, √2/2, √2/2
+    // θ, cos(θ), sin(θ), tan(θ)
+    // 0, 1, 0, 0
+    {0_e, 1_e, 0_e, 0_e},
+    // π/4, √2/2, √2/2, 1
     {KMult(1_e / 4_e, π_e), KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))),
-     KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(2_e))))},
-    // π/5, (1+√5)/4, √((5-√5)/8)
+     KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))), 1_e},
+    // π/5, (1+√5)/4, √((5-√5)/8), √(5-2√5)
     {KMult(1_e / 5_e, π_e),
      KMult(1_e / 4_e, KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))),
-     KExp(KMult(1_e / 2_e,
-                KLn(KMult(1_e / 8_e,
-                          KAdd(5_e, KMult(-1_e, KExp(KMult(1_e / 2_e,
-                                                           KLn(5_e)))))))))},
-    // π/6, √3/2, 1/2
+     KExp(KMult(
+         1_e / 2_e,
+         KLn(KMult(1_e / 8_e,
+                   KAdd(5_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))),
+     KExp(
+         KMult(1_e / 2_e,
+               KLn(KAdd(5_e, KMult(-2_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))},
+    // π/6, √3/2, 1/2, √3/3
     {KMult(1_e / 6_e, π_e), KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))),
-     1_e / 2_e},
-    // π/8, √(2+√2)/2, √(2-√2)/2
+     1_e / 2_e, KMult(1_e / 3_e, KExp(KMult(1_e / 2_e, KLn(3_e))))},
+    // π/8, √(2+√2)/2, √(2-√2)/2, -1+√2
     {KMult(1_e / 8_e, π_e),
      KMult(1_e / 2_e,
            KExp(KMult(1_e / 2_e,
                       KLn(KAdd(2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))))))),
-     KMult(
-         1_e / 2_e,
-         KExp(KMult(
-             1_e / 2_e,
-             KLn(KAdd(2_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(2_e)))))))))},
-    // π/10, √((5+√5)/8), (√5-1)/4
+     KMult(1_e / 2_e,
+           KExp(KMult(
+               1_e / 2_e,
+               KLn(KAdd(2_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(2_e))))))))),
+     KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(2_e))))},
+    // π/10, √((5+√5)/8), (√5-1)/4, √(1-2√5/5)
     {KMult(1_e / 10_e, π_e),
      KExp(KMult(
          1_e / 2_e,
          KLn(KMult(1_e / 8_e, KAdd(5_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))))),
-     KMult(1_e / 4_e, KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))},
-    // π/12, 1/4×√2×(1+√3), 1/4×√2×(-1+√3)
+     KMult(1_e / 4_e, KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))),
+     KExp(KMult(
+         1_e / 2_e,
+         KLn(KAdd(1_e, KMult(-2_e / 5_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))},
+    // π/12, 1/4×√2×(1+√3), 1/4×√2×(-1+√3), 2-√3
     {KMult(1_e / 12_e, π_e),
      KMult(1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
            KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
      KMult(1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
-           KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e)))))},
+           KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
+     KAdd(2_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e)))))},
     /* Angles in ]π/4, π/2]
-     * TODO : Remove them with asin(x) = π/2 - acos(x) advanced reduction. */
-    // π/2, 0, 1
-    {KMult(1_e / 2_e, π_e), 0_e, 1_e},
-    // π/3, 1/2, √3/2
+     * TODO : Remove them with asin(x) = π/2 - acos(x) and
+     *        atan(x) = π/2 - atan(1/x) advanced reduction.
+     */
+    // π/2, 0, 1, undef
+    {KMult(1_e / 2_e, π_e), 0_e, 1_e, KUndef},
+    // π/3, 1/2, √3/2, √3
     {KMult(1_e / 3_e, π_e), 1_e / 2_e,
-     KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e))))},
-    // 3π/10, √((5-√5)/8), (1+√5)/4
+     KMult(1_e / 2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))),
+     KExp(KMult(1_e / 2_e, KLn(3_e)))},
+    // 3π/10, √((5-√5)/8), (1+√5)/4, √(1+2√5/5)
     {KMult(3_e / 10_e, π_e),
      KExp(KMult(
          1_e / 2_e,
          KLn(KMult(1_e / 8_e,
                    KAdd(5_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))),
-     KMult(1_e / 4_e, KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))},
-    // 3π/8, √(2-√2)/2, √(2+√2)/2
+     KMult(1_e / 4_e, KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))),
+     KExp(KMult(
+         1_e / 2_e,
+         KLn(KAdd(1_e, KMult(2_e / 5_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))},
+    // 3π/8, √(2-√2)/2, √(2+√2)/2, 1+√2
     {KMult(3_e / 8_e, π_e),
      KMult(1_e / 2_e,
            KExp(KMult(
@@ -67,19 +81,23 @@ constexpr ExactFormula ExactFormulas[] = {
                KLn(KAdd(2_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(2_e))))))))),
      KMult(1_e / 2_e,
            KExp(KMult(1_e / 2_e,
-                      KLn(KAdd(2_e, KExp(KMult(1_e / 2_e, KLn(2_e))))))))},
-    // 2π/5, (√5-1)/4, √((5+√5)/8)
+                      KLn(KAdd(2_e, KExp(KMult(1_e / 2_e, KLn(2_e)))))))),
+     KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(2_e))))},
+    // 2π/5, (√5-1)/4, √((5+√5)/8), √(5+2√5)
     {KMult(2_e / 5_e, π_e),
      KMult(1_e / 4_e, KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(5_e))))),
      KExp(KMult(
          1_e / 2_e,
-         KLn(KMult(1_e / 8_e, KAdd(5_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))},
-    // 5π/12, 1/4×√2×(-1+√3), 1/4×√2×(1+√3)
+         KLn(KMult(1_e / 8_e, KAdd(5_e, KExp(KMult(1_e / 2_e, KLn(5_e)))))))),
+     KExp(KMult(1_e / 2_e,
+                KLn(KAdd(5_e, KMult(2_e, KExp(KMult(1_e / 2_e, KLn(5_e))))))))},
+    // 5π/12, 1/4×√2×(-1+√3), 1/4×√2×(1+√3), 2+√3
     {KMult(5_e / 12_e, π_e),
      KMult(1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
            KAdd(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
      KMult(1_e / 4_e, KExp(KMult(1_e / 2_e, KLn(2_e))),
-           KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(3_e)))))},
+           KAdd(1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
+     KAdd(2_e, KExp(KMult(1_e / 2_e, KLn(3_e))))},
 };
 
 ExactFormula ExactFormula::GetExactFormulaAtIndex(int n) {
@@ -106,6 +124,19 @@ const Tree* ExactFormula::GetAngleOf(const Tree* trig, bool isAsin) {
     const Tree* treeToMatch = isAsin ? ef.m_sin : ef.m_cos;
     if (!treeToMatch->isUndef() &&
         PatternMatching::Match(trig, treeToMatch, &ctx)) {
+      return ef.m_angle;
+    }
+  }
+  return nullptr;
+}
+
+const Tree* ExactFormula::GetAngleOfTan(const Tree* tan) {
+  PatternMatching::Context ctx;
+  for (int i = 0; i < k_totalNumberOfFormula; i++) {
+    ExactFormula ef = GetExactFormulaAtIndex(i);
+    const Tree* treeToMatch = ef.m_tan;
+    if (!treeToMatch->isUndef() &&
+        PatternMatching::Match(tan, treeToMatch, &ctx)) {
       return ef.m_angle;
     }
   }

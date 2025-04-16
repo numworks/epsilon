@@ -469,12 +469,7 @@ bool Trigonometry::ReduceATrig(Tree* e) {
 }
 
 bool Trigonometry::ReduceArcTangentRad(Tree* e) {
-  // atan(-x) = -atan(x)
-  if (PatternMatching::MatchReplaceSimplify(
-          e, KATanRad(KMult(KA_s, -1_e, KB_s)),
-          KMult(-1_e, KATanRad(KMult(KA_s, KB_s))))) {
-    return true;
-  }
+  assert(e->isATanRad());
   // atan(tan(x)) = x
   [[maybe_unused]] bool preprocessedAtanOfTan = PreprocessAtanOfTan(e);
   if (simplifyATrigOfTrig(e)) {
@@ -486,46 +481,34 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
                                             KMult(1_e / 2_e, π_e))) {
     return true;
   }
-  assert(e->isATanRad());
-  const Tree* arg = e->child(0);
-  if (arg->isZero()) {
-    // atan(0) = 0
-    e->cloneTreeOverTree(0_e);
-    return true;
+  Tree* arg = e->child(0);
+  ComplexSign argSign = GetComplexSign(arg);
+  if (!argSign.isReal()) {
+    return false;
   }
-  if (arg->isOne()) {
-    // atan(1) = π/4
-    e->cloneTreeOverTree(KMult(1_e / 4_e, π_e));
-    return true;
+  bool changed = false;
+  bool argIsOpposed = !argSign.isNull() && argSign.realSign().isNegative();
+  if (argIsOpposed) {
+    changed = true;
+    PatternMatching::MatchReplaceSimplify(arg, KA, KMult(-1_e, KA));
   }
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(arg, KExp(KMult(1_e / 2_e, KLn(3_e))), &ctx)) {
-    // atan(√3) = π/3
-    e->cloneTreeOverTree(KMult(1_e / 3_e, π_e));
-    return true;
+  if (arg->isInf()) {
+    changed = true;
+    e->cloneTreeOverTree(KMult(1_e / 2_e, π_e));
+  } else {
+    const Tree* angle = ExactFormula::GetAngleOfTan(arg);
+    if (angle) {
+      e->cloneTreeOverTree(angle);
+      changed = true;
+    }
   }
-  assert(!PatternMatching::Match(arg, KExp(KMult(-1_e / 2_e, KLn(3_e))), &ctx));
-  if (PatternMatching::Match(
-          arg, KMult(1_e / 3_e, KExp(KMult(1_e / 2_e, KLn(3_e)))), &ctx)) {
-    // atan(1/√3) = π/6
-    e->cloneTreeOverTree(KMult(1_e / 6_e, π_e));
-    return true;
-  }
-  if (PatternMatching::Match(
-          arg, KAdd(2_e, KMult(-1_e, KExp(KMult(1_e / 2_e, KLn(3_e))))),
-          &ctx)) {
-    // atan(2-√3) = π/12
-    e->cloneTreeOverTree(KMult(1_e / 12_e, π_e));
-    return true;
-  }
-  if (PatternMatching::Match(arg, KAdd(-2_e, KExp(KMult(1_e / 2_e, KLn(3_e)))),
-                             &ctx)) {
-    // atan(-2+√3) = -π/12
-    e->cloneTreeOverTree(KMult(-1_e / 12_e, π_e));
-    return true;
+  if (argIsOpposed) {
+    assert(changed);
+    // atan(-x) = -atan(x)
+    PatternMatching::MatchReplaceSimplify(e, KA, KMult(-1_e, KA));
   }
   // TODO_PCJ: Reduce atan(1/x) in dep(sign(x)*π/2-atan(x),{1/x})
-  return false;
+  return changed;
 }
 
 bool Trigonometry::ReduceArCosH(Tree* e) {

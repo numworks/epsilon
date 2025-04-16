@@ -13,13 +13,15 @@ class ExactFormula {
   friend class ExactFormulaTest;
 
  public:
-  template <KTreeConcept T1, KTreeConcept T2, KTreeConcept T3>
-  constexpr ExactFormula(T1 angle, T2 cos, T3 sin)
-      : m_angle(angle), m_cos(cos), m_sin(sin) {}
+  template <KTreeConcept T1, KTreeConcept T2, KTreeConcept T3, KTreeConcept T4>
+  constexpr ExactFormula(T1 angle, T2 cos, T3 sin, T4 tan)
+      : m_angle(angle), m_cos(cos), m_sin(sin), m_tan(tan) {}
   // Find exact formula corresponding to angle, nullptr otherwise
   static const Tree* GetTrigOf(const Tree* angle, bool isSin);
   // Find exact formula corresponding to trig, nullptr otherwise
   static const Tree* GetAngleOf(const Tree* trig, bool isAsin);
+  // Find exact formula corresponding to tan, nullptr otherwise
+  static const Tree* GetAngleOfTan(const Tree* tan);
 
  private:
   static ExactFormula GetExactFormulaAtIndex(int n);
@@ -31,6 +33,7 @@ class ExactFormula {
   const Tree* m_angle;
   const Tree* m_cos;
   const Tree* m_sin;
+  const Tree* m_tan;
 };
 
 }  // namespace Poincare::Internal

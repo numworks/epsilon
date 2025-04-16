@@ -24,6 +24,8 @@ class Poincare::Internal::ExactFormulaTest {
       quiz_assert(!SystematicReduction::DeepReduce(a));
       a->cloneTreeOverTree(ef.m_sin);
       quiz_assert(!SystematicReduction::DeepReduce(a));
+      a->cloneTreeOverTree(ef.m_tan);
+      quiz_assert(!SystematicReduction::DeepReduce(a));
       a->removeTree();
       assert(!ef.m_cos->isUndef() && !ef.m_sin->isUndef());
 
@@ -45,6 +47,14 @@ class Poincare::Internal::ExactFormulaTest {
           OMG::Float::RoughlyEqual<float>(std::sin(angle), sin, epsilon));
       quiz_assert(
           OMG::Float::RoughlyEqual<float>(std::asin(sin), angle, epsilon));
+      if (!ef.m_tan->isUndef()) {
+        float tan =
+            Approximation::To<float>(ef.m_tan, Approximation::Parameters{});
+        quiz_assert(
+            OMG::Float::RoughlyEqual<float>(std::tan(angle), tan, epsilon));
+        quiz_assert(
+            OMG::Float::RoughlyEqual<float>(std::atan(tan), angle, epsilon));
+      }
     }
     /* If pi/2 - asin(x) => acos(x) and pi/2 - acos(x) => asin(x), exact
      * formulas for angles in ]π/4, π/2] must be removed. */
@@ -53,6 +63,9 @@ class Poincare::Internal::ExactFormulaTest {
         [](Tree* tree, ProjectionContext ctx) { simplify(tree, &ctx); }, {});
     process_tree_and_compare(
         "π/2-arccos(1/10)", "π/2-arccos(1/10)",
+        [](Tree* tree, ProjectionContext ctx) { simplify(tree, &ctx); }, {});
+    process_tree_and_compare(
+        "π/2-arctan(1/10)", "π/2-arctan(1/10)",
         [](Tree* tree, ProjectionContext ctx) { simplify(tree, &ctx); }, {});
   }
 };

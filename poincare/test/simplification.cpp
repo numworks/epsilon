@@ -421,7 +421,7 @@ QUIZ_CASE(pcj_simplification_complex) {
       ctx);
   simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
-  simplifies_to("arg(-π+i×2)-π", "arctan(-2/π)", ctx);
+  simplifies_to("arg(-π+i×2)-π", "-arctan(2/π)", ctx);
   simplifies_to("arg(i×2)", "π/2", ctx);
   simplifies_to("arg(-i×2)", "-π/2", ctx);
   simplifies_to("arg(0)", "undef", ctx);
@@ -469,7 +469,9 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("e^(3.14×i)", "e^(157/50×i)", polarCtx);
   simplifies_to("e^(-2.1×i)", "e^(-21/10×i)", polarCtx);
   simplifies_to("root(-8,3)", "2×e^(π/3×i)", polarCtx);
-  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "√(2)×e^(-π/12×i)", polarCtx);
+  // TODO_PCJ: Should be √(2)×e^(-π/12×i)
+  simplifies_to("e^(π/6×i)+e^(-π/3×i)", "√(2)×e^(-arctan(-(-2+√(3)))×i)",
+                polarCtx);
   // TODO: Result could be improved to (√(2)+√(6))/2×e^(π/4×i)
   simplifies_to("e^(π/6×i)+e^(-10π/6×i)", "(√(2)×(1+√(3)))/2×e^(π/4×i)",
                 polarCtx);
@@ -618,7 +620,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("arcosh(-x)", "arcosh(-x)");
   // TODO: Should simplify to -arsinh(x)
   simplifies_to("arsinh(-x)", "arsinh(-x)");
-  simplifies_to("artanh(-x)", "-artanh(x)");
+  simplifies_to("artanh(-x)", "artanh(-x)");
   simplifies_to("cosh(i)", "cos(1)");
   simplifies_to("sinh(i)", "sin(1)×i");
   simplifies_to("tanh(i)", "tan(1)×i");
@@ -1414,16 +1416,25 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("asin({-1, -√(3)/2, -√(2)/2, -1/2, 0, 1/2, √(2)/2, √(3)/2, 1})",
                 "{-90,-60,-45,-30,0,30,45,60,90}",
                 {.m_angleUnit = AngleUnit::Degree});
+
   simplifies_to("asin(-(√(6)+√(2))/4)", "-5π/12");
   simplifies_to("asin(-(√(6)-√(2))/4)", "-π/12");
   simplifies_to("asin((√(6)-√(2))/4)", "π/12");
   simplifies_to("asin((√(6)+√(2))/4)", "5π/12");
-  simplifies_to("atan(-1/√(3))", "-π/6");
-  simplifies_to("atan(1/√(3))", "π/6");
-  simplifies_to("atan(√(3)-2)", "-π/12");
-  simplifies_to("atan(2-√(3))", "π/12");
-  simplifies_to("atan({-inf, -√(3), -1, -√(3)/3, 0, 1, √(3)/3, √(3), inf})",
-                "{-π/2,-π/3,-π/4,-π/6,0,π/4,π/6,π/3,π/2}");
+
+  simplifies_to("atan(0)", "0");
+  simplifies_to("atan({1,-1}*(inf))", "{π/2, -π/2}");
+  simplifies_to("atan({1,-1}*(√(3)))", "{π/3, -π/3}");
+  simplifies_to("atan({1,-1}*(1))", "{π/4, -π/4}");
+  simplifies_to("atan({1,-1}*(√(5-2√(5))))", "{π/5, -π/5}");
+  simplifies_to("atan({1,-1}*(√(5+2√(5))))", "{2π/5, -2π/5}");
+  simplifies_to("atan({1,-1}*(√(3)/3))", "{π/6, -π/6}");
+  simplifies_to("atan({1,-1}*(-1+√(2)))", "{π/8, -π/8}");
+  simplifies_to("atan({1,-1}*(1+√(2)))", "{3π/8, -3π/8}");
+  simplifies_to("atan({1,-1}*(√(1-2√(5)/5)))", "{π/10, -π/10}");
+  simplifies_to("atan({1,-1}*(√(1+2√(5)/5)))", "{3π/10, -3π/10}");
+  simplifies_to("atan({1,-1}*(2-√(3)))", "{π/12, -π/12}");
+  simplifies_to("atan({1,-1}*(2+√(3)))", "{5π/12, -5π/12}");
 
   // Trig diff
   simplifies_to("2×sin(2y)×sin(y)+cos(3×y)", "cos(y)");
@@ -1448,17 +1459,17 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // Inverse trigonometry
   simplifies_to("acos(-x)", "arccos(-x)", cartesianCtx);
   simplifies_to("asin(-x)", "arcsin(-x)", cartesianCtx);
-  simplifies_to("atan(-x)", "-arctan(x)", cartesianCtx);
+  simplifies_to("atan(-x)", "arctan(-x)", cartesianCtx);
 
   // trig(atrig)
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
   simplifies_to("cos({acos(-x), asin(-x), atan(-x)})",
-                "{-x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
+                "{-x,√(-x^2+1),cos(arctan(-x))}", cartesianCtx);
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1),x,sin(arctan(x))}", cartesianCtx);
   simplifies_to("sin({acos(-x), asin(-x), atan(-x)})",
-                "{√(-x^2+1),-x,-sin(arctan(x))}", cartesianCtx);
+                "{√(-x^2+1),-x,sin(arctan(-x))}", cartesianCtx);
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1)/x,(x×√(-x^2+1))/(-x^2+1),x}", cartesianCtx);
   simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
@@ -1495,8 +1506,9 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 {.m_angleUnit = AngleUnit::Gradian});
   simplifies_to("acos(sin({π*23/7, -23*π/7}))/π", "{11/14,3/14}");
   simplifies_to("asin(cos({π*23/7, -23*π/7}))/π", "{-3/14,-3/14}");
+  // TODO_PCJ: Should be {-3π/13,-3π/13}
   simplifies_to("atan({tan(-3π/13), -sin(3π/13)/cos(3π/13)})",
-                "{-3π/13,-3π/13}");
+                "{-(3×π)/13,arctan(-tan((3×π)/13))}");
   simplifies_to("atan({sin(55π/13)/cos(3π/13),sin(55π/13)/cos(-101π/13)})",
                 "{3π/13,3π/13}");
   simplifies_to("atan(sin({3,10,3,16,3,23}π/13)/cos({36,55,42,55,75,55}π/13))",

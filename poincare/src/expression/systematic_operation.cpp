@@ -429,6 +429,15 @@ bool ReduceSimpleComplexPart(Tree* e, bool childIsPure, bool childIsPureReal) {
     // re(A) = A if A pure real
     return true;
   }
+  const Tree* child = e->child(0);
+  if (child->isExp() && GetComplexSign(child->child(0)).isPureIm()) {
+    // This shortcuts the advanced reduction step exp(iA) -> cos(A) + i*sin(A)
+    // re(exp(A)) = cos(-i*A), im(exp(A)) = sin(-i*A) if A is pure imaginary
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KTrig(KMult(-1_e, i_e, KA), KB),
+        {.KA = child->child(0), .KB = e->isRe() ? 0_e : 1_e}));
+    return true;
+  }
   return false;
 }
 

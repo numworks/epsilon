@@ -394,6 +394,8 @@ static bool PreprocessAtanOfTan(Tree* e) {
   return false;
 }
 
+static Tree* simplifyATrigOfTrig2(const Tree* arg, Type type, bool swapATrig);
+
 static bool simplifyATrigOfTrig(Tree* e) {
   Type type = Type::Undef;
   bool swapATrig = false;
@@ -410,43 +412,54 @@ static bool simplifyATrigOfTrig(Tree* e) {
   } else {
     return false;
   }
+  Tree* result = simplifyATrigOfTrig2(ctx.getTree(KA), type, swapATrig);
+  if (!result) {
+    return false;
+  }
+  e->moveTreeOverTree(result);
+  return true;
+}
 
+static Tree* simplifyATrigOfTrig2(const Tree* arg, Type type, bool swapATrig) {
+  assert(type != Type::Undef);
   /* asin(sin(i*x)) = i*x, acos(cos(i*x)) = i*abs(i*x) and atan(tan(i*x)) = i*x
    * for x real */
-  if (GetComplexSign(ctx.getTree(KA)).isPureIm()) {
+  Tree* result = nullptr;
+  if (GetComplexSign(arg).isPureIm()) {
     if (type == Type::Sin || type == Type::Tan) {
-      e->cloneTreeOverTree(ctx.getTree(KA));
+      result = arg->cloneTree();
     } else {
       assert(type == Type::Cos);
-      e->moveTreeOverTree(
-          PatternMatching::CreateSimplify(KMult(i_e, KAbs(KA)), ctx));
+      result =
+          PatternMatching::CreateSimplify(KMult(i_e, KAbs(KA)), {.KA = arg});
     }
   } else {
     // x = π*y
-    const Tree* rationalPiFactor = getPiFactor(ctx.getTree(KA));
+    const Tree* rationalPiFactor = getPiFactor(arg);
     TreeRef reducedPiFactor;
     if (rationalPiFactor) {
       reducedPiFactor =
           computeSimplifiedPiFactorForType(rationalPiFactor, type);
     } else {
-      TreeRef genericPiFactor =
-          PatternMatching::CreateSimplify(KMult(KA, KPow(π_e, -1_e)), ctx);
+      TreeRef genericPiFactor = PatternMatching::CreateSimplify(
+          KMult(KA, KPow(π_e, -1_e)), {.KA = arg});
       reducedPiFactor = computeSimplifiedPiFactorForType(genericPiFactor, type);
       genericPiFactor->removeTree();
     }
     if (!reducedPiFactor) {
-      return false;
+      return nullptr;
     }
-    e->moveTreeOverTree(reducedPiFactor);
-    PatternMatching::MatchReplaceSimplify(e, KA, KMult(π_e, KA));
+    result = reducedPiFactor;
+    PatternMatching::MatchReplaceSimplify(result, KA, KMult(π_e, KA));
   }
+  assert(result);
 
   // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
   if (swapATrig) {
     PatternMatching::MatchReplaceSimplify(
-        e, KA, KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)));
+        result, KA, KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)));
   }
-  return true;
+  return result;
 }
 
 bool Trigonometry::ReduceATrig(Tree* e) {

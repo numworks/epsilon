@@ -93,7 +93,7 @@ $(call create_goal,userland_test, \
   omg.test \
   poincare.test \
   python.test \
-  quiz \
+  quiz.epsilon \
 )
 
 # Firmware component - flasher

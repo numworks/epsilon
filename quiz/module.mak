@@ -1,10 +1,10 @@
 $(call create_module,quiz,1,$(addprefix src/, \
   assertions.cpp \
-  i18n.cpp \
+  i18n.cpp:+epsilon \
   runner.cpp \
   runner_helpers.cpp \
-  runner_helpers_pool.cpp:-nopool \
-  runner_helpers_no_pool.cpp:+nopool \
+  runner_helpers_epsilon.cpp:+epsilon \
+  runner_helpers_scandium.cpp:+scandium \
   stopwatch.cpp \
   test_symbols.c \
 ))

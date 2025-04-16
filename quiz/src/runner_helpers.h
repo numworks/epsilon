@@ -1,3 +1,7 @@
+#pragma once
+
+void init();
+void shutdown();
 void flushGlobalDataNoPool();
 void flushGlobalData();
 void exception_run(void (*inner_main)(const char*, const char*, const char*,

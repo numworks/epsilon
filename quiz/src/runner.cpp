@@ -1,9 +1,5 @@
-#include <apps/init.h>
-#include <escher/init.h>
 #include <ion.h>
-#include <poincare/init.h>
 #include <poincare/print.h>
-#include <poincare/test/helper.h>
 
 #include "quiz.h"
 #include "runner_helpers.h"
@@ -134,14 +130,6 @@ static inline void ion_main_inner(const char* testFilter,
 }
 
 void ion_main(int argc, const char* const argv[]) {
-  // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
-  Poincare::Init();
-  Escher::Init();
-  Apps::Init();
-
-  // Initialize the exam mode to "Off" before running the tests
-  Poincare::Preferences::SharedPreferences()->examMode();
-
   const char* testFilter = nullptr;
   const char* fromFilter = nullptr;
   const char* untilFilter = nullptr;
@@ -176,9 +164,10 @@ void ion_main(int argc, const char* const argv[]) {
    * cannot be allocated memory pointers before. Otherwise, with MicroPython for
    * example, stack pointer could go backward after initialization and allocated
    * memory pointers could be overlooked during mark procedure. */
+  init();
   volatile int stackTop;
   Ion::setStackStart((void*)(&stackTop));
   exception_run(ion_main_inner, testFilter, fromFilter, untilFilter, chunkId,
                 numberOfChunks);
-  Poincare::Shutdown();
+  shutdown();
 }

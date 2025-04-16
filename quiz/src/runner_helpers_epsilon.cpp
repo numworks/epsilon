@@ -1,5 +1,8 @@
 #include <apps/global_preferences.h>
+#include <apps/init.h>
+#include <escher/init.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/init.h>
 #include <poincare/pool.h>
 
 #include "quiz.h"
@@ -9,6 +12,18 @@ class GlobalPreferencesTestBuilder {
  public:
   static GlobalPreferences buildDefault() { return GlobalPreferences(); }
 };
+
+void init() {
+  // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
+  Poincare::Init();
+  Escher::Init();
+  Apps::Init();
+
+  // Initialize the exam mode to "Off" before running the tests
+  Poincare::Preferences::SharedPreferences()->examMode();
+}
+
+void shutdown() { Poincare::Shutdown(); }
 
 void flushGlobalData() {
   /* TODO: Some global data are asserted to be preserved while others are reset

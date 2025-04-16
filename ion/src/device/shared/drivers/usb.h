@@ -14,9 +14,6 @@ void willExecuteDFU();
 void didExecuteDFU();
 bool shouldInterruptDFU(Keyboard::State exitKeys, bool bubbleUpEvents);
 
-const char* FlashStringDescriptor();
-const char* SRAMStringDescriptor();
-
 /* When entering DFU mode, we update this SlotInfo with a pointer to the current
  * PlatformInfo of the binary being run. The slot info is located at the very
  * beginning of the sRAM. */

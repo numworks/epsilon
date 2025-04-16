@@ -25,14 +25,6 @@ bool SVC_ATTRIBUTES shouldInterruptDFU(Keyboard::State exitKeys,
   SVC_RETURNING_R0(SVC_USB_SHOULD_INTERRUPT, bool)
 }
 
-const char* FlashStringDescriptor() {
-  // TODO: remove
-}
-
-const char* SRAMStringDescriptor() {
-  return Config::InterfaceSRAMStringDescriptor;
-}
-
 constexpr static StringDescriptor k_flashDescriptorAuthenticatedSlotA(
     Config::InterfaceFlashStringDescriptorAuthenticatedSlotA);
 constexpr static StringDescriptor k_flashDescriptorAuthenticatedSlotB(

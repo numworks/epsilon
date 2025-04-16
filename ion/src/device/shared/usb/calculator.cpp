@@ -14,8 +14,7 @@ void Calculator::PollAndReset(Ion::USB::DFUParameters parameters) {
    * dfu. */
   char serialNumber[Ion::k_serialNumberLength + 1];
   SerialNumber::copy(serialNumber);
-  Calculator c(serialNumber, USB::FlashStringDescriptor(),
-               USB::SRAMStringDescriptor());
+  Calculator c(serialNumber);
   // Ensure FIFOs are clean before starting polling.
   c.flushFIFOs();
   while (Ion::USB::isPlugged() && !c.isSoftDisconnected() &&

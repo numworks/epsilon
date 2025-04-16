@@ -312,20 +312,20 @@ bool Trigonometry::ReduceTrigSecondElement(Tree* e, bool* isOpposed) {
 }
 
 // Transform atan(sin(a)/cos(b)) in atan(sin(x)/cos(x)) if possible
-static void preprocessAtanOfTan(Tree* e) {
+static bool PreprocessAtanOfTan(Tree* e) {
   PatternMatching::Context ctx;
   // Match atan(sin(a)/cos(b))
   if (!PatternMatching::Match(
           e, KATanRad(KMult(KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
           &ctx)) {
-    return;
+    return false;
   }
   Tree* a = const_cast<Tree*>(ctx.getTree(KA));
   Tree* b = const_cast<Tree*>(ctx.getTree(KB));
   const Tree* aFactor = getPiFactor(a);
   const Tree* bFactor = getPiFactor(b);
   if (!aFactor || !bFactor) {
-    return;
+    return false;
   }
   assert(aFactor->isRational() && bFactor->isRational());
 
@@ -343,14 +343,14 @@ static void preprocessAtanOfTan(Tree* e) {
     // a = b ==> sin(a)/cos(a)
     sub->removeTree();
     b->cloneTreeOverTree(a);
-    return;
+    return true;
   } else if (sub->treeIsIdenticalTo(1_e)) {
     // a = π + b ==> sin(-a)/cos(-a)
     sub->removeTree();
     a->moveTreeOverTree(
         PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = a}));
     b->cloneTreeOverTree(a);
-    return;
+    return true;
   }
   sub->removeTree();
 
@@ -362,14 +362,15 @@ static void preprocessAtanOfTan(Tree* e) {
     // a = -b ==> sin(a)/cos(a)
     add->removeTree();
     b->cloneTreeOverTree(a);
-    return;
+    return true;
   } else if (add->treeIsIdenticalTo(1_e)) {
     // a = π - b ==> sin(b)/cos(b)
     add->removeTree();
     a->cloneTreeOverTree(b);
-    return;
+    return true;
   }
   add->removeTree();
+  return false;
 }
 
 bool reduceATrigOfTrig(Tree* e, const Tree* piFactor, Type type) {
@@ -387,7 +388,6 @@ static bool simplifyATrigOfTrig(Tree* e) {
   Type type = Type::Undef;
   bool swapATrig = false;
   PatternMatching::Context ctx;
-  preprocessAtanOfTan(e);
   if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
     // asin(sin) or asin(cos) or acos(cos) or acos(sin)
     type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
@@ -476,9 +476,12 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
     return true;
   }
   // atan(tan(x)) = x
+  [[maybe_unused]] bool preprocessedAtanOfTan = PreprocessAtanOfTan(e);
   if (simplifyATrigOfTrig(e)) {
     return true;
   }
+  // atan should have been simplified if PreprocessAtanOfTan did something.
+  assert(!preprocessedAtanOfTan);
   if (PatternMatching::MatchReplaceSimplify(e, KATanRad(KInf),
                                             KMult(1_e / 2_e, π_e))) {
     return true;

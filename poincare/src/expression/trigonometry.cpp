@@ -448,10 +448,10 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   if (!argSign.isReal()) {
     return false;
   }
-  bool argIsOpposed = argSign.realSign().canBeStrictlyNegative() &&
-                      !argSign.realSign().canBeStrictlyPositive();
-  bool changed = argIsOpposed;
+  bool changed = false;
+  bool argIsOpposed = !argSign.isNull() && argSign.realSign().isNegative();
   if (argIsOpposed) {
+    changed = true;
     PatternMatching::MatchReplaceSimplify(arg, KA, KMult(-1_e, KA));
   }
   const Tree* angle = ExactFormula::GetAngleOf(arg, isAsin);

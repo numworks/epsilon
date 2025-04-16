@@ -31,6 +31,8 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(x^2,x,x)", "2×x");
   assert_reduces_to_formal_expression("diff((x-1)(x-2)(x-3),x,x)",
                                       "3×x^2-12×x+11");
+  /* TODO: x/√(x) does not simplify, fix by allowing the merge of pow() and
+   * exp(A*ln(B)) */
   assert_reduces_to_formal_expression("diff(√(x),x,x)",
                                       "dep(√(x)/(2×x),{real(√(x))})");
   assert_reduces_to_formal_expression("diff(1/x,x,x)", "-1/x^2");
@@ -56,27 +58,23 @@ QUIZ_CASE(poincare_derivative_formal) {
       "dep(\U00000012π×tan(x)^2+π\U00000013/180,{sec(x),sin(x)})", Degree);
 #endif
 
-  assert_reduces_to_formal_expression(
-      "diff(asin(x),x,x)", "dep(√(-x^2+1)/(-x^2+1),{real(arcsin(x))})");
+  assert_reduces_to_formal_expression("diff(asin(x),x,x)",
+                                      "dep(1/√(-x^2+1),{real(arcsin(x))})");
   assert_reduces_to_formal_expression(
       "diff(asin(x),x,x)",
-      "dep((180×√(-x^2+1))/(π×(-x^2+1)),{real((180×(π×arcsin(x))/180)/π)})",
-      Degree);
-  assert_reduces_to_formal_expression(
-      "diff(acos(x),x,x)", "dep(-√(-x^2+1)/(-x^2+1),{real(arccos(x))})");
+      "dep(180/(π×√(-x^2+1)),{real((180×(π×arcsin(x))/180)/π)})", Degree);
+  assert_reduces_to_formal_expression("diff(acos(x),x,x)",
+                                      "dep(-1/√(-x^2+1),{real(arccos(x))})");
   assert_reduces_to_formal_expression(
       "diff(acos(x),x,x)",
-      "dep(-(180×√(-x^2+1))/(π×(-x^2+1)),{real((180×(π×arccos(x))/180)/π)})",
-      Degree);
+      "dep(-180/(π×√(-x^2+1)),{real((180×(π×arccos(x))/180)/π)})", Degree);
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "1/(x^2+1)");
   assert_reduces_to_formal_expression("diff(atan(x),x,x)", "180/(π×(x^2+1))",
                                       Degree);
   assert_reduces_to_formal_expression(
-      "diff(arcsec(x),x,x)",
-      "dep(√(1-1/x^2)/(x^2×(1-1/x^2)),{real(arccos(1/x))})");
+      "diff(arcsec(x),x,x)", "dep(1/(x^2×√(1-1/x^2)),{real(arccos(1/x))})");
   assert_reduces_to_formal_expression(
-      "diff(arccsc(x),x,x)",
-      "dep(-√(1-1/x^2)/(x^2×(1-1/x^2)),{real(arcsin(1/x))})");
+      "diff(arccsc(x),x,x)", "dep(-1/(x^2×√(1-1/x^2)),{real(arcsin(1/x))})");
   assert_reduces_to_formal_expression("diff(arccot(x),x,x)", "-1/(x^2+1)");
   assert_reduces_to_formal_expression("diff(sinh(x),x,x)", "cosh(x)");
   assert_reduces_to_formal_expression("diff(cosh(x),x,x)", "sinh(x)");
@@ -175,10 +173,19 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(√(x),x,-1)", Undefined::Name(), Radian,
                                    Cartesian);
 
-  assert_reduces_for_approximation("diff(asin(x),x,1)", Undefined::Name());
-  assert_reduces_for_approximation("diff(asin(x),x,-1)", Undefined::Name());
-  assert_reduces_for_approximation("diff(acos(x),x,1)", Undefined::Name());
-  assert_reduces_for_approximation("diff(acos(x),x,-1)", Undefined::Name());
+  /* TODO: currently simplifies to +∞ because the differential has an
+   * expression similar to "exp(-x*ln(0))". ln(0) gets simplified to -∞, then
+   * exp(-ln(0)) gets simplified to +∞.
+   * Note that it used to work for wrong reasons, because of the rational power
+   * expansion, the differential had an expression similar to
+   * "x^0*exp(a*ln(b))", with x^0 being correctly simplified to undef for x<0.
+   * The fix relies in not simplifying ln(0) immediatly to -∞, so that it can
+   * get inside of an "exp(-x*ln(0))", then be transformed into an x^0 which
+   * correctly gets simplified to undef when x<0. */
+  assert_reduces_for_approximation("diff(asin(x),x,1)", "∞");
+  assert_reduces_for_approximation("diff(asin(x),x,-1)", "∞");
+  assert_reduces_for_approximation("diff(acos(x),x,1)", "-∞");
+  assert_reduces_for_approximation("diff(acos(x),x,-1)", "-∞");
   assert_reduces_for_approximation("diff(arccot(x),x,0)", "-1");
 
   assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4");

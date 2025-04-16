@@ -176,25 +176,6 @@ bool SystematicOperation::ReducePower(Tree* e) {
     if (base->isInteger() && PowerLike::ExpandRationalPower(e)) {
       return true;
     }
-    /* TODO: remove this if-block, which applies the rational power expansion
-     * for integer and non-integer bases. Only integer bases should be expanded.
-     */
-    if (n->isRational() && !Rational::IsStrictlyPositiveUnderOne(n)) {
-      // x^(a/b) -> x^((a-c)/b) * exp(ln(x)*c/b) with c remainder of a/b
-      TreeRef a = Rational::Numerator(n).pushOnTreeStack();
-      TreeRef b = Rational::Denominator(n).pushOnTreeStack();
-      assert(!b->isOne());
-      TreeRef c =
-          IntegerHandler::Remainder(Integer::Handler(a), Integer::Handler(b));
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KMult(KPow(KD, KMult(KAdd(KA, KMult(-1_e, KC)), KPow(KB, -1_e))),
-                KExp(KMult(KC, KPow(KB, -1_e), KLn(KD)))),
-          {.KA = a, .KB = b, .KC = c, .KD = base}));
-      c->removeTree();
-      b->removeTree();
-      a->removeTree();
-      return true;
-    }
 
     // After systematic reduction, a power can only have integer index.
     // base^n -> exp(n*ln(base))
@@ -745,25 +726,6 @@ bool SystematicOperation::ReduceExp(Tree* e) {
   }
 
   if (child->isMult()) {
-    /* TODO: remove this if-block, which applies the rational power expansion
-     * for integer and non-integer bases. Only integer bases should be expanded.
-     */
-    if (PatternMatching::Match(child, KMult(KA, KLn(KB)), &ctx)) {
-      const Tree* a = ctx.getTree(KA);
-      const Tree* b = ctx.getTree(KB);
-      assert(!b->isZero() && !a->isOne());
-      if (a->isRational() && ((b->isRational() && !b->isInteger()) ||
-                              !Rational::IsStrictlyPositiveUnderOne(a))) {
-        /* x^(a/b) is expected to have a unique representation :
-         * - (p/q)^(a/b) is p^(a/b)*q^(-a/b) (and then fallback on next step)
-         * - x^(a/b) is x^n * exp(ln(x)*c/b) with n integer, c and b positive
-         *   integers and c < b.
-         * Fallback on Power implementation for that : exp(a*ln(b)) -> b^a */
-        e->moveTreeOverTree(PatternMatching::CreateSimplify(KPow(KB, KA), ctx));
-        assert(!e->isExp());
-        return true;
-      }
-    }
     /* This last step shortcuts at least three advanced reduction steps and is
      * quite common when manipulating roots of negatives.
      * TODO: Deactivate it if advanced reduction is strong enough. */

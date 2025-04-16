@@ -223,7 +223,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("x×(-x^2+1)^(-1/2)", "x/√(-x^2+1)");
   // TODO: Simplify to x
   simplifies_to("(x×(-x^2/√(x^2+1)^2+1)^(-1/2))/√(x^2+1)",
-                "(x×√(x^2+1))/((x^2+1)×√(-x^2/(x^2+1)+1))");
+                "x/(√(x^2+1)×√(-x^2/(x^2+1)+1))");
   simplifies_to("(a+b)/2+(a+b)/2", "a+b");
   simplifies_to("(a+b+c)*3/4+(a+b+c)*1/4", "a+b+c");
   // Sort order
@@ -299,20 +299,19 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(sin(x),x,x)", "cos(x)");
   simplifies_to("diff(cos(x),x,x)", "-sin(x)");
   simplifies_to("diff(tan(x),x,x)", "dep(tan(x)^2+1,{tan(x)})");
-  simplifies_to("diff(acos(x),x,x)",
-                "dep(-√(-x^2+1)/"
-                "(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arccos(x))})");
-  simplifies_to("diff(asin(x),x,x)",
-                "dep(√(-x^2+1)/"
-                "(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arcsin(x))})");
+  simplifies_to(
+      "diff(acos(x),x,x)",
+      "dep(-1/√(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arccos(x))})");
+  simplifies_to(
+      "diff(asin(x),x,x)",
+      "dep(1/√(-x^2+1),{piecewise(0,abs(x)≤1,nonreal),real(arcsin(x))})");
   simplifies_to("diff(atan(x),x,x)", "1/(x^2+1)");
   simplifies_to("diff(sinh(x),x,x)", "cosh(x)");
   simplifies_to("diff(cosh(x),x,x)", "sinh(x)");
   simplifies_to("diff(tanh(x),x,x)",
                 "dep(-(tanh(x)^2)+1,{-(i×(sinh(x)×i))/cosh(x)})");
-  simplifies_to("diff(arcosh(x),x,x)",
-                "dep(√(x^2-1)/(x^2-1),{real(arcosh(x))})");
-  simplifies_to("diff(arsinh(x),x,x)", "√(x^2+1)/(x^2+1)");
+  simplifies_to("diff(arcosh(x),x,x)", "dep(1/√(x^2-1),{real(arcosh(x))})");
+  simplifies_to("diff(arsinh(x),x,x)", "1/√(x^2+1)");
   simplifies_to("diff(artanh(x),x,x)",
                 "dep(1/(-x^2+1),{real(-i×(artanh(x)×i))})");
 
@@ -320,10 +319,10 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(csc(x),x,x)", "-cos(x)/sin(x)^2");
   simplifies_to("diff(cot(x),x,x)", "dep(-1-cot(x)^2,{cot(x)})");
   simplifies_to("diff(arcsec(x),x,x)",
-                "dep(√(1-1/x^2)/(x^2×(1-1/x^2)),{piecewise(0,abs(1/"
+                "dep(1/(x^2×√(1-1/x^2)),{piecewise(0,abs(1/"
                 "x)≤1,nonreal),real(arccos(1/x))})");
   simplifies_to("diff(arccsc(x),x,x)",
-                "dep(-√(1-1/x^2)/(x^2×(1-1/x^2)),{piecewise(0,abs(1/"
+                "dep(-1/(x^2×√(1-1/x^2)),{piecewise(0,abs(1/"
                 "x)≤1,nonreal),real(arcsin(1/x))})");
   simplifies_to("diff(arccot(x),x,x)", "-1/(x^2+1)");
 }
@@ -1491,9 +1490,9 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   simplifies_to("sin({acos(-x), asin(-x), atan(-x)})",
                 "{√(-x^2+1),-x,-sin(arctan(x))}", cartesianCtx);
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
-                "{√(-x^2+1)/x,(x×√(-x^2+1))/(-x^2+1),x}", cartesianCtx);
+                "{√(-x^2+1)/x,x/√(-x^2+1),x}", cartesianCtx);
   simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",
-                "{-√(-x^2+1)/x,-(x×√(-x^2+1))/(-x^2+1),-x}", cartesianCtx);
+                "{-√(-x^2+1)/x,-x/√(-x^2+1),-x}", cartesianCtx);
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}",
                 {.m_complexFormat = ComplexFormat::Cartesian,
@@ -1823,8 +1822,7 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("1/(√(120)+2√(30))", "√(30)/120");
   // 1/√a => √a/a
   simplifies_to("1/√(3)", "√(3)/3");
-  // TODO: Maybe we want to limit rational power simplification to ration bases.
-  simplifies_to("π^(-3/4)", "root(π, 4)/π");  // π^(-3/4) ?
+  simplifies_to("π^(-3/4)", "1/π^(3/4)");  // π^(-3/4) ?
   // √a/√b <=> √(a/b)
   simplifies_to("√(3)/√(5)-√(3/5)", "0");
   // (c/d)^(a/b) => root(c^a*d^f,b)/d^g

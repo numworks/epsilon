@@ -305,6 +305,8 @@ QUIZ_CASE(poincare_simplification_multiplication) {
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("y^x×y^(-x)", "dep(1,{x,y})",
                                        SystemForAnalysis);
+  /* TODO: x/√(x) does not simplify, fix by allowing the merge of pow() and
+   * exp(A*ln(B)) */
   assert_parsed_expression_simplify_to("x/√(x)", "dep(√(x),{1/√(x)})",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "x",
@@ -1326,7 +1328,8 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("tan(41π/6)", "-√(3)/3");
   assert_parsed_expression_simplify_to("tan(π/4+1000π)", "1");
   assert_parsed_expression_simplify_to("tan(-π/3)", "-√(3)");
-  assert_parsed_expression_simplify_to("tan(-π/10)", "-(√(5)×√(5-2×√(5)))/5");
+  assert_parsed_expression_simplify_to("tan(-π/10)",
+                                       "-(√(2)×(-1+√(5)))/(2×√(5+√(5)))");
   assert_parsed_expression_simplify_to("tan(0)", "0", User, Degree);
   assert_parsed_expression_simplify_to("tan(180)", "0", User, Degree);
   assert_parsed_expression_simplify_to("tan(6300/29)", "tan(1080/29)", User,
@@ -2091,9 +2094,8 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("(2+3×i)×(4-2×i)",
                                        "2×√(65)×e^((-2×arctan(7/4)+π)/2×i)",
                                        User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("(3+i)/2",
-                                       "√(10)/2×e^((-2×arctan(3)+π)/2×i)", User,
-                                       Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("(3+i)/2", "√(5/2)×e^(arctan(1/3)×i)",
+                                       User, Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("(3+i)/(2+i)",
                                        "√(2)×e^((2×arctan(7)-π)/2×i)", User,
                                        Radian, MetricUnitFormat, Polar);

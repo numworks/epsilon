@@ -1,7 +1,7 @@
 EADK_EXPECTED_CRC := 26852e98
 
 # Compute crc of eadk.h if the crc32 command exists (on devs machines for instance)
-EADK_CRC := $(shell if command -v crc32 &>/dev/null; then crc32 $(PATH_eadk)/include/eadk/eadk.h ; else echo $(EADK_EXPECTED_CRC) ; fi)
+EADK_CRC := $(shell crc32 $(PATH_eadk)/include/eadk/eadk.h 2>/dev/null || echo $(EADK_EXPECTED_CRC))
 
 ifneq ($(EADK_CRC),$(EADK_EXPECTED_CRC))
 

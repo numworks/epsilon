@@ -109,9 +109,14 @@ SOURCES_ion += $(_ion_simulator_window_setup)
 
 # Simulator files - end
 
+# ION_external_apps is for the caller of ion to choose if it wants apps
+# _ion_external_apps is for particular platforms to tell if they support it
+ION_external_apps ?= 1
+ifeq ($(ION_external_apps),1)
 ifeq ($(_ion_external_apps),1)
 # External app simulator with dlopen
 PRIVATE_SFLAGS_ion += -DION_SIMULATOR_EXTERNAL_APP=1
+endif
 endif
 
 # Simulator layout

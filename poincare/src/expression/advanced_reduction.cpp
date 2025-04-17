@@ -10,7 +10,11 @@
 
 namespace Poincare::Internal {
 
-#define VERBOSE_REDUCTION (DEBUG ? 0 : 0)
+#define VERBOSE_REDUCTION 0
+
+#if !DEBUG
+#undef VERBOSE_REDUCTION
+#endif
 
 #if VERBOSE_REDUCTION > 0
 #define VERBOSE_INDENT(lvl)         \

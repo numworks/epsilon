@@ -1,5 +1,6 @@
 #include "systematic_reduction.h"
 
+#include <omg/unreachable.h>
 #include <poincare/src/memory/n_ary.h>
 
 #include "approximation.h"
@@ -19,14 +20,15 @@
 namespace Poincare::Internal {
 
 bool SystematicReduction::DeepReduce(Tree* e) {
+  if (e->isDepList()) {
+    // Never simplify any dependencies
+    return false;
+  }
   /* Although they are also flattened in ShallowReduce, flattening
    * here could save multiple ShallowReduce and flatten calls. */
   bool modified = (e->isMult() || e->isAdd()) && NAry::Flatten(e);
-  // Never simplify any dependencies
-  if (!e->isDepList()) {
-    for (Tree* child : e->children()) {
-      modified |= DeepReduce(child);
-    }
+  for (Tree* child : e->children()) {
+    modified |= DeepReduce(child);
   }
 
 #if ASSERTIONS
@@ -50,6 +52,23 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
    * this step, only children have been shallowReduced. By doing this before
    * shallowReduction, we don't have to handle undef, float and dependency
    * children in specialized systematic reduction. */
+  if (e->isDepList()) {
+    // Do not bubble-up to preserve well-formed dependencies
+    return false;
+  }
+  if (e->isDep()) {
+    /* Special case to handle bubbling up undef directly from dependency list to
+     * outer expression. The expression is temporarily malformed after bubbling
+     * up from dependency list. */
+    bool changed = Undefined::ShallowBubbleUpUndef(Dependency::Dependencies(e));
+    if (changed) {
+      if (Undefined::ShallowBubbleUpUndef(e)) {
+        ShallowReduce(e);
+        return true;
+      }
+      OMG::unreachable();
+    }
+  }
   bool bubbleUpFloat = false, bubbleUpDependency = false, bubbleUpUndef = false;
   for (const Tree* child : e->children()) {
     if (child->isFloat()) {

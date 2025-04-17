@@ -6,32 +6,13 @@
 #include "k_tree.h"
 #include "matrix.h"
 #include "number.h"
+#include "power_like.h"
 #include "rational.h"
 #include "systematic_operation.h"
 #include "systematic_reduction.h"
 #include "units/unit.h"
 
 namespace Poincare::Internal {
-
-const Tree* Base(const Tree* e) { return e->isPow() ? e->child(0) : e; }
-
-const Tree* Exponent(const Tree* e) { return e->isPow() ? e->child(1) : 1_e; }
-
-struct BaseAndExponent {
-  const Tree* base;
-  const Tree* exponent;
-  bool isValid() { return base != nullptr && exponent != nullptr; }
-};
-
-static BaseAndExponent GetExpBaseAndExponent(const Tree* e) {
-  assert(e->isExp());
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
-      ctx.getTree(KA)->isRational()) {
-    return {.base = ctx.getTree(KB), .exponent = ctx.getTree(KA)};
-  }
-  return {nullptr, nullptr};
-}
 
 static Tree* powerMerge(int* numberOfDependencies, const Tree* child,
                         const Tree* next, const Tree* base,
@@ -102,14 +83,16 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
   } else if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
     merge = Number::Multiplication(child, next);
-  } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
+  } else if (PowerLike::Base(child)->treeIsIdenticalTo(PowerLike::Base(next))) {
     // t^m * t^n -> t^(m+n)
-    merge = powerMerge(numberOfDependencies, child, next, Base(child),
-                       Exponent(child), Exponent(next));
+    merge =
+        powerMerge(numberOfDependencies, child, next, PowerLike::Base(child),
+                   PowerLike::Exponent(child), PowerLike::Exponent(next));
   } else if (child->isExp() && next->isExp()) {
     // This shortcuts 2 advanced reduction steps
-    BaseAndExponent beChild = GetExpBaseAndExponent(child);
-    BaseAndExponent beNext = GetExpBaseAndExponent(next);
+    PowerLike::BaseAndExponent beChild =
+        PowerLike::GetExpBaseAndExponent(child);
+    PowerLike::BaseAndExponent beNext = PowerLike::GetExpBaseAndExponent(next);
     if (beChild.isValid() && beNext.isValid() &&
         beChild.base->treeIsIdenticalTo(beNext.base)) {
       merge = powerMerge(numberOfDependencies, child, next, beChild.base,

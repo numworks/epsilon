@@ -77,6 +77,7 @@ $(addprefix expression/, \
   parametric.cpp \
   physical_constant.cpp \
   polynomial.cpp \
+	power_like.cpp \
   projection.cpp \
   random.cpp \
   rational.cpp \

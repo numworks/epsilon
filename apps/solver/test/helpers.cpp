@@ -182,6 +182,12 @@ static void compareSolutions(SystemOfEquations* system,
 
     i++;
   }
+#if POINCARE_TREE_LOG
+  if (system->numberOfSolutions() != i) {
+    std::cout << "\tWrong number of solution: expected " << i << " got "
+              << system->numberOfSolutions() << std::endl;
+  }
+#endif
   quiz_assert(system->numberOfSolutions() == i);
 }
 

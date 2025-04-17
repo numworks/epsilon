@@ -1567,6 +1567,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
   simplifies_to("1-cos(x)^2-sin(x)^2", "0");
   simplifies_to("(a+b)^2", "a^2+b^2+2×a×b");
   simplifies_to("a^2+2a*b+b^2-(a+b)^2", "0");
+  simplifies_to("(a^2+2a*b+b^2)/(a+b)", "dep(a+b,{nonNull(a+b)})");
   simplifies_to("a^2+b^2-2a*b-(-a+b)^2", "0");
   simplifies_to("1-2a+a^2-(a-1)^2", "0");
   simplifies_to("π^2-2*π*ln(2)+ln(2)^2-(-π+ln(2))^2", "0");

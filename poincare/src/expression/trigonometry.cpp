@@ -394,17 +394,6 @@ static bool PreprocessAtanOfTan(Tree* e) {
   return false;
 }
 
-bool reduceATrigOfTrig(Tree* e, const Tree* piFactor, Type type) {
-  assert(piFactor);
-  Tree* reducedPiFactor = computeSimplifiedPiFactorForType(piFactor, type);
-  if (!reducedPiFactor) {
-    return false;
-  }
-  e->moveTreeOverTree(reducedPiFactor);
-  PatternMatching::MatchReplaceSimplify(e, KA, KMult(π_e, KA));
-  return true;
-}
-
 static bool simplifyATrigOfTrig(Tree* e) {
   Type type = Type::Undef;
   bool swapATrig = false;
@@ -435,18 +424,21 @@ static bool simplifyATrigOfTrig(Tree* e) {
   } else {
     // x = π*y
     const Tree* rationalPiFactor = getPiFactor(ctx.getTree(KA));
-    bool isReduced = false;
+    TreeRef reducedPiFactor;
     if (rationalPiFactor) {
-      isReduced = reduceATrigOfTrig(e, rationalPiFactor, type);
+      reducedPiFactor =
+          computeSimplifiedPiFactorForType(rationalPiFactor, type);
     } else {
       TreeRef genericPiFactor =
           PatternMatching::CreateSimplify(KMult(KA, KPow(π_e, -1_e)), ctx);
-      isReduced = reduceATrigOfTrig(e, genericPiFactor, type);
+      reducedPiFactor = computeSimplifiedPiFactorForType(genericPiFactor, type);
       genericPiFactor->removeTree();
     }
-    if (!isReduced) {
+    if (!reducedPiFactor) {
       return false;
     }
+    e->moveTreeOverTree(reducedPiFactor);
+    PatternMatching::MatchReplaceSimplify(e, KA, KMult(π_e, KA));
   }
 
   // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)

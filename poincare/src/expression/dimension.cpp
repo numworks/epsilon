@@ -356,6 +356,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
        * builtins. */
       uint8_t cols = 0;
       Units::SIVector unitVector = Units::SIVector::Empty();
+      Units::SIVector posUnitVector = Units::SIVector::Empty();
+      Units::SIVector negUnitVector = Units::SIVector::Empty();
       for (int i = 0; i < e->numberOfChildren(); i++) {
         bool secondDivisionChild = (i == 1 && e->isDiv());
         Dimension next = childDim[i];
@@ -372,7 +374,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
             return false;
           }
           if (!unitVector.addAllCoefficients(next.unit.vector,
-                                             secondDivisionChild ? -1 : 1)) {
+                                             secondDivisionChild ? -1 : 1,
+                                             &posUnitVector, &negUnitVector)) {
             return false;
           }
         }

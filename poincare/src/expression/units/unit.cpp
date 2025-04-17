@@ -630,6 +630,8 @@ double Unit::GetValue(const Tree* unit) {
 
 SIVector Unit::GetSIVector(const Tree* baseUnits) {
   SIVector vector = SIVector::Empty();
+  Units::SIVector posUnitVector = Units::SIVector::Empty();
+  Units::SIVector negUnitVector = Units::SIVector::Empty();
   int numberOfFactors;
   int factorIndex = 0;
   const Tree* factor;
@@ -671,8 +673,9 @@ SIVector Unit::GetSIVector(const Tree* baseUnits) {
     }
     // Fill the vector with the unit's exponent
     assert(factor->isUnit());
-    [[maybe_unused]] bool success = vector.addAllCoefficients(
-        GetRepresentative(factor)->siVector(), exponent);
+    [[maybe_unused]] bool success =
+        vector.addAllCoefficients(GetRepresentative(factor)->siVector(),
+                                  exponent, &posUnitVector, &negUnitVector);
     assert(success);
     if (++factorIndex >= numberOfFactors) {
       break;

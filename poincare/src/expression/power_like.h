@@ -11,7 +11,9 @@ class PowerLike {
   struct BaseAndExponent {
     const Tree* base = nullptr;
     const Tree* exponent = nullptr;
+#if ASSERTIONS
     bool isValid() { return base != nullptr && exponent != nullptr; }
+#endif
   };
 
   static const Tree* Base(const Tree* e);

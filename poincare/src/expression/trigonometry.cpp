@@ -312,9 +312,10 @@ bool Trigonometry::ReduceTrigSecondElement(Tree* e, bool* isOpposed) {
   return changed;
 }
 
-// Transform atan(sin(a)/cos(b)) in atan(sin(x)/cos(x)) if possible
-static bool PreprocessAtanOfTan(Tree* e) {
-  // Match atan(sin(a)/cos(b)) or atan(-sin(a)/cos(b))
+// Return x such that atan(sin(a)/cos(b)) = atan(tan(x))
+static Tree* GetAtanTanArg(const Tree* e) {
+  /* Match atan(sin(a)/cos(b)) or atan(-sin(a)/cos(b)), the later being handled
+   * like atan(sin(-a)/cos(b))) */
   PatternMatching::Context ctx;
   bool opposeA = PatternMatching::Match(
       e, KATanRad(KMult(-1_e, KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
@@ -323,46 +324,44 @@ static bool PreprocessAtanOfTan(Tree* e) {
       !PatternMatching::Match(
           e, KATanRad(KMult(KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
           &ctx)) {
-    return false;
+    return nullptr;
   }
-  Tree* a = const_cast<Tree*>(ctx.getTree(KA));
-  Tree* b = const_cast<Tree*>(ctx.getTree(KB));
+  const Tree* a = ctx.getTree(KA);
+  const Tree* b = ctx.getTree(KB);
+  if (a->treeIsIdenticalTo(b)) {
+    /* No need to check -a == b because cos(-1*a) is systematically reduced to
+     * cos(a), so b can't be a mult with -1 factor. */
+    return PatternMatching::CreateSimplify(
+        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e});
+  }
   const Tree* aFactor = getPiFactor(a);
-  const Tree* bFactor = getPiFactor(b);
+  // Skip getPiFactor if aFactor is nullptr
+  const Tree* bFactor = aFactor ? getPiFactor(b) : nullptr;
   if (!aFactor || !bFactor) {
-    return false;
+    return nullptr;
   }
   assert(aFactor->isRational() && bFactor->isRational());
 
-  /* Transform atan(sin(a)/cos(b)) in atan(sin(x)/cos(x))
-   * a = b      ==>  sin(a)/cos(b) = sin(a)/cos(a) = sin(b)/cos(b)
-   * a = -b     ==>  sin(a)/cos(b) = sin(a)/cos(a)
-   * a = π - b  ==>  sin(a)/cos(b) = sin(b)/cos(b)
-   * a = π + b  ==>  sin(a)/cos(b) = sin(-a)/cos(-a) = sin(-b)/cos(-b) */
+  /* Handle sin(a)/cos(b) like tan(x) if :
+   * a = b      ==>  x = a = b     (sin(a) = sin(b))
+   * a = -b     ==>  x = a         (cos(b) = cos(a))
+   * a = π - b  ==>  x = b         (sin(a) = sin(π - b) = sin(b)  )
+   * a = π + b  ==>  x = -a = -b   (cos(b) = cos(a - π) = -cos(-a)) */
 
   Tree* sub = PatternMatching::CreateSimplify(
       KAdd(KMult(KA, KC), KMult(-1_e, KB)),
       {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
   sub->moveTreeOverTree(computeSimplifiedPiFactor(sub));
   assert(sub->isRational());
-  if (sub->treeIsIdenticalTo(0_e)) {
-    // a = b ==> sin(a)/cos(a)
+  if (sub->isZero()) {
     sub->removeTree();
-    a->cloneTreeOverTree(b);
-    if (opposeA) {
-      NAry::RemoveChildAtIndex(e->child(0), 0);
-    }
-    return true;
-  } else if (sub->treeIsIdenticalTo(1_e)) {
-    // a = π + b ==> sin(-a)/cos(-a)
+    // a = b, return b to ignore opposeA
+    return b->cloneTree();
+  } else if (sub->isOne()) {
     sub->removeTree();
-    a->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KMult(KC, KA), {.KA = a, .KC = opposeA ? 1_e : -1_e}));
-    b->cloneTreeOverTree(a);
-    if (opposeA) {
-      NAry::RemoveChildAtIndex(e->child(0), 0);
-    }
-    return true;
+    // a = π + b, return -a taking into account opposeA
+    return PatternMatching::CreateSimplify(
+        KMult(KC, KA), {.KA = a, .KC = opposeA ? 1_e : -1_e});
   }
   sub->removeTree();
 
@@ -371,27 +370,18 @@ static bool PreprocessAtanOfTan(Tree* e) {
       {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
   add->moveTreeOverTree(computeSimplifiedPiFactor(add));
   assert(add->isRational());
-  if (add->treeIsIdenticalTo(0_e)) {
-    // a = -b ==> sin(a)/cos(a)
+  if (add->isZero()) {
     add->removeTree();
-    a->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e}));
-    b->cloneTreeOverTree(a);
-    if (opposeA) {
-      NAry::RemoveChildAtIndex(e->child(0), 0);
-    }
-    return true;
-  } else if (add->treeIsIdenticalTo(1_e)) {
-    // a = π - b ==> sin(b)/cos(b)
+    // a = -b, return a taking into account opposeA
+    return PatternMatching::CreateSimplify(
+        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e});
+  } else if (add->isOne()) {
     add->removeTree();
-    a->cloneTreeOverTree(b);
-    if (opposeA) {
-      NAry::RemoveChildAtIndex(e->child(0), 0);
-    }
-    return true;
+    // a = π - b, return b
+    return b->cloneTree();
   }
   add->removeTree();
-  return false;
+  return nullptr;
 }
 
 static Tree* simplifyATrigOfTrig2(const Tree* arg, Type type, bool swapATrig) {
@@ -478,21 +468,16 @@ bool Trigonometry::ReduceATrig(Tree* e) {
 
 bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   assert(e->isATanRad());
-  // atan(tan(x)) = x
-  [[maybe_unused]] bool preprocessedAtanOfTan = PreprocessAtanOfTan(e);
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(
-          e, KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))),
-          &ctx)) {
-    // atan(sin/cos)
-    Tree* result = simplifyATrigOfTrig2(ctx.getTree(KA), Type::Tan, false);
+  Tree* atanTanArg = GetAtanTanArg(e);
+  if (atanTanArg) {
+    // Handle atan(tan(x))
+    TreeRef result = simplifyATrigOfTrig2(atanTanArg, Type::Tan, false);
+    atanTanArg->removeTree();
     if (result) {
       e->moveTreeOverTree(result);
       return true;
     }
   }
-  // atan should have been simplified if PreprocessAtanOfTan did something.
-  assert(!preprocessedAtanOfTan);
   if (PatternMatching::MatchReplaceSimplify(e, KATanRad(KInf),
                                             KMult(1_e / 2_e, π_e))) {
     return true;

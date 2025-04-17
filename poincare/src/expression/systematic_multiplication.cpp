@@ -83,31 +83,30 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
   } else if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
     merge = Number::Multiplication(child, next);
-  } else if (PowerLike::Base(child)->treeIsIdenticalTo(PowerLike::Base(next))) {
+  } else if (!child->isPowReal() && !next->isPowReal() &&
+             ((child->isExp() && next->isExp()) ||
+              (!child->isExp() && !next->isExp())) &&
+             PowerLike::Base(child)->treeIsIdenticalTo(PowerLike::Base(next))) {
     // t^m * t^n -> t^(m+n)
-    if (!child->isPowReal() && !next->isPowReal() &&
-        ((child->isExp() && next->isExp()) ||
-         (!child->isExp() && !next->isExp()))) {
-      /* PowReal trees cannot be merged without care because it could change the
-       * result. For example PowReal(-1, x) * PowReal(-1, x) is always equal to
-       * 1, but PowReal(-1, 2x) is equal to -1 or 1 depending on the value of x.
-       * See the SystematicOperation::ReducePowerReal function for more details.
-       */
-      /* The merge operation is also not applied if {child, next} is a pair of
-       * power-like trees in which one is an Exp(a*Ln()) expression and the
-       * other is a Pow or a PowReal. It would create an infinite loop. The
-       * merged tree would be splitted back into a Mult(Pow(t, n), Exp(m,
-       * Ln(t))) by the systematic reduction step that expands powers with a
-       * rational exponent outside of the [0, 1] range. */
-      PowerLike::BaseAndExponent childParameters =
-          PowerLike::GetBaseAndExponent(child);
-      PowerLike::BaseAndExponent nextParameters =
-          PowerLike::GetBaseAndExponent(next);
-      assert(childParameters.isValid() && nextParameters.isValid());
-      merge =
-          powerMerge(numberOfDependencies, child, next, childParameters.base,
-                     childParameters.exponent, nextParameters.exponent);
-    }
+    /* PowReal trees cannot be merged without care because it could change the
+     * result. For example PowReal(-1, x) * PowReal(-1, x) is always equal to 1,
+     * but PowReal(-1, 2x) is equal to -1 or 1 depending on the value of x. See
+     * the SystematicOperation::ReducePowerReal function for more details.
+     */
+    /* The merge operation is also not applied if {child, next} is a pair of
+     * power-like trees in which one is an Exp(a*Ln()) expression and the
+     * other is a Pow or a PowReal. It would create an infinite loop. The
+     * merged tree would be splitted back into a Mult(Pow(t, n), Exp(m,
+     * Ln(t))) by the systematic reduction step that expands powers with a
+     * rational exponent outside of the [0, 1] range. */
+    PowerLike::BaseAndExponent childParameters =
+        PowerLike::GetBaseAndExponent(child);
+    PowerLike::BaseAndExponent nextParameters =
+        PowerLike::GetBaseAndExponent(next);
+    assert(childParameters.isValid() && nextParameters.isValid());
+    merge = powerMerge(numberOfDependencies, child, next, childParameters.base,
+                       childParameters.exponent, nextParameters.exponent);
+
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.
     /* TODO: This isMatrix is not enough as the child tree could be of dimension

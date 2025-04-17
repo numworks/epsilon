@@ -312,78 +312,6 @@ bool Trigonometry::ReduceTrigSecondElement(Tree* e, bool* isOpposed) {
   return changed;
 }
 
-// Return x such that atan(sin(a)/cos(b)) = atan(tan(x))
-static Tree* GetAtanTanArg(const Tree* e) {
-  /* Match atan(sin(a)/cos(b)) or atan(-sin(a)/cos(b)), the later being handled
-   * like atan(sin(-a)/cos(b))) */
-  PatternMatching::Context ctx;
-  bool opposeA = PatternMatching::Match(
-      e, KATanRad(KMult(-1_e, KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
-      &ctx);
-  if (!opposeA &&
-      !PatternMatching::Match(
-          e, KATanRad(KMult(KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
-          &ctx)) {
-    return nullptr;
-  }
-  const Tree* a = ctx.getTree(KA);
-  const Tree* b = ctx.getTree(KB);
-  if (a->treeIsIdenticalTo(b)) {
-    /* No need to check -a == b because cos(-1*a) is systematically reduced to
-     * cos(a), so b can't be a mult with -1 factor. */
-    return PatternMatching::CreateSimplify(
-        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e});
-  }
-  const Tree* aFactor = getPiFactor(a);
-  // Skip getPiFactor if aFactor is nullptr
-  const Tree* bFactor = aFactor ? getPiFactor(b) : nullptr;
-  if (!aFactor || !bFactor) {
-    return nullptr;
-  }
-  assert(aFactor->isRational() && bFactor->isRational());
-
-  /* Handle sin(a)/cos(b) like tan(x) if :
-   * a = b      ==>  x = a = b     (sin(a) = sin(b))
-   * a = -b     ==>  x = a         (cos(b) = cos(a))
-   * a = π - b  ==>  x = b         (sin(a) = sin(π - b) = sin(b)  )
-   * a = π + b  ==>  x = -a = -b   (cos(b) = cos(a - π) = -cos(-a)) */
-
-  Tree* sub = PatternMatching::CreateSimplify(
-      KAdd(KMult(KA, KC), KMult(-1_e, KB)),
-      {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
-  sub->moveTreeOverTree(computeSimplifiedPiFactor(sub));
-  assert(sub->isRational());
-  if (sub->isZero()) {
-    sub->removeTree();
-    // a = b, return b to ignore opposeA
-    return b->cloneTree();
-  } else if (sub->isOne()) {
-    sub->removeTree();
-    // a = π + b, return -a taking into account opposeA
-    return PatternMatching::CreateSimplify(
-        KMult(KC, KA), {.KA = a, .KC = opposeA ? 1_e : -1_e});
-  }
-  sub->removeTree();
-
-  Tree* add = PatternMatching::CreateSimplify(
-      KAdd(KMult(KA, KC), KB),
-      {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
-  add->moveTreeOverTree(computeSimplifiedPiFactor(add));
-  assert(add->isRational());
-  if (add->isZero()) {
-    add->removeTree();
-    // a = -b, return a taking into account opposeA
-    return PatternMatching::CreateSimplify(
-        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e});
-  } else if (add->isOne()) {
-    add->removeTree();
-    // a = π - b, return b
-    return b->cloneTree();
-  }
-  add->removeTree();
-  return nullptr;
-}
-
 static Tree* SimplifyATrigOfTrig(const Tree* arg, Type type, bool swapATrig) {
   assert(type != Type::Undef);
   /* asin(sin(i*x)) = i*x, acos(cos(i*x)) = i*abs(i*x) and atan(tan(i*x)) = i*x
@@ -464,6 +392,78 @@ bool Trigonometry::ReduceATrig(Tree* e) {
         e, KA, isAsin ? KMult(-1_e, KA) : KAdd(π_e, KMult(-1_e, KA)));
   }
   return changed;
+}
+
+// Return x such that atan(sin(a)/cos(b)) = atan(tan(x))
+static Tree* GetAtanTanArg(const Tree* e) {
+  /* Match atan(sin(a)/cos(b)) or atan(-sin(a)/cos(b)), the later being handled
+   * like atan(sin(-a)/cos(b))) */
+  PatternMatching::Context ctx;
+  bool opposeA = PatternMatching::Match(
+      e, KATanRad(KMult(-1_e, KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
+      &ctx);
+  if (!opposeA &&
+      !PatternMatching::Match(
+          e, KATanRad(KMult(KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
+          &ctx)) {
+    return nullptr;
+  }
+  const Tree* a = ctx.getTree(KA);
+  const Tree* b = ctx.getTree(KB);
+  if (a->treeIsIdenticalTo(b)) {
+    /* No need to check -a == b because cos(-1*a) is systematically reduced to
+     * cos(a), so b can't be a mult with -1 factor. */
+    return PatternMatching::CreateSimplify(
+        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e});
+  }
+  const Tree* aFactor = getPiFactor(a);
+  // Skip getPiFactor if aFactor is nullptr
+  const Tree* bFactor = aFactor ? getPiFactor(b) : nullptr;
+  if (!aFactor || !bFactor) {
+    return nullptr;
+  }
+  assert(aFactor->isRational() && bFactor->isRational());
+
+  /* Handle sin(a)/cos(b) like tan(x) if :
+   * a = b      ==>  x = a = b     (sin(a) = sin(b))
+   * a = -b     ==>  x = a         (cos(b) = cos(a))
+   * a = π - b  ==>  x = b         (sin(a) = sin(π - b) = sin(b)  )
+   * a = π + b  ==>  x = -a = -b   (cos(b) = cos(a - π) = -cos(-a)) */
+
+  Tree* sub = PatternMatching::CreateSimplify(
+      KAdd(KMult(KA, KC), KMult(-1_e, KB)),
+      {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
+  sub->moveTreeOverTree(computeSimplifiedPiFactor(sub));
+  assert(sub->isRational());
+  if (sub->isZero()) {
+    sub->removeTree();
+    // a = b, return b to ignore opposeA
+    return b->cloneTree();
+  } else if (sub->isOne()) {
+    sub->removeTree();
+    // a = π + b, return -a taking into account opposeA
+    return PatternMatching::CreateSimplify(
+        KMult(KC, KA), {.KA = a, .KC = opposeA ? 1_e : -1_e});
+  }
+  sub->removeTree();
+
+  Tree* add = PatternMatching::CreateSimplify(
+      KAdd(KMult(KA, KC), KB),
+      {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
+  add->moveTreeOverTree(computeSimplifiedPiFactor(add));
+  assert(add->isRational());
+  if (add->isZero()) {
+    add->removeTree();
+    // a = -b, return a taking into account opposeA
+    return PatternMatching::CreateSimplify(
+        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e});
+  } else if (add->isOne()) {
+    add->removeTree();
+    // a = π - b, return b
+    return b->cloneTree();
+  }
+  add->removeTree();
+  return nullptr;
 }
 
 bool Trigonometry::ReduceArcTangentRad(Tree* e) {

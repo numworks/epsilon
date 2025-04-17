@@ -436,35 +436,19 @@ static Tree* simplifyATrigOfTrig2(const Tree* arg, Type type, bool swapATrig) {
   return result;
 }
 
-static bool simplifyATrigOfTrig(Tree* e) {
-  Type type = Type::Undef;
-  bool swapATrig = false;
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
-    // asin(sin) or asin(cos) or acos(cos) or acos(sin)
-    type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
-    swapATrig = type != (ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos);
-  } else if (PatternMatching::Match(
-                 e, KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))),
-                 &ctx)) {
-    // atan(sin/cos)
-    type = Type::Tan;
-  } else {
-    return false;
-  }
-  Tree* result = simplifyATrigOfTrig2(ctx.getTree(KA), type, swapATrig);
-  if (!result) {
-    return false;
-  }
-  e->moveTreeOverTree(result);
-  return true;
-}
-
 bool Trigonometry::ReduceATrig(Tree* e) {
   assert(e->isATrig());
   // atrig(trig(x))
-  if (simplifyATrigOfTrig(e)) {
-    return true;
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
+    // asin(sin) or asin(cos) or acos(cos) or acos(sin)
+    Type type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
+    bool swapATrig = type != (ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos);
+    Tree* result = simplifyATrigOfTrig2(ctx.getTree(KA), type, swapATrig);
+    if (result) {
+      e->moveTreeOverTree(result);
+      return true;
+    }
   }
   Tree* arg = e->child(0);
   bool isAsin = arg->nextTree()->isOne();
@@ -496,8 +480,16 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   assert(e->isATanRad());
   // atan(tan(x)) = x
   [[maybe_unused]] bool preprocessedAtanOfTan = PreprocessAtanOfTan(e);
-  if (simplifyATrigOfTrig(e)) {
-    return true;
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(
+          e, KATanRad(KMult(KPow(KTrig(KA, 0_e), -1_e), KTrig(KA, 1_e))),
+          &ctx)) {
+    // atan(sin/cos)
+    Tree* result = simplifyATrigOfTrig2(ctx.getTree(KA), Type::Tan, false);
+    if (result) {
+      e->moveTreeOverTree(result);
+      return true;
+    }
   }
   // atan should have been simplified if PreprocessAtanOfTan did something.
   assert(!preprocessedAtanOfTan);

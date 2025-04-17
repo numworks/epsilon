@@ -6,21 +6,25 @@
 namespace Poincare::Internal {
 
 const Tree* PowerLike::Base(const Tree* e) {
-  return e->isPow() ? e->child(0) : e;
+  return GetBaseAndExponent(e).base;
 }
 
 const Tree* PowerLike::Exponent(const Tree* e) {
-  return e->isPow() ? e->child(1) : 1_e;
+  return GetBaseAndExponent(e).exponent;
 }
 
-PowerLike::BaseAndExponent PowerLike::GetExpBaseAndExponent(const Tree* e) {
-  assert(e->isExp());
+PowerLike::BaseAndExponent PowerLike::GetBaseAndExponent(const Tree* e) {
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
       ctx.getTree(KA)->isRational()) {
     return {.base = ctx.getTree(KB), .exponent = ctx.getTree(KA)};
   }
-  return {nullptr, nullptr};
+  if (e->isPow() || e->isPowReal()) {
+    const Tree* base = e->child(0);
+    const Tree* exponent = base->nextTree();
+    return {base, exponent};
+  }
+  return {e, 1_e};
 }
 
 }  // namespace Poincare::Internal

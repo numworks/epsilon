@@ -85,18 +85,22 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     merge = Number::Multiplication(child, next);
   } else if (PowerLike::Base(child)->treeIsIdenticalTo(PowerLike::Base(next))) {
     // t^m * t^n -> t^(m+n)
-    merge =
-        powerMerge(numberOfDependencies, child, next, PowerLike::Base(child),
-                   PowerLike::Exponent(child), PowerLike::Exponent(next));
-  } else if (child->isExp() && next->isExp()) {
-    // This shortcuts 2 advanced reduction steps
-    PowerLike::BaseAndExponent beChild =
-        PowerLike::GetExpBaseAndExponent(child);
-    PowerLike::BaseAndExponent beNext = PowerLike::GetExpBaseAndExponent(next);
-    if (beChild.isValid() && beNext.isValid() &&
-        beChild.base->treeIsIdenticalTo(beNext.base)) {
-      merge = powerMerge(numberOfDependencies, child, next, beChild.base,
-                         beChild.exponent, beNext.exponent);
+    if ((child->isExp() && next->isExp()) ||
+        (!child->isExp() && !next->isExp())) {
+      /* The merge operation is not applied if {child, next} is a pair of
+       * power-like trees in which one is an Exp(a*Ln()) expression and the
+       * other is a Pow or a PowReal. It would create an infinite loop. The
+       * merged tree would be splitted back into a Mult(Pow(t, n), Exp(m,
+       * Ln(t))) by the systematic reduction step that expands powers with a
+       * rational exponent outside of the [0, 1] range. */
+      PowerLike::BaseAndExponent childParameters =
+          PowerLike::GetBaseAndExponent(child);
+      PowerLike::BaseAndExponent nextParameters =
+          PowerLike::GetBaseAndExponent(next);
+      assert(childParameters.isValid() && nextParameters.isValid());
+      merge =
+          powerMerge(numberOfDependencies, child, next, childParameters.base,
+                     childParameters.exponent, nextParameters.exponent);
     }
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.

@@ -9,18 +9,14 @@ namespace Poincare::Internal {
 class PowerLike {
  public:
   struct BaseAndExponent {
-    const Tree* base;
-    const Tree* exponent;
+    const Tree* base = nullptr;
+    const Tree* exponent = nullptr;
     bool isValid() { return base != nullptr && exponent != nullptr; }
   };
 
-  // TODO: support for PowReal() and Exp()
   static const Tree* Base(const Tree* e);
   static const Tree* Exponent(const Tree* e);
-
-  // TODO: support for Pow() and PowReal()
-  // TODO: handle trees which are not power-like like Base and Exponent
-  static BaseAndExponent GetExpBaseAndExponent(const Tree* e);
+  static BaseAndExponent GetBaseAndExponent(const Tree* e);
 };
 
 }  // namespace Poincare::Internal

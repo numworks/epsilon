@@ -107,6 +107,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     merge = powerMerge(numberOfDependencies, child, next, Base(child),
                        Exponent(child), Exponent(next));
   } else if (child->isExp() && next->isExp()) {
+    // This shortcuts 2 advanced reduction steps
     BaseAndExponent beChild = GetExpBaseAndExponent(child);
     BaseAndExponent beNext = GetExpBaseAndExponent(next);
     if (beChild.isValid() && beNext.isValid() &&

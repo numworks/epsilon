@@ -85,9 +85,15 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     merge = Number::Multiplication(child, next);
   } else if (PowerLike::Base(child)->treeIsIdenticalTo(PowerLike::Base(next))) {
     // t^m * t^n -> t^(m+n)
-    if ((child->isExp() && next->isExp()) ||
-        (!child->isExp() && !next->isExp())) {
-      /* The merge operation is not applied if {child, next} is a pair of
+    if (!child->isPowReal() && !next->isPowReal() &&
+        ((child->isExp() && next->isExp()) ||
+         (!child->isExp() && !next->isExp()))) {
+      /* PowReal trees cannot be merged without care because it could change the
+       * result. For example PowReal(-1, x) * PowReal(-1, x) is always equal to
+       * 1, but PowReal(-1, 2x) is equal to -1 or 1 depending on the value of x.
+       * See the SystematicOperation::ReducePowerReal function for more details.
+       */
+      /* The merge operation is also not applied if {child, next} is a pair of
        * power-like trees in which one is an Exp(a*Ln()) expression and the
        * other is a Pow or a PowReal. It would create an infinite loop. The
        * merged tree would be splitted back into a Mult(Pow(t, n), Exp(m,

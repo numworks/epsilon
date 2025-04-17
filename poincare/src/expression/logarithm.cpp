@@ -60,6 +60,21 @@ bool Logarithm::ReduceLn(Tree* e) {
     e->cloneTreeOverTree(KMult(-1_e, KInf));
     return true;
   }
+#if 0
+  // Seems like a good idea, but doesn't quite work for √(√(-8))
+  // This bypass an advanced reduction step
+  bool changed = false;
+  if (child->isStrictlyNegativeRational()) {
+    // ln(-p) -> ln(p) + iπ
+    Rational::SetSign(child, NonStrictSign::Positive);
+    e->moveTreeOverTree(
+        PatternMatching::Create(KAdd(KA, KMult(π_e, i_e)), {.KA = e}));
+    // Hack to avoid calling ReduceLn again to reduce the ln(positiveRational)
+    e = e->child(0);
+    child = e->child(0);
+    changed = true;
+  }
+#endif
   if (child->isStrictlyPositiveRational() &&
       Rational::Numerator(child).isOne()) {
     // ln(1/n) = -ln(n)

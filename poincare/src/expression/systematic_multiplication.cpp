@@ -17,6 +17,45 @@ const Tree* Base(const Tree* e) { return e->isPow() ? e->child(0) : e; }
 
 const Tree* Exponent(const Tree* e) { return e->isPow() ? e->child(1) : 1_e; }
 
+struct BaseAndExponent {
+  const Tree* base;
+  const Tree* exponent;
+  bool isValid() { return base != nullptr && exponent != nullptr; }
+};
+
+static BaseAndExponent GetExpBaseAndExponent(const Tree* e) {
+  assert(e->isExp());
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
+      ctx.getTree(KA)->isRational()) {
+    return {.base = ctx.getTree(KB), .exponent = ctx.getTree(KA)};
+  }
+  return {nullptr, nullptr};
+}
+
+static Tree* powerMerge(int* numberOfDependencies, const Tree* child,
+                        const Tree* next, const Tree* base,
+                        const Tree* expChild, const Tree* expNext) {
+  Tree* merge = PatternMatching::CreateSimplify(
+      KPow(KA, KAdd(KB, KC)), {.KA = base, .KB = expChild, .KC = expNext});
+  if (merge->isDep()) {
+    merge->removeNode();
+    *numberOfDependencies += merge->nextTree()->numberOfChildren();
+    merge->nextTree()->removeNode();
+  }
+  // dep(t^(m+n), {t^m}) if m <= 0
+  if (!GetComplexSign(expChild).realSign().isStrictlyPositive()) {
+    child->cloneTree();
+    (*numberOfDependencies)++;
+    // dep(t^(m+n), {t^m, t^n}) if n <= 0 also
+    if (!GetComplexSign(expNext).realSign().isStrictlyPositive()) {
+      next->cloneTree();
+      (*numberOfDependencies)++;
+    }
+  }
+  return merge;
+}
+
 static bool approximationIsFinite(const Tree* e) {
   if (!Approximation::CanApproximate(e)) {
     return false;
@@ -65,23 +104,15 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     merge = Number::Multiplication(child, next);
   } else if (Base(child)->treeIsIdenticalTo(Base(next))) {
     // t^m * t^n -> t^(m+n)
-    merge = PatternMatching::CreateSimplify(
-        KPow(KA, KAdd(KB, KC)),
-        {.KA = Base(child), .KB = Exponent(child), .KC = Exponent(next)});
-    if (merge->isDep()) {
-      merge->removeNode();
-      *numberOfDependencies += merge->nextTree()->numberOfChildren();
-      merge->nextTree()->removeNode();
-    }
-    // dep(t^(m+n), {t^m}) if m <= 0
-    if (!GetComplexSign(Exponent(child)).realSign().isStrictlyPositive()) {
-      child->cloneTree();
-      (*numberOfDependencies)++;
-      // dep(t^(m+n), {t^m, t^n}) if n <= 0 also
-      if (!GetComplexSign(Exponent(next)).realSign().isStrictlyPositive()) {
-        next->cloneTree();
-        (*numberOfDependencies)++;
-      }
+    merge = powerMerge(numberOfDependencies, child, next, Base(child),
+                       Exponent(child), Exponent(next));
+  } else if (child->isExp() && next->isExp()) {
+    BaseAndExponent beChild = GetExpBaseAndExponent(child);
+    BaseAndExponent beNext = GetExpBaseAndExponent(next);
+    if (beChild.isValid() && beNext.isValid() &&
+        beChild.base->treeIsIdenticalTo(beNext.base)) {
+      merge = powerMerge(numberOfDependencies, child, next, beChild.base,
+                         beChild.exponent, beNext.exponent);
     }
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.

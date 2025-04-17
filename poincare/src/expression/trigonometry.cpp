@@ -384,7 +384,7 @@ static Tree* GetAtanTanArg(const Tree* e) {
   return nullptr;
 }
 
-static Tree* simplifyATrigOfTrig2(const Tree* arg, Type type, bool swapATrig) {
+static Tree* SimplifyATrigOfTrig(const Tree* arg, Type type, bool swapATrig) {
   assert(type != Type::Undef);
   /* asin(sin(i*x)) = i*x, acos(cos(i*x)) = i*abs(i*x) and atan(tan(i*x)) = i*x
    * for x real */
@@ -434,7 +434,7 @@ bool Trigonometry::ReduceATrig(Tree* e) {
     // asin(sin) or asin(cos) or acos(cos) or acos(sin)
     Type type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
     bool swapATrig = type != (ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos);
-    Tree* result = simplifyATrigOfTrig2(ctx.getTree(KA), type, swapATrig);
+    Tree* result = SimplifyATrigOfTrig(ctx.getTree(KA), type, swapATrig);
     if (result) {
       e->moveTreeOverTree(result);
       return true;
@@ -471,7 +471,7 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   Tree* atanTanArg = GetAtanTanArg(e);
   if (atanTanArg) {
     // Handle atan(tan(x))
-    TreeRef result = simplifyATrigOfTrig2(atanTanArg, Type::Tan, false);
+    TreeRef result = SimplifyATrigOfTrig(atanTanArg, Type::Tan, false);
     atanTanArg->removeTree();
     if (result) {
       e->moveTreeOverTree(result);

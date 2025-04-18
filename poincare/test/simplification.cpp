@@ -961,6 +961,11 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("cos(0_rad)", "1");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
   simplifies_to("_s^-1", "1×_s^(-1)");
+  /* NOTE: Order of units should not matter. If an overflow can occur when
+   * reordering the multiplication, we return undef, even if no overflow
+   * technically happened */
+  simplifies_to("_s^127 * _s^(-1) * _s", "undef");
+  simplifies_to("_s^127 * _s * _s^(-1)", "undef");
 #if 0
   // See comment in DeepCheckDimensions
   simplifies_to("abs(-3.3_m)", "3.3×_m");

@@ -119,24 +119,17 @@ struct SIVector {
   // Return false if operation overflowed.
   [[nodiscard]] constexpr bool static AccumulativeAbsoluteIsSafe(
       SIVector* pos, SIVector* neg, uint8_t i, int8_t coef, int8_t factor) {
-    if (!pos || !neg) {
-      return true;
+    if (pos && neg && coef != 0) {
+      assert(factor != 0);
+      SIVector* vector = coef * factor >= 0 ? pos : neg;
+      if (!vector->setCoefficientAtIndex(
+              i, vector->coefficientAtIndex(i) + coef * factor)) {
+        return false;
+      }
+      assert(static_cast<int>(vector->coefficientAtIndex(i)) +
+                 static_cast<int>(coef) * static_cast<int>(factor) ==
+             (vector->coefficientAtIndex(i) + coef * factor));
     }
-    assert(factor != 0);
-    if (coef == 0) {
-      return true;
-    }
-    SIVector* vector = pos;
-    if (coef * factor < 0) {
-      vector = neg;
-    }
-    if (!vector->setCoefficientAtIndex(
-            i, vector->coefficientAtIndex(i) + coef * factor)) {
-      return false;
-    }
-    assert(static_cast<int>(vector->coefficientAtIndex(i)) +
-               static_cast<int>(coef) * static_cast<int>(factor) ==
-           (vector->coefficientAtIndex(i) + coef * factor));
     return true;
   }
 };

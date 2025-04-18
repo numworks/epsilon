@@ -446,13 +446,10 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("e^(π*i/6)+e^(-π*i/3)", "(1+√(3))/2+(1/2-√(3)/2)×i",
                 cartesianCtx);
   simplifies_to("e^(π*i/6)*e^(-π*i/3)", "√(3)/2-1/2×i", cartesianCtx);
-  // TODO: Simplify to root(2,4)
   simplifies_to("re(√(√(-8)))", "root(2,4)", cartesianCtx);
   // TODO: Simplify to √(30+2×√(229))/2
   simplifies_to("re(√(15+2×i))", "re(√(15+2×i))", cartesianCtx);
-  // TODO: Simplify to 2×π×i
-  simplifies_to("5*ln(1+i)-ln(exp(5*ln(1+i)))", "5×ln(1+i)-ln(-4-4×i)",
-                cartesianCtx);
+  simplifies_to("5*ln(1+i)-ln(exp(5*ln(1+i)))", "2×π×i", cartesianCtx);
   simplifies_to("0.3*ln(1+i)-ln(exp(0.3*ln(1+i)))", "0", cartesianCtx);
 }
 
@@ -1345,7 +1342,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(inf,x)", "dep(∞×sign(1/ln(x)),{nonNull(x),realPos(x)})");
   simplifies_to("log(-inf,x)",
                 "dep(nonreal,{nonNull(x),realPos(x),ln(-∞)/ln(x)})");
-  simplifies_to("log(-inf,x)", "dep(ln(-∞)/ln(x),{nonNull(x)})", cartesianCtx);
+  simplifies_to("log(-inf,x)", "dep((∞+π×i)/ln(x),{nonNull(x)})", cartesianCtx);
   /* Should be nonreal, TODO return NonReal when evaluating PowReal(x) with x
    * non real */
   simplifies_to("log(inf,-3)", "undef");
@@ -1355,7 +1352,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(1,inf)", "0");
   simplifies_to("log(1,-inf)", "0", cartesianCtx);
   simplifies_to("log(x,inf)", "dep(0,{0×ln(x),nonNull(x),realPos(x)})");
-  simplifies_to("log(x,-inf)", "dep(ln(x)/ln(-∞),{nonNull(x)})", cartesianCtx);
+  simplifies_to("log(x,-inf)", "dep(ln(x)/(∞+π×i),{nonNull(x)})", cartesianCtx);
   simplifies_to("log(inf,inf)", "undef");
   // TODO_PCJ simplifies_to("log(-inf,inf)", "undef", cartesianCtx);
   // TODO_PCJ simplifies_to("log(inf,-inf)", "undef", cartesianCtx);

@@ -28,6 +28,19 @@ Type ShortTypeForBigType(Type t) {
       OMG::unreachable();
   }
 }
+
+int childrenCoeffLn(ComplexSign sign) {
+  int childrenCoeff = 2;
+  if (sign.isReal() && sign.realSign().isStrictlyNegative()) {
+    // Increase cost of real negative children in roots
+    childrenCoeff = 4;
+  } else if (!sign.isReal()) {
+    // Increase cost of non-real chlidren even more
+    childrenCoeff = 8;
+  }
+  return childrenCoeff;
+}
+
 }  // namespace
 
 int Metric::GetTrueMetric(const Tree* e) {
@@ -78,14 +91,8 @@ int Metric::GetTrueMetric(const Tree* e) {
           result += GetTrueMetric(exponent);
         }
         exponent->removeTree();
-        childrenCoeff = 2;
         const Tree* base = ctx.getTree(KB);
-        ComplexSign baseSign = GetComplexSign(base);
-        if ((baseSign.isReal() && baseSign.realSign().isStrictlyNegative()) ||
-            (baseSign.isPureIm() && baseSign.imagSign().isStrictlyNegative())) {
-          // Increase cost of negative children in roots
-          childrenCoeff = 4;
-        }
+        childrenCoeff = childrenCoeffLn(GetComplexSign(base));
         return result + GetTrueMetric(base) * childrenCoeff;
       }
       break;
@@ -105,6 +112,10 @@ int Metric::GetTrueMetric(const Tree* e) {
       childrenCoeff = 2;
       // Ignore second child
       return result + GetTrueMetric(e->child(0)) * childrenCoeff;
+    case Type::Ln: {
+      childrenCoeff = childrenCoeffLn(GetComplexSign(e->child(0)));
+      break;
+    }
     case Type::Abs:
     case Type::Arg:
     case Type::Im:
@@ -118,7 +129,6 @@ int Metric::GetTrueMetric(const Tree* e) {
     case Type::PowReal:
     case Type::Root:
     case Type::Log:
-    case Type::Ln:
     case Type::Sign:
       childrenCoeff = 2;
       break;

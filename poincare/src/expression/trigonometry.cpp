@@ -398,14 +398,9 @@ bool Trigonometry::ReduceATrig(Tree* e) {
 
 // Return x such that atan(sin(a)/cos(b)) = atan(tan(x))
 static Tree* GetAtanTanArg(const Tree* e) {
-  /* Match atan(sin(a)/cos(b)) or atan(-sin(a)/cos(b)), the later being handled
-   * like atan(sin(-a)/cos(b))) */
+  // Match atan(sin(a)/cos(b))
   PatternMatching::Context ctx;
-  bool opposeA = PatternMatching::Match(
-      e, KATanRad(KMult(-1_e, KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
-      &ctx);
-  if (!opposeA &&
-      !PatternMatching::Match(
+  if (!PatternMatching::Match(
           e, KATanRad(KMult(KPow(KTrig(KB, 0_e), -1_e), KTrig(KA, 1_e))),
           &ctx)) {
     return nullptr;
@@ -415,8 +410,7 @@ static Tree* GetAtanTanArg(const Tree* e) {
   if (a->treeIsIdenticalTo(b)) {
     /* No need to check -a == b because cos(-1*a) is systematically reduced to
      * cos(a), so b can't be a mult with -1 factor. */
-    return PatternMatching::CreateSimplify(
-        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e});
+    return a->cloneTree();
   }
   const Tree* aFactor = getPiFactor(a);
   // Skip getPiFactor if aFactor is nullptr
@@ -432,33 +426,29 @@ static Tree* GetAtanTanArg(const Tree* e) {
    * a = π - b  ==>  x = b         (sin(a) = sin(π - b) = sin(b)  )
    * a = π + b  ==>  x = -a = -b   (cos(b) = cos(a - π) = -cos(-a)) */
 
-  Tree* sub = PatternMatching::CreateSimplify(
-      KAdd(KMult(KA, KC), KMult(-1_e, KB)),
-      {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
+  Tree* sub = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
+                                              {.KA = aFactor, .KB = bFactor});
   sub->moveTreeOverTree(computeSimplifiedPiFactor(sub));
   assert(sub->isRational());
   if (sub->isZero()) {
     sub->removeTree();
-    // a = b, return b to ignore opposeA
-    return b->cloneTree();
+    // a = b, return a
+    return a->cloneTree();
   } else if (sub->isOne()) {
     sub->removeTree();
-    // a = π + b, return -a taking into account opposeA
-    return PatternMatching::CreateSimplify(
-        KMult(KC, KA), {.KA = a, .KC = opposeA ? 1_e : -1_e});
+    // a = π + b, return -a
+    return PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = a});
   }
   sub->removeTree();
 
-  Tree* add = PatternMatching::CreateSimplify(
-      KAdd(KMult(KA, KC), KB),
-      {.KA = aFactor, .KB = bFactor, .KC = opposeA ? -1_e : 1_e});
+  Tree* add = PatternMatching::CreateSimplify(KAdd(KA, KB),
+                                              {.KA = aFactor, .KB = bFactor});
   add->moveTreeOverTree(computeSimplifiedPiFactor(add));
   assert(add->isRational());
   if (add->isZero()) {
     add->removeTree();
-    // a = -b, return a taking into account opposeA
-    return PatternMatching::CreateSimplify(
-        KMult(KC, KA), {.KA = a, .KC = opposeA ? -1_e : 1_e});
+    // a = -b, return a
+    return a->cloneTree();
   } else if (add->isOne()) {
     add->removeTree();
     // a = π - b, return b
@@ -470,6 +460,22 @@ static Tree* GetAtanTanArg(const Tree* e) {
 
 bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   assert(e->isATanRad());
+  Tree* arg = e->child(0);
+  ComplexSign argSign = GetComplexSign(arg);
+  Sign argRealSign = argSign.realSign();
+  /* Oppose the argument if arg is negative, or if sign is unknown and there is
+   * a -1 factor. Last case allows solving atan(-tan(x)). */
+  PatternMatching::Context ctx;
+  bool argIsOpposed =
+      !argRealSign.isNull() &&
+      (argRealSign.isNegative() ||
+       (argRealSign.canBeStrictlyNegative() &&
+        PatternMatching::Match(arg, KMult(KA_s, -1_e, KB_s), &ctx)));
+  if (argIsOpposed) {
+    // atan(-x) = -atan(x)
+    return PatternMatching::MatchReplaceSimplify(
+        e, KATanRad(KA), KMult(-1_e, KATanRad(KMult(-1_e, KA))));
+  }
   Tree* atanTanArg = GetAtanTanArg(e);
   if (atanTanArg) {
     // Handle atan(tan(x))
@@ -480,44 +486,27 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
       return true;
     }
   }
-  if (PatternMatching::MatchReplaceSimplify(e, KATanRad(KInf),
-                                            KMult(1_e / 2_e, π_e))) {
-    return true;
-  }
-  Tree* arg = e->child(0);
-  ComplexSign argSign = GetComplexSign(arg);
   if (!argSign.isReal()) {
     return false;
   }
-  bool changed = false;
-  bool argIsOpposed = !argSign.isNull() && argSign.realSign().isNegative();
-  if (argIsOpposed) {
-    changed = true;
-    bool argIsAdd = arg->isAdd();
-    PatternMatching::MatchReplaceSimplify(arg, KA, KMult(-1_e, KA));
-    if (argIsAdd) {
-      /* Expand the -1 to directly catch exact values such as (-1)*(-2+√3).
-       * Advanced reduction will factorize it later if needed. */
-      AdvancedOperation::ExpandMult(arg);
-    }
+  if (PatternMatching::Match(arg, KMult(-1_e, KAdd(KA_s)), &ctx)) {
+    /* Expand the -1 to directly catch exact values such as (-1)*(-2+√3).
+     * Advanced reduction will factorize it later if needed.
+     * This shortcuts an advanced reduction step. */
+    AdvancedOperation::ExpandMult(arg);
   }
   if (arg->isInf()) {
-    changed = true;
     e->cloneTreeOverTree(KMult(1_e / 2_e, π_e));
-  } else {
-    const Tree* angle = ExactFormula::GetAngleOf(arg, Type::Tan);
-    if (angle) {
-      e->cloneTreeOverTree(angle);
-      changed = true;
-    }
+    return true;
   }
-  if (argIsOpposed) {
-    assert(changed);
-    // atan(-x) = -atan(x)
-    PatternMatching::MatchReplaceSimplify(e, KA, KMult(-1_e, KA));
+  const Tree* angle = ExactFormula::GetAngleOf(arg, Type::Tan);
+  if (angle) {
+    e->cloneTreeOverTree(angle);
+    return true;
   }
+
   // TODO_PCJ: Reduce atan(1/x) in dep(sign(x)*π/2-atan(x),{1/x})
-  return changed;
+  return false;
 }
 
 bool Trigonometry::ReduceArCosH(Tree* e) {

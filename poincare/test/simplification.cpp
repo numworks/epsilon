@@ -1457,17 +1457,17 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
   // Inverse trigonometry
   simplifies_to("acos(-x)", "arccos(-x)", cartesianCtx);
   simplifies_to("asin(-x)", "arcsin(-x)", cartesianCtx);
-  simplifies_to("atan(-x)", "arctan(-x)", cartesianCtx);
+  simplifies_to("atan(-x)", "-arctan(x)", cartesianCtx);
 
   // trig(atrig)
   simplifies_to("cos({acos(x), asin(x), atan(x)})",
                 "{x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
   simplifies_to("cos({acos(-x), asin(-x), atan(-x)})",
-                "{-x,√(-x^2+1),cos(arctan(-x))}", cartesianCtx);
+                "{-x,√(-x^2+1),cos(arctan(x))}", cartesianCtx);
   simplifies_to("sin({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1),x,sin(arctan(x))}", cartesianCtx);
   simplifies_to("sin({acos(-x), asin(-x), atan(-x)})",
-                "{√(-x^2+1),-x,sin(arctan(-x))}", cartesianCtx);
+                "{√(-x^2+1),-x,-sin(arctan(x))}", cartesianCtx);
   simplifies_to("tan({acos(x), asin(x), atan(x)})",
                 "{√(-x^2+1)/x,(x×√(-x^2+1))/(-x^2+1),x}", cartesianCtx);
   simplifies_to("tan({acos(-x), asin(-x), atan(-x)})",

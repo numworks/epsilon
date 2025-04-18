@@ -152,6 +152,31 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
 }
 
 bool AdvancedOperation::ExpandExp(Tree* e) {
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
+      ctx.getTree(KA)->isHalf()) {
+    ComplexSign sign = GetComplexSign(ctx.getTree(KB));
+    if (!sign.imagSign().isNull() && sign.imagSign().hasKnownStrictSign()) {
+      /* e = √(a+bi) with b not null and of known sign
+       *
+       * Re(e):           √(1/2 * (√(a^2+b^2)+a))
+       * Im(e): sign(b) * √(1/2 * (√(a^2+b^2)-a))
+       * and abs(KB) = abs(a+bi) = √(a^2+b^2) */
+      TreeRef re = PatternMatching::CreateSimplify(KRe(KB), ctx);
+      Tree* abs = PatternMatching::CreateSimplify(KAbs(KB), ctx);
+      Tree* res = PatternMatching::CreateSimplify(
+          KAdd(KExp(KMult(KH, KLn(KMult(KH, KAdd(KA, KB))))),
+               KMult(KExp(KMult(KH, KLn(KMult(KH, KAdd(KMult(-1_e, KA), KB))))),
+                     KC)),
+          {.KA = re,
+           .KB = abs,
+           .KC = sign.imagSign().isStrictlyPositive() ? i_e : KMult(-1_e, i_e),
+           .KH = 1_e / 2_e});
+      e->moveTreeOverTree(res);
+      SharedTreeStack->flushFromBlock(re);
+      return true;
+    }
+  }
   return
       // exp(A?+B?i+C?) = exp(A+C)*(cos(B) + sin(B)*i)
       /* This is a more generic form of the previous exp(ai) => cos(b)+sin(b)i.

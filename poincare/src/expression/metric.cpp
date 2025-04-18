@@ -29,7 +29,7 @@ Type ShortTypeForBigType(Type t) {
   }
 }
 
-int childrenCoeffLn(ComplexSign sign) {
+int ChildrenCoeffLn(ComplexSign sign) {
   int childrenCoeff = 2;
   if (sign.isReal() && sign.realSign().isStrictlyNegative()) {
     // Increase cost of real negative children in roots
@@ -92,7 +92,7 @@ int Metric::GetTrueMetric(const Tree* e) {
         }
         exponent->removeTree();
         const Tree* base = ctx.getTree(KB);
-        childrenCoeff = childrenCoeffLn(GetComplexSign(base));
+        childrenCoeff = ChildrenCoeffLn(GetComplexSign(base));
         return result + GetTrueMetric(base) * childrenCoeff;
       }
       break;
@@ -113,7 +113,7 @@ int Metric::GetTrueMetric(const Tree* e) {
       // Ignore second child
       return result + GetTrueMetric(e->child(0)) * childrenCoeff;
     case Type::Ln: {
-      childrenCoeff = childrenCoeffLn(GetComplexSign(e->child(0)));
+      childrenCoeff = ChildrenCoeffLn(GetComplexSign(e->child(0)));
       break;
     }
     case Type::Abs:

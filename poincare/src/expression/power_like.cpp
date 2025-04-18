@@ -15,6 +15,7 @@ const Tree* PowerLike::Exponent(const Tree* e) {
 
 PowerLike::BaseAndExponent PowerLike::GetBaseAndExponent(const Tree* e) {
   PatternMatching::Context ctx;
+  // TODO: handle matching KExp(KMult(KA_p, KLn(KB)))
   if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
       ctx.getTree(KA)->isRational()) {
     return {.base = ctx.getTree(KB), .exponent = ctx.getTree(KA)};

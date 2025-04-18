@@ -861,6 +861,8 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("(-41)^(4/5)", "41^(4/5)");
   //   * -|x|^y if p is odd
   simplifies_to("(-41)^(5/7)", "-(41^(5/7))");
+  // Do not merge PowReal if the exponents are unknown
+  simplifies_to("(-1)^y×(-1)^y", "(-1)^y×(-1)^y");
 
   // Complex Power
   simplifies_to("√(x)^2", "x", cartesianCtx);

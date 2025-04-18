@@ -80,7 +80,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
                  Calculation::EqualSign::Equal) {
     /* Case 2.
      * If the user used a decimal in the input and the exact output is equal to
-     * the approximation, prefer using the approximation too keep the decimal
+     * the approximation, prefer using the approximation to keep the decimal
      * form. */
     ansExpr = approxOutput;
   } else {

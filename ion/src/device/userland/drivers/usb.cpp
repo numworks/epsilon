@@ -12,7 +12,7 @@ namespace USB {
 void SVC_ATTRIBUTES willExecuteDFU() {
   SVC_RETURNING_VOID(SVC_USB_WILL_EXECUTE_DFU)
 
-  // Keep usefull information about the currently running slot
+  // Keep useful information about the currently running slot
   slotInfo()->updateUserlandHeader();
 }
 

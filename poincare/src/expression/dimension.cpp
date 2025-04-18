@@ -216,9 +216,13 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       return ListLength(e->child(0), ctx);
     case Type::List:
       return e->numberOfChildren();
-    case Type::ListSequence:
-      assert(Integer::Is<uint8_t>(e->child(1)));
-      return Integer::Handler(e->child(1)).to<uint8_t>();
+    case Type::ListSequence: {
+      float n =
+          Approximation::To<float>(e->child(1), Approximation::Parameters{});
+      assert(std::floor(n) == n);
+      assert(n >= 1 && n <= NAry::k_maxNumberOfChildren);
+      return n;
+    }
     case Type::ListSlice: {
       assert(Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2)));

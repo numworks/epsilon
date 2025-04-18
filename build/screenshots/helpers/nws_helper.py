@@ -60,7 +60,12 @@ def convert_nws_to_txt(nwspath, txtpath=None):
         if event_name == "ExternalText":
             f.write(b" ")
             i += 1
-            while events[i] != 0:
+            while True:
+                if i == len(events):
+                    print("Error:", nwspath, "contains ill formatted external text")
+                    sys.exit(1)
+                if events[i] == 0:
+                    break
                 f.write(events[i].to_bytes(1))
                 i += 1
         i += 1

@@ -61,6 +61,11 @@ static bool isValidChar(int value_leading_ones) {
   return value_leading_ones <= 4;
 }
 
+// First char of an UTF-8 codepoint cannot have only 1 leading one.
+static bool isValidCharForFirst(int value_leading_ones) {
+  return isValidChar(value_leading_ones) && value_leading_ones != 1;
+}
+
 static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
   return (value & ((1 << bits) - 1));
 }
@@ -75,7 +80,7 @@ CodePoint UTF8Decoder::nextCodePoint() {
 
   int leadingOnes = leading_ones(*stringPosition());
 
-  if (!isValidChar(leadingOnes)) {
+  if (!isValidCharForFirst(leadingOnes)) {
     nextByte();
     return UCodePointReplacement;
   }

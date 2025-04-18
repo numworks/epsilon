@@ -415,16 +415,18 @@ static Tree* GetAtanTanArg(const Tree* e) {
   const Tree* aFactor = getPiFactor(a);
   // Skip getPiFactor if aFactor is nullptr
   const Tree* bFactor = aFactor ? getPiFactor(b) : nullptr;
-  if (!aFactor || !bFactor) {
+  if (!bFactor) {
     return nullptr;
   }
   assert(aFactor->isRational() && bFactor->isRational());
 
   /* Handle sin(a)/cos(b) like tan(x) if :
-   * a = b      ==>  x = a = b     (sin(a) = sin(b))
-   * a = -b     ==>  x = a         (cos(b) = cos(a))
-   * a = π - b  ==>  x = b         (sin(a) = sin(π - b) = sin(b)  )
-   * a = π + b  ==>  x = -a = -b   (cos(b) = cos(a - π) = -cos(-a)) */
+   * a = b      ==>  x = a = b   (sin(a)/cos(b) = sin(a)/cos(a) = sin(b)/cos(b))
+   * a = -b     ==>  x = a      (sin(a)/cos(b) = sin(a)/cos(-a) = sin(a)/cos(a))
+   * a = π - b  ==>  x = b   (sin(a)/cos(b) = sin(π - b)/cos(b) = sin(b)/cos(b))
+   * a = π + b  ==>  x = -a = -b
+   *   (sin(a)/cos(b) = sin(a)/cos(a - π) = -sin(-a)/-cos(-a) = sin(-a)/cos(-a))
+   */
 
   Tree* sub = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
                                               {.KA = aFactor, .KB = bFactor});

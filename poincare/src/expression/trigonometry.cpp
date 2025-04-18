@@ -313,7 +313,7 @@ bool Trigonometry::ReduceTrigSecondElement(Tree* e, bool* isOpposed) {
   return changed;
 }
 
-static Tree* SimplifyATrigOfTrig(const Tree* arg, Type type, bool swapATrig) {
+static Tree* SimplifyATrigOfTrig(const Tree* arg, Type type) {
   assert(type != Type::Undef);
   /* asin(sin(i*x)) = i*x, acos(cos(i*x)) = i*abs(i*x) and atan(tan(i*x)) = i*x
    * for x real */
@@ -346,12 +346,6 @@ static Tree* SimplifyATrigOfTrig(const Tree* arg, Type type, bool swapATrig) {
     PatternMatching::MatchReplaceSimplify(result, KA, KMult(π_e, KA));
   }
   assert(result);
-
-  // We can simplify asin(cos) or acos(sin) using acos(x) = π/2 - asin(x)
-  if (swapATrig) {
-    PatternMatching::MatchReplaceSimplify(
-        result, KA, KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)));
-  }
   return result;
 }
 
@@ -359,12 +353,18 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   assert(e->isATrig());
   // atrig(trig(x))
   PatternMatching::Context ctx;
+  // asin(sin) or asin(cos) or acos(cos) or acos(sin)
   if (PatternMatching::Match(e, KATrig(KTrig(KA, KB), KC), &ctx)) {
-    // asin(sin) or asin(cos) or acos(cos) or acos(sin)
+    // Handle asin(cos) like acos(cos) and acos(sin) like asin(sin) for now
     Type type = ctx.getTree(KB)->isOne() ? Type::Sin : Type::Cos;
     bool swapATrig = type != (ctx.getTree(KC)->isOne() ? Type::Sin : Type::Cos);
-    Tree* result = SimplifyATrigOfTrig(ctx.getTree(KA), type, swapATrig);
+    Tree* result = SimplifyATrigOfTrig(ctx.getTree(KA), type);
     if (result) {
+      if (swapATrig) {
+        // Handle asin(cos) and acos(sin) using acos(x) = π/2 - asin(x)
+        PatternMatching::MatchReplaceSimplify(
+            result, KA, KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)));
+      }
       e->moveTreeOverTree(result);
       return true;
     }
@@ -479,7 +479,7 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
   Tree* atanTanArg = GetAtanTanArg(e);
   if (atanTanArg) {
     // Handle atan(tan(x))
-    TreeRef result = SimplifyATrigOfTrig(atanTanArg, Type::Tan, false);
+    TreeRef result = SimplifyATrigOfTrig(atanTanArg, Type::Tan);
     atanTanArg->removeTree();
     if (result) {
       e->moveTreeOverTree(result);

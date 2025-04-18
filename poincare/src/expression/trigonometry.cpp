@@ -47,7 +47,8 @@ const Tree* getExactFormula(uint8_t n, bool isSin, bool* isOpposed) {
   Rational::Push(n, 120);
   SharedTreeStack->pushPi();
   SystematicReduction::DeepReduce(reducedAngle);
-  const Tree* result = ExactFormula::GetTrigOf(reducedAngle, isSin);
+  const Tree* result =
+      ExactFormula::GetTrigOf(reducedAngle, isSin ? Type::Sin : Type::Cos);
   reducedAngle->removeTree();
   return result;
 }
@@ -380,7 +381,8 @@ bool Trigonometry::ReduceATrig(Tree* e) {
     changed = true;
     PatternMatching::MatchReplaceSimplify(arg, KA, KMult(-1_e, KA));
   }
-  const Tree* angle = ExactFormula::GetAngleOf(arg, isAsin);
+  const Tree* angle =
+      ExactFormula::GetAngleOf(arg, isAsin ? Type::Sin : Type::Cos);
   if (angle) {
     e->cloneTreeOverTree(angle);
     changed = true;
@@ -503,7 +505,7 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
     changed = true;
     e->cloneTreeOverTree(KMult(1_e / 2_e, π_e));
   } else {
-    const Tree* angle = ExactFormula::GetAngleOfTan(arg);
+    const Tree* angle = ExactFormula::GetAngleOf(arg, Type::Tan);
     if (angle) {
       e->cloneTreeOverTree(angle);
       changed = true;

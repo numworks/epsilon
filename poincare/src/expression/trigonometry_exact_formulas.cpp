@@ -105,38 +105,29 @@ ExactFormula ExactFormula::GetExactFormulaAtIndex(int n) {
   return ExactFormulas[n];
 }
 
-const Tree* ExactFormula::GetTrigOf(const Tree* angle, bool isSin) {
-  PatternMatching::Context ctx;
+const Tree* ExactFormula::GetTrigOf(const Tree* angle, Type type) {
+  assert(type == Type::Sin || type == Type::Cos || type == Type::Tan);
   for (int i = 0; i < k_numberOfFormulaForTrig; i++) {
     ExactFormula ef = GetExactFormulaAtIndex(i);
-    if (PatternMatching::Match(angle, ef.m_angle, &ctx)) {
-      assert(!(isSin ? ef.m_sin : ef.m_cos)->isUndef());
-      return isSin ? ef.m_sin : ef.m_cos;
+    if (angle->treeIsIdenticalTo(ef.m_angle)) {
+      const Tree* result = type == Type::Sin   ? ef.m_sin
+                           : type == Type::Cos ? ef.m_cos
+                                               : ef.m_tan;
+      assert(!result->isUndef());
+      return result;
     }
   }
   return nullptr;
 }
 
-const Tree* ExactFormula::GetAngleOf(const Tree* trig, bool isAsin) {
-  PatternMatching::Context ctx;
+const Tree* ExactFormula::GetAngleOf(const Tree* trig, Type type) {
+  assert(type == Type::Sin || type == Type::Cos || type == Type::Tan);
   for (int i = 0; i < k_totalNumberOfFormula; i++) {
     ExactFormula ef = GetExactFormulaAtIndex(i);
-    const Tree* treeToMatch = isAsin ? ef.m_sin : ef.m_cos;
-    if (!treeToMatch->isUndef() &&
-        PatternMatching::Match(trig, treeToMatch, &ctx)) {
-      return ef.m_angle;
-    }
-  }
-  return nullptr;
-}
-
-const Tree* ExactFormula::GetAngleOfTan(const Tree* tan) {
-  PatternMatching::Context ctx;
-  for (int i = 0; i < k_totalNumberOfFormula; i++) {
-    ExactFormula ef = GetExactFormulaAtIndex(i);
-    const Tree* treeToMatch = ef.m_tan;
-    if (!treeToMatch->isUndef() &&
-        PatternMatching::Match(tan, treeToMatch, &ctx)) {
+    const Tree* treeToMatch = type == Type::Sin   ? ef.m_sin
+                              : type == Type::Cos ? ef.m_cos
+                                                  : ef.m_tan;
+    if (!treeToMatch->isUndef() && trig->treeIsIdenticalTo(treeToMatch)) {
       return ef.m_angle;
     }
   }

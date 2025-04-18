@@ -6,7 +6,7 @@ on:
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
-  CCACHE_DIR: ${{ vars.CCACHE_DOCKER_DIR }}
+  CCACHE_DIR: ${{ vars.CCACHE_DIR }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -1426,6 +1426,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       a->removeTree();
       return a;
     }
+    case Type::PowReal:
     case Type::Pow: {
       const Tree* base = e->child(0);
       const Tree* index = base->nextTree();

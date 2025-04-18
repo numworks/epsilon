@@ -368,6 +368,7 @@ QUIZ_CASE(pcj_simplification_matrix) {
   simplifies_to("transpose(identity(-1))", "undef");
   simplifies_to("transpose(inverse([[0]]))", "undef");
   simplifies_to("dot([[1]], inverse([[0]]))", "undef");
+  simplifies_to("log(det([[0]]^2))", "undef");
 }
 
 QUIZ_CASE(pcj_simplification_complex) {

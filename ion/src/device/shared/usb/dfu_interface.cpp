@@ -369,6 +369,8 @@ bool DFUMemoryBackend::read(uint32_t address, uint32_t length,
   if (!rangeIsValid(address, length)) {
     return false;
   }
+  /* 2048 is the maximum size that can be configured with wTransferSize in the
+   * DFU descriptor */
   assert(length <= 2048);
   memcpy(destination, reinterpret_cast<uint8_t*>(address), length);
   return true;

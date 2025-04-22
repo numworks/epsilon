@@ -7,6 +7,7 @@
 
 #include "dependency.h"
 #include "k_tree.h"
+#include "rational.h"
 #include "sign.h"
 
 namespace Poincare::Internal {
@@ -133,6 +134,17 @@ int Metric::GetTrueMetric(const Tree* e) {
     }
     case Type::Ln: {
       childrenCoeff = ChildrenCoeffLn(GetComplexSign(e->child(0)));
+      const Tree* firstChild = e->child(0);
+      if (firstChild->isInteger() ||
+          (firstChild->isMult() && firstChild->child(0)->isInteger())) {
+        // Increase cost of integers in ln according to their value
+        IntegerHandler value = Integer::Handler(
+            firstChild->isMult() ? firstChild->child(0) : firstChild);
+        if (value.is<int>()) {
+          value.setSign(NonStrictSign::Positive);
+          childrenCoeff *= value.to<int>() * 2;
+        }
+      }
       break;
     }
     case Type::Abs:

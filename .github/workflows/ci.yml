@@ -39,7 +39,6 @@ concurrency:
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
-  CCACHE_DIR: ${{ vars.CCACHE_DIR }}
 
 jobs:
   android:

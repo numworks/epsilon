@@ -8,9 +8,9 @@ runs:
   steps:
     - name: Build Docker container
       shell: bash
-      run: docker build -f build/Dockerfile . --tag epsilon-builder
+      run: docker build  --build-arg ABSOLUTE_PATH=`pwd`/../../ -f build/Dockerfile . --tag epsilon-builder
 
     - name: Define DOCKER_RUN environment variable
       shell: bash
       run: |
-        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) --env MAKEFLAGS --env CCACHE_DIR=/cache --mount type=bind,source=$CCACHE_DIR,target=/cache --mount type=bind,source=.,target=`pwd` epsilon-builder:latest sh -c" >> $GITHUB_ENV
+        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) --env MAKEFLAGS --env CCACHE_DIR=/cache --mount type=bind,source=`pwd`/../../ccache,target=/cache --mount type=bind,source=.,target=`pwd` epsilon-builder:latest sh -c" >> $GITHUB_ENV

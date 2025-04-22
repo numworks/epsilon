@@ -18,5 +18,6 @@ RUN apt-get install clang-15 libc++-15-dev libc++abi-15-dev && ln -s /usr/bin/cl
 
 ENV PYTHON=/runner/.venv/bin/python
 
-# TODO: should not depend on usain
-WORKDIR /home/usain/_work/epsilon-internal/epsilon-internal
+ARG ABSOLUTE_PATH
+
+WORKDIR ${ABSOLUTE_PATH}/epsilon-internal/epsilon-internal

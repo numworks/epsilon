@@ -5,16 +5,15 @@ on:
       - 'external_apps/**'
 
 env:
-  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+  MAKEFLAGS: ${{ vars.MAKEFLAGS }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-# TODO: Use docker run
 jobs:
   c_cpp_apps:
-    runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
+    runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     steps:
       - name: Install toolchain
         uses: numworks/setup-arm-toolchain@latest

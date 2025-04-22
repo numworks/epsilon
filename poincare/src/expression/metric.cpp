@@ -58,7 +58,7 @@ int Metric::GetTrueMetric(const Tree* e) {
       if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2) {
         result -= GetMetric(Type::Mult);
       }
-      /* Trigonometry with complexes will be beautified into hyperbolic
+      /* Trigonometry with complexes is beautified into hyperbolic
        * trigonometry (cosh, sinh, asinh and atanh)*/
       // TODO: cost difference between trig and hyperbolic trig
       if (PatternMatching::Match(
@@ -70,6 +70,25 @@ int Metric::GetTrueMetric(const Tree* e) {
         result += GetMetric(Type::MinusOne) - GetMetric(Type::ComplexI) * 2;
         if (ctx.getNumberOfTrees(KB) == 1) {
           result -= GetMetric(Type::Mult);
+        }
+      } else {
+        // ln(A)/ln(10) is beautified into log(A)
+        constexpr const Tree* invLn10 = KPow(KLn(10_e), -1_e);
+        bool hasLn = false;
+        bool hasInvLn10 = false;
+        for (const Tree* child : e->children()) {
+          if (child->isLn()) {
+            hasLn = true;
+          } else if (child->treeIsIdenticalTo(invLn10)) {
+            hasInvLn10 = true;
+          }
+          if (hasLn && hasInvLn10) {
+            result -= GetTrueMetric(invLn10);
+            if (e->numberOfChildren() == 2) {
+              result -= GetMetric(Type::Mult);
+            }
+            break;
+          }
         }
       }
       break;
@@ -128,7 +147,6 @@ int Metric::GetTrueMetric(const Tree* e) {
     case Type::Round:
     case Type::PowReal:
     case Type::Root:
-    case Type::Log:
     case Type::Sign:
       childrenCoeff = 2;
       break;

@@ -1607,6 +1607,8 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
   simplifies_to("ln(1/999999)", "-ln(999999)");
   simplifies_to("300×ln(2)", "300×ln(2)");
+  simplifies_to("ln(ln(25))", "ln(ln(25))");
+  simplifies_to("log(log(25))", "log(log(25))");
   // TODO: Metric: 1+ln(x×y)
   simplifies_to("1+ln(x)+ln(y)",
                 "dep(1+ln(x)+ln(y),{nonNull(x),nonNull(y),realPos(x),"

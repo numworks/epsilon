@@ -7,6 +7,10 @@ namespace Poincare::Internal {
 
 class AdvancedOperation {
  public:
+  /* Return the number of nextNode to skip if this tree is required to be
+   * ignored by advanced reduction */
+  static uint8_t SkippableNextNode(const Tree* e);
+
   static bool ContractImRe(Tree* e);
   static bool ExpandImRe(Tree* e);
   static bool ContractAbs(Tree* e);

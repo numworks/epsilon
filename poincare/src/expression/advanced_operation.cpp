@@ -9,6 +9,21 @@
 
 namespace Poincare::Internal {
 
+uint8_t AdvancedOperation::SkippableNextNode(const Tree* e) {
+  if (e->numberOfChildren() == 0) {
+    return 1;
+  }
+#if 0
+  PatternMatching::Context ctx;
+  /* Skipping ln(10)^-1 as it's most often related to a projection of log,
+   * exploring branches like (ln(2)+ln(5))^-1 is almost certainly useless */
+  if (PatternMatching::Match(e, KPow(KLn(10_e), -1_e), &ctx)) {
+    return 4;  // pow, ln, 10, -1
+  }
+#endif
+  return 0;
+}
+
 // This is redundant with im and re expansion for finite expressions
 bool AdvancedOperation::ContractImRe(Tree* e) {
   // re(A)+im(A)*i = A

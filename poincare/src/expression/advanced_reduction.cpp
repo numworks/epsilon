@@ -284,10 +284,10 @@ bool AdvancedReduction::Direction::applyNextNode(Tree** u,
 bool AdvancedReduction::Direction::applyContractOrExpand(Tree** u,
                                                          Tree* root) const {
   assert(isContract() || isExpand());
-  if ((*u)->numberOfChildren() == 0) {
-    // Trees without children cannot be contracted or expanded.
-    return false;
-  }
+  /* Trees without children should be skipped earlier.
+   * They cannot be contracted or expanded */
+  assert((*u)->numberOfChildren() != 0);
+
   if (!(isContract() ? ShallowContract : ShallowExpand)(*u, false)) {
     return false;
   }
@@ -455,9 +455,18 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
      * over this list in reverse order. Caching the intermediate trees avoids
      * recomputing the same nextNode direction twice. */
     Tree* targets[Direction::k_maxNextNodeAmount] = {};
+    int ignoreCount = 0;
     while (i < Direction::k_maxNextNodeAmount &&
            nextNode.applyNextNode(&target, ctx->m_root)) {
-      targets[i++] = target;
+      if (ignoreCount == 0) {
+        ignoreCount = AdvancedOperation::SkippableNextNode(target);
+      }
+      if (ignoreCount > 0) {
+        --ignoreCount;
+        targets[i++] = nullptr;
+      } else {
+        targets[i++] = target;
+      }
     }
     if (i > 0) {
       [[maybe_unused]] bool hasAppendPath =
@@ -485,12 +494,17 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
         fullExploration = false;
         break;
       }
-      LOG(3, "Apply ", ctx->m_path.logLastDirection());
-      fullExploration =
-          ReduceContractThenExpand(targets[i - 1], ctx) && fullExploration;
-      if (ctx->shouldEarlyExit()) {
-        VERBOSE_OUTDENT(3);
-        return false;
+      if (targets[i - 1] == nullptr) {
+        LOG(3, "Ignore ", ctx->m_path.logLastDirection());
+      } else {
+        LOG(3, "Apply ", ctx->m_path.logLastDirection(false));
+        LOG(3, ": ", LogExpression(targets[i - 1]), false);
+        fullExploration =
+            ReduceContractThenExpand(targets[i - 1], ctx) && fullExploration;
+        if (ctx->shouldEarlyExit()) {
+          VERBOSE_OUTDENT(3);
+          return false;
+        }
       }
       ctx->m_path.popBaseDirection();
     }
@@ -498,7 +512,8 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
   VERBOSE_OUTDENT(3);
 
   /* 0 NextNode handle here */
-  if (zeroNextNodeAllowed && ctx->canAppendDirection()) {
+  if (zeroNextNodeAllowed && ctx->canAppendDirection() &&
+      AdvancedOperation::SkippableNextNode(e) == 0) {
     fullExploration = ReduceContractThenExpand(e, ctx) && fullExploration;
   }
   return fullExploration;

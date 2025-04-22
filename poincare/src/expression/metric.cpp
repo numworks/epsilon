@@ -1,8 +1,6 @@
+#if !USE_TREE_SIZE_METRIC
+
 #include "metric.h"
-
-#if USE_TREE_SIZE_METRIC
-
-#else
 
 #include <limits.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -73,12 +71,6 @@ int Metric::GetTrueMetric(const Tree* e) {
         if (ctx.getNumberOfTrees(KB) == 1) {
           result -= GetMetric(Type::Mult);
         }
-      } else if (PatternMatching::Match(e, KTrig(KMult(KA_s, i_e), 0_e),
-                                        &ctx)) {
-        result -= GetMetric(Type::ComplexI);
-        if (ctx.getNumberOfTrees(KA) == 1) {
-          result -= GetMetric(Type::Mult);
-        }
       }
       break;
     }
@@ -108,10 +100,18 @@ int Metric::GetTrueMetric(const Tree* e) {
     case Type::Dep:
       return result + GetTrueMetric(Dependency::Main(e));
     case Type::Trig:
-    case Type::ATrig:
+    case Type::ATrig: {
+      // cos(A*i) is beautified into cosh(A)
+      if (PatternMatching::Match(e, KTrig(KMult(KA_s, i_e), 0_e), &ctx)) {
+        result -= GetMetric(Type::ComplexI);
+        if (ctx.getNumberOfTrees(KA) == 1) {
+          result -= GetMetric(Type::Mult);
+        }
+      }
       childrenCoeff = 2;
       // Ignore second child
       return result + GetTrueMetric(e->child(0)) * childrenCoeff;
+    }
     case Type::Ln: {
       childrenCoeff = ChildrenCoeffLn(GetComplexSign(e->child(0)));
       break;

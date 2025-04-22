@@ -28,6 +28,7 @@ void Calculator::PollAndReset(Ion::USB::DFUParameters parameters) {
     c.detach();
   }
   if (c.resetOnDisconnect()) {
+    // TODO BOOTLOADER query the DFU backend for the actual address here
     c.leave(c.addressPointer());
   }
 }

@@ -234,7 +234,7 @@ void DFUInterface::eraseMemoryIfNeeded() {
     return;
   }
 
-  // TODO this expects an address and we pass a page
+  // TODO BOOTLOADER this expects an address and we pass a page
   bool erased = interface(m_bInterfaceAlternateSetting)->erase(m_erasePage);
   if (erased) {
     /* Put an out of range value in m_erasePage to indicate that no erase is
@@ -396,7 +396,7 @@ bool DFUFlashBackend::erase(uint32_t address) const {
   if (!rangeIsValid(address, 0)) {
     return false;
   }
-  // TODO erase
+  // TODO BOOTLOADER erase
   return true;
 }
 

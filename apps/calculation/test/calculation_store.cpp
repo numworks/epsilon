@@ -90,8 +90,10 @@ QUIZ_CASE(calculation_store) {
   assert(emptyStoreSize > store.remainingBufferSize());
   const size_t calculationSize = emptyStoreSize - store.remainingBufferSize();
 
+  int numberOfCalculations = store.numberOfCalculations();
   while (store.remainingBufferSize() > calculationSize) {
     pushAndProcessCalculation(&store, text, &globalContext);
+    quiz_assert(++numberOfCalculations == store.numberOfCalculations());
   }
   int numberOfCalculations1 = store.numberOfCalculations();
   /* The buffer is now too full to push a new calculation.

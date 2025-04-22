@@ -265,16 +265,14 @@ ExpiringPointer<Calculation> CalculationStore::push(
   CalculationElements calculationToPush =
       computeAndProcess(inputExpression, context);
 
-  size_t neededSize =
-      neededSizeForCalculation(calculationToPush.sizeOfExpressions());
+  size_t neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
   if (neededSize > m_bufferSize) {
     /* The calculation is too big to hold on the buffer, even if all previous
      * calculations were deleted. Replace its outputs by undefined, it should
      * now fit on the calculation buffer. */
     calculationToPush.outputs.exact = Undefined::Builder();
     calculationToPush.outputs.approximate = Undefined::Builder();
-    neededSize =
-        neededSizeForCalculation(calculationToPush.sizeOfExpressions());
+    neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
     if (neededSize > m_bufferSize) {
       /* If the calculation with undefined outputs is still too big, it means
        * that the input expression was too big, which is very unlikely to happen
@@ -387,9 +385,8 @@ size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
 Calculation* CalculationStore::pushCalculation(
     const CalculationElements& calculationToPush, char** location) {
   assert(*location >= m_buffer &&
-         *location <
-             pointerArea() - neededSizeForCalculation(
-                                 calculationToPush.sizeOfExpressions()));
+         *location < pointerArea() - neededSizeForCalculation(
+                                         calculationToPush.sizeOfTrees()));
 
   // Push an empty Calculation instance (takes sizeof(Calculation))
   Calculation* newCalculation = pushEmptyCalculation(location);

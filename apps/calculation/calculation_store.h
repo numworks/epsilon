@@ -113,8 +113,9 @@ class CalculationStore {
     OutputExpressions outputs;
     Poincare::Preferences::ComplexFormat complexFormat;
 
-    size_t sizeOfExpressions() const {
-      return input.size() + outputs.exact.size() + outputs.approximate.size();
+    size_t sizeOfTrees() const {
+      return input.tree()->treeSize() + outputs.exact.tree()->treeSize() +
+             outputs.approximate.tree()->treeSize();
     }
   };
 

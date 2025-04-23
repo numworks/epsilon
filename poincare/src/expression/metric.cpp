@@ -94,6 +94,22 @@ int Metric::GetTrueMetric(const Tree* e) {
       }
       break;
     }
+    case Type::Add: {
+      if (PatternMatching::Match(
+              e, KAdd(KA_s, KMult(KB, KC), KD_s, KMult(KB, KE), KF_s), &ctx)) {
+        /* Ignore cost of developing B*(C+E) when B:
+         * - is not minus one
+         * - is not the inverse of an expression
+         * - is small enough (<= k_defaultMetric) */
+        const Tree* factor = ctx.getTree(KB);
+        if (!(factor->isPow() && factor->child(1)->isMinusOne()) &&
+            !factor->isMinusOne()) {
+          result -= GetMetric(Type::Mult);
+          result -= k_defaultMetric;
+        }
+      }
+      break;
+    }
     case Type::Exp: {
       // exp(A*ln(B)) -> Root(B,A) exception
       if (PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {

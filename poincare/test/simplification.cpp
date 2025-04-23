@@ -470,8 +470,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("e^(-2.1×i)", "e^(-21/10×i)", polarCtx);
   simplifies_to("root(-8,3)", "2×e^(π/3×i)", polarCtx);
   simplifies_to("e^(π/6×i)+e^(-π/3×i)", "√(2)×e^(-π/12×i)", polarCtx);
-  // TODO: Result could be improved to (√(2)+√(6))/2×e^(π/4×i)
-  simplifies_to("e^(π/6×i)+e^(-10π/6×i)", "(√(2)×(1+√(3)))/2×e^(π/4×i)",
+  simplifies_to("e^(π/6×i)+e^(-10π/6×i)", "(√(2)/2+√(6)/2)×e^(π/4×i)",
                 polarCtx);
   // Not simplified into polars
   simplifies_to("-1+π", "-1+π", polarCtx);
@@ -498,7 +497,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(k,k,n,j)", "(j^2-n^2+j+n)/2");
   simplifies_to("2×sum(k,k,0,n)+n", "n×(n+2)");
   simplifies_to("2×sum(k,k,3,n)+n", "n×(n+2)-6");
-  simplifies_to("sum(k^2,k,n,j)", "(j×(j+1)×(2×j+1)-n×(n-1)×(2×n-1))/6");
+  simplifies_to("sum(k^2,k,n,j)", "(2×j^3-2×n^3+3×j^2+3×n^2+j-n)/6");
   simplifies_to("sum(k^2,k,2,5)", "54");
   simplifies_to("sum((2k)^2,k,2,5)", "216");
   simplifies_to("sum((2k)^2,k,0,n)", "(2×n×(n+1)×(2×n+1))/3");
@@ -898,10 +897,11 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("(-8)^(1/3)-1-√(3)×i", "0", cartesianCtx);
   simplifies_to("√(-3)-√(3)×i", "0", cartesianCtx);
 
-  // Development of integer powers
+  // Development of mult and integer power
+  simplifies_to("π*(π+1)", "π^2+π");
   simplifies_to("(π+1)^2", "π^2+1+2×π");
   simplifies_to("(π-1)^2", "π^2+1-2×π");
-  simplifies_to("(π+1)^3", "π^3+1+3×(π^2+π)");
+  simplifies_to("(π+1)^3", "π^3+3×π^2+1+3×π");
   simplifies_to("(π+1)^(-2)", "1/(π^2+1+2×π)");
 }
 
@@ -1607,7 +1607,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("π×ln(2)+ln(4)", "(2+π)×ln(2)");
   simplifies_to("ln(6)", "ln(2)+ln(3)");
   simplifies_to("log(6)", "log(2)+log(3)");
-  simplifies_to("ln(6^2)", "2×(ln(2)+ln(3))");
+  simplifies_to("ln(6^2)", "2×ln(2)+2×ln(3)");
   simplifies_to("ln(1/999999)", "-(3×ln(3)+ln(7)+ln(11)+ln(13)+ln(37))");
   simplifies_to("300×ln(2)", "300×ln(2)");
   simplifies_to("ln(ln(25))", "ln(2)+ln(ln(5))");
@@ -1797,7 +1797,7 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   // 1/(√a+√b) => (√a-√b)/(a-b)
   simplifies_to("1/(√(3)+√(5))",
                 "-(√(3)-√(5))/2");  // TODO: Metric "(√(3)-√(5))/2"
-  simplifies_to("1/(√(3)-√(5))", "-(√(3)+√(5))/2");
+  simplifies_to("1/(√(3)-√(5))", "-√(3)/2-√(5)/2");
   simplifies_to("1/(√(120)+2√(30))", "√(30)/120");
   // 1/√a => √a/a
   simplifies_to("1/√(3)", "√(3)/3");

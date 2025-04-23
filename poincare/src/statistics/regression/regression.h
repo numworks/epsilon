@@ -57,6 +57,9 @@ class Regression {
 
   // - Coefficients
   static int NumberOfCoefficients(Type type);
+  static double GetUserCoefficient(Type type,
+                                   const Coefficients& modelCoefficients,
+                                   int index);
   constexpr static bool HasCoefficients(Type type) {
     return type != Type::None;
   }
@@ -114,6 +117,12 @@ class Regression {
   bool hasR2() const { return HasR2(type()); }
 
   int numberOfCoefficients() const { return NumberOfCoefficients(type()); }
+  double getUserCoefficients(const double* modelCoefficients, int index) const {
+    Coefficients coefficients;
+    memcpy(coefficients.data(), modelCoefficients,
+           numberOfCoefficients() * sizeof(double));
+    return GetUserCoefficient(type(), coefficients, index);
+  }
   const char* formula() const { return Formula(type()); }
   Poincare::Layout templateLayout() const { return TemplateLayout(type()); }
 

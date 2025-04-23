@@ -9,15 +9,30 @@
 
 namespace Poincare::Internal {
 
+static double DtoA(const Regression::Coefficients& modelCoefficients) {
+  return std::exp(modelCoefficients[0] * modelCoefficients[1]);
+}
+
+double LogisticRegression::GetUserCoefficient(
+    const Coefficients& modelCoefficients, int index) {
+  if (index == 0) {
+    return DtoA(modelCoefficients);
+  }
+  assert(index == 1 || index == 2);
+  return modelCoefficients[index];
+}
+
 UserExpression LogisticRegression::privateExpression(
     const double* modelCoefficients) const {
+  Coefficients coefficients;
+  memcpy(coefficients.data(), modelCoefficients,
+         numberOfCoefficients() * sizeof(double));
   // c/(1+a*e^(-b*x))
   return UserExpression::Create(
-      KDiv(KC,
-           KAdd(1_e, KMult(KPow(e_e, KOpposite(KMult(KB, KSub("x"_e, KA))))))),
-      {.KA = UserExpression::Builder(modelCoefficients[0]),
-       .KB = UserExpression::Builder(modelCoefficients[1]),
-       .KC = UserExpression::Builder(modelCoefficients[2])});
+      KDiv(KC, KAdd(1_e, KMult(KA, KPow(e_e, KOpposite(KMult(KB, "x"_e)))))),
+      {.KA = UserExpression::Builder(GetUserCoefficient(coefficients, 0)),
+       .KB = UserExpression::Builder(GetUserCoefficient(coefficients, 1)),
+       .KC = UserExpression::Builder(GetUserCoefficient(coefficients, 2))});
 }
 
 double LogisticRegression::privateEvaluate(

@@ -152,7 +152,7 @@ const char* Regression::Formula(Type type) {
     case Type::Trigonometric:
       return "y=a·sin(b·x+c)+d";
     case Type::Logistic:
-      return "y=c/(1+exp(-b·(x-a)))";
+      return "y=c/(1+a·exp(-b·x))";
   }
   OMG::unreachable();
 }
@@ -182,6 +182,17 @@ const Poincare::Layout Regression::TemplateLayout(Type type) {
       return Layout::String(Formula(type) + sizeof("y=") - 1);
   }
   OMG::unreachable();
+}
+
+double Regression::GetUserCoefficient(Type type,
+                                      const Coefficients& modelCoefficients,
+                                      int index) {
+  switch (type) {
+    case Type::Logistic:
+      return LogisticRegression::GetUserCoefficient(modelCoefficients, index);
+    default:
+      return modelCoefficients[index];
+  }
 }
 
 }  // namespace Poincare::Internal

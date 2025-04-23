@@ -54,6 +54,9 @@ class Model {
   };
   void fit(const Store* store, int series, double* modelCoefficients,
            Poincare::Context* context);
+  double getUserCoefficients(const double* modelCoefficients, int index) const {
+    return regression()->getUserCoefficients(modelCoefficients, index);
+  };
   double correlationCoefficient(const Store* store, int series);
   double determinationCoefficient(const Store* store, int series,
                                   const double* modelCoefficients);

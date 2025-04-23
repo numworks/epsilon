@@ -53,19 +53,25 @@ void assert_regression_is(const double* xi, const double* yi,
   double nullExpectedPrecision = 1e-9;
 
   // Compute and compare the coefficients
-  double* coefficients = store.coefficientsForSeries(series, &context);
   int numberOfCoefs = store.modelForSeries(series)->numberOfCoefficients();
-
-  // Move the double* to an std::array for easier debugging
-  Poincare::Regression::Coefficients coefficientsArray;
-  memmove(coefficientsArray.data(), coefficients,
-          numberOfCoefs * sizeof(double));
+  Poincare::Regression::Coefficients coefficients;
+  for (int i = 0; i < numberOfCoefs; ++i) {
+    coefficients[i] = store.userCoefficientsForSeries(series, i, &context);
+  }
 
   /* TODO: we could use the std::equal or std::for_each algorithms here, to
    * factorize the "for" loop */
   for (int i = 0; i < numberOfCoefs; i++) {
-    quiz_assert(roughly_equal(coefficientsArray[i], trueCoefficients[i],
-                              precision, acceptNAN, nullExpectedPrecision));
+    bool cond = roughly_equal(coefficients[i], trueCoefficients[i], precision,
+                              acceptNAN, nullExpectedPrecision);
+#if POINCARE_TREE_LOG
+    if (!cond) {
+      std::cout << "Coefficient of regression different:" << std::endl;
+      std::cout << "\tExpected:" << trueCoefficients[i] << std::endl;
+      std::cout << "\t     Got:" << coefficients[i] << std::endl;
+    }
+#endif
+    quiz_assert(cond);
   }
 
   double r = store.correlationCoefficient(series);
@@ -95,8 +101,16 @@ void assert_regression_is(const double* xi, const double* yi,
         roughly_equal(r2, trueR2, precision, false, nullExpectedPrecision));
   }
 
-  quiz_assert(roughly_equal(sr, trueResidualStdDev, precision, true,
-                            nullExpectedPrecision));
+  bool cond = roughly_equal(sr, trueResidualStdDev, precision, true,
+                            nullExpectedPrecision);
+#if POINCARE_TREE_LOG
+  if (!cond) {
+    std::cout << "Residual Std dev different:" << std::endl;
+    std::cout << "\tExpected:" << trueResidualStdDev << std::endl;
+    std::cout << "\t     Got:" << sr << std::endl;
+  }
+#endif
+  quiz_assert(cond);
 }
 
 QUIZ_CASE(regression_linear) {
@@ -639,16 +653,17 @@ QUIZ_CASE(regression_logistic) {
   constexpr double y6[] = {1.82e-6, 3.66e-6, 7.34e-6, 1.46e-5, 2.91e-5};
   static_assert(std::size(x6) == std::size(y6), "Column sizes are different");
   constexpr Coefficients coefficients6 = {
-      1.17e-8, 250.0, 2.77e-5};  // target : {0.5, 70.0, 0.001};
-  constexpr double r26 = NAN;    // 0.902321;               // target : 1.0;
-  constexpr double sr6 = 4.9002082E-6;
+      0.00413634, 93.7908, 5.95219e-05};  // target : {0.5, 70.0, 0.001};
+  constexpr double r26 = NAN;  // 0.902321;               // target : 1.0;
+  constexpr double sr6 = 1.27954e-06;
   assert_regression_is(x6, y6, std::size(x6), Model::Type::Logistic,
                        coefficients6, NAN, r26, sr6);
 
   constexpr double x7[] = {1.0, 3.0, 4.0, 6.0, 8.0};
   constexpr double y7[] = {4.0, 4.0, 0.0, 58.0, 5.0};
   static_assert(std::size(x7) == std::size(y7), "Column sizes are different");
-  constexpr Coefficients coefficients7 = {3.56e8, 4.256, 31.4};  // No target
+  constexpr Coefficients coefficients7 = {3.58693e+65, 33.7498,
+                                          31.4};  // No target
   constexpr double r27 = NAN;  // 0.4;  // No target (But should be positive)
   constexpr double sr7 = 26.88173;
   assert_regression_is(x7, y7, std::size(x7), Model::Type::Logistic,

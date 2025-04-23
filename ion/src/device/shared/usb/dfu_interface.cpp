@@ -234,7 +234,6 @@ void DFUInterface::eraseMemoryIfNeeded() {
     return;
   }
 
-  // TODO BOOTLOADER this expects an address and we pass a page
   bool erased = interface(m_bInterfaceAlternateSetting)->erase(m_erasePage);
   if (erased) {
     /* Put an out of range value in m_erasePage to indicate that no erase is
@@ -249,25 +248,6 @@ void DFUInterface::eraseMemoryIfNeeded() {
     m_status = Status::errTARGET;
   }
   return;
-#if 0
-  bool erased = true;
-  if (m_erasePage == Flash::TotalNumberOfSectors()) {
-    Flash::MassEraseWithInterruptions(false);
-  } else {
-    erased = Flash::EraseSectorWithInterruptions(m_erasePage, false);
-  }
-  if (!erased) {
-    // Unrecognized or unwritable sector
-    m_state = State::dfuERROR;
-    m_status = Status::errTARGET;
-  }
-
-  /* Put an out of range value in m_erasePage to indicate that no erase is
-   * waiting. */
-  m_erasePage = -1;
-  m_state = State::dfuDNLOADIDLE;
-  m_status = Status::OK;
-#endif
 }
 
 void DFUInterface::writeOnMemory() {
@@ -286,36 +266,6 @@ void DFUInterface::writeOnMemory() {
     m_state = State::dfuERROR;
     m_status = Status::errTARGET;
   }
-  return;
-
-  if (m_writeAddress >= Board::writableSRAMStartAddress() &&
-      m_writeAddress + m_largeBufferLength < Board::writableSRAMEndAddress()) {
-    // Write on SRAM
-    // FIXME We should check that we are not overriding the current
-    // instructions.
-    memcpy((void*)m_writeAddress, m_largeBuffer, m_largeBufferLength);
-  } else {
-    int writeSector = Flash::SectorAtAddress(m_writeAddress);
-    bool written = false;
-    if (writeSector >= 0) {
-      written = Flash::WriteMemoryWithInterruptions(
-          reinterpret_cast<uint8_t*>(m_writeAddress), m_largeBuffer,
-          m_largeBufferLength, false);
-    }
-    if (!written) {
-      // Invalid write address
-      m_largeBufferLength = 0;
-      m_state = State::dfuERROR;
-      m_status = Status::errTARGET;
-      return;
-    }
-  }
-
-  // Reset the buffer length
-  m_largeBufferLength = 0;
-  // Change the interface state and status
-  m_state = State::dfuDNLOADIDLE;
-  m_status = Status::OK;
 }
 
 bool DFUInterface::getStatus(SetupPacket* request, uint8_t* transferBuffer,
@@ -399,12 +349,12 @@ bool DFUFlashBackend::write(uint32_t address, uint32_t length,
       reinterpret_cast<uint8_t*>(address), source, length, false);
 }
 
-bool DFUFlashBackend::erase(uint32_t address) const {
-  if (!rangeIsValid(address, 0)) {
-    return false;
+bool DFUFlashBackend::erase(uint32_t pageId) const {
+  if (pageId == Flash::TotalNumberOfSectors()) {
+    Flash::MassEraseWithInterruptions(false);
+    return true;
   }
-  // TODO BOOTLOADER erase
-  return true;
+  return Flash::EraseSectorWithInterruptions(pageId, false);
 }
 
 }  // namespace USB

@@ -193,7 +193,9 @@ class DFUInterface : public Interface {
 
 class DFUInterfaceBackend {
  public:
-  virtual bool erase(uint32_t address) const = 0;
+  /* Erase is implemented only by the flash backend. Pass TotalNumberOfSectors
+   * to perform a mass erase. */
+  virtual bool erase(uint32_t pageId) const = 0;
   virtual bool write(uint32_t address, uint32_t length,
                      const uint8_t* source) const = 0;
   virtual bool read(uint32_t address, uint32_t length,
@@ -211,7 +213,7 @@ class DFUMemoryBackend : public DFUInterfaceBackend {
   bool rangeIsValid(uint32_t address, uint32_t length) const;
 
  private:
-  bool erase(uint32_t address) const override;
+  bool erase(uint32_t pageId) const override;
   bool write(uint32_t address, uint32_t length,
              const uint8_t* source) const override;
   bool read(uint32_t address, uint32_t length,
@@ -229,7 +231,7 @@ class DFUFlashBackend : public DFUMemoryBackend {
   using DFUMemoryBackend::DFUMemoryBackend;
 
  private:
-  bool erase(uint32_t address) const override;
+  bool erase(uint32_t pageId) const override;
   bool write(uint32_t address, uint32_t length,
              const uint8_t* source) const override;
 };
@@ -239,7 +241,7 @@ class DFURAMBackend : public DFUMemoryBackend {
   using DFUMemoryBackend::DFUMemoryBackend;
 
  private:
-  bool erase(uint32_t address) const override { return false; };
+  bool erase(uint32_t pageId) const override { return false; };
   bool write(uint32_t address, uint32_t length,
              const uint8_t* source) const override;
 };
@@ -250,7 +252,7 @@ class DFUSecureBackend : public DFUInterfaceBackend {
       : m_virtualBase(virtualBase), m_actualBase(actualBase) {}
 
  private:
-  bool erase(uint32_t address) const override { return false; }
+  bool erase(uint32_t pageId) const override { return false; }
   bool write(uint32_t address, uint32_t length,
              const uint8_t* source) const override;
   bool read(uint32_t address, uint32_t length,

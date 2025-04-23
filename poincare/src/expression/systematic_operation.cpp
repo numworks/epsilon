@@ -724,21 +724,24 @@ bool SystematicOperation::ReduceExp(Tree* e) {
                             KMult(KB, KExp(KAdd(KA_s, KC_s))))) {
     return true;
   }
-  // Turn exp(a*ln(b)) into pow(b, a) if the power is an integer
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
-      ctx.getTree(KA)->isInteger()) {
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
-        KPow(KB, KA), {.KA = ctx.getTree(KA), .KB = ctx.getTree(KB)}));
-    return true;
-  }
 
-  /* Apply the rational power expansion of exp((p/q)*ln(x)) if x is an integer
-   * base. The rational power expansion will apply if the exponent (p/q) is a
-   * rational number outside of the [0, 1] range. */
-  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
-      ctx.getTree(KB)->isInteger() && PowerLike::ExpandRationalPower(e)) {
-    return true;
+  // Power-like case (exp(A*ln(B)))
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx)) {
+    const Tree* base = ctx.getTree(KB);
+    const Tree* exponent = ctx.getTree(KA);
+    // Turn exp(a*ln(b)) into pow(b, a) if the exponent is an integer
+    if (exponent->isInteger()) {
+      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+          KPow(KB, KA), {.KA = ctx.getTree(KA), .KB = ctx.getTree(KB)}));
+      return true;
+    }
+    /* Expand rational powers if the base is an integer and the power is a
+     * rational outside of the [0, 1] range */
+    if (base->isInteger() && exponent->isRational() && !exponent->isInteger() &&
+        !Rational::IsStrictlyPositiveUnderOne(exponent)) {
+      return PowerLike::ExpandRationalPower(e, base, exponent);
+    }
   }
 
   if (child->isMult()) {

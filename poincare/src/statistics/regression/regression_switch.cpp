@@ -152,7 +152,7 @@ const char* Regression::Formula(Type type) {
     case Type::Trigonometric:
       return "y=a·sin(b·x+c)+d";
     case Type::Logistic:
-      return "y=c/(1+a·exp(-b·x))";
+      return "y=c/(1+exp(-b·(x-a)))";
   }
   OMG::unreachable();
 }

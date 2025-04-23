@@ -13,7 +13,8 @@ UserExpression LogisticRegression::privateExpression(
     const double* modelCoefficients) const {
   // c/(1+a*e^(-b*x))
   return UserExpression::Create(
-      KDiv(KC, KAdd(1_e, KMult(KA, KPow(e_e, KMult(-1_e, KB, "x"_e))))),
+      KDiv(KC,
+           KAdd(1_e, KMult(KPow(e_e, KOpposite(KMult(KB, KSub("x"_e, KA))))))),
       {.KA = UserExpression::Builder(modelCoefficients[0]),
        .KB = UserExpression::Builder(modelCoefficients[1]),
        .KC = UserExpression::Builder(modelCoefficients[2])});
@@ -24,12 +25,12 @@ double LogisticRegression::privateEvaluate(
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  if (a == 0.0) {
-    /* Avoids returning NAN if std::exp(-b * x) == Inf because value is too
-     * large. */
-    return c;
-  }
-  return c / (1.0 + a * std::exp(-b * x));
+  // if (a == 0.0) {
+  //   /* Avoids returning NAN if std::exp(-b * x) == Inf because value is too
+  //    * large. */
+  //   return c;
+  // }
+  return c / (1.0 + std::exp(-b * (x - a)));
 }
 
 double LogisticRegression::levelSet(const double* modelCoefficients,
@@ -41,11 +42,11 @@ double LogisticRegression::levelSet(const double* modelCoefficients,
   if (a == 0 || b == 0 || c == 0 || y == 0) {
     return NAN;
   }
-  double lnArgument = (c / y - 1) / a;
+  double lnArgument = (c / y - 1);
   if (lnArgument <= 0) {
     return NAN;
   }
-  return -std::log(lnArgument) / b;
+  return -std::log(lnArgument) / b + a;
 }
 
 double LogisticRegression::partialDerivate(
@@ -54,14 +55,15 @@ double LogisticRegression::partialDerivate(
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double denominator = 1.0 + a * std::exp(-b * x);
+  double exp = std::exp(-b * (x - a));
+  double denominator = 1.0 + exp;
   if (derivateCoefficientIndex == 0) {
     // Derivate with respect to a: exp(-b*x)*(-c/(1+a*exp(-b*x))^2)
-    return -std::exp(-b * x) * c / (denominator * denominator);
+    return -exp * c * b / (denominator * denominator);
   }
   if (derivateCoefficientIndex == 1) {
     // Derivate with respect to b: (-x)*a*exp(-b*x)*(-c/(1+a*exp(-b*x))^2)
-    return x * a * std::exp(-b * x) * c / (denominator * denominator);
+    return (x - a) * exp * c / (denominator * denominator);
   }
   assert(derivateCoefficientIndex == 2);
   // Derivate with respect to c: 1/(1+a*exp(-b*x))
@@ -117,7 +119,7 @@ Regression::Coefficients LogisticRegression::specializedInitCoefficientsForFit(
 
   /* We assume the average of X data is ln(a)/b. This handles both positive and
    * negative values while not being too dependent on outliers. */
-  double a = std::exp(b * xColumn.mean());
+  double a = xColumn.mean();
   if (!std::isfinite(a)) {
     a = defaultValue;
   }

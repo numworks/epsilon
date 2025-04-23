@@ -16,9 +16,12 @@ class PowerLike {
 #endif
   };
 
-  static const Tree* Base(const Tree* e);
-  static const Tree* Exponent(const Tree* e);
-  static BaseAndExponent GetBaseAndExponent(const Tree* e);
+  /* For expressions which are not power-like, or for PowReal expressions when
+   * ignorePowReal is true, the base is the expression itself and the exponent
+   * is 1 */
+  static const Tree* Base(const Tree* e, bool ignorePowReal);
+  static const Tree* Exponent(const Tree* e, bool ignorePowReal);
+  static BaseAndExponent GetBaseAndExponent(const Tree* e, bool ignorePowReal);
 };
 
 }  // namespace Poincare::Internal

@@ -83,10 +83,10 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
   } else if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
     merge = Number::Multiplication(child, next);
-  } else if (!child->isPowReal() && !next->isPowReal() &&
-             ((child->isExp() && next->isExp()) ||
+  } else if (((child->isExp() && next->isExp()) ||
               (!child->isExp() && !next->isExp())) &&
-             PowerLike::Base(child)->treeIsIdenticalTo(PowerLike::Base(next))) {
+             PowerLike::Base(child, true)
+                 ->treeIsIdenticalTo(PowerLike::Base(next, true))) {
     // t^m * t^n -> t^(m+n)
     /* PowReal trees cannot be merged without care because it could change the
      * result. For example PowReal(-1, x) * PowReal(-1, x) is always equal to 1,
@@ -100,9 +100,9 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
      * Ln(t))) by the systematic reduction step that expands powers with a
      * rational exponent outside of the [0, 1] range. */
     PowerLike::BaseAndExponent childParameters =
-        PowerLike::GetBaseAndExponent(child);
+        PowerLike::GetBaseAndExponent(child, true);
     PowerLike::BaseAndExponent nextParameters =
-        PowerLike::GetBaseAndExponent(next);
+        PowerLike::GetBaseAndExponent(next, true);
     assert(childParameters.isValid() && nextParameters.isValid());
     merge = powerMerge(numberOfDependencies, child, next, childParameters.base,
                        childParameters.exponent, nextParameters.exponent);

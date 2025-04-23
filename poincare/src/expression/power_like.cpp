@@ -5,22 +5,23 @@
 
 namespace Poincare::Internal {
 
-const Tree* PowerLike::Base(const Tree* e) {
-  return GetBaseAndExponent(e).base;
+const Tree* PowerLike::Base(const Tree* e, bool ignorePowReal) {
+  return GetBaseAndExponent(e, ignorePowReal).base;
 }
 
-const Tree* PowerLike::Exponent(const Tree* e) {
-  return GetBaseAndExponent(e).exponent;
+const Tree* PowerLike::Exponent(const Tree* e, bool ignorePowReal) {
+  return GetBaseAndExponent(e, ignorePowReal).exponent;
 }
 
-PowerLike::BaseAndExponent PowerLike::GetBaseAndExponent(const Tree* e) {
+PowerLike::BaseAndExponent PowerLike::GetBaseAndExponent(const Tree* e,
+                                                         bool ignorePowReal) {
   PatternMatching::Context ctx;
   // TODO: handle matching KExp(KMult(KA_p, KLn(KB)))
   if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
       ctx.getTree(KA)->isRational()) {
     return {.base = ctx.getTree(KB), .exponent = ctx.getTree(KA)};
   }
-  if (e->isPow() || e->isPowReal()) {
+  if (e->isPow() || (e->isPowReal() && !ignorePowReal)) {
     const Tree* base = e->child(0);
     const Tree* exponent = base->nextTree();
     return {base, exponent};

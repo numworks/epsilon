@@ -9,6 +9,7 @@
 #include "code_point_layout.h"
 #include "grid.h"
 #include "indices.h"
+#include "layouter.h"
 #include "parsing/tokenizer.h"
 #include "vertical_offset.h"
 
@@ -46,6 +47,8 @@ Rack* rackForSerialization(const Rack* rack) {
       newRack,
       KA_s ^ KPrefixSuperscriptL(KB) ^ "log"_l ^ KParenthesesL(KC) ^ KD_s,
       KA_s ^ "log"_l ^ KParenthesesL(KC ^ ","_cl ^ KB) ^ KD_s);
+
+  Layouter::StripSeparators(newRack);
   assert(newRack->isRackLayout());
   return static_cast<Rack*>(newRack);
 }

@@ -171,19 +171,10 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
   assert_reduces_for_approximation("diff(√(x),x,-1)", Undefined::Name(), Radian,
                                    Cartesian);
 
-  /* TODO: currently simplifies to +∞ because the differential has an
-   * expression similar to "exp(-x*ln(0))". ln(0) gets simplified to -∞, then
-   * exp(-ln(0)) gets simplified to +∞.
-   * Note that it used to work for wrong reasons, because of the rational power
-   * expansion, the differential had an expression similar to
-   * "x^0*exp(a*ln(b))", with x^0 being correctly simplified to undef for x<0.
-   * The fix relies in not simplifying ln(0) immediatly to -∞, so that it can
-   * get inside of an "exp(-x*ln(0))", then be transformed into an x^0 which
-   * correctly gets simplified to undef when x<0. */
-  assert_reduces_for_approximation("diff(asin(x),x,1)", "∞");
-  assert_reduces_for_approximation("diff(asin(x),x,-1)", "∞");
-  assert_reduces_for_approximation("diff(acos(x),x,1)", "-∞");
-  assert_reduces_for_approximation("diff(acos(x),x,-1)", "-∞");
+  assert_reduces_for_approximation("diff(asin(x),x,1)", Undefined::Name());
+  assert_reduces_for_approximation("diff(asin(x),x,-1)", Undefined::Name());
+  assert_reduces_for_approximation("diff(acos(x),x,1)", Undefined::Name());
+  assert_reduces_for_approximation("diff(acos(x),x,-1)", Undefined::Name());
   assert_reduces_for_approximation("diff(arccot(x),x,0)", "-1");
 
   assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4");

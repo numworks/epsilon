@@ -56,9 +56,10 @@ bool Logarithm::ReduceLn(Tree* e) {
     e->cloneTreeOverTree(0_e);
     return true;
   }
+  /* Because reduction goes bottom-up, ln(0) is not immediatly reduced, to allow
+   * exp(x*ln(0)) to be properly reduced */
   if (child->isZero()) {
-    e->cloneTreeOverTree(KMult(-1_e, KInf));
-    return true;
+    return false;
   }
 #if 0
   // Seems like a good idea, but doesn't quite work for √(√(-8))

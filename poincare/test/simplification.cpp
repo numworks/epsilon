@@ -1642,6 +1642,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(0)", "undef");
   simplifies_to("ln(0)", "undef", cartesianCtx);
   simplifies_to("ln(cos(x)^2+sin(x)^2)", "dep(0,{nonNull(cos(x)^2+sin(x)^2)})");
+  simplifies_to("ln(cos(x)^2+sin(x)^2-1)", "undef");
   simplifies_to("ln(-10)-ln(5)", "ln(2)+π×i", cartesianCtx);
   simplifies_to("im(ln(-120))", "π", cartesianCtx);
   simplifies_to("ln(-1-i)+ln(-1+i)", "ln(2)", cartesianCtx);

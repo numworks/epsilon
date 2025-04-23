@@ -23,6 +23,27 @@ static bool HandleUnits(Tree* e, ProjectionContext* projectionContext);
 static bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
                           bool reduceIfSuccess);
 
+/* Some patterns are not reduced by the systematic and the advanced reductions,
+ * but if the expression contains one of these patterns at the end of reduction,
+ * the expression is replaced by an undefined. For example, ln(0) is left
+ * unreduced by the systematic and the advanced reductions to allow exp(x*ln(0))
+ * to be correctly simplified. */
+static constexpr const Tree* specialUndefinedPatterns[] = {KLn(0_e)};
+static bool ProcessSpecialUndefinedPatterns(Tree* e) {
+  if (e->hasDescendantSatisfying([](const Tree* t) {
+        for (const Tree* pattern : specialUndefinedPatterns) {
+          if (t->treeIsIdenticalTo(pattern)) {
+            return true;
+          }
+        }
+        return false;
+      })) {
+    e->moveTreeOverTree(KOutOfDefinition->cloneTree());
+    return true;
+  }
+  return false;
+}
+
 #if ASSERTIONS
 template <typename T>
 inline static bool AreConsistent(const Sign& sign, const T& value) {
@@ -192,6 +213,7 @@ bool ReduceSystem(Tree* e, bool advanced, bool expandAlgebraic) {
   if (expandAlgebraic) {
     changed = AdvancedReduction::DeepExpandAlgebraic(e) || changed;
   }
+  changed = ProcessSpecialUndefinedPatterns(e) || changed;
   return Dependency::DeepRemoveUselessDependencies(e) || changed;
 }
 

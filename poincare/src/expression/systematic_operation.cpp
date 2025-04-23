@@ -699,6 +699,9 @@ bool SystematicOperation::ReduceExp(Tree* e) {
   if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx)) {
     const Tree* base = ctx.getTree(KB);
     const Tree* exponent = ctx.getTree(KA);
+    if (base->isZero()) {
+      return PowerLike::ReducePowerOfZero(e, exponent);
+    }
     // Turn exp(a*ln(b)) into pow(b, a) if the exponent is an integer
     if (exponent->isInteger()) {
       e->moveTreeOverTree(PatternMatching::CreateSimplify(

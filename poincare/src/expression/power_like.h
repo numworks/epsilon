@@ -31,6 +31,8 @@ class PowerLike {
    * integer, r, and q are both positive with r/q between 0 and 1. */
   static bool ExpandRationalPower(Tree* e, const Tree* base, const Tree* power);
   static bool ExpandRationalPower(Tree* e);
+
+  static bool ReducePowerOfZero(Tree* e, const Tree* power);
 };
 
 }  // namespace Poincare::Internal

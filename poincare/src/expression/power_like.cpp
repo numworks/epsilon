@@ -69,4 +69,20 @@ bool PowerLike::ExpandRationalPower(Tree* e, const Tree* base,
   return true;
 }
 
+bool PowerLike::ReducePowerOfZero(Tree* e, const Tree* power) {
+  ComplexSign indexSign = GetComplexSign(power);
+  if (indexSign.realSign().isStrictlyPositive()) {
+    // 0^x is always defined.
+    e->cloneTreeOverTree(0_e);
+    return true;
+  }
+  if (!indexSign.realSign().canBeStrictlyPositive()) {
+    // 0^x cannot be defined
+    e->cloneTreeOverTree(KOutOfDefinition);
+    return true;
+  }
+  // Use a dependency as a fallback.
+  return PatternMatching::MatchReplace(e, KA, KDep(0_e, KDepList(KA)));
+}
+
 }  // namespace Poincare::Internal

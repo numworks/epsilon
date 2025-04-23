@@ -143,19 +143,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
     }
   }
   if (base->isZero()) {
-    ComplexSign indexSign = GetComplexSign(n);
-    if (indexSign.realSign().isStrictlyPositive()) {
-      // 0^x is always defined.
-      e->cloneTreeOverTree(0_e);
-      return true;
-    }
-    if (!indexSign.realSign().canBeStrictlyPositive()) {
-      // 0^x cannot be defined
-      e->cloneTreeOverTree(KOutOfDefinition);
-      return true;
-    }
-    // Use a dependency as a fallback.
-    return PatternMatching::MatchReplace(e, KA, KDep(0_e, KDepList(KA)));
+    return PowerLike::ReducePowerOfZero(e, n);
   }
   if (!n->isInteger()) {
     if (n->isRational() && base->isRational() && !base->isInteger()) {

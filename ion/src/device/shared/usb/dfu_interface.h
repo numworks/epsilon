@@ -30,7 +30,7 @@ class DFUInterface : public Interface {
         m_writeAddress(0),
         m_bInterfaceAlternateSetting(bInterfaceAlternateSetting),
         m_isErasingAndWriting(false) {}
-  uint32_t addressPointer() const { return m_addressPointer; }
+  uint32_t leaveAddress() const;
   void wholeDataReceivedCallback(SetupPacket* request, uint8_t* transferBuffer,
                                  uint16_t* transferBufferLength) override;
   void wholeDataSentCallback(SetupPacket* request, uint8_t* transferBuffer,
@@ -198,6 +198,7 @@ class DFUInterfaceBackend {
                      const uint8_t* source) const = 0;
   virtual bool read(uint32_t address, uint32_t length,
                     uint8_t* destination) const = 0;
+  virtual uint32_t leaveAddress(uint32_t requestedAddress) const = 0;
 };
 
 class DFUMemoryBackend : public DFUInterfaceBackend {
@@ -215,6 +216,9 @@ class DFUMemoryBackend : public DFUInterfaceBackend {
              const uint8_t* source) const override;
   bool read(uint32_t address, uint32_t length,
             uint8_t* destination) const override;
+  uint32_t leaveAddress(uint32_t requestedAddress) const override {
+    return requestedAddress;
+  }
 
   const uint32_t m_base;
   const uint32_t m_length;
@@ -252,6 +256,10 @@ class DFUSecureBackend : public DFUInterfaceBackend {
   bool read(uint32_t address, uint32_t length,
             uint8_t* destination) const override {
     return false;
+  }
+  uint32_t leaveAddress(uint32_t requestedAddress) const override {
+    // Secure interfaces can only jump at the base address
+    return m_actualBase;
   }
 
   const uint32_t m_virtualBase;

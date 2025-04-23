@@ -360,6 +360,11 @@ void DFUInterface::leaveDFUAndReset() {
   m_device->detach();
 }
 
+uint32_t DFUInterface::leaveAddress() const {
+  return interface(m_bInterfaceAlternateSetting)
+      ->leaveAddress(m_addressPointer);
+}
+
 bool DFUMemoryBackend::rangeIsValid(uint32_t address, uint32_t length) const {
   return m_base <= address && address + length <= m_base + m_length;
 }

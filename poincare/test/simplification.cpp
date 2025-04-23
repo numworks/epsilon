@@ -862,7 +862,8 @@ QUIZ_CASE(pcj_simplification_power) {
   //   * -|x|^y if p is odd
   simplifies_to("(-41)^(5/7)", "-(41^(5/7))");
   // Do not merge PowReal if the exponents are unknown
-  simplifies_to("(-1)^y×(-1)^y", "(-1)^y×(-1)^y");
+  simplifies_to("(-1)^y×(-1)^y", "((-1)^y)^2");
+  simplifies_to("x^(1/3)×x^(1/3)×x^(1/3)", "root(x,3)^3");
 
   // Complex Power
   simplifies_to("√(x)^2", "x", cartesianCtx);

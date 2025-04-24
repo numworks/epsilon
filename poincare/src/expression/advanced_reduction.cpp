@@ -239,21 +239,12 @@ void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
 }
 
 bool SkipTree(const Tree* e) {
-  return e->block() < SharedTreeStack->lastBlock() && e->isDepList();
+  return e->block() < SharedTreeStack->lastBlock() &&
+         (e->isDepList() || AdvancedOperation::CanSkipTree(e));
 }
 
-Tree* NextNodeSkippingDepList(Tree* e) {
-  assert(!SkipTree(e));
+Tree* NextNodeSkippingIgnoredTrees(Tree* e) {
   Tree* next = e->nextNode();
-  while (SkipTree(next)) {
-    next = next->nextTree();
-  }
-  return next;
-}
-
-const Tree* NextNodeSkippingDepList(const Tree* e) {
-  assert(!SkipTree(e));
-  const Tree* next = e->nextNode();
   while (SkipTree(next)) {
     next = next->nextTree();
   }
@@ -264,18 +255,19 @@ bool AdvancedReduction::Direction::applyNextNode(Tree** u,
                                                  const Tree* root) const {
   // Optimization: No trees are expected after root, so we can use lastBlock()
   assert(isNextNode());
-  assert(
-      (NextNodeSkippingDepList(*u)->block() < SharedTreeStack->lastBlock()) ==
-      NextNodeSkippingDepList(*u)->hasAncestor(root, false));
+  assert((NextNodeSkippingIgnoredTrees(*u)->block() <
+          SharedTreeStack->lastBlock()) ==
+         NextNodeSkippingIgnoredTrees(*u)->hasAncestor(root, false));
   /* TODO We would like this second assert instead of the one above. But we
    * cannot because we apply a path in [ReduceIndependantElement], and there the
    * tree is not guaranteed to be last on TreeStack
    * assert(root->nextTree() == SharedTreeStack->lastBlock() && *u >= root); */
-  if (!(NextNodeSkippingDepList(*u)->block() < SharedTreeStack->lastBlock())) {
+  if (!(NextNodeSkippingIgnoredTrees(*u)->block() <
+        SharedTreeStack->lastBlock())) {
     return false;
   }
   for (uint8_t i = m_type; i >= k_baseNextNodeType; i--) {
-    *u = NextNodeSkippingDepList(*u);
+    *u = NextNodeSkippingIgnoredTrees(*u);
     assert((*u)->block() < SharedTreeStack->lastBlock());
   }
   return true;
@@ -455,18 +447,9 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
      * over this list in reverse order. Caching the intermediate trees avoids
      * recomputing the same nextNode direction twice. */
     Tree* targets[Direction::k_maxNextNodeAmount] = {};
-    int ignoreCount = 0;
     while (i < Direction::k_maxNextNodeAmount &&
            nextNode.applyNextNode(&target, ctx->m_root)) {
-      if (ignoreCount == 0) {
-        ignoreCount = AdvancedOperation::NumberOfNodesToSkip(target);
-      }
-      if (ignoreCount > 0) {
-        --ignoreCount;
-        targets[i++] = nullptr;
-      } else {
-        targets[i++] = target;
-      }
+      targets[i++] = target;
     }
     if (i > 0) {
       [[maybe_unused]] bool hasAppendPath =
@@ -494,17 +477,13 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
         fullExploration = false;
         break;
       }
-      if (targets[i - 1] == nullptr) {
-        LOG(3, "Ignore ", ctx->m_path.logLastDirection());
-      } else {
-        LOG(3, "Apply ", ctx->m_path.logLastDirection(false));
-        LOG(3, ": ", LogExpression(targets[i - 1]), false);
-        fullExploration =
-            ReduceContractThenExpand(targets[i - 1], ctx) && fullExploration;
-        if (ctx->shouldEarlyExit()) {
-          VERBOSE_OUTDENT(3);
-          return false;
-        }
+      LOG(3, "Apply ", ctx->m_path.logLastDirection(false));
+      LOG(3, ": ", LogExpression(targets[i - 1]), false);
+      fullExploration =
+          ReduceContractThenExpand(targets[i - 1], ctx) && fullExploration;
+      if (ctx->shouldEarlyExit()) {
+        VERBOSE_OUTDENT(3);
+        return false;
       }
       ctx->m_path.popBaseDirection();
     }
@@ -512,8 +491,7 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
   VERBOSE_OUTDENT(3);
 
   /* 0 NextNode handle here, unless e must be ignored */
-  if (zeroNextNodeAllowed && ctx->canAppendDirection() &&
-      AdvancedOperation::NumberOfNodesToSkip(e) == 0) {
+  if (zeroNextNodeAllowed && ctx->canAppendDirection() && !SkipTree(e)) {
     fullExploration = ReduceContractThenExpand(e, ctx) && fullExploration;
   }
   return fullExploration;

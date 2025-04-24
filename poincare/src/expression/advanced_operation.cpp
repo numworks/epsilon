@@ -9,20 +9,21 @@
 
 namespace Poincare::Internal {
 
-uint8_t AdvancedOperation::NumberOfNodesToSkip(const Tree* e) {
+bool AdvancedOperation::CanSkipTree(const Tree* e) {
+  /* NOTE: If a more fine-grain skipping is required: e.g. skipping [e] node
+   * but not its descendants, this method could become [NumberOfNodesToSkip]. */
   if (e->numberOfChildren() == 0) {
-    return 1;
+    return true;
   }
 #if 0
   PatternMatching::Context ctx;
   /* Skipping ln(10)^-1 as it's most often related to a projection of log,
    * exploring branches like (ln(2)+ln(5))^-1 is almost certainly useless */
   if (PatternMatching::Match(e, KPow(KLn(10_e), -1_e), &ctx)) {
-    assert(e->numberOfDescendants(true) == 4);
-    return 4;  // pow, ln, 10, -1
+    return true;
   }
 #endif
-  return 0;
+  return false;
 }
 
 // This is redundant with im and re expansion for finite expressions

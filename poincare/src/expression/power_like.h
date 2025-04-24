@@ -22,6 +22,15 @@ class PowerLike {
   static const Tree* Base(const Tree* e, bool ignorePowReal);
   static const Tree* Exponent(const Tree* e, bool ignorePowReal);
   static BaseAndExponent GetBaseAndExponent(const Tree* e, bool ignorePowReal);
+
+  /* Precondition: the power is a non-integer rational outside of the [0, 1]
+   * range.
+   * x^(p/q) is expanded to a fraction of powers of x, in which the first
+   * term has an integer power and the second term has a power between 0 and 1:
+   * x^(p/q) = x^n * x^(r/q) where r is the remainder of p/q. n=(p-r)/q is an
+   * integer, r, and q are both positive with r/q between 0 and 1. */
+  static bool ExpandRationalPower(Tree* e, const Tree* base, const Tree* power);
+  static bool ExpandRationalPower(Tree* e);
 };
 
 }  // namespace Poincare::Internal

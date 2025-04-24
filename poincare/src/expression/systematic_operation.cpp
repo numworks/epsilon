@@ -12,6 +12,7 @@
 #include "k_tree.h"
 #include "list.h"
 #include "matrix.h"
+#include "power_like.h"
 #include "rational.h"
 #include "sign.h"
 #include "systematic_reduction.h"
@@ -171,6 +172,13 @@ bool SystematicOperation::ReducePower(Tree* e) {
       p->removeTree();
       return true;
     }
+
+    if (base->isInteger() && PowerLike::ExpandRationalPower(e)) {
+      return true;
+    }
+    /* TODO: remove this if-block, which applies the rational power expansion
+     * for integer and non-integer bases. Only integer bases should be expanded.
+     */
     if (n->isRational() && !Rational::IsStrictlyPositiveUnderOne(n)) {
       // x^(a/b) -> x^((a-c)/b) * exp(ln(x)*c/b) with c remainder of a/b
       TreeRef a = Rational::Numerator(n).pushOnTreeStack();
@@ -187,6 +195,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
       a->removeTree();
       return true;
     }
+
     // After systematic reduction, a power can only have integer index.
     // base^n -> exp(n*ln(base))
     return PatternMatching::MatchReplaceSimplify(e, KPow(KA, KB),
@@ -723,8 +732,19 @@ bool SystematicOperation::ReduceExp(Tree* e) {
         KPow(KB, KA), {.KA = ctx.getTree(KA), .KB = ctx.getTree(KB)}));
     return true;
   }
+
+  /* Apply the rational power expansion of exp((p/q)*ln(x)) if x is an integer
+   * base. The rational power expansion will apply if the exponent (p/q) is a
+   * rational number outside of the [0, 1] range. */
+  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx) &&
+      ctx.getTree(KB)->isInteger() && PowerLike::ExpandRationalPower(e)) {
+    return true;
+  }
+
   if (child->isMult()) {
-    PatternMatching::Context ctx;
+    /* TODO: remove this if-block, which applies the rational power expansion
+     * for integer and non-integer bases. Only integer bases should be expanded.
+     */
     if (PatternMatching::Match(child, KMult(KA, KLn(KB)), &ctx)) {
       const Tree* a = ctx.getTree(KA);
       const Tree* b = ctx.getTree(KB);

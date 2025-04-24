@@ -2,6 +2,7 @@
 
 #include "k_tree.h"
 #include "poincare/src/memory/pattern_matching.h"
+#include "rational.h"
 
 namespace Poincare::Internal {
 
@@ -27,6 +28,40 @@ PowerLike::BaseAndExponent PowerLike::GetBaseAndExponent(const Tree* e,
     return {base, exponent};
   }
   return {e, 1_e};
+}
+
+bool PowerLike::ExpandRationalPower(Tree* e) {
+  PowerLike::BaseAndExponent parameters = GetBaseAndExponent(e, true);
+  if (parameters.exponent->isInteger() || !parameters.exponent->isRational() ||
+      Rational::IsStrictlyPositiveUnderOne(parameters.exponent)) {
+    return false;
+  }
+  return ExpandRationalPower(e, parameters.base, parameters.exponent);
+}
+
+bool PowerLike::ExpandRationalPower(Tree* e, const Tree* base,
+                                    const Tree* power) {
+  assert(!power->isInteger() && power->isRational() &&
+         !Rational::IsStrictlyPositiveUnderOne(power));
+
+  TreeRef p = Rational::Numerator(power).pushOnTreeStack();
+  TreeRef q = Rational::Denominator(power).pushOnTreeStack();
+  assert(!q->isOne());
+  TreeRef r =
+      IntegerHandler::Remainder(Integer::Handler(p), Integer::Handler(q));
+  TreeRef n = PatternMatching::CreateSimplify(
+      KMult(KAdd(KA, KMult(-1_e, KC)), KPow(KB, -1_e)),
+      {.KA = p, .KB = q, .KC = r});
+  assert(n->isInteger());
+  TreeRef result = PatternMatching::CreateSimplify(
+      KMult(KPow(KA, KB), KExp(KMult(KC, KPow(KD, -1_e), KLn(KA)))),
+      {.KA = base, .KB = n, .KC = r, .KD = q});
+  n->removeTree();
+  r->removeTree();
+  q->removeTree();
+  p->removeTree();
+  e->moveTreeOverTree(result);
+  return true;
 }
 
 }  // namespace Poincare::Internal

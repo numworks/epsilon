@@ -305,9 +305,7 @@ QUIZ_CASE(poincare_simplification_multiplication) {
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("y^x×y^(-x)", "dep(1,{x,y})",
                                        SystemForAnalysis);
-  /* TODO: x/√(x) does not simplify, fix by allowing the merge of pow() and
-   * exp(A*ln(B)) */
-  assert_parsed_expression_simplify_to("x/√(x)", "dep(√(x),{1/√(x)})",
+  assert_parsed_expression_simplify_to("x/√(x)", "dep(√(x),{-ln(x)/2})",
                                        SystemForAnalysis);
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "x",
                                        SystemForAnalysis);

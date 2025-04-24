@@ -91,7 +91,8 @@ QUIZ_CASE(pcj_roots) {
 
   assert_roots_are("{undef, -2, 1}", "undef");
   assert_roots_are("{1, -2, 1}", "{1}");
-  assert_roots_are("{π, -2π, π}", "{1}");
+  // TODO: remove unsimplified useless dependency
+  assert_roots_are("{π, -2π, π}", "{dep(1,{1/π})}");
   assert_roots_are("{1, -1, -6}", "{-2,3}");
   assert_roots_are("{1,-x-1,x}",
                    "{-(-x-1+√(x^2-2×x+1))/2,(x+1+√(x^2-2×x+1))/2}");

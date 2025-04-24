@@ -31,10 +31,8 @@ QUIZ_CASE(poincare_derivative_formal) {
   assert_reduces_to_formal_expression("diff(x^2,x,x)", "2×x");
   assert_reduces_to_formal_expression("diff((x-1)(x-2)(x-3),x,x)",
                                       "3×x^2-12×x+11");
-  /* TODO: x/√(x) does not simplify, fix by allowing the merge of pow() and
-   * exp(A*ln(B)) */
   assert_reduces_to_formal_expression("diff(√(x),x,x)",
-                                      "dep(√(x)/(2×x),{real(√(x))})");
+                                      "dep(1/(2×√(x)),{real(√(x))})");
   assert_reduces_to_formal_expression("diff(1/x,x,x)", "-1/x^2");
 
   assert_reduces_to_formal_expression("diff(e^x,x,x)", "e^(x)");

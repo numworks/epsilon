@@ -28,11 +28,11 @@ static Tree* powerMerge(int* numberOfDependencies, const Tree* child,
   if (!GetComplexSign(expChild).realSign().isStrictlyPositive()) {
     child->cloneTree();
     (*numberOfDependencies)++;
-    // dep(t^(m+n), {t^m, t^n}) if n <= 0 also
-    if (!GetComplexSign(expNext).realSign().isStrictlyPositive()) {
-      next->cloneTree();
-      (*numberOfDependencies)++;
-    }
+  }
+  // dep(t^(m+n), {t^n}) if n <= 0
+  if (!GetComplexSign(expNext).realSign().isStrictlyPositive()) {
+    next->cloneTree();
+    (*numberOfDependencies)++;
   }
   return merge;
 }
@@ -83,30 +83,6 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
   } else if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
     merge = Number::Multiplication(child, next);
-  } else if (((child->isExp() && next->isExp()) ||
-              (!child->isExp() && !next->isExp())) &&
-             PowerLike::Base(child, true)
-                 ->treeIsIdenticalTo(PowerLike::Base(next, true))) {
-    // t^m * t^n -> t^(m+n)
-    /* PowReal trees cannot be merged without care because it could change the
-     * result. For example PowReal(-1, x) * PowReal(-1, x) is always equal to 1,
-     * but PowReal(-1, 2x) is equal to -1 or 1 depending on the value of x. See
-     * the SystematicOperation::ReducePowerReal function for more details.
-     */
-    /* The merge operation is also not applied if {child, next} is a pair of
-     * power-like trees in which one is an Exp(a*Ln()) expression and the
-     * other is a Pow or a PowReal. It would create an infinite loop. The
-     * merged tree would be splitted back into a Mult(Pow(t, n), Exp(m,
-     * Ln(t))) by the systematic reduction step that expands powers with a
-     * rational exponent outside of the [0, 1] range. */
-    PowerLike::BaseAndExponent childParameters =
-        PowerLike::GetBaseAndExponent(child, true);
-    PowerLike::BaseAndExponent nextParameters =
-        PowerLike::GetBaseAndExponent(next, true);
-    assert(childParameters.isValid() && nextParameters.isValid());
-    merge = powerMerge(numberOfDependencies, child, next, childParameters.base,
-                       childParameters.exponent, nextParameters.exponent);
-
   } else if (next->isMatrix()) {
     // TODO: Maybe this should go in advanced reduction.
     /* TODO: This isMatrix is not enough as the child tree could be of dimension
@@ -114,7 +90,33 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     merge = (child->isMatrix()
                  ? Matrix::Multiplication
                  : Matrix::ScalarMultiplication)(child, next, false, nullptr);
+  } else {
+    PowerLike::BaseAndExponent childParameters =
+        PowerLike::GetBaseAndExponent(child, true);
+    PowerLike::BaseAndExponent nextParameters =
+        PowerLike::GetBaseAndExponent(next, true);
+    assert(childParameters.isValid() && nextParameters.isValid());
+    if (!(childParameters.base->isInteger() &&
+          (child->isExp() != next->isExp())) &&
+        childParameters.base->treeIsIdenticalTo(nextParameters.base)) {
+      // t^m * t^n -> t^(m+n)
+      /* PowReal trees cannot be merged without care because it could change the
+       * result. For example PowReal(-1, x) * PowReal(-1, x) is always equal to
+       * 1, but PowReal(-1, 2x) is equal to -1 or 1 depending on the value of x.
+       * See the SystematicOperation::ReducePowerReal function for more details.
+       */
+      /* The merge operation is also not applied if the base is an integer and
+       * {child, next} is a pair of power-like trees in which one is an
+       * Exp(a*Ln()) expression and the other is a Pow. It would create an
+       * infinite loop. The merged tree would be splitted back into a
+       * Mult(Pow(t, n), Exp(m, Ln(t))) by the systematic reduction step that
+       * expands powers with a rational exponent outside of the [0, 1] range. */
+      merge =
+          powerMerge(numberOfDependencies, child, next, childParameters.base,
+                     childParameters.exponent, nextParameters.exponent);
+    }
   }
+
   if (!merge) {
     return false;
   }

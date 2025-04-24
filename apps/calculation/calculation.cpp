@@ -220,11 +220,15 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
     }
   }
 
-  // Hide exact output layout if identical to approximate
+  // Hide exact output layout if identical to approximate or input
   if (CanDisplayExact(m_displayOutput) &&
-      CanDisplayApproximate(m_displayOutput) &&
-      exactOutput.isIdenticalTo(approximateOutput)) {
-    forceDisplayOutput(DisplayOutput::ApproximateIsIdenticalToExact);
+      CanDisplayApproximate(m_displayOutput)) {
+    if (exactOutput.isIdenticalTo(approximateOutput)) {
+      forceDisplayOutput(DisplayOutput::ApproximateIsIdenticalToExact);
+    } else if (m_displayOutput != DisplayOutput::ExactAndApproximateToggle &&
+               exactOutput.isIdenticalTo(createInputLayout(context))) {
+      forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
+    }
   }
 
   return {exactOutput, approximateOutput};

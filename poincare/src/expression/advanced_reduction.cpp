@@ -459,7 +459,7 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
     while (i < Direction::k_maxNextNodeAmount &&
            nextNode.applyNextNode(&target, ctx->m_root)) {
       if (ignoreCount == 0) {
-        ignoreCount = AdvancedOperation::SkippableNextNode(target);
+        ignoreCount = AdvancedOperation::NumberOfNodesToSkip(target);
       }
       if (ignoreCount > 0) {
         --ignoreCount;
@@ -511,9 +511,9 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
   }
   VERBOSE_OUTDENT(3);
 
-  /* 0 NextNode handle here */
+  /* 0 NextNode handle here, unless e must be ignored */
   if (zeroNextNodeAllowed && ctx->canAppendDirection() &&
-      AdvancedOperation::SkippableNextNode(e) == 0) {
+      AdvancedOperation::NumberOfNodesToSkip(e) == 0) {
     fullExploration = ReduceContractThenExpand(e, ctx) && fullExploration;
   }
   return fullExploration;

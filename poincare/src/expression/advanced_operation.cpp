@@ -9,7 +9,7 @@
 
 namespace Poincare::Internal {
 
-uint8_t AdvancedOperation::SkippableNextNode(const Tree* e) {
+uint8_t AdvancedOperation::NumberOfNodesToSkip(const Tree* e) {
   if (e->numberOfChildren() == 0) {
     return 1;
   }
@@ -18,6 +18,7 @@ uint8_t AdvancedOperation::SkippableNextNode(const Tree* e) {
   /* Skipping ln(10)^-1 as it's most often related to a projection of log,
    * exploring branches like (ln(2)+ln(5))^-1 is almost certainly useless */
   if (PatternMatching::Match(e, KPow(KLn(10_e), -1_e), &ctx)) {
+    assert(e->numberOfDescendants(true) == 4);
     return 4;  // pow, ln, 10, -1
   }
 #endif

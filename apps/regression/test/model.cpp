@@ -668,6 +668,48 @@ QUIZ_CASE(regression_logistic) {
   constexpr double sr7 = 26.88173;
   assert_regression_is(x7, y7, std::size(x7), Model::Type::Logistic,
                        coefficients7, NAN, r27, sr7);
+
+  double x8[] = {1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996,
+                 1997, 1998, 1999, 2000, 2001, 2002, 2003, 2009};
+  constexpr double y8[] = {522,   891,   1389,  2032,  2934,  3940,
+                           5189,  6764,  8789,  11097, 13525, 15972,
+                           18467, 20511, 22296, 23272, 37201};
+  static_assert(std::size(x8) == std::size(y8), "Column sizes are different");
+  constexpr Coefficients coefficients8 = {1.88355e+227, 0.261513,
+                                          41117.7};  // No target
+  constexpr double r28 = NAN;
+  constexpr double sr8 = 922.457;
+  assert_regression_is(x8, y8, std::size(x8), Model::Type::Logistic,
+                       coefficients8, NAN, r28, sr8);
+
+  for (double& x : x8) {
+    x += 1000;
+  }
+  constexpr Coefficients coefficients8_2 = {INFINITY, 0.261513,
+                                            41117.7};  // No target
+  assert_regression_is(x8, y8, std::size(x8), Model::Type::Logistic,
+                       coefficients8_2, NAN, r28, sr8);
+
+  constexpr double x10[] = {50, 100, 150};
+  constexpr double y10[] = {260, 270, 280};
+  static_assert(std::size(x10) == std::size(y10), "Column sizes are different");
+  constexpr Coefficients coefficients10 = {1.15976, 0.00148216, 540};
+  constexpr double r210 = NAN;
+  constexpr double sr10 = NAN;  // Normal: Too few points
+  assert_regression_is(x10, y10, std::size(x10), Model::Type::Logistic,
+                       coefficients10, NAN, r210, sr10);
+
+  constexpr double x11[] = {1900, 1910, 1920, 1930, 1940, 1950,
+                            1960, 1970, 1980, 1990, 2000};
+  constexpr double y11[] = {76210000,  92230000,  106020000, 123200000,
+                            132160000, 151330000, 179320000, 203300000,
+                            226540000, 248710000, 281420000};
+  static_assert(std::size(x11) == std::size(y11), "Column sizes are different");
+  constexpr Coefficients coefficients11 = {1.56372e+14, 0.0160339, 7.99474e+08};
+  constexpr double r211 = NAN;
+  constexpr double sr11 = 3.46263e+06;
+  assert_regression_is(x11, y11, std::size(x11), Model::Type::Logistic,
+                       coefficients11, NAN, r211, sr11);
 }
 
 // Testing column and regression calculation

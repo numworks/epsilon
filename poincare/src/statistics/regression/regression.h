@@ -77,6 +77,11 @@ class Regression {
            type == Type::Power || type == Type::Logarithmic;
   }
 
+  constexpr static bool CanDefaultToConstant(Type type) {
+    assert(type != Type::None);
+    return !(type == Type::Power || type == Type::ExponentialAebx ||
+             type == Type::ExponentialAbx || type == Type::Proportional);
+  }
   // - Correlation and determination coefficients
   constexpr static bool HasR(Type type) {
     return type == Type::None || IsLinear(type) || FitsLnY(type) ||
@@ -146,6 +151,7 @@ class Regression {
   void fit(const Series* series, double* modelCoefficients,
            Poincare::Context* context) const;
 
+  Coefficients coefficientsToMatchMean(const Series* series) const;
   double correlationCoefficient(const Series* series) const;
   double determinationCoefficient(const Series* series,
                                   const double* modelCoefficients) const;

@@ -79,7 +79,7 @@ void Regression::fit(const Series* series, double* modelCoefficients,
 Regression::Coefficients Regression::privateFit(
     const Series* series, Poincare::Context* context) const {
   double lowestResidualsSquareSum = OMG::Float::Max<double>();
-  std::array<double, k_maxNumberOfCoefficients> bestModelCoefficients;
+  Coefficients bestModelCoefficients;
   /* The coefficients are initialized to zero, so that in the worst case (it
    * could theoretically happen if all residual standard deviations are infinite
    * or NaN), the returned model coefficients will all be zero. */
@@ -99,6 +99,10 @@ Regression::Coefficients Regression::privateFit(
       bestModelCoefficients = modelCoefficients;
     }
     attemptNumber++;
+  }
+  if (CanDefaultToConstant(type()) &&
+      determinationCoefficient(series, bestModelCoefficients.data()) <= 0) {
+    bestModelCoefficients = coefficientsToMatchMean(series);
   }
   return bestModelCoefficients;
 }

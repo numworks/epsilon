@@ -1,6 +1,7 @@
 #include <omg/unreachable.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/src/statistics/dataset_adapter.h>
 
 #include "cubic_regression.h"
 #include "exponential_regression.h"
@@ -187,6 +188,51 @@ const Poincare::Layout Regression::TemplateLayout(Type type) {
       return Layout::String(Formula(type) + sizeof("y=") - 1);
   }
   OMG::unreachable();
+}
+
+Regression::Coefficients Regression::coefficientsToMatchMean(
+    const Series* series) const {
+  assert(CanDefaultToConstant(type()));
+  Coefficients coefs;
+  coefs.fill(0.0);
+  StatisticsDatasetFromTable xColumn(series, 0);
+  StatisticsDatasetFromTable yColumn(series, 1);
+  double mean = yColumn.mean();
+  int meanIndex = 0;
+  switch (type()) {
+    case Type::LinearAxpb:
+    case Type::LinearApbx:
+    case Type::Median:
+      // Should be possible to have R2 negative on linear regression
+      OMG::unreachable();
+    case Type::Logarithmic:
+      meanIndex = 0;
+      break;
+    case Type::LogisticInternal:
+      /* Even with the other coefs to 0 a factor .5 remains
+       * "internal" logistic model: c/(1+exp(-0(x-0))) => c/(1+exp(0)) => c/2 */
+      mean = 2 * mean;
+      [[fallthrough]];
+    case Type::Logistic:
+    case Type::Quadratic:
+      meanIndex = 2;
+      break;
+    case Type::Trigonometric:
+    case Type::Cubic:
+      meanIndex = 3;
+      break;
+    case Type::Quartic:
+      meanIndex = 4;
+      break;
+    case Type::ExponentialAebx:
+    case Type::ExponentialAbx:
+    case Type::Power:
+    case Type::Proportional:
+    case Type::None:
+      OMG::unreachable();
+  }
+  coefs[meanIndex] = mean;
+  return coefs;
 }
 
 }  // namespace Poincare::Internal

@@ -118,8 +118,16 @@ void assert_regression_is(const double* xi, const double* yi,
     // Compute and check R2/r^2 value and sign
     quiz_assert(r2 <= 1.0 &&
                 (r2 >= 0.0 || modelType == Model::Type::Proportional));
-    quiz_assert(
-        roughly_equal(r2, trueR2, precision, false, nullExpectedPrecision));
+    bool cond =
+        roughly_equal(r2, trueR2, precision, false, nullExpectedPrecision);
+#if POINCARE_TREE_LOG
+    if (!cond) {
+      std::cout << "R^2 different:" << std::endl;
+      std::cout << "\tExpected:" << trueR2 << std::endl;
+      std::cout << "\t     Got:" << r2 << std::endl;
+    }
+#endif
+    quiz_assert(cond);
   }
 
   bool cond = roughly_equal(sr, trueResidualStdDev, precision, true,
@@ -255,6 +263,17 @@ QUIZ_CASE(regression_cubic) {
   constexpr double sr = 0.006858;
   assert_regression_is(x, y, std::size(x), Model::Type::Cubic, coefficients,
                        NAN, r2, sr);
+
+  constexpr double x2[] = {2006, 2007, 2008, 2009, 2010, 2011,
+                           2012, 2013, 2014, 2015, 2016, 2017};
+  constexpr double y2[] = {29.66, 29.39, 28.84, 28.57, 28.51, 28.62,
+                           28.69, 29.52, 29.79, 30.16, 30.31, 30.96};
+  static_assert(std::size(x2) == std::size(y2), "Column sizes are different");
+  constexpr Coefficients coefficients2 = {0, 0, 0, 29.4183};
+  constexpr double r22 = 0;
+  constexpr double sr2 = 0.933847;
+  assert_regression_is(x2, y2, std::size(x2), Model::Type::Cubic, coefficients2,
+                       NAN, r22, sr2);
 }
 
 QUIZ_CASE(regression_quartic) {

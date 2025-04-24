@@ -24,6 +24,11 @@ static Tree* powerMerge(int* numberOfDependencies, const Tree* child,
     *numberOfDependencies += merge->nextTree()->numberOfChildren();
     merge->nextTree()->removeNode();
   }
+  /* Dependencies need to be added when one of the expressions to be merged was
+   * under a negative exponent. Sometimes these dependencies cannot be undefined
+   * (for example π^-1). This is why RemoveDefinedDependencies is called later
+   * on. TODO: do not add useless dependencies (see the comment in
+   * RemoveDefinedDependencies) */
   // dep(t^(m+n), {t^m}) if m <= 0
   if (!GetComplexSign(expChild).realSign().isStrictlyPositive()) {
     child->cloneTree();
@@ -222,7 +227,13 @@ bool SystematicOperation::ReduceSortedMultiplication(Tree* e) {
     // TODO: create moveTreeAfterNode
     e->nextTree()->moveTreeBeforeNode(depList);
     e->cloneNodeAtNode(KDep);
-    mult = Dependency::Main(e);
+    Dependency::RemoveDefinedDependencies(e);
+    if (e->isUndefined()) {
+      return true;
+    }
+    if (e->isDep()) {
+      mult = Dependency::Main(e);
+    }
   } else {
     depList->removeTree();
   }

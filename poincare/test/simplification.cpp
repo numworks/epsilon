@@ -239,6 +239,7 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("x^(1+abs(x)/x)", "dep(x^(1+sign(x)),{x^0})");
   simplifies_to("abs((-3)^ln(5))", "3^ln(5)", cartesianCtx);
   simplifies_to("abs(acos(2)^4)", "abs(acos(2))^4", cartesianCtx);
+  simplifies_to("abs(e^(π/2×i)+e^(π/6×i))", "√(3)");
 }
 
 QUIZ_CASE(pcj_simplification_derivative) {

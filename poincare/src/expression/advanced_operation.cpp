@@ -78,22 +78,16 @@ bool AdvancedOperation::ExpandImRe(Tree* e) {
 
 bool AdvancedOperation::ContractAbs(Tree* e) {
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(
-          e, KAbs(KAdd(KExp(KMult(KA_s, i_e)), KExp(KMult(KB_s, i_e)))),
-          &ctx)) {
-    Tree* a = PatternMatching::CreateSimplify(KMult(KA_s), ctx);
-    Tree* b = PatternMatching::CreateSimplify(KMult(KB_s), ctx);
-    bool childrenAreReal =
-        GetComplexSign(a).isReal() && GetComplexSign(b).isReal();
-    b->removeTree();
-    a->removeTree();
-    if (childrenAreReal) {
-      // |exp(A*i) + exp(B*i)| = √(2+2*cos(A-B)) for A and B real
+  if (PatternMatching::Match(e, KAbs(KAdd(KExp(KA), KExp(KB))), &ctx)) {
+    if (GetComplexSign(ctx.getTree(KA)).isPureIm() &&
+        GetComplexSign(ctx.getTree(KB)).isPureIm()) {
+      // |exp(A) + exp(B)| = √(2+2*cos((B-A)*i)) for A and B pure imaginary
       e->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KExp(KMult(1_e / 2_e,
-                     KLn(KAdd(2_e, KMult(2_e, KTrig(KAdd(KMult(KA_s),
-                                                         KMult(-1_e, KB_s)),
-                                                    0_e)))))),
+          KExp(KMult(
+              1_e / 2_e,
+              KLn(KAdd(2_e,
+                       KMult(2_e, KTrig(KMult(KAdd(KB, KMult(-1_e, KA)), i_e),
+                                        0_e)))))),
           ctx));
       return true;
     }

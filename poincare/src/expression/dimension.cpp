@@ -220,7 +220,7 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       float n =
           Approximation::To<float>(e->child(1), Approximation::Parameters{});
       assert(std::floor(n) == n);
-      assert(n >= 1 && n <= NAry::k_maxNumberOfChildren);
+      assert(n >= 0 && n <= NAry::k_maxNumberOfChildren);
       return n;
     }
     case Type::ListSlice: {
@@ -509,7 +509,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
       float n =
           Approximation::To<float>(e->child(1), Approximation::Parameters{});
       assert(std::floor(n) == n);
-      return n >= 1 && n <= NAry::k_maxNumberOfChildren;
+      return n >= 0 && n <= NAry::k_maxNumberOfChildren;
     }
     case Type::ListSlice:
       return Integer::Is<uint8_t>(e->child(1)) &&

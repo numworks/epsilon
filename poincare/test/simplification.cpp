@@ -751,7 +751,7 @@ QUIZ_CASE(pcj_simplification_list) {
   simplifies_to("sum(sequence(2*k*t, k, 3)+1, t, 1, 3)", "{15,27,39}");
   simplifies_to("sum(sequence(1, k, 255))", "255");
   simplifies_to("sequence(1, k, 256)", "undef");
-  simplifies_to("sequence(k,k,0)", "undef");  // TODO_PCJ: should be {}
+  simplifies_to("sequence(k,k,0)", "{}");
   simplifies_to("mean({1,3*x,2})", "x+1");
   simplifies_to("sum({1,3*x,2})", "3×(x+1)");
   simplifies_to("min({1,-4/7,2,-2})", "-2");

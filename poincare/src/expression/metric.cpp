@@ -142,7 +142,10 @@ int Metric::GetTrueMetric(const Tree* e) {
             firstChild->isMult() ? firstChild->child(0) : firstChild);
         if (value.is<int>()) {
           value.setSign(NonStrictSign::Positive);
-          childrenCoeff *= value.to<int>() * 2;
+          int n = value.to<int>();
+          childrenCoeff = (4 < (INT_MAX - childrenCoeff) / n)
+                              ? childrenCoeff + 4 * n
+                              : INT_MAX;
         }
       }
       break;

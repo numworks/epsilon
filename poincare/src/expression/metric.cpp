@@ -72,24 +72,23 @@ int Metric::GetTrueMetric(const Tree* e) {
         if (ctx.getNumberOfTrees(KB) == 1) {
           result -= GetMetric(Type::Mult);
         }
-      } else {
-        // ln(A)/ln(10) is beautified into log(A)
-        constexpr const Tree* invLn10 = KPow(KLn(10_e), -1_e);
-        bool hasLn = false;
-        bool hasInvLn10 = false;
-        for (const Tree* child : e->children()) {
-          if (child->isLn()) {
-            hasLn = true;
-          } else if (child->treeIsIdenticalTo(invLn10)) {
-            hasInvLn10 = true;
+      }
+      // ln(A)/ln(10) is beautified into log(A)
+      constexpr const Tree* invLn10 = KPow(KLn(10_e), -1_e);
+      bool hasLn = false;
+      bool hasInvLn10 = false;
+      for (const Tree* child : e->children()) {
+        if (child->isLn()) {
+          hasLn = true;
+        } else if (child->treeIsIdenticalTo(invLn10)) {
+          hasInvLn10 = true;
+        }
+        if (hasLn && hasInvLn10) {
+          result -= GetTrueMetric(invLn10);
+          if (e->numberOfChildren() == 2) {
+            result -= GetMetric(Type::Mult);
           }
-          if (hasLn && hasInvLn10) {
-            result -= GetTrueMetric(invLn10);
-            if (e->numberOfChildren() == 2) {
-              result -= GetMetric(Type::Mult);
-            }
-            break;
-          }
+          break;
         }
       }
       break;

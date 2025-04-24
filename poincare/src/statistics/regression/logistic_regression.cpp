@@ -9,14 +9,32 @@
 
 namespace Poincare::Internal {
 
-static double DtoA(const Regression::Coefficients& modelCoefficients) {
-  return std::exp(modelCoefficients[0] * modelCoefficients[1]);
-}
+/* NOTE =============
+ * Logistic Regression uses a two different equivalent models:
+ *
+ * The "user" model:     c/(1+a*exp(-bx))      (displayed to the user)
+ * The "internal" model: c/(1+exp(-b(x-d)))    (use internally for better fit)
+ *
+ * We can easily transition from one to the other with a = exp(bd).
+ *
+ * We use a different model internally because `a` can easily overflow the
+ * `double` range when values of x and b where large enough.
+ * A typical classroom example is to have a series of years as x. Knowing that
+ * `d ~= std::mean(x)` (eg: 2000), this leads to `a ~= exp(2000b)`
+ * which reaches infinity for fairly small values of `b`.
+ *
+ * With the internal model, we can still do the [fit] correctly even with
+ * when `a` reaches `inf`.
+ *
+ * In all this file `d` is stored in `modelCoefficients[0]` and is
+ * transformed to `a` by [GetUserCoefficient]. */
 
+/* Return coefficients from model to be displayed to the user */
 double LogisticRegression::GetUserCoefficient(
     const Coefficients& modelCoefficients, int index) {
   if (index == 0) {
-    return DtoA(modelCoefficients);
+    /* Compute `a` coefficient from "user" model */
+    return std::exp(modelCoefficients[0] * modelCoefficients[1]);
   }
   assert(index == 1 || index == 2);
   return modelCoefficients[index];
@@ -27,7 +45,7 @@ UserExpression LogisticRegression::privateExpression(
   Coefficients coefficients;
   memcpy(coefficients.data(), modelCoefficients,
          numberOfCoefficients() * sizeof(double));
-  // c/(1+a*e^(-b*x))
+  // User model here: c/(1+a*exp(-b*x))
   return UserExpression::Create(
       KDiv(KC, KAdd(1_e, KMult(KA, KPow(e_e, KOpposite(KMult(KB, "x"_e)))))),
       {.KA = UserExpression::Builder(GetUserCoefficient(coefficients, 0)),
@@ -37,51 +55,47 @@ UserExpression LogisticRegression::privateExpression(
 
 double LogisticRegression::privateEvaluate(
     const Coefficients& modelCoefficients, double x) const {
-  double a = modelCoefficients[0];
+  double d = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  // if (a == 0.0) {
-  //   /* Avoids returning NAN if std::exp(-b * x) == Inf because value is too
-  //    * large. */
-  //   return c;
-  // }
-  return c / (1.0 + std::exp(-b * (x - a)));
+  return c / (1.0 + std::exp(-b * (x - d)));
 }
 
 double LogisticRegression::levelSet(const double* modelCoefficients,
                                     double xMin, double xMax, double y,
                                     Poincare::Context* context) const {
-  double a = modelCoefficients[0];
+  double d = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  if (a == 0 || b == 0 || c == 0 || y == 0) {
+  if (b == 0 || c == 0 || y == 0) {
     return NAN;
   }
   double lnArgument = (c / y - 1);
   if (lnArgument <= 0) {
     return NAN;
   }
-  return -std::log(lnArgument) / b + a;
+  return -std::log(lnArgument) / b + d;
 }
 
 double LogisticRegression::partialDerivate(
     const Coefficients& modelCoefficients, int derivateCoefficientIndex,
     double x) const {
-  double a = modelCoefficients[0];
+  double d = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  double exp = std::exp(-b * (x - a));
+  double exp = std::exp(-b * (x - d));
   double denominator = 1.0 + exp;
   if (derivateCoefficientIndex == 0) {
-    // Derivate with respect to a: exp(-b*x)*(-c/(1+a*exp(-b*x))^2)
+    // Derivate with respect to d: -exp(-b*(x-d)) * c * b / (1+exp(-b(x-d)))^2
     return -exp * c * b / (denominator * denominator);
   }
   if (derivateCoefficientIndex == 1) {
-    // Derivate with respect to b: (-x)*a*exp(-b*x)*(-c/(1+a*exp(-b*x))^2)
-    return (x - a) * exp * c / (denominator * denominator);
+    // Derivate with respect to b:
+    // (x-d) * exp(-b*(x-d)) * c / (1+exp(-b*(x-d)))^2
+    return (x - d) * exp * c / (denominator * denominator);
   }
   assert(derivateCoefficientIndex == 2);
-  // Derivate with respect to c: 1/(1+a*exp(-b*x))
+  // Derivate with respect to c: 1/(1+exp(-b*(x-d)))
   return 1.0 / denominator;
 }
 
@@ -91,18 +105,18 @@ Regression::Coefficients LogisticRegression::specializedInitCoefficientsForFit(
   StatisticsDatasetFromTable xColumn(series, 0);
   StatisticsDatasetFromTable yColumn(series, 1);
   /* We optimize fit for data that actually follow a logistic function curve :
-   * f(x)=c/(1+a*e^(-bx))
+   * f(x)=c/(1+e^(-b(x-d)))
    * We use these properties :
-   * (1) f(x) = c/2 <=> x = ln(a)/b
-   * (2) f(x + ln(a)/b) = r * c <=> x = ln(r/(1-r)) / b
+   * (1) f(x) = c/2 <=> x = d
+   * (2) f(x + d) = r * c <=> x = ln(r/(1-r)) / b
    * Coefficients are initialized assuming the data is equally distributed on
    * the interesting part of a logistic function curve.
    * We assume this interesting part to be where 0.01*c < f(x) < 0.99*c.
-   * Using (2), it roughly corresponds to (ln(a)-5)/b < x < (ln(a)+5)/b
-   * Data is assumed equally distributed around the point (ln(a)/b, c/2) (1)
+   * Using (2), it roughly corresponds to d-5/b < x < d+5/b
+   * Data is assumed equally distributed around the point (d, c/2) (1)
    * The curve and significant values look like this :
    *
-   *                             ln(a)/b
+   *                                  d
    *                                  ¦  ______  _  _  _  c
    *                                  ¦ /¦
    *             c/2  _  _  _  _  _  _¦/ ¦
@@ -110,7 +124,8 @@ Regression::Coefficients LogisticRegression::specializedInitCoefficientsForFit(
    *              0  _  _  _  ______ /   ¦
    *                                ¦    ¦
    *                                ¦    ¦
-   *                      ~(ln(a)-5)/b   ~(ln(a)+5)/b
+   *                            ~(d-5/b) ¦
+   *                                  ~(d+5/b)
    */
 
   /* We assume the average of Y data is c/2. This handles both positive and
@@ -132,14 +147,14 @@ Regression::Coefficients LogisticRegression::specializedInitCoefficientsForFit(
     b = -b;
   }
 
-  /* We assume the average of X data is ln(a)/b. This handles both positive and
+  /* We assume the average of X data is d. This handles both positive and
    * negative values while not being too dependent on outliers. */
-  double a = xColumn.mean();
-  if (!std::isfinite(a)) {
-    a = defaultValue;
+  double d = xColumn.mean();
+  if (!std::isfinite(d)) {
+    d = defaultValue;
   }
 
-  return {a, b, c};
+  return {d, b, c};
 }
 
 }  // namespace Poincare::Internal

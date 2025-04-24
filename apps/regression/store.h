@@ -53,7 +53,7 @@ class Store : public Shared::LinearRegressionStore {
   /* [m_regressionCoefficients] can store different coefs from the ones
    * asked by the user. This methods compute the correct "user" coefs based on
    * the ones used internally.
-   * This is because of Logistic regression use different coefs for better fit
+   * This is because Logistic regression uses different coefs for better fit
    */
   double userCoefficientsForSeries(int series, int index,
                                    Poincare::Context* globalContext);

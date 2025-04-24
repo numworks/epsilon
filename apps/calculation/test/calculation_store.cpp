@@ -347,6 +347,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("1-(1/3)%", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "1×(1-((1/3)/100))",
                       "0.99666666666667", &globalContext, &store);
+  assertCalculationIs("π-15i", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation, "π-15i", "3.1415926535898-15i",
+                      &globalContext, &store);
 
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,

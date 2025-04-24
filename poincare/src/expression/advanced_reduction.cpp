@@ -238,14 +238,11 @@ void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
 #endif
 }
 
-bool SkipTree(const Tree* e) {
-  return e->block() < SharedTreeStack->lastBlock() &&
-         (e->isDepList() || AdvancedOperation::CanSkipTree(e));
-}
-
 Tree* NextNodeSkippingIgnoredTrees(Tree* e) {
+  assert(!AdvancedOperation::CanSkipTree(e));
   Tree* next = e->nextNode();
-  while (SkipTree(next)) {
+  while (next->block() < SharedTreeStack->lastBlock() &&
+         AdvancedOperation::CanSkipTree(e)) {
     next = next->nextTree();
   }
   return next;
@@ -255,30 +252,30 @@ bool AdvancedReduction::Direction::applyNextNode(Tree** u,
                                                  const Tree* root) const {
   // Optimization: No trees are expected after root, so we can use lastBlock()
   assert(isNextNode());
-  assert((NextNodeSkippingIgnoredTrees(*u)->block() <
-          SharedTreeStack->lastBlock()) ==
-         NextNodeSkippingIgnoredTrees(*u)->hasAncestor(root, false));
+  Tree* next = NextNodeSkippingIgnoredTrees(*u);
+
+  assert((next->block() < SharedTreeStack->lastBlock()) ==
+         next->hasAncestor(root, false));
   /* TODO We would like this second assert instead of the one above. But we
    * cannot because we apply a path in [ReduceIndependantElement], and there the
-   * tree is not guaranteed to be last on TreeStack
-   * assert(root->nextTree() == SharedTreeStack->lastBlock() && *u >= root); */
-  if (!(NextNodeSkippingIgnoredTrees(*u)->block() <
-        SharedTreeStack->lastBlock())) {
+   * tree is not guaranteed to be last on TreeStack */
+  // assert(root->nextTree() == SharedTreeStack->lastBlock() && *u >= root);
+
+  if (!(next->block() < SharedTreeStack->lastBlock())) {
     return false;
   }
-  for (uint8_t i = m_type; i >= k_baseNextNodeType; i--) {
-    *u = NextNodeSkippingIgnoredTrees(*u);
-    assert((*u)->block() < SharedTreeStack->lastBlock());
+  for (uint8_t i = m_type - 1; i >= k_baseNextNodeType; i--) {
+    next = NextNodeSkippingIgnoredTrees(next);
+    assert(next->block() < SharedTreeStack->lastBlock());
   }
+  *u = next;
   return true;
 }
 
 bool AdvancedReduction::Direction::applyContractOrExpand(Tree** u,
                                                          Tree* root) const {
   assert(isContract() || isExpand());
-  /* Trees without children should be skipped earlier.
-   * They cannot be contracted or expanded */
-  assert((*u)->numberOfChildren() != 0);
+  assert(!AdvancedOperation::CanSkipTree(*u));
 
   if (!(isContract() ? ShallowContract : ShallowExpand)(*u, false)) {
     return false;
@@ -433,6 +430,9 @@ void AdvancedReduction::UpdateBestMetric(Context* ctx) {
 
 bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
                                       bool zeroNextNodeAllowed) {
+  if (AdvancedOperation::CanSkipTree(e)) {
+    return true;
+  }
   VERBOSE_INDENT(3);
   bool fullExploration = true;
   if (ctx->m_path.length() + 1 >= ctx->m_crcCollection.maxDepth()) {
@@ -490,8 +490,8 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
   }
   VERBOSE_OUTDENT(3);
 
-  /* 0 NextNode handle here, unless e must be ignored */
-  if (zeroNextNodeAllowed && ctx->canAppendDirection() && !SkipTree(e)) {
+  /* 0 NextNode handle here */
+  if (zeroNextNodeAllowed && ctx->canAppendDirection()) {
     fullExploration = ReduceContractThenExpand(e, ctx) && fullExploration;
   }
   return fullExploration;
@@ -529,6 +529,9 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
 
   // Successfully applied C||E dir and result is unexplored: compute metric
   UpdateBestMetric(ctx);
+  if (ctx->shouldEarlyExit()) {
+    return false;
+  }
 
   bool fullExploration = PrivateReduce(target, ctx);
   if (ctx->shouldEarlyExit()) {

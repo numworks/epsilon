@@ -225,7 +225,7 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
       CanDisplayApproximate(m_displayOutput)) {
     if (exactOutput.isIdenticalTo(approximateOutput)) {
       forceDisplayOutput(DisplayOutput::ApproximateIsIdenticalToExact);
-    } else if (m_displayOutput != DisplayOutput::ExactAndApproximateToggle &&
+    } else if ((m_displayOutput != DisplayOutput::ExactAndApproximateToggle) &&
                exactOutput.isIdenticalTo(createInputLayout(context))) {
       forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
     }

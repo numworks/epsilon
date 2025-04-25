@@ -350,7 +350,7 @@ bool DFUFlashBackend::write(uint32_t address, uint32_t length,
 }
 
 bool DFUFlashBackend::erase(uint32_t pageId) const {
-  if (pageId == Flash::TotalNumberOfSectors()) {
+  if (pageId == static_cast<uint32_t>(Flash::TotalNumberOfSectors())) {
     Flash::MassEraseWithInterruptions(false);
     return true;
   }

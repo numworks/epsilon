@@ -41,6 +41,8 @@ void TreeStackCheckpoint::Raise(ExceptionType type) {
   if (s_topmostTreeStackCheckpoint == nullptr) {
     abort();
   }
+  // See ExceptionCheckpoint::Raise() for a comment on this assert
+  assert((void*)&type < (void*)s_topmostTreeStackCheckpoint);
   s_topmostTreeStackCheckpoint->rollback();
   abort();
 }

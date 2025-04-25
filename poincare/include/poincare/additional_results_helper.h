@@ -15,13 +15,18 @@ class AdditionalResultsHelper final {
   typedef bool (*ShouldOnlyDisplayApproximation)(
       const UserExpression& input, const UserExpression& exactOutput,
       const UserExpression& approximateOutput, Context* context);
-  static void TrigonometryAngleHelper(
+
+  struct TrigonometryResults {
+    UserExpression exactAngle;
+    float approximatedAngle;
+    bool angleIsExact;
+  };
+  static TrigonometryResults TrigonometryAngleHelper(
       const UserExpression input, const UserExpression exactOutput,
       const UserExpression approximateOutput, bool directTrigonometry,
       Preferences::CalculationPreferences calculationPreferences,
       const Internal::ProjectionContext* ctx,
-      ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation,
-      UserExpression& exactAngle, float* approximatedAngle, bool* angleIsExact);
+      ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation);
 
   static UserExpression ExtractExactAngleFromDirectTrigo(
       const UserExpression input, const UserExpression exactOutput,

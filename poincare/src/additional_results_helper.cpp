@@ -23,22 +23,20 @@ namespace Poincare {
 
 using namespace Internal;
 
-void AdditionalResultsHelper::TrigonometryAngleHelper(
+AdditionalResultsHelper::TrigonometryResults
+AdditionalResultsHelper::TrigonometryAngleHelper(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput, bool directTrigonometry,
     Poincare::Preferences::CalculationPreferences calculationPreferences,
     const ProjectionContext* ctx,
-    ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation,
-    UserExpression& exactAngle, float* approximatedAngle, bool* angleIsExact) {
-  assert(approximatedAngle && angleIsExact);
+    ShouldOnlyDisplayApproximation shouldOnlyDisplayApproximation) {
   const Tree* period = Angle::Period(ctx->m_angleUnit);
   // Find the angle
-  if (directTrigonometry) {
-    exactAngle = ExtractExactAngleFromDirectTrigo(
-        input, exactOutput, ctx->m_context, calculationPreferences);
-  } else {
-    exactAngle = exactOutput;
-  }
+  UserExpression exactAngle =
+      directTrigonometry
+          ? ExtractExactAngleFromDirectTrigo(input, exactOutput, ctx->m_context,
+                                             calculationPreferences)
+          : exactOutput;
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
   /* Set exact angle in [0, 2π].
@@ -62,6 +60,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
    * - Reduction was unsuccessful
    * - The fractional part could not be reduced
    * - Displaying the exact expression is forbidden. */
+  bool angleIsExact = true;
   if (!reductionSuccess ||
       simplifiedAngle->hasDescendantSatisfying([](const Tree* e) {
         return e->isFrac() || e->isCeil() || e->isFloor();
@@ -102,11 +101,10 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
     Beautification::DeepBeautify(approximateAngleTree, *ctx);
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
-    *angleIsExact = false;
+    angleIsExact = false;
   } else {
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle));
-    *angleIsExact = true;
   }
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
@@ -116,7 +114,7 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
    * double is castable in float. */
   assert(approximateAngleTree ||
          simplifiedAngle->treeIsIdenticalTo(exactAngle.tree()));
-  *approximatedAngle = static_cast<float>(Approximation::To<double>(
+  float approximatedAngle = static_cast<float>(Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
@@ -125,8 +123,11 @@ void AdditionalResultsHelper::TrigonometryAngleHelper(
     approximateAngleTree->removeTree();
   }
   simplifiedAngle->removeTree();
-  *approximatedAngle =
-      Trigonometry::ConvertAngleToRadian(*approximatedAngle, ctx->m_angleUnit);
+  approximatedAngle =
+      Trigonometry::ConvertAngleToRadian(approximatedAngle, ctx->m_angleUnit);
+  return {.exactAngle = exactAngle,
+          .approximatedAngle = approximatedAngle,
+          .angleIsExact = angleIsExact};
 }
 
 UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(

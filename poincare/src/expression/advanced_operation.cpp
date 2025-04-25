@@ -13,8 +13,7 @@ bool AdvancedOperation::CanSkipTree(const Tree* e) {
   /* NOTE: If a more fine-grain skipping is required: e.g. skipping [e] node
    * but not its descendants, this method could become [NumberOfNodesToSkip]. */
 
-  /* Both node without children and depList cannot be reduced, so we skip them
-   */
+  // Both node without children and depList cannot be reduced, so we skip them
   if (e->numberOfChildren() == 0 || e->isDepList()) {
     return true;
   }

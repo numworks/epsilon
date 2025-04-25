@@ -242,7 +242,7 @@ Tree* NextNodeSkippingIgnoredTrees(Tree* e) {
   assert(!AdvancedOperation::CanSkipTree(e));
   Tree* next = e->nextNode();
   while (next->block() < SharedTreeStack->lastBlock() &&
-         AdvancedOperation::CanSkipTree(e)) {
+         AdvancedOperation::CanSkipTree(next)) {
     next = next->nextTree();
   }
   return next;

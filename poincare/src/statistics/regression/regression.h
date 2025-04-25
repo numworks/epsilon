@@ -117,12 +117,7 @@ class Regression {
   bool hasR2() const { return HasR2(type()); }
 
   int numberOfCoefficients() const { return NumberOfCoefficients(type()); }
-  double getUserCoefficients(const double* modelCoefficients, int index) const {
-    Coefficients coefficients;
-    memcpy(coefficients.data(), modelCoefficients,
-           numberOfCoefficients() * sizeof(double));
-    return GetUserCoefficient(type(), coefficients, index);
-  }
+  double getUserCoefficients(const double* modelCoefficients, int index) const;
   const char* formula() const { return Formula(type()); }
   Poincare::Layout templateLayout() const { return TemplateLayout(type()); }
 

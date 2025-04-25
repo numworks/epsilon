@@ -23,8 +23,8 @@ namespace Poincare::Internal {
  * `d ~= std::mean(x)` (eg: 2000), this leads to `a ~= exp(2000b)`
  * which reaches infinity for fairly small values of `b`.
  *
- * With the internal model, we can still do the [fit] correctly even with
- * when `a` reaches `inf`.
+ * With the internal model, we can still do the [fit] correctly even when `a`
+ * reaches `inf`
  *
  * In all this file `d` is stored in `modelCoefficients[0]` and is
  * transformed to `a` by [GetUserCoefficient]. */

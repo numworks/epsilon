@@ -435,4 +435,12 @@ double Regression::privateResidualStandardDeviation(
   return std::sqrt(sum / (n - nCoeff));
 }
 
+double Regression::getUserCoefficients(const double* modelCoefficients,
+                                       int index) const {
+  Coefficients coefficients;
+  memcpy(coefficients.data(), modelCoefficients,
+         numberOfCoefficients() * sizeof(double));
+  return GetUserCoefficient(type(), coefficients, index);
+}
+
 }  // namespace Poincare::Internal

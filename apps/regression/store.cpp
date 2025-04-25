@@ -208,8 +208,8 @@ void Store::updateCoefficients(int series, Context* globalContext) {
 double Store::userCoefficientsForSeries(int series, int index,
                                         Context* globalContext) {
   updateCoefficients(series, globalContext);
-  return regressionModel(m_regressionTypes[series])
-      ->getUserCoefficients(m_regressionCoefficients[series], index);
+  return modelForSeries(series)->getUserCoefficients(
+      m_regressionCoefficients[series], index);
 }
 
 double* Store::coefficientsForSeries(int series, Context* globalContext) {
@@ -271,16 +271,15 @@ float Store::minValueOfColumn(int series, int i) const {
 }
 
 double Store::yValueForXValue(int series, double x, Context* globalContext) {
-  Model* model = regressionModel(m_regressionTypes[series]);
   double* coefficients = coefficientsForSeries(series, globalContext);
-  return model->evaluate(coefficients, x);
+  return modelForSeries(series)->evaluate(coefficients, x);
 }
 
 double Store::xValueForYValue(int series, double y, Context* globalContext) {
-  Model* model = regressionModel(m_regressionTypes[series]);
   double* coefficients = coefficientsForSeries(series, globalContext);
-  return model->levelSet(coefficients, App::app()->graphRange()->xMin(),
-                         App::app()->graphRange()->xMax(), y, globalContext);
+  return modelForSeries(series)->levelSet(
+      coefficients, App::app()->graphRange()->xMin(),
+      App::app()->graphRange()->xMax(), y, globalContext);
 }
 
 double Store::residualAtIndexForSeries(int series, int index,

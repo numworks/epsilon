@@ -6,6 +6,7 @@
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/statistics/data_table.h>
+#include <poincare/src/statistics/dataset_adapter.h>
 #include <stdint.h>
 
 #include <array>
@@ -72,6 +73,10 @@ class Regression {
   constexpr static bool IsAffine(Type type) {
     return type == Type::Median || IsLinear(type);
   }
+  constexpr static bool IsPolynomial(Type type) {
+    return type == Type::Quadratic || type == Type::Cubic ||
+           type == Type::Quartic;
+  }
   constexpr static bool IsTransformed(Type type) {
     return type == Type::ExponentialAbx || type == Type::ExponentialAebx ||
            type == Type::Power || type == Type::Logarithmic;
@@ -125,6 +130,16 @@ class Regression {
     // These models are fitted with a ln(B) change of variable.
     return type == Type::ExponentialAbx;
   }
+  constexpr static bool FitsXOffset(Type type) {
+    // These models are fitted with a X-X.mean() change of variable.
+    // TODO? Add every other model where an offset in x can be merged to coefs
+    return IsPolynomial(type);
+  }
+  constexpr static bool FitsYOffset(Type type) {
+    // These models are fitted with a Y-Y.mean() change of variable.
+    // TODO? Add every other model where y=f(x)+constant
+    return IsPolynomial(type);
+  }
 
   // - Formula
   static const char* Formula(Type type);
@@ -146,9 +161,9 @@ class Regression {
    * parameter, and sometimes an output parameter. It would be much better for
    * clarity purposes to apply the following:
    * - when modelCoefficients is a read-only input parameter, pass it as a
-   * "const Coefficients&". It would be more meaningful than "const double*", as
-   * it would highlight the fact that modelCoefficients is an array and not only
-   * a pointer to a double.
+   * "const Coefficients&". It would be more meaningful than "const double*",
+   * as it would highlight the fact that modelCoefficients is an array and not
+   * only a pointer to a double.
    * - when modelCoefficients is an output parameter, return it instead of
    * having it in the list of function parameters. The return type would be
    * "Coefficients". */
@@ -189,14 +204,42 @@ class Regression {
   // Fit
 
   /* For some regressions (e.g. trigonometric), fit can be attempted several
-   * times with different sets of initial parameters, then the best model among
-   * the different fit attempts is selected. */
+   * times with different sets of initial parameters, then the best model
+   * among the different fit attempts is selected. */
   size_t m_initialParametersIterations;
 
   virtual Coefficients privateFit(const Series* series,
                                   Poincare::Context* context) const;
   virtual bool dataSuitableForFit(const Series* series) const;
   constexpr static int k_maxNumberOfPairs = 100;
+
+  class OffsetSeries : public Series {
+   public:
+    OffsetSeries(const Series* series, bool xOffset = false,
+                 bool yOffset = false)
+        : m_series(series),
+          m_xOffset(xOffset ? StatisticsDatasetFromTable(series, 0).mean()
+                            : 0.),
+          m_yOffset(yOffset ? StatisticsDatasetFromTable(series, 1).mean()
+                            : 0.) {}
+    double getX(int i) const override { return m_series->getX(i) - m_xOffset; }
+    double getY(int i) const override { return m_series->getY(i) - m_yOffset; }
+    int numberOfPairs() const override { return m_series->numberOfPairs(); }
+
+    const double GetXOffset() const { return m_xOffset; }
+    const double GetYOffset() const { return m_yOffset; }
+
+   private:
+    const Series* m_series;
+    const double m_xOffset;
+    const double m_yOffset;
+  };
+
+  virtual void offsetCoefficients(Coefficients& modelCoefficients,
+                                  const OffsetSeries* series) const {
+    assert(series->GetXOffset() == 0);
+    assert(series->GetYOffset() == 0);
+  };
 
  private:
   // Model attributes

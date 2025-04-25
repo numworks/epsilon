@@ -269,9 +269,10 @@ QUIZ_CASE(regression_cubic) {
   constexpr double y2[] = {29.66, 29.39, 28.84, 28.57, 28.51, 28.62,
                            28.69, 29.52, 29.79, 30.16, 30.31, 30.96};
   static_assert(std::size(x2) == std::size(y2), "Column sizes are different");
-  constexpr Coefficients coefficients2 = {0, 0, 0, 29.4183};
-  constexpr double r22 = 0;
-  constexpr double sr2 = 0.933847;
+  constexpr Coefficients coefficients2 = {-0.00488992, 29.5594, -59561.3,
+                                          4.00045e+07};
+  constexpr double r22 = 0.961654;
+  constexpr double sr2 = 0.182868;
   assert_regression_is(x2, y2, std::size(x2), Model::Type::Cubic, coefficients2,
                        NAN, r22, sr2);
 }

@@ -84,15 +84,18 @@ Regression::Coefficients Regression::privateFit(
    * could theoretically happen if all residual standard deviations are infinite
    * or NaN), the returned model coefficients will all be zero. */
   bestModelCoefficients.fill(0.0);
+  /* If possible offset X and Y to have column.mean == 0
+   * This improves the fit by having smaller coefficients */
+  OffsetSeries preparedSeries(series, FitsXOffset(type()), FitsYOffset(type()));
 
   size_t attemptNumber = 0;
   while (attemptNumber < m_initialParametersIterations) {
     Coefficients modelCoefficients = initCoefficientsForFit(
-        k_initialCoefficientValue, false, attemptNumber, series);
-    fitLevenbergMarquardt(series, modelCoefficients, context);
+        k_initialCoefficientValue, false, attemptNumber, &preparedSeries);
+    fitLevenbergMarquardt(&preparedSeries, modelCoefficients, context);
     uniformizeCoefficientsFromFit(modelCoefficients);
     double newResidualsSquareSum =
-        privateResidualsSquareSum(series, modelCoefficients);
+        privateResidualsSquareSum(&preparedSeries, modelCoefficients);
     if (isRegressionBetter(newResidualsSquareSum, lowestResidualsSquareSum,
                            modelCoefficients, bestModelCoefficients)) {
       lowestResidualsSquareSum = newResidualsSquareSum;
@@ -101,9 +104,11 @@ Regression::Coefficients Regression::privateFit(
     attemptNumber++;
   }
   if (CanDefaultToConstant(type()) &&
-      determinationCoefficient(series, bestModelCoefficients.data()) <= 0) {
+      determinationCoefficient(&preparedSeries, bestModelCoefficients.data()) <=
+          0) {
     bestModelCoefficients = CoefficientsToMatchMean(series, type());
   }
+  offsetCoefficients(bestModelCoefficients, &preparedSeries);
   return bestModelCoefficients;
 }
 

@@ -52,4 +52,23 @@ double QuarticRegression::partialDerivate(const Coefficients& modelCoefficients,
   };
 }
 
+void QuarticRegression::offsetCoefficients(Coefficients& modelCoefficients,
+                                           const OffsetSeries* series) const {
+  double xo = series->GetXOffset();
+  double yo = series->GetYOffset();
+  double a = modelCoefficients[0];
+  double b = modelCoefficients[1];
+  double c = modelCoefficients[2];
+  double d = modelCoefficients[3];
+  double e = modelCoefficients[4];
+  /* Developpement of: y-yo = a(x-xo)^4 + b(x-xo)^3 + c(x-xo)^2 + d(x-xo) + e */
+  // yo + e - d * xo + c * xo * xo - b * xo * xo * xo + a * xo * xo * xo * xo;
+  modelCoefficients[4] = yo + e + (-d + (c + (-b + a * xo) * xo) * xo) * xo;
+  // d - 2 * c * xo + 3 * b * xo * xo - 4 * a * xo * xo * xo;
+  modelCoefficients[3] = d + (-2 * c + (3 * b - 4 * a * xo) * xo) * xo;
+  modelCoefficients[2] = c - 3 * b * xo + 6 * a * xo * xo;
+  modelCoefficients[1] = b - 4 * a * xo;
+  /* modelCoefficients[0] = a; */
+}
+
 }  // namespace Poincare::Internal

@@ -90,6 +90,9 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
         SetVariableSlot(l, VariableSlot::Assignment);
         return k_variableIndex;
       }
+      if (currentIndex == k_orderIndex) {
+        return direction.isRight() ? k_derivandIndex : k_outsideIndex;
+      }
       switch (currentIndex) {
         case k_outsideIndex:
           assert(direction.isLeft());

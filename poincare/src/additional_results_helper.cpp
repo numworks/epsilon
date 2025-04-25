@@ -39,11 +39,24 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           : exactOutput;
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
-  /* Set exact angle in [0, 2π].
+  /* Set exact angle in [0, 2π[.
    * Use the reduction of frac part to compute modulo. */
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
   bool reductionSuccess = Simplification::Simplify(simplifiedAngle, *ctx);
+#if ASSERTIONS
+  {
+    // Check that simplifiedAngle was set inside [0, 2π[
+    double approximatedAngle = Approximation::To<double>(
+        simplifiedAngle,
+        Approximation::Parameters{.projectLocalVariables = true},
+        Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
+                               ctx->m_context));
+    approximatedAngle =
+        Trigonometry::ConvertAngleToRadian(approximatedAngle, ctx->m_angleUnit);
+    assert(0 <= approximatedAngle && approximatedAngle < 2 * M_PI);
+  }
+#endif
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
@@ -125,6 +138,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   simplifiedAngle->removeTree();
   approximatedAngle =
       Trigonometry::ConvertAngleToRadian(approximatedAngle, ctx->m_angleUnit);
+  assert(0 <= approximatedAngle && approximatedAngle < 2 * M_PI);
   return {.exactAngle = exactAngle,
           .approximatedAngle = approximatedAngle,
           .angleIsExact = angleIsExact};

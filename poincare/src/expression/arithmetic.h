@@ -54,6 +54,9 @@ class Arithmetic {
   static uint32_t GCD(uint32_t a, uint32_t b);
   static uint32_t LCM(uint32_t a, uint32_t b, bool* hasOverflown);
 
+  template <uint64_t threshold>
+  static bool IsIntegerLargerThan(const Tree* e);
+
  private:
   static bool ReduceGCDOrLCM(Tree* e, bool isGCD);
   static Tree* PushPrimeFactorization(IntegerHandler m);

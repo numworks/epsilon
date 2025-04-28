@@ -66,6 +66,26 @@ bool Arithmetic::ReduceEuclideanDivision(Tree* e) {
   return true;
 }
 
+// This function is templated so that the threshold can be statically checked
+template <uint64_t threshold>
+bool Arithmetic::IsIntegerLargerThan(const Tree* e) {
+  /*  In order to check whether a large integer represented by an uint64_t is
+   * larger than a threshold, this threshold has to be in the representable
+   * range of uint64_t. */
+  static_assert(threshold < UINT64_MAX);
+  if (e->isIntegerPosBig() || e->isIntegerNegBig()) {
+    IntegerHandler integer = Integer::Handler(e);
+    if (e->isIntegerNegBig()) {
+      assert(integer.sign() == NonStrictSign::Negative);
+      integer.setSign(NonStrictSign::Positive);
+    }
+    if (!integer.is<uint64_t>() || integer.to<uint64_t>() >= threshold) {
+      return true;
+    }
+  };
+  return false;
+}
+
 bool Arithmetic::ReduceFloor(Tree* e) {
   Tree* child = e->child(0);
   if (child->isRational()) {
@@ -111,10 +131,20 @@ bool Arithmetic::ReduceFloor(Tree* e) {
     return false;
   }
   double approx = Approximation::To<double>(e, Approximation::Parameters{});
-  static_assert(static_cast<double>(INT32_MAX) <
-                OMG::IEEE754<double>::NonExactIntegerLimit());
-  if (std::isnan(approx) ||
-      std::fabs(approx) > static_cast<double>(INT32_MAX)) {
+  constexpr double integerLimit = static_cast<double>(INT32_MAX);
+  static_assert(integerLimit < OMG::IEEE754<double>::NonExactIntegerLimit());
+
+  /* If the Floor expression has integer children which are too large to be
+   * exactly cast to a float, then the floor reduction may not be correct. For
+   * example, in Floor(Cos(IntegerPosBig(1e18))), when Cos(IntegerPosBig(1e18))
+   * is approximated, IntegerPosBig(1e18) is cast to a float in a non-exact way
+   * (into 9.9995e17), and then the cosine gives a completely different result.
+   * The Floor reduction cannot be trusted in such cases. */
+  if (e->hasDescendantSatisfying(
+          IsIntegerLargerThan<static_cast<uint64_t>(integerLimit)>)) {
+    return false;
+  }
+  if (std::isnan(approx) || std::fabs(approx) > integerLimit) {
     return false;
   }
   assert(approx == std::round(approx));

@@ -25,9 +25,7 @@ namespace Poincare::Internal {
  *
  * With the internal model, we can still do the [fit] correctly even when `a`
  * reaches `inf`
- *
- * In all this file `d` is stored in `modelCoefficients[0]` and is
- * transformed to `a` by [GetUserCoefficient]. */
+ *  */
 
 /* Update coefficients from model to the format displayed to the user.
  * Return [false] if conversion lead to NAN/Inf results */

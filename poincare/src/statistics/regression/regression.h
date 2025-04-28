@@ -83,13 +83,13 @@ class Regression {
     if (type == Type::Proportional) {
       return false;
     }
-    // Has custom fit function that ensure R2 maximality
+    // Has custom fit function that ensures R2 maximality
     if (type == Type::Power || type == Type::ExponentialAebx ||
         type == Type::ExponentialAbx || type == Type::LinearApbx ||
         type == Type::LinearAxpb || type == Type::Logarithmic) {
       return false;
     }
-    // Has custom fit function that maximize other quatities
+    // Has custom fit function that maximizes other quantities
     if (type == Type::Median) {
       return false;
     }

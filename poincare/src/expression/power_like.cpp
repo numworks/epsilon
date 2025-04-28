@@ -41,18 +41,23 @@ bool PowerLike::ExpandRationalPower(Tree* e) {
 
 bool PowerLike::ExpandRationalPower(Tree* e, const Tree* base,
                                     const Tree* power) {
+  assert(PowerLike::Exponent(e, true)->treeIsIdenticalTo(power));
+  assert(PowerLike::Base(e, true)->treeIsIdenticalTo(base));
   assert(!power->isInteger() && power->isRational() &&
          !Rational::IsStrictlyPositiveUnderOne(power));
 
+  // e = x^(p/q) is expanded into x^n * x^(r/q) where r is the remainder of p/q
   TreeRef p = Rational::Numerator(power).pushOnTreeStack();
   TreeRef q = Rational::Denominator(power).pushOnTreeStack();
   assert(!q->isOne());
   TreeRef r =
       IntegerHandler::Remainder(Integer::Handler(p), Integer::Handler(q));
+  // n = (p-r)/q
   TreeRef n = PatternMatching::CreateSimplify(
       KMult(KAdd(KA, KMult(-1_e, KC)), KPow(KB, -1_e)),
       {.KA = p, .KB = q, .KC = r});
   assert(n->isInteger());
+  // result = base^n * exp(r/q * ln(base))
   TreeRef result = PatternMatching::CreateSimplify(
       KMult(KPow(KA, KB), KExp(KMult(KC, KPow(KD, -1_e), KLn(KA)))),
       {.KA = base, .KB = n, .KC = r, .KD = q});

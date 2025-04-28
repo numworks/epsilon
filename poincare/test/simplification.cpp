@@ -1613,6 +1613,8 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("300×ln(2)", "300×ln(2)");
   simplifies_to("ln(ln(25))", "ln(2)+ln(ln(5))");
   simplifies_to("log(log(25))", "log(log(5))+log(2)");
+  simplifies_to("ln(5/2)", "-ln(2)+ln(5)");
+  simplifies_to("log(2/7)", "log(2)-log(7)");
   simplifies_to("1+ln(x)+ln(y)",
                 "dep(1+ln(x)+ln(y),{nonNull(x),nonNull(y),realPos(x),"
                 "realPos(y)})");

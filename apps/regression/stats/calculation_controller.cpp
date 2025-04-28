@@ -263,8 +263,8 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
     if (coefficientIndex < 0 || coefficientIndex >= numberOfCoefficients) {
       return DashBufferCell(bufferCell);
     }
-    result = m_store->userCoefficientsForSeries(series, coefficientIndex,
-                                                globContext);
+    result =
+        m_store->coefficientsForSeries(series, globContext)[coefficientIndex];
   } else if (c == Calculation::CorrelationCoeff) {
     // This could be memoized but don't seem to slow the table down for now.
     if (!Store::DisplayR(regressionType)) {

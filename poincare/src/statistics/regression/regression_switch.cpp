@@ -42,7 +42,8 @@ const Regression* Regression::Get(Type type, Preferences::AngleUnit angleUnit) {
   STATIC_VARIABLE ExponentialRegression exponentialAebx(false);
   STATIC_VARIABLE ExponentialRegression exponentialAbx(true);
   STATIC_VARIABLE PowerRegression power;
-  STATIC_VARIABLE LogisticRegression logistic;
+  STATIC_VARIABLE LogisticRegression logistic(false);
+  STATIC_VARIABLE LogisticRegression logisticInternal(true);
   STATIC_VARIABLE MedianRegression median;
   /* NOTE: Having a static var for each angle unit seems weird, but it
    * was the easiest way to adapt to the current implementation.
@@ -79,6 +80,8 @@ const Regression* Regression::Get(Type type, Preferences::AngleUnit angleUnit) {
       return &power;
     case Type::Logistic:
       return &logistic;
+    case Type::LogisticInternal:
+      return &logisticInternal;
     case Type::Median:
       return &median;
     case Type::Trigonometric: {
@@ -113,6 +116,7 @@ int Regression::NumberOfCoefficients(Type type) {
       return 2;
     case Type::Quadratic:
     case Type::Logistic:
+    case Type::LogisticInternal:
       return 3;
     case Type::Cubic:
     case Type::Trigonometric:
@@ -126,6 +130,7 @@ int Regression::NumberOfCoefficients(Type type) {
 const char* Regression::Formula(Type type) {
   switch (type) {
     case Type::None:
+    case Type::LogisticInternal:
       assert(false);
       return "";
     case Type::LinearAxpb:
@@ -182,17 +187,6 @@ const Poincare::Layout Regression::TemplateLayout(Type type) {
       return Layout::String(Formula(type) + sizeof("y=") - 1);
   }
   OMG::unreachable();
-}
-
-double Regression::GetUserCoefficient(Type type,
-                                      const Coefficients& modelCoefficients,
-                                      int index) {
-  switch (type) {
-    case Type::Logistic:
-      return LogisticRegression::GetUserCoefficient(modelCoefficients, index);
-    default:
-      return modelCoefficients[index];
-  }
 }
 
 }  // namespace Poincare::Internal

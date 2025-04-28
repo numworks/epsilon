@@ -33,6 +33,7 @@ class Regression {
     Logistic,
     Median,
     LinearApbx,
+    LogisticInternal,  // Not added to k_numberOfModels
   };
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5;  // Quartic model
@@ -57,9 +58,6 @@ class Regression {
 
   // - Coefficients
   static int NumberOfCoefficients(Type type);
-  static double GetUserCoefficient(Type type,
-                                   const Coefficients& modelCoefficients,
-                                   int index);
   constexpr static bool HasCoefficients(Type type) {
     return type != Type::None;
   }
@@ -117,7 +115,6 @@ class Regression {
   bool hasR2() const { return HasR2(type()); }
 
   int numberOfCoefficients() const { return NumberOfCoefficients(type()); }
-  double getUserCoefficients(const double* modelCoefficients, int index) const;
   const char* formula() const { return Formula(type()); }
   Poincare::Layout templateLayout() const { return TemplateLayout(type()); }
 

@@ -7,15 +7,17 @@ namespace Poincare::Internal {
 
 class LogisticRegression : public Regression {
  public:
-  Type type() const override { return Type::Logistic; }
+  constexpr LogisticRegression(bool internal) : m_isInternal(internal){};
+  Type type() const override {
+    return m_isInternal ? Type::LogisticInternal : Type::Logistic;
+  }
 
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
                   double y, Poincare::Context* context) const override;
 
-  static double GetUserCoefficient(const Coefficients& modelCoefficients,
-                                   int index);
-
  private:
+  Coefficients privateFit(const Series* series,
+                          Poincare::Context* context) const override;
   double privateEvaluate(const Coefficients& modelCoefficients,
                          double x) const override;
   Poincare::UserExpression privateExpression(
@@ -25,6 +27,8 @@ class LogisticRegression : public Regression {
   Coefficients specializedInitCoefficientsForFit(
       double defaultValue, size_t /* attemptNumber */,
       const Series* s = nullptr) const override;
+
+  const bool m_isInternal;
 };
 
 }  // namespace Poincare::Internal

@@ -29,15 +29,14 @@ namespace Poincare::Internal {
  * In all this file `d` is stored in `modelCoefficients[0]` and is
  * transformed to `a` by [GetUserCoefficient]. */
 
-/* Return coefficients from model to be displayed to the user */
-double LogisticRegression::GetUserCoefficient(
-    const Coefficients& modelCoefficients, int index) {
-  if (index == 0) {
-    /* Compute `a` coefficient from "user" model */
-    return std::exp(modelCoefficients[0] * modelCoefficients[1]);
-  }
-  assert(index == 1 || index == 2);
-  return modelCoefficients[index];
+/* Update coefficients from model to the format displayed to the user.
+ * Return [false] if conversion lead to NAN/Inf results */
+static bool UpdateToUserCoefficients(
+    Regression::Coefficients& modelCoefficients) {
+  /* Compute `a` coefficient from "user" model */
+  double a = std::exp(modelCoefficients[0] * modelCoefficients[1]);
+  modelCoefficients[0] = a;
+  return std::isfinite(a);
 }
 
 UserExpression LogisticRegression::privateExpression(
@@ -48,38 +47,65 @@ UserExpression LogisticRegression::privateExpression(
   // User model here: c/(1+a*exp(-b*x))
   return UserExpression::Create(
       KDiv(KC, KAdd(1_e, KMult(KA, KPow(e_e, KOpposite(KMult(KB, "x"_e)))))),
-      {.KA = UserExpression::Builder(GetUserCoefficient(coefficients, 0)),
-       .KB = UserExpression::Builder(GetUserCoefficient(coefficients, 1)),
-       .KC = UserExpression::Builder(GetUserCoefficient(coefficients, 2))});
+      {.KA = UserExpression::Builder(modelCoefficients[0]),
+       .KB = UserExpression::Builder(modelCoefficients[1]),
+       .KC = UserExpression::Builder(modelCoefficients[2])});
 }
 
 double LogisticRegression::privateEvaluate(
     const Coefficients& modelCoefficients, double x) const {
-  double d = modelCoefficients[0];
+  double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  return c / (1.0 + std::exp(-b * (x - d)));
+  if (m_isInternal) {
+    double d = a;
+    return c / (1.0 + std::exp(-b * (x - d)));
+  }
+  if (a == 0.0) {
+    /* Avoids returning NAN if std::exp(-b * x) == Inf because value is too
+     * large. */
+    return c;
+  }
+  return c / (1.0 + a * std::exp(-b * x));
+}
+
+Regression::Coefficients LogisticRegression::privateFit(
+    const Series* series, Poincare::Context* context) const {
+  if (m_isInternal) {
+    return Regression::privateFit(series, context);
+  }
+  Coefficients modelCoefficients;
+  Get(Type::LogisticInternal, AngleUnit::Radian)
+      ->fit(series, modelCoefficients.data(), context);
+  bool success = UpdateToUserCoefficients(modelCoefficients);
+  if (!success) {
+    // Fallback to all NAN if update fails
+    modelCoefficients.fill(NAN);
+  }
+  return modelCoefficients;
 }
 
 double LogisticRegression::levelSet(const double* modelCoefficients,
                                     double xMin, double xMax, double y,
                                     Poincare::Context* context) const {
-  double d = modelCoefficients[0];
+  assert(!m_isInternal);
+  double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  if (b == 0 || c == 0 || y == 0) {
+  if (a == 0 || b == 0 || c == 0 || y == 0) {
     return NAN;
   }
-  double lnArgument = (c / y - 1);
+  double lnArgument = (c / y - 1) / a;
   if (lnArgument <= 0) {
     return NAN;
   }
-  return -std::log(lnArgument) / b + d;
+  return -std::log(lnArgument) / b;
 }
 
 double LogisticRegression::partialDerivate(
     const Coefficients& modelCoefficients, int derivateCoefficientIndex,
     double x) const {
+  assert(m_isInternal);
   double d = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
@@ -102,6 +128,7 @@ double LogisticRegression::partialDerivate(
 Regression::Coefficients LogisticRegression::specializedInitCoefficientsForFit(
     double defaultValue, size_t /* attemptNumber */,
     const Series* series) const {
+  assert(m_isInternal);
   StatisticsDatasetFromTable xColumn(series, 0);
   StatisticsDatasetFromTable yColumn(series, 1);
   /* We optimize fit for data that actually follow a logistic function curve :

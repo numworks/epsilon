@@ -205,13 +205,6 @@ void Store::updateCoefficients(int series, Context* globalContext) {
       computeResidualStandardDeviation(series, globalContext);
 }
 
-double Store::userCoefficientsForSeries(int series, int index,
-                                        Context* globalContext) {
-  updateCoefficients(series, globalContext);
-  return modelForSeries(series)->getUserCoefficients(
-      m_regressionCoefficients[series], index);
-}
-
 double* Store::coefficientsForSeries(int series, Context* globalContext) {
   updateCoefficients(series, globalContext);
   return m_regressionCoefficients[series];

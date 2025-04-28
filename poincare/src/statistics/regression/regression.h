@@ -79,8 +79,24 @@ class Regression {
 
   constexpr static bool CanDefaultToConstant(Type type) {
     assert(type != Type::None);
-    return !(type == Type::Power || type == Type::ExponentialAebx ||
-             type == Type::ExponentialAbx || type == Type::Proportional);
+    // Cannot fit constant
+    if (type == Type::Proportional) {
+      return false;
+    }
+    // Has custom fit function that ensure R2 maximality
+    if (type == Type::Power || type == Type::ExponentialAebx ||
+        type == Type::ExponentialAbx || type == Type::LinearApbx ||
+        type == Type::LinearAxpb || type == Type::Logarithmic) {
+      return false;
+    }
+    // Has custom fit function that maximize other quatities
+    if (type == Type::Median) {
+      return false;
+    }
+    assert(type == Type::Quadratic || type == Type::Cubic ||
+           type == Type::Quartic || type == Type::Logistic ||
+           type == Type::LogisticInternal || type == Type::Trigonometric);
+    return true;
   }
   // - Correlation and determination coefficients
   constexpr static bool HasR(Type type) {
@@ -151,7 +167,7 @@ class Regression {
   void fit(const Series* series, double* modelCoefficients,
            Poincare::Context* context) const;
 
-  Coefficients coefficientsToMatchMean(const Series* series) const;
+  static Coefficients CoefficientsToMatchMean(const Series* series, Type type);
   double correlationCoefficient(const Series* series) const;
   double determinationCoefficient(const Series* series,
                                   const double* modelCoefficients) const;

@@ -190,24 +190,15 @@ const Poincare::Layout Regression::TemplateLayout(Type type) {
   OMG::unreachable();
 }
 
-Regression::Coefficients Regression::coefficientsToMatchMean(
-    const Series* series) const {
-  assert(CanDefaultToConstant(type()));
+Regression::Coefficients Regression::CoefficientsToMatchMean(
+    const Series* series, Type type) {
+  assert(CanDefaultToConstant(type));
   Coefficients coefs;
   coefs.fill(0.0);
-  StatisticsDatasetFromTable xColumn(series, 0);
   StatisticsDatasetFromTable yColumn(series, 1);
   double mean = yColumn.mean();
   int meanIndex = 0;
-  switch (type()) {
-    case Type::LinearAxpb:
-    case Type::LinearApbx:
-    case Type::Median:
-      // Should be possible to have R2 negative on linear regression
-      OMG::unreachable();
-    case Type::Logarithmic:
-      meanIndex = 0;
-      break;
+  switch (type) {
     case Type::LogisticInternal:
       /* Even with the other coefs to 0 a factor .5 remains
        * "internal" logistic model: c/(1+exp(-0(x-0))) => c/(1+exp(0)) => c/2 */
@@ -224,11 +215,7 @@ Regression::Coefficients Regression::coefficientsToMatchMean(
     case Type::Quartic:
       meanIndex = 4;
       break;
-    case Type::ExponentialAebx:
-    case Type::ExponentialAbx:
-    case Type::Power:
-    case Type::Proportional:
-    case Type::None:
+    default:
       OMG::unreachable();
   }
   coefs[meanIndex] = mean;

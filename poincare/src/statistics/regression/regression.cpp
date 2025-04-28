@@ -102,7 +102,7 @@ Regression::Coefficients Regression::privateFit(
   }
   if (CanDefaultToConstant(type()) &&
       determinationCoefficient(series, bestModelCoefficients.data()) <= 0) {
-    bestModelCoefficients = coefficientsToMatchMean(series);
+    bestModelCoefficients = CoefficientsToMatchMean(series, type());
   }
   return bestModelCoefficients;
 }

@@ -326,22 +326,7 @@ void AppsContainer::run() {
     Pool::Unlock();
     activeApp()->displayWarning(I18n::Message::PoolMemoryFull, true);
   }
-  {
-    // TODO_PCJ: TreeStackExceptions should be handled within Poincare.
-    using namespace Poincare::Internal;
-    ExceptionTry { Container::run(); }
-    ExceptionCatch(exc) {
-      switch (exc) {
-        case ExceptionType::TreeStackOverflow:
-        case ExceptionType::IntegerOverflow:
-          // Fallback on ExceptionCheckpoint
-          ExceptionCheckpoint::Raise();
-        default:
-          TreeStackCheckpoint::Raise(exc);
-      }
-      OMG::unreachable();
-    }
-  }
+  Container::run();
   switchToBuiltinApp(nullptr);
 }
 

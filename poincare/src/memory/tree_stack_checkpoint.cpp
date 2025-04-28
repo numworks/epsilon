@@ -1,5 +1,6 @@
 #include "tree_stack_checkpoint.h"
 
+#include <poincare/include/poincare/exception_checkpoint.h>
 #include <stdlib.h>
 
 #include "tree_stack.h"
@@ -37,9 +38,10 @@ void TreeStackCheckpoint::rollback() {
 void TreeStackCheckpoint::Raise(ExceptionType type) {
   assert(type != ExceptionType::None && s_exceptionType == ExceptionType::None);
   s_exceptionType = type;
-  // Can't raise if there are no active TreeStackCheckpoints.
   if (s_topmostTreeStackCheckpoint == nullptr) {
-    abort();
+    // If there are no active TreeStackCheckpoints, raise an ExceptionCheckpoint
+    s_exceptionType = ExceptionType::None;
+    ExceptionCheckpoint::Raise();
   }
   // See ExceptionCheckpoint::Raise() for a comment on this assert
   assert((void*)&type < (void*)s_topmostTreeStackCheckpoint);

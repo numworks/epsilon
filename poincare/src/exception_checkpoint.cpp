@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 namespace Poincare {
 
@@ -33,6 +34,7 @@ void ExceptionCheckpoint::Raise() {
 }
 
 bool ExceptionCheckpoint::setActive(bool interruption) {
+  assert(!Internal::TreeStackCheckpoint::hasActiveCheckpoint());
   if (!interruption) {
     assert(s_topmost == m_parent);
     s_topmost = this;

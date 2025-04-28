@@ -27,6 +27,8 @@ ExceptionCatch(type) {
   // Handle exceptions.
 }
 
+When TreeStackCheckpoint is raised without an active checkpoint, it raises an
+ExceptionCheckpoint.
 */
 
 #define ExceptionTryAfterBlock(rightmostBlock)      \
@@ -67,6 +69,10 @@ class TreeStackCheckpoint final {
 
   void setActive() { s_topmostTreeStackCheckpoint = this; }
   jmp_buf* jumpBuffer() { return &m_jumpBuffer; }
+
+  static bool hasActiveCheckpoint() {
+    return s_topmostTreeStackCheckpoint != nullptr;
+  }
 
  private:
   void rollback();

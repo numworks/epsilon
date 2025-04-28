@@ -7,6 +7,11 @@
 
 #include "pool_checkpoint.h"
 
+/* WARNING:
+ * ExceptionCheckpoint is raised when a TreeStackCheckpoint is raised without an
+ * active checkpoint. Therefore, an ExceptionCheckpoint cannot be set below an
+ * active TreeStackCheckpoint. */
+
 #define ExceptionRun(checkpoint) \
   (CheckpointRun(checkpoint, setjmp(*checkpoint.jumpBuffer())) != 0)
 

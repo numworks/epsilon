@@ -67,7 +67,7 @@ void Device::poll() {
     m_softDisconnect = true;
   }
 
-  // TODO BOOTLOADER: Handle USB RESET
+  // TODO: USB RESET should be handled as well
 }
 
 bool Device::isSoftDisconnected() const { return m_softDisconnect; }

@@ -842,6 +842,9 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("frac(871616/2π)×2π", "871616-277442×π");
   simplifies_to("frac(2^24*π)", "-52707178+16777216×π");
   simplifies_to("frac(2^32*π)-π", "4294967295×π+ceil(-4294967296×π)");
+  simplifies_to("frac(2^24+π)-π", "-3");
+  simplifies_to("frac(sin(10^18))", "frac(sin(10^18))");
+  simplifies_to("log(floor(2^54+π)-3, 2)", "54");
   simplifies_to("floor(random())", "floor(random())");
 }
 

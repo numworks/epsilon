@@ -52,8 +52,8 @@ double QuarticRegression::partialDerivate(const Coefficients& modelCoefficients,
   };
 }
 
-void QuarticRegression::offsetCoefficients(Coefficients& modelCoefficients,
-                                           const OffsetSeries* series) const {
+void QuarticRegression::offsetCoefficients(
+    Coefficients& modelCoefficients, const OffsetSeriesByMean* series) const {
   double xo = series->GetXOffset();
   double yo = series->GetYOffset();
   double a = modelCoefficients[0];

@@ -17,7 +17,7 @@ class QuadraticRegression : public Regression {
   double partialDerivate(const Coefficients& modelCoefficients,
                          int derivateCoefficientIndex, double x) const override;
   void offsetCoefficients(Coefficients& modelCoefficients,
-                          const OffsetSeries* series) const override;
+                          const OffsetSeriesByMean* series) const override;
 };
 
 }  // namespace Poincare::Internal

@@ -47,8 +47,8 @@ double CubicRegression::partialDerivate(const Coefficients& modelCoefficients,
   };
 }
 
-void CubicRegression::offsetCoefficients(Coefficients& modelCoefficients,
-                                         const OffsetSeries* series) const {
+void CubicRegression::offsetCoefficients(
+    Coefficients& modelCoefficients, const OffsetSeriesByMean* series) const {
   double xo = series->GetXOffset();
   double yo = series->GetYOffset();
   double a = modelCoefficients[0];

@@ -39,8 +39,8 @@ double QuadraticRegression::partialDerivate(
   return 1.0;
 }
 
-void QuadraticRegression::offsetCoefficients(Coefficients& modelCoefficients,
-                                             const OffsetSeries* series) const {
+void QuadraticRegression::offsetCoefficients(
+    Coefficients& modelCoefficients, const OffsetSeriesByMean* series) const {
   double xo = series->GetXOffset();
   double yo = series->GetYOffset();
   double a = modelCoefficients[0];

@@ -161,9 +161,9 @@ class Regression {
    * parameter, and sometimes an output parameter. It would be much better for
    * clarity purposes to apply the following:
    * - when modelCoefficients is a read-only input parameter, pass it as a
-   * "const Coefficients&". It would be more meaningful than "const double*",
-   * as it would highlight the fact that modelCoefficients is an array and not
-   * only a pointer to a double.
+   * "const Coefficients&". It would be more meaningful than "const double*", as
+   * it would highlight the fact that modelCoefficients is an array and not only
+   * a pointer to a double.
    * - when modelCoefficients is an output parameter, return it instead of
    * having it in the list of function parameters. The return type would be
    * "Coefficients". */
@@ -204,8 +204,8 @@ class Regression {
   // Fit
 
   /* For some regressions (e.g. trigonometric), fit can be attempted several
-   * times with different sets of initial parameters, then the best model
-   * among the different fit attempts is selected. */
+   * times with different sets of initial parameters, then the best model among
+   * the different fit attempts is selected. */
   size_t m_initialParametersIterations;
 
   virtual Coefficients privateFit(const Series* series,
@@ -213,10 +213,10 @@ class Regression {
   virtual bool dataSuitableForFit(const Series* series) const;
   constexpr static int k_maxNumberOfPairs = 100;
 
-  class OffsetSeries : public Series {
+  class OffsetSeriesByMean : public Series {
    public:
-    OffsetSeries(const Series* series, bool xOffset = false,
-                 bool yOffset = false)
+    OffsetSeriesByMean(const Series* series, bool xOffset = false,
+                       bool yOffset = false)
         : m_series(series),
           m_xOffset(xOffset ? StatisticsDatasetFromTable(series, 0).mean()
                             : 0.),
@@ -236,7 +236,7 @@ class Regression {
   };
 
   virtual void offsetCoefficients(Coefficients& modelCoefficients,
-                                  const OffsetSeries* series) const {
+                                  const OffsetSeriesByMean* series) const {
     assert(series->GetXOffset() == 0);
     assert(series->GetYOffset() == 0);
   };

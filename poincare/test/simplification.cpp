@@ -538,7 +538,6 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(random(),k,0,10)", "product(random(),k,0,10)");
 
   // product(exp) <-> exp(sum)
-  // TODO_PCJ: we should have b×product(k,k,a,b)^2 not product(k,k,a,b)^2×b
   simplifies_to(
       "exp(2*sum(ln(k),k,a,b) + ln(b))",
       "dep(b×product(k,k,a,b)^2,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,"
@@ -1823,7 +1822,7 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   simplifies_to("1/(√(120)+2√(30))", "√(30)/120");
   // 1/√a => √a/a
   simplifies_to("1/√(3)", "√(3)/3");
-  simplifies_to("π^(-3/4)", "1/π^(3/4)");  // π^(-3/4) ?
+  simplifies_to("π^(-3/4)", "1/π^(3/4)");
   // √a/√b <=> √(a/b)
   simplifies_to("√(3)/√(5)-√(3/5)", "0");
   // (c/d)^(a/b) => root(c^a*d^f,b)/d^g

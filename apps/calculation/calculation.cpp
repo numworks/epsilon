@@ -188,10 +188,17 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
         ExceptionCheckpoint::Raise();
       }
     }
-    if (canChangeDisplayOutput &&
-        m_displayOutput == DisplayOutput::ExactAndApproximate &&
-        exactOutput->layoutSize(font).width() > maxVisibleWidth) {
-      forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
+    if (canChangeDisplayOutput) {
+      KDCoordinate exactOutputWidth = exactOutput->layoutSize(font).width();
+      if ((m_displayOutput == DisplayOutput::ExactAndApproximate ||
+           m_displayOutput == DisplayOutput::ExactAndApproximateToggle) &&
+          exactOutputWidth > k_maxExactLayoutWidth) {
+        // TODO: Also forbid numbers of more than 29 figures.
+        forceDisplayOutput(DisplayOutput::ApproximateOnly);
+      } else if (m_displayOutput == DisplayOutput::ExactAndApproximate &&
+                 exactOutputWidth > maxVisibleWidth) {
+        forceDisplayOutput(DisplayOutput::ExactAndApproximateToggle);
+      }
     }
   }
 

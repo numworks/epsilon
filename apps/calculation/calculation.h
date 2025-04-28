@@ -135,6 +135,10 @@ class Calculation {
   AdditionalResultsType additionalResultsType(Poincare::Context* context);
 
  private:
+  /* An exact result of length longer than 58 characters will be hidden. Add a
+   * margin of 7 characters to account for various separators. */
+  constexpr static KDCoordinate k_maxExactLayoutWidth =
+      (58 + 7) * KDFont::GlyphWidth(KDFont::Size::Large);
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
 
   static DisplayOutput ComputeDisplayOutput(

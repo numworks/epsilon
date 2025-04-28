@@ -86,8 +86,7 @@ Regression::Coefficients Regression::privateFit(
   bestModelCoefficients.fill(0.0);
   /* If possible offset X and Y to have column.mean == 0
    * This improves the fit by having smaller coefficients */
-  OffsetSeriesByMean preparedSeries(series, FitsXOffset(type()),
-                                    FitsYOffset(type()));
+  OffsetSeriesByMean preparedSeries(series, FitsXOffset(type()));
 
   size_t attemptNumber = 0;
   while (attemptNumber < m_initialParametersIterations) {

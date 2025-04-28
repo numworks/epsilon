@@ -42,12 +42,11 @@ double QuadraticRegression::partialDerivate(
 void QuadraticRegression::offsetCoefficients(
     Coefficients& modelCoefficients, const OffsetSeriesByMean* series) const {
   double xo = series->GetXOffset();
-  double yo = series->GetYOffset();
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];
   double c = modelCoefficients[2];
-  /* Developpement of: y-yo = a(x-xo)^2 + b(x-xo) + c */
-  modelCoefficients[2] = yo + c - b * xo + a * xo * xo;
+  /* Developpement of: y = a(x-xo)^2 + b(x-xo) + c */
+  modelCoefficients[2] = c - b * xo + a * xo * xo;
   modelCoefficients[1] = b - 2 * a * xo;
   /* modelCoefficients[0] = a; */
 }

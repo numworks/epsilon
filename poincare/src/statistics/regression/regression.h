@@ -135,11 +135,6 @@ class Regression {
     // TODO? Add every other model where an offset in x can be merged to coefs
     return IsPolynomial(type);
   }
-  constexpr static bool FitsYOffset(Type type) {
-    // These models are fitted with a Y-Y.mean() change of variable.
-    // TODO? Add every other model where y=f(x)+constant
-    return IsPolynomial(type);
-  }
 
   // - Formula
   static const char* Formula(Type type);
@@ -215,30 +210,24 @@ class Regression {
 
   class OffsetSeriesByMean : public Series {
    public:
-    OffsetSeriesByMean(const Series* series, bool xOffset = false,
-                       bool yOffset = false)
+    OffsetSeriesByMean(const Series* series, bool xOffset = false)
         : m_series(series),
           m_xOffset(xOffset ? StatisticsDatasetFromTable(series, 0).mean()
-                            : 0.),
-          m_yOffset(yOffset ? StatisticsDatasetFromTable(series, 1).mean()
                             : 0.) {}
     double getX(int i) const override { return m_series->getX(i) - m_xOffset; }
-    double getY(int i) const override { return m_series->getY(i) - m_yOffset; }
+    double getY(int i) const override { return m_series->getY(i); }
     int numberOfPairs() const override { return m_series->numberOfPairs(); }
 
     const double GetXOffset() const { return m_xOffset; }
-    const double GetYOffset() const { return m_yOffset; }
 
    private:
     const Series* m_series;
     const double m_xOffset;
-    const double m_yOffset;
   };
 
   virtual void offsetCoefficients(Coefficients& modelCoefficients,
                                   const OffsetSeriesByMean* series) const {
     assert(series->GetXOffset() == 0);
-    assert(series->GetYOffset() == 0);
   };
 
  private:

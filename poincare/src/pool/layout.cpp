@@ -190,6 +190,22 @@ Layout Layout::cloneWithoutChildrenRacks() {
 
 bool Layout::isEmpty() const { return tree()->numberOfChildren() == 0; }
 
+int Layout::biggestIntegerSize() const {
+  int biggest = 0;
+  int current = 0;
+  for (const Internal::Tree* descendant : tree()->selfAndDescendants()) {
+    if (descendant->isAsciiCodePointLayout() &&
+        Internal::CodePointLayout::GetCodePoint(descendant).isDecimalDigit()) {
+      current++;
+    } else if (!descendant->isThousandsSeparatorLayout()) {
+      biggest = biggest < current ? current : biggest;
+      current = 0;
+    }
+  }
+  biggest = biggest < current ? current : biggest;
+  return biggest;
+}
+
 bool Layout::isCodePointsString() const {
   for (const Internal::Tree* child : tree()->children()) {
     if (!(child->isCodePointLayout() || child->isCombinedCodePointsLayout())) {

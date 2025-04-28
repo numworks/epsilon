@@ -192,8 +192,8 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
       KDCoordinate exactOutputWidth = exactOutput->layoutSize(font).width();
       if ((m_displayOutput == DisplayOutput::ExactAndApproximate ||
            m_displayOutput == DisplayOutput::ExactAndApproximateToggle) &&
-          exactOutputWidth > k_maxExactLayoutWidth) {
-        // TODO: Also forbid numbers of more than 29 figures.
+          (exactOutputWidth > k_maxExactLayoutWidth ||
+           exactOutput.biggestIntegerSize() > k_maxNumberDigitsInExactLayout)) {
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
       } else if (m_displayOutput == DisplayOutput::ExactAndApproximate &&
                  exactOutputWidth > maxVisibleWidth) {

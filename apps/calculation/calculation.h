@@ -139,6 +139,8 @@ class Calculation {
    * margin of 7 characters to account for various separators. */
   constexpr static KDCoordinate k_maxExactLayoutWidth =
       (58 + 7) * KDFont::GlyphWidth(KDFont::Size::Large);
+  // An exact result with integers of more than 29 digits will be hidden.
+  constexpr static int k_maxNumberDigitsInExactLayout = 29;
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
 
   static DisplayOutput ComputeDisplayOutput(

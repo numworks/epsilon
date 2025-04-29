@@ -218,7 +218,8 @@ class IntegerHandler final {
    * workingBuffer because we read a and b digits before filling the working
    * buffer. */
   static IntegerHandler Parse(ForwardUnicodeDecoder& decoder, OMG::Base base,
-                              WorkingBuffer* workingBuffer);
+                              WorkingBuffer* workingBuffer,
+                              int* removedZeros = nullptr);
   static IntegerHandler Usum(const IntegerHandler& a, const IntegerHandler& b,
                              bool subtract, WorkingBuffer* workingBuffer,
                              bool oneDigitOverflow = false);
@@ -287,10 +288,13 @@ class Integer {
     return IntegerHandler::Parse(decoder, base, &workingBuffer)
         .pushOnTreeStack();
   }
+  /* If removedZeros is provided, 0s at the end of the number are counted and
+   * removed. */
   static Tree* Push(ForwardUnicodeDecoder& decoder,
-                    OMG::Base base = OMG::Base::Decimal) {
+                    OMG::Base base = OMG::Base::Decimal,
+                    int* removedZeros = nullptr) {
     WorkingBuffer workingBuffer;
-    return IntegerHandler::Parse(decoder, base, &workingBuffer)
+    return IntegerHandler::Parse(decoder, base, &workingBuffer, removedZeros)
         .pushOnTreeStack();
   }
   static Tree* Push(native_int_t value) {

@@ -81,6 +81,8 @@ QUIZ_CASE(pcj_parse_layout) {
   // TODO _l with non-ascii codepoints
   quiz_assert(is_parsable("1ᴇ2"_l));
   assertLayoutParsesTo("12.34ᴇ999"_l, KDecimal(1234_e, -997_e));
+  assertLayoutParsesTo("12000.30004"_l, KDecimal(1200030004_e, 5_e));
+  assertLayoutParsesTo("12000.3000400000000"_l, KDecimal(1200030004_e, 5_e));
   quiz_assert(is_parsable("-1"_l));
   quiz_assert(is_parsable(".1"_l));
   quiz_assert(is_parsable("1+2+3+4+5+6"_l));

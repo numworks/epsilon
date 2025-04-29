@@ -409,8 +409,11 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
       int offset = smallE - decimalPoint - 1;
       assert(offset > 0);
       LayoutSpanDecoder fractionalDigits(rack, decimalPoint + 1, smallE);
-      Tree* fractionalPart =
-          Integer::Push(fractionalDigits, OMG::Base::Decimal);
+      // Ignore 0s at the end of the fractional part
+      int fractionalOffset = 0;
+      Tree* fractionalPart = Integer::Push(fractionalDigits, OMG::Base::Decimal,
+                                           &fractionalOffset);
+      offset -= fractionalOffset;
       leftHandSide = SharedTreeStack->pushDecimal();
       Tree* result =
           IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));

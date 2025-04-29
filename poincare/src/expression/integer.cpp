@@ -93,7 +93,8 @@ uint8_t* const WorkingBuffer::localStart() {
 
 IntegerHandler IntegerHandler::Parse(ForwardUnicodeDecoder& decoder,
                                      OMG::Base base,
-                                     WorkingBuffer* workingBuffer) {
+                                     WorkingBuffer* workingBuffer,
+                                     int* removedZeros) {
   NonStrictSign sign = NonStrictSign::Positive;
   if (decoder.codePoint() == '-') {
     sign = NonStrictSign::Negative;
@@ -102,16 +103,26 @@ IntegerHandler IntegerHandler::Parse(ForwardUnicodeDecoder& decoder,
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
   IntegerHandler result(0);
   uint8_t* const localStart = workingBuffer->localStart();
+  int consecutiveZeros = 0;
   while (CodePoint codePoint = decoder.nextCodePoint()) {
     IntegerHandler multiplication = Mult(result, baseInteger, workingBuffer);
     workingBuffer->garbageCollect({&baseInteger, &multiplication}, localStart);
     IntegerHandler digit =
         IntegerHandler(OMG::Print::DigitForCharacter(codePoint));
+    if (removedZeros && digit.isZero()) {
+      consecutiveZeros++;
+    } else {
+      consecutiveZeros = 0;
+    }
     digit.setSign(sign);
     result = Sum(multiplication, digit, false, workingBuffer);
     workingBuffer->garbageCollect({&baseInteger, &result}, localStart);
   }
   workingBuffer->garbageCollect({&result}, localStart);
+  if (removedZeros) {
+    *removedZeros = consecutiveZeros;
+    result.removeZeroAtTheEnd(-1, workingBuffer);
+  }
   return result;
 }
 

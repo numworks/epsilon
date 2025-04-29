@@ -110,16 +110,16 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
   }
   switch (e->type()) {
     case Type::SampleStdDev:
-      // SampleStdDev needs a list of length >= 2
-      return childLength[0] >= 2 && (childLength[1] == k_nonListListLength ||
-                                     childLength[0] == childLength[1]);
     case Type::Mean:
     case Type::StdDev:
     case Type::Median:
-    case Type::Variance:
-      // At least 1 child is needed.
-      return childLength[0] >= 1 && (childLength[1] == k_nonListListLength ||
-                                     childLength[0] == childLength[1]);
+    case Type::Variance: {
+      int minListLen = e->type() == Type::SampleStdDev ? 2 : 1;
+      // At least minListLen child is needed.
+      return childLength[0] >= minListLen &&
+             ((childLength[1] == k_nonListListLength && e->child(1)->isOne()) ||
+              childLength[0] == childLength[1]);
+    }
     case Type::Min:
     case Type::Max:
       // At least 1 child is needed.

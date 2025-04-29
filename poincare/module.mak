@@ -47,6 +47,7 @@ $(addprefix expression/, \
   approximation_matrix.cpp \
   approximation_prepare.cpp \
   approximation_power.cpp \
+  approximation_logarithm.cpp \
   approximation_trigonometry.cpp \
   beautification.cpp \
   binary.cpp \

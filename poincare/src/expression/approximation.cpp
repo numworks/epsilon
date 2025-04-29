@@ -452,23 +452,13 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
     case Type::Log:
     case Type::Ln: {
       std::complex<T> c = PrivateToComplex<T>(e->child(0), ctx);
-      /* log has a branch cut on ]-inf, 0]: it is then multi-valued on this cut.
-       * We followed the convention chosen by the lib c++ of llvm on ]-inf+0i,
-       * 0+0i] (warning: log takes the other side of the cut values on ]-inf-0i,
-       * 0-0i]). We manually handle the case where the argument is null, as the
-       * lib c++ gives log(0) = -inf, which is only a generous shorthand for the
-       * limit. */
-      return c == std::complex<T>(0.0) ? -INFINITY
-             : e->isLog()              ? std::log10(c)
-                                       : std::log(c);
+      return Private::ComplexLogarithm<T>(c, e->isLog());
     }
     case Type::LogBase: {
       std::complex<T> a = PrivateToComplex<T>(e->child(0), ctx);
       std::complex<T> b = PrivateToComplex<T>(e->child(1), ctx);
-      // TODO_PCJ: should we use log2 (we previously used log10)
-      return a == static_cast<T>(0) || b == static_cast<T>(0)
-                 ? NAN
-                 : FloatDivision(std::log(a), std::log(b));
+      return FloatDivision(Private::ComplexLogarithm<T>(a, false),
+                           Private::ComplexLogarithm<T>(b, false));
     }
     case Type::Abs:
       return std::abs(PrivateToComplex<T>(e->child(0), ctx));

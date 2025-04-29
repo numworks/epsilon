@@ -44,7 +44,8 @@ bool SystematicReduction::DeepReduce(Tree* e) {
 
 bool SystematicReduction::ShallowReduce(Tree* e) {
   bool changed = BubbleUpFromChildren(e);
-  return Switch(e) || changed;
+  assert(!(changed && Switch(e)));
+  return changed || Switch(e);
 }
 
 bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
@@ -63,7 +64,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
     bool changed = Undefined::ShallowBubbleUpUndef(Dependency::Dependencies(e));
     if (changed) {
       if (Undefined::ShallowBubbleUpUndef(e)) {
-        ShallowReduce(e);
+        assert(!ShallowReduce(e));
         return true;
       }
       OMG::unreachable();
@@ -87,7 +88,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
   }
 
   if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(e)) {
-    ShallowReduce(e);
+    assert(!ShallowReduce(e));
     return true;
   }
 

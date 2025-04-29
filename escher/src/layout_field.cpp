@@ -28,17 +28,13 @@ bool LayoutField::ContentView::setEditing(bool isEditing) {
   if (m_isEditing == isEditing) {
     return false;
   }
-  // m_cursor.resetSelection();
   m_isEditing = isEditing;
   markWholeFrameAsDirty();
-  bool layoutChanged = false;
   m_layoutView.setEditing(isEditing);
   // TODO only useful if empty racks or matrices are changed
   layoutView()->layout()->invalidAllSizesPositionsAndBaselines();
-  layoutChanged = true;
   layoutSubviews();
-  markWholeFrameAsDirty();
-  return layoutChanged;
+  return true;
 }
 
 void LayoutField::ContentView::clearLayout() {

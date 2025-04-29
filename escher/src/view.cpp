@@ -72,7 +72,7 @@ KDRect View::redraw(KDRect rect, KDRect forceRedrawRect) {
   // Eventually, mark that we don't need to be redrawn
   m_dirtyRect = KDRectZero;
 
-  // The function returns the total area that have been redrawn.
+  // The function returns the total area that has been redrawn.
   return redrawnArea;
 }
 
@@ -107,7 +107,7 @@ void View::setFrame(KDRect frame, bool force) {
     /* This optimization avoids calling layoutSubviews each time the frame is
      * just translated. The problem is that subviewAtIndex is sometimes a bit
      * unreliable since some views have different subviews depending on their
-     * current state. (thats why we can't assert that `child` is a subview of
+     * current state. (that's why we can't assert that `child` is a subview of
      * `this` in `setChildFrame`). So this might cause some problems in the
      * future and might need a bit of rework.
      * Also m_frame.isEmpty() must be escaped because layoutSubviews is also

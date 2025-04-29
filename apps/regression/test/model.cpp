@@ -31,6 +31,25 @@ void setRegressionPoints(Store* store, int series, int numberOfPoints,
   }
 }
 
+void assert_regression_data_is_not_suitable(const double* xi, const double* yi,
+                                            const int numberOfPoints,
+                                            Model::Type modelType,
+                                            bool finite) {
+  int series = 0;
+  Shared::GlobalContext globalContext;
+  Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
+                                   Model::Type::None, Model::Type::None,
+                                   Model::Type::None, Model::Type::None};
+  Shared::DoublePairStorePreferences storePreferences;
+  Store store(&globalContext, &storePreferences, regressionTypes);
+
+  setRegressionPoints(&store, series, numberOfPoints, xi, yi);
+  store.setSeriesRegressionType(series, modelType);
+  Shared::StoreContext context(&store, &globalContext);
+
+  quiz_assert(!store.coefficientsAreDefined(series, &context, finite));
+}
+
 void assert_regression_is(const double* xi, const double* yi,
                           const int numberOfPoints, Model::Type modelType,
                           const Coefficients& trueCoefficients, double trueR,
@@ -684,12 +703,13 @@ QUIZ_CASE(regression_logistic) {
   assert_regression_is(x8, y8, std::size(x8), Model::Type::Logistic,
                        coefficients8, NAN, r28, sr8);
 
-  // for (double& x : x8) {
-  //   x += 1000;
-  // }
-  // constexpr Coefficients coefficients8_2 = {NAN, NAN, NAN};  // No target
-  // assert_regression_is(x8, y8, std::size(x8), Model::Type::Logistic,
-  //                      coefficients8_2, NAN, r28, NAN);
+  for (double& x : x8) {
+    x += 1000;
+  }
+  /* Coefficient `a` overflows during transformation from LogisticInternal to
+   * Logistic */
+  assert_regression_data_is_not_suitable(x8, y8, std::size(x8),
+                                         Model::Type::Logistic, false);
 
   constexpr double x10[] = {50, 100, 150};
   constexpr double y10[] = {260, 270, 280};

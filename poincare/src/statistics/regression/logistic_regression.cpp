@@ -39,9 +39,7 @@ static bool UpdateToUserCoefficients(
 
 UserExpression LogisticRegression::privateExpression(
     const double* modelCoefficients) const {
-  Coefficients coefficients;
-  memcpy(coefficients.data(), modelCoefficients,
-         numberOfCoefficients() * sizeof(double));
+  assert(!m_isInternal);
   // User model here: c/(1+a*exp(-b*x))
   return UserExpression::Create(
       KDiv(KC, KAdd(1_e, KMult(KA, KPow(e_e, KOpposite(KMult(KB, "x"_e)))))),

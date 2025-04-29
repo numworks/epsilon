@@ -33,7 +33,10 @@ class Regression {
     Logistic,
     Median,
     LinearApbx,
-    LogisticInternal,  // Not added to k_numberOfModels
+    /* This is an internal model to allow better fitting on the Logistic model.
+     * It is equivalent to Logistic but with transformed coefficients
+     * It should not be shown to the user */
+    LogisticInternal,  // Does not count in k_numberOfModels
   };
   constexpr static int k_numberOfModels = 14;
   constexpr static int k_maxNumberOfCoefficients = 5;  // Quartic model

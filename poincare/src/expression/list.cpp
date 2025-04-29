@@ -63,39 +63,54 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
   }
 }
 
-Tree* List::Fold(const Tree* list, TypeBlock type) {
-  Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
+static Tree* FoldSumOrProduct(const Tree* list, TypeBlock type) {
+  assert(type.isListSum() || type.isListProduct());
   // TODO compute ListLength less often
   int size = Dimension::ListLength(list);
   assert(size >= 0);
   if (size == 0) {
-    assert(type.isListSum() || type.isListProduct());
-    (type.isListSum() ? 0_e : 1_e)->cloneTree();
+    return (type.isListSum() ? 0_e : 1_e)->cloneTree();
   }
+  Tree* result = (type.isListSum() ? SharedTreeStack->pushAdd(size)
+                                   : SharedTreeStack->pushMult(size));
   for (int i = 0; i < size; i++) {
-    Tree* element = GetElement(list, i, SystematicReduction::ShallowReduce);
+    [[maybe_unused]] Tree* element =
+        List::GetElement(list, i, SystematicReduction::ShallowReduce);
     assert(element);
-    if (i == 0) {
-      continue;
+  }
+  SystematicReduction::ShallowReduce(result);
+  return result;
+}
+
+static Tree* FoldMinOrMax(const Tree* list, TypeBlock type) {
+  assert(type.isMin() || type.isMax());
+  // TODO compute ListLength less often
+  int size = Dimension::ListLength(list);
+  assert(size > 0);
+  Tree* result = List::GetElement(list, 0, SystematicReduction::ShallowReduce);
+  for (int i = 1; i < size; i++) {
+    Tree* element =
+        List::GetElement(list, i, SystematicReduction::ShallowReduce);
+    assert(element);
+    // Bubble up undefined children.
+    if (element->isUndefined()) {
+      result->removeTree();
+      return result;
     }
-    if (type.isListSum() || type.isListProduct()) {
-      const Tree* node = type.isListSum() ? KAdd.node<2> : KMult.node<2>;
-      result->cloneNodeAtNode(node);
-      SystematicReduction::ShallowReduce(result);
-    } else {
-      assert(type.isMin() || type.isMax());
-      // Bubble up undefined children.
-      if (!result->isUndefined() &&
-          (element->isUndefined() ||
-           Order::Compare(element, result, Order::OrderType::RealLine) ==
-               ((type.isMax()) ? 1 : -1))) {
-        result->removeTree();
-      } else {
-        element->removeTree();
-      }
-    }
+    (Order::Compare(element, result, Order::OrderType::RealLine) ==
+             ((type.isMax()) ? 1 : -1)
+         ? result
+         : element)
+        ->removeTree();
   }
   return result;
+}
+
+Tree* List::Fold(const Tree* list, TypeBlock type) {
+  if (type.isListSum() || type.isListProduct()) {
+    return FoldSumOrProduct(list, type);
+  }
+  return FoldMinOrMax(list, type);
 }
 
 Tree* List::Variance(const Tree* list, const Tree* coefficients,
@@ -110,8 +125,9 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
   SimpleKTrees::KTree sampleStdDev =
       KMult(stdDev, KPow(KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e)), 1_e / 2_e));
   if (type.isSampleStdDev()) {
-    Tree* n = coefficients->isOne() ? Integer::Push(Dimension::ListLength(list))
-                                    : Fold(coefficients, Type::ListSum);
+    Tree* n = coefficients->isOne()
+                  ? Integer::Push(Dimension::ListLength(list))
+                  : FoldSumOrProduct(coefficients, Type::ListSum);
     PatternMatching::CreateSimplify(sampleStdDev,
                                     {.KA = list, .KB = coefficients, .KC = n});
     n->removeTree();
@@ -131,11 +147,12 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
 #if POINCARE_LIST
   if (coefficients->isOne()) {
     Tree* result = KMult.node<2>->cloneNode();
-    Fold(list, Type::ListSum);
+    FoldSumOrProduct(list, Type::ListSum);
     Rational::Push(1, Dimension::ListLength(list));
     SystematicReduction::ShallowReduce(result);
     return result;
   }
+  assert(Dimension::IsList(coefficients));
   return PatternMatching::CreateSimplify(
       KMult(KListSum(KMult(KA, KB)), KPow(KListSum(KB), -1_e)),
       {.KA = list, .KB = coefficients});

@@ -159,9 +159,12 @@ int Metric::GetTrueMetric(const Tree* e) {
           p.setSign(NonStrictSign::Positive);
           int n_p = p.to<int>();
           int n_q = q.to<int>();
-          childrenCoeff = (4 < (INT_MAX - childrenCoeff) / (n_p + n_q - 1))
-                              ? childrenCoeff + 4 * (n_p + n_q - 1)
-                              : INT_MAX;
+          if (!(n_p + n_q - 1 == 0)) {
+            childrenCoeff = (4 < (INT_MAX - childrenCoeff) / (n_p + n_q - 1))
+                                ? childrenCoeff + 4 * (n_p + n_q - 1)
+                                : INT_MAX;
+          }
+
         } else {
           childrenCoeff = INT_MAX;
         }

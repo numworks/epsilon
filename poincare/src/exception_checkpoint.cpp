@@ -34,7 +34,7 @@ void ExceptionCheckpoint::Raise() {
 }
 
 bool ExceptionCheckpoint::setActive(bool interruption) {
-  assert(!Internal::TreeStackCheckpoint::hasActiveCheckpoint());
+  assert(!Internal::TreeStackCheckpoint::HasActiveCheckpoint());
   if (!interruption) {
     assert(s_topmost == m_parent);
     s_topmost = this;

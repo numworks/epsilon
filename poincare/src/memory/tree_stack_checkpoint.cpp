@@ -40,7 +40,7 @@ void TreeStackCheckpoint::rollback() {
 void TreeStackCheckpoint::Raise(ExceptionType type) {
   assert(type != ExceptionType::None && s_exceptionType == ExceptionType::None);
   s_exceptionType = type;
-  if (s_topmostTreeStackCheckpoint == nullptr) {
+  if (!HasActiveCheckpoint()) {
 #if POINCARE_EXCEPTION_CHECKPOINT
     // If there are no active TreeStackCheckpoints, raise an ExceptionCheckpoint
     s_exceptionType = ExceptionType::None;

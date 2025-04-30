@@ -67,12 +67,12 @@ class TreeStackCheckpoint final {
   TreeStackCheckpoint(Block* rightmostBlock);
   ~TreeStackCheckpoint();
 
-  void setActive() { s_topmostTreeStackCheckpoint = this; }
-  jmp_buf* jumpBuffer() { return &m_jumpBuffer; }
-
-  static bool hasActiveCheckpoint() {
+  static bool HasActiveCheckpoint() {
     return s_topmostTreeStackCheckpoint != nullptr;
   }
+
+  void setActive() { s_topmostTreeStackCheckpoint = this; }
+  jmp_buf* jumpBuffer() { return &m_jumpBuffer; }
 
  private:
   void rollback();

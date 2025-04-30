@@ -107,27 +107,28 @@ Regression::Coefficients Regression::privateFit(
       determinationCoefficient(&preparedSeries, bestModelCoefficients.data()) <=
           0) {
     bestModelCoefficients = CoefficientsToMatchMean(series, type());
-  } else {
-    /* Try rounding the coefficients to the 9th decimal place, and check if
-     * they give a better regression. This is to avoid coefficients like 1e-15.
-     * 10e10 was chosen arbitrarily. */
-    constexpr double k_roundingPrecision = 10e10;
-    Coefficients roundedCoefficients;
-    for (int i = 0; i < numberOfCoefficients(); i++) {
-      roundedCoefficients[i] =
-          std::round(bestModelCoefficients[i] * k_roundingPrecision) /
-          k_roundingPrecision;
-    }
-    double roundedResidualsSquareSum =
-        privateResidualsSquareSum(&preparedSeries, roundedCoefficients);
-    /* Use a reversed condition so that the rounded model is kept in case of
-     * equality */
-    if (!isRegressionBetter(lowestResidualsSquareSum, roundedResidualsSquareSum,
-                            bestModelCoefficients, roundedCoefficients)) {
-      bestModelCoefficients = roundedCoefficients;
-    }
   }
   offsetCoefficients(bestModelCoefficients, &preparedSeries);
+
+  /* Try rounding the coefficients to the 10th decimal place, and check if
+   * they give a better regression. This is to avoid coefficients like 1e-15.
+   * 10e10 was chosen arbitrarily. */
+  constexpr double k_roundingPrecision = 10e10;
+  Coefficients roundedCoefficients;
+  for (int i = 0; i < numberOfCoefficients(); i++) {
+    roundedCoefficients[i] =
+        std::round(bestModelCoefficients[i] * k_roundingPrecision) /
+        k_roundingPrecision;
+  }
+  double roundedResidualsSquareSum =
+      privateResidualsSquareSum(series, roundedCoefficients);
+  /* Use a reversed condition so that the rounded model is kept in case of
+   * equality */
+  if (!isRegressionBetter(lowestResidualsSquareSum, roundedResidualsSquareSum,
+                          bestModelCoefficients, roundedCoefficients)) {
+    bestModelCoefficients = roundedCoefficients;
+  }
+
   return bestModelCoefficients;
 }
 

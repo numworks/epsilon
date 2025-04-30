@@ -624,6 +624,7 @@ DivisionResult<IntegerHandler> IntegerHandler::Udiv(
 IntegerHandler IntegerHandler::GCD(const IntegerHandler& a,
                                    const IntegerHandler& b,
                                    WorkingBuffer* workingBuffer) {
+  uint8_t* const localStart = workingBuffer->localStart();
   // TODO Knuth modified like in upy to avoid divisions
   IntegerHandler i = a;
   i.setSign(NonStrictSign::Positive);
@@ -641,8 +642,10 @@ IntegerHandler IntegerHandler::GCD(const IntegerHandler& a,
     }
     if (Compare(i, j) > 0) {
       i = Udiv(i, j, workingBuffer).remainder;
+      workingBuffer->garbageCollect({&j, &i}, localStart);
     } else {
       j = Udiv(j, i, workingBuffer).remainder;
+      workingBuffer->garbageCollect({&i, &j}, localStart);
     }
   } while (true);
 }

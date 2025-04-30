@@ -56,10 +56,14 @@ static inline int leading_ones(uint8_t value) {
   return i;
 }
 
-/* An UTF-8 char is invalid if it has more than 4 leading ones or if it is the
- * first char and has exactly 1 leading one. */
-static bool isValidChar(int value_leading_ones, bool isFirst = false) {
-  return value_leading_ones <= 4 && !(isFirst && value_leading_ones == 1);
+// First char of an UTF-8 code point has 0, 2, 3 or 4 leading ones.
+static bool isValidFirstChar(int value_leading_ones) {
+  return value_leading_ones <= 4 && value_leading_ones != 1;
+}
+
+// Following char of an UTF-8 code point has 1 leading one.
+static bool isValidFollowingChar(int value_leading_ones) {
+  return value_leading_ones == 1;
 }
 
 static inline uint8_t last_k_bits(uint8_t value, uint8_t bits) {
@@ -76,7 +80,7 @@ CodePoint UTF8Decoder::nextCodePoint() {
 
   int leadingOnes = leading_ones(*stringPosition());
 
-  if (!isValidChar(leadingOnes, true)) {
+  if (!isValidFirstChar(leadingOnes)) {
     nextByte();
     return UCodePointReplacement;
   }
@@ -85,10 +89,10 @@ CodePoint UTF8Decoder::nextCodePoint() {
   for (int i = 0; i < leadingOnes - 1; i++) {
     result <<= 6;
     char nextChunk = nextByte();
-    if (!nextChunk && 0x80) {
+    if (!isValidFollowingChar(leading_ones(nextChunk))) {
       /* The code point is not properly written. This might be due to a code
        * point being translated into chars in a too small buffer. */
-      return UCodePointNull;
+      return UCodePointReplacement;
     }
     result += (nextChunk & 0x3F);
   }
@@ -113,16 +117,10 @@ CodePoint UTF8Decoder::previousCodePoint() {
     i++;
     previousByte();
     leadingOnes = leading_ones(*stringPosition());
-
-    if (!isValidChar(leadingOnes)) {
-      return UCodePointReplacement;
-    }
   }
-  if (leadingOnes != i + 1) {
+  if (!(isValidFirstChar(leadingOnes) && leadingOnes == i + 1)) {
     return UCodePointReplacement;
   }
-
-  assert(leadingOnes > 1 && leadingOnes <= 4);
   assert(stringPosition() >= m_string);
 
   result += last_k_bits(*stringPosition(), 8 - leadingOnes - 1) << (6 * i);
@@ -169,7 +167,7 @@ bool UTF8Decoder::IsTheEndOfACodePoint(const char* end, const char* begin) {
   for (const uint8_t* ptr = reinterpret_cast<const uint8_t*>(end);
        ptr >= reinterpret_cast<const uint8_t*>(begin); ptr--) {
     int ones = leading_ones(*ptr);
-    assert(isValidChar(ones));
+    assert(isValidFirstChar(ones) || isValidFollowingChar(ones));
     numberOfBytes++;
     assert(numberOfBytes <= 4);
     switch (ones) {

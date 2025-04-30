@@ -71,13 +71,14 @@ static Tree* FoldSumOrProduct(const Tree* list, TypeBlock type) {
   if (size == 0) {
     return (type.isListSum() ? 0_e : 1_e)->cloneTree();
   }
-  Tree* result = (type.isListSum() ? SharedTreeStack->pushAdd(size)
-                                   : SharedTreeStack->pushMult(size));
+  Tree* result = (type.isListSum() ? SharedTreeStack->pushAdd(0)
+                                   : SharedTreeStack->pushMult(0));
   for (int i = 0; i < size; i++) {
     [[maybe_unused]] Tree* element =
         List::GetElement(list, i, SystematicReduction::ShallowReduce);
     assert(element);
   }
+  NAry::SetNumberOfChildren(result, size);
   SystematicReduction::ShallowReduce(result);
   return result;
 }

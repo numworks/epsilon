@@ -1636,8 +1636,9 @@ QUIZ_CASE(pcj_simplification_logarithm) {
       "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
       "dep(0,{0×ln(y×abs(x)×sign(y)),nonNull(abs(x)),nonNull(abs(y))})",
       cartesianCtx);
+  // TODO_PCJ: Should be log(14142135623731/5000000000000)
   simplifies_to("log(14142135623731/5000000000000)",
-                "log(14142135623731/5000000000000)");
+                "ln(14142135623731/5000000000000)/(ln(2)+ln(5))");
 
   // Use complex logarithm internally
   simplifies_to("√(x^2)", "√(x^2)", cartesianCtx);

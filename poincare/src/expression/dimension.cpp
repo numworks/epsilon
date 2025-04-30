@@ -650,11 +650,12 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       }
       return dim;
     }
+    case Type::Add:
+      return e->numberOfChildren() > 0 ? Get(e->child(0), ctx) : Scalar();
     case Type::AngleUnitContext:
     case Type::Abs:
     case Type::Opposite:
     case Type::Sqrt:
-    case Type::Add:
     case Type::Sub:
     case Type::Cross:
     case Type::Inverse:

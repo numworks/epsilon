@@ -53,10 +53,12 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     return WriteCodePoint(buffer, bufferSize, '0');
   }
 
+  WorkingBuffer workingBuffer;
+  uint8_t* const localStart = workingBuffer.localStart();
+
   // Compute the exponent
   int exponent = Integer::Handler(decimal->child(1)).to<int>();
 
-  WorkingBuffer workingBuffer;
   // Round the integer if m_mantissa > 10^numberOfSignificantDigits-1
   IntegerHandler m = Integer::Handler(unsignedMantissa);
   int numberOfDigitsInMantissa =
@@ -67,6 +69,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     IntegerHandler value = 1;
     for (int i = 0; i < exp; i++) {
       value = IntegerHandler::Mult(10, value, &workingBuffer);
+      workingBuffer.garbageCollect({&m, &value}, localStart);
     }
     DivisionResult<IntegerHandler> d =
         IntegerHandler::Udiv(m, value, &workingBuffer);
@@ -100,6 +103,7 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
     if (numberOfZeroesToAddForEngineering > 0) {
       for (int i = 0; i < numberOfZeroesToAddForEngineering; i++) {
         m = IntegerHandler::Mult(m, IntegerHandler(10), &workingBuffer);
+        workingBuffer.garbageCollect({&m}, localStart);
       }
       removeZeroes = false;
     }

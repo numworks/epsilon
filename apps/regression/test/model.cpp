@@ -54,7 +54,8 @@ void assert_regression_is(const double* xi, const double* yi,
                           const int numberOfPoints, Model::Type modelType,
                           const Coefficients& trueCoefficients, double trueR,
                           double trueR2, double trueResidualStdDev,
-                          bool acceptNAN = false, bool exactPrecision = false) {
+                          bool acceptNAN = false,
+                          bool exactCoefficients = false) {
   int series = 0;
   Shared::GlobalContext globalContext;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
@@ -67,9 +68,9 @@ void assert_regression_is(const double* xi, const double* yi,
   store.setSeriesRegressionType(series, modelType);
   Shared::StoreContext context(&store, &globalContext);
 
-  double precision = exactPrecision ? 0.0 : 1e-2;
+  double precision = 1e-2;
   // When expected value is null, expect a stronger precision
-  double nullExpectedPrecision = exactPrecision ? 0.0 : 1e-9;
+  double nullExpectedPrecision = 1e-9;
 
   // Compute and compare the coefficients
   double* coefficients = store.coefficientsForSeries(series, &context);
@@ -83,8 +84,9 @@ void assert_regression_is(const double* xi, const double* yi,
   /* TODO: we could use the std::equal or std::for_each algorithms here, to
    * factorize the "for" loop */
   for (int i = 0; i < numberOfCoefs; i++) {
-    bool cond = roughly_equal(coefficients[i], trueCoefficients[i], precision,
-                              acceptNAN, nullExpectedPrecision);
+    bool cond = roughly_equal(coefficients[i], trueCoefficients[i],
+                              exactCoefficients ? 0.0 : precision, acceptNAN,
+                              exactCoefficients ? 0.0 : nullExpectedPrecision);
 #if POINCARE_TREE_LOG
     if (!cond) {
       std::cout << "Coefficient of regression different:" << std::endl;
@@ -252,6 +254,17 @@ QUIZ_CASE(regression_quadratic) {
   constexpr double sr = 0.02477;
   assert_regression_is(x, y, std::size(x), Model::Type::Quadratic, coefficients,
                        NAN, r2, sr);
+}
+
+QUIZ_CASE(regression_quadratic_2) {
+  constexpr double x[] = {1, 4, 6, 8.5, 10.0, 11.5};
+  constexpr double y[] = {-2.85, -8.28, -9.3, -7.65, -5.1, -1.38};
+  static_assert(std::size(x) == std::size(y), "Column sizes are different");
+  constexpr Coefficients coefficients = {0.26, -3.11, 0.};
+  constexpr double r2 = 1.0;
+  constexpr double sr = 0.;
+  assert_regression_is(x, y, std::size(x), Model::Type::Quadratic, coefficients,
+                       NAN, r2, sr, false, true);
 }
 
 QUIZ_CASE(regression_cubic) {

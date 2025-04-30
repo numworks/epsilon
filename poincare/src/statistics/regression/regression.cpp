@@ -96,8 +96,9 @@ Regression::Coefficients Regression::privateFit(
     uniformizeCoefficientsFromFit(modelCoefficients);
     double newResidualsSquareSum =
         privateResidualsSquareSum(&preparedSeries, modelCoefficients);
-    if (isRegressionBetter(newResidualsSquareSum, lowestResidualsSquareSum,
-                           modelCoefficients, bestModelCoefficients)) {
+    if (isRegressionStrictlyBetter(newResidualsSquareSum,
+                                   lowestResidualsSquareSum, modelCoefficients,
+                                   bestModelCoefficients)) {
       lowestResidualsSquareSum = newResidualsSquareSum;
       bestModelCoefficients = modelCoefficients;
     }
@@ -123,9 +124,10 @@ Regression::Coefficients Regression::privateFit(
   double roundedResidualsSquareSum =
       privateResidualsSquareSum(series, roundedCoefficients);
   /* Use a reversed condition so that the rounded model is kept in case of
-   * equality */
-  if (!isRegressionBetter(lowestResidualsSquareSum, roundedResidualsSquareSum,
-                          bestModelCoefficients, roundedCoefficients)) {
+   * similar performances */
+  if (!isRegressionStrictlyBetter(lowestResidualsSquareSum,
+                                  roundedResidualsSquareSum,
+                                  bestModelCoefficients, roundedCoefficients)) {
     bestModelCoefficients = roundedCoefficients;
   }
 
@@ -462,6 +464,25 @@ double Regression::privateResidualStandardDeviation(
   }
   double sum = privateResidualsSquareSum(series, modelCoefficients);
   return std::sqrt(sum / (n - nCoeff));
+}
+
+bool Regression::isRegressionStrictlyBetter(
+    double residualsSquareSum1, double residualsSquareSum2,
+    const Regression::Coefficients& modelCoefficients1,
+    const Regression::Coefficients& modelCoefficients2) const {
+  double maxCoefficient = 0.0;
+  for (int i = 0; i < numberOfCoefficients(); i++) {
+    double absCoefficient1 = std::fabs(modelCoefficients1[i]);
+    double absCoefficient2 = std::fabs(modelCoefficients2[i]);
+    if (absCoefficient1 > maxCoefficient) {
+      maxCoefficient = absCoefficient1;
+    }
+    if (absCoefficient2 > maxCoefficient) {
+      maxCoefficient = absCoefficient2;
+    }
+  }
+  double precision = OMG::Float::Epsilon<double>() * maxCoefficient;
+  return residualsSquareSum1 + precision < residualsSquareSum2;
 }
 
 }  // namespace Poincare::Internal

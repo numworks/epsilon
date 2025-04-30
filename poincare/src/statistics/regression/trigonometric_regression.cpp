@@ -242,7 +242,7 @@ void TrigonometricRegression::uniformizeCoefficientsFromFit(
   }
 }
 
-bool TrigonometricRegression::isRegressionBetter(
+bool TrigonometricRegression::isRegressionStrictlyBetter(
     double residualsSquareSum1, double residualsSquareSum2,
     const Regression::Coefficients& modelCoefficients1,
     const Regression::Coefficients& modelCoefficients2) const {

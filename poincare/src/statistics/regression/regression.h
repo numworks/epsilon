@@ -246,12 +246,10 @@ class Regression {
   double privateResidualStandardDeviation(
       const Series* series, const Coefficients& modelCoefficients) const;
 
-  virtual bool isRegressionBetter(
+  virtual bool isRegressionStrictlyBetter(
       double residualsSquareSum1, double residualsSquareSum2,
-      const Regression::Coefficients& /* modelCoefficients1 */,
-      const Regression::Coefficients& /* modelCoefficients2 */) const {
-    return residualsSquareSum1 < residualsSquareSum2;
-  }
+      const Regression::Coefficients& modelCoefficients1,
+      const Regression::Coefficients& modelCoefficients2) const;
 
   // Levenberg-Marquardt
   constexpr static double k_maxIterations = 300;

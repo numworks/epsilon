@@ -13,8 +13,11 @@ class SystematicReduction {
   static bool ShallowReduce(Tree* e);
 
  private:
-  static bool BubbleUpFromChildren(Tree* e);
+  /* [hasList] is an optim, if in doubt, leave to [false] */
+  static bool BubbleUpFromChildren(Tree* e, bool* hasList);
   static bool Switch(Tree* e);
+  static bool DeepReduceAux(Tree* e, bool* hasList);
+  static bool ShallowReduceAux(Tree* e, bool* hasList);
 };
 
 }  // namespace Poincare::Internal

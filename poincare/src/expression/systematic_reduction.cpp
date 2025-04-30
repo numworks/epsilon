@@ -19,7 +19,7 @@
 
 namespace Poincare::Internal {
 
-bool SystematicReduction::DeepReduce(Tree* e) {
+bool SystematicReduction::DeepReduceAux(Tree* e, bool* hasList) {
   if (e->isDepList()) {
     // Never simplify any dependencies
     return false;
@@ -28,13 +28,16 @@ bool SystematicReduction::DeepReduce(Tree* e) {
    * here could save multiple ShallowReduce and flatten calls. */
   bool modified = (e->isMult() || e->isAdd()) && NAry::Flatten(e);
   for (Tree* child : e->children()) {
-    modified |= DeepReduce(child);
+    modified |= DeepReduceAux(child, hasList);
+  }
+  if (e->isList() || e->isListSequence()) {
+    *hasList = true;
   }
 
 #if ASSERTIONS
   TreeRef previousTree = e->cloneTree();
 #endif
-  bool shallowModified = ShallowReduce(e);
+  bool shallowModified = ShallowReduceAux(e, hasList);
 #if ASSERTIONS
   assert(shallowModified != e->treeIsIdenticalTo(previousTree));
   previousTree->removeTree();
@@ -42,13 +45,47 @@ bool SystematicReduction::DeepReduce(Tree* e) {
   return shallowModified || modified;
 }
 
-bool SystematicReduction::ShallowReduce(Tree* e) {
-  bool changed = BubbleUpFromChildren(e);
-  assert(!(changed && Switch(e)));
-  return changed || Switch(e);
+bool SystematicReduction::DeepReduce(Tree* e) {
+  bool hasList = false;
+  return DeepReduceAux(e, &hasList);
 }
 
-bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
+bool SystematicReduction::ShallowReduceAux(Tree* e, bool* hasList) {
+#if ASSERTIONS
+  // This assert is quite costly, should be an assert level 2 ?
+  assert(Dimension::DeepCheck(e));
+  Dimension dimBefore = Dimension::Get(e);
+  int lenBefore = Dimension::ListLength(e);
+#endif
+  bool changed = SystematicReduction::BubbleUpFromChildren(e, hasList);
+  /* hasList is an optimization to avoid computing IsList on tree without any
+   * list */
+  bool isList = *hasList && Dimension::IsList(e);
+  if (!isList || e->isListSort()) {
+    assert(!(changed && Switch(e)));
+    changed = changed || Switch(e);
+  }
+#if ASSERTIONS
+  if (changed) {
+    assert(Dimension::DeepCheck(e));
+    if (!e->isUndefined()) {
+      assert(Dimension::Get(e) == dimBefore);
+      // TODO decide the output of undef ListSort
+      /* TODO This assert should always be valid regardless of Undefined state
+       * if we output a list of undef/matrix of undef etc... */
+      assert(Dimension::ListLength(e) == lenBefore);
+    }
+  }
+#endif
+  return changed;
+}
+
+bool SystematicReduction::ShallowReduce(Tree* e) {
+  bool hasList = false;
+  return ShallowReduceAux(e, &hasList);
+}
+
+bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool* hasList) {
   /* Before systematic reduction, look for things to bubble-up in children. At
    * this step, only children have been shallowReduced. By doing this before
    * shallowReduction, we don't have to handle undef, float and dependency
@@ -64,7 +101,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
     bool changed = Undefined::ShallowBubbleUpUndef(Dependency::Dependencies(e));
     if (changed) {
       if (Undefined::ShallowBubbleUpUndef(e)) {
-        assert(!ShallowReduce(e));
+        assert(!ShallowReduceAux(e, hasList));
         return true;
       }
       OMG::unreachable();
@@ -88,13 +125,13 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
   }
 
   if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(e)) {
-    assert(!ShallowReduce(e));
+    assert(!ShallowReduceAux(e, hasList));
     return true;
   }
 
   if (bubbleUpFloat &&
       Approximation::ApproximateAndReplaceEveryScalar<double>(e)) {
-    ShallowReduce(e);
+    ShallowReduceAux(e, hasList);
     return true;
   }
 
@@ -102,7 +139,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
     assert(e->isDep());
     /* e->child(0) may now be reduced again. This could unlock further
      * simplifications. */
-    ShallowReduce(e->child(0)) && ShallowReduce(e);
+    ShallowReduceAux(e->child(0), hasList) && ShallowReduceAux(e, hasList);
     return true;
   }
 
@@ -110,8 +147,6 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e) {
 }
 
 bool SystematicReduction::Switch(Tree* e) {
-  // This assert is quite costly, should be an assert level 2 ?
-  assert(Dimension::DeepCheck(e));
   if (!e->isNAry() && e->numberOfChildren() == 0) {
     // No childless tree have a reduction pattern.
     return false;

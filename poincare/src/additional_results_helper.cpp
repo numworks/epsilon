@@ -54,7 +54,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
                                ctx->m_context));
     approximatedAngle =
         Trigonometry::ConvertAngleToRadian(approximatedAngle, ctx->m_angleUnit);
-    assert(0 <= approximatedAngle && approximatedAngle < 2 * M_PI);
+    assert(0.0 <= approximatedAngle && approximatedAngle <= 2.0 * M_PI);
   }
 #endif
 
@@ -138,7 +138,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   simplifiedAngle->removeTree();
   approximatedAngle =
       Trigonometry::ConvertAngleToRadian(approximatedAngle, ctx->m_angleUnit);
-  assert(0 <= approximatedAngle && approximatedAngle < 2 * M_PI);
+  assert(0 <= approximatedAngle && approximatedAngle <= 2 * M_PI);
   return {.exactAngle = exactAngle,
           .approximatedAngle = approximatedAngle,
           .angleIsExact = angleIsExact};

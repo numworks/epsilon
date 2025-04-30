@@ -54,7 +54,7 @@ void assert_regression_is(const double* xi, const double* yi,
                           const int numberOfPoints, Model::Type modelType,
                           const Coefficients& trueCoefficients, double trueR,
                           double trueR2, double trueResidualStdDev,
-                          bool acceptNAN = false) {
+                          bool acceptNAN = false, bool exactPrecision = false) {
   int series = 0;
   Shared::GlobalContext globalContext;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
@@ -67,9 +67,9 @@ void assert_regression_is(const double* xi, const double* yi,
   store.setSeriesRegressionType(series, modelType);
   Shared::StoreContext context(&store, &globalContext);
 
-  double precision = 1e-2;
+  double precision = exactPrecision ? 0.0 : 1e-2;
   // When expected value is null, expect a stronger precision
-  double nullExpectedPrecision = 1e-9;
+  double nullExpectedPrecision = exactPrecision ? 0.0 : 1e-9;
 
   // Compute and compare the coefficients
   double* coefficients = store.coefficientsForSeries(series, &context);
@@ -263,18 +263,30 @@ QUIZ_CASE(regression_cubic) {
   constexpr double sr = 0.006858;
   assert_regression_is(x, y, std::size(x), Model::Type::Cubic, coefficients,
                        NAN, r2, sr);
+}
 
-  constexpr double x2[] = {2006, 2007, 2008, 2009, 2010, 2011,
-                           2012, 2013, 2014, 2015, 2016, 2017};
-  constexpr double y2[] = {29.66, 29.39, 28.84, 28.57, 28.51, 28.62,
-                           28.69, 29.52, 29.79, 30.16, 30.31, 30.96};
-  static_assert(std::size(x2) == std::size(y2), "Column sizes are different");
-  constexpr Coefficients coefficients2 = {-0.00488992, 29.5594, -59561.3,
-                                          4.00045e+07};
-  constexpr double r22 = 0.961654;
-  constexpr double sr2 = 0.182868;
-  assert_regression_is(x2, y2, std::size(x2), Model::Type::Cubic, coefficients2,
-                       NAN, r22, sr2);
+QUIZ_CASE(regression_cubic_2) {
+  constexpr double x[] = {2006, 2007, 2008, 2009, 2010, 2011,
+                          2012, 2013, 2014, 2015, 2016, 2017};
+  constexpr double y[] = {29.66, 29.39, 28.84, 28.57, 28.51, 28.62,
+                          28.69, 29.52, 29.79, 30.16, 30.31, 30.96};
+  static_assert(std::size(x) == std::size(y), "Column sizes are different");
+  constexpr Coefficients coefficients = {-0.00488992, 29.5594, -59561.3,
+                                         4.00045e+07};
+  constexpr double r2 = 0.961654;
+  constexpr double sr = 0.182868;
+  assert_regression_is(x, y, std::size(x), Model::Type::Cubic, coefficients,
+                       NAN, r2, sr);
+}
+
+QUIZ_CASE(regression_cubic_3) {
+  constexpr double x[] = {1.0, 2.0, 3.0, 4.0};
+  constexpr double y[] = {1.0, 2.0, 3.0, 4.0};
+  static_assert(std::size(x) == std::size(y), "Column sizes are different");
+  constexpr Coefficients coefficients = {0.0, 0.0, 1.0, 0.0};
+  constexpr double r2 = 1.0;
+  assert_regression_is(x, y, std::size(x), Model::Type::Cubic, coefficients,
+                       NAN, r2, NAN, false, true);
 }
 
 QUIZ_CASE(regression_quartic) {

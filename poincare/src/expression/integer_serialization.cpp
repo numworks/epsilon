@@ -50,6 +50,7 @@ void IntegerHandler::removeZeroAtTheEnd(int minimalNumbersOfDigits,
     if (!d.remainder.isZero() || (shouldCheckMinimalNumberOfDigits &&
                                   (Compare(d.quotient, minimum) <= 0 &&
                                    Compare(d.quotient, minusMinimum) >= 0))) {
+      workingBuffer->garbageCollect({this}, localStart);
       // assert(!isOverflow());
       return;
     }
@@ -90,6 +91,7 @@ size_t IntegerHandler::serialize(char* buffer, size_t bufferSize,
     char c = OMG::Print::CharacterForDigit(
         OMG::Base::Decimal, d.remainder.isZero() ? 0 : d.remainder.digit(0));
     if (length >= bufferSize - 1) {
+      workingBuffer->garbageCollect({}, localStart);
       return PrintFloat::ConvertFloatToText<float>(
                  NAN, buffer, bufferSize, PrintFloat::k_maxFloatGlyphLength,
                  PrintFloat::k_maxNumberOfSignificantDigits,
@@ -99,6 +101,7 @@ size_t IntegerHandler::serialize(char* buffer, size_t bufferSize,
     workingBuffer->garbageCollect({&base, &quotient}, localStart);
     length += WriteCodePoint(buffer + length, bufferSize - length, c);
   }
+  workingBuffer->garbageCollect({}, localStart);
   assert(length <= bufferSize - 1);
   assert(buffer[length] == 0);
 

@@ -77,8 +77,8 @@ IntegerHandler IntegerHandler::Parse(ForwardUnicodeDecoder& decoder,
     sign = NonStrictSign::Negative;
     decoder.nextCodePoint();
   }
-  IntegerHandler result(0);
   IntegerHandler baseInteger(static_cast<uint8_t>(base));
+  IntegerHandler result(0);
   uint8_t* const localStart = workingBuffer->localStart();
   while (CodePoint codePoint = decoder.nextCodePoint()) {
     IntegerHandler multiplication = Mult(result, baseInteger, workingBuffer);
@@ -89,6 +89,7 @@ IntegerHandler IntegerHandler::Parse(ForwardUnicodeDecoder& decoder,
     result = Sum(multiplication, digit, false, workingBuffer);
     workingBuffer->garbageCollect({&baseInteger, &result}, localStart);
   }
+  workingBuffer->garbageCollect({&result}, localStart);
   return result;
 }
 
@@ -248,6 +249,7 @@ int IntegerHandler::numberOfBase10DigitsWithoutSign(
     workingBuffer->garbageCollect({&base, &d}, localStart);
     numberOfDigits++;
   }
+  workingBuffer->garbageCollect({}, localStart);
   return numberOfDigits;
 }
 
@@ -362,6 +364,7 @@ IntegerHandler IntegerHandler::Sum(const IntegerHandler& a,
                                    bool inverseBNegative,
                                    WorkingBuffer* workingBuffer,
                                    bool oneDigitOverflow) {
+  uint8_t* const localStart = workingBuffer->localStart();
   NonStrictSign bSign = inverseBNegative ? InvertSign(b.sign()) : b.sign();
   IntegerHandler usum;
   if (a.sign() == bSign) {
@@ -381,6 +384,7 @@ IntegerHandler IntegerHandler::Sum(const IntegerHandler& a,
       usum.setSign(bSign);
     }
   }
+  workingBuffer->garbageCollect({&usum}, localStart);
   return usum;
 }
 
@@ -388,6 +392,7 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler& a,
                                     const IntegerHandler& b, bool subtract,
                                     WorkingBuffer* workingBuffer,
                                     bool oneDigitOverflow) {
+  uint8_t* const localStart = workingBuffer->localStart();
   uint8_t size = std::max(a.numberOfDigits<native_uint_t>(),
                           b.numberOfDigits<native_uint_t>());
   if (!subtract) {
@@ -419,6 +424,7 @@ IntegerHandler IntegerHandler::Usum(const IntegerHandler& a,
     }
   }
   sum.sanitize();
+  workingBuffer->garbageCollect({&sum}, localStart);
   return sum;
 }
 
@@ -432,6 +438,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler& a,
                                     const IntegerHandler& b,
                                     WorkingBuffer* workingBuffer,
                                     bool oneDigitOverflow) {
+  uint8_t* const localStart = workingBuffer->localStart();
   // TODO: would be Karatsuba or Toom-Cook multiplication worth it?
   // TODO: optimize for squaring?
   uint8_t size = std::min(
@@ -481,6 +488,7 @@ IntegerHandler IntegerHandler::Mult(const IntegerHandler& a,
   mult.sanitize();
   mult.setSign(a.sign() == b.sign() ? NonStrictSign::Positive
                                     : NonStrictSign::Negative);
+  workingBuffer->garbageCollect({&mult}, localStart);
   return mult;
 }
 
@@ -618,6 +626,7 @@ DivisionResult<IntegerHandler> IntegerHandler::Udiv(
     remainder = newRemainder;
   }
   Q.sanitize();
+  workingBuffer->garbageCollect({&Q, &remainder}, localStart);
   return {.quotient = Q, .remainder = remainder};
 }
 
@@ -635,9 +644,11 @@ IntegerHandler IntegerHandler::GCD(const IntegerHandler& a,
   }
   do {
     if (i.isZero()) {
+      workingBuffer->garbageCollect({&j}, localStart);
       return j;
     }
     if (j.isZero()) {
+      workingBuffer->garbageCollect({&i}, localStart);
       return i;
     }
     if (Compare(i, j) > 0) {

@@ -212,6 +212,7 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
     case Type::Dim:
     case Type::ListElement:
       return k_nonListListLength;
+    case Type::Dep:
     case Type::ListSort:
       return ListLength(e->child(0), ctx);
     case Type::List:

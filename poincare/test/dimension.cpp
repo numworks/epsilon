@@ -132,8 +132,8 @@ QUIZ_CASE(pcj_dimension) {
 
   QUIZ_ASSERT(dim(KDep(1_e, KDepList(1_e, 2_e)), Scalar));
   QUIZ_ASSERT(dim(KDep(KMatrix<1, 1>(1_e), KDepList(1_e, 2_e)), Matrix(1, 1)));
-  QUIZ_ASSERT(
-      len(KDep(1_e, KDepList(1_e, KList(1_e, 2_e), KList(1_e, 2_e))), 2));
+  QUIZ_ASSERT(len(KDep(1_e, KDepList(1_e, KList(1_e, 2_e), KList(1_e, 2_e))),
+                  Dimension::k_nonListListLength));
   QUIZ_ASSERT(len(
       KDep(KList(1_e, 2_e),
            KDepList(1_e, KListSequence("k"_e, 2_e, KVarK), KList(1_e, 2_e))),

@@ -219,7 +219,7 @@ class IntegerHandler final {
    * buffer. */
   static IntegerHandler Parse(ForwardUnicodeDecoder& decoder, OMG::Base base,
                               WorkingBuffer* workingBuffer,
-                              int* removedZeros = nullptr);
+                              uint32_t maxNumberOfDigits = UINT32_MAX);
   static IntegerHandler Usum(const IntegerHandler& a, const IntegerHandler& b,
                              bool subtract, WorkingBuffer* workingBuffer,
                              bool oneDigitOverflow = false);
@@ -292,9 +292,10 @@ class Integer {
    * removed. */
   static Tree* Push(ForwardUnicodeDecoder& decoder,
                     OMG::Base base = OMG::Base::Decimal,
-                    int* removedZeros = nullptr) {
+                    uint32_t maxNumberOfDigits = UINT32_MAX) {
     WorkingBuffer workingBuffer;
-    return IntegerHandler::Parse(decoder, base, &workingBuffer, removedZeros)
+    return IntegerHandler::Parse(decoder, base, &workingBuffer,
+                                 maxNumberOfDigits)
         .pushOnTreeStack();
   }
   static Tree* Push(native_int_t value) {

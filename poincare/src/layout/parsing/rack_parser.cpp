@@ -347,6 +347,22 @@ void RackParser::parseUnexpected(TreeRef& leftHandSide,
   TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
 }
 
+uint32_t NumberOfTrailingZerosDigits(LayoutSpanDecoder decoder) {
+  if (decoder.codePoint() == '-') {
+    decoder.nextCodePoint();
+  }
+  uint32_t trailingZeros = 0;
+  while (CodePoint codePoint = decoder.nextCodePoint()) {
+    assert(OMG::Print::IsDigit(codePoint));
+    if (codePoint == '0') {
+      trailingZeros++;
+    } else {
+      trailingZeros = 0;
+    }
+  }
+  return trailingZeros;
+}
+
 void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
   if (!leftHandSide.isUninitialized()) {
     // FIXME
@@ -406,25 +422,26 @@ void RackParser::parseNumber(TreeRef& leftHandSide, Token::Type stoppingType) {
       }
       // Integer(integerPart) || Decimal(integerPart, -expValue)
     } else {
-      int offset = smallE - decimalPoint - 1;
-      assert(offset > 0);
+      int numberOfDigits = smallE - decimalPoint - 1;
+      assert(numberOfDigits > 0);
       LayoutSpanDecoder fractionalDigits(rack, decimalPoint + 1, smallE);
       // Ignore 0s at the end of the fractional part
-      int fractionalOffset = 0;
-      Tree* fractionalPart = Integer::Push(fractionalDigits, OMG::Base::Decimal,
-                                           &fractionalOffset);
-      offset -= fractionalOffset;
+      numberOfDigits -= NumberOfTrailingZerosDigits(fractionalDigits);
+      assert(numberOfDigits >= 0);
+      Tree* fractionalPart =
+          Integer::Push(fractionalDigits, OMG::Base::Decimal, numberOfDigits);
       leftHandSide = SharedTreeStack->pushDecimal();
-      Tree* result =
-          IntegerHandler::Power(IntegerHandler(10), IntegerHandler(offset));
+      Tree* result = IntegerHandler::Power(IntegerHandler(10),
+                                           IntegerHandler(numberOfDigits));
       result->moveTreeOverTree(IntegerHandler::Multiplication(
           Integer::Handler(result), Integer::Handler(integerPart)));
       result->moveTreeOverTree(IntegerHandler::Addition(
           Integer::Handler(result), Integer::Handler(fractionalPart)));
       fractionalPart->removeTree();
       integerPart->removeTree();
-      Integer::Push(offset - expValue);
-      // Decimal(integerDigits*10^offset + fractionalDigits, offset - expValue)
+      Integer::Push(numberOfDigits - expValue);
+      /* Decimal(integerDigits*10^numberOfDigits + fractionalDigits,
+       * numberOfDigits - expValue) */
     }
   }
   if (generateMixedFractionIfNeeded(leftHandSide)) {

@@ -125,8 +125,8 @@ class Layout final : public PoolHandle {
   Layout makeEditable() { return cloneWithoutMargins(); }
 
   bool isEmpty() const;
-  // Return the number of digits of the biggest integer displayed.
-  int biggestIntegerSize() const;
+  // Return the number of longest of the biggest integer displayed.
+  int longestIntegerSize() const;
 
   // Render
   void draw(KDContext* ctx, KDPoint p, const LayoutStyle& style,

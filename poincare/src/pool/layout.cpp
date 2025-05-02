@@ -190,7 +190,7 @@ Layout Layout::cloneWithoutChildrenRacks() {
 
 bool Layout::isEmpty() const { return tree()->numberOfChildren() == 0; }
 
-int Layout::biggestIntegerSize() const {
+int Layout::longestIntegerSize() const {
   int biggest = 0;
   int current = 0;
   for (const Internal::Tree* descendant : tree()->selfAndDescendants()) {

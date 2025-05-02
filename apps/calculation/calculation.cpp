@@ -193,7 +193,7 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
       if ((m_displayOutput == DisplayOutput::ExactAndApproximate ||
            m_displayOutput == DisplayOutput::ExactAndApproximateToggle) &&
           (exactOutputWidth > k_maxExactLayoutWidth ||
-           exactOutput.biggestIntegerSize() > k_maxNumberDigitsInExactLayout)) {
+           exactOutput.longestIntegerSize() > k_maxNumberDigitsInExactLayout)) {
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
       } else if (m_displayOutput == DisplayOutput::ExactAndApproximate &&
                  exactOutputWidth > maxVisibleWidth) {

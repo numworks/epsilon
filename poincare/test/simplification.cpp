@@ -163,6 +163,16 @@ void simplifies_to(const char* input, const char* output,
       projectionContext);
 }
 
+void simplifies_to_no_beautif(const char* input, const char* output,
+                              ProjectionContext projectionContext = realCtx) {
+  process_tree_and_compare(
+      input, output,
+      [](Tree* tree, ProjectionContext projectionContext) {
+        simplify(tree, &projectionContext, false);
+      },
+      projectionContext);
+}
+
 QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("x", "x");
   simplifies_to("x-x", "0");
@@ -598,6 +608,14 @@ QUIZ_CASE(pcj_simplification_parametric) {
                 "product(f(k),k,a,a+9)", ctx);
   simplifies_to("product(f(k),k,5,b) / product(f(u),u,100,b)",
                 "product(f(k),k,5,99)", ctx);
+
+  // undef
+  simplifies_to("sum(k,k,1/2,10)", "undef");
+  simplifies_to("product(1,k,2,pi)", "undef");
+  simplifies_to("product(1,k,pi,pi+1)", "undef");
+  simplifies_to("sum(1,k,i,i+1)", "undef");
+  simplifies_to_no_beautif("sum([[0]],k,i,0)", "[[undef]]");
+  simplifies_to_no_beautif("product([[0]],k,1,pi)", "[[undef]]");
 }
 
 QUIZ_CASE(pcj_simplification_factorial) {

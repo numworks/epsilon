@@ -65,10 +65,23 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   bool isSum = e->isSum();
   Tree* lowerBound = e->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
-  ComplexSign sign = ComplexSignOfDifference(lowerBound, upperBound);
-  // TODO: what about when bounds are not integer but diff is integer ?
-  if (!sign.isReal()) {
-    return false;
+  /* Since child should be reduce at this point, ensure bounds are integer or
+   * contains UserSymbol (CAS) */
+  ComplexSign sign = ComplexSign::Unknown();
+  if (!(lowerBound->isInteger() ||
+        lowerBound->hasDescendantSatisfying(
+            [](const Tree* child) { return child->isUserSymbol(); })) ||
+      !(upperBound->isInteger() ||
+        upperBound->hasDescendantSatisfying(
+            [](const Tree* child) { return child->isUserSymbol(); })) ||
+      !(sign = ComplexSignOfDifference(lowerBound, upperBound)).isReal()) {
+    Dimension dim = Dimension::Get(e->child(k_integrandIndex));
+    if (dim.isMatrix()) {
+      e->moveTreeOverTree(Matrix::Undef(dim.matrix));
+    } else {
+      e->cloneTreeOverTree(KUndef);
+    }
+    return true;
   }
 
   // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1

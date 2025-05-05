@@ -1,6 +1,7 @@
 #include <poincare/solver/roots.h>
 
 #include "helper.h"
+#include "poincare/src/expression/dependency.h"
 
 using namespace Poincare::Internal;
 
@@ -76,6 +77,7 @@ void assert_roots_are(const char* coefficients, const char* expectedRoots) {
             // Not handled
             quiz_assert(false);
         }
+        Dependency::DeepRemoveUselessDependencies(tree);
         Simplification::BeautifyReduced(tree, &projCtx);
       },
       projCtx);

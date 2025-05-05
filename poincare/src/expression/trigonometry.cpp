@@ -10,6 +10,7 @@
 #include "k_tree.h"
 #include "number.h"
 #include "order.h"
+#include "poincare/src/expression/dependency.h"
 #include "polynomial.h"
 #include "projection.h"
 #include "rational.h"
@@ -336,6 +337,7 @@ static Tree* SimplifyATrigOfTrig(const Tree* arg, Type type) {
     } else {
       TreeRef genericPiFactor = PatternMatching::CreateSimplify(
           KMult(KA, KPow(π_e, -1_e)), {.KA = arg});
+      Dependency::DeepRemoveUselessDependencies(genericPiFactor);
       reducedPiFactor = computeSimplifiedPiFactorForType(genericPiFactor, type);
       genericPiFactor->removeTree();
     }

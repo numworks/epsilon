@@ -694,29 +694,30 @@ bool SystematicOperation::ReduceExp(Tree* e) {
     return true;
   }
 
-  // Power-like case (exp(A*ln(B)))
-  PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx)) {
-    const Tree* base = ctx.getTree(KB);
-    const Tree* exponent = ctx.getTree(KA);
-    if (base->isZero()) {
-      return PowerLike::ReducePowerOfZero(e, exponent);
-    }
-    // Turn exp(a*ln(b)) into pow(b, a) if the exponent is an integer
-    if (exponent->isInteger()) {
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
-          KPow(KB, KA), {.KA = ctx.getTree(KA), .KB = ctx.getTree(KB)}));
-      return true;
-    }
-    /* Expand rational powers if the base is an integer and the power is a
-     * rational outside of the [0, 1] range */
-    if (base->isInteger() && exponent->isRational() && !exponent->isInteger() &&
-        !Rational::IsStrictlyPositiveUnderOne(exponent)) {
-      return PowerLike::ExpandRationalPower(e, base, exponent);
-    }
-  }
-
   if (child->isMult()) {
+    // Power-like case (exp(A*ln(B)))
+    PatternMatching::Context ctx;
+    if (PatternMatching::Match(e, KExp(KMult(KA, KLn(KB))), &ctx)) {
+      const Tree* base = ctx.getTree(KB);
+      const Tree* exponent = ctx.getTree(KA);
+      if (base->isZero()) {
+        return PowerLike::ReducePowerOfZero(e, exponent);
+      }
+      // Turn exp(a*ln(b)) into pow(b, a) if the exponent is an integer
+      if (exponent->isInteger()) {
+        e->moveTreeOverTree(PatternMatching::CreateSimplify(
+            KPow(KB, KA), {.KA = ctx.getTree(KA), .KB = ctx.getTree(KB)}));
+        return true;
+      }
+      /* Expand rational powers if the base is an integer and the power is a
+       * rational outside of the [0, 1] range */
+      if (base->isInteger() && exponent->isRational() &&
+          !exponent->isInteger() &&
+          !Rational::IsStrictlyPositiveUnderOne(exponent)) {
+        return PowerLike::ExpandRationalPower(e, base, exponent);
+      }
+    }
+
     /* This last step shortcuts at least three advanced reduction steps and is
      * quite common when manipulating roots of negatives.
      * TODO: Deactivate it if advanced reduction is strong enough. */

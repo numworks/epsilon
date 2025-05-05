@@ -23,9 +23,8 @@ namespace Poincare::Internal {
  * This value will be set to [true] when a list or a list-producing function
  * (e.g.: RandIntNoRep) is encountered. If this is the case, during
  * [DeepReduce], we always check if the tree is a list before calling [Switch].
- * Indeed some reduction do not ensure the list is conserved (e.g.: 0^KA =>
- * dep(0, {0^KA})). In this case, the the type of the expression may change if
- * KA is a list */
+ * Otherwise, some reduction would lose the list dimension
+ * (e.g.: 0^KA => dep(0, {0^KA})). */
 
 bool SystematicReduction::DeepReduceAux(Tree* e, bool* canBeList) {
   if (e->isDepList()) {

@@ -151,7 +151,7 @@ int Metric::GetTrueMetric(const Tree* e) {
       childrenCoeff = ChildrenCoeffLn(GetComplexSign(e->child(0)));
       const Tree* firstChild =
           e->child(0)->isMult() ? e->child(0)->child(0) : e->child(0);
-      if (firstChild->isRational()) {
+      if (firstChild->isRational() && !firstChild->isZero()) {
         // Increase cost of rationals in ln according to their value
         IntegerHandler p = Rational::Numerator(firstChild);
         IntegerHandler q = Rational::Denominator(firstChild);
@@ -159,11 +159,10 @@ int Metric::GetTrueMetric(const Tree* e) {
           p.setSign(NonStrictSign::Positive);
           int n_p = p.to<int>();
           int n_q = q.to<int>();
-          if (!(n_p + n_q - 1 == 0)) {
-            childrenCoeff = (4 < (INT_MAX - childrenCoeff) / (n_p + n_q - 1))
-                                ? childrenCoeff + 4 * (n_p + n_q - 1)
-                                : INT_MAX;
-          }
+          assert(!(n_p + n_q - 1 == 0));
+          childrenCoeff = (4 < (INT_MAX - childrenCoeff) / (n_p + n_q - 1))
+                              ? childrenCoeff + 4 * (n_p + n_q - 1)
+                              : INT_MAX;
 
         } else {
           childrenCoeff = INT_MAX;

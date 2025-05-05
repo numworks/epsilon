@@ -7,7 +7,7 @@ on:
       - 'poincare/doc/**'
       - 'tests/**'
       - 'ion/src/simulator/**'
-      - 'scandium'
+      - '**/scandium/**'
       - 'external_apps/**'
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=n0120

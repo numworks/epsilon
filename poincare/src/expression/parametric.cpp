@@ -65,7 +65,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   bool isSum = e->isSum();
   Tree* lowerBound = e->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
-  /* Since child should be reduce at this point, ensure bounds are integer or
+  /* Since child should be reduced at this point, ensure bounds are integer or
    * contains UserSymbol (CAS) */
   ComplexSign sign = ComplexSign::Unknown();
   if (!(lowerBound->isInteger() ||

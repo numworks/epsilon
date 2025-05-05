@@ -38,7 +38,9 @@ class Script : public Ion::Storage::Record {
     return static_cast<const char*>(value().buffer) + sizeof(Status);
   }
   size_t contentSize() const { return value().size - sizeof(Status); }
-  size_t usedSize() const { return contentSize() - (strlen(content()) + 1); };
+  size_t availableSpace() const {
+    return contentSize() - (strlen(content()) + 1);
+  };
 
  private:
   // Default script names are chosen between script1 and script99

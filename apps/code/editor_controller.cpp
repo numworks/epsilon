@@ -21,7 +21,7 @@ bool EditorController::freeSpaceFor(int size) {
   const char* previousContentAddress = m_script.content();
 #endif
   Ion::Storage::FileSystem::sharedFileSystem->getAvailableSpaceFromEndOfRecord(
-      m_script, m_script.usedSize());
+      m_script, m_script.availableSpace());
   Ion::Storage::FileSystem::sharedFileSystem->putAvailableSpaceAtEndOfRecord(
       m_script);
 #if ASSERTIONS
@@ -113,7 +113,7 @@ void EditorController::cleanStorageEmptySpace() {
     return;
   }
   Ion::Storage::FileSystem::sharedFileSystem->getAvailableSpaceFromEndOfRecord(
-      m_script, m_script.usedSize());
+      m_script, m_script.availableSpace());
 }
 
 }  // namespace Code

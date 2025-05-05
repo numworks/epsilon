@@ -78,6 +78,25 @@ static bool ReduceRadicalsInDenominator(Tree* e) {
   return false;
 }
 
+/*  This function detects the "√(1/X)" pattern from an "exp((-1/2)*ln(X))"
+ * expression, then applies the reduction of radicals in the denominator on
+ * "1/X". */
+static bool ReduceRootOfRadicalsInDenominator(Tree* e) {
+  PatternMatching::Context ctx;
+  if (!PatternMatching::Match(e, KExp(KMult(-1_e / 2_e, KLn(KA))), &ctx)) {
+    return false;
+  }
+  TreeRef expressionUnderRoot = PatternMatching::Create(KPow(KA, -1_e), ctx);
+  if (!ReduceRadicalsInDenominator(expressionUnderRoot)) {
+    expressionUnderRoot->removeTree();
+    return false;
+  }
+  e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      KExp(KMult(1_e / 2_e, KLn(KA))), {.KA = expressionUnderRoot}));
+  expressionUnderRoot->removeTree();
+  return true;
+}
+
 bool SystematicOperation::ReducePower(Tree* e) {
   assert(e->isPow());
   // base^n
@@ -714,7 +733,6 @@ bool SystematicOperation::ReduceExp(Tree* e) {
           PowerLike::ExpandRationalPower(e, base, exponent)) {
         return true;
       }
-
       /*  If the base is a rational, split the numerator and the denominator.
        * This avoids having the denominator under a root. */
       if (base->isRational() && !(base->isInteger())) {
@@ -725,6 +743,9 @@ bool SystematicOperation::ReduceExp(Tree* e) {
             {.KA = exponent, .KB = numerator, .KC = denominator}));
         denominator->removeTree();
         numerator->removeTree();
+        return true;
+      }
+      if (ReduceRootOfRadicalsInDenominator(e)) {
         return true;
       }
     }

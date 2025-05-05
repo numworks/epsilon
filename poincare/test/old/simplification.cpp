@@ -937,7 +937,7 @@ QUIZ_CASE(poincare_simplification_power) {
                                        "root(25,3)/10-root(16875,6)/10×i", User,
                                        Radian, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to("1+((8+√(6))^(1/2))^-1+(8+√(6))^(1/2)",
-                                       "(9+√(8+√(6))+√(6))/√(8+√(6))", User,
+                                       "1+√(8+√(6))+(√(58)×√(8-√(6)))/58", User,
                                        Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)",
                                        "[[-59/4,27/4][81/8,-37/8]]");
@@ -1326,8 +1326,9 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("tan(41π/6)", "-√(3)/3");
   assert_parsed_expression_simplify_to("tan(π/4+1000π)", "1");
   assert_parsed_expression_simplify_to("tan(-π/3)", "-√(3)");
-  assert_parsed_expression_simplify_to("tan(-π/10)",
-                                       "-(√(2)×(-1+√(5)))/(2×√(5+√(5)))");
+  /*  Currently simplifies to -((-1+√(5))×√(2-(2×√(5))/5))/4.
+   * TODO: contract to -√(1-2×√(5)/5) */
+  assert_parsed_expression_simplify_to("tan(-π/10)", "-√(1-2×√(5)/5)");
   assert_parsed_expression_simplify_to("tan(0)", "0", User, Degree);
   assert_parsed_expression_simplify_to("tan(180)", "0", User, Degree);
   assert_parsed_expression_simplify_to("tan(6300/29)", "tan(1080/29)", User,

@@ -26,7 +26,24 @@ void FileSystem::log() {
 }
 #endif
 
-// TODO: Delete disabled records if space is needed.
+bool FileSystem::freeSpaceFor(int size) {
+  if (size < 0) {
+    return true;
+  }
+  size_t thisAvailableSize = availableSize();
+  if (thisAvailableSize >= size) {
+    return true;
+  }
+  // Only delete hidden records if necessary.
+  if (size - thisAvailableSize > k_storageSize - m_storageSize) {
+    return false;
+  }
+  // Delete hidden records.
+  m_storageSize = k_storageSize;
+  assert(availableSize() >= size);
+  return true;
+}
+
 size_t FileSystem::availableSize() {
   /* TODO maybe do: availableSize(char ** endBuffer) to get the endBuffer if it
    * is needed after calling availableSize */
@@ -149,7 +166,7 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(
       sizeOfRecordStarting(pointerOfRecord(recordWithSameName));
   if (recordSize >= k_maxRecordSize ||
       (recordSize > sameNameRecordSize &&
-       recordSize - sameNameRecordSize > availableSize())) {
+       !freeSpaceFor(recordSize - sameNameRecordSize))) {
     /* If there is an other record with the same name, it will be either
      * destroyed or this new record won't be created. So we only need the
      * difference of size between the two of available space. */
@@ -608,7 +625,7 @@ size_t FileSystem::sizeOfRecordWithName(Record::Name name, size_t dataSize) {
 }
 
 bool FileSystem::slideBuffer(char* position, int delta) {
-  if (delta > (int)availableSize()) {
+  if (!freeSpaceFor(delta)) {
     return false;
   }
   memmove(position + delta, position,

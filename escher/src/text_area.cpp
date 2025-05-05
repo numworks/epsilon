@@ -581,7 +581,11 @@ bool TextArea::ContentView::insertTextAtLocation(const char* text,
                                                  int textLength) {
   size_t textLen = textLength < 0 ? strlen(text) : textLength;
   assert(textLen <= strlen(text));
-  if (m_text.textLength() + textLen >= m_text.bufferSize() || textLen == 0) {
+  if (textLen == 0) {
+    return false;
+  }
+  if (m_text.textLength() + textLen >= m_text.bufferSize()) {
+    // TODO : Remove hidden records to make space.
     return false;
   }
 

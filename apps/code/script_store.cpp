@@ -22,8 +22,8 @@ void ScriptStore::DeleteAllScripts() {
 }
 
 bool ScriptStore::IsFull() {
-  return Ion::Storage::FileSystem::sharedFileSystem->availableSize() <
-         k_fullFreeSpaceSizeLimit;
+  return !Ion::Storage::FileSystem::sharedFileSystem->freeSpaceFor(
+      k_fullFreeSpaceSizeLimit);
 }
 
 const char* ScriptStore::contentOfScript(const char* name,

@@ -37,6 +37,9 @@ class FileSystem {
   void log();
 #endif
 
+  /* Free space by deleting disabled records if needed. Return false if it was
+   * not possible, or it wouldn't be enough. */
+  bool freeSpaceFor(int size);
   size_t availableSize();
   size_t putAvailableSpaceAtEndOfRecord(Record r);
   void getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace);

@@ -76,8 +76,15 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
                                 Poincare::ExamMode previousMode) {
   Preferences::SharedPreferences()->setExamMode(targetExamMode);
 
-  // Empty storage (delete functions, variables, python scripts)
-  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  if (targetExamMode.ruleset() != Poincare::ExamMode::Ruleset::Off) {
+    // Disable storage content (functions, variables, python scripts)
+    Ion::Storage::FileSystem::sharedFileSystem->disableAllRecords();
+  } else {
+    // Restore disabled storage
+    Ion::Storage::FileSystem::sharedFileSystem
+        ->destroyEnabledRecordsAndRestoreDisabledRecords();
+  }
+
   // Empty clipboard and snapshots
   Clipboard::SharedClipboard()->reset();
   for (int i = 0; i < numberOfBuiltinApps(); i++) {

@@ -11,7 +11,7 @@ namespace Escher {
 
 /* This cell is the editable counterpart of EvenOddExpressionCell, except that
  * it doesn't need to be even-odd since the background is always white.
- * Not be confused with EditableExpressionCell that is compatible with
+ * Not to be confused with EditableExpressionCell that is compatible with
  * toolbox-like menus and not expression models lists. */
 
 class EditableExpressionModelCell : public HighlightCell {

@@ -12,11 +12,13 @@ namespace Code {
 
 /* EditorView */
 
-EditorView::EditorView(Responder* parentResponder, App* pythonDelegate)
+EditorView::EditorView(Responder* parentResponder, App* pythonDelegate,
+                       StorageEditorDelegate* storageDelegate)
     : Responder(parentResponder),
       View(),
       m_textArea(parentResponder, pythonDelegate,
-                 GlobalPreferences::SharedGlobalPreferences()->font()),
+                 GlobalPreferences::SharedGlobalPreferences()->font(),
+                 storageDelegate),
       m_gutterView(GlobalPreferences::SharedGlobalPreferences()->font()) {
   m_textArea.setScrollViewDataSourceDelegate(this);
 }

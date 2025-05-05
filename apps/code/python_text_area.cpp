@@ -414,6 +414,13 @@ KDRect PythonTextArea::ContentView::dirtyRectFromPosition(
                 baseDirtyRect.height());
 }
 
+bool PythonTextArea::ContentView::freeSpaceForTextLen(int textLen) {
+  if (TextArea::ContentView::freeSpaceForTextLen(textLen)) {
+    return true;
+  }
+  return m_storageDelegate->freeSpaceFor(textLen);
+}
+
 void PythonTextArea::handleResponderChainEvent(
     Responder::ResponderChainEvent event) {
   TextArea::handleResponderChainEvent(event);

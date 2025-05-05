@@ -11,7 +11,8 @@ class MenuController;
 class ScriptParameterController;
 class App;
 
-class EditorController : public Escher::ViewController {
+class EditorController : public Escher::ViewController,
+                         public StorageEditorDelegate {
  public:
   EditorController(MenuController* menuController, App* pythonDelegate);
   void setScript(Script script, int scriptIndex);
@@ -26,6 +27,7 @@ class EditorController : public Escher::ViewController {
   Escher::ViewController::TitlesDisplay titlesDisplay() const override {
     return Escher::ViewController::TitlesDisplay::DisplayNoTitle;
   }
+  bool freeSpaceFor(int size) override;
 
  protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;

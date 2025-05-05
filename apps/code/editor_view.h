@@ -11,13 +11,15 @@ class EditorView : public Escher::Responder,
                    public Escher::View,
                    public Escher::ScrollViewDataSourceDelegate {
  public:
-  EditorView(Escher::Responder* parentResponder, App* pythonDelegate);
+  EditorView(Escher::Responder* parentResponder, App* pythonDelegate,
+             StorageEditorDelegate* storageDelegate);
   bool isAutocompleting() const;
   void resetSelection();
   void removeAutocompletionText();
   const char* text() const { return m_textArea.text(); }
-  void setText(char* textBuffer, size_t textBufferSize) {
-    m_textArea.setText(textBuffer, textBufferSize);
+  void setText(char* textBuffer, size_t textBufferSize,
+               bool resetCursor = true) {
+    m_textArea.setText(textBuffer, textBufferSize, resetCursor);
   }
   const char* cursorLocation() { return m_textArea.cursorLocation(); }
   bool setCursorLocation(const char* location) {

@@ -259,9 +259,12 @@ bool TextArea::handleEvent(Ion::Events::Event event) {
   return true;
 }
 
-void TextArea::setText(char* textBuffer, size_t textBufferSize) {
+void TextArea::setText(char* textBuffer, size_t textBufferSize,
+                       bool resetCursor) {
   contentView()->setText(textBuffer, textBufferSize);
-  contentView()->moveCursorGeo(0, 0);
+  if (resetCursor) {
+    contentView()->moveCursorGeo(0, 0);
+  }
 }
 
 int TextArea::indentationBeforeCursor() const {
@@ -576,16 +579,16 @@ void TextArea::ContentView::setText(char* textBuffer, size_t textBufferSize) {
   m_cursorLocation = text();
 }
 
+bool TextArea::ContentView::freeSpaceForTextLen(int textLen) {
+  return m_text.textLength() + textLen < m_text.bufferSize();
+}
+
 bool TextArea::ContentView::insertTextAtLocation(const char* text,
                                                  char* location,
                                                  int textLength) {
   size_t textLen = textLength < 0 ? strlen(text) : textLength;
   assert(textLen <= strlen(text));
-  if (textLen == 0) {
-    return false;
-  }
-  if (m_text.textLength() + textLen >= m_text.bufferSize()) {
-    // TODO : Remove hidden records to make space.
+  if (textLen == 0 || !freeSpaceForTextLen(textLen)) {
     return false;
   }
 

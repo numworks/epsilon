@@ -12,10 +12,31 @@ using namespace Escher;
 
 namespace Code {
 
+bool EditorController::freeSpaceFor(int size) {
+  assert(size > 0);
+  if (!Ion::Storage::FileSystem::sharedFileSystem->freeSpaceFor(size)) {
+    return false;
+  }
+#if ASSERTIONS
+  const char* previousContentAddress = m_script.content();
+#endif
+  Ion::Storage::FileSystem::sharedFileSystem->getAvailableSpaceFromEndOfRecord(
+      m_script, m_script.usedSize());
+  Ion::Storage::FileSystem::sharedFileSystem->putAvailableSpaceAtEndOfRecord(
+      m_script);
+#if ASSERTIONS
+  assert(m_script.content() == previousContentAddress);
+#endif
+  // Update content size without reseting cursor
+  m_editorView.setText(const_cast<char*>(m_script.content()),
+                       m_script.contentSize(), false);
+  return true;
+}
+
 EditorController::EditorController(MenuController* menuController,
                                    App* pythonDelegate)
     : ViewController(nullptr),
-      m_editorView(this, pythonDelegate),
+      m_editorView(this, pythonDelegate, this),
       m_script(Ion::Storage::Record()),
       m_scriptIndex(-1),
       m_menuController(menuController) {}

@@ -76,15 +76,15 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
                                 Poincare::ExamMode previousMode) {
   Preferences::SharedPreferences()->setExamMode(targetExamMode);
 
-  if (targetExamMode.ruleset() != ExamMode::Ruleset::Off) {
-    // Empty storage (delete functions, variables, python scripts)
-    Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
-    // Empty clipboard
-    Clipboard::SharedClipboard()->reset();
-    for (int i = 0; i < numberOfBuiltinApps(); i++) {
-      appSnapshotAtIndex(i)->reset();
-    }
-  } else if (previousMode.ruleset() == ExamMode::Ruleset::PressToTest) {
+  // Empty storage (delete functions, variables, python scripts)
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  // Empty clipboard and snapshots
+  Clipboard::SharedClipboard()->reset();
+  for (int i = 0; i < numberOfBuiltinApps(); i++) {
+    appSnapshotAtIndex(i)->reset();
+  }
+
+  if (previousMode.ruleset() == ExamMode::Ruleset::PressToTest) {
     // Reset when leaving PressToTest mode.
     Ion::Reset::core();
   }

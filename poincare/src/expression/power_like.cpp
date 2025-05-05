@@ -32,20 +32,17 @@ PowerLike::BaseAndExponent PowerLike::GetBaseAndExponent(const Tree* e,
 
 bool PowerLike::ExpandRationalPower(Tree* e) {
   PowerLike::BaseAndExponent parameters = GetBaseAndExponent(e, true);
-  if (parameters.exponent->isInteger() || !parameters.exponent->isRational() ||
-      Rational::IsStrictlyPositiveUnderOne(parameters.exponent)) {
-    return false;
-  }
   return ExpandRationalPower(e, parameters.base, parameters.exponent);
 }
 
 bool PowerLike::ExpandRationalPower(Tree* e, const Tree* base,
                                     const Tree* power) {
+  if (power->isInteger() || !power->isRational() ||
+      Rational::IsStrictlyPositiveUnderOne(power)) {
+    return false;
+  }
   assert(PowerLike::Exponent(e, true)->treeIsIdenticalTo(power));
   assert(PowerLike::Base(e, true)->treeIsIdenticalTo(base));
-  assert(!power->isInteger() && power->isRational() &&
-         !Rational::IsStrictlyPositiveUnderOne(power));
-
   // e = x^(p/q) is expanded into x^n * x^(r/q) where r is the remainder of p/q
   TreeRef p = Rational::Numerator(power).pushOnTreeStack();
   TreeRef q = Rational::Denominator(power).pushOnTreeStack();

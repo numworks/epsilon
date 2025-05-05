@@ -709,12 +709,10 @@ bool SystematicOperation::ReduceExp(Tree* e) {
             KPow(KB, KA), {.KA = ctx.getTree(KA), .KB = ctx.getTree(KB)}));
         return true;
       }
-      /* Expand rational powers if the base is an integer and the power is a
-       * rational outside of the [0, 1] range */
-      if (base->isInteger() && exponent->isRational() &&
-          !exponent->isInteger() &&
-          !Rational::IsStrictlyPositiveUnderOne(exponent)) {
-        return PowerLike::ExpandRationalPower(e, base, exponent);
+      // For integer bases, expand rational powers if needed
+      if (base->isInteger() &&
+          PowerLike::ExpandRationalPower(e, base, exponent)) {
+        return true;
       }
     }
 

@@ -208,7 +208,6 @@ bool ListController::handleEvent(Ion::Events::Event event) {
   if (selectedRow() >= 0 && selectedRow() <= numberOfRows() &&
       !isAddEmptyRow(selectedRow()) && m_parameterColumnSelected &&
       (event == Ion::Events::OK || event == Ion::Events::EXE)) {
-    // Will open function parameter menu
     // Open function parameter menu
     int relativeRow;
     Ion::Storage::Record record = selectedRecord(&relativeRow);

@@ -19,9 +19,25 @@ OMG::GlobalBox<FileSystem> FileSystem::sharedFileSystem;
 
 #if ION_STORAGE_LOG
 void FileSystem::log() {
+  std::cout << "FileSystem: size=" << (endBuffer() - m_buffer) << "/"
+            << m_storageSize << "\n";
   for (char* p : *this) {
-    Record::Name currentName = nameOfRecordStarting(p);
-    Record(currentName).log();
+    std::cout << "\t Record at " << (void*)p
+              << " : size=" << sizeOfRecordStarting(p)
+              << " name=" << nameOfRecordStarting(p).baseName;
+    Record r(nameOfRecordStarting(p));
+    std::cout << " contentSize=" << r.value().size << "\n";
+  }
+  if (m_storageSize != k_storageSize) {
+    std::cout << "Hidden records: size=" << k_storageSize - m_storageSize
+              << "\n";
+    for (char* p = m_buffer + m_storageSize; p < m_buffer + k_storageSize;
+         p += sizeOfRecordStarting(p)) {
+      assert(sizeOfRecordStarting(p) > 0);
+      std::cout << "\t Record at " << (void*)p
+                << " : size=" << sizeOfRecordStarting(p)
+                << " name=" << nameOfRecordStarting(p).baseName << "\n";
+    }
   }
 }
 #endif

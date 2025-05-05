@@ -84,11 +84,6 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
     appSnapshotAtIndex(i)->reset();
   }
 
-  if (previousMode.ruleset() == ExamMode::Ruleset::PressToTest) {
-    // Reset when leaving PressToTest mode.
-    Ion::Reset::core();
-  }
-
   refreshPreferences();
   App* app = activeApp();
   if (app) {

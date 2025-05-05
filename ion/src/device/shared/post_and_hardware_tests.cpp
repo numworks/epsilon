@@ -10,7 +10,7 @@ namespace POSTAndHardwareTests {
 constexpr static int k_stampSize = 8;
 
 bool BatteryOK() {
-  return (Ion::Battery::level() >= Ion::Battery::Charge::THREE_QUARTERS);
+  return (Ion::Battery::level() >= Ion::Battery::Charge::P80);
 }
 
 bool VBlankOK() {

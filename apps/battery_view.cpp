@@ -52,7 +52,7 @@ bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
    * trigerring a redrawing by not marking anything as dirty when switching
    * from 'low' to 'empty' battery. */
   chargeState = chargeState == Ion::Battery::Charge::EMPTY
-                    ? Ion::Battery::Charge::LOW
+                    ? Ion::Battery::Charge::P20
                     : chargeState;
   if (m_lowBatteryAnimationState) {
     m_lowBatteryAnimationState--;
@@ -87,7 +87,7 @@ bool BatteryView::setIsPlugged(bool isPlugged) {
 }
 
 void BatteryView::updateBatteryAnimation() {
-  m_lowBatteryAnimationState = m_chargeState == Ion::Battery::Charge::LOW
+  m_lowBatteryAnimationState = m_chargeState == Ion::Battery::Charge::P20
                                    ? k_lowBatteryAnimationBlinks
                                    : 0;
 }
@@ -122,22 +122,13 @@ void BatteryView::drawRect(KDContext* ctx, KDRect rect) const {
     KDColor flashWorkingBuffer[k_flashHeight * k_flashWidth];
     ctx->blendRectWithMask(frame, KDColorWhite, (const uint8_t*)flashMask,
                            flashWorkingBuffer);
-  } else if (m_chargeState == Ion::Battery::Charge::LOW) {
+  } else if (m_chargeState == Ion::Battery::Charge::P20) {
     assert(!m_isPlugged);
-    // LOW: Quite empty battery
+    // P20: Quite empty battery
     drawInsideBatteryLevel(
         ctx, m_lowBatteryAnimationState % 2 ? 0 : 2 * k_elementWidth,
         Palette::LowBattery);
-  } else if (m_chargeState == Ion::Battery::Charge::MID) {
-    assert(!m_isPlugged);
-    // MID: Half full battery
-    drawInsideBatteryLevel(ctx, k_batteryInsideWidth / 2);
-  } else if (m_chargeState == Ion::Battery::Charge::THREE_QUARTERS) {
-    assert(!m_isPlugged);
-    // THREE_QUARTERS: 3/4 full battery
-    drawInsideBatteryLevel(ctx, 3 * k_batteryInsideWidth / 4);
-  } else {
-    assert(m_chargeState == Ion::Battery::Charge::FULL);
+  } else if (m_chargeState == Ion::Battery::Charge::FULL) {
     // FULL but not plugged: Full battery
     drawInsideBatteryLevel(ctx, k_batteryInsideWidth);
     if (m_isPlugged) {
@@ -149,6 +140,17 @@ void BatteryView::drawRect(KDContext* ctx, KDRect rect) const {
       ctx->blendRectWithMask(frame, TitleBarView::k_backgroundColor,
                              (const uint8_t*)tickMask, tickWorkingBuffer);
     }
+  } else {
+    assert(!m_isPlugged);
+    assert(m_chargeState == Ion::Battery::Charge::P40 ||
+           m_chargeState == Ion::Battery::Charge::P60 ||
+           m_chargeState == Ion::Battery::Charge::P80);
+    assert(2 == (int)Ion::Battery::Charge::P40 ||
+           3 == (int)Ion::Battery::Charge::P60 ||
+           4 == (int)Ion::Battery::Charge::P80);
+    // P40 to P80
+    constexpr KDCoordinate k_batteryInsideWidth20P = k_batteryInsideWidth / 5;
+    drawInsideBatteryLevel(ctx, (int)m_chargeState * k_batteryInsideWidth20P);
   }
 
   // Draw the right part

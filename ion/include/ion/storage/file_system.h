@@ -135,6 +135,11 @@ class FileSystem {
   void destroyAllRecords();
   void destroyRecordsWithExtension(const char* extension);
 
+  // Disable all non system recordby moving them at the end of the storage.
+  void disableAllRecords();
+  // Destroy all non system records, and restore the disabled records.
+  void destroyEnabledRecordsAndRestoreDisabledRecords();
+
   /* Destroy competing records.
    * Return true if other records with same full name or competing names
    * have been destroyed.
@@ -225,6 +230,7 @@ class FileSystem {
   uint32_t m_magicFooter;
   StorageDelegate* m_delegate;
   RecordNameVerifier m_recordNameVerifier;
+  size_t m_storageSize;
   mutable Record m_lastRecordRetrieved;
   mutable char* m_lastRecordRetrievedPointer;
 };

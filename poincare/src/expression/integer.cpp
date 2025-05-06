@@ -152,6 +152,9 @@ Tree* IntegerHandler::pushOnTreeStack() const {
   if (isMinusOne()) {
     return SharedTreeStack->pushMinusOne();
   }
+  // Ensure the two pushed blocks will not override digits
+  assert(digitsAreSafe(SharedTreeStack->lastBlock(),
+                       SharedTreeStack->lastBlock() + 1));
   if (numberOfDigits() == 1) {
     Tree* e = SharedTreeStack->pushBlock(sign() == NonStrictSign::Negative
                                              ? Type::IntegerNegShort
@@ -168,6 +171,12 @@ Tree* IntegerHandler::pushOnTreeStack() const {
   Log("PushInteger", e->block(), e->treeSize());
 #endif
   return e;
+}
+
+bool IntegerHandler::digitsAreSafe(const void* start, const void* end) const {
+  return usesImmediateDigit() ||
+         m_digitAccessor.m_digits + m_numberOfDigits <= start ||
+         m_digitAccessor.m_digits > end;
 }
 
 void IntegerHandler::pushDigitsOnTreeStack() const {
@@ -532,6 +541,8 @@ DivisionResult<Tree*> IntegerHandler::Division(
   assert(quotient.usesImmediateDigit() || remainder.usesImmediateDigit() ||
          quotient.digits() < remainder.digits());
   Tree* q = quotient.pushOnTreeStack();
+  // Ensure pushing quotient did not override remainder's digits
+  assert(remainder.digitsAreSafe(q, q->nextTree()));
   Tree* r = remainder.pushOnTreeStack();
   return {.quotient = q, .remainder = r};
 }

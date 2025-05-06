@@ -1858,6 +1858,14 @@ QUIZ_CASE(pcj_simplification_integral) {
   simplifies_to("int(x*e^x,x,0,0)", "int(e^(x)×x,x,0,0)");
 }
 
+QUIZ_CASE(pcj_simplification_roots) {
+  simplifies_to("1/√(2+√(3))", "-(√(2)-√(6))/2");
+  simplifies_to("1/√(-2×√(3)+3×√(2))", "√(√(2)/2+√(3)/3)");
+  simplifies_to("1/√(-4+√(17))", "√(4+√(17))");
+  // TODO: simplify the minus sign
+  simplifies_to("1/√(-3+√(19))", "√(-(-3-√(19))/10)");
+}
+
 void reduces_to_tree(const Tree* input, const Tree* output) {
   Tree* reduced = input->cloneTree();
   ProjectionContext projCtx;

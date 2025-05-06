@@ -95,7 +95,11 @@ bool SystematicReduction::ShallowReduceAux(Tree* e, bool* canBeList) {
 }
 
 bool SystematicReduction::ShallowReduce(Tree* e) {
-  // Assumes no list as it is too costly otherwise
+  /* TODO: Here we assumes [e] is not a list as it is too costly to call
+   * [IsList] on every [ShallowReduce]. This supposition was the default
+   * behaviour before the [canBeList] change, hence the behaviour of
+   * [ShallowReduce] is preserved for now. This leads to the following issue:
+   * List can disappear on some reduction. (See comment at start of file) */
   bool canBeList = false;
   return ShallowReduceAux(e, &canBeList);
 }

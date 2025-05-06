@@ -68,11 +68,11 @@ class WorkingBuffer {
    */
   constexpr static size_t k_blockOffset =
       TypeBlock::NumberOfMetaBlocks(Type::IntegerPosBig) + sizeof(native_int_t);
-  uint8_t* initialStartOfBuffer() {
+  uint8_t* initialStartOfBuffer() const {
     return reinterpret_cast<uint8_t*>(SharedTreeStack->lastBlock() +
                                       k_blockOffset);
   }
-  size_t initialSizeOfBuffer() {
+  size_t initialSizeOfBuffer() const {
     return (TreeStack::k_maxNumberOfBlocks - SharedTreeStack->size() -
             k_blockOffset);
   }

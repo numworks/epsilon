@@ -121,7 +121,6 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   if (negative) {
     currentChar += WriteCodePoint(buffer, bufferSize, '-');
     if (currentChar >= bufferSize - 1) {
-      workingBuffer.garbageCollect({}, localStart);
       return bufferSize - 1;
     }
   }
@@ -140,13 +139,11 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   if (strcmp(tempBuffer, "undef") == 0) {
     currentChar +=
         strlcpy(buffer + currentChar, tempBuffer, bufferSize - currentChar);
-    workingBuffer.garbageCollect({}, localStart);
     return std::min(currentChar, bufferSize - 1);
   }
   // Mantissa has already been cropped to fit.
   assert(m.numberOfBase10DigitsWithoutSign(&workingBuffer) == mantissaLength);
   int numberOfBase10DigitsWithoutSign = mantissaLength;
-  workingBuffer.garbageCollect({}, localStart);
 
   /* We force scientific mode if the number of digits before the dot is superior
    * to the number of significant digits (ie with 4 significant digits,

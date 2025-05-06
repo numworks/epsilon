@@ -18,7 +18,7 @@ bool isCharging();
 
 enum class Charge : uint8_t {
   EMPTY = 0,
-  P20 = 1,  //  20%
+  LOW = 1,  //  20%
   P40 = 2,  //  40%
   P60 = 3,  //  60%
   P80 = 4,  //  80%

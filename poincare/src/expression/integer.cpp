@@ -19,11 +19,23 @@
 namespace Poincare::Internal {
 
 /* WorkingBuffer */
+#if ASSERTIONS
+/* This s_activeWorkingBuffer is used to ensure that we never use two
+ * WorkingBuffer at the same time. */
+static WorkingBuffer* s_activeWorkingBuffer;
+#endif
 
 WorkingBuffer::WorkingBuffer()
-    : m_start(initialStartOfBuffer()), m_remainingSize(initialSizeOfBuffer()) {}
+    : m_start(initialStartOfBuffer()), m_remainingSize(initialSizeOfBuffer()) {
+#if ASSERTIONS
+  s_activeWorkingBuffer = this;
+#endif
+}
 
 uint8_t* WorkingBuffer::allocate(size_t size) {
+#if ASSERTIONS
+  assert(s_activeWorkingBuffer == this);
+#endif
   /* We allow one native_uint_t of overflow that can appear when dividing a
    * Integer with k_maxNumberOfDigits. */
   assert(size <= IntegerHandler::k_maxNumberOfDigits + sizeof(native_uint_t));
@@ -39,6 +51,9 @@ uint8_t* WorkingBuffer::allocate(size_t size) {
 void WorkingBuffer::garbageCollect(
     std::initializer_list<IntegerHandler*> keptIntegers,
     uint8_t* const localStart) {
+#if ASSERTIONS
+  assert(s_activeWorkingBuffer == this);
+#endif
   assert(initialStartOfBuffer() <= localStart && localStart <= m_start);
   uint8_t* previousEnd = m_start;
   (void)previousEnd;  // Silent warning
@@ -65,6 +80,13 @@ void WorkingBuffer::garbageCollect(
       *integer = IntegerHandler(newDigitsPointer, nbOfDigits, integer->sign());
     }
   }
+}
+
+uint8_t* const WorkingBuffer::localStart() {
+#if ASSERTIONS
+  assert(s_activeWorkingBuffer == this);
+#endif
+  return m_start;
 }
 
 /* IntegerHandler */

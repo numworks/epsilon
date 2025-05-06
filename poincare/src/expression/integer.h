@@ -57,7 +57,7 @@ class WorkingBuffer {
    * keptInteger. */
   void garbageCollect(std::initializer_list<IntegerHandler*> keptIntegers,
                       uint8_t* const localStart);
-  uint8_t* const localStart() const { return m_start; }
+  uint8_t* const localStart();
 
  private:
   /* We let an offset at the end of the TreeStack before the working buffer

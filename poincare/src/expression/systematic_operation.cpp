@@ -714,6 +714,18 @@ bool SystematicOperation::ReduceExp(Tree* e) {
           PowerLike::ExpandRationalPower(e, base, exponent)) {
         return true;
       }
+
+      // If the base is a rational, split the numerator and the denominator
+      if (base->isRational() && !(base->isInteger())) {
+        TreeRef numerator = Rational::Numerator(base).pushOnTreeStack();
+        TreeRef denominator = Rational::Denominator(base).pushOnTreeStack();
+        e->moveTreeOverTree(PatternMatching::CreateSimplify(
+            KMult(KExp(KMult(KA, KLn(KB))), KExp(KMult(-1_e, KA, KLn(KC)))),
+            {.KA = exponent, .KB = numerator, .KC = denominator}));
+        denominator->removeTree();
+        numerator->removeTree();
+        return true;
+      }
     }
 
     /* This last step shortcuts at least three advanced reduction steps and is

@@ -2092,7 +2092,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("(2+3×i)×(4-2×i)",
                                        "2×√(65)×e^((-2×arctan(7/4)+π)/2×i)",
                                        User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("(3+i)/2", "√(5/2)×e^(arctan(1/3)×i)",
+  assert_parsed_expression_simplify_to("(3+i)/2", "√(10)/2×e^(arctan(1/3)×i)",
                                        User, Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("(3+i)/(2+i)",
                                        "√(2)×e^((2×arctan(7)-π)/2×i)", User,

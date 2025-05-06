@@ -472,6 +472,7 @@ void AppsContainer::openDFU(bool blocking) {
 
   Ion::USB::DFU(blocking ? Ion::USB::DFUParameters::Blocking()
                          : Ion::USB::DFUParameters::PassThrough());
+  m_batteryTimer.doNotShowModal();
 
   /* DFU might have changed preferences and global preferences, update those
    * that have callbacks: country and exam mode.*/

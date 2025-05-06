@@ -1,5 +1,6 @@
 #include "battery_view.h"
 
+#include <escher/container.h>
 #include <escher/palette.h>
 
 #include "title_bar_view.h"
@@ -64,6 +65,9 @@ bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
   }
   m_chargeState = chargeState;
   updateBatteryAnimation();
+  if (m_chargeState == Ion::Battery::Charge::LOW) {
+    App::app()->displayWarning(I18n::Message::BatteryBelow20);
+  }
   markWholeFrameAsDirty();
   return true;
 }

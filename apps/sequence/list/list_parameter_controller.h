@@ -12,8 +12,6 @@
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
 
-#include "type_parameter_controller.h"
-
 namespace Sequence {
 
 class ListController;
@@ -44,7 +42,7 @@ class ListParameterController : public Shared::ListParameterController,
  private:
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfNonInheritedCells() const {
-    return 2;
+    return 1;
   }  // number of non inherited cells
 
   void updateFirstRankCell();
@@ -52,11 +50,7 @@ class ListParameterController : public Shared::ListParameterController,
   Shared::Sequence* sequence() {
     return static_cast<Shared::Sequence*>(function().pointer());
   }
-  Escher::MenuCell<Escher::MessageTextView, Escher::LayoutView,
-                   Escher::ChevronView>
-      m_typeCell;
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_firstRankCell;
-  TypeParameterController m_typeParameterController;
 };
 
 }  // namespace Sequence

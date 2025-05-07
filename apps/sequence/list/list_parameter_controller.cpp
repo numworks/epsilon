@@ -17,9 +17,7 @@ ListParameterController::ListParameterController(ListController* listController)
     : Shared::ListParameterController(listController,
                                       I18n::Message::SequenceColor,
                                       I18n::Message::DeleteSequence, this),
-      m_firstRankCell(&m_selectableListView, this),
-      m_typeParameterController(this, listController, Metric::CommonMargins) {
-  m_typeCell.label()->setMessage(I18n::Message::SequenceType);
+      m_firstRankCell(&m_selectableListView, this) {
   m_firstRankCell.label()->setMessage(I18n::Message::FirstTermIndex);
 }
 
@@ -48,8 +46,6 @@ bool ListParameterController::textFieldDidFinishEditing(
   updateFirstRankCell();
 
   App::app()->snapshot()->updateInterval();
-  // Invalidate sequence context cache when changing sequence type
-  App::app()->localContext()->resetCache();
   m_selectableListView.handleEvent(event);
   return true;
 }
@@ -61,12 +57,12 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
   if (withinTemporarySelection || previousSelectedRow == l->selectedRow()) {
     return;
   }
-  if (previousSelectedRow == 1) {
+  if (previousSelectedRow == 0) {
     assert(l->cell(previousSelectedRow) == &m_firstRankCell);
     m_firstRankCell.textField()->setEditing(false);
     App::app()->setFirstResponder(&m_selectableListView);
   }
-  if (l->selectedRow() == 1) {
+  if (l->selectedRow() == 0) {
     assert(l->selectedCell() == &m_firstRankCell);
     App::app()->setFirstResponder(&m_firstRankCell);
   }
@@ -74,14 +70,13 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
 
 HighlightCell* ListParameterController::cell(int row) {
   assert(0 <= row && row < numberOfRows());
-  HighlightCell* const cells[] = {&m_typeCell, &m_firstRankCell, &m_enableCell,
-                                  &m_colorCell, &m_deleteCell};
+  HighlightCell* const cells[] = {&m_firstRankCell, &m_enableCell, &m_colorCell,
+                                  &m_deleteCell};
   return cells[row];
 }
 
 void ListParameterController::viewWillAppear() {
   if (!m_record.isNull()) {
-    m_typeCell.subLabel()->setLayout(sequence()->definitionName());
     updateFirstRankCell();
   }
   Shared::ListParameterController::viewWillAppear();
@@ -89,12 +84,6 @@ void ListParameterController::viewWillAppear() {
 
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell* cell = selectedCell();
-  if (cell == &m_typeCell && m_typeCell.canBeActivatedByEvent(event)) {
-    m_typeParameterController.setRecord(m_record);
-    static_cast<StackViewController*>(parentResponder())
-        ->push(&m_typeParameterController);
-    return true;
-  }
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
     App::app()->localContext()->resetCache();
   }

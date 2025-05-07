@@ -22,7 +22,7 @@ namespace Poincare::Internal {
 #if ASSERTIONS
 /* This s_activeWorkingBuffer is used to ensure that we never use two
  * WorkingBuffer at the same time. */
-static WorkingBuffer* s_activeWorkingBuffer;
+static WorkingBuffer* s_activeWorkingBuffer = nullptr;
 #endif
 
 WorkingBuffer::WorkingBuffer()

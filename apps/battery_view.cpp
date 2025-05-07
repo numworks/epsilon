@@ -151,8 +151,8 @@ void BatteryView::drawRect(KDContext* ctx, KDRect rect) const {
     // P40 to P80
     constexpr KDCoordinate k_singleBatteryChargeLevelInsideWidth =
         k_batteryInsideWidth / (Ion::Battery::numberOfChargeStates - 1);
-    drawInsideBatteryLevel(
-        ctx, (int)m_chargeState * k_singleBatteryChargeLevelInsideWidth);
+    drawInsideBatteryLevel(ctx, static_cast<int>(m_chargeState) *
+                                    k_singleBatteryChargeLevelInsideWidth);
   }
 
   // Draw the right part

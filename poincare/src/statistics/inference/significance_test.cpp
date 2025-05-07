@@ -45,10 +45,10 @@ const char* HypothesisSymbol(TestType testType) {
 }
 
 Poincare::Layout HypothesisLayout(TestType testType) {
-  if (testType == TestType::TwoMeans) {
+  if (testType == TestType::TwoProportions) {
     return "p"_l ^ KSubscriptL("1"_l) ^ "-"_l ^ "p"_l ^ KSubscriptL("2"_l);
   }
-  if (testType == TestType::TwoProportions) {
+  if (testType == TestType::TwoMeans) {
     return "μ"_l ^ KSubscriptL("1"_l) ^ "-"_l ^ "μ"_l ^ KSubscriptL("2"_l);
   }
   return Layout::String(HypothesisSymbol(testType));

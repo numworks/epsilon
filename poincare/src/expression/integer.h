@@ -52,6 +52,11 @@ class WorkingBuffer {
 
  public:
   WorkingBuffer();
+  // Forbid copy/move constructor and assignment operator
+  WorkingBuffer(const WorkingBuffer& other) = delete;
+  WorkingBuffer(WorkingBuffer&& other) = delete;
+  WorkingBuffer& operator=(const WorkingBuffer& other) = delete;
+  WorkingBuffer& operator=(WorkingBuffer&& other) = delete;
   uint8_t* allocate(size_t size);
   /* Clean the working buffer from all integers after start but the sorted
    * keptInteger. */

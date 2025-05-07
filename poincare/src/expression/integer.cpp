@@ -280,10 +280,13 @@ int IntegerHandler::numberOfBase10DigitsWithoutSign(
   uint8_t* const localStart = workingBuffer->localStart();
   int numberOfDigits = 1;
   IntegerHandler base(10);
-  IntegerHandler d = Udiv(*this, base, workingBuffer).quotient;
-  while (!d.isZero()) {
-    d = Udiv(d, base, workingBuffer).quotient;
-    workingBuffer->garbageCollect({&base, &d}, localStart);
+  IntegerHandler quotient = *this;
+  while (true) {
+    quotient = Udiv(quotient, base, workingBuffer).quotient;
+    if (quotient.isZero()) {
+      break;
+    }
+    workingBuffer->garbageCollect({&base, &quotient}, localStart);
     numberOfDigits++;
   }
   workingBuffer->garbageCollect({}, localStart);

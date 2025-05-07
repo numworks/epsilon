@@ -145,9 +145,9 @@ void BatteryView::drawRect(KDContext* ctx, KDRect rect) const {
     assert(m_chargeState == Ion::Battery::Charge::P40 ||
            m_chargeState == Ion::Battery::Charge::P60 ||
            m_chargeState == Ion::Battery::Charge::P80);
-    assert(2 == (int)Ion::Battery::Charge::P40 ||
-           3 == (int)Ion::Battery::Charge::P60 ||
-           4 == (int)Ion::Battery::Charge::P80);
+    static_assert(2 == (int)Ion::Battery::Charge::P40 ||
+                  3 == (int)Ion::Battery::Charge::P60 ||
+                  4 == (int)Ion::Battery::Charge::P80);
     // P40 to P80
     constexpr KDCoordinate k_singleBatteryChargeLevelInsideWidth =
         k_batteryInsideWidth / (Ion::Battery::numberOfChargeStates - 1);

@@ -23,7 +23,7 @@ CurveParameterController::CurveParameterController(
 }
 
 const char* CurveParameterController::title() const {
-  return I18n::translate(I18n::Message::SequenceOptions);
+  return I18n::translate(I18n::Message::Options);
 }
 
 void CurveParameterController::setRecord(Ion::Storage::Record record) {

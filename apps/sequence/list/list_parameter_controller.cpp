@@ -24,7 +24,7 @@ ListParameterController::ListParameterController(ListController* listController)
 }
 
 const char* ListParameterController::title() const {
-  return I18n::translate(I18n::Message::SequenceOptions);
+  return I18n::translate(I18n::Message::Options);
 }
 
 bool ListParameterController::textFieldShouldFinishEditing(

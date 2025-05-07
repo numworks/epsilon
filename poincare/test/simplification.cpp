@@ -1530,6 +1530,8 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 "{3π/13,3π/13}");
   simplifies_to("atan(sin({3,10,3,16,3,23}π/13)/cos({36,55,42,55,75,55}π/13))",
                 "{-3π/13,3π/13,-3π/13,-3π/13,3π/13,-3π/13}");
+  // TODO: fix
+  // simplifies_to("atan(tan(π/10))", "π/10");
   simplifies_to("atan(tan(9))", "9", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("acos(cos(9))", "9", {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("asin(sin(9))", "9", {.m_angleUnit = AngleUnit::Degree});

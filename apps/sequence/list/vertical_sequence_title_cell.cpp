@@ -15,29 +15,15 @@ VerticalSequenceTitleCell::VerticalSequenceTitleCell()
 }
 
 void VerticalSequenceTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
-  KDColor backgroundColor = m_even ? KDColorWhite : Escher::Palette::WallScreen;
   // Draw the color indicator
   ctx->fillRect(
       KDRect(0, 0, k_verticalColorIndicatorThickness, bounds().height()),
       m_functionColor);
-  // Draw some background
-  ctx->fillRect(KDRect(bounds().width() - k_equalWidthWithMargins, 0,
-                       k_equalWidthWithMargins, bounds().height()),
-                backgroundColor);
-  /* Draw '='
-   * -1 is visually needed */
-  KDPoint p = KDPoint(bounds().width() - k_equalWidthWithMargins,
-                      m_baseline - KDFont::GlyphHeight(k_font) / 2 - 1);
-  ctx->drawString("=", p,
-                  {.glyphColor = m_functionColor,
-                   .backgroundColor = backgroundColor,
-                   .font = k_font});
 }
 
 KDRect VerticalSequenceTitleCell::subviewFrame() const {
   return KDRect(k_verticalColorIndicatorThickness, 0,
-                bounds().width() - k_verticalColorIndicatorThickness -
-                    k_equalWidthWithMargins,
+                bounds().width() - k_verticalColorIndicatorThickness,
                 bounds().height());
 }
 

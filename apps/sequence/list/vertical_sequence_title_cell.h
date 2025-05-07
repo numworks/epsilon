@@ -15,9 +15,8 @@ class VerticalSequenceTitleCell : public Shared::ExpressionFunctionTitleCell {
  private:
   constexpr static KDCoordinate k_verticalColorIndicatorThickness =
       Escher::Metric::VerticalColorIndicatorThickness;
-  constexpr static KDCoordinate k_equalWidthWithMargins = 10;  // Ad hoc value
-  constexpr static KDCoordinate k_rightMargin = 3;             // Ad hoc value
-  constexpr static float k_horizontalAlignment = 0.9f;
+  constexpr static KDCoordinate k_rightMargin = 3;  // Ad hoc value
+  constexpr static float k_horizontalAlignment = 1.0f;
 
   KDRect subviewFrame() const override;
   void layoutSubviews(bool force = false) override;

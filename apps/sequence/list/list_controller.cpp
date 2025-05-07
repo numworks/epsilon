@@ -211,14 +211,18 @@ void ListController::fillTitleCellForRow(VerticalSequenceTitleCell* cell,
       sequence->isActive() ? sequence->color() : Palette::GrayDark;
   cell->setColor(nameColor);
   // Set the layout
+  const Poincare::Layout equalSign = Poincare::Layout::Parse(" =");
   switch (sequenceDefinition) {
     case k_sequenceDefinition:
-      return cell->setLayout(sequence->definitionName());
+      return cell->setLayout(
+          Poincare::Layout::Concatenate(sequence->definitionName(), equalSign));
     case k_firstInitialCondition:
-      return cell->setLayout(sequence->firstInitialConditionName());
+      return cell->setLayout(Poincare::Layout::Concatenate(
+          sequence->firstInitialConditionName(), equalSign));
     default:
       assert(sequenceDefinition == k_secondInitialCondition);
-      return cell->setLayout(sequence->secondInitialConditionName());
+      return cell->setLayout(Poincare::Layout::Concatenate(
+          sequence->secondInitialConditionName(), equalSign));
   }
 }
 

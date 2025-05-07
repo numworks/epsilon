@@ -65,7 +65,8 @@ bool BatteryView::setChargeState(Ion::Battery::Charge chargeState) {
   }
   m_chargeState = chargeState;
   updateBatteryAnimation();
-  if (m_chargeState == Ion::Battery::Charge::LOW) {
+  if (m_chargeState == Ion::Battery::Charge::LOW &&
+      !Ion::Battery::isCharging()) {
     App::app()->displayWarning(I18n::Message::BatteryBelow20);
   }
   markWholeFrameAsDirty();

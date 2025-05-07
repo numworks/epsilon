@@ -98,7 +98,7 @@ class CurveParameterController
 
   /* max(Function::k_maxNameWithArgumentSize + CalculateOnFx,
    * CalculateOnTheCurve + max(Color*Curve)) */
-  static constexpr size_t k_titleSize =
+  constexpr static size_t k_titleSize =
       40;  // "Berechnen auf der türkisen Kurve"
   constexpr static int k_numberOfParameterRows =
       static_cast<int>(ParameterIndex::NumberOfParameters);

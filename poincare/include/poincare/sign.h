@@ -257,37 +257,37 @@ class ComplexSign {
                        imagSign() && other.imagSign());
   }
 
-  static constexpr ComplexSign RealInteger() {
+  constexpr static ComplexSign RealInteger() {
     return ComplexSign(Sign::Integer(), Sign::Zero());
   }
-  static constexpr ComplexSign Real() {
+  constexpr static ComplexSign Real() {
     return ComplexSign(Sign::Unknown(), Sign::Zero());
   }
-  static constexpr ComplexSign RealFinite() {
+  constexpr static ComplexSign RealFinite() {
     return ComplexSign(Sign::Finite(), Sign::Zero());
   }
-  static constexpr ComplexSign Unknown() {
+  constexpr static ComplexSign Unknown() {
     return ComplexSign(Sign::Unknown(), Sign::Unknown());
   }
-  static constexpr ComplexSign Finite() {
+  constexpr static ComplexSign Finite() {
     return ComplexSign(Sign::Finite(), Sign::Finite());
   }
-  static constexpr ComplexSign Zero() {
+  constexpr static ComplexSign Zero() {
     return ComplexSign(Sign::Zero(), Sign::Zero());
   }
-  static constexpr ComplexSign RealPositive() {
+  constexpr static ComplexSign RealPositive() {
     return ComplexSign(Sign::Positive(), Sign::Zero());
   }
-  static constexpr ComplexSign RealStrictlyPositive() {
+  constexpr static ComplexSign RealStrictlyPositive() {
     return ComplexSign(Sign::StrictlyPositive(), Sign::Zero());
   }
-  static constexpr ComplexSign RealFiniteStrictlyPositive() {
+  constexpr static ComplexSign RealFiniteStrictlyPositive() {
     return ComplexSign(Sign::FiniteStrictlyPositive(), Sign::Zero());
   }
-  static constexpr ComplexSign RealStrictlyPositiveInteger() {
+  constexpr static ComplexSign RealStrictlyPositiveInteger() {
     return ComplexSign(Sign::StrictlyPositiveInteger(), Sign::Zero());
   }
-  static constexpr ComplexSign RealFiniteStrictlyPositiveInteger() {
+  constexpr static ComplexSign RealFiniteStrictlyPositiveInteger() {
     return ComplexSign(Sign::FiniteStrictlyPositiveInteger(), Sign::Zero());
   }
 

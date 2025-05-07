@@ -1080,7 +1080,7 @@ class OUnit : public OExpression {
                              Prefixable::None, Prefixable::None),
   };
   typedef UnitNode::AngleRepresentative AngleRepresentative;
-  static constexpr const AngleRepresentative k_angleRepresentatives[] = {
+  constexpr static const AngleRepresentative k_angleRepresentatives[] = {
       AngleRepresentative("rad", DEFINE_TWICE(1.), Prefixable::None,
                           Prefixable::None),
       AngleRepresentative("\"", "π/648000", M_PI / 648000, Prefixable::None,

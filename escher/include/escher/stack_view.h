@@ -13,7 +13,7 @@ class StackView : public View {
 
   using Mask = uint16_t;
 
-  static constexpr uint8_t k_maxDepth = sizeof(Mask) * 8;
+  constexpr static uint8_t k_maxDepth = sizeof(Mask) * 8;
 
   StackView(Style style, bool extendVertically,
             OMG::AbstractStack<StackHeaderView>* headerViewStack);

@@ -34,14 +34,14 @@ class Parametric {
    * derivation */
   constexpr static ComplexSign k_continuousVariableSign = ComplexSign::Real();
 
-  static constexpr uint8_t k_localVariableId = 0;
-  static constexpr uint8_t k_variableIndex = 0;
+  constexpr static uint8_t k_localVariableId = 0;
+  constexpr static uint8_t k_variableIndex = 0;
 
-  static constexpr uint8_t k_lowerBoundIndex = 1;
-  static constexpr uint8_t k_upperBoundIndex = 2;
-  static constexpr uint8_t k_integrandIndex = 3;
+  constexpr static uint8_t k_lowerBoundIndex = 1;
+  constexpr static uint8_t k_upperBoundIndex = 2;
+  constexpr static uint8_t k_integrandIndex = 3;
 
-  static constexpr uint8_t k_derivandIndex = 2;
+  constexpr static uint8_t k_derivandIndex = 2;
 };
 
 }  // namespace Poincare::Internal

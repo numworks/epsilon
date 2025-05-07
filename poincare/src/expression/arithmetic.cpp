@@ -321,12 +321,12 @@ bool Arithmetic::ExpandBinomial(Tree* e) {
             KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
 }
 
-static constexpr uint16_t k_biggestPrimeFactor = 10000;
+constexpr static uint16_t k_biggestPrimeFactor = 10000;
 static_assert(k_biggestPrimeFactor * k_biggestPrimeFactor < UINT32_MAX,
               "factors are stored as uint32_t");
 
-static constexpr size_t k_numberOfPrimeFactors = 1000;
-static constexpr uint16_t k_primeFactors[k_numberOfPrimeFactors] = {
+constexpr static size_t k_numberOfPrimeFactors = 1000;
+constexpr static uint16_t k_primeFactors[k_numberOfPrimeFactors] = {
     2,    3,    5,    7,    11,   13,   17,   19,   23,   29,   31,   37,
     41,   43,   47,   53,   59,   61,   67,   71,   73,   79,   83,   89,
     97,   101,  103,  107,  109,  113,  127,  131,  137,  139,  149,  151,

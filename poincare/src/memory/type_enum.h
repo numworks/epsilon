@@ -39,10 +39,10 @@ struct AnyType {
 class Type {
  public:
 #define NODE_USE(F, N, S)                   \
-  static constexpr AnyType SCOPED_NODE(F) = \
+  constexpr static AnyType SCOPED_NODE(F) = \
       AnyType::Enabled(TypeEnum::SCOPED_NODE(F));
 #define DISABLED_NODE_USE(F, N, S)          \
-  static constexpr AnyType SCOPED_NODE(F) = \
+  constexpr static AnyType SCOPED_NODE(F) = \
       AnyType::Disabled(TypeEnum::SCOPED_NODE(F));
 #include "types.inc"
 
@@ -66,7 +66,7 @@ class LayoutType {
 /* Members of LayoutType have the same values as their Type counterpart
  * NODE(Fraction) => Fraction = Type::FractionLayout,
  */
-#define NODE_USE(F, N, S) static constexpr auto F = Type::F##Layout;
+#define NODE_USE(F, N, S) constexpr static auto F = Type::F##Layout;
 #include "types.inc"
 
   constexpr LayoutType(AnyType type)

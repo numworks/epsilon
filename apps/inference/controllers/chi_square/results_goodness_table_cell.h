@@ -56,11 +56,11 @@ class ResultGoodnessContributionsTable
   int typeAtLocation(int column, int row) const override { return 0; }
 
  private:
-  static constexpr I18n::Message k_titles[] = {I18n::Message::Observed,
+  constexpr static I18n::Message k_titles[] = {I18n::Message::Observed,
                                                I18n::Message::Expected,
                                                I18n::Message::Contributions};
 
-  static constexpr KDCoordinate k_columnsWidth[] = {95, 95, 100};
+  constexpr static KDCoordinate k_columnsWidth[] = {95, 95, 100};
 
   GoodnessTest* m_inference;
   CategoricalController* m_parentController;

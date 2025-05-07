@@ -31,8 +31,8 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   void layoutSubviews(bool force = false) override;
 
  protected:
-  static constexpr KDCoordinate k_titlesColumnWidth = 75;
-  static constexpr KDCoordinate k_ellipsisWidth =
+  constexpr static KDCoordinate k_titlesColumnWidth = 75;
+  constexpr static KDCoordinate k_ellipsisWidth =
       Escher::Metric::EllipsisCellWidth;
   void setEven(bool even) override;
   virtual bool displayEllipsis() const { return true; }

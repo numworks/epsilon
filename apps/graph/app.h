@@ -72,7 +72,7 @@ class App : public Shared::FunctionApp {
   App(Snapshot* snapshot);
 
   struct ListTab : public Shared::FunctionApp::ListTab {
-    static constexpr I18n::Message k_title = I18n::Message::FunctionTab;
+    constexpr static I18n::Message k_title = I18n::Message::FunctionTab;
     ListTab();
     ListController m_listController;
   };

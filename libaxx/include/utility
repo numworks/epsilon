@@ -17,7 +17,7 @@ using size_t = size_t;
 template <class T, T... Ints>
 struct integer_sequence {
   typedef T value_type;
-  static constexpr size_t size() noexcept { return sizeof...(Ints); }
+  constexpr static size_t size() noexcept { return sizeof...(Ints); }
 };
 
 // This uses a builtin for GCC

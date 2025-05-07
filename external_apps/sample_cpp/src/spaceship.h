@@ -17,18 +17,18 @@ class Spaceship {
   void createRockets();
   void rocketsAction(Alien aliens[], int numberOfAliens);
   void checkForRocketsAliensCollisions(Alien aliens[], int numberOfAliens);
-  static constexpr int k_step = 10;
-  static constexpr int k_width = 35;
-  static constexpr int k_height = 20;
+  constexpr static int k_step = 10;
+  constexpr static int k_width = 35;
+  constexpr static int k_height = 20;
 
  private:
-  static constexpr int k_maxNumberOfRockets = 3 * 50;
-  static constexpr int k_maxNumberOfLives = 3;
-  static constexpr int k_xLowerBound = Display::CommonHorizontalMargin;
-  static constexpr int k_xUpperBound =
+  constexpr static int k_maxNumberOfRockets = 3 * 50;
+  constexpr static int k_maxNumberOfLives = 3;
+  constexpr static int k_xLowerBound = Display::CommonHorizontalMargin;
+  constexpr static int k_xUpperBound =
       EADK::Screen::Width - Display::CommonHorizontalMargin;
-  static constexpr int k_yLowerBound = 3 * Display::CommonVerticalMargin;
-  static constexpr int k_yUpperBound =
+  constexpr static int k_yLowerBound = 3 * Display::CommonVerticalMargin;
+  constexpr static int k_yUpperBound =
       EADK::Screen::Height - Display::CommonVerticalMargin;
   void draw(const EADK::Color c) const;
   void redrawLives();

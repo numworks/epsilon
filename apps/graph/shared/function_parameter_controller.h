@@ -36,7 +36,7 @@ class FunctionParameterController : public Shared::ListParameterController,
 
  private:
   // Shared cells + m_detailsCell + m_functionDomainCell + m_derivativesCell
-  static constexpr int k_numberOfRows =
+  constexpr static int k_numberOfRows =
       Shared::ListParameterController::k_numberOfSharedCells + 3;
   bool displayDetails() const {
     assert(!Poincare::Preferences::SharedPreferences()

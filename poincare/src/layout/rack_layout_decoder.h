@@ -95,7 +95,7 @@ class CPL {
   int compareWithNullTerminatedString(int length, const char* string) const;
 
  private:
-  static constexpr int k_codePointLayoutSize =
+  constexpr static int k_codePointLayoutSize =
       TypeBlock(Type::AsciiCodePointLayout).nodeSize();
   char m_content[k_codePointLayoutSize];
 };

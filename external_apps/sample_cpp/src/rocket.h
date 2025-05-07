@@ -15,10 +15,10 @@ class Rocket {
   void forward();
   bool tryToKill(Alien* a);
   bool off() const { return m_y < 0; }
-  static constexpr int k_period = 5;
+  constexpr static int k_period = 5;
 
  private:
-  static constexpr int k_length = 13;
+  constexpr static int k_length = 13;
   void draw(const EADK::Color c) const;
   void switchOff() { m_y = -1; }
   int m_x;

@@ -72,7 +72,7 @@ class App : public Shared::StoreApp {
 
   struct StoreTab : public Escher::Tab {
     StoreTab();
-    static constexpr I18n::Message k_title = I18n::Message::DataTab;
+    constexpr static I18n::Message k_title = I18n::Message::DataTab;
     Escher::ViewController* top() override {
       return &m_storeStackViewController;
     }
@@ -82,7 +82,7 @@ class App : public Shared::StoreApp {
   };
   struct GraphTab : public Escher::Tab {
     GraphTab();
-    static constexpr I18n::Message k_title = I18n::Message::GraphTab;
+    constexpr static I18n::Message k_title = I18n::Message::GraphTab;
     Escher::ViewController* top() override {
       return &m_graphStackViewController;
     }
@@ -93,7 +93,7 @@ class App : public Shared::StoreApp {
   };
   struct CalculationTab : public Escher::Tab {
     CalculationTab();
-    static constexpr I18n::Message k_title = I18n::Message::StatTab;
+    constexpr static I18n::Message k_title = I18n::Message::StatTab;
     Escher::ViewController* top() override { return &m_calculationHeader; }
     CalculationController m_calculationController;
     Escher::AlternateEmptyViewController

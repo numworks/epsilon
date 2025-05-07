@@ -20,8 +20,8 @@ class ParsingHelper {
   static bool ParameterText(LayoutSpanDecoder* varDecoder,
                             const Layout** parameterStart,
                             size_t* parameterLength);
-  static constexpr int k_indexOfMainExpression1D = 0;
-  static constexpr int k_indexOfParameter1D = 1;
+  constexpr static int k_indexOfMainExpression1D = 0;
+  constexpr static int k_indexOfParameter1D = 1;
 };
 
 }  // namespace Poincare::Internal

@@ -49,9 +49,9 @@ class MultipleBoxesView : public MultipleDataView {
 
   constexpr static KDCoordinate k_axisViewHeight = 21;
 
-  static constexpr KDCoordinate k_topToFirstBoxMarginOneSeries = 48;
-  static constexpr KDCoordinate k_topToFirstBoxMarginMultipleSeries = 14;
-  static constexpr std::array<KDCoordinate, Store::k_numberOfSeries>
+  constexpr static KDCoordinate k_topToFirstBoxMarginOneSeries = 48;
+  constexpr static KDCoordinate k_topToFirstBoxMarginMultipleSeries = 14;
+  constexpr static std::array<KDCoordinate, Store::k_numberOfSeries>
       k_boxToBoxMargins = {24, 24, 12, 10, 10, 10};
 
   void drawRect(KDContext* ctx, KDRect rect) const override;

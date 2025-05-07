@@ -10,8 +10,8 @@ class Life {
   void setIndex(int index);
   void draw() const;
   void breaks();
-  static constexpr int k_width = 11;
-  static constexpr int k_height = 9;
+  constexpr static int k_width = 11;
+  constexpr static int k_height = 9;
 
  private:
   int m_x;

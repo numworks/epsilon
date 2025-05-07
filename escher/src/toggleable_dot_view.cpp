@@ -4,13 +4,13 @@
 
 namespace Escher {
 
-static constexpr KDCoordinate Size = ToggleableDotView::k_dotSize;
+constexpr static KDCoordinate Size = ToggleableDotView::k_dotSize;
 
-static constexpr const KDMask<Size> mediumDot =
+constexpr static const KDMask<Size> mediumDot =
     KDMakeDot<Size>(ToggleableDotView::k_dotRadius);
 const uint8_t (&MediumDotMask)[Size][Size] = mediumDot.m_mask;
 
-static constexpr const KDMask<Size> mediumShallowDot = KDMakeRing<Size>(
+constexpr static const KDMask<Size> mediumShallowDot = KDMakeRing<Size>(
     ToggleableDotView::k_dotRadius - ToggleableDotView::k_shallowDotThickness,
     ToggleableDotView::k_dotRadius);
 const uint8_t (&MediumShallowDotMask)[Size][Size] = mediumShallowDot.m_mask;

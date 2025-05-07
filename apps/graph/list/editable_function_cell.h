@@ -51,8 +51,8 @@ class EditableFunctionCell
     bool handleEvent(Ion::Events::Event event) override;
   };
 
-  static constexpr KDCoordinate k_expressionMargin = 5;
-  static constexpr KDCoordinate k_templateButtonMargin = 5;
+  constexpr static KDCoordinate k_expressionMargin = 5;
+  constexpr static KDCoordinate k_templateButtonMargin = 5;
   TemplateButtonCell m_templateButton;
 };
 

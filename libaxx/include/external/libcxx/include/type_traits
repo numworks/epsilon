@@ -12,7 +12,7 @@ template <class _Tp> struct remove_cv {typedef typename remove_volatile<typename
 template <class _Tp, _Tp __v>
 struct integral_constant
 {
-    static constexpr const _Tp value = __v;
+    constexpr static const _Tp value = __v;
     typedef _Tp value_type;
     typedef integral_constant type;
     inline constexpr operator value_type() const noexcept {return value;}

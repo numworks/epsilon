@@ -32,7 +32,7 @@ class Stack : public AbstractStack<T> {
   static_assert(N > 0);
 
  public:
-  static constexpr int k_maxSize = N;
+  constexpr static int k_maxSize = N;
 
   virtual T* elementAtIndex(int i) {
     assert(i < N);

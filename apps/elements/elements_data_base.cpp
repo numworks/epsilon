@@ -7,9 +7,9 @@ using namespace Poincare;
 namespace Elements {
 
 /* Shortcuts some types and constants to make the table slightly readable. */
-static constexpr double k_unknown = ElementData::k_unknown;
-static constexpr double k_AUnknown = ElementData::k_AUnknown;
-static constexpr double k_affinityUnstable = ElementData::k_affinityUnstable;
+constexpr static double k_unknown = ElementData::k_unknown;
+constexpr static double k_AUnknown = ElementData::k_AUnknown;
+constexpr static double k_affinityUnstable = ElementData::k_affinityUnstable;
 typedef ElementData::Group Group;
 typedef ElementData::PhysicalState PhysicalState;
 typedef ElementData::Block Block;

@@ -12,7 +12,7 @@ namespace Poincare::Internal {
 
 class Layouter {
  public:
-  static constexpr int k_undefinedNumberOfSignificantDigits = -1;
+  constexpr static int k_undefinedNumberOfSignificantDigits = -1;
 
   // Eats expression to built its layout inplace.
   static Tree* LayoutExpression(

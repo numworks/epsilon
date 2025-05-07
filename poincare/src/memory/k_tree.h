@@ -49,10 +49,10 @@ struct KTreesImplementation {
    * the same specialized function. */
   template <Block... Blocks>
   struct KTree : public AbstractKTree {
-    static constexpr size_t k_size = sizeof...(Blocks);
+    constexpr static size_t k_size = sizeof...(Blocks);
     static_assert(k_size > 0);
-    static constexpr Block k_blocks[k_size] = {Blocks...};
-    static constexpr ConstexprTree<k_size> k_tree{Blocks...};
+    constexpr static Block k_blocks[k_size] = {Blocks...};
+    constexpr static ConstexprTree<k_size> k_tree{Blocks...};
     constexpr operator const TSC*() const { return &k_tree; }
     constexpr TypeBlock type() { return k_tree.type(); }
     const TSC* operator->() const { return operator const TSC*(); }
@@ -143,7 +143,7 @@ struct KTreesImplementation {
     }
 
     template <size_t Nb>
-    static constexpr KTree<Tag, Nb, ExtraValues...> node{};
+    constexpr static KTree<Tag, Nb, ExtraValues...> node{};
 
     template <class... Args>
       requires HasATreeConcept<TSC, Args...>
@@ -160,7 +160,7 @@ struct KTreesImplementation {
     }
 
     template <size_t Nb>
-    static constexpr KTree<Tag, Nb % 256, Nb / 256> node{};
+    constexpr static KTree<Tag, Nb % 256, Nb / 256> node{};
   };
 
   // KTree for Arbitrary
@@ -185,7 +185,7 @@ struct KTreesImplementation {
   template <Placeholder::Tag T, Placeholder::Filter F>
   struct KPlaceholderFilter
       : public KTree<Type::Placeholder, Placeholder::ParamsToValue(T, F)> {
-    static constexpr Placeholder::Tag k_tag = T;
+    constexpr static Placeholder::Tag k_tag = T;
   };
 
   template <Placeholder::Tag Tag>

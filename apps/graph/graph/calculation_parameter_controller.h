@@ -42,7 +42,7 @@ class CalculationParameterController
   void setRecord(Ion::Storage::Record record);
 
  private:
-  static constexpr int k_numberOfRows = 9;
+  constexpr static int k_numberOfRows = 9;
   template <class T>
   void push(T* controller, bool pop);
   bool shouldDisplayIntersectionCell() const;

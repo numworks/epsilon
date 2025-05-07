@@ -45,7 +45,7 @@ class Builtin {
   static bool HasCustomIdentifier(LayoutSpan name);
   static const Builtin* GetReservedFunction(LayoutSpan name);
   static const Builtin* GetReservedFunction(const Tree* e);
-  static constexpr const Builtin* GetReservedFunction(Type type);
+  constexpr static const Builtin* GetReservedFunction(Type type);
   static const Builtin* GetSpecialIdentifier(LayoutSpan name);
   static const Builtin* GetSpecialIdentifier(Type type);
   bool canBeTranslated() const;
@@ -65,7 +65,7 @@ class BuiltinWithLayout : public Builtin {
   LayoutType layoutType() const { return m_layoutType; }
   bool has2DLayout() const override { return true; }
 
-  static constexpr const BuiltinWithLayout* GetReservedFunction(
+  constexpr static const BuiltinWithLayout* GetReservedFunction(
       LayoutType layoutType);
 
  private:

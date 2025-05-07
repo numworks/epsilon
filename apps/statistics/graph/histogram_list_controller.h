@@ -62,7 +62,7 @@ class HistogramListController
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
-  static constexpr KDCoordinate k_rowHeight = 75;
+  constexpr static KDCoordinate k_rowHeight = 75;
 
   // Escher::TableViewDataSource
   KDCoordinate nonMemoizedRowHeight(int row) override { return rowHeight(); }

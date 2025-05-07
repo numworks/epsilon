@@ -13,16 +13,16 @@ class Alien {
   bool tryToHit(Spaceship* s);
   bool isGhost() const { return m_x == -1; }
   void killed();
-  static constexpr int k_stepPeriod = 10;
-  static constexpr int k_materializationPeriod = 20;
-  static constexpr int k_width = 15;
-  static constexpr int k_height = 18;
+  constexpr static int k_stepPeriod = 10;
+  constexpr static int k_materializationPeriod = 20;
+  constexpr static int k_width = 15;
+  constexpr static int k_height = 18;
 
  private:
   void draw(const EADK::Color c) const;
   void hide() const;
   void ghostify() { m_x = -1; }
-  static constexpr int k_step = 10;
+  constexpr static int k_step = 10;
   int m_x;
   int m_y;
 };

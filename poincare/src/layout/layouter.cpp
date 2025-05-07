@@ -28,19 +28,19 @@
 
 namespace Poincare::Internal {
 
-static constexpr int k_forceParentheses = -2;
+constexpr static int k_forceParentheses = -2;
 
 // A single token will never need parentheses
-static constexpr int k_tokenPriority = -1;
+constexpr static int k_tokenPriority = -1;
 
 // MaxPriority is to be used when there is no parent that could cause confusion
-static constexpr int k_maxPriority = 20;
+constexpr static int k_maxPriority = 20;
 
 /* Priority just after Add for left child of a subtraction that may be an
  * unparenthesed addition */
-static constexpr int k_subLeftChildPriority = 9;
+constexpr static int k_subLeftChildPriority = 9;
 
-static constexpr int OperatorPriority(TypeBlock type) {
+constexpr static int OperatorPriority(TypeBlock type) {
   switch (type) {
     case Type::ListElement:
       return 0;
@@ -101,7 +101,7 @@ static constexpr int OperatorPriority(TypeBlock type) {
 }
 
 // Commas have no associated block but behave like an operator
-static constexpr int k_commaPriority = OperatorPriority(Type::Set);
+constexpr static int k_commaPriority = OperatorPriority(Type::Set);
 
 Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
                                  int numberOfSignificantDigits,

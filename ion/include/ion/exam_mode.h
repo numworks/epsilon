@@ -30,11 +30,11 @@ CODE_GUARD(exam_mode_rulesets, 2206142180,  //
            };)
 
 // Number of exam modes (-1 for Uninitialized)
-static constexpr size_t k_numberOfModes =
+constexpr static size_t k_numberOfModes =
     static_cast<size_t>(Ruleset::NumberOfRulesets) - 1;
 
 // Number of active exam modes (-2 for Off and PressToTest)
-static constexpr size_t k_numberOfActiveModes = k_numberOfModes - 2;
+constexpr static size_t k_numberOfActiveModes = k_numberOfModes - 2;
 
 constexpr Ruleset toRuleset(Int value) {
   assert(value < static_cast<Int>(Ruleset::NumberOfRulesets));

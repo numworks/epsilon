@@ -3,7 +3,7 @@
 
 using namespace Ion::ExamMode;
 
-static constexpr Int k_clearedBits = static_cast<Int>(-1);
+constexpr static Int k_clearedBits = static_cast<Int>(-1);
 
 QUIZ_CASE(ion_exam_mode_uninitialized) {
   Configuration clearedConfig(k_clearedBits);

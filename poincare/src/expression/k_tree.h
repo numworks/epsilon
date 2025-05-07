@@ -204,7 +204,7 @@ struct KMatrixHelper {
     return Concat<decltype(node), CTS...>();
   }
 
-  static constexpr KTree<Type::Matrix, Rows, Cols> node{};
+  constexpr static KTree<Type::Matrix, Rows, Cols> node{};
 
   template <class... Args>
     requires HasATreeConcept<Tree, Args...>
@@ -414,7 +414,7 @@ struct FloatRepresentation;
 template <class Int, Int V>
 struct FloatLiteral : FloatRepresentation<Int, V> {
   // Since we are using the representation we have to manually flip the sign bit
-  static constexpr Int SignBitMask = Int(1) << (sizeof(Int) * 8 - 1);
+  constexpr static Int SignBitMask = Int(1) << (sizeof(Int) * 8 - 1);
   consteval auto operator-() { return FloatLiteral<Int, V ^ SignBitMask>(); }
 };
 

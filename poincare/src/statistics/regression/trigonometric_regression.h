@@ -22,7 +22,7 @@ class TrigonometricRegression : public Regression {
   /* Because the trigonometric regression is very sensitive to the initial
    * parameters, the fit algorithm is called in a loop several times, with
    * different initial parameter guesses. */
-  static constexpr size_t k_defaultParametersIterations = 7;
+  constexpr static size_t k_defaultParametersIterations = 7;
 
   /* Trigonometric regression is attempted several times with different initial
    * parameters. The more sensitive initial parameter is the frequency. The
@@ -32,7 +32,7 @@ class TrigonometricRegression : public Regression {
    * choice for trigonometric functions, to explore harmonics of the initially
    * guessed frequency. However it is better to have a finer grain in some
    * cases, so we choose √2 as the multiplication factor. */
-  static constexpr double k_frequencyMultiplicationFactor = M_SQRT2;
+  constexpr static double k_frequencyMultiplicationFactor = M_SQRT2;
 
   double privateEvaluate(const Coefficients& modelCoefficients,
                          double x) const override;

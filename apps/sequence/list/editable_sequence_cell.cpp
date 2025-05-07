@@ -19,8 +19,8 @@ void EditableSequenceCell::layoutSubviews(bool force) {
                 KDRect(0, 0, k_titlesColumnWidth, bounds().height()), force);
   setChildFrame(
       expressionCell(),
-      KDRect(k_titlesColumnWidth + k_expressionMargin, 0,
-             bounds().width() - k_titlesColumnWidth - 2 * k_expressionMargin,
+      KDRect(k_titlesColumnWidth, 0,
+             bounds().width() - k_titlesColumnWidth - k_expressionMargin,
              bounds().height()),
       force);
 }

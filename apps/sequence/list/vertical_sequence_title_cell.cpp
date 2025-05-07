@@ -22,9 +22,10 @@ void VerticalSequenceTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 KDRect VerticalSequenceTitleCell::subviewFrame() const {
-  return KDRect(k_verticalColorIndicatorThickness, 0,
-                bounds().width() - k_verticalColorIndicatorThickness,
-                bounds().height());
+  return KDRect(
+      k_verticalColorIndicatorThickness + k_expressionMargin, 0,
+      bounds().width() - k_verticalColorIndicatorThickness - k_expressionMargin,
+      bounds().height());
 }
 
 void VerticalSequenceTitleCell::layoutSubviews(bool force) {

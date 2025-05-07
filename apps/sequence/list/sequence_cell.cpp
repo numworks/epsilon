@@ -35,12 +35,9 @@ void AbstractSequenceCell::setEven(bool even) {
 }
 
 void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
-  KDColor defaultColor = m_even ? KDColorWhite : Palette::WallScreen;
-  // If not highlighted, selectedColor is defaultColor
-  KDColor selectedColor = backgroundColor();
-  m_sequenceTitleCell.setHighlighted(isHighlighted() && m_parameterSelected);
-  m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
-  expressionCell()->setHighlighted(isHighlighted() && !m_parameterSelected);
+  m_expressionBackground = backgroundColor();
+  m_sequenceTitleCell.setHighlighted(isHighlighted());
+  expressionCell()->setHighlighted(isHighlighted());
   expressionCell()->setBackgroundColor(m_expressionBackground);
 }
 

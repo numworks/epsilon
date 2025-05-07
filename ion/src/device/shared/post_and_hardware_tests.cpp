@@ -9,9 +9,9 @@ namespace POSTAndHardwareTests {
 
 constexpr static int k_stampSize = 8;
 
-bool BatteryOK() {
-  return (Ion::Battery::level() >= Ion::Battery::Charge::P80);
-}
+/* 3.78V correspond to the minimum voltage to be in the old `THREE_QUARTERS`
+ * battery level */
+bool BatteryOK() { return (Ion::Battery::voltage() >= 3.78f); }
 
 bool VBlankOK() {
   bool result = true;

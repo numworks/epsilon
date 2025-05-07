@@ -20,7 +20,6 @@ class ListController : public Shared::FunctionListController {
                  Escher::ButtonRowController* header,
                  Escher::ButtonRowController* footer);
   KDCoordinate expressionRowHeight(int row) override;
-  void selectPreviousNewSequenceCell();
   void editExpression(Ion::Events::Event event) override;
   /* ViewController */
   void viewWillAppear() override;

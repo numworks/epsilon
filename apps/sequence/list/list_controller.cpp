@@ -52,15 +52,6 @@ KDCoordinate ListController::expressionRowHeight(int row) {
   return sequenceHeight + 2 * k_defaultVerticalMargin;
 }
 
-void ListController::selectPreviousNewSequenceCell() {
-  int row = selectedRow();
-  int sequenceDefinition;
-  modelIndexForRow(row, &sequenceDefinition);
-  if (sequenceDefinition >= 0) {
-    selectRow(row - sequenceDefinition);
-  }
-}
-
 /* ViewController */
 
 void ListController::viewWillAppear() {

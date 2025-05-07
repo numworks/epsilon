@@ -37,8 +37,7 @@ const char* TypeParameterController::title() const {
 }
 
 void TypeParameterController::viewWillAppear() {
-  const char* nextName = isNewModel() ? SequenceStore::FirstAvailableName()
-                                      : sequence()->fullName();
+  const char* nextName = SequenceStore::FirstAvailableName();
   assert(nextName != nullptr);
   const char* subscripts[k_numberOfCells] = {"n", "n+1", "n+2"};
   for (size_t j = 0; j < k_numberOfCells; j++) {
@@ -62,8 +61,7 @@ void TypeParameterController::viewDidDisappear() {
 void TypeParameterController::handleResponderChainEvent(
     ResponderChainEvent event) {
   if (event.type == ResponderChainEventType::HasBecomeFirst) {
-    selectRow(isNewModel() ? k_indexOfExplicit
-                           : static_cast<uint8_t>(sequence()->type()));
+    selectRow(k_indexOfExplicit);
     UniformSelectableListController::handleResponderChainEvent(event);
   } else {
     UniformSelectableListController::handleResponderChainEvent(event);
@@ -72,28 +70,6 @@ void TypeParameterController::handleResponderChainEvent(
 
 bool TypeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::OK || event == Ion::Events::EXE) {
-    if (!isNewModel()) {
-      Shared::Sequence::Type sequenceType =
-          static_cast<Shared::Sequence::Type>(selectedRow());
-      if (sequence()->type() != sequenceType) {
-        m_listController->selectPreviousNewSequenceCell();
-        sequence()->setType(sequenceType);
-        // Invalidate sequence context cache when changing sequence type
-        App::app()->localContext()->resetCache();
-        // Reset the first index if the new type is "Explicit"
-        if (sequenceType == Shared::Sequence::Type::Explicit) {
-          sequence()->setInitialRank(
-              GlobalPreferences::SharedGlobalPreferences()
-                  ->sequencesInitialRank());
-        }
-      }
-      StackViewController* stack = stackController();
-      assert(stack->depth() > 2);
-      stack->pop();
-      stack->pop();
-      return true;
-    }
-
     Ion::Storage::Record::ErrorStatus error = sequenceStore()->addEmptyModel();
     if (error == Ion::Storage::Record::ErrorStatus::NotEnoughSpaceAvailable) {
       return true;
@@ -109,12 +85,7 @@ bool TypeParameterController::handleEvent(Ion::Events::Event event) {
     m_listController->editExpression(Ion::Events::OK);
     return true;
   }
-  if (event == Ion::Events::Left && !isNewModel()) {
-    stackController()->pop();
-    return true;
-  }
-  if (isNewModel() &&
-      m_listController->handleEventOnExpressionInTemplateMenu(event)) {
+  if (m_listController->handleEventOnExpressionInTemplateMenu(event)) {
     return true;
   }
   return false;

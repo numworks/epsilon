@@ -39,12 +39,7 @@ class TypeParameterController
   Escher::StackViewController* stackController() const {
     return static_cast<Escher::StackViewController*>(parentResponder());
   }
-  Shared::Sequence* sequence() {
-    assert(!isNewModel());
-    return sequenceStore()->modelForRecord(m_record);
-  }
   Shared::SequenceStore* sequenceStore();
-  bool isNewModel() const { return m_record.isNull(); }
 
   Ion::Storage::Record m_record;
   ListController* m_listController;

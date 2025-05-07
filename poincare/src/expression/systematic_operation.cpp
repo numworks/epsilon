@@ -715,7 +715,8 @@ bool SystematicOperation::ReduceExp(Tree* e) {
         return true;
       }
 
-      // If the base is a rational, split the numerator and the denominator
+      /*  If the base is a rational, split the numerator and the denominator.
+       * This avoids having the denominator under a root. */
       if (base->isRational() && !(base->isInteger())) {
         TreeRef numerator = Rational::Numerator(base).pushOnTreeStack();
         TreeRef denominator = Rational::Denominator(base).pushOnTreeStack();

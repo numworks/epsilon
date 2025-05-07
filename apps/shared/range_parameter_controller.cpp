@@ -128,7 +128,9 @@ bool RangeParameterController::handleEvent(Ion::Events::Event event) {
            m_tempInteractiveRange.zoomAuto(OMG::Axis::Horizontal) ||
        m_interactiveRange->zoomAuto(OMG::Axis::Vertical) !=
            m_tempInteractiveRange.zoomAuto(OMG::Axis::Vertical) ||
-       m_interactiveRange->gridType() != m_tempInteractiveRange.gridType())) {
+       m_interactiveRange->gridType() != m_tempInteractiveRange.gridType() ||
+       m_interactiveRange->userGridUnit() !=
+           m_tempInteractiveRange.userGridUnit())) {
     // Open pop-up to confirm discarding values
     m_confirmPopUpController.presentModally();
     return true;

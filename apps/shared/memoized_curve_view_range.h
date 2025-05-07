@@ -18,6 +18,8 @@ class MemoizedCurveViewRange : public CurveViewRange {
     void set(OMG::Axis axis, T value) {
       (axis == OMG::Axis::Horizontal ? x : y) = value;
     }
+
+    bool operator==(const AxisInformation<T>& other) const = default;
   };
 
   MemoizedCurveViewRange();

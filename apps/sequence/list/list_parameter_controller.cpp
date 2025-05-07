@@ -57,12 +57,12 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
   if (withinTemporarySelection || previousSelectedRow == l->selectedRow()) {
     return;
   }
-  if (previousSelectedRow == 0) {
+  if (previousSelectedRow == k_indexOfFirstRankCell) {
     assert(l->cell(previousSelectedRow) == &m_firstRankCell);
     m_firstRankCell.textField()->setEditing(false);
     App::app()->setFirstResponder(&m_selectableListView);
   }
-  if (l->selectedRow() == 0) {
+  if (l->selectedRow() == k_indexOfFirstRankCell) {
     assert(l->selectedCell() == &m_firstRankCell);
     App::app()->setFirstResponder(&m_firstRankCell);
   }
@@ -70,7 +70,7 @@ void ListParameterController::listViewDidChangeSelectionAndDidScroll(
 
 HighlightCell* ListParameterController::cell(int row) {
   assert(0 <= row && row < numberOfRows());
-  HighlightCell* const cells[] = {&m_firstRankCell, &m_enableCell, &m_colorCell,
+  HighlightCell* const cells[] = {&m_colorCell, &m_firstRankCell, &m_enableCell,
                                   &m_deleteCell};
   return cells[row];
 }

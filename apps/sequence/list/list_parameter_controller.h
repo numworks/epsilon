@@ -40,6 +40,7 @@ class ListParameterController : public Shared::ListParameterController,
   }
 
  private:
+  constexpr static int k_indexOfFirstRankCell = 1;
   bool handleEvent(Ion::Events::Event event) override;
   int numberOfNonInheritedCells() const {
     return 1;

@@ -96,6 +96,16 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   GridType gridType() const { return m_gridType; }
   void setGridType(GridType grid);
 
+  // The equality operator cannot be const because of the grid unit memoization
+  bool operator==(InteractiveCurveViewRange& other) {
+    using enum OMG::Axis;
+    return (rangeChecksum() == other.rangeChecksum() &&
+            m_zoomAuto(Horizontal) == other.m_zoomAuto(Horizontal) &&
+            m_zoomAuto(Vertical) == other.m_zoomAuto(Vertical) &&
+            m_gridType == other.m_gridType &&
+            m_userGridUnit == other.m_userGridUnit);
+  }
+
  protected:
   constexpr static float k_maxRatioPositionRange = 1E5f;
   /* In normalized settings, we put each axis so that 1cm = 2 units. For now,

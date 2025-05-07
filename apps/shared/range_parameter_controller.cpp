@@ -122,15 +122,7 @@ void RangeParameterController::viewDidDisappear() {
 
 bool RangeParameterController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Back &&
-      (m_interactiveRange->rangeChecksum() !=
-           m_tempInteractiveRange.rangeChecksum() ||
-       m_interactiveRange->zoomAuto(OMG::Axis::Horizontal) !=
-           m_tempInteractiveRange.zoomAuto(OMG::Axis::Horizontal) ||
-       m_interactiveRange->zoomAuto(OMG::Axis::Vertical) !=
-           m_tempInteractiveRange.zoomAuto(OMG::Axis::Vertical) ||
-       m_interactiveRange->gridType() != m_tempInteractiveRange.gridType() ||
-       m_interactiveRange->userGridUnit() !=
-           m_tempInteractiveRange.userGridUnit())) {
+      (*m_interactiveRange != m_tempInteractiveRange)) {
     // Open pop-up to confirm discarding values
     m_confirmPopUpController.presentModally();
     return true;

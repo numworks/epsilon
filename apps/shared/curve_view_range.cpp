@@ -20,7 +20,7 @@ uint32_t CurveViewRange::rangeChecksum() {
                               dataLengthInBytes / sizeof(uint32_t));
 }
 
-float CurveViewRange::computeGridUnit(OMG::Axis axis) {
+float CurveViewRange::computeGridUnit(OMG::Axis axis) const {
   float minNumberOfUnits, maxNumberOfUnits, range;
   if (axis == OMG::Axis::Horizontal) {
     minNumberOfUnits = k_minNumberOfXGridUnits;

@@ -34,7 +34,7 @@ class CurveViewRange {
   constexpr static float k_smallGridUnitMantissa = 1.f;
   constexpr static float k_mediumGridUnitMantissa = 2.f;
   constexpr static float k_largeGridUnitMantissa = 5.f;
-  float computeGridUnit(OMG::Axis axis);
+  float computeGridUnit(OMG::Axis axis) const;
 };
 
 }  // namespace Shared

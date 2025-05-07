@@ -31,6 +31,7 @@ $(addprefix device/core/device/shared-core/drivers/, \
   internal_flash_$(_ion_mcu_suffix).cpp \
   internal_flash_otp.cpp \
   keyboard.cpp \
+  keyboard_epsilon.cpp \
   keyboard_$(_ion_mcu_suffix).cpp \
   keyboard_init.cpp \
   option_bytes.cpp \

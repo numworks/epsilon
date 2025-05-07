@@ -242,7 +242,8 @@ class IntegerHandler final {
   // sanitize removes the leading zero and recompute the number of digits if
   // necessary
   void sanitize();
-  [[maybe_unused]] bool digitsAreSafe(const void* start, const void* end) const;
+  [[maybe_unused]] bool digitsAreContainedIn(const void* start,
+                                             const void* end) const;
   int numberOfBase10DigitsWithoutSign(WorkingBuffer* workingBuffer) const;
   size_t serialize(char* buffer, size_t bufferSize,
                    WorkingBuffer* workingBuffer) const;

@@ -201,10 +201,10 @@ class IntegerHandler final {
     return serialize(buffer, bufferSize, &workingBuffer);
   }
 
-  int numberOfBase10DigitsWithoutSign() const {
+  int numberOfBase10DigitsWithoutSign(int* numberOfZeroes = nullptr) const {
     WorkingBuffer workingBuffer;
-    return numberOfBase10DigitsWithoutSign(&workingBuffer);
-  };
+    return numberOfBase10DigitsWithoutSign(&workingBuffer, numberOfZeroes);
+  }
 
  private:
   constexpr static int k_digitBase =
@@ -245,7 +245,8 @@ class IntegerHandler final {
   void sanitize();
   [[maybe_unused]] bool digitsAreContainedIn(const void* start,
                                              const void* end) const;
-  int numberOfBase10DigitsWithoutSign(WorkingBuffer* workingBuffer) const;
+  int numberOfBase10DigitsWithoutSign(WorkingBuffer* workingBuffer,
+                                      int* numberOfZeroes = nullptr) const;
   size_t serialize(char* buffer, size_t bufferSize,
                    WorkingBuffer* workingBuffer) const;
   void removeZeroAtTheEnd(int minimalNumbersOfDigits,

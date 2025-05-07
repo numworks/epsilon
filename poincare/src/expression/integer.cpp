@@ -274,15 +274,28 @@ uint8_t IntegerHandler::numberOfDigits() const {
 }
 
 int IntegerHandler::numberOfBase10DigitsWithoutSign(
-    WorkingBuffer* workingBuffer) const {
+    WorkingBuffer* workingBuffer, int* numberOfZeroes) const {
   // TODO: This method should be optimized because udiv is a costly function
   // assert(!isOverflow());
   uint8_t* const localStart = workingBuffer->localStart();
   int numberOfDigits = 1;
   IntegerHandler base(10);
+  bool countingZeros = numberOfZeroes;
+  if (countingZeros) {
+    *numberOfZeroes = 0;
+  }
   IntegerHandler quotient = *this;
   while (true) {
-    quotient = Udiv(quotient, base, workingBuffer).quotient;
+    DivisionResult<IntegerHandler> result = Udiv(quotient, base, workingBuffer);
+    quotient = result.quotient;
+    if (countingZeros) {
+      if (result.remainder.isZero()) {
+        (*numberOfZeroes)++;
+      } else {
+        // Stop counting zeroes as soon as a digit isn't null
+        countingZeros = false;
+      }
+    }
     if (quotient.isZero()) {
       break;
     }

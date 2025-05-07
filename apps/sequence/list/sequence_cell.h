@@ -2,6 +2,7 @@
 #define SEQUENCE_SEQUENCE_CELL_H
 
 #include <apps/shared/with_expression_cell.h>
+#include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
 
 #include "vertical_sequence_title_cell.h"
@@ -13,6 +14,7 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   AbstractSequenceCell()
       : EvenOddCell(),
         m_expressionBackground(KDColorWhite),
+        m_ellipsisBackground(KDColorWhite),
         m_parameterSelected(false) {}
   void setParameterSelected(bool selected);
   virtual Escher::HighlightCell* mainCell() = 0;
@@ -23,16 +25,21 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   VerticalSequenceTitleCell* titleCell() { return &m_sequenceTitleCell; }
 
  private:
-  int numberOfSubviews() const override { return 2; }
+  int numberOfSubviews() const override { return 2 + displayEllipsis(); }
   Escher::View* subviewAtIndex(int index) override;
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
 
  protected:
   static constexpr KDCoordinate k_titlesColumnWidth = 75;
+  static constexpr KDCoordinate k_ellipsisWidth =
+      Escher::Metric::EllipsisCellWidth;
   void setEven(bool even) override;
+  virtual bool displayEllipsis() const { return true; }
   VerticalSequenceTitleCell m_sequenceTitleCell;
+  Escher::EllipsisView m_ellipsisView;
   KDColor m_expressionBackground;
+  KDColor m_ellipsisBackground;
   bool m_parameterSelected;
 };
 

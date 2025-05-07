@@ -81,7 +81,7 @@ class ListController : public Shared::FunctionListController {
     return m_editableCell.expressionCell()->layoutField();
   }
   OMG::HorizontalDirection parameterColumnPosition() const override {
-    return OMG::Direction::Left();
+    return OMG::Direction::Right();
   }
 
   SequenceCell m_sequenceCells[k_maxNumberOfRows];

@@ -44,10 +44,7 @@ $(call document_extension,$(EXECUTABLE_EXTENSION))
 # some .o cannot be built. It will end up throwing an error that stops make but
 # the .a might still be created. As such, we need to remove it manually and
 # propagate the error.
-# FIXME Generating .a might cause some problem with recompilation and is not
-# required anymore, find somewhere else to check for locks.
 $(OUTPUT_DIRECTORY)/%.a: $$(call objects_for_flavored_module,%) | $$(@D)/.
-	$(call check_locks,$(call name_for_flavored_target,$*))
 	$(call rule_label,AR)
 	$(AR) $(ARFLAGS) $@ $^ || (rm -f $@; false)
 
@@ -71,12 +68,6 @@ $(call rule_for_object, \
   WINDRES, rc, \
   $$(WINDRES) $$(WRFLAGS) $$< -O coff -o $$@ \
 )
-
-# Lock files, ensure that modules versions match
-%.lock:
-	$(call lockfile_recipe,$*)
-
-$(call document_extension,lock,Generate $(LOCKFILE_NAME) listing versions of modules used by the goal)
 
 # Auxiliary binaries compiled for the host are built in their own directory.
 include $(PATH_haussmann)/src/rules/tools.mak

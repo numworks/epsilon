@@ -45,6 +45,7 @@ bool ExpressionModelListController::isAddEmptyRow(int row) const {
 
 int ExpressionModelListController::typeAtRow(int row) const {
   if (row == m_editedCellIndex) {
+    assert(!isAddEmptyRow(row));
     return k_editableCellType;
   }
   if (isAddEmptyRow(row)) {

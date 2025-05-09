@@ -74,6 +74,21 @@ App::Snapshot* AppsContainer::usbConnectedAppSnapshot() {
 
 void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
                                 Poincare::ExamMode previousMode) {
+  // Dismiss modal and switch to Home app before altering snapshot data.
+  App* app = activeApp();
+  if (app) {
+    app->modalViewController()->dismissModal();
+    if (app->snapshot() != onBoardingAppSnapshot()) {
+      switchToBuiltinApp(homeAppSnapshot());
+      if (app->snapshot() == homeAppSnapshot()) {
+        /* Window needs to be redrawn if a warning display has been shown, it is
+         * not done when switching from Home app to Home app. */
+        window()->redraw(true);
+      }
+    }
+  }
+
+  // Apply exam mode and delete data
   Preferences::SharedPreferences()->setExamMode(targetExamMode);
 
   // Update storage records (functions, variables, python scripts)
@@ -97,18 +112,6 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
   }
 
   refreshPreferences();
-  App* app = activeApp();
-  if (app) {
-    app->modalViewController()->dismissModal();
-    if (app->snapshot() != onBoardingAppSnapshot()) {
-      switchToBuiltinApp(homeAppSnapshot());
-      if (app->snapshot() == homeAppSnapshot()) {
-        /* Window needs to be redrawn if a warning display has been shown, it is
-         * not done when switching from Home app to Home app. */
-        window()->redraw(true);
-      }
-    }
-  }
 }
 
 Shared::GlobalContext* AppsContainer::globalContext() {

@@ -23,7 +23,6 @@ class TypeParameterController
   void viewWillAppear() override;
   void viewDidDisappear() override;
   bool handleEvent(Ion::Events::Event event) override;
-  void setRecord(Ion::Storage::Record record) { m_record = record; }
 
  protected:
   void handleResponderChainEvent(ResponderChainEvent event) override;
@@ -41,7 +40,6 @@ class TypeParameterController
   }
   Shared::SequenceStore* sequenceStore();
 
-  Ion::Storage::Record m_record;
   ListController* m_listController;
 };
 

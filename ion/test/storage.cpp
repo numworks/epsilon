@@ -1,5 +1,6 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
+#include <omg/print.h>
 #include <quiz.h>
 #include <string.h>
 
@@ -748,4 +749,82 @@ QUIZ_CASE(ion_storage_record_name_verifier) {
   Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   recordNameVerifier->unregisterAllRestrictiveExtensions();
   recordNameVerifier->unregisterAllReservedNames();
+}
+
+QUIZ_CASE(ion_storage_disabled_records) {
+  // Create record1 and record2
+  quiz_assert(putRecordInSharedStorage("record1", Storage::expressionExtension,
+                                       "dataRecord1") ==
+              Storage::Record::ErrorStatus::None);
+  quiz_assert(putRecordInSharedStorage("record2", Storage::expressionExtension,
+                                       "dataRecord2") ==
+              Storage::Record::ErrorStatus::None);
+  // Assert record1 and record2 are accessible
+  quiz_assert(!getRecord("record1", Storage::expressionExtension).isNull());
+  quiz_assert(!getRecord("record2", Storage::expressionExtension).isNull());
+  // Disable records
+  Storage::FileSystem::sharedFileSystem->disableAllRecords();
+  // Assert record1 and record2 are not accessible
+  quiz_assert(getRecord("record1", Storage::expressionExtension).isNull());
+  quiz_assert(getRecord("record2", Storage::expressionExtension).isNull());
+  // Create record2 and record3
+  quiz_assert(putRecordInSharedStorage("record2", Storage::expressionExtension,
+                                       "dataRecord1") ==
+              Storage::Record::ErrorStatus::None);
+  quiz_assert(putRecordInSharedStorage("record3", Storage::expressionExtension,
+                                       "dataRecord1") ==
+              Storage::Record::ErrorStatus::None);
+  // Assert record2 and record3 are accessible
+  quiz_assert(!getRecord("record2", Storage::expressionExtension).isNull());
+  quiz_assert(!getRecord("record3", Storage::expressionExtension).isNull());
+  // Restore disabled records
+  Storage::FileSystem::sharedFileSystem
+      ->destroyEnabledRecordsAndRestoreDisabledRecords();
+  // Assert record1 and record2 are accessible
+  quiz_assert(!getRecord("record1", Storage::expressionExtension).isNull());
+  quiz_assert(!getRecord("record2", Storage::expressionExtension).isNull());
+  // Assert record3 is not accessible
+  quiz_assert(getRecord("record3", Storage::expressionExtension).isNull());
+
+  // Fill up the storage
+  char recordNameBuffer[10];
+  const char* bigData =
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+  int i = 0;
+  Storage::Record::ErrorStatus error = Storage::Record::ErrorStatus::None;
+  do {
+    OMG::Print::IntLeft(i++, recordNameBuffer, sizeof(recordNameBuffer));
+    error = putRecordInSharedStorage(recordNameBuffer,
+                                     Storage::expressionExtension, bigData);
+  } while (error == Storage::Record::ErrorStatus::None);
+  quiz_assert(error == Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
+  // Disable records
+  Storage::FileSystem::sharedFileSystem->disableAllRecords();
+  // Create a new record that would not fit previously
+  quiz_assert(putRecordInSharedStorage(recordNameBuffer,
+                                       Storage::expressionExtension, bigData) ==
+              Storage::Record::ErrorStatus::None);
+  // Restore disabled records
+  Storage::FileSystem::sharedFileSystem
+      ->destroyEnabledRecordsAndRestoreDisabledRecords();
+  // Assert previously disabled records have been erased
+  quiz_assert(
+      Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
+      Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
+          Storage::systemExtension));
 }

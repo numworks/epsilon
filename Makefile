@@ -49,3 +49,12 @@ $(call import_module,quiz,quiz)
 # Declare goals
 
 include build/rules.$(PLATFORM_TYPE).mak
+
+# Special targets
+
+.PHONY: publish-source
+publish-source: | $(OUTPUT_ROOT)/.
+	git archive --output $(OUTPUT_ROOT)/$(APP_NAME)-$(PATCH_LEVEL).tar.gz --prefix=$(APP_NAME)/ HEAD
+	echo "Source code archived in $(OUTPUT_ROOT)/$(APP_NAME)-$(PATCH_LEVEL).tar.gz"
+
+$(call document_other_target,publish-source,Archive the source code of the current branch in a tarball)

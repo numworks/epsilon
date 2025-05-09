@@ -76,11 +76,16 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
                                 Poincare::ExamMode previousMode) {
   Preferences::SharedPreferences()->setExamMode(targetExamMode);
 
-  if (targetExamMode.ruleset() != Poincare::ExamMode::Ruleset::Off) {
-    // Disable storage content (functions, variables, python scripts)
+  // Update storage records (functions, variables, python scripts)
+  if (targetExamMode == previousMode) {
+    assert(targetExamMode.ruleset() != Poincare::ExamMode::Ruleset::Off);
+    // Erase every enabled records
+    Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  } else if (targetExamMode.ruleset() != Poincare::ExamMode::Ruleset::Off) {
+    // Disable enabled records
     Ion::Storage::FileSystem::sharedFileSystem->disableAllRecords();
   } else {
-    // Restore disabled storage
+    // Erase every enabled records and restore disabled ones
     Ion::Storage::FileSystem::sharedFileSystem
         ->destroyEnabledRecordsAndRestoreDisabledRecords();
   }

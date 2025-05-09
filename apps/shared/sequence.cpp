@@ -52,10 +52,14 @@ void Sequence::setType(Type t) {
   switch (t) {
     case Type::Explicit:
       error = setExpressionContent(UserExpression());
+      setFirstInitialConditionContent(Poincare::Layout(), nullptr);
+      setSecondInitialConditionContent(Poincare::Layout(), nullptr);
       break;
     case Type::SingleRecurrence: {
       error = setExpressionContent(Poincare::SymbolHelper::BuildSequence(
           name, UserExpression::Builder(KUnknownSymbol)));
+      setFirstInitialConditionContent("1"_l, nullptr);
+      setSecondInitialConditionContent(Poincare::Layout(), nullptr);
       break;
     }
     case Type::DoubleRecurrence: {
@@ -65,14 +69,13 @@ void Sequence::setType(Type t) {
                name, UserExpression::Builder(KAdd(KUnknownSymbol, 1_e))),
            .KB = Poincare::SymbolHelper::BuildSequence(
                name, UserExpression::Builder(KUnknownSymbol))}));
+      setFirstInitialConditionContent("1"_l, nullptr);
+      setSecondInitialConditionContent("1"_l, nullptr);
       break;
     }
   }
   assert(error == Ion::Storage::Record::ErrorStatus::None);
   (void)error;  // Silence compilation warning
-  // No context needed here
-  setFirstInitialConditionContent(Poincare::Layout(), nullptr);
-  setSecondInitialConditionContent(Poincare::Layout(), nullptr);
 }
 
 void Sequence::setInitialRank(int rank) {

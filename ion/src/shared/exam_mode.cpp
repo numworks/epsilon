@@ -27,11 +27,10 @@ static void updateLed(Configuration config) {
 }
 
 Configuration get() {
-#if CUSTOM_FIRMWARE
-  assert(Authentication::clearanceLevel() ==
-         Authentication::ClearanceLevel::ThirdParty);
-  return Configuration(Ruleset::Off);
-#else
+  if (Authentication::clearanceLevel() ==
+      Authentication::ClearanceLevel::ThirdParty) {
+    return Configuration(Ruleset::Off);
+  }
   Configuration config(ExamBytes::read());
   if (config.isUninitialized() ||
       (Authentication::clearanceLevel() !=
@@ -47,21 +46,19 @@ Configuration get() {
   // Set LED the first time exam mode is retrieved
   updateLed(config);
   return config;
-#endif
 }
 
 void set(Configuration config) {
   assert(!config.isUninitialized());
-#if CUSTOM_FIRMWARE
-  assert(Authentication::clearanceLevel() ==
-         Authentication::ClearanceLevel::ThirdParty);
-  if (config.isActive()) {
-    /* The device will reset on official firmware, and pick up the
-     * configuration left in the other slot. */
-    Reset::core();
+  if (Authentication::clearanceLevel() ==
+      Authentication::ClearanceLevel::ThirdParty) {
+    if (config.isActive()) {
+      /* The device will reset on official firmware, and pick up the
+       * configuration left in the other slot. */
+      Reset::core();
+    }
+    return;
   }
-  return;
-#else
 #if ASSERTIONS
   Configuration previousConfig(ExamBytes::read());
 #endif
@@ -82,7 +79,6 @@ void set(Configuration config) {
     // Apps are visible again, it may require a clearance level update.
     Ion::ExternalApps::updateClearanceLevel(config.isActive());
   }
-#endif
 }
 
 // Class Configuration

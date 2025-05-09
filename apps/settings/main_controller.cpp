@@ -3,6 +3,7 @@
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <assert.h>
+#include <ion/authentication.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -45,6 +46,13 @@ constexpr MessageTree
         MessageTree(I18n::Message::TermsOfUse),
 #endif
 };
+
+bool hideExamModes() {
+  /* Since this would only reset to the official firmware without selected exam
+   * mode, setting an exam mode is disabled in third-party firmwares. */
+  return Ion::Authentication::clearanceLevel() ==
+         Ion::Authentication::ClearanceLevel::ThirdParty;
+}
 
 MainController::MainController(Responder* parentResponder)
     : SelectableListViewController(parentResponder),
@@ -135,9 +143,8 @@ void MainController::pushModel(const Escher::MessageTree* messageTreeModel) {
 }
 
 int MainController::numberOfRows() const {
-#if !CUSTOM_FIRMWARE
-  assert(hasExamModeCell() + hasPressToTestCell() + hasTestModeCell() == 1);
-#endif
+  assert(hideExamModes() ||
+         hasExamModeCell() + hasPressToTestCell() + hasTestModeCell() == 1);
   return model()->numberOfChildren() + hasExamModeCell() +
          hasPressToTestCell() + hasTestModeCell() - 3;
 };
@@ -330,34 +337,24 @@ ViewController* MainController::subControllerForCell(
 
 bool MainController::hasExamModeCell() const {
   // If only exam modes are available
-#if CUSTOM_FIRMWARE
-  return false;
-#else
-  return !hasTestModeCell() && m_examModeController.numberOfRows() > 0;
-#endif
+  return !hideExamModes() && !hasTestModeCell() &&
+         m_examModeController.numberOfRows() > 0;
 }
 
 bool MainController::hasPressToTestCell() const {
   // If only press to test is available
-#if CUSTOM_FIRMWARE
-  return false;
-#else
-  return m_examModeController.numberOfRows() == 0;
-#endif
+  return !hideExamModes() && m_examModeController.numberOfRows() == 0;
 }
 
 bool MainController::hasTestModeCell() const {
   // If both exam mode and press to test are available
-#if CUSTOM_FIRMWARE
-  return false;
-#else
   CountryPreferences::AvailableExamModes examMode =
       GlobalPreferences::SharedGlobalPreferences()->availableExamModes();
-  return (examMode == CountryPreferences::AvailableExamModes::All ||
+  return !hideExamModes() &&
+         (examMode == CountryPreferences::AvailableExamModes::All ||
           examMode == CountryPreferences::AvailableExamModes::AmericanAll) &&
          Preferences::SharedPreferences()->examMode().ruleset() ==
              ExamMode::Ruleset::Off;
-#endif
 }
 
 int MainController::getModelIndex(int index) const {
@@ -366,12 +363,7 @@ int MainController::getModelIndex(int index) const {
    * Then, either the exam mode or the press-to-test cell is hidden. */
   assert(index >= 0 && index < numberOfRows());
   if (index > k_indexOfExamModeCell) {
-#if CUSTOM_FIRMWARE
     index += 3 - hasExamModeCell() - hasPressToTestCell() - hasTestModeCell();
-#else
-    // 2 of the 3 exam mode cells are hidden.
-    index += 2;
-#endif
   } else if (index == k_indexOfExamModeCell) {
     if (!hasExamModeCell()) {
       // Hidden exam mode cell
@@ -379,13 +371,9 @@ int MainController::getModelIndex(int index) const {
       if (!hasPressToTestCell()) {
         // Hidden press-to-test cell
         index += 1;
-#if CUSTOM_FIRMWARE
         if (!hasTestModeCell()) {
           index += 1;
         }
-#else
-        assert(hasTestModeCell());
-#endif
       }
     }
   }

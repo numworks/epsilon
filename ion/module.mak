@@ -36,7 +36,18 @@ PRIVATE_SFLAGS_ion += \
   -DPATCH_LEVEL=\"$(PATCH_LEVEL)\" \
   -DION_KEYBOARD_RICH=$(if $(findstring epsilon,$(ION_layout_variant)),1,0)
 
-ION_LOG_EVENTS_NAME ?= $(DEBUG)
+ION_STORAGE_LOG ?= 0
+ION_LOG_EVENTS_NAME ?= 0
+ifeq ($(PLATFORM_TYPE),simulator)
+ifneq ($(DEBUG),0)
+ION_STORAGE_LOG := 1
+ION_LOG_EVENTS_NAME := 1
+endif
+endif
+
+ifneq ($(ION_STORAGE_LOG),0)
+SFLAGS_ion += -DION_STORAGE_LOG=1
+endif
 
 ifneq ($(ION_LOG_EVENTS_NAME),0)
 SFLAGS_ion += -DION_LOG_EVENTS_NAME=1

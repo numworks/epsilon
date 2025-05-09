@@ -1063,9 +1063,9 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           p.y() + Baseline(l) + radicandSize.height() - Baseline(l->child(0)) -
               k_leftRadixHeight,
           k_leftRadixWidth, k_leftRadixHeight);
-      ctx->blendRectWithMask(leftRadixFrame, style.glyphColor,
-                             (const uint8_t*)radixPixel,
-                             (KDColor*)workingBuffer);
+      ctx->fillRectWithMask(leftRadixFrame, style.glyphColor,
+                            style.backgroundColor, (const uint8_t*)radixPixel,
+                            (KDColor*)workingBuffer);
       // If the indice is higher than the root.
       if (indexSize.height() >
           Baseline(l->child(0)) + k_radixLineThickness + k_heightMargin) {
@@ -1345,9 +1345,9 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
 
         KDColor workingBuffer[SymbolWidth(s_font) * symbolHeight];
         KDRect symbolFrame(left, top + 1, SymbolWidth(s_font), symbolHeight);
-        ctx->blendRectWithMask(symbolFrame, style.glyphColor,
-                               (const uint8_t*)symbolPixel,
-                               (KDColor*)workingBuffer);
+        ctx->fillRectWithMask(
+            symbolFrame, style.glyphColor, style.backgroundColor,
+            (const uint8_t*)symbolPixel, (KDColor*)workingBuffer);
       }
       // Render the "="
       KDSize variableSize = Size(l->child(k_variableIndex));

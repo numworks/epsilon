@@ -476,10 +476,14 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
       return true;
     }
     case Type::UnitConversion:
-      assert(childDim[0].isUnit() && childDim[1].isUnit());
       /* Not using Dimension operator == because different representatives are
        * allowed. */
-      return childDim[0].unit.vector == childDim[1].unit.vector;
+      // TODO undef is allowed here but this could be refactored if we introduce
+      // UndefUnit
+      return childDim[1].isUnit() &&
+             (e->child(0)->isUndefined() ||
+              (childDim[0].isUnit() &&
+               childDim[0].unit.vector == childDim[1].unit.vector));
     case Type::DepList:
       /* For now units and booleans are allowed in depLists. For a later
        * refactoring, it would be better to have a dependency creation function

@@ -12,7 +12,9 @@
 #include "integer.h"
 #include "k_tree.h"
 #include "parametric.h"
+#include "projection.h"
 #include "rational.h"
+#include "systematic_reduction.h"
 
 namespace Poincare::Internal {
 
@@ -141,6 +143,11 @@ bool Arithmetic::BeautifyFactor(Tree* e) {
     return true;
   }
   Tree* child = e->child(0);
+  // Project and Reduce factor to cancel integer beautification
+  if (!child->isInteger()) {
+    Projection::DeepSystemProject(child);
+    SystematicReduction::DeepReduce(child);
+  }
   assert(child->isInteger());
   if (child->isZero() || child->isOne()) {
     // Factor is an extended prime factorization

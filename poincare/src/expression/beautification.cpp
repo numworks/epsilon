@@ -239,6 +239,12 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   return changed;
 }
 
+Tree* PushBeautifiedIntegerHandler(IntegerHandler num,
+                                   bool* hasBeautifiedIntegers) {
+  // TODO: Implement integer beautification if hasBeautifiedIntegers is given.
+  return num.pushOnTreeStack();
+}
+
 bool ApplyBeautificationSteps(Tree* e,
                               const ProjectionContext& projectionContext) {
   bool changed = DeepBeautifyAngleFunctions(e, projectionContext);

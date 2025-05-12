@@ -309,11 +309,11 @@ QUIZ_CASE(pcj_simplification_derivative) {
   simplifies_to("diff(sinh(x),x,x)", "cosh(x)");
   simplifies_to("diff(cosh(x),x,x)", "sinh(x)");
   simplifies_to("diff(tanh(x),x,x)",
-                "dep(-(tanh(x)^2)+1,{-(i×(sinh(x)×i))/cosh(x)})");
+                "dep(-(tanh(x)^2)+1,{-(i×sinh(x)×i)/cosh(x)})");
   simplifies_to("diff(arcosh(x),x,x)", "dep(1/√(x^2-1),{real(arcosh(x))})");
   simplifies_to("diff(arsinh(x),x,x)", "1/√(x^2+1)");
   simplifies_to("diff(artanh(x),x,x)",
-                "dep(1/(-x^2+1),{real(-i×(artanh(x)×i))})");
+                "dep(1/(-x^2+1),{real(-i×artanh(x)×i)})");
 
   simplifies_to("diff(sec(x),x,x)", "sin(x)/cos(x)^2");
   simplifies_to("diff(csc(x),x,x)", "-cos(x)/sin(x)^2");

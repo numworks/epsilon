@@ -3,8 +3,6 @@
 
 #include <poincare/src/memory/tree_ref.h>
 
-#include "projection.h"
-
 namespace Poincare::Internal {
 
 class Division {
@@ -15,11 +13,13 @@ class Division {
                                                           int* numeratorDegree);
 
  private:
-  // Get numerator, denominator, outerNumerator, and opposite (if needed)
+  /* Get numerator, denominator, outerNumerator, and opposite (if needed). If
+   * hasBeautifiedIntegers is given, integers will be beautified, and it will be
+   * set to true if one changed. */
   static void GetDivisionComponents(const Tree* e, TreeRef& numerator,
                                     TreeRef& denominator,
-                                    TreeRef& outerNumerator,
-                                    bool* needOpposite);
+                                    TreeRef& outerNumerator, bool* needOpposite,
+                                    bool* hasBeautifiedIntegers = nullptr);
 };
 
 }  // namespace Poincare::Internal

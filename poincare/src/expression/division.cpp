@@ -3,6 +3,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree.h>
 
+#include "beautification.h"
 #include "degree.h"
 #include "infinity.h"
 #include "k_tree.h"
@@ -48,7 +49,8 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* e) {
 void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
                                      TreeRef& denominator,
                                      TreeRef& outerNumerator,
-                                     bool* needOpposite) {
+                                     bool* needOpposite,
+                                     bool* hasBeautifiedIntegers) {
   assert(needOpposite);
   assert(!numerator.isUninitialized() && numerator->isMult());
   assert(!denominator.isUninitialized() && denominator->isMult());
@@ -80,14 +82,17 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
         } else if (rNum.sign() == NonStrictSign::Negative) {
           *needOpposite = !*needOpposite;
           rNum.setSign(NonStrictSign::Positive);
-          factorsNumerator = rNum.pushOnTreeStack();
+          factorsNumerator = Beautification::PushBeautifiedIntegerHandler(
+              rNum, hasBeautifiedIntegers);
         } else if (!rNum.isOne()) {
-          factorsNumerator = rNum.pushOnTreeStack();
+          factorsNumerator = Beautification::PushBeautifiedIntegerHandler(
+              rNum, hasBeautifiedIntegers);
         }
         IntegerHandler rDen = Rational::Denominator(factor);
         if (!rDen.isOne()) {
           // TODO_PCJ: if rDen is overflow, return -inf
-          factorsDenominator = rDen.pushOnTreeStack();
+          factorsDenominator = Beautification::PushBeautifiedIntegerHandler(
+              rDen, hasBeautifiedIntegers);
         }
       }
     } else if (factor->isPow() || factor->isPowReal()) {
@@ -115,13 +120,13 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
       factorsNumerator = factor->cloneTree();
     }
     if (factorsDenominator) {
-      NAry::AddChild(denominator, factorsDenominator);
+      NAry::AddOrMergeChild(denominator, factorsDenominator);
     }
     if (factorsNumerator) {
-      NAry::AddChild(numerator, factorsNumerator);
+      NAry::AddOrMergeChild(numerator, factorsNumerator);
     }
     if (factorsOuterNumerator) {
-      NAry::AddChild(outerNumerator, factorsOuterNumerator);
+      NAry::AddOrMergeChild(outerNumerator, factorsOuterNumerator);
     }
   }
   NAry::SquashIfPossible(numerator);
@@ -152,9 +157,11 @@ bool Division::BeautifyIntoDivision(Tree* e) {
   TreeRef den = SharedTreeStack->pushMult(0);
   TreeRef outNum = SharedTreeStack->pushMult(0);
   bool needOpposite = false;
-  GetDivisionComponents(e, num, den, outNum, &needOpposite);
+  bool hasBeautifiedIntegers = false;
+  GetDivisionComponents(e, num, den, outNum, &needOpposite,
+                        &hasBeautifiedIntegers);
   assert(num->nextTree() == den && den->nextTree() == outNum);
-  if (den->isOne() && !needOpposite) {
+  if (den->isOne() && !needOpposite && !hasBeautifiedIntegers) {
     // e is already num*outNum
     num->removeTree();
     den->removeTree();
@@ -178,7 +185,7 @@ bool Division::BeautifyIntoDivision(Tree* e) {
     e->moveTreeOverTree(num);
   } else {
     den->removeTree();
-    assert(needOpposite);
+    assert(needOpposite || hasBeautifiedIntegers);
     bool outNumStartsWithUnit =
         outNum->isUnitOrPhysicalConstant() ||
         (outNum->isMult() && outNum->child(0)->isUnitOrPhysicalConstant());

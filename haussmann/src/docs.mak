@@ -35,6 +35,15 @@ $(call document_extension,modules,List the goal's modules and their flavors)
 
 $(call document_other_target,help)
 
+# Archive the source code
+
+.PHONY: publish-source
+publish-source: | $(OUTPUT_ROOT)/.
+	git archive --output $(OUTPUT_ROOT)/$(APP_NAME)-$(PATCH_LEVEL).tar.gz --prefix=$(APP_NAME)/ HEAD
+	echo "Source code archived in $(OUTPUT_ROOT)/$(APP_NAME)-$(PATCH_LEVEL).tar.gz"
+
+$(call document_other_target,publish-source,Archive the source code of the current branch in a tarball. Edit .gitattributes to exclude files.)
+
 # Helpers
 
 define _extract_tastes

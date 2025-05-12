@@ -314,8 +314,11 @@ bool ShallowBeautifyPowerOfTangent(Tree* e, void* context) {
       PatternMatching::MatchReplace(
           e, KDiv(KMult(KA_s, KPow(KSinH(KB), KC), KD_s), KPow(KCosH(KB), KC)),
           KMult(KA_s, KPow(KTanH(KB), KC), KD_s));
-  // Check that the resulting multiplication is correctly sorted
-  assert(!e->isMult() || !NAry::Sort(e, Order::OrderType::Beautification));
+  /* Even if e was sorted before, nothing guarantees it is still sorted after
+   * this operation, so we sort again */
+  if (matchResult && e->isMult()) {
+    NAry::Sort(e, Order::OrderType::Beautification);
+  }
   return matchResult;
 }
 

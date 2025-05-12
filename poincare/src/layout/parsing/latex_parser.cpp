@@ -517,7 +517,8 @@ Tree* LatexToLayout(const char* latexString) {
  *   PtPermute (not handled by serialization ?)
  * */
 
-char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
+char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer,
+                                  const char* end,
                                   bool withThousandsSeparators) {
   for (const Tree* child : rack->children()) {
     if (child->isOperatorSeparatorLayout() || child->isUnitSeparatorLayout() ||
@@ -533,10 +534,10 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer, char* end,
     /* We don't want to capture withThousandsSeparators in the lambda
      * (generates more code), so we put the parameter manually. */
     RackSerializer serializer = withThousandsSeparators
-      ? [](const Rack* rack, char* buffer, char* end) {
+      ? [](const Rack* rack, char* buffer, const char* end) {
           return LayoutToLatexWithExceptions(rack, buffer, end, true);
         }
-      : [](const Rack* rack, char* buffer, char* end) {
+      : [](const Rack* rack, char* buffer,  const char* end) {
           return LayoutToLatexWithExceptions(rack, buffer, end, false);
         };
 

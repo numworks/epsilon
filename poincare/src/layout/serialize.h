@@ -5,14 +5,15 @@
 
 namespace Poincare::Internal {
 
-char* SerializeRack(const Rack* rack, char* buffer, char* end);
+char* SerializeRack(const Rack* rack, char* buffer, const char* end);
 
-using RackSerializer = char* (*)(const Rack* rack, char* buffer, char* end);
-char* SerializeLayout(const Layout* layout, char* buffer, char* end,
+using RackSerializer = char* (*)(const Rack* rack, char* buffer,
+                                 const char* end);
+char* SerializeLayout(const Layout* layout, char* buffer, const char* end,
                       bool isSingleRackChild,
                       RackSerializer serializer = &SerializeRack);
 
-inline size_t Serialize(const Tree* l, char* buffer, char* end) {
+inline size_t Serialize(const Tree* l, char* buffer, const char* end) {
   const char* lastCharacter =
       l->isRackLayout() ? SerializeRack(Rack::From(l), buffer, end)
                         : SerializeLayout(Layout::From(l), buffer, end, true);

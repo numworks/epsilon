@@ -19,7 +19,7 @@ namespace Poincare::Internal {
  * to use operator priority to minimize parentheses and get the correct
  * multiplication symbol. */
 
-char* append(const char* text, char* buffer, char* end) {
+char* append(const char* text, char* buffer, const char* end) {
   size_t len = std::min<size_t>(strlen(text), end - 1 - buffer);
   memcpy(buffer, text, len);
   return buffer + len;
@@ -53,7 +53,7 @@ Rack* rackForSerialization(const Rack* rack) {
   return static_cast<Rack*>(newRack);
 }
 
-char* SerializeRack(const Rack* rack, char* buffer, char* end) {
+char* SerializeRack(const Rack* rack, char* buffer, const char* end) {
   if (rack->numberOfChildren() == 0) {
     /* Text fields serializes layouts to insert them and we need an empty
      * codepoint for the cursor to be placed correctly in the text field.
@@ -66,9 +66,7 @@ char* SerializeRack(const Rack* rack, char* buffer, char* end) {
     buffer = SerializeLayout(Layout::From(child), buffer, end,
                              rack->numberOfChildren() == 1);
     if (buffer == end) {
-      newRack->removeTree();
-      assert(*end == '\0');
-      return end;
+      break;
     }
   }
   newRack->removeTree();
@@ -88,7 +86,7 @@ bool mayNeedParentheses(const Rack* rack) {
   return !tokenizer.popToken().isEndOfStream();
 }
 
-char* serializeWithParentheses(const Rack* rack, char* buffer, char* end,
+char* serializeWithParentheses(const Rack* rack, char* buffer, const char* end,
                                RackSerializer serializer,
                                bool forceParentheses = false) {
   bool addParentheses = forceParentheses || mayNeedParentheses(rack);
@@ -102,7 +100,7 @@ char* serializeWithParentheses(const Rack* rack, char* buffer, char* end,
   return buffer;
 }
 
-char* SerializeLayout(const Layout* layout, char* buffer, char* end,
+char* SerializeLayout(const Layout* layout, char* buffer, const char* end,
                       bool isSingleRackChild, RackSerializer serializer) {
   switch (layout->layoutType()) {
     case LayoutType::CombinedCodePoints:

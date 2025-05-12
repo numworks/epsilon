@@ -13,11 +13,11 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
                       RackSerializer serializer = &SerializeRack);
 
 inline char* Serialize(const Tree* l, char* buffer, char* end) {
-  char* used = l->isRackLayout()
-                   ? SerializeRack(Rack::From(l), buffer, end)
-                   : SerializeLayout(Layout::From(l), buffer, end, true);
-  *used = 0;
-  return used;
+  char* lastCharacter =
+      l->isRackLayout() ? SerializeRack(Rack::From(l), buffer, end)
+                        : SerializeLayout(Layout::From(l), buffer, end, true);
+  assert(*lastCharacter == '\0');
+  return lastCharacter;
 }
 
 }  // namespace Poincare::Internal

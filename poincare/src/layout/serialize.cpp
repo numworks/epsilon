@@ -59,6 +59,7 @@ char* SerializeRack(const Rack* rack, char* buffer, char* end) {
      * codepoint for the cursor to be placed correctly in the text field.
      * TODO: should this behavior be behind a flag ? */
     buffer = append("\x11", buffer, end);
+    *buffer = '\0';
   }
   Tree* newRack = rackForSerialization(rack);
   for (const Tree* child : newRack->children()) {
@@ -66,10 +67,12 @@ char* SerializeRack(const Rack* rack, char* buffer, char* end) {
                              rack->numberOfChildren() == 1);
     if (buffer == end) {
       newRack->removeTree();
+      assert(*end == '\0');
       return end;
     }
   }
   newRack->removeTree();
+  assert(*buffer == '\0');
   return buffer;
 }
 
@@ -242,6 +245,7 @@ char* SerializeLayout(const Layout* layout, char* buffer, char* end,
       buffer = append(")", buffer, end);
     }
   }
+  *buffer = '\0';
   return buffer;
 }
 

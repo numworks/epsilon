@@ -46,7 +46,7 @@ KDCoordinate LayoutObject::computeBaseline(
 size_t LayoutObject::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {
-  return Internal::Serialize(tree(), buffer, buffer + bufferSize) - buffer;
+  return Internal::Serialize(tree(), buffer, buffer + bufferSize);
 }
 
 bool LayoutObject::isIdenticalTo(Layout l, bool makeEditable) const {

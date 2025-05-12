@@ -155,7 +155,7 @@ size_t ExpressionObject::serialize(char* buffer, size_t bufferSize,
                                    int numberOfSignificantDigits) const {
   Tree* layout = Layouter::LayoutExpression(tree()->cloneTree(), true,
                                             numberOfSignificantDigits);
-  size_t size = Serialize(layout, buffer, buffer + bufferSize) - buffer;
+  size_t size = Serialize(layout, buffer, buffer + bufferSize);
   layout->removeTree();
   return size;
 }

@@ -125,7 +125,7 @@ class Layout final : public PoolHandle {
   Layout makeEditable() { return cloneWithoutMargins(); }
 
   bool isEmpty() const;
-  // Return the number of longest of the biggest integer displayed.
+  // Return the number of digits of the longest integer displayed.
   int longestIntegerSize() const;
 
   // Render

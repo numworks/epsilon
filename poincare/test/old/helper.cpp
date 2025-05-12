@@ -114,7 +114,7 @@ void assert_parsed_expression_process_to(
   Tree *m = process(e, &projCtx);
   Tree *l =
       Internal::Layouter::LayoutExpression(m, true, numberOfSignificantDigits);
-  *Internal::Serialize(l, buffer, buffer + bufferSize) = 0;
+  Internal::Serialize(l, buffer, buffer + bufferSize);
   copy_without_system_chars(buffer, buffer);
   l->removeTree();
   bool test = strcmp(buffer, result) == 0;
@@ -317,7 +317,7 @@ void assert_expression_serializes_and_parses_to(
   char buffer[bufferSize];
   Tree *layout =
       Internal::Layouter::LayoutExpression(expression->cloneTree(), true);
-  *Internal::Serialize(layout, buffer, buffer + bufferSize) = 0;
+  Internal::Serialize(layout, buffer, buffer + bufferSize);
   layout->removeTree();
   assert_parsed_expression_is(buffer, result);
 }
@@ -360,7 +360,7 @@ void assert_layout_serializes_to(const Tree *layout,
   char buffer[bufferSize];
   char result[bufferSize];
   copy_without_system_chars(result, serialization);
-  *Serialize(layout, buffer, buffer + bufferSize) = 0;
+  Serialize(layout, buffer, buffer + bufferSize);
   copy_without_system_chars(buffer, buffer);
   bool success = strcmp(buffer, result) == 0;
 #if POINCARE_TREE_LOG

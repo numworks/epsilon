@@ -193,7 +193,7 @@ void serialize_expression(const Tree* expression, char* buffer,
                           size_t bufferSize) {
   Tree* layout = Layouter::LayoutExpression(expression->cloneTree(), true);
   quiz_assert(layout);
-  *Serialize(layout, buffer, buffer + bufferSize) = 0;
+  Serialize(layout, buffer, buffer + bufferSize);
   remove_system_codepoints(buffer);
   layout->removeTree();
 }

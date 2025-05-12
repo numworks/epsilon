@@ -173,6 +173,7 @@ bool Projection::IsForbidden(const Tree* e) {
   switch (e->type()) {
     case Type::PhysicalConstant:
     case Type::Unit:
+    case Type::UnitConversion:
       return examMode.forbidUnits();
     case Type::LogBase:
       return examMode.forbidBasedLogarithm();

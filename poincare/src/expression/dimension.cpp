@@ -478,8 +478,8 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
     case Type::UnitConversion:
       /* Not using Dimension operator == because different representatives are
        * allowed. */
-      // TODO undef is allowed here but this could be refactored if we introduce
-      // UndefUnit
+      /* TODO: undef is allowed here but this could be refactored if we
+       * introduce UndefUnit. */
       return childDim[1].isUnit() &&
              (e->child(0)->isUndefined() ||
               (childDim[0].isUnit() &&

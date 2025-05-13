@@ -295,7 +295,7 @@ endif
 
 POINCARE_TREE_LOG ?= 0
 ifeq ($(PLATFORM_TYPE),simulator)
-ifneq ($(DEBUG),0)
+ifeq ($(DEBUG),1)
 POINCARE_TREE_LOG := 1
 endif
 endif

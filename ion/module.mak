@@ -39,7 +39,7 @@ PRIVATE_SFLAGS_ion += \
 ION_STORAGE_LOG ?= 0
 ION_LOG_EVENTS_NAME ?= 0
 ifeq ($(PLATFORM_TYPE),simulator)
-ifneq ($(DEBUG),0)
+ifeq ($(DEBUG),1)
 ION_STORAGE_LOG := 1
 ION_LOG_EVENTS_NAME := 1
 endif

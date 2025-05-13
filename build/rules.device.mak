@@ -12,7 +12,7 @@ $(call create_goal,bootloader, \
 
 $(OUTPUT_DIRECTORY)/bootloader/%.elf: SFLAGS += -fstack-protector-strong
 
-ifneq ($(DEBUG),0)
+ifeq ($(DEBUG),1)
 ifneq ($(PLATFORM),n0120)
 # Bootloader without optimization is larger than the 64k of the STM32F7 internal
 # flash
@@ -62,7 +62,7 @@ $(call create_goal,bench, \
 
 $(OUTPUT_DIRECTORY)/kernel/%.elf: SFLAGS += -fstack-protector-strong
 
-ifneq ($(DEBUG),0)
+ifeq ($(DEBUG),1)
 # Kernel without optimization is too large to fit in its 64k section.
 $(OUTPUT_DIRECTORY)/kernel/%.elf: SFLAGS += -Os
 

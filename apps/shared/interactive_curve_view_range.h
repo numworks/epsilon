@@ -9,6 +9,7 @@
 #include "grid_type_controller.h"
 #include "interactive_curve_view_range_delegate.h"
 #include "memoized_curve_view_range.h"
+#include "poincare/serialized_expression.h"
 
 namespace Shared {
 
@@ -16,6 +17,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
   using GridType = GridTypeController::GridType;
+  using GridUnitType = Poincare::SerializedExpression;
   template <typename T>
   using AxisInformation = MemoizedCurveViewRange::AxisInformation<T>;
 
@@ -29,7 +31,6 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
         m_offscreenYAxis(0.f),
         m_gridType(GridType::Cartesian),
         m_zoomAuto{true, true},
-        m_userGridUnit{NAN, NAN},
         m_zoomNormalize(false) {}
 
   constexpr static float NormalYXRatio() {
@@ -54,17 +55,19 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
     return gridUnitAuto(OMG::Axis::Horizontal) &&
            gridUnitAuto(OMG::Axis::Vertical);
   }
-  void setGridUnitAuto() { privateSetUserGridUnit(NAN, NAN); }
+  void setGridUnitAuto() { privateSetUserGridUnit({}, {}); }
   bool gridUnitAuto(OMG::Axis axis) const {
-    return std::isnan(m_userGridUnit(axis));
+    return std::isnan(float(m_userGridUnit(axis)));
   }
-  AxisInformation<float> userGridUnit() const { return m_userGridUnit; }
-  void setUserGridUnit(AxisInformation<float> userGridUnit) {
+  AxisInformation<GridUnitType> userGridUnit() const { return m_userGridUnit; }
+  void setUserGridUnit(AxisInformation<GridUnitType> userGridUnit) {
     privateSetUserGridUnit(userGridUnit.x, userGridUnit.y);
   }
-  float userGridUnit(OMG::Axis axis) const { return m_userGridUnit(axis); }
-  void setUserGridUnit(OMG::Axis axis, float v) {
-    AxisInformation<float> newGridUnit = m_userGridUnit;
+  GridUnitType userGridUnit(OMG::Axis axis) const {
+    return m_userGridUnit(axis);
+  }
+  void setUserGridUnit(OMG::Axis axis, GridUnitType v) {
+    AxisInformation<GridUnitType> newGridUnit = m_userGridUnit;
     newGridUnit.set(axis, v);
     privateSetUserGridUnit(newGridUnit.x, newGridUnit.y);
   }
@@ -139,7 +142,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  private:
   void privateSetZoomAuto(bool xAuto, bool yAuto);
   void privateSetGridUnitAuto(bool xAuto, bool yAuto);
-  void privateSetUserGridUnit(float xValue, float yValue);
+  void privateSetUserGridUnit(GridUnitType xValue, GridUnitType yValue);
   void privateComputeRanges(bool computeX, bool computeY);
   float computeGridUnitFromUserParameter(OMG::Axis axis) const;
 
@@ -152,7 +155,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
   GridType m_gridType;
   AxisInformation<bool> m_zoomAuto;
-  AxisInformation<float> m_userGridUnit;
+  AxisInformation<GridUnitType> m_userGridUnit;
   bool m_zoomNormalize;
 };
 

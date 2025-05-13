@@ -328,8 +328,9 @@ void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
   }
 }
 
-void InteractiveCurveViewRange::privateSetUserGridUnit(float xValue,
-                                                       float yValue) {
+void InteractiveCurveViewRange::privateSetUserGridUnit(
+    InteractiveCurveViewRange::GridUnitType xValue,
+    InteractiveCurveViewRange::GridUnitType yValue) {
   bool oldAuto = zoomAndGridUnitAuto();
   m_userGridUnit.x = xValue;
   m_userGridUnit.y = yValue;
@@ -423,25 +424,25 @@ float InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     range = yMax() - yMin() + offscreenYAxis();
   }
   assert(range > 0.0f && std::isfinite(range));
-  float userGridUnit = m_userGridUnit(axis);
-  assert(userGridUnit > 0.0f);
-  float numberOfUnits = range / userGridUnit;  // in float for now
+  float approximateUserGridUnit = float(m_userGridUnit(axis));
+  assert(approximateUserGridUnit > 0.0f);
+  float numberOfUnits = range / approximateUserGridUnit;  // in float for now
   if (minNumberOfUnits <= numberOfUnits && numberOfUnits <= maxNumberOfUnits) {
     // Case 1
-    return userGridUnit;
+    return approximateUserGridUnit;
   } else if (numberOfUnits < minNumberOfUnits) {
     // Case 2
     assert(std::ceil(minNumberOfUnits / numberOfUnits) <=
            std::floor(maxNumberOfUnits / numberOfUnits));
     int k = std::ceil(minNumberOfUnits / numberOfUnits);
-    return userGridUnit / k;
+    return approximateUserGridUnit / k;
   }
   assert(numberOfUnits > maxNumberOfUnits);
   // Case 3
   assert(std::ceil(numberOfUnits / maxNumberOfUnits) <=
          std::floor(numberOfUnits / minNumberOfUnits));
   int k = std::ceil(numberOfUnits / maxNumberOfUnits);
-  return userGridUnit * k;
+  return approximateUserGridUnit * k;
 
   // clang-format off
   /* Proof of the algorithm:

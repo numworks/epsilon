@@ -8,8 +8,11 @@
 namespace Shared {
 
 class SingleInteractiveCurveViewRangeController
-    : public SingleRangeControllerFloatPrecision {
+    : public SingleRangeControllerExactExpressions {
  public:
+  using ParameterType = SingleRangeControllerExactExpressions::ParameterType;
+  using FloatType = SingleRangeControllerExactExpressions::FloatType;
+
   SingleInteractiveCurveViewRangeController(
       Escher::Responder* parentResponder,
       InteractiveCurveViewRange* interactiveCurveViewRange,
@@ -21,7 +24,7 @@ class SingleInteractiveCurveViewRangeController
                                : I18n::Message::ValuesOfY);
   }
   int numberOfRows() const override {
-    return SingleRangeControllerFloatPrecision::numberOfRows() + 1;
+    return SingleRangeControllerExactExpressions::numberOfRows() + 1;
   }
   int typeAtRow(int row) const override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
@@ -47,22 +50,22 @@ class SingleInteractiveCurveViewRangeController
   float limit() const override { return InteractiveCurveViewRange::k_maxFloat; }
   void confirmParameters() override;
   void pop(bool onConfirmation) override { stackController()->pop(); }
-  bool setParameterAtIndex(int parameterIndex, float f) override;
+  bool setParameterAtIndex(int parameterIndex, ParameterType value) override;
   int reusableParameterCellCount(int type) const override;
   Escher::HighlightCell* reusableParameterCell(int index, int type) override;
   Escher::TextField* textFieldOfCellAtIndex(Escher::HighlightCell* cell,
                                             int index) override;
-  float parameterAtIndex(int index) override;
-  bool hasUndefinedValue(const char* text, float floatValue,
+  ParameterType parameterAtIndex(int index) override;
+  bool hasUndefinedValue(const char* text, ParameterType value,
                          int row) const override;
-  bool gridUnitIsAuto() const { return std::isnan(m_gridUnitParam); }
+  bool gridUnitIsAuto() const { return std::isnan(float(m_gridUnitParam)); }
 
   InteractiveCurveViewRange* m_range;
   // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.
-  Poincare::Range1D<float> m_secondaryRangeParam;
+  Poincare::Range1D<FloatType> m_secondaryRangeParam;
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_gridUnitCell;
-  float m_gridUnitParam;
+  ParameterType m_gridUnitParam;
 
   OMG::Axis m_axis;
 };

@@ -19,24 +19,27 @@ OMG::GlobalBox<FileSystem> FileSystem::sharedFileSystem;
 
 #if ION_STORAGE_LOG
 void FileSystem::log() {
-  std::cout << "FileSystem: size=" << (endBuffer() - m_buffer) << "/"
-            << m_accessibleSize << "\n";
+  // Size taken + available space + disabled records size = k_totalSize
+  size_t sizeTaken = endBuffer() - m_buffer;
+  std::cout << "FileSystem: SizeTaken + availableSpace + disabledRecordsSize = "
+               "k_totalSize => "
+            << sizeTaken << " + " << m_accessibleSize - sizeTaken << " + "
+            << k_totalSize - m_accessibleSize << " = " << k_totalSize << "\n";
   for (char* p : *this) {
-    std::cout << "\t Record at " << (void*)p
-              << " : size=" << sizeOfRecordStarting(p)
-              << " name=" << nameOfRecordStarting(p).baseName;
-    Record r(nameOfRecordStarting(p));
-    std::cout << " contentSize=" << r.value().size << "\n";
+    std::cout << "\t";
+    Record(nameOfRecordStarting(p)).log(false, false);
+    std::cout << " totalSize=" << sizeOfRecordStarting(p) << "\n";
   }
+  // Display disabled records content. Record constructor cannot be used.
   if (m_accessibleSize != k_totalSize) {
-    std::cout << "Hidden records: size=" << k_totalSize - m_accessibleSize
+    std::cout << "Disabled records: size=" << k_totalSize - m_accessibleSize
               << "\n";
     for (char* p = m_buffer + m_accessibleSize; p < m_buffer + k_totalSize;
          p += sizeOfRecordStarting(p)) {
       assert(sizeOfRecordStarting(p) > 0);
-      std::cout << "\t Record at " << (void*)p
-                << " : size=" << sizeOfRecordStarting(p)
-                << " name=" << nameOfRecordStarting(p).baseName << "\n";
+      std::cout << "\tDisabled Record " << nameOfRecordStarting(p).baseName
+                << ": address=" << (void*)p
+                << " totalSize=" << sizeOfRecordStarting(p) << "\n";
     }
   }
 }

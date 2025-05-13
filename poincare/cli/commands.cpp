@@ -58,10 +58,21 @@ void logCommand(const std::vector<std::string>& args) {
   e.tree()->log();
 }
 
+void helpCommand(const std::vector<std::string>& args) {
+  std::cout << "Available commands (you can use a prefix if unique)\n";
+  std::cout << "  approximate     -- Approximate an expression\n";
+  std::cout << "  expand          -- Expand an expression using DeepExpand\n";
+  std::cout << "  help            -- List available commands\n";
+  std::cout << "  log             -- Display a tree\n";
+  std::cout
+      << "  simplify        -- Simplify an expression with a default context\n";
+}
+
 // Command map
 std::map<std::string, void (*)(const std::vector<std::string>&)> commands = {
     {"approximate", approximateCommand},
     {"expand", expandCommand},
+    {"help", helpCommand},
     {"simplify", simplifyCommand},
     {"log", logCommand},
 };

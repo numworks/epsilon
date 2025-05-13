@@ -41,8 +41,10 @@ class FileSystem {
    * not possible, or it wouldn't be enough. */
   bool freeSpaceFor(int size);
   size_t availableSize();
+  // Put all the storage available space at the end of the record.
   size_t putAvailableSpaceAtEndOfRecord(Record r);
-  void getAvailableSpaceFromEndOfRecord(Record r, size_t recordAvailableSpace);
+  // Remove data from the end of the record
+  void removeDataFromEndOfRecord(Record r, size_t dataSize);
   uint32_t checksum();
 
   // Storage delegate

@@ -79,15 +79,13 @@ size_t FileSystem::putAvailableSpaceAtEndOfRecord(Record r) {
   return newRecordSize;
 }
 
-void FileSystem::getAvailableSpaceFromEndOfRecord(Record r,
-                                                  size_t recordAvailableSpace) {
+void FileSystem::removeDataFromEndOfRecord(Record r, size_t dataSize) {
   char* p = pointerOfRecord(r);
   size_t previousRecordSize = sizeOfRecordStarting(p);
   char* nextRecord = p + previousRecordSize;
-  memmove(nextRecord - recordAvailableSpace, nextRecord,
+  memmove(nextRecord - dataSize, nextRecord,
           m_buffer + m_storageSize - nextRecord);
-  overrideSizeAtPosition(
-      p, (record_size_t)(previousRecordSize - recordAvailableSpace));
+  overrideSizeAtPosition(p, (record_size_t)(previousRecordSize - dataSize));
 }
 
 uint32_t FileSystem::checksum() {

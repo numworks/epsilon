@@ -557,7 +557,7 @@ aaaaaa)";
       Storage::FileSystem::sharedFileSystem->checksum();
   Storage::FileSystem::sharedFileSystem->putAvailableSpaceAtEndOfRecord(
       retrievedRecord1);
-  Storage::FileSystem::sharedFileSystem->getAvailableSpaceFromEndOfRecord(
+  Storage::FileSystem::sharedFileSystem->removeDataFromEndOfRecord(
       retrievedRecord1, availableSpace);
   quiz_assert(Storage::FileSystem::sharedFileSystem->availableSize() ==
               availableSpace);

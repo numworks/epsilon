@@ -193,6 +193,10 @@ constexpr static Builtin s_builtins[] = {
 constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
     {Type::Abs, "abs", LayoutType::Abs},
     {Type::Binomial, "binomial", LayoutType::Binomial},
+#if POINCARE_PT_COMBINATORICS_LAYOUTS
+    {Type::Binomial, "binomial", LayoutType::PtBinomial},
+    {Type::Permute, "permute", LayoutType::PtPermute},
+#endif
 #if POINCARE_SUM_AND_PRODUCT
     {Type::Sum, "sum", LayoutType::Sum},
     {Type::Product, "product", LayoutType::Product},

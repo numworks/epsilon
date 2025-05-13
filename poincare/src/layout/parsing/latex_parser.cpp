@@ -513,8 +513,8 @@ Tree* LatexToLayout(const char* latexString) {
  *   Point2D
  *   Matrix
  *   Piecewise
- *   PtBinomial (not handled by serialization ?)
- *   PtPermute (not handled by serialization ?)
+ *   PtBinomial
+ *   PtPermute
  * */
 
 char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer,

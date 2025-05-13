@@ -180,7 +180,7 @@ class Sequence : public Function {
 
    private:
     static_assert((1 << 8 * sizeof(uint16_t)) >=
-                      Ion::Storage::FileSystem::k_storageSize,
+                      Ion::Storage::FileSystem::k_totalSize,
                   "Potential overflows of Sequence initial condition sizes");
     Type m_type;
     uint8_t m_initialRank;

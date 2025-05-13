@@ -27,9 +27,8 @@ class FileSystem {
  public:
   typedef uint16_t record_size_t;
 
-  constexpr static size_t k_storageSize = 42 * 1024;
-  static_assert(UINT16_MAX >= k_storageSize - 1,
-                "record_size_t not big enough");
+  constexpr static size_t k_totalSize = 42 * 1024;
+  static_assert(UINT16_MAX >= k_totalSize - 1, "record_size_t not big enough");
 
   static OMG::GlobalBox<FileSystem> sharedFileSystem;
 
@@ -231,11 +230,11 @@ class FileSystem {
       const char** extensionResult);
 
   uint32_t m_magicHeader;
-  char m_buffer[k_storageSize];
+  char m_buffer[k_totalSize];
   uint32_t m_magicFooter;
   StorageDelegate* m_delegate;
   RecordNameVerifier m_recordNameVerifier;
-  size_t m_storageSize;
+  size_t m_accessibleSize;
   mutable Record m_lastRecordRetrieved;
   mutable char* m_lastRecordRetrievedPointer;
 };

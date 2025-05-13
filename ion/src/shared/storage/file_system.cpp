@@ -20,7 +20,7 @@ OMG::GlobalBox<FileSystem> FileSystem::sharedFileSystem;
 #if ION_STORAGE_LOG
 void FileSystem::log() {
   std::cout << "FileSystem: size=" << (endBuffer() - m_buffer) << "/"
-            << m_storageSize << "\n";
+            << m_accessibleSize << "\n";
   for (char* p : *this) {
     std::cout << "\t Record at " << (void*)p
               << " : size=" << sizeOfRecordStarting(p)
@@ -28,10 +28,10 @@ void FileSystem::log() {
     Record r(nameOfRecordStarting(p));
     std::cout << " contentSize=" << r.value().size << "\n";
   }
-  if (m_storageSize != k_storageSize) {
-    std::cout << "Hidden records: size=" << k_storageSize - m_storageSize
+  if (m_accessibleSize != k_totalSize) {
+    std::cout << "Hidden records: size=" << k_totalSize - m_accessibleSize
               << "\n";
-    for (char* p = m_buffer + m_storageSize; p < m_buffer + k_storageSize;
+    for (char* p = m_buffer + m_accessibleSize; p < m_buffer + k_totalSize;
          p += sizeOfRecordStarting(p)) {
       assert(sizeOfRecordStarting(p) > 0);
       std::cout << "\t Record at " << (void*)p
@@ -51,11 +51,11 @@ bool FileSystem::freeSpaceFor(int size) {
     return true;
   }
   // Only delete hidden records if necessary.
-  if (size - thisAvailableSize > k_storageSize - m_storageSize) {
+  if (size - thisAvailableSize > k_totalSize - m_accessibleSize) {
     return false;
   }
   // Delete hidden records.
-  m_storageSize = k_storageSize;
+  m_accessibleSize = k_totalSize;
   assert(availableSize() >= size);
   return true;
 }
@@ -63,8 +63,8 @@ bool FileSystem::freeSpaceFor(int size) {
 size_t FileSystem::availableSize() {
   /* TODO maybe do: availableSize(char ** endBuffer) to get the endBuffer if it
    * is needed after calling availableSize */
-  assert(m_storageSize >= (endBuffer() - m_buffer) + sizeof(record_size_t));
-  return m_storageSize - (endBuffer() - m_buffer) - sizeof(record_size_t);
+  assert(m_accessibleSize >= (endBuffer() - m_buffer) + sizeof(record_size_t));
+  return m_accessibleSize - (endBuffer() - m_buffer) - sizeof(record_size_t);
 }
 
 size_t FileSystem::putAvailableSpaceAtEndOfRecord(Record r) {
@@ -73,7 +73,7 @@ size_t FileSystem::putAvailableSpaceAtEndOfRecord(Record r) {
   size_t availableStorageSize = availableSize();
   char* nextRecord = p + previousRecordSize;
   memmove(nextRecord + availableStorageSize, nextRecord,
-          (m_buffer + m_storageSize - availableStorageSize) - nextRecord);
+          (m_buffer + m_accessibleSize - availableStorageSize) - nextRecord);
   size_t newRecordSize = previousRecordSize + availableStorageSize;
   overrideSizeAtPosition(p, (record_size_t)newRecordSize);
   return newRecordSize;
@@ -84,7 +84,7 @@ void FileSystem::removeDataFromEndOfRecord(Record r, size_t dataSize) {
   size_t previousRecordSize = sizeOfRecordStarting(p);
   char* nextRecord = p + previousRecordSize;
   memmove(nextRecord - dataSize, nextRecord,
-          m_buffer + m_storageSize - nextRecord);
+          m_buffer + m_accessibleSize - nextRecord);
   overrideSizeAtPosition(p, (record_size_t)(previousRecordSize - dataSize));
 }
 
@@ -320,7 +320,7 @@ void FileSystem::destroyRecordsWithExtension(const char* extension) {
 }
 
 void FileSystem::disableAllRecords() {
-  assert(m_storageSize == k_storageSize);
+  assert(m_accessibleSize == k_totalSize);
   // Find the first non sys record
   char* firstNonSysRecord = nullptr;
   [[maybe_unused]] int numberOfSysRecords = 0;
@@ -341,10 +341,10 @@ void FileSystem::disableAllRecords() {
   assert(numberOfSysRecords == numberOfRecordsWithExtension(systemExtension));
   // Move all non sys records to the end of the buffer.
   size_t valueSize = endBuffer() - firstNonSysRecord;
-  memmove(m_buffer + k_storageSize - valueSize, firstNonSysRecord, valueSize);
+  memmove(m_buffer + k_totalSize - valueSize, firstNonSysRecord, valueSize);
   overrideSizeAtPosition(firstNonSysRecord, 0);
   // Disable the records by artificially reducing the size of the storage.
-  m_storageSize -= valueSize;
+  m_accessibleSize -= valueSize;
   // Clear memoized records
   notifyChangeToDelegate();
 }
@@ -352,17 +352,17 @@ void FileSystem::disableAllRecords() {
 void FileSystem::destroyEnabledRecordsAndRestoreDisabledRecords() {
   // This will also clear the memoized records
   destroyAllRecords();
-  if (m_storageSize == k_storageSize) {
+  if (m_accessibleSize == k_totalSize) {
     // Nothing to restore.
     return;
   }
   // Move disabled records to the beginning of the buffer
   char* previousEndBuffer = endBuffer();
-  memmove(previousEndBuffer, m_buffer + m_storageSize,
-          k_storageSize - m_storageSize);
-  overrideSizeAtPosition(previousEndBuffer + k_storageSize - m_storageSize, 0);
+  memmove(previousEndBuffer, m_buffer + m_accessibleSize,
+          k_totalSize - m_accessibleSize);
+  overrideSizeAtPosition(previousEndBuffer + k_totalSize - m_accessibleSize, 0);
   // Restore storage size
-  m_storageSize = k_storageSize;
+  m_accessibleSize = k_totalSize;
 }
 
 bool FileSystem::handleCompetingRecord(Record::Name recordName,
@@ -428,7 +428,7 @@ FileSystem::FileSystem()
       m_buffer(),
       m_magicFooter(Magic),
       m_delegate(nullptr),
-      m_storageSize(k_storageSize),
+      m_accessibleSize(k_totalSize),
       m_lastRecordRetrieved(nullptr),
       m_lastRecordRetrievedPointer(nullptr) {
   assert(m_magicHeader == Magic);

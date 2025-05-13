@@ -5,6 +5,7 @@
 #include <algorithm>
 
 #include "plot_controller.h"
+#include "poincare/k_tree.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -13,15 +14,21 @@ namespace Statistics {
 
 // LabeledAxisWithOptionalPercent
 
-float LabeledAxisWithOptionalPercent::tickStep(
+SerializedExpression LabeledAxisWithOptionalPercent::tickStep(
     const Shared::AbstractPlotView* plotView, OMG::Axis axis) const {
-  return PlotPolicy::VerticalLabeledAxis::tickStep(plotView, axis) *
-         m_plotController->labelStepMultiplicator(axis);
+  return SerializedExpression(SystemExpression::CreateReduce(
+      KMult(KA, KB),
+      {.KA = PlotPolicy::VerticalLabeledAxis::tickStep(plotView, axis)
+                 .expression(),
+       .KB = SystemExpression::Builder(
+           m_plotController->labelStepMultiplicator(axis))}));
 }
 
 int LabeledAxisWithOptionalPercent::computeLabel(
     int i, const Shared::AbstractPlotView* plotView, OMG::Axis axis) {
   int length = PlotPolicy::VerticalLabeledAxis::computeLabel(i, plotView, axis);
+  assert(length <= k_labelBufferMaxSize);
+  assert(length <= k_labelBufferMaxGlyphLength);
   m_plotController->appendLabelSuffix(axis, &m_labels[i][length],
                                       k_labelBufferMaxSize - length, length,
                                       k_labelBufferMaxGlyphLength - length);

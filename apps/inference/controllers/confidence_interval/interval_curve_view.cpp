@@ -56,12 +56,12 @@ void IntervalAxis::reloadAxis(AbstractPlotView* plotView, OMG::Axis axis) {
   }
 }
 
-float IntervalAxis::tickPosition(int i, const AbstractPlotView* plotView,
-                                 OMG::Axis) const {
+Poincare::SerializedExpression IntervalAxis::tickPosition(
+    int i, const AbstractPlotView* plotView, OMG::Axis) const {
   if (i >= k_numberOfLabels) {
-    return NAN;
+    return SerializedExpression(NAN);
   }
-  return m_ticks[i];
+  return SerializedExpression(m_ticks[i]);
 }
 
 void IntervalAxis::drawLabel(int i, float t, const AbstractPlotView* plotView,

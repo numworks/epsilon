@@ -5,6 +5,9 @@
 
 #include <cmath>
 
+#include "poincare/k_tree.h"
+#include "poincare/src/expression/projection.h"
+
 using namespace Poincare;
 
 namespace Shared {
@@ -258,7 +261,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
       !(axis == OMG::Axis::Vertical && plotView->range()->xMin() >= 0.f);
   float tMax = plotView->rangeMax(axis) + plotView->pixelLength(axis);
   int i = 0;
-  float t = tickPosition(i, plotView, axis);
+  float t = static_cast<float>(tickPosition(i, plotView, axis));
   /* maxNumberOfTicks is there to ensure that we do not draw too much ticks
    * when reaching limit cases. For example, tMax = 1.0E+8 and tickStep = 0.5,
    * when t == tMax, increasing if by tickstep will give:
@@ -266,7 +269,8 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
    * precision. Which means the condition t <= tMax in the loop will never be
    * reached. */
   int maxNumberOfTicks =
-      std::ceil((tMax - plotView->rangeMin(axis)) / tickStep(plotView, axis)) +
+      std::ceil((tMax - plotView->rangeMin(axis)) /
+                static_cast<float>(tickStep(plotView, axis))) +
       1;
   assert(maxNumberOfTicks >= 2);
   while (t < tMax && i < maxNumberOfTicks) {
@@ -275,24 +279,35 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
     }
     drawLabel(i, t, plotView, ctx, rect, axis);
     i++;
-    t = tickPosition(i, plotView, axis);
+    t = float(tickPosition(i, plotView, axis));
   }
 }
 
-float SimpleAxis::tickPosition(int i, const AbstractPlotView* plotView,
-                               OMG::Axis axis) const {
-  float step = tickStep(plotView, axis);
+SerializedExpression SimpleAxis::tickPosition(int i,
+                                              const AbstractPlotView* plotView,
+                                              OMG::Axis axis) const {
+  SerializedExpression step = tickStep(plotView, axis);
   float tMin = plotView->rangeMin(axis);
-  assert(std::fabs(std::round(tMin / step)) < static_cast<float>(INT_MAX));
-  int indexOfOrigin = std::floor(-tMin / step);
-  return step * (i - indexOfOrigin);
+  float approximateStep = static_cast<float>(step);
+  assert(std::fabs(std::round(tMin / approximateStep)) <
+         static_cast<float>(INT_MAX));
+  int indexOfOrigin = std::floor(-tMin / approximateStep);
+  return SerializedExpression(
+      UserExpression::Create(KMult(KA, KB),
+                             {.KA = step.expression(),
+                              .KB = UserExpression::Builder(i - indexOfOrigin)})
+          .cloneAndTrySimplify({}));
 }
 
-float SimpleAxis::tickStep(const AbstractPlotView* plotView,
-                           OMG::Axis axis) const {
-  float step = axis == OMG::Axis::Horizontal ? plotView->range()->xGridUnit()
-                                             : plotView->range()->yGridUnit();
-  return 2.f * step;
+SerializedExpression SimpleAxis::tickStep(const AbstractPlotView* plotView,
+                                          OMG::Axis axis) const {
+  // TODO: xGridUnit() and yGridUnit() should return SerializedExpression
+  SerializedExpression step = SerializedExpression(
+      axis == OMG::Axis::Horizontal ? plotView->range()->xGridUnit()
+                                    : plotView->range()->yGridUnit());
+  return SerializedExpression(
+      UserExpression::Create(KMult(2_e, KA), {.KA = step.expression()})
+          .cloneAndTrySimplify({}));
 }
 
 // AbstractLabeledAxis
@@ -309,12 +324,11 @@ void AbstractLabeledAxis::reloadAxis(AbstractPlotView* plotView,
 
 int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView* plotView,
                                       OMG::Axis axis) {
-  float t = tickPosition(i, plotView, axis);
-  return Poincare::PrintFloat::ConvertFloatToText(
-             t, mutableLabel(i), k_labelBufferMaxSize,
-             k_labelBufferMaxGlyphLength, k_numberSignificantDigits,
-             Preferences::PrintFloatMode::Decimal)
-      .GlyphLength;
+  SerializedExpression t = tickPosition(i, plotView, axis);
+  // TODO: what about k_labelBufferMaxGlyphLength?
+  t.writeText({mutableLabel(i), k_labelBufferMaxSize},
+              k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal);
+  return static_cast<int>(strlen(mutableLabel(i)));
 }
 
 bool AbstractLabeledAxis::labelWillBeDisplayed(int i, KDRect rect) const {

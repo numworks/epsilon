@@ -4,6 +4,7 @@
 #include <poincare/print_float.h>
 
 #include "plot_view.h"
+#include "poincare/serialized_expression.h"
 
 namespace Graph {
 class GraphView;
@@ -114,10 +115,10 @@ class SimpleAxis : public PlainAxis {
   virtual void setOtherAxis(bool other) {}
 
  protected:
-  virtual float tickPosition(int i, const AbstractPlotView* plotView,
-                             OMG::Axis axis) const;
-  virtual float tickStep(const AbstractPlotView* plotView,
-                         OMG::Axis axis) const;
+  virtual Poincare::SerializedExpression tickPosition(
+      int i, const AbstractPlotView* plotView, OMG::Axis axis) const;
+  virtual Poincare::SerializedExpression tickStep(
+      const AbstractPlotView* plotView, OMG::Axis axis) const;
   virtual void drawLabel(int i, float t, const AbstractPlotView* plotView,
                          KDContext* ctx, KDRect rect, OMG::Axis axis,
                          KDColor color = k_color) const {}

@@ -4,6 +4,7 @@
 #include <apps/shared/plot_view_policies.h>
 
 #include "inference/models/confidence_interval.h"
+#include "poincare/serialized_expression.h"
 
 namespace Inference {
 
@@ -15,8 +16,9 @@ class IntervalAxis : public Shared::PlotPolicy::SimpleAxis {
       Shared::PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxGlyphLength;
 
   void reloadAxis(Shared::AbstractPlotView* plotView, OMG::Axis) override;
-  float tickPosition(int i, const Shared::AbstractPlotView* plotView,
-                     OMG::Axis) const override;
+  Poincare::SerializedExpression tickPosition(
+      int i, const Shared::AbstractPlotView* plotView,
+      OMG::Axis) const override;
   void drawLabel(int i, float t, const Shared::AbstractPlotView* plotView,
                  KDContext* ctx, KDRect rect, OMG::Axis axis,
                  KDColor color = k_color) const override;

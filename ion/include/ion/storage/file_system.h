@@ -141,8 +141,8 @@ class FileSystem {
 
   // Disable all non system records by moving them at the end of the storage.
   void disableAllRecords();
-  // Destroy all non system records, and restore the disabled records.
-  void destroyEnabledRecordsAndRestoreDisabledRecords();
+  // Restore the disabled records. Storage must be empty of non-system records.
+  void restoreDisabledRecords();
 
   /* Destroy competing records.
    * Return true if other records with same full name or competing names

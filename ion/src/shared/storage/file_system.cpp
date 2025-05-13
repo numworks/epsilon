@@ -352,9 +352,8 @@ void FileSystem::disableAllRecords() {
   notifyChangeToDelegate();
 }
 
-void FileSystem::destroyEnabledRecordsAndRestoreDisabledRecords() {
-  // This will also clear the memoized records
-  destroyAllRecords();
+void FileSystem::restoreDisabledRecords() {
+  assert(numberOfRecords() == numberOfRecordsWithExtension(systemExtension));
   if (m_accessibleSize == k_totalSize) {
     // Nothing to restore.
     return;

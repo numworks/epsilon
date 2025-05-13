@@ -778,8 +778,8 @@ QUIZ_CASE(ion_storage_disabled_records) {
   quiz_assert(!getRecord("record2", Storage::expressionExtension).isNull());
   quiz_assert(!getRecord("record3", Storage::expressionExtension).isNull());
   // Restore disabled records
-  Storage::FileSystem::sharedFileSystem
-      ->destroyEnabledRecordsAndRestoreDisabledRecords();
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  Ion::Storage::FileSystem::sharedFileSystem->restoreDisabledRecords();
   // Assert record1 and record2 are accessible
   quiz_assert(!getRecord("record1", Storage::expressionExtension).isNull());
   Storage::Record record2 = getRecord("record2", Storage::expressionExtension);
@@ -823,8 +823,8 @@ QUIZ_CASE(ion_storage_disabled_records) {
                                        Storage::expressionExtension, bigData) ==
               Storage::Record::ErrorStatus::None);
   // Restore disabled records
-  Storage::FileSystem::sharedFileSystem
-      ->destroyEnabledRecordsAndRestoreDisabledRecords();
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  Ion::Storage::FileSystem::sharedFileSystem->restoreDisabledRecords();
   // Assert previously disabled records have been erased
   quiz_assert(
       Storage::FileSystem::sharedFileSystem->numberOfRecords() ==

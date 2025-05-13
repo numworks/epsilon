@@ -101,8 +101,8 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
     Ion::Storage::FileSystem::sharedFileSystem->disableAllRecords();
   } else {
     // Erase every enabled records and restore disabled ones
-    Ion::Storage::FileSystem::sharedFileSystem
-        ->destroyEnabledRecordsAndRestoreDisabledRecords();
+    Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+    Ion::Storage::FileSystem::sharedFileSystem->restoreDisabledRecords();
   }
 
   // Empty clipboard and snapshots

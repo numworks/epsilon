@@ -757,7 +757,7 @@ QUIZ_CASE(ion_storage_disabled_records) {
                                        "dataRecord1") ==
               Storage::Record::ErrorStatus::None);
   quiz_assert(putRecordInSharedStorage("record2", Storage::expressionExtension,
-                                       "dataRecord2") ==
+                                       "dataRecord21") ==
               Storage::Record::ErrorStatus::None);
   // Assert record1 and record2 are accessible
   quiz_assert(!getRecord("record1", Storage::expressionExtension).isNull());
@@ -769,10 +769,10 @@ QUIZ_CASE(ion_storage_disabled_records) {
   quiz_assert(getRecord("record2", Storage::expressionExtension).isNull());
   // Create record2 and record3
   quiz_assert(putRecordInSharedStorage("record2", Storage::expressionExtension,
-                                       "dataRecord1") ==
+                                       "dataRecord22") ==
               Storage::Record::ErrorStatus::None);
   quiz_assert(putRecordInSharedStorage("record3", Storage::expressionExtension,
-                                       "dataRecord1") ==
+                                       "dataRecord3") ==
               Storage::Record::ErrorStatus::None);
   // Assert record2 and record3 are accessible
   quiz_assert(!getRecord("record2", Storage::expressionExtension).isNull());
@@ -782,7 +782,10 @@ QUIZ_CASE(ion_storage_disabled_records) {
       ->destroyEnabledRecordsAndRestoreDisabledRecords();
   // Assert record1 and record2 are accessible
   quiz_assert(!getRecord("record1", Storage::expressionExtension).isNull());
-  quiz_assert(!getRecord("record2", Storage::expressionExtension).isNull());
+  Storage::Record record2 = getRecord("record2", Storage::expressionExtension);
+  quiz_assert(!record2.isNull());
+  quiz_assert(strcmp(static_cast<const char*>(record2.value().buffer),
+                     "dataRecord21") == 0);
   // Assert record3 is not accessible
   quiz_assert(getRecord("record3", Storage::expressionExtension).isNull());
 
@@ -807,11 +810,11 @@ QUIZ_CASE(ion_storage_disabled_records) {
       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
   int i = 0;
   Storage::Record::ErrorStatus error = Storage::Record::ErrorStatus::None;
-  do {
+  while (error == Storage::Record::ErrorStatus::None) {
     OMG::Print::IntLeft(i++, recordNameBuffer, sizeof(recordNameBuffer));
     error = putRecordInSharedStorage(recordNameBuffer,
                                      Storage::expressionExtension, bigData);
-  } while (error == Storage::Record::ErrorStatus::None);
+  }
   quiz_assert(error == Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
   // Disable records
   Storage::FileSystem::sharedFileSystem->disableAllRecords();

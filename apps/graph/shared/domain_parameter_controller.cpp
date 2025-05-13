@@ -11,8 +11,8 @@ using namespace Escher;
 namespace Graph {
 
 DomainParameterController::DomainParameterController(Responder* parentResponder)
-    : Shared::SingleRangeController<float>(parentResponder,
-                                           &m_confirmPopUpController),
+    : Shared::SingleRangeControllerFloatPrecision(parentResponder,
+                                                  &m_confirmPopUpController),
       m_confirmPopUpController(Invocation::Builder<DomainParameterController>(
           [](DomainParameterController* controller, void* sender) {
             controller->pop(false);

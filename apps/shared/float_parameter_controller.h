@@ -8,6 +8,9 @@ namespace Shared {
 template <typename T>
 class FloatParameterController : public ParametersWithValidationController {
  public:
+  using ParameterType = T;
+  using FloatType = T;
+
   FloatParameterController(Escher::Responder* parentResponder,
                            Escher::View* topView = nullptr);
 
@@ -22,14 +25,14 @@ class FloatParameterController : public ParametersWithValidationController {
   enum class InfinityTolerance { None, PlusInfinity, MinusInfinity };
 
   virtual T parameterAtIndex(int index) = 0;
-  virtual bool hasUndefinedValue(const char* text, T floatValue, int row) const;
+  virtual bool hasUndefinedValue(const char* text, T value, int row) const;
 
  private:
   virtual InfinityTolerance infinityAllowanceForRow(int row) const {
     return InfinityTolerance::None;
   }
 
-  virtual bool setParameterAtIndex(int parameterIndex, T f) = 0;
+  virtual bool setParameterAtIndex(int parameterIndex, T value) = 0;
 };
 
 }  // namespace Shared

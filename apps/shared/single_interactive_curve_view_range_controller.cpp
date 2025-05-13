@@ -11,7 +11,8 @@ SingleInteractiveCurveViewRangeController::
     SingleInteractiveCurveViewRangeController(
         Responder* parentResponder, InteractiveCurveViewRange* interactiveRange,
         Shared::MessagePopUpController* confirmPopUpController)
-    : SingleRangeController<float>(parentResponder, confirmPopUpController),
+    : SingleRangeControllerFloatPrecision(parentResponder,
+                                          confirmPopUpController),
       m_range(interactiveRange),
       m_gridUnitCell(&this->m_selectableListView, this),
       m_gridUnitParam(NAN) {
@@ -126,40 +127,43 @@ bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
     m_gridUnitParam = f;
     return true;
   }
-  return SingleRangeController<float>::setParameterAtIndex(parameterIndex, f);
+  return SingleRangeControllerFloatPrecision::setParameterAtIndex(
+      parameterIndex, f);
 }
 
 int SingleInteractiveCurveViewRangeController::typeAtRow(int row) const {
   return row == 3 ? k_gridUnitCellType
-                  : SingleRangeController<float>::typeAtRow(row);
+                  : SingleRangeControllerFloatPrecision::typeAtRow(row);
 }
 
 KDCoordinate SingleInteractiveCurveViewRangeController::nonMemoizedRowHeight(
     int row) {
   return typeAtRow(row) == k_gridUnitCellType
              ? m_gridUnitCell.minimalSizeForOptimalDisplay().height()
-             : SingleRangeController<float>::nonMemoizedRowHeight(row);
+             : SingleRangeControllerFloatPrecision::nonMemoizedRowHeight(row);
 }
 
 KDCoordinate SingleInteractiveCurveViewRangeController::separatorBeforeRow(
     int row) const {
   return typeAtRow(row) == k_gridUnitCellType
              ? k_defaultRowSeparator
-             : SingleRangeController<float>::separatorBeforeRow(row);
+             : SingleRangeControllerFloatPrecision::separatorBeforeRow(row);
 }
 
 int SingleInteractiveCurveViewRangeController::reusableParameterCellCount(
     int type) const {
   return type == k_gridUnitCellType
              ? 1
-             : SingleRangeController<float>::reusableParameterCellCount(type);
+             : SingleRangeControllerFloatPrecision::reusableParameterCellCount(
+                   type);
 }
 
 HighlightCell* SingleInteractiveCurveViewRangeController::reusableParameterCell(
     int index, int type) {
   return type == k_gridUnitCellType
              ? &m_gridUnitCell
-             : SingleRangeController<float>::reusableParameterCell(index, type);
+             : SingleRangeControllerFloatPrecision::reusableParameterCell(index,
+                                                                          type);
 }
 
 TextField* SingleInteractiveCurveViewRangeController::textFieldOfCellAtIndex(
@@ -168,13 +172,14 @@ TextField* SingleInteractiveCurveViewRangeController::textFieldOfCellAtIndex(
     assert(cell == &m_gridUnitCell);
     return m_gridUnitCell.textField();
   }
-  return SingleRangeController<float>::textFieldOfCellAtIndex(cell, index);
+  return SingleRangeControllerFloatPrecision::textFieldOfCellAtIndex(cell,
+                                                                     index);
 }
 
 float SingleInteractiveCurveViewRangeController::parameterAtIndex(int index) {
   return typeAtRow(index) == k_gridUnitCellType
              ? m_gridUnitParam
-             : SingleRangeController<float>::parameterAtIndex(index);
+             : SingleRangeControllerFloatPrecision::parameterAtIndex(index);
 }
 
 bool SingleInteractiveCurveViewRangeController::hasUndefinedValue(
@@ -183,7 +188,8 @@ bool SingleInteractiveCurveViewRangeController::hasUndefinedValue(
     // Accept empty inputs for grid unit cell
     return false;
   }
-  return SingleRangeController<float>::hasUndefinedValue(text, floatValue, row);
+  return SingleRangeControllerFloatPrecision::hasUndefinedValue(
+      text, floatValue, row);
 }
 
 void SingleInteractiveCurveViewRangeController::fillCellForRow(
@@ -193,7 +199,7 @@ void SingleInteractiveCurveViewRangeController::fillCellForRow(
         I18n::translate(I18n::Message::DefaultSetting));
     return;
   }
-  SingleRangeController<float>::fillCellForRow(cell, row);
+  SingleRangeControllerFloatPrecision::fillCellForRow(cell, row);
 }
 
 bool SingleInteractiveCurveViewRangeController::textFieldDidReceiveEvent(
@@ -204,15 +210,15 @@ bool SingleInteractiveCurveViewRangeController::textFieldDidReceiveEvent(
     // Remove "Auto" text to start edition
     textField->setText("");
   }
-  return SingleRangeController<float>::textFieldDidReceiveEvent(textField,
-                                                                event);
+  return SingleRangeControllerFloatPrecision::textFieldDidReceiveEvent(
+      textField, event);
 }
 
 void SingleInteractiveCurveViewRangeController::textFieldDidAbortEditing(
     Escher::AbstractTextField* textField) {
   // Reload selected cell to display "Auto" when text is empty
   m_selectableListView.reloadSelectedCell();
-  SingleRangeController<float>::textFieldDidAbortEditing(textField);
+  SingleRangeControllerFloatPrecision::textFieldDidAbortEditing(textField);
 }
 
 }  // namespace Shared

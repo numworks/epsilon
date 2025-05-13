@@ -11,22 +11,23 @@
 
 namespace Shared {
 
-template <typename T>
-class SingleRangeController : public FloatParameterController<T> {
+template <typename ParentType>
+class SingleRangeController : public ParentType {
  public:
   SingleRangeController(Escher::Responder* parentResponder,
                         MessagePopUpController* confirmPopUpController);
+
+  using ParameterType = typename ParentType::ParameterType;
+  using FloatType = typename ParentType::FloatType;
+
   void viewWillAppear() override;
 
   int numberOfRows() const override { return k_numberOfBoundsCells + 2; }
   int typeAtRow(int row) const override {
-    return row == 0 ? k_autoCellType
-                    : FloatParameterController<T>::typeAtRow(row);
+    return row == 0 ? k_autoCellType : ParentType::typeAtRow(row);
   }
   int reusableCellCount(int type) const override {
-    return type == k_autoCellType
-               ? 1
-               : FloatParameterController<T>::reusableCellCount(type);
+    return type == k_autoCellType ? 1 : ParentType::reusableCellCount(type);
   }
   Escher::HighlightCell* reusableCell(int index, int type) override;
   KDCoordinate nonMemoizedRowHeight(int row) override;
@@ -39,21 +40,19 @@ class SingleRangeController : public FloatParameterController<T> {
  protected:
   constexpr static int k_numberOfBoundsCells = 2;
   constexpr static int k_autoCellType = 2;
-  static_assert(k_autoCellType !=
-                        FloatParameterController<T>::k_parameterCellType &&
-                    k_autoCellType !=
-                        FloatParameterController<T>::k_buttonCellType,
+  static_assert(k_autoCellType != ParentType::k_parameterCellType &&
+                    k_autoCellType != ParentType::k_buttonCellType,
                 "k_autoCellType value already taken.");
 
   virtual I18n::Message parameterMessage(int index) const = 0;
   virtual bool parametersAreDifferent() = 0;
   virtual void extractParameters() = 0;
-  T parameterAtIndex(int index) override;
+  ParameterType parameterAtIndex(int index) override;
   void setAutoStatus(bool autoParam);
   virtual void setAutoRange() = 0;
-  bool setParameterAtIndex(int parameterIndex, T f) override;
-  void setRange(T min, T max);
-  virtual T limit() const = 0;
+  bool setParameterAtIndex(int parameterIndex, ParameterType value) override;
+  void setRange(FloatType min, FloatType max);
+  virtual FloatType limit() const = 0;
   virtual void confirmParameters() = 0;
   virtual void pop(bool onConfirmation) = 0;
   int reusableParameterCellCount(int type) const override {
@@ -69,7 +68,7 @@ class SingleRangeController : public FloatParameterController<T> {
   Escher::MenuCell<Escher::MessageTextView, Escher::EmptyCellWidget,
                    Escher::SwitchView>
       m_autoCell;
-  Poincare::Range1D<T> m_rangeParam;
+  Poincare::Range1D<FloatType> m_rangeParam;
   bool m_autoParam;
 
  private:
@@ -77,6 +76,11 @@ class SingleRangeController : public FloatParameterController<T> {
 
   Shared::MessagePopUpController* m_confirmPopUpController;
 };
+
+using SingleRangeControllerFloatPrecision =
+    SingleRangeController<FloatParameterController<float>>;
+using SingleRangeControllerDoublePrecision =
+    SingleRangeController<FloatParameterController<double>>;
 
 }  // namespace Shared
 

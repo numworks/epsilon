@@ -8,7 +8,7 @@
 namespace Shared {
 
 class SingleInteractiveCurveViewRangeController
-    : public SingleRangeController<float> {
+    : public SingleRangeControllerFloatPrecision {
  public:
   SingleInteractiveCurveViewRangeController(
       Escher::Responder* parentResponder,
@@ -21,7 +21,7 @@ class SingleInteractiveCurveViewRangeController
                                : I18n::Message::ValuesOfY);
   }
   int numberOfRows() const override {
-    return SingleRangeController<float>::numberOfRows() + 1;
+    return SingleRangeControllerFloatPrecision::numberOfRows() + 1;
   }
   int typeAtRow(int row) const override;
   KDCoordinate nonMemoizedRowHeight(int row) override;

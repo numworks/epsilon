@@ -7,11 +7,11 @@ namespace Shared {
 
 // SingleRangeController
 
-template <typename T>
-SingleRangeController<T>::SingleRangeController(
+template <typename ParentType>
+SingleRangeController<ParentType>::SingleRangeController(
     Responder* parentResponder,
     Shared::MessagePopUpController* confirmPopUpController)
-    : FloatParameterController<T>(parentResponder),
+    : ParentType(parentResponder),
       m_autoParam(false),
       m_confirmPopUpController(confirmPopUpController) {
   for (int i = 0; i < k_numberOfBoundsCells; i++) {
@@ -21,25 +21,26 @@ SingleRangeController<T>::SingleRangeController(
   m_autoCell.label()->setMessage(I18n::Message::DefaultSetting);
 }
 
-template <typename T>
-void SingleRangeController<T>::viewWillAppear() {
+template <typename ParentType>
+void SingleRangeController<ParentType>::viewWillAppear() {
   extractParameters();
   for (int i = 0; i < k_numberOfBoundsCells; i++) {
     m_boundsCells[i].label()->setMessage(parameterMessage(i));
   }
-  FloatParameterController<T>::viewWillAppear();
+  ParentType::viewWillAppear();
 }
 
-template <typename T>
-HighlightCell* SingleRangeController<T>::reusableCell(int index, int type) {
+template <typename ParentType>
+HighlightCell* SingleRangeController<ParentType>::reusableCell(int index,
+                                                               int type) {
   if (type == k_autoCellType) {
     return &m_autoCell;
   }
-  return FloatParameterController<T>::reusableCell(index, type);
+  return ParentType::reusableCell(index, type);
 }
 
-template <typename T>
-KDCoordinate SingleRangeController<T>::nonMemoizedRowHeight(int row) {
+template <typename ParentType>
+KDCoordinate SingleRangeController<ParentType>::nonMemoizedRowHeight(int row) {
   int type = typeAtRow(row);
   HighlightCell* cell =
       type == k_autoCellType ? static_cast<HighlightCell*>(&m_autoCell)
@@ -47,22 +48,22 @@ KDCoordinate SingleRangeController<T>::nonMemoizedRowHeight(int row) {
           ? static_cast<HighlightCell*>(&m_boundsCells[row - 1])
           : nullptr;
   return cell ? this->protectedNonMemoizedRowHeight(cell, row)
-              : FloatParameterController<T>::nonMemoizedRowHeight(row);
+              : ParentType::nonMemoizedRowHeight(row);
 }
 
-template <typename T>
-void SingleRangeController<T>::fillCellForRow(Escher::HighlightCell* cell,
-                                              int row) {
+template <typename ParentType>
+void SingleRangeController<ParentType>::fillCellForRow(
+    Escher::HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type == k_autoCellType) {
     m_autoCell.accessory()->setState(m_autoParam);
     return;
   }
-  FloatParameterController<T>::fillCellForRow(cell, row);
+  ParentType::fillCellForRow(cell, row);
 }
 
-template <typename T>
-bool SingleRangeController<T>::handleEvent(Ion::Events::Event event) {
+template <typename ParentType>
+bool SingleRangeController<ParentType>::handleEvent(Ion::Events::Event event) {
   if (typeAtRow(this->selectedRow()) == k_autoCellType &&
       m_autoCell.canBeActivatedByEvent(event)) {
     // Update auto status
@@ -77,29 +78,30 @@ bool SingleRangeController<T>::handleEvent(Ion::Events::Event event) {
     }
     return true;
   }
-  return FloatParameterController<T>::handleEvent(event);
+  return ParentType::handleEvent(event);
 }
 
-template <typename T>
-HighlightCell* SingleRangeController<T>::reusableParameterCell(int index,
-                                                               int type) {
+template <typename ParentType>
+HighlightCell* SingleRangeController<ParentType>::reusableParameterCell(
+    int index, int type) {
   assert(type == this->k_parameterCellType);
   assert(0 <= index && index < k_numberOfBoundsCells);
   return &m_boundsCells[index];
 }
 
-template <typename T>
-bool SingleRangeController<T>::setParameterAtIndex(int parameterIndex, T f) {
+template <typename ParentType>
+bool SingleRangeController<ParentType>::setParameterAtIndex(
+    int parameterIndex, ParameterType value) {
   int i = parameterIndex - 1;
   assert(0 <= i && i < k_numberOfBoundsCells);
-  i == 0 ? m_rangeParam.setMinKeepingValid(f, limit())
-         : m_rangeParam.setMaxKeepingValid(f, limit());
+  i == 0 ? m_rangeParam.setMinKeepingValid(FloatType(value), limit())
+         : m_rangeParam.setMaxKeepingValid(FloatType(value), limit());
   return true;
 }
 
-template <typename T>
-void SingleRangeController<T>::setRange(T min, T max) {
-  m_rangeParam = Range1D<T>::ValidRangeBetween(min, max, limit());
+template <typename ParentType>
+void SingleRangeController<ParentType>::setRange(FloatType min, FloatType max) {
+  m_rangeParam = Range1D<FloatType>::ValidRangeBetween(min, max, limit());
 }
 
 template <typename T>
@@ -116,13 +118,12 @@ void SingleRangeController<T>::buttonAction() {
   pop(true);
 }
 
-template <typename T>
-bool SingleRangeController<T>::textFieldDidFinishEditing(
+template <typename ParentType>
+bool SingleRangeController<ParentType>::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   bool autoStatusDependsOnRow =
       typeAtRow(this->innerSelectedRow()) == this->k_parameterCellType;
-  if (FloatParameterController<T>::textFieldDidFinishEditing(textField,
-                                                             event)) {
+  if (ParentType::textFieldDidFinishEditing(textField, event)) {
     if (autoStatusDependsOnRow) {
       setAutoStatus(false);
     }
@@ -131,11 +132,13 @@ bool SingleRangeController<T>::textFieldDidFinishEditing(
   return false;
 }
 
-template <typename T>
-T SingleRangeController<T>::parameterAtIndex(int index) {
+template <typename ParentType>
+typename SingleRangeController<ParentType>::ParameterType
+SingleRangeController<ParentType>::parameterAtIndex(int index) {
   int i = index - 1;
   assert(0 <= i && i < k_numberOfBoundsCells);
-  return i == 0 ? m_rangeParam.min() : m_rangeParam.max();
+  return i == 0 ? ParameterType(m_rangeParam.min())
+                : ParameterType(m_rangeParam.max());
 }
 
 template <typename T>
@@ -152,7 +155,7 @@ void SingleRangeController<T>::setAutoStatus(bool autoParam) {
   }
 }
 
-template class SingleRangeController<double>;
-template class SingleRangeController<float>;
+template class SingleRangeController<FloatParameterController<float>>;
+template class SingleRangeController<FloatParameterController<double>>;
 
 }  // namespace Shared

@@ -550,7 +550,7 @@ aaaaaa)";
       Storage::FileSystem::sharedFileSystem->recordBaseNamedWithExtension(
           baseNameRecord4, extensionRecord);
 
-  // Put the the available space at the end of the first record and remove it
+  // Put the available space at the end of the first record and remove it
   size_t availableSpace =
       Storage::FileSystem::sharedFileSystem->availableSize();
   uint32_t checksumBeforeChanges =

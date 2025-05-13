@@ -138,7 +138,7 @@ class FileSystem {
   void destroyAllRecords();
   void destroyRecordsWithExtension(const char* extension);
 
-  // Disable all non system recordby moving them at the end of the storage.
+  // Disable all non system records by moving them at the end of the storage.
   void disableAllRecords();
   // Destroy all non system records, and restore the disabled records.
   void destroyEnabledRecordsAndRestoreDisabledRecords();

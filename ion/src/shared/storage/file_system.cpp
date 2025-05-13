@@ -343,7 +343,6 @@ void FileSystem::disableAllRecords() {
   assert(numberOfSysRecords == numberOfRecordsWithExtension(systemExtension));
   // Move all non sys records to the end of the buffer.
   size_t valueSize = endBuffer() - firstNonSysRecord;
-  // slideBuffer(firstNonSysRecord, availableSize());
   memmove(m_buffer + k_storageSize - valueSize, firstNonSysRecord, valueSize);
   overrideSizeAtPosition(firstNonSysRecord, 0);
   // Disable the records by artificially reducing the size of the storage.

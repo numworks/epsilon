@@ -43,6 +43,8 @@ class SerializedExpression {
   char m_buffer[MaxLength] = "";
 };
 
+using SmallSerializedExpression = Poincare::SerializedExpression<10>;
+
 }  // namespace Poincare
 
 #endif

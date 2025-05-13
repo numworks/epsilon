@@ -13,6 +13,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   explicit_float_parameter_controller.cpp \
   expression_function_title_cell.cpp \
   expression_model_list_controller.cpp \
+  expression_parameter_controller.cpp \
   float_parameter_controller.cpp \
   formula_template_menu_controller.cpp \
   function_app.cpp \

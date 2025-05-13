@@ -157,5 +157,6 @@ void SingleRangeController<T>::setAutoStatus(bool autoParam) {
 
 template class SingleRangeController<FloatParameterController<float>>;
 template class SingleRangeController<FloatParameterController<double>>;
+template class SingleRangeController<ExpressionParameterController>;
 
 }  // namespace Shared

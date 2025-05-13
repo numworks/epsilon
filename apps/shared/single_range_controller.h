@@ -8,6 +8,7 @@
 
 #include "float_parameter_controller.h"
 #include "pop_up_controller.h"
+#include "shared/expression_parameter_controller.h"
 
 namespace Shared {
 
@@ -81,6 +82,8 @@ using SingleRangeControllerFloatPrecision =
     SingleRangeController<FloatParameterController<float>>;
 using SingleRangeControllerDoublePrecision =
     SingleRangeController<FloatParameterController<double>>;
+using SingleRangeControllerExactExpressions =
+    SingleRangeController<ExpressionParameterController>;
 
 }  // namespace Shared
 

@@ -348,8 +348,7 @@ void FileSystem::disableAllRecords() {
   // Disable the records by artificially reducing the size of the storage.
   m_storageSize -= valueSize;
   // Clear memoized records
-  m_lastRecordRetrieved = Record(nullptr);
-  m_lastRecordRetrievedPointer = nullptr;
+  notifyChangeToDelegate();
 }
 
 void FileSystem::destroyEnabledRecordsAndRestoreDisabledRecords() {

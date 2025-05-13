@@ -37,6 +37,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   menu_controller.cpp \
   ok_view.cpp \
   parameter_text_field_delegate.cpp \
+  parameters_with_validation_controller.cpp \
   plot_view_banners.cpp \
   plot_view_cursors.cpp \
   plot_view_plots.cpp \

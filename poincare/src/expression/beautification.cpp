@@ -239,10 +239,66 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   return changed;
 }
 
+bool UseScientificNotation(IntegerHandler num, int* j, int* ns) {
+  // Ni : number of digits
+  // Ns : number of significant digits (non zero)
+  // j : number of 0s digits (Ni = Ns + j)
+  if (num.estimatedNumberOfBase10DigitsWithoutSign(true) <= 13) {
+    // Escape easy cases : number is obviously too small
+    return false;
+  }
+  int ni = num.numberOfBase10DigitsWithoutSign(j);
+  *ns = ni - *j;
+  if (ni <= 13 || *j < 3) {
+    // Small numbers, or not enough 0s
+    return false;
+  }
+  // Only use scientific notation if there are not too many digits
+  if (ni <= 29) {
+    return *ns <= 13;
+  }
+  // This could prevent a result from being hidden
+  return *ns < 29;
+}
+
 Tree* PushBeautifiedIntegerHandler(IntegerHandler num,
                                    bool* hasBeautifiedIntegers) {
-  // TODO: Implement integer beautification if hasBeautifiedIntegers is given.
-  return num.pushOnTreeStack();
+  assert(num.sign() == NonStrictSign::Positive);
+  int j = 0;
+  int ns = 0;
+  if (!hasBeautifiedIntegers || !UseScientificNotation(num, &j, &ns)) {
+    return num.pushOnTreeStack();
+  }
+  *hasBeautifiedIntegers = true;
+  assert(j >= 3 && ns > 0);
+  Tree* result = SharedTreeStack->pushMult(2);
+  if (ns > 1) {
+    // Return Decimal(significantInteger, ns -1) * 10^(j + ns - 1)
+    SharedTreeStack->pushDecimal();
+  } else {
+    // Return significantInteger * 10^(j + ns - 1)
+  }
+  // Push significantInteger = num * 10^(-j), this has to be deep reduced
+  Tree* digits = SharedTreeStack->pushMult(2);
+  num.pushOnTreeStack();
+  SharedTreeStack->pushPow();
+  Integer::Push(10);
+  Integer::Push(-j);
+  SystematicReduction::DeepReduce(digits);
+  assert(digits->isPositiveInteger() && !digits->isZero());
+  if (digits->isOne()) {
+    SharedTreeStack->flushFromBlock(result);
+    // Return 10^(j + ns - 1)
+    result = SharedTreeStack->pushPow();
+  } else {
+    if (ns > 1) {
+      Integer::Push(ns - 1);
+    }
+    SharedTreeStack->pushPow();
+  }
+  Integer::Push(10);
+  Integer::Push(j + ns - 1);
+  return result;
 }
 
 bool ApplyBeautificationSteps(Tree* e,

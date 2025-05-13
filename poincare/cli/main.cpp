@@ -138,7 +138,7 @@ int main() {
     // Match command with possible abbreviation
     std::string cmdName = matchCommand(tokens[0]);
     if (cmdName.empty()) {
-      std::cerr << "unknown command " << tokens[0] << '\n';
+      std::cerr << "Unknown command " << tokens[0] << '\n';
       continue;
     }
 

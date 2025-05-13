@@ -13,10 +13,14 @@ using namespace Poincare;
 
 UserExpression getExpression(const std::vector<std::string>& args) {
   if (args.size() != 1) {
-    std::cerr << "this function expects an expression tree";
-    return {};
+    std::cerr << "This command expects an expression tree\n";
+    return Undefined::Builder();
   }
   UserExpression e = Expression::Parse(args[0].c_str(), nullptr);
+  if (e.isUninitialized()) {
+    std::cerr << "Syntax error\n";
+    return Undefined::Builder();
+  }
   return e;
 }
 

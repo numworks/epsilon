@@ -17,6 +17,15 @@ class SerializedExpression {
     assert(usedLength <= MaxLength);
   }
 
+  explicit SerializedExpression(float value)
+      : SerializedExpression(Poincare::Expression::Builder(value)) {}
+
+  explicit operator float() const {
+    return isUninitialized()
+               ? NAN
+               : expression().template approximateToRealScalar<float>();
+  }
+
   bool isUninitialized() const { return m_buffer[0] == '\0'; }
 
   const char* text() const { return m_buffer; }

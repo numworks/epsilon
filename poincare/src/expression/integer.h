@@ -206,6 +206,10 @@ class IntegerHandler final {
     return numberOfBase10DigitsWithoutSign(&workingBuffer, numberOfZeroes);
   }
 
+  /* Return a fast, but [under/over]estimated number of digits in base 10 using
+   * number of digits in base [k_digitBase]. */
+  int estimatedNumberOfBase10DigitsWithoutSign(bool overEstimated) const;
+
  private:
   constexpr static int k_digitBase =
       1 << sizeof(uint8_t) * OMG::BitHelper::k_numberOfBitsInByte;

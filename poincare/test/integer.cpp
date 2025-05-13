@@ -85,18 +85,28 @@ QUIZ_CASE(pcj_integer_properties) {
   quiz_assert(!b.isUnsignedType<uint8_t>() && a.isUnsignedType<uint8_t>() &&
               static_cast<uint8_t>(a) == 254);
   int numberOfZeroes = 0;
+  quiz_assert(a.estimatedNumberOfBase10DigitsWithoutSign(true) >= 3 &&
+              a.estimatedNumberOfBase10DigitsWithoutSign(false) <= 3);
   quiz_assert(a.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 3 &&
               numberOfZeroes == 0);
+  quiz_assert(b.estimatedNumberOfBase10DigitsWithoutSign(true) >= 2 &&
+              b.estimatedNumberOfBase10DigitsWithoutSign(false) <= 2);
   quiz_assert(b.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 2 &&
               numberOfZeroes == 0);
   quiz_assert(max.numberOfBase10DigitsWithoutSign() == 309);
   IntegerHandler c = CreateIntegerHandler("8764000");
+  quiz_assert(c.estimatedNumberOfBase10DigitsWithoutSign(true) >= 7 &&
+              c.estimatedNumberOfBase10DigitsWithoutSign(false) <= 7);
   quiz_assert(c.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 7 &&
               numberOfZeroes == 3);
   IntegerHandler d = CreateIntegerHandler("0");
+  quiz_assert(d.estimatedNumberOfBase10DigitsWithoutSign(true) >= 1 &&
+              d.estimatedNumberOfBase10DigitsWithoutSign(false) <= 1);
   quiz_assert(d.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 1 &&
               numberOfZeroes == 1);
   IntegerHandler e = CreateIntegerHandler("10");
+  quiz_assert(e.estimatedNumberOfBase10DigitsWithoutSign(true) >= 2 &&
+              e.estimatedNumberOfBase10DigitsWithoutSign(false) <= 2);
   quiz_assert(e.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 2 &&
               numberOfZeroes == 1);
 }

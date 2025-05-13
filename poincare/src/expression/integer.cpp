@@ -741,6 +741,26 @@ Tree* IntegerHandler::LCM(const IntegerHandler& a, const IntegerHandler& b) {
       .pushOnTreeStack();
 }
 
+int IntegerHandler::estimatedNumberOfBase10DigitsWithoutSign(
+    bool overEstimated) const {
+  if (isZero() || (!overEstimated && numberOfDigits() == 1)) {
+    return 1;
+  }
+  /* For example, with 6 776 421 (3 digits in k_digitBase)
+   * Base k_digitBase:        |   3    |   2    |   1    | :    103 102 101
+   * Base 10:            | 8 | 7 | 6 | 5 | 4 | 3 | 2 | 1 | :        6776421
+   * Number is between:                [        ]          : [256^2, 256^3]
+   * Number of digits:                 [        ]          :   [4.8,   7.2]
+   * Number of digits (integer):     [           ]         :     [5,     8] */
+  float estimation = (numberOfDigits() + overEstimated - 1) *
+                     std::log10(static_cast<float>(k_digitBase));
+  int res = std::ceil(estimation);
+  // Ignore equality, which is more than unlikely.
+  int expected = numberOfBase10DigitsWithoutSign();
+  assert(res == expected || overEstimated == (res > expected));
+  return res;
+}
+
 IntegerHandler IntegerHandler::multiplyByPowerOf2(
     uint8_t pow, WorkingBuffer* workingBuffer) const {
   assert(pow < 32);

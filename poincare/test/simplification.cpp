@@ -698,6 +698,8 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("factor(2π)", "undef");
   simplifies_to("factor(42*3)", "2×3^2×7",
                 {.m_complexFormat = ComplexFormat::Polar});
+  simplifies_to("105×10^14", "1.05×10^16");
+  simplifies_to("factor(105×10^14)", "2^14×3×5^15×7");
 
   simplifies_to("quo(23,5)", "4");
   simplifies_to("rem(23,5)", "3");
@@ -1677,6 +1679,27 @@ QUIZ_CASE(pcj_simplification_logarithm) {
 QUIZ_CASE(pcj_simplification_large_integer_no_crash) {
   simplifies_to("diff(x,x,0,100000000000)", "diff(x,x,0,100000000000)");
   simplifies_to("40000000000ln(10)", "40000000000ln(10)");
+}
+
+QUIZ_CASE(pcj_simplification_large_numbers) {
+  simplifies_to("123450000000000000000000000000", "1.2345×10^29");
+  simplifies_to("123450000000000000000000000000/(5×7)", "(2.469×10^28)/7");
+  simplifies_to("π/(12345×10^5)^2", "π/(1.52399025×10^18)");
+  simplifies_to("10^14+i", "10^14+i");
+  simplifies_to("e^(3×10^15)", "e^(3×10^15)");
+
+  /* Edge cases */
+  simplifies_to("1×10^12", "1000000000000");
+  simplifies_to("1234567890123000", "1.234567890123×10^15");
+  simplifies_to("12345678901234×10^15", "12345678901234000000000000000");
+  simplifies_to("123456789012300", "123456789012300");
+  simplifies_to("1234567890123456789012345678000",
+                "1.234567890123456789012345678×10^30");
+  // Hidden in Epsilon's calculation app exact results
+  simplifies_to("123456789012345678901234567800",
+                "123456789012345678901234567800");
+  simplifies_to("1234567890123456789012345678901×10^15",
+                "1234567890123456789012345678901000000000000000");
 }
 
 QUIZ_CASE(pcj_simplification_boolean) {

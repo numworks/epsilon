@@ -54,6 +54,9 @@ class PrintFloat {
            + 3                              // exponant
            + 1;                             // null-terminated
   }
+  /* Since various apps limit the number of digit in exact results, there's no
+   * need to lay out or serialize too may digits in decimals. */
+  constexpr static int k_maxNumberOfSignificantDigitsInDecimals = 30;
 
   struct TextLengths {
     int CharLength;

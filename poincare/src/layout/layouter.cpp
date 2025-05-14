@@ -403,21 +403,22 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
                                        size_t bufferSize) {
   assert(expression->isOfType(
       {Type::Decimal, Type::DoubleFloat, Type::SingleFloat}));
+  if (expression->isDecimal()) {
+    /* Just as it doesn't apply to integers, numberOfSignificantDigits is
+     * ignored with Decimals. */
+    Decimal::Serialize(expression, buffer, bufferSize, m_floatMode);
+    return;
+  }
   int numberOfSignificantDigits =
       m_numberOfSignificantDigits != k_undefinedNumberOfSignificantDigits
           ? m_numberOfSignificantDigits
       : expression->isSingleFloat()
           ? Poincare::PrintFloat::SignificantDecimalDigits<float>()
           : Poincare::PrintFloat::SignificantDecimalDigits<double>();
-  if (expression->isDecimal()) {
-    Decimal::Serialize(expression, buffer, bufferSize, m_floatMode,
-                       numberOfSignificantDigits);
-  } else {
-    Poincare::PrintFloat::ConvertFloatToText(
-        FloatHelper::To(expression), buffer, bufferSize,
-        Poincare::PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits,
-        m_floatMode);
-  }
+  Poincare::PrintFloat::ConvertFloatToText(
+      FloatHelper::To(expression), buffer, bufferSize,
+      Poincare::PrintFloat::k_maxFloatGlyphLength, numberOfSignificantDigits,
+      m_floatMode);
 }
 
 // Remove expression while converting it to a layout in layoutParent

@@ -141,6 +141,11 @@ class Calculation {
       (58 + 7) * KDFont::GlyphWidth(KDFont::Size::Large);
   // An exact result with integers of more than 29 digits will be hidden.
   constexpr static int k_maxNumberDigitsInExactLayout = 29;
+  static_assert(
+      k_maxNumberDigitsInExactLayout <
+          Poincare::PrintFloat::k_maxNumberOfSignificantDigitsInDecimals,
+      "k_maxNumberDigitsInExactLayout needs to be smaller to catch and prevent "
+      "display of cropped decimals.");
   constexpr static KDCoordinate k_heightComputationFailureHeight = 50;
 
   static DisplayOutput ComputeDisplayOutput(

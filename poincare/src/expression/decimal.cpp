@@ -126,10 +126,12 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   }
 
   // Serialize the mantissa
-  char tempBuffer[PrintFloat::k_maxNumberOfSignificantDigits + 1];
-  int mantissaLength =
-      m.serialize(tempBuffer, PrintFloat::k_maxNumberOfSignificantDigits + 1,
-                  &workingBuffer);
+  assert(numberOfSignificantDigits <=
+         PrintFloat::k_maxNumberOfSignificantDigitsInDecimals);
+  char tempBuffer[PrintFloat::k_maxNumberOfSignificantDigitsInDecimals + 1];
+  int mantissaLength = m.serialize(
+      tempBuffer, PrintFloat::k_maxNumberOfSignificantDigitsInDecimals + 1,
+      &workingBuffer);
 
   // Assert that m is not +/-inf
   assert(strcmp(tempBuffer, "inf") != 0);
@@ -164,7 +166,8 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
    *   we force the scientific mode to avoid inventing digits
    * - the number would be too long if we print it as a natural decimal */
   if (mode == Preferences::PrintFloatMode::Engineering ||
-      numberOfRequiredDigits > PrintFloat::k_maxNumberOfSignificantDigits ||
+      numberOfRequiredDigits >
+          PrintFloat::k_maxNumberOfSignificantDigitsInDecimals ||
       forceScientificMode) {
     if (mantissaLength > 1 &&
         (mode != Preferences::PrintFloatMode::Engineering ||

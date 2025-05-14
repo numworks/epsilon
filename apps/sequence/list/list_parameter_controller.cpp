@@ -46,6 +46,8 @@ bool ListParameterController::textFieldDidFinishEditing(
   updateFirstRankCell();
 
   App::app()->snapshot()->updateInterval();
+  // Invalidate sequence context cache when changing initial rank
+  App::app()->localContext()->resetCache();
   m_selectableListView.handleEvent(event);
   return true;
 }

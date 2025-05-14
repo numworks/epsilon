@@ -21,7 +21,7 @@ OMG::GlobalBox<FileSystem> FileSystem::sharedFileSystem;
 void FileSystem::log() {
   // Size taken + available space + disabled records size = k_totalSize
   size_t sizeTaken = endBuffer() - m_buffer;
-  std::cout << "FileSystem: SizeTaken + availableSpace + disabledRecordsSize = "
+  std::cout << "FileSystem: sizeTaken + availableSpace + disabledRecordsSize = "
                "k_totalSize => "
             << sizeTaken << " + " << m_accessibleSize - sizeTaken << " + "
             << k_totalSize - m_accessibleSize << " = " << k_totalSize << "\n";
@@ -643,9 +643,14 @@ size_t FileSystem::sizeOfRecordWithName(Record::Name name, size_t dataSize) {
 }
 
 bool FileSystem::slideBuffer(char* position, int delta) {
+  assert(position >= m_buffer);
+  assert(position <= endBuffer() + sizeof(record_size_t));
+  assert(position + delta >= m_buffer);
   if (!freeSpaceFor(delta)) {
     return false;
   }
+  assert(endBuffer() + sizeof(record_size_t) + delta <=
+         m_buffer + m_accessibleSize);
   memmove(position + delta, position,
           endBuffer() + sizeof(record_size_t) - position);
   return true;

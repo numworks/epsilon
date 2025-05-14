@@ -1,4 +1,3 @@
-#include "py/mphal.h"
 #include "py/mpstate.h"
 
 #if MICROPY_KBD_EXCEPTION

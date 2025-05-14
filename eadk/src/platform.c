@@ -1,13 +1,13 @@
-#include <stdint.h>
 #include <errno.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "../include/eadk/eadk.h"
 
 // External data
 
 extern const char _eadk_external_data_start, _eadk_external_data_size;
-const char * eadk_external_data = &_eadk_external_data_start;
+const char* eadk_external_data = &_eadk_external_data_start;
 size_t eadk_external_data_size = (size_t)&_eadk_external_data_size;
 
 // Heap operations
@@ -15,13 +15,13 @@ size_t eadk_external_data_size = (size_t)&_eadk_external_data_size;
 extern char _heap_start;
 extern char _heap_end;
 
-void * _sbrk(int incr) {
-  static char * heap_end = &_heap_start;
-  void * last_heap_end = heap_end;
+void* _sbrk(int incr) {
+  static char* heap_end = &_heap_start;
+  void* last_heap_end = heap_end;
   heap_end += incr;
   if (heap_end >= (&_heap_end)) {
     errno = ENOMEM;
-    return (void *)-1;
+    return (void*)-1;
   }
   return last_heap_end;
 }
@@ -36,35 +36,26 @@ int _fstat(int file, struct stat * st) {
   return 0;
 }
 #else
-int _fstat(int file, void * st)   {
-  return 0;
-}
+int _fstat(int file, void* st) { return 0; }
 #endif
 
-int _isatty(int file) {
-  return 1;
-}
+int _isatty(int file) { return 1; }
 
-int _open(const char * name, int flags, int mode) {
-  return -1;
-}
+int _open(const char* name, int flags, int mode) { return -1; }
 
-int _read(int file, char *ptr, int len) {
-  return 0;
-}
+int _read(int file, char* ptr, int len) { return 0; }
 
-int _lseek(int file, int ptr, int dir) {
-  return 0;
-}
+int _lseek(int file, int ptr, int dir) { return 0; }
 
-int _close(int file) {
-  return -1;
-}
+int _close(int file) { return -1; }
 
-int _write(int file, char * ptr, int len) {
+int _write(int file, char* ptr, int len) {
   static eadk_point_t location = {0, 0};
-  // TODO: location = eadk_display_draw_string(ptr, location, false, eadk_color_black, eadk_color_white, len); // Ideal scenario: returns location, takes len as input
-  eadk_display_draw_string(ptr, location, false, eadk_color_black, eadk_color_white);
+  // TODO: location = eadk_display_draw_string(ptr, location, false,
+  // eadk_color_black, eadk_color_white, len); // Ideal scenario: returns
+  // location, takes len as input
+  eadk_display_draw_string(ptr, location, false, eadk_color_black,
+                           eadk_color_white);
   return len;
 }
 
@@ -79,22 +70,22 @@ extern char _bss_section_end_ram;
 /* We use an inline version of memcpy/memset in order not to interfere with any
  * symbol that could be defined in the actual external app. */
 
-static inline void _eadk_memcpy(void * dst, const void * src, size_t n) {
-  char * destination = (char *)dst;
-  char * source = (char *)src;
+static inline void _eadk_memcpy(void* dst, const void* src, size_t n) {
+  char* destination = (char*)dst;
+  char* source = (char*)src;
   while (n--) {
     *destination++ = *source++;
   }
 }
 
-static inline void _eadk_memset(void * b, int c, size_t len) {
-  char * destination = (char *)b;
+static inline void _eadk_memset(void* b, int c, size_t len) {
+  char* destination = (char*)b;
   while (len--) {
     *destination++ = (unsigned char)c;
   }
 }
 
-void main(int argc, char * argv[]);
+void main(int argc, char* argv[]);
 
 void _start() {
   /* Copy data section to RAM
@@ -102,8 +93,10 @@ void _start() {
    * in Flash, but linked as if it were in RAM. Now's our opportunity to copy
    * it. Note that until then the data section (e.g. global variables) contains
    * garbage values and should not be used. */
-  size_t dataSectionLength = (&_data_section_end_ram - &_data_section_start_ram);
-  _eadk_memcpy(&_data_section_start_ram, &_data_section_start_flash, dataSectionLength);
+  size_t dataSectionLength =
+      (&_data_section_end_ram - &_data_section_start_ram);
+  _eadk_memcpy(&_data_section_start_ram, &_data_section_start_flash,
+               dataSectionLength);
 
   /* Zero-out the bss section in RAM
    * Until we do, any uninitialized global variable will be unusable. */

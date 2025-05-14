@@ -34,35 +34,35 @@ typedef uint8_t bool;
 #define TRUE 1
 #define FALSE 0
 
-void generateHeaderFromImage(FILE *file, const char *guardian,
-                             const char *variable);
-void generateImplementationFromImage(FILE *file, const char *header,
-                                     const char *variable, uint32_t width,
+void generateHeaderFromImage(FILE* file, const char* guardian,
+                             const char* variable);
+void generateImplementationFromImage(FILE* file, const char* header,
+                                     const char* variable, uint32_t width,
                                      uint32_t height,
-                                     png_bytep *pixelsRowPointers,
+                                     png_bytep* pixelsRowPointers,
                                      bool transparent);
-void fileNameToSnakeCaseName(const char *fileName, char *snakeCaseName,
+void fileNameToSnakeCaseName(const char* fileName, char* snakeCaseName,
                              size_t maxLength);
-void snakeCaseNameToUpperSnakeName(const char *snakeCaseName,
-                                   char *upperSnakeCaseName, size_t maxLength);
-void camelCaseNameFromSnakeCaseNames(const char *snakeCaseName,
-                                     const char *upperSnakeCaseName,
-                                     char *camelCaseName, size_t maxLength);
+void snakeCaseNameToUpperSnakeName(const char* snakeCaseName,
+                                   char* upperSnakeCaseName, size_t maxLength);
+void camelCaseNameFromSnakeCaseNames(const char* snakeCaseName,
+                                     const char* upperSnakeCaseName,
+                                     char* camelCaseName, size_t maxLength);
 
 // TODO: fix inliner to handle any png file
 // TODO: truncate the app image dimensions to 55x56 pixels
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
   ERROR_IF(argc != 4 && argc != 5,
            "Usage: inliner source.png output.h output.cpp [--transparent]");
-  const char *inputPath = argv[1];
+  const char* inputPath = argv[1];
   bool transparent = FALSE;
   if (argc == 5) {
     ERROR_IF(strcmp(argv[4], "--transparent") != 0,
              "Last argument must be '--transparent'");
     transparent = TRUE;
   }
-  FILE *inputFile = fopen(inputPath, "rb");
+  FILE* inputFile = fopen(inputPath, "rb");
   ERROR_IF(inputFile == NULL, "Error: could not open input file.");
 
   unsigned char magic[8];
@@ -92,18 +92,18 @@ int main(int argc, char *argv[]) {
   ERROR_AND_CLOSE_FILE_IF(bitDepth != 8,
                           "Error: Inliner only handles RGBA8888 PNG images.");
 
-  png_bytep *rowPointers = (png_bytep *)malloc(sizeof(png_bytep) * height);
+  png_bytep* rowPointers = (png_bytep*)malloc(sizeof(png_bytep) * height);
   for (int i = 0; i < height; i++) {
-    rowPointers[i] = (png_byte *)malloc(png_get_rowbytes(png, info));
+    rowPointers[i] = (png_byte*)malloc(png_get_rowbytes(png, info));
   }
   png_read_image(png, rowPointers);
 
   char lowerSnakeCaseName[MAX_FILENAME_LENGTH];
   char upperSnakeCaseName[MAX_FILENAME_LENGTH];
   char camelCaseName[MAX_FILENAME_LENGTH];
-  const char *inputFileName = inputPath;
+  const char* inputFileName = inputPath;
   // Let's keep only the last path component
-  for (const char *currentChar = inputPath; *currentChar != 0; currentChar++) {
+  for (const char* currentChar = inputPath; *currentChar != 0; currentChar++) {
     if (*currentChar == '/') {
       inputFileName = currentChar + 1;
     }
@@ -116,14 +116,14 @@ int main(int argc, char *argv[]) {
   camelCaseNameFromSnakeCaseNames(lowerSnakeCaseName, upperSnakeCaseName,
                                   camelCaseName, MAX_FILENAME_LENGTH);
 
-  char *headerPath = argv[2];
-  char *implementationPath = argv[3];
+  char* headerPath = argv[2];
+  char* implementationPath = argv[3];
 
-  FILE *header = fopen(headerPath, "w");
+  FILE* header = fopen(headerPath, "w");
   generateHeaderFromImage(header, upperSnakeCaseName, camelCaseName);
   fclose(header);
 
-  FILE *implementation = fopen(implementationPath, "w");
+  FILE* implementation = fopen(implementationPath, "w");
   generateImplementationFromImage(implementation, lowerSnakeCaseName,
                                   camelCaseName, width, height, rowPointers,
                                   transparent);
@@ -138,7 +138,7 @@ int main(int argc, char *argv[]) {
   fclose(inputFile);
 }
 
-void fileNameToSnakeCaseName(const char *fileName, char *snakeCaseName,
+void fileNameToSnakeCaseName(const char* fileName, char* snakeCaseName,
                              size_t maxLength) {
   for (int i = 0; i < maxLength; i++) {
     snakeCaseName[i] = fileName[i];
@@ -150,8 +150,8 @@ void fileNameToSnakeCaseName(const char *fileName, char *snakeCaseName,
   snakeCaseName[maxLength - 1] = 0;
 }
 
-void snakeCaseNameToUpperSnakeName(const char *snakeCaseName,
-                                   char *upperSnakeCaseName, size_t maxLength) {
+void snakeCaseNameToUpperSnakeName(const char* snakeCaseName,
+                                   char* upperSnakeCaseName, size_t maxLength) {
   for (int i = 0; i < maxLength; i++) {
     char nextLetter = snakeCaseName[i];
     upperSnakeCaseName[i] = toupper(nextLetter);
@@ -161,9 +161,9 @@ void snakeCaseNameToUpperSnakeName(const char *snakeCaseName,
   }
 }
 
-void camelCaseNameFromSnakeCaseNames(const char *snakeCaseName,
-                                     const char *upperSnakeCaseName,
-                                     char *camelCaseName, size_t maxLength) {
+void camelCaseNameFromSnakeCaseNames(const char* snakeCaseName,
+                                     const char* upperSnakeCaseName,
+                                     char* camelCaseName, size_t maxLength) {
   int j = 0;
   for (int i = 0; i < maxLength; i++) {
     char nextLetter = snakeCaseName[i];
@@ -181,8 +181,8 @@ void camelCaseNameFromSnakeCaseNames(const char *snakeCaseName,
   camelCaseName[j] = 0;
 }
 
-void generateHeaderFromImage(FILE *file, const char *guardian,
-                             const char *variable) {
+void generateHeaderFromImage(FILE* file, const char* guardian,
+                             const char* variable) {
   fprintf(file,
           "// This file is auto-generated by Inliner. Do not edit manually.\n");
   fprintf(file, "#ifndef IMAGE_STORE_%s_H\n", guardian);
@@ -194,16 +194,16 @@ void generateHeaderFromImage(FILE *file, const char *guardian,
   fprintf(file, "#endif\n");
 }
 
-void generateImplementationFromImage(FILE *file, const char *header,
-                                     const char *variable, uint32_t width,
+void generateImplementationFromImage(FILE* file, const char* header,
+                                     const char* variable, uint32_t width,
                                      uint32_t height,
-                                     png_bytep *pixelsRowPointers,
+                                     png_bytep* pixelsRowPointers,
                                      bool transparent) {
   int sizeOfPixelBuffer = width * height * sizeof(uint16_t);
   if (transparent) {
     sizeOfPixelBuffer += width * height * sizeof(uint8_t);
   }
-  uint16_t *pixelBuffer = (uint16_t *)malloc(sizeOfPixelBuffer);
+  uint16_t* pixelBuffer = (uint16_t*)malloc(sizeOfPixelBuffer);
 
   for (int j = 0; j < height; j++) {
     png_bytep pixelRow = pixelsRowPointers[j];
@@ -225,17 +225,17 @@ void generateImplementationFromImage(FILE *file, const char *header,
       pixelBuffer[j * width + i] = rgb565value;
 
       if (transparent) {
-        uint8_t *transparentBuffer = (uint8_t *)(&pixelBuffer[width * height]);
+        uint8_t* transparentBuffer = (uint8_t*)(&pixelBuffer[width * height]);
         transparentBuffer[j * width + i] = (uint8_t)(alpha * 0xFF);
       }
     }
   }
 
   int maxSizeOfCompressedPixelBuffer = LZ4_compressBound(sizeOfPixelBuffer);
-  uint8_t *compressedPixelBuffer = malloc(maxSizeOfCompressedPixelBuffer);
+  uint8_t* compressedPixelBuffer = malloc(maxSizeOfCompressedPixelBuffer);
   int sizeOfCompressedPixelBuffer = LZ4_compress_HC(
-      (const char *)pixelBuffer, (char *)compressedPixelBuffer,
-      sizeOfPixelBuffer, maxSizeOfCompressedPixelBuffer, LZ4HC_CLEVEL_MAX);
+      (const char*)pixelBuffer, (char*)compressedPixelBuffer, sizeOfPixelBuffer,
+      maxSizeOfCompressedPixelBuffer, LZ4HC_CLEVEL_MAX);
 
   assert(sizeOfCompressedPixelBuffer != 0);
 

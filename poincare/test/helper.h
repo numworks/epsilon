@@ -170,6 +170,7 @@ void serialize_expression(const Poincare::Internal::Tree* expression,
 
 // Simplification
 void simplify(Poincare::Internal::Tree* e,
-              Poincare::Internal::ProjectionContext* ctx, bool beautify = true);
+              const Poincare::Internal::ProjectionContext& ctx,
+              bool beautify = true);
 
 #endif

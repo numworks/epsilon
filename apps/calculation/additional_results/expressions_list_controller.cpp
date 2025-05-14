@@ -163,7 +163,7 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
   Internal::ProjectionContext tempCtx = *ctx;
   tempCtx.m_symbolic = SymbolicComputation::ReplaceAllSymbols;
   e.cloneAndSimplifyAndApproximate(&exactExpression, &approximateExpression,
-                                   &tempCtx);
+                                   tempCtx);
   assert(!exactExpression.isUninitialized() &&
          !approximateExpression.isUninitialized());
   Layout approximateLayout = Shared::PoincareHelpers::CreateLayout(

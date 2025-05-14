@@ -122,9 +122,10 @@ inline void CloneAndSimplify(
     const ReductionParameters& reductionParameters = {},
     bool* reductionFailure = nullptr) {
   assert(reductionFailure);
-  Poincare::Internal::ProjectionContext ctx =
-      ProjectionContextForParameters(*e, context, reductionParameters);
-  *e = e->cloneAndSimplify(&ctx, reductionFailure);
+
+  *e = e->cloneAndSimplify(
+      ProjectionContextForParameters(*e, context, reductionParameters),
+      reductionFailure);
   assert(!e->isUninitialized());
 }
 
@@ -133,9 +134,9 @@ inline Poincare::SystemExpression CloneAndReduce(
     const ReductionParameters& reductionParameters = {},
     bool* reductionFailure = nullptr) {
   assert(reductionFailure);
-  Poincare::Internal::ProjectionContext ctx =
-      ProjectionContextForParameters(e, context, reductionParameters);
-  return e.cloneAndReduce(&ctx, reductionFailure);
+  return e.cloneAndReduce(
+      ProjectionContextForParameters(e, context, reductionParameters),
+      reductionFailure);
 }
 
 // ===== Misc =====

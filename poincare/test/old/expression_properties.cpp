@@ -22,8 +22,7 @@ void assert_reduced_is_number(const char* input, bool isNumber = true) {
   UserExpression e1 = UserExpression::Builder(parse(input, &context));
   ProjectionContext projectionContext{.m_context = &context};
   bool reductionFailure = false;
-  SystemExpression e2 =
-      e1.cloneAndReduce(&projectionContext, &reductionFailure);
+  SystemExpression e2 = e1.cloneAndReduce(projectionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   quiz_assert_print_if_failure(e2.isConstantNumber() == isNumber, input);
 }
@@ -67,8 +66,7 @@ void assert_reduced_is_rational(const char* input, bool isRational = true) {
   UserExpression e1 = UserExpression::Builder(parse(input, &context));
   ProjectionContext projectionContext{.m_context = &context};
   bool reductionFailure = false;
-  SystemExpression e2 =
-      e1.cloneAndReduce(&projectionContext, &reductionFailure);
+  SystemExpression e2 = e1.cloneAndReduce(projectionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   quiz_assert_print_if_failure(e2.isRational() == isRational, input);
 }
@@ -321,7 +319,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
                                 .m_context = globalContext};
   UserExpression e = UserExpression::Builder(parse(input, globalContext));
   bool reductionFailure = false;
-  e = e.cloneAndReduce(&projContext, &reductionFailure);
+  e = e.cloneAndReduce(projContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   Tree* coefficients = PolynomialParser::GetReducedCoefficients(e, symbolName);
   assert_trees_are_equal(coefficients, expectedCoefficients);
@@ -443,8 +441,7 @@ void assert_is_continuous_on_interval(const char* input, float x1, float x2,
   UserExpression e1 = UserExpression::Builder(parse(input, &context));
   ProjectionContext projectionContext{.m_context = &context};
   bool reductionFailure = false;
-  SystemExpression e2 =
-      e1.cloneAndReduce(&projectionContext, &reductionFailure);
+  SystemExpression e2 = e1.cloneAndReduce(projectionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   SystemFunction e3 = e2.getSystemFunction("x", true);
   quiz_assert_print_if_failure(
@@ -477,8 +474,7 @@ void assert_reduced_deep_is_symbolic(const char* input,
   UserExpression e1 = UserExpression::Builder(parse(input, &context));
   ProjectionContext projectionContext{.m_context = &context};
   bool reductionFailure = false;
-  SystemExpression e2 =
-      e1.cloneAndReduce(&projectionContext, &reductionFailure);
+  SystemExpression e2 = e1.cloneAndReduce(projectionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
   quiz_assert_print_if_failure(
       e2.deepIsOfType(

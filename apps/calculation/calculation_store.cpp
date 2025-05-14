@@ -120,7 +120,7 @@ static void compute(Poincare::Expression inputExpression,
       .m_context = context};
 
   inputExpression.cloneAndSimplifyAndApproximate(
-      &exactOutputExpression, &approximateOutputExpression, &projContext);
+      &exactOutputExpression, &approximateOutputExpression, projContext);
 }
 
 static OutputExpressions computeInterruptible(

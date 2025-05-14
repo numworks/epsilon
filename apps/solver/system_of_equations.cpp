@@ -192,10 +192,10 @@ static void simplifyAndApproximateSolution(
       .m_symbolic = symbolicComputation,
       .m_context = context};
   if (approximate) {
-    e.cloneAndSimplifyAndApproximate(exact, approximate, &projCtx);
+    e.cloneAndSimplifyAndApproximate(exact, approximate, projCtx);
   } else {
     bool reductionFailure = false;
-    *exact = e.cloneAndSimplify(&projCtx, &reductionFailure);
+    *exact = e.cloneAndSimplify(projCtx, &reductionFailure);
   }
   assert(!exact->isUninitialized() &&
          (!approximate || !approximate->isUninitialized()));

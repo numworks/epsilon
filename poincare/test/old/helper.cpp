@@ -111,7 +111,7 @@ void assert_parsed_expression_process_to(
       .m_unitFormat = unitFormat,
       .m_symbolic = symbolicComputation,
       .m_context = ctx};
-  Tree *m = process(e, &projCtx);
+  Tree *m = process(e, projCtx);
   Tree *l =
       Internal::Layouter::LayoutExpression(m, true, numberOfSignificantDigits);
   Internal::Serialize(l, buffer, buffer + bufferSize);
@@ -205,7 +205,7 @@ void assert_parsed_expression_simplify_to(
   assert_parsed_expression_process_to(
       expression, simplifiedExpression, &globalContext, target, complexFormat,
       angleUnit, unitFormat, symbolicComputation, unitConversion,
-      [](Tree *e, Internal::ProjectionContext *projCtx) {
+      [](Tree *e, Internal::ProjectionContext &projCtx) {
         simplify(e, projCtx);
         // TODO_PCJ also approximate to see if it crashes
         return e;
@@ -224,18 +224,18 @@ void assert_expression_approximates_to(const char *expression,
       expression, approximation, &globalContext, SystemForApproximation,
       complexFormat, angleUnit, unitFormat, ReplaceAllSymbols,
       DefaultUnitConversion,
-      [](Tree *e, Internal::ProjectionContext *projCtx) -> Tree * {
+      [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
         /* tree is projected beforehand so we can prepare it for
          * approximation, and have better results on integrals for example. */
-        Simplification::ToSystem(e, projCtx);
+        Simplification::ToSystem(e, &projCtx);
         TreeRef result = Internal::Approximation::ToTree<T>(
             e,
             Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                                 .prepare = true},
-            Internal::Approximation::Context(projCtx->m_angleUnit,
-                                             projCtx->m_complexFormat,
-                                             projCtx->m_context));
-        Beautification::DeepBeautify(result, *projCtx);
+            Internal::Approximation::Context(projCtx.m_angleUnit,
+                                             projCtx.m_complexFormat,
+                                             projCtx.m_context));
+        Beautification::DeepBeautify(result, projCtx);
         e->removeTree();
         return result;
       },
@@ -251,11 +251,11 @@ void assert_expression_approximates_keeping_symbols_to(
       expression, simplifiedExpression, &globalContext, SystemForApproximation,
       complexFormat, angleUnit, unitFormat, ReplaceDefinedSymbols,
       DefaultUnitConversion,
-      [](Tree *e, Internal::ProjectionContext *projCtx) -> Tree * {
+      [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
 #if 0
         Tree *simplifiedExpression;
-        e.cloneAndSimplifyAndApproximate(
-            &simplifiedExpression, nullptr, projCtx);
+        e.cloneAndSimplifyAndApproximate(&simplifiedExpression, nullptr,
+                                         projCtx);
         return simplifiedExpression;
 #endif
         return e;
@@ -271,16 +271,16 @@ void assert_expression_simplifies_approximates_to(
   assert_parsed_expression_process_to(
       expression, approximation, context, SystemForApproximation, complexFormat,
       angleUnit, unitFormat, ReplaceAllSymbols, DefaultUnitConversion,
-      [](Tree *e, Internal::ProjectionContext *projCtx) -> Tree * {
+      [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
         simplify(e, projCtx, false);
         TreeRef result = Internal::Approximation::ToTree<T>(
             e,
             Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                                 .prepare = true},
-            Internal::Approximation::Context(projCtx->m_angleUnit,
-                                             projCtx->m_complexFormat,
-                                             projCtx->m_context));
-        Beautification::DeepBeautify(result, *projCtx);
+            Internal::Approximation::Context(projCtx.m_angleUnit,
+                                             projCtx.m_complexFormat,
+                                             projCtx.m_context));
+        Beautification::DeepBeautify(result, projCtx);
         e->removeTree();
         return result;
       },

@@ -65,7 +65,7 @@ void simplified_approximates_to(
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
-        simplify(tree, &projectionContext, false);
+        simplify(tree, projectionContext, false);
         tree->moveTreeOverTree(Approximation::ToTree<T>(
             tree,
             Approximation::Parameters{.isRootAndCanHaveRandom = true,

@@ -88,8 +88,8 @@ void remove_system_codepoints(char* buffer) {
   *dest = 0;
 }
 
-void simplify(Tree* e, ProjectionContext* ctx, bool beautify) {
-  if (!Simplification::Simplify(e, *ctx, beautify)) {
+void simplify(Tree* e, const ProjectionContext& ctx, bool beautify) {
+  if (!Simplification::Simplify(e, ctx, beautify)) {
     // Return undef to spot tests overflowing the TreeStack
     e->cloneNodeOverTree(KFailedSimplification);
   }
@@ -165,7 +165,7 @@ Tree* parse_and_reduce(const char* input, bool beautify) {
   Tree* e = parse(input);
   assert(e);
   ProjectionContext ctx = {};
-  simplify(e, &ctx, beautify);
+  simplify(e, ctx, beautify);
   return e;
 }
 

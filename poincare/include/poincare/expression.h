@@ -182,25 +182,25 @@ class Expression : public PoolHandle {
   void cloneAndSimplifyAndApproximate(
       UserExpression* simplifiedExpression,
       UserExpression* approximatedExpression,
-      Internal::ProjectionContext* context) const;
+      Internal::ProjectionContext& context) const;
   // Only on UserExpression
-  UserExpression cloneAndSimplify(Internal::ProjectionContext* context,
+  UserExpression cloneAndSimplify(const Internal::ProjectionContext& context,
                                   bool* reductionFailure) const;
   // Only on UserExpression
   SystemExpression cloneAndReduce(
-      Internal::ProjectionContext* projectionContext,
+      const Internal::ProjectionContext& projectionContext,
       bool* reductionFailure) const;
   // Only on UserExpression
   UserExpression cloneAndApproximate(
-      Internal::ProjectionContext* context) const;
+      Internal::ProjectionContext& context) const;
 
   // Only on SystemExpression. Expressions in parameters are outputs.
   void cloneAndBeautifyAndApproximate(
       UserExpression* beautifiedExpression,
       UserExpression* approximatedExpression,
-      Internal::ProjectionContext* context) const;
+      Internal::ProjectionContext& context) const;
   // Only on SystemExpression
-  UserExpression cloneAndBeautify(Internal::ProjectionContext* context) const;
+  UserExpression cloneAndBeautify(Internal::ProjectionContext& context) const;
   // Only on SystemExpression. Replace symbol and reduce.
   SystemExpression cloneAndReplaceSymbolWithExpression(
       const char* symbolName, const SystemExpression& replaceSymbolWith,
@@ -413,7 +413,7 @@ class Expression : public PoolHandle {
 
  private:
   Expression privateCloneAndReduceOrSimplify(
-      Internal::ProjectionContext* context, bool beautify,
+      const Internal::ProjectionContext& context, bool beautify,
       bool* reductionFailure = nullptr) const;
 };
 

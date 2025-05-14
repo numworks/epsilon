@@ -56,7 +56,7 @@ SystemExpression Equation::Model::standardForm(
             expressionInputWithoutFunctions, contextToUse,
             {.target = reductionTarget});
     returnedExpression =
-        returnedExpression.cloneAndReduce(&projCtx, &reductionFailure);
+        returnedExpression.cloneAndReduce(projCtx, &reductionFailure);
     assert(!reductionFailure && !returnedExpression.isUninitialized());
   } else {
     assert(simplifiedInput.isBoolean() || simplifiedInput.isList());

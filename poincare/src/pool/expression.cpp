@@ -336,7 +336,7 @@ bool Expression::deepIsOfType(std::initializer_list<Internal::AnyType> types,
 void UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
-    Internal::ProjectionContext* context) const {
+    Internal::ProjectionContext& context) const {
   // Step 1: simplify
   assert(simplifiedExpression && simplifiedExpression->isUninitialized());
   bool reductionFailure = false;
@@ -348,9 +348,9 @@ void UserExpression::cloneAndSimplifyAndApproximate(
 }
 
 UserExpression UserExpression::cloneAndApproximate(
-    Internal::ProjectionContext* context) const {
-  Approximation::Context approxCtx(
-      context->m_angleUnit, context->m_complexFormat, context->m_context);
+    Internal::ProjectionContext& context) const {
+  Approximation::Context approxCtx(context.m_angleUnit, context.m_complexFormat,
+                                   context.m_context);
   Tree* a;
   if (CAS::Enabled()) {
     a = tree()->cloneTree();
@@ -364,20 +364,20 @@ UserExpression UserExpression::cloneAndApproximate(
         Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                   .projectLocalVariables = true},
         approxCtx);
-    context->m_dimension = Internal::Dimension::Get(a);
-    Beautification::DeepBeautify(a, *context);
+    context.m_dimension = Internal::Dimension::Get(a);
+    Beautification::DeepBeautify(a, context);
   }
   return UserExpression::Builder(a);
 }
 
 UserExpression UserExpression::cloneAndSimplify(
-    Internal::ProjectionContext* context, bool* reductionFailure) const {
+    const Internal::ProjectionContext& context, bool* reductionFailure) const {
   assert(reductionFailure);
   return privateCloneAndReduceOrSimplify(context, true, reductionFailure);
 }
 
 SystemExpression UserExpression::cloneAndReduce(
-    Internal::ProjectionContext* projectionContext,
+    const Internal::ProjectionContext& projectionContext,
     bool* reductionFailure) const {
   assert(reductionFailure);
   return privateCloneAndReduceOrSimplify(projectionContext, false,
@@ -385,12 +385,12 @@ SystemExpression UserExpression::cloneAndReduce(
 }
 
 Expression UserExpression::privateCloneAndReduceOrSimplify(
-    Internal::ProjectionContext* context, bool beautify,
+    const Internal::ProjectionContext& context, bool beautify,
     bool* reductionFailure) const {
   assert(!isUninitialized());
   Tree* e = tree()->cloneTree();
   // TODO_PCJ: Decide if a projection is needed or not
-  bool reductionSuccess = Simplification::Simplify(e, *context, beautify);
+  bool reductionSuccess = Simplification::Simplify(e, context, beautify);
   if (reductionFailure) {
     *reductionFailure = !reductionSuccess;
   }
@@ -400,7 +400,7 @@ Expression UserExpression::privateCloneAndReduceOrSimplify(
 void SystemExpression::cloneAndBeautifyAndApproximate(
     UserExpression* beautifiedExpression,
     UserExpression* approximatedExpression,
-    Internal::ProjectionContext* context) const {
+    Internal::ProjectionContext& context) const {
   assert(beautifiedExpression && beautifiedExpression->isUninitialized());
   *beautifiedExpression = cloneAndBeautify(context);
   assert(approximatedExpression && approximatedExpression->isUninitialized());
@@ -408,10 +408,10 @@ void SystemExpression::cloneAndBeautifyAndApproximate(
 }
 
 UserExpression SystemExpression::cloneAndBeautify(
-    Internal::ProjectionContext* context) const {
+    Internal::ProjectionContext& context) const {
   Tree* e = tree()->cloneTree();
-  context->m_dimension = Internal::Dimension::Get(e);
-  Simplification::BeautifyReduced(e, context);
+  context.m_dimension = Internal::Dimension::Get(e);
+  Simplification::BeautifyReduced(e, &context);
   return Builder(e);
 }
 
@@ -540,7 +540,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
                            .m_symbolic = symbolicComputation,
                            .m_context = context};
   bool reductionFailure;
-  exp = exp.cloneAndSimplify(&ctx, &reductionFailure);
+  exp = exp.cloneAndSimplify(ctx, &reductionFailure);
   assert(!exp.isUninitialized());
   if (!Poincare::Dimension(exp, context).isScalar()) {
     return NAN;

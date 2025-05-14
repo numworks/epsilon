@@ -391,7 +391,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         .m_unitFormat =
             GlobalPreferences::SharedGlobalPreferences()->unitFormat()};
     e.cloneAndBeautifyAndApproximate(&result, &approximation,
-                                     &projectionContext);
+                                     projectionContext);
     assert(!approximation.isUninitialized());
     /* Approximate in case of simplification failure, as we cannot display a
      * non-beautified expression. */

@@ -221,9 +221,9 @@ Record::ErrorStatus FileSystem::createRecordWithDataChunks(
   // Next Record is null-sized
   overrideSizeAtPosition(newRecord, 0);
   Record r = Record(recordName);
+  notifyChangeToDelegate(r);
   m_lastRecordRetrieved = r;
   m_lastRecordRetrievedPointer = newRecordAddress;
-  notifyChangeToDelegate(r);
   return Record::ErrorStatus::None;
 }
 

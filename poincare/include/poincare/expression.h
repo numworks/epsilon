@@ -194,6 +194,11 @@ class Expression : public PoolHandle {
   // Only on UserExpression
   UserExpression cloneAndSimplify(const Internal::ProjectionContext& context,
                                   bool* reductionFailure) const;
+  /*  This version does not warn if simplification fails. In case of failure the
+   * initial expression is returned. */
+  UserExpression cloneAndTrySimplify(
+      const Internal::ProjectionContext& context) const;
+
   // Only on UserExpression
   SystemExpression cloneAndReduce(
       const Internal::ProjectionContext& projectionContext,

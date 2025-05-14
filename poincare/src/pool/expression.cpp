@@ -394,6 +394,11 @@ UserExpression UserExpression::cloneAndSimplify(
   return privateCloneAndReduceOrSimplify(context, true, reductionFailure);
 }
 
+UserExpression UserExpression::cloneAndTrySimplify(
+    const Internal::ProjectionContext& context) const {
+  return privateCloneAndReduceOrSimplify(context, true, nullptr);
+}
+
 SystemExpression UserExpression::cloneAndReduce(
     const Internal::ProjectionContext& projectionContext,
     bool* reductionFailure) const {

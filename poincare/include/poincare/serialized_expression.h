@@ -16,6 +16,9 @@ class SerializedExpression {
   constexpr static size_t k_bufferLength =
       PrintFloat::charSizeForFloatsWithPrecision(k_numberOfSignificantDigits);
 
+  // TODO: fine-tune, check that it complies with the spec
+  constexpr static size_t k_maxExactSerializationLength = 9;
+
   explicit SerializedExpression(Expression expression) {
     [[maybe_unused]] size_t usedLength = expression.serialize(
         m_buffer, k_bufferLength, true, Preferences::PrintFloatMode::Decimal,
@@ -30,6 +33,16 @@ class SerializedExpression {
 
   bool isUninitialized() const { return m_buffer[0] == '\0'; }
 
+  /* Writes the expression representation into the provided buffer.
+   * - If the expression can be represented exactly by a decimal number
+   * (example: 2/5 = 0.4), the decimal form (0.4) will be written.
+   * - If the expression is not a decimal and its exact representation is
+   * smaller than k_maxExactSerializationLength (example: 2/3), this exact
+   * representation is written.
+   * - If the exact representation takes more characters than the above limit
+   * (example: 12/721), the approximation is written in decimal format
+   * (0.016644).
+   */
   void writeText(std::span<char> buffer,
                  int numberOfSignificantDigits = k_numberOfSignificantDigits,
                  Preferences::PrintFloatMode floatDisplayMode =

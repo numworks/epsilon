@@ -82,7 +82,7 @@ $(addprefix expression/, \
   random.cpp \
   rational.cpp \
   sequence.cpp \
-	serialized_expression.cpp:-nopool \
+  serialized_expression.cpp:-nopool \
   set.cpp \
   simplification.cpp \
   symbol.cpp \

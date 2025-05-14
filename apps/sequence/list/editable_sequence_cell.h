@@ -20,6 +20,7 @@ class EditableSequenceCell
   void layoutSubviews(bool force) override;
 
  private:
+  constexpr static KDCoordinate k_expressionMargin = 5;
   bool displayEllipsis() const override { return false; }
 };
 

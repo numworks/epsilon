@@ -33,7 +33,8 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
  protected:
   constexpr static KDCoordinate k_verticalColorIndicatorThickness =
       Escher::Metric::VerticalColorIndicatorThickness;
-  constexpr static KDCoordinate k_expressionMargin = 5;
+  constexpr static KDCoordinate k_margin =
+      Escher::Metric::CellHorizontalElementMargin;
   constexpr static KDCoordinate k_ellipsisWidth =
       Escher::Metric::EllipsisCellWidth;
   void setEven(bool even) override;

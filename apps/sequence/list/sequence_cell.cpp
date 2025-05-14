@@ -30,13 +30,12 @@ void AbstractSequenceCell::drawRect(KDContext* ctx, KDRect rect) const {
 
 void AbstractSequenceCell::layoutSubviews(bool force) {
   KDCoordinate ellipsisWidth = displayEllipsis() ? k_ellipsisWidth : 0;
-  setChildFrame(
-      mainCell(),
-      KDRect(k_verticalColorIndicatorThickness + k_expressionMargin, 0,
-             bounds().width() - k_verticalColorIndicatorThickness -
-                 k_expressionMargin - ellipsisWidth,
-             bounds().height()),
-      force);
+  setChildFrame(mainCell(),
+                KDRect(k_verticalColorIndicatorThickness + k_margin, 0,
+                       bounds().width() - k_verticalColorIndicatorThickness -
+                           k_margin - ellipsisWidth,
+                       bounds().height()),
+                force);
   setChildFrame(&m_ellipsisView,
                 KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
                        bounds().height()),

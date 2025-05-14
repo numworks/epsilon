@@ -5,8 +5,6 @@
 #include <escher/ellipsis_view.h>
 #include <escher/even_odd_cell.h>
 
-#include "vertical_sequence_title_cell.h"
-
 namespace Sequence {
 
 class AbstractSequenceCell : public Escher::EvenOddCell {
@@ -23,12 +21,11 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
     return const_cast<Escher::HighlightCell*>(
         const_cast<AbstractSequenceCell*>(this)->mainCell());
   }
-  VerticalSequenceTitleCell* titleCell() { return &m_sequenceTitleCell; }
 
   void setColor(KDColor color) { m_functionColor = color; }
 
  private:
-  int numberOfSubviews() const override { return 2 + displayEllipsis(); }
+  int numberOfSubviews() const override { return 1 + displayEllipsis(); }
   Escher::View* subviewAtIndex(int index) override;
   void drawRect(KDContext* ctx, KDRect rect) const override;
   void layoutSubviews(bool force = false) override;
@@ -36,12 +33,11 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
  protected:
   constexpr static KDCoordinate k_verticalColorIndicatorThickness =
       Escher::Metric::VerticalColorIndicatorThickness;
-  constexpr static KDCoordinate k_titlesColumnWidth = 70;
+  constexpr static KDCoordinate k_expressionMargin = 5;
   constexpr static KDCoordinate k_ellipsisWidth =
       Escher::Metric::EllipsisCellWidth;
   void setEven(bool even) override;
   virtual bool displayEllipsis() const { return true; }
-  VerticalSequenceTitleCell m_sequenceTitleCell;
   Escher::EllipsisView m_ellipsisView;
   KDColor m_functionColor;
   KDColor m_expressionBackground;

@@ -14,8 +14,6 @@ using namespace Escher;
 
 namespace Sequence {
 
-constexpr KDCoordinate ListController::k_minTitleColumnWidth;
-
 ListController::ListController(Responder* parentResponder,
                                ButtonRowController* header,
                                ButtonRowController* footer)
@@ -25,12 +23,7 @@ ListController::ListController(Responder* parentResponder,
       m_parameterController(this),
       m_typeParameterController(this, this),
       m_typeStackController(nullptr, &m_typeParameterController,
-                            StackViewController::Style::PurpleWhite),
-      m_titlesColumnWidth(k_minTitleColumnWidth) {
-  for (int i = 0; i < k_maxNumberOfRows; i++) {
-    m_sequenceCells[i].expressionCell()->setMargins({k_expressionMargin, 0});
-  }
-}
+                            StackViewController::Style::PurpleWhite) {}
 
 KDCoordinate ListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
@@ -60,7 +53,6 @@ void ListController::viewWillAppear() {
   ExpressionModelListController::viewWillAppear();
   App::app()->defaultToolbox()->setExtraCellsDataSource(
       &m_sequenceToolboxDataSource);
-  computeTitlesColumnWidth();
 }
 
 void ListController::viewDidDisappear() {
@@ -97,8 +89,6 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
     if (type == k_expressionCellType) {
       fillExpressionCellForRow(sequenceCell->mainCell(), row);
     }
-    fillTitleCellForRow(sequenceCell->titleCell(), row,
-                        sequenceCell->mainCell());
     sequenceCell->setParameterSelected(m_parameterColumnSelected);
   }
   FunctionListController::fillCellForRow(cell, row);
@@ -129,19 +119,6 @@ bool ListController::isAcceptableExpression(const UserExpression expression,
   // Do not accept any OperatorType.
   return MathLayoutFieldDelegate::isAcceptableExpression(expression, context) &&
          !expression.isComparison();
-}
-
-void ListController::computeTitlesColumnWidth(bool forceMax) {
-  if (forceMax) {
-    m_titlesColumnWidth =
-        nameWidth(Poincare::SymbolHelper::k_maxNameLength +
-                  Shared::Function::k_parenthesedArgumentCodePointLength) +
-        k_functionTitleSumOfMargins;
-    return;
-  }
-  KDCoordinate maxTitleWidth =
-      maxFunctionNameWidth() + k_functionTitleSumOfMargins;
-  m_titlesColumnWidth = std::max(maxTitleWidth, k_minTitleColumnWidth);
 }
 
 void ListController::editExpression(Ion::Events::Event event) {
@@ -185,42 +162,10 @@ Layout ListController::getLayoutForSelectedRecord() const {
   }
 }
 
-HighlightCell* ListController::titleCells(int index) {
-  assert(index >= 0 && index < k_maxNumberOfRows);
-  return m_sequenceCells[index].titleCell();
-}
 
 HighlightCell* ListController::functionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
   return m_sequenceCells[index].expressionCell();
-}
-
-void ListController::fillTitleCellForRow(VerticalSequenceTitleCell* cell,
-                                         int row,
-                                         HighlightCell* expressionCell) {
-  assert(row >= 0 && row < k_maxNumberOfRows);
-  cell->setBaseline(baseline(row, expressionCell));
-  int sequenceDefinition;
-  Ion::Storage::Record record = recordAtRow(row, &sequenceDefinition);
-  Shared::Sequence* sequence = modelStore()->modelForRecord(record);
-  // Set the color
-  KDColor nameColor =
-      sequence->isActive() ? sequence->color() : Palette::GrayDark;
-  cell->setColor(nameColor);
-  // Set the layout
-  const Poincare::Layout equalSign = Poincare::Layout::Parse(" =");
-  switch (sequenceDefinition) {
-    case k_sequenceDefinition:
-      return cell->setLayout(
-          Poincare::Layout::Concatenate(sequence->definitionName(), equalSign));
-    case k_firstInitialCondition:
-      return cell->setLayout(Poincare::Layout::Concatenate(
-          sequence->firstInitialConditionName(), equalSign));
-    default:
-      assert(sequenceDefinition == k_secondInitialCondition);
-      return cell->setLayout(Poincare::Layout::Concatenate(
-          sequence->secondInitialConditionName(), equalSign));
-  }
 }
 
 void ListController::fillExpressionCellForRow(HighlightCell* cell, int row) {
@@ -245,41 +190,13 @@ void ListController::fillExpressionCellForRow(HighlightCell* cell, int row) {
   }
 }
 
-KDCoordinate ListController::maxFunctionNameWidth() {
-  int maxNameLength = 0;
-  int numberOfModels = modelStore()->numberOfModels();
-  for (int i = 0; i < numberOfModels; i++) {
-    Ion::Storage::Record record = modelStore()->recordAtIndex(i);
-    const char* functionName = record.fullName();
-    const char* dotPosition =
-        strchr(functionName, Ion::Storage::Record::k_dotChar);
-    assert(dotPosition != nullptr);
-    maxNameLength =
-        std::max(maxNameLength, static_cast<int>(dotPosition - functionName));
-  }
-  return nameWidth(maxNameLength +
-                   Shared::Function::k_parenthesedArgumentCodePointLength);
-}
-
 void ListController::didChangeModelsList() {
   ExpressionModelListController::didChangeModelsList();
-  computeTitlesColumnWidth();
   if (modelStore()->numberOfModels() == 0) {
     App::app()->snapshot()->resetInterval();
   } else {
     App::app()->snapshot()->updateInterval();
   }
-}
-
-KDCoordinate ListController::baseline(int j, HighlightCell* cell) {
-  assert(j >= 0 && j < const_cast<ListController*>(this)->numberOfRows());
-  Poincare::Layout layout = cell->layout();
-  if (layout.isUninitialized()) {
-    return -1;  // Baseline < 0 triggers default behaviour (centered alignment)
-  }
-  return 0.5 * (const_cast<ListController*>(this)->rowHeight(j) -
-                layout->layoutSize(k_font).height()) +
-         layout->baseline(k_font);
 }
 
 void ListController::addNewModelAction() {
@@ -296,11 +213,6 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
 
 SequenceStore* ListController::modelStore() const {
   return App::app()->functionStore();
-}
-
-KDCoordinate ListController::nameWidth(int nameLength) const {
-  assert(nameLength >= 0);
-  return nameLength * KDFont::GlyphWidth(VerticalSequenceTitleCell::k_font);
 }
 
 void ListController::showLastSequence() {

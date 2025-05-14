@@ -21,7 +21,6 @@ class EditableSequenceCell
 
  private:
   bool displayEllipsis() const override { return false; }
-  constexpr static KDCoordinate k_expressionMargin = 5;
 };
 
 }  // namespace Sequence

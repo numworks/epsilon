@@ -15,15 +15,11 @@ EditableSequenceCell::EditableSequenceCell(
 }
 
 void EditableSequenceCell::layoutSubviews(bool force) {
-  setChildFrame(&m_sequenceTitleCell,
-                KDRect(k_verticalColorIndicatorThickness, 0,
-                       k_titlesColumnWidth, bounds().height()),
-                force);
   setChildFrame(
       expressionCell(),
-      KDRect(k_titlesColumnWidth + k_verticalColorIndicatorThickness, 0,
+      KDRect(k_verticalColorIndicatorThickness + k_expressionMargin, 0,
              bounds().width() - k_verticalColorIndicatorThickness -
-                 k_titlesColumnWidth - k_expressionMargin,
+                 2 * k_expressionMargin,
              bounds().height()),
       force);
 }

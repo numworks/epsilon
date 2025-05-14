@@ -7,11 +7,9 @@ namespace Sequence {
 View* AbstractSequenceCell::subviewAtIndex(int index) {
   switch (index) {
     case 0:
-      return &m_sequenceTitleCell;
-    case 1:
       return mainCell();
     default:
-      assert(index == 2);
+      assert(index == 1);
       return &m_ellipsisView;
   }
 }
@@ -32,15 +30,11 @@ void AbstractSequenceCell::drawRect(KDContext* ctx, KDRect rect) const {
 
 void AbstractSequenceCell::layoutSubviews(bool force) {
   KDCoordinate ellipsisWidth = displayEllipsis() ? k_ellipsisWidth : 0;
-  setChildFrame(&m_sequenceTitleCell,
-                KDRect(k_verticalColorIndicatorThickness, 0,
-                       k_titlesColumnWidth, bounds().height()),
-                force);
   setChildFrame(
       mainCell(),
-      KDRect(k_verticalColorIndicatorThickness + k_titlesColumnWidth, 0,
+      KDRect(k_verticalColorIndicatorThickness + k_expressionMargin, 0,
              bounds().width() - k_verticalColorIndicatorThickness -
-                 k_titlesColumnWidth - ellipsisWidth,
+                 k_expressionMargin - ellipsisWidth,
              bounds().height()),
       force);
   setChildFrame(&m_ellipsisView,
@@ -49,10 +43,7 @@ void AbstractSequenceCell::layoutSubviews(bool force) {
                 force);
 }
 
-void AbstractSequenceCell::setEven(bool even) {
-  m_sequenceTitleCell.setEven(even);
-  EvenOddCell::setEven(even);
-}
+void AbstractSequenceCell::setEven(bool even) { EvenOddCell::setEven(even); }
 
 void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
   KDColor defaultColor = m_even ? KDColorWhite : Palette::WallScreen;
@@ -60,7 +51,6 @@ void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
   KDColor selectedColor = backgroundColor();
   m_expressionBackground = m_parameterSelected ? defaultColor : selectedColor;
   m_ellipsisBackground = m_parameterSelected ? selectedColor : defaultColor;
-  m_sequenceTitleCell.setHighlighted(isHighlighted() && !m_parameterSelected);
   expressionCell()->setHighlighted(isHighlighted() && !m_parameterSelected);
 }
 

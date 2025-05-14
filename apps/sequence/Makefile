@@ -14,7 +14,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/sequence/,$(addsuffix :-test, \
   list/sequence_cell.cpp \
   list/sequence_toolbox_data_source.cpp \
   list/type_parameter_controller.cpp \
-  list/vertical_sequence_title_cell.cpp \
   values/interval_parameter_controller.cpp \
   values/sequence_column_parameter_controller.cpp \
   values/sum_column_parameter_controller.cpp \

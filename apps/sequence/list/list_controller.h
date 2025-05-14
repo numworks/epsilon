@@ -44,9 +44,6 @@ class ListController : public Shared::FunctionListController {
   constexpr static int k_sequenceDefinition = 0;
   constexpr static int k_firstInitialCondition = k_sequenceDefinition + 1;
   constexpr static int k_secondInitialCondition = k_firstInitialCondition + 1;
-  /* Width and margins */
-  constexpr static KDCoordinate k_minTitleColumnWidth = 65;
-  constexpr static KDCoordinate k_functionTitleSumOfMargins = 25;
   /* Row numbers */
   constexpr static int k_maxNumberOfRows =
       3 * Shared::SequenceStore::k_maxNumberOfSequences;
@@ -55,27 +52,21 @@ class ListController : public Shared::FunctionListController {
     return m_editableCell.expressionCell();
   }
 
-  void computeTitlesColumnWidth(bool forceMax = false);
   ListParameterController* parameterController() override {
     return &m_parameterController;
   }
   int maxNumberOfDisplayableRows() const override { return k_maxNumberOfRows; }
-  Escher::HighlightCell* titleCells(int index);
   Escher::HighlightCell* functionCells(int index) override;
-  void fillTitleCellForRow(VerticalSequenceTitleCell* cell, int row,
-                           Escher::HighlightCell* expressionCell);
   void fillExpressionCellForRow(Escher::HighlightCell* cell, int row);
   int sequenceDefinitionForRow(int j) const;
   int numberOfRowsForRecord(Ion::Storage::Record record) const override;
   KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
-  KDCoordinate baseline(int j, Escher::HighlightCell* cell);
   void addNewModelAction() override;
   bool editSelectedRecordWithLayout(Poincare::Layout layout) override;
   Poincare::Layout getLayoutForSelectedRecord() const override;
   bool removeModelRow(Ion::Storage::Record record) override;
   Shared::SequenceStore* modelStore() const override;
-  KDCoordinate nameWidth(int nameLength) const;
   Escher::LayoutField* layoutField() override {
     return m_editableCell.expressionCell()->layoutField();
   }
@@ -89,7 +80,6 @@ class ListController : public Shared::FunctionListController {
   TypeParameterController m_typeParameterController;
   Escher::StackViewController::Default m_typeStackController;
   SequenceToolboxDataSource m_sequenceToolboxDataSource;
-  KDCoordinate m_titlesColumnWidth;
 };
 
 }  // namespace Sequence

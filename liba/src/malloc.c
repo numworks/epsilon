@@ -1,20 +1,18 @@
-#include <stdlib.h>
-#include <string.h>
 #include <assert.h>
 #include <private/memconfig.h>
+#include <stdlib.h>
+#include <string.h>
 
 extern char _heap_start;
 extern char _heap_end;
 
-heap_config_t HeapConfig = {
-  .nHeap = 0
-};
+heap_config_t HeapConfig = {.nHeap = 0};
 
 // Memsys headers cannot be included easily so we rewrite them here
-int memsys5Init(void *NotUsed);
-void memsys5FreeUnsafe(void *pOld);
-void * memsys5MallocUnsafe(int nByte);
-void * memsys5Realloc(void *pPrior, int nBytes);
+int memsys5Init(void* NotUsed);
+void memsys5FreeUnsafe(void* pOld);
+void* memsys5MallocUnsafe(int nByte);
+void* memsys5Realloc(void* pPrior, int nBytes);
 int memsys5Roundup(int n);
 
 static void configure_heap() {
@@ -26,14 +24,14 @@ static void configure_heap() {
   memsys5Init(0);
 }
 
-void free(void *ptr) {
+void free(void* ptr) {
   if (ptr != NULL) {
     memsys5FreeUnsafe(ptr);
   }
 }
 
-void * malloc(size_t size) {
-  void * p = NULL;
+void* malloc(size_t size) {
+  void* p = NULL;
   if (HeapConfig.nHeap == 0) {
     configure_heap();
   }
@@ -48,6 +46,6 @@ void * malloc(size_t size) {
   return p;
 }
 
-void * realloc(void *ptr, size_t size) {
+void* realloc(void* ptr, size_t size) {
   return memsys5Realloc(ptr, memsys5Roundup(size));
 }

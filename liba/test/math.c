@@ -25,15 +25,15 @@ float test_expm1f(float x) { return expm1f(x); }
 float test_fabsf(float x) { return fabsf(x); }
 float test_floorf(float x) { return floorf(x); }
 float test_fmodf(float x, float y) { return fmodf(x, y); }
-float test_frexpf(float x, int *exp) { return frexpf(x, exp); }
+float test_frexpf(float x, int* exp) { return frexpf(x, exp); }
 float test_ldexpf(float x, int exp) { return ldexpf(x, exp); }
 float test_lgammaf(float x) { return lgammaf(x); }
-float test_lgammaf_r(float x, int *signgamp) { return lgammaf_r(x, signgamp); }
+float test_lgammaf_r(float x, int* signgamp) { return lgammaf_r(x, signgamp); }
 float test_log1pf(float x) { return log1pf(x); }
 float test_log10f(float x) { return log10f(x); }
 float test_logf(float x) { return logf(x); }
-float test_modff(float x, float *iptr) { return modff(x, iptr); }
-float test_nanf(const char *s) { return nanf(s); }
+float test_modff(float x, float* iptr) { return modff(x, iptr); }
+float test_nanf(const char* s) { return nanf(s); }
 float test_nearbyintf(float x) { return nearbyintf(x); }
 float test_powf(float x, float y) { return powf(x, y); }
 float test_roundf(float x) { return roundf(x); }
@@ -71,17 +71,17 @@ double test_expm1(double x) { return expm1(x); }
 double test_fabs(double x) { return fabs(x); }
 double test_floor(double x) { return floor(x); }
 double test_fmod(double x, double y) { return fmod(x, y); }
-double test_frexp(double x, int *exp) { return frexp(x, exp); }
+double test_frexp(double x, int* exp) { return frexp(x, exp); }
 double test_ldexp(double x, int exp) { return ldexp(x, exp); }
 double test_lgamma(double x) { return lgamma(x); }
-double test_lgamma_r(double x, int *signgamp) { return lgamma_r(x, signgamp); }
+double test_lgamma_r(double x, int* signgamp) { return lgamma_r(x, signgamp); }
 double test_log(double x) { return log(x); }
 double test_log1p(double x) { return log1p(x); }
 double test_log10(double x) { return log10(x); }
 double test_log2(double x) { return log2(x); }
 double test_logb(double x) { return logb(x); }
-double test_modf(double x, double *iptr) { return modf(x, iptr); }
-double test_nan(const char *s) { return nan(s); }
+double test_modf(double x, double* iptr) { return modf(x, iptr); }
+double test_nan(const char* s) { return nan(s); }
 double test_nearbyint(double x) { return nearbyint(x); }
 double test_pow(double x, double y) { return pow(x, y); }
 double test_rint(double x) { return rint(x); }

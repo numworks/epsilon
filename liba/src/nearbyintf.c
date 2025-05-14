@@ -14,6 +14,4 @@
  * space and time (nearbyintf OpenBSD 6.0 implementation required some other
  * function implementation), we used roundf. */
 
-float nearbyintf(float x) {
-  return roundf(x);
-}
+float nearbyintf(float x) { return roundf(x); }

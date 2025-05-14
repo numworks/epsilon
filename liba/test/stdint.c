@@ -1,6 +1,7 @@
+#include <assert.h>
 #include <quiz.h>
 #include <stdint.h>
-#include <assert.h>
+
 #include "helpers.h"
 
 QUIZ_CASE(liba_stdint_size) {
@@ -14,8 +15,8 @@ QUIZ_CASE(liba_stdint_size) {
   quiz_assert(sizeof(int32_t) == 4);
   quiz_assert(sizeof(int64_t) == 8);
 
-  quiz_assert(sizeof(uintptr_t) == sizeof(void *));
-  quiz_assert(sizeof(intptr_t) == sizeof(void *));
+  quiz_assert(sizeof(uintptr_t) == sizeof(void*));
+  quiz_assert(sizeof(intptr_t) == sizeof(void*));
 }
 
 QUIZ_CASE(liba_stdint_signedness) {

@@ -56,7 +56,7 @@ $(addprefix device/core/device/shared-core/drivers/, \
   display.cpp \
   display_shortcut.cpp \
   display_vblank.cpp \
-	external_flash.cpp \
+  external_flash.cpp \
   external_flash_qspi_$(_ion_mcu_suffix).cpp \
   internal_flash.cpp \
   internal_flash_$(_ion_mcu_suffix).cpp \
@@ -86,7 +86,7 @@ device/shared/post_and_hardware_tests.cpp \
 $(addprefix shared/, \
   console_line.cpp \
   display_context.cpp \
-	exam_mode.cpp \
+  exam_mode.cpp \
 ) \
 
 _ldflags_ion_bench := \

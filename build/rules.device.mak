@@ -56,7 +56,7 @@ $(call create_goal,bench, \
   liba.armv7m.openbsd \
   libaxx \
   omg \
-	poincare.nopool.nostorage \
+  poincare.nopool.nostorage \
 ,, \
 )
 

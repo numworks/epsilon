@@ -292,11 +292,10 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     exactLayout.serialize(exactBuffer, ::Constant::MaxSerializedExpressionSize);
     approximateLayout.serialize(approximateBuffer,
                                 ::Constant::MaxSerializedExpressionSize);
-    Internal::ProjectionContext ctx;  // TODO: pass arguments
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();
     } else if (Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
-                   exact, approximate, &ctx)) {
+                   exact, approximate)) {
       exactAndApproximateAreEqual = true;
     }
   }

@@ -187,7 +187,7 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
       if (isStrictlyEqual) {
         *isStrictlyEqual =
             Poincare::ExactAndApproximateExpressionsAreStrictlyEqual(
-                exactExpression, approximateExpression, ctx);
+                exactExpression, approximateExpression, *ctx);
       }
     }
   }

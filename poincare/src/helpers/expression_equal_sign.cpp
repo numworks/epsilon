@@ -7,8 +7,8 @@ namespace Poincare {
 
 bool ExactAndApproximateExpressionsAreStrictlyEqual(
     const UserExpression exact, const UserExpression approximate,
-    const Internal::ProjectionContext* ctx) {
-  Internal::ProjectionContext ctxCopy = *ctx;
+    const Internal::ProjectionContext& ctx) {
+  Internal::ProjectionContext ctxCopy = ctx;
   ctxCopy.m_advanceReduce = false;
   // Exact is projected and reduced to turn divisions into rationals
   assert(!exact.isUninitialized());

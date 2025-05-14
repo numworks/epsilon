@@ -20,12 +20,11 @@ bool EditorController::freeSpaceFor(int size) {
 #if ASSERTIONS
   const char* previousContentAddress = m_script.content();
 #endif
-  Ion::Storage::FileSystem::sharedFileSystem->removeDataFromEndOfRecord(
-      m_script, m_script.availableSpace());
   Ion::Storage::FileSystem::sharedFileSystem->putAvailableSpaceAtEndOfRecord(
       m_script);
 #if ASSERTIONS
   assert(m_script.content() == previousContentAddress);
+  assert(Ion::Storage::FileSystem::sharedFileSystem->availableSize() == 0);
 #endif
   // Update content size without reseting cursor
   m_editorView.setText(const_cast<char*>(m_script.content()),

@@ -1,6 +1,8 @@
 #ifndef POINCARE_SERIALIZED_EXPRESSION_H
 #define POINCARE_SERIALIZED_EXPRESSION_H
 
+#include <span>
+
 #include "expression.h"
 
 namespace Poincare {
@@ -32,7 +34,15 @@ class SerializedExpression {
 
   bool isUninitialized() const { return m_buffer[0] == '\0'; }
 
-  const char* text() const { return m_buffer; }
+  void writeText(std::span<char> buffer,
+                 int numberOfSignificantDigits = k_numberOfSignificantDigits,
+                 Preferences::PrintFloatMode floatDisplayMode =
+                     Preferences::PrintFloatMode::Decimal) const {
+    [[maybe_unused]] size_t usedLength =
+        expression().serialize(buffer.data(), buffer.size(), floatDisplayMode,
+                               numberOfSignificantDigits);
+    assert(usedLength <= buffer.size());
+  }
 
   Expression expression() const {
     assert(!isUninitialized());

@@ -19,7 +19,11 @@ void ExpressionParameterController::fillCellForRow(HighlightCell* cell,
       textFieldOfCellAtIndex(cell, row)->isEditing()) {
     return;
   }
-  textFieldOfCellAtIndex(cell, row)->setText(parameterAtIndex(row).text());
+  constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
+  char buffer[PrintFloat::charSizeForFloatsWithPrecision(precision)];
+  parameterAtIndex(row).writeText(buffer, precision,
+                                  Preferences::PrintFloatMode::Decimal);
+  textFieldOfCellAtIndex(cell, row)->setText(buffer);
 }
 
 // TODO: factorize duplicate code with FloatParameterController

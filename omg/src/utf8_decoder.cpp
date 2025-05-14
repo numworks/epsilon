@@ -91,6 +91,11 @@ CodePoint UTF8Decoder::nextCodePoint() {
     if (!isValidFollowingChar(leading_ones(nextChunk))) {
       /* The code point is not properly written. This might be due to a code
        * point being translated into chars in a too small buffer. */
+      if (nextChunk == '\0') {
+        /* Rollback for the 0 to return a UCodePointNull on the next call to
+         * nextCodePoint(). */
+        previousByte();
+      }
       return UCodePointReplacement;
     }
     result += (nextChunk & 0x3F);

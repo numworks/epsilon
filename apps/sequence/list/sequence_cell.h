@@ -13,6 +13,7 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
  public:
   AbstractSequenceCell()
       : EvenOddCell(),
+        m_functionColor(KDColorBlack),
         m_expressionBackground(KDColorWhite),
         m_ellipsisBackground(KDColorWhite),
         m_parameterSelected(false) {}
@@ -24,6 +25,8 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   }
   VerticalSequenceTitleCell* titleCell() { return &m_sequenceTitleCell; }
 
+  void setColor(KDColor color) { m_functionColor = color; }
+
  private:
   int numberOfSubviews() const override { return 2 + displayEllipsis(); }
   Escher::View* subviewAtIndex(int index) override;
@@ -31,13 +34,16 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
   void layoutSubviews(bool force = false) override;
 
  protected:
-  constexpr static KDCoordinate k_titlesColumnWidth = 75;
+  constexpr static KDCoordinate k_verticalColorIndicatorThickness =
+      Escher::Metric::VerticalColorIndicatorThickness;
+  constexpr static KDCoordinate k_titlesColumnWidth = 70;
   constexpr static KDCoordinate k_ellipsisWidth =
       Escher::Metric::EllipsisCellWidth;
   void setEven(bool even) override;
   virtual bool displayEllipsis() const { return true; }
   VerticalSequenceTitleCell m_sequenceTitleCell;
   Escher::EllipsisView m_ellipsisView;
+  KDColor m_functionColor;
   KDColor m_expressionBackground;
   KDColor m_ellipsisBackground;
   bool m_parameterSelected;

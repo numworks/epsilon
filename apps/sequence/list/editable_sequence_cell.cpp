@@ -16,11 +16,14 @@ EditableSequenceCell::EditableSequenceCell(
 
 void EditableSequenceCell::layoutSubviews(bool force) {
   setChildFrame(&m_sequenceTitleCell,
-                KDRect(0, 0, k_titlesColumnWidth, bounds().height()), force);
+                KDRect(k_verticalColorIndicatorThickness, 0,
+                       k_titlesColumnWidth, bounds().height()),
+                force);
   setChildFrame(
       expressionCell(),
-      KDRect(k_titlesColumnWidth, 0,
-             bounds().width() - k_titlesColumnWidth - k_expressionMargin,
+      KDRect(k_titlesColumnWidth + k_verticalColorIndicatorThickness, 0,
+             bounds().width() - k_verticalColorIndicatorThickness -
+                 k_titlesColumnWidth - k_expressionMargin,
              bounds().height()),
       force);
 }

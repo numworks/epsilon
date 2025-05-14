@@ -14,18 +14,9 @@ VerticalSequenceTitleCell::VerticalSequenceTitleCell()
   m_titleTextView.setAlignment(k_horizontalAlignment, 0.0f);
 }
 
-void VerticalSequenceTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
-  // Draw the color indicator
-  ctx->fillRect(
-      KDRect(0, 0, k_verticalColorIndicatorThickness, bounds().height()),
-      m_functionColor);
-}
-
 KDRect VerticalSequenceTitleCell::subviewFrame() const {
-  return KDRect(
-      k_verticalColorIndicatorThickness + k_expressionMargin, 0,
-      bounds().width() - k_verticalColorIndicatorThickness - k_expressionMargin,
-      bounds().height());
+  return KDRect(k_expressionMargin, 0, bounds().width() - k_expressionMargin,
+                bounds().height());
 }
 
 void VerticalSequenceTitleCell::layoutSubviews(bool force) {

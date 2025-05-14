@@ -85,9 +85,15 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
   int type = typeAtRow(row);
   if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
+    int sequenceDefinition;
+    Ion::Storage::Record record = recordAtRow(row, &sequenceDefinition);
+    Shared::Sequence* sequence = modelStore()->modelForRecord(record);
     AbstractSequenceCell* sequenceCell =
         static_cast<AbstractSequenceCell*>(cell);
-    // Update the expression cell first since the title's baseline depends on it
+    // Set color
+    KDColor nameColor =
+        sequence->isActive() ? sequence->color() : Palette::GrayDark;
+    sequenceCell->setColor(nameColor);
     if (type == k_expressionCellType) {
       fillExpressionCellForRow(sequenceCell->mainCell(), row);
     }

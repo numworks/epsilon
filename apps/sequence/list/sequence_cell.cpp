@@ -19,6 +19,10 @@ View* AbstractSequenceCell::subviewAtIndex(int index) {
 void AbstractSequenceCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Color the main background
   ctx->fillRect(bounds(), m_expressionBackground);
+  // Draw the color indicator
+  ctx->fillRect(
+      KDRect(0, 0, k_verticalColorIndicatorThickness, bounds().height()),
+      m_functionColor);
   // Color the ellipsis view
   KDCoordinate ellipsisWidth = displayEllipsis() ? k_ellipsisWidth : 0;
   ctx->fillRect(KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
@@ -29,12 +33,16 @@ void AbstractSequenceCell::drawRect(KDContext* ctx, KDRect rect) const {
 void AbstractSequenceCell::layoutSubviews(bool force) {
   KDCoordinate ellipsisWidth = displayEllipsis() ? k_ellipsisWidth : 0;
   setChildFrame(&m_sequenceTitleCell,
-                KDRect(0, 0, k_titlesColumnWidth, bounds().height()), force);
-  setChildFrame(mainCell(),
-                KDRect(k_titlesColumnWidth, 0,
-                       bounds().width() - k_titlesColumnWidth - ellipsisWidth,
-                       bounds().height()),
+                KDRect(k_verticalColorIndicatorThickness, 0,
+                       k_titlesColumnWidth, bounds().height()),
                 force);
+  setChildFrame(
+      mainCell(),
+      KDRect(k_verticalColorIndicatorThickness + k_titlesColumnWidth, 0,
+             bounds().width() - k_verticalColorIndicatorThickness -
+                 k_titlesColumnWidth - ellipsisWidth,
+             bounds().height()),
+      force);
   setChildFrame(&m_ellipsisView,
                 KDRect(bounds().width() - ellipsisWidth, 0, ellipsisWidth,
                        bounds().height()),

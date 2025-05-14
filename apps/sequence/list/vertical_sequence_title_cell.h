@@ -10,11 +10,10 @@ class VerticalSequenceTitleCell : public Shared::ExpressionFunctionTitleCell {
   constexpr static KDFont::Size k_font = KDFont::Size::Large;
 
   VerticalSequenceTitleCell();
-  void drawRect(KDContext* ctx, KDRect rect) const override;
+
+  void drawRect(KDContext* ctx, KDRect rect) const override{};
 
  private:
-  constexpr static KDCoordinate k_verticalColorIndicatorThickness =
-      Escher::Metric::VerticalColorIndicatorThickness;
   constexpr static KDCoordinate k_rightMargin = 3;  // Ad hoc value
   constexpr static KDCoordinate k_expressionMargin = 5;
   constexpr static float k_horizontalAlignment = 1.0f;

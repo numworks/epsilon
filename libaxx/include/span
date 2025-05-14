@@ -1,0 +1,63 @@
+#ifndef LIBAXX_SPAN
+#define LIBAXX_SPAN
+
+#include <stddef.h>
+
+#include <array>
+
+namespace std {
+
+inline constexpr size_t dynamic_extent = -1;
+// Equivalent to std::numeric_limits<size_t>::max()
+
+template <typename T, size_t Extent = std::dynamic_extent>
+class span {
+ public:
+  // Types
+
+  using element_type = T;
+  using size_type = size_t;
+  using pointer = T*;
+  using const_pointer = const T*;
+  using reference = T&;
+  using const_reference = const T&;
+  using iterator = T*;
+  using const_iterator = const T*;
+
+  // Constructors
+
+  constexpr span() = default;
+  template <typename It>
+  explicit(Extent != std::dynamic_extent) constexpr span(It first,
+                                                         size_type count)
+      : m_data(first), m_size(count) {}
+  template <typename It>
+  explicit(Extent != std::dynamic_extent) constexpr span(It first, It last)
+      : m_data(first), m_size(first - last) {}
+  template <size_t N>
+  constexpr span(element_type (&array)[N]) : m_data(array), m_size(N) {}
+  template <class U, size_t N>
+  constexpr span(std::array<U, N>& array) : m_data(array), m_size(N) {}
+  constexpr span(const span& other) = default;
+
+  constexpr span& operator=(const span& other) = default;
+
+  // Methods
+
+  constexpr pointer data() const { return m_data; }
+  constexpr size_type size() const { return m_size; }
+
+  constexpr iterator begin() const { return data(); }
+  constexpr const_iterator cbegin() const { return data(); }
+  constexpr iterator end() const { return data() + size(); }
+  constexpr const_iterator cend() const { return data() + size(); }
+
+ private:
+  static constexpr size_t k_extent = Extent;
+  pointer m_data = nullptr;
+  size_type m_size = 0;
+};
+
+}  // namespace std
+
+#endif

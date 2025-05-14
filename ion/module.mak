@@ -44,8 +44,10 @@ endif
 
 ifeq ($(PLATFORM),u0-discovery)
 include $(PATH_ion)/scandium.shared.mak
+else ifeq ($(PLATFORM_TYPE),simulator)
+include $(PATH_ion)/shared.simulator.mak
 else
-include $(PATH_ion)/shared.$(PLATFORM_TYPE).mak
+include $(PATH_ion)/epsilon.$(PLATFORM_TYPE).mak
 endif
 
 $(call assert_defined,KANDINSKY_fonts_dependencies)

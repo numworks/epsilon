@@ -10,7 +10,7 @@ $(error Unsupported device platform $(PLATFORM))
 endif
 endif
 
--include $(patsubst %,$(PATH_ion)/shared.device.%.mak,$(_ion_firmware_components))
+-include $(patsubst %,$(PATH_ion)/epsilon.device.%.mak,$(_ion_firmware_components))
 
 # USB sources - begin
 

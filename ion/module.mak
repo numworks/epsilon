@@ -42,10 +42,10 @@ ifneq ($(ION_LOG_EVENTS_NAME),0)
 SFLAGS_ion += -DION_LOG_EVENTS_NAME=1
 endif
 
-ifeq ($(PLATFORM),u0-discovery)
-include $(PATH_ion)/scandium.shared.mak
-else ifeq ($(PLATFORM_TYPE),simulator)
+ifeq ($(PLATFORM_TYPE),simulator)
 include $(PATH_ion)/shared.simulator.mak
+else ifeq ($(PLATFORM),u0-discovery)
+include $(PATH_ion)/scandium.shared.mak
 else
 include $(PATH_ion)/epsilon.$(PLATFORM_TYPE).mak
 endif

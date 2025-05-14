@@ -49,12 +49,12 @@ bool FileSystem::freeSpaceFor(int size) {
   if (size < 0) {
     return true;
   }
-  size_t thisAvailableSize = availableSize();
-  if (thisAvailableSize >= size) {
+  size_t currentAvailableSize = availableSize();
+  if (currentAvailableSize >= size) {
     return true;
   }
   // Only delete hidden records if necessary.
-  if (size - thisAvailableSize > k_totalSize - m_accessibleSize) {
+  if (size - currentAvailableSize > k_totalSize - m_accessibleSize) {
     return false;
   }
   // Delete hidden records.

@@ -9,7 +9,7 @@ namespace Shared {
 class ExpressionParameterController
     : public ParametersWithValidationController {
  public:
-  using ParameterType = Poincare::SmallSerializedExpression;
+  using ParameterType = Poincare::SerializedExpression;
   using FloatType = float;
 
   ExpressionParameterController(Escher::Responder* parentResponder,

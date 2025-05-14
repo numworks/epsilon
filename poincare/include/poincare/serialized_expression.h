@@ -5,16 +5,20 @@
 
 namespace Poincare {
 
-template <size_t MaxLength>
 class SerializedExpression {
  public:
   SerializedExpression() = default;
 
+  constexpr static size_t k_numberOfSignificantDigits =
+      PrintFloat::k_floatNumberOfSignificantDigits;
+  constexpr static size_t k_bufferLength =
+      PrintFloat::charSizeForFloatsWithPrecision(k_numberOfSignificantDigits);
+
   explicit SerializedExpression(Expression expression) {
     [[maybe_unused]] size_t usedLength = expression.serialize(
-        m_buffer, MaxLength, Preferences::PrintFloatMode::Decimal,
-        PrintFloat::k_maxNumberOfSignificantDigits);
-    assert(usedLength <= MaxLength);
+        m_buffer, k_bufferLength, Preferences::PrintFloatMode::Decimal,
+        k_numberOfSignificantDigits);
+    assert(usedLength <= k_bufferLength);
   }
 
   explicit SerializedExpression(float value)
@@ -40,10 +44,8 @@ class SerializedExpression {
   }
 
  private:
-  char m_buffer[MaxLength] = "";
+  char m_buffer[k_bufferLength] = "";
 };
-
-using SmallSerializedExpression = Poincare::SerializedExpression<10>;
 
 }  // namespace Poincare
 

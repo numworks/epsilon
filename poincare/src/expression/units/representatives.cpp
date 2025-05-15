@@ -22,7 +22,7 @@ const Distance::Representatives<const Distance> Distance::representatives = {
     .meter = {"m", 1_e, All, NegativeAndKilo},
     .astronomicalUnit = {"au", 149597870700_e, None, None},
     .lightYear = {"ly", KMult(299792458_e, 31557600_e), None, None},
-    .parsec = {"pc", KMult(180_e, KDiv(3600_e, π_e), 149587870700_e), None,
+    .parsec = {"pc", KMult(180_e, KDiv(3600_e, π_e), 149597870700_e), None,
                None},
     .inch = {"in", 0.0254_e, None, None, true},
     .foot = {"ft", KMult(12_e, 0.0254_e), None, None, true},

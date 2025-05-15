@@ -145,6 +145,11 @@ QUIZ_CASE(solver_quadratic) {
                     "x=(1-π+√((1-π)^2+8+8×√(5)))/4", "delta=(1-π)^2+8+8×√(5)"},
                    &globalContext);
 
+  assert_solves_to("x^2+(1+2^(-52))*x+0.25+2^(-53)=0",
+                   {"x=-(1+2^(-51))/2", "x=-1/2",
+                    "delta=1/20282409603651670423947251286016"},
+                   &globalContext);
+
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
 }

@@ -89,7 +89,57 @@ void saveHistory() {
   write_history(historyFile.c_str());
 }
 
-int main() {
+void printHelp() { std::cout << "poincare_cli command expression\n"; }
+
+void processLine(std::string line) {
+  // Tokenize input
+  std::vector<std::string> tokens;
+  size_t pos = 0;
+  while ((pos = line.find(' ')) != std::string::npos) {
+    tokens.push_back(line.substr(0, pos));
+    line.erase(0, pos + 1);
+  }
+  tokens.push_back(line);  // Last token
+
+  if (tokens.empty()) {
+    return;
+  }
+
+  // Match command with possible abbreviation
+  std::string cmdName = matchCommand(tokens[0]);
+  if (cmdName.empty()) {
+    std::cerr << "Unknown command " << tokens[0] << '\n';
+    return;
+  }
+
+  std::vector<std::string> args(tokens.begin() + 1, tokens.end());
+  commands[cmdName](args);
+}
+
+int main(int argc, char* argv[]) {
+  if (argc > 1 &&
+      (std::strcmp(argv[1], "-help") == 0 || std::strcmp(argv[1], "-h") == 0)) {
+    printHelp();
+    std::exit(0);
+  }
+
+  Ion::Simulator::Random::init();
+  Ion::Init();
+  Poincare::Init();
+
+  if (argc > 1) {
+    std::string line;
+    for (int i = 1; i < argc; ++i) {
+      line += argv[i];
+      if (i < argc - 1) {
+        line += " ";
+      }
+    }
+
+    processLine(line);
+    std::exit(0);
+  }
+
   bool isInteractive = isatty(STDIN_FILENO);
 
   initializeCommands();
@@ -98,10 +148,6 @@ int main() {
     setupCompletion();
     initializeHistory();
   }
-
-  Ion::Simulator::Random::init();
-  Ion::Init();
-  Poincare::Init();
 
   std::string prompt = "> ";
 
@@ -124,26 +170,7 @@ int main() {
 
     add_history(line.c_str());
 
-    // Tokenize input
-    std::vector<std::string> tokens;
-    size_t pos = 0;
-    while ((pos = line.find(' ')) != std::string::npos) {
-      tokens.push_back(line.substr(0, pos));
-      line.erase(0, pos + 1);
-    }
-    tokens.push_back(line);  // Last token
-
-    if (tokens.empty()) continue;
-
-    // Match command with possible abbreviation
-    std::string cmdName = matchCommand(tokens[0]);
-    if (cmdName.empty()) {
-      std::cerr << "Unknown command " << tokens[0] << '\n';
-      continue;
-    }
-
-    std::vector<std::string> args(tokens.begin() + 1, tokens.end());
-    commands[cmdName](args);
+    processLine(line);
   }
 
   if (isInteractive) {

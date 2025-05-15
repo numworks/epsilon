@@ -24,15 +24,16 @@ class FloatParameterController : public ParametersWithValidationController {
  protected:
   enum class InfinityTolerance { None, PlusInfinity, MinusInfinity };
 
-  virtual T parameterAtIndex(int index) = 0;
-  virtual bool hasUndefinedValue(const char* text, T value, int row) const;
+  virtual ParameterType parameterAtIndex(int index) = 0;
+  virtual bool hasUndefinedValue(const char* text, ParameterType value,
+                                 int row) const;
 
  private:
   virtual InfinityTolerance infinityAllowanceForRow(int row) const {
     return InfinityTolerance::None;
   }
 
-  virtual bool setParameterAtIndex(int parameterIndex, T value) = 0;
+  virtual bool setParameterAtIndex(int parameterIndex, ParameterType value) = 0;
 };
 
 }  // namespace Shared

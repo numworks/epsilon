@@ -22,7 +22,7 @@ void FloatParameterController<T>::fillCellForRow(HighlightCell* cell, int row) {
   constexpr int bufferSize =
       PrintFloat::charSizeForFloatsWithPrecision(precision);
   char buffer[bufferSize];
-  PoincareHelpers::ConvertFloatToTextWithDisplayMode<T>(
+  PoincareHelpers::ConvertFloatToTextWithDisplayMode<FloatType>(
       parameterAtIndex(row), buffer, bufferSize, precision,
       Preferences::PrintFloatMode::Decimal);
   textFieldOfCellAtIndex(cell, row)->setText(buffer);
@@ -32,7 +32,7 @@ template <typename T>
 bool FloatParameterController<T>::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
   char* text = textField->draftText();
-  T floatBody = ParseInputFloatValue<T>(text);
+  FloatType floatBody = ParseInputFloatValue<T>(text);
   if (hasUndefinedValue(text, floatBody, innerSelectedRow()) ||
       !setParameterAtIndex(innerSelectedRow(), floatBody)) {
     return false;
@@ -50,10 +50,10 @@ bool FloatParameterController<T>::textFieldDidFinishEditing(
 
 template <typename T>
 bool FloatParameterController<T>::hasUndefinedValue(const char* text,
-                                                    T floatValue,
+                                                    ParameterType value,
                                                     int row) const {
   InfinityTolerance infTolerance = infinityAllowanceForRow(row);
-  return HasUndefinedValue(floatValue,
+  return HasUndefinedValue(value,
                            infTolerance == InfinityTolerance::PlusInfinity,
                            infTolerance == InfinityTolerance::MinusInfinity);
 }

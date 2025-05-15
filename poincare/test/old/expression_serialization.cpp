@@ -141,24 +141,28 @@ QUIZ_CASE(poincare_serialization_decimal) {
   assert_expression_serializes_to(KDecimal(12345_e, 5_e), "0.12345",
                                   DecimalMode);
   assert_expression_serializes_to(1.0_e, "1");
-  assert_expression_parses_and_serializes_to("0.9999999999999996", "1", &ctx);
   assert_expression_parses_and_serializes_to(
-      "0.99999999999995", "9.9999999999995ᴇ-1", &ctx, ScientificMode, 14);
+      "0.99999999999999999999999999999996", "1", &ctx);
   assert_expression_parses_and_serializes_to(
-      "0.00000099999999999995", "9.9999999999995ᴇ-7", &ctx, ScientificMode, 14);
-  assert_expression_parses_and_serializes_to("0.000000999999999999995", "1ᴇ-6",
-                                             &ctx, DecimalMode);
+      "0.999999999999999999999999999995", "9.99999999999999999999999999995ᴇ-1",
+      &ctx, ScientificMode, 14);
   assert_expression_parses_and_serializes_to(
-      "0.000000999999999901200121020102010201201201021099995",
-      "9.999999999012ᴇ-7", &ctx, DecimalMode, 14);
+      "0.000000999999999999999999999999999995",
+      "9.99999999999999999999999999995ᴇ-7", &ctx, ScientificMode, 14);
   assert_expression_parses_and_serializes_to(
-      "9999999999999.53", "9999999999999.5", &ctx, DecimalMode, 14);
-  assert_expression_parses_and_serializes_to("99999999999999.54", "1ᴇ14", &ctx,
-                                             DecimalMode, 14);
-  assert_expression_parses_and_serializes_to("999999999999999.54", "1ᴇ15", &ctx,
-                                             DecimalMode, 14);
-  assert_expression_parses_and_serializes_to("9999999999999999.54", "1ᴇ16",
+      "0.0000009999999999999999999999999999995", "1ᴇ-6", &ctx, DecimalMode);
+  assert_expression_parses_and_serializes_to(
+      "0.0000009999999999999999999999999901200121020102010201201201021099995",
+      "9.9999999999999999999999999012ᴇ-7", &ctx, DecimalMode, 14);
+  assert_expression_parses_and_serializes_to("99999999999999999999999999999.53",
+                                             "99999999999999999999999999999.5",
                                              &ctx, DecimalMode, 14);
+  assert_expression_parses_and_serializes_to(
+      "999999999999999999999999999999.54", "1ᴇ30", &ctx, DecimalMode, 14);
+  assert_expression_parses_and_serializes_to(
+      "9999999999999999999999999999999.54", "1ᴇ31", &ctx, DecimalMode, 14);
+  assert_expression_parses_and_serializes_to(
+      "99999999999999999999999999999999.54", "1ᴇ32", &ctx, DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
       "-9.702365051313ᴇ-297", "-9.702365051313ᴇ-297", &ctx, DecimalMode, 14);
 

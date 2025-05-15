@@ -52,7 +52,6 @@ bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
 
 void SingleInteractiveCurveViewRangeController::extractParameters() {
   m_autoParam = m_range->zoomAuto(m_axis);
-  // TODO: userGridUnit is a serializedExpression
   m_gridUnitParam = m_range->userGridUnit(m_axis);
   if (m_axis == OMG::Axis::Horizontal) {
     m_rangeParam =

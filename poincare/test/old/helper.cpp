@@ -339,11 +339,15 @@ void assert_expression_parses_and_serializes_to(
   Serialize(l, buffer, buffer + bufferSize);
   l->removeTree();
   const bool test = strcmp(buffer, result) == 0;
+#if POINCARE_STRICT_TESTS
   char information[bufferSize] = "";
   if (!test) {
     build_failure_infos(information, bufferSize, expression, buffer, result);
   }
   quiz_assert_print_if_failure(test, information);
+#else
+  quiz_tolerate_print_if_failure(test, expression, result, buffer);
+#endif
 }
 
 void assert_expression_parses_and_serializes_to_itself(

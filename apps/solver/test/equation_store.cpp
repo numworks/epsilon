@@ -365,6 +365,8 @@ QUIZ_CASE(solver_approximate) {
        -1.14107e+14, -1.13126e+14},
       &globalContext);
 
+  assert_solves_numerically_to("(4-x)/(((6+2x)/(x-1))-8)=-(x-1)/4", 0, 4, {3.0},
+                               &globalContext);
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
 }

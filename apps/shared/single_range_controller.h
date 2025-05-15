@@ -18,6 +18,17 @@ class SingleRangeController : public ParentType {
   SingleRangeController(Escher::Responder* parentResponder,
                         MessagePopUpController* confirmPopUpController);
 
+  /* ParameterType is the return type of the parameterAtIndex method.
+   * FloatType is the type of the range parameter (m_rangeParam), which needs to
+   * be a floating-point type.
+   * ParameterType and FloatType can be the same (like in ParentType =
+   * FloatParameterController<float> and ParentType =
+   * FloatParameterController<double>), but they can also be different.
+   * For instance for ParentType = ExpressionParameterController, it's useful
+   * that parameterAtIndex returns a SerializedExpression. That is because in
+   * the child class SingleInteractiveCurveViewRangeController, there is another
+   * parameter beside the range (namely m_gridUnitParam), which needs to have
+   * the same type for the parameterAtIndex method. */
   using ParameterType = typename ParentType::ParameterType;
   using FloatType = typename ParentType::FloatType;
 

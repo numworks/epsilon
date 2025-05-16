@@ -190,18 +190,25 @@ jobs:
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
-      - uses: numworks/setup-emscripten@latest
+      - name: Install Emscripten
+        uses: numworks/setup-emscripten@latest
         with:
           sdk: 3.1.61
       - uses: actions/checkout@v4
-      - run: build/setup.sh --only-simulator
+      - name: Setup the environment
+        run: build/setup.sh --only-simulator
       # TODO: Change setup-emscripten to be able to use EMIT_TSD=1
-      - run: make -j8 -f poincare/poincarejs/Makefile PLATFORM=foxglove ASSERTIONS=1 EMIT_TSD=0 poincare.js.run
+      # NOTE: This should be automatically fixed once we use emscripten 4.x.x
+      - name: Run tests with ASSERTIONS=1
+        run: make -j8 -f poincare/poincarejs/Makefile PLATFORM=foxglove ASSERTIONS=1 EMIT_TSD=0 poincare.js.run
+      # Ensures that minification did not break the code
+      - name: Run tests with ASSERTIONS=0
+        run: make -j8 -f poincare/poincarejs/Makefile PLATFORM=foxglove ASSERTIONS=0 EMIT_TSD=0 poincare.js.run
     # TODO: This is deactivated because setup-emscripten doesn't install tsc
     #       which is needed to build the typescript file
-      # - run: make -f poincare/poincarejs/Makefile
-      # - uses: actions/upload-artifact@v4
-      #   with:
-      #     name: poincarejs.zip
-      #     path: output/release/foxglove/poincarejs.zip
-      #     retention-days: 7
+    # - run: make -f poincare/poincarejs/Makefile
+    # - uses: actions/upload-artifact@v4
+    #   with:
+    #     name: poincarejs.zip
+    #     path: output/release/foxglove/poincarejs.zip
+    #     retention-days: 7

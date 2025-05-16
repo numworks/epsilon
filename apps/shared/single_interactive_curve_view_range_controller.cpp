@@ -92,7 +92,6 @@ void SingleInteractiveCurveViewRangeController::setAutoRange() {
 }
 
 void SingleInteractiveCurveViewRangeController::confirmParameters() {
-  // TODO: userGridUnit is a serializedExpression
   m_range->setUserGridUnit(m_axis, m_gridUnitParam);
   if (boundsParametersAreDifferent()) {
     // Deactivate auto status before updating values.

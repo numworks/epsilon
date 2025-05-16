@@ -1,4 +1,4 @@
-#include "serialized_expression.h"
+#include "poincare/serialized_expression.h"
 
 namespace Poincare {
 

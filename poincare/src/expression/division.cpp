@@ -46,6 +46,8 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* e) {
   return factor->isNumber() && Number::SetSign(factor, NonStrictSign::Positive);
 }
 
+/* Split terms of e into different components that may be used to build an
+ * equivalent representation : (numerator / denominator) * outerNumerator */
 void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
                                      TreeRef& denominator,
                                      TreeRef& outerNumerator,

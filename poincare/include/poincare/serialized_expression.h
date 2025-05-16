@@ -29,7 +29,8 @@ class SerializedExpression {
   explicit SerializedExpression(float value)
       : SerializedExpression(Poincare::Expression::Builder(value)) {}
 
-  explicit operator float() const { return approximation(); }
+  explicit operator float() const { return approximation<float>(); }
+  explicit operator double() const { return approximation<double>(); }
 
   bool isUninitialized() const { return m_buffer[0] == '\0'; }
 
@@ -53,10 +54,9 @@ class SerializedExpression {
     return Expression::Parse(m_buffer, nullptr);
   }
 
-  float approximation() const {
-    return isUninitialized()
-               ? NAN
-               : expression().template approximateToRealScalar<float>();
+  template <typename T>
+  double approximation() const {
+    return isUninitialized() ? NAN : expression().approximateToRealScalar<T>();
   }
 
   bool operator==(const SerializedExpression& other) const {

@@ -14,7 +14,7 @@ void SerializedExpression::writeText(
    * be returned directly. The expression is re-constructed, then serialized
    * with the requested display parameters. */
   UserExpression exactExpression = expression();
-  float approximate = approximation();
+  double approximate = exactExpression.approximateToRealScalar<double>();
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
           exactExpression, UserExpression::Builder(approximate))) {
     char exactSerialization[k_bufferLength];

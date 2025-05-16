@@ -70,7 +70,7 @@ class Token {
   Token(Type type, const Layout* layout, size_t length = 1)
       : m_type(type), m_firstLayout(layout), m_length(length){};
   Token(Type type, LayoutSpan span)
-      : m_type(type), m_firstLayout(span.start), m_length(span.length){};
+      : m_type(type), m_firstLayout(span.data()), m_length(span.size()){};
 
   Type type() const { return m_type; }
   void setType(Type t) { m_type = t; }

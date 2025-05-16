@@ -12,7 +12,7 @@ size_t CodePointSearch(LayoutSpan span, CodePoint c) {
 }
 
 bool HasCodePoint(LayoutSpan span, CodePoint c) {
-  return CodePointSearch(span, c) != span.length;
+  return CodePointSearch(span, c) != span.size();
 }
 
 }  // namespace Poincare::Internal

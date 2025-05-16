@@ -34,7 +34,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
                 initialPosition) {}
 
   LayoutSpanDecoder(LayoutSpan span)
-      : LayoutSpanDecoder(span.start, span.length) {}
+      : LayoutSpanDecoder(span.data(), span.size()) {}
 
   bool isEmpty() const { return m_length == 0; }
 
@@ -91,7 +91,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
 
 inline int CompareLayoutSpanWithNullTerminatedString(const LayoutSpan a,
                                                      const char* b) {
-  LayoutSpanDecoder da(a.start, a.length);
+  LayoutSpanDecoder da(a.data(), a.size());
   UTF8Decoder db(b);
   return OMG::CompareDecoders(&da, &db);
 }

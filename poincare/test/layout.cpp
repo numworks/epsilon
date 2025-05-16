@@ -74,9 +74,9 @@ QUIZ_CASE(pcj_layout_decoder) {
 }
 
 QUIZ_CASE(pcj_omg_code_point) {
-  const LayoutSpan l(Rack::From("123"_l));
+  LayoutSpan l(MakeSpan(Rack::From("123"_l)));
   quiz_assert(CodePointSearch(l, '2') == 1);
-  quiz_assert(CodePointSearch(l, '4') == l.length);
+  quiz_assert(CodePointSearch(l, '4') == l.size());
 }
 
 #if 0

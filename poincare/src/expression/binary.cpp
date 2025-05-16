@@ -47,8 +47,8 @@ ComparisonJunior::Operator Binary::ComparisonOperatorForType(TypeBlock type) {
 
 bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
                                         size_t* returnLength) {
-  int maxOperatorLength = name.length;
-  int lengthOfFoundOperator = 0;
+  size_t maxOperatorLength = name.size();
+  size_t lengthOfFoundOperator = 0;
   Type typeOfFoundOperator;
   for (int i = 0; i < k_numberOfComparisons; i++) {
     Type currentOperatorType = k_operatorForType[i].type;
@@ -56,13 +56,13 @@ bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
         ComparisonJunior::OperatorString(k_operatorForType[i].op);
     // Loop twice, once on the main string, the other on the alternative string
     for (int k = 0; k < 2; k++) {
-      int operatorLength =
+      size_t operatorLength =
           UTF8Helper::StringCodePointLength(currentOperatorString);
       if (operatorLength <= maxOperatorLength &&
           operatorLength > lengthOfFoundOperator &&
           CompareLayoutSpanWithNullTerminatedString(
-              LayoutSpan(name.start, operatorLength), currentOperatorString) ==
-              0) {
+              LayoutSpan(name.begin(), operatorLength),
+              currentOperatorString) == 0) {
         lengthOfFoundOperator = operatorLength;
         typeOfFoundOperator = currentOperatorType;
       }

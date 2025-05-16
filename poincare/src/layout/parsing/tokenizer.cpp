@@ -111,7 +111,7 @@ Token Tokenizer::popNumber() {
 
   // Check for binary or hexadecimal number
   if (integralPartLength == 1 &&
-      CodePointLayout::IsCodePoint(integralPart.start, '0')) {
+      CodePointLayout::IsCodePoint(integralPart.data(), '0')) {
     // Save string position if no binary/hexadecimal number
     LayoutSpanDecoder savedPosition = m_decoder;
     // Look for "0b"
@@ -521,7 +521,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   }
   // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
   Token::Type type;
-  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(span.start, length,
+  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(span.data(), length,
                                                         &type)) {
     // If true, the length has been modified to match the end of the identifier
     return type;
@@ -543,7 +543,7 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   bool nextLayoutIsCodePoint = true;
   size_t length = 0;
   const Units::Representative* storedUnitRepresentative = nullptr;
-  LayoutSpanDecoder save(LayoutSpan(nullptr, 0));
+  LayoutSpanDecoder save(LayoutSpan{});
   while (true) {
     /* Check if the string is of the form:
      * decimalNumber-unit-decimalNumber-unit...

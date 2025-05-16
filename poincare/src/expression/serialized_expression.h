@@ -3,7 +3,7 @@
 
 #include <span>
 
-#include "expression.h"
+#include "poincare/expression.h"
 
 namespace Poincare {
 

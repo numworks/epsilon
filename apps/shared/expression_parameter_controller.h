@@ -2,7 +2,7 @@
 #define SHARED_EXPRESSION_PARAMETER_CONTROLLER_H
 
 #include "parameters_with_validation_controller.h"
-#include "poincare/include/poincare/serialized_expression.h"
+#include "poincare/src/expression/serialized_expression.h"
 
 namespace Shared {
 

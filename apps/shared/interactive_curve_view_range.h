@@ -9,7 +9,7 @@
 #include "grid_type_controller.h"
 #include "interactive_curve_view_range_delegate.h"
 #include "memoized_curve_view_range.h"
-#include "poincare/serialized_expression.h"
+#include "poincare/src/expression/serialized_expression.h"
 
 namespace Shared {
 

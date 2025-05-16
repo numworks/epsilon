@@ -15,23 +15,23 @@ on:
   workflow_dispatch:
     inputs:
       device:
-       type: boolean
-       default: false
+        type: boolean
+        default: false
       android:
-       type: boolean
-       default: false
+        type: boolean
+        default: false
       windows:
-       type: boolean
-       default: false
+        type: boolean
+        default: false
       macos:
-       type: boolean
-       default: false
+        type: boolean
+        default: false
       ios:
-       type: boolean
-       default: false
+        type: boolean
+        default: false
       web:
-       type: boolean
-       default: false
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -58,7 +58,7 @@ jobs:
           path: output/debug/optimized/android/epsilon.apk
   device:
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
-    if : ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.device)) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.device)) }}
     strategy:
       matrix:
         model: [n0110, n0115, n0120]
@@ -72,7 +72,7 @@ jobs:
 
       - name: Check for core
         id: core
-        run: "[[ -e ion/src/device/core ]]"
+        run: '[[ -e ion/src/device/core ]]'
         continue-on-error: true
       - name: Disable core directory
         if: ${{ steps.core.outcome == 'success' }}
@@ -95,8 +95,8 @@ jobs:
     runs-on: windows-latest
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.windows)) }}
     defaults:
-       run:
-         shell: msys2 {0}
+      run:
+        shell: msys2 {0}
     env:
       MAKEFLAGS: '-j2'
     steps:

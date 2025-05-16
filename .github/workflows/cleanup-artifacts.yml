@@ -2,8 +2,8 @@ name: Clean-up artifacts
 
 on:
   pull_request:
-   types:
-     - closed
+    types:
+      - closed
 
 jobs:
   cleanup:

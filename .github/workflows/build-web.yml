@@ -3,8 +3,8 @@ on:
   workflow_dispatch:
     inputs:
       debug:
-       type: boolean
-       default: false
+        type: boolean
+        default: false
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}

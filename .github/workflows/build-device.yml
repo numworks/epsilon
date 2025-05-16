@@ -3,8 +3,8 @@ on:
   workflow_dispatch:
     inputs:
       beta:
-       type: boolean
-       default: false
+        type: boolean
+        default: false
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}
@@ -21,7 +21,7 @@ jobs:
       - name: Setup
         run: build/setup.sh
       - name: Check for core
-        run: "[[ -e ion/src/device/core ]]"
+        run: '[[ -e ion/src/device/core ]]'
       # Not using matrix strategy to avoid multiplying setups and uploads.
       - name: Build n0110
         run: make MODEL=n0110 epsilon.onboarding$BETA.dfu

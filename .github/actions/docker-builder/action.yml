@@ -4,7 +4,7 @@ description: |
   It binds CCACHE_DIR and pass MAKEFLAGS to the container.
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Build Docker container
       shell: bash

@@ -102,4 +102,4 @@ jobs:
             }
 
       - name: Check for failures
-        run: "! grep --silent broken comment.md"
+        run: '! grep --silent broken comment.md'

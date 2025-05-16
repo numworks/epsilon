@@ -705,11 +705,6 @@ bool SystematicOperation::ReduceExp(Tree* e) {
     e->cloneTreeOverTree(1_e);
     return true;
   }
-  if (child->treeIsIdenticalTo(KMult(π_e, i_e))) {
-    e->cloneTreeOverTree(-1_e);
-    return true;
-  }
-
   // This step shortcuts an advanced reduction step.
   // exp(A+ln(B)+C) -> B*exp(A+C)
   if (child->isAdd() && PatternMatching::MatchReplaceSimplify(
@@ -720,7 +715,12 @@ bool SystematicOperation::ReduceExp(Tree* e) {
 
   if (child->isMult()) {
     PatternMatching::Context ctx;
-    // exp(n*πi) case
+    // exp(πi) case, shortcuts one AdvancedReduction step (ExpandExp)
+    if (child->treeIsIdenticalTo(KMult(π_e, i_e))) {
+      e->cloneTreeOverTree(-1_e);
+      return true;
+    }
+    // exp(n*πi) case, shortcuts one AdvancedReduction step (ExpandExp)
     if (PatternMatching::Match(child, KMult(KA, π_e, i_e), &ctx) &&
         ctx.getTree(KA)->isInteger()) {
       IntegerHandler i = Rational::Numerator(ctx.getTree(KA));

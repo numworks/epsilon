@@ -231,11 +231,11 @@ bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
 
 bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
                                  Context* context, MatchContext matchContext) {
-  while (!matchContext.reachedLimit(pattern, true, false)) {
+  while (!matchContext.reachedLimit(pattern, MatchContext::k_globalPattern)) {
     bool onlyEmptyPlaceholders = false;
-    if (matchContext.reachedLimit(pattern, false, false)) {
+    if (matchContext.reachedLimit(pattern, MatchContext::k_localPattern)) {
       // Local pattern has been entirely matched.
-      if (!matchContext.reachedLimit(source, false, true)) {
+      if (!matchContext.reachedLimit(source, MatchContext::k_localSource)) {
         // Local source has not been entirely checked.
         return false;
       }
@@ -246,7 +246,8 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
     }
     /* If source has been entirely checked but pattern nodes are remaining it
      * can only be empty tree placeholders. */
-    onlyEmptyPlaceholders = matchContext.reachedLimit(source, false, true);
+    onlyEmptyPlaceholders =
+        matchContext.reachedLimit(source, MatchContext::k_localSource);
 
     if (pattern->isPlaceholder()) {
       Placeholder::Tag tag = Placeholder::NodeToTag(pattern);
@@ -258,7 +259,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
         // Tag has already been set. Check the trees are the same.
         for (int i = 0; i < context->getNumberOfTrees(tag); i++) {
           if (onlyEmptyPlaceholders ||
-              matchContext.reachedLimit(source, false, true) ||
+              matchContext.reachedLimit(source, MatchContext::k_localSource) ||
               !tagNode->treeIsIdenticalTo(source)) {
             return false;
           }
@@ -310,7 +311,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
   }
   /* Pattern has been entirely and successfully matched.
    * Return false if source has not been entirely checked. */
-  return matchContext.reachedLimit(source, true, true);
+  return matchContext.reachedLimit(source, MatchContext::k_globalSource);
 }
 
 /* Since we use Match a lot with pattern's type not matching source, escape

@@ -150,15 +150,20 @@ class PatternMatching {
    * and local pattern will be Mult(1). */
   class MatchContext {
    public:
-    MatchContext(const Tree* source, const Tree* pattern);
-    bool reachedLimit(const Tree* node, bool global, bool source) const {
-      return ReachedLimit(
-          node, global ? (source ? m_globalSourceEnd : m_globalPatternEnd)
-                       : (source ? m_localSourceEnd : m_localPatternEnd));
+    constexpr static uint8_t k_globalSource = 0;
+    constexpr static uint8_t k_localSource = 1;
+    constexpr static uint8_t k_globalPattern = 2;
+    constexpr static uint8_t k_localPattern = 3;
+    MatchContext(const Tree* source, const Tree* pattern,
+                 uint8_t baseScope = 0);
+    bool reachedLimit(const Tree* node, uint8_t whichLimit) const {
+      return ReachedLimit(node, getEnd(whichLimit));
     }
     // Return the number of siblings right of node in local context.
     int remainingLocalTrees(const Tree* node) const;
     void setLocal(const Tree* source, const Tree* pattern);
+    uint8_t getScope(const Tree* pattern) const;
+    void setNextScope(const Tree* source, const Tree* pattern);
     // Sets the local context to local root parents.
     void setLocalToParent();
 #if POINCARE_TREE_LOG
@@ -166,6 +171,20 @@ class PatternMatching {
 #endif
 
    private:
+    const Block* getEnd(uint8_t which) const {
+      assert(which <= k_localPattern);
+      switch (which) {
+        case k_globalSource:
+          return m_globalSourceEnd;
+        case k_localSource:
+          return m_localSourceEnd;
+        case k_globalPattern:
+          return m_globalPatternEnd;
+        case k_localPattern:
+          return m_localPatternEnd;
+      }
+      OMG::unreachable();
+    }
     static bool ReachedLimit(const Tree* node, const Block* end) {
       assert(node->block() <= end);
       return node->block() == end;

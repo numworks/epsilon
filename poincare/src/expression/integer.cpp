@@ -755,9 +755,8 @@ int IntegerHandler::estimatedNumberOfBase10DigitsWithoutSign(
   float estimation = (numberOfDigits() + overEstimated - 1) *
                      std::log10(static_cast<float>(k_digitBase));
   int res = std::ceil(estimation);
-  // Ignore equality, which is more than unlikely.
-  int expected = numberOfBase10DigitsWithoutSign();
-  assert(res == expected || overEstimated == (res > expected));
+  assert(res == numberOfBase10DigitsWithoutSign() ||
+         overEstimated == (res > numberOfBase10DigitsWithoutSign()));
   return res;
 }
 

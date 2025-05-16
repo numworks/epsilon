@@ -28,9 +28,9 @@ class Grid : public Layout {
   void setNumberOfRows(uint8_t rows) { setNodeValue(0, rows); }
   void setNumberOfColumns(uint8_t columns) { setNodeValue(1, columns); }
 
-  const Rack* childAt(uint8_t col, uint8_t row) const;
-  Rack* childAt(uint8_t col, uint8_t row) {
-    return const_cast<Rack*>(const_cast<const Grid*>(this)->childAt(col, row));
+  const Rack* childAt(uint8_t row, uint8_t col) const;
+  Rack* childAt(uint8_t row, uint8_t col) {
+    return const_cast<Rack*>(const_cast<const Grid*>(this)->childAt(row, col));
   }
 
   Rack* willFillEmptyChildAtIndex(int childIndex);
@@ -38,7 +38,7 @@ class Grid : public Layout {
 
   int rowAtChildIndex(int index) const;
   int columnAtChildIndex(int index) const;
-  int indexAtRowColumn(int row, int column) const;
+  int indexAt(int row, int column) const;
   int rightmostNonGrayColumn() const {
     return numberOfColumns() - 1 - (isEditing() && !numberOfColumnsIsFixed());
   }
@@ -65,10 +65,10 @@ class Grid : public Layout {
   KDCoordinate height(KDFont::Size font) const;
   KDCoordinate columnWidth(int column, KDFont::Size font) const;
   KDCoordinate width(KDFont::Size font) const;
-  void computePositions(KDFont::Size font, KDCoordinate* columns,
-                        KDCoordinate* rows) const;
+  void computePositions(KDFont::Size font, KDCoordinate* rows,
+                        KDCoordinate* columns) const;
   KDSize size(KDFont::Size font) const;
-  KDPoint positionOfChildAt(int column, int row, KDFont::Size font) const;
+  KDPoint positionOfChildAt(int row, int column, KDFont::Size font) const;
 
   constexpr static int k_minimalNumberOfRowsAndColumnsWhileEditing = 2;
 

@@ -30,7 +30,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
         int col = grid->numberOfColumns() - 1 - !grid->numberOfColumnsIsFixed();
         return direction.isLeft()
                    // last real child
-                   ? grid->indexAtRowColumn(row, col)
+                   ? grid->indexAt(row, col)
                    : 0;
       }
       if ((direction.isLeft() && grid->childIsLeftOfGrid(currentIndex)) ||

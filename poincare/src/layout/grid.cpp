@@ -16,7 +16,7 @@ bool Grid::isEditing() const {
   return this <= cursorRack && cursorRack < nextTree();
 }
 
-const Rack* Grid::childAt(uint8_t col, uint8_t row) const {
+const Rack* Grid::childAt(uint8_t row, uint8_t col) const {
   return child(row * numberOfColumns() + col);
 }
 
@@ -38,7 +38,7 @@ Rack* Grid::willFillEmptyChildAtIndex(int childIndex) {
   if (isBottomOfGrid && !numberOfRowsIsFixed()) {
     addEmptyRow();
   }
-  return childAt(column, row);
+  return childAt(row, column);
 }
 
 int Grid::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
@@ -62,7 +62,7 @@ int Grid::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
   }
   assert(numberOfColumns() >= k_minimalNumberOfRowsAndColumnsWhileEditing &&
          numberOfRows() >= k_minimalNumberOfRowsAndColumnsWhileEditing);
-  return indexAtRowColumn(newRow, newColumn);
+  return indexAt(newRow, newColumn);
 }
 
 // Protected
@@ -128,7 +128,7 @@ int Grid::columnAtChildIndex(int index) const {
   return index % numberOfColumns();
 }
 
-int Grid::indexAtRowColumn(int row, int column) const {
+int Grid::indexAt(int row, int column) const {
   assert(row >= 0 && row < numberOfRows());
   assert(column >= 0 && column < numberOfColumns());
   return row * numberOfColumns() + column;
@@ -143,13 +143,13 @@ int Grid::closestNonGrayIndex(int index) const {
   if (!numberOfRowsIsFixed() && childIsBottomOfGrid(index)) {
     row--;
   }
-  return indexAtRowColumn(row, column);
+  return indexAt(row, column);
 }
 
 KDCoordinate Grid::rowBaseline(int row, KDFont::Size font) const {
   assert(numberOfColumns() > 0);
   KDCoordinate rowBaseline = 0;
-  const Tree* child = childAt(0, row);
+  const Tree* child = childAt(row, 0);
   for (int column = 0; column < numberOfColumns(); column++) {
     rowBaseline = std::max(rowBaseline, Render::Baseline(Rack::From(child)));
     child = child->nextTree();
@@ -161,7 +161,7 @@ KDCoordinate Grid::rowHeight(int row, KDFont::Size font) const {
   KDCoordinate underBaseline = 0;
   KDCoordinate aboveBaseline = 0;
   for (int column = 0; column < numberOfColumns(); column++) {
-    const Rack* r = childAt(column, row);
+    const Rack* r = childAt(row, column);
     KDCoordinate b = Render::Baseline(r);
     underBaseline =
         std::max<KDCoordinate>(underBaseline, Render::Height(r) - b);
@@ -178,15 +178,15 @@ KDCoordinate Grid::columnWidth(int column, KDFont::Size font) const {
   // TODO what is the complexity of this ?
   KDCoordinate columnWidth = 0;
   for (int row = 0; row < numberOfRows(); row++) {
-    columnWidth = std::max(columnWidth, Render::Width(childAt(column, row)));
+    columnWidth = std::max(columnWidth, Render::Width(childAt(row, column)));
   }
   return columnWidth;
 }
 
 KDCoordinate Grid::width(KDFont::Size font) const { return size(font).width(); }
 
-void Grid::computePositions(KDFont::Size font, KDCoordinate* columns,
-                            KDCoordinate* rows) const {
+void Grid::computePositions(KDFont::Size font, KDCoordinate* rows,
+                            KDCoordinate* columns) const {
   for (int c = 0; c < numberOfColumns(); c++) {
     columns[c] = 0;
   }
@@ -225,10 +225,11 @@ KDSize Grid::size(KDFont::Size font) const {
   bool editing = isEditing();
   KDCoordinate columsCumulatedWidth[columns];
   KDCoordinate rowCumulatedHeight[rows];
-  computePositions(font, columsCumulatedWidth, rowCumulatedHeight);
-  KDSize size(columsCumulatedWidth[columns - 1 -
-                                   (!numberOfColumnsIsFixed() && !isEditing())],
-              rowCumulatedHeight[rows - 1 - !editing]);
+  computePositions(font, rowCumulatedHeight, columsCumulatedWidth);
+  KDSize size(
+      columsCumulatedWidth[columns - 1 -
+                           (!numberOfColumnsIsFixed() && !editing)],
+      rowCumulatedHeight[rows - 1 - (!numberOfRowsIsFixed() && !editing)]);
   return size;
 }
 
@@ -236,7 +237,7 @@ bool Grid::isColumnOrRowEmpty(bool column, int index) const {
   assert(index >= 0 && index < (column ? numberOfColumns() : numberOfRows()));
   int number = column ? numberOfRows() : numberOfColumns();
   for (int i = 0; i < number; i++) {
-    if (!RackLayout::IsEmpty(column ? childAt(index, i) : childAt(i, index))) {
+    if (!RackLayout::IsEmpty(column ? childAt(i, index) : childAt(index, i))) {
       return false;
     }
   }

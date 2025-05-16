@@ -164,10 +164,10 @@ char* SerializeLayout(const Layout* layout, char* buffer, const char* end,
     case LayoutType::Matrix: {
       const Grid* grid = Grid::From(layout);
       buffer = append("[", buffer, end);
-      for (int j = 0; j < grid->numberOfRows() - 1; j++) {
+      for (int i = 0; i < grid->numberOfRows() - 1; i++) {
         buffer = append("[", buffer, end);
-        for (int i = 0; i < grid->numberOfColumns() - 1; i++) {
-          if (i > 0) {
+        for (int j = 0; j < grid->numberOfColumns() - 1; j++) {
+          if (j > 0) {
             buffer = append(",", buffer, end);
           }
           buffer = serializer(grid->childAt(i, j), buffer, end);

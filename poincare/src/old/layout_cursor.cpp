@@ -1112,8 +1112,8 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
       int currentIndex = m_layout.parent().indexOfChild(m_layout);
       int currentRow = gridNode->rowAtChildIndex(currentIndex);
       assert(currentRow > 0 && gridNode->numberOfColumns() >= 2);
-      newIndex = gridNode->indexAtRowColumn(currentRow - 1,
-                                            gridNode->rightmostNonGrayColumn());
+      newIndex =
+          gridNode->indexAt(currentRow - 1, gridNode->rightmostNonGrayColumn());
     }
     m_layout = m_layout.parent().childAtIndex(newIndex);
     m_position = rightmostPosition();
@@ -1137,7 +1137,7 @@ void LayoutCursor::privateDelete(LayoutNode::DeletionMethod deletionMethod,
     if (deletionMethod != LayoutNode::DeletionMethod::GridLayoutDeleteRow) {
       gridNode->deleteColumnAtIndex(currentColumn);
     }
-    int newChildIndex = gridNode->indexAtRowColumn(currentRow, currentColumn);
+    int newChildIndex = gridNode->indexAt(currentRow, currentColumn);
     *this = LayoutCursor(Layout(gridNode).childAtIndex(newChildIndex));
     didEnterCurrentPosition();
     return;

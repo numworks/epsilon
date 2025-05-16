@@ -912,8 +912,7 @@ void TreeStackCursor::privateDelete(DeletionMethod deletionMethod,
     Grid* grid = Grid::From(parentLayout(&currentIndex));
     int currentRow = grid->rowAtChildIndex(currentIndex);
     assert(currentRow > 0 && grid->numberOfColumns() >= 2);
-    int newIndex =
-        grid->indexAtRowColumn(currentRow - 1, grid->numberOfColumns() - 2);
+    int newIndex = grid->indexAt(currentRow - 1, grid->numberOfColumns() - 2);
     moveCursorToLayout(grid->child(newIndex),
                        OMG::HorizontalDirection::Right());
     // TODO trigger beautification here ?
@@ -933,7 +932,7 @@ void TreeStackCursor::privateDelete(DeletionMethod deletionMethod,
     if (deletionMethod != DeletionMethod::GridLayoutDeleteRow) {
       grid->deleteColumnAtIndex(currentColumn);
     }
-    int newChildIndex = grid->indexAtRowColumn(currentRow, currentColumn);
+    int newChildIndex = grid->indexAt(currentRow, currentColumn);
     moveCursorToLayout(grid->child(newChildIndex),
                        OMG::HorizontalDirection::Left());
     return;

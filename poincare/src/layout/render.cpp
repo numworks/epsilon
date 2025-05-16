@@ -449,18 +449,18 @@ KDPoint Render::AbsoluteOriginRec(const Tree* l, const Tree* root) {
   }
 }
 
-KDPoint Grid::positionOfChildAt(int column, int row, KDFont::Size font) const {
+KDPoint Grid::positionOfChildAt(int row, int column, KDFont::Size font) const {
   KDCoordinate x = 0;
   for (int j = 0; j < column; j++) {
     x += columnWidth(j, font);
   }
-  x += (columnWidth(column, font) - Render::Width(childAt(column, row))) / 2 +
+  x += (columnWidth(column, font) - Render::Width(childAt(row, column))) / 2 +
        column * horizontalGridEntryMargin(font);
   KDCoordinate y = 0;
   for (int i = 0; i < row; i++) {
     y += rowHeight(i, font);
   }
-  y += rowBaseline(row, font) - Render::Baseline(childAt(column, row)) +
+  y += rowBaseline(row, font) - Render::Baseline(childAt(row, column)) +
        row * verticalGridEntryMargin(font);
   KDPoint p(x, y);
   if (isMatrixLayout()) {
@@ -677,7 +677,7 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
       const Grid* grid = Grid::From(l);
       int row = grid->rowAtChildIndex(childIndex);
       int column = grid->columnAtChildIndex(childIndex);
-      return grid->positionOfChildAt(column, row, s_font);
+      return grid->positionOfChildAt(row, column, s_font);
     }
   };
   OMG::unreachable();
@@ -812,7 +812,7 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
   bool editing = grid->isEditing();
   KDCoordinate columsCumulatedWidth[columns];
   KDCoordinate rowCumulatedHeight[rows];
-  grid->computePositions(s_font, columsCumulatedWidth, rowCumulatedHeight);
+  grid->computePositions(s_font, rowCumulatedHeight, columsCumulatedWidth);
   KDSize size(
       columsCumulatedWidth[columns - 1 -
                            (!grid->numberOfColumnsIsFixed() && !editing)],

@@ -234,15 +234,14 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
   while (!matchContext.reachedLimit(pattern, MatchContext::k_globalPattern)) {
     bool onlyEmptyPlaceholders = false;
     if (matchContext.reachedLimit(pattern, MatchContext::k_localPattern)) {
-      // Local pattern has been entirely matched.
-      if (!matchContext.reachedLimit(source, MatchContext::k_localSource)) {
-        // Local source has not been entirely checked.
-        return false;
+      if (matchContext.reachedLimit(source, MatchContext::k_localSource)) {
+        /* Both local pattern and source have been entirely matched, step out of
+         * this local scope */
+        matchContext.setLocalToParent();
+        continue;  // in case parents also reached limits.
       }
-      // Update the local pattern.
-      matchContext.setLocalToParent();
-      // Continue in case parents also reached limits.
-      continue;
+      // Local pattern has been entirely matched but not local source: no match
+      return false;
     }
     /* If source has been entirely checked but pattern nodes are remaining it
      * can only be empty tree placeholders. */

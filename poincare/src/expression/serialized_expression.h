@@ -49,6 +49,10 @@ class SerializedExpression {
   }
 
  private:
+  /* m_buffer is an internal way of storing an Expression. It is convenient
+   * because the Pool is not preserved when the current App is closed. It could
+   * be replaced by a pointer to a Tree in a preserved location, for example the
+   * Storage. */
   char m_buffer[k_bufferLength] = "";
 };
 

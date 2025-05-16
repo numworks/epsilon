@@ -55,7 +55,7 @@ class SerializedExpression {
   }
 
   template <typename T>
-  double approximation() const {
+  T approximation() const {
     return isUninitialized() ? NAN : expression().approximateToRealScalar<T>();
   }
 

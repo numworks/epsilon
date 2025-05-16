@@ -5,6 +5,8 @@
 
 #include <cmath>
 
+#include "poincare/pool_object.h"
+
 using namespace Poincare;
 
 namespace Shared {
@@ -16,23 +18,22 @@ MemoizedCurveViewRange::MemoizedCurveViewRange()
       m_range(-Range1D<float>::k_defaultHalfLength,
               Range1D<float>::k_defaultHalfLength,
               -Range1D<float>::k_defaultHalfLength,
-              Range1D<float>::k_defaultHalfLength),
-      m_gridUnit{NAN, NAN} {}
+              Range1D<float>::k_defaultHalfLength) {}
 
-float MemoizedCurveViewRange::xGridUnit() {
-  if (std::isnan(m_gridUnit(OMG::Axis::Horizontal))) {
+Poincare::SerializedExpression MemoizedCurveViewRange::xGridUnit() {
+  if (std::isnan(static_cast<float>(m_gridUnit(OMG::Axis::Horizontal)))) {
     m_gridUnit.set(OMG::Axis::Horizontal,
                    computeGridUnit(OMG::Axis::Horizontal));
   }
-  assert(m_gridUnit(OMG::Axis::Horizontal) != 0.0f);
+  assert(static_cast<float>(m_gridUnit(OMG::Axis::Horizontal)) != 0.0f);
   return m_gridUnit(OMG::Axis::Horizontal);
 }
 
-float MemoizedCurveViewRange::yGridUnit() {
-  if (std::isnan(m_gridUnit(OMG::Axis::Vertical))) {
+Poincare::SerializedExpression MemoizedCurveViewRange::yGridUnit() {
+  if (std::isnan(static_cast<float>(m_gridUnit(OMG::Axis::Vertical)))) {
     m_gridUnit.set(OMG::Axis::Vertical, computeGridUnit(OMG::Axis::Vertical));
   }
-  assert(m_gridUnit(OMG::Axis::Vertical) != 0.0f);
+  assert(static_cast<float>(m_gridUnit(OMG::Axis::Vertical)) != 0.0f);
   return m_gridUnit(OMG::Axis::Vertical);
 }
 
@@ -42,7 +43,7 @@ void MemoizedCurveViewRange::privateSet(float min, float max, float limit,
   *range1D = Range1D<float>::ValidRangeBetween(min, max, limit);
   /* We must reset both grid units because with normalization
    * they can depend on each other. */
-  m_gridUnit = {NAN, NAN};
+  m_gridUnit = {};
 }
 
 }  // namespace Shared

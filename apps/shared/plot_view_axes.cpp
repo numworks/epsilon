@@ -34,11 +34,11 @@ void WithCartesianGrid::DrawGridLines(const AbstractPlotView* plotView,
   if (parallel == OMG::Axis::Horizontal) {
     min = range->yMin();
     max = range->yMax();
-    step = range->yGridUnit();
+    step = range->yGridUnit().approximation<float>();
   } else {
     min = range->xMin();
     max = range->xMax();
-    step = range->xGridUnit();
+    step = range->xGridUnit().approximation<float>();
   }
 
   int iMin = min / step;
@@ -113,7 +113,7 @@ void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
 
   ComputeRadiusBounds(plotView, rect, &radiusMin, &radiusMax);
 
-  float step = plotView->range()->xGridUnit();
+  float step = plotView->range()->xGridUnit().approximation<float>();
 
   for (int i = std::max<int>(1, std::floor(radiusMin / step));
        i <= std::ceil(radiusMax / step); i++) {

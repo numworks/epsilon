@@ -12,6 +12,11 @@
 #include <algorithm>
 #include <cmath>
 
+#include "poincare/k_tree.h"
+#include "poincare/pool_object.h"
+#include "poincare/serialized_expression.h"
+#include "poincare/src/expression/projection.h"
+
 using namespace Poincare;
 
 namespace Shared {
@@ -74,15 +79,18 @@ void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
   MemoizedCurveViewRange::protectedSetYRange(yMin(), yMax() + d, k_maxFloat);
 }
 
-float InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
+Poincare::SerializedExpression InteractiveCurveViewRange::computeGridUnit(
+    OMG::Axis axis) {
   if (!gridUnitAuto(axis)) {
     return computeGridUnitFromUserParameter(axis);
   }
-  float res = MemoizedCurveViewRange::computeGridUnit(axis);
+  Poincare::SerializedExpression computedGridUnit =
+      MemoizedCurveViewRange::computeGridUnit(axis);
   if (m_zoomNormalize) {
     if (axis == OMG::Axis::Horizontal) {
-      float yUnit = yGridUnit();
-      if ((xMax() - xMin()) / yUnit <= k_maxNumberOfXGridUnits) {
+      Poincare::SerializedExpression yUnit = yGridUnit();
+      if ((xMax() - xMin()) / yUnit.approximation<float>() <=
+          k_maxNumberOfXGridUnits) {
         return yUnit;
       }
     } else {
@@ -92,15 +100,20 @@ float InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
        * check that it allows enough graduations on the Y axis, but if the
        * standard unit would lead to too many graduations on the X axis, we
        * force the larger unit anyways. */
-      float numberOfYUnits = (yMax() - yMin() + offscreenYAxis()) / res;
-      float numberOfXUnits = (xMax() - xMin()) / res;
+      float numberOfYUnits = (yMax() - yMin() + offscreenYAxis()) /
+                             computedGridUnit.approximation<float>();
+      float numberOfXUnits =
+          (xMax() - xMin()) / computedGridUnit.approximation<float>();
       if (numberOfXUnits > k_maxNumberOfXGridUnits ||
           numberOfYUnits / 2.f > k_minNumberOfYGridUnits) {
-        return 2 * res;
+        return Poincare::SerializedExpression(
+            UserExpression::Create(KMult(2_e, KA),
+                                   {.KA = computedGridUnit.expression()})
+                .cloneAndTrySimplify({}));
       }
     }
   }
-  return res;
+  return computedGridUnit;
 }
 
 void InteractiveCurveViewRange::zoom(float ratio, float x, float y) {
@@ -409,7 +422,8 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
   setZoomNormalize(isOrthonormal());
 }
 
-float InteractiveCurveViewRange::computeGridUnitFromUserParameter(
+Poincare::SerializedExpression
+InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     OMG::Axis axis) const {
   assert(!gridUnitAuto(axis));
   float minNumberOfUnits, maxNumberOfUnits, range;
@@ -424,25 +438,34 @@ float InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     range = yMax() - yMin() + offscreenYAxis();
   }
   assert(range > 0.0f && std::isfinite(range));
-  float approximateUserGridUnit = float(m_userGridUnit(axis));
-  assert(approximateUserGridUnit > 0.0f);
-  float numberOfUnits = range / approximateUserGridUnit;  // in float for now
+  assert(m_userGridUnit(axis).approximation<float>() > 0.0f);
+  float numberOfUnits =
+      range / m_userGridUnit(axis).approximation<float>();  // in float for now
   if (minNumberOfUnits <= numberOfUnits && numberOfUnits <= maxNumberOfUnits) {
     // Case 1
-    return approximateUserGridUnit;
+    return m_userGridUnit(axis);
   } else if (numberOfUnits < minNumberOfUnits) {
     // Case 2
     assert(std::ceil(minNumberOfUnits / numberOfUnits) <=
            std::floor(maxNumberOfUnits / numberOfUnits));
-    int k = std::ceil(minNumberOfUnits / numberOfUnits);
-    return approximateUserGridUnit / k;
+    int k = static_cast<int>(std::ceil(minNumberOfUnits / numberOfUnits));
+    return SerializedExpression(
+        UserExpression::Create(KMult(KA, KPow(KB, -1_e)),
+                               {.KA = m_userGridUnit(axis).expression(),
+                                .KB = UserExpression::Builder(k)})
+            .cloneAndTrySimplify({}));
   }
   assert(numberOfUnits > maxNumberOfUnits);
   // Case 3
   assert(std::ceil(numberOfUnits / maxNumberOfUnits) <=
          std::floor(numberOfUnits / minNumberOfUnits));
-  int k = std::ceil(numberOfUnits / maxNumberOfUnits);
-  return approximateUserGridUnit * k;
+  int k = static_cast<int>(std::ceil(numberOfUnits / maxNumberOfUnits));
+
+  return SerializedExpression(
+      UserExpression::Create(KMult(KA, KB),
+                             {.KA = m_userGridUnit(axis).expression(),
+                              .KB = UserExpression::Builder(k)})
+          .cloneAndTrySimplify({}));
 
   // clang-format off
   /* Proof of the algorithm:

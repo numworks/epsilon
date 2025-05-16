@@ -239,7 +239,7 @@ void HistogramMainController::initBarParameters() {
   m_histogramRange.setXRange(xRange.min(), xRange.max());
 
   m_store->setFirstDrawnBarAbscissa(xRange.min());
-  double barWidth = m_histogramRange.xGridUnit();
+  double barWidth = m_histogramRange.xGridUnit().approximation<double>();
   if (barWidth <= 0.0) {
     barWidth = 1.0;
   } else {

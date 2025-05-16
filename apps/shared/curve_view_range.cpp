@@ -11,8 +11,13 @@
 namespace Shared {
 
 uint32_t CurveViewRange::rangeChecksum() {
-  float data[7] = {xMin(),      xMax(),      yMin(),          yMax(),
-                   xGridUnit(), yGridUnit(), offscreenYAxis()};
+  float data[7] = {xMin(),
+                   xMax(),
+                   yMin(),
+                   yMax(),
+                   static_cast<float>(xGridUnit()),
+                   static_cast<float>(yGridUnit()),
+                   offscreenYAxis()};
   size_t dataLengthInBytes = sizeof(data);
   // Assert that dataLengthInBytes is a multiple of 4
   assert((dataLengthInBytes & 0x3) == 0);
@@ -20,7 +25,8 @@ uint32_t CurveViewRange::rangeChecksum() {
                               dataLengthInBytes / sizeof(uint32_t));
 }
 
-float CurveViewRange::computeGridUnit(OMG::Axis axis) const {
+Poincare::SerializedExpression CurveViewRange::computeGridUnit(
+    OMG::Axis axis) const {
   float minNumberOfUnits, maxNumberOfUnits, range;
   if (axis == OMG::Axis::Horizontal) {
     minNumberOfUnits = k_minNumberOfXGridUnits;
@@ -50,7 +56,7 @@ float CurveViewRange::computeGridUnit(OMG::Axis axis) const {
       a = currentA;
     }
   }
-  return a * std::pow(10.0f, b);
+  return Poincare::SerializedExpression(a * std::pow(10.0f, b));
 
   // clang-format off
   /* Proof of the algorithm:

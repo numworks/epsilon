@@ -77,7 +77,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
         }
       }
       // If yGridUnit is twice xGridUnit, visible slope is halved
-      slope *= range->xGridUnit() / range->yGridUnit();
+      slope *= range->xGridUnit().approximation<double>() /
+               range->yGridUnit().approximation<double>();
       /* Assuming the curve is a straight line of slope s. To move the cursor at
        * a fixed distance d along the line, the actual x-axis distance needed is
        * d' = d * cos(θ) with θ the angle between the line and the x-axis.

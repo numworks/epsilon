@@ -37,12 +37,7 @@ class SerializedExpression {
   void writeText(std::span<char> buffer,
                  int numberOfSignificantDigits = k_numberOfSignificantDigits,
                  Preferences::PrintFloatMode floatDisplayMode =
-                     Preferences::PrintFloatMode::Decimal) const {
-    [[maybe_unused]] size_t usedLength =
-        expression().serialize(buffer.data(), buffer.size(), floatDisplayMode,
-                               numberOfSignificantDigits);
-    assert(usedLength <= buffer.size());
-  }
+                     Preferences::PrintFloatMode::Decimal) const;
 
   Expression expression() const {
     assert(!isUninitialized());

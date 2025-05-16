@@ -752,12 +752,16 @@ int IntegerHandler::estimatedNumberOfBase10DigitsWithoutSign(
    * Number is between:                [        ]          : [256^2, 256^3]
    * Number of digits:                 [        ]          :   [4.8,   7.2]
    * Number of digits (integer):     [           ]         :     [5,     8] */
-  float estimation = (numberOfDigits() + overEstimated - 1) *
-                     std::log10(static_cast<float>(k_digitBase));
-  int res = std::ceil(estimation);
-  assert(res == numberOfBase10DigitsWithoutSign() ||
-         overEstimated == (res > numberOfBase10DigitsWithoutSign()));
-  return res;
+  int estimatedNumberOfDigitsBase256 =
+      numberOfDigits() - (overEstimated ? 0 : 1);
+  float estimation = std::ceil(estimatedNumberOfDigitsBase256 *
+                               std::log10(static_cast<float>(k_digitBase)));
+  assert(estimation > 0.f && estimation < INT_MAX);
+  int estimatedNumberOfDigitsBase10 = static_cast<int>(estimation);
+  assert(estimatedNumberOfDigitsBase10 == numberOfBase10DigitsWithoutSign() ||
+         overEstimated == (estimatedNumberOfDigitsBase10 >
+                           numberOfBase10DigitsWithoutSign()));
+  return estimatedNumberOfDigitsBase10;
 }
 
 IntegerHandler IntegerHandler::multiplyByPowerOf2(

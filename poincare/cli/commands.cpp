@@ -9,14 +9,25 @@
 
 #include <iostream>
 
+#include "history_context.h"
+
 using namespace Poincare;
+
+HistoryContext s_historyContext;
+
+Internal::ProjectionContext context() {
+  Internal::ProjectionContext ctx;
+  ctx.m_context = &s_historyContext;
+  ctx.m_symbolic = SymbolicComputation::ReplaceDefinedSymbols;
+  return ctx;
+}
 
 UserExpression getExpression(const std::vector<std::string>& args) {
   if (args.size() != 1) {
     std::cerr << "This command expects an expression tree\n";
     return Undefined::Builder();
   }
-  UserExpression e = Expression::Parse(args[0].c_str(), nullptr);
+  UserExpression e = Expression::Parse(args[0].c_str(), &s_historyContext);
   if (e.isUninitialized()) {
     std::cerr << "Syntax error\n";
     return Undefined::Builder();
@@ -25,15 +36,16 @@ UserExpression getExpression(const std::vector<std::string>& args) {
 }
 
 void printExpression(const UserExpression& expr) {
+  int id = s_historyContext.addOutput(expr);
   char buffer[65536];
   expr.serialize(buffer, std::size(buffer));
-  std::cout << buffer << std::endl;
+  std::cout << "o" << id << " = " << buffer << std::endl;
 }
 
 // Command implementations
 void expandCommand(const std::vector<std::string>& args) {
   UserExpression s = getExpression(args);
-  Internal::ProjectionContext ctx;
+  Internal::ProjectionContext ctx = context();
   Internal::Tree* p = s.tree()->cloneTree();
   Internal::Simplification::ToSystem(p, &ctx);
   Internal::SystematicReduction::DeepReduce(p);
@@ -44,14 +56,14 @@ void expandCommand(const std::vector<std::string>& args) {
 
 void approximateCommand(const std::vector<std::string>& args) {
   UserExpression e = getExpression(args);
-  ApproximationContext ctx(nullptr, Preferences::ComplexFormat::Real,
+  ApproximationContext ctx(&s_historyContext, Preferences::ComplexFormat::Real,
                            Preferences::AngleUnit::Radian);
   printExpression(e.approximateToTree<double>(ctx));
 }
 
 void simplifyCommand(const std::vector<std::string>& args) {
   bool reductionFailure = false;
-  Internal::ProjectionContext ctx;
+  ProjectionContext ctx = context();
   UserExpression e =
       getExpression(args).cloneAndSimplify(&ctx, &reductionFailure);
   printExpression(e);
@@ -59,7 +71,11 @@ void simplifyCommand(const std::vector<std::string>& args) {
 
 void logCommand(const std::vector<std::string>& args) {
   UserExpression e = getExpression(args);
-  e.tree()->log();
+  if (!s_historyContext.expressionForUserNamed(e)->isUndef()) {
+    s_historyContext.expressionForUserNamed(e)->log();
+  } else {
+    e.tree()->log();
+  }
 }
 
 void helpCommand(const std::vector<std::string>& args) {

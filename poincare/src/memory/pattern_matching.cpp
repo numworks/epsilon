@@ -421,15 +421,13 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
           insertedNAry, insertedNAry->numberOfChildren() + treesToInsert - 1);
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
-        Tree* inserted = nodeToInsert->cloneTree();
+        [[maybe_unused]] Tree* inserted = nodeToInsert->cloneTree();
         assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
-        (void)(inserted);
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
-    Tree* inserted = nodeToInsert->cloneTree();
+    [[maybe_unused]] Tree* inserted = nodeToInsert->cloneTree();
     assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
-    (void)(inserted);
     node = node->nextNode();
   }
   return top;

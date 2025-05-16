@@ -221,9 +221,8 @@ QUIZ_CASE(solver_cubic) {
                    &globalContext);
 
   assert_solves_to("4(2x-1)^3-12(2x-1)^2-95(2x-1)+325=0",
-                   {"x=-2-1808709119/100000000000000000000000000×i",
-                    "x=2.5+.25×i", "x=2.5-.25×i", "delta=-108160000"},
-                   &globalContext);  // Target x=-2 on first solution
+                   {"x=-2", "x=5/2-1/4×i", "x=5/2+1/4×i", "delta=-108160000"},
+                   &globalContext);
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);

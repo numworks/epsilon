@@ -6,6 +6,7 @@
 #include "k_tree.h"
 #include "sign.h"
 #include "systematic_reduction.h"
+#include "variables.h"
 
 namespace Poincare::Internal {
 
@@ -380,13 +381,21 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
       ctx.getTree(KC)->isInteger() && !ctx.getTree(KC)->isMinusOne()) {
     // a^n and b^n are out of the sum to avoid dependencies in a^0 and b^0
     bool inverse = ctx.getTree(KC)->isNegativeInteger();
+    TreeRef scopedKA = ctx.getTree(KA)->cloneTree();
+    Variables::EnterScope(scopedKA);
+    TreeRef scopedKB = PatternMatching::Create(KAdd(KB_p), ctx);
+    Variables::EnterScope(scopedKB);
+    ctx.setNode(KD, scopedKA, 1, false);
+    ctx.setNode(KE, scopedKB, 1, false);
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KAdd(KPow(KA, KAbs(KC)),
              KSum("k"_e, 1_e, KAdd(KAbs(KC), -1_e),
-                  KMult(KBinomial(KAbs(KC), KVarK), KPow(KA, KVarK),
-                        KPow(KAdd(KB_p), KAdd(KAbs(KC), KMult(-1_e, KVarK))))),
+                  KMult(KBinomial(KAbs(KC), KVarK), KPow(KD, KVarK),
+                        KPow(KE, KAdd(KAbs(KC), KMult(-1_e, KVarK))))),
              KPow(KAdd(KB_p), KAbs(KC))),
         ctx));
+    scopedKB->removeTree();
+    scopedKA->removeTree();
     Parametric::Explicit(e);
     if (inverse) {
       PatternMatching::MatchReplaceSimplify(e, KA, KPow(KA, -1_e));

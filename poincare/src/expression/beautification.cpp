@@ -239,65 +239,75 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   return changed;
 }
 
-bool UseScientificNotation(IntegerHandler num, int* j, int* ns) {
-  // Ni : number of digits
-  // Ns : number of significant digits (non zero)
-  // j : number of 0s digits (Ni = Ns + j)
-  if (num.estimatedNumberOfBase10DigitsWithoutSign(true) <= 13) {
-    // Escape easy cases : number is obviously too small
+bool UseScientificNotation(IntegerHandler integer, int* nbOf0sAtTheEnd,
+                           int* nbOfSignificantDigits) {
+  // ScientificNotation display rule parameters
+  constexpr int k_minimalExponent = 3;
+  constexpr int k_comfortableNumberOfDigits = 13;
+  constexpr int k_maxNumberOfDigits = 29;
+  if (integer.estimatedNumberOfBase10DigitsWithoutSign(true) <=
+      k_comfortableNumberOfDigits) {
+    // Early escape: number is obviously too small
     return false;
   }
-  int ni = num.numberOfBase10DigitsWithoutSign(j);
-  *ns = ni - *j;
-  if (ni <= 13 || *j < 3) {
+  int nbOfDigits = integer.numberOfBase10DigitsWithoutSign(nbOf0sAtTheEnd);
+  *nbOfSignificantDigits = nbOfDigits - *nbOf0sAtTheEnd;
+
+  if (nbOfDigits <= k_comfortableNumberOfDigits ||
+      *nbOf0sAtTheEnd < k_minimalExponent) {
     // Small numbers, or not enough 0s
     return false;
   }
   // Only use scientific notation if there are not too many digits
-  if (ni <= 29) {
-    return *ns <= 13;
+  if (nbOfDigits <= k_maxNumberOfDigits) {
+    return *nbOfSignificantDigits <= k_comfortableNumberOfDigits;
   }
   // This could prevent a result from being hidden
-  return *ns < 29;
+  return *nbOfSignificantDigits < k_maxNumberOfDigits;
 }
 
-Tree* PushBeautifiedIntegerHandler(IntegerHandler num,
+Tree* PushBeautifiedIntegerHandler(IntegerHandler integer,
                                    bool* hasBeautifiedIntegers) {
-  assert(num.sign() == NonStrictSign::Positive);
-  int j = 0;
-  int ns = 0;
-  if (!hasBeautifiedIntegers || !UseScientificNotation(num, &j, &ns)) {
-    return num.pushOnTreeStack();
+  assert(integer.sign() == NonStrictSign::Positive);
+  int nbOf0sAtTheEnd = 0;
+  int nbOfSignificantDigits = 0;
+  if (!hasBeautifiedIntegers ||
+      !UseScientificNotation(integer, &nbOf0sAtTheEnd,
+                             &nbOfSignificantDigits)) {
+    return integer.pushOnTreeStack();
   }
   *hasBeautifiedIntegers = true;
-  assert(j >= 3 && ns > 0);
+  assert(nbOf0sAtTheEnd >= 3 && nbOfSignificantDigits > 0);
   Tree* result = SharedTreeStack->pushMult(2);
-  if (ns > 1) {
-    // Return Decimal(significantInteger, ns -1) * 10^(j + ns - 1)
+  if (nbOfSignificantDigits > 1) {
+    /* Return Decimal(significantDigits, nbOfSignificantDigits -1)
+     *        * 10^(nbOf0sAtTheEnd + nbOfSignificantDigits - 1) */
     SharedTreeStack->pushDecimal();
   } else {
-    // Return significantInteger * 10^(j + ns - 1)
+    // Return significantDigits * 10^(nbOf0sAtTheEnd + nbOfSignificantDigits -1)
   }
-  // Push significantInteger = num * 10^(-j), this has to be deep reduced
-  Tree* digits = SharedTreeStack->pushMult(2);
-  num.pushOnTreeStack();
+  /* Push significantDigits = integer * 10^(-nbOf0sAtTheEnd)
+   * This has to be deep reduced */
+  Tree* significantDigits = SharedTreeStack->pushMult(2);
+  integer.pushOnTreeStack();
   SharedTreeStack->pushPow();
   Integer::Push(10);
-  Integer::Push(-j);
-  SystematicReduction::DeepReduce(digits);
-  assert(digits->isPositiveInteger() && !digits->isZero());
-  if (digits->isOne()) {
+  Integer::Push(-nbOf0sAtTheEnd);
+  SystematicReduction::DeepReduce(significantDigits);
+  assert(significantDigits->isPositiveInteger() &&
+         !significantDigits->isZero());
+  if (significantDigits->isOne()) {
     SharedTreeStack->flushFromBlock(result);
-    // Return 10^(j + ns - 1)
+    // Return 10^(nbOf0sAtTheEnd + nbOfSignificantDigits - 1)
     result = SharedTreeStack->pushPow();
   } else {
-    if (ns > 1) {
-      Integer::Push(ns - 1);
+    if (nbOfSignificantDigits > 1) {
+      Integer::Push(nbOfSignificantDigits - 1);
     }
     SharedTreeStack->pushPow();
   }
   Integer::Push(10);
-  Integer::Push(j + ns - 1);
+  Integer::Push(nbOf0sAtTheEnd + nbOfSignificantDigits - 1);
   return result;
 }
 

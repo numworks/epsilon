@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 
+#include "commands.h"
+
 using namespace Poincare::Internal;
 
 // Save trees of previous outputs o0, o1...
@@ -22,6 +24,9 @@ class HistoryContext : public Poincare::Context {
 
   UserNamedType expressionTypeForIdentifier(const char* identifier,
                                             int length) override {
+    if (!s_isInteractive) {
+      return UserNamedType::None;
+    }
     if (length < 2 || identifier[0] != 'o') {
       return UserNamedType::None;
     }
@@ -29,6 +34,9 @@ class HistoryContext : public Poincare::Context {
   }
 
   const Tree* expressionForUserNamed(const Tree* symbol) override {
+    if (!s_isInteractive) {
+      return nullptr;
+    }
     if (!symbol->isUserSymbol()) {
       return nullptr;
     }

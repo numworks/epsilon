@@ -129,6 +129,9 @@ int main(int argc, char* argv[]) {
 
   if (argc > 1) {
     std::string line;
+    if (argc == 2) {
+      line += "simplify ";
+    }
     for (int i = 1; i < argc; ++i) {
       line += argv[i];
       if (i < argc - 1) {
@@ -140,11 +143,11 @@ int main(int argc, char* argv[]) {
     std::exit(0);
   }
 
-  bool isInteractive = isatty(STDIN_FILENO);
+  s_isInteractive = isatty(STDIN_FILENO);
 
   initializeCommands();
 
-  if (isInteractive) {
+  if (s_isInteractive) {
     setupCompletion();
     initializeHistory();
   }
@@ -154,7 +157,7 @@ int main(int argc, char* argv[]) {
   while (true) {
     char* input = readline(prompt.c_str());
     if (input == nullptr) {  // EOF (e.g., Ctrl+D)
-      if (isInteractive) {
+      if (s_isInteractive) {
         std::cout << "\nExiting." << std::endl;
       }
       break;
@@ -173,7 +176,7 @@ int main(int argc, char* argv[]) {
     processLine(line);
   }
 
-  if (isInteractive) {
+  if (s_isInteractive) {
     saveHistory();
   }
 

@@ -14,6 +14,7 @@
 using namespace Poincare;
 
 HistoryContext s_historyContext;
+bool s_isInteractive = false;
 
 Internal::ProjectionContext context() {
   Internal::ProjectionContext ctx;
@@ -36,10 +37,13 @@ UserExpression getExpression(const std::vector<std::string>& args) {
 }
 
 void printExpression(const UserExpression& expr) {
-  int id = s_historyContext.addOutput(expr);
+  if (s_isInteractive) {
+    int id = s_historyContext.addOutput(expr);
+    std::cout << "o" << id << " = ";
+  }
   char buffer[65536];
   expr.serialize(buffer, std::size(buffer));
-  std::cout << "o" << id << " = " << buffer << std::endl;
+  std::cout << buffer << std::endl;
 }
 
 // Command implementations
@@ -71,7 +75,7 @@ void simplifyCommand(const std::vector<std::string>& args) {
 
 void logCommand(const std::vector<std::string>& args) {
   UserExpression e = getExpression(args);
-  if (!s_historyContext.expressionForUserNamed(e)->isUndef()) {
+  if (s_historyContext.expressionForUserNamed(e)) {
     s_historyContext.expressionForUserNamed(e)->log();
   } else {
     e.tree()->log();

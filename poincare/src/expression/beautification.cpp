@@ -32,6 +32,7 @@ bool DeepBeautifyAngleFunctions(Tree* e,
                                 const ProjectionContext& projectionContext);
 bool ShallowBeautifyAngleFunctions(Tree* e, void* context);
 bool ShallowBeautifyPercent(Tree* e);
+bool ShallowBeautifyBigInteger(Tree* e, void* context);
 bool ShallowBeautifyOppositesDivisionsRoots(Tree* e, void* context);
 bool ShallowBeautifyPowerOfTangent(Tree* e, void* context);
 bool ShallowBeautify(Tree* e, void* context);
@@ -266,17 +267,17 @@ bool UseScientificNotation(IntegerHandler integer, int* nbOf0sAtTheEnd,
   return *nbOfSignificantDigits < k_maxNumberOfDigits;
 }
 
-Tree* PushBeautifiedIntegerHandler(IntegerHandler integer,
-                                   bool* hasBeautifiedIntegers) {
-  assert(integer.sign() == NonStrictSign::Positive);
+bool ShallowBeautifyBigInteger(Tree* e, void* context) {
+  assert(!((e->isRational() && !e->isInteger()) || e->isIntegerNegBig()));
+  if (!e->isIntegerPosBig()) {
+    return false;
+  }
   int nbOf0sAtTheEnd = 0;
   int nbOfSignificantDigits = 0;
-  if (!hasBeautifiedIntegers ||
-      !UseScientificNotation(integer, &nbOf0sAtTheEnd,
+  if (!UseScientificNotation(Integer::Handler(e), &nbOf0sAtTheEnd,
                              &nbOfSignificantDigits)) {
-    return integer.pushOnTreeStack();
+    return false;
   }
-  *hasBeautifiedIntegers = true;
   assert(nbOf0sAtTheEnd >= 3 && nbOfSignificantDigits > 0);
   Tree* result = SharedTreeStack->pushMult(2);
   if (nbOfSignificantDigits > 1) {
@@ -289,7 +290,7 @@ Tree* PushBeautifiedIntegerHandler(IntegerHandler integer,
   /* Push significantDigits = integer * 10^(-nbOf0sAtTheEnd)
    * This has to be deep reduced */
   Tree* significantDigits = SharedTreeStack->pushMult(2);
-  integer.pushOnTreeStack();
+  e->cloneTree();
   SharedTreeStack->pushPow();
   Integer::Push(10);
   Integer::Push(-nbOf0sAtTheEnd);
@@ -308,7 +309,12 @@ Tree* PushBeautifiedIntegerHandler(IntegerHandler integer,
   }
   Integer::Push(10);
   Integer::Push(nbOf0sAtTheEnd + nbOfSignificantDigits - 1);
-  return result;
+  e->moveTreeOverTree(result);
+  return true;
+}
+
+bool ShallowFlattenMult(Tree* e, void* context) {
+  return e->isMult() && NAry::Flatten(e);
 }
 
 bool ApplyBeautificationSteps(Tree* e,
@@ -325,6 +331,12 @@ bool ApplyBeautificationSteps(Tree* e,
       Tree::ApplyShallowTopDown(e, ShallowBeautifyPowerOfTangent) || changed;
   changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifySpecialDisplays) || changed;
+  assert(!Tree::ApplyShallowTopDown(e, ShallowFlattenMult));
+  if (Tree::ApplyShallowTopDown(e, ShallowBeautifyBigInteger)) {
+    changed = true;
+    // New multiplications have been introduced and should be flattened
+    Tree::ApplyShallowTopDown(e, ShallowFlattenMult);
+  }
   changed = Variables::BeautifyToName(e) || changed;
   return changed;
 }

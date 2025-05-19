@@ -18,8 +18,8 @@ class Division {
    * set to true if one changed. */
   static void GetDivisionComponents(const Tree* e, TreeRef& numerator,
                                     TreeRef& denominator,
-                                    TreeRef& outerNumerator, bool* needOpposite,
-                                    bool* hasBeautifiedIntegers = nullptr);
+                                    TreeRef& outerNumerator,
+                                    bool* needOpposite);
 };
 
 }  // namespace Poincare::Internal

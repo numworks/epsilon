@@ -25,7 +25,7 @@ uint32_t CurveViewRange::rangeChecksum() {
                               dataLengthInBytes / sizeof(uint32_t));
 }
 
-Poincare::SerializedExpression CurveViewRange::computeGridUnit(
+Poincare::ExpressionOrFloat CurveViewRange::computeGridUnit(
     OMG::Axis axis) const {
   float minNumberOfUnits, maxNumberOfUnits, range;
   if (axis == OMG::Axis::Horizontal) {
@@ -56,7 +56,7 @@ Poincare::SerializedExpression CurveViewRange::computeGridUnit(
       a = currentA;
     }
   }
-  return Poincare::SerializedExpression(a * std::pow(10.0f, b));
+  return Poincare::ExpressionOrFloat(a * std::pow(10.0f, b));
 
   // clang-format off
   /* Proof of the algorithm:

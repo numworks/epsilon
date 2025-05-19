@@ -25,7 +25,7 @@ class SingleRangeController : public ParentType {
    * FloatParameterController<float> and ParentType =
    * FloatParameterController<double>), but they can also be different.
    * For instance for ParentType = ExpressionParameterController, it's useful
-   * that parameterAtIndex returns a SerializedExpression. That is because in
+   * that parameterAtIndex returns an ExpressionOrFloat. That is because in
    * the child class SingleInteractiveCurveViewRangeController, there is another
    * parameter beside the range (namely m_gridUnitParam), which needs to have
    * the same type for the parameterAtIndex method. */

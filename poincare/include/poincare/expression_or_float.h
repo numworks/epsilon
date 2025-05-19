@@ -1,5 +1,5 @@
-#ifndef POINCARE_SERIALIZED_EXPRESSION_H
-#define POINCARE_SERIALIZED_EXPRESSION_H
+#ifndef POINCARE_EXPRESSION_OR_FLOAT_H
+#define POINCARE_EXPRESSION_OR_FLOAT_H
 
 #include <poincare/expression.h>
 
@@ -7,9 +7,9 @@
 
 namespace Poincare {
 
-class SerializedExpression {
+class ExpressionOrFloat {
  public:
-  SerializedExpression() = default;
+  ExpressionOrFloat() = default;
 
   constexpr static size_t k_numberOfSignificantDigits =
       PrintFloat::k_floatNumberOfSignificantDigits;
@@ -19,14 +19,14 @@ class SerializedExpression {
   // TODO: fine-tune, check that it complies with the spec
   constexpr static size_t k_maxExactSerializationLength = 9;
 
-  explicit SerializedExpression(Expression expression) {
+  explicit ExpressionOrFloat(Expression expression) {
     [[maybe_unused]] size_t usedLength = expression.serialize(
         m_buffer, k_bufferLength, true, Preferences::PrintFloatMode::Decimal,
         k_numberOfSignificantDigits);
     assert(usedLength <= k_bufferLength);
   }
 
-  explicit SerializedExpression(float value) : m_value(value) {}
+  explicit ExpressionOrFloat(float value) : m_value(value) {}
 
   explicit operator float() const { return approximation<float>(); }
   explicit operator double() const { return approximation<double>(); }
@@ -63,7 +63,7 @@ class SerializedExpression {
                                   : expression().approximateToRealScalar<T>();
   }
 
-  bool operator==(const SerializedExpression& other) const {
+  bool operator==(const ExpressionOrFloat& other) const {
     return strcmp(m_buffer, other.m_buffer) == 0;
   }
 

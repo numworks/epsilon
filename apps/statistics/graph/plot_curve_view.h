@@ -4,7 +4,7 @@
 #include <apps/shared/plot_view_policies.h>
 
 #include "../store.h"
-#include "poincare/serialized_expression.h"
+#include "poincare/expression_or_float.h"
 
 namespace Statistics {
 
@@ -18,8 +18,8 @@ class LabeledAxisWithOptionalPercent
   }
 
  protected:
-  Poincare::SerializedExpression tickStep(
-      const Shared::AbstractPlotView* plotView, OMG::Axis axis) const;
+  Poincare::ExpressionOrFloat tickStep(const Shared::AbstractPlotView* plotView,
+                                       OMG::Axis axis) const;
   int computeLabel(int i, const Shared::AbstractPlotView* plotView,
                    OMG::Axis axis);
 

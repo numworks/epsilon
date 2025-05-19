@@ -4,7 +4,7 @@
 #include <poincare/range.h>
 
 #include "curve_view_range.h"
-#include "poincare/serialized_expression.h"
+#include "poincare/expression_or_float.h"
 
 namespace Shared {
 
@@ -32,8 +32,8 @@ class MemoizedCurveViewRange : public CurveViewRange {
   float yMax() const override { return m_range.yMax(); }
   /* A null gridUnit value means a limit has been changed without updating the
    * grid unit. */
-  Poincare::SerializedExpression xGridUnit() final;
-  Poincare::SerializedExpression yGridUnit() final;
+  Poincare::ExpressionOrFloat xGridUnit() final;
+  Poincare::ExpressionOrFloat yGridUnit() final;
 
   virtual void setXRange(float min, float max) { protectedSetXRange(min, max); }
   virtual void setYRange(float min, float max) { protectedSetYRange(min, max); }
@@ -47,7 +47,7 @@ class MemoizedCurveViewRange : public CurveViewRange {
 
  protected:
   Poincare::Range2D<float> memoizedRange() const { return m_range; }
-  virtual Poincare::SerializedExpression computeGridUnit(OMG::Axis axis) {
+  virtual Poincare::ExpressionOrFloat computeGridUnit(OMG::Axis axis) {
     return axis == OMG::Axis::Horizontal ? CurveViewRange::xGridUnit()
                                          : CurveViewRange::yGridUnit();
   }
@@ -75,7 +75,7 @@ class MemoizedCurveViewRange : public CurveViewRange {
 
   // Window bounds of the data
   Poincare::Range2D<float> m_range;
-  AxisInformation<Poincare::SerializedExpression> m_gridUnit;
+  AxisInformation<Poincare::ExpressionOrFloat> m_gridUnit;
 };
 
 }  // namespace Shared

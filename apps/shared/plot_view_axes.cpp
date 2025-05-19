@@ -283,36 +283,35 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
   }
 }
 
-SerializedExpression SimpleAxis::tickPosition(int i,
-                                              const AbstractPlotView* plotView,
-                                              OMG::Axis axis) const {
-  SerializedExpression step = tickStep(plotView, axis);
+ExpressionOrFloat SimpleAxis::tickPosition(int i,
+                                           const AbstractPlotView* plotView,
+                                           OMG::Axis axis) const {
+  ExpressionOrFloat step = tickStep(plotView, axis);
   float tMin = plotView->rangeMin(axis);
   float approximateStep = static_cast<float>(step);
   assert(std::fabs(std::round(tMin / approximateStep)) <
          static_cast<float>(INT_MAX));
   int indexOfOrigin = static_cast<int>(std::floor(-tMin / approximateStep));
   if (step.hasNoExactExpression()) {
-    return SerializedExpression(static_cast<float>(i - indexOfOrigin) *
-                                static_cast<float>(step));
+    return ExpressionOrFloat(static_cast<float>(i - indexOfOrigin) *
+                             static_cast<float>(step));
   }
-  return SerializedExpression(
+  return ExpressionOrFloat(
       UserExpression::Create(KMult(KA, KB),
                              {.KA = step.expression(),
                               .KB = UserExpression::Builder(i - indexOfOrigin)})
           .cloneAndTrySimplify({}));
 }
 
-SerializedExpression SimpleAxis::tickStep(const AbstractPlotView* plotView,
-                                          OMG::Axis axis) const {
-  // TODO: xGridUnit() and yGridUnit() should return SerializedExpression
-  SerializedExpression step = SerializedExpression(
+ExpressionOrFloat SimpleAxis::tickStep(const AbstractPlotView* plotView,
+                                       OMG::Axis axis) const {
+  ExpressionOrFloat step = ExpressionOrFloat(
       axis == OMG::Axis::Horizontal ? plotView->range()->xGridUnit()
                                     : plotView->range()->yGridUnit());
   if (step.hasNoExactExpression()) {
-    return SerializedExpression(2.f * static_cast<float>(step));
+    return ExpressionOrFloat(2.f * static_cast<float>(step));
   }
-  return SerializedExpression(
+  return ExpressionOrFloat(
       UserExpression::Create(KMult(2_e, KA), {.KA = step.expression()})
           .cloneAndTrySimplify({}));
 }
@@ -331,7 +330,7 @@ void AbstractLabeledAxis::reloadAxis(AbstractPlotView* plotView,
 
 int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView* plotView,
                                       OMG::Axis axis) {
-  SerializedExpression t = tickPosition(i, plotView, axis);
+  ExpressionOrFloat t = tickPosition(i, plotView, axis);
   // TODO: what about k_labelBufferMaxGlyphLength?
   t.writeText({mutableLabel(i), k_labelBufferMaxSize},
               k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal);

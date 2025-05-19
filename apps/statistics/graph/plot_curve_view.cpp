@@ -14,9 +14,9 @@ namespace Statistics {
 
 // LabeledAxisWithOptionalPercent
 
-SerializedExpression LabeledAxisWithOptionalPercent::tickStep(
+ExpressionOrFloat LabeledAxisWithOptionalPercent::tickStep(
     const Shared::AbstractPlotView* plotView, OMG::Axis axis) const {
-  return SerializedExpression(SystemExpression::CreateReduce(
+  return ExpressionOrFloat(SystemExpression::CreateReduce(
       KMult(KA, KB),
       {.KA = PlotPolicy::VerticalLabeledAxis::tickStep(plotView, axis)
                  .expression(),

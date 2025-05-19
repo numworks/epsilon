@@ -14,7 +14,6 @@
 
 #include "poincare/k_tree.h"
 #include "poincare/pool_object.h"
-#include "poincare/serialized_expression.h"
 #include "poincare/src/expression/projection.h"
 
 using namespace Poincare;
@@ -79,16 +78,15 @@ void InteractiveCurveViewRange::setOffscreenYAxis(float f) {
   MemoizedCurveViewRange::protectedSetYRange(yMin(), yMax() + d, k_maxFloat);
 }
 
-Poincare::SerializedExpression InteractiveCurveViewRange::computeGridUnit(
-    OMG::Axis axis) {
+ExpressionOrFloat InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
   if (!gridUnitAuto(axis)) {
     return computeGridUnitFromUserParameter(axis);
   }
-  Poincare::SerializedExpression computedGridUnit =
+  ExpressionOrFloat computedGridUnit =
       MemoizedCurveViewRange::computeGridUnit(axis);
   if (m_zoomNormalize) {
     if (axis == OMG::Axis::Horizontal) {
-      Poincare::SerializedExpression yUnit = yGridUnit();
+      ExpressionOrFloat yUnit = yGridUnit();
       if ((xMax() - xMin()) / yUnit.approximation<float>() <=
           k_maxNumberOfXGridUnits) {
         return yUnit;
@@ -106,7 +104,7 @@ Poincare::SerializedExpression InteractiveCurveViewRange::computeGridUnit(
           (xMax() - xMin()) / computedGridUnit.approximation<float>();
       if (numberOfXUnits > k_maxNumberOfXGridUnits ||
           numberOfYUnits / 2.f > k_minNumberOfYGridUnits) {
-        return Poincare::SerializedExpression(
+        return ExpressionOrFloat(
             UserExpression::Create(KMult(2_e, KA),
                                    {.KA = computedGridUnit.expression()})
                 .cloneAndTrySimplify({}));
@@ -422,8 +420,7 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
   setZoomNormalize(isOrthonormal());
 }
 
-Poincare::SerializedExpression
-InteractiveCurveViewRange::computeGridUnitFromUserParameter(
+ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     OMG::Axis axis) const {
   assert(!gridUnitAuto(axis));
   float minNumberOfUnits, maxNumberOfUnits, range;
@@ -449,7 +446,7 @@ InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     assert(std::ceil(minNumberOfUnits / numberOfUnits) <=
            std::floor(maxNumberOfUnits / numberOfUnits));
     int k = static_cast<int>(std::ceil(minNumberOfUnits / numberOfUnits));
-    return SerializedExpression(
+    return ExpressionOrFloat(
         UserExpression::Create(KMult(KA, KPow(KB, -1_e)),
                                {.KA = m_userGridUnit(axis).expression(),
                                 .KB = UserExpression::Builder(k)})
@@ -461,7 +458,7 @@ InteractiveCurveViewRange::computeGridUnitFromUserParameter(
          std::floor(numberOfUnits / minNumberOfUnits));
   int k = static_cast<int>(std::ceil(numberOfUnits / maxNumberOfUnits));
 
-  return SerializedExpression(
+  return ExpressionOrFloat(
       UserExpression::Create(KMult(KA, KB),
                              {.KA = m_userGridUnit(axis).expression(),
                               .KB = UserExpression::Builder(k)})

@@ -4,12 +4,12 @@
 #include <float.h>
 #include <ion/display.h>
 #include <poincare/range.h>
-#include <poincare/serialized_expression.h>
 #include <stdint.h>
 
 #include "grid_type_controller.h"
 #include "interactive_curve_view_range_delegate.h"
 #include "memoized_curve_view_range.h"
+#include "poincare/expression_or_float.h"
 
 namespace Shared {
 
@@ -17,7 +17,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
   using GridType = GridTypeController::GridType;
-  using GridUnitType = Poincare::SerializedExpression;
+  using GridUnitType = Poincare::ExpressionOrFloat;
   template <typename T>
   using AxisInformation = MemoizedCurveViewRange::AxisInformation<T>;
 
@@ -144,11 +144,11 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   void privateSetGridUnitAuto(bool xAuto, bool yAuto);
   void privateSetUserGridUnit(GridUnitType xValue, GridUnitType yValue);
   void privateComputeRanges(bool computeX, bool computeY);
-  Poincare::SerializedExpression computeGridUnitFromUserParameter(
+  Poincare::ExpressionOrFloat computeGridUnitFromUserParameter(
       OMG::Axis axis) const;
 
   // MemoizedCurveViewRange
-  Poincare::SerializedExpression computeGridUnit(OMG::Axis axis) override;
+  Poincare::ExpressionOrFloat computeGridUnit(OMG::Axis axis) override;
 
   Poincare::Range2D<float> m_memoizedAutoRange;
   uint64_t m_checksumOfMemoizedAutoRange;

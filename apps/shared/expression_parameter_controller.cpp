@@ -31,8 +31,8 @@ void ExpressionParameterController::fillCellForRow(HighlightCell* cell,
 bool ExpressionParameterController::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
   char* text = textField->draftText();
-  SerializedExpression currentExpression =
-      SerializedExpression(Expression::Parse(text, App::app()->localContext()));
+  ExpressionOrFloat currentExpression =
+      ExpressionOrFloat(Expression::Parse(text, App::app()->localContext()));
   if (hasUndefinedValue(text, currentExpression, innerSelectedRow()) ||
       !setParameterAtIndex(innerSelectedRow(), currentExpression)) {
     return false;

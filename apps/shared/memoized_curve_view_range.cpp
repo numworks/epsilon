@@ -20,7 +20,7 @@ MemoizedCurveViewRange::MemoizedCurveViewRange()
               -Range1D<float>::k_defaultHalfLength,
               Range1D<float>::k_defaultHalfLength) {}
 
-Poincare::SerializedExpression MemoizedCurveViewRange::xGridUnit() {
+ExpressionOrFloat MemoizedCurveViewRange::xGridUnit() {
   if (std::isnan(static_cast<float>(m_gridUnit(OMG::Axis::Horizontal)))) {
     m_gridUnit.set(OMG::Axis::Horizontal,
                    computeGridUnit(OMG::Axis::Horizontal));
@@ -29,7 +29,7 @@ Poincare::SerializedExpression MemoizedCurveViewRange::xGridUnit() {
   return m_gridUnit(OMG::Axis::Horizontal);
 }
 
-Poincare::SerializedExpression MemoizedCurveViewRange::yGridUnit() {
+ExpressionOrFloat MemoizedCurveViewRange::yGridUnit() {
   if (std::isnan(static_cast<float>(m_gridUnit(OMG::Axis::Vertical)))) {
     m_gridUnit.set(OMG::Axis::Vertical, computeGridUnit(OMG::Axis::Vertical));
   }

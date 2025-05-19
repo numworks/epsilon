@@ -5,7 +5,7 @@
 #include <poincare/solver/zoom.h>
 #include <stdint.h>
 
-#include "poincare/serialized_expression.h"
+#include "poincare/expression_or_float.h"
 
 namespace Shared {
 
@@ -19,10 +19,10 @@ class CurveViewRange {
   virtual float yMax() const = 0;
   float xCenter() const { return (xMin() + xMax()) / 2; }
   float yCenter() const { return (yMin() + yMax()) / 2; }
-  virtual Poincare::SerializedExpression xGridUnit() {
+  virtual Poincare::ExpressionOrFloat xGridUnit() {
     return computeGridUnit(OMG::Axis::Horizontal);
   }
-  virtual Poincare::SerializedExpression yGridUnit() {
+  virtual Poincare::ExpressionOrFloat yGridUnit() {
     return computeGridUnit(OMG::Axis::Vertical);
   }
   constexpr static float k_maxNumberOfXGridUnits = 18.0f;
@@ -40,7 +40,7 @@ class CurveViewRange {
   constexpr static float k_smallGridUnitMantissa = 1.f;
   constexpr static float k_mediumGridUnitMantissa = 2.f;
   constexpr static float k_largeGridUnitMantissa = 5.f;
-  Poincare::SerializedExpression computeGridUnit(OMG::Axis axis) const;
+  Poincare::ExpressionOrFloat computeGridUnit(OMG::Axis axis) const;
 };
 
 }  // namespace Shared

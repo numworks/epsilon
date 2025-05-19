@@ -1,4 +1,4 @@
-#include <poincare/serialized_expression.h>
+#include "poincare/expression_or_float.h"
 
 #include "poincare/helpers/expression_equal_sign.h"
 #include "poincare/print_float.h"
@@ -18,7 +18,7 @@ void SerializeFloatValue(float value, std::span<char> buffer,
   assert(floatSerializationLengths.CharLength <= buffer.size());
 }
 
-void SerializedExpression::writeText(
+void ExpressionOrFloat::writeText(
     std::span<char> buffer, int numberOfSignificantDigits,
     Preferences::PrintFloatMode floatDisplayMode) const {
   if (hasNoExactExpression()) {

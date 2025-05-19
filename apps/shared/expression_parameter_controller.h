@@ -1,7 +1,7 @@
 #ifndef SHARED_EXPRESSION_PARAMETER_CONTROLLER_H
 #define SHARED_EXPRESSION_PARAMETER_CONTROLLER_H
 
-#include <poincare/serialized_expression.h>
+#include <poincare/expression_or_float.h>
 
 #include "parameters_with_validation_controller.h"
 
@@ -10,7 +10,7 @@ namespace Shared {
 class ExpressionParameterController
     : public ParametersWithValidationController {
  public:
-  using ParameterType = Poincare::SerializedExpression;
+  using ParameterType = Poincare::ExpressionOrFloat;
   using FloatType = float;
 
   ExpressionParameterController(Escher::Responder* parentResponder,

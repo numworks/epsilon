@@ -225,9 +225,14 @@ UserExpression UserExpression::ParseLatex(const char* latex, Context* context,
   return result;
 }
 
-Expression Expression::Create(const Tree* structure, ContextTrees ctx) {
-  Tree* tree = PatternMatching::Create(structure, ctx);
+Expression Expression::CreateWithScope(const Tree* structure, ContextTrees ctx,
+                                       ContextScopes scopes) {
+  Tree* tree = PatternMatching::Create(structure, ctx, scopes);
   return Builder(tree);
+}
+
+Expression Expression::Create(const Tree* structure, ContextTrees ctx) {
+  return CreateWithScope(structure, ctx, ContextScopes());
 }
 
 SystemExpression SystemExpression::CreateReduce(const Tree* structure,
@@ -631,9 +636,12 @@ template <typename T>
 T SystemFunction::approximateIntegralToRealScalar(
     const SystemExpression& lowerBound,
     const SystemExpression& upperBound) const {
+  /* We suppose here that tree() has been handled correctly and already has
+   * valid scope */
   Tree* integralTree = PatternMatching::Create(
       KIntegral("x"_e, KA, KB, KC),
-      {.KA = lowerBound.tree(), .KB = upperBound.tree(), .KC = tree()});
+      {.KA = lowerBound.tree(), .KB = upperBound.tree(), .KC = tree()},
+      {.KC = 1});
   T result = Approximation::To<T>(
       integralTree, Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                               .prepare = true});

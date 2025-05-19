@@ -446,10 +446,12 @@ UserExpression ContinuousFunction::sumBetweenBounds(double start, double end,
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
   // Integral takes ownership of args
-  return UserExpression::Create(KIntegral(KUnknownSymbol, KA, KB, KC),
-                                {.KA = UserExpression::Builder<double>(start),
-                                 .KB = UserExpression::Builder<double>(end),
-                                 .KC = expressionReduced(context)});
+  return UserExpression::CreateWithScope(
+      KIntegral(KUnknownSymbol, KA, KB, KC),
+      {.KA = UserExpression::Builder<double>(start),
+       .KB = UserExpression::Builder<double>(end),
+       .KC = expressionReduced(context)},
+      {.KC = 1});
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */

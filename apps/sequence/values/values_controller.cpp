@@ -155,11 +155,12 @@ Layout ValuesController::functionTitleLayout(int column) {
   }
   char sequenceName[SymbolHelper::k_maxNameSize];
   sequence->nameWithoutExtension(sequenceName, SymbolHelper::k_maxNameSize);
-  UserExpression sumExpression = UserExpression::Create(
+  UserExpression sumExpression = UserExpression::CreateWithScope(
       KSum("k"_e, KA, "n"_e, KB),
       {.KA = UserExpression::Builder(sequence->initialRank()),
        .KB = Poincare::SymbolHelper::BuildSequence(
-           sequenceName, UserExpression::Builder("k"_e))});
+           sequenceName, UserExpression::Builder("k"_e))},
+      {.KB = 1});
   return sumExpression.createLayout(preferences->displayMode(),
                                     preferences->numberOfSignificantDigits(),
                                     nullptr);

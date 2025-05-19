@@ -366,6 +366,7 @@ void assert_layout_serializes_to(const Tree *layout,
   Serialize(layout, buffer, buffer + bufferSize);
   copy_without_system_chars(buffer, buffer);
   bool success = strcmp(buffer, result) == 0;
+#if POINCARE_STRICT_TESTS
 #if POINCARE_TREE_LOG
   if (!success) {
     std::cout << "\nSerialization test failure with: \n";
@@ -374,7 +375,6 @@ void assert_layout_serializes_to(const Tree *layout,
               << "\n\n";
   }
 #endif
-#if POINCARE_STRICT_TESTS
   quiz_assert(success);
 #else
   quiz_tolerate_print_if_failure(success, serialization, serialization, buffer);

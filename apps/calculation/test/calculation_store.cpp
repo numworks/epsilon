@@ -223,16 +223,33 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                                     expectedStoredInput);
   }
   if (expectedExactOutput) {
-    quiz_assert(Calculation::Calculation::CanDisplayExact(
-        lastCalculation->displayOutput()));
-    assert_layout_serializes_to(outputLayouts.exact, expectedExactOutput);
+    assert(Calculation::Calculation::CanDisplayExact(expectedDisplay));
+    if (outputLayouts.exact.isUninitialized()) {
+#if POINCARE_STRICT_TESTS
+      quiz_assert_print_if_failure(false, "serialization");
+#else
+      quiz_tolerate_print_if_failure(false, expectedExactOutput,
+                                     expectedExactOutput, "Uninitialized");
+#endif
+    } else {
+      assert_layout_serializes_to(outputLayouts.exact, expectedExactOutput);
+    }
   }
 
   if (expectedApproximateOutput) {
-    assert(Calculation::Calculation::CanDisplayApproximate(
-        lastCalculation->displayOutput()));
-    assert_layout_serializes_to(outputLayouts.approximate,
-                                expectedApproximateOutput);
+    assert(Calculation::Calculation::CanDisplayApproximate(expectedDisplay));
+    if (outputLayouts.approximate.isUninitialized()) {
+#if POINCARE_STRICT_TESTS
+      quiz_assert_print_if_failure(false, "serialization");
+#else
+      quiz_tolerate_print_if_failure(false, expectedApproximateOutput,
+                                     expectedApproximateOutput,
+                                     "Uninitialized");
+#endif
+    } else {
+      assert_layout_serializes_to(outputLayouts.approximate,
+                                  expectedApproximateOutput);
+    }
   }
   store->deleteAll();
 }

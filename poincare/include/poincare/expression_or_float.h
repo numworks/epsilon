@@ -68,7 +68,8 @@ class ExpressionOrFloat {
   }
 
   bool operator==(const ExpressionOrFloat& other) const {
-    return strcmp(m_buffer, other.m_buffer) == 0;
+    return hasNoExactExpression() ? (m_value == other.m_value)
+                                  : (strcmp(m_buffer, other.m_buffer) == 0);
   }
 
  private:

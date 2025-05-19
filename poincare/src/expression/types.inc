@@ -369,7 +369,7 @@ NODE(UndefFailedSimplification,
      BASE)                      // raised TreeStackOverFlow or IntegerOverFlow
 NODE(UndefZeroPowerZero, BASE)  // 0^0
 NODE(UndefZeroDivision, BASE)   // 1/0, tan(nπ/2)
-NODE(UndefBoolean, BASE)  // undefined with Boolean dimension
+NODE(UndefBoolean, BASE)        // undefined with Boolean dimension
 NODE(UndefUnhandled, BASE)      // inf - inf, 0 * inf, unimplemented
 NODE(UndefUnhandledDimension, BASE)  // [[1,2]] + [[1],[2]]
 NODE(UndefBadType, BASE)             // non-integers in gcd,lcm,...
@@ -389,17 +389,17 @@ NODE(UnitConversion, BASE, 2)
  * during context-less simplification and approximation. */
 NODE(AngleUnitContext, BASE, 1, { uint8_t angleUnit; })
 
-RANGE(Expression, RationalNegBig, AngleUnitContext)
-
-// SequenceExplicit(formula, firstRank)
-NODE(SequenceExplicit, BASE, 2)
-// SequenceSingleRecurrence(formula, firstRank, initialCondition)
-NODE(SequenceSingleRecurrence, BASE, 3)
-// SequenceDoubleRecurrence(formula, firstRank, initialCondition,
+// SequenceExplicit(name, formula, firstRank)
+NODE(SequenceExplicit, SEQUENCE, 3)
+// SequenceSingleRecurrence(name, formula, firstRank, initialCondition)
+NODE(SequenceSingleRecurrence, SEQUENCE, 4)
+// SequenceDoubleRecurrence(name, formula, firstRank, initialCondition,
 // initialCondition)
-NODE(SequenceDoubleRecurrence, BASE, 4)
+NODE(SequenceDoubleRecurrence, SEQUENCE, 5)
 
 RANGE(Sequence, SequenceExplicit, SequenceDoubleRecurrence)
+
+RANGE(Expression, RationalNegBig, SequenceDoubleRecurrence)
 
 // TODO: should this really be here ?
 NODE(PointOfInterest, BASE, 0, {

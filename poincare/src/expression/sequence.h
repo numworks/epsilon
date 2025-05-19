@@ -13,6 +13,8 @@ class Sequence {
     DoubleRecurrence = 2
   };
 
+  static constexpr int k_firstRankIndex = 2;
+
   static Type GetType(const Tree* sequence);
   static int InitialRank(const Tree* sequence);
 

@@ -127,6 +127,14 @@ constexpr auto KListSequence = KFixedArity<3, Type::ListSequence>();
 constexpr auto KListSort = KUnary<Type::ListSort>();
 #endif
 
+#if POINCARE_SEQUENCE
+constexpr auto KSequenceExplicit = KFixedArity<3, Type::SequenceExplicit>();
+constexpr auto KSequenceSingleRecurrence =
+    KFixedArity<4, Type::SequenceSingleRecurrence>();
+constexpr auto KSequenceDoubleRecurrence =
+    KFixedArity<5, Type::SequenceDoubleRecurrence>();
+#endif
+
 #if POINCARE_POINT
 constexpr auto KPoint = KBinary<Type::Point>();
 #endif

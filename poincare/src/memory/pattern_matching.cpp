@@ -118,6 +118,12 @@ void PatternMatching::MatchContext::setLocalToParent() {
   setLocal(sourceParent, patternParent);
 }
 
+/* Get the scope of the current [pattern] tree in the [m_globalPatternRoot].
+ * The scope is the amount of parametric node in [pattern] ancestors where
+ * [pattern] is in the [FunctionIndex]-th child of such node.
+ * This corresponds to the number of time the index of the variable needs
+ * to be increased if the variable were to be inserted inplace of [pattern].
+ * */
 uint8_t PatternMatching::MatchContext::getScope(const Tree* pattern) const {
 #if ASSERTIONS
   assert(m_globalPatternRoot <= pattern &&
@@ -125,10 +131,14 @@ uint8_t PatternMatching::MatchContext::getScope(const Tree* pattern) const {
   uint8_t scope = m_baseScope;
   const Tree* e = m_globalPatternRoot;
 
+  // From root to pattern, visit each ancestors of pattern
   while (e != pattern) {
+    /* If [e] is parametric and [pattern] is located in the functionIndex
+     * child, scope will increase */
     int functionIndex = e->isParametric() ? Parametric::FunctionIndex(e) : -1;
     const Tree* child = e->child(0);
     const Tree* nextChild = child->nextTree();
+    // Find the ancestor of [pattern] in e's children
     for (int i = 0; i < e->numberOfChildren(); ++i) {
       if (child <= pattern && pattern < nextChild) {
         // pattern is a child of child

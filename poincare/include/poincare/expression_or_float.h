@@ -7,6 +7,10 @@
 
 namespace Poincare {
 
+/* Common interface for Poincare::Expression and float values. It is possible to
+ * use this class in an environment that forbids exact calculations (for
+ * instance in the Python app where the TreeStack is not available), but on the
+ * condition that only the float variant of ExpressionOrFloat is used. */
 class ExpressionOrFloat {
  public:
   ExpressionOrFloat() = default;

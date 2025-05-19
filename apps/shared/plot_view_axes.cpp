@@ -291,7 +291,11 @@ SerializedExpression SimpleAxis::tickPosition(int i,
   float approximateStep = static_cast<float>(step);
   assert(std::fabs(std::round(tMin / approximateStep)) <
          static_cast<float>(INT_MAX));
-  int indexOfOrigin = std::floor(-tMin / approximateStep);
+  int indexOfOrigin = static_cast<int>(std::floor(-tMin / approximateStep));
+  if (step.hasNoExactExpression()) {
+    return SerializedExpression(static_cast<float>(i - indexOfOrigin) *
+                                static_cast<float>(step));
+  }
   return SerializedExpression(
       UserExpression::Create(KMult(KA, KB),
                              {.KA = step.expression(),
@@ -305,6 +309,9 @@ SerializedExpression SimpleAxis::tickStep(const AbstractPlotView* plotView,
   SerializedExpression step = SerializedExpression(
       axis == OMG::Axis::Horizontal ? plotView->range()->xGridUnit()
                                     : plotView->range()->yGridUnit());
+  if (step.hasNoExactExpression()) {
+    return SerializedExpression(2.f * static_cast<float>(step));
+  }
   return SerializedExpression(
       UserExpression::Create(KMult(2_e, KA), {.KA = step.expression()})
           .cloneAndTrySimplify({}));

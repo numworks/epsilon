@@ -9,6 +9,7 @@
 
 #include "grid.h"
 #include "parsing/rack_parser.h"
+#include "sequence.h"
 
 namespace Poincare::Internal {
 
@@ -121,6 +122,56 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       }
       return expr;
     }
+#if POINCARE_SEQUENCE
+    case LayoutType::Sequence: {
+      const Grid* grid = Grid::From(l);
+      assert(grid->numberOfColumns() == 2);
+      assert(grid->numberOfRows() >= 1);
+      Tree* expr;
+
+      // Sequence symbol
+      expr = Parse(grid->child(0), context);
+      if (!expr || !expr->isUserSequence()) {
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+      SharedTreeStack->pushUserSymbol(Symbol::GetName(expr));
+      expr->removeTree();
+
+      // Sequence expression
+      if (!Parse(grid->child(1), context)) {
+        TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+      }
+
+      // First rank
+      SharedTreeStack->pushInteger(SequenceLayout::FirstRank(l));
+
+      switch (grid->numberOfRows()) {
+        case 1: {
+          expr->cloneNodeAtNode(KSequenceExplicit);
+          return expr;
+        }
+        case 2: {
+          expr->cloneNodeAtNode(KSequenceSingleRecurrence);
+          // First initial condition
+          if (!Parse(grid->child(3), context)) {
+            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+          }
+          return expr;
+        }
+        case 3: {
+          expr->cloneNodeAtNode(KSequenceDoubleRecurrence);
+          // First and second initial conditions
+          if (!Parse(grid->child(3), context) ||
+              !Parse(grid->child(5), context)) {
+            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+          }
+          return expr;
+        }
+        default:
+          OMG::unreachable();
+      }
+    }
+#endif
     default: {
       // The layout children map one-to-one to the expression
       TreeRef ref = SharedTreeStack->pushBlock(ExpressionType(l->layoutType()));

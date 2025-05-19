@@ -2,6 +2,8 @@
 
 #include <assert.h>
 #include <omg/unreachable.h>
+#include <poincare/helpers/symbol.h>
+#include <poincare/src/memory/pattern_matching.h>
 #include <string.h>
 
 #include "dimension.h"
@@ -28,6 +30,41 @@ int Sequence::InitialRank(const Tree* sequence) {
   assert(sequence->isSequence());
   assert(sequence->child(k_firstRankIndex)->isInteger());
   return Integer::Handler(sequence->child(k_firstRankIndex)).to<int>();
+}
+
+Tree* Sequence::MainExpressionName(const Tree* sequence) {
+  assert(sequence->isSequence());
+  Tree* result = SharedTreeStack->pushUserSequence(
+      Symbol::GetName(sequence->child(k_nameIndex)));
+  Tree* sequenceSymbol = SharedTreeStack->pushUserSymbol("n");
+  switch (sequence->type()) {
+    case Internal::Type::SequenceExplicit:
+      break;
+    case Internal::Type::SequenceSingleRecurrence:
+      sequenceSymbol->moveTreeOverTree(
+          PatternMatching::Create(KAdd(KA, 1_e), {.KA = sequenceSymbol}));
+      break;
+    case Internal::Type::SequenceDoubleRecurrence:
+      sequenceSymbol->moveTreeOverTree(
+          PatternMatching::Create(KAdd(KA, 2_e), {.KA = sequenceSymbol}));
+      break;
+    default:
+      OMG::unreachable();
+  }
+  return result;
+}
+
+Tree* Sequence::InitialConditionName(const Tree* sequence,
+                                     bool isFirstCondition) {
+  assert(sequence->isSequence());
+  Tree* result = SharedTreeStack->pushUserSequence(
+      Symbol::GetName(sequence->child(k_nameIndex)));
+  Tree* firstRank = sequence->child(k_firstRankIndex)->cloneTree();
+  if (!isFirstCondition) {
+    firstRank->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KAdd(KA, 1_e), {.KA = firstRank}));
+  }
+  return result;
 }
 
 bool Sequence::MainExpressionContainsForbiddenTerms(

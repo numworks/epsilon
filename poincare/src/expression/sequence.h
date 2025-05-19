@@ -13,10 +13,18 @@ class Sequence {
     DoubleRecurrence = 2
   };
 
+  static constexpr int k_nameIndex = 0;
+  static constexpr int k_mainExpressionIndex = 1;
   static constexpr int k_firstRankIndex = 2;
+  static constexpr int k_firstInitialConditionIndex = 3;
+  static constexpr int k_secondInitialConditionIndex = 4;
 
   static Type GetType(const Tree* sequence);
   static int InitialRank(const Tree* sequence);
+
+  static Tree* MainExpressionName(const Tree* sequence);
+  static Tree* InitialConditionName(const Tree* sequence,
+                                    bool isFirstCondition = true);
 
   static bool MainExpressionContainsForbiddenTerms(
       const Tree* e, const char* name, Type type, int initialRank,

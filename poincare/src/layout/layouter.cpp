@@ -14,6 +14,7 @@
 #include <poincare/src/expression/number.h>
 #include <poincare/src/expression/physical_constant.h>
 #include <poincare/src/expression/rational.h>
+#include <poincare/src/expression/sequence.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/units/unit.h>
@@ -362,6 +363,54 @@ void Layouter::layoutMatrix(TreeRef& layoutParent, Tree* expression) {
   PushCodePoint(layoutParent, ']');
 }
 
+void Layouter::layoutSequence(TreeRef& layoutParent, Tree* expression) {
+  // Get first rank
+  assert(Integer::Handler(expression->child(Sequence::k_firstRankIndex))
+             .is<uint8_t>());
+  uint8_t firstRank =
+      Integer::Handler(expression->child(Sequence::k_firstRankIndex))
+          .to<uint8_t>();
+
+  // Get names
+  TreeRef mainExpressionName = Sequence::MainExpressionName(expression);
+  TreeRef firstInitialConditionName =
+      (expression->type() == Type::SequenceSingleRecurrence ||
+       expression->type() == Type::SequenceDoubleRecurrence)
+          ? Sequence::InitialConditionName(expression, true)
+          : nullptr;
+  TreeRef secondInitialConditionName =
+      (expression->type() == Type::SequenceDoubleRecurrence)
+          ? Sequence::InitialConditionName(expression, false)
+          : nullptr;
+
+  // Push sequence layout
+  TreeRef layout = SharedTreeStack->pushSequenceLayout(
+      expression->numberOfChildren() - 2, 2, firstRank);
+
+  // Remove first rank and name children
+  expression->child(Sequence::k_firstRankIndex)->removeTree();
+  expression->child(Sequence::k_nameIndex)->removeTree();
+  // Layout main expression
+  TreeRef newParent = SharedTreeStack->pushRackLayout(0);
+  layoutExpression(newParent, mainExpressionName, k_maxPriority);
+  newParent = SharedTreeStack->pushRackLayout(0);
+  layoutExpression(newParent, expression->nextNode(), k_maxPriority);
+  // Layout initial conditions
+  if (firstInitialConditionName) {
+    newParent = SharedTreeStack->pushRackLayout(0);
+    layoutExpression(newParent, firstInitialConditionName, k_maxPriority);
+    newParent = SharedTreeStack->pushRackLayout(0);
+    layoutExpression(newParent, expression->nextNode(), k_maxPriority);
+  }
+  if (secondInitialConditionName) {
+    newParent = SharedTreeStack->pushRackLayout(0);
+    layoutExpression(newParent, secondInitialConditionName, k_maxPriority);
+    newParent = SharedTreeStack->pushRackLayout(0);
+    layoutExpression(newParent, expression->nextNode(), k_maxPriority);
+  }
+  NAry::AddChild(layoutParent, layout);
+}
+
 void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {
   // TODO_PCJ: ask the context whether to add an underscore
   if (m_linearMode) {
@@ -687,6 +736,11 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         KRackL()->cloneTree();
         NAry::AddChild(layoutParent, layout);
       }
+      break;
+    case Type::SequenceExplicit:
+    case Type::SequenceSingleRecurrence:
+    case Type::SequenceDoubleRecurrence:
+      layoutSequence(layoutParent, expression);
       break;
     case Type::Unit:
       layoutUnit(layoutParent, expression);

@@ -61,6 +61,7 @@ class Layouter {
   void layoutInfixOperator(TreeRef& layoutParent, Tree* expression,
                            CodePoint op, bool multiplication = false);
   void layoutMatrix(TreeRef& layoutParent, Tree* expression);
+  void layoutSequence(TreeRef& layoutParent, Tree* expression);
   void layoutUnit(TreeRef& layoutParent, Tree* expression);
   void layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression);
   void layoutExpression(TreeRef& layoutParent, Tree* expression,

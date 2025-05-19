@@ -98,6 +98,22 @@ constexpr auto KPiecewise3L(A, B, C, D, E, F) {
       KTree<Type::RackSimpleLayout, 0, 0, Type::RackSimpleLayout, 0, 0>>();
 }
 
+template <KTreeConcept A, KTreeConcept B>
+constexpr auto KSequence1L(A, B) {
+  return Concat<KTree<Type::SequenceLayout, 1, 2, 1>, A, B>();
+}
+
+template <KTreeConcept A, KTreeConcept B, KTreeConcept C, KTreeConcept D>
+constexpr auto KSequence2L(A, B, C, D) {
+  return Concat<KTree<Type::SequenceLayout, 2, 2, 1>, A, B, C, D>();
+}
+
+template <KTreeConcept A, KTreeConcept B, KTreeConcept C, KTreeConcept D,
+          KTreeConcept E, KTreeConcept F>
+constexpr auto KSequence3L(A, B, C, D, E, F) {
+  return Concat<KTree<Type::SequenceLayout, 3, 2, 1>, A, B, C, D, E, F>();
+}
+
 constexpr auto KConjL = KUnary<Type::ConjLayout>();
 constexpr auto KSqrtL = KUnary<Type::SqrtLayout>();
 constexpr auto KRootL = KBinary<Type::RootLayout>();

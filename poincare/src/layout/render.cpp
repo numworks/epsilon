@@ -422,6 +422,17 @@ KDSize Render::Size(const Layout* l) {
       height = sizeWithBrace.height();
       break;
     }
+    case LayoutType::Sequence: {
+      const Grid* grid = Grid::From(l);
+      KDSize sizeWithoutBrace = grid->size(s_font);
+      // Add a right and a left margin of size k_curlyBraceWidth
+      KDSize sizeWithBrace =
+          KDSize(sizeWithoutBrace.width() + 3 * CurlyBraces::k_curlyBraceWidth,
+                 CurlyBraces::Height(sizeWithoutBrace.height()));
+      width = sizeWithBrace.width();
+      height = sizeWithBrace.height();
+      break;
+    }
   }
   return KDSize(width, height);
 }
@@ -454,8 +465,11 @@ KDPoint Grid::positionOfChildAt(int row, int column, KDFont::Size font) const {
   for (int j = 0; j < column; j++) {
     x += columnWidth(j, font);
   }
-  x += (columnWidth(column, font) - Render::Width(childAt(row, column))) / 2 +
-       column * horizontalGridEntryMargin(font);
+  x += column * horizontalGridEntryMargin(font);
+  if (column == 0 || !isSequenceLayout()) {
+    // Center child, except for second column in sequence layout
+    x += (columnWidth(column, font) - Render::Width(childAt(row, column))) / 2;
+  }
   KDCoordinate y = 0;
   for (int i = 0; i < row; i++) {
     y += rowHeight(i, font);
@@ -467,9 +481,11 @@ KDPoint Grid::positionOfChildAt(int row, int column, KDFont::Size font) const {
     /* TODO calling height here is bad for complexity */
     return p.translatedBy(SquareBrackets::ChildOffset(height(font)));
   }
-  assert(isPiecewiseLayout());
+  assert(isPiecewiseLayout() || isSequenceLayout());
+  // Left margin is doubled in sequence layout
   return p.translatedBy(
-      KDPoint(CurlyBraces::k_curlyBraceWidth, CurlyBraces::k_lineThickness));
+      KDPoint((1 + isSequenceLayout()) * CurlyBraces::k_curlyBraceWidth,
+              CurlyBraces::k_lineThickness));
 }
 
 KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
@@ -673,7 +689,8 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
     }
 
     case LayoutType::Matrix:
-    case LayoutType::Piecewise: {
+    case LayoutType::Piecewise:
+    case LayoutType::Sequence: {
       const Grid* grid = Grid::From(l);
       int row = grid->rowAtChildIndex(childIndex);
       int column = grid->columnAtChildIndex(childIndex);
@@ -769,7 +786,8 @@ KDCoordinate Render::Baseline(const Layout* l) {
       return std::max(0, PtCombinatorics::AboveSymbol(l, s_font) +
                              PtCombinatorics::k_symbolBaseline);
     case LayoutType::Piecewise:
-    case LayoutType::Matrix: {
+    case LayoutType::Matrix:
+    case LayoutType::Sequence: {
       assert(Pair::k_lineThickness == CurlyBraces::k_lineThickness);
       KDCoordinate height = Grid::From(l)->height(s_font);
       return (height + 1) / 2 + Pair::k_lineThickness;
@@ -821,8 +839,7 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
   if (l->isMatrixLayout()) {
     size = SquareBrackets::SizeGivenChildSize(size);
     offset = SquareBrackets::ChildOffset(size.height());
-  } else {
-    assert(l->isPiecewiseLayout());
+  } else if (l->isPiecewiseLayout()) {
     if (l->numberOfChildren() == 4 && !grid->isEditing() &&
         RackLayout::IsEmpty(l->child(1))) {
       // If there is only 1 row and the condition is empty, shrink the size
@@ -833,6 +850,13 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
                   CurlyBraces::Height(size.height()));
     offset =
         KDPoint(CurlyBraces::k_curlyBraceWidth, CurlyBraces::k_lineThickness);
+  } else {
+    assert(l->isSequenceLayout());
+    // Add a right and a left margin of size k_curlyBraceWidth
+    size = KDSize(size.width() + 3 * CurlyBraces::k_curlyBraceWidth,
+                  CurlyBraces::Height(size.height()));
+    offset = KDPoint(2 * CurlyBraces::k_curlyBraceWidth,
+                     CurlyBraces::k_lineThickness);
   }
   offset = offset.translatedBy(p);
   int rowBaseline = 0;
@@ -846,11 +870,14 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
 
     KDCoordinate x = c > 0 ? columsCumulatedWidth[c - 1]
                            : -grid->horizontalGridEntryMargin(s_font);
-    x += ((columsCumulatedWidth[c] - x -
-           grid->horizontalGridEntryMargin(s_font)) -
-          Width(childRack)) /
-             2 +
-         grid->horizontalGridEntryMargin(s_font);
+    if (c == 0 || !l->isSequenceLayout()) {
+      // Center child, except for second column in sequence layout
+      x += ((columsCumulatedWidth[c] - x -
+             grid->horizontalGridEntryMargin(s_font)) -
+            Width(childRack)) /
+           2;
+    }
+    x += grid->horizontalGridEntryMargin(s_font);
     KDCoordinate y = r > 0 ? rowCumulatedHeight[r - 1]
                            : -grid->verticalGridEntryMargin(s_font);
     if (c == 0) {
@@ -1488,6 +1515,31 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           commaStyle.glyphColor = style.piecewiseCommaColor;
         }
         ctx->drawString(",", commaPosition.translatedBy(p), commaStyle);
+      }
+      return;
+    }
+    case LayoutType::Sequence: {
+      const Grid* grid = Grid::From(l);
+      assert(grid->numberOfColumns() == 2);
+      // Draw the curly brace
+      if (grid->numberOfRows() > 1) {
+        RenderCurlyBracesWithChildHeight(true, grid->height(style.font), ctx, p,
+                                         style);
+      }
+      // Draw the equal signs
+      KDCoordinate equalAbscissa = 2 * CurlyBraces::k_curlyBraceWidth +
+                                   grid->columnWidth(0, style.font) +
+                                   k_gridEntryMargin;
+      int nbRows = grid->numberOfRows() -
+                   (!grid->numberOfRowsIsFixed() && !grid->isEditing());
+      for (int i = 0; i < nbRows; i++) {
+        const Rack* leftChild = l->child(i * 2);
+        KDPoint leftChildPosition = PositionOfChild(l, i * 2);
+        KDPoint equalPosition =
+            KDPoint(equalAbscissa,
+                    leftChildPosition.y() + Baseline(leftChild) -
+                        KDFont::Font(s_font)->stringSize("=").height() / 2);
+        ctx->drawString("=", equalPosition.translatedBy(p), style);
       }
       return;
     }

@@ -40,6 +40,12 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
       int step = direction.isLeft() ? -1 : 1;
       return currentIndex + step;
     }
+    case LayoutType::Sequence: {
+      if (currentIndex == k_outsideIndex) {
+        return 1;
+      }
+      return k_cantMoveIndex;
+    }
     case LayoutType::Diff: {
       using namespace Derivative;
       assert(l->isDiffLayout());
@@ -209,7 +215,8 @@ int CursorMotion::IndexAfterVerticalCursorMove(
       return k_cantMoveIndex;
     }
     case LayoutType::Matrix:
-    case LayoutType::Piecewise: {
+    case LayoutType::Piecewise:
+    case LayoutType::Sequence: {
       const Grid* grid = Grid::From(l);
       if (currentIndex == k_outsideIndex) {
         return k_cantMoveIndex;
@@ -379,6 +386,8 @@ int CursorMotion::IndexToPointToWhenInserting(const Tree* l) {
       return RackLayout::IsEmpty(l->child(Fraction::k_numeratorIndex))
                  ? Fraction::k_numeratorIndex
                  : Fraction::k_denominatorIndex;
+    case LayoutType::Sequence:
+      return SequenceLayout::k_mainExpressionIndex;
     default:
       return l->numberOfChildren() > 0 ? 0 : k_outsideIndex;
   }
@@ -412,6 +421,7 @@ DeletionMethod CursorMotion::DeletionMethodForCursorLeftOfChild(
     const Tree* l, int childIndex) {
   switch (l->layoutType()) {
     case LayoutType::Prison:
+    case LayoutType::Sequence:
       return DeletionMethod::MoveLeft;
     case LayoutType::Point2D:
     case LayoutType::Binomial:

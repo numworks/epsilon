@@ -659,7 +659,9 @@ bool LayoutCursor::horizontalMove(OMG::HorizontalDirection direction) {
    * but select all of it. */
   int newIndex =
       isSelecting()
-          ? nextLayout->isPrisonLayout() ? k_cantMoveIndex : k_outsideIndex
+          ? nextLayout->isPrisonLayout() || nextLayout->isSequenceLayout()
+                ? k_cantMoveIndex
+                : k_outsideIndex
           : CursorMotion::IndexAfterHorizontalCursorMove(
                 nextLayout, direction, currentIndexInNextLayout);
   if (newIndex == k_cantMoveIndex) {

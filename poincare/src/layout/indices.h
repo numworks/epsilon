@@ -80,6 +80,12 @@ constexpr static int k_upperBoundIndex = 1;
 constexpr static int k_functionIndex = 2;
 }  // namespace ListSequence
 
+namespace SequenceLayout {
+constexpr static int k_mainExpressionIndex = 1;
+constexpr static int k_firstInitialConditionIndex = 3;
+constexpr static int k_secondInitialConditionIndex = 5;
+}  // namespace SequenceLayout
+
 }  // namespace Poincare::Internal
 
 #endif

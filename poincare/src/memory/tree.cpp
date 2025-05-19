@@ -20,6 +20,7 @@
 #include <poincare/src/layout/autocompleted_pair.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/layouter.h>
+#include <poincare/src/layout/sequence.h>
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/layout/vertical_offset.h>
 
@@ -108,7 +109,7 @@ void Tree::logAttributes(std::ostream& stream) const {
            << "\"";
   }
   if (isVar()) {
-    stream << " id=" << static_cast<int>(Variables::Id(this));
+    stream << " id=\"" << static_cast<int>(Variables::Id(this)) << "\"";
     stream << " sign=\"";
     Variables::GetComplexSign(this).log(stream, false);
     stream << "\"";
@@ -122,28 +123,35 @@ void Tree::logAttributes(std::ostream& stream) const {
     stream << " value=\"" << buffer << "\"";
   }
   if (isPlaceholder()) {
-    stream << " tag=" << static_cast<int>(Placeholder::NodeToTag(this));
-    stream << " filter=" << static_cast<int>(Placeholder::NodeToFilter(this));
+    stream << " tag=\"" << static_cast<int>(Placeholder::NodeToTag(this))
+           << "\"";
+    stream << " filter=\"" << static_cast<int>(Placeholder::NodeToFilter(this))
+           << "\"";
   }
   if (isRandomized()) {
-    stream << " seed=" << static_cast<int>(Random::GetSeed(this));
+    stream << " seed=\"" << static_cast<int>(Random::GetSeed(this)) << "\"";
   }
   if (isUnit()) {
-    stream << " representativeId=" << static_cast<int>(nodeValue(0));
-    stream << " prefixId=" << static_cast<int>(nodeValue(1));
+    stream << " representativeId=\"" << static_cast<int>(nodeValue(0)) << "\"";
+    stream << " prefixId=\"" << static_cast<int>(nodeValue(1)) << "\"";
   }
   if (isAutocompletedPair()) {
-    stream << " leftIsTemporary="
-           << AutocompletedPair::IsTemporary(this, Side::Left);
-    stream << " rightIsTemporary="
-           << AutocompletedPair::IsTemporary(this, Side::Right);
+    stream << " leftIsTemporary=\""
+           << AutocompletedPair::IsTemporary(this, Side::Left) << "\"";
+    stream << " rightIsTemporary=\""
+           << AutocompletedPair::IsTemporary(this, Side::Right) << "\"";
   }
   if (isDiffLayout()) {
-    stream << " isNthDerivative=" << toDiffLayoutNode()->isNthDerivative;
+    stream << " isNthDerivative=\"" << toDiffLayoutNode()->isNthDerivative
+           << "\"";
   }
   if (isVerticalOffsetLayout()) {
-    stream << " isSubscript=" << VerticalOffset::IsSubscript(this);
-    stream << " isPrefix=" << VerticalOffset::IsPrefix(this);
+    stream << " isSubscript=\"" << VerticalOffset::IsSubscript(this) << "\"";
+    stream << " isPrefix=\"" << VerticalOffset::IsPrefix(this) << "\"";
+  }
+  if (isSequenceLayout()) {
+    stream << " firstRank=\""
+           << static_cast<int>(SequenceLayout::FirstRank(this)) << "\"";
   }
 }
 

@@ -49,15 +49,17 @@ class Grid : public Layout {
 
   // Virtuality
   KDCoordinate horizontalGridEntryMargin(KDFont::Size font) const {
-    return isPiecewiseLayout()
+    return isPiecewiseLayout() || isSequenceLayout()
                ? 2 * k_gridEntryMargin + KDFont::GlyphMaxWidth(font)
                : k_gridEntryMargin;
   }
   KDCoordinate verticalGridEntryMargin(KDFont::Size font) const {
     return k_gridEntryMargin;
   }
-  bool numberOfRowsIsFixed() const { return false; }
-  bool numberOfColumnsIsFixed() const { return isPiecewiseLayout(); }
+  bool numberOfRowsIsFixed() const { return isSequenceLayout(); }
+  bool numberOfColumnsIsFixed() const {
+    return isPiecewiseLayout() || isSequenceLayout();
+  }
 
   // Sizes
   KDCoordinate rowBaseline(int row, KDFont::Size font) const;

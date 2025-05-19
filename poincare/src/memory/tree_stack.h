@@ -192,6 +192,8 @@ class AbstractTreeStack : public BlockStack {
                             uint8_t interest, bool inverted,
                             uint8_t subCurveIndex);
 
+  Tree* pushSequenceLayout(int nbRows, int nbCols, uint8_t firstRank = 1);
+
   Tree* pushArbitrary(uint16_t size, const uint8_t* data);
 
   template <typename T>

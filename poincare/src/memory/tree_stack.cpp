@@ -203,6 +203,15 @@ Tree* AbstractTreeStack::pushPointOfInterest(double abscissa, double ordinate,
   return result;
 }
 
+Tree* AbstractTreeStack::pushSequenceLayout(int nbRows, int nbCols,
+                                            uint8_t firstRank) {
+  Tree* result = pushBlock(Type::SequenceLayout);
+  pushValueBlock(nbRows % 256);
+  pushValueBlock(nbCols % 256);
+  pushValueBlock(firstRank);
+  return result;
+}
+
 Tree* AbstractTreeStack::pushArbitrary(uint16_t size, const uint8_t* data) {
   Tree* result = pushBlock(Type::Arbitrary);
   pushValueBlock(0);  // nary

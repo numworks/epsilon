@@ -79,7 +79,7 @@ NODE(Product, SUM_AND_PRODUCT, 4)
 NODE(Sum, SUM_AND_PRODUCT, 4)
 
 // TODO replace by subscript ?
-// Sequence(Symbol, SymbolMax, Function)
+// ListSequence(Symbol, SymbolMax, Function)
 NODE(ListSequence, LIST, 3)
 
 RANGE(ParametricLayout, DiffLayout, ListSequenceLayout)
@@ -92,7 +92,8 @@ NODE(PtPermute, PT_COMBINATORICS_LAYOUTS, 2)
 
 NODE(Matrix, MATRIX, NARY2D)
 NODE(Piecewise, PIECEWISE, NARY2D)
-RANGE(GridLayout, MatrixLayout, PiecewiseLayout)
+NODE(Sequence, SEQUENCE, NARY2D, { uint8_t firstRank; })
+RANGE(GridLayout, MatrixLayout, SequenceLayout)
 
 NODE(Conj, BASE, 1)
 NODE(Root, BASE, 2)

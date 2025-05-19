@@ -21,10 +21,11 @@ const Rack* Grid::childAt(uint8_t row, uint8_t col) const {
 }
 
 bool Grid::childIsPlaceholder(int index) const {
-  return childIsBottomOfGrid(index) ||
-         (childIsRightOfGrid(index) &&
-          (!isPiecewiseLayout() || (childIsInLastNonGrayRow(index) &&
-                                    RackLayout::IsEmpty(child(index)))));
+  return !isSequenceLayout() &&
+         (childIsBottomOfGrid(index) ||
+          (childIsRightOfGrid(index) &&
+           (!isPiecewiseLayout() || (childIsInLastNonGrayRow(index) &&
+                                     RackLayout::IsEmpty(child(index))))));
 }
 
 Rack* Grid::willFillEmptyChildAtIndex(int childIndex) {
@@ -60,8 +61,10 @@ int Grid::removeTrailingEmptyRowOrColumnAtChildIndex(int childIndex) {
     newRow = row;
     deleteRowAtIndex(row--);
   }
-  assert(numberOfColumns() >= k_minimalNumberOfRowsAndColumnsWhileEditing &&
-         numberOfRows() >= k_minimalNumberOfRowsAndColumnsWhileEditing);
+  assert((numberOfColumnsIsFixed() ||
+          numberOfColumns() >= k_minimalNumberOfRowsAndColumnsWhileEditing) &&
+         (numberOfRowsIsFixed() ||
+          numberOfRows() >= k_minimalNumberOfRowsAndColumnsWhileEditing));
   return indexAt(newRow, newColumn);
 }
 
@@ -267,6 +270,7 @@ void Grid::addEmptyColumn() {
 }
 
 void Grid::empty() {
+  assert(!isSequenceLayout());
   if (isPiecewiseLayout()) {
     cloneTreeOverTree(KEmptyPiecewiseL);
   } else {

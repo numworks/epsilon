@@ -196,7 +196,6 @@ class PatternMatching {
     int remainingLocalTrees(const Tree* node) const;
     void setLocal(const Tree* source, const Tree* pattern);
     uint8_t getScope(const Tree* pattern) const;
-    void setNextScope(const Tree* source, const Tree* pattern);
     // Sets the local context to local root parents.
     void setLocalToParent();
 #if POINCARE_TREE_LOG

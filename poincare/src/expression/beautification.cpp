@@ -331,12 +331,9 @@ bool ApplyBeautificationSteps(Tree* e,
       Tree::ApplyShallowTopDown(e, ShallowBeautifyPowerOfTangent) || changed;
   changed =
       Tree::ApplyShallowTopDown(e, ShallowBeautifySpecialDisplays) || changed;
-  assert(!Tree::ApplyShallowTopDown(e, ShallowFlattenMult));
-  if (Tree::ApplyShallowTopDown(e, ShallowBeautifyBigInteger)) {
-    changed = true;
-    // New multiplications have been introduced and should be flattened
-    Tree::ApplyShallowTopDown(e, ShallowFlattenMult);
-  }
+  changed = Tree::ApplyShallowTopDown(e, ShallowBeautifyBigInteger) || changed;
+  // New multiplications may have been introduced and should be flattened
+  changed = Tree::ApplyShallowTopDown(e, ShallowFlattenMult) || changed;
   changed = Variables::BeautifyToName(e) || changed;
   return changed;
 }

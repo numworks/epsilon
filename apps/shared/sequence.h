@@ -44,6 +44,11 @@ class Sequence : public Function {
   void setInitialRank(int rank);
   void setDisplaySum(bool display) { recordData()->setDisplaySum(display); }
 
+  // Aggregated layout
+  Poincare::Layout aggregatedLayout();
+  Ion::Storage::Record::ErrorStatus setLayoutsForAggregated(
+      Poincare::Layout l, Poincare::Context* ctx);
+
   // Definition
   Poincare::Layout definitionName() { return m_definition.name(this); }
   // First initial condition

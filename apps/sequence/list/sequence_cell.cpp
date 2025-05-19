@@ -42,8 +42,6 @@ void AbstractSequenceCell::layoutSubviews(bool force) {
                 force);
 }
 
-void AbstractSequenceCell::setEven(bool even) { EvenOddCell::setEven(even); }
-
 void SequenceCell::updateSubviewsBackgroundAfterChangingState() {
   KDColor defaultColor = m_even ? KDColorWhite : Palette::WallScreen;
   // If not highlighted, selectedColor is defaultColor

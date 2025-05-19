@@ -46,7 +46,7 @@ class ListController : public Shared::FunctionListController {
   constexpr static int k_secondInitialCondition = k_firstInitialCondition + 1;
   /* Row numbers */
   constexpr static int k_maxNumberOfRows =
-      3 * Shared::SequenceStore::k_maxNumberOfSequences;
+      Shared::SequenceStore::k_maxNumberOfSequences;
 
   Escher::EditableExpressionModelCell* editableExpressionModelCell() override {
     return m_editableCell.expressionCell();
@@ -58,9 +58,6 @@ class ListController : public Shared::FunctionListController {
   int maxNumberOfDisplayableRows() const override { return k_maxNumberOfRows; }
   Escher::HighlightCell* functionCells(int index) override;
   void fillExpressionCellForRow(Escher::HighlightCell* cell, int row);
-  int sequenceDefinitionForRow(int j) const;
-  int numberOfRowsForRecord(Ion::Storage::Record record) const override;
-  KDCoordinate maxFunctionNameWidth();
   void didChangeModelsList() override;
   void addNewModelAction() override;
   bool editSelectedRecordWithLayout(Poincare::Layout layout) override;

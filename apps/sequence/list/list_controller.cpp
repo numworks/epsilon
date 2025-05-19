@@ -27,20 +27,9 @@ ListController::ListController(Responder* parentResponder,
 
 KDCoordinate ListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
-  KDCoordinate sequenceHeight;
-  int sequenceDefinition;
-  Shared::Sequence* sequence =
-      modelStore()->modelForRecord(recordAtRow(row, &sequenceDefinition));
-  Layout layout;
-  if (sequenceDefinition == k_firstInitialCondition) {
-    layout = sequence->firstInitialConditionLayout();
-  } else if (sequenceDefinition == k_secondInitialCondition) {
-    layout = sequence->secondInitialConditionLayout();
-  } else {
-    assert(sequenceDefinition == k_sequenceDefinition);
-    layout = sequence->layout();
-  }
-  sequenceHeight =
+  Shared::Sequence* sequence = modelStore()->modelForRecord(recordAtRow(row));
+  Layout layout = sequence->aggregatedLayout();
+  KDCoordinate sequenceHeight =
       layout.isUninitialized() ? 0 : layout->layoutSize(k_font).height();
   return sequenceHeight + 2 * k_defaultVerticalMargin;
 }
@@ -123,45 +112,30 @@ bool ListController::isAcceptableExpression(const UserExpression expression,
 
 void ListController::editExpression(Ion::Events::Event event) {
   ExpressionModelListController::editExpression(event);
+  if (event == Ion::Events::OK || event == Ion::Events::EXE) {
+    // Perform backspace to start with cursor inside layout
+    ExpressionModelListController::editExpression(Ion::Events::Backspace);
+  }
   m_editableCell.setHighlighted(true);
   // Invalidate the sequences context cache
   App::app()->localContext()->resetCache();
 }
 
 bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
-  int sequenceDefinition;
-  Ion::Storage::Record record = selectedRecord(&sequenceDefinition);
+  Ion::Storage::Record record = selectedRecord();
   Shared::Sequence* sequence = modelStore()->modelForRecord(record);
   Context* context = App::app()->localContext();
   Ion::Storage::Record::ErrorStatus error;
-  switch (sequenceDefinition) {
-    case k_sequenceDefinition:
-      error = sequence->setContent(layout, context);
-      break;
-    case k_firstInitialCondition:
-      error = sequence->setFirstInitialConditionContent(layout, context);
-      break;
-    default:
-      error = sequence->setSecondInitialConditionContent(layout, context);
-  }
+  error = sequence->setLayoutsForAggregated(layout, context);
   didChangeModelsList();
   return error == Ion::Storage::Record::ErrorStatus::None;
 }
 
 Layout ListController::getLayoutForSelectedRecord() const {
-  int sequenceDefinition;
-  Ion::Storage::Record record = selectedRecord(&sequenceDefinition);
+  Ion::Storage::Record record = selectedRecord();
   Shared::Sequence* sequence = modelStore()->modelForRecord(record);
-  switch (sequenceDefinition) {
-    case k_sequenceDefinition:
-      return sequence->layout();
-    case k_firstInitialCondition:
-      return sequence->firstInitialConditionLayout();
-    default:
-      return sequence->secondInitialConditionLayout();
-  }
+  return sequence->aggregatedLayout();
 }
-
 
 HighlightCell* ListController::functionCells(int index) {
   assert(index >= 0 && index < k_maxNumberOfRows);
@@ -172,22 +146,13 @@ void ListController::fillExpressionCellForRow(HighlightCell* cell, int row) {
   assert(typeAtRow(row) == k_expressionCellType);
   Escher::EvenOddExpressionCell* myCell =
       static_cast<Escher::EvenOddExpressionCell*>(cell);
-  int sequenceDefinition;
-  Ion::Storage::Record record = recordAtRow(row, &sequenceDefinition);
+  Ion::Storage::Record record = recordAtRow(row);
   Shared::Sequence* sequence = modelStore()->modelForRecord(record);
   // Set the color
   KDColor textColor = sequence->isActive() ? KDColorBlack : Palette::GrayDark;
   myCell->setTextColor(textColor);
   // Set the layout
-  switch (sequenceDefinition) {
-    case k_sequenceDefinition:
-      return myCell->setLayout(sequence->layout());
-    case k_firstInitialCondition:
-      return myCell->setLayout(sequence->firstInitialConditionLayout());
-    default:
-      assert(sequenceDefinition == k_secondInitialCondition);
-      return myCell->setLayout(sequence->secondInitialConditionLayout());
-  }
+  return myCell->setLayout(sequence->aggregatedLayout());
 }
 
 void ListController::didChangeModelsList() {
@@ -222,10 +187,6 @@ void ListController::showLastSequence() {
       store->numberOfModels() == store->maxNumberOfModels();
   int lastRow = numberOfRows() - (hasAddSequenceButton ? 0 : 1) - 1;
   selectableListView()->scrollToCell(lastRow);
-}
-
-int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {
-  return modelStore()->modelForRecord(record)->numberOfElements();
 }
 
 }  // namespace Sequence

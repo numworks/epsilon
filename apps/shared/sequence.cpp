@@ -8,6 +8,8 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/src/expression/sequence.h>
+#include <poincare/src/layout/grid.h>
+#include <poincare/src/layout/sequence.h>
 #include <string.h>
 
 #include <cmath>
@@ -82,6 +84,80 @@ void Sequence::setInitialRank(int rank) {
   recordData()->setInitialRank(rank);
   m_firstInitialCondition.tidyName();
   m_secondInitialCondition.tidyName();
+}
+
+Layout Sequence::aggregatedLayout() {
+  Layout result;
+  switch (type()) {
+    case Type::Explicit:
+      result = Layout::Create(KSequence1L(KA, KB),
+                              {.KA = definitionName(), .KB = layout()});
+      break;
+    case Type::SingleRecurrence:
+      result = Layout::Create(KSequence2L(KA, KB, KC, KD),
+                              {.KA = definitionName(),
+                               .KB = layout(),
+                               .KC = firstInitialConditionName(),
+                               .KD = firstInitialConditionLayout()});
+      break;
+    case Type::DoubleRecurrence:
+      result = Layout::Create(KSequence3L(KA, KB, KC, KD, KE, KF),
+                              {.KA = definitionName(),
+                               .KB = layout(),
+                               .KC = firstInitialConditionName(),
+                               .KD = firstInitialConditionLayout(),
+                               .KE = secondInitialConditionName(),
+                               .KF = secondInitialConditionLayout()});
+      break;
+  }
+  Internal::SequenceLayout::SetFirstRank(result.tree()->child(0),
+                                         initialRank());
+  return result;
+}
+
+Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
+    Poincare::Layout l, Poincare::Context* ctx) {
+  assert(l.tree()->isRackLayout());
+  if (l.tree()->child(0)->isSequenceLayout()) {
+    const Internal::Grid* grid = Internal::Grid::From(l.tree()->child(0));
+    Ion::Storage::Record::ErrorStatus error =
+        Ion::Storage::Record::ErrorStatus::None;
+    switch (type()) {
+      case Type::Explicit: {
+        assert(grid->numberOfChildren() == 2);
+        return setContent(grid->childAt(0, 1), ctx);
+      }
+      case Type::SingleRecurrence: {
+        assert(grid->numberOfChildren() == 4);
+        error = setContent(grid->childAt(0, 1), ctx);
+        if (error != Ion::Storage::Record::ErrorStatus::None) {
+          return error;
+        }
+        // Update grid pointer in case layout tree has moved
+        grid = Internal::Grid::From(l.tree()->child(0));
+        return setFirstInitialConditionContent(grid->childAt(1, 1), ctx);
+      }
+      case Type::DoubleRecurrence: {
+        assert(grid->numberOfChildren() == 6);
+        error = setContent(grid->childAt(0, 1), ctx);
+        if (error != Ion::Storage::Record::ErrorStatus::None) {
+          return error;
+        }
+        // Update grid pointer in case layout tree has moved
+        grid = Internal::Grid::From(l.tree()->child(0));
+        error = setFirstInitialConditionContent(grid->childAt(1, 1), ctx);
+        if (error != Ion::Storage::Record::ErrorStatus::None) {
+          return error;
+        }
+        // Update grid pointer in case layout tree has moved
+        grid = Internal::Grid::From(l.tree()->child(0));
+        return setSecondInitialConditionContent(grid->childAt(2, 1), ctx);
+      }
+    }
+  } else {
+    // Handle as main expression
+    return setContent(l, ctx);
+  }
 }
 
 Layout Sequence::nameLayout() {

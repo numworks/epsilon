@@ -37,7 +37,6 @@ class AbstractSequenceCell : public Escher::EvenOddCell {
       Escher::Metric::CellHorizontalElementMargin;
   constexpr static KDCoordinate k_ellipsisWidth =
       Escher::Metric::EllipsisCellWidth;
-  void setEven(bool even) override;
   virtual bool displayEllipsis() const { return true; }
   Escher::EllipsisView m_ellipsisView;
   KDColor m_functionColor;

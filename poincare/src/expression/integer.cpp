@@ -1,12 +1,12 @@
 #include "integer.h"
 
+#include <limits.h>
 #include <omg/arithmetic.h>
 #include <omg/print.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/src/memory/value_block.h>
 
 #include <algorithm>
-#include <new>
 
 #include "dimension.h"
 #include "k_tree.h"

@@ -65,14 +65,12 @@ QUIZ_CASE(pcj_integer_constructor) {
 
 void assert_number_of_digits_and_zeroes(IntegerHandler a, int numberOfDigits,
                                         int numberOfZeroes) {
-  int numberOfZeroesInA = 0;
   quiz_assert(a.estimatedNumberOfBase10DigitsWithoutSign(true) >=
               numberOfDigits);
   quiz_assert(a.estimatedNumberOfBase10DigitsWithoutSign(false) <=
               numberOfDigits);
-  quiz_assert(a.numberOfBase10DigitsWithoutSign(&numberOfZeroesInA) ==
-              numberOfDigits);
-  quiz_assert(numberOfZeroesInA == numberOfZeroes);
+  quiz_assert(a.numberOfBase10DigitsWithoutSign() ==
+              std::pair(numberOfDigits, numberOfZeroes));
 }
 
 QUIZ_CASE(pcj_integer_properties) {

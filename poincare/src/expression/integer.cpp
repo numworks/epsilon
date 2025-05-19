@@ -273,24 +273,22 @@ uint8_t IntegerHandler::numberOfDigits() const {
   return OMG::Arithmetic::CeilDivision<uint8_t>(nbOfDigits, sizeof(T));
 }
 
-int IntegerHandler::numberOfBase10DigitsWithoutSign(
-    WorkingBuffer* workingBuffer, int* numberOfZeroes) const {
+std::pair<int, int> IntegerHandler::numberOfBase10DigitsWithoutSign(
+    WorkingBuffer* workingBuffer) const {
   // TODO: This method should be optimized because udiv is a costly function
   // assert(!isOverflow());
   uint8_t* const localStart = workingBuffer->localStart();
   int numberOfDigits = 1;
   IntegerHandler base(10);
-  bool countingZeros = numberOfZeroes;
-  if (countingZeros) {
-    *numberOfZeroes = 0;
-  }
+  bool countingZeros = true;
+  int numberOfZeroes = 0;
   IntegerHandler quotient = *this;
   while (true) {
     DivisionResult<IntegerHandler> result = Udiv(quotient, base, workingBuffer);
     quotient = result.quotient;
     if (countingZeros) {
       if (result.remainder.isZero()) {
-        (*numberOfZeroes)++;
+        numberOfZeroes++;
       } else {
         // Stop counting zeroes as soon as a digit isn't null
         countingZeros = false;
@@ -303,7 +301,7 @@ int IntegerHandler::numberOfBase10DigitsWithoutSign(
     numberOfDigits++;
   }
   workingBuffer->garbageCollect({}, localStart);
-  return numberOfDigits;
+  return std::pair(numberOfDigits, numberOfZeroes);
 }
 
 template <typename T>
@@ -758,9 +756,10 @@ int IntegerHandler::estimatedNumberOfBase10DigitsWithoutSign(
                                std::log10(static_cast<float>(k_digitBase)));
   assert(estimation > 0.f && estimation < INT_MAX);
   int estimatedNumberOfDigitsBase10 = static_cast<int>(estimation);
-  assert(estimatedNumberOfDigitsBase10 == numberOfBase10DigitsWithoutSign() ||
+  assert(estimatedNumberOfDigitsBase10 ==
+             numberOfBase10DigitsWithoutSign().first ||
          overEstimated == (estimatedNumberOfDigitsBase10 >
-                           numberOfBase10DigitsWithoutSign()));
+                           numberOfBase10DigitsWithoutSign().first));
   return estimatedNumberOfDigitsBase10;
 }
 

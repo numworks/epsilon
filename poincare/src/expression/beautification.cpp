@@ -251,7 +251,9 @@ bool UseScientificNotation(IntegerHandler integer, int* nbOf0sAtTheEnd,
     // Early escape: number is obviously too small
     return false;
   }
-  int nbOfDigits = integer.numberOfBase10DigitsWithoutSign(nbOf0sAtTheEnd);
+  std::pair<int, int> digits = integer.numberOfBase10DigitsWithoutSign();
+  int nbOfDigits = digits.first;
+  *nbOf0sAtTheEnd = digits.second;
   *nbOfSignificantDigits = nbOfDigits - *nbOf0sAtTheEnd;
 
   if (nbOfDigits <= k_comfortableNumberOfDigits ||

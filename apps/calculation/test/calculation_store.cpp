@@ -352,6 +352,23 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Approximation, "π-15i", "3.1415926535898-15i",
                       &globalContext, &store);
 
+  // Big integers
+  // TODO: Should be DisplayOutput::ExactOnly
+  assertCalculationIs(
+      "12340000000000000000000", DisplayOutput::ExactAndApproximateToggle,
+      EqualSign::Equal, "1.234×10^22", "1.234ᴇ22", &globalContext, &store);
+  assertCalculationIs("1234567890123456789012345678000",
+                      DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation,
+                      "1.234567890123456789012345678×10^30",
+                      "1.2345678901235ᴇ30", &globalContext, &store);
+  assertCalculationIs("123456789012345678901234567800",
+                      DisplayOutput::ApproximateOnly, EqualSign::Hidden,
+                      nullptr, "1.2345678901235ᴇ29", &globalContext, &store);
+  assertCalculationIs("1234567890123456789012345678901×10^15",
+                      DisplayOutput::ApproximateOnly, EqualSign::Hidden,
+                      nullptr, "1.2345678901235ᴇ45", &globalContext, &store);
+
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "2", nullptr, &globalContext, &store);

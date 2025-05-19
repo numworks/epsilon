@@ -240,12 +240,17 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   return changed;
 }
 
-bool UseScientificNotation(IntegerHandler integer, int* nbOf0sAtTheEnd,
-                           int* nbOfSignificantDigits) {
+bool ShallowBeautifyBigInteger(Tree* e, void* context) {
+  assert(!((e->isRational() && !e->isInteger()) || e->isIntegerNegBig()));
+  if (!e->isIntegerPosBig()) {
+    return false;
+  }
+  /* Step 1 : Decide if number needs to be displayed in scientific notation */
   // ScientificNotation display rule parameters
   constexpr int k_minimalExponent = 3;
   constexpr int k_comfortableNumberOfDigits = 13;
   constexpr int k_maxNumberOfDigits = 29;
+  IntegerHandler integer(Integer::Handler(e));
   if (integer.estimatedNumberOfBase10DigitsWithoutSign(true) <=
       k_comfortableNumberOfDigits) {
     // Early escape: number is obviously too small
@@ -253,33 +258,24 @@ bool UseScientificNotation(IntegerHandler integer, int* nbOf0sAtTheEnd,
   }
   std::pair<int, int> digits = integer.numberOfBase10DigitsWithoutSign();
   int nbOfDigits = digits.first;
-  *nbOf0sAtTheEnd = digits.second;
-  *nbOfSignificantDigits = nbOfDigits - *nbOf0sAtTheEnd;
+  int nbOf0sAtTheEnd = digits.second;
+  int nbOfSignificantDigits = nbOfDigits - nbOf0sAtTheEnd;
 
   if (nbOfDigits <= k_comfortableNumberOfDigits ||
-      *nbOf0sAtTheEnd < k_minimalExponent) {
+      nbOf0sAtTheEnd < k_minimalExponent) {
     // Small numbers, or not enough 0s
     return false;
   }
-  // Only use scientific notation if there are not too many digits
-  if (nbOfDigits <= k_maxNumberOfDigits) {
-    return *nbOfSignificantDigits <= k_comfortableNumberOfDigits;
+  /* Only use scientific notation if there are not too many digits to display,
+   * or if it could prevent a result from being hidden. */
+  if ((nbOfDigits <= k_maxNumberOfDigits &&
+       nbOfSignificantDigits > k_comfortableNumberOfDigits) ||
+      (nbOfDigits > k_maxNumberOfDigits &&
+       nbOfSignificantDigits >= k_maxNumberOfDigits)) {
+    return false;
   }
-  // This could prevent a result from being hidden
-  return *nbOfSignificantDigits < k_maxNumberOfDigits;
-}
 
-bool ShallowBeautifyBigInteger(Tree* e, void* context) {
-  assert(!((e->isRational() && !e->isInteger()) || e->isIntegerNegBig()));
-  if (!e->isIntegerPosBig()) {
-    return false;
-  }
-  int nbOf0sAtTheEnd = 0;
-  int nbOfSignificantDigits = 0;
-  if (!UseScientificNotation(Integer::Handler(e), &nbOf0sAtTheEnd,
-                             &nbOfSignificantDigits)) {
-    return false;
-  }
+  /* Step 2 : Create the scientific notation */
   assert(nbOf0sAtTheEnd >= 3 && nbOfSignificantDigits > 0);
   Tree* result = SharedTreeStack->pushMult(2);
   if (nbOfSignificantDigits > 1) {

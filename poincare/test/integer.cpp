@@ -106,6 +106,12 @@ QUIZ_CASE(pcj_integer_properties) {
   assert_number_of_digits_and_zeroes(d, 1, 1);
   IntegerHandler e = CreateIntegerHandler("10");
   assert_number_of_digits_and_zeroes(e, 2, 1);
+  IntegerHandler f =
+      CreateIntegerHandler("1234567891012345678910123456789100000000");
+  assert_number_of_digits_and_zeroes(f, 40, 8);
+  IntegerHandler g =
+      CreateIntegerHandler("0001000000000000000000000000000000000000000");
+  assert_number_of_digits_and_zeroes(g, 40, 39);
 }
 
 static void assert_equal(IntegerHandler a, IntegerHandler b) {

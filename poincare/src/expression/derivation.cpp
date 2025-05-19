@@ -35,7 +35,8 @@ bool Derivation::Reduce(Tree* e) {
          .KB = symbolValue,
          .KC = order,
          .KD = constDerivand->child(0),
-         .KE = constDerivand->child(1)});
+         .KE = constDerivand->child(1)},
+        {.KD = 1, .KE = 1});
     Derivation::Reduce(pointDiff->child(0));
     Derivation::Reduce(pointDiff->child(1));
     SystematicReduction::ShallowReduce(pointDiff);

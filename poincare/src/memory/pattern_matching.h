@@ -3,6 +3,7 @@
 
 #include <omg/always_false.h>
 #include <omg/unreachable.h>
+#include <poincare/src/expression/variables.h>
 
 #include <array>
 
@@ -24,12 +25,30 @@ struct ContextTrees {
   const Tree* KH = nullptr;
 };
 
+struct ContextScopes {
+  uint8_t KA = 0;
+  uint8_t KB = 0;
+  uint8_t KC = 0;
+  uint8_t KD = 0;
+  uint8_t KE = 0;
+  uint8_t KF = 0;
+  uint8_t KG = 0;
+  uint8_t KH = 0;
+};
+
 class PatternMatching {
  public:
   class Context {
    public:
     Context() : m_array() {}
-    Context(const ContextTrees& trees) : m_trees(trees) {
+    Context(const ContextTrees& trees,
+            const ContextScopes& scopes = ContextScopes())
+        : m_trees(trees)
+#if ASSERTIONS
+          ,
+          m_scopes(scopes)
+#endif
+    {
       for (int i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
         if (m_array[i]) {
           m_numberOfTrees[i] = 1;
@@ -57,18 +76,27 @@ class PatternMatching {
       return true;
 #endif
     }
+    uint8_t scope(uint8_t tag) const {
+#if ASSERTIONS
+      return m_scopeArray[tag];
+#else
+      // Dummy value, unused anyway.
+      return 0;
+#endif
+    }
     template <Placeholder::Tag T>
     void setNode(KPlaceholder<T>, const Tree* node, uint8_t numberOfTrees,
-                 bool isAnyTree) {
-      return setNode(T, node, numberOfTrees, isAnyTree);
+                 bool isAnyTree, uint8_t scope = 0) {
+      return setNode(T, node, numberOfTrees, isAnyTree, scope);
     }
     void setNode(uint8_t tag, const Tree* node, uint8_t numberOfTrees,
-                 bool isAnyTree) {
+                 bool isAnyTree, uint8_t scope = 0) {
       assert(isAnyTree || numberOfTrees == 1);
       m_array[tag] = node;
       m_numberOfTrees[tag] = numberOfTrees;
 #if ASSERTIONS
       m_isAnyTree[tag] = isAnyTree;
+      m_scopeArray[tag] = scope;
 #endif
     }
     void setNumberOfTrees(uint8_t tag, uint8_t numberOfTrees) {
@@ -83,17 +111,20 @@ class PatternMatching {
    private:
     union {
       ContextTrees m_trees;
-      struct {
-        const Tree* m_array[Placeholder::Tag::NumberOfTags];
-        uint8_t m_numberOfTrees[Placeholder::Tag::NumberOfTags];
-#if ASSERTIONS
-        // Used only to assert AnyTreePlaceholders are properly used when
-        // creating
-        bool m_isAnyTree[Placeholder::Tag::NumberOfTags];
-#endif
-      };
-      static_assert(sizeof(m_trees) == sizeof(m_array));
+      const Tree* m_array[Placeholder::Tag::NumberOfTags];
     };
+    static_assert(sizeof(m_trees) == sizeof(m_array));
+    uint8_t m_numberOfTrees[Placeholder::Tag::NumberOfTags];
+#if ASSERTIONS
+    // Used only to assert AnyTreePlaceholders are properly used when
+    // creating
+    bool m_isAnyTree[Placeholder::Tag::NumberOfTags];
+    union {
+      ContextScopes m_scopes;
+      uint8_t m_scopeArray[Placeholder::Tag::NumberOfTags];
+    };
+    static_assert(sizeof(m_scopes) == sizeof(m_scopeArray));
+#endif
   };
 
 #ifndef PLATFORM_DEVICE
@@ -110,19 +141,21 @@ class PatternMatching {
   static bool Match(const Tree* source, const Tree* pattern, Context* context);
   static Tree* Create(const Tree* structure, const Context context = Context(),
                       bool simplify = false) {
-    return CreateTree(structure, context, nullptr, simplify);
+    return CreateTree(structure, context, nullptr, simplify, 0);
   }
   static Tree* CreateSimplify(const Tree* structure,
                               const Context context = Context()) {
-    return CreateTree(structure, context, nullptr, true);
+    return CreateTree(structure, context, nullptr, true, 0);
   }
   static Tree* Create(const Tree* structure, const ContextTrees& context,
+                      const ContextScopes& scopes = ContextScopes(),
                       bool simplify = false) {
-    return Create(structure, Context(context), simplify);
+    return Create(structure, Context(context, scopes), simplify);
   }
   static Tree* CreateSimplify(const Tree* structure,
-                              const ContextTrees& context) {
-    return Create(structure, Context(context), true);
+                              const ContextTrees& context,
+                              const ContextScopes scopes = ContextScopes()) {
+    return Create(structure, Context(context, scopes), true);
   }
   static Tree* MatchCreate(const Tree* source, const Tree* pattern,
                            const Tree* structure);
@@ -200,6 +233,7 @@ class PatternMatching {
     const Tree* const m_globalPatternRoot;
     const Block* const m_globalSourceEnd;
     const Block* const m_globalPatternEnd;
+    uint8_t m_baseScope = 0;
   };
 
   // Match an AnyTree Placeholder
@@ -211,13 +245,14 @@ class PatternMatching {
                          Context* context, MatchContext matchContext);
   // Create structure tree with context's placeholder nodes in TreeStack
   static Tree* CreateTree(const Tree* structure, const Context context,
-                          Tree* insertedNAry, bool simplify);
+                          Tree* insertedNAry, bool simplify, uint8_t scope);
   /* Return true if source has been matched after squashing pattern.
    * Note: this method can dirty the context if false is returned. */
   static bool MatchSourceWithSquashedPattern(const Tree* source,
                                              const Tree* pattern,
-                                             Context* context);
-};
+                                             Context* context,
+                                             const MatchContext& matchContext);
+};  // namespace Poincare::Internal
 
 namespace KTrees {
 // Aliases for convenience

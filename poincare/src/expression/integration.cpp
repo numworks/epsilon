@@ -58,10 +58,11 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
     constant->removeTree();
   }
   // Not handled
-  return force ? PatternMatching::Create(
-                     KIntegral(KA, KB, KC, KD),
-                     {.KA = symbol, .KB = a, .KC = b, .KD = integrand})
-               : nullptr;
+  return force
+             ? PatternMatching::Create(
+                   KIntegral(KA, KB, KC, KD),
+                   {.KA = symbol, .KB = a, .KC = b, .KD = integrand}, {.KD = 1})
+             : nullptr;
 }
 
 bool Integration::Reduce(Tree* e) {

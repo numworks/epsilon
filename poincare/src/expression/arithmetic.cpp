@@ -15,6 +15,7 @@
 #include "projection.h"
 #include "rational.h"
 #include "systematic_reduction.h"
+#include "variables.h"
 
 namespace Poincare::Internal {
 
@@ -256,6 +257,7 @@ bool Arithmetic::ExpandPermute(Tree* e) {
 }
 
 bool Arithmetic::ReduceBinomial(Tree* e) {
+  assert(e->isBinomial());
   Tree* n = e->child(0);
   Tree* k = n->nextTree();
   OMG::Troolean kIsRationalInteger = Integer::IsRationalInteger(k);
@@ -309,11 +311,20 @@ bool Arithmetic::ReduceBinomial(Tree* e) {
    * If n was negative, k - n < k_maxNValue, result < binomial(-150,150) ~10^88
    */
   // binomial(n, k) -> prod((n - j) / (k - j), j, 0, k - 1)
-  PatternMatching::MatchReplaceSimplify(
-      e, KBinomial(KA, KB),
-      KProduct("j"_e, 0_e, KAdd(KB, -1_e),
+  /* We directly modify e here since we override it anyway
+   * We need n in product scope (KA)
+   * and k both in (KB) and out (KC) of product scope */
+  Variables::EnterScope(n);
+  TreeRef scopedK = k->cloneTree();
+  Variables::EnterScope(scopedK);
+  PatternMatching::Context ctx({.KA = n, .KB = scopedK, .KC = k},
+                               {.KA = 1, .KB = 1});
+  e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      KProduct("j"_e, 0_e, KAdd(KC, -1_e),
                KMult(KAdd(KA, KMult(-1_e, KVarK)),
-                     KPow(KAdd(KB, KMult(-1_e, KVarK)), -1_e))));
+                     KPow(KAdd(KB, KMult(-1_e, KVarK)), -1_e))),
+      ctx));
+  scopedK->removeTree();
   Parametric::Explicit(e);
   return true;
 }

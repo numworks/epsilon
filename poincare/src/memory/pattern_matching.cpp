@@ -74,7 +74,8 @@ void PatternMatching::MatchContext::log() const {
 #endif
 
 PatternMatching::MatchContext::MatchContext(const Tree* source,
-                                            const Tree* pattern)
+                                            const Tree* pattern,
+                                            uint8_t baseScope)
     : m_localSourceRoot(source),
       m_localSourceEnd(source->nextTree()->block()),
       m_localPatternRoot(pattern),
@@ -82,7 +83,8 @@ PatternMatching::MatchContext::MatchContext(const Tree* source,
       m_globalSourceRoot(source),
       m_globalPatternRoot(pattern),
       m_globalSourceEnd(m_localSourceEnd),
-      m_globalPatternEnd(m_localPatternEnd) {}
+      m_globalPatternEnd(m_localPatternEnd),
+      m_baseScope(baseScope) {}
 
 int PatternMatching::MatchContext::remainingLocalTrees(const Tree* node) const {
   if (ReachedLimit(node, m_localSourceEnd)) {
@@ -116,6 +118,37 @@ void PatternMatching::MatchContext::setLocalToParent() {
   setLocal(sourceParent, patternParent);
 }
 
+uint8_t PatternMatching::MatchContext::getScope(const Tree* pattern) const {
+#if ASSERTIONS
+  assert(m_globalPatternRoot <= pattern &&
+         pattern <= m_globalPatternRoot->nextTree());
+  uint8_t scope = m_baseScope;
+  const Tree* e = m_globalPatternRoot;
+
+  while (e != pattern) {
+    int functionIndex = e->isParametric() ? Parametric::FunctionIndex(e) : -1;
+    const Tree* child = e->child(0);
+    const Tree* nextChild = child->nextTree();
+    for (int i = 0; i < e->numberOfChildren(); ++i) {
+      if (child <= pattern && pattern < nextChild) {
+        // pattern is a child of child
+        if (functionIndex == i) {
+          ++scope;
+        }
+        e = child;
+        break;
+      }
+      child = nextChild;
+      nextChild = child->nextTree();
+    }
+  }
+  return scope;
+#else
+  // Dummy value, unused
+  return 0;
+#endif
+}
+
 bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Tree* source,
                                     const Tree* pattern, Context* context,
                                     MatchContext matchContext) {
@@ -124,7 +157,8 @@ bool PatternMatching::MatchAnyTrees(Placeholder::Tag tag, const Tree* source,
          filter == Placeholder::Filter::ZeroOrMore);
   int maxNumberOfTrees = matchContext.remainingLocalTrees(source);
   int numberOfTrees = (filter == Placeholder::Filter::OneOrMore) ? 1 : 0;
-  context->setNode(tag, source, numberOfTrees, true);
+  context->setNode(tag, source, numberOfTrees, true,
+                   matchContext.getScope(pattern));
   if (filter == Placeholder::Filter::OneOrMore) {
     source = source->nextTree();
   }
@@ -150,9 +184,9 @@ bool CannotBeSquashed(const Tree* pattern) {
   return !pattern->isAdd() && !pattern->isMult();
 }
 
-bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
-                                                     const Tree* pattern,
-                                                     Context* context) {
+bool PatternMatching::MatchSourceWithSquashedPattern(
+    const Tree* source, const Tree* pattern, Context* context,
+    const MatchContext& matchContext) {
   if (CannotBeSquashed(pattern)) {
     return false;
   }
@@ -163,6 +197,8 @@ bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
   const Tree* ChildToCheck = nullptr;
   // Used to keep track of emptied placeholders.
   Context emptiedPlaceholders;
+  // We are in a NAry tree, scope won't differ between sibilings
+  uint8_t scope = matchContext.getScope(pattern);
 
   for (const Tree* child : pattern->children()) {
     if (child->isPlaceholder()) {
@@ -182,10 +218,10 @@ bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
       } else if (filter != Placeholder::Filter::ZeroOrMore) {
         minimalNumberOfChildren++;
         context->setNode(tag, source, 1,
-                         filter == Placeholder::Filter::OneOrMore);
+                         filter == Placeholder::Filter::OneOrMore, scope);
       } else {
         // Set unassigned ZeroOrMore placeholders to 0 children for now.
-        context->setNode(tag, source, 0, true);
+        context->setNode(tag, source, 0, true, scope);
         emptiedPlaceholders.setNode(tag, source, 1, true);
       }
     } else {
@@ -218,14 +254,14 @@ bool PatternMatching::MatchSourceWithSquashedPattern(const Tree* source,
     // Update the emptied placeholder to hold the source as single child instead
     /* TODO: If source is addition/multiplication neutral, leaving the
      *       placeholder empty could also work. */
-    context->setNode(emptiedPlaceholderTag, source, 1, true);
+    context->setNode(emptiedPlaceholderTag, source, 1, true, scope);
   }
   /* Since the parent context in source isn't an NAry, we avoid using MatchNodes
    * with unmatched placeholders. This is why we already matched them (and
    * updated context). Otherwise, we still need to check that source match the
    * squashed pattern. */
   return ChildToCheck ? MatchNodes(source, ChildToCheck, context,
-                                   MatchContext(source, ChildToCheck))
+                                   MatchContext(source, ChildToCheck, scope))
                       : true;
 }
 
@@ -276,7 +312,7 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
         return MatchAnyTrees(tag, source, pattern, context, matchContext);
       } else {
         // Set the tag to source's tree
-        context->setNode(tag, source, 1, false);
+        context->setNode(tag, source, 1, false, matchContext.getScope(pattern));
         source = source->nextTree();
       }
       pattern = pattern->nextNode();
@@ -301,7 +337,8 @@ bool PatternMatching::MatchNodes(const Tree* source, const Tree* pattern,
       continue;
     }
     // Try to squash the pattern: KMult(KA_p) may match with a single tree.
-    if (!MatchSourceWithSquashedPattern(source, pattern, context)) {
+    if (!MatchSourceWithSquashedPattern(source, pattern, context,
+                                        matchContext)) {
       // Tree* cannot match exactly.
       return false;
     }
@@ -354,7 +391,8 @@ bool PatternMatching::Match(const Tree* source, const Tree* pattern,
 }
 
 Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
-                                  Tree* insertedNAry, bool simplify) {
+                                  Tree* insertedNAry, bool simplify,
+                                  uint8_t scope) {
   Tree* top = Tree::FromBlocks(SharedTreeStack->lastBlock());
   const Block* lastStructureBlock = structure->nextTree()->block();
   const bool withinNAry = insertedNAry != nullptr;
@@ -369,23 +407,37 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         Tree* insertedNode = node->cloneNode();
         /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
-        CreateTree(node, context, insertedNode, simplify);
+        CreateTree(node, context, insertedNode, simplify, scope);
         if (simplify) {
           SystematicReduction::ShallowReduce(insertedNode);
         } else {
           NAry::Sanitize(insertedNode);
         }
         node = node->nextTree();
+#if ASSERTIONS
+      } else if (node->isParametric()) {
+        Tree* result = node->cloneNode();
+        node = node->nextNode();
+        for (int i = 0; i < numberOfChildren; i++) {
+          CreateTree(node, context, nullptr, simplify,
+                     scope + static_cast<uint8_t>(
+                                 Parametric::IsFunctionIndex(i, result)));
+          node = node->nextTree();
+        }
+        if (simplify) {
+          SystematicReduction::ShallowReduce(result);
+        }
+#endif
       } else if (withinNAry && numberOfChildren > 0) {
         // Insert the tree recursively to locally remove insertedNAry
-        CreateTree(node, context, nullptr, simplify);
+        CreateTree(node, context, nullptr, simplify, scope);
         node = node->nextTree();
       } else {
         Tree* result = node->cloneNode();
         node = node->nextNode();
         if (simplify) {
           for (int i = 0; i < numberOfChildren; i++) {
-            CreateTree(node, context, nullptr, simplify);
+            CreateTree(node, context, nullptr, simplify, scope);
             node = node->nextTree();
           }
           SystematicReduction::ShallowReduce(result);
@@ -401,6 +453,8 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
     // Created tree must match AnyTrees status of the Placeholder used to match
     assert(context.isAnyTree(tag) ==
            (Placeholder::NodeToFilter(node) != Placeholder::Filter::One));
+    // Created tree must match scope of the Placeholder used to match
+    assert(context.scope(tag) == scope);
     /* AnyTreesPlaceholders trees can only be inserted into simple nArys, even
      * with 1 treesToInsert. */
     assert(!(context.isAnyTree(tag) && !withinNAry));
@@ -530,7 +584,7 @@ bool PatternMatching::TrimSourceTree(Tree* source,
       placeholders[i] = TreeRef(const_cast<Tree*>(ctx->getTree(i)));
     }
     // Invalidate context before anything is detached.
-    ctx->setNode(i, nullptr, numberOfTrees, ctx->isAnyTree(i));
+    ctx->setNode(i, nullptr, numberOfTrees, ctx->isAnyTree(i), ctx->scope(i));
   }
 
   // TreeStack: ..... | *{2} +{2} x y z | 0 0 0 ....
@@ -567,7 +621,7 @@ bool PatternMatching::TrimSourceTree(Tree* source,
   for (uint8_t i = 0; i < Placeholder::Tag::NumberOfTags; i++) {
     if (!placeholders[i].isUninitialized()) {
       ctx->setNode(i, placeholders[i], ctx->getNumberOfTrees(i),
-                   ctx->isAnyTree(i));
+                   ctx->isAnyTree(i), ctx->scope(i));
     }
   }
   return true;

@@ -396,9 +396,22 @@ bool Parametric::Explicit(Tree* e) {
 bool Parametric::ExpandExpOfSum(Tree* e) {
   // TODO: factorize with AdvancedOperation::ExpandExp
   // exp(a*sum(f(k),k,m,n)*b) = product(exp(a*f(k)*b),k,m,n)
-  return PatternMatching::MatchReplaceSimplify(
-      e, KExp(KMult(KA_s, KSum(KB, KC, KD, KE), KF_s)),
-      KProduct(KB, KC, KD, KExp(KMult(KA_s, KE, KF_s))));
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(e, KExp(KMult(KA_s, KSum(KB, KC, KD, KE), KF_s)),
+                             &ctx)) {
+    // KA and KF need to enter KProduct scope
+    TreeRef a = PatternMatching::Create(KMult(KA_s), ctx);
+    Variables::EnterScope(a);
+    ctx.setNode(KA, a, 1, false, 1);
+    TreeRef f = PatternMatching::Create(KMult(KF_s), ctx);
+    Variables::EnterScope(f);
+    ctx.setNode(KF, f, 1, false, 1);
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KProduct(KB, KC, KD, KExp(KMult(KA, KE, KF))), ctx));
+    SharedTreeStack->flushFromBlock(a);  // Removes a and f
+    return true;
+  }
+  return false;
 }
 
 bool Parametric::ContractProductOfExp(Tree* e) {

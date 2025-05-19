@@ -555,6 +555,11 @@ void GraphController::reloadBannerViewForCursorOnFunction(
                                      &m_cursorView);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
+          cursorX, cursorY, Solver<double>::Interest::UnreachedIntersection)) {
+    bannerView()->addInterestMessage(I18n::Message::Intersection,
+                                     &m_cursorView);
+  }
+  if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
           cursorX, cursorY, Solver<double>::Interest::Root)) {
     bannerView()->addInterestMessage(
         function->isAlongY() ? I18n::Message::LineYInterceptDescription

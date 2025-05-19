@@ -626,7 +626,8 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
     }
 
     bool isRing =
-        p.interest == Solver<double>::Interest::UnreachedDiscontinuity;
+        p.interest == Solver<double>::Interest::UnreachedDiscontinuity ||
+        p.interest == Solver<double>::Interest::UnreachedIntersection;
 
     KDRect dotRelativeRect = dotRect(k_dotSize, dotCoordinates, isRing);
     /* If the dot intersects the dirty rect, force the redraw.

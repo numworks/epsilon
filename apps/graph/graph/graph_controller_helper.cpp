@@ -276,7 +276,10 @@ bool GraphControllerHelper::snapToInterestAndUpdateCursor(
   cursor->moveTo(nextPointOfInterest.abscissa, nextPointOfInterestXY.x(),
                  nextPointOfInterestXY.y());
   setCursorIsRing(nextPointOfInterest.interest ==
-                  Solver<double>::Interest::UnreachedDiscontinuity);
+                      Solver<double>::Interest::UnreachedDiscontinuity ||
+                  nextPointOfInterest.interest ==
+                      Solver<double>::Interest::UnreachedIntersection);
+
   return true;
 }
 

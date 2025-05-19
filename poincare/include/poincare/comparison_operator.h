@@ -28,6 +28,10 @@ class ComparisonJunior {
 
   static Operator OperatorReverseInferiorSuperior(Operator op);
 
+  static bool IsStrict(Operator op) {
+    return op == Operator::Superior || op == Operator::Inferior;
+  };
+
  private:
   struct OperatorStringType {
     Operator op;

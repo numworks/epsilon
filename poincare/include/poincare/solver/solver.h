@@ -29,6 +29,7 @@ class Solver {
     ReachedDiscontinuity,    // Discontinuity where f(x) is defined
     UnreachedDiscontinuity,  // Discontinuity where f(x) is undefined
     Intersection,
+    UnreachedIntersection,
     HorizontalAsymptote,
     YIntercept,
     Other,

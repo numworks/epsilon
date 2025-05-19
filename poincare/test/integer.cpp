@@ -63,6 +63,18 @@ QUIZ_CASE(pcj_integer_constructor) {
 #endif
 }
 
+void assert_number_of_digits_and_zeroes(IntegerHandler a, int numberOfDigits,
+                                        int numberOfZeroes) {
+  int numberOfZeroesInA = 0;
+  quiz_assert(a.estimatedNumberOfBase10DigitsWithoutSign(true) >=
+              numberOfDigits);
+  quiz_assert(a.estimatedNumberOfBase10DigitsWithoutSign(false) <=
+              numberOfDigits);
+  quiz_assert(a.numberOfBase10DigitsWithoutSign(&numberOfZeroesInA) ==
+              numberOfDigits);
+  quiz_assert(numberOfZeroesInA == numberOfZeroes);
+}
+
 QUIZ_CASE(pcj_integer_properties) {
   IntegerHandler zero(static_cast<uint8_t>(0));
   IntegerHandler one(1);
@@ -84,31 +96,16 @@ QUIZ_CASE(pcj_integer_properties) {
               static_cast<int8_t>(b) == -13);
   quiz_assert(!b.isUnsignedType<uint8_t>() && a.isUnsignedType<uint8_t>() &&
               static_cast<uint8_t>(a) == 254);
-  int numberOfZeroes = 0;
-  quiz_assert(a.estimatedNumberOfBase10DigitsWithoutSign(true) >= 3 &&
-              a.estimatedNumberOfBase10DigitsWithoutSign(false) <= 3);
-  quiz_assert(a.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 3 &&
-              numberOfZeroes == 0);
-  quiz_assert(b.estimatedNumberOfBase10DigitsWithoutSign(true) >= 2 &&
-              b.estimatedNumberOfBase10DigitsWithoutSign(false) <= 2);
-  quiz_assert(b.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 2 &&
-              numberOfZeroes == 0);
-  quiz_assert(max.numberOfBase10DigitsWithoutSign() == 309);
+  // Number of digits and zeroes
+  assert_number_of_digits_and_zeroes(a, 3, 0);
+  assert_number_of_digits_and_zeroes(b, 2, 0);
+  assert_number_of_digits_and_zeroes(max, 309, 0);
   IntegerHandler c = CreateIntegerHandler("8764000");
-  quiz_assert(c.estimatedNumberOfBase10DigitsWithoutSign(true) >= 7 &&
-              c.estimatedNumberOfBase10DigitsWithoutSign(false) <= 7);
-  quiz_assert(c.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 7 &&
-              numberOfZeroes == 3);
+  assert_number_of_digits_and_zeroes(c, 7, 3);
   IntegerHandler d = CreateIntegerHandler("0");
-  quiz_assert(d.estimatedNumberOfBase10DigitsWithoutSign(true) >= 1 &&
-              d.estimatedNumberOfBase10DigitsWithoutSign(false) <= 1);
-  quiz_assert(d.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 1 &&
-              numberOfZeroes == 1);
+  assert_number_of_digits_and_zeroes(d, 1, 1);
   IntegerHandler e = CreateIntegerHandler("10");
-  quiz_assert(e.estimatedNumberOfBase10DigitsWithoutSign(true) >= 2 &&
-              e.estimatedNumberOfBase10DigitsWithoutSign(false) <= 2);
-  quiz_assert(e.numberOfBase10DigitsWithoutSign(&numberOfZeroes) == 2 &&
-              numberOfZeroes == 1);
+  assert_number_of_digits_and_zeroes(e, 2, 1);
 }
 
 static void assert_equal(IntegerHandler a, IntegerHandler b) {

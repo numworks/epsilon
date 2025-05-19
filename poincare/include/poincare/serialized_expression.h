@@ -26,15 +26,16 @@ class SerializedExpression {
     assert(usedLength <= k_bufferLength);
   }
 
-  explicit SerializedExpression(float value)
-      : SerializedExpression(Poincare::Expression::Builder(value)) {}
+  explicit SerializedExpression(float value) : m_value(value) {}
 
   explicit operator float() const { return approximation<float>(); }
   explicit operator double() const { return approximation<double>(); }
 
-  bool isUninitialized() const { return m_buffer[0] == '\0'; }
+  bool hasNoExactExpression() const { return m_buffer[0] == '\0'; }
 
-  /* Writes the expression representation into the provided buffer.
+  /* Writes the expression or float representation into the provided buffer.
+   * - If the instance does not contain an exact expression, write the stored
+   * floating-point value.
    * - If the expression can be represented exactly by a decimal number
    * (example: 2/5 = 0.4), the decimal form (0.4) will be written.
    * - If the expression is not a decimal and its exact representation is
@@ -50,13 +51,16 @@ class SerializedExpression {
                      Preferences::PrintFloatMode::Decimal) const;
 
   Expression expression() const {
-    assert(!isUninitialized());
+    if (hasNoExactExpression()) {
+      return Expression::Builder(m_value);
+    }
     return Expression::Parse(m_buffer, nullptr);
   }
 
   template <typename T>
   T approximation() const {
-    return isUninitialized() ? NAN : expression().approximateToRealScalar<T>();
+    return hasNoExactExpression() ? static_cast<T>(m_value)
+                                  : expression().approximateToRealScalar<T>();
   }
 
   bool operator==(const SerializedExpression& other) const {
@@ -69,6 +73,7 @@ class SerializedExpression {
    * be replaced by a pointer to a Tree in a preserved location, for example the
    * Storage. */
   char m_buffer[k_bufferLength] = "";
+  float m_value = NAN;
 };
 
 }  // namespace Poincare

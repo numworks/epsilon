@@ -6,15 +6,31 @@
 
 namespace Poincare {
 
+void SerializeFloatValue(float value, std::span<char> buffer,
+                         int numberOfSignificantDigits,
+                         Preferences::PrintFloatMode floatDisplayMode) {
+  [[maybe_unused]] PrintFloat::TextLengths floatSerializationLengths =
+      PrintFloat::ConvertFloatToText(
+          value, buffer.data(), buffer.size(),
+          Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
+              numberOfSignificantDigits),
+          numberOfSignificantDigits, floatDisplayMode);
+  assert(floatSerializationLengths.CharLength <= buffer.size());
+}
+
 void SerializedExpression::writeText(
     std::span<char> buffer, int numberOfSignificantDigits,
     Preferences::PrintFloatMode floatDisplayMode) const {
+  if (hasNoExactExpression()) {
+    return SerializeFloatValue(m_value, buffer, numberOfSignificantDigits,
+                               floatDisplayMode);
+  }
   /*  Note: m_buffer is just an internal storage, but it does not have the
-   * requested number of significant digits or display mode. It should thus not
-   * be returned directly. The expression is re-constructed, then serialized
-   * with the requested display parameters. */
+   * requested number of significant digits or display mode. It should thus
+   * not be returned directly. The expression is re-constructed, then
+   * serialized with the requested display parameters. */
   UserExpression exactExpression = expression();
-  double approximate = exactExpression.approximateToRealScalar<double>();
+  float approximate = exactExpression.approximateToRealScalar<float>();
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
           exactExpression, UserExpression::Builder(approximate))) {
     char exactSerialization[k_bufferLength];
@@ -27,13 +43,8 @@ void SerializedExpression::writeText(
       return;
     }
   }
-  [[maybe_unused]] PrintFloat::TextLengths approximationSerializationLengths =
-      PrintFloat::ConvertFloatToText(
-          approximate, buffer.data(), buffer.size(),
-          Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
-              numberOfSignificantDigits),
-          numberOfSignificantDigits, floatDisplayMode);
-  assert(approximationSerializationLengths.CharLength <= buffer.size());
+  return SerializeFloatValue(approximate, buffer, numberOfSignificantDigits,
+                             floatDisplayMode);
 }
 
 }  // namespace Poincare

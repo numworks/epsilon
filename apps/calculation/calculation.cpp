@@ -191,9 +191,11 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
     if (canChangeDisplayOutput) {
       KDCoordinate exactOutputWidth = exactOutput->layoutSize(font).width();
       if ((m_displayOutput == DisplayOutput::ExactAndApproximate ||
+           m_displayOutput == DisplayOutput::ApproximateIsIdenticalToExact ||
            m_displayOutput == DisplayOutput::ExactAndApproximateToggle) &&
           (exactOutputWidth > k_maxExactLayoutWidth ||
            exactOutput.longestIntegerSize() > k_maxNumberDigitsInExactLayout)) {
+        assert(m_displayOutput != DisplayOutput::ApproximateIsIdenticalToExact);
         forceDisplayOutput(DisplayOutput::ApproximateOnly);
       } else if (m_displayOutput == DisplayOutput::ExactAndApproximate &&
                  exactOutputWidth > maxVisibleWidth) {

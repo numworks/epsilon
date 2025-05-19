@@ -272,9 +272,9 @@ QUIZ_CASE(calculation_significant_digits) {
                       &globalContext, &store);
   assertCalculationIs(
       "1123456789", DisplayOutput::ApproximateIsIdenticalToExact,
-      EqualSign::Hidden, nullptr, "1123456789", &globalContext, &store);
+      EqualSign::Hidden, "1123456789", nullptr, &globalContext, &store);
   assertCalculationIs("123456789", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "123456789", &globalContext,
+                      EqualSign::Hidden, "123456789", nullptr, &globalContext,
                       &store);
 }
 
@@ -306,29 +306,29 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("2x-x", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "undef", nullptr, &globalContext, &store);
   assertCalculationIs("[[1,2,3]]", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "[[1,2,3]]", &globalContext,
+                      EqualSign::Hidden, "[[1,2,3]]", nullptr, &globalContext,
                       &store);
   assertCalculationIs("[[1,x,3]]", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "[[1,undef,3]]",
+                      EqualSign::Hidden, "[[1,undef,3]]", nullptr,
                       &globalContext, &store);
   assertCalculationIs(
       "[[1/0,2/0]]", DisplayOutput::ApproximateIsIdenticalToExact,
-      EqualSign::Hidden, nullptr, "[[undef,undef]]", &globalContext, &store);
+      EqualSign::Hidden, "[[undef,undef]]", nullptr, &globalContext, &store);
   assertCalculationIs("{1/0,2/0}", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "{undef,undef}",
+                      EqualSign::Hidden, "{undef,undef}", nullptr,
                       &globalContext, &store);
   assertCalculationIs("28^7", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "13492928512", &globalContext,
+                      EqualSign::Hidden, "13492928512", nullptr, &globalContext,
                       &store);
   assertCalculationIs("3+√(2)→a", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "3+√(2)", "4.4142135623731",
                       &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3+2→a", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "5", &globalContext, &store);
+                      EqualSign::Hidden, "5", nullptr, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3→a", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "3", &globalContext, &store);
+                      EqualSign::Hidden, "3", nullptr, &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   assertCalculationIs("3/2→a", DisplayOutput::ExactAndApproximate,
                       EqualSign::Equal, "3/2", "1.5", &globalContext, &store);
@@ -442,7 +442,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
       ExamMode(ExamMode::Ruleset::Dutch));
 
   assertCalculationIs("1+1", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "2", &globalContext, &store);
+                      EqualSign::Hidden, "2", nullptr, &globalContext, &store);
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Equal, "1/2", "0.5", &globalContext, &store);
   assertCalculationIs("0.5", DisplayOutput::ExactAndApproximateToggle,
@@ -744,7 +744,7 @@ QUIZ_CASE(calculation_complex_format) {
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
   assertCalculationIs("1+i", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "1+i", &globalContext,
+                      EqualSign::Hidden, "1+i", nullptr, &globalContext,
                       &store);
   assertCalculationIs("√(-1)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "nonreal", nullptr, &globalContext, &store);
@@ -755,26 +755,26 @@ QUIZ_CASE(calculation_complex_format) {
                       &store);
   assertCalculationIs("(-8)^(1/3)",
                       DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "-2", &globalContext, &store);
+                      EqualSign::Hidden, "-2", nullptr, &globalContext, &store);
   assertCalculationIs("(-8)^(2/3)",
                       DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "4", &globalContext, &store);
+                      EqualSign::Hidden, "4", nullptr, &globalContext, &store);
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "nonreal", nullptr, &globalContext, &store);
 
   Preferences::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
   assertCalculationIs("1+i", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "1+i", &globalContext,
+                      EqualSign::Hidden, "1+i", nullptr, &globalContext,
                       &store);
   assertCalculationIs("√(-1)", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "i", &globalContext, &store);
+                      EqualSign::Hidden, "i", nullptr, &globalContext, &store);
   assertCalculationIs(
       "ln(-2)", DisplayOutput::ExactAndApproximate, EqualSign::Approximation,
       "ln(2)+π·i", "0.69314718055995+3.1415926535898i", &globalContext, &store);
   assertCalculationIs("√(-1)×√(-1)",
                       DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, "-1", &globalContext, &store);
+                      EqualSign::Hidden, "-1", nullptr, &globalContext, &store);
   assertCalculationIs("(-8)^(1/3)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "1+√(3)i", "1+1.7320508075689i",
                       &globalContext, &store);

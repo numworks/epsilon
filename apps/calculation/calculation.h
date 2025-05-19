@@ -55,13 +55,13 @@ class Calculation {
 
   static bool CanDisplayExact(DisplayOutput d) {
     assert(d != DisplayOutput::Unknown);
-    return d != DisplayOutput::ApproximateOnly &&
-           d != DisplayOutput::ApproximateIsIdenticalToExact;
+    return d != DisplayOutput::ApproximateOnly;
   }
 
   static bool CanDisplayApproximate(DisplayOutput d) {
     assert(d != DisplayOutput::Unknown);
-    return d != DisplayOutput::ExactOnly;
+    return d != DisplayOutput::ExactOnly &&
+           d != DisplayOutput::ApproximateIsIdenticalToExact;
   }
 
   Calculation(

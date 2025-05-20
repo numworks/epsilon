@@ -13,13 +13,15 @@ class Division {
                                                           int* numeratorDegree);
 
  private:
-  /* Get numerator, denominator, outerNumerator, and opposite (if needed). If
-   * hasBeautifiedIntegers is given, integers will be beautified, and it will be
-   * set to true if one changed. */
-  static void GetDivisionComponents(const Tree* e, TreeRef& numerator,
-                                    TreeRef& denominator,
-                                    TreeRef& outerNumerator,
-                                    bool* needOpposite);
+  struct DivisionComponentsResult {
+    TreeRef numerator;
+    TreeRef denominator;
+    TreeRef outerNumerator;
+    bool needOpposite;
+  };
+  /* Split terms of e into different components that may be used to build an
+   * equivalent representation : (numerator / denominator) * outerNumerator */
+  static DivisionComponentsResult GetDivisionComponents(const Tree* e);
 };
 
 }  // namespace Poincare::Internal

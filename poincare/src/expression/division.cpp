@@ -45,16 +45,12 @@ bool MakePositiveAnyNegativeNumeralFactor(Tree* e) {
   return factor->isNumber() && Number::SetSign(factor, NonStrictSign::Positive);
 }
 
-/* Split terms of e into different components that may be used to build an
- * equivalent representation : (numerator / denominator) * outerNumerator */
-void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
-                                     TreeRef& denominator,
-                                     TreeRef& outerNumerator,
-                                     bool* needOpposite) {
-  assert(needOpposite);
-  assert(!numerator.isUninitialized() && numerator->isMult());
-  assert(!denominator.isUninitialized() && denominator->isMult());
-  assert(!outerNumerator.isUninitialized() && outerNumerator->isMult());
+Division::DivisionComponentsResult Division::GetDivisionComponents(
+    const Tree* e) {
+  TreeRef numerator = SharedTreeStack->pushMult(0);
+  TreeRef denominator = SharedTreeStack->pushMult(0);
+  TreeRef outerNumerator = SharedTreeStack->pushMult(0);
+  bool needOpposite = false;
 
   // TODO replace NumberOfFactors and Factor with an iterable
   const int numberOfFactors = NumberOfFactors(e);
@@ -78,9 +74,9 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
       } else {
         IntegerHandler rNum = Rational::Numerator(factor);
         if (rNum.isMinusOne()) {
-          *needOpposite = !*needOpposite;
+          needOpposite = !needOpposite;
         } else if (rNum.sign() == NonStrictSign::Negative) {
-          *needOpposite = !*needOpposite;
+          needOpposite = !needOpposite;
           rNum.setSign(NonStrictSign::Positive);
           factorsNumerator = rNum.pushOnTreeStack();
         } else if (!rNum.isOne()) {
@@ -128,75 +124,74 @@ void Division::GetDivisionComponents(const Tree* e, TreeRef& numerator,
   }
   NAry::SquashIfPossible(numerator);
   NAry::SquashIfPossible(denominator);
-  if (numerator != outerNumerator) {
-    NAry::SquashIfPossible(outerNumerator);
-  }
+  NAry::SquashIfPossible(outerNumerator);
+  return {numerator, denominator, outerNumerator, needOpposite};
 }
 
 Tree* Division::PushDenominatorAndComputeDegreeOfNumerator(
     const Tree* e, const char* symbol, int* numeratorDegree) {
-  bool needOpposite = false;
-  // Anything expected in outerNumerator is put back in numerator.
-  TreeRef denominator = SharedTreeStack->pushMult(0);
-  TreeRef numerator = SharedTreeStack->pushMult(0);
-  GetDivisionComponents(e, numerator, denominator, numerator, &needOpposite);
-  assert(denominator->nextTree() == numerator);
-  /* needOpposite won't alter degree, so it is ignored.
+  DivisionComponentsResult result = GetDivisionComponents(e);
+  /* Numerator and outerNumerator are "merged" by summing degree.
+   * needOpposite won't alter degree, so it is ignored.
    * Otherwise, numerator should be multiplied by -1 and flattened, or replaced
    * with -1 if it was 1. */
-  *numeratorDegree = Degree::Get(numerator, symbol);
-  numerator->removeTree();
-  return denominator;
+  int firstNumeratorDegree = Degree::Get(result.numerator, symbol);
+  int outerNumeratorDegree = Degree::Get(result.outerNumerator, symbol);
+  *numeratorDegree = (firstNumeratorDegree == Degree::k_unknown ||
+                      outerNumeratorDegree == Degree::k_unknown)
+                         ? Degree::k_unknown
+                         : firstNumeratorDegree + outerNumeratorDegree;
+  result.numerator->removeTree();
+  result.outerNumerator->removeTree();
+  return result.denominator;
 }
 
 bool Division::BeautifyIntoDivision(Tree* e) {
-  TreeRef num = SharedTreeStack->pushMult(0);
-  TreeRef den = SharedTreeStack->pushMult(0);
-  TreeRef outNum = SharedTreeStack->pushMult(0);
-  bool needOpposite = false;
-  GetDivisionComponents(e, num, den, outNum, &needOpposite);
-  assert(num->nextTree() == den && den->nextTree() == outNum);
-  if (den->isOne() && !needOpposite) {
-    // e is already num*outNum
-    num->removeTree();
-    den->removeTree();
-    outNum->removeTree();
+  DivisionComponentsResult result = GetDivisionComponents(e);
+  assert(result.numerator->nextTree() == result.denominator &&
+         result.denominator->nextTree() == result.outerNumerator);
+  if (result.denominator->isOne() && !result.needOpposite) {
+    // e is already num*outerNumerator
+    result.numerator->removeTree();
+    result.denominator->removeTree();
+    result.outerNumerator->removeTree();
     return false;
   }
-  if (needOpposite) {
+  if (result.needOpposite) {
     e->cloneNodeAtNode(KOpposite);
     e = e->child(0);
   }
-  if (!den->isOne()) {
-    num->cloneNodeAtNode(KDiv);
-    if (outNum->isOne()) {
-      // return num/den
-      outNum->removeTree();
+  if (!result.denominator->isOne()) {
+    result.numerator->cloneNodeAtNode(KDiv);
+    if (result.outerNumerator->isOne()) {
+      // return numerator/denominator
+      result.outerNumerator->removeTree();
     } else {
-      // return num/den * outNum
-      num->cloneNodeAtNode(KMult.node<2>);
-      NAry::Flatten(num);
+      // return numerator/denominator * outerNumerator
+      result.numerator->cloneNodeAtNode(KMult.node<2>);
+      NAry::Flatten(result.numerator);
     }
-    e->moveTreeOverTree(num);
+    e->moveTreeOverTree(result.numerator);
   } else {
-    den->removeTree();
-    assert(needOpposite);
+    result.denominator->removeTree();
+    assert(result.needOpposite);
     bool outNumStartsWithUnit =
-        outNum->isUnitOrPhysicalConstant() ||
-        (outNum->isMult() && outNum->child(0)->isUnitOrPhysicalConstant());
-    if (num->isOne() && !outNumStartsWithUnit) {
-      // return outNum
-      num->removeTree();
-      e->moveTreeOverTree(outNum);
-    } else if (outNum->isOne()) {
-      // return num
-      outNum->removeTree();
-      e->moveTreeOverTree(num);
+        result.outerNumerator->isUnitOrPhysicalConstant() ||
+        (result.outerNumerator->isMult() &&
+         result.outerNumerator->child(0)->isUnitOrPhysicalConstant());
+    if (result.numerator->isOne() && !outNumStartsWithUnit) {
+      // return outerNumerator
+      result.numerator->removeTree();
+      e->moveTreeOverTree(result.outerNumerator);
+    } else if (result.outerNumerator->isOne()) {
+      // return numerator
+      result.outerNumerator->removeTree();
+      e->moveTreeOverTree(result.numerator);
     } else {
-      // return num*outNum
-      num->cloneNodeAtNode(KMult.node<2>);
-      NAry::Flatten(num);
-      e->moveTreeOverTree(num);
+      // return numerator*outerNumerator
+      result.numerator->cloneNodeAtNode(KMult.node<2>);
+      NAry::Flatten(result.numerator);
+      e->moveTreeOverTree(result.numerator);
     }
   }
   return true;

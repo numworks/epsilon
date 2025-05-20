@@ -2,6 +2,7 @@
 
 #include <poincare/expression.h>
 #include <poincare/src/expression/advanced_reduction.h>
+#include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/systematic_reduction.h>
@@ -59,10 +60,14 @@ void expandCommand(const std::vector<std::string>& args) {
 }
 
 void approximateCommand(const std::vector<std::string>& args) {
-  UserExpression e = getExpression(args);
-  ApproximationContext ctx(&s_historyContext, Preferences::ComplexFormat::Real,
-                           Preferences::AngleUnit::Radian);
-  printExpression(e.approximateToTree<double>(ctx));
+  UserExpression s = getExpression(args);
+  Internal::ProjectionContext ctx = context();
+  Internal::Tree* p = s.tree()->cloneTree();
+  Internal::Simplification::ToSystem(p, &ctx);
+  Internal::Tree* a = Internal::Approximation::ToTree<double>(p, {});
+  Expression r = Expression::Builder(a);
+  p->removeTree();
+  printExpression(r);
 }
 
 void simplifyCommand(const std::vector<std::string>& args) {

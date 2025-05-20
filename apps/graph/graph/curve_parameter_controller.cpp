@@ -326,8 +326,9 @@ void CurveParameterController::setRecord(Ion::Storage::Record record,
                                          int derivationOrder) {
   m_record = record;
   m_derivationOrder = derivationOrder;
-  m_calculationCell.setVisible(function()->canDisplayDerivative() &&
-                               m_derivationOrder == 0);
+  m_calculationCell.setVisible(
+      (function()->canDisplayDerivative() && m_derivationOrder == 0) ||
+      !function()->properties().isEquality());
   selectRow(0);
   m_selectableListView.resetSizeAndOffsetMemoization();
   m_preimageGraphController.setRecord(record);

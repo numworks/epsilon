@@ -175,8 +175,23 @@ void CalculationParameterController::fillAreaCell() {
 
 void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
-  assert(function()->canDisplayDerivative());
+  assert(function()->canDisplayDerivative() ||
+         !function()->properties().isEquality());
   selectRow(0);
+  if (!function()->properties().isEquality()) {
+    m_intersectionCell.setVisible(true);
+    m_tangentCell.setVisible(false);
+    m_preimageCell.setVisible(false);
+    m_maximumCell.setVisible(false);
+    m_minimumCell.setVisible(false);
+    m_rootCell.setVisible(false);
+    m_slopeCell.setVisible(false);
+    m_integralCell.setVisible(false);
+    m_areaCell.setVisible(false);
+    m_selectableListView.resetSizeAndOffsetMemoization();
+    return;
+  }
+  m_tangentCell.setVisible(true);
   bool isCartesian = function()->properties().isCartesian();
   assert(isCartesian || function()->properties().isPolar() ||
          function()->properties().isParametric());

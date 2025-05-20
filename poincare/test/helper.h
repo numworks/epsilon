@@ -25,7 +25,9 @@ void process_tree_and_compare(
 void quiz_tolerate_print_if_failure(bool test, const char* input,
                                     const char* expected = "",
                                     const char* observed = "");
-void quiz_assert_print_if_failure(bool test, const char* information);
+void quiz_assert_print_if_failure(bool test, const char* information,
+                                  const char* expected = nullptr,
+                                  const char* observed = nullptr);
 
 void remove_system_codepoints(char* buffer);
 

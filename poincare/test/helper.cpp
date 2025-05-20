@@ -66,10 +66,18 @@ void quiz_tolerate_print_if_failure(bool test, const char* input,
   quiz_print(buffer);
 }
 
-void quiz_assert_print_if_failure(bool test, const char* information) {
+void quiz_assert_print_if_failure(bool test, const char* information,
+                                  const char* expected, const char* observed) {
   if (!test) {
     quiz_print("TEST FAILURE WHILE TESTING:");
     quiz_print(information);
+    if (expected && observed) {
+      constexpr int bufferSize = 500;
+      char buffer[bufferSize];
+      Poincare::Print::UnsafeCustomPrintf(
+          buffer, bufferSize, "Expected: %s\nObserved: %s", expected, observed);
+      quiz_print(buffer);
+    }
   }
   quiz_assert(test);
 }

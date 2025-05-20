@@ -262,6 +262,7 @@ _sources_poincare_test := $(addprefix test/, \
   random.cpp \
   rational.cpp \
   roots.cpp \
+  serialization.cpp \
   set.cpp \
   sign.cpp \
   simplification.cpp \

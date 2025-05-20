@@ -18,6 +18,8 @@ namespace Graph {
 
 class GraphController : public Shared::FunctionGraphController,
                         public GraphControllerHelper {
+  friend class IntersectionGraphController;
+
  public:
   GraphController(
       Escher::Responder* parentResponder, Escher::ButtonRowController* header,

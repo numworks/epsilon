@@ -319,4 +319,32 @@ void Variables::Private::EnterOrLeaveScope(Tree* e, bool enter, int var) {
   }
 }
 
+uint8_t Variables::GetScopeOf(const Tree* tree, const Tree* root) {
+  assert(root <= tree && tree < root->nextTree());
+  uint8_t scope = 0;
+  // From [root] to [tree], visit each ancestors of [tree].
+  while (root != tree) {
+    /* If [root] is parametric and [tree] is located in the functionIndex
+     * child, scope will increase */
+    int functionIndex =
+        root->isParametric() ? Parametric::FunctionIndex(root) : -1;
+    const Tree* child = root->child(0);
+    const Tree* nextChild = child->nextTree();
+    // Find the ancestor of [tree] in [root]'s children
+    for (int i = 0; i < root->numberOfChildren(); ++i) {
+      // if [tree] is a child of [child] (or [tree] is [child])
+      if (child <= tree && tree < nextChild) {
+        if (functionIndex == i) {
+          ++scope;
+        }
+        root = child;
+        break;
+      }
+      child = nextChild;
+      nextChild = child->nextTree();
+    }
+  }
+  return scope;
+}
+
 }  // namespace Poincare::Internal

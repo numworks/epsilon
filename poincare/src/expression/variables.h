@@ -81,6 +81,13 @@ inline void LeaveScope(Tree* e) {
 bool LeaveScopeWithReplacement(Tree* e, const Tree* value, bool simplify,
                                bool addDependencyInValue);
 
+/* Get the scope of [tree] relative to [root].
+ * The scope is the amount of parametric node in [tree]'s ancestors where
+ * [tree] is a descendant of its [FunctionIndex]-th child.
+ * This corresponds to the number of time the index of the variable needs
+ * to be increased if the variable were to be inserted in place of [tree]. */
+uint8_t GetScopeOf(const Tree* tree, const Tree* root);
+
 };  // namespace Variables
 
 }  // namespace Poincare::Internal

@@ -240,6 +240,42 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   return changed;
 }
 
+Tree* PushScientificNotation(const Tree* e, int nbOf0sAtTheEnd,
+                             int nbOfSignificantDigits) {
+  assert(nbOf0sAtTheEnd >= 3 && nbOfSignificantDigits > 0);
+  Tree* result = SharedTreeStack->pushMult(2);
+  if (nbOfSignificantDigits > 1) {
+    /* Return Decimal(significantDigits, nbOfSignificantDigits -1)
+     *        * 10^(nbOf0sAtTheEnd + nbOfSignificantDigits - 1) */
+    SharedTreeStack->pushDecimal();
+  } else {
+    // Return significantDigits * 10^(nbOf0sAtTheEnd + nbOfSignificantDigits -1)
+  }
+  /* Push significantDigits = integer * 10^(-nbOf0sAtTheEnd)
+   * This has to be deep reduced */
+  Tree* significantDigits = SharedTreeStack->pushMult(2);
+  e->cloneTree();
+  SharedTreeStack->pushPow();
+  Integer::Push(10);
+  Integer::Push(-nbOf0sAtTheEnd);
+  SystematicReduction::DeepReduce(significantDigits);
+  assert(significantDigits->isPositiveInteger() &&
+         !significantDigits->isZero());
+  if (significantDigits->isOne()) {
+    SharedTreeStack->flushFromBlock(result);
+    // Return 10^(nbOf0sAtTheEnd + nbOfSignificantDigits - 1)
+    result = SharedTreeStack->pushPow();
+  } else {
+    if (nbOfSignificantDigits > 1) {
+      Integer::Push(nbOfSignificantDigits - 1);
+    }
+    SharedTreeStack->pushPow();
+  }
+  Integer::Push(10);
+  Integer::Push(nbOf0sAtTheEnd + nbOfSignificantDigits - 1);
+  return result;
+}
+
 bool ShallowBeautifyBigInteger(Tree* e, void* context) {
   assert(!((e->isRational() && !e->isInteger()) || e->isIntegerNegBig()));
   if (!e->isIntegerPosBig()) {
@@ -276,38 +312,8 @@ bool ShallowBeautifyBigInteger(Tree* e, void* context) {
   }
 
   /* Step 2 : Create the scientific notation */
-  assert(nbOf0sAtTheEnd >= 3 && nbOfSignificantDigits > 0);
-  Tree* result = SharedTreeStack->pushMult(2);
-  if (nbOfSignificantDigits > 1) {
-    /* Return Decimal(significantDigits, nbOfSignificantDigits -1)
-     *        * 10^(nbOf0sAtTheEnd + nbOfSignificantDigits - 1) */
-    SharedTreeStack->pushDecimal();
-  } else {
-    // Return significantDigits * 10^(nbOf0sAtTheEnd + nbOfSignificantDigits -1)
-  }
-  /* Push significantDigits = integer * 10^(-nbOf0sAtTheEnd)
-   * This has to be deep reduced */
-  Tree* significantDigits = SharedTreeStack->pushMult(2);
-  e->cloneTree();
-  SharedTreeStack->pushPow();
-  Integer::Push(10);
-  Integer::Push(-nbOf0sAtTheEnd);
-  SystematicReduction::DeepReduce(significantDigits);
-  assert(significantDigits->isPositiveInteger() &&
-         !significantDigits->isZero());
-  if (significantDigits->isOne()) {
-    SharedTreeStack->flushFromBlock(result);
-    // Return 10^(nbOf0sAtTheEnd + nbOfSignificantDigits - 1)
-    result = SharedTreeStack->pushPow();
-  } else {
-    if (nbOfSignificantDigits > 1) {
-      Integer::Push(nbOfSignificantDigits - 1);
-    }
-    SharedTreeStack->pushPow();
-  }
-  Integer::Push(10);
-  Integer::Push(nbOf0sAtTheEnd + nbOfSignificantDigits - 1);
-  e->moveTreeOverTree(result);
+  e->moveTreeOverTree(
+      PushScientificNotation(e, nbOf0sAtTheEnd, nbOfSignificantDigits));
   return true;
 }
 

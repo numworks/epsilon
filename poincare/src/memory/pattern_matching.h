@@ -183,13 +183,15 @@ class PatternMatching {
    * and local pattern will be Mult(1). */
   class MatchContext {
    public:
-    constexpr static uint8_t k_globalSource = 0;
-    constexpr static uint8_t k_localSource = 1;
-    constexpr static uint8_t k_globalPattern = 2;
-    constexpr static uint8_t k_localPattern = 3;
+    enum Filter {
+      GlobalSource,
+      LocalSource,
+      GlobalPattern,
+      LocalPattern,
+    };
     MatchContext(const Tree* source, const Tree* pattern,
                  uint8_t baseScope = 0);
-    bool reachedLimit(const Tree* node, uint8_t whichLimit) const {
+    bool reachedLimit(const Tree* node, Filter whichLimit) const {
       return ReachedLimit(node, getEnd(whichLimit));
     }
     // Return the number of siblings right of node in local context.
@@ -203,16 +205,15 @@ class PatternMatching {
 #endif
 
    private:
-    const Block* getEnd(uint8_t which) const {
-      assert(which <= k_localPattern);
-      switch (which) {
-        case k_globalSource:
+    const Block* getEnd(Filter filter) const {
+      switch (filter) {
+        case GlobalSource:
           return m_globalSourceEnd;
-        case k_localSource:
+        case LocalSource:
           return m_localSourceEnd;
-        case k_globalPattern:
+        case GlobalPattern:
           return m_globalPatternEnd;
-        case k_localPattern:
+        case LocalPattern:
           return m_localPatternEnd;
       }
       OMG::unreachable();

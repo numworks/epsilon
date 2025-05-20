@@ -74,7 +74,7 @@ void simplifyCommand(const std::vector<std::string>& args) {
   bool reductionFailure = false;
   ProjectionContext ctx = context();
   UserExpression e =
-      getExpression(args).cloneAndSimplify(&ctx, &reductionFailure);
+      getExpression(args).cloneAndSimplify(ctx, &reductionFailure);
   printExpression(e);
 }
 

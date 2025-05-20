@@ -144,7 +144,7 @@ void Tree::logAttributes(std::ostream& stream) const {
 }
 
 void Tree::logSerialize(std::ostream& stream) const {
-  TreeRef outputLayout = Layouter::LayoutExpression(cloneTree(), true);
+  TreeRef outputLayout = Layouter::LayoutExpression(cloneTree(), true, false);
   assert(!outputLayout.isUninitialized());
   constexpr size_t bufferSize = 1024;
   char buffer[bufferSize];

@@ -450,7 +450,7 @@ Poincare::Layout CreateBeautifiedLayout(Tree* reducedExpression,
                                         uint8_t numberOfSignificantDigits) {
   Simplification::BeautifyReduced(reducedExpression, ctx);
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
-      reducedExpression, false, numberOfSignificantDigits, displayMode));
+      reducedExpression, false, false, numberOfSignificantDigits, displayMode));
 }
 
 Poincare::Layout AdditionalResultsHelper::ScientificLayout(

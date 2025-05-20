@@ -112,8 +112,8 @@ void assert_parsed_expression_process_to(
       .m_symbolic = symbolicComputation,
       .m_context = ctx};
   Tree *m = process(e, projCtx);
-  Tree *l =
-      Internal::Layouter::LayoutExpression(m, true, numberOfSignificantDigits);
+  Tree *l = Internal::Layouter::LayoutExpression(m, true, false,
+                                                 numberOfSignificantDigits);
   Internal::Serialize(l, buffer, buffer + bufferSize);
   copy_without_system_chars(buffer, buffer);
   l->removeTree();
@@ -295,7 +295,8 @@ void assert_expression_serializes_to(const Tree *expression,
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   Tree *layout = Internal::Layouter::LayoutExpression(
-      expression->cloneTree(), true, numberOfSignificantDigits, mode, base);
+      expression->cloneTree(), true, false, numberOfSignificantDigits, mode,
+      base);
   Serialize(layout, buffer, buffer + bufferSize);
   bool test = strcmp(serialization, buffer) == 0;
   layout->removeTree();
@@ -333,7 +334,7 @@ void assert_expression_parses_and_serializes_to(
     int numberOfSignificantDigits, OMG::Base base) {
   Tree *e = parse_expression(expression, globalContext);
   Tree *l = Internal::Layouter::LayoutExpression(
-      e, true, numberOfSignificantDigits, mode, base);
+      e, true, false, numberOfSignificantDigits, mode, base);
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   Serialize(l, buffer, buffer + bufferSize);

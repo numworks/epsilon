@@ -95,7 +95,7 @@ class ExpressionObject final : public PoolObject {
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits, Context* context,
                       OMG::Base base = OMG::Base::Decimal) const;
-  size_t serialize(char* buffer, size_t bufferSize,
+  size_t serialize(char* buffer, size_t bufferSize, bool compactMode,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const;
 
@@ -304,7 +304,7 @@ class Expression : public PoolHandle {
   /* TODO:
    * - Use same convention as strlcpy: return size of the source even if the
    * bufferSize was too small.*/
-  size_t serialize(char* buffer, size_t bufferSize,
+  size_t serialize(char* buffer, size_t bufferSize, bool compactMode = false,
                    Preferences::PrintFloatMode floatDisplayMode =
                        Preferences::PrintFloatMode::Decimal,
                    int numberOfSignificantDigits =

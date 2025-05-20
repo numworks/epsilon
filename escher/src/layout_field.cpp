@@ -635,7 +635,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
      * expression). */
     Expression e = Expression::Parse(layout, nullptr);
     if (!e.isUninitialized()) {
-      e.serialize(buffer, bufferSize,
+      e.serialize(buffer, bufferSize, false,
                   Poincare::Preferences::SharedPreferences()->displayMode(),
                   Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
     } else {

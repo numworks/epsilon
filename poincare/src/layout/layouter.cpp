@@ -104,11 +104,12 @@ constexpr static int OperatorPriority(TypeBlock type) {
 constexpr static int k_commaPriority = OperatorPriority(Type::Set);
 
 Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
+                                 bool compactMode,
                                  int numberOfSignificantDigits,
                                  Preferences::PrintFloatMode floatMode,
                                  OMG::Base base) {
   ExceptionTryAfterBlock(expression) {
-    return UnsafeLayoutExpression(expression, linearMode,
+    return UnsafeLayoutExpression(expression, linearMode, compactMode,
                                   numberOfSignificantDigits, floatMode, base);
   }
   ExceptionCatch(exc) {
@@ -116,8 +117,8 @@ Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
       case ExceptionType::TreeStackOverflow:
       case ExceptionType::IntegerOverflow:
         return UnsafeLayoutExpression(KUndef->cloneTree(), linearMode,
-                                      numberOfSignificantDigits, floatMode,
-                                      base);
+                                      compactMode, numberOfSignificantDigits,
+                                      floatMode, base);
       default:
         TreeStackCheckpoint::Raise(exc);
     }
@@ -126,6 +127,7 @@ Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
 }
 
 Tree* Layouter::UnsafeLayoutExpression(Tree* expression, bool linearMode,
+                                       bool compactMode,
                                        int numberOfSignificantDigits,
                                        Preferences::PrintFloatMode floatMode,
                                        OMG::Base base) {
@@ -135,8 +137,8 @@ Tree* Layouter::UnsafeLayoutExpression(Tree* expression, bool linearMode,
    * layoutParent's root. */
   TreeRef layoutParent = SharedTreeStack->pushRackLayout(0);
   assert(expression->nextTree() == layoutParent);
-  Layouter layouter(linearMode, false, numberOfSignificantDigits, floatMode,
-                    base);
+  Layouter layouter(linearMode, false, compactMode, numberOfSignificantDigits,
+                    floatMode, base);
   layouter.m_addSeparators =
       !linearMode && layouter.requireSeparators(expression);
   layouter.layoutExpression(layoutParent, expression, k_maxPriority);

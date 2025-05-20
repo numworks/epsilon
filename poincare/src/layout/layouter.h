@@ -16,7 +16,7 @@ class Layouter {
 
   // Eats expression to built its layout inplace.
   static Tree* LayoutExpression(
-      Tree* expression, bool linearMode = false,
+      Tree* expression, bool linearMode = false, bool compactMode = false,
       int numberOfSignificantDigits = k_undefinedNumberOfSignificantDigits,
       Preferences::PrintFloatMode floatMode =
           Preferences::PrintFloatMode::Decimal,
@@ -29,16 +29,18 @@ class Layouter {
   static void StripSeparators(Tree* rack);
 
  private:
-  Layouter(bool linearMode, bool addSeparators, int numberOfSignificantDigits,
-           Preferences::PrintFloatMode floatMode, OMG::Base base)
+  Layouter(bool linearMode, bool addSeparators, bool compactMode,
+           int numberOfSignificantDigits, Preferences::PrintFloatMode floatMode,
+           OMG::Base base)
       : m_linearMode(linearMode),
         m_addSeparators(addSeparators),
+        m_compactMode(compactMode),
         m_numberOfSignificantDigits(numberOfSignificantDigits),
         m_floatMode(floatMode),
         m_base(base) {}
   // Eats expression to built its layout inplace. May raise TreeStack exceptions
   static Tree* UnsafeLayoutExpression(
-      Tree* expression, bool linearMode = false,
+      Tree* expression, bool linearMode = false, bool compactMode = false,
       int numberOfSignificantDigits = k_undefinedNumberOfSignificantDigits,
       Preferences::PrintFloatMode floatMode =
           Preferences::PrintFloatMode::Decimal,
@@ -67,6 +69,7 @@ class Layouter {
   static void StripUselessPlus(Tree* rack);
   bool m_linearMode;
   bool m_addSeparators;
+  bool m_compactMode;
   int m_numberOfSignificantDigits;
   Preferences::PrintFloatMode m_floatMode;
   OMG::Base m_base;

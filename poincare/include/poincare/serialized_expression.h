@@ -18,7 +18,7 @@ class SerializedExpression {
 
   explicit SerializedExpression(Expression expression) {
     [[maybe_unused]] size_t usedLength = expression.serialize(
-        m_buffer, k_bufferLength, Preferences::PrintFloatMode::Decimal,
+        m_buffer, k_bufferLength, true, Preferences::PrintFloatMode::Decimal,
         k_numberOfSignificantDigits);
     assert(usedLength <= k_bufferLength);
   }

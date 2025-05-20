@@ -10,8 +10,8 @@ void SerializedExpression::writeText(
    * be returned directly. The expression is re-constructed, then serialized
    * with the requested display parameters. */
   [[maybe_unused]] size_t usedLength =
-      expression().serialize(buffer.data(), buffer.size(), floatDisplayMode,
-                             numberOfSignificantDigits);
+      expression().serialize(buffer.data(), buffer.size(), true,
+                             floatDisplayMode, numberOfSignificantDigits);
   assert(usedLength <= buffer.size());
 }
 

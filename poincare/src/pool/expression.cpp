@@ -146,15 +146,16 @@ Poincare::Layout ExpressionObject::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context, OMG::Base base) const {
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
-      tree()->cloneTree(), false, numberOfSignificantDigits, floatDisplayMode,
-      base));
+      tree()->cloneTree(), false, false, numberOfSignificantDigits,
+      floatDisplayMode, base));
 }
 
 size_t ExpressionObject::serialize(char* buffer, size_t bufferSize,
+                                   bool compactMode,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {
-  Tree* layout = Layouter::LayoutExpression(tree()->cloneTree(), true,
-                                            numberOfSignificantDigits);
+  Tree* layout = Layouter::LayoutExpression(
+      tree()->cloneTree(), true, compactMode, numberOfSignificantDigits);
   size_t size = Serialize(layout, buffer, buffer + bufferSize);
   layout->removeTree();
   return size;
@@ -738,12 +739,13 @@ char* UserExpression::toLatex(char* buffer, int bufferSize,
 }
 
 size_t UserExpression::serialize(char* buffer, size_t bufferSize,
+                                 bool compactMode,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {
   return isUninitialized()
              ? 0
-             : object()->serialize(buffer, bufferSize, floatDisplayMode,
-                                   numberOfSignificantDigits);
+             : object()->serialize(buffer, bufferSize, compactMode,
+                                   floatDisplayMode, numberOfSignificantDigits);
 }
 
 bool Expression::replaceSymbolWithExpression(const UserExpression& symbol,

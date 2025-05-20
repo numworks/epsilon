@@ -589,8 +589,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
       m_nextPointOfInterestIndex = i;
     }
 
-    if (m_interest != Poincare::Solver<double>::Interest::None &&
-        m_interest != p.interest) {
+    if (!PointsOfInterestCache::PointFitInterest(p, m_interest)) {
       continue;
     }
 

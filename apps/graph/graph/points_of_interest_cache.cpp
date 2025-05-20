@@ -51,6 +51,14 @@ bool PointsOfInterestCache::computeUntilNthPoint(int n) {
   return true;
 }
 
+bool PointsOfInterestCache::PointFitInterest(
+    PointOfInterest poi, Solver<double>::Interest interest) {
+  return interest == Solver<double>::Interest::None ||
+         poi.interest == interest ||
+         (interest == Solver<double>::Interest::Intersection &&
+          poi.interest == Solver<double>::Interest::UnreachedIntersection);
+}
+
 int PointsOfInterestCache::numberOfPoints(
     Solver<double>::Interest interest) const {
   int n = numberOfPoints();
@@ -59,7 +67,7 @@ int PointsOfInterestCache::numberOfPoints(
   }
   int result = 0;
   for (int i = 0; i < n; i++) {
-    if (pointAtIndex(i).interest == interest) {
+    if (PointFitInterest(pointAtIndex(i), interest)) {
       result++;
     }
   }
@@ -91,9 +99,7 @@ PointOfInterest PointsOfInterestCache::firstPointInDirection(
         (!stretch && p.abscissa == end)) {
       break;
     }
-    if ((interest == Solver<double>::Interest::None ||
-         interest == p.interest) &&
-        p.subCurveIndex == subCurveIndex) {
+    if (PointFitInterest(p, interest) && p.subCurveIndex == subCurveIndex) {
       /* Select in priority the reached discontinuity point: if the point is an
        * unreached discontinuity, check if there is a reached discontinuity at
        * the same abscissa. */
@@ -116,9 +122,7 @@ bool PointsOfInterestCache::hasInterestAtCoordinates(
   int n = numberOfPoints();
   for (int i = 0; i < n; i++) {
     PointOfInterest p = pointAtIndex(i);
-    if (p.x() == x && p.y() == y &&
-        (interest == Solver<double>::Interest::None ||
-         p.interest == interest)) {
+    if (p.x() == x && p.y() == y && PointFitInterest(p, interest)) {
       return true;
     }
   }

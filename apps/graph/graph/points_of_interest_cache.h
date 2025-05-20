@@ -57,6 +57,9 @@ class PointsOfInterestCache {
            (numberOfPoints(interest) <= k_maxNumberOfDisplayablePoints);
   }
 
+  static bool PointFitInterest(Poincare::PointOfInterest poi,
+                               Poincare::Solver<double>::Interest interest);
+
  private:
   constexpr static int k_maxNumberOfDisplayablePoints = 64;
   constexpr static float k_numberOfSteps = 25.0;

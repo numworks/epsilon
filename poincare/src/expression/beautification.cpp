@@ -242,7 +242,8 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
 
 Tree* PushScientificNotation(const Tree* e, int nbOf0sAtTheEnd,
                              int nbOfSignificantDigits) {
-  assert(nbOf0sAtTheEnd >= 3 && nbOfSignificantDigits > 0);
+  assert(nbOf0sAtTheEnd > 0 && nbOfSignificantDigits > 0);
+  assert(e->isIntegerPosBig());
   Tree* result = SharedTreeStack->pushMult(2);
   if (nbOfSignificantDigits > 1) {
     /* Return Decimal(significantDigits, nbOfSignificantDigits -1)
@@ -312,6 +313,7 @@ bool ShallowBeautifyBigInteger(Tree* e, void* context) {
   }
 
   /* Step 2 : Create the scientific notation */
+  assert(nbOf0sAtTheEnd >= k_minimalExponent && nbOfSignificantDigits > 0);
   e->moveTreeOverTree(
       PushScientificNotation(e, nbOf0sAtTheEnd, nbOfSignificantDigits));
   return true;

@@ -23,8 +23,7 @@ QUIZ_CASE(pcj_expression_serialization) {
   assert_expression_serializes_to(
       Poincare::SystemExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)),
       "(2×π)/3", false);
-  // TODO: remove parentheses in compact mode
   assert_expression_serializes_to(
-      Poincare::SystemExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "(2π)/3",
+      Poincare::SystemExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "2π/3",
       true);
 }

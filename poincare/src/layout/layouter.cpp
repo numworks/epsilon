@@ -36,6 +36,8 @@ constexpr static int k_tokenPriority = -1;
 // MaxPriority is to be used when there is no parent that could cause confusion
 constexpr static int k_maxPriority = 20;
 
+constexpr static int k_forceRemoveParentheses = k_maxPriority;
+
 /* Priority just after Add for left child of a subtraction that may be an
  * unparenthesed addition */
 constexpr static int k_subLeftChildPriority = 9;
@@ -378,11 +380,16 @@ void Layouter::layoutPowerOrDivision(TreeRef& layoutParent, Tree* expression) {
   TreeRef createdLayout;
   // No parentheses in Fraction roots and Power index.
   if (m_linearMode) {
+    // In compact mode, parentheses are removed from (a×b)/c
+    int firstChildPriority =
+        (type == Type::Div && expression->isMult() && m_compactMode)
+            ? k_forceRemoveParentheses
+            : OperatorPriority(type);
     // force parentheses when serializing e^(x)
     int secondChildPriority = type == Type::Pow && expression->isEulerE()
                                   ? k_forceParentheses
                                   : OperatorPriority(type);
-    layoutExpression(layoutParent, expression, OperatorPriority(type));
+    layoutExpression(layoutParent, expression, firstChildPriority);
     PushCodePoint(layoutParent, type == Type::Div ? '/' : '^');
     layoutExpression(layoutParent, expression, secondChildPriority);
     return;

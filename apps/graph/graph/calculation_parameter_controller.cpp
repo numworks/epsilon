@@ -30,7 +30,7 @@ CalculationParameterController::CalculationParameterController(
       m_rootGraphController(nullptr, graphView, bannerView, range, cursor),
       m_intersectionGraphController(nullptr, graphView, bannerView, range,
                                     cursor) {
-  m_intersectionCell.label()->setMessage(I18n::Message::Intersection);
+  m_intersectionCell.label()->setMessage(I18n::Message::PointOfIntersection);
   m_minimumCell.label()->setMessage(I18n::Message::Minimum);
   m_maximumCell.label()->setMessage(I18n::Message::Maximum);
   m_integralCell.label()->setMessage(I18n::Message::Integral);

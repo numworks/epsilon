@@ -273,7 +273,7 @@ uint8_t IntegerHandler::numberOfDigits() const {
   return OMG::Arithmetic::CeilDivision<uint8_t>(nbOfDigits, sizeof(T));
 }
 
-std::pair<int, int> IntegerHandler::numberOfBase10DigitsWithoutSign(
+IntegerHandler::DigitCounts IntegerHandler::numberOfBase10DigitsWithoutSign(
     WorkingBuffer* workingBuffer) const {
   // TODO: This method should be optimized because udiv is a costly function
   // assert(!isOverflow());
@@ -301,7 +301,7 @@ std::pair<int, int> IntegerHandler::numberOfBase10DigitsWithoutSign(
     numberOfDigits++;
   }
   workingBuffer->garbageCollect({}, localStart);
-  return std::pair(numberOfDigits, numberOfZeroes);
+  return {numberOfDigits, numberOfZeroes};
 }
 
 template <typename T>
@@ -757,9 +757,9 @@ int IntegerHandler::estimatedNumberOfBase10DigitsWithoutSign(
   assert(estimation > 0.f && estimation < INT_MAX);
   int estimatedNumberOfDigitsBase10 = static_cast<int>(estimation);
   assert(estimatedNumberOfDigitsBase10 ==
-             numberOfBase10DigitsWithoutSign().first ||
+             numberOfBase10DigitsWithoutSign().numberOfDigits ||
          overEstimated == (estimatedNumberOfDigitsBase10 >
-                           numberOfBase10DigitsWithoutSign().first));
+                           numberOfBase10DigitsWithoutSign().numberOfDigits));
   return estimatedNumberOfDigitsBase10;
 }
 

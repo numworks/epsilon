@@ -293,9 +293,10 @@ bool ShallowBeautifyBigInteger(Tree* e, void* context) {
     // Early escape: number is obviously too small
     return false;
   }
-  std::pair<int, int> digits = integer.numberOfBase10DigitsWithoutSign();
-  int nbOfDigits = digits.first;
-  int nbOf0sAtTheEnd = digits.second;
+  IntegerHandler::DigitCounts digitCount =
+      integer.numberOfBase10DigitsWithoutSign();
+  int nbOfDigits = digitCount.numberOfDigits;
+  int nbOf0sAtTheEnd = digitCount.numberOfZerosAtTheEnd;
   int nbOfSignificantDigits = nbOfDigits - nbOf0sAtTheEnd;
 
   if (nbOfDigits <= k_comfortableNumberOfDigits ||

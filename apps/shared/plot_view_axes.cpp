@@ -331,10 +331,13 @@ void AbstractLabeledAxis::reloadAxis(AbstractPlotView* plotView,
 int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView* plotView,
                                       OMG::Axis axis) {
   ExpressionOrFloat t = tickPosition(i, plotView, axis);
-  // TODO: what about k_labelBufferMaxGlyphLength?
-  t.writeText({mutableLabel(i), k_labelBufferMaxSize},
-              k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal);
-  return static_cast<int>(strlen(mutableLabel(i)));
+  // TODO: writeText should take k_labelBufferMaxGlyphLength as an input
+  // parameter
+  PrintFloat::TextLengths textLengths = t.writeText(
+      {mutableLabel(i), k_labelBufferMaxSize}, k_numberSignificantDigits,
+      Preferences::PrintFloatMode::Decimal);
+  assert(strlen(mutableLabel(i)) == textLengths.CharLength);
+  return textLengths.GlyphLength;
 }
 
 bool AbstractLabeledAxis::labelWillBeDisplayed(int i, KDRect rect) const {

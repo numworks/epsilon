@@ -1,9 +1,10 @@
 #ifndef POINCARE_EXPRESSION_OR_FLOAT_H
 #define POINCARE_EXPRESSION_OR_FLOAT_H
 
-#include <poincare/expression.h>
-
 #include <span>
+
+#include "poincare/expression.h"
+#include "poincare/print_float.h"
 
 namespace Poincare {
 
@@ -48,11 +49,13 @@ class ExpressionOrFloat {
    * - If the exact representation takes more characters than the above limit
    * (example: 12/721), the approximation is written in decimal format
    * (0.016644).
+   * The text lengths of what was written are returned.
    */
-  void writeText(std::span<char> buffer,
-                 int numberOfSignificantDigits = k_numberOfSignificantDigits,
-                 Preferences::PrintFloatMode floatDisplayMode =
-                     Preferences::PrintFloatMode::Decimal) const;
+  PrintFloat::TextLengths writeText(
+      std::span<char> buffer,
+      int numberOfSignificantDigits = k_numberOfSignificantDigits,
+      Preferences::PrintFloatMode floatDisplayMode =
+          Preferences::PrintFloatMode::Decimal) const;
 
   Expression expression() const {
     if (hasNoExactExpression()) {

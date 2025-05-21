@@ -441,6 +441,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
       UCodePointLatinLetterSmallCapitalE, buffer + currentNumberOfChar,
       bufferSize - currentNumberOfChar - 1);
   dividend = Long(exponent);  // reuse dividend as it is not needed anymore
+  assert(numberOfCharExponent > 0);
   PrintLongWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent,
                              dividend, -1);
   buffer[currentNumberOfChar + static_cast<size_t>(numberOfCharExponent)] = 0;

@@ -627,21 +627,18 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       Poincare::Preferences::EditionMode::Edition1D) {
     constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
     char buffer[bufferSize];
-    /* TODO_PCJ: We shouldn't serialize 2D layouts.
-     * We should only be able to serialize 1D layouts. If the layout is in 2D,
-     * we should first parse it as an expression and then layout it in 1D.
-     * This way we would have a uniform serialization for one same expression
-     * (and make the most of all the optimizations done when layouting an
-     * expression). */
     Expression e = Expression::Parse(layout, nullptr);
     if (!e.isUninitialized()) {
-      e.serialize(buffer, bufferSize, false,
-                  Poincare::Preferences::SharedPreferences()->displayMode(),
-                  Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
+      Layout layout = e.createLayout(
+          Poincare::Preferences::SharedPreferences()->displayMode(),
+          Poincare::PrintFloat::k_maxNumberOfSignificantDigits, nullptr,
+          OMG::Base::Decimal, true);
+      cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
+                             forceCursorLeftOfLayout);
     } else {
       layout.serialize(buffer, bufferSize);
+      insertText(buffer, false, forceCursorRightOfLayout);
     }
-    insertText(buffer, false, forceCursorRightOfLayout);
   } else {
     cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
                            forceCursorLeftOfLayout);

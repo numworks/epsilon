@@ -144,9 +144,9 @@ SystemExpression ExpressionObject::approximateToTree(
 
 Poincare::Layout ExpressionObject::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context, OMG::Base base) const {
+    Context* context, OMG::Base base, bool linearMode) const {
   return Poincare::Layout::Builder(Layouter::LayoutExpression(
-      tree()->cloneTree(), false, false, numberOfSignificantDigits,
+      tree()->cloneTree(), linearMode, false, numberOfSignificantDigits,
       floatDisplayMode, base));
 }
 
@@ -719,12 +719,12 @@ int SystemExpression::getPolynomialReducedCoefficients(
 
 Poincare::Layout UserExpression::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context, OMG::Base base) const {
+    Context* context, OMG::Base base, bool linearMode) const {
   if (isUninitialized()) {
     return Poincare::Layout();
   }
   return object()->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                context, base);
+                                context, base, linearMode);
 }
 
 char* UserExpression::toLatex(char* buffer, int bufferSize,

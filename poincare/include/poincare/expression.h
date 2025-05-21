@@ -94,7 +94,8 @@ class ExpressionObject final : public PoolObject {
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits, Context* context,
-                      OMG::Base base = OMG::Base::Decimal) const;
+                      OMG::Base base = OMG::Base::Decimal,
+                      bool linearMode = false) const;
   size_t serialize(char* buffer, size_t bufferSize, bool compactMode,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const;
@@ -295,7 +296,8 @@ class Expression : public PoolHandle {
 
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits, Context* context,
-                      OMG::Base base = OMG::Base::Decimal) const;
+                      OMG::Base base = OMG::Base::Decimal,
+                      bool linearMode = false) const;
   char* toLatex(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
                 int numberOfSignificantDigits, Context* context,

@@ -140,6 +140,10 @@ class ContinuousFunctionProperties {
   bool isEquality() const {
     return equationType() == Poincare::ComparisonJunior::Operator::Equal;
   }
+  bool isStrictInequality() const {
+    return equationType() == Poincare::ComparisonJunior::Operator::Superior ||
+           equationType() == Poincare::ComparisonJunior::Operator::Inferior;
+  }
   bool isEnabledParametric() const { return isEnabled() && isParametric(); }
 
   bool canBeActiveInTable() const {

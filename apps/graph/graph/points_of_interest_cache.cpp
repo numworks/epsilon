@@ -286,8 +286,7 @@ PointOfInterest findIntersections(void* searchContext) {
   int n = ctx->store->numberOfActiveFunctions();
   SystemFunction e = f->expressionApproximated(ctx->context);
   bool alongY = f->isAlongY();
-  bool fIsStrict =
-      Poincare::ComparisonJunior::IsStrict(f->properties().equationType());
+  bool fIsStrict = f->properties().isStrictInequality();
   while (ctx->counter < n) {
     int otherFunctionIndex = ctx->counter;
     if (ctx->memoizedOtherFunction.isUninitialized()) {
@@ -314,8 +313,7 @@ PointOfInterest findIntersections(void* searchContext) {
       if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
         ExpiringPointer<ContinuousFunction> g =
             ctx->store->modelForRecord(ctx->otherRecord);
-        bool gIsStrict = Poincare::ComparisonJunior::IsStrict(
-            g->properties().equationType());
+        bool gIsStrict = g->properties().isStrictInequality();
         assert(solution.interest() == Solver<double>::Interest::Intersection);
         return {
             solution.x(),

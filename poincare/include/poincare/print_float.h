@@ -59,8 +59,8 @@ class PrintFloat {
   constexpr static int k_maxNumberOfSignificantDigitsInDecimals = 30;
 
   struct TextLengths {
-    int CharLength;
-    int GlyphLength;
+    size_t CharLength;
+    size_t GlyphLength;
   };
   /* If the buffer size is too small to display the right number of significant
    * digits, the function forces the scientific mode. If the buffer is still too
@@ -68,8 +68,8 @@ class PrintFloat {
    * ConvertFloatToText returns the number of characters that have been written
    * in buffer (excluding the last \0 character). */
   template <class T>
-  static TextLengths ConvertFloatToText(T d, char* buffer, int bufferSize,
-                                        int availableGlyphLength,
+  static TextLengths ConvertFloatToText(T d, char* buffer, size_t bufferSize,
+                                        size_t availableGlyphLength,
                                         int numberOfSignificantDigits,
                                         Preferences::PrintFloatMode mode);
   template <class T>
@@ -99,7 +99,7 @@ class PrintFloat {
  private:
   template <class T>
   static TextLengths ConvertFloatToTextPrivate(
-      T f, char* buffer, int bufferSize, int availableGlyphLength,
+      T f, char* buffer, size_t bufferSize, size_t availableGlyphLength,
       int numberOfSignificantDigits, Preferences::PrintFloatMode mode);
 
   class Long final {

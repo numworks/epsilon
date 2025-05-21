@@ -21,7 +21,7 @@ namespace Poincare {
 
 constexpr const char* k_undefName =
     Internal::BuiltinsAliases::k_undefinedAlias.mainAlias();
-constexpr int k_undefNameLength = OMG::StringLength(k_undefName);
+constexpr size_t k_undefNameLength = OMG::StringLength(k_undefName);
 
 constexpr size_t PrintFloat::Long::k_maxNumberOfCharsForDigit;
 
@@ -139,7 +139,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char* buffer, int bufferLength,
 
 template <class T>
 PrintFloat::TextLengths PrintFloat::ConvertFloatToText(
-    T f, char* buffer, int bufferSize, int glyphLength,
+    T f, char* buffer, size_t bufferSize, size_t glyphLength,
     int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
@@ -189,18 +189,18 @@ int PrintFloat::EngineeringExponentFromBase10Exponent(int exponent) {
 
 template <class T>
 PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
-    T f, char* buffer, int bufferSize, int glyphLength,
+    T f, char* buffer, size_t bufferSize, size_t glyphLength,
     int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
   assert(glyphLength > 0 && glyphLength <= k_maxFloatGlyphLength);
-  int availableCharLength = std::min(bufferSize - 1, glyphLength);
+  size_t availableCharLength = std::min(bufferSize - 1, glyphLength);
   TextLengths exceptionResult = {.CharLength = bufferSize,
                                  .GlyphLength = glyphLength + 1};
   // TODO: accelerate for f between 0 and 10 ?
   if (std::isinf(f)) {
     // Infinity
-    int requiredCharLength = strlen(Internal::Infinity::Name(f < 0));
+    size_t requiredCharLength = strlen(Internal::Infinity::Name(f < 0));
     TextLengths requiredTextLengths = {.CharLength = requiredCharLength,
                                        .GlyphLength = requiredCharLength};
     if (requiredCharLength > availableCharLength) {
@@ -214,7 +214,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
 
   if (std::isnan(f)) {
     // Nan
-    constexpr int requiredCharLength = k_undefNameLength;
+    constexpr size_t requiredCharLength = k_undefNameLength;
     constexpr TextLengths requiredTextLengths = {
         .CharLength = requiredCharLength, .GlyphLength = requiredCharLength};
     if (requiredCharLength > availableCharLength) {
@@ -381,8 +381,8 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
 
   /* Part III: Sign */
-
-  int numberOfCharsForMantissaWithSign =
+  assert(numberOfCharsForMantissaWithoutSign >= 0);
+  size_t numberOfCharsForMantissaWithSign =
       numberOfCharsForMantissaWithoutSign + (f >= 0 ? 0 : 1);
   if (numberOfCharsForMantissaWithSign > availableCharLength) {
     // Exception 2: we will overflow the buffer
@@ -403,6 +403,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
     numberOfCharExponent++;
     assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   }
+  assert(numberOfCharExponent >= 0);
 
   /* Part V: print mantissa*10^exponent */
 
@@ -410,8 +411,8 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   // Print mantissa
   bool doNotWriteExponent =
       (mode == Preferences::PrintFloatMode::Decimal) || (exponent == 0);
-  int neededNumberOfChars = numberOfCharsForMantissaWithSign;
-  int neededNumberOfGlyphs = numberOfCharsForMantissaWithSign;
+  size_t neededNumberOfChars = numberOfCharsForMantissaWithSign;
+  size_t neededNumberOfGlyphs = numberOfCharsForMantissaWithSign;
   if (!doNotWriteExponent) {
     neededNumberOfChars +=
         UTF8Decoder::CharSizeOfCodePoint(UCodePointLatinLetterSmallCapitalE) +
@@ -432,24 +433,29 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   }
   // Print exponent
   assert(numberOfCharsForMantissaWithSign < bufferSize);
-  int currentNumberOfChar = numberOfCharsForMantissaWithSign;
+  size_t currentNumberOfChar = numberOfCharsForMantissaWithSign;
   currentNumberOfChar += UTF8Decoder::CodePointToChars(
       UCodePointLatinLetterSmallCapitalE, buffer + currentNumberOfChar,
       bufferSize - currentNumberOfChar - 1);
   dividend = Long(exponent);  // reuse dividend as it is not needed anymore
   PrintLongWithDecimalMarker(buffer + currentNumberOfChar, numberOfCharExponent,
                              dividend, -1);
-  buffer[currentNumberOfChar + numberOfCharExponent] = 0;
-  assert(neededNumberOfChars == currentNumberOfChar + numberOfCharExponent);
-  return {.CharLength = currentNumberOfChar + numberOfCharExponent,
-          .GlyphLength =
-              numberOfCharsForMantissaWithSign + 1 + numberOfCharExponent};
+  buffer[currentNumberOfChar + static_cast<size_t>(numberOfCharExponent)] = 0;
+  assert(neededNumberOfChars ==
+         currentNumberOfChar + static_cast<size_t>(numberOfCharExponent));
+
+  return {.CharLength =
+              currentNumberOfChar + static_cast<size_t>(numberOfCharExponent),
+          .GlyphLength = numberOfCharsForMantissaWithSign + 1 +
+                         static_cast<size_t>(numberOfCharExponent)};
 }
 
 template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<float>(
-    float, char*, int, int, int, Preferences::Preferences::PrintFloatMode);
+    float, char*, size_t, size_t, int,
+    Preferences::Preferences::PrintFloatMode);
 template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<double>(
-    double, char*, int, int, int, Preferences::Preferences::PrintFloatMode);
+    double, char*, size_t, size_t, int,
+    Preferences::Preferences::PrintFloatMode);
 template int PrintFloat::SignificantDecimalDigits<float>();
 template int PrintFloat::SignificantDecimalDigits<double>();
 

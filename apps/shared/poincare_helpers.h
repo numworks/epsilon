@@ -26,8 +26,8 @@ inline Poincare::Layout CreateLayout(
 // ===== Serialization =====
 
 template <class T>
-inline int ConvertFloatToText(T d, char* buffer, int bufferSize,
-                              int numberOfSignificantDigits) {
+inline size_t ConvertFloatToText(T d, char* buffer, size_t bufferSize,
+                                 int numberOfSignificantDigits) {
   return Poincare::PrintFloat::ConvertFloatToText(
              d, buffer, bufferSize,
              Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
@@ -38,8 +38,8 @@ inline int ConvertFloatToText(T d, char* buffer, int bufferSize,
 }
 
 template <class T>
-inline int ConvertFloatToTextWithDisplayMode(
-    T d, char* buffer, int bufferSize, int numberOfSignificantDigits,
+inline size_t ConvertFloatToTextWithDisplayMode(
+    T d, char* buffer, size_t bufferSize, int numberOfSignificantDigits,
     Poincare::Preferences::PrintFloatMode displayMode) {
   return Poincare::PrintFloat::ConvertFloatToText(
              d, buffer, bufferSize,

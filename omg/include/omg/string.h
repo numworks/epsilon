@@ -1,11 +1,13 @@
 #ifndef OMG_STRING_H
 #define OMG_STRING_H
 
+#include <stddef.h>
+
 namespace OMG {
 
 // constexpr version of strlen
-constexpr static int StringLength(const char* string) {
-  int result = 0;
+constexpr static size_t StringLength(const char* string) {
+  size_t result = 0;
   while (string[result] != 0) {
     result++;
   }

@@ -225,7 +225,8 @@ UserExpression UserExpression::ParseLatex(const char* latex, Context* context,
   return result;
 }
 
-Expression Expression::Create(const Tree* structure, ContextTrees ctxTrees) {
+UserExpression UserExpression::Create(const Tree* structure,
+                                      ContextTrees ctxTrees) {
   /* Since we build a [NoScopeContext], it is expected that the trees of [ctx]
    * come from UserExpression */
   return Builder(PatternMatching::Create(

@@ -896,7 +896,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     *isCartesianEquation = isUnnamedFunction;
   }
   if (isUnnamedFunction) {
-    result = Expression::Create(
+    result = UserExpression::Create(
         KSub(KA, KB),
         {.KA = leftExpression, .KB = result.cloneChildAtIndex(1)});
     /* Replace all y symbols with UCodePointTemporaryUnknown so that they are

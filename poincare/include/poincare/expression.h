@@ -135,8 +135,8 @@ class Expression : public PoolHandle {
                                    bool addMissingParenthesis = true,
                                    bool parseForAssignment = false);
 
-  static Expression Create(const Internal::Tree* structure,
-                           Internal::ContextTrees ctx);
+  static UserExpression Create(const Internal::Tree* structure,
+                               Internal::ContextTrees ctx);
   static SystemExpression CreateReduce(const Internal::Tree* structure,
                                        Internal::ContextTrees ctx);
   static SystemExpression CreateIntegralOfAbsOfDifference(

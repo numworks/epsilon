@@ -431,8 +431,11 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
     // Created tree must match AnyTrees status of the Placeholder used to match
     assert(context.isAnyTree(tag) ==
            (Placeholder::NodeToFilter(node) != Placeholder::Filter::One));
-    // Created tree must match scope of the Placeholder used to match
-    assert(context.scope(tag) == scope);
+    /* Created tree must match scope of the Placeholder used to match.
+     * This is skipped when the context comes from [NoScopeContext].
+     * This is only useful when manipulating trees that are known to not have
+     * any KVar nodes. (i.e.: UserExpression) */
+    assert(!context.shouldCheckScope() || context.scope(tag) == scope);
     /* AnyTreesPlaceholders trees can only be inserted into simple nArys, even
      * with 1 treesToInsert. */
     assert(!(context.isAnyTree(tag) && !withinNAry));

@@ -225,20 +225,30 @@ UserExpression UserExpression::ParseLatex(const char* latex, Context* context,
   return result;
 }
 
-Expression Expression::CreateWithScope(const Tree* structure, ContextTrees ctx,
-                                       ContextScopes scopes) {
-  Tree* tree = PatternMatching::Create(structure, ctx, scopes);
-  return Builder(tree);
-}
-
-Expression Expression::Create(const Tree* structure, ContextTrees ctx) {
-  return CreateWithScope(structure, ctx, ContextScopes());
+Expression Expression::Create(const Tree* structure, ContextTrees ctxTrees) {
+  /* Since we build a [NoScopeContext], it is expected that the trees of [ctx]
+   * come from UserExpression */
+  return Builder(PatternMatching::Create(
+      structure, PatternMatching::Context::NoScopeContext(ctxTrees)));
 }
 
 SystemExpression SystemExpression::CreateReduce(const Tree* structure,
                                                 ContextTrees ctx) {
   Tree* tree = PatternMatching::CreateSimplify(structure, ctx);
   return Builder(tree);
+}
+
+SystemExpression SystemExpression::CreateIntegralOfAbsOfDifference(
+    SystemExpression lowerBound, SystemExpression upperBound,
+    SystemExpression integrandA, SystemExpression integrandB) {
+  return Builder(
+      PatternMatching::Create(KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
+                              {.KA = KUnknownSymbol,
+                               .KB = lowerBound,
+                               .KC = upperBound,
+                               .KD = integrandA,
+                               .KE = integrandB},
+                              {.KD = 1, .KE = 1}));
 }
 
 // Builders from value.

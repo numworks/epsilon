@@ -107,14 +107,9 @@ SystemExpression AreaBetweenCurvesGraphController::createSumExpression(
   function = FunctionApp::app()->functionStore()->modelForRecord(
       secondSelectedRecord());
   SystemExpression expressionG = function->expressionReduced(context).clone();
-  SystemExpression result = Expression::CreateWithScope(
-      KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
-      {.KA = SymbolHelper::SystemSymbol(),
-       .KB = SystemExpression::Builder<double>(startSum),
-       .KC = SystemExpression::Builder<double>(endSum),
-       .KD = expressionF,
-       .KE = expressionG},
-      {.KD = 1, .KE = 1});
+  SystemExpression result = Expression::CreateIntegralOfAbsOfDifference(
+      SystemExpression::Builder<double>(startSum),
+      SystemExpression::Builder<double>(endSum), expressionF, expressionG);
   return result;
 }
 

@@ -17,7 +17,6 @@
 namespace Poincare::Internal {
 class Tree;
 struct ContextTrees;
-struct ContextScopes;
 // TODO_PCJ: Expose ProjectionContext
 struct ProjectionContext;
 }  // namespace Poincare::Internal
@@ -138,11 +137,11 @@ class Expression : public PoolHandle {
 
   static Expression Create(const Internal::Tree* structure,
                            Internal::ContextTrees ctx);
-  static Expression CreateWithScope(const Internal::Tree* structure,
-                                    Internal::ContextTrees ctx,
-                                    Internal::ContextScopes scopes);
   static SystemExpression CreateReduce(const Internal::Tree* structure,
                                        Internal::ContextTrees ctx);
+  static SystemExpression CreateIntegralOfAbsOfDifference(
+      SystemExpression lowerBound, SystemExpression upperBound,
+      SystemExpression integrandA, SystemExpression integrandB);
   operator const Internal::Tree*() const { return tree(); }
   // Builders from value.
   static SystemExpression Builder(int32_t n);

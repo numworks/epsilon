@@ -58,6 +58,20 @@ class PatternMatching {
 #endif
       }
     }
+    /* This constructor should only be used when the trees contained in [trees]
+     * do not have any [KVar] nodes. This is the case when they can come from
+     * UserExpression */
+    static Context NoScopeContext(const ContextTrees& trees) {
+      Context ctx(trees);
+#if ASSERTIONS
+      for (const Tree* e : ctx.m_array) {
+        assert(!e || e->firstDescendantSatisfying(
+                         [](const Tree* t) { return t->isVar(); }) == nullptr);
+      }
+      ctx.m_checkScope = false;
+#endif
+      return ctx;
+    }
     template <Placeholder::Tag T>
     const Tree* getTree(KPlaceholder<T>) const {
       return getTree(T);
@@ -84,6 +98,9 @@ class PatternMatching {
       return 0;
 #endif
     }
+#if ASSERTIONS
+    bool shouldCheckScope() const { return m_checkScope; }
+#endif
     template <Placeholder::Tag T>
     void setNode(KPlaceholder<T>, const Tree* node, uint8_t numberOfTrees,
                  bool isAnyTree, uint8_t scope = 0) {
@@ -123,6 +140,7 @@ class PatternMatching {
       ContextScopes m_scopes;
       uint8_t m_scopeArray[Placeholder::Tag::NumberOfTags];
     };
+    bool m_checkScope = true;
     static_assert(sizeof(m_scopes) == sizeof(m_scopeArray));
 #endif
   };

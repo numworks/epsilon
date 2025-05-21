@@ -119,7 +119,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char* buffer, int bufferLength,
    * use ('.', '0, '1', '2', ...) are only one char long. */
   for (int k = bufferLength - 1; k >= firstDigitChar; k--) {
     if (k == decimalMarkerPosition) {
-      assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+      static_assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
       buffer[k] = '.';
       continue;
     }
@@ -128,7 +128,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char* buffer, int bufferLength,
       buffer[k] = tempBuffer[--intLength];
       continue;
     }
-    assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
+    static_assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
     buffer[k] = '0';
   }
   if (firstDigitChar == 1) {
@@ -335,7 +335,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
            (numberOfCharsForMantissaWithoutSign > exponentInBase10 + 1 ||
             mode == Preferences::PrintFloatMode::Scientific ||
             mode == Preferences::PrintFloatMode::Engineering)) {
-      assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
+      static_assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
       numberOfCharsForMantissaWithoutSign--;
       dividend = quotient;
       Long::DivisionByTen(dividend, &quotient, &digit);
@@ -357,7 +357,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
       (mode == Preferences::PrintFloatMode::Engineering &&
        (numberOfCharsForMantissaWithoutSign > minimalNumberOfMantissaDigits));
   if (decimalMarker) {
-    assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
+    static_assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
     numberOfCharsForMantissaWithoutSign++;
   }
   if (numberOfCharsForMantissaWithoutSign > availableCharLength) {
@@ -378,7 +378,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   if (f < 0) {
     decimalMarkerPosition++;
   }
-  assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
+  static_assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
 
   /* Part III: Sign */
   assert(numberOfCharsForMantissaWithoutSign >= 0);
@@ -401,13 +401,13 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   if (exponent < 0) {
     // If the exponent is < 0, we need a additional char for the sign
     numberOfCharExponent++;
-    assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
+    static_assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   }
   assert(numberOfCharExponent >= 0);
 
   /* Part V: print mantissa*10^exponent */
 
-  assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
+  static_assert(UTF8Decoder::CharSizeOfCodePoint('-') == 1);
   // Print mantissa
   bool doNotWriteExponent =
       (mode == Preferences::PrintFloatMode::Decimal) || (exponent == 0);

@@ -94,7 +94,7 @@ class PrintFloat {
       size_t engineeringMinimalNumberOfDigits, size_t numberOfDigits) {
     int number = static_cast<int>(engineeringMinimalNumberOfDigits) -
                  static_cast<int>(numberOfDigits);
-    return number > 0 ? size_t(number) : size_t{0};
+    return static_cast<size_t>(number > 0 ? number : 0);
   }
 
  private:

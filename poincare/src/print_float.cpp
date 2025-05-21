@@ -238,8 +238,8 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
    * display of 0.0006 */
   double unroundedMantissa =
       static_cast<double>(f) *
-      std::pow(10.0, (double)(static_cast<int>(numberOfSignificantDigits) - 1 -
-                              exponentInBase10));
+      std::pow(10.0, (static_cast<int>(numberOfSignificantDigits) - 1 -
+                      exponentInBase10));
   // Round mantissa to get the right number of significant digits
   double mantissa = std::round(unroundedMantissa);
 
@@ -329,7 +329,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
     size_t minimumNumberOfCharsInMantissa =
         mode == Preferences::PrintFloatMode::Engineering
             ? minimalNumberOfMantissaDigits
-            : size_t{1};
+            : 1;
     while (digit.isZero() &&
            numberOfCharsForMantissaWithoutSign >
                minimumNumberOfCharsInMantissa &&

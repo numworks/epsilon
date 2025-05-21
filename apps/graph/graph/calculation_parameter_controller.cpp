@@ -201,8 +201,7 @@ bool CalculationParameterController::shouldDisplayIntersectionCell() const {
   ContinuousFunctionStore* store = App::app()->functionStore();
   /* Intersection row is displayed if there is at least two intersectable
    * functions. */
-  return (function()->properties().isCartesian() ||
-          !function()->properties().isEquality()) &&
+  return function()->shouldDisplayIntersections() &&
          store->numberOfIntersectableFunctions() > 1;
 }
 

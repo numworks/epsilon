@@ -94,9 +94,10 @@ QUIZ _CASE(pcj_layout_render) {
 #endif
 
 QUIZ_CASE(pcj_layout_multiplication_symbol) {
-  quiz_assert(MultiplicationSymbol(KMult(2_e, 3_e)) == u'×');
-  quiz_assert(MultiplicationSymbol(KMult(2_e, "a"_e)) == UCodePointNull);
-  quiz_assert(MultiplicationSymbol(KMult(2_e, KCos(π_e), KSqrt(2_e))) == u'·');
+  quiz_assert(MultiplicationSymbol(KMult(2_e, 3_e), false) == u'×');
+  quiz_assert(MultiplicationSymbol(KMult(2_e, "a"_e), false) == UCodePointNull);
+  quiz_assert(MultiplicationSymbol(KMult(2_e, KCos(π_e), KSqrt(2_e)), false) ==
+              u'·');
 }
 
 QUIZ_CASE(pcj_k_matrix_l) {

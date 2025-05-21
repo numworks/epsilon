@@ -278,7 +278,8 @@ CodePoint CodePointForOperatorSymbol(OperatorSymbol symbol) {
  * */
 // clang-format on
 
-OperatorSymbol OperatorSymbolBetween(LayoutShape left, LayoutShape right) {
+OperatorSymbol OperatorSymbolBetween(LayoutShape left, LayoutShape right,
+                                     bool linearMode) {
   if (left == Default || right == Default || right == Brace) {
     return MiddleDot;
   }
@@ -332,14 +333,16 @@ OperatorSymbol OperatorSymbolBetween(LayoutShape left, LayoutShape right) {
         case NthRoot:
           return MiddleDot;
         default:
-          return Empty;
+          /* Forces (a/b)*c to be serialized into a/b×c (instead of a/bc) in
+           * linear mode */
+          return linearMode ? MultiplicationSign : Empty;
       }
     default:
       OMG::unreachable();
   }
 }
 
-CodePoint MultiplicationSymbol(const Tree* mult) {
+CodePoint MultiplicationSymbol(const Tree* mult, bool linearMode) {
   int sign = -1;
   int childrenNumber = mult->numberOfChildren();
   for (int i = 0; i < childrenNumber - 1; i++) {
@@ -352,8 +355,8 @@ CodePoint MultiplicationSymbol(const Tree* mult) {
     if (Units::Unit::IsUnitOrPowerOfUnit(right)) {
       symbol = Units::Unit::IsUnitOrPowerOfUnit(left) ? MiddleDot : Empty;
     } else {
-      symbol =
-          OperatorSymbolBetween(RightLayoutShape(left), LeftLayoutShape(right));
+      symbol = OperatorSymbolBetween(RightLayoutShape(left),
+                                     LeftLayoutShape(right), linearMode);
     }
     sign = std::max(sign, static_cast<int>(symbol));
   }

@@ -461,7 +461,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutInfixOperator(layoutParent, expression,
                           (m_linearMode && !m_compactMode)
                               ? CodePoint(u'×')
-                              : MultiplicationSymbol(expression),
+                              : MultiplicationSymbol(expression, m_linearMode),
                           true);
       break;
     case Type::Pow:

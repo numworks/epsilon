@@ -368,12 +368,15 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("π-15i", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "π-15i", "3.1415926535898-15i",
                       &globalContext, &store);
+  // TODO: ApproximateIsIdenticalToExact would be better.
+  assertCalculationIs("1.234×10^22×i", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Equal, "1.234×10^22×i", "1.234ᴇ22i",
+                      &globalContext, &store);
 
   // Big integers
-  // TODO: Should be DisplayOutput::ExactOnly
   assertCalculationIs(
-      "12340000000000000000000", DisplayOutput::ExactAndApproximateToggle,
-      EqualSign::Equal, "1.234×10^22", "1.234ᴇ22", &globalContext, &store);
+      "12340000000000000000000", DisplayOutput::ApproximateIsIdenticalToExact,
+      EqualSign::Hidden, "1.234×10^22", nullptr, &globalContext, &store);
   assertCalculationIs("1234567890123456789012345678000",
                       DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation,

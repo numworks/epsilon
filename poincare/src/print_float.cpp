@@ -101,7 +101,7 @@ size_t PrintFloat::Long::serialize(char* buffer, size_t bufferSize) const {
   return numberOfChars;
 }
 
-void PrintFloat::PrintLongWithDecimalMarker(char* buffer, int bufferLength,
+void PrintFloat::PrintLongWithDecimalMarker(char* buffer, size_t bufferLength,
                                             Long& i,
                                             int decimalMarkerPosition) {
   /* The decimal marker position is always preceded by a char, thus, it is never
@@ -115,7 +115,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char* buffer, int bufferLength,
   /* We should use the UTF8Decoder to write code points in buffers, but it is
    * much clearer to manipulate chars directly as we know that the code point we
    * use ('.', '0, '1', '2', ...) are only one char long. */
-  for (int k = bufferLength - 1; k >= firstDigitChar; k--) {
+  for (int k = static_cast<int>(bufferLength) - 1; k >= firstDigitChar; k--) {
     if (k == decimalMarkerPosition) {
       static_assert(UTF8Decoder::CharSizeOfCodePoint('.') == 1);
       buffer[k] = '.';
@@ -138,7 +138,7 @@ void PrintFloat::PrintLongWithDecimalMarker(char* buffer, int bufferLength,
 template <class T>
 PrintFloat::TextLengths PrintFloat::ConvertFloatToText(
     T f, char* buffer, size_t bufferSize, size_t glyphLength,
-    int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
+    size_t numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
 
@@ -188,7 +188,7 @@ int PrintFloat::EngineeringExponentFromBase10Exponent(int exponent) {
 template <class T>
 PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
     T f, char* buffer, size_t bufferSize, size_t glyphLength,
-    int numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
+    size_t numberOfSignificantDigits, Preferences::PrintFloatMode mode) {
   assert(numberOfSignificantDigits > 0);
   assert(bufferSize > 0);
   assert(glyphLength > 0 && glyphLength <= k_maxFloatGlyphLength);
@@ -236,9 +236,10 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
    * With doubles, 0.000600000028 * 10^10 = 6000000.2849...
    * This value is then rounded into mantissa = 6000000 which yields a proper
    * display of 0.0006 */
-  double unroundedMantissa = static_cast<double>(f) *
-                             std::pow(10.0, (double)(numberOfSignificantDigits -
-                                                     1 - exponentInBase10));
+  double unroundedMantissa =
+      static_cast<double>(f) *
+      std::pow(10.0, (double)(static_cast<int>(numberOfSignificantDigits) - 1 -
+                              exponentInBase10));
   // Round mantissa to get the right number of significant digits
   double mantissa = std::round(unroundedMantissa);
 
@@ -250,10 +251,10 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
    * small), mantissa is now inf. We handle this case by using logarithm
    * function. */
   if (std::isnan(mantissa) || std::isinf(mantissa)) {
-    mantissa =
-        std::round(std::pow(10, std::log10(std::fabs(f)) +
-                                    static_cast<T>(numberOfSignificantDigits -
-                                                   1 - exponentInBase10)));
+    mantissa = std::round(std::pow(
+        10, std::log10(std::fabs(f)) +
+                static_cast<T>(static_cast<int>(numberOfSignificantDigits) - 1 -
+                               exponentInBase10)));
     mantissa = std::copysign(mantissa, static_cast<double>(f));
   }
   /* We update the exponent in base 10 (if 0.99999999 was rounded to 1 for
@@ -265,12 +266,12 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
    */
   if (f != 0 &&
       OMG::IEEE754<double>::exponentBase10(mantissa) - exponentInBase10 !=
-          numberOfSignificantDigits - 1 - exponentInBase10) {
+          static_cast<int>(numberOfSignificantDigits) - 1 - exponentInBase10) {
     exponentInBase10++;
   }
 
   if (mode == Preferences::PrintFloatMode::Decimal &&
-      exponentInBase10 >= numberOfSignificantDigits) {
+      exponentInBase10 >= static_cast<int>(numberOfSignificantDigits)) {
     /* Exception 1: avoid inventing digits to fill the printed float: when
      * displaying 12345 with 2 significant digis in Decimal mode for instance.
      * This exception is caught by ConvertFloatToText and forces the mode to
@@ -279,15 +280,17 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   }
 
   // Correct the number of digits in mantissa after rounding
-  if (OMG::IEEE754<T>::exponentBase10(mantissa) >= numberOfSignificantDigits) {
+  if (OMG::IEEE754<T>::exponentBase10(mantissa) >=
+      static_cast<int>(numberOfSignificantDigits)) {
     mantissa = mantissa / static_cast<T>(10.0);
   }
 
   // Number of chars for the mantissa
-  int numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
+  size_t numberOfCharsForMantissaWithoutSign = numberOfSignificantDigits;
   if (mode == Preferences::PrintFloatMode::Decimal && exponentInBase10 < 0) {
     // Add |exponentInBase10| to count 0 added before significant digits
-    numberOfCharsForMantissaWithoutSign -= exponentInBase10;
+    numberOfCharsForMantissaWithoutSign +=
+        static_cast<size_t>(-exponentInBase10);
   }
 
   /* The number of digits in a mantissa is capped because the maximal int64_t is
@@ -299,7 +302,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
   Long dividend = Long((int64_t)mantissa);
 
   int exponentForEngineeringNotation = 0;
-  int minimalNumberOfMantissaDigits = 1;
+  size_t minimalNumberOfMantissaDigits = 1;
   bool removeZeroes = true;
 
   if (mode == Preferences::PrintFloatMode::Engineering) {
@@ -307,13 +310,13 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
         EngineeringExponentFromBase10Exponent(exponentInBase10);
     minimalNumberOfMantissaDigits = EngineeringMinimalNumberOfDigits(
         exponentInBase10, exponentForEngineeringNotation);
-    int numberOfZeroesToAdd = EngineeringNumberOfZeroesToAdd(
+    size_t numberOfZeroesToAdd = EngineeringNumberOfZeroesToAdd(
         minimalNumberOfMantissaDigits, numberOfCharsForMantissaWithoutSign);
     if (numberOfZeroesToAdd > 0) {
       removeZeroes = false;
-      assert(numberOfCharsForMantissaWithoutSign - numberOfSignificantDigits <
-             3);
-      for (int i = 0; i < numberOfZeroesToAdd; i++) {
+      assert(numberOfCharsForMantissaWithoutSign <
+             numberOfSignificantDigits + 3);
+      for (size_t i = 0; i < numberOfZeroesToAdd; i++) {
         assert(mantissa < 1000);
         Long::MultiplySmallLongByTen(dividend);
       }
@@ -323,14 +326,15 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
     Long digit;
     Long quotient;
     Long::DivisionByTen(dividend, &quotient, &digit);
-    int minimumNumberOfCharsInMantissa =
+    size_t minimumNumberOfCharsInMantissa =
         mode == Preferences::PrintFloatMode::Engineering
             ? minimalNumberOfMantissaDigits
-            : 1;
+            : size_t{1};
     while (digit.isZero() &&
            numberOfCharsForMantissaWithoutSign >
                minimumNumberOfCharsInMantissa &&
-           (numberOfCharsForMantissaWithoutSign > exponentInBase10 + 1 ||
+           (static_cast<int>(numberOfCharsForMantissaWithoutSign) >
+                exponentInBase10 + 1 ||
             mode == Preferences::PrintFloatMode::Scientific ||
             mode == Preferences::PrintFloatMode::Engineering)) {
       static_assert(UTF8Decoder::CharSizeOfCodePoint('0') == 1);
@@ -351,7 +355,8 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
       (mode == Preferences::PrintFloatMode::Scientific &&
        numberOfCharsForMantissaWithoutSign > 1) ||
       (mode == Preferences::PrintFloatMode::Decimal &&
-       numberOfCharsForMantissaWithoutSign > exponentInBase10 + 1) ||
+       static_cast<int>(numberOfCharsForMantissaWithoutSign) >
+           exponentInBase10 + 1) ||
       (mode == Preferences::PrintFloatMode::Engineering &&
        (numberOfCharsForMantissaWithoutSign > minimalNumberOfMantissaDigits));
   if (decimalMarker) {
@@ -371,7 +376,7 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
     decimalMarkerPosition = 1;
   } else {
     assert(mode == Preferences::PrintFloatMode::Engineering);
-    decimalMarkerPosition = minimalNumberOfMantissaDigits;
+    decimalMarkerPosition = static_cast<int>(minimalNumberOfMantissaDigits);
   }
   if (f < 0) {
     decimalMarkerPosition++;
@@ -449,12 +454,12 @@ PrintFloat::TextLengths PrintFloat::ConvertFloatToTextPrivate(
 }
 
 template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<float>(
-    float, char*, size_t, size_t, int,
+    float, char*, size_t, size_t, size_t,
     Preferences::Preferences::PrintFloatMode);
 template PrintFloat::TextLengths PrintFloat::ConvertFloatToText<double>(
-    double, char*, size_t, size_t, int,
+    double, char*, size_t, size_t, size_t,
     Preferences::Preferences::PrintFloatMode);
-template int PrintFloat::SignificantDecimalDigits<float>();
-template int PrintFloat::SignificantDecimalDigits<double>();
+template size_t PrintFloat::SignificantDecimalDigits<float>();
+template size_t PrintFloat::SignificantDecimalDigits<double>();
 
 }  // namespace Poincare

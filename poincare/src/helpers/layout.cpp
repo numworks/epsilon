@@ -84,4 +84,33 @@ KDSize Point2DSizeGivenChildSize(KDSize childSize) {
   return Point2D::SizeGivenChildSize(childSize);
 }
 
+bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
+  if (!layout->hasChildSatisfying([](const Tree* c) {
+        return CodePointLayout::IsCodePoint(c,
+                                            UCodePointLatinLetterSmallCapitalE);
+      })) {
+    return false;
+  }
+  Tree* result = KRackL()->cloneTree();
+  Tree* addTo = result;
+  for (const Tree* child : layout->children()) {
+    if (CodePointLayout::IsCodePoint(child,
+                                     UCodePointLatinLetterSmallCapitalE)) {
+      assert(result == addTo);
+      NAry::AddOrMergeChild(result, "×10"_l->cloneTree());
+      if (linear) {
+        NAry::AddOrMergeChild(result, "^"_l->cloneTree());
+      } else {
+        Tree* pow = KSuperscriptL->cloneNode();
+        addTo = KRackL()->cloneTree();
+        NAry::AddChild(result, pow);
+      }
+      continue;
+    }
+    NAry::AddChild(addTo, child->cloneTree());
+  }
+  layout->moveTreeOverTree(result);
+  return true;
+}
+
 }  // namespace Poincare::LayoutHelpers

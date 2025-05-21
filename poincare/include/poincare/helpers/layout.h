@@ -21,6 +21,9 @@ bool IsSanitizedRack(const Internal::Tree* rack);
 
 KDSize Point2DSizeGivenChildSize(KDSize childSize);
 
+// Turn 2E3 into 2×10^3. TODO: this should be a setting of the layouter
+bool TurnEToTenPowerLayout(Internal::Tree* layout, bool linear = false);
+
 }  // namespace Poincare::LayoutHelpers
 
 #endif

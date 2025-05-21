@@ -757,11 +757,11 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
          .symbolicComputation = SymbolicComputation::KeepAllSymbols},
         &reductionFailure);
     if (reductionFailure) {
-      result = SystemExpression::Create(KFailedSimplification, {});
+      result = SystemExpression::Builder(KFailedSimplification);
     }
     assert(!result.isUninitialized());
   } else {
-    result = SystemExpression::Create(KUndef, {});
+    result = SystemExpression::Builder(KUndef);
   }
   /* TODO_PCJ: equation and result used to be a same Expression at this step.
    * Ensure this pool usage regression of still having equation in the pool is

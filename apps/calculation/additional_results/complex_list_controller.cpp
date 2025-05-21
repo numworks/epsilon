@@ -34,16 +34,15 @@ void ComplexListController::computeAdditionalResults(
   constexpr KTree k_symbol = "z"_e;
   size_t index = 0;
   ctx.m_complexFormat = complexFormToDisplay();
-  setLineAtIndex(index++, UserExpression::Create(k_symbol, {}), exactOutput,
-                 &ctx);
+  setLineAtIndex(index++, UserExpression::Builder(k_symbol), exactOutput, &ctx);
   ctx.m_complexFormat = Preferences::ComplexFormat::Cartesian;
-  setLineAtIndex(index++, UserExpression::Create(KAbs(k_symbol), {}),
+  setLineAtIndex(index++, UserExpression::Builder(KAbs(k_symbol)),
                  UserExpression::Create(KAbs(KA), {.KA = exactOutput}), &ctx);
-  setLineAtIndex(index++, UserExpression::Create(KArg(k_symbol), {}),
+  setLineAtIndex(index++, UserExpression::Builder(KArg(k_symbol)),
                  UserExpression::Create(KArg(KA), {.KA = exactOutput}), &ctx);
-  setLineAtIndex(index++, UserExpression::Create(KRe(k_symbol), {}),
+  setLineAtIndex(index++, UserExpression::Builder(KRe(k_symbol)),
                  UserExpression::Create(KRe(KA), {.KA = exactOutput}), &ctx);
-  setLineAtIndex(index++, UserExpression::Create(KIm(k_symbol), {}),
+  setLineAtIndex(index++, UserExpression::Builder(KIm(k_symbol)),
                  UserExpression::Create(KIm(KA), {.KA = exactOutput}), &ctx);
 
   // Set Complex illustration

@@ -112,7 +112,7 @@ SystemExpression ExpressionModel::expressionReduced(
            .updateComplexFormatWithExpression = false},
           &reductionFailure);
       if (reductionFailure) {
-        m_expression = SystemExpression::Create(KFailedSimplification, {});
+        m_expression = SystemExpression::Builder(KFailedSimplification);
       }
       /* TODO_PCJ not the appropriate place but sequences use their
        * expressionReduced to approximate directly */

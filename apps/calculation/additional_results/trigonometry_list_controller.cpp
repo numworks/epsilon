@@ -58,11 +58,11 @@ void TrigonometryListController::computeAdditionalResults(
       &ctx);
 
   constexpr KTree k_symbol = "θ"_e;
-  setLineAtIndex(++index, UserExpression::Create(KCos(k_symbol), {}),
+  setLineAtIndex(++index, UserExpression::Builder(KCos(k_symbol)),
                  UserExpression::Create(KCos(KA), {.KA = exactAngle}), &ctx);
-  setLineAtIndex(++index, UserExpression::Create(KSin(k_symbol), {}),
+  setLineAtIndex(++index, UserExpression::Builder(KSin(k_symbol)),
                  UserExpression::Create(KSin(KA), {.KA = exactAngle}), &ctx);
-  setLineAtIndex(++index, UserExpression::Create(KTan(k_symbol), {}),
+  setLineAtIndex(++index, UserExpression::Builder(KTan(k_symbol)),
                  UserExpression::Create(KTan(KA), {.KA = exactAngle}), &ctx);
 
   /* Set illustration */

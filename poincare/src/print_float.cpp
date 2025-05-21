@@ -70,12 +70,10 @@ void PrintFloat::Long::MultiplySmallLongByTen(Long& smallLong) {
 }
 
 size_t PrintFloat::Long::serialize(char* buffer, size_t bufferSize) const {
-  if (bufferSize == 0) {
-    return bufferSize - 1;
-  }
+  assert(bufferSize > 0);
   if (bufferSize == 1) {
     buffer[0] = 0;
-    return bufferSize - 1;
+    return 0;
   }
   size_t numberOfChars = 0;
   if (m_negative) {

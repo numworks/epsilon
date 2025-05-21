@@ -232,7 +232,8 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
   // Hide exact output layout if identical to approximate or input
   if (CanDisplayExact(m_displayOutput) &&
       CanDisplayApproximate(m_displayOutput)) {
-    if (exactOutput.isIdenticalTo(approximateOutput)) {
+    if (exactOutput.isIdenticalTo(approximateOutput) ||
+        exactOutput.isSameScientificNotationAs(approximateOutput, false)) {
       forceDisplayOutput(DisplayOutput::ApproximateIsIdenticalToExact);
     } else if ((m_displayOutput != DisplayOutput::ExactAndApproximateToggle) &&
                exactOutput.isIdenticalTo(createInputLayout(context))) {

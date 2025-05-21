@@ -142,6 +142,9 @@ class Layout final : public PoolHandle {
 
   // True if rack with only code points in it
   bool isCodePointsString() const;
+
+  // Return true if both layout match with same digits : 1.234*10^(4) == 1.234E4
+  bool isSameScientificNotationAs(Layout approximation, bool linear) const;
 };
 
 }  // namespace Poincare

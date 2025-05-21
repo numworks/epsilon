@@ -215,4 +215,16 @@ bool Layout::isCodePointsString() const {
   return true;
 }
 
+bool Layout::isSameScientificNotationAs(Layout approximation,
+                                        bool linear) const {
+  assert(linear || !tree()->hasChildSatisfying([](const Internal::Tree* c) {
+    return Internal::CodePointLayout::IsCodePoint(c, '^');
+  }));
+  Internal::Tree* approx = approximation.tree()->cloneTree();
+  bool result = LayoutHelpers::TurnEToTenPowerLayout(approx, linear) &&
+                tree()->treeIsIdenticalTo(approx);
+  approx->removeTree();
+  return result;
+}
+
 }  // namespace Poincare

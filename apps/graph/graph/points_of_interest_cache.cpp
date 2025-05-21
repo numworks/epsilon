@@ -316,13 +316,14 @@ PointOfInterest findIntersections(void* searchContext) {
             ctx->store->modelForRecord(ctx->otherRecord);
         bool gIsStrict = Poincare::ComparisonJunior::IsStrict(
             g->properties().equationType());
+        assert(solution.interest() == Solver<double>::Interest::Intersection);
         return {
             solution.x(),
             solution.y(),
             static_cast<uint32_t>(ctx->otherRecord),
             fIsStrict || gIsStrict
                 ? Solver<double>::Interest::UnreachedIntersection
-                : solution.interest(),
+                : Solver<double>::Interest::Intersection,
             alongY,
             0,
         };

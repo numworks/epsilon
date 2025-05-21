@@ -201,7 +201,7 @@ class PatternMatching {
    * and local pattern will be Mult(1). */
   class MatchContext {
    public:
-    enum Filter {
+    enum Limit {
       GlobalSource,
       LocalSource,
       GlobalPattern,
@@ -209,8 +209,8 @@ class PatternMatching {
     };
     MatchContext(const Tree* source, const Tree* pattern,
                  uint8_t baseScope = 0);
-    bool reachedLimit(const Tree* node, Filter whichLimit) const {
-      return ReachedLimit(node, getEnd(whichLimit));
+    bool reachedLimit(const Tree* node, Limit limit) const {
+      return ReachedLimit(node, getEnd(limit));
     }
     // Return the number of siblings right of node in local context.
     int remainingLocalTrees(const Tree* node) const;
@@ -223,8 +223,8 @@ class PatternMatching {
 #endif
 
    private:
-    const Block* getEnd(Filter filter) const {
-      switch (filter) {
+    const Block* getEnd(Limit limit) const {
+      switch (limit) {
         case GlobalSource:
           return m_globalSourceEnd;
         case LocalSource:

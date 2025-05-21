@@ -26,4 +26,11 @@ QUIZ_CASE(pcj_expression_serialization) {
   assert_expression_serializes_to(
       Poincare::SystemExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "2π/3",
       true);
+  assert_expression_serializes_to(
+      Poincare::SystemExpression::Builder(KMult(KDiv(π_e, 2_e), e_e)), "π/2×e",
+      false);
+  // TODO: this looks wrong, a special case is needed for this
+  assert_expression_serializes_to(
+      Poincare::SystemExpression::Builder(KMult(KDiv(π_e, 2_e), e_e)), "π/2e",
+      true);
 }

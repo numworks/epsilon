@@ -6,6 +6,7 @@
 
 #include "plot_controller.h"
 #include "poincare/k_tree.h"
+#include "poincare/src/expression/projection.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -16,12 +17,14 @@ namespace Statistics {
 
 ExpressionOrFloat LabeledAxisWithOptionalPercent::tickStep(
     const Shared::AbstractPlotView* plotView, OMG::Axis axis) const {
-  return ExpressionOrFloat(SystemExpression::CreateReduce(
-      KMult(KA, KB),
-      {.KA = PlotPolicy::VerticalLabeledAxis::tickStep(plotView, axis)
-                 .expression(),
-       .KB = SystemExpression::Builder(
-           m_plotController->labelStepMultiplicator(axis))}));
+  return ExpressionOrFloat(
+      UserExpression::Create(
+          KMult(KA, KB),
+          {.KA = PlotPolicy::VerticalLabeledAxis::tickStep(plotView, axis)
+                     .expression(),
+           .KB = SystemExpression::Builder(
+               m_plotController->labelStepMultiplicator(axis))})
+          .cloneAndTrySimplify({}));
 }
 
 int LabeledAxisWithOptionalPercent::computeLabel(

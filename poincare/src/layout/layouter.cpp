@@ -451,10 +451,11 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     }
     case Type::Mult:
-      layoutInfixOperator(
-          layoutParent, expression,
-          m_linearMode ? CodePoint(u'×') : MultiplicationSymbol(expression),
-          true);
+      layoutInfixOperator(layoutParent, expression,
+                          (m_linearMode && !m_compactMode)
+                              ? CodePoint(u'×')
+                              : MultiplicationSymbol(expression),
+                          true);
       break;
     case Type::Pow:
     case Type::Div:

@@ -557,6 +557,8 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
   Ion::Storage::Record selectedRec = selectedRecord();
   ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(selectedRec);
+  bool isStrictInequality = f->properties().isStrictInequality();
+
   if (!f->properties().isCartesian() ||
       functionWasInterrupted(
           functionStore()->indexOfRecordAmongActiveRecords(selectedRec))) {
@@ -625,6 +627,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
     }
 
     bool isRing =
+        isStrictInequality ||
         p.interest == Solver<double>::Interest::UnreachedDiscontinuity ||
         p.interest == Solver<double>::Interest::UnreachedIntersection;
 

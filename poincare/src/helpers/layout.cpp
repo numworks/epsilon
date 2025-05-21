@@ -107,6 +107,18 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
       }
       continue;
     }
+    /* TODO: 2*10^50*i is currently laid out as 2ᴇ50i. A similar issue probably
+     * arises with any following node. Non-digit following nodes are therefore
+     * handled here.
+     * TODO: A multiplication operator should be added. */
+    if (result != addTo &&
+        !(child->isCodePointLayout() &&
+          (CodePointLayout::GetCodePoint(child).isDecimalDigit() ||
+           (addTo->numberOfChildren() == 0 &&
+            CodePointLayout::IsCodePoint(child, '-'))))) {
+      // Only add '-' and numbers to the superscript
+      addTo = result;
+    }
     NAry::AddChild(addTo, child->cloneTree());
   }
   layout->moveTreeOverTree(result);

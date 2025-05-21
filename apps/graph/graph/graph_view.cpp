@@ -605,7 +605,6 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
       // Redraw curve and cursor without any interest point
       drawRect(ctx, rect);
       if (cursorView()) {
-        cursorView()->setHighlighted(false);
         static_cast<MemoizedCursorView*>(cursorView())
             ->redrawCursor(rect.translatedBy(absoluteOrigin()));
       }

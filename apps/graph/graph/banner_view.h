@@ -29,8 +29,8 @@ class BannerView : public Shared::XYBannerView {
   BannerBufferTextView* aView() { return &m_aView; }
   BannerBufferTextView* bView() { return &m_bView; }
   int numberOfInterestMessages() const;
-  void addInterestMessage(I18n::Message message, Shared::CursorView* cursor);
-  void emptyInterestMessages(Shared::CursorView* cursor);
+  void addInterestMessage(I18n::Message message);
+  void emptyInterestMessages();
   void setDisplayParameters(DisplayParameters displayParameters);
   bool showFirstDerivative() const {
     return m_displayParameters.showFirstDerivative;

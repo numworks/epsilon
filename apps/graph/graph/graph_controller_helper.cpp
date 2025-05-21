@@ -27,7 +27,6 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
   double tMin = function->tMin();
   double tMax = function->tMax();
   int functionsCount = -1;
-  bannerView()->emptyInterestMessages(graphView()->cursorView());
 
   if (((direction.isRight() && std::abs(tCursor - tMax) < DBL_EPSILON) ||
        (direction.isLeft() && std::abs(tCursor - tMin) < DBL_EPSILON)) &&

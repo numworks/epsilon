@@ -23,21 +23,18 @@ BannerView::BannerView(Responder* parentResponder,
   }
 }
 
-void BannerView::addInterestMessage(I18n::Message message,
-                                    Shared::CursorView* cursor) {
+void BannerView::addInterestMessage(I18n::Message message) {
   int n = numberOfInterestMessages();
   if (n == k_maxNumberOfInterests) {
     return;
   }
   m_interestMessageView[n].setMessage(message);
-  cursor->setHighlighted(true);
 }
 
-void BannerView::emptyInterestMessages(Shared::CursorView* cursor) {
+void BannerView::emptyInterestMessages() {
   for (int i = 0; i < k_maxNumberOfInterests; i++) {
     m_interestMessageView[i].setMessage(I18n::Message::Default);
   }
-  cursor->setHighlighted(false);
 }
 
 void BannerView::setDisplayParameters(DisplayParameters displayParameters) {

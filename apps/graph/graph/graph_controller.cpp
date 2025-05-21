@@ -536,51 +536,48 @@ void GraphController::reloadBannerViewForCursorOnFunction(
   ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
   PointsOfInterestCache* pointsOfInterest = pointsOfInterestForRecord(record);
-  bannerView()->emptyInterestMessages(&m_cursorView);
+  bannerView()->emptyInterestMessages();
   /* The interests are sorted from most important to lowest, in case there is
    * not enough space on the banner to display all of them. */
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
           cursorX, cursorY, Solver<double>::Interest::LocalMinimum)) {
     assert(!function->isAlongY());
-    bannerView()->addInterestMessage(I18n::Message::Minimum, &m_cursorView);
+    bannerView()->addInterestMessage(I18n::Message::Minimum);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
           cursorX, cursorY, Solver<double>::Interest::LocalMaximum)) {
     assert(!function->isAlongY());
-    bannerView()->addInterestMessage(I18n::Message::Maximum, &m_cursorView);
+    bannerView()->addInterestMessage(I18n::Message::Maximum);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
           cursorX, cursorY, Solver<double>::Interest::Intersection)) {
-    bannerView()->addInterestMessage(I18n::Message::Intersection,
-                                     &m_cursorView);
+    bannerView()->addInterestMessage(I18n::Message::Intersection);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
           cursorX, cursorY, Solver<double>::Interest::Root)) {
     bannerView()->addInterestMessage(
         function->isAlongY() ? I18n::Message::LineYInterceptDescription
-                             : I18n::Message::Zero,
-        &m_cursorView);
+                             : I18n::Message::Zero);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
           cursorX, cursorY, Solver<double>::Interest::YIntercept)) {
     bannerView()->addInterestMessage(
         function->isAlongY() ? I18n::Message::Zero
-                             : I18n::Message::LineYInterceptDescription,
-        &m_cursorView);
+                             : I18n::Message::LineYInterceptDescription);
   }
   if (pointsOfInterest->hasDisplayableInterestAtCoordinates(
           cursorX, cursorY, Solver<double>::Interest::UnreachedDiscontinuity)) {
     // Display undef in banner view
     cursorY = NAN;
-    bannerView()->addInterestMessage(I18n::Message::Discontinuity,
-                                     &m_cursorView);
+    bannerView()->addInterestMessage(I18n::Message::Discontinuity);
   }
+  bool hasInterest = bannerView()->numberOfInterestMessages() > 0;
+  m_cursorView.setHighlighted(hasInterest);
 
   /* Cap number of significant digits for point of interest to be consistent
    * with CalculationGraphController */
   cappedNumberOfSignificantDigits =
-      cappedNumberOfSignificantDigits ||
-      bannerView()->numberOfInterestMessages() > 0;
+      cappedNumberOfSignificantDigits || hasInterest;
   FunctionGraphController::reloadBannerViewForCursorOnFunction(
       cursorT, cursorX, cursorY, record, functionStore, context,
       cappedNumberOfSignificantDigits);

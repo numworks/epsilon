@@ -175,34 +175,23 @@ void CalculationParameterController::fillAreaCell() {
 
 void CalculationParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
+  ContinuousFunctionProperties properties = function()->properties();
+  bool isEquality = properties.isEquality();
   assert(function()->canDisplayDerivative() ||
-         !function()->properties().isEquality());
+         (!isEquality && shouldDisplayIntersectionCell()));
   selectRow(0);
-  if (!function()->properties().isEquality()) {
-    m_intersectionCell.setVisible(true);
-    m_tangentCell.setVisible(false);
-    m_preimageCell.setVisible(false);
-    m_maximumCell.setVisible(false);
-    m_minimumCell.setVisible(false);
-    m_rootCell.setVisible(false);
-    m_slopeCell.setVisible(false);
-    m_integralCell.setVisible(false);
-    m_areaCell.setVisible(false);
-    m_selectableListView.resetSizeAndOffsetMemoization();
-    return;
-  }
-  m_tangentCell.setVisible(true);
-  bool isCartesian = function()->properties().isCartesian();
-  assert(isCartesian || function()->properties().isPolar() ||
-         function()->properties().isParametric());
-  m_preimageCell.setVisible(isCartesian);
+  bool isCartesian = properties.isCartesian();
+  bool isCartesianEquality = isCartesian && isEquality;
+  assert(isCartesian || properties.isPolar() || properties.isParametric());
+  m_tangentCell.setVisible(isEquality);
+  m_preimageCell.setVisible(isCartesianEquality);
   m_intersectionCell.setVisible(shouldDisplayIntersectionCell());
-  m_maximumCell.setVisible(isCartesian);
-  m_minimumCell.setVisible(isCartesian);
-  m_rootCell.setVisible(isCartesian);
-  m_slopeCell.setVisible(!isCartesian);
-  m_integralCell.setVisible(isCartesian);
-  m_areaCell.setVisible(shouldDisplayAreaCell());
+  m_maximumCell.setVisible(isCartesianEquality);
+  m_minimumCell.setVisible(isCartesianEquality);
+  m_rootCell.setVisible(isCartesianEquality);
+  m_slopeCell.setVisible(!isCartesian && isEquality);
+  m_integralCell.setVisible(isCartesianEquality);
+  m_areaCell.setVisible(shouldDisplayAreaCell() && isEquality);
   m_selectableListView.resetSizeAndOffsetMemoization();
 }
 
@@ -212,7 +201,8 @@ bool CalculationParameterController::shouldDisplayIntersectionCell() const {
   ContinuousFunctionStore* store = App::app()->functionStore();
   /* Intersection row is displayed if there is at least two intersectable
    * functions. */
-  return function()->properties().isCartesian() &&
+  return (function()->properties().isCartesian() ||
+          !function()->properties().isEquality()) &&
          store->numberOfIntersectableFunctions() > 1;
 }
 

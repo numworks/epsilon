@@ -54,22 +54,22 @@ void Sequence::setType(Type t) {
   switch (t) {
     case Type::Explicit:
       error = setExpressionContent(UserExpression());
-      setFirstInitialConditionContent(Poincare::Layout(), nullptr);
-      setSecondInitialConditionContent(Poincare::Layout(), nullptr);
+      setFirstInitialConditionContent(Layout(), nullptr);
+      setSecondInitialConditionContent(Layout(), nullptr);
       break;
     case Type::SingleRecurrence: {
-      error = setExpressionContent(Poincare::SymbolHelper::BuildSequence(
+      error = setExpressionContent(SymbolHelper::BuildSequence(
           name, UserExpression::Builder(KUnknownSymbol)));
       setFirstInitialConditionContent("1"_l, nullptr);
-      setSecondInitialConditionContent(Poincare::Layout(), nullptr);
+      setSecondInitialConditionContent(Layout(), nullptr);
       break;
     }
     case Type::DoubleRecurrence: {
-      error = setExpressionContent(Poincare::UserExpression::Create(
+      error = setExpressionContent(UserExpression::Create(
           KAdd(KA, KB),
-          {.KA = Poincare::SymbolHelper::BuildSequence(
+          {.KA = SymbolHelper::BuildSequence(
                name, UserExpression::Builder(KAdd(KUnknownSymbol, 1_e))),
-           .KB = Poincare::SymbolHelper::BuildSequence(
+           .KB = SymbolHelper::BuildSequence(
                name, UserExpression::Builder(KUnknownSymbol))}));
       setFirstInitialConditionContent("1"_l, nullptr);
       setSecondInitialConditionContent("1"_l, nullptr);
@@ -116,7 +116,7 @@ Layout Sequence::aggregatedLayout() {
 }
 
 Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
-    Poincare::Layout l, Poincare::Context* ctx) {
+    Layout l, Context* ctx) {
   assert(l.tree()->isRackLayout());
   if (l.tree()->child(0)->isSequenceLayout()) {
     const Internal::Grid* grid = Internal::Grid::From(l.tree()->child(0));
@@ -206,7 +206,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
   char buffer[bufferSize];
   name(buffer, bufferSize);
   // TODO_PCJ: used SymbolicComputation::ReplaceDefinedSymbols
-  return Poincare::Internal::Sequence::MainExpressionContainsForbiddenTerms(
+  return Internal::Sequence::MainExpressionContainsForbiddenTerms(
       expressionClone().tree(), buffer, type(), initialRank(),
       recursionIsAllowed, systemSymbolIsAllowed, otherSequencesAreAllowed);
 }

@@ -128,8 +128,10 @@ void process_tree_and_compare(const char* input, const char* output,
   }
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
-    int expectedMetric = Metric::GetMetric(expected);
-    int expressionMetric = Metric::GetMetric(expression);
+    int expectedMetric =
+        Metric::GetMetric(expected, projectionContext.m_reductionTarget);
+    int expressionMetric =
+        Metric::GetMetric(expression, projectionContext.m_reductionTarget);
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];
     serialize_expression(expression, buffer, bufferSize);

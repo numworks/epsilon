@@ -3,6 +3,8 @@
 
 #include <poincare/src/memory/tree.h>
 
+#include "context.h"
+
 #define USE_TREE_SIZE_METRIC 0
 
 namespace Poincare::Internal {
@@ -14,19 +16,19 @@ class Metric {
  public:
 #if USE_TREE_SIZE_METRIC
   // Metric of given tree. The smaller is the better.
-  static int GetMetric(const Tree* e) {
+  static int GetMetric(const Tree* e, ReductionTarget reductionTarget) {
     return (e->isDep() ? e->child(0) : e)->treeSize();
   }
 
 #else
   /* Return a metric evaluating [e] complexity: the smaller the metric, the
    * simpler the tree. */
-  static int GetTrueMetric(const Tree* e);
+  static int GetTrueMetric(const Tree* e, ReductionTarget reductionTarget);
   /* Usually return [GetTrueMetric] result.
    * If a metric of [k_perfectMetric] is returned, it means that any equivalent
    * tree to [e] will have a worst metric, this is decided by
    * [CannotBeReducedFurther] */
-  static int GetMetric(const Tree* e);
+  static int GetMetric(const Tree* e, ReductionTarget reductionTarget);
   /* Return [true] when any equivalent tree to [e] can be considered to have a
    * worst metric than [e]. */
   static bool CannotBeReducedFurther(const Tree* e);

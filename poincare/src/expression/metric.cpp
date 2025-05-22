@@ -34,7 +34,7 @@ int ChildrenCoeffLn(ComplexSign sign) {
     // Increase cost of real negative children in roots
     childrenCoeff = 4;
   } else if (!sign.isReal()) {
-    // Increase cost of non-real chlidren even more
+    // Increase cost of non-real children even more
     childrenCoeff = 8;
   }
   return childrenCoeff;
@@ -42,7 +42,7 @@ int ChildrenCoeffLn(ComplexSign sign) {
 
 }  // namespace
 
-int Metric::GetTrueMetric(const Tree* e) {
+int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
   int result = GetMetric(e->type());
   /* Some functions must have the smallest children possible, so we increase the
    * cost of all children inside the parent expression with a coefficient. */
@@ -115,12 +115,12 @@ int Metric::GetTrueMetric(const Tree* e) {
         Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
         if (!exponent->isHalf()) {
           // Ignore cost of exponent for squareroot
-          result += GetTrueMetric(exponent);
+          result += GetTrueMetric(exponent, reductionTarget);
         }
         exponent->removeTree();
         const Tree* base = ctx.getTree(KB);
         childrenCoeff = ChildrenCoeffLn(GetComplexSign(base));
-        return result + GetTrueMetric(base) * childrenCoeff;
+        return result + GetTrueMetric(base, reductionTarget) * childrenCoeff;
       }
       break;
     }
@@ -133,7 +133,7 @@ int Metric::GetTrueMetric(const Tree* e) {
       break;
     }
     case Type::Dep:
-      return result + GetTrueMetric(Dependency::Main(e));
+      return result + GetTrueMetric(Dependency::Main(e), reductionTarget);
     case Type::Trig:
     case Type::ATrig: {
       // cos(A*i) is beautified into cosh(A)
@@ -145,7 +145,8 @@ int Metric::GetTrueMetric(const Tree* e) {
       }
       childrenCoeff = 2;
       // Ignore second child
-      return result + GetTrueMetric(e->child(0)) * childrenCoeff;
+      return result +
+             GetTrueMetric(e->child(0), reductionTarget) * childrenCoeff;
     }
     case Type::Ln: {
       childrenCoeff = ChildrenCoeffLn(GetComplexSign(e->child(0)));
@@ -189,16 +190,16 @@ int Metric::GetTrueMetric(const Tree* e) {
       break;
   }
   for (const Tree* child : e->children()) {
-    result += GetTrueMetric(child) * childrenCoeff;
+    result += GetTrueMetric(child, reductionTarget) * childrenCoeff;
   }
   return result;
 }
 
-int Metric::GetMetric(const Tree* e) {
+int Metric::GetMetric(const Tree* e, ReductionTarget reductionTarget) {
   if (CannotBeReducedFurther(e)) {
     return k_perfectMetric;
   }
-  int metric = GetTrueMetric(e);
+  int metric = GetTrueMetric(e, reductionTarget);
   assert(metric != k_perfectMetric);
   /* INT_MAX in case of overflow
    * NOTE this does not completely prevent overflows as we could circle back

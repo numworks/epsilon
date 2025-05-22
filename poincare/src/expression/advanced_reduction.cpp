@@ -58,7 +58,8 @@ void LogExpression(const Tree* e, bool displayDependencies = false) {
 
 #endif
 
-AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
+AdvancedReduction::Path AdvancedReduction::FindBestReduction(
+    const Tree* e, ReductionTarget reductionTarget) {
   /* The advanced reduction is capped in depth by Path::k_size and in breadth by
    * CrcCollection::k_size. If this limit is reached, no further possibilities
    * will be explored.
@@ -66,8 +67,8 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
    * expression could yield different results if limits have been reached. */
 
   Tree* editedExpression = e->cloneTree();
-  Context ctx(editedExpression, e, Metric::GetMetric(e),
-              CrcCollection::AdvancedHash(e));
+  Context ctx(editedExpression, e, Metric::GetMetric(e, reductionTarget),
+              CrcCollection::AdvancedHash(e), reductionTarget);
   // Add initial root
   ctx.m_crcCollection.add(CrcCollection::AdvancedHash(e), 0);
 #if VERBOSE_REDUCTION >= 1
@@ -86,7 +87,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(const Tree* e) {
   return std::move(ctx.m_bestPath);
 }
 
-bool AdvancedReduction::Reduce(Tree* e) {
+bool AdvancedReduction::Reduce(Tree* e, ReductionTarget reductionTarget) {
 #if POINCARE_NO_ADVANCED_REDUCTION
   return false;
 #endif
@@ -100,18 +101,19 @@ bool AdvancedReduction::Reduce(Tree* e) {
              [](const Tree* e) { return e->isRandomized(); }));
 
   if (!(e->isList())) {
-    return ReduceIndependantElement(e);
+    return ReduceIndependantElement(e, reductionTarget);
   }
   bool changed = false;
   for (Tree* child : e->children()) {
-    changed = ReduceIndependantElement(child) || changed;
+    changed = ReduceIndependantElement(child, reductionTarget) || changed;
   }
   return changed;
 }
 
-bool AdvancedReduction::ReduceIndependantElement(Tree* e) {
+bool AdvancedReduction::ReduceIndependantElement(
+    Tree* e, ReductionTarget reductionTarget) {
   Path best_path{};
-  ExceptionTry { best_path = FindBestReduction(e); }
+  ExceptionTry { best_path = FindBestReduction(e, reductionTarget); }
   ExceptionCatch(type) {
     if (!(type == ExceptionType::TreeStackOverflow ||
           type == ExceptionType::IntegerOverflow)) {
@@ -388,7 +390,7 @@ void inline AdvancedReduction::Context::resetIfNeeded() {
 void AdvancedReduction::UpdateBestMetric(Context* ctx) {
   // Otherwise, root should be reset to current path.
   assert(!ctx->m_mustResetRoot);
-  int metric = Metric::GetMetric(ctx->m_root);
+  int metric = Metric::GetMetric(ctx->m_root, ctx->m_reductionTarget);
   if (metric == Metric::k_perfectMetric) {
     ctx->m_bestMetric = Metric::k_perfectMetric;
     ctx->m_bestPath = ctx->m_path;

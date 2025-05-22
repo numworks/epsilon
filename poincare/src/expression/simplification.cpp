@@ -207,9 +207,8 @@ bool ReduceSystem(Tree* e, bool advanced, ReductionTarget reductionTarget) {
   changed = List::BubbleUp(e, SystematicReduction::ShallowReduce) || changed;
 #endif
   if (advanced) {
-    changed = AdvancedReduction::Reduce(e) || changed;
+    changed = AdvancedReduction::Reduce(e, reductionTarget) || changed;
   }
-  // TODO: Also handle ReductionTarget::SystemForApproximation
   if (reductionTarget == ReductionTarget::SystemForAnalysis) {
     changed = AdvancedReduction::DeepExpandAlgebraic(e) || changed;
   }

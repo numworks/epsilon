@@ -197,14 +197,18 @@ void assert_parsed_expression_simplify_to(
     ReductionTarget target, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat,
-    SymbolicComputation symbolicComputation) {
+    SymbolicComputation symbolicComputation, bool beautify) {
   Shared::GlobalContext globalContext;
+  // TODO_PCJ also approximate to see if it crashes
   assert_parsed_expression_process_to(
       expression, simplifiedExpression, &globalContext, target, complexFormat,
       angleUnit, unitFormat, symbolicComputation,
+      beautify ?
       [](Tree *e, Internal::ProjectionContext &projCtx) {
-        simplify(e, projCtx);
-        // TODO_PCJ also approximate to see if it crashes
+        simplify(e, projCtx, true);
+        return e;
+      } :[](Tree *e, Internal::ProjectionContext &projCtx) {
+        simplify(e, projCtx, false);
         return e;
       });
 }
@@ -218,8 +222,8 @@ void assert_expression_approximates_to(const char *expression,
                                        int numberOfSignificantDigits) {
   Shared::GlobalContext globalContext;
   assert_parsed_expression_process_to(
-      expression, approximation, &globalContext, SystemForApproximation,
-      complexFormat, angleUnit, unitFormat, ReplaceAllSymbols,
+      expression, approximation, &globalContext, User, complexFormat, angleUnit,
+      unitFormat, ReplaceAllSymbols,
       [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
         /* tree is projected beforehand so we can prepare it for
          * approximation, and have better results on integrals for example. */
@@ -275,7 +279,12 @@ void assert_expression_simplifies_approximates_to(
             Internal::Approximation::Context(projCtx.m_angleUnit,
                                              projCtx.m_complexFormat,
                                              projCtx.m_context));
+        /* Expression may have been reduced in another target, but it has been
+         * approximated in the meantime. */
+        ReductionTarget previousReductionTarget = projCtx.m_reductionTarget;
+        projCtx.m_reductionTarget = User;
         Beautification::DeepBeautify(result, projCtx);
+        projCtx.m_reductionTarget = previousReductionTarget;
         e->removeTree();
         return result;
       },

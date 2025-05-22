@@ -101,9 +101,9 @@ QUIZ_CASE(poincare_dependency_multiplication) {
   // Dependency is properly reduced even when containing symbols
   assert_parsed_expression_simplify_to("0x^arcsin(π)",
                                        "dep(0,{0×x^arcsin(π)})");
-  assert_parsed_expression_simplify_to(
-      "0x^arcsin(π)", "dep(nonreal,{0×x^arcsin(π)})", SystemForAnalysis, Radian,
-      MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("0x^arcsin(π)",
+                                       "dep(nonreal,{0×x^arcsin(π)})", User,
+                                       Radian, MetricUnitFormat, Real);
 }
 
 QUIZ_CASE(poincare_dependency_trigonometry) {

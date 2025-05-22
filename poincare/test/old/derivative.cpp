@@ -148,7 +148,7 @@ void assert_reduces_for_approximation(
     Poincare::Preferences::ComplexFormat complexFormat = Real) {
   assert_parsed_expression_simplify_to(
       expression, result, SystemForApproximation, angleUnit, MetricUnitFormat,
-      complexFormat, ReplaceAllSymbols);
+      complexFormat, ReplaceAllSymbols, false);
 }
 
 QUIZ_CASE(poincare_derivative_reduced_approximation) {

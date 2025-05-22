@@ -122,7 +122,8 @@ void assert_parsed_expression_simplify_to(
     Poincare::Preferences::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
-    Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols);
+    Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols,
+    bool beautify = true);
 
 // Approximation
 

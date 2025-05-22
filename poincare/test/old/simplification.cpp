@@ -288,27 +288,51 @@ QUIZ_CASE(poincare_simplification_multiplication) {
   assert_parsed_expression_simplify_to("x^5*x^3", "x^8");
   assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2");
   assert_parsed_expression_simplify_to("x^0", "dep(1,{x^0})");
-  assert_parsed_expression_simplify_to("π^5/π^3", "π^2", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("π^5*π^3", "π^8", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("π^3/π^5", "1/π^2", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("π^0", "1", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("π^π/π^(π-1)", "π", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^5/x^3", "dep(x^2,{nonNull(x)})",
-                                       SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^5×x^3", "x^8", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^0", "dep(1,{x^0})",
-                                       SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^π/x^(π-1)", "x", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^π/x^(π+1)", "1/x", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("2^x×2^(-x)", "dep(1,{x})",
-                                       SystemForAnalysis);
-  assert_parsed_expression_simplify_to("y^x×y^(-x)", "dep(1,{x,y})",
-                                       SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x/√(x)", "dep(√(x),{-ln(x)/2})",
-                                       SystemForAnalysis);
-  assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "x",
-                                       SystemForAnalysis);
+  assert_parsed_expression_simplify_to("π^5/π^3", "π^2", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to("π^5*π^3", "π^8", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to("π^3/π^5", "1/π^2", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to("π^0", "1", SystemForAnalysis, Radian,
+                                       MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to("π^π/π^(π-1)", "π", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "x^5/x^3", "dep(x^2,{nonNull(x)})", SystemForAnalysis, Radian,
+      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to("x^5×x^3", "x^8", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to("x^3/x^5", "1/x^2", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to("x^0", "dep(1,{x^0})", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to("x^π/x^(π-1)", "x", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to("x^π/x^(π+1)", "1/x", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "2^x×2^(-x)", "dep(1,{x})", SystemForAnalysis, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "y^x×y^(-x)", "dep(1,{x,y})", SystemForAnalysis, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "x/√(x)", "dep(√(x),{-ln(x)/2})", SystemForAnalysis, Radian,
+      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "x^(1/2)×x^(1/2)", "x", SystemForAnalysis, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("x^(1/2)×x^(1/2)", "dep(x,{√(x)})", User,
                                        Radian, MetricUnitFormat, Real);
   assert_parsed_expression_simplify_to("2*3^x*3^(-x)", "dep(2,{x})");
@@ -1070,8 +1094,9 @@ QUIZ_CASE(poincare_simplification_random) {
 QUIZ_CASE(poincare_simplification_randint) {
   // assert_parsed_expression_simplify_to("randint(1,1)", "1", User);
   //  Randint is not simplified if ReductionTarget = SystemForApproximation
-  assert_parsed_expression_simplify_to("randint(1,3)", "randint(1,3)",
-                                       SystemForApproximation);
+  assert_parsed_expression_simplify_to(
+      "randint(1,3)", "randint(1,3)", SystemForApproximation, Radian,
+      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
 }
 
 QUIZ_CASE(poincare_simplification_function) {
@@ -1082,7 +1107,9 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("abs(0)", "0");
   assert_parsed_expression_simplify_to("abs(x*y)", "abs(x)×abs(y)");
   assert_parsed_expression_simplify_to("abs(x^π)", "abs(x)^π");
-  assert_parsed_expression_simplify_to("abs(i)", "1", SystemForApproximation);
+  assert_parsed_expression_simplify_to("abs(i)", "1", SystemForApproximation,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("abs(√(√(√(√(√(√(i)))))))", "1");
   assert_parsed_expression_simplify_to("abs(√(√(√(√(√(√(πi)))))))",
                                        "root(π,64)");
@@ -1436,8 +1463,9 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(tan(2/3))", "2/3");
   assert_parsed_expression_simplify_to("tan(atan(2/3))", "2/3");
   // If target != User, sin/cos is not reduced to tan(x)
-  assert_parsed_expression_simplify_to("atan(sin(2/3)/cos(2/3))", "2/3",
-                                       SystemForAnalysis);
+  assert_parsed_expression_simplify_to(
+      "atan(sin(2/3)/cos(2/3))", "2/3", SystemForAnalysis, Radian,
+      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("tan(atan(5/2))", "5/2");
   assert_parsed_expression_simplify_to("atan(tan(5/2))", "5/2-π");
   assert_parsed_expression_simplify_to("atan(tan(-π/7))", "-π/7");
@@ -1762,8 +1790,10 @@ QUIZ_CASE(poincare_simplification_functions_of_matrices) {
 QUIZ_CASE(poincare_simplification_store) {
   assert_parsed_expression_simplify_to("1+2→x", "3→x");
 #if TODO_PCJ
-  assert_parsed_expression_simplify_to("0.2→f(x)", "0.2→f(x)",
-                                       SystemForAnalysis);
+  assert_parsed_expression_simplify_to(
+      "0.2→f(x)", "0.2→f(x)", SystemForAnalysis, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
 #endif
   assert_parsed_expression_simplify_to("0.1+0.2→x", "3/10→x");
   assert_parsed_expression_simplify_to("a→x", "a→x");
@@ -2161,47 +2191,59 @@ QUIZ_CASE(poincare_simplification_complex_format) {
 
 QUIZ_CASE(poincare_simplification_reduction_target) {
   // Replace sin/cos-->tan for ReductionTarget = User
-  assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))",
-                                       "sin(x)/cos(x)^2", SystemForAnalysis);
   assert_parsed_expression_simplify_to(
-      "sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForApproximation);
+      "sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForAnalysis, Radian,
+      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "sin(x)/(cos(x)×cos(x))", "sin(x)/cos(x)^2", SystemForApproximation,
+      Radian, MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("sin(x)/(cos(x)×cos(x))",
                                        "tan(x)/cos(x)", User);
 
   // Factorize on the same denominator only for ReductionTarget = User
-  assert_parsed_expression_simplify_to("1/π+1/x", "1/π+1/x", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("1/π+1/x", "1/π+1/x",
-                                       SystemForApproximation);
+  assert_parsed_expression_simplify_to("1/π+1/x", "1/π+1/x", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "1/π+1/x", "1/π+1/x", SystemForApproximation, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("1/π+1/x", "(x+π)/(π×x)", User);
 
   // Display in the form a+ib only for ReductionTarget = User
-  assert_parsed_expression_simplify_to("1/(1+i)", "1/(1+i)", SystemForAnalysis);
-  assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i",
-                                       SystemForApproximation);
+  assert_parsed_expression_simplify_to("1/(1+i)", "1/(1+i)", SystemForAnalysis,
+                                       Radian, MetricUnitFormat, Cartesian,
+                                       ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "1/(1+i)", "1/2-1/2×i", SystemForApproximation, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("1/(1+i)", "1/2-1/2×i", User);
-  assert_parsed_expression_simplify_to("√(i×(i+2))", "√(-1+2×i)",
-                                       SystemForApproximation);
+  assert_parsed_expression_simplify_to(
+      "√(i×(i+2))", "√(-1+2×i)", SystemForApproximation, Radian,
+      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
 
-  assert_parsed_expression_simplify_to("sign(abs(x))", "sign(abs(x))",
-                                       SystemForApproximation);
+  assert_parsed_expression_simplify_to(
+      "sign(abs(x))", "sign(abs(x))", SystemForApproximation, Radian,
+      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("sign(abs(x))", "sign(abs(x))", User);
 
   // Reduction of abs(x) depends on the target and the complex format
-  assert_parsed_expression_simplify_to("x/abs(x)", "dep(1/sign(x),{1/x})",
-                                       SystemForAnalysis, Radian,
-                                       MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to(
+      "x/abs(x)", "dep(1/sign(x),{1/x})", SystemForAnalysis, Radian,
+      MetricUnitFormat, Real, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("x/abs(x)", "x/abs(x)", User, Radian,
                                        MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("x/abs(x)", "x/abs(x)",
-                                       SystemForAnalysis, Radian,
-                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to(
+      "x/abs(x)", "x/abs(x)", SystemForAnalysis, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
 
   // Expand multinome when ReductionTarget is not SystemForApproximation as it
   // increases precision loss
-  assert_parsed_expression_simplify_to("(2+x)^2", "(x+2)^2",
-                                       SystemForApproximation);
-  assert_parsed_expression_simplify_to("(2+x)^2", "x^2+4×x+4",
-                                       SystemForAnalysis);
+  assert_parsed_expression_simplify_to(
+      "(2+x)^2", "(x+2)^2", SystemForApproximation, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "(2+x)^2", "x^2+4×x+4", SystemForAnalysis, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("(2+x)^2", "x^2+4×x+4", User);
 }
 
@@ -2411,15 +2453,19 @@ QUIZ_CASE(poincare_advanced_trigonometry) {
   assert_parsed_expression_simplify_to("arccot(cot(0.5))", "1/2");
   assert_parsed_expression_simplify_to("arccot(cot(-3))", "π-3");
   assert_parsed_expression_simplify_to("arccot(3)", "arctan(1/3)", User);
-  assert_parsed_expression_simplify_to("arccot(3)", "arctan(1/3)",
-                                       SystemForAnalysis);
-  assert_parsed_expression_simplify_to("arccot(3)", "arctan(1/3)",
-                                       SystemForApproximation);
+  assert_parsed_expression_simplify_to(
+      "arccot(3)", "arctan(1/3)", SystemForAnalysis, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "arccot(3)", "arctan(1/3)", SystemForApproximation, Radian,
+      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
   assert_parsed_expression_simplify_to("arccot(x)", "arccot(x)", User);
-  assert_parsed_expression_simplify_to("arccot(x)", "arccot(x)",
-                                       SystemForAnalysis);
-  assert_parsed_expression_simplify_to("arccot(x)", "arccot(x)",
-                                       SystemForApproximation);
+  assert_parsed_expression_simplify_to(
+      "arccot(x)", "arccot(x)", SystemForAnalysis, Radian, MetricUnitFormat,
+      Cartesian, ReplaceDefinedSymbols, false);
+  assert_parsed_expression_simplify_to(
+      "arccot(x)", "arccot(x)", SystemForApproximation, Radian,
+      MetricUnitFormat, Cartesian, ReplaceDefinedSymbols, false);
 
   // cot(acot)
   assert_parsed_expression_simplify_to("cot(arccot(3))", "3");

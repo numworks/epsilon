@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
   binary-size:
+    timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     steps:
       - name: Fetch target branch and PR branch

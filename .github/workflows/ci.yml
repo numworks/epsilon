@@ -42,6 +42,7 @@ env:
 
 jobs:
   android:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.android)) }}
     env:
@@ -57,6 +58,7 @@ jobs:
           name: epsilon-android.apk
           path: output/debug/optimized/android/epsilon.apk
   device:
+    timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.device)) }}
     strategy:
@@ -92,6 +94,7 @@ jobs:
       - if: ${{ steps.core.outcome == 'success' }}
         run: $DOCKER_RUN "make MODEL=${{ matrix.model }} bench.ram.dfu"
   windows:
+    timeout-minutes: 15
     runs-on: windows-latest
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.windows)) }}
     defaults:
@@ -118,6 +121,7 @@ jobs:
           name: epsilon-windows.exe
           path: output/debug/optimized/windows/epsilon.exe
   web:
+    timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.web)) }}
     env:
@@ -137,6 +141,7 @@ jobs:
           path: output/debug/optimized/web/epsilon.html
           retention-days: 7
   linux:
+    timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
@@ -156,6 +161,7 @@ jobs:
           name: epsilon-linux.bin
           path: output/debug/optimized/linux/epsilon.bin
   macos:
+    timeout-minutes: 15
     runs-on: macOS-latest
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.macos)) }}
     env:
@@ -171,6 +177,7 @@ jobs:
           name: epsilon-macos.zip
           path: output/debug/optimized/macos/epsilon.app
   ios:
+    timeout-minutes: 15
     runs-on: macOS-latest
     if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.ios)) }}
     env:
@@ -186,6 +193,7 @@ jobs:
           name: epsilon-ios.ipa
           path: output/debug/optimized/ios/epsilon.ipa
   poincarejs:
+    timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}

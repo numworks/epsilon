@@ -50,12 +50,6 @@ constexpr Poincare::SymbolicComputation ReplaceAllSymbolsWithUndefined =
     Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined;
 constexpr Poincare::SymbolicComputation KeepAllSymbols =
     Poincare::SymbolicComputation::KeepAllSymbols;
-constexpr Poincare::UnitConversion NoUnitConversion =
-    Poincare::UnitConversion::None;
-constexpr Poincare::UnitConversion DefaultUnitConversion =
-    Poincare::UnitConversion::Default;
-constexpr Poincare::UnitConversion InternationalSystemUnitConversion =
-    Poincare::UnitConversion::InternationalSystem;
 constexpr Poincare::Preferences::AngleUnit Radian =
     Poincare::Preferences::AngleUnit::Radian;
 constexpr Poincare::Preferences::AngleUnit Degree =
@@ -94,7 +88,7 @@ void assert_parsed_expression_process_to(
     Poincare::Preferences::AngleUnit angleUnit,
     Poincare::Preferences::UnitFormat unitFormat,
     Poincare::SymbolicComputation symbolicComputation,
-    Poincare::UnitConversion unitConversion, ProcessExpression process,
+    ProcessExpression process,
     int numberOfSignificantDigits =
         Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
 
@@ -129,8 +123,7 @@ void assert_parsed_expression_simplify_to(
     Poincare::Preferences::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
-    Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols,
-    Poincare::UnitConversion unitConversion = DefaultUnitConversion);
+    Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols);
 
 // Approximation
 

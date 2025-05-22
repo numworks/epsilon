@@ -92,7 +92,6 @@ struct ReductionParameters {
   Poincare::ReductionTarget target = Poincare::ReductionTarget::User;
   Poincare::SymbolicComputation symbolicComputation =
       Poincare::SymbolicComputation::ReplaceDefinedSymbols;
-  Poincare::UnitConversion unitConversion = Poincare::UnitConversion::Default;
 };
 
 inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(

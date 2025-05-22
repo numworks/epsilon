@@ -94,8 +94,8 @@ void assert_parsed_expression_process_to(
     const char *expression, const char *oldResult, Context *ctx,
     ReductionTarget target, Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-    SymbolicComputation symbolicComputation, UnitConversion unitConversion,
-    ProcessExpression process, int numberOfSignificantDigits) {
+    SymbolicComputation symbolicComputation, ProcessExpression process,
+    int numberOfSignificantDigits) {
   constexpr int bufferSize = 2048;
   char buffer[bufferSize];
   char result[bufferSize];
@@ -200,11 +200,11 @@ void assert_parsed_expression_simplify_to(
     ReductionTarget target, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat,
-    SymbolicComputation symbolicComputation, UnitConversion unitConversion) {
+    SymbolicComputation symbolicComputation) {
   Shared::GlobalContext globalContext;
   assert_parsed_expression_process_to(
       expression, simplifiedExpression, &globalContext, target, complexFormat,
-      angleUnit, unitFormat, symbolicComputation, unitConversion,
+      angleUnit, unitFormat, symbolicComputation,
       [](Tree *e, Internal::ProjectionContext &projCtx) {
         simplify(e, projCtx);
         // TODO_PCJ also approximate to see if it crashes
@@ -223,7 +223,6 @@ void assert_expression_approximates_to(const char *expression,
   assert_parsed_expression_process_to(
       expression, approximation, &globalContext, SystemForApproximation,
       complexFormat, angleUnit, unitFormat, ReplaceAllSymbols,
-      DefaultUnitConversion,
       [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
         /* tree is projected beforehand so we can prepare it for
          * approximation, and have better results on integrals for example. */
@@ -250,7 +249,6 @@ void assert_expression_approximates_keeping_symbols_to(
   assert_parsed_expression_process_to(
       expression, simplifiedExpression, &globalContext, SystemForApproximation,
       complexFormat, angleUnit, unitFormat, ReplaceDefinedSymbols,
-      DefaultUnitConversion,
       [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
 #if 0
         Tree *simplifiedExpression;
@@ -270,7 +268,7 @@ void assert_expression_simplifies_approximates_to(
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   assert_parsed_expression_process_to(
       expression, approximation, context, SystemForApproximation, complexFormat,
-      angleUnit, unitFormat, ReplaceAllSymbols, DefaultUnitConversion,
+      angleUnit, unitFormat, ReplaceAllSymbols,
       [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
         simplify(e, projCtx, false);
         TreeRef result = Internal::Approximation::ToTree<T>(

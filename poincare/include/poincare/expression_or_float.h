@@ -21,8 +21,7 @@ class ExpressionOrFloat {
   constexpr static size_t k_bufferLength =
       PrintFloat::charSizeForFloatsWithPrecision(k_numberOfSignificantDigits);
 
-  // TODO: fine-tune, check that it complies with the spec
-  constexpr static size_t k_maxExactSerializationGlyphLength = 9;
+  constexpr static size_t k_maxExactSerializationGlyphLength = 5;
 
   explicit ExpressionOrFloat(Expression expression) {
     [[maybe_unused]] size_t usedLength = expression.serialize(

@@ -9,13 +9,11 @@ namespace Poincare {
 
 PrintFloat::TextLengths SerializeFloatValue(
     float value, std::span<char> buffer, size_t numberOfSignificantDigits,
-    Preferences::PrintFloatMode floatDisplayMode) {
+    Preferences::PrintFloatMode floatDisplayMode, size_t maxGlyphLength) {
   PrintFloat::TextLengths floatSerializationLengths =
-      PrintFloat::ConvertFloatToText(
-          value, buffer.data(), buffer.size(),
-          Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
-              numberOfSignificantDigits),
-          numberOfSignificantDigits, floatDisplayMode);
+      PrintFloat::ConvertFloatToText(value, buffer.data(), buffer.size(),
+                                     maxGlyphLength, numberOfSignificantDigits,
+                                     floatDisplayMode);
   assert(floatSerializationLengths.CharLength <= buffer.size());
   assert(floatSerializationLengths.CharLength == strlen(buffer.data()));
   return floatSerializationLengths;
@@ -34,10 +32,10 @@ PrintFloat::TextLengths SerializeExactExpression(
 
 PrintFloat::TextLengths ExpressionOrFloat::writeText(
     std::span<char> buffer, size_t numberOfSignificantDigits,
-    Preferences::PrintFloatMode floatDisplayMode) const {
+    Preferences::PrintFloatMode floatDisplayMode, size_t maxGlyphLength) const {
   if (hasNoExactExpression()) {
     return SerializeFloatValue(m_value, buffer, numberOfSignificantDigits,
-                               floatDisplayMode);
+                               floatDisplayMode, maxGlyphLength);
   }
   /*  Note: m_buffer is just an internal storage, but it does not have the
    * requested number of significant digits or display mode. It should thus
@@ -51,15 +49,16 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
     PrintFloat::TextLengths exactTextLengths =
         SerializeExactExpression(exactExpression, exactSerialization,
                                  numberOfSignificantDigits, floatDisplayMode);
-    if (exactTextLengths.GlyphLength <= k_maxExactSerializationGlyphLength) {
-      assert(exactTextLengths.CharLength <= buffer.size());
+    if ((exactTextLengths.GlyphLength <= k_maxExactSerializationGlyphLength) &&
+        (exactTextLengths.GlyphLength <= maxGlyphLength) &&
+        (exactTextLengths.CharLength <= buffer.size())) {
       strlcpy(buffer.data(), exactSerialization,
               exactTextLengths.CharLength + 1);
       return exactTextLengths;
     }
   }
   return SerializeFloatValue(approximate, buffer, numberOfSignificantDigits,
-                             floatDisplayMode);
+                             floatDisplayMode, maxGlyphLength);
 }
 
 }  // namespace Poincare

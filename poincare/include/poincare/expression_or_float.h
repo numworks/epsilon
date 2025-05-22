@@ -51,11 +51,19 @@ class ExpressionOrFloat {
    * (0.016644).
    * The text lengths of what was written are returned.
    */
+
+  PrintFloat::TextLengths writeText(
+      std::span<char> buffer, size_t numberOfSignificantDigits,
+      Preferences::PrintFloatMode floatDisplayMode,
+      size_t maxGlyphLength) const;
   PrintFloat::TextLengths writeText(
       std::span<char> buffer,
       size_t numberOfSignificantDigits = k_numberOfSignificantDigits,
       Preferences::PrintFloatMode floatDisplayMode =
-          Preferences::PrintFloatMode::Decimal) const;
+          Preferences::PrintFloatMode::Decimal) const {
+    return writeText(buffer, numberOfSignificantDigits, floatDisplayMode,
+                     buffer.size());
+  }
 
   Expression expression() const {
     if (hasNoExactExpression()) {

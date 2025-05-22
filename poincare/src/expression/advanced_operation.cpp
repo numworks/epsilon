@@ -3,6 +3,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include "integer.h"
 #include "k_tree.h"
 #include "sign.h"
 #include "systematic_reduction.h"
@@ -377,8 +378,19 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
 
   // Binomial theorem
   // (A + B?)^n = sum(binomial(n, k) * A^k * B^(n-k), k, 0, n)
-  if (PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
-      ctx.getTree(KC)->isInteger() && !ctx.getTree(KC)->isMinusOne()) {
+  bool matched = PatternMatching::Match(e, KPow(KAdd(KA, KB_p), KC), &ctx) &&
+                 ctx.getTree(KC)->isInteger();
+  if (matched) {
+    IntegerHandler exp = Integer::Handler(ctx.getTree(KC));
+    if (exp.isMinusOne()) {
+      matched = false;
+    } else {
+      exp.setSign(NonStrictSign::Positive);
+      /* Do not expand power strictly greater than 9,  */
+      matched = IntegerHandler::Compare(exp, IntegerHandler(9)) <= 0;
+    }
+  }
+  if (matched) {
     // a^n and b^n are out of the sum to avoid dependencies in a^0 and b^0
     bool inverse = ctx.getTree(KC)->isNegativeInteger();
     /* a, b and n requires 2 trees each:

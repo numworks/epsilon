@@ -372,6 +372,8 @@ QUIZ_CASE(solver_approximate) {
 
   assert_solves_numerically_to("(4-x)/(((6+2x)/(x-1))-8)=-(x-1)/4", 0, 4, {3.0},
                                &globalContext);
+  assert_solves_numerically_to(".91×ln(x - 4) + 22.796 = 26", 0, 100,
+                               {37.814142093595251}, &globalContext);
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
 }

@@ -129,10 +129,10 @@ class AbstractLabeledAxis : public SimpleAxis {
  public:
   constexpr static int k_numberSignificantDigits =
       Poincare::Preferences::LargeNumberOfSignificantDigits;
-  constexpr static int k_labelBufferMaxSize =
+  constexpr static size_t k_labelBufferMaxSize =
       Poincare::PrintFloat::charSizeForFloatsWithPrecision(
           k_numberSignificantDigits);
-  constexpr static int k_labelBufferMaxGlyphLength =
+  constexpr static size_t k_labelBufferMaxGlyphLength =
       Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
           k_numberSignificantDigits);
   constexpr static int k_maxNumberOfXLabels =

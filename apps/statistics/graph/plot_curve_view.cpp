@@ -30,11 +30,12 @@ ExpressionOrFloat LabeledAxisWithOptionalPercent::tickStep(
 int LabeledAxisWithOptionalPercent::computeLabel(
     int i, const Shared::AbstractPlotView* plotView, OMG::Axis axis) {
   int length = PlotPolicy::VerticalLabeledAxis::computeLabel(i, plotView, axis);
-  assert(length <= k_labelBufferMaxSize);
-  assert(length <= k_labelBufferMaxGlyphLength);
-  m_plotController->appendLabelSuffix(axis, &m_labels[i][length],
-                                      k_labelBufferMaxSize - length, length,
-                                      k_labelBufferMaxGlyphLength - length);
+  assert(length <= static_cast<int>(k_labelBufferMaxSize));
+  assert(length <= static_cast<int>(k_labelBufferMaxGlyphLength));
+  m_plotController->appendLabelSuffix(
+      axis, &m_labels[i][length],
+      static_cast<int>(k_labelBufferMaxSize) - length, length,
+      k_labelBufferMaxGlyphLength - length);
   return k_labelBufferMaxSize;
 }
 

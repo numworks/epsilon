@@ -688,6 +688,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
           {.complexFormat = complexFormat,
            .angleUnit = angleUnit,
            .updateComplexFormatWithExpression = false,
+           .target = ReductionTarget::SystemForApproximation,
            .symbolicComputation = SymbolicComputation::KeepAllSymbols},
           &reductionFailure);
       assert(!resultForApproximation.isUninitialized() && !reductionFailure);

@@ -499,7 +499,8 @@ SystemExpression SystemExpression::getReducedDerivative(
   if (!Internal::Dimension::DeepCheck(result)) {
     result->cloneTreeOverTree(KUndefUnhandledDimension);
   } else {
-    Simplification::ReduceSystem(result, false);
+    Simplification::ReduceSystem(result, false,
+                                 ReductionTarget::SystemForApproximation);
   }
   return SystemExpression::Builder(result);
 }

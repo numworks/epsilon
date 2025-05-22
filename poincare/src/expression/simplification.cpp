@@ -134,10 +134,8 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
 void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext) {
   assert(!e->isStore());
   ToSystem(e, projectionContext);
-  // TODO: Also handle ReductionTarget::SystemForApproximation
   ReduceSystem(e, projectionContext->m_advanceReduce,
-               projectionContext->m_reductionTarget ==
-                   ReductionTarget::SystemForAnalysis);
+               projectionContext->m_reductionTarget);
   // Non-approximated numbers or node may have appeared during reduction.
   ApplyStrategy(e, *projectionContext, true);
 }
@@ -202,7 +200,7 @@ bool IsSystem(const Tree* e) {
 }
 #endif
 
-bool ReduceSystem(Tree* e, bool advanced, bool expandAlgebraic) {
+bool ReduceSystem(Tree* e, bool advanced, ReductionTarget reductionTarget) {
   bool changed = SystematicReduction::DeepReduce(e);
   assert(!SystematicReduction::DeepReduce(e));
 #if POINCARE_LIST
@@ -211,7 +209,8 @@ bool ReduceSystem(Tree* e, bool advanced, bool expandAlgebraic) {
   if (advanced) {
     changed = AdvancedReduction::Reduce(e) || changed;
   }
-  if (expandAlgebraic) {
+  // TODO: Also handle ReductionTarget::SystemForApproximation
+  if (reductionTarget == ReductionTarget::SystemForAnalysis) {
     changed = AdvancedReduction::DeepExpandAlgebraic(e) || changed;
   }
   changed = ProcessSpecialUndefinedPatterns(e) || changed;
@@ -232,7 +231,7 @@ bool HandleUnits(Tree* e, ProjectionContext* projectionContext) {
     if (projectionContext->m_strategy == Strategy::ApproximateToFloat) {
       ApplyStrategy(e, *projectionContext, true);
     }
-    ReduceSystem(e, false);
+    ReduceSystem(e, false, projectionContext->m_reductionTarget);
     changed = true;
   }
   if (projectionContext->m_dimension.isUnit() &&

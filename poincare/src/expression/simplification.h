@@ -19,7 +19,8 @@ bool ToSystem(Tree* e, ProjectionContext* projectionContext);
 #if ASSERTIONS
 bool IsSystem(const Tree* e);
 #endif
-bool ReduceSystem(Tree* e, bool advanced, bool expandAlgebraic = false);
+bool ReduceSystem(Tree* e, bool advanced,
+                  ReductionTarget reductionTarget = ReductionTarget::User);
 }  // namespace Simplification
 
 }  // namespace Poincare::Internal

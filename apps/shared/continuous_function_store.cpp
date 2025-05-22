@@ -8,6 +8,14 @@ using namespace Escher;
 
 namespace Shared {
 
+void ContinuousFunctionStore::removeAll() {
+  FunctionStore::removeAll();
+  m_memoizedNumberOfActiveFunctions = 0;
+  for (int i = 0; i < k_maxNumberOfMemoizedModels; i++) {
+    m_functions[i] = ContinuousFunction();
+  }
+}
+
 bool ContinuousFunctionStore::displaysOnlyCartesianFunctions(
     int* nbActiveFunctions) const {
   int nActive = numberOfActiveFunctions();

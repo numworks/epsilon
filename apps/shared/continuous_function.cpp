@@ -671,9 +671,9 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       // TODO_PCJ: with advanced reduction we should only have to reduce once
       /* m_expression is resulting of a simplification with ExpandAlgebraic
        * expansion strategy. But no expansion strategy could give a simpler
-       * result. For example (x+9)^6 is fully developped with ExpandAlgebraic,
+       * result. For example (x+9)^6 is fully developed with ExpandAlgebraic,
        * which results in approximation inaccuracy. On the other hand, the
-       * expression (x+1)^2-x^2-2x-1 should be developped so that we understand
+       * expression (x+1)^2-x^2-2x-1 should be developed so that we understand
        * that it's equal to zero, and is better handled with ExpandAlgebraic. To
        * solve this problem, we try to simplify both ways and compare the number
        * of nodes of each expression. We take the one that has the less node.

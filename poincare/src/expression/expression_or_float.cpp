@@ -37,16 +37,16 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
           exactExpression, UserExpression::Builder(approximate))) {
     char exactSerialization[k_bufferLength];
-    size_t exactSerializationLength =
+    size_t exactStringLength =
         exactExpression.serialize(exactSerialization, k_bufferLength, true,
                                   floatDisplayMode, numberOfSignificantDigits);
-    if (exactSerializationLength <= k_maxExactSerializationLength) {
-      assert(exactSerializationLength <= buffer.size());
-      strlcpy(buffer.data(), exactSerialization, exactSerializationLength + 1);
-      assert(exactSerializationLength == strlen(buffer.data()));
-      return PrintFloat::TextLengths{
-          exactSerializationLength,
-          UTF8Helper::StringGlyphLength(buffer.data())};
+    size_t exactGlyphLength = UTF8Helper::StringGlyphLength(exactSerialization);
+    if (exactGlyphLength <= k_maxExactSerializationGlyphLength) {
+      assert(exactStringLength <= buffer.size());
+      strlcpy(buffer.data(), exactSerialization, exactStringLength + 1);
+      assert(exactStringLength == strlen(buffer.data()));
+      assert(exactGlyphLength == UTF8Helper::StringGlyphLength(buffer.data()));
+      return PrintFloat::TextLengths{exactStringLength, exactGlyphLength};
     }
   }
   return SerializeFloatValue(approximate, buffer, numberOfSignificantDigits,

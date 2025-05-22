@@ -22,7 +22,7 @@ class ExpressionOrFloat {
       PrintFloat::charSizeForFloatsWithPrecision(k_numberOfSignificantDigits);
 
   // TODO: fine-tune, check that it complies with the spec
-  constexpr static size_t k_maxExactSerializationLength = 9;
+  constexpr static size_t k_maxExactSerializationGlyphLength = 9;
 
   explicit ExpressionOrFloat(Expression expression) {
     [[maybe_unused]] size_t usedLength = expression.serialize(
@@ -44,7 +44,7 @@ class ExpressionOrFloat {
    * - If the expression can be represented exactly by a decimal number
    * (example: 2/5 = 0.4), the decimal form (0.4) will be written.
    * - If the expression is not a decimal and its exact representation is
-   * smaller than k_maxExactSerializationLength (example: 2/3), this exact
+   * smaller than k_maxExactSerializationGlyphLength (example: 2/3), this exact
    * representation is written.
    * - If the exact representation takes more characters than the above limit
    * (example: 12/721), the approximation is written in decimal format

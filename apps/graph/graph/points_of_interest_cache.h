@@ -50,6 +50,7 @@ class PointsOfInterestCache {
       Poincare::Solver<double>::Interest interest =
           Poincare::Solver<double>::Interest::None,
       bool allInterestsAreDisplayed = true) const;
+  bool hasDisplayableUnreachedInterestAtCoordinates(double x, double y) const;
 
   bool canDisplayPoints(Poincare::Solver<double>::Interest interest =
                             Poincare::Solver<double>::Interest::None) const {

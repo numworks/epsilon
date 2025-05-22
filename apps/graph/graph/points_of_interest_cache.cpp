@@ -138,7 +138,20 @@ bool PointsOfInterestCache::hasDisplayableInterestAtCoordinates(
     // Ignore interest point if it is not displayed.
     return false;
   }
-  return PointsOfInterestCache::hasInterestAtCoordinates(x, y, interest);
+  return hasInterestAtCoordinates(x, y, interest);
+}
+
+bool PointsOfInterestCache::hasDisplayableUnreachedInterestAtCoordinates(
+    double x, double y) const {
+  using Interest = Poincare::Solver<double>::Interest;
+  for (Interest interest :
+       {Interest::UnreachedDiscontinuity, Interest::UnreachedIntersection}) {
+    if (canDisplayPoints(interest) &&
+        hasInterestAtCoordinates(x, y, interest)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 float PointsOfInterestCache::step() const {

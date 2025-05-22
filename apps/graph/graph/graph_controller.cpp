@@ -317,10 +317,18 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
 
 void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
                                          int subCurveIndex) {
-  m_cursorView.setIsRing(functionStore()
-                             ->modelForRecord(recordAtCurveIndex(curveIndex))
-                             ->properties()
-                             .isScatterPlot());
+  Ion::Storage::Record record = recordAtCurveIndex(curveIndex);
+  ContinuousFunctionProperties properties =
+      functionStore()->modelForRecord(record)->properties();
+  bool cursorShouldBeRing =
+      properties.isScatterPlot() ||
+      pointsOfInterestForRecord(record)
+          ->hasDisplayableUnreachedInterestAtCoordinates(m_cursor->x(),
+                                                         m_cursor->y()) ||
+      (properties.isStrictInequality() &&
+       pointsOfInterestForRecord(record)->hasDisplayableInterestAtCoordinates(
+           m_cursor->x(), m_cursor->y()));
+  m_cursorView.setIsRing(cursorShouldBeRing);
   FunctionGraphController::selectCurveAtIndex(curveIndex, willBeVisible,
                                               subCurveIndex);
 }

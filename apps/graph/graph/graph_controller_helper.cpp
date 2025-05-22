@@ -164,8 +164,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       // Hyperbolas have an undefined section along-side the x axis.
       double previousT = t;
       int tries = 0;
-      int maxTries = std::ceil(numberOfStepsInGradUnit *
-                               CurveViewRange::k_maxNumberOfXGridUnits);
+      int maxTries =
+          numberOfStepsInGradUnit * CurveViewRange::k_maxNumberOfXGridUnits;
       do {
         // Try to jump out of the undefined section
         t += dir * step;

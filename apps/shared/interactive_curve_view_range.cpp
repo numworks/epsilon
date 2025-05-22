@@ -88,7 +88,7 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
     if (axis == OMG::Axis::Horizontal) {
       ExpressionOrFloat yUnit = yGridUnit();
       if ((xMax() - xMin()) / yUnit.approximation<float>() <=
-          k_maxNumberOfXGridUnits) {
+          static_cast<float>(k_maxNumberOfXGridUnits)) {
         return yUnit;
       }
     } else {
@@ -102,8 +102,8 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
                              computedGridUnit.approximation<float>();
       float numberOfXUnits =
           (xMax() - xMin()) / computedGridUnit.approximation<float>();
-      if (numberOfXUnits > k_maxNumberOfXGridUnits ||
-          numberOfYUnits / 2.f > k_minNumberOfYGridUnits) {
+      if (numberOfXUnits > static_cast<float>(k_maxNumberOfXGridUnits) ||
+          numberOfYUnits / 2.f > static_cast<float>(k_minNumberOfYGridUnits)) {
         return ExpressionOrFloat(
             UserExpression::Create(KMult(2_e, KA),
                                    {.KA = computedGridUnit.expression()})

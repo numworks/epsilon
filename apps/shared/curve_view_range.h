@@ -25,12 +25,12 @@ class CurveViewRange {
   virtual Poincare::ExpressionOrFloat yGridUnit() {
     return computeGridUnit(OMG::Axis::Vertical);
   }
-  constexpr static float k_maxNumberOfXGridUnits = 18.0f;
-  constexpr static float k_maxNumberOfYGridUnits = 13.0f;
+  constexpr static size_t k_maxNumberOfXGridUnits = 18;
+  constexpr static size_t k_maxNumberOfYGridUnits = 13;
 
  protected:
-  constexpr static float k_minNumberOfXGridUnits = 7.0f;
-  constexpr static float k_minNumberOfYGridUnits = 5.0f;
+  constexpr static size_t k_minNumberOfXGridUnits = 7;
+  constexpr static size_t k_minNumberOfYGridUnits = 5;
 
  private:
   virtual float offscreenYAxis() const { return 0.f; }

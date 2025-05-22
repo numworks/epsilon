@@ -135,9 +135,9 @@ class AbstractLabeledAxis : public SimpleAxis {
   constexpr static size_t k_labelBufferMaxGlyphLength =
       Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
           k_numberSignificantDigits);
-  constexpr static int k_maxNumberOfXLabels =
+  constexpr static size_t k_maxNumberOfXLabels =
       CurveViewRange::k_maxNumberOfXGridUnits;
-  constexpr static int k_maxNumberOfYLabels =
+  constexpr static size_t k_maxNumberOfYLabels =
       CurveViewRange::k_maxNumberOfYGridUnits;
 
   AbstractLabeledAxis() : m_lastDrawnRect(KDRectZero), m_hidden(false) {}

@@ -305,9 +305,9 @@ ExpressionOrFloat SimpleAxis::tickPosition(int i,
 
 ExpressionOrFloat SimpleAxis::tickStep(const AbstractPlotView* plotView,
                                        OMG::Axis axis) const {
-  ExpressionOrFloat step = ExpressionOrFloat(
-      axis == OMG::Axis::Horizontal ? plotView->range()->xGridUnit()
-                                    : plotView->range()->yGridUnit());
+  ExpressionOrFloat step = axis == OMG::Axis::Horizontal
+                               ? plotView->range()->xGridUnit()
+                               : plotView->range()->yGridUnit();
   if (step.hasNoExactExpression()) {
     return ExpressionOrFloat(2.f * static_cast<float>(step));
   }

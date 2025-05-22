@@ -53,7 +53,7 @@ class ExpressionOrFloat {
    */
   PrintFloat::TextLengths writeText(
       std::span<char> buffer,
-      int numberOfSignificantDigits = k_numberOfSignificantDigits,
+      size_t numberOfSignificantDigits = k_numberOfSignificantDigits,
       Preferences::PrintFloatMode floatDisplayMode =
           Preferences::PrintFloatMode::Decimal) const;
 

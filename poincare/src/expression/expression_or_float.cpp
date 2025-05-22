@@ -8,7 +8,7 @@
 namespace Poincare {
 
 PrintFloat::TextLengths SerializeFloatValue(
-    float value, std::span<char> buffer, int numberOfSignificantDigits,
+    float value, std::span<char> buffer, size_t numberOfSignificantDigits,
     Preferences::PrintFloatMode floatDisplayMode) {
   PrintFloat::TextLengths floatSerializationLengths =
       PrintFloat::ConvertFloatToText(
@@ -23,17 +23,17 @@ PrintFloat::TextLengths SerializeFloatValue(
 
 PrintFloat::TextLengths SerializeExactExpression(
     Expression expression, std::span<char> buffer,
-    int numberOfSignificantDigits,
+    size_t numberOfSignificantDigits,
     Preferences::PrintFloatMode floatDisplayMode) {
   size_t exactStringLength =
       expression.serialize(buffer.data(), buffer.size(), true, floatDisplayMode,
-                           numberOfSignificantDigits);
+                           static_cast<int>(numberOfSignificantDigits));
   size_t exactGlyphLength = UTF8Helper::StringGlyphLength(buffer.data());
   return PrintFloat::TextLengths{exactStringLength, exactGlyphLength};
 }
 
 PrintFloat::TextLengths ExpressionOrFloat::writeText(
-    std::span<char> buffer, int numberOfSignificantDigits,
+    std::span<char> buffer, size_t numberOfSignificantDigits,
     Preferences::PrintFloatMode floatDisplayMode) const {
   if (hasNoExactExpression()) {
     return SerializeFloatValue(m_value, buffer, numberOfSignificantDigits,

@@ -45,6 +45,9 @@ class Layouter {
       Preferences::PrintFloatMode floatMode =
           Preferences::PrintFloatMode::Decimal,
       OMG::Base base = OMG::Base::Decimal);
+  /* TODO: addOperatorSeparator, addUnitSeparator and AddThousandsSeparators
+   * should all be applicable in linear mode. Separators should be stripped
+   * before parsing layouts in 1D. */
   void addOperatorSeparator(Tree* layoutParent);
   void addUnitSeparator(Tree* layoutParent);
   bool requireSeparators(const Tree* expression);

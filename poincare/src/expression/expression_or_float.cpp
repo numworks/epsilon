@@ -14,6 +14,16 @@ PrintFloat::TextLengths SerializeFloatValue(
       PrintFloat::ConvertFloatToText(value, buffer.data(), buffer.size(),
                                      maxGlyphLength, numberOfSignificantDigits,
                                      floatDisplayMode);
+  /*  PrintFloat::ConvertFloatToText can return the "exception result"
+   * {.CharLength = bufferSize, .GlyphLength = maxGlyphLength + 1} if it was not
+   * possible to write into the buffer with the requested parameters. In the
+   * ExpressionOrFloat context, it is better to return zero lengths to match
+   * with the written buffer length (which is zero as nothing was written by
+   * PrintFloat::ConvertFloatToText). */
+  if (floatSerializationLengths ==
+      PrintFloat::TextLengths{buffer.size(), maxGlyphLength + 1}) {
+    return PrintFloat::TextLengths{0, 0};
+  }
   assert(floatSerializationLengths.CharLength <= buffer.size());
   assert(floatSerializationLengths.CharLength == strlen(buffer.data()));
   return floatSerializationLengths;

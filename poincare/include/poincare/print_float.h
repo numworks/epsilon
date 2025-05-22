@@ -61,6 +61,8 @@ class PrintFloat {
   struct TextLengths {
     size_t CharLength;
     size_t GlyphLength;
+
+    constexpr bool operator==(const TextLengths& other) const = default;
   };
   /* If the buffer size is too small to display the right number of significant
    * digits, the function forces the scientific mode. If the buffer is still too

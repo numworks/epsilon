@@ -746,11 +746,14 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   SystemExpression result;
   Preferences::ComplexFormat complexFormat =
       this->complexFormat(record, context);
+  Preferences::AngleUnit angleUnit =
+      Preferences::SharedPreferences()->angleUnit();
   if (!equation.isUndefined()) {
     bool reductionFailure = false;
     result = PoincareHelpers::CloneAndReduce(
         equation, context,
         {.complexFormat = complexFormat,
+         .angleUnit = angleUnit,
          .updateComplexFormatWithExpression = false,
          .target = ReductionTarget::SystemForAnalysis,
          // Symbols have already been replaced.

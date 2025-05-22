@@ -28,7 +28,7 @@ static bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
  * the expression is replaced by an undefined. For example, ln(0) is left
  * unreduced by the systematic and the advanced reductions to allow exp(x*ln(0))
  * to be correctly simplified. */
-static constexpr const Tree* specialUndefinedPatterns[] = {KLn(0_e)};
+constexpr static const Tree* specialUndefinedPatterns[] = {KLn(0_e)};
 static bool ProcessSpecialUndefinedPatterns(Tree* e) {
   if (e->hasDescendantSatisfying([](const Tree* t) {
         for (const Tree* pattern : specialUndefinedPatterns) {

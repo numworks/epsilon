@@ -21,6 +21,17 @@ PrintFloat::TextLengths SerializeFloatValue(
   return floatSerializationLengths;
 }
 
+PrintFloat::TextLengths SerializeExactExpression(
+    Expression expression, std::span<char> buffer,
+    int numberOfSignificantDigits,
+    Preferences::PrintFloatMode floatDisplayMode) {
+  size_t exactStringLength =
+      expression.serialize(buffer.data(), buffer.size(), true, floatDisplayMode,
+                           numberOfSignificantDigits);
+  size_t exactGlyphLength = UTF8Helper::StringGlyphLength(buffer.data());
+  return PrintFloat::TextLengths{exactStringLength, exactGlyphLength};
+}
+
 PrintFloat::TextLengths ExpressionOrFloat::writeText(
     std::span<char> buffer, int numberOfSignificantDigits,
     Preferences::PrintFloatMode floatDisplayMode) const {
@@ -37,16 +48,14 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
           exactExpression, UserExpression::Builder(approximate))) {
     char exactSerialization[k_bufferLength];
-    size_t exactStringLength =
-        exactExpression.serialize(exactSerialization, k_bufferLength, true,
-                                  floatDisplayMode, numberOfSignificantDigits);
-    size_t exactGlyphLength = UTF8Helper::StringGlyphLength(exactSerialization);
-    if (exactGlyphLength <= k_maxExactSerializationGlyphLength) {
-      assert(exactStringLength <= buffer.size());
-      strlcpy(buffer.data(), exactSerialization, exactStringLength + 1);
-      assert(exactStringLength == strlen(buffer.data()));
-      assert(exactGlyphLength == UTF8Helper::StringGlyphLength(buffer.data()));
-      return PrintFloat::TextLengths{exactStringLength, exactGlyphLength};
+    PrintFloat::TextLengths exactTextLengths =
+        SerializeExactExpression(exactExpression, exactSerialization,
+                                 numberOfSignificantDigits, floatDisplayMode);
+    if (exactTextLengths.GlyphLength <= k_maxExactSerializationGlyphLength) {
+      assert(exactTextLengths.CharLength <= buffer.size());
+      strlcpy(buffer.data(), exactSerialization,
+              exactTextLengths.CharLength + 1);
+      return exactTextLengths;
     }
   }
   return SerializeFloatValue(approximate, buffer, numberOfSignificantDigits,

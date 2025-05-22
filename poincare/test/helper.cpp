@@ -11,6 +11,8 @@
 #include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
+#include "poincare/src/expression/metric.h"
+
 using namespace Poincare::Internal;
 
 const char* AlmostMaxIntegerString() {
@@ -127,6 +129,8 @@ void process_tree_and_compare(const char* input, const char* output,
   }
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
+    int expectedMetric = Metric::GetMetric(expected);
+    int expressionMetric = Metric::GetMetric(expression);
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];
     serialize_expression(expression, buffer, bufferSize);
@@ -135,8 +139,11 @@ void process_tree_and_compare(const char* input, const char* output,
       ok = true;
     } else {
 #ifndef PLATFORM_DEVICE
+      const char* metricText =
+          expectedMetric > expressionMetric ? " (better " : " (worse ";
       std::cout << input << " processed to " << buffer << " instead of "
-                << output << std::endl;
+                << output << metricText << expressionMetric << " vs "
+                << expectedMetric << ")" << std::endl;
 #endif
     }
     quiz_assert(ok);

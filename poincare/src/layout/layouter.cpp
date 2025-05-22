@@ -284,7 +284,7 @@ void Layouter::layoutIntegerHandler(TreeRef& layoutParent,
     }
   } while (!(value->isZero() && decimalOffset <= 0));
   value->removeTree();
-  if (m_base == OMG::Base::Decimal) {
+  if (m_base == OMG::Base::Decimal && !m_linearMode) {
     AddThousandsSeparators(rack);
   }
   NAry::AddOrMergeChild(layoutParent, rack);
@@ -702,7 +702,9 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       TreeRef rack = KRackL()->cloneTree();
       layoutText(rack, buffer);
-      AddThousandsSeparators(rack);
+      if (!m_linearMode) {
+        AddThousandsSeparators(rack);
+      }
       NAry::AddOrMergeChild(layoutParent, rack);
       break;
     }

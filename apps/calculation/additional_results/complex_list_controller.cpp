@@ -46,13 +46,11 @@ void ComplexListController::computeAdditionalResults(
                  UserExpression::Create(KIm(KA), {.KA = exactOutput}), &ctx);
 
   // Set Complex illustration
-  ApproximationContext approximationContext(context, ctx.m_complexFormat,
-                                            ctx.m_angleUnit);
   double realPart;
   double imagPart;
   bool hasComplexApprox =
       approximateOutput.hasDefinedComplexApproximation<double>(
-          approximationContext, &realPart, &imagPart);
+          ctx.m_angleUnit, ctx.m_complexFormat, context, &realPart, &imagPart);
 
   assert(hasComplexApprox);
   (void)hasComplexApprox;  // Silence the compiler;

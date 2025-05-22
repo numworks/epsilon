@@ -88,8 +88,9 @@ class ExpressionObject final : public PoolObject {
   // Properties
 
   template <typename T>
-  SystemExpression approximateToTree(
-      const ApproximationContext& approximationContext) const;
+  SystemExpression approximateToTree(Preferences::AngleUnit angleUnit,
+                                     Preferences::ComplexFormat complexFormat,
+                                     Context* context) const;
 
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
@@ -249,9 +250,10 @@ class Expression : public PoolHandle {
   SystemExpression removeUndefListElements() const;
 
   template <typename T>
-  SystemExpression approximateToTree(
-      const ApproximationContext& approximationContext) const {
-    return object()->approximateToTree<T>(approximationContext);
+  SystemExpression approximateToTree(Preferences::AngleUnit angleUnit,
+                                     Preferences::ComplexFormat complexFormat,
+                                     Context* context) const {
+    return object()->approximateToTree<T>(angleUnit, complexFormat, context);
   }
   /* Approximation Helper
    * Return NAN for all non real scalar expressions. */
@@ -265,9 +267,11 @@ class Expression : public PoolHandle {
   template <typename T>
   /* Return true when both real and imaginary approximation are defined and
    * imaginary part is not null. */
-  bool hasDefinedComplexApproximation(
-      const ApproximationContext& approximationContext,
-      T* returnRealPart = nullptr, T* returnImagPart = nullptr) const;
+  bool hasDefinedComplexApproximation(Preferences::AngleUnit angleUnit,
+                                      Preferences::ComplexFormat complexFormat,
+                                      Context* context,
+                                      T* returnRealPart = nullptr,
+                                      T* returnImagPart = nullptr) const;
   bool isComplexScalar(
       Preferences::CalculationPreferences calculationPreferences,
       Context* context) const;

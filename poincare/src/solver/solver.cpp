@@ -106,7 +106,7 @@ typename Solver<T>::Solution Solver<T>::next(const Tree* e, BracketTest test,
           [](const Tree* e) { return e->isRandomized(); })) {
     return Solution();
   }
-  /* TODO_PCJ: Either Pass ApproximationContext(m_context, m_complexFormat,
+  /* TODO_PCJ: Either Pass approximation context (m_context, m_complexFormat,
    * m_angleUnit) or ensure expression is projected. */
   FunctionEvaluation f = [](T x, const void* aux) {
     const Internal::Tree* e = reinterpret_cast<const Internal::Tree*>(aux);
@@ -554,7 +554,7 @@ T Solver<T>::nextRootInAddition(const Tree* e) const {
    * they are zeroes of the whole expression. */
   ExpressionTestAuxiliary test = [](const Tree* e, Context* context,
                                     void* aux) {
-    /* TODO_PCJ: Either Pass ApproximationContext, ComplexFormat, AngleUnit and
+    /* TODO_PCJ: Either Pass approximation context, ComplexFormat, AngleUnit and
      * SymbolicComputation::ReplaceDefinedSymbols or ensure
      * expression is projected. */
     return e->hasDescendantSatisfying([](const Tree* e) {

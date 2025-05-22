@@ -134,12 +134,10 @@ void ExpressionObject::logAttributes(std::ostream& stream) const {
 
 template <typename T>
 SystemExpression ExpressionObject::approximateToTree(
-    const ApproximationContext& approximationContext) const {
+    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
       tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true},
-      Approximation::Context(approximationContext.angleUnit(),
-                             approximationContext.complexFormat(),
-                             approximationContext.context())));
+      Approximation::Context(angleUnit, complexFormat, context)));
 }
 
 Poincare::Layout ExpressionObject::createLayout(
@@ -566,22 +564,20 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
 }
 
 template <typename T>
-bool UserExpression::hasDefinedComplexApproximation(
-    const ApproximationContext& approximationContext, T* returnRealPart,
-    T* returnImagPart) const {
-  if (approximationContext.complexFormat() ==
-          Preferences::ComplexFormat::Real ||
+bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
+                                                    ComplexFormat complexFormat,
+                                                    Context* context,
+                                                    T* returnRealPart,
+                                                    T* returnImagPart) const {
+  if (complexFormat == Preferences::ComplexFormat::Real ||
       !Internal::Dimension::IsNonListScalar(tree())) {
     return false;
   }
-  // TODO_PCJ: Remove ApproximationContext
   std::complex<T> z = Approximation::ToComplex<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(approximationContext.angleUnit(),
-                             approximationContext.complexFormat(),
-                             approximationContext.context()));
+      Approximation::Context(angleUnit, complexFormat, context));
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
     return false;
@@ -603,11 +599,11 @@ bool UserExpression::isComplexScalar(
     Preferences::CalculationPreferences calculationPreferences,
     Context* context) const {
   Preferences::ComplexFormat complexFormat =
-      calculationPreferences.complexFormat;
+      Preferences::UpdatedComplexFormatWithExpressionInput(
+          calculationPreferences.complexFormat, *this, context);
   Preferences::AngleUnit angleUnit = calculationPreferences.angleUnit;
-  ApproximationContext approximationContext(context, complexFormat, angleUnit);
-  approximationContext.updateComplexFormat(*this);
-  if (hasDefinedComplexApproximation<double>(approximationContext)) {
+  if (hasDefinedComplexApproximation<double>(angleUnit, complexFormat,
+                                             context)) {
     assert(!hasUnit());
     return true;
   }
@@ -1216,9 +1212,9 @@ const char* Poincare::Infinity::k_minusInfinityName =
     Internal::Infinity::k_minusInfinityName;
 
 template SystemExpression ExpressionObject::approximateToTree<float>(
-    const ApproximationContext&) const;
+    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
 template SystemExpression ExpressionObject::approximateToTree<double>(
-    const ApproximationContext&) const;
+    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
 
 template SystemExpression SystemExpression::Builder<float>(float);
 template SystemExpression SystemExpression::Builder<double>(double);
@@ -1273,9 +1269,11 @@ template double UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
             Preferences::AngleUnit, SymbolicComputation);
 
 template bool UserExpression::hasDefinedComplexApproximation<float>(
-    const ApproximationContext&, float*, float*) const;
+    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context, float*,
+    float*) const;
 template bool UserExpression::hasDefinedComplexApproximation<double>(
-    const ApproximationContext&, double*, double*) const;
+    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context, double*,
+    double*) const;
 
 template float UserExpression::approximateToRealScalar<float>(
     Preferences::AngleUnit, Preferences::ComplexFormat, Context*) const;

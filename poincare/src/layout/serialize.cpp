@@ -204,6 +204,11 @@ char* SerializeLayout(const Layout* layout, char* buffer, const char* end,
       break;
     }
     default: {
+      /* Sequence layouts should never be serialized. Copying sequence layouts
+       * is forbidden so that it never gets out of the sequence app, but if the
+       * case arises and we cannot prevent it, we could serialize it as an empty
+       * string or undef. */
+      assert(!layout->isSequenceLayout());
       if (layout->isPiecewiseLayout()) {
         buffer = append("piecewise", buffer, end);
       } else {

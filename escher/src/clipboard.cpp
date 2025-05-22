@@ -3,6 +3,7 @@
 #include <ion/clipboard.h>
 #include <omg/utf8_decoder.h>
 #include <poincare/expression.h>
+#include <poincare/layout.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/memory/tree.h>
 
@@ -39,6 +40,9 @@ void Clipboard::storeText(const char* text, int length) {
 }
 
 void Clipboard::storeLayout(Poincare::Layout layout) {
+  if (layout.isForbiddenForCopy()) {
+    return;
+  }
   int size = layout.tree()->treeSize();
   if (size < k_bufferSize) {
     memcpy(m_treeBuffer, layout.tree(), size);

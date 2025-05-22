@@ -1,5 +1,7 @@
 #include "app_with_store_menu.h"
 
+#include <poincare/layout.h>
+
 using namespace Escher;
 using namespace Poincare;
 
@@ -15,7 +17,8 @@ bool AppWithStoreMenu::handleEvent(Ion::Events::Event event) {
 }
 
 void AppWithStoreMenu::storeLayout(Poincare::Layout layout) {
-  if (m_modalViewController.isDisplayingModal()) {
+  if (m_modalViewController.isDisplayingModal() ||
+      layout.isForbiddenForCopy()) {
     return;
   }
   m_storeMenuController.setLayout(layout);

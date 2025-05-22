@@ -148,6 +148,8 @@ class Layout final : public PoolHandle {
    * Calculation app. If they represent the same digits, approximation is
    * hidden. */
   bool isSameScientificNotationAs(Layout approximation, bool linear) const;
+
+  bool isForbiddenForCopy() const;
 };
 
 }  // namespace Poincare

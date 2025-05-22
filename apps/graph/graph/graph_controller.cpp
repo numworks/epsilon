@@ -422,6 +422,8 @@ void GraphController::openMenuForSelectedCurve() {
   int derivationOrder =
       f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
   m_curveParameterController.setRecord(record, derivationOrder);
+  setCursorIsRing(false);
+  m_cursorView.setHighlighted(false);
   stackController()->push(&m_curveParameterController);
 }
 

@@ -13,6 +13,15 @@
 
 namespace Poincare::Internal {
 
+bool Sequence::IsSequenceName(const char* name) {
+  for (const char* s : k_sequenceNames) {
+    if (strcmp(s, name) == 0) {
+      return true;
+    }
+  }
+  return false;
+}
+
 Sequence::Type Sequence::GetType(const Tree* sequence) {
   switch (sequence->type()) {
     case Internal::Type::SequenceExplicit:

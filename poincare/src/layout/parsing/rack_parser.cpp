@@ -14,6 +14,7 @@
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/physical_constant.h>
+#include <poincare/src/expression/sequence.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/k_tree.h>
@@ -1086,15 +1087,19 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
 
 #if POINCARE_SEQUENCE
   // Parse u(n)
-  if (idType == Poincare::Context::UserNamedType::Sequence ||
-      (idType == Poincare::Context::UserNamedType::None &&
-       m_nextToken.type() == Token::Type::Subscript)) {
+  bool hasSubscriptOrLayoutParentheses =
+      m_nextToken.type() == Token::Type::Subscript ||
+      (m_nextToken.type() == Token::Type::Layout &&
+       m_nextToken.firstLayout()->isParenthesesLayout());
+  bool hasLeftParenthesis = m_nextToken.type() == Token::Type::LeftParenthesis;
+  if ((idType == Poincare::Context::UserNamedType::Sequence ||
+       (idType == Poincare::Context::UserNamedType::None &&
+        Sequence::IsSequenceName(name))) &&
+      (hasSubscriptOrLayoutParentheses || hasLeftParenthesis)) {
     /* If the user is not defining a variable and the identifier is already
-     * known to be a sequence, or has an unknown type and is followed
-     * by a subscript, it's a sequence call. */
-    if (m_nextToken.type() == Token::Type::Subscript ||
-        (m_nextToken.type() == Token::Type::Layout &&
-         m_nextToken.firstLayout()->isParenthesesLayout())) {
+     * known to be a sequence, or has an unknown type and the identifier is a
+     * sequence name, it's a sequence call. */
+    if (hasSubscriptOrLayoutParentheses) {
       popToken();
       /* TODO factor with parseSequence */
       leftHandSide = SharedTreeStack->pushUserSequence(name);
@@ -1105,9 +1110,7 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
       }
       return;
     }
-    if (m_nextToken.type() != Token::Type::LeftParenthesis) {
-      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-    }
+    assert(hasLeftParenthesis);
     parseSequence(leftHandSide, name, Token::Type::RightParenthesis);
     return;
   }

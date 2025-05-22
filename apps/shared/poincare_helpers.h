@@ -95,11 +95,7 @@ inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
   Poincare::Internal::ProjectionContext projectionContext = {
       .m_complexFormat = reductionParameters.complexFormat,
       .m_angleUnit = reductionParameters.angleUnit,
-      .m_expansionStrategy =
-          (reductionParameters.target ==
-           Poincare::ReductionTarget::SystemForAnalysis)
-              ? Poincare::Internal::ExpansionStrategy::ExpandAlgebraic
-              : Poincare::Internal::ExpansionStrategy::None,
+      .m_reductionTarget = reductionParameters.target,
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = reductionParameters.symbolicComputation,

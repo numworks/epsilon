@@ -23,18 +23,13 @@ enum class ComplexFormat : uint8_t {
 
 enum class Strategy { Default, ApproximateToFloat };
 
-enum class ExpansionStrategy { None, ExpandAlgebraic };
-
 enum class ReductionTarget {
-  /* Minimal reduction: this at least reduces rationals operations as
-   * "1-0.3-0.7 --> 0" */
+  /* Optimized for approximation : (1+x)^3 will not be developed. */
   SystemForApproximation = 0,
-  /* Expansion of Newton multinome to be able to identify polynoms */
+  /* Optimized for analysis : (1+x)^3 will be developed to identify polynomial
+   * coefficients */
   SystemForAnalysis,
-  /* Additional features as:
-   * - factorizing on a common denominator
-   * - turning complex expression into the form a+ib
-   * - identifying tangent in cos/sin polynoms ... */
+  /* Optimized for user display. */
   User
 };
 

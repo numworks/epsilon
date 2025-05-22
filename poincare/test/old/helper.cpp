@@ -102,15 +102,12 @@ void assert_parsed_expression_process_to(
   copy_without_system_chars(result, oldResult);
   assert(SharedTreeStack->numberOfTrees() == 0);
   Tree *e = parse_expression(expression, ctx);
-  Internal::ProjectionContext projCtx = {
-      .m_complexFormat = complexFormat,
-      .m_angleUnit = angleUnit,
-      .m_expansionStrategy = (target == ReductionTarget::SystemForAnalysis)
-                                 ? Internal::ExpansionStrategy::ExpandAlgebraic
-                                 : Internal::ExpansionStrategy::None,
-      .m_unitFormat = unitFormat,
-      .m_symbolic = symbolicComputation,
-      .m_context = ctx};
+  Internal::ProjectionContext projCtx = {.m_complexFormat = complexFormat,
+                                         .m_angleUnit = angleUnit,
+                                         .m_reductionTarget = target,
+                                         .m_unitFormat = unitFormat,
+                                         .m_symbolic = symbolicComputation,
+                                         .m_context = ctx};
   Tree *m = process(e, projCtx);
   Tree *l = Internal::Layouter::LayoutExpression(m, true, false,
                                                  numberOfSignificantDigits);

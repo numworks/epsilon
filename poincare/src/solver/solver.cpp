@@ -186,7 +186,7 @@ typename Solver<T>::Solution Solver<T>::nextIntersection(
   if (*memoizedDifference == nullptr) {
     /* TODO: simplify if we decide that functions should be simplified.
      * Either pass ProjectionContext(m_complexFormat,
-     * m_angleUnit, ExpansionStrategy::ExpandAlgebraic, UnitFormat::Metric,
+     * m_angleUnit, ReductionTarget::SystemForAnalysis, UnitFormat::Metric,
      * m_context) or ensure expression is projected. */
     *memoizedDifference = PatternMatching::Create(KAdd(KA, KMult(-1_e, KB)),
                                                   {.KA = e1, .KB = e2});

@@ -134,9 +134,10 @@ Tree* ApplySimplify(const Tree* dataTree, ProjectionContext* projectionContext,
 void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext) {
   assert(!e->isStore());
   ToSystem(e, projectionContext);
+  // TODO: Also handle ReductionTarget::SystemForApproximation
   ReduceSystem(e, projectionContext->m_advanceReduce,
-               projectionContext->m_expansionStrategy ==
-                   ExpansionStrategy::ExpandAlgebraic);
+               projectionContext->m_reductionTarget ==
+                   ReductionTarget::SystemForAnalysis);
   // Non-approximated numbers or node may have appeared during reduction.
   ApplyStrategy(e, *projectionContext, true);
 }

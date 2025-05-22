@@ -13,7 +13,7 @@ struct ProjectionContext {
   ComplexFormat m_complexFormat = ComplexFormat::Real;
   AngleUnit m_angleUnit = AngleUnit::Radian;
   Strategy m_strategy = Strategy::Default;
-  ExpansionStrategy m_expansionStrategy = ExpansionStrategy::None;
+  ReductionTarget m_reductionTarget = ReductionTarget::User;
   /* TODO_PCJ: Default to a None DimensionType to ensure we don't mistake it
    * with a memoized value. */
   Dimension m_dimension = Dimension();

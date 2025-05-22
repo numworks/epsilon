@@ -735,47 +735,50 @@ Poincare::SystemFunction ContinuousFunction::Model::expressionApproximated(
 Poincare::SystemExpression
 ContinuousFunction::Model::expressionReducedForAnalysis(
     const Ion::Storage::Record* record, Poincare::Context* context) const {
-  ContinuousFunctionProperties::SymbolType computedFunctionSymbol =
-      ContinuousFunctionProperties::k_defaultSymbolType;
-  ComparisonJunior::Operator computedEquationType =
-      ContinuousFunctionProperties::k_defaultEquationType;
-  bool isCartesianEquation = false;
-  UserExpression equation =
-      expressionEquation(record, context, &computedEquationType,
-                         &computedFunctionSymbol, &isCartesianEquation);
-  SystemExpression result;
-  Preferences::ComplexFormat complexFormat =
-      this->complexFormat(record, context);
-  Preferences::AngleUnit angleUnit =
-      Preferences::SharedPreferences()->angleUnit();
-  if (!equation.isUndefined()) {
-    bool reductionFailure = false;
-    result = PoincareHelpers::CloneAndReduce(
-        equation, context,
-        {.complexFormat = complexFormat,
-         .angleUnit = angleUnit,
-         .updateComplexFormatWithExpression = false,
-         .target = ReductionTarget::SystemForAnalysis,
-         // Symbols have already been replaced.
-         .symbolicComputation = SymbolicComputation::KeepAllSymbols},
-        &reductionFailure);
-    if (reductionFailure) {
-      result = SystemExpression::Builder(KFailedSimplification);
+  if (m_expressionForAnalysis.isUninitialized()) {
+    ContinuousFunctionProperties::SymbolType computedFunctionSymbol =
+        ContinuousFunctionProperties::k_defaultSymbolType;
+    ComparisonJunior::Operator computedEquationType =
+        ContinuousFunctionProperties::k_defaultEquationType;
+    bool isCartesianEquation = false;
+    UserExpression equation =
+        expressionEquation(record, context, &computedEquationType,
+                           &computedFunctionSymbol, &isCartesianEquation);
+    SystemExpression result;
+    Preferences::ComplexFormat complexFormat =
+        this->complexFormat(record, context);
+    Preferences::AngleUnit angleUnit =
+        Preferences::SharedPreferences()->angleUnit();
+    if (!equation.isUndefined()) {
+      bool reductionFailure = false;
+      result = PoincareHelpers::CloneAndReduce(
+          equation, context,
+          {.complexFormat = complexFormat,
+           .angleUnit = angleUnit,
+           .updateComplexFormatWithExpression = false,
+           .target = ReductionTarget::SystemForAnalysis,
+           // Symbols have already been replaced.
+           .symbolicComputation = SymbolicComputation::KeepAllSymbols},
+          &reductionFailure);
+      if (reductionFailure) {
+        result = SystemExpression::Builder(KFailedSimplification);
+      }
+      assert(!result.isUninitialized());
+    } else {
+      result = SystemExpression::Builder(KUndef);
     }
-    assert(!result.isUninitialized());
-  } else {
-    result = SystemExpression::Builder(KUndef);
+    /* TODO_PCJ: equation and result used to be a same Expression at this step.
+     * Ensure this pool usage regression of still having equation in the pool is
+     * acceptable. */
+    if (!m_properties.isInitialized()) {
+      // Use the computed equation to update the plot type.
+      m_properties.update(result, originalEquation(record, UCodePointUnknown),
+                          context, complexFormat, computedEquationType,
+                          computedFunctionSymbol, isCartesianEquation);
+    }
+    m_expressionForAnalysis = result;
   }
-  /* TODO_PCJ: equation and result used to be a same Expression at this step.
-   * Ensure this pool usage regression of still having equation in the pool is
-   * acceptable. */
-  if (!m_properties.isInitialized()) {
-    // Use the computed equation to update the plot type.
-    m_properties.update(result, originalEquation(record, UCodePointUnknown),
-                        context, complexFormat, computedEquationType,
-                        computedFunctionSymbol, isCartesianEquation);
-  }
-  return result;
+  return m_expressionForAnalysis;
 }
 
 UserExpression ContinuousFunction::Model::expressionClone(
@@ -1095,6 +1098,10 @@ void ContinuousFunction::Model::tidyDownstreamPoolFrom(
   if (treePoolCursor == nullptr ||
       m_expressionApproximated.isDownstreamOf(treePoolCursor)) {
     m_expressionApproximated = SystemFunction();
+  }
+  if (treePoolCursor == nullptr ||
+      m_expressionForAnalysis.isDownstreamOf(treePoolCursor)) {
+    m_expressionForAnalysis = SystemExpression();
   }
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }

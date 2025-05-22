@@ -444,7 +444,9 @@ class ContinuousFunction : public Function {
     /* m_expression is used for values in table.
      * m_expressionApproximated is used for plot, autozoom and points of
      * interest.
+     * m_expressionForAnalysis is used for analysis.
      */
+    mutable Poincare::SystemExpression m_expressionForAnalysis;
     mutable Poincare::SystemFunction m_expressionApproximated;
     mutable Poincare::SystemExpression m_expressionFirstDerivate;
     mutable Poincare::SystemFunction m_expressionFirstDerivateApproximated;

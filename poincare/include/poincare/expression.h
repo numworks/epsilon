@@ -4,7 +4,6 @@
 #include <omg/enums.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/layout.h>
-#include <poincare/old/computation_context.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/pool_object.h>
 #include <poincare/preferences.h>
@@ -22,6 +21,8 @@ struct ProjectionContext;
 }  // namespace Poincare::Internal
 
 namespace Poincare {
+
+class Expression;
 
 /* Aliases used to specify a Expression's type. TODO_PCJ: split them into
  * actual classes to prevent casting one into another. */

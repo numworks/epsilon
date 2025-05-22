@@ -10,6 +10,8 @@ namespace Poincare {
 
 class Expression;
 
+static_assert(false, "This file is unused and should not be included.");
+
 enum class ReductionTarget {
   /* Minimal reduction: this at least reduces rationals operations as
    * "1-0.3-0.7 --> 0" */

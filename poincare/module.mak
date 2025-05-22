@@ -27,7 +27,6 @@ _sources_poincare_storage := $(addprefix src/, \
 
 _sources_poincare_extended := $(addprefix src/, \
 $(addprefix old/, \
-  computation_context.cpp:-nopool \
   context.cpp \
   empty_context.cpp \
   float_list.cpp:-nopool \

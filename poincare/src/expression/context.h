@@ -25,6 +25,19 @@ enum class Strategy { Default, ApproximateToFloat };
 
 enum class ExpansionStrategy { None, ExpandAlgebraic };
 
+enum class ReductionTarget {
+  /* Minimal reduction: this at least reduces rationals operations as
+   * "1-0.3-0.7 --> 0" */
+  SystemForApproximation = 0,
+  /* Expansion of Newton multinome to be able to identify polynoms */
+  SystemForAnalysis,
+  /* Additional features as:
+   * - factorizing on a common denominator
+   * - turning complex expression into the form a+ib
+   * - identifying tangent in cos/sin polynoms ... */
+  User
+};
+
 enum class UnitFormat { Metric, Imperial };
 
 enum class SymbolicComputation {

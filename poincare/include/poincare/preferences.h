@@ -18,6 +18,7 @@ class FileSystem;
 
 namespace Poincare {
 
+using ReductionTarget = Internal::ReductionTarget;
 using SymbolicComputation = Internal::SymbolicComputation;
 
 /* Preferences live in the Storage, which does not enforce alignment. The packed

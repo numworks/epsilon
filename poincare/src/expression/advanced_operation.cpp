@@ -368,11 +368,35 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
     }
   }
 
-  // (A + B?)^2 = (A^2 + 2*A*B + B^2)
-  if (PatternMatching::MatchReplaceSimplify(
+  // (A + B + ...)^2 = (A^2 + 2*A*B + B^2 + ...): fully develop the square
+  if (PatternMatching::Match(e, KPow(KA, 2_e), &ctx) &&
+      ctx.getTree(KA)->isAdd() && ctx.getTree(KA)->numberOfChildren() >= 2) {
+    const Tree* add = ctx.getTree(KA);
+    int nbOfChildren = add->numberOfChildren();
+    constexpr int maxChildrenForDeepExpand = 10;
+    if (nbOfChildren > maxChildrenForDeepExpand) {
+      // Fallback to simple expand if too many children in addition
+      return PatternMatching::MatchReplaceSimplify(
           e, KPow(KAdd(KA, KB_p), 2_e),
           KAdd(KPow(KA, 2_e), KMult(2_e, KA, KAdd(KB_p)),
-               KPow(KAdd(KB_p), 2_e)))) {
+               KPow(KAdd(KB_p), 2_e)));
+    }
+    const Tree* children[maxChildrenForDeepExpand];
+    // Store children as the cache will be cleared by the successive Create
+    for (IndexedChild<const Tree*> child : add->indexedChildren()) {
+      children[child.index] = child;
+    }
+    Tree* res = KAdd.node<0>->cloneTree();
+    for (int i = 0; i < nbOfChildren; ++i) {
+      PatternMatching::CreateSimplify(KPow(KA, 2_e), {.KA = children[i]});
+      for (int j = i + 1; j < nbOfChildren; ++j) {
+        PatternMatching::CreateSimplify(KMult(2_e, KA, KB),
+                                        {.KA = children[i], .KB = children[j]});
+      }
+    }
+    NAry::SetNumberOfChildren(res, nbOfChildren * (nbOfChildren + 1) / 2);
+    SystematicReduction::ShallowReduce(res);
+    e->moveTreeOverTree(res);
     return true;
   }
 

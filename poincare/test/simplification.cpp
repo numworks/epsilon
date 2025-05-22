@@ -915,6 +915,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(57×√(17)+68×√(10))", "17^(3/4)×(1+(2×√(170))/17)");
   simplifies_to("(-8)^(1/3)-1-√(3)×i", "0", cartesianCtx);
   simplifies_to("√(-3)-√(3)×i", "0", cartesianCtx);
+  simplifies_to("(√(2+√(3))+√(2-√(3))×i)^2", "2×√(3)+2i", cartesianCtx);
 
   // Development of mult and integer power
   simplifies_to("π*(π+1)", "π^2+π");

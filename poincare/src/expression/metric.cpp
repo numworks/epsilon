@@ -43,6 +43,11 @@ int ChildrenCoeffLn(ComplexSign sign) {
 }  // namespace
 
 int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
+  // Metric should not penalize what will be beautified out.
+  const bool willBeBeautified = reductionTarget == ReductionTarget::User;
+  // Metric should not penalize what will be expanded.
+  const bool shouldExpand =
+      reductionTarget != ReductionTarget::SystemForApproximation;
   int result = GetMetric(e->type());
   /* Some functions must have the smallest children possible, so we increase the
    * cost of all children inside the parent expression with a coefficient. */
@@ -53,48 +58,56 @@ int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
     case Type::RationalPosBig:
     case Type::IntegerNegBig:
     case Type::IntegerPosBig:
-      return GetMetric(ShortTypeForBigType(e->type())) * e->nodeSize();
+      return willBeBeautified
+                 ? GetMetric(ShortTypeForBigType(e->type())) * e->nodeSize()
+                 : GetMetric(e->type());
     case Type::Mult: {
       // Ignore cost of multiplication in (-A)
       if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2) {
         result -= GetMetric(Type::Mult);
       }
-      /* Trigonometry with complexes is beautified into hyperbolic
-       * trigonometry (cosh, sinh, asinh and atanh)*/
-      // TODO: cost difference between trig and hyperbolic trig
-      if (PatternMatching::Match(
-              e, KMult(KA_s, KTrig(KMult(KB_s, i_e), 1_e), KC_s, i_e), &ctx) ||
-          PatternMatching::Match(
-              e, KMult(KA_s, KATrig(KMult(KB_s, i_e), 1_e), KC_s, i_e), &ctx) ||
-          PatternMatching::Match(
-              e, KMult(KA_s, KATanRad(KMult(KB_s, i_e)), KC_s, i_e), &ctx)) {
-        result += GetMetric(Type::MinusOne) - GetMetric(Type::ComplexI) * 2;
-        if (ctx.getNumberOfTrees(KB) == 1) {
-          result -= GetMetric(Type::Mult);
-        }
-      }
-      // ln(A)/ln(10) is beautified into log(A)
-      constexpr const Tree* invLn10 = KPow(KLn(10_e), -1_e);
-      bool hasLn = false;
-      bool hasInvLn10 = false;
-      for (const Tree* child : e->children()) {
-        if (child->isLn()) {
-          hasLn = true;
-        } else if (child->treeIsIdenticalTo(invLn10)) {
-          hasInvLn10 = true;
-        }
-        if (hasLn && hasInvLn10) {
-          result -= GetTrueMetric(invLn10);
-          if (e->numberOfChildren() == 2) {
+
+      if (willBeBeautified) {
+        /* Trigonometry with complexes is beautified into hyperbolic
+         * trigonometry (cosh, sinh, asinh and atanh)*/
+        // TODO: cost difference between trig and hyperbolic trig
+        if (PatternMatching::Match(
+                e, KMult(KA_s, KTrig(KMult(KB_s, i_e), 1_e), KC_s, i_e),
+                &ctx) ||
+            PatternMatching::Match(
+                e, KMult(KA_s, KATrig(KMult(KB_s, i_e), 1_e), KC_s, i_e),
+                &ctx) ||
+            PatternMatching::Match(
+                e, KMult(KA_s, KATanRad(KMult(KB_s, i_e)), KC_s, i_e), &ctx)) {
+          result += GetMetric(Type::MinusOne) - GetMetric(Type::ComplexI) * 2;
+          if (ctx.getNumberOfTrees(KB) == 1) {
             result -= GetMetric(Type::Mult);
           }
-          break;
+        }
+        // ln(A)/ln(10) is beautified into log(A)
+        constexpr const Tree* invLn10 = KPow(KLn(10_e), -1_e);
+        bool hasLn = false;
+        bool hasInvLn10 = false;
+        for (const Tree* child : e->children()) {
+          if (child->isLn()) {
+            hasLn = true;
+          } else if (child->treeIsIdenticalTo(invLn10)) {
+            hasInvLn10 = true;
+          }
+          if (hasLn && hasInvLn10) {
+            result -= GetTrueMetric(invLn10, reductionTarget);
+            if (e->numberOfChildren() == 2) {
+              result -= GetMetric(Type::Mult);
+            }
+            break;
+          }
         }
       }
       break;
     }
     case Type::Add: {
-      if (PatternMatching::Match(
+      if (shouldExpand &&
+          PatternMatching::Match(
               e, KAdd(KA_s, KMult(KB, KC), KD_s, KMult(KB, KE), KF_s), &ctx)) {
         /* Ignore cost of developing B*(C+E) when B:
          * - is not minus one
@@ -110,8 +123,9 @@ int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       break;
     }
     case Type::Exp: {
-      // exp(A*ln(B)) -> Root(B,A) exception
-      if (PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {
+      if (willBeBeautified &&
+          PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {
+        // exp(A*ln(B)) -> Root(B,A) exception
         Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
         if (!exponent->isHalf()) {
           // Ignore cost of exponent for squareroot
@@ -125,7 +139,7 @@ int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       break;
     }
     case Type::Pow: {
-      if (e->child(0)->isAdd() && e->child(1)->isInteger() &&
+      if (shouldExpand && e->child(0)->isAdd() && e->child(1)->isInteger() &&
           !e->child(1)->isMinusOne()) {
         // Increase cost of factorized expressions as integer power
         childrenCoeff = 4;
@@ -136,8 +150,9 @@ int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       return result + GetTrueMetric(Dependency::Main(e), reductionTarget);
     case Type::Trig:
     case Type::ATrig: {
-      // cos(A*i) is beautified into cosh(A)
-      if (PatternMatching::Match(e, KTrig(KMult(KA_s, i_e), 0_e), &ctx)) {
+      if (willBeBeautified &&
+          PatternMatching::Match(e, KTrig(KMult(KA_s, i_e), 0_e), &ctx)) {
+        // cos(A*i) is beautified into cosh(A)
         result -= GetMetric(Type::ComplexI);
         if (ctx.getNumberOfTrees(KA) == 1) {
           result -= GetMetric(Type::Mult);
@@ -152,7 +167,8 @@ int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       childrenCoeff = ChildrenCoeffLn(GetComplexSign(e->child(0)));
       const Tree* firstChild =
           e->child(0)->isMult() ? e->child(0)->child(0) : e->child(0);
-      if (firstChild->isRational() && !firstChild->isZero()) {
+      if (willBeBeautified && firstChild->isRational() &&
+          !firstChild->isZero()) {
         // Increase cost of rationals in ln according to their value
         IntegerHandler p = Rational::Numerator(firstChild);
         IntegerHandler q = Rational::Denominator(firstChild);
@@ -226,6 +242,7 @@ int Metric::GetMetric(Type type) {
       return k_defaultMetric * 2;
     case Type::Sum:
     case Type::Var:
+    case Type::UserSymbol:
       return k_defaultMetric * 3;
   }
 }

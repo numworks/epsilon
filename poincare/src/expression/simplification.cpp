@@ -157,19 +157,32 @@ bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext) {
 }
 
 bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
-  // Seed random nodes before anything is merged/duplicated.
+  // Seed random nodes before anything is merged/duplicated
   int previousMaxRandomSeed = Random::GetMaxSeed(e);
   int maxRandomSeed = Random::SeedRandomNodes(e, previousMaxRandomSeed);
   bool changed = maxRandomSeed > previousMaxRandomSeed;
-  // Replace functions and variable before dimension check
-  changed = Variables::ProjectLocalVariablesToId(e) || changed;
-  // Replace local variables before user named
-  if (Projection::DeepReplaceUserNamed(e, projectionContext->m_context,
-                                       projectionContext->m_symbolic)) {
-    // Seed random nodes that may have appeared after replacing.
-    maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
-    changed = true;
+  // Replace UserFunctions before projecting local variables
+  const SymbolicComputation symbolic = projectionContext->m_symbolic;
+  Poincare::Context* context = projectionContext->m_context;
+  if (symbolic != SymbolicComputation::KeepAllSymbols &&
+      symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+    if (Projection::DeepReplaceUserNamed(
+            e, context, SymbolicComputation::ReplaceDefinedFunctions)) {
+      // Seed random nodes that may have appeared after replacing
+      maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
+      changed = true;
+    }
   }
+  changed = Variables::ProjectLocalVariablesToId(e) || changed;
+  // Replace user named symbols after having projected local variables
+  if (symbolic != SymbolicComputation::ReplaceDefinedFunctions) {
+    changed = Projection::DeepReplaceUserNamed(e, context, symbolic) || changed;
+  } else {
+    assert(!Projection::DeepReplaceUserNamed(e, context, symbolic));
+  }
+  // No additional random nodes should have appeared
+  assert(Random::SeedRandomNodes(e, maxRandomSeed) == maxRandomSeed);
+  // Check dimension after having replaced symbols and functions
   if (!Dimension::DeepCheck(e)) {
     e->cloneTreeOverTree(KUndefUnhandledDimension);
     changed = true;

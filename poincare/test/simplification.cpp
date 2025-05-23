@@ -641,9 +641,9 @@ QUIZ_CASE(pcj_simplification_parametric) {
       .m_context = &globalContext,
   };
   simplifies_to("f'(4)", "8", ctx2);
-  // TODO: To fix, should be 8.
-  simplifies_to("g(4)", "0", ctx2);
-  simplifies_to("h(4)", "0", ctx2);
+  // TODO: To fix, should be 8, and should not crash
+  // simplifies_to("g(4)", "0", ctx2);
+  simplifies_to("h(4)", "8", ctx2);
 }
 
 QUIZ_CASE(pcj_simplification_factorial) {

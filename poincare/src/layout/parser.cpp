@@ -138,7 +138,9 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       expr->removeTree();
 
       // Sequence expression
-      if (!Parse(grid->child(1), context)) {
+      if (Rack::IsEmpty(grid->child(1))) {
+        SharedTreeStack->pushBlock(Type::EmptySequenceExpression);
+      } else if (!Parse(grid->child(1), context)) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
 

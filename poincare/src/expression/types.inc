@@ -399,6 +399,11 @@ NODE(SequenceDoubleRecurrence, SEQUENCE, 5)
 
 RANGE(Sequence, SequenceExplicit, SequenceDoubleRecurrence)
 
+/* This node is used to parse a sequence layout even if it contains an empty
+ * rack.
+ * TODO: find a better solution to display sequence layouts. */
+NODE(EmptySequenceExpression, SEQUENCE)
+
 RANGE(Expression, RationalNegBig, SequenceDoubleRecurrence)
 
 // TODO: should this really be here ?

@@ -742,6 +742,8 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::SequenceDoubleRecurrence:
       layoutSequence(layoutParent, expression);
       break;
+    case Type::EmptySequenceExpression:
+      break;
     case Type::Unit:
       layoutUnit(layoutParent, expression);
       break;

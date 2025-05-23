@@ -37,12 +37,15 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
     if (e->isRandomized()) {
       if (GetSeed(e) == 0) {
         // RandIntNoRep needs to reserve seed for each of its elements.
-        /* RandIntNoRep dimension may have not been checked at this point and we
-         * need its length. The dimension check for RandIntNoRep is
-         * straighforward and can be done at this step. */
-        int size = e->isRandIntNoRep() && Dimension::DeepCheck(e)
-                       ? Dimension::ListLength(e)
-                       : 1;
+        int size = 1;
+        if (e->isRandIntNoRep() && Dimension::DeepCheck(e)) {
+          /* RandIntNoRep dimension may have not been checked at this point and
+           * we need its length. The dimension check for RandIntNoRep is
+           * straighforward and can be done at this step. */
+          int listLength = Dimension::ListLength(e);
+          // Keep a size 1 to increment currentSeed anyway.
+          size = listLength > 0 ? listLength : 1;
+        }
         assert(static_cast<int>(currentSeed) + size < k_maxNumberOfSeeds);
         if (currentSeed + size > Context::k_maxNumberOfVariables) {
           assert(GetSeed(e) == 0);

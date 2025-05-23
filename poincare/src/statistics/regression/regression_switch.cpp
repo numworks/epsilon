@@ -19,41 +19,29 @@
 
 namespace Poincare::Internal {
 
-/* WARNING: The "constexpr static" object sometimes raised "memory out of
- * bounds" error with emscripten compiler for an unknown reason.
- * Initilazing them at runtime (not constexpr) fixed the problem.
- * This might need further investigation ? Does the emscripten compiler respects
- * all the cpp standard guarantees ? Note that changing -Oz to -O0 doesn't fix
- * the problem. Weirdly, using ASSERTIONS=1 fixes it, no idea why. */
-#ifdef TARGET_POINCARE_JS
-#define STATIC_VARIABLE static
-#else
-#define STATIC_VARIABLE constexpr static
-#endif
-
 const Regression* Regression::Get(Type type, Preferences::AngleUnit angleUnit) {
-  STATIC_VARIABLE NoneRegression none;
-  STATIC_VARIABLE LinearRegression linearAxpb(false);
-  STATIC_VARIABLE LinearRegression linearApbx(true);
-  STATIC_VARIABLE ProportionalRegression proportional;
-  STATIC_VARIABLE QuadraticRegression quadratic;
-  STATIC_VARIABLE CubicRegression cubic;
-  STATIC_VARIABLE QuarticRegression quartic;
-  STATIC_VARIABLE LogarithmicRegression logarithmic;
-  STATIC_VARIABLE ExponentialRegression exponentialAebx(false);
-  STATIC_VARIABLE ExponentialRegression exponentialAbx(true);
-  STATIC_VARIABLE PowerRegression power;
-  STATIC_VARIABLE LogisticRegression logistic(false);
-  STATIC_VARIABLE LogisticRegression logisticInternal(true);
-  STATIC_VARIABLE MedianRegression median;
+  constexpr static NoneRegression none;
+  constexpr static LinearRegression linearAxpb(false);
+  constexpr static LinearRegression linearApbx(true);
+  constexpr static ProportionalRegression proportional;
+  constexpr static QuadraticRegression quadratic;
+  constexpr static CubicRegression cubic;
+  constexpr static QuarticRegression quartic;
+  constexpr static LogarithmicRegression logarithmic;
+  constexpr static ExponentialRegression exponentialAebx(false);
+  constexpr static ExponentialRegression exponentialAbx(true);
+  constexpr static PowerRegression power;
+  constexpr static LogisticRegression logistic(false);
+  constexpr static LogisticRegression logisticInternal(true);
+  constexpr static MedianRegression median;
   /* NOTE: Having a static var for each angle unit seems weird, but it
    * was the easiest way to adapt to the current implementation.
    * Maybe the way Regressions are handled should be rethought ? */
-  STATIC_VARIABLE TrigonometricRegression trigonometricRad(
+  constexpr static TrigonometricRegression trigonometricRad(
       Preferences::AngleUnit::Radian);
-  STATIC_VARIABLE TrigonometricRegression trigonometricDeg(
+  constexpr static TrigonometricRegression trigonometricDeg(
       Preferences::AngleUnit::Degree);
-  STATIC_VARIABLE TrigonometricRegression trigonometricGrad(
+  constexpr static TrigonometricRegression trigonometricGrad(
       Preferences::AngleUnit::Gradian);
 
   switch (type) {

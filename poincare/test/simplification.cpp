@@ -631,6 +631,19 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(1,k,i,i+1)", "undef");
   simplifies_to_no_beautif("sum([[0]],k,i,0)", "[[undef]]");
   simplifies_to_no_beautif("product([[0]],k,1,pi)", "[[undef]]");
+
+  // Parametric in functions
+  store("x^2→f(x)", &globalContext);
+  store("f'(x)→g(x)", &globalContext);
+  store("diff(f(x),x,x)→h(x)", &globalContext);
+  ProjectionContext ctx2 = {
+      .m_symbolic = SymbolicComputation::ReplaceDefinedFunctions,
+      .m_context = &globalContext,
+  };
+  simplifies_to("f'(4)", "8", ctx2);
+  // TODO: To fix, should be 8.
+  simplifies_to("g(4)", "0", ctx2);
+  simplifies_to("h(4)", "0", ctx2);
 }
 
 QUIZ_CASE(pcj_simplification_factorial) {

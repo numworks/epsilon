@@ -1,6 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/src/expression/beautification.h>
+#include <poincare/src/expression/derivation.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/rational.h>
 
@@ -285,11 +286,17 @@ QUIZ_CASE(poincare_serialization_derivative) {
   assert_expression_serializes_to(KDiff("x"_e, "x"_e, 3_e, KFun<"f">("x"_e)),
                                   "diff(f(x),x,x,3)");
   assert_expression_serializes_to(
-      KDiff(KUnknownSymbol, "x"_e, 1_e, KFun<"f">(KUnknownSymbol)), "f'(x)");
+      KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 1_e,
+            KFun<"f">(Derivation::k_functionDerivativeVariable)),
+      "f'(x)");
   assert_expression_serializes_to(
-      KDiff(KUnknownSymbol, "x"_e, 2_e, KFun<"f">(KUnknownSymbol)), "f\"(x)");
+      KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 2_e,
+            KFun<"f">(Derivation::k_functionDerivativeVariable)),
+      "f\"(x)");
   assert_expression_serializes_to(
-      KDiff(KUnknownSymbol, "x"_e, 3_e, KFun<"f">(KUnknownSymbol)), "f^(3)(x)");
+      KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 3_e,
+            KFun<"f">(Derivation::k_functionDerivativeVariable)),
+      "f^(3)(x)");
   assert_expression_parses_and_serializes_to("f'(x)", "f×_'×(x)", &ctx);
   assert_expression_parses_and_serializes_to("f\"(x)", "f×_\"×(x)", &ctx);
   assert_expression_parses_and_serializes_to("f''(x)", "f×_'×_'×(x)", &ctx);

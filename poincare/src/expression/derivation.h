@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_DERIVATION_H
 #define POINCARE_EXPRESSION_DERIVATION_H
 
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/tree_ref.h>
 
 namespace Poincare::Internal {
@@ -12,6 +13,9 @@ class Derivation {
 
   constexpr static CodePoint k_firstOrderSymbol = '\'';
   constexpr static CodePoint k_secondOrderSymbol = '"';
+  /* Used in layouter/parser to preserve f'(x) form, without using
+   * KUnknownSymbol which might interfere with other behaviors. */
+  constexpr static KTree k_functionDerivativeVariable = KTemporaryUnknownSymbol;
 
  private:
   /* Push derivand derivation on the pool. If force is true, push a diff tree

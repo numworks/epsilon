@@ -2,6 +2,7 @@
 #include <poincare/exception_checkpoint.h>
 #include <poincare/init.h>
 #include <poincare/print.h>
+#include <poincare/src/expression/derivation.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/units/k_units.h>
@@ -684,10 +685,14 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "func", "", 0);
   assert_parsed_expression_is(
-      "f'(x)", KDiff(KUnknownSymbol, "x"_e, 1_e, KFun<"f">(KUnknownSymbol)),
+      "f'(x)",
+      KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 1_e,
+            KFun<"f">(Derivation::k_functionDerivativeVariable)),
       &globalContext);
   assert_parsed_expression_is(
-      "f\"(x)", KDiff(KUnknownSymbol, "x"_e, 2_e, KFun<"f">(KUnknownSymbol)),
+      "f\"(x)",
+      KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 2_e,
+            KFun<"f">(Derivation::k_functionDerivativeVariable)),
       &globalContext);
   assert_parse_to_same_expression("f'(x)", "f^(1)(x)", &globalContext);
   assert_parse_to_same_expression("f\"(x)", "f^(2)(x)", &globalContext);
@@ -696,7 +701,9 @@ QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
   assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)", &globalContext);
   assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)", &globalContext);
   assert_parsed_expression_is(
-      "f^(3)(x)", KDiff(KUnknownSymbol, "x"_e, 3_e, KFun<"f">(KUnknownSymbol)),
+      "f^(3)(x)",
+      KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 3_e,
+            KFun<"f">(Derivation::k_functionDerivativeVariable)),
       &globalContext);
   assert_parsed_expression_is(
       "f^(3/2)(x)",

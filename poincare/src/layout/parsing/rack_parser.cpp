@@ -8,6 +8,7 @@
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/binary.h>
+#include <poincare/src/expression/derivation.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/list.h>
@@ -1181,15 +1182,14 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     if (derivationOrder > 0) {
       result = SharedTreeStack->pushDiff();
       // Symbol - Any symbol can be used other than UnknownSymbol.
-      const Tree* symbol = "x"_e;
-      symbol->cloneTree();
+      Derivation::k_functionDerivativeVariable->cloneTree();
       // SymbolValue
       parameter->detachTree();
       // Order
       Integer::Push(derivationOrder);
       // Derivand
       SharedTreeStack->pushUserFunction(name);
-      symbol->cloneTree();
+      Derivation::k_functionDerivativeVariable->cloneTree();
     } else {
       result = parameter->moveNodeBeforeNode(
           SharedTreeStack->pushUserFunction(name));

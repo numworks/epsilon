@@ -12,7 +12,6 @@ class FunctionTitleCell : public Escher::EvenOddCell {
       : EvenOddCell(), m_baseline(-1), m_functionColor(KDColorBlack) {}
   virtual void setColor(KDColor color);
   void drawRect(KDContext* ctx, KDRect rect) const override;
-  void setBaseline(KDCoordinate baseline);
 
  protected:
   constexpr static KDCoordinate k_separatorThickness =

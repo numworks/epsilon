@@ -7,13 +7,6 @@ void FunctionTitleCell::setColor(KDColor color) {
   reloadCell();
 }
 
-void FunctionTitleCell::setBaseline(KDCoordinate baseline) {
-  if (m_baseline != baseline) {
-    m_baseline = baseline;
-    reloadCell();
-  }
-}
-
 void FunctionTitleCell::drawRect(KDContext* ctx, KDRect rect) const {
   // Draw the color indicator
   ctx->fillRect(KDRect(0, 0, bounds().width(), k_colorIndicatorThickness),

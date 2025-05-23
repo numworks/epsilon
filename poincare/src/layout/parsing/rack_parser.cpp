@@ -1180,15 +1180,16 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   } else {
     if (derivationOrder > 0) {
       result = SharedTreeStack->pushDiff();
-      // Symbol
-      KUnknownSymbol->cloneTree();
+      // Symbol - Any symbol can be used other than UnknownSymbol.
+      const Tree* symbol = "x"_e;
+      symbol->cloneTree();
       // SymbolValue
       parameter->detachTree();
       // Order
       Integer::Push(derivationOrder);
       // Derivand
       SharedTreeStack->pushUserFunction(name);
-      KUnknownSymbol->cloneTree();
+      symbol->cloneTree();
     } else {
       result = parameter->moveNodeBeforeNode(
           SharedTreeStack->pushUserFunction(name));

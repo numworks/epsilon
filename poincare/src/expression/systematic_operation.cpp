@@ -868,7 +868,19 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
     if (e->hasChildSatisfying([](const Tree* e) { return e->isFloat(); }) &&
         Approximation::ApproximateAndReplaceEveryScalar<double>(e)) {
       changed = true;
-      if (e->isFloat()) {
+      PatternMatching::Context ctx;
+      /* Possible output of [ApproximateAndReplaceEveryScalar] include :
+       * - float
+       * - undef/nonreal */
+      if (e->isFloat() || e->isUndefined()) {
+        return true;
+      }
+      /* - float+float*i
+       * - float*i */
+      if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB, i_e)), &ctx) &&
+          ctx.getTree(KB)->isFloat() &&
+          (ctx.getNumberOfTrees(KA) == 0 ||
+           (ctx.getNumberOfTrees(KA) == 1 && ctx.getTree(KA)->isFloat()))) {
         return true;
       }
     }

@@ -26,6 +26,10 @@
 #include "placeholder.h"
 #endif
 
+#if ASSERTIONS
+#include <poincare/src/expression/parametric.h>
+#endif
+
 namespace Poincare::Internal {
 
 #if POINCARE_TREE_LOG
@@ -508,9 +512,33 @@ bool Tree::deepReplaceWith(const Tree* target, TreeRef& replacement) {
   if (replaceWith(target, replacement)) {
     return true;
   }
+#if ASSERTIONS
+  int index = 0;
+#endif
   bool changed = false;
-  for (Tree* child : children()) {
-    changed = child->deepReplaceWith(target, replacement) || changed;
+  for (Tree* childTree : children()) {
+    bool childChanged = childTree->deepReplaceWith(target, replacement);
+#if ASSERTIONS
+    if (childChanged && isParametric()) {
+      // Variable should not be altered
+      assert(index != Parametric::k_variableIndex);
+      // The variable should not be in the replacement expression
+      if (index == Parametric::FunctionIndex(this)) {
+        /* Only one of these two assertions could be checked depending on if the
+         * expression has been projected or not. Test both for now. */
+        // Projected expression :
+        assert(!replacement->hasDescendantSatisfying(
+            [](const Tree* t) { return t->isVar(); }));
+        // Unprojected expressions :
+        const Tree* variable = child(Parametric::k_variableIndex);
+        for (const Tree* t : replacement->selfAndDescendants()) {
+          assert(!t->treeIsIdenticalTo(variable));
+        }
+      }
+    }
+    index++;
+#endif
+    changed = childChanged || changed;
   }
   return changed;
 }

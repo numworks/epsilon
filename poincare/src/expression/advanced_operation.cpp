@@ -370,7 +370,8 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
 
   // (A + B + ...)^2 = (A^2 + 2*A*B + B^2 + ...): fully develop the square
   if (PatternMatching::Match(e, KPow(KA, 2_e), &ctx) &&
-      ctx.getTree(KA)->isAdd() && ctx.getTree(KA)->numberOfChildren() >= 2) {
+      ctx.getTree(KA)->isAdd()) {
+    assert(ctx.getTree(KA)->numberOfChildren() >= 2);  // e should be reduced
     const Tree* add = ctx.getTree(KA);
     int nbOfChildren = add->numberOfChildren();
     constexpr int maxChildrenForDeepExpand = 10;

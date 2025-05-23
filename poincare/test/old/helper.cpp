@@ -209,6 +209,11 @@ void assert_parsed_expression_simplify_to(
         return e;
       } :[](Tree *e, Internal::ProjectionContext &projCtx) {
         simplify(e, projCtx, false);
+        /* Beautify the expression with a different target, to allow layouting and output comparison. */
+        ReductionTarget previousReductionTarget = projCtx.m_reductionTarget;
+        projCtx.m_reductionTarget = User;
+        Beautification::DeepBeautify(e, projCtx);
+        projCtx.m_reductionTarget = previousReductionTarget;
         return e;
       });
 }

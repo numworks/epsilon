@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/src/expression/advanced_reduction.h>
+#include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/list.h>
@@ -169,6 +170,12 @@ void projects_and_reduces_to(const char* input, const char* output,
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
         simplify(tree, projectionContext, false);
+        // Beautify anyway to compare input and outputs
+        ReductionTarget previousReductionTarget =
+            projectionContext.m_reductionTarget;
+        projectionContext.m_reductionTarget = ReductionTarget::User;
+        Beautification::DeepBeautify(tree, projectionContext);
+        projectionContext.m_reductionTarget = previousReductionTarget;
       },
       projectionContext);
 }
@@ -1933,16 +1940,16 @@ QUIZ_CASE(pcj_simplification_without_beautification) {
       .m_reductionTarget = ReductionTarget::SystemForApproximation};
   ProjectionContext AnalysisCtx = {.m_reductionTarget =
                                        ReductionTarget::SystemForAnalysis};
-  projects_and_reduces_to("(1+x)^3", "(1+x)^3", ApproximationCtx);
+  projects_and_reduces_to("(1+x)^3", "(x+1)^3", ApproximationCtx);
   projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0", ApproximationCtx);
-  projects_and_reduces_to("(1+x)^3", "1+3×x+3×x^2+x^3", AnalysisCtx);
+  projects_and_reduces_to("(1+x)^3", "x^3+3×x^2+3×x+1", AnalysisCtx);
   projects_and_reduces_to("ln(49000*x)",
-                          "dep(Ln(49000)+Ln(x),{nonNull(x),realPos(49000×x)})",
+                          "dep(ln(49000)+ln(x),{nonNull(x),realPos(49000×x)})",
                           ApproximationCtx);
   projects_and_reduces_to("ln(49000*x)",
-                          "dep(Ln(49000)+Ln(x),{nonNull(x),realPos(49000×x)})",
+                          "dep(ln(49000)+ln(x),{nonNull(x),realPos(49000×x)})",
                           AnalysisCtx);
   // TODO: x^2*(1-x^2) might be better for approximation.
-  projects_and_reduces_to("x^2-x^4", "x^2-1×x^4", ApproximationCtx);
-  projects_and_reduces_to("x^2-x^4", "x^2-1×x^4", AnalysisCtx);
+  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ApproximationCtx);
+  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", AnalysisCtx);
 }

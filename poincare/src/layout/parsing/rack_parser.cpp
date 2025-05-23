@@ -23,9 +23,9 @@
 #include <stdlib.h>
 
 #include <algorithm>
-#include <utility>
 
 #include "helper.h"
+#include "omg/code_point.h"
 
 namespace Poincare::Internal {
 
@@ -1219,12 +1219,60 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   return true;
 }
 
-Tree* RackParser::tryParseFunctionParameters() {
+Tree* RackParser::tryParseFunctionParameters(bool acceptWithoutParenthesis) {
   bool parenthesisIsLayout = m_nextToken.is(Token::Type::Layout) &&
                              m_nextToken.firstLayout()->isParenthesesLayout();
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::LeftParenthesis)) {
     // Left parenthesis missing.
-    return nullptr;
+    if (!acceptWithoutParenthesis || m_nextToken.is(Token::Type::EndOfStream)) {
+      return nullptr;
+    }
+    /* builtin functions can be called without parenthesis. In this case, we
+     * take the subsequent sequence of letters and digits as a the function
+     * argument.
+     * For example, "cos2x+3" is parsed as "cos(2*x)+3"
+     * We also accept a plus/minus sign at the beginning of the argument.
+     * For example, "cos-2x+3" is parsed as "cos(-2*x)+3"
+     */
+    // Find the argument to parse
+    int nextTokenIndex = m_root->indexOfChild(m_nextToken.firstLayout());
+    int nextTokenEnd = m_root->numberOfChildren();
+    for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
+      if (child.index < nextTokenIndex) {
+        continue;
+      }
+      if (child->isCodePointLayout()) {
+        bool isFirstChar = (child.index == nextTokenIndex);
+        CodePoint c = CodePointLayout::GetCodePoint(child);
+        if (c.isLatinLetter() || c.isDecimalDigit() ||
+            (isFirstChar && (c == '-' || c == '+'))) {
+          continue;
+        }
+      }
+      nextTokenEnd = child.index;
+      break;
+    }
+    if (nextTokenEnd == nextTokenIndex) {
+      // No argument to parse
+      return nullptr;
+    }
+    // Skip the argument and pop the next token
+    m_tokenizer.skip(nextTokenEnd - nextTokenIndex - m_nextToken.length());
+    popToken();
+    // Parse the argument
+    TreeRef list = List::PushEmpty();
+    RackParser subParser(m_root, m_parsingContext.context(), false,
+                         m_parsingContext.parsingMethod(), false,
+                         nextTokenIndex, nextTokenEnd);
+    Tree* argument = subParser.parse();
+    if (!argument) {
+      // Parse of argument failed
+      list->removeTree();
+      return nullptr;
+    }
+    // Only 1 argument can be passed without parenthesis
+    NAry::SetNumberOfChildren(list, 1);
+    return list;
   }
   if (!parenthesisIsLayout && popTokenIfType(Token::Type::RightParenthesis)) {
     // The function has no parameter.
@@ -1240,7 +1288,7 @@ Tree* RackParser::tryParseFunctionParameters() {
 }
 
 Tree* RackParser::parseFunctionParameters() {
-  Tree* commaSeparatedList = tryParseFunctionParameters();
+  Tree* commaSeparatedList = tryParseFunctionParameters(true);
   if (!commaSeparatedList) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }

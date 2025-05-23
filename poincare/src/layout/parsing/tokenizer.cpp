@@ -410,7 +410,7 @@ static bool stringIsACodePointFollowedByNumbers(LayoutSpan span) {
   return true;
 }
 
-static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
+static bool isSpecialIdentifierOrReservedFunctionFollowedByNumbers(
     const Layout* start, size_t* length, Token::Type* returnType) {
   size_t identifierLength = 0;
   LayoutSpanDecoder decoder(start, *length);
@@ -425,7 +425,7 @@ static bool stringIsASpecialIdentifierOrALogFollowedByNumbers(
     return false;
   }
   LayoutSpan span(start, identifierLength);
-  if (Builtin::ReservedFunctionName(KLogBase).contains(span)) {
+  if (Builtin::HasReservedFunction(span)) {
     *returnType = Token::Type::ReservedFunction;
     *length = identifierLength;
     return true;
@@ -519,10 +519,11 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
       Units::Unit::CanParse(span, nullptr, nullptr)) {
     return Token::Type::Unit;
   }
-  // "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
+  /* "Ans5" should not be parsed as "A*n*s5" but "Ans*5"
+   * "cos2" should not be parsed as "c*o*s2" but "cos(2)" */
   Token::Type type;
-  if (stringIsASpecialIdentifierOrALogFollowedByNumbers(span.data(), length,
-                                                        &type)) {
+  if (isSpecialIdentifierOrReservedFunctionFollowedByNumbers(span.data(),
+                                                             length, &type)) {
     // If true, the length has been modified to match the end of the identifier
     return type;
   }

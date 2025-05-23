@@ -129,7 +129,7 @@ jobs:
     steps:
       - uses: numworks/setup-emscripten@latest
         with:
-          sdk: 3.1.61
+          sdk: 4.0.8
       - uses: actions/checkout@v4
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
@@ -201,7 +201,7 @@ jobs:
       - name: Install Emscripten
         uses: numworks/setup-emscripten@latest
         with:
-          sdk: 3.1.61
+          sdk: 4.0.8
       - uses: actions/checkout@v4
       - name: Setup the environment
         run: build/setup.sh --only-simulator

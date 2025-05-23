@@ -1,6 +1,6 @@
 winget install --accept-package-agreements python
 winget install ezwinports.make
 git clone https://github.com/emscripten-core/emsdk.git
-./emsdk/emsdk install 3.1.61
-./emsdk/emsdk activate 3.1.61
+./emsdk/emsdk install 4.0.8
+./emsdk/emsdk activate 4.0.8
 npm install -g nwlink

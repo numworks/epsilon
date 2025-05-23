@@ -578,123 +578,122 @@ void ContinuousFunction::RecordDataBuffer::setColor(KDColor color,
 SystemExpression ContinuousFunction::Model::expressionReduced(
     const Ion::Storage::Record* record, Context* context) const {
   // m_expression might already be memmoized.
-  if (m_expression.isUninitialized()) {
-    // Retrieve the expression equation's expression.
-    m_expression = expressionReducedForAnalysis(record, context);
-    ContinuousFunctionProperties thisProperties = properties(record);
-    if (!thisProperties.isEnabled()) {
-      m_expression = Undefined::Builder();
-      return m_expression;
+  if (!m_expression.isUninitialized()) {
+    return m_expression;
+  }
+  // Retrieve the expression equation's expression.
+  m_expression = expressionReducedForAnalysis(record, context);
+  ContinuousFunctionProperties thisProperties = properties(record);
+  if (!thisProperties.isEnabled()) {
+    m_expression = Undefined::Builder();
+    return m_expression;
+  }
+  Preferences::ComplexFormat complexFormat =
+      this->complexFormat(record, context);
+  Preferences::AngleUnit angleUnit =
+      Preferences::SharedPreferences()->angleUnit();
+  if (thisProperties.isScatterPlot()) {
+    /* Scatter plots do not depend on any variable, so they can be approximated
+     * in advance. In addition, they are sorted to be traveled from left to
+     * right (i.e. in order of ascending x). */
+    if (m_expression.dimension().isListOfPoints()) {
+      m_expression = m_expression.removeUndefListElements()
+                         .approximateListAndSort<double>();
+      // m_expression may be an empty, dimension-less list after this.
+    } else {
+      assert(m_expression.dimension().isPoint());
+      m_expression = PoincareHelpers::Approximate<double>(
+          m_expression, context,
+          {.complexFormat = complexFormat, .angleUnit = angleUnit});
     }
-    Preferences::ComplexFormat complexFormat =
-        this->complexFormat(record, context);
-    Preferences::AngleUnit angleUnit =
-        Preferences::SharedPreferences()->angleUnit();
-    if (thisProperties.isScatterPlot()) {
-      /* Scatter plots do not depend on any variable, so they can be
-       * approximated in advance.
-       * In addition, they are sorted to be travelled from left to right (i.e.
-       * in order of ascending x). */
-      if (m_expression.dimension().isListOfPoints()) {
-        m_expression = m_expression.removeUndefListElements()
-                           .approximateListAndSort<double>();
-        // m_expression may be an empty, dimension-less list after this.
-      } else {
-        assert(m_expression.dimension().isPoint());
-        m_expression = PoincareHelpers::Approximate<double>(
-            m_expression, context,
-            {.complexFormat = complexFormat, .angleUnit = angleUnit});
-      }
-    } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
-               (record->fullName() == nullptr ||
-                record->fullName()[0] == k_unnamedRecordFirstChar)) {
-      /* Polar, inversePolar and cartesian equations are unnamed. Here
-       * only cartesian equations are processed. */
-      /* Function isn't named, m_expression currently is an expression in y or x
-       * such as y = x. We extract the solution by solving in y or x. */
-      int yDegree = m_expression.polynomialDegree(
-          ContinuousFunctionProperties::k_ordinateName);
-      bool willBeAlongX = true;
-      if (yDegree < 1 || yDegree > 2) {
-        int xDegree = m_expression.polynomialDegree(k_unknownName);
-        if (xDegree < 1 || xDegree > 2) {
-          // Such degrees of equation in y and x are not handled.
-          m_expression = Undefined::Builder();
-          return m_expression;
-        }
-        // Equation can be plotted along y. For example : x=cos(y) or x^2=1
-        willBeAlongX = false;
-      }
-      /* Solve the equation in y (or x if not willBeAlongX)
-       * Symbols are replaced to simplify roots. */
-      SystemExpression
-          coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
-      int degree = m_expression.getPolynomialReducedCoefficients(
-          willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
-                       : k_unknownName,
-          coefficients, context, complexFormat, angleUnit,
-          ContinuousFunctionProperties::k_defaultUnitFormat,
-          SymbolicComputation::ReplaceDefinedSymbols, true);
-
-      if (degree == -1) {
-        /* The reduction failed, so the expression is not reduced and
-         * getPolynomialReducedCoefficients returned -1. */
-        return m_expression;
-      }
-      assert(!willBeAlongX || degree == yDegree);
-      if (degree == 1) {
-        m_expression = SystemExpression::Builder(
-            Poincare::Roots::Linear(coefficients[1], coefficients[0]));
-      } else if (degree == 2) {
-        // Equation is of degree 2, each root is a subcurve to plot.
-        assert(m_properties.isOfDegreeTwo());
-        Internal::Tree* list = Poincare::Roots::Quadratic(
-            coefficients[2], coefficients[1], coefficients[0]);
-        if (list->numberOfChildren() == 1) {
-          // Flat conic
-          list->removeNode();
-        } else if (list->numberOfChildren() == 2) {
-          /* Swap the equations since conics inequalities assume their equations
-           * are in a certain order to make the distinction between inside and
-           * outside. */
-          list->child(0)->swapWithTree(list->child(1));
-        }
-        m_expression = SystemExpression::Builder(list);
-      } else {
-        /* TODO: We could handle simple equations of any degree by solving the
-         * equation within the graph view bounds, to plot as many vertical or
-         * horizontal lines as needed. */
+  } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
+             (record->fullName() == nullptr ||
+              record->fullName()[0] == k_unnamedRecordFirstChar)) {
+    /* Polar, inversePolar and cartesian equations are unnamed. Here only
+     * cartesian equations are processed. */
+    /* Function isn't named, m_expression currently is an expression in y or x
+     * such as y = x. We extract the solution by solving in y or x. */
+    int yDegree = m_expression.polynomialDegree(
+        ContinuousFunctionProperties::k_ordinateName);
+    bool willBeAlongX = true;
+    if (yDegree < 1 || yDegree > 2) {
+      int xDegree = m_expression.polynomialDegree(k_unknownName);
+      if (xDegree < 1 || xDegree > 2) {
+        // Such degrees of equation in y and x are not handled.
         m_expression = Undefined::Builder();
         return m_expression;
       }
+      // Equation can be plotted along y. For example : x=cos(y) or x^2=1
+      willBeAlongX = false;
+    }
+    /* Solve the equation in y (or x if not willBeAlongX)
+     * Symbols are replaced to simplify roots. */
+    SystemExpression
+        coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+    int degree = m_expression.getPolynomialReducedCoefficients(
+        willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
+                     : k_unknownName,
+        coefficients, context, complexFormat, angleUnit,
+        ContinuousFunctionProperties::k_defaultUnitFormat,
+        SymbolicComputation::ReplaceDefinedSymbols, true);
+
+    if (degree == -1) {
+      /* The reduction failed, so the expression is not reduced and
+       * getPolynomialReducedCoefficients returned -1. */
+      return m_expression;
+    }
+    assert(!willBeAlongX || degree == yDegree);
+    if (degree == 1) {
+      m_expression = SystemExpression::Builder(
+          Poincare::Roots::Linear(coefficients[1], coefficients[0]));
+    } else if (degree == 2) {
+      // Equation is of degree 2, each root is a subcurve to plot.
+      assert(m_properties.isOfDegreeTwo());
+      Internal::Tree* list = Poincare::Roots::Quadratic(
+          coefficients[2], coefficients[1], coefficients[0]);
+      if (list->numberOfChildren() == 1) {
+        // Flat conic
+        list->removeNode();
+      } else if (list->numberOfChildren() == 2) {
+        /* Swap the equations since conics inequalities assume their equations
+         * are in a certain order to make the distinction between inside and
+         * outside. */
+        list->child(0)->swapWithTree(list->child(1));
+      }
+      m_expression = SystemExpression::Builder(list);
     } else {
-      // TODO_PCJ: with advanced reduction we should only have to reduce once
-      /* m_expression is resulting of a simplification with ExpandAlgebraic
-       * expansion strategy. But no expansion strategy could give a simpler
-       * result. For example (x+9)^6 is fully developed with ExpandAlgebraic,
-       * which results in approximation inaccuracy. On the other hand, the
-       * expression (x+1)^2-x^2-2x-1 should be developed so that we understand
-       * that it's equal to zero, and is better handled with ExpandAlgebraic. To
-       * solve this problem, we try to simplify both ways and compare the number
-       * of nodes of each expression. We take the one that has the less node.
-       * This is not ideal because an expression with less nodes does not always
-       * mean a simpler expression, but it's a good compromise for now. */
-      UserExpression equation = expressionEquation(record, context);
-      if (!equation.isUninitialized()) {
-        bool reductionFailure = false;
-        SystemExpression resultForApproximation =
-            PoincareHelpers::CloneAndReduce(
-                equation, context,
-                {.complexFormat = complexFormat,
-                 .angleUnit = angleUnit,
-                 .updateComplexFormatWithExpression = false,
-                 .symbolicComputation = SymbolicComputation::KeepAllSymbols},
-                &reductionFailure);
-        assert(!resultForApproximation.isUninitialized() && !reductionFailure);
-        if (resultForApproximation.numberOfDescendants(true) <
-            m_expression.numberOfDescendants(true)) {
-          m_expression = resultForApproximation;
-        }
+      /* TODO: We could handle simple equations of any degree by solving the
+       * equation within the graph view bounds, to plot as many vertical or
+       * horizontal lines as needed. */
+      m_expression = Undefined::Builder();
+      return m_expression;
+    }
+  } else {
+    // TODO_PCJ: with advanced reduction we should only have to reduce once
+    /* m_expression is resulting of a simplification with ExpandAlgebraic
+     * expansion strategy. But no expansion strategy could give a simpler
+     * result. For example (x+9)^6 is fully developed with ExpandAlgebraic,
+     * which results in approximation inaccuracy. On the other hand, the
+     * expression (x+1)^2-x^2-2x-1 should be developed so that we understand
+     * that it's equal to zero, and is better handled with ExpandAlgebraic. To
+     * solve this problem, we try to simplify both ways and compare the number
+     * of nodes of each expression. We take the one that has the less node. This
+     * is not ideal because an expression with less nodes does not always mean a
+     * simpler expression, but it's a good compromise for now. */
+    UserExpression equation = expressionEquation(record, context);
+    if (!equation.isUninitialized()) {
+      bool reductionFailure = false;
+      SystemExpression resultForApproximation = PoincareHelpers::CloneAndReduce(
+          equation, context,
+          {.complexFormat = complexFormat,
+           .angleUnit = angleUnit,
+           .updateComplexFormatWithExpression = false,
+           .symbolicComputation = SymbolicComputation::KeepAllSymbols},
+          &reductionFailure);
+      assert(!resultForApproximation.isUninitialized() && !reductionFailure);
+      if (resultForApproximation.numberOfDescendants(true) <
+          m_expression.numberOfDescendants(true)) {
+        m_expression = resultForApproximation;
       }
     }
   }
@@ -735,49 +734,50 @@ Poincare::SystemFunction ContinuousFunction::Model::expressionApproximated(
 Poincare::SystemExpression
 ContinuousFunction::Model::expressionReducedForAnalysis(
     const Ion::Storage::Record* record, Poincare::Context* context) const {
-  if (m_expressionForAnalysis.isUninitialized()) {
-    ContinuousFunctionProperties::SymbolType computedFunctionSymbol =
-        ContinuousFunctionProperties::k_defaultSymbolType;
-    ComparisonJunior::Operator computedEquationType =
-        ContinuousFunctionProperties::k_defaultEquationType;
-    bool isCartesianEquation = false;
-    UserExpression equation =
-        expressionEquation(record, context, &computedEquationType,
-                           &computedFunctionSymbol, &isCartesianEquation);
-    SystemExpression result;
-    Preferences::ComplexFormat complexFormat =
-        this->complexFormat(record, context);
-    Preferences::AngleUnit angleUnit =
-        Preferences::SharedPreferences()->angleUnit();
-    if (!equation.isUndefined()) {
-      bool reductionFailure = false;
-      result = PoincareHelpers::CloneAndReduce(
-          equation, context,
-          {.complexFormat = complexFormat,
-           .angleUnit = angleUnit,
-           .updateComplexFormatWithExpression = false,
-           .target = ReductionTarget::SystemForAnalysis,
-           // Symbols have already been replaced.
-           .symbolicComputation = SymbolicComputation::KeepAllSymbols},
-          &reductionFailure);
-      if (reductionFailure) {
-        result = SystemExpression::Builder(KFailedSimplification);
-      }
-      assert(!result.isUninitialized());
-    } else {
-      result = SystemExpression::Builder(KUndef);
-    }
-    /* TODO_PCJ: equation and result used to be a same Expression at this step.
-     * Ensure this pool usage regression of still having equation in the pool is
-     * acceptable. */
-    if (!m_properties.isInitialized()) {
-      // Use the computed equation to update the plot type.
-      m_properties.update(result, originalEquation(record, UCodePointUnknown),
-                          context, complexFormat, computedEquationType,
-                          computedFunctionSymbol, isCartesianEquation);
-    }
-    m_expressionForAnalysis = result;
+  if (!m_expressionForAnalysis.isUninitialized()) {
+    return m_expressionForAnalysis;
   }
+  ContinuousFunctionProperties::SymbolType computedFunctionSymbol =
+      ContinuousFunctionProperties::k_defaultSymbolType;
+  ComparisonJunior::Operator computedEquationType =
+      ContinuousFunctionProperties::k_defaultEquationType;
+  bool isCartesianEquation = false;
+  UserExpression equation =
+      expressionEquation(record, context, &computedEquationType,
+                         &computedFunctionSymbol, &isCartesianEquation);
+  SystemExpression result;
+  Preferences::ComplexFormat complexFormat =
+      this->complexFormat(record, context);
+  Preferences::AngleUnit angleUnit =
+      Preferences::SharedPreferences()->angleUnit();
+  if (!equation.isUndefined()) {
+    bool reductionFailure = false;
+    result = PoincareHelpers::CloneAndReduce(
+        equation, context,
+        {.complexFormat = complexFormat,
+         .angleUnit = angleUnit,
+         .updateComplexFormatWithExpression = false,
+         .target = ReductionTarget::SystemForAnalysis,
+         // Symbols have already been replaced.
+         .symbolicComputation = SymbolicComputation::KeepAllSymbols},
+        &reductionFailure);
+    if (reductionFailure) {
+      result = SystemExpression::Builder(KFailedSimplification);
+    }
+    assert(!result.isUninitialized());
+  } else {
+    result = SystemExpression::Builder(KUndef);
+  }
+  /* TODO_PCJ: equation and result used to be a same Expression at this step.
+   * Ensure this pool usage regression of still having equation in the pool is
+   * acceptable. */
+  if (!m_properties.isInitialized()) {
+    // Use the computed equation to update the plot type.
+    m_properties.update(result, originalEquation(record, UCodePointUnknown),
+                        context, complexFormat, computedEquationType,
+                        computedFunctionSymbol, isCartesianEquation);
+  }
+  m_expressionForAnalysis = result;
   return m_expressionForAnalysis;
 }
 

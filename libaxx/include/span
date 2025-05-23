@@ -37,7 +37,7 @@ class span {
   template <size_t N>
   constexpr span(element_type (&array)[N]) : m_data(array), m_size(N) {}
   template <class U, size_t N>
-  constexpr span(std::array<U, N>& array) : m_data(array), m_size(N) {}
+  constexpr span(std::array<U, N>& array) : m_data(array.data()), m_size(N) {}
   constexpr span(const span& other) = default;
 
   constexpr span& operator=(const span& other) = default;

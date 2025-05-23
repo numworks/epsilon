@@ -1073,36 +1073,21 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
   return expressionToStore;
 }
 
+void TidyIfDownStreamOf(Expression& expression, PoolObject* treePoolCursor) {
+  if (treePoolCursor == nullptr || expression.isDownstreamOf(treePoolCursor)) {
+    expression = Expression();
+  }
+}
+
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(
     PoolObject* treePoolCursor) const {
-  if (treePoolCursor == nullptr ||
-      m_expressionFirstDerivate.isDownstreamOf(treePoolCursor)) {
-    m_expressionFirstDerivate = SystemExpression();
-  }
-  if (treePoolCursor == nullptr ||
-      m_expressionFirstDerivateApproximated.isDownstreamOf(treePoolCursor)) {
-    m_expressionFirstDerivateApproximated = SystemFunction();
-  }
-  if (treePoolCursor == nullptr ||
-      m_expressionSecondDerivate.isDownstreamOf(treePoolCursor)) {
-    m_expressionSecondDerivate = SystemExpression();
-  }
-  if (treePoolCursor == nullptr ||
-      m_expressionSecondDerivateApproximated.isDownstreamOf(treePoolCursor)) {
-    m_expressionSecondDerivateApproximated = SystemFunction();
-  }
-  if (treePoolCursor == nullptr ||
-      m_expressionSlope.isDownstreamOf(treePoolCursor)) {
-    m_expressionSlope = SystemFunctionScalar();
-  }
-  if (treePoolCursor == nullptr ||
-      m_expressionApproximated.isDownstreamOf(treePoolCursor)) {
-    m_expressionApproximated = SystemFunction();
-  }
-  if (treePoolCursor == nullptr ||
-      m_expressionForAnalysis.isDownstreamOf(treePoolCursor)) {
-    m_expressionForAnalysis = SystemExpression();
-  }
+  TidyIfDownStreamOf(m_expressionFirstDerivate, treePoolCursor);
+  TidyIfDownStreamOf(m_expressionFirstDerivateApproximated, treePoolCursor);
+  TidyIfDownStreamOf(m_expressionSecondDerivate, treePoolCursor);
+  TidyIfDownStreamOf(m_expressionSecondDerivateApproximated, treePoolCursor);
+  TidyIfDownStreamOf(m_expressionSlope, treePoolCursor);
+  TidyIfDownStreamOf(m_expressionApproximated, treePoolCursor);
+  TidyIfDownStreamOf(m_expressionForAnalysis, treePoolCursor);
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }
 

@@ -430,6 +430,8 @@ void GraphController::openMenuForSelectedCurve() {
   int derivationOrder =
       f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
   m_curveParameterController.setRecord(record, derivationOrder);
+  /* Remove cursor highlighting and ring to ensure clean cursor if we enter
+   * another controllers */
   setCursorIsRing(false);
   m_cursorView.setHighlighted(false);
   stackController()->push(&m_curveParameterController);

@@ -414,9 +414,10 @@ KDSize Render::Size(const Layout* l) {
         sizeWithoutBrace =
             KDSize(grid->columnWidth(0, s_font), sizeWithoutBrace.height());
       }
-      // Add a right margin of size k_curlyBraceWidth
+      // Add a right margin
       KDSize sizeWithBrace =
-          KDSize(sizeWithoutBrace.width() + 2 * CurlyBraces::k_curlyBraceWidth,
+          KDSize(sizeWithoutBrace.width() + CurlyBraces::k_curlyBraceWidth +
+                     GridWithCurlyBraces::k_horizontalMargin,
                  CurlyBraces::Height(sizeWithoutBrace.height()));
       width = sizeWithBrace.width();
       height = sizeWithBrace.height();
@@ -425,9 +426,10 @@ KDSize Render::Size(const Layout* l) {
     case LayoutType::Sequence: {
       const Grid* grid = Grid::From(l);
       KDSize sizeWithoutBrace = grid->size(s_font);
-      // Add a right and a left margin of size k_curlyBraceWidth
+      // Add a right and a left margin
       KDSize sizeWithBrace =
-          KDSize(sizeWithoutBrace.width() + 3 * CurlyBraces::k_curlyBraceWidth,
+          KDSize(sizeWithoutBrace.width() + CurlyBraces::k_curlyBraceWidth +
+                     2 * GridWithCurlyBraces::k_horizontalMargin,
                  CurlyBraces::Height(sizeWithoutBrace.height()));
       width = sizeWithBrace.width();
       height = sizeWithBrace.height();
@@ -483,9 +485,9 @@ KDPoint Grid::positionOfChildAt(int row, int column, KDFont::Size font) const {
   }
   assert(isPiecewiseLayout() || isSequenceLayout());
   // Left margin is doubled in sequence layout
-  return p.translatedBy(
-      KDPoint((1 + isSequenceLayout()) * CurlyBraces::k_curlyBraceWidth,
-              CurlyBraces::k_lineThickness));
+  return p.translatedBy(KDPoint(
+      (1 + isSequenceLayout()) * GridWithCurlyBraces::k_horizontalMargin,
+      CurlyBraces::k_lineThickness));
 }
 
 KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
@@ -845,17 +847,20 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
       // If there is only 1 row and the condition is empty, shrink the size
       size = KDSize(grid->columnWidth(0, s_font), size.height());
     }
-    // Add a right margin of size k_curlyBraceWidth
-    size = KDSize(size.width() + 2 * CurlyBraces::k_curlyBraceWidth,
+    // Add a right margin
+    size = KDSize(size.width() + CurlyBraces::k_curlyBraceWidth +
+                      GridWithCurlyBraces::k_horizontalMargin,
                   CurlyBraces::Height(size.height()));
     offset =
         KDPoint(CurlyBraces::k_curlyBraceWidth, CurlyBraces::k_lineThickness);
   } else {
     assert(l->isSequenceLayout());
-    // Add a right and a left margin of size k_curlyBraceWidth
-    size = KDSize(size.width() + 3 * CurlyBraces::k_curlyBraceWidth,
+    // Add a right and a left margin
+    size = KDSize(size.width() + CurlyBraces::k_curlyBraceWidth +
+                      2 * GridWithCurlyBraces::k_horizontalMargin,
                   CurlyBraces::Height(size.height()));
-    offset = KDPoint(2 * CurlyBraces::k_curlyBraceWidth,
+    offset = KDPoint(CurlyBraces::k_curlyBraceWidth +
+                         GridWithCurlyBraces::k_horizontalMargin,
                      CurlyBraces::k_lineThickness);
   }
   offset = offset.translatedBy(p);
@@ -1527,7 +1532,8 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                                          style);
       }
       // Draw the equal signs
-      KDCoordinate equalAbscissa = 2 * CurlyBraces::k_curlyBraceWidth +
+      KDCoordinate equalAbscissa = CurlyBraces::k_curlyBraceWidth +
+                                   GridWithCurlyBraces::k_horizontalMargin +
                                    grid->columnWidth(0, style.font) +
                                    k_gridEntryMargin;
       int nbRows = grid->numberOfRows();

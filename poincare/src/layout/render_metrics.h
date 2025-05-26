@@ -708,6 +708,10 @@ inline KDPoint PositionOfVariable(const Layout* node, KDFont::Size font) {
 }
 
 }  // namespace ListSequence
+
+namespace GridWithCurlyBraces {
+constexpr KDCoordinate k_horizontalMargin = CurlyBraces::k_curlyBraceWidth;
+}  // namespace GridWithCurlyBraces
 }  // namespace Poincare::Internal
 
 #endif

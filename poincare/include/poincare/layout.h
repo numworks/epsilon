@@ -143,7 +143,10 @@ class Layout final : public PoolHandle {
   // True if rack with only code points in it
   bool isCodePointsString() const;
 
-  // Return true if both layout match with same digits : 1.234*10^(4) == 1.234E4
+  /* Return true if both layout match with same digits : 1.234*10^(4) == 1.234E4
+   * This is used to compare exact and approximate output in Epsilon's
+   * Calculation app. If they represent the same digits, approximation is
+   * hidden. */
   bool isSameScientificNotationAs(Layout approximation, bool linear) const;
 };
 

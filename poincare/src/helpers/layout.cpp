@@ -91,7 +91,10 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
       })) {
     return false;
   }
+  // Result rack, containing the mantissa digits and the power of ten layout.
   Tree* result = KRackL()->cloneTree();
+  /* Rack into which are added layout's children. It will change to the Power
+   * layout once ᴇ has been found. */
   Tree* addTo = result;
   for (const Tree* child : layout->children()) {
     if (CodePointLayout::IsCodePoint(child,
@@ -102,6 +105,7 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
         NAry::AddOrMergeChild(result, "^"_l->cloneTree());
       } else {
         Tree* pow = KSuperscriptL->cloneNode();
+        // Next digits, or "-" will be added to the superscript.
         addTo = KRackL()->cloneTree();
         NAry::AddChild(result, pow);
       }
@@ -116,7 +120,8 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
           (CodePointLayout::GetCodePoint(child).isDecimalDigit() ||
            (addTo->numberOfChildren() == 0 &&
             CodePointLayout::IsCodePoint(child, '-'))))) {
-      // Only add '-' and numbers to the superscript
+      /* Only add '-' and numbers to the superscript. Next children will be
+       * added to result. */
       addTo = result;
     }
     NAry::AddChild(addTo, child->cloneTree());

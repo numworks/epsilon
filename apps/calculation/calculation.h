@@ -46,8 +46,7 @@ class Calculation {
     ExactOnly,
     ApproximateOnly,
     /* ApproximateIsIdenticalToExact has the same display behavior as
-     * ApproximateOnly but exact output may be used by Ans or additional
-     * results */
+     * ExactOnly. Exact output may be used by Ans or additional results */
     ApproximateIsIdenticalToExact,
     ExactAndApproximate,
     ExactAndApproximateToggle

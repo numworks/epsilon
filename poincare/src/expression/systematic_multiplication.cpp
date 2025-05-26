@@ -50,9 +50,9 @@ static bool approximationIsFinite(const Tree* e) {
 
 static bool MergeMultiplicationChildWithNext(Tree* child,
                                              int* numberOfDependencies,
-                                             bool* hasRemovedOneChild) {
-  assert(hasRemovedOneChild);
-  *hasRemovedOneChild = false;
+                                             int* nbOfRemovedChildren) {
+  assert(nbOfRemovedChildren);
+  *nbOfRemovedChildren = 0;
   Tree* next = child->nextTree();
   Tree* merge = nullptr;
   if (child->isZero()) {
@@ -71,7 +71,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
           next->detachTree();
           (*numberOfDependencies)++;
         }
-        *hasRemovedOneChild = true;
+        *nbOfRemovedChildren = 1;
         return true;
       }
     }
@@ -80,7 +80,7 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     // 1 * x -> x
     // inf * inf -> inf
     child->removeTree();
-    *hasRemovedOneChild = true;
+    *nbOfRemovedChildren = 1;
     return true;
   } else if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
@@ -126,11 +126,13 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
   next->moveTreeOverTree(merge);
   child->removeTree();
   if (child->isMult()) {
-    assert(child->numberOfChildren() == 2);
+    /* nbOfRemovedChildren can be negative here, if 2 merged tree become a mult
+     * with 3 child e.g.: √(2eπ)*√(2eπ) = 2eπ */
+    *nbOfRemovedChildren = 2 - child->numberOfChildren();
     // Move children into parent multiplication
     child->removeNode();
   } else {
-    *hasRemovedOneChild = true;
+    *nbOfRemovedChildren = 1;
   }
   return true;
 }
@@ -140,17 +142,15 @@ static bool MergeMultiplicationChildrenFrom(Tree* child, int index,
                                             int* numberOfDependencies) {
   assert(*numberOfSiblings > 0);
   bool changed = false;
-  bool hasRemovedOneChild = false;
+  int nbOfRemovedChildren = 0;
   while (index < *numberOfSiblings) {
     if (!(index + 1 < *numberOfSiblings &&
           MergeMultiplicationChildWithNext(child, numberOfDependencies,
-                                           &hasRemovedOneChild))) {
+                                           &nbOfRemovedChildren))) {
       // Child is neither 0, 1 and can't be merged with next child (or is last).
       return changed;
     }
-    if (hasRemovedOneChild) {
-      (*numberOfSiblings)--;
-    }
+    (*numberOfSiblings) -= nbOfRemovedChildren;
     assert(*numberOfSiblings > 0);
     changed = true;
   }

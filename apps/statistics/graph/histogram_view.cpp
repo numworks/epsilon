@@ -77,7 +77,6 @@ void HistogramView::setBarHighlight(double start, double end) {
 }
 
 void HistogramView::reloadSelectedBar() {
-  AbstractPlotView::reload();
   KDCoordinate barInteriorStartPixelIndex =
       floatToKDCoordinatePixel(OMG::Axis::Horizontal, m_highlightedBarStart) +
       PlotPolicy::WithHistogram::k_borderWidth;
@@ -90,6 +89,7 @@ void HistogramView::reloadSelectedBar() {
       KDRect(barInteriorStartPixelIndex, 0,
              barInteriorEndPixelIndex - barInteriorStartPixelIndex + 1,
              bounds().height()));
+  AbstractPlotView::reload(false, true);
 }
 
 }  // namespace Statistics

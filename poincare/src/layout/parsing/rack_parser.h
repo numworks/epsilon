@@ -159,7 +159,7 @@ class RackParser {
                            Token::Type stoppingType);
   Tree* parseVector();
   // Return nullptr if parentheses could not be parsed
-  Tree* tryParseFunctionParameters(bool acceptWithoutParenthesis = false);
+  Tree* tryParseFunctionParameters(bool isBuiltinFunction = false);
   Tree* parseFunctionParameters();
   void parseListParameters(TreeRef& leftHandSide);
   Tree* parseCommaSeparatedList(bool isFirstToken = false);

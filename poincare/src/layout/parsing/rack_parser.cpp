@@ -1219,12 +1219,13 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   return true;
 }
 
-Tree* RackParser::tryParseFunctionParameters(bool acceptWithoutParenthesis) {
+Tree* RackParser::tryParseFunctionParameters(bool isBuiltinFunction) {
   bool parenthesisIsLayout = m_nextToken.is(Token::Type::Layout) &&
                              m_nextToken.firstLayout()->isParenthesesLayout();
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::LeftParenthesis)) {
     // Left parenthesis missing.
-    if (!acceptWithoutParenthesis || m_nextToken.is(Token::Type::EndOfStream)) {
+#if POINCARE_PARSE_IMPLICIT_PARENTHESES
+    if (!isBuiltinFunction || m_nextToken.is(Token::Type::EndOfStream)) {
       return nullptr;
     }
     /* builtin functions can be called without parenthesis. In this case, we
@@ -1273,6 +1274,10 @@ Tree* RackParser::tryParseFunctionParameters(bool acceptWithoutParenthesis) {
     // Only 1 argument can be passed without parenthesis
     NAry::SetNumberOfChildren(list, 1);
     return list;
+#else
+    // Parentheses are mandatory
+    return nullptr;
+#endif
   }
   if (!parenthesisIsLayout && popTokenIfType(Token::Type::RightParenthesis)) {
     // The function has no parameter.

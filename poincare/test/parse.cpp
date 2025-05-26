@@ -173,11 +173,3 @@ QUIZ_CASE(pcj_parse_parametric) {
   assertLayoutParsesTo(KRackL(KSumL("string"_l, "0"_l, "10"_l, "string"_l)),
                        KSum("string"_e, 0_e, 10_e, "string"_e), &context);
 }
-
-QUIZ_CASE(pcj_parse_builtins_without_parentheses) {
-  Poincare::EmptyContext context;
-  assertLayoutParsesTo("cos2x+3"_l, KAdd(KCos(KMult(2_e, "x"_e)), 3_e),
-                       &context);
-  assertLayoutParsesTo("cos-2x+3"_l,
-                       KAdd(KCos(KOpposite(KMult(2_e, "x"_e))), 3_e), &context);
-}

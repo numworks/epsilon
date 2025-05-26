@@ -404,7 +404,7 @@ RANGE(Sequence, SequenceExplicit, SequenceDoubleRecurrence)
  * TODO: find a better solution to display sequence layouts. */
 NODE(EmptySequenceExpression, SEQUENCE)
 
-RANGE(Expression, RationalNegBig, SequenceDoubleRecurrence)
+RANGE(Expression, RationalNegBig, EmptySequenceExpression)
 
 // TODO: should this really be here ?
 NODE(PointOfInterest, BASE, 0, {

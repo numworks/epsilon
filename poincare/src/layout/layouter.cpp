@@ -384,29 +384,27 @@ void Layouter::layoutSequence(TreeRef& layoutParent, Tree* expression) {
           : nullptr;
 
   // Push sequence layout
+  assert(expression->numberOfChildren() >= 2 &&
+         expression->numberOfChildren() <= 5);
+  uint8_t numberOfExpressionChildren = expression->numberOfChildren() - 2;
   TreeRef layout = SharedTreeStack->pushSequenceLayout(
-      expression->numberOfChildren() - 2, 2, firstRank);
+      numberOfExpressionChildren, 2, firstRank);
 
-  // Remove first rank and name children
-  expression->child(Sequence::k_firstRankIndex)->removeTree();
-  expression->child(Sequence::k_nameIndex)->removeTree();
-  // Layout main expression
-  TreeRef newParent = SharedTreeStack->pushRackLayout(0);
-  layoutExpression(newParent, mainExpressionName, k_maxPriority);
-  newParent = SharedTreeStack->pushRackLayout(0);
-  layoutExpression(newParent, expression->nextNode(), k_maxPriority);
-  // Layout initial conditions
-  if (firstInitialConditionName) {
+  // Remove name and first rank children
+  Tree* currentChild = expression->nextNode();
+  currentChild->removeTree();
+  currentChild->nextTree()->removeTree();
+
+  // Layout main expression and initial conditions
+  for (int i = 0; i < numberOfExpressionChildren; i++) {
+    Tree* name = i == 0   ? mainExpressionName
+                 : i == 1 ? firstInitialConditionName
+                          : secondInitialConditionName;
+    assert(name);
+    TreeRef newParent = SharedTreeStack->pushRackLayout(0);
+    layoutExpression(newParent, name, k_maxPriority);
     newParent = SharedTreeStack->pushRackLayout(0);
-    layoutExpression(newParent, firstInitialConditionName, k_maxPriority);
-    newParent = SharedTreeStack->pushRackLayout(0);
-    layoutExpression(newParent, expression->nextNode(), k_maxPriority);
-  }
-  if (secondInitialConditionName) {
-    newParent = SharedTreeStack->pushRackLayout(0);
-    layoutExpression(newParent, secondInitialConditionName, k_maxPriority);
-    newParent = SharedTreeStack->pushRackLayout(0);
-    layoutExpression(newParent, expression->nextNode(), k_maxPriority);
+    layoutExpression(newParent, currentChild, k_maxPriority);
   }
   NAry::AddChild(layoutParent, layout);
 }

@@ -108,7 +108,7 @@ bool SumGraphController::moveCursorHorizontallyToPosition(double x) {
   }
   m_legendView.setEditableZone(m_cursor->x());
   makeCursorVisibleAndReloadBanner();
-  m_graphView->reload(true);
+  m_graphView->reload(false, true);
   return true;
 }
 

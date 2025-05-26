@@ -25,11 +25,13 @@ class ExpressionOrFloat {
   constexpr static size_t k_maxExactSerializationGlyphLength = 5;
 
   explicit ExpressionOrFloat(Expression expression) {
-    [[maybe_unused]] size_t expressionSize = expression.tree()->treeSize();
-    /*  TODO: ensure on the caller side that the passed expression is not bigger
-     * than than k_maxExpressionSize */
-    assert(expressionSize <= k_maxExpressionSize);
-    expression.tree()->copyTreeTo(m_buffer.data());
+    if (!expression.isUninitialized()) {
+      [[maybe_unused]] size_t expressionSize = expression.tree()->treeSize();
+      /*  TODO: ensure on the caller side that the passed expression is not
+       * bigger than than k_maxExpressionSize */
+      assert(expressionSize <= k_maxExpressionSize);
+      expression.tree()->copyTreeTo(m_buffer.data());
+    }
   }
 
   explicit ExpressionOrFloat(float value) : m_value(value) {}

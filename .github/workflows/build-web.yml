@@ -14,12 +14,14 @@ jobs:
   build:
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Read Emscripten version
+        run: echo "EMSDK_VERSION=$(cat .emsdk-version)" >> $GITHUB_ENV
       - name: Download emscripten
         uses: numworks/setup-emscripten@latest
         with:
-          sdk: 4.0.8
-      - name: Checkout
-        uses: actions/checkout@v4
+          sdk: ${{ env.EMSDK_VERSION }}
       - name: Setup
         run: build/setup.sh --only-simulator
       - name: Build

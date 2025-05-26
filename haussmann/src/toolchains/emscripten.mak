@@ -1,5 +1,8 @@
 EMSCRIPTEN_MODULARIZE ?= 1
 
+# Read required version from .emsdk-version file
+EMCC_REQUIRED_VERSION := $(shell cat .emsdk-version)
+
 CC := emcc
 CXX := emcc
 AR := emar

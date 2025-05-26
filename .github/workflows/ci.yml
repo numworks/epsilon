@@ -127,10 +127,14 @@ jobs:
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
-      - uses: numworks/setup-emscripten@latest
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Read Emscripten version
+        run: echo "EMSDK_VERSION=$(cat .emsdk-version)" >> $GITHUB_ENV
+      - name: Download emscripten
+        uses: numworks/setup-emscripten@latest
         with:
-          sdk: 4.0.8
-      - uses: actions/checkout@v4
+          sdk: ${{ env.EMSDK_VERSION }}
       - run: build/setup.sh --only-simulator
       - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
       - run: node output/debug/optimized/web/test.js --headless --limit-stack-usage
@@ -198,11 +202,14 @@ jobs:
     env:
       MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
     steps:
-      - name: Install Emscripten
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Read Emscripten version
+        run: echo "EMSDK_VERSION=$(cat .emsdk-version)" >> $GITHUB_ENV
+      - name: Download emscripten
         uses: numworks/setup-emscripten@latest
         with:
-          sdk: 4.0.8
-      - uses: actions/checkout@v4
+          sdk: ${{ env.EMSDK_VERSION }}
       - name: Setup the environment
         run: build/setup.sh --only-simulator
       - name: Run tests with ASSERTIONS=1

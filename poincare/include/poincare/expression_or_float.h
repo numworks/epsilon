@@ -5,6 +5,7 @@
 
 #include "poincare/expression.h"
 #include "poincare/print_float.h"
+#include "poincare/src/memory/tree.h"
 
 namespace Poincare {
 
@@ -16,18 +17,19 @@ class ExpressionOrFloat {
  public:
   ExpressionOrFloat() = default;
 
+  constexpr static size_t k_maxExpressionSize = 20;
+
   constexpr static size_t k_numberOfSignificantDigits =
       PrintFloat::k_floatNumberOfSignificantDigits;
-  constexpr static size_t k_bufferLength =
-      PrintFloat::charSizeForFloatsWithPrecision(k_numberOfSignificantDigits);
 
   constexpr static size_t k_maxExactSerializationGlyphLength = 5;
 
   explicit ExpressionOrFloat(Expression expression) {
-    [[maybe_unused]] size_t usedLength = expression.serialize(
-        m_buffer, k_bufferLength, true, Preferences::PrintFloatMode::Decimal,
-        k_numberOfSignificantDigits);
-    assert(usedLength <= k_bufferLength);
+    [[maybe_unused]] size_t expressionSize = expression.tree()->treeSize();
+    /*  TODO: ensure on the caller side that the passed expression is not bigger
+     * than than k_maxExpressionSize */
+    assert(expressionSize <= k_maxExpressionSize);
+    expression.tree()->copyTreeTo(m_buffer.data());
   }
 
   explicit ExpressionOrFloat(float value) : m_value(value) {}
@@ -69,7 +71,7 @@ class ExpressionOrFloat {
     if (hasNoExactExpression()) {
       return Expression::Builder(m_value);
     }
-    return Expression::Parse(m_buffer, nullptr);
+    return Expression::Builder(Internal::Tree::FromBlocks(m_buffer.data()));
   }
 
   template <typename T>
@@ -79,16 +81,21 @@ class ExpressionOrFloat {
   }
 
   bool operator==(const ExpressionOrFloat& other) const {
-    return hasNoExactExpression() ? (m_value == other.m_value)
-                                  : (strcmp(m_buffer, other.m_buffer) == 0);
+    if (hasNoExactExpression()) {
+      return (m_value == other.m_value);
+    }
+    const Internal::Tree* tree = Internal::Tree::FromBlocks(m_buffer.data());
+    const Internal::Tree* otherTree =
+        Internal::Tree::FromBlocks(other.m_buffer.data());
+    return tree->treeIsIdenticalTo(otherTree);
   }
 
  private:
-  /* m_buffer is an internal way of storing an Expression. It is convenient
-   * because the Pool is not preserved when the current App is closed. It could
-   * be replaced by a pointer to a Tree in a preserved location, for example the
-   * Storage. */
-  char m_buffer[k_bufferLength] = "";
+  /* The Pool (where Expressions are stored) is not preserved when the current
+   * App is closed. So for the expression to be preserved when closing and
+   * reopening the App, ExpressionOrFloat needs to store the expression Tree in
+   * a buffer of Blocks. */
+  std::array<Internal::Block, k_maxExpressionSize> m_buffer;
   float m_value = NAN;
 };
 

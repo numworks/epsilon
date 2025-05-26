@@ -48,14 +48,12 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
     return SerializeFloatValue(m_value, buffer, numberOfSignificantDigits,
                                floatDisplayMode, maxGlyphLength);
   }
-  /*  Note: m_buffer is just an internal storage, but it does not have the
-   * requested number of significant digits or display mode. It should thus
-   * not be returned directly. The expression is re-constructed, then
-   * serialized with the requested display parameters. */
   UserExpression exactExpression = expression();
   float approximate = exactExpression.approximateToRealScalar<float>();
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
           exactExpression, UserExpression::Builder(approximate))) {
+    // TODO: which buffer length to ensure no problem?
+    constexpr size_t k_bufferLength = 100;
     char exactSerialization[k_bufferLength];
     PrintFloat::TextLengths exactTextLengths =
         SerializeExactExpression(exactExpression, exactSerialization,

@@ -70,7 +70,7 @@ class PoolHandle {
   bool isUninitialized() const {
     return m_identifier == PoolObject::NoObjectIdentifier;
   }
-  bool isDownstreamOf(PoolObject* treePoolCursor) {
+  bool isDownstreamOf(const PoolObject* treePoolCursor) {
     return !isUninitialized() &&
            (object() == nullptr || object() >= treePoolCursor);
   }

@@ -47,7 +47,7 @@ class PoolCheckpoint {
   }
   PoolCheckpoint& operator=(const PoolCheckpoint&) = delete;
 
-  PoolObject* const endOfPoolBeforeCheckpoint() { return m_endOfPool; }
+  const PoolObject* const endOfPoolBeforeCheckpoint() { return m_endOfPool; }
 
   virtual void discard() const { protectedDiscard(); }
 

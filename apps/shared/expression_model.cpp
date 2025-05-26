@@ -220,7 +220,8 @@ void ExpressionModel::updateNewDataWithExpression(
   }
 }
 
-void ExpressionModel::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) const {
+void ExpressionModel::tidyDownstreamPoolFrom(
+    const PoolObject* treePoolCursor) const {
   if (treePoolCursor == nullptr ||
       m_expression.isDownstreamOf(treePoolCursor)) {
     m_expression = UserExpression();

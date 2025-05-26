@@ -162,7 +162,7 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
 }
 
 void ContinuousFunction::tidyDownstreamPoolFrom(
-    PoolObject* treePoolCursor) const {
+    const PoolObject* treePoolCursor) const {
   ExpressionModelHandle::tidyDownstreamPoolFrom(treePoolCursor);
   m_cache = nullptr;
 }
@@ -1073,14 +1073,15 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
   return expressionToStore;
 }
 
-void TidyIfDownStreamOf(Expression& expression, PoolObject* treePoolCursor) {
+void TidyIfDownStreamOf(Expression& expression,
+                        const PoolObject* treePoolCursor) {
   if (treePoolCursor == nullptr || expression.isDownstreamOf(treePoolCursor)) {
     expression = Expression();
   }
 }
 
 void ContinuousFunction::Model::tidyDownstreamPoolFrom(
-    PoolObject* treePoolCursor) const {
+    const PoolObject* treePoolCursor) const {
   TidyIfDownStreamOf(m_expressionFirstDerivate, treePoolCursor);
   TidyIfDownStreamOf(m_expressionFirstDerivateApproximated, treePoolCursor);
   TidyIfDownStreamOf(m_expressionSecondDerivate, treePoolCursor);

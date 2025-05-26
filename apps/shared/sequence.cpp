@@ -135,7 +135,7 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
       recursionIsAllowed, systemSymbolIsAllowed, otherSequencesAreAllowed);
 }
 
-void Sequence::tidyDownstreamPoolFrom(PoolObject* treePoolCursor) const {
+void Sequence::tidyDownstreamPoolFrom(const PoolObject* treePoolCursor) const {
   model()->tidyDownstreamPoolFrom(treePoolCursor);
   m_firstInitialCondition.tidyDownstreamPoolFrom(treePoolCursor);
   m_secondInitialCondition.tidyDownstreamPoolFrom(treePoolCursor);
@@ -219,14 +219,14 @@ Layout Sequence::SequenceModel::name(Sequence* sequence) {
   return m_name;
 }
 
-void Sequence::SequenceModel::tidyName(PoolObject* treePoolCursor) const {
+void Sequence::SequenceModel::tidyName(const PoolObject* treePoolCursor) const {
   if (treePoolCursor == nullptr || m_name.isDownstreamOf(treePoolCursor)) {
     m_name = Layout();
   }
 }
 
 void Sequence::SequenceModel::tidyDownstreamPoolFrom(
-    PoolObject* treePoolCursor) const {
+    const PoolObject* treePoolCursor) const {
   tidyName(treePoolCursor);
   ExpressionModel::tidyDownstreamPoolFrom(treePoolCursor);
 }

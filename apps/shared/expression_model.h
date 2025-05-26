@@ -36,7 +36,7 @@ class ExpressionModel {
       const Poincare::UserExpression& newExpression);
 
   virtual void tidyDownstreamPoolFrom(
-      Poincare::PoolObject* treePoolCursor = nullptr) const;
+      const Poincare::PoolObject* treePoolCursor = nullptr) const;
 
   Poincare::Preferences::ComplexFormat complexFormat(
       const Ion::Storage::Record* record, Poincare::Context* context) const;

@@ -45,7 +45,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
   Poincare::Range2D<float> optimalRange(
       bool computeX, bool computeY,
       Poincare::Range2D<float> originalRange) const override;
-  void tidyModels(Poincare::PoolObject* treePoolCursor) override {}
+  void tidyModels(const Poincare::PoolObject* treePoolCursor) override {}
 
   void selectRegressionCurve() { *m_selectedDotIndex = -1; }
   int selectedSeriesIndex() const {

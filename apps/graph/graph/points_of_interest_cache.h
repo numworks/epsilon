@@ -69,7 +69,7 @@ class PointsOfInterestCache {
 
   void stripOutOfBounds();
   Poincare::Expression computeBetween(float start, float end);
-  void tidyDownstreamPoolFrom(Poincare::PoolObject* treePoolCursor) const;
+  void tidyDownstreamPoolFrom(const Poincare::PoolObject* treePoolCursor) const;
 
   Ion::Storage::Record
       m_record;  // This is not const because of the copy constructor

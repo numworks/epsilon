@@ -49,7 +49,7 @@ class ExpressionModelStore {
 
   // Other
   virtual void tidyDownstreamPoolFrom(
-      Poincare::PoolObject* treePoolCursor = nullptr);
+      const Poincare::PoolObject* treePoolCursor = nullptr);
   void storageDidChangeForRecord(const Ion::Storage::Record record) const {
     resetMemoizedModelsExceptRecord(record);
   }

@@ -400,7 +400,7 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
 }
 
 void PointsOfInterestCache::tidyDownstreamPoolFrom(
-    PoolObject* treePoolCursor) const {
+    const PoolObject* treePoolCursor) const {
   ContinuousFunctionStore* store = App::app()->functionStore();
   int n = store->numberOfActiveFunctions();
   for (int i = 0; i < n; i++) {

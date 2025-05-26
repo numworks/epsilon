@@ -32,7 +32,8 @@ class GraphView : public Shared::FunctionGraphView,
   int numberOfDrawnRecords() const override;
   void drawRecord(Ion::Storage::Record record, int index, KDContext* ctx,
                   KDRect rect, bool firstDrawnRecord) const override;
-  void tidyModel(int i, Poincare::PoolObject* treePoolCursor) const override;
+  void tidyModel(int i,
+                 const Poincare::PoolObject* treePoolCursor) const override;
   void setFocus(bool focus) override;
   Shared::ContinuousFunctionStore* functionStore() const override;
 

@@ -19,7 +19,8 @@ const char* SequenceStore::FirstAvailableName(size_t* nameIndex) {
   // Choose available name
   size_t currentNameIndex = 0;
   while (currentNameIndex < k_maxNumberOfSequences) {
-    const char* name = k_sequenceNames[currentNameIndex];
+    const char* name =
+        Poincare::SequenceHelper::k_sequenceNames[currentNameIndex];
     if (Storage::FileSystem::sharedFileSystem
             ->recordBaseNamedWithExtension(name, Storage::sequenceExtension)
             .isNull()) {
@@ -58,7 +59,7 @@ Storage::Record::ErrorStatus SequenceStore::addEmptyModel() {
 
 int SequenceStore::SequenceIndexForName(char name) {
   for (int i = 0; i < k_maxNumberOfSequences; i++) {
-    if (k_sequenceNames[i][0] == name) {
+    if (Poincare::SequenceHelper::k_sequenceNames[i][0] == name) {
       return i;
     }
   }

@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
+#include <poincare/helpers/sequence.h>
 
 #include <array>
 
@@ -29,9 +30,8 @@ App::Snapshot::Snapshot()
   // Register u, v and w as reserved names to the sharedStorage.
   Ion::Storage::FileSystem::sharedFileSystem->recordNameVerifier()
       ->registerArrayOfReservedNames(
-          Shared::SequenceStore::k_sequenceNames,
-          Ion::Storage::sequenceExtension, 0,
-          std::size(Shared::SequenceStore::k_sequenceNames));
+          SequenceHelper::k_sequenceNames, Ion::Storage::sequenceExtension, 0,
+          std::size(SequenceHelper::k_sequenceNames));
 }
 
 App* App::Snapshot::unpack(Container* container) {

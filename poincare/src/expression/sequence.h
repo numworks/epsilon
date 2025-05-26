@@ -19,8 +19,6 @@ class Sequence {
   constexpr static int k_firstInitialConditionIndex = 3;
   constexpr static int k_secondInitialConditionIndex = 4;
 
-  constexpr static const char* k_sequenceNames[] = {"u", "v", "w"};
-
   static bool IsSequenceName(const char* name);
   static Type GetType(const Tree* sequence);
   static int InitialRank(const Tree* sequence);

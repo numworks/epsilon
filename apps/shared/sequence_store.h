@@ -2,6 +2,7 @@
 #define APPS_SHARED_SEQUENCE_STORE_H
 
 #include <omg/string.h>
+#include <poincare/helpers/sequence.h>
 #include <stdint.h>
 
 #include "function_store.h"
@@ -26,15 +27,15 @@ class SequenceStore : public FunctionStore {
    * may not be the record for u. */
   Ion::Storage::Record recordAtNameIndex(int i) const {
     return Ion::Storage::FileSystem::sharedFileSystem
-        ->recordBaseNamedWithExtension(k_sequenceNames[i], modelExtension());
+        ->recordBaseNamedWithExtension(
+            Poincare::SequenceHelper::k_sequenceNames[i], modelExtension());
   }
 
   static int SequenceIndexForName(char name);
   static const char* FirstAvailableName(size_t* nameIndex = nullptr);
-  constexpr static const char* k_sequenceNames[] = {"u", "v", "w"};
   constexpr static size_t k_maxSequenceNameLength = []() {
     size_t m = 0;
-    for (const char* s : k_sequenceNames) {
+    for (const char* s : Poincare::SequenceHelper::k_sequenceNames) {
       m = std::max<size_t>(m, OMG::StringLength(s));
     }
     return m;

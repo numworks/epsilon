@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <omg/unreachable.h>
+#include <poincare/helpers/sequence.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <string.h>
@@ -14,7 +15,7 @@
 namespace Poincare::Internal {
 
 bool Sequence::IsSequenceName(const char* name) {
-  for (const char* s : k_sequenceNames) {
+  for (const char* s : SequenceHelper::k_sequenceNames) {
     if (strcmp(s, name) == 0) {
       return true;
     }

@@ -3,6 +3,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/sequence_store.h>
 #include <assert.h>
+#include <poincare/helpers/sequence.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
@@ -37,8 +38,7 @@ void SequenceToolboxDataSource::buildExtraCellsLayouts(const char* sequenceName,
       assert(m_numberOfAddedCells < k_maxNumberOfLayouts);
       m_addedCellLayout[m_numberOfAddedCells++] = Layout::Create(
           KA ^ KSubscriptL(KB),
-          {.KA =
-               Layout::CodePoint(Shared::SequenceStore::k_sequenceNames[i][0]),
+          {.KA = Layout::CodePoint(SequenceHelper::k_sequenceNames[i][0]),
            .KB = Layout::String(indice)});
     }
   }

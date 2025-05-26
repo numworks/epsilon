@@ -26,10 +26,9 @@ class ExpressionOrFloat {
 
   explicit ExpressionOrFloat(Expression expression) {
     if (!expression.isUninitialized()) {
-      [[maybe_unused]] size_t expressionSize = expression.tree()->treeSize();
       /*  TODO: ensure on the caller side that the passed expression is not
        * bigger than than k_maxExpressionSize */
-      assert(expressionSize <= k_maxExpressionSize);
+      assert(expression.tree()->treeSize() <= k_maxExpressionSize);
       expression.tree()->copyTreeTo(m_buffer.data());
     }
   }

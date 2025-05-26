@@ -193,6 +193,7 @@ class AbstractPlotView : public Escher::View {
   uint32_t m_drawnRangeVersion;
   bool m_bannerOverlapsGraph;
   bool m_focus;
+  bool m_bannerBoundsChanged = false;
 };
 
 template <class CAxes, class CPlot, class CBanner, class CCursor>

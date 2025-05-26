@@ -23,8 +23,9 @@ void AbstractPlotView::reload(bool resetInterruption, bool force) {
         KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight));
   }
   layoutSubviews();
-  if (isReloadNeeded) {
+  if (isReloadNeeded || m_bannerBoundsChanged) {
     reloadAxes();
+    m_bannerBoundsChanged = false;
   }
 }
 
@@ -429,6 +430,7 @@ void AbstractPlotView::layoutSubviews(bool force) {
           KDFont::GlyphSize(k_font).height() + 2 * k_labelMargin;
       markRectAsDirty(KDRect(0, bounds().height() - dirtyHeight,
                              bounds().width(), dirtyHeight));
+      m_bannerBoundsChanged = true;
     }
   }
   CursorView* cursor = cursorView();

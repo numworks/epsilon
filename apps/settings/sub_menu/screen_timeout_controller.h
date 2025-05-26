@@ -5,9 +5,9 @@
 #include <escher/layout_view.h>
 #include <escher/menu_cell.h>
 #include <escher/message_text_view.h>
+#include <omg/unreachable.h>
 
 #include "generic_sub_controller.h"
-#include "omg/unreachable.h"
 
 namespace Settings {
 

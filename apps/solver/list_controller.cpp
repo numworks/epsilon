@@ -1,12 +1,12 @@
 #include "list_controller.h"
 
 #include <assert.h>
+#include <escher/responder.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/comparison_operator.h>
 #include <poincare/layout.h>
 
 #include "app.h"
-#include "escher/responder.h"
 
 using namespace Shared;
 using namespace Escher;

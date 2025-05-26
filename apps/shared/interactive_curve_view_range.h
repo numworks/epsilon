@@ -4,12 +4,12 @@
 #include <float.h>
 #include <ion/display.h>
 #include <poincare/range.h>
+#include <poincare/serialized_expression.h>
 #include <stdint.h>
 
 #include "grid_type_controller.h"
 #include "interactive_curve_view_range_delegate.h"
 #include "memoized_curve_view_range.h"
-#include "poincare/serialized_expression.h"
 
 namespace Shared {
 

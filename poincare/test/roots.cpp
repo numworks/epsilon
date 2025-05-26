@@ -1,7 +1,7 @@
 #include <poincare/solver/roots.h>
+#include <poincare/src/expression/dependency.h>
 
 #include "helper.h"
-#include "poincare/src/expression/dependency.h"
 
 using namespace Poincare::Internal;
 

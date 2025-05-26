@@ -3,8 +3,7 @@
 
 #include <SDL.h>
 #include <ion/events.h>
-
-#include "ion/keyboard/event_data.h"
+#include <ion/keyboard/event_data.h>
 
 namespace Ion {
 namespace Events {

@@ -1,9 +1,9 @@
 #ifndef POINCARE_SERIALIZED_EXPRESSION_H
 #define POINCARE_SERIALIZED_EXPRESSION_H
 
-#include <span>
+#include <poincare/expression.h>
 
-#include "poincare/expression.h"
+#include <span>
 
 namespace Poincare {
 

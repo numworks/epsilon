@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_POWER_LIKE_H
 #define POINCARE_EXPRESSION_POWER_LIKE_H
 
-#include "poincare/src/memory/tree.h"
+#include <poincare/src/memory/tree.h>
 
 namespace Poincare::Internal {
 

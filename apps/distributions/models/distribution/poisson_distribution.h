@@ -1,9 +1,9 @@
 #ifndef PROBABILITE_POISSON_DISTRIBUTION_H
 #define PROBABILITE_POISSON_DISTRIBUTION_H
 
+#include <apps/i18n.h>
 #include <poincare/layout.h>
 
-#include "apps/i18n.h"
 #include "one_parameter_distribution.h"
 
 namespace Distributions {

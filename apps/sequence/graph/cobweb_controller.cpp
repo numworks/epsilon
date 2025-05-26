@@ -1,18 +1,18 @@
 #include "cobweb_controller.h"
 
+#include <apps/shared/continuous_function.h>
+#include <apps/shared/sequence_context.h>
+#include <apps/shared/sequence_store.h>
+#include <ion/events.h>
+#include <omg/code_point.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 #include <poincare/solver/zoom.h>
 
 #include "../app.h"
-#include "apps/sequence/graph/cobweb_graph_view.h"
-#include "apps/sequence/graph/graph_controller.h"
-#include "apps/shared/continuous_function.h"
-#include "apps/shared/sequence_context.h"
-#include "apps/shared/sequence_store.h"
-#include "ion/events.h"
-#include "omg/code_point.h"
+#include "cobweb_graph_view.h"
+#include "graph_controller.h"
 
 using namespace Shared;
 using namespace Poincare;

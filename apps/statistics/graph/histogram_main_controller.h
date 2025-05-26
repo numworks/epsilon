@@ -2,6 +2,7 @@
 #define STATISTICS_HISTOGRAM_MAIN_CONTROLLER_H
 
 #include <escher/tab_view_controller.h>
+#include <poincare/range.h>
 
 #include "../store.h"
 #include "banner_delegate.h"
@@ -9,7 +10,6 @@
 #include "histogram_list_controller.h"
 #include "histogram_main_view.h"
 #include "histogram_parameter_controller.h"
-#include "poincare/range.h"
 
 namespace Statistics {
 

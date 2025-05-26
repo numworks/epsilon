@@ -2,8 +2,8 @@ extern "C" {
 #include "../include/eadk/eadk.h"
 }
 
-#include "ion/src/device/shared/drivers/svcall.h"
-#include "ion/src/device/userland/drivers/svcall.h"
+#include <ion/src/device/shared/drivers/svcall.h>
+#include <ion/src/device/userland/drivers/svcall.h>
 
 void SVC_ATTRIBUTES eadk_backlight_set_brightness(uint8_t brightness){
     SVC_RETURNING_VOID(SVC_BACKLIGHT_SET_BRIGHTNESS)}

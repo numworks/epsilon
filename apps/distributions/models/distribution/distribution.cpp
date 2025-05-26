@@ -1,5 +1,6 @@
 #include "distribution.h"
 
+#include <omg/troolean.h>
 #include <poincare/statistics/distribution.h>
 
 #include <cmath>
@@ -11,7 +12,6 @@
 #include "geometric_distribution.h"
 #include "hypergeometric_distribution.h"
 #include "normal_distribution.h"
-#include "omg/troolean.h"
 #include "poisson_distribution.h"
 #include "student_distribution.h"
 #include "uniform_distribution.h"

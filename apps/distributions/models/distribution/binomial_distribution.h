@@ -1,8 +1,9 @@
 #ifndef PROBABILITE_BINOMIAL_DISTRIBUTION_H
 #define PROBABILITE_BINOMIAL_DISTRIBUTION_H
 
-#include "omg/unreachable.h"
-#include "poincare/statistics/distribution.h"
+#include <omg/unreachable.h>
+#include <poincare/statistics/distribution.h>
+
 #include "two_parameters_distribution.h"
 
 namespace Distributions {

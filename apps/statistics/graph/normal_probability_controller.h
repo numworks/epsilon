@@ -1,10 +1,10 @@
 #ifndef STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H
 #define STATISTICS_NORMAL_PROBABILITY_CONTROLLER_H
 
+#include <apps/shared/round_cursor_view.h>
 #include <escher/alternate_empty_view_delegate.h>
 #include <limits.h>
 
-#include "apps/shared/round_cursor_view.h"
 #include "plot_controller.h"
 
 namespace Statistics {

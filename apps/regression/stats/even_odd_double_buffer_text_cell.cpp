@@ -1,8 +1,7 @@
 #include "even_odd_double_buffer_text_cell.h"
 
 #include <assert.h>
-
-#include "escher/metric.h"
+#include <escher/metric.h>
 
 using namespace Escher;
 

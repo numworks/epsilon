@@ -1,12 +1,12 @@
 #ifndef POINCARE_MEMORY_TREE_H
 #define POINCARE_MEMORY_TREE_H
 
+#include <omg/memory.h>
 #include <string.h>
 
 #include <utility>
 
 #include "indexed_child.h"
-#include "omg/memory.h"
 #include "type_block.h"
 #include "value_block.h"
 

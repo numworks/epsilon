@@ -2,8 +2,7 @@
 #define POINCARE_HELPERS_EXPRESSION_EQUAL_SIGN_H
 
 #include <poincare/expression.h>
-
-#include "poincare/src/expression/projection.h"
+#include <poincare/src/expression/projection.h>
 
 namespace Poincare {
 bool ExactAndApproximateExpressionsAreStrictlyEqual(

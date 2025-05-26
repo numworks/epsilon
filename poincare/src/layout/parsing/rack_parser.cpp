@@ -1,5 +1,6 @@
 #include "rack_parser.h"
 
+#include <omg/code_point.h>
 #include <omg/unicode_helper.h>
 #include <omg/utf8_decoder.h>
 #include <poincare/old/empty_context.h>
@@ -25,7 +26,6 @@
 #include <algorithm>
 
 #include "helper.h"
-#include "omg/code_point.h"
 
 namespace Poincare::Internal {
 

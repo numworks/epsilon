@@ -5,6 +5,7 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/statistics/distributions/distribution_method.h>
 #include <poincare/src/statistics/statistics_dataset.h>
+#include <poincare/statistics/distribution.h>
 #include <poincare/trigonometry.h>
 
 #include <bit>
@@ -22,7 +23,6 @@
 #include "matrix.h"
 #include "number.h"
 #include "physical_constant.h"
-#include "poincare/statistics/distribution.h"
 #include "random.h"
 #include "rational.h"
 #include "simplification.h"

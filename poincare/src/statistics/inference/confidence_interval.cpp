@@ -3,10 +3,10 @@
 #include <omg/round.h>
 #include <omg/unreachable.h>
 #include <poincare/k_tree.h>
+#include <poincare/src/layout/k_tree.h>
 #include <poincare/src/statistics/domain.h>
 #include <poincare/statistics/distribution.h>
 
-#include "poincare/src/layout/k_tree.h"
 #include "significance_test.h"
 
 namespace Poincare::Internal::Inference::ConfidenceInterval {

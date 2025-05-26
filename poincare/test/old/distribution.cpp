@@ -1,5 +1,4 @@
-#include "poincare/src/statistics/distributions/distribution.h"
-
+#include <poincare/src/statistics/distributions/distribution.h>
 #include <poincare/statistics/distribution.h>
 
 #include <algorithm>

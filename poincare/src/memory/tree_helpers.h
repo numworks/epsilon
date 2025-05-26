@@ -1,8 +1,8 @@
 #ifndef POINCARE_MEMORY_TREE_HELPERS_H
 #define POINCARE_MEMORY_TREE_HELPERS_H
 
-#include "poincare/src/memory/tree_ref.h"
-#include "poincare/src/memory/type_block.h"
+#include <poincare/src/memory/tree_ref.h>
+#include <poincare/src/memory/type_block.h>
 
 namespace Poincare::Internal {
 

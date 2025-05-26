@@ -1,8 +1,9 @@
 #ifndef INFERENCE_MODELS_HOMOGENEITY_TEST_H
 #define INFERENCE_MODELS_HOMOGENEITY_TEST_H
 
+#include <poincare/old/float_list.h>
+
 #include "chi2_test.h"
-#include "poincare/old/float_list.h"
 
 namespace Inference {
 

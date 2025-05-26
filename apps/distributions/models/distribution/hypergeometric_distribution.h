@@ -1,9 +1,9 @@
 #ifndef PROBABILITE_HYPERGEOMETRIC_DISTRIBUTION_H
 #define PROBABILITE_HYPERGEOMETRIC_DISTRIBUTION_H
 
+#include <apps/i18n.h>
 #include <poincare/layout.h>
 
-#include "apps/i18n.h"
 #include "three_parameters_distribution.h"
 
 namespace Distributions {

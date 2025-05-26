@@ -1,7 +1,8 @@
 #ifndef PROBABILITE_UNIFORM_DISTRIBUTION_H
 #define PROBABILITE_UNIFORM_DISTRIBUTION_H
 
-#include "poincare/statistics/distribution.h"
+#include <poincare/statistics/distribution.h>
+
 #include "two_parameters_distribution.h"
 
 namespace Distributions {

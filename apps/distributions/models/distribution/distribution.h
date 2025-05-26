@@ -1,10 +1,10 @@
 #ifndef PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 #define PROBABILITE_DISTRIBUTION_DISTRIBUTION_H
 
+#include <apps/i18n.h>
 #include <apps/shared/statistical_distribution.h>
 #include <poincare/statistics/distribution.h>
 
-#include "apps/i18n.h"
 #include "distributions/models/calculation/discrete_calculation.h"
 #include "distributions/models/calculation/finite_integral_calculation.h"
 #include "distributions/models/calculation/left_integral_calculation.h"

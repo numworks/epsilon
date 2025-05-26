@@ -1,7 +1,8 @@
 #include "power_like.h"
 
+#include <poincare/src/memory/pattern_matching.h>
+
 #include "k_tree.h"
-#include "poincare/src/memory/pattern_matching.h"
 #include "rational.h"
 
 namespace Poincare::Internal {

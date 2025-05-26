@@ -1,10 +1,9 @@
 #include "function_graph_cell.h"
 
+#include <escher/palette.h>
+#include <kandinsky/color.h>
 #include <poincare/expression.h>
 #include <poincare/print.h>
-
-#include "escher/palette.h"
-#include "kandinsky/color.h"
 
 using namespace Shared;
 using namespace Poincare;

@@ -1,10 +1,10 @@
 #ifndef PROBABILITE_EXPONENTIAL_DISTRIBUTION_H
 #define PROBABILITE_EXPONENTIAL_DISTRIBUTION_H
 
+#include <apps/i18n.h>
 #include <assert.h>
 #include <poincare/layout.h>
 
-#include "apps/i18n.h"
 #include "one_parameter_distribution.h"
 
 namespace Distributions {

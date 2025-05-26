@@ -1,7 +1,8 @@
 #ifndef STATISTICS_HISTOGRAM_MAIN_VIEW_H
 #define STATISTICS_HISTOGRAM_MAIN_VIEW_H
 
-#include "escher/selectable_list_view.h"
+#include <escher/selectable_list_view.h>
+
 #include "histogram_banner_view.h"
 
 namespace Statistics {

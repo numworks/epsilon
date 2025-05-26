@@ -1,6 +1,6 @@
 #include "chi2_test.h"
 
-#include "poincare/src/statistics/data_table.h"
+#include <poincare/src/statistics/data_table.h>
 
 namespace Poincare::Internal::Inference::SignificanceTest::Chi2 {
 

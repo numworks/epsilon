@@ -1,6 +1,7 @@
 #include "expression_parameter_controller.h"
 
-#include "poincare/expression.h"
+#include <poincare/expression.h>
+
 #include "poincare_helpers.h"
 
 using namespace Escher;

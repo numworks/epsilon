@@ -1,6 +1,7 @@
 #include "trigonometry.h"
 
 #include <omg/unreachable.h>
+#include <poincare/src/expression/dependency.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
@@ -10,7 +11,6 @@
 #include "k_tree.h"
 #include "number.h"
 #include "order.h"
-#include "poincare/src/expression/dependency.h"
 #include "polynomial.h"
 #include "projection.h"
 #include "rational.h"

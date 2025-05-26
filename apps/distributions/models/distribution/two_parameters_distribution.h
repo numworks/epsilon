@@ -1,8 +1,9 @@
 #ifndef PROBABILITE_TWO_PARAMETERS_DISTRIBUTION_H
 #define PROBABILITE_TWO_PARAMETERS_DISTRIBUTION_H
 
+#include <poincare/statistics/distribution.h>
+
 #include "distribution.h"
-#include "poincare/statistics/distribution.h"
 
 namespace Distributions {
 

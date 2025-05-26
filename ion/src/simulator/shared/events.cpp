@@ -14,8 +14,8 @@
 
 #include <algorithm>
 
+#include "clipboard_helper.h"
 #include "haptics.h"
-#include "ion/src/simulator/shared/clipboard_helper.h"
 
 #if ION_LOG_EVENTS_NAME
 #include <ion/console.h>

@@ -3,6 +3,7 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_ref.h>
+#include <poincare/src/memory/tree_stack.h>
 
 #include <algorithm>
 
@@ -12,7 +13,6 @@
 #include "indices.h"
 #include "input_beautification.h"
 #include "layout_cursor.h"
-#include "poincare/src/memory/tree_stack.h"
 #include "rack_layout.h"
 #include "render.h"
 

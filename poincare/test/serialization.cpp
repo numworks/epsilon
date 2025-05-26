@@ -1,8 +1,9 @@
 
+#include <poincare/expression.h>
+#include <poincare/k_tree.h>
+#include <poincare/preferences.h>
+
 #include "helper.h"
-#include "poincare/expression.h"
-#include "poincare/k_tree.h"
-#include "poincare/preferences.h"
 
 void assert_expression_serializes_to(
     Poincare::SystemExpression expression, const char* serialization,

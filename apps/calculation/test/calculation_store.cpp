@@ -226,7 +226,8 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
     assert(Calculation::Calculation::CanDisplayExact(expectedDisplay));
     if (outputLayouts.exact.isUninitialized()) {
 #if POINCARE_STRICT_TESTS
-      quiz_assert_print_if_failure(false, "serialization");
+      quiz_assert_print_if_failure(false, expectedExactOutput,
+                                   expectedExactOutput, "Uninitialized");
 #else
       quiz_tolerate_print_if_failure(false, expectedExactOutput,
                                      expectedExactOutput, "Uninitialized");
@@ -240,7 +241,8 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
     assert(Calculation::Calculation::CanDisplayApproximate(expectedDisplay));
     if (outputLayouts.approximate.isUninitialized()) {
 #if POINCARE_STRICT_TESTS
-      quiz_assert_print_if_failure(false, "serialization");
+      quiz_assert_print_if_failure(false, expectedExactOutput,
+                                   expectedExactOutput, "Uninitialized");
 #else
       quiz_tolerate_print_if_failure(false, expectedApproximateOutput,
                                      expectedApproximateOutput,

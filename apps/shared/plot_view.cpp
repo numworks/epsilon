@@ -13,16 +13,19 @@ namespace Shared {
 
 void AbstractPlotView::reload(bool resetInterruption, bool force) {
   uint32_t rangeVersion = m_range->rangeChecksum();
-  if (force || m_drawnRangeVersion != rangeVersion) {
+  bool isReloadNeeded = force || (m_drawnRangeVersion != rangeVersion);
+  if (isReloadNeeded) {
     // FIXME: This should also be called if the *curve* changed
     m_drawnRangeVersion = rangeVersion;
-    View* banner = bannerView();
+    const View* banner = bannerView();
     KDCoordinate bannerHeight = banner ? banner->bounds().height() : 0;
     markRectAsDirty(
         KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight));
   }
   layoutSubviews();
-  reloadAxes();
+  if (isReloadNeeded) {
+    reloadAxes();
+  }
 }
 
 void AbstractPlotView::setCursorView(CursorView* cursorView) {

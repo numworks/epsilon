@@ -3,6 +3,7 @@
 #include <apps/global_preferences.h>
 #include <assert.h>
 #include <poincare/helpers/symbol.h>
+#include <poincare/src/layout/rack.h>
 
 #include <algorithm>
 
@@ -84,6 +85,20 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
 }
 
 /* MathLayoutFieldDelegate */
+
+void ListController::layoutFieldDidAbortEditing(LayoutField* layoutField) {
+  ExpressionModelListController::layoutFieldDidAbortEditing(layoutField);
+
+  // Remove sequence if main expression is empty
+  Shared::Sequence* sequence = modelStore()->modelForRecord(selectedRecord());
+  if (Poincare::Internal::Rack::IsEmpty(sequence->layout()) &&
+      removeModelRow(selectedRecord())) {
+    int newSelectedRow =
+        selectedRow() >= numberOfRows() ? numberOfRows() - 1 : selectedRow();
+    selectRow(newSelectedRow);
+    selectableListView()->reloadData();
+  }
+}
 
 bool ListController::layoutFieldDidReceiveEvent(LayoutField* layoutField,
                                                 Ion::Events::Event event) {

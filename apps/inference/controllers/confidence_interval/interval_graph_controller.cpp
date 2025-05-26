@@ -103,7 +103,7 @@ void IntervalGraphController::saveIntervalValues() {
 void IntervalGraphController::intervalDidChange() {
   m_graphView.conclusionView()->setInterval(m_currentEstimate,
                                             m_currentMarginOfError);
-  m_graphView.reload();
+  m_graphView.reload(true);
 }
 
 }  // namespace Inference

@@ -54,10 +54,13 @@ Type ExpressionType(LayoutType type) {
 }
 
 Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
-                    bool isTopLevelRack, ParsingContext::ParsingMethod method) {
+                    bool isTopLevelRack, ParsingContext::ParsingMethod method,
+                    bool forceParseSequence) {
   if (l->isRackLayout()) {
     // TODO: should be inlined in the caller
-    return RackParser(l, context, isTopLevelRack, method).parse();
+    return RackParser(l, context, isTopLevelRack, method, false,
+                      forceParseSequence)
+        .parse();
   }
   switch (l->layoutType()) {
     case LayoutType::VerticalOffset:
@@ -74,8 +77,9 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
     }
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces: {
-      Tree* list =
-          RackParser(l->child(0), context, false, method, true).parse();
+      Tree* list = RackParser(l->child(0), context, false, method, true,
+                              forceParseSequence)
+                       .parse();
       if (!list) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -140,7 +144,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
 
       // Sequence expression
       currentChild = currentChild->nextTree();
-      if (Rack::IsEmpty(currentChild)) {
+      if (Rack::IsEmpty(currentChild) && forceParseSequence) {
         SharedTreeStack->pushBlock(Type::EmptySequenceExpression);
       } else if (!Parse(currentChild, context)) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

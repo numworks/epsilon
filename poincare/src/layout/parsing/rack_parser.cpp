@@ -553,8 +553,8 @@ void RackParser::parseImplicitAdditionBetweenUnits(TreeRef& leftHandSide,
   int start = m_root->indexOfChild(m_currentToken.firstLayout());
   RackParser subParser(
       m_root, m_parsingContext.context(), false,
-      ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits, false, start,
-      start + m_currentToken.length());
+      ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits, false,
+      m_forceParseSequence, start, start + m_currentToken.length());
   leftHandSide = subParser.parse();
   if (leftHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -892,9 +892,9 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   if (builtin->aliases()->contains("log") &&
       popTokenIfType(Token::Type::Subscript)) {
     // Special case for the log function (e.g. "log₂(8)")
-    TreeRef base = Parser::Parse(m_currentToken.firstLayout()->child(0),
-                                 m_parsingContext.context(), false,
-                                 m_parsingContext.parsingMethod());
+    TreeRef base = Parser::Parse(
+        m_currentToken.firstLayout()->child(0), m_parsingContext.context(),
+        false, m_parsingContext.parsingMethod(), m_forceParseSequence);
     if (!base) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
@@ -1103,8 +1103,10 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
       popToken();
       /* TODO factor with parseSequence */
       leftHandSide = SharedTreeStack->pushUserSequence(name);
-      Tree* index = Parser::Parse(m_currentToken.firstLayout()->child(0),
-                                  m_parsingContext.context());
+      Tree* index =
+          Parser::Parse(m_currentToken.firstLayout()->child(0),
+                        m_parsingContext.context(), m_isTopLevelRack,
+                        m_parsingContext.parsingMethod(), m_forceParseSequence);
       if (!index) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -1389,9 +1391,9 @@ void RackParser::parseLayout(TreeRef& leftHandSide, Token::Type stoppingType) {
   // }
   assert(m_currentToken.length() == 1);
   /* Parse standalone layouts */
-  leftHandSide =
-      Parser::Parse(m_currentToken.firstLayout(), m_parsingContext.context(),
-                    false, m_parsingContext.parsingMethod());
+  leftHandSide = Parser::Parse(
+      m_currentToken.firstLayout(), m_parsingContext.context(), false,
+      m_parsingContext.parsingMethod(), m_forceParseSequence);
   isThereImplicitOperator();
 }
 
@@ -1403,7 +1405,7 @@ void RackParser::parseSuperscript(TreeRef& leftHandSide,
   }
   TreeRef rightHandSide =
       Parser::Parse(layout->child(0), m_parsingContext.context(), false,
-                    m_parsingContext.parsingMethod());
+                    m_parsingContext.parsingMethod(), m_forceParseSequence);
   if (rightHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1422,8 +1424,9 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   const Tree* layout = m_currentToken.firstLayout();
-  TreeRef base = Parser::Parse(layout->child(0), m_parsingContext.context(),
-                               false, m_parsingContext.parsingMethod());
+  TreeRef base =
+      Parser::Parse(layout->child(0), m_parsingContext.context(), false,
+                    m_parsingContext.parsingMethod(), m_forceParseSequence);
   if (base.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1469,8 +1472,9 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
     }
   } else if (popTokenIfType(Token::Type::Superscript)) {
     const Tree* layout = m_currentToken.firstLayout();
-    result = Parser::Parse(layout->child(0), m_parsingContext.context(), false,
-                           m_parsingContext.parsingMethod());
+    result =
+        Parser::Parse(layout->child(0), m_parsingContext.context(), false,
+                      m_parsingContext.parsingMethod(), m_forceParseSequence);
     if (!result) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }

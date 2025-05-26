@@ -627,7 +627,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       Poincare::Preferences::EditionMode::Edition1D) {
     constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
     char buffer[bufferSize];
-    Expression e = Expression::Parse(layout, nullptr);
+    Expression e = Expression::Parse(layout, nullptr, true, false, true);
     if (!e.isUninitialized()) {
       Layout layout = e.createLayout(
           Poincare::Preferences::SharedPreferences()->displayMode(),

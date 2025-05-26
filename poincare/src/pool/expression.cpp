@@ -187,17 +187,20 @@ const Tree* Expression::TreeFromAddress(const void* address) {
 
 UserExpression UserExpression::Parse(const Tree* layout, Context* context,
                                      bool addMissingParenthesis,
-                                     bool parseForAssignment) {
+                                     bool parseForAssignment,
+                                     bool forceParseSequence) {
   // TODO_PCJ: Use addMissingParenthesis
   return Builder(Parser::Parse(layout, context, true,
                                parseForAssignment
                                    ? ParsingContext::ParsingMethod::Assignment
-                                   : ParsingContext::ParsingMethod::Classic));
+                                   : ParsingContext::ParsingMethod::Classic,
+                               forceParseSequence));
 }
 
 UserExpression UserExpression::Parse(const char* string, Context* context,
                                      bool addMissingParenthesis,
-                                     bool parseForAssignment) {
+                                     bool parseForAssignment,
+                                     bool forceParseSequence) {
   if (string[0] == 0) {
     return UserExpression();
   }
@@ -205,8 +208,8 @@ UserExpression UserExpression::Parse(const char* string, Context* context,
   if (!layout) {
     return UserExpression();
   }
-  UserExpression result =
-      Parse(layout, context, addMissingParenthesis, parseForAssignment);
+  UserExpression result = Parse(layout, context, addMissingParenthesis,
+                                parseForAssignment, forceParseSequence);
   layout->removeTree();
   return result;
 }

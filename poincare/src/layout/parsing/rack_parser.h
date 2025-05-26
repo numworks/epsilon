@@ -37,8 +37,8 @@ class RackParser {
              bool isTopLevelRack = false,
              ParsingContext::ParsingMethod parsingMethod =
                  ParsingContext::ParsingMethod::Classic,
-             bool commaSeparatedList = false, int textStart = 0,
-             int textEnd = -1)
+             bool commaSeparatedList = false, bool forceParseSequence = false,
+             int textStart = 0, int textEnd = -1)
       : m_parsingContext(context, parsingMethod),
         m_tokenizer(Rack::From(rack), &m_parsingContext, textStart, textEnd),
         m_currentToken(Token(Token::Type::Undefined)),
@@ -47,6 +47,7 @@ class RackParser {
         m_waitingSlashForMixedFraction(false),
         m_commaSeparatedList(commaSeparatedList),
         m_isTopLevelRack(isTopLevelRack),
+        m_forceParseSequence(forceParseSequence),
         m_root(rack) {}
 
   Tree* parse();
@@ -205,6 +206,7 @@ class RackParser {
   bool m_waitingSlashForMixedFraction;
   bool m_commaSeparatedList;
   bool m_isTopLevelRack;
+  bool m_forceParseSequence;
   const Tree* m_root;
 };
 

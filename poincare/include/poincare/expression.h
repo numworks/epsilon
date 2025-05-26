@@ -130,10 +130,12 @@ class Expression : public PoolHandle {
 
   static UserExpression Parse(const Internal::Tree* layout, Context* context,
                               bool addMissingParenthesis = true,
-                              bool parseForAssignment = false);
+                              bool parseForAssignment = false,
+                              bool forceParseSequence = false);
   static UserExpression Parse(const char* layout, Context* context,
                               bool addMissingParenthesis = true,
-                              bool parseForAssignment = false);
+                              bool parseForAssignment = false,
+                              bool forceParseSequence = false);
   static UserExpression ParseLatex(const char* latex, Context* context,
                                    bool addMissingParenthesis = true,
                                    bool parseForAssignment = false);

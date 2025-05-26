@@ -26,6 +26,9 @@ class CodePoint {
     return 0x391 <= m_code && m_code <= 0x3a9 && m_code != 0x3a2;
   }
   bool isGreekSmallLetter() const { return 0x3b1 <= m_code && m_code <= 0x3c9; }
+  bool isGreekLetter() const {
+    return isGreekCapitalLetter() || isGreekSmallLetter();
+  }
   bool isEquationOperator() const;  // <, =, >, ≤, ≥
  private:
   uint32_t m_code;

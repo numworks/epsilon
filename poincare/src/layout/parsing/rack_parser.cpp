@@ -1245,7 +1245,7 @@ Tree* RackParser::tryParseFunctionParameters(bool isBuiltinFunction) {
       if (child->isCodePointLayout()) {
         bool isFirstChar = (child.index == nextTokenIndex);
         CodePoint c = CodePointLayout::GetCodePoint(child);
-        if (c.isLatinLetter() || c.isDecimalDigit() ||
+        if (c.isLatinLetter() || c.isDecimalDigit() || c.isGreekLetter() ||
             (isFirstChar && (c == '-' || c == '+'))) {
           continue;
         }

@@ -127,9 +127,11 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       const Grid* grid = Grid::From(l);
       assert(grid->numberOfColumns() == 2);
       assert(grid->numberOfRows() >= 1);
+      assert(grid->numberOfRows() <= 3);
 
       // Sequence symbol
-      Tree* expr = Parse(grid->child(0), context);
+      const Tree* currentChild = grid->nextNode();
+      Tree* expr = Parse(currentChild, context);
       if (!expr || !expr->isUserSequence()) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -137,40 +139,28 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       expr->removeTree();
 
       // Sequence expression
-      if (Rack::IsEmpty(grid->child(1))) {
+      currentChild = currentChild->nextTree();
+      if (Rack::IsEmpty(currentChild)) {
         SharedTreeStack->pushBlock(Type::EmptySequenceExpression);
-      } else if (!Parse(grid->child(1), context)) {
+      } else if (!Parse(currentChild, context)) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
 
       // First rank
       SharedTreeStack->pushInteger(SequenceLayout::FirstRank(l));
 
-      switch (grid->numberOfRows()) {
-        case 1: {
-          expr->cloneNodeAtNode(KSequenceExplicit);
-          return expr;
+      expr->cloneNodeAtNode(KSequenceExplicit);
+      // Initial conditions
+      for (int row = 1; row < grid->numberOfRows(); row++) {
+        // Skip name and get to expression child
+        currentChild = currentChild->nextTree()->nextTree();
+        if (!Parse(currentChild, context)) {
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
-        case 2: {
-          expr->cloneNodeAtNode(KSequenceSingleRecurrence);
-          // First initial condition
-          if (!Parse(grid->child(3), context)) {
-            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-          }
-          return expr;
-        }
-        case 3: {
-          expr->cloneNodeAtNode(KSequenceDoubleRecurrence);
-          // First and second initial conditions
-          if (!Parse(grid->child(3), context) ||
-              !Parse(grid->child(5), context)) {
-            TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-          }
-          return expr;
-        }
-        default:
-          OMG::unreachable();
+        expr->cloneNodeOverNode(row == 1 ? KSequenceSingleRecurrence
+                                         : KSequenceDoubleRecurrence);
       }
+      return expr;
     }
 #endif
     default: {

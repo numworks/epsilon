@@ -1228,44 +1228,11 @@ Tree* RackParser::tryParseFunctionParameters(bool isBuiltinFunction) {
     if (!isBuiltinFunction || m_nextToken.is(Token::Type::EndOfStream)) {
       return nullptr;
     }
-    /* builtin functions can be called without parenthesis. In this case, we
-     * take the subsequent sequence of letters and digits as a the function
-     * argument.
-     * For example, "cos2x+3" is parsed as "cos(2*x)+3"
-     * We also accept a plus/minus sign at the beginning of the argument.
-     * For example, "cos-2x+3" is parsed as "cos(-2*x)+3"
-     */
-    // Find the argument to parse
-    int nextTokenIndex = m_root->indexOfChild(m_nextToken.firstLayout());
-    int nextTokenEnd = m_root->numberOfChildren();
-    for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
-      if (child.index < nextTokenIndex) {
-        continue;
-      }
-      if (child->isCodePointLayout()) {
-        bool isFirstChar = (child.index == nextTokenIndex);
-        CodePoint c = CodePointLayout::GetCodePoint(child);
-        if (c.isLatinLetter() || c.isDecimalDigit() || c.isGreekLetter() ||
-            (isFirstChar && (c == '-' || c == '+'))) {
-          continue;
-        }
-      }
-      nextTokenEnd = child.index;
-      break;
-    }
-    if (nextTokenEnd == nextTokenIndex) {
-      // No argument to parse
-      return nullptr;
-    }
-    // Skip the argument and pop the next token
-    m_tokenizer.skip(nextTokenEnd - nextTokenIndex - m_nextToken.length());
-    popToken();
-    // Parse the argument
+    /* builtin functions can be called without parenthesis. In this case, it
+     * eats every subsequent tokens with a higher precedence as the implicit
+     * multiplication. */
     TreeRef list = List::PushEmpty();
-    RackParser subParser(m_root, m_parsingContext.context(), false,
-                         m_parsingContext.parsingMethod(), false,
-                         nextTokenIndex, nextTokenEnd);
-    Tree* argument = subParser.parse();
+    Tree* argument = parseUntil(Token::TypeBefore(Token::Type::ImplicitTimes));
     if (!argument) {
       // Parse of argument failed
       list->removeTree();

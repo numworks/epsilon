@@ -65,6 +65,10 @@ class Token {
     Undefined
   };
 
+  inline static Type TypeBefore(Type t) {
+    return static_cast<Type>(static_cast<int>(t) - 1);
+  }
+
   Token(Type type = Type::Undefined)
       : m_type(type), m_firstLayout(), m_length(0){};
   Token(Type type, const Layout* layout, size_t length = 1)

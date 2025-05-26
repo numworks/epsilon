@@ -82,6 +82,9 @@ class ExpressionOrFloat {
   }
 
   bool operator==(const ExpressionOrFloat& other) const {
+    if (hasNoExactExpression() != other.hasNoExactExpression()) {
+      return false;
+    }
     if (hasNoExactExpression()) {
       return (m_value == other.m_value);
     }

@@ -1424,6 +1424,9 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   popToken();
+  if (m_currentToken.type() != Token::Type::ReservedFunction) {
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
   TreeRef log;
   parseReservedFunction(log, Token::Type::ImplicitTimes);
   if (log.isUninitialized() || !log->isLog()) {

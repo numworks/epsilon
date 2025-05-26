@@ -127,10 +127,9 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       const Grid* grid = Grid::From(l);
       assert(grid->numberOfColumns() == 2);
       assert(grid->numberOfRows() >= 1);
-      Tree* expr;
 
       // Sequence symbol
-      expr = Parse(grid->child(0), context);
+      Tree* expr = Parse(grid->child(0), context);
       if (!expr || !expr->isUserSequence()) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }

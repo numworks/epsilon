@@ -42,7 +42,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
     }
     case LayoutType::Sequence: {
       if (currentIndex == k_outsideIndex) {
-        return 1;
+        return SequenceLayout::k_mainExpressionIndex;
       }
       return k_cantMoveIndex;
     }

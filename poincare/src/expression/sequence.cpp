@@ -41,7 +41,7 @@ int Sequence::InitialRank(const Tree* sequence) {
   return Integer::Handler(sequence->child(k_firstRankIndex)).to<int>();
 }
 
-Tree* Sequence::MainExpressionName(const Tree* sequence) {
+Tree* Sequence::PushMainExpressionName(const Tree* sequence) {
   assert(sequence->isSequence());
   Tree* result = SharedTreeStack->pushUserSequence(
       Symbol::GetName(sequence->child(k_nameIndex)));
@@ -63,8 +63,8 @@ Tree* Sequence::MainExpressionName(const Tree* sequence) {
   return result;
 }
 
-Tree* Sequence::InitialConditionName(const Tree* sequence,
-                                     bool isFirstCondition) {
+Tree* Sequence::PushInitialConditionName(const Tree* sequence,
+                                         bool isFirstCondition) {
   assert(sequence->isSequence());
   Tree* result = SharedTreeStack->pushUserSequence(
       Symbol::GetName(sequence->child(k_nameIndex)));

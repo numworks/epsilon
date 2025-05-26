@@ -372,15 +372,15 @@ void Layouter::layoutSequence(TreeRef& layoutParent, Tree* expression) {
           .to<uint8_t>();
 
   // Get names
-  TreeRef mainExpressionName = Sequence::MainExpressionName(expression);
+  TreeRef mainExpressionName = Sequence::PushMainExpressionName(expression);
   TreeRef firstInitialConditionName =
       (expression->type() == Type::SequenceSingleRecurrence ||
        expression->type() == Type::SequenceDoubleRecurrence)
-          ? Sequence::InitialConditionName(expression, true)
+          ? Sequence::PushInitialConditionName(expression, true)
           : nullptr;
   TreeRef secondInitialConditionName =
       (expression->type() == Type::SequenceDoubleRecurrence)
-          ? Sequence::InitialConditionName(expression, false)
+          ? Sequence::PushInitialConditionName(expression, false)
           : nullptr;
 
   // Push sequence layout

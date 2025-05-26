@@ -1530,8 +1530,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       KDCoordinate equalAbscissa = 2 * CurlyBraces::k_curlyBraceWidth +
                                    grid->columnWidth(0, style.font) +
                                    k_gridEntryMargin;
-      int nbRows = grid->numberOfRows() -
-                   (!grid->numberOfRowsIsFixed() && !grid->isEditing());
+      int nbRows = grid->numberOfRows();
       for (int i = 0; i < nbRows; i++) {
         const Rack* leftChild = l->child(i * 2);
         KDPoint leftChildPosition = PositionOfChild(l, i * 2);

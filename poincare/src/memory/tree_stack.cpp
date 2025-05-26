@@ -203,11 +203,11 @@ Tree* AbstractTreeStack::pushPointOfInterest(double abscissa, double ordinate,
   return result;
 }
 
-Tree* AbstractTreeStack::pushSequenceLayout(int nbRows, int nbCols,
+Tree* AbstractTreeStack::pushSequenceLayout(uint8_t nbRows, uint8_t nbCols,
                                             uint8_t firstRank) {
   Tree* result = pushBlock(Type::SequenceLayout);
-  pushValueBlock(nbRows % 256);
-  pushValueBlock(nbCols % 256);
+  pushValueBlock(nbRows);
+  pushValueBlock(nbCols);
   pushValueBlock(firstRank);
   return result;
 }

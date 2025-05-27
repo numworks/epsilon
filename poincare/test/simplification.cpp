@@ -1935,21 +1935,21 @@ QUIZ_CASE(pcj_simplification_undef) {
   reduces_to_tree(KDep(1_e, KDepList(KUndefBoolean)), KUndef);
 }
 
-QUIZ_CASE(pcj_simplification_without_beautification) {
-  ProjectionContext ApproximationCtx = {
+QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
+  ProjectionContext ctxForApproximation = {
       .m_reductionTarget = ReductionTarget::SystemForApproximation};
-  ProjectionContext AnalysisCtx = {.m_reductionTarget =
-                                       ReductionTarget::SystemForAnalysis};
-  projects_and_reduces_to("(1+x)^3", "(x+1)^3", ApproximationCtx);
-  projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0", ApproximationCtx);
-  projects_and_reduces_to("(1+x)^3", "x^3+3×x^2+3×x+1", AnalysisCtx);
+  ProjectionContext ctxForAnalysis = {.m_reductionTarget =
+                                          ReductionTarget::SystemForAnalysis};
+  projects_and_reduces_to("(1+x)^3", "(x+1)^3", ctxForApproximation);
+  projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0", ctxForApproximation);
+  projects_and_reduces_to("(1+x)^3", "x^3+3×x^2+3×x+1", ctxForAnalysis);
   projects_and_reduces_to("ln(49000*x)",
                           "dep(ln(49000)+ln(x),{nonNull(x),realPos(49000×x)})",
-                          ApproximationCtx);
+                          ctxForApproximation);
   projects_and_reduces_to("ln(49000*x)",
                           "dep(ln(49000)+ln(x),{nonNull(x),realPos(49000×x)})",
-                          AnalysisCtx);
+                          ctxForAnalysis);
   // TODO: x^2*(1-x^2) might be better for approximation.
-  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ApproximationCtx);
-  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", AnalysisCtx);
+  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ctxForApproximation);
+  projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ctxForAnalysis);
 }

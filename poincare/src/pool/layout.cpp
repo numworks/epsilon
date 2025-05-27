@@ -231,12 +231,8 @@ bool Layout::isForbiddenForCopy() const {
   if (isUninitialized()) {
     return false;
   }
-  for (const Internal::Tree* child : tree()->children()) {
-    if (child->isSequenceLayout()) {
-      return true;
-    }
-  }
-  return false;
+  return tree()->hasDescendantSatisfying(
+      [](const Internal::Tree* l) { return l->isSequenceLayout(); });
 }
 
 }  // namespace Poincare

@@ -17,8 +17,8 @@ bool AppWithStoreMenu::handleEvent(Ion::Events::Event event) {
 }
 
 void AppWithStoreMenu::storeLayout(Poincare::Layout layout) {
-  if (m_modalViewController.isDisplayingModal() ||
-      layout.isForbiddenForCopy()) {
+  assert(!layout.isForbiddenForCopy());
+  if (m_modalViewController.isDisplayingModal()) {
     return;
   }
   m_storeMenuController.setLayout(layout);

@@ -40,9 +40,7 @@ void Clipboard::storeText(const char* text, int length) {
 }
 
 void Clipboard::storeLayout(Poincare::Layout layout) {
-  if (layout.isForbiddenForCopy()) {
-    return;
-  }
+  assert(!layout.isForbiddenForCopy());
   int size = layout.tree()->treeSize();
   if (size < k_bufferSize) {
     memcpy(m_treeBuffer, layout.tree(), size);

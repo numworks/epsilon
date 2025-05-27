@@ -194,7 +194,7 @@ int CursorMotion::IndexAfterHorizontalCursorMove(
 
 int CursorMotion::IndexAfterVerticalCursorMove(
     Tree* l, OMG::VerticalDirection direction, int currentIndex,
-    PositionInLayout positionAtCurrentIndex) {
+    PositionInLayout positionAtCurrentIndex, bool isSelecting) {
   switch (l->layoutType()) {
     case LayoutType::Prison:
       return k_cantMoveIndex;
@@ -218,7 +218,8 @@ int CursorMotion::IndexAfterVerticalCursorMove(
     case LayoutType::Piecewise:
     case LayoutType::Sequence: {
       const Grid* grid = Grid::From(l);
-      if (currentIndex == k_outsideIndex) {
+      if (currentIndex == k_outsideIndex ||
+          (l->isSequenceLayout() && isSelecting)) {
         return k_cantMoveIndex;
       }
       if (direction.isUp() && !grid->childIsTopOfGrid(currentIndex)) {

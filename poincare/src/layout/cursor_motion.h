@@ -33,7 +33,7 @@ class CursorMotion {
                                             int currentIndex);
   static int IndexAfterVerticalCursorMove(
       Tree* l, OMG::VerticalDirection direction, int currentIndex,
-      PositionInLayout positionAtCurrentIndex);
+      PositionInLayout positionAtCurrentIndex, bool isSelecting);
 
   static int IndexToPointToWhenInserting(const Tree* l);
   static Tree* DeepChildToPointToWhenInserting(Tree* l);

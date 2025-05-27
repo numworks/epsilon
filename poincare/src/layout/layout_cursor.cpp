@@ -789,8 +789,8 @@ bool LayoutCursor::verticalMoveWithoutSelection(
     for (int i = 0; i < 2; i++) {
       if (nextLayout) {
         int nextIndex = CursorMotion::IndexAfterVerticalCursorMove(
-            nextLayout, direction, k_outsideIndex,
-            positionRelativeToNextLayout);
+            nextLayout, direction, k_outsideIndex, positionRelativeToNextLayout,
+            isSelecting());
         if (nextIndex != k_cantMoveIndex) {
           assert(nextIndex != k_outsideIndex);
           assert(!nextLayout->isRackLayout());
@@ -817,7 +817,7 @@ bool LayoutCursor::verticalMoveWithoutSelection(
                                                : PositionInLayout::Middle);
   while (parentLayout) {
     int nextIndex = CursorMotion::IndexAfterVerticalCursorMove(
-        parentLayout, direction, childIndex, currentPosition);
+        parentLayout, direction, childIndex, currentPosition, isSelecting());
     if (nextIndex != k_cantMoveIndex) {
       if (nextIndex == k_outsideIndex) {
         assert(currentPosition != PositionInLayout::Middle);

@@ -1737,6 +1737,14 @@ Tree* ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
   return nullptr;
 }
 
+Tree* ExtractRealPart(const Tree* e) {
+  if (GetComplexSign(e).isReal()) {
+    return e->cloneTree();
+  }
+  std::complex<double> value = PrivateToComplex<double>(e, nullptr);
+  return SharedTreeStack->pushDoubleFloat(value.real());
+}
+
 /* TODO: not all this functions are worth templating on float and
  * double. ToComplex needs it but ToMatrix could take a bool and call the
  * correct ToComplex<T> as needed since the code is mostly independent of the

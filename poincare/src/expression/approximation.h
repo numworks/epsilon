@@ -186,6 +186,7 @@ T FloatLCM(T a, T b);
  * This function assumes that Approximation has already been applied
  * to e. */
 Tree* ExtractRealPartIfImaginaryPartNegligible(const Tree* e);
+Tree* ExtractRealPart(const Tree* e);
 
 template <typename T>
 bool IsNonReal(std::complex<T> x) {

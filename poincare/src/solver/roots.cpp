@@ -168,10 +168,8 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
   if (discriminantSign.realSign().isPositive()) {
     // If the discriminant is positive or zero, all roots are real.
     for (Tree* root : approximatedRoots->children()) {
-      Tree* realPart =
-          Approximation::ExtractRealPartIfImaginaryPartNegligible(root);
-      assert(realPart != nullptr && realPart->isNumber());
-      root->moveTreeOverTree(realPart);
+      // Even when root contains a non-negligeable imaginary part, we remove it
+      root->moveTreeOverTree(Approximation::ExtractRealPart(root));
     }
   } else {
     /*  If the discriminant is strictly negative, there are three distinct

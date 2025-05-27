@@ -212,12 +212,11 @@ float Metric::GetMetric(const Tree* e, ReductionTarget reductionTarget) {
   if (CannotBeReducedFurther(e)) {
     return k_perfectMetric;
   }
+  /* Use full tree for metric computation instead of main as the dep node should
+   * still count towards increasing the metric */
   float metric = GetTrueMetric(e, reductionTarget);
   assert(metric > k_perfectMetric);
-  float size = static_cast<float>(e->treeSize());
-  if (size > 100) {
-    size = 100;
-  }
+  float size = std::min(static_cast<float>(e->treeSize()), 100.f);
   /* Adding a small factor linear with size, with maximum of 1/8.
    * The goal is to prefer smaller Tree when they have the same metric. */
   metric += size * k_defaultMetric / 800.f;
@@ -274,7 +273,7 @@ bool HasCartesianForm(const Tree* e) {
 }  // namespace
 
 bool Metric::CannotBeReducedFurther(const Tree* e) {
-  return HasCartesianForm(e);
+  return HasCartesianForm(Dependency::SafeMain(e));
 }
 
 }  // namespace Poincare::Internal

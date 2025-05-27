@@ -1685,9 +1685,10 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(x)+ln(y)-ln(x×y)",
                 "dep(ln(x)+ln(y)-ln(x×y),{nonNull(x),nonNull(y)})",
                 cartesianCtx);
-  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
-                "dep(0,{0×ln(abs(x)×abs(y)),nonNull(abs(x)),nonNull(abs(y))})",
-                cartesianCtx);
+  simplifies_to(
+      "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
+      "dep(0,{0×ln(y×abs(x)×sign(y)),nonNull(abs(x)),nonNull(abs(y))})",
+      cartesianCtx);
   simplifies_to("log(14142135623731/5000000000000)",
                 "log(14142135623731/5000000000000)");
 

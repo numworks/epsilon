@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
 #include <poincare/code_points.h>
-#include <poincare/src/expression/sequence.h>
+#include <poincare/helpers/sequence.h>
 
 #include "function.h"
 #include "sequence_cache.h"
@@ -28,7 +28,7 @@ class Sequence : public Function {
  public:
   constexpr static CodePoint k_sequenceSymbol =
       Poincare::CodePoints::k_sequenceSymbol;
-  using Type = Poincare::Internal::Sequence::Type;
+  using Type = Poincare::SequenceHelper::Type;
   Sequence(Ion::Storage::Record record = Record()) : Function(record) {}
 
   CodePoint symbol() const override { return k_sequenceSymbol; }

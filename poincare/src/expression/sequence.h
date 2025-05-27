@@ -7,12 +7,6 @@ namespace Poincare::Internal {
 
 class Sequence {
  public:
-  enum class Type : uint8_t {
-    Explicit = 0,
-    SingleRecurrence = 1,
-    DoubleRecurrence = 2
-  };
-
   constexpr static int k_nameIndex = 0;
   constexpr static int k_mainExpressionIndex = 1;
   constexpr static int k_firstRankIndex = 2;
@@ -20,7 +14,6 @@ class Sequence {
   constexpr static int k_secondInitialConditionIndex = 4;
 
   static bool IsSequenceName(const char* name);
-  static Type GetType(const Tree* sequence);
   static int InitialRank(const Tree* sequence);
 
   static Tree* PushMainExpressionName(const Tree* sequence);

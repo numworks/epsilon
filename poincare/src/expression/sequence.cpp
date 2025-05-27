@@ -23,19 +23,6 @@ bool Sequence::IsSequenceName(const char* name) {
   return false;
 }
 
-Sequence::Type Sequence::GetType(const Tree* sequence) {
-  switch (sequence->type()) {
-    case Internal::Type::SequenceExplicit:
-      return Type::Explicit;
-    case Internal::Type::SequenceSingleRecurrence:
-      return Type::SingleRecurrence;
-    case Internal::Type::SequenceDoubleRecurrence:
-      return Type::DoubleRecurrence;
-    default:
-      OMG::unreachable();
-  }
-}
-
 int Sequence::InitialRank(const Tree* sequence) {
   assert(sequence->isSequence());
   assert(sequence->child(k_firstRankIndex)->isInteger());
@@ -48,13 +35,13 @@ Tree* Sequence::PushMainExpressionName(const Tree* sequence) {
       Symbol::GetName(sequence->child(k_nameIndex)));
   Tree* sequenceSymbol = SharedTreeStack->pushUserSymbol("n");
   switch (sequence->type()) {
-    case Internal::Type::SequenceExplicit:
+    case Type::SequenceExplicit:
       break;
-    case Internal::Type::SequenceSingleRecurrence:
+    case Type::SequenceSingleRecurrence:
       sequenceSymbol->moveTreeOverTree(
           PatternMatching::Create(KAdd(KA, 1_e), {.KA = sequenceSymbol}));
       break;
-    case Internal::Type::SequenceDoubleRecurrence:
+    case Type::SequenceDoubleRecurrence:
       sequenceSymbol->moveTreeOverTree(
           PatternMatching::Create(KAdd(KA, 2_e), {.KA = sequenceSymbol}));
       break;
@@ -107,17 +94,18 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
     if (rank->isInteger()) {
       // u(k) is allowed only when it is an initial condition
       int rankValue = Integer::Handler(rank).to<int>();
-      if ((type != Type::Explicit && rankValue == initialRank) ||
-          (type == Type::DoubleRecurrence && rankValue == initialRank + 1)) {
+      if ((type != Type::SequenceExplicit && rankValue == initialRank) ||
+          (type == Type::SequenceDoubleRecurrence &&
+           rankValue == initialRank + 1)) {
         continue;
       }
       return true;
     }
     // Recursion on a sequence is allowed only on u(n) (or u(n+1) if double rec)
-    if (recursion &&
-        ((type != Type::Explicit && rank->treeIsIdenticalTo(KUnknownSymbol)) ||
-         (type == Type::DoubleRecurrence &&
-          rank->treeIsIdenticalTo(KAdd(KUnknownSymbol, 1_e))))) {
+    if (recursion && ((type != Type::SequenceExplicit &&
+                       rank->treeIsIdenticalTo(KUnknownSymbol)) ||
+                      (type == Type::SequenceDoubleRecurrence &&
+                       rank->treeIsIdenticalTo(KAdd(KUnknownSymbol, 1_e))))) {
       // Ignore the child content which has been checked already
       skipUntil = d->nextTree();
       continue;

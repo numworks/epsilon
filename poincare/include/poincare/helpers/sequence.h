@@ -7,6 +7,13 @@
 namespace Poincare {
 
 namespace SequenceHelper {
+
+enum class Type : uint8_t {
+  Explicit = 0,
+  SingleRecurrence = 1,
+  DoubleRecurrence = 2
+};
+
 constexpr static const char* k_sequenceNames[] = {"u", "v", "w"};
 
 // Layout
@@ -16,9 +23,8 @@ void SetFirstRank(Layout l, uint8_t firstRank);
 
 // Expression
 bool MainExpressionContainsForbiddenTerms(UserExpression e, const char* name,
-                                          Internal::Sequence::Type type,
-                                          int initialRank, bool recursion,
-                                          bool systemSymbol,
+                                          Type type, int initialRank,
+                                          bool recursion, bool systemSymbol,
                                           bool otherSequences);
 
 }  // namespace SequenceHelper

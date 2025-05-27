@@ -4,6 +4,19 @@
 
 namespace Poincare {
 
+static Internal::Type GetType(SequenceHelper::Type sequenceType) {
+  switch (sequenceType) {
+    case SequenceHelper::Type::Explicit:
+      return Internal::Type::SequenceExplicit;
+    case SequenceHelper::Type::SingleRecurrence:
+      return Internal::Type::SequenceSingleRecurrence;
+    case SequenceHelper::Type::DoubleRecurrence:
+      return Internal::Type::SequenceDoubleRecurrence;
+    default:
+      OMG::unreachable();
+  }
+}
+
 bool SequenceHelper::IsSequenceInsideRack(Layout l) {
   return l.tree()->isRackLayout() && l.tree()->child(0)->isSequenceLayout();
 }
@@ -21,10 +34,10 @@ void SequenceHelper::SetFirstRank(Layout l, uint8_t firstRank) {
 }
 
 bool SequenceHelper::MainExpressionContainsForbiddenTerms(
-    UserExpression e, const char* name, Internal::Sequence::Type type,
-    int initialRank, bool recursion, bool systemSymbol, bool otherSequences) {
+    UserExpression e, const char* name, Type type, int initialRank,
+    bool recursion, bool systemSymbol, bool otherSequences) {
   return Internal::Sequence::MainExpressionContainsForbiddenTerms(
-      e.tree(), name, type, initialRank, recursion, systemSymbol,
+      e.tree(), name, GetType(type), initialRank, recursion, systemSymbol,
       otherSequences);
 }
 

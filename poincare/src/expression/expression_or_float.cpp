@@ -22,6 +22,7 @@ PrintFloat::TextLengths SerializeFloatValue(
    * PrintFloat::ConvertFloatToText). */
   if (floatSerializationLengths ==
       PrintFloat::TextLengths{buffer.size(), maxGlyphLength + 1}) {
+    assert(buffer[0] == '\0');
     return PrintFloat::TextLengths{0, 0};
   }
   assert(floatSerializationLengths.CharLength <= buffer.size());

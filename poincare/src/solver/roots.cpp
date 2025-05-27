@@ -510,8 +510,7 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
    * of subtracting two very close numbers when delta0 << delta1. */
 
   if (SignOfTreeOrApproximation(delta0).isNull()) {
-    return PatternMatching::CreateSimplify(KPow(KA, KPow(3_e, -1_e)),
-                                           {.KA = delta1});
+    return PatternMatching::CreateSimplify(KPow(KA, 1_e / 3_e), {.KA = delta1});
   }
 
   const Tree* signDelta1 =
@@ -528,9 +527,9 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
               KAdd(
                 KPow(KB, 2_e),
                 KMult(-4_e, KPow(KA, 3_e))),
-              KPow(2_e, -1_e)))),
-        KPow(2_e, -1_e)),
-      KPow(3_e, -1_e)),
+              1_e / 2_e))),
+        1_e / 2_e),
+      1_e / 3_e),
     {.KA = delta0, .KB = delta1, .KC = signDelta1});
   // clang-format on
 }

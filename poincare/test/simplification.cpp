@@ -1913,6 +1913,10 @@ QUIZ_CASE(pcj_simplification_integral) {
                 "int(sin(x),x,1,3)+6×int(e^(x),x,1,3)");
   simplifies_to("int((x-3)(x+1),x,1,2)", "-3+int(x^2,x,1,2)-2×int(x,x,1,2)");
   simplifies_to("int(x*e^x,x,0,0)", "int(e^(x)×x,x,0,0)");
+  simplifies_to("diff(int(x^2*t/2,t,0,1),x,y)",
+                "dep(y×int(t,t,0,1),{real((y^2×int(t,t,0,1))/2)})");
+  simplifies_to("diff(int(x^2/2+t,t,0,1),x,y)",
+                "dep(y,{real(y^2/2+int(t,t,0,1))})");
 }
 
 QUIZ_CASE(pcj_simplification_roots) {

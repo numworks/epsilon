@@ -15,8 +15,12 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
                        const Tree* integrand, bool force) {
   if (!Variables::HasVariable(integrand, 0)) {
     // int(c, x, a, b) = c*(b-a) if c does not depend on x
-    return PatternMatching::CreateSimplify(KMult(KC, KAdd(KB, KMult(-1_e, KA))),
-                                           {.KA = a, .KB = b, .KC = integrand});
+    Tree* result = integrand->cloneTree();
+    Variables::LeaveScope(result);
+    result->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KMult(KC, KAdd(KB, KMult(-1_e, KA))),
+                                        {.KA = a, .KB = b, .KC = result}));
+    return result;
   }
   if (integrand->isAdd()) {
     Tree* result = SharedTreeStack->pushAdd(integrand->numberOfChildren());
@@ -42,6 +46,7 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
       assert(remainingIntegrand->numberOfChildren() > 0);
       assert(constant->nextTree() == remainingIntegrand);
       // int(c * f(x), x, a, b) = c * int(f(x), x, a, b)
+      Variables::LeaveScope(constant);
       NAry::SquashIfUnary(remainingIntegrand);
       assert(!SystematicReduction::ShallowReduce(remainingIntegrand));
       (KIntegral)->cloneNode();

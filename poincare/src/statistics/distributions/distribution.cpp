@@ -86,14 +86,14 @@ T ComputeXMin(Type type, const ParametersArray<T> parameters) {
         // If parameter is too big, subtracting only 1.0 wouldn't do anything.
         return parameters[0] - 1.0f;
       }
-      return parameters[0] - 0.6f * (parameters[1] - parameters[0]);
+      return parameters[0] - 0.5f * (parameters[1] - parameters[0]);
     }
     case Type::Normal: {
       assert(!std::isnan(parameters[0]) && !std::isnan(parameters[1]));
       if (parameters[1] == 0.0f) {
         return parameters[0] - 1.0f;
       }
-      return parameters[0] - 5.0f * std::fabs(parameters[1]);
+      return parameters[0] - 4.5f * std::fabs(parameters[1]);
     }
     case Type::Student: {
       return -5.0f;

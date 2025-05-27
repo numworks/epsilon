@@ -121,12 +121,8 @@ void SingleRangeController<T>::buttonAction() {
 template <typename ParentType>
 bool SingleRangeController<ParentType>::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
-  bool autoStatusDependsOnRow =
-      typeAtRow(this->innerSelectedRow()) == this->k_parameterCellType;
   if (ParentType::textFieldDidFinishEditing(textField, event)) {
-    if (autoStatusDependsOnRow) {
-      setAutoStatus(false);
-    }
+    setAutoStatus(false);
     return true;
   }
   return false;

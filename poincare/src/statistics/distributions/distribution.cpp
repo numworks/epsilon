@@ -81,15 +81,16 @@ T GetUniformXExtremum(Type type, const ParametersArray<T> parameters,
                       bool min) {
   assert(type == Type::Uniform);
   int coefficient = min ? -1 : 1;
+  int paramIndex = min ? 0 : 1;
 
   assert(parameters[1] >= parameters[0]);
   T range = parameters[1] - parameters[0];
   if (range < FLT_EPSILON) {
     // If parameter is too big, adding/subtracting only 1.0 wouldn't do
     // anything.
-    return parameters[0] + coefficient * 1.0f;
+    return parameters[paramIndex] + coefficient;
   }
-  return parameters[0] + coefficient * 0.5f * range;
+  return parameters[paramIndex] + coefficient * 0.5f * range;
 }
 
 template <typename T>

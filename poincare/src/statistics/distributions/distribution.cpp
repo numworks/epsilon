@@ -65,8 +65,7 @@ double EvaluateParameterForProbabilityAndBound(
 }
 
 template <typename T>
-T GetFisherDistributionMode(Type type, const ParametersArray<T> parameters) {
-  // Only implemented for Fisher Distribution
+T GetFisherMode(Type type, const ParametersArray<T> parameters) {
   assert(type == Type::Fisher);
 
   const float d1 = parameters[0];
@@ -201,7 +200,7 @@ T ComputeYMax(Type type, const ParametersArray<T> parameters) {
     case Type::Student:
       return EvaluateAtAbscissa<T>(type, 0.0f, parameters);
     case Type::Geometric:
-      // Tha distribution is max for x == 1
+      // The distribution is max for x == 1
       return EvaluateAtAbscissa<T>(type, 1.0f, parameters);
     case Type::Exponential: {
       float result = parameters[0];
@@ -240,7 +239,7 @@ T ComputeYMax(Type type, const ParametersArray<T> parameters) {
       return result;
     }
     case Type::Fisher: {
-      const float m = GetFisherDistributionMode(type, parameters);
+      const float m = GetFisherMode(type, parameters);
       float max = std::isnan(m) ? k_fisherDefaultMax
                                 : EvaluateAtAbscissa<T>(type, m, parameters);
       return std::isnan(max) ? k_fisherDefaultMax : max;
@@ -255,9 +254,9 @@ template float MeanAbscissa(
 template double MeanAbscissa(
     Type type, const Distribution::ParametersArray<double> parameters);
 
-template float GetFisherDistributionMode(
+template float GetFisherMode(
     Type type, const Distribution::ParametersArray<float> parameters);
-template double GetFisherDistributionMode(
+template double GetFisherMode(
     Type type, const Distribution::ParametersArray<double> parameters);
 
 template float ComputeXMin(

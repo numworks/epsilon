@@ -170,7 +170,7 @@ double EvaluateParameterForProbabilityAndBound(
     double probability, double bound, bool isUpperBound);
 
 template <typename T>
-T GetFisherDistributionMode(Type type, const ParametersArray<T> parameters);
+T GetFisherMode(Type type, const ParametersArray<T> parameters);
 template <typename T>
 T GetUniformXExtremum(Type type, const ParametersArray<T> parameters, bool min);
 template <typename T>

@@ -43,9 +43,7 @@ int ChildrenCoeffLn(ComplexSign sign) {
 }  // namespace
 
 int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
-  // Metric should not penalize what will be beautified out.
   const bool willBeBeautified = reductionTarget == ReductionTarget::User;
-  // Metric should not penalize what will be expanded.
   const bool shouldExpand =
       reductionTarget != ReductionTarget::SystemForApproximation;
   int result = GetMetric(e->type());
@@ -62,12 +60,11 @@ int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
                  ? GetMetric(ShortTypeForBigType(e->type())) * e->nodeSize()
                  : GetMetric(e->type());
     case Type::Mult: {
-      // Ignore cost of multiplication in (-A)
-      if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2) {
-        result -= GetMetric(Type::Mult);
-      }
-
       if (willBeBeautified) {
+        // Ignore cost of multiplication in (-A)
+        if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2) {
+          result -= GetMetric(Type::Mult);
+        }
         /* Trigonometry with complexes is beautified into hyperbolic
          * trigonometry (cosh, sinh, asinh and atanh)*/
         // TODO: cost difference between trig and hyperbolic trig

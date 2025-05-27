@@ -209,8 +209,8 @@ T ComputeYMax(Type type, const ParametersArray<T> parameters) {
       if (parameters[0] / 2.0f <= 1.0f + FLT_EPSILON) {
         result = 0.5f;
       } else {
-        result =
-            EvaluateAtAbscissa<T>(type, parameters[0] - 1.0f, parameters) * 1.2;
+        result = EvaluateAtAbscissa<T>(type, parameters[0] - 1.0f, parameters) *
+                 1.2f;
       }
       return result;
     }

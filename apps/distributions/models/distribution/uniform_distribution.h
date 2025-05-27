@@ -34,9 +34,6 @@ class UniformDistribution final : public TwoParametersDistribution {
         OMG::unreachable();
     }
   }
-
-  float privateComputeXMin() const override;
-  float privateComputeXMax() const override;
 };
 
 }  // namespace Distributions

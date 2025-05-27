@@ -22,8 +22,6 @@ class StudentDistribution : public OneParameterDistribution {
   I18n::Message messageForParameterAtIndex(int index) const override {
     return I18n::Message::DegreesOfFreedomDefinition;
   }
-  float privateComputeXMin() const override;
-  float privateComputeXMax() const override;
 };
 
 }  // namespace Distributions

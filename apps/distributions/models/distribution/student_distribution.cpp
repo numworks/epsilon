@@ -11,14 +11,4 @@ bool StudentDistribution::authorizedParameterAtIndex(double x,
          x >= DBL_EPSILON && x <= 200.0;
 }
 
-float StudentDistribution::privateComputeXMin() const {
-  return Poincare::Distribution::ComputeXMin(m_distribution,
-                                             constParametersArray());
-}
-
-float StudentDistribution::privateComputeXMax() const {
-  return Poincare::Distribution::ComputeXMax(m_distribution,
-                                             constParametersArray());
-}
-
 }  // namespace Distributions

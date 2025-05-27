@@ -96,14 +96,9 @@ class Distribution : public Shared::StatisticalDistribution {
   float computeXMin() const override final { return computeXExtremum(true); }
   float computeXExtremum(bool min) const;
 
-  virtual float privateComputeXMax() const {
-    float result = Poincare::Distribution::ComputeXMax(m_distribution,
-                                                       constParametersArray());
-    return result * (1.0f + k_displayRightMarginRatio);
-  };
-  virtual float privateComputeXMin() const {
-    return -k_displayLeftMarginRatio * privateComputeXMax();
-  }
+  float privateComputeXMax() const { return privateComputeXExtremum(false); };
+  float privateComputeXMin() const { return privateComputeXExtremum(true); };
+  float privateComputeXExtremum(bool min) const;
 
   virtual float computeYMax() const override {
     float result = Poincare::Distribution::ComputeYMax(m_distribution,

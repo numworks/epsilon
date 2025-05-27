@@ -252,4 +252,14 @@ float Distribution::computeXExtremum(bool min) const {
   return result;
 }
 
+float Distribution::privateComputeXExtremum(bool min) const {
+  float xMax = Poincare::Distribution::ComputeXMax(m_distribution,
+                                                   constParametersArray());
+  float xMin = Poincare::Distribution::ComputeXMin(m_distribution,
+                                                   constParametersArray());
+  float range = xMax - xMin;
+  return min ? xMin - k_displayLeftMarginRatio * range
+             : xMax + k_displayRightMarginRatio * range;
+}
+
 }  // namespace Distributions

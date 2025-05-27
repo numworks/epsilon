@@ -26,14 +26,4 @@ void NormalDistribution::setParameterAtIndex(double f, int index) {
   computeCurveViewRange();
 }
 
-float NormalDistribution::privateComputeXMin() const {
-  return Poincare::Distribution::ComputeXMin(m_distribution,
-                                             constParametersArray());
-}
-
-float NormalDistribution::privateComputeXMax() const {
-  return Poincare::Distribution::ComputeXMax(m_distribution,
-                                             constParametersArray());
-}
-
 }  // namespace Distributions

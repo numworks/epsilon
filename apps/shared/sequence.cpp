@@ -7,9 +7,6 @@
 #include <omg/utf8_helper.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/src/expression/sequence.h>
-#include <poincare/src/layout/grid.h>
-#include <poincare/src/layout/sequence.h>
 #include <string.h>
 
 #include <cmath>
@@ -110,52 +107,29 @@ Layout Sequence::aggregatedLayout() {
                                .KF = secondInitialConditionLayout()});
       break;
   }
-  Internal::SequenceLayout::SetFirstRank(result.tree()->child(0),
-                                         initialRank());
+  SequenceHelper::SetFirstRank(result, initialRank());
   return result;
 }
 
 Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
     Layout l, Context* ctx) {
-  assert(l.tree()->isRackLayout());
-  if (l.tree()->child(0)->isSequenceLayout()) {
-    const Internal::Grid* grid = Internal::Grid::From(l.tree()->child(0));
+  if (SequenceHelper::IsSequenceInsideRack(l)) {
     Ion::Storage::Record::ErrorStatus error =
-        Ion::Storage::Record::ErrorStatus::None;
-    switch (type()) {
-      case Type::Explicit: {
-        assert(grid->numberOfChildren() == 2);
-        return setContent(grid->childAt(0, 1), ctx);
-      }
-      case Type::SingleRecurrence: {
-        assert(grid->numberOfChildren() == 4);
-        error = setContent(grid->childAt(0, 1), ctx);
-        if (error != Ion::Storage::Record::ErrorStatus::None) {
-          return error;
-        }
-        // Update grid pointer in case layout tree has moved
-        grid = Internal::Grid::From(l.tree()->child(0));
-        return setFirstInitialConditionContent(grid->childAt(1, 1), ctx);
-      }
-      case Type::DoubleRecurrence: {
-        assert(grid->numberOfChildren() == 6);
-        error = setContent(grid->childAt(0, 1), ctx);
-        if (error != Ion::Storage::Record::ErrorStatus::None) {
-          return error;
-        }
-        // Update grid pointer in case layout tree has moved
-        grid = Internal::Grid::From(l.tree()->child(0));
-        error = setFirstInitialConditionContent(grid->childAt(1, 1), ctx);
-        if (error != Ion::Storage::Record::ErrorStatus::None) {
-          return error;
-        }
-        // Update grid pointer in case layout tree has moved
-        grid = Internal::Grid::From(l.tree()->child(0));
-        return setSecondInitialConditionContent(grid->childAt(2, 1), ctx);
-      }
+        setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), ctx);
+    if (type() == Type::Explicit ||
+        error != Ion::Storage::Record::ErrorStatus::None) {
+      return error;
     }
+    error = setFirstInitialConditionContent(
+        SequenceHelper::ExtractExpressionAtRow(l, 1), ctx);
+    if (type() == Type::SingleRecurrence ||
+        error != Ion::Storage::Record::ErrorStatus::None) {
+      return error;
+    }
+    return setSecondInitialConditionContent(
+        SequenceHelper::ExtractExpressionAtRow(l, 2), ctx);
   } else {
-    // Handle as main expression
+    // Handle layout as main expression
     return setContent(l, ctx);
   }
 }
@@ -206,9 +180,9 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
   char buffer[bufferSize];
   name(buffer, bufferSize);
   // TODO_PCJ: used SymbolicComputation::ReplaceDefinedSymbols
-  return Internal::Sequence::MainExpressionContainsForbiddenTerms(
-      expressionClone().tree(), buffer, type(), initialRank(),
-      recursionIsAllowed, systemSymbolIsAllowed, otherSequencesAreAllowed);
+  return SequenceHelper::MainExpressionContainsForbiddenTerms(
+      expressionClone(), buffer, type(), initialRank(), recursionIsAllowed,
+      systemSymbolIsAllowed, otherSequencesAreAllowed);
 }
 
 void Sequence::tidyDownstreamPoolFrom(const PoolObject* treePoolCursor) const {

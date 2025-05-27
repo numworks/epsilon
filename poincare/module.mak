@@ -108,6 +108,7 @@ $(addprefix helpers/, \
   expression_equal_sign.cpp:-nopool \
   layout.cpp \
   scatter_plot_iterable.cpp:-nopool \
+  sequence.cpp:-nopool \
   store.cpp:-nopool \
   symbol.cpp:-nopool \
   trigonometry.cpp:-nopool \

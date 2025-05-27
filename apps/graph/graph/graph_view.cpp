@@ -25,6 +25,7 @@ void GraphView::reload(bool resetInterrupted, bool force,
                        bool forceRedrawAxes) {
   if (m_tangentDisplay) {
     markRectAsDirty(boundsWithoutBanner());
+    forceRedrawAxes = true;
   }
   return FunctionGraphView::reload(resetInterrupted, force, forceRedrawAxes);
 }

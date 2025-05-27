@@ -48,8 +48,9 @@ class ExpressionOrFloat {
    * - If the exact representation takes more characters than the above limit
    * (example: 12/721), the approximation is written in decimal format
    * (0.016644).
-   * The text lengths of what was written are returned.
-   */
+   * The text lengths of what was written are returned. */
+  /* Note: the contained expression should be a UserExpression when using the
+   * writeText method to display the expression to the user. */
 
   PrintFloat::TextLengths writeText(
       std::span<char> buffer, size_t numberOfSignificantDigits,

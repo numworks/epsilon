@@ -22,7 +22,7 @@ ExpressionOrFloat LabeledAxisWithOptionalPercent::tickStep(
           KMult(KA, KB),
           {.KA = PlotPolicy::VerticalLabeledAxis::tickStep(plotView, axis)
                      .expression(),
-           .KB = SystemExpression::Builder(
+           .KB = UserExpression::Builder(
                m_plotController->labelStepMultiplicator(axis))})
           .cloneAndTrySimplify({}));
 }

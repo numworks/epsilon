@@ -315,9 +315,9 @@ class Expression : public PoolHandle {
                 int numberOfSignificantDigits, Context* context,
                 bool withThousandsSeparator = false) const;
 
-  /* TODO:
-   * - Use same convention as strlcpy: return size of the source even if the
-   * bufferSize was too small.*/
+  /* TODO: detect when the buffer size was to small to hold the expression
+   * serialization, and return an error code so that the caller can handle this
+   * case. */
   size_t serialize(char* buffer, size_t bufferSize, bool compactMode = false,
                    Preferences::PrintFloatMode floatDisplayMode =
                        Preferences::PrintFloatMode::Decimal,

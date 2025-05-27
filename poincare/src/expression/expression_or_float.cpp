@@ -52,8 +52,13 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
   float approximate = exactExpression.approximateToRealScalar<float>();
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
           exactExpression, UserExpression::Builder(approximate))) {
-    // TODO: which buffer length to ensure no problem?
-    constexpr size_t k_bufferLength = 100;
+    /* For now, a "large enough" buffer is allocated for the exact expression
+     * serialization. */
+    /*/ TODO: the size of this buffer should be reduced. To safely achieve this,
+     * UserExpression::serialize needs to return an error code when the buffer
+     * size is too small to hold the expession. When falling in that case here,
+     * the approximation serialization will be used instead. */
+    constexpr size_t k_bufferLength = 50;
     char exactSerialization[k_bufferLength];
     PrintFloat::TextLengths exactTextLengths =
         SerializeExactExpression(exactExpression, exactSerialization,

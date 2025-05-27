@@ -342,6 +342,8 @@ QUIZ_CASE(pcj_simplification_derivative) {
                 "dep(-1/(x^2×√(1-1/x^2)),{piecewise(0,abs(1/"
                 "x)≤1,nonreal),real(arcsin(1/x))})");
   simplifies_to("diff(arccot(x),x,x)", "-1/(x^2+1)");
+  // TODO: Simplify to 0
+  simplifies_to("diff(floor(z), x, y)", "diff(floor(z),x,y)");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

@@ -46,7 +46,8 @@ bool Derivation::Reduce(Tree* e) {
 #endif
 
   OMG::Troolean validOrder = Integer::IsPositiveRationalInteger(order);
-  if (validOrder == OMG::Troolean::False) {
+  if (validOrder == OMG::Troolean::False || Random::HasRandom(constDerivand)) {
+    // Do not handle random nodes in derivation, and invalid orders.
     e->cloneTreeOverTree(KUndefUnhandled);
     return true;
   }
@@ -122,10 +123,6 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
         PatternMatching::Create(KDiff(KA, KVarX, KAdd(KB, 1_e), KC), ctx);
     SystematicReduction::ShallowReduce(result->child(2));
     return result;
-  }
-  if (Random::HasRandom(derivand)) {
-    // Do not handle random nodes in derivation
-    return KUndefUnhandled->cloneTree();
   }
   if (derivand->isUndefined()) {
     // TODO: is the derivative of something nonreal still nonreal?

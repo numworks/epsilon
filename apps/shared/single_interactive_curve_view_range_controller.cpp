@@ -88,6 +88,8 @@ void SingleInteractiveCurveViewRangeController::setAutoRange() {
       m_secondaryRangeParam =
           Range1D<float>::ValidRangeBetween(tempRange.yMin(), tempRange.yMax());
     }
+    // Reset the grid unit to "auto"
+    m_gridUnitParam = ExpressionOrFloat{};
   }
 }
 

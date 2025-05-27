@@ -856,6 +856,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(-9)", "3×i", cartesianCtx);
   simplifies_to("√(i)", "√(2)/2+√(2)/2×i", cartesianCtx);
   simplifies_to("√(-i)", "√(2)/2-√(2)/2×i", cartesianCtx);
+  simplifies_to("√(2eπ)*√(2eπ)", "2×π×e");
   simplifies_to("root(-8,3)", "-2");
   simplifies_to("(cos(x)^2+sin(x)^2-1)^π", "0", cartesianCtx);
   simplifies_to("1-e^(-(0.09/(5.63*10^-7)))", "1-e^(-90000000/563)");

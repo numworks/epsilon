@@ -559,7 +559,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
       "exp(2*sum(ln(k),k,a,b) + ln(b))",
       "dep(b×product(k,k,a,b)^2,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,"
       "b),nonNull(b),realPos(b)})");
-  simplifies_to("product(exp(2k),k,0,y)", "e^(y×(y+1))");
+  simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
 
   // expand sum
   simplifies_to("sum(k^3+4,k,n,n+3)-16", "sum(k^3,k,n,n+3)");
@@ -1685,10 +1685,9 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(x)+ln(y)-ln(x×y)",
                 "dep(ln(x)+ln(y)-ln(x×y),{nonNull(x),nonNull(y)})",
                 cartesianCtx);
-  simplifies_to(
-      "ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
-      "dep(0,{0×ln(y×abs(x)×sign(y)),nonNull(abs(x)),nonNull(abs(y))})",
-      cartesianCtx);
+  simplifies_to("ln(abs(x))+ln(abs(y))-ln(abs(x)×abs(y))",
+                "dep(0,{0×ln(abs(x)×abs(y)),nonNull(abs(x)),nonNull(abs(y))})",
+                cartesianCtx);
   simplifies_to("log(14142135623731/5000000000000)",
                 "log(14142135623731/5000000000000)");
 
@@ -1874,7 +1873,7 @@ QUIZ_CASE(pcj_simplification_rational_power) {
   // 1/(√a+√b) => (√a-√b)/(a-b)
   simplifies_to("1/(√(3)+√(5))",
                 "-(√(3)-√(5))/2");  // TODO: Metric "(√(3)-√(5))/2"
-  simplifies_to("1/(√(3)-√(5))", "-√(3)/2-√(5)/2");
+  simplifies_to("1/(√(3)-√(5))", "-(√(3)+√(5))/2");
   simplifies_to("1/(√(120)+2√(30))", "√(30)/120");
   // 1/√a => √a/a
   simplifies_to("1/√(3)", "√(3)/3");
@@ -1955,10 +1954,10 @@ QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
   projects_and_reduces_to("1+3×x+3×x^2+x^3-(1+x)^3", "0", ctxForApproximation);
   projects_and_reduces_to("(1+x)^3", "x^3+3×x^2+3×x+1", ctxForAnalysis);
   projects_and_reduces_to("ln(49000*x)",
-                          "dep(ln(49000)+ln(x),{nonNull(x),realPos(49000×x)})",
+                          "dep(ln(49000×x),{nonNull(x),realPos(49000×x)})",
                           ctxForApproximation);
   projects_and_reduces_to("ln(49000*x)",
-                          "dep(ln(49000)+ln(x),{nonNull(x),realPos(49000×x)})",
+                          "dep(ln(49000×x),{nonNull(x),realPos(49000×x)})",
                           ctxForAnalysis);
   // TODO: x^2*(1-x^2) might be better for approximation.
   projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ctxForApproximation);

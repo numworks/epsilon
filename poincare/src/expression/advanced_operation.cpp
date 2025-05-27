@@ -295,6 +295,7 @@ bool AdvancedOperation::ContractMult(Tree* e) {
   // Find a common factor in an addition of multiplications
   // Only look for first term of each multiplication.
   // A + A*B + A * C + A * D + ... = A * (1 + B + C + D + ...)
+  // TODO: should also work with factor A and -A
   const Tree* commonFactor = nullptr;
   const Tree* currentCommonFactor = nullptr;
   bool commonFactorIsEverywhere = true;

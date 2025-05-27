@@ -214,6 +214,13 @@ float Metric::GetMetric(const Tree* e, ReductionTarget reductionTarget) {
   }
   float metric = GetTrueMetric(e, reductionTarget);
   assert(metric > k_perfectMetric);
+  float size = static_cast<float>(e->treeSize());
+  if (size > 100) {
+    size = 100;
+  }
+  /* Adding a small factor linear with size, with maximum of 1/8.
+   * The goal is to prefer smaller Tree when they have the same metric. */
+  metric += size * k_defaultMetric / 800.f;
   return metric;
 }
 

@@ -31,7 +31,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/distributions/,$(addsuffix :-test, \
   models/distribution/chi_squared_distribution.cpp \
   models/distribution/distribution.cpp \
   models/distribution/fisher_distribution.cpp \
-  models/distribution/geometric_distribution.cpp \
   models/distribution/hypergeometric_distribution.cpp \
   models/distribution/student_distribution.cpp \
   models/distribution/exponential_distribution.cpp \

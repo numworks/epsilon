@@ -442,6 +442,20 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
     }
     case Type::Sqrt: {
       std::complex<T> c = PrivateToComplex<T>(e->child(0), ctx);
+      if (c == std::complex<T>(0)) {
+        return 0;
+      }
+      /* With c real <0 and |c| big enough, the approximation errors of
+       * std::sqrt become so big that [NeglectRealOrImaginaryPartIfNegligible]
+       * fails to remove them, we use the std::sqrt of real for this case */
+      if (c.imag() == 0) {
+        /* √a with a real is:
+         * - √a if a>0
+         * - √(-a)*i if a<0 */
+        bool isPositive = c.real() > 0;
+        T res = std::sqrt(isPositive ? c.real() : -c.real());
+        return isPositive ? res : std::complex<T>(0, res);
+      }
       return NeglectRealOrImaginaryPartIfNegligible(std::sqrt(c), c);
     }
     case Type::Root: {

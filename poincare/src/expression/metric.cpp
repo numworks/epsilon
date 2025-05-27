@@ -28,8 +28,8 @@ Type ShortTypeForBigType(Type t) {
   }
 }
 
-int ChildrenCoeffLn(ComplexSign sign) {
-  int childrenCoeff = 2;
+float ChildrenCoeffLn(ComplexSign sign) {
+  float childrenCoeff = 2;
   if (sign.isReal() && sign.realSign().isStrictlyNegative()) {
     // Increase cost of real negative children in roots
     childrenCoeff = 4;
@@ -42,14 +42,14 @@ int ChildrenCoeffLn(ComplexSign sign) {
 
 }  // namespace
 
-int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
+float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
   const bool willBeBeautified = reductionTarget == ReductionTarget::User;
   const bool shouldExpand =
       reductionTarget != ReductionTarget::SystemForApproximation;
-  int result = GetMetric(e->type());
+  float result = GetMetric(e->type());
   /* Some functions must have the smallest children possible, so we increase the
    * cost of all children inside the parent expression with a coefficient. */
-  int childrenCoeff = 1;
+  float childrenCoeff = 1;
   PatternMatching::Context ctx;
   switch (e->type()) {
     case Type::RationalNegBig:
@@ -208,39 +208,35 @@ int Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
   return result;
 }
 
-int Metric::GetMetric(const Tree* e, ReductionTarget reductionTarget) {
+float Metric::GetMetric(const Tree* e, ReductionTarget reductionTarget) {
   if (CannotBeReducedFurther(e)) {
     return k_perfectMetric;
   }
-  int metric = GetTrueMetric(e, reductionTarget);
-  assert(metric != k_perfectMetric);
-  /* INT_MAX in case of overflow
-   * NOTE this does not completely prevent overflows as we could circle back
-   * above 0
-   * TODO a long-term solution could be to use a float metric instead */
-  return metric > 0 ? metric : INT_MAX;
+  float metric = GetTrueMetric(e, reductionTarget);
+  assert(metric > k_perfectMetric);
+  return metric;
 }
 
-int Metric::GetMetric(Type type) {
+float Metric::GetMetric(Type type) {
   switch (type) {
     case Type::Zero:
     case Type::One:
     case Type::Two:
     case Type::MinusOne:
-      return k_defaultMetric / 3;
+      return k_defaultMetric / 3.f;
     case Type::IntegerNegShort:
     case Type::IntegerPosShort:
-      return k_defaultMetric / 2;
+      return k_defaultMetric / 2.f;
     default:
       return k_defaultMetric;
     case Type::PowReal:
     case Type::Random:
     case Type::RandInt:
-      return k_defaultMetric * 2;
+      return k_defaultMetric * 2.f;
     case Type::Sum:
     case Type::Var:
     case Type::UserSymbol:
-      return k_defaultMetric * 3;
+      return k_defaultMetric * 3.f;
   }
 }
 

@@ -390,7 +390,7 @@ void inline AdvancedReduction::Context::resetIfNeeded() {
 void AdvancedReduction::UpdateBestMetric(Context* ctx) {
   // Otherwise, root should be reset to current path.
   assert(!ctx->m_mustResetRoot);
-  int metric = Metric::GetMetric(ctx->m_root, ctx->m_reductionTarget);
+  float metric = Metric::GetMetric(ctx->m_root, ctx->m_reductionTarget);
   if (metric == Metric::k_perfectMetric) {
     ctx->m_bestMetric = Metric::k_perfectMetric;
     ctx->m_bestPath = ctx->m_path;
@@ -399,7 +399,7 @@ void AdvancedReduction::UpdateBestMetric(Context* ctx) {
     return;
   }
 #if VERBOSE_REDUCTION >= 1
-  const int oldMetric = ctx->m_bestMetric;
+  const float oldMetric = ctx->m_bestMetric;
   const char* label = "Metric (";
 #endif
 

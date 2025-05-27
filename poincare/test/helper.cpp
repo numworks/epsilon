@@ -128,9 +128,9 @@ void process_tree_and_compare(const char* input, const char* output,
   }
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
-    int expectedMetric =
+    float expectedMetric =
         Metric::GetMetric(expected, projectionContext.m_reductionTarget);
-    int expressionMetric =
+    float expressionMetric =
         Metric::GetMetric(expression, projectionContext.m_reductionTarget);
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];
@@ -141,7 +141,9 @@ void process_tree_and_compare(const char* input, const char* output,
     } else {
 #ifndef PLATFORM_DEVICE
       const char* metricText =
-          expectedMetric > expressionMetric ? " (better " : " (worse ";
+          expectedMetric > expressionMetric
+              ? " (better "
+              : (expectedMetric == expressionMetric ? " (same " : " (worse ");
       std::cout << input << " processed to " << buffer << " instead of "
                 << output << metricText << expressionMetric << " vs "
                 << expectedMetric << ")" << std::endl;

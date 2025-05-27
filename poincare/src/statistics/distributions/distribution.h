@@ -169,6 +169,19 @@ double EvaluateParameterForProbabilityAndBound(
     Type type, int parameterIndex, const ParametersArray<double> parameters,
     double probability, double bound, bool isUpperBound);
 
+template <typename T>
+T GetFisherDistributionMode(Type type, const ParametersArray<T> parameters);
+
+constexpr static float k_uniformDiracMaximum = 10.0f;
+constexpr static float k_fisherDefaultMax = 3.0f;
+
+template <typename T>
+T ComputeXMin(Type type, const ParametersArray<T> parameters);
+template <typename T>
+T ComputeXMax(Type type, const ParametersArray<T> parameters);
+template <typename T>
+T ComputeYMax(Type type, const ParametersArray<T> parameters);
+
 };  // namespace Distribution
 
 }  // namespace Internal

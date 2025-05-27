@@ -29,8 +29,6 @@ class HypergeometricDistribution final : public ThreeParametersDistribution {
                                       I18n::Message::SampleSize};
     return parameterTexts[i];
   }
-  float privateComputeXMax() const override;
-  float computeYMax() const override;
 };
 
 }  // namespace Distributions

@@ -55,14 +55,4 @@ float UniformDistribution::privateComputeXMax() const {
   return m_parameters[1] + 0.6f * (m_parameters[1] - m_parameters[0]);
 }
 
-float UniformDistribution::computeYMax() const {
-  float result = m_parameters[1] - m_parameters[0] < FLT_EPSILON
-                     ? k_diracMaximum
-                     : 1.0f / (m_parameters[1] - m_parameters[0]);
-  if (result <= 0.0f || std::isnan(result) || std::isinf(result)) {
-    result = 1.0f;
-  }
-  return result * (1.0f + k_displayTopMarginRatio);
-}
-
 }  // namespace Distributions

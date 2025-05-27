@@ -26,23 +26,14 @@ void NormalDistribution::setParameterAtIndex(double f, int index) {
   computeCurveViewRange();
 }
 
-float NormalDistribution::privateXExtremum(bool min) const {
-  assert(!std::isnan(m_parameters[0]) && !std::isnan(m_parameters[1]));
-  int coefficient = (min ? -1 : 1);
-  if (m_parameters[1] == 0.0f) {
-    return m_parameters[0] + coefficient * 1.0f;
-  }
-
-  return m_parameters[0] + coefficient * 5.0f * std::fabs(m_parameters[1]);
+float NormalDistribution::privateComputeXMin() const {
+  return Poincare::Distribution::ComputeXMin(m_distribution,
+                                             constParametersArray());
 }
 
-float NormalDistribution::computeYMax() const {
-  float maxAbscissa = m_parameters[0];
-  float result = evaluateAtAbscissa(maxAbscissa);
-  if (std::isnan(result) || result <= 0.0f) {
-    result = 1.0f;
-  }
-  return result * (1.0f + k_displayTopMarginRatio);
+float NormalDistribution::privateComputeXMax() const {
+  return Poincare::Distribution::ComputeXMax(m_distribution,
+                                             constParametersArray());
 }
 
 }  // namespace Distributions

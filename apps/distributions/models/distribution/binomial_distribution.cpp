@@ -23,25 +23,16 @@ double BinomialDistribution::rightIntegralInverseForProbability(
 
 float BinomialDistribution::privateComputeXMin() const {
   float min = 0.0f;
-  float max = m_parameters[0] > min ? m_parameters[0] : 1.0f;
+  float max = Poincare::Distribution::ComputeXMax(m_distribution,
+                                                  constParametersArray());
   return min - k_displayLeftMarginRatio * (max - min);
 }
 
 float BinomialDistribution::privateComputeXMax() const {
   float min = 0.0f;
-  float max = m_parameters[0] > min ? m_parameters[0] : 1.0f;
+  float max = Poincare::Distribution::ComputeXMax(m_distribution,
+                                                  constParametersArray());
   return max + k_displayRightMarginRatio * (max - min);
-}
-
-float BinomialDistribution::computeYMax() const {
-  int maxAbscissa = m_parameters[1] < 1.0
-                        ? (m_parameters[0] + 1) * m_parameters[1]
-                        : m_parameters[0];
-  float result = evaluateAtAbscissa(maxAbscissa);
-  if (result <= 0.0f || std::isnan(result)) {
-    result = 1.0f;
-  }
-  return result * (1.0f + k_displayTopMarginRatio);
 }
 
 }  // namespace Distributions

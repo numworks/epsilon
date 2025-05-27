@@ -27,8 +27,6 @@ class GeometricDistribution final : public OneParameterDistribution {
   I18n::Message messageForParameterAtIndex(int index) const override {
     return I18n::Message::SuccessProbability;
   }
-  float privateComputeXMax() const override;
-  float computeYMax() const override;
 };
 
 }  // namespace Distributions

@@ -23,8 +23,6 @@ class ChiSquaredDistribution : public OneParameterDistribution {
   I18n::Message messageForParameterAtIndex(int index) const override {
     return I18n::Message::DegreesOfFreedomDefinition;
   }
-  float privateComputeXMax() const override;
-  float computeYMax() const override;
 };
 
 }  // namespace Distributions

@@ -25,8 +25,6 @@ class ExponentialDistribution final : public OneParameterDistribution {
   I18n::Message messageForParameterAtIndex(int i) const override {
     return I18n::Message::LambdaExponentialDefinition;
   }
-  float privateComputeXMax() const override;
-  float computeYMax() const override;
 };
 
 }  // namespace Distributions

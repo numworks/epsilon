@@ -12,17 +12,13 @@ bool StudentDistribution::authorizedParameterAtIndex(double x,
 }
 
 float StudentDistribution::privateComputeXMin() const {
-  return -privateComputeXMax();
+  return Poincare::Distribution::ComputeXMin(m_distribution,
+                                             constParametersArray());
 }
 
-float StudentDistribution::privateComputeXMax() const { return 5.0f; }
-
-float StudentDistribution::computeYMax() const {
-  const float floatParam = static_cast<float>(m_parameter);
-  return Poincare::Distribution::EvaluateAtAbscissa(
-             m_distribution, 0.0f,
-             Poincare::Distribution::ParametersArray<float>({floatParam})) *
-         (1.0f + k_displayTopMarginRatio);
+float StudentDistribution::privateComputeXMax() const {
+  return Poincare::Distribution::ComputeXMax(m_distribution,
+                                             constParametersArray());
 }
 
 }  // namespace Distributions

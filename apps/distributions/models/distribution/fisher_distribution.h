@@ -30,9 +30,7 @@ class FisherDistribution final : public TwoParametersDistribution {
         OMG::unreachable();
     }
   }
-  float mode() const;
   float privateComputeXMax() const override;
-  float computeYMax() const override;
 };
 
 }  // namespace Distributions

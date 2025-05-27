@@ -24,7 +24,6 @@ class StudentDistribution : public OneParameterDistribution {
   }
   float privateComputeXMin() const override;
   float privateComputeXMax() const override;
-  float computeYMax() const override;
 };
 
 }  // namespace Distributions

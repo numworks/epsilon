@@ -32,10 +32,8 @@ class NormalDistribution final : public TwoParametersDistribution {
         OMG::unreachable();
     }
   }
-  float privateXExtremum(bool min) const;
-  float privateComputeXMin() const override { return privateXExtremum(true); }
-  float privateComputeXMax() const override { return privateXExtremum(false); }
-  float computeYMax() const override;
+  float privateComputeXMin() const override;
+  float privateComputeXMax() const override;
 };
 
 }  // namespace Distributions

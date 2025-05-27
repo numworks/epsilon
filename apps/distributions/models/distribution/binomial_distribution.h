@@ -32,7 +32,6 @@ class BinomialDistribution final : public TwoParametersDistribution {
   }
   float privateComputeXMin() const override;
   float privateComputeXMax() const override;
-  float computeYMax() const override;
 };
 
 }  // namespace Distributions

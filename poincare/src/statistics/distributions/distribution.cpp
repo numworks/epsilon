@@ -78,23 +78,40 @@ T GetFisherDistributionMode(Type type, const ParametersArray<T> parameters) {
 }
 
 template <typename T>
+T GetUniformXExtremum(Type type, const ParametersArray<T> parameters,
+                      bool min) {
+  assert(type == Type::Uniform);
+  int coefficient = min ? -1 : 1;
+
+  assert(parameters[1] >= parameters[0]);
+  T range = parameters[1] - parameters[0];
+  if (range < FLT_EPSILON) {
+    // If parameter is too big, adding/subtracting only 1.0 wouldn't do
+    // anything.
+    return parameters[0] + coefficient * 1.0f;
+  }
+  return parameters[0] + coefficient * 0.5f * range;
+}
+
+template <typename T>
+T GetNormalXExtremum(Type type, const ParametersArray<T> parameters, bool min) {
+  assert(type == Type::Normal);
+  int coefficient = min ? -1 : 1;
+
+  assert(!std::isnan(parameters[0]) && !std::isnan(parameters[1]));
+  if (parameters[1] == 0.0f) {
+    return parameters[0] + coefficient * 1.0f;
+  }
+  return parameters[0] + coefficient * 4.5f * std::fabs(parameters[1]);
+}
+
+template <typename T>
 T ComputeXMin(Type type, const ParametersArray<T> parameters) {
   switch (type) {
-    case Type::Uniform: {
-      assert(parameters[1] >= parameters[0]);
-      if (parameters[1] - parameters[0] < FLT_EPSILON) {
-        // If parameter is too big, subtracting only 1.0 wouldn't do anything.
-        return parameters[0] - 1.0f;
-      }
-      return parameters[0] - 0.5f * (parameters[1] - parameters[0]);
-    }
-    case Type::Normal: {
-      assert(!std::isnan(parameters[0]) && !std::isnan(parameters[1]));
-      if (parameters[1] == 0.0f) {
-        return parameters[0] - 1.0f;
-      }
-      return parameters[0] - 4.5f * std::fabs(parameters[1]);
-    }
+    case Type::Uniform:
+      return GetUniformXExtremum(type, parameters, true);
+    case Type::Normal:
+      return GetNormalXExtremum(type, parameters, true);
     case Type::Student: {
       return -5.0f;
     }
@@ -117,17 +134,9 @@ T ComputeXMax(Type type, const ParametersArray<T> parameters) {
     case Type::Binomial:
       return parameters[0] > 0.0f ? parameters[0] : 1.0f;
     case Type::Uniform:
-      if (parameters[1] - parameters[0] < FLT_EPSILON) {
-        // If parameter is too big, adding only 1.0 wouldn't do anything.
-        return parameters[0] + 1.0f;
-      }
-      return parameters[1] + 0.6f * (parameters[1] - parameters[0]);
+      return GetUniformXExtremum(type, parameters, false);
     case Type::Normal:
-      assert(!std::isnan(parameters[0]) && !std::isnan(parameters[1]));
-      if (parameters[1] == 0.0f) {
-        return parameters[0] + 1.0f;
-      }
-      return parameters[0] + 5.0f * std::fabs(parameters[1]);
+      return GetNormalXExtremum(type, parameters, false);
     case Type::Student:
       return -ComputeXMin(type, parameters);
     case Type::Geometric:

@@ -171,6 +171,10 @@ double EvaluateParameterForProbabilityAndBound(
 
 template <typename T>
 T GetFisherDistributionMode(Type type, const ParametersArray<T> parameters);
+template <typename T>
+T GetUniformXExtremum(Type type, const ParametersArray<T> parameters, bool min);
+template <typename T>
+T GetNormalXExtremum(Type type, const ParametersArray<T> parameters, bool min);
 
 constexpr static float k_uniformDiracMaximum = 10.0f;
 constexpr static float k_fisherDefaultMax = 3.0f;

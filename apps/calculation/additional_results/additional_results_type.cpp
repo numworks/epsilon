@@ -215,7 +215,8 @@ bool AdditionalResultsType::HasVector(
   assert(!norm.isUndefined());
   int nChildren = approximateOutput.tree()->numberOfChildren();
   for (int i = 0; i < nChildren; ++i) {
-    if (HasComplex(approximateOutput, calculationPreferences, context)) {
+    if (HasComplex(approximateOutput.cloneChildAtIndex(i),
+                   calculationPreferences, context)) {
       return false;
     }
   }

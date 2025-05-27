@@ -134,7 +134,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       assert(grid->numberOfRows() <= 3);
 
       // Sequence symbol
-      const Tree* currentChild = grid->nextNode();
+      const Tree* currentChild = grid->child(0);
       Tree* expr = Parse(currentChild, context);
       if (!expr || !expr->isUserSequence()) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -156,7 +156,12 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
       expr->cloneNodeAtNode(KSequenceExplicit);
       // Initial conditions
       for (int row = 1; row < grid->numberOfRows(); row++) {
-        // Skip name and get to expression child
+        /* The structure of the grid is:
+         * sequenceLayout(mainName, mainExpr, firstInitialConditionName,
+         * firstInitialConditionExpr, secondInitialConditionName,
+         * secondInitialConditionExpr)
+         * When we enter this loop, currentChild is at mainExpr. Skip next child
+         * to get to the next expression. */
         currentChild = currentChild->nextTree()->nextTree();
         if (!Parse(currentChild, context)) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

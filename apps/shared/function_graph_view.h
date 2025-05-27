@@ -42,7 +42,8 @@ class FunctionGraphView
                     CursorView* cursorView);
 
   // AbstractPlotView
-  void reload(bool resetInterrupted = false, bool force = false) override;
+  void reload(bool resetInterrupted = false, bool force = false,
+              bool forceRedrawAxes = false) override;
   void resetInterruption() override { m_functionsInterrupted = 0; }
 
   void selectRecord(Ion::Storage::Record record);

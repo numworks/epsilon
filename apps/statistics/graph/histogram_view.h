@@ -40,7 +40,8 @@ class HistogramView
   HistogramView(Store* store, Shared::CurveViewRange* range);
 
   // AbstractPlotView
-  void reload(bool resetInterruption = false, bool force = false);
+  void reload(bool resetInterruption = false, bool force = false,
+              bool forceRedrawAxes = false) override;
 
   void setBarHighlight(double start, double end);
   void setDisplayLabels(bool display) { m_xAxis.setHidden(!display); }

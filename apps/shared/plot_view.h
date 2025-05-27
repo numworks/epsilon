@@ -41,7 +41,8 @@ class AbstractPlotView : public Escher::View {
   // Escher::View
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
-  virtual void reload(bool resetInterruption = false, bool force = false);
+  virtual void reload(bool resetInterruption = false, bool force = false,
+                      bool forceRedrawAxes = false);
   virtual void resetInterruption() {}
   virtual Escher::View* bannerView() const = 0;
   virtual CursorView* cursorView() const = 0;

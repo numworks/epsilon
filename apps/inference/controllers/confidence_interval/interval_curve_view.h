@@ -58,7 +58,8 @@ class IntervalCurveView
   IntervalCurveView(ConfidenceInterval* interval, const int* selectedIndex);
 
   // AbstractPlotView
-  void reload(bool resetInterruption = false, bool force = false) override;
+  void reload(bool resetInterruption = false, bool force = false,
+              bool forceRedrawAxes = false) override;
 
  private:
   KDColor backgroundColor() const override {

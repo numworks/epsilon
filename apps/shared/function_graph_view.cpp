@@ -97,11 +97,12 @@ FunctionGraphView::FunctionGraphView(InteractiveCurveViewRange* range,
   m_cursorView = cursorView;
 }
 
-void FunctionGraphView::reload(bool resetInterrupted, bool force) {
+void FunctionGraphView::reload(bool resetInterrupted, bool force,
+                               bool forceRedrawAxes) {
   if (force || resetInterrupted) {
     resetInterruption();
   }
-  AbstractPlotView::reload(resetInterrupted, force);
+  AbstractPlotView::reload(resetInterrupted, force, forceRedrawAxes);
 }
 
 void FunctionGraphView::selectRecord(Ion::Storage::Record record) {

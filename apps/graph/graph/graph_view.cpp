@@ -21,11 +21,12 @@ GraphView::GraphView(InteractiveCurveViewRange* graphRange,
       m_computePointsOfInterest(false),
       m_tangentDisplay(false) {}
 
-void GraphView::reload(bool resetInterrupted, bool force) {
+void GraphView::reload(bool resetInterrupted, bool force,
+                       bool forceRedrawAxes) {
   if (m_tangentDisplay) {
     markRectAsDirty(boundsWithoutBanner());
   }
-  return FunctionGraphView::reload(resetInterrupted, force);
+  return FunctionGraphView::reload(resetInterrupted, force, forceRedrawAxes);
 }
 
 void GraphView::drawRect(KDContext* ctx, KDRect rect) const {

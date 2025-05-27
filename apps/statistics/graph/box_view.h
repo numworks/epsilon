@@ -90,7 +90,8 @@ class BoxView
   BoxView(Store* store, int series, DataViewController* dataViewController);
 
   // AbstractPlotView
-  void reload(bool resetInterruption = false, bool force = false) override;
+  void reload(bool resetInterruption = false, bool force = false,
+              bool forceRedrawAxes = false) override;
   void drawBackground(KDContext* ctx, KDRect rect) const override {}
 
   int selectedBoxCalculation() const {

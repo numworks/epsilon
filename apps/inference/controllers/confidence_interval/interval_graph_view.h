@@ -13,7 +13,7 @@ class IntervalGraphView : public Escher::View {
   IntervalGraphView(ConfidenceInterval* interval, int* selectedIndex)
       : m_curveView(interval, selectedIndex) {}
   void drawRect(KDContext* ctx, KDRect rect) const override;
-  void reload(bool force = false);
+  void reload();
   IntervalConclusionView* conclusionView() { return &m_conclusionView; };
 
  private:

@@ -10,9 +10,9 @@ void IntervalGraphView::drawRect(KDContext* ctx, KDRect rect) const {
                 Escher::Palette::WallScreen);
 }
 
-void IntervalGraphView::reload(bool force) {
+void IntervalGraphView::reload() {
   layoutSubviews();
-  m_curveView.reload(false, force);
+  m_curveView.reload(false, false, true);
   m_conclusionView.reload();
 }
 

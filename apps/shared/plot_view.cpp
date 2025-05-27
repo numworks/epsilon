@@ -11,7 +11,8 @@ using namespace Poincare;
 
 namespace Shared {
 
-void AbstractPlotView::reload(bool resetInterruption, bool force) {
+void AbstractPlotView::reload(bool resetInterruption, bool force,
+                              bool forceRedrawAxes) {
   uint32_t rangeVersion = m_range->rangeChecksum();
   bool isReloadNeeded = force || (m_drawnRangeVersion != rangeVersion);
   if (isReloadNeeded) {
@@ -23,7 +24,7 @@ void AbstractPlotView::reload(bool resetInterruption, bool force) {
         KDRect(0, 0, bounds().width(), bounds().height() - bannerHeight));
   }
   layoutSubviews();
-  if (isReloadNeeded || m_bannerBoundsChanged) {
+  if (forceRedrawAxes || isReloadNeeded || m_bannerBoundsChanged) {
     reloadAxes();
     m_bannerBoundsChanged = false;
   }

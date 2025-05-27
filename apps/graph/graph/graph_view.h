@@ -20,7 +20,8 @@ class GraphView : public Shared::FunctionGraphView,
             Shared::MemoizedCursorView* cursorView);
 
   // FunctionGraphView
-  void reload(bool resetInterrupted = false, bool force = false) override;
+  void reload(bool resetInterrupted = false, bool force = false,
+              bool forceRedrawAxes = false) override;
   void drawRect(KDContext* ctx, KDRect rect) const override;
   int selectedRecordIndex() const override;
 

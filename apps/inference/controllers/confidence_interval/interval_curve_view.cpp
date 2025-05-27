@@ -171,7 +171,8 @@ IntervalCurveView::IntervalCurveView(ConfidenceInterval* interval,
   m_selectedIntervalIndex = selectedIndex;
 }
 
-void IntervalCurveView::reload(bool resetInterruption, bool force) {
+void IntervalCurveView::reload(bool resetInterruption, bool force,
+                               bool forceRedrawAxes) {
   /* Temporarily set the interval with selected threshold so that the axis
    * displays the right bounds */
   float mainThreshold = m_interval->threshold();
@@ -179,7 +180,7 @@ void IntervalCurveView::reload(bool resetInterruption, bool force) {
       ConfidenceInterval::DisplayedIntervalThresholdAtIndex(
           m_interval->threshold(), *m_selectedIntervalIndex));
   m_interval->compute();
-  AbstractPlotView::reload(resetInterruption, force);
+  AbstractPlotView::reload(resetInterruption, force, forceRedrawAxes);
 
   // Restore initial threshold and interval
   m_interval->setThreshold(mainThreshold);

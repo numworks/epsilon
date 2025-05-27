@@ -62,8 +62,9 @@ HistogramView::HistogramView(Store* store, Shared::CurveViewRange* range)
   setDisplayLabels(false);
 }
 
-void HistogramView::reload(bool resetInterruption, bool force) {
-  AbstractPlotView::reload(resetInterruption, force);
+void HistogramView::reload(bool resetInterruption, bool force,
+                           bool forceRedrawAxes) {
+  AbstractPlotView::reload(resetInterruption, force, forceRedrawAxes);
   markWholeFrameAsDirty();
 }
 
@@ -89,7 +90,7 @@ void HistogramView::reloadSelectedBar() {
       KDRect(barInteriorStartPixelIndex, 0,
              barInteriorEndPixelIndex - barInteriorStartPixelIndex + 1,
              bounds().height()));
-  AbstractPlotView::reload(false, true);
+  AbstractPlotView::reload(false, false, true);
 }
 
 }  // namespace Statistics

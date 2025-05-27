@@ -172,8 +172,8 @@ BoxView::BoxView(Store* store, int series,
   m_dataViewController = dataViewController;
 }
 
-void BoxView::reload(bool resetInterruption, bool force) {
-  AbstractPlotView::reload(resetInterruption, force);
+void BoxView::reload(bool resetInterruption, bool force, bool forceRedrawAxes) {
+  AbstractPlotView::reload(resetInterruption, force, forceRedrawAxes);
   markRectAsDirty(boxRect());
 }
 

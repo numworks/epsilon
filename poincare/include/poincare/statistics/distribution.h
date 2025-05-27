@@ -37,6 +37,10 @@ using Internal::Distribution::MeanAbscissa;
 
 using Internal::Distribution::EvaluateParameterForProbabilityAndBound;
 
+using Internal::Distribution::ComputeXMax;
+using Internal::Distribution::ComputeXMin;
+using Internal::Distribution::ComputeYMax;
+
 }  // namespace Distribution
 
 }  // namespace Poincare

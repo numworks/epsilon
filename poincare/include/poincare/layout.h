@@ -144,7 +144,7 @@ class Layout final : public PoolHandle {
   bool isCodePointsString() const;
 
   /* Return true if both layout match with same digits : 1.234*10^(4) == 1.234E4
-   * This is used to compare exact and approximate output in Epsilon's
+   * This is used to compare exact and approximate outputs in Epsilon's
    * Calculation app. If they represent the same digits, approximation is
    * hidden. */
   bool isSameScientificNotationAs(Layout approximation, bool linear) const;

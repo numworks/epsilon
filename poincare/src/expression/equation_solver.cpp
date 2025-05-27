@@ -136,6 +136,16 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 
   /* Clone and simplify the equations */
   Tree* reducedEquationSet = equationsSet->cloneTree();
+
+  /* Replace UserSymbols with variables for easier solution handling. This needs
+   * to be done before reduction because UserSymbol are considered real, and not
+   * variables. */
+  int i = 0;
+  for (const Tree* variable : userSymbols->children()) {
+    Variables::ReplaceSymbol(reducedEquationSet, variable, i++,
+                             ComplexSign::Finite());
+  }
+
   ProjectAndReduce(reducedEquationSet, projectionContext, error);
   if (*error != Error::NoError) {
     reducedEquationSet->removeTree();
@@ -143,12 +153,6 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
     return nullptr;
   }
 
-  /* Replace UserSymbols with variables for easier solution handling */
-  int i = 0;
-  for (const Tree* variable : userSymbols->children()) {
-    Variables::ReplaceSymbol(reducedEquationSet, variable, i++,
-                             ComplexSign::Finite());
-  }
   context->numberOfVariables = numberOfVariables;
 
   /* Find equation's results */

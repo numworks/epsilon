@@ -408,8 +408,8 @@ QUIZ_CASE(solver_complex_real) {
   assert_solves_to_error("x^2-√(-1)=0", EquationNonReal, &globalContext);
   assert_solves_to_error("x+√(-1)×√(-1)=0", EquationNonReal, &globalContext);
   assert_solves_to("x*2+2i-10=0", "x=5-i", &globalContext);
-  // TODO : Fix this
-  assert_solves_to("x+re(x)=2+i", "x=1+1/2×i", &globalContext);
+  assert_solves_to_error("x+re(x)=2+i", RequireApproximateSolution,
+                         &globalContext);
 
 #if 0
   // TODO_PCJ: currently solves to EquationUndefined instead of EquationNonReal

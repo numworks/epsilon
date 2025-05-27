@@ -300,7 +300,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
                 "dep(diff(floor(a),a,x,7),{diff(floor(a),a,x,2),diff(floor(a),"
                 "a,x,3),diff(floor(a),a,x,6)})");
   simplifies_to("diff(diff(floor(a)+b*a,a,x),b,x)",
-                "dep(1+diff(diff(floor(a),a,x),b,x),{floor(x)})");
+                "dep(1,{floor(x),diff(floor(a),a,x)})");
   simplifies_to("diff(randint(0,5), x, 2)", "undef");
   simplifies_to("diff(x+floor(random()), x, 2)", "undef");
   // Derivating a complex expression is forbidden
@@ -342,8 +342,7 @@ QUIZ_CASE(pcj_simplification_derivative) {
                 "dep(-1/(x^2×√(1-1/x^2)),{piecewise(0,abs(1/"
                 "x)≤1,nonreal),real(arcsin(1/x))})");
   simplifies_to("diff(arccot(x),x,x)", "-1/(x^2+1)");
-  // TODO: Simplify to 0
-  simplifies_to("diff(floor(z), x, y)", "diff(floor(z),x,y)");
+  simplifies_to("diff(floor(z), x, y)", "dep(0,{floor(z)})");
 }
 
 QUIZ_CASE(pcj_simplification_matrix) {

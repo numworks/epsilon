@@ -131,6 +131,9 @@ Tree* Derivation::Derive(const Tree* derivand, const Tree* symbol, bool force) {
     // TODO: is the derivative of something nonreal still nonreal?
     return derivand->cloneTree();
   }
+  if (!Variables::HasVariable(derivand, 0)) {
+    return (0_e)->cloneTree();
+  }
   /* General case :
    * f(g0(V0), g1(V0), ...) -> ... + Di(f) * diff(gi(V0), symbol, V0) + ...
    * With Di the partial derivative on parameter i (see ShallowPartialDerivate)

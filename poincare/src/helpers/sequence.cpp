@@ -1,4 +1,5 @@
 #include <poincare/helpers/sequence.h>
+#include <poincare/src/expression/sequence.h>
 #include <poincare/src/layout/grid.h>
 #include <poincare/src/layout/sequence.h>
 

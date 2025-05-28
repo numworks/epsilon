@@ -2,7 +2,6 @@
 #define POINCARE_HELPERS_SEQUENCE_H
 
 #include <poincare/expression.h>
-#include <poincare/src/expression/sequence.h>
 
 namespace Poincare {
 

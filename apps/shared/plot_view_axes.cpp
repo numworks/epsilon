@@ -279,6 +279,9 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
     }
     drawLabel(i, t, plotView, ctx, rect, axis);
     i++;
+    if (i >= static_cast<int>(numberOfLabels())) {
+      break;
+    }
     t = float(tickPosition(i, plotView, axis));
   }
 }

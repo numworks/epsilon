@@ -268,10 +268,10 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
    *  t = tMax + tickStep, but tMax + tickStep == tMax because of float
    * precision. Which means the condition t <= tMax in the loop will never be
    * reached. */
-  int maxNumberOfTicks =
-      std::ceil((tMax - plotView->rangeMin(axis)) /
-                static_cast<float>(tickStep(plotView, axis))) +
-      1;
+  int maxNumberOfTicks = static_cast<int>(std::ceil(
+                             (tMax - plotView->rangeMin(axis)) /
+                             static_cast<float>(tickStep(plotView, axis)))) +
+                         1;
   assert(maxNumberOfTicks >= 2);
   while (t < tMax && i < maxNumberOfTicks) {
     if (drawTicks) {

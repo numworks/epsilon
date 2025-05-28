@@ -229,6 +229,12 @@ QUIZ_CASE(solver_cubic) {
                    {"x=-2", "x=5/2-1/4×i", "x=5/2+1/4×i", "delta=-108160000"},
                    &globalContext);
 
+  assert_solves_to(
+      "x^3+1111111116*x^2-6",
+      {"x=-1111111116", "x=-7363160451/100000000000000",
+       "x=7339318593/100000000000000", "delta=32921811134156380512921812532"},
+      &globalContext);
+
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
 }

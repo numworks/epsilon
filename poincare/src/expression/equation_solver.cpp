@@ -146,7 +146,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   Projection::DeepReplaceUserNamed(
       reducedEquationSet, projectionContext.m_context,
       SymbolicComputation::ReplaceDefinedFunctions);
-  // Replace UserFunctions
+  // Replace UserSymbols
   int i = 0;
   for (const Tree* variable : userSymbols->children()) {
     // TODO: Use a more precise complexSign when possible for better reduction.

@@ -4,6 +4,10 @@
 #include <poincare/sign.h>
 #include <poincare/src/memory/tree_ref.h>
 
+namespace Poincare {
+class Context;
+}
+
 namespace Poincare::Internal {
 
 /* Textual UserSymbols in expressions are projected into de Bruijn indices. When
@@ -30,13 +34,16 @@ class Variable {
 namespace Private {
 // Variables below preserveUnder are considered local and preserved
 void EnterOrLeaveScope(Tree* e, bool enter, int preserveUnder);
-void GetUserSymbols(const Tree* e, Tree* set);
+/* Get the user symbols of e and push them in set. Look inside UserFunctions
+ * definition if ctx is given. */
+void GetUserSymbols(const Tree* e, Tree* set, Poincare::Context* ctx = nullptr);
 uint8_t ToId(const Tree* variables, const char* name, uint8_t length);
 const Tree* ToSymbol(const Tree* variables, uint8_t id);
 }  // namespace Private
 
-// Push a Set with the free user symbols of the expression
-Tree* GetUserSymbols(const Tree* e);
+/* Push a Set with the free user symbols of the expression. Look inside
+ * UserFunctions definition if ctx is given. */
+Tree* GetUserSymbols(const Tree* e, Poincare::Context* ctx = nullptr);
 // Ignore UserSymbols in parametric's variable
 bool HasUserSymbols(const Tree* e, bool checkForUserFunctions = false);
 

@@ -1,6 +1,7 @@
 #include "variables.h"
 
 #include <omg/unreachable.h>
+#include <poincare/old/context.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <string.h>
@@ -44,29 +45,40 @@ const Tree* Variables::Private::ToSymbol(const Tree* variables, uint8_t id) {
   return variables->child(id);
 }
 
-Tree* Variables::GetUserSymbols(const Tree* e) {
+Tree* Variables::GetUserSymbols(const Tree* e, Poincare::Context* ctx) {
   // TODO Is it worth to represent the empty set with nullptr ?
   Tree* set = Set::PushEmpty();
-  Private::GetUserSymbols(e, set);
+  Private::GetUserSymbols(e, set, ctx);
   return set;
 }
 
-void Variables::Private::GetUserSymbols(const Tree* e, Tree* set) {
+void Variables::Private::GetUserSymbols(const Tree* e, Tree* set,
+                                        Poincare::Context* ctx) {
   if (e->isUserSymbol()) {
     return Set::Add(set, e);
+  }
+  if (ctx && e->isUserFunction()) {
+    /* If ctx is given, we look inside the user function definition. Unknown
+     * symbol has to be discarded. */
+    Tree* subSet = Set::PushEmpty();
+    GetUserSymbols(ctx->expressionForUserNamed(e), subSet, ctx);
+    Tree* symbolToRemove = KSet(KUnknownSymbol)->cloneTree();
+    subSet = Set::Difference(subSet, symbolToRemove);
+    set = Set::Union(set, subSet);
+    // Also get UserSymbols in the function's child.
   }
   bool isParametric = e->isParametric();
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
     if (isParametric && child.index == Parametric::k_variableIndex) {
     } else if (isParametric && Parametric::IsFunctionIndex(child.index, e)) {
       Tree* subSet = Set::PushEmpty();
-      GetUserSymbols(child, subSet);
+      GetUserSymbols(child, subSet, ctx);
       Tree* boundSymbols = Set::PushEmpty();
       Set::Add(boundSymbols, e->child(Parametric::k_variableIndex));
       subSet = Set::Difference(subSet, boundSymbols);
       set = Set::Union(set, subSet);
     } else {
-      GetUserSymbols(child, set);
+      GetUserSymbols(child, set, ctx);
     }
   }
 }

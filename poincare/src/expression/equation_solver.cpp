@@ -98,10 +98,11 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
   context->complexFormat = projectionContext.m_complexFormat;
 
   // Retrieve user symbols before simplification and variable replacement
-  Tree* userSymbols = Variables::GetUserSymbols(equationsSet);
+  Tree* userSymbols =
+      Variables::GetUserSymbols(equationsSet, projectionContext.m_context);
   uint8_t numberOfVariables = userSymbols->numberOfChildren();
   /* When ReplaceDefinedSymbols, when a symbol in the expression is defined by
-   * the user, remove it from possible unkowns */
+   * the user, remove it from possible unknowns */
   if (projectionContext.m_context && userSymbols->numberOfChildren() > 0) {
     Tree* userSymbol = userSymbols->child(0);
     uint8_t index = 0;

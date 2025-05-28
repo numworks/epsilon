@@ -452,9 +452,8 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
         /* √c with "c" real is:
          * 1. √c if c>0
          * 2. √(-c)*i if c<0 */
-        bool isPositive = c.real() > 0;
-        T res = std::sqrt(isPositive ? c.real() : -c.real());
-        return isPositive ? res : std::complex<T>(0, res);
+        return c.real() > 0 ? std::sqrt(c.real())
+                            : std::complex<T>(0, std::sqrt(-c.real()));
       }
       return NeglectRealOrImaginaryPartIfNegligible(std::sqrt(c), c);
     }

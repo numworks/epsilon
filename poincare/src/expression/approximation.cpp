@@ -449,9 +449,9 @@ std::complex<T> BasicToComplex(const Tree* e, const Context* ctx) {
        * std::sqrt become so big that [NeglectRealOrImaginaryPartIfNegligible]
        * fails to remove them, we use the std::sqrt of real for this case */
       if (c.imag() == 0) {
-        /* √a with a real is:
-         * - √a if a>0
-         * - √(-a)*i if a<0 */
+        /* √c with "c" real is:
+         * 1. √c if c>0
+         * 2. √(-c)*i if c<0 */
         bool isPositive = c.real() > 0;
         T res = std::sqrt(isPositive ? c.real() : -c.real());
         return isPositive ? res : std::complex<T>(0, res);

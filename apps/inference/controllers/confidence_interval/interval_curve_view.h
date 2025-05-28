@@ -15,6 +15,8 @@ class IntervalAxis : public Shared::PlotPolicy::SimpleAxis {
   constexpr static size_t k_glyphLength =
       Shared::PlotPolicy::AbstractLabeledAxis::k_labelBufferMaxGlyphLength;
 
+  size_t numberOfLabels() const override { return k_numberOfLabels; };
+
   void reloadAxis(Shared::AbstractPlotView* plotView, OMG::Axis) override;
   Poincare::ExpressionOrFloat tickPosition(
       int i, const Shared::AbstractPlotView* plotView,
@@ -24,7 +26,7 @@ class IntervalAxis : public Shared::PlotPolicy::SimpleAxis {
                  KDColor color = k_color) const override;
 
  private:
-  constexpr static int k_numberOfLabels = 2;
+  constexpr static size_t k_numberOfLabels = 2;
 
   ConfidenceInterval* interval(const Shared::AbstractPlotView* plotView) const {
     return static_cast<ConfidenceInterval*>(plotView->range());

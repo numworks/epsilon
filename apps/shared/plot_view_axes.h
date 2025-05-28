@@ -115,13 +115,17 @@ class SimpleAxis : public PlainAxis {
   virtual void setOtherAxis(bool other) {}
 
  protected:
+  virtual size_t numberOfLabels() const = 0;
+
   virtual Poincare::ExpressionOrFloat tickPosition(
       int i, const AbstractPlotView* plotView, OMG::Axis axis) const;
   virtual Poincare::ExpressionOrFloat tickStep(const AbstractPlotView* plotView,
                                                OMG::Axis axis) const;
   virtual void drawLabel(int i, float t, const AbstractPlotView* plotView,
                          KDContext* ctx, KDRect rect, OMG::Axis axis,
-                         KDColor color = k_color) const {}
+                         KDColor color = k_color) const {
+    assert(i < static_cast<int>(numberOfLabels()));
+  }
 };
 
 /* Abstract class describing an axis with evenly spaced out labels. */
@@ -147,9 +151,9 @@ class AbstractLabeledAxis : public SimpleAxis {
   void setHidden(bool hide) { m_hidden = hide; }
 
  protected:
-  virtual size_t numberOfLabels() const = 0;
   virtual char* mutableLabel(int i) = 0;
   const char* label(int i) const {
+    assert(i < static_cast<int>(numberOfLabels()));
     return const_cast<AbstractLabeledAxis*>(this)->mutableLabel(i);
   }
   virtual int computeLabel(int i, const AbstractPlotView* plotView,
@@ -182,7 +186,7 @@ class LabeledAxis : public AbstractLabeledAxis {
  protected:
   size_t numberOfLabels() const override { return N; }
   char* mutableLabel(int i) override {
-    assert(static_cast<size_t>(i) < N);
+    assert(i < static_cast<int>(N));
     return m_labels[i];
   }
   char m_labels[N][k_labelBufferMaxSize];

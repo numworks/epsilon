@@ -289,6 +289,7 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
 ExpressionOrFloat SimpleAxis::tickPosition(int i,
                                            const AbstractPlotView* plotView,
                                            OMG::Axis axis) const {
+  assert(i < static_cast<int>(numberOfLabels()));
   ExpressionOrFloat step = tickStep(plotView, axis);
   float tMin = plotView->rangeMin(axis);
   float approximateStep = static_cast<float>(step);
@@ -333,6 +334,7 @@ void AbstractLabeledAxis::reloadAxis(AbstractPlotView* plotView,
 
 int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView* plotView,
                                       OMG::Axis axis) {
+  assert(i < static_cast<int>(numberOfLabels()));
   ExpressionOrFloat t = tickPosition(i, plotView, axis);
   PrintFloat::TextLengths textLengths = t.writeText(
       {mutableLabel(i), k_labelBufferMaxSize}, k_numberSignificantDigits,
@@ -342,14 +344,14 @@ int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView* plotView,
 }
 
 bool AbstractLabeledAxis::labelWillBeDisplayed(int i, KDRect rect) const {
+  assert(i < static_cast<int>(numberOfLabels()));
   return !rect.intersects(m_lastDrawnRect);
 }
 
 KDRect AbstractLabeledAxis::labelRect(int i, float t,
                                       const AbstractPlotView* plotView,
                                       OMG::Axis axis) const {
-  assert(static_cast<size_t>(i) < numberOfLabels());
-
+  assert(i < static_cast<int>(numberOfLabels()));
   const char* text = label(i);
   if (m_hidden || text[0] == '\0') {
     return KDRectZero;
@@ -386,6 +388,7 @@ void AbstractLabeledAxis::drawLabel(int i, float t,
                                     const AbstractPlotView* plotView,
                                     KDContext* ctx, KDRect rect, OMG::Axis axis,
                                     KDColor color) const {
+  assert(i < static_cast<int>(numberOfLabels()));
   const char* text = label(i);
   KDRect thisLabelRect = labelRect(i, t, plotView, axis);
   if (thisLabelRect.intersects(rect) &&

@@ -282,11 +282,11 @@ RANGE(AMatrixOrContainsMatricesAsChildren, Dot, Matrix)
 
 NODE(List, BASE, NARY)
 NODE(ListSort, LIST, 1)
+NODE(ListSlice, LIST, 3)
 
 // ListElement(List, ElementIndex)
 NODE(ListElement, LIST, 2)
 // ListSlice(List, ElementIndexStart, ElementIndexEnd)
-NODE(ListSlice, LIST, 3)
 NODE(Mean, LIST, 2)
 NODE(StdDev, LIST, 2)
 NODE(Median, LIST, 2)

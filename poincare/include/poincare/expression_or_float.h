@@ -16,14 +16,14 @@ namespace Poincare {
  * condition that only the float variant of ExpressionOrFloat is used. */
 class ExpressionOrFloat {
  public:
-  ExpressionOrFloat() = default;
-
   constexpr static size_t k_maxExpressionSize = 20;
 
   constexpr static size_t k_numberOfSignificantDigits =
       PrintFloat::k_floatNumberOfSignificantDigits;
 
   constexpr static size_t k_maxExactSerializationGlyphLength = 5;
+
+  ExpressionOrFloat() = default;
 
   explicit ExpressionOrFloat(Expression expression) {
     if (!expression.isUninitialized()) {

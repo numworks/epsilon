@@ -136,16 +136,23 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 
   /* Clone and simplify the equations */
   Tree* reducedEquationSet = equationsSet->cloneTree();
-
-  /* Replace UserSymbols with variables for easier solution handling. This needs
-   * to be done before reduction because UserSymbol are considered real, and not
-   * variables. */
+  /* The symbols should be replaced in this order :
+   *  - User functions (because they can hide UserSymbols and local symbols)
+   *  - UserSymbols into Variables (because they have a different complexSign)
+   *  - Local symbols into variables (Done in ProjectAndReduce)
+   *  - Reduction (Done in ProjectAndReduce). */
+  // Replace UserFunctions
+  Projection::DeepReplaceUserNamed(
+      reducedEquationSet, projectionContext.m_context,
+      SymbolicComputation::ReplaceDefinedFunctions);
+  // Replace UserFunctions
   int i = 0;
   for (const Tree* variable : userSymbols->children()) {
+    // TODO: Use a more precise complexSign when possible for better reduction.
     Variables::ReplaceSymbol(reducedEquationSet, variable, i++,
                              ComplexSign::Finite());
   }
-
+  // Project (replace local symbols) and reduce
   ProjectAndReduce(reducedEquationSet, projectionContext, error);
   if (*error != Error::NoError) {
     reducedEquationSet->removeTree();

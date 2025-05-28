@@ -125,19 +125,20 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
   // stdDev * sqrt(1 + 1 / (n - 1))
   SimpleKTrees::KTree sampleStdDev =
       KMult(stdDev, KPow(KAdd(1_e, KPow(KAdd(KC, -1_e), -1_e)), 1_e / 2_e));
+  PatternMatching::Context ctx({.KA = list, .KB = coefficients});
+  ctx.setInvolvesList(true);
   if (type.isSampleStdDev()) {
     Tree* n = coefficients->isOne()
                   ? Integer::Push(Dimension::ListLength(list))
                   : FoldSumOrProduct(coefficients, Type::ListSum);
-    PatternMatching::CreateSimplify(sampleStdDev,
-                                    {.KA = list, .KB = coefficients, .KC = n});
+    ctx.setNode(KC, n, 1, false);
+    PatternMatching::CreateSimplify(sampleStdDev, ctx);
     n->removeTree();
     return n;
   } else {
     assert(type.isVariance() || type.isStdDev());
     return PatternMatching::CreateSimplify(
-        type == Type::Variance ? variance : stdDev,
-        {.KA = list, .KB = coefficients});
+        type == Type::Variance ? variance : stdDev, ctx);
   }
 #else
   OMG::unreachable();
@@ -154,9 +155,10 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
     return result;
   }
   assert(Dimension::IsList(coefficients));
+  PatternMatching::Context ctx({.KA = list, .KB = coefficients});
+  ctx.setInvolvesList(true);
   return PatternMatching::CreateSimplify(
-      KMult(KListSum(KMult(KA, KB)), KPow(KListSum(KB), -1_e)),
-      {.KA = list, .KB = coefficients});
+      KMult(KListSum(KMult(KA, KB)), KPow(KListSum(KB), -1_e)), ctx);
 #else
   OMG::unreachable();
 #endif

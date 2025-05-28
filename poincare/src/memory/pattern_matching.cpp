@@ -387,7 +387,8 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
          * computed in CreateTree. */
         CreateTree(node, context, insertedNode, simplify, scope);
         if (simplify) {
-          SystematicReduction::ShallowReduce(insertedNode);
+          SystematicReduction::ShallowReduceMaybeList(insertedNode,
+                                                      context.involvesList());
         } else {
           NAry::Sanitize(insertedNode);
         }
@@ -403,7 +404,8 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
           node = node->nextTree();
         }
         if (simplify) {
-          SystematicReduction::ShallowReduce(result);
+          SystematicReduction::ShallowReduceMaybeList(result,
+                                                      context.involvesList());
         }
 #endif
       } else if (withinNAry && numberOfChildren > 0) {
@@ -418,7 +420,8 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
             CreateTree(node, context, nullptr, simplify, scope);
             node = node->nextTree();
           }
-          SystematicReduction::ShallowReduce(result);
+          SystematicReduction::ShallowReduceMaybeList(result,
+                                                      context.involvesList());
         }
       }
       continue;

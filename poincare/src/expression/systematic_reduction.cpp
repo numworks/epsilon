@@ -19,34 +19,48 @@
 
 namespace Poincare::Internal {
 
-/* [canBeList] explaination:
- * This value will be set to [true] when a list or a list-producing function
- * (e.g.: RandIntNoRep) is encountered. If this is the case, during
- * [DeepReduce], we always check if the tree is a list before calling [Switch].
- * Otherwise, some reduction would lose the list dimension
- * (e.g.: 0^KA => dep(0, {0^KA})). */
+/* [isList] explaination:
+ * Because we do not want to think of list in SystematicReduction steps, some
+ * reduction lose the list dimension when applied to the wrong tree.
+ * (e.g.: 0^KA => dep(0, {0^KA})).
+ * But checking [Dimenstion::IsList] on each descendent of tree is too costly.
+ * Instead we keep track of the presence of lists inside the tree manually.
+ * [isList] is set to [true] when a list or a list-producing function (e.g.:
+ * RandIntNoRep) is encountered, or when a child is a list and the node is not a
+ * [isListToScalar].
+ * This allows [ShallowReduceAux] to not call [Switch] when a list is present */
 
-bool SystematicReduction::DeepReduceAux(Tree* e, bool* canBeList) {
+bool SystematicReduction::DeepReduceAux(Tree* e, bool* isList) {
   if (e->isDepList()) {
     // Never simplify any dependencies
     return false;
   }
+  bool hasListChild = false;
   /* Although they are also flattened in ShallowReduce, flattening
    * here could save multiple ShallowReduce and flatten calls. */
   bool modified = (e->isMult() || e->isAdd()) && NAry::Flatten(e);
   for (Tree* child : e->children()) {
-    modified |= DeepReduceAux(child, canBeList);
+    bool childIsList = false;
+    modified |= DeepReduceAux(child, &childIsList);
+    hasListChild = hasListChild || childIsList;
   }
-  // This should be all the nodes capable of producing a list
-  if (e->isList() || e->isListSequence() || e->isRandIntNoRep() ||
-      e->isUserFunction()) {
-    *canBeList = true;
+  /* This should be all the nodes capable of producing a list.
+   * If a UserFunction is present here, it means there is no definition for it,
+   * we assumes it does not involves lists */
+  if (e->isList() || e->isListSequence() || e->isRandIntNoRep()) {
+    *isList = true;
+  } else if (e->isListToScalar() || e->isDim()) {
+    assert(hasListChild || e->isDim());
+    *isList = false;
+  } else {
+    // Bubble-up list
+    *isList = hasListChild;
   }
 
 #if ASSERTIONS
   TreeRef previousTree = e->cloneTree();
 #endif
-  bool shallowModified = ShallowReduceAux(e, canBeList);
+  bool shallowModified = ShallowReduceAux(e, *isList);
 #if ASSERTIONS
   assert(shallowModified != e->treeIsIdenticalTo(previousTree));
   previousTree->removeTree();
@@ -55,28 +69,23 @@ bool SystematicReduction::DeepReduceAux(Tree* e, bool* canBeList) {
 }
 
 bool SystematicReduction::DeepReduce(Tree* e) {
-  bool canBeList = false;
-  return DeepReduceAux(e, &canBeList);
+  bool isList = false;
+  return DeepReduceAux(e, &isList);
 }
 
-bool SystematicReduction::ShallowReduceAux(Tree* e, bool* canBeList) {
+bool SystematicReduction::ShallowReduceAux(Tree* e, bool isList) {
 #if ASSERTIONS
   // This assert is quite costly, should be an assert level 2 ?
   assert(Dimension::DeepCheck(e));
   Dimension dimBefore = Dimension::Get(e);
   int lenBefore = Dimension::ListLength(e);
 #endif
-  bool changed = SystematicReduction::BubbleUpFromChildren(e, canBeList);
-  /* canBeList is an optimization to avoid computing IsList on tree without any
-   * list */
-  bool isList = *canBeList && Dimension::IsList(e);
-  /* Update canBeList, when we encountered a list consuming function (eg:
-   * mean/max), the tree can no longer be a list */
-  *canBeList = isList;
+  bool changed = SystematicReduction::BubbleUpFromChildren(e, isList);
+  assert(Dimension::IsList(e) == isList);
+  /* See comment at the start of file for why we do not call [Switch] when a
+   * list is present */
   if (!isList || e->isListSort()) {
     assert(!(changed && Switch(e)));
-    /* See comment at the start of file for why we do not call [Switch] when a
-     * list is present */
     changed = changed || Switch(e);
   }
 #if ASSERTIONS
@@ -96,15 +105,22 @@ bool SystematicReduction::ShallowReduceAux(Tree* e, bool* canBeList) {
 
 bool SystematicReduction::ShallowReduce(Tree* e) {
   /* TODO: Here we assumes [e] is not a list as it is too costly to call
-   * [IsList] on every [ShallowReduce]. This supposition was the default
-   * behaviour before the [canBeList] change, hence the behaviour of
-   * [ShallowReduce] is preserved for now. This leads to the following issue:
-   * List can disappear on some reduction. (See comment at start of file) */
-  bool canBeList = false;
-  return ShallowReduceAux(e, &canBeList);
+   * [Dimension::IsList] on every [ShallowReduce].
+   * This supposition was the default behaviour before the [isList] change,
+   * hence the behaviour of [ShallowReduce] is preserved for now.
+   * (See comment at start of file) */
+  return ShallowReduceMaybeList(e, false);
 }
 
-bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool* canBeList) {
+bool SystematicReduction::ShallowReduceMaybeList(Tree* e, bool forceListCheck) {
+  if (forceListCheck) {
+    return ShallowReduceAux(e, Dimension::IsList(e));
+  }
+  bool isList = (e->isList() || e->isListSequence() || e->isRandIntNoRep());
+  return ShallowReduceAux(e, isList);
+}
+
+bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool isList) {
   /* Before systematic reduction, look for things to bubble-up in children. At
    * this step, only children have been shallowReduced. By doing this before
    * shallowReduction, we don't have to handle undef, float and dependency
@@ -120,7 +136,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool* canBeList) {
     bool changed = Undefined::ShallowBubbleUpUndef(Dependency::Dependencies(e));
     if (changed) {
       if (Undefined::ShallowBubbleUpUndef(e)) {
-        assert(!ShallowReduceAux(e, canBeList));
+        assert(!ShallowReduceAux(e, isList));
         return true;
       }
       OMG::unreachable();
@@ -144,13 +160,13 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool* canBeList) {
   }
 
   if (bubbleUpUndef && Undefined::ShallowBubbleUpUndef(e)) {
-    assert(!ShallowReduceAux(e, canBeList));
+    assert(!ShallowReduceAux(e, isList));
     return true;
   }
 
   if (bubbleUpFloat &&
       Approximation::ApproximateAndReplaceEveryScalar<double>(e)) {
-    ShallowReduceAux(e, canBeList);
+    ShallowReduceAux(e, isList);
     return true;
   }
 
@@ -158,7 +174,7 @@ bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool* canBeList) {
     assert(e->isDep());
     /* e->child(0) may now be reduced again. This could unlock further
      * simplifications. */
-    ShallowReduceAux(e->child(0), canBeList) && ShallowReduceAux(e, canBeList);
+    ShallowReduceAux(e->child(0), isList) && ShallowReduceAux(e, isList);
     return true;
   }
 

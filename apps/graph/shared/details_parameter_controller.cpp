@@ -103,7 +103,7 @@ int DetailsParameterController::detailsNumberOfSections() const {
   if (m_record.isNull() || function()->properties().hideDetails()) {
     return 0;
   }
-  ExamMode examMode = Preferences::SharedPreferences()->examMode();
+  ExamMode examMode = SharedPreferences()->examMode();
   if (examMode.forbidGraphDetails()) {
     return 0;
   }

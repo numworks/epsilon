@@ -17,6 +17,7 @@
 #include "global_context.h"
 #include "poincare_helpers.h"
 
+using namespace Escher;
 using namespace Poincare;
 using namespace Poincare::CodePoints;
 
@@ -129,8 +130,7 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
                                               Context* context) {
   ContinuousFunctionProperties thisProperties = properties();
   if (thisProperties.isParametric()) {
-    Preferences::PrintFloatMode mode =
-        Poincare::Preferences::SharedPreferences()->displayMode();
+    Preferences::PrintFloatMode mode = SharedPreferences()->displayMode();
     return Poincare::Print::CustomPrintf(buffer, bufferSize, "(%*.*ed;%*.*ed)",
                                          cursorX, mode, precision, cursorY,
                                          mode, precision);
@@ -190,7 +190,7 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
       k_unknownName, coefficients, context, complexFormat(context),
-      Poincare::Preferences::SharedPreferences()->angleUnit(),
+      SharedPreferences()->angleUnit(),
       ContinuousFunctionProperties::k_defaultUnitFormat,
       SymbolicComputation::ReplaceAllSymbols);
   assert(d <= 1);
@@ -414,7 +414,7 @@ float ContinuousFunction::autoTMax() const {
              : (properties().isInversePolar()
                     ? Range1D<float>::k_defaultHalfLength
                     : 2.f * Trigonometry::PiInAngleUnit(
-                                Preferences::SharedPreferences()->angleUnit()));
+                                SharedPreferences()->angleUnit()));
 }
 
 float ContinuousFunction::autoTMin() const {
@@ -476,8 +476,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
   assert(thisProperties.isPolar() || thisProperties.isInversePolar());
   const T r = thisProperties.isPolar() ? x1x2.y() : x1x2.x();
   const T angle = (thisProperties.isPolar() ? x1x2.x() : x1x2.y()) * M_PI /
-                  Trigonometry::PiInAngleUnit(
-                      Poincare::Preferences::SharedPreferences()->angleUnit());
+                  Trigonometry::PiInAngleUnit(SharedPreferences()->angleUnit());
   return Coordinate2D<T>(r * std::cos(angle), r * std::sin(angle));
 }
 
@@ -590,8 +589,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
   }
   Preferences::ComplexFormat complexFormat =
       this->complexFormat(record, context);
-  Preferences::AngleUnit angleUnit =
-      Preferences::SharedPreferences()->angleUnit();
+  Preferences::AngleUnit angleUnit = SharedPreferences()->angleUnit();
   if (thisProperties.isScatterPlot()) {
     /* Scatter plots do not depend on any variable, so they can be approximated
      * in advance. In addition, they are sorted to be traveled from left to
@@ -749,8 +747,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   SystemExpression result;
   Preferences::ComplexFormat complexFormat =
       this->complexFormat(record, context);
-  Preferences::AngleUnit angleUnit =
-      Preferences::SharedPreferences()->angleUnit();
+  Preferences::AngleUnit angleUnit = SharedPreferences()->angleUnit();
   if (!equation.isUndefined()) {
     bool reductionFailure = false;
     result = PoincareHelpers::CloneAndReduce(

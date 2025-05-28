@@ -52,8 +52,8 @@ void DisplayModeController::fillCellForRow(HighlightCell* cell, int row) {
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
     int length = OMG::Print::IntLeft(
-        Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
-        buffer, bufferSize);
+        Escher::SharedPreferences()->numberOfSignificantDigits(), buffer,
+        bufferSize);
     buffer[length] = 0;
     m_editableCell.textField()->setText(buffer);
     return;
@@ -76,7 +76,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (floatBody < 1.0) {
     floatBody = 1.0;
   }
-  if (Poincare::Preferences::SharedPreferences()->displayMode() ==
+  if (Escher::SharedPreferences()->displayMode() ==
           Poincare::Preferences::PrintFloatMode::Engineering &&
       floatBody < 3.0) {
     floatBody = 3.0;
@@ -84,7 +84,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (floatBody > Poincare::PrintFloat::k_maxNumberOfSignificantDigits) {
     floatBody = Poincare::PrintFloat::k_maxNumberOfSignificantDigits;
   }
-  Poincare::Preferences::SharedPreferences()->setNumberOfSignificantDigits(
+  Escher::SharedPreferences()->setNumberOfSignificantDigits(
       (char)std::round(floatBody));
   m_selectableListView.reloadSelectedCell();
   if (event == Ion::Events::Up || event == Ion::Events::OK) {

@@ -98,7 +98,7 @@ void GraphOptionsController::viewWillAppear() {
       m_r2Cell.label()->setLayout(
           Store::DisplayR2(type) ? "R2"_l : "r"_l ^ KSuperscriptL("2"_l));
     }
-    if (Preferences::SharedPreferences()->examMode().forbidStatsDiagnostics()) {
+    if (SharedPreferences()->examMode().forbidStatsDiagnostics()) {
       rCells[i]->label()->setTextColor(Palette::GrayDark);
       rCells[i]->accessory()->setTextColor(Palette::GrayDark);
       rCells[i]->accessory()->setText(I18n::translate(I18n::Message::Disabled));

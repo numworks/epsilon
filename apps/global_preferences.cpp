@@ -11,16 +11,12 @@ GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
 }
 
 void GlobalPreferences::countryHasChanged(bool updateSnapshots) {
-  Poincare::Preferences::SharedPreferences()->setCombinatoricSymbols(
-      combinatoricsSymbols());
-  Poincare::Preferences::SharedPreferences()->enableMixedFractions(
-      mixedFractions());
-  Poincare::Preferences::SharedPreferences()->setLogarithmBasePosition(
+  Escher::SharedPreferences()->setCombinatoricSymbols(combinatoricsSymbols());
+  Escher::SharedPreferences()->enableMixedFractions(mixedFractions());
+  Escher::SharedPreferences()->setLogarithmBasePosition(
       logarithmBasePosition());
-  Poincare::Preferences::SharedPreferences()->setLogarithmKeyEvent(
-      logarithmKeyEvent());
-  Poincare::Preferences::SharedPreferences()->setParabolaParameter(
-      parabolaParameter());
+  Escher::SharedPreferences()->setLogarithmKeyEvent(logarithmKeyEvent());
+  Escher::SharedPreferences()->setParabolaParameter(parabolaParameter());
   if (!updateSnapshots) {
     return;
   }

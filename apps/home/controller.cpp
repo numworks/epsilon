@@ -195,8 +195,7 @@ void Controller::switchToSelectedApp() {
       container->switchToBuiltinApp(selectedSnapshot);
     }
   } else {
-    assert(Preferences::SharedPreferences()->examMode().ruleset() ==
-           ExamMode::Ruleset::Off);
+    assert(SharedPreferences()->examMode().ruleset() == ExamMode::Ruleset::Off);
     m_view.reload();
     Ion::ExternalApps::App a = container->externalAppAtIndex(
         appIdx - container->numberOfBuiltinApps());
@@ -205,7 +204,7 @@ void Controller::switchToSelectedApp() {
 }
 
 bool Controller::appIsForbidden(I18n::Message appName) const {
-  ExamMode examMode = Preferences::SharedPreferences()->examMode();
+  ExamMode examMode = SharedPreferences()->examMode();
   return (appName == I18n::Message::CodeApp && examMode.forbidCodeApp()) ||
          (appName == I18n::Message::ElementsApp &&
           examMode.forbidElementsApp()) ||
@@ -213,7 +212,7 @@ bool Controller::appIsForbidden(I18n::Message appName) const {
 }
 
 I18n::Message Controller::forbiddenAppMessage() const {
-  ExamMode mode = Preferences::SharedPreferences()->examMode();
+  ExamMode mode = SharedPreferences()->examMode();
   if (mode.ruleset() == ExamMode::Ruleset::PressToTest) {
     return I18n::Message::ForbiddenAppInPressToTestMode;
   }

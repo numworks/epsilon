@@ -68,7 +68,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 bool LayoutField::handleDivision() {
   assert(m_divisionCycleWithAns != OMG::Troolean::Unknown);
   bool mixedFractionsEnabled =
-      Preferences::SharedPreferences()->mixedFractionsAreEnabled();
+      Escher::SharedPreferences()->mixedFractionsAreEnabled();
   Ion::Events::Event event = Ion::Events::Division;
 
   if (m_divisionCycleWithAns == OMG::Troolean::True) {

@@ -209,7 +209,7 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
 
   GlobalPreferences* globalPreferences =
       GlobalPreferences::SharedGlobalPreferences();
-  Preferences* preferences = Preferences::SharedPreferences();
+  MathPreferences* preferences = SharedPreferences();
   int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtRow(row);
@@ -353,8 +353,7 @@ bool MainController::hasTestModeCell() const {
   return !hideExamModes() &&
          (examMode == CountryPreferences::AvailableExamModes::All ||
           examMode == CountryPreferences::AvailableExamModes::AmericanAll) &&
-         Preferences::SharedPreferences()->examMode().ruleset() ==
-             ExamMode::Ruleset::Off;
+         SharedPreferences()->examMode().ruleset() == ExamMode::Ruleset::Off;
 }
 
 int MainController::getModelIndex(int index) const {

@@ -3,8 +3,8 @@
 
 #include <escher/blink_timer.h>
 #include <escher/container.h>
+#include <escher/math_preferences.h>
 #include <ion/events.h>
-#include <poincare/preferences.h>
 
 #include "apps_window.h"
 #include "backlight_dimming_timer.h"

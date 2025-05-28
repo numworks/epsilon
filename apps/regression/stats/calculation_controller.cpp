@@ -129,7 +129,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
 
   const Calculation c = calculationForRow(row);
   bool forbidStatsDiagnostics =
-      Preferences::SharedPreferences()->examMode().forbidStatsDiagnostics();
+      SharedPreferences()->examMode().forbidStatsDiagnostics();
   // Calculation title and symbols
   if (type == k_calculationTitleCellType ||
       type == k_calculationSymbolCellType) {

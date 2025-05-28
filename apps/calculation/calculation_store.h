@@ -3,8 +3,8 @@
 
 #include <apps/constant.h>
 #include <apps/shared/expiring_pointer.h>
+#include <escher/math_preferences.h>
 #include <poincare/old/pool_variable_context.h>
-#include <poincare/preferences.h>
 #include <stddef.h>
 
 #include "calculation.h"
@@ -146,7 +146,7 @@ class CalculationStore {
   char* const m_buffer;
   const size_t m_bufferSize;
   int m_numberOfCalculations;
-  Poincare::Preferences m_inUsePreferences;
+  Escher::MathPreferences m_inUsePreferences;
 };
 
 }  // namespace Calculation

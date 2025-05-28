@@ -1,7 +1,7 @@
 #include "explicit_float_parameter_controller.h"
 
 #include <assert.h>
-#include <poincare/preferences.h>
+#include <escher/math_preferences.h>
 
 #include <cmath>
 
@@ -65,7 +65,7 @@ void ExplicitFloatParameterController::fillParameterCellAtRow(int row) {
   char buffer[bufferSize];
   PoincareHelpers::ConvertFloatToTextWithDisplayMode(
       parameterAtIndex(row), buffer, bufferSize, precision,
-      Preferences::SharedPreferences()->displayMode());
+      SharedPreferences()->displayMode());
   textFieldOfCellAtRow(row)->setText(buffer);
 }
 

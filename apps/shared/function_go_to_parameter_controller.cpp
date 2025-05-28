@@ -27,8 +27,8 @@ bool FunctionGoToParameterController::confirmParameterAtIndex(
       (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
   f = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       f, app->localContext(),
-      Poincare::Preferences::SharedPreferences()->numberOfSignificantDigits(),
-      pixelWidth, false);
+      Escher::SharedPreferences()->numberOfSignificantDigits(), pixelWidth,
+      false);
   m_graphController->moveCursorAndCenterIfNeeded(f);
 
   return true;

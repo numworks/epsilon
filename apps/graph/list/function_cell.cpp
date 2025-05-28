@@ -64,9 +64,7 @@ KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
 }
 
 bool AbstractFunctionCell::displayFunctionType() const {
-  return !Poincare::Preferences::SharedPreferences()
-              ->examMode()
-              .forbidGraphDetails();
+  return !Escher::SharedPreferences()->examMode().forbidGraphDetails();
 }
 
 View* AbstractFunctionCell::subviewAtIndex(int index) {

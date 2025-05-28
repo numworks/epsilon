@@ -19,6 +19,7 @@
 
 #include "app.h"
 
+using namespace Escher;
 using namespace Poincare;
 using Poincare::Internal::EquationSolver;
 using namespace Poincare::Internal::KTrees;
@@ -52,8 +53,8 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   Internal::Tree* result = EquationSolver::ExactSolve(
       set, &m_solverContext,
       {
-          .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
-          .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
+          .m_complexFormat = SharedPreferences()->complexFormat(),
+          .m_angleUnit = SharedPreferences()->angleUnit(),
           .m_context = context,
       },
       &error);
@@ -113,8 +114,8 @@ Internal::Tree* SystemOfEquations::prepareEquationForApproximateSolve(
 
   // Reduce and replace user variables if needed
   Internal::ProjectionContext ctx{
-      .m_complexFormat = Preferences::SharedPreferences()->complexFormat(),
-      .m_angleUnit = Preferences::SharedPreferences()->angleUnit(),
+      .m_complexFormat = SharedPreferences()->complexFormat(),
+      .m_angleUnit = SharedPreferences()->angleUnit(),
       .m_symbolic = (m_solverContext.overrideUserVariables
                          ? SymbolicComputation::ReplaceDefinedFunctions
                          : SymbolicComputation::ReplaceDefinedSymbols),
@@ -208,12 +209,11 @@ static void simplifyAndApproximateSolution(
 
 SystemOfEquations::Error SystemOfEquations::registerSolution(
     UserExpression e, Context* context, SolutionType type) {
-  Preferences::AngleUnit angleUnit =
-      Preferences::SharedPreferences()->angleUnit();
+  Preferences::AngleUnit angleUnit = SharedPreferences()->angleUnit();
   UserExpression exact, approximate;
 
   bool forbidExactSolution =
-      Preferences::SharedPreferences()->examMode().forbidExactResults();
+      SharedPreferences()->examMode().forbidExactResults();
   EquationStore* store = m_store;
   int nEquations = store->numberOfDefinedModels();
   int i = 0;

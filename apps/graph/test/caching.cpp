@@ -5,6 +5,7 @@
 
 #include "helper.h"
 
+using namespace Escher;
 using namespace Poincare;
 using namespace Shared;
 
@@ -134,10 +135,8 @@ void assert_cache_stays_valid(const char* definition, float rangeXMin = -5,
 }
 
 QUIZ_CASE(graph_caching) {
-  Preferences::AngleUnit previousAngleUnit =
-      Preferences::SharedPreferences()->angleUnit();
-  Preferences::SharedPreferences()->setAngleUnit(
-      Preferences::AngleUnit::Degree);
+  Preferences::AngleUnit previousAngleUnit = SharedPreferences()->angleUnit();
+  SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
   assert_cache_stays_valid("f(x)=x");
   assert_cache_stays_valid("f(x)=x^2");
   assert_cache_stays_valid("f(x)=sin(x)");
@@ -154,7 +153,7 @@ QUIZ_CASE(graph_caching) {
   assert_cache_stays_valid("r=cos(5θ)", 0.f, 360.f);
   assert_cache_stays_valid("r=cos(5θ)", -1e8f, 1e8f);
 
-  Preferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
+  SharedPreferences()->setAngleUnit(previousAngleUnit);
 }
 
 }  // namespace Graph

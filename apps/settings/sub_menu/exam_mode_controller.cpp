@@ -34,10 +34,9 @@ void ExamModeController::handleResponderChainEvent(ResponderChainEvent event) {
     selectRow(initialSelectedRow());
     m_contentView.reload();
     // We add a message when the mode exam is on
-    m_contentView.setMessage(
-        Preferences::SharedPreferences()->examMode().isActive()
-            ? I18n::Message::ToDeactivateExamMode
-            : I18n::Message::Default);
+    m_contentView.setMessage(SharedPreferences()->examMode().isActive()
+                                 ? I18n::Message::ToDeactivateExamMode
+                                 : I18n::Message::Default);
   } else {
     GenericSubController::handleResponderChainEvent(event);
   }
@@ -46,8 +45,7 @@ void ExamModeController::handleResponderChainEvent(ResponderChainEvent event) {
 int ExamModeController::numberOfRows() const {
   /* Available exam mode depends on the selected country and the active mode.
    * A user could first activate an exam mode and then change the country. */
-  ExamMode::Ruleset rules =
-      Preferences::SharedPreferences()->examMode().ruleset();
+  ExamMode::Ruleset rules = SharedPreferences()->examMode().ruleset();
   switch (rules) {
     case ExamMode::Ruleset::PressToTest:
       // Menu shouldn't be visible
@@ -112,9 +110,9 @@ int ExamModeController::initialSelectedRow() const {
 
 ExamMode ExamModeController::examMode() {
   ExamMode mode(examModeRulesetAtIndex(selectedRow()));
-  if (Preferences::SharedPreferences()->examMode().isActive()) {
+  if (SharedPreferences()->examMode().isActive()) {
     // If the exam mode is already on, this re-activate the same exam mode
-    mode = Preferences::SharedPreferences()->examMode();
+    mode = SharedPreferences()->examMode();
   }
   return mode;
 }
@@ -197,8 +195,7 @@ I18n::Message ExamModeController::examModeActivationMessage(
       std::size(messages) == Ion::ExamMode::k_numberOfModes * messagesPerMode,
       "messages size is invalid");
 
-  ExamMode::Ruleset examMode =
-      Preferences::SharedPreferences()->examMode().ruleset();
+  ExamMode::Ruleset examMode = SharedPreferences()->examMode().ruleset();
   bool isReactivation = (examMode != ExamMode::Ruleset::Off);
   assert(!isReactivation || index == 0);
   // Exam mode is either the selected ruleset or the already activated one.

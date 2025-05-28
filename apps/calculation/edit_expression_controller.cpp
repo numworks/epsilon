@@ -78,7 +78,7 @@ void EditExpressionController::restoreInput() {
   m_contentView.layoutField()->restoreContent(
       snap->cacheBuffer(), *snap->cacheBufferInformationAddress(),
       snap->cacheCursorOffset(), snap->cacheCursorPosition());
-  if (Poincare::Preferences::SharedPreferences()->editionMode() ==
+  if (Escher::SharedPreferences()->editionMode() ==
           Poincare::Preferences::EditionMode::Edition1D &&
       !m_contentView.layoutField()->layout().isCodePointsString()) {
     // Restored input is incompatible with edition mode.

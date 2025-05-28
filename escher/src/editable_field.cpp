@@ -1,5 +1,6 @@
 #include <escher/container.h>
 #include <escher/editable_field.h>
+#include <escher/math_preferences.h>
 #include <escher/metric.h>
 #include <escher/toolbox.h>
 #include <omg/utf8_helper.h>
@@ -49,7 +50,7 @@ bool EditableField::handleXNT(int currentIndex, CodePoint startingXNT) {
 size_t EditableField::getTextFromEvent(Ion::Events::Event event, char* buffer,
                                        size_t bufferSize) {
   if (event == Ion::Events::Log &&
-      Poincare::Preferences::SharedPreferences()->logarithmKeyEvent() ==
+      SharedPreferences()->logarithmKeyEvent() ==
           Poincare::Preferences::LogarithmKeyEvent::WithBaseTen) {
     return strlcpy(buffer, k_logWithBase10, bufferSize);
   }

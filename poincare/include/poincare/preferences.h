@@ -21,10 +21,13 @@ namespace Poincare {
 using ReductionTarget = Internal::ReductionTarget;
 using SymbolicComputation = Internal::SymbolicComputation;
 
-/* Preferences live in the Storage, which does not enforce alignment. The packed
- * attribute ensures the compiler will not emit instructions that require the
- * data to be aligned. */
-class __attribute__((packed)) Preferences final {
+/**
+ *  Preferences live in the Storage, which does not enforce alignment. The
+ * packed attribute ensures the compiler will not emit instructions that require
+ * the data to be aligned.
+ * TODO: Ideally the class should be final, but we need to override it with
+ * Escher::MathPreferences. See comment below. */
+class __attribute__((packed)) Preferences {
   friend Ion::Storage::FileSystem;
   friend PreferencesTestBuilder;
   friend OMG::GlobalBox<Poincare::Preferences>;
@@ -132,53 +135,6 @@ class __attribute__((packed)) Preferences final {
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols);
 
-  /* WARNING: The following methods should not be called in Poincare
-   * EditionMode, AngleUnit, ComplexFormat, PrintFloatMode and
-   * NumberOfSignificantDigits should not be stored in Poincaré's Preferences,
-   * and rather be passed to methods signatures.
-   * The refactor wasn't tackled yet but none of them is currently called in
-   * Poincaré. To ensure this, they are forbidden in PoincareJS (which doesn't
-   * need them)
-   * TODO_PCJ: Get rid of them entirely */
-#ifndef TARGET_POINCARE_JS
-  CalculationPreferences calculationPreferences() const {
-    return m_calculationPreferences;
-  }
-  AngleUnit angleUnit() const { return m_calculationPreferences.angleUnit; }
-  void setAngleUnit(AngleUnit angleUnit) {
-    m_calculationPreferences.angleUnit = angleUnit;
-  }
-  PrintFloatMode displayMode() const {
-    return m_calculationPreferences.displayMode;
-  }
-  void setDisplayMode(PrintFloatMode displayMode) {
-    m_calculationPreferences.displayMode = displayMode;
-  }
-  EditionMode editionMode() const {
-    return m_calculationPreferences.editionMode;
-  }
-  void setEditionMode(EditionMode editionMode) {
-    m_calculationPreferences.editionMode = editionMode;
-  }
-  ComplexFormat complexFormat() const {
-    return m_calculationPreferences.complexFormat;
-  }
-  void setComplexFormat(Preferences::ComplexFormat complexFormat) {
-    m_calculationPreferences.complexFormat = complexFormat;
-  }
-  uint8_t numberOfSignificantDigits() const {
-    return m_calculationPreferences.numberOfSignificantDigits;
-  }
-  void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
-    m_calculationPreferences.numberOfSignificantDigits =
-        numberOfSignificantDigits;
-  }
-  uint32_t mathPreferencesCheckSum() const {
-    return (static_cast<uint32_t>(complexFormat()) << 8) +
-           static_cast<uint32_t>(angleUnit());
-  }
-#endif
-
   CombinatoricSymbols combinatoricSymbols() const {
     return m_combinatoricSymbols;
   }
@@ -219,6 +175,57 @@ class __attribute__((packed)) Preferences final {
   bool forceExamModeReload() const { return m_forceExamModeReload; }
   ExamMode examMode() const;
   void setExamMode(ExamMode examMode);
+
+ protected:
+  /* WARNING: The following methods should not be called in Poincare
+   * EditionMode, AngleUnit, ComplexFormat, PrintFloatMode and
+   * NumberOfSignificantDigits should not be stored in Poincaré's Preferences,
+   * and rather be passed to methods signatures.
+   * The refactor wasn't tackled yet but none of them is currently called in
+   * Poincaré. To ensure this, they are forbidden in PoincareJS (which doesn't
+   * need them), and are protected.
+   * An alias class Escher::MathPreferences is provided in Escher to access
+   * these methods, as they are used in Apps and Escher.
+   * See comment in escher/math_preferences.h
+   * TODO_PCJ: Get rid of them entirely */
+#ifndef TARGET_POINCARE_JS
+  CalculationPreferences calculationPreferences() const {
+    return m_calculationPreferences;
+  }
+  AngleUnit angleUnit() const { return m_calculationPreferences.angleUnit; }
+  void setAngleUnit(AngleUnit angleUnit) {
+    m_calculationPreferences.angleUnit = angleUnit;
+  }
+  PrintFloatMode displayMode() const {
+    return m_calculationPreferences.displayMode;
+  }
+  void setDisplayMode(PrintFloatMode displayMode) {
+    m_calculationPreferences.displayMode = displayMode;
+  }
+  EditionMode editionMode() const {
+    return m_calculationPreferences.editionMode;
+  }
+  void setEditionMode(EditionMode editionMode) {
+    m_calculationPreferences.editionMode = editionMode;
+  }
+  ComplexFormat complexFormat() const {
+    return m_calculationPreferences.complexFormat;
+  }
+  void setComplexFormat(Preferences::ComplexFormat complexFormat) {
+    m_calculationPreferences.complexFormat = complexFormat;
+  }
+  uint8_t numberOfSignificantDigits() const {
+    return m_calculationPreferences.numberOfSignificantDigits;
+  }
+  void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
+    m_calculationPreferences.numberOfSignificantDigits =
+        numberOfSignificantDigits;
+  }
+  uint32_t mathPreferencesCheckSum() const {
+    return (static_cast<uint32_t>(complexFormat()) << 8) +
+           static_cast<uint32_t>(angleUnit());
+  }
+#endif
 
  private:
   constexpr static uint8_t k_version = 0;

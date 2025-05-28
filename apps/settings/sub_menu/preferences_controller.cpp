@@ -107,7 +107,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
    * implementing a setter. This would make the code more modular and avoid such
    * hard-to-read if/else blocks. */
 
-  Preferences* preferences = Preferences::SharedPreferences();
+  MathPreferences* preferences = SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
   } else if (message == I18n::Message::DisplayMode) {
@@ -137,7 +137,7 @@ int PreferencesController::valueIndexForPreference(
    * implementing a getter. This would make the code more modular and avoid such
    * hard-to-read if/else blocks. */
 
-  Preferences* preferences = Preferences::SharedPreferences();
+  MathPreferences* preferences = SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();
   }

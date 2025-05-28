@@ -6,8 +6,9 @@
 
 #include "helper.h"
 
-using namespace Shared;
+using namespace Escher;
 using namespace Poincare;
+using namespace Shared;
 
 namespace Graph {
 
@@ -158,7 +159,7 @@ void assert_same_function_properties(const char* expression1,
 }
 
 QUIZ_CASE(graph_function_properties) {
-  Poincare::Preferences::SharedPreferences()->setComplexFormat(
+  Escher::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
 
   // Test the plot type under different Press-to-test parameters :
@@ -177,8 +178,7 @@ QUIZ_CASE(graph_function_properties) {
                    .setFlag(PTTFlags::ForbidImplicitPlots)),
   };
 
-  Preferences::SharedPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Cartesian);
+  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Cartesian);
 
   constexpr static FunctionProperties k_linearProperties = FunctionProperties{
       .m_caption = I18n::Message::LinearType,
@@ -191,8 +191,8 @@ QUIZ_CASE(graph_function_properties) {
           ContinuousFunctionProperties::CurveParameterType::Line};
 
   for (const ExamMode examMode : examModes) {
-    if (Preferences::SharedPreferences()->examMode() != examMode) {
-      Preferences::SharedPreferences()->setExamMode(examMode);
+    if (SharedPreferences()->examMode() != examMode) {
+      SharedPreferences()->setExamMode(examMode);
     }
     bool noInequations = examMode.forbidInequalityGraphing();
     bool noImplicitPlot = examMode.forbidImplicitPlots();
@@ -886,33 +886,31 @@ QUIZ_CASE(graph_function_properties) {
         k_undefinedParametric);
     // === Updated complex format ===
 
-    assert(Poincare::Preferences::SharedPreferences()->complexFormat() ==
+    assert(Escher::SharedPreferences()->complexFormat() ==
            Preferences::ComplexFormat::Cartesian);
     assert_check_function_properties("y=(√(-1))^2", k_horizontalLineProperties);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);
     assert_check_function_properties("y=im(i*x+1)", k_lineProperties);
 
-    Poincare::Preferences::SharedPreferences()->setComplexFormat(
+    Escher::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Real);
     assert_check_function_properties("y=(√(-1))^2", k_unhandledCartesian);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);
     assert_check_function_properties("y=im(i*x+1)", k_lineProperties);
     // Restore cartesian complex format
-    Poincare::Preferences::SharedPreferences()->setComplexFormat(
+    Escher::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Cartesian);
 
     // Restore an Off exam mode.
-    if (Preferences::SharedPreferences()->examMode() !=
-        ExamMode(ExamMode::Ruleset::Off)) {
-      Preferences::SharedPreferences()->setExamMode(
-          ExamMode(ExamMode::Ruleset::Off));
+    if (SharedPreferences()->examMode() != ExamMode(ExamMode::Ruleset::Off)) {
+      SharedPreferences()->setExamMode(ExamMode(ExamMode::Ruleset::Off));
     }
   }
 
   // Restore default preferences
-  Poincare::Preferences::SharedPreferences()->setComplexFormat(
+  Escher::SharedPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
 }
 

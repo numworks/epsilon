@@ -1,8 +1,8 @@
 #include "title_bar_view.h"
 
+#include <escher/math_preferences.h>
 #include <escher/palette.h>
 #include <omg/unreachable.h>
-#include <poincare/preferences.h>
 #include <poincare/print.h>
 
 #include <array>
@@ -88,7 +88,7 @@ void TitleBarView::layoutSubviews(bool force) {
                  Metric::TitleBarExternHorizontalMargin,
              (bounds().height() - batterySize.height()) / 2, batterySize),
       force);
-  if (Preferences::SharedPreferences()->examMode().isActive()) {
+  if (SharedPreferences()->examMode().isActive()) {
     setChildFrame(
         &m_examModeIconView,
         KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight) / 2,
@@ -99,7 +99,7 @@ void TitleBarView::layoutSubviews(bool force) {
                          k_examTextWidth, bounds().height() - k_verticalShift),
                   force);
     I18n::Message examModeMessage;
-    switch (Preferences::SharedPreferences()->examMode().ruleset()) {
+    switch (SharedPreferences()->examMode().ruleset()) {
       case ExamMode::Ruleset::English:
         examModeMessage = I18n::Message::ExamModeTitleBarUK;
         break;
@@ -145,7 +145,7 @@ void TitleBarView::layoutSubviews(bool force) {
 
 void TitleBarView::refreshPreferences() {
   char buffer[k_preferenceTextSize];
-  Preferences* preferences = Preferences::SharedPreferences();
+  MathPreferences* preferences = SharedPreferences();
   // Display Sci/ or Eng/ if the print float mode is not decimal
   const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
   I18n::Message floatModeMessage =

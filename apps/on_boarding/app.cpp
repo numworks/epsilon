@@ -32,8 +32,7 @@ void App::didBecomeActive(Window* window) {
   ::App::didBecomeActive(window);
   // Disable spinner
   Ion::Events::setSpinner(false);
-  if (Poincare::Preferences::SharedPreferences()->examMode().color() ==
-      KDColorBlack) {
+  if (Escher::SharedPreferences()->examMode().color() == KDColorBlack) {
     // Forbid standby in exam mode with led since it disables the led
     Ion::Power::selectStandbyMode(true);
   }

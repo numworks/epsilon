@@ -10,6 +10,7 @@
 
 #include <cmath>
 
+using namespace Escher;
 using namespace Poincare;
 
 namespace Shared {
@@ -86,10 +87,10 @@ void check_sum_of_sequence_between_bounds(double result, double start,
   Sequence* seq = addSequence(store, type, definition, condition1, condition2,
                               sequenceContext);
 
-  double sum = seq->sumBetweenBounds(start, end, sequenceContext)
-                   .approximateToRealScalar<double>(
-                       Preferences::SharedPreferences()->angleUnit(),
-                       seq->complexFormat(sequenceContext));
+  double sum =
+      seq->sumBetweenBounds(start, end, sequenceContext)
+          .approximateToRealScalar<double>(SharedPreferences()->angleUnit(),
+                                           seq->complexFormat(sequenceContext));
   assert_roughly_equal(sum, result);
 
   store->removeAll();

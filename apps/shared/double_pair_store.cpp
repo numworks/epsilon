@@ -143,8 +143,8 @@ bool DoublePairStore::setList(List& list, int series, int i, bool delayUpdate,
     }
     double evaluation =
         list.cloneChildAtIndex(j).approximateToRealScalar<double>(
-            Preferences::SharedPreferences()->angleUnit(),
-            Preferences::SharedPreferences()->complexFormat(), m_context);
+            Escher::SharedPreferences()->angleUnit(),
+            Escher::SharedPreferences()->complexFormat(), m_context);
     set(evaluation, series, i, j, true, setOtherColumnToDefaultIfEmpty);
   }
   return updateSeries(series, delayUpdate);

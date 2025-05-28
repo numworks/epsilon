@@ -2,6 +2,7 @@
 #define REGRESSION_MODEL_H
 
 #include <escher/i18n.h>
+#include <escher/math_preferences.h>
 #include <poincare/expression.h>
 #include <poincare/statistics/regression.h>
 #include <poincare/statistics/statistics.h>
@@ -71,8 +72,8 @@ class Model {
  private:
   bool useLinearMxpbForm() const;
   const Poincare::Regression* regression() const {
-    return Poincare::Regression::Get(
-        m_type, Poincare::Preferences::SharedPreferences()->angleUnit());
+    return Poincare::Regression::Get(m_type,
+                                     Escher::SharedPreferences()->angleUnit());
   }
   Type m_type;
 };

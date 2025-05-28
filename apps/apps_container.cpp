@@ -45,12 +45,12 @@ AppsContainer::AppsContainer()
 
 int AppsContainer::numberOfExternalApps() {
   return Ion::ExternalApps::numberOfApps(
-      Preferences::SharedPreferences()->examMode().isActive());
+      SharedPreferences()->examMode().isActive());
 }
 
 Ion::ExternalApps::App AppsContainer::externalAppAtIndex(int index) {
-  for (Ion::ExternalApps::App a : Ion::ExternalApps::Apps(
-           Preferences::SharedPreferences()->examMode().isActive())) {
+  for (Ion::ExternalApps::App a :
+       Ion::ExternalApps::Apps(SharedPreferences()->examMode().isActive())) {
     if (index == 0) {
       return a;
     }
@@ -89,7 +89,7 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
   }
 
   // Apply exam mode and delete data
-  Preferences::SharedPreferences()->setExamMode(targetExamMode);
+  SharedPreferences()->setExamMode(targetExamMode);
 
   // Update storage records (functions, variables, python scripts)
   if (targetExamMode == previousMode) {
@@ -191,9 +191,9 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
       return false;
     }
-    if (!Preferences::SharedPreferences()->examMode().isActive()) {
+    if (!SharedPreferences()->examMode().isActive()) {
       openDFU(true);
-      if (Preferences::SharedPreferences()->examMode().isActive()) {
+      if (SharedPreferences()->examMode().isActive()) {
         Ion::USB::enable();
       }
     } else if (m_firstUSBEnumeration) {
@@ -290,8 +290,8 @@ void AppsContainer::handleRunException() {
 
 void AppsContainer::run() {
   window()->setAbsoluteFrame(Ion::Display::Rect);
-  Preferences* poincarePreferences = Preferences::SharedPreferences();
-  Poincare::ExamMode examMode = poincarePreferences->examMode();
+  MathPreferences* preferences = SharedPreferences();
+  Poincare::ExamMode examMode = preferences->examMode();
   if (examMode.isActive()) {
     setExamMode(examMode,
                 Poincare::ExamMode(Ion::ExamMode::Ruleset::Uninitialized));
@@ -455,7 +455,7 @@ void AppsContainer::resetShiftAlphaStatus() {
 }
 
 void AppsContainer::openDFU(bool blocking) {
-  Preferences* preferences = Preferences::SharedPreferences();
+  MathPreferences* preferences = SharedPreferences();
   App::Snapshot* activeSnapshot =
       (activeApp() == nullptr ? homeAppSnapshot() : activeApp()->snapshot());
   Poincare::ExamMode activeExamMode = preferences->examMode();

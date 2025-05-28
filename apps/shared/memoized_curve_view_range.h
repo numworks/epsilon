@@ -32,8 +32,8 @@ class MemoizedCurveViewRange : public CurveViewRange {
   float yMax() const override { return m_range.yMax(); }
   /* A null gridUnit value means a limit has been changed without updating the
    * grid unit. */
-  Poincare::ExpressionOrFloat xGridUnit() final;
-  Poincare::ExpressionOrFloat yGridUnit() final;
+  Poincare::ExpressionOrFloat xGridUnit() override final;
+  Poincare::ExpressionOrFloat yGridUnit() override final;
 
   virtual void setXRange(float min, float max) { protectedSetXRange(min, max); }
   virtual void setYRange(float min, float max) { protectedSetYRange(min, max); }

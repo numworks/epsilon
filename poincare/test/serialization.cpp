@@ -7,7 +7,7 @@
 #include "helper.h"
 
 void assert_expression_serializes_to(
-    Poincare::SystemExpression expression, const char* serialization,
+    Poincare::UserExpression expression, const char* serialization,
     bool compactMode = false,
     Poincare::Preferences::PrintFloatMode printFloatMode =
         Poincare::Preferences::PrintFloatMode::Decimal,
@@ -39,11 +39,11 @@ void assert_expression_or_float_serializes_to(
 QUIZ_CASE(pcj_expression_serialization) {
   using namespace Poincare;
   assert_expression_serializes_to(
-      SystemExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "(2×π)/3", false);
+      UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "(2×π)/3", false);
   assert_expression_serializes_to(
-      SystemExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "2π/3", true);
+      UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "2π/3", true);
   assert_expression_serializes_to(
-      SystemExpression::Builder(KMult(KDiv(π_e, 2_e), e_e)), "π/2×e", true);
+      UserExpression::Builder(KMult(KDiv(π_e, 2_e), e_e)), "π/2×e", true);
 }
 
 QUIZ_CASE(pcj_expression_or_float_serialization) {
@@ -58,24 +58,24 @@ QUIZ_CASE(pcj_expression_or_float_serialization) {
       Preferences::ShortNumberOfSignificantDigits);
 
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(SystemExpression::Builder(π_e)), "π");
+      ExpressionOrFloat(UserExpression::Builder(π_e)), "π");
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(SystemExpression::Builder(KDiv(KMult(2_e, π_e), 3_e))),
+      ExpressionOrFloat(UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e))),
       "2π/3");
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(SystemExpression::Builder(KDiv(KMult(2_e, π_e), 30_e))),
+      ExpressionOrFloat(UserExpression::Builder(KDiv(KMult(2_e, π_e), 30_e))),
       "2π/30");
   assert_expression_or_float_serializes_to(
       ExpressionOrFloat(
-          SystemExpression::Builder(KMult(-1_e, KDiv(KMult(2_e, π_e), 30_e)))),
+          UserExpression::Builder(KMult(-1_e, KDiv(KMult(2_e, π_e), 30_e)))),
       "-0.2094395");
 
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(SystemExpression::Builder(KDiv(KMult(10_e, π_e), 3_e))),
+      ExpressionOrFloat(UserExpression::Builder(KDiv(KMult(10_e, π_e), 3_e))),
       "", Preferences::PrintFloatMode::Decimal,
       Preferences::VeryLargeNumberOfSignificantDigits, 4);
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(SystemExpression::Builder(KDiv(KMult(10_e, π_e), 3_e))),
+      ExpressionOrFloat(UserExpression::Builder(KDiv(KMult(10_e, π_e), 3_e))),
       "10.5", Preferences::PrintFloatMode::Decimal,
       Preferences::VeryShortNumberOfSignificantDigits, 4);
 }

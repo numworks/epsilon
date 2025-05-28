@@ -5,6 +5,8 @@
 #include <limits.h>
 #include <poincare/src/memory/pattern_matching.h>
 
+#include <cmath>
+
 #include "dependency.h"
 #include "k_tree.h"
 #include "rational.h"
@@ -144,7 +146,8 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       break;
     }
     case Type::Dep:
-      return result + GetTrueMetric(Dependency::Main(e), reductionTarget);
+      /* Cost of dependency is ignored */
+      return GetTrueMetric(Dependency::Main(e), reductionTarget);
     case Type::Trig:
     case Type::ATrig: {
       if (willBeBeautified &&
@@ -212,14 +215,17 @@ float Metric::GetMetric(const Tree* e, ReductionTarget reductionTarget) {
   if (CannotBeReducedFurther(e)) {
     return k_perfectMetric;
   }
-  /* Use full tree for metric computation instead of main as the dep node should
-   * still count towards increasing the metric */
   float metric = GetTrueMetric(e, reductionTarget);
   assert(metric > k_perfectMetric);
-  float size = std::min(static_cast<float>(e->treeSize()), 100.f);
-  /* Adding a small factor linear with size, with maximum of 1/8.
-   * The goal is to prefer smaller Tree when they have the same metric. */
-  metric += size * k_defaultMetric / 800.f;
+  /* Adding a small factor based on size, from 0 to 1/8.
+   * The goal is to prefer smaller tree when they have the same metric.
+   * This factor should be smaller than the minimal difference in metric
+   * i.e.:
+   * GetMetric(Type::IntegerPosShort) - GetMetric(Type::Zero)
+   * = 1/2 - 1/3 = 1/6 */
+  float sizeFactor =
+      M_2_PI * std::atan(static_cast<float>(e->treeSize()) / 100.f);
+  metric += sizeFactor * k_defaultMetric / 8.f;
   return metric;
 }
 

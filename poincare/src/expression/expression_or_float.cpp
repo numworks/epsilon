@@ -49,9 +49,9 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
                                floatDisplayMode, maxGlyphLength);
   }
   UserExpression exactExpression = expression();
-  float approximate = exactExpression.approximateToRealScalar<float>();
+  float approximation = approximate<float>(exactExpression);
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
-          exactExpression, UserExpression::Builder(approximate))) {
+          exactExpression, UserExpression::Builder(approximation))) {
     /* For now, a "large enough" buffer is allocated for the exact expression
      * serialization. */
     /*/ TODO: the size of this buffer should be reduced. To safely achieve this,
@@ -71,7 +71,7 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
       return exactTextLengths;
     }
   }
-  return SerializeFloatValue(approximate, buffer, numberOfSignificantDigits,
+  return SerializeFloatValue(approximation, buffer, numberOfSignificantDigits,
                              floatDisplayMode, maxGlyphLength);
 }
 

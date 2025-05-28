@@ -78,4 +78,8 @@ QUIZ_CASE(pcj_expression_or_float_serialization) {
       ExpressionOrFloat(UserExpression::Builder(KDiv(KMult(10_e, π_e), 3_e))),
       "10.5", Preferences::PrintFloatMode::Decimal,
       Preferences::VeryShortNumberOfSignificantDigits, 4);
+
+  assert_expression_or_float_serializes_to(
+      ExpressionOrFloat(UserExpression::Builder(KSin(KSin(KSin(KSin(1_e)))))),
+      "0.6275718", Preferences::PrintFloatMode::Decimal);
 }

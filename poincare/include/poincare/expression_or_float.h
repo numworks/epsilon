@@ -4,6 +4,7 @@
 #include <span>
 
 #include "poincare/expression.h"
+#include "poincare/preferences.h"
 #include "poincare/print_float.h"
 #include "poincare/src/memory/tree.h"
 
@@ -78,7 +79,7 @@ class ExpressionOrFloat {
   template <typename T>
   T approximation() const {
     return hasNoExactExpression() ? static_cast<T>(m_value)
-                                  : expression().approximateToRealScalar<T>();
+                                  : approximate<T>(expression());
   }
 
   bool operator==(const ExpressionOrFloat& other) const {
@@ -95,6 +96,14 @@ class ExpressionOrFloat {
   }
 
  private:
+  /* The approximation parameters are fixed to Radian and Real in the context of
+   * ExpressionOrFloat. */
+  template <typename T>
+  static T approximate(UserExpression expression) {
+    return expression.approximateToRealScalar<T>(
+        Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real);
+  }
+
   /* The Pool (where Expressions are stored) is not preserved when the current
    * App is closed. So for the expression to be preserved when closing and
    * reopening the App, ExpressionOrFloat needs to store the expression Tree in

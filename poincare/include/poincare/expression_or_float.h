@@ -16,7 +16,7 @@ namespace Poincare {
  * condition that only the float variant of ExpressionOrFloat is used. */
 class ExpressionOrFloat {
  public:
-  constexpr static size_t k_maxExpressionSize = 20;
+  constexpr static size_t k_maxExpressionSize = 8;
 
   constexpr static size_t k_numberOfSignificantDigits =
       PrintFloat::k_floatNumberOfSignificantDigits;
@@ -26,10 +26,13 @@ class ExpressionOrFloat {
   ExpressionOrFloat() = default;
 
   explicit ExpressionOrFloat(Expression expression) {
-    if (!expression.isUninitialized()) {
-      /*  TODO: ensure on the caller side that the passed expression is not
-       * bigger than than k_maxExpressionSize */
-      assert(expression.tree()->treeSize() <= k_maxExpressionSize);
+    if (expression.isUninitialized()) {
+      return;
+    }
+    if (expression.tree()->treeSize() > k_maxExpressionSize) {
+      // Fallback on storing the approximation if the expression is too large
+      m_value = approximate<float>(expression);
+    } else {
       expression.tree()->copyTreeTo(m_buffer.data());
     }
   }

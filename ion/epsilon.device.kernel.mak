@@ -68,6 +68,7 @@ $(addprefix device/core/device/kernel/drivers/, \
   authentication_$(_ion_mcu_suffix).cpp:+allow3rdparty \
   authentication_strict.cpp:-allow3rdparty \
   battery.cpp \
+  battery_level_$(_ion_mcu_suffix).cpp \
   board.cpp \
   board_$(_ion_mcu_suffix).cpp \
   board_third_party.cpp:+allow3rdparty \

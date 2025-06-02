@@ -52,6 +52,11 @@ class MemoizedCurveViewRange : public CurveViewRange {
                                          : CurveViewRange::yGridUnit();
   }
 
+  /* Reset both the x and y axes grid units to an empty value. This will trigger
+   * the grid unit recomputation when the grid unit member variable is accessed
+   * later on. */
+  void resetGridUnit() { m_gridUnit = {}; }
+
   void protectedSetXRange(float min, float max,
                           float limit = Poincare::Range1D<float>::k_maxFloat) {
     privateSet(min, max, limit, true);

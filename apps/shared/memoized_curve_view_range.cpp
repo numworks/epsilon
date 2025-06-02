@@ -41,9 +41,10 @@ void MemoizedCurveViewRange::privateSet(float min, float max, float limit,
                                         bool x) {
   Range1D<float>* range1D = x ? m_range.x() : m_range.y();
   *range1D = Range1D<float>::ValidRangeBetween(min, max, limit);
-  /* We must reset both grid units because with normalization
-   * they can depend on each other. */
-  m_gridUnit = {};
+  /* The grid unit has to be recomputed when the range changes. We must reset
+   * both grid units because with normalization they can depend on each other.
+   */
+  resetGridUnit();
 }
 
 }  // namespace Shared

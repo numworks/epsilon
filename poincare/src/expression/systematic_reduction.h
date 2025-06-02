@@ -11,7 +11,7 @@ class SystematicReduction {
  public:
   static bool DeepReduce(Tree* e);
   static bool ShallowReduce(Tree* e);
-  static bool ShallowReduceMaybeList(Tree* e, bool forceListCheck);
+  static bool ShallowReduceMaybeList(Tree* e, bool forceDeepListCheck);
 
  private:
   /* [isList] is an optimisation, if in doubt, leave to [false].

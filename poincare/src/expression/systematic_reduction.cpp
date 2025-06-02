@@ -81,6 +81,7 @@ bool SystematicReduction::ShallowReduceAux(Tree* e, bool isList) {
   int lenBefore = Dimension::ListLength(e);
 #endif
   bool changed = SystematicReduction::BubbleUpFromChildren(e, isList);
+  // If this assert triggered, maybe you should use [ShallowReduceMaybeList] ?
   assert(Dimension::IsList(e) == isList);
   /* See comment at the start of file for why we do not call [Switch] when a
    * list is present */
@@ -112,11 +113,11 @@ bool SystematicReduction::ShallowReduce(Tree* e) {
   return ShallowReduceMaybeList(e, false);
 }
 
-bool SystematicReduction::ShallowReduceMaybeList(Tree* e, bool forceListCheck) {
-  if (forceListCheck) {
-    return ShallowReduceAux(e, Dimension::IsList(e));
-  }
-  return ShallowReduceAux(e, TypeBlock::ProducesList(e->type()));
+bool SystematicReduction::ShallowReduceMaybeList(Tree* e,
+                                                 bool forceDeepListCheck) {
+  return ShallowReduceAux(e, forceDeepListCheck
+                                 ? Dimension::IsList(e)
+                                 : TypeBlock::ProducesList(e->type()));
 }
 
 bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool isList) {

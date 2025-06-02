@@ -3,8 +3,10 @@
 #include <poincare/preferences.h>
 #include <poincare/solver/roots.h>
 #include <poincare/solver/solver.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_helpers.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/solver/zoom.h>
@@ -247,8 +249,12 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
              e, t, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
 }
 
-Range1D<double> EquationSolver::AutomaticInterval(const Tree* preparedEquation,
-                                                  Context* context) {
+Range1D<double> EquationSolver::AutomaticInterval(
+    const Tree* equation, Context* context,
+    ProjectionContext projectionContext) {
+  Tree* preparedEquation =
+      PrepareEquationForApproximateSolve(equation, context, projectionContext);
+
   /* Interval search is done in float to gain some time, since precision does
    * not matter as much as for the actual solve. The computed interval is
    * stretched and converted to double because the actual solver works on
@@ -287,14 +293,18 @@ Range1D<double> EquationSolver::AutomaticInterval(const Tree* preparedEquation,
     finalRange.stretchEachBoundBy(securityMargin,
                                   k_maxFloatForAutoApproximateSolvingRange);
   }
+  preparedEquation->removeTree();
   return {finalRange.min(), finalRange.max()};
 }
 
-Tree* EquationSolver::ApproximateSolve(const Tree* preparedEquation,
-                                       Range1D<double> range,
-                                       Context* context) {
+Tree* EquationSolver::ApproximateSolve(const Tree* equation,
+                                       Range1D<double> range, Context* context,
+                                       ProjectionContext projectionContext) {
   assert(context->type == Type::GeneralMonovariable);
   assert(context->variables.numberOfVariables() == 1);
+
+  Tree* preparedEquation =
+      PrepareEquationForApproximateSolve(equation, context, projectionContext);
 
   assert(range.isValid());
   Solver<double> solver =
@@ -323,6 +333,8 @@ Tree* EquationSolver::ApproximateSolve(const Tree* preparedEquation,
       }
     }
   }
+
+  preparedEquation->removeTree();
   return resultList;
 }
 
@@ -774,6 +786,34 @@ Tree* EquationSolver::GetNextParameterSymbol(size_t* parameterIndex,
     symbol->removeTree();
   }
   OMG::unreachable();
+}
+
+Tree* EquationSolver::PrepareEquationForApproximateSolve(
+    const Tree* equation, Context* context,
+    ProjectionContext projectionContext) {
+  Tree* equationClone = equation->cloneTree();
+
+  projectionContext.m_symbolic =
+      (context->overrideUserVariables
+           ? SymbolicComputation::ReplaceDefinedFunctions
+           : SymbolicComputation::ReplaceDefinedSymbols);
+  // Reduce and replace user variables if needed
+  Projection::UpdateComplexFormatWithExpressionInput(equationClone,
+                                                     &projectionContext);
+
+  context->complexFormat = projectionContext.m_complexFormat;
+  Simplification::ProjectAndReduce(equationClone, &projectionContext);
+
+  // Find remaining variable
+  Internal::Tree* variables = Variables::GetUserSymbols(equationClone);
+  assert(variables->numberOfChildren() == 1);
+  context->variables.fillWithList(variables);
+  variables->removeTree();
+
+  Approximation::PrepareFunctionForApproximation(
+      equationClone, context->variables.variable(0),
+      Preferences::ComplexFormat::Real);
+  return equationClone;
 }
 
 }  // namespace Poincare::Internal

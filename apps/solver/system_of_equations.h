@@ -102,8 +102,6 @@ class SystemOfEquations {
         const Poincare::Internal::Tree* symbol) override;
   };
 
-  Poincare::Internal::Tree* prepareEquationForApproximateSolve(
-      Poincare::Context* context);
   Error solveLinearSystem(Poincare::Context* context,
                           Poincare::SystemExpression* simplifiedEquations);
   Error solvePolynomial(Poincare::Context* context,

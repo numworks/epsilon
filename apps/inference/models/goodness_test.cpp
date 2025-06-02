@@ -80,8 +80,13 @@ bool GoodnessTest::authorizedParameterAtIndex(double p, int i) const {
 }
 
 bool GoodnessTest::validateInputs(int pageIndex) {
-  return Poincare::Inference::SignificanceTest::Chi2::AreGoodnessInputsValid(
-      &m_observedValuesData, &m_expectedValuesData);
+  bool validInputs =
+      Poincare::Inference::SignificanceTest::Chi2::AreGoodnessInputsValid(
+          &m_observedValuesData, &m_expectedValuesData);
+  assert(!validInputs ||
+         Poincare::Inference::SignificanceTest::Chi2::IsDegreesOfFreedomValid(
+             m_degreesOfFreedom));
+  return validInputs;
 }
 
 int GoodnessTest::numberOfDataRows() const {

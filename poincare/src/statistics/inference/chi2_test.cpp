@@ -66,7 +66,7 @@ bool AreGoodnessInputsValid(const DataTable* observedValues,
   int maxCol = observedValues->numberOfColumns();
 
   if (maxCol != 1 || maxCol != expectedValues->numberOfColumns() ||
-      maxRow < 1 || maxRow > expectedValues->numberOfRows()) {
+      maxRow <= 1 || maxRow > expectedValues->numberOfRows()) {
     return false;
   }
   for (int row = 0; row < maxRow; row++) {

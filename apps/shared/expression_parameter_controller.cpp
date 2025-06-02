@@ -30,9 +30,17 @@ void ExpressionParameterController::fillCellForRow(HighlightCell* cell,
 // TODO: factorize duplicate code with FloatParameterController
 bool ExpressionParameterController::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
-  char* text = textField->draftText();
+  const char* text = textField->draftText();
+  UserExpression parsedExpression =
+      Expression::Parse(text, App::app()->localContext());
+  if (!parsedExpression.isUninitialized() &&
+      !Poincare::Dimension(parsedExpression).isScalar()) {
+    App::app()->displayWarning(I18n::Message::UndefinedValue);
+    return false;
+  }
   ExpressionOrFloat currentExpression =
-      ExpressionOrFloat(Expression::Parse(text, App::app()->localContext()));
+      parsedExpression.isUninitialized() ? ExpressionOrFloat()
+                                         : ExpressionOrFloat(parsedExpression);
   if (hasUndefinedValue(text, currentExpression, innerSelectedRow()) ||
       !setParameterAtIndex(innerSelectedRow(), currentExpression)) {
     return false;

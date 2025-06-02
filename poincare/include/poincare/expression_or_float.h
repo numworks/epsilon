@@ -26,9 +26,8 @@ class ExpressionOrFloat {
   ExpressionOrFloat() = default;
 
   explicit ExpressionOrFloat(Expression expression) {
-    if (expression.isUninitialized()) {
-      return;
-    }
+    assert(!expression.isUninitialized() &&
+           Poincare::Dimension(expression).isScalar());
     if (expression.tree()->treeSize() > k_maxExpressionSize) {
       // Fallback on storing the approximation if the expression is too large
       m_value = approximate<float>(expression);
@@ -103,11 +102,8 @@ class ExpressionOrFloat {
    * ExpressionOrFloat. */
   template <typename T>
   static T approximate(UserExpression expression) {
-    if (!Poincare::Dimension(expression).isScalar()) {
-      /* REFACTOR: std::numeric_limits<T>::quiet_NaN() when std::numeric_limits
-       * is ported to the codebase */
-      return NAN;
-    }
+    assert(!expression.isUninitialized() &&
+           Poincare::Dimension(expression).isScalar());
     return expression.approximateToRealScalar<T>(
         Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real);
   }

@@ -21,9 +21,10 @@ inline int defaultConvertFloatToText(double value, char buffer[],
 template <typename TextHolder>
 void PrintValueInTextHolder(
     double value, TextHolder* textField, bool forbidNAN = true,
-    bool forbidNegative = false,
+    bool forbidNegative = false, bool forbidZero = false,
     int precision = Poincare::Preferences::ShortNumberOfSignificantDigits) {
-  if ((forbidNAN && std::isnan(value)) || (forbidNegative && value < 0.0)) {
+  if ((forbidNAN && std::isnan(value)) || (forbidNegative && value < 0.0) ||
+      (forbidZero && value == 0.)) {
     textField->setText("");
   } else {
     constexpr int bufferSize = Constants::k_shortBufferSize;

@@ -112,7 +112,7 @@ void InputStoreController::viewWillAppear() {
     InputCategoricalCell<LayoutView>& c = m_extraParameters[i];
     int param = indexOfEditedParameterAtIndex(indexOfFirstExtraParameter() + i);
     PrintValueInTextHolder(
-        m_inference->parameterAtIndex(param), c.textField(), true, true,
+        m_inference->parameterAtIndex(param), c.textField(), true, true, false,
         Poincare::Preferences::VeryLargeNumberOfSignificantDigits);
     c.setMessages(m_inference->parameterSymbolAtIndex(param),
                   m_inference->parameterDefinitionAtIndex(param));

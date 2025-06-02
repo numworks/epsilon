@@ -18,7 +18,7 @@ InputGoodnessController::InputGoodnessController(
 
 void InputGoodnessController::updateDegreeOfFreedomCell() {
   PrintValueInTextHolder(m_inference->degreeOfFreedom(),
-                         m_degreeOfFreedomCell.textField(), true, true);
+                         m_degreeOfFreedomCell.textField(), true, true, true);
 }
 
 void InputGoodnessController::viewWillAppear() {

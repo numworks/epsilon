@@ -76,12 +76,14 @@ class EquationSolver {
   static Tree* ExactSolve(const Tree* equationsSet, Context* context,
                           ProjectionContext projectionContext, Error* error);
 
-  static Range1D<double> AutomaticInterval(const Tree* preparedEquation,
-                                           Context* context);
+  static Range1D<double> AutomaticInterval(const Tree* equation,
+                                           Context* context,
+                                           ProjectionContext projectionContext);
 
   // Return a List of DoubleFloat
-  static Tree* ApproximateSolve(const Tree* preparedEquation,
-                                Range1D<double> range, Context* context);
+  static Tree* ApproximateSolve(const Tree* equation, Range1D<double> range,
+                                Context* context,
+                                ProjectionContext projectionContext);
 
  private:
   // Return list of exact solutions.
@@ -112,6 +114,10 @@ class EquationSolver {
   static Tree* GetNextParameterSymbol(size_t* parameterIndex,
                                       uint32_t usedParameterIndices,
                                       Poincare::Context* context);
+
+  static Tree* PrepareEquationForApproximateSolve(
+      const Tree* equation, Context* context,
+      ProjectionContext projectionContext);
 };
 
 }  // namespace Poincare::Internal

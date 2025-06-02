@@ -955,6 +955,7 @@ QUIZ_CASE(calculation_additional_results) {
                                            &store);
   assertCalculationAdditionalResultTypeHas("-sin(\")", {}, &globalContext,
                                            &store);
+  assertCalculationAdditionalResultTypeHas("i=0", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("30°+2_rad", {.unit = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("45_rad", {.unit = true},

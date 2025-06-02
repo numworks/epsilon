@@ -27,7 +27,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   }
   if (HasComplex(exactOutput, calculationPreferences, context)) {
     // Cf comment in HasComplex
-    return AdditionalResultsType{.empty = true};
+    return NoAdditionalResult;
   }
   bool inputHasAngleUnit, exactHasAngleUnit, approximateHasAngleUnit;
   bool inputHasUnit = input.hasUnit(true, &inputHasAngleUnit);
@@ -41,7 +41,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
      * units but not output (ex: L/(L/3)), we don't display any results. */
     return exactHasUnit && HasUnit(exactOutput, calculationPreferences)
                ? AdditionalResultsType{.unit = true}
-               : AdditionalResultsType{.empty = true};
+               : NoAdditionalResult;
   }
   if (HasDirectTrigo(input, exactOutput, calculationPreferences, context)) {
     return AdditionalResultsType{.directTrigonometry = true};
@@ -56,12 +56,15 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
   }
   if (approximateOutput.dimension().isMatrix()) {
     return HasMatrix(approximateOutput) ? AdditionalResultsType{.matrix = true}
-                                        : AdditionalResultsType{.empty = true};
+                                        : NoAdditionalResult;
   }
   if (exactHasAngleUnit || approximateHasAngleUnit) {
     return exactHasAngleUnit && HasUnit(exactOutput, calculationPreferences)
                ? AdditionalResultsType{.unit = true}
-               : AdditionalResultsType{.empty = true};
+               : NoAdditionalResult;
+  }
+  if (exactOutput.isBoolean()) {
+    return NoAdditionalResult;
   }
   AdditionalResultsType type = {};
   if (!inputHasAngleUnit && HasFunction(input, approximateOutput)) {
@@ -238,6 +241,7 @@ bool AdditionalResultsType::HasFunction(
   assert(!approximateOutput.isUndefined());
   assert(!approximateOutput.hasUnit());
   assert(!approximateOutput.isMatrix());
+  assert(!approximateOutput.isBoolean());
   return !approximateOutput.isNonReal() && !approximateOutput.isPoint() &&
          AdditionalResultsHelper::expressionIsInterestingFunction(input);
 }

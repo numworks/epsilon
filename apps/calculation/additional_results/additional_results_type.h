@@ -81,6 +81,8 @@ struct AdditionalResultsType {
   static bool HasRational(const Poincare::UserExpression);
 };
 
+constexpr AdditionalResultsType NoAdditionalResult{.empty = true};
+
 }  // namespace Calculation
 
 #endif

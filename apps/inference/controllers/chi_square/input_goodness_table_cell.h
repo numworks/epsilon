@@ -18,10 +18,6 @@ class InputGoodnessTableCell : public DoubleColumnTableCell {
                          InputGoodnessController* inputGoodnessController,
                          Escher::ScrollViewDelegate* scrollViewDelegate);
 
-  // Responder
-  bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
-                                 Ion::Events::Event event) override;
-
   bool recomputeDimensionsAndReload(bool forceReloadTable = false,
                                     bool forceReloadPage = false,
                                     bool forceReloadCell = false) override;

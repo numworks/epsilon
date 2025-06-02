@@ -20,20 +20,6 @@ InputGoodnessTableCell::InputGoodnessTableCell(
   }
 }
 
-bool InputGoodnessTableCell::textFieldDidFinishEditing(
-    Escher::AbstractTextField* textField, Ion::Events::Event event) {
-  int previousDegreeOfFreedom = inference()->computeDegreesOfFreedom();
-  if (InputCategoricalTableCell::textFieldDidFinishEditing(textField, event)) {
-    int newDegreeOfFreedom = inference()->computeDegreesOfFreedom();
-    if (previousDegreeOfFreedom != newDegreeOfFreedom) {
-      inference()->setDegreeOfFreedom(newDegreeOfFreedom);
-      m_inputGoodnessController->updateDegreeOfFreedomCell();
-    }
-    return true;
-  }
-  return false;
-}
-
 bool InputGoodnessTableCell::recomputeDimensionsAndReload(
     bool forceReloadTable, bool forceReloadPage, bool forceReloadCell) {
   // Update degree of freedom if Number of non-empty rows changed

@@ -145,6 +145,10 @@ class TypeBlock : public Block {
     return !(POINCARE_MATRIX && isAMatrixOrContainsMatricesAsChildren());
   }
 
+  static bool ProducesList(Type type) {
+    return IsOfType(type, {Type::List, Type::ListSequence, Type::RandIntNoRep});
+  }
+
   // Their next metaBlock contains the numberOfChildren
   constexpr static bool IsNAry(Type type) {
     return NumberOfChildrenOrTag(type) == NARY ||

@@ -47,7 +47,7 @@ bool SystematicReduction::DeepReduceAux(Tree* e, bool* isList) {
   /* This should be all the nodes capable of producing a list.
    * If a UserFunction is present here, it means there is no definition for it,
    * we assumes it does not involves lists */
-  if (e->isList() || e->isListSequence() || e->isRandIntNoRep()) {
+  if (TypeBlock::ProducesList(e->type())) {
     *isList = true;
   } else if (e->isListToScalar() || e->isDim()) {
     assert(hasListChild || e->isDim());
@@ -116,8 +116,7 @@ bool SystematicReduction::ShallowReduceMaybeList(Tree* e, bool forceListCheck) {
   if (forceListCheck) {
     return ShallowReduceAux(e, Dimension::IsList(e));
   }
-  bool isList = (e->isList() || e->isListSequence() || e->isRandIntNoRep());
-  return ShallowReduceAux(e, isList);
+  return ShallowReduceAux(e, TypeBlock::ProducesList(e->type()));
 }
 
 bool SystematicReduction::BubbleUpFromChildren(Tree* e, bool isList) {

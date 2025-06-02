@@ -19,16 +19,16 @@
 
 namespace Poincare::Internal {
 
-/* [isList] explaination:
+/* [isList] explanation:
  * Because we do not want to think of list in SystematicReduction steps, some
- * reduction lose the list dimension when applied to the wrong tree.
+ * reductions lose the list dimension when applied to the wrong tree.
  * (e.g.: 0^KA => dep(0, {0^KA})).
- * But checking [Dimenstion::IsList] on each descendent of tree is too costly.
+ * But checking [Dimenstion::IsList] on each descendant of tree is too costly.
  * Instead we keep track of the presence of lists inside the tree manually.
  * [isList] is set to [true] when a list or a list-producing function (e.g.:
  * RandIntNoRep) is encountered, or when a child is a list and the node is not a
  * [isListToScalar].
- * This allows [ShallowReduceAux] to not call [Switch] when a list is present */
+ * This allows [ShallowReduceAux] not to call [Switch] when a list is present */
 
 bool SystematicReduction::DeepReduceAux(Tree* e, bool* isList) {
   if (e->isDepList()) {

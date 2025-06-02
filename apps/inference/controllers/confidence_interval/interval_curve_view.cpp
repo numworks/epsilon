@@ -56,29 +56,29 @@ void IntervalAxis::reloadAxis(AbstractPlotView* plotView, OMG::Axis axis) {
   }
 }
 
-ExpressionOrFloat IntervalAxis::tickPosition(int i,
+ExpressionOrFloat IntervalAxis::tickPosition(int labelIndex,
                                              const AbstractPlotView* plotView,
                                              OMG::Axis) const {
-  if (i >= static_cast<int>(k_numberOfLabels)) {
+  if (labelIndex >= static_cast<int>(k_numberOfLabels)) {
     return ExpressionOrFloat(NAN);
   }
-  return ExpressionOrFloat(m_ticks[i]);
+  return ExpressionOrFloat(m_ticks[labelIndex]);
 }
 
-void IntervalAxis::drawLabel(int i, float t, const AbstractPlotView* plotView,
-                             KDContext* ctx, KDRect rect, OMG::Axis axis,
-                             KDColor color) const {
+void IntervalAxis::drawLabel(int labelIndex, float t,
+                             const AbstractPlotView* plotView, KDContext* ctx,
+                             KDRect rect, OMG::Axis axis, KDColor color) const {
   // Take the opposite of m_positionLeftLabel for the right label.
   AbstractPlotView::RelativePosition xRelative =
-      i == 1 &&
+      labelIndex == 1 &&
               m_positionOfLeftLabel != AbstractPlotView::RelativePosition::There
           ? (m_positionOfLeftLabel == AbstractPlotView::RelativePosition::After
                  ? AbstractPlotView::RelativePosition::Before
                  : AbstractPlotView::RelativePosition::After)
           : m_positionOfLeftLabel;
-  plotView->drawLabel(ctx, rect, m_labels[i], Coordinate2D<float>(t, 0.f),
-                      xRelative, AbstractPlotView::RelativePosition::After,
-                      color);
+  plotView->drawLabel(ctx, rect, m_labels[labelIndex],
+                      Coordinate2D<float>(t, 0.f), xRelative,
+                      AbstractPlotView::RelativePosition::After, color);
 }
 
 // IntervalPlotPolicy

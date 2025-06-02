@@ -19,10 +19,11 @@ class IntervalAxis : public Shared::PlotPolicy::SimpleAxis {
 
   void reloadAxis(Shared::AbstractPlotView* plotView, OMG::Axis) override;
   Poincare::ExpressionOrFloat tickPosition(
-      int i, const Shared::AbstractPlotView* plotView,
+      int labelIndex, const Shared::AbstractPlotView* plotView,
       OMG::Axis) const override;
-  void drawLabel(int i, float t, const Shared::AbstractPlotView* plotView,
-                 KDContext* ctx, KDRect rect, OMG::Axis axis,
+  void drawLabel(int labelIndex, float t,
+                 const Shared::AbstractPlotView* plotView, KDContext* ctx,
+                 KDRect rect, OMG::Axis axis,
                  KDColor color = k_color) const override;
 
  private:

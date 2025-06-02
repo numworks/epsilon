@@ -260,8 +260,8 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
   bool drawTicks =
       !(axis == OMG::Axis::Vertical && plotView->range()->xMin() >= 0.f);
   float tMax = plotView->rangeMax(axis) + plotView->pixelLength(axis);
-  int i = 0;
-  float t = static_cast<float>(tickPosition(i, plotView, axis));
+  int labelIndex = 0;
+  float t = static_cast<float>(tickPosition(labelIndex, plotView, axis));
   /* maxNumberOfTicks is there to ensure that we do not draw too much ticks
    * when reaching limit cases. For example, tMax = 1.0E+8 and tickStep = 0.5,
    * when t == tMax, increasing if by tickstep will give:
@@ -273,23 +273,23 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
                              static_cast<float>(tickStep(plotView, axis)))) +
                          1;
   assert(maxNumberOfTicks >= 2);
-  while (t < tMax && i < maxNumberOfTicks) {
+  while (t < tMax && labelIndex < maxNumberOfTicks) {
     if (drawTicks) {
       plotView->drawTick(ctx, rect, axis, t, k_color);
     }
-    drawLabel(i, t, plotView, ctx, rect, axis);
-    i++;
-    if (i >= static_cast<int>(numberOfLabels())) {
+    drawLabel(labelIndex, t, plotView, ctx, rect, axis);
+    labelIndex++;
+    if (labelIndex >= static_cast<int>(numberOfLabels())) {
       break;
     }
-    t = float(tickPosition(i, plotView, axis));
+    t = float(tickPosition(labelIndex, plotView, axis));
   }
 }
 
-ExpressionOrFloat SimpleAxis::tickPosition(int i,
+ExpressionOrFloat SimpleAxis::tickPosition(int labelIndex,
                                            const AbstractPlotView* plotView,
                                            OMG::Axis axis) const {
-  assert(i < static_cast<int>(numberOfLabels()));
+  assert(labelIndex < static_cast<int>(numberOfLabels()));
   ExpressionOrFloat step = tickStep(plotView, axis);
   float tMin = plotView->rangeMin(axis);
   float approximateStep = static_cast<float>(step);
@@ -297,13 +297,13 @@ ExpressionOrFloat SimpleAxis::tickPosition(int i,
          static_cast<float>(INT_MAX));
   int indexOfOrigin = static_cast<int>(std::floor(-tMin / approximateStep));
   if (step.hasNoExactExpression()) {
-    return ExpressionOrFloat(static_cast<float>(i - indexOfOrigin) *
+    return ExpressionOrFloat(static_cast<float>(labelIndex - indexOfOrigin) *
                              static_cast<float>(step));
   }
   return ExpressionOrFloat(
-      UserExpression::Create(KMult(KA, KB),
-                             {.KA = step.expression(),
-                              .KB = UserExpression::Builder(i - indexOfOrigin)})
+      UserExpression::Create(KMult(KA, KB), {.KA = step.expression(),
+                                             .KB = UserExpression::Builder(
+                                                 labelIndex - indexOfOrigin)})
           .cloneAndTrySimplify({}));
 }
 
@@ -326,33 +326,36 @@ void AbstractLabeledAxis::reloadAxis(AbstractPlotView* plotView,
                                      OMG::Axis axis) {
   size_t n = numberOfLabels();
   m_lastDrawnRect = KDRectZero;
-  for (size_t i = 0; i < n; i++) {
-    computeLabel(i, plotView, axis);
+  for (size_t labelIndex = 0; labelIndex < n; labelIndex++) {
+    computeLabel(labelIndex, plotView, axis);
   }
   computeLabelsRelativePosition(plotView, axis);
 }
 
-int AbstractLabeledAxis::computeLabel(int i, const AbstractPlotView* plotView,
+int AbstractLabeledAxis::computeLabel(int labelIndex,
+                                      const AbstractPlotView* plotView,
                                       OMG::Axis axis) {
-  assert(i < static_cast<int>(numberOfLabels()));
-  ExpressionOrFloat t = tickPosition(i, plotView, axis);
+  assert(labelIndex < static_cast<int>(numberOfLabels()));
+  ExpressionOrFloat t = tickPosition(labelIndex, plotView, axis);
   PrintFloat::TextLengths textLengths = t.writeText(
-      {mutableLabel(i), k_labelBufferMaxSize}, k_numberSignificantDigits,
-      Preferences::PrintFloatMode::Decimal, k_labelBufferMaxGlyphLength);
-  assert(strlen(mutableLabel(i)) == textLengths.CharLength);
+      {mutableLabel(labelIndex), k_labelBufferMaxSize},
+      k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal,
+      k_labelBufferMaxGlyphLength);
+  assert(strlen(mutableLabel(labelIndex)) == textLengths.CharLength);
   return static_cast<int>(textLengths.GlyphLength);
 }
 
-bool AbstractLabeledAxis::labelWillBeDisplayed(int i, KDRect rect) const {
-  assert(i < static_cast<int>(numberOfLabels()));
+bool AbstractLabeledAxis::labelWillBeDisplayed(int labelIndex,
+                                               KDRect rect) const {
+  assert(labelIndex < static_cast<int>(numberOfLabels()));
   return !rect.intersects(m_lastDrawnRect);
 }
 
-KDRect AbstractLabeledAxis::labelRect(int i, float t,
+KDRect AbstractLabeledAxis::labelRect(int labelIndex, float t,
                                       const AbstractPlotView* plotView,
                                       OMG::Axis axis) const {
-  assert(i < static_cast<int>(numberOfLabels()));
-  const char* text = label(i);
+  assert(labelIndex < static_cast<int>(numberOfLabels()));
+  const char* text = label(labelIndex);
   if (m_hidden || text[0] == '\0') {
     return KDRectZero;
   }
@@ -384,15 +387,15 @@ KDRect AbstractLabeledAxis::labelRect(int i, float t,
   return plotView->labelRect(text, xy, xRelative, yRelative);
 }
 
-void AbstractLabeledAxis::drawLabel(int i, float t,
+void AbstractLabeledAxis::drawLabel(int labelIndex, float t,
                                     const AbstractPlotView* plotView,
                                     KDContext* ctx, KDRect rect, OMG::Axis axis,
                                     KDColor color) const {
-  assert(i < static_cast<int>(numberOfLabels()));
-  const char* text = label(i);
-  KDRect thisLabelRect = labelRect(i, t, plotView, axis);
+  assert(labelIndex < static_cast<int>(numberOfLabels()));
+  const char* text = label(labelIndex);
+  KDRect thisLabelRect = labelRect(labelIndex, t, plotView, axis);
   if (thisLabelRect.intersects(rect) &&
-      labelWillBeDisplayed(i, thisLabelRect)) {
+      labelWillBeDisplayed(labelIndex, thisLabelRect)) {
     m_lastDrawnRect = thisLabelRect.paddedWith(AbstractPlotView::k_labelMargin);
     plotView->drawLabel(ctx, rect, text, thisLabelRect, color);
   }
@@ -425,9 +428,10 @@ void AbstractLabeledAxis::computeLabelsRelativePosition(
   } else {
     KDCoordinate labelsWidth = 0;
     int n = numberOfLabels();
-    for (int i = 0; i < n; i++) {
-      KDCoordinate w =
-          KDFont::Font(AbstractPlotView::k_font)->stringSize(label(i)).width();
+    for (int labelIndex = 0; labelIndex < n; labelIndex++) {
+      KDCoordinate w = KDFont::Font(AbstractPlotView::k_font)
+                           ->stringSize(label(labelIndex))
+                           .width();
       if (w > labelsWidth) {
         labelsWidth = w;
       }

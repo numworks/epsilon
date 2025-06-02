@@ -27,13 +27,14 @@ class FunctionAxis : public Shared::PlotPolicy::LabeledAxis<N> {
   constexpr static KDColor k_specialLabelsColor = Escher::Palette::Red;
 
   // AbstractLabeledAxis
-  bool labelWillBeDisplayed(int i, KDRect labelRect) const override;
+  bool labelWillBeDisplayed(size_t labelIndex, KDRect labelRect) const override;
 
   // LabeledAxis
   size_t numberOfLabels() const override { return N + 1; }
-  char* mutableLabel(int i) override {
-    return i == N ? m_specialLabel
-                  : Shared::PlotPolicy::LabeledAxis<N>::mutableLabel(i);
+  char* mutableLabel(size_t labelIndex) override {
+    return labelIndex == N
+               ? m_specialLabel
+               : Shared::PlotPolicy::LabeledAxis<N>::mutableLabel(labelIndex);
   }
 
   mutable KDRect m_specialLabelRect;

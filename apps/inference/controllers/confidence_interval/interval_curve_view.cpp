@@ -56,16 +56,16 @@ void IntervalAxis::reloadAxis(AbstractPlotView* plotView, OMG::Axis axis) {
   }
 }
 
-ExpressionOrFloat IntervalAxis::tickPosition(int labelIndex,
+ExpressionOrFloat IntervalAxis::tickPosition(size_t labelIndex,
                                              const AbstractPlotView* plotView,
                                              OMG::Axis) const {
-  if (labelIndex >= static_cast<int>(k_numberOfLabels)) {
+  if (labelIndex >= k_numberOfLabels) {
     return ExpressionOrFloat(NAN);
   }
   return ExpressionOrFloat(m_ticks[labelIndex]);
 }
 
-void IntervalAxis::drawLabel(int labelIndex, float t,
+void IntervalAxis::drawLabel(size_t labelIndex, float t,
                              const AbstractPlotView* plotView, KDContext* ctx,
                              KDRect rect, OMG::Axis axis, KDColor color) const {
   // Take the opposite of m_positionLeftLabel for the right label.

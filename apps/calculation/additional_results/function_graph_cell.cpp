@@ -55,10 +55,11 @@ void FunctionAxis<N>::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
 }
 
 template <size_t N>
-bool FunctionAxis<N>::labelWillBeDisplayed(int i, KDRect labelRect) const {
-  return i == N ||
-         (!labelRect.intersects(m_specialLabelRect) &&
-          PlotPolicy::LabeledAxis<N>::labelWillBeDisplayed(i, labelRect));
+bool FunctionAxis<N>::labelWillBeDisplayed(size_t labelIndex,
+                                           KDRect labelRect) const {
+  return labelIndex == N || (!labelRect.intersects(m_specialLabelRect) &&
+                             PlotPolicy::LabeledAxis<N>::labelWillBeDisplayed(
+                                 labelIndex, labelRect));
 }
 
 void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
@@ -88,10 +89,10 @@ void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
 
 template bool
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfYLabels>::
-    labelWillBeDisplayed(int i, KDRect labelRect) const;
+    labelWillBeDisplayed(size_t labelIndex, KDRect labelRect) const;
 template bool
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::
-    labelWillBeDisplayed(int i, KDRect labelRect) const;
+    labelWillBeDisplayed(size_t labelIndex, KDRect labelRect) const;
 template void
 FunctionAxis<PlotPolicy::AbstractLabeledAxis::k_maxNumberOfXLabels>::reloadAxis(
     AbstractPlotView* plotView, OMG::Axis axis);

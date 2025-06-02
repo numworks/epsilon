@@ -118,14 +118,15 @@ class SimpleAxis : public PlainAxis {
   virtual size_t numberOfLabels() const = 0;
 
   virtual Poincare::ExpressionOrFloat tickPosition(
-      int labelIndex, const AbstractPlotView* plotView, OMG::Axis axis) const;
+      size_t labelIndex, const AbstractPlotView* plotView,
+      OMG::Axis axis) const;
   virtual Poincare::ExpressionOrFloat tickStep(const AbstractPlotView* plotView,
                                                OMG::Axis axis) const;
-  virtual void drawLabel(int labelIndex, float t,
+  virtual void drawLabel(size_t labelIndex, float t,
                          const AbstractPlotView* plotView, KDContext* ctx,
                          KDRect rect, OMG::Axis axis,
                          KDColor color = k_color) const {
-    assert(labelIndex < static_cast<int>(numberOfLabels()));
+    assert(labelIndex < numberOfLabels());
   }
 };
 
@@ -152,17 +153,17 @@ class AbstractLabeledAxis : public SimpleAxis {
   void setHidden(bool hide) { m_hidden = hide; }
 
  protected:
-  virtual char* mutableLabel(int labelIndex) = 0;
-  const char* label(int labelIndex) const {
-    assert(labelIndex < static_cast<int>(numberOfLabels()));
+  virtual char* mutableLabel(size_t labelIndex) = 0;
+  const char* label(size_t labelIndex) const {
+    assert(labelIndex < numberOfLabels());
     return const_cast<AbstractLabeledAxis*>(this)->mutableLabel(labelIndex);
   }
-  virtual int computeLabel(int labelIndex, const AbstractPlotView* plotView,
+  virtual int computeLabel(size_t labelIndex, const AbstractPlotView* plotView,
                            OMG::Axis axis);
-  virtual bool labelWillBeDisplayed(int labelIndex, KDRect rect) const;
-  KDRect labelRect(int labelIndex, float t, const AbstractPlotView* plotView,
+  virtual bool labelWillBeDisplayed(size_t labelIndex, KDRect rect) const;
+  KDRect labelRect(size_t labelIndex, float t, const AbstractPlotView* plotView,
                    OMG::Axis axis) const;
-  void drawLabel(int labelIndex, float t, const AbstractPlotView* plotView,
+  void drawLabel(size_t labelIndex, float t, const AbstractPlotView* plotView,
                  KDContext* ctx, KDRect rect, OMG::Axis axis,
                  KDColor color = k_color) const override;
   void computeLabelsRelativePosition(const AbstractPlotView* plotView,
@@ -179,15 +180,15 @@ template <size_t N>
 class LabeledAxis : public AbstractLabeledAxis {
  public:
   LabeledAxis() {
-    for (int labelIndex = 0; labelIndex < N; labelIndex++) {
+    for (size_t labelIndex = 0; labelIndex < N; labelIndex++) {
       m_labels[labelIndex][0] = 0;
     }
   }
 
  protected:
   size_t numberOfLabels() const override { return N; }
-  char* mutableLabel(int labelIndex) override {
-    assert(labelIndex < static_cast<int>(N));
+  char* mutableLabel(size_t labelIndex) override {
+    assert(labelIndex < N);
     return m_labels[labelIndex];
   }
   char m_labels[N][k_labelBufferMaxSize];

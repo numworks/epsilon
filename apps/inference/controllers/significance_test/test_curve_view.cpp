@@ -140,22 +140,23 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
 
 // TestXAxis
 
-void TestXAxis::drawLabel(int i, float t, const AbstractPlotView* plotView,
-                          KDContext* ctx, KDRect rect, OMG::Axis axis,
-                          KDColor color) const {
+void TestXAxis::drawLabel(size_t labelIndex, float t,
+                          const AbstractPlotView* plotView, KDContext* ctx,
+                          KDRect rect, OMG::Axis axis, KDColor color) const {
   assert(axis == OMG::Axis::Horizontal);
   const TestCurveView* testCurveView =
       static_cast<const TestCurveView*>(plotView);
   float z = testCurveView->test()->testCriticalValue();
-  KDCoordinate labelWidth =
-      KDFont::Font(AbstractPlotView::k_font)->stringSize(label(i)).width();
+  KDCoordinate labelWidth = KDFont::Font(AbstractPlotView::k_font)
+                                ->stringSize(label(labelIndex))
+                                .width();
   KDCoordinate zWidth = KDFont::GlyphSize(AbstractPlotView::k_font).width() *
                         TestPlotPolicy::k_zLabelMaxGlyphLength;
   if (std::fabs(z - t) >
       plotView->pixelWidth() * 0.5f * (labelWidth + zWidth)) {
     /* Label does not overlap with z label, it can be drawn */
-    PlotPolicy::HorizontalLabeledAxis::drawLabel(i, t, plotView, ctx, rect,
-                                                 axis);
+    PlotPolicy::HorizontalLabeledAxis::drawLabel(labelIndex, t, plotView, ctx,
+                                                 rect, axis);
   }
 }
 

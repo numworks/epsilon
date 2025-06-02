@@ -19,9 +19,9 @@ class LabeledAxisWithOptionalPercent
 
  protected:
   Poincare::ExpressionOrFloat tickStep(const Shared::AbstractPlotView* plotView,
-                                       OMG::Axis axis) const;
-  int computeLabel(int i, const Shared::AbstractPlotView* plotView,
-                   OMG::Axis axis);
+                                       OMG::Axis axis) const override;
+  int computeLabel(size_t labelIndex, const Shared::AbstractPlotView* plotView,
+                   OMG::Axis axis) override;
 
   PlotController* m_plotController;
 };

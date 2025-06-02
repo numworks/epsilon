@@ -140,7 +140,7 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
   Poincare::Context* context = App::app()->localContext();
   ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
   float gridUnit =
-      2.0 * interactiveCurveViewRange()->xGridUnit().approximation<float>();
+      2.f * interactiveCurveViewRange()->xGridUnit().approximation<float>();
   float xMin = interactiveCurveViewRange()->xMin();
   float xMax = interactiveCurveViewRange()->xMax();
 

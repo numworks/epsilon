@@ -103,6 +103,11 @@ class ExpressionOrFloat {
    * ExpressionOrFloat. */
   template <typename T>
   static T approximate(UserExpression expression) {
+    if (!Poincare::Dimension(expression).isScalar()) {
+      /* REFACTOR: std::numeric_limits<T>::quiet_NaN() when std::numeric_limits
+       * is ported to the codebase */
+      return NAN;
+    }
     return expression.approximateToRealScalar<T>(
         Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real);
   }

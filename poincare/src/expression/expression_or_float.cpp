@@ -42,14 +42,16 @@ PrintFloat::TextLengths SerializeExactExpression(
 }
 
 PrintFloat::TextLengths ExpressionOrFloat::writeText(
-    std::span<char> buffer, size_t numberOfSignificantDigits,
+    std::span<char> buffer, ApproximationParameters approximationParameters,
+    size_t numberOfSignificantDigits,
     Preferences::PrintFloatMode floatDisplayMode, size_t maxGlyphLength) const {
   if (hasNoExactExpression()) {
     return SerializeFloatValue(m_value, buffer, numberOfSignificantDigits,
                                floatDisplayMode, maxGlyphLength);
   }
   UserExpression exactExpression = expression();
-  float approximation = Approximate<float>(exactExpression);
+  float approximation =
+      Approximate<float>(exactExpression, approximationParameters);
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
           exactExpression, UserExpression::Builder(approximation))) {
     /* For now, a "large enough" buffer is allocated for the exact expression

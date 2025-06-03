@@ -3,9 +3,12 @@
 
 #include <apps/global_preferences.h>
 #include <poincare/expression.h>
+#include <poincare/expression_or_float.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/projection.h>
+
+#include <type_traits>
 
 namespace Shared {
 
@@ -150,6 +153,39 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
       buffer, context,
       Poincare::Preferences::SharedPreferences()->complexFormat(),
       Poincare::Preferences::SharedPreferences()->angleUnit());
+}
+
+// Conversions to float
+
+/* Some controllers are templated to handle a parameter which has either a
+ * numeric float type, or Poincare::ExpressionOrFloat (which is a union
+ * containing either a Poincare::Expression or a float). A conversion function
+ * to a float is needed to take either a direct float type or a
+ * Poincare::ExpressionOrFloat as an input. See the ParameterType and FloatType
+ * type definitions in the SingleRangeController class for a concrete example.
+ */
+
+// Float conversion for direct float types
+
+inline float ToFloat(float value) { return value; }
+inline double ToFloat(double value) { return value; }
+
+// Float conversion for Poincare::ExpressionOrFloat
+
+/* When an ExpressionOrFloat contains the expression variant, converting this
+ * expression to a float is an approximation. The Poincare approximation API
+ * requires an angle unit and a complex format in order to approximate the
+ * expression. In the Epsilon apps context, the approximation should use the
+ * user settings for angle unit and complex format. */
+
+template <typename FloatType = float>
+FloatType ToFloat(Poincare::ExpressionOrFloat value) {
+  static_assert(std::is_floating_point_v<FloatType>);
+  return value.approximation<FloatType>(
+      Poincare::ExpressionOrFloat::ApproximationParameters{
+          .angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
+          .complexFormat =
+              Poincare::Preferences::SharedPreferences()->complexFormat()});
 }
 
 }  // namespace PoincareHelpers

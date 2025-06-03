@@ -8,6 +8,7 @@
 #include <cmath>
 
 #include "../app.h"
+#include "apps/shared/poincare_helpers.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -38,7 +39,7 @@ I18n::Message IntegralGraphController::legendMessageAtStep(Step step) {
 double IntegralGraphController::cursorNextStep(
     double x, OMG::HorizontalDirection direction) {
   return x + (direction.isRight() ? 1.0 : -1.0) *
-                 static_cast<double>(m_graphRange->xGridUnit()) /
+                 PoincareHelpers::ToFloat<double>(m_graphRange->xGridUnit()) /
                  static_cast<double>(k_numberOfCursorStepsInGradUnit);
 }
 

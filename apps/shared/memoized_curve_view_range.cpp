@@ -6,6 +6,7 @@
 #include <cmath>
 
 #include "poincare/pool_object.h"
+#include "poincare_helpers.h"
 
 using namespace Poincare;
 
@@ -21,19 +22,19 @@ MemoizedCurveViewRange::MemoizedCurveViewRange()
               Range1D<float>::k_defaultHalfLength) {}
 
 ExpressionOrFloat MemoizedCurveViewRange::xGridUnit() {
-  if (std::isnan(static_cast<float>(m_gridUnit(OMG::Axis::Horizontal)))) {
+  if (std::isnan(PoincareHelpers::ToFloat(m_gridUnit(OMG::Axis::Horizontal)))) {
     m_gridUnit.set(OMG::Axis::Horizontal,
                    computeGridUnit(OMG::Axis::Horizontal));
   }
-  assert(static_cast<float>(m_gridUnit(OMG::Axis::Horizontal)) != 0.0f);
+  assert(PoincareHelpers::ToFloat(m_gridUnit(OMG::Axis::Horizontal)) != 0.0f);
   return m_gridUnit(OMG::Axis::Horizontal);
 }
 
 ExpressionOrFloat MemoizedCurveViewRange::yGridUnit() {
-  if (std::isnan(static_cast<float>(m_gridUnit(OMG::Axis::Vertical)))) {
+  if (std::isnan(PoincareHelpers::ToFloat(m_gridUnit(OMG::Axis::Vertical)))) {
     m_gridUnit.set(OMG::Axis::Vertical, computeGridUnit(OMG::Axis::Vertical));
   }
-  assert(static_cast<float>(m_gridUnit(OMG::Axis::Vertical)) != 0.0f);
+  assert(PoincareHelpers::ToFloat(m_gridUnit(OMG::Axis::Vertical)) != 0.0f);
   return m_gridUnit(OMG::Axis::Vertical);
 }
 

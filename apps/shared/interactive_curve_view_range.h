@@ -10,6 +10,7 @@
 #include "interactive_curve_view_range_delegate.h"
 #include "memoized_curve_view_range.h"
 #include "poincare/expression_or_float.h"
+#include "poincare_helpers.h"
 
 namespace Shared {
 
@@ -57,7 +58,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
   }
   void setGridUnitAuto() { privateSetUserGridUnit({}, {}); }
   bool gridUnitAuto(OMG::Axis axis) const {
-    return std::isnan(float(m_userGridUnit(axis)));
+    return std::isnan(PoincareHelpers::ToFloat(m_userGridUnit(axis)));
   }
   AxisInformation<GridUnitType> userGridUnit() const { return m_userGridUnit; }
   void setUserGridUnit(AxisInformation<GridUnitType> userGridUnit) {

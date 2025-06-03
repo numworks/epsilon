@@ -57,7 +57,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
   double step;
   double t = tCursor;
   if (function->properties().isCartesian()) {
-    step = static_cast<double>(range->xGridUnit()) / numberOfStepsInGradUnit;
+    step = PoincareHelpers::ToFloat<double>(range->xGridUnit()) /
+           numberOfStepsInGradUnit;
     double slopeMultiplicator = 1.0;
     if (function->canDisplayDerivative()) {
       // Use the local derivative to slow down the cursor's step if needed
@@ -77,8 +78,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
         }
       }
       // If yGridUnit is twice xGridUnit, visible slope is halved
-      slope *= range->xGridUnit().approximation<double>() /
-               range->yGridUnit().approximation<double>();
+      slope *= PoincareHelpers::ToFloat<double>(range->xGridUnit()) /
+               PoincareHelpers::ToFloat<double>(range->yGridUnit());
       /* Assuming the curve is a straight line of slope s. To move the cursor at
        * a fixed distance d along the line, the actual x-axis distance needed is
        * d' = d * cos(θ) with θ the angle between the line and the x-axis.

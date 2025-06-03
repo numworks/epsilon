@@ -5,8 +5,11 @@
 
 #include <cmath>
 
+#include "poincare/expression_or_float.h"
 #include "poincare/k_tree.h"
+#include "poincare/preferences.h"
 #include "poincare/src/expression/projection.h"
+#include "poincare_helpers.h"
 
 using namespace Poincare;
 
@@ -34,11 +37,11 @@ void WithCartesianGrid::DrawGridLines(const AbstractPlotView* plotView,
   if (parallel == OMG::Axis::Horizontal) {
     min = range->yMin();
     max = range->yMax();
-    step = range->yGridUnit().approximation<float>();
+    step = PoincareHelpers::ToFloat(range->yGridUnit());
   } else {
     min = range->xMin();
     max = range->xMax();
-    step = range->xGridUnit().approximation<float>();
+    step = PoincareHelpers::ToFloat(range->xGridUnit());
   }
 
   int iMin = min / step;
@@ -113,7 +116,7 @@ void WithPolarGrid::DrawPolarCircles(const AbstractPlotView* plotView,
 
   ComputeRadiusBounds(plotView, rect, &radiusMin, &radiusMax);
 
-  float step = plotView->range()->xGridUnit().approximation<float>();
+  float step = PoincareHelpers::ToFloat(plotView->range()->xGridUnit());
 
   for (int i = std::max<int>(1, std::floor(radiusMin / step));
        i <= std::ceil(radiusMax / step); i++) {
@@ -266,16 +269,18 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
    *  t = tMax + tickStep, but tMax + tickStep == tMax because of float
    * precision. Which means the condition t <= tMax in the loop will never be
    * reached. */
-  int maxNumberOfTicks = static_cast<int>(std::ceil(
-                             (tMax - plotView->rangeMin(axis)) /
-                             static_cast<float>(tickStep(plotView, axis)))) +
-                         1;
+  int maxNumberOfTicks =
+      static_cast<int>(
+          std::ceil((tMax - plotView->rangeMin(axis)) /
+                    PoincareHelpers::ToFloat(tickStep(plotView, axis)))) +
+      1;
   assert(maxNumberOfTicks >= 2);
   for (size_t labelIndex = 0;
        labelIndex <
        std::min(static_cast<size_t>(maxNumberOfTicks), numberOfLabels());
        labelIndex++) {
-    float t = static_cast<float>(tickPosition(labelIndex, plotView, axis));
+    float t =
+        PoincareHelpers::ToFloat(tickPosition(labelIndex, plotView, axis));
     if (t >= tMax) {
       break;
     }
@@ -292,14 +297,14 @@ ExpressionOrFloat SimpleAxis::tickPosition(size_t labelIndex,
   assert(labelIndex < numberOfLabels());
   ExpressionOrFloat step = tickStep(plotView, axis);
   float tMin = plotView->rangeMin(axis);
-  float approximateStep = static_cast<float>(step);
+  float approximateStep = PoincareHelpers::ToFloat(step);
   assert(std::fabs(std::round(tMin / approximateStep)) <
          static_cast<float>(INT_MAX));
   int indexOfOrigin = static_cast<int>(std::floor(-tMin / approximateStep));
   if (step.hasNoExactExpression()) {
     return ExpressionOrFloat(
         static_cast<float>(static_cast<int>(labelIndex) - indexOfOrigin) *
-        static_cast<float>(step));
+        PoincareHelpers::ToFloat(step));
   }
   return ExpressionOrFloat(
       UserExpression::Create(
@@ -315,7 +320,7 @@ ExpressionOrFloat SimpleAxis::tickStep(const AbstractPlotView* plotView,
                                ? plotView->range()->xGridUnit()
                                : plotView->range()->yGridUnit();
   if (step.hasNoExactExpression()) {
-    return ExpressionOrFloat(2.f * static_cast<float>(step));
+    return ExpressionOrFloat(2.f * PoincareHelpers::ToFloat(step));
   }
   return ExpressionOrFloat(
       UserExpression::Create(KMult(2_e, KA), {.KA = step.expression()})
@@ -340,7 +345,10 @@ int AbstractLabeledAxis::computeLabel(size_t labelIndex,
   assert(labelIndex < numberOfLabels());
   ExpressionOrFloat t = tickPosition(labelIndex, plotView, axis);
   PrintFloat::TextLengths textLengths = t.writeText(
-      {mutableLabel(labelIndex), k_labelBufferMaxSize},
+      std::span<char>{mutableLabel(labelIndex), k_labelBufferMaxSize},
+      ExpressionOrFloat::ApproximationParameters{
+          Preferences::SharedPreferences()->angleUnit(),
+          Preferences::SharedPreferences()->complexFormat()},
       k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal,
       k_labelBufferMaxGlyphLength);
   assert(strlen(mutableLabel(labelIndex)) == textLengths.CharLength);

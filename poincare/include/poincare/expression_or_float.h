@@ -29,8 +29,14 @@ class ExpressionOrFloat {
     assert(!expression.isUninitialized() &&
            Poincare::Dimension(expression).isScalar());
     if (expression.tree()->treeSize() > k_maxExpressionSize) {
+      /*  TODO: move the logic for big expressions in the apps, after parsing
+       * the expression. This will simplify this constructor and allow the
+       * approximation to be called with the user settings for complex format
+       * and angle unit */
       // Fallback on storing the approximation if the expression is too large
-      m_value = Approximate<float>(expression);
+      m_value = Approximate<float>(
+          expression,
+          {Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real});
     } else {
       expression.tree()->copyTreeTo(m_buffer.data());
     }
@@ -38,10 +44,12 @@ class ExpressionOrFloat {
 
   explicit ExpressionOrFloat(float value) : m_value(value) {}
 
-  explicit operator float() const { return approximation<float>(); }
-  explicit operator double() const { return approximation<double>(); }
-
   bool hasNoExactExpression() const { return m_buffer[0] == '\0'; }
+
+  struct ApproximationParameters {
+    Preferences::AngleUnit angleUnit;
+    Preferences::ComplexFormat complexFormat;
+  };
 
   /* Writes the expression or float representation into the provided buffer.
    * - If the instance does not contain an exact expression, write the stored
@@ -59,16 +67,17 @@ class ExpressionOrFloat {
    * writeText method to display the expression to the user. */
 
   PrintFloat::TextLengths writeText(
-      std::span<char> buffer, size_t numberOfSignificantDigits,
+      std::span<char> buffer, ApproximationParameters approximationParameters,
+      size_t numberOfSignificantDigits,
       Preferences::PrintFloatMode floatDisplayMode,
       size_t maxGlyphLength) const;
   PrintFloat::TextLengths writeText(
-      std::span<char> buffer,
+      std::span<char> buffer, ApproximationParameters approximationParameters,
       size_t numberOfSignificantDigits = k_numberOfSignificantDigits,
       Preferences::PrintFloatMode floatDisplayMode =
           Preferences::PrintFloatMode::Decimal) const {
-    return writeText(buffer, numberOfSignificantDigits, floatDisplayMode,
-                     buffer.size());
+    return writeText(buffer, approximationParameters, numberOfSignificantDigits,
+                     floatDisplayMode, buffer.size());
   }
 
   Expression expression() const {
@@ -79,9 +88,10 @@ class ExpressionOrFloat {
   }
 
   template <typename T>
-  T approximation() const {
-    return hasNoExactExpression() ? static_cast<T>(m_value)
-                                  : Approximate<T>(expression());
+  T approximation(ApproximationParameters approximationParameters) const {
+    return hasNoExactExpression()
+               ? static_cast<T>(m_value)
+               : Approximate<T>(expression(), approximationParameters);
   }
 
   bool operator==(const ExpressionOrFloat& other) const {
@@ -101,11 +111,13 @@ class ExpressionOrFloat {
   /* The approximation parameters are fixed to Radian and Real in the context of
    * ExpressionOrFloat. */
   template <typename T>
-  static T Approximate(UserExpression expression) {
+  static T Approximate(UserExpression expression,
+                       ApproximationParameters approximationParameters) {
     assert(!expression.isUninitialized() &&
            Poincare::Dimension(expression).isScalar());
     return expression.approximateToRealScalar<T>(
-        Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real);
+        approximationParameters.angleUnit,
+        approximationParameters.complexFormat);
   }
 
   /* The Pool (where Expressions are stored) is not preserved when the current

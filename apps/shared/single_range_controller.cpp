@@ -1,5 +1,7 @@
 #include "single_range_controller.h"
 
+#include "poincare_helpers.h"
+
 using namespace Escher;
 using namespace Poincare;
 
@@ -94,8 +96,10 @@ bool SingleRangeController<ParentType>::setParameterAtIndex(
     int parameterIndex, ParameterType value) {
   int i = parameterIndex - 1;
   assert(0 <= i && i < k_numberOfBoundsCells);
-  i == 0 ? m_rangeParam.setMinKeepingValid(FloatType(value), limit())
-         : m_rangeParam.setMaxKeepingValid(FloatType(value), limit());
+  i == 0 ? m_rangeParam.setMinKeepingValid(PoincareHelpers::ToFloat(value),
+                                           limit())
+         : m_rangeParam.setMaxKeepingValid(PoincareHelpers::ToFloat(value),
+                                           limit());
   return true;
 }
 

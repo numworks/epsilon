@@ -15,6 +15,7 @@
 #include "poincare/k_tree.h"
 #include "poincare/pool_object.h"
 #include "poincare/src/expression/projection.h"
+#include "shared/poincare_helpers.h"
 
 using namespace Poincare;
 
@@ -87,7 +88,7 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
   if (m_zoomNormalize) {
     if (axis == OMG::Axis::Horizontal) {
       ExpressionOrFloat yUnit = yGridUnit();
-      if ((xMax() - xMin()) / yUnit.approximation<float>() <=
+      if (((xMax() - xMin()) / PoincareHelpers::ToFloat(yUnit)) <=
           static_cast<float>(k_maxNumberOfXGridUnits)) {
         return yUnit;
       }
@@ -99,11 +100,12 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
        * standard unit would lead to too many graduations on the X axis, we
        * force the larger unit anyways. */
       float numberOfYUnits = (yMax() - yMin() + offscreenYAxis()) /
-                             computedGridUnit.approximation<float>();
+                             PoincareHelpers::ToFloat(computedGridUnit);
       float numberOfXUnits =
-          (xMax() - xMin()) / computedGridUnit.approximation<float>();
+          (xMax() - xMin()) / PoincareHelpers::ToFloat(computedGridUnit);
       if (numberOfXUnits > static_cast<float>(k_maxNumberOfXGridUnits) ||
-          numberOfYUnits / 2.f > static_cast<float>(k_minNumberOfYGridUnits)) {
+          (numberOfYUnits / 2.f) >
+              static_cast<float>(k_minNumberOfYGridUnits)) {
         return ExpressionOrFloat(
             UserExpression::Create(KMult(2_e, KA),
                                    {.KA = computedGridUnit.expression()})
@@ -440,9 +442,9 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     range = yMax() - yMin() + offscreenYAxis();
   }
   assert(range > 0.0f && std::isfinite(range));
-  assert(m_userGridUnit(axis).approximation<float>() > 0.0f);
-  float numberOfUnits =
-      range / m_userGridUnit(axis).approximation<float>();  // in float for now
+  assert(PoincareHelpers::ToFloat(m_userGridUnit(axis)) > 0.0f);
+  float numberOfUnits = range / PoincareHelpers::ToFloat(
+                                    m_userGridUnit(axis));  // in float for now
   if (minNumberOfUnits <= numberOfUnits && numberOfUnits <= maxNumberOfUnits) {
     // Case 1
     return m_userGridUnit(axis);

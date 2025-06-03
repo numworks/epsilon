@@ -4,6 +4,7 @@
 #include <apps/shared/single_range_controller.h>
 
 #include "interactive_curve_view_range.h"
+#include "poincare_helpers.h"
 
 namespace Shared {
 
@@ -58,7 +59,9 @@ class SingleInteractiveCurveViewRangeController
   ParameterType parameterAtIndex(int index) override;
   bool hasUndefinedValue(const char* text, ParameterType value,
                          int row) const override;
-  bool gridUnitIsAuto() const { return std::isnan(float(m_gridUnitParam)); }
+  bool gridUnitIsAuto() const {
+    return std::isnan(PoincareHelpers::ToFloat(m_gridUnitParam));
+  }
 
   InteractiveCurveViewRange* m_range;
   // m_secondaryRangeParam is only used when activating xAuto while yAuto is on.

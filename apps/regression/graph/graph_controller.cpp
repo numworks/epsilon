@@ -226,10 +226,10 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
     }
     *m_selectedDotIndex = dotSelected;
   } else {
-    double step =
-        (direction.isRight() ? 1 : -1) * scrollSpeed *
-        static_cast<double>(interactiveCurveViewRange()->xGridUnit()) /
-        static_cast<double>(k_numberOfCursorStepsInGradUnit);
+    double step = (direction.isRight() ? 1 : -1) * scrollSpeed *
+                  PoincareHelpers::ToFloat<double>(
+                      interactiveCurveViewRange()->xGridUnit()) /
+                  static_cast<double>(k_numberOfCursorStepsInGradUnit);
     x = m_cursor->x() + step;
     y = yValue(*m_selectedCurveIndex, x, globalContext());
   }

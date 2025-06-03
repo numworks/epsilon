@@ -5,6 +5,8 @@
 #include <poincare/preferences.h>
 #include <poincare/print.h>
 
+#include "shared/poincare_helpers.h"
+
 namespace Statistics {
 
 HistogramMainController::HistogramMainController(
@@ -239,7 +241,8 @@ void HistogramMainController::initBarParameters() {
   m_histogramRange.setXRange(xRange.min(), xRange.max());
 
   m_store->setFirstDrawnBarAbscissa(xRange.min());
-  double barWidth = m_histogramRange.xGridUnit().approximation<double>();
+  double barWidth =
+      Shared::PoincareHelpers::ToFloat<double>(m_histogramRange.xGridUnit());
   if (barWidth <= 0.0) {
     barWidth = 1.0;
   } else {

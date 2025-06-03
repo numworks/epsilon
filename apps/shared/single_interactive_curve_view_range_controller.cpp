@@ -1,5 +1,6 @@
 #include "single_interactive_curve_view_range_controller.h"
 
+#include "shared/poincare_helpers.h"
 #include "shared/single_range_controller.h"
 
 using namespace Escher;
@@ -39,8 +40,10 @@ bool SingleInteractiveCurveViewRangeController::boundsParametersAreDifferent() {
 }
 
 bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
-  FloatType approximateGridUnitParam = float(m_gridUnitParam);
-  FloatType approximateUserGridUnit = float(m_range->userGridUnit(m_axis));
+  FloatType approximateGridUnitParam =
+      PoincareHelpers::ToFloat(m_gridUnitParam);
+  FloatType approximateUserGridUnit =
+      PoincareHelpers::ToFloat(m_range->userGridUnit(m_axis));
   bool gridParamIsDifferent =
       std::isnan(approximateGridUnitParam) !=
           std::isnan(approximateUserGridUnit) ||
@@ -126,7 +129,7 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
 bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
     int parameterIndex, ParameterType value) {
   if (typeAtRow(parameterIndex) == k_gridUnitCellType) {
-    if (FloatType(value) <= 0.0f) {
+    if (PoincareHelpers::ToFloat(value) <= 0.0f) {
       App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }

@@ -532,6 +532,7 @@ template <typename T>
 T UserExpression::approximateToRealScalar(AngleUnit angleUnit,
                                           ComplexFormat complexFormat,
                                           Context* context) const {
+  static_assert(std::is_floating_point_v<T>);
   assert(Poincare::Dimension(*this, context).isScalar() ||
          Poincare::Dimension(*this, context).isUnit());
   return Approximation::To<T>(

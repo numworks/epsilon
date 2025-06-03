@@ -2,6 +2,8 @@
 
 #include <poincare/expression.h>
 
+#include "poincare/expression_or_float.h"
+#include "poincare/preferences.h"
 #include "poincare_helpers.h"
 
 using namespace Escher;
@@ -22,8 +24,12 @@ void ExpressionParameterController::fillCellForRow(HighlightCell* cell,
   }
   constexpr int precision = Preferences::VeryLargeNumberOfSignificantDigits;
   char buffer[PrintFloat::charSizeForFloatsWithPrecision(precision)];
-  parameterAtIndex(row).writeText(buffer, precision,
-                                  Preferences::PrintFloatMode::Decimal);
+  parameterAtIndex(row).writeText(
+      buffer,
+      ExpressionOrFloat::ApproximationParameters{
+          Preferences::SharedPreferences()->angleUnit(),
+          Preferences::SharedPreferences()->complexFormat()},
+      precision, Preferences::PrintFloatMode::Decimal);
   textFieldOfCellAtIndex(cell, row)->setText(buffer);
 }
 
@@ -60,7 +66,7 @@ bool ExpressionParameterController::hasUndefinedValue(const char* text,
                                                       ParameterType value,
                                                       int row) const {
   InfinityTolerance infTolerance = infinityAllowanceForRow(row);
-  return HasUndefinedValue(FloatType(value),
+  return HasUndefinedValue(PoincareHelpers::ToFloat(value),
                            infTolerance == InfinityTolerance::PlusInfinity,
                            infTolerance == InfinityTolerance::MinusInfinity);
 }

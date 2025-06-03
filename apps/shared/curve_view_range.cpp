@@ -8,6 +8,8 @@
 
 #include <cmath>
 
+#include "poincare_helpers.h"
+
 namespace Shared {
 
 uint32_t CurveViewRange::rangeChecksum() {
@@ -15,8 +17,8 @@ uint32_t CurveViewRange::rangeChecksum() {
                    xMax(),
                    yMin(),
                    yMax(),
-                   static_cast<float>(xGridUnit()),
-                   static_cast<float>(yGridUnit()),
+                   PoincareHelpers::ToFloat(xGridUnit()),
+                   PoincareHelpers::ToFloat(yGridUnit()),
                    offscreenYAxis()};
   size_t dataLengthInBytes = sizeof(data);
   // Assert that dataLengthInBytes is a multiple of 4

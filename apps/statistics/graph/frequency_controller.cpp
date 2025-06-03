@@ -7,6 +7,7 @@
 #include <poincare/print.h>
 
 #include "../app.h"
+#include "apps/shared/poincare_helpers.h"
 
 namespace Statistics {
 
@@ -110,9 +111,10 @@ bool FrequencyController::moveSelectionHorizontally(
   }
 
   // Compute cursor step
-  double step = (direction.isRight() ? 1 : -1) *
-                static_cast<double>(m_graphRange.xGridUnit()) /
-                static_cast<double>(k_numberOfCursorStepsInGradUnit);
+  double step =
+      (direction.isRight() ? 1 : -1) *
+      Shared::PoincareHelpers::ToFloat<double>(m_graphRange.xGridUnit()) /
+      static_cast<double>(k_numberOfCursorStepsInGradUnit);
   assert(step != 0.0);
 
   double x = m_cursor.x();

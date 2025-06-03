@@ -44,9 +44,12 @@ bool ExpressionParameterController::textFieldDidFinishEditing(
     App::app()->displayWarning(I18n::Message::UndefinedValue);
     return false;
   }
-  ExpressionOrFloat currentExpression =
-      parsedExpression.isUninitialized() ? ExpressionOrFloat()
-                                         : ExpressionOrFloat(parsedExpression);
+  ExpressionOrFloat currentExpression = ExpressionOrFloat::Builder(
+      parsedExpression, [](UserExpression expression) {
+        return expression.approximateToRealScalar<float>(
+            Preferences::SharedPreferences()->angleUnit(),
+            Preferences::SharedPreferences()->complexFormat());
+      });
   if (hasUndefinedValue(text, currentExpression, innerSelectedRow()) ||
       !setParameterAtIndex(innerSelectedRow(), currentExpression)) {
     return false;

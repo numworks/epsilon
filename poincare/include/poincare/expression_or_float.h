@@ -26,23 +26,32 @@ class ExpressionOrFloat {
   ExpressionOrFloat() = default;
 
   explicit ExpressionOrFloat(Expression expression) {
-    assert(!expression.isUninitialized() &&
-           Poincare::Dimension(expression).isScalar());
-    if (expression.tree()->treeSize() > k_maxExpressionSize) {
-      /*  TODO: move the logic for big expressions in the apps, after parsing
-       * the expression. This will simplify this constructor and allow the
-       * approximation to be called with the user settings for complex format
-       * and angle unit */
-      // Fallback on storing the approximation if the expression is too large
-      m_value = Approximate<float>(
-          expression,
-          {Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real});
-    } else {
-      expression.tree()->copyTreeTo(m_buffer.data());
-    }
+    assert(!expression.isUninitialized());
+    assert(Poincare::Dimension(expression).isScalar());
+    assert(expression.tree()->treeSize() <= k_maxExpressionSize);
+    expression.tree()->copyTreeTo(m_buffer.data());
   }
 
   explicit ExpressionOrFloat(float value) : m_value(value) {}
+
+  using ApproximationFunction = float (*)(Expression);
+
+  /*  Create an ExpressionOrFloat from an Expression with unknown properties.
+   * The input Expression may be uninitialized or too big to hold on the
+   * internal storage of ExpressionOrFloat. The only requirement is that the
+   * input expression, if initialized, should represent a scalar value. */
+  static ExpressionOrFloat Builder(
+      Expression expression, ApproximationFunction approximationFunction) {
+    if (expression.isUninitialized()) {
+      return ExpressionOrFloat();
+    }
+    assert(Poincare::Dimension(expression).isScalar());
+    if (expression.tree()->treeSize() > k_maxExpressionSize) {
+      // Fallback on storing the approximation if the expression is too large
+      return ExpressionOrFloat(approximationFunction(expression));
+    }
+    return ExpressionOrFloat(expression);
+  }
 
   bool hasNoExactExpression() const { return m_buffer[0] == '\0'; }
 

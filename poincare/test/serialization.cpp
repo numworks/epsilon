@@ -52,6 +52,9 @@ QUIZ_CASE(pcj_expression_serialization) {
 
 QUIZ_CASE(pcj_expression_or_float_serialization) {
   using namespace Poincare;
+
+  assert_expression_or_float_serializes_to(ExpressionOrFloat(), "undef");
+
   assert_expression_or_float_serializes_to(ExpressionOrFloat(0.123f), "0.123");
   assert_expression_or_float_serializes_to(ExpressionOrFloat(-2.5f), "-2.5");
   assert_expression_or_float_serializes_to(
@@ -63,27 +66,44 @@ QUIZ_CASE(pcj_expression_or_float_serialization) {
 
   assert_expression_or_float_serializes_to(
       ExpressionOrFloat(UserExpression::Builder(π_e)), "π");
+
+  auto approximationFunction = [](Expression expression) {
+    return expression.approximateToRealScalar<float>(
+        Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real);
+  };
+
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e))),
+      ExpressionOrFloat::Builder(
+          UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)),
+          approximationFunction),
       "2π/3");
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(UserExpression::Builder(KDiv(KMult(2_e, π_e), 30_e))),
+      ExpressionOrFloat::Builder(
+          UserExpression::Builder(KDiv(KMult(2_e, π_e), 30_e)),
+          approximationFunction),
       "2π/30");
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(
-          UserExpression::Builder(KMult(-1_e, KDiv(KMult(2_e, π_e), 30_e)))),
+      ExpressionOrFloat::Builder(
+          UserExpression::Builder(KMult(-1_e, KDiv(KMult(2_e, π_e), 30_e))),
+          approximationFunction),
       "-0.2094395");
 
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(UserExpression::Builder(KDiv(KMult(10_e, π_e), 3_e))),
+      ExpressionOrFloat::Builder(
+          UserExpression::Builder(KDiv(KMult(10_e, π_e), 3_e)),
+          approximationFunction),
       "", Preferences::PrintFloatMode::Decimal,
       Preferences::VeryLargeNumberOfSignificantDigits, 4);
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(UserExpression::Builder(KDiv(KMult(10_e, π_e), 3_e))),
+      ExpressionOrFloat::Builder(
+          UserExpression::Builder(KDiv(KMult(10_e, π_e), 3_e)),
+          approximationFunction),
       "10.5", Preferences::PrintFloatMode::Decimal,
       Preferences::VeryShortNumberOfSignificantDigits, 4);
 
   assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(UserExpression::Builder(KSin(KSin(KSin(KSin(1_e)))))),
+      ExpressionOrFloat::Builder(
+          UserExpression::Builder(KSin(KSin(KSin(KSin(1_e))))),
+          approximationFunction),
       "0.6275718", Preferences::PrintFloatMode::Decimal);
 }

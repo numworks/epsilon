@@ -25,7 +25,7 @@ class StatisticalDistribution : public MemoizedCurveViewRange {
   virtual I18n::Message title() const = 0;
 
   // Input parameters
-  virtual int numberOfParameters() = 0;
+  virtual int numberOfParameters() const = 0;
   virtual double parameterAtIndex(int i) const {
     return const_cast<StatisticalDistribution*>(this)->parametersArray()[i];
   }

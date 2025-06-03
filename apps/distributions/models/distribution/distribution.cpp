@@ -71,7 +71,7 @@ double Distribution::meanAbscissa() const {
   return Poincare::Distribution::MeanAbscissa(m_distribution,
                                               constParametersArray());
 }
-int Distribution::numberOfParameters() {
+int Distribution::numberOfParameters() const {
   return Poincare::Distribution::NumberOfParameters(m_distribution);
 }
 const char* Distribution::parameterNameAtIndex(int index) const {

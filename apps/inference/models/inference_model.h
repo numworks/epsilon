@@ -105,7 +105,7 @@ class InferenceModel : public Shared::StatisticalDistribution {
   }
 
   // Input
-  int numberOfParameters() override {
+  int numberOfParameters() const override {
     return numberOfTestParameters() + 1 /* threshold */;
   }
   int numberOfTestParameters() const {

@@ -27,7 +27,7 @@ class GoodnessTest final : public Chi2Test {
 
   // Inference
   // +1 for degrees of freedom
-  int numberOfParameters() override {
+  int numberOfParameters() const override {
     return Chi2Test::numberOfParameters() + 1;
   }
   double parameterAtIndex(int i) const override;

@@ -30,7 +30,7 @@ class Distribution : public Shared::StatisticalDistribution {
   double meanAbscissa() const;
 
   // Parameters
-  int numberOfParameters() override;
+  int numberOfParameters() const override;
   const char* parameterNameAtIndex(int index) const;
   double defaultParameterAtIndex(int index) const;
   bool authorizedParameterAtIndex(double x, int index) const override;

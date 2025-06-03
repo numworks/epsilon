@@ -30,7 +30,7 @@ class ExpressionOrFloat {
            Poincare::Dimension(expression).isScalar());
     if (expression.tree()->treeSize() > k_maxExpressionSize) {
       // Fallback on storing the approximation if the expression is too large
-      m_value = approximate<float>(expression);
+      m_value = Approximate<float>(expression);
     } else {
       expression.tree()->copyTreeTo(m_buffer.data());
     }
@@ -81,7 +81,7 @@ class ExpressionOrFloat {
   template <typename T>
   T approximation() const {
     return hasNoExactExpression() ? static_cast<T>(m_value)
-                                  : approximate<T>(expression());
+                                  : Approximate<T>(expression());
   }
 
   bool operator==(const ExpressionOrFloat& other) const {
@@ -101,7 +101,7 @@ class ExpressionOrFloat {
   /* The approximation parameters are fixed to Radian and Real in the context of
    * ExpressionOrFloat. */
   template <typename T>
-  static T approximate(UserExpression expression) {
+  static T Approximate(UserExpression expression) {
     assert(!expression.isUninitialized() &&
            Poincare::Dimension(expression).isScalar());
     return expression.approximateToRealScalar<T>(

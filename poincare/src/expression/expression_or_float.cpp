@@ -49,7 +49,7 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
                                floatDisplayMode, maxGlyphLength);
   }
   UserExpression exactExpression = expression();
-  float approximation = approximate<float>(exactExpression);
+  float approximation = Approximate<float>(exactExpression);
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
           exactExpression, UserExpression::Builder(approximation))) {
     /* For now, a "large enough" buffer is allocated for the exact expression

@@ -218,8 +218,7 @@ class InferenceModel : public Shared::StatisticalDistribution {
     Poincare::Inference::ParametersArray array;
     const double* paramsArray =
         const_cast<InferenceModel*>(this)->parametersArray();
-    std::copy(paramsArray,
-              paramsArray + Poincare::Inference::k_maxNumberOfParameters,
+    std::copy(paramsArray, paramsArray + numberOfTestParameters(),
               array.data());
     return array;
   }

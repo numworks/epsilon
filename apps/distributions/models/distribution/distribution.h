@@ -70,9 +70,7 @@ class Distribution : public Shared::StatisticalDistribution {
     ParametersArray array;
     const double* paramsArray =
         const_cast<Distribution*>(this)->parametersArray();
-    std::copy(paramsArray,
-              paramsArray + Poincare::Distribution::k_maxNumberOfParameters,
-              array.data());
+    std::copy(paramsArray, paramsArray + numberOfParameters(), array.data());
     return array;
   }
 

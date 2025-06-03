@@ -16,13 +16,6 @@ namespace Poincare {
  * condition that only the float variant of ExpressionOrFloat is used. */
 class ExpressionOrFloat {
  public:
-  constexpr static size_t k_maxExpressionSize = 8;
-
-  constexpr static size_t k_numberOfSignificantDigits =
-      PrintFloat::k_floatNumberOfSignificantDigits;
-
-  constexpr static size_t k_maxExactSerializationGlyphLength = 5;
-
   ExpressionOrFloat() = default;
 
   explicit ExpressionOrFloat(Expression expression) {
@@ -117,6 +110,11 @@ class ExpressionOrFloat {
   }
 
  private:
+  constexpr static size_t k_maxExpressionSize = 8;
+  constexpr static size_t k_numberOfSignificantDigits =
+      PrintFloat::k_floatNumberOfSignificantDigits;
+  constexpr static size_t k_maxExactSerializationGlyphLength = 5;
+
   /* The approximation parameters are fixed to Radian and Real in the context of
    * ExpressionOrFloat. */
   template <typename T>

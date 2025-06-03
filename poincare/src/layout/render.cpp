@@ -836,7 +836,8 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
   KDSize size(
       columsCumulatedWidth[columns - 1 -
                            (!grid->numberOfColumnsIsFixed() && !editing)],
-      rowCumulatedHeight[rows - 1 - !editing]);
+      rowCumulatedHeight[rows - 1 -
+                         (!grid->numberOfRowsIsFixed() && !editing)]);
   KDPoint offset = KDPointZero;
   if (l->isMatrixLayout()) {
     size = SquareBrackets::SizeGivenChildSize(size);

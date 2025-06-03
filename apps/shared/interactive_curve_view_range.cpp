@@ -104,12 +104,12 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnit(OMG::Axis axis) {
       float numberOfXUnits =
           (xMax() - xMin()) / PoincareHelpers::ToFloat(computedGridUnit);
       if (numberOfXUnits > static_cast<float>(k_maxNumberOfXGridUnits) ||
-          (numberOfYUnits / 2.f) >
-              static_cast<float>(k_minNumberOfYGridUnits)) {
-        return ExpressionOrFloat(
+          numberOfYUnits / 2.f > static_cast<float>(k_minNumberOfYGridUnits)) {
+        return ExpressionOrFloat::Builder(
             UserExpression::Create(KMult(2_e, KA),
                                    {.KA = computedGridUnit.expression()})
-                .cloneAndTrySimplify({}));
+                .cloneAndTrySimplify({}),
+            PoincareHelpers::ApproximateToRealScalar);
       }
     }
   }
@@ -453,11 +453,12 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     assert(std::ceil(minNumberOfUnits / numberOfUnits) <=
            std::floor(maxNumberOfUnits / numberOfUnits));
     int k = static_cast<int>(std::ceil(minNumberOfUnits / numberOfUnits));
-    return ExpressionOrFloat(
+    return ExpressionOrFloat::Builder(
         UserExpression::Create(KMult(KA, KPow(KB, -1_e)),
                                {.KA = m_userGridUnit(axis).expression(),
                                 .KB = UserExpression::Builder(k)})
-            .cloneAndTrySimplify({}));
+            .cloneAndTrySimplify({}),
+        PoincareHelpers::ApproximateToRealScalar);
   }
   assert(numberOfUnits > maxNumberOfUnits);
   // Case 3
@@ -465,11 +466,12 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
          std::floor(numberOfUnits / minNumberOfUnits));
   int k = static_cast<int>(std::ceil(numberOfUnits / maxNumberOfUnits));
 
-  return ExpressionOrFloat(
+  return ExpressionOrFloat::Builder(
       UserExpression::Create(KMult(KA, KB),
                              {.KA = m_userGridUnit(axis).expression(),
                               .KB = UserExpression::Builder(k)})
-          .cloneAndTrySimplify({}));
+          .cloneAndTrySimplify({}),
+      PoincareHelpers::ApproximateToRealScalar);
 
   // clang-format off
   /* Proof of the algorithm:

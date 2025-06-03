@@ -65,7 +65,7 @@ struct ApproximationParameters {
 // Approximate to tree and keep units
 template <class T>
 inline Poincare::Expression Approximate(
-    const Poincare::Expression e, Poincare::Context* context,
+    Poincare::Expression e, Poincare::Context* context,
     const ApproximationParameters& approximationParameters = {}) {
   Poincare::Preferences::ComplexFormat complexFormat =
       approximationParameters.complexFormat;
@@ -76,6 +76,15 @@ inline Poincare::Expression Approximate(
   }
   return e.approximateToTree<T>(approximationParameters.angleUnit,
                                 complexFormat, context);
+}
+
+// Approximate a real scalar expression. Contexts are not handled.
+template <class FloatType = float>
+inline FloatType ApproximateToRealScalar(Poincare::Expression e) {
+  static_assert(std::is_floating_point_v<FloatType>);
+  return e.approximateToRealScalar<FloatType>(
+      Poincare::Preferences::SharedPreferences()->angleUnit(),
+      Poincare::Preferences::SharedPreferences()->complexFormat());
 }
 
 // ===== Reduction =====

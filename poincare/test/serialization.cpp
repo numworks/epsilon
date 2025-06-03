@@ -64,14 +64,15 @@ QUIZ_CASE(pcj_expression_or_float_serialization) {
       Preferences::PrintFloatMode::Decimal,
       Preferences::ShortNumberOfSignificantDigits);
 
-  assert_expression_or_float_serializes_to(
-      ExpressionOrFloat(UserExpression::Builder(π_e)), "π");
-
   auto approximationFunction = [](Expression expression) {
     return expression.approximateToRealScalar<float>(
         Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real);
   };
 
+  assert_expression_or_float_serializes_to(
+      ExpressionOrFloat::Builder(UserExpression::Builder(π_e),
+                                 approximationFunction),
+      "π");
   assert_expression_or_float_serializes_to(
       ExpressionOrFloat::Builder(
           UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)),

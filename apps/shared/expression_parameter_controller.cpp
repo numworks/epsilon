@@ -45,11 +45,7 @@ bool ExpressionParameterController::textFieldDidFinishEditing(
     return false;
   }
   ExpressionOrFloat currentExpression = ExpressionOrFloat::Builder(
-      parsedExpression, [](UserExpression expression) {
-        return expression.approximateToRealScalar<float>(
-            Preferences::SharedPreferences()->angleUnit(),
-            Preferences::SharedPreferences()->complexFormat());
-      });
+      parsedExpression, PoincareHelpers::ApproximateToRealScalar);
   if (hasUndefinedValue(text, currentExpression, innerSelectedRow()) ||
       !setParameterAtIndex(innerSelectedRow(), currentExpression)) {
     return false;

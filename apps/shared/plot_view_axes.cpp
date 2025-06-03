@@ -306,12 +306,13 @@ ExpressionOrFloat SimpleAxis::tickPosition(size_t labelIndex,
         static_cast<float>(static_cast<int>(labelIndex) - indexOfOrigin) *
         PoincareHelpers::ToFloat(step));
   }
-  return ExpressionOrFloat(
+  return ExpressionOrFloat::Builder(
       UserExpression::Create(
           KMult(KA, KB), {.KA = step.expression(),
                           .KB = UserExpression::Builder(
                               static_cast<int>(labelIndex) - indexOfOrigin)})
-          .cloneAndTrySimplify({}));
+          .cloneAndTrySimplify({}),
+      PoincareHelpers::ApproximateToRealScalar);
 }
 
 ExpressionOrFloat SimpleAxis::tickStep(const AbstractPlotView* plotView,
@@ -322,9 +323,10 @@ ExpressionOrFloat SimpleAxis::tickStep(const AbstractPlotView* plotView,
   if (step.hasNoExactExpression()) {
     return ExpressionOrFloat(2.f * PoincareHelpers::ToFloat(step));
   }
-  return ExpressionOrFloat(
+  return ExpressionOrFloat::Builder(
       UserExpression::Create(KMult(2_e, KA), {.KA = step.expression()})
-          .cloneAndTrySimplify({}));
+          .cloneAndTrySimplify({}),
+      PoincareHelpers::ApproximateToRealScalar);
 }
 
 // AbstractLabeledAxis

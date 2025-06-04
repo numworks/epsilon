@@ -1,12 +1,12 @@
 #ifndef POINCARE_EXPRESSION_OR_FLOAT_H
 #define POINCARE_EXPRESSION_OR_FLOAT_H
 
-#include <span>
+#include <poincare/expression.h>
+#include <poincare/preferences.h>
+#include <poincare/print_float.h>
+#include <poincare/src/memory/tree.h>
 
-#include "poincare/expression.h"
-#include "poincare/preferences.h"
-#include "poincare/print_float.h"
-#include "poincare/src/memory/tree.h"
+#include <span>
 
 namespace Poincare {
 

@@ -292,7 +292,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
 bool CalculationStore::preferencesHaveChanged() {
   // Track settings that might invalidate HistoryCells heights
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   if (m_inUsePreferences.combinatoricSymbols() ==
           preferences->combinatoricSymbols() &&
       m_inUsePreferences.numberOfSignificantDigits() ==

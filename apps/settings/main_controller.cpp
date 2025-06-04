@@ -207,9 +207,9 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
    * value from GlobalPreferences or MathPreferences::SharedPreferences(). This
    * would make the code more modular and thus clearer. */
 
-  GlobalPreferences* globalPreferences =
+  const GlobalPreferences* globalPreferences =
       GlobalPreferences::SharedGlobalPreferences();
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtRow(row);

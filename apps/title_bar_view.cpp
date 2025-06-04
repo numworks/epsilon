@@ -145,7 +145,7 @@ void TitleBarView::layoutSubviews(bool force) {
 
 void TitleBarView::refreshPreferences() {
   char buffer[k_preferenceTextSize];
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   // Display Sci/ or Eng/ if the print float mode is not decimal
   const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
   I18n::Message floatModeMessage =

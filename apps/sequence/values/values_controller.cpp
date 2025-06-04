@@ -146,7 +146,7 @@ Layout* ValuesController::memoizedLayoutAtIndex(int i) {
 }
 
 Layout ValuesController::functionTitleLayout(int column) {
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   bool isSumColumn = false;
   Shared::Sequence* sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
@@ -166,7 +166,7 @@ Layout ValuesController::functionTitleLayout(int column) {
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   double abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
   bool isSumColumn = false;

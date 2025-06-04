@@ -290,7 +290,7 @@ void AppsContainer::handleRunException() {
 
 void AppsContainer::run() {
   window()->setAbsoluteFrame(Ion::Display::Rect);
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   Poincare::ExamMode examMode = preferences->examMode();
   if (examMode.isActive()) {
     setExamMode(examMode,
@@ -455,7 +455,7 @@ void AppsContainer::resetShiftAlphaStatus() {
 }
 
 void AppsContainer::openDFU(bool blocking) {
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   App::Snapshot* activeSnapshot =
       (activeApp() == nullptr ? homeAppSnapshot() : activeApp()->snapshot());
   Poincare::ExamMode activeExamMode = preferences->examMode();

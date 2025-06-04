@@ -137,7 +137,7 @@ int PreferencesController::valueIndexForPreference(
    * implementing a getter. This would make the code more modular and avoid such
    * hard-to-read if/else blocks. */
 
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();
   }

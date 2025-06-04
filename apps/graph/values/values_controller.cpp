@@ -359,7 +359,7 @@ void ValuesController::setStartEndMessages(
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   double abscissa;
   int derivationOrder;
   Shared::ExpiringPointer<ContinuousFunction> function =

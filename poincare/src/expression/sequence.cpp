@@ -90,20 +90,29 @@ bool Sequence::MainExpressionContainsForbiddenTerms(
       }
       continue;
     }
+    if (type == Type::SequenceExplicit) {
+      // Forbid u(k) from appearing in explicit u(n) definition
+      return true;
+    }
     const Tree* rank = d->child(0);
     if (rank->isInteger()) {
-      // u(k) is allowed only when it is an initial condition
-      int rankValue = Integer::Handler(rank).to<int>();
-      if ((type != Type::SequenceExplicit && rankValue == initialRank) ||
-          (type == Type::SequenceDoubleRecurrence &&
-           rankValue == initialRank + 1)) {
-        continue;
+      /* u(k) is allowed only when it is an initial condition
+       * initialRank is max 255, but rank could be 256 and still valid if it's a
+       * DoubleRecurrence sequence */
+      IntegerHandler rankHandler = Integer::Handler(rank);
+      if (rankHandler.is<int>()) {
+        int rankValue = rankHandler.to<int>();
+        if (rankValue == initialRank ||
+            (type == Type::SequenceDoubleRecurrence &&
+             rankValue == initialRank + 1)) {
+          continue;
+        }
       }
+      // if rank !is<int>(), then it's definitely too big to be valid
       return true;
     }
     // Recursion on a sequence is allowed only on u(n) (or u(n+1) if double rec)
-    if (recursion && ((type != Type::SequenceExplicit &&
-                       rank->treeIsIdenticalTo(KUnknownSymbol)) ||
+    if (recursion && (rank->treeIsIdenticalTo(KUnknownSymbol) ||
                       (type == Type::SequenceDoubleRecurrence &&
                        rank->treeIsIdenticalTo(KAdd(KUnknownSymbol, 1_e))))) {
       // Ignore the child content which has been checked already

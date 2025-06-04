@@ -317,7 +317,8 @@ Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
   /* The absolute value of A or D might be above the uint32_t maximum
    * representable value. As the ListPositiveDivisors function only accepts
    * uint32_t input, we must prevent potential overflows. */
-  if (IntegerHandler::Compare(AHandler, IntegerHandler(UINT32_MAX)) == 1) {
+  if (IntegerHandler::Compare(AHandler, IntegerHandler(UINT32_MAX)) == 1 ||
+      IntegerHandler::Compare(DHandler, IntegerHandler(UINT32_MAX)) == 1) {
     A->removeTree();
     D->removeTree();
     return nullptr;

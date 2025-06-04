@@ -59,7 +59,7 @@ void IntervalAxis::reloadAxis(AbstractPlotView* plotView, OMG::Axis axis) {
 ExpressionOrFloat IntervalAxis::tickPosition(size_t labelIndex,
                                              const AbstractPlotView* plotView,
                                              OMG::Axis) const {
-  if (labelIndex >= k_numberOfLabels) {
+  if (labelIndex >= numberOfLabels()) {
     return ExpressionOrFloat(NAN);
   }
   return ExpressionOrFloat(m_ticks[labelIndex]);

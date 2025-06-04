@@ -35,6 +35,7 @@ class Clipboard {
   BufferState bufferState() { return m_bufferState; }
 
  private:
+  void storeEmptyTree();
   BufferState m_bufferState = Updated;
 };
 

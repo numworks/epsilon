@@ -106,18 +106,25 @@ Poincare::Layout Clipboard::storedLayout() {
 
 void Clipboard::reset() {
   strlcpy(m_textBuffer, "", 1);
-  const Poincare::Internal::Tree* emptyRack = Poincare::Internal::KRackL();
-  memcpy(m_treeBuffer, emptyRack, emptyRack->treeSize());
+  storeEmptyTree();
   m_bufferState = Updated;
   /* As we do not want to empty the user's computer's clipboard when entering
    * exam mode, we do not reset Ion::Clipboard. */
 }
+void Clipboard::storeEmptyTree() {
+  const Poincare::Internal::Tree* emptyRack = Poincare::Internal::KRackL();
+  memcpy(m_treeBuffer, emptyRack, emptyRack->treeSize());
+}
 
 void Clipboard::updateTreeFromText() {
   Poincare::Layout layout = Poincare::Layout::Parse(m_textBuffer);
-  int size = layout.tree()->treeSize();
-  if (size < k_bufferSize) {
-    memcpy(m_treeBuffer, layout.tree(), size);
+  if (layout.isUninitialized()) {
+    storeEmptyTree();
+  } else {
+    int size = layout.tree()->treeSize();
+    if (size < k_bufferSize) {
+      memcpy(m_treeBuffer, layout.tree(), size);
+    }
   }
   m_bufferState = Updated;
 }

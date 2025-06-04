@@ -141,6 +141,11 @@ void Calculation::computeDisplayOutput(Poincare::Context* context) {
   }
   m_displayOutput = ComputeDisplayOutput(input(), exactOutput(),
                                          approximateOutput(), context);
+  /* Hide the exact output if it comes from a reduction failure and if the
+   * approximate output is available */
+  if (m_reductionFailure && CanDisplayApproximate(m_displayOutput)) {
+    forceDisplayOutput(DisplayOutput::ApproximateOnly);
+  }
   assert(m_displayOutput != DisplayOutput::Unknown);
 }
 

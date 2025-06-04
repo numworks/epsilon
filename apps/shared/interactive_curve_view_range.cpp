@@ -5,17 +5,17 @@
 #include <omg/ieee754.h>
 #include <omg/numeric_comparison.h>
 #include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/k_tree.h>
+#include <poincare/pool_object.h>
 #include <poincare/preferences.h>
 #include <poincare/solver/zoom.h>
+#include <poincare/src/expression/projection.h>
 #include <stddef.h>
 
 #include <algorithm>
 #include <cmath>
 
-#include "poincare/k_tree.h"
-#include "poincare/pool_object.h"
-#include "poincare/src/expression/projection.h"
-#include "shared/poincare_helpers.h"
+#include "poincare_helpers.h"
 
 using namespace Poincare;
 

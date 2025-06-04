@@ -1,5 +1,6 @@
 #include "integral_graph_controller.h"
 
+#include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/layout.h>
@@ -8,7 +9,6 @@
 #include <cmath>
 
 #include "../app.h"
-#include "apps/shared/poincare_helpers.h"
 
 using namespace Shared;
 using namespace Poincare;

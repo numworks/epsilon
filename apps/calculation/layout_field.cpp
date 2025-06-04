@@ -1,6 +1,7 @@
 #include "layout_field.h"
 
 #include <apps/i18n.h>
+#include <apps/math_preferences.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 
@@ -68,7 +69,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
 bool LayoutField::handleDivision() {
   assert(m_divisionCycleWithAns != OMG::Troolean::Unknown);
   bool mixedFractionsEnabled =
-      Escher::SharedPreferences()->mixedFractionsAreEnabled();
+      MathPreferences::SharedPreferences()->mixedFractionsAreEnabled();
   Ion::Events::Event event = Ion::Events::Division;
 
   if (m_divisionCycleWithAns == OMG::Troolean::True) {

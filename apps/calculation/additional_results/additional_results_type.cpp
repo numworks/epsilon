@@ -94,7 +94,9 @@ bool AdditionalResultsType::ForbidAdditionalResults(
    * from creating new expressions with store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  if (Escher::SharedPreferences()->examMode().forbidAdditionalResults() ||
+  if (MathPreferences::SharedPreferences()
+          ->examMode()
+          .forbidAdditionalResults() ||
       input.isUninitialized() || exactOutput.isUninitialized() ||
       approximateOutput.isUninitialized() || input.isStore() ||
       exactOutput.isList() || approximateOutput.isList() ||

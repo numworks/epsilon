@@ -236,7 +236,7 @@ void CalculationController::reload() {
         m_distribution->parameterAtIndex(
             m_distribution->uninitializedParameterIndex()),
         Poincare::Preferences::PrintFloatMode::Decimal,
-        Escher::SharedPreferences()->numberOfSignificantDigits());
+        MathPreferences::SharedPreferences()->numberOfSignificantDigits());
     m_contentView.unknownParameterValue()->setText(buffer);
   }
   m_contentView.reload();

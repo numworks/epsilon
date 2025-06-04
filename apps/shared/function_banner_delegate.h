@@ -1,7 +1,7 @@
 #ifndef SHARED_FUNCTION_BANNER_DELEGATE_H
 #define SHARED_FUNCTION_BANNER_DELEGATE_H
 
-#include <escher/math_preferences.h>
+#include <apps/math_preferences.h>
 #include <poincare/preferences.h>
 
 #include "curve_view_cursor.h"
@@ -38,7 +38,8 @@ class FunctionBannerDelegate {
       Poincare::Context* context, bool cappedNumberOfSignificantDigits = false);
   virtual XYBannerView* bannerView() = 0;
   virtual int numberOfSignificantDigits(bool capped = false) const {
-    int userDigits = Escher::SharedPreferences()->numberOfSignificantDigits();
+    int userDigits =
+        MathPreferences::SharedPreferences()->numberOfSignificantDigits();
     return capped && userDigits > k_cappedNumberOfSignificantDigits
                ? k_cappedNumberOfSignificantDigits
                : userDigits;

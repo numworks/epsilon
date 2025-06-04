@@ -45,12 +45,12 @@ AppsContainer::AppsContainer()
 
 int AppsContainer::numberOfExternalApps() {
   return Ion::ExternalApps::numberOfApps(
-      SharedPreferences()->examMode().isActive());
+      MathPreferences::SharedPreferences()->examMode().isActive());
 }
 
 Ion::ExternalApps::App AppsContainer::externalAppAtIndex(int index) {
-  for (Ion::ExternalApps::App a :
-       Ion::ExternalApps::Apps(SharedPreferences()->examMode().isActive())) {
+  for (Ion::ExternalApps::App a : Ion::ExternalApps::Apps(
+           MathPreferences::SharedPreferences()->examMode().isActive())) {
     if (index == 0) {
       return a;
     }
@@ -89,7 +89,7 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
   }
 
   // Apply exam mode and delete data
-  SharedPreferences()->setExamMode(targetExamMode);
+  MathPreferences::SharedPreferences()->setExamMode(targetExamMode);
 
   // Update storage records (functions, variables, python scripts)
   if (targetExamMode == previousMode) {
@@ -191,9 +191,9 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
       return false;
     }
-    if (!SharedPreferences()->examMode().isActive()) {
+    if (!MathPreferences::SharedPreferences()->examMode().isActive()) {
       openDFU(true);
-      if (SharedPreferences()->examMode().isActive()) {
+      if (MathPreferences::SharedPreferences()->examMode().isActive()) {
         Ion::USB::enable();
       }
     } else if (m_firstUSBEnumeration) {
@@ -290,7 +290,7 @@ void AppsContainer::handleRunException() {
 
 void AppsContainer::run() {
   window()->setAbsoluteFrame(Ion::Display::Rect);
-  MathPreferences* preferences = SharedPreferences();
+  MathPreferences* preferences = MathPreferences::SharedPreferences();
   Poincare::ExamMode examMode = preferences->examMode();
   if (examMode.isActive()) {
     setExamMode(examMode,
@@ -455,7 +455,7 @@ void AppsContainer::resetShiftAlphaStatus() {
 }
 
 void AppsContainer::openDFU(bool blocking) {
-  MathPreferences* preferences = SharedPreferences();
+  MathPreferences* preferences = MathPreferences::SharedPreferences();
   App::Snapshot* activeSnapshot =
       (activeApp() == nullptr ? homeAppSnapshot() : activeApp()->snapshot());
   Poincare::ExamMode activeExamMode = preferences->examMode();

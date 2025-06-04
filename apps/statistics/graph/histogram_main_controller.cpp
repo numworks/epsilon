@@ -157,9 +157,10 @@ void HistogramMainController::updateBannerView() {
   KDCoordinate previousHeight =
       m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 
-  int precision = Escher::SharedPreferences()->numberOfSignificantDigits();
+  int precision =
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      Escher::SharedPreferences()->displayMode();
+      MathPreferences::SharedPreferences()->displayMode();
   constexpr static int k_bufferSize =
       sizeof("Intervalle : [-1.2345ᴇ-123;-1.2345ᴇ-123[");  // longest case
   constexpr static int k_maxNumberOfGlyphs =

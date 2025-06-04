@@ -11,7 +11,6 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
 
-using namespace Escher;
 using namespace Poincare;
 using namespace Shared;
 
@@ -25,9 +24,9 @@ static void enhancePushedExpression(UserExpression& expression) {
    *     If angleUnit = deg, cos(π) is enhanced to cos(π°)
    *     If angleUnit = *, 2->rad is enhanced to 2*->rad
    * */
-  if (!SharedPreferences()->examMode().forbidUnits()) {
+  if (!MathPreferences::SharedPreferences()->examMode().forbidUnits()) {
     Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-        expression, SharedPreferences()->angleUnit());
+        expression, MathPreferences::SharedPreferences()->angleUnit());
   }
 }
 
@@ -37,7 +36,7 @@ CalculationStore::CalculationStore(char* buffer, size_t bufferSize)
     : m_buffer(buffer),
       m_bufferSize(bufferSize),
       m_numberOfCalculations(0),
-      m_inUsePreferences(*SharedPreferences()) {}
+      m_inUsePreferences(*MathPreferences::SharedPreferences()) {}
 
 ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
     int index) const {
@@ -113,7 +112,7 @@ static void compute(Poincare::Expression inputExpression,
 
   Internal::ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
-      .m_angleUnit = Escher::SharedPreferences()->angleUnit(),
+      .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
@@ -218,7 +217,7 @@ static void postProcessOutputs(OutputExpressions& outputs,
 
 Poincare::UserExpression CalculationStore::parseInput(
     Poincare::Layout inputLayout, Poincare::Context* context) {
-  m_inUsePreferences = *SharedPreferences();
+  m_inUsePreferences = *MathPreferences::SharedPreferences();
 
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
@@ -244,7 +243,7 @@ Poincare::UserExpression CalculationStore::parseInput(
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
     Poincare::Expression inputExpression, Poincare::Context* context) {
   Poincare::Preferences::ComplexFormat complexFormat =
-      Escher::SharedPreferences()->complexFormat();
+      MathPreferences::SharedPreferences()->complexFormat();
   OutputExpressions outputs =
       computeInterruptible(inputExpression, complexFormat, context);
 
@@ -293,7 +292,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
 bool CalculationStore::preferencesHaveChanged() {
   // Track settings that might invalidate HistoryCells heights
-  MathPreferences* preferences = SharedPreferences();
+  MathPreferences* preferences = MathPreferences::SharedPreferences();
   if (m_inUsePreferences.combinatoricSymbols() ==
           preferences->combinatoricSymbols() &&
       m_inUsePreferences.numberOfSignificantDigits() ==
@@ -367,8 +366,8 @@ Calculation* CalculationStore::pushEmptyCalculation(char** location) {
   assert(*location != k_pushErrorLocation);
   Calculation* newCalculation = reinterpret_cast<Calculation*>(*location);
   assert(spaceForNewCalculations(*location) >= sizeof(Calculation));
-  new (*location)
-      Calculation(Escher::SharedPreferences()->calculationPreferences());
+  new (*location) Calculation(
+      MathPreferences::SharedPreferences()->calculationPreferences());
   *location += sizeof(Calculation);
   assert(*location != k_pushErrorLocation);
   return newCalculation;

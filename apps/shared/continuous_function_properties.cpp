@@ -1,6 +1,6 @@
 #include "continuous_function_properties.h"
 
-#include <escher/math_preferences.h>
+#include <apps/math_preferences.h>
 #include <omg/unreachable.h>
 #include <poincare/cas.h>
 #include <poincare/code_points.h>
@@ -146,7 +146,9 @@ void ContinuousFunctionProperties::update(
   setSymbolType(precomputedFunctionSymbol);
   setEquationType(precomputedOperatorType);
 
-  if (Escher::SharedPreferences()->examMode().forbidInequalityGraphing() &&
+  if (MathPreferences::SharedPreferences()
+          ->examMode()
+          .forbidInequalityGraphing() &&
       precomputedOperatorType != ComparisonJunior::Operator::Equal) {
     setErrorStatusAndUpdateCaption(Status::Banned);
     return;
@@ -291,7 +293,7 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  if (Escher::SharedPreferences()->examMode().forbidImplicitPlots()) {
+  if (MathPreferences::SharedPreferences()->examMode().forbidImplicitPlots()) {
     CodePoint symbol = willBeAlongX ? k_ordinateSymbol : UCodePointUnknown;
     if (!IsExplicitEquation(inputEquation, symbol)) {
       setErrorStatusAndUpdateCaption(Status::Banned);
@@ -398,7 +400,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
                                   : CurveParameterType::CartesianFunction);
 
   if (xDeg >= 1 && xDeg <= 2 &&
-      !Escher::SharedPreferences()->examMode().forbidImplicitPlots()) {
+      !MathPreferences::SharedPreferences()->examMode().forbidImplicitPlots()) {
     /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */

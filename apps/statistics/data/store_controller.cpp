@@ -77,7 +77,7 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
     PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
         value, buffer, bufferSize,
         AbstractEvenOddBufferTextCell::k_defaultPrecision,
-        SharedPreferences()->displayMode());
+        MathPreferences::SharedPreferences()->displayMode());
     myCell->setText(buffer);
     KDColor textColor = m_store->seriesIsActive(m_store->seriesAtColumn(column))
                             ? KDColorBlack

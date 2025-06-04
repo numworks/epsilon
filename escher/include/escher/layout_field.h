@@ -3,8 +3,8 @@
 
 #include <escher/editable_field.h>
 #include <escher/layout_field_delegate.h>
+#include <escher/layout_preferences.h>
 #include <escher/layout_view.h>
-#include <escher/math_preferences.h>
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
 #include <poincare/old/context.h>
@@ -78,7 +78,7 @@ class LayoutField : public EditableField {
 
  protected:
   bool linearMode() const {
-    return SharedPreferences()->editionMode() ==
+    return LayoutPreferences::SharedPreferences()->editionMode() ==
            Poincare::Preferences::EditionMode::Edition1D;
   }
   bool insertText(const char* text, bool indentation = false,

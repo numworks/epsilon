@@ -1,8 +1,8 @@
 #include "graph_controller_helper.h"
 
+#include <apps/math_preferences.h>
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
-#include <escher/math_preferences.h>
 #include <omg/ieee754.h>
 #include <poincare/print.h>
 
@@ -10,7 +10,6 @@
 
 #include "../app.h"
 
-using namespace Escher;
 using namespace Shared;
 using namespace Poincare;
 
@@ -123,7 +122,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       t = magnitude * std::round(t / magnitude);
       // Also round t so that f(x) matches f evaluated at displayed x
       t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-          t, context, SharedPreferences()->numberOfSignificantDigits(),
+          t, context,
+          MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
           pixelWidth, false);
     }
     // Snap to interest could have corrupted ExpiringPointer
@@ -149,7 +149,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
         t, App::app()->localContext(),
-        SharedPreferences()->numberOfSignificantDigits(), 0.05 * step, true);
+        MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
+        0.05 * step, true);
   }
   // t must have changed
   assert(tCursor != t || function->properties().isScatterPlot());
@@ -204,8 +205,10 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
   size_t numberOfChar =
       function->nameWithArgument(buffer, bufferSize, derivationOrder);
   assert(function->canDisplayDerivative());
-  Preferences::PrintFloatMode mode = SharedPreferences()->displayMode();
-  int precision = SharedPreferences()->numberOfSignificantDigits();
+  Preferences::PrintFloatMode mode =
+      MathPreferences::SharedPreferences()->displayMode();
+  int precision =
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
   if (function->properties().isParametric()) {
     assert(derivative.isPoint());
     Coordinate2D<double> xy = derivative.toPoint();
@@ -251,10 +254,11 @@ double GraphControllerHelper::reloadSlopeInBannerViewForCursorOnFunction(
       function->approximateSlope(cursor->t(), App::app()->localContext());
   constexpr size_t bufferSize = FunctionBannerDelegate::k_textBufferSize;
   char buffer[bufferSize];
-  Print::CustomPrintf(buffer, bufferSize, "%s=%*.*ed",
-                      I18n::translate(I18n::Message::CartesianSlopeFormula),
-                      slope, SharedPreferences()->displayMode(),
-                      SharedPreferences()->numberOfSignificantDigits());
+  Print::CustomPrintf(
+      buffer, bufferSize, "%s=%*.*ed",
+      I18n::translate(I18n::Message::CartesianSlopeFormula), slope,
+      MathPreferences::SharedPreferences()->displayMode(),
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits());
   bannerView()->slopeView()->setText(buffer);
   bannerView()->reload();
   return slope;

@@ -2,8 +2,8 @@
 #define CALCULATION_CALCULATION_STORE_H
 
 #include <apps/constant.h>
+#include <apps/math_preferences.h>
 #include <apps/shared/expiring_pointer.h>
-#include <escher/math_preferences.h>
 #include <poincare/old/pool_variable_context.h>
 #include <stddef.h>
 
@@ -146,7 +146,7 @@ class CalculationStore {
   char* const m_buffer;
   const size_t m_bufferSize;
   int m_numberOfCalculations;
-  Escher::MathPreferences m_inUsePreferences;
+  MathPreferences m_inUsePreferences;
 };
 
 }  // namespace Calculation

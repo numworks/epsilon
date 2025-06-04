@@ -58,9 +58,10 @@ bool BoxController::reloadBannerView() {
   KDCoordinate previousHeight =
       m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 
-  int precision = SharedPreferences()->numberOfSignificantDigits();
+  int precision =
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      Escher::SharedPreferences()->displayMode();
+      MathPreferences::SharedPreferences()->displayMode();
   constexpr int k_bufferSize =
       1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
   char buffer[k_bufferSize] = "";

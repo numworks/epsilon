@@ -1,10 +1,10 @@
 #include "values_controller.h"
 
 #include <apps/constant.h>
+#include <apps/math_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>
-#include <escher/math_preferences.h>
 #include <omg/utf8_helper.h>
 #include <poincare/cas.h>
 #include <poincare/circuit_breaker_checkpoint.h>
@@ -171,11 +171,11 @@ void ValuesController::hideDerivative(Ion::Storage::Record record,
 /* PRIVATE */
 
 KDSize ValuesController::ApproximatedParametricCellSize() {
-  KDSize layoutSize = LayoutHelpers::Point2DSizeGivenChildSize(
-      KDSize(PrintFloat::glyphLengthForFloatWithPrecision(
-                 SharedPreferences()->numberOfSignificantDigits()) *
-                 KDFont::GlyphWidth(k_cellFont),
-             KDFont::GlyphHeight(k_cellFont)));
+  KDSize layoutSize = LayoutHelpers::Point2DSizeGivenChildSize(KDSize(
+      PrintFloat::glyphLengthForFloatWithPrecision(
+          MathPreferences::SharedPreferences()->numberOfSignificantDigits()) *
+          KDFont::GlyphWidth(k_cellFont),
+      KDFont::GlyphHeight(k_cellFont)));
   return layoutSize + KDSize(Metric::SmallCellMargin * 2, 0);
 }
 
@@ -359,7 +359,7 @@ void ValuesController::setStartEndMessages(
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
-  MathPreferences* preferences = SharedPreferences();
+  MathPreferences* preferences = MathPreferences::SharedPreferences();
   double abscissa;
   int derivationOrder;
   Shared::ExpiringPointer<ContinuousFunction> function =
@@ -386,8 +386,9 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
         SymbolicComputation::ReplaceAllSymbolsWithUndefined);
     UserExpression approximation;
     Poincare::Internal::ProjectionContext projectionContext = {
-        .m_complexFormat = Escher::SharedPreferences()->complexFormat(),
-        .m_angleUnit = Escher::SharedPreferences()->angleUnit(),
+        .m_complexFormat =
+            MathPreferences::SharedPreferences()->complexFormat(),
+        .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
         .m_unitFormat =
             GlobalPreferences::SharedGlobalPreferences()->unitFormat()};
     e.cloneAndBeautifyAndApproximate(&result, &approximation,

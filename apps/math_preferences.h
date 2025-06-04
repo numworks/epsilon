@@ -1,16 +1,15 @@
-#ifndef ESCHER_MATH_PREFERENCES_H
-#define ESCHER_MATH_PREFERENCES_H
+#ifndef APPS_MATH_PREFERENCES_H
+#define APPS_MATH_PREFERENCES_H
 
 #include <poincare/preferences.h>
 
-namespace Escher {
-
 /**
+ * This is the Apps pendant of Escher::LayoutPreferences.
  * The sole purpose of this class is to provide a way to access some protected
  * methods of Poincare::Preferences.
  * These methods are not meant to be used inside Poincare and thus are
  * protected, but the current implementation of the user preferences in Apps
- * and Escher relies on them.
+ * relies on them.
  * Ideally, we would refactor entirely the Poincare::Preferences class to split
  * it between the true "preferences" part (that currently can be accessed in
  * Poincare) and the "parameters" part (like ComplexFormat or AngleUnit, that
@@ -23,6 +22,11 @@ namespace Escher {
  */
 class MathPreferences : public Poincare::Preferences {
  public:
+  inline static MathPreferences* SharedPreferences() {
+    return static_cast<MathPreferences*>(
+        Poincare::Preferences::SharedPreferences());
+  }
+
   using Poincare::Preferences::angleUnit;
   using Poincare::Preferences::calculationPreferences;
   using Poincare::Preferences::complexFormat;
@@ -37,12 +41,6 @@ class MathPreferences : public Poincare::Preferences {
   using Poincare::Preferences::setNumberOfSignificantDigits;
 };
 
-inline static MathPreferences* SharedPreferences() {
-  return static_cast<MathPreferences*>(
-      Poincare::Preferences::SharedPreferences());
-}
-
 static_assert(sizeof(MathPreferences) == sizeof(Poincare::Preferences));
 
-}  // namespace Escher
 #endif

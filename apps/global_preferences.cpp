@@ -11,12 +11,15 @@ GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
 }
 
 void GlobalPreferences::countryHasChanged(bool updateSnapshots) {
-  Escher::SharedPreferences()->setCombinatoricSymbols(combinatoricsSymbols());
-  Escher::SharedPreferences()->enableMixedFractions(mixedFractions());
-  Escher::SharedPreferences()->setLogarithmBasePosition(
+  MathPreferences::SharedPreferences()->setCombinatoricSymbols(
+      combinatoricsSymbols());
+  MathPreferences::SharedPreferences()->enableMixedFractions(mixedFractions());
+  MathPreferences::SharedPreferences()->setLogarithmBasePosition(
       logarithmBasePosition());
-  Escher::SharedPreferences()->setLogarithmKeyEvent(logarithmKeyEvent());
-  Escher::SharedPreferences()->setParabolaParameter(parabolaParameter());
+  MathPreferences::SharedPreferences()->setLogarithmKeyEvent(
+      logarithmKeyEvent());
+  MathPreferences::SharedPreferences()->setParabolaParameter(
+      parabolaParameter());
   if (!updateSnapshots) {
     return;
   }

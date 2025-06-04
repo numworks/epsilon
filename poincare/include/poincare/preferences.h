@@ -22,11 +22,11 @@ using ReductionTarget = Internal::ReductionTarget;
 using SymbolicComputation = Internal::SymbolicComputation;
 
 /**
- *  Preferences live in the Storage, which does not enforce alignment. The
+ * Preferences live in the Storage, which does not enforce alignment. The
  * packed attribute ensures the compiler will not emit instructions that require
  * the data to be aligned.
  * TODO: Ideally the class should be final, but we need to override it with
- * Escher::MathPreferences. See comment below. */
+ * Apps::MathPreferences and Escher::LayoutPreferences. See comment below. */
 class __attribute__((packed)) Preferences {
   friend Ion::Storage::FileSystem;
   friend PreferencesTestBuilder;
@@ -184,9 +184,9 @@ class __attribute__((packed)) Preferences {
    * The refactor wasn't tackled yet but none of them is currently called in
    * Poincaré. To ensure this, they are forbidden in PoincareJS (which doesn't
    * need them), and are protected.
-   * An alias class Escher::MathPreferences is provided in Escher to access
-   * these methods, as they are used in Apps and Escher.
-   * See comment in escher/math_preferences.h
+   * Alias classes Apps::MathPreferences and Escher::LayoutPreferences are
+   * provided in Apps and Escher to access these methods. See comment in
+   * apps/math_preferences.h
    * TODO_PCJ: Get rid of them entirely */
 #ifndef TARGET_POINCARE_JS
   CalculationPreferences calculationPreferences() const {

@@ -204,12 +204,12 @@ int MainController::typeAtRow(int row) const {
 void MainController::fillCellForRow(HighlightCell* cell, int row) {
   /* TODO: each child controller (m_preferencesController,
    * m_displayModeController...) should be responsible for getting the current
-   * value from GlobalPreferences or SharedPreferences. This would make the code
-   * more modular and thus clearer. */
+   * value from GlobalPreferences or MathPreferences::SharedPreferences(). This
+   * would make the code more modular and thus clearer. */
 
   GlobalPreferences* globalPreferences =
       GlobalPreferences::SharedGlobalPreferences();
-  MathPreferences* preferences = SharedPreferences();
+  MathPreferences* preferences = MathPreferences::SharedPreferences();
   int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtRow(row);
@@ -353,7 +353,8 @@ bool MainController::hasTestModeCell() const {
   return !hideExamModes() &&
          (examMode == CountryPreferences::AvailableExamModes::All ||
           examMode == CountryPreferences::AvailableExamModes::AmericanAll) &&
-         SharedPreferences()->examMode().ruleset() == ExamMode::Ruleset::Off;
+         MathPreferences::SharedPreferences()->examMode().ruleset() ==
+             ExamMode::Ruleset::Off;
 }
 
 int MainController::getModelIndex(int index) const {

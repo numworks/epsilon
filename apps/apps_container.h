@@ -1,9 +1,9 @@
 #ifndef APPS_CONTAINER_H
 #define APPS_CONTAINER_H
 
+#include <apps/math_preferences.h>
 #include <escher/blink_timer.h>
 #include <escher/container.h>
-#include <escher/math_preferences.h>
 #include <ion/events.h>
 
 #include "apps_window.h"

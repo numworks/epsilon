@@ -19,9 +19,9 @@ namespace PoincareHelpers {
 inline Poincare::Layout CreateLayout(
     const Poincare::UserExpression e, Poincare::Context* context,
     Poincare::Preferences::PrintFloatMode displayMode =
-        Escher::SharedPreferences()->displayMode(),
+        MathPreferences::SharedPreferences()->displayMode(),
     uint8_t numberOfSignificantDigits =
-        Escher::SharedPreferences()->numberOfSignificantDigits()) {
+        MathPreferences::SharedPreferences()->numberOfSignificantDigits()) {
   return e.createLayout(displayMode, numberOfSignificantDigits, context);
 }
 
@@ -35,7 +35,7 @@ inline size_t ConvertFloatToText(T d, char* buffer, size_t bufferSize,
              Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
                  numberOfSignificantDigits),
              numberOfSignificantDigits,
-             Escher::SharedPreferences()->displayMode())
+             MathPreferences::SharedPreferences()->displayMode())
       .CharLength;
 }
 
@@ -55,9 +55,9 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 
 struct ApproximationParameters {
   Poincare::Preferences::ComplexFormat complexFormat =
-      Escher::SharedPreferences()->complexFormat();
+      MathPreferences::SharedPreferences()->complexFormat();
   Poincare::Preferences::AngleUnit angleUnit =
-      Escher::SharedPreferences()->angleUnit();
+      MathPreferences::SharedPreferences()->angleUnit();
   bool updateComplexFormatWithExpression = true;
 };
 
@@ -90,9 +90,9 @@ inline FloatType ApproximateToRealScalar(Poincare::Expression e) {
 
 struct ReductionParameters {
   Poincare::Preferences::ComplexFormat complexFormat =
-      Escher::SharedPreferences()->complexFormat();
+      MathPreferences::SharedPreferences()->complexFormat();
   Poincare::Preferences::AngleUnit angleUnit =
-      Escher::SharedPreferences()->angleUnit();
+      MathPreferences::SharedPreferences()->angleUnit();
   bool updateComplexFormatWithExpression = true;
 
   Poincare::ReductionTarget target = Poincare::ReductionTarget::User;
@@ -158,8 +158,8 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
   (void)numberOfChar;
   // Extract displayed value
   return Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<T>(
-      buffer, context, Escher::SharedPreferences()->complexFormat(),
-      Escher::SharedPreferences()->angleUnit());
+      buffer, context, MathPreferences::SharedPreferences()->complexFormat(),
+      MathPreferences::SharedPreferences()->angleUnit());
 }
 
 // Conversions to float

@@ -1,9 +1,9 @@
 #include "helpers.h"
 
 #include <apps/global_preferences.h>
+#include <apps/math_preferences.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
-#include <escher/math_preferences.h>
 #include <limits.h>
 #include <poincare/helpers/store.h>
 #include <poincare/test/helper.h>
@@ -16,7 +16,6 @@
 #include "../solver_context.h"
 
 using namespace Solver;
-using namespace Escher;
 using namespace Poincare;
 
 // Private sub-helpers
@@ -250,6 +249,6 @@ void assert_auto_solving_range_is(const char* equation, double min, double max,
 
 void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,
                                   Preferences::AngleUnit angleUnit) {
-  SharedPreferences()->setComplexFormat(complexFormat);
-  SharedPreferences()->setAngleUnit(angleUnit);
+  MathPreferences::SharedPreferences()->setComplexFormat(complexFormat);
+  MathPreferences::SharedPreferences()->setAngleUnit(angleUnit);
 }

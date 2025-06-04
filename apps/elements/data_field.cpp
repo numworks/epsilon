@@ -9,7 +9,6 @@
 
 #include "elements_data_base.h"
 
-using namespace Escher;
 using namespace Poincare;
 
 namespace Elements {
@@ -32,7 +31,7 @@ bool DoubleDataField::hasDouble(AtomicNumber z) const {
 Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   assert(hasDouble(z));
   Preferences::PrintFloatMode floatDisplayMode =
-      SharedPreferences()->displayMode();
+      MathPreferences::SharedPreferences()->displayMode();
   double v = getDouble(z);
   if (!std::isfinite(v)) {
     return DataField::UnknownValueLayout();
@@ -102,7 +101,7 @@ Layout DoubleDataFieldWithSubscriptSymbol::fieldSymbolLayout() const {
 Poincare::Layout ZDataField::getLayout(AtomicNumber z,
                                        int significantDigits) const {
   Preferences::PrintFloatMode floatDisplayMode =
-      SharedPreferences()->displayMode();
+      MathPreferences::SharedPreferences()->displayMode();
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
   return Expression::Builder(static_cast<int>(z))
@@ -117,7 +116,7 @@ Layout ADataField::getLayout(AtomicNumber z, int significantDigits) const {
     return DataField::UnknownValueLayout();
   }
   Preferences::PrintFloatMode floatDisplayMode =
-      SharedPreferences()->displayMode();
+      MathPreferences::SharedPreferences()->displayMode();
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
   return Expression::Builder(static_cast<int>(a))
@@ -203,7 +202,7 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z,
   }
 
   Preferences::PrintFloatMode floatDisplayMode =
-      SharedPreferences()->displayMode();
+      MathPreferences::SharedPreferences()->displayMode();
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
 

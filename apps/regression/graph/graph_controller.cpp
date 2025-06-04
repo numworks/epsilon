@@ -140,9 +140,9 @@ bool GraphController::buildRegressionExpression(
 void GraphController::reloadBannerView() {
   const int selectedSeries = selectedSeriesIndex();
   const int significantDigits =
-      SharedPreferences()->numberOfSignificantDigits();
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      Escher::SharedPreferences()->displayMode();
+      MathPreferences::SharedPreferences()->displayMode();
 
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined =
@@ -169,7 +169,9 @@ void GraphController::reloadBannerView() {
     m_bannerView.setDisplayParameters(true, true, !coefficientsAreDefined);
     m_bannerView.otherView()->setText(I18n::translate(I18n::Message::MeanDot));
   } else if (!(Store::HasCoefficients(modelType) ||
-               SharedPreferences()->examMode().forbidStatsDiagnostics())) {
+               MathPreferences::SharedPreferences()
+                   ->examMode()
+                   .forbidStatsDiagnostics())) {
     // Display correlation coefficient
     m_bannerView.setDisplayParameters(true, false, !coefficientsAreDefined);
     Poincare::Print::CustomPrintf(

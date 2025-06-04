@@ -1,8 +1,8 @@
 #ifndef SHARED_INTERACTIVE_CURVE_VIEW_DELEGATE_H
 #define SHARED_INTERACTIVE_CURVE_VIEW_DELEGATE_H
 
+#include <apps/math_preferences.h>
 #include <assert.h>
-#include <escher/math_preferences.h>
 #include <poincare/old/context.h>
 #include <poincare/range.h>
 
@@ -27,7 +27,7 @@ class InteractiveCurveViewRangeDelegate {
                 Ion::Storage::FileSystem::sharedFileSystem->checksum())
             << 32) +
            static_cast<uint64_t>(
-               Escher::SharedPreferences()->mathPreferencesCheckSum());
+               MathPreferences::SharedPreferences()->mathPreferencesCheckSum());
   }
   virtual Poincare::Range2D<float> optimalRange(
       bool computeX, bool computeY,

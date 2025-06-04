@@ -104,12 +104,14 @@ void TangentGraphController::reloadBannerView() {
   }
 
   Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", coefficientA,
-                      SharedPreferences()->displayMode(), precision);
+                      MathPreferences::SharedPreferences()->displayMode(),
+                      precision);
   m_bannerView->aView()->setText(buffer);
 
   double coefficientB = -coefficientA * m_cursor->x() + m_cursor->y();
   Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", coefficientB,
-                      SharedPreferences()->displayMode(), precision);
+                      MathPreferences::SharedPreferences()->displayMode(),
+                      precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

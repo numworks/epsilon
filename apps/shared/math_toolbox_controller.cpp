@@ -75,7 +75,7 @@ KDCoordinate MathToolboxController::nonMemoizedRowHeight(int row) {
 bool MathToolboxController::isMessageTreeDisabled(
     const ToolboxMessageTree* messageTree) const {
   I18n::Message label = messageTree->label();
-  ExamMode examMode = SharedPreferences()->examMode();
+  ExamMode examMode = MathPreferences::SharedPreferences()->examMode();
   return (messageTree->text() == I18n::Message::Sum && examMode.forbidSum()) ||
          (label == I18n::Message::BasedLogarithm &&
           examMode.forbidBasedLogarithm()) ||
@@ -121,14 +121,14 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
     if (resultLayout.isUninitialized()) {
       const char* text = I18n::translate(messageTree->label());
 
-      if (Escher::SharedPreferences()->editionMode() ==
+      if (MathPreferences::SharedPreferences()->editionMode() ==
           Poincare::Preferences::EditionMode::Edition2D) {
         // No context is given so that f(x) is never parsed as f×(x)
         UserExpression resultExpression = UserExpression::Parse(text, nullptr);
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
           resultLayout = resultExpression.createLayout(
-              Escher::SharedPreferences()->displayMode(),
+              MathPreferences::SharedPreferences()->displayMode(),
               Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
               App::app()->localContext());
         }
@@ -137,7 +137,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
         // If 2D parsing failed or edition is in 1D, try a simpler layout
         resultLayout = Layout::String(text, strlen(text));
       }
-    } else if (Escher::SharedPreferences()->editionMode() ==
+    } else if (MathPreferences::SharedPreferences()->editionMode() ==
                Poincare::Preferences::EditionMode::Edition1D) {
       char buffer[AbstractTextField::MaxBufferSize()];
       size_t len = resultLayout.serialize(buffer, sizeof(buffer));
@@ -229,7 +229,8 @@ int MathToolboxController::maxNumberOfDisplayedRows() const {
 }
 
 int MathToolboxController::controlChecksum() const {
-  return static_cast<int>(SharedPreferences()->examMode().ruleset()) *
+  return static_cast<int>(
+             MathPreferences::SharedPreferences()->examMode().ruleset()) *
              I18n::NumberOfCountries +
          static_cast<int>(
              GlobalPreferences::SharedGlobalPreferences()->country()) +
@@ -242,7 +243,7 @@ int MathToolboxController::controlChecksum() const {
 int MathToolboxController::indexAfterFork(
     const ToolboxMessageTree* forkMessageTree) const {
   if (forkMessageTree->childrenList() == arithmeticFork) {
-    if (Escher::SharedPreferences()->mixedFractionsAreEnabled()) {
+    if (MathPreferences::SharedPreferences()->mixedFractionsAreEnabled()) {
       return 0;
     }
     return 1;

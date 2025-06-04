@@ -1,9 +1,9 @@
 #include "../calculation_store.h"
 
 #include <apps/calculation/additional_results/additional_results_type.h>
+#include <apps/math_preferences.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
-#include <escher/math_preferences.h>
 #include <poincare/cas.h>
 #include <poincare/k_tree.h>
 #include <poincare/old/context.h>
@@ -18,7 +18,6 @@ using EqualSign = Calculation::Calculation::EqualSign;
 using OutputLayouts = Calculation::Calculation::OutputLayouts;
 using CalculationStore = Calculation::CalculationStore;
 
-using namespace Escher;
 using namespace Poincare;
 
 constexpr static size_t calculationBufferSize =
@@ -132,11 +131,13 @@ QUIZ_CASE(calculation_ans) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
   // Setup complex format and exam mode
   Preferences::ComplexFormat previousComplexFormat =
-      SharedPreferences()->complexFormat();
-  ExamMode previousExamMode = SharedPreferences()->examMode();
-  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
+      MathPreferences::SharedPreferences()->complexFormat();
+  ExamMode previousExamMode = MathPreferences::SharedPreferences()->examMode();
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Real);
   if (previousExamMode != ExamMode(ExamMode::Ruleset::Off)) {
-    SharedPreferences()->setExamMode(ExamMode(ExamMode::Ruleset::Off));
+    MathPreferences::SharedPreferences()->setExamMode(
+        ExamMode(ExamMode::Ruleset::Off));
   }
   pushAndProcessCalculation(&store, "1+3/4", &globalContext);
   pushAndProcessCalculation(&store, "ans+2/3", &globalContext);
@@ -168,7 +169,8 @@ QUIZ_CASE(calculation_ans) {
 
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
-  SharedPreferences()->setExamMode(ExamMode(ExamMode::Ruleset::Dutch));
+  MathPreferences::SharedPreferences()->setExamMode(
+      ExamMode(ExamMode::Ruleset::Dutch));
   assert(CAS::ShouldOnlyDisplayApproximation(
       UserExpression::Builder(KSqrt(2_e)), UserExpression::Builder(KSqrt(2_e)),
       Expression(), nullptr));
@@ -176,8 +178,8 @@ QUIZ_CASE(calculation_ans) {
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 
   // Restore complex format and exam mode
-  SharedPreferences()->setExamMode(previousExamMode);
-  SharedPreferences()->setComplexFormat(previousComplexFormat);
+  MathPreferences::SharedPreferences()->setExamMode(previousExamMode);
+  MathPreferences::SharedPreferences()->setComplexFormat(previousComplexFormat);
 
   pushAndProcessCalculation(&store, "_g0", &globalContext);
   pushAndProcessCalculation(&store, "ans→m*s^-2", &globalContext);
@@ -282,12 +284,14 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
-  Preferences::AngleUnit previousAngleUnit = SharedPreferences()->angleUnit();
-  SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
+  Preferences::AngleUnit previousAngleUnit =
+      MathPreferences::SharedPreferences()->angleUnit();
+  MathPreferences::SharedPreferences()->setAngleUnit(
+      Preferences::AngleUnit::Degree);
 
   uint8_t previousNumberOfSignificantDigits =
-      SharedPreferences()->numberOfSignificantDigits();
-  SharedPreferences()->setNumberOfSignificantDigits(
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+  MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
       PrintFloat::k_maxNumberOfSignificantDigits);
 
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
@@ -411,7 +415,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("45→gon", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "50gon", &globalContext,
                       &store);
-  SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Radian);
+  MathPreferences::SharedPreferences()->setAngleUnit(
+      Preferences::AngleUnit::Radian);
   assertCalculationIs("2+π→_rad", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "(2+π)rad",
                       "5.1415926535898rad", &globalContext, &store);
@@ -433,11 +438,13 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "6rad", &globalContext,
                       &store);
-  SharedPreferences()->setAngleUnit(Preferences::AngleUnit::Degree);
+  MathPreferences::SharedPreferences()->setAngleUnit(
+      Preferences::AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
-  ExamMode previousExamMode = SharedPreferences()->examMode();
-  SharedPreferences()->setExamMode(ExamMode(ExamMode::Ruleset::Dutch));
+  ExamMode previousExamMode = MathPreferences::SharedPreferences()->examMode();
+  MathPreferences::SharedPreferences()->setExamMode(
+      ExamMode(ExamMode::Ruleset::Dutch));
 
   assertCalculationIs("1+1", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "2", nullptr, &globalContext, &store);
@@ -458,10 +465,10 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("_g0", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       nullptr, nullptr, &globalContext, &store);
 
-  SharedPreferences()->setExamMode(previousExamMode);
-  SharedPreferences()->setAngleUnit(previousAngleUnit);
+  MathPreferences::SharedPreferences()->setExamMode(previousExamMode);
+  MathPreferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
 
-  SharedPreferences()->setNumberOfSignificantDigits(
+  MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
       previousNumberOfSignificantDigits);
 }
 
@@ -735,11 +742,12 @@ QUIZ_CASE(calculation_complex_format) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
   uint8_t previousNumberOfSignificantDigits =
-      SharedPreferences()->numberOfSignificantDigits();
-  SharedPreferences()->setNumberOfSignificantDigits(
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+  MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
       PrintFloat::k_maxNumberOfSignificantDigits);
 
-  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Real);
   assertCalculationIs("1+i", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "1+i", nullptr, &globalContext,
                       &store);
@@ -759,7 +767,8 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "nonreal", nullptr, &globalContext, &store);
 
-  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Cartesian);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Cartesian);
   assertCalculationIs("1+i", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "1+i", nullptr, &globalContext,
                       &store);
@@ -782,7 +791,8 @@ QUIZ_CASE(calculation_complex_format) {
                       "0.84089641525371+0.84089641525371i", &globalContext,
                       &store);
 
-  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Polar);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Polar);
   assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "√(2)e^((π/4)i)",
                       "1.4142135623731e^(0.78539816339745i)", &globalContext,
@@ -808,9 +818,10 @@ QUIZ_CASE(calculation_complex_format) {
                       "1.1892071150027e^(0.78539816339745i)", &globalContext,
                       &store);
 
-  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Real);
 
-  SharedPreferences()->setNumberOfSignificantDigits(
+  MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
       previousNumberOfSignificantDigits);
 }
 
@@ -868,7 +879,8 @@ QUIZ_CASE(calculation_additional_results) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
-  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Real);
   assertCalculationAdditionalResultTypeHas("1+1", {.integer = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("π-π", {.integer = true},
@@ -960,10 +972,12 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("_L/(_L/3)", {}, &globalContext,
                                            &store);
 
-  SharedPreferences()->setDisplayMode(Preferences::PrintFloatMode::Scientific);
+  MathPreferences::SharedPreferences()->setDisplayMode(
+      Preferences::PrintFloatMode::Scientific);
   assertCalculationAdditionalResultTypeHas("e^(2+3)", {}, &globalContext,
                                            &store);
-  SharedPreferences()->setDisplayMode(Preferences::PrintFloatMode::Decimal);
+  MathPreferences::SharedPreferences()->setDisplayMode(
+      Preferences::PrintFloatMode::Decimal);
 
   assertCalculationAdditionalResultTypeHas("√(-1)", {}, &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("{1}", {}, &globalContext, &store);
@@ -983,11 +997,13 @@ QUIZ_CASE(calculation_additional_results) {
                                            &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("z.exp").destroy();
 
-  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Polar);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Polar);
   assertCalculationAdditionalResultTypeHas("-10", {.complex = true},
                                            &globalContext, &store);
 
-  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Cartesian);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("[[1+2i][3+i]]", {.matrix = true},
@@ -995,5 +1011,6 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("-10", {.scientificNotation = true},
                                            &globalContext, &store);
 
-  SharedPreferences()->setComplexFormat(Preferences::ComplexFormat::Real);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Real);
 }

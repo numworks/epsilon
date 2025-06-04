@@ -1,7 +1,7 @@
 #include <assert.h>
 #include <escher/clipboard.h>
 #include <escher/layout_field.h>
-#include <escher/math_preferences.h>
+#include <escher/layout_preferences.h>
 #include <escher/text_field.h>
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
@@ -301,7 +301,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
   }
   // The text is parsable, we create its layout an insert it.
   Layout resultLayout = resultExpression.createLayout(
-      SharedPreferences()->displayMode(),
+      LayoutPreferences::SharedPreferences()->displayMode(),
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
       App::app() ? App::app()->localContext() : nullptr);
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
@@ -624,14 +624,14 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
   layout = layout.makeEditable();
-  if (SharedPreferences()->editionMode() ==
+  if (LayoutPreferences::SharedPreferences()->editionMode() ==
       Poincare::Preferences::EditionMode::Edition1D) {
     constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
     char buffer[bufferSize];
     Expression e = Expression::Parse(layout, nullptr, true, false, true);
     if (!e.isUninitialized()) {
       Layout layout =
-          e.createLayout(SharedPreferences()->displayMode(),
+          e.createLayout(LayoutPreferences::SharedPreferences()->displayMode(),
                          Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
                          nullptr, OMG::Base::Decimal, true);
       cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,

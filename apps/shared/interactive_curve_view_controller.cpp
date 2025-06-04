@@ -172,7 +172,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       floatBody, App::app()->localContext(),
-      Escher::SharedPreferences()->numberOfSignificantDigits(),
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
       curveView()->pixelWidth(), false);
   moveCursorAndCenterIfNeeded(floatBody);
   return true;

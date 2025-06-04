@@ -29,9 +29,9 @@ void ResidualPlotController::updateCursor() {
                         &m_curveView);
 
   const int significantDigits =
-      Escher::SharedPreferences()->numberOfSignificantDigits();
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      Escher::SharedPreferences()->displayMode();
+      MathPreferences::SharedPreferences()->displayMode();
   constexpr size_t bufferSize =
       Shared::BannerView::BannerBufferTextView::MaxTextSize();
   constexpr static int k_maxNumberOfGlyphs =

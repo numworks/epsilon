@@ -265,8 +265,8 @@ bool CurveParameterController::confirmParameterAtIndex(ParameterIndex index,
       (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
   f = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       f, App::app()->localContext(),
-      Escher::SharedPreferences()->numberOfSignificantDigits(), pixelWidth,
-      false);
+      MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
+      pixelWidth, false);
 
   m_graphRange->setZoomAuto(false);
   m_graphController->moveCursorAndCenterIfNeeded(f);

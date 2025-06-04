@@ -187,8 +187,8 @@ Calculation::OutputLayouts Calculation::createOutputLayouts(
          * -> raise an exception. */
         ExceptionCheckpoint::Raise();
       }
-    }
-    if (canChangeDisplayOutput && CanDisplayApproximate(m_displayOutput)) {
+    } else if (canChangeDisplayOutput &&
+               CanDisplayApproximate(m_displayOutput)) {
       KDCoordinate exactOutputWidth = exactOutput->layoutSize(font).width();
       assert((m_displayOutput == DisplayOutput::ExactAndApproximate ||
               m_displayOutput == DisplayOutput::ExactAndApproximateToggle));

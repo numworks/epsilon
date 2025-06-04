@@ -67,6 +67,15 @@ bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
   if (position == 0) {
     return false;
   }
+#if POINCARE_PT_COMBINATORICS_LAYOUTS
+  if (Preferences::SharedPreferences()->combinatoricSymbols() ==
+          Preferences::CombinatoricSymbols::LetterWithSubAndSuperscript &&
+      TokenizeAndBeautifyIdentifiers(
+          cursorRack, position - 1, k_specialCombinatoricsRules,
+          k_lenOfSpecialCombinatoricsRules, context, layoutCursor)) {
+    return true;
+  }
+#endif
   return TokenizeAndBeautifyIdentifiers(
       cursorRack, position - 1, k_simpleIdentifiersRules,
       k_lenOfSimpleIdentifiersRules, context, layoutCursor);
@@ -115,6 +124,15 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
     if (insertedLayoutIndex == 0) {
       return false;
     }
+#if POINCARE_PT_COMBINATORICS_LAYOUTS
+    if (Preferences::SharedPreferences()->combinatoricSymbols() ==
+            Preferences::CombinatoricSymbols::LetterWithSubAndSuperscript &&
+        TokenizeAndBeautifyIdentifiers(
+            h, insertedLayoutIndex - 1, k_specialCombinatoricsRules,
+            k_lenOfSpecialCombinatoricsRules, context, layoutCursor, true)) {
+      return true;
+    }
+#endif
     return TokenizeAndBeautifyIdentifiers(
                h, insertedLayoutIndex - 1, k_identifiersRules,
                k_lenOfIdentifiersRules, context, layoutCursor, true) ||

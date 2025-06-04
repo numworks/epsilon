@@ -226,6 +226,16 @@ class InputBeautification {
   constexpr static size_t k_lenOfIdentifiersRules =
       std::size(k_identifiersRules);
 
+#if POINCARE_PT_COMBINATORICS_LAYOUTS
+  constexpr static const BeautificationRule k_specialCombinatoricsRules[] = {
+      /* binomial( */
+      ruleHelper<Type::Binomial, Type::PtBinomialLayout>(),
+      /* permute( */
+      ruleHelper<Type::Permute, Type::PtPermuteLayout>()};
+  constexpr static size_t k_lenOfSpecialCombinatoricsRules =
+      std::size(k_specialCombinatoricsRules);
+#endif
+
   constexpr static BeautificationRule k_sumRule = {
       "sum", 4, [](TreeRef* parameters) -> Tree* {
         // TODO factorize with diff and int

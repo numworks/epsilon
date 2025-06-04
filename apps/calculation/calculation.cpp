@@ -333,11 +333,16 @@ void Calculation::fillExpressionsForAdditionalResults(
 
 AdditionalResultsType Calculation::additionalResultsType(Context* context) {
   if (m_additionalResultsType.isUninitialized()) {
-    UserExpression i, a, e;
-    fillExpressionsForAdditionalResults(&i, &e, &a, context);
-    m_additionalResultsType =
-        AdditionalResultsType::AdditionalResultsForExpressions(
-            i, e, a, m_calculationPreferences, context);
+    if (m_reductionFailure) {
+      // Hide the additional result if the calculation had a reduction failure
+      m_additionalResultsType = AdditionalResultsType{.empty = true};
+    } else {
+      UserExpression i, a, e;
+      fillExpressionsForAdditionalResults(&i, &e, &a, context);
+      m_additionalResultsType =
+          AdditionalResultsType::AdditionalResultsForExpressions(
+              i, e, a, m_calculationPreferences, context);
+    }
   }
   assert(!m_additionalResultsType.isUninitialized());
   return m_additionalResultsType;

@@ -35,7 +35,7 @@ int LabeledAxisWithOptionalPercent::computeLabel(
   m_plotController->appendLabelSuffix(
       axis, &m_labels[i][length],
       static_cast<int>(k_labelBufferMaxSize) - length, length,
-      k_labelBufferMaxGlyphLength - length);
+      static_cast<int>(k_labelBufferMaxGlyphLength) - length);
   return k_labelBufferMaxSize;
 }
 

@@ -351,7 +351,7 @@ bool Expression::deepIsOfType(std::initializer_list<Internal::AnyType> types,
       context, SymbolicComputation::ReplaceDefinedSymbols, &types);
 }
 
-void UserExpression::cloneAndSimplifyAndApproximate(
+bool UserExpression::cloneAndSimplifyAndApproximate(
     UserExpression* simplifiedExpression,
     UserExpression* approximatedExpression,
     Internal::ProjectionContext& context) const {
@@ -363,6 +363,7 @@ void UserExpression::cloneAndSimplifyAndApproximate(
   // Step 2: approximate
   assert(approximatedExpression && approximatedExpression->isUninitialized());
   *approximatedExpression = simplifiedExpression->cloneAndApproximate(context);
+  return reductionFailure;
 }
 
 UserExpression UserExpression::cloneAndApproximate(

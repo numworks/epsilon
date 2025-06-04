@@ -111,6 +111,7 @@ class CalculationStore {
   struct CalculationElements {
     Poincare::UserExpression input;
     OutputExpressions outputs;
+    bool hasReductionFailure;
     Poincare::Preferences::ComplexFormat complexFormat;
 
     size_t sizeOfTrees() const {

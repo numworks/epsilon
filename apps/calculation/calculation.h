@@ -69,6 +69,7 @@ class Calculation {
         m_equalSign(EqualSign::Unknown),
         m_calculationPreferences(calculationPreferences),
         m_additionalResultsType(),
+        m_reductionFailure(false),
         m_height(-1),
         m_expandedHeight(-1),
         m_inputTreeSize(0),
@@ -86,6 +87,10 @@ class Calculation {
 
   void setComplexFormat(Poincare::Preferences::ComplexFormat complexFormat) {
     m_calculationPreferences.complexFormat = complexFormat;
+  }
+
+  void setReductionFailure(bool hasReductionFailure) {
+    m_reductionFailure = hasReductionFailure;
   }
 
   // Expressions
@@ -210,6 +215,7 @@ class Calculation {
    * additional results. */
   Poincare::Preferences::CalculationPreferences m_calculationPreferences;
   AdditionalResultsType m_additionalResultsType;
+  bool m_reductionFailure;
 #if __EMSCRIPTEN__
   // See comment about emscripten alignment in Function::RecordDataBuffer
   static_assert(

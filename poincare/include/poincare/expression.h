@@ -186,8 +186,9 @@ class Expression : public PoolHandle {
     return static_cast<ExpressionObject*>(PoolHandle::object());
   }
 
-  // Only on UserExpression. Expressions in parameters are outputs.
-  void cloneAndSimplifyAndApproximate(
+  /* Only on UserExpression. Expressions in parameters are outputs. The return
+   * boolean indicates the reduction status (success or failure) */
+  bool cloneAndSimplifyAndApproximate(
       UserExpression* simplifiedExpression,
       UserExpression* approximatedExpression,
       Internal::ProjectionContext& context) const;

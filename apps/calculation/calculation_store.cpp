@@ -99,7 +99,7 @@ void CalculationStore::replaceAnsInExpression(UserExpression& expression,
   expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
 }
 
-static void compute(Poincare::Expression inputExpression,
+static bool compute(Poincare::Expression inputExpression,
                     Poincare::Expression& exactOutputExpression,
                     Poincare::Expression& approximateOutputExpression,
                     Poincare::Preferences::ComplexFormat& complexFormat,
@@ -119,11 +119,16 @@ static void compute(Poincare::Expression inputExpression,
                                    : SymbolicComputation::ReplaceAllSymbols,
       .m_context = context};
 
-  inputExpression.cloneAndSimplifyAndApproximate(
+  return inputExpression.cloneAndSimplifyAndApproximate(
       &exactOutputExpression, &approximateOutputExpression, projContext);
 }
 
-static OutputExpressions computeInterruptible(
+struct CalculationResult {
+  OutputExpressions outputs;
+  bool hasReductionFailure;
+};
+
+static CalculationResult computeInterruptible(
     Poincare::Expression inputExpression,
     Poincare::Preferences::ComplexFormat& complexFormat,
     Poincare::Context* context) {
@@ -134,11 +139,12 @@ static OutputExpressions computeInterruptible(
    * approximative to avoid long computation to determine it.
    */
   OutputExpressions outputs;
+  bool hasReductionFailure = false;
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
-    compute(inputExpression, outputs.exact, outputs.approximate, complexFormat,
-            context);
+    hasReductionFailure = compute(inputExpression, outputs.exact,
+                                  outputs.approximate, complexFormat, context);
   } else {
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
@@ -148,7 +154,7 @@ static OutputExpressions computeInterruptible(
 
   assert(!outputs.exact.isUninitialized() &&
          !outputs.approximate.isUninitialized());
-  return outputs;
+  return CalculationResult{outputs, hasReductionFailure};
 }
 
 static void processStore(OutputExpressions& outputs,
@@ -244,13 +250,15 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
     Poincare::Expression inputExpression, Poincare::Context* context) {
   Poincare::Preferences::ComplexFormat complexFormat =
       MathPreferences::SharedPreferences()->complexFormat();
-  OutputExpressions outputs =
+  CalculationResult calculationResult =
       computeInterruptible(inputExpression, complexFormat, context);
 
-  postProcessOutputs(outputs, inputExpression,
+  postProcessOutputs(calculationResult.outputs, inputExpression,
                      m_inUsePreferences.examMode().forbidUnits(), context);
 
-  return {inputExpression, outputs, complexFormat};
+  return CalculationElements{inputExpression, calculationResult.outputs,
+                             calculationResult.hasReductionFailure,
+                             complexFormat};
 }
 
 ExpiringPointer<Calculation> CalculationStore::push(
@@ -390,8 +398,9 @@ Calculation* CalculationStore::pushCalculation(
 
   // Push an empty Calculation instance (takes sizeof(Calculation))
   Calculation* newCalculation = pushEmptyCalculation(location);
-  // Set the complex format
+  // Set the calculation properties
   newCalculation->setComplexFormat(calculationToPush.complexFormat);
+  newCalculation->setReductionFailure(calculationToPush.hasReductionFailure);
 
   // Push the input and output expressions after the Calculation
   assert(!calculationToPush.input.isUninitialized() &&

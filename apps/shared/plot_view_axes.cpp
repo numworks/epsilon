@@ -260,8 +260,6 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
   bool drawTicks =
       !(axis == OMG::Axis::Vertical && plotView->range()->xMin() >= 0.f);
   float tMax = plotView->rangeMax(axis) + plotView->pixelLength(axis);
-  size_t labelIndex = 0;
-  float t = static_cast<float>(tickPosition(labelIndex, plotView, axis));
   /* maxNumberOfTicks is there to ensure that we do not draw too much ticks
    * when reaching limit cases. For example, tMax = 1.0E+8 and tickStep = 0.5,
    * when t == tMax, increasing if by tickstep will give:
@@ -273,16 +271,18 @@ void SimpleAxis::drawAxis(const AbstractPlotView* plotView, KDContext* ctx,
                              static_cast<float>(tickStep(plotView, axis)))) +
                          1;
   assert(maxNumberOfTicks >= 2);
-  while (t < tMax && static_cast<int>(labelIndex) < maxNumberOfTicks) {
+  for (size_t labelIndex = 0;
+       labelIndex <
+       std::min(static_cast<size_t>(maxNumberOfTicks), numberOfLabels());
+       labelIndex++) {
+    float t = static_cast<float>(tickPosition(labelIndex, plotView, axis));
+    if (t >= tMax) {
+      break;
+    }
     if (drawTicks) {
       plotView->drawTick(ctx, rect, axis, t, k_color);
     }
     drawLabel(labelIndex, t, plotView, ctx, rect, axis);
-    labelIndex++;
-    if (labelIndex >= numberOfLabels()) {
-      break;
-    }
-    t = float(tickPosition(labelIndex, plotView, axis));
   }
 }
 

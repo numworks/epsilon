@@ -87,8 +87,6 @@ bool Arithmetic::ReduceFloor(Tree* e) {
     return false;
   }
   double approx = Approximation::To<double>(e, Approximation::Parameters{});
-  // TODO: add Integer::Push(int64_t) to increase the range of possible exact
-  // floor result
   static_assert(static_cast<double>(INT32_MAX) <
                 OMG::IEEE754<double>::NonExactIntegerLimit());
   if (std::isnan(approx) ||
@@ -96,17 +94,20 @@ bool Arithmetic::ReduceFloor(Tree* e) {
     return false;
   }
   assert(approx == std::round(approx));
-  /* If `approx` is smaller than the largest integer such that all smaller
-   * integers can be exactly represented in IEEE754, then `approx` is the exact
-   * result (no precision loss). Since we lack the possibility to push
-   * integer bigger than int32 onto the stack, we are limited to INT32_MAX
-   * instead of IEEE754::NonExactIntegerLimit. If further precision is required,
-   * Integer::Push(int64_t) is needed.
-   * NOTE, the order goes:
-   * <float>NonExactIntLim < INT32_MAX < <double>NonExactIntLim < INT64_MAX */
-  // TODO: understand comment below v
-  /* TODO : While this ensure exact integer representation, exact decimals are
-   * also expected here, this limit should be lowered. */
+  /* If `approx` is bigger than the largest integer such that all smaller
+   * integers can be exactly represented in IEEE754, then `approx` is not the
+   * exact result (loss of precision).
+   * Since we lack the possibility to push integer bigger than int32 onto the
+   * stack, we are limited to INT32_MAX instead of
+   * IEEE754::NonExactIntegerLimit.
+   * NOTE: the order goes:
+   * floatNonExactIntLim < INT32_MAX < doubleNonExactIntLim < INT64_MAX
+   * NOTE: Even if the approximation has a small enough value it's not
+   * enough to ensure a valid reduction: precision could have been lost during
+   * approximation. For example floor(bigNumber-bigNumber).
+   *
+   * TODO: This limit (INT_MAX) should be lowered, it would make it more
+   * difficult to obtain incorrect exact result. */
   e->moveTreeOverTree(Integer::Push(static_cast<int32_t>(approx)));
   return true;
 }

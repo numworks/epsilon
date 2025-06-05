@@ -90,6 +90,14 @@ $(addprefix shared/, \
   exam_mode.cpp \
 ) \
 
+ifeq ($(PLATFORM),n0120)
+_sources_ion_bench += \
+  device/core/device/shared-core/drivers/external_flash_sscg.cpp
+else
+_sources_ion_bench += \
+  device/core/device/shared-core/drivers/external_flash_no_sscg.cpp
+endif
+
 _ldflags_ion_bench := \
   -Wl,-T,$(PATH_ion)/src/device/core/device/bench/ram.ld
 

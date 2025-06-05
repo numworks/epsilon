@@ -38,6 +38,8 @@ void FunctionListController::computeAdditionalResults(
           {.complexFormat = complexFormat(), .angleUnit = angleUnit()},
           &reductionFailure)
           .getSystemFunction(k_symbolName, true);
+  /* Reduction should always succeed when in the additional results, as they are
+   * blocked if the Calculation had a reduction failure. */
   assert(!simplifiedExpression.isUninitialized() && !reductionFailure);
 
   /* Use the approximate expression to compute the ordinate to ensure that

@@ -74,10 +74,12 @@ device/core/device/bootloader/main.cpp
 ifeq ($(PLATFORM),n0120)
 _sources_ion_bootloader += \
   device/core/device/shared-core/drivers/board_power_supply_stm32h.cpp \
-  device/core/device/bootloader/drivers/keyboard_pins_stm32h.cpp
+  device/core/device/bootloader/drivers/keyboard_pins_stm32h.cpp \
+  device/core/device/bootloader/drivers/external_flash_sscg.cpp
 else
 _sources_ion_bootloader += \
-  device/core/device/shared-core/drivers/external_flash_qspi_$(PLATFORM).cpp
+  device/core/device/shared-core/drivers/external_flash_qspi_$(PLATFORM).cpp \
+  device/core/device/shared-core/drivers/external_flash_no_sscg.cpp
 endif
 
 _ldflags_ion_bootloader := \

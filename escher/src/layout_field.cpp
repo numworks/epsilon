@@ -630,7 +630,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
     char buffer[bufferSize];
     Expression e = Expression::Parse(layout, nullptr, true, false, true);
     if (!e.isUninitialized()) {
-      Layout layout =
+      layout =
           e.createLayout(LayoutPreferences::SharedPreferences()->displayMode(),
                          Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
                          nullptr, OMG::Base::Decimal, true);

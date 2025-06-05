@@ -26,6 +26,7 @@ $(addprefix device/core/device/shared-core/drivers/, \
   display.cpp \
   external_flash.cpp \
   external_flash_qspi_$(_ion_mcu_suffix).cpp \
+  external_flash_no_sscg.cpp \
   flash_authorizations.cpp \
   flash_write_with_interruptions.cpp \
   internal_flash.cpp \

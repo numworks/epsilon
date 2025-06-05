@@ -75,6 +75,29 @@ bool Arithmetic::ReduceFloor(Tree* e) {
     e->moveTreeOverTree(div.quotient);
     return true;
   }
+  if (child->isAdd()) {
+    int totalChildren = child->numberOfChildren();
+    TreeRef result = SharedTreeStack->pushAdd(0);
+    int detachedChildren = 0;
+    for (Tree* addChild : child->children()) {
+      if (addChild->isInteger()) {
+        addChild->detachTree();
+        ++detachedChildren;
+      }
+    }
+    if (detachedChildren > 0) {
+      NAry::SetNumberOfChildren(child, totalChildren - detachedChildren);
+      NAry::SquashIfPossible(child);
+      ReduceFloor(e->cloneTree());
+      NAry::SetNumberOfChildren(result, detachedChildren + 1);
+      SystematicReduction::ShallowReduce(result);
+      e->moveTreeOverTree(result);
+      return true;
+    }
+    result->removeNode();
+    // No child from the original tree have been detached
+    assert(result->block() == SharedTreeStack->lastBlock());
+  }
 
   assert(Dimension::Get(child).isScalar());
   if (Dimension::IsList(child)) {

@@ -391,6 +391,10 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       DisplayOutput::ApproximateOnly, EqualSign::Hidden,
                       nullptr, "1.2345678901235ᴇ45", &globalContext, &store);
 
+  // IntegerOverflow during reduction
+  assertCalculationIs("0^(10^600)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Hidden, nullptr, "0", &globalContext, &store);
+
   // Exact output that have dependencies are not displayed
   assertCalculationIs("2→f(x)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "2", nullptr, &globalContext, &store);
@@ -970,6 +974,10 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("180°/(π_rad)", {.integer = true},
                                            &globalContext, &store);
   assertCalculationAdditionalResultTypeHas("_L/(_L/3)", {}, &globalContext,
+                                           &store);
+
+  // IntegerOverflow during reduction
+  assertCalculationAdditionalResultTypeHas("0^(10^600)", {}, &globalContext,
                                            &store);
 
   MathPreferences::SharedPreferences()->setDisplayMode(

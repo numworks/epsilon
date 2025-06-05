@@ -758,7 +758,10 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("floor(π)", "3");
   simplifies_to("frac(π+1)+floor(π+0.1)", "π");
   simplifies_to("log(ceil(2^15+π)-4,2)", "15");
-  simplifies_to("frac(2^24+π)-π", "16777216-floor(16777216+π)");
+  // Testing floor approximation exact representation limit
+  simplifies_to("frac(871616/2π)×2π", "871616-277442×π");
+  simplifies_to("frac(2^24+π)-π", "-3");
+  simplifies_to("frac(2^33+π)-π", "8589934592-floor(8589934592+π)");
   simplifies_to("log(floor(2^54+π)-3, 2)",
                 "ln(-3+floor(18014398509481984+π))/ln(2)");
   simplifies_to("floor(random())", "floor(random())");

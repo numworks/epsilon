@@ -86,17 +86,25 @@ bool Arithmetic::ReduceFloor(Tree* e) {
   if (!Approximation::CanApproximate(e)) {
     return false;
   }
-  // TODO_PCJ: Use double instead of float (requires Integer::Push(uint64_t)).
-  float approx = Approximation::To<float>(e, Approximation::Parameters{});
-  static_assert(OMG::IEEE754<float>::NonExactIntegerLimit() <= UINT32_MAX);
+  double approx = Approximation::To<double>(e, Approximation::Parameters{});
+  // TODO: add Integer::Push(int64_t) to increase the range of possible exact
+  // floor result
+  static_assert(static_cast<double>(INT32_MAX) <
+                OMG::IEEE754<double>::NonExactIntegerLimit());
   if (std::isnan(approx) ||
-      std::fabs(approx) > OMG::IEEE754<float>::NonExactIntegerLimit()) {
+      std::fabs(approx) > static_cast<double>(INT32_MAX)) {
     return false;
   }
   assert(approx == std::round(approx));
-  /* If Approx is smaller than the largest integer such as all smaller integers
-   * can be exactly represented in IEEE754, approx is the exact result (no
-   * precision were loss). */
+  /* If `approx` is smaller than the largest integer such that all smaller
+   * integers can be exactly represented in IEEE754, then `approx` is the exact
+   * result (no precision loss). Since we lack the possibility to push
+   * integer bigger than int32 onto the stack, we are limited to INT32_MAX
+   * instead of IEEE754::NonExactIntegerLimit. If further precision is required,
+   * Integer::Push(int64_t) is needed.
+   * NOTE, the order goes:
+   * <float>NonExactIntLim < INT32_MAX < <double>NonExactIntLim < INT64_MAX */
+  // TODO: understand comment below v
   /* TODO : While this ensure exact integer representation, exact decimals are
    * also expected here, this limit should be lowered. */
   e->moveTreeOverTree(Integer::Push(static_cast<int32_t>(approx)));

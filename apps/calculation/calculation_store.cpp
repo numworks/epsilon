@@ -150,6 +150,7 @@ static CalculationResult computeInterruptible(
         checkpoint.endOfPoolBeforeCheckpoint());
     // If the output computation is interrupted, return undef
     outputs = {Undefined::Builder(), Undefined::Builder()};
+    hasReductionFailure = true;
   }
 
   assert(!outputs.exact.isUninitialized() &&

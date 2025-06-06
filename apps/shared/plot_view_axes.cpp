@@ -1,5 +1,6 @@
 #include "plot_view_axes.h"
 
+#include <apps/math_preferences.h>
 #include <limits.h>
 #include <poincare/print.h>
 
@@ -7,7 +8,6 @@
 
 #include "poincare/expression_or_float.h"
 #include "poincare/k_tree.h"
-#include "poincare/preferences.h"
 #include "poincare/src/expression/projection.h"
 #include "poincare_helpers.h"
 
@@ -349,8 +349,8 @@ int AbstractLabeledAxis::computeLabel(size_t labelIndex,
   PrintFloat::TextLengths textLengths = t.writeText(
       std::span<char>{mutableLabel(labelIndex), k_labelBufferMaxSize},
       ExpressionOrFloat::ApproximationParameters{
-          Preferences::SharedPreferences()->angleUnit(),
-          Preferences::SharedPreferences()->complexFormat()},
+          MathPreferences::SharedPreferences()->angleUnit(),
+          MathPreferences::SharedPreferences()->complexFormat()},
       k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal,
       k_labelBufferMaxGlyphLength);
   assert(strlen(mutableLabel(labelIndex)) == textLengths.CharLength);

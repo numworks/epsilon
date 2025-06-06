@@ -1,8 +1,8 @@
 #include "expression_parameter_controller.h"
 
+#include <apps/math_preferences.h>
 #include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
-#include <poincare/preferences.h>
 
 #include "poincare_helpers.h"
 
@@ -27,8 +27,8 @@ void ExpressionParameterController::fillCellForRow(HighlightCell* cell,
   parameterAtIndex(row).writeText(
       buffer,
       ExpressionOrFloat::ApproximationParameters{
-          Preferences::SharedPreferences()->angleUnit(),
-          Preferences::SharedPreferences()->complexFormat()},
+          MathPreferences::SharedPreferences()->angleUnit(),
+          MathPreferences::SharedPreferences()->complexFormat()},
       precision, Preferences::PrintFloatMode::Decimal);
   textFieldOfCellAtIndex(cell, row)->setText(buffer);
 }

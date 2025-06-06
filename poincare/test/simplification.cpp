@@ -443,10 +443,7 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to(
       "abs(arccos(z)+i×arccos(w))^2-(-im(arccos(w))+re(arccos(z)))^2-(im("
       "arccos(z))+re(arccos(w)))^2",
-      "abs(arccos(z)+arccos(w)×i)^2-(im(arccos(w))^2+im(arccos(z))^2+re(arccos("
-      "w))^2+re(arccos(z))^2+2×im(arccos(z))×re(arccos(w))-2×im(arccos(w))×re("
-      "arccos(z)))",
-      ctx);
+      "im(arccos(z)+arccos(w)×i)^2-(im(arccos(z))+re(arccos(w)))^2", ctx);
   simplifies_to("arg(x+y×i)", "arg(x+y×i)", ctx);
   simplifies_to("arg(π+i×2)", "arctan(2/π)", ctx);
   simplifies_to("arg(-π+i×2)-π", "-arctan(2/π)", ctx);

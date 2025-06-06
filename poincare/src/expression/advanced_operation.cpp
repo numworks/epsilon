@@ -38,6 +38,8 @@ bool AdvancedOperation::ContractImRe(Tree* e) {
 }
 
 bool ExpandImReIfNotInfinite(Tree* e) {
+  // This advanced operation has been disabled for a faster Poincare
+#if POINCARE_EXTENDED_ADVANCED_OPERATIONS
   PatternMatching::Context ctx;
   // A? + B?*im(C)*D? + E? = A - B*C*D*i + B*re(C)*D*i + E
   if (PatternMatching::Match(e, KAdd(KA_s, KMult(KB_s, KIm(KC), KD_s), KE_s),
@@ -73,6 +75,7 @@ bool ExpandImReIfNotInfinite(Tree* e) {
       return true;
     }
   }
+#endif
   return false;
 }
 

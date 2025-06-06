@@ -71,11 +71,7 @@ class Apps {
   AppIterator end() const { return AppIterator(nullptr); };
 
  private:
-#if !PLATFORM_DEVICE
-  // No external app on simulator, this silences the unused warning
-  [[maybe_unused]]
-#endif
-  bool m_isExamModeActive;
+  [[maybe_unused]] bool m_isExamModeActive;
 };
 
 // Apps are hidden during an active exam mode.

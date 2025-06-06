@@ -1,6 +1,7 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
+#include <apps/math_preferences.h>
 #include <assert.h>
 
 using namespace Escher;

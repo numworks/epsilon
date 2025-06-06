@@ -1,6 +1,7 @@
 #include "global_preferences.h"
 
 #include "apps_container_helper.h"
+#include "math_preferences.h"
 
 GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
   static GlobalPreferences* ptr = Ion::Storage::FileSystem::sharedFileSystem

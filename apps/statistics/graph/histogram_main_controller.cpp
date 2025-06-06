@@ -1,5 +1,6 @@
 #include "histogram_main_controller.h"
 
+#include <apps/math_preferences.h>
 #include <omg/float.h>
 #include <omg/unreachable.h>
 #include <poincare/preferences.h>

@@ -10,6 +10,7 @@
 
 #include "apps_container_storage.h"
 #include "global_preferences.h"
+#include "math_preferences.h"
 #include "shared/record_restrictive_extensions_helper.h"
 
 extern "C" {

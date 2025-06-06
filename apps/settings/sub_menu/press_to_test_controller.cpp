@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <apps/i18n.h>
+#include <apps/math_preferences.h>
 #include <assert.h>
 #include <escher/stack_view_controller.h>
 

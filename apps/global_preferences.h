@@ -2,7 +2,6 @@
 #define APPS_GLOBAL_PREFERENCES_H
 
 #include <apps/i18n.h>
-#include <apps/math_preferences.h>
 #include <ion.h>
 #include <kandinsky/font.h>
 #include <omg/global_box.h>

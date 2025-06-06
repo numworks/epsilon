@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/math_preferences.h>
 #include <assert.h>
 #include <ion/authentication.h>
 

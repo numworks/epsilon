@@ -1,5 +1,6 @@
 #include "plot_controller.h"
 
+#include <apps/math_preferences.h>
 #include <poincare/print.h>
 
 #include "../data/store_controller.h"

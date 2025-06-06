@@ -1,6 +1,5 @@
 #include "title_bar_view.h"
 
-#include <apps/math_preferences.h>
 #include <escher/palette.h>
 #include <omg/unreachable.h>
 #include <poincare/print.h>
@@ -8,6 +7,8 @@
 #include <array>
 
 #include "exam_icon.h"
+#include "math_preferences.h"
+
 extern "C" {
 #include <assert.h>
 }

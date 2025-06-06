@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <apps/math_preferences.h>
 #include <assert.h>
 
 #include <array>

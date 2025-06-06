@@ -1,5 +1,6 @@
 #include "box_controller.h"
 
+#include <apps/math_preferences.h>
 #include <poincare/print.h>
 
 #include "../app.h"

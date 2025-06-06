@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
+#include <apps/math_preferences.h>
 #include <assert.h>
 #include <escher/abstract_text_field.h>
 #include <poincare/exception_checkpoint.h>

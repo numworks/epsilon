@@ -2,6 +2,7 @@
 #define SHARED_POINCARE_HELPERS_H
 
 #include <apps/global_preferences.h>
+#include <apps/math_preferences.h>
 #include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
 #include <poincare/preferences.h>
@@ -82,8 +83,8 @@ template <class FloatType = float>
 inline FloatType ApproximateToRealScalar(Poincare::Expression e) {
   static_assert(std::is_floating_point_v<FloatType>);
   return e.approximateToRealScalar<FloatType>(
-      Poincare::Preferences::SharedPreferences()->angleUnit(),
-      Poincare::Preferences::SharedPreferences()->complexFormat());
+      MathPreferences::SharedPreferences()->angleUnit(),
+      MathPreferences::SharedPreferences()->complexFormat());
 }
 
 // ===== Reduction =====
@@ -190,9 +191,9 @@ FloatType ToFloat(Poincare::ExpressionOrFloat value) {
   static_assert(std::is_floating_point_v<FloatType>);
   return value.approximation<FloatType>(
       Poincare::ExpressionOrFloat::ApproximationParameters{
-          .angleUnit = Poincare::Preferences::SharedPreferences()->angleUnit(),
+          .angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
           .complexFormat =
-              Poincare::Preferences::SharedPreferences()->complexFormat()});
+              MathPreferences::SharedPreferences()->complexFormat()});
 }
 
 }  // namespace PoincareHelpers

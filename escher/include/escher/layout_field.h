@@ -3,11 +3,12 @@
 
 #include <escher/editable_field.h>
 #include <escher/layout_field_delegate.h>
-#include <escher/layout_preferences.h>
 #include <escher/layout_view.h>
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
 #include <poincare/old/context.h>
+
+#include "layout_preferences.h"
 
 namespace Escher {
 

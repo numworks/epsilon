@@ -76,6 +76,7 @@ bool Arithmetic::ReduceFloor(Tree* e) {
     return true;
   }
   if (child->isAdd()) {
+    // ⌊A + B⌋ = A + ⌊B⌋ if A is an integer
     int totalChildren = child->numberOfChildren();
     TreeRef result = SharedTreeStack->pushAdd(0);
     int detachedChildren = 0;

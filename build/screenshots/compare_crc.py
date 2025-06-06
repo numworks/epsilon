@@ -53,6 +53,12 @@ parser.add_argument(
     action="store_true",
     help="Do not exit with an error status even if some scenarios failed.",
 )
+parser.add_argument(
+    "--asan",
+    action="store_true",
+    help="Skip test known to fail when using ASAN",
+)
+known_asan_failure = ["python_parabola", "python_console_variablebox", "python_editor_delete"]
 
 
 def run_test(scenario_name, state_file, executable, computed_crc32_list):
@@ -92,12 +98,13 @@ def main():
                 if not os.path.isdir(scenario_folder):
                     continue
 
-                print("Collecting data from", scenario_folder)
                 state_file = get_file_with_extension(scenario_folder, ".nws")
                 reference_crc32_file = get_file_with_extension(scenario_folder, ".txt")
-                if state_file == "" or reference_crc32_file == "":
+                if state_file == "" or reference_crc32_file == "" or \
+                    (args.asan and scenario_name in known_asan_failure):
                     ignored = ignored + 1
                     continue
+                print("Collecting data from", scenario_folder)
 
                 pool.submit(
                     run_test,

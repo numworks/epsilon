@@ -3,6 +3,8 @@
 #include <poincare/k_tree.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
+#include <poincare/src/expression/k_tree.h>
+#include <poincare/src/layout/serialize.h>
 
 #include "helper.h"
 
@@ -42,6 +44,13 @@ void assert_expression_or_float_serializes_to(
 
 QUIZ_CASE(pcj_expression_serialization) {
   using namespace Poincare;
+  // Buffer is too small
+  constexpr size_t bufferSize = 5;
+  char buffer[bufferSize];
+  size_t result =
+      UserExpression::Builder(KCos(1000000_e)).serialize(buffer, bufferSize);
+  quiz_assert(result == Internal::k_serializationError);
+
   assert_expression_serializes_to(
       UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "(2×π)/3", false);
   assert_expression_serializes_to(

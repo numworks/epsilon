@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <poincare/include/poincare/additional_results_helper.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/k_tree.h>
@@ -79,10 +80,8 @@ QUIZ_CASE(pcj_rational_sign_of_ln) {
               ComplexSign(Sign::FiniteStrictlyNegative(), Sign::Zero()));
   quiz_assert(Rational::ComplexSignOfLn(KLn(10_e / 11_e)) ==
               ComplexSign(Sign::FiniteStrictlyNegative(), Sign::Zero()));
-  IntegerHandler veryBig = IntegerHandler(
-      reinterpret_cast<const uint8_t*>("\xff\xff\xff\xff\xff"), 5);
-  IntegerHandler lessBig = IntegerHandler(
-      reinterpret_cast<const uint8_t*>("\xff\xff\xff\xff\xfe"), 5);
+  const Tree* veryBig = Integer::Push(UINT_MAX);
+  const Tree* lessBig = Integer::Push(UINT_MAX - 1);
   const Tree* ln = SharedTreeStack->pushLn();
   Tree* rational = Rational::Push(veryBig, lessBig);
   quiz_assert(Rational::ComplexSignOfLn(ln) ==
@@ -93,8 +92,8 @@ QUIZ_CASE(pcj_rational_sign_of_ln) {
               ComplexSign(Sign::FiniteStrictlyPositive(),
                           Sign::FiniteStrictlyPositive()));
   rational->removeTree();
-  lessBig.setSign(NonStrictSign::Negative);
-  rational = Rational::Push(lessBig, veryBig);
+  Rational::Push(lessBig, veryBig);
+  Rational::SetSign(rational, NonStrictSign::Negative);
   quiz_assert(Rational::ComplexSignOfLn(ln) ==
               ComplexSign(Sign::FiniteStrictlyNegative(),
                           Sign::FiniteStrictlyPositive()));

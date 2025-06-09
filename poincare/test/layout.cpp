@@ -63,6 +63,8 @@ QUIZ_CASE(pcj_expression_to_layout) {
                                OMG::Base::Decimal);
   assert_expression_layouts_as(KAdd("x"_e, KOpposite(KAdd("y"_e, "z"_e))),
                                "x-"_l ^ KParenthesesL("y+z"_l));
+  assert_expression_layouts_as(KListSlice("L"_e, 2_e, 3_e),
+                               "L"_l ^ KParenthesesL("2,3"_l));
 }
 
 QUIZ_CASE(pcj_layout_decoder) {

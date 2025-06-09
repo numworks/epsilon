@@ -46,6 +46,7 @@ constexpr static int k_subLeftChildPriority = 9;
 constexpr static int OperatorPriority(TypeBlock type) {
   switch (type) {
     case Type::ListElement:
+    case Type::ListSlice:
       return 0;
     case Type::Fact:
     case Type::PercentSimple:
@@ -824,6 +825,17 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       layoutExpression(layoutParent, expression->nextNode(),
                        k_forceParentheses);
       break;
+    case Type::ListSlice: {
+      layoutExpression(layoutParent, expression->nextNode(),
+                       OperatorPriority(type));
+      TreeRef parenthesis = KParenthesesL->cloneNode();
+      TreeRef rack = KRackL()->cloneTree();
+      NAry::AddChild(layoutParent, parenthesis);
+      layoutExpression(rack, expression->nextNode(), OperatorPriority(type));
+      PushCodePoint(rack, ',');
+      layoutExpression(rack, expression->nextNode(), OperatorPriority(type));
+      break;
+    }
     case Type::Parentheses:
       layoutExpression(layoutParent, expression->nextNode(),
                        k_forceParentheses);

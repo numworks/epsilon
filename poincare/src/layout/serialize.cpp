@@ -252,4 +252,12 @@ char* SerializeLayout(const Layout* layout, char* buffer, const char* end,
   return buffer;
 }
 
+size_t Serialize(const Tree* l, char* buffer, const char* end) {
+  const char* lastCharacter =
+      l->isRackLayout() ? SerializeRack(Rack::From(l), buffer, end)
+                        : SerializeLayout(Layout::From(l), buffer, end, true);
+  assert(*lastCharacter == '\0');
+  return lastCharacter - buffer;
+}
+
 }  // namespace Poincare::Internal

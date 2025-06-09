@@ -47,10 +47,26 @@ class span {
   constexpr pointer data() const { return m_data; }
   constexpr size_type size() const { return m_size; }
 
+  constexpr bool empty() const { return size() == 0; }
+
   constexpr iterator begin() const { return data(); }
   constexpr const_iterator cbegin() const { return data(); }
   constexpr iterator end() const { return data() + size(); }
   constexpr const_iterator cend() const { return data() + size(); }
+
+  constexpr reference operator[](size_type index) const {
+    return *(data() + index);
+  }
+
+  constexpr std::span<element_type, std::dynamic_extent> first(
+      size_type count) const {
+    return std::span<element_type, std::dynamic_extent>(data(), data() + count);
+  }
+  constexpr std::span<element_type, std::dynamic_extent> last(
+      size_type count) const {
+    return std::span<element_type, std::dynamic_extent>(data() + size() - count,
+                                                        data() + size());
+  }
 
  private:
   pointer m_data = nullptr;

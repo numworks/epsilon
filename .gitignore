@@ -13,3 +13,5 @@ node_modules/
 /screenshots_each_step/
 .vscode/
 .devcontainer/
+ion/src/simulator/ios/GoogleAnalyticsServices/
+ion/src/device/epsilon-core

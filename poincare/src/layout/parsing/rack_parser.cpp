@@ -1358,6 +1358,7 @@ void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
       // Right brace missing.
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
+    assert(!leftHandSide.isUninitialized());
   } else {
     leftHandSide = List::PushEmpty();
   }

@@ -2,6 +2,7 @@
 
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/memory/pattern_matching.h>
+#include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include <algorithm>
 
@@ -20,7 +21,10 @@ namespace Poincare::Internal {
  * multiplication symbol. */
 
 char* append(const char* text, char* buffer, const char* end) {
-  size_t len = std::min<size_t>(strlen(text), end - 1 - buffer);
+  size_t len = strlen(text);
+  if (len >= end - 1 - buffer) {
+    TreeStackCheckpoint::Raise(ExceptionType::SerializeFail);
+  }
   memcpy(buffer, text, len);
   return buffer + len;
 }
@@ -253,11 +257,17 @@ char* SerializeLayout(const Layout* layout, char* buffer, const char* end,
 }
 
 size_t Serialize(const Tree* l, char* buffer, const char* end) {
-  const char* lastCharacter =
-      l->isRackLayout() ? SerializeRack(Rack::From(l), buffer, end)
-                        : SerializeLayout(Layout::From(l), buffer, end, true);
-  assert(*lastCharacter == '\0');
-  return lastCharacter - buffer;
+  ExceptionTry {
+    const char* lastCharacter =
+        l->isRackLayout() ? SerializeRack(Rack::From(l), buffer, end)
+                          : SerializeLayout(Layout::From(l), buffer, end, true);
+    assert(*lastCharacter == '\0');
+    return lastCharacter - buffer;
+  }
+  ExceptionCatch(type) {
+    assert(type == ExceptionType::SerializeFail);
+    return k_serializationError;
+  }
 }
 
 }  // namespace Poincare::Internal

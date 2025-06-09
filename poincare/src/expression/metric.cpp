@@ -219,12 +219,16 @@ float Metric::GetMetric(const Tree* e, ReductionTarget reductionTarget) {
   assert(metric > k_perfectMetric);
   /* Adding a small factor based on size, from 0 to 1/8.
    * The goal is to prefer smaller tree when they have the same metric.
+   * Dependencies must be ignored so that two trees with the same hash in
+   * advanced reduction have the same metric.
    * This factor should be smaller than the minimal difference in metric
    * i.e.:
    * GetMetric(Type::IntegerPosShort) - GetMetric(Type::Zero)
    * = 1/2 - 1/3 = 1/6 */
   float sizeFactor =
-      M_2_PI * std::atan(static_cast<float>(e->treeSize()) / 100.f);
+      M_2_PI *
+      std::atan(static_cast<float>(Dependency::SafeMain(e)->treeSize()) /
+                100.f);
   metric += sizeFactor * k_defaultMetric / 8.f;
   return metric;
 }

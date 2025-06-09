@@ -1671,7 +1671,7 @@ QUIZ_CASE(pcj_simplification_logarithm) {
                 "realPos(y)})");
   simplifies_to("ln(π)-ln(1/π)", "2×ln(π)");
   simplifies_to("cos(x)^2+sin(x)^2-ln(x)",
-                "dep(1-ln(x),{arg(1/x),arg(x),realPos(x)})");
+                "dep(1-ln(x),{nonNull(x),realPos(x)})");
   simplifies_to("1-ln(x)", "dep(1-ln(x),{nonNull(x)})", cartesianCtx);
   simplifies_to("ln(0)", "undef");
   simplifies_to("ln(0)", "undef", cartesianCtx);

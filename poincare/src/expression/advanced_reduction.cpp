@@ -403,7 +403,8 @@ void AdvancedReduction::UpdateBestMetric(Context* ctx) {
   const char* label = "Metric (";
 #endif
 
-  // If metric is the same, compare hash to ensure a deterministic result.
+  /* If metric is the same, compare hash to ensure a same result when starting
+   * from two different equivalent expressions. */
   if (metric < ctx->m_bestMetric ||
       (metric == ctx->m_bestMetric &&
        CrcCollection::AdvancedHash(ctx->m_root) > ctx->m_bestHash)) {
@@ -516,6 +517,16 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
     if (!ctx->canAppendDirection()) {
       // Not able to add due to decreased maxDepth
       return false;
+    }
+    if (ctx->m_bestHash == hash &&
+        ctx->m_bestPath.length() > ctx->m_path.length()) {
+      // If this is the best reduction, with a shorter path, use it
+      assert(ctx->m_bestMetric ==
+             Metric::GetMetric(ctx->m_root, ctx->m_reductionTarget));
+      assert(ctx->canAppendDirection());
+      ctx->m_path.append(dir);
+      ctx->m_bestPath = ctx->m_path;
+      ctx->m_path.popWholeDirection();
     }
     LOG(3, "Seen before ", dir.log(false));
     LOG(3, ": ", LogExpression(ctx->m_root), false);

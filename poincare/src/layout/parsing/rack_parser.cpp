@@ -1124,10 +1124,14 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
                                                  stoppingType, true)) {
     return;
   }
-  // Parse aspostrophe as unit (default parsing)
+  // Parse apostrophe as unit (default parsing)
   setState(previousState);
-  privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
-                                             stoppingType, false);
+  if (!privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
+                                                  stoppingType, false)) {
+    /* TODO: This should not fail silently, raise ExceptionType::ParseFail if it
+     * happens. */
+    assert(false);
+  }
 }
 
 bool RackParser::parseApostropheDerivationOrder(int* derivationOrder) {

@@ -33,9 +33,11 @@ Tree* CodePointLayout::PushCombined(CodePoint codePoint,
 char* CodePointLayout::CopyName(const Tree* l, char* buffer,
                                 size_t bufferSize) {
   CodePoint c = GetCodePoint(l);
+  assert(bufferSize >= UTF8Decoder::CharSizeOfCodePoint(c));
   size_t size = UTF8Decoder::CodePointToChars(c, buffer, bufferSize);
   if (l->isCombinedCodePointsLayout()) {
-    CodePoint c = GetCombiningCodePoint(l);
+    c = GetCombiningCodePoint(l);
+    assert(bufferSize - size >= UTF8Decoder::CharSizeOfCodePoint(c));
     size += UTF8Decoder::CodePointToChars(c, buffer + size, bufferSize - size);
   }
   buffer[size] = 0;

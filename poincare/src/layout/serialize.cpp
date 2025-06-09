@@ -266,6 +266,7 @@ size_t Serialize(const Tree* l, char* buffer, const char* end) {
   }
   ExceptionCatch(type) {
     assert(type == ExceptionType::SerializeFail);
+    buffer[0] = '\0';
     return k_serializationError;
   }
 }

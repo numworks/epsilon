@@ -54,6 +54,7 @@ Tree* Variables::GetUserSymbols(const Tree* e, Poincare::Context* ctx) {
 
 void Variables::Private::GetUserSymbols(const Tree* e, Tree* set,
                                         Poincare::Context* ctx) {
+  assert(e);
   if (e->isUserSymbol()) {
     return Set::Add(set, e);
   }

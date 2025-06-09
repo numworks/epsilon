@@ -1259,6 +1259,7 @@ Tree* RackParser::tryParseFunctionParameters(bool isBuiltinFunction) {
   Tree* commaSeparatedList = parseCommaSeparatedList();
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::RightParenthesis)) {
     // Right parenthesis missing
+    assert(commaSeparatedList);
     commaSeparatedList->removeTree();
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }

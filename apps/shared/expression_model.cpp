@@ -143,6 +143,7 @@ const Internal::Tree* ExpressionModel::expressionTree(
   assert(record->fullName() != nullptr);
   /* A new Expression has to be created at each call (because it might be
    * tempered with after calling) */
+  assert(expressionSize(record) > 0);
   return UserExpression::TreeFromAddress(expressionAddress(record));
 }
 

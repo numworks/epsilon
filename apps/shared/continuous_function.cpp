@@ -798,6 +798,7 @@ const Internal::Tree* ContinuousFunction::Model::expressionTree(
     const Ion::Storage::Record* record) const {
   assert(record->fullName() != nullptr &&
          record->fullName()[0] != k_unnamedRecordFirstChar);
+  assert(ExpressionModel::expressionTree(record));
   return ExpressionModel::expressionTree(record)->child(1);
 }
 

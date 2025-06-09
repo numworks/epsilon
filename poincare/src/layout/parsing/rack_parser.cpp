@@ -778,13 +778,14 @@ void RackParser::parseLeftParenthesis(TreeRef& leftHandSide,
   Token::Type endToken = Token::Type::RightParenthesis;
 
   TreeRef list = parseCommaSeparatedList();
+  assert(!list.isUninitialized());
 #if POINCARE_POINT
-  if (!list.isUninitialized() && list->numberOfChildren() == 2) {
+  if (list->numberOfChildren() == 2) {
     CloneNodeOverNode(list, KPoint);
     leftHandSide = list;
   } else
 #endif
-      if (!list.isUninitialized() && list->numberOfChildren() == 1) {
+      if (list->numberOfChildren() == 1) {
     CloneNodeOverNode(list, KParentheses);
     leftHandSide = list;
   } else {
@@ -1257,9 +1258,9 @@ Tree* RackParser::tryParseFunctionParameters(bool isBuiltinFunction) {
     return List::PushEmpty();
   }
   Tree* commaSeparatedList = parseCommaSeparatedList();
+  assert(commaSeparatedList);
   if (!parenthesisIsLayout && !popTokenIfType(Token::Type::RightParenthesis)) {
     // Right parenthesis missing
-    assert(commaSeparatedList);
     commaSeparatedList->removeTree();
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1309,7 +1310,8 @@ Tree* RackParser::parseVector() {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   TreeRef commaSeparatedList = parseCommaSeparatedList();
-  if (!commaSeparatedList || commaSeparatedList->numberOfChildren() == 0) {
+  assert(commaSeparatedList);
+  if (commaSeparatedList->numberOfChildren() == 0) {
     // Empty vectors are not handled
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1330,7 +1332,12 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
                          m_parsingContext.context(), false,
                          m_parsingContext.parsingMethod(), true);
     popToken();
-    return subParser.parse();
+    Tree* result = subParser.parse();
+    if (!result) {
+      // Failure while parsing the list.
+      TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+    }
+    return result;
   }
   TreeRef list = List::PushEmpty();
   if (m_nextToken.is(Token::Type::EndOfStream)) {
@@ -1354,11 +1361,11 @@ void RackParser::parseList(TreeRef& leftHandSide, Token::Type stoppingType) {
   }
   if (!popTokenIfType(Token::Type::RightBrace)) {
     leftHandSide = parseCommaSeparatedList(true);
+    assert(!leftHandSide.isUninitialized());
     if (!popTokenIfType(Token::Type::RightBrace)) {
       // Right brace missing.
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
-    assert(!leftHandSide.isUninitialized());
   } else {
     leftHandSide = List::PushEmpty();
   }

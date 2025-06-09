@@ -58,7 +58,12 @@ parser.add_argument(
     action="store_true",
     help="Skip test known to fail when using ASAN",
 )
-known_asan_failure = ["python_parabola", "python_console_variablebox", "python_editor_delete"]
+# TODO: pass those tests even when ASAN=1
+known_asan_failure = [
+    "python_parabola",
+    "python_console_variablebox",
+    "python_editor_delete",
+]
 
 
 def run_test(scenario_name, state_file, executable, computed_crc32_list):
@@ -100,8 +105,11 @@ def main():
 
                 state_file = get_file_with_extension(scenario_folder, ".nws")
                 reference_crc32_file = get_file_with_extension(scenario_folder, ".txt")
-                if state_file == "" or reference_crc32_file == "" or \
-                    (args.asan and scenario_name in known_asan_failure):
+                if (
+                    state_file == ""
+                    or reference_crc32_file == ""
+                    or (args.asan and scenario_name in known_asan_failure)
+                ):
                     ignored = ignored + 1
                     continue
                 print("Collecting data from", scenario_folder)

@@ -93,6 +93,7 @@ static inline void ion_main_inner(const char* testFilter,
 #if ASAN
     /* When ASAN=1, "python_numpy" reaches an assert due to an error in python
      * "RuntimeError: maximum recursion depth exceeded" */
+    // TODO: pass this test even when ASAN=1
     if (strcmp(quiz_case_names[i], "python_numpy") == 0) {
       i++;
       continue;

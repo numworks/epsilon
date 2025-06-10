@@ -46,10 +46,10 @@ KDCoordinate LayoutObject::computeBaseline(
 size_t LayoutObject::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {
-  size_t length =
-      Internal::Serializer::Serialize(tree(), buffer, buffer + bufferSize);
+  size_t length = Internal::LayoutSerializer::Serialize(tree(), buffer,
+                                                        buffer + bufferSize);
   assert(length <= bufferSize ||
-         length == Internal::Serializer::k_serializationError);
+         length == Internal::LayoutSerializer::k_serializationError);
   return length;
 }
 

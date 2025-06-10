@@ -7,7 +7,7 @@
 
 namespace Poincare::Internal {
 
-class Serializer {
+class LayoutSerializer {
   friend class LatexParser;
 
  public:

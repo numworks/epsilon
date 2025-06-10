@@ -531,7 +531,7 @@ char* LatexParser::LayoutToLatexWithExceptions(const Rack* rack, char* buffer,
 
     /* We don't want to capture withThousandsSeparators in the lambda
      * (generates more code), so we put the parameter manually. */
-    Serializer::RackSerializer serializer = withThousandsSeparators
+    LayoutSerializer::RackSerializer serializer = withThousandsSeparators
       ? [](const Rack* rack, char* buffer, const char* end) {
           return LayoutToLatexWithExceptions(rack, buffer, end, true);
         }
@@ -608,9 +608,9 @@ char* LatexParser::LayoutToLatexWithExceptions(const Rack* rack, char* buffer,
     }
 
     // Use common serialization
-    buffer =
-        Serializer::SerializeLayout(Layout::From(child), buffer, end,
-                                    rack->numberOfChildren() == 1, serializer);
+    buffer = LayoutSerializer::SerializeLayout(Layout::From(child), buffer, end,
+                                               rack->numberOfChildren() == 1,
+                                               serializer);
     *buffer = 0;
   }
 

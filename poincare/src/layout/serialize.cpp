@@ -57,8 +57,8 @@ Rack* rackForSerialization(const Rack* rack) {
   return static_cast<Rack*>(newRack);
 }
 
-char* Serializer::SerializeRack(const Rack* rack, char* buffer,
-                                const char* end) {
+char* LayoutSerializer::SerializeRack(const Rack* rack, char* buffer,
+                                      const char* end) {
   if (rack->numberOfChildren() == 0) {
     /* Text fields serializes layouts to insert them and we need an empty
      * codepoint for the cursor to be placed correctly in the text field.
@@ -91,9 +91,9 @@ bool mayNeedParentheses(const Rack* rack) {
   return !tokenizer.popToken().isEndOfStream();
 }
 
-char* Serializer::SerializeWithParentheses(
+char* LayoutSerializer::SerializeWithParentheses(
     const Rack* rack, char* buffer, const char* end,
-    Serializer::RackSerializer serializer, bool forceParentheses) {
+    LayoutSerializer::RackSerializer serializer, bool forceParentheses) {
   bool addParentheses = forceParentheses || mayNeedParentheses(rack);
   if (addParentheses) {
     buffer = append("(", buffer, end);
@@ -105,9 +105,9 @@ char* Serializer::SerializeWithParentheses(
   return buffer;
 }
 
-char* Serializer::SerializeLayout(const Layout* layout, char* buffer,
-                                  const char* end, bool isSingleRackChild,
-                                  RackSerializer serializer) {
+char* LayoutSerializer::SerializeLayout(const Layout* layout, char* buffer,
+                                        const char* end, bool isSingleRackChild,
+                                        RackSerializer serializer) {
   switch (layout->layoutType()) {
     case LayoutType::CombinedCodePoints:
     case LayoutType::AsciiCodePoint:
@@ -258,7 +258,8 @@ char* Serializer::SerializeLayout(const Layout* layout, char* buffer,
   return buffer;
 }
 
-size_t Serializer::Serialize(const Tree* l, char* buffer, const char* end) {
+size_t LayoutSerializer::Serialize(const Tree* l, char* buffer,
+                                   const char* end) {
   ExceptionTry {
     const char* lastCharacter =
         l->isRackLayout() ? SerializeRack(Rack::From(l), buffer, end)

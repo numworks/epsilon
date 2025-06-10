@@ -1,5 +1,6 @@
 #include "serialize.h"
 
+#include <omg/unreachable.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -272,6 +273,7 @@ size_t LayoutSerializer::Serialize(const Tree* l, char* buffer,
     buffer[0] = '\0';
     return k_serializationError;
   }
+  OMG::unreachable();
 }
 
 }  // namespace Poincare::Internal

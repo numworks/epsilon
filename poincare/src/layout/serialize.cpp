@@ -274,7 +274,9 @@ size_t LayoutSerializer::Serialize(const Tree* l, std::span<char> buffer) {
     return static_cast<size_t>(lastCharacter - buffer.data());
   }
   ExceptionCatch(type) {
-    assert(type == ExceptionType::SerializeBufferOverflow);
+    if (type != ExceptionType::SerializeBufferOverflow) {
+      TreeStackCheckpoint::Raise(type);
+    }
     buffer[0] = '\0';
     return k_bufferOverflow;
   }

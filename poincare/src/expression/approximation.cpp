@@ -1288,6 +1288,17 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     list->removeTree();
     return result;
   }
+  if (e->isListSequence()) {
+    assert(ctx && ctx->m_listElement != -1);
+    // epsilon sequences starts at one
+    Context ctxCopy = *ctx;
+    LocalContext localCtx =
+        LocalContext(ctx->m_listElement + 1, ctx->m_localContext);
+    ctxCopy.m_localContext = &localCtx;
+    // Reset random context
+    ctxCopy.m_randomContext = Random::Context();
+    return PrivateToBoolean<T>(e->child(2), &ctxCopy);
+  }
   if (e->isUndefBoolean()) {
     return BooleanOrUndefined(BooleanOrUndefined::Undef{});
   }

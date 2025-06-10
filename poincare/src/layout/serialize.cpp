@@ -23,7 +23,8 @@ namespace Poincare::Internal {
 
 char* append(const char* text, char* buffer, const char* end) {
   size_t len = strlen(text);
-  if (len >= end - 1 - buffer) {
+  assert(end >= buffer + 1);
+  if (len >= static_cast<size_t>(end - 1 - buffer)) {
     TreeStackCheckpoint::Raise(ExceptionType::SerializeBufferOverflow);
   }
   memcpy(buffer, text, len);

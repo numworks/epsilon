@@ -66,13 +66,25 @@ class WorkingBuffer {
 
  private:
   /* We let an offset at the end of the TreeStack before the working buffer
-   * to be able to push either:
-   * - the meta blocks of a Big Int before moving the digits from the
-   *   WorkingBuffer to the TreeStack,
-   * - the maximal size of an Integer Tree* that an immediate digit represents.
-   */
-  constexpr static size_t k_blockOffset =
+   * to be able to push up to two integers without corrupting digits (e.g. in
+   * IntegerHandler::Division). There are three scenarios:
+   * - Both integers have immediate digits, no digits can be corrupted.
+   * - Both integer digits are on the working buffer: they need to be
+   * pushed in their corresponding order:
+   *        [TreeStack][     k_blockOffset    ][Digits1][Digits2]
+   *        [TreeStack][MetaBlocks][Digits1][MetaBlocks][Digits2]
+   * - First integer has immediate digits, the other is on the working buffer:
+   *        [TreeStack][         k_blockOffset         ][Digits2]
+   *        [TreeStack][MetaBlocks][Digits1][MetaBlocks][Digits2]
+   * The offset must be large enough to contain either two sets of meta blocks,
+   * or the biggest immediate digit and one set of meta blocks. */
+  constexpr static size_t k_biggestMetaBlocks =
+      TypeBlock::NumberOfMetaBlocks(Type::IntegerPosBig);
+  constexpr static size_t k_biggestImmediateDigitsInteger =
       TypeBlock::NumberOfMetaBlocks(Type::IntegerPosBig) + sizeof(native_int_t);
+  constexpr static size_t k_blockOffset =
+      std::max<size_t>(k_biggestMetaBlocks, k_biggestImmediateDigitsInteger) +
+      k_biggestMetaBlocks;
   uint8_t* initialStartOfBuffer() const {
     return reinterpret_cast<uint8_t*>(SharedTreeStack->lastBlock() +
                                       k_blockOffset);

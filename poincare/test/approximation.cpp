@@ -171,6 +171,10 @@ QUIZ_CASE(pcj_approximation_list) {
   approximates_to<float>("sort({(3,2),(1,4),(2,0),(1,1)})",
                          "{(1,1),(1,4),(2,0),(3,2)}");
   approximates_to<float>("sequence(k<=1, k, 2)", "{True,False}");
+  approximates_to<float>("sequence(1/(k-2)<=3, k, 5)",
+                         "{True,undef,True,True,True}");
+  approximates_to<float>("sequence(1/(k-2)=3, k, 5)",
+                         "{False,undef,False,False,False}");
   // TODO_PCJ: approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
 }
 

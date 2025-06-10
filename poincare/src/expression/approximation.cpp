@@ -1251,6 +1251,9 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
   if (e->isInequality()) {
     T a = PrivateTo<T>(e->child(0), ctx);
     T b = PrivateTo<T>(e->child(1), ctx);
+    if (std::isnan(a) || std::isnan(b)) {
+      return BooleanOrUndefined(BooleanOrUndefined::Undef{});
+    }
     if (e->isInferior()) {
       return a < b;
     }
@@ -1267,6 +1270,10 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     assert(e->isEqual() || e->isNotEqual());
     std::complex<T> a = PrivateToComplex<T>(e->child(0), ctx);
     std::complex<T> b = PrivateToComplex<T>(e->child(1), ctx);
+    if (std::isnan(a.real()) || std::isnan(a.imag()) || std::isnan(b.real()) ||
+        std::isnan(b.imag())) {
+      return BooleanOrUndefined(BooleanOrUndefined::Undef{});
+    }
     return e->isEqual() == (a == b);
   }
   if (e->isPiecewise()) {

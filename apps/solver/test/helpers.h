@@ -24,7 +24,8 @@ bring_in(Solver::SystemOfEquations::Error, EquationUnhandled);
 
 void assert_solves_to(std::initializer_list<const char*> equations,
                       std::initializer_list<const char*> solutions,
-                      Shared::GlobalContext* globalContext);
+                      Shared::GlobalContext* globalContext,
+                      double approxThreshold = 0.);
 void assert_solves_numerically_to(const char* equation, double min, double max,
                                   std::initializer_list<double> solutions,
                                   Shared::GlobalContext* globalContext,

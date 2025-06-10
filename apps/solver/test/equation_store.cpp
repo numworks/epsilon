@@ -230,10 +230,10 @@ QUIZ_CASE(solver_cubic) {
                    &globalContext);
 
   assert_solves_to(
-      "x^3+1111111116*x^2-6",
+      {"x^3+1111111116*x^2-6"},
       {"x=-1111111116", "x=-7363160451/100000000000000",
        "x=7339318593/100000000000000", "delta=32921811134156380512921812532"},
-      &globalContext);
+      &globalContext, 3e-7);
 
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);

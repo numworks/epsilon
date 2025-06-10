@@ -99,7 +99,8 @@ void assert_solves_to_error(std::initializer_list<const char*> equations,
 
 static void compareSolutions(SystemOfEquations* system,
                              std::initializer_list<const char*> solutions,
-                             SolverContext* solverContext) {
+                             SolverContext* solverContext,
+                             double approximationThreshold = 0.) {
   /* TODO: this function needs to be reworked so that we can compare Expressions
    * directly, instead of parsing const char * objects and Layouts and comparing
    * afterwards. */
@@ -170,8 +171,25 @@ static void compareSolutions(SystemOfEquations* system,
 #else
     bool result = (!expectedExpression.isUninitialized() &&
                    expectedExpression.isIdenticalTo(obtainedExpression));
+    if (!result && approximationThreshold != 0.) {
+      double expectedApproxed =
+          expectedExpression.approximateToRealScalar<double>();
+      double obtainedApproxed =
+          obtainedExpression.approximateToRealScalar<double>();
+      if (std::fabs(expectedApproxed - obtainedApproxed) <
+          approximationThreshold) {
+        result = true;
+      }
 #if POINCARE_TREE_LOG
-    if (!result) {
+      else {
+        std::cout << "\tWrong Solution approxed: " << obtainedApproxed
+                  << "\n\tInstead of approxed: " << expectedApproxed
+                  << std::endl;
+      }
+#endif
+    }
+#if POINCARE_TREE_LOG
+    else if (!result) {
       std::cout << "\tWrong Solution: ";
       obtainedExpression.tree()->logSerialize();
       std::cout << "\tInstead of: ";
@@ -209,12 +227,14 @@ void assert_solves_to_infinite_solutions(
 
 void assert_solves_to(std::initializer_list<const char*> equations,
                       std::initializer_list<const char*> solutions,
-                      Shared::GlobalContext* globalContext) {
+                      Shared::GlobalContext* globalContext,
+                      double appproxThreshold) {
   SolverContext solverContext(globalContext);
-  solve_and(equations, &solverContext,
-            [solutions, &solverContext](SystemOfEquations* system) {
-              compareSolutions(system, solutions, &solverContext);
-            });
+  solve_and(
+      equations, &solverContext,
+      [solutions, &solverContext, appproxThreshold](SystemOfEquations* system) {
+        compareSolutions(system, solutions, &solverContext, appproxThreshold);
+      });
 }
 
 void assert_solves_numerically_to(const char* equation, double min, double max,

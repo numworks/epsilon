@@ -78,7 +78,7 @@ class Tree : public TypeBlock {
 
   // Get the i-th value block (after the type block)
   constexpr uint8_t nodeValue(uint8_t index) const {
-    assert(index + 1 < static_cast<uint8_t>(nodeSize()));
+    assert(static_cast<size_t>(index) + 1 < nodeSize());
     return static_cast<uint8_t>(m_valueBlocks[index]);
   }
   void setNodeValue(uint8_t index, int value) {
@@ -91,7 +91,7 @@ class Tree : public TypeBlock {
   }
   void setNodeValue(uint8_t index, uint8_t value) {
     ResetCache(this);
-    assert(index + 1 < static_cast<uint8_t>(nodeSize()));
+    assert(static_cast<size_t>(index) + 1 < nodeSize());
     m_valueBlocks[index] = value;
   }
   ValueBlock* nodeValueBlock(uint8_t index) { return &m_valueBlocks[index]; }

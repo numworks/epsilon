@@ -6,6 +6,7 @@
 #include <assert.h>
 #include <limits.h>
 #include <poincare/helpers/store.h>
+#include <poincare/test/float_helper.h>
 #include <poincare/test/helper.h>
 #include <quiz.h>
 #include <string.h>
@@ -176,12 +177,10 @@ static void compareSolutions(SystemOfEquations* system,
           expectedExpression.approximateToRealScalar<double>();
       double obtainedApproxed =
           obtainedExpression.approximateToRealScalar<double>();
-      if (std::fabs(expectedApproxed - obtainedApproxed) <
-          approximationThreshold) {
-        result = true;
-      }
+      result = roughly_equal(obtainedApproxed, expectedApproxed,
+                             approximationThreshold);
 #if POINCARE_TREE_LOG
-      else {
+      if (!result) {
         std::cout << "\tWrong Solution approxed: " << obtainedApproxed
                   << "\n\tInstead of approxed: " << expectedApproxed
                   << std::endl;

@@ -221,9 +221,15 @@ void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
 void Layouter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
                                   const char* name) {
   layoutText(layoutParent, name);
-  TreeRef parenthesis = SharedTreeStack->pushParenthesisLayout(false, false);
-  TreeRef newParent = SharedTreeStack->pushRackLayout(0);
-  NAry::AddChild(layoutParent, parenthesis);
+  TreeRef newParent;
+  if (m_linearMode) {
+    newParent = layoutParent;
+    PushCodePoint(newParent, '(');
+  } else {
+    TreeRef parenthesis = SharedTreeStack->pushParenthesisLayout(false, false);
+    newParent = SharedTreeStack->pushRackLayout(0);
+    NAry::AddChild(layoutParent, parenthesis);
+  }
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     if (((j == 1 && expression->isListStatWithCoefficients()) ||
          (j == 3 && expression->isDiff())) &&
@@ -240,6 +246,9 @@ void Layouter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
       PushCodePoint(newParent, ',');
     }
     layoutExpression(newParent, expression->nextNode(), k_commaPriority);
+  }
+  if (m_linearMode) {
+    PushCodePoint(newParent, ')');
   }
 }
 
@@ -490,6 +499,12 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         parentPriority == k_forceParentheses)) ||
       (type.isEuclideanDivision() &&
        parentPriority < OperatorPriority(Type::Equal))) {
+    if (m_linearMode) {
+      PushCodePoint(layoutParent, '(');
+      layoutExpression(layoutParent, expression, k_maxPriority);
+      PushCodePoint(layoutParent, ')');
+      return;
+    }
     TreeRef parenthesis = KParenthesesL(KRackL())->cloneTree();
     NAry::AddChild(layoutParent, parenthesis);
     TreeRef rack = parenthesis->child(0);

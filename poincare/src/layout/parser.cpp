@@ -48,6 +48,8 @@ Type ExpressionType(LayoutType type) {
       return Type::Root;
     case LayoutType::Parentheses:
       return Type::Parentheses;
+    case LayoutType::Point2D:
+      return Type::Point;
     default:
       OMG::unreachable();
   }

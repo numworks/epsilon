@@ -1128,8 +1128,9 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
   setState(previousState);
   if (!privateParseCustomIdentifierWithParameters(leftHandSide, name, length,
                                                   stoppingType, false)) {
-    /* TODO: This should not fail silently, raise ExceptionType::ParseFail if it
-     * happens. */
+    /* TODO: If this assert fails, raise ExceptionType::ParseFail if the layout
+     * was not parsable, remove the assertion if a silent failure is to be
+     * tolerated. */
     assert(false);
   }
 }

@@ -154,8 +154,7 @@ size_t ExpressionObject::serialize(std::span<char> buffer, bool compactMode,
   Tree* layout = Layouter::LayoutExpression(
       tree()->cloneTree(), true, compactMode, numberOfSignificantDigits);
   size_t size = LayoutSerializer::Serialize(layout, buffer);
-  assert(size <= buffer.size() ||
-         size == LayoutSerializer::k_serializationError);
+  assert(size <= buffer.size() || size == LayoutSerializer::k_bufferOverflow);
   layout->removeTree();
   return size;
 }
@@ -754,7 +753,7 @@ size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
                                           buffer, compactMode, floatDisplayMode,
                                           numberOfSignificantDigits);
   assert(length <= buffer.size() ||
-         length == LayoutSerializer::k_serializationError);
+         length == LayoutSerializer::k_bufferOverflow);
   return length;
 }
 

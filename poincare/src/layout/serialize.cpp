@@ -24,7 +24,7 @@ namespace Poincare::Internal {
 char* append(const char* text, char* buffer, const char* end) {
   size_t len = strlen(text);
   if (len >= end - 1 - buffer) {
-    TreeStackCheckpoint::Raise(ExceptionType::SerializeFail);
+    TreeStackCheckpoint::Raise(ExceptionType::SerializeBufferOverflow);
   }
   memcpy(buffer, text, len);
   return buffer + len;
@@ -273,9 +273,9 @@ size_t LayoutSerializer::Serialize(const Tree* l, std::span<char> buffer) {
     return static_cast<size_t>(lastCharacter - buffer.data());
   }
   ExceptionCatch(type) {
-    assert(type == ExceptionType::SerializeFail);
+    assert(type == ExceptionType::SerializeBufferOverflow);
     buffer[0] = '\0';
-    return k_serializationError;
+    return k_bufferOverflow;
   }
   OMG::unreachable();
 }

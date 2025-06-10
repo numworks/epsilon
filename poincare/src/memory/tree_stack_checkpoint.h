@@ -54,7 +54,7 @@ enum class ExceptionType : int {
   IntegerOverflow,
   // Misc
   ParseFail,  // Used by parser, TODO: Use more distinct errors.
-  SerializeFail,
+  SerializeBufferOverflow,
   SortFail,  // NAry::Sort encountered unsortable types with respect to Order
   NonPolynomial,  // Used by polynomial parser
   Other,          // Used internally for Unit tests.

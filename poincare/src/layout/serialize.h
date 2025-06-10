@@ -13,7 +13,7 @@ class LayoutSerializer {
   friend class LatexParser;
 
  public:
-  constexpr static size_t k_serializationError = UINT_MAX;
+  constexpr static size_t k_bufferOverflow = UINT_MAX;
 
   static size_t Serialize(const Tree* l, std::span<char> buffer);
 

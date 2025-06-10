@@ -48,7 +48,7 @@ QUIZ_CASE(pcj_expression_serialization) {
   constexpr size_t bufferSize = 5;
   char buffer[bufferSize];
   size_t result = UserExpression::Builder(KCos(1000000_e)).serialize(buffer);
-  quiz_assert(result == Internal::LayoutSerializer::k_serializationError);
+  quiz_assert(result == Internal::LayoutSerializer::k_bufferOverflow);
 
   assert_expression_serializes_to(
       UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "(2×π)/3", false);

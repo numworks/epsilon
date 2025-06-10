@@ -364,7 +364,9 @@ KDSize LayoutField::minimalSizeForOptimalDisplay() const {
 }
 
 const char* LayoutField::text() {
-  layout().serialize(m_draftBuffer, m_draftBufferSize);
+  [[maybe_unused]] size_t length =
+      layout().serialize(m_draftBuffer, m_draftBufferSize);
+  assert(length <= m_draftBufferSize);
   return m_draftBuffer;
 }
 
@@ -637,7 +639,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
                              forceCursorLeftOfLayout);
     } else {
-      layout.serialize(buffer, bufferSize);
+      [[maybe_unused]] size_t length = layout.serialize(buffer, bufferSize);
+      assert(length <= bufferSize);
       insertText(buffer, false, forceCursorRightOfLayout);
     }
   } else {

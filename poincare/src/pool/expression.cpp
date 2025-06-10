@@ -155,6 +155,7 @@ size_t ExpressionObject::serialize(char* buffer, size_t bufferSize,
   Tree* layout = Layouter::LayoutExpression(
       tree()->cloneTree(), true, compactMode, numberOfSignificantDigits);
   size_t size = Serialize(layout, buffer, buffer + bufferSize);
+  assert(size <= bufferSize || size == Internal::k_serializationError);
   layout->removeTree();
   return size;
 }
@@ -749,10 +750,13 @@ size_t UserExpression::serialize(char* buffer, size_t bufferSize,
                                  bool compactMode,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {
-  return isUninitialized()
-             ? 0
-             : object()->serialize(buffer, bufferSize, compactMode,
-                                   floatDisplayMode, numberOfSignificantDigits);
+  size_t length =
+      isUninitialized()
+          ? 0
+          : object()->serialize(buffer, bufferSize, compactMode,
+                                floatDisplayMode, numberOfSignificantDigits);
+  assert(length <= bufferSize || length == Internal::k_serializationError);
+  return length;
 }
 
 bool Expression::replaceSymbolWithExpression(const UserExpression& symbol,

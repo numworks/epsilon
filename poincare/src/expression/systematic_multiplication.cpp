@@ -257,6 +257,10 @@ bool SystematicOperation::ReduceSortedMultiplication(Tree* e) {
    * 3*a*i*i -> Simplify -> 3*a*-1 -> Sort -> -1*3*a -> Simplify -> -3*a */
   if (NAry::Sort(mult, Order::OrderType::PreserveMatrices)) {
     ReduceSortedMultiplication(mult);
+    if (mult->isDep()) {
+      // e can also be a dep, we need to bubble up
+      Dependency::ShallowBubbleUpDependencies(e);
+    }
   }
   return true;
 }

@@ -898,8 +898,12 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
   changed =
       (e->isAdd() ? ReduceSortedAddition(e) : ReduceSortedMultiplication(e)) ||
       changed;
-  if (changed && e->type() == type) {
+  assert(!(e->isDep() && e->child(0)->isDep()));
+  if (changed && (e->type() == type || e->isDep())) {
     // Bubble-up may be unlocked after merging identical bases
+    if (e->isDep()) {
+      SystematicReduction::BubbleUpFromChildren(e->child(0), false);
+    }
     SystematicReduction::BubbleUpFromChildren(e, false);
     /* TODO: If this assert can't be preserved, ReduceSortedAddition must handle
      * one or both of these cases as handled in ReduceSortedMultiplication: With

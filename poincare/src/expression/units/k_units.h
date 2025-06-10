@@ -53,6 +53,18 @@ struct AllRepresentatives {
 
 namespace Poincare::Internal::KTrees::KUnits {
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Winvalid-offsetof"
+/* NOTE:
+ * The `offsetof` call in UNIT_ID macro results in an invalid offsetof warning.
+ * This is because 'AllRepresentatives` is not a standard-layout class due to
+ * its members inheriting from `Units::Representative` which is not
+ * standard-layout due to its virtual methods.
+ * Calling `offsetof` on such class is undefined behaviour, but still works in
+ * our case.
+ * TODO: Fixing this requires a constexpr function of the form:
+ * f(DIMENSION, NAME) = id */
+
 DEFINE_KUNIT(time, second);
 DEFINE_KUNIT(time, minute);
 DEFINE_KUNIT(time, hour);
@@ -78,6 +90,8 @@ DEFINE_KUNIT(mass, pound);
 DEFINE_KUNIT(mass, ounce);
 
 DEFINE_KUNIT(volume, liter);
+
+#pragma GCC diagnostic pop
 
 }  // namespace Poincare::Internal::KTrees::KUnits
 

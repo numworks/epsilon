@@ -53,7 +53,7 @@ void assert_expression_layouts_and_serializes_to(const Tree* expression,
   quiz_assert(layout);
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
-  LayoutSerializer::Serialize(layout, buffer, buffer + bufferSize);
+  LayoutSerializer::Serialize(layout, buffer);
   quiz_assert(strcmp(serialization, buffer) == 0);
   layout->removeTree();
 }

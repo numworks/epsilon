@@ -13,6 +13,8 @@
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
 
+#include <span>
+
 namespace Poincare::Internal {
 class Tree;
 struct ContextTrees;
@@ -98,7 +100,7 @@ class ExpressionObject final : public PoolObject {
                       int numberOfSignificantDigits, Context* context,
                       OMG::Base base = OMG::Base::Decimal,
                       bool linearMode = false) const;
-  size_t serialize(char* buffer, size_t bufferSize, bool compactMode,
+  size_t serialize(std::span<char> buffer, bool compactMode,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const;
 
@@ -319,7 +321,7 @@ class Expression : public PoolHandle {
   /* TODO: detect when the buffer size was to small to hold the expression
    * serialization, and return an error code so that the caller can handle this
    * case. */
-  size_t serialize(char* buffer, size_t bufferSize, bool compactMode = false,
+  size_t serialize(std::span<char> buffer, bool compactMode = false,
                    Preferences::PrintFloatMode floatDisplayMode =
                        Preferences::PrintFloatMode::Decimal,
                    int numberOfSignificantDigits =

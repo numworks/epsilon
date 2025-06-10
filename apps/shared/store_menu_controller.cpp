@@ -157,7 +157,7 @@ bool StoreMenuController::layoutFieldDidFinishEditing(
   constexpr size_t bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
   Layout layout = layoutField->layout();
-  [[maybe_unused]] size_t length = layout.serialize(buffer, bufferSize);
+  [[maybe_unused]] size_t length = layout.serialize(buffer);
   assert(length <= bufferSize);
   if (parseAndStore(buffer)) {
     layoutField->clearLayout();

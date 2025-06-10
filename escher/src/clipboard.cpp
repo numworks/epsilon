@@ -130,7 +130,7 @@ void Clipboard::updateTreeFromText() {
 }
 
 void Clipboard::updateTextFromTree() {
-  privateStoredLayout().serialize(m_textBuffer, k_bufferSize);
+  privateStoredLayout().serialize(m_textBuffer);
   m_bufferState = Updated;
 }
 

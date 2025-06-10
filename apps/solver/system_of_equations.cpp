@@ -290,11 +290,11 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
   if (!approximateLayout.isUninitialized() && !exactLayout.isUninitialized()) {
     char exactBuffer[::Constant::MaxSerializedExpressionSize];
     char approximateBuffer[::Constant::MaxSerializedExpressionSize];
-    [[maybe_unused]] size_t exactSerializationLength = exactLayout.serialize(
-        exactBuffer, ::Constant::MaxSerializedExpressionSize);
+    [[maybe_unused]] size_t exactSerializationLength =
+        exactLayout.serialize(exactBuffer);
     assert(exactSerializationLength <= ::Constant::MaxSerializedExpressionSize);
-    [[maybe_unused]] size_t approximateLength = approximateLayout.serialize(
-        approximateBuffer, ::Constant::MaxSerializedExpressionSize);
+    [[maybe_unused]] size_t approximateLength =
+        approximateLayout.serialize(approximateBuffer);
     assert(approximateLength <= ::Constant::MaxSerializedExpressionSize);
     if (strcmp(exactBuffer, approximateBuffer) == 0) {
       exactLayout = Layout();

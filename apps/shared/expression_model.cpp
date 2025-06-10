@@ -36,7 +36,7 @@ void ExpressionModel::text(const Storage::Record* record, char* buffer,
   if (symbol != 0) {
     e.replaceUnknownWithSymbol(symbol);
   }
-  size_t serializedSize = e.serialize(buffer, bufferSize);
+  size_t serializedSize = e.serialize(std::span<char>(buffer, bufferSize));
   if (serializedSize >= bufferSize - 1) {
     // It is very likely that the buffer is overflowed
     buffer[0] = 0;

@@ -17,7 +17,7 @@ void assert_expression_serializes_to(
         Poincare::Preferences::VeryLargeNumberOfSignificantDigits) {
   constexpr int bufferSize = 100;
   char buffer[bufferSize];
-  expression.serialize(buffer, bufferSize, compactMode, printFloatMode,
+  expression.serialize(buffer, compactMode, printFloatMode,
                        numberOfSignificantDigits);
   quiz_assert_print_if_failure((strcmp(serialization, buffer) == 0),
                                serialization, serialization, buffer);
@@ -47,8 +47,7 @@ QUIZ_CASE(pcj_expression_serialization) {
   // Buffer is too small
   constexpr size_t bufferSize = 5;
   char buffer[bufferSize];
-  size_t result =
-      UserExpression::Builder(KCos(1000000_e)).serialize(buffer, bufferSize);
+  size_t result = UserExpression::Builder(KCos(1000000_e)).serialize(buffer);
   quiz_assert(result == Internal::LayoutSerializer::k_serializationError);
 
   assert_expression_serializes_to(

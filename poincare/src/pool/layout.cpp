@@ -43,12 +43,11 @@ KDCoordinate LayoutObject::computeBaseline(
       cursor ? cursor->simpleCursor() : Internal::SimpleLayoutCursor());
 }
 
-size_t LayoutObject::serialize(char* buffer, size_t bufferSize,
+size_t LayoutObject::serialize(std::span<char> buffer,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {
-  size_t length = Internal::LayoutSerializer::Serialize(tree(), buffer,
-                                                        buffer + bufferSize);
-  assert(length <= bufferSize ||
+  size_t length = Internal::LayoutSerializer::Serialize(tree(), buffer);
+  assert(length <= buffer.size() ||
          length == Internal::LayoutSerializer::k_serializationError);
   return length;
 }

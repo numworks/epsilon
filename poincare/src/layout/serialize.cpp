@@ -259,14 +259,18 @@ char* LayoutSerializer::SerializeLayout(const Layout* layout, char* buffer,
   return buffer;
 }
 
-size_t LayoutSerializer::Serialize(const Tree* l, char* buffer,
-                                   const char* end) {
+size_t LayoutSerializer::Serialize(const Tree* l, std::span<char> buffer) {
   ExceptionTry {
     const char* lastCharacter =
-        l->isRackLayout() ? SerializeRack(Rack::From(l), buffer, end)
-                          : SerializeLayout(Layout::From(l), buffer, end, true);
+        l->isRackLayout()
+            ? SerializeRack(Rack::From(l), buffer.data(),
+                            buffer.data() + buffer.size())
+            : SerializeLayout(Layout::From(l), buffer.data(),
+                              buffer.data() + buffer.size(), true);
     assert(*lastCharacter == '\0');
-    return lastCharacter - buffer;
+    assert(buffer.data() <= lastCharacter &&
+           lastCharacter < buffer.data() + buffer.size());
+    return static_cast<size_t>(lastCharacter - buffer.data());
   }
   ExceptionCatch(type) {
     assert(type == ExceptionType::SerializeFail);

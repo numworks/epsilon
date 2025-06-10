@@ -3,6 +3,8 @@
 
 #include <limits.h>
 
+#include <span>
+
 #include "rack.h"
 
 namespace Poincare::Internal {
@@ -13,7 +15,7 @@ class LayoutSerializer {
  public:
   constexpr static size_t k_serializationError = UINT_MAX;
 
-  static size_t Serialize(const Tree* l, char* buffer, const char* end);
+  static size_t Serialize(const Tree* l, std::span<char> buffer);
 
  private:
   static char* SerializeRack(const Rack* rack, char* buffer, const char* end);

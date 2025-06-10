@@ -155,7 +155,7 @@ static void compareSolutions(SystemOfEquations* system,
     }
     constexpr int bufferSize = 500;
     char obtainedLayoutBuffer[bufferSize];
-    obtainedLayout.serialize(obtainedLayoutBuffer, bufferSize);
+    obtainedLayout.serialize(obtainedLayoutBuffer);
     Expression parsedExpression =
         Expression::Parse(obtainedLayoutBuffer, solverContext, false);
     quiz_assert(!parsedExpression.isUninitialized());

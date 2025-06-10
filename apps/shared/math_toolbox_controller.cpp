@@ -141,7 +141,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
     } else if (MathPreferences::SharedPreferences()->editionMode() ==
                Poincare::Preferences::EditionMode::Edition1D) {
       char buffer[AbstractTextField::MaxBufferSize()];
-      size_t len = resultLayout.serialize(buffer, sizeof(buffer));
+      size_t len = resultLayout.serialize(buffer);
       assert(len <= AbstractTextField::MaxBufferSize());
       resultLayout = Layout::String(buffer, len);
     }

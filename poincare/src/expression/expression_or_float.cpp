@@ -35,7 +35,7 @@ PrintFloat::TextLengths SerializeExactExpression(
     size_t numberOfSignificantDigits,
     Preferences::PrintFloatMode floatDisplayMode) {
   size_t exactStringLength =
-      expression.serialize(buffer.data(), buffer.size(), true, floatDisplayMode,
+      expression.serialize(buffer, true, floatDisplayMode,
                            static_cast<int>(numberOfSignificantDigits));
   /* Serialization may fail if it does not hold on the buffer, in that case an
    * error code whose value is the maximum of unsigned integers is returned as

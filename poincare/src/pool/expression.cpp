@@ -148,15 +148,14 @@ Poincare::Layout ExpressionObject::createLayout(
       floatDisplayMode, base));
 }
 
-size_t ExpressionObject::serialize(char* buffer, size_t bufferSize,
-                                   bool compactMode,
+size_t ExpressionObject::serialize(std::span<char> buffer, bool compactMode,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {
   Tree* layout = Layouter::LayoutExpression(
       tree()->cloneTree(), true, compactMode, numberOfSignificantDigits);
-  size_t size =
-      LayoutSerializer::Serialize(layout, buffer, buffer + bufferSize);
-  assert(size <= bufferSize || size == LayoutSerializer::k_serializationError);
+  size_t size = LayoutSerializer::Serialize(layout, buffer);
+  assert(size <= buffer.size() ||
+         size == LayoutSerializer::k_serializationError);
   layout->removeTree();
   return size;
 }
@@ -747,16 +746,14 @@ char* UserExpression::toLatex(char* buffer, int bufferSize,
       buffer, buffer + bufferSize - 1, withThousandsSeparator);
 }
 
-size_t UserExpression::serialize(char* buffer, size_t bufferSize,
-                                 bool compactMode,
+size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {
-  size_t length =
-      isUninitialized()
-          ? 0
-          : object()->serialize(buffer, bufferSize, compactMode,
-                                floatDisplayMode, numberOfSignificantDigits);
-  assert(length <= bufferSize ||
+  size_t length = isUninitialized() ? 0
+                                    : object()->serialize(
+                                          buffer, compactMode, floatDisplayMode,
+                                          numberOfSignificantDigits);
+  assert(length <= buffer.size() ||
          length == LayoutSerializer::k_serializationError);
   return length;
 }

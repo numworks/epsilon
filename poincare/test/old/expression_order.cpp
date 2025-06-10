@@ -20,8 +20,8 @@ void old_assert_greater(const Tree* e1, const Tree* e2) {
   char information[bufferSize] = "";
   char buffer1[bufferSize];
   char buffer2[bufferSize];
-  serialize_expression(e1, buffer1, bufferSize);
-  serialize_expression(e2, buffer2, bufferSize);
+  serialize_expression(e1, buffer1);
+  serialize_expression(e2, buffer2);
   Poincare::Print::UnsafeCustomPrintf(information, bufferSize,
                                       "%s greater than %s", buffer1, buffer2);
   quiz_tolerate_print_if_failure(test, information, "true", "false");
@@ -98,10 +98,10 @@ void assert_multiplication_or_addition_is_ordered_as(const Tree* input,
   char buffer1[bufferSize] = "";
   char buffer2[bufferSize] = "";
   char buffer3[bufferSize] = "";
-  serialize_expression(input, buffer1, bufferSize);
-  serialize_expression(expected, buffer2, bufferSize);
+  serialize_expression(input, buffer1);
+  serialize_expression(expected, buffer2);
   if (!test) {
-    serialize_expression(clone, buffer3, bufferSize);
+    serialize_expression(clone, buffer3);
   }
   quiz_tolerate_print_if_failure(test, buffer1, buffer2, buffer3);
 #endif

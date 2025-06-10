@@ -613,7 +613,7 @@ bool AbstractTextField::handleEventWithLayout(Poincare::Layout layout,
                                               bool forceCursorRightOfText) {
   constexpr size_t bufferSize = MaxBufferSize();
   char buffer[bufferSize];
-  [[maybe_unused]] size_t length = layout.serialize(buffer, bufferSize);
+  [[maybe_unused]] size_t length = layout.serialize(buffer);
   assert(length <= bufferSize);
   return handleEventWithText(buffer, false, forceCursorRightOfText);
 }

@@ -58,9 +58,8 @@ bool AbstractMathFieldDelegate::isAcceptableText(const char* text,
    * - log(x,2) */
   constexpr int bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
-  int length =
-      exp.serialize(buffer, bufferSize, false,
-                    MathPreferences::SharedPreferences()->displayMode());
+  int length = exp.serialize(
+      buffer, false, MathPreferences::SharedPreferences()->displayMode());
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */

@@ -103,9 +103,9 @@ QUIZ_CASE(calculation_store) {
   pushAndProcessCalculation(&store, text, &globalContext);
   // Assert pushed text is correct
   char buffer[4096];
-  store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
+  store.calculationAtIndex(0)->input().serialize(buffer);
   quiz_assert(strcmp(buffer, text) == 0);
-  store.calculationAtIndex(0)->input().serialize(buffer, std::size(buffer));
+  store.calculationAtIndex(0)->input().serialize(buffer);
   quiz_assert(strcmp(buffer, text) == 0);
   int numberOfCalculations2 = store.numberOfCalculations();
   // The numberOfCalculations should be the same

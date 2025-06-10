@@ -11,6 +11,8 @@
 #include <poincare/src/memory/tree_stack.h>
 #include <quiz.h>
 
+#include <span>
+
 #if POINCARE_TREE_LOG
 #include <iostream>
 #endif
@@ -168,7 +170,7 @@ inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
 // Serialization
 
 void serialize_expression(const Poincare::Internal::Tree* expression,
-                          char* buffer, size_t bufferSize);
+                          std::span<char> buffer);
 
 // Simplification
 void simplify(Poincare::Internal::Tree* e,

@@ -293,8 +293,8 @@ bool FindXNTSymbol2D(const Tree* layout, const Tree* root, char* buffer,
     if (childIndex == Parametric::FunctionIndex(static_cast<Type>(
                           k_parameteredFunctions[functionIndex].layoutType))) {
       if (isValidXNTParameter(parameterLayout)) {
-        LayoutSerializer::Serialize(parameterLayout, buffer,
-                                    buffer + bufferSize);
+        LayoutSerializer::Serialize(parameterLayout,
+                                    std::span<char>(buffer, bufferSize));
         *cycleSize = 1;
       }
     }

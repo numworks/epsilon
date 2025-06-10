@@ -160,7 +160,7 @@ void Tree::logSerialize(std::ostream& stream) const {
   assert(!outputLayout.isUninitialized());
   constexpr size_t bufferSize = 1024;
   char buffer[bufferSize];
-  LayoutSerializer::Serialize(outputLayout, buffer, buffer + bufferSize);
+  LayoutSerializer::Serialize(outputLayout, buffer);
   outputLayout->removeTree();
   stream << buffer << "\n";
 }

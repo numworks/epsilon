@@ -43,7 +43,7 @@ void printExpression(const UserExpression& expr) {
     std::cout << "o" << id << " = ";
   }
   char buffer[65536];
-  expr.serialize(buffer, std::size(buffer));
+  expr.serialize(buffer);
   std::cout << buffer << std::endl;
 }
 

@@ -34,7 +34,7 @@ QUIZ_CASE(code_clipboard_enters_and_exits_python) {
    */
   Expression e = Expression::Parse("1+e^x", nullptr);
   char buffer[32];
-  e.serialize(buffer, sizeof(buffer));
+  e.serialize(buffer);
   assert_clipboard_enters_and_exits_python(buffer, "1+exp(x)");
 
   /* The character 'e' should only be changed to 'ᴇ' if it is part of a

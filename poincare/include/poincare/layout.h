@@ -10,6 +10,8 @@
 #include <poincare/src/memory/block.h>
 #include <poincare/src/memory/k_tree_concept.h>
 
+#include <span>
+
 namespace Poincare::Internal {
 class Block;
 class Tree;
@@ -38,7 +40,7 @@ class LayoutObject final : public PoolObject,
   void logAttributes(std::ostream& stream) const override;
 #endif
 
-  size_t serialize(char* buffer, size_t bufferSize,
+  size_t serialize(std::span<char> buffer,
                    Preferences::PrintFloatMode floatDisplayMode =
                        Preferences::PrintFloatMode::Decimal,
                    int numberOfSignificantDigits = 0) const;
@@ -111,8 +113,8 @@ class Layout final : public PoolHandle {
   // Serialization
   // TODO_PCJ: One of these is defined on PoolObject, the other is not
   // TODO_PCJ: Should these return a char* pointing to the end of the buffer ?
-  size_t serialize(char* buffer, size_t bufferSize) const {
-    return (*this)->serialize(buffer, bufferSize);
+  size_t serialize(std::span<char> buffer) const {
+    return (*this)->serialize(buffer);
   }
   size_t toLatex(char* buffer, size_t bufferSize) const;
 

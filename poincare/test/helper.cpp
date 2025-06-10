@@ -136,7 +136,7 @@ void process_tree_and_compare(const char* input, const char* output,
 #endif
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];
-    serialize_expression(expression, buffer, bufferSize);
+    serialize_expression(expression, buffer);
     bool visuallyOk = strcmp(output, buffer) == 0;
     if (visuallyOk) {
       ok = true;
@@ -210,11 +210,10 @@ void store(const char* storeExpression, Poincare::Context* ctx) {
   Poincare::StoreHelper::PerformStore(ctx, s);
 }
 
-void serialize_expression(const Tree* expression, char* buffer,
-                          size_t bufferSize) {
+void serialize_expression(const Tree* expression, std::span<char> buffer) {
   Tree* layout = Layouter::LayoutExpression(expression->cloneTree(), true);
   quiz_assert(layout);
-  LayoutSerializer::Serialize(layout, buffer, buffer + bufferSize);
-  remove_system_codepoints(buffer);
+  LayoutSerializer::Serialize(layout, buffer);
+  remove_system_codepoints(buffer.data());
   layout->removeTree();
 }

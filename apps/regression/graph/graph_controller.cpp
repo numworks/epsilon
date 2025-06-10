@@ -127,7 +127,7 @@ bool GraphController::buildRegressionExpression(
       coefficients,
       GlobalPreferences::SharedGlobalPreferences()->yPredictedSymbol(),
       significantDigits, displayMode);
-  size_t length = l.serialize(buffer, bufferSize);
+  size_t length = l.serialize(std::span<char>(buffer, bufferSize));
   if (length >= bufferSize - 1 || length == 0) {
     return false;
   }

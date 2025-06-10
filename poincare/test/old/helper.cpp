@@ -111,7 +111,7 @@ void assert_parsed_expression_process_to(
   Tree *m = process(e, projCtx);
   Tree *l = Internal::Layouter::LayoutExpression(m, true, false,
                                                  numberOfSignificantDigits);
-  Internal::LayoutSerializer::Serialize(l, buffer, buffer + bufferSize);
+  Internal::LayoutSerializer::Serialize(l, buffer);
   copy_without_system_chars(buffer, buffer);
   l->removeTree();
   bool test = strcmp(buffer, result) == 0;
@@ -306,7 +306,7 @@ void assert_expression_serializes_to(const Tree *expression,
   Tree *layout = Internal::Layouter::LayoutExpression(
       expression->cloneTree(), true, false, numberOfSignificantDigits, mode,
       base);
-  LayoutSerializer::Serialize(layout, buffer, buffer + bufferSize);
+  LayoutSerializer::Serialize(layout, buffer);
   bool test = strcmp(serialization, buffer) == 0;
   layout->removeTree();
 #if POINCARE_STRICT_TESTS
@@ -327,7 +327,7 @@ void assert_expression_serializes_and_parses_to(
   char buffer[bufferSize];
   Tree *layout =
       Internal::Layouter::LayoutExpression(expression->cloneTree(), true);
-  Internal::LayoutSerializer::Serialize(layout, buffer, buffer + bufferSize);
+  Internal::LayoutSerializer::Serialize(layout, buffer);
   layout->removeTree();
   assert_parsed_expression_is(buffer, result);
 }
@@ -346,7 +346,7 @@ void assert_expression_parses_and_serializes_to(
       e, true, false, numberOfSignificantDigits, mode, base);
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
-  LayoutSerializer::Serialize(l, buffer, buffer + bufferSize);
+  LayoutSerializer::Serialize(l, buffer);
   l->removeTree();
   const bool test = strcmp(buffer, result) == 0;
 #if POINCARE_STRICT_TESTS
@@ -374,7 +374,7 @@ void assert_layout_serializes_to(const Tree *layout,
   char buffer[bufferSize];
   char result[bufferSize];
   copy_without_system_chars(result, serialization);
-  LayoutSerializer::Serialize(layout, buffer, buffer + bufferSize);
+  LayoutSerializer::Serialize(layout, buffer);
   copy_without_system_chars(buffer, buffer);
   bool success = strcmp(buffer, result) == 0;
 #if POINCARE_STRICT_TESTS

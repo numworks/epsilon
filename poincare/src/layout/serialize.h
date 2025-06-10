@@ -7,17 +7,20 @@
 
 namespace Poincare::Internal {
 
-char* SerializeRack(const Rack* rack, char* buffer, const char* end);
+class Serializer {
+ public:
+  constexpr static size_t k_serializationError = UINT_MAX;
 
-using RackSerializer = char* (*)(const Rack* rack, char* buffer,
-                                 const char* end);
-char* SerializeLayout(const Layout* layout, char* buffer, const char* end,
-                      bool isSingleRackChild,
-                      RackSerializer serializer = &SerializeRack);
+  static char* SerializeRack(const Rack* rack, char* buffer, const char* end);
 
-constexpr size_t k_serializationError = UINT_MAX;
+  using RackSerializer = char* (*)(const Rack* rack, char* buffer,
+                                   const char* end);
+  static char* SerializeLayout(const Layout* layout, char* buffer,
+                               const char* end, bool isSingleRackChild,
+                               RackSerializer serializer = &SerializeRack);
 
-size_t Serialize(const Tree* l, char* buffer, const char* end);
+  static size_t Serialize(const Tree* l, char* buffer, const char* end);
+};
 
 }  // namespace Poincare::Internal
 

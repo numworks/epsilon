@@ -154,8 +154,8 @@ size_t ExpressionObject::serialize(char* buffer, size_t bufferSize,
                                    int numberOfSignificantDigits) const {
   Tree* layout = Layouter::LayoutExpression(
       tree()->cloneTree(), true, compactMode, numberOfSignificantDigits);
-  size_t size = Serialize(layout, buffer, buffer + bufferSize);
-  assert(size <= bufferSize || size == Internal::k_serializationError);
+  size_t size = Serializer::Serialize(layout, buffer, buffer + bufferSize);
+  assert(size <= bufferSize || size == Serializer::k_serializationError);
   layout->removeTree();
   return size;
 }
@@ -755,7 +755,7 @@ size_t UserExpression::serialize(char* buffer, size_t bufferSize,
           ? 0
           : object()->serialize(buffer, bufferSize, compactMode,
                                 floatDisplayMode, numberOfSignificantDigits);
-  assert(length <= bufferSize || length == Internal::k_serializationError);
+  assert(length <= bufferSize || length == Serializer::k_serializationError);
   return length;
 }
 

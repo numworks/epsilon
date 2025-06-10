@@ -118,7 +118,7 @@ void assert_layout_serializes_as(const Tree* layout,
                                  const char* serialization) {
   constexpr size_t bufferSize = 256;
   char buffer[bufferSize];
-  Serialize(layout, buffer, buffer + bufferSize);
+  Serializer::Serialize(layout, buffer, buffer + bufferSize);
   remove_system_codepoints(buffer);
   quiz_assert(strcmp(buffer, serialization) == 0);
 }

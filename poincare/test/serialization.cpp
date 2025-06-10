@@ -49,7 +49,7 @@ QUIZ_CASE(pcj_expression_serialization) {
   char buffer[bufferSize];
   size_t result =
       UserExpression::Builder(KCos(1000000_e)).serialize(buffer, bufferSize);
-  quiz_assert(result == Internal::k_serializationError);
+  quiz_assert(result == Internal::Serializer::k_serializationError);
 
   assert_expression_serializes_to(
       UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "(2×π)/3", false);

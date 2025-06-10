@@ -57,7 +57,8 @@ Rack* rackForSerialization(const Rack* rack) {
   return static_cast<Rack*>(newRack);
 }
 
-char* SerializeRack(const Rack* rack, char* buffer, const char* end) {
+char* Serializer::SerializeRack(const Rack* rack, char* buffer,
+                                const char* end) {
   if (rack->numberOfChildren() == 0) {
     /* Text fields serializes layouts to insert them and we need an empty
      * codepoint for the cursor to be placed correctly in the text field.
@@ -91,7 +92,7 @@ bool mayNeedParentheses(const Rack* rack) {
 }
 
 char* serializeWithParentheses(const Rack* rack, char* buffer, const char* end,
-                               RackSerializer serializer,
+                               Serializer::RackSerializer serializer,
                                bool forceParentheses = false) {
   bool addParentheses = forceParentheses || mayNeedParentheses(rack);
   if (addParentheses) {
@@ -104,8 +105,9 @@ char* serializeWithParentheses(const Rack* rack, char* buffer, const char* end,
   return buffer;
 }
 
-char* SerializeLayout(const Layout* layout, char* buffer, const char* end,
-                      bool isSingleRackChild, RackSerializer serializer) {
+char* Serializer::SerializeLayout(const Layout* layout, char* buffer,
+                                  const char* end, bool isSingleRackChild,
+                                  RackSerializer serializer) {
   switch (layout->layoutType()) {
     case LayoutType::CombinedCodePoints:
     case LayoutType::AsciiCodePoint:
@@ -256,7 +258,7 @@ char* SerializeLayout(const Layout* layout, char* buffer, const char* end,
   return buffer;
 }
 
-size_t Serialize(const Tree* l, char* buffer, const char* end) {
+size_t Serializer::Serialize(const Tree* l, char* buffer, const char* end) {
   ExceptionTry {
     const char* lastCharacter =
         l->isRackLayout() ? SerializeRack(Rack::From(l), buffer, end)

@@ -128,18 +128,21 @@ void process_tree_and_compare(const char* input, const char* output,
   }
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
+#ifndef PLATFORM_DEVICE
     float expectedMetric =
         Metric::GetMetric(expected, projectionContext.m_reductionTarget);
     float expressionMetric =
         Metric::GetMetric(expression, projectionContext.m_reductionTarget);
+#endif
     constexpr size_t bufferSize = 256;
     char buffer[bufferSize];
     serialize_expression(expression, buffer, bufferSize);
     bool visuallyOk = strcmp(output, buffer) == 0;
     if (visuallyOk) {
       ok = true;
-    } else {
+    }
 #ifndef PLATFORM_DEVICE
+    else {
       const char* metricText =
           expectedMetric > expressionMetric
               ? " (better "
@@ -147,8 +150,8 @@ void process_tree_and_compare(const char* input, const char* output,
       std::cout << input << " processed to " << buffer << " instead of "
                 << output << metricText << expressionMetric << " vs "
                 << expectedMetric << ")" << std::endl;
-#endif
     }
+#endif
     quiz_assert(ok);
   }
   expression->removeTree();

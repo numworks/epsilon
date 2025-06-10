@@ -37,6 +37,9 @@ PrintFloat::TextLengths SerializeExactExpression(
   size_t exactStringLength =
       expression.serialize(buffer.data(), buffer.size(), true, floatDisplayMode,
                            static_cast<int>(numberOfSignificantDigits));
+  /* Serialization may fail if it does not hold on the buffer, in that case an
+   * error code whose value is the maximum of unsigned integers is returned as
+   * the string length. The approximate expression will be used instead. */
   size_t exactGlyphLength = UTF8Helper::StringGlyphLength(buffer.data());
   return PrintFloat::TextLengths{exactStringLength, exactGlyphLength};
 }
@@ -54,20 +57,15 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
       Approximate<float>(exactExpression, approximationParameters);
   if (!ExactAndApproximateExpressionsAreStrictlyEqual(
           exactExpression, UserExpression::Builder(approximation))) {
-    /* For now, a "large enough" buffer is allocated for the exact expression
-     * serialization. */
-    /*/ TODO: the size of this buffer should be reduced. To safely achieve this,
-     * UserExpression::serialize needs to return an error code when the buffer
-     * size is too small to hold the expession. When falling in that case here,
-     * the approximation serialization will be used instead. */
-    constexpr size_t k_bufferLength = 50;
-    char exactSerialization[k_bufferLength];
+    constexpr size_t k_bufferExactLength = 15;
+    char exactSerialization[k_bufferExactLength];
     PrintFloat::TextLengths exactTextLengths =
         SerializeExactExpression(exactExpression, exactSerialization,
                                  numberOfSignificantDigits, floatDisplayMode);
     if ((exactTextLengths.GlyphLength <= k_maxExactSerializationGlyphLength) &&
         (exactTextLengths.GlyphLength <= maxGlyphLength) &&
-        (exactTextLengths.CharLength <= buffer.size())) {
+        (exactTextLengths.CharLength <= k_bufferExactLength) &&
+        ((exactTextLengths.CharLength <= buffer.size()))) {
       strlcpy(buffer.data(), exactSerialization,
               exactTextLengths.CharLength + 1);
       return exactTextLengths;

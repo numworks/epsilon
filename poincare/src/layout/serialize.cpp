@@ -91,9 +91,9 @@ bool mayNeedParentheses(const Rack* rack) {
   return !tokenizer.popToken().isEndOfStream();
 }
 
-char* serializeWithParentheses(const Rack* rack, char* buffer, const char* end,
-                               Serializer::RackSerializer serializer,
-                               bool forceParentheses = false) {
+char* Serializer::SerializeWithParentheses(
+    const Rack* rack, char* buffer, const char* end,
+    Serializer::RackSerializer serializer, bool forceParentheses) {
   bool addParentheses = forceParentheses || mayNeedParentheses(rack);
   if (addParentheses) {
     buffer = append("(", buffer, end);
@@ -141,10 +141,10 @@ char* Serializer::SerializeLayout(const Layout* layout, char* buffer,
         buffer = append("(", buffer, end);
       }
       buffer =
-          serializeWithParentheses(layout->child(0), buffer, end, serializer);
+          SerializeWithParentheses(layout->child(0), buffer, end, serializer);
       buffer = append("/", buffer, end);
       buffer =
-          serializeWithParentheses(layout->child(1), buffer, end, serializer);
+          SerializeWithParentheses(layout->child(1), buffer, end, serializer);
       if (!isSingleRackChild) {
         buffer = append(")", buffer, end);
       }
@@ -154,11 +154,11 @@ char* Serializer::SerializeLayout(const Layout* layout, char* buffer,
       if (VerticalOffset::IsSuffixSuperscript(layout)) {
         buffer = append("^", buffer, end);
         buffer =
-            serializeWithParentheses(layout->child(0), buffer, end, serializer);
+            SerializeWithParentheses(layout->child(0), buffer, end, serializer);
       } else {
         /* TODO_PCJ: something else is needed here to translate the subscript.
          * For now, force parentheses around subscript expression */
-        buffer = serializeWithParentheses(layout->child(0), buffer, end,
+        buffer = SerializeWithParentheses(layout->child(0), buffer, end,
                                           serializer, true);
       }
       break;

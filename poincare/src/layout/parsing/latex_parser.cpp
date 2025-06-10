@@ -17,8 +17,6 @@
 
 namespace Poincare::Internal {
 
-namespace LatexParser {
-
 // ===== Latex Tokens =====
 
 /* A LatexToken is an array of LatexTokenChildren
@@ -480,7 +478,7 @@ Tree* NextLatexToken(const char** start, const char* rightDelimiter) {
   return codepoint;
 }
 
-Tree* LatexToLayout(const char* latexString) {
+Tree* LatexParser::LatexToLayout(const char* latexString) {
   ExceptionTry {
     Tree* result = KRackL()->cloneTree();
     ParseLatexOnRackUntilDelimiter(Rack::From(result), &latexString, "");
@@ -517,9 +515,9 @@ Tree* LatexToLayout(const char* latexString) {
  *   PtPermute
  * */
 
-char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer,
-                                  const char* end,
-                                  bool withThousandsSeparators) {
+char* LatexParser::LayoutToLatexWithExceptions(const Rack* rack, char* buffer,
+                                               const char* end,
+                                               bool withThousandsSeparators) {
   for (const Tree* child : rack->children()) {
     if (child->isOperatorSeparatorLayout() || child->isUnitSeparatorLayout() ||
         (!withThousandsSeparators && child->isThousandsSeparatorLayout())) {
@@ -624,8 +622,8 @@ char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer,
   return buffer;
 }
 
-char* LayoutToLatex(const Rack* rack, char* buffer, char* end,
-                    bool withThousandsSeparators) {
+char* LatexParser::LayoutToLatex(const Rack* rack, char* buffer, char* end,
+                                 bool withThousandsSeparators) {
   ExceptionTry {
     char* result =
         LayoutToLatexWithExceptions(rack, buffer, end, withThousandsSeparators);
@@ -926,7 +924,5 @@ bool BuildChildWithOptionalParenthesesFromLatex(
   }
   return false;
 }
-
-}  // namespace LatexParser
 
 }  // namespace Poincare::Internal

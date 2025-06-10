@@ -6,13 +6,17 @@
 
 namespace Poincare::Internal {
 
-namespace LatexParser {
+class LatexParser {
+ public:
+  static Tree* LatexToLayout(const char* latexString);
+  static char* LayoutToLatex(const Rack* rack, char* buffer, char* end,
+                             bool withThousandsSeparators = false);
 
-Tree* LatexToLayout(const char* latexString);
-char* LayoutToLatex(const Rack* rack, char* buffer, char* end,
-                    bool withThousandsSeparators = false);
-
-}  // namespace LatexParser
+ private:
+  static char* LayoutToLatexWithExceptions(const Rack* rack, char* buffer,
+                                           const char* end,
+                                           bool withThousandsSeparators);
+};
 
 }  // namespace Poincare::Internal
 

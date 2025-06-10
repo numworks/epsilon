@@ -38,8 +38,8 @@ PrintFloat::TextLengths SerializeExactExpression(
       expression.serialize(buffer, true, floatDisplayMode,
                            static_cast<int>(numberOfSignificantDigits));
   /* Serialization may fail if it does not hold on the buffer, in that case an
-   * error code whose value is the maximum of unsigned integers is returned as
-   * the string length. The approximate expression will be used instead. */
+   * error code is returned as the string length. The approximate expression
+   * will be used instead. */
   size_t exactGlyphLength = UTF8Helper::StringGlyphLength(buffer.data());
   return PrintFloat::TextLengths{exactStringLength, exactGlyphLength};
 }

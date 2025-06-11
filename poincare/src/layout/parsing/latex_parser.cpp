@@ -418,8 +418,8 @@ Tree* NextLatexToken(const char** start, const char* rightDelimiter) {
           continue;
         }
         assert((resultLayout->isRackLayout() && indexInLayout == 0) ||
-               indexInLayout >= 0 &&
-                   (indexInLayout < resultLayout->numberOfChildren()));
+               (indexInLayout >= 0 &&
+                (indexInLayout < resultLayout->numberOfChildren())));
         assert(i < rule.latexTokenSize - 1);  // Last should be k_noChild
         Tree* childResult = KRackL()->cloneTree();
         const char* childRightDelimiter = latexToken[i + 1].leftDelimiter;

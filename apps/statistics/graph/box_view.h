@@ -16,14 +16,15 @@ namespace Statistics {
 
 class BoxPlotPolicy {
  public:
-  constexpr static KDCoordinate BoxHeight(int numberOfValidSeries) {
-    assert(numberOfValidSeries <= Store::k_numberOfSeries);
+  constexpr static KDCoordinate BoxHeight(size_t numberOfValidSeries) {
+    assert(numberOfValidSeries >= 1 &&
+           numberOfValidSeries <= k_boxesHeights.size());
     return k_boxesHeights[numberOfValidSeries - 1];
   }
   constexpr static KDCoordinate BoxVerticalMargin() {
     return k_verticalSideSize;
   }
-  constexpr static KDCoordinate BoxFrameHeight(int numberOfValidSeries) {
+  constexpr static KDCoordinate BoxFrameHeight(size_t numberOfValidSeries) {
     return k_verticalSideSize + BoxHeight(numberOfValidSeries) +
            k_verticalSideSize;
   }

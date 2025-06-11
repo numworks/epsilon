@@ -26,13 +26,13 @@ class MultipleBoxesView : public MultipleDataView {
   Escher::View* subviewAtIndex(int index) override;
 
  private:
-  constexpr static KDCoordinate TopToFirstBoxMargin(int numberOfSeries) {
+  constexpr static KDCoordinate TopToFirstBoxMargin(size_t numberOfSeries) {
     assert(1 <= numberOfSeries && numberOfSeries <= Store::k_numberOfSeries);
     return numberOfSeries == 1 ? k_topToFirstBoxMarginOneSeries
                                : k_topToFirstBoxMarginMultipleSeries;
   }
-  constexpr static KDCoordinate BoxToBoxMargin(int numberOfSeries) {
-    assert(1 <= numberOfSeries && numberOfSeries <= k_boxToBoxMargins.size());
+  constexpr static KDCoordinate BoxToBoxMargin(size_t numberOfSeries) {
+    assert(numberOfSeries <= k_boxToBoxMargins.size());
     return k_boxToBoxMargins[numberOfSeries - 1];
   }
 

@@ -28,25 +28,28 @@ BoxView* MultipleBoxesView::plotViewForSeries(int series) {
 }
 
 void MultipleBoxesView::layoutDataSubviews(bool force) {
-  int numberOfDataSubviews = m_store->numberOfActiveSeries(
+  const int numberOfDataSubviews = m_store->numberOfActiveSeries(
       Shared::DoublePairStore::DefaultActiveSeriesTest);
   assert(numberOfDataSubviews > 0);
   KDCoordinate bannerHeight = bannerFrame().height();
-  KDCoordinate boxYPosition = TopToFirstBoxMargin(numberOfDataSubviews);
+  KDCoordinate boxYPosition =
+      TopToFirstBoxMargin(static_cast<size_t>(numberOfDataSubviews));
   for (int i = 0; i < Store::k_numberOfSeries; i++) {
     if (Shared::DoublePairStore::DefaultActiveSeriesTest(m_store, i)) {
       // Add vertical margins to box layout. Boxes layouts may overlap.
       KDRect frame =
           KDRect(0, boxYPosition - BoxPlotPolicy::BoxVerticalMargin(),
                  bounds().width(),
-                 BoxPlotPolicy::BoxFrameHeight(numberOfDataSubviews));
+                 BoxPlotPolicy::BoxFrameHeight(
+                     static_cast<size_t>(numberOfDataSubviews)));
       setChildFrame(plotViewForSeries(i), frame, force);
-      boxYPosition += BoxPlotPolicy::BoxHeight(numberOfDataSubviews) +
-                      BoxToBoxMargin(numberOfDataSubviews);
+      boxYPosition +=
+          BoxPlotPolicy::BoxHeight(static_cast<size_t>(numberOfDataSubviews)) +
+          BoxToBoxMargin(static_cast<size_t>(numberOfDataSubviews));
     }
   }
   // Remove BoxToBoxMargin on last box
-  boxYPosition -= BoxToBoxMargin(numberOfDataSubviews);
+  boxYPosition -= BoxToBoxMargin(static_cast<size_t>(numberOfDataSubviews));
   assert(bounds().height() >= boxYPosition + k_axisViewHeight + bannerHeight);
   // Layout the axis right above the banner
   setChildFrame(&m_axisView,

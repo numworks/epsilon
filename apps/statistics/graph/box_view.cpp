@@ -16,9 +16,11 @@ namespace Statistics {
 
 void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
                              KDRect rect) const {
-  int numberOfSeries = m_store->numberOfActiveSeries(
+  const int numberOfSeries = m_store->numberOfActiveSeries(
       Shared::DoublePairStore::DefaultActiveSeriesTest);
-  assert(plotView->bounds().height() == BoxFrameHeight(numberOfSeries));
+  assert(numberOfSeries >= 0);
+  assert(plotView->bounds().height() ==
+         BoxFrameHeight(static_cast<size_t>(numberOfSeries)));
   KDColor color = plotView->hasFocus()
                       ? DoublePairStore::colorLightOfSeriesAtIndex(m_series)
                       : Palette::GrayWhite;
@@ -32,14 +34,15 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
       plotView->floatToKDCoordinatePixel(OMG::Axis::Horizontal, thirdQuart);
   ctx->fillRect(KDRect(firstQuartilePixels, k_verticalSideSize,
                        thirdQuartilePixels - firstQuartilePixels,
-                       BoxHeight(numberOfSeries)),
+                       BoxHeight(static_cast<size_t>(numberOfSeries))),
                 color);
 
   /* Draw the horizontal lines linking the box to the whiskers
    * Compute the middle from the pixels for a better precision */
   float segmentOrd = plotView->pixelToFloat(
       OMG::Axis::Vertical,
-      (k_verticalSideSize + BoxHeight(numberOfSeries) + k_verticalSideSize) /
+      (k_verticalSideSize + BoxHeight(static_cast<size_t>(numberOfSeries)) +
+       k_verticalSideSize) /
           2);
   double lowerWhisker = m_store->lowerWhisker(m_series);
   double upperWhisker = m_store->upperWhisker(m_series);
@@ -49,7 +52,8 @@ void BoxPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
                                 thirdQuart, upperWhisker, color);
 
   float lowBound = plotView->pixelToFloat(
-      OMG::Axis::Vertical, k_verticalSideSize + BoxHeight(numberOfSeries));
+      OMG::Axis::Vertical,
+      k_verticalSideSize + BoxHeight(static_cast<size_t>(numberOfSeries)));
   float upBound =
       plotView->pixelToFloat(OMG::Axis::Vertical, k_verticalSideSize);
 
@@ -99,11 +103,12 @@ void BoxPlotPolicy::drawBar(const AbstractPlotView* plotView, KDContext* ctx,
   plotView->drawStraightSegment(ctx, rect, OMG::Axis::Vertical, calculation,
                                 lowBound, upBound, color, k_quantileBarWidth);
   if (isSelected) {
+    int numberOfSeries = m_store->numberOfActiveSeries(
+        Shared::DoublePairStore::DefaultActiveSeriesTest);
+    assert(numberOfSeries >= 0);
     lowBound = plotView->pixelToFloat(
         OMG::Axis::Vertical,
-        k_verticalSideSize +
-            BoxHeight(m_store->numberOfActiveSeries(
-                Shared::DoublePairStore::DefaultActiveSeriesTest)) +
+        k_verticalSideSize + BoxHeight(static_cast<size_t>(numberOfSeries)) +
             k_chevronMargin - 1);
     upBound = plotView->pixelToFloat(OMG::Axis::Vertical,
                                      k_verticalSideSize - k_chevronMargin);
@@ -178,16 +183,18 @@ void BoxView::reload(bool resetInterruption, bool force, bool forceRedrawAxes) {
 }
 
 KDRect BoxView::selectedCalculationRect() const {
-  float calculation = m_store->boxPlotCalculationAtIndex(
-      m_series, m_dataViewController->selectedIndex());
+  float calculation = static_cast<float>(m_store->boxPlotCalculationAtIndex(
+      m_series, m_dataViewController->selectedIndex()));
   KDCoordinate minX =
       floatToKDCoordinatePixel(OMG::Axis::Horizontal, calculation) -
       k_leftSideSize;
   KDCoordinate width = k_leftSideSize + k_rightSideSize;
+  int numberOfSeries = m_store->numberOfActiveSeries(
+      Shared::DoublePairStore::DefaultActiveSeriesTest);
+  assert(numberOfSeries >= 0);
   // Transpose the rect into parent's view coordinates
   return KDRect(minX, 0, width,
-                BoxFrameHeight(m_store->numberOfActiveSeries(
-                    Shared::DoublePairStore::DefaultActiveSeriesTest)))
+                BoxFrameHeight(static_cast<size_t>(numberOfSeries)))
       .translatedBy(absoluteOrigin());
 }
 

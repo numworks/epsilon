@@ -102,7 +102,7 @@ uint32_t _eadk_timing_millis_high() {
 }
 
 const char* eadk_external_data = nullptr;
-extern size_t eadk_external_data_size = 0;
+size_t eadk_external_data_size = 0;
 
 bool eadk_usb_is_plugged() { return Ion::USB::isPlugged(); }
 

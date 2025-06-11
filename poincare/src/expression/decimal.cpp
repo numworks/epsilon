@@ -126,8 +126,9 @@ int Decimal::Serialize(const Tree* decimal, char* buffer, int bufferSize,
   }
 
   // Serialize the mantissa
-  assert(static_cast<int>(numberOfSignificantDigits) <=
-         PrintFloat::k_maxNumberOfSignificantDigitsInDecimals);
+  assert(
+      numberOfSignificantDigits <=
+      static_cast<int>(PrintFloat::k_maxNumberOfSignificantDigitsInDecimals));
   char tempBuffer[PrintFloat::k_maxNumberOfSignificantDigitsInDecimals + 1];
   int mantissaLength = m.serialize(
       tempBuffer, PrintFloat::k_maxNumberOfSignificantDigitsInDecimals + 1,

@@ -81,7 +81,7 @@ $(addprefix expression/, \
   projection.cpp \
   random.cpp \
   rational.cpp \
-  sequence.cpp \
+  sequence.cpp:-nopool \
   expression_or_float.cpp:-nopool \
   set.cpp \
   simplification.cpp \

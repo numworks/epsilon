@@ -181,6 +181,24 @@ void Layouter::addUnitSeparator(Tree* layoutParent) {
   NAry::AddChild(layoutParent, KUnitSeparatorL->cloneTree());
 }
 
+Tree* Layouter::insertParenthesis(TreeRef& layoutParent, bool isOpening,
+                                  bool isCurlyBrace) {
+  if (m_linearMode) {
+    PushCodePoint(layoutParent, isOpening      ? isCurlyBrace ? '{' : '('
+                                : isCurlyBrace ? '}'
+                                               : ')');
+    return layoutParent;
+  } else if (isOpening) {
+    TreeRef parenthesis =
+        (isCurlyBrace ? KCurlyBracesL : KParenthesesL)->cloneNode();
+    KRackL()->cloneTree();
+    NAry::AddChild(layoutParent, parenthesis);
+    return parenthesis->child(0);
+  }
+  // If closing layout parentheses, do nothing.
+  return layoutParent;
+}
+
 void Layouter::layoutText(TreeRef& layoutParent, const char* text) {
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
@@ -221,15 +239,7 @@ void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
 void Layouter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
                                   const char* name) {
   layoutText(layoutParent, name);
-  TreeRef newParent;
-  if (m_linearMode) {
-    newParent = layoutParent;
-    PushCodePoint(newParent, '(');
-  } else {
-    TreeRef parenthesis = SharedTreeStack->pushParenthesisLayout(false, false);
-    newParent = SharedTreeStack->pushRackLayout(0);
-    NAry::AddChild(layoutParent, parenthesis);
-  }
+  TreeRef newParent = insertParenthesis(layoutParent, true);
   for (int j = 0; j < expression->numberOfChildren(); j++) {
     if (((j == 1 && expression->isListStatWithCoefficients()) ||
          (j == 3 && expression->isDiff())) &&
@@ -247,9 +257,7 @@ void Layouter::layoutFunctionCall(TreeRef& layoutParent, Tree* expression,
     }
     layoutExpression(newParent, expression->nextNode(), k_commaPriority);
   }
-  if (m_linearMode) {
-    PushCodePoint(newParent, ')');
-  }
+  insertParenthesis(newParent, false);
 }
 
 void Layouter::layoutChildrenAsRacks(Tree* expression) {
@@ -499,16 +507,10 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         parentPriority == k_forceParentheses)) ||
       (type.isEuclideanDivision() &&
        parentPriority < OperatorPriority(Type::Equal))) {
-    if (m_linearMode) {
-      PushCodePoint(layoutParent, '(');
-      layoutExpression(layoutParent, expression, k_maxPriority);
-      PushCodePoint(layoutParent, ')');
-      return;
-    }
-    TreeRef parenthesis = KParenthesesL(KRackL())->cloneTree();
-    NAry::AddChild(layoutParent, parenthesis);
-    TreeRef rack = parenthesis->child(0);
-    return layoutExpression(rack, expression, k_maxPriority);
+    TreeRef newParent = insertParenthesis(layoutParent, true);
+    layoutExpression(newParent, expression, k_maxPriority);
+    insertParenthesis(newParent, false);
+    return;
   }
 
   switch (type) {
@@ -820,20 +822,13 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::List:
     case Type::Set:
     case Type::DepList:
-    case Type::Point:
-      if (m_linearMode) {
-        PushCodePoint(layoutParent, type.isPoint() ? '(' : '{');
-        layoutInfixOperator(layoutParent, expression, ',');
-        PushCodePoint(layoutParent, type.isPoint() ? ')' : '}');
-        break;
-      } else {
-        TreeRef parenthesis =
-            (type.isList() ? KCurlyBracesL : KParenthesesL)->cloneNode();
-        TreeRef rack = KRackL()->cloneTree();
-        NAry::AddChild(layoutParent, parenthesis);
-        layoutInfixOperator(rack, expression, ',');
-        break;
-      }
+    case Type::Point: {
+      TreeRef newParent =
+          insertParenthesis(layoutParent, true, !type.isPoint());
+      layoutInfixOperator(newParent, expression, ',');
+      insertParenthesis(newParent, false, !type.isPoint());
+      break;
+    }
     case Type::ListElement:
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
@@ -843,23 +838,13 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::ListSlice: {
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
-      TreeRef newParent;
-      if (m_linearMode) {
-        PushCodePoint(layoutParent, '(');
-        newParent = layoutParent;
-      } else {
-        TreeRef parenthesis = KParenthesesL->cloneNode();
-        newParent = KRackL()->cloneTree();
-        NAry::AddChild(layoutParent, parenthesis);
-      }
+      TreeRef newParent = insertParenthesis(layoutParent, true);
       layoutExpression(newParent, expression->nextNode(),
                        OperatorPriority(type));
       PushCodePoint(newParent, ',');
       layoutExpression(newParent, expression->nextNode(),
                        OperatorPriority(type));
-      if (m_linearMode) {
-        PushCodePoint(newParent, ')');
-      }
+      insertParenthesis(newParent, false);
       break;
     }
     case Type::Parentheses:

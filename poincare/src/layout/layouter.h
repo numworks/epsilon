@@ -45,6 +45,10 @@ class Layouter {
       Preferences::PrintFloatMode floatMode =
           Preferences::PrintFloatMode::Decimal,
       OMG::Base base = OMG::Base::Decimal);
+
+  // Insert layout or codepoint depending on linear mode.
+  Tree* insertParenthesis(TreeRef& layoutParent, bool isOpening,
+                          bool isCurlyBrace = false);
   /* TODO: addOperatorSeparator, addUnitSeparator and AddThousandsSeparators
    * should all be applicable in linear mode. Separators should be stripped
    * before parsing layouts in 1D. */

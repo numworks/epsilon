@@ -24,8 +24,8 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
     Layouter::StripSeparators(layout);
     Tree* parsed = Parser::Parse(layout, nullptr);
     assert(parsed->isRationalOrFloat() || parsed->isDecimal() ||
-           (parsed->isOpposite() && parsed->child(0)->isRationalOrFloat() ||
-            parsed->child(0)->isDecimal()));
+           (parsed->isOpposite() && (parsed->child(0)->isRationalOrFloat() ||
+                                     parsed->child(0)->isDecimal())));
     ProjectionContext ctx{.m_advanceReduce = false};
     Simplification::ProjectAndReduce(parsed, &ctx);
     bool result = exact->treeIsIdenticalTo(parsed);

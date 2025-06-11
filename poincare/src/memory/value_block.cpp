@@ -53,7 +53,7 @@ double ValueBlock::get<double>() const {
 
 template <typename T>
 void ValueBlock::set(T value) {
-  memcpy(this, &value, sizeof(value));
+  memcpy(this, static_cast<void*>(&value), sizeof(value));
 }
 
 template void ValueBlock::set(float);

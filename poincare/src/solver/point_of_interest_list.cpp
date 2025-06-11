@@ -32,7 +32,8 @@ PointOfInterest pointFromTree(const Internal::Tree* t) {
   PointOfInterest result;
   assert(sizeof(result) ==
          sizeof(Internal::CustomTypeStructs::PointOfInterestNode));
-  memcpy(&result, t + 1 /* skip the TypeBlock */, sizeof(result));
+  memcpy(&result, static_cast<const void*>(t + 1) /* skip the TypeBlock */,
+         sizeof(result));
   return result;
 }
 

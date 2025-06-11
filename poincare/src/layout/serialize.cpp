@@ -277,7 +277,6 @@ size_t LayoutSerializer::Serialize(const Tree* l, std::span<char> buffer) {
     if (type != ExceptionType::SerializeBufferOverflow) {
       TreeStackCheckpoint::Raise(type);
     }
-    buffer[0] = '\0';
     return k_bufferOverflow;
   }
   OMG::unreachable();

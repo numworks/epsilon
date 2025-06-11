@@ -885,6 +885,7 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
 #endif
         return true;
       }
+      NAry::Flatten(e);
     }
   }
   assert(e->type() == type);

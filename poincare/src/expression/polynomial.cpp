@@ -52,11 +52,13 @@ Tree* Polynomial::LeadingIntegerCoefficient(Tree* polynomial) {
 
 uint8_t Polynomial::ExponentAtIndex(const Tree* polynomial, int index) {
   assert(index >= 0 && index < NumberOfTerms(polynomial));
+  assert(index < UINT8_MAX - 1);
   return polynomial->nodeValue(1 + index);
 }
 
 void Polynomial::SetExponentAtIndex(Tree* polynomial, int index,
                                     uint8_t exponent) {
+  assert(index < UINT8_MAX - 1);
   polynomial->setNodeValue(1 + index, exponent);
 }
 

@@ -96,7 +96,6 @@ bool SystematicOperation::ReduceSortedAddition(Tree* e) {
    * is needed before the recursive call below */
   assert(e->isAdd());
   bool changed = false;
-  bool didSquashChildren = false;
   int n = e->numberOfChildren();
   int i = 0;
   Tree* child = e->child(0);
@@ -113,7 +112,6 @@ bool SystematicOperation::ReduceSortedAddition(Tree* e) {
       if (child->isAdd()) {
         n += child->numberOfChildren() - 1;
         child->removeNode();
-        didSquashChildren = true;
       }
       changed = true;
       n--;
@@ -129,13 +127,8 @@ bool SystematicOperation::ReduceSortedAddition(Tree* e) {
       return true;
     }
   }
-  if (didSquashChildren) {
-    /* Newly squashed children should be sorted again and they may allow new
-     * simplifications. */
-    NAry::Sort(e);
-    assert(changed);
-  }
   if (changed) {
+    NAry::Sort(e);
     /* TODO: Instead of this recursive call we could refactor to include the
      * possibility of merging previously skipped child to handle cases like:
      * M(a,b) = false but M(a,M(b,c)) = true

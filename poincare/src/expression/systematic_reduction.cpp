@@ -245,8 +245,10 @@ bool SystematicReduction::Switch(Tree* e) {
     case Type::Quo:
     case Type::Rem:
       return Arithmetic::ReduceQuotientOrRemainder(e);
+#if POINCARE_EUCLIDEAN_DIVISION
     case Type::EuclideanDivision:
       return Arithmetic::ReduceEuclideanDivision(e);
+#endif
     case Type::Round:
       return Arithmetic::ReduceRound(e);
     case Type::Sign:

@@ -187,6 +187,80 @@ class TypeBlock : public Block {
     }
   }
 
+  struct NbChildrenAndNodeSize {
+    int numberOfChildren;
+    size_t nodeSize;
+  };
+
+  struct pair {
+    int rawChildrenNumber;
+    size_t numberOfMetaBlocks;
+  };
+
+  constexpr static pair NumberOfChidrenOrTagAndNumberOfMetaBlocks(Type type) {
+    switch (type) {
+      /* NODE(MinusOne) => DefaultNumberOfMetaBlocks(0) + 0
+       * NODE(Mult, NARY) => DefaultNumberOfMetaBlocks(NARY) + 0
+       * NODE(IntegerNegShort, 0, { uint8_t absValue; }) =>
+       *   DefaultNumberOfMetaBlocks(0) + sizeof(IntegerNegShortNode)
+       */
+#define NODE_USE(F, N, S)    \
+  case Type::SCOPED_NODE(F): \
+    return {N, DefaultNumberOfMetaBlocks(N) + S};
+#define DISABLED_NODE_USE(F, N, S)
+#include "types.inc"
+      default:
+        return {0, 1};
+    }
+  }
+
+  constexpr NbChildrenAndNodeSize numberOfChildrenAndNodeSize() const {
+    Type t = type();
+    pair p = NumberOfChidrenOrTagAndNumberOfMetaBlocks(t);
+
+    if (p.rawChildrenNumber >= 0) {
+      switch (t) {
+#if POINCARE_SEQUENCE
+        case Type::UserSequence:
+#endif
+        case Type::UserFunction:
+        case Type::UserSymbol:
+        case Type::IntegerPosBig:
+        case Type::IntegerNegBig:
+          return {p.rawChildrenNumber,
+                  p.numberOfMetaBlocks + static_cast<uint8_t>(*next())};
+        case Type::RationalPosBig:
+        case Type::RationalNegBig: {
+          uint8_t numberOfDigitsNumerator = static_cast<uint8_t>(*next());
+          uint8_t numberOfDigitsDenominator = static_cast<uint8_t>(*nextNth(2));
+          return {p.rawChildrenNumber,
+                  p.numberOfMetaBlocks +
+                      static_cast<size_t>(numberOfDigitsNumerator) +
+                      static_cast<size_t>(numberOfDigitsDenominator)};
+        }
+        default:
+          return {p.rawChildrenNumber, p.numberOfMetaBlocks};
+      }
+    } else if (p.rawChildrenNumber == NARY) {
+      if (t == Type::Polynomial) {
+        uint8_t nextValue = static_cast<uint8_t>(*next());
+        return {nextValue, p.numberOfMetaBlocks + nextValue - 1};
+      }
+      if (t == Type::Arbitrary) {
+        uint16_t size = static_cast<uint8_t>(*nextNth(3)) << 8 |
+                        static_cast<uint8_t>(*nextNth(2));
+        return {static_cast<uint8_t>(*next()), p.numberOfMetaBlocks + size};
+      }
+      return {static_cast<uint8_t>(*next()), p.numberOfMetaBlocks};
+    } else if (p.rawChildrenNumber == NARY16) {
+      return {OMG::unalignedShort(next()), p.numberOfMetaBlocks};
+    } else {
+      assert(p.rawChildrenNumber == NARY2D);
+      return {static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2)),
+              p.numberOfMetaBlocks};
+    }
+  }
+
   constexpr size_t nodeSize() const {
     Type t = type();
     size_t numberOfMetaBlocks = NumberOfMetaBlocks(t);

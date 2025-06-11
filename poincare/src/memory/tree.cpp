@@ -248,8 +248,33 @@ const Tree* NextTreeNoCache(const Tree* result) {
   assert(result != nullptr);
   int nbOfChildrenToScan = 1;
   while (nbOfChildrenToScan > 0) {
-    nbOfChildrenToScan += result->numberOfChildren() - 1;
-    result = result->nextNode();
+    /* This while loop is equivalent to the following code:
+     *
+     * nbOfChildrenToScan += result->numberOfChildren() - 1;
+     * result = result->nextNode();
+     *
+     * To optimize, the call to [nextNode] is inlined by hand, and the
+     * [numberOfChildren] and [nodeSize] data is gather in a single
+     * call to [numberOfChildrenAndNodeSize] */
+
+    Tree::NbChildrenAndNodeSize cs = result->numberOfChildrenAndNodeSize();
+    assert(cs.nodeSize == result->nodeSize() &&
+           cs.numberOfChildren == result->numberOfChildren());
+    nbOfChildrenToScan += cs.numberOfChildren - 1;
+
+    // This assert are the
+    assert(!result->isTreeBorder());
+    assert(result + result->nodeSize() != SharedTreeStack->firstBlock());
+    assert(result != SharedTreeStack->lastBlock());
+    // This operation still count as a [nextNode] in POINCARE_METRICS
+#if POINCARE_METRICS
+    if (SharedTreeStack->firstBlock() <= this &&
+        this <= SharedTreeStack->lastBlock()) {
+      nextNodeInTreeStackCount++;
+    }
+    nextNodeCount++;
+#endif
+    result = Tree::FromBlocks(result + cs.nodeSize);
   }
   return result;
 }

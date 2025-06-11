@@ -797,7 +797,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       const Tree* values = e->child(0);
       int length = Dimension::ListLength(values, ctx->m_symbolContext);
       assert(length > 0);
-      T result;
+      T result = 0.0;
       for (int i = 0; i < length; i++) {
         tempCtx.m_listElement = i;
         std::complex<T> v = PrivateToComplex<T>(values, &tempCtx);

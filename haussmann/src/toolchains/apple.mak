@@ -34,6 +34,7 @@ export SDKROOT := $(shell xcrun --show-sdk-path)
 SFLAGS += -isysroot $(SYSROOT)
 SFLAGS += -fPIC
 SFLAGS += -m$(APPLE_PLATFORM_MIN_VERSION_KEYWORD)-version-min=$(APPLE_PLATFORM_MIN_VERSION)
+SFLAGS += -Wno-unknown-warning-option
 
 # _arch_flag_helper, <arch>
 define _arch_flag_helper

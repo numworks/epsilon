@@ -8,3 +8,4 @@ EXECUTABLE_EXTENSION := bin
 
 LDFLAGS += -lc++
 CXXFLAGS += -stdlib=libc++
+SFLAGS += -Wno-unknown-warning-option

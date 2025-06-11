@@ -843,12 +843,23 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
     case Type::ListSlice: {
       layoutExpression(layoutParent, expression->nextNode(),
                        OperatorPriority(type));
-      TreeRef parenthesis = KParenthesesL->cloneNode();
-      TreeRef rack = KRackL()->cloneTree();
-      NAry::AddChild(layoutParent, parenthesis);
-      layoutExpression(rack, expression->nextNode(), OperatorPriority(type));
-      PushCodePoint(rack, ',');
-      layoutExpression(rack, expression->nextNode(), OperatorPriority(type));
+      TreeRef newParent;
+      if (m_linearMode) {
+        PushCodePoint(layoutParent, '(');
+        newParent = layoutParent;
+      } else {
+        TreeRef parenthesis = KParenthesesL->cloneNode();
+        newParent = KRackL()->cloneTree();
+        NAry::AddChild(layoutParent, parenthesis);
+      }
+      layoutExpression(newParent, expression->nextNode(),
+                       OperatorPriority(type));
+      PushCodePoint(newParent, ',');
+      layoutExpression(newParent, expression->nextNode(),
+                       OperatorPriority(type));
+      if (m_linearMode) {
+        PushCodePoint(newParent, ')');
+      }
       break;
     }
     case Type::Parentheses:

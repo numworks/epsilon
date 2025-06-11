@@ -5,7 +5,7 @@
 namespace Inference {
 
 void TwoMeansStatistic::computeParametersFromSeries(
-    const InferenceModel* inference, int pageIndex) {
+    const InferenceModel* inference, uint8_t pageIndex) {
   assert(hasSeries(pageIndex));
   int seriesIndex = seriesAt(pageIndex);
   Shared::StoreToSeries seriesModel(this, seriesIndex);

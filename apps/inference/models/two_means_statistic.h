@@ -15,7 +15,7 @@ class TwoMeansStatistic : public InputTableFromStatisticStore {
 
  protected:
   void computeParametersFromSeries(const InferenceModel* inference,
-                                   int pageIndex) override;
+                                   uint8_t pageIndex) override;
 
   double preProcessTwoMeansParameter(double p, int index) const {
     if (index == Params::TwoMeans::N1 || index == Params::TwoMeans::N2) {

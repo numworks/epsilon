@@ -16,9 +16,9 @@ class InputTable {
 
   // Store functions
   virtual uint8_t numberOfSeries() const = 0;
-  virtual int seriesAt(int pageIndex) const { return -1; }
-  virtual void setSeriesAt(InferenceModel*, int pageIndex, int series) {}
-  bool hasSeries(int pageIndex) const;
+  virtual int seriesAt(uint8_t pageIndex) const { return -1; }
+  virtual void setSeriesAt(InferenceModel*, uint8_t pageIndex, int series) {}
+  bool hasSeries(uint8_t pageIndex) const;
   bool hasAllSeries() const;
   void unsetSeries(InferenceModel*);
 

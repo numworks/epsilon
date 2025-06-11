@@ -14,7 +14,7 @@ class OneMeanStatistic : public InputTableFromStatisticStore {
 
  protected:
   void computeParametersFromSeries(const InferenceModel* inference,
-                                   int pageIndex) override;
+                                   uint8_t pageIndex) override;
 
   double preProcessOneMeanParameter(double p, int index) const {
     if (index == Params::OneMean::N) {

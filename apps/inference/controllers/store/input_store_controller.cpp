@@ -92,8 +92,7 @@ void InputStoreController::initializeDropdown() {
     assert(model->numberOfSeries() == 1);
     m_dropdownCell.setMessage(I18n::Message::DataSet);
   }
-  m_dropdownCell.dropdown()->selectRow(
-      model->seriesAt(static_cast<uint8_t>(m_pageIndex)));
+  m_dropdownCell.dropdown()->selectRow(model->seriesAt(m_pageIndex));
 
   int nRows = m_dropdownDataSource.numberOfRows();
   constexpr size_t bufferSize =
@@ -188,7 +187,7 @@ void InputStoreController::selectSeriesForDropdownRow(int row) {
     row = 0;
   }
   InputTable* tableModel = m_storeTableCell.tableModel();
-  tableModel->setSeriesAt(m_inference, static_cast<uint8_t>(m_pageIndex), row);
+  tableModel->setSeriesAt(m_inference, m_pageIndex, row);
 }
 
 void InputStoreController::updateParameterCellsVisibility() {

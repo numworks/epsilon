@@ -23,7 +23,7 @@ class SlopeTStatistic : public InputTableFromRegressionStore {
 
  protected:
   void computeParametersFromSeries(const InferenceModel* inference,
-                                   int pageIndex) override;
+                                   uint8_t pageIndex) override;
 
   double m_params[Poincare::Inference::NumberOfParameters(TestType::Slope)];
 };

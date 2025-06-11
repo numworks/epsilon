@@ -11,13 +11,13 @@
 
 namespace Inference {
 
-bool InputTable::hasSeries(int pageIndex) const {
+bool InputTable::hasSeries(uint8_t pageIndex) const {
   return seriesAt(pageIndex) >= 0;
 }
 
 bool InputTable::hasAllSeries() const {
   for (uint8_t i = 0; i < numberOfSeries(); i++) {
-    if (!hasSeries(static_cast<int>(i))) {
+    if (!hasSeries(i)) {
       return false;
     }
   }
@@ -26,7 +26,7 @@ bool InputTable::hasAllSeries() const {
 
 void InputTable::unsetSeries(InferenceModel* inference) {
   for (uint8_t i = 0; i < numberOfSeries(); i++) {
-    setSeriesAt(inference, static_cast<int>(i), -1);
+    setSeriesAt(inference, i, -1);
   }
 }
 

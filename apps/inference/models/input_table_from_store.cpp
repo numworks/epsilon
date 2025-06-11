@@ -5,9 +5,9 @@
 
 namespace Inference {
 
-void InputTableFromStore::setSeriesAt(InferenceModel* inference, int pageIndex,
-                                      int series) {
-  assert(pageIndex >= 0 && pageIndex < m_series.size());
+void InputTableFromStore::setSeriesAt(InferenceModel* inference,
+                                      uint8_t pageIndex, int series) {
+  assert(pageIndex < m_series.size());
   m_series[pageIndex] = series;
   if (!hasSeries(pageIndex) && !inference->areParametersValid()) {
     inference->initParameters();
@@ -17,11 +17,11 @@ void InputTableFromStore::setSeriesAt(InferenceModel* inference, int pageIndex,
 bool InputTableFromStore::validateInputs(InferenceModel* inference,
                                          int pageIndex) {
   assert(pageIndex >= 0 && pageIndex < static_cast<int>(numberOfSeries()));
-  if (hasSeries(pageIndex)) {
+  if (hasSeries(static_cast<uint8_t>(pageIndex))) {
     if (!validateSeries(doublePairStore(), pageIndex)) {
       return false;
     }
-    computeParametersFromSeries(inference, pageIndex);
+    computeParametersFromSeries(inference, static_cast<uint8_t>(pageIndex));
   }
   return inference->areParametersValid();
 }
@@ -70,7 +70,7 @@ void InputTableFromStore::recomputeData() {
 }
 
 void InputTableFromStatisticStore::setSeriesAt(InferenceModel* inference,
-                                               int pageIndex, int series) {
+                                               uint8_t pageIndex, int series) {
   InputTableFromStore::setSeriesAt(inference, pageIndex, series);
   initDatasetsIfSeries();
 }
@@ -100,7 +100,9 @@ bool InputTableFromStatisticStore::computedParameterAtIndex(
   }
 
   /* Weave sample standard deviation between mean and population. */
-  *value = sampleStandardDeviation(seriesAt(index / k_oneMeanNumberOfParams));
+  int pageIndex = index / k_oneMeanNumberOfParams;
+  assert(pageIndex >= 0 && pageIndex <= UINT8_MAX);
+  *value = sampleStandardDeviation(seriesAt(static_cast<uint8_t>(pageIndex)));
 
   Poincare::Inference::Type tType(inference->type().testType, StatisticType::T);
   *message = Poincare::Inference::ParameterLayout(tType, index);

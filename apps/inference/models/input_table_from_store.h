@@ -22,12 +22,11 @@ class InputTableFromStore : public InputTable {
 
   InputTableFromStore() : m_series{-1, -1}, m_activePageIndex{0} {}
 
-  int seriesAt(int pageIndex) const override {
-    assert(pageIndex >= 0 && pageIndex < static_cast<int>(numberOfSeries()) &&
-           numberOfSeries() <= m_series.size());
+  int seriesAt(uint8_t pageIndex) const override {
+    assert(pageIndex < numberOfSeries() && numberOfSeries() <= m_series.size());
     return m_series[pageIndex];
   }
-  void setSeriesAt(InferenceModel* inference, int pageIndex,
+  void setSeriesAt(InferenceModel* inference, uint8_t pageIndex,
                    int series) override;
   bool validateInputs(InferenceModel* inference, int pageIndex);
   bool authorizedValueAtPosition(double p, int row, int column) const override;
@@ -46,7 +45,7 @@ class InputTableFromStore : public InputTable {
 
  protected:
   virtual void computeParametersFromSeries(const InferenceModel* inference,
-                                           int pageIndex) = 0;
+                                           uint8_t pageIndex) = 0;
 
   int numberOfComputedParameters(const InferenceModel* inference) const {
     return static_cast<int>(hasAllSeries()) *
@@ -80,7 +79,7 @@ class InputTableFromStatisticStore : public InputTableFromStore,
     return seriesAt(m_activePageIndex);
   }
 
-  void setSeriesAt(InferenceModel* inference, int pageIndex,
+  void setSeriesAt(InferenceModel* inference, uint8_t pageIndex,
                    int series) override;
   void deleteValuesInColumn(int column) override;
 

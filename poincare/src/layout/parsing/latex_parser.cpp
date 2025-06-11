@@ -5,9 +5,9 @@
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/indices.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/layout/parsing/tokenizer.h>
 #include <poincare/src/layout/rack_from_text.h>
-#include <poincare/src/layout/serialize.h>
 #include <poincare/src/layout/vertical_offset.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack.h>

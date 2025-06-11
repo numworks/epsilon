@@ -122,6 +122,7 @@ $(addprefix layout/, \
   input_beautification.cpp \
   layout_cursor.cpp \
   layout_selection.cpp \
+  layout_serializer.cpp \
   layout_span.cpp \
   layout_span_decoder.cpp \
   layout_memoization.cpp:-nopool \
@@ -136,7 +137,6 @@ $(addprefix layout/, \
   rack_layout.cpp \
   rack_layout_decoder.cpp \
   render.cpp \
-  serialize.cpp \
   xnt.cpp \
 ) \
 $(addprefix memory/, \

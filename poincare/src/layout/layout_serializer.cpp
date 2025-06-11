@@ -1,4 +1,4 @@
-#include "serialize.h"
+#include "layout_serializer.h"
 
 #include <omg/unreachable.h>
 #include <poincare/src/expression/builtin.h>

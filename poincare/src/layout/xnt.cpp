@@ -6,10 +6,10 @@
 #include <poincare/xnt.h>
 
 #include "k_tree.h"
+#include "layout_serializer.h"
 #include "parsing/helper.h"
 #include "parsing/tokenizer.h"
 #include "rack_layout_decoder.h"
-#include "serialize.h"
 
 using namespace Poincare::Internal;
 

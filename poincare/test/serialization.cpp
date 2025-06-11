@@ -4,7 +4,7 @@
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/k_tree.h>
-#include <poincare/src/layout/serialize.h>
+#include <poincare/src/layout/layout_serializer.h>
 
 #include "helper.h"
 

@@ -1,7 +1,7 @@
 #include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/layout/layouter.h>
-#include <poincare/src/layout/serialize.h>
 
 #include "../helper.h"
 

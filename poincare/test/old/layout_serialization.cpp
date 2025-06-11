@@ -1,5 +1,5 @@
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/layout/serialize.h>
+#include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <quiz.h>
 

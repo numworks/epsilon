@@ -25,12 +25,12 @@
 #include <poincare/src/expression/units/representatives.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/expression/variables.h>
+#include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/parsing/latex_parser.h>
 #include <poincare/src/layout/parsing/parsing_context.h>
 #include <poincare/src/layout/rack_from_text.h>
-#include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>

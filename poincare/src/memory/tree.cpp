@@ -19,9 +19,9 @@
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/layout/autocompleted_pair.h>
 #include <poincare/src/layout/code_point_layout.h>
+#include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/sequence.h>
-#include <poincare/src/layout/serialize.h>
 #include <poincare/src/layout/vertical_offset.h>
 
 #include "placeholder.h"

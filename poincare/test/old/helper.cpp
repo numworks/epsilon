@@ -7,10 +7,10 @@
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/simplification.h>
+#include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/rack_from_text.h>
-#include <poincare/src/layout/serialize.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/test/helper.h>
 

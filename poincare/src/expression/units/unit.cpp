@@ -1249,8 +1249,8 @@ Tree* BuildDecomposition(double value, const Representative* const* list,
     // Compute ratio from smallest representative to this one
     double ratio = std::round(representative->ratio() / smallestRatio);
     // Representatives must be ordered and have the same dimension.
-    assert(i == 0 || (list[i]->ratio() < list[i - 1]->ratio()) &&
-                         list[i]->siVector() == list[i - 1]->siVector());
+    assert(i == 0 || ((list[i]->ratio() < list[i - 1]->ratio()) &&
+                      list[i]->siVector() == list[i - 1]->siVector()));
     double representativeValue = value / ratio;
     double lax = OMG::Float::EpsilonLax<double>() / ratio;
     if (!lastUnit) {

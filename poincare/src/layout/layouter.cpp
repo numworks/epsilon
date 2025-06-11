@@ -382,6 +382,7 @@ void Layouter::layoutMatrix(TreeRef& layoutParent, Tree* expression) {
 }
 
 void Layouter::layoutSequence(TreeRef& layoutParent, Tree* expression) {
+#if POINCARE_SEQUENCE
   // Get first rank
   assert(Integer::Handler(expression->child(Sequence::k_firstRankIndex))
              .is<uint8_t>());
@@ -425,6 +426,7 @@ void Layouter::layoutSequence(TreeRef& layoutParent, Tree* expression) {
     layoutExpression(newParent, currentChild, k_maxPriority);
   }
   NAry::AddChild(layoutParent, layout);
+#endif
 }
 
 void Layouter::layoutUnit(TreeRef& layoutParent, Tree* expression) {

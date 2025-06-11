@@ -16,8 +16,8 @@ bool InputTable::hasSeries(int pageIndex) const {
 }
 
 bool InputTable::hasAllSeries() const {
-  for (int i = 0; i < numberOfSeries(); i++) {
-    if (!hasSeries(i)) {
+  for (uint8_t i = 0; i < numberOfSeries(); i++) {
+    if (!hasSeries(static_cast<int>(i))) {
       return false;
     }
   }
@@ -25,8 +25,8 @@ bool InputTable::hasAllSeries() const {
 }
 
 void InputTable::unsetSeries(InferenceModel* inference) {
-  for (int i = 0; i < numberOfSeries(); i++) {
-    setSeriesAt(inference, i, -1);
+  for (uint8_t i = 0; i < numberOfSeries(); i++) {
+    setSeriesAt(inference, static_cast<int>(i), -1);
   }
 }
 
@@ -96,7 +96,7 @@ int InputTable::index2DToIndex(int row, int column) const {
 // TODO: const Shared::DoublePairStore*
 bool InputTable::validateSeries(Shared::DoublePairStore* doublePairStore,
                                 int index) const {
-  assert(index >= 0 && index < numberOfSeries());
+  assert(index >= 0 && index < static_cast<int>(numberOfSeries()));
   int series = seriesAt(index);
   return doublePairStore->seriesIsValid(series) &&
          doublePairStore->numberOfPairsOfSeries(series) > 2;

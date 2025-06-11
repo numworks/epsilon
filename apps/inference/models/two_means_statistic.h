@@ -11,7 +11,7 @@ class TwoMeansStatistic : public InputTableFromStatisticStore {
  public:
   using InputTableFromStatisticStore::InputTableFromStatisticStore;
 
-  int numberOfSeries() const override { return 2; }
+  uint8_t numberOfSeries() const override { return 2; }
 
  protected:
   void computeParametersFromSeries(const InferenceModel* inference,

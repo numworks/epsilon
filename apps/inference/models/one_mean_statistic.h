@@ -10,7 +10,7 @@ namespace Inference {
 class OneMeanStatistic : public InputTableFromStatisticStore {
  public:
   using InputTableFromStatisticStore::InputTableFromStatisticStore;
-  int numberOfSeries() const override { return 1; }
+  uint8_t numberOfSeries() const override { return 1; }
 
  protected:
   void computeParametersFromSeries(const InferenceModel* inference,

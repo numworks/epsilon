@@ -19,7 +19,7 @@ class SlopeTStatistic : public InputTableFromRegressionStore {
     m_series[0] = 0;
     initListsFromStorage();
   }
-  int numberOfSeries() const override { return 1; }
+  uint8_t numberOfSeries() const override { return 1; }
 
  protected:
   void computeParametersFromSeries(const InferenceModel* inference,

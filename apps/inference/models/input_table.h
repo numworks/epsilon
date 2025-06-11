@@ -15,7 +15,7 @@ class InputTable {
   constexpr static int k_maxNumberOfStoreColumns = 4;
 
   // Store functions
-  virtual int numberOfSeries() const = 0;
+  virtual uint8_t numberOfSeries() const = 0;
   virtual int seriesAt(int pageIndex) const { return -1; }
   virtual void setSeriesAt(InferenceModel*, int pageIndex, int series) {}
   bool hasSeries(int pageIndex) const;

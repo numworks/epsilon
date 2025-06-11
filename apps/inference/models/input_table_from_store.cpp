@@ -16,7 +16,7 @@ void InputTableFromStore::setSeriesAt(InferenceModel* inference, int pageIndex,
 
 bool InputTableFromStore::validateInputs(InferenceModel* inference,
                                          int pageIndex) {
-  assert(pageIndex >= 0 && pageIndex < numberOfSeries());
+  assert(pageIndex >= 0 && pageIndex < static_cast<int>(numberOfSeries()));
   if (hasSeries(pageIndex)) {
     if (!validateSeries(doublePairStore(), pageIndex)) {
       return false;
@@ -61,7 +61,7 @@ bool InputTableFromStore::deleteValueAtPosition(int row, int column) {
 }
 
 void InputTableFromStore::recomputeData() {
-  for (int i = 0; i < numberOfSeries(); i++) {
+  for (size_t i = 0; i < numberOfSeries(); i++) {
     int seriesAtIndex = m_series[i];
     if (seriesAtIndex >= 0) {
       doublePairStore()->updateSeries(seriesAtIndex);

@@ -75,7 +75,7 @@ void inputTableValues(InputTable* table, InferenceModel* inference,
                  testCase.m_inputs[i]));
   }
   // Compute parameters from the table if needed
-  for (int p = 0; p < table->numberOfSeries(); p++) {
+  for (uint8_t p = 0; p < table->numberOfSeries(); p++) {
     inference->validateInputs(0);
   }
 }

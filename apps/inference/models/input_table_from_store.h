@@ -13,17 +13,17 @@ namespace Inference {
 
 class InputTableFromStore : public InputTable {
  public:
-  constexpr static int k_numberOfColumnsPerSeries =
+  constexpr static size_t k_numberOfColumnsPerSeries =
       Shared::DoublePairStore::k_numberOfColumnsPerSeries;
-  constexpr static int k_numberOfDatasetOptions = 2;
-  constexpr static int k_maxNumberOfSeries = 2;
-  constexpr static int k_maxNumberOfColumns =
+  constexpr static size_t k_numberOfDatasetOptions = 2;
+  constexpr static uint8_t k_maxNumberOfSeries = 2;
+  constexpr static size_t k_maxNumberOfColumns =
       k_maxNumberOfSeries * k_numberOfColumnsPerSeries;
 
   InputTableFromStore() : m_series{-1, -1}, m_activePageIndex{0} {}
 
   int seriesAt(int pageIndex) const override {
-    assert(pageIndex >= 0 && pageIndex < numberOfSeries() &&
+    assert(pageIndex >= 0 && pageIndex < static_cast<int>(numberOfSeries()) &&
            numberOfSeries() <= m_series.size());
     return m_series[pageIndex];
   }

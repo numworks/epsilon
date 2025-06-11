@@ -30,7 +30,7 @@ class Chi2Test : public SignificanceTest, public InputTable {
                                       int row) = 0;
 
   // Table
-  int numberOfSeries() const override { return 0; }
+  uint8_t numberOfSeries() const override { return 0; }
 
   void compute() override;
 

@@ -32,8 +32,8 @@ class Block {
   constexpr Block* next() {
     return OMG::Utils::DeconstifyPtr(&Block::next, this);
   }
-  constexpr const Block* nextNth(int i) const { return this + i; }
-  constexpr Block* nextNth(int i) {
+  constexpr const Block* nextNth(size_t i) const { return this + i; }
+  constexpr Block* nextNth(size_t i) {
     return OMG::Utils::DeconstifyPtr(&Block::nextNth, this, i);
   }
 

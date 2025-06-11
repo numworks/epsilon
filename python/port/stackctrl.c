@@ -34,7 +34,12 @@
 void mp_stack_ctrl_init(void) {
 #ifndef __clang_analyzer__
   volatile int stack_dummy;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdangling-pointer"
+  /* The dangling pointer is intended here, to store the address of the stack
+   * top/ */
   MP_STATE_THREAD(stack_top) = (char*)&stack_dummy;
+#pragma GCC diagnostic pop
 #endif
 }
 

@@ -21,8 +21,8 @@ namespace Regression {
 const char* Store::SeriesTitle(int series) {
   /* Controller titles for menus targetting a specific series. These cannot
    * live on the stack and must be const char *. */
-  assert(series >= 0 && series < k_seriesTitles.size());
-  return k_seriesTitles[series];
+  assert(series >= 0 && series < static_cast<int>(k_seriesTitles.size()));
+  return k_seriesTitles[static_cast<size_t>(series)];
 }
 
 Store::Store(Shared::GlobalContext* context,

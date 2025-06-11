@@ -23,8 +23,8 @@ MultipleBoxesView::MultipleBoxesView(Store* store,
 }
 
 BoxView* MultipleBoxesView::plotViewForSeries(int series) {
-  assert(series >= 0 && series < m_boxViews.size());
-  return &m_boxViews[series];
+  assert(series >= 0 && series < static_cast<int>(m_boxViews.size()));
+  return &m_boxViews[static_cast<size_t>(series)];
 }
 
 void MultipleBoxesView::layoutDataSubviews(bool force) {

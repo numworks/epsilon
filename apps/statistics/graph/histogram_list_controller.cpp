@@ -23,8 +23,8 @@ HistogramListController::HistogramListController(
 Escher::HighlightCell* HistogramListController::reusableCell(int index,
                                                              int type) {
   assert(type == 0);
-  assert(index >= 0 && index < m_displayCells.size());
-  return &m_displayCells[index];
+  assert(index >= 0 && index < static_cast<int>(m_displayCells.size()));
+  return &m_displayCells[static_cast<size_t>(index)];
 }
 
 void HistogramListController::fillCellForRow(Escher::HighlightCell* cell,

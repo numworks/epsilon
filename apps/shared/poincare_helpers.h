@@ -147,7 +147,9 @@ inline Poincare::SystemExpression CloneAndReduce(
 template <class T>
 inline T ValueOfFloatAsDisplayed(T t, int precision,
                                  Poincare::Context* context) {
-  assert(precision <= Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
+  assert(
+      precision <=
+      static_cast<int>(Poincare::PrintFloat::k_maxNumberOfSignificantDigits));
   constexpr static size_t bufferSize =
       Poincare::PrintFloat::charSizeForFloatsWithPrecision(
           Poincare::PrintFloat::k_maxNumberOfSignificantDigits);

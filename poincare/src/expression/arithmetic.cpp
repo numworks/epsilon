@@ -66,24 +66,12 @@ bool Arithmetic::ReduceEuclideanDivision(Tree* e) {
   return true;
 }
 
-// This function is templated so that the threshold can be statically checked
 template <uint64_t threshold>
 bool Arithmetic::IsIntegerLargerThan(const Tree* e) {
-  /*  In order to check whether a large integer represented by an uint64_t is
-   * larger than a threshold, this threshold has to be in the representable
-   * range of uint64_t. */
-  static_assert(threshold < UINT64_MAX);
-  if (e->isIntegerPosBig() || e->isIntegerNegBig()) {
-    IntegerHandler integer = Integer::Handler(e);
-    if (e->isIntegerNegBig()) {
-      assert(integer.sign() == NonStrictSign::Negative);
-      integer.setSign(NonStrictSign::Positive);
-    }
-    if (!integer.is<uint64_t>() || integer.to<uint64_t>() >= threshold) {
-      return true;
-    }
+  if (!e->isInteger()) {
+    return false;
   }
-  return false;
+  return Rational::CompareAbs(e, IntegerLiteral<threshold>{}) > 0;
 }
 
 bool Arithmetic::ReduceFloor(Tree* e) {

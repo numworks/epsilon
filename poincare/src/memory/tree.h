@@ -106,10 +106,13 @@ class Tree : public TypeBlock {
   static void ResetCache(const void* after = nullptr);
 
   // Tree Navigation
-  const Tree* nextNode() const;
+  const Tree* nextNode(size_t nodeSize) const;
+  const Tree* nextNode() const { return nextNode(nodeSize()); }
   Tree* nextNode() {
-    return const_cast<Tree*>(const_cast<const Tree*>(this)->nextNode());
+    return const_cast<Tree*>(
+        const_cast<const Tree*>(this)->nextNode(nodeSize()));
   }
+
   const Tree* nextTree() const;
   Tree* nextTree() {
     return const_cast<Tree*>(const_cast<const Tree*>(this)->nextTree());

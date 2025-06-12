@@ -253,28 +253,14 @@ const Tree* NextTreeNoCache(const Tree* result) {
      * nbOfChildrenToScan += result->numberOfChildren() - 1;
      * result = result->nextNode();
      *
-     * To optimize, the call to [nextNode] is inlined by hand, and the
-     * [numberOfChildren] and [nodeSize] data is gather in a single
-     * call to [numberOfChildrenAndNodeSize] */
+     * To optimize the [numberOfChildren] and [nodeSize] data is gather in a
+     * single call to [numberOfChildrenAndNodeSize] */
 
     Tree::NodeInfo cs = result->numberOfChildrenAndNodeSize();
     assert(cs.nodeSize == result->nodeSize());
     assert(cs.numberOfChildren == result->numberOfChildren());
     nbOfChildrenToScan += cs.numberOfChildren - 1;
-
-    // This assert are the
-    assert(!result->isTreeBorder());
-    assert(result + result->nodeSize() != SharedTreeStack->firstBlock());
-    assert(result != SharedTreeStack->lastBlock());
-    // This operation still count as a [nextNode] in POINCARE_METRICS
-#if POINCARE_METRICS
-    if (SharedTreeStack->firstBlock() <= this &&
-        this <= SharedTreeStack->lastBlock()) {
-      nextNodeInTreeStackCount++;
-    }
-    nextNodeCount++;
-#endif
-    result = Tree::FromBlocks(result + cs.nodeSize);
+    result = result->nextNode(cs.nodeSize);
   }
   return result;
 }
@@ -356,11 +342,10 @@ void LogC(Cache<t>* c) {
 }
 #endif
 
-const Tree* Tree::nextNode() const {
-#if ASSERTIONS
+const Tree* Tree::nextNode(size_t nodeSize) const {
   assert(!isTreeBorder());
-#endif
-  assert(this + nodeSize() != SharedTreeStack->firstBlock());
+  assert(nodeSize == Tree::nodeSize());
+  assert(this + nodeSize != SharedTreeStack->firstBlock());
   assert(this != SharedTreeStack->lastBlock());
 #if POINCARE_METRICS
   if (SharedTreeStack->firstBlock() <= this &&
@@ -369,7 +354,7 @@ const Tree* Tree::nextNode() const {
   }
   nextNodeCount++;
 #endif
-  return Tree::FromBlocks(this + nodeSize());
+  return Tree::FromBlocks(this + nodeSize);
 }
 
 uint32_t Tree::hash() const {

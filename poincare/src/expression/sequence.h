@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_SEQUENCE_H
 #define POINCARE_EXPRESSION_SEQUENCE_H
 
+#include <poincare/old/context.h>
 #include <poincare/src/memory/tree.h>
 
 namespace Poincare::Internal {
@@ -21,7 +22,7 @@ class Sequence {
                                         bool isFirstCondition = true);
 
   static bool MainExpressionContainsForbiddenTerms(
-      const Tree* e, const char* name, Type type, int initialRank,
+      const Tree* e, Context* ctx, const char* name, Type type, int initialRank,
       bool recursion, bool systemSymbol, bool otherSequences);
 };
 

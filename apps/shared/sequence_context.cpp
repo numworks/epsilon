@@ -42,8 +42,8 @@ Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
   return s;
 }
 
-bool SequenceContext::sequenceIsNotComputable(int sequenceIndex) {
-  return cache()->sequenceIsNotComputable(sequenceIndex);
+bool SequenceContext::sequenceIsNotComputable(Context* ctx, int sequenceIndex) {
+  return cache()->sequenceIsNotComputable(ctx, sequenceIndex);
 }
 
 SequenceCache* SequenceContext::cache() {

@@ -29,7 +29,7 @@ class SequenceContext : public Poincare::ContextWithParent {
       const char* identifier, int length) override;
 
   SequenceStore* sequenceStore() { return m_sequenceStore; }
-  bool sequenceIsNotComputable(int sequenceIndex);
+  bool sequenceIsNotComputable(Poincare::Context* ctx, int sequenceIndex);
   void resetCache() { cache()->resetCache(); }
   Sequence* sequenceAtNameIndex(int sequenceIndex) const;
 

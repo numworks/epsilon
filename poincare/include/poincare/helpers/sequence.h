@@ -21,9 +21,10 @@ Layout ExtractExpressionAtRow(Layout l, int row = 0);
 void SetFirstRank(Layout l, uint8_t firstRank);
 
 // Expression
-bool MainExpressionContainsForbiddenTerms(UserExpression e, const char* name,
-                                          Type type, int initialRank,
-                                          bool recursion, bool systemSymbol,
+bool MainExpressionContainsForbiddenTerms(UserExpression e, Context* ctx,
+                                          const char* name, Type type,
+                                          int initialRank, bool recursion,
+                                          bool systemSymbol,
                                           bool otherSequences);
 
 }  // namespace SequenceHelper

@@ -14,7 +14,7 @@ class SequenceCache {
   SequenceCache(Shared::SequenceStore* sequenceStore);
 
   void resetCache();
-  bool sequenceIsNotComputable(int sequenceIndex);
+  bool sequenceIsNotComputable(Poincare::Context* ctx, int sequenceIndex);
 
   void stepUntilRank(int sequenceIndex, int rank, Poincare::Context* ctx);
   int rank(int sequenceIndex, bool intermediateComputation) {

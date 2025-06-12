@@ -181,8 +181,8 @@ bool Sequence::mainExpressionContainsForbiddenTerms(
   name(buffer, bufferSize);
   // TODO_PCJ: used SymbolicComputation::ReplaceDefinedSymbols
   return SequenceHelper::MainExpressionContainsForbiddenTerms(
-      expressionClone(), buffer, type(), initialRank(), recursionIsAllowed,
-      systemSymbolIsAllowed, otherSequencesAreAllowed);
+      expressionClone(), context, buffer, type(), initialRank(),
+      recursionIsAllowed, systemSymbolIsAllowed, otherSequencesAreAllowed);
 }
 
 void Sequence::tidyDownstreamPoolFrom(const PoolObject* treePoolCursor) const {
@@ -205,7 +205,7 @@ double Sequence::approximateAtRank(int rank, SequenceCache* sqctx,
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   if (!isDefined() || rank < initialRank() ||
       (rank >= firstNonInitialRank() &&
-       sqctx->sequenceIsNotComputable(sequenceIndex))) {
+       sqctx->sequenceIsNotComputable(ctx, sequenceIndex))) {
     return NAN;
   }
   sqctx->stepUntilRank(sequenceIndex, rank, ctx);

@@ -197,12 +197,12 @@ int SequenceCache::rankForInitialValuesStorage(int sequenceIndex) const {
   return sequenceAtNameIndex(sequenceIndex)->initialRank() + k_storageDepth - 1;
 }
 
-bool SequenceCache::sequenceIsNotComputable(int sequenceIndex) {
+bool SequenceCache::sequenceIsNotComputable(Poincare::Context* ctx,
+                                            int sequenceIndex) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   if (m_sequenceIsNotComputable[sequenceIndex] == OMG::Troolean::Unknown) {
-    m_sequenceIsNotComputable[sequenceIndex] =
-        OMG::BoolToTroolean(sequenceAtNameIndex(sequenceIndex)
-                                ->mainExpressionIsNotComputable(nullptr));
+    m_sequenceIsNotComputable[sequenceIndex] = OMG::BoolToTroolean(
+        sequenceAtNameIndex(sequenceIndex)->mainExpressionIsNotComputable(ctx));
   }
   return TrooleanToBool(m_sequenceIsNotComputable[sequenceIndex]);
 }

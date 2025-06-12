@@ -12,14 +12,16 @@ class Bounds {
    * the sign of difference e.g. pi - 1/2 */
   static Poincare::Sign Sign(const Tree* e);
 
+  // Compute upper and lower bounds of a Tree
+  static Bounds Compute(const Tree* e);
+
  private:
   Bounds(double lower, double upper, uint8_t ulp = 1)
       : m_lower(lower), m_upper(upper) {
     spread(ulp);
   };
-  Bounds() = default;
-  static Bounds Invalid() { return Bounds(); }
-  static Bounds Compute(const Tree* e);
+  constexpr Bounds() = default;
+  static constexpr Bounds Invalid() { return Bounds(); }
   static Bounds Mult(const Tree* e);
   static Bounds Add(const Tree* e);
   static Bounds Pow(const Tree* e);

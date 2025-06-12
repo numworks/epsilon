@@ -179,6 +179,10 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
     Tree* r1 = approximatedRoots->child(0);
     Tree* r2 = approximatedRoots->child(1);
     Tree* r3 = approximatedRoots->child(2);
+    if (r1->isUndefined() || r2->isUndefined() || r3->isUndefined()) {
+      // Real root cannot be extracted if one of the roots is undefined
+      return approximatedRoots;
+    }
     // Look for the root with smallest imaginary part
     std::complex<float> r1value = Approximation::ToComplex<float>(r1, {});
     std::complex<float> r2value = Approximation::ToComplex<float>(r2, {});

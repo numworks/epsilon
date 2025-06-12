@@ -61,8 +61,8 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to_infinite_solutions({"x=x", "y=y"}, {"x=t2", "y=t1"}, &globalContext);
 #endif
 
-  assert_solves_to_infinite_solutions(
-      {"x+y+z=0"}, {"x=-(t1+t2)", "y=t2", "z=t1"}, &globalContext);
+  assert_solves_to_infinite_solutions({"x+y+z=0"}, {"x=-t1-t2", "y=t2", "z=t1"},
+                                      &globalContext);
   assert_solves_to_infinite_solutions({"x+y+z=0", "x+2y+3z=0"},
                                       {"x=t", "y=-2t", "z=t"}, &globalContext);
 
@@ -107,9 +107,10 @@ QUIZ_CASE(solver_linear_system) {
                    {"x=3/2-3/2×(2+√(3))×i", "y=3/2×(2+√(3))+3/2×i"},
                    &globalContext);
   setComplexFormatAndAngleUnit(Polar, Radian);
+  // TODO: Find polar form
   assert_solves_to(
       {"x+i×y=0", "x+y×exp(i×π/3)=3"},
-      {"x=3×(√(2)/2+√(6)/2)×exp(-i×π×5/12)", "y=3/2×(√(2)+√(6))×exp(i×π/12)"},
+      {"x=-3×i×(exp(1/3×π×i)-1×i)^-1", "y=3×(exp(1/3×π×i)-1×i)^-1"},
       &globalContext);
 
   // Restore default preferences
@@ -527,7 +528,7 @@ QUIZ_CASE(solver_symbolic_computation) {
   set("x", "0", &globalContext);
   assert_solves_to_infinite_solutions(
       {"D=0", "b=0", "c=0", "x+y+z+t=0"},
-      {"D=0", "b=0", "c=0", "t=-(t1+t2)", "y=t2", "z=t1"}, &globalContext);
+      {"D=0", "b=0", "c=0", "t=-t1-t2", "y=t2", "z=t1"}, &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Long variable names

@@ -175,7 +175,8 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
   }
 }
 
-// approximate is an optional parameter
+/* Simplify and approximate solutions, does not call advanced reduction.
+ * Approximate is an optional parameter. */
 static void simplifyAndApproximateSolution(
     UserExpression e, UserExpression* exact, UserExpression* approximate,
     bool approximateDuringReduction, Context* context,
@@ -191,7 +192,8 @@ static void simplifyAndApproximateSolution(
                         : Internal::Strategy::Default,
       .m_unitFormat = unitFormat,
       .m_symbolic = symbolicComputation,
-      .m_context = context};
+      .m_context = context,
+      .m_advanceReduce = false};
   if (approximate) {
     e.cloneAndSimplifyAndApproximate(exact, approximate, projCtx);
   } else {

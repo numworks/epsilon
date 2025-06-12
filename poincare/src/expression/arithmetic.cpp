@@ -82,7 +82,7 @@ bool Arithmetic::IsIntegerLargerThan(const Tree* e) {
     if (!integer.is<uint64_t>() || integer.to<uint64_t>() >= threshold) {
       return true;
     }
-  };
+  }
   return false;
 }
 

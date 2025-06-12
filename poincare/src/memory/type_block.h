@@ -250,6 +250,7 @@ class TypeBlock : public Block {
     Type t = type();
     size_t numberOfMetaBlocks = NumberOfMetaBlocks(t);
     // NOTE: Make sure new Types are handled here.
+    // And make sure to also update [numberOfChildrenAndNodeSize]
     switch (t) {
       case Type::IntegerPosBig:
       case Type::IntegerNegBig: {
@@ -291,6 +292,7 @@ class TypeBlock : public Block {
   }
 
   constexpr int numberOfChildren() const {
+    // NOTE: Make sure to also update [numberOfChildrenAndNodeSize]
     int n = NumberOfChildrenOrTag(type());
     if (n >= 0) {
       return n;

@@ -53,11 +53,12 @@ install_python_deps() {
   fi
 
   .venv/bin/pip3 install \
+    black \
+    parse \
     pyelftools \
     pypng \
-    stringcase \
-    black \
-    parse
+    rich \
+    stringcase
 }
 
 install_macos_binary_deps() {

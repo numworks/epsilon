@@ -257,9 +257,9 @@ const Tree* NextTreeNoCache(const Tree* result) {
      * [numberOfChildren] and [nodeSize] data is gather in a single
      * call to [numberOfChildrenAndNodeSize] */
 
-    Tree::NbChildrenAndNodeSize cs = result->numberOfChildrenAndNodeSize();
-    assert(cs.nodeSize == result->nodeSize() &&
-           cs.numberOfChildren == result->numberOfChildren());
+    Tree::NodeInfo cs = result->numberOfChildrenAndNodeSize();
+    assert(cs.nodeSize == result->nodeSize());
+    assert(cs.numberOfChildren == result->numberOfChildren());
     nbOfChildrenToScan += cs.numberOfChildren - 1;
 
     // This assert are the

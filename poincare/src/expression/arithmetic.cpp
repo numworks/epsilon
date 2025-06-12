@@ -1,6 +1,7 @@
 #include "arithmetic.h"
 
 #include <limits.h>
+#include <omg/float.h>
 #include <omg/ieee754.h>
 #include <omg/troolean.h>
 #include <poincare/src/expression/integer.h>
@@ -8,6 +9,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "approximation.h"
+#include "bounds.h"
 #include "dimension.h"
 #include "integer.h"
 #include "k_tree.h"
@@ -66,14 +68,6 @@ bool Arithmetic::ReduceEuclideanDivision(Tree* e) {
   return true;
 }
 
-template <uint64_t threshold>
-bool Arithmetic::IsIntegerLargerThan(const Tree* e) {
-  if (!e->isInteger()) {
-    return false;
-  }
-  return Rational::CompareAbs(e, IntegerLiteral<threshold>{}) > 0;
-}
-
 bool Arithmetic::ReduceFloor(Tree* e) {
   Tree* child = e->child(0);
   if (child->isRational()) {
@@ -112,45 +106,41 @@ bool Arithmetic::ReduceFloor(Tree* e) {
   if (Dimension::IsList(child)) {
     return false;
   }
-  /* TODO: Escape to undef if child is complex, instead of relying on final
-   * approximation. */
-  // Reduce using approximation if possible.
-  if (!Approximation::CanApproximate(e)) {
+
+  /* Use the Bounds API. A Floor expression is reduced to an integer if and only
+   * if its bounds are comprised between two consecutive integers.
+   * The Bounds API does not handle all types of operations. Undefined bounds
+   * are returned if the expression contains an unhandled operation. */
+  Bounds bounds = Bounds::Compute(child);
+  if (bounds.areUndefined()) {
     return false;
   }
-  double approx = Approximation::To<double>(e, Approximation::Parameters{});
+  /* The integer limits are kept as double (and not cast to an integer type) to
+   * keep the maximum precision. */
+  double lowerInteger = std::floor(bounds.lower());
+  double upperInteger = std::ceil(bounds.upper());
+  /* If the integer bounds are apart from more than 1, the Floor expression
+   * cannot be reduced. */
+  if (lowerInteger + 1.0 <
+      upperInteger - OMG::Float::SqrtEpsilonLax<double>()) {
+    return false;
+  }
+  /* The floor expression is equal to lowerInteger. However the double value of
+   * lowerInteger needs to be converted to an integer. If the value is larger
+   * than the limit for not losing precision when casting to an integer, we
+   * choose not to reduce the floor expression (we could maybe return the double
+   * value instead).
+   * Note that the non exact integer limit is supposed to be
+   * OMG::IEEE754<double>::NonExactIntegerLimit(), but since we lack the
+   * possibility to push integers bigger than int32 onto the stack, we are
+   * limited to INT32_MAX instead. The order goes: floatNonExactIntLim <
+   * INT32_MAX < doubleNonExactIntLim < INT64_MAX  */
   constexpr double integerLimit = static_cast<double>(INT32_MAX);
   static_assert(integerLimit < OMG::IEEE754<double>::NonExactIntegerLimit());
-
-  /* If the Floor expression has integer children which are too large to be
-   * exactly cast to a float, then the floor reduction may not be correct. For
-   * example, in Floor(Cos(IntegerPosBig(1e18))), when Cos(IntegerPosBig(1e18))
-   * is approximated, IntegerPosBig(1e18) is cast to a float in a non-exact way
-   * (into 9.9995e17), and then the cosine gives a completely different result.
-   * The Floor reduction cannot be trusted in such cases. */
-  if (e->hasDescendantSatisfying(
-          IsIntegerLargerThan<static_cast<uint64_t>(integerLimit)>)) {
+  if (std::abs(lowerInteger) >= integerLimit) {
     return false;
   }
-  if (std::isnan(approx) || std::fabs(approx) > integerLimit) {
-    return false;
-  }
-  assert(approx == std::round(approx));
-  /* If `approx` is bigger than the largest integer such that all smaller
-   * integers can be exactly represented in IEEE754, then `approx` is not the
-   * exact result (loss of precision).
-   * Since we lack the possibility to push integer bigger than int32 onto the
-   * stack, we are limited to INT32_MAX instead of
-   * IEEE754::NonExactIntegerLimit.
-   * NOTE: the order goes:
-   * floatNonExactIntLim < INT32_MAX < doubleNonExactIntLim < INT64_MAX
-   * NOTE: Even if the approximation has a small enough value it's not
-   * enough to ensure a valid reduction: precision could have been lost during
-   * approximation. For example floor(bigNumber-bigNumber).
-   *
-   * TODO: This limit (INT_MAX) should be lowered, it would make it more
-   * difficult to obtain incorrect exact result. */
-  e->moveTreeOverTree(Integer::Push(static_cast<int32_t>(approx)));
+  e->moveTreeOverTree(Integer::Push(static_cast<int32_t>(lowerInteger)));
   return true;
 }
 

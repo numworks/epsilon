@@ -846,6 +846,9 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("frac(sin(10^18))", "frac(sin(10^18))");
   simplifies_to("log(floor(2^54+π)-3, 2)", "54");
   simplifies_to("floor(random())", "floor(random())");
+  /* TODO: the following expression is not handled by the exact reduction for
+   * now, the Bounds API needs to handle trigonometric functions */
+  simplifies_to("floor(sin(0.001))", "floor(sin(1/1000))");
 }
 
 QUIZ_CASE(pcj_simplification_percent) {

@@ -82,6 +82,11 @@ static bool MergeMultiplicationChildWithNext(Tree* child,
     child->removeTree();
     *nbOfRemovedChildren = 1;
     return true;
+  } else if (next->isOne()) {
+    // x * 1 -> x
+    next->removeTree();
+    *nbOfRemovedChildren = 1;
+    return true;
   } else if (child->isRationalOrFloat() && next->isRationalOrFloat()) {
     // Merge numbers
     merge = Number::Multiplication(child, next);

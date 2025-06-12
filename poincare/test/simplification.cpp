@@ -1345,6 +1345,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("cos(x)+inf", "∞");
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");
+  simplifies_to("inf×i×i×i×i", "∞");
 
   Shared::GlobalContext globalContext;
   store("x→f(x)", &globalContext);

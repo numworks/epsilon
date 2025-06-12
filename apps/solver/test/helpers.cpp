@@ -143,7 +143,8 @@ static void compareSolutions(SystemOfEquations* system,
     bool reductionFailure = false;
     Internal::ProjectionContext projCtx{
         .m_complexFormat = Internal::ComplexFormat::Cartesian,
-        .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols};
+        .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
+        .m_advanceReduce = false};
     Expression expectedExpression =
         Expression::Parse(expectedValue, solverContext, false)
             .cloneAndReduce(projCtx, &reductionFailure);
@@ -161,7 +162,8 @@ static void compareSolutions(SystemOfEquations* system,
     quiz_assert(!parsedExpression.isUninitialized());
     projCtx = {
         .m_complexFormat = Internal::ComplexFormat::Cartesian,
-        .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols};
+        .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
+        .m_advanceReduce = false};
     Expression obtainedExpression =
         parsedExpression.cloneAndReduce(projCtx, &reductionFailure);
     quiz_assert(!reductionFailure && !obtainedExpression.isUninitialized());

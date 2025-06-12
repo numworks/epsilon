@@ -61,8 +61,8 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to_infinite_solutions({"x=x", "y=y"}, {"x=t2", "y=t1"}, &globalContext);
 #endif
 
-  assert_solves_to_infinite_solutions({"x+y+z=0"}, {"x=-t1-t2", "y=t2", "z=t1"},
-                                      &globalContext);
+  assert_solves_to_infinite_solutions(
+      {"x+y+z=0"}, {"x=-(t1+t2)", "y=t2", "z=t1"}, &globalContext);
   assert_solves_to_infinite_solutions({"x+y+z=0", "x+2y+3z=0"},
                                       {"x=t", "y=-2t", "z=t"}, &globalContext);
 
@@ -104,12 +104,12 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to("0x^2=0", {"x=t"}, &globalContext);
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   assert_solves_to({"x+i×y=0", "x+y×exp(i×π/3)=3"},
-                   {"x=3/2-3/2×(2+√(3))×i", "y=3/2×(2+√(3)+i)"},
+                   {"x=3/2-3/2×(2+√(3))×i", "y=3/2×(2+√(3))+3/2×i"},
                    &globalContext);
   setComplexFormatAndAngleUnit(Polar, Radian);
   assert_solves_to(
       {"x+i×y=0", "x+y×exp(i×π/3)=3"},
-      {"x=3/2×(√(2)+√(6))×exp(-i×π×5/12)", "y=3/2×(√(2)+√(6))×exp(i×π/12)"},
+      {"x=3×(√(2)/2+√(6)/2)×exp(-i×π×5/12)", "y=3/2×(√(2)+√(6))×exp(i×π/12)"},
       &globalContext);
 
   // Restore default preferences
@@ -141,8 +141,8 @@ QUIZ_CASE(solver_quadratic) {
                    {"x=2/3-√(2)/3×i", "x=2/3+√(2)/3×i", "delta=-8"},
                    &globalContext);
   assert_solves_to("x^2+x+1=3×x^2+π×x-√(5)",
-                   {"x=-(-1+π+√((1-π)^2+8+8×√(5)))/4",
-                    "x=(1-π+√((1-π)^2+8+8×√(5)))/4", "delta=(1-π)^2+8+8×√(5)"},
+                   {"x=-(-1+π+√(9-2×π+π^2+8×√(5)))/4",
+                    "x=(1-π+√(9-2×π+π^2+8×√(5)))/4", "delta=9-2×π+π^2+8×√(5)"},
                    &globalContext);
 
   assert_solves_to("x^2+(1+2^(-52))*x+0.25+2^(-53)=0",
@@ -213,7 +213,7 @@ QUIZ_CASE(solver_cubic) {
       {
           "x=368.7200924", "x=-184.8600462-319.610685×i",
           "x=-184.8600462+319.610685×i",
-          "delta=-27×(1-16000000×π)^2+11-224000000×π"  // or approximate value?
+          "delta=-16+640000000×π-6912000000000000×π^2"  // or approximate value?
       },
       &globalContext);
   assert_solves_to(
@@ -527,7 +527,7 @@ QUIZ_CASE(solver_symbolic_computation) {
   set("x", "0", &globalContext);
   assert_solves_to_infinite_solutions(
       {"D=0", "b=0", "c=0", "x+y+z+t=0"},
-      {"D=0", "b=0", "c=0", "t=-t1-t2", "y=t2", "z=t1"}, &globalContext);
+      {"D=0", "b=0", "c=0", "t=-(t1+t2)", "y=t2", "z=t1"}, &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Long variable names

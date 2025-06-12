@@ -36,15 +36,15 @@ class Bounds {
   static Bounds Pow(const Tree* e);
   void remove();
   void flip();
-  bool isStrictlyPositive() {
+  bool isStrictlyPositive() const {
     assert(exists());
     return 0 < m_lower;
   }
-  bool isStrictlyNegative() {
+  bool isStrictlyNegative() const {
     assert(exists());
     return m_upper < 0;
   }
-  bool isNull() {
+  bool isNull() const {
     assert(exists());
     return m_lower == 0 && m_upper == 0;
   }
@@ -53,7 +53,7 @@ class Bounds {
   /* Spread lower and upper bounds by specified ulp */
   void spread(unsigned int ulp_precision = 1);
   /* Check bounds are well defined */
-  bool exists() {
+  bool exists() const {
     // Both bounds are valid or neither
     assert(std::isfinite(m_lower) == std::isfinite(m_upper));
     return std::isfinite(m_lower);
@@ -62,7 +62,7 @@ class Bounds {
    * [lower <= upper < 0],
    * [0 < lower <= upper],
    * [lower == upper == 0]. */
-  bool hasKnownStrictSign() {
+  bool hasKnownStrictSign() const {
     return exists() && ((m_lower <= m_upper && (m_upper < 0 || 0 < m_lower)) ||
                         (m_lower == 0 && m_upper == 0));
   }

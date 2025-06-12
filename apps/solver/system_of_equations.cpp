@@ -213,11 +213,10 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     UserExpression e, Context* context, SolutionType type) {
   Preferences::AngleUnit angleUnit =
       MathPreferences::SharedPreferences()->angleUnit();
-  UserExpression exact, approximate;
-
   bool forbidExactSolution =
       MathPreferences::SharedPreferences()->examMode().forbidExactResults();
   EquationStore* store = m_store;
+
   int nEquations = store->numberOfDefinedModels();
   int i = 0;
   while (i < nEquations && !forbidExactSolution) {
@@ -230,24 +229,26 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     i++;
   }
 
-  bool approximateDuringReduction =
-      type == SolutionType::Formal && forbidExactSolution;
+  const bool displayApproximateSolution = type != SolutionType::Formal;
 
   bool displayExactSolution = false;
-  bool displayApproximateSolution = false;
+  UserExpression exact = UserExpression();
+  UserExpression approximate = UserExpression();
   if (type == SolutionType::Approximate) {
     approximate = e;
-    displayApproximateSolution = true;
   } else {
     assert(type == SolutionType::Formal || type == SolutionType::Exact);
-    UserExpression* approximatePointer =
-        type == SolutionType::Formal ? nullptr : &approximate;
     Preferences::UnitFormat unitFormat =
         GlobalPreferences::SharedGlobalPreferences()->unitFormat();
     // Any remaining symbol at this point should be an unknown parameter.
     SymbolicComputation symbolicComputation =
         SymbolicComputation::KeepAllSymbols;
     assert(type == SolutionType::Formal || !e.clone().replaceSymbols(context));
+
+    const bool approximateDuringReduction =
+        !displayApproximateSolution && forbidExactSolution;
+    UserExpression* approximatePointer =
+        displayApproximateSolution ? &approximate : nullptr;
     simplifyAndApproximateSolution(e, &exact, approximatePointer,
                                    approximateDuringReduction, context,
                                    m_solverContext.complexFormat, angleUnit,
@@ -256,7 +257,6 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         approximateDuringReduction ||
         (!forbidExactSolution &&
          !CAS::ShouldOnlyDisplayApproximation(e, exact, approximate, context));
-    displayApproximateSolution = type != SolutionType::Formal;
     if (!displayApproximateSolution && !displayExactSolution) {
       /* Happens if the formal solution has no permission to be displayed.
        * Re-reduce but force approximating during reduction. */
@@ -269,10 +269,12 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       displayExactSolution = true;
     }
   }
+
   if (!approximate.isUninitialized() && approximate.isNonReal()) {
     return Error::EquationNonReal;
   }
-  if (type != SolutionType::Formal && approximate.isUndefined()) {
+  if (displayApproximateSolution && !approximate.isUninitialized() &&
+      approximate.isUndefined()) {
     return Error::EquationUndefined;
   }
 

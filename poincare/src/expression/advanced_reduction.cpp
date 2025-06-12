@@ -266,6 +266,7 @@ bool AdvancedReduction::Direction::applyNextNode(Tree** u,
   if (!(next->block() < SharedTreeStack->lastBlock())) {
     return false;
   }
+  static_assert(k_baseNextNodeType > 0);
   for (uint8_t i = m_type - 1; i >= k_baseNextNodeType; i--) {
     next = NextNodeSkippingIgnoredTrees(next);
     assert(next->block() < SharedTreeStack->lastBlock());

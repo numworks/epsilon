@@ -30,6 +30,7 @@ void test(int accessType, int repeat) {
 
   // Backward sequential access
   if (accessType == 1) {
+    assert(start > 0);
     for (uint8_t* p = end - sizeof(T); p >= start; p--) {
       volatile T* q = reinterpret_cast<T*>(p);
       check(q, repeat);

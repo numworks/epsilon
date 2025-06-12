@@ -169,11 +169,6 @@ class TypeBlock : public Block {
   constexpr static int NARY2D = -2;
   constexpr static int NARY16 = -3;
 
-  struct NodeInfoInternal {
-    int numberOfChildrenOrTag;
-    size_t numberOfMetaBlocks;
-  };
-
  public:
   constexpr static size_t NumberOfMetaBlocks(Type type) {
     switch (type) {
@@ -199,9 +194,9 @@ class TypeBlock : public Block {
 
   constexpr NodeInfo numberOfChildrenAndNodeSize() const {
     Type t = type();
-    NodeInfoInternal nii = NumberOfChidrenOrTagAndNumberOfMetaBlocks(t);
+    NodeInfo ni = NumberOfChidrenOrTagAndNumberOfMetaBlocks(t);
 
-    if (nii.numberOfChildrenOrTag >= 0) {
+    if (ni.numberOfChildren >= 0) {
       switch (t) {
 #if POINCARE_SEQUENCE
         case Type::UserSequence:
@@ -210,39 +205,36 @@ class TypeBlock : public Block {
         case Type::UserSymbol:
         case Type::IntegerPosBig:
         case Type::IntegerNegBig:
-          return {nii.numberOfChildrenOrTag,
-                  nii.numberOfMetaBlocks + static_cast<uint8_t>(*next())};
+          return {ni.numberOfChildren,
+                  ni.nodeSize + static_cast<uint8_t>(*next())};
         case Type::RationalPosBig:
         case Type::RationalNegBig: {
           uint8_t numberOfDigitsNumerator = static_cast<uint8_t>(*next());
           uint8_t numberOfDigitsDenominator = static_cast<uint8_t>(*nextNth(2));
-          return {nii.numberOfChildrenOrTag,
-                  nii.numberOfMetaBlocks +
-                      static_cast<size_t>(numberOfDigitsNumerator) +
+          return {ni.numberOfChildren,
+                  ni.nodeSize + static_cast<size_t>(numberOfDigitsNumerator) +
                       static_cast<size_t>(numberOfDigitsDenominator)};
         }
         default:
-          return {nii.numberOfChildrenOrTag, nii.numberOfMetaBlocks};
+          return {ni.numberOfChildren, ni.nodeSize};
       }
-    } else if (nii.numberOfChildrenOrTag == NARY) {
+    } else if (ni.numberOfChildren == NARY) {
       uint8_t valueOfNextBlock = static_cast<uint8_t>(*next());
       if (t == Type::Polynomial) {
-        return {valueOfNextBlock,
-                nii.numberOfMetaBlocks + valueOfNextBlock - 1};
+        return {valueOfNextBlock, ni.nodeSize + valueOfNextBlock - 1};
       } else if (t == Type::Arbitrary) {
         uint16_t additionnalMetaBlocks = static_cast<uint8_t>(*nextNth(3))
                                              << 8 |
                                          static_cast<uint8_t>(*nextNth(2));
-        return {valueOfNextBlock,
-                nii.numberOfMetaBlocks + additionnalMetaBlocks};
+        return {valueOfNextBlock, ni.nodeSize + additionnalMetaBlocks};
       }
-      return {valueOfNextBlock, nii.numberOfMetaBlocks};
-    } else if (nii.numberOfChildrenOrTag == NARY16) {
-      return {OMG::unalignedShort(next()), nii.numberOfMetaBlocks};
+      return {valueOfNextBlock, ni.nodeSize};
+    } else if (ni.numberOfChildren == NARY16) {
+      return {OMG::unalignedShort(next()), ni.nodeSize};
     } else {
-      assert(nii.numberOfChildrenOrTag == NARY2D);
+      assert(ni.numberOfChildren == NARY2D);
       return {static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2)),
-              nii.numberOfMetaBlocks};
+              ni.nodeSize};
     }
   }
 
@@ -327,7 +319,7 @@ class TypeBlock : public Block {
     }
   }
 
-  constexpr static NodeInfoInternal NumberOfChidrenOrTagAndNumberOfMetaBlocks(
+  constexpr static NodeInfo NumberOfChidrenOrTagAndNumberOfMetaBlocks(
       Type type) {
     switch (type) {
       /* NODE(MinusOne) => {0, DefaultNumberOfMetaBlocks(0) + 0}

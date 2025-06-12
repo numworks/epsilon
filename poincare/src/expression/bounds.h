@@ -4,6 +4,8 @@
 #include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
 
+#include <cmath>
+
 namespace Poincare::Internal {
 
 class Bounds {
@@ -14,6 +16,13 @@ class Bounds {
 
   // Compute upper and lower bounds of a Tree
   static Bounds Compute(const Tree* e);
+
+  bool areUndefined() const {
+    return std::isnan(m_lower) || std::isnan(m_upper);
+  }
+
+  double lower() const { return m_lower; }
+  double upper() const { return m_upper; }
 
  private:
   Bounds(double lower, double upper, uint8_t ulp = 1)

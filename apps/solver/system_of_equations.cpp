@@ -175,15 +175,18 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
   }
 }
 
-/* Simplify and approximate solutions, does not call advanced reduction.
- * Approximate is an optional parameter. */
+/* Simplify and approximate solutions. Never call advanced reduction.
+ * [exact] and [approximate] are optional parameter. */
 static void simplifyAndApproximateSolution(
     UserExpression e, UserExpression* exact, UserExpression* approximate,
     bool approximateDuringReduction, Context* context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation) {
-  assert(exact);
+  if (!exact && !approximate) {
+    // Nothing to do.
+    return;
+  }
   Internal::ProjectionContext projCtx = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
@@ -194,19 +197,21 @@ static void simplifyAndApproximateSolution(
       .m_symbolic = symbolicComputation,
       .m_context = context,
       .m_advanceReduce = false};
-  if (approximate) {
+  if (exact && approximate) {
     e.cloneAndSimplifyAndApproximate(exact, approximate, projCtx);
-  } else {
+  } else if (exact) {
     bool reductionFailure = false;
     *exact = e.cloneAndSimplify(projCtx, &reductionFailure);
+  } else {
+    *approximate = e.cloneAndApproximate(projCtx);
   }
-  assert(!exact->isUninitialized() &&
-         (!approximate || !approximate->isUninitialized()));
-  if (exact->isDep()) {
+  if (exact && exact->isDep()) {
     /* Reduction may have created a dependency.
      * We remove that dependency in order to create layouts. */
     *exact = exact->cloneChildAtIndex(0);
   }
+  assert(!exact || !exact->isUninitialized());
+  assert(!approximate || !approximate->isUninitialized());
 }
 
 SystemOfEquations::Error SystemOfEquations::registerSolution(
@@ -249,10 +254,17 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         !displayApproximateSolution && forbidExactSolution;
     UserExpression* approximatePointer =
         displayApproximateSolution ? &approximate : nullptr;
-    simplifyAndApproximateSolution(e, &exact, approximatePointer,
+    // Only re-reduce e if approximateDuringReduction is true.
+    bool reduceSolution = approximateDuringReduction;
+    UserExpression* exactPointer = reduceSolution ? &exact : nullptr;
+    simplifyAndApproximateSolution(e, exactPointer, approximatePointer,
                                    approximateDuringReduction, context,
                                    m_solverContext.complexFormat, angleUnit,
                                    unitFormat, symbolicComputation);
+    // assert(approximateDuringReduction || e.isIdenticalTo(exact));
+    if (!reduceSolution) {
+      exact = e;
+    }
     displayExactSolution =
         approximateDuringReduction ||
         (!forbidExactSolution &&

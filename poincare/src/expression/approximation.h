@@ -179,13 +179,6 @@ T FloatGCD(T a, T b);
 template <typename T>
 T FloatLCM(T a, T b);
 
-/* After approximation, there could be a remaining small imaginary part. If
- * one is sure that the result should be real, the following function extracts
- * the real part. If the imaginary part is too big, a nullptr is returned
- * instead.
- * This function assumes that Approximation has already been applied
- * to e. */
-Tree* ExtractRealPartIfImaginaryPartNegligible(const Tree* e);
 Tree* ExtractRealPart(const Tree* e);
 
 template <typename T>

@@ -1756,18 +1756,6 @@ bool Private::PrivateApproximateAndReplaceEveryScalar(Tree* e,
   return changed;
 }
 
-Tree* ExtractRealPartIfImaginaryPartNegligible(const Tree* e) {
-  if (GetComplexSign(e).isReal()) {
-    return e->cloneTree();
-  }
-  std::complex<double> value = PrivateToComplex<double>(e, nullptr);
-  constexpr float precision = 100 * OMG::Float::EpsilonLax<double>();
-  if (std::abs(value.imag()) < precision) {
-    return SharedTreeStack->pushDoubleFloat(value.real());
-  }
-  return nullptr;
-}
-
 Tree* ExtractRealPart(const Tree* e) {
   if (GetComplexSign(e).isReal()) {
     return e->cloneTree();

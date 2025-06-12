@@ -1,3 +1,4 @@
+#include <omg/float.h>
 #include <omg/list.h>
 #include <poincare/sign.h>
 #include <poincare/solver/roots.h>
@@ -178,23 +179,35 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
     Tree* r1 = approximatedRoots->child(0);
     Tree* r2 = approximatedRoots->child(1);
     Tree* r3 = approximatedRoots->child(2);
-    Tree* maybeRealR1 =
-        Approximation::ExtractRealPartIfImaginaryPartNegligible(r1);
-    Tree* maybeRealR2 =
-        Approximation::ExtractRealPartIfImaginaryPartNegligible(r2);
-    Tree* maybeRealR3 =
-        Approximation::ExtractRealPartIfImaginaryPartNegligible(r3);
-    // Only one of the root is real
-    assert(((maybeRealR1 != nullptr) + (maybeRealR2 != nullptr) +
-            (maybeRealR3 != nullptr)) == 1);
-    if (maybeRealR1) {
-      r1->moveTreeOverTree(maybeRealR1);
-    }
-    if (maybeRealR2) {
-      r2->moveTreeOverTree(maybeRealR2);
-    }
-    if (maybeRealR3) {
-      r3->moveTreeOverTree(maybeRealR3);
+    // Look for the root with smallest imaginary part
+    std::complex<float> r1value = Approximation::ToComplex<float>(r1, {});
+    std::complex<float> r2value = Approximation::ToComplex<float>(r2, {});
+    std::complex<float> r3value = Approximation::ToComplex<float>(r3, {});
+    bool compareR1R2 = std::abs(r1value.imag()) < std::abs(r2value.imag());
+    bool compareR2R3 = std::abs(r2value.imag()) < std::abs(r3value.imag());
+    bool compareR1R3 = std::abs(r1value.imag()) < std::abs(r3value.imag());
+    constexpr float precision = OMG::Float::EpsilonLax<float>();
+    if (compareR1R2) {
+      if (compareR1R3) {
+        // r1 is the real root, r2 and r3 should have the same real part
+        assert(std::abs(r2value.real() - r3value.real()) < precision);
+        r1->moveTreeOverTree(Approximation::ExtractRealPart(r1));
+      } else {
+        // r3 is the real root, r1 and r2 should have the same real part
+        assert(std::abs(r1value.real() - r2value.real()) < precision);
+        r3->moveTreeOverTree(Approximation::ExtractRealPart(r3));
+      }
+    } else {
+      if (compareR2R3) {
+        // r2 is the real root, r1 and r3 should have the same real part
+        assert(std::abs(r1value.real() - r3value.real()) < precision);
+        r2->moveTreeOverTree(Approximation::ExtractRealPart(r2));
+
+      } else {
+        // r3 is the real root, , r1 and r2 should have the same real part
+        assert(std::abs(r1value.real() - r2value.real()) < precision);
+        r3->moveTreeOverTree(Approximation::ExtractRealPart(r3));
+      }
     }
   }
   NAry::Sort(approximatedRoots, Order::OrderType::ComplexLine);

@@ -1010,6 +1010,8 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("cos(0_rad)", "1");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
   simplifies_to("_s^-1", "1×_s^(-1)");
+  // NOTE: this is a test for ReduceSortedAddition, see comment there
+  simplifies_to("0×_A + π×_A - π×_A", "0×_A");
   /* NOTE: Order of units should not matter. If an overflow can occur when
    * reordering the multiplication, we return undef, even if no overflow
    * technically happened */

@@ -128,10 +128,13 @@ bool SystematicOperation::ReduceSortedAddition(Tree* e) {
     }
   }
   if (changed) {
+    /* Newly merged children should be sorted again as it may allow new
+     * simplifications. */
     NAry::Sort(e);
     /* TODO: Instead of this recursive call we could refactor to include the
      * possibility of merging previously skipped child to handle cases like:
      * M(a,b) = false but M(a,M(b,c)) = true
+     * An example of this is `0_A + π_A - π_A`
      * with M = [MergeAdditionChildWithNext]
      * When doing this refactor, one could probably merge back this code with
      * systematic_multiplication.cpp */

@@ -13,13 +13,11 @@ class Bounds {
   static Poincare::Sign Sign(const Tree* e);
 
  private:
-  double m_lower;
-  double m_upper;
   Bounds(double lower, double upper, uint8_t ulp = 1)
       : m_lower(lower), m_upper(upper) {
     spread(ulp);
   };
-  Bounds() : m_lower(NAN), m_upper(NAN){};
+  Bounds() = default;
   static Bounds Invalid() { return Bounds(); }
   static Bounds Compute(const Tree* e);
   static Bounds Mult(const Tree* e);
@@ -57,6 +55,9 @@ class Bounds {
     return exists() && ((m_lower <= m_upper && (m_upper < 0 || 0 < m_lower)) ||
                         (m_lower == 0 && m_upper == 0));
   }
+
+  double m_lower = NAN;
+  double m_upper = NAN;
 };
 
 }  // namespace Poincare::Internal

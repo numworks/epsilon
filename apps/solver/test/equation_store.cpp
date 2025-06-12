@@ -104,7 +104,7 @@ QUIZ_CASE(solver_linear_system) {
   assert_solves_to("0x^2=0", {"x=t"}, &globalContext);
   setComplexFormatAndAngleUnit(Cartesian, Radian);
   assert_solves_to({"x+i×y=0", "x+y×exp(i×π/3)=3"},
-                   {"x=3/2+(-3-3√(3)/2)×i", "y=3+3/2×√(3)+3/2×i"},
+                   {"x=3/2-3/2×(2+√(3))×i", "y=3/2×(2+√(3)+i)"},
                    &globalContext);
   setComplexFormatAndAngleUnit(Polar, Radian);
   assert_solves_to(

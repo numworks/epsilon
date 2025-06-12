@@ -494,7 +494,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
           /* Replace the solution in the equation set to check later that it
            * respects the dependencies. */
           Variables::Replace(equationSetClone, row, child);
-          *error = EnhanceSolution(child, context);
+          // Child has already been reduced.
+          assert(!Simplification::ReduceSystem(child, false));
           // Continue anyway to preserve TreeStack integrity
         }
         child = child->nextTree();
@@ -697,7 +698,8 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
         return nullptr;
       }
     }
-    EnhanceSolution(solution, context);
+    // solution has already been reduced.
+    assert(!Simplification::ReduceSystem(solution, false));
     solution = solution->nextTree();
   }
   removeMarker(end);
@@ -707,17 +709,6 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   NAry::AddChild(solutionList, discriminant);
   *error = Error::NoError;
   return solutionList;
-}
-
-EquationSolver::Error EquationSolver::EnhanceSolution(Tree* solution,
-                                                      Context* context) {
-  /* TODO_PCJ:
-   * - Remove this function
-   * - Pass more context
-   */
-  // TODO: Use user settings for a RealUnkown sign ?
-  Simplification::ReduceSystem(solution, true);
-  return Error::NoError;
 }
 
 uint32_t EquationSolver::TagParametersUsedAsVariables(const Context* context) {

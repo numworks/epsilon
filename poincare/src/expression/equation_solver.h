@@ -104,8 +104,6 @@ class EquationSolver {
   static Tree* GetLinearCoefficients(const Tree* equation,
                                      uint8_t numberOfVariables,
                                      Context* context);
-  // Prepare a solution before display
-  static Error EnhanceSolution(Tree* solution, Context* context);
 
   constexpr static char k_parameterPrefix = 't';
   static uint32_t TagParametersUsedAsVariables(const Context* context);

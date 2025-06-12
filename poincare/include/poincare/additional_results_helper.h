@@ -18,7 +18,7 @@ class AdditionalResultsHelper final {
 
   struct TrigonometryResults {
     UserExpression exactAngle;
-    float approximatedAngle;
+    double approximatedAngle;
     bool angleIsExact;
   };
   static TrigonometryResults TrigonometryAngleHelper(

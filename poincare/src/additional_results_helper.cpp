@@ -127,18 +127,18 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
    * double is castable in float. */
   assert(approximateAngleTree ||
          simplifiedAngle->treeIsIdenticalTo(exactAngle.tree()));
-  float approximatedAngle = static_cast<float>(Approximation::To<double>(
+  double approximatedAngle = Approximation::To<double>(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                             ctx->m_context)));
+                             ctx->m_context));
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
   simplifiedAngle->removeTree();
   approximatedAngle =
       Trigonometry::ConvertAngleToRadian(approximatedAngle, ctx->m_angleUnit);
-  assert(0 <= approximatedAngle && approximatedAngle <= 2 * M_PI);
+  assert(0.0 <= approximatedAngle && approximatedAngle <= 2.0 * M_PI);
   return {.exactAngle = exactAngle,
           .approximatedAngle = approximatedAngle,
           .angleIsExact = angleIsExact};

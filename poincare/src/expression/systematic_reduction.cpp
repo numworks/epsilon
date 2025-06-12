@@ -46,7 +46,7 @@ bool SystematicReduction::DeepReduceAux(Tree* e, bool* isList) {
   }
   /* This should be all the nodes capable of producing a list.
    * If a UserFunction is present here, it means there is no definition for it,
-   * we assumes it does not involves lists */
+   * we assume it does not involve lists */
   if (TypeBlock::ProducesList(e->type())) {
     *isList = true;
   } else if (e->isListToScalar() || e->isDim()) {
@@ -81,7 +81,7 @@ bool SystematicReduction::ShallowReduceAux(Tree* e, bool isList) {
   int lenBefore = Dimension::ListLength(e);
 #endif
   bool changed = SystematicReduction::BubbleUpFromChildren(e, isList);
-  // If this assert triggered, maybe you should use [ShallowReduceMaybeList] ?
+  // NOTE: Use [ShallowReduceMaybeList] if expression may contain lists
   assert(Dimension::IsList(e) == isList);
   /* See comment at the start of file for why we do not call [Switch] when a
    * list is present */
@@ -107,8 +107,7 @@ bool SystematicReduction::ShallowReduceAux(Tree* e, bool isList) {
 bool SystematicReduction::ShallowReduce(Tree* e) {
   /* TODO: Here we assumes [e] is not a list as it is too costly to call
    * [Dimension::IsList] on every [ShallowReduce].
-   * This supposition was the default behaviour before the [isList] change,
-   * hence the behaviour of [ShallowReduce] is preserved for now.
+   * If the tree contains lists, [ShallowReduceMaybeList] should be used
    * (See comment at start of file) */
   return ShallowReduceMaybeList(e, false);
 }

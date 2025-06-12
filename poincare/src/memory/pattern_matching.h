@@ -120,6 +120,8 @@ class PatternMatching {
       m_numberOfTrees[tag] = numberOfTrees;
     }
     bool isUninitialized() const;
+    /* When the source or pattern of the pattern matching is susceptible to
+     * contain list, [involvesList] should be set to [true] */
     void setInvolvesList(bool involvesList) { m_involvesList = involvesList; }
     bool involvesList() const { return m_involvesList; }
 

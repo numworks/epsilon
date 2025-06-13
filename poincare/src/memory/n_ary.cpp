@@ -65,8 +65,8 @@ void NAry::SetNumberOfChildren(Tree* nary, size_t numberOfChildren) {
 bool NAry::Flatten(Tree* nary) {
   assert(nary->isNAry());
   bool modified = false;
-  size_t numberOfChildren = nary->numberOfChildren();
-  size_t childIndex = 0;
+  int numberOfChildren = nary->numberOfChildren();
+  int childIndex = 0;
   Tree* child = nary->nextNode();
   while (childIndex < numberOfChildren) {
     if (nary->type() == child->type()) {
@@ -79,6 +79,12 @@ bool NAry::Flatten(Tree* nary) {
     }
   }
   if (modified) {
+    while (numberOfChildren > UINT8_MAX) {
+      SetNumberOfChildren(nary, UINT8_MAX);
+      numberOfChildren -= UINT8_MAX - 1;
+      nary = nary->lastChild();
+      nary->cloneNodeBeforeNode(KMult.node<0>);
+    }
     SetNumberOfChildren(nary, numberOfChildren);
     return true;
   }

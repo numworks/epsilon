@@ -427,6 +427,28 @@ void InteractiveCurveViewRange::privateComputeRanges(bool computeX,
   setZoomNormalize(isOrthonormal());
 }
 
+int ClosestPowerOfTenAbove(int number) {
+  int powerOfTen = 10;
+  while (number > powerOfTen) {
+    powerOfTen *= 10;
+  }
+  return powerOfTen;
+}
+
+// The "two-five-ten" factors are defined as ({1, 2, 5}x10^n)
+int ClosestTwoFiveTenFactorAbove(int number) {
+  int powerOfTen = ClosestPowerOfTenAbove(number);
+  int twoFactor = powerOfTen / 5;
+  if (number <= twoFactor) {
+    return twoFactor;
+  }
+  int fiveFactor = powerOfTen / 2;
+  if (number <= fiveFactor) {
+    return fiveFactor;
+  }
+  return powerOfTen;
+}
+
 ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     OMG::Axis axis) const {
   assert(!gridUnitAuto(axis));
@@ -450,9 +472,9 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     return m_userGridUnit(axis);
   } else if (numberOfUnits < minNumberOfUnits) {
     // Case 2
-    assert(std::ceil(minNumberOfUnits / numberOfUnits) <=
-           std::floor(maxNumberOfUnits / numberOfUnits));
-    int k = static_cast<int>(std::ceil(minNumberOfUnits / numberOfUnits));
+    int k = ClosestTwoFiveTenFactorAbove(
+        static_cast<int>(std::ceil(minNumberOfUnits / numberOfUnits)));
+    assert(k <= std::floor(maxNumberOfUnits / numberOfUnits));
     return ExpressionOrFloat::Builder(
         UserExpression::Create(KMult(KA, KPow(KB, -1_e)),
                                {.KA = m_userGridUnit(axis).expression(),
@@ -462,9 +484,9 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   }
   assert(numberOfUnits > maxNumberOfUnits);
   // Case 3
-  assert(std::ceil(numberOfUnits / maxNumberOfUnits) <=
-         std::floor(numberOfUnits / minNumberOfUnits));
-  int k = static_cast<int>(std::ceil(numberOfUnits / maxNumberOfUnits));
+  int k = ClosestTwoFiveTenFactorAbove(
+      static_cast<int>(std::ceil(numberOfUnits / maxNumberOfUnits)));
+  assert(k <= std::floor(numberOfUnits / minNumberOfUnits));
 
   return ExpressionOrFloat::Builder(
       UserExpression::Create(KMult(KA, KB),
@@ -504,8 +526,13 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    * => E2 - E1 > 1.5
    * => floor(E1) != floor(E2)
    *
-   * We can take the smallest k solution to be as close as possible to the user input:
-   * ceil(E1) = ceil(minNumberOfUnits * userGridUnit / range)
+   * We take the smallest "two-five-ten" factor available to be as close as possible to the user input:
+   * k = ClosestTwoFiveTenFactorAbove(ceil(E1))
+   * k = ClosestTwoFiveTenFactorAbove(ceil(minNumberOfUnits * userGridUnit / range))
+   *
+   * Given that maxNumberOfUnits / minNumberOfUnits is always > 2.5 (18/7 = 2.57 and 13/5 = 2.6), and that
+   * ClosestTwoFiveTenFactorAbove multiplies its input by 2.5 in the worst case (example:
+   * ClosestTwoFiveTenFactorAbove(21)=50), we will always be able to find a suitable value for k.
    *
    * Case 3: range / userGridUnit > maxNumberOfUnits
    * -------
@@ -521,8 +548,11 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    * => E2 - E1 > 1.5
    * => floor(E1) != floor(E2)
    *
-   * We can take the smallest k solution to be as close as possible to the user input:
-   * ceil(E1) = ceil(range / (maxNumberOfUnits * userGridUnit))
+   * We take the smallest "two-five-ten" factor available to be as close as possible to the user input:
+   * k = ClosestTwoFiveTenFactorAbove(ceil(E1))
+   * k = ClosestTwoFiveTenFactorAbove(ceil(range / (maxNumberOfUnits * userGridUnit)))
+   *
+   * See Case 2 above for a proof of why we can always find a suitable k.
    * */
   // clang-format on
 }

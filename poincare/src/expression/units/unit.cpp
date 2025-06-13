@@ -110,16 +110,16 @@ static bool CanSimplifyUnitProduct(const SIVector* unitsExponents,
                                    int entryUnitExponent,
                                    SIVector& bestRemainderExponents,
                                    size_t& bestRemainderSupportSize) {
-  /* This function tries to simplify a Unit product (given as the
-   * 'unitsExponents' int array), by applying a given operation. If the
-   * result of the operation is simpler, 'bestUnit' and
-   * 'bestRemainder' are updated accordingly. */
+  /* This function tries to simplify a unit (given as the 'unitsExponents' int
+   * array), by multiplying with a given unit ('entryUnitExponents' int array)
+   * at a given exponent ('entryUnitExponent'). If the result of the operation
+   * is simpler, 'bestUnit' and 'bestRemainder' are updated accordingly. */
   SIVector simplifiedExponents;
 
   for (size_t i = 0; i < SIVector::k_numberOfBaseUnits; i++) {
     // Simplify unitsExponents with base units from derived unit
     if (!simplifiedExponents.setCoefficientAtIndex(
-            i, unitsExponents->coefficientAtIndex(i) -
+            i, unitsExponents->coefficientAtIndex(i) +
                    entryUnitExponent *
                        entryUnitExponents->coefficientAtIndex(i))) {
       // Unit vector overflowed
@@ -166,16 +166,16 @@ Tree* ChooseBestDerivedUnits(SIVector* unitsExponents) {
          i < Representative::k_numberOfDimensions - 1; i++) {
       const Representative* dim = Representative::DefaultRepresentatives()[i];
       const SIVector entryUnitExponents = dim->siVector();
-      /* A simplification is tried by either multiplying or dividing.
+      /* A simplification is tried by either dividing or multiplying.
        * If successful, unitsSupportSize, bestRemainderExponents and
        * bestRemainderSupportSize have been updated. */
-      if (CanSimplifyUnitProduct(unitsExponents, unitsSupportSize,
-                                 &entryUnitExponents, 1, bestRemainderExponents,
-                                 bestRemainderSupportSize)) {
+      if (CanSimplifyUnitProduct(
+              unitsExponents, unitsSupportSize, &entryUnitExponents, -1,
+              bestRemainderExponents, bestRemainderSupportSize)) {
         bestUnitExponent = 1;
         bestDim = dim;
       } else if (CanSimplifyUnitProduct(
-                     unitsExponents, unitsSupportSize, &entryUnitExponents, -1,
+                     unitsExponents, unitsSupportSize, &entryUnitExponents, 1,
                      bestRemainderExponents, bestRemainderSupportSize)) {
         bestUnitExponent = -1;
         bestDim = dim;

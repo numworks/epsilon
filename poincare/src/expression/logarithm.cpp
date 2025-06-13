@@ -259,10 +259,10 @@ bool Logarithm::ContractLn(Tree* e) {
   // (A/D)*ln(B) = (ln(B^A) + i*(A*arg(B) - arg(B^A)))/D with A, D integers.
   if (PatternMatching::Match(e, KMult(KA, KLn(KB)), &ctx) &&
       ctx.getTree(KA)->isRational() &&
-      !Rational::Numerator(ctx.getTree(KA)).isOne()) {
+      !Rational::Numerator(ctx.getTree(KA)).isOne() &&
+      !ctx.getTree(KB)->isZero()) {
     TreeRef a = Rational::Numerator(ctx.getTree(KA)).pushOnTreeStack();
     const Tree* b = ctx.getTree(KB);
-    assert(!b->isZero());
     TreeRef c = PushProductCorrection(b, a);
     TreeRef d = Rational::Denominator(ctx.getTree(KA)).pushOnTreeStack();
     e->moveTreeOverTree(PatternMatching::CreateSimplify(

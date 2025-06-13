@@ -4,6 +4,7 @@
 #include <poincare/sign.h>
 #include <poincare/src/memory/tree.h>
 
+#include <algorithm>
 #include <cmath>
 
 namespace Poincare::Internal {
@@ -35,7 +36,7 @@ class Bounds {
   static Bounds Add(const Tree* e);
   static Bounds Pow(const Tree* e);
   void remove();
-  void flip();
+  void flip() { std::swap(m_lower, m_upper); }
   bool isStrictlyPositive() const {
     assert(exists());
     return 0 < m_lower;

@@ -235,10 +235,4 @@ void Bounds::spread(unsigned int ulp) {
   nthNextafter(m_upper, DBL_MAX, ulp);
 }
 
-void Bounds::flip() {
-  double tmp = m_lower;
-  m_lower = m_upper;
-  m_upper = tmp;
-}
-
 }  // namespace Poincare::Internal

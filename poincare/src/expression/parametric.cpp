@@ -366,7 +366,7 @@ bool Parametric::Explicit(Tree* e) {
     boundsDifference->removeTree();
     return false;
   }
-  uint8_t numberOfTerms = Integer::Handler(boundsDifference).to<uint8_t>() + 1;
+  int numberOfTerms = Integer::Handler(boundsDifference).to<uint8_t>() + 1;
   boundsDifference->removeTree();
   Tree* result;
   if (isSum) {

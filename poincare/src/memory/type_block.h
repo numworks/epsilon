@@ -197,83 +197,46 @@ class TypeBlock : public Block {
   constexpr NodeInfo numberOfChildrenAndNodeSize() const {
     Type t = type();
     NodeInfo ni = NumberOfChidrenOrTagAndNumberOfMetaBlocks(t);
-
-    if (ni.numberOfChildren >= 0) {
-      switch (t) {
-#if POINCARE_SEQUENCE
-        case Type::UserSequence:
-#endif
-        case Type::UserFunction:
-        case Type::UserSymbol:
-        case Type::IntegerPosBig:
-        case Type::IntegerNegBig:
-          return {ni.numberOfChildren,
-                  ni.nodeSize + static_cast<uint8_t>(*next())};
-        case Type::RationalPosBig:
-        case Type::RationalNegBig: {
-          uint8_t numberOfDigitsNumerator = static_cast<uint8_t>(*next());
-          uint8_t numberOfDigitsDenominator = static_cast<uint8_t>(*nextNth(2));
-          return {ni.numberOfChildren,
-                  ni.nodeSize + static_cast<size_t>(numberOfDigitsNumerator) +
-                      static_cast<size_t>(numberOfDigitsDenominator)};
-        }
-        default:
-          return {ni.numberOfChildren, ni.nodeSize};
-      }
-    } else if (ni.numberOfChildren == NARY) {
-      uint8_t valueOfNextBlock = static_cast<uint8_t>(*next());
-      if (t == Type::Polynomial) {
-        return {valueOfNextBlock, ni.nodeSize + valueOfNextBlock - 1};
-      } else if (t == Type::Arbitrary) {
-        uint16_t additionnalMetaBlocks = static_cast<uint8_t>(*nextNth(3))
-                                             << 8 |
-                                         static_cast<uint8_t>(*nextNth(2));
-        return {valueOfNextBlock, ni.nodeSize + additionnalMetaBlocks};
-      }
-      return {valueOfNextBlock, ni.nodeSize};
-    } else if (ni.numberOfChildren == NARY16) {
-      return {OMG::unalignedShort(next()), ni.nodeSize};
-    } else {
-      assert(ni.numberOfChildren == NARY2D);
-      return {static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2)),
-              ni.nodeSize};
-    }
+    /* ni.nodeSize here is actually numberOfMetaBlocks.
+     * ni.numberOfChildren here is actually numberOfChildrenOrTag */
+    return {numberOfChildren(ni.numberOfChildren), nodeSize(t, ni.nodeSize)};
   }
 
   constexpr size_t nodeSize() const {
     Type t = type();
-    size_t numberOfMetaBlocks = NumberOfMetaBlocks(t);
-    // NOTE: Make sure new Types are handled here.
-    // And make sure to also update [numberOfChildrenAndNodeSize]
+    return nodeSize(t, NumberOfMetaBlocks(t));
+  }
+
+  constexpr int numberOfChildren() const {
+    return numberOfChildren(NumberOfChildrenOrTag(type()));
+  }
+
+  constexpr static int NumberOfChildren(Type type) {
+    assert(NumberOfChildrenOrTag(type) != NARY &&
+           NumberOfChildrenOrTag(type) != NARY2D);
+    return NumberOfChildrenOrTag(type);
+  }
+
+ private:
+  inline constexpr size_t nodeSize(Type t, size_t numberOfMetaBlocks) const {
     switch (t) {
-      case Type::IntegerPosBig:
-      case Type::IntegerNegBig: {
-        uint8_t numberOfDigits = static_cast<uint8_t>(*next());
-        return numberOfMetaBlocks + numberOfDigits;
-      }
-      case Type::RationalPosBig:
-      case Type::RationalNegBig: {
-        uint8_t numberOfDigitsNumerator = static_cast<uint8_t>(*next());
-        uint8_t numberOfDigitsDenominator = static_cast<uint8_t>(*nextNth(2));
-        return numberOfMetaBlocks +
-               static_cast<size_t>(numberOfDigitsNumerator) +
-               static_cast<size_t>(numberOfDigitsDenominator);
-      }
-      case Type::Polynomial: {
-        uint8_t numberOfTerms = static_cast<uint8_t>(*next()) - 1;
-        return numberOfMetaBlocks + numberOfTerms;
-      }
-      case Type::UserSymbol: {
-        uint8_t numberOfChars = static_cast<uint8_t>(*nextNth(1));
-        return numberOfMetaBlocks + numberOfChars;
-      }
+      case Type::UserSymbol:
       case Type::UserFunction:
 #if POINCARE_SEQUENCE
       case Type::UserSequence:
 #endif
-      {
-        uint8_t numberOfChars = static_cast<uint8_t>(*next());
-        return numberOfMetaBlocks + numberOfChars;
+      case Type::Polynomial:
+      case Type::RationalPosBig:
+      case Type::IntegerPosBig:
+      case Type::RationalNegBig:
+      case Type::IntegerNegBig: {
+        numberOfMetaBlocks += static_cast<uint8_t>(*next());
+        if (t == Type::RationalPosBig || t == Type::RationalNegBig) {
+          numberOfMetaBlocks += static_cast<uint8_t>(*nextNth(2));
+        } else if (t == Type::Polynomial) {
+          --numberOfMetaBlocks;
+        }
+        return numberOfMetaBlocks;
       }
       case Type::Arbitrary: {
         uint16_t size = static_cast<uint8_t>(*nextNth(3)) << 8 |
@@ -285,28 +248,19 @@ class TypeBlock : public Block {
     }
   }
 
-  constexpr int numberOfChildren() const {
-    // NOTE: Make sure to also update [numberOfChildrenAndNodeSize]
-    int n = NumberOfChildrenOrTag(type());
-    if (n >= 0) {
-      return n;
-    } else if (n == NARY) {
+  inline constexpr int numberOfChildren(int numberOfChildrenOrTag) const {
+    if (numberOfChildrenOrTag >= 0) {
+      return numberOfChildrenOrTag;
+    } else if (numberOfChildrenOrTag == NARY) {
       return static_cast<uint8_t>(*next());
-    } else if (n == NARY16) {
+    } else if (numberOfChildrenOrTag == NARY16) {
       return OMG::unalignedShort(next());
     } else {
-      assert(n == NARY2D);
+      assert(numberOfChildrenOrTag == NARY2D);
       return static_cast<uint8_t>(*next()) * static_cast<uint8_t>(*nextNth(2));
     }
   }
 
-  constexpr static int NumberOfChildren(Type type) {
-    assert(NumberOfChildrenOrTag(type) != NARY &&
-           NumberOfChildrenOrTag(type) != NARY2D);
-    return NumberOfChildrenOrTag(type);
-  }
-
- private:
   constexpr static int NumberOfChildrenOrTag(Type type) {
     /* NOTE: Make sure to also update
      * [NumberOfChidrenOrTagAndNumberOfMetaBlocks] */

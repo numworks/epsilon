@@ -156,12 +156,15 @@ void Tree::logAttributes(std::ostream& stream) const {
 }
 
 void Tree::logSerialize(std::ostream& stream) const {
-  TreeRef outputLayout = Layouter::LayoutExpression(cloneTree(), true, false);
-  assert(!outputLayout.isUninitialized());
+  assert(isExpression() || isRackOrLayout());
+  Tree* layout = isExpression()
+                     ? Layouter::LayoutExpression(cloneTree(), true, false)
+                     : cloneTree();
+  assert(layout);
   constexpr size_t bufferSize = 1024;
   char buffer[bufferSize];
-  LayoutSerializer::Serialize(outputLayout, buffer);
-  outputLayout->removeTree();
+  LayoutSerializer::Serialize(layout, buffer);
+  layout->removeTree();
   stream << buffer << "\n";
 }
 

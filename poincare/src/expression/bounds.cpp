@@ -7,6 +7,33 @@
 
 namespace Poincare::Internal {
 
+struct Interval {
+  double lower;
+  double upper;
+};
+
+double Middle(Interval interval) {
+  return (interval.upper + interval.lower) / 2.0;
+}
+
+Interval LeftHalf(Interval interval) {
+  return Interval{interval.lower, Middle(interval)};
+}
+
+Interval RightHalf(Interval interval) {
+  return Interval{Middle(interval), interval.upper};
+}
+
+double MapToInterval(double value, Interval interval) {
+  double intervalWidth = interval.upper - interval.lower;
+  double scaled = (value - interval.lower) / intervalWidth;
+  return (scaled - std::floor(scaled)) * intervalWidth + interval.lower;
+}
+
+bool IsInside(double value, Interval interval) {
+  return value >= interval.lower && value <= interval.upper;
+}
+
 Sign Bounds::Sign(const Tree* e) {
   Bounds bounds = Compute(e);
   Poincare::Sign sign = Sign::Unknown();
@@ -47,6 +74,42 @@ Bounds Bounds::Compute(const Tree* e) {
       Bounds b = Bounds::Compute(e->child(0));
       if (b.exists()) {
         b.applyMonotoneFunction(std::exp);
+      }
+      return b;
+    }
+    case Type::Trig: {
+      Bounds b = Bounds::Compute(e->child(0));
+      if (!b.exists()) {
+        return b;
+      }
+      bool isCos = e->child(1)->isZero();
+
+      /* TODO: escape for values which are "too big" as precision is completely
+       * lost */
+      Interval principalInterval =
+          isCos ? Interval{-M_PI, M_PI}
+                : Interval{-M_PI / 2.0, 3.0 * M_PI / 2.0};
+      double principalAngleLower = MapToInterval(b.lower(), principalInterval);
+      double angleUpper = principalAngleLower + b.upper() - b.lower();
+      if (IsInside(principalAngleLower, LeftHalf(principalInterval)) &&
+          IsInside(angleUpper, LeftHalf(principalInterval))) {
+        if (isCos) {
+          // cos is strictly ascending between -pi and 0
+          b.applyMonotoneFunction(std::cos);
+        } else {
+          // sin is strictly ascending between -pi/2 and pi/2
+          b.applyMonotoneFunction(std::sin);
+        }
+
+      } else if (IsInside(principalAngleLower, RightHalf(principalInterval)) &&
+                 IsInside(angleUpper, RightHalf(principalInterval))) {
+        if (isCos) {
+          // cos is strictly decreasing between 0 and pi
+          b.applyMonotoneFunction(std::cos, true);
+        } else {
+          // sin is strictly ascending between pi/2 and 3*pi/2
+          b.applyMonotoneFunction(std::sin, true);
+        }
       }
       return b;
     }

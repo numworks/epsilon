@@ -194,15 +194,15 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
                      : compareR2R3 ? r2
                                    : r3;
 #if ASSERTIONS
+    // complexRoot1 and complexRoot2 should have the same real part
     std::complex<float>* complexRoot1Value =
         realRoot == r1 ? &r2Value : &r1Value;
     std::complex<float>* complexRoot2Value =
         realRoot == r3 ? &r2Value : &r3Value;
     constexpr float precision = OMG::Float::EpsilonLax<float>();
-#endif
-    // complexRoot1 and complexRoot2 should have the same real part
     assert(std::abs(complexRoot1Value->real() - complexRoot2Value->real()) <
            precision);
+#endif
     realRoot->moveTreeOverTree(Approximation::ExtractRealPart(realRoot));
   }
   NAry::Sort(approximatedRoots, Order::OrderType::ComplexLine);

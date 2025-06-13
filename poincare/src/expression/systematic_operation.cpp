@@ -8,6 +8,7 @@
 
 #include "approximation.h"
 #include "arithmetic.h"
+#include "dependency.h"
 #include "infinity.h"
 #include "k_tree.h"
 #include "list.h"
@@ -902,7 +903,7 @@ bool SystematicOperation::ReduceAddOrMult(Tree* e) {
   if (changed && (e->type() == type || e->isDep())) {
     // Bubble-up may be unlocked after merging identical bases
     if (e->isDep()) {
-      SystematicReduction::BubbleUpFromChildren(e->child(0), false);
+      SystematicReduction::BubbleUpFromChildren(Dependency::Main(e), false);
     }
     SystematicReduction::BubbleUpFromChildren(e, false);
     /* TODO: If this assert can't be preserved, ReduceSortedAddition must handle

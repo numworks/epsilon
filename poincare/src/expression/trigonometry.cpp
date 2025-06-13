@@ -500,19 +500,23 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
     AdvancedOperation::ExpandMult(arg);
     // ExpandMult can create dependency, we need them to bubble-up
     if (arg->isDep()) {
+      // e = atan(dep(arg))
       if (Dependency::ShallowBubbleUpDependencies(e)) {
-        arg = e->child(0)->child(0);
+        // e = dep(atan(arg))
+        assert(Dependency::Main(e)->isATanRad());
+        arg = Dependency::Main(e)->child(0);
       }
     }
   }
   // NOTE: at this point, e can be ATanRad(...) or Dep(ATanRad(...))
   if (arg->isInf()) {
-    (e->isDep() ? e->child(0) : e)->cloneTreeOverTree(KMult(1_e / 2_e, π_e));
+    (e->isDep() ? Dependency::Main(e) : e)
+        ->cloneTreeOverTree(KMult(1_e / 2_e, π_e));
     return true;
   }
   const Tree* angle = ExactFormula::GetAngleOf(arg, Type::Tan);
   if (angle) {
-    (e->isDep() ? e->child(0) : e)->cloneTreeOverTree(angle);
+    (e->isDep() ? Dependency::Main(e) : e)->cloneTreeOverTree(angle);
     return true;
   }
 

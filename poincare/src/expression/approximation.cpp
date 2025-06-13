@@ -1022,10 +1022,8 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
       T err = std::pow(10, std::round(child[1]));
       return std::round(child[0] * err) / err;
     }
-#if POINCARE_EUCLIDEAN_DIVISION
     case Type::EuclideanDivision:
     case Type::EuclideanDivisionResult:
-#endif
     case Type::Quo:
     case Type::Rem: {
       T a = child[0];

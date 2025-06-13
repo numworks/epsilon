@@ -307,3 +307,12 @@ SFLAGS_poincare += -DPOINCARE_TREE_LOG=1
 endif
 
 CXXFLAGS += -include $(PATH_poincare)/config.$(POINCARE_variant).h
+
+# Deactivate clang and gcc warnings for out of range cases in switches.
+# This is useful when switching on a Poincare::Internal::TypeBlock, as
+# some cases are purposely out of range.
+ifeq ($(COMPILER_FAMILY),clang)
+PRIVATE_SFLAGS_poincare += -Wno-tautological-constant-out-of-range-compare
+else
+PRIVATE_SFLAGS_poincare += -Wno-switch-outside-range
+endif

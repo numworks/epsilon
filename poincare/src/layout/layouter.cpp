@@ -55,10 +55,8 @@ constexpr static int OperatorPriority(TypeBlock type) {
       return 2;
     case Type::Div:
       return 3;
-#if POINCARE_EUCLIDEAN_DIVISION
     case Type::EuclideanDivision:
       return 4;
-#endif
     case Type::Mult:
       return 5;
     case Type::PercentAddition:
@@ -580,7 +578,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
                        OperatorPriority(Type::PercentSimple));
       PushCodePoint(layoutParent, '%');
       break;
-#if POINCARE_EUCLIDEAN_DIVISION
     case Type::EuclideanDivision:
       layoutInfixOperator(layoutParent, expression,
                           CodePoint(UCodePointAssertion));
@@ -594,7 +591,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       PushCodePoint(layoutParent, '=');
       layoutExpression(layoutParent, expression->nextNode(), k_commaPriority);
       break;
-#endif
     case Type::Zero:
     case Type::MinusOne:
     case Type::One:

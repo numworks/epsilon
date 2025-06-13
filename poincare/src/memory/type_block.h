@@ -194,7 +194,7 @@ class TypeBlock : public Block {
     size_t nodeSize;
   };
 
-  constexpr NodeInfo numberOfChildrenAndNodeSize() const {
+  inline constexpr NodeInfo numberOfChildrenAndNodeSize() const {
     Type t = type();
     NodeInfo ni = NumberOfChidrenOrTagAndNumberOfMetaBlocks(t);
     /* ni.nodeSize here is actually numberOfMetaBlocks.

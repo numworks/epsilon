@@ -89,9 +89,9 @@ bool SystematicReduction::ShallowReduceAux(Tree* e, bool isList) {
     assert(!(changed && Switch(e)));
     changed = changed || Switch(e);
   } else if (e->isMult() || e->isAdd()) {
-    /* When an Nary node contains lists, `Switch` is not called and no
-     * flatten occurs, doing a `Flatten` here ensures the tree is fully reduced,
-     * even when lists are present */
+    /* When an NAry node contains lists, `Switch` is not called and no
+     * flatten occurs, doing a `Flatten` here ensures that calling [DeepReduce]
+     * again won't change the tree, even when lists are present */
     changed = changed || NAry::Flatten(e);
   }
 #if ASSERTIONS

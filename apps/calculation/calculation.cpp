@@ -118,11 +118,15 @@ Layout Calculation::createApproximateOutputLayout(
   if (ExceptionRun(ecp)) {
     UserExpression e = approximateOutput();
     if (!e.isUninitialized()) {
-      return e.createLayout(
-          m_calculationPreferences.displayMode,
-          forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
-                     : m_calculationPreferences.numberOfSignificantDigits,
-          context);
+      /* In calculation, we replace the compact 2ᴇ-10 notation with a 2D layout.
+       * TODO: apply this at layouting step. */
+      return e
+          .createLayout(
+              m_calculationPreferences.displayMode,
+              forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
+                         : m_calculationPreferences.numberOfSignificantDigits,
+              context)
+          .cloneAndTurnEToTenPowerLayout(false);
     }
   }
   *couldNotCreateApproximateLayout = true;

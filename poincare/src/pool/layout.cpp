@@ -218,6 +218,12 @@ bool Layout::isCodePointsString() const {
   return true;
 }
 
+Layout Layout::cloneAndTurnEToTenPowerLayout(bool linear) const {
+  Internal::Tree* approx = tree()->cloneTree();
+  LayoutHelpers::TurnEToTenPowerLayout(approx, linear);
+  return Layout::Builder(approx);
+}
+
 bool Layout::isSameScientificNotationAs(Layout approximation,
                                         bool linear) const {
   assert(linear || !tree()->hasChildSatisfying([](const Internal::Tree* c) {

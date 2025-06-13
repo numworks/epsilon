@@ -82,10 +82,17 @@ Bounds Bounds::Compute(const Tree* e) {
       if (!b.exists()) {
         return b;
       }
-      bool isCos = e->child(1)->isZero();
 
-      /* TODO: escape for values which are "too big" as precision is completely
-       * lost */
+      /* If the angle is "too big", the precision of std::cos and std::sin is
+       * lost. In this case the bounds should not be propagated through the sin
+       * or cos function. */
+      constexpr double angleLimitForPrecision = 1000.0;
+      if (std::max(std::abs(b.lower()), std::abs(b.upper())) >=
+          angleLimitForPrecision) {
+        return Invalid();
+      }
+
+      bool isCos = e->child(1)->isZero();
       Interval principalInterval =
           isCos ? Interval{-M_PI, M_PI}
                 : Interval{-M_PI / 2.0, 3.0 * M_PI / 2.0};
@@ -100,7 +107,6 @@ Bounds Bounds::Compute(const Tree* e) {
           // sin is strictly ascending between -pi/2 and pi/2
           b.applyMonotoneFunction(std::sin);
         }
-
       } else if (IsInside(principalAngleLower, RightHalf(principalInterval)) &&
                  IsInside(angleUpper, RightHalf(principalInterval))) {
         if (isCos) {

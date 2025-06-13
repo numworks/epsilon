@@ -847,6 +847,10 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("log(floor(2^54+π)-3, 2)", "54");
   simplifies_to("floor(random())", "floor(random())");
   simplifies_to("floor(sin(0.001))", "0");
+  /* Above a certain threshold, we consider that the sine or cosine of a "big"
+   * angle has too many approximation errors. This blocks the floor exact
+   * reduction.  */
+  simplifies_to("floor(cos(1000))", "floor(cos(1000))");
 }
 
 QUIZ_CASE(pcj_simplification_percent) {

@@ -30,12 +30,7 @@ class Node:
         return {
             "name": self.name,
             "size": self.size,
-            "children": [
-                child.to_dict()
-                for child in sorted(
-                    self.children.values(), key=lambda c: c.size, reverse=True
-                )
-            ],
+            "children": [child.to_dict() for child in self.children.values()],
         }
 
 
@@ -51,9 +46,9 @@ def find_at_depth_zero(s, start, substring):
         if depth == 0 and s.startswith(substring, i):
             return i
 
-        if s[i] == '(' or s[i] == '{' or s[i] == '[' or s[i] == '<':
+        if s[i] == "(" or s[i] == "{" or s[i] == "[" or s[i] == "<":
             depth += 1
-        elif s[i] == ')' or s[i] == '}' or s[i] == ']' or s[i] == '>':
+        elif s[i] == ")" or s[i] == "}" or s[i] == "]" or s[i] == ">":
             depth -= 1
 
         i += 1
@@ -177,7 +172,10 @@ def main():
         root.add_symbol(namespaces, symbol_name, size)
 
     if args.json:
-        print(json.dumps(root.to_dict(), indent=2))
+        print(f"Writing JSON output to {args.elf_file}.json. This may take a while...")
+        with open(args.elf_file + ".json", "w") as f:
+            json.dump(root.to_dict(), f, indent=2)
+        print(f"[green]JSON output written to {args.elf_file}.json[/green]")
     else:
         rich_tree = Tree(f"{root.name} ({root.size})")
         build_rich_tree(root, rich_tree)

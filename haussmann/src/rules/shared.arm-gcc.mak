@@ -28,7 +28,8 @@ $(OUTPUT_DIRECTORY)/%.st_flash: $(OUTPUT_DIRECTORY)/%.elf
 
 $(call document_extension,st_flash,Write <...>.bin to a device using a ST-Link and STM32_Programmer_CLI.)
 
+$(OUTPUT_DIRECTORY)/%.elf.size_tree: JSON ?=
 $(OUTPUT_DIRECTORY)/%.elf.size_tree: $(OUTPUT_DIRECTORY)/%.elf
-	$(PYTHON) $(PATH_haussmann)/data/device/elf_size_tree.py $<
+	$(PYTHON) $(PATH_haussmann)/data/device/elf_size_tree.py $< $(if $(JSON),--json,--rich)
 
-$(call document_extension,elf.size_tree,Generate a size tree from the ELF file.)
+$(call document_extension,elf.size_tree,Generate a size tree from the ELF file. Pass JSON=1 to generate a JSON file instead of a rich text output.)

@@ -45,6 +45,10 @@ def strip_return_type(symbol_str):
     - Templates: <...>
     - (anonymous namespace)
     - Only removes return type if a space exists outside <> and () before '('
+
+    e.g.:
+    "A::B::C<D::E, F>::G A::B::C<D::E, F>::(anonymous namespace)::H()"
+      -> "A::B::C<D::E, F>::(anonymous namespace)::H()"
     """
     ANON = "(anonymous namespace)"
     ANON_LEN = len(ANON)
@@ -101,6 +105,10 @@ def strip_return_type(symbol_str):
 
 
 def split_cpp_namespaces(name):
+    """
+    "A::B::C<D::E, F>::(anonymous namespace)"
+      -> ["A", "B", "C<D::E, F>", "(anonymous namespace)"]
+    """
     parts = []
     current = []
     depth = 0  # template angle bracket nesting
@@ -132,6 +140,10 @@ def split_cpp_namespaces(name):
 
 
 def split_namespace_and_symbol(symbol_str):
+    """
+    "A::B::C<D::E, F>::(anonymous namespace)::H()"
+      -> (["A", "B", "C<D::E, F>", "(anonymous namespace)"], "H()")
+    """
     depth = 0
     last_ns_pos = -1
     i = 0
@@ -162,6 +174,12 @@ allowed_types = {"T", "t", "R", "r"}  # Only .text and .rodata
 
 
 def parse_nm_line(line):
+    """
+    Parse a line from `arm-none-eabi-nm` output.
+    Returns (symbol, size) or None if invalid.
+    Expects lines like:
+    "00000000 00000000 T A::B::C<D::E, F>::(anonymous namespace)::H()"
+    """
     parts = line.strip().split(None, 3)
     if len(parts) != 4:
         return None

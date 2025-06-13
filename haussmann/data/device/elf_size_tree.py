@@ -191,9 +191,9 @@ def parse_nm_line(line):
 
 
 def build_rich_tree(node, tree):
-    label = f"{node.name} ({node.size})"
-    branch = tree.add(label)
     for child in sorted(node.children.values(), key=lambda c: c.size, reverse=True):
+        label = f"{child.name} ({child.size})"
+        branch = tree.add(label)
         build_rich_tree(child, branch)
 
 
@@ -215,7 +215,10 @@ def main():
 
     try:
         proc = subprocess.run(
-            ["nm", "-SCn", args.elf_file], capture_output=True, text=True, check=True
+            ["arm-none-eabi-nm", "-SCn", args.elf_file],
+            capture_output=True,
+            text=True,
+            check=True,
         )
     except subprocess.CalledProcessError as e:
         print(f"[red]Error running nm: {e}[/red]", file=sys.stderr)
@@ -233,8 +236,7 @@ def main():
         print(json.dumps(root.to_dict(), indent=2))
     else:
         rich_tree = Tree(f"{root.name} ({root.size})")
-        for child in sorted(root.children.values(), key=lambda c: c.size, reverse=True):
-            build_rich_tree(child, rich_tree)
+        build_rich_tree(root, rich_tree)
         print(rich_tree)
 
 

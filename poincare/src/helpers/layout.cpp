@@ -111,18 +111,21 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
       }
       continue;
     }
-    /* TODO: 2*10^50*i is currently laid out as 2ᴇ50i. A similar issue probably
-     * arises with any following node. Non-digit following nodes are therefore
-     * handled here.
-     * TODO: A multiplication operator should be added. */
+    /* 1*10^-50+2*10^50*i is currently laid out as 1ᴇ-50+2ᴇ50i. Detect the end
+     * of the exponent, and add a multiplication operator if necessary. */
     if (result != addTo &&
         !(child->isCodePointLayout() &&
           (CodePointLayout::GetCodePoint(child).isDecimalDigit() ||
            (addTo->numberOfChildren() == 0 &&
             CodePointLayout::IsCodePoint(child, '-'))))) {
-      /* Only add '-' and numbers to the superscript. Next children will be
-       * added to result. */
+      /* Come out of the superscript to layout next code points. */
       addTo = result;
+      if (!CodePointLayout::IsCodePoint(child, '-') &&
+          !CodePointLayout::IsCodePoint(child, '+') &&
+          !CodePointLayout::IsCodePoint(child, UCodePointMiddleDot) &&
+          !CodePointLayout::IsCodePoint(child, UCodePointMultiplicationSign)) {
+        NAry::AddOrMergeChild(addTo, "×"_l->cloneTree());
+      }
     }
     NAry::AddChild(addTo, child->cloneTree());
   }

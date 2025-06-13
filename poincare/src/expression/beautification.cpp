@@ -414,6 +414,9 @@ bool ShallowBeautifyPowerOfTangent(Tree* e, void* context) {
 // Reverse most system projections to display better expressions
 bool ShallowBeautify(Tree* e, void* context) {
   bool changed = false;
+  if (e->isAdd() || e->isMult()) {
+    changed = NAry::Flatten(e);
+  }
   if (e->isAdd()) {
     NAry::Sort(e, Order::OrderType::AdditionBeautification);
   }

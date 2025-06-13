@@ -70,6 +70,7 @@ Bounds Bounds::Add(const Tree* e) {
     return Invalid();
   }
   bounds.spread(e->numberOfChildren() - 1);
+  assert(bounds.lower() <= bounds.upper());
   return bounds;
 }
 
@@ -93,6 +94,7 @@ Bounds Bounds::Mult(const Tree* e) {
     bounds.flip();
   }
   bounds.spread(e->numberOfChildren() - 1);
+  assert(bounds.lower() <= bounds.upper());
   return bounds;
 }
 
@@ -143,6 +145,7 @@ void Bounds::applyMonotoneFunction(double (*f)(double), bool decreasing,
     flip();
   }
   spread(ulp_precision);
+  assert(m_lower <= m_upper);
 }
 
 static void nthNextafter(double& value, const double& spreadDirection,

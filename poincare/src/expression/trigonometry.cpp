@@ -509,14 +509,14 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
     }
   }
   // NOTE: at this point, e can be ATanRad(...) or Dep(ATanRad(...))
+  Tree* eMain = (e->isDep() ? Dependency::Main(e) : e);
   if (arg->isInf()) {
-    (e->isDep() ? Dependency::Main(e) : e)
-        ->cloneTreeOverTree(KMult(1_e / 2_e, π_e));
+    eMain->cloneTreeOverTree(KMult(1_e / 2_e, π_e));
     return true;
   }
   const Tree* angle = ExactFormula::GetAngleOf(arg, Type::Tan);
   if (angle) {
-    (e->isDep() ? Dependency::Main(e) : e)->cloneTreeOverTree(angle);
+    eMain->cloneTreeOverTree(angle);
     return true;
   }
 

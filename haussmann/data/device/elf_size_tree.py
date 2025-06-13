@@ -39,135 +39,61 @@ class Node:
         }
 
 
-def strip_return_type(symbol_str):
+def find_at_depth_zero(s, start, substring):
     """
-    Strip return type from C++ symbols, safely handling:
-    - Templates: <...>
-    - (anonymous namespace)
-    - Only removes return type if a space exists outside <> and () before '('
-
-    e.g.:
-    "A::B::C<D::E, F>::G A::B::C<D::E, F>::(anonymous namespace)::H()"
-      -> "A::B::C<D::E, F>::(anonymous namespace)::H()"
+    Find the first occurrence of `substring` at depth zero in `s` starting from `start`.
+    Depth zero means no nested parentheses or brackets.
     """
-    ANON = "(anonymous namespace)"
-    ANON_LEN = len(ANON)
+    depth = 0
+    i = start
 
-    # Step 1: find the '(' that starts the function signature
-    paren_index = -1
-    i = 0
-    angle_depth = 0
-    paren_depth = 0
+    while i < len(s):
+        if depth == 0 and s.startswith(substring, i):
+            return i
 
-    while i < len(symbol_str):
-        if symbol_str[i : i + ANON_LEN] == ANON:
-            i += ANON_LEN
-            continue
-        if symbol_str[i] == "<":
-            angle_depth += 1
-        elif symbol_str[i] == ">":
-            angle_depth -= 1
-        elif symbol_str[i] == "(":
-            if angle_depth == 0:
-                paren_index = i
-                break
-            paren_depth += 1
-        elif symbol_str[i] == ")":
-            paren_depth = max(0, paren_depth - 1)
+        if s[i] == '(' or s[i] == '{' or s[i] == '[' or s[i] == '<':
+            depth += 1
+        elif s[i] == ')' or s[i] == '}' or s[i] == ']' or s[i] == '>':
+            depth -= 1
+
         i += 1
 
-    if paren_index == -1:
-        return symbol_str  # Not a function
-
-    # Step 2: go backward from paren to find last space outside of <>, ()
-    i = paren_index - 1
-    angle_depth = 0
-    paren_depth = 0
-
-    while i >= 0:
-        if i - ANON_LEN + 1 >= 0 and symbol_str[i - ANON_LEN + 1 : i + 1] == ANON:
-            i -= ANON_LEN
-            continue
-        c = symbol_str[i]
-        if c == ">":
-            angle_depth += 1
-        elif c == "<":
-            angle_depth -= 1
-        elif c == ")":
-            paren_depth += 1
-        elif c == "(":
-            paren_depth = max(0, paren_depth - 1)
-        elif c == " " and angle_depth == 0 and paren_depth == 0:
-            return symbol_str[i + 1 :]
-        i -= 1
-
-    return symbol_str  # No return type found
+    return None
 
 
-def split_cpp_namespaces(name):
+def strip_return_type(symbol_str):
     """
-    "A::B::C<D::E, F>::(anonymous namespace)"
-      -> ["A", "B", "C<D::E, F>", "(anonymous namespace)"]
+    Strip return type from C++ symbols.
+
+    e.g.:
+    "A::B::C<D::E, F>::G H::I::J<K::L, M>::(anonymous namespace)::N()"
+      -> "H::I::J<K::L, M>::(anonymous namespace)::N()"
     """
-    parts = []
-    current = []
-    depth = 0  # template angle bracket nesting
+    # Find the last space at depth zero that is followed by parentheses.
+    symbol_start = 0
+    i = find_at_depth_zero(symbol_str, 0, " ")
+    while i is not None:
+        if find_at_depth_zero(symbol_str, i + 1, "(") is None:
+            break
+        symbol_start = i + 1
+        i = find_at_depth_zero(symbol_str, symbol_start, " ")
 
-    i = 0
-    while i < len(name):
-        c = name[i]
-        if c == "<":
-            depth += 1
-            current.append(c)
-            i += 1
-        elif c == ">":
-            if depth > 0:
-                depth -= 1
-            current.append(c)
-            i += 1
-        elif c == ":" and i + 1 < len(name) and name[i + 1] == ":" and depth == 0:
-            # hit a :: outside templates — split here
-            parts.append("".join(current))
-            current = []
-            i += 2  # skip both colons
-        else:
-            current.append(c)
-            i += 1
-
-    if current:
-        parts.append("".join(current))
-    return parts
+    return symbol_str[symbol_start:]
 
 
 def split_namespace_and_symbol(symbol_str):
     """
-    "A::B::C<D::E, F>::(anonymous namespace)::H()"
-      -> (["A", "B", "C<D::E, F>", "(anonymous namespace)"], "H()")
+    "A::B::C<D::E, F>::(anonymous namespace)::G()"
+      -> (["A", "B", "C<D::E, F>", "(anonymous namespace)"], "G()")
     """
-    depth = 0
-    last_ns_pos = -1
-    i = 0
-    while i < len(symbol_str) - 1:
-        if symbol_str[i : i + 21] == "(anonymous namespace)":
-            i += 21
-            continue
-        c = symbol_str[i]
-        if c == "(":
-            depth += 1
-        elif c == ")":
-            depth -= 1
-        elif c == ":" and symbol_str[i + 1] == ":" and depth == 0:
-            last_ns_pos = i
-            i += 1
-        i += 1
-
-    if last_ns_pos == -1:
-        return [], symbol_str
-    else:
-        namespaces_str = symbol_str[:last_ns_pos]
-        symbol_name = symbol_str[last_ns_pos + 2 :]
-        namespaces = split_cpp_namespaces(namespaces_str) if namespaces_str else []
-        return namespaces, symbol_name
+    namespaces = []
+    symbol_start = 0
+    i = find_at_depth_zero(symbol_str, 0, "::")
+    while i is not None:
+        namespaces.append(symbol_str[symbol_start:i])
+        symbol_start = i + 2  # skip the "::"
+        i = find_at_depth_zero(symbol_str, symbol_start, "::")
+    return (namespaces, symbol_str[symbol_start:])
 
 
 allowed_types = {"T", "t", "R", "r"}  # Only .text and .rodata
@@ -178,7 +104,7 @@ def parse_nm_line(line):
     Parse a line from `arm-none-eabi-nm` output.
     Returns (symbol, size) or None if invalid.
     Expects lines like:
-    "00000000 00000000 T A::B::C<D::E, F>::(anonymous namespace)::H()"
+    "00000000 00000000 T A::B::C<D::E, F>::(anonymous namespace)::G()"
     """
     parts = line.strip().split(None, 3)
     if len(parts) != 4:

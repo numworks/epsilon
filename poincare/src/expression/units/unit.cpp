@@ -104,24 +104,25 @@ const Representative* Representative::FromId(uint8_t id) {
   return Representative::DefaultRepresentatives()[0];
 }
 
-static bool CanSimplifyUnitProduct(const SIVector* unitsExponents,
-                                   size_t& unitsSupportSize,
-                                   const SIVector* entryUnitExponents,
-                                   int entryUnitExponent,
+/* This function tries to simplify a unit ('unitCoefficients') by multiplying
+ * with another unit ('simplifyingUnitCoefficients') at a given exponent
+ * ('simplifyingUnitExponent'). If the result of the operation is simpler,
+ * 'unitSupportSize', 'bestRemainderExponents' and 'bestRemainderSupportSize'
+ * are updated accordingly. */
+static bool CanSimplifyUnitProduct(const SIVector* unitCoefficients,
+                                   size_t& unitSupportSize,
+                                   const SIVector* simplifyingUnitCoefficients,
+                                   int simplifyingUnitExponent,
                                    SIVector& bestRemainderExponents,
                                    size_t& bestRemainderSupportSize) {
-  /* This function tries to simplify a unit (given as the 'unitsExponents' int
-   * array), by multiplying with a given unit ('entryUnitExponents' int array)
-   * at a given exponent ('entryUnitExponent'). If the result of the operation
-   * is simpler, 'bestUnit' and 'bestRemainder' are updated accordingly. */
   SIVector simplifiedExponents;
 
   for (size_t i = 0; i < SIVector::k_numberOfBaseUnits; i++) {
-    // Simplify unitsExponents with base units from derived unit
+    // Simplify unitCoefficients with base units from derived unit
     if (!simplifiedExponents.setCoefficientAtIndex(
-            i, unitsExponents->coefficientAtIndex(i) +
-                   entryUnitExponent *
-                       entryUnitExponents->coefficientAtIndex(i))) {
+            i, unitCoefficients->coefficientAtIndex(i) +
+                   simplifyingUnitExponent *
+                       simplifyingUnitCoefficients->coefficientAtIndex(i))) {
       // Unit vector overflowed
       return false;
     }
@@ -131,19 +132,19 @@ static bool CanSimplifyUnitProduct(const SIVector* unitsExponents,
    * symbols) is reduced. A norm taking coefficients into account is possible.
    * One could use the sum of all coefficients to favor _C_s from _A_s^2.
    * However, replacing _m_s^-2 with _N_kg^-1 should be avoided. */
-  bool isSimpler = (1 + simplifiedSupportSize < unitsSupportSize);
+  bool isSimpler = (1 + simplifiedSupportSize < unitSupportSize);
 
   if (isSimpler) {
     bestRemainderExponents = simplifiedExponents;
     bestRemainderSupportSize = simplifiedSupportSize;
-    /* unitsSupportSize is updated and will be taken into
+    /* unitSupportSize is updated and will be taken into
      * account in next iterations of CanSimplifyUnitProduct. */
-    unitsSupportSize = 1 + simplifiedSupportSize;
+    unitSupportSize = 1 + simplifiedSupportSize;
   }
   return isSimpler;
 }
 
-Tree* ChooseBestDerivedUnits(SIVector* unitsExponents) {
+Tree* ChooseBestDerivedUnits(SIVector* unitCoefficients) {
   /* Recognize derived units
    * - Look up in the table of derived units, the one which itself or its
    * inverse simplifies 'units' the most.
@@ -155,28 +156,27 @@ Tree* ChooseBestDerivedUnits(SIVector* unitsExponents) {
   /* If exponents are not integers, GetSIVector will return a null
    * vector, preventing any attempt at simplification. This protects us
    * against undue "simplifications" such as _C^1.3 -> _C*_A^0.3*_s^0.3 */
-  size_t unitsSupportSize = unitsExponents->supportSize();
+  size_t unitSupportSize = unitCoefficients->supportSize();
   SIVector bestRemainderExponents;
   size_t bestRemainderSupportSize;
-  while (unitsSupportSize > 1) {
+  while (unitSupportSize > 1) {
     const Representative* bestDim = nullptr;
     int8_t bestUnitExponent = 0;
     // Look up in the table of derived units.
     for (int i = SIVector::k_numberOfBaseUnits;
          i < Representative::k_numberOfDimensions - 1; i++) {
       const Representative* dim = Representative::DefaultRepresentatives()[i];
-      const SIVector entryUnitExponents = dim->siVector();
-      /* A simplification is tried by either dividing or multiplying.
-       * If successful, unitsSupportSize, bestRemainderExponents and
-       * bestRemainderSupportSize have been updated. */
+      const SIVector simplifyingUnitCoefficients = dim->siVector();
+      // A simplification is tried by either dividing or multiplying.
       if (CanSimplifyUnitProduct(
-              unitsExponents, unitsSupportSize, &entryUnitExponents, -1,
-              bestRemainderExponents, bestRemainderSupportSize)) {
+              unitCoefficients, unitSupportSize, &simplifyingUnitCoefficients,
+              -1, bestRemainderExponents, bestRemainderSupportSize)) {
         bestUnitExponent = 1;
         bestDim = dim;
-      } else if (CanSimplifyUnitProduct(
-                     unitsExponents, unitsSupportSize, &entryUnitExponents, 1,
-                     bestRemainderExponents, bestRemainderSupportSize)) {
+      } else if (CanSimplifyUnitProduct(unitCoefficients, unitSupportSize,
+                                        &simplifyingUnitCoefficients, 1,
+                                        bestRemainderExponents,
+                                        bestRemainderSupportSize)) {
         bestUnitExponent = -1;
         bestDim = dim;
       }
@@ -196,8 +196,8 @@ Tree* ChooseBestDerivedUnits(SIVector* unitsExponents) {
     const int position = unitsAccu->numberOfChildren();
     NAry::AddChildAtIndex(unitsAccu, derivedUnit, position);
     // Update remainder units and their exponents for next simplifications
-    *unitsExponents = bestRemainderExponents;
-    unitsSupportSize = bestRemainderSupportSize;
+    *unitCoefficients = bestRemainderExponents;
+    unitSupportSize = bestRemainderSupportSize;
   }
   NAry::SquashIfEmpty(unitsAccu);
   return unitsAccu;

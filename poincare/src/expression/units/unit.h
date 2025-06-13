@@ -260,7 +260,7 @@ class Unit {
                                         UnitFormat unitFormat);
 };
 
-Tree* ChooseBestDerivedUnits(SIVector* unitsExponents);
+Tree* ChooseBestDerivedUnits(SIVector* unitCoefficients);
 bool IsCombinationOfUnits(const Tree* e);
 
 bool HasUnit(const Tree* e);

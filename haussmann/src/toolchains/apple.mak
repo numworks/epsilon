@@ -28,6 +28,8 @@ LIPO = $(shell xcrun --sdk $(APPLE_SDK) --find lipo)
 
 EXECUTABLE_EXTENSION := bin
 
+COMPILER_FAMILY := clang
+
 SYSROOT := $(shell xcrun --sdk $(APPLE_SDK) --show-sdk-path)
 export SDKROOT := $(shell xcrun --show-sdk-path)
 

@@ -8,6 +8,8 @@ OBJCOPY := arm-none-eabi-objcopy
 
 EXECUTABLE_EXTENSION := elf
 
+COMPILER_FAMILY := gcc
+
 SFLAGS += \
   -fdata-sections \
   -ffreestanding \

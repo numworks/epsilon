@@ -10,6 +10,8 @@ LD := emcc
 
 EXECUTABLE_EXTENSION := js
 
+COMPILER_FAMILY := clang
+
 # Modules should add EXPORTED_FUNCTIONS and EXPORTED_RUNTIME_METHODS to LDFLAGS.
 LDFLAGS += \
   -s ASYNCIFY=$(_emscripten_asyncify) \

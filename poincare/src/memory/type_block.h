@@ -171,6 +171,8 @@ class TypeBlock : public Block {
 
  public:
   constexpr static size_t NumberOfMetaBlocks(Type type) {
+    /* NOTE: Make sure to also update
+     * [NumberOfChidrenOrTagAndNumberOfMetaBlocks] */
     switch (type) {
       /* NODE(MinusOne) => DefaultNumberOfMetaBlocks(0) + 0
        * NODE(Mult, NARY) => DefaultNumberOfMetaBlocks(NARY) + 0
@@ -306,6 +308,8 @@ class TypeBlock : public Block {
 
  private:
   constexpr static int NumberOfChildrenOrTag(Type type) {
+    /* NOTE: Make sure to also update
+     * [NumberOfChidrenOrTagAndNumberOfMetaBlocks] */
     switch (type) {
       /* NODE(MinusOne) => 0
        * NODE(Pow, 2) => 2 */
@@ -320,6 +324,8 @@ class TypeBlock : public Block {
   }
 
   constexpr static NodeInfo NumberOfChidrenOrTagAndNumberOfMetaBlocks(
+      /* NOTE: Make sure to also update [NumberOfChidrenOrTag] and
+       * [NumberOfMetaBlocks] */
       Type type) {
     switch (type) {
       /* NODE(MinusOne) => {0, DefaultNumberOfMetaBlocks(0) + 0}

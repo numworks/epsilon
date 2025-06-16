@@ -662,7 +662,6 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
                              discriminant)
           : Roots::Cubic(coefficients[3], coefficients[2], coefficients[1],
                          coefficients[0], discriminant, true);
-  Dependency::DeepRemoveUselessDependencies(solutionList);
   /* TODO: When all coefficients are real, the number of real solutions needs to
    * be checked in an assert (looking at the discrimant sign). The verification
    * function would be similar to Roots::ApproximateRootsOfRealCubic, but

@@ -10,26 +10,39 @@ namespace Internal {
 
 class Roots {
  public:
-  // Return the only root.
-  static Tree* Linear(const Tree* a, const Tree* b);
+  // Return the only root. Use advanced reduction and simplify dependencies.
+  static Tree* Linear(const Tree* a, const Tree* b) {
+    return ApplyAdditionalReduction(PrivateLinear(a, b));
+  }
 
   /* Return a list of one or two roots, in decreasing order.
-   * Delta can be provided or will be computed. */
+   * Delta can be provided or will be computed.
+   * Use advanced reduction and simplify dependencies. */
   static Tree* Quadratic(const Tree* a, const Tree* b, const Tree* c,
-                         const Tree* discriminant = nullptr);
+                         const Tree* discriminant = nullptr) {
+    return ApplyAdditionalReduction(PrivateQuadratic(a, b, c, discriminant));
+  }
   static Tree* QuadraticDiscriminant(const Tree* a, const Tree* b,
-                                     const Tree* c);
+                                     const Tree* c) {
+    return ApplyAdditionalReduction(PrivateQuadraticDiscriminant(a, b, c));
+  }
 
   /* Return a list of at most three roots, in decreasing order.
    * Delta can be provided or will be computed.
+   * Use advanced reduction and simplify dependencies.
    * If applying Cardano's method is needed, it can be made faster (as it costs
    * a great amount of computation time). However in that case, the solutions
    * obtained by Cardano's method will be approximated.  */
   static Tree* Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
                      const Tree* discriminant = nullptr,
-                     bool fastCardanoMethod = false);
+                     bool fastCardanoMethod = false) {
+    return ApplyAdditionalReduction(
+        PrivateCubic(a, b, c, d, discriminant, fastCardanoMethod));
+  }
   static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
-                                 const Tree* d);
+                                 const Tree* d) {
+    return ApplyAdditionalReduction(PrivateCubicDiscriminant(a, b, c, d));
+  }
 
  private:
   constexpr static SimpleKTrees::KTree k_squareRootOfThree =
@@ -42,6 +55,22 @@ class Roots {
   // (-1 - i√(3)) / 2
   constexpr static SimpleKTrees::KTree k_cubeRootOfUnity2 =
       KMult(1_e / 2_e, KAdd(-1_e, KMult(-1_e, k_squareRootOfThree, i_e)));
+
+  /* Public methods counterparts, without advanced reduction. */
+
+  static Tree* PrivateLinear(const Tree* a, const Tree* b);
+  static Tree* PrivateQuadratic(const Tree* a, const Tree* b, const Tree* c,
+                                const Tree* discriminant = nullptr);
+  static Tree* PrivateQuadraticDiscriminant(const Tree* a, const Tree* b,
+                                            const Tree* c);
+  static Tree* PrivateCubic(const Tree* a, const Tree* b, const Tree* c,
+                            const Tree* d, const Tree* discriminant = nullptr,
+                            bool fastCardanoMethod = false);
+  static Tree* PrivateCubicDiscriminant(const Tree* a, const Tree* b,
+                                        const Tree* c, const Tree* d);
+
+  // Apply advanced reduction, remove useless dependencies, and return the tree.
+  static Tree* ApplyAdditionalReduction(Tree* solutions);
 
   static Tree* PolynomialEvaluation(const Tree* value, const Tree* a,
                                     const Tree* b, const Tree* c,

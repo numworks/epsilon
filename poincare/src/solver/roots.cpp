@@ -5,6 +5,7 @@
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/arithmetic.h>
+#include <poincare/src/expression/dependency.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/order.h>
@@ -16,30 +17,31 @@
 
 namespace Poincare::Internal {
 
-Tree* Roots::Linear(const Tree* a, const Tree* b) {
+Tree* Roots::ApplyAdditionalReduction(Tree* solutions) {
+  AdvancedReduction::Reduce(solutions);
+  Dependency::DeepRemoveUselessDependencies(solutions);
+  return solutions;
+}
+
+Tree* Roots::PrivateLinear(const Tree* a, const Tree* b) {
   assert(a && b);
-  Tree* root = PatternMatching::CreateSimplify(KMult(-1_e, KB, KPow(KA, -1_e)),
-                                               {.KA = a, .KB = b});
-  AdvancedReduction::Reduce(root);
-  return root;
+  return PatternMatching::CreateSimplify(KMult(-1_e, KB, KPow(KA, -1_e)),
+                                         {.KA = a, .KB = b});
 }
 
-Tree* Roots::QuadraticDiscriminant(const Tree* a, const Tree* b,
-                                   const Tree* c) {
+Tree* Roots::PrivateQuadraticDiscriminant(const Tree* a, const Tree* b,
+                                          const Tree* c) {
   // Δ=B^2-4AC
-  Tree* result = PatternMatching::CreateSimplify(
+  return PatternMatching::CreateSimplify(
       KAdd(KPow(KB, 2_e), KMult(-4_e, KA, KC)), {.KA = a, .KB = b, .KC = c});
-  // Use advanced reduction because systematic reduction doesn't expand powers.
-  AdvancedReduction::Reduce(result);
-  return result;
 }
 
-Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
-                       const Tree* discriminant) {
+Tree* Roots::PrivateQuadratic(const Tree* a, const Tree* b, const Tree* c,
+                              const Tree* discriminant) {
   assert(a && b && c);
   if (!discriminant) {
     Tree* discriminant = Roots::QuadraticDiscriminant(a, b, c);
-    TreeRef solutions = Roots::Quadratic(a, b, c, discriminant);
+    TreeRef solutions = Roots::PrivateQuadratic(a, b, c, discriminant);
     discriminant->removeTree();
     return solutions;
   }
@@ -71,13 +73,11 @@ Tree* Roots::Quadratic(const Tree* a, const Tree* b, const Tree* c,
      * sign instead of ComplexLine order like cubic solver. */
     root1->detachTree();
   }
-
-  AdvancedReduction::Reduce(solutions);
   return solutions;
 }
 
-Tree* Roots::CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
-                               const Tree* d) {
+Tree* Roots::PrivateCubicDiscriminant(const Tree* a, const Tree* b,
+                                      const Tree* c, const Tree* d) {
   /* Δ = b^2*c^2 + 18abcd - 27a^2*d^2 - 4ac^3 - 4db^3
    * If Δ > 0, the cubic has three distinct real roots. If Δ < 0, the cubic has
    * one real root and two non-real complex conjugate roots. If Δ = 0, the cubic
@@ -99,12 +99,12 @@ Tree* Roots::CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
    * KPow helps.
    * Eg: user input (x-e)(fx2+gx+h) expands to fx3+(g-ef)x2+(h-ge)x-eh. */
   AdvancedReduction::DeepExpandAlgebraic(delta);
-  AdvancedReduction::Reduce(delta);
   return delta;
 }
 
-Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
-                   const Tree* discriminant, bool fastCardanoMethod) {
+Tree* Roots::PrivateCubic(const Tree* a, const Tree* b, const Tree* c,
+                          const Tree* d, const Tree* discriminant,
+                          bool fastCardanoMethod) {
   assert(a && b && c && d);
 
   if (a->isUndefined() || b->isUndefined() || c->isUndefined() ||
@@ -114,13 +114,13 @@ Tree* Roots::Cubic(const Tree* a, const Tree* b, const Tree* c, const Tree* d,
 
   /* Cases in which some coefficients are zero. */
   if (GetComplexSign(a).isNull()) {
-    return Roots::Quadratic(b, c, d);
+    return Roots::PrivateQuadratic(b, c, d);
   }
   if (GetComplexSign(d).isNull()) {
     /* When d is null the obvious root is zero. To avoid complexifying the
      * remaining quadratic polynomial expression with further calculations, we
      * directly call the quadratic solver for a, b, and c. */
-    Tree* allRoots = Roots::Quadratic(a, b, c);
+    Tree* allRoots = Roots::PrivateQuadratic(a, b, c);
     assert(allRoots->isList());
     /* TODO: We could refactor this by either:
      * - creating an NAry::RemoveDuplicates function, that would be called right
@@ -242,7 +242,7 @@ Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
                                                  {.KA = a, .KB = b, .KH = r});
   TreeRef gamma = PatternMatching::CreateSimplify(
       KMult(-1_e, KD, KPow(KH, -1_e)), {.KD = d, .KH = r});
-  TreeRef allRoots = Roots::Quadratic(a, beta, gamma);
+  TreeRef allRoots = Roots::PrivateQuadratic(a, beta, gamma);
   beta->removeTree();
   gamma->removeTree();
   if (!NAry::ContainsSame(allRoots, r)) {
@@ -267,7 +267,6 @@ Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
       {.KA = baseRoot});
   baseRoot->removeTree();
   NAry::Sort(rootList, Order::OrderType::ComplexLine);
-  AdvancedReduction::Reduce(rootList);
   return rootList;
 }
 
@@ -410,7 +409,6 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
 
   if (SignOfTreeOrApproximation(delta).isNull()) {
     Tree* rootList = CubicRootsNullDiscriminant(a, b, c, d);
-    AdvancedReduction::Reduce(rootList);
     return rootList;
   }
 
@@ -433,9 +431,7 @@ Tree* Roots::CubicRootsCardanoMethod(const Tree* a, const Tree* b,
   delta1->removeTree();
   delta0->removeTree();
 
-  if (!approximateCardanoNumber) {
-    AdvancedReduction::Reduce(rootList);
-  } else {
+  if (approximateCardanoNumber) {
     // Some rounding errors in Cardano's method calculations may lead to small
     // imaginary parts. If we know that some roots are pure real numbers because
     // the polynomial coefficients are all real, remove these small imaginary

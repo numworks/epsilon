@@ -491,7 +491,6 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   for (uint8_t row = 0; row < rows; row++) {
     for (uint8_t col = 0; col < cols; col++) {
       if (row < n && col == cols - 1) {
-        assert(*error == Error::NoError);
         /* Replace the solution in the equation set to check later that it
          * respects the dependencies. */
         Variables::Replace(equationSetClone, row, child);
@@ -511,10 +510,10 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   assert(equationSetClone->isList());
   for (const Tree* equation : equationSetClone->children()) {
     if (equation->isUndefined()) {
-      assert(*error == Error::NoError);
       equationSetClone->removeTree();
       matrix->removeTree();
       equationSetWithoutDep->removeTree();
+      assert(*error == Error::NoError);
       return SharedTreeStack->pushSet(0);
     }
     if (equation->isDep()) {
@@ -531,6 +530,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   equationSetClone->removeTree();
 
   equationSetWithoutDep->removeTree();
+  assert(*error == Error::NoError);
   return matrix;
 }
 

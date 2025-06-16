@@ -175,7 +175,7 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
   }
 }
 
-/* Simplify and approximate solutions. Never call advanced reduction.
+/* Simplify and/or approximate solutions. Never call advanced reduction.
  * [exact] and [approximate] are optional parameter. */
 static void simplifyAndApproximateSolution(
     UserExpression e, UserExpression* exact, UserExpression* approximate,
@@ -261,7 +261,6 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
                                    approximateDuringReduction, context,
                                    m_solverContext.complexFormat, angleUnit,
                                    unitFormat, symbolicComputation);
-    // assert(approximateDuringReduction || e.isIdenticalTo(exact));
     if (!reduceSolution) {
       exact = e;
     }

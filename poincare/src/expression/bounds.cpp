@@ -101,24 +101,33 @@ Bounds Bounds::Compute(const Tree* e) {
               : IntervalData{Interval{-M_PI_2, 3.0 * M_PI_2}, 2 * M_PI, M_PI_2};
       double principalAngleLower = MapToInterval(b.lower(), principalInterval);
       double angleUpper = principalAngleLower + b.upper() - b.lower();
-      if (IsInside(principalAngleLower, LeftHalf(principalInterval)) &&
-          IsInside(angleUpper, LeftHalf(principalInterval))) {
+
+      /* The MapToInterval function performs some operations that each create
+       * a small precision loss. To account for this precision loss, we expand
+       * the mapped bounds by a certain factor. */
+      Bounds expandedBounds = Bounds(principalAngleLower, angleUpper, 100);
+
+      if (IsInside(expandedBounds.lower(), LeftHalf(principalInterval)) &&
+          IsInside(expandedBounds.upper(), LeftHalf(principalInterval))) {
         if (isCos) {
-          // cos is strictly ascending between -pi and 0
-          b.applyMonotoneFunction(std::cos);
+          // cos is strictly ascending between -π and 0
+          expandedBounds.applyMonotoneFunction(std::cos);
         } else {
-          // sin is strictly ascending between -pi/2 and pi/2
-          b.applyMonotoneFunction(std::sin);
+          // sin is strictly ascending between -π/2 and π/2
+          expandedBounds.applyMonotoneFunction(std::sin);
         }
-      } else if (IsInside(principalAngleLower, RightHalf(principalInterval)) &&
-                 IsInside(angleUpper, RightHalf(principalInterval))) {
+        return expandedBounds;
+      }
+      if (IsInside(expandedBounds.lower(), RightHalf(principalInterval)) &&
+          IsInside(expandedBounds.upper(), RightHalf(principalInterval))) {
         if (isCos) {
-          // cos is strictly decreasing between 0 and pi
-          b.applyMonotoneFunction(std::cos, true);
+          // cos is strictly decreasing between 0 and π
+          expandedBounds.applyMonotoneFunction(std::cos, true);
         } else {
-          // sin is strictly ascending between pi/2 and 3*pi/2
-          b.applyMonotoneFunction(std::sin, true);
+          // sin is strictly ascending between π/2 and 3π/2
+          expandedBounds.applyMonotoneFunction(std::sin, true);
         }
+        return expandedBounds;
       }
       return b;
     }

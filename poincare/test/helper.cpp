@@ -134,7 +134,7 @@ void process_tree_and_compare(const char* input, const char* output,
     float expressionMetric =
         Metric::GetMetric(expression, projectionContext.m_reductionTarget);
 #endif
-    constexpr size_t bufferSize = 256;
+    constexpr size_t bufferSize = 1024;
     char buffer[bufferSize];
     serialize_expression(expression, buffer);
     bool visuallyOk = strcmp(output, buffer) == 0;

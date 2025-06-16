@@ -62,33 +62,47 @@ void NAry::SetNumberOfChildren(Tree* nary, size_t numberOfChildren) {
   }
 }
 
+bool isLastIndex(int numberOfChildren, int childIndex) {
+  if (numberOfChildren != childIndex + 1) {
+    return false;
+  }
+  float ff = static_cast<float>(childIndex) / static_cast<float>(UINT8_MAX - 1);
+  return ff == std::round(ff);
+}
+
 bool NAry::Flatten(Tree* nary) {
   assert(nary->isNAry());
+  bool nodeRemoved = false;
   bool modified = false;
   int numberOfChildren = nary->numberOfChildren();
   int childIndex = 0;
   Tree* child = nary->nextNode();
   while (childIndex < numberOfChildren) {
     if (nary->type() == child->type()) {
-      modified = true;
-      numberOfChildren += child->numberOfChildren() - 1;
+      int childsChildren = child->numberOfChildren();
+      /* NOTE: Do not flag as modified if the last index is a mult, as it can be
+       * the case for an already flatten Tree with more than 255 children */
+      nodeRemoved = true;
+      modified = modified || childsChildren <= 1 ||
+                 !isLastIndex(numberOfChildren, childIndex);
+      numberOfChildren += childsChildren - 1;
       child->removeNode();
     } else {
       child = child->nextTree();
       childIndex++;
     }
   }
-  if (modified) {
+  if (nodeRemoved) {
+    Tree* root = nary;
     while (numberOfChildren > UINT8_MAX) {
       SetNumberOfChildren(nary, UINT8_MAX);
       numberOfChildren -= UINT8_MAX - 1;
       nary = nary->lastChild();
-      nary->cloneNodeBeforeNode(KMult.node<0>);
+      nary->cloneNodeBeforeNode(root);
     }
     SetNumberOfChildren(nary, numberOfChildren);
-    return true;
   }
-  return false;
+  return modified;
 }
 
 bool NAry::SquashIfUnary(Tree* nary) {

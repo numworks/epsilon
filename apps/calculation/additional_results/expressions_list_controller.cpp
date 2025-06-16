@@ -167,7 +167,8 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
   assert(!exactExpression.isUninitialized() &&
          !approximateExpression.isUninitialized());
   Layout approximateLayout = Shared::PoincareHelpers::CreateLayout(
-      approximateExpression, ctx->m_context);
+                                 approximateExpression, ctx->m_context)
+                                 .cloneAndTurnEToTenPowerLayout(false);
   Layout exactLayout = exactExpression.isUninitialized()
                            ? approximateLayout
                            : Shared::PoincareHelpers::CreateLayout(

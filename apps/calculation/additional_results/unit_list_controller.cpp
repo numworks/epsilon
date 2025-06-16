@@ -145,11 +145,13 @@ void UnitListController::computeAdditionalResults(
 
   // Memoize distinct layouts
   Layout exactOutputLayout =
-      Shared::PoincareHelpers::CreateLayout(exactOutput, context);
+      Shared::PoincareHelpers::CreateLayout(exactOutput, context)
+          .cloneAndTurnEToTenPowerLayout(false);
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     if (!expressions[i].isUninitialized() && !expressions[i].isUndefined()) {
       Layout layout =
-          Shared::PoincareHelpers::CreateLayout(expressions[i], context);
+          Shared::PoincareHelpers::CreateLayout(expressions[i], context)
+              .cloneAndTurnEToTenPowerLayout(false);
       // Skip layouts identical to exactOutput
       if (exactOutputLayout.isIdenticalTo(layout, true)) {
         continue;
@@ -171,7 +173,8 @@ void UnitListController::computeAdditionalResults(
       if (expressions[i].isInRadians(context)) {
         // Approximated radian expression has already been computed.
         Layout approximatedLayout = Shared::PoincareHelpers::CreateLayout(
-            approximatedSIExpression, context);
+                                        approximatedSIExpression, context)
+                                        .cloneAndTurnEToTenPowerLayout(false);
         if (!approximatedLayout.isIdenticalTo(layout, true)) {
           m_exactLayouts[m_numberOfExpressionCells] = layout;
           m_approximatedLayouts[m_numberOfExpressionCells] = approximatedLayout;
@@ -247,7 +250,7 @@ Layout UnitListController::layoutAtIndex(HighlightCell* cell, int index) {
              m_SIValue, m_referenceValues[index], m_tableIndexForComparison)
       .createLayout(Preferences::PrintFloatMode::Decimal,
                     Poincare::Preferences::LargeNumberOfSignificantDigits,
-                    nullptr);
+                    nullptr);  // scientific
 }
 
 }  // namespace Calculation

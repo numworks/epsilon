@@ -259,6 +259,7 @@ bool AdditionalResultsType::HasScientificNotation(
           Preferences::PrintFloatMode::Scientific) {
     return false;
   }
+  // No need to call cloneAndTurnEToTenPowerLayout on both layouts.
   Poincare::Layout historyResult = approximateOutput.createLayout(
       calculationPreferences.displayMode,
       calculationPreferences.numberOfSignificantDigits, context);

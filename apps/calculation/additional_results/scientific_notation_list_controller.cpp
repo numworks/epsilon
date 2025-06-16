@@ -15,7 +15,8 @@ void ScientificNotationListController::computeAdditionalResults(
   assert(AdditionalResultsType::HasScientificNotation(
       approximateOutput, m_calculationPreferences, context));
   m_layouts[0] = AdditionalResultsHelper::ScientificLayout(
-      approximateOutput, context, m_calculationPreferences);
+                     approximateOutput, context, m_calculationPreferences)
+                     .cloneAndTurnEToTenPowerLayout(false);
 }
 
 I18n::Message ScientificNotationListController::messageAtIndex(int index) {

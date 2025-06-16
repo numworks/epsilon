@@ -197,18 +197,21 @@ static void simplifyAndApproximateSolution(
       .m_symbolic = symbolicComputation,
       .m_context = context,
       .m_advanceReduce = false};
-  if (exact && approximate) {
-    e.cloneAndSimplifyAndApproximate(exact, approximate, projCtx);
-  } else if (exact) {
-    bool reductionFailure = false;
-    *exact = e.cloneAndSimplify(projCtx, &reductionFailure);
+  if (exact) {
+    if (approximate) {
+      e.cloneAndSimplifyAndApproximate(exact, approximate, projCtx);
+    } else {
+      bool reductionFailure = false;
+      *exact = e.cloneAndSimplify(projCtx, &reductionFailure);
+    }
+    if (exact->isDep()) {
+      /* Reduction may have created a dependency.
+       * We remove that dependency in order to create layouts. */
+      *exact = exact->cloneChildAtIndex(0);
+    }
   } else {
+    assert(approximate);
     *approximate = e.cloneAndApproximate(projCtx);
-  }
-  if (exact && exact->isDep()) {
-    /* Reduction may have created a dependency.
-     * We remove that dependency in order to create layouts. */
-    *exact = exact->cloneChildAtIndex(0);
   }
   assert(!exact || !exact->isUninitialized());
   assert(!approximate || !approximate->isUninitialized());
@@ -255,13 +258,13 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     UserExpression* approximatePointer =
         displayApproximateSolution ? &approximate : nullptr;
     // Only re-reduce e if approximateDuringReduction is true.
-    bool reduceSolution = approximateDuringReduction;
-    UserExpression* exactPointer = reduceSolution ? &exact : nullptr;
+    UserExpression* exactPointer =
+        approximateDuringReduction ? &exact : nullptr;
     simplifyAndApproximateSolution(e, exactPointer, approximatePointer,
                                    approximateDuringReduction, context,
                                    m_solverContext.complexFormat, angleUnit,
                                    unitFormat, symbolicComputation);
-    if (!reduceSolution) {
+    if (!approximateDuringReduction) {
       exact = e;
     }
     displayExactSolution =

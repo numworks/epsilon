@@ -88,9 +88,9 @@ Bounds Bounds::Compute(const Tree* e) {
       /* If the angle is "too big", the precision of std::cos and std::sin is
        * lost. In this case the bounds should not be propagated through the sin
        * or cos function. */
-      constexpr double angleLimitForPrecision = 1000.0;
+      constexpr double k_angleLimitForPrecision = 1000.0;
       if (std::max(std::abs(b.lower()), std::abs(b.upper())) >=
-          angleLimitForPrecision) {
+          k_angleLimitForPrecision) {
         return Invalid();
       }
 

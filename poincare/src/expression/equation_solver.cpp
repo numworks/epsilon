@@ -348,6 +348,7 @@ void EquationSolver::ProjectAndReduce(Tree* equationsSet,
 Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
                                         uint8_t n, Context* context,
                                         Error* error) {
+  assert(*error == Error::NoError);
   context->exactResults = true;
   context->type = Type::LinearSystem;
   context->degree = 1;
@@ -405,7 +406,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
        * solution. */
       matrix->removeTree();
       equationSetWithoutDep->removeTree();
-      *error = Error::NoError;
+      assert(*error == Error::NoError);
       return SharedTreeStack->pushSet(0);
     }
     coefficient = coefficient->nextTree();
@@ -417,7 +418,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     context->solutionStatus = SolutionStatus::Incomplete;
     matrix->removeTree();
     equationSetWithoutDep->removeTree();
-    *error = Error::NoError;
+    assert(*error == Error::NoError);
     return SharedTreeStack->pushSet(0);
 #else
     /* The system is insufficiently qualified: bind the value of n-rank
@@ -490,14 +491,13 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   for (uint8_t row = 0; row < rows; row++) {
     for (uint8_t col = 0; col < cols; col++) {
       if (row < n && col == cols - 1) {
-        if (*error == Error::NoError) {
-          /* Replace the solution in the equation set to check later that it
-           * respects the dependencies. */
-          Variables::Replace(equationSetClone, row, child);
-          // Child has already been reduced.
-          assert(!Simplification::ReduceSystem(child, false));
-          // Continue anyway to preserve TreeStack integrity
-        }
+        assert(*error == Error::NoError);
+        /* Replace the solution in the equation set to check later that it
+         * respects the dependencies. */
+        Variables::Replace(equationSetClone, row, child);
+        // Child has already been reduced.
+        assert(!Simplification::ReduceSystem(child, false));
+        // Continue anyway to preserve TreeStack integrity
         child = child->nextTree();
       } else {
         child->removeTree();
@@ -511,7 +511,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   assert(equationSetClone->isList());
   for (const Tree* equation : equationSetClone->children()) {
     if (equation->isUndefined()) {
-      *error = Error::NoError;
+      assert(*error == Error::NoError);
       equationSetClone->removeTree();
       matrix->removeTree();
       equationSetWithoutDep->removeTree();

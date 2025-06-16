@@ -24,6 +24,11 @@ class Bounds {
 
   double lower() const { return m_lower; }
   double upper() const { return m_upper; }
+  double width() const {
+    /*  If the bounds are equal, 0.0 is returned to avoid floating-point errors
+     * when substracting two equal numbers */
+    return (m_lower == m_upper) ? 0.0 : m_upper - m_lower;
+  }
 
  private:
   Bounds(double lower, double upper, uint8_t ulp = 1)

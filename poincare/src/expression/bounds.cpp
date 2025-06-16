@@ -104,7 +104,7 @@ Bounds Bounds::Compute(const Tree* e) {
               ? IntervalData{Interval{-M_PI, M_PI}, 2 * M_PI, 0.0}
               : IntervalData{Interval{-M_PI_2, 3.0 * M_PI_2}, 2 * M_PI, M_PI_2};
       double principalAngleLower = MapToInterval(b.lower(), principalInterval);
-      double angleUpper = principalAngleLower + b.upper() - b.lower();
+      double angleUpper = principalAngleLower + b.width();
 
       /* The MapToInterval function performs some operations that each create
        * a small precision loss. To account for this precision loss, we expand

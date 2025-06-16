@@ -30,17 +30,6 @@ class Roots {
                      bool fastCardanoMethod = false);
   static Tree* CubicDiscriminant(const Tree* a, const Tree* b, const Tree* c,
                                  const Tree* d);
-  /* The approximation of cubic roots requires special attention. We have
-   * information on the number of real roots, looking at the discriminant
-   * sign. Approximation errors adding a very small imaginary part can be
-   * removed using this information. */
-  /* WARNING: this function assumes that all the cubic coefficients are real.
-   * Otherwise, we do not have any information on the "realness" of roots, and
-   * we can simply call the usual approximation function. */
-  /* TODO: this function could be generalized to quadratic polynomials (or even
-   * other polynomial degrees) */
-  static Tree* ApproximateRootsOfRealCubic(const Tree* roots,
-                                           const Tree* discriminant);
 
  private:
   constexpr static SimpleKTrees::KTree k_squareRootOfThree =
@@ -62,6 +51,18 @@ class Roots {
                      const Tree* c, const Tree* d);
 
   /* Cubic solver helpers */
+
+  /* The approximation of cubic roots requires special attention. We have
+   * information on the number of real roots, looking at the discriminant
+   * sign. Approximation errors adding a very small imaginary part can be
+   * removed using this information. */
+  /* WARNING: this function assumes that all the cubic coefficients are real.
+   * Otherwise, we do not have any information on the "realness" of roots, and
+   * we can simply call the usual approximation function. */
+  /* TODO: this function could be generalized to quadratic polynomials (or even
+   * other polynomial degrees) */
+  static Tree* ApproximateRootsOfRealCubic(const Tree* roots,
+                                           const Tree* discriminant);
 
   /* Return a list of three cubic roots in the special case where the "b" and
    * "c" cubic coefficients are null. */

@@ -66,8 +66,13 @@ bool isLastIndex(int numberOfChildren, int childIndex) {
   if (numberOfChildren != childIndex + 1) {
     return false;
   }
-  float ff = static_cast<float>(childIndex) / static_cast<float>(UINT8_MAX - 1);
-  return ff == std::round(ff);
+  /* Checking if the index is a multiple of UINT8_MAX-1 to detect:
+   * - (a+b+c+... + z)    z is 255-th child, with index 254
+   *                ^
+   * - (a+b+c+... + (z + aa + ab + .. + ay))    ay is 509-th, with index 508
+   *                                    ^
+   */
+  return childIndex > 0 && childIndex % (UINT8_MAX - 1) == 0;
 }
 
 bool NAry::Flatten(Tree* nary) {
@@ -93,7 +98,7 @@ bool NAry::Flatten(Tree* nary) {
     }
   }
   if (nodeRemoved) {
-    Tree* root = nary;
+    const Tree* root = nary;
     while (numberOfChildren > UINT8_MAX) {
       SetNumberOfChildren(nary, UINT8_MAX);
       numberOfChildren -= UINT8_MAX - 1;

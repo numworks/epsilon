@@ -12,22 +12,24 @@ struct Interval {
   double upper;
 };
 
-double Middle(Interval interval) {
-  return (interval.upper + interval.lower) / 2.0;
+struct IntervalData {
+  Interval interval;
+  double width;
+  double middle;
+};
+
+Interval LeftHalf(const IntervalData& intervalData) {
+  return Interval{intervalData.interval.lower, intervalData.middle};
 }
 
-Interval LeftHalf(Interval interval) {
-  return Interval{interval.lower, Middle(interval)};
+Interval RightHalf(const IntervalData& intervalData) {
+  return Interval{intervalData.middle, intervalData.interval.upper};
 }
 
-Interval RightHalf(Interval interval) {
-  return Interval{Middle(interval), interval.upper};
-}
-
-double MapToInterval(double value, Interval interval) {
-  double intervalWidth = interval.upper - interval.lower;
-  double scaled = (value - interval.lower) / intervalWidth;
-  return (scaled - std::floor(scaled)) * intervalWidth + interval.lower;
+double MapToInterval(double value, const IntervalData& intervalData) {
+  double scaled = (value - intervalData.interval.lower) / intervalData.width;
+  return (scaled - std::floor(scaled)) * intervalData.width +
+         intervalData.interval.lower;
 }
 
 bool IsInside(double value, Interval interval) {
@@ -93,9 +95,10 @@ Bounds Bounds::Compute(const Tree* e) {
       }
 
       bool isCos = e->child(1)->isZero();
-      Interval principalInterval =
-          isCos ? Interval{-M_PI, M_PI}
-                : Interval{-M_PI / 2.0, 3.0 * M_PI / 2.0};
+      IntervalData principalInterval =
+          isCos
+              ? IntervalData{Interval{-M_PI, M_PI}, 2 * M_PI, 0.0}
+              : IntervalData{Interval{-M_PI_2, 3.0 * M_PI_2}, 2 * M_PI, M_PI_2};
       double principalAngleLower = MapToInterval(b.lower(), principalInterval);
       double angleUpper = principalAngleLower + b.upper() - b.lower();
       if (IsInside(principalAngleLower, LeftHalf(principalInterval)) &&

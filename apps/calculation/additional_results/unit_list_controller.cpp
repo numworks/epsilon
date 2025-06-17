@@ -250,7 +250,8 @@ Layout UnitListController::layoutAtIndex(HighlightCell* cell, int index) {
              m_SIValue, m_referenceValues[index], m_tableIndexForComparison)
       .createLayout(Preferences::PrintFloatMode::Decimal,
                     Poincare::Preferences::LargeNumberOfSignificantDigits,
-                    nullptr);  // scientific
+                    nullptr)
+      .cloneAndTurnEToTenPowerLayout(false);
 }
 
 }  // namespace Calculation

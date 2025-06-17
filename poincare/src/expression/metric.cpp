@@ -172,18 +172,9 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
         // Increase cost of rationals in ln according to their value
         IntegerHandler p = Rational::Numerator(firstChild);
         IntegerHandler q = Rational::Denominator(firstChild);
-        if (p.is<int>() && q.is<int>()) {
-          p.setSign(NonStrictSign::Positive);
-          int n_p = p.to<int>();
-          int n_q = q.to<int>();
-          assert(!(n_p + n_q - 1 == 0));
-          childrenCoeff = (4 < (INT_MAX - childrenCoeff) / (n_p + n_q - 1))
-                              ? childrenCoeff + 4 * (n_p + n_q - 1)
-                              : INT_MAX;
-
-        } else {
-          childrenCoeff = INT_MAX;
-        }
+        p.setSign(NonStrictSign::Positive);
+        assert(p.to<float>() + q.to<float>() != 1.f);
+        childrenCoeff += 4.f * (p.to<float>() + q.to<float>() - 1.f);
       }
       break;
     }

@@ -65,7 +65,7 @@ class StoreMenuController : public Escher::ModalViewController,
     Escher::SelectableListView m_selectableListView;
   };
 
-  bool parseAndStore(const char* text);
+  bool store(Poincare::Layout layout);
   void openAbortWarning();
 
   char m_savedDraftTextBuffer[Escher::AbstractTextField::MaxBufferSize()];

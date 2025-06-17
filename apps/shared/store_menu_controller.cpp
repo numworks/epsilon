@@ -7,7 +7,6 @@
 #include <poincare/k_tree.h>
 
 #include "app_with_store_menu.h"
-#include "poincare_helpers.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -128,10 +127,10 @@ void StoreMenuController::openAbortWarning() {
   App::app()->modalViewController()->reloadModal();
 }
 
-bool StoreMenuController::parseAndStore(const char* text) {
+bool StoreMenuController::store(Layout layout) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
   Context* context = app->localContext();
-  UserExpression input = UserExpression::Parse(text, context);
+  UserExpression input = UserExpression::Parse(layout, context);
   if (input.isUninitialized() || !input.isStore()) {
     openAbortWarning();
     return false;
@@ -154,12 +153,7 @@ bool StoreMenuController::layoutFieldDidFinishEditing(
     Escher::LayoutField* layoutField, Ion::Events::Event event) {
   assert(layoutField == m_cell.layoutField());
   assert(!layoutField->isEditing());
-  constexpr size_t bufferSize = TextField::MaxBufferSize();
-  char buffer[bufferSize];
-  Layout layout = layoutField->layout();
-  [[maybe_unused]] size_t length = layout.serialize(buffer);
-  assert(length <= bufferSize);
-  if (parseAndStore(buffer)) {
+  if (store(layoutField->layout())) {
     layoutField->clearLayout();
     return true;
   }

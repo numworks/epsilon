@@ -464,21 +464,28 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     range = yMax() - yMin() + offscreenYAxis();
   }
   assert(range > 0.0f && std::isfinite(range));
-  assert(PoincareHelpers::ToFloat(m_userGridUnit(axis)) > 0.0f);
-  float numberOfUnits = range / PoincareHelpers::ToFloat(
-                                    m_userGridUnit(axis));  // in float for now
+
+  // The grid unit is half of the user parameter
+  // TODO: rename m_userGridUnit into m_userStep
+  ExpressionOrFloat userGridUnit = ExpressionOrFloat::Builder(
+      UserExpression::Create(KMult(1_e / 2_e, KA),
+                             {.KA = m_userGridUnit(axis).expression()})
+          .cloneAndTrySimplify({}),
+      PoincareHelpers::ApproximateToRealScalar);
+  assert(PoincareHelpers::ToFloat(userGridUnit) > 0.0f);
+  float numberOfUnits = range / PoincareHelpers::ToFloat(userGridUnit);
   if (minNumberOfUnits <= numberOfUnits && numberOfUnits <= maxNumberOfUnits) {
     // Case 1
-    return m_userGridUnit(axis);
+    return userGridUnit;
   } else if (numberOfUnits < minNumberOfUnits) {
     // Case 2
     int k = ClosestTwoFiveTenFactorAbove(
         static_cast<int>(std::ceil(minNumberOfUnits / numberOfUnits)));
     assert(k <= std::floor(maxNumberOfUnits / numberOfUnits));
     return ExpressionOrFloat::Builder(
-        UserExpression::Create(KMult(KA, KPow(KB, -1_e)),
-                               {.KA = m_userGridUnit(axis).expression(),
-                                .KB = UserExpression::Builder(k)})
+        UserExpression::Create(
+            KMult(KA, KPow(KB, -1_e)),
+            {.KA = userGridUnit.expression(), .KB = UserExpression::Builder(k)})
             .cloneAndTrySimplify({}),
         PoincareHelpers::ApproximateToRealScalar);
   }
@@ -489,9 +496,8 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   assert(k <= std::floor(numberOfUnits / minNumberOfUnits));
 
   return ExpressionOrFloat::Builder(
-      UserExpression::Create(KMult(KA, KB),
-                             {.KA = m_userGridUnit(axis).expression(),
-                              .KB = UserExpression::Builder(k)})
+      UserExpression::Create(KMult(KA, KB), {.KA = userGridUnit.expression(),
+                                             .KB = UserExpression::Builder(k)})
           .cloneAndTrySimplify({}),
       PoincareHelpers::ApproximateToRealScalar);
 

@@ -421,26 +421,24 @@ bool ShallowBeautify(Tree* e, void* context) {
     NAry::Sort(e, Order::OrderType::AdditionBeautification);
   }
 
-#if 0
   // TODO: handle lnReal too
   // ln(A)      * ln(B)^(-1) -> log(A, B)
   // ln(A)^(-1) * ln(B)      -> log(B, A)
-  changed = PatternMatching::MatchReplace(
-                ref, KMult(KA_s, KLn(KB), KPow(KLn(KC), -1_e), KD_s),
-                KMult(KA_s, KLogBase(KB, KC), KD_s)) ||
-            PatternMatching::MatchReplace(
-                ref, KMult(KA_s, KPow(KLn(KB), -1_e), KLn(KC), KD_s),
-                KMult(KA_s, KLogBase(KC, KB), KD_s));
-#endif
-
-  // ln(A)       * ln(10)^(-1) -> log(A)
-  // ln(10)^(-1) * ln(A)       -> log(A)
-  changed = PatternMatching::MatchReplace(
-                e, KMult(KA_s, KLn(KB), KC_s, KPow(KLn(10_e), -1_e), KD_s),
-                KMult(KA_s, KLog(KB), KC_s, KD_s)) ||
-            PatternMatching::MatchReplace(
-                e, KMult(KA_s, KPow(KLn(10_e), -1_e), KC_s, KLn(KB), KD_s),
-                KMult(KA_s, KLog(KB), KC_s, KD_s));
+  PatternMatching::Context ctx;
+  if (PatternMatching::Match(
+          e, KMult(KA_s, KLn(KB), KC_s, KPow(KLn(KD), -1_e), KE_s), &ctx) ||
+      PatternMatching::Match(
+          e, KMult(KA_s, KPow(KLn(KD), -1_e), KC_s, KLn(KB), KE_s), &ctx)) {
+    // log(A, 10) -> log(A)
+    if (ctx.getTree(KD)->treeIsIdenticalTo(10_e)) {
+      e->moveTreeOverTree(
+          PatternMatching::Create(KMult(KA_s, KLog(KB), KC_s, KE_s), ctx));
+    } else {
+      e->moveTreeOverTree(PatternMatching::Create(
+          KMult(KA_s, KLogBase(KB, KD), KC_s, KE_s), ctx));
+    }
+    changed = true;
+  }
 
   int n = e->numberOfChildren();
   while (e->isMult() && n > 1 &&

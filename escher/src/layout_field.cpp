@@ -628,8 +628,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
   layout = layout.makeEditable();
   if (LayoutPreferences::SharedPreferences()->editionMode() ==
       Poincare::Preferences::EditionMode::Edition1D) {
-    constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
-    char buffer[bufferSize];
+    /* TODO_PCJ: Check if layout is already a 1D layout. If so, insert it
+     * directly. */
     Expression e = Expression::Parse(layout, nullptr, true, false, true);
     if (!e.isUninitialized()) {
       layout =
@@ -639,6 +639,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
                              forceCursorLeftOfLayout);
     } else {
+      constexpr size_t bufferSize = AbstractTextField::MaxBufferSize();
+      char buffer[bufferSize];
       size_t length = layout.serialize(buffer);
       if (length == LayoutHelpers::k_bufferOverflow) {
         return;

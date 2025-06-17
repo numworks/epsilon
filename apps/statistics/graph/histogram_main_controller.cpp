@@ -211,8 +211,8 @@ void HistogramMainController::updateBannerView() {
     /* With the change of list view size, we need to align the last list element
      * with the new bottom. */
     m_listController.selectableListView()->scrollToCell(
-        m_listController.selectedSeries());
-
+        m_store->activeSeriesIndexFromSeriesIndex(
+            m_listController.selectedSeries()));
   } else {
     m_view.bannerView()->reload();
   }

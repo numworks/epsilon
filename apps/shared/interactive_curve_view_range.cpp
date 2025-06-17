@@ -350,10 +350,10 @@ void InteractiveCurveViewRange::privateSetUserStep(
   if (m_delegate && oldAuto != zoomAndGridUnitAuto()) {
     m_delegate->updateZoomButtons();
   }
-  /*  The m_gridUnit member variable is reset here to trigger a recomputation of
-   * the variable when it will accessed later on. When this recomputation
-   * occurs, m_gridUnit be recomputed from the value of the newly defined
-   * m_userStep, through the computeGridUnitFromUserParameter function. */
+  /* The m_gridUnit member variable is reset here to trigger a recomputation of
+   * the variable when it is accessed later on. m_gridUnit will be recomputed
+   * from the value of the newly defined m_userStep, through the
+   * computeGridUnitFromUserParameter function. */
   resetGridUnit();
 }
 

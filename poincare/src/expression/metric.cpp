@@ -83,18 +83,24 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
             result -= GetMetric(Type::Mult);
           }
         }
-        // ln(A)/ln(10) is beautified into log(A)
-        constexpr const Tree* invLn10 = KPow(KLn(10_e), -1_e);
+        // Reset context
+        ctx = PatternMatching::Context();
+        // ln(A)/ln(B) is beautified into log(A,B)
+        constexpr const Tree* invLn = KPow(KLn(KB), -1_e);
         bool hasLn = false;
-        bool hasInvLn10 = false;
+        const Tree* lastInvLn = nullptr;
         for (const Tree* child : e->children()) {
+          assert(!lastInvLn == !ctx.getTree(KB));
           if (child->isLn()) {
             hasLn = true;
-          } else if (child->treeIsIdenticalTo(invLn10)) {
-            hasInvLn10 = true;
+          } else if (!lastInvLn && PatternMatching::Match(child, invLn, &ctx)) {
+            lastInvLn = child;
           }
-          if (hasLn && hasInvLn10) {
-            result -= GetTrueMetric(invLn10, reductionTarget);
+          if (hasLn && ctx.getTree(KB)) {
+            assert(!lastInvLn == !ctx.getTree(KB));
+            // Discard 1/ln(B) cost, bu t preserve B cost.
+            result -= GetTrueMetric(lastInvLn, reductionTarget);
+            result += GetTrueMetric(ctx.getTree(KB), reductionTarget);
             if (e->numberOfChildren() == 2) {
               result -= GetMetric(Type::Mult);
             }

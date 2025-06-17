@@ -1508,7 +1508,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("log(1,inf)", "0");
   simplifies_to("log(1,-inf)", "0", cartesianCtx);
   simplifies_to("log(x,inf)", "dep(0,{0×ln(x),nonNull(x),realPos(x)})");
-  simplifies_to("log(x,-inf)", "dep(ln(x)/(∞+π×i),{nonNull(x)})", cartesianCtx);
+  simplifies_to("log(x,-inf)", "dep(log(x,-∞),{nonNull(x)})", cartesianCtx);
   simplifies_to("log(inf,inf)", "undef");
   // TODO_PCJ simplifies_to("log(-inf,inf)", "undef", cartesianCtx);
   // TODO_PCJ simplifies_to("log(inf,-inf)", "undef", cartesianCtx);
@@ -1811,12 +1811,9 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(e^(i×2×π))", "0", cartesianCtx);
 
   simplifies_to("log(9,7)", "2×log(3,7)");
-  // TODO: "2×log(3,8)"
-  simplifies_to("log(9,8)", "(2×log(3,2))/3");
-  // TODO: "log(3,7)+log(5,7)"
-  simplifies_to("log(3,7)+log(5,7)", "(ln(3)+ln(5))/ln(7)");
-  // TODO: "log(3,8)+log(5,8)"
-  simplifies_to("log(3,8)+log(5,8)", "(ln(3)+ln(5))/(3×ln(2))");
+  simplifies_to("log(9,8)", "2×log(3,8)");
+  simplifies_to("log(3,7)+log(5,7)", "log(3,7)+log(5,7)");
+  simplifies_to("log(3,8)+log(5,8)", "log(3,8)+log(5,8)");
 }
 
 QUIZ_CASE(pcj_simplification_large_integer_no_crash) {

@@ -39,7 +39,7 @@ class SingleInteractiveCurveViewRangeController
   void setAxis(OMG::Axis axis);
 
  private:
-  constexpr static int k_gridUnitCellType = 3;
+  constexpr static int k_stepCellType = 3;
   I18n::Message parameterMessage(int index) const override {
     assert(index == 0 || index == 1);
     return index == 0 ? I18n::Message::Minimum : I18n::Message::Maximum;
@@ -59,8 +59,8 @@ class SingleInteractiveCurveViewRangeController
   ParameterType parameterAtIndex(int index) override;
   bool hasUndefinedValue(const char* text, ParameterType value,
                          int row) const override;
-  bool gridUnitIsAuto() const {
-    return std::isnan(PoincareHelpers::ToFloat(m_gridUnitParam));
+  bool stepIsAuto() const {
+    return std::isnan(PoincareHelpers::ToFloat(m_stepParameter));
   }
 
   InteractiveCurveViewRange* m_range;
@@ -68,7 +68,7 @@ class SingleInteractiveCurveViewRangeController
   Poincare::Range1D<FloatType> m_secondaryRangeParam;
 
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_gridUnitCell;
-  ParameterType m_gridUnitParam;
+  ParameterType m_stepParameter;
 
   OMG::Axis m_axis;
 };

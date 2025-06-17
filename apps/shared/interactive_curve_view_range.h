@@ -18,7 +18,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  public:
   constexpr static float k_maxFloat = 1E+8f;
   using GridType = GridTypeController::GridType;
-  using GridUnitType = Poincare::ExpressionOrFloat;
+  using UserStepType = Poincare::ExpressionOrFloat;
   template <typename T>
   using AxisInformation = MemoizedCurveViewRange::AxisInformation<T>;
 
@@ -56,21 +56,19 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
     return gridUnitAuto(OMG::Axis::Horizontal) &&
            gridUnitAuto(OMG::Axis::Vertical);
   }
-  void setGridUnitAuto() { privateSetUserGridUnit({}, {}); }
+  void setGridUnitAuto() { privateSetUserStep({}, {}); }
   bool gridUnitAuto(OMG::Axis axis) const {
-    return std::isnan(PoincareHelpers::ToFloat(m_userGridUnit(axis)));
+    return std::isnan(PoincareHelpers::ToFloat(m_userStep(axis)));
   }
-  AxisInformation<GridUnitType> userGridUnit() const { return m_userGridUnit; }
-  void setUserGridUnit(AxisInformation<GridUnitType> userGridUnit) {
-    privateSetUserGridUnit(userGridUnit.x, userGridUnit.y);
+  AxisInformation<UserStepType> userStep() const { return m_userStep; }
+  void setUserStep(AxisInformation<UserStepType> userStep) {
+    privateSetUserStep(userStep.x, userStep.y);
   }
-  GridUnitType userGridUnit(OMG::Axis axis) const {
-    return m_userGridUnit(axis);
-  }
-  void setUserGridUnit(OMG::Axis axis, GridUnitType v) {
-    AxisInformation<GridUnitType> newGridUnit = m_userGridUnit;
-    newGridUnit.set(axis, v);
-    privateSetUserGridUnit(newGridUnit.x, newGridUnit.y);
+  UserStepType userStep(OMG::Axis axis) const { return m_userStep(axis); }
+  void setUserStep(OMG::Axis axis, UserStepType v) {
+    AxisInformation<UserStepType> newUserStep = m_userStep;
+    newUserStep.set(axis, v);
+    privateSetUserStep(newUserStep.x, newUserStep.y);
   }
   bool zoomNormalize() const { return m_zoomNormalize; }
   void setZoomNormalize(bool v);
@@ -106,8 +104,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
     return (rangeChecksum() == other.rangeChecksum() &&
             m_zoomAuto(Horizontal) == other.m_zoomAuto(Horizontal) &&
             m_zoomAuto(Vertical) == other.m_zoomAuto(Vertical) &&
-            m_gridType == other.m_gridType &&
-            m_userGridUnit == other.m_userGridUnit);
+            m_gridType == other.m_gridType && m_userStep == other.m_userStep);
   }
 
  protected:
@@ -143,7 +140,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
  private:
   void privateSetZoomAuto(bool xAuto, bool yAuto);
   void privateSetGridUnitAuto(bool xAuto, bool yAuto);
-  void privateSetUserGridUnit(GridUnitType xValue, GridUnitType yValue);
+  void privateSetUserStep(UserStepType xValue, UserStepType yValue);
   void privateComputeRanges(bool computeX, bool computeY);
   Poincare::ExpressionOrFloat computeGridUnitFromUserParameter(
       OMG::Axis axis) const;
@@ -157,7 +154,7 @@ class InteractiveCurveViewRange : public MemoizedCurveViewRange {
 
   GridType m_gridType;
   AxisInformation<bool> m_zoomAuto;
-  AxisInformation<GridUnitType> m_userGridUnit;
+  AxisInformation<UserStepType> m_userStep;
   bool m_zoomNormalize;
 };
 

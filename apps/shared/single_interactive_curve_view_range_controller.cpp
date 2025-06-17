@@ -18,7 +18,7 @@ SingleInteractiveCurveViewRangeController::
                                             confirmPopUpController),
       m_range(interactiveRange),
       m_gridUnitCell(&this->m_selectableListView, this),
-      m_gridUnitParam(NAN) {
+      m_stepParameter(NAN) {
   m_gridUnitCell.label()->setMessage(I18n::Message::Step);
 }
 
@@ -40,22 +40,19 @@ bool SingleInteractiveCurveViewRangeController::boundsParametersAreDifferent() {
 }
 
 bool SingleInteractiveCurveViewRangeController::parametersAreDifferent() {
-  FloatType approximateGridUnitParam =
-      PoincareHelpers::ToFloat(m_gridUnitParam);
-  FloatType approximateUserGridUnit =
-      PoincareHelpers::ToFloat(m_range->userGridUnit(m_axis));
-  bool gridParamIsDifferent =
-      std::isnan(approximateGridUnitParam) !=
-          std::isnan(approximateUserGridUnit) ||
-      (!std::isnan(approximateGridUnitParam) &&
-       !std::isnan(approximateUserGridUnit) &&
-       approximateGridUnitParam != approximateUserGridUnit);
-  return gridParamIsDifferent || boundsParametersAreDifferent();
+  FloatType newStepValue = PoincareHelpers::ToFloat(m_stepParameter);
+  FloatType currentStepValue =
+      PoincareHelpers::ToFloat(m_range->userStep(m_axis));
+  bool stepParameterIsDifferent =
+      std::isnan(newStepValue) != std::isnan(currentStepValue) ||
+      (!std::isnan(newStepValue) && !std::isnan(currentStepValue) &&
+       newStepValue != currentStepValue);
+  return stepParameterIsDifferent || boundsParametersAreDifferent();
 }
 
 void SingleInteractiveCurveViewRangeController::extractParameters() {
   m_autoParam = m_range->zoomAuto(m_axis);
-  m_gridUnitParam = m_range->userGridUnit(m_axis);
+  m_stepParameter = m_range->userStep(m_axis);
   if (m_axis == OMG::Axis::Horizontal) {
     m_rangeParam =
         Range1D<float>::ValidRangeBetween(m_range->xMin(), m_range->xMax());
@@ -92,12 +89,12 @@ void SingleInteractiveCurveViewRangeController::setAutoRange() {
           Range1D<float>::ValidRangeBetween(tempRange.yMin(), tempRange.yMax());
     }
     // Reset the grid unit to "auto"
-    m_gridUnitParam = ExpressionOrFloat{};
+    m_stepParameter = ExpressionOrFloat{};
   }
 }
 
 void SingleInteractiveCurveViewRangeController::confirmParameters() {
-  m_range->setUserGridUnit(m_axis, m_gridUnitParam);
+  m_range->setUserStep(m_axis, m_stepParameter);
   if (boundsParametersAreDifferent()) {
     // Deactivate auto status before updating values.
     m_range->setZoomAuto(m_axis, false);
@@ -128,12 +125,12 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
 
 bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
     int parameterIndex, ParameterType value) {
-  if (typeAtRow(parameterIndex) == k_gridUnitCellType) {
+  if (typeAtRow(parameterIndex) == k_stepCellType) {
     if (PoincareHelpers::ToFloat(value) <= 0.0f) {
       App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }
-    m_gridUnitParam = value;
+    m_stepParameter = value;
     return true;
   }
   return SingleRangeControllerExactExpressions::setParameterAtIndex(
@@ -141,34 +138,34 @@ bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
 }
 
 int SingleInteractiveCurveViewRangeController::typeAtRow(int row) const {
-  return row == 3 ? k_gridUnitCellType
+  return row == 3 ? k_stepCellType
                   : SingleRangeControllerExactExpressions::typeAtRow(row);
 }
 
 KDCoordinate SingleInteractiveCurveViewRangeController::nonMemoizedRowHeight(
     int row) {
-  return typeAtRow(row) == k_gridUnitCellType
+  return typeAtRow(row) == k_stepCellType
              ? m_gridUnitCell.minimalSizeForOptimalDisplay().height()
              : SingleRangeControllerExactExpressions::nonMemoizedRowHeight(row);
 }
 
 KDCoordinate SingleInteractiveCurveViewRangeController::separatorBeforeRow(
     int row) const {
-  return typeAtRow(row) == k_gridUnitCellType
+  return typeAtRow(row) == k_stepCellType
              ? k_defaultRowSeparator
              : SingleRangeControllerExactExpressions::separatorBeforeRow(row);
 }
 
 int SingleInteractiveCurveViewRangeController::reusableParameterCellCount(
     int type) const {
-  return type == k_gridUnitCellType ? 1
-                                    : SingleRangeControllerExactExpressions::
-                                          reusableParameterCellCount(type);
+  return type == k_stepCellType ? 1
+                                : SingleRangeControllerExactExpressions::
+                                      reusableParameterCellCount(type);
 }
 
 HighlightCell* SingleInteractiveCurveViewRangeController::reusableParameterCell(
     int index, int type) {
-  return type == k_gridUnitCellType
+  return type == k_stepCellType
              ? &m_gridUnitCell
              : SingleRangeControllerExactExpressions::reusableParameterCell(
                    index, type);
@@ -176,7 +173,7 @@ HighlightCell* SingleInteractiveCurveViewRangeController::reusableParameterCell(
 
 TextField* SingleInteractiveCurveViewRangeController::textFieldOfCellAtIndex(
     HighlightCell* cell, int index) {
-  if (typeAtRow(index) == k_gridUnitCellType) {
+  if (typeAtRow(index) == k_stepCellType) {
     assert(cell == &m_gridUnitCell);
     return m_gridUnitCell.textField();
   }
@@ -186,14 +183,14 @@ TextField* SingleInteractiveCurveViewRangeController::textFieldOfCellAtIndex(
 
 SingleInteractiveCurveViewRangeController::ParameterType
 SingleInteractiveCurveViewRangeController::parameterAtIndex(int index) {
-  return typeAtRow(index) == k_gridUnitCellType
-             ? m_gridUnitParam
+  return typeAtRow(index) == k_stepCellType
+             ? m_stepParameter
              : SingleRangeControllerExactExpressions::parameterAtIndex(index);
 }
 
 bool SingleInteractiveCurveViewRangeController::hasUndefinedValue(
     const char* text, ParameterType value, int row) const {
-  if (text[0] == 0 && typeAtRow(row) == k_gridUnitCellType) {
+  if (text[0] == 0 && typeAtRow(row) == k_stepCellType) {
     // Accept empty inputs for grid unit cell
     return false;
   }
@@ -203,7 +200,7 @@ bool SingleInteractiveCurveViewRangeController::hasUndefinedValue(
 
 void SingleInteractiveCurveViewRangeController::fillCellForRow(
     HighlightCell* cell, int row) {
-  if (typeAtRow(row) == k_gridUnitCellType && gridUnitIsAuto()) {
+  if (typeAtRow(row) == k_stepCellType && stepIsAuto()) {
     textFieldOfCellAtIndex(cell, row)->setText(
         I18n::translate(I18n::Message::DefaultSetting));
     return;
@@ -214,8 +211,8 @@ void SingleInteractiveCurveViewRangeController::fillCellForRow(
 bool SingleInteractiveCurveViewRangeController::textFieldDidReceiveEvent(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   if ((event == Ion::Events::OK || event == Ion::Events::EXE) &&
-      !textField->isEditing() &&
-      typeAtRow(selectedRow()) == k_gridUnitCellType && gridUnitIsAuto()) {
+      !textField->isEditing() && typeAtRow(selectedRow()) == k_stepCellType &&
+      stepIsAuto()) {
     // Remove "Auto" text to start edition
     textField->setText("");
   }

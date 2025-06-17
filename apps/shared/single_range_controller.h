@@ -27,7 +27,7 @@ class SingleRangeController : public ParentType {
    * For instance for ParentType = ExpressionParameterController, it's useful
    * that parameterAtIndex returns an ExpressionOrFloat. That is because in
    * the child class SingleInteractiveCurveViewRangeController, there is another
-   * parameter beside the range (namely m_gridUnitParam), which needs to have
+   * parameter beside the range (namely m_stepParameter), which needs to have
    * the same type for the parameterAtIndex method. */
   using ParameterType = typename ParentType::ParameterType;
   using FloatType = typename ParentType::FloatType;

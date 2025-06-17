@@ -341,19 +341,19 @@ void InteractiveCurveViewRange::privateSetZoomAuto(bool xAuto, bool yAuto) {
   }
 }
 
-void InteractiveCurveViewRange::privateSetUserGridUnit(
-    InteractiveCurveViewRange::GridUnitType xValue,
-    InteractiveCurveViewRange::GridUnitType yValue) {
+void InteractiveCurveViewRange::privateSetUserStep(
+    InteractiveCurveViewRange::UserStepType xValue,
+    InteractiveCurveViewRange::UserStepType yValue) {
   bool oldAuto = zoomAndGridUnitAuto();
-  m_userGridUnit.x = xValue;
-  m_userGridUnit.y = yValue;
+  m_userStep.x = xValue;
+  m_userStep.y = yValue;
   if (m_delegate && oldAuto != zoomAndGridUnitAuto()) {
     m_delegate->updateZoomButtons();
   }
   /*  The m_gridUnit member variable is reset here to trigger a recomputation of
    * the variable when it will accessed later on. When this recomputation
-   * occurs, m_gridUnit will take the value of m_userGridUnit which has just
-   * been defined. */
+   * occurs, m_gridUnit be recomputed from the value of the newly defined
+   * m_userStep, through the computeGridUnitFromUserParameter function. */
   resetGridUnit();
 }
 
@@ -466,17 +466,16 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   assert(range > 0.0f && std::isfinite(range));
 
   // The grid unit is half of the user parameter
-  // TODO: rename m_userGridUnit into m_userStep
-  ExpressionOrFloat userGridUnit = ExpressionOrFloat::Builder(
+  ExpressionOrFloat userStep = ExpressionOrFloat::Builder(
       UserExpression::Create(KMult(1_e / 2_e, KA),
-                             {.KA = m_userGridUnit(axis).expression()})
+                             {.KA = m_userStep(axis).expression()})
           .cloneAndTrySimplify({}),
       PoincareHelpers::ApproximateToRealScalar);
-  assert(PoincareHelpers::ToFloat(userGridUnit) > 0.0f);
-  float numberOfUnits = range / PoincareHelpers::ToFloat(userGridUnit);
+  assert(PoincareHelpers::ToFloat(userStep) > 0.0f);
+  float numberOfUnits = range / PoincareHelpers::ToFloat(userStep);
   if (minNumberOfUnits <= numberOfUnits && numberOfUnits <= maxNumberOfUnits) {
     // Case 1
-    return userGridUnit;
+    return userStep;
   } else if (numberOfUnits < minNumberOfUnits) {
     // Case 2
     int k = ClosestTwoFiveTenFactorAbove(
@@ -485,7 +484,7 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
     return ExpressionOrFloat::Builder(
         UserExpression::Create(
             KMult(KA, KPow(KB, -1_e)),
-            {.KA = userGridUnit.expression(), .KB = UserExpression::Builder(k)})
+            {.KA = userStep.expression(), .KB = UserExpression::Builder(k)})
             .cloneAndTrySimplify({}),
         PoincareHelpers::ApproximateToRealScalar);
   }
@@ -496,7 +495,7 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   assert(k <= std::floor(numberOfUnits / minNumberOfUnits));
 
   return ExpressionOrFloat::Builder(
-      UserExpression::Create(KMult(KA, KB), {.KA = userGridUnit.expression(),
+      UserExpression::Create(KMult(KA, KB), {.KA = userStep.expression(),
                                              .KB = UserExpression::Builder(k)})
           .cloneAndTrySimplify({}),
       PoincareHelpers::ApproximateToRealScalar);
@@ -504,29 +503,29 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   // clang-format off
   /* Proof of the algorithm:
    *
-   * We want to find gridUnit = userGridUnit * k or gridUnit = userGridUnit / k, with k an integer,
+   * We want to find gridUnit = userStep * k or gridUnit = userStep / k, with k an integer,
    * and k being a "two-five-ten" factor (meaning k is part of ({1, 2, 5}x10^n)).
    * We want: minNumberOfUnits <= range / gridUnit <= maxNumberOfUnits
    *
-   * Case 1: minNumberOfUnits <= range / userGridUnit <= maxNumberOfUnits
+   * Case 1: minNumberOfUnits <= range / userStep <= maxNumberOfUnits
    * ------
-   * The solution is userGridUnit.
+   * The solution is userStep.
    *
-   * Case 2: range / userGridUnit < minNumberOfUnits
+   * Case 2: range / userStep < minNumberOfUnits
    * -------
-   * We want to decrease the grid unit, so we look for gridUnit = userGridUnit / k, with k an integer
+   * We want to decrease the grid unit, so we look for gridUnit = userStep / k, with k an integer
    * A solution thus needs to verify:
-   *       minNumberOfUnits <= range / (userGridUnit / k) <= maxNumberOfUnits
-   * <=>   minNumberOfUnits <=  k * range / userGridUnit  <= maxNumberOfUnits
-   * <=>   E1 = minNumberOfUnits * userGridUnit / range <= k <= maxNumberOfUnits * userGridUnit / range = E2
+   *       minNumberOfUnits <= range / (userStep / k) <= maxNumberOfUnits
+   * <=>   minNumberOfUnits <=  k * range / userStep  <= maxNumberOfUnits
+   * <=>   E1 = minNumberOfUnits * userStep / range <= k <= maxNumberOfUnits * userStep / range = E2
    * Since k must be a integer,
    * <=>   ceil(E1) <= k <= floor(E2)
    *
    * We have a solution if ceil(E1) <= floor(E2) <=> floor(E1) < floor(E2) <=> floor(E1) != floor(E2)
    *
    * Let's compute E2 - E1:
-   * E2 - E1 = (maxNumberOfUnits - minNumberOfUnits) * userGridUnit / range
-   * and since range / userGridUnit < minNumberOfUnits
+   * E2 - E1 = (maxNumberOfUnits - minNumberOfUnits) * userStep / range
+   * and since range / userStep < minNumberOfUnits
    * E2 - E1 > (maxNumberOfUnits - minNumberOfUnits) / minNumberOfUnits = E3
    * minNumberOfUnits and maxNumberOfUnits have predefined values depending on the axis. For the x-axis,
    * minNumberOfUnits = 7 and maxNumberOfUnits = 18 so E3 = 1.57, and for the y-axis, minNumberOfUnits = 5
@@ -536,7 +535,7 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    *
    * We take the smallest "two-five-ten" factor available to be as close as possible to the user input:
    * k = ClosestTwoFiveTenFactorAbove(ceil(E1))
-   * k = ClosestTwoFiveTenFactorAbove(ceil(minNumberOfUnits * userGridUnit / range))
+   * k = ClosestTwoFiveTenFactorAbove(ceil(minNumberOfUnits * userStep / range))
    *
    * Given that maxNumberOfUnits / minNumberOfUnits is always > 2.5 (18/7 = 2.57 and 13/5 = 2.6), and that
    * ClosestTwoFiveTenFactorAbove multiplies its input by 2.5 in the worst case (example:
@@ -544,25 +543,25 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    *
    * Some examples for minNumberOfUnits = 7 and maxNumberOfUnits = 18:
    *
-   * Example 1: x = range / userGridUnit = 3 (user choice)
+   * Example 1: x = range / userStep = 3 (user choice)
    * Then ceil(E1) = ceil(7/3) = 3
    * k = ClosestTwoFiveTenFactorAbove(ceil(E1)) = 5
    * And floor(E2) = floor(18/3) = 6 is greater than k
    *
-   * Example 2: x = range / userGridUnit = 1/286  (user choice)
+   * Example 2: x = range / userStep = 1/286  (user choice)
    * Then ceil(E1) = ceil(7/(1/286)) = 2002
    * k = ClosestTwoFiveTenFactorAbove(ceil(E1)) = 5000
    * And floor(E2) = floor(18/(1/286)) = 5148 is greater than k
    *
-   * Case 3: range / userGridUnit > maxNumberOfUnits
+   * Case 3: range / userStep > maxNumberOfUnits
    * -------
-   * We want to increase the grid unit, so we look for gridUnit = userGridUnit * k, with k an integer
+   * We want to increase the grid unit, so we look for gridUnit = userStep * k, with k an integer
    * Similar computation than in case 2 will give
-   * E1 = range / (maxNumberOfUnits * userGridUnit)
-   * E2 = range / (minNumberOfUnits * userGridUnit)
+   * E1 = range / (maxNumberOfUnits * userStep)
+   * E2 = range / (minNumberOfUnits * userStep)
    * Let's compute E2 - E1:
-   * E2 - E1 = (1/minNumberOfUnits - 1/maxNumberOfUnits) * range / userGridUnit
-   * and since range / userGridUnit > maxNumberOfUnits
+   * E2 - E1 = (1/minNumberOfUnits - 1/maxNumberOfUnits) * range / userStep
+   * and since range / userStep > maxNumberOfUnits
    * E2 - E1 > (1/minNumberOfUnits - 1/maxNumberOfUnits) * maxNumberOfUnits = (maxNumberOfUnits - minNumberOfUnits) / minNumberOfUnits = E3
    * We saw in case 2 that E3 > 1.5
    * => E2 - E1 > 1.5
@@ -570,16 +569,16 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    *
    * We take the smallest "two-five-ten" factor available to be as close as possible to the user input:
    * k = ClosestTwoFiveTenFactorAbove(ceil(E1))
-   *   = ClosestTwoFiveTenFactorAbove(ceil(range / (maxNumberOfUnits * userGridUnit)))
+   *   = ClosestTwoFiveTenFactorAbove(ceil(range / (maxNumberOfUnits * userStep)))
    *
    * Some examples for minNumberOfUnits = 7 and maxNumberOfUnits = 18:
    *
-   * Example 1: x = range / userGridUnit = 37 (user choice)
+   * Example 1: x = range / userStep = 37 (user choice)
    * Then ceil(E1) = ceil(37/18) = 3
    * k = ClosestTwoFiveTenFactorAbove(ceil(E1)) = 5
    * And floor(E2) = floor(37/7) = 5 is equal to k
    *
-   * Example 2: x = range / userGridUnit = 361 (user choice)
+   * Example 2: x = range / userStep = 361 (user choice)
    * Then ceil(E1) = ceil(361/18) = 21
    * k = ClosestTwoFiveTenFactorAbove(ceil(E1)) = 50
    * And floor(E2) = floor(361/7) = 51 is greater than k

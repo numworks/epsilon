@@ -639,7 +639,10 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
                              forceCursorLeftOfLayout);
     } else {
-      [[maybe_unused]] size_t length = layout.serialize(buffer);
+      size_t length = layout.serialize(buffer);
+      if (length == LayoutHelpers::k_bufferOverflow) {
+        return;
+      }
       assert(length <= bufferSize);
       insertText(buffer, false, forceCursorRightOfLayout);
     }

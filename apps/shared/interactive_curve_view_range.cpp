@@ -498,7 +498,8 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
   // clang-format off
   /* Proof of the algorithm:
    *
-   * We want to find gridUnit = userGridUnit * k or gridUnit = userGridUnit / k, with k an integer.
+   * We want to find gridUnit = userGridUnit * k or gridUnit = userGridUnit / k, with k an integer,
+   * and k being a "two-five-ten" factor (meaning k is part of ({1, 2, 5}x10^n)).
    * We want: minNumberOfUnits <= range / gridUnit <= maxNumberOfUnits
    *
    * Case 1: minNumberOfUnits <= range / userGridUnit <= maxNumberOfUnits
@@ -521,8 +522,9 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    * E2 - E1 = (maxNumberOfUnits - minNumberOfUnits) * userGridUnit / range
    * and since range / userGridUnit < minNumberOfUnits
    * E2 - E1 > (maxNumberOfUnits - minNumberOfUnits) / minNumberOfUnits = E3
-   * For minNumberOfUnits = 7 and maxNumberOfUnits = 18, E3 = 1.57...
-   * For minNumberOfUnits = 5 and maxNumberOfUnits = 13, E3 = 1.6
+   * minNumberOfUnits and maxNumberOfUnits have predefined values depending on the axis. For the x-axis,
+   * minNumberOfUnits = 7 and maxNumberOfUnits = 18 so E3 = 1.57, and for the y-axis, minNumberOfUnits = 5
+   * and maxNumberOfUnits = 13 so E3 = 1.6.
    * => E2 - E1 > 1.5
    * => floor(E1) != floor(E2)
    *
@@ -550,10 +552,9 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    *
    * We take the smallest "two-five-ten" factor available to be as close as possible to the user input:
    * k = ClosestTwoFiveTenFactorAbove(ceil(E1))
-   * k = ClosestTwoFiveTenFactorAbove(ceil(range / (maxNumberOfUnits * userGridUnit)))
+   *   = ClosestTwoFiveTenFactorAbove(ceil(range / (maxNumberOfUnits * userGridUnit)))
    *
-   * See Case 2 above for a proof of why we can always find a suitable k.
-   * */
+   */
   // clang-format on
 }
 

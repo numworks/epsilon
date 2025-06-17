@@ -33,14 +33,17 @@ class Tokenizer {
 
   struct State {
     LayoutSpanDecoder decoder;
+    Poincare::Context* parsingContextContext;
     int numberOfStoredIdentifiers = -1;
   };
   State currentState() {
     return State{.decoder = m_decoder,
+                 .parsingContextContext = m_parsingContext->context(),
                  .numberOfStoredIdentifiers = m_numberOfStoredIdentifiers};
   }
   void setState(State state) {
     m_decoder = state.decoder;
+    m_parsingContext->setContext(state.parsingContextContext);
     m_numberOfStoredIdentifiers = state.numberOfStoredIdentifiers;
   }
 

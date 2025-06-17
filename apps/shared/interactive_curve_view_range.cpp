@@ -542,6 +542,18 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    * ClosestTwoFiveTenFactorAbove multiplies its input by 2.5 in the worst case (example:
    * ClosestTwoFiveTenFactorAbove(21)=50), we will always be able to find a suitable value for k.
    *
+   * Some examples for minNumberOfUnits = 7 and maxNumberOfUnits = 18:
+   *
+   * Example 1: x = range / userGridUnit = 3 (user choice)
+   * Then ceil(E1) = ceil(7/3) = 3
+   * k = ClosestTwoFiveTenFactorAbove(ceil(E1)) = 5
+   * And floor(E2) = floor(18/3) = 6 is greater than k
+   *
+   * Example 2: x = range / userGridUnit = 1/286  (user choice)
+   * Then ceil(E1) = ceil(7/(1/286)) = 2002
+   * k = ClosestTwoFiveTenFactorAbove(ceil(E1)) = 5000
+   * And floor(E2) = floor(18/(1/286)) = 5148 is greater than k
+   *
    * Case 3: range / userGridUnit > maxNumberOfUnits
    * -------
    * We want to increase the grid unit, so we look for gridUnit = userGridUnit * k, with k an integer
@@ -559,6 +571,18 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    * We take the smallest "two-five-ten" factor available to be as close as possible to the user input:
    * k = ClosestTwoFiveTenFactorAbove(ceil(E1))
    *   = ClosestTwoFiveTenFactorAbove(ceil(range / (maxNumberOfUnits * userGridUnit)))
+   *
+   * Some examples for minNumberOfUnits = 7 and maxNumberOfUnits = 18:
+   *
+   * Example 1: x = range / userGridUnit = 37 (user choice)
+   * Then ceil(E1) = ceil(37/18) = 3
+   * k = ClosestTwoFiveTenFactorAbove(ceil(E1)) = 5
+   * And floor(E2) = floor(37/7) = 5 is equal to k
+   *
+   * Example 2: x = range / userGridUnit = 361 (user choice)
+   * Then ceil(E1) = ceil(361/18) = 21
+   * k = ClosestTwoFiveTenFactorAbove(ceil(E1)) = 50
+   * And floor(E2) = floor(361/7) = 51 is greater than k
    *
    */
   // clang-format on

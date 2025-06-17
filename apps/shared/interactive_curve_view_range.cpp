@@ -539,7 +539,8 @@ ExpressionOrFloat InteractiveCurveViewRange::computeGridUnitFromUserParameter(
    *
    * Given that maxNumberOfUnits / minNumberOfUnits is always > 2.5 (18/7 = 2.57 and 13/5 = 2.6), and that
    * ClosestTwoFiveTenFactorAbove multiplies its input by 2.5 in the worst case (example:
-   * ClosestTwoFiveTenFactorAbove(21)=50), we will always be able to find a suitable value for k.
+   * ClosestTwoFiveTenFactorAbove(21)=50), we will (hopefully) always be able to find a suitable value for k.
+   * We don't have a formal proof of this, but testing on worst case values seems to always work.
    *
    * Some examples for minNumberOfUnits = 7 and maxNumberOfUnits = 18:
    *

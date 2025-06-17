@@ -1809,6 +1809,15 @@ QUIZ_CASE(pcj_simplification_logarithm) {
   simplifies_to("ln(e^(i×π))", "π×i", cartesianCtx);
   simplifies_to("ln(e^(-i×π))", "π×i", cartesianCtx);
   simplifies_to("ln(e^(i×2×π))", "0", cartesianCtx);
+
+  // TODO: "2×log(3,7)"
+  simplifies_to("log(9,7)", "(2×ln(3))/ln(7)");
+  // TODO: "2×log(3,8)"
+  simplifies_to("log(9,8)", "(2×ln(3))/(3×ln(2))");
+  // TODO: "log(3,7)+log(5,7)"
+  simplifies_to("log(3,7)+log(5,7)", "(ln(3)+ln(5))/ln(7)");
+  // TODO: "log(3,8)+log(5,8)"
+  simplifies_to("log(3,8)+log(5,8)", "(ln(3)+ln(5))/(3×ln(2))");
 }
 
 QUIZ_CASE(pcj_simplification_large_integer_no_crash) {

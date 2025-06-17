@@ -219,9 +219,9 @@ bool Layout::isCodePointsString() const {
 }
 
 Layout Layout::cloneAndTurnEToTenPowerLayout(bool linear) const {
-  Internal::Tree* approx = tree()->cloneTree();
-  LayoutHelpers::TurnEToTenPowerLayout(approx, linear);
-  return Layout::Builder(approx);
+  Internal::Tree* layout = tree()->cloneTree();
+  LayoutHelpers::TurnEToTenPowerLayout(layout, linear);
+  return Layout::Builder(layout);
 }
 
 bool Layout::isSameScientificNotationAs(Layout approximation,

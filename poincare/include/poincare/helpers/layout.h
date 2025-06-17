@@ -2,12 +2,16 @@
 #define POINCARE_HELPERS_LAYOUT_H
 
 #include <kandinsky/size.h>
+#include <limits.h>
+#include <stddef.h>
 
 namespace Poincare::Internal {
 class Tree;
 }
 
 namespace Poincare::LayoutHelpers {
+
+constexpr size_t k_bufferOverflow = UINT_MAX;
 
 void MakeRightMostParenthesisTemporary(Internal::Tree* l);
 

@@ -1,6 +1,7 @@
 #include <omg/utf8_helper.h>
 #include <poincare/cas.h>
 #include <poincare/expression.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -154,7 +155,7 @@ size_t ExpressionObject::serialize(std::span<char> buffer, bool compactMode,
   Tree* layout = Layouter::LayoutExpression(
       tree()->cloneTree(), true, compactMode, numberOfSignificantDigits);
   size_t size = LayoutSerializer::Serialize(layout, buffer);
-  assert(size <= buffer.size() || size == LayoutSerializer::k_bufferOverflow);
+  assert(size <= buffer.size() || size == LayoutHelpers::k_bufferOverflow);
   layout->removeTree();
   return size;
 }
@@ -752,8 +753,7 @@ size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
                                     : object()->serialize(
                                           buffer, compactMode, floatDisplayMode,
                                           numberOfSignificantDigits);
-  assert(length <= buffer.size() ||
-         length == LayoutSerializer::k_bufferOverflow);
+  assert(length <= buffer.size() || length == LayoutHelpers::k_bufferOverflow);
   return length;
 }
 

@@ -1,5 +1,6 @@
 #include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/k_tree.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
@@ -48,7 +49,7 @@ QUIZ_CASE(pcj_expression_serialization) {
   constexpr size_t bufferSize = 5;
   char buffer[bufferSize];
   size_t result = UserExpression::Builder(KCos(1000000_e)).serialize(buffer);
-  quiz_assert(result == Internal::LayoutSerializer::k_bufferOverflow);
+  quiz_assert(result == LayoutHelpers::k_bufferOverflow);
 
   assert_expression_serializes_to(
       UserExpression::Builder(KDiv(KMult(2_e, π_e), 3_e)), "(2×π)/3", false);

@@ -47,8 +47,7 @@ size_t LayoutObject::serialize(std::span<char> buffer,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {
   size_t length = Internal::LayoutSerializer::Serialize(tree(), buffer);
-  assert(length <= buffer.size() ||
-         length == Internal::LayoutSerializer::k_bufferOverflow);
+  assert(length <= buffer.size() || length == LayoutHelpers::k_bufferOverflow);
   return length;
 }
 

@@ -1,6 +1,7 @@
 #include "layout_serializer.h"
 
 #include <omg/unreachable.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -277,7 +278,7 @@ size_t LayoutSerializer::Serialize(const Tree* l, std::span<char> buffer) {
     if (type != ExceptionType::SerializeBufferOverflow) {
       TreeStackCheckpoint::Raise(type);
     }
-    return k_bufferOverflow;
+    return LayoutHelpers::k_bufferOverflow;
   }
   OMG::unreachable();
 }

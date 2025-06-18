@@ -9,7 +9,7 @@ namespace Poincare::Internal {
 
 bool HaveSameSign(double x, double y) { return x * y >= 0; }
 
-double Derivative(double x, bool isCos) {
+double TrigDerivative(double x, bool isCos) {
   return isCos ? -std::sin(x) : std::cos(x);
 }
 
@@ -86,8 +86,8 @@ Bounds Bounds::Compute(const Tree* e) {
        * either strictly increasing or strictly decreasing. In that case, the
        * bounds can safely be spread. */
       bool isCos = e->child(1)->isZero();
-      if (!HaveSameSign(Derivative(b.lower(), isCos),
-                        Derivative(b.upper(), isCos))) {
+      if (!HaveSameSign(TrigDerivative(b.lower(), isCos),
+                        TrigDerivative(b.upper(), isCos))) {
         return trigonometricDefaultBounds;
       }
       /* We currently don't handle the case where the lower bound is just a

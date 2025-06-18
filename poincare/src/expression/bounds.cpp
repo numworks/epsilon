@@ -88,13 +88,15 @@ Bounds Bounds::Compute(const Tree* e) {
         return b;
       }
 
+      const Bounds trigonometricDefaultBounds = Bounds(-1.0, 1.0);
+
       /* If the angle is "too big", the precision of std::cos and std::sin is
        * lost. In this case the bounds should not be propagated through the sin
        * or cos function. */
       constexpr double k_angleLimitForPrecision = 1000.0;
       if (std::max(std::abs(b.lower()), std::abs(b.upper())) >=
           k_angleLimitForPrecision) {
-        return Invalid();
+        return trigonometricDefaultBounds;
       }
 
       bool isCos = e->child(1)->isZero();
@@ -155,7 +157,7 @@ Bounds Bounds::Compute(const Tree* e) {
        * This alternative method, if implemented, should also take precision
        * loss issues into account. */
 
-      return b;
+      return trigonometricDefaultBounds;
     }
     default:
       return Invalid();

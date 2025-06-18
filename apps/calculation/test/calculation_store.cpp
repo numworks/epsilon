@@ -263,15 +263,15 @@ QUIZ_CASE(calculation_significant_digits) {
   assertCalculationIs("123456789123456789",
                       DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "123456789123456789",
-                      "1.234567891ᴇ17", &globalContext, &store);
+                      "1.234567891×10^17", &globalContext, &store);
   // FIXME: sign is wrong (returns Equal)
   assertCalculationIs("123123456789", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "123123456789",
-                      "1.231234568ᴇ11", &globalContext, &store);
+                      "1.231234568×10^11", &globalContext, &store);
   // FIXME: sign is wrong (returns Equal)
   assertCalculationIs("11123456789", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Approximation, "11123456789", "1.112345679ᴇ10",
-                      &globalContext, &store);
+                      EqualSign::Approximation, "11123456789",
+                      "1.112345679×10^10", &globalContext, &store);
   assertCalculationIs(
       "1123456789", DisplayOutput::ApproximateIsIdenticalToExact,
       EqualSign::Hidden, "1123456789", nullptr, &globalContext, &store);
@@ -370,10 +370,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("π-15i", DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation, "π-15i", "3.1415926535898-15i",
                       &globalContext, &store);
-  // TODO: ApproximateIsIdenticalToExact would be better.
-  assertCalculationIs("1.234×10^22×i", DisplayOutput::ExactAndApproximateToggle,
-                      EqualSign::Equal, "1.234×10^22×i", "1.234ᴇ22i",
-                      &globalContext, &store);
+  assertCalculationIs(
+      "1.234×10^22×i", DisplayOutput::ApproximateIsIdenticalToExact,
+      EqualSign::Hidden, "1.234×10^22×i", nullptr, &globalContext, &store);
 
   // Big integers
   assertCalculationIs(
@@ -383,13 +382,13 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       DisplayOutput::ExactAndApproximateToggle,
                       EqualSign::Approximation,
                       "1.234567890123456789012345678×10^30",
-                      "1.2345678901235ᴇ30", &globalContext, &store);
+                      "1.2345678901235×10^30", &globalContext, &store);
   assertCalculationIs("123456789012345678901234567800",
                       DisplayOutput::ApproximateOnly, EqualSign::Hidden,
-                      nullptr, "1.2345678901235ᴇ29", &globalContext, &store);
+                      nullptr, "1.2345678901235×10^29", &globalContext, &store);
   assertCalculationIs("1234567890123456789012345678901×10^15",
                       DisplayOutput::ApproximateOnly, EqualSign::Hidden,
-                      nullptr, "1.2345678901235ᴇ45", &globalContext, &store);
+                      nullptr, "1.2345678901235×10^45", &globalContext, &store);
 
   // IntegerOverflow during reduction
   assertCalculationIs("0^(10^600)", DisplayOutput::ApproximateOnly,
@@ -405,7 +404,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Hidden, nullptr, "0.16666666666667g",
                       &globalContext, &store);
   assertCalculationIs("(1/6)_L_kg", DisplayOutput::ApproximateOnly,
-                      EqualSign::Hidden, nullptr, "1.6666666666667ᴇ-4m^3·kg",
+                      EqualSign::Hidden, nullptr, "1.6666666666667×10^-4m^3·kg",
                       &globalContext, &store);
   assertCalculationIs("(π/6)_rad", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "30°", &globalContext,

@@ -119,6 +119,12 @@ bool Arithmetic::ReduceFloor(Tree* e) {
    * keep the maximum precision. */
   double lowerInteger = std::floor(bounds.lower());
   double upperInteger = std::ceil(bounds.upper());
+  /* Note that for very large values (greater than
+   * OMG::IEEE754<double>::NonExactIntegerLimit()), the lack of numerical
+   * precision could lead to have upperInteger = lowerInteger (+1) although the
+   * difference between the two values is in reality strictly more than one.
+   * This case will be handled below with the integerLimit. */
+
   /* If the integer bounds are apart from more than 1, the Floor expression
    * cannot be reduced. */
   if (lowerInteger + 1.0 <

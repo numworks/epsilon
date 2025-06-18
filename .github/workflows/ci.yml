@@ -156,9 +156,16 @@ jobs:
         uses: ./.github/actions/docker-builder
 
       # TODO_PCJ: Add ASAN=1 and TIDY=1
-      - run: $DOCKER_RUN "make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin"
-      - run: |
-          $DOCKER_RUN "parallel --halt soon,fail=1 --retries 1 --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)"
+      - name: Build epsilon.bin and test.bin
+        run: $DOCKER_RUN "make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin"
+      - name: Run unit tests (in parallel)
+        run: |
+          $DOCKER_RUN "parallel --halt now,fail=1 --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)"
+        id: run-tests
+        continue-on-error: true
+      - name: Run unit tests sequentially (if parallel run failed)
+        if: steps.run-tests.outcome == 'failure'
+        run: $DOCKER_RUN "output/debug/optimized/linux/test.bin --headless --limit-stack-usage"
       - uses: actions/upload-artifact@v4
         if: ${{ fromJSON(vars.ADVANCED_JOBS) }}
         with:

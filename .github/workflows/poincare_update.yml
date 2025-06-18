@@ -40,10 +40,18 @@ jobs:
 
       - name: Make head
         run: $DOCKER_RUN "make PLATFORM=simulator ASSERTIONS=1 test.bin"
-      - name: Run head
+      - name: Run head (in parallel)
+        id: run-tests
+        continue-on-error: true
         shell: bash
         run: |
-          $DOCKER_RUN "parallel --halt soon,fail=1 --retries 1 --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | tee out
+          $DOCKER_RUN "parallel --halt now,fail=1 --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | tee out
+
+      - name: Run head sequentially (if parallel run failed)
+        if: steps.run-tests.outcome == 'failure'
+        shell: bash
+        run: |
+          $DOCKER_RUN "output/debug/optimized/linux/test.bin --headless --limit-stack-usage" | tee out
 
       - name: Filter output
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv

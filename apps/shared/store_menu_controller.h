@@ -3,7 +3,7 @@
 
 #include <apps/i18n.h>
 #include <escher/editable_expression_cell.h>
-#include <escher/editable_fiel_help_box.h>
+#include <escher/editable_field_help_box.h>
 #include <escher/list_view_data_source.h>
 #include <escher/selectable_list_view.h>
 #include <escher/selectable_table_view_data_source.h>

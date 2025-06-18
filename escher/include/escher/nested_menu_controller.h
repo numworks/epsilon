@@ -3,8 +3,8 @@
 
 #include <escher/chevron_view.h>
 #include <escher/container.h>
-#include <escher/editable_fiel_help_box.h>
 #include <escher/editable_field.h>
+#include <escher/editable_field_help_box.h>
 #include <escher/highlight_cell.h>
 #include <escher/list_view_data_source.h>
 #include <escher/menu_cell.h>

@@ -1,7 +1,7 @@
 #ifndef ESCHER_APP_H
 #define ESCHER_APP_H
 
-#include <escher/editable_fiel_help_box.h>
+#include <escher/editable_field_help_box.h>
 #include <escher/i18n.h>
 #include <escher/image.h>
 #include <escher/modal_view_controller.h>

@@ -14,7 +14,7 @@ COPY build/setup.sh build/setup.sh
 RUN build/setup.sh --ci
 
 # Uncomment if you want to build with TOOLCHAIN=host-clang
-RUN apt-get install clang-15 libc++-15-dev libc++abi-15-dev && ln -s /usr/bin/clang-15 /usr/local/bin/clang && ln -s /usr/bin/clang++-15 /usr/local/bin/clang++
+RUN apt-get install clang-15 libc++-15-dev libc++abi-15-dev elfutils && ln -s /usr/bin/clang-15 /usr/local/bin/clang && ln -s /usr/bin/clang++-15 /usr/local/bin/clang++
 
 ENV PYTHON=/runner/.venv/bin/python
 

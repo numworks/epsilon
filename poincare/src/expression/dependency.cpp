@@ -7,6 +7,7 @@
 #include <poincare/src/memory/tree_ref.h>
 
 #include "approximation.h"
+#include "dimension.h"
 #include "k_tree.h"
 #include "parametric.h"
 #include "rational.h"
@@ -140,7 +141,9 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
         totalNumberOfDependencies--;
         continue;
       } else {
-        dep->moveTreeOverTree(approximation);
+        Type undefType = approximation->type();
+        approximation->removeTree();
+        Undefined::ReplaceTreeWithDimensionedType(dep, undefType);
         return true;
       }
     }
@@ -164,9 +167,8 @@ bool Dependency::RemoveDefinedDependencies(Tree* dep) {
     Tree* main = Dependency::Main(dep);
     // To avoid infinite loops
     if (!main->isNonReal()) {
-      NAry::AddChild(set, main);
-      // TODO: use replaceTreeWithDimensionedType(main, Type::NonReal)?
-      main->cloneNodeAtNode(KNonReal);
+      NAry::AddChild(set, main->cloneTree());
+      Undefined::ReplaceTreeWithDimensionedType(main, Type::NonReal);
       ShallowRemoveUselessDependencies(dep);
       return true;
     }
@@ -261,6 +263,11 @@ bool CanBeUndefWithInfinity(const Tree* e) {
     bool canContainInfinity = false;
     bool canContainNull = false;
     for (const Tree* child : e->children()) {
+      if (!Dimension::Get(child).isScalarOrUnit()) {
+        // Skip parts of dependency if it's not a scalar tree
+        // TODO handle non-scalar trees here (matrix, list)
+        continue;
+      }
       ComplexSign s = GetComplexSign(child);
       Sign realSign = s.realSign();
       Sign imagSign = s.imagSign();

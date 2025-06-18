@@ -1382,6 +1382,15 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("{1,undef}", "{1,undef}");
   simplifies_to("[[1,undef]]", "[[1,undef]]");
   simplifies_to("(1,undef)", "(1,undef)");
+  // Dependency with non-scalar main-tree
+  simplifies_to("sequence(k,k,3)×log(-7)", "{nonreal,nonreal,nonreal}");
+  simplifies_to("arcsin(6)×[[1,1]]", "[[nonreal,nonreal]]");
+  simplifies_to("sequence(k,k,3)×log(0)", "{undef,undef,undef}");
+  simplifies_to_no_beautif("ln(0)×[[1,1]]", "[[undef,undef]]");
+  // TODO should be "[[undef]]" or "undef" with beautification
+  simplifies_to_no_beautif("[[0]]×[[∞]]×arcsin(6)", "[[nonreal]]");
+  simplifies_to_no_beautif("[[0,∞]]×[[0,1][1,1]]×arcsin(6)",
+                           "[[nonreal,nonreal]]");
 
   Tree* e1 = KAdd(KDep(KMult(2_e, 3_e), KDepList(0_e)), 4_e)->cloneTree();
   const Tree* r1 = KDep(KAdd(KMult(2_e, 3_e), 4_e), KDepList(0_e));

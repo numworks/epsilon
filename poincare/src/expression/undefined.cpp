@@ -1,6 +1,5 @@
 #include "undefined.h"
 
-#include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_stack.h>
 
 #include "dimension.h"
@@ -21,7 +20,7 @@ bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
          (e->isListSequence() && childIndex == 2);
 }
 
-void replaceTreeWithDimensionedType(Tree* e, Type type) {
+void Undefined::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
   assert(TypeBlock::IsZero(type) || TypeBlock::IsUndefined(type));
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   int length = Dimension::ListLength(e);
@@ -71,7 +70,7 @@ bool Undefined::ShallowBubbleUpUndef(Tree* e) {
   if (worstType == Type::Zero) {
     return false;
   }
-  replaceTreeWithDimensionedType(e, worstType);
+  ReplaceTreeWithDimensionedType(e, worstType);
   return true;
 }
 

@@ -6,6 +6,7 @@
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <omg/utf8_helper.h>
+#include <poincare/helpers/layout.h>
 #include <poincare/xnt.h>
 
 #include <algorithm>
@@ -613,7 +614,10 @@ bool AbstractTextField::handleEventWithLayout(Poincare::Layout layout,
                                               bool forceCursorRightOfText) {
   constexpr size_t bufferSize = MaxBufferSize();
   char buffer[bufferSize];
-  [[maybe_unused]] size_t length = layout.serialize(buffer);
+  size_t length = layout.serialize(buffer);
+  if (length == LayoutHelpers::k_bufferOverflow) {
+    return false;
+  }
   assert(length <= bufferSize);
   return handleEventWithText(buffer, false, forceCursorRightOfText);
 }

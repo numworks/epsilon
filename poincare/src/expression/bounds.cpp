@@ -59,7 +59,7 @@ Bounds Bounds::Compute(const Tree* e) {
     case Type::Trig: {
       Bounds b = Bounds::Compute(e->child(0));
       if (!b.exists()) {
-        return b;
+        return Invalid();
       }
 
       const Bounds trigonometricDefaultBounds = Bounds(-1.0, 1.0);

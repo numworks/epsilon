@@ -26,6 +26,9 @@ Interval RightHalf(const IntervalData& intervalData) {
   return Interval{intervalData.middle, intervalData.interval.upper};
 }
 
+/* Maps a value to inside a reference interval. This is used to get the
+ * principal representative of an angle. For instance with value = 31π and
+ * interval = [0, 2π], the mapped value is π. */
 double MapToInterval(double value, const IntervalData& intervalData) {
   double scaled = (value - intervalData.interval.lower) / intervalData.width;
   return (scaled - std::floor(scaled)) * intervalData.width +
@@ -128,7 +131,7 @@ Bounds Bounds::Compute(const Tree* e) {
           // cos is strictly decreasing between 0 and π
           expandedBounds.applyMonotoneFunction(std::cos, true);
         } else {
-          // sin is strictly ascending between π/2 and 3π/2
+          // sin is strictly decreasing between π/2 and 3π/2
           expandedBounds.applyMonotoneFunction(std::sin, true);
         }
         return expandedBounds;

@@ -758,8 +758,8 @@ QUIZ_CASE(pcj_sign_is_real) {
   assert_projected_is_real("round({2,3})");
   assert_projected_is_not_real("round([[2,3]])");
   assert_projected_is_real("sign(2)");
-  assert_projected_is_real("sign(2i)");
-  assert_projected_is_real("sign({2,3})");
+  assert_projected_is_not_real("sign(2i)");
+  assert_projected_is_not_real("sign({2,3})");
   assert_projected_is_not_real("sign([[2,3]])");
   assert_projected_is_real("diff(2x,x,1)");
   assert_projected_is_real("diff({2,3}x,x,1)");

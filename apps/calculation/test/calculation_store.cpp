@@ -223,6 +223,8 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
     assert_expression_serializes_to(lastCalculation->input(),
                                     expectedStoredInput);
   }
+  /* To preserve the Poincare_update CI, we output a something whether or not
+   * the layouts can be compared. */
   if (expectedExactOutput) {
     assert(Calculation::Calculation::CanDisplayExact(expectedDisplay));
     if (outputLayouts.exact.isUninitialized()) {
@@ -230,16 +232,22 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
       quiz_assert_print_if_failure(false, expectedExactOutput,
                                    expectedExactOutput, "Uninitialized");
 #else
-      quiz_tolerate_print_if_failure(false, expectedExactOutput,
-                                     expectedExactOutput, "Uninitialized");
+      quiz_tolerate_print_if_failure(false, input, expectedExactOutput,
+                                     "Uninitialized");
 #endif
     } else {
       assert_layout_serializes_to(outputLayouts.exact, expectedExactOutput);
     }
   } else {
     assert(!Calculation::Calculation::CanDisplayExact(expectedDisplay));
+#if !POINCARE_STRICT_TESTS
+    quiz_tolerate_print_if_failure(true, input, "Uninitialized",
+                                   "Uninitialized");
+#endif
   }
 
+  /* To preserve the Poincare_update CI, we output a something whether or not
+   * the layouts can be compared. */
   if (expectedApproximateOutput && !skipApproximation) {
     assert(Calculation::Calculation::CanDisplayApproximate(expectedDisplay));
     if (outputLayouts.approximate.isUninitialized()) {
@@ -247,8 +255,7 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
       quiz_assert_print_if_failure(false, expectedExactOutput,
                                    expectedExactOutput, "Uninitialized");
 #else
-      quiz_tolerate_print_if_failure(false, expectedApproximateOutput,
-                                     expectedApproximateOutput,
+      quiz_tolerate_print_if_failure(false, input, expectedApproximateOutput,
                                      "Uninitialized");
 #endif
     } else {
@@ -260,6 +267,10 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
      * approximation and skip it. */
     assert(skipApproximation ||
            !Calculation::Calculation::CanDisplayApproximate(expectedDisplay));
+#if !POINCARE_STRICT_TESTS
+    quiz_tolerate_print_if_failure(true, input, "Uninitialized",
+                                   "Uninitialized");
+#endif
   }
   store->deleteAll();
 }

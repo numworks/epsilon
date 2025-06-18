@@ -263,8 +263,8 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                                   expectedApproximateOutput);
     }
   } else {
-    /* When testing input containing random nodes, we can't compare the
-     * approximation and skip it. */
+    /* When testing input containing random nodes, the approximation is skipped
+     * as we can't compare it. */
     assert(skipApproximation ||
            !Calculation::Calculation::CanDisplayApproximate(expectedDisplay));
 #if !POINCARE_STRICT_TESTS

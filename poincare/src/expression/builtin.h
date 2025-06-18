@@ -159,7 +159,8 @@ constexpr static Builtin s_builtins[] = {
     {Type::Factor, "factor"},
     {Type::Frac, "frac"},
     {Type::Round, "round"},
-    {Type::Sign, "sign"},
+    // No Builtins for Type::Sign because it's a system tree.
+    {Type::SignUser, "sign"},
 #if POINCARE_LIST
     {Type::Mean, "mean"},
     {Type::StdDev, "stddev"},

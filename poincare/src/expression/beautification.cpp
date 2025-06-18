@@ -490,6 +490,8 @@ bool ShallowBeautify(Tree* e, void* context) {
   }
 
   return
+      // sign(x) -> signUser(x)
+      PatternMatching::MatchReplace(e, KSign(KA), KSignUser(KA)) ||
       // ln(x) -> lnUser(x)
       PatternMatching::MatchReplace(e, KLn(KA), KLnUser(KA)) ||
       // exp(1) -> e

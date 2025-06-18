@@ -7,7 +7,6 @@
 #include "angle.h"
 #include "decimal.h"
 #include "dependency.h"
-#include "physical_constant.h"
 #include "sign.h"
 #include "symbol.h"
 #include "units/representatives.h"
@@ -333,6 +332,9 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   /* In following replacements, ref node isn't supposed to be replaced with
    * a node needing further projection. */
   return
+      // signUser(A) -> dep(sign(A), real(A))
+      PatternMatching::MatchReplace(e, KSignUser(KA),
+                                    KDep(KSign(KA), KDepList(KReal(KA)))) ||
       // frac(A) -> A - floor(A)
       PatternMatching::MatchReplace(e, KFrac(KA),
                                     KAdd(KA, KMult(-1_e, KFloor(KA)))) ||

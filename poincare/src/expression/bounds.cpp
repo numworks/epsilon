@@ -93,19 +93,13 @@ Bounds Bounds::Compute(const Tree* e) {
       /* We currently don't handle the case where the lower bound is just a
        * little below a multiple of π/2, and the upper bound is just a little
        * above this same multiple of π/2.
-       * To handle this case, an idea would be to compute n_lower =
-       * std::floor(bounds.lower()/M_PI_2) and n_upper =
-       * std::ceil(bounds.lower()/M_PI_2). If n_lower and n_upper are one
-       * integer apart, it would mean that the two bounds are strictly comprised
-       * in a monotonous interval of the sin/cos function, and the bounds can be
-       * spread as below. If n_lower and n_upper are two integers apart, it
-       * would mean that the bounds are around a multiple of π/2, in which case
-       * Bounds(std::min(std::sin(bounds.lower()), std::sin(bounds.upper())), 1)
-       * or Bounds(-1, std::max(std::sin(bounds.lower()),
-       * std::sin(bounds.upper()))) can be returned, depending on whether the
-       * bounds are around a maximum or a minimum of sin/cos.
-       * This new method, if implemented, should take precision loss issues into
-       * account. */
+       * This case can be detected by looking at the sign of the function
+       * derivative at the lower and upper bound.
+       * The returned value would be Bounds(std::min(std::sin(bounds.lower()),
+       * std::sin(bounds.upper())), 1) or Bounds(-1,
+       * std::max(std::sin(bounds.lower()), std::sin(bounds.upper()))),
+       * depending on whether the bounds are around a maximum or a minimum of
+       * sin/cos. */
 
       if (isCos) {
         b.applyMonotoneFunction(std::cos);

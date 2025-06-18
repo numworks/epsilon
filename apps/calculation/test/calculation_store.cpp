@@ -195,7 +195,8 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                          const char* expectedExactOutput,
                          const char* expectedApproximateOutput,
                          Context* context, CalculationStore* store,
-                         const char* expectedStoredInput = nullptr) {
+                         const char* expectedStoredInput = nullptr,
+                         bool skipApproximation = false) {
   OutputLayouts outputLayouts =
       pushAndProcessCalculation(store, input, context);
   Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
@@ -235,9 +236,11 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
     } else {
       assert_layout_serializes_to(outputLayouts.exact, expectedExactOutput);
     }
+  } else {
+    assert(!Calculation::Calculation::CanDisplayExact(expectedDisplay));
   }
 
-  if (expectedApproximateOutput) {
+  if (expectedApproximateOutput && !skipApproximation) {
     assert(Calculation::Calculation::CanDisplayApproximate(expectedDisplay));
     if (outputLayouts.approximate.isUninitialized()) {
 #if POINCARE_STRICT_TESTS
@@ -252,6 +255,11 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
       assert_layout_serializes_to(outputLayouts.approximate,
                                   expectedApproximateOutput);
     }
+  } else {
+    /* When testing input containing random nodes, we can't compare the
+     * approximation and skip it. */
+    assert(skipApproximation ||
+           !Calculation::Calculation::CanDisplayApproximate(expectedDisplay));
   }
   store->deleteAll();
 }
@@ -340,7 +348,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   assertCalculationIs("1+1+random()", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, nullptr, &globalContext,
-                      &store);
+                      &store, nullptr, true);
   assertCalculationIs("1+1+round(1.343,2)", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "3.34", &globalContext,
                       &store);
@@ -464,9 +472,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Hidden, nullptr, "0.70710678118655",
                       &globalContext, &store);
   assertCalculationIs("_G", DisplayOutput::ExactOnly, EqualSign::Hidden,
-                      nullptr, nullptr, &globalContext, &store);
+                      "undef", nullptr, &globalContext, &store);
   assertCalculationIs("_g0", DisplayOutput::ExactOnly, EqualSign::Hidden,
-                      nullptr, nullptr, &globalContext, &store);
+                      "undef", nullptr, &globalContext, &store);
 
   MathPreferences::SharedPreferences()->setExamMode(previousExamMode);
   MathPreferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
@@ -716,7 +724,7 @@ QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
   // Tests a bug with symbolic computation
   assertCalculationIs("int((e^(-x))-x^(0.5), x, 0, 3)",
                       DisplayOutput::ApproximateOnly, EqualSign::Hidden,
-                      nullptr, nullptr, &globalContext, &store);
+                      nullptr, "-2.513888684", &globalContext, &store);
   assertCalculationIs("int(x,x,0,2)", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "2", &globalContext, &store);
   assertCalculationIs("sum(x,x,0,2)", DisplayOutput::ApproximateOnly,
@@ -726,8 +734,7 @@ QUIZ_CASE(calculation_symbolic_computation_and_parametered_expressions) {
   assertCalculationIs("diff(x^2,x,3)", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "6", &globalContext, &store);
   assertCalculationIs("2→x", DisplayOutput::ApproximateIsIdenticalToExact,
-                      EqualSign::Hidden, nullptr, nullptr, &globalContext,
-                      &store);
+                      EqualSign::Hidden, "2", nullptr, &globalContext, &store);
   assertCalculationIs("int(x,x,0,2)", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "2", &globalContext, &store);
   assertCalculationIs("sum(x,x,0,2)", DisplayOutput::ApproximateOnly,

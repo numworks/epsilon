@@ -224,7 +224,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
 
       for (int j = 0; j < context->numberOfVariables; j++) {
         // Generate a unique identifier t? that does not collide with variables.
-        TreeRef symbol = getNextParameterSymbol(
+        TreeRef symbol = GetNextParameterSymbol(
             &parameterIndex, usedParameterIndices, projectionContext.m_context);
         Variables::LeaveScopeWithReplacement(result, symbol, false, false);
         symbol->removeTree();
@@ -743,7 +743,7 @@ uint32_t EquationSolver::TagParametersUsedAsVariables(const Context* context) {
   return tags;
 }
 
-Tree* EquationSolver::getNextParameterSymbol(size_t* parameterIndex,
+Tree* EquationSolver::GetNextParameterSymbol(size_t* parameterIndex,
                                              uint32_t usedParameterIndices,
                                              Poincare::Context* context) {
   /* Equation had more solution and introduced new unknowns variables, name

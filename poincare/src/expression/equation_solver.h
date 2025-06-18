@@ -109,7 +109,7 @@ class EquationSolver {
   static uint32_t TagParametersUsedAsVariables(const Context* context);
 
   // Return the userSymbol for the next additional parameter variable.
-  static Tree* getNextParameterSymbol(size_t* parameterIndex,
+  static Tree* GetNextParameterSymbol(size_t* parameterIndex,
                                       uint32_t usedParameterIndices,
                                       Poincare::Context* context);
 };

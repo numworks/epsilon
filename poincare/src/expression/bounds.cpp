@@ -7,36 +7,10 @@
 
 namespace Poincare::Internal {
 
-struct Interval {
-  double lower;
-  double upper;
-};
+bool HaveSameSign(double x, double y) { return x * y >= 0; }
 
-struct IntervalData {
-  Interval interval;
-  double width;
-  double middle;
-};
-
-Interval LeftHalf(const IntervalData& intervalData) {
-  return Interval{intervalData.interval.lower, intervalData.middle};
-}
-
-Interval RightHalf(const IntervalData& intervalData) {
-  return Interval{intervalData.middle, intervalData.interval.upper};
-}
-
-/* Maps a value to inside a reference interval. This is used to get the
- * principal representative of an angle. For instance with value = 31π and
- * interval = [0, 2π], the mapped value is π. */
-double MapToInterval(double value, const IntervalData& intervalData) {
-  double scaled = (value - intervalData.interval.lower) / intervalData.width;
-  return (scaled - std::floor(scaled)) * intervalData.width +
-         intervalData.interval.lower;
-}
-
-bool IsInside(double value, Interval interval) {
-  return value >= interval.lower && value <= interval.upper;
+double Derivative(double x, bool isCos) {
+  return isCos ? -std::sin(x) : std::cos(x);
 }
 
 Sign Bounds::Sign(const Tree* e) {
@@ -90,74 +64,55 @@ Bounds Bounds::Compute(const Tree* e) {
 
       const Bounds trigonometricDefaultBounds = Bounds(-1.0, 1.0);
 
+      if (b.width() >= M_PI) {
+        /* The image interval of the bounds through the sin or cos function can
+         * potientially be [-1, 1]. */
+        return trigonometricDefaultBounds;
+      }
+
       /* If the angle is "too big", the precision of std::cos and std::sin is
-       * lost. In this case the bounds should not be propagated through the sin
-       * or cos function. */
+       * lost. In this case the bounds should not be propagated through the
+       * sin or cos function. */
       constexpr double k_angleLimitForPrecision = 1000.0;
       if (std::max(std::abs(b.lower()), std::abs(b.upper())) >=
           k_angleLimitForPrecision) {
         return trigonometricDefaultBounds;
       }
 
+      /* We check whether the function derivative taken at b.lower() and at
+       * b.upper() has the same sign. If this is the case, knowing that the
+       * distance between b.lower() and b.upper() is at most π, it means that
+       * the bounds are both comprised in an interval where the function is
+       * either strictly increasing or strictly decreasing. In that case, the
+       * bounds can safely be spread. */
       bool isCos = e->child(1)->isZero();
-      /* The cos or sin function can only be applied if the bounds are included
-       * in an interval where the function is strictly increasing or strictly
-       * decreasing. To check this, we map the bounds to a reference interval of
-       * the function ([-π,π] for cos and [-π/2, 3π/2] for sin). */
-      IntervalData principalInterval =
-          isCos
-              ? IntervalData{Interval{-M_PI, M_PI}, 2 * M_PI, 0.0}
-              : IntervalData{Interval{-M_PI_2, 3.0 * M_PI_2}, 2 * M_PI, M_PI_2};
-      double principalAngleLower = MapToInterval(b.lower(), principalInterval);
-      double angleUpper = principalAngleLower + b.width();
-
-      /* The MapToInterval function performs some operations that each create
-       * a small precision loss. To account for this precision loss, we expand
-       * the mapped bounds by a certain factor. */
-      Bounds expandedBounds = Bounds(principalAngleLower, angleUpper, 100);
-
-      if (IsInside(expandedBounds.lower(), LeftHalf(principalInterval)) &&
-          IsInside(expandedBounds.upper(), LeftHalf(principalInterval))) {
-        if (isCos) {
-          // cos is strictly ascending between -π and 0
-          expandedBounds.applyMonotoneFunction(std::cos);
-        } else {
-          // sin is strictly ascending between -π/2 and π/2
-          expandedBounds.applyMonotoneFunction(std::sin);
-        }
-        return expandedBounds;
+      if (!HaveSameSign(Derivative(b.lower(), isCos),
+                        Derivative(b.upper(), isCos))) {
+        return trigonometricDefaultBounds;
       }
-      if (IsInside(expandedBounds.lower(), RightHalf(principalInterval)) &&
-          IsInside(expandedBounds.upper(), RightHalf(principalInterval))) {
-        if (isCos) {
-          // cos is strictly decreasing between 0 and π
-          expandedBounds.applyMonotoneFunction(std::cos, true);
-        } else {
-          // sin is strictly decreasing between π/2 and 3π/2
-          expandedBounds.applyMonotoneFunction(std::sin, true);
-        }
-        return expandedBounds;
-      }
-
       /* We currently don't handle the case where the lower bound is just a
        * little below a multiple of π/2, and the upper bound is just a little
        * above this same multiple of π/2.
-       * To handle this case, we could have a completely different process than
-       * mapping the bounds to the principal interval. We could compute n_lower
-       * = std::floor(bounds.lower()/M_PI_2) and n_upper =
+       * To handle this case, an idea would be to compute n_lower =
+       * std::floor(bounds.lower()/M_PI_2) and n_upper =
        * std::ceil(bounds.lower()/M_PI_2). If n_lower and n_upper are one
        * integer apart, it would mean that the two bounds are strictly comprised
        * in a monotonous interval of the sin/cos function, and the bounds can be
-       * spread as before. If n_lower and n_upper are two integers apart, it
+       * spread as below. If n_lower and n_upper are two integers apart, it
        * would mean that the bounds are around a multiple of π/2, in which case
        * Bounds(std::min(std::sin(bounds.lower()), std::sin(bounds.upper())), 1)
        * or Bounds(-1, std::max(std::sin(bounds.lower()),
        * std::sin(bounds.upper()))) can be returned, depending on whether the
        * bounds are around a maximum or a minimum of sin/cos.
-       * This alternative method, if implemented, should also take precision
-       * loss issues into account. */
+       * This new method, if implemented, should take precision loss issues into
+       * account. */
 
-      return trigonometricDefaultBounds;
+      if (isCos) {
+        b.applyMonotoneFunction(std::cos);
+      } else {
+        b.applyMonotoneFunction(std::sin);
+      }
+      return b;
     }
     default:
       return Invalid();
@@ -246,11 +201,10 @@ Bounds Bounds::Pow(const Tree* e) {
   return Invalid();
 }
 
-void Bounds::applyMonotoneFunction(double (*f)(double), bool decreasing,
-                                   uint8_t ulp_precision) {
+void Bounds::applyMonotoneFunction(double (*f)(double), uint8_t ulp_precision) {
   m_lower = f(m_lower);
   m_upper = f(m_upper);
-  if (decreasing) {
+  if (m_upper < m_lower) {
     flip();
   }
   spread(ulp_precision);

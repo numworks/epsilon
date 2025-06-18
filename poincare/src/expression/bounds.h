@@ -54,8 +54,7 @@ class Bounds {
     assert(exists());
     return m_lower == 0 && m_upper == 0;
   }
-  void applyMonotoneFunction(double (*f)(double), bool decreasing = false,
-                             uint8_t ulp_precision = 1);
+  void applyMonotoneFunction(double (*f)(double), uint8_t ulp_precision = 1);
   /* Spread lower and upper bounds by specified ulp */
   void spread(unsigned int ulp_precision = 1);
   /* Check bounds are well defined */

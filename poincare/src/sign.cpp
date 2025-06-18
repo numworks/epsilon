@@ -298,8 +298,11 @@ ComplexSign Power(ComplexSign base, ComplexSign exp, bool expIsTwo) {
 ComplexSign TypeSign(ComplexSign s) {
   Sign realSign =
       Sign(s.realSign().canBeNull(), s.realSign().canBeStrictlyPositive(),
-           s.realSign().canBeStrictlyNegative(), false, false);
-  return ComplexSign(realSign, Sign::Zero());
+           s.realSign().canBeStrictlyNegative(), !s.isPure(), false);
+  Sign imagSign =
+      Sign(s.imagSign().canBeNull(), s.imagSign().canBeStrictlyPositive(),
+           s.imagSign().canBeStrictlyNegative(), !s.isPure(), false);
+  return ComplexSign(realSign, imagSign);
 }
 
 ComplexSign PercentAddition(ComplexSign s1, ComplexSign s2) {

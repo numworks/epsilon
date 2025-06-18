@@ -186,15 +186,15 @@ static bool ReduceMultiplicationChildRec(Tree* child, int index,
 }
 
 static bool ReduceMultiplicationWithInf(Tree* e) {
-  // TODO_PCJ: what about x complex? sign is not defined on complexes
   // x*inf -> sign(x)*inf
-  // Except when x = -1,0,1 or sign (to avoid infinite loop)
+  // Except when x = -i,-1,0,1,i or sign (to avoid infinite loop)
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KMult(KA, KInf), &ctx) ||
       PatternMatching::Match(e, KMult(KInf, KA), &ctx)) {
     const Tree* x = ctx.getTree(KA);
     assert(!x->isZero() && !x->isOne());
-    if (x->isMinusOne() || x->isSign()) {
+    if (x->isMinusOne() || x->isSign() || x->isComplexI() ||
+        x->treeIsIdenticalTo(KMult(-1_e, i_e))) {
       return false;
     }
   }
@@ -202,8 +202,6 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
   if (Dimension::Get(e).isScalar() &&
       PatternMatching::MatchReplaceSimplify(
           e, KMult(KA_s, KInf, KB_s), KMult(KSign(KMult(KA_s, KB_s)), KInf))) {
-    /* Warning: it works because sign(z)=undef if z is complex and we don't
-     * handle i*inf.*/
     return true;
   }
   return false;

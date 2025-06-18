@@ -498,6 +498,12 @@ bool SystematicOperation::ReduceSign(Tree* e) {
   const Tree* child = e->child(0);
   ComplexSign sign = GetComplexSign(child);
   if (sign.canBeNonReal()) {
+    if (sign.isPureIm()) {
+      // sign(iA) = i*sign(A)
+      PatternMatching::MatchReplaceSimplify(
+          e, KSign(KA), KMult(KSign(KMult(-1_e, KA, i_e)), i_e));
+      return true;
+    }
     // Could use sign(z) = exp(i*arg(z)) but ignore for now
     return false;
   }

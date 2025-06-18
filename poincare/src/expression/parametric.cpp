@@ -11,6 +11,7 @@
 #include "matrix.h"
 #include "sign.h"
 #include "systematic_reduction.h"
+#include "units/unit.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -94,7 +95,15 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     if (dim.isMatrix()) {
       e->moveTreeOverTree(isSum ? Matrix::Zero(dim.matrix)
                                 : Matrix::Identity(dim.matrix));
+    } else if (dim.isUnit()) {
+      // Preserve unit
+      Tree* result = SharedTreeStack->pushMult(2);
+      (0_e)->cloneTree();
+      Units::Unit::GetBaseUnits(dim.unit.vector);
+      SystematicReduction::ShallowReduce(result);
+      e->moveTreeOverTree(result);
     } else {
+      assert(dim.isScalar());
       e->cloneTreeOverTree(isSum ? 0_e : 1_e);
     }
     return true;

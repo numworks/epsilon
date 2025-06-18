@@ -1110,6 +1110,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("_s^-1", "1×_s^(-1)");
   // NOTE: this is a test for ReduceSortedAddition, see comment there
   simplifies_to("0×_A + π×_A - π×_A", "0×_A");
+  simplifies_to("sum(_s,x,2,0)", "0×_s");
   /* NOTE: Order of units should not matter. If an overflow can occur when
    * reordering the multiplication, we return undef, even if no overflow
    * technically happened */

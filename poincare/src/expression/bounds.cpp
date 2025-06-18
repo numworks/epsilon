@@ -7,9 +7,9 @@
 
 namespace Poincare::Internal {
 
-bool HaveSameSign(double x, double y) { return x * y >= 0; }
+constexpr static bool HaveSameSign(double x, double y) { return x * y >= 0; }
 
-double TrigDerivative(double x, bool isCos) {
+constexpr static double TrigDerivative(double x, bool isCos) {
   return isCos ? -std::sin(x) : std::cos(x);
 }
 

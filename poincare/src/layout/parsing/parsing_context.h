@@ -24,10 +24,10 @@ class ParsingContext {
                  ParsingContext::ParsingMethod parsingMethod)
       : m_context(context), m_parsingMethod(parsingMethod) {}
 
-  Poincare::Context* context() { return m_context; }
+  Poincare::Context* context() const { return m_context; }
   void setContext(Poincare::Context* context) { m_context = context; }
 
-  ParsingMethod parsingMethod() { return m_parsingMethod; }
+  ParsingMethod parsingMethod() const { return m_parsingMethod; }
   void setParsingMethod(ParsingMethod method) { m_parsingMethod = method; }
 
  private:

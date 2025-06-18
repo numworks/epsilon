@@ -28,20 +28,20 @@ class Tokenizer {
   Token popToken();
 
   void skip(int n) { m_decoder.skip(n); }
-  size_t currentPosition() { return m_decoder.position(); }
-  size_t endPosition() { return m_decoder.end(); }
+  size_t currentPosition() const { return m_decoder.position(); }
+  size_t endPosition() const { return m_decoder.end(); }
 
   struct State {
     LayoutSpanDecoder decoder;
     Poincare::Context* parsingContextContext;
     int numberOfStoredIdentifiers = -1;
   };
-  State currentState() {
+  State currentState() const {
     return State{.decoder = m_decoder,
                  .parsingContextContext = m_parsingContext->context(),
                  .numberOfStoredIdentifiers = m_numberOfStoredIdentifiers};
   }
-  void setState(State state) {
+  void setState(const State& state) {
     m_decoder = state.decoder;
     m_parsingContext->setContext(state.parsingContextContext);
     m_numberOfStoredIdentifiers = state.numberOfStoredIdentifiers;

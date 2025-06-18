@@ -187,7 +187,7 @@ class RackParser {
     bool pendingImplicitOperator;
     bool waitingSlashForMixedFraction;
   };
-  State currentState() {
+  State currentState() const {
     return State{
         .tokenizerState = m_tokenizer.currentState(),
         .currentToken = m_currentToken,
@@ -195,7 +195,7 @@ class RackParser {
         .pendingImplicitOperator = m_pendingImplicitOperator,
         .waitingSlashForMixedFraction = m_waitingSlashForMixedFraction};
   }
-  void setState(State state);
+  void setState(const State& state);
 
   // Data members
   ParsingContext m_parsingContext;

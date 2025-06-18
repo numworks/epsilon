@@ -1549,7 +1549,7 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
   return false;
 }
 
-void RackParser::setState(State state) {
+void RackParser::setState(const State& state) {
   m_tokenizer.setState(state.tokenizerState);
   m_currentToken = state.currentToken;
   m_nextToken = state.nextToken;

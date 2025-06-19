@@ -72,7 +72,6 @@ class CalculationStore {
   Poincare::PoolVariableContext createAnsContext(Poincare::Context* context);
 
  private:
-  constexpr static char* k_pushErrorLocation = nullptr;
   constexpr static size_t k_pushErrorSize = 0;
 
   constexpr static size_t neededSizeForCalculation(size_t sizeOfExpressions) {

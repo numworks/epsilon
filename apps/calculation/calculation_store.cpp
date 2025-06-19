@@ -363,18 +363,15 @@ void CalculationStore::getEmptySpace(size_t neededSize) {
 }
 
 Calculation* CalculationStore::pushEmptyCalculation(char** location) {
-  assert(*location != k_pushErrorLocation);
   Calculation* newCalculation = reinterpret_cast<Calculation*>(*location);
   assert(spaceForNewCalculations(*location) >= sizeof(Calculation));
   new (*location) Calculation(
       MathPreferences::SharedPreferences()->calculationPreferences());
   *location += sizeof(Calculation);
-  assert(*location != k_pushErrorLocation);
   return newCalculation;
 }
 
 size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
-  assert(*location != k_pushErrorLocation);
   size_t length = e.tree()->treeSize();
   assert(spaceForNewCalculations(*location) >= length);
   memcpy(*location, e.tree(), length);
@@ -387,7 +384,7 @@ Calculation* CalculationStore::pushCalculation(
   char* location = endOfCalculations();
   assert(location >= m_buffer &&
          location < pointerArea() - neededSizeForCalculation(
-                                         calculationToPush.sizeOfTrees()));
+                                        calculationToPush.sizeOfTrees()));
 
   // Push an empty Calculation instance (takes sizeof(Calculation))
   Calculation* newCalculation = pushEmptyCalculation(&location);

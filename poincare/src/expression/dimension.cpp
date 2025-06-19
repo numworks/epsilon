@@ -9,6 +9,7 @@
 #include "dependency.h"
 #include "integer.h"
 #include "matrix.h"
+#include "number.h"
 #include "parametric.h"
 #include "physical_constant.h"
 #include "projection.h"
@@ -115,14 +116,10 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
     case Type::Median:
     case Type::Variance: {
       int minListLen = e->type() == Type::SampleStdDev ? 2 : 1;
-      bool (*isOneOrFloatOne)(const Tree*) = [](const Tree* t) {
-        return t->isOne() || t->treeIsIdenticalTo(1_fe) ||
-               t->treeIsIdenticalTo(1_de);
-      };
       // At least minListLen child is needed.
       return childLength[0] >= minListLen &&
              ((childLength[1] == k_nonListListLength &&
-               isOneOrFloatOne(e->child(1))) ||
+               Number::IsOne(e->child(1))) ||
               childLength[0] == childLength[1]);
     }
     case Type::Min:

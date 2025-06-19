@@ -349,7 +349,6 @@ std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
       Tree* a = PrivateToTree<float>(
           child, Dimension::Get(child, ctx->m_symbolContext), ctx);
       if (a->isUndefined()) {
-        a->removeTree();
         undefValue = NAN;
       }
       a->removeTree();

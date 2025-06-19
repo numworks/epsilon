@@ -6,7 +6,6 @@
 #include <poincare/range.h>
 #include <poincare/src/expression/equation_solver.h>
 
-#include "equation.h"
 #include "equation_store.h"
 #include "solution.h"
 
@@ -35,11 +34,11 @@ class SystemOfEquations {
   SystemOfEquations(EquationStore* store) : m_store(store) {}
 
   constexpr static int k_maxNumberOfExactSolutions =
-      std::max(Poincare::Expression::k_maxNumberOfVariables,
-               Poincare::Expression::k_maxPolynomialDegree + 1);
-  constexpr static int k_maxNumberOfApproximateSolutions = 10;
+      Poincare::Internal::EquationSolver::k_maxNumberOfExactSolutions;
+  constexpr static int k_maxNumberOfApproximateSolutions =
+      Poincare::Internal::EquationSolver::k_maxNumberOfApproximateSolutions;
   constexpr static int k_maxNumberOfSolutions =
-      std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
+      Poincare::Internal::EquationSolver::k_maxNumberOfSolutions;
 
   // System analysis
   Type type() const { return m_solverContext.type; }

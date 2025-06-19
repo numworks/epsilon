@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_EQUATION_SOLVER_H
 #define POINCARE_EXPRESSION_EQUATION_SOLVER_H
 
+#include <poincare/expression.h>
 #include <poincare/range.h>
 #include <poincare/src/memory/tree.h>
 
@@ -12,9 +13,10 @@ namespace Poincare::Internal {
 /* Solver methods are a direct (and incomplete for now) adaptation of methods in
  * apps/solver/system_of_equations.cpp. */
 
-template <int N>
 class VariableArray {
  public:
+  constexpr static int k_maxNumberOfVariables =
+      Expression::k_maxNumberOfVariables;
   VariableArray() : m_numberOfVariables(0) {}
   void fillWithList(const Tree* list);
   void clear() { m_numberOfVariables = 0; }
@@ -28,13 +30,17 @@ class VariableArray {
 
  private:
   int m_numberOfVariables;
-  char m_variables[N][Symbol::k_maxNameSize];
+  char m_variables[k_maxNumberOfVariables][Symbol::k_maxNameSize];
 };
 
 class EquationSolver {
  public:
-  constexpr static int k_maxNumberOfExactSolutions = 6;
+  constexpr static int k_maxNumberOfExactSolutions =
+      std::max(VariableArray::k_maxNumberOfVariables,
+               Expression::k_maxPolynomialDegree + 1);
   constexpr static int k_maxNumberOfApproximateSolutions = 10;
+  constexpr static int k_maxNumberOfSolutions =
+      std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
 
   enum class Type : uint8_t {
     LinearSystem,
@@ -68,8 +74,8 @@ class EquationSolver {
     bool overrideUserVariables = false;
     bool exactResults = true;
     SolutionStatus solutionStatus = SolutionStatus::Complete;
-    VariableArray<k_maxNumberOfExactSolutions> variables;
-    VariableArray<k_maxNumberOfExactSolutions> userVariables;
+    VariableArray variables;
+    VariableArray userVariables;
   };
 
   // Return list of exact solutions.

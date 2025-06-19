@@ -17,7 +17,11 @@ namespace Poincare::Internal {
 class LayoutSpanDecoder : public ForwardUnicodeDecoder {
  public:
   LayoutSpanDecoder(const Layout* start, size_t length)
-      : ForwardUnicodeDecoder(0, length), m_layout(start), m_length(length) {}
+      : ForwardUnicodeDecoder(0, length),
+        m_layout(start),
+        m_length(static_cast<uint16_t>(length)) {
+    assert(m_length == m_end - m_position);
+  }
 
   LayoutSpanDecoder(const Rack* rack, size_t initialPosition = 0,
                     size_t lastPosition = k_noSize)

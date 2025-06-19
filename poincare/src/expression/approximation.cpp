@@ -1309,8 +1309,10 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     return BooleanOrUndefined(BooleanOrUndefined::Undef{});
   }
   if (e->isDep()) {
-    // TODO: Undefined boolean return false for now.
-    return (UndefDependencies<T>(e, ctx) == std::complex<T>(0.0));
+    if (UndefDependencies<T>(e, ctx) != std::complex<T>(0.0)) {
+      return BooleanOrUndefined(BooleanOrUndefined::Undef{});
+    }
+    return PrivateToBoolean<T>(e->child(0), ctx);
   }
   assert(e->isLogicalOperator());
   BooleanOrUndefined a = PrivateToBoolean<T>(e->child(0), ctx);

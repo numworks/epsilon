@@ -104,10 +104,9 @@ class CalculationStore {
                                            endOfTemporaryData);
   }
 
-  /* Make space for calculation. Update [location] if some older calculations
-   * are cleared. [neededSize] must account for everything accounted in
-   * [neededSizeForCalculation] */
-  void getEmptySpace(char** location, size_t neededSize);
+  /* Make space for calculation by clearing some older calculations if needed.
+   * neededSize must be smaller than m_bufferSize */
+  void getEmptySpace(size_t neededSize);
 
   struct CalculationElements {
     Poincare::UserExpression input;

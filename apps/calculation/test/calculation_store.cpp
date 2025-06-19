@@ -460,6 +460,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("diff(x^2,x,3)_rad→a", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "6rad", &globalContext,
                       &store);
+  assertCalculationIs("int(6/x^2-8/x^3,x,1,2)", DisplayOutput::ApproximateOnly,
+                      EqualSign::Hidden, nullptr, "0", &globalContext, &store);
+
   MathPreferences::SharedPreferences()->setAngleUnit(
       Preferences::AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();

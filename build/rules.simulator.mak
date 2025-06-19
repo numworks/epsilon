@@ -33,7 +33,7 @@ $(call create_goal,test, \
   sdl \
 )
 
-include build/coverage.mak
+include $(PATH_haussmann)/src/rules/coverage.mak
 
 ifeq ($(PLATFORM),web)
 $(call create_zip,epsilon%zip,$(addprefix $(OUTPUT_DIRECTORY)/, \

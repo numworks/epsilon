@@ -624,12 +624,11 @@ std::complex<T> AnalysisToComplex(const Tree* e, const Context* ctx) {
       int upperBound = up.real();
       // Cloning here to avoid modifying function argument `e`
       Tree* child = upperBoundChild->nextTree()->cloneTree();
-      assert(ctx);
-      Context ctxCopy = *ctx;
+      Context ctxCopy = ctx ? *ctx : Context();
       /* We ApproximateAndReplaceEveryScalar here to avoid approximate complex
        * constants on every round of the sum/product computation */
-      ApproximateAndReplaceEveryScalar<T>(child, *ctx);
-      LocalContext localCtx = LocalContext(NAN, ctx->m_localContext);
+      ApproximateAndReplaceEveryScalar<T>(child, ctxCopy);
+      LocalContext localCtx = LocalContext(NAN, ctxCopy.m_localContext);
       ctxCopy.m_localContext = &localCtx;
       std::complex<T> result = e->isSum() ? 0 : 1;
       for (int k = lowerBound; k <= upperBound; k++) {

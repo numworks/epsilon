@@ -361,8 +361,7 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
 void CalculationStore::getEmptySpace(size_t neededSize) {
   assert(neededSize < m_bufferSize);
   while (remainingBufferSize() < neededSize) {
-    assert(numberOfCalculations() > 0);
-    deleteOldestCalculation(endOfCalculations());
+    deleteOldestCalculation();
   }
 }
 

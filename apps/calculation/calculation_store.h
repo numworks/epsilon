@@ -99,9 +99,9 @@ class CalculationStore {
   size_t spaceForNewCalculations(const char* currentEndOfCalculations) const;
 
   size_t privateDeleteCalculationAtIndex(int index, char* shiftedMemoryEnd);
-  size_t deleteOldestCalculation(char* endOfTemporaryData) {
-    return privateDeleteCalculationAtIndex(numberOfCalculations() - 1,
-                                           endOfTemporaryData);
+  void deleteOldestCalculation() {
+    assert(numberOfCalculations() > 0);
+    deleteCalculationAtIndex(numberOfCalculations() - 1);
   }
 
   /* Make space for calculation by clearing some older calculations if needed.

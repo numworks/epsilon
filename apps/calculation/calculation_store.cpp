@@ -294,6 +294,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
   char* cursor = endOfCalculations();
   getEmptySpace(&cursor, neededSize);
   assert(cursor != k_pushErrorLocation);
+  assert(cursor == endOfCalculations());
   Calculation* pushedCalculation = pushCalculation(calculationToPush, &cursor);
   assert(pushedCalculation);
   return ExpiringPointer(pushedCalculation);
@@ -361,6 +362,7 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
 }
 
 void CalculationStore::getEmptySpace(char** location, size_t neededSize) {
+  assert(*location == endOfCalculations());
   /* [spaceForNewCalculations] also accounts for calculation's pointer. This
    * Could be factorized with [remainingBufferSize()] */
   while (spaceForNewCalculations(*location) + sizeof(Calculation*) <
@@ -371,6 +373,7 @@ void CalculationStore::getEmptySpace(char** location, size_t neededSize) {
     }
     int deleted = deleteOldestCalculation(*location);
     *location -= deleted;
+    assert(*location == endOfCalculations());
   }
 }
 

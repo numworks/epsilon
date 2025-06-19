@@ -29,6 +29,11 @@ class ContextWithParent : public Context {
     return m_parentContext->setExpressionForUserNamed(expression, symbol);
   }
 
+  bool canRemoveUnderscoreToUnits() const override {
+    assert(m_parentContext);
+    return m_parentContext->canRemoveUnderscoreToUnits();
+  }
+
  private:
   Context* m_parentContext;
 };

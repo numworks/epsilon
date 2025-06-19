@@ -43,6 +43,9 @@ QUIZ_CASE(solver_solving_range) {
                                         &globalContext);
   assert_auto_solving_range_is("x^(1/3)=234567", -10, 10, &globalContext);
 
+  assert_solves_with_auto_solving_range("int(e^(t*x),x,2,4)=7.2", {0.4173565},
+                                        &globalContext);
+
   // Restore default preferences
   setComplexFormatAndAngleUnit(Real, Radian);
 }

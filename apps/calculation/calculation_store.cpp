@@ -361,7 +361,10 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
 }
 
 void CalculationStore::getEmptySpace(char** location, size_t neededSize) {
-  while (spaceForNewCalculations(*location) < neededSize) {
+  /* [spaceForNewCalculations] also accounts for calculation's pointer. This
+   * Could be factorized with [remainingBufferSize()] */
+  while (spaceForNewCalculations(*location) + sizeof(Calculation*) <
+         neededSize) {
     if (numberOfCalculations() == 0) {
       *location = k_pushErrorLocation;
       return;

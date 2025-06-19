@@ -104,8 +104,9 @@ class CalculationStore {
                                            endOfTemporaryData);
   }
 
-  /* Make space for calculation. Update the location if some older calculations
-   * are cleared. */
+  /* Make space for calculation. Update [location] if some older calculations
+   * are cleared. [neededSize] must account for everything accounted in
+   * [neededSizeForCalculation] */
   void getEmptySpace(char** location, size_t neededSize);
 
   struct CalculationElements {

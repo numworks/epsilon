@@ -33,6 +33,7 @@ $(call create_goal,test, \
   sdl \
 )
 
+COVERAGE_main_goal := epsilon
 include $(PATH_haussmann)/src/rules/coverage.mak
 
 ifeq ($(PLATFORM),web)

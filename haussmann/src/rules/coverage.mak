@@ -1,4 +1,4 @@
-$(call create_goal,coverage_epsilon,$(MODULES_epsilon),coverage)
+$(call create_goal,coverage_$(COVERAGE_main_goal),$(MODULES_$(COVERAGE_main_goal)),coverage)
 
 $(call create_goal,coverage_test,$(MODULES_test),coverage)
 
@@ -43,7 +43,7 @@ endef
 # rule_for_coverage,<coverage_dir>
 define rule_for_coverage
 $(eval \
-coverage: $1/coverage_test.bin $1/coverage_epsilon.bin
+coverage: $1/coverage_test.bin $1/coverage_$(COVERAGE_main_goal).bin
 	$(call initialize_diagnosis,code_coverage,$1)
 	$(call run_screenshot_tests,$$(word 2,$$^))
 	$(call run_unit_tests,$$<)

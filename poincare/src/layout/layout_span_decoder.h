@@ -17,7 +17,9 @@ namespace Poincare::Internal {
 class LayoutSpanDecoder : public ForwardUnicodeDecoder {
  public:
   LayoutSpanDecoder(const Layout* start, size_t length)
-      : ForwardUnicodeDecoder(0, length), m_layout(start), m_length(length) {}
+      : ForwardUnicodeDecoder(0, length), m_layout(start), m_length(length) {
+    assert(m_length == m_end - m_position);
+  }
 
   LayoutSpanDecoder(const Rack* rack, size_t initialPosition = 0,
                     size_t lastPosition = k_noSize)
@@ -33,10 +35,10 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
                                       : lastPosition) -
                 initialPosition) {}
 
-  LayoutSpanDecoder(LayoutSpan span)
+  explicit LayoutSpanDecoder(LayoutSpan span)
       : LayoutSpanDecoder(span.data(), span.size()) {}
 
-  bool isEmpty() const { return m_length == 0; }
+  bool isEmpty() const override { return m_length == 0; }
 
   const Layout* layout() const { return m_layout; }
 
@@ -47,7 +49,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
                : UCodePointNull;
   }
 
-  CodePoint combiningCodePoint() {
+  CodePoint combiningCodePoint() const {
     return m_length > 0 && m_layout->isCombinedCodePointsLayout()
                ? CodePointLayout::GetCombiningCodePoint(m_layout)
                : UCodePointNull;
@@ -59,13 +61,13 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
     return cp;
   }
 
-  bool nextLayoutIsCodePoint() {
+  bool nextLayoutIsCodePoint() const {
     /* Return true if the decoder is empty for functions that are looping on
      * codepoints until they hit a null codepoints. */
     return m_length == 0 || m_layout->isCodePointLayout();
   }
 
-  bool nextLayoutIsCombinedCodePoint() {
+  bool nextLayoutIsCombinedCodePoint() const {
     return m_layout->isCombinedCodePointsLayout();
   }
 
@@ -75,7 +77,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
     return result;
   }
 
-  LayoutSpan toSpan() { return LayoutSpan{m_layout, m_length}; }
+  LayoutSpan toSpan() const { return LayoutSpan{m_layout, m_length}; }
 
   void skip(int n) {
     while (n--) {

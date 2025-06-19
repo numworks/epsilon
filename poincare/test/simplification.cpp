@@ -1397,8 +1397,6 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to_no_beautif("[[0]]×[[∞]]×arcsin(6)", "[[nonreal]]");
   simplifies_to_no_beautif("[[0,∞]]×[[0,1][1,1]]×arcsin(6)",
                            "[[nonreal,nonreal]]");
-  /* TODO: It should be unreal, but is transformed to UndefBoolean which is
-   * displayed as "undef" */
   simplifies_to(
       "sequence(random(),k,10)<arcsin(4)",
       "dep(sequence(undef,k,10),{sequence(random(),k,10)<arcsin(4)})");

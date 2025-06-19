@@ -41,19 +41,19 @@ class SystemOfEquations {
       Poincare::Internal::EquationSolver::k_maxNumberOfSolutions;
 
   // System analysis
-  Type type() const { return m_solverContext.type; }
-  int degree() const { return m_solverContext.degree; }
+  Type type() const { return m_solutionMetadata.type; }
+  int degree() const { return m_solutionMetadata.degree; }
   const char* variable(size_t index) const {
-    return m_solverContext.variables.variable(index);
+    return m_solutionMetadata.variables.variable(index);
   }
   size_t numberOfUserVariables() const {
-    return m_solverContext.userVariables.numberOfVariables();
+    return m_solutionMetadata.userVariables.numberOfVariables();
   }
   const char* userVariable(size_t index) const {
-    return m_solverContext.userVariables.variable(index);
+    return m_solutionMetadata.userVariables.variable(index);
   }
   bool overrideUserVariables() const {
-    return m_solverContext.overrideUserVariables;
+    return m_solutionMetadata.overrideUserVariables;
   }
 
   // Approximate range
@@ -82,7 +82,7 @@ class SystemOfEquations {
     return m_solutions + index;
   }
   SolutionStatus solutionStatus() const {
-    return m_solverContext.solutionStatus;
+    return m_solutionMetadata.solutionStatus;
   }
 
   void tidy(Poincare::PoolObject* treePoolCursor = nullptr);
@@ -115,12 +115,12 @@ class SystemOfEquations {
                          SolutionType type);
   void registerSolution(double f);
 
+  Poincare::Internal::EquationSolver::SolutionMetadata m_solutionMetadata;
   Solution m_solutions[k_maxNumberOfSolutions];
   size_t m_numberOfSolutions;
   EquationStore* m_store;
   Poincare::Range1D<double> m_approximateSolvingRange;
   bool m_autoApproximateSolvingRange;
-  Poincare::Internal::EquationSolver::Context m_solverContext;
 };
 
 }  // namespace Solver

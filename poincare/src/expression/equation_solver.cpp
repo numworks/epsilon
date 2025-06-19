@@ -41,66 +41,54 @@ void VariableArray::fillWithList(const Tree* list) {
   }
 }
 
-template void
-VariableArray<EquationSolver::k_maxNumberOfExactSolutions>::append(const char*);
-
-template void VariableArray<
-    EquationSolver::k_maxNumberOfExactSolutions>::fillWithList(const Tree*);
-
-Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
-                                 ProjectionContext projectionContext,
-                                 Error* error) {
+EquationSolver::SolverResult EquationSolver::ExactSolve(
+    const Tree* equationsSet, ProjectionContext projectionContext) {
   // Try solving while using user variables
-  // TODO: Context is quite large and this copy could be optimized.
-  Context firstContext = *context;
   projectionContext.m_symbolic = SymbolicComputation::ReplaceDefinedSymbols;
-  Tree* result =
-      PrivateExactSolve(equationsSet, &firstContext, projectionContext, error);
-  if (*error == Error::RequireApproximateSolution ||
-      (*error == Error::NoError && result->numberOfChildren() > 0)) {
-    *context = firstContext;
-    return result;
+  SolverResult firstResult = PrivateExactSolve(equationsSet, projectionContext);
+  if (firstResult.metadata.error == Error::RequireApproximateSolution ||
+      (firstResult.metadata.error == Error::NoError &&
+       firstResult.solutionList->numberOfChildren() > 0)) {
+    return firstResult;
   }
-  assert((result == nullptr) || (result->numberOfChildren() == 0));
-  if (result) {
-    result->removeTree();
+  assert((firstResult.solutionList == nullptr) ||
+         (firstResult.solutionList->numberOfChildren() == 0));
+  if (firstResult.solutionList) {
+    firstResult.solutionList->removeTree();
   }
 
   // Try solving while overriding user variables
-  Error secondError = Error::NoError;
   projectionContext.m_symbolic = SymbolicComputation::ReplaceDefinedFunctions;
-  result =
-      PrivateExactSolve(equationsSet, context, projectionContext, &secondError);
-  if (*error != Error::NoError || secondError == Error::NoError ||
-      secondError == Error::RequireApproximateSolution) {
-    *error = secondError;
-  } else {
-    assert(!result);
-    *context = firstContext;
-    if (*error == Error::NoError) {
-      /* The system becomes invalid when overriding the user variables: the
-       * first solution was better. Restore inital empty set */
-      result = SharedTreeStack->pushSet(0);
-    }
+  SolverResult secondResult =
+      PrivateExactSolve(equationsSet, projectionContext);
+  if (firstResult.metadata.error == Error::NoError &&
+      secondResult.metadata.error != Error::NoError &&
+      secondResult.metadata.error != Error::RequireApproximateSolution) {
+    assert(secondResult.solutionList == nullptr);
+    /* The system becomes invalid when overriding the user variables: the
+     * first solution was better. Restore inital empty set */
+    firstResult.solutionList = SharedTreeStack->pushSet(0);
+    return firstResult;
   }
-  return result;
+
+  return secondResult;
 }
 
-Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
-                                        Context* context,
-                                        ProjectionContext projectionContext,
-                                        Error* error) {
+EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
+    const Tree* equationsSet, ProjectionContext projectionContext) {
   // Update context from projectionContext
   assert(projectionContext.m_symbolic ==
              SymbolicComputation::ReplaceDefinedFunctions ||
          projectionContext.m_symbolic ==
              SymbolicComputation::ReplaceDefinedSymbols);
-  context->overrideUserVariables =
+
+  SolutionMetadata metadata;
+  metadata.overrideUserVariables =
       (projectionContext.m_symbolic ==
        SymbolicComputation::ReplaceDefinedFunctions);
   Projection::UpdateComplexFormatWithExpressionInput(equationsSet,
                                                      &projectionContext);
-  context->complexFormat = projectionContext.m_complexFormat;
+  metadata.complexFormat = projectionContext.m_complexFormat;
 
   // Retrieve user symbols before simplification and variable replacement
   Tree* userSymbols =
@@ -113,7 +101,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
     uint8_t index = 0;
     while (index < numberOfVariables) {
       if (projectionContext.m_context->expressionForUserNamed(userSymbol)) {
-        context->userVariables.append(Symbol::GetName(userSymbol));
+        metadata.userVariables.append(Symbol::GetName(userSymbol));
         if (projectionContext.m_symbolic ==
             SymbolicComputation::ReplaceDefinedSymbols) {
           userSymbol->removeTree();
@@ -131,13 +119,13 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
       Preferences::SharedPreferences()
           ->examMode()
           .forbidSimultaneousEquationSolver()) {
-    *error = Error::DisabledInExamMode;
+    metadata.error = Error::DisabledInExamMode;
   } else if (numberOfVariables > k_maxNumberOfExactSolutions) {
-    *error = Error::TooManyVariables;
+    metadata.error = Error::TooManyVariables;
   }
-  if (*error != Error::NoError) {
+  if (metadata.error != Error::NoError) {
     userSymbols->removeTree();
-    return nullptr;
+    return {nullptr, metadata};
   }
 
   /* Clone and simplify the equations */
@@ -159,27 +147,25 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
                              ComplexSign::Finite());
   }
   // Project (replace local symbols) and reduce
-  ProjectAndReduce(reducedEquationSet, projectionContext, error);
-  if (*error != Error::NoError) {
+  metadata.error = ProjectAndReduce(reducedEquationSet, projectionContext);
+  if (metadata.error != Error::NoError) {
     reducedEquationSet->removeTree();
     userSymbols->removeTree();
-    return nullptr;
+    return {nullptr, metadata};
   }
 
-  context->numberOfVariables = numberOfVariables;
+  metadata.numberOfVariables = numberOfVariables;
 
   /* Find equation's results */
   TreeRef result;
-  assert(*error == Error::NoError);
-  result =
-      SolveLinearSystem(reducedEquationSet, numberOfVariables, context, error);
+  assert(metadata.error == Error::NoError);
+  result = SolveLinearSystem(reducedEquationSet, numberOfVariables, &metadata);
 #if POINCARE_POLYNOMIAL_SOLVER
-  if (*error == Error::NonLinearSystem && numberOfVariables <= 1 &&
+  if (metadata.error == Error::NonLinearSystem && numberOfVariables <= 1 &&
       equationsSet->numberOfChildren() <= 1) {
     assert(result.isUninitialized());
-    result =
-        SolvePolynomial(reducedEquationSet, numberOfVariables, context, error);
-    if (*error != Error::RequireApproximateSolution) {
+    result = SolvePolynomial(reducedEquationSet, numberOfVariables, &metadata);
+    if (metadata.error != Error::RequireApproximateSolution) {
       /* Remove non real solutions of a polynomial if the equation was projected
        * with a "Real" Complex format */
       assert(result->isList());
@@ -192,36 +178,37 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
       }
     }
   }
-  if (*error == Error::RequireApproximateSolution) {
-    context->type = Type::GeneralMonovariable;
+  if (metadata.error == Error::RequireApproximateSolution) {
+    metadata.type = Type::GeneralMonovariable;
     // TODO: Handle GeneralMonovariable solving.
     assert(result.isUninitialized());
     reducedEquationSet->removeTree();
     userSymbols->removeTree();
-    return result;
+    return {nullptr, metadata};
   }
 #else
-  if (*error == Error::NonLinearSystem ||
-      *error == Error::RequireApproximateSolution) {
-    context->type = Type::GeneralMonovariable;
+  if (metadata.error == Error::NonLinearSystem ||
+      metadata.error == Error::RequireApproximateSolution) {
+    metadata.type = Type::GeneralMonovariable;
   }
 #endif
   reducedEquationSet->removeTree();
 
   /* Replace variables back to UserSymbols */
   if (!result.isUninitialized()) {
-    context->variables.fillWithList(userSymbols);
+    metadata.variables.fillWithList(userSymbols);
     for (const Tree* symbol : userSymbols->children()) {
       Variables::LeaveScopeWithReplacement(result, symbol, false, false);
     }
     // Replace additional unknown parameter variables (t1, t2, ...)
-    context->numberOfVariables -= userSymbols->numberOfChildren();
-    if (context->numberOfVariables > 0) {
+    metadata.numberOfVariables -= userSymbols->numberOfChildren();
+    if (metadata.numberOfVariables > 0) {
       // Start at 0 ("t") instead of 1 ("t1") if there is only one variable
-      size_t parameterIndex = (context->numberOfVariables > 1) ? 1 : 0;
-      uint32_t usedParameterIndices = TagParametersUsedAsVariables(context);
+      size_t parameterIndex = (metadata.numberOfVariables > 1) ? 1 : 0;
+      uint32_t usedParameterIndices =
+          TagParametersUsedAsVariables(metadata.variables);
 
-      for (int j = 0; j < context->numberOfVariables; j++) {
+      for (int j = 0; j < metadata.numberOfVariables; j++) {
         // Generate a unique identifier t? that does not collide with variables.
         TreeRef symbol = GetNextParameterSymbol(
             &parameterIndex, usedParameterIndices, projectionContext.m_context);
@@ -237,7 +224,7 @@ Tree* EquationSolver::PrivateExactSolve(const Tree* equationsSet,
     Simplification::BeautifyReduced(result, &projectionContext);
   }
 
-  return result;
+  return {result, metadata};
 }
 
 template <typename T>
@@ -248,11 +235,13 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
              e, t, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
 }
 
-Range1D<double> EquationSolver::AutomaticInterval(
-    const Tree* equation, Context* context,
-    ProjectionContext projectionContext) {
-  Tree* preparedEquation =
-      PrepareEquationForApproximateSolve(equation, context, projectionContext);
+EquationSolver::ApproximateSolvingRange
+EquationSolver::ComputeApproximateSolvingRange(
+    const Tree* equation, ProjectionContext projectionContext) {
+  // TODO: Restore "overrideUserVariables" when needed
+  SolutionMetadata metadata;
+  Tree* preparedEquation = PrepareEquationForApproximateSolve(
+      equation, projectionContext, &metadata);
 
   /* Interval search is done in float to gain some time, since precision does
    * not matter as much as for the actual solve. The computed interval is
@@ -271,14 +260,6 @@ Range1D<double> EquationSolver::AutomaticInterval(
   bool finiteNumberOfSolutions = true;
   bool didFitRoots = zoom.fitRoots(evaluator<float>, model, false,
                                    evaluator<double>, &finiteNumberOfSolutions);
-  /* When there are more than k_maxNumberOfApproximateSolutions on one side of
-   * 0, the zoom is setting the interval to have a maximum of 5 solutions left
-   * of 0 and 5 solutions right of zero. This means that sometimes, for a
-   * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will be
-   * displayed. We still want to notify the user that more solutions exist. */
-  context->solutionStatus = finiteNumberOfSolutions
-                                ? SolutionStatus::Complete
-                                : SolutionStatus::Incomplete;
   zoom.fitBounds(evaluator<float>, model, false);
   Range1D<float> finalRange = *(zoom.range(false, false).x());
   if (didFitRoots) {
@@ -293,17 +274,20 @@ Range1D<double> EquationSolver::AutomaticInterval(
                                   k_maxFloatForAutoApproximateSolvingRange);
   }
   preparedEquation->removeTree();
-  return {finalRange.min(), finalRange.max()};
+  return {{finalRange.min(), finalRange.max()}, !finiteNumberOfSolutions};
 }
 
-Tree* EquationSolver::ApproximateSolve(const Tree* equation,
-                                       Range1D<double> range, Context* context,
-                                       ProjectionContext projectionContext) {
-  assert(context->type == Type::GeneralMonovariable);
-  assert(context->variables.numberOfVariables() == 1);
-
-  Tree* preparedEquation =
-      PrepareEquationForApproximateSolve(equation, context, projectionContext);
+EquationSolver::SolverResult EquationSolver::ApproximateSolve(
+    const Tree* equation, Range1D<double> range,
+    ProjectionContext projectionContext, bool isRangeIncomplete) {
+  // TODO: Restore "overrideUserVariables" when needed
+  SolutionMetadata metadata{
+      .type = Type::GeneralMonovariable,
+      .solutionStatus = isRangeIncomplete ? SolutionStatus::Incomplete
+                                          : SolutionStatus::Complete,
+  };
+  Tree* preparedEquation = PrepareEquationForApproximateSolve(
+      equation, projectionContext, &metadata);
 
   assert(range.isValid());
   Solver<double> solver =
@@ -322,7 +306,7 @@ Tree* EquationSolver::ApproximateSolve(const Tree* equation,
     }
 
     if (i == k_maxNumberOfApproximateSolutions) {
-      context->solutionStatus = SolutionStatus::Incomplete;
+      metadata.solutionStatus = SolutionStatus::Incomplete;
     } else {
       if (std::isnan(root)) {
         break;
@@ -334,39 +318,37 @@ Tree* EquationSolver::ApproximateSolve(const Tree* equation,
   }
 
   preparedEquation->removeTree();
-  return resultList;
+  return {resultList, metadata};
 }
 
-void EquationSolver::ProjectAndReduce(Tree* equationsSet,
-                                      ProjectionContext projectionContext,
-                                      Error* error) {
-  assert(*error == Error::NoError);
+EquationSolver::Error EquationSolver::ProjectAndReduce(
+    Tree* equationsSet, ProjectionContext projectionContext) {
   assert(projectionContext.m_advanceReduce);
   Simplification::ProjectAndReduce(equationsSet, &projectionContext);
   if (projectionContext.m_dimension.isUnit()) {
-    *error = Error::EquationUndefined;
-    return;
+    return Error::EquationUndefined;
   }
   if (!equationsSet->isList()) {
-    *error = Error::EquationUndefined;
-    return;
+    return Error::EquationUndefined;
   }
+  Error error = Error::NoError;
   for (const Tree* equation : equationsSet->children()) {
-    if (equation->isUndefined()) {
-      *error = equation->isNonReal() && *error == Error::NoError
-                   ? Error::EquationNonReal
-                   : Error::EquationUndefined;
+    if (!equation->isUndefined()) {
+      continue;
     }
+    if (!equation->isNonReal()) {
+      return Error::EquationUndefined;
+    }
+    error = Error::EquationNonReal;
   }
+  return error;
 }
 
 Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
-                                        uint8_t n, Context* context,
-                                        Error* error) {
-  assert(*error == Error::NoError);
-  context->exactResults = true;
-  context->type = Type::LinearSystem;
-  context->degree = 1;
+                                        uint8_t n, SolutionMetadata* metadata) {
+  metadata->exactResults = true;
+  metadata->type = Type::LinearSystem;
+  metadata->degree = 1;
 
   // Solve without dependencies
   Tree* equationSetWithoutDep =
@@ -383,9 +365,9 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
 
   // Create the matrix (A|b) for the equation Ax=b;
   for (const Tree* equation : equationSetWithoutDep->children()) {
-    Tree* coefficients = GetLinearCoefficients(equation, n, context);
+    Tree* coefficients = GetLinearCoefficients(equation, n);
     if (!coefficients) {
-      *error = Error::NonLinearSystem;
+      metadata->error = Error::NonLinearSystem;
       matrix->removeTree();
       equationSetWithoutDep->removeTree();
       return nullptr;
@@ -402,7 +384,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   // Compute the rank of (A|b)
   int rank = Matrix::CanonizeAndRank(matrix);
   if (rank == Matrix::k_failedToCanonizeRank) {
-    *error = Error::EquationUndefined;
+    metadata->error = Error::EquationUndefined;
     matrix->removeTree();
     equationSetWithoutDep->removeTree();
     return nullptr;
@@ -421,7 +403,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
        * solution. */
       matrix->removeTree();
       equationSetWithoutDep->removeTree();
-      assert(*error == Error::NoError);
+      assert(metadata->error == Error::NoError);
       return SharedTreeStack->pushSet(0);
     }
     coefficient = coefficient->nextTree();
@@ -438,7 +420,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
 #else
     /* The system is insufficiently qualified: bind the value of n-rank
      * variables to parameters. */
-    context->solutionStatus = SolutionStatus::Incomplete;
+    metadata->solutionStatus = SolutionStatus::Incomplete;
     int variable = n - 1;
     int row = m - 1;
     int firstVariableInRow = -1;
@@ -474,7 +456,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
         (i == variable ? 1_e : 0_e)->cloneTree();
       }
       // Push a finite variable starting from ??
-      SharedTreeStack->pushVar(context->numberOfVariables++,
+      SharedTreeStack->pushVar(metadata->numberOfVariables++,
                                ComplexSign::Finite());
       rows = m + 1;
       Matrix::SetDimensions(matrix, ++m, n + 1);
@@ -487,14 +469,14 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
      * reduction of the equation set. */
     rank = Matrix::CanonizeAndRank(matrix, true);
     if (rank == Matrix::k_failedToCanonizeRank) {
-      *error = Error::EquationUndefined;
+      metadata->error = Error::EquationUndefined;
       matrix->removeTree();
       equationSetWithoutDep->removeTree();
       return nullptr;
     }
 #endif
   } else {
-    context->solutionStatus = SolutionStatus::Complete;
+    metadata->solutionStatus = SolutionStatus::Complete;
   }
   assert(rank == n);
 
@@ -528,14 +510,14 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       equationSetClone->removeTree();
       matrix->removeTree();
       equationSetWithoutDep->removeTree();
-      assert(*error == Error::NoError);
+      assert(metadata->error == Error::NoError);
       return SharedTreeStack->pushSet(0);
     }
     if (equation->isDep()) {
       // Approximate if the equation is monovariable and different from 0=0
-      *error = (n == 1 && !Dependency::Main(equation)->isZero())
-                   ? Error::RequireApproximateSolution
-                   : Error::EquationUnhandled;
+      metadata->error = (n == 1 && !Dependency::Main(equation)->isZero())
+                            ? Error::RequireApproximateSolution
+                            : Error::EquationUnhandled;
       equationSetClone->removeTree();
       matrix->removeTree();
       equationSetWithoutDep->removeTree();
@@ -545,13 +527,12 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   equationSetClone->removeTree();
 
   equationSetWithoutDep->removeTree();
-  assert(*error == Error::NoError);
+  assert(metadata->error == Error::NoError);
   return matrix;
 }
 
 Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
-                                            uint8_t numberOfVariables,
-                                            Context* context) {
+                                            uint8_t numberOfVariables) {
   TreeRef result = SharedTreeStack->pushList(0);
   TreeRef eq = equation->cloneTree();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
@@ -614,8 +595,7 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
 }
 
 Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
-                                      uint8_t n, Context* context,
-                                      Error* error) {
+                                      uint8_t n, SolutionMetadata* metadata) {
   assert(simplifiedEquationSet->isList() &&
          simplifiedEquationSet->numberOfChildren() == 1);
   assert(n == 1);
@@ -629,7 +609,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   Tree* polynomial = PolynomialParser::Parse(
       equationWithoutDep, Variables::Variable(0, ComplexSign::Finite()));
   if (!polynomial) {
-    *error = Error::RequireApproximateSolution;
+    metadata->error = Error::RequireApproximateSolution;
     SharedTreeStack->dropBlocksFrom(equation);
     return nullptr;
   }
@@ -638,12 +618,12 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
       {};
   int degree = Polynomial::Degree(polynomial);
   if (degree > Polynomial::k_maxPolynomialDegree) {
-    *error = Error::RequireApproximateSolution;
+    metadata->error = Error::RequireApproximateSolution;
     SharedTreeStack->dropBlocksFrom(equation);
     return nullptr;
   }
-  context->type = Type::PolynomialMonovariable;
-  context->degree = degree;
+  metadata->type = Type::PolynomialMonovariable;
+  metadata->degree = degree;
 
   int numberOfTerms = Polynomial::NumberOfTerms(polynomial);
   const Tree* coefficient = Polynomial::LeadingCoefficient(polynomial);
@@ -708,7 +688,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
         continue;
       }
       if (remainingDependency) {
-        *error = Error::RequireApproximateSolution;
+        metadata->error = Error::RequireApproximateSolution;
         SharedTreeStack->dropBlocksFrom(equation);
         return nullptr;
       }
@@ -722,20 +702,20 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
   equation->removeTree();
 
   NAry::AddChild(solutionList, discriminant);
-  *error = Error::NoError;
+  metadata->error = Error::NoError;
   return solutionList;
 }
 
-uint32_t EquationSolver::TagParametersUsedAsVariables(const Context* context) {
+uint32_t EquationSolver::TagParametersUsedAsVariables(VariableArray variables) {
   uint32_t tags = 0;
   constexpr size_t k_maxIndex = OMG::BitHelper::numberOfBitsIn(tags);
   constexpr size_t k_maxNumberOfDigits =
       OMG::Print::LengthOfUInt32(OMG::Base::Decimal, k_maxIndex);
   /* Only check local variables that may not have a global definition. The
    * others  will be checked for later. */
-  for (int i = 0; i < context->variables.numberOfVariables(); i++) {
+  for (int i = 0; i < variables.numberOfVariables(); i++) {
     // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
-    const char* variable = context->variables.variable(i);
+    const char* variable = variables.variable(i);
     if (variable[0] != k_parameterPrefix) {
       continue;
     }
@@ -788,29 +768,29 @@ Tree* EquationSolver::GetNextParameterSymbol(size_t* parameterIndex,
 }
 
 Tree* EquationSolver::PrepareEquationForApproximateSolve(
-    const Tree* equation, Context* context,
-    ProjectionContext projectionContext) {
+    const Tree* equation, ProjectionContext projectionContext,
+    SolutionMetadata* metadata) {
   Tree* equationClone = equation->cloneTree();
 
   projectionContext.m_symbolic =
-      (context->overrideUserVariables
+      (metadata->overrideUserVariables
            ? SymbolicComputation::ReplaceDefinedFunctions
            : SymbolicComputation::ReplaceDefinedSymbols);
   // Reduce and replace user variables if needed
   Projection::UpdateComplexFormatWithExpressionInput(equationClone,
                                                      &projectionContext);
 
-  context->complexFormat = projectionContext.m_complexFormat;
+  metadata->complexFormat = projectionContext.m_complexFormat;
   Simplification::ProjectAndReduce(equationClone, &projectionContext);
 
   // Find remaining variable
   Internal::Tree* variables = Variables::GetUserSymbols(equationClone);
   assert(variables->numberOfChildren() == 1);
-  context->variables.fillWithList(variables);
+  metadata->variables.fillWithList(variables);
   variables->removeTree();
 
   Approximation::PrepareFunctionForApproximation(
-      equationClone, context->variables.variable(0),
+      equationClone, metadata->variables.variable(0),
       Preferences::ComplexFormat::Real);
   return equationClone;
 }

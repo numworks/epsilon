@@ -65,56 +65,68 @@ class EquationSolver {
     Interrupted,  // The solver has been interrupted
   };
 
-  struct Context {
-    ComplexFormat complexFormat;
-    Type type;
-    int8_t degree;
-    int8_t numberOfVariables;
+  struct SolutionMetadata {
+    Error error = Error::NoError;
+    ComplexFormat complexFormat = ComplexFormat::Cartesian;
+    Type type = Type::GeneralMonovariable;
+    int8_t degree = 0;
+    int8_t numberOfVariables = 0;
     // If true, defined userVariables are ignored.
     bool overrideUserVariables = false;
     bool exactResults = true;
-    SolutionStatus solutionStatus = SolutionStatus::Complete;
     VariableArray variables;
     VariableArray userVariables;
+    SolutionStatus solutionStatus = SolutionStatus::Complete;
   };
 
-  // Return list of exact solutions.
-  static Tree* ExactSolve(const Tree* equationsSet, Context* context,
-                          ProjectionContext projectionContext, Error* error);
+  struct SolverResult {
+    Tree* solutionList = nullptr;
+    SolutionMetadata metadata;
+  };
 
-  static Range1D<double> AutomaticInterval(const Tree* equation,
-                                           Context* context,
-                                           ProjectionContext projectionContext);
+  struct ApproximateSolvingRange {
+    Range1D<double> range;
+    /* When there are more than k_maxNumberOfApproximateSolutions on one side of
+     * 0, the zoom is setting the interval to have a maximum of 5 solutions left
+     * of 0 and 5 solutions right of zero. This means that sometimes, for a
+     * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will
+     * be displayed. We still want to notify the user that more solutions exist.
+     */
+    bool isRangeIncomplete;
+  };
 
-  // Return a List of DoubleFloat
-  static Tree* ApproximateSolve(const Tree* equation, Range1D<double> range,
-                                Context* context,
-                                ProjectionContext projectionContext);
+  static SolverResult ExactSolve(const Tree* equationsSet,
+                                 ProjectionContext projectionContext);
+
+  static ApproximateSolvingRange ComputeApproximateSolvingRange(
+      const Tree* equation, ProjectionContext projectionContext);
+
+  static SolverResult ApproximateSolve(const Tree* equation,
+                                       Range1D<double> range,
+                                       ProjectionContext projectionContext,
+                                       bool isRangeIncomplete = false);
 
  private:
   // Return list of exact solutions.
-  static Tree* PrivateExactSolve(const Tree* equationsSet, Context* context,
-                                 ProjectionContext projectionContext,
-                                 Error* error);
-  static void ProjectAndReduce(Tree* equationsSet,
-                               ProjectionContext projectionContext,
-                               Error* error);
+  static SolverResult PrivateExactSolve(const Tree* equationsSet,
+                                        ProjectionContext projectionContext);
+  static Error ProjectAndReduce(Tree* equationsSet,
+                                ProjectionContext projectionContext);
   // Return list of solutions for linear system.
   static Tree* SolveLinearSystem(const Tree* equationsSet,
-                                 uint8_t numberOfVariables, Context* context,
-                                 Error* error);
+                                 uint8_t numberOfVariables,
+                                 SolutionMetadata* metadata);
   // Return list of solutions for a polynomial equation.
   static Tree* SolvePolynomial(const Tree* equationsSet,
-                               uint8_t numberOfVariables, Context* context,
-                               Error* error);
+                               uint8_t numberOfVariables,
+                               SolutionMetadata* metadata);
 
   // Return list of linear coefficients for each variables and final constant.
   static Tree* GetLinearCoefficients(const Tree* equation,
-                                     uint8_t numberOfVariables,
-                                     Context* context);
+                                     uint8_t numberOfVariables);
 
   constexpr static char k_parameterPrefix = 't';
-  static uint32_t TagParametersUsedAsVariables(const Context* context);
+  static uint32_t TagParametersUsedAsVariables(VariableArray variables);
 
   // Return the userSymbol for the next additional parameter variable.
   static Tree* GetNextParameterSymbol(size_t* parameterIndex,
@@ -122,8 +134,8 @@ class EquationSolver {
                                       Poincare::Context* context);
 
   static Tree* PrepareEquationForApproximateSolve(
-      const Tree* equation, Context* context,
-      ProjectionContext projectionContext);
+      const Tree* equation, ProjectionContext projectionContext,
+      SolutionMetadata* metadata);
 };
 
 }  // namespace Poincare::Internal

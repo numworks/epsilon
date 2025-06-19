@@ -184,14 +184,15 @@ bool ParsingHelper::ParameterText(LayoutSpanDecoder* varDecoder,
     c = varDecoder->nextCodePoint();
   }
   startOfVariable = *varDecoder;
-  size_t lengthOfVariable =
+  int lengthOfVariable =
       NumberOfNextTreeTo(startOfVariable.layout(), endOfVariable) - 1;
+  assert(lengthOfVariable >= 0);
 
   // if (!Tokenizer::CanBeCustomIdentifier(varDecoder, lengthOfVariable)) {
   // return false;
   // }
   *varDecoder = startOfVariable;
-  *parameterLength = lengthOfVariable;
+  *parameterLength = static_cast<size_t>(lengthOfVariable);
   *parameterStart = startOfVariable.layout();
   return true;
 }

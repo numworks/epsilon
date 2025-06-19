@@ -101,7 +101,7 @@ QUIZ_CASE(pcj_approximation_can_approximate) {
       KSum("k"_e, 2_e, 8_e, KAdd(KVarK, KVar<1, 0, 0>, 3_e))));
 }
 
-QUIZ_CASE(pcj_approximation_tree) {
+QUIZ_CASE(pcj_approximation_scalar) {
   approximates_to(123_e, 123.f);
   approximates_to(-123.21_fe, -123.21f);
   approximates_to(π_e, M_PI);

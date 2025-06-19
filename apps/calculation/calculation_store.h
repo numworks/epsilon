@@ -65,9 +65,7 @@ class CalculationStore {
 
   Shared::ExpiringPointer<Calculation> push(Poincare::Layout input,
                                             Poincare::Context* context);
-  void deleteCalculationAtIndex(int index) {
-    privateDeleteCalculationAtIndex(index, endOfCalculations());
-  }
+  void deleteCalculationAtIndex(int index);
   void deleteAll() { m_numberOfCalculations = 0; }
   bool preferencesHaveChanged();
 
@@ -98,7 +96,6 @@ class CalculationStore {
   /* Account for the size of an additional pointer at the end of the buffer. */
   size_t spaceForNewCalculations(const char* currentEndOfCalculations) const;
 
-  size_t privateDeleteCalculationAtIndex(int index, char* shiftedMemoryEnd);
   void deleteOldestCalculation() {
     assert(numberOfCalculations() > 0);
     deleteCalculationAtIndex(numberOfCalculations() - 1);

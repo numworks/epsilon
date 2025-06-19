@@ -337,14 +337,13 @@ size_t CalculationStore::spaceForNewCalculations(
              : 0;
 }
 
-size_t CalculationStore::privateDeleteCalculationAtIndex(
-    int index, char* shiftedMemoryEnd) {
+void CalculationStore::deleteCalculationAtIndex(int index) {
   char* deletionStart = index == numberOfCalculations() - 1
                             ? m_buffer
                             : endOfCalculationAtIndex(index + 1);
   char* deletionEnd = endOfCalculationAtIndex(index);
   size_t deletedSize = deletionEnd - deletionStart;
-  size_t shiftedMemorySize = shiftedMemoryEnd - deletionEnd;
+  size_t shiftedMemorySize = endOfCalculations() - deletionEnd;
 
   Ion::CircuitBreaker::lock();
   memmove(deletionStart, deletionEnd, shiftedMemorySize);
@@ -354,8 +353,6 @@ size_t CalculationStore::privateDeleteCalculationAtIndex(
   }
   m_numberOfCalculations--;
   Ion::CircuitBreaker::unlock();
-
-  return deletedSize;
 }
 
 void CalculationStore::getEmptySpace(size_t neededSize) {

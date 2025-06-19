@@ -231,3 +231,7 @@ jobs:
           name: poincarejs.zip
           path: output/release/foxglove/poincarejs.zip
           retention-days: 7
+  coverage:
+    name: Code Coverage
+    needs: linux
+    uses: ./.github/workflows/code_coverage.yml

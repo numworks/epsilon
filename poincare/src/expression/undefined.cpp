@@ -27,7 +27,7 @@ void Undefined::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
   if (length >= 0) {
     // Push ListSequence instead of a list to delay its expansion.
     SharedTreeStack->pushListSequence();
-    KVarK->cloneTree();
+    "k"_e->cloneTree();
     Integer::Push(length);
   }
   Dimension dim = Dimension::Get(e);

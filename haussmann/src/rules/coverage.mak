@@ -2,16 +2,16 @@ $(call create_goal,coverage_$(COVERAGE_main_goal),$(MODULES_$(COVERAGE_main_goal
 
 $(call create_goal,coverage_test,$(MODULES_test),coverage)
 
-$(call all_targets_named,coverage/%.bin): SFLAGS += --coverage
-
 _coverage_excludes := \
-  '**/eadk/**' \
-  '**/external/**' \
-  '*/output/**' \
-  '**/test/**' \
-  '**/python/src/**' \
-  '**/quiz/src/**' \
-  '/usr/**' \
+  .*/eadk/.* \
+  .*/external/.* \
+  .*/output/.* \
+  .*/test/.* \
+  .*/python/src/.* \
+  .*/quiz/src/.* \
+  /usr/.*
+
+$(call all_targets_named,coverage/%.bin): SFLAGS += --coverage -fprofile-exclude-files='$(subst $( ),;,$(_coverage_excludes))'
 
 # initialize_diagnosis, <file_name>, <coverage_dir>
 define initialize_diagnosis
@@ -36,7 +36,6 @@ endef
 define generate_coverage_info
 	@echo Generating coverage info for files in $2. Result will be stored in $2/$1.info.
 	lcov -j 32 --capture --directory $2 --output-file $2/$1.info \
-	$$(foreach pattern,$$(_coverage_excludes),--exclude $$(pattern)) \
 	--rc function_coverage=0 --rc geninfo_unexecuted_blocks=1
 endef
 

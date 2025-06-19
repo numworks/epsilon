@@ -139,10 +139,9 @@ class CalculationStore {
   /* Push a Calculation with its expressions (input, exact and approximate
    * output), and updates the calculation buffer to hold this new calculation
    * (see the memory layout in the CalculationStore class description).
-   * Note: this method assumes that enough space was freed after "location" to
-   * contain the new calculation. */
-  Calculation* pushCalculation(const CalculationElements& calculationToPush,
-                               char** location);
+   * Note: this method assumes that enough space was freed to contain the new
+   * calculation. */
+  Calculation* pushCalculation(const CalculationElements& calculationToPush);
 
   char* const m_buffer;
   const size_t m_bufferSize;

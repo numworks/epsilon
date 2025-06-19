@@ -292,8 +292,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
 
   // Free space for the new calculation
   getEmptySpace(neededSize);
-  char* cursor = endOfCalculations();
-  Calculation* pushedCalculation = pushCalculation(calculationToPush, &cursor);
+  Calculation* pushedCalculation = pushCalculation(calculationToPush);
   assert(pushedCalculation);
   return ExpiringPointer(pushedCalculation);
 }
@@ -388,14 +387,14 @@ size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
 }
 
 Calculation* CalculationStore::pushCalculation(
-    const CalculationElements& calculationToPush, char** location) {
-  assert(*location != k_pushErrorLocation);
-  assert(*location >= m_buffer &&
-         *location < pointerArea() - neededSizeForCalculation(
+    const CalculationElements& calculationToPush) {
+  char* location = endOfCalculations();
+  assert(location >= m_buffer &&
+         location < pointerArea() - neededSizeForCalculation(
                                          calculationToPush.sizeOfTrees()));
 
   // Push an empty Calculation instance (takes sizeof(Calculation))
-  Calculation* newCalculation = pushEmptyCalculation(location);
+  Calculation* newCalculation = pushEmptyCalculation(&location);
   // Set the calculation properties
   newCalculation->setComplexFormat(calculationToPush.complexFormat);
   newCalculation->setReductionFailure(calculationToPush.hasReductionFailure);
@@ -405,16 +404,16 @@ Calculation* CalculationStore::pushCalculation(
          !calculationToPush.outputs.exact.isUninitialized() &&
          !calculationToPush.outputs.approximate.isUninitialized());
   newCalculation->m_inputTreeSize =
-      pushExpressionTree(location, calculationToPush.input);
+      pushExpressionTree(&location, calculationToPush.input);
   newCalculation->m_exactOutputTreeSize =
-      pushExpressionTree(location, calculationToPush.outputs.exact);
+      pushExpressionTree(&location, calculationToPush.outputs.exact);
   newCalculation->m_approximatedOutputTreeSize =
-      pushExpressionTree(location, calculationToPush.outputs.approximate);
+      pushExpressionTree(&location, calculationToPush.outputs.approximate);
 
   /* Write the pointer to the new calculation at pointerArea() (takes
    * sizeof(Calculation*)) */
-  assert(*location < pointerArea() - sizeof(Calculation*));
-  pointerArray()[-1] = *location;
+  assert(location < pointerArea() - sizeof(Calculation*));
+  pointerArray()[-1] = location;
   /* Now that the calculation is fully built, we can finally update
    * m_numberOfCalculations. As that is the only variable tracking the state
    * of the store, updating it only at the end of the push ensures that,

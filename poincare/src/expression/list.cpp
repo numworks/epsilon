@@ -8,6 +8,7 @@
 #include "k_tree.h"
 #include "rational.h"
 #include "systematic_reduction.h"
+#include "undefined.h"
 #include "variables.h"
 
 namespace Poincare::Internal {
@@ -74,9 +75,13 @@ static Tree* FoldSumOrProduct(const Tree* list, TypeBlock type) {
   Tree* result = (type.isListSum() ? SharedTreeStack->pushAdd(0)
                                    : SharedTreeStack->pushMult(0));
   for (int i = 0; i < size; i++) {
-    [[maybe_unused]] Tree* element =
+    Tree* element =
         List::GetElement(list, i, SystematicReduction::ShallowReduce);
-    assert(element);
+    if (element == nullptr) {
+      // If an element is not retrievable, abort and return [nullptr]
+      SharedTreeStack->flushFromBlock(result);
+      return nullptr;
+    }
   }
   NAry::SetNumberOfChildren(result, size);
   SystematicReduction::ShallowReduce(result);
@@ -89,10 +94,17 @@ static Tree* FoldMinOrMax(const Tree* list, TypeBlock type) {
   int size = Dimension::ListLength(list);
   assert(size > 0);
   Tree* result = List::GetElement(list, 0, SystematicReduction::ShallowReduce);
+  if (result == nullptr) {
+    return nullptr;
+  }
   for (int i = 1; i < size; i++) {
     Tree* element =
         List::GetElement(list, i, SystematicReduction::ShallowReduce);
-    assert(element);
+    if (element == nullptr) {
+      // If an element is not retrievable, abort and return [nullptr]
+      SharedTreeStack->flushFromBlock(result);
+      return nullptr;
+    }
     // Bubble up undefined children.
     if (element->isUndefined()) {
       result->removeTree();
@@ -107,6 +119,7 @@ static Tree* FoldMinOrMax(const Tree* list, TypeBlock type) {
   return result;
 }
 
+/* Return the folded tree on success, return [nullptr] on failure */
 Tree* List::Fold(const Tree* list, TypeBlock type) {
   if (type.isListSum() || type.isListProduct()) {
     return FoldSumOrProduct(list, type);
@@ -131,6 +144,9 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
     Tree* n = coefficients->isOne()
                   ? Integer::Push(Dimension::ListLength(list))
                   : FoldSumOrProduct(coefficients, Type::ListSum);
+    if (n == nullptr) {
+      return nullptr;
+    }
     ctx.setNode(KC, n, 1, false);
     PatternMatching::CreateSimplify(sampleStdDev, ctx);
     n->removeTree();
@@ -149,7 +165,11 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
 #if POINCARE_LIST
   if (coefficients->isOne()) {
     Tree* result = KMult.node<2>->cloneNode();
-    FoldSumOrProduct(list, Type::ListSum);
+    Tree* listSum = FoldSumOrProduct(list, Type::ListSum);
+    if (listSum == nullptr) {
+      SharedTreeStack->flushFromBlock(result);
+      return nullptr;
+    }
     Rational::Push(1, Dimension::ListLength(list));
     SystematicReduction::ShallowReduce(result);
     return result;
@@ -203,16 +223,28 @@ bool List::ShallowApplyListOperators(Tree* e) {
         }
         TreeStackCheckpoint::Raise(exc);
       }
-      e->moveTreeOverTree(result);
+      if (result) {
+        e->moveTreeOverTree(result);
+        return true;
+      }
+      return false;
+    }
+    case Type::Mean: {
+      Tree* mean = Mean(e->child(0), e->child(1));
+      if (mean == nullptr) {
+        return false;
+      }
+      e->moveTreeOverTree(mean);
       return true;
     }
-    case Type::Mean:
-      e->moveTreeOverTree(Mean(e->child(0), e->child(1)));
-      return true;
     case Type::Variance:
     case Type::StdDev:
     case Type::SampleStdDev: {
-      e->moveTreeOverTree(Variance(e->child(0), e->child(1), e->type()));
+      Tree* variance = Variance(e->child(0), e->child(1), e->type());
+      if (variance == nullptr) {
+        return false;
+      }
+      e->moveTreeOverTree(variance);
       return true;
     }
     case Type::Median: {
@@ -277,7 +309,8 @@ bool List::ShallowApplyListOperators(Tree* e) {
            * expression. It might work when used with other lists because a
            * scalar can be interpret as a constant list in most contexts but
            * expect issues. */
-          e->cloneTreeOverTree(KUndef);
+          Undefined::ReplaceTreeWithDimensionedType(e,
+                                                    Type::UndefOutOfDefinition);
           return true;
         }
         TreeStackCheckpoint::Raise(exc);

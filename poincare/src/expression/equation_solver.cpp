@@ -25,17 +25,16 @@
 
 namespace Poincare::Internal {
 
-template <int N>
-void VariableArray<N>::append(const char* variable) {
-  assert(m_numberOfVariables < N);
+void VariableArray::append(const char* variable) {
+  assert(m_numberOfVariables < k_maxNumberOfVariables);
   assert(strlen(variable) < Symbol::k_maxNameLength);
   memcpy(m_variables[m_numberOfVariables], variable, strlen(variable) + 1);
   m_numberOfVariables++;
 }
 
-template <int N>
-void VariableArray<N>::fillWithList(const Tree* list) {
-  assert((list->isList() || list->isSet()) && list->numberOfChildren() <= N);
+void VariableArray::fillWithList(const Tree* list) {
+  assert((list->isList() || list->isSet()) &&
+         list->numberOfChildren() <= k_maxNumberOfVariables);
   clear();
   for (const Tree* variable : list->children()) {
     append(Symbol::GetName(variable));

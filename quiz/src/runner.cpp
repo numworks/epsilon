@@ -122,6 +122,10 @@ static inline void ion_main_inner(const char* testFilter,
 
   quiz_print_clear();
 
+  if (numberOfChunks != 1) {
+    return;
+  }
+
   // Display test results
   Poincare::Print::CustomPrintf(buffer, k_bufferSize, "ALL %i TESTS FINISHED",
                                 end - start);

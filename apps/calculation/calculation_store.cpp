@@ -293,7 +293,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
   // Free space for the new calculation and move cursor if needed
   char* cursor = endOfCalculations();
   getEmptySpace(&cursor, neededSize);
-
+  assert(cursor != k_pushErrorLocation);
   Calculation* pushedCalculation = pushCalculation(calculationToPush, &cursor);
   assert(pushedCalculation);
   return ExpiringPointer(pushedCalculation);
@@ -393,6 +393,7 @@ size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
 
 Calculation* CalculationStore::pushCalculation(
     const CalculationElements& calculationToPush, char** location) {
+  assert(*location != k_pushErrorLocation);
   assert(*location >= m_buffer &&
          *location < pointerArea() - neededSizeForCalculation(
                                          calculationToPush.sizeOfTrees()));

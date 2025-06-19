@@ -17,9 +17,7 @@ namespace Poincare::Internal {
 class LayoutSpanDecoder : public ForwardUnicodeDecoder {
  public:
   LayoutSpanDecoder(const Layout* start, size_t length)
-      : ForwardUnicodeDecoder(0, length), m_layout(start), m_length(length) {
-    assert(m_length == m_end - m_position);
-  }
+      : ForwardUnicodeDecoder(0, length), m_layout(start), m_length(length) {}
 
   LayoutSpanDecoder(const Rack* rack, size_t initialPosition = 0,
                     size_t lastPosition = k_noSize)
@@ -43,13 +41,18 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   const Layout* layout() const { return m_layout; }
 
   CodePoint codePoint() override {
-    return m_length > 0 && (m_layout->isCodePointLayout() ||
-                            m_layout->isCombinedCodePointsLayout())
+    if (m_length == 0) {
+      return UCodePointNull;
+    }
+    assert(m_layout != nullptr);
+    return (m_layout->isCodePointLayout() ||
+            m_layout->isCombinedCodePointsLayout())
                ? CodePointLayout::GetCodePoint(m_layout)
                : UCodePointNull;
   }
 
   CodePoint combiningCodePoint() const {
+    assert(m_layout != nullptr);
     return m_length > 0 && m_layout->isCombinedCodePointsLayout()
                ? CodePointLayout::GetCombiningCodePoint(m_layout)
                : UCodePointNull;
@@ -64,10 +67,12 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   bool nextLayoutIsCodePoint() const {
     /* Return true if the decoder is empty for functions that are looping on
      * codepoints until they hit a null codepoints. */
+    assert(m_layout != nullptr);
     return m_length == 0 || m_layout->isCodePointLayout();
   }
 
   bool nextLayoutIsCombinedCodePoint() const {
+    assert(m_layout != nullptr);
     return m_layout->isCombinedCodePointsLayout();
   }
 
@@ -87,7 +92,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
 
  private:
   void next();
-  const Layout* m_layout;
+  const Layout* m_layout;  // allowed to be a nullptr
   uint16_t m_length;
 };
 

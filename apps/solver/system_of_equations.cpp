@@ -47,39 +47,36 @@ Internal::Tree* equationSet(const EquationStore* store) {
 
 SystemOfEquations::Error SystemOfEquations::exactSolve(
     Poincare::Context* context) {
-  Error error = Error::NoError;
-
-  m_solverContext.variables.clear();
-  m_solverContext.userVariables.clear();
+  m_solutionMetadata.variables.clear();
+  m_solutionMetadata.userVariables.clear();
 
   Internal::Tree* set = equationSet(m_store);
-  Internal::Tree* result = EquationSolver::ExactSolve(
-      set, &m_solverContext,
-      {
-          .m_complexFormat =
-              MathPreferences::SharedPreferences()->complexFormat(),
-          .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
-          .m_context = context,
-      },
-      &error);
-
-  if (error == Error::NoError) {
-    assert(result);
+  EquationSolver::SolverResult result = EquationSolver::ExactSolve(
+      set, {
+               .m_complexFormat =
+                   MathPreferences::SharedPreferences()->complexFormat(),
+               .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+               .m_context = context,
+           });
+  Internal::Tree* solutionList = result.solutionList;
+  m_solutionMetadata = result.metadata;
+  if (m_solutionMetadata.error == Error::NoError) {
+    assert(solutionList);
     m_numberOfSolutions = 0;
     assert(solutionStatus() != SolutionStatus::Interrupted);
     SolutionType solutionType = solutionStatus() == SolutionStatus::Incomplete
                                     ? SolutionType::Formal
                                     : SolutionType::Exact;
-    for (const Internal::Tree* solution : result->children()) {
+    for (const Internal::Tree* solution : solutionList->children()) {
       registerSolution(UserExpression::Builder(solution), context,
                        solutionType);
     }
-    result->removeTree();
+    solutionList->removeTree();
   } else {
-    assert(!result);
+    assert(!solutionList);
   }
   set->removeTree();
-  return error;
+  return m_solutionMetadata.error;
 }
 
 const Internal::Tree*
@@ -96,13 +93,13 @@ SystemOfEquations::ContextWithoutT::expressionForUserNamed(
 void SystemOfEquations::setApproximateSolvingRange(
     Poincare::Range1D<double> approximateSolvingRange) {
   m_autoApproximateSolvingRange = false;
-  m_solverContext.solutionStatus = SolutionStatus::Complete;
+  m_solutionMetadata.solutionStatus = SolutionStatus::Complete;
   m_approximateSolvingRange = approximateSolvingRange;
 }
 
 void SystemOfEquations::cancelApproximateSolve(
     bool autoApproximate, Poincare::Range1D<double> range) {
-  m_solverContext.solutionStatus = SolutionStatus::Interrupted;
+  m_solutionMetadata.solutionStatus = SolutionStatus::Interrupted;
   m_autoApproximateSolvingRange = autoApproximate;
   // Warning : A default range is given, but solutions have not been computed.
   m_approximateSolvingRange = range;
@@ -113,13 +110,17 @@ void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
   assert(m_store->numberOfDefinedModels() == 1);
   Internal::Tree* equation = equationAtIndex(0, m_store);
 
-  m_approximateSolvingRange =
-      Poincare::Internal::EquationSolver::AutomaticInterval(
-          equation, &m_solverContext,
+  Internal::EquationSolver::ApproximateSolvingRange resultRange =
+      Poincare::Internal::EquationSolver::ComputeApproximateSolvingRange(
+          equation,
           {.m_complexFormat =
                MathPreferences::SharedPreferences()->complexFormat(),
            .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
            .m_context = context});
+  m_approximateSolvingRange = resultRange.range;
+  m_solutionMetadata.solutionStatus = resultRange.isRangeIncomplete
+                                          ? SolutionStatus::Incomplete
+                                          : SolutionStatus::Complete;
   m_autoApproximateSolvingRange = true;
   equation->removeTree();
 }
@@ -128,22 +129,27 @@ void SystemOfEquations::approximateSolve(Context* context) {
   assert(m_store->numberOfDefinedModels() == 1);
   Internal::Tree* equation = equationAtIndex(0, m_store);
 
-  Internal::Tree* result = Poincare::Internal::EquationSolver::ApproximateSolve(
-      equation, m_approximateSolvingRange, &m_solverContext,
-      {.m_complexFormat = MathPreferences::SharedPreferences()->complexFormat(),
-       .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
-       .m_context = context});
+  EquationSolver::SolverResult result =
+      Poincare::Internal::EquationSolver::ApproximateSolve(
+          equation, m_approximateSolvingRange,
+          {.m_complexFormat =
+               MathPreferences::SharedPreferences()->complexFormat(),
+           .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+           .m_context = context},
+          m_solutionMetadata.solutionStatus == SolutionStatus::Incomplete);
 
-  assert(result && result->isList());
+  m_solutionMetadata = result.metadata;
+  assert(result.solutionList && result.solutionList->isList());
   // Update member variables for LinearSystem
-  m_numberOfSolutions = result->numberOfChildren();
+  m_numberOfSolutions = result.solutionList->numberOfChildren();
   // Copy solutions
-  for (int i = 0; const Internal::Tree* solution : result->children()) {
+  for (int i = 0;
+       const Internal::Tree* solution : result.solutionList->children()) {
     m_solutions[i++] =
         Solution(Poincare::Layout(), Poincare::Layout(),
                  Poincare::Internal::FloatHelper::To(solution), false);
   }
-  result->removeTree();
+  result.solutionList->removeTree();
   equation->removeTree();
 }
 
@@ -244,7 +250,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         approximateDuringReduction ? &exact : nullptr;
     simplifyAndApproximateSolution(e, exactPointer, approximatePointer,
                                    approximateDuringReduction, context,
-                                   m_solverContext.complexFormat, angleUnit,
+                                   m_solutionMetadata.complexFormat, angleUnit,
                                    unitFormat, symbolicComputation);
     if (!approximateDuringReduction) {
       exact = e;
@@ -259,7 +265,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       exact = UserExpression();
       approximate = UserExpression();
       simplifyAndApproximateSolution(e, &exact, approximatePointer, true,
-                                     context, m_solverContext.complexFormat,
+                                     context, m_solutionMetadata.complexFormat,
                                      angleUnit, unitFormat,
                                      symbolicComputation);
       displayExactSolution = true;

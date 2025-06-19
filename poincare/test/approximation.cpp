@@ -132,8 +132,7 @@ QUIZ_CASE(pcj_approximation_boolean) {
   approximates_to_boolean(KTrue, true);
   approximates_to_boolean(KFalse, false);
   approximates_to_boolean(KDep(KTrue, KDepList(KUndef)),
-                          Approximation::BooleanOrUndefined(
-                              Approximation::BooleanOrUndefined::Undef{}));
+                          Approximation::BooleanOrUndefined::Undef());
 }
 
 QUIZ_CASE(pcj_approximation_replace) {

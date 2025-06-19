@@ -1251,7 +1251,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     T a = PrivateTo<T>(e->child(0), ctx);
     T b = PrivateTo<T>(e->child(1), ctx);
     if (std::isnan(a) || std::isnan(b)) {
-      return BooleanOrUndefined(BooleanOrUndefined::Undef{});
+      return BooleanOrUndefined::Undef();
     }
     if (e->isInferior()) {
       return a < b;
@@ -1271,7 +1271,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     std::complex<T> b = PrivateToComplex<T>(e->child(1), ctx);
     if (std::isnan(a.real()) || std::isnan(a.imag()) || std::isnan(b.real()) ||
         std::isnan(b.imag())) {
-      return BooleanOrUndefined(BooleanOrUndefined::Undef{});
+      return BooleanOrUndefined::Undef();
     }
     return e->isEqual() == (a == b);
   }
@@ -1306,11 +1306,11 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     return PrivateToBoolean<T>(e->child(2), &ctxCopy);
   }
   if (e->isUndefBoolean()) {
-    return BooleanOrUndefined(BooleanOrUndefined::Undef{});
+    return BooleanOrUndefined::Undef();
   }
   if (e->isDep()) {
     if (UndefDependencies<T>(e, ctx) != std::complex<T>(0.0)) {
-      return BooleanOrUndefined(BooleanOrUndefined::Undef{});
+      return BooleanOrUndefined::Undef();
     }
     return PrivateToBoolean<T>(e->child(0), ctx);
   }

@@ -90,15 +90,15 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
         bool hasLn = false;
         const Tree* lastInvLn = nullptr;
         for (const Tree* child : e->children()) {
-          assert(!lastInvLn == !ctx.getTree(KB));
+          assert((lastInvLn == nullptr) == (ctx.getTree(KB) == nullptr));
           if (child->isLn()) {
             hasLn = true;
           } else if (!lastInvLn && PatternMatching::Match(child, invLn, &ctx)) {
             lastInvLn = child;
           }
           if (hasLn && ctx.getTree(KB)) {
-            assert(!lastInvLn == !ctx.getTree(KB));
-            // Discard 1/ln(B) cost, bu t preserve B cost.
+            assert((lastInvLn == nullptr) == (ctx.getTree(KB) == nullptr));
+            // Discard 1/ln(B) cost, but preserve B cost.
             result -= GetTrueMetric(lastInvLn, reductionTarget);
             result += GetTrueMetric(ctx.getTree(KB), reductionTarget);
             if (e->numberOfChildren() == 2) {

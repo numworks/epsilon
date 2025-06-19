@@ -1309,6 +1309,10 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
   if (e->isUndefBoolean()) {
     return BooleanOrUndefined(BooleanOrUndefined::Undef{});
   }
+  if (e->isDep()) {
+    // TODO: Undefined boolean return false for now.
+    return (UndefDependencies<T>(e, ctx) == std::complex<T>(0.0));
+  }
   assert(e->isLogicalOperator());
   BooleanOrUndefined a = PrivateToBoolean<T>(e->child(0), ctx);
   if (a.isUndefined()) {
@@ -1316,10 +1320,6 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
   }
   if (e->isLogicalNot()) {
     return !(a.value());
-  }
-  if (e->isDep()) {
-    // TODO: Undefined boolean return false for now.
-    return (UndefDependencies<T>(e, ctx) == std::complex<T>(0.0));
   }
   BooleanOrUndefined b = PrivateToBoolean<T>(e->child(1), ctx);
   if (b.isUndefined()) {

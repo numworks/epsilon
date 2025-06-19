@@ -220,9 +220,9 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
         if (approximate) {
           matrix->moveTreeOverTree(Matrix::Undef(
               {static_cast<uint8_t>(m), static_cast<uint8_t>(n)}));
-          if (determinant) {
-            *determinant = KUndefUnhandled->cloneTree();
-          }
+        }
+        if (determinant) {
+          *determinant = KUndefUnhandled->cloneTree();
         }
         return false;
       }

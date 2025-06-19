@@ -17,6 +17,19 @@ constexpr ProjectionContext cartesianCtx = {.m_complexFormat =
                                                 ComplexFormat::Cartesian};
 constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 
+void approximates_to_boolean(const Tree* n,
+                             Approximation::BooleanOrUndefined expected) {
+  Approximation::BooleanOrUndefined approx = Approximation::ToBoolean<float>(
+      n,
+      Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                .projectLocalVariables = true},
+      Approximation::Context(AngleUnit::Radian, ComplexFormat::Real));
+  quiz_assert(approx.isUndefined() == expected.isUndefined());
+  if (!approx.isUndefined()) {
+    quiz_assert(approx.value() == expected.value());
+  }
+}
+
 template <typename T>
 void approximates_to(const Tree* n, T f) {
   T approx = Approximation::To<T>(
@@ -88,7 +101,7 @@ QUIZ_CASE(pcj_approximation_can_approximate) {
       KSum("k"_e, 2_e, 8_e, KAdd(KVarK, KVar<1, 0, 0>, 3_e))));
 }
 
-QUIZ_CASE(pcj_approximation) {
+QUIZ_CASE(pcj_approximation_tree) {
   approximates_to(123_e, 123.f);
   approximates_to(-123.21_fe, -123.21f);
   approximates_to(π_e, M_PI);
@@ -113,6 +126,13 @@ QUIZ_CASE(pcj_approximation) {
   approximates_to(KPow(e_e, 3_e / 2_e), 4.481689f);
   approximates_to(KNonNull(KUndef), NAN);
   approximates_to(KRealPos(KUndef), NAN);
+}
+
+QUIZ_CASE(pcj_approximation_boolean) {
+  approximates_to_boolean(KTrue, true);
+  approximates_to_boolean(KFalse, false);
+  // TODO: Should be BooleanOrUndefined(BooleanOrUndefined::Undef{})
+  approximates_to_boolean(KDep(KTrue, KDepList(KUndef)), false);
 }
 
 QUIZ_CASE(pcj_approximation_replace) {

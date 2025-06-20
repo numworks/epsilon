@@ -92,6 +92,7 @@ bool isOperator(const Tree* l) {
 }
 
 bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
+  // Early escape
   if (!layout->hasChildSatisfying([](const Tree* c) {
         return CodePointLayout::IsCodePoint(c,
                                             UCodePointLatinLetterSmallCapitalE);
@@ -101,49 +102,79 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
   // Result rack, containing the mantissa digits and the power of ten layout.
   Tree* result = KRackL()->cloneTree();
   /* Rack into which are added layout's children. It will change to the Power
-   * layout once ᴇ has been found. */
+   * layout once ᴇ has been found or within a parentheses layout. */
   Tree* addTo = result;
-  bool isOnly1 = true;
+  // -1ᴇ23
+  bool isAddingInParentheses = false;
+  // Keep track of last two children
+  const Tree* previousChild = nullptr;
+  const Tree* previousPreviousChild = nullptr;
   for (const Tree* child : layout->children()) {
     if (CodePointLayout::IsCodePoint(child,
                                      UCodePointLatinLetterSmallCapitalE)) {
       assert(result == addTo);
-      if (isOnly1) {
-        // 1ᴇ23 is laid out as 10^23
-        assert(result->numberOfChildren() >= 1);
-        assert(CodePointLayout::IsCodePoint(result->lastChild(), '1'));
-      } else {
-        NAry::AddOrMergeChild(result, "×1"_l->cloneTree());
+      bool isPrecededBy1 =
+          previousChild && CodePointLayout::IsCodePoint(previousChild, '1') &&
+          (!previousPreviousChild || isOperator(previousPreviousChild));
+      bool isPrecededByMinus1 =
+          isPrecededBy1 && previousPreviousChild &&
+          CodePointLayout::IsCodePoint(previousPreviousChild, '-');
+      if (isPrecededBy1) {
+        // 1ᴇ23 -> 10^23
+        NAry::RemoveChildAtIndex(addTo, addTo->numberOfChildren() - 1);
       }
-      NAry::AddOrMergeChild(result, "0"_l->cloneTree());
+      if (isPrecededByMinus1) {
+        // -1ᴇ23 -> -(10^23)
+        if (linear) {
+          NAry::AddOrMergeChild(addTo, "("_l->cloneTree());
+          isAddingInParentheses = true;
+        } else {
+          assert(addTo->nextTree() == SharedTreeStack->lastBlock());
+          NAry::SetNumberOfChildren(addTo, addTo->numberOfChildren() + 1);
+          KParenthesesL->cloneNode();
+          addTo = KRackL()->cloneTree();
+        }
+      }
+      if (!isPrecededBy1) {
+        // 2ᴇ23 -> 2×10^23
+        NAry::AddOrMergeChild(addTo, "×"_l->cloneTree());
+      }
+      NAry::AddOrMergeChild(addTo, "10"_l->cloneTree());
       if (linear) {
-        NAry::AddOrMergeChild(result, "^"_l->cloneTree());
+        NAry::AddOrMergeChild(addTo, "^"_l->cloneTree());
       } else {
         Tree* pow = KSuperscriptL->cloneNode();
         // Next digits, or "-" will be added to the superscript.
-        addTo = KRackL()->cloneTree();
-        NAry::AddChild(result, pow);
+        Tree* newRack = KRackL()->cloneTree();
+        NAry::AddChild(addTo, pow);
+        addTo = newRack;
       }
       continue;
     }
     /* 1*10^-50+2*10^50*i is currently laid out as 1ᴇ-50+2ᴇ50i. Detect the end
      * of the exponent, and add a multiplication operator if necessary. */
-    if (result != addTo &&
+    if ((result != addTo || isAddingInParentheses) &&
         !(child->isCodePointLayout() &&
           (CodePointLayout::GetCodePoint(child).isDecimalDigit() ||
            (addTo->numberOfChildren() == 0 &&
             CodePointLayout::IsCodePoint(child, '-'))))) {
       /* Come out of the superscript to layout next code points. */
       addTo = result;
-      if (!isOperator(child)) {
+      if (isAddingInParentheses) {
+        // -1ᴇ23 -> -(10^23)
+        NAry::AddOrMergeChild(addTo, ")"_l->cloneTree());
+      } else if (!isOperator(child)) {
+        // 2ᴇ23i -> 2×10^23×i
         NAry::AddOrMergeChild(addTo, "×"_l->cloneTree());
       }
-      isOnly1 = true;
+      isAddingInParentheses = false;
     }
     NAry::AddChild(addTo, child->cloneTree());
-    // Detect patterns like 1ᴇ23, -1ᴇ23, 1ᴇ23+1ᴇ23, ...
-    isOnly1 = isOperator(child) || (isOnly1 && child->isCodePointLayout() &&
-                                    CodePointLayout::IsCodePoint(child, '1'));
+    previousPreviousChild = previousChild;
+    previousChild = child;
+  }
+  if (isAddingInParentheses) {
+    NAry::AddOrMergeChild(addTo, ")"_l->cloneTree());
   }
   layout->moveTreeOverTree(result);
   return true;

@@ -601,6 +601,9 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
         break;
       }
     }
+    if (c == UCodePointNull) {
+      break;
+    }
     storedUnitRepresentative = unitRepresentative;
   }
   if (nextLayoutIsCodePoint) {

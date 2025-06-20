@@ -888,6 +888,42 @@ static void PromoteBuiltin(TreeRef& parameterList, const Builtin* builtin) {
   }
 }
 
+struct ParameterData {
+  const Tree* start;
+  size_t length;
+};
+ParameterData ParameterFromParenthesisLayout(const Tree* parenthesesLayout) {
+  assert(parenthesesLayout->isParenthesesLayout());
+  /* The Parentheses layout is as follows:
+    <Parentheses>
+      <RackSimple>
+        ...
+      </RackSimple>
+    </Parentheses>
+  */
+  const Tree* parenthesesRack = parenthesesLayout->nextNode();
+  return ParameterData{
+      .start = parenthesesRack->nextNode(),
+      .length = static_cast<size_t>(parenthesesRack->numberOfChildren())};
+}
+
+ParameterData ParameterFromParenthesisCodePoint(const Tree* root,
+                                                int indexOfLeftParenthesis) {
+  assert(CodePointLayout::GetCodePoint(root->child(indexOfLeftParenthesis))
+             .getChar() == '(');
+  /* The root layout is as follows:
+    <RackSimple>
+      ...
+      <CodePointLeftParenthesis>
+      ...
+    </RackSimple>
+  */
+  assert(indexOfLeftParenthesis <= root->numberOfChildren());
+  return ParameterData{.start = root->child(indexOfLeftParenthesis + 1),
+                       .length = static_cast<size_t>(root->numberOfChildren() -
+                                                     indexOfLeftParenthesis)};
+}
+
 void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
                                               const Builtin* builtin) {
   if (builtin->aliases()->contains("log") &&
@@ -933,35 +969,35 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       powerFunction = true;
     }
   }
-
-  if (m_parsingContext.context() && builtin->type().isParametric()) {
+  if (!(m_parsingContext.context() && builtin->type().isParametric())) {
+    leftHandSide = parseFunctionParameters();
+  } else {
+    int indexOfParenthesis =
+        m_root->indexOfChild(m_currentToken.firstLayout()) +
+        static_cast<int>(m_currentToken.length());
     // We must make sure that the parameter is parsed as a single variable.
+    const Tree* parenthesis = m_root->child(indexOfParenthesis);
+    ParameterData parameter =
+        parenthesis->isCodePointLayout()
+            ? ParameterFromParenthesisCodePoint(m_root, indexOfParenthesis)
+            : ParameterFromParenthesisLayout(parenthesis);
+    LayoutSpanDecoder parameterDecoder(Layout::From(parameter.start),
+                                       parameter.length);
     const Layout* parameterText;
     size_t parameterLength;
-    int start = m_root->indexOfChild(m_currentToken.firstLayout()) +
-                m_currentToken.length() + 1;
-    if (start < m_root->numberOfChildren()) {
-      LayoutSpanDecoder decoder(Layout::From(m_root->child(start)),
-                                m_root->numberOfChildren() - start);
-      if (ParsingHelper::ParameterText(&decoder, &parameterText,
-                                       &parameterLength)) {
-        Poincare::Context* oldContext = m_parsingContext.context();
-        char name[Symbol::k_maxNameLength];
-        LayoutSpanDecoder nameDecoder(
-            LayoutSpan(parameterText, parameterLength));
-        nameDecoder.printInBuffer(name, std::size(name));
-        Poincare::TreeVariableContext parameterContext(name, oldContext);
-        m_parsingContext.setContext(&parameterContext);
-        leftHandSide = parseFunctionParameters();
-        m_parsingContext.setContext(oldContext);
-      } else {
-        leftHandSide = parseFunctionParameters();
-      }
-    } else {
+    if (!ParsingHelper::ParameterText(&parameterDecoder, &parameterText,
+                                      &parameterLength)) {
       leftHandSide = parseFunctionParameters();
+    } else {
+      Poincare::Context* oldContext = m_parsingContext.context();
+      char name[Symbol::k_maxNameLength];
+      LayoutSpanDecoder nameDecoder(LayoutSpan(parameterText, parameterLength));
+      nameDecoder.printInBuffer(name, std::size(name));
+      Poincare::TreeVariableContext parameterContext(name, oldContext);
+      m_parsingContext.setContext(&parameterContext);
+      leftHandSide = parseFunctionParameters();
+      m_parsingContext.setContext(oldContext);
     }
-  } else {
-    leftHandSide = parseFunctionParameters();
   }
 
   /* The following lines are there because some functions have the same name

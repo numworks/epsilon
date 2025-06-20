@@ -84,6 +84,13 @@ KDSize Point2DSizeGivenChildSize(KDSize childSize) {
   return Point2D::SizeGivenChildSize(childSize);
 }
 
+bool isOperator(const Tree* l) {
+  return CodePointLayout::IsCodePoint(l, '-') ||
+         CodePointLayout::IsCodePoint(l, '+') ||
+         CodePointLayout::IsCodePoint(l, UCodePointMiddleDot) ||
+         CodePointLayout::IsCodePoint(l, UCodePointMultiplicationSign);
+}
+
 bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
   if (!layout->hasChildSatisfying([](const Tree* c) {
         return CodePointLayout::IsCodePoint(c,
@@ -96,11 +103,19 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
   /* Rack into which are added layout's children. It will change to the Power
    * layout once ᴇ has been found. */
   Tree* addTo = result;
+  bool isOnly1 = true;
   for (const Tree* child : layout->children()) {
     if (CodePointLayout::IsCodePoint(child,
                                      UCodePointLatinLetterSmallCapitalE)) {
       assert(result == addTo);
-      NAry::AddOrMergeChild(result, "×10"_l->cloneTree());
+      if (isOnly1) {
+        // 1ᴇ23 is laid out as 10^23
+        assert(result->numberOfChildren() >= 1);
+        assert(CodePointLayout::IsCodePoint(result->lastChild(), '1'));
+      } else {
+        NAry::AddOrMergeChild(result, "×1"_l->cloneTree());
+      }
+      NAry::AddOrMergeChild(result, "0"_l->cloneTree());
       if (linear) {
         NAry::AddOrMergeChild(result, "^"_l->cloneTree());
       } else {
@@ -120,14 +135,15 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
             CodePointLayout::IsCodePoint(child, '-'))))) {
       /* Come out of the superscript to layout next code points. */
       addTo = result;
-      if (!CodePointLayout::IsCodePoint(child, '-') &&
-          !CodePointLayout::IsCodePoint(child, '+') &&
-          !CodePointLayout::IsCodePoint(child, UCodePointMiddleDot) &&
-          !CodePointLayout::IsCodePoint(child, UCodePointMultiplicationSign)) {
+      if (!isOperator(child)) {
         NAry::AddOrMergeChild(addTo, "×"_l->cloneTree());
       }
+      isOnly1 = true;
     }
     NAry::AddChild(addTo, child->cloneTree());
+    // Detect patterns like 1ᴇ23, -1ᴇ23, 1ᴇ23+1ᴇ23, ...
+    isOnly1 = isOperator(child) || (isOnly1 && child->isCodePointLayout() &&
+                                    CodePointLayout::IsCodePoint(child, '1'));
   }
   layout->moveTreeOverTree(result);
   return true;

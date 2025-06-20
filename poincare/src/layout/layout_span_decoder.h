@@ -50,13 +50,17 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
 
   bool isEmpty() const override { return m_length == 0; }
 
-  const Layout* layout() const { return m_layout; }
+  const Layout* layout() const {
+    assert(m_length != k_outOfRange);
+    return m_layout;
+  }
 
   CodePoint codePoint() override {
     if (m_length == 0) {
       return UCodePointNull;
     }
     assert(m_layout != nullptr);
+    assert(m_length != k_outOfRange);
     return (m_layout->isCodePointLayout() ||
             m_layout->isCombinedCodePointsLayout())
                ? CodePointLayout::GetCodePoint(m_layout)
@@ -65,6 +69,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
 
   CodePoint combiningCodePoint() const {
     assert(m_layout != nullptr);
+    assert(m_length != k_outOfRange);
     return m_length > 0 && m_layout->isCombinedCodePointsLayout()
                ? CodePointLayout::GetCombiningCodePoint(m_layout)
                : UCodePointNull;
@@ -80,11 +85,13 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
     /* Return true if the decoder is empty for functions that are looping on
      * codepoints until they hit a null codepoints. */
     assert(m_layout != nullptr);
+    assert(m_length != k_outOfRange);
     return m_length == 0 || m_layout->isCodePointLayout();
   }
 
   bool nextLayoutIsCombinedCodePoint() const {
     assert(m_layout != nullptr);
+    assert(m_length != k_outOfRange);
     return m_layout->isCombinedCodePointsLayout();
   }
 
@@ -103,6 +110,13 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   }
 
  private:
+#if ASSERTIONS
+  /* For optimization purposes, the next() function can be called when m_length
+   * is 0, but only once. After this last call, m_layout becomes invalid as well
+   */
+  static constexpr uint16_t k_outOfRange = UINT16_MAX;
+#endif
+
   void next();
   const Layout* m_layout;  // allowed to be a nullptr
   uint16_t m_length;

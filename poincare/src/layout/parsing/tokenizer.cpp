@@ -367,8 +367,9 @@ void Tokenizer::fillIdentifiersList() {
 
 Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
                                                const Layout** stringEnd) {
-  int length = NumberOfNextTreeTo(stringStart, *stringEnd);
-  LayoutSpanDecoder decoder(stringStart, static_cast<size_t>(length));
+  size_t length =
+      static_cast<size_t>(NumberOfNextTreeTo(stringStart, *stringEnd));
+  LayoutSpanDecoder decoder(stringStart, length);
   Token::Type tokenType = Token::Type::Undefined;
   /* Find the right-most identifier by trying to parse 'abcd', then 'bcd',
    * then 'cd' and then 'd' until you find a defined identifier. */

@@ -24,7 +24,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
     assert(m_length == m_end - m_position);
     /*  If a LayoutSpanDecoder is constructed with a very long length, it is
      * probably due to a size_t overflow */
-    assert(m_length <= UINT16_MAX / 2);
+    assert(length <= UINT16_MAX);
   }
 
   LayoutSpanDecoder(const Rack* rack, size_t initialPosition = 0,
@@ -40,8 +40,8 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
             (lastPosition == k_noSize ? rack->numberOfChildren()
                                       : lastPosition) -
                 initialPosition) {
-    /* Entering this constructor with lastPosition < initialPosition is most
-     * probably wrong. */
+    /* Entering this constructor with lastPosition < initialPosition indicates
+     * that something unexpected or wrong happened. */
     assert(lastPosition >= initialPosition);
   }
 
@@ -56,7 +56,7 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
   }
 
   CodePoint codePoint() override {
-    if (m_length == 0) {
+    if (isEmpty()) {
       return UCodePointNull;
     }
     assert(m_layout != nullptr);

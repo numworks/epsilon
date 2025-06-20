@@ -3,6 +3,7 @@
 
 #include <omg/unicode_helper.h>
 #include <omg/utf8_decoder.h>
+#include <stdint.h>
 
 #include "code_point_layout.h"
 #include "layout_span.h"
@@ -21,6 +22,9 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
         m_layout(start),
         m_length(static_cast<uint16_t>(length)) {
     assert(m_length == m_end - m_position);
+    /*  If a LayoutSpanDecoder is constructed with a very long length, it is
+     * probably due to a size_t overflow */
+    assert(m_length <= UINT16_MAX / 2);
   }
 
   LayoutSpanDecoder(const Rack* rack, size_t initialPosition = 0,
@@ -35,7 +39,11 @@ class LayoutSpanDecoder : public ForwardUnicodeDecoder {
                 : nullptr,
             (lastPosition == k_noSize ? rack->numberOfChildren()
                                       : lastPosition) -
-                initialPosition) {}
+                initialPosition) {
+    /* Entering this constructor with lastPosition < initialPosition is most
+     * probably wrong. */
+    assert(lastPosition >= initialPosition);
+  }
 
   explicit LayoutSpanDecoder(LayoutSpan span)
       : LayoutSpanDecoder(span.data(), span.size()) {}

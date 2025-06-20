@@ -342,7 +342,9 @@ void CalculationStore::deleteCalculationAtIndex(int index) {
                             ? m_buffer
                             : endOfCalculationAtIndex(index + 1);
   char* deletionEnd = endOfCalculationAtIndex(index);
+  assert(deletionEnd >= deletionStart);
   size_t deletedSize = deletionEnd - deletionStart;
+  assert(endOfCalculations() >= deletionEnd);
   size_t shiftedMemorySize = endOfCalculations() - deletionEnd;
 
   Ion::CircuitBreaker::lock();

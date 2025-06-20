@@ -89,8 +89,10 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
 #if ION_SIMULATOR_FILES
       case SDLK_s:
         Simulator::Actions::saveState();
+        return None;
       case SDLK_p:
         Simulator::Actions::saveScreenshot();
+        return None;
 #endif
       default:
         return None;

@@ -584,7 +584,7 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("rref(1)", KRref(1_e));
   assert_parsed_expression_is("sec(1)", KSec(1_e));
   assert_parsed_expression_is("sin(1)", KSin(1_e));
-  assert_parsed_expression_is("sign(1)", KSign(1_e));
+  assert_parsed_expression_is("sign(1)", KSignUser(1_e));
   assert_parsed_expression_is("sinh(1)", KSinH(1_e));
   assert_parsed_expression_is("sum(1,n,2,3)", KSum("n"_e, 2_e, 3_e, 1_e));
   assert_text_not_parsable("sum(1,2,3,4)");

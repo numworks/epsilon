@@ -547,7 +547,7 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
   size_t length = 0;
   const Units::Representative* storedUnitRepresentative = nullptr;
   LayoutSpanDecoder save(LayoutSpan{});
-  while (true) {
+  while (c != UCodePointNull) {
     /* Check if the string is of the form:
      * decimalNumber-unit-decimalNumber-unit...
      * Each loop will check for a pair decimalNumber-unit */
@@ -601,9 +601,6 @@ size_t Tokenizer::popImplicitAdditionBetweenUnits() {
         isImplicitAddition = false;
         break;
       }
-    }
-    if (c == UCodePointNull) {
-      break;
     }
     storedUnitRepresentative = unitRepresentative;
   }

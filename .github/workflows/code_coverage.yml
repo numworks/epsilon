@@ -116,7 +116,15 @@ jobs:
             var differential = fs.readFileSync('${{ env.COVERAGE_OUTPUT_DIR }}/differential.md');
             var artifact_url = "${{ github.server_url }}/${{ github.repository }}//actions/runs/${{ github.run_id }}/artifacts/${{ steps.report.outputs.artifact-id }}"
 
-            const body = "### Coverage report (" + head_commit + ")\n\n" + summary + "#### Differences with base branch (" + base_commit + ")\n\n" + differential + "\n\nDownload full report: " + artifact_url
+            const body = (
+              "### ${{ inputs.project-path == 'scandium' && 'Scandium' || 'Epsilon' }} Coverage report "
+              + "(" + head_commit + ")\n\n"
+              + summary
+              + "#### Differences with base branch (" + base_commit + ")\n\n"
+              + differential
+              + "\n\nDownload full report: "
+              + artifact_url
+            )
             const pr_number = context.issue.number
 
             const owner = context.repo.owner;

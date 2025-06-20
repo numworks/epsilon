@@ -104,6 +104,8 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
   /* Rack into which are added layout's children. It will change to the Power
    * layout once ᴇ has been found or within a parentheses layout. */
   Tree* addTo = result;
+  // 1ᴇ23
+  bool isAddingPrecededByOne = false;
   // -1ᴇ23
   bool isAddingInParentheses = false;
   // Keep track of last two children
@@ -121,6 +123,7 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
           CodePointLayout::IsCodePoint(previousPreviousChild, '-');
       if (isPrecededBy1) {
         // 1ᴇ23 -> 10^23
+        isAddingPrecededByOne = true;
         NAry::RemoveChildAtIndex(addTo, addTo->numberOfChildren() - 1);
       }
       if (isPrecededByMinus1) {
@@ -163,11 +166,14 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
       if (isAddingInParentheses) {
         // -1ᴇ23 -> -(10^23)
         NAry::AddOrMergeChild(addTo, ")"_l->cloneTree());
-      } else if (!isOperator(child)) {
+      } else if (!isOperator(child) && (linear || !isAddingPrecededByOne)) {
         // 2ᴇ23i -> 2×10^23×i
         NAry::AddOrMergeChild(addTo, "×"_l->cloneTree());
+      } else {
+        // 1ᴇ23i -> 10^{23}i
       }
       isAddingInParentheses = false;
+      isAddingPrecededByOne = false;
     }
     NAry::AddChild(addTo, child->cloneTree());
     previousPreviousChild = previousChild;

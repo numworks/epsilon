@@ -408,6 +408,13 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("1234567890123456789012345678901×10^15",
                       DisplayOutput::ApproximateOnly, EqualSign::Hidden,
                       nullptr, "1.2345678901235×10^45", &globalContext, &store);
+  assertCalculationIs(
+      "10^45+i*10^45", DisplayOutput::ApproximateIsIdenticalToExact,
+      EqualSign::Hidden, "10^45+10^45i", nullptr, &globalContext, &store);
+  // TODO: first parentheses should be removed in approximation too.
+  assertCalculationIs("-10^45-i*10^45", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Equal, "-(10^45)-10^45i", "-(10^45)-(10^45)i",
+                      &globalContext, &store);
 
   // IntegerOverflow during reduction
   assertCalculationIs("0^(10^600)", DisplayOutput::ApproximateOnly,

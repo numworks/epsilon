@@ -204,7 +204,6 @@ QUIZ_CASE(pcj_parse_sequences) {
   assertLayoutParsesTo("u(4)"_l, expected);
   expected->removeTree();
   quiz_assert(is_parsable("f'(4)"_l));
-  // TODO: This should not parse, especially not as a userfunction.
-  // quiz_assert(!is_parsable("u'(4)"_l));
+  quiz_assert(!is_parsable("u'(4)"_l));
 #endif
 }

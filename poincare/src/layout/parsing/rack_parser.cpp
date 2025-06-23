@@ -1246,6 +1246,13 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
+#if POINCARE_SEQUENCE
+  if (Sequence::IsSequenceName(name)) {
+    // UserFunction cannot have a sequence name.
+    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+#endif
+
   MoveTreeOverTree(parameter, parameter->child(0));
   if (parameter->type() == Type::UserSymbol &&
       strncmp(Symbol::GetName(parameter), name, length) == 0) {

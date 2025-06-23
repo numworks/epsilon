@@ -104,10 +104,10 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
   /* Rack into which are added layout's children. It will change to the Power
    * layout once ᴇ has been found or within a parentheses layout. */
   Tree* addTo = result;
-  // 1ᴇ23
-  bool isAddingPrecededByOne = false;
-  // -1ᴇ23
-  bool isAddingInParentheses = false;
+  // If one, there is no need to lay out the mantissa: 1ᴇ23 -> 10^23.
+  bool mantissaIsOne = false;
+  // Only add parentheses when negative and without mantissa: -1ᴇ23 -> -(10^23)
+  bool parenthesesAreNeeded = false;
   // Keep track of last two children
   const Tree* previousChild = nullptr;
   const Tree* previousPreviousChild = nullptr;
@@ -123,14 +123,14 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
           CodePointLayout::IsCodePoint(previousPreviousChild, '-');
       if (isPrecededBy1) {
         // 1ᴇ23 -> 10^23
-        isAddingPrecededByOne = true;
+        mantissaIsOne = true;
         NAry::RemoveChildAtIndex(addTo, addTo->numberOfChildren() - 1);
       }
       if (isPrecededByMinus1) {
         // -1ᴇ23 -> -(10^23)
         if (linear) {
           NAry::AddOrMergeChild(addTo, "("_l->cloneTree());
-          isAddingInParentheses = true;
+          parenthesesAreNeeded = true;
         } else {
           assert(addTo->nextTree() == SharedTreeStack->lastBlock());
           NAry::SetNumberOfChildren(addTo, addTo->numberOfChildren() + 1);
@@ -154,32 +154,38 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
       }
       continue;
     }
-    /* 1*10^-50+2*10^50*i is currently laid out as 1ᴇ-50+2ᴇ50i. Detect the end
-     * of the exponent, and add a multiplication operator if necessary. */
-    if ((result != addTo || isAddingInParentheses) &&
-        !(child->isCodePointLayout() &&
-          (CodePointLayout::GetCodePoint(child).isDecimalDigit() ||
-           (addTo->numberOfChildren() == 0 &&
-            CodePointLayout::IsCodePoint(child, '-'))))) {
+    /* Detect when exponent has been fully laid out :
+     * - addTo differs from result, or parentheses are being laid out in linear
+     * mode
+     * - a non-decimal digit is encountered (except for the first -).
+     * For exemple, 1*10^-50+2*10^50*i has been laid out as 1ᴇ-50+2ᴇ50i
+     * A multiplication operator has to be added in some cases. */
+    bool exponentIsBeingLaidOut = (result != addTo || parenthesesAreNeeded);
+    bool childIsInExponent =
+        exponentIsBeingLaidOut && child->isCodePointLayout() &&
+        (CodePointLayout::GetCodePoint(child).isDecimalDigit() ||
+         (addTo->numberOfChildren() == 0 &&
+          CodePointLayout::IsCodePoint(child, '-')));
+    if (exponentIsBeingLaidOut && !childIsInExponent) {
       /* Come out of the superscript to layout next code points. */
       addTo = result;
-      if (isAddingInParentheses) {
+      if (parenthesesAreNeeded) {
         // -1ᴇ23 -> -(10^23)
         NAry::AddOrMergeChild(addTo, ")"_l->cloneTree());
-      } else if (!isOperator(child) && (linear || !isAddingPrecededByOne)) {
+      } else if (!isOperator(child) && (linear || !mantissaIsOne)) {
         // 2ᴇ23i -> 2×10^23×i
         NAry::AddOrMergeChild(addTo, "×"_l->cloneTree());
       } else {
         // 1ᴇ23i -> 10^{23}i
       }
-      isAddingInParentheses = false;
-      isAddingPrecededByOne = false;
+      parenthesesAreNeeded = false;
+      mantissaIsOne = false;
     }
     NAry::AddChild(addTo, child->cloneTree());
     previousPreviousChild = previousChild;
     previousChild = child;
   }
-  if (isAddingInParentheses) {
+  if (parenthesesAreNeeded) {
     NAry::AddOrMergeChild(addTo, ")"_l->cloneTree());
   }
   layout->moveTreeOverTree(result);

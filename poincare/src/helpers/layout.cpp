@@ -100,7 +100,6 @@ struct TurnChildEToTenPowerLayoutOutput {
 TurnChildEToTenPowerLayoutOutput TurnChildEToTenPowerLayout(
     const Tree* previousChild, const Tree* previousPreviousChild, bool linear,
     Tree* result) {
-  bool mantissaIsOne = false;
   bool parenthesesAreNeeded = false;
   bool isPrecededBy1 =
       previousChild && CodePointLayout::IsCodePoint(previousChild, '1') &&
@@ -110,7 +109,6 @@ TurnChildEToTenPowerLayoutOutput TurnChildEToTenPowerLayout(
       CodePointLayout::IsCodePoint(previousPreviousChild, '-');
   if (isPrecededBy1) {
     // 1ᴇ23 -> 10^23
-    mantissaIsOne = true;
     NAry::RemoveChildAtIndex(result, (result)->numberOfChildren() - 1);
   }
   if (isPrecededByMinus1) {
@@ -139,7 +137,7 @@ TurnChildEToTenPowerLayoutOutput TurnChildEToTenPowerLayout(
     NAry::AddChild(result, pow);
     result = newRack;
   }
-  return {result, mantissaIsOne, parenthesesAreNeeded};
+  return {result, isPrecededBy1, parenthesesAreNeeded};
 }
 
 bool TurnEToTenPowerLayout(Tree* layout, bool linear) {

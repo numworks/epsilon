@@ -16,7 +16,6 @@
 #include <ion.h>
 #include <poincare/helpers/symbol.h>
 
-#include "equation_store.h"
 #include "system_of_equations.h"
 
 namespace Solver {

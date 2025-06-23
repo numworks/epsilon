@@ -17,8 +17,6 @@
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
-#include "app.h"
-
 using namespace Poincare;
 using Poincare::Internal::EquationSolver;
 using namespace Poincare::Internal::KTrees;

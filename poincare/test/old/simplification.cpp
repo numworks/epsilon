@@ -1195,7 +1195,7 @@ QUIZ_CASE(poincare_simplification_function) {
       "000000000000000000000000000000000000000000000000000000000000000000000000"
       "0000000000000000,5)");
   assert_parsed_expression_simplify_to("sign(-23)", "-1");
-  assert_parsed_expression_simplify_to("sign(-i)", "sign(-i)");
+  assert_parsed_expression_simplify_to("sign(-i)", "undef");
   assert_parsed_expression_simplify_to("sign(0)", "0");
   assert_parsed_expression_simplify_to("sign(inf)", "1");
   assert_parsed_expression_simplify_to("sign(-inf)", "-1");
@@ -1204,7 +1204,7 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("sign(log(18))", "1");
   assert_parsed_expression_simplify_to("sign(-√(2))", "-1");
   assert_parsed_expression_simplify_to("sign(x)", "sign(x)");
-  assert_parsed_expression_simplify_to("sign(2+i)", "sign(2+i)");
+  assert_parsed_expression_simplify_to("sign(2+i)", "undef");
   /* Test with no symbolic computation to check that n inside a sum expression
    * is not replaced by Undefined */
   assert_parsed_expression_simplify_to("sum(n,n,1,5)", "15", User, Radian,

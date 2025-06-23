@@ -196,3 +196,15 @@ QUIZ_CASE(pcj_parse_parametric) {
   quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,0"_l), &context));
   quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,0,"_l), &context));
 }
+
+QUIZ_CASE(pcj_parse_sequences) {
+#if POINCARE_SEQUENCE
+  Tree* expected = SharedTreeStack->pushUserSequence("u");
+  (4_e)->cloneTree();
+  assertLayoutParsesTo("u(4)"_l, expected);
+  expected->removeTree();
+  quiz_assert(is_parsable("f'(4)"_l));
+  // TODO: This should not parse, especially not as a userfunction.
+  // quiz_assert(!is_parsable("u'(4)"_l));
+#endif
+}

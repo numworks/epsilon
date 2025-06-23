@@ -5,6 +5,10 @@ on:
     inputs:
       project-path:
         type: string
+      genhtml-args:
+        default: ""
+        required: false
+        type: string
 jobs:
   coverage:
     timeout-minutes: 15
@@ -78,7 +82,7 @@ jobs:
           path: ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt
           retention-days: 2
       - name: Generate coverage report
-        run: $DOCKER_RUN "touch ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt && genhtml ${{ env.COVERAGE_OUTPUT_DIR }}/head.info -o ${{ env.COVERAGE_OUTPUT_DIR }}/report --baseline-file ${{ env.COVERAGE_OUTPUT_DIR }}/base.info --diff-file ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt --no-function-coverage --ignore-errors path | grep \"coverage rate:\" -A 40 > ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt"
+        run: $DOCKER_RUN "touch ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt && genhtml ${{ inputs.genhtml-args }} ${{ env.COVERAGE_OUTPUT_DIR }}/head.info -o ${{ env.COVERAGE_OUTPUT_DIR }}/report --baseline-file ${{ env.COVERAGE_OUTPUT_DIR }}/base.info --diff-file ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt --no-function-coverage --ignore-errors path | grep \"coverage rate:\" -A 40 > ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt"
       - name: Upload report
         id: report
         uses: actions/upload-artifact@v4

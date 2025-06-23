@@ -4,6 +4,8 @@
 #include <apps/shared/sequence_store.h>
 #include <assert.h>
 #include <omg/float.h>
+#include <poincare/print.h>
+#include <poincare/test/helper.h>
 #include <poincare/test/old/helper.h>
 #include <quiz.h>
 #include <string.h>
@@ -61,8 +63,15 @@ void check_sequences_defined_by(
       if (seqs[i]->isDefined()) {
         double un =
             seqs[i]->evaluateXYAtParameter((double)j, sequenceContext).y();
-        quiz_assert(OMG::Float::RoughlyEqual<double>(
-            un, result[i][j], OMG::Float::EpsilonLax<double>(), true));
+        bool isEqual = OMG::Float::RoughlyEqual<double>(
+            un, result[i][j], OMG::Float::EpsilonLax<double>(), true);
+        constexpr size_t bufferSize = 100;
+        char buffer[bufferSize];
+        Poincare::Print::CustomPrintf(
+            buffer, bufferSize, "%*.*ed instead of %*.*ed.", un,
+            Preferences::PrintFloatMode::Decimal, 7, result[i][j],
+            Preferences::PrintFloatMode::Decimal, 7);
+        quiz_assert_print_if_failure(isEqual, buffer);
       }
     }
   }
@@ -708,6 +717,24 @@ QUIZ_CASE(sequence_evaluation) {
   conditions1[0] = nullptr;
   conditions2[0] = nullptr;
   check_sequences_defined_by(result38, types, definitions, conditions1,
+                             conditions2);
+
+  // u(n+1) = u(n)+n-1, v(n) = u(10^n)
+  double results39[SequenceStore::k_maxNumberOfSequences][10] = {
+      {2.0, 1.0, 1.0, 2.0, 4.0, 7.0, 11.0, 16.0, 22.0, 29.0},
+      {1.0, 37.0, 4852.0, 498502.0, 49985002.0, NAN, NAN, NAN, NAN, NAN}};
+  types[0] = Sequence::Type::SingleRecurrence;
+  types[1] = Sequence::Type::Explicit;
+  definitions[0] = "u(n)+n-1";
+  definitions[1] = "u(10^n)";
+  definitions[2] = nullptr;
+  conditions1[0] = "2";
+  conditions1[1] = nullptr;
+  conditions1[2] = nullptr;
+  conditions2[0] = nullptr;
+  conditions2[1] = nullptr;
+  conditions2[2] = nullptr;
+  check_sequences_defined_by(results39, types, definitions, conditions1,
                              conditions2);
 }
 

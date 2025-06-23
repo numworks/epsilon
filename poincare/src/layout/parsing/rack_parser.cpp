@@ -1245,30 +1245,30 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   if (parameter->numberOfChildren() != 1) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  TreeRef result;
 
   MoveTreeOverTree(parameter, parameter->child(0));
   if (parameter->type() == Type::UserSymbol &&
       strncmp(Symbol::GetName(parameter), name, length) == 0) {
     // Function and variable must have distinct names.
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+  }
+
+  TreeRef result;
+  if (derivationOrder > 0) {
+    result = SharedTreeStack->pushDiff();
+    // Symbol - Any symbol can be used other than UnknownSymbol.
+    Derivation::k_functionDerivativeVariable->cloneTree();
+    // SymbolValue
+    parameter->detachTree();
+    // Order
+    Integer::Push(derivationOrder);
+    // Derivand
+    SharedTreeStack->pushUserFunction(name);
+    Derivation::k_functionDerivativeVariable->cloneTree();
   } else {
-    if (derivationOrder > 0) {
-      result = SharedTreeStack->pushDiff();
-      // Symbol - Any symbol can be used other than UnknownSymbol.
-      Derivation::k_functionDerivativeVariable->cloneTree();
-      // SymbolValue
-      parameter->detachTree();
-      // Order
-      Integer::Push(derivationOrder);
-      // Derivand
-      SharedTreeStack->pushUserFunction(name);
-      Derivation::k_functionDerivativeVariable->cloneTree();
-    } else {
-      result = parameter->moveNodeBeforeNode(
-          SharedTreeStack->pushUserFunction(name));
-      assert(result->child(0) == parameter);
-    }
+    result =
+        parameter->moveNodeBeforeNode(SharedTreeStack->pushUserFunction(name));
+    assert(result->child(0) == parameter);
   }
 
   if (result->type() == Type::UserFunction &&

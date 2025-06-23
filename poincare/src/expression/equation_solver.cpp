@@ -83,7 +83,7 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
              SymbolicComputation::ReplaceDefinedSymbols);
 
   SolutionMetadata metadata;
-  metadata.overrideUserVariables =
+  metadata.overrideDefinedVariables =
       (projectionContext.m_symbolic ==
        SymbolicComputation::ReplaceDefinedFunctions);
   Projection::UpdateComplexFormatWithExpressionInput(equationsSet,
@@ -93,34 +93,34 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
   // Retrieve user symbols before simplification and variable replacement
   Tree* userSymbols =
       Variables::GetUserSymbols(equationsSet, projectionContext.m_context);
-  uint8_t numberOfVariables = userSymbols->numberOfChildren();
+  uint8_t numberOfUnknowns = userSymbols->numberOfChildren();
   /* When ReplaceDefinedSymbols, when a symbol in the expression is defined by
    * the user, remove it from possible unknowns */
   if (projectionContext.m_context && userSymbols->numberOfChildren() > 0) {
     Tree* userSymbol = userSymbols->child(0);
     uint8_t index = 0;
-    while (index < numberOfVariables) {
+    while (index < numberOfUnknowns) {
       if (projectionContext.m_context->expressionForUserNamed(userSymbol)) {
-        metadata.userVariables.append(Symbol::GetName(userSymbol));
+        metadata.definedVariables.append(Symbol::GetName(userSymbol));
         if (projectionContext.m_symbolic ==
             SymbolicComputation::ReplaceDefinedSymbols) {
           userSymbol->removeTree();
-          --numberOfVariables;
+          --numberOfUnknowns;
           continue;
         }
       }
       userSymbol = userSymbol->nextTree();
       ++index;
     }
-    NAry::SetNumberOfChildren(userSymbols, numberOfVariables);
+    NAry::SetNumberOfChildren(userSymbols, numberOfUnknowns);
   }
 
-  if ((equationsSet->numberOfChildren() > 1 || numberOfVariables > 1) &&
+  if ((equationsSet->numberOfChildren() > 1 || numberOfUnknowns > 1) &&
       Preferences::SharedPreferences()
           ->examMode()
           .forbidSimultaneousEquationSolver()) {
     metadata.error = Error::DisabledInExamMode;
-  } else if (numberOfVariables > k_maxNumberOfExactSolutions) {
+  } else if (numberOfUnknowns > k_maxNumberOfExactSolutions) {
     metadata.error = Error::TooManyVariables;
   }
   if (metadata.error != Error::NoError) {
@@ -154,17 +154,17 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
     return {nullptr, metadata};
   }
 
-  metadata.numberOfVariables = numberOfVariables;
+  metadata.numberOfUnknowns = numberOfUnknowns;
 
   /* Find equation's results */
   TreeRef result;
   assert(metadata.error == Error::NoError);
-  result = SolveLinearSystem(reducedEquationSet, numberOfVariables, &metadata);
+  result = SolveLinearSystem(reducedEquationSet, numberOfUnknowns, &metadata);
 #if POINCARE_POLYNOMIAL_SOLVER
-  if (metadata.error == Error::NonLinearSystem && numberOfVariables <= 1 &&
+  if (metadata.error == Error::NonLinearSystem && numberOfUnknowns <= 1 &&
       equationsSet->numberOfChildren() <= 1) {
     assert(result.isUninitialized());
-    result = SolvePolynomial(reducedEquationSet, numberOfVariables, &metadata);
+    result = SolvePolynomial(reducedEquationSet, numberOfUnknowns, &metadata);
     if (metadata.error != Error::RequireApproximateSolution) {
       /* Remove non real solutions of a polynomial if the equation was projected
        * with a "Real" Complex format */
@@ -196,19 +196,19 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
 
   /* Replace variables back to UserSymbols */
   if (!result.isUninitialized()) {
-    metadata.variables.fillWithList(userSymbols);
+    metadata.unknownVariables.fillWithList(userSymbols);
     for (const Tree* symbol : userSymbols->children()) {
       Variables::LeaveScopeWithReplacement(result, symbol, false, false);
     }
     // Replace additional unknown parameter variables (t1, t2, ...)
-    metadata.numberOfVariables -= userSymbols->numberOfChildren();
-    if (metadata.numberOfVariables > 0) {
+    metadata.numberOfUnknowns -= userSymbols->numberOfChildren();
+    if (metadata.numberOfUnknowns > 0) {
       // Start at 0 ("t") instead of 1 ("t1") if there is only one variable
-      size_t parameterIndex = (metadata.numberOfVariables > 1) ? 1 : 0;
+      size_t parameterIndex = (metadata.numberOfUnknowns > 1) ? 1 : 0;
       uint32_t usedParameterIndices =
-          TagParametersUsedAsVariables(metadata.variables);
+          TagParametersUsedAsVariables(metadata.unknownVariables);
 
-      for (int j = 0; j < metadata.numberOfVariables; j++) {
+      for (int j = 0; j < metadata.numberOfUnknowns; j++) {
         // Generate a unique identifier t? that does not collide with variables.
         TreeRef symbol = GetNextParameterSymbol(
             &parameterIndex, usedParameterIndices, projectionContext.m_context);
@@ -238,7 +238,7 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
 EquationSolver::ApproximateSolvingRange
 EquationSolver::ComputeApproximateSolvingRange(
     const Tree* equation, ProjectionContext projectionContext) {
-  // TODO: Restore "overrideUserVariables" when needed
+  // TODO: Restore "overrideDefinedVariables" when needed
   SolutionMetadata metadata;
   Tree* preparedEquation = PrepareEquationForApproximateSolve(
       equation, projectionContext, &metadata);
@@ -280,7 +280,7 @@ EquationSolver::ComputeApproximateSolvingRange(
 EquationSolver::SolverResult EquationSolver::ApproximateSolve(
     const Tree* equation, Range1D<double> range,
     ProjectionContext projectionContext, bool isRangeIncomplete) {
-  // TODO: Restore "overrideUserVariables" when needed
+  // TODO: Restore "overrideDefinedVariables" when needed
   SolutionMetadata metadata{
       .type = Type::GeneralMonovariable,
       .solutionStatus = isRangeIncomplete ? SolutionStatus::Incomplete
@@ -455,7 +455,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
         (i == variable ? 1_e : 0_e)->cloneTree();
       }
       // Push a finite variable starting from ??
-      SharedTreeStack->pushVar(metadata->numberOfVariables++,
+      SharedTreeStack->pushVar(metadata->numberOfUnknowns++,
                                ComplexSign::Finite());
       rows = m + 1;
       Matrix::SetDimensions(matrix, ++m, n + 1);
@@ -772,7 +772,7 @@ Tree* EquationSolver::PrepareEquationForApproximateSolve(
   Tree* equationClone = equation->cloneTree();
 
   projectionContext.m_symbolic =
-      (metadata->overrideUserVariables
+      (metadata->overrideDefinedVariables
            ? SymbolicComputation::ReplaceDefinedFunctions
            : SymbolicComputation::ReplaceDefinedSymbols);
   // Reduce and replace user variables if needed
@@ -785,11 +785,11 @@ Tree* EquationSolver::PrepareEquationForApproximateSolve(
   // Find remaining variable
   Internal::Tree* variables = Variables::GetUserSymbols(equationClone);
   assert(variables->numberOfChildren() == 1);
-  metadata->variables.fillWithList(variables);
+  metadata->unknownVariables.fillWithList(variables);
   variables->removeTree();
 
   Approximation::PrepareFunctionForApproximation(
-      equationClone, metadata->variables.variable(0),
+      equationClone, metadata->unknownVariables.variable(0),
       Preferences::ComplexFormat::Real);
   return equationClone;
 }

@@ -43,17 +43,17 @@ class SystemOfEquations {
   // System analysis
   Type type() const { return m_solutionMetadata.type; }
   int degree() const { return m_solutionMetadata.degree; }
-  const char* variable(size_t index) const {
-    return m_solutionMetadata.variables.variable(index);
+  const char* unknownVariable(size_t index) const {
+    return m_solutionMetadata.unknownVariables.variable(index);
   }
-  size_t numberOfUserVariables() const {
-    return m_solutionMetadata.userVariables.numberOfVariables();
+  size_t numberOfDefinedVariables() const {
+    return m_solutionMetadata.definedVariables.numberOfVariables();
   }
-  const char* userVariable(size_t index) const {
-    return m_solutionMetadata.userVariables.variable(index);
+  const char* definedVariable(size_t index) const {
+    return m_solutionMetadata.definedVariables.variable(index);
   }
-  bool overrideUserVariables() const {
-    return m_solutionMetadata.overrideUserVariables;
+  bool overrideDefinedVariables() const {
+    return m_solutionMetadata.overrideDefinedVariables;
   }
 
   // Approximate range

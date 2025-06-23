@@ -346,7 +346,6 @@ EquationSolver::Error EquationSolver::ProjectAndReduce(
 
 Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
                                         uint8_t n, SolutionMetadata* metadata) {
-  metadata->exactResults = true;
   metadata->type = Type::LinearSystem;
   metadata->degree = 1;
 

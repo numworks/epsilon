@@ -73,7 +73,6 @@ class EquationSolver {
     int8_t numberOfVariables = 0;
     // If true, defined userVariables are ignored.
     bool overrideUserVariables = false;
-    bool exactResults = true;
     VariableArray variables;
     VariableArray userVariables;
     SolutionStatus solutionStatus = SolutionStatus::Complete;

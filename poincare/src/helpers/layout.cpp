@@ -92,52 +92,53 @@ bool isOperator(const Tree* l) {
 }
 
 struct TurnChildEToTenPowerLayoutOutput {
-  Tree* addTo;
+  Tree* cursorRack;
   bool mantissaIsOne;
   bool parenthesesAreNeeded;
 };
 
 TurnChildEToTenPowerLayoutOutput TurnChildEToTenPowerLayout(
     const Tree* previousChild, const Tree* previousPreviousChild, bool linear,
-    Tree* result) {
+    Tree* cursorRack) {
   bool parenthesesAreNeeded = false;
-  bool isPrecededBy1 =
+  bool mantissaDigitsIsOne =
       previousChild && CodePointLayout::IsCodePoint(previousChild, '1') &&
       (!previousPreviousChild || isOperator(previousPreviousChild));
-  bool isPrecededByMinus1 =
-      isPrecededBy1 && previousPreviousChild &&
+  bool mantissaIsMinusOne =
+      mantissaDigitsIsOne && previousPreviousChild &&
       CodePointLayout::IsCodePoint(previousPreviousChild, '-');
-  if (isPrecededBy1) {
+  if (mantissaDigitsIsOne) {
     // 1ᴇ23 -> 10^23
-    NAry::RemoveChildAtIndex(result, (result)->numberOfChildren() - 1);
+    NAry::RemoveChildAtIndex(cursorRack, (cursorRack)->numberOfChildren() - 1);
   }
-  if (isPrecededByMinus1) {
+  if (mantissaIsMinusOne) {
     // -1ᴇ23 -> -(10^23)
     if (linear) {
-      NAry::AddOrMergeChild(result, "("_l->cloneTree());
+      NAry::AddOrMergeChild(cursorRack, "("_l->cloneTree());
       parenthesesAreNeeded = true;
     } else {
-      assert((result)->nextTree() == SharedTreeStack->lastBlock());
-      NAry::SetNumberOfChildren(result, (result)->numberOfChildren() + 1);
+      assert((cursorRack)->nextTree() == SharedTreeStack->lastBlock());
+      NAry::SetNumberOfChildren(cursorRack,
+                                (cursorRack)->numberOfChildren() + 1);
       KParenthesesL->cloneNode();
-      result = KRackL()->cloneTree();
+      cursorRack = KRackL()->cloneTree();
     }
   }
-  if (!isPrecededBy1) {
+  if (!mantissaDigitsIsOne) {
     // 2ᴇ23 -> 2×10^23
-    NAry::AddOrMergeChild(result, "×"_l->cloneTree());
+    NAry::AddOrMergeChild(cursorRack, "×"_l->cloneTree());
   }
-  NAry::AddOrMergeChild(result, "10"_l->cloneTree());
+  NAry::AddOrMergeChild(cursorRack, "10"_l->cloneTree());
   if (linear) {
-    NAry::AddOrMergeChild(result, "^"_l->cloneTree());
+    NAry::AddOrMergeChild(cursorRack, "^"_l->cloneTree());
   } else {
     Tree* pow = KSuperscriptL->cloneNode();
     // Next digits, or "-" will be added to the superscript.
     Tree* newRack = KRackL()->cloneTree();
-    NAry::AddChild(result, pow);
-    result = newRack;
+    NAry::AddChild(cursorRack, pow);
+    cursorRack = newRack;
   }
-  return {result, isPrecededBy1, parenthesesAreNeeded};
+  return {cursorRack, mantissaDigitsIsOne, parenthesesAreNeeded};
 }
 
 bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
@@ -149,10 +150,10 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
     return false;
   }
   // Result rack, containing the mantissa digits and the power of ten layout.
-  Tree* result = KRackL()->cloneTree();
+  Tree* outputRack = KRackL()->cloneTree();
   /* Rack into which are added layout's children. It will change to the Power
    * layout once ᴇ has been found or within a parentheses layout. */
-  Tree* addTo = result;
+  Tree* cursorRack = outputRack;
   // If one, there is no need to lay out the mantissa: 1ᴇ23 -> 10^23.
   bool mantissaIsOne = false;
   // Only add parentheses when negative and without mantissa: -1ᴇ23 -> -(10^23)
@@ -163,49 +164,50 @@ bool TurnEToTenPowerLayout(Tree* layout, bool linear) {
   for (const Tree* child : layout->children()) {
     if (CodePointLayout::IsCodePoint(child,
                                      UCodePointLatinLetterSmallCapitalE)) {
-      assert(result == addTo);
+      assert(outputRack == cursorRack);
       TurnChildEToTenPowerLayoutOutput res = TurnChildEToTenPowerLayout(
-          previousChild, previousPreviousChild, linear, addTo);
-      addTo = res.addTo;
+          previousChild, previousPreviousChild, linear, cursorRack);
+      cursorRack = res.cursorRack;
       mantissaIsOne = res.mantissaIsOne;
       parenthesesAreNeeded = res.parenthesesAreNeeded;
       continue;
     }
     /* Detect when exponent has been fully laid out :
-     * - addTo differs from result, or parentheses are being laid out in linear
-     * mode
+     * - cursorRack differs from outputRack, or parentheses are being laid out
+     * in linear mode
      * - a non-decimal digit is encountered (except for the first -).
      * For exemple, 1*10^-50+2*10^50*i has been laid out as 1ᴇ-50+2ᴇ50i
      * A multiplication operator has to be added in some cases. */
-    bool exponentIsBeingLaidOut = (result != addTo || parenthesesAreNeeded);
+    bool exponentIsBeingLaidOut =
+        (outputRack != cursorRack || parenthesesAreNeeded);
     bool childIsInExponent =
         exponentIsBeingLaidOut && child->isCodePointLayout() &&
         (CodePointLayout::GetCodePoint(child).isDecimalDigit() ||
-         (addTo->numberOfChildren() == 0 &&
+         (cursorRack->numberOfChildren() == 0 &&
           CodePointLayout::IsCodePoint(child, '-')));
     if (exponentIsBeingLaidOut && !childIsInExponent) {
       /* Come out of the superscript to layout next code points. */
-      addTo = result;
+      cursorRack = outputRack;
       if (parenthesesAreNeeded) {
         // -1ᴇ23 -> -(10^23)
-        NAry::AddOrMergeChild(addTo, ")"_l->cloneTree());
+        NAry::AddOrMergeChild(cursorRack, ")"_l->cloneTree());
       } else if (!isOperator(child) && (linear || !mantissaIsOne)) {
         // 2ᴇ23i -> 2×10^23×i
-        NAry::AddOrMergeChild(addTo, "×"_l->cloneTree());
+        NAry::AddOrMergeChild(cursorRack, "×"_l->cloneTree());
       } else {
         // 1ᴇ23i -> 10^{23}i
       }
       parenthesesAreNeeded = false;
       mantissaIsOne = false;
     }
-    NAry::AddChild(addTo, child->cloneTree());
+    NAry::AddChild(cursorRack, child->cloneTree());
     previousPreviousChild = previousChild;
     previousChild = child;
   }
   if (parenthesesAreNeeded) {
-    NAry::AddOrMergeChild(addTo, ")"_l->cloneTree());
+    NAry::AddOrMergeChild(cursorRack, ")"_l->cloneTree());
   }
-  layout->moveTreeOverTree(result);
+  layout->moveTreeOverTree(outputRack);
   return true;
 }
 

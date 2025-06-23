@@ -924,6 +924,31 @@ ParameterData ParameterFromParenthesisCodePoint(const Tree* root,
                                                      indexOfLeftParenthesis)};
 }
 
+bool findParameterOfParametric(std::span<char> buffer, const Tree* root,
+                               Token currentToken) {
+  int indexOfParenthesis = root->indexOfChild(currentToken.firstLayout()) +
+                           static_cast<int>(currentToken.length());
+  if (indexOfParenthesis >= root->numberOfChildren()) {
+    return false;
+  }
+  const Tree* parenthesis = root->child(indexOfParenthesis);
+  ParameterData parameter =
+      parenthesis->isCodePointLayout()
+          ? ParameterFromParenthesisCodePoint(root, indexOfParenthesis)
+          : ParameterFromParenthesisLayout(parenthesis);
+  LayoutSpanDecoder parameterDecoder(Layout::From(parameter.start),
+                                     parameter.length);
+  const Layout* parameterText;
+  size_t parameterLength;
+  if (!ParsingHelper::ParameterText(&parameterDecoder, &parameterText,
+                                    &parameterLength)) {
+    return false;
+  }
+  LayoutSpanDecoder nameDecoder(LayoutSpan(parameterText, parameterLength));
+  nameDecoder.printInBuffer(buffer.data(), buffer.size());
+  return true;
+}
+
 void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
                                               const Builtin* builtin) {
   if (builtin->aliases()->contains("log") &&
@@ -969,39 +994,23 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       powerFunction = true;
     }
   }
-  if (!(m_parsingContext.context() && builtin->type().isParametric())) {
+  bool isParametricWithParsingContext =
+      m_parsingContext.context() && builtin->type().isParametric();
+  if (!isParametricWithParsingContext) {
     leftHandSide = parseFunctionParameters();
   } else {
-    int indexOfParenthesis =
-        m_root->indexOfChild(m_currentToken.firstLayout()) +
-        static_cast<int>(m_currentToken.length());
-    if (indexOfParenthesis >= m_root->numberOfChildren()) {
+    char name[Symbol::k_maxNameLength];
+    bool hasParametricParameter =
+        findParameterOfParametric(name, m_root, m_currentToken);
+    if (!hasParametricParameter) {
       leftHandSide = parseFunctionParameters();
     } else {
       // We must make sure that the parameter is parsed as a single variable.
-      const Tree* parenthesis = m_root->child(indexOfParenthesis);
-      ParameterData parameter =
-          parenthesis->isCodePointLayout()
-              ? ParameterFromParenthesisCodePoint(m_root, indexOfParenthesis)
-              : ParameterFromParenthesisLayout(parenthesis);
-      LayoutSpanDecoder parameterDecoder(Layout::From(parameter.start),
-                                         parameter.length);
-      const Layout* parameterText;
-      size_t parameterLength;
-      if (!ParsingHelper::ParameterText(&parameterDecoder, &parameterText,
-                                        &parameterLength)) {
-        leftHandSide = parseFunctionParameters();
-      } else {
-        Poincare::Context* oldContext = m_parsingContext.context();
-        char name[Symbol::k_maxNameLength];
-        LayoutSpanDecoder nameDecoder(
-            LayoutSpan(parameterText, parameterLength));
-        nameDecoder.printInBuffer(name, std::size(name));
-        Poincare::TreeVariableContext parameterContext(name, oldContext);
-        m_parsingContext.setContext(&parameterContext);
-        leftHandSide = parseFunctionParameters();
-        m_parsingContext.setContext(oldContext);
-      }
+      Poincare::Context* oldContext = m_parsingContext.context();
+      Poincare::TreeVariableContext parameterContext(name, oldContext);
+      m_parsingContext.setContext(&parameterContext);
+      leftHandSide = parseFunctionParameters();
+      m_parsingContext.setContext(oldContext);
     }
   }
 

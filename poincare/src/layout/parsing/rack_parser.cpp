@@ -932,9 +932,10 @@ ParameterData ParameterFromParenthesisCodePoint(const Tree* root,
 }
 
 bool findParameterOfParametric(std::span<char> buffer, const Tree* root,
-                               Token currentToken) {
-  int indexOfParenthesis = root->indexOfChild(currentToken.firstLayout()) +
-                           static_cast<int>(currentToken.length());
+                               Token parametricFunction) {
+  int indexOfParenthesis =
+      root->indexOfChild(parametricFunction.firstLayout()) +
+      static_cast<int>(parametricFunction.length());
   if (indexOfParenthesis >= root->numberOfChildren()) {
     return false;
   }

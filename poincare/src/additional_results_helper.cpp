@@ -172,7 +172,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   const Tree* directTrigoFunction;
   if ((inputTree->isDirectTrigonometryFunction() ||
        inputTree->isDirectAdvancedTrigonometryFunction()) &&
-      !inputTree->hasChildSatisfying(
+      !inputTree->hasDescendantSatisfying(
           [](const Tree* e) { return e->isUserNamed(); })) {
     /* Do not display trigonometric additional informations, in case the symbol
      * value is later modified/deleted in the storage and can't be retrieved.

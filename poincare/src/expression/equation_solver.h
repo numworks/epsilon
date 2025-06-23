@@ -76,6 +76,7 @@ class EquationSolver {
     VariableArray unknownVariables;
     VariableArray definedVariables;
     SolutionStatus solutionStatus = SolutionStatus::Complete;
+    Range1D<double> approximateSolvingRange;
   };
 
   struct SolverResult {
@@ -83,27 +84,13 @@ class EquationSolver {
     SolutionMetadata metadata;
   };
 
-  struct ApproximateSolvingRange {
-    Range1D<double> range;
-    /* When there are more than k_maxNumberOfApproximateSolutions on one side of
-     * 0, the zoom is setting the interval to have a maximum of 5 solutions left
-     * of 0 and 5 solutions right of zero. This means that sometimes, for a
-     * function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions will
-     * be displayed. We still want to notify the user that more solutions exist.
-     */
-    bool isRangeIncomplete;
-  };
-
   static SolverResult ExactSolve(const Tree* equationsSet,
                                  ProjectionContext projectionContext);
 
-  static ApproximateSolvingRange ComputeApproximateSolvingRange(
-      const Tree* equation, ProjectionContext projectionContext);
-
-  static SolverResult ApproximateSolve(const Tree* equation,
-                                       Range1D<double> range,
-                                       ProjectionContext projectionContext,
-                                       bool isRangeIncomplete = false);
+  /* If the range is (NaN, NaN), it will be automatically computed. */
+  static SolverResult ApproximateSolve(
+      const Tree* equation, ProjectionContext projectionContext,
+      Range1D<double> range = Range1D<double>());
 
  private:
   // Return list of exact solutions.

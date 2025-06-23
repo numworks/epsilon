@@ -8,6 +8,7 @@
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/pool_variable_context.h>
+#include <poincare/range.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/equation_solver.h>
 #include <poincare/src/expression/float_helper.h>
@@ -90,37 +91,14 @@ SystemOfEquations::ContextWithoutT::expressionForUserNamed(
 
 void SystemOfEquations::setApproximateSolvingRange(
     Poincare::Range1D<double> approximateSolvingRange) {
-  m_autoApproximateSolvingRange = false;
+  m_isUsingAutoSolvingRange = false;
   m_solutionMetadata.solutionStatus = SolutionStatus::Complete;
   m_approximateSolvingRange = approximateSolvingRange;
 }
 
-void SystemOfEquations::cancelApproximateSolve(
-    bool autoApproximate, Poincare::Range1D<double> range) {
+void SystemOfEquations::cancelApproximateSolve() {
   m_solutionMetadata.solutionStatus = SolutionStatus::Interrupted;
-  m_autoApproximateSolvingRange = autoApproximate;
-  // Warning : A default range is given, but solutions have not been computed.
-  m_approximateSolvingRange = range;
   m_numberOfSolutions = 0;
-}
-
-void SystemOfEquations::autoComputeApproximateSolvingRange(Context* context) {
-  assert(m_store->numberOfDefinedModels() == 1);
-  Internal::Tree* equation = equationAtIndex(0, m_store);
-
-  Internal::EquationSolver::ApproximateSolvingRange resultRange =
-      Poincare::Internal::EquationSolver::ComputeApproximateSolvingRange(
-          equation,
-          {.m_complexFormat =
-               MathPreferences::SharedPreferences()->complexFormat(),
-           .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
-           .m_context = context});
-  m_approximateSolvingRange = resultRange.range;
-  m_solutionMetadata.solutionStatus = resultRange.isRangeIncomplete
-                                          ? SolutionStatus::Incomplete
-                                          : SolutionStatus::Complete;
-  m_autoApproximateSolvingRange = true;
-  equation->removeTree();
 }
 
 void SystemOfEquations::approximateSolve(Context* context) {
@@ -129,14 +107,22 @@ void SystemOfEquations::approximateSolve(Context* context) {
 
   EquationSolver::SolverResult result =
       Poincare::Internal::EquationSolver::ApproximateSolve(
-          equation, m_approximateSolvingRange,
+          equation,
           {.m_complexFormat =
                MathPreferences::SharedPreferences()->complexFormat(),
            .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
            .m_context = context},
-          m_solutionMetadata.solutionStatus == SolutionStatus::Incomplete);
+          m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
+                                    : m_approximateSolvingRange);
 
   m_solutionMetadata = result.metadata;
+
+  // Store the range used to solve
+  m_approximateSolvingRange = result.metadata.approximateSolvingRange;
+  if (m_isUsingAutoSolvingRange) {
+    m_memoizedAutoSolvingRange = m_approximateSolvingRange;
+  }
+
   assert(result.solutionList && result.solutionList->isList());
   // Update member variables for LinearSystem
   m_numberOfSolutions = result.solutionList->numberOfChildren();

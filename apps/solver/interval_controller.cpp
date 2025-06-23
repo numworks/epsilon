@@ -3,7 +3,7 @@
 #include <apps/i18n.h>
 #include <assert.h>
 #include <poincare/circuit_breaker_checkpoint.h>
-#include <string.h>
+#include <poincare/range.h>
 
 #include "app.h"
 
@@ -34,7 +34,22 @@ bool IntervalController::handleEvent(Ion::Events::Event event) {
     // Bypass the Left == Back of single range controller
     return false;
   }
-  return SingleRangeController::handleEvent(event);
+  bool result = SingleRangeController::handleEvent(event);
+  if (result && isAutoRangeInvalid() &&
+      typeAtRow(selectedRow()) == k_autoCellType) {
+    // Refresh the data to show/hide the cells if the auto range is invalid
+    this->m_selectableListView.reloadData();
+  }
+  return result;
+}
+
+int IntervalController::numberOfRows() const {
+  int parentRows = SingleRangeControllerDoublePrecision::numberOfRows();
+  if (m_autoParam && isAutoRangeInvalid()) {
+    // Hide the interval cells if the auto interval is not yet computed
+    return parentRows - 2;
+  }
+  return parentRows;
 }
 
 I18n::Message IntervalController::parameterMessage(int index) const {
@@ -49,12 +64,20 @@ double IntervalController::limit() const {
 void IntervalController::extractParameters() {
   SystemOfEquations* system = App::app()->system();
   m_rangeParam = system->approximateSolvingRange();
-  m_autoParam = system->autoApproximateSolvingRange();
+  if (isAutoRangeInvalid()) {
+    // Unset the auto parameter if the auto range is invalid
+    system->useAutoSolvingRange(false);
+  }
+  m_autoParam = system->isUsingAutoSolvingRange();
 }
 
 void IntervalController::confirmParameters() {
   SystemOfEquations* system = App::app()->system();
-  system->setApproximateSolvingRange(m_rangeParam);
+  if (m_autoParam) {
+    system->useAutoSolvingRange();
+  } else {
+    system->setApproximateSolvingRange(m_rangeParam);
+  }
 }
 
 bool IntervalController::parametersAreDifferent() {
@@ -63,17 +86,9 @@ bool IntervalController::parametersAreDifferent() {
 }
 
 void IntervalController::setAutoRange() {
-  SystemOfEquations* system = App::app()->system();
-  Poincare::CircuitBreakerCheckpoint checkpoint(
-      Ion::CircuitBreaker::CheckpointType::Back);
-  if (CircuitBreakerRun(checkpoint)) {
-    system->autoComputeApproximateSolvingRange(App::app()->localContext());
-    m_rangeParam = system->approximateSolvingRange();
-  } else {
-    App::app()->equationStore()->tidyDownstreamPoolFrom(
-        checkpoint.endOfPoolBeforeCheckpoint());
-    system->cancelApproximateSolve();
-    m_autoParam = false;
+  m_autoParam = true;
+  if (!isAutoRangeInvalid()) {
+    m_rangeParam = App::app()->system()->memoizedAutoSolvingRange();
   }
 }
 
@@ -87,11 +102,15 @@ void IntervalController::pop(bool onConfirmation) {
     } else {
       App::app()->equationStore()->tidyDownstreamPoolFrom(
           checkpoint.endOfPoolBeforeCheckpoint());
-      system->cancelApproximateSolve(m_autoParam, m_rangeParam);
+      system->cancelApproximateSolve();
     }
   }
   StackViewController* stack = stackController();
   stack->pop();
+}
+
+bool IntervalController::isAutoRangeInvalid() const {
+  return App::app()->system()->memoizedAutoSolvingRange().isNan();
 }
 
 }  // namespace Solver

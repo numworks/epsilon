@@ -235,3 +235,5 @@ jobs:
     name: Code Coverage
     needs: linux
     uses: ./.github/workflows/code_coverage.yml
+    with:
+      project-path: .

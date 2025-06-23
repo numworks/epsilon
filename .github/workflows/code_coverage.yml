@@ -4,8 +4,6 @@ on:
   workflow_call:
     inputs:
       project-path:
-        default: .
-        required: false
         type: string
 jobs:
   coverage:

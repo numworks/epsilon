@@ -177,6 +177,13 @@ bool ParsingHelper::ParameterText(LayoutSpanDecoder* varDecoder,
     previousC = c;
     c = varDecoder->nextCodePoint();
   }
+  if (c == UCodePointNull) {
+    /* All the code points in the varDecoder range have been read but no closing
+     * symbol (right parenthesis or comma) have been encountered. This means
+     * that the parametric layout is ill-formed and its variable cannot be
+     * found. */
+    return false;
+  }
   const Tree* endOfVariable = varDecoder->layout();
   *varDecoder = startOfVariable;
   // Skip whitespaces

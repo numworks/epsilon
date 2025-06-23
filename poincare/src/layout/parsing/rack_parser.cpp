@@ -914,6 +914,7 @@ ParameterData ParameterFromParenthesisCodePoint(const Tree* root,
                                                 int indexOfLeftParenthesis) {
   assert(CodePointLayout::GetCodePoint(root->child(indexOfLeftParenthesis))
              .getChar() == '(');
+  assert(indexOfLeftParenthesis < root->numberOfChildren());
   /* The root layout is as follows:
     <RackSimple>
       ...
@@ -921,7 +922,10 @@ ParameterData ParameterFromParenthesisCodePoint(const Tree* root,
       ...
     </RackSimple>
   */
-  assert(indexOfLeftParenthesis <= root->numberOfChildren());
+  if (indexOfLeftParenthesis == root->numberOfChildren() - 1) {
+    // There is nothing after the opening parenthesis
+    return ParameterData{.start = nullptr, .length = 0};
+  }
   return ParameterData{.start = root->child(indexOfLeftParenthesis + 1),
                        .length = static_cast<size_t>(root->numberOfChildren() -
                                                      indexOfLeftParenthesis)};

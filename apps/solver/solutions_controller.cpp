@@ -2,7 +2,6 @@
 
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
-#include <limits.h>
 #include <omg/print.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>

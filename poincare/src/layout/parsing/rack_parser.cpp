@@ -926,9 +926,10 @@ ParameterData ParameterFromParenthesisCodePoint(const Tree* root,
     // There is nothing after the opening parenthesis
     return ParameterData{.start = nullptr, .length = 0};
   }
-  return ParameterData{.start = root->child(indexOfLeftParenthesis + 1),
+  int indexOfParameterStart = indexOfLeftParenthesis + 1;
+  return ParameterData{.start = root->child(indexOfParameterStart),
                        .length = static_cast<size_t>(root->numberOfChildren() -
-                                                     indexOfLeftParenthesis)};
+                                                     indexOfParameterStart)};
 }
 
 bool findParameterOfParametric(std::span<char> buffer, const Tree* root,

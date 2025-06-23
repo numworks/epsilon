@@ -173,4 +173,25 @@ QUIZ_CASE(pcj_parse_parametric) {
   // Works with symbol = "string"
   assertLayoutParsesTo(KRackL(KSumL("string"_l, "0"_l, "10"_l, "string"_l)),
                        KSum("string"_e, 0_e, 10_e, "string"_e), &context);
+
+  quiz_assert(is_parsable("sum(k,k,0,1)"_l, &context));
+  quiz_assert(!is_parsable("sum(000000),"_l, &context));
+  quiz_assert(!is_parsable("sum"_l, &context));
+  quiz_assert(!is_parsable("sum("_l, &context));
+  quiz_assert(!is_parsable("sum()"_l, &context));
+  quiz_assert(!is_parsable("sum(k,)"_l, &context));
+  quiz_assert(!is_parsable("sum(k,k"_l, &context));
+  quiz_assert(!is_parsable("sum(k,k,"_l, &context));
+  quiz_assert(!is_parsable("sum(k,k,0"_l, &context));
+  quiz_assert(!is_parsable("sum(k,k,0,"_l, &context));
+  quiz_assert(!is_parsable("sum(k,k,0,1"_l, &context));
+  quiz_assert(is_parsable("sum"_l ^ KParenthesesL("k,k,0,1"_l), &context));
+  quiz_assert(
+      !is_parsable("sum"_l ^ KParenthesesL("000000"_l) ^ ","_l, &context));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL(KRackL()), &context));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,"_l), &context));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k"_l), &context));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,"_l), &context));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,0"_l), &context));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,0,"_l), &context));
 }

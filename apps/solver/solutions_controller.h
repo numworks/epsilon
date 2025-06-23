@@ -227,8 +227,7 @@ class SolutionsController : public Escher::ViewController,
 
   void selectIntervalButton();
   bool solutionsAreApproximate() const;
-  bool usedUserVariables() const;
-  int userVariablesMessageRow() const;
+  int definedVariablesMessageRow() const;
   I18n::Message noSolutionMessage();
 
   Escher::SmallFontEvenOddBufferTextCell m_symbolCells[k_numberOfSymbolCells];

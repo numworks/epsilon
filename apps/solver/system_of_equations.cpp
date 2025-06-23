@@ -47,8 +47,8 @@ Internal::Tree* equationSet(const EquationStore* store) {
 
 SystemOfEquations::Error SystemOfEquations::exactSolve(
     Poincare::Context* context) {
-  m_solutionMetadata.variables.clear();
-  m_solutionMetadata.userVariables.clear();
+  m_solutionMetadata.unknownVariables.clear();
+  m_solutionMetadata.definedVariables.clear();
 
   Internal::Tree* set = equationSet(m_store);
   EquationSolver::SolverResult result = EquationSolver::ExactSolve(

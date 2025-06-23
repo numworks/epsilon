@@ -74,7 +74,7 @@ void assert_solves_with_range_to(const char* equation, double min, double max,
         }
         system->approximateSolve(&solverContext);
         if (variable) {
-          quiz_assert(strcmp(system->variable(0), variable) == 0);
+          quiz_assert(strcmp(system->unknownVariable(0), variable) == 0);
         }
         size_t i = 0;
         for (double solution : solutions) {
@@ -122,7 +122,7 @@ static void compareSolutions(SystemOfEquations* system,
       /* For some reason the EquationStore returns up to 3 results but always
        * just one variable, so we don't check variable name...
        * TODO: Change this poor behavior. */
-      const char* obtainedVariable = system->variable(i);
+      const char* obtainedVariable = system->unknownVariable(i);
       quiz_assert(strcmp(obtainedVariable, expectedVariable) == 0);
     }
 

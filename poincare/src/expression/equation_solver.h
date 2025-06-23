@@ -70,11 +70,11 @@ class EquationSolver {
     ComplexFormat complexFormat = ComplexFormat::Cartesian;
     Type type = Type::GeneralMonovariable;
     int8_t degree = 0;
-    int8_t numberOfVariables = 0;
-    // If true, defined userVariables are ignored.
-    bool overrideUserVariables = false;
-    VariableArray variables;
-    VariableArray userVariables;
+    int8_t numberOfUnknowns = 0;
+    // If true, definedVariables are ignored.
+    bool overrideDefinedVariables = false;
+    VariableArray unknownVariables;
+    VariableArray definedVariables;
     SolutionStatus solutionStatus = SolutionStatus::Complete;
   };
 

@@ -321,10 +321,10 @@ bool SolutionsController::handleEvent(Ion::Events::Event event) {
 int SolutionsController::numberOfRows() const {
   SystemOfEquations* system = App::app()->system();
   int numberOfRows = system->numberOfSolutions();
-  if (system->numberOfUserVariables() > 0) {
+  if (system->numberOfDefinedVariables() > 0) {
     // Add the empty row if there are rows above predefined variables message
     numberOfRows +=
-        (numberOfRows > 0 ? 2 : 1) + system->numberOfUserVariables();
+        (numberOfRows > 0 ? 2 : 1) + system->numberOfDefinedVariables();
   }
   return numberOfRows;
 }
@@ -332,7 +332,7 @@ int SolutionsController::numberOfRows() const {
 void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
                                               int row) {
   SystemOfEquations* system = App::app()->system();
-  const int rowOfUserVariablesMessage = userVariablesMessageRow();
+  const int definedVariablesRow = definedVariablesMessageRow();
   int type = typeAtLocation(column, row);
   if (type == k_emptyCellType) {
     return;
@@ -343,14 +343,14 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
     MessageCell* messageCell = static_cast<MessageCell*>(cell);
     // Message is split across two cells : |**** used | predefined  vars ****|
     messageCell->setHorizontalAlignment(column == 0 ? 1.0f : 0.0f);
-    if (usedUserVariables()) {
-      messageCell->setMessage(
-          column == 0 ? I18n::Message::PredefinedVariablesUsedLeft
-                      : I18n::Message::PredefinedVariablesUsedRight);
-    } else {
+    if (App::app()->system()->overrideDefinedVariables()) {
       messageCell->setMessage(
           column == 0 ? I18n::Message::PredefinedVariablesIgnoredLeft
                       : I18n::Message::PredefinedVariablesIgnoredRight);
+    } else {
+      messageCell->setMessage(
+          column == 0 ? I18n::Message::PredefinedVariablesUsedLeft
+                      : I18n::Message::PredefinedVariablesUsedRight);
     }
     return;
   }
@@ -370,12 +370,12 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
         SymbolHelper::k_maxNameLengthWithoutQuotationMarks + 1;
     constexpr size_t bufferSize = k_maxSize + 2;
     char bufferSymbol[bufferSize];
-    if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
+    if (definedVariablesRow < 0 || row < definedVariablesRow - 1) {
       // It's a solution row, get symbol name
       if (system->type() == SystemOfEquations::Type::LinearSystem) {
         /* The system has more than one variable: the cell text is the
          * variable name */
-        const char* varName = system->variable(row);
+        const char* varName = system->unknownVariable(row);
         SymbolHelper::NameWithoutQuotationMarks(bufferSymbol, bufferSize,
                                                 varName, strlen(varName));
       } else {
@@ -396,7 +396,7 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
           assert(variableIndex == 1);
           variableIndex = 0;
         }
-        const char* varName = system->variable(0);
+        const char* varName = system->unknownVariable(0);
         size_t length = SymbolHelper::NameWithoutQuotationMarks(
             bufferSymbol, bufferSize, varName, strlen(varName));
         length += OMG::Print::IntLeft(variableIndex, bufferSymbol + length,
@@ -404,10 +404,10 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
         bufferSymbol[length] = 0;
       }
     } else {
-      // It's a user variable row, get variable name
-      assert(rowOfUserVariablesMessage >= 0);
+      // It's a defined variable row, get variable name
+      assert(definedVariablesRow >= 0);
       const char* varName =
-          system->userVariable(row - rowOfUserVariablesMessage - 1);
+          system->definedVariable(row - definedVariablesRow - 1);
       SymbolHelper::NameWithoutQuotationMarks(bufferSymbol, bufferSize, varName,
                                               strlen(varName));
     }
@@ -425,7 +425,7 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
     static_cast<AbstractEvenOddBufferTextCell*>(cell)->setText(bufferValue);
   }
   if (type == k_exactValueCellType) {
-    if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
+    if (definedVariablesRow < 0 || row < definedVariablesRow - 1) {
       // It's a solution row
       assert(system->numberOfSolutions() > 0);
       const Solution* solution = system->solution(row);
@@ -444,9 +444,10 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
       valueCell->setExactAndApproximateAreStriclyEqual(
           solution->exactAndApproximateAreEqual());
     } else {
-      // It's a user variable row, get values of the solutions or discriminant
+      /* It's a defined variable row, get values of the solutions or
+       * discriminant */
       const char* symbolName =
-          system->userVariable(row - rowOfUserVariablesMessage - 1);
+          system->definedVariable(row - definedVariablesRow - 1);
       UserExpression symbol =
           SymbolHelper::BuildSymbol(symbolName, strlen(symbolName));
       UserExpression value = UserExpression::Builder(
@@ -461,9 +462,9 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
 }
 
 KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
-  const int rowOfUserVariablesMessage = userVariablesMessageRow();
+  const int definedVariablesRow = definedVariablesMessageRow();
   SystemOfEquations* system = App::app()->system();
-  if (rowOfUserVariablesMessage < 0 || row < rowOfUserVariablesMessage - 1) {
+  if (definedVariablesRow < 0 || row < definedVariablesRow - 1) {
     // It's a solution row
     assert(system->numberOfSolutions() > 0);
     if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
@@ -491,14 +492,13 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
     }
     return layoutHeight + 2 * Metric::CommonSmallMargin;
   }
-  if (row == rowOfUserVariablesMessage ||
-      row == rowOfUserVariablesMessage - 1) {
-    // It's an empty or user variable message row
+  if (row == definedVariablesRow || row == definedVariablesRow - 1) {
+    // It's an empty or defined variable message row
     return k_defaultCellHeight;
   }
   // TODO: memoize user symbols if too slow
   const char* symbolName =
-      system->userVariable(row - rowOfUserVariablesMessage - 1);
+      system->definedVariable(row - definedVariablesRow - 1);
   UserExpression symbol =
       SymbolHelper::BuildSymbol(symbolName, strlen(symbolName));
   UserExpression value = UserExpression::Builder(
@@ -546,12 +546,12 @@ int SolutionsController::reusableCellCount(int type) const {
 }
 
 int SolutionsController::typeAtLocation(int column, int row) const {
-  const int rowOfUserVariableMessage = userVariablesMessageRow();
+  const int definedVariableRow = definedVariablesMessageRow();
   SystemOfEquations* system = App::app()->system();
-  if (row == rowOfUserVariableMessage - 1) {
+  if (row == definedVariableRow - 1) {
     return k_emptyCellType;
   }
-  if (row == rowOfUserVariableMessage) {
+  if (row == definedVariableRow) {
     return k_messageCellType;
   }
   if (column == 0) {
@@ -561,7 +561,7 @@ int SolutionsController::typeAtLocation(int column, int row) const {
     }
     return k_symbolCellType;
   }
-  if ((rowOfUserVariableMessage < 0 || row < rowOfUserVariableMessage - 1) &&
+  if ((definedVariableRow < 0 || row < definedVariableRow - 1) &&
       system->type() == SystemOfEquations::Type::GeneralMonovariable) {
     return k_approximateValueCellType;
   }
@@ -579,15 +579,11 @@ bool SolutionsController::solutionsAreApproximate() const {
          SystemOfEquations::Type::GeneralMonovariable;
 }
 
-bool SolutionsController::usedUserVariables() const {
-  return !App::app()->system()->overrideUserVariables();
-}
-
-int SolutionsController::userVariablesMessageRow() const {
+int SolutionsController::definedVariablesMessageRow() const {
   SystemOfEquations* system = App::app()->system();
-  assert(system->numberOfUserVariables() >= 0);
-  if (system->numberOfUserVariables() == 0) {
-    // No user variables
+  assert(system->numberOfDefinedVariables() >= 0);
+  if (system->numberOfDefinedVariables() == 0) {
+    // No defined variables
     return -1;
   }
   if (system->numberOfSolutions() == 0) {

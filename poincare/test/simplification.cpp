@@ -270,6 +270,8 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("abs((-3)^ln(5))", "3^ln(5)", cartesianCtx);
   simplifies_to("abs(acos(2)^4)", "abs(acos(2))^4", cartesianCtx);
   simplifies_to("abs(e^(π/2×i)+e^(π/6×i))", "√(3)");
+  simplifies_to("2^101*2", "5070602400912917605986812821504");
+  simplifies_to("2.3×10^45", "2.3×10^45");
 }
 
 QUIZ_CASE(pcj_simplification_big_nary) {
@@ -559,6 +561,8 @@ QUIZ_CASE(pcj_simplification_complex) {
   simplifies_to("re(√(15+2×i))", "√((15+√(229))/2)", cartesianCtx);
   simplifies_to("5*ln(1+i)-ln(exp(5*ln(1+i)))", "2×π×i", cartesianCtx);
   simplifies_to("0.3*ln(1+i)-ln(exp(0.3*ln(1+i)))", "0", cartesianCtx);
+  simplifies_to("2×cos(π/12)×e^(5×i×π/12)", "1/2+(1+√(3)/2)×i", cartesianCtx);
+  simplifies_to("(1+i)^201", "(1+i)^201", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_simplification_polar) {

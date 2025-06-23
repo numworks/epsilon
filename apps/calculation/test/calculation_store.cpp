@@ -187,6 +187,12 @@ QUIZ_CASE(calculation_ans) {
   assert_expression_serializes_to(lastCalculation->exactOutput(),
                                   "9.80665×_m×_s^\U00000012-2\U00000013");
 
+  pushAndProcessCalculation(&store, "4546249×1.0071^9", &globalContext);
+  pushAndProcessCalculation(&store, "Ans×1.0071^9", &globalContext);
+  lastCalculation = store.calculationAtIndex(0);
+  assert_expression_serializes_to(lastCalculation->input(),
+                                  "(4546249×1.0071^9)×1.0071^9");
+
   store.deleteAll();
 }
 

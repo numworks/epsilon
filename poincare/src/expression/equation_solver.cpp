@@ -235,61 +235,64 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
              e, t, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
 }
 
-EquationSolver::ApproximateSolvingRange
-EquationSolver::ComputeApproximateSolvingRange(
-    const Tree* equation, ProjectionContext projectionContext) {
-  // TODO: Restore "overrideDefinedVariables" when needed
-  SolutionMetadata metadata;
-  Tree* preparedEquation = PrepareEquationForApproximateSolve(
-      equation, projectionContext, &metadata);
-
-  /* Interval search is done in float to gain some time, since precision does
-   * not matter as much as for the actual solve. The computed interval is
-   * stretched and converted to double because the actual solver works on
-   * double. */
-  constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
-  // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();
-  constexpr float k_yxRatio = 3.06f / 5.76f;
-  Zoom zoom(NAN, NAN, k_yxRatio, k_maxFloatForAutoApproximateSolvingRange);
-  // Use the intersection between the definition domain of f and the bounds
-  zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
-                 k_maxFloatForAutoApproximateSolvingRange);
-  zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
-                           k_maxNumberOfApproximateSolutions / 2);
-  const void* model = static_cast<const void*>(preparedEquation);
-  bool finiteNumberOfSolutions = true;
-  bool didFitRoots = zoom.fitRoots(evaluator<float>, model, false,
-                                   evaluator<double>, &finiteNumberOfSolutions);
-  zoom.fitBounds(evaluator<float>, model, false);
-  Range1D<float> finalRange = *(zoom.range(false, false).x());
-  if (didFitRoots) {
-    /* The range was computed from the solution found with a solver in float. We
-     * need to strech the range in case it does not cover the solution found
-     * with a solver in double. */
-    constexpr static float k_securityMarginCoef = 1 / 10.0;
-    float securityMargin =
-        std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) *
-        k_securityMarginCoef;
-    finalRange.stretchEachBoundBy(securityMargin,
-                                  k_maxFloatForAutoApproximateSolvingRange);
-  }
-  preparedEquation->removeTree();
-  return {{finalRange.min(), finalRange.max()}, !finiteNumberOfSolutions};
-}
-
 EquationSolver::SolverResult EquationSolver::ApproximateSolve(
-    const Tree* equation, Range1D<double> range,
-    ProjectionContext projectionContext, bool isRangeIncomplete) {
+    const Tree* equation, ProjectionContext projectionContext,
+    Range1D<double> range) {
   // TODO: Restore "overrideDefinedVariables" when needed
   SolutionMetadata metadata{
       .type = Type::GeneralMonovariable,
-      .solutionStatus = isRangeIncomplete ? SolutionStatus::Incomplete
-                                          : SolutionStatus::Complete,
   };
   Tree* preparedEquation = PrepareEquationForApproximateSolve(
       equation, projectionContext, &metadata);
 
+  if (range.isNan()) {
+    /* Interval search is done in float to gain some time, since precision does
+     * not matter as much as for the actual solve. The computed interval is
+     * stretched and converted to double because the actual solver works on
+     * double. */
+    constexpr float k_maxFloatForAutoApproximateSolvingRange = 1e15f;
+    // TODO: factor with InteractiveCurveViewRange::NormalYXRatio();
+    constexpr float k_yxRatio = 3.06f / 5.76f;
+    Zoom zoom(NAN, NAN, k_yxRatio, k_maxFloatForAutoApproximateSolvingRange);
+    // Use the intersection between the definition domain of f and the bounds
+    zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
+                   k_maxFloatForAutoApproximateSolvingRange);
+    zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
+                             k_maxNumberOfApproximateSolutions / 2);
+    const void* model = static_cast<const void*>(preparedEquation);
+    bool finiteNumberOfSolutions = true;
+    bool didFitRoots =
+        zoom.fitRoots(evaluator<float>, model, false, evaluator<double>,
+                      &finiteNumberOfSolutions);
+    zoom.fitBounds(evaluator<float>, model, false);
+    Range1D<float> finalRange = *(zoom.range(false, false).x());
+    if (didFitRoots) {
+      /* The range was computed from the solution found with a solver in float.
+       * We need to strech the range in case it does not cover the solution
+       * found with a solver in double. */
+      constexpr static float k_securityMarginCoef = 1 / 10.0;
+      float securityMargin =
+          std::max(std::abs(finalRange.max()), std::abs(finalRange.min())) *
+          k_securityMarginCoef;
+      finalRange.stretchEachBoundBy(securityMargin,
+                                    k_maxFloatForAutoApproximateSolvingRange);
+    }
+
+    range = Range1D<double>(finalRange.min(), finalRange.max());
+    if (!finiteNumberOfSolutions) {
+      /* When there are more than k_maxNumberOfApproximateSolutions on one side
+       * of 0, the zoom is setting the interval to have a maximum of 5 solutions
+       * left of 0 and 5 solutions right of zero. This means that sometimes, for
+       * a function like `piecewise(1, x<0; cos(x), x >= 0)`, only 5 solutions
+       * will be displayed. We still want to notify the user that more solutions
+       * exist.
+       */
+      metadata.solutionStatus = SolutionStatus::Incomplete;
+    }
+  }
+
   assert(range.isValid());
+  metadata.approximateSolvingRange = range;
   Solver<double> solver =
       Poincare::Solver<double>(range.min(), range.max(), nullptr /*context*/);
   solver.stretch();

@@ -60,21 +60,30 @@ class SystemOfEquations {
   Poincare::Range1D<double> approximateSolvingRange() const {
     return m_approximateSolvingRange;
   }
-  bool autoApproximateSolvingRange() const {
-    return m_autoApproximateSolvingRange;
-  }
   void setApproximateSolvingRange(
       Poincare::Range1D<double> approximateSolvingRange);
-  void autoComputeApproximateSolvingRange(Poincare::Context* context);
+
+  void resetSolvingRanges() {
+    m_approximateSolvingRange = k_fallbackRange;
+    m_memoizedAutoSolvingRange = Poincare::Range1D<double>();
+  }
+
+  bool isUsingAutoSolvingRange() const { return m_isUsingAutoSolvingRange; }
+  void useAutoSolvingRange(bool useAuto = true) {
+    m_isUsingAutoSolvingRange = useAuto;
+  }
+  Poincare::Range1D<double> memoizedAutoSolvingRange() const {
+    return m_memoizedAutoSolvingRange;
+  }
 
   // Solving methods
   Error exactSolve(Poincare::Context* context);
   void approximateSolve(Poincare::Context* context);
+
   /* Cancel intermediate results of setApproximateSolvingRange and
    * approximateSolve */
-  void cancelApproximateSolve(
-      bool autoApproximate = false,
-      Poincare::Range1D<double> range = k_fallbackRange);
+  void cancelApproximateSolve();
+
   // Solutions getters
   size_t numberOfSolutions() const { return m_numberOfSolutions; }
   const Solution* solution(size_t index) const {
@@ -120,7 +129,8 @@ class SystemOfEquations {
   size_t m_numberOfSolutions;
   EquationStore* m_store;
   Poincare::Range1D<double> m_approximateSolvingRange;
-  bool m_autoApproximateSolvingRange;
+  Poincare::Range1D<double> m_memoizedAutoSolvingRange;
+  bool m_isUsingAutoSolvingRange;
 };
 
 }  // namespace Solver

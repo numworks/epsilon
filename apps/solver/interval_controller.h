@@ -5,8 +5,6 @@
 #include <escher/menu_cell_with_editable_text.h>
 #include <escher/message_text_view.h>
 
-#include "equation_store.h"
-
 namespace Solver {
 
 class IntervalController : public Shared::SingleRangeControllerDoublePrecision {
@@ -14,6 +12,7 @@ class IntervalController : public Shared::SingleRangeControllerDoublePrecision {
   IntervalController(Escher::Responder* parentResponder);
   const char* title() const override;
   bool handleEvent(Ion::Events::Event event) override;
+  int numberOfRows() const override;
 
  private:
   I18n::Message parameterMessage(int index) const override;
@@ -23,6 +22,10 @@ class IntervalController : public Shared::SingleRangeControllerDoublePrecision {
   bool parametersAreDifferent() override;
   void setAutoRange() override;
   void pop(bool onConfirmation) override;
+
+  // If the auto range is invalid, the interval cells are hidden
+  bool isAutoRangeInvalid() const;
+
   Shared::MessagePopUpController m_confirmPopUpController;
 };
 

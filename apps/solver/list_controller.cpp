@@ -214,14 +214,17 @@ void ListController::resolveEquations() {
          * selection. */
         Poincare::CircuitBreakerCheckpoint subCheckpoint(
             Ion::CircuitBreaker::CheckpointType::Back);
+
+        App::app()->system()->resetSolvingRanges();
+        App::app()->system()->useAutoSolvingRange();
         if (CircuitBreakerRun(subCheckpoint)) {
-          App::app()->system()->autoComputeApproximateSolvingRange(context);
           App::app()->system()->approximateSolve(context);
         } else {
           modelStore()->tidyDownstreamPoolFrom(
               subCheckpoint.endOfPoolBeforeCheckpoint());
           App::app()->system()->cancelApproximateSolve();
         }
+
         [[fallthrough]];
       }
       default: {

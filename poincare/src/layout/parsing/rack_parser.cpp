@@ -902,6 +902,9 @@ ParameterData ParameterFromParenthesisLayout(const Tree* parenthesesLayout) {
     </Parentheses>
   */
   const Tree* parenthesesRack = parenthesesLayout->nextNode();
+  if (parenthesesRack->numberOfChildren() == 0) {
+    return ParameterData{.start = nullptr, .length = 0};
+  }
   return ParameterData{
       .start = parenthesesRack->nextNode(),
       .length = static_cast<size_t>(parenthesesRack->numberOfChildren())};
@@ -936,6 +939,9 @@ bool findParameterOfParametric(std::span<char> buffer, const Tree* root,
       parenthesis->isCodePointLayout()
           ? ParameterFromParenthesisCodePoint(root, indexOfParenthesis)
           : ParameterFromParenthesisLayout(parenthesis);
+  if (parameter.start == nullptr) {
+    return false;
+  }
   LayoutSpanDecoder parameterDecoder(Layout::From(parameter.start),
                                      parameter.length);
   const Layout* parameterText;

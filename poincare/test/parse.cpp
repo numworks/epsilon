@@ -177,6 +177,7 @@ QUIZ_CASE(pcj_parse_parametric) {
   quiz_assert(is_parsable("sum(k,k,0,1)"_l, &context));
   quiz_assert(!is_parsable("sum(000000),"_l, &context));
   quiz_assert(!is_parsable("sum"_l, &context));
+  quiz_assert(!is_parsable("sum×0"_l, &context));
   quiz_assert(!is_parsable("sum("_l, &context));
   quiz_assert(!is_parsable("sum()"_l, &context));
   quiz_assert(!is_parsable("sum(k,)"_l, &context));

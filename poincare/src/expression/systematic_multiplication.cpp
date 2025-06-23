@@ -188,6 +188,7 @@ static bool ReduceMultiplicationChildRec(Tree* child, int index,
 static bool ReduceMultiplicationWithInf(Tree* e) {
   // x*inf -> sign(x)*inf
   // Except when x = -i,-1,0,1,i or sign (to avoid infinite loop)
+  // TODO: check for |x| = 0 or 1 when `sign(z)=exp(i*arg(z))` is implemented.
   PatternMatching::Context ctx;
   if (PatternMatching::Match(e, KMult(KA, KInf), &ctx) ||
       PatternMatching::Match(e, KMult(KInf, KA), &ctx)) {

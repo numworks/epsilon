@@ -504,7 +504,9 @@ bool SystematicOperation::ReduceSign(Tree* e) {
           e, KSign(KA), KMult(KSign(KMult(-1_e, KA, i_e)), i_e));
       return true;
     }
-    // Could use sign(z) = exp(i*arg(z)) but ignore for now
+    /* Could use sign(z) = exp(i*arg(z)) but ignore for now.
+     * TODO: when implementing this, see comment in
+     * `ReduceMultiplicationWithInf` to avoid infinite loops. */
     return false;
   }
   const Tree* result;

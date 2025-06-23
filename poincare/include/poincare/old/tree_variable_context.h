@@ -11,7 +11,7 @@ class TreeVariableContext : public ContextWithParent {
  public:
   TreeVariableContext(const char* name = nullptr,
                       Context* parentContext = nullptr)
-      : ContextWithParent(parentContext), m_name(name) {}
+      : ContextWithParent(parentContext), m_name(name), m_value(nullptr) {}
 
   // Context
   UserNamedType expressionTypeForIdentifier(const char* identifier,

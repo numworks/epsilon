@@ -296,7 +296,7 @@ PointOfInterest findIntersections(void* searchContext) {
        !f->shouldDisplayIntersections())) {
     return PointOfInterest{};
   }
-  int n = ctx->store->numberOfActiveFunctions();
+  int n = ctx->store->numberOfModels();
   SystemFunction e = f->expressionApproximated(ctx->context);
   bool alongY = f->isAlongY();
   bool fIsStrict = f->properties().isStrictInequality();

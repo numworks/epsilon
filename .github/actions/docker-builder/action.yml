@@ -8,7 +8,7 @@ runs:
   steps:
     - name: Build Docker container
       shell: bash
-      run: docker build --build-arg ABSOLUTE_PATH=`pwd`/../../ -f tools/Dockerfile . --tag epsilon-builder
+      run: docker build -f tools/Dockerfile . --tag epsilon-builder
 
     - name: Define DOCKER_RUN environment variable
       shell: bash
@@ -16,4 +16,4 @@ runs:
         CACHE_FOLDER=$(pwd)/../../ccache
         mkdir -p $CACHE_FOLDER
         CACHE_FLAGS="--env CCACHE_DIR=/cache --mount type=bind,source=$CACHE_FOLDER,target=/cache"
-        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) $CACHE_FLAGS --env MAKEFLAGS --mount type=bind,source=.,target=$(pwd) epsilon-builder:latest sh -c" >> $GITHUB_ENV
+        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) $CACHE_FLAGS --env MAKEFLAGS --mount type=bind,source=.,target=/monorepo epsilon-builder:latest sh -c" >> $GITHUB_ENV

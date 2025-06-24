@@ -5,6 +5,7 @@
 #include "beautification.h"
 #include "dependency.h"
 #include "k_tree.h"
+#include "simplification.h"
 #include "systematic_reduction.h"
 #include "variables.h"
 
@@ -83,6 +84,7 @@ bool PrepareExpressionForApproximation(Tree* e) {
 
 void PrepareFunctionForApproximation(Tree* e, const char* variable,
                                      ComplexFormat complexFormat) {
+  assert(Simplification::IsSystem(e));
   Variables::ReplaceSymbol(e, variable, 0,
                            complexFormat == ComplexFormat::Real
                                ? ComplexSign::Real()

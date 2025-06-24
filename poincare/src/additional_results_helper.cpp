@@ -531,23 +531,22 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
 
   // 3. Matrix row echelon form
   Tree* reducedRowEchelonForm = matrix->cloneTree();
-  if (!Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr,
-                                     isApproximate)) {
-    assert(false);
-  }
-  // Clone layouted tree to preserve reducedRowEchelonForm for next step.
-  rowEchelonFormL =
-      CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), &ctx,
-                             displayMode, numberOfSignificantDigits);
+  if (Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr,
+                                    isApproximate)) {
+    // Clone layouted tree to preserve reducedRowEchelonForm for next step.
+    rowEchelonFormL =
+        CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), &ctx,
+                               displayMode, numberOfSignificantDigits);
 
-  /* 4. Matrix reduced row echelon form
-   *    Computed from row echelon form to save computation time. */
-  if (!Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr,
-                                     isApproximate)) {
-    assert(false);
+    /* 4. Matrix reduced row echelon form
+     *    Computed from row echelon form to save computation time. */
+    if (!Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr,
+                                       isApproximate)) {
+      assert(false);
+    }
+    reducedRowEchelonFormL = CreateBeautifiedLayout(
+        reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);
   }
-  reducedRowEchelonFormL = CreateBeautifiedLayout(
-      reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);
 
   // 5. Matrix trace if square matrix
   if (isSquared) {

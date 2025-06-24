@@ -48,12 +48,13 @@ void MatrixListController::computeAdditionalResults(
   } else {
     assert(inverse.isUninitialized());
   }
-  assert(!rowEchelonForm.isUninitialized() &&
-         !reducedRowEchelonForm.isUninitialized());
-  m_message[index] = I18n::Message::AdditionalRowEchelonForm;
-  m_layouts[index++] = rowEchelonForm;
-  m_message[index] = I18n::Message::AdditionalReducedRowEchelonForm;
-  m_layouts[index++] = reducedRowEchelonForm;
+  if (!rowEchelonForm.isUninitialized()) {
+    assert(!reducedRowEchelonForm.isUninitialized());
+    m_message[index] = I18n::Message::AdditionalRowEchelonForm;
+    m_layouts[index++] = rowEchelonForm;
+    m_message[index] = I18n::Message::AdditionalReducedRowEchelonForm;
+    m_layouts[index++] = reducedRowEchelonForm;
+  }
 
   if (isSquared) {
     assert(!trace.isUninitialized());

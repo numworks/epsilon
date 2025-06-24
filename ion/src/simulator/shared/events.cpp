@@ -115,6 +115,10 @@ Event getEvent(int* timeout) {
   if (sDestinationJournal != nullptr) {
     sDestinationJournal->pushEvent(nextEvent);
   }
+  if (nextEvent == Ion::Events::Timeout) {
+    *timeout = 0;
+    nextEvent = Ion::Events::None;
+  }
   return nextEvent;
 }
 

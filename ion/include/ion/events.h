@@ -189,6 +189,10 @@ enum class EventId : uint8_t {
   /* This event is only used in the simulator, to handle text that cannot be
    * associated with a key. */
   ExternalText = Event::Special(8),
+  /* Phony event to be included in state files that want to simulate a long wait
+   * between events. It is not propagated to the apps but sets timeout to 0
+   * in getEvent instead. */
+  Timeout = Event::Special(9),
 
 #include <ion/keys.inc>
 };

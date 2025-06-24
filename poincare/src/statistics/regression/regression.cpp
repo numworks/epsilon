@@ -3,8 +3,11 @@
 #include <omg/float.h>
 #include <poincare/solver/solver.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/context.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/simplification.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/solver/matrix_array.h>
 #include <poincare/src/statistics/dataset_adapter.h>
@@ -46,6 +49,9 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   Tree* diff = SharedTreeStack->pushAdd(2);
   static_cast<const Tree*>(e)->cloneTree();
   SharedTreeStack->pushFloat(-y);
+  ProjectionContext projectionContext = ProjectionContext{
+      .m_complexFormat = ComplexFormat::Real, .m_angleUnit = angleUnit()};
+  Internal::Simplification::ToSystem(diff, &projectionContext);
   Approximation::PrepareFunctionForApproximation(diff, "x",
                                                  ComplexFormat::Real);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection

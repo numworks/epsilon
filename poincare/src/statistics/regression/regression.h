@@ -5,6 +5,7 @@
 #include <poincare/layout.h>
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
+#include <poincare/src/expression/context.h>
 #include <poincare/src/statistics/data_table.h>
 #include <poincare/src/statistics/dataset_adapter.h>
 #include <stdint.h>
@@ -231,6 +232,11 @@ class Regression {
   };
 
  private:
+  /* An angle unit is needed to project the regression expression. The
+   * regressions that use trigonometric functions must override this method to
+   * provide the right specific angle unit. */
+  virtual AngleUnit angleUnit() const { return AngleUnit::None; }
+
   // Model attributes
   virtual double partialDerivate(const Coefficients& modelCoefficients,
                                  int derivateCoefficientIndex, double x) const {

@@ -34,6 +34,8 @@ class TrigonometricRegression : public Regression {
    * cases, so we choose √2 as the multiplication factor. */
   constexpr static double k_frequencyMultiplicationFactor = M_SQRT2;
 
+  AngleUnit angleUnit() const override { return m_angleUnit; }
+
   double privateEvaluate(const Coefficients& modelCoefficients,
                          double x) const override;
 

@@ -39,14 +39,9 @@ class EquationSolver {
       std::max(VariableArray::k_maxNumberOfVariables,
                Expression::k_maxPolynomialDegree + 1);
   constexpr static int k_maxNumberOfApproximateSolutions = 10;
+
   constexpr static int k_maxNumberOfSolutions =
       std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
-
-  enum class Type : uint8_t {
-    LinearSystem,
-    PolynomialMonovariable,
-    GeneralMonovariable,
-  };
 
   enum class Error {
     NoError = 0,
@@ -59,24 +54,41 @@ class EquationSolver {
     DisabledInExamMode,  // TODO_PCJ
   };
 
-  enum class SolutionStatus : uint8_t {
-    Complete,     // All solutions have been found in the interval
-    Incomplete,   // There are other solutions
-    Interrupted,  // The solver has been interrupted
+  enum class SolutionType : uint8_t {
+    Approximate,
+    Exact,
+    Formal,
+  };
+
+  enum class SolvingMethod : uint8_t {
+    GeneralMonovariable,
+    LinearSystem,
+    PolynomialMonovariable,
   };
 
   struct SolutionMetadata {
+    // - General metadata -
     Error error = Error::NoError;
-    ComplexFormat complexFormat = ComplexFormat::Cartesian;
-    Type type = Type::GeneralMonovariable;
-    int8_t degree = 0;
-    int8_t numberOfUnknowns = 0;
-    // If true, definedVariables are ignored.
-    bool overrideDefinedVariables = false;
+    SolvingMethod solvingMethod = SolvingMethod::GeneralMonovariable;
+    SolutionType solutionType = SolutionType::Approximate;
+
+    // - Variables -
+    // Variables that are considered unknown in the equations.
     VariableArray unknownVariables;
+    // Variables that are defined by the user.
     VariableArray definedVariables;
-    SolutionStatus solutionStatus = SolutionStatus::Complete;
-    Range1D<double> approximateSolvingRange;
+    // If true, definedVariables are included in unknownVariables.
+    bool overrideDefinedVariables = false;
+
+    // - Preferences used for projection -
+    ComplexFormat complexFormat = ComplexFormat::Cartesian;
+
+    // - Exact solve only -
+    int degree = 0;
+
+    // - Approximate solve only -
+    Range1D<double> solvingRange = Range1D<double>();
+    bool incompleteSolutions = false;
   };
 
   struct SolverResult {

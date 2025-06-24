@@ -154,8 +154,6 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
     return {nullptr, metadata};
   }
 
-  metadata.numberOfUnknowns = numberOfUnknowns;
-
   /* Find equation's results */
   TreeRef result;
   assert(metadata.error == Error::NoError);
@@ -179,7 +177,7 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
     }
   }
   if (metadata.error == Error::RequireApproximateSolution) {
-    metadata.type = Type::GeneralMonovariable;
+    metadata.solvingMethod = SolvingMethod::GeneralMonovariable;
     // TODO: Handle GeneralMonovariable solving.
     assert(result.isUninitialized());
     reducedEquationSet->removeTree();
@@ -189,7 +187,7 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
 #else
   if (metadata.error == Error::NonLinearSystem ||
       metadata.error == Error::RequireApproximateSolution) {
-    metadata.type = Type::GeneralMonovariable;
+    metadata.solvingMethod = SolvingMethod::GeneralMonovariable;
   }
 #endif
   reducedEquationSet->removeTree();
@@ -200,15 +198,14 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
     for (const Tree* symbol : userSymbols->children()) {
       Variables::LeaveScopeWithReplacement(result, symbol, false, false);
     }
-    // Replace additional unknown parameter variables (t1, t2, ...)
-    metadata.numberOfUnknowns -= userSymbols->numberOfChildren();
-    if (metadata.numberOfUnknowns > 0) {
+    assert(numberOfUnknowns == metadata.unknownVariables.numberOfVariables());
+    if (numberOfUnknowns > 0) {
       // Start at 0 ("t") instead of 1 ("t1") if there is only one variable
-      size_t parameterIndex = (metadata.numberOfUnknowns > 1) ? 1 : 0;
+      size_t parameterIndex = (numberOfUnknowns > 1) ? 1 : 0;
       uint32_t usedParameterIndices =
           TagParametersUsedAsVariables(metadata.unknownVariables);
 
-      for (int j = 0; j < metadata.numberOfUnknowns; j++) {
+      for (int j = 0; j < numberOfUnknowns; j++) {
         // Generate a unique identifier t? that does not collide with variables.
         TreeRef symbol = GetNextParameterSymbol(
             &parameterIndex, usedParameterIndices, projectionContext.m_context);
@@ -240,8 +237,10 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
     Range1D<double> range) {
   // TODO: Restore "overrideDefinedVariables" when needed
   SolutionMetadata metadata{
-      .type = Type::GeneralMonovariable,
+      .solvingMethod = SolvingMethod::GeneralMonovariable,
+      .solutionType = SolutionType::Approximate,
   };
+
   Tree* preparedEquation = PrepareEquationForApproximateSolve(
       equation, projectionContext, &metadata);
 
@@ -287,12 +286,12 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
        * will be displayed. We still want to notify the user that more solutions
        * exist.
        */
-      metadata.solutionStatus = SolutionStatus::Incomplete;
+      metadata.incompleteSolutions = true;
     }
   }
 
   assert(range.isValid());
-  metadata.approximateSolvingRange = range;
+  metadata.solvingRange = range;
   Solver<double> solver =
       Poincare::Solver<double>(range.min(), range.max(), nullptr /*context*/);
   solver.stretch();
@@ -309,7 +308,7 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
     }
 
     if (i == k_maxNumberOfApproximateSolutions) {
-      metadata.solutionStatus = SolutionStatus::Incomplete;
+      metadata.incompleteSolutions = true;
     } else {
       if (std::isnan(root)) {
         break;
@@ -349,7 +348,7 @@ EquationSolver::Error EquationSolver::ProjectAndReduce(
 
 Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
                                         uint8_t n, SolutionMetadata* metadata) {
-  metadata->type = Type::LinearSystem;
+  metadata->solvingMethod = SolvingMethod::LinearSystem;
   metadata->degree = 1;
 
   // Solve without dependencies
@@ -414,7 +413,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   if (rank != n || n <= 0) {
 #if POINCARE_NO_INFINITE_SYSTEMS
     (void)m;
-    context->solutionStatus = SolutionStatus::Incomplete;
+    metadata->solutionType = SolutionType::Formal;
     matrix->removeTree();
     equationSetWithoutDep->removeTree();
     assert(*error == Error::NoError);
@@ -422,10 +421,11 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
 #else
     /* The system is insufficiently qualified: bind the value of n-rank
      * variables to parameters. */
-    metadata->solutionStatus = SolutionStatus::Incomplete;
+    metadata->solutionType = SolutionType::Formal;
     int variable = n - 1;
     int row = m - 1;
     int firstVariableInRow = -1;
+    int numberOfUnknowns = metadata->unknownVariables.numberOfVariables();
     while (variable >= 0) {
       // Find the first variable with a non-null coefficient in the current row
       if (row >= 0) {
@@ -457,9 +457,8 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       for (int i = 0; i < n; i++) {
         (i == variable ? 1_e : 0_e)->cloneTree();
       }
-      // Push a finite variable starting from ??
-      SharedTreeStack->pushVar(metadata->numberOfUnknowns++,
-                               ComplexSign::Finite());
+      // Push a finite variable starting from numberOfUnknowns
+      SharedTreeStack->pushVar(numberOfUnknowns++, ComplexSign::Finite());
       rows = m + 1;
       Matrix::SetDimensions(matrix, ++m, n + 1);
       variable--;
@@ -478,7 +477,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     }
 #endif
   } else {
-    metadata->solutionStatus = SolutionStatus::Complete;
+    metadata->solutionType = SolutionType::Exact;
   }
   assert(rank == n);
 
@@ -624,7 +623,7 @@ Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
     SharedTreeStack->dropBlocksFrom(equation);
     return nullptr;
   }
-  metadata->type = Type::PolynomialMonovariable;
+  metadata->solvingMethod = SolvingMethod::PolynomialMonovariable;
   metadata->degree = degree;
 
   int numberOfTerms = Polynomial::NumberOfTerms(polynomial);

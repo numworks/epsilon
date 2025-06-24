@@ -198,8 +198,8 @@ SolutionsController::SolutionsController(Responder* parentResponder,
 
 /* ViewController */
 const char* SolutionsController::title() const {
-  if (App::app()->system()->type() ==
-      SystemOfEquations::Type::GeneralMonovariable) {
+  if (App::app()->system()->solvingMethod() ==
+      SystemOfEquations::SolvingMethod::GeneralMonovariable) {
     return I18n::translate(I18n::Message::ApproximateSolution);
   }
   return I18n::translate(I18n::Message::Solution);
@@ -215,30 +215,23 @@ void SolutionsController::viewWillAppear() {
   bool requireWarning = true;
   SystemOfEquations* system = App::app()->system();
 
-  if (system->numberOfSolutions() == 0 &&
-      system->solutionStatus() !=
-          SystemOfEquations::SolutionStatus::Interrupted) {
+  if (system->numberOfSolutions() == 0 && !system->wasInterrupted()) {
     // There are no solutions
     m_contentView.setWarningMessage(noSolutionMessage());
-  } else if (solutionsAreApproximate()) {
-    switch (system->solutionStatus()) {
-      case SystemOfEquations::SolutionStatus::Complete:
-        m_contentView.setWarningMessage(I18n::Message::OtherSolutionsMayExist);
-        break;
-      case SystemOfEquations::SolutionStatus::Incomplete:
-        m_contentView.setWarningMessageWithNumber(
-            I18n::Message::OnlyFirstSolutionsDisplayed,
-            system->numberOfSolutions());
-        break;
-      default:
-        assert(system->solutionStatus() ==
-               SystemOfEquations::SolutionStatus::Interrupted);
-        m_contentView.setWarningMessage(
-            I18n::Message::InterruptedApproximateSolver);
-        break;
+  } else if (system->solutionType() ==
+             SystemOfEquations::SolutionType::Approximate) {
+    if (system->wasInterrupted()) {
+      m_contentView.setWarningMessage(
+          I18n::Message::InterruptedApproximateSolver);
+    } else if (system->incompleteSolutions()) {
+      m_contentView.setWarningMessageWithNumber(
+          I18n::Message::OnlyFirstSolutionsDisplayed,
+          system->numberOfSolutions());
+    } else {
+      m_contentView.setWarningMessage(I18n::Message::OtherSolutionsMayExist);
     }
-  } else if (system->type() ==
-                 SystemOfEquations::Type::PolynomialMonovariable &&
+  } else if (system->solvingMethod() ==
+                 SystemOfEquations::SolvingMethod::PolynomialMonovariable &&
              system->numberOfSolutions() == 1) {
     if (system->degree() == 2) {
       /* For quadratic polynoms, if only delta is displayed, it means that the
@@ -250,9 +243,10 @@ void SolutionsController::viewWillAppear() {
       // TODO: Message could be updated. The user did not input any interval.
       m_contentView.setWarningMessage(I18n::Message::NoSolutionInterval);
     }
-  } else if (system->type() == SystemOfEquations::Type::LinearSystem &&
-             system->solutionStatus() ==
-                 SystemOfEquations::SolutionStatus::Incomplete) {
+  } else if (system->solvingMethod() ==
+                 SystemOfEquations::SolvingMethod::LinearSystem &&
+             system->solutionType() ==
+                 SystemOfEquations::SolutionType::Formal) {
     m_contentView.setWarningMessage(I18n::Message::InfiniteNumberOfSolutions);
   } else {
     requireWarning = false;
@@ -371,7 +365,8 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
     char bufferSymbol[bufferSize];
     if (definedVariablesRow < 0 || row < definedVariablesRow - 1) {
       // It's a solution row, get symbol name
-      if (system->type() == SystemOfEquations::Type::LinearSystem) {
+      if (system->solvingMethod() ==
+          SystemOfEquations::SolvingMethod::LinearSystem) {
         /* The system has more than one variable: the cell text is the
          * variable name */
         const char* varName = system->unknownVariable(row);
@@ -391,7 +386,8 @@ void SolutionsController::fillCellForLocation(HighlightCell* cell, int column,
         if (doubleRootPref ==
                 CountryPreferences::SolverDoubleRootName::Variant1 &&
             system->numberOfSolutions() == 2 &&
-            system->type() == SystemOfEquations::Type::PolynomialMonovariable) {
+            system->solvingMethod() ==
+                SystemOfEquations::SolvingMethod::PolynomialMonovariable) {
           assert(variableIndex == 1);
           variableIndex = 0;
         }
@@ -466,7 +462,8 @@ KDCoordinate SolutionsController::nonMemoizedRowHeight(int row) {
   if (definedVariablesRow < 0 || row < definedVariablesRow - 1) {
     // It's a solution row
     assert(system->numberOfSolutions() > 0);
-    if (system->type() == SystemOfEquations::Type::GeneralMonovariable) {
+    if (system->solvingMethod() ==
+        SystemOfEquations::SolvingMethod::GeneralMonovariable) {
       return k_defaultCellHeight;
     }
     Layout exactLayout = system->solution(row)->exactLayout();
@@ -554,14 +551,16 @@ int SolutionsController::typeAtLocation(int column, int row) const {
     return k_messageCellType;
   }
   if (column == 0) {
-    if (system->type() == SystemOfEquations::Type::PolynomialMonovariable &&
+    if (system->solvingMethod() ==
+            SystemOfEquations::SolvingMethod::PolynomialMonovariable &&
         row == static_cast<int>(system->numberOfSolutions()) - 1) {
       return k_deltaCellType;
     }
     return k_symbolCellType;
   }
   if ((definedVariableRow < 0 || row < definedVariableRow - 1) &&
-      system->type() == SystemOfEquations::Type::GeneralMonovariable) {
+      system->solvingMethod() ==
+          SystemOfEquations::SolvingMethod::GeneralMonovariable) {
     return k_approximateValueCellType;
   }
   return k_exactValueCellType;
@@ -574,8 +573,8 @@ void SolutionsController::selectIntervalButton() {
 }
 
 bool SolutionsController::solutionsAreApproximate() const {
-  return App::app()->system()->type() ==
-         SystemOfEquations::Type::GeneralMonovariable;
+  return App::app()->system()->solvingMethod() ==
+         SystemOfEquations::SolvingMethod::GeneralMonovariable;
 }
 
 int SolutionsController::definedVariablesMessageRow() const {

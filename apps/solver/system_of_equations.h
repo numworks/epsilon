@@ -25,11 +25,10 @@ namespace Solver {
 
 class SystemOfEquations {
  public:
-  using Type = Poincare::Internal::EquationSolver::Type;
+  using SolvingMethod = Poincare::Internal::EquationSolver::SolvingMethod;
+  using SolutionType = Poincare::Internal::EquationSolver::SolutionType;
 
   using Error = Poincare::Internal::EquationSolver::Error;
-
-  using SolutionStatus = Poincare::Internal::EquationSolver::SolutionStatus;
 
   SystemOfEquations(EquationStore* store) : m_store(store) {}
 
@@ -41,8 +40,14 @@ class SystemOfEquations {
       Poincare::Internal::EquationSolver::k_maxNumberOfSolutions;
 
   // System analysis
-  Type type() const { return m_solutionMetadata.type; }
+  SolvingMethod solvingMethod() const {
+    return m_solutionMetadata.solvingMethod;
+  }
   int degree() const { return m_solutionMetadata.degree; }
+  bool incompleteSolutions() const {
+    return m_solutionMetadata.incompleteSolutions;
+  }
+
   const char* unknownVariable(size_t index) const {
     return m_solutionMetadata.unknownVariables.variable(index);
   }
@@ -90,10 +95,9 @@ class SystemOfEquations {
     assert(index < m_numberOfSolutions);
     return m_solutions + index;
   }
-  SolutionStatus solutionStatus() const {
-    return m_solutionMetadata.solutionStatus;
-  }
+  SolutionType solutionType() const { return m_solutionMetadata.solutionType; }
 
+  bool wasInterrupted() const { return m_wasInterrupted; }
   void tidy(Poincare::PoolObject* treePoolCursor = nullptr);
 
  private:
@@ -110,27 +114,18 @@ class SystemOfEquations {
         const Poincare::Internal::Tree* symbol) override;
   };
 
-  Error solveLinearSystem(Poincare::Context* context,
-                          Poincare::SystemExpression* simplifiedEquations);
-  Error solvePolynomial(Poincare::Context* context,
-                        Poincare::SystemExpression* simplifiedEquations);
-
-  enum class SolutionType : uint8_t {
-    Exact,
-    Approximate,
-    Formal,
-  };
   Error registerSolution(Poincare::UserExpression e, Poincare::Context* context,
                          SolutionType type);
   void registerSolution(double f);
 
-  Poincare::Internal::EquationSolver::SolutionMetadata m_solutionMetadata;
   Solution m_solutions[k_maxNumberOfSolutions];
+  Poincare::Internal::EquationSolver::SolutionMetadata m_solutionMetadata;
   size_t m_numberOfSolutions;
   EquationStore* m_store;
   Poincare::Range1D<double> m_approximateSolvingRange;
   Poincare::Range1D<double> m_memoizedAutoSolvingRange;
   bool m_isUsingAutoSolvingRange;
+  bool m_wasInterrupted;
 };
 
 }  // namespace Solver

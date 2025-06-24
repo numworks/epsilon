@@ -118,7 +118,8 @@ static void compareSolutions(SystemOfEquations* system,
     *equal = 0;
 
     const char* expectedVariable = editableSolution;
-    if (system->type() != SystemOfEquations::Type::PolynomialMonovariable) {
+    if (system->solvingMethod() !=
+        SystemOfEquations::SolvingMethod::PolynomialMonovariable) {
       /* For some reason the EquationStore returns up to 3 results but always
        * just one variable, so we don't check variable name...
        * TODO: Change this poor behavior. */
@@ -216,14 +217,14 @@ void assert_solves_to_infinite_solutions(
     std::initializer_list<const char*> solutions,
     Shared::GlobalContext* globalContext) {
   SolverContext solverContext(globalContext);
-  solve_and(
-      equations, &solverContext,
-      [solutions, &solverContext](SystemOfEquations* system) {
-        quiz_assert(system->type() == SystemOfEquations::Type::LinearSystem &&
-                    system->solutionStatus() ==
-                        SystemOfEquations::SolutionStatus::Incomplete);
-        compareSolutions(system, solutions, &solverContext);
-      });
+  solve_and(equations, &solverContext,
+            [solutions, &solverContext](SystemOfEquations* system) {
+              quiz_assert(system->solvingMethod() ==
+                              SystemOfEquations::SolvingMethod::LinearSystem &&
+                          system->solutionType() ==
+                              SystemOfEquations::SolutionType::Formal);
+              compareSolutions(system, solutions, &solverContext);
+            });
 }
 
 void assert_solves_to(std::initializer_list<const char*> equations,

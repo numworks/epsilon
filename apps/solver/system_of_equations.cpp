@@ -46,6 +46,7 @@ Internal::Tree* equationSet(const EquationStore* store) {
 
 SystemOfEquations::Error SystemOfEquations::exactSolve(
     Poincare::Context* context) {
+  m_wasInterrupted = false;
   m_solutionMetadata.unknownVariables.clear();
   m_solutionMetadata.definedVariables.clear();
 
@@ -62,13 +63,9 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   if (m_solutionMetadata.error == Error::NoError) {
     assert(solutionList);
     m_numberOfSolutions = 0;
-    assert(solutionStatus() != SolutionStatus::Interrupted);
-    SolutionType solutionType = solutionStatus() == SolutionStatus::Incomplete
-                                    ? SolutionType::Formal
-                                    : SolutionType::Exact;
     for (const Internal::Tree* solution : solutionList->children()) {
       registerSolution(UserExpression::Builder(solution), context,
-                       solutionType);
+                       m_solutionMetadata.solutionType);
     }
     solutionList->removeTree();
   } else {
@@ -92,17 +89,17 @@ SystemOfEquations::ContextWithoutT::expressionForUserNamed(
 void SystemOfEquations::setApproximateSolvingRange(
     Poincare::Range1D<double> approximateSolvingRange) {
   m_isUsingAutoSolvingRange = false;
-  m_solutionMetadata.solutionStatus = SolutionStatus::Complete;
   m_approximateSolvingRange = approximateSolvingRange;
 }
 
 void SystemOfEquations::cancelApproximateSolve() {
-  m_solutionMetadata.solutionStatus = SolutionStatus::Interrupted;
+  m_wasInterrupted = true;
   m_numberOfSolutions = 0;
 }
 
 void SystemOfEquations::approximateSolve(Context* context) {
   assert(m_store->numberOfDefinedModels() == 1);
+  m_wasInterrupted = false;
   Internal::Tree* equation = equationAtIndex(0, m_store);
 
   EquationSolver::SolverResult result =
@@ -118,7 +115,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
   m_solutionMetadata = result.metadata;
 
   // Store the range used to solve
-  m_approximateSolvingRange = result.metadata.approximateSolvingRange;
+  m_approximateSolvingRange = result.metadata.solvingRange;
   if (m_isUsingAutoSolvingRange) {
     m_memoizedAutoSolvingRange = m_approximateSolvingRange;
   }

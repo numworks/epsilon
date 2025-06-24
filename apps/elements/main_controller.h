@@ -60,6 +60,9 @@ class MainController : public Escher::ViewController,
 
   void endElementSearch(AtomicNumber z);
 
+  void privateModalViewAltersFirstResponder(
+      FirstResponderAlteration alteration) override;
+
   DetailsListController m_detailsController;
   DisplayTypeController m_displayTypeController;
   ContentView m_view;

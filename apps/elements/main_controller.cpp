@@ -107,7 +107,7 @@ bool MainController::textFieldDidReceiveEvent(
   // Sto event needs to be handled here before AbstractTextField handles it.
   if (event == Ion::Events::Sto || event == Ion::Events::Var) {
     /* ElementsView only redraws its background when appearing to avoid
-     * blinking It needs to be redrawn after the store menu */
+     * blinking. It needs to be redrawn after the store menu */
     m_view.elementsView()->dirtyBackground();
   }
   if (textField->isEditing()) {
@@ -209,6 +209,13 @@ void MainController::handleResponderChainEvent(
     Escher::App::app()->setFirstResponder(m_view.bannerView()->textField());
   } else {
     Escher::ViewController::handleResponderChainEvent(event);
+  }
+}
+
+void MainController::privateModalViewAltersFirstResponder(
+    FirstResponderAlteration alteration) {
+  if (alteration == FirstResponderAlteration::WillSpoil) {
+    m_view.elementsView()->dirtyBackground();
   }
 }
 

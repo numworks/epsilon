@@ -698,7 +698,7 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
     case Type::Norm:
     case Type::Det: {
       Tree* m = ToMatrix<T>(e->child(0), ctx);
-      Tree* value;
+      Tree* value = nullptr;
       if (e->isDet()) {
         Matrix::RowCanonize(m, true, &value, true, ctx);
       } else {

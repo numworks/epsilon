@@ -503,7 +503,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
 
   // 1. Matrix determinant if square matrix
   if (isSquared) {
-    Tree* determinant;
+    Tree* determinant = nullptr;
     Tree* matrixClone = matrix->cloneTree();
     Internal::Matrix::RowCanonize(matrixClone, true, &determinant,
                                   isApproximate);

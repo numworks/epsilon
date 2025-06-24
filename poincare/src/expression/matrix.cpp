@@ -206,6 +206,8 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
 bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
                          bool approximate, const Approximation::Context* ctx,
                          bool forceCanonization) {
+  // If determinant is given, it must be nullptr.
+  assert(!determinant || !*determinant);
   // The matrix children have to be reduced to be able to spot 0
   assert(approximate || !SystematicReduction::DeepReduce(matrix));
 
@@ -504,7 +506,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
     }
     return false;
   }
-  Tree* result;
+  Tree* result = nullptr;
   switch (e->type()) {
     case Type::Cross:
     case Type::Dot: {
@@ -516,7 +518,9 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
       break;
     }
     case Type::Det:
-      if (RowCanonize(child, true, &result)) {
+      RowCanonize(child, true, &result);
+      // RowCanonize can fail, but return an undefined determinant
+      if (result) {
         break;
       }
       return false;

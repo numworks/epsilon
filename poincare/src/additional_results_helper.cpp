@@ -505,8 +505,10 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (isSquared) {
     Tree* determinant = nullptr;
     Tree* matrixClone = matrix->cloneTree();
-    Internal::Matrix::RowCanonize(matrixClone, true, &determinant,
-                                  isApproximate);
+    if (!Internal::Matrix::RowCanonize(matrixClone, true, &determinant,
+                                       isApproximate)) {
+      determinant = (KUndefUnhandled)->cloneTree();
+    }
     // TODO: Use ComplexSign or approximation to handle more complex cases
     bool determinantIsUndefinedOrNull =
         determinant->isUndefined() || determinant->isZero();
@@ -529,8 +531,10 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
 
   // 3. Matrix row echelon form
   Tree* reducedRowEchelonForm = matrix->cloneTree();
-  Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr,
-                                isApproximate);
+  if (!Internal::Matrix::RowCanonize(reducedRowEchelonForm, false, nullptr,
+                                     isApproximate)) {
+    assert(false);
+  }
   // Clone layouted tree to preserve reducedRowEchelonForm for next step.
   rowEchelonFormL =
       CreateBeautifiedLayout(reducedRowEchelonForm->cloneTree(), &ctx,
@@ -538,8 +542,10 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
 
   /* 4. Matrix reduced row echelon form
    *    Computed from row echelon form to save computation time. */
-  Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr,
-                                isApproximate);
+  if (!Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr,
+                                     isApproximate)) {
+    assert(false);
+  }
   reducedRowEchelonFormL = CreateBeautifiedLayout(
       reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);
 

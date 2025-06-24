@@ -700,7 +700,9 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
       Tree* m = ToMatrix<T>(e->child(0), ctx);
       Tree* value = nullptr;
       if (e->isDet()) {
-        Matrix::RowCanonize(m, true, &value, true, ctx);
+        if (!Matrix::RowCanonize(m, true, &value, true, ctx)) {
+          value = KUndefUnhandled->cloneTree();
+        }
       } else {
         assert(e->isNorm());
         value = Vector::Norm(m);
@@ -1472,7 +1474,10 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     case Type::Ref:
     case Type::Rref: {
       Tree* result = ToMatrix<T>(e->child(0), ctx);
-      Matrix::RowCanonize(result, e->isRref(), nullptr, true, ctx);
+      if (!Matrix::RowCanonize(result, e->isRref(), nullptr, true, ctx)) {
+        result->moveTreeOverTree(
+            Matrix::Undef(Matrix::GetMatrixDimension(result)));
+      }
       return result;
     }
     case Type::Dim: {

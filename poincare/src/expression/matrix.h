@@ -17,6 +17,9 @@ struct Matrix {
     assert(matrix->isMatrix());
     return matrix->nodeValue(1);
   }
+  static MatrixDimension GetMatrixDimension(const Tree* matrix) {
+    return {NumberOfRows(matrix), NumberOfColumns(matrix)};
+  }
   static void SetNumberOfRows(Tree* matrix, uint8_t rows) {
     assert(matrix->isMatrix());
     matrix->setNodeValue(0, rows);
@@ -53,6 +56,8 @@ struct Matrix {
                               bool approximate = false,
                               const Approximation::Context* ctx = nullptr);
   static Tree* Transpose(const Tree* matrix);
+  /* Return true if the matrix has been successfully canonized, false otherwise.
+   * In the later case, determinant is not computed. */
   static bool RowCanonize(Tree* matrix, bool reducedForm = true,
                           Tree** determinant = nullptr,
                           bool approximate = false,

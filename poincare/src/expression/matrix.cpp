@@ -217,15 +217,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
   // Check that all values are valid
   if (!forceCanonization) {
     for (const Tree* child : matrix->children()) {
-      // TODO: check if undefined after approximation
       if (child->isUndefined() || !Approximation::CanApproximate(child)) {
-        if (approximate) {
-          matrix->moveTreeOverTree(Matrix::Undef(
-              {static_cast<uint8_t>(m), static_cast<uint8_t>(n)}));
-        }
-        if (determinant) {
-          *determinant = KUndefUnhandled->cloneTree();
-        }
         return false;
       }
     }
@@ -518,9 +510,7 @@ bool Matrix::SystematicReduceMatrixOperation(Tree* e) {
       break;
     }
     case Type::Det:
-      RowCanonize(child, true, &result);
-      // RowCanonize can fail, but return an undefined determinant
-      if (result) {
+      if (RowCanonize(child, true, &result)) {
         break;
       }
       return false;

@@ -176,6 +176,9 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("√(888888)", "942.8086");
   approximates_to<float>("888888^(.5)", "942.8086");
   approximates_to<float>("√(-888888)", "942.8086×i", cartesianCtx);
+  // TODO: Should be 0.932552672... but is approximated to 0.932552636...
+  approximates_to<float>("1/(0.752^-0.245)", "0.9325526");
+  approximates_to<float>("1/(0.75^-0.245)", "0.9319444");
 #if 0
   // TODO: should be a pure imaginary
   approximates_to<float>("(-888888)^(.5)", "7.118005ᴇ-5+942.8084×i",

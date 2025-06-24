@@ -18,6 +18,4 @@ RUN apt-get install clang-15 libc++-15-dev libc++abi-15-dev elfutils && ln -s /u
 
 ENV PYTHON=/runner/.venv/bin/python
 
-ARG ABSOLUTE_PATH
-
-WORKDIR ${ABSOLUTE_PATH}/epsilon-internal/epsilon-internal
+WORKDIR /monorepo

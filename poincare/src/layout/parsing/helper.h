@@ -17,6 +17,10 @@ class ParsingHelper {
 
   static bool ParameterText(UnicodeDecoder& varDecoder, size_t* parameterStart,
                             size_t* parameterLength);
+
+  /* Find the variable in a parametric function. It is the second parameter of
+   * the parametric. For example sum(2*param,param,0,10) should return the
+   * location and length of the "param" variable. */
   static bool ParameterText(LayoutSpanDecoder* varDecoder,
                             const Layout** parameterStart,
                             size_t* parameterLength);

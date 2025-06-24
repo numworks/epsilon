@@ -170,6 +170,8 @@ bool ParsingHelper::ParameterText(LayoutSpanDecoder* varDecoder,
     return false;
   }
 
+  /* Look for the second comma in the parameter list. The parameters are
+   * organized as {f(k),k,0,10}, with k being the variable name. */
   LayoutSpanDecoder startOfVariable = *varDecoder;
   c = varDecoder->nextCodePoint();
   CodePoint previousC = UCodePointUnknown;
@@ -177,11 +179,11 @@ bool ParsingHelper::ParameterText(LayoutSpanDecoder* varDecoder,
     previousC = c;
     c = varDecoder->nextCodePoint();
   }
-  if (c == UCodePointNull) {
-    /* All the code points in the varDecoder range have been read but no closing
-     * symbol (right parenthesis or comma) have been encountered. This means
-     * that the parametric layout is ill-formed and its variable cannot be
-     * found. */
+  if (c != ',') {
+    /* The closing parenthesis is encountered or all the code points in the
+     * varDecoder range have been read but the second comma has not been
+     * encountered. This means that the parametric layout is ill-formed and its
+     * variable cannot be found. */
     return false;
   }
   const Tree* endOfVariable = varDecoder->layout();

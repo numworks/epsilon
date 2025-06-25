@@ -480,12 +480,9 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
     case Type::UnitConversion:
       /* Not using Dimension operator == because different representatives are
        * allowed. */
-      /* TODO: undef is allowed here but this could be refactored if we
-       * introduce UndefUnit. */
-      return childDim[1].isUnit() &&
-             (e->child(0)->isUndefined() ||
-              (childDim[0].isUnit() &&
-               childDim[0].unit.vector == childDim[1].unit.vector));
+      return childDim[0].isUnit() && childDim[1].isUnit() &&
+             (e->child(0)->isUndefUnit() ||
+              childDim[0].unit.vector == childDim[1].unit.vector);
     case Type::DepList:
       /* For now units and booleans are allowed in depLists. For a later
        * refactoring, it would be better to have a dependency creation function
@@ -725,6 +722,9 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     }
     case Type::UndefBoolean: {
       return Boolean();
+    }
+    case Type::UndefUnit: {
+      return Dimension::Unit(Units::SIVector::Undef(), nullptr);
     }
     default:
       if (e->isLogicalOperatorOrBoolean() || e->isComparison()) {

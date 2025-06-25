@@ -630,6 +630,7 @@ double Unit::GetValue(const Tree* unit) {
 }
 
 SIVector Unit::GetSIVector(const Tree* baseUnits) {
+  assert(baseUnits->isUnit());
   SIVector vector = SIVector::Empty();
   Units::SIVector posUnitVector = Units::SIVector::Empty();
   Units::SIVector negUnitVector = Units::SIVector::Empty();

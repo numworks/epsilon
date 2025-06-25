@@ -40,6 +40,16 @@ struct SIVector {
   }
   constexpr bool isEmpty() const { return supportSize() == 0; }
   constexpr static SIVector Empty() { return {}; }
+  constexpr static SIVector Undef() {
+    return SIVector{.time = INT8_MIN,
+                    .distance = INT8_MIN,
+                    .angle = INT8_MIN,
+                    .mass = INT8_MIN,
+                    .current = INT8_MIN,
+                    .temperature = INT8_MIN,
+                    .amountOfSubstance = INT8_MIN,
+                    .luminousIntensity = INT8_MIN};
+  }
 
   /* Return [false] if operation overflowed.
    * [pos] and [neg] allow for checking of overflows even when ordering matters

@@ -6,6 +6,7 @@
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/systematic_reduction.h>
+#include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/tree_stack.h>
 
@@ -2085,6 +2086,8 @@ QUIZ_CASE(pcj_simplification_undef) {
   reduces_to_tree(KDep(KNonReal, KDepList(KUndef)), KUndef);
   reduces_to_tree(KDep(KTrue, KDepList(KUndef)), KUndefBoolean);
   reduces_to_tree(KDep(1_e, KDepList(KUndefBoolean)), KUndef);
+  reduces_to_tree(KDep(KUnits::meter, KDepList(KUndef)), KUndefUnit);
+  reduces_to_tree(KDep(1_e, KDepList(KUndefUnit)), KUndef);
 }
 
 QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {

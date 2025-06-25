@@ -34,8 +34,11 @@ void Undefined::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
   if (dim.isBoolean()) {
     assert(TypeBlock::IsUndefined(type));
     SharedTreeStack->pushBlock(Type::UndefBoolean);
+  } else if (dim.isUnit()) {
+    assert(TypeBlock::IsUndefined(type));
+    SharedTreeStack->pushBlock(Type::UndefUnit);
   } else {
-    if (type == Type::UndefBoolean) {
+    if (type == Type::UndefBoolean || type == Type::UndefUnit) {
       type = Type::Undef;
     }
     if (dim.isMatrix()) {

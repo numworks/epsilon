@@ -478,9 +478,11 @@ QUIZ_CASE(pcj_approximation_with_context) {
   approximates_to<float>("b*[[5]]", "[[20]]", ctx);
 
   store("x>0→g(x)", &globalContext);
+  store("true→t", &globalContext);
   approximates_to_boolean("g(2)", true, ctx);
   approximates_to_boolean("g(1/0)", Approximation::BooleanOrUndefined::Undef(),
                           ctx);
+  approximates_to_boolean("t", true, ctx);
 
   store("[[x,0][0,x]]→h(x)", &globalContext);
   approximates_to<float>("h(3)", "[[3,0][0,3]]", ctx);

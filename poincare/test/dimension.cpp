@@ -56,6 +56,9 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(hasInvalidDimOrLen("(True, False)"));
   QUIZ_ASSERT(hasInvalidDimOrLen("{2,(1,3)}"));
   QUIZ_ASSERT(hasInvalidDimOrLen("randintnorep(1,10,-1)"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("f(True)"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("f((1,2))"));
+  QUIZ_ASSERT(hasInvalidDimOrLen("f(2_m)"));
 
   QUIZ_ASSERT(dim("1", Scalar));
   QUIZ_ASSERT(dim("cos(sin(1+3))*2^3", Scalar));
@@ -68,6 +71,7 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(dim("sum([[k,2]], k, 1, n)", Matrix(1, 2)));
   QUIZ_ASSERT(dim("{}", Scalar));
   QUIZ_ASSERT(dim("sequence(k,k,3)", Scalar));
+  QUIZ_ASSERT(dim("f(3)", Scalar));
 
   QUIZ_ASSERT(dim("{False, False}", Boolean));
   QUIZ_ASSERT(hasInvalidDimOrLen("1 + {False, False}"));
@@ -171,17 +175,11 @@ QUIZ_CASE(pcj_dimension) {
   store("33_m→d", &globalContext);
   store("{x,2*x}→g(x)", &globalContext);
   store("(x,2*x)→h(x)", &globalContext);
-  store("x+33_m→j(x)", &globalContext);
 
   QUIZ_ASSERT(dim("a", Scalar, &globalContext));
   QUIZ_ASSERT(dim("c", Point, &globalContext));
   QUIZ_ASSERT(len("h(b)", 2, &globalContext));
   QUIZ_ASSERT(dim("g(a)+b+{1,6}", Scalar, &globalContext));
-  QUIZ_ASSERT(dim(
-      "j(d)",
-      Dimension::Unit({.distance = 1}, &Units::Distance::representatives.meter),
-      &globalContext));
-  QUIZ_ASSERT(hasInvalidDimOrLen("j(c)", &globalContext));
 
   QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 0);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();

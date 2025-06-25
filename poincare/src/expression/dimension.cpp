@@ -521,16 +521,6 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
     case Type::ListSlice:
       return Integer::Is<uint8_t>(e->child(1)) &&
              Integer::Is<uint8_t>(e->child(2));
-    case Type::UserFunction: {
-      if (ctx) {
-        Tree* clone = CloneAndReplaceSymbols(e, ctx);
-        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
-        bool result = DeepCheckDimensions(clone, nullptr);
-        clone->removeTree();
-        return result;
-      }
-      [[fallthrough]];
-    }
 #if 0
     /* TODO: Should be handled but caused dimensional issues later on,
      * notably because of Re and Im not being handle
@@ -569,6 +559,16 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
       assert(!definition || DeepCheckDimensions(definition, ctx));
 #endif
       return true;
+    }
+    case Type::UserFunction: {
+      if (ctx) {
+        Tree* clone = CloneAndReplaceSymbols(e, ctx);
+        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
+        bool result = DeepCheckDimensions(clone, nullptr);
+        clone->removeTree();
+        return result;
+      }
+      [[fallthrough]];
     }
     case Type::UserSequence:
     case Type::NonNull:  // TODO: could be unit
@@ -720,8 +720,8 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
         clone->removeTree();
         return result;
       }
-      // Without definition, consider the function to be a scalar.
-      return Get(e->child(0), ctx);
+      /* Without definition, consider the function to be scalar. */
+      return Scalar();
     }
     case Type::UndefBoolean: {
       return Boolean();

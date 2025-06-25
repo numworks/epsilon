@@ -13,7 +13,7 @@ void testExamByte(ExamBytes::Int expectedValue) {
     char buffer[bufferSize];
     Poincare::Print::CustomPrintf(buffer, bufferSize, "%i instead of %i.",
                                   observedValue, expectedValue);
-    quiz_assert_print_if_failure(false, buffer);
+    quiz_print(buffer);
   }
 }
 

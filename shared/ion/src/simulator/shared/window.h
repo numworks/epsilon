@@ -14,6 +14,7 @@ void init();
 void shutdown();
 
 bool isHeadless();
+bool isAlwaysHeadless();
 
 void setNeedsRefresh();
 void refresh();

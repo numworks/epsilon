@@ -563,6 +563,7 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
     }
     case Type::UserFunction:
     case Type::UserSymbol: {
+      // TODO: Factorize with PrivateToBoolean and ToMatrix
       // Global variable
       if (!ctx || !ctx->m_symbolContext) {
         return NAN;
@@ -574,6 +575,8 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
       if (e->isUserSymbol()) {
         return PrivateToComplex<T>(definition, ctx);
       }
+      /* LocalContext only handles complex scalar, but non scalar children of
+       * UserFunction are not forbidden in dimension check anyway. */
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         return NAN;
@@ -1317,6 +1320,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     return PrivateToBoolean<T>(e->child(0), ctx);
   }
   if (e->isUserFunction() || e->isUserSymbol()) {
+    // TODO: Factorize with ToMatrix and UserNamedToComplex
     // Global variable
     // Function of symbol cannot have a boolean dimension without a context.
     assert(ctx && ctx->m_symbolContext);
@@ -1326,9 +1330,8 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     if (e->isUserSymbol()) {
       return PrivateToBoolean<T>(definition, ctx);
     }
-    /* LocalContext only handles complex scalar, but it could be of any
-     * dimension, but non scalar children of UserFunction are not handled in
-     * dimension check anyway. */
+    /* LocalContext only handles complex scalar, but non scalar children of
+     * UserFunction are not forbidden in dimension check anyway. */
     std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
     if (std::isnan(x.real()) || std::isnan(x.imag())) {
       return BooleanOrUndefined::Undef();
@@ -1536,6 +1539,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     }
     case Type::UserFunction:
     case Type::UserSymbol: {
+      // TODO: Factorize with PrivateToBoolean and UserNamedToComplex
       // Global variable
       // Function of symbol cannot have a Matrix dimension without a context.
       assert(ctx && ctx->m_symbolContext);
@@ -1545,9 +1549,8 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       if (e->isUserSymbol()) {
         return ToMatrix<T>(definition, ctx);
       }
-      /* LocalContext only handles complex scalar, but it could be of any
-       * dimension, but non scalar children of UserFunction are not handled in
-       * dimension check anyway. */
+      /* LocalContext only handles complex scalar, but non scalar children of
+       * UserFunction are not forbidden in dimension check anyway. */
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         /* NOTE: this is problematic as the returned tree is not isMatrix */

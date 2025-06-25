@@ -18,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup
-        run: epsilon/build/setup.sh --only-simulator
+        run: tools/setup.sh --only-simulator
       - name: Build
         run: make -C epsilon DEBUG=$DEBUG PLATFORM=simulator TARGET=android epsilon.apk
       - name: Optimize ()

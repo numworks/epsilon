@@ -28,7 +28,7 @@ jobs:
         run: $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin epsilon.cas.bin"
       - name: Compare crc of screenshots (No CAS)
         timeout-minutes: 15
-        run: $DOCKER_RUN "\$PYTHON build/screenshots/compare_crc.py output/debug/optimized/linux/epsilon.bin -n"
+        run: $DOCKER_RUN "\$PYTHON tools/screenshots/compare_crc.py epsilon/output/debug/optimized/linux/epsilon.bin -d epsilon/tests/screenshots_dataset -n"
       - name: Compare crc of screenshots (CAS)
         timeout-minutes: 15
-        run: $DOCKER_RUN "\$PYTHON build/screenshots/compare_crc.py -d tests/screenshots_dataset_cas output/debug/optimized/linux/epsilon.cas.bin -n"
+        run: $DOCKER_RUN "\$PYTHON tools/screenshots/compare_crc.py -d epsilon/tests/screenshots_dataset_cas epsilon/output/debug/optimized/linux/epsilon.cas.bin -n"

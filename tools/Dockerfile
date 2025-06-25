@@ -9,9 +9,9 @@ RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/assume-yes && \
     apt-get upgrade && \
     apt-get install --no-install-recommends sudo
 
-COPY epsilon/build/setup.sh epsilon/build/setup.sh
+COPY tools/setup.sh tools/setup.sh
 
-RUN epsilon/build/setup.sh --ci
+RUN tools/setup.sh --ci
 
 # Uncomment if you want to build with TOOLCHAIN=host-clang
 RUN apt-get install clang-15 libc++-15-dev libc++abi-15-dev elfutils && ln -s /usr/bin/clang-15 /usr/local/bin/clang && ln -s /usr/bin/clang++-15 /usr/local/bin/clang++

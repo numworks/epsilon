@@ -50,7 +50,7 @@ jobs:
     steps:
       - run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v4
-      - run: epsilon/build/setup.sh --only-simulator
+      - run: tools/setup.sh --only-simulator
       - run: make -C epsilon PLATFORM=simulator TARGET=android ASSERTIONS=1 test.apk
       - run: make -C epsilon PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk
       - uses: actions/upload-artifact@master
@@ -111,7 +111,7 @@ jobs:
             git
             mingw-w64-x86_64-arm-none-eabi-gcc
       - uses: actions/checkout@v4
-      - run: epsilon/build/setup.sh
+      - run: tools/setup.sh
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.exe
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 test.exe
       - run: ./epsilon/output/debug/optimized/windows/test.exe --headless --limit-stack-usage
@@ -135,7 +135,7 @@ jobs:
         uses: numworks/setup-emscripten@latest
         with:
           sdk: ${{ env.EMSDK_VERSION }}
-      - run: epsilon/build/setup.sh --only-simulator
+      - run: tools/setup.sh --only-simulator
       - run: make -C epsilon PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
       - run: node epsilon/output/debug/optimized/web/test.js --headless --limit-stack-usage
         timeout-minutes: 5
@@ -179,7 +179,7 @@ jobs:
       MAKEFLAGS: '-j2'
     steps:
       - uses: actions/checkout@v4
-      - run: epsilon/build/setup.sh --only-simulator
+      - run: tools/setup.sh --only-simulator
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
       - run: epsilon/output/debug/optimized/macos/x86_64/test.bin --headless --limit-stack-usage
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.app
@@ -195,7 +195,7 @@ jobs:
       MAKEFLAGS: '-j2'
     steps:
       - uses: actions/checkout@v4
-      - run: epsilon/build/setup.sh --only-simulator
+      - run: tools/setup.sh --only-simulator
       - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
       - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
       - run: make -C epsilon PLATFORM=simulator TARGET=ios APPLE_PLATFORM=ios-simulator
@@ -218,7 +218,7 @@ jobs:
         with:
           sdk: ${{ env.EMSDK_VERSION }}
       - name: Setup the environment
-        run: epsilon/build/setup.sh --only-simulator
+        run: tools/setup.sh --only-simulator
       - name: Run tests with ASSERTIONS=1
         run: make -j8 -f poincare/poincarejs/Makefile PLATFORM=foxglove ASSERTIONS=1 poincare.js.run
       # Ensures that minification did not break the code

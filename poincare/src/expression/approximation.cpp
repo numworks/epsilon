@@ -131,7 +131,8 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
 template <typename T>
 BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
                              Context context) {
-  assert(Dimension::DeepCheck(e) && Dimension::Get(e).isBoolean());
+  assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
+         Dimension::Get(e, context.m_symbolContext).isBoolean());
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;

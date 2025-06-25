@@ -542,7 +542,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
      *    Computed from row echelon form to save computation time. */
     if (!Internal::Matrix::RowCanonize(reducedRowEchelonForm, true, nullptr,
                                        isApproximate)) {
-      assert(false);
+      OMG::unreachable();
     }
     reducedRowEchelonFormL = CreateBeautifiedLayout(
         reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);

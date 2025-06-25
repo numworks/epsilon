@@ -57,7 +57,7 @@ struct Matrix {
                               const Approximation::Context* ctx = nullptr);
   static Tree* Transpose(const Tree* matrix);
   /* Return true if the matrix has been successfully canonized, false otherwise.
-   * In the later case, determinant is not computed. */
+   * In the latter case, leave determinant uninitialized. */
   static bool RowCanonize(Tree* matrix, bool reducedForm = true,
                           Tree** determinant = nullptr,
                           bool approximate = false,

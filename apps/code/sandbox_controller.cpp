@@ -43,4 +43,11 @@ void SandboxController::redrawWindow() {
   AppsContainer::sharedAppsContainer()->redrawWindow();
 }
 
+void SandboxController::privateModalViewAltersFirstResponder(
+    FirstResponderAlteration alteration) {
+  if (alteration == FirstResponderAlteration::DidRestore) {
+    handleEvent(Ion::Events::Back);
+  }
+}
+
 }  // namespace Code

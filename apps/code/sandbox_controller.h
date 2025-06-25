@@ -25,6 +25,8 @@ class SandboxController : public Escher::ViewController {
   }
 
  private:
+  void privateModalViewAltersFirstResponder(
+      FirstResponderAlteration alteration) override;
   void redrawWindow();
   Escher::SolidColorView m_solidColorView;
 };

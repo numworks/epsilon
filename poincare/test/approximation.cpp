@@ -53,6 +53,32 @@ void approximates_to(const Tree* n, T f) {
 }
 
 template <typename T>
+void approximates_to(const char* input, T f,
+                     const ProjectionContext& projectionContext = realCtx) {
+  Tree* expression = parse(input, projectionContext.m_context);
+  T approx = Approximation::To<T>(
+      expression,
+      Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                .projectLocalVariables = true},
+      Approximation::Context(projectionContext.m_angleUnit,
+                             projectionContext.m_complexFormat,
+                             projectionContext.m_context));
+  bool result =
+      OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
+#if POINCARE_TREE_LOG
+  if (!result) {
+    std::cout << "Approximation test failure with: " << input << "\n";
+    std::cout << "Approximated to " << approx << " instead of " << f << "\n";
+    std::cout << "Absolute difference is : " << std::fabs(approx - f) << "\n";
+    std::cout << "Relative difference is : " << std::fabs((approx - f) / f)
+              << "\n";
+  }
+#endif
+  quiz_assert(result);
+  expression->removeTree();
+}
+
+template <typename T>
 void approximates_to(const char* input, const char* output,
                      const ProjectionContext& projectionContext = realCtx) {
   // TODO: use same test and log as approximates_to?
@@ -176,9 +202,8 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("√(888888)", "942.8086");
   approximates_to<float>("888888^(.5)", "942.8086");
   approximates_to<float>("√(-888888)", "942.8086×i", cartesianCtx);
-  // TODO: Should be 0.932552672... but is approximated to 0.932552636...
-  approximates_to<float>("1/(0.752^-0.245)", "0.9325526");
-  approximates_to<float>("1/(0.75^-0.245)", "0.9319444");
+  approximates_to<float>("1/(0.752^-0.245)", 0.9325527);
+  approximates_to<float>("1/(0.75^-0.245)", 0.9319444);
 #if 0
   // TODO: should be a pure imaginary
   approximates_to<float>("(-888888)^(.5)", "7.118005ᴇ-5+942.8084×i",

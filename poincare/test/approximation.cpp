@@ -30,6 +30,24 @@ void approximates_to_boolean(const Tree* n,
   }
 }
 
+void approximates_to_boolean(const char* input,
+                             Approximation::BooleanOrUndefined expected,
+                             const ProjectionContext& projectionContext) {
+  Tree* expression = parse(input, projectionContext.m_context);
+  Approximation::BooleanOrUndefined approx = Approximation::ToBoolean<float>(
+      expression,
+      Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                .projectLocalVariables = true},
+      Approximation::Context(projectionContext.m_angleUnit,
+                             projectionContext.m_complexFormat,
+                             projectionContext.m_context));
+  quiz_assert(approx.isUndefined() == expected.isUndefined());
+  if (!approx.isUndefined()) {
+    quiz_assert(approx.value() == expected.value());
+  }
+  expression->removeTree();
+}
+
 template <typename T>
 void approximates_to(const Tree* n, T f) {
   T approx = Approximation::To<T>(
@@ -458,6 +476,12 @@ QUIZ_CASE(pcj_approximation_with_context) {
   approximates_to<float>("f(a+i)", "13.28319+2×i", ctx);
   approximates_to<float>("z", "undef", ctx);
   approximates_to<float>("b*[[5]]", "[[20]]", ctx);
+
+  store("x>0→g(x)", &globalContext);
+  approximates_to_boolean("g(2)", true, ctx);
+
+  store("[[x,0][0,x]]→h(x)", &globalContext);
+  approximates_to<float>("h(3)", "[[3,0][0,3]]", ctx);
 }
 
 // Use projected trees

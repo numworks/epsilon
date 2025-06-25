@@ -1316,6 +1316,36 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
     }
     return PrivateToBoolean<T>(e->child(0), ctx);
   }
+  if (e->isUserFunction() || e->isUserSymbol()) {
+    // Global variable
+    if (!ctx || !ctx->m_symbolContext) {
+      return BooleanOrUndefined::Undef();
+    }
+    const Tree* definition = ctx->m_symbolContext->expressionForUserNamed(e);
+    if (!definition) {
+      return BooleanOrUndefined::Undef();
+    }
+    if (e->isUserSymbol()) {
+      return PrivateToBoolean<T>(definition, ctx);
+    }
+    /* LocalContext only handles complex scalar, but it could be of any
+     * dimension, but non scalar children of UserFunction are not handled in
+     * dimension check anyway. */
+    std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
+    if (std::isnan(x.real()) || std::isnan(x.imag())) {
+      return BooleanOrUndefined::Undef();
+    }
+    Tree* definitionClone = definition->cloneTree();
+    // Only approximate child once and use local context.
+    Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
+                             ComplexSign::Unknown());
+    Context ctxCopy = *ctx;
+    LocalContext localCtx = LocalContext(x, ctx->m_localContext);
+    ctxCopy.m_localContext = &localCtx;
+    BooleanOrUndefined result = PrivateToBoolean<T>(definitionClone, &ctxCopy);
+    definitionClone->removeTree();
+    return result;
+  }
   assert(e->isLogicalOperator());
   BooleanOrUndefined a = PrivateToBoolean<T>(e->child(0), ctx);
   if (a.isUndefined()) {
@@ -1509,44 +1539,40 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     case Type::UserFunction:
     case Type::UserSymbol: {
       // Global variable
-      if (e->isUserFunction()) {
-        assert(false);  // TODO
-        return KUndef->cloneTree();
-      }
       if (!ctx || !ctx->m_symbolContext) {
-        assert(false);
         /* NOTE: this is problematic as the returned tree is not isMatrix */
         return KUndef->cloneTree();
       }
       const Tree* definition = ctx->m_symbolContext->expressionForUserNamed(e);
       if (!definition) {
         /* NOTE: this is problematic as the returned tree is not isMatrix */
-        assert(false);
         return KUndef->cloneTree();
       }
       if (e->isUserSymbol()) {
         return ToMatrix<T>(definition, ctx);
       }
-#if 0
-      // TODO: incomplete code for UserFunction
-      Dimension dim = Dimension::Get(e->child(0));
-      /* x could be scalar or matrix */
-      Tree* x = PrivateToTree<T>(e->child(0), dim, ctx);
+      /* LocalContext only handles complex scalar, but it could be of any
+       * dimension, but non scalar children of UserFunction are not handled in
+       * dimension check anyway. */
+      std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
+      if (std::isnan(x.real()) || std::isnan(x.imag())) {
+        /* NOTE: this is problematic as the returned tree is not isMatrix */
+        return KUndef->cloneTree();
+      }
       Tree* definitionClone = definition->cloneTree();
       // Only approximate child once and use local context.
       Variables::ReplaceSymbol(definitionClone, KUnknownSymbol, 0,
                                ComplexSign::Unknown());
       Context ctxCopy = *ctx;
-      // LocalContext localCtx = LocalContext(x, ctx->m_localContext);
-      // ctxCopy.m_localContext = &localCtx;
-      Tree* result = ToMatrix<T>(definitionClone, &ctxCopy);
+      LocalContext localCtx = LocalContext(x, ctx->m_localContext);
+      ctxCopy.m_localContext = &localCtx;
+      TreeRef result = ToMatrix<T>(definitionClone, &ctxCopy);
       definitionClone->removeTree();
-      x->removeTree();
       return result;
-#endif
     }
     default:;
   }
+  /* NOTE: this is problematic as the returned tree is not isMatrix */
   return KUndef->cloneTree();
 }
 

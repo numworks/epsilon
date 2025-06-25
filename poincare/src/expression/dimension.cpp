@@ -298,7 +298,10 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
         !e->isListSequence() &&
         childDim.isBoolean() != e->isLogicalOperatorOrBoolean()) {
       /* Only piecewises, parenthesis, dependencies, lists and boolean operators
-       * can have boolean child. Boolean operators must have boolean child. */
+       * can have boolean child. Boolean operators must have boolean child.
+       * TODO: UserFunctions taking boolean parameters are not handled. If we
+       * handle it, things should be reworked in UserFunction approximation too.
+       */
       return false;
     }
     if (childDim.isPoint()) {
@@ -717,7 +720,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
         clone->removeTree();
         return result;
       }
-      // TODO: Maybe scalar ?
+      // Without definition, consider the function to be a scalar.
       return Get(e->child(0), ctx);
     }
     case Type::UndefBoolean: {

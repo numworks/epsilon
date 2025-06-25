@@ -546,6 +546,8 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
     }
     reducedRowEchelonFormL = CreateBeautifiedLayout(
         reducedRowEchelonForm, &ctx, displayMode, numberOfSignificantDigits);
+  } else {
+    reducedRowEchelonForm->removeTree();
   }
 
   // 5. Matrix trace if square matrix

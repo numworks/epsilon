@@ -283,7 +283,8 @@ int main(int argc, char* argv[]) {
     args.push(k_languageFlag, Platform::languageCode());
   }
 
-  bool headless = args.popFlags(k_headlessFlags, std::size(k_headlessFlags));
+  bool headless = Window::isAlwaysHeadless() ||
+                  args.popFlags(k_headlessFlags, std::size(k_headlessFlags));
 
   Random::init();
   if (!headless) {

@@ -576,7 +576,7 @@ std::complex<T> UserNamedToComplex(const Tree* e, const Context* ctx) {
         return PrivateToComplex<T>(definition, ctx);
       }
       /* LocalContext only handles complex scalar, but non scalar children of
-       * UserFunction are not forbidden in dimension check anyway. */
+       * UserFunction are forbidden in dimension check anyway. */
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         return NAN;
@@ -1331,7 +1331,7 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
       return PrivateToBoolean<T>(definition, ctx);
     }
     /* LocalContext only handles complex scalar, but non scalar children of
-     * UserFunction are not forbidden in dimension check anyway. */
+     * UserFunction are forbidden in dimension check anyway. */
     std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
     if (std::isnan(x.real()) || std::isnan(x.imag())) {
       return BooleanOrUndefined::Undef();
@@ -1550,7 +1550,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
         return ToMatrix<T>(definition, ctx);
       }
       /* LocalContext only handles complex scalar, but non scalar children of
-       * UserFunction are not forbidden in dimension check anyway. */
+       * UserFunction are forbidden in dimension check anyway. */
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       if (std::isnan(x.real()) || std::isnan(x.imag())) {
         /* NOTE: this is problematic as the returned tree is not isMatrix */

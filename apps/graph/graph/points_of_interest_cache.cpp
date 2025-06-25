@@ -206,7 +206,6 @@ struct PointSearchContext {
   size_t currentProvider = 0;
   int counter = 0;
   Ion::Storage::Record otherRecord;
-  SystemFunction memoizedOtherFunction;
 
   void reinitSolver() {
     solver = {start, end, context};
@@ -296,13 +295,14 @@ PointOfInterest findIntersections(void* searchContext) {
        !f->shouldDisplayIntersections())) {
     return PointOfInterest{};
   }
+  SystemFunction memoizedOtherFunction;
   int n = ctx->store->numberOfModels();
   SystemFunction e = f->expressionApproximated(ctx->context);
   bool alongY = f->isAlongY();
   bool fIsStrict = f->properties().isStrictInequality();
   while (ctx->counter < n) {
     int otherFunctionIndex = ctx->counter;
-    if (ctx->memoizedOtherFunction.isUninitialized()) {
+    if (memoizedOtherFunction.isUninitialized()) {
       ctx->otherRecord = ctx->store->recordAtIndex(otherFunctionIndex);
       if (ctx->record == ctx->otherRecord) {
         ++ctx->counter;
@@ -314,12 +314,12 @@ PointOfInterest findIntersections(void* searchContext) {
         ++ctx->counter;
         continue;
       }
-      ctx->memoizedOtherFunction = g->expressionApproximated(ctx->context);
+      memoizedOtherFunction = g->expressionApproximated(ctx->context);
     }
     ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
     Solver<double>::Solution solution;
     while (std::isfinite(
-        (solution = ctx->solver.nextIntersection(e, ctx->memoizedOtherFunction))
+        (solution = ctx->solver.nextIntersection(e, memoizedOtherFunction))
             .x())) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
@@ -341,7 +341,7 @@ PointOfInterest findIntersections(void* searchContext) {
       }
     }
     ++ctx->counter;
-    ctx->memoizedOtherFunction = SystemFunction{};
+    memoizedOtherFunction = SystemFunction{};
     ctx->reinitSolver();
   }
 

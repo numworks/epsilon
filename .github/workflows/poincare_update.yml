@@ -39,19 +39,19 @@ jobs:
         uses: ./.github/actions/docker-builder
 
       - name: Make head
-        run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator ASSERTIONS=1 test.bin"
+        run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon_test.bin"
       - name: Run head (in parallel)
         id: run-tests
         continue-on-error: true
         shell: bash
         run: |
-          $DOCKER_RUN "parallel --halt now,fail=1 --keep-order epsilon/output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | tee out
+          $DOCKER_RUN "parallel --halt now,fail=1 --keep-order epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | tee out
 
       - name: Run head sequentially (if parallel run failed)
         if: steps.run-tests.outcome == 'failure'
         shell: bash
         run: |
-          $DOCKER_RUN "epsilon/output/debug/optimized/linux/test.bin --headless --limit-stack-usage" | tee out
+          $DOCKER_RUN "epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage" | tee out
 
       - name: Filter output
         run: cat out | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee head.csv
@@ -63,11 +63,11 @@ jobs:
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
 
       - name: Make ancestor
-        run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator ASSERTIONS=1 test.bin"
+        run: $DOCKER_RUN "make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon_test.bin"
       - name: Run ancestor
         shell: bash
         run: |
-          $DOCKER_RUN "parallel --halt soon,fail=1 --retries 1 --keep-order epsilon/output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
+          $DOCKER_RUN "parallel --halt soon,fail=1 --retries 1 --keep-order epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)" | grep "^\\(CRASH\\|BAD\\|OK\\)" | tee ancestor.csv
 
       - name: Compare logs
         id: compare_logs

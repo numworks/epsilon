@@ -1,5 +1,5 @@
 # Run an executable file
-$(OUTPUT_DIRECTORY)/%.run: $(OUTPUT_DIRECTORY)/%.bin
+$(OUTPUT_DIRECTORY)/%.bin.run: $(OUTPUT_DIRECTORY)/%.bin
 	$^
 
 $(call document_extension,run,Execute <...>.bin)

@@ -19,7 +19,7 @@ $(call create_goal,epsilon, \
   sdl \
 )
 
-$(call create_goal,test, \
+$(call create_goal,epsilon_test, \
   apps.test \
   eadk \
   escher.test \

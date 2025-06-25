@@ -1318,13 +1318,11 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
   }
   if (e->isUserFunction() || e->isUserSymbol()) {
     // Global variable
-    if (!ctx || !ctx->m_symbolContext) {
-      return BooleanOrUndefined::Undef();
-    }
+    // Function of symbol cannot have a boolean dimension without a context.
+    assert(ctx && ctx->m_symbolContext);
     const Tree* definition = ctx->m_symbolContext->expressionForUserNamed(e);
-    if (!definition) {
-      return BooleanOrUndefined::Undef();
-    }
+    // Function of symbol cannot have a boolean dimension without a definition.
+    assert(definition);
     if (e->isUserSymbol()) {
       return PrivateToBoolean<T>(definition, ctx);
     }
@@ -1539,15 +1537,11 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
     case Type::UserFunction:
     case Type::UserSymbol: {
       // Global variable
-      if (!ctx || !ctx->m_symbolContext) {
-        /* NOTE: this is problematic as the returned tree is not isMatrix */
-        return KUndef->cloneTree();
-      }
+      // Function of symbol cannot have a Matrix dimension without a context.
+      assert(ctx && ctx->m_symbolContext);
       const Tree* definition = ctx->m_symbolContext->expressionForUserNamed(e);
-      if (!definition) {
-        /* NOTE: this is problematic as the returned tree is not isMatrix */
-        return KUndef->cloneTree();
-      }
+      // Function of symbol cannot have a Matrix dimension without a definition.
+      assert(definition);
       if (e->isUserSymbol()) {
         return ToMatrix<T>(definition, ctx);
       }

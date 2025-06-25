@@ -8,7 +8,7 @@ runs:
   steps:
     - name: Build Docker container
       shell: bash
-      run: docker build  --build-arg ABSOLUTE_PATH=`pwd`/../../ -f build/Dockerfile . --tag epsilon-builder
+      run: docker build --build-arg ABSOLUTE_PATH=`pwd`/../../ -f epsilon/build/Dockerfile . --tag epsilon-builder
 
     - name: Define DOCKER_RUN environment variable
       shell: bash

@@ -25,16 +25,16 @@ jobs:
       - name: Setup
         run: build/setup.sh --only-simulator
       - name: Build
-        run: make DEBUG=$DEBUG PLATFORM=web epsilon.html htmlpack.zip
+        run: make -C epsilon DEBUG=$DEBUG PLATFORM=web epsilon.html htmlpack.zip
       - name: Upload epsilon.html
         uses: actions/upload-artifact@v4
         with:
           name: epsilon.html
-          path: output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/epsilon.html
+          path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/epsilon.html
           retention-days: 7
       - name: Upload htmlpack.zip
         uses: actions/upload-artifact@v4
         with:
           name: htmlpack.zip
-          path: output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/htmlpack.zip
+          path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/htmlpack.zip
           retention-days: 7

@@ -8,9 +8,9 @@ on:
     paths-ignore:
       - '**/*.md'
       - 'poincare/doc/**'
-      - 'tests/**'
+      - 'epsilon/tests/**'
       - '**/scandium/**'
-      - 'external_apps/**'
+      - 'epsilon/external_apps/**'
 
   workflow_dispatch:
     inputs:
@@ -50,13 +50,13 @@ jobs:
     steps:
       - run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v4
-      - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 test.apk
-      - run: make PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk
+      - run: epsilon/build/setup.sh --only-simulator
+      - run: make -C epsilon PLATFORM=simulator TARGET=android ASSERTIONS=1 test.apk
+      - run: make -C epsilon PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-android.apk
-          path: output/debug/optimized/android/epsilon.apk
+          path: epsilon/output/debug/optimized/android/epsilon.apk
   device:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
@@ -83,16 +83,16 @@ jobs:
         # Since both slots have the exact same amount of Flash reserved, it is pointless to build both the A and B elfs for every variant.
         # As an exception,  because we'll build epsilon.dfu that on both userland.A.elf and userland.B.elf, we still build those here
         # TODO: It is also probably useless to build so many variants
-        run: $DOCKER_RUN "make MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf"
+        run: $DOCKER_RUN "make -C epsilon MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf"
       - name: Restore core directory
         if: ${{ steps.core.outcome == 'success' }}
         run: mv ion/src/device/core-disable ion/src/device/core
       - if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make MODEL=${{ matrix.model }} epsilon.dfu"
+        run: $DOCKER_RUN "make -C epsilon MODEL=${{ matrix.model }} epsilon.dfu"
       - if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make MODEL=${{ matrix.model }} flasher.dfu"
+        run: $DOCKER_RUN "make -C epsilon MODEL=${{ matrix.model }} flasher.dfu"
       - if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make MODEL=${{ matrix.model }} bench.ram.dfu"
+        run: $DOCKER_RUN "make -C epsilon MODEL=${{ matrix.model }} bench.ram.dfu"
   windows:
     timeout-minutes: 15
     runs-on: windows-latest
@@ -111,15 +111,15 @@ jobs:
             git
             mingw-w64-x86_64-arm-none-eabi-gcc
       - uses: actions/checkout@v4
-      - run: build/setup.sh
-      - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.exe
-      - run: make PLATFORM=simulator ASSERTIONS=1 test.exe
-      - run: ./output/debug/optimized/windows/test.exe --headless --limit-stack-usage
+      - run: epsilon/build/setup.sh
+      - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.exe
+      - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 test.exe
+      - run: ./epsilon/output/debug/optimized/windows/test.exe --headless --limit-stack-usage
       - run: make -j8 userland.A.elf
       - uses: actions/upload-artifact@v4
         with:
           name: epsilon-windows.exe
-          path: output/debug/optimized/windows/epsilon.exe
+          path: epsilon/output/debug/optimized/windows/epsilon.exe
   web:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
@@ -135,14 +135,14 @@ jobs:
         uses: numworks/setup-emscripten@latest
         with:
           sdk: ${{ env.EMSDK_VERSION }}
-      - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
-      - run: node output/debug/optimized/web/test.js --headless --limit-stack-usage
+      - run: epsilon/build/setup.sh --only-simulator
+      - run: make -C epsilon PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
+      - run: node epsilon/output/debug/optimized/web/test.js --headless --limit-stack-usage
         timeout-minutes: 5
       - uses: actions/upload-artifact@v4
         with:
           name: epsilon.html
-          path: output/debug/optimized/web/epsilon.html
+          path: epsilon/output/debug/optimized/web/epsilon.html
           retention-days: 7
   linux:
     timeout-minutes: 15
@@ -157,20 +157,20 @@ jobs:
 
       # TODO_PCJ: Add ASAN=1 and TIDY=1
       - name: Build epsilon.bin and test.bin
-        run: $DOCKER_RUN "make TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin"
+        run: $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin"
       - name: Run unit tests (in parallel)
         run: |
-          $DOCKER_RUN "parallel --halt now,fail=1 --keep-order output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)"
+          $DOCKER_RUN "parallel --halt now,fail=1 --keep-order epsilon/output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)"
         id: run-tests
         continue-on-error: true
       - name: Run unit tests sequentially (if parallel run failed)
         if: steps.run-tests.outcome == 'failure'
-        run: $DOCKER_RUN "rm -f core; output/debug/optimized/linux/test.bin --headless --limit-stack-usage || (eu-stack --core core; exit 1)"
+        run: $DOCKER_RUN "rm -f core; epsilon/output/debug/optimized/linux/test.bin --headless --limit-stack-usage || (eu-stack --core core; exit 1)"
       - uses: actions/upload-artifact@v4
         if: ${{ fromJSON(vars.ADVANCED_JOBS) }}
         with:
           name: epsilon-linux.bin
-          path: output/debug/optimized/linux/epsilon.bin
+          path: epsilon/output/debug/optimized/linux/epsilon.bin
   macos:
     timeout-minutes: 15
     runs-on: macOS-latest
@@ -179,14 +179,14 @@ jobs:
       MAKEFLAGS: '-j2'
     steps:
       - uses: actions/checkout@v4
-      - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
-      - run: output/debug/optimized/macos/x86_64/test.bin --headless --limit-stack-usage
-      - run: make PLATFORM=simulator ASSERTIONS=1 epsilon.app
+      - run: epsilon/build/setup.sh --only-simulator
+      - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
+      - run: epsilon/output/debug/optimized/macos/x86_64/test.bin --headless --limit-stack-usage
+      - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.app
       - uses: actions/upload-artifact@v4
         with:
           name: epsilon-macos.zip
-          path: output/debug/optimized/macos/epsilon.app
+          path: epsilon/output/debug/optimized/macos/epsilon.app
   ios:
     timeout-minutes: 15
     runs-on: macOS-latest
@@ -195,14 +195,14 @@ jobs:
       MAKEFLAGS: '-j2'
     steps:
       - uses: actions/checkout@v4
-      - run: build/setup.sh --only-simulator
-      - run: make PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
-      - run: make PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
-      - run: make PLATFORM=simulator TARGET=ios APPLE_PLATFORM=ios-simulator
+      - run: epsilon/build/setup.sh --only-simulator
+      - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 epsilon.ipa
+      - run: make -C epsilon PLATFORM=simulator TARGET=ios ASSERTIONS=1 test.ipa
+      - run: make -C epsilon PLATFORM=simulator TARGET=ios APPLE_PLATFORM=ios-simulator
       - uses: actions/upload-artifact@v4
         with:
           name: epsilon-ios.ipa
-          path: output/debug/optimized/ios/epsilon.ipa
+          path: epsilon/output/debug/optimized/ios/epsilon.ipa
   poincarejs:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
@@ -218,7 +218,7 @@ jobs:
         with:
           sdk: ${{ env.EMSDK_VERSION }}
       - name: Setup the environment
-        run: build/setup.sh --only-simulator
+        run: epsilon/build/setup.sh --only-simulator
       - name: Run tests with ASSERTIONS=1
         run: make -j8 -f poincare/poincarejs/Makefile PLATFORM=foxglove ASSERTIONS=1 poincare.js.run
       # Ensures that minification did not break the code
@@ -229,6 +229,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: poincarejs.zip
+          # TODO move poincarejs output path inside poincare
           path: output/release/foxglove/poincarejs.zip
           retention-days: 7
   coverage:

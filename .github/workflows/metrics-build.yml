@@ -5,10 +5,10 @@ on:
     paths-ignore:
       - '**/*.md'
       - 'poincare/doc/**'
-      - 'tests/**'
-      - 'ion/src/simulator/**'
+      - 'epsilon/tests/**'
+      - 'shared/ion/src/simulator/**'
       - '**/scandium/**'
-      - 'external_apps/**'
+      - 'epsilon/external_apps/**'
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=n0120
 
@@ -37,26 +37,26 @@ jobs:
 
       - name: Check for core
         id: core
-        run: '[[ -e ion/src/device/core ]]'
+        run: '[[ -e shared/ion/src/device/core ]]'
         continue-on-error: true
       - name: Build common ancestor bootloader and kernel for N0120
         if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
+        run: $DOCKER_RUN "make -C epsilon bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
       - name: Build common ancestor userland for N0120
-        run: $DOCKER_RUN "make userland.onboarding.beta.allow3rdparty.A.elf"
+        run: $DOCKER_RUN "make -C epsilon userland.onboarding.beta.allow3rdparty.A.elf"
       - name: Save ancestor build
-        run: mv output/release/n0120 base
+        run: mv epsilon/output/release/n0120 base
 
       - name: Checkout head of PR
         run: git checkout ${{ github.event.pull_request.head.sha }}
 
       - name: Build head bootloader and kernel for N0120
         if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
+        run: $DOCKER_RUN "make -C epsilon bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
       - name: Build head userland for N0120
-        run: $DOCKER_RUN "make userland.onboarding.beta.allow3rdparty.A.elf"
+        run: $DOCKER_RUN "make -C epsilon userland.onboarding.beta.allow3rdparty.A.elf"
       - name: Save head build
-        run: mv output/release/n0120 head
+        run: mv epsilon/output/release/n0120 head
 
       - name: Initialize metrics output
         run: |

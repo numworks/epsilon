@@ -9,7 +9,7 @@ on:
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}
   DEBUG: ${{ fromJSON(github.event.inputs.debug) && '1' || '0' }}
-  OUTPUT_PATH: output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/simulator/android
+  OUTPUT_PATH: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/simulator/android
 
 jobs:
   build:
@@ -18,9 +18,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup
-        run: build/setup.sh --only-simulator
+        run: epsilon/build/setup.sh --only-simulator
       - name: Build
-        run: make DEBUG=$DEBUG PLATFORM=simulator TARGET=android epsilon.apk
+        run: make -C epsilon DEBUG=$DEBUG PLATFORM=simulator TARGET=android epsilon.apk
       - name: Optimize ()
         # Optimize twice since first try will fail.
         run: $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 $OUTPUT_PATH/epsilon.apk $OUTPUT_PATH/epsilon_temp.apk ; $ANDROID_HOME/build-tools/29.0.2/zipalign -v -p 4 $OUTPUT_PATH/epsilon_temp.apk $OUTPUT_PATH/epsilon_optimized.apk

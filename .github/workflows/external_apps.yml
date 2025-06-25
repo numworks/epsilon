@@ -14,9 +14,6 @@ concurrency:
 jobs:
   c_cpp_apps:
     runs-on: ${{ fromJSON(vars.EPSILON_RUNNER_LABELS) }}
-    defaults:
-      run:
-        working-directory: ./epsilon
     steps:
       - name: Install toolchain
         uses: numworks/setup-arm-toolchain@latest
@@ -30,11 +27,11 @@ jobs:
       - name: Setup nwlink
         run: npm install -g nwlink
       - name: Build sample_c for device
-        run: make -C external_apps/sample_c PLATFORM=device build
+        run: make -C epsilon/external_apps/sample_c PLATFORM=device build
       - name: Build sample_cpp for device
-        run: make -C external_apps/sample_cpp PLATFORM=device build
+        run: make -C epsilon/external_apps/sample_cpp PLATFORM=device build
       - name: Build rpn_cpp for device
-        run: make -C external_apps/rpn_cpp PLATFORM=device build
+        run: make -C epsilon/external_apps/rpn_cpp PLATFORM=device build
   rust_app:
     runs-on: ubuntu-latest
     if: 0
@@ -44,8 +41,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - name: Go to rust external app directory
-        run: cd external_apps/sample_rust
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
@@ -53,5 +48,6 @@ jobs:
           target: thumbv7em-none-eabihf
       - name: Run cargo build
         uses: actions-rs/cargo@v1
+        working-directory: ./epsilon/external_apps/sample_rust
         with:
           command: build

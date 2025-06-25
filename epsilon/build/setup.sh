@@ -179,7 +179,7 @@ init_git_pre_push_hook() {
   # Create a git hook to prevent push on master branch without confirmation
   # See build/git/pre-push for details
   echo "Creating pre-push hook to prevent unwanted push on master."
-  cp build/git/pre-push .git/hooks/pre-push
+  cp epsilon/build/git/pre-push .git/hooks/pre-push
   chmod +x .git/hooks/pre-push
   git init
 }

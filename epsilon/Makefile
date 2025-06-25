@@ -1,6 +1,6 @@
 # Import haussmann
 
-PATH_haussmann := haussmann
+PATH_haussmann := ../haussmann
 APP_NAME := Epsilon
 APP_VERSION := 24.0.0
 OUTPUT_ROOT := output

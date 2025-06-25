@@ -40,6 +40,14 @@ struct SIVector {
   }
   constexpr bool isEmpty() const { return supportSize() == 0; }
   constexpr static SIVector Empty() { return {}; }
+  constexpr bool isUndef() const {
+    for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
+      if (coefficientAtIndex(i) != INT8_MIN) {
+        return false;
+      }
+    }
+    return true;
+  }
   constexpr static SIVector Undef() {
     return SIVector{.time = INT8_MIN,
                     .distance = INT8_MIN,

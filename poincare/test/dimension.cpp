@@ -1,6 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
+#include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/expression/units/representatives.h>
 
 #include "helper.h"
@@ -92,6 +93,7 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(hasInvalidDimOrLen(KLogicalNot(KBadType)));
   QUIZ_ASSERT(hasInvalidDimOrLen(KLogicalOr(KTrue, KUndef)));
   QUIZ_ASSERT(dim(KLogicalAnd(KTrue, KUndefBoolean), Boolean));
+  QUIZ_ASSERT(dim(KUndefUnit, Dimension::Unit(KUnits::meter)));
 
   QUIZ_ASSERT(len("1", Dimension::k_nonListListLength));
   QUIZ_ASSERT(len("{1,2}", 2));

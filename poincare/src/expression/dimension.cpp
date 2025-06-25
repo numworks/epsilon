@@ -745,6 +745,9 @@ bool Dimension::operator==(const Dimension& other) const {
     return matrix.rows == other.matrix.rows && matrix.cols == other.matrix.cols;
   }
   if (type == DimensionType::Unit) {
+    if (unit.vector.isUndef() || other.unit.vector.isUndef()) {
+      return true;
+    }
     return unit.vector == other.unit.vector &&
            (unit.vector != Units::Temperature::Dimension ||
             unit.representative == other.unit.representative);

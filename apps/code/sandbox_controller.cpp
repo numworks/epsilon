@@ -46,6 +46,8 @@ void SandboxController::redrawWindow() {
 void SandboxController::privateModalViewAltersFirstResponder(
     FirstResponderAlteration alteration) {
   if (alteration == FirstResponderAlteration::DidRestore) {
+    /* After dismissing a modal view, the screen behind the modal is lost. Go
+     * back to the console to avoid a white rectangle. */
     handleEvent(Ion::Events::Back);
   }
 }

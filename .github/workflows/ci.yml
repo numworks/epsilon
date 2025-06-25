@@ -157,15 +157,15 @@ jobs:
 
       # TODO_PCJ: Add ASAN=1 and TIDY=1
       - name: Build epsilon.bin and test.bin
-        run: $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin test.bin"
+        run: $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin epsilon_test.bin"
       - name: Run unit tests (in parallel)
         run: |
-          $DOCKER_RUN "parallel --halt now,fail=1 --keep-order epsilon/output/debug/optimized/linux/test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)"
+          $DOCKER_RUN "parallel --halt now,fail=1 --keep-order epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage --number-of-chunks 32 --chunk-id {} ::: \$(seq 0 31)"
         id: run-tests
         continue-on-error: true
       - name: Run unit tests sequentially (if parallel run failed)
         if: steps.run-tests.outcome == 'failure'
-        run: $DOCKER_RUN "rm -f core; epsilon/output/debug/optimized/linux/test.bin --headless --limit-stack-usage || (eu-stack --core core; exit 1)"
+        run: $DOCKER_RUN "rm -f core; epsilon/output/debug/optimized/linux/epsilon_test.bin --headless --limit-stack-usage || (eu-stack --core core; exit 1)"
       - uses: actions/upload-artifact@v4
         if: ${{ fromJSON(vars.ADVANCED_JOBS) }}
         with:
@@ -180,8 +180,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: tools/setup.sh --only-simulator
-      - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 test.bin
-      - run: epsilon/output/debug/optimized/macos/x86_64/test.bin --headless --limit-stack-usage
+      - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 ARCH=x86_64 epsilon_test.bin
+      - run: epsilon/output/debug/optimized/macos/x86_64/epsilon_test.bin --headless --limit-stack-usage
       - run: make -C epsilon PLATFORM=simulator ASSERTIONS=1 epsilon.app
       - uses: actions/upload-artifact@v4
         with:

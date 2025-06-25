@@ -110,8 +110,8 @@ $(call create_goal,flasher, \
 .PHONY: custom_userland.flash
 custom_userland.flash:
 	@echo "Finding connected device model and inactive slot."
-	MODEL=$$($(PYTHON) build/device/dfu.py --model) && \
-	SLOT=$$($(PYTHON) build/device/dfu.py --inactive_slot) && \
+	MODEL=$$($(PYTHON) tools/device/dfu.py --model) && \
+	SLOT=$$($(PYTHON) tools/device/dfu.py --inactive_slot) && \
 	DFULEAVE=$$(if [[ "$$SLOT" == "A" ]]; then echo "0x90010000"; elif [[ "$$SLOT" == "B" ]]; then echo "0x90410000"; fi) && \
 	echo "DETECTED MODEL\t$$MODEL" && \
 	echo "LEAVE AT\t$$DFULEAVE" && \
@@ -142,7 +142,7 @@ $1%flash: $(OUTPUT_DIRECTORY)/$1%flash
 
 $(OUTPUT_DIRECTORY)/$1%dfu: $(addprefix $(OUTPUT_DIRECTORY)/,$2) | $$$$(@D)/.
 	$$(call rule_label,DFU)
-	$(PYTHON) $(PATH_haussmann)/data/device/elf2dfu.py -i $$^ -o $$@
+	$(PYTHON) tools/device/elf2dfu.py -i $$^ -o $$@
 )
 endef
 

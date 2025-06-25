@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Setup
-        run: epsilon/build/setup.sh
+        run: tools/setup.sh
       - name: Check for core
         run: '[[ -e ion/src/device/core ]]'
       # Not using matrix strategy to avoid multiplying setups and uploads.

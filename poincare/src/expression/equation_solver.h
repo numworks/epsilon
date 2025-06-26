@@ -101,22 +101,49 @@ class EquationSolver {
 
   /* If the range is (NaN, NaN), it will be automatically computed. */
   static SolverResult ApproximateSolve(
-      const Tree* equation, ProjectionContext projectionContext,
+      const Tree* equationsSet, ProjectionContext projectionContext,
       Range1D<double> range = Range1D<double>());
 
  private:
+  enum class UnknownSelectionStrategy : uint8_t {
+    // Only includes symbols that are not defined by the user
+    OnlyUndefinedSymbols,
+    // Includes all symbols, even ones defined by the user
+    AllSymbols,
+    /* Choses whether or not to override defined variables in order to have only
+     * one unknown at the end */
+    MaxOneSymbol,
+  };
+
+  struct PreprocessingResult {
+    Tree* reducedEquationSet = nullptr;
+
+    SolutionMetadata partialMetadata;
+  };
+
+  /* Extracts unknows and userVariables, and reduces the equation set.
+   * This is used by both ExactSolve and ApproximateSolve.
+   * The following fields of the metadata will be filled:
+   * - error (if any)
+   * - unknownVariables
+   * - definedVariables
+   * - overrideDefinedVariables
+   * - complexFormat
+   */
+  static PreprocessingResult PreprocessEquationSet(
+      const Tree* equationsSet, ProjectionContext* projectionContext,
+      UnknownSelectionStrategy selectionStrategy);
+
   // Return list of exact solutions.
   static SolverResult PrivateExactSolve(const Tree* equationsSet,
-                                        ProjectionContext projectionContext);
-  static Error ProjectAndReduce(Tree* equationsSet,
-                                ProjectionContext projectionContext);
+                                        ProjectionContext projectionContext,
+                                        bool overrideDefinedVariables);
+
   // Return list of solutions for linear system.
   static Tree* SolveLinearSystem(const Tree* equationsSet,
-                                 uint8_t numberOfVariables,
                                  SolutionMetadata* metadata);
   // Return list of solutions for a polynomial equation.
   static Tree* SolvePolynomial(const Tree* equationsSet,
-                               uint8_t numberOfVariables,
                                SolutionMetadata* metadata);
 
   // Return list of linear coefficients for each variables and final constant.
@@ -130,10 +157,6 @@ class EquationSolver {
   static Tree* GetNextParameterSymbol(size_t* parameterIndex,
                                       uint32_t usedParameterIndices,
                                       Poincare::Context* context);
-
-  static Tree* PrepareEquationForApproximateSolve(
-      const Tree* equation, ProjectionContext projectionContext,
-      SolutionMetadata* metadata);
 };
 
 }  // namespace Poincare::Internal

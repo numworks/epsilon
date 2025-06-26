@@ -100,11 +100,11 @@ void SystemOfEquations::cancelApproximateSolve() {
 void SystemOfEquations::approximateSolve(Context* context) {
   assert(m_store->numberOfDefinedModels() == 1);
   m_wasInterrupted = false;
-  Internal::Tree* equation = equationAtIndex(0, m_store);
+  Internal::Tree* set = equationSet(m_store);
 
   EquationSolver::SolverResult result =
       Poincare::Internal::EquationSolver::ApproximateSolve(
-          equation,
+          set,
           {.m_complexFormat =
                MathPreferences::SharedPreferences()->complexFormat(),
            .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
@@ -131,7 +131,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
                  Poincare::Internal::FloatHelper::To(solution), false);
   }
   result.solutionList->removeTree();
-  equation->removeTree();
+  set->removeTree();
 }
 
 void SystemOfEquations::tidy(PoolObject* treePoolCursor) {

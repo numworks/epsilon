@@ -430,7 +430,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
   for (int i = 0; i < metadata.unknownVariables.size(); i++) {
     const char* variable = metadata.unknownVariables[i];
     // TODO: Use a more precise complexSign when possible for better reduction.
-    Variables::ReplaceSymbol(reducedEquationList, variable, i++,
+    Variables::ReplaceSymbol(reducedEquationList, variable, i,
                              ComplexSign::Finite());
   }
 

@@ -46,12 +46,29 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   // Try solving while using user variables
   SolverResult firstResult =
       PrivateExactSolve(equationList, projectionContext, false);
-  if (firstResult.metadata.error == Error::RequireApproximateSolution ||
-      (firstResult.metadata.error == Error::NoError &&
-       firstResult.solutionList->numberOfChildren() > 0) ||
-      firstResult.metadata.definedVariables.size() == 0) {
+
+  Error firstError = firstResult.metadata.error;
+  size_t nDefinedVariables = firstResult.metadata.definedVariables.size();
+
+  /* Retry with overriden variables if:
+   *     - There are variables to override (nDefinedVariables > 0)
+   * AND -    There is no error but no solution was found
+   *       OR The equation is undefined or non real or unhandled
+   *
+   * For every other errors, overriding the variables shouldn't change anything.
+   */
+  bool retryWithOverridenVariables =
+      nDefinedVariables > 0 &&
+      ((firstError == Error::NoError &&
+        firstResult.solutionList->numberOfChildren() == 0) ||
+       firstError == Error::EquationUndefined ||
+       firstError == Error::EquationNonReal ||
+       firstError == Error::EquationUnhandled);
+
+  if (!retryWithOverridenVariables) {
     return firstResult;
   }
+
   assert((firstResult.solutionList == nullptr) ||
          (firstResult.solutionList->numberOfChildren() == 0));
   if (firstResult.solutionList) {
@@ -61,9 +78,10 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   // Try solving while overriding user variables
   SolverResult secondResult =
       PrivateExactSolve(equationList, projectionContext, true);
-  if (firstResult.metadata.error == Error::NoError &&
-      secondResult.metadata.error != Error::NoError &&
-      secondResult.metadata.error != Error::RequireApproximateSolution) {
+  Error secondError = secondResult.metadata.error;
+
+  if (firstError == Error::NoError && secondError != Error::NoError &&
+      secondError != Error::RequireApproximateSolution) {
     assert(secondResult.solutionList == nullptr);
     /* The system becomes invalid when overriding the user variables: the
      * first solution was better. Restore inital empty set */

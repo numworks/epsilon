@@ -111,7 +111,8 @@ void SystemOfEquations::approximateSolve(Context* context) {
            .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
            .m_context = context},
           m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
-                                    : m_approximateSolvingRange);
+                                    : m_approximateSolvingRange,
+          k_maxNumberOfApproximateSolutions);
 
   m_solutionMetadata = result.metadata;
 

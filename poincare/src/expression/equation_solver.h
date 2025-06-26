@@ -32,10 +32,6 @@ class EquationSolver {
   constexpr static int k_maxNumberOfExactSolutions =
       std::max(Expression::k_maxNumberOfVariables,
                Expression::k_maxPolynomialDegree + 1);
-  constexpr static int k_maxNumberOfApproximateSolutions = 10;
-
-  constexpr static int k_maxNumberOfSolutions =
-      std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
 
   enum class Error {
     NoError = 0,
@@ -94,9 +90,10 @@ class EquationSolver {
                                  ProjectionContext projectionContext);
 
   /* If the range is (NaN, NaN), it will be automatically computed. */
-  static SolverResult ApproximateSolve(
-      const Tree* equationList, ProjectionContext projectionContext,
-      Range1D<double> range = Range1D<double>());
+  static SolverResult ApproximateSolve(const Tree* equationList,
+                                       ProjectionContext projectionContext,
+                                       Range1D<double> range,
+                                       size_t maxNumberOfSolutions);
 
  private:
   enum class UnknownSelectionStrategy : uint8_t {

@@ -214,7 +214,7 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
 
 EquationSolver::SolverResult EquationSolver::ApproximateSolve(
     const Tree* equationList, ProjectionContext projectionContext,
-    Range1D<double> range) {
+    Range1D<double> range, size_t maxNumberOfSolutions) {
   assert(equationList->isList());
 
   if (equationList->numberOfChildren() > 1) {
@@ -259,8 +259,7 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
     // Use the intersection between the definition domain of f and the bounds
     zoom.setBounds(-k_maxFloatForAutoApproximateSolvingRange,
                    k_maxFloatForAutoApproximateSolvingRange);
-    zoom.setMaxPointsOneSide(k_maxNumberOfApproximateSolutions,
-                             k_maxNumberOfApproximateSolutions / 2);
+    zoom.setMaxPointsOneSide(maxNumberOfSolutions, maxNumberOfSolutions / 2);
     const void* model = static_cast<const void*>(preparedEquation);
     bool finiteNumberOfSolutions = true;
     bool didFitRoots =
@@ -301,7 +300,7 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
 
   TreeRef resultList = List::PushEmpty();
 
-  for (int i = 0; i <= k_maxNumberOfApproximateSolutions; i++) {
+  for (int i = 0; i <= maxNumberOfSolutions; i++) {
     double root = solver.nextRoot(preparedEquation).x();
     if (root < range.min()) {
       i--;
@@ -310,7 +309,7 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
       root = NAN;
     }
 
-    if (i == k_maxNumberOfApproximateSolutions) {
+    if (i == maxNumberOfSolutions) {
       metadata.incompleteSolutions = true;
     } else {
       if (std::isnan(root)) {

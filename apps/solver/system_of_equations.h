@@ -34,10 +34,9 @@ class SystemOfEquations {
 
   constexpr static int k_maxNumberOfExactSolutions =
       Poincare::Internal::EquationSolver::k_maxNumberOfExactSolutions;
-  constexpr static int k_maxNumberOfApproximateSolutions =
-      Poincare::Internal::EquationSolver::k_maxNumberOfApproximateSolutions;
+  constexpr static int k_maxNumberOfApproximateSolutions = 10;
   constexpr static int k_maxNumberOfSolutions =
-      Poincare::Internal::EquationSolver::k_maxNumberOfSolutions;
+      std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
 
   // System analysis
   SolvingMethod solvingMethod() const {

@@ -341,12 +341,22 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
   assert(userSymbols->isSet());
 
   VariableArray undefinedVariables;
+  // The total number can be over the capacity of VariableArray
+  size_t nDefinedVariables = 0;
+  size_t nUndefinedVariables = 0;
+
   for (Tree* userSymbol : userSymbols->children()) {
     const char* symbolName = Symbol::GetName(userSymbol);
     if (context && context->expressionForUserNamed(userSymbol)) {
-      metadata.definedVariables.push(symbolName);
+      if (!metadata.definedVariables.isFull()) {
+        metadata.definedVariables.push(symbolName);
+      }
+      nDefinedVariables++;
     } else {
-      undefinedVariables.push(symbolName);
+      if (!undefinedVariables.isFull()) {
+        undefinedVariables.push(symbolName);
+      }
+      nUndefinedVariables++;
     }
   }
 
@@ -366,30 +376,35 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
       OMG::unreachable();
   }
 
-  if (metadata.overrideDefinedVariables) {
-    metadata.unknownVariables.fillWithList(userSymbols);
-  } else {
-    metadata.unknownVariables = undefinedVariables;
-  }
+  int expectedNumberOfUnknowns =
+      nUndefinedVariables +
+      (metadata.overrideDefinedVariables ? nDefinedVariables : 0);
 
-  int numberOfUnknowns = metadata.unknownVariables.size();
-
-  if (numberOfUnknowns > k_maxNumberOfExactSolutions ||
+  if (expectedNumberOfUnknowns > k_maxNumberOfExactSolutions ||
       (selectionStrategy == UnknownSelectionStrategy::MaxOneSymbol &&
-       numberOfUnknowns > 1)) {
+       expectedNumberOfUnknowns > 1)) {
     metadata.error = Error::TooManyVariables;
-  } else if ((equationList->numberOfChildren() > 1 || numberOfUnknowns > 1) &&
+  } else if ((equationList->numberOfChildren() > 1 ||
+              expectedNumberOfUnknowns > 1) &&
              Preferences::SharedPreferences()
                  ->examMode()
                  .forbidSimultaneousEquationSolver()) {
     metadata.error = Error::DisabledInExamMode;
   }
 
-  userSymbols->removeTree();
-
   if (metadata.error != Error::NoError) {
+    userSymbols->removeTree();
     return {nullptr, metadata};
   }
+
+  if (metadata.overrideDefinedVariables) {
+    metadata.unknownVariables.fillWithList(userSymbols);
+  } else {
+    metadata.unknownVariables = undefinedVariables;
+  }
+
+  assert(metadata.unknownVariables.size() == expectedNumberOfUnknowns);
+  userSymbols->removeTree();
 
   // Step 3. Clone and simplify the equations
 

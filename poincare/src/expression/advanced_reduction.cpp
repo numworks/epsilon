@@ -379,18 +379,7 @@ void AdvancedReduction::Path::log() const {
 }
 #endif
 
-void inline AdvancedReduction::Context::resetIfNeeded() {
-  if (m_mustResetRoot) {
-    // Reset root to current path
-    m_root->cloneTreeOverTree(m_original);
-    m_path.apply(m_root);
-    m_mustResetRoot = false;
-  }
-}
-
 void AdvancedReduction::UpdateBestMetric(Context* ctx) {
-  // Otherwise, root should be reset to current path.
-  assert(!ctx->m_mustResetRoot);
   float metric = Metric::GetMetric(ctx->m_root, ctx->m_reductionTarget);
   if (metric == Metric::k_perfectMetric) {
     ctx->m_bestMetric = Metric::k_perfectMetric;
@@ -473,7 +462,6 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
     /* 254 to 1 NextNode handled here */
     assert(i <= Direction::k_maxNextNodeAmount);
     for (; i >= 1; --i) {
-      ctx->resetIfNeeded();
       // It will be impossible to add C||E after our NextNodes: stop here
       if (!ctx->canAppendDirection()) {
         LOG(1, "CRC ", ctx->m_crcCollection.log());
@@ -511,7 +499,6 @@ bool inline AdvancedReduction::DuplicateRootAndReduceDirection(
   bool result = ReduceDirection(newTarget, ctx, dir);
   ctx->m_root = oldRoot;
   SharedTreeStack->dropBlocksFrom(newRoot);
-  ctx->m_mustResetRoot = false;
   return result;
 }
 
@@ -519,7 +506,6 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
                                                Direction dir) {
   assert(!dir.isNextNode());
   assert(ctx->canAppendDirection());
-  ctx->resetIfNeeded();
   Tree* target = e;
   if (!dir.applyContractOrExpand(&target, ctx->m_root)) {
     LOG(3, "Nothing to ", dir.log());
@@ -528,7 +514,6 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
   uint32_t hash = CrcCollection::AdvancedHash(ctx->m_root);
   /* If explored, do not go further. */
   if (!ctx->m_crcCollection.add(hash, ctx->m_path.length() + 1)) {
-    ctx->m_mustResetRoot = true;
     if (!ctx->canAppendDirection()) {
       // Not able to add due to decreased maxDepth
       return false;
@@ -570,7 +555,6 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
     ctx->m_crcCollection.add(hash, 0);
   }
   ctx->m_path.popWholeDirection();
-  ctx->m_mustResetRoot = true;
   return fullExploration;
 }
 

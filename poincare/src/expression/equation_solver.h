@@ -56,26 +56,22 @@ class EquationSolver {
     PolynomialMonovariable,
   };
 
-  struct SolutionMetadata {
-    // - General metadata -
-    Error error = Error::NoError;
-    SolvingMethod solvingMethod = SolvingMethod::GeneralMonovariable;
-    SolutionType solutionType = SolutionType::Approximate;
-
-    // - Variables -
+  struct EquationMetadata {
     // Variables that are considered unknown in the equations.
     VariableArray unknownVariables;
-    // Variables that are defined by the user.
+    // Variables that are defined by the user and present in the equations.
     VariableArray definedVariables;
     // If true, definedVariables are included in unknownVariables.
     bool overrideDefinedVariables = false;
-
-    // - Preferences used for projection -
+    // Complex format used for projection
     ComplexFormat complexFormat = ComplexFormat::Cartesian;
+  };
 
+  struct SolutionMetadata {
+    SolvingMethod solvingMethod = SolvingMethod::GeneralMonovariable;
+    SolutionType solutionType = SolutionType::Approximate;
     // - Exact solve only -
     int degree = 0;
-
     // - Approximate solve only -
     Range1D<double> solvingRange = Range1D<double>();
     bool incompleteSolutions = false;
@@ -83,7 +79,11 @@ class EquationSolver {
 
   struct SolverResult {
     Tree* solutionList = nullptr;
-    SolutionMetadata metadata;
+    Error error = Error::NoError;
+    // Stores metadata about the equations and their unknowns.
+    EquationMetadata equationMetadata;
+    // Stores metadata about the solutions and how they were computed.
+    SolutionMetadata solutionMetadata;
   };
 
   static SolverResult ExactSolve(const Tree* equationList,
@@ -108,18 +108,12 @@ class EquationSolver {
 
   struct PreprocessingResult {
     Tree* reducedEquationList = nullptr;
-    SolutionMetadata partialMetadata;
+    Error error = Error::NoError;
+    EquationMetadata equationMetadata;
   };
 
-  /* Extracts unknows and userVariables, and reduces the equation set.
-   * This is used by both ExactSolve and ApproximateSolve.
-   * The following fields of the metadata will be filled:
-   * - error (if any)
-   * - unknownVariables
-   * - definedVariables
-   * - overrideDefinedVariables
-   * - complexFormat
-   */
+  /* This is used by both ExactSolve and ApproximateSolve.
+   * It computes the EquationMetadata, and reduces the equation set. */
   static PreprocessingResult PreprocessEquationList(
       const Tree* equationList, ProjectionContext* projectionContext,
       UnknownSelectionStrategy selectionStrategy);
@@ -130,11 +124,11 @@ class EquationSolver {
                                         bool overrideDefinedVariables);
 
   // Return list of solutions for linear system.
-  static Tree* SolveLinearSystem(const Tree* equationList,
-                                 SolutionMetadata* metadata);
+  static SolverResult SolveLinearSystem(
+      const Tree* equationList, const EquationMetadata& equationMetadata);
   // Return list of solutions for a polynomial equation.
-  static Tree* SolvePolynomial(const Tree* equationList,
-                               SolutionMetadata* metadata);
+  static SolverResult SolvePolynomial(const Tree* equationList,
+                                      const EquationMetadata& equationMetadat);
 
   // Return list of linear coefficients for each variables and final constant.
   static Tree* GetLinearCoefficients(const Tree* equation,

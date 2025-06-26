@@ -47,8 +47,8 @@ Internal::Tree* equationList(const EquationStore* store) {
 SystemOfEquations::Error SystemOfEquations::exactSolve(
     Poincare::Context* context) {
   m_wasInterrupted = false;
-  m_solutionMetadata.unknownVariables.clear();
-  m_solutionMetadata.definedVariables.clear();
+  m_equationMetadata.unknownVariables.clear();
+  m_equationMetadata.definedVariables.clear();
 
   Internal::Tree* eqList = equationList(m_store);
   EquationSolver::SolverResult result = EquationSolver::ExactSolve(
@@ -60,8 +60,10 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
           .m_context = context,
       });
   Internal::Tree* solutionList = result.solutionList;
-  m_solutionMetadata = result.metadata;
-  if (m_solutionMetadata.error == Error::NoError) {
+  m_solutionMetadata = result.solutionMetadata;
+  m_equationMetadata = result.equationMetadata;
+  Error error = result.error;
+  if (error == Error::NoError) {
     assert(solutionList);
     m_numberOfSolutions = 0;
     for (const Internal::Tree* solution : solutionList->children()) {
@@ -73,7 +75,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     assert(!solutionList);
   }
   eqList->removeTree();
-  return m_solutionMetadata.error;
+  return error;
 }
 
 const Internal::Tree*
@@ -114,10 +116,11 @@ void SystemOfEquations::approximateSolve(Context* context) {
                                     : m_approximateSolvingRange,
           k_maxNumberOfApproximateSolutions);
 
-  m_solutionMetadata = result.metadata;
+  m_solutionMetadata = result.solutionMetadata;
+  m_equationMetadata = result.equationMetadata;
 
   // Store the range used to solve
-  m_approximateSolvingRange = result.metadata.solvingRange;
+  m_approximateSolvingRange = m_solutionMetadata.solvingRange;
   if (m_isUsingAutoSolvingRange) {
     m_memoizedAutoSolvingRange = m_approximateSolvingRange;
   }
@@ -233,7 +236,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
         approximateDuringReduction ? &exact : nullptr;
     simplifyAndApproximateSolution(e, exactPointer, approximatePointer,
                                    approximateDuringReduction, context,
-                                   m_solutionMetadata.complexFormat, angleUnit,
+                                   m_equationMetadata.complexFormat, angleUnit,
                                    unitFormat, symbolicComputation);
     if (!approximateDuringReduction) {
       exact = e;
@@ -248,7 +251,7 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
       exact = UserExpression();
       approximate = UserExpression();
       simplifyAndApproximateSolution(e, &exact, approximatePointer, true,
-                                     context, m_solutionMetadata.complexFormat,
+                                     context, m_equationMetadata.complexFormat,
                                      angleUnit, unitFormat,
                                      symbolicComputation);
       displayExactSolution = true;

@@ -38,8 +38,8 @@ typename Solver<T>::Solution Solver<T>::next(
     FunctionEvaluation f, const void* aux, BracketTest test, HoneResult hone,
     DiscontinuityEvaluation discontinuityTest) {
   // Check if there is a solution in the queue
-  if (!m_solutionQueue.isEmpty()) {
-    return registerSolution(m_solutionQueue.pop(), true);
+  if (m_solutionQueue.size() > 0) {
+    return registerSolution(m_solutionQueue.popFirst(), true);
   }
 
   Coordinate2D<T> p1, p2(m_xStart, f(m_xStart, aux)),
@@ -90,8 +90,8 @@ typename Solver<T>::Solution Solver<T>::next(
     if (interest != Interest::None) {
       honeAndRoundSolution(f, aux, start, end, interest, hone,
                            discontinuityTest);
-      if (!m_solutionQueue.isEmpty()) {
-        return registerSolution(m_solutionQueue.pop());
+      if (m_solutionQueue.size() > 0) {
+        return registerSolution(m_solutionQueue.popFirst());
       }
     }
   }
@@ -612,7 +612,7 @@ void Solver<T>::honeAndRoundSolution(
     FunctionEvaluation f, const void* aux, Coordinate2D<T> start,
     Coordinate2D<T> end, Interest interest, HoneResult hone,
     DiscontinuityEvaluation discontinuityTest) {
-  assert(m_solutionQueue.isEmpty());
+  assert(m_solutionQueue.size() == 0);
   if (interest == Interest::ReachedDiscontinuity) {
     return honeAndRoundDiscontinuitySolution(f, aux, start, end);
   }
@@ -698,7 +698,7 @@ void Solver<T>::honeAndRoundDiscontinuitySolution(FunctionEvaluation f,
                                                   const void* aux,
                                                   Coordinate2D<T> start,
                                                   Coordinate2D<T> end) {
-  assert(m_solutionQueue.isEmpty());
+  assert(m_solutionQueue.size() == 0);
   T precision = NullTolerance(start.x());
 
   // Find the smallest interval containing the discontinuity

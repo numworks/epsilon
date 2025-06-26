@@ -9,20 +9,16 @@
 
 namespace Shared {
 
-Interval::Interval() : m_numberOfElements(0) { reset(); }
+Interval::Interval() { reset(); }
 
-int Interval::numberOfElements() {
+size_t Interval::numberOfElements() {
   computeElements();
-  return m_numberOfElements;
+  return m_intervalBuffer.size();
 }
 
 void Interval::deleteElementAtIndex(int index) {
   assert(!m_needCompute);
-  assert(m_numberOfElements > 0);
-  for (int k = index; k < m_numberOfElements - 1; k++) {
-    m_intervalBuffer[k] = m_intervalBuffer[k + 1];
-  }
-  m_numberOfElements--;
+  m_intervalBuffer.removeAt(index);
 }
 
 bool Interval::hasSameParameters(IntervalParameters parameters) {
@@ -40,9 +36,10 @@ double Interval::element(int i) {
 void Interval::setElement(int i, double f) {
   assert(i <= numberOfElements() && i < k_maxNumberOfElements);
   computeElements();
-  m_intervalBuffer[i] = f;
-  if (i == numberOfElements()) {
-    m_numberOfElements++;
+  if (i == m_intervalBuffer.size()) {
+    m_intervalBuffer.push(f);
+  } else {
+    m_intervalBuffer[i] = f;
   }
 }
 
@@ -72,17 +69,16 @@ void Interval::computeElements() {
   if (!m_needCompute) {
     return;
   }
-  if (isEmpty()) {
-    m_numberOfElements = 0;
-  } else {
-    m_numberOfElements = m_parameters.step() > 0
-                             ? 1 + (m_parameters.end() - m_parameters.start()) /
-                                       m_parameters.step()
-                             : k_maxNumberOfElements;
-    m_numberOfElements =
-        m_numberOfElements > k_maxNumberOfElements || m_numberOfElements < 0
-            ? k_maxNumberOfElements
-            : m_numberOfElements;
+  m_intervalBuffer.clear();
+  size_t numberOfElements = 0;
+  if (!isEmpty()) {
+    numberOfElements = m_parameters.step() > 0
+                           ? 1 + (m_parameters.end() - m_parameters.start()) /
+                                     m_parameters.step()
+                           : k_maxNumberOfElements;
+
+    numberOfElements =
+        std::clamp(numberOfElements, (size_t)0, k_maxNumberOfElements);
   }
   /* Even though elements are displayed with 7 significant digits, we round the
    * element to 14 significant digits to prevent unexpected imprecisions due to
@@ -94,18 +90,19 @@ void Interval::computeElements() {
   // Save some calls to std::pow(10.0, -precision)
   constexpr double ratioThreshold = 10e-14;
   bool checkForElementZero = (m_parameters.start() < 0.0);
-  for (int i = 0; i < m_numberOfElements; i += 1) {
+  for (int i = 0; i < numberOfElements; i += 1) {
     if (checkForElementZero && i > 0 &&
         std::abs(1.0 + m_parameters.start() / (i * m_parameters.step())) <
             ratioThreshold) {
       /* We also round to 0 if start/(i*step) would have been rounded to -1.
        * For example, with start=-1.2, and step=0.2, 6th element should be 0
        * instead of 2.22e-16. */
-      m_intervalBuffer[i] = 0.0;
+      m_intervalBuffer.push(0.0);
     } else {
-      m_intervalBuffer[i] = PoincareHelpers::ValueOfFloatAsDisplayed<double>(
+      double value = PoincareHelpers::ValueOfFloatAsDisplayed<double>(
           m_parameters.start() + i * m_parameters.step(), precision, nullptr);
-      checkForElementZero = checkForElementZero && m_intervalBuffer[i] < 0.0;
+      m_intervalBuffer.push(value);
+      checkForElementZero = checkForElementZero && value < 0.0;
     }
   }
   m_needCompute = false;

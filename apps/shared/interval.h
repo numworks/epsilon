@@ -1,6 +1,8 @@
 #ifndef SHARED_VALUES_INTERVAL_H
 #define SHARED_VALUES_INTERVAL_H
 
+#include <omg/vector.h>
+
 namespace Shared {
 
 class Interval {
@@ -8,7 +10,7 @@ class Interval {
   Interval();
   // Delete the implicit copy constructor: the object is heavy
   Interval(const Interval&) = delete;
-  int numberOfElements();
+  size_t numberOfElements();
   void deleteElementAtIndex(int index);
   class IntervalParameters {
    public:
@@ -36,14 +38,14 @@ class Interval {
   void clear();
   void translateTo(double newStart);
   bool isEmpty() const { return m_parameters.start() > m_parameters.end(); }
-  constexpr static int k_maxNumberOfElements = 101;
+  constexpr static size_t k_maxNumberOfElements = 101;
 
  private:
   void computeElements();
-  int m_numberOfElements;
-  double m_intervalBuffer[k_maxNumberOfElements];
-  bool m_needCompute;
+
+  OMG::StaticVector<double, k_maxNumberOfElements> m_intervalBuffer;
   IntervalParameters m_parameters;
+  bool m_needCompute;
 };
 
 typedef void (Interval::IntervalParameters::*SetterPointer)(double);

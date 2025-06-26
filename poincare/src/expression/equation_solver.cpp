@@ -42,10 +42,10 @@ void VariableArray::fillWithList(const Tree* list) {
 }
 
 EquationSolver::SolverResult EquationSolver::ExactSolve(
-    const Tree* equationsSet, ProjectionContext projectionContext) {
+    const Tree* equationList, ProjectionContext projectionContext) {
   // Try solving while using user variables
   SolverResult firstResult =
-      PrivateExactSolve(equationsSet, projectionContext, false);
+      PrivateExactSolve(equationList, projectionContext, false);
   if (firstResult.metadata.error == Error::RequireApproximateSolution ||
       (firstResult.metadata.error == Error::NoError &&
        firstResult.solutionList->numberOfChildren() > 0) ||
@@ -60,7 +60,7 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
 
   // Try solving while overriding user variables
   SolverResult secondResult =
-      PrivateExactSolve(equationsSet, projectionContext, true);
+      PrivateExactSolve(equationList, projectionContext, true);
   if (firstResult.metadata.error == Error::NoError &&
       secondResult.metadata.error != Error::NoError &&
       secondResult.metadata.error != Error::RequireApproximateSolution) {
@@ -75,22 +75,22 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
 }
 
 EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
-    const Tree* equationsSet, ProjectionContext projectionContext,
+    const Tree* equationList, ProjectionContext projectionContext,
     bool overrideDefinedVariables) {
   // Step 1. Analyze the equations
-  PreprocessingResult preprocessingResult = PreprocessEquationSet(
-      equationsSet, &projectionContext,
+  PreprocessingResult preprocessingResult = PreprocessEquationList(
+      equationList, &projectionContext,
       overrideDefinedVariables
           ? UnknownSelectionStrategy::AllSymbols
           : UnknownSelectionStrategy::OnlyUndefinedSymbols);
 
-  Tree* reducedEquationSet = preprocessingResult.reducedEquationSet;
+  Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   SolutionMetadata metadata = preprocessingResult.partialMetadata;
 
   if (metadata.error != Error::NoError) {
     /* If the analysis failed, return an empty solution list */
-    if (reducedEquationSet) {
-      reducedEquationSet->removeTree();
+    if (reducedEquationList) {
+      reducedEquationList->removeTree();
     }
     return {nullptr, metadata};
   }
@@ -101,16 +101,16 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
   assert(metadata.error == Error::NoError);
 
   // Step 2.1. Try with linear system solving
-  result = SolveLinearSystem(reducedEquationSet, &metadata);
+  result = SolveLinearSystem(reducedEquationList, &metadata);
 
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
   if (metadata.error == Error::NonLinearSystem &&
       metadata.unknownVariables.numberOfVariables() <= 1 &&
-      reducedEquationSet->numberOfChildren() <= 1) {
+      reducedEquationList->numberOfChildren() <= 1) {
     assert(result.isUninitialized());
     metadata.error = Error::NoError;
-    result = SolvePolynomial(reducedEquationSet, &metadata);
+    result = SolvePolynomial(reducedEquationList, &metadata);
     if (metadata.error == Error::NoError) {
       /* Remove non real solutions of a polynomial if the equation was
        * projected with a "Real" Complex format */
@@ -126,7 +126,7 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
   }
 #endif
 
-  reducedEquationSet->removeTree();
+  reducedEquationList->removeTree();
 
   if (metadata.error == Error::NonLinearSystem ||
       metadata.error == Error::RequireApproximateSolution) {
@@ -193,31 +193,31 @@ static Coordinate2D<T> evaluator(T t, const void* model) {
 }
 
 EquationSolver::SolverResult EquationSolver::ApproximateSolve(
-    const Tree* equationsSet, ProjectionContext projectionContext,
+    const Tree* equationList, ProjectionContext projectionContext,
     Range1D<double> range) {
-  assert(equationsSet->isList());
+  assert(equationList->isList());
 
-  if (equationsSet->numberOfChildren() > 1) {
+  if (equationList->numberOfChildren() > 1) {
     return {nullptr, {.error = Error::EquationUnhandled}};
   }
 
   // Step 1. Analyze the equations
-  PreprocessingResult preprocessingResult = PreprocessEquationSet(
-      equationsSet, &projectionContext, UnknownSelectionStrategy::MaxOneSymbol);
+  PreprocessingResult preprocessingResult = PreprocessEquationList(
+      equationList, &projectionContext, UnknownSelectionStrategy::MaxOneSymbol);
 
-  Tree* reducedEquationSet = preprocessingResult.reducedEquationSet;
+  Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   SolutionMetadata metadata = preprocessingResult.partialMetadata;
 
   if (metadata.error != Error::NoError) {
-    if (reducedEquationSet) {
-      reducedEquationSet->removeTree();
+    if (reducedEquationList) {
+      reducedEquationList->removeTree();
     }
     return {nullptr, metadata};
   }
 
-  assert(reducedEquationSet->isList() &&
-         reducedEquationSet->numberOfChildren() == 1);
-  Tree* preparedEquation = reducedEquationSet->child(0);
+  assert(reducedEquationList->isList() &&
+         reducedEquationList->numberOfChildren() == 1);
+  Tree* preparedEquation = reducedEquationList->child(0);
 
   assert(metadata.unknownVariables.numberOfVariables() == 1);
   Approximation::PrepareFunctionForApproximation(
@@ -299,27 +299,27 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
     }
   }
 
-  reducedEquationSet->removeTree();
+  reducedEquationList->removeTree();
   return {resultList, metadata};
 }
 
-EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationSet(
-    const Tree* equationsSet, ProjectionContext* projectionContext,
+EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
+    const Tree* equationList, ProjectionContext* projectionContext,
     UnknownSelectionStrategy selectionStrategy) {
-  assert(equationsSet->isList());
+  assert(equationList->isList());
 
   SolutionMetadata metadata;
 
-  // Step 1. Update complex format from equationsSet
+  // Step 1. Update complex format from equationList
 
-  Projection::UpdateComplexFormatWithExpressionInput(equationsSet,
+  Projection::UpdateComplexFormatWithExpressionInput(equationList,
                                                      projectionContext);
   metadata.complexFormat = projectionContext->m_complexFormat;
 
   // Step 2. Retrieve user symbols and infer the list of unknowns
 
   Context* context = projectionContext->m_context;
-  Tree* userSymbols = Variables::GetUserSymbols(equationsSet, context);
+  Tree* userSymbols = Variables::GetUserSymbols(equationList, context);
   assert(userSymbols->isSet());
 
   VariableArray undefinedVariables;
@@ -361,7 +361,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationSet(
       (selectionStrategy == UnknownSelectionStrategy::MaxOneSymbol &&
        numberOfUnknowns > 1)) {
     metadata.error = Error::TooManyVariables;
-  } else if ((equationsSet->numberOfChildren() > 1 || numberOfUnknowns > 1) &&
+  } else if ((equationList->numberOfChildren() > 1 || numberOfUnknowns > 1) &&
              Preferences::SharedPreferences()
                  ->examMode()
                  .forbidSimultaneousEquationSolver()) {
@@ -376,7 +376,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationSet(
 
   // Step 3. Clone and simplify the equations
 
-  Tree* reducedEquationSet = equationsSet->cloneTree();
+  Tree* reducedEquationList = equationList->cloneTree();
   projectionContext->m_symbolic =
       metadata.overrideDefinedVariables
           ? SymbolicComputation::ReplaceDefinedFunctions
@@ -390,7 +390,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationSet(
 
   // Step 3.1. Replace UserFunctions
   Projection::DeepReplaceUserNamed(
-      reducedEquationSet, context,
+      reducedEquationList, context,
       SymbolicComputation::ReplaceDefinedFunctions);
 
   // Step 3.2. Replace unkowns
@@ -398,20 +398,20 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationSet(
   for (int i = 0; i < metadata.unknownVariables.numberOfVariables(); i++) {
     const char* variable = metadata.unknownVariables.variable(i);
     // TODO: Use a more precise complexSign when possible for better reduction.
-    Variables::ReplaceSymbol(reducedEquationSet, variable, i++,
+    Variables::ReplaceSymbol(reducedEquationList, variable, i++,
                              ComplexSign::Finite());
   }
 
   // Step 3.3. Project (replace local symbols) and reduce
 
-  Simplification::ProjectAndReduce(reducedEquationSet, projectionContext);
+  Simplification::ProjectAndReduce(reducedEquationList, projectionContext);
   if (projectionContext->m_dimension.isUnit()) {
     metadata.error = Error::EquationUndefined;
-  } else if (!reducedEquationSet->isList()) {
+  } else if (!reducedEquationList->isList()) {
     metadata.error = Error::EquationUndefined;
   } else {
     Error error = Error::NoError;
-    for (const Tree* equation : reducedEquationSet->children()) {
+    for (const Tree* equation : reducedEquationList->children()) {
       if (equation->isUndefined()) {
         if (equation->isNonReal()) {
           error = Error::EquationNonReal;
@@ -424,35 +424,35 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationSet(
     metadata.error = error;
   }
 
-  return {reducedEquationSet, metadata};
+  return {reducedEquationList, metadata};
 }
 
-Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
+Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationList,
                                         SolutionMetadata* metadata) {
   metadata->solvingMethod = SolvingMethod::LinearSystem;
   metadata->degree = 1;
 
   // Solve without dependencies
-  Tree* equationSetWithoutDep =
-      SharedTreeStack->pushSet(reducedEquationSet->numberOfChildren());
-  for (const Tree* equation : reducedEquationSet->children()) {
+  Tree* equationListWithoutDep =
+      SharedTreeStack->pushSet(reducedEquationList->numberOfChildren());
+  for (const Tree* equation : reducedEquationList->children()) {
     Dependency::SafeMain(equation)->cloneTree();
   }
 
   // n unknown variables and rows equations
   int n = metadata->unknownVariables.numberOfVariables();
   uint8_t cols = n + 1;
-  uint8_t rows = reducedEquationSet->numberOfChildren();
+  uint8_t rows = reducedEquationList->numberOfChildren();
   TreeRef matrix = SharedTreeStack->pushMatrix(0, 0);
-  int m = reducedEquationSet->numberOfChildren();
+  int m = reducedEquationList->numberOfChildren();
 
   // Create the matrix (A|b) for the equation Ax=b;
-  for (const Tree* equation : equationSetWithoutDep->children()) {
+  for (const Tree* equation : equationListWithoutDep->children()) {
     Tree* coefficients = GetLinearCoefficients(equation, n);
     if (!coefficients) {
       metadata->error = Error::NonLinearSystem;
       matrix->removeTree();
-      equationSetWithoutDep->removeTree();
+      equationListWithoutDep->removeTree();
       return nullptr;
     }
     assert(coefficients->numberOfChildren() == cols);
@@ -469,7 +469,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   if (rank == Matrix::k_failedToCanonizeRank) {
     metadata->error = Error::EquationUndefined;
     matrix->removeTree();
-    equationSetWithoutDep->removeTree();
+    equationListWithoutDep->removeTree();
     return nullptr;
   }
   const Tree* coefficient = matrix->child(0);
@@ -485,7 +485,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       /* Row describes an equation of the form '0=b', the system has no
        * solution. */
       matrix->removeTree();
-      equationSetWithoutDep->removeTree();
+      equationListWithoutDep->removeTree();
       assert(metadata->error == Error::NoError);
       return SharedTreeStack->pushSet(0);
     }
@@ -497,7 +497,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     (void)m;
     metadata->solutionType = SolutionType::Formal;
     matrix->removeTree();
-    equationSetWithoutDep->removeTree();
+    equationListWithoutDep->removeTree();
     assert(metadata->error == Error::NoError);
     return SharedTreeStack->pushSet(0);
 #else
@@ -549,12 +549,12 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     /* forceCanonization = true so that canonization still happens even if
      * t.approximate() is NAN. If other children of ab had an undef
      * approximation, the resolution would already have failed at
-     * reduction of the equation set. */
+     * reduction of the equation list. */
     rank = Matrix::CanonizeAndRank(matrix, true);
     if (rank == Matrix::k_failedToCanonizeRank) {
       metadata->error = Error::EquationUndefined;
       matrix->removeTree();
-      equationSetWithoutDep->removeTree();
+      equationListWithoutDep->removeTree();
       return nullptr;
     }
 #endif
@@ -566,14 +566,14 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
   /* The rank is equal to the number of variables: the system has n
    * solutions, and after canonization their values are the first n values on
    * the last column. */
-  TreeRef equationSetClone = reducedEquationSet->cloneTree();
+  TreeRef equationListClone = reducedEquationList->cloneTree();
   Tree* child = matrix->child(0);
   for (uint8_t row = 0; row < rows; row++) {
     for (uint8_t col = 0; col < cols; col++) {
       if (row < n && col == cols - 1) {
-        /* Replace the solution in the equation set to check later that it
+        /* Replace the solution in the equation list to check later that it
          * respects the dependencies. */
-        Variables::Replace(equationSetClone, row, child);
+        Variables::Replace(equationListClone, row, child);
         // Child has already been reduced.
         assert(!Simplification::ReduceSystem(child, false));
         // Continue anyway to preserve TreeStack integrity
@@ -584,15 +584,15 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
     }
   }
   matrix->moveNodeOverNode(SharedTreeStack->pushSet(n));
-  Dependency::DeepRemoveUselessDependencies(equationSetClone);
+  Dependency::DeepRemoveUselessDependencies(equationListClone);
 
   // Make sure the solution satisfies dependencies in equations
-  assert(equationSetClone->isList());
-  for (const Tree* equation : equationSetClone->children()) {
+  assert(equationListClone->isList());
+  for (const Tree* equation : equationListClone->children()) {
     if (equation->isUndefined()) {
-      equationSetClone->removeTree();
+      equationListClone->removeTree();
       matrix->removeTree();
-      equationSetWithoutDep->removeTree();
+      equationListWithoutDep->removeTree();
       assert(metadata->error == Error::NoError);
       return SharedTreeStack->pushSet(0);
     }
@@ -601,15 +601,15 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationSet,
       metadata->error = (n == 1 && !Dependency::Main(equation)->isZero())
                             ? Error::RequireApproximateSolution
                             : Error::EquationUnhandled;
-      equationSetClone->removeTree();
+      equationListClone->removeTree();
       matrix->removeTree();
-      equationSetWithoutDep->removeTree();
+      equationListWithoutDep->removeTree();
       return nullptr;
     }
   }
-  equationSetClone->removeTree();
+  equationListClone->removeTree();
 
-  equationSetWithoutDep->removeTree();
+  equationListWithoutDep->removeTree();
   assert(metadata->error == Error::NoError);
   return matrix;
 }
@@ -677,12 +677,12 @@ Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
   return result;
 }
 
-Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationSet,
+Tree* EquationSolver::SolvePolynomial(const Tree* simplifiedEquationList,
                                       SolutionMetadata* metadata) {
-  assert(simplifiedEquationSet->isList() &&
-         simplifiedEquationSet->numberOfChildren() == 1);
+  assert(simplifiedEquationList->isList() &&
+         simplifiedEquationList->numberOfChildren() == 1);
 
-  Tree* equation = simplifiedEquationSet->child(0)->cloneTree();
+  Tree* equation = simplifiedEquationList->child(0)->cloneTree();
   // TODO: expansion should be done only once
   SystematicReduction::DeepReduce(equation);
   AdvancedReduction::DeepExpandAlgebraic(equation);

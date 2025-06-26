@@ -13,12 +13,12 @@ bool check_solutions(
     std::initializer_list<const char*> outputs,
     ProjectionContext projectionContext,
     EquationSolver::Error expectedError = EquationSolver::Error::NoError) {
-  Tree* equationSet = Poincare::Internal::List::PushEmpty();
+  Tree* equationList = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
-    NAry::AddChild(equationSet, parse(equation));
+    NAry::AddChild(equationList, parse(equation));
   }
   EquationSolver::SolverResult result =
-      EquationSolver::ExactSolve(equationSet, projectionContext);
+      EquationSolver::ExactSolve(equationList, projectionContext);
   EquationSolver::Error error = result.metadata.error;
   Tree* solutions = result.solutionList;
   quiz_assert(error == expectedError);
@@ -41,7 +41,7 @@ bool check_solutions(
   } else {
     quiz_assert(outputs.size() == 0);
   }
-  equationSet->removeTree();
+  equationList->removeTree();
   return true;
 }
 

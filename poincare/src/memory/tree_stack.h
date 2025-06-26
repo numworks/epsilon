@@ -31,11 +31,6 @@ class AbstractTreeStack : public BlockStack {
  public:
   using BlockStack::BlockStack;
 
-#if PLATFORM_DEVICE
-  __attribute__((section(".bss.$tree_stack")))
-#endif
-  ;
-
   size_t numberOfTrees() const;
 
   // Will changing the modified tree alter the other tree ?
@@ -266,7 +261,11 @@ class TemplatedTreeStack : public AbstractTreeStack {
 
 class TreeStack : public TemplatedTreeStack<POINCARE_TREE_STACK_SIZE> {
  public:
-  static OMG::GlobalBox<TreeStack> SharedTreeStack;
+#if PLATFORM_DEVICE
+  __attribute__((section(".bss.$tree_stack")))
+#endif
+  static OMG::GlobalBox<TreeStack>
+      SharedTreeStack;
 };
 
 inline constexpr OMG::GlobalBox<TreeStack>& SharedTreeStack =

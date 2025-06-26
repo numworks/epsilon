@@ -117,6 +117,7 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
 
   TreeRef result;
   assert(metadata.error == Error::NoError);
+  metadata.solutionType = SolutionType::Exact;
 
   // Step 2.1. Try with linear system solving
   result = SolveLinearSystem(reducedEquationList, &metadata);
@@ -233,6 +234,9 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
     }
     return {nullptr, metadata};
   }
+
+  metadata.solutionType = SolutionType::Approximate;
+  metadata.solvingMethod = SolvingMethod::GeneralMonovariable;
 
   assert(reducedEquationList->isList() &&
          reducedEquationList->numberOfChildren() == 1);
@@ -591,8 +595,6 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationList,
       return nullptr;
     }
 #endif
-  } else {
-    metadata->solutionType = SolutionType::Exact;
   }
   assert(rank == n);
 

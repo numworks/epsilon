@@ -35,13 +35,13 @@ Internal::Tree* equationAtIndex(size_t index, const EquationStore* store) {
   return equal;
 }
 
-Internal::Tree* equationSet(const EquationStore* store) {
-  Internal::Tree* equationSet = Internal::List::PushEmpty();
+Internal::Tree* equationList(const EquationStore* store) {
+  Internal::Tree* equationList = Internal::List::PushEmpty();
   int nEquations = store->numberOfDefinedModels();
   for (int i = 0; i < nEquations; i++) {
-    Internal::NAry::AddChild(equationSet, equationAtIndex(i, store));
+    Internal::NAry::AddChild(equationList, equationAtIndex(i, store));
   }
-  return equationSet;
+  return equationList;
 }
 
 SystemOfEquations::Error SystemOfEquations::exactSolve(
@@ -50,14 +50,15 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   m_solutionMetadata.unknownVariables.clear();
   m_solutionMetadata.definedVariables.clear();
 
-  Internal::Tree* set = equationSet(m_store);
+  Internal::Tree* eqList = equationList(m_store);
   EquationSolver::SolverResult result = EquationSolver::ExactSolve(
-      set, {
-               .m_complexFormat =
-                   MathPreferences::SharedPreferences()->complexFormat(),
-               .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
-               .m_context = context,
-           });
+      eqList,
+      {
+          .m_complexFormat =
+              MathPreferences::SharedPreferences()->complexFormat(),
+          .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+          .m_context = context,
+      });
   Internal::Tree* solutionList = result.solutionList;
   m_solutionMetadata = result.metadata;
   if (m_solutionMetadata.error == Error::NoError) {
@@ -71,7 +72,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   } else {
     assert(!solutionList);
   }
-  set->removeTree();
+  eqList->removeTree();
   return m_solutionMetadata.error;
 }
 
@@ -100,11 +101,11 @@ void SystemOfEquations::cancelApproximateSolve() {
 void SystemOfEquations::approximateSolve(Context* context) {
   assert(m_store->numberOfDefinedModels() == 1);
   m_wasInterrupted = false;
-  Internal::Tree* set = equationSet(m_store);
+  Internal::Tree* eqList = equationList(m_store);
 
   EquationSolver::SolverResult result =
       Poincare::Internal::EquationSolver::ApproximateSolve(
-          set,
+          eqList,
           {.m_complexFormat =
                MathPreferences::SharedPreferences()->complexFormat(),
            .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
@@ -131,7 +132,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
                  Poincare::Internal::FloatHelper::To(solution), false);
   }
   result.solutionList->removeTree();
-  set->removeTree();
+  eqList->removeTree();
 }
 
 void SystemOfEquations::tidy(PoolObject* treePoolCursor) {

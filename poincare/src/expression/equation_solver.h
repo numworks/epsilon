@@ -96,12 +96,12 @@ class EquationSolver {
     SolutionMetadata metadata;
   };
 
-  static SolverResult ExactSolve(const Tree* equationsSet,
+  static SolverResult ExactSolve(const Tree* equationList,
                                  ProjectionContext projectionContext);
 
   /* If the range is (NaN, NaN), it will be automatically computed. */
   static SolverResult ApproximateSolve(
-      const Tree* equationsSet, ProjectionContext projectionContext,
+      const Tree* equationList, ProjectionContext projectionContext,
       Range1D<double> range = Range1D<double>());
 
  private:
@@ -116,8 +116,7 @@ class EquationSolver {
   };
 
   struct PreprocessingResult {
-    Tree* reducedEquationSet = nullptr;
-
+    Tree* reducedEquationList = nullptr;
     SolutionMetadata partialMetadata;
   };
 
@@ -130,20 +129,20 @@ class EquationSolver {
    * - overrideDefinedVariables
    * - complexFormat
    */
-  static PreprocessingResult PreprocessEquationSet(
-      const Tree* equationsSet, ProjectionContext* projectionContext,
+  static PreprocessingResult PreprocessEquationList(
+      const Tree* equationList, ProjectionContext* projectionContext,
       UnknownSelectionStrategy selectionStrategy);
 
   // Return list of exact solutions.
-  static SolverResult PrivateExactSolve(const Tree* equationsSet,
+  static SolverResult PrivateExactSolve(const Tree* equationList,
                                         ProjectionContext projectionContext,
                                         bool overrideDefinedVariables);
 
   // Return list of solutions for linear system.
-  static Tree* SolveLinearSystem(const Tree* equationsSet,
+  static Tree* SolveLinearSystem(const Tree* equationList,
                                  SolutionMetadata* metadata);
   // Return list of solutions for a polynomial equation.
-  static Tree* SolvePolynomial(const Tree* equationsSet,
+  static Tree* SolvePolynomial(const Tree* equationList,
                                SolutionMetadata* metadata);
 
   // Return list of linear coefficients for each variables and final constant.

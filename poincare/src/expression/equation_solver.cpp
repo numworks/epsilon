@@ -41,11 +41,10 @@ void VariableArray::fillWithList(const Tree* list) {
   }
 }
 
-EquationSolver::SolverResult EquationSolver::ExactSolve(
+EquationSolver::SolverResult EquationSolver::ExactSolveAdaptive(
     const Tree* equationList, ProjectionContext projectionContext) {
   // Try solving while using user variables
-  SolverResult firstResult =
-      PrivateExactSolve(equationList, projectionContext, false);
+  SolverResult firstResult = ExactSolve(equationList, projectionContext, false);
 
   Error firstError = firstResult.error;
   size_t nDefinedVariables =
@@ -77,8 +76,7 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   }
 
   // Try solving while overriding user variables
-  SolverResult secondResult =
-      PrivateExactSolve(equationList, projectionContext, true);
+  SolverResult secondResult = ExactSolve(equationList, projectionContext, true);
   Error secondError = secondResult.error;
 
   if (firstError == Error::NoError && secondError != Error::NoError &&
@@ -93,7 +91,7 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   return secondResult;
 }
 
-EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
+EquationSolver::SolverResult EquationSolver::ExactSolve(
     const Tree* equationList, ProjectionContext projectionContext,
     bool overrideDefinedVariables) {
   // Step 1. Analyze the equations

@@ -86,8 +86,15 @@ class EquationSolver {
     SolutionMetadata solutionMetadata;
   };
 
+  // Return list of exact solutions.
   static SolverResult ExactSolve(const Tree* equationList,
-                                 ProjectionContext projectionContext);
+                                 ProjectionContext projectionContext,
+                                 bool overrideDefinedVariables = false);
+
+  /* Will try to exact solve with overrideDefinedVariables = false
+   * but will fallback on overrideDefinedVariables = true if it fails */
+  static SolverResult ExactSolveAdaptive(const Tree* equationList,
+                                         ProjectionContext projectionContext);
 
   /* If the range is (NaN, NaN), it will be automatically computed. */
   static SolverResult ApproximateSolve(const Tree* equationList,
@@ -117,11 +124,6 @@ class EquationSolver {
   static PreprocessingResult PreprocessEquationList(
       const Tree* equationList, ProjectionContext* projectionContext,
       UnknownSelectionStrategy selectionStrategy);
-
-  // Return list of exact solutions.
-  static SolverResult PrivateExactSolve(const Tree* equationList,
-                                        ProjectionContext projectionContext,
-                                        bool overrideDefinedVariables);
 
   // Return list of solutions for linear system.
   static SolverResult SolveLinearSystem(

@@ -501,6 +501,20 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
   return fullExploration;
 }
 
+bool inline AdvancedReduction::DuplicateRootAndReduceDirection(
+    const Tree* target, Context* ctx, Direction dir) {
+  Tree* oldRoot = ctx->m_root;
+  assert(oldRoot <= target && target < oldRoot->nextTree());
+  Tree* newRoot = oldRoot->cloneTree();
+  Tree* newTarget = target - oldRoot + newRoot;
+  ctx->m_root = newRoot;
+  bool result = ReduceDirection(newTarget, ctx, dir);
+  ctx->m_root = oldRoot;
+  SharedTreeStack->dropBlocksFrom(newRoot);
+  ctx->m_mustResetRoot = false;
+  return result;
+}
+
 bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
                                                Direction dir) {
   assert(!dir.isNextNode());
@@ -562,7 +576,8 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
 
 bool AdvancedReduction::ReduceContractThenExpand(Tree* e, Context* ctx) {
   VERBOSE_INDENT(2);
-  bool fullExploration = ReduceDirection(e, ctx, Direction::Contract());
+  bool fullExploration =
+      DuplicateRootAndReduceDirection(e, ctx, Direction::Contract());
   if (ctx->shouldEarlyExit()) {
     VERBOSE_OUTDENT(2);
     return false;
@@ -573,7 +588,8 @@ bool AdvancedReduction::ReduceContractThenExpand(Tree* e, Context* ctx) {
     return false;
   }
   fullExploration =
-      ReduceDirection(e, ctx, Direction::Expand()) && fullExploration;
+      DuplicateRootAndReduceDirection(e, ctx, Direction::Expand()) &&
+      fullExploration;
   VERBOSE_OUTDENT(2);
   return fullExploration;
 }

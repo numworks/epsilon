@@ -25,19 +25,19 @@
 
 namespace Poincare::Internal {
 
-void VariableArray::append(const char* variable) {
-  assert(m_numberOfVariables < k_maxNumberOfVariables);
-  assert(strlen(variable) < Symbol::k_maxNameLength);
-  memcpy(m_variables[m_numberOfVariables], variable, strlen(variable) + 1);
-  m_numberOfVariables++;
+void VariableArray::push(const char* variable) {
+  assert(m_size < capacity());
+  assert(variable && strlen(variable) < Symbol::k_maxNameLength);
+  memcpy(m_data[m_size], variable, strlen(variable) + 1);
+  m_size++;
 }
 
 void VariableArray::fillWithList(const Tree* list) {
   assert((list->isList() || list->isSet()) &&
-         list->numberOfChildren() <= k_maxNumberOfVariables);
+         list->numberOfChildren() <= capacity());
   clear();
   for (const Tree* variable : list->children()) {
-    append(Symbol::GetName(variable));
+    push(Symbol::GetName(variable));
   }
 }
 
@@ -49,7 +49,7 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   if (firstResult.metadata.error == Error::RequireApproximateSolution ||
       (firstResult.metadata.error == Error::NoError &&
        firstResult.solutionList->numberOfChildren() > 0) ||
-      firstResult.metadata.definedVariables.numberOfVariables() == 0) {
+      firstResult.metadata.definedVariables.size() == 0) {
     return firstResult;
   }
   assert((firstResult.solutionList == nullptr) ||
@@ -106,7 +106,7 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
   if (metadata.error == Error::NonLinearSystem &&
-      metadata.unknownVariables.numberOfVariables() <= 1 &&
+      metadata.unknownVariables.size() <= 1 &&
       reducedEquationList->numberOfChildren() <= 1) {
     assert(result.isUninitialized());
     metadata.error = Error::NoError;
@@ -144,10 +144,10 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
   }
 
   /* Replace unknown Variables back to UserSymbols */
-  int numberOfUnknowns = metadata.unknownVariables.numberOfVariables();
+  int numberOfUnknowns = metadata.unknownVariables.size();
   Tree* userSymbols = SharedTreeStack->pushList(numberOfUnknowns);
   for (int i = 0; i < numberOfUnknowns; i++) {
-    const char* variableName = metadata.unknownVariables.variable(i);
+    const char* variableName = metadata.unknownVariables[i];
     SharedTreeStack->pushUserSymbol(variableName);
   }
   for (const Tree* symbol : userSymbols->children()) {
@@ -219,9 +219,9 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
          reducedEquationList->numberOfChildren() == 1);
   Tree* preparedEquation = reducedEquationList->child(0);
 
-  assert(metadata.unknownVariables.numberOfVariables() == 1);
+  assert(metadata.unknownVariables.size() == 1);
   Approximation::PrepareFunctionForApproximation(
-      preparedEquation, metadata.unknownVariables.variable(0),
+      preparedEquation, metadata.unknownVariables[0],
       Preferences::ComplexFormat::Real);
 
   if (range.isNan()) {
@@ -326,9 +326,9 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
   for (Tree* userSymbol : userSymbols->children()) {
     const char* symbolName = Symbol::GetName(userSymbol);
     if (context && context->expressionForUserNamed(userSymbol)) {
-      metadata.definedVariables.append(symbolName);
+      metadata.definedVariables.push(symbolName);
     } else {
-      undefinedVariables.append(symbolName);
+      undefinedVariables.push(symbolName);
     }
   }
 
@@ -337,13 +337,12 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
       metadata.overrideDefinedVariables = false;
       break;
     case UnknownSelectionStrategy::AllSymbols:
-      metadata.overrideDefinedVariables =
-          metadata.definedVariables.numberOfVariables() > 0;
+      metadata.overrideDefinedVariables = metadata.definedVariables.size() > 0;
       break;
     case UnknownSelectionStrategy::MaxOneSymbol:
       metadata.overrideDefinedVariables =
-          (undefinedVariables.numberOfVariables() == 0 &&
-           metadata.definedVariables.numberOfVariables() == 1);
+          (undefinedVariables.size() == 0 &&
+           metadata.definedVariables.size() == 1);
       break;
     default:
       OMG::unreachable();
@@ -355,7 +354,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
     metadata.unknownVariables = undefinedVariables;
   }
 
-  int numberOfUnknowns = metadata.unknownVariables.numberOfVariables();
+  int numberOfUnknowns = metadata.unknownVariables.size();
 
   if (numberOfUnknowns > k_maxNumberOfExactSolutions ||
       (selectionStrategy == UnknownSelectionStrategy::MaxOneSymbol &&
@@ -395,8 +394,8 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
 
   // Step 3.2. Replace unkowns
 
-  for (int i = 0; i < metadata.unknownVariables.numberOfVariables(); i++) {
-    const char* variable = metadata.unknownVariables.variable(i);
+  for (int i = 0; i < metadata.unknownVariables.size(); i++) {
+    const char* variable = metadata.unknownVariables[i];
     // TODO: Use a more precise complexSign when possible for better reduction.
     Variables::ReplaceSymbol(reducedEquationList, variable, i++,
                              ComplexSign::Finite());
@@ -440,7 +439,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationList,
   }
 
   // n unknown variables and rows equations
-  int n = metadata->unknownVariables.numberOfVariables();
+  int n = metadata->unknownVariables.size();
   uint8_t cols = n + 1;
   uint8_t rows = reducedEquationList->numberOfChildren();
   TreeRef matrix = SharedTreeStack->pushMatrix(0, 0);
@@ -507,7 +506,7 @@ Tree* EquationSolver::SolveLinearSystem(const Tree* reducedEquationList,
     int variable = n - 1;
     int row = m - 1;
     int firstVariableInRow = -1;
-    int numberOfUnknowns = metadata->unknownVariables.numberOfVariables();
+    int numberOfUnknowns = metadata->unknownVariables.size();
     while (variable >= 0) {
       // Find the first variable with a non-null coefficient in the current row
       if (row >= 0) {
@@ -796,9 +795,9 @@ uint32_t EquationSolver::TagParametersUsedAsVariables(VariableArray variables) {
       OMG::Print::LengthOfUInt32(OMG::Base::Decimal, k_maxIndex);
   /* Only check local variables that may not have a global definition. The
    * others  will be checked for later. */
-  for (int i = 0; i < variables.numberOfVariables(); i++) {
+  for (int i = 0; i < variables.size(); i++) {
     // Set the k-th bit in tags if name == "t{k}" and 0th if name is "t"
-    const char* variable = variables.variable(i);
+    const char* variable = variables[i];
     if (variable[0] != k_parameterPrefix) {
       continue;
     }

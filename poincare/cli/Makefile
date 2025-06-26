@@ -1,18 +1,11 @@
 # Copied from poincarejs, some parts could be factorized
 
-# Assert this is being run from the repository's top level, as haussmann does
-# not like having .. in paths.
-ifeq ($(shell find . -maxdepth 1 -name '.git'),)
-$(error For now, this makefile should be run from the root of epsilon. Use "make -f poincare/cli/Makefile ..." instead)
-endif
-
-PATH_haussmann := haussmann
+PATH_haussmann := ../../haussmann
 APP_NAME := Poincare
 APP_VERSION := 0.1.0
 OUTPUT_ROOT := output
 DEBUG ?= 1
 PLATFORM ?= host
-EMIT_TSD ?= 1
 include $(PATH_haussmann)/Makefile
 
 POINCARE_TREE_LOG = 1

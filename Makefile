@@ -4,6 +4,9 @@ epsilon%:
 scandium%:
 	$(MAKE) -C scandium $@
 
+poincare%:
+	$(MAKE) -C poincare $@
+
 format:
 	$(MAKE) -C epsilon ROOT=`pwd` $@
 

@@ -5,7 +5,7 @@
 namespace Escher {
 
 StackView::StackView(Style style, bool extendVertically,
-                     OMG::AbstractStack<StackHeaderView>* headerViewStack)
+                     OMG::Vector<StackHeaderView>* headerViewStack)
     : View(),
       m_stackHeaderViews(headerViewStack),
       m_borderView(Palette::GrayBright),
@@ -88,7 +88,7 @@ void StackView::layoutSubviews(bool force) {
   int numberOfStacks = m_stackHeaderViews->size();
   for (int i = 0; i < numberOfStacks; i++) {
     setChildFrame(
-        m_stackHeaderViews->elementAtIndex(i),
+        &(*m_stackHeaderViews)[i],
         KDRect(0, heightOffset, width,
                Metric::StackTitleHeight + Metric::CellSeparatorThickness),
         force);
@@ -148,7 +148,7 @@ View* StackView::subviewAtIndex(int index) {
   int numberOfStacks = m_stackHeaderViews->size();
   if (index < numberOfStacks) {
     assert(index >= 0);
-    return m_stackHeaderViews->elementAtIndex(index);
+    return &(*m_stackHeaderViews)[index];
   }
   if (index == numberOfStacks) {
     return m_contentView;

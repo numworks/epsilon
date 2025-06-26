@@ -555,22 +555,35 @@ Arithmetic::Divisors Arithmetic::ListPositiveDivisors(uint32_t n) {
     return result;
   }
 
-  // Except n itself, all divisors are under n/2
-  uint32_t kEnd = n / 2;
   // No need to look for even divisors if n is odd
   uint32_t kStep = 1 + (n % 2);
-  // Look for positive divisors of n
-  for (uint32_t k = 1; k <= kEnd; k += kStep) {
-    if (n % k == 0) {
-      result.list[result.numberOfDivisors++] = k;
-      if (result.numberOfDivisors >= Divisors::k_maxNumberOfDivisors) {
-        // TODO: use a TreeStackException
-        result.numberOfDivisors = Divisors::k_divisorListFailed;
-        return result;
-      }
+  // Look for divisors pairs, add k at the start of the list and n/k at the end
+  uint32_t k = 1;
+  int nbDivisorsPairs = 0;
+  while (k * k < n) {
+    if (n % k != 0) {
+      k += kStep;
+      continue;
     }
+    result.list[nbDivisorsPairs++] = k;
+    result.list[Divisors::k_maxNumberOfDivisors - nbDivisorsPairs] = n / k;
+    if (nbDivisorsPairs >= Divisors::k_maxNumberOfDivisors / 2) {
+      // TODO: use a TreeStackException
+      result.numberOfDivisors = Divisors::k_divisorListFailed;
+      return result;
+    }
+    k += kStep;
   }
-  result.list[result.numberOfDivisors++] = n;
+  // Small divisors are <= sqrt(n)
+  int nbSmallDivisors = nbDivisorsPairs;
+  if (k * k == n) {
+    result.list[nbSmallDivisors++] = k;
+  }
+  // Merge the start and the end of the list
+  memmove(&result.list[nbSmallDivisors],
+          &result.list[Divisors::k_maxNumberOfDivisors - nbDivisorsPairs],
+          sizeof(*result.list) * nbDivisorsPairs);
+  result.numberOfDivisors = nbSmallDivisors + nbDivisorsPairs;
   return result;
 }
 

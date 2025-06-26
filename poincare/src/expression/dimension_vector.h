@@ -13,6 +13,7 @@ namespace Units {
 
 struct SIVector {
   constexpr static uint8_t k_numberOfBaseUnits = 8;
+  constexpr static int8_t k_undefCoefficient = INT8_MIN;
   // Operators
   bool operator==(const SIVector&) const = default;
   bool operator!=(const SIVector&) const = default;
@@ -42,21 +43,23 @@ struct SIVector {
   constexpr static SIVector Empty() { return {}; }
   constexpr bool isUndef() const {
     for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
-      if (coefficientAtIndex(i) != INT8_MIN) {
+      if (coefficientAtIndex(i) != k_undefCoefficient) {
         return false;
       }
     }
     return true;
   }
+  /* Vector for UndefUnit. Values do not matter since UndefUnit is meant to have
+   * the same dimension as any other unit. */
   constexpr static SIVector Undef() {
-    return SIVector{.time = INT8_MIN,
-                    .distance = INT8_MIN,
-                    .angle = INT8_MIN,
-                    .mass = INT8_MIN,
-                    .current = INT8_MIN,
-                    .temperature = INT8_MIN,
-                    .amountOfSubstance = INT8_MIN,
-                    .luminousIntensity = INT8_MIN};
+    return SIVector{.time = k_undefCoefficient,
+                    .distance = k_undefCoefficient,
+                    .angle = k_undefCoefficient,
+                    .mass = k_undefCoefficient,
+                    .current = k_undefCoefficient,
+                    .temperature = k_undefCoefficient,
+                    .amountOfSubstance = k_undefCoefficient,
+                    .luminousIntensity = k_undefCoefficient};
   }
 
   /* Return [false] if operation overflowed.

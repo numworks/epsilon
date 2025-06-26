@@ -746,6 +746,7 @@ bool Dimension::operator==(const Dimension& other) const {
   }
   if (type == DimensionType::Unit) {
     if (unit.vector.isUndef() || other.unit.vector.isUndef()) {
+      // UndefUnif has the same dimension as any other unit.
       return true;
     }
     return unit.vector == other.unit.vector &&

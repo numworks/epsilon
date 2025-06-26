@@ -93,6 +93,7 @@ QUIZ_CASE(pcj_dimension) {
   QUIZ_ASSERT(hasInvalidDimOrLen(KLogicalNot(KBadType)));
   QUIZ_ASSERT(hasInvalidDimOrLen(KLogicalOr(KTrue, KUndef)));
   QUIZ_ASSERT(dim(KLogicalAnd(KTrue, KUndefBoolean), Boolean));
+  // UndefUnit has the same dimension as any unit
   QUIZ_ASSERT(dim(KUndefUnit, Dimension::Unit(KUnits::meter)));
 
   QUIZ_ASSERT(len("1", Dimension::k_nonListListLength));

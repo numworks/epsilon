@@ -7,6 +7,7 @@
  * Tokenizer determines a Type and may save other relevant data intended for the
  * Parser. */
 
+#include <omg/vector.h>
 #include <poincare/src/layout/layout_span_decoder.h>
 
 #include "parsing_context.h"
@@ -18,13 +19,9 @@ class Tokenizer {
  public:
   Tokenizer(const Rack* rack, ParsingContext* parsingContext,
             size_t textStart = 0, int textEnd = -1)
-      : m_decoder(rack, textStart, textEnd),
-        m_parsingContext(parsingContext),
-        m_numberOfStoredIdentifiers(0) {}
+      : m_decoder(rack, textStart, textEnd), m_parsingContext(parsingContext) {}
   Tokenizer(LayoutSpanDecoder& decoder, ParsingContext* parsingContext)
-      : m_decoder(decoder),
-        m_parsingContext(parsingContext),
-        m_numberOfStoredIdentifiers(0) {}
+      : m_decoder(decoder), m_parsingContext(parsingContext) {}
   Token popToken();
 
   void skip(int n) { m_decoder.skip(n); }
@@ -34,17 +31,17 @@ class Tokenizer {
   struct State {
     LayoutSpanDecoder decoder;
     Poincare::Context* parsingContextContext;
-    int numberOfStoredIdentifiers = -1;
+    size_t numberOfStoredIdentifiers = -1;
   };
   State currentState() const {
     return State{.decoder = m_decoder,
                  .parsingContextContext = m_parsingContext->context(),
-                 .numberOfStoredIdentifiers = m_numberOfStoredIdentifiers};
+                 .numberOfStoredIdentifiers = m_storedIdentifiersList.size()};
   }
   void setState(const State& state) {
     m_decoder = state.decoder;
     m_parsingContext->setContext(state.parsingContextContext);
-    m_numberOfStoredIdentifiers = state.numberOfStoredIdentifiers;
+    m_storedIdentifiersList.resize(state.numberOfStoredIdentifiers);
   }
 
   static bool IsIdentifierMaterial(const CodePoint c);
@@ -148,8 +145,8 @@ class Tokenizer {
    * reparse later to pop "b" and "c".
    * This has a limited size though so it won't memoize every token for
    * long strings. */
-  Token m_storedIdentifiersList[k_maxNumberOfIdentifiersInList];
-  int m_numberOfStoredIdentifiers;
+  OMG::StaticVector<Token, k_maxNumberOfIdentifiersInList>
+      m_storedIdentifiersList;
 };
 
 }  // namespace Poincare::Internal

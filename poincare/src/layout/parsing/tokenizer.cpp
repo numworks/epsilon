@@ -164,11 +164,10 @@ Token Tokenizer::popNumber() {
 }
 
 Token Tokenizer::popToken() {
-  if (m_numberOfStoredIdentifiers != 0) {
-    // Popping an implicit multiplication between identifiers
-    m_numberOfStoredIdentifiers--;
-    // The last identifier of the list is the first of the string
-    return m_storedIdentifiersList[m_numberOfStoredIdentifiers];
+  if (m_storedIdentifiersList.size() > 0) {
+    /* Popping an implicit multiplication between identifiers
+     *  The last identifier of the list is the first of the string */
+    return m_storedIdentifiersList.pop();
   }
   // Skip whitespaces
   while (canPopCodePoint(' ')) {
@@ -249,10 +248,10 @@ Token Tokenizer::popToken() {
 
     // Decoder is one CodePoint ahead of the beginning of the identifier string
     m_decoder = start;
-    assert(m_numberOfStoredIdentifiers ==
+    assert(m_storedIdentifiersList.size() ==
            0);  // assert we're done with previous tokenization
     fillIdentifiersList();
-    assert(m_numberOfStoredIdentifiers > 0);
+    assert(m_storedIdentifiersList.size() > 0);
     // The identifiers list is filled, go back to beginning of popToken
     return popToken();
   }
@@ -341,17 +340,16 @@ void Tokenizer::fillIdentifiersList() {
   const Layout* currentStringEnd = m_decoder.layout();
   assert(currentStringEnd - identifiersStringStart > 0);
   while (identifiersStringStart < currentStringEnd) {
-    if (m_numberOfStoredIdentifiers >= k_maxNumberOfIdentifiersInList) {
+    if (m_storedIdentifiersList.isFull()) {
       /* If there is not enough space in the list, just empty it.
        * All the tokens that have already been parsed are lost and will be
        * reparsed later. This is not optimal, but we can't remember an infinite
        * list of token. */
-      m_numberOfStoredIdentifiers = 0;
+      m_storedIdentifiersList.clear();
     }
     Token rightMostToken = popLongestRightMostIdentifier(identifiersStringStart,
                                                          &currentStringEnd);
-    m_storedIdentifiersList[m_numberOfStoredIdentifiers] = rightMostToken;
-    m_numberOfStoredIdentifiers++;
+    m_storedIdentifiersList.push(rightMostToken);
   }
   /* Since the m_storedIdentifiersList has limited size, fillIdentifiersList
    * will sometimes not parse the whole identifiers string.
@@ -391,7 +389,7 @@ Token Tokenizer::popLongestRightMostIdentifier(const Layout* stringStart,
      * To avoid missing the "5", we delete every token right of "Ans" and
      * we later re-tokenize starting from "5x".
      * */
-    m_numberOfStoredIdentifiers = 0;
+    m_storedIdentifiersList.clear();
   }
   *stringEnd = stringStart;
   return Token(tokenType, stringStart, tokenLength);

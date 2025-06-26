@@ -48,16 +48,16 @@ class SystemOfEquations {
   }
 
   const char* unknownVariable(size_t index) const {
-    return m_solutionMetadata.unknownVariables[index];
+    return m_equationMetadata.unknownVariables[index];
   }
   size_t numberOfDefinedVariables() const {
-    return m_solutionMetadata.definedVariables.size();
+    return m_equationMetadata.definedVariables.size();
   }
   const char* definedVariable(size_t index) const {
-    return m_solutionMetadata.definedVariables[index];
+    return m_equationMetadata.definedVariables[index];
   }
   bool overrideDefinedVariables() const {
-    return m_solutionMetadata.overrideDefinedVariables;
+    return m_equationMetadata.overrideDefinedVariables;
   }
 
   // Approximate range
@@ -118,6 +118,7 @@ class SystemOfEquations {
   void registerSolution(double f);
 
   Solution m_solutions[k_maxNumberOfSolutions];
+  Poincare::Internal::EquationSolver::EquationMetadata m_equationMetadata;
   Poincare::Internal::EquationSolver::SolutionMetadata m_solutionMetadata;
   size_t m_numberOfSolutions;
   EquationStore* m_store;

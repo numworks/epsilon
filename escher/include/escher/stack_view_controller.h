@@ -50,7 +50,7 @@ class StackViewController : public ViewController {
  protected:
   StackViewController(Responder* parentResponder, StackView::Style style,
                       bool extendVertically,
-                      OMG::AbstractStack<StackHeaderView>* headerViewStack);
+                      OMG::Vector<StackHeaderView>* headerViewStack);
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:
@@ -90,7 +90,7 @@ class CustomSizeStackViewController : public StackViewController {
  public:
   static_assert(Capacity <= StackView::k_maxDepth);
 
-  using Stack = OMG::Stack<StackHeaderView, Capacity>;
+  using Stack = OMG::StaticVector<StackHeaderView, Capacity>;
 
   constexpr static int k_maxNumberOfChildren = Capacity;
 

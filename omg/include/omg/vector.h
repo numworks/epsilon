@@ -1,0 +1,87 @@
+#ifndef OMG_VECTOR_H
+#define OMG_VECTOR_H
+
+#include <assert.h>
+#include <stddef.h>
+
+/* The StaticVector class is a custom implementation of boost's static_vector
+ * https://beta.boost.org/doc/libs/1_58_0/doc/html/boost/container/static_vector.html
+ */
+
+/* TODO: The class StaticVector should be used in many places in the code.
+ * TIP: Search for "m_numberOf" or "int m_" or "size_t m_" to find places where
+ * it could apply. */
+
+namespace OMG {
+
+template <typename T>
+class Vector {
+ public:
+  Vector() : m_size(0) {}
+  virtual ~Vector() = default;
+
+  size_t size() const { return m_size; }
+  void clear() { m_size = 0; }
+  void resize(size_t size) {
+    assert(size <= m_size);
+    m_size = size;
+  }
+
+  virtual const T& operator[](size_t index) const = 0;
+  virtual T& operator[](size_t index) = 0;
+
+  void push(const T& value) { (*this)[m_size++] = value; }
+  T& pop() {
+    assert(this->m_size > 0);
+    T& result = (*this)[m_size - 1];
+    /* This cannot be decreased before accessing the element or the assert in
+     * the operator[] will fail */
+    --m_size;
+    return result;
+  }
+  void removeAt(size_t index) {
+    assert(index < m_size);
+    for (size_t i = index; i < m_size - 1; i++) {
+      (*this)[i] = (*this)[i + 1];
+    }
+    --m_size;
+  }
+
+ protected:
+  size_t m_size;
+};
+
+/* This class is a simple static array that can hold up to CAPACITY elements
+ * of type T */
+template <typename T, size_t CAPACITY>
+class StaticVector : public Vector<T> {
+  static_assert(CAPACITY > 0, "StaticVector must have a positive capacity");
+
+ public:
+  using Vector<T>::Vector;
+
+  // Use this constructor only if T has a proper default constructor
+  StaticVector(size_t initialSize) : Vector<T>() {
+    assert(initialSize <= CAPACITY);
+    this->m_size = initialSize;
+  }
+
+  size_t capacity() const { return CAPACITY; }
+  bool isFull() const { return this->m_size == CAPACITY; }
+
+  const T& operator[](size_t index) const override {
+    assert(index < this->m_size);
+    return m_data[index];
+  }
+  T& operator[](size_t index) override {
+    assert(index < this->m_size);
+    return m_data[index];
+  }
+
+ protected:
+  T m_data[CAPACITY];
+};
+
+}  // namespace OMG
+
+#endif

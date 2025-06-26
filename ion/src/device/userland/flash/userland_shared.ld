@@ -106,12 +106,18 @@ SECTIONS {
     *(COMMON)
     _external_apps_RAM_start = .;
     KEEP(*(.bss.$app_buffer))
+    _poincare_pool_start = .;
     KEEP(*(.bss.$poincare_pool))
+    _poincare_pool_end = .;
+    _tree_stack_start = .;
     KEEP(*(.bss.$tree_stack))
+    _tree_stack_end = .;
     _bss_section_end_ram = .;
     *(.bss.*)
     _bss_section_assert_end_ram = .;
-    ASSERT (( _bss_section_end_ram == _bss_section_assert_end_ram), ".bss.$poincare_pool section should be the last symbol of bss to be included in the external apps RAM range.");
+    ASSERT (_poincare_pool_end > _poincare_pool_start, "Error: poincare_pool is empty!");
+    ASSERT (_tree_stack_end > _tree_stack_start, "Error: tree_stack is empty!");
+    ASSERT (_bss_section_end_ram == _bss_section_assert_end_ram, ".bss.$poincare_pool section should be the last symbol of bss to be included in the external apps RAM range.");
   } >SRAM
 
   .heap : {

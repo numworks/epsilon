@@ -176,11 +176,12 @@ EquationSolver::SolverResult EquationSolver::PrivateExactSolve(
 
   // If the solution is formal, replace the other variables with t, t1, t2, etc.
   if (metadata.solutionType == SolutionType::Formal) {
-    int extraVariableId = numberOfUnknowns;
-    while (Variables::HasVariable(result, extraVariableId)) {
-      extraVariableId++;
+    int numberOfExtraVariables = 0;
+    /* The id of the extra variables starts at 0 as other variables were already
+     * replaced by user symbols. */
+    while (Variables::HasVariable(result, numberOfExtraVariables)) {
+      numberOfExtraVariables++;
     }
-    int numberOfExtraVariables = extraVariableId - numberOfUnknowns;
     if (numberOfExtraVariables > 0) {
       // Start at 0 ("t") instead of 1 ("t1") if there is only one variable
       size_t parameterIndex = (numberOfExtraVariables > 1) ? 1 : 0;

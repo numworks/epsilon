@@ -757,6 +757,7 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("arcosh(i)", "arcosh(i)");
   simplifies_to("arsinh(i)", "π/2×i");
   simplifies_to("artanh(i)", "π/4×i");
+  simplifies_to("cosh(2*pi+1)", "cosh(1+2×π)", cartesianCtx);
   simplifies_to("cosh(-x)+sinh(x)", "e^(x)");
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
   // TODO: Should simplify to 0

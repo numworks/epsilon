@@ -182,6 +182,9 @@ class AdvancedReduction {
    * Return true if advanced reduction possibilities have all been explored. */
   static bool PrivateReduce(Tree* e, Context* ctx,
                             bool zeroNextNodeAllowed = true);
+  /* Duplicate the current root and call [ReduceDirection] on the copy. */
+  static bool DuplicateRootAndReduceDirection(const Tree* e, Context* ctx,
+                                              Direction direction);
   /* Try one reduction step with given [direction], if successful calls
    * [PrivateReduce].
    * [direction] should be Contract or Expand only. NextNode are handled in

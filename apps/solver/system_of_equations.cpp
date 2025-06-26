@@ -51,7 +51,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   m_equationMetadata.definedVariables.clear();
 
   Internal::Tree* eqList = equationList(m_store);
-  EquationSolver::SolverResult result = EquationSolver::ExactSolve(
+  EquationSolver::SolverResult result = EquationSolver::ExactSolveAdaptive(
       eqList,
       {
           .m_complexFormat =

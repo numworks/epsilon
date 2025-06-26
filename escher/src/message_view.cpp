@@ -4,11 +4,9 @@
 namespace Escher {
 
 MessageView::MessageView(const I18n::Message* messages, const KDColor* colors,
-                         uint8_t numberOfMessages) {
-  m_numberOfMessages = numberOfMessages < k_maxNumberOfMessages
-                           ? numberOfMessages
-                           : k_maxNumberOfMessages;
-  for (uint8_t i = 0; i < m_numberOfMessages; i++) {
+                         uint8_t numberOfMessages)
+    : m_messageTextViews(std::min(numberOfMessages, k_maxNumberOfMessages)) {
+  for (uint8_t i = 0; i < m_messageTextViews.size(); i++) {
     m_messageTextViews[i].setFont(i == 0 ? KDFont::Size::Large
                                          : KDFont::Size::Small);
     m_messageTextViews[i].setMessage(messages[i]);
@@ -23,7 +21,7 @@ void MessageView::drawRect(KDContext* ctx, KDRect rect) const {
 }
 
 View* MessageView::subviewAtIndex(int index) {
-  if (index >= m_numberOfMessages) {
+  if (index >= m_messageTextViews.size()) {
     assert(false);
     return nullptr;
   }
@@ -31,7 +29,7 @@ View* MessageView::subviewAtIndex(int index) {
 }
 
 void MessageView::layoutSubviews(bool force) {
-  if (m_numberOfMessages == 0) {
+  if (m_messageTextViews.size() == 0) {
     return;
   }
   KDCoordinate width = bounds().width();
@@ -42,7 +40,7 @@ void MessageView::layoutSubviews(bool force) {
                 KDRect(0, k_titleMargin, width, titleHeight), force);
   const KDCoordinate paragraphHeight =
       k_titleMargin + titleHeight + k_paragraphMargin;
-  for (uint8_t i = 1; i < m_numberOfMessages; i++) {
+  for (uint8_t i = 1; i < m_messageTextViews.size(); i++) {
     setChildFrame(
         &m_messageTextViews[i],
         KDRect(0, paragraphHeight + (i - 1) * textHeight, width, textHeight),

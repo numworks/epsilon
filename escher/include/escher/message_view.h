@@ -2,6 +2,7 @@
 #define ESCHER_MESSAGE_VIEW_H
 
 #include <escher/message_text_view.h>
+#include <omg/vector.h>
 
 namespace Escher {
 
@@ -12,7 +13,7 @@ class MessageView : public View {
   void drawRect(KDContext* ctx, KDRect rect) const override;
 
  protected:
-  int numberOfSubviews() const override { return m_numberOfMessages; }
+  int numberOfSubviews() const override { return m_messageTextViews.size(); }
   View* subviewAtIndex(int index) override;
   void layoutSubviews(bool force = false) override;
 
@@ -20,8 +21,7 @@ class MessageView : public View {
   constexpr static KDCoordinate k_titleMargin = 40;
   constexpr static KDCoordinate k_paragraphMargin = 32;
   constexpr static uint8_t k_maxNumberOfMessages = 8;
-  MessageTextView m_messageTextViews[k_maxNumberOfMessages];
-  uint8_t m_numberOfMessages;
+  OMG::StaticVector<MessageTextView, k_maxNumberOfMessages> m_messageTextViews;
 };
 
 }  // namespace Escher

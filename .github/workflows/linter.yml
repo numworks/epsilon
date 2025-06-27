@@ -32,19 +32,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup
-        run: python3 -m venv .venv && .venv/bin/pip3 install black
-
-      - name: Get a recent clang-format version
-        uses: numworks/setup-llvm@latest
-
-      # These are for prettier
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install Node.js dependencies
-        run: npm install
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder
 
       - name: Lint files changed by PR
-        run: make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS="--dry-run --Werror" PYTHON=python3 PYFORMATARGS="--check" JSFORMATARGS="--check"
+        run: $DOCKER_RUN "make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS=\"--dry-run --Werror\" PYTHON=python3 PYFORMATARGS=\"--check\" JSFORMATARGS=\"--check\""

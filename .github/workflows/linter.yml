@@ -36,4 +36,4 @@ jobs:
         uses: ./.github/actions/docker-builder
 
       - name: Lint files changed by PR
-        run: $DOCKER_RUN "make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS=\"--dry-run --Werror\" PYTHON=python3 PYFORMATARGS=\"--check\" JSFORMATARGS=\"--check\""
+        run: $DOCKER_RUN "make format BASE=${{ steps.common_ancestor.outputs.commit_sha }} CXXFORMATARGS=\"--dry-run --Werror\" PYFORMATARGS=\"--check\" JSFORMATARGS=\"--check\""

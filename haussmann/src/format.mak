@@ -1,7 +1,7 @@
 CXXFORMAT := clang-format
 CXXFORMATARGS ?= -i --Werror --verbose
 GITDIFFARGS := --name-only --diff-filter=d
-PYFORMAT := ./.venv/bin/black
+PYFORMAT := $(PYTHON) -m black
 PYFORMATARGS ?=
 JSFORMAT := npx prettier
 JSFORMATARGS ?= --write

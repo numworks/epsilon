@@ -13,8 +13,7 @@ runs:
     - name: Define DOCKER_RUN environment variable
       shell: bash
       run: |
-        CACHE_FLAGS=""
-        if echo "$MAKEFLAGS" | grep -qw with-cache; then
-          CACHE_FLAGS="--env CCACHE_DIR=/cache --mount type=bind,source=$(pwd)/../../ccache,target=/cache"
-        fi
+        CACHE_FOLDER=$(pwd)/../../ccache
+        mkdir -p $CACHE_FOLDER
+        CACHE_FLAGS="--env CCACHE_DIR=/cache --mount type=bind,source=$CACHE_FOLDER,target=/cache"
         echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) $CACHE_FLAGS --env MAKEFLAGS --mount type=bind,source=.,target=$(pwd) epsilon-builder:latest sh -c" >> $GITHUB_ENV

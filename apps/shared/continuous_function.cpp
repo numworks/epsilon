@@ -10,6 +10,7 @@
 #include <poincare/print.h>
 #include <poincare/solver/roots.h>
 #include <poincare/src/expression/derivation.h>
+#include <poincare/src/expression/polynomial.h>
 #include <poincare/trigonometry.h>
 
 #include <algorithm>
@@ -186,7 +187,7 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
   SystemExpression equation = expressionReduced(context);
   // Compute metrics for details view of Line
   SystemExpression
-      coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+      coefficients[Internal::Polynomial::k_maxNumberOfPolynomialCoefficients];
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
       k_unknownName, coefficients, context, complexFormat(context),
@@ -630,7 +631,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     /* Solve the equation in y (or x if not willBeAlongX)
      * Symbols are replaced to simplify roots. */
     SystemExpression
-        coefficients[Expression::k_maxNumberOfPolynomialCoefficients];
+        coefficients[Internal::Polynomial::k_maxNumberOfPolynomialCoefficients];
     int degree = m_expression.getPolynomialReducedCoefficients(
         willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
                      : k_unknownName,

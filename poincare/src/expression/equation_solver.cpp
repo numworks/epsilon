@@ -25,14 +25,14 @@
 
 namespace Poincare::Internal {
 
-void VariableArray::push(const char* variable) {
+void EquationSolver::VariableArray::push(const char* variable) {
   assert(m_size < capacity());
   assert(variable && strlen(variable) < Symbol::k_maxNameLength);
   memcpy(m_data[m_size], variable, strlen(variable) + 1);
   m_size++;
 }
 
-void VariableArray::fillWithList(const Tree* list) {
+void EquationSolver::VariableArray::fillWithList(const Tree* list) {
   assert((list->isList() || list->isSet()) &&
          list->numberOfChildren() <= capacity());
   clear();

@@ -2,10 +2,10 @@
 #define POINCARE_EXPRESSION_EQUATION_SOLVER_H
 
 #include <omg/vector.h>
-#include <poincare/expression.h>
 #include <poincare/range.h>
 #include <poincare/src/memory/tree.h>
 
+#include "polynomial.h"
 #include "projection.h"
 #include "symbol.h"
 
@@ -14,24 +14,25 @@ namespace Poincare::Internal {
 /* Solver methods are a direct (and incomplete for now) adaptation of methods in
  * apps/solver/system_of_equations.cpp. */
 
-class VariableArray
-    : public OMG::StaticVector<char[Symbol::k_maxNameSize],
-                               Expression::k_maxNumberOfVariables> {
- public:
-  void push(const char* variable);
-  void fillWithList(const Tree* list);
-
- private:
-  // Prevent pushing arrays
-  using OMG::StaticVector<char[Symbol::k_maxNameSize],
-                          Expression::k_maxNumberOfVariables>::push;
-};
-
 class EquationSolver {
  public:
+  constexpr static int k_maxNumberOfVariables = 6;
   constexpr static int k_maxNumberOfExactSolutions =
-      std::max(Expression::k_maxNumberOfVariables,
-               Expression::k_maxPolynomialDegree + 1);
+      std::max(k_maxNumberOfVariables,
+               // +1 for delta
+               Polynomial::k_maxPolynomialDegree + 1);
+
+  class VariableArray : public OMG::StaticVector<char[Symbol::k_maxNameSize],
+                                                 k_maxNumberOfVariables> {
+   public:
+    void push(const char* variable);
+    void fillWithList(const Tree* list);
+
+   private:
+    // Prevent pushing arrays
+    using OMG::StaticVector<char[Symbol::k_maxNameSize],
+                            k_maxNumberOfVariables>::push;
+  };
 
   enum class Error {
     NoError = 0,

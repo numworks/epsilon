@@ -32,6 +32,8 @@ class SystemOfEquations {
 
   SystemOfEquations(EquationStore* store) : m_store(store) {}
 
+  constexpr static int k_maxNumberOfVariables =
+      Poincare::Internal::EquationSolver::k_maxNumberOfVariables;
   constexpr static int k_maxNumberOfExactSolutions =
       Poincare::Internal::EquationSolver::k_maxNumberOfExactSolutions;
   constexpr static int k_maxNumberOfApproximateSolutions = 10;

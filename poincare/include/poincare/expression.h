@@ -290,12 +290,6 @@ class Expression : public PoolHandle {
   template <typename T>
   bool isDiscontinuousOnInterval(T minBound, T maxBound) const;
 
-  constexpr static int k_maxNumberOfVariables = 6;
-  // TODO: factorize with k_maxPolynomialDegree from Polynomial
-  constexpr static int k_maxPolynomialDegree = 3;
-  // TODO: factorize with k_maxNumberOfPolynomialCoefficients from Polynomial
-  constexpr static int k_maxNumberOfPolynomialCoefficients =
-      k_maxPolynomialDegree + 1;
   int polynomialDegree(const char* symbolName) const;
   /* Fills the table coefficients with the expressions of the first 3 polynomial
    * coefficients and returns the  polynomial degree. It is supposed to be

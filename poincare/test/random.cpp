@@ -154,6 +154,7 @@ QUIZ_CASE(pcj_random_range_values) {
   assert_approximate_is_float("random()");
   assert_approximate_is_float("random()-random()", -1.0f, 1.0f);
   assert_approximate_is_float("3*random()", 0.0f, 3.0f);
+  assert_approximate_is_float("stddev({random(), random()})", 0.0f, 1.0f);
 
   assert_approximate_is_int("_m * random()^0", 1, 1);
   assert_approximate_is_int("randint(0,1)_m", 0, 1);

@@ -25,19 +25,15 @@ using namespace Shared;
 
 namespace Solver {
 
-Internal::Tree* equationAtIndex(size_t index, const EquationStore* store) {
-  assert(index >= 0 && index < store->numberOfDefinedModels());
-  ExpiringPointer<Equation> equation =
-      store->modelForRecord(store->definedRecordAtIndex(index));
-  Poincare::Expression equationExpression = equation->expressionClone();
-  return equationExpression.tree()->cloneTree();
-}
-
 Internal::Tree* equationList(const EquationStore* store) {
   Internal::Tree* equationList = Internal::List::PushEmpty();
   int nEquations = store->numberOfDefinedModels();
   for (int i = 0; i < nEquations; i++) {
-    Internal::NAry::AddChild(equationList, equationAtIndex(i, store));
+    ExpiringPointer<Equation> equation =
+        store->modelForRecord(store->definedRecordAtIndex(i));
+    Poincare::Expression equationExpression = equation->expressionClone();
+    Internal::NAry::AddChild(equationList,
+                             equationExpression.tree()->cloneTree());
   }
   return equationList;
 }

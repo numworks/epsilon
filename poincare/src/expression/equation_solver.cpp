@@ -146,7 +146,9 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   }
 #endif
 
+  TreeRef solutionList = result.solutionList;
   reducedEquationList->removeTree();
+  result.solutionList = solutionList;
 
   // Step 3. Handle the result
 

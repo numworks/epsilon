@@ -128,7 +128,8 @@ class EquationSolver {
 
   // Return list of solutions for linear system.
   static SolverResult SolveLinearSystem(
-      const Tree* equationList, const EquationMetadata& equationMetadata);
+      const Tree* equationList, const EquationMetadata& equationMetadata,
+      Context* context);
   // Return list of solutions for a polynomial equation.
   static SolverResult SolvePolynomial(const Tree* equationList,
                                       const EquationMetadata& equationMetadat);

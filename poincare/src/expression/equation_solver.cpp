@@ -119,8 +119,8 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   // Step 2. Solve the equations
 
   // Step 2.1. Try with linear system solving
-  SolverResult result =
-      SolveLinearSystem(reducedEquationList, equationMetadata);
+  SolverResult result = SolveLinearSystem(reducedEquationList, equationMetadata,
+                                          projectionContext.m_context);
 
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
@@ -161,45 +161,6 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
       result.solutionList = nullptr;
     }
     return result;
-  }
-
-  /* Replace unknown Variables back to UserSymbols */
-  int numberOfUnknowns = equationMetadata.unknownVariables.size();
-  Tree* userSymbols = SharedTreeStack->pushList(numberOfUnknowns);
-  for (int i = 0; i < numberOfUnknowns; i++) {
-    const char* variableName = equationMetadata.unknownVariables[i];
-    SharedTreeStack->pushUserSymbol(variableName);
-  }
-  for (const Tree* symbol : userSymbols->children()) {
-    Variables::LeaveScopeWithReplacement(result.solutionList, symbol, false,
-                                         false);
-  }
-
-  userSymbols->removeTree();
-
-  // If the solution is formal, replace the other variables with t, t1, t2, etc.
-  if (result.solutionMetadata.solutionType == SolutionType::Formal) {
-    int numberOfExtraVariables = 0;
-    /* The id of the extra variables starts at 0 as other variables were already
-     * replaced by user symbols. */
-    while (
-        Variables::HasVariable(result.solutionList, numberOfExtraVariables)) {
-      numberOfExtraVariables++;
-    }
-    if (numberOfExtraVariables > 0) {
-      // Start at 0 ("t") instead of 1 ("t1") if there is only one variable
-      size_t parameterIndex = (numberOfExtraVariables > 1) ? 1 : 0;
-      uint32_t usedParameterIndices =
-          TagParametersUsedAsVariables(equationMetadata.unknownVariables);
-      for (int j = 0; j < numberOfExtraVariables; j++) {
-        // Generate a unique identifier t? that does not collide with variables.
-        TreeRef symbol = GetNextParameterSymbol(
-            &parameterIndex, usedParameterIndices, projectionContext.m_context);
-        Variables::LeaveScopeWithReplacement(result.solutionList, symbol, false,
-                                             false);
-        symbol->removeTree();
-      }
-    }
   }
 
   /* Beautify result */
@@ -483,7 +444,8 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
 }
 
 EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
-    const Tree* reducedEquationList, const EquationMetadata& equationMetadata) {
+    const Tree* reducedEquationList, const EquationMetadata& equationMetadata,
+    Context* context) {
   SolutionMetadata solutionMetadata{
       .solvingMethod = SolvingMethod::LinearSystem,
       .solutionType = SolutionType::Exact,
@@ -558,6 +520,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     coefficient = coefficient->nextTree();
   }
 
+  size_t firstExtraVariableId = equationMetadata.unknownVariables.size();
+  size_t numberOfExtraVariables = 0;
+
   if (rank != n || n <= 0) {
     solutionMetadata.solutionType = SolutionType::Formal;
 #if POINCARE_NO_INFINITE_SYSTEMS
@@ -572,7 +537,6 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     int variable = n - 1;
     int row = m - 1;
     int firstVariableInRow = -1;
-    int numberOfUnknowns = equationMetadata.unknownVariables.size();
     while (variable >= 0) {
       // Find the first variable with a non-null coefficient in the current row
       if (row >= 0) {
@@ -604,8 +568,10 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
       for (int i = 0; i < n; i++) {
         (i == variable ? 1_e : 0_e)->cloneTree();
       }
-      // Push a finite variable starting from numberOfUnknowns
-      SharedTreeStack->pushVar(numberOfUnknowns++, ComplexSign::Finite());
+      // Push a finite variable starting from firstExtraVariableId
+      SharedTreeStack->pushVar(firstExtraVariableId + numberOfExtraVariables,
+                               ComplexSign::Finite());
+      numberOfExtraVariables++;
       rows = m + 1;
       Matrix::SetDimensions(matrix, ++m, n + 1);
       variable--;
@@ -671,8 +637,24 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     }
   }
   equationListClone->removeTree();
-
   equationListWithoutDep->removeTree();
+
+  // If the solution is formal, replace the extra variables with t, t1, t2, etc.
+  if (numberOfExtraVariables > 0) {
+    // Start at 0 ("t") instead of 1 ("t1") if there is only one variable
+    size_t parameterIndex = (numberOfExtraVariables > 1) ? 1 : 0;
+    uint32_t usedParameterIndices =
+        TagParametersUsedAsVariables(equationMetadata.unknownVariables);
+    size_t lastExtraVariableId = firstExtraVariableId + numberOfExtraVariables;
+    for (int j = firstExtraVariableId; j < lastExtraVariableId; j++) {
+      // Generate a unique identifier t? that does not collide with variables.
+      TreeRef symbol = GetNextParameterSymbol(&parameterIndex,
+                                              usedParameterIndices, context);
+      Variables::Replace(matrix, j, symbol);
+      symbol->removeTree();
+    }
+  }
+
   return {matrix, Error::NoError, equationMetadata, solutionMetadata};
 }
 
@@ -883,7 +865,7 @@ uint32_t EquationSolver::TagParametersUsedAsVariables(VariableArray variables) {
 
 Tree* EquationSolver::GetNextParameterSymbol(size_t* parameterIndex,
                                              uint32_t usedParameterIndices,
-                                             Poincare::Context* context) {
+                                             Context* context) {
   /* Equation had more solution and introduced new unknowns variables, name
    * them 't' + 2 digits + '\0' */
   constexpr size_t k_parameterNameSize = 1 + 2 + 1;

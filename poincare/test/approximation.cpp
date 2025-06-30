@@ -447,6 +447,11 @@ QUIZ_CASE(pcj_approximation_derivatives) {
   approximates_to<float>("diff(ln(x), x, -1)", "undef");
 }
 
+QUIZ_CASE(pcj_approximation_percent) {
+  simplified_approximates_to<double>("900(1+1.5%/365)^(18*365)",
+                                     "1178.9614650069");
+}
+
 QUIZ_CASE(pcj_approximation_decimal) {
   approximates_to(283495231345_e, 283495231345.f);
   approximates_to(283495231345._e, 283495231345.f);

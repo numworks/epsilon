@@ -30,9 +30,7 @@ Internal::Tree* equationAtIndex(size_t index, const EquationStore* store) {
   ExpiringPointer<Equation> equation =
       store->modelForRecord(store->definedRecordAtIndex(index));
   Poincare::Expression equationExpression = equation->expressionClone();
-  Internal::Tree* equal = equationExpression.tree()->cloneTree();
-  Internal::PatternMatching::MatchReplace(equal, KEqual(KA, KB), KSub(KA, KB));
-  return equal;
+  return equationExpression.tree()->cloneTree();
 }
 
 Internal::Tree* equationList(const EquationStore* store) {

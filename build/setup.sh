@@ -110,6 +110,9 @@ install_linux_binary_deps() {
 
   if [[ $CI == "1" ]]; then
     sudo apt-get install parallel
+    # format.mak requires prettier
+    sudo apt-get install npm
+    sudo npm install -g prettier
     install_latest_lcov
   fi
 }

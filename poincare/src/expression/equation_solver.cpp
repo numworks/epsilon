@@ -431,18 +431,24 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
           ? SymbolicComputation::ReplaceDefinedFunctions
           : SymbolicComputation::ReplaceDefinedSymbols;
 
+  // Step 3.1. Replace KEqual with KSub
+  for (Tree* equation : reducedEquationList->children()) {
+    Internal::PatternMatching::MatchReplace(equation, KEqual(KA, KB),
+                                            KSub(KA, KB));
+  }
+
   /* The symbols should be replaced in this order :
    *  - User functions (because they can hide UserSymbols and local symbols)
    *  - UserSymbols into unkowns (because they have a different complexSign)
    *  - Local symbols into variables (Done in ProjectAndReduce)
    *  - Reduction (Done in ProjectAndReduce). */
 
-  // Step 3.1. Replace UserFunctions
+  // Step 3.2. Replace UserFunctions
   Projection::DeepReplaceUserNamed(
       reducedEquationList, context,
       SymbolicComputation::ReplaceDefinedFunctions);
 
-  // Step 3.2. Replace unkowns
+  // Step 3.3. Replace unkowns
 
   for (int i = 0; i < equationMetadata.unknownVariables.size(); i++) {
     const char* variable = equationMetadata.unknownVariables[i];
@@ -451,7 +457,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
                              ComplexSign::Finite());
   }
 
-  // Step 3.3. Project (replace local symbols) and reduce
+  // Step 3.4. Project (replace local symbols) and reduce
 
   Simplification::ProjectAndReduce(reducedEquationList, projectionContext);
   if (projectionContext->m_dimension.isUnit()) {

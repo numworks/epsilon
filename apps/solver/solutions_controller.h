@@ -15,6 +15,7 @@
 #include <escher/table_view_data_source.h>
 #include <ion.h>
 #include <poincare/helpers/symbol.h>
+#include <poincare/src/expression/equation_solver.h>
 
 #include "system_of_equations.h"
 
@@ -200,18 +201,18 @@ class SolutionsController : public Escher::ViewController,
   static_assert(
       k_maxNumberOfVisibleCells <=
           SystemOfEquations::k_maxNumberOfSolutions +
-              Poincare::Expression::k_maxNumberOfVariables,
+              SystemOfEquations::k_maxNumberOfVariables,
       "We can reduce the number of cells in Solver:SolutionsController.");
   constexpr static int k_maxNumberOfSymbols =
       SystemOfEquations::k_maxNumberOfSolutions +
-      Poincare::Expression::k_maxNumberOfVariables;
+      SystemOfEquations::k_maxNumberOfVariables;
   constexpr static int k_numberOfSymbolCells =
       (k_maxNumberOfVisibleCells < k_maxNumberOfSymbols)
           ? k_maxNumberOfVisibleCells
           : k_maxNumberOfSymbols;
   constexpr static int k_maxNumberOfExactValues =
       SystemOfEquations::k_maxNumberOfExactSolutions +
-      Poincare::Expression::k_maxNumberOfVariables;
+      SystemOfEquations::k_maxNumberOfVariables;
   constexpr static int k_numberOfExactValueCells =
       (k_maxNumberOfVisibleCells < k_maxNumberOfExactValues)
           ? k_maxNumberOfVisibleCells

@@ -2,16 +2,16 @@
 #define SOLVER_EQUATION_STORE_H
 
 #include <apps/shared/expression_model_store.h>
+#include <poincare/src/expression/equation_solver.h>
 
 #include "equation.h"
-#include "solution.h"
 
 namespace Solver {
 
 class EquationStore : public Shared::ExpressionModelStore {
  public:
   constexpr static int k_maxNumberOfEquations =
-      Poincare::UserExpression::k_maxNumberOfVariables;
+      Poincare::Internal::EquationSolver::k_maxNumberOfVariables;
   constexpr static const char* k_extension = Ion::Storage::equationExtension;
 
   // ExpressionModelStore

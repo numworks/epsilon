@@ -415,17 +415,16 @@ struct ParentAndPosition {
   int position;
 };
 
-/* Return [true] if descendant is in root, in this case [pp] has been populated
- * with the result.
- * If [rootNextTree] is set and the function returned [false], then
- * [rootNextTree] is [root->nextTree()]. */
-static bool ParentOfDescendantAux(const Tree* root, const Tree* descendant,
-                                  ParentAndPosition* pp,
-                                  const Tree** rootNextTree = nullptr) {
+/* Return [{parent, position}] if [descendant] is in [root], else return
+ * [{nullptr, 0}].
+ * If [rootNextTree] is set, then it is [root->nextTree()]. */
+static ParentAndPosition ParentOfDescendantAux(
+    const Tree* root, const Tree* descendant,
+    const Tree** rootNextTree = nullptr) {
   struct ParentInfo {
     const Tree* parent;
     int remainingChildren;
-    int originalChildren;
+    int numberOfChildren;
   };
   // Arbitrary size, increase to make less recursive calls
   constexpr size_t k_size = 10;
@@ -436,24 +435,23 @@ static bool ParentOfDescendantAux(const Tree* root, const Tree* descendant,
   int i = 0;
   pile[0] = {root, rootInfo.numberOfChildren, rootInfo.numberOfChildren};
   while (true) {
-    /* Remove parents with 0 [remaingChildren], indeed the [node]'s parent is
-     * the last element of [tcc] with [remaingChildren] > 0  */
+    /* Remove parents with 0 [remainingChildren], indeed the [node]'s parent is
+     * the last element of [pile] with [remainingChildren] > 0  */
     while (pile[i].remainingChildren == 0) {
       i--;
       if (i < 0) {
         // descendant not in root
         assert(node == root->nextTree());
         if (rootNextTree) {
-          // Update rootNextTree, this is an optimization
+          // Update [rootNextTree], this is an optimization
           *rootNextTree = node;
         }
-        return false;
+        return {nullptr, 0};
       }
     }
     if (node == descendant) {
-      pp->position = pile[i].originalChildren - pile[i].remainingChildren;
-      pp->parent = pile[i].parent;
-      return true;
+      return {pile[i].parent,
+              pile[i].numberOfChildren - pile[i].remainingChildren};
     }
     pile[i].remainingChildren--;
 
@@ -462,17 +460,17 @@ static bool ParentOfDescendantAux(const Tree* root, const Tree* descendant,
      * at the start of next loop */
     if (info.numberOfChildren > 0) {
       if (i >= k_size - 1) {
-        // No space left in local [tcc] array, recursive call to continue
-        if (ParentOfDescendantAux(node, descendant, pp, &node)) {
+        // No space left in local [pile], recursive call to continue
+        ParentAndPosition pp = ParentOfDescendantAux(node, descendant, &node);
+        if (pp.parent != nullptr) {
           // Successfully found parent in recursive call: return
-          return true;
+          return pp;
         }
         /* [node] has been updated by the recursive call to be the next tree
          * to inspect */
         continue;
-      } else {
-        pile[++i] = {node, info.numberOfChildren, info.numberOfChildren};
       }
+      pile[++i] = {node, info.numberOfChildren, info.numberOfChildren};
     }
     node = node->nextNode(info.nodeSize);
   }
@@ -486,8 +484,8 @@ const Tree* Tree::parentOfDescendant(const Tree* descendant,
   if (descendant < this) {
     return nullptr;
   }
-  ParentAndPosition pp;
-  if (ParentOfDescendantAux(this, descendant, &pp)) {
+  ParentAndPosition pp = ParentOfDescendantAux(this, descendant);
+  if (pp.parent != nullptr) {
     *position = pp.position;
     return pp.parent;
   }

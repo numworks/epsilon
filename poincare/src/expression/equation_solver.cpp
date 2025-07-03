@@ -42,6 +42,12 @@ void VariableArray<N>::fillWithList(const Tree* list) {
   }
 }
 
+template void
+VariableArray<EquationSolver::k_maxNumberOfExactSolutions>::append(const char*);
+
+template void VariableArray<
+    EquationSolver::k_maxNumberOfExactSolutions>::fillWithList(const Tree*);
+
 Tree* EquationSolver::ExactSolve(const Tree* equationsSet, Context* context,
                                  ProjectionContext projectionContext,
                                  Error* error) {

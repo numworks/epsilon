@@ -1002,7 +1002,8 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
     case Type::PowReal: {
       return ApproximatePower<T>(e, ctx, ComplexFormat::Real);
     }
-    case Type::Sign: {
+    case Type::Sign:
+    case Type::SignUser: {
       // TODO why no epsilon in Poincare ?
       return child[0] == 0 ? 0 : child[0] < 0 ? -1 : 1;
     }

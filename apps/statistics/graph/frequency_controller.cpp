@@ -59,8 +59,7 @@ bool FrequencyController::textFieldDidFinishEditing(
   }
   // Update cursor
   m_cursor.moveTo(newX, newX, yValueAtAbscissa(selectedSeries(), newX));
-  m_cursorView.setIsRing(newX ==
-                         valueAtIndex(selectedSeries(), selectedIndex()));
+  setCursorIsRing(newX == valueAtIndex(selectedSeries(), selectedIndex()));
   reloadBannerView();
   m_curveView.reload();
   return true;
@@ -98,7 +97,7 @@ void FrequencyController::reloadValueInBanner(
 }
 
 void FrequencyController::moveCursorToSelectedIndex(bool setColor) {
-  m_cursorView.setIsRing(true);
+  setCursorIsRing(true);
   PlotController::moveCursorToSelectedIndex(setColor);
 }
 
@@ -144,7 +143,7 @@ bool FrequencyController::moveSelectionHorizontally(
     moveCursorToSelectedIndex(false);
     return true;
   }
-  m_cursorView.setIsRing(false);
+  setCursorIsRing(false);
 
   // Apply step
   x += step;

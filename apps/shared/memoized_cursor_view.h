@@ -25,10 +25,10 @@ class MemoizedCursorView : public CursorView {
     return isHighlighted() ? Escher::Palette::GrayDarkest : m_color;
   }
   mutable bool m_underneathPixelBufferLoaded;
+  bool eraseCursorIfPossible(const Escher::View* parent);
 
  private:
   KDColor m_color;
-  bool eraseCursorIfPossible(const Escher::View* parent);
 };
 
 }  // namespace Shared

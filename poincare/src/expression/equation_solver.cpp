@@ -163,8 +163,12 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
     return result;
   }
 
-  /* Beautify result */
-  Simplification::BeautifyReduced(result.solutionList, &projectionContext);
+  /* Simplify result */
+  for (Tree* solution : result.solutionList->children()) {
+    /* Simplify each solution separately as Set don't interact well with
+     * simplification */
+    Simplification::Simplify(solution, projectionContext);
+  }
 
   return result;
 }

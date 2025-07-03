@@ -103,6 +103,8 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
 
   Tree* reducedEquationList = preprocessingResult.reducedEquationList;
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
+  projectionContext.m_complexFormat =
+      preprocessingResult.equationMetadata.complexFormat;
 
   if (preprocessingResult.error != Error::NoError) {
     /* If the analysis failed, return an empty solution list */
@@ -310,13 +312,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
 
   EquationMetadata equationMetadata;
 
-  // Step 1. Update complex format from equationList
-
-  Projection::UpdateComplexFormatWithExpressionInput(equationList,
-                                                     projectionContext);
-  equationMetadata.complexFormat = projectionContext->m_complexFormat;
-
-  // Step 2. Retrieve user symbols and infer the list of unknowns
+  // Step 1. Retrieve user symbols and infer the list of unknowns
 
   Context* context = projectionContext->m_context;
   Tree* userSymbols = Variables::GetUserSymbols(equationList, context);
@@ -390,13 +386,21 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
   assert(equationMetadata.unknownVariables.size() == expectedNumberOfUnknowns);
   userSymbols->removeTree();
 
-  // Step 3. Clone and simplify the equations
-
-  Tree* reducedEquationList = equationList->cloneTree();
   projectionContext->m_symbolic =
       equationMetadata.overrideDefinedVariables
           ? SymbolicComputation::ReplaceDefinedFunctions
           : SymbolicComputation::ReplaceDefinedSymbols;
+
+  /* Step 2. Update complex format from equationList
+   * NOTE: This must be done after deciding the symbolic computation mode */
+
+  Projection::UpdateComplexFormatWithExpressionInput(equationList,
+                                                     projectionContext);
+  equationMetadata.complexFormat = projectionContext->m_complexFormat;
+
+  // Step 3. Clone and simplify the equations
+
+  Tree* reducedEquationList = equationList->cloneTree();
 
   // Step 3.1. Replace KEqual with KSub
   for (Tree* equation : reducedEquationList->children()) {

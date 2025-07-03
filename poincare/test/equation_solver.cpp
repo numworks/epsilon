@@ -18,15 +18,15 @@ bool check_solutions(
     NAry::AddChild(equationList, parse(equation));
   }
   EquationSolver::SolverResult result =
-      EquationSolver::ExactSolve(equationList, projectionContext);
-  EquationSolver::Error error = result.metadata.error;
+      EquationSolver::ExactSolveAdaptive(equationList, projectionContext);
+  EquationSolver::Error error = result.error;
   Tree* solutions = result.solutionList;
   quiz_assert(error == expectedError);
   if (solutions) {
     quiz_assert(solutions->numberOfChildren() ==
                 static_cast<int>(outputs.size()));
     projectionContext.m_symbolic =
-        result.metadata.overrideUserVariables
+        result.equationMetadata.overrideDefinedVariables
             ? SymbolicComputation::KeepAllSymbols
             : SymbolicComputation::ReplaceDefinedSymbols;
     const Tree* solution = solutions->nextNode();
@@ -114,15 +114,13 @@ QUIZ_CASE(pcj_equation_solver) {
 }
 
 void check_range(const char* input, double min, double max) {
-  Tree* equation = parse(input);
+  Tree* equationList = TreeStack::SharedTreeStack->pushList(1);
+  parse(input);
   ProjectionContext ctx;
-  Simplification::ToSystem(equation, &ctx);
-  Approximation::PrepareFunctionForApproximation(equation, "x",
-                                                 ComplexFormat::Real);
-  EquationSolver::ApproximateSolvingRange result =
-      EquationSolver::ComputeApproximateSolvingRange(equation, ctx);
-  quiz_assert(result.range.min() == min);
-  quiz_assert(result.range.max() == max);
+  EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
+      equationList, ctx, Poincare::Range1D<double>(), 10);
+  quiz_assert(result.solutionMetadata.solvingRange.min() == min);
+  quiz_assert(result.solutionMetadata.solvingRange.max() == max);
 }
 
 QUIZ_CASE(pcj_equation_solver_auto_range) {

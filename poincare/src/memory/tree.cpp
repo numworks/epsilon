@@ -485,11 +485,8 @@ const Tree* Tree::parentOfDescendant(const Tree* descendant,
     return nullptr;
   }
   ParentAndPosition pp = ParentOfDescendantAux(this, descendant);
-  if (pp.parent != nullptr) {
-    *position = pp.position;
-    return pp.parent;
-  }
-  return nullptr;
+  *position = pp.position;
+  return pp.parent;  // May be nullptr
 }
 
 int Tree::numberOfDescendants(bool includeSelf) const {

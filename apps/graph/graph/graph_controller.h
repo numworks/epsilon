@@ -95,7 +95,9 @@ class GraphController : public Shared::FunctionGraphController,
   void jumpToLeftRightCurve(double t, OMG::HorizontalDirection direction,
                             int functionsCount,
                             Ion::Storage::Record record) override;
-  void setCursorIsRing(bool isRing) override { m_cursorView.setIsRing(isRing); }
+  void setCursorIsRing(bool isRing) override {
+    m_cursorView.setIsRing(isRing, &m_view);
+  }
 
   // SimpleInteractiveCurveViewController
   void reloadBannerView() override;

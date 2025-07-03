@@ -78,6 +78,10 @@ class FrequencyController : public PlotController,
     return &m_bannerViewWithEditableField;
   }
 
+  void setCursorIsRing(bool isRing) {
+    m_cursorView.setIsRing(isRing, &m_curveView);
+  }
+
   Shared::ToggleableRingRoundCursorView m_cursorView;
   PlotBannerViewWithEditableField m_bannerViewWithEditableField;
 };

@@ -18,9 +18,10 @@ void AbstractRoundCursorView::drawCursor(KDContext* ctx, KDRect rect) const {
   ctx->blendRectWithMask(dotRect, color(), mask, cursorWorkingBuffer);
 }
 
-void ToggleableRingRoundCursorView::setIsRing(bool isRing) {
+void ToggleableRingRoundCursorView::setIsRing(bool isRing, const View* parent) {
   if (isRing != m_isRing) {
     m_isRing = isRing;
+    eraseCursorIfPossible(parent);
     markWholeFrameAsDirty();
   }
 }

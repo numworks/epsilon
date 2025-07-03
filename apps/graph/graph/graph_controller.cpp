@@ -328,7 +328,7 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
       (properties.isStrictInequality() &&
        pointsOfInterestForRecord(record)->hasDisplayableInterestAtCoordinates(
            m_cursor->x(), m_cursor->y()));
-  m_cursorView.setIsRing(cursorShouldBeRing);
+  setCursorIsRing(cursorShouldBeRing);
   FunctionGraphController::selectCurveAtIndex(curveIndex, willBeVisible,
                                               subCurveIndex);
 }

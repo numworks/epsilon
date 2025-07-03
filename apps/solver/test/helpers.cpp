@@ -68,7 +68,7 @@ void assert_solves_with_range_to(const char* equation, double min, double max,
         quiz_assert(e == RequireApproximateSolution);
         assert(std::isnan(min) == std::isnan(max));
         if (std::isnan(min)) {
-          system->autoComputeApproximateSolvingRange(&solverContext);
+          system->useAutoSolvingRange(true);
         } else {
           system->setApproximateSolvingRange(Range1D(min, max));
         }
@@ -263,7 +263,8 @@ void assert_auto_solving_range_is(const char* equation, double min, double max,
       [min, max, &solverContext](SystemOfEquations* system,
                                  SystemOfEquations::Error e) {
         quiz_assert(e == RequireApproximateSolution);
-        system->autoComputeApproximateSolvingRange(&solverContext);
+        system->useAutoSolvingRange(true);
+        system->approximateSolve(&solverContext);
         Range1D<double> solvingRange = system->approximateSolvingRange();
         quiz_assert(solvingRange.min() == min && solvingRange.max() == max);
       });

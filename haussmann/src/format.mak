@@ -5,6 +5,7 @@ PYFORMAT := $(PYTHON) -m black
 PYFORMATARGS ?=
 JSFORMAT := npx prettier
 JSFORMATARGS ?= --write
+ROOT := .
 
 .PHONY: format
 format: BASE ?= HEAD
@@ -14,18 +15,18 @@ format: JSFILES ?= $(shell (git diff $(GITDIFFARGS) $(BASE); git diff $(GITDIFFA
 format:
 # Use xargs to elegantly handle the case CXXFILES=""
 	echo "=== Formatting .c, .cpp and .h files ==="
-	echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS)
+	cd $(ROOT); echo $(CXXFILES) | xargs -r $(CXXFORMAT) $(CXXFORMATARGS)
 	echo "=== Formatting .py files ==="
-	echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)
+	cd $(ROOT); echo $(PYFILES) | xargs -r $(PYFORMAT) $(PYFORMATARGS)
 	echo "=== Formatting .js files ==="
-	echo $(JSFILES) | xargs -r $(JSFORMAT) $(JSFORMATARGS)
+	cd $(ROOT); echo $(JSFILES) | xargs -r $(JSFORMAT) $(JSFORMATARGS)
 
 .PHONY: reformat
 reformat:
 	@if [ "$(BASE)" == "" ]; then \
 	  echo "Please provide a base commit with \"make reformat BASE=<ref>\""; \
 	else \
-	  git rebase --autostash --strategy-option=theirs --exec "make format BASE=HEAD~; git commit -a --amend --no-edit" $(BASE); \
+	  cd $(ROOT); git rebase --autostash --strategy-option=theirs --exec "make format BASE=HEAD~; git commit -a --amend --no-edit" $(BASE); \
 	fi
 
 $(call document_other_target,format,Format C++ and Python files. Apply on files specified explicitly (in CXXFILES and PYFILES variables) or on files modified since BASE (defaults to HEAD))

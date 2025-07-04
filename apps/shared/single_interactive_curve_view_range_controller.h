@@ -44,6 +44,13 @@ class SingleInteractiveCurveViewRangeController
     assert(index == 0 || index == 1);
     return index == 0 ? I18n::Message::Minimum : I18n::Message::Maximum;
   }
+  // Step value must be strictly postive and not contain random numbers.
+  static bool IsValidStepValue(ParameterType value) {
+    FloatType floatValue = PoincareHelpers::ToFloat(value);
+    return (std::isnan(floatValue) || floatValue > 0.0f) &&
+           (value.expression().isUninitialized() ||
+            !value.expression().hasRandomNumber());
+  }
   bool boundsParametersAreDifferent();
   bool parametersAreDifferent() override;
   void extractParameters() override;

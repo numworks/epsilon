@@ -16,7 +16,7 @@ function Calculator(emModule) {
     emModule.mirrorCanvas = document.querySelector('canvas.calculator-mirror');
   }
   var mirrorCanvasContext = emModule.mirrorCanvas ? emModule.mirrorCanvas.getContext('2d') : null;
-  var arguments = [
+  var args = [
     '--language',
     document.documentElement.lang || window.navigator.language.split('-')[0],
   ];
@@ -25,7 +25,7 @@ function Calculator(emModule) {
   const params = new URLSearchParams(window.location.search);
   nwbPath = params.get('nwb');
   if (nwbPath) {
-    arguments.push('--nwb', nwbPath);
+    args.push('--nwb', nwbPath);
     nwbDataPath = params.get('nwbdata');
     if (nwbDataPath) {
       fetch(nwbDataPath)
@@ -38,13 +38,13 @@ function Calculator(emModule) {
         .then((buffer) => {
           emModule.FS.writeFile('/data', new Uint8Array(buffer));
         });
-      arguments.push('--nwb-external-data', '/data');
+      args.push('--nwb-external-data', '/data');
     }
   }
 
   var defaultModule = {
     canvas: mainCanvas,
-    arguments,
+    args,
     onEpsilonIdle: function () {
       calculatorElement.classList.remove('loading');
     },

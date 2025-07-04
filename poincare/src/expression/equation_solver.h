@@ -76,7 +76,8 @@ class EquationSolver {
   };
 
   struct SolverResult {
-    Tree* solutionList = nullptr;
+    Tree* exactSolutionList = nullptr;
+    Tree* approximateSolutionList = nullptr;
     Error error = Error::NoError;
     // Stores metadata about the equations and their unknowns.
     EquationMetadata equationMetadata;

@@ -7,6 +7,8 @@
 #include <ion/usb.h>
 #include <stddef.h>
 
+#include <array>
+
 #include "dfu_interface.h"
 #include "dfu_interfaces.h"
 #include "stack/descriptor/bos_descriptor.h"
@@ -100,7 +102,7 @@ class Calculator : public Device {
         m_workshopURLDescriptor(URLDescriptor::Scheme::HTTPS,
                                 "my.numworks.com"),
         m_extendedCompatIdDescriptor("WINUSB"),
-        m_descriptors{
+        m_descriptors{makeDescriptorList(
             &m_deviceDescriptor,              // Type = Device, Index = 0
             &m_configurationDescriptor,       // Type = Configuration, Index = 0
             &m_languageStringDescriptor,      // Type = String, Index = 0
@@ -108,7 +110,7 @@ class Calculator : public Device {
             &m_productStringDescriptor,       // Type = String, Index = 2
             &m_serialNumberStringDescriptor,  // Type = String, Index = 3
             &m_bosDescriptor                  // Type = BOS, Index = 0
-        },
+            )},
         m_dfuInterface(this, &m_ep0, k_dfuFlashInterfaceAlternateSetting) {}
   void leave(uint32_t leaveAddress) override;
   uint32_t addressPointer() const { return m_dfuInterface.leaveAddress(); }
@@ -134,6 +136,14 @@ class Calculator : public Device {
   constexpr static uint8_t k_webUSBLandingPageIndex = 1;
   constexpr static uint8_t k_microsoftOSVendorCode = 2;
 
+  constexpr static size_t k_numberOfDescriptors = 7;
+  using DescriptorList = std::array<Descriptor*, k_numberOfDescriptors>;
+
+  constexpr static DescriptorList makeDescriptorList(auto&&... descriptors) {
+    static_assert(sizeof...(descriptors) == k_numberOfDescriptors);
+    return DescriptorList{descriptors...};
+  }
+
   // WebUSB and MicrosoftOSDescriptor commands
   bool getURLCommand(uint8_t* transferBuffer, uint16_t* transferBufferLength,
                      uint16_t transferBufferMaxLength);
@@ -155,7 +165,7 @@ class Calculator : public Device {
   URLDescriptor m_workshopURLDescriptor;
   ExtendedCompatIDDescriptor m_extendedCompatIdDescriptor;
 
-  Descriptor* m_descriptors[7];
+  DescriptorList m_descriptors;
   /* m_descriptors contains only descriptors that sould be returned via the
    * method descriptor(uint8_t type, uint8_t index), so do not count descriptors
    * included in other descriptors or returned by other functions. */

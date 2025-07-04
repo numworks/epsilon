@@ -205,6 +205,7 @@ $(addprefix statistics/, \
   statistics_dataset_column.cpp \
 ) \
   additional_results_helper.cpp:-nopool \
+  equation_solver.cpp:-nopool \
   comparison_operator.cpp \
   print.cpp \
   random.cpp \

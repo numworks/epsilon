@@ -5,12 +5,13 @@
 #include <apps/shared/poincare_helpers.h>
 #include <omg/print.h>
 #include <poincare/cas.h>
+#include <poincare/equation_solver.h>
+#include <poincare/expression.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/empty_context.h>
 #include <poincare/old/pool_variable_context.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/approximation.h>
-#include <poincare/src/expression/equation_solver.h>
 #include <poincare/src/expression/float_helper.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/projection.h>
@@ -19,13 +20,12 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 using namespace Poincare;
-using Poincare::Internal::EquationSolver;
 using namespace Poincare::Internal::KTrees;
 using namespace Shared;
 
 namespace Solver {
 
-Internal::Tree* equationList(const EquationStore* store) {
+UserExpression equationList(const EquationStore* store) {
   Internal::Tree* equationList = Internal::List::PushEmpty();
   int nEquations = store->numberOfDefinedModels();
   for (int i = 0; i < nEquations; i++) {
@@ -35,7 +35,7 @@ Internal::Tree* equationList(const EquationStore* store) {
     Internal::NAry::AddChild(equationList,
                              equationExpression.tree()->cloneTree());
   }
-  return equationList;
+  return UserExpression::Builder(equationList);
 }
 
 SystemOfEquations::Error SystemOfEquations::exactSolve(
@@ -44,7 +44,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   m_equationMetadata.unknownVariables.clear();
   m_equationMetadata.definedVariables.clear();
 
-  Internal::Tree* eqList = equationList(m_store);
+  UserExpression eqList = equationList(m_store);
   EquationSolver::SolverResult result = EquationSolver::ExactSolveAdaptive(
       eqList,
       {
@@ -53,47 +53,35 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
           .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
           .m_context = context,
       });
-  Internal::Tree* exactSolutionList = result.exactSolutionList;
-  Internal::Tree* approximateSolutionList = result.approximateSolutionList;
+  UserExpression exactSolutionList = result.exactSolutionList;
+  UserExpression approximateSolutionList = result.approximateSolutionList;
   m_solutionMetadata = result.solutionMetadata;
   m_equationMetadata = result.equationMetadata;
   Error error = result.error;
+
   if (error == Error::NoError) {
-    assert(exactSolutionList && exactSolutionList->isList());
+    assert(!exactSolutionList.isUninitialized() && exactSolutionList.isList());
     m_numberOfSolutions = 0;  // Reset number of solutions
 
-    bool hasApproximateSolutions = approximateSolutionList;
+    bool hasApproximateSolutions = !approximateSolutionList.isUninitialized();
     assert(!hasApproximateSolutions ||
-           (approximateSolutionList->isList() &&
-            approximateSolutionList->numberOfChildren() ==
-                exactSolutionList->numberOfChildren()));
+           (approximateSolutionList.isList() &&
+            approximateSolutionList.tree()->numberOfChildren() ==
+                exactSolutionList.tree()->numberOfChildren()));
 
-    size_t nSolutions = exactSolutionList->numberOfChildren();
-    const Internal::Tree* currentApproximate =
-        hasApproximateSolutions && nSolutions > 0
-            ? approximateSolutionList->child(0)
-            : nullptr;
-    size_t i = 0;
-    for (const Internal::Tree* exactSol : exactSolutionList->children()) {
+    size_t nSolutions = exactSolutionList.tree()->numberOfChildren();
+    for (size_t i = 0; i < nSolutions; i++) {
       UserExpression approximate = UserExpression();
-      if (currentApproximate) {
-        approximate = UserExpression::Builder(currentApproximate);
-        if (++i < nSolutions) {  // Do not go beyond the stack end
-          currentApproximate = currentApproximate->nextTree();
-        }
+      if (hasApproximateSolutions) {
+        approximate = approximateSolutionList.cloneChildAtIndex(i);
       }
-      registerExactSolution(UserExpression::Builder(exactSol), approximate,
-                            context);
+      UserExpression exact = exactSolutionList.cloneChildAtIndex(i);
+      registerExactSolution(exact, approximate, context);
     }
-    if (approximateSolutionList) {
-      assert(approximateSolutionList > exactSolutionList);
-      approximateSolutionList->removeTree();
-    }
-    exactSolutionList->removeTree();
   } else {
-    assert(!exactSolutionList && !approximateSolutionList);
+    assert(exactSolutionList.isUninitialized() &&
+           approximateSolutionList.isUninitialized());
   }
-  eqList->removeTree();
   return error;
 }
 
@@ -122,18 +110,16 @@ void SystemOfEquations::cancelApproximateSolve() {
 void SystemOfEquations::approximateSolve(Context* context) {
   assert(m_store->numberOfDefinedModels() == 1);
   m_wasInterrupted = false;
-  Internal::Tree* eqList = equationList(m_store);
+  UserExpression eqList = equationList(m_store);
 
-  EquationSolver::SolverResult result =
-      Poincare::Internal::EquationSolver::ApproximateSolve(
-          eqList,
-          {.m_complexFormat =
-               MathPreferences::SharedPreferences()->complexFormat(),
-           .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
-           .m_context = context},
-          m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
-                                    : m_approximateSolvingRange,
-          k_maxNumberOfApproximateSolutions);
+  EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
+      eqList,
+      {.m_complexFormat = MathPreferences::SharedPreferences()->complexFormat(),
+       .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+       .m_context = context},
+      m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
+                                : m_approximateSolvingRange,
+      k_maxNumberOfApproximateSolutions);
 
   m_solutionMetadata = result.solutionMetadata;
   m_equationMetadata = result.equationMetadata;
@@ -144,19 +130,19 @@ void SystemOfEquations::approximateSolve(Context* context) {
     m_memoizedAutoSolvingRange = m_approximateSolvingRange;
   }
 
-  assert(result.approximateSolutionList &&
-         result.approximateSolutionList->isList() && !result.exactSolutionList);
+  assert(!result.approximateSolutionList.isUninitialized() &&
+         result.approximateSolutionList.isList() &&
+         result.exactSolutionList.isUninitialized());
   // Update member variables for LinearSystem
-  m_numberOfSolutions = result.approximateSolutionList->numberOfChildren();
+  m_numberOfSolutions =
+      result.approximateSolutionList.tree()->numberOfChildren();
   // Copy solutions
-  for (int i = 0; const Internal::Tree* solution :
-                  result.approximateSolutionList->children()) {
-    m_solutions[i++] =
-        Solution(Poincare::Layout(), Poincare::Layout(),
-                 Poincare::Internal::FloatHelper::To(solution), false);
+  for (size_t i = 0; i < m_numberOfSolutions; i++) {
+    double solution = result.approximateSolutionList.cloneChildAtIndex(i)
+                          .approximateToRealScalar<double>();
+    m_solutions[i] =
+        Solution(Poincare::Layout(), Poincare::Layout(), solution, false);
   }
-  result.approximateSolutionList->removeTree();
-  eqList->removeTree();
 }
 
 void SystemOfEquations::tidy(PoolObject* treePoolCursor) {

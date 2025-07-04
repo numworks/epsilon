@@ -571,10 +571,11 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
       [[fallthrough]];
     }
     case Type::UserSequence:
-    case Type::NonNull:  // TODO: could be unit
+      return childDim[0].isScalar();
+    case Type::NonNull:
     case Type::Real:
     case Type::RealPos:
-      return childDim[0].isScalar();
+      return childDim[0].isScalar() || childDim[0].isUnit();
     default:
       if (e->isLogicalOperatorOrBoolean()) {
         return true;

@@ -155,7 +155,7 @@ class Calculator : public Device {
   URLDescriptor m_workshopURLDescriptor;
   ExtendedCompatIDDescriptor m_extendedCompatIdDescriptor;
 
-  Descriptor* m_descriptors[9];
+  Descriptor* m_descriptors[7];
   /* m_descriptors contains only descriptors that sould be returned via the
    * method descriptor(uint8_t type, uint8_t index), so do not count descriptors
    * included in other descriptors or returned by other functions. */

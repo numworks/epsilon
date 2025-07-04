@@ -11,9 +11,6 @@
 
 namespace Poincare::Internal {
 
-/* Solver methods are a direct (and incomplete for now) adaptation of methods in
- * apps/solver/system_of_equations.cpp. */
-
 class EquationSolver {
  public:
   constexpr static int k_maxNumberOfVariables = 6;

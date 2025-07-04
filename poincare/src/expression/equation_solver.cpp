@@ -165,8 +165,8 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
     return result;
   }
 
-  /* Simplify result */
-  Simplification::Simplify(result.solutionList, projectionContext);
+  /* Beautify result */
+  Simplification::BeautifyReduced(result.solutionList, &projectionContext);
 
   return result;
 }
@@ -607,9 +607,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
         /* Replace the solution in the equation list to check later that it
          * respects the dependencies. */
         Variables::Replace(equationListClone, row, child);
-        // Child has already been reduced.
-        assert(!Simplification::ReduceSystem(child, false));
-        // Continue anyway to preserve TreeStack integrity
+        // Reduce the solution
+        Simplification::ReduceSystem(child, true);
+        // Continue to preserve TreeStack integrity
         child = child->nextTree();
       } else {
         child->removeTree();

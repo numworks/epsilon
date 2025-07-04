@@ -60,7 +60,7 @@ EquationSolver::SolverResult EquationSolver::ExactSolveAdaptive(
   bool retryWithOverridenVariables =
       nDefinedVariables > 0 &&
       ((firstError == Error::NoError &&
-        firstResult.solutionList->numberOfChildren() == 0) ||
+        firstResult.exactSolutionList->numberOfChildren() == 0) ||
        firstError == Error::EquationUndefined ||
        firstError == Error::EquationNonReal ||
        firstError == Error::EquationUnhandled);
@@ -69,10 +69,15 @@ EquationSolver::SolverResult EquationSolver::ExactSolveAdaptive(
     return firstResult;
   }
 
-  assert((firstResult.solutionList == nullptr) ||
-         (firstResult.solutionList->numberOfChildren() == 0));
-  if (firstResult.solutionList) {
-    firstResult.solutionList->removeTree();
+  assert((firstResult.exactSolutionList == nullptr) ||
+         (firstResult.exactSolutionList->numberOfChildren() == 0));
+  if (firstResult.approximateSolutionList) {
+    assert(!firstResult.exactSolutionList ||
+           firstResult.approximateSolutionList > firstResult.exactSolutionList);
+    firstResult.approximateSolutionList->removeTree();
+  }
+  if (firstResult.exactSolutionList) {
+    firstResult.exactSolutionList->removeTree();
   }
 
   // Try solving while overriding user variables
@@ -81,10 +86,11 @@ EquationSolver::SolverResult EquationSolver::ExactSolveAdaptive(
 
   if (firstError == Error::NoError && secondError != Error::NoError &&
       secondError != Error::RequireApproximateSolution) {
-    assert(secondResult.solutionList == nullptr);
+    assert(secondResult.exactSolutionList == nullptr);
     /* The system becomes invalid when overriding the user variables: the
      * first solution was better. Restore inital empty list */
-    firstResult.solutionList = List::PushEmpty();
+    firstResult.exactSolutionList = List::PushEmpty();
+    firstResult.approximateSolutionList = List::PushEmpty();
     return firstResult;
   }
 
@@ -108,11 +114,8 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
 
   if (preprocessingResult.error != Error::NoError) {
     /* If the analysis failed, return an empty solution list */
-    if (reducedEquationList) {
-      reducedEquationList->removeTree();
-    }
+    assert(reducedEquationList == nullptr);
     return {
-        .solutionList = nullptr,
         .error = preprocessingResult.error,
         .equationMetadata = equationMetadata,
     };
@@ -129,13 +132,14 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   if (result.error == Error::NonLinearSystem &&
       equationMetadata.unknownVariables.size() <= 1 &&
       reducedEquationList->numberOfChildren() <= 1) {
-    assert(result.solutionList == nullptr);
+    assert(result.exactSolutionList == nullptr &&
+           result.approximateSolutionList == nullptr);
     result = SolvePolynomial(reducedEquationList, equationMetadata);
 
     if (result.error == Error::NoError) {
       /* Remove non real solutions of a polynomial if the equation was
        * projected with a "Real" Complex format */
-      Tree* solutionList = result.solutionList;
+      Tree* solutionList = result.exactSolutionList;
       assert(solutionList->isList());
       if (projectionContext.m_complexFormat == ComplexFormat::Real) {
         for (int i = solutionList->numberOfChildren() - 1; i >= 0; i--) {
@@ -148,25 +152,56 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   }
 #endif
 
-  TreeRef solutionList = result.solutionList;
+  TreeRef exactSolutionList = result.exactSolutionList;
   reducedEquationList->removeTree();
-  result.solutionList = solutionList;
+  result.exactSolutionList = exactSolutionList;
 
   // Step 3. Handle the result
 
   if (result.error == Error::NonLinearSystem ||
       result.error == Error::RequireApproximateSolution ||
-      result.solutionList == nullptr) {
+      result.exactSolutionList == nullptr) {
     // TODO: Handle GeneralMonovariable solving.
-    if (result.solutionList) {
-      result.solutionList->removeTree();
-      result.solutionList = nullptr;
+    if (result.exactSolutionList) {
+      result.exactSolutionList->removeTree();
+      result.exactSolutionList = nullptr;
     }
     return result;
   }
 
+  /* Approximate */
+
+  if (result.solutionMetadata.solutionType != SolutionType::Formal) {
+    Approximation::Context approxCtx(projectionContext.m_angleUnit,
+                                     projectionContext.m_complexFormat,
+                                     projectionContext.m_context);
+    result.approximateSolutionList = Approximation::ToTree<double>(
+        result.exactSolutionList,
+        Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                  .prepare = true},
+        approxCtx);
+  }
+
   /* Beautify result */
-  Simplification::BeautifyReduced(result.solutionList, &projectionContext);
+
+  assert(result.exactSolutionList);
+  TreeRef approximateSolutionList;
+
+  if (result.approximateSolutionList) {
+    // Keep reference to approximate solution list
+    approximateSolutionList = result.approximateSolutionList;
+    // Beautify approximate solutions
+    Simplification::BeautifyReduced(result.approximateSolutionList,
+                                    &projectionContext);
+  }
+
+  // Beautify exact solutions
+  Simplification::BeautifyReduced(result.exactSolutionList, &projectionContext);
+
+  if (result.approximateSolutionList) {
+    result.approximateSolutionList =
+        approximateSolutionList;  // Restore reference
+  }
 
   return result;
 }
@@ -185,7 +220,7 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
   assert(equationList->isList());
 
   if (equationList->numberOfChildren() > 1) {
-    return {.solutionList = nullptr, .error = Error::EquationUnhandled};
+    return {.error = Error::EquationUnhandled};
   }
 
   // Step 1. Analyze the equations
@@ -196,11 +231,8 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
   EquationMetadata equationMetadata = preprocessingResult.equationMetadata;
 
   if (preprocessingResult.error != Error::NoError) {
-    if (reducedEquationList) {
-      reducedEquationList->removeTree();
-    }
+    assert(reducedEquationList == nullptr);
     return {
-        .solutionList = nullptr,
         .error = preprocessingResult.error,
         .equationMetadata = equationMetadata,
     };
@@ -295,8 +327,8 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
   }
 
   reducedEquationList->removeTree();
-  return {.solutionList = resultList,
-          .error = Error::NoError,
+  // exactSolutionList is nullptr
+  return {.approximateSolutionList = resultList,
           .equationMetadata = equationMetadata,
           .solutionMetadata = solutionMetadata};
 }
@@ -370,7 +402,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
 
   if (error != Error::NoError) {
     userSymbols->removeTree();
-    return {nullptr, error, equationMetadata};
+    return {.error = error, .equationMetadata = equationMetadata};
   }
 
   if (equationMetadata.overrideDefinedVariables) {
@@ -443,8 +475,13 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
       }
     }
   }
+  if (error != Error::NoError) {
+    reducedEquationList->removeTree();
+    return {.error = error, .equationMetadata = equationMetadata};
+  }
 
-  return {reducedEquationList, error, equationMetadata};
+  return {.reducedEquationList = reducedEquationList,
+          .equationMetadata = equationMetadata};
 }
 
 EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
@@ -477,10 +514,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
       matrix->removeTree();
       equationListWithoutDep->removeTree();
       return {
-          nullptr,
-          Error::NonLinearSystem,
-          equationMetadata,
-          solutionMetadata,
+          .error = Error::NonLinearSystem,
+          .equationMetadata = equationMetadata,
+          .solutionMetadata = solutionMetadata,
       };
     }
     assert(coefficients->numberOfChildren() == cols);
@@ -498,10 +534,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     matrix->removeTree();
     equationListWithoutDep->removeTree();
     return {
-        nullptr,
-        Error::EquationUndefined,
-        equationMetadata,
-        solutionMetadata,
+        .error = Error::EquationUndefined,
+        .equationMetadata = equationMetadata,
+        .solutionMetadata = solutionMetadata,
     };
   }
   const Tree* coefficient = matrix->child(0);
@@ -518,8 +553,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
        * solution. */
       matrix->removeTree();
       equationListWithoutDep->removeTree();
-      return {List::PushEmpty(), Error::NoError, equationMetadata,
-              solutionMetadata};
+      return {.exactSolutionList = List::PushEmpty(),
+              .equationMetadata = equationMetadata,
+              .solutionMetadata = solutionMetadata};
     }
     coefficient = coefficient->nextTree();
   }
@@ -533,8 +569,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     (void)m;
     matrix->removeTree();
     equationListWithoutDep->removeTree();
-    return {List::PushEmpty(), Error::NoError, equationMetadata,
-            solutionMetadata};
+    return {.exactSolutionList = List::PushEmpty(),
+            .equationMetadata = equationMetadata,
+            .solutionMetadata = solutionMetadata};
 #else
     /* The system is insufficiently qualified: bind the value of n-rank
      * variables to parameters. */
@@ -589,8 +626,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     if (rank == Matrix::k_failedToCanonizeRank) {
       matrix->removeTree();
       equationListWithoutDep->removeTree();
-      return {nullptr, Error::EquationUndefined, equationMetadata,
-              solutionMetadata};
+      return {.error = Error::EquationUndefined,
+              .equationMetadata = equationMetadata,
+              .solutionMetadata = solutionMetadata};
     }
 #endif
   }
@@ -626,8 +664,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
       equationListClone->removeTree();
       matrix->removeTree();
       equationListWithoutDep->removeTree();
-      return {List::PushEmpty(), Error::NoError, equationMetadata,
-              solutionMetadata};
+      return {.exactSolutionList = List::PushEmpty(),
+              .equationMetadata = equationMetadata,
+              .solutionMetadata = solutionMetadata};
     }
     if (equation->isDep()) {
       // Approximate if the equation is monovariable and different from 0=0
@@ -637,7 +676,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
       equationListClone->removeTree();
       matrix->removeTree();
       equationListWithoutDep->removeTree();
-      return {nullptr, error, equationMetadata, solutionMetadata};
+      return {.error = error,
+              .equationMetadata = equationMetadata,
+              .solutionMetadata = solutionMetadata};
     }
   }
   equationListClone->removeTree();
@@ -659,7 +700,9 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     }
   }
 
-  return {matrix, Error::NoError, equationMetadata, solutionMetadata};
+  return {.exactSolutionList = matrix,
+          .equationMetadata = equationMetadata,
+          .solutionMetadata = solutionMetadata};
 }
 
 Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
@@ -747,8 +790,9 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
       equationWithoutDep, Variables::Variable(0, ComplexSign::Finite()));
   if (!polynomial) {
     SharedTreeStack->dropBlocksFrom(equation);
-    return {nullptr, Error::RequireApproximateSolution, equationMetadata,
-            solutionMetadata};
+    return {.error = Error::RequireApproximateSolution,
+            .equationMetadata = equationMetadata,
+            .solutionMetadata = solutionMetadata};
   }
 
   const Tree* coefficients[Polynomial::k_maxNumberOfPolynomialCoefficients] =
@@ -756,8 +800,9 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
   int degree = Polynomial::Degree(polynomial);
   if (degree > Polynomial::k_maxPolynomialDegree) {
     SharedTreeStack->dropBlocksFrom(equation);
-    return {nullptr, Error::RequireApproximateSolution, equationMetadata,
-            solutionMetadata};
+    return {.error = Error::RequireApproximateSolution,
+            .equationMetadata = equationMetadata,
+            .solutionMetadata = solutionMetadata};
   }
   solutionMetadata.degree = degree;
 
@@ -825,8 +870,9 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
       }
       if (remainingDependency) {
         SharedTreeStack->dropBlocksFrom(equation);
-        return {nullptr, Error::RequireApproximateSolution, equationMetadata,
-                solutionMetadata};
+        return {.error = Error::RequireApproximateSolution,
+                .equationMetadata = equationMetadata,
+                .solutionMetadata = solutionMetadata};
       }
     }
     // solution has already been reduced.
@@ -838,7 +884,9 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
   equation->removeTree();
 
   NAry::AddChild(solutionList, discriminant);
-  return {solutionList, Error::NoError, equationMetadata, solutionMetadata};
+  return {.exactSolutionList = solutionList,
+          .equationMetadata = equationMetadata,
+          .solutionMetadata = solutionMetadata};
 }
 
 uint32_t EquationSolver::TagParametersUsedAsVariables(VariableArray variables) {

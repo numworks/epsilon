@@ -115,9 +115,9 @@ class SystemOfEquations {
         const Poincare::Internal::Tree* symbol) override;
   };
 
-  Error registerSolution(Poincare::UserExpression e, Poincare::Context* context,
-                         SolutionType type);
-  void registerSolution(double f);
+  Error registerExactSolution(Poincare::UserExpression exact,
+                              Poincare::UserExpression approximate,
+                              Poincare::Context* context);
 
   Solution m_solutions[k_maxNumberOfSolutions];
   Poincare::Internal::EquationSolver::EquationMetadata m_equationMetadata;

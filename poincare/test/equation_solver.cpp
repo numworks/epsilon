@@ -20,7 +20,7 @@ bool check_solutions(
   EquationSolver::SolverResult result =
       EquationSolver::ExactSolveAdaptive(equationList, projectionContext);
   EquationSolver::Error error = result.error;
-  Tree* solutions = result.solutionList;
+  Tree* solutions = result.exactSolutionList;
   quiz_assert(error == expectedError);
   if (solutions) {
     quiz_assert(solutions->numberOfChildren() ==

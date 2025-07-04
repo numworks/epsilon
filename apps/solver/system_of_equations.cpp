@@ -53,20 +53,45 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
           .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
           .m_context = context,
       });
-  Internal::Tree* solutionList = result.solutionList;
+  Internal::Tree* exactSolutionList = result.exactSolutionList;
+  Internal::Tree* approximateSolutionList = result.approximateSolutionList;
   m_solutionMetadata = result.solutionMetadata;
   m_equationMetadata = result.equationMetadata;
   Error error = result.error;
   if (error == Error::NoError) {
-    assert(solutionList);
-    m_numberOfSolutions = 0;
-    for (const Internal::Tree* solution : solutionList->children()) {
-      registerSolution(UserExpression::Builder(solution), context,
-                       m_solutionMetadata.solutionType);
+    assert(exactSolutionList && exactSolutionList->isList());
+    m_numberOfSolutions = 0;  // Reset number of solutions
+
+    bool hasApproximateSolutions = approximateSolutionList;
+    assert(!hasApproximateSolutions ||
+           (approximateSolutionList->isList() &&
+            approximateSolutionList->numberOfChildren() ==
+                exactSolutionList->numberOfChildren()));
+
+    size_t nSolutions = exactSolutionList->numberOfChildren();
+    const Internal::Tree* currentApproximate =
+        hasApproximateSolutions && nSolutions > 0
+            ? approximateSolutionList->child(0)
+            : nullptr;
+    size_t i = 0;
+    for (const Internal::Tree* exactSol : exactSolutionList->children()) {
+      UserExpression approximate = UserExpression();
+      if (currentApproximate) {
+        approximate = UserExpression::Builder(currentApproximate);
+        if (++i < nSolutions) {  // Do not go beyond the stack end
+          currentApproximate = currentApproximate->nextTree();
+        }
+      }
+      registerExactSolution(UserExpression::Builder(exactSol), approximate,
+                            context);
     }
-    solutionList->removeTree();
+    if (approximateSolutionList) {
+      assert(approximateSolutionList > exactSolutionList);
+      approximateSolutionList->removeTree();
+    }
+    exactSolutionList->removeTree();
   } else {
-    assert(!solutionList);
+    assert(!exactSolutionList && !approximateSolutionList);
   }
   eqList->removeTree();
   return error;
@@ -119,17 +144,18 @@ void SystemOfEquations::approximateSolve(Context* context) {
     m_memoizedAutoSolvingRange = m_approximateSolvingRange;
   }
 
-  assert(result.solutionList && result.solutionList->isList());
+  assert(result.approximateSolutionList &&
+         result.approximateSolutionList->isList() && !result.exactSolutionList);
   // Update member variables for LinearSystem
-  m_numberOfSolutions = result.solutionList->numberOfChildren();
+  m_numberOfSolutions = result.approximateSolutionList->numberOfChildren();
   // Copy solutions
-  for (int i = 0;
-       const Internal::Tree* solution : result.solutionList->children()) {
+  for (int i = 0; const Internal::Tree* solution :
+                  result.approximateSolutionList->children()) {
     m_solutions[i++] =
         Solution(Poincare::Layout(), Poincare::Layout(),
                  Poincare::Internal::FloatHelper::To(solution), false);
   }
-  result.solutionList->removeTree();
+  result.approximateSolutionList->removeTree();
   eqList->removeTree();
 }
 
@@ -143,55 +169,15 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
   }
 }
 
-/* Simplify and/or approximate solutions. Never call advanced reduction.
- * [exact] and [approximate] are optional parameter. */
-static void simplifyAndApproximateSolution(
-    UserExpression e, UserExpression* exact, UserExpression* approximate,
-    bool approximateDuringReduction, Context* context,
-    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
-    Preferences::UnitFormat unitFormat,
-    SymbolicComputation symbolicComputation) {
-  if (!exact && !approximate) {
-    // Nothing to do.
-    return;
-  }
-  Internal::ProjectionContext projCtx = {
-      .m_complexFormat = complexFormat,
-      .m_angleUnit = angleUnit,
-      .m_strategy = approximateDuringReduction
-                        ? Internal::Strategy::ApproximateToFloat
-                        : Internal::Strategy::Default,
-      .m_unitFormat = unitFormat,
-      .m_symbolic = symbolicComputation,
-      .m_context = context,
-      .m_advanceReduce = false};
-  if (exact) {
-    if (approximate) {
-      e.cloneAndSimplifyAndApproximate(exact, approximate, projCtx);
-    } else {
-      bool reductionFailure = false;
-      *exact = e.cloneAndSimplify(projCtx, &reductionFailure);
-    }
-    if (exact->isDep()) {
-      /* Reduction may have created a dependency.
-       * We remove that dependency in order to create layouts. */
-      *exact = exact->cloneChildAtIndex(0);
-    }
-  } else {
-    assert(approximate);
-    *approximate = e.cloneAndApproximate(projCtx);
-  }
-  assert(!exact || !exact->isUninitialized());
-  assert(!approximate || !approximate->isUninitialized());
-}
+SystemOfEquations::Error SystemOfEquations::registerExactSolution(
+    UserExpression exact, UserExpression approximate, Context* context) {
+  assert(m_solutionMetadata.solutionType != SolutionType::Approximate);
+  assert(!exact.isUninitialized());
 
-SystemOfEquations::Error SystemOfEquations::registerSolution(
-    UserExpression e, Context* context, SolutionType type) {
-  Preferences::AngleUnit angleUnit =
-      MathPreferences::SharedPreferences()->angleUnit();
+  EquationStore* store = m_store;
+
   bool forbidExactSolution =
       MathPreferences::SharedPreferences()->examMode().forbidExactResults();
-  EquationStore* store = m_store;
 
   int nEquations = store->numberOfDefinedModels();
   int i = 0;
@@ -205,70 +191,47 @@ SystemOfEquations::Error SystemOfEquations::registerSolution(
     i++;
   }
 
-  const bool displayApproximateSolution = type != SolutionType::Formal;
+  assert(m_solutionMetadata.solutionType == SolutionType::Formal ||
+         !exact.clone().replaceSymbols(context));
 
-  bool displayExactSolution = false;
-  UserExpression exact = UserExpression();
-  UserExpression approximate = UserExpression();
-  if (type == SolutionType::Approximate) {
-    approximate = e;
-  } else {
-    assert(type == SolutionType::Formal || type == SolutionType::Exact);
-    Preferences::UnitFormat unitFormat =
-        GlobalPreferences::SharedGlobalPreferences()->unitFormat();
-    // Any remaining symbol at this point should be an unknown parameter.
-    SymbolicComputation symbolicComputation =
-        SymbolicComputation::KeepAllSymbols;
-    assert(type == SolutionType::Formal || !e.clone().replaceSymbols(context));
+  forbidExactSolution =
+      forbidExactSolution ||
+      CAS::ShouldOnlyDisplayApproximation(exact, exact, approximate, context);
 
-    const bool approximateDuringReduction =
-        !displayApproximateSolution && forbidExactSolution;
-    UserExpression* approximatePointer =
-        displayApproximateSolution ? &approximate : nullptr;
-    // Only re-reduce e if approximateDuringReduction is true.
-    UserExpression* exactPointer =
-        approximateDuringReduction ? &exact : nullptr;
-    simplifyAndApproximateSolution(e, exactPointer, approximatePointer,
-                                   approximateDuringReduction, context,
-                                   m_equationMetadata.complexFormat, angleUnit,
-                                   unitFormat, symbolicComputation);
-    if (!approximateDuringReduction) {
-      exact = e;
-    }
-    displayExactSolution =
-        approximateDuringReduction ||
-        (!forbidExactSolution &&
-         !CAS::ShouldOnlyDisplayApproximation(e, exact, approximate, context));
-    if (!displayApproximateSolution && !displayExactSolution) {
-      /* Happens if the formal solution has no permission to be displayed.
-       * Re-reduce but force approximating during reduction. */
-      exact = UserExpression();
-      approximate = UserExpression();
-      simplifyAndApproximateSolution(e, &exact, approximatePointer, true,
-                                     context, m_equationMetadata.complexFormat,
-                                     angleUnit, unitFormat,
-                                     symbolicComputation);
-      displayExactSolution = true;
-    }
+  if (forbidExactSolution && approximate.isUninitialized()) {
+    // Re-reduce exact solution but approximate during reduction.
+    Internal::ProjectionContext projCtx = {
+        .m_complexFormat = m_equationMetadata.complexFormat,
+        .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+        .m_strategy = Internal::Strategy::ApproximateToFloat,
+        .m_unitFormat =
+            GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+        // Any remaining symbol at this point should be an unknown parameter.
+        .m_symbolic = SymbolicComputation::KeepAllSymbols,
+        .m_context = context,
+        .m_advanceReduce = false};
+    bool failure = false;
+    approximate = exact.cloneAndSimplify(projCtx, &failure);
   }
 
-  if (!approximate.isUninitialized() && approximate.isNonReal()) {
-    return Error::EquationNonReal;
-  }
-  if (displayApproximateSolution && !approximate.isUninitialized() &&
-      approximate.isUndefined()) {
-    return Error::EquationUndefined;
+  if (!approximate.isUninitialized()) {
+    if (approximate.isNonReal()) {
+      return Error::EquationNonReal;
+    }
+    if (approximate.isUndefined()) {
+      return Error::EquationUndefined;
+    }
   }
 
   Layout exactLayout, approximateLayout;
-  if (displayExactSolution) {
+  if (!forbidExactSolution) {
     assert(!exact.isUninitialized());
     exactLayout = PoincareHelpers::CreateLayout(exact, context);
   }
-  if (displayApproximateSolution) {
-    assert(!approximate.isUninitialized());
+  if (!approximate.isUninitialized()) {
     approximateLayout = PoincareHelpers::CreateLayout(approximate, context);
   }
+
   assert(!approximateLayout.isUninitialized() ||
          !exactLayout.isUninitialized());
 

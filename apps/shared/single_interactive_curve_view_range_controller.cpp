@@ -126,7 +126,7 @@ void SingleInteractiveCurveViewRangeController::confirmParameters() {
 bool SingleInteractiveCurveViewRangeController::setParameterAtIndex(
     int parameterIndex, ParameterType value) {
   if (typeAtRow(parameterIndex) == k_stepCellType) {
-    if (PoincareHelpers::ToFloat(value) <= 0.0f) {
+    if (!IsValidStepValue(value)) {
       App::app()->displayWarning(I18n::Message::ForbiddenValue);
       return false;
     }

@@ -2,9 +2,9 @@
 #define SOLVER_SYSTEM_OF_EQUATIONS_H
 
 #include <apps/shared/interactive_curve_view_range.h>
+#include <poincare/equation_solver.h>
 #include <poincare/old/context_with_parent.h>
 #include <poincare/range.h>
-#include <poincare/src/expression/equation_solver.h>
 
 #include "equation_store.h"
 #include "solution.h"
@@ -25,10 +25,10 @@ namespace Solver {
 
 class SystemOfEquations {
  public:
-  using SolvingMethod = Poincare::Internal::EquationSolver::SolvingMethod;
-  using SolutionType = Poincare::Internal::EquationSolver::SolutionType;
+  using SolvingMethod = Poincare::EquationSolver::SolvingMethod;
+  using SolutionType = Poincare::EquationSolver::SolutionType;
 
-  using Error = Poincare::Internal::EquationSolver::Error;
+  using Error = Poincare::EquationSolver::Error;
 
   SystemOfEquations(EquationStore* store) : m_store(store) {}
 

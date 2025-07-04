@@ -15,7 +15,6 @@
 #include <escher/table_view_data_source.h>
 #include <ion.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/src/expression/equation_solver.h>
 
 #include "system_of_equations.h"
 

@@ -121,7 +121,7 @@ class EquationSolver {
   };
 
   /* This is used by both ExactSolve and ApproximateSolve.
-   * It computes the EquationMetadata, and reduces the equation set. */
+   * It computes the EquationMetadata, and reduces the equation list. */
   static PreprocessingResult PreprocessEquationList(
       const Tree* equationList, ProjectionContext* projectionContext,
       UnknownSelectionStrategy selectionStrategy);

@@ -83,8 +83,8 @@ EquationSolver::SolverResult EquationSolver::ExactSolveAdaptive(
       secondError != Error::RequireApproximateSolution) {
     assert(secondResult.solutionList == nullptr);
     /* The system becomes invalid when overriding the user variables: the
-     * first solution was better. Restore inital empty set */
-    firstResult.solutionList = SharedTreeStack->pushSet(0);
+     * first solution was better. Restore inital empty list */
+    firstResult.solutionList = List::PushEmpty();
     return firstResult;
   }
 
@@ -166,11 +166,7 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   }
 
   /* Simplify result */
-  for (Tree* solution : result.solutionList->children()) {
-    /* Simplify each solution separately as Set don't interact well with
-     * simplification */
-    Simplification::Simplify(solution, projectionContext);
-  }
+  Simplification::Simplify(result.solutionList, projectionContext);
 
   return result;
 }
@@ -462,7 +458,7 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
 
   // Solve without dependencies
   Tree* equationListWithoutDep =
-      SharedTreeStack->pushSet(reducedEquationList->numberOfChildren());
+      SharedTreeStack->pushList(reducedEquationList->numberOfChildren());
   for (const Tree* equation : reducedEquationList->children()) {
     Dependency::SafeMain(equation)->cloneTree();
   }
@@ -522,7 +518,7 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
        * solution. */
       matrix->removeTree();
       equationListWithoutDep->removeTree();
-      return {SharedTreeStack->pushSet(0), Error::NoError, equationMetadata,
+      return {List::PushEmpty(), Error::NoError, equationMetadata,
               solutionMetadata};
     }
     coefficient = coefficient->nextTree();
@@ -537,7 +533,7 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     (void)m;
     matrix->removeTree();
     equationListWithoutDep->removeTree();
-    return {SharedTreeStack->pushSet(0), Error::NoError, equationMetadata,
+    return {List::PushEmpty(), Error::NoError, equationMetadata,
             solutionMetadata};
 #else
     /* The system is insufficiently qualified: bind the value of n-rank
@@ -620,7 +616,7 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
       }
     }
   }
-  matrix->moveNodeOverNode(SharedTreeStack->pushSet(n));
+  matrix->moveNodeOverNode(SharedTreeStack->pushList(n));
   Dependency::DeepRemoveUselessDependencies(equationListClone);
 
   // Make sure the solution satisfies dependencies in equations
@@ -630,7 +626,7 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
       equationListClone->removeTree();
       matrix->removeTree();
       equationListWithoutDep->removeTree();
-      return {SharedTreeStack->pushSet(0), Error::NoError, equationMetadata,
+      return {List::PushEmpty(), Error::NoError, equationMetadata,
               solutionMetadata};
     }
     if (equation->isDep()) {
@@ -668,7 +664,7 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
 
 Tree* EquationSolver::GetLinearCoefficients(const Tree* equation,
                                             uint8_t numberOfVariables) {
-  TreeRef result = SharedTreeStack->pushList(0);
+  TreeRef result = List::PushEmpty();
   TreeRef eq = equation->cloneTree();
   /* TODO: y*(1+x) is not handled by PolynomialParser. We expand everything as
    * temporary workaround. */

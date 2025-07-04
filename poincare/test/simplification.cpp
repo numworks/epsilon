@@ -1169,6 +1169,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("tan(2_rad^2)", "undef");
   // TODO_PCJ : Wasn't exact before
   simplifies_to("π×_rad×_°", "π^2/180×_rad^2");
+  simplifies_to("(_A×x)^2×_s", "undef", replaceSymbolCtx);
 
   // BestRepresentative
   simplifies_to("1_m+1_km", "1.001×_km",

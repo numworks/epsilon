@@ -41,14 +41,7 @@ struct SIVector {
   }
   constexpr bool isEmpty() const { return supportSize() == 0; }
   constexpr static SIVector Empty() { return {}; }
-  constexpr bool isUndef() const {
-    for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
-      if (coefficientAtIndex(i) != k_undefCoefficient) {
-        return false;
-      }
-    }
-    return true;
-  }
+  constexpr bool isUndef() const { return *this == Undef(); }
   /* Vector for UndefUnit. Values do not matter since UndefUnit is meant to have
    * the same dimension as any other unit. */
   constexpr static SIVector Undef() {
@@ -74,6 +67,13 @@ struct SIVector {
                                                   int8_t factor,
                                                   SIVector* pos = nullptr,
                                                   SIVector* neg = nullptr) {
+    if (isUndef()) {
+      return true;
+    }
+    if (other.isUndef()) {
+      *this = Undef();
+      return true;
+    }
     for (uint8_t i = 0; i < k_numberOfBaseUnits; i++) {
       if (!setCoefficientAtIndex(i, coefficientAtIndex(i) +
                                         other.coefficientAtIndex(i) * factor) ||

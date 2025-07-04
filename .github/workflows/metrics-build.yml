@@ -67,7 +67,7 @@ jobs:
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
       - name: Binary size summary (userland only)
         if: ${{ steps.core.outcome != 'success' }}
-        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize)" > ./metrics-output/binary_size_summary
+        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
       - name: App sizes
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" > ./metrics-output/app_sizes
       - name: Binary size N0120

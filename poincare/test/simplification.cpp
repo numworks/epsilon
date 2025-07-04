@@ -1170,6 +1170,10 @@ QUIZ_CASE(pcj_simplification_unit) {
   // TODO_PCJ : Wasn't exact before
   simplifies_to("π×_rad×_°", "π^2/180×_rad^2");
   simplifies_to("(_A×x)^2×_s", "undef", replaceSymbolCtx);
+  simplifies_to("log(_s×x/(_s×y))",
+                "dep(log(x/y),{nonNull(x),nonNull(1/"
+                "(1×10^0×y)),realPos((1×10^0×x)/(1×10^0×y))})",
+                keepAllSymbolsCtx);
 
   // BestRepresentative
   simplifies_to("1_m+1_km", "1.001×_km",

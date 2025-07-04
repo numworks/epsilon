@@ -1,5 +1,5 @@
 poincare_cli%:
-	$(MAKE) -C cli $@
+	@ $(MAKE) -C cli $@
 
 poincare.js%:
-	$(MAKE) -C poincarejs $@
+	@ $(MAKE) -C poincarejs $@

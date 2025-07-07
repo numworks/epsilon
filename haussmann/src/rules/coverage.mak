@@ -1,6 +1,6 @@
 $(call create_goal,coverage_$(COVERAGE_main_goal),$(MODULES_$(COVERAGE_main_goal)),coverage)
 
-$(call create_goal,coverage_test,$(MODULES_test),coverage)
+$(call create_goal,coverage_test,$(MODULES_$(COVERAGE_main_goal)_test),coverage)
 
 _coverage_excludes := \
   .*/eadk/.* \

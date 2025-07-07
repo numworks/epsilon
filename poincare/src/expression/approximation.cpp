@@ -1702,6 +1702,8 @@ bool Private::SkipApproximation(TypeBlock type, TypeBlock parentType,
     case Type::ListElement:
       assert(indexInParent < 1 || previousChildWasApproximated);
       return indexInParent >= 1 && !previousChildWasApproximated;
+    case Type::ListSequence:
+      return indexInParent == Parametric::k_lowerBoundIndex;
     case Type::Identity:
       return true;
     default:

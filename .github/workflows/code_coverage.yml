@@ -99,8 +99,8 @@ jobs:
       # TODO: next steps should be in a separate workflow for safety reasons
       - name: Format report into markdown tables
         run: |
-          touch ${{ env.COVERAGE_OUTPUT_DIR }}/summary.md && $DOCKER_RUN "\$PYTHON build/metrics/coverage_report.py ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt --base_output ${{ env.COVERAGE_OUTPUT_DIR }}/base_summary.txt --summary" > ${{ env.COVERAGE_OUTPUT_DIR }}/summary.md
-          touch ${{ env.COVERAGE_OUTPUT_DIR }}/differential.md && $DOCKER_RUN "\$PYTHON build/metrics/coverage_report.py ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt --diff" > ${{ env.COVERAGE_OUTPUT_DIR }}/differential.md
+          touch ${{ env.COVERAGE_OUTPUT_DIR }}/summary.md && $DOCKER_RUN "\$PYTHON tools/metrics/coverage_report.py ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt --base_output ${{ env.COVERAGE_OUTPUT_DIR }}/base_summary.txt --summary" > ${{ env.COVERAGE_OUTPUT_DIR }}/summary.md
+          touch ${{ env.COVERAGE_OUTPUT_DIR }}/differential.md && $DOCKER_RUN "\$PYTHON tools/metrics/coverage_report.py ${{ env.COVERAGE_OUTPUT_DIR }}/genhtml_output.txt --diff" > ${{ env.COVERAGE_OUTPUT_DIR }}/differential.md
       - name: Shorten commit ids
         id: shorten_commits
         run: |

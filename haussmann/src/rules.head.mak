@@ -73,11 +73,6 @@ $(call rule_for_object, \
   $$(CC) $$(PRIORITY_SFLAGS) $$(SFLAGS) -c $$< -o $$@ \
 )
 
-$(call rule_for_object, \
-  WINDRES, rc, \
-  $$(WINDRES) $$(WRFLAGS) $$< -O coff -o $$@ \
-)
-
 # Define a helpful prerequesite for targets that should always be rebuilt
 .PHONY: FORCE
 FORCE: ;

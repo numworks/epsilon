@@ -143,14 +143,14 @@ class AdvancedReduction {
   };
 
   struct Context {
-    Context(Tree* root, float bestMetric, uint32_t bestHash,
+    Context(const Tree* root, float bestMetric, uint32_t bestHash,
             ReductionTarget reductionTarget)
         : m_root(root),
           m_bestMetric(bestMetric),
           m_bestHash(bestHash),
           m_reductionTarget(reductionTarget) {}
 
-    Tree* m_root;
+    const Tree* m_root;
     Path m_path;
     Path m_bestPath;
     float m_bestMetric;
@@ -183,7 +183,8 @@ class AdvancedReduction {
    * [PrivateReduce].
    * [direction] should be Contract or Expand only. NextNode are handled in
    * [PrivateReduce]. */
-  static bool ReduceDirection(Tree* e, Context* ctx, Direction direction);
+  static bool ReduceDirection(Tree* e, Tree* root, Context* ctx,
+                              Direction direction);
   /* Auxiliary method to [PrivateReduce], handles Contract and Expand
    * operations. Return true if advanced reduction possibilities have all been
    * explored. */

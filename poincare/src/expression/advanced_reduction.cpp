@@ -558,7 +558,7 @@ bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
   return fullExploration;
 }
 
-bool AdvancedReduction::ReduceContractThenExpand(Tree* e, Context* ctx) {
+bool AdvancedReduction::ReduceContractThenExpand(const Tree* e, Context* ctx) {
   VERBOSE_INDENT(2);
   bool fullExploration =
       DuplicateRootAndReduceDirection(e, ctx, Direction::Contract());

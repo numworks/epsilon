@@ -189,7 +189,7 @@ class AdvancedReduction {
   /* Auxiliary method to [PrivateReduce], handles Contract and Expand
    * operations. Return true if advanced reduction possibilities have all been
    * explored. */
-  static bool ReduceContractThenExpand(Tree* e, Context* ctx);
+  static bool ReduceContractThenExpand(const Tree* e, Context* ctx);
   /* Compute the metric of ctx->m_root and update ctx accordingly */
   static void UpdateBestMetric(Context* ctx);
   // Bottom-up ShallowReduce starting from tree. Output is unrelated to change.

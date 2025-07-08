@@ -66,6 +66,8 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(
    * This means calling Reduce on an equivalent but different
    * expression could yield different results if limits have been reached. */
 
+  /* TODO: We could do without cloning [e] here, but [applyNextNode] is
+   * optimized to be applied on trees at the end of the TreeStack only. */
   Tree* editedExpression = e->cloneTree();
   Context ctx(editedExpression, Metric::GetMetric(e, reductionTarget),
               CrcCollection::AdvancedHash(e), reductionTarget);

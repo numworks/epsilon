@@ -12,11 +12,19 @@ constexpr static KDColor k_chargingPromptColors[] = {
     KDColorBlack, KDColorBlack, KDColorBlack, KDColorBlack};
 constexpr static uint8_t k_chargingPromptNumberOfMessages = 4;
 
+bool dismissWhenUnplugged(Ion::Events::Event) {
+  if (!Ion::USB::isPlugged()) {
+    Escher::App::app()->modalViewController()->dismissModal();
+    return true;
+  }
+  return false;
+}
+
 BatteryTimer::BatteryTimer()
     : Timer(1),
-      m_chargingPromptController(k_chargingPromptMessages,
-                                 k_chargingPromptColors,
-                                 k_chargingPromptNumberOfMessages) {}
+      m_chargingPromptController(
+          k_chargingPromptMessages, k_chargingPromptColors,
+          k_chargingPromptNumberOfMessages, dismissWhenUnplugged) {}
 
 bool BatteryTimer::fire() {
   AppsContainer* container = AppsContainer::sharedAppsContainer();

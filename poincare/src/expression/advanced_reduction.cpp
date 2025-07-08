@@ -67,7 +67,7 @@ AdvancedReduction::Path AdvancedReduction::FindBestReduction(
    * expression could yield different results if limits have been reached. */
 
   Tree* editedExpression = e->cloneTree();
-  Context ctx(editedExpression, e, Metric::GetMetric(e, reductionTarget),
+  Context ctx(editedExpression, Metric::GetMetric(e, reductionTarget),
               CrcCollection::AdvancedHash(e), reductionTarget);
   // Add initial root
   ctx.m_crcCollection.add(CrcCollection::AdvancedHash(e), 0);

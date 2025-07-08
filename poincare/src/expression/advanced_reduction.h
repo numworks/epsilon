@@ -143,16 +143,14 @@ class AdvancedReduction {
   };
 
   struct Context {
-    Context(Tree* root, const Tree* original, float bestMetric,
-            uint32_t bestHash, ReductionTarget reductionTarget)
+    Context(Tree* root, float bestMetric, uint32_t bestHash,
+            ReductionTarget reductionTarget)
         : m_root(root),
-          m_original(original),
           m_bestMetric(bestMetric),
           m_bestHash(bestHash),
           m_reductionTarget(reductionTarget) {}
 
     Tree* m_root;
-    const Tree* m_original;
     Path m_path;
     Path m_bestPath;
     float m_bestMetric;

@@ -93,6 +93,30 @@ struct Dimension {
     MatrixDimension matrix;
     UnitDimension unit;
   };
+#if POINCARE_TREE_LOG
+  /* LCOV_EXCL_START */
+  void log() {
+    switch (type) {
+      case DimensionType::Scalar:
+        std::cout << "Scalar" << std::endl;
+        return;
+      case DimensionType::Unit:
+        std::cout << "Unit (TODO log unit)" << std::endl;
+        return;
+      case DimensionType::Boolean:
+        std::cout << "Boolean" << std::endl;
+        return;
+      case DimensionType::Point:
+        std::cout << "Point" << std::endl;
+        return;
+      case DimensionType::Matrix:
+        std::cout << "Matrix (" << (int)matrix.rows << ',' << (int)matrix.cols
+                  << ')' << std::endl;
+        return;
+    }
+  }
+  /* LCOV_EXCL_STOP */
+#endif
 
  private:
   static bool DeepCheckDimensions(const Tree* e,

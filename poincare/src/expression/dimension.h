@@ -101,7 +101,8 @@ struct Dimension {
         std::cout << "Scalar" << std::endl;
         return;
       case DimensionType::Unit:
-        std::cout << "Unit (TODO log unit)" << std::endl;
+        // TODO more detailed log of units
+        std::cout << "Unit" << std::endl;
         return;
       case DimensionType::Boolean:
         std::cout << "Boolean" << std::endl;

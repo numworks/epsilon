@@ -8,8 +8,27 @@
 
 using namespace Poincare::Internal;
 
-bool dim(const Tree* e, Dimension d, Poincare::Context* ctx = nullptr) {
-  return Dimension::DeepCheck(e, ctx) && d == Dimension::Get(e, ctx);
+bool dim(const Tree* e, Dimension dExpected, Poincare::Context* ctx = nullptr) {
+  if (!Dimension::DeepCheck(e, ctx)) {
+#if POINCARE_TREE_LOG
+    std::cout << "EXPECTED VALID dimension for: ";
+    e->logSerialize();
+#endif
+    return false;
+  }
+  Dimension dObtained = Dimension::Get(e, ctx);
+  if (dExpected != dObtained) {
+#if POINCARE_TREE_LOG
+    std::cout << "For tree: ";
+    e->logSerialize();
+    std::cout << "Expected dimension: ";
+    dExpected.log();
+    std::cout << "               Got: ";
+    dObtained.log();
+#endif
+    return false;
+  }
+  return true;
 }
 
 bool dim(const char* input, Dimension d, Poincare::Context* ctx = nullptr) {
@@ -32,7 +51,15 @@ bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
 }
 
 bool hasInvalidDimOrLen(const Tree* e, Poincare::Context* ctx = nullptr) {
-  return !Dimension::DeepCheck(e, ctx);
+  bool res = !Dimension::DeepCheck(e, ctx);
+#if POINCARE_TREE_LOG
+  if (!res) {
+    std::cout << "Got valid but expected invalid dim/len for: ";
+    e->logSerialize();
+  }
+
+#endif
+  return res;
 }
 
 bool hasInvalidDimOrLen(const char* input, Poincare::Context* ctx = nullptr) {

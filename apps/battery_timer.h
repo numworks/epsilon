@@ -13,7 +13,7 @@ class BatteryTimer : public Escher::Timer {
 
  private:
   bool fire() override;
-  OnBoarding::PromptController m_chargingPromptController;
+  OnBoarding::PromptControllerCustomEventHandler m_chargingPromptController;
 
   /* Waiting around 1 second of charging time to display modal, this almost
    * ensures the USB modal shows before if the calculator is connected to a PC

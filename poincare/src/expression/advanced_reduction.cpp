@@ -491,23 +491,24 @@ bool AdvancedReduction::PrivateReduce(const Tree* e, Context* ctx,
 
 bool inline AdvancedReduction::DuplicateRootAndReduceDirection(
     const Tree* target, Context* ctx, Direction dir) {
-  Tree* oldRoot = ctx->m_root;
+  const Tree* oldRoot = ctx->m_root;
   assert(oldRoot <= target && target < oldRoot->nextTree());
   Tree* newRoot = oldRoot->cloneTree();
   Tree* newTarget = target - oldRoot + newRoot;
   ctx->m_root = newRoot;
-  bool result = ReduceDirection(newTarget, ctx, dir);
+  bool result = ReduceDirection(newTarget, newRoot, ctx, dir);
   ctx->m_root = oldRoot;
   SharedTreeStack->dropBlocksFrom(newRoot);
   return result;
 }
 
-bool inline AdvancedReduction::ReduceDirection(Tree* e, Context* ctx,
-                                               Direction dir) {
+bool inline AdvancedReduction::ReduceDirection(Tree* e, Tree* root,
+                                               Context* ctx, Direction dir) {
   assert(!dir.isNextNode());
   assert(ctx->canAppendDirection());
+  assert(ctx->m_root == root);
   Tree* target = e;
-  if (!dir.applyContractOrExpand(&target, ctx->m_root)) {
+  if (!dir.applyContractOrExpand(&target, root)) {
     LOG(3, "Nothing to ", dir.log());
     return true;
   }

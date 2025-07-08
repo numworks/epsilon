@@ -240,9 +240,9 @@ void AdvancedReduction::CrcCollection::decreaseMaxDepth() {
 #endif
 }
 
-Tree* NextNodeSkippingIgnoredTrees(Tree* e) {
+const Tree* NextNodeSkippingIgnoredTrees(const Tree* e) {
   assert(!AdvancedOperation::CanSkipTree(e));
-  Tree* next = e->nextNode();
+  const Tree* next = e->nextNode();
   while (next->block() < SharedTreeStack->lastBlock() &&
          AdvancedOperation::CanSkipTree(next)) {
     next = next->nextTree();
@@ -250,11 +250,11 @@ Tree* NextNodeSkippingIgnoredTrees(Tree* e) {
   return next;
 }
 
-bool AdvancedReduction::Direction::applyNextNode(Tree** u,
+bool AdvancedReduction::Direction::applyNextNode(const Tree** u,
                                                  const Tree* root) const {
   // Optimization: No trees are expected after root, so we can use lastBlock()
   assert(isNextNode());
-  Tree* next = NextNodeSkippingIgnoredTrees(*u);
+  const Tree* next = NextNodeSkippingIgnoredTrees(*u);
 
   assert((next->block() < SharedTreeStack->lastBlock()) ==
          next->hasAncestor(root, false));
@@ -293,7 +293,7 @@ bool AdvancedReduction::Direction::applyContractOrExpand(Tree** u,
 bool AdvancedReduction::Direction::apply(Tree** u, Tree* root,
                                          bool* rootChanged) const {
   if (isNextNode()) {
-    return applyNextNode(u, root);
+    return applyNextNode(const_cast<const Tree**>(u), root);
   }
   *rootChanged = applyContractOrExpand(u, root);
   return *rootChanged;
@@ -421,7 +421,7 @@ void AdvancedReduction::UpdateBestMetric(Context* ctx) {
 #endif
 }
 
-bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
+bool AdvancedReduction::PrivateReduce(const Tree* e, Context* ctx,
                                       bool zeroNextNodeAllowed) {
   if (AdvancedOperation::CanSkipTree(e)) {
     return true;
@@ -434,12 +434,12 @@ bool AdvancedReduction::PrivateReduce(Tree* e, Context* ctx,
   } else {
     Direction nextNode = Direction::NextNode(1);
     int i = 0;
-    Tree* target = e;
+    const Tree* target = e;
     /* [targets] caches all intermediate node obtained when doing the maximum
      * number of nextNode direction. This is useful because we want to iterate
      * over this list in reverse order. Caching the intermediate trees avoids
      * recomputing the same nextNode direction twice. */
-    Tree* targets[Direction::k_maxNextNodeAmount] = {};
+    const Tree* targets[Direction::k_maxNextNodeAmount] = {};
     while (i < Direction::k_maxNextNodeAmount &&
            nextNode.applyNextNode(&target, ctx->m_root)) {
       targets[i++] = target;

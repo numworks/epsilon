@@ -81,7 +81,7 @@ class AdvancedReduction {
     // Return true if direction was applied.
     bool apply(Tree** e, Tree* root, bool* treeChanged) const;
     // Return true if direction was applied.
-    bool applyNextNode(Tree** e, const Tree* root) const;
+    bool applyNextNode(const Tree** e, const Tree* root) const;
     // Return true if direction was applied.
     bool applyContractOrExpand(Tree** e, Tree* root) const;
     // Constructor needed for Path::m_stack
@@ -176,7 +176,7 @@ class AdvancedReduction {
   /* Internal entrypoint for AdvancedReduction. Handles NextNode operations.
    * After each NextNode, calls [ReduceContractThenExpand].
    * Return true if advanced reduction possibilities have all been explored. */
-  static bool PrivateReduce(Tree* e, Context* ctx,
+  static bool PrivateReduce(const Tree* e, Context* ctx,
                             bool zeroNextNodeAllowed = true);
   /* Duplicate the current root and call [ReduceDirection] on the copy. */
   static bool DuplicateRootAndReduceDirection(const Tree* e, Context* ctx,

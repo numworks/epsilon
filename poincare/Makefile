@@ -6,3 +6,7 @@ poincare.js%:
 
 poincarejs%:
 	@ $(MAKE) -C poincarejs $@
+
+clean:
+	@ $(MAKE) -C cli $@
+	@ $(MAKE) -C poincare $@

@@ -12,3 +12,8 @@ format:
 
 reformat:
 	@ $(MAKE) -C epsilon ROOT=`pwd` $@
+
+clean:
+	@ $(MAKE) -C epsilon $@
+	@ $(MAKE) -C scandium $@
+	@ $(MAKE) -C poincare $@

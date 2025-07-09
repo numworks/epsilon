@@ -50,4 +50,6 @@ LDFLAGS_sdl += \
   -framework Metal \
   -framework OpenGLES \
   -framework QuartzCore \
-  -framework UIKit
+  -framework UIKit \
+  -framework ImageIO \
+  -framework MobileCoreServices \

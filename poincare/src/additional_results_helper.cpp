@@ -44,24 +44,11 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   Tree* simplifiedAngle = PatternMatching::Create(
       KMult(KFrac(KDiv(KA, KB)), KB), {.KA = exactAngle, .KB = period});
   bool reductionSuccess = Simplification::Simplify(simplifiedAngle, *ctx);
-#if ASSERTIONS
-  {
-    // Check that simplifiedAngle was set inside [0, 2π[
-    double approximatedAngle = Approximation::To<double>(
-        simplifiedAngle,
-        Approximation::Parameters{.projectLocalVariables = true},
-        Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                               ctx->m_context));
-    approximatedAngle =
-        Trigonometry::ConvertAngleToRadian(approximatedAngle, ctx->m_angleUnit);
-    assert(0.0 <= approximatedAngle && approximatedAngle <= 2.0 * M_PI);
-  }
-#endif
 
   Tree* approximateAngleTree = nullptr;
   if (!directTrigonometry) {
+    assert(!approximateOutput.isUndefined());
     approximateAngleTree = approximateOutput.tree()->cloneTree();
-    assert(approximateAngleTree && !approximateAngleTree->isUndefined());
     if (GetSign(approximateAngleTree).isStrictlyNegative()) {
       // If the approximate angle is in [-π, π], set it in [0, 2π]
       approximateAngleTree->moveTreeOverTree(PatternMatching::Create(

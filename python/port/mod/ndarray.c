@@ -938,8 +938,6 @@ ndarray_obj_t *ndarray_from_iterable(mp_obj_t obj, uint8_t dtype) {
     size_t shape[ULAB_MAX_DIMS];
     mp_obj_iter_buf_t iter_buf[ULAB_MAX_DIMS];
     mp_obj_t iterable[ULAB_MAX_DIMS];
-    // inspect only the very first element in each dimension; this is fast,
-    // but not completely safe, e.g., length compatibility is not checked
     mp_obj_t item = obj;
 
     while(1) {
@@ -949,7 +947,22 @@ ndarray_obj_t *ndarray_from_iterable(mp_obj_t obj, uint8_t dtype) {
         if(ndim == ULAB_MAX_DIMS) {
             mp_raise_ValueError(translate("too many dimensions"));
         }
-        shape[ndim] = MP_OBJ_SMALL_INT_VALUE(mp_obj_len_maybe(item));
+        size_t len_first_item = MP_OBJ_SMALL_INT_VALUE(mp_obj_len_maybe(item));
+        shape[ndim] = len_first_item;
+        /* Check length compatibility for multi-dimensional arrays.
+         * array([[1,2,3],[4,5,6]]) has compatible shapes, but
+         * array([[1,2,3],[4,5,6,7]]) has incompatible shapes and should raise. */
+        if (ndim > 0){
+            while(1) {
+                mp_obj_t iterable_item = mp_iternext(iterable[ndim-1]);
+                if (iterable_item == NULL){
+                    break;
+                }
+                if ( MP_OBJ_SMALL_INT_VALUE(mp_obj_len_maybe(iterable_item)) != len_first_item){
+                    mp_raise_ValueError(translate("inhomogeneous array shape"));
+                }
+            }
+        }
         if(shape[ndim] == 0) {
             ndim++;
             break;

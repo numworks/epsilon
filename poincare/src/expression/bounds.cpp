@@ -63,10 +63,11 @@ Bounds Bounds::Compute(const Tree* e) {
     }
     case Type::Ln: {
       Bounds b = Bounds::Compute(e->child(0));
-      if (b.exists()) {
+      if (b.exists() && b.isStrictlyPositive()) {
         b.applyMonotoneFunction(std::log);
+        return b;
       }
-      return b;
+      return Invalid();
     }
     case Type::Exp: {
       Bounds b = Bounds::Compute(e->child(0));

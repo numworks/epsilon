@@ -3,3 +3,6 @@ poincare_cli%:
 
 poincare.js%:
 	@ $(MAKE) -C poincarejs $@
+
+poincarejs%:
+	@ $(MAKE) -C poincarejs $@

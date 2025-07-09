@@ -7,6 +7,7 @@ scandium%:
 poincare%:
 	@ $(MAKE) -C poincare $@
 
+# Using format from epsilon is a simple hack to avoid setting up haussmann here
 format:
 	@ $(MAKE) -C epsilon ROOT=`pwd` $@
 

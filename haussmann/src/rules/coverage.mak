@@ -35,7 +35,7 @@ endef
 # generate_coverage_info, <file_name>, <coverage_dir>
 define generate_coverage_info
 	@echo Generating coverage info for files in $2. Result will be stored in $2/$1.info.
-	lcov -j 32 --capture --directory $2 --output-file $2/$1.info \
+	lcov $(COVERAGE_lcov_args) -j 32 --capture --directory $2 --output-file $2/$1.info \
 	--rc function_coverage=0 --rc geninfo_unexecuted_blocks=1 \
 	--rc omit_lines=default: --rc omit_lines=OMG::unreachable
 endef

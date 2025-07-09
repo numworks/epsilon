@@ -48,4 +48,5 @@ QUIZ_CASE(pcj_bounds_sign) {
   assert_bounds_sign_is(i_e, Sign::Unknown());
   assert_bounds_sign_is("1+i", Sign::Unknown());
   assert_bounds_sign_is("{1}", Sign::Unknown());
+  assert_bounds_sign_is(KLn(KPow(KLn(2_e), 7000_e)), Sign::Unknown());
 }

@@ -70,4 +70,15 @@ QUIZ_CASE(python_numpy) {
   assert_command_execution_succeeds(env, "5*c", "array([5.0, 10.0])\n");
   assert_command_execution_succeeds(env, "c**2", "array([1.0, 4.0])\n");
   assert_command_execution_succeeds(env, "2**c", "array([2.0, 4.0])\n");
+  // Multi-dimensional array construction from a list or a tuple
+  assert_command_execution_fails(env, "np.array([[1,2,3],[4,5]])");
+  assert_command_execution_fails(env, "np.array(([1,2,3],[4,5]))");
+  assert_command_execution_fails(env, "np.array([[1,2],[3,4,5]])");
+  assert_command_execution_fails(env, "np.array(([1,2],[3,4,5]))");
+  assert_command_execution_succeeds(
+      env, "np.array([[1,2,3],[4,5,6]])\n",
+      "array([[1.0, 2.0, 3.0],\n       [4.0, 5.0, 6.0]])\n");
+  assert_command_execution_succeeds(
+      env, "np.array(([1,2,3],[4,5,6]))\n",
+      "array([[1.0, 2.0, 3.0],\n       [4.0, 5.0, 6.0]])\n");
 }

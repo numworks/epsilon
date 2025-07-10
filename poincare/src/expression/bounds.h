@@ -67,11 +67,17 @@ class Bounds {
   /* Check if bounds exists and is valid, meaning either:
    * [lower <= upper < 0],
    * [0 < lower <= upper],
-   * [lower == upper == 0]. */
+   * or [lower == upper == 0]. */
   bool hasKnownStrictSign() const {
-    return exists() && ((m_lower <= m_upper && (m_upper < 0 || 0 < m_lower)) ||
-                        (m_lower == 0 && m_upper == 0));
+    assert(exists() && m_lower <= m_upper);
+    return m_upper < 0 || 0 < m_lower || m_lower == m_upper;
   }
+
+#if POINCARE_TREE_LOG
+  void log() {
+    std::cout << "Bounds (" << m_lower << ',' << m_upper << ')' << std::endl;
+  }
+#endif
 
   double m_lower = NAN;
   double m_upper = NAN;

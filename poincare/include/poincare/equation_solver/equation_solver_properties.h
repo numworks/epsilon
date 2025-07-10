@@ -1,0 +1,102 @@
+#ifndef POINCARE_EQUATION_SOLVER_PROPERTIES_H
+#define POINCARE_EQUATION_SOLVER_PROPERTIES_H
+
+#include <assert.h>
+#include <omg/vector.h>
+#include <poincare/helpers/polynomial.h>
+#include <poincare/range.h>
+#include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/symbol.h>
+#include <poincare/src/memory/tree.h>
+
+/* This file is used by equation_solver_pool and equation_solver_tree.
+ * It's splitted to ensure Scandium can use it without including expression.h */
+
+namespace Poincare {
+
+namespace EquationSolverProperties {
+
+constexpr static size_t k_maxNumberOfVariables = 6;
+constexpr static size_t k_maxNumberOfExactSolutions =
+    std::max(k_maxNumberOfVariables,
+             // +1 for delta
+             PolynomialHelpers::k_maxSolvableDegree + 1);
+
+/* TODO: This cannot be extracted from SymbolHelper because it includes
+ * expression.h, which cannot be included in Scandium */
+constexpr static size_t k_maxVariableSize = Internal::Symbol::k_maxNameSize;
+
+class VariableArray : public OMG::StaticVector<char[k_maxVariableSize],
+                                               k_maxNumberOfVariables> {
+ public:
+  void push(const char* variable) {
+    assert(m_size < capacity());
+    assert(variable && strlen(variable) < k_maxVariableSize);
+    memcpy(m_data[m_size], variable, strlen(variable) + 1);
+    m_size++;
+  }
+
+  void fillWithList(const Internal::Tree* list) {
+    assert((list->isList() || list->isSet()) &&
+           list->numberOfChildren() <= capacity());
+    clear();
+    for (const Internal::Tree* variable : list->children()) {
+      push(Internal::Symbol::GetName(variable));
+    }
+  }
+
+ private:
+  // Prevent pushing arrays
+  using OMG::StaticVector<char[k_maxVariableSize],
+                          k_maxNumberOfVariables>::push;
+};
+
+enum class Error {
+  NoError = 0,
+  EquationUndefined = 1,
+  EquationNonReal = 2,
+  TooManyVariables = 3,
+  NonLinearSystem = 4,
+  RequireApproximateSolution = 5,
+  EquationUnhandled = 6,
+  DisabledInExamMode,  // TODO_PCJ
+};
+
+enum class SolutionType : uint8_t {
+  Approximate,
+  Exact,
+  Formal,
+};
+
+enum class SolvingMethod : uint8_t {
+  GeneralMonovariable,
+  LinearSystem,
+  PolynomialMonovariable,
+};
+
+struct EquationMetadata {
+  // Variables that are considered unknown in the equations.
+  VariableArray unknownVariables;
+  // Variables that are defined by the user and present in the equations.
+  VariableArray definedVariables;
+  // If true, definedVariables are included in unknownVariables.
+  bool overrideDefinedVariables = false;
+  // Complex format used for projection
+  Internal::ComplexFormat complexFormat = Internal::ComplexFormat::Cartesian;
+};
+
+struct SolutionMetadata {
+  SolvingMethod solvingMethod = SolvingMethod::GeneralMonovariable;
+  SolutionType solutionType = SolutionType::Approximate;
+  // - Exact solve only -
+  int degree = 0;
+  // - Approximate solve only -
+  Range1D<double> solvingRange = Range1D<double>();
+  bool incompleteSolutions = false;
+};
+
+}  // namespace EquationSolverProperties
+
+}  // namespace Poincare
+
+#endif

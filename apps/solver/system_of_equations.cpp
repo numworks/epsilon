@@ -5,7 +5,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <omg/print.h>
 #include <poincare/cas.h>
-#include <poincare/equation_solver.h>
+#include <poincare/equation_solver/equation_solver_pool.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/expression_equal_sign.h>
 #include <poincare/old/empty_context.h>

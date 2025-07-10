@@ -1,24 +1,26 @@
-#ifndef POINCARE_EQUATION_SOLVER_H
-#define POINCARE_EQUATION_SOLVER_H
+#ifndef POINCARE_EQUATION_SOLVER_POOL_H
+#define POINCARE_EQUATION_SOLVER_POOL_H
 
 #include <poincare/expression.h>
-#include <poincare/src/expression/equation_solver.h>
-#include <poincare/src/expression/projection.h>
 
-// This is the public interface for the EquationSolver.
+#include "equation_solver_properties.h"
 
 namespace Poincare {
 
 namespace EquationSolver {
 
-// TODO: These should be in a separate header instead of exposing internal
-using Error = Poincare::Internal::EquationSolver::Error;
-using SolvingMethod = Poincare::Internal::EquationSolver::SolvingMethod;
-using SolutionType = Poincare::Internal::EquationSolver::SolutionType;
-using VariableArray = Poincare::Internal::EquationSolver::VariableArray;
+constexpr static size_t k_maxNumberOfVariables =
+    EquationSolverProperties::k_maxNumberOfVariables;
+constexpr static size_t k_maxNumberOfExactSolutions =
+    EquationSolverProperties::k_maxNumberOfExactSolutions;
 
-using EquationMetadata = Poincare::Internal::EquationSolver::EquationMetadata;
-using SolutionMetadata = Poincare::Internal::EquationSolver::SolutionMetadata;
+using VariableArray = EquationSolverProperties::VariableArray;
+using Error = EquationSolverProperties::Error;
+using SolvingMethod = EquationSolverProperties::SolvingMethod;
+using SolutionType = EquationSolverProperties::SolutionType;
+
+using EquationMetadata = EquationSolverProperties::EquationMetadata;
+using SolutionMetadata = EquationSolverProperties::SolutionMetadata;
 
 // Similar to Poincare::Internal::EquationSolver::SolverResult
 struct SolverResult {

@@ -224,7 +224,7 @@
 "DeprecatedExternalText",
 "Idle",
 "ExternalText",
-"Zero",
+"Timeout",
 "Dot",
 "EE",
 "Ans",

@@ -45,7 +45,7 @@ class PromptControllerCustomEventHandler : public PromptController {
                                      uint8_t numberOfMessages,
                                      EventHandler callback)
       : PromptController(messages, colors, numberOfMessages),
-        m_handleEvent(callback) {};
+        m_handleEvent(callback){};
 
   bool handleEvent(Ion::Events::Event event) override {
     return m_handleEvent(event) || PromptController::handleEvent(event);

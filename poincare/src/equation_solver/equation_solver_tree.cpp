@@ -314,7 +314,15 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
   assert(userSymbols->isSet());
 
   VariableArray undefinedVariables;
-  // The total number can be over the capacity of VariableArray
+  /* The total number can be over the capacity of VariableArray. Either:
+   * - The total number of unknowns (undefined + eventually defined) overloads
+   * the capacity of VariableArray. In this case the solving will fail with the
+   * error TooManyVariables.
+   * - Only the number of defined variables overloads the capacity of
+   * VariableArray. In this case the solving continues. The array just won't
+   * hold the extra defined variables, which is not that bad since it's only
+   * used to display to the user which already defined variables were used.
+   */
   size_t nDefinedVariables = 0;
   size_t nUndefinedVariables = 0;
 

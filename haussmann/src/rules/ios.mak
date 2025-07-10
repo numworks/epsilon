@@ -35,7 +35,6 @@ $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) $(_simula
 	$(Q) plutil -insert "DTXcodeBuild" -string "$(IOS_XCODE_BUILD)" $@
 	$(Q) plutil -insert "CFBundleVersion" -string "$(EPSILON_VERSION)" $@
 	$(Q) plutil -insert "CFBundleShortVersionString" -string "$(EPSILON_VERSION)" $@
-	$(Q) $(foreach capability,$(UI_REQUIRED_CAPABILITIES),plutil -insert "UIRequiredDeviceCapabilities.0" -string "$(capability)" $@ ;)
 	$(Q) plutil -replace CFBundleIcons -json `plutil -extract CFBundleIcons json -o - $(OUTPUT_DIRECTORY)/app/assets/partial.plist` $@
 	$(Q) plutil -replace CFBundleIcons~ipad -json `plutil -extract CFBundleIcons~ipad json -o - $(OUTPUT_DIRECTORY)/app/assets/partial.plist` $@
 

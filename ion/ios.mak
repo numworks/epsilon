@@ -21,3 +21,11 @@ _ion_simulator_icons_sizes := 20x20 29x29 40x40 58x58 60x60 76x76 \
 _ion_simulator_iconset := $(_ion_simulator_assets_path)/AppIcon.appiconset
 
 include $(PATH_ion)/shared.apple.mak
+
+$(_ion_simulator_iconset)/Contents.json: ion/src/simulator/ios/icon_assets.json $(_ion_simulator_icons) | $$(@D)/.
+	$(call rule_label,COPY)
+	$(Q) cp $< $@
+
+$(_simulator_app_resources_path)/Assets.car: $(_ion_simulator_iconset)/Contents.json | $$(@D)/.
+	$(call rule_label,ACTOOL)
+	$(Q) $(ACTOOL) --compile $(OUTPUT_DIRECTORY)/$*.app --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --platform $(APPLE_SDK) --app-icon AppIcon --output-partial-info-plist $(OUTPUT_DIRECTORY)/app/assets/partial.plist $(_ion_simulator_assets_path) > /dev/null

@@ -624,7 +624,10 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
         /* Replace the solution in the equation list to check later that it
          * respects the dependencies. */
         Variables::Replace(equationListClone, row, child);
-        // Reduce the solution
+        /* Reduce the solution. RowCanonize only applies systematic reduction,
+         * so we need to apply advanced reduction.
+         * TODO: Should rowCanonize advance reduce ? */
+        assert(!Simplification::ReduceSystem(child, false));
         Simplification::ReduceSystem(child, true);
         // Continue to preserve TreeStack integrity
         child = child->nextTree();

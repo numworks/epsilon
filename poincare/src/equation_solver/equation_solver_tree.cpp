@@ -680,7 +680,7 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
       // Generate a unique identifier t? that does not collide with variables.
       TreeRef symbol = GetNextParameterSymbol(&parameterIndex,
                                               usedParameterIndices, context);
-      Variables::Replace(matrix, j, symbol);
+      Variables::Replace(matrix, j, symbol, false, false);
       symbol->removeTree();
     }
   }

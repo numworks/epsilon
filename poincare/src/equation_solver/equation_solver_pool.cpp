@@ -6,8 +6,9 @@ namespace Poincare {
 
 namespace EquationSolver {
 
+// This will destroy the trees of solutions on the stack
 static SolverResult ConvertInternalResult(
-    const Internal::EquationSolver::SolverResult& internalResult) {
+    Internal::EquationSolver::SolverResult& internalResult) {
   SolverResult solverResult;
 
   Internal::Tree* exactSolutionList = internalResult.exactSolutionList;

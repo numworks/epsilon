@@ -54,29 +54,24 @@ EquationSolver::SolverResult EquationSolver::ExactSolveAdaptive(
     return firstResult;
   }
 
-  assert((firstResult.exactSolutionList == nullptr) ||
-         (firstResult.exactSolutionList->numberOfChildren() == 0));
-  if (firstResult.approximateSolutionList) {
-    assert(!firstResult.exactSolutionList ||
-           firstResult.approximateSolutionList > firstResult.exactSolutionList);
-    firstResult.approximateSolutionList->removeTree();
-  }
-  if (firstResult.exactSolutionList) {
-    firstResult.exactSolutionList->removeTree();
-  }
-
   // Try solving while overriding user variables
   SolverResult secondResult = ExactSolve(equationList, projectionContext, true);
   Error secondError = secondResult.error;
 
   if (firstError == Error::NoError && secondError != Error::NoError &&
       secondError != Error::RequireApproximateSolution) {
-    assert(secondResult.exactSolutionList == nullptr);
-    /* The system becomes invalid when overriding the user variables: the
-     * first solution was better. Restore inital empty list */
-    firstResult.exactSolutionList = List::PushEmpty();
-    firstResult.approximateSolutionList = List::PushEmpty();
+    assert(!secondResult.exactSolutionList &&
+           !secondResult.approximateSolutionList &&
+           firstResult.exactSolutionList);
+    // Use the first result empty solution list
     return firstResult;
+  }
+
+  if (firstResult.exactSolutionList) {
+    firstResult.exactSolutionList->removeTree();
+  }
+  if (firstResult.approximateSolutionList) {
+    firstResult.approximateSolutionList->removeTree();
   }
 
   return secondResult;
@@ -117,8 +112,7 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   if (result.error == Error::NonLinearSystem &&
       equationMetadata.unknownVariables.size() <= 1 &&
       reducedEquationList->numberOfChildren() <= 1) {
-    assert(result.exactSolutionList == nullptr &&
-           result.approximateSolutionList == nullptr);
+    assert(!result.exactSolutionList && !result.approximateSolutionList);
     result = SolvePolynomial(reducedEquationList, equationMetadata);
 
     if (result.error == Error::NoError) {
@@ -137,19 +131,16 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   }
 #endif
 
-  TreeRef exactSolutionList = result.exactSolutionList;
   reducedEquationList->removeTree();
-  result.exactSolutionList = exactSolutionList;
 
   // Step 3. Handle the result
 
   if (result.error == Error::NonLinearSystem ||
       result.error == Error::RequireApproximateSolution ||
-      result.exactSolutionList == nullptr) {
+      !result.exactSolutionList) {
     // TODO: Handle GeneralMonovariable solving.
     if (result.exactSolutionList) {
       result.exactSolutionList->removeTree();
-      result.exactSolutionList = nullptr;
     }
     return result;
   }
@@ -169,23 +160,14 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
 
   /* Beautify result */
 
-  assert(result.exactSolutionList);
-  TreeRef approximateSolutionList;
-
-  if (result.approximateSolutionList) {
-    // Keep reference to approximate solution list
-    approximateSolutionList = result.approximateSolutionList;
-    // Beautify approximate solutions
-    Simplification::BeautifyReduced(result.approximateSolutionList,
-                                    &projectionContext);
-  }
-
   // Beautify exact solutions
+  assert(result.exactSolutionList);
   Simplification::BeautifyReduced(result.exactSolutionList, &projectionContext);
 
+  // Beautify approximate solutions
   if (result.approximateSolutionList) {
-    result.approximateSolutionList =
-        approximateSolutionList;  // Restore reference
+    Simplification::BeautifyReduced(result.approximateSolutionList,
+                                    &projectionContext);
   }
 
   return result;

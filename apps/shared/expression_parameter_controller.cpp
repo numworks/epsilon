@@ -12,8 +12,9 @@ using namespace Poincare;
 namespace Shared {
 
 ExpressionParameterController::ExpressionParameterController(
-    Responder* parentResponder, View* topView)
-    : ParametersWithValidationController(parentResponder, topView) {}
+    Responder* parentResponder, View* topView, View* bottomView)
+    : ParametersWithValidationController(parentResponder, topView, bottomView) {
+}
 
 // TODO: factorize duplicate code with FloatParameterController
 void ExpressionParameterController::fillCellForRow(HighlightCell* cell,

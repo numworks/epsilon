@@ -12,8 +12,9 @@ namespace Shared {
 template <typename ParentType>
 SingleRangeController<ParentType>::SingleRangeController(
     Responder* parentResponder,
-    Shared::MessagePopUpController* confirmPopUpController)
-    : ParentType(parentResponder),
+    Shared::MessagePopUpController* confirmPopUpController,
+    Escher::MessageTextView* bottomView)
+    : ParentType(parentResponder, nullptr, bottomView),
       m_autoParam(false),
       m_confirmPopUpController(confirmPopUpController) {
   for (int i = 0; i < k_numberOfBoundsCells; i++) {

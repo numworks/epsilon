@@ -16,7 +16,8 @@ class ParametersWithValidationController
       public ParameterTextFieldDelegate {
  public:
   ParametersWithValidationController(Escher::Responder* parentResponder,
-                                     Escher::View* topView = nullptr);
+                                     Escher::View* topView = nullptr,
+                                     Escher::View* bottomView = nullptr);
 
   // ListWithTopAndBottomController
   bool handleEvent(Ion::Events::Event event) override;

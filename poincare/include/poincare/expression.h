@@ -251,7 +251,8 @@ class Expression : public PoolHandle {
   Coordinate2D<T> approximateToPoint() const;
 
   template <typename T>
-  T approximateIntegralToRealScalar(const SystemExpression& lowerBound,
+  T approximateIntegralToRealScalar(const SystemExpression& symbol,
+                                    const SystemExpression& lowerBound,
                                     const SystemExpression& upperBound) const;
 
   // Return SystemExpression with sorted approximated elements.

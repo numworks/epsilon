@@ -1,5 +1,6 @@
 #include "equation_solver.h"
 
+#include <poincare/helpers/polynomial.h>
 #include <poincare/preferences.h>
 #include <poincare/solver/roots.h>
 #include <poincare/solver/solver.h>
@@ -795,10 +796,10 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
             .solutionMetadata = solutionMetadata};
   }
 
-  const Tree* coefficients[Polynomial::k_maxNumberOfPolynomialCoefficients] =
-      {};
+  const Tree* coefficients[PolynomialHelpers::NumberOfCoefficients(
+      PolynomialHelpers::k_maxSolvableDegree)] = {};
   int degree = Polynomial::Degree(polynomial);
-  if (degree > Polynomial::k_maxPolynomialDegree) {
+  if (degree > PolynomialHelpers::k_maxSolvableDegree) {
     SharedTreeStack->dropBlocksFrom(equation);
     return {.error = Error::RequireApproximateSolution,
             .equationMetadata = equationMetadata,
@@ -810,7 +811,8 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
   const Tree* coefficient = Polynomial::LeadingCoefficient(polynomial);
   for (int i = 0; i < numberOfTerms; i++) {
     int exponent = Polynomial::ExponentAtIndex(polynomial, i);
-    if (exponent < Polynomial::k_maxNumberOfPolynomialCoefficients) {
+    if (exponent < PolynomialHelpers::NumberOfCoefficients(
+                       PolynomialHelpers::k_maxSolvableDegree)) {
       coefficients[exponent] = coefficient;
     }
     coefficient = coefficient->nextTree();

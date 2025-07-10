@@ -35,10 +35,6 @@ class Polynomial final {
   friend class PolynomialParser;
 
  public:
-  constexpr static int k_maxPolynomialDegree = 3;
-  constexpr static int k_maxNumberOfPolynomialCoefficients =
-      k_maxPolynomialDegree + 1;
-
   static Tree* PushEmpty(const Tree* variable);
   static Tree* PushMonomial(const Tree* variable, uint8_t exponent,
                             const Tree* coefficient = nullptr);

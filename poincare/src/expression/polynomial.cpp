@@ -1,6 +1,7 @@
 #include "polynomial.h"
 
 #include <omg/unreachable.h>
+#include <poincare/helpers/polynomial.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -8,11 +9,7 @@
 
 #include "advanced_reduction.h"
 #include "approximation.h"
-#include "dependency.h"
 #include "k_tree.h"
-#include "number.h"
-#include "rational.h"
-#include "set.h"
 #include "sign.h"
 #include "simplification.h"
 #include "systematic_reduction.h"
@@ -431,7 +428,7 @@ Tree* PolynomialParser::GetCoefficients(const Tree* e, const char* symbolName) {
   TreeRef result;
   if (poly->isPolynomial()) {
     int degree = Polynomial::Degree(poly);
-    if (0 <= degree && degree <= Polynomial::k_maxPolynomialDegree) {
+    if (0 <= degree && degree <= PolynomialHelpers::k_maxSolvableDegree) {
       result = SharedTreeStack->pushList(0);
       int numberOfTerms = Polynomial::NumberOfTerms(poly);
       int indexExponent = numberOfTerms - 1;
@@ -482,7 +479,7 @@ bool PolynomialParser::HasNonNullCoefficients(
     return false;
   }
   int degree = coefList->numberOfChildren() - 1;
-  assert(0 <= degree && degree <= Polynomial::k_maxPolynomialDegree);
+  assert(0 <= degree && degree <= PolynomialHelpers::k_maxSolvableDegree);
 
   assert(highestDegreeCoefficientIsPositive);
   const Tree* child = coefList->child(degree);

@@ -142,6 +142,8 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
     if (result.exactSolutionList) {
       result.exactSolutionList->removeTree();
     }
+    // Reset solution metadata
+    result.solutionMetadata = {};
     return result;
   }
 

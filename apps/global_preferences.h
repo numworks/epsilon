@@ -108,6 +108,10 @@ class __attribute__((packed)) GlobalPreferences {
       const {
     return countryPreferences().graphTemplateDefault();
   }
+  constexpr CountryPreferences::StepAdjustmentWarning stepAdjustmentWarning()
+      const {
+    return countryPreferences().stepAdjustmentWarning();
+  }
   int sequencesInitialRank() const;
 
   const char* openIntervalChar(bool left) const {

@@ -68,6 +68,11 @@ class CountryPreferences {
     Equation,  // y=x
   };
 
+  enum class StepAdjustmentWarning : bool {
+    Displayed,
+    Hidden,
+  };
+
   constexpr CountryPreferences(
       AvailableExamModes availableExamModes,
       MethodForQuartiles methodForQuartiles,
@@ -86,7 +91,8 @@ class CountryPreferences {
       Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent,
       Poincare::Preferences::ParabolaParameter parabolaParameter,
       SolverDoubleRootName solverDoubleRootName,
-      GraphTemplateDefault graphTemplateDefault)
+      GraphTemplateDefault graphTemplateDefault,
+      StepAdjustmentWarning stepAdjustmentWarning)
       : m_availableExamModes(availableExamModes),
         m_homeAppsLayout(homeAppsLayout),
         m_unitFormat(unitFormat),
@@ -106,7 +112,8 @@ class CountryPreferences {
         m_logarithmKeyEvent(logarithmKeyEvent),
         m_parabolaParameter(parabolaParameter),
         m_solverDoubleRootName(solverDoubleRootName),
-        m_graphTemplateDefault(graphTemplateDefault) {}
+        m_graphTemplateDefault(graphTemplateDefault),
+        m_stepAdjustmentWarning(stepAdjustmentWarning) {}
 
   constexpr AvailableExamModes availableExamModes() const {
     return m_availableExamModes;
@@ -169,6 +176,10 @@ class CountryPreferences {
     return m_graphTemplateDefault;
   }
 
+  constexpr StepAdjustmentWarning stepAdjustmentWarning() const {
+    return m_stepAdjustmentWarning;
+  }
+
  private:
   const AvailableExamModes m_availableExamModes;
   const HomeAppsLayout m_homeAppsLayout;
@@ -190,6 +201,7 @@ class CountryPreferences {
   const Poincare::Preferences::ParabolaParameter m_parabolaParameter;
   const SolverDoubleRootName m_solverDoubleRootName;
   const GraphTemplateDefault m_graphTemplateDefault;
+  const StepAdjustmentWarning m_stepAdjustmentWarning;
 };
 
 #endif

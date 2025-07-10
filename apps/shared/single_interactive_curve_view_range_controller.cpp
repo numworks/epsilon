@@ -1,5 +1,9 @@
 #include "single_interactive_curve_view_range_controller.h"
 
+#include "apps/i18n.h"
+#include "country_preferences.h"
+#include "escher/message_text_view.h"
+#include "global_preferences.h"
 #include "shared/poincare_helpers.h"
 #include "shared/single_range_controller.h"
 
@@ -15,7 +19,12 @@ SingleInteractiveCurveViewRangeController::
         Responder* parentResponder, InteractiveCurveViewRange* interactiveRange,
         Shared::MessagePopUpController* confirmPopUpController)
     : SingleRangeControllerExactExpressions(
-          parentResponder, confirmPopUpController, &m_bottomMessageView),
+          parentResponder, confirmPopUpController,
+          GlobalPreferences::SharedGlobalPreferences()
+                      ->stepAdjustmentWarning() ==
+                  CountryPreferences::StepAdjustmentWarning::Displayed
+              ? &m_bottomMessageView
+              : nullptr),
       m_range(interactiveRange),
       m_gridUnitCell(&this->m_selectableListView, this),
       m_stepParameter(NAN),

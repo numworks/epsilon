@@ -14,3 +14,10 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
 SOURCES_ion += $(PATH_ion)/src/shared/collect_registers.cpp
 
 _ion_simulator_files := 0
+
+_ion_simulator_assets_path := $(OUTPUT_DIRECTORY)/app/assets/Assets.xcassets
+_ion_simulator_icons_sizes := 20x20 29x29 40x40 58x58 60x60 76x76 \
+  80x80 87x87 120x120 152x152 167x167 180x180 1024x1024
+_ion_simulator_iconset := $(_ion_simulator_assets_path)/AppIcon.appiconset
+
+include $(PATH_ion)/shared.apple.mak

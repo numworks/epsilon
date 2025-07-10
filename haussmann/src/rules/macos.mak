@@ -4,6 +4,7 @@ $(OUTPUT_DIRECTORY)/%.run: $(OUTPUT_DIRECTORY)/%.bin
 
 $(call document_extension,run,Execute <...>.bin)
 
+_simulator_app := $(OUTPUT_DIRECTORY)/%.app
 _simulator_app_binary = $(_simulator_app)/Contents/MacOS/$(APP_NAME)
 _simulator_app_plist = $(_simulator_app)/Contents/Info.plist
 _simulator_app_resources_path = $(_simulator_app)/Contents/Resources
@@ -31,4 +32,3 @@ $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) | $$(@D)/
 	plutil -insert "CFBundleExecutable" -string "$(APP_NAME)" $@
 	plutil -insert "CFBundleVersion" -string "$(APP_VERSION)" $@
 	plutil -insert "CFBundleShortVersionString" -string "$(APP_VERSION)" $@
-

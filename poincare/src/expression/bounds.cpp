@@ -15,12 +15,13 @@ constexpr static double TrigDerivative(double x, bool isCos) {
 
 Sign Bounds::Sign(const Tree* e) {
   Bounds bounds = Compute(e);
-  Poincare::Sign sign = Sign::Unknown();
-  if (bounds.hasKnownStrictSign()) {
-    sign = Poincare::Sign(bounds.m_lower == 0, bounds.isStrictlyPositive(),
-                          bounds.isStrictlyNegative(), true, false);
+  if (!bounds.exists()) {
+    return Sign::Unknown();
   }
-  return sign;
+  // NOTE: Can be null if neither strictly negative or positive
+  return Poincare::Sign(
+      !(bounds.isStrictlyNegative() || bounds.isStrictlyPositive()),
+      0 < bounds.upper(), bounds.lower() < 0, true, false);
 }
 
 Bounds Bounds::Compute(const Tree* e) {
@@ -44,6 +45,22 @@ Bounds Bounds::Compute(const Tree* e) {
       return Pow(e);
     case Type::Trig:
       return Trig(e);
+    case Type::Abs: {
+      Bounds b = Bounds::Compute(e->child(0));
+      if (!b.exists()) {
+        return Invalid();
+      }
+      if (!b.hasKnownStrictSign()) {
+        assert(b.upper() > 0);
+        // No math operation, no need to spread
+        return Bounds(0, std::max(std::abs(b.lower()), b.upper()), 0);
+      }
+      if (b.isNull() || b.isStrictlyPositive()) {
+        return b;
+      }
+      assert(b.isStrictlyNegative());
+      return Bounds(std::abs(b.upper()), std::abs(b.lower()), 0);
+    }
     case Type::Ln: {
       Bounds b = Bounds::Compute(e->child(0));
       if (b.exists()) {
@@ -97,7 +114,7 @@ Bounds Bounds::Mult(const Tree* e) {
   if (!bounds.exists()) {
     return Invalid();
   }
-  /* A negative multiplication can cause the bounds to be flipped */
+  /* A negative multiplication can cause the bounds to be flipped */
   if (bounds.m_upper < bounds.m_lower) {
     bounds.flip();
   }
@@ -109,7 +126,7 @@ Bounds Bounds::Mult(const Tree* e) {
 Bounds Bounds::Pow(const Tree* e) {
   Bounds base = Bounds::Compute(e->child(0));
   Bounds exp = Bounds::Compute(e->child(1));
-  if (base.exists() && exp.hasKnownStrictSign()) {
+  if (base.exists() && exp.exists() && exp.hasKnownStrictSign()) {
     if (base.isStrictlyPositive()) {
       /* 1. 0 < e
        *    1 < b       => b-^e- < b+^e+    2^2 < 10^3

@@ -77,6 +77,8 @@ class SingleInteractiveCurveViewRangeController
   Escher::MenuCellWithEditableText<Escher::MessageTextView> m_gridUnitCell;
   ParameterType m_stepParameter;
 
+  Escher::MessageTextView m_bottomMessageView;
+
   OMG::Axis m_axis;
 };
 

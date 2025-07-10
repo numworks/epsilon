@@ -9,8 +9,9 @@ namespace Shared {
 
 template <typename T>
 FloatParameterController<T>::FloatParameterController(
-    Responder* parentResponder, View* topView)
-    : ParametersWithValidationController(parentResponder, topView) {}
+    Responder* parentResponder, View* topView, View* bottomView)
+    : ParametersWithValidationController(parentResponder, topView, bottomView) {
+}
 
 template <typename T>
 void FloatParameterController<T>::fillCellForRow(HighlightCell* cell, int row) {

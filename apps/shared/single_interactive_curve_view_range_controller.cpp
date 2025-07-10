@@ -14,8 +14,8 @@ SingleInteractiveCurveViewRangeController::
     SingleInteractiveCurveViewRangeController(
         Responder* parentResponder, InteractiveCurveViewRange* interactiveRange,
         Shared::MessagePopUpController* confirmPopUpController)
-    : SingleRangeControllerExactExpressions(parentResponder,
-                                            confirmPopUpController),
+    : SingleRangeControllerExactExpressions(
+          parentResponder, confirmPopUpController, &m_bottomMessageView),
       m_range(interactiveRange),
       m_gridUnitCell(&this->m_selectableListView, this),
       m_stepParameter(NAN) {

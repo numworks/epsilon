@@ -14,7 +14,8 @@ class ExpressionParameterController
   using FloatType = float;
 
   ExpressionParameterController(Escher::Responder* parentResponder,
-                                Escher::View* topView = nullptr);
+                                Escher::View* topView = nullptr,
+                                Escher::View* bottomView = nullptr);
 
   // MemoizedListViewDataSource
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;

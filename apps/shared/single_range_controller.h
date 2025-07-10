@@ -6,6 +6,7 @@
 #include <escher/switch_view.h>
 #include <poincare/range.h>
 
+#include "escher/message_text_view.h"
 #include "float_parameter_controller.h"
 #include "pop_up_controller.h"
 #include "shared/expression_parameter_controller.h"
@@ -16,7 +17,8 @@ template <typename ParentType>
 class SingleRangeController : public ParentType {
  public:
   SingleRangeController(Escher::Responder* parentResponder,
-                        MessagePopUpController* confirmPopUpController);
+                        MessagePopUpController* confirmPopUpController,
+                        Escher::MessageTextView* bottomView = nullptr);
 
   /* ParameterType is the return type of the parameterAtIndex method.
    * FloatType is the type of the range parameter (m_rangeParam), which needs to

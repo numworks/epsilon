@@ -12,7 +12,8 @@ class FloatParameterController : public ParametersWithValidationController {
   using FloatType = T;
 
   FloatParameterController(Escher::Responder* parentResponder,
-                           Escher::View* topView = nullptr);
+                           Escher::View* topView = nullptr,
+                           Escher::View* bottomView = nullptr);
 
   // MemoizedListViewDataSource
   void fillCellForRow(Escher::HighlightCell* cell, int row) override;

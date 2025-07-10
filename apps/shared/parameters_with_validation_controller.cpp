@@ -10,8 +10,8 @@ using namespace Poincare;
 namespace Shared {
 
 ParametersWithValidationController::ParametersWithValidationController(
-    Responder* parentResponder, View* topView)
-    : ListWithTopAndBottomController(parentResponder, topView),
+    Responder* parentResponder, View* topView, View* bottomView)
+    : ListWithTopAndBottomController(parentResponder, topView, bottomView),
       m_okButton(&m_selectableListView, I18n::Message::Ok,
                  Invocation::Builder<ParametersWithValidationController>(
                      [](ParametersWithValidationController* parameterController,

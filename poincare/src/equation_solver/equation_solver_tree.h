@@ -69,11 +69,16 @@ class EquationSolver {
       const Tree* equationList, ProjectionContext* projectionContext,
       UnknownSelectionStrategy selectionStrategy);
 
-  // Return list of solutions for linear system.
+  /* Checks if the equationList is a linear system, and if so, computes the
+   * solutions. The equationMetada passed as arguments are contained in the
+   * returned SolverResult.  */
   static SolverResult SolveLinearSystem(
       const Tree* equationList, const EquationMetadata& equationMetadata,
       Context* context);
-  // Return list of solutions for a polynomial equation.
+
+  /* Checks if the equationList is a deg 2 or 3 polynomial, and if so, computes
+   * the solutions. The equationMetada passed as arguments are contained in the
+   * returned SolverResult. */
   static SolverResult SolvePolynomial(const Tree* equationList,
                                       const EquationMetadata& equationMetadat);
 

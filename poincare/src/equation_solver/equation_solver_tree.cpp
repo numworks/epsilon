@@ -219,6 +219,7 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
       preparedEquation, equationMetadata.unknownVariables[0],
       Preferences::ComplexFormat::Real);
 
+  // Step 2. Compute the solving range if not provided
   if (range.isNan()) {
     /* Interval search is done in float to gain some time, since precision does
      * not matter as much as for the actual solve. The computed interval is
@@ -264,6 +265,7 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
     }
   }
 
+  // Step 3. Compute the solutions
   assert(range.isValid());
   solutionMetadata.solvingRange = range;
   Solver<double> solver =

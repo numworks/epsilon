@@ -228,6 +228,6 @@
 "DeprecatedExternalText",
 "Idle",
 "ExternalText",
-"",
+"Timeout",
 "",
 "",

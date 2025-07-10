@@ -38,7 +38,7 @@ bool IntervalController::handleEvent(Ion::Events::Event event) {
   if (result && isAutoRangeInvalid() &&
       typeAtRow(selectedRow()) == k_autoCellType) {
     // Refresh the data to show/hide the cells if the auto range is invalid
-    this->m_selectableListView.reloadData();
+    m_selectableListView.reloadData();
   }
   return result;
 }

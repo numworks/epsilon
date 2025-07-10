@@ -246,6 +246,7 @@ _sources_poincare_test := $(addprefix test/, \
   old/zoom.cpp \
   approximation.cpp \
   beautification.cpp \
+  bounds.cpp \
   dimension.cpp \
   equation_solver.cpp \
   float_helper.cpp \

@@ -21,8 +21,8 @@ class EquationSolver {
   using SolutionMetadata = EquationSolverProperties::SolutionMetadata;
 
   struct SolverResult {
-    Tree* exactSolutionList = nullptr;
-    Tree* approximateSolutionList = nullptr;
+    TreeRef exactSolutionList;
+    TreeRef approximateSolutionList;
     Error error = Error::NoError;
     // Stores metadata about the equations and their unknowns.
     EquationMetadata equationMetadata;

@@ -20,6 +20,8 @@ SingleInteractiveCurveViewRangeController::
       m_gridUnitCell(&this->m_selectableListView, this),
       m_stepParameter(NAN) {
   m_gridUnitCell.label()->setMessage(I18n::Message::Step);
+  m_bottomMessageView.setMessage(I18n::Message::StepAdjustment);
+  m_bottomMessageView.setFont(KDFont::Size::Small);
 }
 
 void SingleInteractiveCurveViewRangeController::setAxis(OMG::Axis axis) {

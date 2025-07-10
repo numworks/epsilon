@@ -2,7 +2,7 @@
 #define SOLVER_SYSTEM_OF_EQUATIONS_H
 
 #include <apps/shared/interactive_curve_view_range.h>
-#include <poincare/equation_solver.h>
+#include <poincare/equation_solver/equation_solver_pool.h>
 #include <poincare/old/context_with_parent.h>
 #include <poincare/range.h>
 
@@ -33,9 +33,9 @@ class SystemOfEquations {
   SystemOfEquations(EquationStore* store) : m_store(store) {}
 
   constexpr static int k_maxNumberOfVariables =
-      Poincare::Internal::EquationSolver::k_maxNumberOfVariables;
+      Poincare::EquationSolver::k_maxNumberOfVariables;
   constexpr static int k_maxNumberOfExactSolutions =
-      Poincare::Internal::EquationSolver::k_maxNumberOfExactSolutions;
+      Poincare::EquationSolver::k_maxNumberOfExactSolutions;
   constexpr static int k_maxNumberOfApproximateSolutions = 10;
   constexpr static int k_maxNumberOfSolutions =
       std::max(k_maxNumberOfExactSolutions, k_maxNumberOfApproximateSolutions);
@@ -120,8 +120,8 @@ class SystemOfEquations {
                               Poincare::Context* context);
 
   Solution m_solutions[k_maxNumberOfSolutions];
-  Poincare::Internal::EquationSolver::EquationMetadata m_equationMetadata;
-  Poincare::Internal::EquationSolver::SolutionMetadata m_solutionMetadata;
+  Poincare::EquationSolver::EquationMetadata m_equationMetadata;
+  Poincare::EquationSolver::SolutionMetadata m_solutionMetadata;
   size_t m_numberOfSolutions;
   EquationStore* m_store;
   Poincare::Range1D<double> m_approximateSolvingRange;

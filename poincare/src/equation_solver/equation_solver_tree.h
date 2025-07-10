@@ -1,79 +1,24 @@
 #ifndef POINCARE_EXPRESSION_EQUATION_SOLVER_H
 #define POINCARE_EXPRESSION_EQUATION_SOLVER_H
 
-#include <omg/vector.h>
-#include <poincare/helpers/polynomial.h>
-#include <poincare/range.h>
-#include <poincare/src/memory/tree.h>
-
-#include "projection.h"
-#include "symbol.h"
+#include <poincare/equation_solver/equation_solver_properties.h>
 
 namespace Poincare::Internal {
 
 class EquationSolver {
  public:
-  constexpr static size_t k_maxNumberOfVariables = 6;
+  constexpr static size_t k_maxNumberOfVariables =
+      EquationSolverProperties::k_maxNumberOfVariables;
   constexpr static size_t k_maxNumberOfExactSolutions =
-      std::max(k_maxNumberOfVariables,
-               // +1 for delta
-               PolynomialHelpers::k_maxSolvableDegree + 1);
+      EquationSolverProperties::k_maxNumberOfExactSolutions;
 
-  class VariableArray : public OMG::StaticVector<char[Symbol::k_maxNameSize],
-                                                 k_maxNumberOfVariables> {
-   public:
-    void push(const char* variable);
-    void fillWithList(const Tree* list);
+  using VariableArray = EquationSolverProperties::VariableArray;
+  using Error = EquationSolverProperties::Error;
+  using SolvingMethod = EquationSolverProperties::SolvingMethod;
+  using SolutionType = EquationSolverProperties::SolutionType;
 
-   private:
-    // Prevent pushing arrays
-    using OMG::StaticVector<char[Symbol::k_maxNameSize],
-                            k_maxNumberOfVariables>::push;
-  };
-
-  enum class Error {
-    NoError = 0,
-    EquationUndefined = 1,
-    EquationNonReal = 2,
-    TooManyVariables = 3,
-    NonLinearSystem = 4,
-    RequireApproximateSolution = 5,
-    EquationUnhandled = 6,
-    DisabledInExamMode,  // TODO_PCJ
-  };
-
-  enum class SolutionType : uint8_t {
-    Approximate,
-    Exact,
-    Formal,
-  };
-
-  enum class SolvingMethod : uint8_t {
-    GeneralMonovariable,
-    LinearSystem,
-    PolynomialMonovariable,
-  };
-
-  struct EquationMetadata {
-    // Variables that are considered unknown in the equations.
-    VariableArray unknownVariables;
-    // Variables that are defined by the user and present in the equations.
-    VariableArray definedVariables;
-    // If true, definedVariables are included in unknownVariables.
-    bool overrideDefinedVariables = false;
-    // Complex format used for projection
-    ComplexFormat complexFormat = ComplexFormat::Cartesian;
-  };
-
-  struct SolutionMetadata {
-    SolvingMethod solvingMethod = SolvingMethod::GeneralMonovariable;
-    SolutionType solutionType = SolutionType::Approximate;
-    // - Exact solve only -
-    int degree = 0;
-    // - Approximate solve only -
-    Range1D<double> solvingRange = Range1D<double>();
-    bool incompleteSolutions = false;
-  };
+  using EquationMetadata = EquationSolverProperties::EquationMetadata;
+  using SolutionMetadata = EquationSolverProperties::SolutionMetadata;
 
   struct SolverResult {
     Tree* exactSolutionList = nullptr;

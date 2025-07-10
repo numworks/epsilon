@@ -1,7 +1,6 @@
-#include <poincare/equation_solver.h>
-#include <poincare/src/expression/equation_solver.h>
-
-#include "poincare/expression.h"
+#include <poincare/equation_solver/equation_solver_pool.h>
+#include <poincare/expression.h>
+#include <poincare/src/equation_solver/equation_solver_tree.h>
 
 namespace Poincare {
 
@@ -14,8 +13,6 @@ static SolverResult ConvertInternalResult(
   Internal::Tree* exactSolutionList = internalResult.exactSolutionList;
   Internal::Tree* approximateSolutionList =
       internalResult.approximateSolutionList;
-  assert(!exactSolutionList || !approximateSolutionList ||
-         (approximateSolutionList > exactSolutionList));
 
   if (approximateSolutionList) {
     // Do approximate first as its tree is always after the exact one

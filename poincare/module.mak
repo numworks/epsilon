@@ -33,6 +33,10 @@ $(addprefix old/, \
   pool_variable_context.cpp:-nopool \
   tree_variable_context.cpp \
 ) \
+$(addprefix equation_solver/, \
+  equation_solver_pool.cpp:-nopool \
+  equation_solver_tree.cpp \
+) \
 $(addprefix expression/, \
   advanced_operation.cpp \
   advanced_reduction.cpp \
@@ -62,7 +66,6 @@ $(addprefix expression/, \
   dimension.cpp \
   division.cpp \
   equal_sign.cpp \
-  equation_solver.cpp \
   float_helper.cpp \
   infinity.cpp \
   integer.cpp \
@@ -205,7 +208,6 @@ $(addprefix statistics/, \
   statistics_dataset_column.cpp \
 ) \
   additional_results_helper.cpp:-nopool \
-  equation_solver.cpp:-nopool \
   comparison_operator.cpp \
   print.cpp \
   random.cpp \

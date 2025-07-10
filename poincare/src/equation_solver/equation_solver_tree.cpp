@@ -1,10 +1,22 @@
-#include "equation_solver.h"
+#include "equation_solver_tree.h"
 
+#include <poincare/equation_solver/equation_solver_properties.h>
 #include <poincare/helpers/polynomial.h>
 #include <poincare/numeric_solver/roots.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/preferences.h>
+#include <poincare/src/expression/advanced_reduction.h>
+#include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/dependency.h>
+#include <poincare/src/expression/list.h>
+#include <poincare/src/expression/matrix.h>
+#include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/sign.h>
+#include <poincare/src/expression/simplification.h>
+#include <poincare/src/expression/symbol.h>
+#include <poincare/src/expression/systematic_reduction.h>
+#include <poincare/src/expression/variables.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
@@ -12,35 +24,7 @@
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/numeric_solver/zoom.h>
 
-#include "advanced_reduction.h"
-#include "approximation.h"
-#include "dependency.h"
-#include "list.h"
-#include "matrix.h"
-#include "polynomial.h"
-#include "sign.h"
-#include "simplification.h"
-#include "symbol.h"
-#include "systematic_reduction.h"
-#include "variables.h"
-
 namespace Poincare::Internal {
-
-void EquationSolver::VariableArray::push(const char* variable) {
-  assert(m_size < capacity());
-  assert(variable && strlen(variable) < Symbol::k_maxNameLength);
-  memcpy(m_data[m_size], variable, strlen(variable) + 1);
-  m_size++;
-}
-
-void EquationSolver::VariableArray::fillWithList(const Tree* list) {
-  assert((list->isList() || list->isSet()) &&
-         list->numberOfChildren() <= capacity());
-  clear();
-  for (const Tree* variable : list->children()) {
-    push(Symbol::GetName(variable));
-  }
-}
 
 EquationSolver::SolverResult EquationSolver::ExactSolveAdaptive(
     const Tree* equationList, ProjectionContext projectionContext) {

@@ -22,6 +22,9 @@ SingleInteractiveCurveViewRangeController::
   m_gridUnitCell.label()->setMessage(I18n::Message::Step);
   m_bottomMessageView.setMessage(I18n::Message::StepAdjustment);
   m_bottomMessageView.setFont(KDFont::Size::Small);
+  m_bottomMessageView.setAlignment(KDGlyph::k_alignCenter,
+                                   KDGlyph::k_alignCenter);
+  m_bottomMessageView.setBackgroundColor(Palette::WallScreen);
 }
 
 void SingleInteractiveCurveViewRangeController::setAxis(OMG::Axis axis) {

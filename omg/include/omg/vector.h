@@ -4,7 +4,9 @@
 #include <assert.h>
 #include <stddef.h>
 
-/* The StaticVector class is a custom implementation of boost's static_vector
+/* The StaticVector class is a simple static array that can hold up to a max
+ * number of elements and tracks its current size.
+ * It's partly inspired by boost's static_vector class:
  * https://beta.boost.org/doc/libs/1_58_0/doc/html/boost/container/static_vector.html
  */
 

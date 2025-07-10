@@ -18,13 +18,14 @@ SingleInteractiveCurveViewRangeController::
           parentResponder, confirmPopUpController, &m_bottomMessageView),
       m_range(interactiveRange),
       m_gridUnitCell(&this->m_selectableListView, this),
-      m_stepParameter(NAN) {
+      m_stepParameter(NAN),
+      m_bottomMessageView(
+          I18n::Message::StepAdjustment,
+          KDGlyph::Format{
+              .style = KDGlyph::Style{.backgroundColor = Palette::WallScreen,
+                                      .font = KDFont::Size::Small},
+              .horizontalAlignment = KDGlyph::k_alignCenter}) {
   m_gridUnitCell.label()->setMessage(I18n::Message::Step);
-  m_bottomMessageView.setMessage(I18n::Message::StepAdjustment);
-  m_bottomMessageView.setFont(KDFont::Size::Small);
-  m_bottomMessageView.setAlignment(KDGlyph::k_alignCenter,
-                                   KDGlyph::k_alignCenter);
-  m_bottomMessageView.setBackgroundColor(Palette::WallScreen);
 }
 
 void SingleInteractiveCurveViewRangeController::setAxis(OMG::Axis axis) {

@@ -105,6 +105,12 @@ void SystemOfEquations::setApproximateSolvingRange(
 void SystemOfEquations::cancelApproximateSolve() {
   m_wasInterrupted = true;
   m_numberOfSolutions = 0;
+  // Ensure solution metadata is reset
+  m_solutionMetadata = Poincare::EquationSolver::SolutionMetadata();
+  m_solutionMetadata.solvingMethod =
+      Poincare::EquationSolver::SolvingMethod::GeneralMonovariable;
+  m_solutionMetadata.solutionType =
+      Poincare::EquationSolver::SolutionType::Approximate;
 }
 
 void SystemOfEquations::approximateSolve(Context* context) {

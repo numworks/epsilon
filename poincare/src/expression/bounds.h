@@ -40,6 +40,7 @@ class Bounds {
   static Bounds Mult(const Tree* e);
   static Bounds Add(const Tree* e);
   static Bounds Pow(const Tree* e);
+  static Bounds Trig(const Tree* e);
   void remove();
   void flip() { std::swap(m_lower, m_upper); }
   bool isStrictlyPositive() const {

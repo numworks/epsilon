@@ -42,6 +42,8 @@ Bounds Bounds::Compute(const Tree* e) {
     case Type::PowReal:
     case Type::Pow:
       return Pow(e);
+    case Type::Trig:
+      return Trig(e);
     case Type::Ln: {
       Bounds b = Bounds::Compute(e->child(0));
       if (b.exists()) {
@@ -53,58 +55,6 @@ Bounds Bounds::Compute(const Tree* e) {
       Bounds b = Bounds::Compute(e->child(0));
       if (b.exists()) {
         b.applyMonotoneFunction(std::exp);
-      }
-      return b;
-    }
-    case Type::Trig: {
-      Bounds b = Bounds::Compute(e->child(0));
-      if (!b.exists()) {
-        return Invalid();
-      }
-
-      const Bounds trigonometricDefaultBounds = Bounds(-1.0, 1.0);
-
-      if (b.width() >= M_PI) {
-        /* The image interval of the bounds through the sin or cos function can
-         * potientially be [-1, 1]. */
-        return trigonometricDefaultBounds;
-      }
-
-      /* If the angle is "too big", the precision of std::cos and std::sin is
-       * lost. In this case the bounds should not be propagated through the
-       * sin or cos function. */
-      constexpr double k_angleLimitForPrecision = 1000.0;
-      if (std::max(std::abs(b.lower()), std::abs(b.upper())) >=
-          k_angleLimitForPrecision) {
-        return trigonometricDefaultBounds;
-      }
-
-      /* We check whether the function derivative taken at b.lower() and at
-       * b.upper() has the same sign. If this is the case, knowing that the
-       * distance between b.lower() and b.upper() is at most π, it means that
-       * the bounds are both comprised in an interval where the function is
-       * either strictly increasing or strictly decreasing. In that case, the
-       * bounds can safely be spread. */
-      bool isCos = e->child(1)->isZero();
-      if (!HaveSameSign(TrigDerivative(b.lower(), isCos),
-                        TrigDerivative(b.upper(), isCos))) {
-        return trigonometricDefaultBounds;
-      }
-      /* We currently don't handle the case where the lower bound is just a
-       * little below a multiple of π/2, and the upper bound is just a little
-       * above this same multiple of π/2.
-       * This case can be detected by looking at the sign of the function
-       * derivative at the lower and upper bound.
-       * The returned value would be Bounds(std::min(std::sin(bounds.lower()),
-       * std::sin(bounds.upper())), 1) or Bounds(-1,
-       * std::max(std::sin(bounds.lower()), std::sin(bounds.upper()))),
-       * depending on whether the bounds are around a maximum or a minimum of
-       * sin/cos. */
-
-      if (isCos) {
-        b.applyMonotoneFunction(std::cos);
-      } else {
-        b.applyMonotoneFunction(std::sin);
       }
       return b;
     }
@@ -193,6 +143,59 @@ Bounds Bounds::Pow(const Tree* e) {
     // To handle cases like (-1/2)^(-3), (-pi)^2
   }
   return Invalid();
+}
+
+Bounds Bounds::Trig(const Tree* e) {
+  Bounds b = Bounds::Compute(e->child(0));
+  if (!b.exists()) {
+    return Invalid();
+  }
+
+  const Bounds trigonometricDefaultBounds = Bounds(-1.0, 1.0);
+
+  if (b.width() >= M_PI) {
+    /* The image interval of the bounds through the sin or cos function can
+     * potientially be [-1, 1]. */
+    return trigonometricDefaultBounds;
+  }
+
+  /* If the angle is "too big", the precision of std::cos and std::sin is
+   * lost. In this case the bounds should not be propagated through the
+   * sin or cos function. */
+  constexpr double k_angleLimitForPrecision = 1000.0;
+  if (std::max(std::abs(b.lower()), std::abs(b.upper())) >=
+      k_angleLimitForPrecision) {
+    return trigonometricDefaultBounds;
+  }
+
+  /* We check whether the function derivative taken at b.lower() and at
+   * b.upper() has the same sign. If this is the case, knowing that the
+   * distance between b.lower() and b.upper() is at most π, it means that
+   * the bounds are both comprised in an interval where the function is
+   * either strictly increasing or strictly decreasing. In that case, the
+   * bounds can safely be spread. */
+  bool isCos = e->child(1)->isZero();
+  if (!HaveSameSign(TrigDerivative(b.lower(), isCos),
+                    TrigDerivative(b.upper(), isCos))) {
+    return trigonometricDefaultBounds;
+  }
+  /* We currently don't handle the case where the lower bound is just a
+   * little below a multiple of π/2, and the upper bound is just a little
+   * above this same multiple of π/2.
+   * This case can be detected by looking at the sign of the function
+   * derivative at the lower and upper bound.
+   * The returned value would be Bounds(std::min(std::sin(bounds.lower()),
+   * std::sin(bounds.upper())), 1) or Bounds(-1,
+   * std::max(std::sin(bounds.lower()), std::sin(bounds.upper()))),
+   * depending on whether the bounds are around a maximum or a minimum of
+   * sin/cos. */
+
+  if (isCos) {
+    b.applyMonotoneFunction(std::cos);
+  } else {
+    b.applyMonotoneFunction(std::sin);
+  }
+  return b;
 }
 
 void Bounds::applyMonotoneFunction(double (*f)(double), uint8_t ulp_precision) {

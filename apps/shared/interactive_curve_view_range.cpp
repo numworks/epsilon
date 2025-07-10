@@ -6,9 +6,9 @@
 #include <omg/numeric_comparison.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/k_tree.h>
+#include <poincare/numeric_solver/zoom.h>
 #include <poincare/pool_object.h>
 #include <poincare/preferences.h>
-#include <poincare/solver/zoom.h>
 #include <poincare/src/expression/projection.h>
 #include <stddef.h>
 

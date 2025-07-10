@@ -3,9 +3,9 @@
 #include <omg/troolean.h>
 #include <omg/unreachable.h>
 #include <poincare/src/expression/approximation.h>
-#include <poincare/src/solver/beta_function.h>
-#include <poincare/src/solver/regularized_incomplete_beta_function.h>
-#include <poincare/src/solver/solver_algorithms.h>
+#include <poincare/src/numeric_solver/beta_function.h>
+#include <poincare/src/numeric_solver/regularized_incomplete_beta_function.h>
+#include <poincare/src/numeric_solver/solver_algorithms.h>
 
 #include "distribution.h"
 

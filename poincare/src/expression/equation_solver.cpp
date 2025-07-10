@@ -1,16 +1,16 @@
 #include "equation_solver.h"
 
 #include <poincare/helpers/polynomial.h>
+#include <poincare/numeric_solver/roots.h>
+#include <poincare/numeric_solver/solver.h>
 #include <poincare/preferences.h>
-#include <poincare/solver/roots.h>
-#include <poincare/solver/solver.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_helpers.h>
 #include <poincare/src/memory/tree_ref.h>
-#include <poincare/src/solver/zoom.h>
+#include <poincare/src/numeric_solver/zoom.h>
 
 #include "advanced_reduction.h"
 #include "approximation.h"

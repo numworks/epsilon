@@ -2,7 +2,7 @@
 #define SHARED_CURVE_VIEW_RANGE_H
 
 #include <omg/enums.h>
-#include <poincare/solver/zoom.h>
+#include <poincare/numeric_solver/zoom.h>
 #include <stdint.h>
 
 #include "poincare/expression_or_float.h"

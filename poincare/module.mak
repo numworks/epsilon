@@ -154,7 +154,7 @@ $(addprefix pool/, \
   layout.cpp:-nopool \
   pool_layout_cursor.cpp:-nopool \
 ) \
-$(addprefix solver/, \
+$(addprefix numeric_solver/, \
   beta_function.cpp \
   erf_inv.cpp \
   matrix_array.cpp \

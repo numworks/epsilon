@@ -1,7 +1,7 @@
 #include <omg/list.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/k_tree.h>
-#include <poincare/solver/point_of_interest_list.h>
+#include <poincare/numeric_solver/point_of_interest_list.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>

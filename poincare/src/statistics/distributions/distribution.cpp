@@ -2,7 +2,7 @@
 
 #include <omg/troolean.h>
 #include <omg/unreachable.h>
-#include <poincare/src/solver/solver_algorithms.h>
+#include <poincare/src/numeric_solver/solver_algorithms.h>
 
 namespace Poincare::Internal::Distribution {
 

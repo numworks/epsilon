@@ -1,7 +1,7 @@
 #include "regression.h"
 
 #include <omg/float.h>
-#include <poincare/solver/solver.h>
+#include <poincare/numeric_solver/solver.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/context.h>
 #include <poincare/src/expression/float_helper.h>
@@ -9,7 +9,7 @@
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/memory/pattern_matching.h>
-#include <poincare/src/solver/matrix_array.h>
+#include <poincare/src/numeric_solver/matrix_array.h>
 #include <poincare/src/statistics/dataset_adapter.h>
 
 #include <cmath>

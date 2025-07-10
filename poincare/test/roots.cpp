@@ -1,4 +1,4 @@
-#include <poincare/solver/roots.h>
+#include <poincare/numeric_solver/roots.h>
 #include <poincare/src/expression/dependency.h>
 
 #include "helper.h"

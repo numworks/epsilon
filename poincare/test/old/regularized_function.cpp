@@ -1,6 +1,6 @@
 #include <float.h>
-#include <poincare/src/solver/regularized_gamma_function.h>
-#include <poincare/src/solver/regularized_incomplete_beta_function.h>
+#include <poincare/src/numeric_solver/regularized_gamma_function.h>
+#include <poincare/src/numeric_solver/regularized_incomplete_beta_function.h>
 #include <quiz.h>
 
 #include <cmath>

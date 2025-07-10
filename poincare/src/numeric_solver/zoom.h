@@ -2,8 +2,8 @@
 #define POINCARE_SOLVER_ZOOM_H
 
 #include <ion/display.h>
+#include <poincare/numeric_solver/solver.h>
 #include <poincare/range.h>
-#include <poincare/solver/solver.h>
 #include <poincare/src/expression/context.h>
 #include <poincare/src/memory/tree.h>
 

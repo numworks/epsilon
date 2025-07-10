@@ -6,9 +6,9 @@
 #include <ion/events.h>
 #include <omg/code_point.h>
 #include <poincare/layout.h>
+#include <poincare/numeric_solver/zoom.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
-#include <poincare/solver/zoom.h>
 
 #include "../app.h"
 #include "cobweb_graph_view.h"

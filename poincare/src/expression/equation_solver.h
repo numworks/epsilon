@@ -2,10 +2,10 @@
 #define POINCARE_EXPRESSION_EQUATION_SOLVER_H
 
 #include <omg/vector.h>
+#include <poincare/helpers/polynomial.h>
 #include <poincare/range.h>
 #include <poincare/src/memory/tree.h>
 
-#include "polynomial.h"
 #include "projection.h"
 #include "symbol.h"
 
@@ -13,11 +13,11 @@ namespace Poincare::Internal {
 
 class EquationSolver {
  public:
-  constexpr static int k_maxNumberOfVariables = 6;
-  constexpr static int k_maxNumberOfExactSolutions =
+  constexpr static size_t k_maxNumberOfVariables = 6;
+  constexpr static size_t k_maxNumberOfExactSolutions =
       std::max(k_maxNumberOfVariables,
                // +1 for delta
-               Polynomial::k_maxPolynomialDegree + 1);
+               PolynomialHelpers::k_maxSolvableDegree + 1);
 
   class VariableArray : public OMG::StaticVector<char[Symbol::k_maxNameSize],
                                                  k_maxNumberOfVariables> {

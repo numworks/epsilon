@@ -4,13 +4,13 @@
 #include <escher/palette.h>
 #include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
+#include <poincare/helpers/polynomial.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/print.h>
 #include <poincare/solver/roots.h>
 #include <poincare/src/expression/derivation.h>
-#include <poincare/src/expression/polynomial.h>
 #include <poincare/trigonometry.h>
 
 #include <algorithm>
@@ -186,15 +186,15 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
   assert(properties().isLine());
   SystemExpression equation = expressionReduced(context);
   // Compute metrics for details view of Line
-  SystemExpression
-      coefficients[Internal::Polynomial::k_maxNumberOfPolynomialCoefficients];
+  SystemExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
+      PolynomialHelpers::k_lineDegree)];
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
       k_unknownName, coefficients, context, complexFormat(context),
       MathPreferences::SharedPreferences()->angleUnit(),
       ContinuousFunctionProperties::k_defaultUnitFormat,
       SymbolicComputation::ReplaceAllSymbols);
-  assert(d <= 1);
+  assert(d <= PolynomialHelpers::k_lineDegree);
   /* Degree might vary depending on symbols definition and complex format.
    * Approximate and return the two line coefficients */
   if (d < 0) {
@@ -630,8 +630,9 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     }
     /* Solve the equation in y (or x if not willBeAlongX)
      * Symbols are replaced to simplify roots. */
-    SystemExpression
-        coefficients[Internal::Polynomial::k_maxNumberOfPolynomialCoefficients];
+    constexpr size_t k_maxHandledDegree = 2;
+    SystemExpression coefficients[PolynomialHelpers::NumberOfCoefficients(
+        k_maxHandledDegree)];
     int degree = m_expression.getPolynomialReducedCoefficients(
         willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
                      : k_unknownName,

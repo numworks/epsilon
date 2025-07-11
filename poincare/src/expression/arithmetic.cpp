@@ -503,7 +503,7 @@ Arithmetic::FactorizedInteger Arithmetic::PrimeFactorization(IntegerHandler m) {
     if (div.remainder.isZero()) {
       if (result.coefficients[t] == UINT8_MAX) {
         /* Failed factorization because number as a factor with coef > UINT8_MAX
-         * like 2^300 */
+         * like 2^300 */
         result.numberOfFactors = FactorizedInteger::k_factorizationFailed;
         return result;
       }

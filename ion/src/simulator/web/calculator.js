@@ -99,6 +99,7 @@ function Calculator(emModule) {
      * See https://github.com/emscripten-core/emscripten/blob/main/ChangeLog.md#3158---042324
      * */
     emModule = Object.assign(emModule, resultModule);
+    emModule.loaded = true;
 
     /* Install event handlers
      * This needs to be done after loading Epsilon, otherwise the _IonSimulator*

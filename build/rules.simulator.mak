@@ -49,6 +49,7 @@ $(call create_zip,htmlpack%zip,$(addprefix $(OUTPUT_DIRECTORY)/, \
   epsilon%js \
   ion/src/simulator/web/calculator.html \
   ion/src/simulator/web/calculator.css \
+  ion/src/simulator/web/calculator.js \
   app/assets/background.jpg \
   app/assets/background-no-shadow.webp \
 ) \

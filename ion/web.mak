@@ -29,9 +29,12 @@ _ion_web_exported_functions = $(subst $( ),$(,),$(strip $(patsubst %,_%, \
   $(_eadk_exported_functions) \
 )))
 
-_ion_web_exported_runtime_methods := $(subst $( ),$(,),$(strip \
+# Using = instead of := is needed here as there is no garantee, the variable
+# $(_sdl_web_exported_runtime_methods) is already defined
+_ion_web_exported_runtime_methods = $(subst $( ),$(,),$(strip \
   UTF8ToString \
   FS \
+  $(_sdl_web_exported_runtime_methods) \
 ))
 
 LDFLAGS_ion += \
@@ -65,6 +68,14 @@ $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.html: $(addprefix $(PATH_ion)/sr
 	$(PYTHON) $(filter %.py,$^) --html $@ --css $(basename $@).css $(filter %.json,$^)
 
 $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.css: $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.html
+
+$(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.js: $(_ion_web_path)/calculator.js
+	$(call rule_label,HOSTCPP)
+	$(HOSTCPP) \
+		-E -CC \
+		-DEM_MODULE_NAME=$(APP_NAME) \
+		-P $(filter %.js,$^) \
+		$@
 
 $(OUTPUT_DIRECTORY)/$(_ion_web_path)/simulator.html: $(_ion_web_path)/simulator.html.inc $(addprefix $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.,html css)
 	$(call rule_label,HOSTCPP)

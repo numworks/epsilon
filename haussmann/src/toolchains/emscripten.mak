@@ -48,10 +48,10 @@ else
 #
 # -O3 or -Os ?
 # Build size comparison:
-# Optim | poincare.wasm | epsilon.js
-#  -O0  |    637 KB     | 10 375 KB
-#  -O3  |    586 KB     |  5 628 KB
-#  -Os  |    555 KB     |  5 533 KB
+# Optim | poincare.wasm | epsilon.js
+#  -O0  |    637 KB     | 10 375 KB
+#  -O3  |    586 KB     |  5 628 KB
+#  -Os  |    555 KB     |  5 533 KB
 # -O3 -> -Os: -5.3% size on poincare.wasm, -1.7% on epsilon.js
 #
 # Computation speed comparison

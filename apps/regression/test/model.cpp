@@ -752,7 +752,7 @@ QUIZ_CASE(regression_logistic) {
     x += 1000;
   }
   /* Coefficient `a` overflows during transformation from LogisticInternal to
-   * Logistic */
+   * Logistic */
   assert_regression_data_is_not_suitable(x8, y8, std::size(x8),
                                          Model::Type::Logistic, false);
 

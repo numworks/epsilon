@@ -7,12 +7,15 @@
 #include <escher/view_controller.h>
 #include <ion/usb.h>
 
-namespace OnBoarding {
+namespace Shared {
 
 class PromptController : public Escher::ViewController {
  public:
+  typedef bool (*EventHandler)(Ion::Events::Event);
+
   PromptController(const I18n::Message* messages, const KDColor* colors,
-                   uint8_t numberOfMessages);
+                   uint8_t numberOfMessages,
+                   EventHandler eventHandler = nullptr);
   Escher::View* view() override { return &m_messageViewWithSkip; }
   bool handleEvent(Ion::Events::Event event) override;
 
@@ -35,25 +38,9 @@ class PromptController : public Escher::ViewController {
     Shared::OkView m_okView;
   };
   MessageViewWithSkip m_messageViewWithSkip;
-};
-
-class PromptControllerCustomEventHandler : public PromptController {
- public:
-  typedef bool (*EventHandler)(Ion::Events::Event);
-  PromptControllerCustomEventHandler(const I18n::Message* messages,
-                                     const KDColor* colors,
-                                     uint8_t numberOfMessages,
-                                     EventHandler callback)
-      : PromptController(messages, colors, numberOfMessages),
-        m_handleEvent(callback){};
-
-  bool handleEvent(Ion::Events::Event event) override {
-    return m_handleEvent(event) || PromptController::handleEvent(event);
-  }
-
   EventHandler m_handleEvent;
 };
 
-}  // namespace OnBoarding
+}  // namespace Shared
 
 #endif

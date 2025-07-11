@@ -5,7 +5,7 @@
 
 using namespace Escher;
 
-namespace OnBoarding {
+namespace Shared {
 
 PromptController::MessageViewWithSkip::MessageViewWithSkip(
     const I18n::Message* messages, const KDColor* colors,
@@ -55,21 +55,21 @@ void PromptController::MessageViewWithSkip::layoutSubviews(bool force) {
 
 PromptController::PromptController(const I18n::Message* messages,
                                    const KDColor* colors,
-                                   uint8_t numberOfMessages)
+                                   uint8_t numberOfMessages,
+                                   EventHandler eventHandler)
     : ViewController(nullptr),
-      m_messageViewWithSkip(messages, colors, numberOfMessages) {}
+      m_messageViewWithSkip(messages, colors, numberOfMessages),
+      m_handleEvent(eventHandler) {}
 
 bool PromptController::handleEvent(Ion::Events::Event event) {
-  if (event.isKeyPress() && event != Ion::Events::Back &&
-      event != Ion::Events::OnOff) {
+  if (m_handleEvent) {
+    return m_handleEvent(event);
+  }
+  if (event.isKeyPress() && event != Ion::Events::OnOff) {
     App::app()->modalViewController()->dismissModal();
-    AppsContainer* appsContainer = AppsContainer::sharedAppsContainer();
-    if (App::app()->snapshot() == appsContainer->onBoardingAppSnapshot()) {
-      appsContainer->switchToBuiltinApp(appsContainer->homeAppSnapshot());
-    }
     return true;
   }
   return false;
 }
 
-}  // namespace OnBoarding
+}  // namespace Shared

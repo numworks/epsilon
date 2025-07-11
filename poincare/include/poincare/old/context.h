@@ -32,6 +32,9 @@ class Context {
                                            int rank) const {
     return NAN;
   }
+#if TARGET_POINCARE_JS
+  virtual ~Context() = default;
+#endif
 
   static Context* GlobalContext;
 };

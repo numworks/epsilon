@@ -13,8 +13,8 @@
 #include "hardware_test/app.h"
 #include "home/app.h"
 #include "on_boarding/app.h"
-#include "on_boarding/prompt_controller.h"
 #include "shared/global_context.h"
+#include "shared/prompt_controller.h"
 #include "suspend_timer.h"
 #include "usb/app.h"
 
@@ -46,7 +46,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   void displayExamModePopUp(Poincare::ExamMode mode);
   void shutdownDueToLowBattery();
   void setShiftAlphaStatus(Ion::Events::ShiftAlphaStatus newStatus);
-  OnBoarding::PromptController* promptController();
+  Shared::PromptController* promptController();
   void redrawWindow();
   void setDFUBetweenEvents(bool active) { m_dfuBetweenEvents = active; }
 
@@ -83,7 +83,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   EmptyBatteryWindow m_emptyBatteryWindow;
   Shared::GlobalContext m_globalContext;
   ExamPopUpController m_examPopUpController;
-  OnBoarding::PromptController m_promptController;
+  Shared::PromptController m_promptController;
   BatteryTimer m_batteryTimer;
   SuspendTimer m_suspendTimer;
   BacklightDimmingTimer m_backlightDimmingTimer;

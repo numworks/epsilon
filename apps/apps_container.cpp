@@ -11,6 +11,7 @@
 #include "apps_container_storage.h"
 #include "global_preferences.h"
 #include "math_preferences.h"
+#include "on_boarding/startup_prompt_controller.h"
 #include "shared/record_restrictive_extensions_helper.h"
 
 extern "C" {
@@ -31,7 +32,8 @@ AppsContainer::AppsContainer()
       m_dfuBetweenEvents(false),
       m_examPopUpController(),
       m_promptController(k_promptMessages, k_promptColors,
-                         k_promptNumberOfMessages),
+                         k_promptNumberOfMessages,
+                         OnBoarding::StartupModalHandleEvent),
       m_backlightDimmingTimer(GlobalPreferences::k_defaultDimmingTime)
 #if EPSILON_GETOPT
       ,
@@ -398,7 +400,7 @@ void AppsContainer::setShiftAlphaStatus(
 
 bool AppsContainer::updateAlphaLock() { return m_window.updateAlphaLock(); }
 
-OnBoarding::PromptController* AppsContainer::promptController() {
+Shared::PromptController* AppsContainer::promptController() {
   if (k_promptNumberOfMessages == 0) {
     return nullptr;
   }

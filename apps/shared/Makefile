@@ -42,6 +42,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/shared/,$(addsuffix :-test, \
   plot_view_banners.cpp \
   plot_view_cursors.cpp \
   plot_view_plots.cpp \
+  prompt_controller.cpp \
   range_parameter_controller.cpp \
   round_cursor_view.cpp \
   shared_app.cpp \

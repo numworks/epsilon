@@ -24,10 +24,26 @@ $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) $(_simula
 	$(Q) plutil -replace CFBundleIcons~ipad -json `plutil -extract CFBundleIcons~ipad json -o - $(OUTPUT_DIRECTORY)/app/assets/partial.plist` $@
 
 
-$(_simulator_app)/launch.storyboardc: ion/src/simulator/ios/launch.storyboard | $$(@D)/.
+$(_simulator_app_resources_path)/launch.storyboardc: ion/src/simulator/ios/launch.storyboard | $$(@D)/.
 	$(call rule_label,IBTOOL)
 	$(Q) $(IBTOOL) --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --compile $@ $^
 
-_simulator_app_deps += $(_simulator_app)/launch.storyboardc
+_simulator_app_deps += $(_simulator_app_resources_path)/launch.storyboardc
+
+ifdef IOS_PROVISIONNING_PROFILE
+$(_simulator_app_resources_path)/embedded.mobileprovision: $(IOS_PROVISIONNING_PROFILE) | $$(@D)/.
+	$(call rule_label,COPY)
+	$(Q) cp $^ $@
+
+$(OUTPUT_DIRECTORY)/app/entitlements.plist: $(IOS_PROVISIONNING_PROFILE)
+	$(call rule_label,SCMS)
+	$(Q) security cms -D -i $(IOS_PROVISIONNING_PROFILE) | plutil -extract Entitlements xml1 - -o $@
+
+_simulator_app_deps += $(OUTPUT_DIRECTORY)/app/entitlements.plist
+_simulator_app_deps += $(_simulator_app_resources_path)/embedded.mobileprovision
+else
+$(_simulator_app_resources_path)/embedded.mobileprovision:
+	$(warning Building without a provisionning profile. Please define IOS_PROVISIONNING_PROFILE to point to the .mobileprovision file you want to use.)
+endif
 
 include  $(PATH_haussmann)/src/rules/shared.apple.mak

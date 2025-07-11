@@ -10,7 +10,7 @@ namespace Escher {
 
 StackViewController::StackViewController(
     Responder* parentResponder, StackView::Style style, bool extendVertically,
-    OMG::Vector<StackHeaderView>* headerViewStack)
+    OMG::AbstractStaticVector<StackHeaderView>* headerViewStack)
     : ViewController(parentResponder),
       m_view(style, extendVertically, headerViewStack),
       m_size(1),

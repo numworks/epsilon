@@ -17,7 +17,7 @@
 namespace OMG {
 
 template <typename T>
-class Vector {
+class AbstractStaticVector {
  public:
   size_t size() const { return m_size; }
   void clear() { m_size = 0; }
@@ -53,21 +53,21 @@ class Vector {
   }
 
  protected:
-  Vector() : m_size(0) {}
+  AbstractStaticVector() : m_size(0) {}
 
   size_t m_size;
   T m_data[0];
 };
 
 template <typename T, size_t CAPACITY>
-class StaticVector : public Vector<T> {
+class StaticVector : public AbstractStaticVector<T> {
  public:
   static_assert(CAPACITY > 0, "StaticVector must have a positive capacity");
 
-  StaticVector() : Vector<T>() {}
+  StaticVector() : AbstractStaticVector<T>() {}
 
   // Use this constructor only if T has a proper default constructor
-  StaticVector(size_t initialSize) : Vector<T>() {
+  StaticVector(size_t initialSize) : AbstractStaticVector<T>() {
     assert(initialSize <= CAPACITY);
     this->m_size = initialSize;
   }

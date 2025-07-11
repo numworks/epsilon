@@ -572,7 +572,8 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   if (!Poincare::Dimension(exp, context).isScalar()) {
     return NAN;
   }
-  return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat);
+  return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat,
+                                        context);
 }
 
 template <typename T>

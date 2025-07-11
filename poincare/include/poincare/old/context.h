@@ -14,6 +14,7 @@ namespace Poincare {
 
 class PoolObject;
 
+// TODO: Rename SymbolContext
 class Context {
  public:
   enum class UserNamedType : uint8_t { None, Function, Sequence, Symbol, List };

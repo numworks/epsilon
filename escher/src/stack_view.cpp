@@ -4,8 +4,9 @@
 
 namespace Escher {
 
-StackView::StackView(Style style, bool extendVertically,
-                     OMG::Vector<StackHeaderView>* headerViewStack)
+StackView::StackView(
+    Style style, bool extendVertically,
+    OMG::AbstractStaticVector<StackHeaderView>* headerViewStack)
     : View(),
       m_stackHeaderViews(headerViewStack),
       m_borderView(Palette::GrayBright),

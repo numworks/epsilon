@@ -16,7 +16,7 @@ class StackView : public View {
   constexpr static uint8_t k_maxDepth = sizeof(Mask) * 8;
 
   StackView(Style style, bool extendVertically,
-            OMG::Vector<StackHeaderView>* headerViewStack);
+            OMG::AbstractStaticVector<StackHeaderView>* headerViewStack);
   int8_t numberOfStacks() const { return m_stackHeaderViews->size(); }
   void setContentView(View* view);
   void setupHeadersBorderOverlaping(bool headersOverlapHeaders,
@@ -41,7 +41,7 @@ class StackView : public View {
   // Returns the index in m_stackViews for a given display index
   int stackHeaderIndex(int displayIndex);
 
-  OMG::Vector<StackHeaderView>* m_stackHeaderViews;
+  OMG::AbstractStaticVector<StackHeaderView>* m_stackHeaderViews;
   SolidColorView m_borderView;
   View* m_contentView;
   Style m_style;

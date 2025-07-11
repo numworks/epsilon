@@ -48,9 +48,9 @@ class StackViewController : public ViewController {
   }
 
  protected:
-  StackViewController(Responder* parentResponder, StackView::Style style,
-                      bool extendVertically,
-                      OMG::Vector<StackHeaderView>* headerViewStack);
+  StackViewController(
+      Responder* parentResponder, StackView::Style style, bool extendVertically,
+      OMG::AbstractStaticVector<StackHeaderView>* headerViewStack);
   void handleResponderChainEvent(ResponderChainEvent event) override;
 
  private:

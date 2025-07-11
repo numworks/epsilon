@@ -19,9 +19,6 @@ namespace OMG {
 template <typename T>
 class Vector {
  public:
-  Vector() : m_size(0) {}
-  virtual ~Vector() = default;
-
   size_t size() const { return m_size; }
   void clear() { m_size = 0; }
   void resize(size_t size) {
@@ -29,12 +26,18 @@ class Vector {
     m_size = size;
   }
 
-  virtual const T& operator[](size_t index) const = 0;
-  virtual T& operator[](size_t index) = 0;
+  const T& operator[](size_t index) const {
+    assert(index < m_size);
+    return m_data[index];
+  }
+  T& operator[](size_t index) {
+    assert(index < m_size);
+    return m_data[index];
+  }
 
   void push(const T& value) { (*this)[m_size++] = value; }
   T& pop() {
-    assert(this->m_size > 0);
+    assert(m_size > 0);
     T& result = (*this)[m_size - 1];
     /* This cannot be decreased before accessing the element or the assert in
      * the operator[] will fail */
@@ -50,17 +53,18 @@ class Vector {
   }
 
  protected:
+  Vector() : m_size(0) {}
+
   size_t m_size;
+  T m_data[0];
 };
 
-/* This class is a simple static array that can hold up to CAPACITY elements
- * of type T */
 template <typename T, size_t CAPACITY>
 class StaticVector : public Vector<T> {
+ public:
   static_assert(CAPACITY > 0, "StaticVector must have a positive capacity");
 
- public:
-  using Vector<T>::Vector;
+  StaticVector() : Vector<T>() {}
 
   // Use this constructor only if T has a proper default constructor
   StaticVector(size_t initialSize) : Vector<T>() {
@@ -70,15 +74,6 @@ class StaticVector : public Vector<T> {
 
   size_t capacity() const { return CAPACITY; }
   bool isFull() const { return this->m_size == CAPACITY; }
-
-  const T& operator[](size_t index) const override {
-    assert(index < this->m_size);
-    return m_data[index];
-  }
-  T& operator[](size_t index) override {
-    assert(index < this->m_size);
-    return m_data[index];
-  }
 
  protected:
   T m_data[CAPACITY];

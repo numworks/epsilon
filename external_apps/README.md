@@ -9,9 +9,9 @@ This folder contains apps to run on a [NumWorks calculator](https://www.numworks
 
 ## On device
 
-Here are the instructions to run the app [rpn_cpp](rpn_cpp) on a Numworks calculator.
+Here are the instructions to run the app [sample_cpp](sample_cpp) on a Numworks calculator.
 
-You can swap `rpn_cpp` for any other C/C++ based external app.
+You can swap `sample_cpp` for any other C/C++ based external app.
 
 ### Setup nwlink
 
@@ -28,7 +28,7 @@ The calculator must be on the `CALCULATOR IS CONNECTED` screen.
 ![Calculator is connected screenshot](docs/calculator_connected.png)
 
 ```shell
-make -C rpn_cpp PLATFORM=device run
+make -C sample_cpp PLATFORM=device run
 ```
 
 A `THIRD PARTY APPLICATIONS` message will appear, and the app should be accessible at the end of the Home menu.
@@ -39,10 +39,10 @@ A `THIRD PARTY APPLICATIONS` message will appear, and the app should be accessib
 
 After a run or a build
 ```shell
-make -C rpn_cpp PLATFORM=device build
+make -C sample_cpp PLATFORM=device build
 ```
 
-You should have a `rpn_cpp/output/device/rpn.nwa` file that you can distribute!
+You should have a `sample_cpp/output/device/rpn.nwa` file that you can distribute!
 
 Anyone can now install it on their calculator from the [NumWorks online uploader](https://my.numworks.com/apps).
 
@@ -79,7 +79,7 @@ Simulator path can also be overridden with the `SIMULATOR=[PATH_TO_SIMULATOR]` c
 
 On a separate shell, run
 ```shell
-make -C rpn_cpp server
+make -C sample_cpp server
 ```
 
 In the other shell, run :
@@ -95,7 +95,7 @@ source emsdk/emsdk_env.sh
 Finally, run
 
 ```shell
-make -C rpn_cpp PLATFORM=web run
+make -C sample_cpp PLATFORM=web run
 ```
 
 Your browser should display the simulator with the app inside.
@@ -103,14 +103,14 @@ Your browser should display the simulator with the app inside.
 ### On native simulator (MacOS, Linux, Windows)
 
 ```shell
-make -C rpn_cpp PLATFORM=simulator run
+make -C sample_cpp PLATFORM=simulator run
 ```
 
 A native simulator should open on the app.
 
 You can also debug your app using either `gdc` (or `lldb` on MacOS).
 ```shell
-make -C rpn_cpp PLATFORM=simulator debug
+make -C sample_cpp PLATFORM=simulator debug
 ```
 
 ## License

@@ -27,7 +27,6 @@ class Context {
 
   virtual bool setExpressionForUserNamed(const Internal::Tree* expression,
                                          const Internal::Tree* symbol) = 0;
-  virtual bool canRemoveUnderscoreToUnits() const { return true; }
 
   virtual double approximateSequenceAtRank(const char* identifier,
                                            int rank) const {

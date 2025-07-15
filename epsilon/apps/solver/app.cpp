@@ -64,7 +64,6 @@ App::App(Snapshot* snapshot)
                    ButtonRowController::Size::Large),
       m_stackViewController(&m_modalViewController, &m_listFooter,
                             StackViewController::Style::GrayGradation),
-      m_system(&m_equationStore),
-      m_context(AppsContainer::sharedAppsContainer()->globalContext()) {}
+      m_system(&m_equationStore) {}
 
 }  // namespace Solver

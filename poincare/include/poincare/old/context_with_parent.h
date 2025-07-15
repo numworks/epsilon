@@ -29,9 +29,10 @@ class ContextWithParent : public Context {
     return m_parentContext->setExpressionForUserNamed(expression, symbol);
   }
 
-  bool canRemoveUnderscoreToUnits() const override {
+  double approximateSequenceAtRank(const char* identifier,
+                                   int rank) const override {
     assert(m_parentContext);
-    return m_parentContext->canRemoveUnderscoreToUnits();
+    return m_parentContext->approximateSequenceAtRank(identifier, rank);
   }
 
  private:

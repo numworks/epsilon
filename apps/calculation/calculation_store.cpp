@@ -385,8 +385,8 @@ Calculation* CalculationStore::pushCalculation(
     const CalculationElements& calculationToPush) {
   char* cursor = endOfCalculations();
   assert(cursor >= m_buffer &&
-         cursor < pointerArea() - neededSizeForCalculation(
-                                      calculationToPush.sizeOfTrees()));
+         cursor <= pointerArea() - neededSizeForCalculation(
+                                       calculationToPush.sizeOfTrees()));
 
   // Push an empty Calculation instance (takes sizeof(Calculation))
   Calculation* newCalculation = pushEmptyCalculation(&cursor);
@@ -407,7 +407,7 @@ Calculation* CalculationStore::pushCalculation(
 
   /* Write the pointer to the new calculation at pointerArea() (takes
    * sizeof(Calculation*)) */
-  assert(cursor < pointerArea() - sizeof(Calculation*));
+  assert(cursor <= pointerArea() - sizeof(Calculation*));
   pointerArray()[-1] = cursor;
   /* Now that the calculation is fully built, we can finally update
    * m_numberOfCalculations. As that is the only variable tracking the state

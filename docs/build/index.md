@@ -1,5 +1,13 @@
 # Build and run your own version of Epsilon
 
+## Retrieve the source code
+
+The code is hosted on <a href="https://github.com/numworks/epsilon">GitHub</a>. You can retrieve it using with
+```shell
+git clone https://github.com/numworks/epsilon.git
+cd epsilon
+```
+
 ## Install the SDK
 
 > [!NOTE]
@@ -8,13 +16,6 @@
 To build and run epsilon, setup your device using the following command in your terminal (Msys2, Terminal.app, xterm…)
 ```shell
 chmod +x build/setup.sh & build/setup.sh
-```
-
-## Retrieve the source code
-
-The code is hosted on <a href="https://github.com/numworks/epsilon">GitHub</a>. You can retrieve it using with
-```shell
-git clone https://github.com/numworks/epsilon.git
 ```
 
 ## Run Epsilon on your computer

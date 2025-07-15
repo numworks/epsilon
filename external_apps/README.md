@@ -11,7 +11,7 @@ This folder contains apps to run on a [NumWorks calculator](https://www.numworks
 
 Here are the instructions to run the app [sample_cpp](sample_cpp) on a Numworks calculator.
 
-You can swap `sample_cpp` for any other C/C++ based external app.
+You can swap `sample_cpp` for any other C/C++ based external app (`rpn_cpp` or `sample_c`).
 
 ### Setup nwlink
 

@@ -16,15 +16,18 @@ using namespace Poincare::Internal;
 
 void assertLayoutParsesTo(const Tree* layout, const Tree* expected,
                           Poincare::Context* context = nullptr,
-                          ParsingContext::ParsingMethod parsingMethod =
-                              ParsingContext::ParsingMethod::Classic) {
-  Tree* expression = RackParser(layout, context, true, parsingMethod).parse();
+                          bool isAssignment = false) {
+  Tree* expression =
+      RackParser(layout, {.context = context,
+                          .params = {.isAssignment = isAssignment},
+                          .metadata = {.isTopLevelRack = true}})
+          .parse();
   assert_trees_are_equal(expression, expected);
 }
 
 QUIZ_CASE(pcj_parse_layout_tokenize) {
   Shared::GlobalContext ctx;
-  ParsingContext context(&ctx, ParsingContext::ParsingMethod::Classic);
+  ParsingContext context = {.context = &ctx};
   Tokenizer tokenizer(Rack::From("ab*123.45"_l), &context);
   Token token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::CustomIdentifier &&
@@ -68,7 +71,10 @@ QUIZ_CASE(pcj_parse_layout_tokenize) {
 }
 
 bool is_parsable(const Tree* layout, Poincare::Context* context = nullptr) {
-  TreeRef expression = RackParser(layout, context, true).parse();
+  TreeRef expression =
+      RackParser(layout,
+                 {.context = context, .metadata = {.isTopLevelRack = true}})
+          .parse();
   return !expression.isUninitialized();
 }
 
@@ -142,7 +148,7 @@ QUIZ_CASE(pcj_parse_assignment) {
   assertLayoutParsesTo(
       "f(x)=xxln(x)"_l,
       KEqual(KFun<"f">("x"_e), KMult("x"_e, "x"_e, KLnUser("x"_e))), &context,
-      ParsingContext::ParsingMethod::Assignment);
+      true);
 }
 
 QUIZ_CASE(pcj_parse_mixed_fraction) {

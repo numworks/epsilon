@@ -630,7 +630,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       Poincare::Preferences::EditionMode::Edition1D) {
     /* TODO_PCJ: Check if layout is already a 1D layout. If so, insert it
      * directly. */
-    Expression e = Expression::Parse(layout, nullptr, true, false, true);
+    Expression e =
+        Expression::Parse(layout, nullptr, {.forceParseSequence = true});
     if (!e.isUninitialized()) {
       layout =
           e.createLayout(LayoutPreferences::SharedPreferences()->displayMode(),

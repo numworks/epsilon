@@ -3,6 +3,7 @@
 
 #include <omg/enums.h>
 #include <poincare/comparison_operator.h>
+#include <poincare/helpers/parser.h>
 #include <poincare/layout.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/pool_object.h>
@@ -131,16 +132,11 @@ class Expression : public PoolHandle {
   static const Internal::Tree* TreeFromAddress(const void* address);
 
   static UserExpression Parse(const Internal::Tree* layout, Context* context,
-                              bool addMissingParenthesis = true,
-                              bool parseForAssignment = false,
-                              bool forceParseSequence = false);
+                              ParserHelper::ParsingParameters params = {});
   static UserExpression Parse(const char* layout, Context* context,
-                              bool addMissingParenthesis = true,
-                              bool parseForAssignment = false,
-                              bool forceParseSequence = false);
+                              ParserHelper::ParsingParameters params = {});
   static UserExpression ParseLatex(const char* latex, Context* context,
-                                   bool addMissingParenthesis = true,
-                                   bool parseForAssignment = false);
+                                   ParserHelper::ParsingParameters params = {});
 
   static UserExpression Create(const Internal::Tree* structure,
                                Internal::ContextTrees ctx);

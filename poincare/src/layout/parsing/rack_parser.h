@@ -8,6 +8,7 @@
  *   an efficient but less readable shunting-yard parser. */
 
 // #include "helper.h"
+#include <poincare/helpers/parser.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/memory/tree_ref.h>
 
@@ -29,25 +30,18 @@ class RackParser {
    * - f(x) will always be parsed as f(x) and not f*(x)
    * - u{n} will always be parsed as u_n and not u*{n}
    * - abc will always be parsed as abc and not a*b*c
-   * The same is true if you set parseForAssignment = true
-   * but the parser will set parseForAssignment = false when it encounters a
+   * The same is true if you set isAssignment = true
+   * but the parser will set isAssignment = false when it encounters a
    * "=". (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as
    * f(x)=xy) */
-  RackParser(const Tree* rack, Poincare::Context* context,
-             bool isTopLevelRack = false,
-             ParsingContext::ParsingMethod parsingMethod =
-                 ParsingContext::ParsingMethod::Classic,
-             bool commaSeparatedList = false, bool forceParseSequence = false,
-             int textStart = 0, int textEnd = -1)
-      : m_parsingContext(context, parsingMethod),
+  RackParser(const Tree* rack, ParsingContext parsingContext, int textStart = 0,
+             int textEnd = -1)
+      : m_parsingContext(parsingContext),
         m_tokenizer(Rack::From(rack), &m_parsingContext, textStart, textEnd),
         m_currentToken(Token(Token::Type::Undefined)),
         m_nextToken(Token(Token::Type::Undefined)),
         m_pendingImplicitOperator(false),
         m_waitingSlashForMixedFraction(false),
-        m_commaSeparatedList(commaSeparatedList),
-        m_isTopLevelRack(isTopLevelRack),
-        m_forceParseSequence(forceParseSequence),
         m_root(rack) {}
 
   Tree* parse();
@@ -182,6 +176,7 @@ class RackParser {
   // Save and restore parser state
   struct State {
     Tokenizer::State tokenizerState;
+    Context* parsingContextContext;
     Token currentToken;
     Token nextToken;
     bool pendingImplicitOperator;
@@ -190,6 +185,7 @@ class RackParser {
   State currentState() const {
     return State{
         .tokenizerState = m_tokenizer.currentState(),
+        .parsingContextContext = m_parsingContext.context,
         .currentToken = m_currentToken,
         .nextToken = m_nextToken,
         .pendingImplicitOperator = m_pendingImplicitOperator,
@@ -202,11 +198,9 @@ class RackParser {
   Tokenizer m_tokenizer;
   Token m_currentToken;
   Token m_nextToken;
+  bool m_isTopLevel;
   bool m_pendingImplicitOperator;
   bool m_waitingSlashForMixedFraction;
-  bool m_commaSeparatedList;
-  bool m_isTopLevelRack;
-  bool m_forceParseSequence;
   const Tree* m_root;
 };
 

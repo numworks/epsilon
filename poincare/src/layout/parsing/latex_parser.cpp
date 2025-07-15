@@ -741,9 +741,6 @@ void BuildIntegrandChildFromLatex(const char** latexString,
       integralToken[k_integrandIndexInIntegralToken].indexInLayout));
   const char* integrandStart = *latexString;
 
-  EmptyContext emptyContext;
-  ParsingContext parsingContext(&emptyContext,
-                                ParsingContext::ParsingMethod::Classic);
   while (**latexString != 0) {
     if (**latexString == 'd') {
       // We might have found the end of the integrand
@@ -783,6 +780,8 @@ void BuildIntegrandChildFromLatex(const char** latexString,
        */
       Rack* rack = RackFromText(identifierStart, identifierEnd);
 
+      EmptyContext emptyContext;
+      ParsingContext parsingContext{.context = &emptyContext};
       Tokenizer tokenizer(rack, &parsingContext);
       Token currentToken;
       size_t totalTokensLength = 0;

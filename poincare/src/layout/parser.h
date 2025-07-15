@@ -1,6 +1,7 @@
 #ifndef POINCARE_LAYOUT_PARSER_H
 #define POINCARE_LAYOUT_PARSER_H
 
+#include <poincare/helpers/parser.h>
 #include <poincare/old/context.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -10,12 +11,10 @@
 namespace Poincare::Internal {
 
 namespace Parser {
-Tree* Parse(const Tree* l, Poincare::Context* context,
-            bool isTopLevelRack = false,
-            ParsingContext::ParsingMethod method =
-                ParsingContext::ParsingMethod::Classic,
-            bool forceParseSequence = false);
-}
+
+Tree* Parse(const Tree* l, ParsingContext parsingContext);
+
+}  // namespace Parser
 
 }  // namespace Poincare::Internal
 

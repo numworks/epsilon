@@ -55,15 +55,15 @@ Type ExpressionType(LayoutType type) {
   }
 }
 
-Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
-                    bool isTopLevelRack, ParsingContext::ParsingMethod method,
-                    bool forceParseSequence) {
+Tree* Parser::Parse(const Tree* l, ParsingContext parsingContext) {
   if (l->isRackLayout()) {
     // TODO: should be inlined in the caller
-    return RackParser(l, context, isTopLevelRack, method, false,
-                      forceParseSequence)
-        .parse();
+    return RackParser(l, parsingContext).parse();
   }
+
+  // From now on, rack cannot be top level
+  parsingContext.metadata.isTopLevelRack = false;
+
   switch (l->layoutType()) {
     case LayoutType::VerticalOffset:
     case LayoutType::AsciiCodePoint:
@@ -71,7 +71,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
     case LayoutType::CombinedCodePoints:
       assert(false);
     case LayoutType::Prison: {
-      Tree* parsed = Parse(l->child(0), context, false, method);
+      Tree* parsed = Parse(l->child(0), parsingContext);
       if (!parsed) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -79,9 +79,8 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
     }
     case LayoutType::Parentheses:
     case LayoutType::CurlyBraces: {
-      Tree* list = RackParser(l->child(0), context, false, method, true,
-                              forceParseSequence)
-                       .parse();
+      parsingContext.metadata.isCommaSeparatedList = true;
+      Tree* list = RackParser(l->child(0), parsingContext).parse();
       if (!list) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -116,7 +115,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
         if (grid->childIsPlaceholder(i)) {
           continue;
         }
-        if (!Parse(grid->child(i), context)) {
+        if (!Parse(grid->child(i), {.context = parsingContext.context})) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
         actualNumberOfChildren++;
@@ -137,7 +136,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
 
       // Sequence symbol
       const Tree* currentChild = grid->child(0);
-      Tree* expr = Parse(currentChild, context);
+      Tree* expr = Parse(currentChild, {.context = parsingContext.context});
       if (!expr || !expr->isUserSequence()) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -146,9 +145,10 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
 
       // Sequence expression
       currentChild = currentChild->nextTree();
-      if (Rack::IsEmpty(currentChild) && forceParseSequence) {
+      if (Rack::IsEmpty(currentChild) &&
+          parsingContext.params.forceParseSequence) {
         SharedTreeStack->pushBlock(Type::EmptySequenceExpression);
-      } else if (!Parse(currentChild, context)) {
+      } else if (!Parse(currentChild, {.context = parsingContext.context})) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
 
@@ -165,7 +165,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
          * When we enter this loop, currentChild is at mainExpr. Skip next child
          * to get to the next expression. */
         currentChild = currentChild->nextTree()->nextTree();
-        if (!Parse(currentChild, context)) {
+        if (!Parse(currentChild, {.context = parsingContext.context})) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
         expr->cloneNodeOverNode(row == 1 ? KSequenceSingleRecurrence
@@ -181,11 +181,11 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
 
       /* TODO: The behaviour relative to the parametric expressions
        * is duplicated with RackParser::parseReservedFunction */
-      bool useParameterContext = context && ref->isParametric();
+      bool useParameterContext = parsingContext.context && ref->isParametric();
       TreeVariableContext parameterContext;  // For parametric
 
       for (int i = 0; i < n; i++) {
-        Context* childContext = context;
+        Context* childContext = parsingContext.context;
 
         if (useParameterContext) {
           if (i == Parametric::k_variableIndex) {
@@ -198,7 +198,7 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
           }
         }
 
-        TreeRef parsedChild = Parse(l->child(i), childContext);
+        TreeRef parsedChild = Parse(l->child(i), {.context = childContext});
         if (!parsedChild) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
@@ -208,8 +208,8 @@ Tree* Parser::Parse(const Tree* l, Poincare::Context* context,
           if (!parsedChild->isUserSymbol()) {
             TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
           }
-          parameterContext =
-              TreeVariableContext(Symbol::GetName(parsedChild), context);
+          parameterContext = TreeVariableContext(Symbol::GetName(parsedChild),
+                                                 parsingContext.context);
           /* Preparing the context for the function child relies on the variable
            * child being parsed first */
           static_assert(Parametric::k_variableIndex == 0);

@@ -128,12 +128,11 @@ void assert_parsed_expression_process_to(
 }
 
 Internal::Tree *parse_expression(const char *expression, Context *context,
-                                 bool parseForAssignment) {
+                                 bool isAssignment) {
   Tree *inputLayout = RackFromText(expression);
-  RackParser parser(inputLayout, context, true,
-                    parseForAssignment
-                        ? Internal::ParsingContext::ParsingMethod::Assignment
-                        : Internal::ParsingContext::ParsingMethod::Classic);
+  RackParser parser(inputLayout, {.context = context,
+                                  .params = {.isAssignment = isAssignment},
+                                  .metadata = {.isTopLevelRack = true}});
   bool success = parser.parse() != nullptr;
   inputLayout->removeTree();
   Tree *result = success ? inputLayout : nullptr;
@@ -143,17 +142,16 @@ Internal::Tree *parse_expression(const char *expression, Context *context,
 
 void assert_parsed_expression_is(const char *expression,
                                  const Poincare::Internal::Tree *expected,
-                                 bool parseForAssignment) {
+                                 bool isAssignment) {
   Shared::GlobalContext context;
-  assert_parsed_expression_is(expression, expected, &context,
-                              parseForAssignment);
+  assert_parsed_expression_is(expression, expected, &context, isAssignment);
 }
 
 void assert_parsed_expression_is(const char *expression,
                                  const Poincare::Internal::Tree *expected,
                                  Shared::GlobalContext *context,
-                                 bool parseForAssignment) {
-  Tree *parsed = parse_expression(expression, context, parseForAssignment);
+                                 bool isAssignment) {
+  Tree *parsed = parse_expression(expression, context, isAssignment);
   bool test = parsed && parsed->treeIsIdenticalTo(expected);
   if (parsed) {
     parsed->removeTree();

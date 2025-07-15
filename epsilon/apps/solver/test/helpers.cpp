@@ -147,7 +147,8 @@ static void compareSolutions(SystemOfEquations* system,
         .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
         .m_advanceReduce = false};
     Expression expectedExpression =
-        Expression::Parse(expectedValue, solverContext, false)
+        Expression::Parse(expectedValue, solverContext,
+                          {.forceUnitUnderscore = true})
             .cloneAndReduce(projCtx, &reductionFailure);
     quiz_assert(!reductionFailure && !expectedExpression.isUninitialized());
 
@@ -158,8 +159,8 @@ static void compareSolutions(SystemOfEquations* system,
     constexpr int bufferSize = 500;
     char obtainedLayoutBuffer[bufferSize];
     obtainedLayout.serialize(obtainedLayoutBuffer);
-    Expression parsedExpression =
-        Expression::Parse(obtainedLayoutBuffer, solverContext, false);
+    Expression parsedExpression = Expression::Parse(
+        obtainedLayoutBuffer, solverContext, {.forceUnitUnderscore = true});
     quiz_assert(!parsedExpression.isUninitialized());
     projCtx = {
         .m_complexFormat = Internal::ComplexFormat::Cartesian,

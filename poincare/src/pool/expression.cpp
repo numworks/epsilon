@@ -187,21 +187,14 @@ const Tree* Expression::TreeFromAddress(const void* address) {
 }
 
 UserExpression UserExpression::Parse(const Tree* layout, Context* context,
-                                     bool addMissingParenthesis,
-                                     bool parseForAssignment,
-                                     bool forceParseSequence) {
-  // TODO_PCJ: Use addMissingParenthesis
-  return Builder(Parser::Parse(layout, context, true,
-                               parseForAssignment
-                                   ? ParsingContext::ParsingMethod::Assignment
-                                   : ParsingContext::ParsingMethod::Classic,
-                               forceParseSequence));
+                                     ParserHelper::ParsingParameters params) {
+  return Builder(Parser::Parse(layout, {.context = context,
+                                        .params = params,
+                                        .metadata = {.isTopLevelRack = true}}));
 }
 
 UserExpression UserExpression::Parse(const char* string, Context* context,
-                                     bool addMissingParenthesis,
-                                     bool parseForAssignment,
-                                     bool forceParseSequence) {
+                                     ParserHelper::ParsingParameters params) {
   if (string[0] == 0) {
     return UserExpression();
   }
@@ -209,21 +202,19 @@ UserExpression UserExpression::Parse(const char* string, Context* context,
   if (!layout) {
     return UserExpression();
   }
-  UserExpression result = Parse(layout, context, addMissingParenthesis,
-                                parseForAssignment, forceParseSequence);
+  UserExpression result = Parse(layout, context, params);
   layout->removeTree();
   return result;
 }
 
-UserExpression UserExpression::ParseLatex(const char* latex, Context* context,
-                                          bool addMissingParenthesis,
-                                          bool parseForAssignment) {
+UserExpression UserExpression::ParseLatex(
+    const char* latex, Context* context,
+    ParserHelper::ParsingParameters params) {
   Tree* layout = LatexParser::LatexToLayout(latex);
   if (!layout) {
     return UserExpression();
   }
-  UserExpression result =
-      Parse(layout, context, addMissingParenthesis, parseForAssignment);
+  UserExpression result = Parse(layout, context, params);
   layout->removeTree();
   return result;
 }
@@ -291,7 +282,7 @@ SystemExpression Expression::DecimalBuilderFromDouble(double value) {
   assert(buffer[0] != 0);
   Tree* layout = RackFromText(buffer);
   assert(layout);
-  TreeRef expression = Parser::Parse(layout, nullptr);
+  TreeRef expression = Parser::Parse(layout, {.context = nullptr});
   // expression is only made of numbers and simple nodes, no need for contextes.
   layout->removeTree();
   ProjectionContext context = {};
@@ -558,7 +549,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
     const char* text, Context* context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     SymbolicComputation symbolicComputation) {
-  UserExpression exp = Parse(text, context, false);
+  UserExpression exp = Parse(text, context);
   if (exp.isUninitialized()) {
     return NAN;
   }

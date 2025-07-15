@@ -13,7 +13,7 @@ void assert_layout_is_not_parsed(Layout l) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   l.serialize(buffer);
-  UserExpression e = UserExpression::Parse(buffer, nullptr, false);
+  UserExpression e = UserExpression::Parse(buffer, nullptr);
   quiz_assert_print_if_failure(e.isUninitialized(), buffer);
 }
 
@@ -41,7 +41,7 @@ void assert_parsed_layout_is(Layout l, const Poincare::Internal::Tree* rj) {
   char buffer[bufferSize];
   l.serialize(buffer);
 
-  Internal::Tree* ej = Internal::Parser::Parse(l.tree()->cloneTree(), nullptr);
+  Internal::Tree* ej = Internal::Parser::Parse(l.tree()->cloneTree(), {});
   quiz_assert_print_if_failure(ej, buffer);
   quiz_assert_print_if_failure(ej->treeIsIdenticalTo(rj), buffer);
   Internal::TreeStack::SharedTreeStack->flush();

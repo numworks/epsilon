@@ -251,8 +251,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
 
   /* Tokenize the identifiers string (ex: xpiabs = x*pi*abs) and try to
    * beautify each token. */
-  ParsingContext parsingContext(context,
-                                ParsingContext::ParsingMethod::Classic);
+  ParsingContext parsingContext{.context = context};
 
   /* The content of rack will be modified if token match which would break the
    * tokenizer. To avoid this we run the tokenizer on rack and modifications on

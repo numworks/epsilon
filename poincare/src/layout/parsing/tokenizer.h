@@ -17,11 +17,12 @@ namespace Poincare::Internal {
 
 class Tokenizer {
  public:
-  Tokenizer(const Rack* rack, ParsingContext* parsingContext,
+  Tokenizer(const Rack* rack, const ParsingContext* parsingContext,
             size_t textStart = 0, int textEnd = -1)
       : m_decoder(rack, textStart, textEnd), m_parsingContext(parsingContext) {}
-  Tokenizer(LayoutSpanDecoder& decoder, ParsingContext* parsingContext)
+  Tokenizer(LayoutSpanDecoder& decoder, const ParsingContext* parsingContext)
       : m_decoder(decoder), m_parsingContext(parsingContext) {}
+
   Token popToken();
 
   void skip(int n) { m_decoder.skip(n); }
@@ -30,17 +31,14 @@ class Tokenizer {
 
   struct State {
     LayoutSpanDecoder decoder;
-    Poincare::Context* parsingContextContext;
     size_t numberOfStoredIdentifiers = -1;
   };
   State currentState() const {
     return State{.decoder = m_decoder,
-                 .parsingContextContext = m_parsingContext->context(),
                  .numberOfStoredIdentifiers = m_storedIdentifiersList.size()};
   }
   void setState(const State& state) {
     m_decoder = state.decoder;
-    m_parsingContext->setContext(state.parsingContextContext);
     m_storedIdentifiersList.resize(state.numberOfStoredIdentifiers);
   }
 
@@ -137,7 +135,7 @@ class Tokenizer {
   size_t popImplicitAdditionBetweenUnits();
 
   LayoutSpanDecoder m_decoder;
-  ParsingContext* m_parsingContext;
+  const ParsingContext* m_parsingContext;
   /* This list is used to memoize the identifiers we already parsed.
    * Ex: When parsing abc, we first turn it into ab*c and store "c",
    * then a*b*c and store "b" and "a". This is useful because we pop

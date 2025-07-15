@@ -160,13 +160,11 @@ void process_tree_and_compare(const char* input, const char* output,
 }
 
 Tree* private_parse(const char* input, Poincare::Context* context,
-                    bool parseForAssignment = false,
-                    bool assertNotParsable = false) {
+                    bool isAssignment = false, bool assertNotParsable = false) {
   Tree* layout = RackFromText(input);
-  RackParser parser(layout, context, true,
-                    parseForAssignment
-                        ? ParsingContext::ParsingMethod::Assignment
-                        : ParsingContext::ParsingMethod::Classic);
+  RackParser parser(layout, {.context = context,
+                             .params = {.isAssignment = isAssignment},
+                             .metadata = {.isTopLevelRack = true}});
   Tree* expression = parser.parse();
   if (assertNotParsable || !expression) {
     quiz_assert(assertNotParsable == !expression);
@@ -177,9 +175,8 @@ Tree* private_parse(const char* input, Poincare::Context* context,
   return layout;
 }
 
-Tree* parse(const char* input, Poincare::Context* context,
-            bool parseForAssignment) {
-  return private_parse(input, context, parseForAssignment);
+Tree* parse(const char* input, Poincare::Context* context, bool isAssignment) {
+  return private_parse(input, context, isAssignment);
 }
 
 Tree* parse_and_reduce(const char* input, bool beautify) {

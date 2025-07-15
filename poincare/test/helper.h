@@ -145,7 +145,7 @@ const char* ApproximatedParsedIntegerString();
 
 Poincare::Internal::Tree* parse(const char* input,
                                 Poincare::Context* context = nullptr,
-                                bool parseForAssignment = false);
+                                bool isAssignment = false);
 
 Poincare::Internal::Tree* parse_and_reduce(const char* input,
                                            bool beautify = false);

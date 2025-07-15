@@ -17,15 +17,13 @@
 
 using namespace Poincare;
 using namespace Internal;
-using Internal::ParsingContext;
 using Internal::Token;
 using Internal::Tokenizer;
 
 void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
-  ParsingContext parsingContext(nullptr,
-                                ParsingContext::ParsingMethod::Classic);
   bool test = true;
   Internal::Rack* inputLayout = Internal::RackFromText(string);
+  ParsingContext parsingContext{};
   Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();
@@ -64,8 +62,7 @@ void assert_tokenizes_as_constant(const char* string) {
 
 void assert_tokenizes_as_undefined_token(const char* string) {
   Internal::Rack* inputLayout = Internal::RackFromText(string);
-  ParsingContext parsingContext(nullptr,
-                                ParsingContext::ParsingMethod::Classic);
+  ParsingContext parsingContext{};
   Tokenizer tokenizer(inputLayout, &parsingContext);
   while (true) {
     Token token = tokenizer.popToken();

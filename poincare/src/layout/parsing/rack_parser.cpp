@@ -28,10 +28,15 @@
 #include <algorithm>
 
 #include "helper.h"
+#include "poincare/src/layout/parsing/parsing_context.h"
 
 namespace Poincare::Internal {
 
 Tree* RackParser::parse() {
+  bool isTopLevel = m_parsingContext.metadata.isTopLevelRack;
+  /* This can be unset as it won't be used anymore. This ensures it's not
+   * passed to subsequent calls to Parser::Parse */
+  m_parsingContext.metadata.isTopLevelRack = false;
   ExceptionTry {
     for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
       if (child.index < m_tokenizer.currentPosition() ||
@@ -39,6 +44,10 @@ Tree* RackParser::parse() {
         continue;
       }
       if (child->treeIsIdenticalTo("→"_cl)) {
+        // Rightwards arrow are only allowed in the root rack of the layout
+        if (!isTopLevel) {
+          TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
+        }
         return parseExpressionWithRightwardsArrow(child.index);
       }
     }
@@ -64,11 +73,6 @@ static inline void turnIntoBinaryNode(const Tree* node, TreeRef& leftHandSide,
 
 Tree* RackParser::parseExpressionWithRightwardsArrow(
     size_t rightwardsArrowPosition) {
-  // Rightwards arrow are only allowed in the root rack of the layout
-  if (!m_isTopLevelRack) {
-    TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
-  }
-
   /* If the string contains an arrow, try to parse as unit conversion first.
    * We have to do this here because the parsing of the leftSide and the one
    * of the rightSide are both impacted by the fact that it is a unitConversion
@@ -92,21 +96,21 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
    * */
 
   // Step 1. Parse as unitConversion
-  m_parsingContext.setParsingMethod(
-      ParsingContext::ParsingMethod::UnitConversion);
+  m_parsingContext.metadata.isUnitConversion = true;
   State previousState = currentState();
   ExceptionTry { return initializeFirstTokenAndParseUntilEnd(); }
   ExceptionCatch(type) {
     if (type != ExceptionType::ParseFail) {
       TreeStackCheckpoint::Raise(type);
     }
-
     // Failed to parse as unit conversion
     setState(previousState);
   }
 
+  m_parsingContext.metadata.isUnitConversion = false;
+
   // Step 2. Parse as assignment, starting with rightHandSide.
-  m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Assignment);
+  m_parsingContext.params.isAssignment = true;
   m_tokenizer.skip(rightwardsArrowPosition + 1);
   TreeRef rightHandSide = initializeFirstTokenAndParseUntilEnd();
   if (m_nextToken.is(Token::Type::EndOfStream) &&
@@ -116,19 +120,19 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
        (rightHandSide->isUserFunction() &&
         rightHandSide->child(0)->isUserSymbol()))) {
     setState(previousState);
-    m_parsingContext.setParsingMethod(ParsingContext::ParsingMethod::Classic);
+    m_parsingContext.params.isAssignment = false;
     Poincare::EmptyContext tempContext = Poincare::EmptyContext();
     // This is instantiated outside the condition so that the pointer is not
     // lost.
     Poincare::TreeVariableContext assignmentContext("", &tempContext);
-    if (rightHandSide->isUserFunction() && m_parsingContext.context()) {
+    if (rightHandSide->isUserFunction() && m_parsingContext.context) {
       /* If assigning a function, set the function parameter in the context
        * for parsing leftHandSide.
        * This is to ensure that 3g->f(g) is correctly parsed */
       TreeRef functionParameter = rightHandSide->child(0);
       assignmentContext = Poincare::TreeVariableContext(
-          Symbol::GetName(functionParameter), m_parsingContext.context());
-      m_parsingContext.setContext(&assignmentContext);
+          Symbol::GetName(functionParameter), m_parsingContext.context);
+      m_parsingContext.context = &assignmentContext;
     }
     // Parse leftHandSide
     m_nextToken = m_tokenizer.popToken();
@@ -143,7 +147,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
 Tree* RackParser::initializeFirstTokenAndParseUntilEnd() {
   m_nextToken = m_tokenizer.popToken();
   TreeRef result;
-  if (m_commaSeparatedList) {
+  if (m_parsingContext.metadata.isCommaSeparatedList) {
     result = parseCommaSeparatedList(true);
   } else {
     result = parseUntil(Token::Type::EndOfStream);
@@ -269,14 +273,12 @@ void RackParser::popToken() {
     } else {
       m_nextToken = m_tokenizer.popToken();
       if (m_nextToken.type() == Token::Type::AssignmentEqual) {
-        assert(m_parsingContext.parsingMethod() ==
-               ParsingContext::ParsingMethod::Assignment);
+        assert(m_parsingContext.params.isAssignment);
         /* Stop parsing for assignment to ensure that, from now on xy is
          * understood as x*y. For example, "func(x) = xy" -> left of the =, we
          * parse for assignment so "func" is NOT understood as "f*u*n*c", but
          * after the equal we want "xy" to be understood as "x*y" */
-        m_parsingContext.setParsingMethod(
-            ParsingContext::ParsingMethod::Classic);
+        m_parsingContext.params.isAssignment = false;
       }
     }
   }
@@ -337,8 +339,7 @@ void RackParser::isThereImplicitOperator() {
 }
 
 Token::Type RackParser::implicitOperatorType() {
-  return m_parsingContext.parsingMethod() == ParsingContext::ParsingMethod::
-                                                 ImplicitAdditionBetweenUnits &&
+  return m_parsingContext.metadata.isImplicitAdditionBetweenUnits &&
                  m_currentToken.type() == Token::Type::Unit
              ? Token::Type::Plus
              : Token::Type::ImplicitTimes;
@@ -546,15 +547,14 @@ void RackParser::parseImplicitTimes(TreeRef& leftHandSide,
 void RackParser::parseImplicitAdditionBetweenUnits(TreeRef& leftHandSide,
                                                    Token::Type stoppingType) {
   assert(leftHandSide.isUninitialized());
-  assert(m_parsingContext.parsingMethod() !=
-         ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits);
+  assert(!m_parsingContext.metadata.isImplicitAdditionBetweenUnits);
   /* We parse the string again, but this time with
    * ParsingMethod::ImplicitAdditionBetweenUnits. */
   int start = m_root->indexOfChild(m_currentToken.firstLayout());
-  RackParser subParser(
-      m_root, m_parsingContext.context(), false,
-      ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits, false,
-      m_forceParseSequence, start, start + m_currentToken.length());
+  ParsingContext newParsingContext = m_parsingContext;
+  newParsingContext.metadata.isImplicitAdditionBetweenUnits = true;
+  RackParser subParser(m_root, newParsingContext, start,
+                       start + m_currentToken.length());
   leftHandSide = subParser.parse();
   if (leftHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -682,16 +682,15 @@ void RackParser::parseRightwardsArrow(TreeRef& leftHandSide,
    * */
 
   if (leftHandSide.isUninitialized() ||
-      m_parsingContext.parsingMethod() !=
-          ParsingContext::ParsingMethod::UnitConversion) {
+      !m_parsingContext.metadata.isUnitConversion) {
     // Left-hand side missing or not in a unit conversion
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
 
   bool leftIsSymbolWithUnits = false;
-  if (leftHandSide->isUserSymbol() && m_parsingContext.context()) {
+  if (leftHandSide->isUserSymbol() && m_parsingContext.context) {
     const Tree* value =
-        m_parsingContext.context()->expressionForUserNamed(leftHandSide);
+        m_parsingContext.context->expressionForUserNamed(leftHandSide);
     leftIsSymbolWithUnits = value && Units::HasUnit(value);
   }
 
@@ -967,9 +966,8 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   if (builtin->aliases()->contains("log") &&
       popTokenIfType(Token::Type::Subscript)) {
     // Special case for the log function (e.g. "log₂(8)")
-    TreeRef base = Parser::Parse(
-        m_currentToken.firstLayout()->child(0), m_parsingContext.context(),
-        false, m_parsingContext.parsingMethod(), m_forceParseSequence);
+    TreeRef base =
+        Parser::Parse(m_currentToken.firstLayout()->child(0), m_parsingContext);
     if (!base) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
@@ -1008,7 +1006,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
     }
   }
   bool isParametricWithParsingContext =
-      m_parsingContext.context() && builtin->type().isParametric();
+      m_parsingContext.context && builtin->type().isParametric();
   if (!isParametricWithParsingContext) {
     leftHandSide = parseFunctionParameters();
   } else {
@@ -1019,11 +1017,11 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       leftHandSide = parseFunctionParameters();
     } else {
       // We must make sure that the parameter is parsed as a single variable.
-      Poincare::Context* oldContext = m_parsingContext.context();
+      Poincare::Context* oldContext = m_parsingContext.context;
       Poincare::TreeVariableContext parameterContext(name, oldContext);
-      m_parsingContext.setContext(&parameterContext);
+      m_parsingContext.context = &parameterContext;
       leftHandSide = parseFunctionParameters();
-      m_parsingContext.setContext(oldContext);
+      m_parsingContext.context = oldContext;
     }
   }
 
@@ -1130,11 +1128,9 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
    * a sequence*/
   Poincare::Context::UserNamedType idType =
       Poincare::Context::UserNamedType::None;
-  if (m_parsingContext.context() &&
-      m_parsingContext.parsingMethod() !=
-          ParsingContext::ParsingMethod::Assignment) {
+  if (m_parsingContext.context && !m_parsingContext.params.isAssignment) {
     idType =
-        m_parsingContext.context()->expressionTypeForIdentifier(name, length);
+        m_parsingContext.context->expressionTypeForIdentifier(name, length);
     if (idType != Poincare::Context::UserNamedType::Function &&
         idType != Poincare::Context::UserNamedType::Sequence &&
         idType != Poincare::Context::UserNamedType::List) {
@@ -1167,10 +1163,8 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
       popToken();
       /* TODO factor with parseSequence */
       leftHandSide = SharedTreeStack->pushUserSequence(name);
-      Tree* index =
-          Parser::Parse(m_currentToken.firstLayout()->child(0),
-                        m_parsingContext.context(), m_isTopLevelRack,
-                        m_parsingContext.parsingMethod(), m_forceParseSequence);
+      Tree* index = Parser::Parse(m_currentToken.firstLayout()->child(0),
+                                  m_parsingContext);
       if (!index) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -1281,20 +1275,20 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
   if (result->type() == Type::UserFunction &&
       parameter->type() == Type::UserSymbol &&
       m_nextToken.type() == Token::Type::AssignmentEqual &&
-      m_parsingContext.context()) {
+      m_parsingContext.context) {
     /* Set the parameter in the context to ensure that f(t)=t is not
      * understood as f(t)=1_t
      * If we decide that functions can be assigned with any parameter,
      * this will ensure that f(abc)=abc is understood like f(x)=x
      */
-    Poincare::Context* previousContext = m_parsingContext.context();
+    Poincare::Context* previousContext = m_parsingContext.context;
     Poincare::TreeVariableContext functionAssignmentContext(
-        Symbol::GetName(parameter), m_parsingContext.context());
-    m_parsingContext.setContext(&functionAssignmentContext);
+        Symbol::GetName(parameter), m_parsingContext.context);
+    m_parsingContext.context = &functionAssignmentContext;
     // We have to parseUntil here so that we do not lose the
     // functionAssignmentContext pointer.
     leftHandSide = parseUntil(stoppingType, result);
-    m_parsingContext.setContext(previousContext);
+    m_parsingContext.context = previousContext;
     return true;
   }
   leftHandSide = result;
@@ -1403,9 +1397,10 @@ Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
       m_nextToken.firstLayout()->isParenthesesLayout()) {
     assert(m_nextToken.firstLayout()->nextNode()->isRackLayout());
     // Parse the RackLayout as a comma separated list.
+    ParsingContext newParsingContext = m_parsingContext;
+    newParsingContext.metadata.isCommaSeparatedList = true;
     RackParser subParser(m_nextToken.firstLayout()->nextNode(),
-                         m_parsingContext.context(), false,
-                         m_parsingContext.parsingMethod(), true);
+                         newParsingContext);
     popToken();
     Tree* result = subParser.parse();
     if (!result) {
@@ -1475,9 +1470,7 @@ void RackParser::parseLayout(TreeRef& leftHandSide, Token::Type stoppingType) {
   // }
   assert(m_currentToken.length() == 1);
   /* Parse standalone layouts */
-  leftHandSide = Parser::Parse(
-      m_currentToken.firstLayout(), m_parsingContext.context(), false,
-      m_parsingContext.parsingMethod(), m_forceParseSequence);
+  leftHandSide = Parser::Parse(m_currentToken.firstLayout(), m_parsingContext);
   isThereImplicitOperator();
 }
 
@@ -1487,9 +1480,7 @@ void RackParser::parseSuperscript(TreeRef& leftHandSide,
   if (leftHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  TreeRef rightHandSide =
-      Parser::Parse(layout->child(0), m_parsingContext.context(), false,
-                    m_parsingContext.parsingMethod(), m_forceParseSequence);
+  TreeRef rightHandSide = Parser::Parse(layout->child(0), m_parsingContext);
   if (rightHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1508,9 +1499,7 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   const Tree* layout = m_currentToken.firstLayout();
-  TreeRef base =
-      Parser::Parse(layout->child(0), m_parsingContext.context(), false,
-                    m_parsingContext.parsingMethod(), m_forceParseSequence);
+  TreeRef base = Parser::Parse(layout->child(0), m_parsingContext);
   if (base.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1556,9 +1545,7 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
     }
   } else if (popTokenIfType(Token::Type::Superscript)) {
     const Tree* layout = m_currentToken.firstLayout();
-    result =
-        Parser::Parse(layout->child(0), m_parsingContext.context(), false,
-                      m_parsingContext.parsingMethod(), m_forceParseSequence);
+    result = Parser::Parse(layout->child(0), m_parsingContext);
     if (!result) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
@@ -1580,7 +1567,7 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
 }
 
 bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
-  if (m_parsingContext.context() &&
+  if (m_parsingContext.context &&
       !Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
     /* If m_context == nullptr, the expression has already been parsed.
      * We do not escape here because we want to parse it the same way it was
@@ -1621,6 +1608,7 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
 
 void RackParser::setState(const State& state) {
   m_tokenizer.setState(state.tokenizerState);
+  m_parsingContext.context = state.parsingContextContext;
   m_currentToken = state.currentToken;
   m_nextToken = state.nextToken;
   m_pendingImplicitOperator = state.pendingImplicitOperator;

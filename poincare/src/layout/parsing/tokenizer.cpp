@@ -21,8 +21,8 @@ Token::Type TokenizerFailure(const char* reason) {
 
 bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
 #if TODO_PCJ
-  ParsingContext pContext(nullptr, ParsingContext::ParsingMethod::Assignment);
-  Tokenizer tokenizer(decoder, &pContext);
+  ParsingContext parsingContext{.param = {.isAssignment = true}};
+  Tokenizer tokenizer(decoder, &parsingContext);
   Token t = tokenizer.popToken();
   if (t.type() != Token::Type::CustomIdentifier ||
       t.length() != decoder.end() - decoder.start() ||
@@ -218,8 +218,7 @@ Token Tokenizer::popToken() {
     /* An implicit addition between units always starts with a number. So we
      * check here if there is one. If the parsingMethod is already Implicit
      * AdditionBetweenUnits, we don't need to check it again. */
-    if (m_parsingContext->parsingMethod() !=
-        ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
+    if (!m_parsingContext->metadata.isImplicitAdditionBetweenUnits) {
       size_t lengthOfImplicitAdditionBetweenUnits =
           popImplicitAdditionBetweenUnits();
       if (lengthOfImplicitAdditionBetweenUnits > 0) {
@@ -232,8 +231,7 @@ Token Tokenizer::popToken() {
   }
 
   if (IsIdentifierMaterial(c)) {
-    if (m_parsingContext->parsingMethod() ==
-        ParsingContext::ParsingMethod::ImplicitAdditionBetweenUnits) {
+    if (m_parsingContext->metadata.isImplicitAdditionBetweenUnits) {
       /* If currently popping an implicit addition, we have already checked that
        * any identifier is a unit. */
       Token result(Token::Type::Unit);
@@ -277,8 +275,7 @@ Token Tokenizer::popToken() {
      * This ensures that "f(x) = x and 1" is parsed as "f(x) = (x and 1)" and
      * not "(f(x) = x) and 1" */
     Token result(comparisonOperatorType == Type::Equal &&
-                         m_parsingContext->parsingMethod() ==
-                             ParsingContext::ParsingMethod::Assignment
+                         m_parsingContext->params.isAssignment
                      ? Token::Type::AssignmentEqual
                      : Token::Type::ComparisonOperator);
     result.setRange(start.layout(), comparisonOperatorLength);
@@ -488,8 +485,7 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   }
   /* When parsing for unit conversion, the identifier "m" should always
    * be understood as the unit and not the variable. */
-  if (m_parsingContext->parsingMethod() ==
-          ParsingContext::ParsingMethod::UnitConversion &&
+  if (m_parsingContext->metadata.isUnitConversion &&
       Units::Unit::CanParse(span, nullptr, nullptr)) {
     return Token::Type::Unit;
   }
@@ -501,10 +497,9 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   LayoutSpanDecoder decoder(span);
   decoder.printInBuffer(string, std::size(string));
   if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "
-      && (m_parsingContext->parsingMethod() ==
-              ParsingContext::ParsingMethod::Assignment ||
-          m_parsingContext->context() == nullptr ||
-          m_parsingContext->context()->expressionTypeForIdentifier(
+      && (m_parsingContext->params.isAssignment ||
+          m_parsingContext->context == nullptr ||
+          m_parsingContext->context->expressionTypeForIdentifier(
               string, *length) != Context::UserNamedType::None)) {
     return Token::Type::CustomIdentifier;
   }
@@ -512,10 +507,8 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   /* If not unit conversion and "m" has been or is being assigned by the user
    * it's understood as a variable before being understood as a unit.
    * That's why the following condition is checked after the previous one. */
-  if (m_parsingContext->parsingMethod() !=
-          ParsingContext::ParsingMethod::UnitConversion &&
-      m_parsingContext->context() &&
-      m_parsingContext->context()->canRemoveUnderscoreToUnits() &&
+  if (!m_parsingContext->metadata.isUnitConversion &&
+      !m_parsingContext->params.forceUnitUnderscore &&
       Units::Unit::CanParse(span, nullptr, nullptr)) {
     return Token::Type::Unit;
   }

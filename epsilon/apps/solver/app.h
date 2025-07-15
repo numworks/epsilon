@@ -8,7 +8,6 @@
 #include "interval_controller.h"
 #include "list_controller.h"
 #include "solutions_controller.h"
-#include "solver_context.h"
 #include "system_of_equations.h"
 
 namespace Solver {
@@ -36,7 +35,6 @@ class App : public Shared::MathApp {
   };
 
   static App* app() { return static_cast<App*>(Escher::App::app()); }
-  Poincare::Context* localContext() override { return &m_context; }
   Snapshot* snapshot() const {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }
@@ -62,7 +60,6 @@ class App : public Shared::MathApp {
   Escher::ButtonRowController m_listFooter;
   Escher::StackViewController::Default m_stackViewController;
   SystemOfEquations m_system;
-  SolverContext m_context;
 };
 
 }  // namespace Solver

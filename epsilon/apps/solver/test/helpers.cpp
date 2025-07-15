@@ -14,7 +14,6 @@
 #include <cmath>
 
 #include "../equation_store.h"
-#include "../solver_context.h"
 
 using namespace Solver;
 using namespace Poincare;
@@ -23,7 +22,7 @@ using namespace Poincare;
 
 template <typename T>
 void solve_and_process_error(std::initializer_list<const char*> equations,
-                             SolverContext* solverContext, T&& lambda) {
+                             Context* ctx, T&& lambda) {
   EquationStore equationStore;
   SystemOfEquations system(&equationStore);
   for (const char* equation : equations) {
@@ -34,22 +33,22 @@ void solve_and_process_error(std::initializer_list<const char*> equations,
         equationStore.recordAtIndex(equationStore.numberOfModels() - 1);
     Shared::ExpiringPointer<Equation> model =
         equationStore.modelForRecord(record);
-    err = model->setContent(Layout::Parse(equation), solverContext);
+    err = model->setContent(Layout::Parse(equation), ctx);
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
                                  equation);
   }
   equationStore.tidyDownstreamPoolFrom();
   system.tidy();
-  SystemOfEquations::Error err = system.exactSolve(solverContext);
+  SystemOfEquations::Error err = system.exactSolve(ctx);
   lambda(&system, err);
   equationStore.removeAll();
 }
 
 template <typename T>
-void solve_and(std::initializer_list<const char*> equations,
-               SolverContext* solverContext, T&& lambda) {
+void solve_and(std::initializer_list<const char*> equations, Context* ctx,
+               T&& lambda) {
   solve_and_process_error(
-      equations, solverContext,
+      equations, ctx,
       [lambda](SystemOfEquations* system, SystemOfEquations::Error error) {
         quiz_assert(error == NoError);
         lambda(system);
@@ -60,10 +59,9 @@ void assert_solves_with_range_to(const char* equation, double min, double max,
                                  std::initializer_list<double> solutions,
                                  Shared::GlobalContext* globalContext,
                                  const char* variable = nullptr) {
-  SolverContext solverContext(globalContext);
   solve_and_process_error(
-      {equation}, &solverContext,
-      [min, max, solutions, variable, &solverContext](
+      {equation}, globalContext,
+      [min, max, solutions, variable, globalContext](
           SystemOfEquations* system, SystemOfEquations::Error e) {
         quiz_assert(e == RequireApproximateSolution);
         assert(std::isnan(min) == std::isnan(max));
@@ -72,7 +70,7 @@ void assert_solves_with_range_to(const char* equation, double min, double max,
         } else {
           system->setApproximateSolvingRange(Range1D(min, max));
         }
-        system->approximateSolve(&solverContext);
+        system->approximateSolve(globalContext);
         if (variable) {
           quiz_assert(strcmp(system->unknownVariable(0), variable) == 0);
         }
@@ -90,9 +88,8 @@ void assert_solves_with_range_to(const char* equation, double min, double max,
 void assert_solves_to_error(std::initializer_list<const char*> equations,
                             SystemOfEquations::Error error,
                             Shared::GlobalContext* globalContext) {
-  SolverContext solverContext(globalContext);
   solve_and_process_error(
-      equations, &solverContext,
+      equations, globalContext,
       [error](SystemOfEquations* system, SystemOfEquations::Error e) {
         quiz_assert(e == error);
       });
@@ -100,8 +97,7 @@ void assert_solves_to_error(std::initializer_list<const char*> equations,
 
 static void compareSolutions(SystemOfEquations* system,
                              std::initializer_list<const char*> solutions,
-                             SolverContext* solverContext,
-                             double approximationThreshold = 0.) {
+                             Context* ctx, double approximationThreshold = 0.) {
   /* TODO: this function needs to be reworked so that we can compare Expressions
    * directly, instead of parsing const char * objects and Layouts and comparing
    * afterwards. */
@@ -147,8 +143,7 @@ static void compareSolutions(SystemOfEquations* system,
         .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
         .m_advanceReduce = false};
     Expression expectedExpression =
-        Expression::Parse(expectedValue, solverContext,
-                          {.forceUnitUnderscore = true})
+        Expression::Parse(expectedValue, ctx, {.forceUnitUnderscore = true})
             .cloneAndReduce(projCtx, &reductionFailure);
     quiz_assert(!reductionFailure && !expectedExpression.isUninitialized());
 
@@ -160,7 +155,7 @@ static void compareSolutions(SystemOfEquations* system,
     char obtainedLayoutBuffer[bufferSize];
     obtainedLayout.serialize(obtainedLayoutBuffer);
     Expression parsedExpression = Expression::Parse(
-        obtainedLayoutBuffer, solverContext, {.forceUnitUnderscore = true});
+        obtainedLayoutBuffer, ctx, {.forceUnitUnderscore = true});
     quiz_assert(!parsedExpression.isUninitialized());
     projCtx = {
         .m_complexFormat = Internal::ComplexFormat::Cartesian,
@@ -217,14 +212,13 @@ void assert_solves_to_infinite_solutions(
     std::initializer_list<const char*> equations,
     std::initializer_list<const char*> solutions,
     Shared::GlobalContext* globalContext) {
-  SolverContext solverContext(globalContext);
-  solve_and(equations, &solverContext,
-            [solutions, &solverContext](SystemOfEquations* system) {
+  solve_and(equations, globalContext,
+            [solutions, globalContext](SystemOfEquations* system) {
               quiz_assert(system->solvingMethod() ==
                               SystemOfEquations::SolvingMethod::LinearSystem &&
                           system->solutionType() ==
                               SystemOfEquations::SolutionType::Formal);
-              compareSolutions(system, solutions, &solverContext);
+              compareSolutions(system, solutions, globalContext);
             });
 }
 
@@ -232,11 +226,10 @@ void assert_solves_to(std::initializer_list<const char*> equations,
                       std::initializer_list<const char*> solutions,
                       Shared::GlobalContext* globalContext,
                       double appproxThreshold) {
-  SolverContext solverContext(globalContext);
   solve_and(
-      equations, &solverContext,
-      [solutions, &solverContext, appproxThreshold](SystemOfEquations* system) {
-        compareSolutions(system, solutions, &solverContext, appproxThreshold);
+      equations, globalContext,
+      [solutions, globalContext, appproxThreshold](SystemOfEquations* system) {
+        compareSolutions(system, solutions, globalContext, appproxThreshold);
       });
 }
 
@@ -258,14 +251,13 @@ void assert_solves_with_auto_solving_range(
 
 void assert_auto_solving_range_is(const char* equation, double min, double max,
                                   Shared::GlobalContext* globalContext) {
-  SolverContext solverContext(globalContext);
   solve_and_process_error(
-      {equation}, &solverContext,
-      [min, max, &solverContext](SystemOfEquations* system,
-                                 SystemOfEquations::Error e) {
+      {equation}, globalContext,
+      [min, max, globalContext](SystemOfEquations* system,
+                                SystemOfEquations::Error e) {
         quiz_assert(e == RequireApproximateSolution);
         system->useAutoSolvingRange(true);
-        system->approximateSolve(&solverContext);
+        system->approximateSolve(globalContext);
         Range1D<double> solvingRange = system->approximateSolvingRange();
         quiz_assert(solvingRange.min() == min && solvingRange.max() == max);
       });

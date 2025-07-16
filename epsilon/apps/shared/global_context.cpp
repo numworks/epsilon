@@ -82,7 +82,7 @@ void GlobalContext::DestroyRecordsBaseNamedWithoutExtension(
 }
 
 Context::UserNamedType GlobalContext::expressionTypeForIdentifier(
-    const char* identifier, int length) {
+    const char* identifier, int length) const {
   const char* extension =
       Ion::Storage::FileSystem::sharedFileSystem
           ->extensionOfRecordBaseNamedWithExtensions(
@@ -106,7 +106,7 @@ Context::UserNamedType GlobalContext::expressionTypeForIdentifier(
 }
 
 const Internal::Tree* GlobalContext::expressionForUserNamed(
-    const Internal::Tree* symbol) {
+    const Internal::Tree* symbol) const {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   Ion::Storage::Record r =
       UserNamedRecordWithBaseName(Internal::Symbol::GetName(symbol));
@@ -153,7 +153,7 @@ bool GlobalContext::setExpressionForUserNamed(
 }
 
 const Internal::Tree* GlobalContext::expressionForSymbolAndRecord(
-    const Internal::Tree* symbol, Ion::Storage::Record r) {
+    const Internal::Tree* symbol, Ion::Storage::Record r) const {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   return symbol->isUserSymbol() ? ExpressionForUserSymbol(r)
                                 : ExpressionForUserFunction(r);

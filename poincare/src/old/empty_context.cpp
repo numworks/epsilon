@@ -4,7 +4,7 @@
 namespace Poincare {
 
 const Internal::Tree* EmptyContext::expressionForUserNamed(
-    const Internal::Tree* symbolt) {
+    const Internal::Tree* symbolt) const {
   return nullptr;  // TODO KUndef ?
 }
 

@@ -26,7 +26,7 @@ class SequenceContext : public Poincare::ContextWithParent {
    * The other methods (setExpressionForUserNamed and
    * expressionForUserNamed) always call the parent context. */
   Poincare::Context::UserNamedType expressionTypeForIdentifier(
-      const char* identifier, int length) override;
+      const char* identifier, int length) const override;
 
   SequenceStore* sequenceStore() { return m_sequenceStore; }
   bool sequenceIsNotComputable(Poincare::Context* ctx, int sequenceIndex);

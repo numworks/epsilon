@@ -59,7 +59,7 @@ class GlobalContext final : public Poincare::Context {
    * The expression recorded in global context is already an expression.
    * Otherwise, we would need the context and the angle unit to evaluate it */
   UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) override;
+                                            int length) const override;
   bool setExpressionForUserNamed(
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
@@ -75,9 +75,9 @@ class GlobalContext final : public Poincare::Context {
  private:
   // Expression getters
   const Poincare::Internal::Tree* expressionForUserNamed(
-      const Poincare::Internal::Tree* symbol) override;
+      const Poincare::Internal::Tree* symbol) const override;
   const Poincare::Internal::Tree* expressionForSymbolAndRecord(
-      const Poincare::Internal::Tree* symbol, Ion::Storage::Record r);
+      const Poincare::Internal::Tree* symbol, Ion::Storage::Record r) const;
   static const Poincare::Internal::Tree* ExpressionForUserSymbol(
       Ion::Storage::Record r);
   static const Poincare::Internal::Tree* ExpressionForUserFunction(

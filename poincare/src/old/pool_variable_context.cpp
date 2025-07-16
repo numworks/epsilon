@@ -13,7 +13,7 @@ void PoolVariableContext::setApproximationForVariable(T value) {
 }
 
 Context::UserNamedType PoolVariableContext::expressionTypeForIdentifier(
-    const char* identifier, int length) {
+    const char* identifier, int length) const {
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
           identifier, length, m_name) == 0) {
     return UserNamedType::Symbol;
@@ -36,7 +36,7 @@ bool PoolVariableContext::setExpressionForUserNamed(
 }
 
 const Internal::Tree* PoolVariableContext::expressionForUserNamed(
-    const Internal::Tree* symbol) {
+    const Internal::Tree* symbol) const {
   if (m_name != nullptr &&
       strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
     if (symbol->isUserSymbol()) {

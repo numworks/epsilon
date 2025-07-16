@@ -15,13 +15,13 @@ class TreeVariableContext : public ContextWithParent {
 
   // Context
   UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) override;
+                                            int length) const override;
   // The provided expression needs to outlive the VariableContext
   bool setExpressionForUserNamed(const Internal::Tree* expression,
                                  const Internal::Tree* symbol) override;
 
   const Internal::Tree* expressionForUserNamed(
-      const Internal::Tree* symbol) override;
+      const Internal::Tree* symbol) const override;
 
  private:
   const char* m_name;

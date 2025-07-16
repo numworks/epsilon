@@ -79,7 +79,20 @@ See instructions to build them from [Epsilon's root](../) :
 
 Simulator path can also be overridden with the `SIMULATOR=[PATH_TO_SIMULATOR]` compilation flag.
 
-#### Web simulator
+### Native simulator (MacOS, Linux, Windows)
+
+```shell
+make -C sample_cpp PLATFORM=simulator run
+```
+
+A native simulator should open on the app.
+
+You can also debug your app using either `gcd` (or `lldb` on MacOS).
+```shell
+make -C sample_cpp PLATFORM=simulator debug
+```
+
+### Web simulator
 
 On a separate shell, run
 ```shell
@@ -103,19 +116,6 @@ make -C sample_cpp PLATFORM=web run
 ```
 
 Your browser should display the simulator with the app inside.
-
-### On native simulator (MacOS, Linux, Windows)
-
-```shell
-make -C sample_cpp PLATFORM=simulator run
-```
-
-A native simulator should open on the app.
-
-You can also debug your app using either `gdc` (or `lldb` on MacOS).
-```shell
-make -C sample_cpp PLATFORM=simulator debug
-```
 
 ## License
 

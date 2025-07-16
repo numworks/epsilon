@@ -12,7 +12,16 @@ namespace Poincare::Internal {
 
 namespace Parser {
 
+// This is called mainly internally by the parser
 Tree* Parse(const Tree* l, ParsingContext parsingContext);
+
+// Call this to parse a top-level layout
+inline Tree* ParseTopLevel(const Tree* l, Context* context = nullptr,
+                           ParserHelper::ParsingParameters params = {}) {
+  return Parse(l, {.context = context,
+                   .params = params,
+                   .metadata = {.isTopLevelRack = true}});
+}
 
 }  // namespace Parser
 

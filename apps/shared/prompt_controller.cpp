@@ -61,15 +61,4 @@ PromptController::PromptController(const I18n::Message* messages,
       m_messageViewWithSkip(messages, colors, numberOfMessages),
       m_handleEvent(eventHandler) {}
 
-bool PromptController::handleEvent(Ion::Events::Event event) {
-  if (m_handleEvent) {
-    return m_handleEvent(event);
-  }
-  if (event.isKeyPress() && event != Ion::Events::OnOff) {
-    App::app()->modalViewController()->dismissModal();
-    return true;
-  }
-  return false;
-}
-
 }  // namespace Shared

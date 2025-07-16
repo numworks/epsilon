@@ -14,10 +14,12 @@ class PromptController : public Escher::ViewController {
   typedef bool (*EventHandler)(Ion::Events::Event);
 
   PromptController(const I18n::Message* messages, const KDColor* colors,
-                   uint8_t numberOfMessages,
-                   EventHandler eventHandler = nullptr);
+                   uint8_t numberOfMessages, EventHandler eventHandler);
   Escher::View* view() override { return &m_messageViewWithSkip; }
-  bool handleEvent(Ion::Events::Event event) override;
+  bool handleEvent(Ion::Events::Event event) override {
+    assert(m_handleEvent);
+    return m_handleEvent(event);
+  }
 
  private:
   class MessageViewWithSkip : public Escher::MessageView {

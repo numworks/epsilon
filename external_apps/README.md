@@ -7,6 +7,8 @@ This folder contains apps to run on a [NumWorks calculator](https://www.numworks
 - [sample_cpp](sample_cpp) : a space invaders game
 - [sample_rust](sample_rust) : not C/C++ based, following setup instructions do not apply, see [sample_rust instructions](sample_rust/README.md).
 
+Following instructions are to be executed from [this](./) folder.
+
 ## On device
 
 Here are the instructions to run the app [sample_cpp](sample_cpp) on a Numworks calculator.
@@ -15,10 +17,14 @@ You can swap `sample_cpp` for any other C/C++ based external app (`rpn_cpp` or `
 
 ### Setup nwlink
 
-Before your first run, you'll need to install nwlink on your computer.
+Before your first run, you'll need to install `nwlink` on your computer.
 ```shell
 npm install -g nwlink
 ```
+
+You will also need a C compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS).
+
+You can run [Epsilon's setup script](../build/setup.sh) for that.
 
 ### Run the app
 
@@ -50,8 +56,6 @@ Anyone can now install it on their calculator from the [NumWorks online uploader
 
 ### Setup
 
-You'll just need a C compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS).
-
 Depending on you system :
 - Windows :
 ```shell
@@ -66,7 +70,7 @@ chmod +x setup.sh & ./setup.sh
 
 By default, an [epsilon_simulators](epsilon_simulators/) folder is expected.
 
-It contains platform-specific Epsilon simulators to run any external app on.
+It should contain the expected platform-specific Epsilon simulators to run any external app on.
 See instructions to build them from [Epsilon's root](../) :
 - [Web](epsilon_simulators/web/README.md) : `epsilon.html`
 - [Linux](epsilon_simulators/linux/README.md) : `epsilon.bin`

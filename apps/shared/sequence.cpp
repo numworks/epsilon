@@ -232,14 +232,11 @@ double Sequence::approximateAtContextRank(Context* ctx, int rank,
   return e.approximateToRealScalar<double>();
 }
 
-UserExpression Sequence::sumBetweenBounds(double start, double end,
-                                          Context* context) const {
-  /* Here, we cannot just create the expression sum(u(n), start, end) because
-   * the approximation of u(n) is not handled by Poincare (but only by
-   * Sequence). */
+double Sequence::sumBetweenBoundsValue(double start, double end,
+                                       Context* context) const {
   double result = 0.0;
   if (end - start > k_maxNumberOfSteps || start + 1.0 == start) {
-    return UserExpression::Builder<double>(NAN);
+    return NAN;
   }
   start = std::round(start);
   end = std::round(end);
@@ -247,11 +244,17 @@ UserExpression Sequence::sumBetweenBounds(double start, double end,
     /* When |start| >> 1.0, start + 1.0 = start. In that case, quit the
      * infinite loop. */
     if (i == i - 1.0 || i == i + 1.0) {
-      return UserExpression::Builder<double>(NAN);
+      return NAN;
     }
     result += evaluateXYAtParameter(i, context).y();
   }
-  return UserExpression::Builder<double>(result);
+  return result;
+}
+
+UserExpression Sequence::sumBetweenBounds(double start, double end,
+                                          Context* context) const {
+  return UserExpression::Builder<double>(
+      sumBetweenBoundsValue(start, end, context));
 }
 
 Sequence::RecordDataBuffer* Sequence::recordData() const {

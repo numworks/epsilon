@@ -142,8 +142,11 @@ class Sequence : public Function {
   double approximateAtRank(int rank, SequenceCache* sqctx,
                            Poincare::Context* ctx) const;
 
+  double sumBetweenBoundsValue(double start, double end,
+                               Poincare::Context* context) const;
   Poincare::UserExpression sumBetweenBounds(
       double start, double end, Poincare::Context* context) const override;
+
   // m_initialRank is capped by 255
   constexpr static int k_maxInitialRank = 255;
   // 255 + 1 (to take into account a double recursive sequence) fits in 3 digits

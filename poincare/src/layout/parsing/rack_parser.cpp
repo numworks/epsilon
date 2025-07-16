@@ -549,7 +549,7 @@ void RackParser::parseImplicitAdditionBetweenUnits(TreeRef& leftHandSide,
   assert(leftHandSide.isUninitialized());
   assert(!m_parsingContext.metadata.isImplicitAdditionBetweenUnits);
   /* We parse the string again, but this time with
-   * ParsingMethod::ImplicitAdditionBetweenUnits. */
+   * isImplicitAdditionBetweenUnits = true */
   int start = m_root->indexOfChild(m_currentToken.firstLayout());
   ParsingContext newParsingContext = m_parsingContext;
   newParsingContext.metadata.isImplicitAdditionBetweenUnits = true;

@@ -144,7 +144,7 @@ class Sequence : public Function {
 
   double sumBetweenBoundsValue(double start, double end,
                                Poincare::Context* context) const;
-  Poincare::UserExpression sumBetweenBounds(
+  Poincare::SystemExpression sumBetweenBounds(
       double start, double end, Poincare::Context* context) const override;
 
   // m_initialRank is capped by 255

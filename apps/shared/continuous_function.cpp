@@ -442,16 +442,17 @@ void ContinuousFunction::trimResolutionInterval(double* start,
   *end = *end < tmin ? tmin : tmax < *end ? tmax : *end;
 }
 
-UserExpression ContinuousFunction::sumBetweenBounds(double start, double end,
-                                                    Context* context) const {
+SystemExpression ContinuousFunction::sumBetweenBounds(double start, double end,
+                                                      Context* context) const {
   assert(properties().isCartesian());
   start = std::max<double>(start, tMin());
   end = std::min<double>(end, tMax());
   // Integral takes ownership of args
-  return UserExpression::Create(KIntegral(KUnknownSymbol, KA, KB, KC),
-                                {.KA = UserExpression::Builder<double>(start),
-                                 .KB = UserExpression::Builder<double>(end),
-                                 .KC = expressionReduced(context)});
+  return SystemExpression::Create(
+      KIntegral(KUnknownSymbol, KA, KB, KC),
+      {.KA = SystemExpression::Builder<double>(start),
+       .KB = SystemExpression::Builder<double>(end),
+       .KC = expressionReduced(context)});
   /* TODO: when we approximate integral, we might want to simplify the integral
    * here. However, we might want to do it once for all x (to avoid lagging in
    * the derivative table. */

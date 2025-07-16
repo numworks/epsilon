@@ -66,6 +66,8 @@ Depending on you system :
 chmod +x setup.sh & ./setup.sh
 ```
 
+Follow additional instructions given at the end of this script (`Next steps`) to access `emsdk` tools from command line, this is required for a web build.
+
 #### Prepare web and native simulators
 
 By default, an [epsilon_simulators](epsilon_simulators/) folder is expected.

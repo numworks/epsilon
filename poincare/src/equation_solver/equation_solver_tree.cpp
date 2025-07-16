@@ -827,6 +827,14 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
    * without approximation. */
   polynomial->removeTree();
 
+  // The quadratic / cubic solver may have failed to find exact solutions
+  if (solutionList->isUndefined()) {
+    SharedTreeStack->dropBlocksFrom(equation);
+    return {.error = Error::RequireApproximateSolution,
+            .equationMetadata = equationMetadata,
+            .solutionMetadata = solutionMetadata};
+  }
+
   // Enhance solutions and make sure they satisfy dependencies in the equation
   assert(solutionList->isList());
   size_t numberOfSolutions = solutionList->numberOfChildren();

@@ -786,7 +786,6 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
             .equationMetadata = equationMetadata,
             .solutionMetadata = solutionMetadata};
   }
-  solutionMetadata.degree = degree;
 
   int numberOfTerms = Polynomial::NumberOfTerms(polynomial);
   const Tree* coefficient = Polynomial::LeadingCoefficient(polynomial);
@@ -875,6 +874,7 @@ EquationSolver::SolverResult EquationSolver::SolvePolynomial(
   equation->removeTree();
 
   NAry::AddChild(solutionList, discriminant);
+  solutionMetadata.degree = degree;
   return {.exactSolutionList = solutionList,
           .equationMetadata = equationMetadata,
           .solutionMetadata = solutionMetadata};

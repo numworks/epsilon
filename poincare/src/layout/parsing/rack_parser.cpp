@@ -1392,6 +1392,9 @@ Tree* RackParser::parseVector() {
 }
 
 Tree* RackParser::parseCommaSeparatedList(bool isFirstToken) {
+  // Flag has already been used. Unset it.
+  m_parsingContext.metadata.isCommaSeparatedList = false;
+
   // First rack's layout cannot be a comma separated list.
   if (!isFirstToken && m_nextToken.is(Token::Type::Layout) &&
       m_nextToken.firstLayout()->isParenthesesLayout()) {

@@ -91,10 +91,6 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"sin(x)"}, {}, projCtx,
                   EquationSolver::Error::RequireApproximateSolution);
 
-#if 0
-  check_solutions({"x^2+1"}, {}, projCtx, EquationSolver::Error::EquationNonreal);
-#endif
-
   // Check that failures of the quadratic and cubic solver are handled
   /*  TODO: in the following case, the quadratic and cubic solver should not
    * fail and x=0 should be returned as the solution. This is due to dependency
@@ -112,6 +108,7 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"x-a", "x-a+y-root(-1,3)", "a-1"}, {"1", "1", "-1"},
                   projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+  check_solutions({"x^2+1"}, {"-4"}, projCtx, EquationSolver::Error::NoError);
 
   store("x+1→f(x)", &globalContext);
   check_solutions({"f(a)+x", "f(x)"}, {"0", "-1"}, projCtx);
@@ -122,6 +119,10 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"abs(1-x)/abs(1-x)-x", "y-3", "z+y"}, {}, projCtx);
   check_solutions({"x^2*(x-1)/x"}, {"1", "1"}, projCtx);
   check_solutions({"x/x-1+x"}, {}, projCtx);
+
+  projCtx.m_complexFormat = ComplexFormat::Cartesian;
+  check_solutions({"x^2+1"}, {"-i", "i", "-4"}, projCtx,
+                  EquationSolver::Error::NoError);
 }
 
 void check_range(const char* input, double min, double max) {

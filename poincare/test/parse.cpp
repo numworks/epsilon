@@ -5,8 +5,8 @@
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/k_tree.h>
+#include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/parsing/parsing_context.h>
-#include <poincare/src/layout/parsing/rack_parser.h>
 #include <poincare/src/layout/parsing/tokenizer.h>
 #include <quiz.h>
 
@@ -18,10 +18,7 @@ void assertLayoutParsesTo(const Tree* layout, const Tree* expected,
                           Poincare::Context* context = nullptr,
                           bool isAssignment = false) {
   Tree* expression =
-      RackParser(layout, {.context = context,
-                          .params = {.isAssignment = isAssignment},
-                          .metadata = {.isTopLevelRack = true}})
-          .parse();
+      Parser::ParseTopLevel(layout, context, {.isAssignment = isAssignment});
   assert_trees_are_equal(expression, expected);
 }
 
@@ -71,10 +68,7 @@ QUIZ_CASE(pcj_parse_layout_tokenize) {
 }
 
 bool is_parsable(const Tree* layout, Poincare::Context* context = nullptr) {
-  TreeRef expression =
-      RackParser(layout,
-                 {.context = context, .metadata = {.isTopLevelRack = true}})
-          .parse();
+  TreeRef expression = Parser::ParseTopLevel(layout, context);
   return !expression.isUninitialized();
 }
 

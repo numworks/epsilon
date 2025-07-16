@@ -188,9 +188,7 @@ const Tree* Expression::TreeFromAddress(const void* address) {
 
 UserExpression UserExpression::Parse(const Tree* layout, Context* context,
                                      ParserHelper::ParsingParameters params) {
-  return Builder(Parser::Parse(layout, {.context = context,
-                                        .params = params,
-                                        .metadata = {.isTopLevelRack = true}}));
+  return Builder(Parser::ParseTopLevel(layout, context, params));
 }
 
 UserExpression UserExpression::Parse(const char* string, Context* context,
@@ -282,7 +280,7 @@ SystemExpression Expression::DecimalBuilderFromDouble(double value) {
   assert(buffer[0] != 0);
   Tree* layout = RackFromText(buffer);
   assert(layout);
-  TreeRef expression = Parser::Parse(layout, {.context = nullptr});
+  TreeRef expression = Parser::ParseTopLevel(layout);
   // expression is only made of numbers and simple nodes, no need for contextes.
   layout->removeTree();
   ProjectionContext context = {};

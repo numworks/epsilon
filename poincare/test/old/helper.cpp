@@ -9,7 +9,7 @@
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/layout/layouter.h>
-#include <poincare/src/layout/parsing/rack_parser.h>
+#include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/test/helper.h>
@@ -130,12 +130,9 @@ void assert_parsed_expression_process_to(
 Internal::Tree *parse_expression(const char *expression, Context *context,
                                  bool isAssignment) {
   Tree *inputLayout = RackFromText(expression);
-  RackParser parser(inputLayout, {.context = context,
-                                  .params = {.isAssignment = isAssignment},
-                                  .metadata = {.isTopLevelRack = true}});
-  bool success = parser.parse() != nullptr;
+  TreeRef result = Parser::ParseTopLevel(inputLayout, context,
+                                         {.isAssignment = isAssignment});
   inputLayout->removeTree();
-  Tree *result = success ? inputLayout : nullptr;
   quiz_assert_print_if_failure(result != nullptr, expression);
   return result;
 }

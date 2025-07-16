@@ -8,7 +8,7 @@
 #include <poincare/src/expression/metric.h>
 #include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/layout/layouter.h>
-#include <poincare/src/layout/parsing/rack_parser.h>
+#include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
@@ -162,10 +162,8 @@ void process_tree_and_compare(const char* input, const char* output,
 Tree* private_parse(const char* input, Poincare::Context* context,
                     bool isAssignment = false, bool assertNotParsable = false) {
   Tree* layout = RackFromText(input);
-  RackParser parser(layout, {.context = context,
-                             .params = {.isAssignment = isAssignment},
-                             .metadata = {.isTopLevelRack = true}});
-  Tree* expression = parser.parse();
+  Tree* expression =
+      Parser::ParseTopLevel(layout, context, {.isAssignment = isAssignment});
   if (assertNotParsable || !expression) {
     quiz_assert(assertNotParsable == !expression);
     layout->removeTree();

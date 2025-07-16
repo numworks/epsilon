@@ -19,12 +19,13 @@ class Context {
  public:
   enum class UserNamedType : uint8_t { None, Function, Sequence, Symbol, List };
   virtual UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                                    int length) = 0;
+                                                    int length) const = 0;
 
   /* The returned Tree* may live in the Pool or in the Storage. */
   virtual const Internal::Tree* expressionForUserNamed(
-      const Internal::Tree* symbol) = 0;
+      const Internal::Tree* symbol) const = 0;
 
+  // TODO_PCJ: This should be removed as it's only used by Apps
   virtual bool setExpressionForUserNamed(const Internal::Tree* expression,
                                          const Internal::Tree* symbol) = 0;
 
@@ -32,6 +33,7 @@ class Context {
                                            int rank) const {
     return NAN;
   }
+
 #if TARGET_POINCARE_JS
   virtual ~Context() = default;
 #endif

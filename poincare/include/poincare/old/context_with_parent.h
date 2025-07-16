@@ -13,13 +13,13 @@ class ContextWithParent : public Context {
 
   // Context
   const Internal::Tree* expressionForUserNamed(
-      const Internal::Tree* symbol) override {
+      const Internal::Tree* symbol) const override {
     assert(m_parentContext);
     return m_parentContext->expressionForUserNamed(symbol);
   }
 
   UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) override {
+                                            int length) const override {
     assert(m_parentContext);
     return m_parentContext->expressionTypeForIdentifier(identifier, length);
   }

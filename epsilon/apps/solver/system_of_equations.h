@@ -112,7 +112,7 @@ class SystemOfEquations {
 
    private:
     const Poincare::Internal::Tree* expressionForUserNamed(
-        const Poincare::Internal::Tree* symbol) override;
+        const Poincare::Internal::Tree* symbol) const override;
   };
 
   Error registerExactSolution(Poincare::UserExpression exact,

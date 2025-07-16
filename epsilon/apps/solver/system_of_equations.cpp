@@ -87,7 +87,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
 
 const Internal::Tree*
 SystemOfEquations::ContextWithoutT::expressionForUserNamed(
-    const Internal::Tree* symbol) {
+    const Internal::Tree* symbol) const {
   assert(symbol->isUserNamed());
   if (symbol->isUserSymbol() &&
       strcmp(Internal::Symbol::GetName(symbol), "t") == 0) {

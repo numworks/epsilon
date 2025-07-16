@@ -13,7 +13,7 @@ class StoreContext : public Poincare::ContextWithParent {
       : Poincare::ContextWithParent(parentContext), m_store(store) {}
 
   Poincare::Context::UserNamedType expressionTypeForIdentifier(
-      const char* identifier, int length) override {
+      const char* identifier, int length) const override {
     return m_store->isColumnName(identifier, length)
                ? Poincare::Context::UserNamedType::List
                : Poincare::ContextWithParent::expressionTypeForIdentifier(

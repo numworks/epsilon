@@ -14,7 +14,7 @@ class EmptyContext : public Context {
  public:
   // Context
   UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) override {
+                                            int length) const override {
     return UserNamedType::None;
   }
   bool setExpressionForUserNamed(const Internal::Tree* expression,
@@ -24,7 +24,7 @@ class EmptyContext : public Context {
   }
 
   const Internal::Tree* expressionForUserNamed(
-      const Internal::Tree* symbol) override;
+      const Internal::Tree* symbol) const override;
 };
 
 }  // namespace Poincare

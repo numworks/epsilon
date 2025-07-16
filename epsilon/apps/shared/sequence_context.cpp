@@ -20,7 +20,7 @@ SequenceContext::SequenceContext(Context* parentContext,
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
 Context::UserNamedType SequenceContext::expressionTypeForIdentifier(
-    const char* identifier, int length) {
+    const char* identifier, int length) const {
   constexpr int numberOfSequencesNames =
       std::size(SequenceHelper::k_sequenceNames);
   for (int i = 0; i < numberOfSequencesNames; i++) {

@@ -506,8 +506,13 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
 
   /* If not unit conversion and "m" has been or is being assigned by the user
    * it's understood as a variable before being understood as a unit.
-   * That's why the following condition is checked after the previous one. */
+   * That's why the following condition is checked after the previous one.
+   * NOTE: We check if context isn't nullptr because when context is nullptr
+   * it's expected that no units is allowed without "_".
+   * This basically fixes the toolbox parsing of °'"
+   * TODO: Rework the way nullptr context is handled in the parser */
   if (!m_parsingContext->metadata.isUnitConversion &&
+      m_parsingContext->context != nullptr &&
       !m_parsingContext->params.forceUnitUnderscore &&
       Units::Unit::CanParse(span, nullptr, nullptr)) {
     return Token::Type::Unit;

@@ -5,7 +5,7 @@ _simulator_app_resources_path = $(_simulator_app)
 
 # App resources
 
-$(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) $(_simulator_app_resources_path)/Assets.car | $$(@D)/. 
+$(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) $(_simulator_app_resources_path)/Assets.car | $$(@D)/.
 	$(call rule_label,PLUTIL)
 	$(Q) cp $< $@
 	$(Q) plutil -insert "BuildMachineOSBuild" -string "$(IOS_BUILD_MACHINE_OS_BUILD)" $@
@@ -18,8 +18,9 @@ $(_simulator_app_plist): $(PATH_haussmann)/data/Info.plist.$(PLATFORM) $(_simula
 	$(Q) plutil -insert "DTSDKBuild" -string "$(IOS_PLATFORM_BUILD)" $@
 	$(Q) plutil -insert "DTXcode" -string "$(IOS_XCODE_VERSION)" $@
 	$(Q) plutil -insert "DTXcodeBuild" -string "$(IOS_XCODE_BUILD)" $@
-	$(Q) plutil -insert "CFBundleVersion" -string "$(EPSILON_VERSION)" $@
-	$(Q) plutil -insert "CFBundleShortVersionString" -string "$(EPSILON_VERSION)" $@
+	$(Q) plutil -insert "CFBundleExecutable" -string "$(APP_NAME)" $@
+	$(Q) plutil -insert "CFBundleVersion" -string "$(APP_VERSION)" $@
+	$(Q) plutil -insert "CFBundleShortVersionString" -string "$(APP_VERSION)" $@
 	$(Q) plutil -replace CFBundleIcons -json `plutil -extract CFBundleIcons json -o - $(OUTPUT_DIRECTORY)/app/assets/partial.plist` $@
 	$(Q) plutil -replace CFBundleIcons~ipad -json `plutil -extract CFBundleIcons~ipad json -o - $(OUTPUT_DIRECTORY)/app/assets/partial.plist` $@
 

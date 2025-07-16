@@ -1,6 +1,6 @@
 {
   "background": [0, 0, 1130, 2220],
-  "area_of_interest": [100, 30, 960, 2150],
+  "area_of_interest": [0, 0, 1130, 2220],
   "screen": [167, 173, 796, 597],
   "shapes": {
     "HorizontalArrow": [0, 3],

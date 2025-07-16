@@ -226,7 +226,7 @@ class ContinuousFunction : public Function {
   /* Integral */
 
   // Return the expression of the integral between start and end
-  Poincare::UserExpression sumBetweenBounds(
+  Poincare::SystemExpression sumBetweenBounds(
       double start, double end, Poincare::Context* context) const override;
 
   /* Cache */

@@ -251,9 +251,9 @@ double Sequence::sumBetweenBoundsValue(double start, double end,
   return result;
 }
 
-UserExpression Sequence::sumBetweenBounds(double start, double end,
-                                          Context* context) const {
-  return UserExpression::Builder<double>(
+SystemExpression Sequence::sumBetweenBounds(double start, double end,
+                                            Context* context) const {
+  return SystemExpression::Builder<double>(
       sumBetweenBoundsValue(start, end, context));
 }
 

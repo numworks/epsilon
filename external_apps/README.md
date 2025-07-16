@@ -26,7 +26,7 @@ You will also need a C compiler (`gcc` is expected on Windows and Linux and `cla
 
 You can run [Epsilon's setup script](../build/setup.sh) for that.
 
-### Run the app
+### Install the app on your calculator
 
 This will build and load your app on a plugged in calculator.
 
@@ -41,7 +41,7 @@ A `THIRD PARTY APPLICATIONS` message will appear, and the app should be accessib
 
 ![Third party application screenshot](docs/third_party_applications.png)
 
-### Distribute your .nwa app
+### Distribute your `.nwa` app
 
 After a run or a build
 ```shell
@@ -53,6 +53,8 @@ You should have a `sample_cpp/output/device/rpn.nwa` file that you can distribut
 Anyone can now install it on their calculator from the [NumWorks online uploader](https://my.numworks.com/apps).
 
 ## Try your app on an Epsilon simulator
+
+An a simulator, you can test and debug your app more easily.
 
 ### Setup
 

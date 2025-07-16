@@ -9,6 +9,7 @@
 #include <cmath>
 
 #include "../app.h"
+#include "poincare/expression.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -173,18 +174,14 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   Context* context = App::app()->localContext();
   Shared::ExpiringPointer<Shared::Sequence> sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
-  UserExpression result;
-  if (isSumColumn) {
-    result =
-        sequence->sumBetweenBounds(sequence->initialRank(), abscissa, context);
-  } else {
-    Coordinate2D<double> xy =
-        sequence->evaluateXYAtParameter(abscissa, context);
-    result = Expression::Builder<double>(xy.y());
-  }
+  double sumValue =
+      isSumColumn ? sequence->sumBetweenBoundsValue(sequence->initialRank(),
+                                                    abscissa, context)
+                  : sequence->evaluateXYAtParameter(abscissa, context).y();
   *memoizedLayoutAtIndex(index) =
-      result.createLayout(preferences->displayMode(),
-                          preferences->numberOfSignificantDigits(), context);
+      UserExpression::Builder(sumValue).createLayout(
+          preferences->displayMode(), preferences->numberOfSignificantDigits(),
+          context);
 }
 
 Shared::Interval* ValuesController::intervalAtColumn(int column) {

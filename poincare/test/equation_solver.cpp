@@ -94,6 +94,16 @@ QUIZ_CASE(pcj_equation_solver) {
                   EquationSolver::Error::RequireApproximateSolution);
 #endif
 
+  // Check that failures of the quadratic and cubic solver are handled
+  /*  TODO: in the following case, the quadratic and cubic solver should not
+   * fail and x=0 should be returned as the solution. This is due to dependency
+   * simplification that does not distinguish between true infinity and very
+   * large numbers. */
+  check_solutions({"cos(3000×i)*x^2"}, {}, projCtx,
+                  EquationSolver::Error::RequireApproximateSolution);
+  check_solutions({"cos(3000×i)*x^3"}, {}, projCtx,
+                  EquationSolver::Error::RequireApproximateSolution);
+
   // Complex format detection
   projCtx.m_complexFormat = ComplexFormat::Real;
   store("i→a", &globalContext);

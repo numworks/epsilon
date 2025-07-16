@@ -121,6 +121,9 @@ Tree* Roots::PrivateCubic(const Tree* a, const Tree* b, const Tree* c,
      * remaining quadratic polynomial expression with further calculations, we
      * directly call the quadratic solver for a, b, and c. */
     Tree* allRoots = Roots::PrivateQuadratic(a, b, c);
+    if (allRoots->isUndefined()) {
+      return allRoots;
+    }
     assert(allRoots->isList());
     /* TODO: We could refactor this by either:
      * - creating an NAry::RemoveDuplicates function, that would be called right

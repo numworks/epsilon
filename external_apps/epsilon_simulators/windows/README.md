@@ -1,6 +1,17 @@
 # Prepare a Windows simulator
 
-From Epsilon's root, build a simulator and copy it there.
+Follow next instructions from epsilon's root.
+
+## Setup
+
+If this is the first time you build an epsilon simulator, you need to run the epsilon's setup script.
+```bash
+chmod +x build/setup.sh & build/setup.sh
+```
+
+## Simulator
+
+Build a simulator and copy it there.
 ```bash
 make PLATFORM=windows epsilon.exe
 cp output/release/windows/epsilon.exe external_apps/epsilon_simulators/windows/

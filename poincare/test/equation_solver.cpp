@@ -88,10 +88,11 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"identity(3)"}, {}, projCtx,
                   EquationSolver::Error::EquationUndefined);
 
-#if 0
-  check_solutions({"x^2+1"}, {}, projCtx, EquationSolver::Error::EquationNonreal);
   check_solutions({"sin(x)"}, {}, projCtx,
                   EquationSolver::Error::RequireApproximateSolution);
+
+#if 0
+  check_solutions({"x^2+1"}, {}, projCtx, EquationSolver::Error::EquationNonreal);
 #endif
 
   // Check that failures of the quadratic and cubic solver are handled

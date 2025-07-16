@@ -29,3 +29,8 @@ $(_ion_simulator_iconset)/Contents.json: ion/src/simulator/ios/icon_assets.json 
 $(_simulator_app_resources_path)/Assets.car: $(_ion_simulator_iconset)/Contents.json | $$(@D)/.
 	$(call rule_label,ACTOOL)
 	$(Q) $(ACTOOL) --compile $(OUTPUT_DIRECTORY)/$*.app --minimum-deployment-target $(APPLE_PLATFORM_MIN_VERSION) --platform $(APPLE_SDK) --app-icon AppIcon --output-partial-info-plist $(OUTPUT_DIRECTORY)/app/assets/partial.plist $(_ion_simulator_assets_path) > /dev/null
+
+$(eval $(foreach a,$(_ion_simulator_assets),\
+$(call rule_for_simulator_resource,COPY,$(notdir $a),$a,\
+  cp $$^ $$@ \
+)))

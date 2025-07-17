@@ -11,4 +11,3 @@ fi
 git clone https://github.com/emscripten-core/emsdk.git
 ./emsdk/emsdk install $EMSDK_VERSION
 ./emsdk/emsdk activate $EMSDK_VERSION
-npm install -g nwlink

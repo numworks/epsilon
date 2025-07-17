@@ -8,25 +8,22 @@ This folder contains apps to run on a [NumWorks calculator](https://www.numworks
 - [sample_rust](sample_rust) : not C/C++ based, following setup instructions do not apply, see [sample_rust instructions](sample_rust/README.md).
 
 Following instructions are to be executed from [this](./) folder.
-
-## On device
-
-Here are the instructions to run the app [sample_cpp](sample_cpp) on a Numworks calculator.
+They will guide you to install the app [sample_cpp](sample_cpp) app on a Numworks calculator or on a simulator.
 
 You can swap `sample_cpp` for any other C/C++ based external app (`rpn_cpp` or `sample_c`).
 
-### Setup nwlink
+## Setup
 
-Before your first run, you'll need to install `nwlink` on your computer.
+As prerequisite, you will need :
+- A `C` compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS). You can run [Epsilon's setup script](../build/setup.sh) for that
+- [`npm`](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed
+
+Then, you'll need to install `nwlink` on your computer.
 ```shell
 npm install -g nwlink
 ```
 
-You will also need a C compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS).
-
-You can run [Epsilon's setup script](../build/setup.sh) for that.
-
-### Install the app on your calculator
+## Install the app on your calculator
 
 This will build and load your app on a plugged in calculator.
 
@@ -56,20 +53,6 @@ Anyone can now install it on their calculator from the [NumWorks online uploader
 
 An a simulator, you can test and debug your app more easily.
 
-### Setup
-
-Depending on you system :
-- Windows :
-```shell
-./setup.ps1
-```
-- Others :
-```shell
-chmod +x setup.sh & ./setup.sh
-```
-
-Follow additional instructions given at the end of this script (`Next steps`) to access `emsdk` tools from command line, this is required for a web build.
-
 #### Prepare web and native simulators
 
 By default, an [epsilon_simulators](epsilon_simulators/) folder is expected.
@@ -98,10 +81,26 @@ make -C sample_cpp PLATFORM=simulator debug
 
 ### Web simulator
 
+#### Additional Setup
+
+Depending on you system :
+- Windows :
+```shell
+./setup_web.ps1
+```
+- Others :
+```shell
+chmod +x setup_web.sh & ./setup_web.sh
+```
+
+#### Launch a server
+
 On a separate shell, run
 ```shell
 make -C sample_cpp server
 ```
+
+#### Build and run your app
 
 In the other shell, run :
 - Windows
@@ -123,7 +122,7 @@ Your browser should display the simulator with the app inside.
 
 ## License
 
-These sample apps are distributed under the terms of the BSD License. See LICENSE for details.
+These apps are distributed under the terms of the BSD License. See LICENSE for details.
 
 ## Trademarks
 

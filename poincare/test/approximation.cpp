@@ -441,6 +441,10 @@ QUIZ_CASE(pcj_approximation_integrals) {
   approximates_to<float>("int(2*(2x-2)^3,x,1,2)", "4");
 
   simplified_approximates_to<double>("int(3x^2+x-4,x,-2,2)", "0");
+
+  // Double integration
+  approximates_to<float>("int(int(t^2,t,0,x),x,0,4)", "21.33333");
+  approximates_to<float>("int(int(t,t,0,x),x,0,1)", "0.1666667");
 }
 
 QUIZ_CASE(pcj_approximation_derivatives) {

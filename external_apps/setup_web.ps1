@@ -10,4 +10,3 @@ $emsdkVersion = if (Test-Path ../.emsdk-version) {
 git clone https://github.com/emscripten-core/emsdk.git
 ./emsdk/emsdk install $emsdkVersion
 ./emsdk/emsdk activate $emsdkVersion
-npm install -g nwlink

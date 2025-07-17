@@ -493,35 +493,49 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
   return true;
 }
 
+static const Tree* TreeFromSign(Sign sign) {
+  if (sign.isNull()) {
+    return 0_e;
+  } else if (sign.isStrictlyPositive()) {
+    return 1_e;
+  } else if (sign.isStrictlyNegative()) {
+    return -1_e;
+  } else {
+    return nullptr;
+  }
+}
+
 bool SystematicOperation::ReduceSign(Tree* e) {
   assert(e->isSign());
   const Tree* child = e->child(0);
+  if (child->isSign()) {
+    e->removeNode();
+    ReduceSign(e);
+    return true;
+  }
   ComplexSign sign = GetComplexSign(child);
   if (sign.canBeNonReal()) {
     if (sign.isPureIm()) {
-      // sign(iA) = i*sign(A)
-      PatternMatching::MatchReplaceSimplify(
-          e, KSign(KA), KMult(KSign(KMult(-1_e, KA, i_e)), i_e));
-      return true;
+      // sign(iA) = i*sign(A) if sign(A) is known
+      const Tree* signTree = TreeFromSign(sign.imagSign());
+      if (signTree) {
+        e->moveTreeOverTree(
+            PatternMatching::Create(KMult(KA, i_e), {.KA = signTree}));
+        return true;
+      }
     }
     /* Could use sign(z) = exp(i*arg(z)) but ignore for now.
      * TODO: when implementing this, see comment in
      * `ReduceMultiplicationWithInf` to avoid infinite loops. */
     return false;
   }
-  const Tree* result;
-  if (sign.isNull()) {
-    result = 0_e;
-  } else if (sign.realSign().isStrictlyPositive()) {
-    result = 1_e;
-  } else if (sign.realSign().isStrictlyNegative()) {
-    result = -1_e;
-  } else {
-    return false;
+  const Tree* result = TreeFromSign(sign.realSign());
+  if (result) {
+    e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
+                                                {.KA = result, .KB = child}));
+    return true;
   }
-  e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
-                                              {.KA = result, .KB = child}));
-  return true;
+  return false;
 }
 
 bool SystematicOperation::ReduceDistribution(Tree* e) {

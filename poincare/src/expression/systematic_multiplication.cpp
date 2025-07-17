@@ -190,19 +190,21 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
   // Except when x = -i,-1,0,1,i or sign (to avoid infinite loop)
   // TODO: check for |x| = 0 or 1 when `sign(z)=exp(i*arg(z))` is implemented.
   PatternMatching::Context ctx;
-  if (PatternMatching::Match(e, KMult(KA, KInf), &ctx) ||
-      PatternMatching::Match(e, KMult(KInf, KA), &ctx)) {
-    const Tree* x = ctx.getTree(KA);
+  if (Dimension::Get(e).isScalar() &&
+      PatternMatching::Match(e, KMult(KA_s, KInf, KB_s), &ctx)) {
+    TreeRef x = PatternMatching::Create(KMult(KA_s, KB_s), ctx);
     assert(!x->isZero() && !x->isOne());
+    PatternMatching::Context ctx;
+    // TODO: there has to be a better way to test if x is a fixed point of Sign
     if (x->isMinusOne() || x->isSign() || x->isComplexI() ||
-        x->treeIsIdenticalTo(KMult(-1_e, i_e))) {
+        x->treeIsIdenticalTo(KMult(-1_e, i_e)) ||
+        PatternMatching::Match(x, KMult(KSign(KA), i_e), &ctx)) {
+      x->removeTree();
       return false;
     }
-  }
-  // Except when x is not scalar.
-  if (Dimension::Get(e).isScalar() &&
-      PatternMatching::MatchReplaceSimplify(
-          e, KMult(KA_s, KInf, KB_s), KMult(KSign(KMult(KA_s, KB_s)), KInf))) {
+    e->moveTreeOverTree(
+        PatternMatching::CreateSimplify(KMult(KSign(KA), KInf), {.KA = x}));
+    x->removeTree();
     return true;
   }
   return false;
@@ -243,6 +245,16 @@ bool SystematicOperation::ReduceSortedMultiplication(Tree* e) {
       // e can also be a dep, we need to bubble up
       Dependency::ShallowBubbleUpDependencies(e);
     }
+#if ASSERTIONS
+    Tree* mult =
+        e->isMult()
+            ? e
+            : (e->isDep() && e->child(0)->isMult() ? e->child(0) : nullptr);
+    if (mult) {
+      assert(!NAry::Sort(mult, Order::OrderType::PreserveMatrices));
+      assert(!ReduceSortedMultiplication(mult));
+    }
+#endif
     return true;
   }
   assert(mult->isMult());

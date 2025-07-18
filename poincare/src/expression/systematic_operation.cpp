@@ -493,16 +493,22 @@ bool SystematicOperation::ReduceComplexPart(Tree* e) {
   return true;
 }
 
-static const Tree* TreeFromSign(Sign sign) {
+static const Tree* TreeFromSign(ComplexSign sign) {
   if (sign.isNull()) {
     return 0_e;
-  } else if (sign.isStrictlyPositive()) {
-    return 1_e;
-  } else if (sign.isStrictlyNegative()) {
-    return -1_e;
-  } else {
-    return nullptr;
   }
+  constexpr const Tree* nullTree = static_cast<const Tree*>(nullptr);
+  if (sign.isReal()) {
+    return sign.realSign().isStrictlyNegative()   ? -1_e
+           : sign.realSign().isStrictlyPositive() ? 1_e
+                                                  : nullTree;
+  }
+  if (sign.isPureIm()) {
+    return sign.imagSign().isStrictlyNegative()   ? KMult(-1_e, i_e)
+           : sign.imagSign().isStrictlyPositive() ? i_e
+                                                  : nullTree;
+  }
+  return nullTree;
 }
 
 bool SystematicOperation::ReduceSign(Tree* e) {
@@ -514,22 +520,10 @@ bool SystematicOperation::ReduceSign(Tree* e) {
     return true;
   }
   ComplexSign sign = GetComplexSign(child);
-  if (sign.canBeNonReal()) {
-    if (sign.isPureIm()) {
-      // sign(iA) = i*sign(A) if sign(A) is known
-      const Tree* signTree = TreeFromSign(sign.imagSign());
-      if (signTree) {
-        e->moveTreeOverTree(
-            PatternMatching::CreateSimplify(KMult(KA, i_e), {.KA = signTree}));
-        return true;
-      }
-    }
-    /* Could use sign(z) = exp(i*arg(z)) but ignore for now.
-     * TODO: when implementing this, see comment in
-     * `ReduceMultiplicationWithInf` to avoid infinite loops. */
-    return false;
-  }
-  const Tree* result = TreeFromSign(sign.realSign());
+  const Tree* result = TreeFromSign(sign);
+  /* Could use sign(z) = exp(i*arg(z)) but ignore for now.
+   * TODO: when implementing this, see comment in
+   * `ReduceMultiplicationWithInf` to avoid infinite loops. */
   if (result) {
     e->moveTreeOverTree(PatternMatching::CreateSimplify(
         KDep(KA, KDepList(KB)), {.KA = result, .KB = child}));

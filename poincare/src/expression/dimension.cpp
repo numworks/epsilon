@@ -413,11 +413,13 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
       /* Forbid units of non-integer power or of too big of a power.
        * TODO_PCJ:  Handle the unit as a scalar if the index is not an integer
        */
-      if (!IsIntegerExpression(e->child(1))) {
+      const Tree* exponent = e->child(1);
+      if (!(exponent->isInteger() ||
+            (exponent->isOpposite() && exponent->child(0)->isInteger()))) {
         return false;
       }
       float index =
-          Approximation::To<float>(e->child(1), Approximation::Parameters{});
+          Approximation::To<float>(exponent, Approximation::Parameters{});
       assert(!std::isnan(index) && std::round(index) == index);
       if (index > static_cast<float>(INT8_MAX) ||
           (index < static_cast<float>(INT8_MIN))) {

@@ -520,7 +520,7 @@ bool SystematicOperation::ReduceSign(Tree* e) {
       const Tree* signTree = TreeFromSign(sign.imagSign());
       if (signTree) {
         e->moveTreeOverTree(
-            PatternMatching::Create(KMult(KA, i_e), {.KA = signTree}));
+            PatternMatching::CreateSimplify(KMult(KA, i_e), {.KA = signTree}));
         return true;
       }
     }
@@ -531,8 +531,8 @@ bool SystematicOperation::ReduceSign(Tree* e) {
   }
   const Tree* result = TreeFromSign(sign.realSign());
   if (result) {
-    e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
-                                                {.KA = result, .KB = child}));
+    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        KDep(KA, KDepList(KB)), {.KA = result, .KB = child}));
     return true;
   }
   return false;

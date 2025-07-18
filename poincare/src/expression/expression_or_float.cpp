@@ -1,9 +1,10 @@
 #include "poincare/expression_or_float.h"
 
+#include <poincare/helpers/layout.h>
+
 #include "omg/utf8_helper.h"
 #include "poincare/helpers/expression_equal_sign.h"
 #include "poincare/print_float.h"
-#include "projection.h"
 
 namespace Poincare {
 
@@ -70,6 +71,8 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
         (exactTextLengths.GlyphLength <= maxGlyphLength) &&
         (exactTextLengths.CharLength <= k_bufferExactLength) &&
         ((exactTextLengths.CharLength <= buffer.size()))) {
+      assert(exactTextLengths.CharLength !=
+             Poincare::LayoutHelpers::k_bufferOverflow);
       strlcpy(buffer.data(), exactSerialization,
               exactTextLengths.CharLength + 1);
       return exactTextLengths;

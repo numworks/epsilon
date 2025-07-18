@@ -105,6 +105,7 @@ $(addprefix function_properties/, \
   conic.cpp:-nopool \
   function_type.cpp:-nopool \
   helper.cpp:-nopool \
+  integral.cpp:-nopool \
 ) \
 $(addprefix helpers/, \
   cas.cpp:-nopool \

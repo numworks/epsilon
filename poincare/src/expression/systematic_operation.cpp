@@ -510,7 +510,7 @@ bool SystematicOperation::ReduceSign(Tree* e) {
   const Tree* child = e->child(0);
   if (child->isSign()) {
     e->removeNode();
-    ReduceSign(e);
+    assert(!ReduceSign(e));
     return true;
   }
   ComplexSign sign = GetComplexSign(child);

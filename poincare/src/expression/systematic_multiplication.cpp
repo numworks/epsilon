@@ -246,11 +246,8 @@ bool SystematicOperation::ReduceSortedMultiplication(Tree* e) {
       Dependency::ShallowBubbleUpDependencies(e);
     }
 #if ASSERTIONS
-    Tree* mult =
-        e->isMult()
-            ? e
-            : (e->isDep() && e->child(0)->isMult() ? e->child(0) : nullptr);
-    if (mult) {
+    if (Dependency::SafeMain(e)->isMult()) {
+      Tree* mult = Dependency::SafeMain(e);
       assert(!NAry::Sort(mult, Order::OrderType::PreserveMatrices));
       assert(!ReduceSortedMultiplication(mult));
     }

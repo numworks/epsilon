@@ -6,11 +6,11 @@ This document describes how to install template apps created by Numworks both on
 
 Since version-24, external apps are hidden in exam-mode, and are available again once the exam-mode is removed. Resets or crashes will remove external apps from the device.
 
-The available apps are :
-- [rpn_cpp](rpn_cpp) : a RPN engine to be completed
-- [sample_c](sample_c) : a C application plotting squares and using external data
-- [sample_cpp](sample_cpp) : a space invaders game
-- [sample_rust](sample_rust) : not C/C++ based, following setup instructions do not apply, see [sample_rust instructions](sample_rust/README.md).
+The available apps are:
+- [rpn_cpp](rpn_cpp): a RPN engine to be completed
+- [sample_c](sample_c): a C application plotting squares and using external data
+- [sample_cpp](sample_cpp): a space invaders game
+- [sample_rust](sample_rust): not C/C++ based, following setup instructions do not apply, see [sample_rust instructions](sample_rust/README.md).
 
 Following instructions are to be executed from [this](./) folder.
 They will guide you to install the app [sample_cpp](sample_cpp) app on a Numworks calculator or on a simulator.
@@ -19,7 +19,7 @@ You can swap `sample_cpp` for any other C/C++ based external app (`rpn_cpp` or `
 
 ## Setup
 
-As prerequisite, you will need :
+As prerequisite, you will need:
 - A `C` compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS). You can run [Epsilon's setup script](../build/setup.sh) for that
 - [`npm`](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed
 
@@ -63,11 +63,11 @@ When creating your app, testing on the physical device can be a bit tedious. Run
 By default, an [epsilon_simulators](epsilon_simulators/) folder is expected.
 
 It should contain the expected platform-specific Epsilon simulators to run any external app on.
-See instructions to build them from [Epsilon's root](../) :
-- [Web](epsilon_simulators/web/README.md) : `epsilon.html`
-- [Linux](epsilon_simulators/linux/README.md) : `epsilon.bin`
-- [MacOS](epsilon_simulators/macos/README.md) : `epsilon.app/Contents/MacOS/Epsilon`
-- [Windows](epsilon_simulators/windows/README.md) : `epsilon.exe`
+See instructions to build them from [Epsilon's root](../):
+- [Web](epsilon_simulators/web/README.md): `epsilon.html`
+- [Linux](epsilon_simulators/linux/README.md): `epsilon.bin`
+- [MacOS](epsilon_simulators/macos/README.md): `epsilon.app/Contents/MacOS/Epsilon`
+- [Windows](epsilon_simulators/windows/README.md): `epsilon.exe`
 
 Simulator path can also be overridden with the `SIMULATOR=[PATH_TO_SIMULATOR]` compilation flag.
 
@@ -88,12 +88,12 @@ make -C sample_cpp PLATFORM=simulator debug
 
 #### Additional Setup
 
-Depending on you system :
-- Windows :
+Depending on you system:
+- Windows:
 ```shell
 ./setup_web.ps1
 ```
-- Others :
+- Others:
 ```shell
 chmod +x setup_web.sh & ./setup_web.sh
 ```
@@ -107,7 +107,7 @@ make -C sample_cpp server
 
 #### Build and run your app
 
-In the other shell, run :
+In the other shell, run:
 - Windows
 ```shell
 emsdk/emsdk_env.ps1

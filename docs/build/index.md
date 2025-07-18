@@ -4,7 +4,7 @@ The numworks calculator supports running unofficial software.
 
 You can create and run you very own epsilon version.
 
-This unofficial software will have restricted permissions :
+This unofficial software will have restricted permissions:
 - Any reset or crash will irreversibly switch back to an official firmware
 - Exam mode cannot be set
 
@@ -47,7 +47,7 @@ You can also update your NumWorks calculator with our own custom firmware.
 
 ### Prerequisites
 
-To install your custom firmware :
+To install your custom firmware:
 - Your calculator must be running on an official firmware.
 - Your custom firmware must have the same version number `APP_VERSION` (you can change it in [root's Makefile](/Makefile))
 
@@ -62,7 +62,7 @@ Build and flash the custom userland with the command
 make -j8 custom_userland.flash
 ```
 
-The software should jump on your custom firmware with an `UNOFFICIAL SOFTWARE` warning :
+The software should jump on your custom firmware with an `UNOFFICIAL SOFTWARE` warning:
 
 ![Unofficial software screenshot](unofficial_software.png)
 

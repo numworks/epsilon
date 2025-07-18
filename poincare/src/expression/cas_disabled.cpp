@@ -54,9 +54,12 @@ bool neverDisplayExactOutput(const Tree* exactOutput, Context* context) {
    * 2. If the output has remaining depencies, the exact output is not
    * displayed to avoid outputs like 5 ≈ undef and also because it could
    * be a reduction that failed and was interrupted which can lead to
-   * dependencies not being properly bubbled-up */
+   * dependencies not being properly bubbled-up
+   * 3. If the output contains a Sign function, the exact output is not
+   * displayed as it happends very rarely and an unreduced sign brings no value
+   */
   for (const Tree* t : exactOutput->selfAndDescendants()) {
-    if (t->isComparison() || t->isDep()) {
+    if (t->isComparison() || t->isDep() || t->isSignUser()) {
       return true;
     }
     if (!t->isUndefined()) {

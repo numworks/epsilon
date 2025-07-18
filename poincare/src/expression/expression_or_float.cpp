@@ -65,8 +65,8 @@ PrintFloat::TextLengths ExpressionOrFloat::writeText(
     bool firstCharIsMinus = exactSerialization[0] == '-';
     /* NOTE: minus sign size is ignored to avoid displaying exact values on the
      * positive part of the axis and approximation on the negative part */
-    if ((exactTextLengths.GlyphLength - (firstCharIsMinus ? 1 : 0) <=
-         k_maxExactSerializationGlyphLength) &&
+    if ((exactTextLengths.GlyphLength <=
+         k_maxExactSerializationGlyphLength + (firstCharIsMinus ? 1 : 0)) &&
         (exactTextLengths.GlyphLength <= maxGlyphLength) &&
         (exactTextLengths.CharLength <= k_bufferExactLength) &&
         ((exactTextLengths.CharLength <= buffer.size()))) {

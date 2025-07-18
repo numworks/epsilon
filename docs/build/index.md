@@ -1,5 +1,13 @@
 # Build and run your own version of Epsilon
 
+The numworks calculator supports running unofficial software.
+
+You can create and run you very own epsilon version.
+
+This unofficial software will have more limited permissions :
+- Any reset or crash will irreversibly switch back to an official firmware
+- Exam mode cannot be set
+
 ## Retrieve the source code
 
 The code is hosted on <a href="https://github.com/numworks/epsilon">GitHub</a>. You can retrieve it using with

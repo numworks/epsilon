@@ -4,6 +4,7 @@
 #include <escher/palette.h>
 #include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
+#include <poincare/function_properties/integral.h>
 #include <poincare/helpers/polynomial.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
@@ -445,17 +446,11 @@ void ContinuousFunction::trimResolutionInterval(double* start,
 SystemExpression ContinuousFunction::sumBetweenBounds(double start, double end,
                                                       Context* context) const {
   assert(properties().isCartesian());
-  start = std::max<double>(start, tMin());
-  end = std::min<double>(end, tMax());
-  // Integral takes ownership of args
-  return SystemExpression::Create(
-      KIntegral(KUnknownSymbol, KA, KB, KC),
-      {.KA = SystemExpression::Builder<double>(start),
-       .KB = SystemExpression::Builder<double>(end),
-       .KC = expressionReduced(context)});
-  /* TODO: when we approximate integral, we might want to simplify the integral
-   * here. However, we might want to do it once for all x (to avoid lagging in
-   * the derivative table. */
+  // KUnknownSymbol is the variable used in the grapher app
+  return Poincare::IntegralBetweenBounds(
+      expressionReduced(context), Internal::Symbol::GetName(KUnknownSymbol),
+      SystemExpression::Builder(std::max<double>(start, tMin())),
+      SystemExpression::Builder(std::min<double>(end, tMax())));
 }
 
 /* ContinuousFunction - Private */

@@ -4,12 +4,12 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <omg/utf8_helper.h>
+#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 
 #include <cmath>
 
 #include "../app.h"
-#include "poincare/expression.h"
 
 using namespace Poincare;
 using namespace Escher;

@@ -31,11 +31,11 @@ class ExpressionOrFloat {
       return ExpressionOrFloat();
     }
     assert(Poincare::Dimension(expression).isScalar());
-    if (expression.tree()->treeSize() > k_maxExpressionSize) {
-      // Fallback on storing the approximation if the expression is too large
-      return ExpressionOrFloat(approximationFunction(expression));
+    if (ExpressionFitsBuffer(expression)) {
+      return ExpressionOrFloat(expression);
     }
-    return ExpressionOrFloat(expression);
+    // Fallback on storing the approximation if the expression is too large
+    return ExpressionOrFloat(approximationFunction(expression));
   }
 
   bool hasNoExactExpression() const { return m_buffer[0] == '\0'; }
@@ -102,9 +102,14 @@ class ExpressionOrFloat {
   }
 
  private:
-  constexpr static size_t k_maxExpressionSize = 8;
+  constexpr static size_t k_oppositeNodeSize =
+      Internal::TypeBlock(Internal::Type::Opposite).nodeSize();
+  /* Max tree size, including potential [Opposite] node */
+  constexpr static size_t k_maxTreeSize = 8 + k_oppositeNodeSize;
   constexpr static size_t k_numberOfSignificantDigits =
       PrintFloat::k_floatNumberOfSignificantDigits;
+
+  // This max ignores the "-" sign, the true maximum is one more than this value
   constexpr static size_t k_maxExactSerializationGlyphLength = 5;
 
   /* The constructor from an expression is private. The Builder method should be
@@ -112,7 +117,7 @@ class ExpressionOrFloat {
   explicit ExpressionOrFloat(Expression expression) {
     assert(!expression.isUninitialized());
     assert(Poincare::Dimension(expression).isScalar());
-    assert(expression.tree()->treeSize() <= k_maxExpressionSize);
+    assert(ExpressionFitsBuffer(expression));
     expression.tree()->copyTreeTo(m_buffer.data());
   }
 
@@ -128,11 +133,21 @@ class ExpressionOrFloat {
         approximationParameters.complexFormat);
   }
 
+  /* We ignore the cost of the [Opposite] node when storing the tree in the
+   * buffer:
+   * Either the expression is negative and smaller than [k_maxTreeSize].
+   * Or it is positive and smaller than [k_maxTreeSize - 1]. */
+  static bool ExpressionFitsBuffer(Expression expression) {
+    size_t treeSize = expression.tree()->treeSize();
+    treeSize -= expression.tree()->isOpposite() ? k_oppositeNodeSize : 0;
+    return treeSize <= k_maxTreeSize;
+  }
+
   /* The Pool (where Expressions are stored) is not preserved when the current
    * App is closed. So for the expression to be preserved when closing and
    * reopening the App, ExpressionOrFloat needs to store the expression Tree in
    * a buffer of Blocks. */
-  std::array<Internal::Block, k_maxExpressionSize> m_buffer;
+  std::array<Internal::Block, k_maxTreeSize> m_buffer;
   float m_value = NAN;
 };
 

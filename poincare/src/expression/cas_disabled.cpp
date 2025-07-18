@@ -56,7 +56,8 @@ bool neverDisplayExactOutput(const Tree* exactOutput, Context* context) {
    * be a reduction that failed and was interrupted which can lead to
    * dependencies not being properly bubbled-up
    * 3. If the output contains a Sign function, the exact output is not
-   * displayed as it happends very rarely and an unreduced sign brings no value
+   * displayed, indeed sign can appear spontaneously and an unreduced sign
+   * brings no value.
    */
   for (const Tree* t : exactOutput->selfAndDescendants()) {
     if (t->isComparison() || t->isDep() || t->isSignUser()) {

@@ -24,6 +24,9 @@ struct Dependency {
   static const Tree* SafeMain(const Tree* e) {
     return e->isDep() ? Main(e) : e;
   }
+  static Tree* SafeMain(Tree* e) {
+    return const_cast<Tree*>(SafeMain(const_cast<const Tree*>(e)));
+  }
   // Compare two trees ignoring dependencies.
   static bool MainTreeIsIdenticalToMain(const Tree* e, const Tree* other) {
     return (e->isDep() ? Main(e) : e)

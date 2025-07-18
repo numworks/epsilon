@@ -192,11 +192,11 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
   PatternMatching::Context ctx;
   if (Dimension::Get(e).isScalar() &&
       PatternMatching::Match(e, KMult(KA_s, KInf, KB_s), &ctx)) {
-    TreeRef x = PatternMatching::Create(KMult(KA_s, KB_s), ctx);
-    assert(!x->isZero() && !x->isOne());
+    TreeRef x = PatternMatching::CreateSimplify(KMult(KA_s, KB_s), ctx);
+    assert(!x->isZero());
     PatternMatching::Context ctx;
     // TODO: there has to be a better way to test if x is a fixed point of Sign
-    if (x->isMinusOne() || x->isSign() || x->isComplexI() ||
+    if (x->isOne() || x->isMinusOne() || x->isSign() || x->isComplexI() ||
         x->treeIsIdenticalTo(KMult(-1_e, i_e)) ||
         PatternMatching::Match(x, KMult(KSign(KA), i_e), &ctx)) {
       x->removeTree();

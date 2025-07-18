@@ -1469,6 +1469,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");
   simplifies_to("inf×i×i×i×i", "∞");
+  simplifies_to("inf×2i", "∞×i");
   simplifies_to("-i×inf", "-∞×i");
   simplifies_to("inf×cos(3)×i", "∞×sign(cos(3)×i)");
 

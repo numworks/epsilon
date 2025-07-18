@@ -1,7 +1,12 @@
 # External apps
 
-This folder contains apps to run on a [NumWorks calculator](https://www.numworks.com).
+The [NumWorks calculator](https://www.numworks.com) allows you to install and run `external apps` created by the community or yourself.
 
+This document describes how to install template apps created by Numworks both on the physical calculator and on the various simulators available (native or web).
+
+Since version-24, external apps are hidden in exam-mode, and are available again once the exam-mode is removed. Resets or crashes will remove external apps from the device.
+
+The available apps are :
 - [rpn_cpp](rpn_cpp) : a RPN engine to be completed
 - [sample_c](sample_c) : a C application plotting squares and using external data
 - [sample_cpp](sample_cpp) : a space invaders game
@@ -51,7 +56,7 @@ Anyone can now install it on their calculator from the [NumWorks online uploader
 
 ## Try your app on an Epsilon simulator
 
-An a simulator, you can test and debug your app more easily.
+When creating your app, testing on the physical device can be a bit tedious. Running on your app on a simulator allows you to test and debug more easily.
 
 #### Prepare web and native simulators
 

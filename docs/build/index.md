@@ -4,7 +4,7 @@ The numworks calculator supports running unofficial software.
 
 You can create and run you very own epsilon version.
 
-This unofficial software will have more limited permissions :
+This unofficial software will have restricted permissions :
 - Any reset or crash will irreversibly switch back to an official firmware
 - Exam mode cannot be set
 

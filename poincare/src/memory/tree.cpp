@@ -459,7 +459,7 @@ static ParentAndPosition ParentOfDescendantAux(
     /* Avoid increasing [i] if [numberOfChildren] is 0 as it will be decreased
      * at the start of next loop */
     if (info.numberOfChildren > 0) {
-      if (i >= k_size - 1) {
+      if (i >= static_cast<int>(k_size) - 1) {
         // No space left in local [pile], recursive call to continue
         ParentAndPosition pp = ParentOfDescendantAux(node, descendant, &node);
         if (pp.parent != nullptr) {

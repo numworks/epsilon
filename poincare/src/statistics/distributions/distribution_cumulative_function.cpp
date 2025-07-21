@@ -50,7 +50,7 @@ T exponentialCumulativeDistributiveFunction(T x,
 }
 
 template <typename T>
-T fischerCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
+T fisherCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
   const T d1 = params[Params::Fisher::D1];
   const T d2 = params[Params::Fisher::D2];
   return RegularizedIncompleteBetaFunction(d1 / 2.0, d2 / 2.0,
@@ -157,7 +157,7 @@ T CumulativeDistributiveFunctionAtAbscissa(
     case Type::Student:
       return studentCumulativeDistributiveFunction(x, parameters);
     case Type::Fisher:
-      return fischerCumulativeDistributiveFunction(x, parameters);
+      return fisherCumulativeDistributiveFunction(x, parameters);
     default:
       assert(!IsContinuous(type));
       return discreteCumulativeDistributiveFunction(type, x, parameters);

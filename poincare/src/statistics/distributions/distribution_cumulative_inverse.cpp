@@ -123,7 +123,7 @@ T exponentialCumulativeDistributiveInverse(
 }
 
 template <typename T>
-T fischerCumulativeDistributiveInverse(
+T fisherCumulativeDistributiveInverse(
     T probability, const Distribution::ParametersArray<T> params) {
   const T d1 = params[Params::Fisher::D1];
   const T d2 = params[Params::Fisher::D2];
@@ -357,7 +357,7 @@ T CumulativeDistributiveInverseForProbability(
     case Type::Poisson:
       return poissonCumulativeDistributiveInverse(probability, parameters);
     case Type::Fisher:
-      return fischerCumulativeDistributiveInverse(probability, parameters);
+      return fisherCumulativeDistributiveInverse(probability, parameters);
     default:
       OMG::unreachable();
   }

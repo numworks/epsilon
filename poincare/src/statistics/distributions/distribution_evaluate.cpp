@@ -66,7 +66,7 @@ T evalExponential(T x, const Distribution::ParametersArray<T> params) {
 }
 
 template <typename T>
-T evalFischer(T x, const Distribution::ParametersArray<T> params) {
+T evalFisher(T x, const Distribution::ParametersArray<T> params) {
   const T d1 = params[Params::Fisher::D1];
   const T d2 = params[Params::Fisher::D2];
   const T f = d1 * x / (d1 * x + d2);
@@ -192,7 +192,7 @@ T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T> parameters) {
     case Type::Poisson:
       return evalPoisson(x, parameters);
     case Type::Fisher:
-      return evalFischer(x, parameters);
+      return evalFisher(x, parameters);
     default:
       OMG::unreachable();
   }

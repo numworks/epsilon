@@ -392,7 +392,7 @@ Layout ValuesController::memoizedLayoutForCell(int column, int row) {
     // Compute the buffer of the new cells of the memoized table
     int maxCol = std::min(nbOfMemoizedColumns,
                           numberOfValuesColumns() - m_firstMemoizedColumn);
-    int maxRow[maxCol];
+    int maxRow[k_maxNumberOfDisplayableColumns];
     int maxOfMaxRow = -1;
     for (int col = 0; col < maxCol; col++) {
       maxRow[col] = std::min(

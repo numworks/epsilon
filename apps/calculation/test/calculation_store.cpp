@@ -503,6 +503,23 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("_g0", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "undef", nullptr, &globalContext, &store);
 
+  using PTTFlags = ExamMode::PressToTestFlags::Flags;
+  MathPreferences::SharedPreferences()->setExamMode(ExamMode(
+      ExamMode::Ruleset::PressToTest,
+      ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidBasedLogarithm)));
+
+  assertCalculationIs("ln(5)", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation, "ln(5)", "1.6094379124341",
+                      &globalContext, &store);
+  assertCalculationIs("log(5)", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation, "log(5)", "0.69897000433602",
+                      &globalContext, &store);
+  assertCalculationIs("log(5,10)", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Approximation, "log(5)", "0.69897000433602",
+                      &globalContext, &store);
+  assertCalculationIs("log(5,5)", DisplayOutput::ExactOnly, EqualSign::Hidden,
+                      "undef", nullptr, &globalContext, &store);
+
   MathPreferences::SharedPreferences()->setExamMode(previousExamMode);
   MathPreferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
 

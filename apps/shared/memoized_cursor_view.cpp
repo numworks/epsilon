@@ -55,7 +55,10 @@ bool MemoizedCursorView::eraseCursorIfPossible(const Escher::View* parent) {
   }
   // Erase the cursor
   assert(parent);
-  KDColor cursorWorkingBuffer[size() * size()];
+  const size_t maxSize =
+      std::max(Dots::LargeDotDiameter, Dots::LargeRingDiameter);
+  assert(size() <= maxSize);
+  KDColor cursorWorkingBuffer[maxSize * maxSize];
   KDContext* ctx = Ion::Display::Context::SharedContext;
   KDPoint previousOrigin = ctx->origin();
   KDRect previousClippingRect = ctx->clippingRect();

@@ -177,7 +177,8 @@ bool Projection::IsForbidden(const Tree* e) {
       return examMode.forbidUnits();
     case Type::LogBase:
       return examMode.forbidBasedLogarithm() &&
-             !e->child(1)->treeIsIdenticalTo(10_e);
+             !e->child(1)->treeIsIdenticalTo(10_e) &&
+             !e->child(1)->treeIsIdenticalTo(e_e);
     case Type::Sum:
       return examMode.forbidSum();
     case Type::Norm:

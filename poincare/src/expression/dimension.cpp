@@ -57,7 +57,7 @@ Dimension Dimension::Unit(const Tree* unit) {
               Units::Unit::GetRepresentative(unit));
 }
 
-bool IsIntegerExpression(const Tree* e) {
+bool IsIntegerExpression(const Tree* e, bool excludeFunctionCalls = false) {
   /* TODO: when the dimension depends on an integer expression (that is not an
    * integer node) we need a nested Simplify to properly compute the value of
    * the inner expression before continuing. This will have consequences on the
@@ -74,20 +74,20 @@ bool IsIntegerExpression(const Tree* e) {
     case Type::Add:
     case Type::Sub: {
       for (const Tree* child : e->children()) {
-        if (!IsIntegerExpression(child)) {
+        if (!IsIntegerExpression(child, excludeFunctionCalls)) {
           return false;
         }
       }
       return true;
     }
     case Type::Pow:
-      return IsIntegerExpression(e->child(0)) &&
+      return IsIntegerExpression(e->child(0), excludeFunctionCalls) &&
              Integer::Is<uint8_t>(e->child(1));
     case Type::Ceil:
     case Type::Floor:
-      return true;
+      return !excludeFunctionCalls;
     case Type::Round:
-      return e->child(1)->isZero();
+      return !excludeFunctionCalls && e->child(1)->isZero();
     default:
       return false;
   }
@@ -414,8 +414,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
        * TODO_PCJ:  Handle the unit as a scalar if the index is not an integer
        */
       const Tree* exponent = e->child(1);
-      if (!(exponent->isInteger() ||
-            (exponent->isOpposite() && exponent->child(0)->isInteger()))) {
+      if (!(IsIntegerExpression(exponent, true))) {
         return false;
       }
       float index =

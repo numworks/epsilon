@@ -457,17 +457,17 @@ consteval auto FloatLiteralOperator() {
 }
 
 template <char... C>
-consteval auto operator"" _fe() {
+consteval auto operator""_fe() {
   return FloatLiteralOperator<float, uint32_t, C...>();
 }
 
 template <char... C>
-consteval auto operator"" _de() {
+consteval auto operator""_de() {
   return FloatLiteralOperator<double, uint64_t, C...>();
 }
 
 template <char... C>
-consteval auto operator"" _e() {
+consteval auto operator""_e() {
   constexpr const char value[] = {C..., '\0'};
   constexpr size_t size = sizeof...(C) + 1;
   constexpr size_t decimalPointIndex = DecimalPointIndex(value, size);
@@ -500,7 +500,7 @@ struct KUserSymbol<S, std::index_sequence<I...>>
 };
 
 template <String S>
-consteval auto operator"" _e() {
+consteval auto operator""_e() {
   return KUserSymbol<S>();
 }
 

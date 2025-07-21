@@ -159,14 +159,14 @@ struct _RackSimpleLayoutHelper<S, std::index_sequence<I...>>
           KCodePointL<S.codePointAt(I)>...> {};
 
 template <String S>
-consteval auto operator"" _l() {
+consteval auto operator""_l() {
   return _RackSimpleLayoutHelper<S>();
 }
 
 // Unfortunately template operator'' does not exist, we must use strings instead
 template <String S>
   requires(S.codePointSize() == 2)
-consteval auto operator"" _cl() {
+consteval auto operator""_cl() {
   return KCodePointL<S.codePointAt(0)>();
 }
 

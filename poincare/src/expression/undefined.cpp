@@ -82,7 +82,7 @@ bool Undefined::IsDimensionedUndefined(const Tree* t) {
   if (t->isUndefined()) {
     return true;
   }
-  if (t->isMatrix() || t->isList()) {
+  if (t->isMatrix() || t->isList() || t->isPoint()) {
     if (t->numberOfChildren() == 0) {
       return false;
     }
@@ -101,11 +101,6 @@ bool Undefined::IsDimensionedUndefined(const Tree* t) {
   }
   if (t->isListSequence()) {
     return t->child(Parametric::FunctionIndex(t))->isUndefined();
-  }
-  if (t->isPoint()) {
-    TypeBlock type0 = t->child(0)->type();
-    TypeBlock type1 = t->child(1)->type();
-    return type0.isUndefined() && type0 == type1;
   }
   return false;
 }

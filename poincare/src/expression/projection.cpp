@@ -7,6 +7,7 @@
 #include "angle.h"
 #include "decimal.h"
 #include "dependency.h"
+#include "k_tree.h"
 #include "sign.h"
 #include "symbol.h"
 #include "units/representatives.h"
@@ -175,7 +176,8 @@ bool Projection::IsForbidden(const Tree* e) {
     case Type::UnitConversion:
       return examMode.forbidUnits();
     case Type::LogBase:
-      return examMode.forbidBasedLogarithm();
+      return examMode.forbidBasedLogarithm() &&
+             !e->child(1)->treeIsIdenticalTo(10_e);
     case Type::Sum:
       return examMode.forbidSum();
     case Type::Norm:

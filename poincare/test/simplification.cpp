@@ -1115,10 +1115,11 @@ QUIZ_CASE(pcj_simplification_unit) {
   simplifies_to("1234_g", "1234×_g");
   simplifies_to("cos(0_rad)", "1");
   simplifies_to("sum(_s,x,0,1)", "2×_s");
+  // NOTE: We only allow simple int operations in unit exponents
   simplifies_to("_s^-1", "1×_s^(-1)");
-  // NOTE: Forbids anything else than int or -int in exponent
+  simplifies_to("_s^(4-2^3+2×3)", "1×_s^2");
+  simplifies_to("_s^floor(1)", "undef");
   simplifies_to("_s^ceil(2)", "undef");
-  simplifies_to("_s^(2×3)", "undef");
   // NOTE: this is a test for ReduceSortedAddition, see comment there
   simplifies_to("0×_A + π×_A - π×_A", "0×_A");
   simplifies_to("sum(_s,x,2,0)", "0×_s");

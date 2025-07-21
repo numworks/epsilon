@@ -517,6 +517,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("log(5,10)", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "log(5)", "0.69897000433602",
                       &globalContext, &store);
+  assertCalculationIs("log(5,e)", DisplayOutput::ExactAndApproximate,
+                      EqualSign::Approximation, "ln(5)", "1.6094379124341",
+                      &globalContext, &store);
   assertCalculationIs("log(5,5)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "undef", nullptr, &globalContext, &store);
 

@@ -316,6 +316,7 @@ bool AdvancedOperation::ContractMult(Tree* e) {
   }
   if (commonFactorIsEverywhere) {
     Tree* result = SharedTreeStack->pushMult(2);
+    assert(commonFactor != nullptr);
     commonFactor->cloneTree();
     Tree* subResult = SharedTreeStack->pushAdd(e->numberOfChildren());
     for (const Tree* child : e->children()) {

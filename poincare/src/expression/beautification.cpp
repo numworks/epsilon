@@ -18,6 +18,7 @@
 #include "rational.h"
 #include "symbol.h"
 #include "systematic_reduction.h"
+#include "undefined.h"
 #include "units/unit.h"
 #include "variables.h"
 
@@ -711,7 +712,7 @@ Tree* GetCartesianFormat(const Tree* e,
     Dependency::DeepRemoveUselessDependencies(result);
   }
   Tree* cartesianForm = result->isDep() ? Dependency::Main(result) : result;
-  if (cartesianForm->isUndef()) {
+  if (Undefined::IsDimensionedUndefined(cartesianForm)) {
     cartesianForm->removeTree();
     return nullptr;
   }

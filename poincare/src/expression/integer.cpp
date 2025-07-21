@@ -754,7 +754,7 @@ int IntegerHandler::estimatedNumberOfBase10DigitsWithoutSign(
       numberOfDigits() - (overEstimated ? 0 : 1);
   float estimation = std::ceil(estimatedNumberOfDigitsBase256 *
                                std::log10(static_cast<float>(k_digitBase)));
-  assert(estimation > 0.f && estimation < INT_MAX);
+  assert(estimation > 0.f && estimation < static_cast<float>(INT_MAX));
   int estimatedNumberOfDigitsBase10 = static_cast<int>(estimation);
   assert(estimatedNumberOfDigitsBase10 ==
              numberOfBase10DigitsWithoutSign().numberOfDigits ||

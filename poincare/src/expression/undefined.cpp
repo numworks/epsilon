@@ -5,6 +5,7 @@
 #include "dimension.h"
 #include "integer.h"
 #include "k_tree.h"
+#include "matrix.h"
 
 namespace Poincare::Internal {
 
@@ -77,4 +78,35 @@ bool Undefined::ShallowBubbleUpUndef(Tree* e) {
   return true;
 }
 
+bool Undefined::IsDimensionedUndefined(const Tree* t) {
+  if (t->isUndefined()) {
+    return true;
+  }
+  if (t->isMatrix() || t->isList()) {
+    if (t->numberOfChildren() == 0) {
+      return false;
+    }
+    // Check all children are the same and undefined
+    const Tree* child = t->child(0);
+    TypeBlock type = child->type();
+    if (!type.isUndefined()) {
+      return false;
+    }
+    for (const Tree* child : t->children()) {
+      if (child->type() != type) {
+        return false;
+      }
+    }
+    return true;
+  }
+  if (t->isListSequence()) {
+    return t->child(Parametric::FunctionIndex(t))->isUndefined();
+  }
+  if (t->isPoint()) {
+    TypeBlock type0 = t->child(0)->type();
+    TypeBlock type1 = t->child(1)->type();
+    return type0.isUndefined() && type0 == type1;
+  }
+  return false;
+}
 }  // namespace Poincare::Internal

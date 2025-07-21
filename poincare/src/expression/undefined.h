@@ -20,6 +20,8 @@ class Undefined {
    * [e] is matrix type is undef => [[undef,...]...] with correct size.
    * [e] is boolean => booleanUndef. */
   static void ReplaceTreeWithDimensionedType(Tree* e, Type type);
+  /* Check if an undefined tree created by [ReplaceTreeWithDimensionedType] */
+  static bool IsDimensionedUndefined(const Tree* t);
   template <typename T>
   static bool IsUndefined(std::complex<T> c) {
     return std::isnan(c.real()) || std::isnan(c.imag());

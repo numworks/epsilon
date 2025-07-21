@@ -644,7 +644,7 @@ void AbstractPlotView::stamp(KDContext* ctx, KDRect rect, Coordinate2D<float> p,
     return;
   }
 
-  KDColor workingBuffer[stampSize * stampSize];
+  KDColor workingBuffer[k_thickStampSize * k_thickStampSize];
   float dx = px - pxf;
   float dy = py - pyf;
   size_t ix = std::round(dx * k_shiftedSteps);

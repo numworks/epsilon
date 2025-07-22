@@ -29,18 +29,15 @@ uint32_t CurveViewRange::rangeChecksum() {
 
 Poincare::ExpressionOrFloat CurveViewRange::computeGridUnit(
     OMG::Axis axis) const {
-  size_t minNumberOfUnits, maxNumberOfUnits;
-  float range;
-  if (axis == OMG::Axis::Horizontal) {
-    minNumberOfUnits = k_minNumberOfXGridUnits;
-    maxNumberOfUnits = k_maxNumberOfXGridUnits;
-    range = xMax() - xMin();
-  } else {
-    assert(axis == OMG::Axis::Vertical);
-    minNumberOfUnits = k_minNumberOfYGridUnits;
-    maxNumberOfUnits = k_maxNumberOfYGridUnits;
-    range = yMax() - yMin() + offscreenYAxis();
-  }
+  size_t minNumberOfUnits = (axis == OMG::Axis::Horizontal)
+                                ? k_minNumberOfXGridUnits
+                                : k_minNumberOfYGridUnits;
+  size_t maxNumberOfUnits = (axis == OMG::Axis::Horizontal)
+                                ? k_maxNumberOfXGridUnits
+                                : k_maxNumberOfYGridUnits;
+  float range = (axis == OMG::Axis::Horizontal)
+                    ? xMax() - xMin()
+                    : yMax() - yMin() + offscreenYAxis();
   int a = 0;
   int b = 0;
   constexpr int unitsCount = 3;

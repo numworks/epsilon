@@ -790,7 +790,8 @@ QUIZ_CASE(ion_storage_disabled_records) {
   quiz_assert(getRecord("record3", Storage::expressionExtension).isNull());
 
   // Fill up the storage
-  char recordNameBuffer[10];
+  const size_t bufferSize = 10;
+  char recordNameBuffer[bufferSize];
   const char* bigData =
       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
@@ -808,12 +809,15 @@ QUIZ_CASE(ion_storage_disabled_records) {
       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
       "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-  int i = 0;
+  uint32_t recordName = 0;
   Storage::Record::ErrorStatus error = Storage::Record::ErrorStatus::None;
   while (error == Storage::Record::ErrorStatus::None) {
-    OMG::Print::IntLeft(i++, recordNameBuffer, sizeof(recordNameBuffer));
+    int sizeOfName =
+        OMG::Print::IntLeft(recordName, recordNameBuffer, bufferSize);
+    recordNameBuffer[sizeOfName] = '\0';
     error = putRecordInSharedStorage(recordNameBuffer,
                                      Storage::expressionExtension, bigData);
+    recordName++;
   }
   quiz_assert(error == Storage::Record::ErrorStatus::NotEnoughSpaceAvailable);
   // Disable records

@@ -25,6 +25,7 @@ namespace Poincare::Internal {
  */
 
 class Random {
+  friend struct List;
   /* Random nodes have a random seed metadata.
    * Identical node and seed should approximate to the same value.
    * A null seed indicates a un-seeded node.

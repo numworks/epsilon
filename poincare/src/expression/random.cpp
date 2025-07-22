@@ -31,33 +31,32 @@ uint8_t Random::GetMaxSeed(const Tree* e) {
 
 uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
   uint8_t currentSeed = maxSeed;
-  int descendants = 1;
-  while (descendants > 0) {
-    descendants--;
-    if (e->isRandomized()) {
-      if (GetSeed(e) == 0) {
-        // RandIntNoRep needs to reserve seed for each of its elements.
-        int size = 1;
-        if (e->isRandIntNoRep() && Dimension::DeepCheck(e)) {
-          /* RandIntNoRep dimension may have not been checked at this point and
-           * we need its length. The dimension check for RandIntNoRep is
-           * straighforward and can be done at this step. */
-          // Keep a size 1 to increment currentSeed anyway.
-          size = std::max(Dimension::ListLength(e), 1);
-        }
-        assert(static_cast<int>(currentSeed) + size < k_maxNumberOfSeeds);
-        if (currentSeed + size > Context::k_maxNumberOfVariables) {
-          assert(GetSeed(e) == 0);
-          return currentSeed;
-        }
-        SetSeed(e, currentSeed + 1);
-        currentSeed += size;
-      } else {
-        assert(GetSeed(e) <= maxSeed);
-      }
+  for (Tree* descendant : e->selfAndDescendants()) {
+    if (!descendant->isRandomized()) {
+      continue;
     }
-    descendants += e->numberOfChildren();
-    e = e->nextNode();
+    if (GetSeed(descendant) != 0) {
+      assert(GetSeed(descendant) <= maxSeed);
+      continue;
+    }
+    /* RandIntNoRep and RandInt of lists needs to reserve seed for each of
+     * its elements. */
+    int size = 1;
+    if ((descendant->isRandIntNoRep() || descendant->isRandInt()) &&
+        Dimension::DeepCheck(descendant)) {
+      /* RandIntNoRep dimension may have not been checked at this point and
+       * we need its length. The dimension check for RandIntNoRep is
+       * straighforward and can be done at this step. */
+      // Keep a size 1 to increment currentSeed anyway.
+      size = std::max(Dimension::ListLength(descendant), 1);
+    }
+    assert(static_cast<int>(currentSeed) + size < k_maxNumberOfSeeds);
+    if (currentSeed + size > Context::k_maxNumberOfVariables) {
+      assert(GetSeed(descendant) == 0);
+      return currentSeed;
+    }
+    SetSeed(descendant, currentSeed + 1);
+    currentSeed += size;
   }
   return currentSeed;
 }

@@ -142,7 +142,8 @@ bool AreParametersValidBool(Type type, const ParametersArray<U> parameters) {
 }
 
 constexpr bool AcceptsOnlyPositiveAbscissa(Type type) {
-  return type == Type::Exponential || type == Type::Chi2;
+  return type == Type::Exponential || type == Type::Chi2 ||
+         type == Type::Fisher;
 }
 template <typename T>
 T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T> parameters);

@@ -49,8 +49,7 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
         return nullptr;
       }
       Tree* result = nullptr;
-      if (e->isRandInt()) {
-        assert(Random::GetSeed(e) > 0);
+      if (e->isRandInt() && Random::GetSeed(e) > 0) {
         // Cannot clone e directly as it has a non-zero seed
         result = (KRandInt)->cloneNode();
         Random::SetSeed(result, Random::GetSeed(e) + k);

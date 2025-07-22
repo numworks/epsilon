@@ -988,53 +988,54 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
 
 template <typename T>
 std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
-  OMG::StaticVector<T, 2> child;
+  OMG::StaticVector<T, 2> children;
   for (IndexedChild<const Tree*> childNode : e->indexedChildren()) {
     std::complex<T> app = PrivateToComplex<T>(childNode, ctx);
     if (app.imag() != 0 || std::isnan(app.real())) {
       return NAN;
     }
     assert(!std::isnan(app.imag()));
-    child.push(app.real());
+    children.push(app.real());
   }
   switch (e->type()) {
     case Type::Decimal:
-      return child[0] * std::pow(static_cast<T>(10.0), -child[1]);
+      return children[0] * std::pow(static_cast<T>(10.0), -children[1]);
     case Type::PowReal: {
       return ApproximatePower<T>(e, ctx, ComplexFormat::Real);
     }
     case Type::Sign:
     case Type::SignUser: {
-      return std::fabs(child[0]) <= OMG::Float::Epsilon<T>() ? 0
-             : child[0] < 0                                  ? -1
-                                                             : 1;
+      return std::fabs(children[0]) <= OMG::Float::Epsilon<T>() ? 0
+             : children[0] < 0                                  ? -1
+                                                                : 1;
     }
     case Type::Floor:
     case Type::Ceil: {
       /* Assume low deviation from natural numbers are errors */
-      T delta = std::fabs((std::round(child[0]) - child[0]) / child[0]);
+      T delta =
+          std::fabs((std::round(children[0]) - children[0]) / children[0]);
       if (delta <= OMG::Float::Epsilon<T>()) {
-        return std::round(child[0]);
+        return std::round(children[0]);
       }
-      return e->isFloor() ? std::floor(child[0]) : std::ceil(child[0]);
+      return e->isFloor() ? std::floor(children[0]) : std::ceil(children[0]);
     }
     case Type::Frac: {
-      return child[0] - std::floor(child[0]);
+      return children[0] - std::floor(children[0]);
     }
     case Type::Round: {
-      assert(!std::isnan(child[1]));
-      if (child[1] != std::round(child[1])) {
+      assert(!std::isnan(children[1]));
+      if (children[1] != std::round(children[1])) {
         return NAN;
       }
-      T err = std::pow(10, std::round(child[1]));
-      return std::round(child[0] * err) / err;
+      T err = std::pow(10, std::round(children[1]));
+      return std::round(children[0] * err) / err;
     }
     case Type::EuclideanDivision:
     case Type::EuclideanDivisionResult:
     case Type::Quo:
     case Type::Rem: {
-      T a = child[0];
-      T b = child[1];
+      T a = children[0];
+      T b = children[1];
       assert(!std::isnan(a) && !std::isnan(b));
       if (a != (int)a || b != (int)b) {
         return NAN;
@@ -1045,7 +1046,7 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
     }
 
     case Type::Fact: {
-      T n = child[0];
+      T n = children[0];
       if (n != std::round(n) || n < 0) {
         return NAN;
       }
@@ -1059,13 +1060,13 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
       return std::round(result);
     }
     case Type::Binomial: {
-      T n = child[0];
-      T k = child[1];
+      T n = children[0];
+      T k = children[1];
       return FloatBinomial<T>(n, k);
     }
     case Type::Permute: {
-      T n = child[0];
-      T k = child[1];
+      T n = children[0];
+      T k = children[1];
       if (n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
         return NAN;
       }
@@ -1082,21 +1083,21 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
       return std::round(result);
     }
     case Type::MixedFraction: {
-      T integerPart = child[0];
-      T fractionPart = child[1];
+      T integerPart = children[0];
+      T fractionPart = children[1];
       if (fractionPart < 0.0 || integerPart != std::fabs(integerPart)) {
         // TODO how can this happen ?
         return NAN;
       }
-      return child[0] + child[1];
+      return children[0] + children[1];
     }
     case Type::Factor:
       // Useful for the beautification only
-      return child[0];
+      return children[0];
     case Type::PercentSimple:
-      return child[0] / 100.0;
+      return children[0] / 100.0;
     case Type::PercentAddition:
-      return child[0] * (1.0 + child[1] / 100.0);
+      return children[0] * (1.0 + children[1] / 100.0);
     default:
       if (e->isParametric()) {
         // TODO: Explicit e if it contains random nodes.

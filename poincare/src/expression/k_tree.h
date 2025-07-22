@@ -160,14 +160,18 @@ constexpr auto KDepList = KNAry<Type::DepList>();
 constexpr auto KPiecewise = KNAry<Type::Piecewise>();
 #endif
 
-// with seed 0
-constexpr auto KRandom = KTree<Type::Random, 0>();
-constexpr auto KRandInt = KBinary<Type::RandInt, 0>();
-constexpr auto KRandIntNoRep = KFixedArity<3, Type::RandIntNoRep, 0>();
-
 // with other seed
 template <uint8_t seed>
+constexpr auto KRandomSeeded = KTree<Type::Random, seed>();
+template <uint8_t seed>
 constexpr auto KRandIntSeeded = KBinary<Type::RandInt, seed>();
+template <uint8_t seed>
+constexpr auto KRandIntNoRepSeeded = KFixedArity<3, Type::RandIntNoRep, seed>();
+
+// with seed 0
+constexpr auto KRandom = KRandomSeeded<0>;
+constexpr auto KRandInt = KRandIntSeeded<0>;
+constexpr auto KRandIntNoRep = KRandIntNoRepSeeded<0>;
 
 template <uint8_t Id, uint8_t realSign, uint8_t imagSign>
 constexpr auto KVar = KTree<Type::Var, Id, realSign, imagSign>();

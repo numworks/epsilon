@@ -212,8 +212,7 @@ class PatternMatching {
       GlobalPattern,
       LocalPattern,
     };
-    MatchContext(const Tree* source, const Tree* pattern,
-                 uint8_t baseScope = 0);
+    MatchContext(const Tree* source, const Tree* pattern);
     bool reachedLimit(const Tree* node, Limit limit) const {
       return ReachedLimit(node, getEnd(limit));
     }
@@ -256,7 +255,6 @@ class PatternMatching {
     const Tree* const m_globalPatternRoot;
     const Block* const m_globalSourceEnd;
     const Block* const m_globalPatternEnd;
-    uint8_t m_baseScope = 0;
   };
 
   // Match an AnyTree Placeholder

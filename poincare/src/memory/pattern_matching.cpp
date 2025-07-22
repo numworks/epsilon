@@ -74,8 +74,7 @@ void PatternMatching::MatchContext::log() const {
 #endif
 
 PatternMatching::MatchContext::MatchContext(const Tree* source,
-                                            const Tree* pattern,
-                                            uint8_t baseScope)
+                                            const Tree* pattern)
     : m_localSourceRoot(source),
       m_localSourceEnd(source->nextTree()->block()),
       m_localPatternRoot(pattern),
@@ -83,8 +82,7 @@ PatternMatching::MatchContext::MatchContext(const Tree* source,
       m_globalSourceRoot(source),
       m_globalPatternRoot(pattern),
       m_globalSourceEnd(m_localSourceEnd),
-      m_globalPatternEnd(m_localPatternEnd),
-      m_baseScope(baseScope) {}
+      m_globalPatternEnd(m_localPatternEnd) {}
 
 int PatternMatching::MatchContext::remainingLocalTrees(const Tree* node) const {
   if (ReachedLimit(node, m_localSourceEnd)) {
@@ -239,7 +237,7 @@ bool PatternMatching::MatchSourceWithSquashedPattern(
    * updated context). Otherwise, we still need to check that source match the
    * squashed pattern. */
   return ChildToCheck ? MatchNodes(source, ChildToCheck, context,
-                                   MatchContext(source, ChildToCheck, scope))
+                                   MatchContext(source, ChildToCheck))
                       : true;
 }
 

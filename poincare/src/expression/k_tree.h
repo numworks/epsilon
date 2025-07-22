@@ -165,6 +165,10 @@ constexpr auto KRandom = KTree<Type::Random, 0>();
 constexpr auto KRandInt = KBinary<Type::RandInt, 0>();
 constexpr auto KRandIntNoRep = KFixedArity<3, Type::RandIntNoRep, 0>();
 
+// with other seed
+template <uint8_t seed>
+constexpr auto KRandIntSeeded = KBinary<Type::RandInt, seed>();
+
 template <uint8_t Id, uint8_t realSign, uint8_t imagSign>
 constexpr auto KVar = KTree<Type::Var, Id, realSign, imagSign>();
 

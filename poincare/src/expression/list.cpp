@@ -48,10 +48,18 @@ Tree* List::GetElement(const Tree* e, int k, Tree::Operation reduction) {
       if (e->type().isListToScalar()) {
         return nullptr;
       }
-      Tree* result = e->cloneNode();
-      if (e->isDepList()) {
-        // Do not attempt to reduce conditions of dependency
-        reduction = [](Tree*) { return false; };
+      Tree* result = nullptr;
+      if (e->isRandInt()) {
+        assert(Random::GetSeed(e) > 0);
+        // Cannot clone e directly as it has a non-zero seed
+        result = (KRandInt)->cloneNode();
+        Random::SetSeed(result, Random::GetSeed(e) + k);
+      } else {
+        result = e->cloneNode();
+        if (e->isDepList()) {
+          // Do not attempt to reduce conditions of dependency
+          reduction = [](Tree*) { return false; };
+        }
       }
       for (const Tree* child : e->children()) {
         if (!GetElement(child, k, reduction)) {

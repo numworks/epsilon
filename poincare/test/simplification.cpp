@@ -971,6 +971,10 @@ QUIZ_CASE(pcj_simplification_random) {
   simplifies_to("sum(k+randint(1,10),k,2,5)-14", "sum(randint(1,10),k,2,5)");
   simplifies_to("sequence(2*k+random(),k,3)+1", "1+sequence(2×k+random(),k,3)");
   simplifies_to("random()<acos(40)", "undef");
+  Tree* randintList = (KRandInt(0_e, KList(0_e, 1_e)))->cloneTree();
+  simplify(randintList, realCtx, true);
+  assert_trees_are_equal(randintList, KList(KRandIntSeeded<1>(0_e, 0_e),
+                                            KRandIntSeeded<2>(0_e, 1_e)));
 }
 
 QUIZ_CASE(pcj_simplification_power) {

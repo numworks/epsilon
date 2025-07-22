@@ -2,6 +2,7 @@
 
 #include <omg/float.h>
 #include <omg/unreachable.h>
+#include <omg/vector.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/statistics/distributions/distribution_method.h>
 #include <poincare/src/statistics/statistics_dataset.h>
@@ -987,19 +988,17 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
 
 template <typename T>
 std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
-  assert(e->numberOfChildren() == 1 || e->numberOfChildren() == 2);
-  T child[2];
+  OMG::StaticVector<T, 2> child;
   for (IndexedChild<const Tree*> childNode : e->indexedChildren()) {
     std::complex<T> app = PrivateToComplex<T>(childNode, ctx);
     if (app.imag() != 0 || std::isnan(app.real())) {
       return NAN;
     }
     assert(!std::isnan(app.imag()));
-    child[childNode.index] = app.real();
+    child.push(app.real());
   }
   switch (e->type()) {
     case Type::Decimal:
-      assert(e->numberOfChildren() == 2);
       return child[0] * std::pow(static_cast<T>(10.0), -child[1]);
     case Type::PowReal: {
       return ApproximatePower<T>(e, ctx, ComplexFormat::Real);
@@ -1023,7 +1022,6 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
       return child[0] - std::floor(child[0]);
     }
     case Type::Round: {
-      assert(e->numberOfChildren() == 2);
       assert(!std::isnan(child[1]));
       if (child[1] != std::round(child[1])) {
         return NAN;
@@ -1035,7 +1033,6 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
     case Type::EuclideanDivisionResult:
     case Type::Quo:
     case Type::Rem: {
-      assert(e->numberOfChildren() == 2);
       T a = child[0];
       T b = child[1];
       assert(!std::isnan(a) && !std::isnan(b));
@@ -1062,13 +1059,11 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
       return std::round(result);
     }
     case Type::Binomial: {
-      assert(e->numberOfChildren() == 2);
       T n = child[0];
       T k = child[1];
       return FloatBinomial<T>(n, k);
     }
     case Type::Permute: {
-      assert(e->numberOfChildren() == 2);
       T n = child[0];
       T k = child[1];
       if (n != std::round(n) || k != std::round(k) || n < 0.0f || k < 0.0f) {
@@ -1087,7 +1082,6 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
       return std::round(result);
     }
     case Type::MixedFraction: {
-      assert(e->numberOfChildren() == 2);
       T integerPart = child[0];
       T fractionPart = child[1];
       if (fractionPart < 0.0 || integerPart != std::fabs(integerPart)) {
@@ -1102,9 +1096,7 @@ std::complex<T> ToComplexSwitchOnlyReal(const Tree* e, const Context* ctx) {
     case Type::PercentSimple:
       return child[0] / 100.0;
     case Type::PercentAddition:
-      assert(e->numberOfChildren() == 2);
       return child[0] * (1.0 + child[1] / 100.0);
-
     default:
       if (e->isParametric()) {
         // TODO: Explicit e if it contains random nodes.

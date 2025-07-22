@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_MATRIX_H
 #define POINCARE_EXPRESSION_MATRIX_H
 
+#include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree.h>
 
 #include "approximation.h"
@@ -74,6 +75,9 @@ struct Matrix {
   static Tree* Power(const Tree* matrix, int exponent, bool approximate = false,
                      const Approximation::Context* ctx = nullptr);
   static bool SystematicReduceMatrixOperation(Tree* e);
+
+  // REFACTOR: the maximum size of a matrix could be reduced.
+  constexpr static size_t k_maximumSize = NAry::k_maxNumberOfChildren;
 };
 
 }  // namespace Poincare::Internal

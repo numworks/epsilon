@@ -86,9 +86,7 @@ Tree* Matrix::Transpose(const Tree* matrix) {
     return result;
   }
   Tree* result = SharedTreeStack->pushMatrix(cols, rows);
-  /* REFACTOR: the below array size can be reduced when the maximum size of a
-   * matrix is reduced */
-  const Tree* rowsM[NAry::k_maxNumberOfChildren];
+  const Tree* rowsM[k_maximumSize];
   const Tree* child = matrix->child(0);
   for (int row = 0; row < rows; row++) {
     rowsM[row] = child;
@@ -157,9 +155,7 @@ Tree* Matrix::Multiplication(const Tree* matrix1, const Tree* matrix2,
   /* The complexity of the naive multiplication is n^3 by itself but if we do
    * not take care, indexing the children with child will add an n^2
    * factor. To avoid this, we keep track of each row of matrix2. */
-  /* REFACTOR: the below array size can be reduced when the maximum size of a
-   * matrix is reduced */
-  const Tree* rowsM2[NAry::k_maxNumberOfChildren];
+  const Tree* rowsM2[k_maximumSize];
   {
     // Initialize row pointers
     const Tree* childM2 = matrix2->child(0);

@@ -1,6 +1,6 @@
 #include "grid.h"
 
-#include <poincare/src/memory/n_ary.h>
+#include <poincare/src/expression/matrix.h>
 
 #include "k_tree.h"
 #include "layout_cursor.h"
@@ -228,10 +228,8 @@ KDSize Grid::size(KDFont::Size font) const {
   int rows = numberOfRows();
   int columns = numberOfColumns();
   bool editing = isEditing();
-  /* REFACTOR: the below array sizes can be reduced when the maximum size of a
-   * matrix is reduced */
-  KDCoordinate columsCumulatedWidth[NAry::k_maxNumberOfChildren];
-  KDCoordinate rowCumulatedHeight[NAry::k_maxNumberOfChildren];
+  KDCoordinate columsCumulatedWidth[Matrix::k_maximumSize];
+  KDCoordinate rowCumulatedHeight[Matrix::k_maximumSize];
   computePositions(font, rowCumulatedHeight, columsCumulatedWidth);
   assert(rows >= 2 || (rows == 1 && (numberOfRowsIsFixed() || editing)));
   assert(columns >= 2 ||

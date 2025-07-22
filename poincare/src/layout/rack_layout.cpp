@@ -250,7 +250,7 @@ KDPoint RackLayout::ChildPosition(const Rack* node, int i) {
     context->x = position.x();
     context->baseline = position.y();
   };
-  Context context;
+  Context context = {};
   assert(node->numberOfChildren() > 0 && i >= 0);
   IterBetweenIndexes(node, 0, i + 1, iter, &context, false);
   return KDPoint(context.x, baseline - context.baseline);

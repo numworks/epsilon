@@ -270,7 +270,7 @@ Token Tokenizer::popToken() {
   }
 
   Type comparisonOperatorType;
-  size_t comparisonOperatorLength;
+  size_t comparisonOperatorLength = 0;
   if (Binary::IsComparisonOperatorString(
           start.toSpan(), &comparisonOperatorType, &comparisonOperatorLength)) {
     /* Change precedence of equal when assigning a function.

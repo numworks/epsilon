@@ -12,6 +12,11 @@ class Binary {
   static bool IsBinaryLogicalOperator(LayoutSpan name, Type* type);
   static const char* OperatorName(TypeBlock type);
 
+  /*  REFACTOR: return the returnType and returnLength when the result is an
+   * comparison operator. This would avoid creating uninitialized returnType and
+   * returnLength before passing them to this function. The return type could be
+   * an std::optional<std::pair<Type, size_t>>, that contains the {Type, size_t}
+   * result only when there is a comparison operator. */
   static bool IsComparisonOperatorString(LayoutSpan name, Type* returnType,
                                          size_t* returnLength);
   static ComparisonJunior::Operator ComparisonOperatorForType(TypeBlock type);

@@ -2,6 +2,7 @@
 
 #include <kandinsky/dot.h>
 #include <omg/unreachable.h>
+#include <poincare/src/memory/n_ary.h>
 
 #include "autocompleted_pair.h"
 #include "code_point_layout.h"
@@ -830,8 +831,11 @@ void Render::DrawGridLayout(const Layout* l, KDContext* ctx, KDPoint p,
   int rows = grid->numberOfRows();
   int columns = grid->numberOfColumns();
   bool editing = grid->isEditing();
-  KDCoordinate columsCumulatedWidth[columns];
-  KDCoordinate rowCumulatedHeight[rows];
+
+  /* REFACTOR: the below array size can be reduced when the maximum size of a
+   * matrix is reduced */
+  KDCoordinate columsCumulatedWidth[NAry::k_maxNumberOfChildren];
+  KDCoordinate rowCumulatedHeight[NAry::k_maxNumberOfChildren];
   grid->computePositions(s_font, rowCumulatedHeight, columsCumulatedWidth);
   KDSize size(
       columsCumulatedWidth[columns - 1 -

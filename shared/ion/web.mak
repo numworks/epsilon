@@ -69,11 +69,11 @@ _ion_simulator_files := 0
 
 _ion_web_path := $(PATH_ion)/src/simulator/web
 
-$(call generated_sources_for, app/src/background-with-shadow.webp): $(PATH_ion)/src/simulator/assets/$(ION_layout_variant)/background-with-shadow.webp | $$(@D)/.
+$(call generated_sources_for, app/src/background-with-shadow.webp): $(PATH_ion)/src/simulator/assets/$(ION_variant)/background-with-shadow.webp | $$(@D)/.
 	$(call rule_label,COPY)
 	cp $^ $@
 
-$(call generated_sources_for, app/src/calculator.html): $(addprefix $(PATH_ion)/src/simulator/,shared/$(ION_layout_variant)/layout.json web/css_html_layout.py) | $$(@D)/.
+$(call generated_sources_for, app/src/calculator.html): $(addprefix $(PATH_ion)/src/simulator/,shared/$(ION_variant)/layout.json web/css_html_layout.py) | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) --html $@ --css $(basename $@).css $(filter %.json,$^)
 
@@ -97,8 +97,8 @@ $(call generated_sources_for, app/src/simulator_%html): $(_ion_web_path)/simulat
 		-DEM_MODULE_JS='"$*js"' \
 		-DPATCH_LEVEL=\"$(PATCH_LEVEL)\" \
 		-DEPSILON_VERSION=\"$(APP_VERSION)\" \
-		-DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_layout_variant)) \
-		-DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_layout_variant)) \
-		-DLAYOUT_$(ION_layout_variant) \
+		-DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_variant)) \
+		-DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_variant)) \
+		-DLAYOUT_$(ION_variant) \
 		-P $(filter %.inc,$^) \
 		$@

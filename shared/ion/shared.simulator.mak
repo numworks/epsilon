@@ -7,7 +7,7 @@ $(addprefix shared/, \
   exam_mode.cpp \
   keyboard_queue.cpp \
   keyboard.cpp \
-  layout_events/$(ION_layout_variant)/layout_events.cpp \
+  layout_events/$(ION_variant)/layout_events.cpp \
   stack_position.cpp \
   storage/file_system.cpp \
   storage/record.cpp \
@@ -22,6 +22,7 @@ $(addprefix shared/dummy/, \
   fcc_id.cpp \
   led.cpp \
   platform_info.cpp \
+  $(ION_variant)/serial_number.cpp \
   post_and_hardware_tests.cpp \
   power.cpp \
   reset.cpp \
@@ -58,7 +59,7 @@ SFLAGS_ion += \
 
 # Simulator backgrounds - begin
 
-_ion_simulator_background := $(PATH_ion)/src/simulator/assets/$(ION_layout_variant)/background-with-shadow.webp
+_ion_simulator_background := $(PATH_ion)/src/simulator/assets/$(ION_variant)/background-with-shadow.webp
 _ion_simulator_backgrounds_generated := $(addprefix $(OUTPUT_DIRECTORY)/app/assets/,background.jpg background-no-shadow.webp)
 
 _ion_simulator_background_crop_epsilon := 1005x1975+93+13
@@ -77,14 +78,14 @@ _ion_simulator_perfect_width_scandium := 274
 _ion_simulator_perfect_height_scandium := 477
 
 PRIVATE_SFLAGS_ion += \
-  -DION_SIMULATOR_PERFECT_WIDTH=$(_ion_simulator_perfect_width_$(ION_layout_variant)) \
-  -DION_SIMULATOR_PERFECT_HEIGHT=$(_ion_simulator_perfect_height_$(ION_layout_variant))
+  -DION_SIMULATOR_PERFECT_WIDTH=$(_ion_simulator_perfect_width_$(ION_variant)) \
+  -DION_SIMULATOR_PERFECT_HEIGHT=$(_ion_simulator_perfect_height_$(ION_variant))
 
 $(_ion_simulator_backgrounds_generated): $(_ion_simulator_background) | $$(@D)/.
 	$(call rule_label,CONVERT)
 	convert \
-		-crop $(_ion_simulator_background_crop_$(ION_layout_variant)) \
-		-resize $(_ion_simulator_background_resize_$(ION_layout_variant)) \
+		-crop $(_ion_simulator_background_crop_$(ION_variant)) \
+		-resize $(_ion_simulator_background_resize_$(ION_variant)) \
 		$< $@
 
 # Simulator backgrounds - end
@@ -124,7 +125,7 @@ endif
 
 # Simulator layout
 _sources_ion_simulator_layout := $(PATH_ion)/src/simulator/shared/layout.cpp
-$(call generated_sources_for,$(_sources_ion_simulator_layout)): $(PATH_ion)/src/simulator/shared/$(ION_layout_variant)/layout.json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
+$(call generated_sources_for,$(_sources_ion_simulator_layout)): $(PATH_ion)/src/simulator/shared/$(ION_variant)/layout.json $(PATH_ion)/src/simulator/shared/layout.py | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) -i $(filter %.json,$^) -o $@
 SOURCES_ion += $(_sources_ion_simulator_layout)

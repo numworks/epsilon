@@ -1,4 +1,4 @@
-$(call assert_defined,ION_layout_variant)
+$(call assert_defined,ION_variant)
 
 $(call create_module,ion,1, $(patsubst %, test/%:+test, \
   crc32.cpp \
@@ -23,20 +23,20 @@ _ion_keyboard_rows_epsilon = 9
 _ion_keyboard_rows_scandium = 7
 
 SFLAGS_ion += \
-  -I$(PATH_ion)/include/ion/keyboard/$(ION_layout_variant) \
-  -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_layout_variant)) \
-  -DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_layout_variant)) \
-  -DION_DISPLAY_BORDER=$(_ion_display_border_$(ION_layout_variant)) \
-  -DION_DISPLAY_BORDER_COLOR="$(_ion_display_border_color_$(ION_layout_variant))" \
+  -I$(PATH_ion)/include/ion/keyboard/$(ION_variant) \
+  -DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_variant)) \
+  -DION_DISPLAY_HEIGHT=$(_ion_display_height_$(ION_variant)) \
+  -DION_DISPLAY_BORDER=$(_ion_display_border_$(ION_variant)) \
+  -DION_DISPLAY_BORDER_COLOR="$(_ion_display_border_color_$(ION_variant))" \
   -DION_KEYBOARD_COLUMNS=$(_ion_keyboard_columns) \
-  -DION_KEYBOARD_ROWS=$(_ion_keyboard_rows_$(ION_layout_variant)) \
-  -DION_KEYBOARD_HAS_ALPHA=$(if $(findstring epsilon,$(ION_layout_variant)),1,0)
+  -DION_KEYBOARD_ROWS=$(_ion_keyboard_rows_$(ION_variant)) \
+  -DION_KEYBOARD_HAS_ALPHA=$(if $(findstring epsilon,$(ION_variant)),1,0)
 
 PRIVATE_SFLAGS_ion += \
   -DEPSILON_VERSION=\"$(APP_VERSION)\" \
   -DPATCH_LEVEL=\"$(PATCH_LEVEL)\" \
-  -DION_KEYBOARD_RICH=$(if $(findstring epsilon,$(ION_layout_variant)),1,0) \
-  -DION_VARIANT_$(call upper,$(ION_layout_variant))
+  -DION_KEYBOARD_RICH=$(if $(findstring epsilon,$(ION_variant)),1,0) \
+  -DION_VARIANT_$(call upper,$(ION_variant))
 
 ION_STORAGE_LOG ?= 0
 ION_LOG_EVENTS_NAME ?= 0

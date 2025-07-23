@@ -12,7 +12,7 @@ namespace USB {
 void Calculator::PollAndReset(Ion::USB::DFUParameters parameters) {
   /* Don't use Ion::serialNumber to avoid any data section in the relocatable
    * dfu. */
-  char serialNumber[Ion::k_serialNumberLength + 1];
+  char serialNumber[SerialNumber::k_serialNumberLength + 1];
   SerialNumber::copy(serialNumber);
   Calculator c(serialNumber);
   // Ensure FIFOs are clean before starting polling.

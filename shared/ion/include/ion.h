@@ -41,7 +41,6 @@ const char* epsilonVersion();
 const char* kernelVersion();
 const char* patchLevel();
 const char* fccId();
-constexpr static int k_serialNumberLength = 16;
 const char* serialNumber();
 const char* pcbVersion();
 const char* compilationFlags();

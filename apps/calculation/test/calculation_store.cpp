@@ -522,6 +522,9 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       &globalContext, &store);
   assertCalculationIs("log(5,5)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "undef", nullptr, &globalContext, &store);
+  assertCalculationIs("ln(89)/ln(5)", DisplayOutput::ExactAndApproximateToggle,
+                      EqualSign::Approximation, "(ln(89))/(ln(5))",
+                      "2.7889465850494", &globalContext, &store);
 
   MathPreferences::SharedPreferences()->setExamMode(previousExamMode);
   MathPreferences::SharedPreferences()->setAngleUnit(previousAngleUnit);

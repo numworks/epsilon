@@ -191,6 +191,15 @@ bool Projection::IsForbidden(const Tree* e) {
   }
 }
 
+bool Projection::HasForbiddenDescendants(const Tree* e) {
+  // early escape if exam mode is not active, preventing a deep search.
+  if (!Poincare::Preferences::SharedPreferences()->examMode().isActive()) {
+    assert(!e->hasDescendantSatisfying(IsForbidden));
+    return false;
+  }
+  return e->hasDescendantSatisfying(IsForbidden);
+}
+
 /* The order of nodes in NAry is not a concern here. They will be sorted before
  * SystemReduction. */
 bool Projection::ShallowSystemProject(Tree* e, void* context) {

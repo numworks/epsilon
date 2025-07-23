@@ -229,9 +229,12 @@ Tree* Private::PrepareTreeAndContext(const Tree* e, Parameters params,
 
 template <typename T>
 Tree* Private::PrivateToTree(const Tree* e, Dimension dim, const Context* ctx) {
-  /* TODO_PCJ: not all approximation methods come here, but this assert should
-   * always be called when approximating. */
-  assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
+  /* TODO_PCJ: not all approximation methods come here, but this should always
+   * be handled when approximating. */
+  if (Projection::HasForbiddenDescendants(e)) {
+    return KForbidden->cloneTree();
+  }
+
   if (dim.isBoolean()) {
 #if POINCARE_BOOLEAN
     BooleanOrUndefined boolean = PrivateToBoolean<T>(e, ctx);

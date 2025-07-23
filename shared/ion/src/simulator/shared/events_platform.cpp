@@ -78,7 +78,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
       }
     }
     switch (sym) {
-#if ION_KEYBOARD_RICH
+#if ION_VARIANT_EPSILON
       case SDLK_x:
         return Cut;
       case SDLK_c:
@@ -145,7 +145,7 @@ static inline Event eventFromSDLKeyboardEvent(SDL_KeyboardEvent event) {
   return None;
 }
 
-#if ION_KEYBOARD_RICH
+#if ION_VARIANT_EPSILON
 
 constexpr char k_asciiEventsOffset = 32;
 constexpr Event k_eventForASCIIWithOffset[] = {
@@ -246,7 +246,7 @@ constexpr Event k_eventForASCIIWithOffset[] = {
     None,
 };
 
-#else
+#elif ION_VARIANT_SCANDIUM
 
 constexpr char k_asciiEventsOffset = 40;
 constexpr Event k_eventForASCIIWithOffset[] = {

@@ -73,7 +73,7 @@ class State {
     return (m_bitField >> (uint8_t)k) & 1;
   }
   operator uint64_t() const { return m_bitField; }
-  void setKey(Key k) {
+  constexpr void setKey(Key k) {
     if (k != Key::None) {
       m_bitField |= (uint64_t)1 << (uint8_t)k;
     }

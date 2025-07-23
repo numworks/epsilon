@@ -52,6 +52,8 @@ class Projection {
   /* Return true if node simplification and display is forbidden by current
    * preferences. */
   static bool IsForbidden(const Tree* e);
+  // Return true if one of its descendants is forbidden by current preferences.
+  static bool HasForbiddenDescendants(const Tree* e);
 
  private:
   static bool ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,

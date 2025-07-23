@@ -239,7 +239,13 @@ bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   } else {
     changed = ApplyBeautificationSteps(e, projectionContext) || changed;
   }
-  assert(!e->hasDescendantSatisfying(Projection::IsForbidden));
+  if (Projection::HasForbiddenDescendants(e)) {
+    /* TODO: This is a defensive solution to prevent forbidden nodes from
+     *       leaking. This should not happen in beautification. */
+    assert(false);
+    e->cloneTreeOverTree(KForbidden);
+    return true;
+  }
   return changed;
 }
 

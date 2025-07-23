@@ -1,5 +1,6 @@
 #include "beautification.h"
 
+#include <poincare/preferences.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree.h>
@@ -434,11 +435,14 @@ bool ShallowBeautify(Tree* e, void* context) {
     if (ctx.getTree(KD)->treeIsIdenticalTo(10_e)) {
       e->moveTreeOverTree(
           PatternMatching::Create(KMult(KA_s, KLog(KB), KC_s, KE_s), ctx));
-    } else {
+      changed = true;
+    } else if (!Poincare::Preferences::SharedPreferences()
+                    ->examMode()
+                    .forbidBasedLogarithm()) {
       e->moveTreeOverTree(PatternMatching::Create(
           KMult(KA_s, KLogBase(KB, KD), KC_s, KE_s), ctx));
+      changed = true;
     }
-    changed = true;
   }
 
   int n = e->numberOfChildren();

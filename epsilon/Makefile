@@ -26,7 +26,7 @@ include build/config.$(PLATFORM_TYPE).mak
 
 # Select the font and layout
 KANDINSKY_font_variant := epsilon
-ION_layout_variant := epsilon
+ION_variant := epsilon
 
 POINCARE_variant := epsilon
 

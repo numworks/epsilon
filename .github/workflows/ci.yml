@@ -247,3 +247,5 @@ jobs:
       platform: n0120
       elfs-if-core: bootloader/bootloader.elf kernel/kernel.onboarding.beta.allow3rdparty.A.elf
       elfs: userland.onboarding.beta.allow3rdparty.A.elf
+      elfs-summary-if-core: kernel/kernel.onboarding.beta.allow3rdparty.A.elf
+      elfs-summary: userland.onboarding.beta.allow3rdparty.A.elf

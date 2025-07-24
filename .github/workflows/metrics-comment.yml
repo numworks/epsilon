@@ -53,9 +53,10 @@ jobs:
             } else {
               throw new Error("No binary_size found for either N0120 or N0110 .");
             }
+            var project = (model=='N0120' || model=='N0110') ? 'Epsilon' : 'Scandium';
 
             const body = (
-              "### Binary size analysis\n\n"
+              "### " + project + " Binary size analysis\n\n"
               + binary_size_summary + "\n"
               + "<details>\n<summary>Full details</summary>\n\n"
               + "### Apps\n\n"

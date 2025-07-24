@@ -11,6 +11,10 @@ on:
         type: string
       elfs-if-core:
         type: string
+      elfs-summary:
+        type: string
+      elfs-summary-if-core:
+        type: string
 
 jobs:
   binary-size:
@@ -38,13 +42,14 @@ jobs:
         run: |
           if [[ -e ion/src/device/core ]]; then
             ELFS="${{ inputs.elfs }} ${{ inputs.elfs-if-core }}"
+            ELFS_SUMMARY="${{ inputs.elfs-summary }} ${{ inputs.elfs-summary-if-core }}"
           else
             ELFS="${{ inputs.elfs }}"
+            ELFS_SUMMARY="${{ inputs.elfs-summary }}"
           fi
-          echo $ELFS
           echo "elfs=$ELFS" >> $GITHUB_OUTPUT
+          echo "elfs-summary=$ELFS_SUMMARY" >> $GITHUB_OUTPUT
           GOALS=$(for e in $ELFS; do basename $e; done | paste -sd' ' -)
-          echo $GOALS
           echo "goals=$GOALS" >> $GITHUB_OUTPUT
 
       - name: Build common ancestor
@@ -65,10 +70,9 @@ jobs:
           mkdir -p ./metrics-output
           echo ${{ github.event.number }} > ./metrics-output/PR_number
       - name: Binary size summary
-        if: false
-        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
+        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "head/$e "; done) --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
       - name: Binary size
-        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base $(for e in "${{ steps.elfs.outputs.elfs }}"; do echo -n "base/$e "; done) @Head  $(for e in "${{ steps.elfs.outputs.elfs }}"; do echo -n "head/$e "; done) --sections .text .rodata .bss .data" > ./metrics-output/binary_size_n0120
+        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "head/$e "; done) --sections .text .rodata .bss .data" > ./metrics-output/binary_size_n0120
       - name: App sizes
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" > ./metrics-output/app_sizes
       - name: Upload metrics output

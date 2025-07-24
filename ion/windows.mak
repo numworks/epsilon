@@ -15,6 +15,7 @@ SOURCES_ion += $(addprefix $(PATH_ion)/src/simulator/, \
 SOURCES_ion += ion/src/shared/collect_registers.cpp
 
 _ion_simulator_files := 1
+_ion_external_apps := 1
 
 # RC file dependencies
 $(call all_objects_for,$(PATH_ion)/src/simulator/windows/resources.rc): WRFLAGS += -I $(OUTPUT_DIRECTORY)

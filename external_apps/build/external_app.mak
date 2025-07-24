@@ -52,6 +52,7 @@ else ifeq ($(PLATFORM),web)
   LTO = 0
   SIMULATOR ?= $(SIMULATORS_DIR)/$(PLATFORM)/epsilon.html
 else
+  LIBS =
   LD_DYNAMIC_LOOKUP_FLAG = -Wl,-undefined,dynamic_lookup
   ifeq ($(HOST),windows)
     ifeq ($(OS),Windows_NT)
@@ -64,6 +65,7 @@ else
     GDB = $(MINGW_TOOLCHAIN_PREFIX)gdb --args
     LD_DYNAMIC_LOOKUP_FLAG = -L$(SIMULATORS_DIR)/$(PLATFORM) -lepsilon
     SIMULATOR_FILENAME := epsilon.exe
+    LIBS = $(SIMULATORS_DIR)/$(PLATFORM)/libepsilon.a
   else ifeq ($(HOST),linux)
     CC = gcc
     CXX = g++
@@ -164,7 +166,7 @@ else
 .PHONY: build
 build: $(BUILD_DIR)/$(APP_NAME).nwb
 
-$(BUILD_DIR)/$(APP_NAME).nwb: $(call object_for,$(SOURCES)) $(SIMULATOR)
+$(BUILD_DIR)/$(APP_NAME).nwb: $(call object_for,$(SOURCES)) $(SIMULATOR) $(LIBS)
 	@echo "LD      $@"
 	$(Q) $(CC) $(CXXFLAGS) $(call object_for,$(SOURCES)) $(LDFLAGS) -o $@
 

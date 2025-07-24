@@ -11,8 +11,8 @@ chmod +x build/setup.sh & build/setup.sh
 
 ## Simulator
 
-Build a simulator and copy it there.
+Build a simulator and copy the necessary files [here](./).
 ```bash
 make PLATFORM=windows epsilon.exe
-cp output/release/windows/epsilon.exe external_apps/epsilon_simulators/windows/
+cp output/release/windows/epsilon.exe output/release/windows/libepsilon.a external_apps/epsilon_simulators/windows/
 ```

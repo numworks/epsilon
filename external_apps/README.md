@@ -1,69 +1,73 @@
 # External apps
 
-The [NumWorks calculator](https://www.numworks.com) allows you to install and run `external apps` created by the community or yourself.
+The [NumWorks calculator](https://www.numworks.com) allows you to install and run external apps created by yourself or the community.
 
-This document describes how to install template apps created by Numworks both on the physical calculator and on the various simulators available (native or web).
+Resets or crashes will remove external apps from the device.
+Since version 24.3.0, the external apps are only hidden in exam-mode,
+and are available again once the exam-mode is removed.
 
-Since version-24, external apps are hidden in exam-mode, and are available again once the exam-mode is removed. Resets or crashes will remove external apps from the device.
-
-The available apps are:
-- [rpn_cpp](rpn_cpp): a RPN engine to be completed
+Numworks provides a few example external apps:
 - [sample_c](sample_c): a C application plotting squares and using external data
 - [sample_cpp](sample_cpp): a space invaders game
 - [sample_rust](sample_rust): not C/C++ based, following setup instructions do not apply, see [sample_rust instructions](sample_rust/README.md).
+- [rpn_cpp](rpn_cpp): a RPN engine to be completed
 
-Following instructions are to be executed from [this](./) folder.
-They will guide you to install the app [sample_cpp](sample_cpp) app on a Numworks calculator or on a simulator.
+The rest of this document contains instructions that will guide you to install
+the [sample_cpp](sample_cpp) app on a Numworks calculator or on a simulator.
+The commands are to be executed from [this](./) folder.
 
-You can swap `sample_cpp` for any other C/C++ based external app (`rpn_cpp` or `sample_c`).
+You can swap `sample_cpp` for any other C/C++ based external app (e.g.: `rpn_cpp` or `sample_c`).
 
-## Setup
+## Requirements
 
-As prerequisite, you will need:
+To build an external app, you will need:
 - A `C` compiler (`gcc` is expected on Windows and Linux and `clang` is expected on MacOS). You can run [Epsilon's setup script](../build/setup.sh) for that
-- [`npm`](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) installed
-
-Then, you'll need to install `nwlink` on your computer.
+- [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) to install `nwlink` :
 ```shell
 npm install -g nwlink
 ```
 
-## Install the app on your calculator
+## Build and install the app on your calculator
 
-This will build and load your app on a plugged in calculator.
+To install the app on your calculator, it must be plugged in and
+on the `CALCULATOR IS CONNECTED` screen:
 
-The calculator must be on the `CALCULATOR IS CONNECTED` screen.
 ![Calculator is connected screenshot](docs/calculator_connected.png)
 
+Then, run the following commad to build and install the app:
 ```shell
-make -C sample_cpp PLATFORM=device run
+make -c sample_cpp platform=device run
 ```
 
-A `THIRD PARTY APPLICATIONS` message will appear, and the app should be accessible at the end of the Home menu.
+A `THIRD PARTY APPLICATIONS` message will appear,
+and the app should be accessible at the end of the Home menu.
 
 ![Third party application screenshot](docs/third_party_applications.png)
 
-### Distribute your `.nwa` app
+### Distribute your `app.nwa`
 
-After a run or a build
+The `.nwa` file extension denotes an external app for the Numworks calculator.
+
+Anyone can install an `app.nwa` on their calculator from [NumWorks online uploader](https://my.numworks.com/apps).
+
+To build your own `nwa` file, run:
 ```shell
 make -C sample_cpp PLATFORM=device build
 ```
 
-You should have a `sample_cpp/output/device/rpn.nwa` file that you can distribute!
-
-Anyone can now install it on their calculator from the [NumWorks online uploader](https://my.numworks.com/apps).
+You should now have a `sample_cpp.nwa` file in `sample_cpp/output/device/` that you can distribute!
 
 ## Try your app on an Epsilon simulator
 
-When creating your app, testing on the physical device can be a bit tedious. Running on your app on a simulator allows you to test and debug more easily.
+When creating your app, testing on the physical device can be a bit tedious.
+Running your app on a simulator allows you to test and debug more easily.
 
-#### Prepare web and native simulators
+#### Prepare your simulator
 
-By default, an [epsilon_simulators](epsilon_simulators/) folder is expected.
+By default, the platform-specific Epsilon simulators are expected in their
+corresponding [epsilon_simulators](epsilon_simulators/) folder.
 
-It should contain the expected platform-specific Epsilon simulators to run any external app on.
-See instructions to build them from [Epsilon's root](../):
+See instructions to build them (from [Epsilon's root](../)):
 - [Web](epsilon_simulators/web/README.md): `epsilon.html`
 - [Linux](epsilon_simulators/linux/README.md): `epsilon.bin`
 - [MacOS](epsilon_simulators/macos/README.md): `epsilon.app/Contents/MacOS/Epsilon`
@@ -77,9 +81,9 @@ Simulator path can also be overridden with the `SIMULATOR=[PATH_TO_SIMULATOR]` c
 make -C sample_cpp PLATFORM=simulator run
 ```
 
-A native simulator should open on the app.
+A native simulator should open directly on the app.
 
-You can also debug your app using either `gcd` (or `lldb` on MacOS).
+You can also debug your app using `gcd` (or `lldb` on MacOS).
 ```shell
 make -C sample_cpp PLATFORM=simulator debug
 ```

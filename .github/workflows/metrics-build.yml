@@ -1,25 +1,23 @@
 name: Build metrics
 # read-only repo token
 on:
-  pull_request:
-    paths-ignore:
-      - '**/*.md'
-      - 'poincare/doc/**'
-      - 'epsilon/tests/**'
-      - 'shared/ion/src/simulator/**'
-      - '**/scandium/**'
-      - 'epsilon/external_apps/**'
-env:
-  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=n0120
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  workflow_call:
+    inputs:
+      project-path:
+        type: string
+      platform:
+        type: string
+      elfs:
+        type: string
+      elfs-if-core:
+        type: string
 
 jobs:
   binary-size:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
+    env:
+      MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }} PLATFORM=${{ inputs.platform }}
     steps:
       - name: Fetch target branch and PR branch
         uses: actions/checkout@v4
@@ -36,46 +34,43 @@ jobs:
         run: git checkout ${{ steps.common_ancestor.outputs.commit_sha }}
 
       - name: Check for core
-        id: core
-        run: '[[ -e shared/ion/src/device/core ]]'
-        continue-on-error: true
-      - name: Build common ancestor bootloader and kernel for N0120
-        if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make -C epsilon bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
-      - name: Build common ancestor userland for N0120
-        run: $DOCKER_RUN "make -C epsilon userland.onboarding.beta.allow3rdparty.A.elf"
+        id: elfs
+        run: |
+          if [[ -e ion/src/device/core ]]; then
+            ELFS="${{ inputs.elfs }} ${{ inputs.elfs-if-core }}"
+          else
+            ELFS="${{ inputs.elfs }}"
+          fi
+          echo $ELFS
+          echo "elfs=$ELFS" >> $GITHUB_OUTPUT
+          GOALS=$(for e in $ELFS; do basename $e; done | paste -sd' ' -)
+          echo $GOALS
+          echo "goals=$GOALS" >> $GITHUB_OUTPUT
+
+      - name: Build common ancestor
+        run: $DOCKER_RUN "make ${{ steps.elfs.outputs.goals }}"
       - name: Save ancestor build
-        run: mv epsilon/output/release/n0120 base
+        run: mv output/release/${{ inputs.platform }} base
 
       - name: Checkout head of PR
         run: git checkout ${{ github.event.pull_request.head.sha }}
 
-      - name: Build head bootloader and kernel for N0120
-        if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make -C epsilon bootloader.elf kernel.onboarding.beta.allow3rdparty.A.elf"
-      - name: Build head userland for N0120
-        run: $DOCKER_RUN "make -C epsilon userland.onboarding.beta.allow3rdparty.A.elf"
+      - name: Build head
+        run: $DOCKER_RUN "make ${{ steps.elfs.outputs.goals }}"
       - name: Save head build
-        run: mv epsilon/output/release/n0120 head
+        run: mv output/release/${{ inputs.platform }} head
 
       - name: Initialize metrics output
         run: |
           mkdir -p ./metrics-output
           echo ${{ github.event.number }} > ./metrics-output/PR_number
       - name: Binary size summary
-        if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
-      - name: Binary size summary (userland only)
-        if: ${{ steps.core.outcome != 'success' }}
-        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
+        if: false
+        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/userland.onboarding.beta.allow3rdparty.A.elf --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
+      - name: Binary size
+        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base $(for e in "${{ steps.elfs.outputs.elfs }}"; do echo -n "base/$e "; done) @Head  $(for e in "${{ steps.elfs.outputs.elfs }}"; do echo -n "head/$e "; done) --sections .text .rodata .bss .data" > ./metrics-output/binary_size_n0120
       - name: App sizes
-        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" > ./metrics-output/app_sizes
-      - name: Binary size N0120
-        if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/bootloader/bootloader.elf base/kernel/kernel.onboarding.beta.allow3rdparty.A.elf base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/bootloader/bootloader.elf head/kernel/kernel.onboarding.beta.allow3rdparty.A.elf head/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data" > ./metrics-output/binary_size_n0120
-      - name: Binary size N0120 (userland only)
-        if: ${{ steps.core.outcome != 'success' }}
-        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --sections .text .rodata .bss .data" > ./metrics-output/binary_size_n0120
+        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" > ./metrics-output/app_sizes
       - name: Upload metrics output
         uses: actions/upload-artifact@v4
         with:

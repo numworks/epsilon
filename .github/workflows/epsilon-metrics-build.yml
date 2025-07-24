@@ -11,7 +11,7 @@ on:
       - 'external_apps/**'
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-Epsilon-${{ github.ref }}
   cancel-in-progress: true
 
 env:

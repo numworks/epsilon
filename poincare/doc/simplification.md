@@ -15,15 +15,15 @@ graph TD;
 ```
 
 Steps:
-- Projection removes complexMode, angleUnit, ...
-- SystematicReduction applies obvious reductions
-- AdvancedReduction finds the best reduced representation
-- Beautification undoes Projection and applies readability improvements
-- In practice, Beautification also prepares for Layouter
+- `Projection` removes `complexMode`, `angleUnit`, ...
+- `SystematicReduction` applies obvious reductions
+- `AdvancedReduction` finds the best reduced representation
+- `Beautification` undoes `Projection` and applies readability improvements
+- In practice, `Beautification` also prepares for `Layouter`
 
 Expression properties:
-- Projected Expressions are made of specific Nodes
-- Projected Expressions are independent from ComplexMode, AngleUnit, ...
+- Projected Expressions are made of specific `Nodes`
+- Projected Expressions are independent from `ComplexMode`, `AngleUnit`, ...
 - Reduced Expressions are Projected Expressions
 
 These operations never need to be applied twice.
@@ -57,7 +57,7 @@ sinh(random())=\frac{e^{random()}-e^{-random()}}{2}
 <details>
 <summary>Exception with some parametrics</summary>
 
-For parametrics (in particular Sum, Product and ListSequence, others just do not handle random) containing a randomized expression, we want to approximate each instance of the expression to a different random, for instance:
+For parametrics (in particular `Sum`, `Product` and `ListSequence`, others just do not handle random) containing a randomized expression, we want to approximate each instance of the expression to a different random, for instance:
 
 $sum(random(),k,0,1) = random()+random() ≠ 2*random()$
 
@@ -75,7 +75,7 @@ and
 
 $random_1()+sequence(random_2(),k,2)$ cannot reduce to $sequence(random_1()+random_2(),k,2)$
 
-- when we approximate a parametric, we approximate each instance of the expression with new values for each seed (by giving a clean randomContext each time)
+- when we approximate a parametric, we approximate each instance of the expression with new values for each seed (by giving a clean `randomContext` each time)
 
 $$sum(tan(random_1()),k,0,1)$$
 
@@ -97,14 +97,6 @@ A possible solution would be to seed random nodes via a child containing an expr
 
 This solution was deemed too heavy for now, which is why parametrics are only handled at approximation.
 
-<details>
-<summary>Other solutions we thought of</summary>
-
-- *not seeding nodes in parametrics*, which would force us to prevent any form of simplification on an expression containing a randomized parametric (and thus check at each entry point of the simplification whether we have a randomized parametric in the expression)
-
-
-</details>
-
 </details>
 
 </details>
@@ -113,16 +105,16 @@ This solution was deemed too heavy for now, which is why parametrics are only ha
 
 Local symbols are projected to an id, based on how nested they are in the local contexts, using de Bruijn indexes. Global symbols are preserved.
 
-Below the example expression are written the projected id of the local user symbols.
+Below this expression are written the projected ids of the local user symbols.
 
 ```
 a + diff(c + x + sum(k + a + x, k, 1, x), x, b) + diff(a, a, a)
-a        c   0       0   a   1  k  1  0   x  b         0  a  a
+a        c   0       0   a   1  k     0   x  b         0  a  a
 ```
 
 The second child of the parametric (e.g. "k" in the sum above) is kept unaltered and will be used to restore the name during the beautification.
 
-When nested inside a parametered expression, all id are incremented. In the parametered expression, `0` is the local parameter.
+When nested inside a parametered expression, all ids are incremented. In the parametered expression, `0` is the local parameter.
 
 This variable id has to be accounted for when comparing trees, or manipulating them in and out of parametric expressions, using `Variables::LeaveScope` and `Variables::EnterScope` (move the variable out and in the parametric expression and increment/decrement the id).
 
@@ -143,13 +135,13 @@ For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
 
 During our simplification algorithms, the global user symbols and functions are considered to be scalar.
 
-This allows for simplifications such as $`x*y*x=x^{2}*y`$, which wouldn't be possible if x was a matrix.
+This allows for simplifications such as $`x*y*x=x^{2}*y`$, which wouldn't be possible if $x$ was a matrix.
 
 Matrices could still be stored in variables, but it would be replaced on projection.
 
 User functions and sequences have an unknown complex sign, so $re(f(0))$ cannot be simplified further.
 
-However, user symbols are considered real, $re(x)$ simplifies to $x$ under any ComplexFormat.
+However, user symbols are considered real, $re(x)$ simplifies to $x$ under any `ComplexFormat`.
 
 <details>
 <summary>Why are user symbols are considered real ?</summary>
@@ -170,7 +162,7 @@ Just like variables, we could store the UserSymbol's sign in its node.
 
 We can no longer create UserSymbol Trees without needing a special context.
 
-For example, when computing an expression's polynomial degree depending on "x", its sign would be required to be able to create a UserSymbol tree to compare subtrees with.
+For example, when computing an expression's polynomial degree depending on `x`, its sign would be required to be able to create a UserSymbol tree to compare subtrees with.
 
 However, we try not to rely on any context when manipulating projected expressions.
 
@@ -206,7 +198,7 @@ Most of the time, we use the `Default` strategy and let the simplification handl
 
 It is expected to:
 - Approximate everything that can be if strategy is `ApproximateToFloat`.
-- Reduce the number of equivalent representations of an expression (Div(A,B) -> Mult(A, Pow(B, -1))). It replace nodes not handled by reduction with other nodes handled by reduction.
+- Reduce the number of equivalent representations of an expression (`Div(A,B)` -> `Mult(A, Pow(B, -1))`). It replaces nodes not handled by reduction with other nodes handled by reduction.
 - Un-contextualize the expression (remove complex format and angle units considerations from reduction algorithm)
 - Do nothing if applied a second time
 
@@ -260,13 +252,13 @@ $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 
 Some projections are too difficult to undo to be applied at projection. But we still want to try them to see if it improves the result. We then try the projection during advanced reduction.
 
-For example, `atan(x)` should be projected in `asin(x/√(1 + x^2))` because systematic reduction shouldn't handle `atan` nodes. But `asin(x/√(1 + x^2))` can be too difficult to convert back to `atan(x)`. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
+For example, `atan(x)` should be projected to `asin(x/√(1 + x^2))` so that systematic reduction doesn't have to handle `atan` nodes. But `asin(x/√(1 + x^2))` can be too difficult to convert back to `atan(x)`. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
 
 Advanced reduction can undo it if it doesn't improve the overall expression, and systematic reduction will just ignore the unprojected node.
 
 Since this step is applied long after projection step, the new tree must already be in its projected form.
 
-In practice, we replace `atan(x)` (projected tree for atan) by `atrig(x*(1+x^2)^(-1/2),1)`.
+In practice, we replace `ATanRad(x)` (projected tree for `atan`) by `atrig(x*(1+x^2)^(-1/2),1)`.
 
 This practice tends to slow down advanced reduction so we limit it to the very minimum.
 
@@ -452,7 +444,7 @@ The exceptions are points, lists and piecewise branches (not conditions) :
 `{1, undef, 3}`
 `piecewise({x, x>0, undef})`
 
-If multiple undef can be bubbled up, we select the most "important" one.
+If multiple `undef` can be bubbled up, we select the most "important" one. For instance, `DivisionByZero` has precedence over `NonReal`.
 
 #### Floats
 
@@ -480,7 +472,7 @@ With dependency, we can replace the local variable:
 
 At this step, there are still nested lists in the expression, but we know the expected list length.
 The list expression is turned into an actual list node by `List::BubbleUp`.
-It build the elements one at a time, using GetElement to retrieve them.
+It build the elements one at a time, using `GetElement` to retrieve them.
 
 For instance: `GetElement({2, 3, 4}, 1) -> 3` and `GetElement(ListSequence(2*k, k, 50), 36) -> 2*36 -> 72`
 
@@ -494,9 +486,9 @@ It is expected to:
 
 ### Effects
 
-Using Expand and Contract formulas, Advanced reduction tries to transform the expression, and calls systematic reduction at each step.
+Using `Expand` and `Contract` formulas, advanced reduction tries to transform the expression, and calls systematic reduction at each step.
 
-Some expansion operations are used specifically to expand algebraic operations (+, ×, ^) and are thus grouped to be called on their own when necessary (for instance, to expand a polynomial function before computing its coefficients).
+Some expansion operations are used specifically to expand algebraic operations (+, ×, ^) and are thus grouped together to be called on their own when necessary (for instance, to expand a polynomial function before computing its coefficients).
 
 <details>
 <summary>List of advanded reductions</summary>
@@ -552,11 +544,11 @@ See examples in [annex](advanced-reduction-examples).
 
 ### Metric
 
-To decide which form of an expression is best for us, we implement our own metric on expressions. We call a metric any function assigning a score to a given expression. In our case, we want the metric to give a sense of the "size" or "simplicity" of our expression, so that, in advanced reduction, we aim to minimize this metric. The metric is thus called at each leaf of the advanced reduction search, to compare the leaf expression to the best expression found until then (i.e. expression with the lowest metric).
+To decide which form of an expression is best for us, we implement our own metric on expressions. We call a metric any function assigning a score to a given expression. In our case, we want the metric to give a sense of the "size" or "complexity" of our expression, so that, in advanced reduction, we aim to minimize this metric. The metric is thus called at each leaf of the advanced reduction search, to compare the leaf expression to the best expression found until then (i.e. expression with the lowest metric).
 
-Ideally, a metric should yield a different result for different expressions. We currently fallback on hash comparison in advanced-reduction.
+Ideally, a metric should yield a different result for different expressions. In case of an equality, we currently fallback on hash comparison in advanced-reduction.
 
-A simple metric consists in counting the size of an expression, but it would not take into account that some nodes appear or disappear at beautification (also, calling beautification at each step of the advanced reduction would be too costly). Some nodes are also less desirable than others and having our own metric gives us more power to decide which expression we want to display.
+A simple metric consists in counting the size of an expression, but it would not take into account that some nodes appear or disappear at beautification (and calling beautification at each step of the advanced reduction would be too costly). Some nodes are also less desirable than others and having our own metric gives us more power to decide which expression we want to display.
 
 #### Examples
 

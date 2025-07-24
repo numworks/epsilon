@@ -45,11 +45,15 @@ class Internal::Context;
 void myMethod(Internal::Context ctx) const;
 ```
 
+## On using Trees
+
+To understand what trees are and how they should be used in general, see [here](tree.md).
+
 ## Only edit Trees on the TreeStack
 
 The `TreeStack` is the only place where `Tree` edition is allowed.
 
-When a `Tree` is stored out of the `TreeStack` and needs to be changed, it is copied onto `TreeStack`, edited there, and then the original `Tree` is overwritten with the result.
+When a `Tree` is stored out of the `TreeStack` and needs to be changed, it is copied onto the `TreeStack`, edited there, and then the original `Tree` is overwritten with the result.
 
 ## Use switch and C-style code with Tree structure
 
@@ -154,7 +158,7 @@ static bool Alter(Tree* tree, Context ctx);
 
 ## Iteration over child
 
-`Tree::child` method can be quite costly as it needs to browse through every previous children. Calling it multiple time over successive children is really costly.
+`Tree::child` method can be quite costly as it needs to browse through every previous children. Calling it multiple times over successive children is really costly.
 
 > [!CAUTION]
 > Avoid this:
@@ -232,11 +236,11 @@ Tree* firstChild = tree->nextNode();
 Tree* firstChild = tree->child(0);
 ```
 
-Both examples are equivalent to access a tree's first child, but the later asserts the Tree has a child and makes the intent clear.
+Both examples are equivalent to access a tree's first child, but the latter asserts that the `Tree` has a child and makes the intent clear.
 
 ## Save children pointers when used several times
 
-Remember that `nextTree` and `child` walk all descendants, it may be costly when the Tree is large.
+Remember that `nextTree` and `child` walk all descendants, it may be costly when the `Tree` is large.
 
 > [!CAUTION]
 > Avoid this:
@@ -264,12 +268,12 @@ bool TestSomethingOnPow(const Tree * pow) {
 
 ## Be careful with move/clone before a TreeRef
 
-Sometimes a TreeRef is created to keep track of the end of a Tree, by pointing to the beginning of the next tree.
+Sometimes a `TreeRef` is created to keep track of the end of a `Tree`, by pointing to the beginning of the next tree.
 ```cpp
 TreeRef end = tree->nextTree();
 ```
 
-If another node/tree is moved/cloned before this next tree, then the `end` TreeRef will point to the end of this new node/tree, and not to the end of the original tree.
+If another node/tree is moved/cloned before this next tree, then the `end` `TreeRef` will point to the end of this new node/tree, and not to the end of the original tree.
 To avoid this, the *at* move/clone operation should be used instead.
 
 > [!CAUTION]
@@ -372,7 +376,7 @@ switch(layout->layoutType()) {
 ```
 
 ## Layouts: Use Rack* and Layout*
-To make the distinction on what the Tree* points to.
+To make the distinction on what the `Tree*` points to.
 > [!CAUTION]
 > Avoid this:
 
@@ -390,11 +394,3 @@ void moveCursorAt(Rack * rack, int index) {
   Layout * layout = rack->child(index);
   ...
 ```
-
-## Others
-
-| Avoid | Prefer |
-|-------|------|
-| Non-recursive bottom-up iteration | Iterate in the right direction to always change the downstream children |
-| Handling ill-formatted expression during simplification | Implement check in `DeepCheckDimensions` or `DeepCheckListLength` to always assume valid expressions |
-| Uncertain manipulation of multiple `Tree* ` | Using `TreeRef` |

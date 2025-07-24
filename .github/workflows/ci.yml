@@ -238,3 +238,12 @@ jobs:
     uses: ./.github/workflows/code_coverage.yml
     with:
       project-path: epsilon
+  binary-size:
+    # TODO: ignore changes in ion/src/simulator
+    name: Build metrics
+    uses: ./.github/workflows/metrics-build.yml
+    with:
+      project-path: epsilon
+      platform: n0120
+      elfs-if-core: bootloader/bootloader.elf kernel/kernel.onboarding.beta.allow3rdparty.A.elf
+      elfs: userland.onboarding.beta.allow3rdparty.A.elf

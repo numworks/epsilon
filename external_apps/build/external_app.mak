@@ -52,7 +52,6 @@ else ifeq ($(PLATFORM),web)
   LTO = 0
   SIMULATOR ?= $(SIMULATORS_DIR)/$(PLATFORM)/epsilon.html
 else
-  SIMULATOR_PATH =
   LD_DYNAMIC_LOOKUP_FLAG = -Wl,-undefined,dynamic_lookup
   ifeq ($(HOST),windows)
     ifeq ($(OS),Windows_NT)
@@ -63,22 +62,21 @@ else
     CC = $(MINGW_TOOLCHAIN_PREFIX)gcc
     CXX = $(MINGW_TOOLCHAIN_PREFIX)g++
     GDB = $(MINGW_TOOLCHAIN_PREFIX)gdb --args
-    EXE = exe
     LD_DYNAMIC_LOOKUP_FLAG = -L$(SIMULATORS_DIR)/$(PLATFORM) -lepsilon
+    SIMULATOR_FILENAME := epsilon.exe
   else ifeq ($(HOST),linux)
     CC = gcc
     CXX = g++
     GDB = gdb --args
-    EXE = bin
+    SIMULATOR_FILENAME := epsilon.bin
   else
     CXX = clang++
     GDB = lldb --
-    EXE = app
-    SIMULATOR_PATH = /Contents/MacOS/Epsilon
+    SIMULATOR_FILENAME := epsilon.app/Contents/MacOS/Epsilon
   endif
   LINK_GC = 0
   LTO = 0
-  SIMULATOR ?= $(SIMULATORS_DIR)/$(PLATFORM)/epsilon.$(EXE)$(SIMULATOR_PATH)
+  SIMULATOR ?= $(SIMULATORS_DIR)/$(PLATFORM)/$(SIMULATOR_FILENAME)
 endif
 
 NWLINK = npx --yes -- nwlink

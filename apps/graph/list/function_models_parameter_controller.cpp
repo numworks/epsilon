@@ -116,6 +116,8 @@ FunctionModelsParameterController::Models() {
       return layoutVariant1;
     case CountryPreferences::GraphTemplatesLayout::Variant2:
       return layoutVariant2;
+    case CountryPreferences::GraphTemplatesLayout::Variant3:
+      return layoutVariant3;
     default:
       return layoutDefault;
   }

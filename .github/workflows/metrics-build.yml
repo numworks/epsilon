@@ -15,6 +15,8 @@ on:
         type: string
       elfs-summary-if-core:
         type: string
+      app-sizes:
+        type: boolean
 
 jobs:
   binary-size:
@@ -53,7 +55,7 @@ jobs:
           echo "goals=$GOALS" >> $GITHUB_OUTPUT
 
       - name: Build common ancestor
-        run: $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
+        run: $DOCKER_RUN "make DEBUG=0 -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
       - name: Save ancestor build
         run: mv ${{ inputs.project-path }}/output/release/${{ inputs.platform }} base
 
@@ -61,7 +63,7 @@ jobs:
         run: git checkout ${{ github.event.pull_request.head.sha }}
 
       - name: Build head
-        run: $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
+        run: $DOCKER_RUN "make DEBUG=0 -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
       - name: Save head build
         run: mv ${{ inputs.project-path }}/output/release/${{ inputs.platform }} head
 
@@ -74,6 +76,7 @@ jobs:
       - name: Binary size
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "head/$e "; done) --sections .text .rodata .bss .data" > ./metrics-output/binary_size_n0120
       - name: App sizes
+        if: ${{ inputs.app-sizes }}
         run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" > ./metrics-output/app_sizes
       - name: Upload metrics output
         uses: actions/upload-artifact@v4

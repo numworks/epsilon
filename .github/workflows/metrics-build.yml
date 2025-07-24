@@ -53,17 +53,17 @@ jobs:
           echo "goals=$GOALS" >> $GITHUB_OUTPUT
 
       - name: Build common ancestor
-        run: $DOCKER_RUN "make ${{ steps.elfs.outputs.goals }}"
+        run: $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
       - name: Save ancestor build
-        run: mv output/release/${{ inputs.platform }} base
+        run: mv ${{ inputs.project-path }}/output/release/${{ inputs.platform }} base
 
       - name: Checkout head of PR
         run: git checkout ${{ github.event.pull_request.head.sha }}
 
       - name: Build head
-        run: $DOCKER_RUN "make ${{ steps.elfs.outputs.goals }}"
+        run: $DOCKER_RUN "make -C ${{ inputs.project-path }} ${{ steps.elfs.outputs.goals }}"
       - name: Save head build
-        run: mv output/release/${{ inputs.platform }} head
+        run: mv ${{ inputs.project-path }}/output/release/${{ inputs.platform }} head
 
       - name: Initialize metrics output
         run: |

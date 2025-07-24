@@ -32,6 +32,7 @@ extern const MessageTree s_modelTestModeMenu[2];
 extern const MessageTree
     s_modelAboutChildren[AboutController::k_totalNumberOfCell];
 extern const MessageTree s_model;
+extern const int s_aboutIndex;
 
 class MainController : public Escher::SelectableListViewController<
                            Escher::StandardMemoizedListViewDataSource> {

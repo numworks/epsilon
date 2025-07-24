@@ -19,7 +19,7 @@ env:
 
 jobs:
   binary-size:
-    name: Build metrics
+    name: Epsilon
     uses: ./.github/workflows/metrics-build.yml
     with:
       project-path: epsilon

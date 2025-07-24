@@ -44,7 +44,7 @@ function Calculator(emModule) {
 
   var defaultModule = {
     canvas: mainCanvas,
-    args,
+    arguments: args,
     onEpsilonIdle: function () {
       calculatorElement.classList.remove('loading');
     },

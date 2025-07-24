@@ -41,7 +41,12 @@ jobs:
             var fs = require('fs');
             var pr_number = Number(fs.readFileSync('./PR_number'));
             var binary_size_summary = fs.readFileSync('./binary_size_summary');
-            var app_sizes = fs.readFileSync('./app_sizes');
+            var app_sizes;
+            if (fs.existsSync('./app_sizes')) {
+              app_sizes = fs.readFileSync('./app_sizes');
+            } else {
+              app_sizes = '';
+            }
             var binary_size_model;
             var model;
             if (fs.existsSync('./binary_size_n0110')) {
@@ -59,8 +64,7 @@ jobs:
               "### " + project + " Binary size analysis\n\n"
               + binary_size_summary + "\n"
               + "<details>\n<summary>Full details</summary>\n\n"
-              + "### Apps\n\n"
-              + app_sizes + "\n\n"
+              + (app_sizes ? ("### Apps\n\n" + app_sizes + "\n\n") : '')
               + "### " + model + "\n\n"
               + binary_size_model + "\n"
               + "</details>"

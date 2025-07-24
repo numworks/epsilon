@@ -1,0 +1,30 @@
+name: Build metrics
+
+on:
+  pull_request:
+    paths-ignore:
+      - '**/*.md'
+      - 'poincare/doc/**'
+      - 'tests/**'
+      - '**/scandium/**'
+      - 'ion/src/simulator/**'
+      - 'external_apps/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  MAKEFLAGS: ${{ vars.MAKEFLAGS_CACHED }}
+
+jobs:
+  binary-size:
+    name: Build metrics
+    uses: ./.github/workflows/metrics-build.yml
+    with:
+      project-path: epsilon
+      platform: n0120
+      elfs-if-core: bootloader/bootloader.elf kernel/kernel.onboarding.beta.allow3rdparty.A.elf
+      elfs: userland.onboarding.beta.allow3rdparty.A.elf
+      elfs-summary-if-core: kernel/kernel.onboarding.beta.allow3rdparty.A.elf
+      elfs-summary: userland.onboarding.beta.allow3rdparty.A.elf

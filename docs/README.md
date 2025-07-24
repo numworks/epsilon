@@ -4,11 +4,11 @@ Epsilon is a high-performance graphing calculator operating system. It includes 
 
 ## Build your own version of Epsilon
 
-First of all, you should learn [how to build and run](build/index.md) your very own version of Epsilon. Note that you don't need an actual NumWorks calculator to do this. Indeed, Epsilon can be compiled as a standalone application that will run on your computer.
+First of all, you should learn [how to build and run](build/README.md) your very own version of Epsilon. Note that you don't need an actual NumWorks calculator to do this. Indeed, Epsilon can be compiled as a standalone application that will run on your computer.
 
 ## Discover Epsilon's architecture
 
-Epsilon's code is comprehensive, as it goes from a keyboard driver up to a math engine. Epsilon is made out of five main bricks: [Ion](ion/index.md), Kandinsky, [Poincaré](poincare/index.md), Escher, and Apps.
+Epsilon's code is comprehensive, as it goes from a keyboard driver up to a math engine. Epsilon is made out of five main bricks: [Ion](ion/README.md), Kandinsky, [Poincaré](poincare/README.md), Escher, and Apps.
 
 ![Epsilon's architecture](architecture.svg)
 

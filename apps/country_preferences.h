@@ -48,6 +48,7 @@ class CountryPreferences {
     Default,
     Variant1,
     Variant2,
+    Variant3,
   };
 
   /* Variant1 -> The models change (mx+p instead of ax+b) and display residual

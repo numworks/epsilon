@@ -55,7 +55,7 @@ class FunctionModelsParameterController
   };
 
   constexpr static Model layoutVariant1[] = {
-      // US & NL
+      // US
       Model::Equation,     Model::Function, Model::Inequality, Model::Point,
       Model::ListOfPoints, Model::Inverse,  Model::Piecewise,  Model::Conic,
       Model::Parametric,   Model::Polar,
@@ -69,12 +69,20 @@ class FunctionModelsParameterController
       Model::ListOfPoints,
   };
 
+  constexpr static Model layoutVariant3[] = {
+      // NL
+      Model::Function,   Model::Equation, Model::Inequality,   Model::Inverse,
+      Model::Piecewise,  Model::Point,    Model::ListOfPoints, Model::Conic,
+      Model::Parametric, Model::Polar,
+  };
+
   constexpr static int k_numberOfExpressionModels =
       static_cast<int>(Model::NumberOfModels) - 1;
 
   static_assert(
       sizeof(layoutDefault) == sizeof(layoutVariant1) &&
-          sizeof(layoutDefault) == sizeof(layoutVariant2),
+          sizeof(layoutDefault) == sizeof(layoutVariant2) &&
+          sizeof(layoutDefault) == sizeof(layoutVariant3),
       "Template layouts are assumed to be the same length in all countries");
   constexpr static int k_numberOfExpressionCells = std::size(layoutDefault);
 

@@ -24,4 +24,6 @@ constexpr MessageTree s_modelMenu[] = {
 constexpr MessageTree s_model =
     MessageTree(I18n::Message::SettingsApp, s_modelMenu);
 
+constexpr int s_aboutIndex = 11;
+
 }  // namespace Settings

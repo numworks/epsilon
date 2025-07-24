@@ -90,6 +90,15 @@ MainController::MainController(Responder* parentResponder)
 bool MainController::handleEvent(Ion::Events::Event event) {
   GlobalPreferences* preferences = GlobalPreferences::SharedGlobalPreferences();
   int index = selectedRow();
+  if (event == Ion::Events::Zero) {
+    if (index != s_aboutIndex) {
+      m_selectableListView.selectCell(s_aboutIndex);
+      return true;
+    }
+    // Open About section
+    pushModel(model()->childAtIndex(getModelIndex(selectedRow())));
+    return true;
+  }
   int type = typeAtRow(index);
   if (type == k_resetCellType) {
     // Escape now since ButtonCell is not a MenuCell

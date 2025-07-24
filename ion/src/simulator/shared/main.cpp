@@ -37,8 +37,10 @@ extern size_t eadk_external_data_size;
 #include <dlfcn.h>
 #endif
 
+#if ION_SIMULATOR_FILES
 constexpr static const char* k_loadStateFileKeys[] = {"--load-state-file",
                                                       "-l"};
+#endif
 constexpr static const char* k_headlessFlags[] = {"--headless", "-h"};
 constexpr static const char* k_languageFlag = "--language";
 constexpr static const char* k_limitStackUsageFlag = "--limit-stack-usage";

@@ -8,10 +8,10 @@ You can try Epsilon straight from your browser in the [online simulator](https:/
 
 ## Diving in
 
-We highly recommend you start by reading the [documentation](docs/index.md) for this project. You'll learn how to install the [SDK](docs/build/index.md) and about the overall architecture of the Epsilon.
+We highly recommend you start by reading the [documentation](docs/README.md) for this project. You'll learn how to install the [SDK](docs/build/README.md) and about the overall architecture of the Epsilon.
 
 On a simulator or your own calculator, you can build and run your own projects following these documentations:
-- A [custom firmware](docs/build/index.md)
+- A [custom firmware](docs/build/README.md)
 - An [external app](external_apps/README.md)
 
 ## Contributing

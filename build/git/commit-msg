@@ -35,7 +35,7 @@ commit_msg_file=$1
 commit_msg=$(cat "$commit_msg_file")
 
 # Define the pattern for the commit message
-pattern="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z\/]+\))?: .*$"
+pattern="^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-zA-Z\/_]+\))?: .*$"
 
 # Check if the commit message matches the pattern
 if ! [[ $commit_msg =~ $pattern ]]; then

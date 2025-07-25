@@ -86,6 +86,7 @@ constexpr auto KDep = KBinary<Type::Dep>();
 constexpr auto KNonNull = KUnary<Type::NonNull>();
 constexpr auto KReal = KUnary<Type::Real>();
 constexpr auto KRealPos = KUnary<Type::RealPos>();
+constexpr auto KRealInteger = KUnary<Type::RealInteger>();
 constexpr auto KRound = KBinary<Type::Round>();
 constexpr auto KBinomial = KBinary<Type::Binomial>();
 constexpr auto KPermute = KBinary<Type::Permute>();

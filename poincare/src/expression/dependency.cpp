@@ -414,6 +414,41 @@ bool ReduceDependencies(Tree* dependencies) {
         changed = true;
         continue;
       }
+    } else if (dependency->isRealInteger()) {
+      ComplexSign sign = GetComplexSign(dependency->child(0));
+      if (sign.isNonReal()) {
+        /* dep(..., {realInteger(x)},) = dep(..., {undef}) if x is not real */
+        dependency->cloneTreeOverTree(KUndef);
+        changed = true;
+        continue;
+      }
+      if (sign.isReal() && sign.realSign().isInteger()) {
+        // dep(..., {realInteger(x)}) = dep(..., {x}) if x is real and integer
+        dependency->moveTreeOverTree(dependency->child(0));
+        changed = true;
+        continue;
+      }
+      Tree* core = dependency->child(0);
+      if (core->isAdd()) {
+        int numberOfChildren = core->numberOfChildren();
+        assert(numberOfChildren > 0);
+        int i = 0;
+        Tree* child = core->child(0);
+        while (i < numberOfChildren) {
+          if (child->isInteger()) {
+            child->removeTree();
+            --numberOfChildren;
+            changed = true;
+          } else {
+            ++i;
+            child = child->nextTree();
+          }
+        }
+        if (changed) {
+          NAry::SetNumberOfChildren(core, numberOfChildren);
+          NAry::SquashIfPossible(core);
+        }
+      }
     }
     dependency = dependency->nextTree();
   }

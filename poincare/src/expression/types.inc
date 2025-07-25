@@ -355,6 +355,8 @@ NODE(NonNull, BASE, 1)
 NODE(Real, BASE, 1)
 // RealPos(x) = {0 if x ∈ ℝ+, nonreal} (only used in DepList)
 NODE(RealPos, BASE, 1)
+// RealInteger(x) = {0 if x ∈ ℤ, undef} (only used in DepList)
+NODE(RealInteger, BASE, 1)
 
 NODE(Set, BASE, NARY)
 NODE(Parentheses, BASE, 1)

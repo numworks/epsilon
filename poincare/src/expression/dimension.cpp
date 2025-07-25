@@ -576,6 +576,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
     case Type::NonNull:
     case Type::Real:
     case Type::RealPos:
+    case Type::RealInteger:
       return childDim[0].isScalar() || childDim[0].isUnit();
     default:
       if (e->isLogicalOperatorOrBoolean()) {

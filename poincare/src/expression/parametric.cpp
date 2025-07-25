@@ -77,7 +77,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   };
   constexpr bool (*IsIntegerOrHasUserSymbol)(const Tree*) = [](const Tree* e) {
     return e->isInteger() || e->hasDescendantSatisfying([](const Tree* child) {
-      return child->isUserSymbol();
+      return child->isUserSymbol() || child->isVar();
     });
   };
   /* Since child should be reduced at this point, ensure bounds are integer or

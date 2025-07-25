@@ -67,6 +67,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   Tree* lowerBound = e->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
 
+  // TODO: use Undefined::ReplaceTreeWithDimensionnedType
   constexpr void (*ToUndefRespectingDim)(Tree*) = [](Tree* e) {
     Dimension dim = Dimension::Get(e->child(k_integrandIndex));
     if (dim.isMatrix()) {
@@ -82,7 +83,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   };
   /* Since child should be reduced at this point, ensure bounds are integer or
    * contains UserSymbol (CAS) */
-  ComplexSign sign = ComplexSignOfDifference(lowerBound, upperBound);
+  ComplexSign sign = ComplexSignOfDifference(upperBound, lowerBound);
   if (!IsIntegerOrHasUserSymbol(lowerBound) ||
       !IsIntegerOrHasUserSymbol(upperBound) || !sign.isReal()) {
     ToUndefRespectingDim(e);
@@ -90,7 +91,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   }
 
   // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1
-  if (sign.realSign().isStrictlyPositive()) {
+  if (sign.realSign().isStrictlyNegative()) {
     Dimension dim = Dimension::Get(e->child(k_integrandIndex));
     if (dim.isMatrix()) {
       e->moveTreeOverTree(isSum ? Matrix::Zero(dim.matrix)

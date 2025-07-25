@@ -75,6 +75,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   ComplexSign signLowerBound = GetComplexSign(lowerBound);
   ComplexSign signUpperBound = GetComplexSign(upperBound);
   if (signLowerBound.isNonReal() || signUpperBound.isNonReal()) {
+    // NOTE: catches bounds like: i, k+i
     Undefined::ReplaceTreeWithDimensionedType(e, Type::UndefOutOfDefinition);
     return true;
   }
@@ -85,12 +86,17 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     bool boundsHaveSymbol =
         HasUserSymbol(lowerBound) || HasUserSymbol(upperBound);
     if (!boundsHaveSymbol || sign.isNonReal()) {
+      // NOTE: catches bounds like: π
       Undefined::ReplaceTreeWithDimensionedType(e, Type::UndefOutOfDefinition);
       return true;
     }
-    if (!sign.isReal() || !boundsHaveSymbol) {
+    if (!sign.isReal()) {
+      // NOTE: catches bounds like: k×i
       return false;
     }
+    assert(boundsHaveSymbol && sign.isReal());
+    /* TODO: Should add dependency for bounds to be integers and boundsDiff to
+     * be positive: atm bounds like k+π are not caught */
   }
 
   // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1

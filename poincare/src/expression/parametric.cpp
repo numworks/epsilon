@@ -11,6 +11,7 @@
 #include "matrix.h"
 #include "sign.h"
 #include "systematic_reduction.h"
+#include "undefined.h"
 #include "units/unit.h"
 #include "variables.h"
 
@@ -67,15 +68,6 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   Tree* lowerBound = e->child(k_lowerBoundIndex);
   Tree* upperBound = lowerBound->nextTree();
 
-  // TODO: use Undefined::ReplaceTreeWithDimensionnedType
-  constexpr void (*ToUndefRespectingDim)(Tree*) = [](Tree* e) {
-    Dimension dim = Dimension::Get(e->child(k_integrandIndex));
-    if (dim.isMatrix()) {
-      e->moveTreeOverTree(Matrix::Undef(dim.matrix));
-    } else {
-      e->cloneTreeOverTree(KUndef);
-    }
-  };
   constexpr bool (*HasUserSymbol)(const Tree*) = [](const Tree* e) {
     return e->hasDescendantSatisfying(
         [](const Tree* child) { return child->isUserSymbol(); });
@@ -83,7 +75,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   ComplexSign signLowerBound = GetComplexSign(lowerBound);
   ComplexSign signUpperBound = GetComplexSign(upperBound);
   if (signLowerBound.isNonReal() || signUpperBound.isNonReal()) {
-    ToUndefRespectingDim(e);
+    Undefined::ReplaceTreeWithDimensionedType(e, Type::UndefOutOfDefinition);
     return true;
   }
   ComplexSign sign = ComplexSignOfDifference(upperBound, lowerBound);
@@ -93,7 +85,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     bool boundsHaveSymbol =
         HasUserSymbol(lowerBound) || HasUserSymbol(upperBound);
     if (!boundsHaveSymbol || sign.isNonReal()) {
-      ToUndefRespectingDim(e);
+      Undefined::ReplaceTreeWithDimensionedType(e, Type::UndefOutOfDefinition);
       return true;
     }
     if (!sign.isReal() || !boundsHaveSymbol) {

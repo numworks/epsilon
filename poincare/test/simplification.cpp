@@ -608,62 +608,74 @@ QUIZ_CASE(pcj_simplification_parametric) {
   // sum
   simplifies_to("sum(1,k,3,4)", "2");
   simplifies_to("sum(k,k,3,4)", "7");
-  simplifies_to("sum(1,k,a,a)", "1");
-  simplifies_to("sum(π,k,a,a+1)", "2×π");
+  simplifies_to("sum(1,k,a,a)", "dep(1,{realInteger(a)})");
+  simplifies_to("sum(π,k,a,a+1)", "dep(2×π,{realInteger(a)})");
   simplifies_to("sum(1,k,1,floor(tan(-11)))", "225");
-  simplifies_to("sum(n,k,1,n)", "n^2");
-  simplifies_to("sum(a*b,k,1,n)", "a×b×n");
-  simplifies_to("sum(k,k,n,j)", "(j^2-n^2+j+n)/2");
-  simplifies_to("2×sum(k,k,0,n)+n", "n×(n+2)");
-  simplifies_to("2×sum(k,k,3,n)+n", "n×(n+2)-6");
-  simplifies_to("sum(k^2,k,n,j)", "(2×j^3-2×n^3+3×j^2+3×n^2+j-n)/6");
+  simplifies_to("sum(n,k,1,n)", "dep(n^2,{realInteger(n)})");
+  simplifies_to("sum(a*b,k,1,n)", "dep(a×b×n,{realInteger(n)})");
+  simplifies_to("sum(k,k,n,j)",
+                "dep((j^2-n^2+j+n)/2,{realInteger(n),realInteger(j)})");
+  simplifies_to("2×sum(k,k,0,n)+n", "dep(n×(n+2),{realInteger(n)})");
+  simplifies_to("2×sum(k,k,3,n)+n", "dep(n×(n+2)-6,{realInteger(n)})");
+  simplifies_to(
+      "sum(k^2,k,n,j)",
+      "dep((2×j^3-2×n^3+3×j^2+3×n^2+j-n)/6,{realInteger(n),realInteger(j)})");
   simplifies_to("sum(k^2,k,2,5)", "54");
   simplifies_to("sum((2k)^2,k,2,5)", "216");
-  simplifies_to("sum((2k)^2,k,0,n)", "(2×n×(n+1)×(2×n+1))/3");
+  simplifies_to("sum((2k)^2,k,0,n)",
+                "dep((2×n×(n+1)×(2×n+1))/3,{realInteger(n)})");
   simplifies_to("sum((2k)^4,k,0,n)", "16×sum(k^4,k,0,n)");
   simplifies_to("sum(k*cos(k),k,1,n)", "sum(cos(k)×k,k,1,n)");
-  simplifies_to("sum(sum(x*j,j,1,n),k,1,2)", "n×(n+1)×x");
-  simplifies_to("sum(sum(a*k,a,0,j),k,1,n)", "(j×(j+1)×n×(n+1))/4");
-  simplifies_to("sum(sum(j,j,0,k),k,1,n)", "n^3/6+n^2/2+n/3");
+  simplifies_to("sum(sum(x*j,j,1,n),k,1,2)", "dep(n×(n+1)×x,{realInteger(n)})");
+  simplifies_to("sum(sum(a*k,a,0,j),k,1,n)",
+                "dep((j×(j+1)×n×(n+1))/4,{realInteger(j),realInteger(n)})");
+  simplifies_to("sum(sum(j,j,0,k),k,1,n)",
+                "dep(n^3/6+n^2/2+n/3,{realInteger(n)})");
   simplifies_to("sum(sum(j,j,0,k+π),k,1,n)", "undef");
   simplifies_to("sum(π^k,k,4,2)", "0");
-  simplifies_to("sum(sin(k),k,a+10,a)", "0");
-  simplifies_to("sum(sin(k),k,a,a-10)", "0");
+  simplifies_to("sum(sin(k),k,a+10,a)", "dep(0,{realInteger(a)})");
+  simplifies_to("sum(sin(k),k,a,a-10)", "dep(0,{realInteger(a)})");
   simplifies_to("sum(random()*k,k,0,n)", "sum(random()×k,k,0,n)");
   simplifies_to("sum(random(),k,0,10)", "sum(random(),k,0,10)");
-  simplifies_to("sum(k/k,k,1,n)", "dep(n,{sum(k^0,k,1,n),sum(1/k,k,1,n)})");
-  simplifies_to("sum(k/k,k,0,n)", "dep(n+1,{sum(k^0,k,0,n),sum(1/k,k,0,n)})");
+  simplifies_to("sum(k/k,k,1,n)",
+                "dep(n,{sum(1/k,k,1,n),sum(k^0,k,1,n),realInteger(n)})");
+  simplifies_to("sum(k/k,k,0,n)",
+                "dep(n+1,{sum(1/k,k,0,n),sum(k^0,k,0,n),realInteger(n)})");
   simplifies_to("sum(k/k,k,-1,n)",
-                "dep(n+2,{sum(k^0,k,-1,n),sum(1/k,k,-1,n)})");
+                "dep(n+2,{sum(1/k,k,-1,n),sum(k^0,k,-1,n),realInteger(n)})");
 
   // product
-  simplifies_to("product(p,k,j,n)", "p^(-j+n+1)");
-  simplifies_to("product(p^3,k,j,n)", "(p^3)^(-j+n+1)");
+  simplifies_to("product(p,k,j,n)",
+                "dep(p^(-j+n+1),{realInteger(j),realInteger(n)})");
+  simplifies_to("product(p^3,k,j,n)",
+                "dep((p^3)^(-j+n+1),{realInteger(j),realInteger(n)})");
   simplifies_to("product(k^3,k,j,n)", "product(k,k,j,n)^3");
   simplifies_to("product(k^x,k,j,n)", "product(k^x,k,j,n)");
   simplifies_to("product(x^k,k,j,n)", "product(x^k,k,j,n)");
   simplifies_to("product(π^k,k,2,1)", "1");
-  simplifies_to("product(sin(k),k,a+10,a)", "1");
-  simplifies_to("product(sin(k),k,a,a-10)", "1");
+  simplifies_to("product(sin(k),k,a+10,a)", "dep(1,{realInteger(a)})");
+  simplifies_to("product(sin(k),k,a,a-10)", "dep(1,{realInteger(a)})");
   simplifies_to("product(random()*k,k,0,n)", "product(random()×k,k,0,n)");
   simplifies_to("product(random(),k,0,10)", "product(random(),k,0,10)");
 
   // product(exp) <-> exp(sum)
   simplifies_to(
       "exp(2*sum(ln(k),k,a,b) + ln(b))",
-      "dep(b×product(k,k,a,b)^2,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,"
-      "b),nonNull(b),realPos(b)})");
-  simplifies_to("product(exp(2k),k,0,y)", "e^(y^2+y)");
+      "dep(b×product(k,k,a,b)^2,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,b),"
+      "nonNull(b),realPos(b)})");
+  simplifies_to("product(exp(2k),k,0,y)", "dep(e^(y^2+y),{realInteger(y)})");
 
   // expand sum
-  simplifies_to("sum(k^3+4,k,n,n+3)-16", "sum(k^3,k,n,n+3)");
+  simplifies_to("sum(k^3+4,k,n,n+3)-16",
+                "dep(sum(k^3,k,n,n+3),{realInteger(n)})");
   simplifies_to("sum(x*k!,k,1,2)", "3*x");
-  simplifies_to("sum(tan(k),k,a,a)", "tan(a)");
+  simplifies_to("sum(tan(k),k,a,a)", "dep(tan(a),{realInteger(a)})");
 
   // expand product
-  simplifies_to("product(4*cos(k),k,n,n+3)/256", "product(cos(k),k,n,n+3)");
+  simplifies_to("product(4*cos(k),k,n,n+3)/256",
+                "dep(product(cos(k),k,n,n+3),{realInteger(n)})");
   simplifies_to("product(cos(k),k,2,4)-cos(2)×cos(3)×cos(4)", "0");
-  simplifies_to("product(sin(k),k,a+1,a+1)", "sin(a+1)");
+  simplifies_to("product(sin(k),k,a+1,a+1)", "dep(sin(a+1),{realInteger(a)})");
 
   Shared::GlobalContext globalContext;
   store("x→f(x)", &globalContext);
@@ -673,56 +685,63 @@ QUIZ_CASE(pcj_simplification_parametric) {
   };
 
   // contract sum
-  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b)", "0", ctx);
+  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b)",
+                "dep(0,{realInteger(a),realInteger(b)})", ctx);
   simplifies_to("sum(f(k),k,a,b+n)-sum(f(u),u,a,b)",
                 "sum(f(k),k,a,b+n)-sum(f(u),u,a,b)", ctx);
-  simplifies_to("sum(f(k),k,a,b+10)-sum(f(u),u,a,b)", "sum(f(k),k,b+1,b+10)",
-                ctx);
-  simplifies_to("sum(f(k),k,a,100)-sum(f(u),u,a,5)", "sum(f(k),k,6,100)", ctx);
+  simplifies_to("sum(f(k),k,a,b+10)-sum(f(u),u,a,b)",
+                "dep(sum(f(k),k,b+1,b+10),{realInteger(a)})", ctx);
+  simplifies_to("sum(f(k),k,a,100)-sum(f(u),u,a,5)",
+                "dep(sum(f(k),k,6,100),{realInteger(a)})", ctx);
   simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b+n)",
                 "sum(f(k),k,a,b)-sum(f(u),u,a,b+n)", ctx);
-  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b+10)", "- sum(f(u),u,b+1,b+10)",
-                ctx);
-  simplifies_to("sum(f(k),k,a,5)-sum(f(u),u,a,100)", "- sum(f(u),u,6,100)",
-                ctx);
-  simplifies_to("sum(f(k),k,a+10,b)-sum(f(u),u,a,b)", "- sum(f(u),u,a,a+9)",
-                ctx);
-  simplifies_to("sum(f(k),k,100,b)-sum(f(u),u,5,b)", "- sum(f(u),u,5,99)", ctx);
+  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a,b+10)",
+                "dep(-sum(f(u),u,b+1,b+10),{realInteger(a)})", ctx);
+  simplifies_to("sum(f(k),k,a,5)-sum(f(u),u,a,100)",
+                "dep(-sum(f(u),u,6,100),{realInteger(a)})", ctx);
+  simplifies_to("sum(f(k),k,a+10,b)-sum(f(u),u,a,b)",
+                "dep(-sum(f(u),u,a,a+9),{realInteger(b)})", ctx);
+  simplifies_to("sum(f(k),k,100,b)-sum(f(u),u,5,b)",
+                "dep(-sum(f(u),u,5,99),{realInteger(b)})", ctx);
   simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a+n,b)",
                 "sum(f(k),k,a,b)-sum(f(u),u,a+n,b)", ctx);
-  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a+10,b)", "sum(f(k),k,a,a+9)", ctx);
-  simplifies_to("sum(f(k),k,5,b)-sum(f(u),u,100,b)", "sum(f(k),k,5,99)", ctx);
+  simplifies_to("sum(f(k),k,a,b)-sum(f(u),u,a+10,b)",
+                "dep(sum(f(k),k,a,a+9),{realInteger(b)})", ctx);
+  simplifies_to("sum(f(k),k,5,b)-sum(f(u),u,100,b)",
+                "dep(sum(f(k),k,5,99),{realInteger(b)})", ctx);
 
   // contract product
-  simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b)", "1", ctx);
+  simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b)",
+                "dep(1,{realInteger(a),realInteger(b)})", ctx);
   simplifies_to("product(f(k),k,a,b+n) / product(f(u),u,a,b)",
-                "product(f(k),k,a,b+n) / product(f(u),u,a,b)", ctx);
+                "product(f(k),k,a,b+n)/product(f(u),u,a,b)", ctx);
   simplifies_to("product(f(k),k,a,b+10) / product(f(u),u,a,b)",
-                "product(f(k),k,b+1,b+10)", ctx);
+                "dep(product(f(k),k,b+1,b+10),{realInteger(a)})", ctx);
   simplifies_to("product(f(k),k,a,100) / product(f(u),u,a,5)",
-                "product(f(k),k,6,100)", ctx);
+                "dep(product(f(k),k,6,100),{realInteger(a)})", ctx);
   simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b+n)",
-                "product(f(k),k,a,b) / product(f(u),u,a,b+n)", ctx);
+                "product(f(k),k,a,b)/product(f(u),u,a,b+n)", ctx);
   simplifies_to("product(f(k),k,a,b) / product(f(u),u,a,b+10)",
-                "1 / product(f(u),u,b+1,b+10)", ctx);
+                "dep(1/product(f(u),u,b+1,b+10),{realInteger(a)})", ctx);
   simplifies_to("product(f(k),k,a,5) / product(f(u),u,a,100)",
-                "1 / product(f(u),u,6,100)", ctx);
+                "dep(1/product(f(u),u,6,100),{realInteger(a)})", ctx);
   simplifies_to("product(f(k),k,a+10,b) / product(f(u),u,a,b)",
-                "1 / product(f(u),u,a,a+9)", ctx);
+                "dep(1/product(f(u),u,a,a+9),{realInteger(b)})", ctx);
   simplifies_to("product(f(k),k,100,b) / product(f(u),u,5,b)",
-                "1 / product(f(u),u,5,99)", ctx);
-  simplifies_to("product(f(k),k,a,b) / product(f(u),u,a+n,b)",
-                "product(f(k),k,a,b) / product(f(u),u,a+n,b)", ctx);
-  simplifies_to("product(f(k),k,a,b) / product(f(u),u,a+10,b)",
-                "product(f(k),k,a,a+9)", ctx);
-  simplifies_to("product(f(k),k,5,b) / product(f(u),u,100,b)",
-                "product(f(k),k,5,99)", ctx);
+                "dep(1/product(f(u),u,5,99),{realInteger(b)})", ctx);
+  simplifies_to("product(f(k),k,a,b)/product(f(u),u,a+n,b)",
+                "product(f(k),k,a,b)/product(f(u),u,a+n,b)", ctx);
+  simplifies_to("product(f(k),k,a,b)/product(f(u),u,a+10,b)",
+                "dep(product(f(k),k,a,a+9),{realInteger(b)})", ctx);
+  simplifies_to("product(f(k),k,5,b)/product(f(u),u,100,b)",
+                "dep(product(f(k),k,5,99),{realInteger(b)})", ctx);
 
   // undef
   simplifies_to("sum(k,k,1/2,10)", "undef");
   simplifies_to("product(1,k,2,pi)", "undef");
   simplifies_to("product(1,k,pi,pi+1)", "undef");
   simplifies_to("sum(1,k,i,i+1)", "undef");
+  simplifies_to("sum(1,k,1,n×i)", "sum(1,k,1,n×i)");  // maybe undef or 0 ???
   simplifies_to_no_beautif("sum([[0]],k,i,0)", "[[undef]]");
   simplifies_to_no_beautif("product([[0]],k,1,pi)", "[[undef]]");
 

@@ -47,7 +47,6 @@ cargo run
 ## Notes
 
 The NumWorks calculator runs [Epsilon](http://github.com/numworks/epsilon), a tailor-made calculator operating system.
-Starting from version 16, Epsilon allows installing custom binary apps.
 To run this sample app, make sure your calculator is up-to-date by visiting https://my.numworks.com.
 
 Due to the embedded nature of Epsilon, the Rust app has to be `no_std`.

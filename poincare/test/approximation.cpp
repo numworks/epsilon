@@ -170,6 +170,9 @@ QUIZ_CASE(pcj_approximation_scalar) {
   approximates_to(KPow(e_e, 3_e / 2_e), 4.481689f);
   approximates_to(KNonNull(KUndef), NAN);
   approximates_to(KRealPos(KUndef), NAN);
+  approximates_to(KRealInteger(KUndef), NAN);
+  approximates_to(KRealInteger(π_e), NAN);
+  approximates_to(KRealInteger(i_e), NAN);
 }
 
 QUIZ_CASE(pcj_approximation_boolean) {

@@ -185,10 +185,11 @@ constexpr static Builtin s_builtins[] = {
 #if POINCARE_PIECEWISE
     {Type::Piecewise, "piecewise"},  // 2D layout is a grid
 #endif
-    {Type::Dep, "dep"},          // TODO shouldn't be user parsable
-    {Type::NonNull, "nonNull"},  // TODO shouldn't be user parsable
-    {Type::Real, "real"},        // TODO shouldn't be user parsable
-    {Type::RealPos, "realPos"},  // TODO shouldn't be user parsable
+    {Type::Dep, "dep"},                  // TODO shouldn't be user parsable
+    {Type::NonNull, "nonNull"},          // TODO shouldn't be user parsable
+    {Type::Real, "real"},                // TODO shouldn't be user parsable
+    {Type::RealPos, "realPos"},          // TODO shouldn't be user parsable
+    {Type::RealInteger, "realInteger"},  // TODO shouldn't be user parsable
 };
 
 constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {

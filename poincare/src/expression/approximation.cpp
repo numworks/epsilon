@@ -960,6 +960,10 @@ std::complex<T> MiscToComplex(const Tree* e, const Context* ctx) {
       std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
       return x.real() < 0.0 || x.imag() != 0.0 ? NonReal<T>() : x;
     }
+    case Type::RealInteger: {
+      std::complex<T> x = PrivateToComplex<T>(e->child(0), ctx);
+      return x.imag() != 0.0 ? NAN : std::floor(x.real()) == x ? x : NAN;
+    }
     /* Handle units as their scalar value in basic SI so prefix and
      * representative homogeneity isn't necessary. Dimension is expected to be
      * handled at this point. */
@@ -1229,6 +1233,7 @@ std::complex<T> Private::ToComplexSwitch(const Tree* e, const Context* ctx) {
     case Type::NonNull:
     case Type::Real:
     case Type::RealPos:
+    case Type::RealInteger:
     case Type::Unit:
     case Type::PhysicalConstant:
     case Type::LnUser:

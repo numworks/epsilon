@@ -242,8 +242,9 @@ KDSize Render::Size(const Layout* l) {
     case LayoutType::Root: {
       KDSize radicandSize = Size(l->child(0));
       KDSize indexSize = NthRoot::AdjustedIndexSize(l, s_font);
-      width = indexSize.width() + 3 * NthRoot::k_horizontalPadding +
-              NthRoot::k_radixLineThickness + radicandSize.width();
+      width = indexSize.width() + NthRoot::k_leftMargin +
+              2 * NthRoot::k_horizontalPadding + NthRoot::k_radixLineThickness +
+              radicandSize.width();
       height = Baseline(l) + radicandSize.height() - Baseline(l->child(0));
       break;
     }
@@ -515,7 +516,8 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
     case LayoutType::Root: {
       KDSize indexSize = NthRoot::AdjustedIndexSize(l, s_font);
       if (childIndex == 0) {
-        return KDPoint(indexSize.width() + 2 * NthRoot::k_horizontalPadding +
+        return KDPoint(indexSize.width() + NthRoot::k_leftMargin +
+                           NthRoot::k_horizontalPadding +
                            NthRoot::k_radixLineThickness,
                        Baseline(l) - Baseline(l->child(0)));
       } else {
@@ -1094,7 +1096,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       KDSize indexSize = AdjustedIndexSize(l, s_font);
       KDColor workingBuffer[k_leftRadixWidth * k_leftRadixHeight];
       KDRect leftRadixFrame(
-          p.x() + indexSize.width() + k_horizontalPadding - k_leftRadixWidth,
+          p.x() + indexSize.width() + k_leftMargin - k_leftRadixWidth,
           p.y() + Baseline(l) + radicandSize.height() - Baseline(l->child(0)) -
               k_leftRadixHeight,
           k_leftRadixWidth, k_leftRadixHeight);
@@ -1106,7 +1108,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
           Baseline(l->child(0)) + k_radixLineThickness + k_verticalPadding) {
         // Vertical radix bar
         ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + k_horizontalPadding,
+            KDRect(p.x() + indexSize.width() + k_leftMargin,
                    p.y() + indexSize.height() - Baseline(l->child(0)) -
                        k_radixLineThickness - k_verticalPadding,
                    k_radixLineThickness,
@@ -1115,23 +1117,22 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
             style.glyphColor);
         // Horizontal radix bar
         ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + k_horizontalPadding,
+            KDRect(p.x() + indexSize.width() + k_leftMargin,
                    p.y() + indexSize.height() - Baseline(l->child(0)) -
                        k_radixLineThickness - k_verticalPadding,
                    radicandSize.width() + 2 * k_horizontalPadding + 1,
                    k_radixLineThickness),
             style.glyphColor);
       } else {
-        ctx->fillRect(KDRect(p.x() + indexSize.width() + k_horizontalPadding,
-                             p.y(), k_radixLineThickness,
+        ctx->fillRect(KDRect(p.x() + indexSize.width() + k_leftMargin, p.y(),
+                             k_radixLineThickness,
                              radicandSize.height() + k_verticalPadding +
                                  k_radixLineThickness),
                       style.glyphColor);
-        ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + k_horizontalPadding, p.y(),
-                   radicandSize.width() + 2 * k_horizontalPadding,
-                   k_radixLineThickness),
-            style.glyphColor);
+        ctx->fillRect(KDRect(p.x() + indexSize.width() + k_leftMargin, p.y(),
+                             radicandSize.width() + 2 * k_horizontalPadding,
+                             k_radixLineThickness),
+                      style.glyphColor);
       }
       return;
     }

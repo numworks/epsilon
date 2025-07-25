@@ -230,8 +230,11 @@ inline KDCoordinate MinVerticalMargin(const Layout* node) {
 }  // namespace Pair
 
 namespace NthRoot {
+constexpr KDCoordinate k_topMargin = 0;
+constexpr KDCoordinate k_bottomMargin = 0;
+constexpr KDCoordinate k_rightMargin = 0;
 constexpr KDCoordinate k_leftMargin = 2;
-constexpr KDCoordinate k_verticalPadding = 2;
+constexpr KDCoordinate k_topPadding = 2;
 constexpr KDCoordinate k_horizontalPadding = 2;
 constexpr KDCoordinate k_radixLineThickness = 1;
 

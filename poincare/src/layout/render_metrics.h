@@ -235,7 +235,7 @@ constexpr KDCoordinate k_radixLineThickness = 1;
 #if POINCARE_SCANDIUM_LAYOUTS
 constexpr KDCoordinate k_topMargin = 2;
 constexpr KDCoordinate k_bottomMargin = 2;
-constexpr KDCoordinate k_rightMargin = 1;
+constexpr KDCoordinate k_rightMargin = 2;
 constexpr KDCoordinate k_leftMargin = 2;
 constexpr KDCoordinate k_indexLeftMargin = 1;
 constexpr KDCoordinate k_topPadding = 2;
@@ -245,7 +245,7 @@ constexpr KDCoordinate k_leftRadixWidth = 3;
 #else
 constexpr KDCoordinate k_topMargin = 0;
 constexpr KDCoordinate k_bottomMargin = 0;
-constexpr KDCoordinate k_rightMargin = 0;
+constexpr KDCoordinate k_rightMargin = 1;
 constexpr KDCoordinate k_leftMargin = 2;
 constexpr KDCoordinate k_indexLeftMargin = 0;
 constexpr KDCoordinate k_topPadding = 2;

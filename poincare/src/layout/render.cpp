@@ -1118,19 +1118,21 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
             style.glyphColor);
         // Horizontal radix bar
         ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + k_leftMargin,
-                   p.y() + indexSize.height() - Baseline(l->child(0)) -
-                       k_radixLineThickness - k_topPadding,
-                   radicandSize.width() + 2 * k_horizontalPadding + 1,
-                   k_radixLineThickness),
+            KDRect(
+                p.x() + k_leftMargin + indexSize.width() + k_radixLineThickness,
+                p.y() + indexSize.height() - Baseline(l->child(0)) -
+                    k_radixLineThickness - k_topPadding,
+                radicandSize.width() + 2 * k_horizontalPadding,
+                k_radixLineThickness),
             style.glyphColor);
       } else {
         ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + k_leftMargin,
+            KDRect(p.x() + k_leftMargin + indexSize.width(),
                    k_topMargin + p.y(), k_radixLineThickness,
                    radicandSize.height() + k_topPadding + k_radixLineThickness),
             style.glyphColor);
-        ctx->fillRect(KDRect(p.x() + indexSize.width() + k_leftMargin,
+        ctx->fillRect(KDRect(p.x() + k_leftMargin + indexSize.width() +
+                                 k_radixLineThickness,
                              k_topMargin + p.y(),
                              radicandSize.width() + 2 * k_horizontalPadding,
                              k_radixLineThickness),

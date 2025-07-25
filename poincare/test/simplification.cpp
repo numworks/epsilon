@@ -625,6 +625,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(sum(x*j,j,1,n),k,1,2)", "n×(n+1)×x");
   simplifies_to("sum(sum(a*k,a,0,j),k,1,n)", "(j×(j+1)×n×(n+1))/4");
   simplifies_to("sum(sum(j,j,0,k),k,1,n)", "n^3/6+n^2/2+n/3");
+  simplifies_to("sum(sum(j,j,0,k+π),k,1,n)", "undef");
   simplifies_to("sum(π^k,k,4,2)", "0");
   simplifies_to("sum(sin(k),k,a+10,a)", "0");
   simplifies_to("sum(sin(k),k,a,a-10)", "0");

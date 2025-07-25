@@ -76,18 +76,29 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
       e->cloneTreeOverTree(KUndef);
     }
   };
-  constexpr bool (*IsIntegerOrHasUserSymbol)(const Tree*) = [](const Tree* e) {
-    return e->isInteger() || e->hasDescendantSatisfying([](const Tree* child) {
-      return child->isUserSymbol() || child->isVar();
-    });
+  constexpr bool (*HasUserSymbol)(const Tree*) = [](const Tree* e) {
+    return e->hasDescendantSatisfying(
+        [](const Tree* child) { return child->isUserSymbol(); });
   };
-  /* Since child should be reduced at this point, ensure bounds are integer or
-   * contains UserSymbol (CAS) */
-  ComplexSign sign = ComplexSignOfDifference(upperBound, lowerBound);
-  if (!IsIntegerOrHasUserSymbol(lowerBound) ||
-      !IsIntegerOrHasUserSymbol(upperBound) || !sign.isReal()) {
+  ComplexSign signLowerBound = GetComplexSign(lowerBound);
+  ComplexSign signUpperBound = GetComplexSign(upperBound);
+  if (signLowerBound.isNonReal() || signUpperBound.isNonReal()) {
     ToUndefRespectingDim(e);
     return true;
+  }
+  ComplexSign sign = ComplexSignOfDifference(upperBound, lowerBound);
+  /* Since child should be reduced at this point, ensure bounds are integer or
+   * contains UserSymbol (CAS) */
+  if (!signLowerBound.isInteger() || !signUpperBound.isInteger()) {
+    bool boundsHaveSymbol =
+        HasUserSymbol(lowerBound) || HasUserSymbol(upperBound);
+    if (!boundsHaveSymbol || sign.isNonReal()) {
+      ToUndefRespectingDim(e);
+      return true;
+    }
+    if (!sign.isReal() || !boundsHaveSymbol) {
+      return false;
+    }
   }
 
   // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1

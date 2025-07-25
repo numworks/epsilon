@@ -606,6 +606,11 @@ QUIZ_CASE(pcj_simplification_parametric) {
   e->removeTree();
 
   // sum
+  simplifies_to("sum(1,k,3,4)", "2");
+  simplifies_to("sum(k,k,3,4)", "7");
+  simplifies_to("sum(1,k,a,a)", "1");
+  simplifies_to("sum(π,k,a,a+1)", "2×π");
+  simplifies_to("sum(1,k,1,floor(tan(-11)))", "225");
   simplifies_to("sum(n,k,1,n)", "n^2");
   simplifies_to("sum(a*b,k,1,n)", "a×b×n");
   simplifies_to("sum(k,k,n,j)", "(j^2-n^2+j+n)/2");

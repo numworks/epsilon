@@ -230,8 +230,8 @@ inline KDCoordinate MinVerticalMargin(const Layout* node) {
 }  // namespace Pair
 
 namespace NthRoot {
-constexpr KDCoordinate k_heightMargin = 2;
-constexpr KDCoordinate k_widthMargin = 2;
+constexpr KDCoordinate k_verticalPadding = 2;
+constexpr KDCoordinate k_horizontalPadding = 2;
 constexpr KDCoordinate k_radixLineThickness = 1;
 
 #if POINCARE_SCANDIUM_LAYOUTS

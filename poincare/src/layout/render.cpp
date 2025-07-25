@@ -242,7 +242,7 @@ KDSize Render::Size(const Layout* l) {
     case LayoutType::Root: {
       KDSize radicandSize = Size(l->child(0));
       KDSize indexSize = NthRoot::AdjustedIndexSize(l, s_font);
-      width = indexSize.width() + 3 * NthRoot::k_widthMargin +
+      width = indexSize.width() + 3 * NthRoot::k_horizontalPadding +
               NthRoot::k_radixLineThickness + radicandSize.width();
       height = Baseline(l) + radicandSize.height() - Baseline(l->child(0));
       break;
@@ -515,7 +515,7 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
     case LayoutType::Root: {
       KDSize indexSize = NthRoot::AdjustedIndexSize(l, s_font);
       if (childIndex == 0) {
-        return KDPoint(indexSize.width() + 2 * NthRoot::k_widthMargin +
+        return KDPoint(indexSize.width() + 2 * NthRoot::k_horizontalPadding +
                            NthRoot::k_radixLineThickness,
                        Baseline(l) - Baseline(l->child(0)));
       } else {
@@ -715,7 +715,7 @@ KDCoordinate Render::Baseline(const Layout* l) {
     case LayoutType::Root: {
       return std::max<KDCoordinate>(
           Baseline(l->child(0)) + NthRoot::k_radixLineThickness +
-              NthRoot::k_heightMargin,
+              NthRoot::k_verticalPadding,
           NthRoot::AdjustedIndexSize(l, s_font).height());
     }
     case LayoutType::CondensedSum:
@@ -1094,7 +1094,7 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
       KDSize indexSize = AdjustedIndexSize(l, s_font);
       KDColor workingBuffer[k_leftRadixWidth * k_leftRadixHeight];
       KDRect leftRadixFrame(
-          p.x() + indexSize.width() + k_widthMargin - k_leftRadixWidth,
+          p.x() + indexSize.width() + k_horizontalPadding - k_leftRadixWidth,
           p.y() + Baseline(l) + radicandSize.height() - Baseline(l->child(0)) -
               k_leftRadixHeight,
           k_leftRadixWidth, k_leftRadixHeight);
@@ -1103,34 +1103,35 @@ void Render::RenderNode(const Layout* l, KDContext* ctx, KDPoint p,
                             (KDColor*)workingBuffer);
       // If the indice is higher than the root.
       if (indexSize.height() >
-          Baseline(l->child(0)) + k_radixLineThickness + k_heightMargin) {
+          Baseline(l->child(0)) + k_radixLineThickness + k_verticalPadding) {
         // Vertical radix bar
         ctx->fillRect(
-            KDRect(
-                p.x() + indexSize.width() + k_widthMargin,
-                p.y() + indexSize.height() - Baseline(l->child(0)) -
-                    k_radixLineThickness - k_heightMargin,
-                k_radixLineThickness,
-                radicandSize.height() + k_heightMargin + k_radixLineThickness),
+            KDRect(p.x() + indexSize.width() + k_horizontalPadding,
+                   p.y() + indexSize.height() - Baseline(l->child(0)) -
+                       k_radixLineThickness - k_verticalPadding,
+                   k_radixLineThickness,
+                   radicandSize.height() + k_verticalPadding +
+                       k_radixLineThickness),
             style.glyphColor);
         // Horizontal radix bar
         ctx->fillRect(
-            KDRect(p.x() + indexSize.width() + k_widthMargin,
+            KDRect(p.x() + indexSize.width() + k_horizontalPadding,
                    p.y() + indexSize.height() - Baseline(l->child(0)) -
-                       k_radixLineThickness - k_heightMargin,
-                   radicandSize.width() + 2 * k_widthMargin + 1,
+                       k_radixLineThickness - k_verticalPadding,
+                   radicandSize.width() + 2 * k_horizontalPadding + 1,
                    k_radixLineThickness),
             style.glyphColor);
       } else {
-        ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin, p.y(),
-                             k_radixLineThickness,
-                             radicandSize.height() + k_heightMargin +
+        ctx->fillRect(KDRect(p.x() + indexSize.width() + k_horizontalPadding,
+                             p.y(), k_radixLineThickness,
+                             radicandSize.height() + k_verticalPadding +
                                  k_radixLineThickness),
                       style.glyphColor);
-        ctx->fillRect(KDRect(p.x() + indexSize.width() + k_widthMargin, p.y(),
-                             radicandSize.width() + 2 * k_widthMargin,
-                             k_radixLineThickness),
-                      style.glyphColor);
+        ctx->fillRect(
+            KDRect(p.x() + indexSize.width() + k_horizontalPadding, p.y(),
+                   radicandSize.width() + 2 * k_horizontalPadding,
+                   k_radixLineThickness),
+            style.glyphColor);
       }
       return;
     }

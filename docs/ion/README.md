@@ -64,4 +64,4 @@ Our executables can run in an headless state using the flag `--headless` or `-h`
 
 With that flag, there are virtually no I/O, which is very useful for measuring and instrumenting the code.
 
-We use it for fuzzing and running the test suite.
+It can be used for fuzzing and to run the test suite.

@@ -80,6 +80,20 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     return true;
   }
   ComplexSign sign = ComplexSignOfDifference(upperBound, lowerBound);
+  /* NOTE: this variable is used when when dependencies are introduced and the
+   * sum/product is simplified later. Since later pattern matching/reduction are
+   * unaware of the newly created dep node, we need to handle possible KDep
+   * creation and reduction with this function */
+  TreeRef deplist;
+  bool (*createNeededDeps)(Tree*, TreeRef) = [](Tree* e, TreeRef deplist) {
+    if (deplist.isUninitialized()) {
+      return false;
+    }
+    e->nextTree()->moveTreeBeforeNode(deplist);
+    e->cloneNodeAtNode(KDep);
+    Dependency::ShallowBubbleUpDependencies(e);
+    return true;
+  };
   /* Since child should be reduced at this point, ensure bounds are integer or
    * contains UserSymbol (CAS) */
   if (!signLowerBound.isInteger() || !signUpperBound.isInteger()) {
@@ -95,8 +109,14 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
       return false;
     }
     assert(boundsHaveSymbol && sign.isReal());
-    /* TODO: Should add dependency for bounds to be integers and boundsDiff to
-     * be positive: atm bounds like k+π are not caught */
+    // TODO: Introduce piecewise for inverted bounds:
+    // sum(...,k,j) => {sum(...,k,j) if k<=j else 0}
+    // NOTE: Dependencies will catch bounds like: k+π
+    deplist = SharedTreeStack->pushDepList(2);
+    SharedTreeStack->pushRealInteger();
+    lowerBound->cloneTree();
+    SharedTreeStack->pushRealInteger();
+    upperBound->cloneTree();
   }
 
   // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1
@@ -116,12 +136,15 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
       assert(dim.isScalar());
       e->cloneTreeOverTree(isSum ? 0_e : 1_e);
     }
+    createNeededDeps(e, deplist);
     return true;
   }
 
   // If a=b, no need to wait for advanced reduction to explicit
   if (sign.realSign().isNull()) {
-    return Explicit(e);
+    bool changed = Explicit(e);
+    changed = createNeededDeps(e, deplist) || changed;
+    return changed;
   }
 
   // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
@@ -129,6 +152,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
           e, KSum(KA, KB, KC, KVarK),
           KMult(1_e / 2_e, KAdd(KMult(KC, KAdd(1_e, KC)),
                                 KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
+    createNeededDeps(e, deplist);
     return true;
   }
 
@@ -139,10 +163,14 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
                 KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
                      KMult(-1_e, KAdd(-1_e, KB), KB,
                            KAdd(KMult(2_e, KB), -1_e)))))) {
+    createNeededDeps(e, deplist);
     return true;
   }
 
   if (Random::HasRandom(e)) {
+    if (!deplist.isUninitialized()) {
+      deplist->removeTree();
+    }
     return false;
   }
 
@@ -158,7 +186,12 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
         isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
         {.KA = upperBound, .KB = lowerBound, .KC = function});
     e->moveTreeOverTree(result);
+    createNeededDeps(e, deplist);
     return true;
+  }
+
+  if (!deplist.isUninitialized()) {
+    deplist->removeTree();
   }
 
   // sum(a*f(k),k,m,n) = a*sum(f(k),k,m,n)
@@ -256,6 +289,11 @@ bool Parametric::ExpandProduct(Tree* e) {
  *   sum(v(k), k, min(c,b), max(a,d))
  */
 
+template <Placeholder::Tag T>
+static constexpr const Tree* WithRealIntegerDep(auto t, KPlaceholder<T> k) {
+  return KDep(t, KDepList(KRealInteger(k)));
+}
+
 bool Parametric::ContractSum(Tree* e) {
   /* TODO: handle any form:
    * - KAdd(KA_s, KSum, KB_s, KMult(KSum, -1_e), KC_s)
@@ -276,10 +314,13 @@ bool Parametric::ContractSum(Tree* e) {
                           realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyPositive()
-              ? PatternMatching::CreateReduce(KSum(KA, KAdd(KF, 1_e), KC, KD),
-                                              ctx)
+              ? PatternMatching::CreateReduce(
+                    WithRealIntegerDep(KSum(KA, KAdd(KF, 1_e), KC, KD), KB),
+                    ctx)
               : PatternMatching::CreateReduce(
-                    KMult(KSum(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
+                    WithRealIntegerDep(
+                        KMult(KSum(KE, KAdd(KC, 1_e), KF, KD), -1_e), KB),
+                    ctx);
       e->moveTreeOverTree(result);
       return true;
     }
@@ -298,10 +339,14 @@ bool Parametric::ContractSum(Tree* e) {
                           realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyNegative()
-              ? PatternMatching::CreateReduce(KSum(KA, KB, KAdd(KF, -1_e), KD),
-                                              ctx)
+              ? PatternMatching::CreateReduce(
+                    WithRealIntegerDep(KSum(KA, KB, KAdd(KF, -1_e), KD), KC),
+                    ctx)
               : PatternMatching::CreateReduce(
-                    KMult(KSum(KE, KF, KAdd(KB, -1_e), KD), -1_e), ctx);
+                    WithRealIntegerDep(
+                        KMult(KSum(KE, KF, KAdd(KB, -1_e), KD), -1_e), KC),
+                    ctx);
+
       e->moveTreeOverTree(result);
       return true;
     }
@@ -331,9 +376,12 @@ bool Parametric::ContractProduct(Tree* e) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyPositive()
               ? PatternMatching::CreateReduce(
-                    KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx)
+                    WithRealIntegerDep(KProduct(KA, KAdd(KF, 1_e), KC, KD), KB),
+                    ctx)
               : PatternMatching::CreateReduce(
-                    KPow(KProduct(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
+                    WithRealIntegerDep(
+                        KPow(KProduct(KE, KAdd(KC, 1_e), KF, KD), -1_e), KB),
+                    ctx);
       e->moveTreeOverTree(result);
       return true;
     }
@@ -354,9 +402,13 @@ bool Parametric::ContractProduct(Tree* e) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyNegative()
               ? PatternMatching::CreateReduce(
-                    KProduct(KA, KB, KAdd(KF, -1_e), KD), ctx)
+                    WithRealIntegerDep(KProduct(KA, KB, KAdd(KF, -1_e), KD),
+                                       KC),
+                    ctx)
               : PatternMatching::CreateReduce(
-                    KPow(KProduct(KE, KF, KAdd(KB, -1_e), KD), -1_e), ctx);
+                    WithRealIntegerDep(
+                        KPow(KProduct(KE, KF, KAdd(KB, -1_e), KD), -1_e), KC),
+                    ctx);
       e->moveTreeOverTree(result);
       return true;
     }

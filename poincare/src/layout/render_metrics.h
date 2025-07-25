@@ -230,18 +230,26 @@ inline KDCoordinate MinVerticalMargin(const Layout* node) {
 }  // namespace Pair
 
 namespace NthRoot {
+constexpr KDCoordinate k_radixLineThickness = 1;
+
+#if POINCARE_SCANDIUM_LAYOUTS
+constexpr KDCoordinate k_topMargin = 2;
+constexpr KDCoordinate k_bottomMargin = 2;
+constexpr KDCoordinate k_rightMargin = 1;
+constexpr KDCoordinate k_leftMargin = 2;
+constexpr KDCoordinate k_indexLeftMargin = 1;
+constexpr KDCoordinate k_topPadding = 2;
+constexpr KDCoordinate k_horizontalPadding = 2;
+constexpr KDCoordinate k_leftRadixHeight = 6;
+constexpr KDCoordinate k_leftRadixWidth = 3;
+#else
 constexpr KDCoordinate k_topMargin = 0;
 constexpr KDCoordinate k_bottomMargin = 0;
 constexpr KDCoordinate k_rightMargin = 0;
 constexpr KDCoordinate k_leftMargin = 2;
+constexpr KDCoordinate k_indexLeftMargin = 0;
 constexpr KDCoordinate k_topPadding = 2;
 constexpr KDCoordinate k_horizontalPadding = 2;
-constexpr KDCoordinate k_radixLineThickness = 1;
-
-#if POINCARE_SCANDIUM_LAYOUTS
-constexpr KDCoordinate k_leftRadixHeight = 6;
-constexpr KDCoordinate k_leftRadixWidth = 3;
-#else
 constexpr KDCoordinate k_leftRadixHeight = 9;
 constexpr KDCoordinate k_leftRadixWidth = 5;
 #endif
@@ -249,7 +257,9 @@ constexpr KDCoordinate k_leftRadixWidth = 5;
 inline KDSize AdjustedIndexSize(const Layout* node, KDFont::Size font) {
   return node->isSqrtLayout()
              ? KDSize(k_leftRadixWidth, 0)
-             : KDSize(std::max(k_leftRadixWidth, Width(node->child(1))),
+             : KDSize(std::max<KDCoordinate>(
+                          k_leftRadixWidth,
+                          Width(node->child(1)) + k_indexLeftMargin),
                       Height(node->child(1)));
 }
 }  // namespace NthRoot

@@ -517,12 +517,13 @@ KDPoint Render::PositionOfChild(const Layout* l, int childIndex) {
     case LayoutType::Root: {
       KDSize indexSize = NthRoot::AdjustedIndexSize(l, s_font);
       if (childIndex == 0) {
-        return KDPoint(indexSize.width() + NthRoot::k_leftMargin +
+        return KDPoint(NthRoot::k_leftMargin + indexSize.width() +
                            NthRoot::k_horizontalPadding +
                            NthRoot::k_radixLineThickness,
                        Baseline(l) - Baseline(l->child(0)));
       } else {
-        return KDPoint(0, Baseline(l) - indexSize.height());
+        return KDPoint(NthRoot::k_indexLeftMargin,
+                       Baseline(l) - indexSize.height());
       }
     }
     case LayoutType::CondensedSum: {

@@ -141,7 +141,7 @@ jobs:
             );
 
             const commentToUpdate = oldComments.findLast(comment =>
-              comment.user.login === 'github-actions[bot]' && comment.body.startsWith(body.slice(0,10))
+              comment.user.login === 'github-actions[bot]' && comment.body.startsWith(body.slice(0,20))
             )
 
             if (commentToUpdate) {

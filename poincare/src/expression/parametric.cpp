@@ -289,11 +289,6 @@ bool Parametric::ExpandProduct(Tree* e) {
  *   sum(v(k), k, min(c,b), max(a,d))
  */
 
-template <Placeholder::Tag T>
-static constexpr const Tree* WithRealIntegerDep(auto t, KPlaceholder<T> k) {
-  return KDep(t, KDepList(KRealInteger(k)));
-}
-
 bool Parametric::ContractSum(Tree* e) {
   /* TODO: handle any form:
    * - KAdd(KA_s, KSum, KB_s, KMult(KSum, -1_e), KC_s)
@@ -315,11 +310,12 @@ bool Parametric::ContractSum(Tree* e) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyPositive()
               ? PatternMatching::CreateReduce(
-                    WithRealIntegerDep(KSum(KA, KAdd(KF, 1_e), KC, KD), KB),
+                    KDep(KSum(KA, KAdd(KF, 1_e), KC, KD),
+                         KDepList(KRealInteger(KB))),
                     ctx)
               : PatternMatching::CreateReduce(
-                    WithRealIntegerDep(
-                        KMult(KSum(KE, KAdd(KC, 1_e), KF, KD), -1_e), KB),
+                    KDep(KMult(KSum(KE, KAdd(KC, 1_e), KF, KD), -1_e),
+                         KDepList(KRealInteger(KB))),
                     ctx);
       e->moveTreeOverTree(result);
       return true;
@@ -340,11 +336,12 @@ bool Parametric::ContractSum(Tree* e) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyNegative()
               ? PatternMatching::CreateReduce(
-                    WithRealIntegerDep(KSum(KA, KB, KAdd(KF, -1_e), KD), KC),
+                    KDep(KSum(KA, KB, KAdd(KF, -1_e), KD),
+                         KDepList(KRealInteger(KC))),
                     ctx)
               : PatternMatching::CreateReduce(
-                    WithRealIntegerDep(
-                        KMult(KSum(KE, KF, KAdd(KB, -1_e), KD), -1_e), KC),
+                    KDep(KMult(KSum(KE, KF, KAdd(KB, -1_e), KD), -1_e),
+                         KDepList(KRealInteger(KC))),
                     ctx);
 
       e->moveTreeOverTree(result);
@@ -376,11 +373,12 @@ bool Parametric::ContractProduct(Tree* e) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyPositive()
               ? PatternMatching::CreateReduce(
-                    WithRealIntegerDep(KProduct(KA, KAdd(KF, 1_e), KC, KD), KB),
+                    KDep(KProduct(KA, KAdd(KF, 1_e), KC, KD),
+                         KDepList(KRealInteger(KB))),
                     ctx)
               : PatternMatching::CreateReduce(
-                    WithRealIntegerDep(
-                        KPow(KProduct(KE, KAdd(KC, 1_e), KF, KD), -1_e), KB),
+                    KDep(KPow(KProduct(KE, KAdd(KC, 1_e), KF, KD), -1_e),
+                         KDepList(KRealInteger(KB))),
                     ctx);
       e->moveTreeOverTree(result);
       return true;
@@ -402,12 +400,12 @@ bool Parametric::ContractProduct(Tree* e) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyNegative()
               ? PatternMatching::CreateReduce(
-                    WithRealIntegerDep(KProduct(KA, KB, KAdd(KF, -1_e), KD),
-                                       KC),
+                    KDep(KProduct(KA, KB, KAdd(KF, -1_e), KD),
+                         KDepList(KRealInteger(KC))),
                     ctx)
               : PatternMatching::CreateReduce(
-                    WithRealIntegerDep(
-                        KPow(KProduct(KE, KF, KAdd(KB, -1_e), KD), -1_e), KC),
+                    KDep(KPow(KProduct(KE, KF, KAdd(KB, -1_e), KD), -1_e),
+                         KDepList(KRealInteger(KC))),
                     ctx);
       e->moveTreeOverTree(result);
       return true;

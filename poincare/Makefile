@@ -9,4 +9,4 @@ poincarejs%:
 
 clean:
 	@ $(MAKE) -C cli $@
-	@ $(MAKE) -C poincare $@
+	@ $(MAKE) -C poincarejs $@

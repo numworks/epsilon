@@ -137,7 +137,7 @@ T fisherCumulativeDistributiveInverse(
     return INFINITY;
   }
   if (p < DBL_EPSILON) {
-    return -INFINITY;
+    return 0.;
   }
   double ax = DBL_EPSILON;
   double bx = 100.0;  // Arbitrary value
@@ -166,7 +166,7 @@ T fisherCumulativeDistributiveInverse(
      * EXAMPLE: Fisher law, d1=2, d2=2.2*10^-16, try to find P(X<=a) = 0.25
      *
      * TODO: Find a better way to display that no solution could be found. */
-    return p > 0.5 ? INFINITY : -INFINITY;
+    return p > 0.5 ? INFINITY : 0.;
   }
   return result.x();
 }

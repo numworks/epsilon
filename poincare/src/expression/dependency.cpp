@@ -428,6 +428,7 @@ bool ReduceDependencies(Tree* dependencies) {
         changed = true;
         continue;
       }
+      // realInteger(a+n) with n an Integer => realInteger(a)
       Tree* core = dependency->child(0);
       if (core->isAdd()) {
         int numberOfChildren = core->numberOfChildren();

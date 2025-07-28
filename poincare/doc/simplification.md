@@ -101,6 +101,12 @@ This solution was deemed too heavy for now, which is why parametrics are only ha
 
 </details>
 
+## Global functions
+
+After random seeding and before projecting local symbols, global functions need to be replaced recursively if `SymbolicComputation` allows it.
+
+If a function has been replaced, random nodes are seeded again.
+
 ## Local symbols
 
 Local symbols are projected to an id, based on how nested they are in the local contexts, using de Bruijn indexes. Global symbols are preserved.
@@ -120,16 +126,9 @@ This variable id has to be accounted for when comparing trees, or manipulating t
 
 ## Global symbols
 
-User symbols and functions stored in the given context are replaced with their definition (see `SymbolicComputation` enum for replacement rules), even if nested.
+User symbols stored in the given context are replaced with their definition (see `SymbolicComputation` enum for replacement rules).
 
 If allowed by `SymbolicComputation`, symbols with no definition are left unchanged.
-
-If anything has been replaced, reapply previous step to seed new random nodes.
-
-For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
-- Seeded to $f(random_1())*f(0)$
-- Replaced to $(random_1()+random_1()+random())*(0+0+random())$,
-- Seeded again to $(random_1()+random_1()+random_2())*(0+0+random_3())$
 
 ### Global variable's properties
 
@@ -209,7 +208,9 @@ For example, in degrees, $cos(x)-y+frac(z)+arccot(x)$ would be projected to
 $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 
 <details>
-<summary>List of projections</summary>
+<summary>Examples of projections</summary>
+
+All projection operations can be found [here](/poincare/src/expression/projection.cpp), in method `ShallowSystemProject`.
 
 | Match | Replace |
 |---|---|
@@ -250,22 +251,20 @@ $$trig(x*π/180,0)+(-1)*y+z+(-1)*floor(z)+π/2-atan(x)$$
 
 ### Projection in advanced reduction
 
-Some projections are too difficult to undo to be applied at projection. But we still want to try them to see if it improves the result. We then try the projection during advanced reduction.
+Some projections are too difficult to undo at beautification, and may be useless if it unlocks no further simplifications.
 
-For example, `atan(x)` should be projected to `asin(x/√(1 + x^2))` so that systematic reduction doesn't have to handle `atan` nodes. But `asin(x/√(1 + x^2))` can be too difficult to convert back to `atan(x)`. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
+To tackle this, we try apply the projection later, during advanced reduction.
 
-Advanced reduction can undo it if it doesn't improve the overall expression, and systematic reduction will just ignore the unprojected node.
+For example, `atan(x)` could be projected to `asin(x/√(1 + x^2))`, so that systematic reduction doesn't have to handle `atan` nodes. But `asin(x/√(1 + x^2))` can be too difficult to convert back to `atan(x)`, which is a much better form to beautify. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
 
-Since this step is applied long after projection step, the new tree must already be in its projected form.
-
-In practice, we replace `ATanRad(x)` (projected tree for `atan`) by `atrig(x*(1+x^2)^(-1/2),1)`.
+Advanced reduction can undo it if it doesn't improve the overall expression, and systematic reduction will just ignore the un-projected node.
 
 This practice tends to slow down advanced reduction so we limit it to the very minimum.
 
-For example, advanced trigonometry functions are projected in projection because we don't really want them to appear in results.
-
 <details>
-<summary>List of projections in advanced reduction</summary>
+<summary>Examples of projections in advanced reduction</summary>
+
+See `Projection::Expand` in [projection code](/poincare/src/expression/projection.cpp).
 
 | Match | Replace |
 |---|---|
@@ -288,7 +287,9 @@ Systematic reduction can reduce rational operations, convert non-integer powers 
 Dependencies are already bubbled-up at each shallow systematic reduce.
 
 <details>
-<summary>List of systematic reductions</summary>
+<summary>Examples of systematic reductions</summary>
+
+See `SystematicReduction::Switch` [here](/poincare/src/expression/systematic_reduction.cpp).
 
 | Match | Replace |
 |---|---|
@@ -439,10 +440,7 @@ At each shallow step in systematic reduction, some expressions needs to be bubbl
 
 Most trees are set to undefined if one of their children is undefined.
 
-The exceptions are points, lists and piecewise branches (not conditions) :
-`(undef, x)`
-`{1, undef, 3}`
-`piecewise({x, x>0, undef})`
+There are some exceptions like points or lists (`(undef, x)`,`{1, undef, 3}`). See `Undefined::CanHaveUndefinedChild` for more examples.
 
 If multiple `undef` can be bubbled up, we select the most "important" one. For instance, `DivisionByZero` has precedence over `NonReal`.
 
@@ -488,10 +486,12 @@ It is expected to:
 
 Using `Expand` and `Contract` formulas, advanced reduction tries to transform the expression, and calls systematic reduction at each step.
 
-Some expansion operations are used specifically to expand algebraic operations (+, ×, ^) and are thus grouped together to be called on their own when necessary (for instance, to expand a polynomial function before computing its coefficients).
+Some expansion operations are used specifically to expand algebraic operations (+, ×, ^) and are thus grouped together to be called on their own when necessary (for instance, to expand a polynomial function before computing its coefficients, see [k_expandAlgebraicOperations](/poincare/src/expression/advanced_reduction.h)).
 
 <details>
-<summary>List of advanded reductions</summary>
+<summary>Examples of advanced reductions</summary>
+
+See the list of operation in [k_contractOperations and k_expandOperations](/poincare/src/expression/advanced_reduction.h).
 
 | Match | Replace |
 |---|---|
@@ -540,7 +540,7 @@ Some expansion operations are used specifically to expand algebraic operations (
 
 #### Examples
 
-See examples in [annex](advanced-reduction-examples).
+See examples of advanced reduction in [annex](advanced-reduction-examples).
 
 ### Metric
 
@@ -552,21 +552,23 @@ A simple metric consists in counting the size of an expression, but it would not
 
 #### Examples
 
-Let's call $m: E \longrightarrow \mathbb{N}$ our metric on $E$ the set of all expressions. The basic metric gives a default cost to all nodes and goes recursively through the expression to add the cost of the main node and all of its descendants.
+Let's call $m: E \longrightarrow \mathbb{R_{\geq 0}}$ our metric on $E$ the set of all expressions.
+
+The basic metric gives a default cost to all nodes and goes recursively through the expression to add the cost of the main node and all of its descendants.
 
 For some functions, we aim to reduce the size of the expression inside them, so we increase the cost of all of their children with a multiplicative coefficient. Also, the metric of some expressions is reduced to other metrics.
 
 Examples (non exhaustive list):
 | Expression | Metric reduction |  |
 |---|---|---|
-| m(-A) | m(-1)+m(A) | - sign should not bear the cost of multiplication |
-| m(LongInteger) | m(Integer)*size() | same for LongRationals, we prefer shorter integers and rationals |
+| m(-1 * A) | m(-1)+m(A) | ignore the cost of multiplication, since it will be beautified into -A |
+| m(LongInteger) | m(Integer)*size() | we prefer shorter numbers, same for LongRationals |
 | m(Abs(A)) | m(Abs)+m(A)*coeff | increased coefficient for children of abs (same for arg, im, root, ln, etc) |
 | m(Trig(A,0)) | m(Trig)+m(A) | ignore the second child indicating the type of trigonometric function (same for ATrig) |
 | m(Exp(1/2*Ln(A))) | m(Exp)+m(A) | beautifies to √A so we do not count the cost of 1/2 and Ln |
 | m(Exp(1/2*Ln(A))) with A negative | m(Exp)+m(A)*coeff | same as √A with an increased coefficient for A negative |
 
-
+A null metric indicates we should not try to reduce further the expression, to escape advanced reduction.
 
 ## Reduce dependencies
 
@@ -594,7 +596,11 @@ This step basically undoes earlier steps in the following order:
 
 ### Restore complex format
 
-Not implemented yet.
+First, depending on the complex format, we try to display the result in a cartesian or polar form.
+
+We compute real and imaginary part independently (or distance and angle in polar format), calling reduction and advanced reduction again, and keeping the result only if both real and imaginary parts have been simplified out.
+
+This is the first step because the expression needs to be projected.
 
 ### Restore angle unit
 

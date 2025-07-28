@@ -741,7 +741,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(1,k,2,pi)", "undef");
   simplifies_to("product(1,k,pi,pi+1)", "undef");
   simplifies_to("sum(1,k,i,i+1)", "undef");
-  simplifies_to("sum(1,k,1,n×i)", "sum(1,k,1,n×i)");  // maybe undef or 0 ???
+  simplifies_to("sum(1,k,1,n×i)", "sum(1,k,1,n×i)");
   simplifies_to_no_beautif("sum([[0]],k,i,0)", "[[undef]]");
   simplifies_to_no_beautif("product([[0]],k,1,pi)", "[[undef]]");
 

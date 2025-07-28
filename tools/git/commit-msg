@@ -23,7 +23,7 @@
 #
 # Set up (all commands are run from root epsilon folder):
 # 1. Copy this file into your repo in the folder `.git/hooks`:
-#     `cp build/git/commit-msg .git/hooks/commit-msg`
+#     `cp tools/git/commit-msg .git/hooks/commit-msg`
 # 2. Set executable permissions:
 #     `chmod +x .git/hooks/commit-msg`
 # 3. Re-init your git:

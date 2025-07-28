@@ -186,9 +186,9 @@ init_git_pre_push_hook() {
 
 init_git_commit_msg_hook() {
   # Create a git hook to enforce a commit message format
-  # See build/git/commit-msg for details
+  # See tools/git/commit-msg for details
   echo "Creating commit-msg hook to enforce commit messages."
-  cp build/git/commit-msg .git/hooks/commit-msg
+  cp tools/git/commit-msg .git/hooks/commit-msg
   chmod +x .git/hooks/commit-msg
   git init
 }

@@ -388,8 +388,11 @@ QUIZ_CASE(distributions_results_fisher) {
   Distributions::FisherDistribution distribution;
   distribution.setParameterAtIndex(1.0, 0);
   distribution.setParameterAtIndex(1.0, 1);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1),
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1.),
                               0.15915494309189535);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.), INFINITY);
+  assert_cumulative_distributive_function_direct_and_inverse_is(&distribution,
+                                                                0.0, 0.0);
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 1.7, 0.5834784097728860);
   assert_cumulative_distributive_function_direct_and_inverse_is(
@@ -398,7 +401,7 @@ QUIZ_CASE(distributions_results_fisher) {
   // Fisher distribution with d1 = 3 and d2 = 2
   distribution.setParameterAtIndex(3.0, 0);
   distribution.setParameterAtIndex(2.0, 1);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1),
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1.),
                               0.27885480092693415);
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 2.0, 0.6495190528383);
@@ -412,6 +415,7 @@ QUIZ_CASE(distributions_results_fisher) {
    * to 1e-6 for this test to pass on device. */
   assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1.0),
                               1.9189567194868620, 1e-6);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0), 0.0);
   assert_cumulative_distributive_function_direct_and_inverse_is(
       &distribution, 0.6, 0.00688477308162587);
   assert_cumulative_distributive_function_direct_and_inverse_is(
@@ -422,10 +426,15 @@ QUIZ_CASE(distributions_results_fisher) {
   // Fisher distribution with d1 = 4 and d2 = 2
   distribution.setParameterAtIndex(4.0, 0);
   distribution.setParameterAtIndex(2.0, 1);
-  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1),
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(1.),
                               0.2962962962962962);
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 1.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 2.0, 1.0, 0.0);
   assert_finite_integral_between_abscissas_is(&distribution, 1.0, 2.0,
                                               0.19555555555555555);
+
+  // Fisher distribution with d1 = 2 and d2 = 3
+  distribution.setParameterAtIndex(2.0, 0);
+  distribution.setParameterAtIndex(3.0, 1);
+  assert_roughly_equal<float>(distribution.evaluateAtAbscissa(0.), 1.0);
 }

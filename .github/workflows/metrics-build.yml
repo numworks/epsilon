@@ -42,7 +42,7 @@ jobs:
       - name: Check for core
         id: elfs
         run: |
-          if [[ -e ion/src/device/core ]]; then
+          if [[ -e shared/ion/src/device/core ]]; then
             ELFS="${{ inputs.elfs }} ${{ inputs.elfs-if-core }}"
             ELFS_SUMMARY="${{ inputs.elfs-summary }} ${{ inputs.elfs-summary-if-core }}"
           else
@@ -74,12 +74,12 @@ jobs:
           echo ${{ inputs.platform }} > ./metrics-output/platform
           echo -n ${{ inputs.project-path == 'scandium' && 'Scandium' || 'Epsilon' }} > ./metrics-output/project
       - name: Binary size summary
-        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "head/$e "; done) --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
+        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs-summary }}; do echo -n "head/$e "; done) --sections @Flash .text .rodata .data @RAM .bss .data --summarize" > ./metrics-output/binary_size_summary
       - name: Binary size
-        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "head/$e "; done) --sections .text .rodata .bss .data" > ./metrics-output/binary_size
+        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "base/$e "; done) @Head  $(for e in ${{ steps.elfs.outputs.elfs }}; do echo -n "head/$e "; done) --sections .text .rodata .bss .data" > ./metrics-output/binary_size
       - name: App sizes
         if: ${{ inputs.app-sizes }}
-        run: $DOCKER_RUN "\$PYTHON build/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" > ./metrics-output/app_sizes
+        run: $DOCKER_RUN "\$PYTHON tools/metrics/binary_size.py @Base base/userland.onboarding.beta.allow3rdparty.A.elf @Head head/userland.onboarding.beta.allow3rdparty.A.elf --app-sizes" > ./metrics-output/app_sizes
       - name: Upload metrics output
         uses: actions/upload-artifact@v4
         with:

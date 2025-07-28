@@ -69,6 +69,10 @@ template <typename T>
 T evalFisher(T x, const Distribution::ParametersArray<T> params) {
   const T d1 = params[Params::Fisher::D1];
   const T d2 = params[Params::Fisher::D2];
+  if (x == 0.) {
+    // Close to 0, the function is equivalent to x^(d1/2 - 1)
+    return d1 < 2. ? INFINITY : (d1 > 2. ? 0. : 1.);
+  }
   const T f = d1 * x / (d1 * x + d2);
   const T numerator =
       std::pow(f, d1 / static_cast<T>(2.0)) *

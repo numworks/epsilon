@@ -501,7 +501,7 @@ EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     assert(coefficients->numberOfChildren() == cols);
     // Invert constant because Ax=b is represented by Ax-b
     Tree* constant = coefficients->lastChild();
-    PatternMatching::MatchReplaceSimplify(constant, KA, KMult(-1_e, KA));
+    PatternMatching::MatchReplaceReduce(constant, KA, KMult(-1_e, KA));
     coefficients->removeNode();
     Matrix::SetNumberOfColumns(matrix, cols);
     Matrix::SetNumberOfRows(matrix, Matrix::NumberOfRows(matrix) + 1);

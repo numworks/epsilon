@@ -125,7 +125,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   }
 
   // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
-  if (PatternMatching::MatchReplaceSimplify(
+  if (PatternMatching::MatchReplaceReduce(
           e, KSum(KA, KB, KC, KVarK),
           KMult(1_e / 2_e, KAdd(KMult(KC, KAdd(1_e, KC)),
                                 KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
@@ -133,7 +133,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   }
 
   // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
-  if (PatternMatching::MatchReplaceSimplify(
+  if (PatternMatching::MatchReplaceReduce(
           e, KSum(KA, KB, KC, KPow(KVarK, 2_e)),
           KMult(KPow(6_e, -1_e),
                 KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
@@ -220,7 +220,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
 bool Parametric::ExpandSum(Tree* e) {
   return e->isSum() &&
          // sum(f+g,k,a,b) = sum(f,k,a,b) + sum(g,k,a,b)
-         (PatternMatching::MatchReplaceSimplify(
+         (PatternMatching::MatchReplaceReduce(
               e, KSum(KA, KB, KC, KAdd(KD, KE_p)),
               KAdd(KSum(KA, KB, KC, KD), KSum(KA, KB, KC, KAdd(KE_p)))) ||
           // sum(x_k, k, 0, n) = x_0 + ... + x_n
@@ -230,7 +230,7 @@ bool Parametric::ExpandSum(Tree* e) {
 bool Parametric::ExpandProduct(Tree* e) {
   return e->isProduct() &&
          // prod(f*g,k,a,b) = prod(f,k,a,b) * prod(g,k,a,b)
-         (PatternMatching::MatchReplaceSimplify(
+         (PatternMatching::MatchReplaceReduce(
               e, KProduct(KA, KB, KC, KMult(KD, KE_p)),
               KMult(KProduct(KA, KB, KC, KD),
                     KProduct(KA, KB, KC, KMult(KE_p)))) ||
@@ -436,8 +436,8 @@ bool Parametric::ExpandExpOfSum(Tree* e) {
 bool Parametric::ContractProductOfExp(Tree* e) {
   // TODO: factorize with AdvancedOperation::ContractExp
   // product(exp(f(k)),k,m,n) = exp(sum(f(k),k,m,n))
-  return PatternMatching::MatchReplaceSimplify(
-      e, KProduct(KA, KB, KC, KExp(KD)), KExp(KSum(KA, KB, KC, KD)));
+  return PatternMatching::MatchReplaceReduce(e, KProduct(KA, KB, KC, KExp(KD)),
+                                             KExp(KSum(KA, KB, KC, KD)));
 }
 
 }  // namespace Poincare::Internal

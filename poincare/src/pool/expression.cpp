@@ -654,30 +654,6 @@ Coordinate2D<T> SystemExpression::approximateToPoint() const {
 }
 
 template <typename T>
-T SystemExpression::approximateIntegralToRealScalar(
-    const SystemExpression& symbol, const SystemExpression& lowerBound,
-    const SystemExpression& upperBound) const {
-  assert(symbol.isUserSymbol());
-  /* We suppose here that tree() has been handled correctly and already has
-   * valid scope */
-  Tree* integralTree = PatternMatching::Create(KIntegral(KA, KB, KC, KD),
-                                               {.KA = symbol.tree(),
-                                                .KB = lowerBound.tree(),
-                                                .KC = upperBound.tree(),
-                                                .KD = tree()},
-                                               {.KD = 1});
-  ProjectionContext ctx;
-  Simplification::ToSystem(integralTree, &ctx);
-  T result =
-      Approximation::To<T>(integralTree, Approximation::Parameters{
-                                             .isRootAndCanHaveRandom = true,
-                                             .prepare = true,
-                                         });
-  integralTree->removeTree();
-  return result;
-}
-
-template <typename T>
 SystemExpression SystemExpression::approximateListAndSort() const {
   assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
@@ -1274,13 +1250,6 @@ template Coordinate2D<float> SystemExpression::approximateToPoint<float>()
     const;
 template Coordinate2D<double> SystemExpression::approximateToPoint<double>()
     const;
-
-template float SystemFunction::approximateIntegralToRealScalar<float>(
-    const SystemExpression& symbol, const SystemExpression& upperBound,
-    const SystemExpression& lowerBound) const;
-template double SystemFunction::approximateIntegralToRealScalar<double>(
-    const SystemExpression& symbol, const SystemExpression& upperBound,
-    const SystemExpression& lowerBound) const;
 
 template float UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
     float>(const char*, Context*, Preferences::ComplexFormat,

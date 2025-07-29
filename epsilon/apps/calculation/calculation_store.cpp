@@ -272,14 +272,14 @@ OMG::ExpiringPointer<Calculation> CalculationStore::push(
       computeAndProcess(inputExpression, context);
 
   size_t neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
-  if (neededSize > bufferSize()) {
+  if (neededSize > maximumSize()) {
     /* The calculation is too big to hold on the buffer, even if all previous
      * calculations were deleted. Replace its outputs by undefined, it should
      * now fit on the calculation buffer. */
     calculationToPush.outputs.exact = Undefined::Builder();
     calculationToPush.outputs.approximate = Undefined::Builder();
     neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
-    if (neededSize > bufferSize()) {
+    if (neededSize > maximumSize()) {
       /* If the calculation with undefined outputs is still too big, it means
        * that the input expression was too big, which is very unlikely to happen
        * in a real usecase. */
@@ -288,7 +288,7 @@ OMG::ExpiringPointer<Calculation> CalculationStore::push(
   }
 
   // Free space for the new calculation
-  getEmptySpace(neededSize);
+  makeRoomForElement(neededSize);
   Calculation* pushedCalculation = pushCalculation(calculationToPush);
   assert(pushedCalculation);
   return OMG::ExpiringPointer(pushedCalculation);

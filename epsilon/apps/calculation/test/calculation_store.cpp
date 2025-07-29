@@ -85,13 +85,13 @@ QUIZ_CASE(calculation_store) {
   }
   text[textSize - 1] = 0;
 
-  const size_t emptyStoreSize = store.remainingBufferSize();
+  const size_t emptyStoreSize = store.remainingSize();
   pushAndProcessCalculation(&store, text, &globalContext);
-  assert(emptyStoreSize > store.remainingBufferSize());
-  const size_t calculationSize = emptyStoreSize - store.remainingBufferSize();
+  assert(emptyStoreSize > store.remainingSize());
+  const size_t calculationSize = emptyStoreSize - store.remainingSize();
 
   int numberOfCalculations = store.numberOfCalculations();
-  while (store.remainingBufferSize() > calculationSize) {
+  while (store.remainingSize() > calculationSize) {
     pushAndProcessCalculation(&store, text, &globalContext);
     quiz_assert(++numberOfCalculations == store.numberOfCalculations());
   }
@@ -112,7 +112,7 @@ QUIZ_CASE(calculation_store) {
   quiz_assert(numberOfCalculations1 == numberOfCalculations2);
 
   store.deleteAll();
-  quiz_assert(store.remainingBufferSize() == store.bufferSize());
+  quiz_assert(store.remainingSize() == store.maximumSize());
 }
 
 void assertAnsIs(const char* input, const char* expectedAnsInputText,

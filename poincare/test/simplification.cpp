@@ -605,6 +605,8 @@ QUIZ_CASE(pcj_simplification_parametric) {
   assert_trees_are_equal(e, a);
   e->removeTree();
 
+  simplifies_to("sum(sum(j,j,0,k),k,1,n)",
+                "dep(n^3/6+n^2/2+n/3,{realInteger(n)})");
   // sum
   simplifies_to("sum(1,k,3,4)", "2");
   simplifies_to("sum(k,k,3,4)", "7");
@@ -624,7 +626,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum((2k)^2,k,2,5)", "216");
   simplifies_to("sum((2k)^2,k,0,n)",
                 "dep((2×n×(n+1)×(2×n+1))/3,{realInteger(n)})");
-  simplifies_to("sum((2k)^4,k,0,n)", "16×sum(k^4,k,0,n)");
+  simplifies_to("sum((2k)^4,k,0,n)", "dep(16×sum(k^4,k,0,n),{realInteger(n)})");
   simplifies_to("sum(k*cos(k),k,1,n)", "sum(cos(k)×k,k,1,n)");
   simplifies_to("sum(sum(x*j,j,1,n),k,1,2)", "dep(n×(n+1)×x,{realInteger(n)})");
   simplifies_to("sum(sum(a*k,a,0,j),k,1,n)",
@@ -638,18 +640,19 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(random()*k,k,0,n)", "sum(random()×k,k,0,n)");
   simplifies_to("sum(random(),k,0,10)", "sum(random(),k,0,10)");
   simplifies_to("sum(k/k,k,1,n)",
-                "dep(n,{sum(1/k,k,1,n),sum(k^0,k,1,n),realInteger(n)})");
+                "dep(n,{sum(k^0,k,1,n),sum(1/k,k,1,n),realInteger(n)})");
   simplifies_to("sum(k/k,k,0,n)",
-                "dep(n+1,{sum(1/k,k,0,n),sum(k^0,k,0,n),realInteger(n)})");
+                "dep(n+1,{sum(k^0,k,0,n),sum(1/k,k,0,n),realInteger(n)})");
   simplifies_to("sum(k/k,k,-1,n)",
-                "dep(n+2,{sum(1/k,k,-1,n),sum(k^0,k,-1,n),realInteger(n)})");
+                "dep(n+2,{sum(k^0,k,-1,n),sum(1/k,k,-1,n),realInteger(n)})");
 
   // product
   simplifies_to("product(p,k,j,n)",
                 "dep(p^(-j+n+1),{realInteger(j),realInteger(n)})");
   simplifies_to("product(p^3,k,j,n)",
                 "dep((p^3)^(-j+n+1),{realInteger(j),realInteger(n)})");
-  simplifies_to("product(k^3,k,j,n)", "product(k,k,j,n)^3");
+  simplifies_to("product(k^3,k,j,n)",
+                "dep(product(k,k,j,n)^3,{realInteger(j),realInteger(n)})");
   simplifies_to("product(k^x,k,j,n)", "product(k^x,k,j,n)");
   simplifies_to("product(x^k,k,j,n)", "product(x^k,k,j,n)");
   simplifies_to("product(π^k,k,2,1)", "1");
@@ -662,7 +665,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to(
       "exp(2*sum(ln(k),k,a,b) + ln(b))",
       "dep(b×product(k,k,a,b)^2,{sum(nonNull(k),k,a,b),sum(realPos(k),k,a,b),"
-      "nonNull(b),realPos(b)})");
+      "nonNull(b),realPos(b),realInteger(a),realInteger(b)})");
   simplifies_to("product(exp(2k),k,0,y)", "dep(e^(y^2+y),{realInteger(y)})");
 
   // expand sum

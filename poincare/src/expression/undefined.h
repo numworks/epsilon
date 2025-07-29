@@ -14,12 +14,15 @@ class Undefined {
   static bool ShallowBubbleUpUndef(Tree* e);
   static bool CanBeUndefined(const Tree* e);
   static bool CanHaveUndefinedChild(const Tree* e, int childIndex);
-  /* Replace [e] with a tree of type [type] with identical dimension.
+  /* Create a tree of type [type] with identical dimension to [e].
    * Example:
    * [e] is list and type is nonreal => {nonreal,...} with correct length.
    * [e] is matrix type is undef => [[undef,...]...] with correct size.
    * [e] is boolean => booleanUndef. */
-  static void ReplaceTreeWithDimensionedType(Tree* e, Type type);
+  static Tree* CreateTreeWithDimensionedType(const Tree* e, Type type);
+  static void ReplaceTreeWithDimensionedType(Tree* e, Type type) {
+    e->moveTreeOverTree(CreateTreeWithDimensionedType(e, type));
+  }
   /* Check if an undefined tree created by [ReplaceTreeWithDimensionedType] */
   static bool IsDimensionedUndefined(const Tree* t);
   template <typename T>

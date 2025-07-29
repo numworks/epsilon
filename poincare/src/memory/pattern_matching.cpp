@@ -468,13 +468,14 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
   return top;
 }
 
-Tree* PatternMatching::MatchCreate(const Tree* source, const Tree* pattern,
-                                   const Tree* structure) {
+Tree* PatternMatching::PrivateMatchCreate(const Tree* source,
+                                          const Tree* pattern,
+                                          const Tree* structure, bool reduce) {
   Context ctx;
   if (!Match(source, pattern, &ctx)) {
     return nullptr;
   }
-  return Create(structure, ctx);
+  return Create(structure, ctx, reduce);
 }
 
 bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,

@@ -40,13 +40,13 @@ struct Dependency {
   static bool DeepBubbleUpDependencies(Tree* e);
   static bool ShallowBubbleUpDependencies(Tree* e);
   static bool DeepRemoveUselessDependencies(Tree* e);
+  static bool ShallowRemoveUselessDependencies(Tree* e);
 
   static bool RemoveDependencies(Tree* e);
 
  private:
   constexpr static int k_mainIndex = 0;
   constexpr static int k_dependenciesIndex = 1;
-  static bool ShallowRemoveUselessDependencies(Tree* e);
 
   /* Remove dependencies that cannot be undefined. Also turns the expression
    * into "undef" if one dependency is found to be undefined. */

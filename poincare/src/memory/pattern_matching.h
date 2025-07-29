@@ -180,7 +180,13 @@ class PatternMatching {
     return Create(structure, Context(context, scopes), true);
   }
   static Tree* MatchCreate(const Tree* source, const Tree* pattern,
-                           const Tree* structure);
+                           const Tree* structure) {
+    return PrivateMatchCreate(source, pattern, structure, false);
+  }
+  static Tree* MatchCreateReduce(const Tree* source, const Tree* pattern,
+                                 const Tree* structure) {
+    return PrivateMatchCreate(source, pattern, structure, true);
+  }
   // Return true if reference has been replaced
   static bool MatchReplace(Tree* source, const Tree* pattern,
                            const Tree* structure, bool reduce = false) {
@@ -194,6 +200,8 @@ class PatternMatching {
 
  private:
   static bool PrivateMatchReplace(Tree* source, const Tree* pattern,
+                                  const Tree* structure, bool reduce);
+  static Tree* PrivateMatchCreate(const Tree* source, const Tree* pattern,
                                   const Tree* structure, bool reduce);
 
   static bool TrimSourceTree(Tree* source, Context* ctx);

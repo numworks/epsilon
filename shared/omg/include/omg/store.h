@@ -39,12 +39,15 @@ class Store {
   int numberOfElements() const { return m_numberOfElements; }
   void* elementAtIndex(int index) const;
 
-  size_t bufferSize() const { return m_bufferSize; }
-  size_t remainingBufferSize() const {
-    return spaceForNewElements(endOfElements()) + sizeof(offset_t);
-  }
+  size_t maximumSize() const { return m_bufferSize - sizeof(offset_t); }
+  size_t remainingSize() const { return spaceForNewElements(endOfElements()); }
 
   void* pushElement(const void* element, int size);
+
+  /* Make space by clearing some older elements if needed.
+   * neededSize must be smaller than maximumSize */
+  void makeRoomForElement(size_t neededSize);
+
   void deleteElementAtIndex(int index);
   void deleteAll() { m_numberOfElements = 0; }
 
@@ -61,10 +64,6 @@ class Store {
     assert(numberOfElements() > 0);
     deleteElementAtIndex(numberOfElements() - 1);
   }
-
-  /* Make space by clearing some older elements if needed.
-   * neededSize must be smaller than m_bufferSize */
-  void getEmptySpace(size_t neededSize);
 
   // Track an element that has been already copied/constructed in the buffer
   void registerElement(char* element, int size);

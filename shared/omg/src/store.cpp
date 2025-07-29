@@ -5,8 +5,6 @@
 
 namespace OMG {
 
-// Public
-
 Store::Store(char* buffer, size_t bufferSize)
     : m_buffer(buffer), m_bufferSize(bufferSize), m_numberOfElements(0) {
   static_assert(std::is_same_v<offset_t, uint16_t>);
@@ -19,7 +17,12 @@ void* Store::elementAtIndex(int index) const {
                                          : endOfElementAtIndex(index + 1);
 }
 
-// Private
+void Store::makeRoomForElement(size_t neededSize) {
+  assert(neededSize < m_bufferSize);
+  while (remainingSize() < neededSize) {
+    deleteOldestElement();
+  }
+}
 
 char* Store::endOfElementAtIndex(int index) const {
   assert(0 <= index && index < numberOfElements());
@@ -55,13 +58,6 @@ void Store::deleteElementAtIndex(int index) {
   }
   m_numberOfElements--;
   // Ion::CircuitBreaker::unlock();
-}
-
-void Store::getEmptySpace(size_t neededSize) {
-  assert(neededSize < m_bufferSize);
-  while (remainingBufferSize() < neededSize) {
-    deleteOldestElement();
-  }
 }
 
 void* Store::pushElement(const void* element, int size) {

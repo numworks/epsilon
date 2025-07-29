@@ -47,16 +47,16 @@ class CalculationStore : OMG::Store {
 
   Poincare::PoolVariableContext createAnsContext(Poincare::Context* context);
 
-  using Store::bufferSize;
   using Store::deleteAll;
-  using Store::remainingBufferSize;
+  using Store::maximumSize;
+  using Store::remainingSize;
 
  private:
   constexpr static size_t neededSizeForCalculation(size_t sizeOfExpressions) {
     /* See the "memory layout" section in the description of the
      * CalculationStore class for more details on how calculations are stored.
      */
-    return sizeof(Calculation) + sizeOfExpressions + sizeof(Calculation*);
+    return sizeof(Calculation) + sizeOfExpressions;
   }
 
   struct CalculationElements {

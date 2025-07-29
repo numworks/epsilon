@@ -205,7 +205,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     Tree::ApplyShallowTopDown(exactAngle, Units::Unit::ShallowRemoveUnit);
     exactAngle->cloneNodeAtNode(KMult.node<2>);
     Angle::RadTo(angleUnit)->cloneTree();
-    // Simplify again
+    // Reduce again
     SystematicReduction::ShallowReduce(exactAngle);
   }
 

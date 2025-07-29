@@ -794,7 +794,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
      * TODO: Bring A back in ]-π,π] if possible. */
     if (PatternMatching::Match(e, KExp(KMult(KArg(KExp(KA)), i_e)), &ctx) &&
         GetComplexSign(ctx.getTree(KA)).isPureIm()) {
-      // KExp(KA) has already been simplified, no need to simplify further
+      // KExp(KA) has already been reduced, no need to reduce further
       e->moveTreeOverTree(PatternMatching::Create(KExp(KA), ctx));
       return true;
     }

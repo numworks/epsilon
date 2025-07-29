@@ -32,7 +32,7 @@ namespace Poincare::Internal {
 
 bool SystematicReduction::DeepReduceAux(Tree* e, bool* isList) {
   if (e->isDepList()) {
-    // Never simplify any dependencies
+    // Never reduce any dependencies
     return false;
   }
   bool hasListChild = false;

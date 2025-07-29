@@ -25,7 +25,7 @@ class ExactFormula {
   static ExactFormula GetExactFormulaAtIndex(int n);
 
   constexpr static int k_totalNumberOfFormula = 13;
-  // Only formulas for angles in [0, π/4] are used when simplifying cos and sin
+  // Only formulas for angles in [0, π/4] are used when reducing cos and sin
   constexpr static int k_numberOfFormulaForTrig = 7;
 
   const Tree* m_angle;

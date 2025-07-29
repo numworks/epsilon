@@ -245,7 +245,7 @@ bool AdvancedOperation::ContractExp(Tree* e) {
 // A*(B+C+..)*(D+E+...) = A*B*D + A*B*E+...+A*C*D+...
 bool AdvancedOperation::ExpandMult(Tree* e) {
   /* As opposed to most advanced operation steps, we expand mult in depth
-   * because too many advanced reduction steps were needed to simplify
+   * because too many advanced reduction steps were needed to reduce
    * multiplications of additions. We therefore rely on ContractMult for atomic
    * contractions that improve the metric. */
   PatternMatching::Context ctx;

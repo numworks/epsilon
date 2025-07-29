@@ -285,7 +285,7 @@ bool CanBeUndefWithInfinity(const Tree* e) {
   return false;
 }
 
-bool SimplifyPowReal(Tree* dependency, Tree* dependencies) {
+bool ReducePowerRealDependency(Tree* dependency, Tree* dependencies) {
   assert(dependency->isPowReal());
   assert(dependencies->isDepList());
   Tree* exponent = dependency->child(1);
@@ -319,7 +319,7 @@ bool SimplifyPowReal(Tree* dependency, Tree* dependencies) {
   return true;
 }
 
-bool SimplifyDependencies(Tree* dependencies) {
+bool ReduceDependencies(Tree* dependencies) {
   assert(dependencies->isDepList());
   bool changed = false;
 
@@ -360,7 +360,7 @@ bool SimplifyDependencies(Tree* dependencies) {
       continue;
 
     } else if (dependency->isPowReal() &&
-               SimplifyPowReal(dependency, dependencies)) {
+               ReducePowerRealDependency(dependency, dependencies)) {
       changed = true;
       continue;
     } else if (IsDefinedIfChildIsDefined(dependency)) {
@@ -426,7 +426,7 @@ bool Dependency::ShallowRemoveUselessDependencies(Tree* dep) {
   const Tree* expression = Dependency::Main(dep);
   Tree* set = Dependency::Dependencies(dep);
 
-  bool changed = SimplifyDependencies(set);
+  bool changed = ReduceDependencies(set);
 
   if (changed) {
     NAry::Sort(set);

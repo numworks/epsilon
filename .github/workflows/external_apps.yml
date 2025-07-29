@@ -2,7 +2,7 @@ name: External Apps Build
 on:
   pull_request:
     paths:
-      - 'external_apps/**'
+      - 'epsilon/external_apps/**'
 
 env:
   MAKEFLAGS: ${{ vars.MAKEFLAGS }}
@@ -35,9 +35,6 @@ jobs:
   rust_app:
     runs-on: ubuntu-latest
     if: 0
-    defaults:
-      run:
-        working-directory: ./epsilon
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

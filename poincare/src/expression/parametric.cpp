@@ -62,12 +62,135 @@ ComplexSign Parametric::VariableSign(const Tree* e) {
   }
 }
 
-bool Parametric::ReduceSumOrProduct(Tree* e) {
+Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
+                            const Tree* upperBound, const Tree* function,
+                            ComplexSign sign) {
   assert(e->isSum() || e->isProduct());
   bool isSum = e->isSum();
-  Tree* lowerBound = e->child(k_lowerBoundIndex);
-  Tree* upperBound = lowerBound->nextTree();
 
+  // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1
+  if (sign.realSign().isStrictlyNegative()) {
+    Dimension dim = Dimension::Get(function);
+    Tree* result;
+    if (dim.isMatrix()) {
+      result = isSum ? Matrix::Zero(dim.matrix) : Matrix::Identity(dim.matrix);
+    } else if (dim.isUnit()) {
+      // Preserve unit
+      result = SharedTreeStack->pushMult(2);
+      (0_e)->cloneTree();
+      Units::Unit::GetBaseUnits(dim.unit.vector);
+      SystematicReduction::ShallowReduce(result);
+    } else {
+      assert(dim.isScalar());
+      result = (isSum ? 0_e : 1_e)->cloneTree();
+    }
+    return result;
+  }
+
+  // If a=b, no need to wait for advanced reduction to explicit
+  if (sign.realSign().isNull()) {
+    Tree* result = e->cloneTree();
+    if (Parametric::Explicit(result)) {
+      return result;
+    }
+    result->removeTree();
+    return nullptr;
+  }
+
+  // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
+  Tree* result = PatternMatching::MatchCreateReduce(
+      e, KSum(KA, KB, KC, KVarK),
+      KMult(1_e / 2_e,
+            KAdd(KMult(KC, KAdd(1_e, KC)), KMult(-1_e, KB, KAdd(-1_e, KB)))));
+  if (result) {
+    return result;
+  }
+
+  // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
+  result = PatternMatching::MatchCreateReduce(
+      e, KSum(KA, KB, KC, KPow(KVarK, 2_e)),
+      KMult(KPow(6_e, -1_e),
+            KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
+                 KMult(-1_e, KAdd(-1_e, KB), KB, KAdd(KMult(2_e, KB), -1_e)))));
+  if (result) {
+    return result;
+  }
+
+  if (Random::HasRandom(e)) {
+    return nullptr;
+  }
+
+  // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
+  if (!Variables::HasVariable(function, Parametric::k_localVariableId)) {
+    // TODO: add ceil around bounds
+    constexpr SimpleKTrees::KTree numberOfTerms =
+        KAdd(1_e, KA, KMult(-1_e, KB));
+    TreeRef body = function->cloneTree();
+    Variables::LeaveScope(body);
+    PatternMatching::CreateReduce(
+        isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
+        {.KA = upperBound, .KB = lowerBound, .KC = body});
+    body->removeTree();
+    return body;  // Contains CreateReduce result
+  }
+
+  // sum(a*f(k),k,m,n) = a*sum(f(k),k,m,n)
+  if (isSum && function->isMult()) {
+    TreeRef result(SharedTreeStack->pushMult(1));
+    Tree* sum = e->cloneTree();
+    const int nbChildren = function->numberOfChildren();
+    int nbChildrenRemoved = 0;
+    Tree* function = sum->child(Parametric::k_integrandIndex);
+    Tree* child = function->child(0);
+    for (int i = 0; i < nbChildren; i++) {
+      if (!Variables::HasVariable(child, Parametric::k_localVariableId)) {
+        Variables::LeaveScope(child);
+        child->detachTree();
+        nbChildrenRemoved++;
+      } else {
+        child = child->nextTree();
+      }
+    }
+    NAry::SetNumberOfChildren(function, nbChildren - nbChildrenRemoved);
+    NAry::SetNumberOfChildren(result, nbChildrenRemoved + 1);
+    if (nbChildrenRemoved == 0) {
+      SharedTreeStack->flushFromBlock(result);
+      return nullptr;
+    }
+    assert(function->numberOfChildren() > 0);  // Because HasVariable
+    if (function->numberOfChildren() == 1) {
+      // Shallow reduce to remove the Mult
+      // TODO: Squash is should be enough
+      SystematicReduction::ShallowReduce(function);
+    }
+    // Shallow reduce the Sum
+    SystematicReduction::ShallowReduce(sum);
+    // Shallow reduce a*Sum
+    SystematicReduction::ShallowReduce(result);
+    return result;
+  }
+
+  // prod(f(k)^a,k,m,n) = prod(f(k),k,m,n)^a
+  if (!isSum && function->isPow()) {
+    Tree* result = e->cloneTree();
+    assert(function->child(1)->isInteger());
+    // If a wasn't an integer, we would need to add Variables::LeaveScope(a)
+    assert(!Variables::HasVariable(function->child(1),
+                                   Parametric::k_localVariableId));
+    // Move the node Pow before the Prod
+    result->moveNodeAtNode(result->child(Parametric::k_integrandIndex));
+    // Shallow reduce the Prod
+    SystematicReduction::ShallowReduce(result->child(0));
+    // Shallow reduce Prod^a
+    SystematicReduction::ShallowReduce(result);
+    return result;
+  }
+  return nullptr;
+}
+
+bool Parametric::ReduceSumOrProduct(Tree* e) {
+  const Tree* lowerBound = e->child(k_lowerBoundIndex);
+  const Tree* upperBound = lowerBound->nextTree();
   constexpr bool (*HasUserSymbol)(const Tree*) = [](const Tree* e) {
     return e->hasDescendantSatisfying(
         [](const Tree* child) { return child->isUserSymbol(); });
@@ -80,20 +203,6 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     return true;
   }
   ComplexSign sign = ComplexSignOfDifference(upperBound, lowerBound);
-  /* NOTE: this variable is used when when dependencies are introduced and the
-   * sum/product is simplified later. Since later pattern matching/reduction are
-   * unaware of the newly created dep node, we need to handle possible KDep
-   * creation and reduction with this function */
-  TreeRef deplist;
-  bool (*createNeededDeps)(Tree*, TreeRef) = [](Tree* e, TreeRef deplist) {
-    if (deplist.isUninitialized()) {
-      return false;
-    }
-    e->nextTree()->moveTreeBeforeNode(deplist);
-    e->cloneNodeAtNode(KDep);
-    Dependency::ShallowBubbleUpDependencies(e);
-    return true;
-  };
   /* Since child should be reduced at this point, ensure bounds are integer or
    * contains UserSymbol (CAS) */
   if (!signLowerBound.isInteger() || !signUpperBound.isInteger()) {
@@ -112,142 +221,22 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     // TODO: Introduce piecewise for inverted bounds:
     // sum(...,k,j) => {sum(...,k,j) if k<=j else 0}
     // NOTE: Dependencies will catch bounds like: k+π
-    deplist = SharedTreeStack->pushDepList(2);
-    SharedTreeStack->pushRealInteger();
-    lowerBound->cloneTree();
-    SharedTreeStack->pushRealInteger();
-    upperBound->cloneTree();
   }
 
-  // If a > b: sum(f(k),k,a,b) = 0 and prod(f(k),k,a,b) = 1
-  if (sign.realSign().isStrictlyNegative()) {
-    Dimension dim = Dimension::Get(e->child(k_integrandIndex));
-    if (dim.isMatrix()) {
-      e->moveTreeOverTree(isSum ? Matrix::Zero(dim.matrix)
-                                : Matrix::Identity(dim.matrix));
-    } else if (dim.isUnit()) {
-      // Preserve unit
-      Tree* result = SharedTreeStack->pushMult(2);
-      (0_e)->cloneTree();
-      Units::Unit::GetBaseUnits(dim.unit.vector);
-      SystematicReduction::ShallowReduce(result);
-      e->moveTreeOverTree(result);
-    } else {
-      assert(dim.isScalar());
-      e->cloneTreeOverTree(isSum ? 0_e : 1_e);
-    }
-    createNeededDeps(e, deplist);
-    return true;
-  }
-
-  // If a=b, no need to wait for advanced reduction to explicit
-  if (sign.realSign().isNull()) {
-    bool changed = Explicit(e);
-    changed = createNeededDeps(e, deplist) || changed;
-    return changed;
-  }
-
-  // sum(k,k,m,n) = n(n+1)/2 - (m-1)m/2
-  if (PatternMatching::MatchReplaceReduce(
-          e, KSum(KA, KB, KC, KVarK),
-          KMult(1_e / 2_e, KAdd(KMult(KC, KAdd(1_e, KC)),
-                                KMult(-1_e, KB, KAdd(-1_e, KB)))))) {
-    createNeededDeps(e, deplist);
-    return true;
-  }
-
-  // sum(k^2,k,m,n) = n(n+1)(2n+1)/6 - (m-1)(m)(2m-1)/6
-  if (PatternMatching::MatchReplaceReduce(
-          e, KSum(KA, KB, KC, KPow(KVarK, 2_e)),
-          KMult(KPow(6_e, -1_e),
-                KAdd(KMult(KC, KAdd(KC, 1_e), KAdd(KMult(2_e, KC), 1_e)),
-                     KMult(-1_e, KAdd(-1_e, KB), KB,
-                           KAdd(KMult(2_e, KB), -1_e)))))) {
-    createNeededDeps(e, deplist);
-    return true;
-  }
-
-  if (Random::HasRandom(e)) {
-    if (!deplist.isUninitialized()) {
-      deplist->removeTree();
-    }
+  const Tree* function = upperBound->nextTree();
+  static_assert(k_lowerBoundIndex + 1 == k_upperBoundIndex &&
+                k_upperBoundIndex + 1 == k_integrandIndex);
+  TreeRef result =
+      ReduceSumOrProductAux(e, lowerBound, upperBound, function, sign);
+  if (!result) {
     return false;
   }
-
-  Tree* function = upperBound->nextTree();
-
-  // sum(f,k,m,n) = (1+n-m)*f and prod(f,k,m,n) = f^(1+n-m)
-  if (!Variables::HasVariable(function, k_localVariableId)) {
-    // TODO: add ceil around bounds
-    constexpr SimpleKTrees::KTree numberOfTerms =
-        KAdd(1_e, KA, KMult(-1_e, KB));
-    Variables::LeaveScope(function);
-    Tree* result = PatternMatching::CreateReduce(
-        isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
-        {.KA = upperBound, .KB = lowerBound, .KC = function});
-    e->moveTreeOverTree(result);
-    createNeededDeps(e, deplist);
-    return true;
-  }
-
-  if (!deplist.isUninitialized()) {
-    deplist->removeTree();
-  }
-
-  // sum(a*f(k),k,m,n) = a*sum(f(k),k,m,n)
-  if (isSum && function->isMult()) {
-    TreeRef a(SharedTreeStack->pushMult(0));
-    const int nbChildren = function->numberOfChildren();
-    int nbChildrenRemoved = 0;
-    Tree* child = function->child(0);
-    for (int i = 0; i < nbChildren; i++) {
-      if (!Variables::HasVariable(child, k_localVariableId)) {
-        Variables::LeaveScope(child);
-        child->detachTree();
-        nbChildrenRemoved++;
-      } else {
-        child = child->nextTree();
-      }
-    }
-    NAry::SetNumberOfChildren(function, nbChildren - nbChildrenRemoved);
-    NAry::SetNumberOfChildren(a, nbChildrenRemoved);
-    if (a->numberOfChildren() == 0) {
-      a->removeTree();
-      return false;
-    }
-    assert(function->numberOfChildren() > 0);  // Because HasVariable
-    if (function->numberOfChildren() == 1) {
-      // Shallow reduce to remove the Mult
-      SystematicReduction::ShallowReduce(function);
-    }
-    // Shallow reduce the Sum
-    SystematicReduction::ShallowReduce(e);
-    // Add factor a before the Sum
-    e->moveTreeAtNode(a);
-    // a is already a Mult, increase its number of children to include the Sum
-    NAry::SetNumberOfChildren(e, e->numberOfChildren() + 1);
-    // Shallow reduce a*Sum
-    SystematicReduction::ShallowReduce(e);
-    return true;
-  }
-
-  // prod(f(k)^a,k,m,n) = prod(f(k),k,m,n)^a
-  if (!isSum && function->isPow()) {
-    Tree* a = function->child(1);
-    assert(a->isInteger());
-    (void)a;
-    // If a wasn't an integer, we would need to add Variables::LeaveScope(a)
-    assert(!Variables::HasVariable(a, k_localVariableId));
-    // Move the node Pow before the Prod
-    e->moveNodeAtNode(function);
-    // Shallow reduce the Prod
-    SystematicReduction::ShallowReduce(e->child(0));
-    // Shallow reduce Prod^a
-    SystematicReduction::ShallowReduce(e);
-    return true;
-  }
-
-  return false;
+  e->moveTreeOverTree(PatternMatching::CreateReduce(
+      KDep(KA, KDepList(KRealInteger(KB), KRealInteger(KC))),
+      {.KA = result, .KB = lowerBound, .KC = upperBound}));
+  result->removeTree();
+  Dependency::ShallowRemoveUselessDependencies(e);
+  return true;
 }
 
 bool Parametric::ExpandSum(Tree* e) {

@@ -21,7 +21,7 @@ bool Undefined::CanHaveUndefinedChild(const Tree* e, int childIndex) {
          (e->isListSequence() && childIndex == 2);
 }
 
-void Undefined::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
+Tree* Undefined::CreateTreeWithDimensionedType(const Tree* e, Type type) {
   assert(TypeBlock::IsZero(type) || TypeBlock::IsUndefined(type));
   Tree* result = Tree::FromBlocks(SharedTreeStack->lastBlock());
   int length = Dimension::ListLength(e);
@@ -57,7 +57,7 @@ void Undefined::ReplaceTreeWithDimensionedType(Tree* e, Type type) {
       SharedTreeStack->pushBlock(type);
     }
   }
-  e->moveTreeOverTree(result);
+  return result;
 }
 
 bool Undefined::ShallowBubbleUpUndef(Tree* e) {

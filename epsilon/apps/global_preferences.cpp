@@ -17,8 +17,6 @@ void GlobalPreferences::countryHasChanged(bool updateSnapshots) {
   MathPreferences::SharedPreferences()->enableMixedFractions(mixedFractions());
   MathPreferences::SharedPreferences()->setLogarithmBasePosition(
       logarithmBasePosition());
-  MathPreferences::SharedPreferences()->setLogarithmKeyEvent(
-      logarithmKeyEvent());
   MathPreferences::SharedPreferences()->setParabolaParameter(
       parabolaParameter());
   if (!updateSnapshots) {

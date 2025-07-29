@@ -51,7 +51,7 @@ size_t EditableField::getTextFromEvent(Ion::Events::Event event, char* buffer,
                                        size_t bufferSize) {
   if (event == Ion::Events::Log &&
       LayoutPreferences::SharedPreferences()->logarithmKeyEvent() ==
-          Poincare::Preferences::LogarithmKeyEvent::WithBaseTen) {
+          LogarithmKeyEvent::WithBaseTen) {
     return strlcpy(buffer, k_logWithBase10, bufferSize);
   }
   return Ion::Events::copyText(static_cast<uint8_t>(event), buffer, bufferSize);

@@ -47,12 +47,6 @@ class Store {
   void deleteAll() { m_numberOfElements = 0; }
 
  protected:
-  char* pointerArea() const {
-    return m_buffer + m_bufferSize - m_numberOfElements * sizeof(void*);
-  }
-  char** pointerArray() const {
-    return reinterpret_cast<char**>(pointerArea());
-  }
   char* endOfElements() const {
     return numberOfElements() == 0 ? m_buffer : endOfElementAtIndex(0);
   }
@@ -69,6 +63,17 @@ class Store {
   /* Make space by clearing some older elements if needed.
    * neededSize must be smaller than m_bufferSize */
   void getEmptySpace(size_t neededSize);
+
+  // Track an element that has been already copied/constructed in the buffer
+  void registerElement(char* element, int size);
+
+ private:
+  char* pointerArea() const {
+    return m_buffer + m_bufferSize - m_numberOfElements * sizeof(void*);
+  }
+  char** pointerArray() const {
+    return reinterpret_cast<char**>(pointerArea());
+  }
 
   char* const m_buffer;
   const size_t m_bufferSize;

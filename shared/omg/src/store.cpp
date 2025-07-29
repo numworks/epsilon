@@ -66,9 +66,13 @@ void* Store::pushElement(const void* element, int size) {
          destination + size + sizeof(void*) <= pointerArea());
 
   std::memcpy(destination, element, size);
+  registerElement(destination, size);
+  return destination;
+}
 
+void Store::registerElement(char* element, int size) {
   // Write the pointer to the new element at pointerArea()
-  pointerArray()[-1] = destination + size;
+  pointerArray()[-1] = element + size;
 
   /* Now that the element is copied, we can finally update
    * m_numberOfElements. As that is the only variable tracking the state of the
@@ -76,9 +80,7 @@ void* Store::pushElement(const void* element, int size) {
    * interruption occur, all the temporary states are silently discarded and no
    * ill-formed Element is stored. */
   m_numberOfElements++;
-  assert(elementAtIndex(0) == destination);
-
-  return destination;
+  assert(elementAtIndex(0) == element);
 }
 
 }  // namespace OMG

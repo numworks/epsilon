@@ -147,6 +147,39 @@ class __attribute__((packed)) GlobalPreferences {
   // In milliseconds
   constexpr static uint32_t k_defaultDimmingTime = 30 * 1000;
 
+  Poincare::Preferences::CalculationPreferences calculationPreferences() const {
+    return m_calculationPreferences;
+  }
+  Poincare::Preferences::AngleUnit angleUnit() const {
+    return m_calculationPreferences.angleUnit;
+  }
+  void setAngleUnit(Poincare::Preferences::AngleUnit angleUnit) {
+    m_calculationPreferences.angleUnit = angleUnit;
+  }
+  Poincare::Preferences::PrintFloatMode displayMode() const {
+    return m_calculationPreferences.displayMode;
+  }
+  void setDisplayMode(Poincare::Preferences::PrintFloatMode displayMode) {
+    m_calculationPreferences.displayMode = displayMode;
+  }
+  Poincare::Preferences::ComplexFormat complexFormat() const {
+    return m_calculationPreferences.complexFormat;
+  }
+  void setComplexFormat(Poincare::Preferences::ComplexFormat complexFormat) {
+    m_calculationPreferences.complexFormat = complexFormat;
+  }
+  uint8_t numberOfSignificantDigits() const {
+    return m_calculationPreferences.numberOfSignificantDigits;
+  }
+  void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
+    m_calculationPreferences.numberOfSignificantDigits =
+        numberOfSignificantDigits;
+  }
+  uint32_t mathPreferencesCheckSum() const {
+    return (static_cast<uint32_t>(complexFormat()) << 8) +
+           static_cast<uint32_t>(angleUnit());
+  }
+
  private:
   constexpr static uint8_t k_version = 2;
 
@@ -186,17 +219,22 @@ class __attribute__((packed)) GlobalPreferences {
 
   /* TODO: group all 1 bit settings (showPopUp, font & editionMode) into a
    * struct of size 1byte */
-  CODE_GUARD(global_preferences, 1555060920,                               //
-             uint8_t m_version = k_version;                                //
-             BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;  //
-             I18n::Language m_language = k_defaultLanguage;                //
-             I18n::Country m_country = k_defaultCountry;                   //
-             bool m_showPopUp = k_defaultShowPopUp;                        //
-             KDFont::Size m_font = k_defaultFont;                          //
-             EditionMode m_editionMode = k_defaultEditionMode;             //
-             DimmingTimeType m_dimmingTime = k_defaultDimmingTime;         //
-             public
-             : static constexpr int k_objectSize = 14;)
+  // CODE_GUARD(
+  //     global_preferences, 1067168840,  //
+  uint8_t m_version = k_version;
+  BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;
+  I18n::Language m_language = k_defaultLanguage;
+  I18n::Country m_country = k_defaultCountry;
+  bool m_showPopUp = k_defaultShowPopUp;
+  KDFont::Size m_font = k_defaultFont;
+  EditionMode m_editionMode = k_defaultEditionMode;
+  Poincare::Preferences::CalculationPreferences m_calculationPreferences =
+      Poincare::Preferences::k_defaultCalculationPreferences;
+  DimmingTimeType m_dimmingTime = k_defaultDimmingTime;
+
+ public:
+  static constexpr int k_objectSize = 16;
+  // )
 };
 
 #if PLATFORM_DEVICE

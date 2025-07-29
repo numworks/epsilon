@@ -166,51 +166,6 @@ class __attribute__((packed)) Preferences {
   ExamMode examMode() const;
   void setExamMode(ExamMode examMode);
 
- protected:
-  /* WARNING: The following methods should not be called in Poincare
-   * EditionMode, AngleUnit, ComplexFormat, PrintFloatMode and
-   * NumberOfSignificantDigits should not be stored in Poincaré's Preferences,
-   * and rather be passed to methods signatures.
-   * The refactor wasn't tackled yet but none of them is currently called in
-   * Poincaré. To ensure this, they are forbidden in PoincareJS (which doesn't
-   * need them), and are protected.
-   * Alias classes Apps::MathPreferences and Escher::LayoutPreferences are
-   * provided in Apps and Escher to access these methods. See comment in
-   * apps/math_preferences.h
-   * TODO_PCJ: Get rid of them entirely */
-#ifndef TARGET_POINCARE_JS
-  CalculationPreferences calculationPreferences() const {
-    return m_calculationPreferences;
-  }
-  AngleUnit angleUnit() const { return m_calculationPreferences.angleUnit; }
-  void setAngleUnit(AngleUnit angleUnit) {
-    m_calculationPreferences.angleUnit = angleUnit;
-  }
-  PrintFloatMode displayMode() const {
-    return m_calculationPreferences.displayMode;
-  }
-  void setDisplayMode(PrintFloatMode displayMode) {
-    m_calculationPreferences.displayMode = displayMode;
-  }
-  ComplexFormat complexFormat() const {
-    return m_calculationPreferences.complexFormat;
-  }
-  void setComplexFormat(Preferences::ComplexFormat complexFormat) {
-    m_calculationPreferences.complexFormat = complexFormat;
-  }
-  uint8_t numberOfSignificantDigits() const {
-    return m_calculationPreferences.numberOfSignificantDigits;
-  }
-  void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
-    m_calculationPreferences.numberOfSignificantDigits =
-        numberOfSignificantDigits;
-  }
-  uint32_t mathPreferencesCheckSum() const {
-    return (static_cast<uint32_t>(complexFormat()) << 8) +
-           static_cast<uint32_t>(angleUnit());
-  }
-#endif
-
  private:
   // TODO: remove this and associated member
   enum class LogarithmKeyEvent : uint8_t { Default };

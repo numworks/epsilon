@@ -25,14 +25,18 @@ namespace Escher {
  * It's named LayoutPreferences to avoid name conflicts with
  * Poincare::Preferences See comment in poincare/preferences.h.
  */
-class LayoutPreferences : public Poincare::Preferences {
+/* TODO: remove dependency to apps. One solution could be call Escher::Init with
+ * a pointer to an abstart class that declares the necessary methods */
+class LayoutPreferences : public GlobalPreferences {
  public:
   inline static LayoutPreferences* SharedPreferences() {
     return static_cast<LayoutPreferences*>(
-        Poincare::Preferences::SharedPreferences());
+        GlobalPreferences::SharedGlobalPreferences());
   }
 
-  using Poincare::Preferences::displayMode;
+  Poincare::Preferences::PrintFloatMode displayMode() {
+    return GlobalPreferences::SharedGlobalPreferences()->displayMode();
+  }
 
   Escher::LogarithmKeyEvent logarithmKeyEvent() {
     return GlobalPreferences::SharedGlobalPreferences()->logarithmKeyEvent();
@@ -44,7 +48,7 @@ class LayoutPreferences : public Poincare::Preferences {
   }
 };
 
-static_assert(sizeof(LayoutPreferences) == sizeof(Poincare::Preferences));
+static_assert(sizeof(LayoutPreferences) == sizeof(GlobalPreferences));
 
 }  // namespace Escher
 #endif

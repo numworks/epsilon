@@ -244,7 +244,7 @@ class ContinuousFunctionProperties {
       const Poincare::SystemExpression& analyzedExpression);
 
   // If equation should be allowed when implicit plots are forbidden.
-  static bool IsExplicitEquation(const Poincare::SystemExpression equation,
+  static bool IsExplicitEquation(const Poincare::UserExpression equation,
                                  CodePoint symbol);
 
   // Setters

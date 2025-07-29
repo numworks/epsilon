@@ -508,7 +508,7 @@ I18n::Message ContinuousFunctionProperties::captionForParametricFunction(
 }
 
 bool ContinuousFunctionProperties::IsExplicitEquation(
-    const SystemExpression equation, CodePoint symbol) {
+    const UserExpression equation, CodePoint symbol) {
   /* An equation is explicit if it is a comparison between the given symbol and
    * something that does not depend on it. For example, using 'y' symbol:
    * y=1+x or y>x are explicit but y+1=x or y=x+2*y are implicit. */

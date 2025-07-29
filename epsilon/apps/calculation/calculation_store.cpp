@@ -99,9 +99,9 @@ void CalculationStore::replaceAnsInExpression(UserExpression& expression,
   expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
 }
 
-static bool compute(Poincare::Expression inputExpression,
-                    Poincare::Expression& exactOutputExpression,
-                    Poincare::Expression& approximateOutputExpression,
+static bool compute(Poincare::UserExpression inputExpression,
+                    Poincare::UserExpression& exactOutputExpression,
+                    Poincare::UserExpression& approximateOutputExpression,
                     Poincare::Preferences::ComplexFormat& complexFormat,
                     Poincare::Context* context) {
   assert(!inputExpression.isUninitialized());
@@ -129,7 +129,7 @@ struct CalculationResult {
 };
 
 static CalculationResult computeInterruptible(
-    Poincare::Expression inputExpression,
+    Poincare::UserExpression inputExpression,
     Poincare::Preferences::ComplexFormat& complexFormat,
     Poincare::Context* context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
@@ -197,7 +197,7 @@ assert(!value.recursivelyMatches(
 }
 
 static void postProcessOutputs(OutputExpressions& outputs,
-                               Poincare::Expression inputExpression,
+                               Poincare::UserExpression inputExpression,
                                bool unitsForbidden,
                                Poincare::Context* context) {
   /* TODO: the two following operations should be performed in a
@@ -248,7 +248,7 @@ Poincare::UserExpression CalculationStore::parseInput(
 }
 
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
-    Poincare::Expression inputExpression, Poincare::Context* context) {
+    Poincare::UserExpression inputExpression, Poincare::Context* context) {
   Poincare::Preferences::ComplexFormat complexFormat =
       MathPreferences::SharedPreferences()->complexFormat();
   CalculationResult calculationResult =

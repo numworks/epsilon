@@ -132,9 +132,9 @@ $(addprefix layout/, \
   layout_memoization.cpp:-nopool \
   layouter.cpp \
   multiplication_symbol.cpp \
-  parser.cpp \
   parsing/helper.cpp \
   parsing/latex_parser.cpp \
+  parsing/layout_parser.cpp \
   parsing/rack_parser.cpp \
   parsing/tokenizer.cpp \
   rack_from_text.cpp \

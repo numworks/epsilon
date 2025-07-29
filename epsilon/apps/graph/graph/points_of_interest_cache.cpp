@@ -212,7 +212,7 @@ struct PointSearchContext {
     solver.setSearchStep(searchStep);
     solver.stretch();
   }
-  ExpiringPointer<ContinuousFunction> model() const {
+  OMG::ExpiringPointer<ContinuousFunction> model() const {
     return store->modelForRecord(record);
   }
 };
@@ -220,7 +220,7 @@ struct PointSearchContext {
 PointOfInterest findYIntercept(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
   if (ctx->start < 0.f && 0.f < ctx->end) {
-    ExpiringPointer<ContinuousFunction> f = ctx->model();
+    OMG::ExpiringPointer<ContinuousFunction> f = ctx->model();
     int n = f->numberOfSubCurves();
     while (ctx->counter < n) {
       uint8_t subCurve = ctx->counter++;
@@ -245,7 +245,7 @@ PointOfInterest findYIntercept(void* searchContext) {
 PointOfInterest findRootOrExtremum(void* searchContext) {
   PointSearchContext* ctx = static_cast<PointSearchContext*>(searchContext);
 
-  ExpiringPointer<ContinuousFunction> f = ctx->model();
+  OMG::ExpiringPointer<ContinuousFunction> f = ctx->model();
   if (f->numberOfSubCurves() != 1) {
     // Only y-intercept
     return PointOfInterest{};
@@ -290,7 +290,7 @@ PointOfInterest findIntersections(void* searchContext) {
   /* Do not compute intersections if store is full because re-creating a
    * ContinuousFunction object each time a new function is intersected
    * is very slow. */
-  ExpiringPointer<ContinuousFunction> f = ctx->model();
+  OMG::ExpiringPointer<ContinuousFunction> f = ctx->model();
   if ((ctx->store->memoizationOverflows() ||
        !f->shouldDisplayIntersections())) {
     return PointOfInterest{};
@@ -308,7 +308,7 @@ PointOfInterest findIntersections(void* searchContext) {
         ++ctx->counter;
         continue;
       }
-      ExpiringPointer<ContinuousFunction> g =
+      OMG::ExpiringPointer<ContinuousFunction> g =
           ctx->store->modelForRecord(ctx->otherRecord);
       if (!g->shouldDisplayIntersections()) {
         ++ctx->counter;
@@ -324,7 +324,7 @@ PointOfInterest findIntersections(void* searchContext) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
       if (solution.xy().xIsIn(ctx->start, ctx->end, true, false)) {
-        ExpiringPointer<ContinuousFunction> g =
+        OMG::ExpiringPointer<ContinuousFunction> g =
             ctx->store->modelForRecord(ctx->otherRecord);
         bool gIsStrict = g->properties().isStrictInequality();
         assert(solution.interest() == Solver<double>::Interest::Intersection);

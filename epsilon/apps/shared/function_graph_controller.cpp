@@ -77,7 +77,7 @@ void FunctionGraphController::selectCurveAtIndex(int curveIndex,
 
   Ion::Storage::Record r = recordAtCurveIndex(curveIndex);
   functionGraphView()->selectRecord(r);
-  ExpiringPointer<Function> f = functionStore()->modelForRecord(r);
+  OMG::ExpiringPointer<Function> f = functionStore()->modelForRecord(r);
   KDColor color =
       f->color(f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex));
   functionGraphView()->cursorView()->setColor(color, functionGraphView());
@@ -91,7 +91,7 @@ KDCoordinate
 FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(
     int row) {
   assert(row < graphController()->numberOfCurves());
-  ExpiringPointer<Function> function =
+  OMG::ExpiringPointer<Function> function =
       graphController()->functionStore()->modelForRecord(
           graphController()->recordAtCurveIndex(row));
   return std::max(function->layout()->layoutSize(k_font).height(),
@@ -102,7 +102,7 @@ FunctionGraphController::FunctionSelectionController::nonMemoizedRowHeight(
 void FunctionGraphController::FunctionSelectionController::fillCellForRow(
     HighlightCell* cell, int row) {
   assert(row < graphController()->numberOfCurves());
-  ExpiringPointer<Function> function =
+  OMG::ExpiringPointer<Function> function =
       graphController()->functionStore()->modelForRecord(
           graphController()->recordAtCurveIndex(row));
   CurveSelectionCellWithChevron* myCell =
@@ -138,7 +138,8 @@ void FunctionGraphController::reloadBannerView() {
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
                                                bool ignoreMargins) {
   Poincare::Context* context = App::app()->localContext();
-  ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
+  OMG::ExpiringPointer<Function> function =
+      functionStore()->modelForRecord(record);
   float gridUnit =
       2.f * PoincareHelpers::ToFloat(interactiveCurveViewRange()->xGridUnit());
   float xMin = interactiveCurveViewRange()->xMin();
@@ -180,7 +181,8 @@ FunctionStore* FunctionGraphController::functionStore() const {
 void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(
     int index, double* t, Coordinate2D<double>* xy, bool ignoreMargins) {
   Ion::Storage::Record record = recordAtCurveIndex(index);
-  ExpiringPointer<Function> function = functionStore()->modelForRecord(record);
+  OMG::ExpiringPointer<Function> function =
+      functionStore()->modelForRecord(record);
   *t = defaultCursorT(record, ignoreMargins);
   *xy = function->evaluateXYAtParameter(*t, App::app()->localContext(), 0);
 }
@@ -229,7 +231,7 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
                                                              int nextSubCurve,
                                                              double nextT) {
   // Clip the current t to the domain of the next function
-  ExpiringPointer<Function> f =
+  OMG::ExpiringPointer<Function> f =
       functionStore()->modelForRecord(recordAtCurveIndex(nextCurve));
   if (!std::isnan(f->tMin())) {
     assert(!std::isnan(f->tMax()));
@@ -294,7 +296,7 @@ void FunctionGraphController::tidyModels(
     const Poincare::PoolObject* treePoolCursor) {
   int nbOfFunctions = numberOfCurves();
   for (int i = 0; i < nbOfFunctions; i++) {
-    ExpiringPointer<Function> f =
+    OMG::ExpiringPointer<Function> f =
         functionStore()->modelForRecord(recordAtCurveIndex(i));
     f->tidyDownstreamPoolFrom(treePoolCursor);
   }

@@ -41,7 +41,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
     }
   }
   SequenceStore* sequenceStore = App::app()->functionStore();
-  ExpiringPointer<Shared::Sequence> sequence =
+  OMG::ExpiringPointer<Shared::Sequence> sequence =
       sequenceStore->modelForRecord(m_record);
   constexpr size_t bufferSize = k_textMaxLength + 1;
   char name[bufferSize] = {};

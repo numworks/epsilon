@@ -67,7 +67,8 @@ void ContinuousFunctionStore::fillLastFreeColors(bool* colorIsFree) const {
 
   int i = numberOfModels() - 1;
   while (i >= 0) {
-    ExpiringPointer<ContinuousFunction> f = modelForRecord(recordAtIndex(i));
+    OMG::ExpiringPointer<ContinuousFunction> f =
+        modelForRecord(recordAtIndex(i));
     int nDerivatives = 1 + 2 * f->canDisplayDerivative();
     for (int d = 0; d < nDerivatives; d++) {
       int c = indexInArray(f->color(d), Palette::DataColor, paletteSize);

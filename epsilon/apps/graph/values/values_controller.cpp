@@ -157,7 +157,7 @@ int ValuesController::columnToFreeze() {
 void ValuesController::hideDerivative(Ion::Storage::Record record,
                                       int derivationOrder) {
   selectCellAtLocation(selectedColumn() - 1, selectedRow());
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
   if (derivationOrder == 1) {
     f->setDisplayValueFirstDerivative(false);
@@ -237,7 +237,7 @@ size_t ValuesController::fillColumnName(int column, char* buffer) {
   if (typeAtLocation(column, 0) == k_functionTitleCellType) {
     int derivationOrder;
     Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
-    Shared::ExpiringPointer<ContinuousFunction> function =
+    OMG::ExpiringPointer<ContinuousFunction> function =
         functionStore()->modelForRecord(record);
     constexpr size_t bufferNameSize =
         ContinuousFunction::k_maxNameWithArgumentSize + 1;
@@ -263,7 +263,7 @@ void ValuesController::setTitleCellStyle(HighlightCell* cell, int column) {
   }
   int derivationOrder;
   Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
-  Shared::ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
   static_cast<FunctionTitleCell*>(cell)->setColor(
       function->color(derivationOrder));
@@ -289,7 +289,7 @@ void ValuesController::updateNumberOfColumns() {
   for (int i = 0; i < numberOfDisplayedFunctions; i++) {
     Ion::Storage::Record record =
         functionStore()->activeRecordInTableAtIndex(i);
-    ExpiringPointer<ContinuousFunction> f =
+    OMG::ExpiringPointer<ContinuousFunction> f =
         functionStore()->modelForRecord(record);
     int symbolTypeIndex = static_cast<int>(f->properties().symbolType());
     m_numberOfValuesColumnsForType[symbolTypeIndex] +=
@@ -312,7 +312,7 @@ Layout ValuesController::functionTitleLayout(int column) {
   assert(typeAtLocation(column, 0) == k_functionTitleCellType);
   int derivationOrder;
   Ion::Storage::Record record = recordAtColumn(column, &derivationOrder);
-  Shared::ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
   constexpr size_t bufferNameSize =
       ContinuousFunction::k_maxNameWithArgumentSize + 1;
@@ -362,7 +362,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   const MathPreferences* preferences = MathPreferences::SharedPreferences();
   double abscissa;
   int derivationOrder;
-  Shared::ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       functionAtIndex(column, row, &abscissa, &derivationOrder);
   Context* context = App::app()->localContext();
   UserExpression result;
@@ -533,7 +533,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
     const int numberOfColumnsForCurrentRecord =
         numberOfColumnsForRecord(record);
     if (index <= i && i < index + numberOfColumnsForCurrentRecord) {
-      ExpiringPointer<ContinuousFunction> f =
+      OMG::ExpiringPointer<ContinuousFunction> f =
           functionStore()->modelForRecord(record);
       *derivationOrder = f->derivationOrderFromRelativeIndex(
           i - index, ContinuousFunction::DerivativeDisplayType::Value);
@@ -545,7 +545,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
   return nullptr;
 }
 
-Shared::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(
+OMG::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(
     int column, int row, double* abscissa, int* derivationOrder) {
   *abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
@@ -555,7 +555,7 @@ Shared::ExpiringPointer<ContinuousFunction> ValuesController::functionAtIndex(
 
 int ValuesController::numberOfColumnsForRecord(
     Ion::Storage::Record record) const {
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
   return 1 + f->displayValueFirstDerivative() +
          f->displayValueSecondDerivative();

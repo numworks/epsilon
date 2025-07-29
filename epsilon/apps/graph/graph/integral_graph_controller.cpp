@@ -44,7 +44,7 @@ double IntegralGraphController::cursorNextStep(
 }
 
 Layout IntegralGraphController::createFunctionLayout() {
-  ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(selectedRecord());
   constexpr size_t bufferSize =
       Poincare::SymbolHelper::k_maxNameSize + 5;  // f(x)dx

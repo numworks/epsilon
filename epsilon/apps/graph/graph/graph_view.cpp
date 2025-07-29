@@ -61,7 +61,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     m_areaIndex = 0;
   }
 
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
 
   PreparedFunction e = f->expressionApproximated(context());
@@ -316,7 +316,7 @@ void GraphView::drawTangent(KDContext* ctx, KDRect rect,
   if (!m_tangentDisplay || m_selectedRecord != record) {
     return;
   }
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
   assert(f->canComputeTangent());
   /* TODO: We could handle tangent on second curve here by finding out
@@ -557,7 +557,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
   m_computePointsOfInterest = false;
 
   Ion::Storage::Record selectedRec = selectedRecord();
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(selectedRec);
   bool isStrictInequality = f->properties().isStrictInequality();
 
@@ -651,7 +651,7 @@ void GraphView::drawPointsOfInterest(KDContext* ctx, KDRect rect) {
       cursorView()->setCursorFrame(this, frameOfCursor, true);
     }
     // Refresh expiring pointer
-    ExpiringPointer<ContinuousFunction> f =
+    OMG::ExpiringPointer<ContinuousFunction> f =
         functionStore()->modelForRecord(selectedRec);
     KDColor color =
         p.interest == Solver<double>::Interest::ReachedDiscontinuity ||

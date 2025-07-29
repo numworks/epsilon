@@ -81,7 +81,7 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
   if (type == k_expressionCellType) {
     EvenOddExpressionCell* evenOddCell =
         static_cast<EvenOddExpressionCell*>(cell);
-    ExpiringPointer<Equation> equation =
+    OMG::ExpiringPointer<Equation> equation =
         modelStore()->modelForRecord(recordAtRow(row));
     evenOddCell->setLayout(equation->layout());
   }

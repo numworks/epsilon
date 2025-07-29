@@ -20,7 +20,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     InteractiveCurveViewRange* range, int numberOfStepsInGradUnit,
     Ion::Storage::Record record, float pixelWidth, int scrollSpeed,
     int* subCurveIndex) {
-  ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
   assert(!subCurveIndex || *subCurveIndex < function->numberOfSubCurves(true));
   const double tCursor = cursor->t();
@@ -194,7 +194,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
 PointOrRealScalar<double>
 GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
     CurveViewCursor* cursor, Ion::Storage::Record record, int derivationOrder) {
-  ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
   PointOrRealScalar<double> derivative =
       function->approximateDerivative<double>(
@@ -248,7 +248,7 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
 
 double GraphControllerHelper::reloadSlopeInBannerViewForCursorOnFunction(
     CurveViewCursor* cursor, Ion::Storage::Record record) {
-  ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
   double slope =
       function->approximateSlope(cursor->t(), App::app()->localContext());

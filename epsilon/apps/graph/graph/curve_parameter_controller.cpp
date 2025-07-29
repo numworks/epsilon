@@ -60,7 +60,7 @@ Escher::HighlightCell* CurveParameterController::cell(int row) {
       const_cast<const CurveParameterController*>(this)->cell(row));
 }
 
-Shared::ExpiringPointer<Shared::ContinuousFunction>
+OMG::ExpiringPointer<Shared::ContinuousFunction>
 CurveParameterController::function() const {
   return App::app()->functionStore()->modelForRecord(m_record);
 }

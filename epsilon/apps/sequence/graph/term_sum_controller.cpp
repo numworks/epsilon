@@ -28,7 +28,7 @@ const char* TermSumController::title() const {
 }
 
 bool TermSumController::moveCursorHorizontallyToPosition(double position) {
-  ExpiringPointer<Shared::Sequence> sequence =
+  OMG::ExpiringPointer<Shared::Sequence> sequence =
       App::app()->functionStore()->modelForRecord(selectedRecord());
   int initialRank = sequence->initialRank();
   int intPosition = std::round(position);
@@ -56,7 +56,7 @@ double TermSumController::cursorNextStep(double x,
 }
 
 Layout TermSumController::createFunctionLayout() {
-  ExpiringPointer<Shared::Sequence> sequence =
+  OMG::ExpiringPointer<Shared::Sequence> sequence =
       App::app()->functionStore()->modelForRecord(selectedRecord());
   return sequence->nameLayout();
 }

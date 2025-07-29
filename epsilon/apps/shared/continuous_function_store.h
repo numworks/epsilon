@@ -54,14 +54,14 @@ class ContinuousFunctionStore : public FunctionStore {
     return recordSatisfyingTestAtIndex(i, &IsFunctionActiveInTableOfSymbolType,
                                        &symbolType);
   }
-  ExpiringPointer<ContinuousFunction> modelForRecord(
+  OMG::ExpiringPointer<ContinuousFunction> modelForRecord(
       Ion::Storage::Record record) const {
-    return ExpiringPointer<ContinuousFunction>(
+    return OMG::ExpiringPointer<ContinuousFunction>(
         static_cast<ContinuousFunction*>(privateModelForRecord(record)));
   }
-  ExpiringPointer<const ContinuousFunction> constModelForRecord(
+  OMG::ExpiringPointer<const ContinuousFunction> constModelForRecord(
       Ion::Storage::Record record) const {
-    return ExpiringPointer<const ContinuousFunction>(
+    return OMG::ExpiringPointer<const ContinuousFunction>(
         static_cast<const ContinuousFunction*>(privateModelForRecord(record)));
   }
   void setCachesContainer(CachesContainer* container) {

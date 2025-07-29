@@ -30,7 +30,7 @@ void IntersectionGraphController::reloadBannerView() {
   char buffer[bufferSize];
   const char* legend = "=";
   // 'f(x)=g(x)=', keep 2 chars for '='
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(m_record);
   size_t numberOfChar =
       f->nameWithArgument(buffer, bufferSize - 2 * strlen(legend));
@@ -39,7 +39,7 @@ void IntersectionGraphController::reloadBannerView() {
   numberOfChar += Print::CustomPrintf(buffer + numberOfChar,
                                       bufferSize - numberOfChar, legend);
   // keep 1 char for '=';
-  ExpiringPointer<ContinuousFunction> g =
+  OMG::ExpiringPointer<ContinuousFunction> g =
       functionStore()->modelForRecord(m_intersectedRecord);
   size_t numberOfCharsBeforeGName = numberOfChar;
   numberOfChar += g->nameWithArgument(

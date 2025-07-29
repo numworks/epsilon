@@ -26,7 +26,7 @@ SequenceColumnParameterController::clearColumnHelper() {
 bool SequenceColumnParameterController::handleEvent(Ion::Events::Event event) {
   assert(selectedRow() == 0);
   if (m_showSumCell.canBeActivatedByEvent(event)) {
-    ExpiringPointer<Shared::Sequence> currentSequence =
+    OMG::ExpiringPointer<Shared::Sequence> currentSequence =
         GlobalContext::s_sequenceStore->modelForRecord(m_record);
     currentSequence->setDisplaySum(!currentSequence->displaySum());
     updateShowSumSwitch();
@@ -41,7 +41,7 @@ void SequenceColumnParameterController::viewWillAppear() {
 }
 
 void SequenceColumnParameterController::updateShowSumSwitch() {
-  ExpiringPointer<Shared::Sequence> currentSequence =
+  OMG::ExpiringPointer<Shared::Sequence> currentSequence =
       GlobalContext::s_sequenceStore->modelForRecord(m_record);
   m_showSumCell.accessory()->setState(currentSequence->displaySum());
 }

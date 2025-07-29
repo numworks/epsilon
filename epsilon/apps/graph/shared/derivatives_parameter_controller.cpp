@@ -55,7 +55,7 @@ StackViewController* DerivativesParameterController::stackController() const {
   return static_cast<StackViewController*>(parentResponder());
 }
 
-Shared::ExpiringPointer<Shared::ContinuousFunction>
+OMG::ExpiringPointer<Shared::ContinuousFunction>
 DerivativesParameterController::function() const {
   assert(!m_record.isNull());
   return App::app()->functionStore()->modelForRecord(m_record);

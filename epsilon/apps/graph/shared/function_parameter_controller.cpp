@@ -82,7 +82,7 @@ int writeInterval(char* buffer, int bufferSize, double min, double max,
 void FunctionParameterController::viewWillAppear() {
   if (!m_record.isNull()) {
     App* myApp = App::app();
-    Shared::ExpiringPointer<ContinuousFunction> function =
+    OMG::ExpiringPointer<ContinuousFunction> function =
         myApp->functionStore()->modelForRecord(m_record);
     m_detailsCell.subLabel()->setMessage(function->properties().caption());
     double min = function->tMin();
@@ -127,7 +127,8 @@ bool FunctionParameterController::handleEvent(Ion::Events::Event event) {
   return result;
 }
 
-ExpiringPointer<ContinuousFunction> FunctionParameterController::function() {
+OMG::ExpiringPointer<ContinuousFunction>
+FunctionParameterController::function() {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 

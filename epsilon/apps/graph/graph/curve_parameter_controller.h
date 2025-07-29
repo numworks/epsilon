@@ -82,7 +82,7 @@ class CurveParameterController
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,
                                  Ion::Events::Event event) override;
   Escher::TextField* textFieldOfCellAtRow(int row) override;
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
+  OMG::ExpiringPointer<Shared::ContinuousFunction> function() const;
   bool confirmParameterAtIndex(ParameterIndex index, double f);
   void fillParameterCellAtRow(int row) override;
   bool parameterAtIndexIsPreimage(ParameterIndex index) const;

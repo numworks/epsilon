@@ -53,7 +53,7 @@ class CobwebController : public Shared::SimpleInteractiveCurveViewController,
   bool handleZoom(Ion::Events::Event event) override;
   void setupRange();
   bool updateStep(int delta);
-  Shared::ExpiringPointer<Shared::Sequence> sequence() const;
+  OMG::ExpiringPointer<Shared::Sequence> sequence() const;
   CobwebGraphView m_graphView;
   Shared::XYBannerView* m_bannerView;
   Shared::InteractiveCurveViewRange m_graphRange;

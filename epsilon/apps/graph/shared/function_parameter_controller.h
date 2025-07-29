@@ -48,7 +48,7 @@ class FunctionParameterController : public Shared::ListParameterController,
   bool displayDomain() const {
     return m_domainParameterController.isVisible() > 0;
   }
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function();
+  OMG::ExpiringPointer<Shared::ContinuousFunction> function();
 
   // ColumnParameters
   void initializeColumnParameters() override;

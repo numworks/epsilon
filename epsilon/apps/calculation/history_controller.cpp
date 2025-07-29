@@ -116,7 +116,7 @@ bool HistoryController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-Shared::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(
+OMG::ExpiringPointer<Calculation> HistoryController::calculationAtIndex(
     int i) const {
   return m_calculationStore->calculationAtIndex(storeIndex(i));
 }
@@ -153,7 +153,7 @@ KDPoint HistoryController::offsetToRestoreAfterReload(
   int selectedRow = m_selectableListView.selectedRow();
   if (0 <= selectedRow &&
       selectedRow < m_calculationStore->numberOfCalculations()) {
-    Shared::ExpiringPointer<Calculation> calculation =
+    OMG::ExpiringPointer<Calculation> calculation =
         calculationAtIndex(selectedRow);
     delta = calculation->height(true) - calculation->height(false);
   }
@@ -203,7 +203,7 @@ KDCoordinate HistoryController::nonMemoizedRowHeight(int row) {
   if (row >= m_calculationStore->numberOfCalculations()) {
     return 0;
   }
-  Shared::ExpiringPointer<Calculation> calculation = calculationAtIndex(row);
+  OMG::ExpiringPointer<Calculation> calculation = calculationAtIndex(row);
   bool expanded =
       row == selectedRow() && m_selectedSubviewType == SubviewType::Output;
   return calculation->height(expanded);
@@ -290,7 +290,7 @@ void HistoryController::handleOK() {
 
   if (m_selectedSubviewType == SubviewType::Output) {
     m_selectableListView.deselectTable();
-    Shared::ExpiringPointer<Calculation> calculation =
+    OMG::ExpiringPointer<Calculation> calculation =
         calculationAtIndex(focusRow);
     ScrollableTwoLayoutsView::SubviewPosition outputSubviewPosition =
         selectedCell->outputView()->selectedSubviewPosition();
@@ -310,7 +310,7 @@ void HistoryController::handleOK() {
 
   assert(m_selectedSubviewType == SubviewType::Ellipsis);
   assert(displayOutput != Calculation::DisplayOutput::ExactOnly);
-  ExpiringPointer<Calculation> selectedCalculation =
+  OMG::ExpiringPointer<Calculation> selectedCalculation =
       calculationAtIndex(focusRow);
   UserExpression i, a, e;
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a, context);

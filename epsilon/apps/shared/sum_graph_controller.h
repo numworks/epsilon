@@ -4,7 +4,6 @@
 #include <escher/layout_view.h>
 #include <poincare/print_float.h>
 
-#include "expiring_pointer.h"
 #include "function.h"
 #include "function_graph_view.h"
 #include "simple_interactive_curve_view_controller.h"

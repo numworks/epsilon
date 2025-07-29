@@ -237,7 +237,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(
   }
   Poincare::UserExpression equation = Poincare::UserExpression::Create(
       KEqual(KA, KB), {.KA = symbol, .KB = expressionToStore});
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       GlobalContext::s_continuousFunctionStore->modelForRecord(recordToSet);
   // TODO: factorize with ContinuousFunction::setContent
   bool wasCartesian = f->properties().isCartesian();
@@ -290,7 +290,7 @@ void GlobalContext::DeleteParametricComponentsWithBaseName(
 
 void GlobalContext::DeleteParametricComponentsOfRecord(
     Ion::Storage::Record record) {
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       GlobalContext::s_continuousFunctionStore->modelForRecord(record);
   if (!f->properties().isEnabledParametric()) {
     return;
@@ -315,7 +315,7 @@ static void storeParametricComponent(char* baseName, size_t baseNameLength,
 
 void GlobalContext::StoreParametricComponentsOfRecord(
     Ion::Storage::Record record) {
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       GlobalContext::s_continuousFunctionStore->modelForRecord(record);
   if (!f->properties().isEnabledParametric()) {
     return;

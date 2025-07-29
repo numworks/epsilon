@@ -2,7 +2,6 @@
 #define GRAPH_SHARED_DETAILS_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/continuous_function.h>
-#include <apps/shared/expiring_pointer.h>
 #include <escher/buffer_text_view.h>
 #include <escher/menu_cell.h>
 #include <escher/selectable_list_view_controller.h>
@@ -10,6 +9,7 @@
 #include <escher/stack_view_controller.h>
 #include <escher/view_controller.h>
 #include <ion/storage/file_system.h>
+#include <omg/expiring_pointer.h>
 #include <poincare/function_properties/conic.h>
 
 namespace Graph {
@@ -60,7 +60,7 @@ class DetailsParameterController
   constexpr static size_t k_hyperbolaDetailsSections = 6;
   constexpr static int k_numberOfDataPoints = 7;  // max + 1 for plot type
   // Return record's Continuous Function pointer
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
+  OMG::ExpiringPointer<Shared::ContinuousFunction> function() const;
   bool functionIsNonVerticalLine() const {
     return function()->properties().isLine() &&
            !function()->properties().isAlongY();

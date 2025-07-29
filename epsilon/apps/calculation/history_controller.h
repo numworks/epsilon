@@ -43,7 +43,7 @@ class HistoryController : public Escher::ViewController,
   KDCoordinate nonMemoizedRowHeight(int row) override;
 
   int storeIndex(int i) const { return numberOfRows() - i - 1; }
-  Shared::ExpiringPointer<Calculation> calculationAtIndex(int i) const;
+  OMG::ExpiringPointer<Calculation> calculationAtIndex(int i) const;
   bool calculationAtIndexToggles(int index) const;
   void handleOK();
 

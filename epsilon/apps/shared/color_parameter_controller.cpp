@@ -58,7 +58,7 @@ KDCoordinate ColorParameterController::defaultRowHeight() {
   return protectedNonMemoizedRowHeight(&tempCell, 0);
 }
 
-ExpiringPointer<Function> ColorParameterController::function() {
+OMG::ExpiringPointer<Function> ColorParameterController::function() {
   return FunctionApp::app()->functionStore()->modelForRecord(m_record);
 }
 

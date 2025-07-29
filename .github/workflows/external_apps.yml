@@ -34,17 +34,18 @@ jobs:
         run: make -C epsilon/external_apps/rpn_cpp PLATFORM=device build
   rust_app:
     runs-on: ubuntu-latest
-    if: 0
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: latest
+      - name: Setup nwlink
+        run: npm install -g nwlink
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: thumbv7em-none-eabihf
       - name: Run cargo build
-        uses: actions-rs/cargo@v1
-        working-directory: ./epsilon/external_apps/sample_rust
-        with:
-          command: build
+        run: "cd epsilon/external_apps/sample_rust; cargo build"

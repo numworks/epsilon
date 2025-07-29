@@ -136,11 +136,18 @@ class __attribute__((packed)) GlobalPreferences {
   KDFont::Size font() const { return m_font; }
   void setFont(KDFont::Size font) { m_font = font; }
 
+  enum class EditionMode : bool {
+    Edition2D = 0,
+    Edition1D = 1,
+  };
+  EditionMode editionMode() const { return m_editionMode; }
+  void setEditionMode(EditionMode editionMode) { m_editionMode = editionMode; }
+
   // In milliseconds
   constexpr static uint32_t k_defaultDimmingTime = 30 * 1000;
 
  private:
-  constexpr static uint8_t k_version = 1;
+  constexpr static uint8_t k_version = 2;
 
 #if __EMSCRIPTEN__
   using BrightnessType = emscripten_align1_int;
@@ -155,6 +162,7 @@ class __attribute__((packed)) GlobalPreferences {
   constexpr static I18n::Language k_defaultLanguage = I18n::Language::EN;  //
   constexpr static bool k_defaultShowPopUp = true;                         //
   constexpr static KDFont::Size k_defaultFont = KDFont::Size::Large;       //
+  constexpr static EditionMode k_defaultEditionMode = EditionMode::Edition2D;
 
   /* GlobalPreferences is a singleton, hence the private constructor. The unique
    * instance can be accessed through the
@@ -175,16 +183,17 @@ class __attribute__((packed)) GlobalPreferences {
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
 
-  CODE_GUARD(global_preferences, 265131171,                                //
+  CODE_GUARD(global_preferences, 1555060920,                               //
              uint8_t m_version = k_version;                                //
              BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;  //
              I18n::Language m_language = k_defaultLanguage;                //
              I18n::Country m_country = k_defaultCountry;                   //
              bool m_showPopUp = k_defaultShowPopUp;                        //
              KDFont::Size m_font = k_defaultFont;                          //
+             EditionMode m_editionMode = k_defaultEditionMode;             //
              DimmingTimeType m_dimmingTime = k_defaultDimmingTime;         //
              public
-             : static constexpr int k_objectSize = 13;)
+             : static constexpr int k_objectSize = 14;)
 };
 
 #if PLATFORM_DEVICE

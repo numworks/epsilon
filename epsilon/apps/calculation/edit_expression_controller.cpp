@@ -1,5 +1,6 @@
 #include "edit_expression_controller.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <ion/display.h>
 #include <poincare/exception_checkpoint.h>
@@ -79,8 +80,8 @@ void EditExpressionController::restoreInput() {
   m_contentView.layoutField()->restoreContent(
       snap->cacheBuffer(), *snap->cacheBufferInformationAddress(),
       snap->cacheCursorOffset(), snap->cacheCursorPosition());
-  if (MathPreferences::SharedPreferences()->editionMode() ==
-          Poincare::Preferences::EditionMode::Edition1D &&
+  if (GlobalPreferences::SharedGlobalPreferences()->editionMode() ==
+          GlobalPreferences::EditionMode::Edition1D &&
       !m_contentView.layoutField()->layout().isCodePointsString()) {
     // Restored input is incompatible with edition mode.
     m_contentView.layoutField()->clearLayout();

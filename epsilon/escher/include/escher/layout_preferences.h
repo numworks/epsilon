@@ -1,6 +1,7 @@
 #ifndef ESCHER_MATH_PREFERENCES_H
 #define ESCHER_MATH_PREFERENCES_H
 
+#include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 
 namespace Escher {
@@ -29,8 +30,12 @@ class LayoutPreferences : public Poincare::Preferences {
         Poincare::Preferences::SharedPreferences());
   }
 
+  static bool LinearMode() {
+    return GlobalPreferences::SharedGlobalPreferences()->editionMode() ==
+           GlobalPreferences::EditionMode::Edition1D;
+  }
+
   using Poincare::Preferences::displayMode;
-  using Poincare::Preferences::editionMode;
 };
 
 static_assert(sizeof(LayoutPreferences) == sizeof(Poincare::Preferences));

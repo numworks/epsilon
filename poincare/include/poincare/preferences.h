@@ -56,10 +56,6 @@ class __attribute__((packed)) Preferences {
     Engineering,
     NModes,
   };
-  enum class EditionMode : bool {
-    Edition2D,
-    Edition1D,
-  };
   using ComplexFormat = Internal::ComplexFormat;
   constexpr static ComplexFormat k_defaultComplexFormatIfNotReal =
       ComplexFormat::Cartesian;
@@ -77,7 +73,7 @@ class __attribute__((packed)) Preferences {
   struct CalculationPreferences {
     AngleUnit angleUnit : k_numberOfBitsForAngleUnit;
     PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
-    EditionMode editionMode : 1;
+    bool dummy : 1;  // Filler to avoid changing the size of the struct
     ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
     /* Explicitly declare padding bits to avoid uninitalized values. */
     uint8_t padding
@@ -92,7 +88,7 @@ class __attribute__((packed)) Preferences {
   constexpr static CalculationPreferences k_defaultCalculationPreferences = {
       .angleUnit = AngleUnit::Radian,
       .displayMode = Preferences::PrintFloatMode::Decimal,
-      .editionMode = EditionMode::Edition2D,
+      .dummy = false,
       .complexFormat = Preferences::ComplexFormat::Real,
       .numberOfSignificantDigits =
           Preferences::DefaultNumberOfPrintedSignificantDigits};
@@ -201,12 +197,6 @@ class __attribute__((packed)) Preferences {
   }
   void setDisplayMode(PrintFloatMode displayMode) {
     m_calculationPreferences.displayMode = displayMode;
-  }
-  EditionMode editionMode() const {
-    return m_calculationPreferences.editionMode;
-  }
-  void setEditionMode(EditionMode editionMode) {
-    m_calculationPreferences.editionMode = editionMode;
   }
   ComplexFormat complexFormat() const {
     return m_calculationPreferences.complexFormat;

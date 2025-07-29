@@ -19,14 +19,14 @@ class ExpressionOrFloat {
   ExpressionOrFloat() = default;
   explicit ExpressionOrFloat(float value) : m_value(value) {}
 
-  using ApproximationFunction = float (*)(Expression);
+  using ApproximationFunction = float (*)(UserExpression);
 
   /*  Create an ExpressionOrFloat from an Expression. The input Expression may
    * be uninitialized or too big to hold on the internal storage of
    * ExpressionOrFloat. The only requirement is that the input expression, if
    * initialized, should represent a scalar value. */
   static ExpressionOrFloat Builder(
-      Expression expression, ApproximationFunction approximationFunction) {
+      UserExpression expression, ApproximationFunction approximationFunction) {
     if (expression.isUninitialized()) {
       return ExpressionOrFloat();
     }
@@ -74,11 +74,11 @@ class ExpressionOrFloat {
                      floatDisplayMode, buffer.size());
   }
 
-  Expression expression() const {
+  UserExpression expression() const {
     if (hasNoExactExpression()) {
-      return Expression::Builder(m_value);
+      return UserExpression::Builder(m_value);
     }
-    return Expression::Builder(Internal::Tree::FromBlocks(m_buffer.data()));
+    return UserExpression::Builder(Internal::Tree::FromBlocks(m_buffer.data()));
   }
 
   template <typename T>
@@ -114,7 +114,7 @@ class ExpressionOrFloat {
 
   /* The constructor from an expression is private. The Builder method should be
    * used when creating an ExpressionOrFloat from an expression. */
-  explicit ExpressionOrFloat(Expression expression) {
+  explicit ExpressionOrFloat(UserExpression expression) {
     assert(!expression.isUninitialized());
     assert(Poincare::Dimension(expression).isScalar());
     assert(ExpressionFitsBuffer(expression));
@@ -137,7 +137,7 @@ class ExpressionOrFloat {
    * buffer:
    * Either the expression is negative and smaller than [k_maxTreeSize].
    * Or it is positive and smaller than [k_maxTreeSize - 1]. */
-  static bool ExpressionFitsBuffer(Expression expression) {
+  static bool ExpressionFitsBuffer(UserExpression expression) {
     size_t treeSize = expression.tree()->treeSize();
     treeSize -= expression.tree()->isOpposite() ? k_oppositeNodeSize : 0;
     return treeSize <= k_maxTreeSize;

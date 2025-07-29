@@ -32,7 +32,7 @@ PrintFloat::TextLengths SerializeFloatValue(
 }
 
 PrintFloat::TextLengths SerializeExactExpression(
-    Expression expression, std::span<char> buffer,
+    UserExpression expression, std::span<char> buffer,
     size_t numberOfSignificantDigits,
     Preferences::PrintFloatMode floatDisplayMode) {
   size_t exactStringLength =

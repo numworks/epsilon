@@ -15,27 +15,32 @@ namespace Private {
 bool ShallowPrepareForApproximation(Tree* e, void* ctx) {
   // TODO: we want x^-1 -> 1/x and y*x^-1 -> y/x but maybe not x^-2 -> 1/x^2 ?
   // TODO: Ensure no node is duplicated (random not may have not been seeded)
+  // exp(A*ln(B))-> B^A
   bool changed = PatternMatching::MatchReplace(
       e, KExp(KMult(KA_s, KLn(KB), KC_s)), KPow(KB, KMult(KA_s, KC_s)));
   /* Do exp => pow here to allow pow => sqrt/div to take effect in a single
    * shallow call */
   /* TODO: e^ is better than exp because we have code to handle special
    * cases in pow, exp is probably more precise on normal values */
+  // exp(A) -> e^A
   changed =
       PatternMatching::MatchReplace(e, KExp(KA), KPow(e_e, KA)) || changed;
-  return PatternMatching::MatchReplace(e, KPowReal(KA, -1_e), KDiv(1_e, KA)) ||
-         PatternMatching::MatchReplace(e, KPow(KA, -1_e), KDiv(1_e, KA)) ||
-         PatternMatching::MatchReplace(
-             e, KPowReal(KA, 1_e / 2_e),
-             KDep(KSqrt(KA), KDepList(KRealPos(KA)))) ||
-         PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
-         PatternMatching::MatchReplace(
-             e, KMult(KA_s, KLn(KB), KPow(KLn(10_e), -1_e), KC_s),
-             KMult(KA_s, KLog(KB), KC_s)) ||
-         PatternMatching::MatchReplace(
-             e, KMult(KA_s, KPow(KLn(10_e), -1_e), KLn(KB), KC_s),
-             KMult(KA_s, KLog(KB), KC_s)) ||
-         changed;
+  return
+      // A^-1 -> 1/A
+      PatternMatching::MatchReplace(e, KPowReal(KA, -1_e), KDiv(1_e, KA)) ||
+      PatternMatching::MatchReplace(e, KPow(KA, -1_e), KDiv(1_e, KA)) ||
+      // A^0.5 -> sqrt(A)
+      PatternMatching::MatchReplace(e, KPowReal(KA, 1_e / 2_e),
+                                    KDep(KSqrt(KA), KDepList(KRealPos(KA)))) ||
+      PatternMatching::MatchReplace(e, KPow(KA, 1_e / 2_e), KSqrt(KA)) ||
+      //  ln(A)/ln(10) -> log(A)
+      PatternMatching::MatchReplace(
+          e, KMult(KA_s, KLn(KB), KPow(KLn(10_e), -1_e), KC_s),
+          KMult(KA_s, KLog(KB), KC_s)) ||
+      PatternMatching::MatchReplace(
+          e, KMult(KA_s, KPow(KLn(10_e), -1_e), KLn(KB), KC_s),
+          KMult(KA_s, KLog(KB), KC_s)) ||
+      changed;
 }
 
 static Tree* RewriteIntegrandNear(const Tree* integrand, const Tree* bound) {

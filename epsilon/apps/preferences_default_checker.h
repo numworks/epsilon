@@ -26,9 +26,8 @@ static_assert(
     GlobalPreferences::defaultCountryPreferences().logarithmBasePosition() ==
     Poincare::Preferences::k_defaultLogarithmBasePosition);
 
-static_assert(
-    GlobalPreferences::defaultCountryPreferences().logarithmKeyEvent() ==
-    Poincare::Preferences::LogarithmKeyEvent::Default);
+static_assert(GlobalPreferences::defaultCountryPreferences()
+                  .logarithmKeyEvent() == Escher::LogarithmKeyEvent::Default);
 
 static_assert(
     GlobalPreferences::defaultCountryPreferences().parabolaParameter() ==

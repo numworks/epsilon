@@ -111,8 +111,6 @@ class __attribute__((packed)) Preferences {
     TranslateToFrench,
     // TODO: support other languages
   };
-  // This is in Poincare and not in Apps because it's used in Escher
-  enum class LogarithmKeyEvent : uint8_t { Default, WithBaseTen };
   enum class ParabolaParameter : uint8_t { Default, FocalLength };
 
   constexpr static MixedFractions k_defaultMixedFraction =
@@ -158,10 +156,6 @@ class __attribute__((packed)) Preferences {
 #if POINCARE_TRANSLATE_BUILTINS
     m_translatedBuiltins = translate;
 #endif
-  }
-  LogarithmKeyEvent logarithmKeyEvent() const { return m_logarithmKeyEvent; }
-  void setLogarithmKeyEvent(LogarithmKeyEvent logarithmKeyEvent) {
-    m_logarithmKeyEvent = logarithmKeyEvent;
   }
   ParabolaParameter parabolaParameter() const { return m_parabolaParameter; }
   void setParabolaParameter(ParabolaParameter parameter) {
@@ -218,6 +212,8 @@ class __attribute__((packed)) Preferences {
 #endif
 
  private:
+  // TODO: remove this and associated member
+  enum class LogarithmKeyEvent : uint8_t { Default };
   constexpr static uint8_t k_version = 0;
 
   /* Preferences is a singleton, hence the private constructor. The unique

@@ -2,6 +2,7 @@
 #define APPS_GLOBAL_PREFERENCES_H
 
 #include <apps/i18n.h>
+#include <escher/layout_preferences_enum.h>
 #include <ion.h>
 #include <kandinsky/font.h>
 #include <omg/global_box.h>
@@ -94,7 +95,7 @@ class __attribute__((packed)) GlobalPreferences {
       const {
     return countryPreferences().logarithmBasePosition();
   }
-  constexpr Poincare::Preferences::LogarithmKeyEvent logarithmKeyEvent() const {
+  constexpr Escher::LogarithmKeyEvent logarithmKeyEvent() const {
     return countryPreferences().logarithmKeyEvent();
   }
   constexpr Poincare::Preferences::ParabolaParameter parabolaParameter() const {
@@ -183,6 +184,8 @@ class __attribute__((packed)) GlobalPreferences {
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
 
+  /* TODO: group all 1 bit settings (showPopUp, font & editionMode) into a
+   * struct of size 1byte */
   CODE_GUARD(global_preferences, 1555060920,                               //
              uint8_t m_version = k_version;                                //
              BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;  //

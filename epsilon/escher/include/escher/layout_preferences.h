@@ -4,6 +4,8 @@
 #include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 
+#include "layout_preferences_enum.h"
+
 namespace Escher {
 
 /**
@@ -30,12 +32,16 @@ class LayoutPreferences : public Poincare::Preferences {
         Poincare::Preferences::SharedPreferences());
   }
 
+  using Poincare::Preferences::displayMode;
+
+  Escher::LogarithmKeyEvent logarithmKeyEvent() {
+    return GlobalPreferences::SharedGlobalPreferences()->logarithmKeyEvent();
+  }
+
   static bool LinearMode() {
     return GlobalPreferences::SharedGlobalPreferences()->editionMode() ==
            GlobalPreferences::EditionMode::Edition1D;
   }
-
-  using Poincare::Preferences::displayMode;
 };
 
 static_assert(sizeof(LayoutPreferences) == sizeof(Poincare::Preferences));

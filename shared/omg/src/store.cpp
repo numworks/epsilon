@@ -1,13 +1,17 @@
 #include <omg/store.h>
 
 #include <cstring>
+#include <type_traits>
 
 namespace OMG {
 
 // Public
 
 Store::Store(char* buffer, size_t bufferSize)
-    : m_buffer(buffer), m_bufferSize(bufferSize), m_numberOfElements(0) {}
+    : m_buffer(buffer), m_bufferSize(bufferSize), m_numberOfElements(0) {
+  static_assert(std::is_same_v<offset_t, uint16_t>);
+  assert(bufferSize < UINT16_MAX);
+}
 
 void* Store::elementAtIndex(int index) const {
   assert(0 <= index && index <= numberOfElements() - 1);
@@ -19,7 +23,7 @@ void* Store::elementAtIndex(int index) const {
 
 char* Store::endOfElementAtIndex(int index) const {
   assert(0 <= index && index < numberOfElements());
-  char* res = pointerArray()[index];
+  char* res = m_buffer + offsetArray()[index];
   /* Make sure the element pointed to is inside the buffer */
   assert(m_buffer <= res && res < m_buffer + m_bufferSize);
   return res;
@@ -27,8 +31,8 @@ char* Store::endOfElementAtIndex(int index) const {
 
 size_t Store::spaceForNewElements(const char* currentEndOfElements) const {
   // Be careful with size_t: negative values are not handled
-  return currentEndOfElements + sizeof(void*) < pointerArea()
-             ? (pointerArea() - currentEndOfElements) - sizeof(void*)
+  return currentEndOfElements + sizeof(offset_t) < offsetArea()
+             ? (offsetArea() - currentEndOfElements) - sizeof(offset_t)
              : 0;
 }
 
@@ -47,7 +51,7 @@ void Store::deleteElementAtIndex(int index) {
   std::memmove(deletionStart, deletionEnd, shiftedMemorySize);
 
   for (int i = index - 1; i >= 0; i--) {
-    pointerArray()[i + 1] = pointerArray()[i] - deletedSize;
+    offsetArray()[i + 1] = offsetArray()[i] - deletedSize;
   }
   m_numberOfElements--;
   // Ion::CircuitBreaker::unlock();
@@ -63,7 +67,7 @@ void Store::getEmptySpace(size_t neededSize) {
 void* Store::pushElement(const void* element, int size) {
   char* destination = endOfElements();
   assert(destination >= m_buffer &&
-         destination + size + sizeof(void*) <= pointerArea());
+         destination + size + sizeof(offset_t) <= offsetArea());
 
   std::memcpy(destination, element, size);
   registerElement(destination, size);
@@ -71,8 +75,9 @@ void* Store::pushElement(const void* element, int size) {
 }
 
 void Store::registerElement(char* element, int size) {
+  assert(m_buffer <= element && element + size <= m_buffer + m_bufferSize);
   // Write the pointer to the new element at pointerArea()
-  pointerArray()[-1] = element + size;
+  offsetArray()[-1] = element + size - m_buffer;
 
   /* Now that the element is copied, we can finally update
    * m_numberOfElements. As that is the only variable tracking the state of the

@@ -155,12 +155,12 @@ Tree* List::Variance(const Tree* list, const Tree* coefficients,
       return nullptr;
     }
     ctx.setNode(KC, n, 1, false);
-    PatternMatching::CreateSimplify(sampleStdDev, ctx);
+    PatternMatching::CreateReduce(sampleStdDev, ctx);
     n->removeTree();
     return n;
   } else {
     assert(type.isVariance() || type.isStdDev());
-    return PatternMatching::CreateSimplify(
+    return PatternMatching::CreateReduce(
         type == Type::Variance ? variance : stdDev, ctx);
   }
 #else
@@ -184,7 +184,7 @@ Tree* List::Mean(const Tree* list, const Tree* coefficients) {
   assert(Dimension::IsList(coefficients));
   PatternMatching::Context ctx({.KA = list, .KB = coefficients});
   ctx.setInvolvesList(true);
-  return PatternMatching::CreateSimplify(
+  return PatternMatching::CreateReduce(
       KMult(KListSum(KMult(KA, KB)), KPow(KListSum(KB), -1_e)), ctx);
 #else
   OMG::unreachable();
@@ -293,7 +293,7 @@ bool List::ShallowApplyListOperators(Tree* e) {
       } else if (upperMedianIndex == lowerMedianIndex) {
         e->moveTreeOverTree(valuesList->child(lowerMedianIndex));
       } else {
-        e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        e->moveTreeOverTree(PatternMatching::CreateReduce(
             KMult(1_e / 2_e, KAdd(KA, KB)),
             {.KA = valuesList->child(lowerMedianIndex),
              .KB = valuesList->child(upperMedianIndex)}));

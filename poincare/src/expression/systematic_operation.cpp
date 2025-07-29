@@ -60,14 +60,14 @@ static bool ReduceRadicalsInDenominator(Tree* e) {
       SplitRadical(ctx.getTree(KB), &c, &d)) {
     assert(a && b && c && d);
     assert(!(b->isOne() && d->isOne()));
-    Tree* denominator = PatternMatching::CreateSimplify(
+    Tree* denominator = PatternMatching::CreateReduce(
         KAdd(KMult(KPow(KA, 2_e), KB), KMult(KPow(KC, 2_e), KD, -1_e)),
         {.KA = a, .KB = b, .KC = c, .KD = d});
     if (denominator->isZero()) {
       denominator->removeTree();
       return false;
     }
-    TreeRef result = PatternMatching::CreateSimplify(
+    TreeRef result = PatternMatching::CreateReduce(
         KMult(KAdd(KMult(KA, KPow(KB, 1_e / 2_e)),
                    KMult(KC, KPow(KD, 1_e / 2_e), -1_e)),
               KPow(KE, -1_e)),
@@ -92,7 +92,7 @@ static bool ReduceRootOfRadicalsInDenominator(Tree* e) {
     expressionUnderRoot->removeTree();
     return false;
   }
-  e->moveTreeOverTree(PatternMatching::CreateSimplify(
+  e->moveTreeOverTree(PatternMatching::CreateReduce(
       KExp(KMult(1_e / 2_e, KLn(KA))), {.KA = expressionUnderRoot}));
   expressionUnderRoot->removeTree();
   return true;
@@ -156,7 +156,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
         }
         assert(Infinity::IsMinusInfinity(base));
         // (-inf)^pos -> ±inf
-        e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        e->moveTreeOverTree(PatternMatching::CreateReduce(
             KMult(KPow(-1_e, KA), KInf), {.KA = n}));
         return true;
       }
@@ -173,7 +173,7 @@ bool SystematicOperation::ReducePower(Tree* e) {
        * positive integers such that c+d = b */
       TreeRef p = Rational::Numerator(base).pushOnTreeStack();
       TreeRef q = Rational::Denominator(base).pushOnTreeStack();
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KMult(KPow(KA, KB), KPow(KC, KMult(-1_e, KB))),
           {.KA = p, .KB = n, .KC = q}));
       q->removeTree();
@@ -336,7 +336,7 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
   // arg(e^(iA)) = A reduced to ]-π,π] when A real
   PatternMatching::Context ctx;
   if (PatternMatching::Match(child, KExp(KMult(KA_p, i_e)), &ctx)) {
-    Tree* arg = PatternMatching::CreateSimplify(KMult(KA_p), ctx);
+    Tree* arg = PatternMatching::CreateReduce(KMult(KA_p), ctx);
     if (GetComplexSign(arg).isReal() &&
         Trigonometry::ReduceArgumentToPrincipal(arg)) {
       e->moveTreeOverTree(arg);
@@ -369,7 +369,7 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
     }
     if (changed) {
       SystematicReduction::ShallowReduce(child);
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KDep(KArg(KA), KB), {.KA = child, .KB = depList}));
     }
     depList->removeTree();
@@ -387,7 +387,7 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
       /* atan2(y, 0) = undef if y = 0
        *               π/2 if y > 0
        *               -π/2 if y < 0 */
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KDep(KB, KDepList(KA)),
           {.KA = child,
            .KB = imagSign.isNull()               ? KOutOfDefinition
@@ -398,7 +398,7 @@ bool SystematicOperation::ReduceComplexArgument(Tree* e) {
       /* atan2(0, x) = 0      if x > 0
        *               π      if x < 0 */
       assert(!realSign.isNull());
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KDep(KB, KDepList(KA)),
           {.KA = child, .KB = realSign.isStrictlyPositive() ? 0_e : π_e}));
       return true;
@@ -431,7 +431,7 @@ bool ReduceSimpleComplexPart(Tree* e, bool childIsPure, bool childIsPureReal) {
   if (child->isExp() && GetComplexSign(child->child(0)).isPureIm()) {
     // This shortcuts the advanced reduction step exp(iA) -> cos(A) + i*sin(A)
     // re(exp(A)) = cos(-i*A), im(exp(A)) = sin(-i*A) if A is pure imaginary
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateReduce(
         KTrig(KMult(-1_e, i_e, KA), KB),
         {.KA = child->child(0), .KB = e->isRe() ? 0_e : 1_e}));
     return true;
@@ -525,7 +525,7 @@ bool SystematicOperation::ReduceSign(Tree* e) {
    * TODO: when implementing this, see comment in
    * `ReduceMultiplicationWithInf` to avoid infinite loops. */
   if (result) {
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateReduce(
         KDep(KA, KDepList(KB)), {.KA = result, .KB = child}));
     return true;
   }
@@ -593,10 +593,10 @@ static bool ReduceNestedRadicals(Tree* e) {
     assert(a && b && c && d);
     assert(!(b->isOne() && d->isOne()));
     // Compare a^2*b and c^2*d to choose w, x, y and z such that that y^2 > z
-    Tree* a2b = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
-                                                {.KA = a, .KB = b});
-    Tree* c2d = PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KB),
-                                                {.KA = c, .KB = d});
+    Tree* a2b = PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KB),
+                                              {.KA = a, .KB = b});
+    Tree* c2d = PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KB),
+                                              {.KA = c, .KB = d});
     bool a2bGreaterThanc2d = Rational::Compare(a2b, c2d) > 0;
     c2d->removeTree();
     a2b->removeTree();
@@ -606,19 +606,19 @@ static bool ReduceNestedRadicals(Tree* e) {
     }
     Tree* w = b->cloneTree();
     Tree* x = c->cloneTree();
-    Tree* y = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
-                                              {.KA = a, .KB = c});
-    Tree* z = PatternMatching::CreateSimplify(KMult(KA, KPow(KB, -1_e)),
-                                              {.KA = d, .KB = b});
+    Tree* y = PatternMatching::CreateReduce(KMult(KA, KPow(KB, -1_e)),
+                                            {.KA = a, .KB = c});
+    Tree* z = PatternMatching::CreateReduce(KMult(KA, KPow(KB, -1_e)),
+                                            {.KA = d, .KB = b});
 
     // √(y+√z) can be turned into √u+√v if ∂ = √(y^2-z) is rational.
-    Tree* delta = PatternMatching::CreateSimplify(
+    Tree* delta = PatternMatching::CreateReduce(
         KPow(KAdd(KPow(KA, 2_e), KMult(-1_e, KB)), 1_e / 2_e),
         {.KA = y, .KB = z});
     if (delta->isRational()) {
       /* √(a√b+c√d) = √(√(w)) * √(x) * (√u+√v) with
        * u = (y+∂)/2 and v = (y-∂)/2 */
-      result = PatternMatching::CreateSimplify(
+      result = PatternMatching::CreateReduce(
           KMult(KPow(KA, 1_e / 4_e), KPow(KMult(KE, KB), 1_e / 2_e),
                 KAdd(KPow(KMult(KAdd(KMult(KE, KC), KD), 1_e / 2_e), 1_e / 2_e),
                      KMult(KE, KPow(KMult(KAdd(KMult(KE, KC), KMult(-1_e, KD)),
@@ -691,9 +691,9 @@ static bool ReduceSquareRoot(Tree* e) {
     e->moveTreeOverTree(outerTerm);
     return true;
   }
-  e->moveTreeOverTree(PatternMatching::CreateSimplify(
-      KMult(KA, KExp(KMult(1_e / 2_e, KLn(KB)))),
-      {.KA = outerTerm, .KB = innerTerm}));
+  e->moveTreeOverTree(
+      PatternMatching::CreateReduce(KMult(KA, KExp(KMult(1_e / 2_e, KLn(KB)))),
+                                    {.KA = outerTerm, .KB = innerTerm}));
   innerTerm->removeTree();
   outerTerm->removeTree();
   return true;
@@ -753,7 +753,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
       }
       // Turn exp(a*ln(b)) into pow(b, a) if the exponent is an integer
       if (exponent->isInteger()) {
-        e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        e->moveTreeOverTree(PatternMatching::CreateReduce(
             KPow(KB, KA), {.KA = ctx.getTree(KA), .KB = ctx.getTree(KB)}));
         return true;
       }
@@ -767,7 +767,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
       if (base->isRational() && !(base->isInteger())) {
         TreeRef numerator = Rational::Numerator(base).pushOnTreeStack();
         TreeRef denominator = Rational::Denominator(base).pushOnTreeStack();
-        e->moveTreeOverTree(PatternMatching::CreateSimplify(
+        e->moveTreeOverTree(PatternMatching::CreateReduce(
             KMult(KExp(KMult(KA, KLn(KB))), KExp(KMult(-1_e, KA, KLn(KC)))),
             {.KA = exponent, .KB = numerator, .KC = denominator}));
         denominator->removeTree();
@@ -868,7 +868,7 @@ bool SystematicOperation::ReduceAbs(Tree* e) {
   const Tree* minusOne = (isReal == sign.canBeStrictlyNegative()) ? -1_e : 1_e;
   const Tree* complexI = isReal ? 1_e : i_e;
   // |3| = |-3| = |3i| = |-3i| = 3
-  e->moveTreeOverTree(PatternMatching::CreateSimplify(
+  e->moveTreeOverTree(PatternMatching::CreateReduce(
       KMult(KA, KB, KC), {.KA = minusOne, .KB = complexI, .KC = child}));
   return true;
 }

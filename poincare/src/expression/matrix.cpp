@@ -305,7 +305,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
           Approximation::Private::ToComplexTreeInplace(newOpHJ, ctx);
           opHJ->moveTreeOverTree(newOpHJ);
         } else {
-          opHJ->moveTreeOverTree(PatternMatching::CreateSimplify(
+          opHJ->moveTreeOverTree(PatternMatching::CreateReduce(
               KMult(KA, KPow(KB, -1_e)), {.KA = opHJ, .KB = divisor}));
           Dependency::DeepRemoveUselessDependencies(opHJ);
         }
@@ -334,7 +334,7 @@ bool Matrix::RowCanonize(Tree* matrix, bool reducedForm, Tree** determinant,
             Approximation::Private::ToComplexTreeInplace(newOpIJ, ctx);
             opIJ->moveTreeOverTree(newOpIJ);
           } else {
-            opIJ->moveTreeOverTree(PatternMatching::CreateSimplify(
+            opIJ->moveTreeOverTree(PatternMatching::CreateReduce(
                 KAdd(KA, KMult(-1_e, KB, KC)),
                 {.KA = opIJ, .KB = opHJ, .KC = factor}));
             Dependency::DeepRemoveUselessDependencies(opIJ);

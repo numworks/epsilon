@@ -50,7 +50,7 @@ bool PowerLike::ExpandRationalPower(Tree* e, const Tree* base,
       Rational::Numerator(power), Rational::Denominator(power));
   Tree* q = Rational::Denominator(power).pushOnTreeStack();
   // result = base^n * exp(r/q * ln(base))
-  TreeRef result = PatternMatching::CreateSimplify(
+  TreeRef result = PatternMatching::CreateReduce(
       KMult(KPow(KA, KB), KExp(KMult(KC, KPow(KD, -1_e), KLn(KA)))),
       {.KA = base, .KB = division.quotient, .KC = division.remainder, .KD = q});
   q->removeTree();

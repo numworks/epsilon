@@ -18,8 +18,8 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
     Tree* result = integrand->cloneTree();
     Variables::LeaveScope(result);
     result->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(KC, KAdd(KB, KMult(-1_e, KA))),
-                                        {.KA = a, .KB = b, .KC = result}));
+        PatternMatching::CreateReduce(KMult(KC, KAdd(KB, KMult(-1_e, KA))),
+                                      {.KA = a, .KB = b, .KC = result}));
     return result;
   }
   if (integrand->isAdd()) {

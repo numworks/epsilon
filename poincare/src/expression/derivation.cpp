@@ -227,7 +227,7 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
     case Type::ATrig: {
       // Di(acos(x)) = -1/√(-x^2+1)
       // Di(asin(x)) = 1/√(-x^2+1)
-      return PatternMatching::CreateSimplify(
+      return PatternMatching::CreateReduce(
           KMult(KA, KPow(KAdd(KMult(-1_e, KPow(KB, 2_e)), 1_e), -1_e / 2_e)),
           {.KA = derivand->child(1)->isZero() ? -1_e : 1_e,
            .KB = derivand->child(0)});
@@ -244,12 +244,12 @@ Tree* Derivation::ShallowPartialDerivate(const Tree* derivand, int index) {
      * which can give the impression that the derivative was not calculated. */
     case Type::ATanRad: {
       // Di(atan(x)) = 1/(x^2+1)
-      return PatternMatching::CreateSimplify(
-          KPow(KAdd(KPow(KA, 2_e), 1_e), -1_e), {.KA = derivand->child(0)});
+      return PatternMatching::CreateReduce(KPow(KAdd(KPow(KA, 2_e), 1_e), -1_e),
+                                           {.KA = derivand->child(0)});
     }
     case Type::ArCosH: {
       // Di(acosh(x)) = 1/√(x^2-1)
-      return PatternMatching::CreateSimplify(
+      return PatternMatching::CreateReduce(
           KPow(KAdd(-1_e, KPow(KA, 2_e)), -1_e / 2_e),
           {.KA = derivand->child(0)});
     }

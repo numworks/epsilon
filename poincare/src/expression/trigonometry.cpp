@@ -121,14 +121,14 @@ static Tree* computeSimplifiedPiFactor(const Tree* piFactor) {
    * Compute k = ⌊piFactor⌋
    * if k is even, x = π*(piFactor-k)
    * if k is odd, x = π*(piFactor-k+1) */
-  Tree* res = PatternMatching::CreateSimplify(KFloor(KA), {.KA = piFactor});
+  Tree* res = PatternMatching::CreateReduce(KFloor(KA), {.KA = piFactor});
   assert(res->isInteger());
   bool kIsEven = Integer::Handler(res).isEven();
-  res->moveTreeOverTree(PatternMatching::CreateSimplify(
+  res->moveTreeOverTree(PatternMatching::CreateReduce(
       KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
   if (!kIsEven) {
     res->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
+        PatternMatching::CreateReduce(KAdd(1_e, KA), {.KA = res}));
   }
   return res;
 }
@@ -161,7 +161,7 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
    * Compute k = ⌈piFactor⌉
    * if k is even, Arg(exp(i*x)) = π*(piFactor-k)
    * if k is odd, Arg(exp(i*x)) = π*(piFactor-k+1) */
-  Tree* res = PatternMatching::CreateSimplify(
+  Tree* res = PatternMatching::CreateReduce(
       type == Type::Cos   ? KFloor(KA)
       : type == Type::Arg ? KMult(-1_e, KFloor(KMult(-1_e, KA)))
                           : KFloor(KAdd(KA, 1_e / 2_e)),
@@ -174,16 +174,16 @@ static Tree* computeSimplifiedPiFactorForType(const Tree* piFactor, Type type) {
     return nullptr;
   }
   bool kIsEven = Integer::Handler(res).isEven();
-  res->moveTreeOverTree(PatternMatching::CreateSimplify(
+  res->moveTreeOverTree(PatternMatching::CreateReduce(
       KAdd(KA, KMult(-1_e, KB)), {.KA = piFactor, .KB = res}));
   if (!kIsEven && type != Type::Tan) {
     if (type != Type::Arg) {
       res->moveTreeOverTree(
-          PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = res}));
+          PatternMatching::CreateReduce(KMult(-1_e, KA), {.KA = res}));
     }
     if (type != Type::Sin) {
       res->moveTreeOverTree(
-          PatternMatching::CreateSimplify(KAdd(1_e, KA), {.KA = res}));
+          PatternMatching::CreateReduce(KAdd(1_e, KA), {.KA = res}));
     }
   }
   return res;
@@ -198,7 +198,7 @@ bool Trigonometry::ReduceArgumentToPrincipal(Tree* e) {
     TreeRef simplifiedPiFactor =
         computeSimplifiedPiFactorForType(piFactor, Type::Arg);
     if (simplifiedPiFactor) {
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KMult(KA, π_e), {.KA = simplifiedPiFactor}));
       simplifiedPiFactor->removeTree();
       return true;
@@ -244,14 +244,14 @@ bool Trigonometry::ReduceTrig(Tree* e) {
       if (isOpposed) {
         // -cos(x) = cos(x+π) and -sin(x) = sin(x+π)
         MoveTreeOverTree(simplifiedPiFactor,
-                         PatternMatching::CreateSimplify(
+                         PatternMatching::CreateReduce(
                              KAdd(KA, 1_e), {.KA = simplifiedPiFactor}));
         isOpposed = false;
       }
       MoveTreeOverTree(simplifiedPiFactor,
                        computeSimplifiedPiFactor(simplifiedPiFactor));
       if (!simplifiedPiFactor->treeIsIdenticalTo(piFactor)) {
-        firstArgument->moveTreeOverTree(PatternMatching::CreateSimplify(
+        firstArgument->moveTreeOverTree(PatternMatching::CreateReduce(
             KMult(π_e, KA), {.KA = simplifiedPiFactor}));
         changed = true;
       }
@@ -324,8 +324,7 @@ static Tree* SimplifyATrigOfTrig(const Tree* arg, Type type) {
       result = arg->cloneTree();
     } else {
       assert(type == Type::Cos);
-      result =
-          PatternMatching::CreateSimplify(KMult(i_e, KAbs(KA)), {.KA = arg});
+      result = PatternMatching::CreateReduce(KMult(i_e, KAbs(KA)), {.KA = arg});
     }
   } else {
     // x = π*y
@@ -335,7 +334,7 @@ static Tree* SimplifyATrigOfTrig(const Tree* arg, Type type) {
       reducedPiFactor =
           computeSimplifiedPiFactorForType(rationalPiFactor, type);
     } else {
-      TreeRef genericPiFactor = PatternMatching::CreateSimplify(
+      TreeRef genericPiFactor = PatternMatching::CreateReduce(
           KMult(KA, KPow(π_e, -1_e)), {.KA = arg});
       Dependency::DeepRemoveUselessDependencies(genericPiFactor);
       reducedPiFactor = computeSimplifiedPiFactorForType(genericPiFactor, type);
@@ -430,8 +429,8 @@ static Tree* GetAtanTanArg(const Tree* e) {
    *   (sin(a)/cos(b) = sin(a)/cos(a - π) = -sin(-a)/-cos(-a) = sin(-a)/cos(-a))
    */
 
-  Tree* sub = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
-                                              {.KA = aFactor, .KB = bFactor});
+  Tree* sub = PatternMatching::CreateReduce(KAdd(KA, KMult(-1_e, KB)),
+                                            {.KA = aFactor, .KB = bFactor});
   sub->moveTreeOverTree(computeSimplifiedPiFactor(sub));
   assert(sub->isRational());
   if (sub->isZero()) {
@@ -441,12 +440,12 @@ static Tree* GetAtanTanArg(const Tree* e) {
   } else if (sub->isOne()) {
     sub->removeTree();
     // a = π + b, return -a
-    return PatternMatching::CreateSimplify(KMult(-1_e, KA), {.KA = a});
+    return PatternMatching::CreateReduce(KMult(-1_e, KA), {.KA = a});
   }
   sub->removeTree();
 
-  Tree* add = PatternMatching::CreateSimplify(KAdd(KA, KB),
-                                              {.KA = aFactor, .KB = bFactor});
+  Tree* add = PatternMatching::CreateReduce(KAdd(KA, KB),
+                                            {.KA = aFactor, .KB = bFactor});
   add->moveTreeOverTree(computeSimplifiedPiFactor(add));
   assert(add->isRational());
   if (add->isZero()) {
@@ -530,7 +529,7 @@ bool Trigonometry::ReduceArCosH(Tree* e) {
   if (PatternMatching::Match(e, KArCosH(KTrig(KA, 0_e)), &ctx) &&
       GetComplexSign(ctx.getTree(KA)).isPureIm()) {
     // acosh(cos(x)) = abs(x) for x pure imaginary
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(KAbs(KA), ctx));
+    e->moveTreeOverTree(PatternMatching::CreateReduce(KAbs(KA), ctx));
     return true;
   }
 #endif

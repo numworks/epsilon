@@ -17,7 +17,7 @@ namespace Poincare::Internal {
 static Tree* powerMerge(int* numberOfDependencies, const Tree* child,
                         const Tree* next, const Tree* base,
                         const Tree* expChild, const Tree* expNext) {
-  Tree* merge = PatternMatching::CreateSimplify(
+  Tree* merge = PatternMatching::CreateReduce(
       KPow(KA, KAdd(KB, KC)), {.KA = base, .KB = expChild, .KC = expNext});
   if (merge->isDep()) {
     merge->removeNode();
@@ -192,7 +192,7 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
   PatternMatching::Context ctx;
   if (Dimension::Get(e).isScalar() &&
       PatternMatching::Match(e, KMult(KA_s, KInf, KB_s), &ctx)) {
-    TreeRef x = PatternMatching::CreateSimplify(KMult(KA_s, KB_s), ctx);
+    TreeRef x = PatternMatching::CreateReduce(KMult(KA_s, KB_s), ctx);
     assert(!x->isZero());
     PatternMatching::Context ctx;
     // TODO: there has to be a better way to test if x is a fixed point of Sign
@@ -203,7 +203,7 @@ static bool ReduceMultiplicationWithInf(Tree* e) {
       return false;
     }
     e->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(KSign(KA), KInf), {.KA = x}));
+        PatternMatching::CreateReduce(KMult(KSign(KA), KInf), {.KA = x}));
     x->removeTree();
     return true;
   }

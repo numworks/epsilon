@@ -343,7 +343,7 @@ The second argument is a `PatternMatching::Context` that associates any placehol
 
 The resulting tree is valid and will be pushed at the end of the `TreeStack`.
 
-If you need a simplified tree, use `CreateSimplify` with a pattern that is a simplified tree and context values that are simplified too.
+If you need a simplified tree, use `CreateReduce` with a pattern that is a simplified tree and context values that are simplified too.
 
 > [!NOTE]
 > Pattern matching is only interesting when you have a context. Is it not optimal to do for example:
@@ -396,7 +396,7 @@ bool hasChanged = MatchReplace(tree, KAdd(KA, KA), KMult(2_e, KA));
 
 </details>
 
-Methods `CreateSimplify` and `MatchReplaceReduce` perform the same task,
+Methods `CreateReduce` and `MatchReplaceReduce` perform the same task,
 but also call systematic simplification on each created tree along the way (**but
 not placeholders**, which are assumed to be simplified trees already).
 

@@ -466,8 +466,8 @@ Sign GetSign(const Tree* e) {
 }
 
 ComplexSign ComplexSignOfDifference(const Tree* e1, const Tree* e2) {
-  Tree* difference = PatternMatching::CreateSimplify(KAdd(KA, KMult(-1_e, KB)),
-                                                     {.KA = e1, .KB = e2});
+  Tree* difference = PatternMatching::CreateReduce(KAdd(KA, KMult(-1_e, KB)),
+                                                   {.KA = e1, .KB = e2});
   ComplexSign result = GetComplexSign(difference);
   if (AdvancedReduction::DeepExpandAlgebraic(difference)) {
     /* We do not use advance reduction here but it might be useful to expand

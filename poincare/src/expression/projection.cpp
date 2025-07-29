@@ -425,7 +425,7 @@ bool Projection::Expand(Tree* e) {
   if (PatternMatching::Match(e, KATanRad(KA), &ctx) &&
       GetComplexSign(ctx.getTree(KA)).isReal()) {
     // atan(A) -> asin(A/Sqrt(1 + A^2)) for A real
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateReduce(
         KATrig(
             KMult(KA, KPow(KAdd(1_e, KPow(KA, 2_e)), KMult(-1_e, 1_e / 2_e))),
             1_e),
@@ -440,7 +440,7 @@ bool Projection::Expand(Tree* e) {
       /* Warning: formula holds for x real and ≥ 1, but it seems to work for x ≥
        * -1 using the principal branches of acosh and ln. TODO: Find a proof of
        * that. */
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KLn(KAdd(KA, KPow(KAdd(KPow(KA, 2_e), -1_e), 1_e / 2_e))), ctx));
       return true;
     }

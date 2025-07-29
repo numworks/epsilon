@@ -51,7 +51,7 @@ bool ExpandImReIfNotInfinite(Tree* e) {
      * infinitely expanding */
     if (realSign.isFinite() &&
         (ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KE) != 0)) {
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KAdd(KA_s, KMult(-1_e, KB_s, KC, KD_s, i_e),
                KMult(KB_s, KRe(KC), KD_s, i_e), KE_s),
           ctx));
@@ -68,7 +68,7 @@ bool ExpandImReIfNotInfinite(Tree* e) {
      * infinitely expanding */
     if (imagSign.isFinite() &&
         (ctx.getNumberOfTrees(KA) != 0 || ctx.getNumberOfTrees(KE) != 0)) {
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KAdd(KA_s, KMult(KB_s, KC, KD_s),
                KMult(-1_e, KB_s, KIm(KC), KD_s, i_e), KE_s),
           ctx));
@@ -106,7 +106,7 @@ bool AdvancedOperation::ContractAbs(Tree* e) {
     if (GetComplexSign(ctx.getTree(KA)).isPureIm() &&
         GetComplexSign(ctx.getTree(KB)).isPureIm()) {
       // |exp(A) + exp(B)| = √(2+2*cos((B-A)*i)) for A and B pure imaginary
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KExp(KMult(
               1_e / 2_e,
               KLn(KAdd(2_e,
@@ -138,7 +138,7 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
     const Tree* mult = e->child(0);
     Tree* result = mult->cloneNode();
     for (const Tree* child : mult->children()) {
-      PatternMatching::CreateSimplify(KAbs(KA), {.KA = child});
+      PatternMatching::CreateReduce(KAbs(KA), {.KA = child});
     }
     SystematicReduction::ShallowReduce(result);
     e->moveTreeOverTree(result);
@@ -150,16 +150,15 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
     // |B^A| = |B|^A for A real
     e->moveTreeOverTree(
         e->child(0)->isExp()
-            ? PatternMatching::CreateSimplify(KExp(KMult(KA, KLn(KAbs(KB)))),
-                                              ctx)
-            : PatternMatching::CreateSimplify(KPow(KAbs(KB), KA), ctx));
+            ? PatternMatching::CreateReduce(KExp(KMult(KA, KLn(KAbs(KB)))), ctx)
+            : PatternMatching::CreateReduce(KPow(KAbs(KB), KA), ctx));
     return true;
   }
   if (PatternMatching::Match(e, KAbs(KA), &ctx) &&
       GetComplexSign(ctx.getTree(KA)).isReal()) {
     // |A| = A*sign(A) for A real
     e->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(KA, KSign(KA)), ctx));
+        PatternMatching::CreateReduce(KMult(KA, KSign(KA)), ctx));
     return true;
   }
   // |A| = √(re(A)^2+im(A)^2)
@@ -180,9 +179,9 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
        * Re(e):           √(1/2 * (√(a^2+b^2)+a))
        * Im(e): sign(b) * √(1/2 * (√(a^2+b^2)-a))
        * and abs(KB) = abs(a+bi) = √(a^2+b^2) */
-      TreeRef re = PatternMatching::CreateSimplify(KRe(KB), ctx);
-      Tree* abs = PatternMatching::CreateSimplify(KAbs(KB), ctx);
-      Tree* res = PatternMatching::CreateSimplify(
+      TreeRef re = PatternMatching::CreateReduce(KRe(KB), ctx);
+      Tree* abs = PatternMatching::CreateReduce(KAbs(KB), ctx);
+      Tree* res = PatternMatching::CreateReduce(
           KAdd(KExp(KMult(KH, KLn(KMult(KH, KAdd(KA, KB))))),
                KMult(KExp(KMult(KH, KLn(KMult(KH, KAdd(KMult(-1_e, KA), KB))))),
                      KC)),
@@ -221,7 +220,7 @@ bool AdvancedOperation::ContractExp(Tree* e) {
                              &ctx) &&
       GetComplexSign(ctx.getTree(KC)).isReal() &&
       GetComplexSign(ctx.getTree(KE)).isReal()) {
-    Tree* contracted = PatternMatching::CreateSimplify(
+    Tree* contracted = PatternMatching::CreateReduce(
         KMult(KA_s, KExp(KMult(KB_p, KLn(KMult(KC, KE)))), KD_s, KF_s), ctx);
     e->moveTreeOverTree(contracted);
     return true;
@@ -258,7 +257,7 @@ bool AdvancedOperation::ExpandMult(Tree* e) {
     for (int i = 0; i < numberOfTerms; i++) {
       ctx.setNode(KB, term, 1, false);
       // TODO: Maybe limit the number of recursive calls.
-      ExpandMult(PatternMatching::CreateSimplify(KMult(KA_s, KB, KD_s), ctx));
+      ExpandMult(PatternMatching::CreateReduce(KMult(KA_s, KB, KD_s), ctx));
       term = term->nextTree();
     }
     e->moveTreeOverTree(result);
@@ -281,11 +280,11 @@ bool AdvancedOperation::ContractMult(Tree* e) {
   if (PatternMatching::Match(e, KMult(KA_s, KPow(KB, KC), KPow(KD, KC), KE_s),
                              &ctx) &&
       (ctx.getTree(KB)->isAdd() || ctx.getTree(KD)->isAdd())) {
-    Tree* mult = PatternMatching::CreateSimplify(KMult(KB, KD), ctx);
+    Tree* mult = PatternMatching::CreateReduce(KMult(KB, KD), ctx);
     ExpandMult(mult);
     ctx.setNode(KB, mult, 1, false);
     mult->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(KA_s, KPow(KB, KC), KE_s), ctx));
+        PatternMatching::CreateReduce(KMult(KA_s, KPow(KB, KC), KE_s), ctx));
     e->moveTreeOverTree(mult);
     return true;
   }
@@ -365,7 +364,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
     ComplexSign s = GetComplexSign(ctx.getTree(KA));
     // Filter out infinite and pure expressions for useful and accurate results
     if (!s.isPure() && !s.canBeInfinite()) {
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KMult(KAdd(KRe(KA), KMult(-1_e, KIm(KA), i_e)),
                 KPow(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e)), -1_e)),
           ctx));
@@ -394,10 +393,10 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
     }
     Tree* res = KAdd.node<0>->cloneTree();
     for (int i = 0; i < nbOfChildren; ++i) {
-      PatternMatching::CreateSimplify(KPow(KA, 2_e), {.KA = children[i]});
+      PatternMatching::CreateReduce(KPow(KA, 2_e), {.KA = children[i]});
       for (int j = i + 1; j < nbOfChildren; ++j) {
-        PatternMatching::CreateSimplify(KMult(2_e, KA, KB),
-                                        {.KA = children[i], .KB = children[j]});
+        PatternMatching::CreateReduce(KMult(2_e, KA, KB),
+                                      {.KA = children[i], .KB = children[j]});
       }
     }
     NAry::SetNumberOfChildren(res, nbOfChildren * (nbOfChildren + 1) / 2);
@@ -436,7 +435,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
     TreeRef scopedKC = ctx.getTree(KC)->cloneTree();
     Variables::EnterScope(scopedKC);
     ctx.setNode(KF, scopedKC, 1, false, 1);
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateReduce(
         KAdd(KPow(KA, KAbs(KC)),
              KSum("k"_e, 1_e, KAdd(KAbs(KC), -1_e),
                   KMult(KBinomial(KAbs(KF), KVarK), KPow(KD, KVarK),
@@ -487,7 +486,7 @@ bool AdvancedOperation::ExpandComplexArgument(Tree* e) {
       /* atan2(y, x) = arctan(y/x)      if x > 0
        *               arctan(y/x) + π  if y >= 0 and x < 0
        *               arctan(y/x) - π  if y < 0  and x < 0 */
-      e->moveTreeOverTree(PatternMatching::CreateSimplify(
+      e->moveTreeOverTree(PatternMatching::CreateReduce(
           KAdd(KATanRad(KMult(KIm(KA), KPow(KRe(KA), -1_e))), KMult(KB, π_e)),
           {.KA = child,
            .KB = realSign.isStrictlyPositive()

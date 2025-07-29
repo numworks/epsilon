@@ -154,7 +154,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
     constexpr SimpleKTrees::KTree numberOfTerms =
         KAdd(1_e, KA, KMult(-1_e, KB));
     Variables::LeaveScope(function);
-    Tree* result = PatternMatching::CreateSimplify(
+    Tree* result = PatternMatching::CreateReduce(
         isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
         {.KA = upperBound, .KB = lowerBound, .KC = function});
     e->moveTreeOverTree(result);
@@ -276,9 +276,9 @@ bool Parametric::ContractSum(Tree* e) {
                           realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyPositive()
-              ? PatternMatching::CreateSimplify(KSum(KA, KAdd(KF, 1_e), KC, KD),
-                                                ctx)
-              : PatternMatching::CreateSimplify(
+              ? PatternMatching::CreateReduce(KSum(KA, KAdd(KF, 1_e), KC, KD),
+                                              ctx)
+              : PatternMatching::CreateReduce(
                     KMult(KSum(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
       e->moveTreeOverTree(result);
       return true;
@@ -298,9 +298,9 @@ bool Parametric::ContractSum(Tree* e) {
                           realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyNegative()
-              ? PatternMatching::CreateSimplify(
-                    KSum(KA, KB, KAdd(KF, -1_e), KD), ctx)
-              : PatternMatching::CreateSimplify(
+              ? PatternMatching::CreateReduce(KSum(KA, KB, KAdd(KF, -1_e), KD),
+                                              ctx)
+              : PatternMatching::CreateReduce(
                     KMult(KSum(KE, KF, KAdd(KB, -1_e), KD), -1_e), ctx);
       e->moveTreeOverTree(result);
       return true;
@@ -330,9 +330,9 @@ bool Parametric::ContractProduct(Tree* e) {
                           realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyPositive()
-              ? PatternMatching::CreateSimplify(
+              ? PatternMatching::CreateReduce(
                     KProduct(KA, KAdd(KF, 1_e), KC, KD), ctx)
-              : PatternMatching::CreateSimplify(
+              : PatternMatching::CreateReduce(
                     KPow(KProduct(KE, KAdd(KC, 1_e), KF, KD), -1_e), ctx);
       e->moveTreeOverTree(result);
       return true;
@@ -353,9 +353,9 @@ bool Parametric::ContractProduct(Tree* e) {
                           realSign.isStrictlyNegative())) {
       Tree* result =
           realSign.isNull() || realSign.isStrictlyNegative()
-              ? PatternMatching::CreateSimplify(
+              ? PatternMatching::CreateReduce(
                     KProduct(KA, KB, KAdd(KF, -1_e), KD), ctx)
-              : PatternMatching::CreateSimplify(
+              : PatternMatching::CreateReduce(
                     KPow(KProduct(KE, KF, KAdd(KB, -1_e), KD), -1_e), ctx);
       e->moveTreeOverTree(result);
       return true;
@@ -375,7 +375,7 @@ bool Parametric::Explicit(Tree* e) {
   const Tree* lowerBound = e->child(k_lowerBoundIndex);
   const Tree* upperBound = lowerBound->nextTree();
   const Tree* child = upperBound->nextTree();
-  Tree* boundsDifference = PatternMatching::CreateSimplify(
+  Tree* boundsDifference = PatternMatching::CreateReduce(
       KAdd(KA, KMult(-1_e, KB)), {.KA = upperBound, .KB = lowerBound});
   Dependency::RemoveDependencies(boundsDifference);
   AdvancedReduction::DeepExpandAlgebraic(boundsDifference);
@@ -425,7 +425,7 @@ bool Parametric::ExpandExpOfSum(Tree* e) {
     TreeRef f = PatternMatching::Create(KMult(KF_s), ctx);
     Variables::EnterScope(f);
     ctx.setNode(KF, f, 1, false, 1);
-    e->moveTreeOverTree(PatternMatching::CreateSimplify(
+    e->moveTreeOverTree(PatternMatching::CreateReduce(
         KProduct(KB, KC, KD, KExp(KMult(KA, KE, KF))), ctx));
     SharedTreeStack->flushFromBlock(a);  // Removes a and f
     return true;

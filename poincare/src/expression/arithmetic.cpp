@@ -366,7 +366,7 @@ bool Arithmetic::ReduceBinomial(Tree* e) {
   Variables::EnterScope(scopedK);
   PatternMatching::Context ctx({.KA = n, .KB = scopedK, .KC = k},
                                {.KA = 1, .KB = 1});
-  e->moveTreeOverTree(PatternMatching::CreateSimplify(
+  e->moveTreeOverTree(PatternMatching::CreateReduce(
       KProduct("j"_e, 0_e, KAdd(KC, -1_e),
                KMult(KAdd(KA, KMult(-1_e, KVarK)),
                      KPow(KAdd(KB, KMult(-1_e, KVarK)), -1_e))),

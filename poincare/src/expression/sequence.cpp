@@ -59,7 +59,7 @@ Tree* Sequence::PushInitialConditionName(const Tree* sequence,
   Tree* firstRank = sequence->child(k_firstRankIndex)->cloneTree();
   if (!isFirstCondition) {
     firstRank->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KAdd(KA, 1_e), {.KA = firstRank}));
+        PatternMatching::CreateReduce(KAdd(KA, 1_e), {.KA = firstRank}));
   }
   return result;
 }

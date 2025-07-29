@@ -525,13 +525,13 @@ ParametricConic::ParametricConic(const SystemExpression& analyzedExpression,
   Tree* variableY = yOfT->cloneTree();
   RemoveConstantTermsInAddition(variableY, symbol);
 
-  Tree* quotient = PatternMatching::CreateSimplify(
+  Tree* quotient = PatternMatching::CreateReduce(
       KMult(KPow(KA, 2_e), KPow(KB, -1_e)), {.KA = variableX, .KB = variableY});
   bool parabola = Degree::Get(quotient, symbol) == 0;
   if (!parabola) {
     quotient->moveTreeOverTree(
-        PatternMatching::CreateSimplify(KMult(KPow(KA, 2_e), KPow(KB, -1_e)),
-                                        {.KA = variableY, .KB = variableX}));
+        PatternMatching::CreateReduce(KMult(KPow(KA, 2_e), KPow(KB, -1_e)),
+                                      {.KA = variableY, .KB = variableX}));
     parabola = Degree::Get(quotient, symbol) == 0;
   }
   quotient->removeTree();

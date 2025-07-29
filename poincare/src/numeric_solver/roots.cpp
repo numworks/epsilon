@@ -25,15 +25,15 @@ Tree* Roots::ApplyAdditionalReduction(Tree* solutions) {
 
 Tree* Roots::PrivateLinear(const Tree* a, const Tree* b) {
   assert(a && b);
-  return PatternMatching::CreateSimplify(KMult(-1_e, KB, KPow(KA, -1_e)),
-                                         {.KA = a, .KB = b});
+  return PatternMatching::CreateReduce(KMult(-1_e, KB, KPow(KA, -1_e)),
+                                       {.KA = a, .KB = b});
 }
 
 Tree* Roots::PrivateQuadraticDiscriminant(const Tree* a, const Tree* b,
                                           const Tree* c) {
   // Δ=B^2-4AC
-  return PatternMatching::CreateSimplify(
-      KAdd(KPow(KB, 2_e), KMult(-4_e, KA, KC)), {.KA = a, .KB = b, .KC = c});
+  return PatternMatching::CreateReduce(KAdd(KPow(KB, 2_e), KMult(-4_e, KA, KC)),
+                                       {.KA = a, .KB = b, .KC = c});
 }
 
 Tree* Roots::PrivateQuadratic(const Tree* a, const Tree* b, const Tree* c,
@@ -52,16 +52,16 @@ Tree* Roots::PrivateQuadratic(const Tree* a, const Tree* b, const Tree* c,
   ComplexSign deltaSign = SignOfTreeOrApproximation(discriminant);
   if (deltaSign.isNull()) {
     // -B/2A
-    return PatternMatching::CreateSimplify(
+    return PatternMatching::CreateReduce(
         KList(KMult(-1_e / 2_e, KB, KPow(KA, -1_e))), {.KA = a, .KB = b});
   }
   Tree* solutions = SharedTreeStack->pushList(2);
   // {-(B+√Δ)/2A, (-B+√Δ)/2A}
-  Tree* root1 = PatternMatching::CreateSimplify(
+  Tree* root1 = PatternMatching::CreateReduce(
       KMult(-1_e / 2_e, KAdd(KB, KExp(KMult(1_e / 2_e, KLn(KC)))),
             KPow(KA, -1_e)),
       {.KA = a, .KB = b, .KC = discriminant});
-  PatternMatching::CreateSimplify(
+  PatternMatching::CreateReduce(
       KMult(1_e / 2_e, KAdd(KMult(-1_e, KB), KExp(KMult(1_e / 2_e, KLn(KC)))),
             KPow(KA, -1_e)),
       {.KA = a, .KB = b, .KC = discriminant});
@@ -84,7 +84,7 @@ Tree* Roots::PrivateCubicDiscriminant(const Tree* a, const Tree* b,
    * has a multiple root. */
 
   // clang-format off
-  Tree* delta = PatternMatching::CreateSimplify(
+  Tree* delta = PatternMatching::CreateReduce(
     KAdd(
       KMult(KPow(KB, 2_e), KPow(KC, 2_e)),
       KMult(18_e, KA, KB, KC, KD),
@@ -215,7 +215,7 @@ Tree* Roots::ApproximateRootsOfRealCubic(const Tree* roots,
 Tree* Roots::PolynomialEvaluation(const Tree* value, const Tree* a,
                                   const Tree* b, const Tree* c, const Tree* d) {
   // clang-format off
-  Tree* e = PatternMatching::CreateSimplify(
+  Tree* e = PatternMatching::CreateReduce(
     KAdd(
       KMult(KA, KPow(KH, 3_e)),
       KMult(KB, KPow(KH, 2_e)),
@@ -241,10 +241,10 @@ Tree* Roots::CubicRootsKnowingNonZeroRoot(const Tree* a, const Tree* b,
   assert(!GetComplexSign(r).isNull());
   /* If r is a non zero root of "ax^3+bx^2+cx+d", we can factorize the
    * polynomial as "(x-r)*(ax^2+β*x+γ)", with "β =b+a*r" and γ=-d/r */
-  TreeRef beta = PatternMatching::CreateSimplify(KAdd(KB, KMult(KA, KH)),
-                                                 {.KA = a, .KB = b, .KH = r});
-  TreeRef gamma = PatternMatching::CreateSimplify(
-      KMult(-1_e, KD, KPow(KH, -1_e)), {.KD = d, .KH = r});
+  TreeRef beta = PatternMatching::CreateReduce(KAdd(KB, KMult(KA, KH)),
+                                               {.KA = a, .KB = b, .KH = r});
+  TreeRef gamma = PatternMatching::CreateReduce(KMult(-1_e, KD, KPow(KH, -1_e)),
+                                                {.KD = d, .KH = r});
   TreeRef allRoots = Roots::PrivateQuadratic(a, beta, gamma);
   beta->removeTree();
   gamma->removeTree();
@@ -262,10 +262,10 @@ Tree* Roots::CubicRootsNullSecondAndThirdCoefficients(const Tree* a,
   /* Polynoms of the form "ax^3+d=0" have a simple real solution : x1 =
    * sqrt(-d/a,3). Then the two other complex conjugate roots are given by x2 =
    * rootsOfUnity[1] * x1 and x3 = rootsOfUnity[[2] * x1. */
-  Tree* baseRoot = PatternMatching::CreateSimplify(
+  Tree* baseRoot = PatternMatching::CreateReduce(
       KPow(KMult(-1_e, KPow(KA, -1_e), KD), KPow(3_e, -1_e)),
       {.KA = a, .KD = d});
-  TreeRef rootList = PatternMatching::CreateSimplify(
+  TreeRef rootList = PatternMatching::CreateReduce(
       KList(KA, KMult(KA, k_cubeRootOfUnity1), KMult(KA, k_cubeRootOfUnity2)),
       {.KA = baseRoot});
   baseRoot->removeTree();
@@ -278,7 +278,7 @@ Tree* Roots::SimpleRootSearch(const Tree* a, const Tree* b, const Tree* c,
   /* Polynomials which can be written as "kx^2(cx+d)+cx+d" have a simple
    * root: "-d/c". */
   /* TODO: check the "kx(bx^2+d)+bx^2+d" pattern, with root √(-d/b) */
-  Tree* simpleRoot = PatternMatching::CreateSimplify(
+  Tree* simpleRoot = PatternMatching::CreateReduce(
       KMult(-1_e, KD, KPow(KC, -1_e)), {.KC = c, .KD = d});
   if (IsRoot(simpleRoot, a, b, c, d)) {
     return simpleRoot;
@@ -302,11 +302,11 @@ Tree* Roots::RationalRootSearch(const Tree* a, const Tree* b, const Tree* c,
   Tree* denominatorB = Rational::Denominator(b).pushOnTreeStack();
   Tree* denominatorC = Rational::Denominator(c).pushOnTreeStack();
   Tree* denominatorD = Rational::Denominator(d).pushOnTreeStack();
-  Tree* lcm = PatternMatching::CreateSimplify(KLCM(KA, KB, KC, KD),
-                                              {.KA = denominatorA,
-                                               .KB = denominatorB,
-                                               .KC = denominatorC,
-                                               .KD = denominatorD});
+  Tree* lcm =
+      PatternMatching::CreateReduce(KLCM(KA, KB, KC, KD), {.KA = denominatorA,
+                                                           .KB = denominatorB,
+                                                           .KC = denominatorC,
+                                                           .KD = denominatorD});
 
   assert(lcm->isRational());
   TreeRef A = Rational::Multiplication(a, lcm);
@@ -380,8 +380,8 @@ Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
      * + (-r3*a)", when roots are irreducible. We can test for each term of the
      * addition whether  "-1 * addTerm / a" is a root. */
     for (const Tree* sumTerm : b->children()) {
-      Tree* r = PatternMatching::CreateSimplify(KMult(-1_e, KH, KPow(KA, -1_e)),
-                                                {.KA = a, .KH = sumTerm});
+      Tree* r = PatternMatching::CreateReduce(KMult(-1_e, KH, KPow(KA, -1_e)),
+                                              {.KA = a, .KH = sumTerm});
       if (IsRoot(r, a, b, c, d)) {
         return r;
       }
@@ -390,8 +390,8 @@ Tree* Roots::SumRootSearch(const Tree* a, const Tree* b, const Tree* c,
   }
   /* If the polynomial has a triple root, then the expression of b might be "b
    * = -a*3*r, with r being a triple root. */
-  Tree* r = PatternMatching::CreateSimplify(
-      KMult(-1_e / 3_e, KB, KPow(KA, -1_e)), {.KA = a, .KB = b});
+  Tree* r = PatternMatching::CreateReduce(KMult(-1_e / 3_e, KB, KPow(KA, -1_e)),
+                                          {.KA = a, .KB = b});
   if (IsRoot(r, a, b, c, d)) {
     return r;
   }
@@ -462,13 +462,13 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
   TreeRef rootList = SignOfTreeOrApproximation(delta0).isNull()
     ?
       // "-b/3a" is a triple root
-      PatternMatching::CreateSimplify(
+      PatternMatching::CreateReduce(
           KList(
               KMult(-1_e, KB, KPow(KMult(3_e, KA), -1_e))),
           {.KA = a, .KB = b})
     :
       /* "(9ad - bc)/(2*delta0)" is a double root and (4abc - 9da^2 - b^3)/(a*delta0)" is a simple root */
-      PatternMatching::CreateSimplify(
+      PatternMatching::CreateReduce(
           KList(
               KMult(
                   KAdd(KMult(9_e, KA, KD), KMult(-1_e, KB, KC)),
@@ -490,8 +490,8 @@ Tree* Roots::CubicRootsNullDiscriminant(const Tree* a, const Tree* b,
 
 Tree* Roots::Delta0(const Tree* a, const Tree* b, const Tree* c) {
   // Δ_0 = b^2 - 3ac
-  return PatternMatching::CreateSimplify(
-      KAdd(KPow(KB, 2_e), KMult(-3_e, KA, KC)), {.KA = a, .KB = b, .KC = c});
+  return PatternMatching::CreateReduce(KAdd(KPow(KB, 2_e), KMult(-3_e, KA, KC)),
+                                       {.KA = a, .KB = b, .KC = c});
 }
 
 Tree* Roots::Delta1(const Tree* a, const Tree* b, const Tree* c,
@@ -499,7 +499,7 @@ Tree* Roots::Delta1(const Tree* a, const Tree* b, const Tree* c,
   {
     //  Δ_1 = 2b^3 - 9abc + 27da^2
     // clang-format off
-    return PatternMatching::CreateSimplify(
+    return PatternMatching::CreateReduce(
         KAdd(
           KMult(2_e, KPow(KB, 3_e)),
           KMult(-9_e, KA, KB, KC),
@@ -518,13 +518,13 @@ Tree* Roots::CardanoNumber(const Tree* delta0, const Tree* delta1) {
    * of subtracting two very close numbers when delta0 << delta1. */
 
   if (SignOfTreeOrApproximation(delta0).isNull()) {
-    return PatternMatching::CreateSimplify(KPow(KA, 1_e / 3_e), {.KA = delta1});
+    return PatternMatching::CreateReduce(KPow(KA, 1_e / 3_e), {.KA = delta1});
   }
 
   const Tree* signDelta1 =
       SignOfTreeOrApproximation(delta1).realSign().isPositive() ? 1_e : -1_e;
   // clang-format off
-  return PatternMatching::CreateSimplify(
+  return PatternMatching::CreateReduce(
     KPow(
       KMult(
         KAdd(
@@ -557,7 +557,7 @@ Tree* Roots::CardanoRoot(const Tree* a, const Tree* b, const Tree* cardano,
                                      : k_cubeRootOfUnity2;
 
   // clang-format off
-  return  PatternMatching::CreateSimplify(
+  return  PatternMatching::CreateReduce(
       KMult(
         KPow(KMult(-3_e, KA), -1_e),
         KAdd(

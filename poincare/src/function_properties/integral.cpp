@@ -15,7 +15,7 @@ SystemExpression IntegralBetweenBounds(SystemExpression expression,
   Tree* function = expression.tree()->cloneTree();
   Variables::ReplaceSymbol(function, variableName, 0, ComplexSign::Real());
   SystemExpression result =
-      SystemExpression::Builder(PatternMatching::CreateSimplify(
+      SystemExpression::Builder(PatternMatching::CreateReduce(
           KIntegral(KVarX, KA, KB, KC),
           PatternMatching::Context(
               ContextTrees{.KA = lowerBound, .KB = upperBound, .KC = function},

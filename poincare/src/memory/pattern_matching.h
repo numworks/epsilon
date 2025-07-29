@@ -166,8 +166,8 @@ class PatternMatching {
                       bool simplify = false) {
     return CreateTree(structure, context, nullptr, simplify, 0);
   }
-  static Tree* CreateSimplify(const Tree* structure,
-                              const Context context = Context()) {
+  static Tree* CreateReduce(const Tree* structure,
+                            const Context context = Context()) {
     return CreateTree(structure, context, nullptr, true, 0);
   }
   static Tree* Create(const Tree* structure, const ContextTrees& context,
@@ -175,9 +175,8 @@ class PatternMatching {
                       bool simplify = false) {
     return Create(structure, Context(context, scopes), simplify);
   }
-  static Tree* CreateSimplify(const Tree* structure,
-                              const ContextTrees& context,
-                              const ContextScopes scopes = ContextScopes()) {
+  static Tree* CreateReduce(const Tree* structure, const ContextTrees& context,
+                            const ContextScopes scopes = ContextScopes()) {
     return Create(structure, Context(context, scopes), true);
   }
   static Tree* MatchCreate(const Tree* source, const Tree* pattern,

@@ -238,7 +238,7 @@ UserExpression UserExpression::Create(const Tree* structure,
 
 SystemExpression SystemExpression::CreateReduce(const Tree* structure,
                                                 ContextTrees ctx) {
-  Tree* tree = PatternMatching::CreateSimplify(structure, ctx);
+  Tree* tree = PatternMatching::CreateReduce(structure, ctx);
   return Builder(tree);
 }
 

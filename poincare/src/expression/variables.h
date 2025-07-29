@@ -59,12 +59,12 @@ bool HasVariables(const Tree* e);
 bool HasVariable(const Tree* e, const Tree* variable);
 bool HasVariable(const Tree* e, int id);
 
-// Replace occurrences of variable with value and simplify inside e
-bool Replace(Tree* e, const Tree* variable, const Tree* value, bool simplify);
+// Replace occurrences of variable with value and reduce inside e
+bool Replace(Tree* e, const Tree* variable, const Tree* value, bool reduce);
 bool Replace(Tree* e, int id, const Tree* value, bool leave = false,
-             bool simplify = true);
+             bool reduce = true);
 bool Replace(Tree* e, int id, const TreeRef& value, bool leave = false,
-             bool simplify = true);
+             bool reduce = true);
 
 // Replace symbol with Var<id>
 bool ReplaceSymbol(Tree* e, const char* symbol, int id, ComplexSign sign);
@@ -85,7 +85,7 @@ inline void EnterScopeExceptLocalVariable(Tree* e) {
 inline void LeaveScope(Tree* e) {
   return Private::EnterOrLeaveScope(e, false, 0);
 }
-bool LeaveScopeWithReplacement(Tree* e, const Tree* value, bool simplify,
+bool LeaveScopeWithReplacement(Tree* e, const Tree* value, bool reduce,
                                bool addDependencyInValue);
 
 /* Get the scope of [tree] relative to [root].

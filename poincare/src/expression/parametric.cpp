@@ -260,7 +260,7 @@ bool Parametric::ContractSum(Tree* e) {
   /* TODO: handle any form:
    * - KAdd(KA_s, KSum, KB_s, KMult(KSum, -1_e), KC_s)
    * - KAdd(KA_s, KMult(KSum, -1_e), KB_s, KSum, KC_s) */
-  // Used to simplify simplified and projected permute and binomials.
+  // Used to reduce simplified and projected permute and binomials.
   /* Sum(u(k), k, a, b) - Sum(u(k), k, a, c)
    * -> Sum(u(k), k, c+1, b) if b > c
    * -> 0 if b = c (can be included in previous case and then will be reduced)
@@ -313,7 +313,7 @@ bool Parametric::ContractProduct(Tree* e) {
   /* TODO: handle any form:
    * - KMult(KA_s, KProduct, KB_s, KPow(KProduct, -1_e), KC_s)
    * - KMult(KA_s, KPow(KProduct, -1_e), KB_s, KProduct, KC_s) */
-  // Used to simplify simplified and projected permute and binomials.
+  // Used to reduce simplified and projected permute and binomials.
   /* Prod(u(k), k, a, b) / Prod(u(k), k, a, c)
    * -> Prod(u(k), k, c+1, b) if b > c
    * -> 1 if b = c (can be included in previous case and then will be reduced)

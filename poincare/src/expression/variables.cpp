@@ -101,9 +101,9 @@ bool Variables::HasUserSymbols(const Tree* e, bool checkForUserFunctions) {
 }
 
 bool Variables::LeaveScopeWithReplacement(Tree* e, const Tree* value,
-                                          bool simplify,
+                                          bool reduce,
                                           bool addDependencyInValue) {
-  bool changed = Replace(e, 0, value, true, simplify);
+  bool changed = Replace(e, 0, value, true, reduce);
   if (!changed && addDependencyInValue) {
     /* Add a dependency in the value if it is leaving the scope of the
      * expression but it does not appear in the expression. */
@@ -111,7 +111,7 @@ bool Variables::LeaveScopeWithReplacement(Tree* e, const Tree* value,
      * after e. Cloning is overkill but easy. */
     e->moveTreeOverTree(PatternMatching::Create(KDep(KA, KDepList(KB)),
                                                 {.KA = e, .KB = value}));
-    if (simplify) {
+    if (reduce) {
       SystematicReduction::ShallowReduce(e);
     }
     return true;
@@ -120,23 +120,23 @@ bool Variables::LeaveScopeWithReplacement(Tree* e, const Tree* value,
 }
 
 bool Variables::Replace(Tree* e, const Tree* variable, const Tree* value,
-                        bool simplify) {
+                        bool reduce) {
   assert(variable->isVar());
-  return Replace(e, Id(variable), value, simplify);
+  return Replace(e, Id(variable), value, reduce);
 }
 
 bool Variables::Replace(Tree* e, int id, const Tree* value, bool leave,
-                        bool simplify) {
+                        bool reduce) {
   /* TODO We need to track the replacement value only if it is in the pool and
    * after e. Cloning is overkill but easy. */
   TreeRef valueRef = value->cloneTree();
-  bool result = Replace(e, id, valueRef, leave, simplify);
+  bool result = Replace(e, id, valueRef, leave, reduce);
   valueRef->removeTree();
   return result;
 }
 
 bool Variables::Replace(Tree* e, int id, const TreeRef& value, bool leave,
-                        bool simplify) {
+                        bool reduce) {
   if (e->isVar()) {
     if (Id(e) == id) {
       e->cloneTreeOverTree(value);
@@ -153,9 +153,9 @@ bool Variables::Replace(Tree* e, int id, const TreeRef& value, bool leave,
   for (IndexedChild<Tree*> child : e->indexedChildren()) {
     int updatedId =
         id + (isParametric && Parametric::IsFunctionIndex(child.index, e));
-    changed = Replace(child, updatedId, value, leave, simplify) || changed;
+    changed = Replace(child, updatedId, value, leave, reduce) || changed;
   }
-  if (simplify && changed) {
+  if (reduce && changed) {
     SystematicReduction::ShallowReduce(e);
   }
   return changed;

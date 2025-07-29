@@ -1,6 +1,6 @@
 #include <omg/store.h>
+#include <string.h>
 
-#include <cstring>
 #include <type_traits>
 
 namespace OMG {
@@ -51,7 +51,7 @@ void Store::deleteElementAtIndex(int index) {
 
   // TODO
   // Ion::CircuitBreaker::lock();
-  std::memmove(deletionStart, deletionEnd, shiftedMemorySize);
+  memmove(deletionStart, deletionEnd, shiftedMemorySize);
 
   for (int i = index - 1; i >= 0; i--) {
     offsetArray()[i + 1] = offsetArray()[i] - deletedSize;
@@ -65,7 +65,7 @@ void* Store::pushElement(const void* element, int size) {
   assert(destination >= m_buffer &&
          destination + size + sizeof(offset_t) <= offsetArea());
 
-  std::memcpy(destination, element, size);
+  memcpy(destination, element, size);
   registerElement(destination, size);
   return destination;
 }

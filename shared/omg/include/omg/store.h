@@ -1,9 +1,8 @@
 #pragma once
 
 #include <omg/expiring_pointer.h>
-
-#include <cstddef>
-#include <cstdint>
+#include <stddef.h>
+#include <stdint.h>
 
 namespace OMG {
 

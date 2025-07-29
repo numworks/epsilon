@@ -163,8 +163,8 @@ class PatternMatching {
 
   static bool Match(const Tree* source, const Tree* pattern, Context* context);
   static Tree* Create(const Tree* structure, const Context context = Context(),
-                      bool simplify = false) {
-    return CreateTree(structure, context, nullptr, simplify, 0);
+                      bool reduce = false) {
+    return CreateTree(structure, context, nullptr, reduce, 0);
   }
   static Tree* CreateReduce(const Tree* structure,
                             const Context context = Context()) {
@@ -172,8 +172,8 @@ class PatternMatching {
   }
   static Tree* Create(const Tree* structure, const ContextTrees& context,
                       const ContextScopes& scopes = ContextScopes(),
-                      bool simplify = false) {
-    return Create(structure, Context(context, scopes), simplify);
+                      bool reduce = false) {
+    return Create(structure, Context(context, scopes), reduce);
   }
   static Tree* CreateReduce(const Tree* structure, const ContextTrees& context,
                             const ContextScopes scopes = ContextScopes()) {
@@ -183,8 +183,8 @@ class PatternMatching {
                            const Tree* structure);
   // Return true if reference has been replaced
   static bool MatchReplace(Tree* source, const Tree* pattern,
-                           const Tree* structure, bool simplify = false) {
-    return PrivateMatchReplace(source, pattern, structure, simplify);
+                           const Tree* structure, bool reduce = false) {
+    return PrivateMatchReplace(source, pattern, structure, reduce);
   }
   // Return true if reference has been replaced
   static bool MatchReplaceReduce(Tree* source, const Tree* pattern,
@@ -194,7 +194,7 @@ class PatternMatching {
 
  private:
   static bool PrivateMatchReplace(Tree* source, const Tree* pattern,
-                                  const Tree* structure, bool simplify);
+                                  const Tree* structure, bool reduce);
 
   static bool TrimSourceTree(Tree* source, Context* ctx);
 
@@ -265,7 +265,7 @@ class PatternMatching {
                          Context* context, MatchContext matchContext);
   // Create structure tree with context's placeholder nodes in TreeStack
   static Tree* CreateTree(const Tree* structure, const Context context,
-                          Tree* insertedNAry, bool simplify, uint8_t scope);
+                          Tree* insertedNAry, bool reduce, uint8_t scope);
   /* Return true if source has been matched after squashing pattern.
    * Note: this method can dirty the context if false is returned. */
   static bool MatchSourceWithSquashedPattern(const Tree* source,

@@ -37,6 +37,14 @@ Tree* RackParser::parse() {
   /* This can be unset as it won't be used anymore. This ensures it's not
    * passed to subsequent calls to Parser::Parse */
   m_parsingContext.metadata.isTopLevelRack = false;
+
+  if (isTopLevel && m_parsingContext.params.isAssignment) {
+    /* If the rack is the top-level rack and we are parsing for assignment,
+     * we set isAssignmentDeclaration to true so that the first token
+     * can be parsed as a CustomIdentifier */
+    m_parsingContext.metadata.isAssignmentDeclaration = true;
+  }
+
   ExceptionTry {
     for (IndexedChild<const Tree*> child : m_root->indexedChildren()) {
       if (child.index < m_tokenizer.currentPosition() ||
@@ -110,7 +118,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
   m_parsingContext.metadata.isUnitConversion = false;
 
   // Step 2. Parse as assignment, starting with rightHandSide.
-  m_parsingContext.params.isAssignment = true;
+  m_parsingContext.metadata.isAssignmentDeclaration = true;
   m_tokenizer.skip(rightwardsArrowPosition + 1);
   TreeRef rightHandSide = initializeFirstTokenAndParseUntilEnd();
   if (m_nextToken.is(Token::Type::EndOfStream) &&
@@ -120,7 +128,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
        (rightHandSide->isUserFunction() &&
         rightHandSide->child(0)->isUserSymbol()))) {
     setState(previousState);
-    m_parsingContext.params.isAssignment = false;
+    m_parsingContext.metadata.isAssignmentDeclaration = false;
     Poincare::EmptyContext tempContext = Poincare::EmptyContext();
     // This is instantiated outside the condition so that the pointer is not
     // lost.
@@ -273,12 +281,13 @@ void RackParser::popToken() {
     } else {
       m_nextToken = m_tokenizer.popToken();
       if (m_nextToken.type() == Token::Type::AssignmentEqual) {
-        assert(m_parsingContext.params.isAssignment);
-        /* Stop parsing for assignment to ensure that, from now on xy is
-         * understood as x*y. For example, "func(x) = xy" -> left of the =, we
-         * parse for assignment so "func" is NOT understood as "f*u*n*c", but
-         * after the equal we want "xy" to be understood as "x*y" */
-        m_parsingContext.params.isAssignment = false;
+        assert(m_parsingContext.metadata.isAssignmentDeclaration);
+        /* Stop parsing for declaration of assignment to ensure that, from now
+         * on xy is understood as x*y. For example, "func(x) = xy" -> left of
+         * the =, we parse for assignment so "func" is NOT understood as
+         * "f*u*n*c", but after the equal we want "xy" to be understood as "x*y"
+         */
+        m_parsingContext.metadata.isAssignmentDeclaration = false;
       }
     }
   }
@@ -1128,7 +1137,8 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
    * a sequence*/
   Poincare::Context::UserNamedType idType =
       Poincare::Context::UserNamedType::None;
-  if (m_parsingContext.context && !m_parsingContext.params.isAssignment) {
+  if (m_parsingContext.context &&
+      !m_parsingContext.metadata.isAssignmentDeclaration) {
     idType =
         m_parsingContext.context->expressionTypeForIdentifier(name, length);
     if (idType != Poincare::Context::UserNamedType::Function &&

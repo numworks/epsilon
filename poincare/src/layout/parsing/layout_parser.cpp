@@ -115,7 +115,7 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
         if (grid->childIsPlaceholder(i)) {
           continue;
         }
-        if (!Parse(grid->child(i), {.context = parsingContext.context})) {
+        if (!Parse(grid->child(i), parsingContext.cloneWithoutMetadata())) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
         actualNumberOfChildren++;
@@ -136,7 +136,7 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
 
       // Sequence symbol
       const Tree* currentChild = grid->child(0);
-      Tree* expr = Parse(currentChild, {.context = parsingContext.context});
+      Tree* expr = Parse(currentChild, parsingContext.cloneWithoutMetadata());
       if (!expr || !expr->isUserSequence()) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -148,7 +148,7 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
       if (Rack::IsEmpty(currentChild) &&
           parsingContext.params.allowEmptySequence) {
         SharedTreeStack->pushBlock(Type::EmptySequenceExpression);
-      } else if (!Parse(currentChild, {.context = parsingContext.context})) {
+      } else if (!Parse(currentChild, parsingContext.cloneWithoutMetadata())) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
 
@@ -165,7 +165,7 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
          * When we enter this loop, currentChild is at mainExpr. Skip next child
          * to get to the next expression. */
         currentChild = currentChild->nextTree()->nextTree();
-        if (!Parse(currentChild, {.context = parsingContext.context})) {
+        if (!Parse(currentChild, parsingContext.cloneWithoutMetadata())) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
         expr->cloneNodeOverNode(row == 1 ? KSequenceSingleRecurrence
@@ -198,7 +198,9 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
           }
         }
 
-        TreeRef parsedChild = Parse(l->child(i), {.context = childContext});
+        TreeRef parsedChild =
+            Parse(l->child(i),
+                  {.context = childContext, .params = parsingContext.params});
         if (!parsedChild) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }

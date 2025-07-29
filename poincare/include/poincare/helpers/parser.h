@@ -7,7 +7,7 @@ struct ParsingParameters {
   /* If true:
    *  f(x) is understood as a function and not f*(x).
    *  abc is understood as abc and not a*b*c.
-   * This sets back to false when an '=' symbol is reached */
+   * This is only applied until a '=' symbol is reached */
   bool isAssignment = false;
   // If true, "g" will never be parsed as a unit (for solver)
   bool forceUnitUnderscore = false;

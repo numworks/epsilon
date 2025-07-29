@@ -1,6 +1,7 @@
 #ifndef APPS_MATH_PREFERENCES_H
 #define APPS_MATH_PREFERENCES_H
 
+#include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 
 /**
@@ -20,25 +21,60 @@
  * It's named MathPreferences to avoid name conflicts with Poincare::Preferences
  * See comment in poincare/preferences.h.
  */
-class MathPreferences : public Poincare::Preferences {
+class MathPreferences : public GlobalPreferences {
  public:
   inline static MathPreferences* SharedPreferences() {
     return static_cast<MathPreferences*>(
-        Poincare::Preferences::SharedPreferences());
+        GlobalPreferences::SharedGlobalPreferences());
   }
 
-  using Poincare::Preferences::angleUnit;
-  using Poincare::Preferences::calculationPreferences;
-  using Poincare::Preferences::complexFormat;
-  using Poincare::Preferences::displayMode;
-  using Poincare::Preferences::mathPreferencesCheckSum;
-  using Poincare::Preferences::numberOfSignificantDigits;
-  using Poincare::Preferences::setAngleUnit;
-  using Poincare::Preferences::setComplexFormat;
-  using Poincare::Preferences::setDisplayMode;
-  using Poincare::Preferences::setNumberOfSignificantDigits;
+  Poincare::ExamMode examMode() const {
+    return Poincare::Preferences::SharedPreferences()->examMode();
+  };
+  void setExamMode(Poincare::ExamMode examMode) {
+    Poincare::Preferences::SharedPreferences()->setExamMode(examMode);
+  };
+  bool forceExamModeReload() const {
+    return Poincare::Preferences::SharedPreferences()->forceExamModeReload();
+  }
+  bool mixedFractionsAreEnabled() const {
+    return Poincare::Preferences::SharedPreferences()
+        ->mixedFractionsAreEnabled();
+  }
+  void enableMixedFractions(Poincare::Preferences::MixedFractions enable) {
+    Poincare::Preferences::SharedPreferences()->enableMixedFractions(enable);
+  }
+  Poincare::Preferences::CombinatoricSymbols combinatoricSymbols() const {
+    return Poincare::Preferences::SharedPreferences()->combinatoricSymbols();
+  }
+  void setCombinatoricSymbols(
+      Poincare::Preferences::CombinatoricSymbols combinatoricSymbols) {
+    Poincare::Preferences::SharedPreferences()->setCombinatoricSymbols(
+        combinatoricSymbols);
+  }
+
+  void setLogarithmBasePosition(
+      Poincare::Preferences::LogarithmBasePosition position) {
+    Poincare::Preferences::SharedPreferences()->setLogarithmBasePosition(
+        position);
+  }
+  void setParabolaParameter(
+      Poincare::Preferences::ParabolaParameter parameter) {
+    Poincare::Preferences::SharedPreferences()->setParabolaParameter(parameter);
+  }
+
+  using GlobalPreferences::angleUnit;
+  using GlobalPreferences::calculationPreferences;
+  using GlobalPreferences::complexFormat;
+  using GlobalPreferences::displayMode;
+  using GlobalPreferences::mathPreferencesCheckSum;
+  using GlobalPreferences::numberOfSignificantDigits;
+  using GlobalPreferences::setAngleUnit;
+  using GlobalPreferences::setComplexFormat;
+  using GlobalPreferences::setDisplayMode;
+  using GlobalPreferences::setNumberOfSignificantDigits;
 };
 
-static_assert(sizeof(MathPreferences) == sizeof(Poincare::Preferences));
+static_assert(sizeof(MathPreferences) == sizeof(GlobalPreferences));
 
 #endif

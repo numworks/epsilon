@@ -19,7 +19,7 @@ endif
 # TODO: Each app has to be nammed here to avoid (slowly) searching in output.
 #       Find a better solution.
 $(call assert_defined,QUIZ_cases_directories)
-_test_sources := $(shell find $(QUIZ_cases_directories) -path "**/test/**.c" -or -path "**/test/**.cpp")
+_test_sources := $(shell find -H $(QUIZ_cases_directories) -path "**/test/**.c" -or -path "**/test/**.cpp")
 
 # TODO Requires :+test to be the last taste
 $(OUTPUT_DIRECTORY)/$(PATH_quiz)/src/test_symbols.c: $(_test_sources) | $$(@D)/.

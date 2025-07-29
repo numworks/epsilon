@@ -275,7 +275,7 @@ Token Tokenizer::popToken() {
      * This ensures that "f(x) = x and 1" is parsed as "f(x) = (x and 1)" and
      * not "(f(x) = x) and 1" */
     Token result(comparisonOperatorType == Type::Equal &&
-                         m_parsingContext->params.isAssignment
+                         m_parsingContext->metadata.isAssignmentDeclaration
                      ? Token::Type::AssignmentEqual
                      : Token::Type::ComparisonOperator);
     result.setRange(start.layout(), comparisonOperatorLength);
@@ -497,14 +497,14 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   LayoutSpanDecoder decoder(span);
   decoder.printInBuffer(string, std::size(string));
   if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "
-      && (m_parsingContext->params.isAssignment ||
+      && (m_parsingContext->metadata.isAssignmentDeclaration ||
           m_parsingContext->context == nullptr ||
           m_parsingContext->context->expressionTypeForIdentifier(
               string, *length) != Context::UserNamedType::None)) {
     return Token::Type::CustomIdentifier;
   }
 
-  /* If not unit conversion and "m" has been or is being assigned by the user
+  /* If not unit conversion and "m" has been or is being declared by the user
    * it's understood as a variable before being understood as a unit.
    * That's why the following condition is checked after the previous one.
    * NOTE: We check if context isn't nullptr because when context is nullptr

@@ -31,7 +31,7 @@ class RackParser {
    * - u{n} will always be parsed as u_n and not u*{n}
    * - abc will always be parsed as abc and not a*b*c
    * The same is true if you set isAssignment = true
-   * but the parser will set isAssignment = false when it encounters a
+   * but the parser will not use the isAssignment anymore when it encounters a
    * "=". (so that f(x)=xy is parsed as f(x)=x*y, and not as f*(x)=x*y or as
    * f(x)=xy) */
   RackParser(const Tree* rack, ParsingContext parsingContext, int textStart = 0,

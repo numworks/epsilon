@@ -343,7 +343,7 @@ The second argument is a `PatternMatching::Context` that associates any placehol
 
 The resulting tree is valid and will be pushed at the end of the `TreeStack`.
 
-If you need a simplified tree, use `CreateReduce` with a pattern that is a simplified tree and context values that are simplified too.
+If you need a reduced tree, use `CreateReduce` with a pattern that is a reduced tree and context values that are reduced too.
 
 > [!NOTE]
 > Pattern matching is only interesting when you have a context. Is it not optimal to do for example:
@@ -385,7 +385,7 @@ if (PatternMatching::Match(expr5, KCos(KA), &ctx)) {
 The functions `Match` and `Create` are combined in `MatchCreate` and `MatchReplace` to alter the structure of trees without dealing with a context at all:
 
 ```cpp
-// Apply simplification a + a -> 2 * a
+// Apply reduction a + a -> 2 * a
 bool hasChanged = MatchReplace(tree, KAdd(KA, KA), KMult(2_e, KA));
 ```
 <details>
@@ -397,8 +397,8 @@ bool hasChanged = MatchReplace(tree, KAdd(KA, KA), KMult(2_e, KA));
 </details>
 
 Methods `CreateReduce` and `MatchReplaceReduce` perform the same task,
-but also call systematic simplification on each created tree along the way (**but
-not placeholders**, which are assumed to be simplified trees already).
+but also call systematic reduction on each created tree along the way (**but
+not placeholders**, which are assumed to be reduced trees already).
 
 
 ## How to transform an n-ary Tree using pattern matching ?
@@ -412,7 +412,7 @@ When you used `_s` or `_p` to match several children with a placeholder, you are
 same suffix to insert these trees inside an n-ary in the create pattern.
 
 ```cpp
-// Apply simplification a*(b+c...)*d... -> a*b*d + a*(c...)*d...
+// Apply reduction a*(b+c...)*d... -> a*b*d + a*(c...)*d...
 bool hasChanged = MatchReplaceReduce(
     tree, KMult(KA, KAdd(KB, KC_p), KD_s),
     KAdd(KMult(KA, KB, KD_s), KMult(KA, KAdd(KC_p), KD_s)));

@@ -133,7 +133,7 @@ void CalculationParameterController::fillAreaCell() {
   // If there is only two derivable functions, hide the chevron
   m_areaCell.accessory()->displayChevron(ShouldDisplayChevronInAreaCell());
   // Get the name of the selected function
-  ExpiringPointer<ContinuousFunction> mainFunction = function();
+  OMG::ExpiringPointer<ContinuousFunction> mainFunction = function();
   constexpr static size_t bufferSize =
       Shared::Function::k_maxNameWithArgumentSize;
   char mainFunctionName[bufferSize];
@@ -147,7 +147,7 @@ void CalculationParameterController::fillAreaCell() {
     Ion::Storage::Record secondRecord =
         AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
             0, m_record);
-    ExpiringPointer<ContinuousFunction> secondFunction =
+    OMG::ExpiringPointer<ContinuousFunction> secondFunction =
         App::app()->functionStore()->modelForRecord(secondRecord);
     secondFunction->nameWithArgument(secondPlaceHolder + numberOfChars,
                                      bufferSize - numberOfChars);
@@ -218,7 +218,7 @@ bool CalculationParameterController::ShouldDisplayChevronInAreaCell() {
   return App::app()->functionStore()->numberOfAreaCompatibleFunctions() > 2;
 }
 
-Shared::ExpiringPointer<Shared::ContinuousFunction>
+OMG::ExpiringPointer<Shared::ContinuousFunction>
 CalculationParameterController::function() const {
   return App::app()->functionStore()->modelForRecord(m_record);
 }

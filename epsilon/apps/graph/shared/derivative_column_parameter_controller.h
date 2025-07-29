@@ -39,7 +39,7 @@ class DerivativeColumnParameterController
 
  private:
   Shared::ClearColumnHelper* clearColumnHelper() override;
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
+  OMG::ExpiringPointer<Shared::ContinuousFunction> function() const;
 
   Escher::MenuCell<Escher::MessageTextView, Escher::MessageTextView,
                    Escher::ChevronView>

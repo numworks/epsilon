@@ -56,7 +56,7 @@ int ExpressionModelListController::typeAtRow(int row) const {
 
 KDCoordinate ExpressionModelListController::expressionRowHeight(int row) {
   assert(typeAtRow(row) == k_expressionCellType);
-  ExpiringPointer<ExpressionModelHandle> m =
+  OMG::ExpiringPointer<ExpressionModelHandle> m =
       modelStore()->modelForRecord(recordAtRow(row));
   KDCoordinate expressionHeight =
       m->layout().isUninitialized() ? 0
@@ -173,7 +173,7 @@ void ExpressionModelListController::editExpression(Ion::Events::Event event) {
 bool ExpressionModelListController::editSelectedRecordWithLayout(
     Layout layout) {
   Ion::Storage::Record record = selectedRecord();
-  ExpiringPointer<ExpressionModelHandle> model =
+  OMG::ExpiringPointer<ExpressionModelHandle> model =
       modelStore()->modelForRecord(record);
   bool result = (model->setContent(layout, App::app()->localContext()) ==
                  Ion::Storage::Record::ErrorStatus::None);

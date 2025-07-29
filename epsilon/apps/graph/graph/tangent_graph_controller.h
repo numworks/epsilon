@@ -47,7 +47,7 @@ class TangentGraphController
   bool moveCursorHorizontally(OMG::HorizontalDirection direction,
                               int scrollSpeed = 1) override;
   bool handleEnter() override;
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
+  OMG::ExpiringPointer<Shared::ContinuousFunction> function() const;
 
   GraphView* m_graphView;
   BannerView* m_bannerView;

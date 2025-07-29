@@ -124,7 +124,7 @@ Range2D<float> GraphController::optimalRange(
 
   for (int i = 0; i < nbFunctions; i++) {
     canComputeIntersections[i] = false;
-    ExpiringPointer<const ContinuousFunction> f =
+    OMG::ExpiringPointer<const ContinuousFunction> f =
         store->constModelForRecord(store->activeRecordAtIndex(i));
     ContinuousFunctionAndContext fModel{.func = f.operator->(), .ctx = context};
     if (f->approximationBasedOnCostlyAlgorithms(context)) {
@@ -197,7 +197,7 @@ Range2D<float> GraphController::optimalRange(
           f->properties()
               .canComputeIntersectionsWithFunctionsAlongSameVariable()) {
         for (int j = 0; j < i; j++) {
-          ExpiringPointer<const ContinuousFunction> g =
+          OMG::ExpiringPointer<const ContinuousFunction> g =
               store->constModelForRecord(store->activeRecordAtIndex(j));
           if (canComputeIntersections[j] &&
               g->properties()
@@ -217,7 +217,7 @@ Range2D<float> GraphController::optimalRange(
   if (computeY) {
     zoom.setBounds(xBounds.min(), xBounds.max());
     for (int i = 0; i < nbFunctions; i++) {
-      ExpiringPointer<ContinuousFunction> f =
+      OMG::ExpiringPointer<ContinuousFunction> f =
           store->modelForRecord(store->activeRecordAtIndex(i));
       if (f->approximationBasedOnCostlyAlgorithms(context) ||
           !f->properties().isCartesian()) {
@@ -243,7 +243,7 @@ Range2D<float> GraphController::optimalRange(
 
 PointsOfInterestCache* GraphController::pointsOfInterestForRecord(
     Ion::Storage::Record record) {
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
   PointsOfInterestCache* cache = nullptr;
   for (int i = 0; i < static_cast<int>(m_pointsOfInterest.length()); i++) {
@@ -277,14 +277,14 @@ const Layout GraphController::FunctionSelectionController::nameLayoutAtIndex(
   GraphController* graphController =
       static_cast<GraphController*>(m_graphController);
   ContinuousFunctionStore* store = graphController->functionStore();
-  ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       store->modelForRecord(store->activeRecordAtIndex(j));
   return function->layout();
 }
 
 void GraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
   int derivationOrder =
       f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
@@ -376,7 +376,7 @@ int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
 
 double GraphController::defaultCursorT(Ion::Storage::Record record,
                                        bool ignoreMargins) {
-  ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       functionStore()->modelForRecord(record);
   if (function->properties().isCartesian()) {
     return FunctionGraphController::defaultCursorT(record, ignoreMargins);
@@ -426,7 +426,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
 
 void GraphController::openMenuForSelectedCurve() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
   int derivationOrder =
       f->derivationOrderFromSubCurveIndex(m_selectedSubCurveIndex);
@@ -450,14 +450,14 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     return false;
   }
 
-  ExpiringPointer<ContinuousFunction> currentF =
+  OMG::ExpiringPointer<ContinuousFunction> currentF =
       functionStore()->modelForRecord(recordAtSelectedCurveIndex());
   float nextT =
       currentF->properties().isScatterPlot() && std::isfinite(m_cursor->x())
           ? m_cursor->x()
           : m_cursor->t();
 
-  ExpiringPointer<ContinuousFunction> nextF =
+  OMG::ExpiringPointer<ContinuousFunction> nextF =
       functionStore()->modelForRecord(recordAtCurveIndex(nextCurve));
   if (nextF->properties().isScatterPlot()) {
     double nextX = nextT;
@@ -496,7 +496,7 @@ void GraphController::jumpToLeftRightCurve(double t,
     if (currentRecord == record) {
       continue;
     }
-    ExpiringPointer<ContinuousFunction> f =
+    OMG::ExpiringPointer<ContinuousFunction> f =
         functionStore()->modelForRecord(currentRecord);
     assert(f->properties().isCartesian());
     /* Select the closest horizontal curve, then the closest vertically, then
@@ -546,7 +546,7 @@ void GraphController::reloadBannerViewForCursorOnFunction(
     double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
     FunctionStore* functionStore, Poincare::Context* context,
     bool cappedNumberOfSignificantDigits) {
-  ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);
   PointsOfInterestCache* pointsOfInterest = pointsOfInterestForRecord(record);
   bannerView()->emptyInterestMessages();

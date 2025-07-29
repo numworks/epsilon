@@ -16,9 +16,9 @@ class EquationStore : public Shared::ExpressionModelStore {
 
   // ExpressionModelStore
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
-  Shared::ExpiringPointer<Equation> modelForRecord(
+  OMG::ExpiringPointer<Equation> modelForRecord(
       Ion::Storage::Record record) const {
-    return Shared::ExpiringPointer<Equation>(
+    return OMG::ExpiringPointer<Equation>(
         static_cast<Equation*>(privateModelForRecord(record)));
   }
   static void RemoveAll() {

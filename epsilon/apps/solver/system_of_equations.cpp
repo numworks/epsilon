@@ -29,7 +29,7 @@ UserExpression equationList(const EquationStore* store) {
   Internal::Tree* equationList = Internal::List::PushEmpty();
   int nEquations = store->numberOfDefinedModels();
   for (int i = 0; i < nEquations; i++) {
-    ExpiringPointer<Equation> equation =
+    OMG::ExpiringPointer<Equation> equation =
         store->modelForRecord(store->definedRecordAtIndex(i));
     Poincare::Expression equationExpression = equation->expressionClone();
     Internal::NAry::AddChild(equationList,
@@ -174,7 +174,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   int nEquations = store->numberOfDefinedModels();
   int i = 0;
   while (i < nEquations && !forbidExactSolution) {
-    ExpiringPointer<Equation> equation =
+    OMG::ExpiringPointer<Equation> equation =
         store->modelForRecord(store->definedRecordAtIndex(i));
     if (CAS::NeverDisplayReductionOfInput(equation->expressionClone(),
                                           context)) {

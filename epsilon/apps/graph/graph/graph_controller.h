@@ -141,7 +141,7 @@ class GraphController : public Shared::FunctionGraphController,
                Shared::InteractiveCurveViewRange::GridType::Polar;
   }
   void interestingFunctionRange(
-      Shared::ExpiringPointer<Shared::ContinuousFunction> f, float tMin,
+      OMG::ExpiringPointer<Shared::ContinuousFunction> f, float tMin,
       float tMax, float step, float* xm, float* xM, float* ym, float* yM) const;
 
   Shared::ToggleableRingRoundCursorView m_cursorView;

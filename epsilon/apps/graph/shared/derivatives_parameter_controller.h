@@ -2,11 +2,11 @@
 #define GRAPH_SHARED_DERIVATIVES_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/continuous_function.h>
-#include <apps/shared/expiring_pointer.h>
 #include <escher/menu_cell.h>
 #include <escher/selectable_list_view_controller.h>
 #include <escher/stack_view_controller.h>
 #include <escher/switch_view.h>
+#include <omg/expiring_pointer.h>
 
 namespace Graph {
 
@@ -30,7 +30,7 @@ class DerivativesParameterController
 
  private:
   Escher::StackViewController* stackController() const;
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
+  OMG::ExpiringPointer<Shared::ContinuousFunction> function() const;
   void updateSwitchs();
   void toggleSwitch(int row);
   bool switchState(int row) const;

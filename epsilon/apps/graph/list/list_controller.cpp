@@ -95,7 +95,7 @@ bool ListController::completeEquation(LayoutField* equationField,
                                       CodePoint symbol) {
   equationField->putCursorOnOneSide(OMG::Direction::Left());
   // Retrieve the edited function
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(selectedRecord());
   constexpr size_t k_bufferSize =
       SymbolHelper::k_maxNameSize + sizeof("(θ)≥") - 1;
@@ -211,7 +211,7 @@ bool ListController::handleEvent(Ion::Events::Event event) {
     // Open function parameter menu
     int relativeRow;
     Ion::Storage::Record record = selectedRecord(&relativeRow);
-    ExpiringPointer<ContinuousFunction> f =
+    OMG::ExpiringPointer<ContinuousFunction> f =
         modelStore()->modelForRecord(record);
     int derivationOrder =
         derivationOrderFromRelativeRow(f.pointer(), relativeRow);
@@ -239,7 +239,7 @@ bool ListController::removeModelRow(Ion::Storage::Record record) {
   Ion::Storage::Record r = selectedRecord(&relativeRow);
   GlobalContext::DeleteParametricComponentsOfRecord(r);
   // If we are on a derivative row, only hide derivative
-  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(r);
+  OMG::ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(r);
   int derivationOrder =
       derivationOrderFromRelativeRow(f.pointer(), relativeRow);
   if (derivationOrder > 0) {
@@ -276,7 +276,7 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
   if (type != k_addNewModelCellType) {
     assert(type == k_expressionCellType || type == k_editableCellType);
     int relativeRow;
-    ExpiringPointer<ContinuousFunction> f =
+    OMG::ExpiringPointer<ContinuousFunction> f =
         modelStore()->modelForRecord(recordAtRow(row, &relativeRow));
     int derivationOrder =
         derivationOrderFromRelativeRow(f.pointer(), relativeRow);
@@ -319,7 +319,8 @@ void ListController::fillCellForRow(HighlightCell* cell, int row) {
 void ListController::hideDerivative(Ion::Storage::Record record,
                                     int derivationOrder) {
   selectableListView()->selectCell(selectableListView()->selectedRow() - 1);
-  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(record);
+  OMG::ExpiringPointer<ContinuousFunction> f =
+      modelStore()->modelForRecord(record);
   if (derivationOrder == 1) {
     f->setDisplayPlotFirstDerivative(false);
   } else {
@@ -345,7 +346,8 @@ ContinuousFunctionStore* ListController::modelStore() const {
 }
 
 int ListController::numberOfRowsForRecord(Ion::Storage::Record record) const {
-  ExpiringPointer<ContinuousFunction> f = modelStore()->modelForRecord(record);
+  OMG::ExpiringPointer<ContinuousFunction> f =
+      modelStore()->modelForRecord(record);
   return 1 + f->displayPlotFirstDerivative() + f->displayPlotSecondDerivative();
 }
 
@@ -356,7 +358,7 @@ int ListController::derivationOrderFromRelativeRow(ContinuousFunction* f,
 }
 
 bool ListController::isValidExpressionModel(UserExpression expression) {
-  ExpiringPointer<ContinuousFunction> f =
+  OMG::ExpiringPointer<ContinuousFunction> f =
       modelStore()->modelForRecord(selectedRecord());
   if (FunctionNameHelper::ParametricComponentsNameError(expression,
                                                         f.pointer())) {

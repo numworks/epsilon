@@ -451,7 +451,7 @@ bool MathVariableBoxController::destroyRecordAtRow(int row) {
     char buffer[bufferSize];
     size_t length = 0;
     if (record.hasExtension(Storage::functionExtension)) {
-      ExpiringPointer<ContinuousFunction> f =
+      OMG::ExpiringPointer<ContinuousFunction> f =
           GlobalContext::s_continuousFunctionStore->modelForRecord(record);
       if (f->properties().isEnabledParametric()) {
         isParametricFunction = true;

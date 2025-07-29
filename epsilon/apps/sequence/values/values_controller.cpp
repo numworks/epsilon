@@ -77,7 +77,7 @@ size_t ValuesController::fillColumnName(int column, char* buffer) {
   }
   bool isSumColumn = false;
   Ion::Storage::Record record = recordAtColumn(column, &isSumColumn);
-  Shared::ExpiringPointer<Shared::Sequence> seq =
+  OMG::ExpiringPointer<Shared::Sequence> seq =
       functionStore()->modelForRecord(record);
   if (!isSumColumn) {
     return seq->nameWithArgument(buffer, k_maxSizeOfColumnName);
@@ -107,7 +107,7 @@ Ion::Storage::Record ValuesController::recordAtColumn(int i,
   int currentColumn = numberOfAbscissaColumns();
   for (int k = 0; k < numberOfActiveSequences; k++) {
     Ion::Storage::Record record = functionStore()->activeRecordAtIndex(k);
-    Shared::ExpiringPointer<Shared::Sequence> seq =
+    OMG::ExpiringPointer<Shared::Sequence> seq =
         functionStore()->modelForRecord(record);
     int numberOfColumnsForCurrentRecord = 1 + seq->displaySum();
     if (currentColumn <= i &&
@@ -129,7 +129,7 @@ void ValuesController::updateNumberOfColumns() {
   m_hasAtLeastOneSumColumn = false;
   int numberOfActiveSequences = functionStore()->numberOfActiveFunctions();
   for (int k = 0; k < numberOfActiveSequences; k++) {
-    Shared::ExpiringPointer<Shared::Sequence> seq =
+    OMG::ExpiringPointer<Shared::Sequence> seq =
         functionStore()->modelForRecord(
             functionStore()->activeRecordAtIndex(k));
     bool displaySum = seq->displaySum();
@@ -172,7 +172,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
       row - 1);  // Subtract the title row from row to get the element index
   bool isSumColumn = false;
   Context* context = App::app()->localContext();
-  Shared::ExpiringPointer<Shared::Sequence> sequence =
+  OMG::ExpiringPointer<Shared::Sequence> sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
   double sumValue =
       isSumColumn ? sequence->sumBetweenBoundsValue(sequence->initialRank(),

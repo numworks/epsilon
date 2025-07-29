@@ -20,7 +20,7 @@ AreaBetweenCurvesParameterController::AreaCompatibleFunctionAtIndex(
     if (currentRecord == excludedRecord) {
       continue;
     }
-    ExpiringPointer<ContinuousFunction> function =
+    OMG::ExpiringPointer<ContinuousFunction> function =
         store->modelForRecord(currentRecord);
     if (ContinuousFunctionStore::IsFunctionAreaCompatible(function.operator->(),
                                                           nullptr)) {
@@ -52,7 +52,7 @@ int AreaBetweenCurvesParameterController::numberOfRows() const {
 
 KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(
     int row) {
-  ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(
           AreaCompatibleFunctionAtIndex(row, m_mainRecord));
   CurveSelectionCell tempCell;
@@ -63,7 +63,7 @@ KDCoordinate AreaBetweenCurvesParameterController::nonMemoizedRowHeight(
 
 void AreaBetweenCurvesParameterController::fillCellForRow(
     Escher::HighlightCell* cell, int row) {
-  ExpiringPointer<ContinuousFunction> function =
+  OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(
           AreaCompatibleFunctionAtIndex(row, m_mainRecord));
   CurveSelectionCell* curveSelectionCell =

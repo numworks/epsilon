@@ -38,13 +38,13 @@ CalculationStore::CalculationStore(char* buffer, size_t bufferSize)
       m_numberOfCalculations(0),
       m_inUsePreferences(*MathPreferences::SharedPreferences()) {}
 
-ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
+OMG::ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
     int index) const {
   assert(0 <= index && index <= numberOfCalculations() - 1);
   Calculation* ptr = reinterpret_cast<Calculation*>(
       index == numberOfCalculations() - 1 ? m_buffer
                                           : endOfCalculationAtIndex(index + 1));
-  return ExpiringPointer(ptr);
+  return OMG::ExpiringPointer(ptr);
 }
 
 UserExpression CalculationStore::ansExpression(Context* context) const {
@@ -52,7 +52,8 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
   if (numberOfCalculations() == 0) {
     return defaultAns;
   }
-  ExpiringPointer<Calculation> mostRecentCalculation = calculationAtIndex(0);
+  OMG::ExpiringPointer<Calculation> mostRecentCalculation =
+      calculationAtIndex(0);
   UserExpression input = mostRecentCalculation->input();
   UserExpression exactOutput = mostRecentCalculation->exactOutput();
   UserExpression approxOutput = mostRecentCalculation->approximateOutput();
@@ -262,7 +263,7 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
                              complexFormat};
 }
 
-ExpiringPointer<Calculation> CalculationStore::push(
+OMG::ExpiringPointer<Calculation> CalculationStore::push(
     Poincare::Layout inputLayout, Poincare::Context* context) {
   Poincare::UserExpression inputExpression = parseInput(inputLayout, context);
   if (inputExpression.isUninitialized()) {
@@ -294,7 +295,7 @@ ExpiringPointer<Calculation> CalculationStore::push(
   getEmptySpace(neededSize);
   Calculation* pushedCalculation = pushCalculation(calculationToPush);
   assert(pushedCalculation);
-  return ExpiringPointer(pushedCalculation);
+  return OMG::ExpiringPointer(pushedCalculation);
 }
 
 bool CalculationStore::preferencesHaveChanged() {

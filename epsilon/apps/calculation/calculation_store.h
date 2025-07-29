@@ -3,7 +3,7 @@
 
 #include <apps/constant.h>
 #include <apps/math_preferences.h>
-#include <apps/shared/expiring_pointer.h>
+#include <omg/expiring_pointer.h>
 #include <poincare/old/pool_variable_context.h>
 #include <stddef.h>
 
@@ -53,7 +53,7 @@ class CalculationStore {
   /* A Calculation does not count toward the number while it is being built and
    * filled. */
   int numberOfCalculations() const { return m_numberOfCalculations; }
-  Shared::ExpiringPointer<Calculation> calculationAtIndex(int index) const;
+  OMG::ExpiringPointer<Calculation> calculationAtIndex(int index) const;
   Poincare::UserExpression ansExpression(Poincare::Context* context) const;
 
   void replaceAnsInExpression(Poincare::UserExpression& expression,
@@ -63,8 +63,8 @@ class CalculationStore {
     return spaceForNewCalculations(endOfCalculations()) + sizeof(Calculation*);
   }
 
-  Shared::ExpiringPointer<Calculation> push(Poincare::Layout input,
-                                            Poincare::Context* context);
+  OMG::ExpiringPointer<Calculation> push(Poincare::Layout input,
+                                         Poincare::Context* context);
   void deleteCalculationAtIndex(int index);
   void deleteAll() { m_numberOfCalculations = 0; }
   bool preferencesHaveChanged();

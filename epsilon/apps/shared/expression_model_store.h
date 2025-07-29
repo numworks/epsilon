@@ -3,8 +3,8 @@
 
 #include <assert.h>
 #include <ion/storage/file_system.h>
+#include <omg/expiring_pointer.h>
 
-#include "expiring_pointer.h"
 #include "expression_model_handle.h"
 
 namespace Shared {
@@ -29,9 +29,9 @@ class ExpressionModelStore {
   Ion::Storage::Record definedRecordAtIndex(int i) const {
     return recordSatisfyingTestAtIndex(i, &isModelDefined, nullptr);
   }
-  ExpiringPointer<ExpressionModelHandle> modelForRecord(
+  OMG::ExpiringPointer<ExpressionModelHandle> modelForRecord(
       Ion::Storage::Record record) const {
-    return ExpiringPointer<ExpressionModelHandle>(
+    return OMG::ExpiringPointer<ExpressionModelHandle>(
         privateModelForRecord(record));
   }
 

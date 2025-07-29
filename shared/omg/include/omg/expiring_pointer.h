@@ -1,9 +1,8 @@
-#ifndef SHARED_EXPIRING_POINTER_H
-#define SHARED_EXPIRING_POINTER_H
+#pragma once
 
 #include <assert.h>
 
-namespace Shared {
+namespace OMG {
 
 template <class T>
 class ExpiringPointer {
@@ -42,6 +41,4 @@ template <class T>
 T* ExpiringPointer<T>::s_global = nullptr;
 #endif
 
-}  // namespace Shared
-
-#endif
+}  // namespace OMG

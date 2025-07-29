@@ -12,7 +12,8 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
     double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
     FunctionStore* functionStore, Poincare::Context* context,
     bool cappedNumberOfSignificantDigits) {
-  ExpiringPointer<Function> function = functionStore->modelForRecord(record);
+  OMG::ExpiringPointer<Function> function =
+      functionStore->modelForRecord(record);
   char buffer[k_textBufferSize];
   size_t numberOfChar = 0;
   numberOfChar += UTF8Helper::WriteCodePoint(

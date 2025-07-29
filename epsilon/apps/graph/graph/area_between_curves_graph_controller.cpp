@@ -38,7 +38,7 @@ void AreaBetweenCurvesGraphController::setSecondRecord(
 
 void AreaBetweenCurvesGraphController::makeCursorVisibleOnSecondCurve(float x) {
   assert(!secondSelectedRecord().isNull());
-  ExpiringPointer<Shared::Function> functionG =
+  OMG::ExpiringPointer<Shared::Function> functionG =
       FunctionApp::app()->functionStore()->modelForRecord(
           secondSelectedRecord());
   float yG =
@@ -70,7 +70,7 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   constexpr size_t bufferSize =
       Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small) + 1;
   char buffer[bufferSize];
-  ExpiringPointer<ContinuousFunction> functionF =
+  OMG::ExpiringPointer<ContinuousFunction> functionF =
       App::app()->functionStore()->modelForRecord(selectedRecord());
   bool functionFisNamed = functionF->isNamed();
   size_t numberOfChars = functionF->nameWithArgument(buffer, bufferSize);
@@ -82,7 +82,7 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
   if (numberOfChars >= bufferSize) {
     return Layout();
   }
-  ExpiringPointer<ContinuousFunction> functionG =
+  OMG::ExpiringPointer<ContinuousFunction> functionG =
       App::app()->functionStore()->modelForRecord(secondSelectedRecord());
   if (!functionFisNamed && !functionG->isNamed()) {
     /* If both function are unnamed, display "Area = ..."
@@ -100,7 +100,7 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
 SystemExpression AreaBetweenCurvesGraphController::createSumExpression(
     double startSum, double endSum, Context* context) {
   // Get the expression of the first function
-  ExpiringPointer<Shared::Function> function =
+  OMG::ExpiringPointer<Shared::Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
   SystemExpression expressionF = function->expressionReduced(context).clone();
   // Get the expression of the second function

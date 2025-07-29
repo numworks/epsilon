@@ -72,7 +72,7 @@ bool ListParameterController::handleEvent(Ion::Events::Event event) {
   return false;
 }
 
-ExpiringPointer<Function> ListParameterController::function() {
+OMG::ExpiringPointer<Function> ListParameterController::function() {
   return functionStore()->modelForRecord(m_record);
 }
 

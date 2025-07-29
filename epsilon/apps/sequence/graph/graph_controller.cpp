@@ -126,7 +126,7 @@ const Layout GraphController::SequenceSelectionController::nameLayoutAtIndex(
   GraphController* graphController =
       static_cast<GraphController*>(m_graphController);
   SequenceStore* store = graphController->functionStore();
-  ExpiringPointer<Shared::Sequence> sequence =
+  OMG::ExpiringPointer<Shared::Sequence> sequence =
       store->modelForRecord(store->activeRecordAtIndex(j));
   return sequence->definitionName();
 }

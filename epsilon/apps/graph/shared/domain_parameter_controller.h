@@ -2,10 +2,10 @@
 #define GRAPH_SHARED_DOMAIN_PARAMETER_CONTROLLER_H
 
 #include <apps/shared/continuous_function.h>
-#include <apps/shared/expiring_pointer.h>
 #include <apps/shared/interactive_curve_view_controller.h>
 #include <apps/shared/math_toolbox_controller.h>
 #include <apps/shared/single_range_controller.h>
+#include <omg/expiring_pointer.h>
 
 namespace Graph {
 
@@ -58,7 +58,7 @@ class DomainParameterController
                    : stackController()->pop();
   }
   InfinityTolerance infinityAllowanceForRow(int row) const override;
-  Shared::ExpiringPointer<Shared::ContinuousFunction> function() const;
+  OMG::ExpiringPointer<Shared::ContinuousFunction> function() const;
   void switchToolboxContent(Escher::AbstractTextField* textField,
                             bool setSpecificContent);
 

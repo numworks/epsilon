@@ -28,8 +28,9 @@ class FunctionStore : public ExpressionModelStore {
     }
     return -1;
   }
-  ExpiringPointer<Function> modelForRecord(Ion::Storage::Record record) const {
-    return ExpiringPointer<Function>(
+  OMG::ExpiringPointer<Function> modelForRecord(
+      Ion::Storage::Record record) const {
+    return OMG::ExpiringPointer<Function>(
         static_cast<Function*>(privateModelForRecord(record)));
   }
 

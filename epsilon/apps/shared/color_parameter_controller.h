@@ -47,7 +47,7 @@ class ColorParameterController : public Escher::SelectableListViewController<
           Escher::Metric::TabHeight + 2 * Escher::Metric::StackTitleHeight);
 
   KDCoordinate defaultRowHeight() override;
-  ExpiringPointer<Function> function();
+  OMG::ExpiringPointer<Function> function();
 
   Ion::Storage::Record m_record;
   ColorCell m_cells[k_numberOfCells];

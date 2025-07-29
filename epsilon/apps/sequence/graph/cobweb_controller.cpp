@@ -82,7 +82,7 @@ void CobwebController::setRecord(Ion::Storage::Record record) {
   m_isSuitable = sequence()->isSuitableForCobweb(App::app()->localContext());
 }
 
-ExpiringPointer<Shared::Sequence> CobwebController::sequence() const {
+OMG::ExpiringPointer<Shared::Sequence> CobwebController::sequence() const {
   return m_sequenceStore->modelForRecord(m_record);
 }
 

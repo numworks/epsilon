@@ -63,7 +63,7 @@ bool TangentGraphController::textFieldDidFinishEditing(
   if (HasUndefinedValue(floatBody)) {
     return false;
   }
-  ExpiringPointer<ContinuousFunction> f = function();
+  OMG::ExpiringPointer<ContinuousFunction> f = function();
   Coordinate2D<double> xy =
       f->evaluateXYAtParameter(floatBody, App::app()->localContext());
   m_cursor->moveTo(floatBody, xy.x(), xy.y());
@@ -130,7 +130,8 @@ bool TangentGraphController::handleEnter() {
   return true;
 }
 
-ExpiringPointer<ContinuousFunction> TangentGraphController::function() const {
+OMG::ExpiringPointer<ContinuousFunction> TangentGraphController::function()
+    const {
   return App::app()->functionStore()->modelForRecord(m_record);
 }
 

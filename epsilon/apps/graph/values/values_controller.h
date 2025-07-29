@@ -167,7 +167,7 @@ class ValuesController : public Shared::ValuesController,
   bool exactValuesButtonAction();
   void activateExactValues(bool activate);
   Ion::Storage::Record recordAtColumn(int i, int* derivationOrder);
-  Shared::ExpiringPointer<Shared::ContinuousFunction> functionAtIndex(
+  OMG::ExpiringPointer<Shared::ContinuousFunction> functionAtIndex(
       int column, int row, double* abscissa, int* derivationOrder);
   int numberOfColumnsForRecord(Ion::Storage::Record record) const;
   int numberOfColumnsForSymbolType(int symbolTypeIndex) const;

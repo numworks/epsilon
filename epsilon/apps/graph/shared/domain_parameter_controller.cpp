@@ -113,7 +113,7 @@ DomainParameterController::infinityAllowanceForRow(int row) const {
   return FloatParameterController<float>::InfinityTolerance::None;
 }
 
-Shared::ExpiringPointer<Shared::ContinuousFunction>
+OMG::ExpiringPointer<Shared::ContinuousFunction>
 DomainParameterController::function() const {
   assert(!m_record.isNull());
   return App::app()->functionStore()->modelForRecord(m_record);

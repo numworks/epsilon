@@ -42,7 +42,7 @@ OutputLayouts pushAndProcessCalculation(CalculationStore* store,
   constexpr static KDCoordinate maxVisibleWidth = 280;
 
   store->push(Layout::String(input), context);
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
+  OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 
   return lastCalculation->layoutCalculation(font, maxVisibleWidth, context,
@@ -118,7 +118,7 @@ QUIZ_CASE(calculation_store) {
 void assertAnsIs(const char* input, const char* expectedAnsInputText,
                  Context* context, CalculationStore* store) {
   pushAndProcessCalculation(store, input, context);
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
+  OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   pushAndProcessCalculation(store, "Ans", context);
   lastCalculation = store->calculationAtIndex(0);
@@ -141,7 +141,7 @@ QUIZ_CASE(calculation_ans) {
   }
   pushAndProcessCalculation(&store, "1+3/4", &globalContext);
   pushAndProcessCalculation(&store, "ans+2/3", &globalContext);
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
+  OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput() ==
               DisplayOutput::ExactAndApproximate);
@@ -205,7 +205,7 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                          bool skipApproximation = false) {
   OutputLayouts outputLayouts =
       pushAndProcessCalculation(store, input, context);
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
+  OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 
   bool displayOutputTest = lastCalculation->displayOutput() == expectedDisplay;
@@ -545,7 +545,7 @@ void assertMainCalculationOutputIs(const char* input, const char* output,
                                    Context* context, CalculationStore* store) {
   // For the next test, we only need to checkout input and output text.
   pushAndProcessCalculation(store, input, context);
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
+  OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   switch (lastCalculation->displayOutput()) {
     case DisplayOutput::ApproximateOnly:
@@ -922,7 +922,7 @@ void assertCalculationAdditionalResultTypeHas(
     const char* input, const AdditionalResultsType additionalResultsType,
     Context* context, CalculationStore* store) {
   pushAndProcessCalculation(store, input, context);
-  Shared::ExpiringPointer<Calculation::Calculation> lastCalculation =
+  OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 #if POINCARE_STRICT_TESTS
   quiz_assert(lastCalculation->additionalResultsType(context) ==

@@ -22,11 +22,13 @@ namespace OMG {
                                                  for new elements ->
 +------------------------------------------------------------------------------+
 |           |           |           |           |                  |  |  |  |  |
-| Element 3 | Element 2 | Element 1 | Element 0 |                  |p0|p1|p2|p3|
+| Element 3 | Element 2 | Element 1 | Element 0 |                  |o0|o1|o2|o3|
 |   Oldest  |           |           |           |                  |  |  |  |  |
 +------------------------------------------------------------------------------+
 ^           ^           ^           ^           ^                              ^
-m_buffer    p3          p2          p1          p0                 pointerArea()
+m_buffer    p3          p2          p1          p0                  offsetArea()
+
+with p_i = m_buffer + o_i
 
 */
 
@@ -39,7 +41,7 @@ class Store {
 
   size_t bufferSize() const { return m_bufferSize; }
   size_t remainingBufferSize() const {
-    return spaceForNewElements(endOfElements()) + sizeof(void*);
+    return spaceForNewElements(endOfElements()) + sizeof(offset_t);
   }
 
   void* pushElement(const void* element, int size);
@@ -68,11 +70,12 @@ class Store {
   void registerElement(char* element, int size);
 
  private:
-  char* pointerArea() const {
-    return m_buffer + m_bufferSize - m_numberOfElements * sizeof(void*);
+  using offset_t = uint16_t;
+  char* offsetArea() const {
+    return m_buffer + m_bufferSize - m_numberOfElements * sizeof(offset_t);
   }
-  char** pointerArray() const {
-    return reinterpret_cast<char**>(pointerArea());
+  offset_t* offsetArray() const {
+    return reinterpret_cast<offset_t*>(offsetArea());
   }
 
   char* const m_buffer;

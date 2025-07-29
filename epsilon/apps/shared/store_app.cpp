@@ -1,5 +1,8 @@
 #include "store_app.h"
 
+#include <poincare/k_tree.h>
+#include <poincare/layout.h>
+#include <poincare/src/memory/tree.h>
 #include <poincare/symbol_context.h>
 
 using namespace Poincare;
@@ -14,6 +17,9 @@ StoreApp::Snapshot::Snapshot() {
 
 bool StoreApp::Snapshot::memoizeFormula(Poincare::Layout formula, int index) {
   assert(index >= 0 && index < k_numberOfMemoizedFormulas);
+  static_assert(!static_cast<Internal::Tree>(Internal::Type(0)).isLayout());
+  /* We use 0 as error
+   * TODO: Create an error block type ? */
   if (formula.isUninitialized()) {
     m_memoizedFormulasBuffer[index][0] = 0;
     return false;
@@ -24,16 +30,19 @@ bool StoreApp::Snapshot::memoizeFormula(Poincare::Layout formula, int index) {
     m_memoizedFormulasBuffer[index][0] = 0;
     return false;
   }
-  memcpy(m_memoizedFormulasBuffer, formula.tree(), size);
+  memcpy(m_memoizedFormulasBuffer[index], formula.tree(), size);
   return true;
 }
 
 Layout StoreApp::Snapshot::memoizedFormula(int index) const {
-  // TODO: This doesn't work
-  return UserExpression::Parse(m_memoizedFormulasBuffer[index],
-                               EmptySymbolContext{}, {.preserveInput = true})
-      .createLayout(Preferences::PrintFloatMode::Decimal,
-                    PrintFloat::k_maxNumberOfSignificantDigits);
+  /* We use 0 as error
+   * TODO: Create an error block type ? */
+  if (m_memoizedFormulasBuffer[index][0] == static_cast<Internal::Block>(0)) {
+    return Poincare::Layout();
+  }
+  const Internal::Tree* layoutTree =
+      Internal::Tree::FromBlocks(m_memoizedFormulasBuffer[index]);
+  return Poincare::Layout::Builder(layoutTree);
 }
 
 }  // namespace Shared

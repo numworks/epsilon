@@ -38,8 +38,6 @@ SystemExpression IntegralBetweenBounds(const SystemExpression& expression,
                                        const SystemExpression& upperBound) {
   Tree* integral =
       BuildIntegralTree(expression, variableName, lowerBound, upperBound);
-  ProjectionContext ctx{.m_advanceReduce = false};
-  Simplification::ProjectAndReduce(integral, &ctx);
   return SystemExpression::Builder(integral);
 }
 

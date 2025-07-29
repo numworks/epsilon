@@ -367,7 +367,7 @@ bool PatternMatching::Match(const Tree* source, const Tree* pattern,
 }
 
 Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
-                                  Tree* insertedNAry, bool simplify,
+                                  Tree* insertedNAry, bool reduce,
                                   uint8_t scope) {
   Tree* top = Tree::FromBlocks(SharedTreeStack->lastBlock());
   const Block* lastStructureBlock = structure->nextTree()->block();
@@ -383,8 +383,8 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         Tree* insertedNode = node->cloneNode();
         /* Use node and not node->nextNode() so that lastStructureBlock can be
          * computed in CreateTree. */
-        CreateTree(node, context, insertedNode, simplify, scope);
-        if (simplify) {
+        CreateTree(node, context, insertedNode, reduce, scope);
+        if (reduce) {
           SystematicReduction::ShallowReduceMaybeList(insertedNode,
                                                       context.involvesList());
         } else {
@@ -396,26 +396,26 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
         Tree* result = node->cloneNode();
         node = node->nextNode();
         for (int i = 0; i < numberOfChildren; i++) {
-          CreateTree(node, context, nullptr, simplify,
+          CreateTree(node, context, nullptr, reduce,
                      scope + static_cast<uint8_t>(
                                  Parametric::IsFunctionIndex(i, result)));
           node = node->nextTree();
         }
-        if (simplify) {
+        if (reduce) {
           SystematicReduction::ShallowReduceMaybeList(result,
                                                       context.involvesList());
         }
 #endif
       } else if (withinNAry && numberOfChildren > 0) {
         // Insert the tree recursively to locally remove insertedNAry
-        CreateTree(node, context, nullptr, simplify, scope);
+        CreateTree(node, context, nullptr, reduce, scope);
         node = node->nextTree();
       } else {
         Tree* result = node->cloneNode();
         node = node->nextNode();
-        if (simplify) {
+        if (reduce) {
           for (int i = 0; i < numberOfChildren; i++) {
-            CreateTree(node, context, nullptr, simplify, scope);
+            CreateTree(node, context, nullptr, reduce, scope);
             node = node->nextTree();
           }
           SystematicReduction::ShallowReduceMaybeList(result,
@@ -457,12 +457,12 @@ Tree* PatternMatching::CreateTree(const Tree* structure, const Context context,
       // Since withinNAry is true, insertedNAry will be sanitized afterward
       for (int i = 0; i < treesToInsert - 1; i++) {
         [[maybe_unused]] Tree* inserted = nodeToInsert->cloneTree();
-        assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
+        assert(!(reduce && SystematicReduction::DeepReduce(inserted)));
         nodeToInsert = nodeToInsert->nextTree();
       }
     }
     [[maybe_unused]] Tree* inserted = nodeToInsert->cloneTree();
-    assert(!(simplify && SystematicReduction::DeepReduce(inserted)));
+    assert(!(reduce && SystematicReduction::DeepReduce(inserted)));
     node = node->nextNode();
   }
   return top;
@@ -478,13 +478,12 @@ Tree* PatternMatching::MatchCreate(const Tree* source, const Tree* pattern,
 }
 
 bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
-                                          const Tree* structure,
-                                          bool simplify) {
+                                          const Tree* structure, bool reduce) {
   Context ctx;
   // Escape case for full matches like A -> cos(A)
   if (pattern->isPlaceholder()) {
     ctx.setNode(Placeholder::NodeToTag(pattern), source, 1, false);
-    source->moveTreeOverTree(Create(structure, ctx, simplify));
+    source->moveTreeOverTree(Create(structure, ctx, reduce));
     return true;
   }
 
@@ -502,7 +501,7 @@ bool PatternMatching::PrivateMatchReplace(Tree* source, const Tree* pattern,
 #endif
 
   // Step 3 - Build the PatternMatching replacement
-  Tree* created = Create(structure, ctx, simplify);
+  Tree* created = Create(structure, ctx, reduce);
 
   // Step 4 - Replace with created structure
   source->moveTreeOverTree(created);

@@ -122,8 +122,8 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
     if (resultLayout.isUninitialized()) {
       const char* text = I18n::translate(messageTree->label());
 
-      if (MathPreferences::SharedPreferences()->editionMode() ==
-              Poincare::Preferences::EditionMode::Edition2D &&
+      if (GlobalPreferences::SharedGlobalPreferences()->editionMode() ==
+              GlobalPreferences::EditionMode::Edition2D &&
           !messageTree->useRaw()) {
         // preserveInput is true so that f(x) is never parsed as f×(x)
         UserExpression resultExpression = UserExpression::Parse(
@@ -141,8 +141,8 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
          * simpler layout */
         resultLayout = Layout::String(text, strlen(text));
       }
-    } else if (MathPreferences::SharedPreferences()->editionMode() ==
-               Poincare::Preferences::EditionMode::Edition1D) {
+    } else if (GlobalPreferences::SharedGlobalPreferences()->editionMode() ==
+               GlobalPreferences::EditionMode::Edition1D) {
       char buffer[AbstractTextField::MaxBufferSize()];
       size_t len = resultLayout.serialize(buffer);
       assert(len <= AbstractTextField::MaxBufferSize());

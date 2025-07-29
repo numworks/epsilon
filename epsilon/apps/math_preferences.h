@@ -31,13 +31,11 @@ class MathPreferences : public Poincare::Preferences {
   using Poincare::Preferences::calculationPreferences;
   using Poincare::Preferences::complexFormat;
   using Poincare::Preferences::displayMode;
-  using Poincare::Preferences::editionMode;
   using Poincare::Preferences::mathPreferencesCheckSum;
   using Poincare::Preferences::numberOfSignificantDigits;
   using Poincare::Preferences::setAngleUnit;
   using Poincare::Preferences::setComplexFormat;
   using Poincare::Preferences::setDisplayMode;
-  using Poincare::Preferences::setEditionMode;
   using Poincare::Preferences::setNumberOfSignificantDigits;
 };
 

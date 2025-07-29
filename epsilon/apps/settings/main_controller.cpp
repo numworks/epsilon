@@ -260,7 +260,8 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
       childIndex = (int)preferences->displayMode();
       break;
     case I18n::Message::EditionMode:
-      childIndex = (int)preferences->editionMode();
+      childIndex =
+          (int)GlobalPreferences::SharedGlobalPreferences()->editionMode();
       break;
     case I18n::Message::ComplexFormat:
       childIndex = (int)preferences->complexFormat();

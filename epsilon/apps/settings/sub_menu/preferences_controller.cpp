@@ -122,7 +122,8 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
           std::max<int>(preferences->numberOfSignificantDigits(), 3));
     }
   } else if (message == I18n::Message::EditionMode) {
-    preferences->setEditionMode((Preferences::EditionMode)valueIndex);
+    GlobalPreferences::SharedGlobalPreferences()->setEditionMode(
+        (GlobalPreferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
@@ -146,7 +147,7 @@ int PreferencesController::valueIndexForPreference(
     return (int)preferences->displayMode();
   }
   if (message == I18n::Message::EditionMode) {
-    return (int)preferences->editionMode();
+    return (int)GlobalPreferences::SharedGlobalPreferences()->editionMode();
   }
   if (message == I18n::Message::ComplexFormat) {
     return (int)preferences->complexFormat();

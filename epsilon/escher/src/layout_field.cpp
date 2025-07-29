@@ -628,8 +628,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
   }
   KDSize previousSize = minimalSizeForOptimalDisplay();
   layout = layout.makeEditable();
-  if (LayoutPreferences::SharedPreferences()->editionMode() ==
-      Poincare::Preferences::EditionMode::Edition1D) {
+  if (linearMode()) {
     /* TODO_PCJ: Check if layout is already a 1D layout. If so, insert it
      * directly. */
     // Parse with preserveInput to avoid modifying the layout unwantedly.

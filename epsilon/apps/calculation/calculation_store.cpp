@@ -33,18 +33,14 @@ static void enhancePushedExpression(UserExpression& expression) {
 // Public
 
 CalculationStore::CalculationStore(char* buffer, size_t bufferSize)
-    : m_buffer(buffer),
-      m_bufferSize(bufferSize),
-      m_numberOfCalculations(0),
+    : Store(buffer, bufferSize),
       m_inUsePreferences(*MathPreferences::SharedPreferences()) {}
 
 OMG::ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
     int index) const {
   assert(0 <= index && index <= numberOfCalculations() - 1);
-  Calculation* ptr = reinterpret_cast<Calculation*>(
-      index == numberOfCalculations() - 1 ? m_buffer
-                                          : endOfCalculationAtIndex(index + 1));
-  return OMG::ExpiringPointer(ptr);
+  return OMG::ExpiringPointer(
+      reinterpret_cast<Calculation*>(elementAtIndex(index)));
 }
 
 UserExpression CalculationStore::ansExpression(Context* context) const {
@@ -276,14 +272,14 @@ OMG::ExpiringPointer<Calculation> CalculationStore::push(
       computeAndProcess(inputExpression, context);
 
   size_t neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
-  if (neededSize > m_bufferSize) {
+  if (neededSize > bufferSize()) {
     /* The calculation is too big to hold on the buffer, even if all previous
      * calculations were deleted. Replace its outputs by undefined, it should
      * now fit on the calculation buffer. */
     calculationToPush.outputs.exact = Undefined::Builder();
     calculationToPush.outputs.approximate = Undefined::Builder();
     neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
-    if (neededSize > m_bufferSize) {
+    if (neededSize > bufferSize()) {
       /* If the calculation with undefined outputs is still too big, it means
        * that the input expression was too big, which is very unlikely to happen
        * in a real usecase. */
@@ -322,52 +318,9 @@ PoolVariableContext CalculationStore::createAnsContext(Context* context) {
 
 // Private
 
-char* CalculationStore::endOfCalculationAtIndex(int index) const {
-  assert(0 <= index && index < numberOfCalculations());
-  char* res = pointerArray()[index];
-  /* Make sure the calculation pointed to is inside the buffer */
-  assert(m_buffer <= res && res < m_buffer + m_bufferSize);
-  return res;
-}
-
-size_t CalculationStore::spaceForNewCalculations(
-    const char* currentEndOfCalculations) const {
-  // Be careful with size_t: negative values are not handled
-  return currentEndOfCalculations + sizeof(Calculation*) < pointerArea()
-             ? (pointerArea() - currentEndOfCalculations) - sizeof(Calculation*)
-             : 0;
-}
-
-void CalculationStore::deleteCalculationAtIndex(int index) {
-  char* deletionStart = index == numberOfCalculations() - 1
-                            ? m_buffer
-                            : endOfCalculationAtIndex(index + 1);
-  char* deletionEnd = endOfCalculationAtIndex(index);
-  assert(deletionEnd >= deletionStart);
-  size_t deletedSize = deletionEnd - deletionStart;
-  assert(endOfCalculations() >= deletionEnd);
-  size_t shiftedMemorySize = endOfCalculations() - deletionEnd;
-
-  Ion::CircuitBreaker::lock();
-  memmove(deletionStart, deletionEnd, shiftedMemorySize);
-
-  for (int i = index - 1; i >= 0; i--) {
-    pointerArray()[i + 1] = pointerArray()[i] - deletedSize;
-  }
-  m_numberOfCalculations--;
-  Ion::CircuitBreaker::unlock();
-}
-
-void CalculationStore::getEmptySpace(size_t neededSize) {
-  assert(neededSize < m_bufferSize);
-  while (remainingBufferSize() < neededSize) {
-    deleteOldestCalculation();
-  }
-}
-
 Calculation* CalculationStore::pushEmptyCalculation(char** location) {
   Calculation* newCalculation = reinterpret_cast<Calculation*>(*location);
-  assert(spaceForNewCalculations(*location) >= sizeof(Calculation));
+  assert(spaceForNewElements(*location) >= sizeof(Calculation));
   new (*location) Calculation(
       MathPreferences::SharedPreferences()->calculationPreferences());
   *location += sizeof(Calculation);
@@ -376,7 +329,7 @@ Calculation* CalculationStore::pushEmptyCalculation(char** location) {
 
 size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
   size_t length = e.tree()->treeSize();
-  assert(spaceForNewCalculations(*location) >= length);
+  assert(spaceForNewElements(*location) >= length);
   memcpy(*location, e.tree(), length);
   *location += length;
   return length;
@@ -384,10 +337,10 @@ size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
 
 Calculation* CalculationStore::pushCalculation(
     const CalculationElements& calculationToPush) {
-  char* cursor = endOfCalculations();
-  assert(cursor >= m_buffer &&
-         cursor + neededSizeForCalculation(calculationToPush.sizeOfTrees()) <=
-             pointerArea());
+  char* start = endOfElements();
+  char* cursor = start;
+  assert(neededSizeForCalculation(calculationToPush.sizeOfTrees()) <=
+         spaceForNewElements(cursor));
 
   // Push an empty Calculation instance (takes sizeof(Calculation))
   Calculation* newCalculation = pushEmptyCalculation(&cursor);
@@ -406,18 +359,7 @@ Calculation* CalculationStore::pushCalculation(
   newCalculation->m_approximatedOutputTreeSize =
       pushExpressionTree(&cursor, calculationToPush.outputs.approximate);
 
-  /* Write the pointer to the new calculation at pointerArea() (takes
-   * sizeof(Calculation*)) */
-  assert(cursor + sizeof(Calculation*) <= pointerArea());
-  pointerArray()[-1] = cursor;
-  /* Now that the calculation is fully built, we can finally update
-   * m_numberOfCalculations. As that is the only variable tracking the state
-   * of the store, updating it only at the end of the push ensures that,
-   * should an interruption occur, all the temporary states are silently
-   * discarded and no ill-formed Calculation is stored. */
-  m_numberOfCalculations++;
-  assert(calculationAtIndex(0).pointer() == newCalculation);
-
+  registerElement(start, cursor - start);
   return newCalculation;
 }
 

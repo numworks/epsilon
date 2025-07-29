@@ -2,6 +2,7 @@
 #include <poincare/function_properties/integral.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/approximation.h>
+#include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/variables.h>
@@ -17,6 +18,10 @@ Tree* BuildIntegralTree(const SystemExpression& expression,
                         const SystemExpression& upperBound) {
   Tree* function = expression.tree()->cloneTree();
   Variables::ReplaceSymbol(function, variableName, 0, ComplexSign::Real());
+  if (!Internal::Dimension::Get(function).isScalar()) {
+    function->cloneTreeOverTree(KUndefUnhandledDimension);
+    return function;
+  }
   TreeRef result = PatternMatching::CreateReduce(
       // Unknown doesn't matter and could be anything
       KIntegral(KTemporaryUnknownSymbol, KA, KB, KC),

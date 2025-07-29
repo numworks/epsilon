@@ -146,7 +146,7 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
       // Sequence expression
       currentChild = currentChild->nextTree();
       if (Rack::IsEmpty(currentChild) &&
-          parsingContext.params.forceParseSequence) {
+          parsingContext.params.allowEmptySequence) {
         SharedTreeStack->pushBlock(Type::EmptySequenceExpression);
       } else if (!Parse(currentChild, {.context = parsingContext.context})) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

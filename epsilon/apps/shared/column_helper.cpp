@@ -75,8 +75,9 @@ void StoreColumnHelper::displayFormulaInput() {
   int index =
       formulaMemoizationIndex(store()->seriesAtColumn(referencedColumn()),
                               store()->relativeColumn(referencedColumn()));
-  if (!memoizedFormula(index).isUninitialized()) {
-    fillFormulaInputWithFormula(memoizedFormula(index));
+  Layout layout = memoizedFormula(index);
+  if (!layout.isUninitialized()) {
+    fillFormulaInputWithFormula(layout);
     return;
   }
   App::app()->displayModalViewController(&m_templateStackController, 0.f, 0.f,

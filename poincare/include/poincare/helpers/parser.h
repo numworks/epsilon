@@ -11,8 +11,11 @@ struct ParsingParameters {
   bool isAssignment = false;
   // If true, "g" will never be parsed as a unit (for solver)
   bool forceUnitUnderscore = false;
-  // TODO: Add comment explaining what this does. Not clear for me
-  bool forceParseSequence = false;
+  /* If true, the layout w_n = [] is allowed. This is useful for turning
+   * 2D sequences into 1D sequences when inserting from toolbox.
+   * TODO: It's very niche. Should probably be refactored at the same time as
+   * nullptr parsing. */
+  bool allowEmptySequence = false;
 };
 
 }  // namespace Poincare::ParserHelper

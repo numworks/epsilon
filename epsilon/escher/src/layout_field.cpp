@@ -631,7 +631,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
     /* TODO_PCJ: Check if layout is already a 1D layout. If so, insert it
      * directly. */
     Expression e =
-        Expression::Parse(layout, nullptr, {.forceParseSequence = true});
+        Expression::Parse(layout, nullptr, {.allowEmptySequence = true});
     if (!e.isUninitialized()) {
       layout =
           e.createLayout(LayoutPreferences::SharedPreferences()->displayMode(),

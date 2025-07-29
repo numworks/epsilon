@@ -253,7 +253,7 @@ All projection operations can be found [here](/poincare/src/expression/projectio
 
 Some projections are too difficult to undo at beautification, and may be useless if it unlocks no further simplifications.
 
-To tackle this, we try apply the projection later, during advanced reduction.
+To tackle this, we try to apply the projection later, during advanced reduction.
 
 For example, `atan(x)` could be projected to `asin(x/√(1 + x^2))`, so that systematic reduction doesn't have to handle `atan` nodes. But `asin(x/√(1 + x^2))` can be too difficult to convert back to `atan(x)`, which is a much better form to beautify. So this "projection" is done during advanced reduction, in the method `Projection::Expand`.
 
@@ -491,7 +491,7 @@ Some expansion operations are used specifically to expand algebraic operations (
 <details>
 <summary>Examples of advanced reductions</summary>
 
-See the list of operation in [k_contractOperations and k_expandOperations](/poincare/src/expression/advanced_reduction.h).
+See the list of operations in `k_contractOperations` and `k_expandOperations` [here](/poincare/src/expression/advanced_reduction.h).
 
 | Match | Replace |
 |---|---|
@@ -568,7 +568,13 @@ Examples (non exhaustive list):
 | m(Exp(1/2*Ln(A))) | m(Exp)+m(A) | beautifies to √A so we do not count the cost of 1/2 and Ln |
 | m(Exp(1/2*Ln(A))) with A negative | m(Exp)+m(A)*coeff | same as √A with an increased coefficient for A negative |
 
-A null metric indicates we should not try to reduce further the expression, to escape advanced reduction.
+A null metric indicates the expression is ideal and cannot be reduced further.
+
+It is used to escape advanced reduction when the best possible representation has been found.
+
+For example, the expression $2+pi$ cannot be reduced further.
+
+See `CannotBeReducedFurther` in [metric.h](/poincare/src/expression/metric.h).
 
 ## Reduce dependencies
 
@@ -596,11 +602,20 @@ This step basically undoes earlier steps in the following order:
 
 ### Restore complex format
 
-First, depending on the complex format, we try to display the result in a cartesian or polar form.
+This steps needs to be applied first, before any other beautification step that could prevent reduction or complex formatting.
 
-We compute real and imaginary part independently (or distance and angle in polar format), calling reduction and advanced reduction again, and keeping the result only if both real and imaginary parts have been simplified out.
+Depending on the complex format, we try to beautify the expression $A$ into one of this form :
+- Cartesian Form : $re(A)+i \times im(A)$
+- Polar Form : $|A| \times e^{i \times arg(A)}$
+- Default : $A$
 
-This is the first step because the expression needs to be projected.
+If cartesian complex format is to be applied, we create the real and imaginary parts of the expression and reduce them.
+
+If one of the part could not be reduced further and is still of the form `re(...)` or `im(...)`, we escape and continue beautification normally in default case.
+
+Otherwise, each part is individually beautified (using following steps) and they are merged into an addition at the end.
+
+The polar complex format is analogous to the cartesian format by replacing real/imaginary part with module/argument.
 
 ### Restore angle unit
 

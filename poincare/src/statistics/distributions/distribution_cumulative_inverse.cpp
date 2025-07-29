@@ -155,19 +155,21 @@ T fisherCumulativeDistributiveInverse(
                *proba;
       },
       pack);
-  /* Either no result was found, the precision is ok or the result was outside
-   * the given ax bx bounds */
-  if (!(std::isnan(result.y()) || std::fabs(result.y()) <= FLT_EPSILON ||
-        std::fabs(result.x() - ax) < FLT_EPSILON ||
-        std::fabs(result.x() - bx) < FLT_EPSILON)) {
-    /* We would like to put this as an assertion, but sometimes we do get
-     * false result: we replace them with inf to make the problem obvious to
-     * the student.
-     * EXAMPLE: Fisher law, d1=2, d2=2.2*10^-16, try to find P(X<=a) = 0.25
-     *
-     * TODO: Find a better way to display that no solution could be found. */
+
+  /* Enter this condition if an unprecise result is found that is not at
+   * abscissa ax or bx.
+   * Ideally we would like to put this as an assertion, but sometimes we do get
+   * false positive: we replace them with the max x values possible (0 or
+   * infinity) to make the problem obvious to the student.
+   * EXAMPLE: Fisher law, d1=2, d2=2.2*10^-16, try to find P(X<=a) = 0.25
+   *
+   * TODO: Find a better way to display that no good solution could be found. */
+  if (!std::isnan(result.y()) && std::fabs(result.y()) > FLT_EPSILON &&
+      std::fabs(result.x() - ax) > FLT_EPSILON &&
+      std::fabs(result.x() - bx) > FLT_EPSILON) {
     return p > 0.5 ? INFINITY : 0.;
   }
+
   return result.x();
 }
 

@@ -22,7 +22,7 @@ bool ExactAndApproximateExpressionsAreStrictlyEqual(const Tree* exact,
      * truncated float. */
     Tree* layout = Layouter::LayoutExpression(approximate->cloneTree());
     Layouter::StripSeparators(layout);
-    Tree* parsed = Parser::ParseTopLevel(layout);
+    Tree* parsed = Parser::Parse(layout);
     assert(parsed->isRationalOrFloat() || parsed->isDecimal() ||
            (parsed->isOpposite() && (parsed->child(0)->isRationalOrFloat() ||
                                      parsed->child(0)->isDecimal())));

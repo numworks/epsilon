@@ -163,7 +163,7 @@ Tree* private_parse(const char* input, Poincare::Context* context,
                     bool isAssignment = false, bool assertNotParsable = false) {
   Tree* layout = RackFromText(input);
   Tree* expression =
-      Parser::ParseTopLevel(layout, context, {.isAssignment = isAssignment});
+      Parser::Parse(layout, context, {.isAssignment = isAssignment});
   if (assertNotParsable || !expression) {
     quiz_assert(assertNotParsable == !expression);
     layout->removeTree();

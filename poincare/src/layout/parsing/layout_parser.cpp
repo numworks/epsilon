@@ -1,15 +1,15 @@
-#include "parser.h"
+#include "layout_parser.h"
 
 #include <omg/unreachable.h>
 #include <poincare/old/tree_variable_context.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/symbol.h>
+#include <poincare/src/layout/grid.h>
+#include <poincare/src/layout/sequence.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
-#include "grid.h"
-#include "parsing/rack_parser.h"
-#include "sequence.h"
+#include "rack_parser.h"
 
 namespace Poincare::Internal {
 
@@ -55,7 +55,7 @@ Type ExpressionType(LayoutType type) {
   }
 }
 
-Tree* Parser::Parse(const Tree* l, ParsingContext parsingContext) {
+Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
   if (l->isRackLayout()) {
     // TODO: should be inlined in the caller
     return RackParser(l, parsingContext).parse();

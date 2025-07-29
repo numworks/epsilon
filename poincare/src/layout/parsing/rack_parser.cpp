@@ -18,7 +18,6 @@
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/layout/k_tree.h>
-#include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
@@ -28,7 +27,8 @@
 #include <algorithm>
 
 #include "helper.h"
-#include "poincare/src/layout/parsing/parsing_context.h"
+#include "layout_parser.h"
+#include "parsing_context.h"
 
 namespace Poincare::Internal {
 
@@ -966,8 +966,8 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
   if (builtin->aliases()->contains("log") &&
       popTokenIfType(Token::Type::Subscript)) {
     // Special case for the log function (e.g. "log₂(8)")
-    TreeRef base =
-        Parser::Parse(m_currentToken.firstLayout()->child(0), m_parsingContext);
+    TreeRef base = LayoutParser::Parse(m_currentToken.firstLayout()->child(0),
+                                       m_parsingContext);
     if (!base) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }
@@ -1163,8 +1163,8 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
       popToken();
       /* TODO factor with parseSequence */
       leftHandSide = SharedTreeStack->pushUserSequence(name);
-      Tree* index = Parser::Parse(m_currentToken.firstLayout()->child(0),
-                                  m_parsingContext);
+      Tree* index = LayoutParser::Parse(m_currentToken.firstLayout()->child(0),
+                                        m_parsingContext);
       if (!index) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
       }
@@ -1473,7 +1473,8 @@ void RackParser::parseLayout(TreeRef& leftHandSide, Token::Type stoppingType) {
   // }
   assert(m_currentToken.length() == 1);
   /* Parse standalone layouts */
-  leftHandSide = Parser::Parse(m_currentToken.firstLayout(), m_parsingContext);
+  leftHandSide =
+      LayoutParser::Parse(m_currentToken.firstLayout(), m_parsingContext);
   isThereImplicitOperator();
 }
 
@@ -1483,7 +1484,8 @@ void RackParser::parseSuperscript(TreeRef& leftHandSide,
   if (leftHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
-  TreeRef rightHandSide = Parser::Parse(layout->child(0), m_parsingContext);
+  TreeRef rightHandSide =
+      LayoutParser::Parse(layout->child(0), m_parsingContext);
   if (rightHandSide.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1502,7 +1504,7 @@ void RackParser::parsePrefixSuperscript(TreeRef& leftHandSide,
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
   const Tree* layout = m_currentToken.firstLayout();
-  TreeRef base = Parser::Parse(layout->child(0), m_parsingContext);
+  TreeRef base = LayoutParser::Parse(layout->child(0), m_parsingContext);
   if (base.isUninitialized()) {
     TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
   }
@@ -1548,7 +1550,7 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
     }
   } else if (popTokenIfType(Token::Type::Superscript)) {
     const Tree* layout = m_currentToken.firstLayout();
-    result = Parser::Parse(layout->child(0), m_parsingContext);
+    result = LayoutParser::Parse(layout->child(0), m_parsingContext);
     if (!result) {
       TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
     }

@@ -1,0 +1,29 @@
+#include <omg/store.h>
+#include <quiz.h>
+#include <string.h>
+
+using namespace OMG;
+
+QUIZ_CASE(omg_store) {
+  constexpr int bufferSize = 20;
+  char buffer[bufferSize];
+  Store store(buffer, bufferSize);
+  quiz_assert(store.maximumSize() == 18);
+  store.pushElement("strtofillthestore", 18);
+  quiz_assert(store.remainingSize() == 0);
+  store.deleteElementAtIndex(0);
+  quiz_assert(store.remainingSize() == store.maximumSize());
+
+  store.pushElement("hello", 6);
+  quiz_assert(store.remainingSize() == 10);
+  store.pushElement("world", 6);
+  quiz_assert(store.remainingSize() == 2);
+  store.pushElement("!", 2);
+  quiz_assert(store.remainingSize() == 0);
+  store.makeRoomForElement(13);
+  quiz_assert(store.numberOfElements() == 1);
+  store.pushElement("a larger one", 13);
+
+  quiz_assert(strcmp((char*)store.elementAtIndex(0), "a larger one") == 0);
+  quiz_assert(strcmp((char*)store.elementAtIndex(1), "!") == 0);
+}

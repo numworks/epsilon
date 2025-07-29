@@ -1,424 +1,84 @@
-#include "calculation_store.h"
+#include <omg/store.h>
 
-#include <apps/shared/global_context.h>
-#include <poincare/cas.h>
-#include <poincare/circuit_breaker_checkpoint.h>
-#include <poincare/exception_checkpoint.h>
-#include <poincare/helpers/store.h>
-#include <poincare/helpers/symbol.h>
-#include <poincare/helpers/trigonometry.h>
-#include <poincare/k_tree.h>
-#include <poincare/src/expression/projection.h>
-#include <poincare/src/memory/tree.h>
+#include <cstring>
 
-using namespace Poincare;
-using namespace Shared;
-
-namespace Calculation {
-
-static void enhancePushedExpression(UserExpression& expression) {
-  assert(!expression.isUninitialized());
-  /* Add an angle unit in trigonometric functions if the user could have
-   * forgotten to change the angle unit in the preferences.
-   * Ex: If angleUnit = rad, cos(4) is enhanced to cos(4rad)
-   *     If angleUnit = deg, cos(π) is enhanced to cos(π°)
-   *     If angleUnit = *, 2->rad is enhanced to 2*->rad
-   * */
-  if (!MathPreferences::SharedPreferences()->examMode().forbidUnits()) {
-    Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-        expression, MathPreferences::SharedPreferences()->angleUnit());
-  }
-}
+namespace OMG {
 
 // Public
 
-CalculationStore::CalculationStore(char* buffer, size_t bufferSize)
-    : m_buffer(buffer),
-      m_bufferSize(bufferSize),
-      m_numberOfCalculations(0),
-      m_inUsePreferences(*MathPreferences::SharedPreferences()) {}
+Store::Store(char* buffer, size_t bufferSize)
+    : m_buffer(buffer), m_bufferSize(bufferSize), m_numberOfElements(0) {}
 
-ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
-    int index) const {
-  assert(0 <= index && index <= numberOfCalculations() - 1);
-  Calculation* ptr = reinterpret_cast<Calculation*>(
-      index == numberOfCalculations() - 1 ? m_buffer
-                                          : endOfCalculationAtIndex(index + 1));
-  return OMG::ExpiringPointer(ptr);
-}
-
-UserExpression CalculationStore::ansExpression(Context* context) const {
-  const UserExpression defaultAns = UserExpression::Builder(0_e);
-  if (numberOfCalculations() == 0) {
-    return defaultAns;
-  }
-  OMG::ExpiringPointer<Calculation> mostRecentCalculation =
-      calculationAtIndex(0);
-  UserExpression input = mostRecentCalculation->input();
-  UserExpression exactOutput = mostRecentCalculation->exactOutput();
-  UserExpression approxOutput = mostRecentCalculation->approximateOutput();
-  UserExpression ansExpr;
-  if ((mostRecentCalculation->displayOutput() ==
-           Calculation::DisplayOutput::ApproximateOnly &&
-       !exactOutput.isIdenticalTo(approxOutput)) ||
-      exactOutput.isUndefined()) {
-    /* Case 1.
-     * If exact output was hidden, it should not be accessible using Ans.
-     * Return input instead so that no precision is lost.
-     * Except if the exact output is equal to its approximation and is neither
-     * Nonreal nor Undefined, in which case the exact output can be used as Ans
-     * since it's exactly the approx (this happens mainly with units).
-     * */
-    ansExpr = input;
-    if (ansExpr.isStore()) {
-      /* Case 1.1 If the input is a store expression, keep only the first child
-       * of the input in Ans because the whole store can't be used in a
-       * calculation. */
-      ansExpr = ansExpr.cloneChildAtIndex(0);
-    }
-  } else if (input.recursivelyMatches(&Expression::isApproximate, context) &&
-             mostRecentCalculation->equalSign() ==
-                 Calculation::EqualSign::Equal) {
-    /* Case 2.
-     * If the user used a decimal in the input and the exact output is equal to
-     * the approximation, prefer using the approximation to keep the decimal
-     * form. */
-    ansExpr = approxOutput;
-  } else {
-    /* Case 3.
-     * Default to the exact output.*/
-    ansExpr = exactOutput;
-  }
-  assert(ansExpr.isUninitialized() || !ansExpr.isStore());
-  return ansExpr.isUninitialized() ? defaultAns : ansExpr;
-}
-
-void CalculationStore::replaceAnsInExpression(UserExpression& expression,
-                                              Context* context) const {
-  UserExpression ansSymbol = SymbolHelper::Ans();
-  UserExpression ansExpression = this->ansExpression(context);
-  expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
-}
-
-static bool compute(Poincare::Expression inputExpression,
-                    Poincare::Expression& exactOutputExpression,
-                    Poincare::Expression& approximateOutputExpression,
-                    Poincare::Preferences::ComplexFormat& complexFormat,
-                    Poincare::Context* context) {
-  assert(!inputExpression.isUninitialized());
-  // Update complexFormat with input expression
-  complexFormat =
-      Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-          complexFormat, inputExpression, context);
-
-  Internal::ProjectionContext projContext = {
-      .m_complexFormat = complexFormat,
-      .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
-      .m_unitFormat =
-          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      .m_symbolic = CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
-                                   : SymbolicComputation::ReplaceAllSymbols,
-      .m_context = context};
-
-  return inputExpression.cloneAndSimplifyAndApproximate(
-      &exactOutputExpression, &approximateOutputExpression, projContext);
-}
-
-struct CalculationResult {
-  OutputExpressions outputs;
-  bool hasReductionFailure;
-};
-
-static CalculationResult computeInterruptible(
-    Poincare::Expression inputExpression,
-    Poincare::Preferences::ComplexFormat& complexFormat,
-    Poincare::Context* context) {
-  /* TODO: we could refine this UserCircuitBreaker. When interrupted during
-   * simplification, we could still try to display the approximate result? When
-   * interrupted during approximation, we could at least display the exact
-   * result. If we do so, don't forget to force the Calculation sign to be
-   * approximative to avoid long computation to determine it.
-   */
-  OutputExpressions outputs;
-  bool hasReductionFailure = false;
-  CircuitBreakerCheckpoint checkpoint(
-      Ion::CircuitBreaker::CheckpointType::Back);
-  if (CircuitBreakerRun(checkpoint)) {
-    hasReductionFailure = compute(inputExpression, outputs.exact,
-                                  outputs.approximate, complexFormat, context);
-  } else {
-    GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
-        checkpoint.endOfPoolBeforeCheckpoint());
-    // If the output computation is interrupted, return undef
-    outputs = {Undefined::Builder(), Undefined::Builder()};
-    hasReductionFailure = true;
-  }
-
-  assert(!outputs.exact.isUninitialized() &&
-         !outputs.approximate.isUninitialized());
-  return CalculationResult{outputs, hasReductionFailure};
-}
-
-static void processStore(OutputExpressions& outputs,
-                         Poincare::UserExpression input,
-                         Poincare::Context* context) {
-  /* The global context performs the store and ensures that no symbol is kept in
-   * the definition of a variable.
-   * Once this is done, the output is replaced with the stored expression. To do
-   * so, the expression of the symbol is retrieved after it is stored because it
-   * can be different from the value in the store expression.
-   * e.g. if f(x) = cos(x), the expression "f(x^2)->f(x)" will return
-   * "cos(x^2)". */
-
-  // TODO: factorize with StoreMenuController::parseAndStore
-  // TODO: add circuit breaker?
-  UserExpression value = StoreHelper::Value(outputs.exact);
-  UserExpression symbol = StoreHelper::Symbol(outputs.exact);
-  UserExpression valueApprox =
-      PoincareHelpers::Approximate<double>(value, context);
-  if (symbol.isUserSymbol() &&
-      CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox, context)) {
-    value = valueApprox;
-  }
-#if 0
-/* TODO_PCJ: restore assert
-* Handle case of functions (3*x->f(x)): there should be no symbol except x */
-assert(!value.recursivelyMatches(
-[](const Expression e) { return e.isUserSymbol(); }));
-#endif
-  if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
-    outputs.exact = value;
-    outputs.approximate = valueApprox;
-    assert(!outputs.exact.isUninitialized() &&
-           !outputs.approximate.isUninitialized());
-  } else {
-    outputs.exact = Undefined::Builder();
-    outputs.approximate = Undefined::Builder();
-  }
-}
-
-static void postProcessOutputs(OutputExpressions& outputs,
-                               Poincare::Expression inputExpression,
-                               bool unitsForbidden,
-                               Poincare::Context* context) {
-  /* TODO: the two following operations should be performed in a
-   * CircuitBreakerCheckpoint to handle the "Back" interruption properly,
-   * although it is very unlikely to happen because these operations are fast.
-   * However, having a CircuitBreakerCheckpoint here causes unexpected and
-   * unexplained problems that should be investigated in more details.
-   */
-  if (unitsForbidden && outputs.approximate.hasUnit()) {
-    outputs = {Undefined::Builder(), Undefined::Builder()};
-  }
-  enhancePushedExpression(outputs.exact);
-
-  /* When an input contains a store, it is kept by the reduction in the exact
-   * output and the actual store is performed here.
-   * This must be done outside of a checkpoint because it can delete some
-   * memoized expressions in the Sequence store, which would alter the pool
-   * above the checkpoint. */
-  // TODO: improve the safety of the store operation
-  if (outputs.exact.isStore()) {
-    processStore(outputs, inputExpression, context);
-  }
-}
-
-Poincare::UserExpression CalculationStore::parseInput(
-    Poincare::Layout inputLayout, Poincare::Context* context) {
-  m_inUsePreferences = *MathPreferences::SharedPreferences();
-
-  CircuitBreakerCheckpoint checkpoint(
-      Ion::CircuitBreaker::CheckpointType::Back);
-  if (CircuitBreakerRun(checkpoint)) {
-    /* Compute Ans now before the store is updated or the last calculation
-     * deleted.
-     * Setting Ans in the context makes it available during the parsing of the
-     * input, namely to know if a rightwards arrow is a unit conversion or a
-     * variable assignment. */
-    PoolVariableContext ansContext = createAnsContext(context);
-    UserExpression inputExpression =
-        UserExpression::Parse(inputLayout, &ansContext);
-    replaceAnsInExpression(inputExpression, context);
-    enhancePushedExpression(inputExpression);
-    return inputExpression;
-  } else {
-    GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
-        checkpoint.endOfPoolBeforeCheckpoint());
-    return Poincare::UserExpression();
-  }
-}
-
-CalculationStore::CalculationElements CalculationStore::computeAndProcess(
-    Poincare::Expression inputExpression, Poincare::Context* context) {
-  Poincare::Preferences::ComplexFormat complexFormat =
-      MathPreferences::SharedPreferences()->complexFormat();
-  CalculationResult calculationResult =
-      computeInterruptible(inputExpression, complexFormat, context);
-
-  postProcessOutputs(calculationResult.outputs, inputExpression,
-                     m_inUsePreferences.examMode().forbidUnits(), context);
-
-  return CalculationElements{inputExpression, calculationResult.outputs,
-                             calculationResult.hasReductionFailure,
-                             complexFormat};
-}
-
-ExpiringPointer<Calculation> CalculationStore::push(
-    Poincare::Layout inputLayout, Poincare::Context* context) {
-  Poincare::UserExpression inputExpression = parseInput(inputLayout, context);
-  if (inputExpression.isUninitialized()) {
-    /* If parsing was interrupted (which is unlikely to happen), do not update
-     * the calculation store */
-    return nullptr;
-  }
-
-  CalculationElements calculationToPush =
-      computeAndProcess(inputExpression, context);
-
-  size_t neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
-  if (neededSize > m_bufferSize) {
-    /* The calculation is too big to hold on the buffer, even if all previous
-     * calculations were deleted. Replace its outputs by undefined, it should
-     * now fit on the calculation buffer. */
-    calculationToPush.outputs.exact = Undefined::Builder();
-    calculationToPush.outputs.approximate = Undefined::Builder();
-    neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
-    if (neededSize > m_bufferSize) {
-      /* If the calculation with undefined outputs is still too big, it means
-       * that the input expression was too big, which is very unlikely to happen
-       * in a real usecase. */
-      ExceptionCheckpoint::Raise();
-    }
-  }
-
-  // Free space for the new calculation
-  getEmptySpace(neededSize);
-  Calculation* pushedCalculation = pushCalculation(calculationToPush);
-  assert(pushedCalculation);
-  return OMG::ExpiringPointer(pushedCalculation);
-}
-
-bool CalculationStore::preferencesHaveChanged() {
-  // Track settings that might invalidate HistoryCells heights
-  const MathPreferences* preferences = MathPreferences::SharedPreferences();
-  if (m_inUsePreferences.combinatoricSymbols() ==
-          preferences->combinatoricSymbols() &&
-      m_inUsePreferences.numberOfSignificantDigits() ==
-          preferences->numberOfSignificantDigits() &&
-      m_inUsePreferences.logarithmBasePosition() ==
-          preferences->logarithmBasePosition()) {
-    return false;
-  }
-  m_inUsePreferences = *preferences;
-  return true;
-}
-
-PoolVariableContext CalculationStore::createAnsContext(Context* context) {
-  PoolVariableContext ansContext(SymbolHelper::AnsMainAlias(), context);
-  ansContext.setExpressionForUserNamed(ansExpression(context),
-                                       SymbolHelper::Ans());
-  return ansContext;
+void* Store::elementAtIndex(int index) const {
+  assert(0 <= index && index <= numberOfElements() - 1);
+  return index == numberOfElements() - 1 ? m_buffer
+                                         : endOfElementAtIndex(index + 1);
 }
 
 // Private
 
-char* CalculationStore::endOfCalculationAtIndex(int index) const {
-  assert(0 <= index && index < numberOfCalculations());
+char* Store::endOfElementAtIndex(int index) const {
+  assert(0 <= index && index < numberOfElements());
   char* res = pointerArray()[index];
-  /* Make sure the calculation pointed to is inside the buffer */
+  /* Make sure the element pointed to is inside the buffer */
   assert(m_buffer <= res && res < m_buffer + m_bufferSize);
   return res;
 }
 
-size_t CalculationStore::spaceForNewCalculations(
-    const char* currentEndOfCalculations) const {
+size_t Store::spaceForNewElements(const char* currentEndOfElements) const {
   // Be careful with size_t: negative values are not handled
-  return currentEndOfCalculations + sizeof(Calculation*) < pointerArea()
-             ? (pointerArea() - currentEndOfCalculations) - sizeof(Calculation*)
+  return currentEndOfElements + sizeof(void*) < pointerArea()
+             ? (pointerArea() - currentEndOfElements) - sizeof(void*)
              : 0;
 }
 
-void CalculationStore::deleteCalculationAtIndex(int index) {
-  char* deletionStart = index == numberOfCalculations() - 1
+void Store::deleteElementAtIndex(int index) {
+  char* deletionStart = index == numberOfElements() - 1
                             ? m_buffer
-                            : endOfCalculationAtIndex(index + 1);
-  char* deletionEnd = endOfCalculationAtIndex(index);
+                            : endOfElementAtIndex(index + 1);
+  char* deletionEnd = endOfElementAtIndex(index);
   assert(deletionEnd >= deletionStart);
   size_t deletedSize = deletionEnd - deletionStart;
-  assert(endOfCalculations() >= deletionEnd);
-  size_t shiftedMemorySize = endOfCalculations() - deletionEnd;
+  assert(endOfElements() >= deletionEnd);
+  size_t shiftedMemorySize = endOfElements() - deletionEnd;
 
-  Ion::CircuitBreaker::lock();
-  memmove(deletionStart, deletionEnd, shiftedMemorySize);
+  // TODO
+  // Ion::CircuitBreaker::lock();
+  std::memmove(deletionStart, deletionEnd, shiftedMemorySize);
 
   for (int i = index - 1; i >= 0; i--) {
     pointerArray()[i + 1] = pointerArray()[i] - deletedSize;
   }
-  m_numberOfCalculations--;
-  Ion::CircuitBreaker::unlock();
+  m_numberOfElements--;
+  // Ion::CircuitBreaker::unlock();
 }
 
-void CalculationStore::getEmptySpace(size_t neededSize) {
+void Store::getEmptySpace(size_t neededSize) {
   assert(neededSize < m_bufferSize);
   while (remainingBufferSize() < neededSize) {
-    deleteOldestCalculation();
+    deleteOldestElement();
   }
 }
 
-Calculation* CalculationStore::pushEmptyCalculation(char** location) {
-  Calculation* newCalculation = reinterpret_cast<Calculation*>(*location);
-  assert(spaceForNewCalculations(*location) >= sizeof(Calculation));
-  new (*location) Calculation(
-      MathPreferences::SharedPreferences()->calculationPreferences());
-  *location += sizeof(Calculation);
-  return newCalculation;
+void* Store::pushElement(const void* element, int size) {
+  char* destination = endOfElements();
+  assert(destination >= m_buffer &&
+         destination + size + sizeof(void*) <= pointerArea());
+
+  std::memcpy(destination, element, size);
+
+  // Write the pointer to the new element at pointerArea()
+  pointerArray()[-1] = destination + size;
+
+  /* Now that the element is copied, we can finally update
+   * m_numberOfElements. As that is the only variable tracking the state of the
+   * store, updating it only at the end of the push ensures that, should an
+   * interruption occur, all the temporary states are silently discarded and no
+   * ill-formed Element is stored. */
+  m_numberOfElements++;
+  assert(elementAtIndex(0) == destination);
+
+  return destination;
 }
 
-size_t CalculationStore::pushExpressionTree(char** location, UserExpression e) {
-  size_t length = e.tree()->treeSize();
-  assert(spaceForNewCalculations(*location) >= length);
-  memcpy(*location, e.tree(), length);
-  *location += length;
-  return length;
-}
-
-Calculation* CalculationStore::pushCalculation(
-    const CalculationElements& calculationToPush) {
-  char* cursor = endOfCalculations();
-  assert(cursor >= m_buffer &&
-         cursor + neededSizeForCalculation(calculationToPush.sizeOfTrees()) <=
-             pointerArea());
-
-  // Push an empty Calculation instance (takes sizeof(Calculation))
-  Calculation* newCalculation = pushEmptyCalculation(&cursor);
-  // Set the calculation properties
-  newCalculation->setComplexFormat(calculationToPush.complexFormat);
-  newCalculation->setReductionFailure(calculationToPush.hasReductionFailure);
-
-  // Push the input and output expressions after the Calculation
-  assert(!calculationToPush.input.isUninitialized() &&
-         !calculationToPush.outputs.exact.isUninitialized() &&
-         !calculationToPush.outputs.approximate.isUninitialized());
-  newCalculation->m_inputTreeSize =
-      pushExpressionTree(&cursor, calculationToPush.input);
-  newCalculation->m_exactOutputTreeSize =
-      pushExpressionTree(&cursor, calculationToPush.outputs.exact);
-  newCalculation->m_approximatedOutputTreeSize =
-      pushExpressionTree(&cursor, calculationToPush.outputs.approximate);
-
-  /* Write the pointer to the new calculation at pointerArea() (takes
-   * sizeof(Calculation*)) */
-  assert(cursor + sizeof(Calculation*) <= pointerArea());
-  pointerArray()[-1] = cursor;
-  /* Now that the calculation is fully built, we can finally update
-   * m_numberOfCalculations. As that is the only variable tracking the state
-   * of the store, updating it only at the end of the push ensures that,
-   * should an interruption occur, all the temporary states are silently
-   * discarded and no ill-formed Calculation is stored. */
-  m_numberOfCalculations++;
-  assert(calculationAtIndex(0).pointer() == newCalculation);
-
-  return newCalculation;
-}
-
-}  // namespace Calculation
+}  // namespace OMG

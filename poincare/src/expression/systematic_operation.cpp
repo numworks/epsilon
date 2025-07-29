@@ -294,7 +294,7 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
   }
 
   if (!y->isRational()) {
-    // We don't know enough to simplify further.
+    // We don't know enough to reduce further.
     return false;
   }
 
@@ -306,7 +306,7 @@ bool SystematicOperation::ReducePowerReal(Tree* e) {
   bool xNegative = xSign.realSign().isStrictlyNegative();
 
   if (!pIsEven && !xNegative) {
-    // We don't know enough to simplify further.
+    // We don't know enough to reduce further.
     return false;
   }
   assert(xNegative || pIsEven);

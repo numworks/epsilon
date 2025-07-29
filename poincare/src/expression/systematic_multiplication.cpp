@@ -171,7 +171,7 @@ static bool ReduceMultiplicationChildRec(Tree* child, int index,
   // Merge child with right siblings as much as possible.
   bool childChanged = MergeMultiplicationChildrenFrom(
       child, index, numberOfSiblings, numberOfDependencies);
-  // Simplify starting from next child.
+  // Reduce starting from next child.
   if (index + 1 < *numberOfSiblings &&
       ReduceMultiplicationChildRec(child->nextTree(), index + 1,
                                    numberOfSiblings, multiplicationChanged,

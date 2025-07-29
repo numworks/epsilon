@@ -8,7 +8,7 @@ namespace Poincare::Internal {
 
 class Derivation {
  public:
-  // Shallow simplify a derivation Tree* inplace.
+  // Shallow reduce a derivation Tree* inplace.
   static bool Reduce(Tree* e);
 
   constexpr static CodePoint k_firstOrderSymbol = '\'';

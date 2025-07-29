@@ -10,14 +10,14 @@ namespace Internal {
 
 class Roots {
  public:
-  // Return the only root. Use advanced reduction and simplify dependencies.
+  // Return the only root. Use advanced reduction and reduce dependencies.
   static Tree* Linear(const Tree* a, const Tree* b) {
     return ApplyAdditionalReduction(PrivateLinear(a, b));
   }
 
   /* Return a list of one or two roots, in decreasing order.
    * Delta can be provided or will be computed.
-   * Use advanced reduction and simplify dependencies. */
+   * Use advanced reduction and reduce dependencies. */
   static Tree* Quadratic(const Tree* a, const Tree* b, const Tree* c,
                          const Tree* discriminant = nullptr) {
     return ApplyAdditionalReduction(PrivateQuadratic(a, b, c, discriminant));
@@ -29,7 +29,7 @@ class Roots {
 
   /* Return a list of at most three roots, in decreasing order.
    * Delta can be provided or will be computed.
-   * Use advanced reduction and simplify dependencies.
+   * Use advanced reduction and reduce dependencies.
    * If applying Cardano's method is needed, it can be made faster (as it costs
    * a great amount of computation time). However in that case, the solutions
    * obtained by Cardano's method will be approximated.  */

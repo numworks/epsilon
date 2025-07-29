@@ -225,7 +225,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/distribution.cpp \
   old/erf_inv.cpp \
   old/exam_mode.cpp \
-  old/expression_order.cpp \
   old/expression_properties.cpp \
   old/expression_serialization.cpp \
   old/expression_to_layout.cpp \

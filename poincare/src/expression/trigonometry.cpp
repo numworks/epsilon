@@ -221,7 +221,7 @@ bool Trigonometry::ReduceTrig(Tree* e) {
   bool isSin = secondArgument->isOne();
   // cos(-x) = cos(x) and sin(-x) = -sin(x)
   // TODO: Maybe factorize even/odd functions logic
-  if (PatternMatching::MatchReplaceSimplify(
+  if (PatternMatching::MatchReplaceReduce(
           firstArgument, KMult(KA_s, -1_e, KB_s), KMult(KA_s, KB_s))) {
     changed = true;
     if (isSin) {
@@ -263,7 +263,7 @@ bool Trigonometry::ReduceTrig(Tree* e) {
              PatternMatching::MatchReplace(
                  e, KTrig(KMult(KArCosH(KA), i_e), 0_e), KA) ||
 #endif
-             PatternMatching::MatchReplaceSimplify(
+             PatternMatching::MatchReplaceReduce(
                  e, KTrig(KATrig(KA, KB), KC),
                  KPow(KAdd(1_e, KMult(-1_e, KPow(KA, 2_e))), 1_e / 2_e))) {
     /* sin(asin(x))=cos(acos(x))=cos(arcosh(x)*i)=x,
@@ -345,7 +345,7 @@ static Tree* SimplifyATrigOfTrig(const Tree* arg, Type type) {
       return nullptr;
     }
     result = reducedPiFactor;
-    PatternMatching::MatchReplaceSimplify(result, KA, KMult(π_e, KA));
+    PatternMatching::MatchReplaceReduce(result, KA, KMult(π_e, KA));
   }
   assert(result);
   return result;
@@ -364,7 +364,7 @@ bool Trigonometry::ReduceATrig(Tree* e) {
     if (result) {
       if (swapATrig) {
         // Handle asin(cos) and acos(sin) using acos(x) = π/2 - asin(x)
-        PatternMatching::MatchReplaceSimplify(
+        PatternMatching::MatchReplaceReduce(
             result, KA, KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KA)));
       }
       e->moveTreeOverTree(result);
@@ -381,7 +381,7 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   bool argIsOpposed = !argSign.isNull() && argSign.realSign().isNegative();
   if (argIsOpposed) {
     changed = true;
-    PatternMatching::MatchReplaceSimplify(arg, KA, KMult(-1_e, KA));
+    PatternMatching::MatchReplaceReduce(arg, KA, KMult(-1_e, KA));
   }
   const Tree* angle =
       ExactFormula::GetAngleOf(arg, isAsin ? Type::Sin : Type::Cos);
@@ -392,7 +392,7 @@ bool Trigonometry::ReduceATrig(Tree* e) {
   if (argIsOpposed) {
     assert(changed);
     // asin(-x) = -asin(x) and acos(-x) = π - acos(x)
-    PatternMatching::MatchReplaceSimplify(
+    PatternMatching::MatchReplaceReduce(
         e, KA, isAsin ? KMult(-1_e, KA) : KAdd(π_e, KMult(-1_e, KA)));
   }
   return changed;
@@ -477,7 +477,7 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
         PatternMatching::Match(arg, KMult(KA_s, -1_e, KB_s), &ctx)));
   if (argIsOpposed) {
     // atan(-x) = -atan(x)
-    return PatternMatching::MatchReplaceSimplify(
+    return PatternMatching::MatchReplaceReduce(
         e, KATanRad(KA), KMult(-1_e, KATanRad(KMult(-1_e, KA))));
   }
   Tree* atanTanArg = GetAtanTanArg(e);
@@ -542,7 +542,7 @@ bool Trigonometry::ReduceArCosH(Tree* e) {
 
 bool Trigonometry::ExpandTrigonometric(Tree* e) {
   // Trig(A?+B, C) = Trig(A, 0)*Trig(B, C) + Trig(A, 1)*Trig(B, C-1)
-  return PatternMatching::MatchReplaceSimplify(
+  return PatternMatching::MatchReplaceReduce(
       e, KTrig(KAdd(KA, KB_p), KD),
       KAdd(KMult(KTrig(KAdd(KA), 0_e), KTrig(KAdd(KB_p), KD)),
            KMult(KTrig(KAdd(KA), 1_e), KTrig(KAdd(KB_p), KAdd(KD, -1_e)))));
@@ -554,20 +554,20 @@ bool Trigonometry::ContractTrigonometric(Tree* e) {
    * both way would lead to infinite possible contractions. */
   return
       // A?*tan(atan(B))*C? = A*B*C
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e,
           KMult(KA_s, KPow(KTrig(KATanRad(KB), 0_e), -1_e),
                 KTrig(KATanRad(KB), 1_e), KC_s),
           KMult(KA_s, KB, KC_s)) ||
       // A?+cos(B)^2+C?+sin(B)^2+D? = 1 + A + C + D
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e,
           KAdd(KA_s, KPow(KTrig(KB, 0_e), 2_e), KC_s, KPow(KTrig(KB, 1_e), 2_e),
                KD_s),
           KDep(KAdd(1_e, KA_s, KC_s, KD_s), KDepList(KB))) ||
       // A?*Trig(B, C)*D?*Trig(E, F)*G? =
       // 0.5*A*D*(Trig(B-E, TrigDiff(C,F)) + Trig(B+E, C+F))*G
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e, KMult(KA_s, KTrig(KB, KC), KD_s, KTrig(KE, KF), KG_s),
           KMult(1_e / 2_e, KA_s, KD_s,
                 KAdd(KTrig(KAdd(KB, KMult(-1_e, KE)), KTrigDiff(KC, KF)),

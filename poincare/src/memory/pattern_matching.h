@@ -188,8 +188,8 @@ class PatternMatching {
     return PrivateMatchReplace(source, pattern, structure, simplify);
   }
   // Return true if reference has been replaced
-  static bool MatchReplaceSimplify(Tree* source, const Tree* pattern,
-                                   const Tree* structure) {
+  static bool MatchReplaceReduce(Tree* source, const Tree* pattern,
+                                 const Tree* structure) {
     return PrivateMatchReplace(source, pattern, structure, true);
   }
 

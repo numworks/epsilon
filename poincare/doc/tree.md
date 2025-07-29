@@ -396,7 +396,7 @@ bool hasChanged = MatchReplace(tree, KAdd(KA, KA), KMult(2_e, KA));
 
 </details>
 
-Methods `CreateSimplify` and `MatchReplaceSimplify` perform the same task,
+Methods `CreateSimplify` and `MatchReplaceReduce` perform the same task,
 but also call systematic simplification on each created tree along the way (**but
 not placeholders**, which are assumed to be simplified trees already).
 
@@ -413,7 +413,7 @@ same suffix to insert these trees inside an n-ary in the create pattern.
 
 ```cpp
 // Apply simplification a*(b+c...)*d... -> a*b*d + a*(c...)*d...
-bool hasChanged = MatchReplaceSimplify(
+bool hasChanged = MatchReplaceReduce(
     tree, KMult(KA, KAdd(KB, KC_p), KD_s),
     KAdd(KMult(KA, KB, KD_s), KMult(KA, KAdd(KC_p), KD_s)));
 ```

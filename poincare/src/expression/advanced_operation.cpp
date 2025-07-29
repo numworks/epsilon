@@ -33,7 +33,7 @@ bool AdvancedOperation::CanSkipTree(const Tree* e) {
 // This is redundant with im and re expansion for finite expressions
 bool AdvancedOperation::ContractImRe(Tree* e) {
   // re(A)+im(A)*i = A
-  return PatternMatching::MatchReplaceSimplify(
+  return PatternMatching::MatchReplaceReduce(
       e, KAdd(KRe(KA), KMult(KIm(KA), i_e)), KA);
 }
 
@@ -82,18 +82,18 @@ bool ExpandImReIfNotInfinite(Tree* e) {
 bool AdvancedOperation::ExpandImRe(Tree* e) {
   return
       // im(A+B?) = im(A) + im(B)
-      PatternMatching::MatchReplaceSimplify(e, KIm(KAdd(KA, KB_p)),
-                                            KAdd(KIm(KA), KIm(KAdd(KB_p)))) ||
+      PatternMatching::MatchReplaceReduce(e, KIm(KAdd(KA, KB_p)),
+                                          KAdd(KIm(KA), KIm(KAdd(KB_p)))) ||
       // re(A+B?) = re(A) + re(B)
-      PatternMatching::MatchReplaceSimplify(e, KRe(KAdd(KA, KB_p)),
-                                            KAdd(KRe(KA), KRe(KAdd(KB_p)))) ||
+      PatternMatching::MatchReplaceReduce(e, KRe(KAdd(KA, KB_p)),
+                                          KAdd(KRe(KA), KRe(KAdd(KB_p)))) ||
       // im(A*B?) = im(A)re(B) + re(A)im(B)
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e, KIm(KMult(KA, KB_p)),
           KAdd(KMult(KIm(KA), KRe(KMult(KB_p))),
                KMult(KRe(KA), KIm(KMult(KB_p))))) ||
       // re(A*B?) = re(A)*re(B) - im(A)*im(B)
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e, KRe(KMult(KA, KB_p)),
           KAdd(KMult(KRe(KA), KRe(KMult(KB_p))),
                KMult(-1_e, KIm(KA), KIm(KMult(KB_p))))) ||
@@ -117,13 +117,13 @@ bool AdvancedOperation::ContractAbs(Tree* e) {
     }
   }
   // A?*|B|*|C|*D? = A*|BC|*D
-  return PatternMatching::MatchReplaceSimplify(
+  return PatternMatching::MatchReplaceReduce(
       e, KMult(KA_s, KAbs(KB), KAbs(KC), KD_s),
       KMult(KA_s, KAbs(KMult(KB, KC)), KD_s));
 }
 
 bool AdvancedOperation::ExpandAbs(Tree* e) {
-  if (PatternMatching::MatchReplaceSimplify(
+  if (PatternMatching::MatchReplaceReduce(
           e, KPow(KAbs(KA), 2_e),
           KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e)))) {
     // |A|^2 = re(A)^2+im(A)^2
@@ -163,7 +163,7 @@ bool AdvancedOperation::ExpandAbs(Tree* e) {
     return true;
   }
   // |A| = √(re(A)^2+im(A)^2)
-  return PatternMatching::MatchReplaceSimplify(
+  return PatternMatching::MatchReplaceReduce(
       e, KAbs(KA),
       KExp(
           KMult(1_e / 2_e, KLn(KAdd(KPow(KRe(KA), 2_e), KPow(KIm(KA), 2_e))))));
@@ -200,14 +200,14 @@ bool AdvancedOperation::ExpandExp(Tree* e) {
       /* This is a more generic form of the previous exp(ai) => cos(b)+sin(b)i.
        * It shortcuts what could be done in 2/3 Advanced operation before:
        * exp(a+bi) => exp(a)exp(bi) => exp(a)(cos(b)+sin(b)i) */
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e, KExp(KAdd(KA_s, KMult(KB_s, i_e), KC_s)),
           KMult(KExp(KAdd(KA_s, KC_s)),
                 KAdd(KTrig(KMult(KB_s), 0_e),
                      KMult(KTrig(KMult(KB_s), 1_e), i_e)))) ||
       // exp(A+B?) = exp(A) * exp(B)
-      PatternMatching::MatchReplaceSimplify(e, KExp(KAdd(KA, KB_p)),
-                                            KMult(KExp(KA), KExp(KAdd(KB_p))));
+      PatternMatching::MatchReplaceReduce(e, KExp(KAdd(KA, KB_p)),
+                                          KMult(KExp(KA), KExp(KAdd(KB_p))));
 }
 
 bool AdvancedOperation::ContractExp(Tree* e) {
@@ -228,15 +228,15 @@ bool AdvancedOperation::ContractExp(Tree* e) {
   }
   return
       // A? * exp(B) * exp(C) * D? = A * exp(B+C) * D
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e, KMult(KA_s, KExp(KB), KExp(KC), KD_s),
           KMult(KA_s, KExp(KAdd(KB, KC)), KD_s)) ||
       // A? + cos(B) + C? + sin(B)*i + D? = A + C + D + exp(B*i)
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e, KAdd(KA_s, KTrig(KB, 0_e), KC_s, KMult(KTrig(KB, 1_e), i_e), KD_s),
           KAdd(KA_s, KC_s, KD_s, KExp(KMult(KB, i_e)))) ||
       // A? + cos(B) + C? - sin(B)*i + D? = A + C + D + exp(-B*i)
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e,
           KAdd(KA_s, KTrig(KB, 0_e), KC_s, KMult(-1_e, KTrig(KB, 1_e), i_e),
                KD_s),
@@ -338,19 +338,19 @@ bool AdvancedOperation::ContractMult(Tree* e) {
 
   return
       // A + BC + DE + CE = A-BD + (C+D)*(B+E) mainly useful when A == BD
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e, KAdd(KA, KMult(KB_s, KC_s), KMult(KD_s, KE_s), KMult(KC_s, KE_s)),
           KAdd(KA, KMult(-1_e, KB_s, KD_s),
                KMult(KAdd(KMult(KB_s), KMult(KE_s)),
                      KAdd(KMult(KD_s), KMult(KC_s))))) ||
       /* A? + B?*C*D? + E? + C^2 + F? = (BD/2 + C)^2 - (BD)^2/4 + A + E + F
        * useful to find notable identities, when A + E + F = B^2/4 */
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e, KAdd(KA_s, KMult(KB_s, KC, KD_s), KE_s, KPow(KC, 2_e), KF_s),
           KAdd(KPow(KAdd(KC, KMult(1_e / 2_e, KB_s, KD_s)), 2_e), KA_s, KE_s,
                KF_s, KMult(-1_e / 4_e, KPow(KMult(KB_s, KD_s), 2_e)))) ||
       // A? + B?*C*D? + E? + F?*C*G? + H? = A + C*(B*D+F*G) + E + H
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e,
           KAdd(KA_s, KMult(KB_s, KC, KD_s), KE_s, KMult(KF_s, KC, KG_s), KH_s),
           KAdd(KA_s, KMult(KC, KAdd(KMult(KB_s, KD_s), KMult(KF_s, KG_s))),
@@ -382,7 +382,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
     constexpr int maxChildrenForDeepExpand = 10;
     if (nbOfChildren > maxChildrenForDeepExpand) {
       // Fallback to simple expand if too many children in addition
-      return PatternMatching::MatchReplaceSimplify(
+      return PatternMatching::MatchReplaceReduce(
           e, KPow(KAdd(KA, KB_p), 2_e),
           KAdd(KPow(KA, 2_e), KMult(2_e, KA, KAdd(KB_p)),
                KPow(KAdd(KB_p), 2_e)));
@@ -447,7 +447,7 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
     SharedTreeStack->flushFromBlock(scopedKA);
     Parametric::Explicit(e);
     if (inverse) {
-      PatternMatching::MatchReplaceSimplify(e, KA, KPow(KA, -1_e));
+      PatternMatching::MatchReplaceReduce(e, KA, KPow(KA, -1_e));
     }
     return true;
   }
@@ -458,15 +458,15 @@ bool AdvancedOperation::ExpandPower(Tree* e) {
 bool AdvancedOperation::ExpandCeilFloor(Tree* e) {
   return
       // ceil(A)  -> -floor(-A)
-      PatternMatching::MatchReplaceSimplify(
-          e, KCeil(KA), KMult(-1_e, KFloor(KMult(-1_e, KA))));
+      PatternMatching::MatchReplaceReduce(e, KCeil(KA),
+                                          KMult(-1_e, KFloor(KMult(-1_e, KA))));
 }
 
 bool AdvancedOperation::ContractCeilFloor(Tree* e) {
   return
       // floor(A) -> -ceil(-A)
-      PatternMatching::MatchReplaceSimplify(
-          e, KFloor(KA), KMult(-1_e, KCeil(KMult(-1_e, KA))));
+      PatternMatching::MatchReplaceReduce(e, KFloor(KA),
+                                          KMult(-1_e, KCeil(KMult(-1_e, KA))));
 }
 
 bool AdvancedOperation::ExpandComplexArgument(Tree* e) {

@@ -120,10 +120,10 @@ bool Binary::ReduceBooleanOperator(Tree* e) {
       PatternMatching::MatchReplace(e, KLogicalXor(KFalse, KA), KA) ||
       PatternMatching::MatchReplace(e, KLogicalXor(KA, KFalse), KA) ||
       // true xor A -> not A
-      PatternMatching::MatchReplaceSimplify(e, KLogicalXor(KTrue, KA),
-                                            KLogicalNot(KA)) ||
-      PatternMatching::MatchReplaceSimplify(e, KLogicalXor(KA, KTrue),
-                                            KLogicalNot(KA)) ||
+      PatternMatching::MatchReplaceReduce(e, KLogicalXor(KTrue, KA),
+                                          KLogicalNot(KA)) ||
+      PatternMatching::MatchReplaceReduce(e, KLogicalXor(KA, KTrue),
+                                          KLogicalNot(KA)) ||
 
       // not (not A) -> A
       PatternMatching::MatchReplace(e, KLogicalNot(KLogicalNot(KA)), KA) ||

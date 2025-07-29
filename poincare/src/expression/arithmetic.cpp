@@ -162,7 +162,7 @@ bool Arithmetic::ReduceRound(Tree* e) {
     return false;
   }
   // round(A, B)  -> floor(A * 10^B + 1/2) * 10^-B
-  return PatternMatching::MatchReplaceSimplify(
+  return PatternMatching::MatchReplaceReduce(
       e, KRound(KA, KB),
       KMult(KFloor(KAdd(KMult(KA, KPow(10_e, KB)), 1_e / 2_e)),
             KPow(10_e, KMult(-1_e, KB))));
@@ -258,8 +258,8 @@ bool Arithmetic::ReduceFactorial(Tree* e) {
 
 bool Arithmetic::ExpandFactorial(Tree* e) {
   // A! = Prod(k, 1, A, k)
-  PatternMatching::MatchReplaceSimplify(e, KFact(KA),
-                                        KProduct("k"_e, 1_e, KA, KVarK));
+  PatternMatching::MatchReplaceReduce(e, KFact(KA),
+                                      KProduct("k"_e, 1_e, KA, KVarK));
   /* Explicit the product directly to compute the factorial if the argument was
    * a rational */
   if (e->isProduct() && e->child(2)->isRational()) {
@@ -298,7 +298,7 @@ bool Arithmetic::ReducePermute(Tree* e) {
 
 bool Arithmetic::ExpandPermute(Tree* e) {
   // permute(n, k) -> n!/(n-k)!
-  return PatternMatching::MatchReplaceSimplify(
+  return PatternMatching::MatchReplaceReduce(
       e, KPermute(KA, KB),
       KMult(KFact(KA), KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));
 }
@@ -380,7 +380,7 @@ bool Arithmetic::ExpandBinomial(Tree* e) {
   // binomial(n, k) -> n!/(k!(n-k)!)
   // TODO generalized binomial formula with unknowns ?
   return false;
-  return PatternMatching::MatchReplaceSimplify(
+  return PatternMatching::MatchReplaceReduce(
       e, KBinomial(KA, KB),
       KMult(KFact(KA), KPow(KFact(KB), -1_e),
             KPow(KFact(KAdd(KA, KMult(-1_e, KB))), -1_e)));

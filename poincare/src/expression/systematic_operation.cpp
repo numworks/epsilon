@@ -187,8 +187,8 @@ bool SystematicOperation::ReducePower(Tree* e) {
 
     // After systematic reduction, a power can only have integer index.
     // base^n -> exp(n*ln(base))
-    return PatternMatching::MatchReplaceSimplify(e, KPow(KA, KB),
-                                                 KExp(KMult(KLn(KA), KB)));
+    return PatternMatching::MatchReplaceReduce(e, KPow(KA, KB),
+                                               KExp(KMult(KLn(KA), KB)));
   }
   if (base->isRational()) {
     e->moveTreeOverTree(Rational::IntegerPower(base, n));
@@ -228,12 +228,12 @@ bool SystematicOperation::ReducePower(Tree* e) {
     if (nSign.realSign().canBeStrictlyNegative() &&
         pSign.realSign().canBeStrictlyNegative()) {
       // Add a dependency in case p*n becomes positive (ex: 1/(1/x))
-      return PatternMatching::MatchReplaceSimplify(
+      return PatternMatching::MatchReplaceReduce(
           e, KPow(KPow(KA, KB), KC),
           KDep(KPow(KA, KMult(KB, KC)), KDepList(KPow(KA, KB))));
     }
-    return PatternMatching::MatchReplaceSimplify(e, KPow(KPow(KA, KB), KC),
-                                                 KPow(KA, KMult(KB, KC)));
+    return PatternMatching::MatchReplaceReduce(e, KPow(KPow(KA, KB), KC),
+                                               KPow(KA, KMult(KB, KC)));
   }
   // (w1*...*wk)^n -> w1^n * ... * wk^n
   if (base->isMult()) {
@@ -251,10 +251,10 @@ bool SystematicOperation::ReducePower(Tree* e) {
   }
   return
       // exp(a)^b -> exp(a*b)
-      PatternMatching::MatchReplaceSimplify(e, KPow(KExp(KA), KB),
-                                            KExp(KMult(KA, KB))) ||
+      PatternMatching::MatchReplaceReduce(e, KPow(KExp(KA), KB),
+                                          KExp(KMult(KA, KB))) ||
       // sign(x)^-1 -> dep(sign(x), {x^-1})
-      PatternMatching::MatchReplaceSimplify(
+      PatternMatching::MatchReplaceReduce(
           e, KPow(KSign(KA), -1_e),
           KDep(KSign(KA), KDepList(KPow(KA, -1_e)))) ||
       ReduceRadicalsInDenominator(e);
@@ -724,9 +724,9 @@ bool SystematicOperation::ReduceExp(Tree* e) {
   }
   // This step shortcuts an advanced reduction step.
   // exp(A+ln(B)+C) -> B*exp(A+C)
-  if (child->isAdd() && PatternMatching::MatchReplaceSimplify(
-                            e, KExp(KAdd(KA_s, KLn(KB), KC_s)),
-                            KMult(KB, KExp(KAdd(KA_s, KC_s))))) {
+  if (child->isAdd() &&
+      PatternMatching::MatchReplaceReduce(e, KExp(KAdd(KA_s, KLn(KB), KC_s)),
+                                          KMult(KB, KExp(KAdd(KA_s, KC_s))))) {
     return true;
   }
 
@@ -783,7 +783,7 @@ bool SystematicOperation::ReduceExp(Tree* e) {
      * quite common when manipulating roots of negatives.
      * TODO: Deactivate it if advanced reduction is strong enough. */
     // exp(0.5*(A + πi + B)) -> i*exp(0.5*(A + B))
-    if (PatternMatching::MatchReplaceSimplify(
+    if (PatternMatching::MatchReplaceReduce(
             e, KExp(KMult(1_e / 2_e, KAdd(KA_s, KMult(π_e, i_e), KB_s))),
             KMult(KExp(KMult(1_e / 2_e, KAdd(KA_s, KB_s))), i_e))) {
       return true;

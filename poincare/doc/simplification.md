@@ -88,7 +88,7 @@ $$\frac{sin(random_1())}{cos(random_1())} + \frac{sin(random_1^{new}())}{cos(ran
 
 We want to respect the following properties:
 
-- $random()$ cannot be approximated during simplification
+- $random()$ cannot be approximated during reduction
 - $random()-random()$ should not be reduced to 0
 - $tan(random())$ should be well distributed
 - $sequence(random(),k,10)$ should not be reduced to $random()*sequence(1,k,10)$
@@ -283,7 +283,7 @@ It is expected to:
 
 ### Effects
 
-Systematic reduction can simplify rational operations, convert non-integer powers to their exponential/logarithm form, factorize variables in simple additions or even compute exact derivatives.
+Systematic reduction can reduce rational operations, convert non-integer powers to their exponential/logarithm form, factorize variables in simple additions or even compute exact derivatives.
 
 Dependencies are already bubbled-up at each shallow systematic reduce.
 
@@ -404,7 +404,7 @@ Dependencies are already bubbled-up at each shallow systematic reduce.
 | round(A, B) (with valid A, B) | floor(A×10^B + 1/2)×10^-B |
 | diff(dep(x, {ln(x), z}), x, y) | dep(diff(x, x, y), {diff(ln(x), x, y), z}) |
 
-The following methods directly simplify to their result:
+The following methods directly reduce to their result:
 - listSort(L)
 - median(L)
 - dim(A)
@@ -568,7 +568,7 @@ Examples (non exhaustive list):
 
 
 
-## Simplify dependencies
+## Reduce dependencies
 
 In this step, we remove useless dependencies from a dependency tree:
 - Break up simple dependencies into smaller bits (`dep(..,{x*y})` and `dep(..,{x+y})` become `dep(..,{x ,y})`).

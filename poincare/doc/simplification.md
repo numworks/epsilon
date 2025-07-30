@@ -107,6 +107,11 @@ After random seeding and before projecting local symbols, global functions need 
 
 If a function has been replaced, random nodes are seeded again.
 
+For example if $f(x)=x+x+random()$, the expression $f(random())*f(0)$ has been:
+- Seeded to $f(random_1())*f(0)$
+- Replaced to $(random_1()+random_1()+random())*(0+0+random())$,
+- Seeded again to $(random_1()+random_1()+random_2())*(0+0+random_3())$
+
 ## Local symbols
 
 Local symbols are projected to an id, based on how nested they are in the local contexts, using de Bruijn indexes. Global symbols are preserved.

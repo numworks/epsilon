@@ -150,15 +150,11 @@ void assert_parsed_expression_is(const char *expression,
                                  bool isAssignment) {
   Tree *parsed = parse_expression(expression, context, isAssignment);
   bool test = parsed && parsed->treeIsIdenticalTo(expected);
+  quiz_assert_print_if_failure(test, expression, "parsed and identical",
+                               parsed ? "not identical" : "not parsed");
   if (parsed) {
     parsed->removeTree();
   }
-#if POINCARE_STRICT_TESTS
-  quiz_assert(test);
-#else
-  quiz_tolerate_print_if_failure(test, expression, "parsed and identical",
-                                 parsed ? "not parsed" : "not identical");
-#endif
 }
 
 void assert_parse_to_same_expression(const char *expression1,

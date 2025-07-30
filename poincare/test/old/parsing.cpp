@@ -36,13 +36,9 @@ void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
     }
     tokenTypes++;
   }
-#if POINCARE_STRICT_TESTS
-  quiz_assert(test);
-#else
-  quiz_tolerate_print_if_failure(test, string, "expected token",
-                                 "unexpected token");
+  quiz_assert_print_if_failure(test, string, "expected token",
+                               "unexpected token");
   inputLayout->removeTree();
-#endif
 }
 
 void assert_tokenizes_as_number(const char* string) {

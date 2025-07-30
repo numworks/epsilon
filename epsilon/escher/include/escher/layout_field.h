@@ -9,8 +9,6 @@
 #include <kandinsky/point.h>
 #include <poincare/old/context.h>
 
-#include "layout_preferences.h"
-
 namespace Escher {
 
 class LayoutField : public EditableField {
@@ -79,9 +77,7 @@ class LayoutField : public EditableField {
   virtual KDCoordinate inputViewHeight() const;
 
  protected:
-  bool linearMode() const {
-    return LayoutPreferences::SharedPreferences()->linearMode();
-  }
+  bool linearMode() const { return SharedPreferences->linearMode(); }
   bool insertText(const char* text, bool indentation = false,
                   bool forceCursorRightOfText = false);
   void reload(KDSize previousSize);

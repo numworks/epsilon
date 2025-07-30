@@ -15,7 +15,7 @@
  * packed attribute ensures the compiler will not emit instructions that require
  * the data to be aligned. */
 class __attribute__((packed)) GlobalPreferences
-    : public Escher::LayoutPreferencesInterface {
+    : public Escher::LayoutPreferences::Interface {
   friend OMG::GlobalBox<GlobalPreferences>;
   friend Ion::Storage::FileSystem;
 
@@ -96,7 +96,8 @@ class __attribute__((packed)) GlobalPreferences
       const {
     return countryPreferences().logarithmBasePosition();
   }
-  constexpr Escher::LogarithmKeyEvent logarithmKeyEvent() const override {
+  constexpr Escher::LayoutPreferences::LogarithmKeyEvent logarithmKeyEvent()
+      const override {
     return countryPreferences().logarithmKeyEvent();
   }
   constexpr Poincare::Preferences::ParabolaParameter parabolaParameter() const {

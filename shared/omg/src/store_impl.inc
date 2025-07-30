@@ -21,7 +21,7 @@ void* Store<L, U>::elementAtIndex(int index) const {
 
 template <auto L, auto U>
 void Store<L, U>::makeRoomForElement(size_t neededSize) {
-  assert(neededSize < m_bufferSize);
+  assert(neededSize < maximumSize());
   while (remainingSize() < neededSize) {
     deleteOldestElement();
   }

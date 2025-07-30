@@ -20,6 +20,12 @@ Tree* floatNodeAtIndex(const Tree* tree, int index) {
   return const_cast<Tree*>(firstChild + index * k_nodeSize);
 }
 
+template <typename T>
+FloatList<T> FloatList<T>::Builder() {
+  Expression expr = Expression::Builder(SharedTreeStack->pushList(0));
+  return static_cast<FloatList<T>&>(expr);
+}
+
 /* TODO: Avoid changing a PoolHandle in place. This happens in addValueAtIndex,
  * replaceValueAtIndex and removeValueAtIndex. */
 

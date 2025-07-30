@@ -7,12 +7,9 @@
 namespace Poincare {
 
 template <typename T>
-class FloatList : public List, public DatasetColumn<T> {
+class FloatList : public Expression, public DatasetColumn<T> {
  public:
-  static FloatList<T> Builder() {
-    List list = List::Builder();
-    return static_cast<FloatList<T>&>(list);
-  }
+  static FloatList<T> Builder();
 
   void addValue(T value);
   void replaceValueAtIndex(T value, int index);

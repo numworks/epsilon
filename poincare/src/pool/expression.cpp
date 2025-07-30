@@ -1146,13 +1146,6 @@ Poincare::Layout Point::create2DLayout(
                                   {.KA = child0, .KB = child1});
 }
 
-/* List */
-
-List List::Builder() {
-  Expression expr = Expression::Builder(SharedTreeStack->pushList(0));
-  return static_cast<List&>(expr);
-}
-
 /* Unit */
 
 Expression Unit::Builder(Preferences::AngleUnit angleUnit) {

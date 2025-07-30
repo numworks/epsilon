@@ -35,8 +35,11 @@ void FloatList<T>::addValue(T value) {
 template <typename T>
 void FloatList<T>::replaceValueAtIndex(T value, int index) {
   assert(index < numberOfChildren());
-  Tree* child = floatNodeAtIndex<T>(tree(), index);
+  Tree* clone = tree()->cloneTree();
+  Tree* child = floatNodeAtIndex<T>(clone, index);
   child->nodeValueBlock(0)->set<T>(value);
+  Expression temp = Expression::Builder(clone);
+  *this = static_cast<FloatList<T>&>(temp);
 }
 
 template <typename T>

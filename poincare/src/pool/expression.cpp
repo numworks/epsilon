@@ -1153,23 +1153,6 @@ List List::Builder() {
   return static_cast<List&>(expr);
 }
 
-void List::removeChildAtIndexInPlace(int i) {
-  Tree* clone = tree()->cloneTree();
-  NAry::RemoveChildAtIndex(clone, i);
-  Expression temp = Expression::Builder(clone);
-  *this = static_cast<List&>(temp);
-}
-
-// TODO_PCJ: Rework this and its usage
-void List::addChildAtIndexInPlace(Expression t, int index,
-                                  int currentNumberOfChildren) {
-  Tree* clone = tree()->cloneTree();
-  TreeRef newChild = t.tree()->cloneTree();
-  NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
-  Expression temp = Expression::Builder(clone);
-  *this = static_cast<List&>(temp);
-}
-
 /* Unit */
 
 Expression Unit::Builder(Preferences::AngleUnit angleUnit) {

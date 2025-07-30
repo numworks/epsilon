@@ -75,11 +75,11 @@ void VectorListController::computeAdditionalResults(
   assert(approximateOutput.isMatrix());
   Matrix vector = static_cast<const Matrix&>(approximateOutput);
   assert(vector.isVector());
-  if (vector.tree()->numberOfChildren() != 2) {
+  if (vector.numberOfChildren() != 2) {
     // Vector is not 2D
     return;
   }
-  assert(normalized.tree()->numberOfChildren() == 2);
+  assert(normalized.numberOfChildren() == 2);
   UserExpression angle = UserExpression::Create(
       KACos(KA), {.KA = normalized.cloneChildAtIndex(0)});
   /* ComplexSign needs a reduced expression. Using approximation here, but a

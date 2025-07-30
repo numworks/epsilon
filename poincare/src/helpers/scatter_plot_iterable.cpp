@@ -41,6 +41,6 @@ int ScatterPlotIterable::length() const {
   return m_expression.isUndefined() ? 0
          : m_expression.dimension().isListOfPoints() ||
                  m_expression.dimension().isEmptyList()
-             ? m_expression.tree()->numberOfChildren()
+             ? m_expression.numberOfChildren()
              : 1;
 }

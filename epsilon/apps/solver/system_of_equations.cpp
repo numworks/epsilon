@@ -66,10 +66,10 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
     bool hasApproximateSolutions = !approximateSolutionList.isUninitialized();
     assert(!hasApproximateSolutions ||
            (approximateSolutionList.isList() &&
-            approximateSolutionList.tree()->numberOfChildren() ==
-                exactSolutionList.tree()->numberOfChildren()));
+            approximateSolutionList.numberOfChildren() ==
+                exactSolutionList.numberOfChildren()));
 
-    size_t nSolutions = exactSolutionList.tree()->numberOfChildren();
+    size_t nSolutions = exactSolutionList.numberOfChildren();
     for (size_t i = 0; i < nSolutions; i++) {
       UserExpression approximate = UserExpression();
       if (hasApproximateSolutions) {
@@ -129,8 +129,7 @@ void SystemOfEquations::approximateSolve(Context* context) {
          result.approximateSolutionList.isList() &&
          result.exactSolutionList.isUninitialized());
   // Update member variables for LinearSystem
-  m_numberOfSolutions =
-      result.approximateSolutionList.tree()->numberOfChildren();
+  m_numberOfSolutions = result.approximateSolutionList.numberOfChildren();
   // Copy solutions
   for (size_t i = 0; i < m_numberOfSolutions; i++) {
     double solution = result.approximateSolutionList.cloneChildAtIndex(i)

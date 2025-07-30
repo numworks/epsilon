@@ -79,7 +79,7 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
     }
     if (!isUndefined && f->numberOfSubCurves() == 2) {
       assert(e.isList());
-      assert(static_cast<List&>(e).numberOfChildren() == 2);
+      assert(e.numberOfChildren() == 2);
       isUndefined = e.cloneChildAtIndex(0).isUndefined() &&
                     e.cloneChildAtIndex(1).isUndefined();
     }

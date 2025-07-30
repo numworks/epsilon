@@ -501,7 +501,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       assert(e.dimension().isListOfPoints() || e.dimension().isEmptyList());
       int tInt = t;
       if (static_cast<T>(tInt) != t || tInt < 0 ||
-          tInt >= static_cast<List&>(e).numberOfChildren()) {
+          tInt >= e.numberOfChildren()) {
         return Coordinate2D<T>();
       }
       point = e.cloneChildAtIndex(tInt);
@@ -518,7 +518,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
       assert(subCurveIndex >= 0);
       assert(derivationOrder == 0);
       assert(e.isList());
-      assert(static_cast<List&>(e).numberOfChildren() > subCurveIndex);
+      assert(e.numberOfChildren() > subCurveIndex);
     }
     T value = e.approximateToRealScalarWithValue<T>(t, subCurveIndex);
     if (isAlongY()) {
@@ -1109,7 +1109,7 @@ int ContinuousFunction::Model::numberOfSubCurves(
         expressionReduced(record, Poincare::Context::GlobalContext);
     if (e.isList()) {
       assert(prop.isOfDegreeTwo());
-      return static_cast<List&>(e).numberOfChildren();
+      return e.numberOfChildren();
     }
   }
   return 1;

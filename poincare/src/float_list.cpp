@@ -27,7 +27,7 @@ void FloatList<T>::addValueAtIndex(T value, int index) {
 
 template <typename T>
 void FloatList<T>::replaceValueAtIndex(T value, int index) {
-  assert(index < tree()->numberOfChildren());
+  assert(index < numberOfChildren());
   Tree* child = floatNodeAtIndex<T>(tree(), index);
   child->nodeValueBlock(0)->set<T>(value);
 }

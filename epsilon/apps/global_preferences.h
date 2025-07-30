@@ -224,22 +224,20 @@ class __attribute__((packed)) GlobalPreferences
 
   /* TODO: group all 1 bit settings (showPopUp, font & editionMode) into a
    * struct of size 1byte */
-  // CODE_GUARD(
-  //     global_preferences, 1067168840,  //
-  uint8_t m_version = k_version;
-  BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;
-  I18n::Language m_language = k_defaultLanguage;
-  I18n::Country m_country = k_defaultCountry;
-  bool m_showPopUp = k_defaultShowPopUp;
-  KDFont::Size m_font = k_defaultFont;
-  EditionMode m_editionMode = k_defaultEditionMode;
-  Poincare::Preferences::CalculationPreferences m_calculationPreferences =
-      Poincare::Preferences::k_defaultCalculationPreferences;
-  DimmingTimeType m_dimmingTime = k_defaultDimmingTime;
-
- public:
-  static constexpr int k_objectSize = 20;
-  // )
+  CODE_GUARD(
+      global_preferences, 2443540429,  //
+      uint8_t m_version = k_version;
+      BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;
+      I18n::Language m_language = k_defaultLanguage;
+      I18n::Country m_country = k_defaultCountry;
+      bool m_showPopUp = k_defaultShowPopUp;
+      KDFont::Size m_font = k_defaultFont;
+      EditionMode m_editionMode = k_defaultEditionMode;
+      Poincare::Preferences::CalculationPreferences m_calculationPreferences =
+          Poincare::Preferences::k_defaultCalculationPreferences;
+      DimmingTimeType m_dimmingTime = k_defaultDimmingTime;
+      public
+      : static constexpr int k_objectSize = 20;)
 };
 
 #if PLATFORM_DEVICE

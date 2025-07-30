@@ -84,12 +84,15 @@ class Store {
   int m_numberOfElements;
 };
 
+inline void _doNothing() {}
+using StoreNoLock = Store<_doNothing, _doNothing>;
+
 template <class T>
-class StoreT : public Store<> {
+class StoreT : public StoreNoLock {
  public:
-  using Store::Store;
+  using StoreNoLock::Store;
   const T* elementAtIndex(int index) const {
-    return static_cast<const T*>(Store::elementAtIndex(index));
+    return static_cast<const T*>(this->StoreNoLock::elementAtIndex(index));
   }
 };
 

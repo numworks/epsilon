@@ -180,6 +180,47 @@ Tree* parse_and_reduce(const char* input, bool beautify) {
   return e;
 }
 
+void assert_parsed_expression_is(const char* expression,
+                                 const Poincare::Internal::Tree* expected,
+                                 bool isAssignment) {
+  Shared::GlobalContext context;
+  assert_parsed_expression_is(expression, expected, &context, isAssignment);
+}
+
+void assert_parsed_expression_is(const char* expression,
+                                 const Poincare::Internal::Tree* expected,
+                                 Shared::GlobalContext* context,
+                                 bool isAssignment) {
+  Tree* parsed = parse(expression, context, isAssignment);
+  bool test = parsed && parsed->treeIsIdenticalTo(expected);
+  quiz_assert_print_if_failure(test, expression, "parsed and identical",
+                               parsed ? "not identical" : "not parsed");
+  if (parsed) {
+    parsed->removeTree();
+  }
+}
+
+void assert_parse_to_same_expression(const char* expression1,
+                                     const char* expression2,
+                                     Shared::GlobalContext* globalContext) {
+  Tree* e1 = parse(expression1, globalContext);
+  Tree* e2 = parse(expression2, globalContext);
+  quiz_assert(e1);
+  quiz_assert(e2);
+  quiz_assert(e1->treeIsIdenticalTo(e2));
+}
+
+void assert_expression_serializes_and_parses_to(
+    const Poincare::Internal::Tree* expression,
+    const Poincare::Internal::Tree* result) {
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  Tree* layout = Layouter::LayoutExpression(expression->cloneTree(), true);
+  LayoutSerializer::Serialize(layout, buffer);
+  layout->removeTree();
+  assert_parsed_expression_is(buffer, result);
+}
+
 void assert_text_not_parsable(const char* input, Poincare::Context* context) {
   bool parsed = private_parse(input, context, false, true);
   quiz_assert(!parsed);

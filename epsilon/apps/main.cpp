@@ -59,6 +59,7 @@ void ion_main(int argc, const char* const argv[]) {
   // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
   Poincare::Init();
   Apps::Init();
+  // NOTE: GlobalPreferences object is initialized in Apps::Init
   Escher::Init(GlobalPreferences::SharedGlobalPreferences());
 
 #if EPSILON_GETOPT

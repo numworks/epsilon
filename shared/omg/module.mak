@@ -19,7 +19,6 @@ _sources_omg_all := $(addprefix src/, \
   float.cpp \
   list.cpp \
   memory.cpp \
-  store.cpp \
   unicode_helper.cpp \
 ) $(_sources_omg_decompress) $(_sources_omg_print) $(_sources_omg_utf8)
 

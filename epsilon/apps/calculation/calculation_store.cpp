@@ -33,7 +33,8 @@ static void enhancePushedExpression(UserExpression& expression) {
 // Public
 
 CalculationStore::CalculationStore(char* buffer, size_t bufferSize)
-    : Store(buffer, bufferSize),
+    : Store<Ion::CircuitBreaker::lock, Ion::CircuitBreaker::unlock>(buffer,
+                                                                    bufferSize),
       m_inUsePreferences(*MathPreferences::SharedPreferences()) {}
 
 OMG::ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(

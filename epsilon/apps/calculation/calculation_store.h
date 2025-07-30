@@ -3,6 +3,7 @@
 
 #include <apps/constant.h>
 #include <apps/math_preferences.h>
+#include <ion/circuit_breaker.h>
 #include <omg/expiring_pointer.h>
 #include <omg/store.h>
 #include <poincare/old/pool_variable_context.h>
@@ -27,7 +28,8 @@ struct OutputExpressions {
  * layout.
  */
 
-class CalculationStore : OMG::Store {
+class CalculationStore
+    : OMG::Store<Ion::CircuitBreaker::lock, Ion::CircuitBreaker::unlock> {
  public:
   CalculationStore(char* buffer, size_t bufferSize);
 

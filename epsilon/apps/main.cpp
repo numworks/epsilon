@@ -12,6 +12,16 @@
 #include <escher/layout_preferences.h>
 #include <ion.h>
 
+class DummyLayoutPreferences : public Escher::LayoutPreferencesInterface {
+  bool linearMode() const override { return false; };
+  Escher::LogarithmKeyEvent logarithmKeyEvent() const override {
+    return Escher::LogarithmKeyEvent::Default;
+  };
+  Poincare::Preferences::PrintFloatMode displayMode() const override {
+    return Poincare::Preferences::PrintFloatMode::Decimal;
+  };
+};
+
 char digit_to_char(int n) { return '0' + (n % 10); }
 
 void ion_main(int argc, const char* const argv[]) {
@@ -21,7 +31,7 @@ void ion_main(int argc, const char* const argv[]) {
   constexpr int bufsiz = 32;
   char txtbuf[bufsiz];
 
-  Escher::DummyLayoutPreferences prefs;
+  DummyLayoutPreferences prefs;
   Escher::Init(&prefs);
 
   while (1) {

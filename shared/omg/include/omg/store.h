@@ -84,6 +84,15 @@ class Store {
   int m_numberOfElements;
 };
 
+template <class T>
+class StoreT : public Store<> {
+ public:
+  using Store::Store;
+  const T* elementAtIndex(int index) const {
+    return static_cast<const T*>(Store::elementAtIndex(index));
+  }
+};
+
 }  // namespace OMG
 
 #include <omg/src/store_impl.inc>

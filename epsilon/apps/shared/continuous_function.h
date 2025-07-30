@@ -123,7 +123,7 @@ class ContinuousFunction : public Function {
   }
   // Update plotType as well as tMin and tMax values.
   void updateModel(Poincare::Context* context, bool wasCartesian);
-  Poincare::SystemFunction expressionApproximated(
+  Poincare::PreparedFunction expressionApproximated(
       Poincare::Context* context, int derivationOrder = 0) const {
     return m_model.expressionApproximated(this, context, derivationOrder);
   }
@@ -267,7 +267,7 @@ class ContinuousFunction : public Function {
     return m_model.expressionDerivateReduced(this, context, derivationOrder);
   }
   // Return the reduced expression of the slope (dy/dx)
-  Poincare::SystemFunctionScalar expressionSlopeReduced(
+  Poincare::PreparedFunctionScalar expressionSlopeReduced(
       Poincare::Context* context) const {
     return m_model.expressionSlopeReduced(this, context);
   }
@@ -382,7 +382,7 @@ class ContinuousFunction : public Function {
         Poincare::Context* context) const override;
     /* Return the expression reduced with approximated non symbols for faster
      * plot */
-    Poincare::SystemFunction expressionApproximated(
+    Poincare::PreparedFunction expressionApproximated(
         const Ion::Storage::Record* record, Poincare::Context* context,
         int derivationOrder = 0) const;
     // Return the expression reduced, and computes plotType
@@ -409,7 +409,7 @@ class ContinuousFunction : public Function {
         const Ion::Storage::Record* record, Poincare::Context* context,
         int derivationOrder) const;
     // Return the slope (dy/dx)
-    Poincare::SystemFunctionScalar expressionSlopeReduced(
+    Poincare::PreparedFunctionScalar expressionSlopeReduced(
         const Ion::Storage::Record* record, Poincare::Context* context) const;
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
@@ -447,12 +447,12 @@ class ContinuousFunction : public Function {
      * m_expressionForAnalysis is used for analysis.
      */
     mutable Poincare::SystemExpression m_expressionForAnalysis;
-    mutable Poincare::SystemFunction m_expressionApproximated;
+    mutable Poincare::PreparedFunction m_expressionApproximated;
     mutable Poincare::SystemExpression m_expressionFirstDerivate;
-    mutable Poincare::SystemFunction m_expressionFirstDerivateApproximated;
+    mutable Poincare::PreparedFunction m_expressionFirstDerivateApproximated;
     mutable Poincare::SystemExpression m_expressionSecondDerivate;
-    mutable Poincare::SystemFunction m_expressionSecondDerivateApproximated;
-    mutable Poincare::SystemFunctionScalar m_expressionSlope;
+    mutable Poincare::PreparedFunction m_expressionSecondDerivateApproximated;
+    mutable Poincare::PreparedFunctionScalar m_expressionSlope;
   };
 
   // Return model pointer

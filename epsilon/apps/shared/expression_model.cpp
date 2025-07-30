@@ -116,7 +116,7 @@ SystemExpression ExpressionModel::expressionReduced(
       }
       /* TODO_PCJ not the appropriate place but sequences use their
        * expressionReduced to approximate directly */
-      m_expression = m_expression.getSystemFunction(Function::k_unknownName);
+      m_expression = m_expression.getPreparedFunction(Function::k_unknownName);
     }
   }
   return m_expression;

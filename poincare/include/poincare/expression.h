@@ -40,11 +40,11 @@ using ProjectedExpression = NoContextExpression;
 // Must have been systematic simplified
 using SystemExpression = ProjectedExpression;
 // Can depend on a Variable and has been prepared for approximation
-using SystemFunction = NoContextExpression;
-// SystemFunction with Scalar approximation
-using SystemFunctionScalar = SystemFunction;
-// SystemFunction with Point approximation
-using SystemFunctionPoint = SystemFunction;
+using PreparedFunction = NoContextExpression;
+// PreparedFunction with Scalar approximation
+using PreparedFunctionScalar = PreparedFunction;
+// PreparedFunction with Point approximation
+using PreparedFunctionPoint = PreparedFunction;
 
 class Dimension {
  public:
@@ -224,8 +224,8 @@ class Expression : public PoolHandle {
    * approximateToPointOrRealScalarWithValue Returns undef if the expression's
    * dimension is not point or scalar. If scalarsOnly = true, returns undef if
    * it's a point or a list. */
-  SystemFunction getSystemFunction(const char* symbolName,
-                                   bool scalarsOnly = false) const;
+  PreparedFunction getPreparedFunction(const char* symbolName,
+                                       bool scalarsOnly = false) const;
   // Approximate real scalar or unit
   template <typename T>
   T approximateToRealScalar(

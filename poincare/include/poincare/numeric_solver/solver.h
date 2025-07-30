@@ -11,7 +11,7 @@
 #include <algorithm>
 #include <cmath>
 
-/* TODO_PCJ: Change signatures to systemFunctions instead of Trees. */
+/* TODO_PCJ: Change signatures to preparedFunctions instead of Trees. */
 namespace Poincare {
 
 class Context;

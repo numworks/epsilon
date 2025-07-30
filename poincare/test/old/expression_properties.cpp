@@ -443,7 +443,7 @@ void assert_is_continuous_on_interval(const char* input, float x1, float x2,
   bool reductionFailure = false;
   SystemExpression e2 = e1.cloneAndReduce(projectionContext, &reductionFailure);
   quiz_assert(!reductionFailure);
-  SystemFunction e3 = e2.getSystemFunction("x", true);
+  PreparedFunction e3 = e2.getPreparedFunction("x", true);
   quiz_assert_print_if_failure(
       !isContinuous ==
           Continuity::IsDiscontinuousOnInterval<float>(e3.tree(), x1, x2),

@@ -38,6 +38,7 @@ define generate_coverage_info
 	lcov $(COVERAGE_lcov_args) -j 32 --capture --directory $2 --output-file $2/$1.info \
 	--rc function_coverage=0 --rc geninfo_unexecuted_blocks=1 \
 	--rc omit_lines=default: --rc omit_lines=OMG::unreachable
+	python3 tools/metrics/resolve_symlinks_in_info.py $2/$1.info
 endef
 
 # rule_for_coverage,<coverage_dir>

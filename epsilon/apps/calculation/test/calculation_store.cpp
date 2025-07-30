@@ -115,15 +115,17 @@ QUIZ_CASE(calculation_store) {
   quiz_assert(store.remainingSize() == store.maximumSize());
 }
 
-void assertAnsIs(const char* input, const char* expectedAnsInputText,
-                 Context* context, CalculationStore* store) {
+void assertAnsIs(
+    const char* input, const char* expectedAnsInputText, Context* context,
+    CalculationStore* store,
+    Poincare::Preferences::PrintFloatMode displayMode = ScientificMode) {
   pushAndProcessCalculation(store, input, context);
   OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   pushAndProcessCalculation(store, "Ans", context);
   lastCalculation = store->calculationAtIndex(0);
   assert_expression_serializes_to(lastCalculation->input(),
-                                  expectedAnsInputText);
+                                  expectedAnsInputText, displayMode);
 }
 
 QUIZ_CASE(calculation_ans) {
@@ -151,16 +153,21 @@ QUIZ_CASE(calculation_ans) {
   lastCalculation = store.calculationAtIndex(0);
   quiz_assert(lastCalculation->displayOutput() ==
               DisplayOutput::ExactAndApproximateToggle);
-  assert_expression_serializes_to(lastCalculation->approximateOutput(),
-                                  "2.6366666666667");
+  assert_expression_serializes_to(
+      lastCalculation->approximateOutput(), "2.6366666666667", ScientificMode,
+      Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
 
   assertAnsIs("1+1→a", "2", &globalContext, &store);
   assertAnsIs("0^0→a", "0^0", &globalContext, &store);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   assertAnsIs("1+1", "2", &globalContext, &store);
-  assertAnsIs("13.3", "13.3", &globalContext, &store);
-  assertAnsIs("√(-1-1)", "√(-1-1)", &globalContext, &store);
+  assertAnsIs("13.3", "13.3", &globalContext, &store, DecimalMode);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Cartesian);
+  assertAnsIs("√(-1-1)", "√(2)×i", &globalContext, &store);
+  MathPreferences::SharedPreferences()->setComplexFormat(
+      Preferences::ComplexFormat::Real);
   assertAnsIs("int(diff(x^2,x,x),x,0,1)", "int(diff(x^2,x,x),x,0,1)",
               &globalContext, &store);
   assertAnsIs("int(diff(x^2.1,x,x),x,0,1)", "int(diff(x^2.1,x,x),x,0,1)",
@@ -185,7 +192,7 @@ QUIZ_CASE(calculation_ans) {
   pushAndProcessCalculation(&store, "ans→m*s^-2", &globalContext);
   lastCalculation = store.calculationAtIndex(0);
   assert_expression_serializes_to(lastCalculation->exactOutput(),
-                                  "9.80665×_m×_s^\U00000012-2\U00000013");
+                                  "9.80665×_m×_s^(-2)");
 
   pushAndProcessCalculation(&store, "4546249×1.0071^9", &globalContext);
   pushAndProcessCalculation(&store, "Ans×1.0071^9", &globalContext);

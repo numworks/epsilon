@@ -20,8 +20,8 @@ void HomogeneityTest::init() {
     m_expectedValues[i] = Poincare::FloatList<double>::Builder();
     m_contributions[i] = Poincare::FloatList<double>::Builder();
     for (int j = 0; j < k_maxNumberOfRows; j++) {
-      m_expectedValues[i].addValueAtIndex(k_undefinedValue, j);
-      m_contributions[i].addValueAtIndex(k_undefinedValue, j);
+      m_expectedValues[i].addValue(k_undefinedValue);
+      m_contributions[i].addValue(k_undefinedValue);
     }
   }
 }

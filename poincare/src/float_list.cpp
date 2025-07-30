@@ -24,8 +24,7 @@ Tree* floatNodeAtIndex(const Tree* tree, int index) {
  * replaceValueAtIndex and removeValueAtIndex. */
 
 template <typename T>
-void FloatList<T>::addValueAtIndex(T value, int index) {
-  assert(index <= numberOfChildren());
+void FloatList<T>::addValue(T value) {
   Tree* clone = tree()->cloneTree();
   TreeRef newChild = SharedTreeStack->pushFloat(value);
   NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);

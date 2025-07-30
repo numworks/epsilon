@@ -31,7 +31,7 @@ GoodnessTest::GoodnessTest() {
 void GoodnessTest::init() {
   m_contributions = Poincare::FloatList<double>::Builder();
   for (int j = 0; j < k_maxNumberOfRows; j++) {
-    m_contributions.addValueAtIndex(k_undefinedValue, j);
+    m_contributions.addValue(k_undefinedValue);
   }
 }
 

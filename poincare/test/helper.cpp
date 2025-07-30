@@ -189,7 +189,7 @@ void assert_parsed_expression_is(const char* expression,
 
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
-                                 Shared::GlobalContext* context,
+                                 Poincare::Context* context,
                                  bool isAssignment) {
   Tree* parsed = parse(expression, context, isAssignment);
   bool test = parsed && parsed->treeIsIdenticalTo(expected);
@@ -202,9 +202,9 @@ void assert_parsed_expression_is(const char* expression,
 
 void assert_parse_to_same_expression(const char* expression1,
                                      const char* expression2,
-                                     Shared::GlobalContext* globalContext) {
-  Tree* e1 = parse(expression1, globalContext);
-  Tree* e2 = parse(expression2, globalContext);
+                                     Poincare::Context* context) {
+  Tree* e1 = parse(expression1, context);
+  Tree* e2 = parse(expression2, context);
   quiz_assert(e1);
   quiz_assert(e2);
   quiz_assert(e1->treeIsIdenticalTo(e2));

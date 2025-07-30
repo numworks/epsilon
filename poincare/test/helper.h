@@ -1,7 +1,6 @@
 #ifndef POINCAREJ_TEST_HELPER_H
 #define POINCAREJ_TEST_HELPER_H
 
-#include <apps/shared/global_context.h>
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
@@ -155,11 +154,11 @@ void assert_parsed_expression_is(const char* expression,
                                  bool isAssignment = false);
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
-                                 Shared::GlobalContext* globalContext,
+                                 Poincare::Context* context,
                                  bool isAssignment = false);
 void assert_parse_to_same_expression(const char* expression1,
                                      const char* expression2,
-                                     Shared::GlobalContext* globalContext);
+                                     Poincare::Context* context);
 
 void assert_expression_serializes_and_parses_to(
     const Poincare::Internal::Tree* expression,

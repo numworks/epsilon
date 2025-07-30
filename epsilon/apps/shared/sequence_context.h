@@ -11,7 +11,7 @@ namespace Shared {
 
 class Sequence;
 
-class SequenceContext : public Poincare::ContextWithParent {
+class SequenceContext final : public Poincare::ContextWithParent {
   friend class Sequence;
 
  public:

@@ -40,11 +40,6 @@ const char * BigOverflowedIntegerString() {
   return s;
 }
 
-const char * MaxParsedIntegerString() {
-  static const char * s = "999999999999999999999999999999"; // 10^k_maxNumberOfParsedDigitsBase10 - 1
-  return s;
-}
-
 const char * ApproximatedParsedIntegerString() {
   static const char * s = "1000000000000000000000000000000"; // 10^k_maxNumberOfParsedDigitsBase10
   return s;

@@ -7,9 +7,6 @@
 
 namespace Poincare {
 
-class Expression;
-class ContextWithParent;
-
 class EmptyContext : public Context {
  public:
   // Context

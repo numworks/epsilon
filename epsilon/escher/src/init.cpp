@@ -6,8 +6,7 @@
 namespace Escher {
 
 void Init(const LayoutPreferences::Interface* preferences) {
-  assert(preferences);
-  SharedPreferences = preferences;
+  LayoutPreferences::Init(preferences);
   TextCursorView::InitSharedCursor();
 }
 

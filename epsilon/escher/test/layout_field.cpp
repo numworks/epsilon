@@ -19,13 +19,9 @@ void assert_events_lead_to_selection(
   field.handleEvent(Ion::Events::Copy);
   bool result = strcmp(Clipboard::SharedClipboard()->storedText(),
                        selectedParsedAndSerializedText) == 0;
-#if POINCARE_STRICT_TESTS
-  quiz_assert(result);
-#else
-  quiz_tolerate_print_if_failure(result, selectedParsedAndSerializedText,
-                                 selectedParsedAndSerializedText,
-                                 Clipboard::SharedClipboard()->storedText());
-#endif
+  quiz_assert_print_if_failure(result, selectedParsedAndSerializedText,
+                               selectedParsedAndSerializedText,
+                               Clipboard::SharedClipboard()->storedText());
 }
 
 QUIZ_CASE(escher_layout_field_select_left_right) {
@@ -103,7 +99,7 @@ QUIZ_CASE(escher_layout_field_select_left_right) {
         Ion::Events::Right,     Ion::Events::Plus,      Ion::Events::Seven,
         Ion::Events::Eight,     Ion::Events::ShiftLeft, Ion::Events::ShiftLeft,
         Ion::Events::ShiftLeft, Ion::Events::ShiftLeft};
-    assert_events_lead_to_selection(events, eventsCount, "g34/h56+78");
+    assert_events_lead_to_selection(events, eventsCount, "(g34/h56)+78");
   }
   {
     /* Select in a horizontal layout with a fraction, starting inside the
@@ -209,8 +205,7 @@ QUIZ_CASE(escher_layout_field_select_up_down) {
 
     };
     assert_events_lead_to_selection(events, eventsCount - 1, "ghi/klm");
-    assert_events_lead_to_selection(events, eventsCount,
-                                    "12345/\x12ghi/klm\x13");
+    assert_events_lead_to_selection(events, eventsCount, "12345/(ghi/klm)");
   }
 }
 

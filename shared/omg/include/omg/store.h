@@ -7,10 +7,10 @@
 namespace OMG {
 
 /* Data structure to store a stack of variable-sized elements in one big buffer.
- * The elements are stored one after another while pointers to the end of each
- * element are stored at the end of the buffer, in the opposite direction.  By
- * doing so, we can memoize every element entered while not limiting the number
- * of element stored in the buffer.
+ * The elements are stored one after another while offsets to reach the end of
+ * each element are stored at the end of the buffer, in the opposite direction.
+ * By doing so, we can memoize every element entered while not limiting the
+ * number of element stored in the buffer.
  *
  * If the remaining space is too small for storing a new element, we delete the
  * oldest one.
@@ -31,8 +31,7 @@ with p_i = m_buffer + o_i
 
 */
 
-/* Lock and Unlock are functions to call to prevent interruptions in critical
- * parts. */
+// Lock and Unlock are callbacks to disable interruptions during critical parts.
 
 template <auto Lock = []() {}, auto Unlock = []() {}>
 class Store {

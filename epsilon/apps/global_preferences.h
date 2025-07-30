@@ -2,6 +2,7 @@
 #define APPS_GLOBAL_PREFERENCES_H
 
 #include <apps/i18n.h>
+#include <escher/layout_preferences.h>
 #include <escher/layout_preferences_enum.h>
 #include <ion.h>
 #include <kandinsky/font.h>
@@ -14,7 +15,8 @@
 /* GlobalPreferences live in the Storage, which does not enforce alignment. The
  * packed attribute ensures the compiler will not emit instructions that require
  * the data to be aligned. */
-class __attribute__((packed)) GlobalPreferences {
+class __attribute__((packed)) GlobalPreferences
+    : public Escher::LayoutPreferencesInterface {
   friend OMG::GlobalBox<GlobalPreferences>;
   friend Ion::Storage::FileSystem;
 
@@ -95,7 +97,7 @@ class __attribute__((packed)) GlobalPreferences {
       const {
     return countryPreferences().logarithmBasePosition();
   }
-  constexpr Escher::LogarithmKeyEvent logarithmKeyEvent() const {
+  constexpr Escher::LogarithmKeyEvent logarithmKeyEvent() const override {
     return countryPreferences().logarithmKeyEvent();
   }
   constexpr Poincare::Preferences::ParabolaParameter parabolaParameter() const {
@@ -142,6 +144,9 @@ class __attribute__((packed)) GlobalPreferences {
     Edition1D = 1,
   };
   EditionMode editionMode() const { return m_editionMode; }
+  bool linearMode() const override {
+    return editionMode() == EditionMode::Edition1D;
+  }
   void setEditionMode(EditionMode editionMode) { m_editionMode = editionMode; }
 
   // In milliseconds
@@ -156,7 +161,7 @@ class __attribute__((packed)) GlobalPreferences {
   void setAngleUnit(Poincare::Preferences::AngleUnit angleUnit) {
     m_calculationPreferences.angleUnit = angleUnit;
   }
-  Poincare::Preferences::PrintFloatMode displayMode() const {
+  Poincare::Preferences::PrintFloatMode displayMode() const override {
     return m_calculationPreferences.displayMode;
   }
   void setDisplayMode(Poincare::Preferences::PrintFloatMode displayMode) {
@@ -233,7 +238,7 @@ class __attribute__((packed)) GlobalPreferences {
   DimmingTimeType m_dimmingTime = k_defaultDimmingTime;
 
  public:
-  static constexpr int k_objectSize = 16;
+  static constexpr int k_objectSize = 20;
   // )
 };
 

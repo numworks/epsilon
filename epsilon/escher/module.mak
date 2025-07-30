@@ -43,6 +43,7 @@ $(call create_module,escher,1,$(addprefix src/, \
   input_view_controller.cpp \
   key_view.cpp \
   layout_field.cpp \
+  layout_preferences.cpp \
   list_view_data_source.cpp \
   menu_cell.cpp \
   menu_cell_with_editable_text.cpp \

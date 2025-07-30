@@ -16,8 +16,8 @@ class GlobalPreferencesTestBuilder {
 void init() {
   // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
   Poincare::Init();
-  Escher::Init();
   Apps::Init();
+  Escher::Init(GlobalPreferences::SharedGlobalPreferences());
 
   // Initialize the exam mode to "Off" before running the tests
   Poincare::Preferences::SharedPreferences()->examMode();

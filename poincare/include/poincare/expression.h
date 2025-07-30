@@ -451,10 +451,6 @@ class Point final : public Expression {
 class List : public Expression {
  public:
   static List Builder();
-
-  void removeChildAtIndexInPlace(int i);
-  void addChildAtIndexInPlace(Expression t, int index,
-                              int currentNumberOfChildren);
 };
 
 class Unit final {

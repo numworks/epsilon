@@ -234,7 +234,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/layout_to_expression.cpp \
   old/matrix.cpp \
   old/numeric_solver.cpp \
-  old/parsing.cpp \
   old/print.cpp \
   old/print_float.cpp \
   old/range.cpp \

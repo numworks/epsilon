@@ -1,6 +1,7 @@
 #ifndef POINCAREJ_TEST_HELPER_H
 #define POINCAREJ_TEST_HELPER_H
 
+#include <apps/shared/global_context.h>
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
@@ -148,6 +149,21 @@ Poincare::Internal::Tree* parse(const char* input,
 
 Poincare::Internal::Tree* parse_and_reduce(const char* input,
                                            bool beautify = false);
+
+void assert_parsed_expression_is(const char* expression,
+                                 const Poincare::Internal::Tree* expected,
+                                 bool isAssignment = false);
+void assert_parsed_expression_is(const char* expression,
+                                 const Poincare::Internal::Tree* expected,
+                                 Shared::GlobalContext* globalContext,
+                                 bool isAssignment = false);
+void assert_parse_to_same_expression(const char* expression1,
+                                     const char* expression2,
+                                     Shared::GlobalContext* globalContext);
+
+void assert_expression_serializes_and_parses_to(
+    const Poincare::Internal::Tree* expression,
+    const Poincare::Internal::Tree* result);
 
 void assert_text_not_parsable(const char* input,
                               Poincare::Context* context = nullptr);

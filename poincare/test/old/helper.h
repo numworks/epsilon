@@ -97,17 +97,6 @@ Poincare::Internal::Tree* parse_expression(const char* expression,
                                            Poincare::Context* context,
                                            bool isAssignment = false);
 
-void assert_parsed_expression_is(const char* expression,
-                                 const Poincare::Internal::Tree* expected,
-                                 bool isAssignment = false);
-void assert_parsed_expression_is(const char* expression,
-                                 const Poincare::Internal::Tree* expected,
-                                 Shared::GlobalContext* globalContext,
-                                 bool isAssignment = false);
-void assert_parse_to_same_expression(const char* expression1,
-                                     const char* expression2,
-                                     Shared::GlobalContext* globalContext);
-
 // Simplification
 
 void assert_reduce_and_store(
@@ -159,10 +148,6 @@ void assert_expression_serializes_to(
     const Poincare::Internal::Tree* expression, const char* serialization,
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
-
-void assert_expression_serializes_and_parses_to(
-    const Poincare::Internal::Tree* expression,
-    const Poincare::Internal::Tree* result);
 
 void assert_expression_parses_and_serializes_to(
     const char* expression, const char* result,

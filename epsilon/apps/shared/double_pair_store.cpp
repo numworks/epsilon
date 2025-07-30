@@ -49,7 +49,7 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
       if (!e.isList()) {
         continue;
       }
-      setList(static_cast<List&>(e), s, i, true);
+      setList(e, s, i, true);
     }
     updateSeries(s, delayUpdate);
   }
@@ -128,7 +128,8 @@ bool DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate,
   return updateSeries(series, delayUpdate);
 }
 
-bool DoublePairStore::setList(List& list, int series, int i, bool delayUpdate,
+bool DoublePairStore::setList(Expression& list, int series, int i,
+                              bool delayUpdate,
                               bool setOtherColumnToDefaultIfEmpty) {
   /* Approximate the list to turn it into list of doubles since we do not
    * want to work with exact expressions in Regression and Statistics.*/

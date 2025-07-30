@@ -447,12 +447,6 @@ class Point final : public Expression {
                         int significantDigits, Context* context) const;
 };
 
-// TODO_PCJ: Actually implement methods. Assert its block type is List
-class List : public Expression {
- public:
-  static List Builder();
-};
-
 class Unit final {
  public:
   // Build default unit for given angleUnit preference.

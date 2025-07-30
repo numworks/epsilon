@@ -220,8 +220,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
      * same time in the pool. We might be working with huge lists right now, so
      * it's better to get out of the scope and destroy the list before storing
      * the data of the double pair store in the storage. */
-    store()->setList(static_cast<Poincare::List&>(reduced), *series, *column,
-                     true, true);
+    store()->setList(reduced, *series, *column, true, true);
     return FillColumnStatus::Success;
   }
   /* Formula isn't a list and has already been reduced with context, which is no

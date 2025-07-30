@@ -545,42 +545,36 @@ QUIZ_CASE(poincare_parsing_identifiers) {
   assert_parsed_expression_is("arccot^(9)(1)", KPow(KACot(1_e), 9_e));
   assert_parsed_expression_is("arcsec^(10)(1)", KPow(KASec(1_e), 10_e));
   assert_parsed_expression_is("arccsc^(11)(1)", KPow(KACsc(1_e), 11_e));
-#if 0
-  assert_parsed_expression_is("cosh^(-2)(1)", KPow(KCosH(1_e), KOpposite(2_e)));
-  assert_parsed_expression_is("sinh^(-3)(1)", KPow(KSinH(1_e), KOpposite(3_e)));
-  assert_parsed_expression_is("tanh^(-4)(1)", KPow(KTanH(1_e), KOpposite(4_e)));
-  assert_parsed_expression_is("arsinh^(-5)(1)",
-                              KPow(KArSinH(1_e), KOpposite(5_e)));
-  assert_parsed_expression_is("arcosh^(-6)(1)",
-                              KPow(KArCosH(1_e), KOpposite(6_e)));
-  assert_parsed_expression_is("artanh^(-7)(1)",
-                              KPow(KArTanH(1_e), KOpposite(7_e)));
-#endif
+  assert_parsed_expression_is("cosh^(-2)(1)", KPow(KCosH(1_e), -2_e));
+  assert_parsed_expression_is("sinh^(-3)(1)", KPow(KSinH(1_e), -3_e));
+  assert_parsed_expression_is("tanh^(-4)(1)", KPow(KTanH(1_e), -4_e));
+  assert_parsed_expression_is("arsinh^(-5)(1)", KPow(KArSinH(1_e), -5_e));
+  assert_parsed_expression_is("arcosh^(-6)(1)", KPow(KArCosH(1_e), -6_e));
+  assert_parsed_expression_is("artanh^(-7)(1)", KPow(KArTanH(1_e), -7_e));
+
   assert_text_not_parsable("ln^(2)(2)");
 
-  // Custom identifiers with storage
-  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      "ab", "exp", "", 0);
-  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      "bacos", "func", "", 0);
-  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      "azfoo", "exp", "", 0);
-  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      "foobar", "func", "", 0);
-  Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      "a3b", "exp", "", 0);
-  assert_parsed_expression_is("xyz", KMult("x"_e, "y"_e, "z"_e));
-  assert_parsed_expression_is("xy123z", KMult("x"_e, "y123"_e, "z"_e));
-  assert_parsed_expression_is("3→xyz", KStore(3_e, "xyz"_e));
-  assert_parsed_expression_is("ab", "ab"_e);
-  assert_parsed_expression_is("ab3", KMult("a"_e, "b3"_e));
-  assert_parsed_expression_is("a3b", "a3b"_e);
-  assert_parsed_expression_is("aacos(x)", KMult("a"_e, KACos("x"_e)));
-#if 0
-  assert_parsed_expression_is("bacos(x)", KFun<"bacos">("x"_e));
+  Shared::GlobalContext globalContext;
+  store("0→ab", &globalContext);
+  store("x→bacos(x)", &globalContext);
+  store("0→azfoo", &globalContext);
+  store("x→foobar(x)", &globalContext);
+  store("0→a3b", &globalContext);
+  assert_parsed_expression_is("xyz", KMult("x"_e, "y"_e, "z"_e),
+                              &globalContext);
+  assert_parsed_expression_is("xy123z", KMult("x"_e, "y123"_e, "z"_e),
+                              &globalContext);
+  assert_parsed_expression_is("3→xyz", KStore(3_e, "xyz"_e), &globalContext);
+  assert_parsed_expression_is("ab", "ab"_e, &globalContext);
+  assert_parsed_expression_is("ab3", KMult("a"_e, "b3"_e), &globalContext);
+  assert_parsed_expression_is("a3b", "a3b"_e, &globalContext);
+  assert_parsed_expression_is("aacos(x)", KMult("a"_e, KACos("x"_e)),
+                              &globalContext);
+  assert_parsed_expression_is("bacos(x)", KFun<"bacos">("x"_e), &globalContext);
   assert_parsed_expression_is("azfoobar(x)",
-                              KMult("a"_e, "z"_e, KFun<"foobar">("x"_e)));
-#endif
+                              KMult("a"_e, "z"_e, KFun<"foobar">("x"_e)),
+                              &globalContext);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
 QUIZ_CASE(poincare_parsing_derivative_apostrophe) {
@@ -766,9 +760,8 @@ QUIZ_CASE(poincare_parsing_implicit_multiplication) {
   assert_parsed_expression_is("1!2", KMult(KFact(1_e), 2_e));
   assert_parsed_expression_is("2e^(3)",
                               KMult(2_e, KPow(e_e, KParentheses(3_e))));
-#if 0
-  assert_parsed_expression_is("(2^3)3", KMult(KPow(2_e, 3_e), 3_e));
-#endif
+  assert_parsed_expression_is("(2^3)3",
+                              KMult(KParentheses(KPow(2_e, 3_e)), 3_e));
   assert_parsed_expression_is("[[1]][[2]]",
                               KMult(KMatrix<1, 1>(1_e), KMatrix<1, 1>(2_e)));
   assert_parsed_expression_is("2{1,2}", KMult(2_e, KList(1_e, 2_e)));

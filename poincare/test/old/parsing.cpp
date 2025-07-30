@@ -314,60 +314,23 @@ QUIZ_CASE(poincare_parsing_lists_access) {
 }
 
 QUIZ_CASE(poincare_parsing_constants) {
-#if 0
-  for (ConstantNode::ConstantInfo info : ConstantNode::k_constants) {
-    for (const char* constantNameAlias : info.m_aliasesList) {
-      assert_tokenizes_as_constant(constantNameAlias);
-    }
-  }
-#endif
+  assert_tokenizes_as_constant("_c");
+  assert_tokenizes_as_constant("_G");
+  assert_tokenizes_as_constant("_e");
+  assert_tokenizes_as_constant("_g0");
+  assert_tokenizes_as_constant("_k");
+  assert_tokenizes_as_constant("_ke");
+  assert_tokenizes_as_constant("_me");
+  assert_tokenizes_as_constant("_mn");
+  assert_tokenizes_as_constant("_mp");
+  assert_tokenizes_as_constant("_Na");
+  assert_tokenizes_as_constant("_R");
+  assert_tokenizes_as_constant("_ε0");
+  assert_tokenizes_as_constant("_μ0");
+  assert_tokenizes_as_constant("_hplanck");
 }
 
 QUIZ_CASE(poincare_parsing_units) {
-  // Units
-#if 0
-  Shared::GlobalContext context;
-  for (int i = 0; i < OUnit::Representative::k_numberOfDimensions; i++) {
-    const OUnit::Representative* dim =
-        OUnit::Representative::DefaultRepresentatives()[i];
-    for (int j = 0; j < dim->numberOfRepresentatives(); j++) {
-      const OUnit::Representative* rep =
-          dim->representativesOfSameDimension() + j;
-      constexpr static size_t bufferSize = 10;
-      char buffer[bufferSize];
-      OUnit::Builder(rep, OUnit::Prefix::EmptyPrefix())
-          .serialize(buffer, bufferSize, DecimalMode,
-                     Preferences::VeryShortNumberOfSignificantDigits);
-      OExpression unit = parse_expression(buffer, nullptr);
-      quiz_assert_print_if_failure(unit.otype() == ExpressionNode::Type::OUnit,
-                                   "Should be parsed as a OUnit");
-      // Try without '_'. This need a context or everything without '_' is
-      // understood as variable.
-      unit = parse_expression(buffer + 1, &context);
-      quiz_assert_print_if_failure(unit.otype() == ExpressionNode::Type::OUnit,
-                                   "Should be parsed as a OUnit");
-      if (rep->isInputPrefixable()) {
-        for (size_t i = 0; i < OUnit::Prefix::k_numberOfPrefixes; i++) {
-          const OUnit::Prefix* pre = OUnit::Prefix::Prefixes();
-          OUnit::Builder(rep, pre).serialize(
-              buffer, bufferSize, DecimalMode,
-              Preferences::VeryShortNumberOfSignificantDigits);
-          OExpression unit = parse_expression(buffer, nullptr);
-          quiz_assert_print_if_failure(
-              unit.otype() == ExpressionNode::Type::OUnit,
-              "Should be parsed as a OUnit");
-          // Try without '_'. This need a context or everything without '_' is
-          // understood as variable.
-          unit = parse_expression(buffer, &context);
-          quiz_assert_print_if_failure(
-              unit.otype() == ExpressionNode::Type::OUnit,
-              "Should be parsed as a OUnit");
-        }
-      }
-    }
-  }
-#endif
-
   // Non-existing units are not parsable
   assert_text_not_parsable("_n");
   assert_text_not_parsable("_a");
@@ -376,6 +339,8 @@ QUIZ_CASE(poincare_parsing_units) {
 
   // Any identifier starting with '_' is tokenized as a unit
   assert_tokenizes_as_unit("_m");
+  assert_tokenizes_as_unit("_km");
+  assert_tokenizes_as_unit("_pm");
   assert_tokenizes_as_unit("_A");
 
   // Can parse implicit multiplication with units

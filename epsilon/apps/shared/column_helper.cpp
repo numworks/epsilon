@@ -196,8 +196,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   }
 
   if (reduced.isList()) {
-    int formulaNumberOfChildren =
-        static_cast<List&>(reduced).numberOfChildren();
+    int formulaNumberOfChildren = reduced.numberOfChildren();
     /* List in another context may allow other types (boolean for instance) but
      * in this context only scalar is allowed since anything else would be
      * nonsensical */

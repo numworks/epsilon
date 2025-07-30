@@ -848,7 +848,7 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
   /* TODO_PCJ: This is highly ineffective : each child of the tree is cloned on
    * the pool to be recursivelyMatched. We do so so that ExpressionTrinaryTest
    * can use Expression API. */
-  const int childrenCount = tree()->numberOfChildren();
+  const int childrenCount = numberOfChildren();
 
   bool isParametered = tree()->isParametric();
   // Run loop backwards to find lists and matrices quicker in NAry expressions
@@ -1052,6 +1052,8 @@ bool Expression::hasRandomList() const {
       [](const Tree* e) { return e->isRandIntNoRep(); });
 }
 
+int Expression::numberOfChildren() const { return tree()->numberOfChildren(); }
+
 ComparisonJunior::Operator Expression::comparisonOperator() const {
   assert(isComparison());
   return Internal::Binary::ComparisonOperatorForType(tree()->type());
@@ -1065,7 +1067,7 @@ Poincare::Matrix Poincare::Matrix::Builder() {
 }
 
 void Poincare::Matrix::setDimensions(int rows, int columns) {
-  assert(rows * columns == tree()->numberOfChildren());
+  assert(rows * columns == numberOfChildren());
   Tree* clone = tree()->cloneTree();
   Internal::Matrix::SetNumberOfColumns(clone, columns);
   Internal::Matrix::SetNumberOfRows(clone, rows);
@@ -1167,8 +1169,6 @@ void List::addChildAtIndexInPlace(Expression t, int index,
   Expression temp = Expression::Builder(clone);
   *this = static_cast<List&>(temp);
 }
-
-int List::numberOfChildren() const { return tree()->numberOfChildren(); }
 
 /* Unit */
 

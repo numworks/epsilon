@@ -396,6 +396,7 @@ class Expression : public PoolHandle {
   bool allChildrenAreUndefined() const;
   bool hasRandomNumber() const;
   bool hasRandomList() const;
+  int numberOfChildren() const;
 
   // More complex bool properties
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
@@ -450,7 +451,6 @@ class Point final : public Expression {
 class List : public Expression {
  public:
   static List Builder();
-  int numberOfChildren() const;
 
   void removeChildAtIndexInPlace(int i);
   void addChildAtIndexInPlace(Expression t, int index,

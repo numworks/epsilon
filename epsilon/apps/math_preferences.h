@@ -30,10 +30,10 @@ class MathPreferences : public GlobalPreferences {
 
   Poincare::ExamMode examMode() const {
     return Poincare::Preferences::SharedPreferences()->examMode();
-  };
+  }
   void setExamMode(Poincare::ExamMode examMode) {
     Poincare::Preferences::SharedPreferences()->setExamMode(examMode);
-  };
+  }
   bool forceExamModeReload() const {
     return Poincare::Preferences::SharedPreferences()->forceExamModeReload();
   }

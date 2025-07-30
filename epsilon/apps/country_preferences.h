@@ -1,7 +1,7 @@
 #ifndef COUNTRY_PREFERENCES_H
 #define COUNTRY_PREFERENCES_H
 
-#include <escher/layout_preferences_enum.h>
+#include <escher/layout_preferences.h>
 #include <poincare/preferences.h>
 
 class CountryPreferences {

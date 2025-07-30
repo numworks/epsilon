@@ -3,7 +3,6 @@
 
 #include <apps/i18n.h>
 #include <escher/layout_preferences.h>
-#include <escher/layout_preferences_enum.h>
 #include <ion.h>
 #include <kandinsky/font.h>
 #include <omg/global_box.h>

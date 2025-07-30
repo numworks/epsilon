@@ -3,8 +3,6 @@
 
 #include <poincare/preferences.h>
 
-#include "layout_preferences_enum.h"
-
 namespace Escher {
 
 /**
@@ -25,6 +23,9 @@ namespace Escher {
  * It's named LayoutPreferences to avoid name conflicts with
  * Poincare::Preferences See comment in poincare/preferences.h.
  */
+
+enum class LogarithmKeyEvent : char { Default, WithBaseTen };
+
 class LayoutPreferencesInterface {
  public:
   virtual bool linearMode() const = 0;

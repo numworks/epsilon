@@ -143,44 +143,27 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
   assert_parsed_expression_is("0.1ᴇ-2", 0.001_e);
   assert_parsed_expression_is("1.ᴇ-2", 0.01_e);
   assert_parsed_expression_is(".1ᴇ-2", 0.001_e);
-  // Decimal with rounding when digits are above 14
   assert_parsed_expression_is("0.0000012345678901234",
                               KDecimal(12345678901234_e, 19_e));
-#if 0
   assert_parsed_expression_is("0.00000123456789012345",
-                              KDecimal(12345678901235_e, 19_e));
-  assert_parsed_expression_is("0.00000123456789012341",
-                              KDecimal(12345678901234_e, 19_e));
-#endif
+                              KDecimal(123456789012345_e, 20_e));
   assert_parsed_expression_is("1234567890123.4",
                               KDecimal(12345678901234_e, 1_e));
-#if 0
   assert_parsed_expression_is("123456789012345.2",
-                              KDecimal(12345678901235_e, -1_e));
-  assert_parsed_expression_is("123456789012341.2",
-                              KDecimal(12345678901234_e, -1_e));
-#endif
+                              KDecimal(1234567890123452_e, 1_e));
   assert_parsed_expression_is("12.34567", KDecimal(1234567_e, 5_e));
   assert_parsed_expression_is(".999999999999990",
                               KDecimal(99999999999999_e, 14_e));
-#if 0
-  assert_parsed_expression_is("9.99999999999994",
-                              KDecimal(99999999999999_e, 13_e));
-  assert_parsed_expression_is("99.9999999999995",
-                              KDecimal(100000000000000_e, 12_e));
   assert_parsed_expression_is("999.999999999999",
-                              KDecimal(100000000000000_e, 11_e));
-  assert_parsed_expression_is("9999.99199999999",
-                              KDecimal(99999920000000_e, 10_e));
-  assert_parsed_expression_is("99299.9999999999",
-                              KDecimal(99300000000000_e, 9_e));
-#endif
+                              KDecimal(999999999999999_e, 12_e));
+  assert_parsed_expression_is("2.3ᴇ1000", KDecimal(23_e, -999_e));
+  assert_parsed_expression_is("0.23ᴇ-999", KDecimal(23_e, 1001_e));
 
   // Parse integer
   const char* input = "123456789012345678765434567";
   Tree* a = Internal::Integer::Push(input, strlen(input));
   assert_parsed_expression_is(input, a);
-  const char* input2 = MaxParsedIntegerString();
+  const char* input2 = MaxIntegerString();
   a->removeTree();
   Tree* b = Internal::Integer::Push(input2, strlen(input2));
   assert_parsed_expression_is(input2, b);
@@ -189,24 +172,6 @@ QUIZ_CASE(poincare_parsing_parse_numbers) {
   // Parsed Based integer
   assert_parsed_expression_is("0b1011", 11_e);
   assert_parsed_expression_is("0x12AC", 4780_e);
-
-#if 0  // TODO_PCJ
-  // Integer parsed in Decimal because they overflow Integer
-  assert_parsed_expression_is(ApproximatedParsedIntegerString(),
-                              Float<double>::Builder(1.0e30));
-#endif
-
-// Infinity
-#if 0
-  assert_parsed_expression_is("23ᴇ1000", KMult(-1_e, KInf));
-#endif
-  assert_parsed_expression_is("2.3ᴇ1000", KDecimal(23_e, -999_e));
-
-// Zero
-#if 0
-  assert_parsed_expression_is("0.23ᴇ-1000", KDecimal(0_e, 0_e));
-#endif
-  assert_parsed_expression_is("0.23ᴇ-999", KDecimal(23_e, 1001_e));
 }
 
 QUIZ_CASE(poincare_parsing_parse) {

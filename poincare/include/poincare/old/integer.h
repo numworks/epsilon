@@ -126,7 +126,7 @@ class Integer final : public PoolHandle {
   }
   /* If the user input is larger than 10^k_MaxNumberOfParsedDigitsBase10,
    * it is converted to decimal which is then converted to float when reduced.
-   * This is to avoid computations that takes to much time, when pressing Ans
+   * This is to avoid computations that take too much time, when pressing Ans
    * for example.
    * Nonetheless, an Integer bigger than 1O^k_MaxNumberOfParsedDigitsBase10 can
    * be created during any Poincare computation (evaluation, reduction, solving

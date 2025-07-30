@@ -4,6 +4,12 @@ $(OUTPUT_DIRECTORY)/%.bin.run: $(OUTPUT_DIRECTORY)/%.bin
 
 $(call document_extension,run,Execute <...>.bin)
 
+# Run in the debugger
+$(OUTPUT_DIRECTORY)/%.bin.debug: $(OUTPUT_DIRECTORY)/%.bin
+	$(GDB) -- $^
+
+$(call document_extension,debug,Execute <...>.bin in a debugger)
+
 _simulator_app := $(OUTPUT_DIRECTORY)/%.app
 _simulator_app_binary = $(_simulator_app)/Contents/MacOS/$(APP_NAME)
 _simulator_app_plist = $(_simulator_app)/Contents/Info.plist

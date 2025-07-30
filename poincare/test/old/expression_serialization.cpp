@@ -226,7 +226,7 @@ QUIZ_CASE(poincare_serialization_float) {
 QUIZ_CASE(poincare_serialization_division) {
   assert_beautifies_serializes_to(KDiv(-2_e, π_e), "(-2)/π");
   assert_beautifies_serializes_to(KDiv(π_e, -2_e), "π/(-2)");
-  assert_expression_serializes_and_parses_to_itself(KDiv(2_e, 3_e));
+  assert_expression_serializes_to(KDiv(2_e, 3_e), "2/3");
   assert_beautifies_serializes_to(KDiv(KDiv(2_e, 3_e), π_e), "(2/3)/π");
   assert_beautifies_serializes_to(KDiv(KAdd(1_e, 2_e), π_e), "(1+2)/π");
   assert_beautifies_serializes_to(KDiv(KSub(2_e, 1_e), π_e), "(2-1)/π");

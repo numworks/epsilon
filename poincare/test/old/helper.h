@@ -163,8 +163,6 @@ void assert_expression_serializes_to(
 void assert_expression_serializes_and_parses_to(
     const Poincare::Internal::Tree* expression,
     const Poincare::Internal::Tree* result);
-void assert_expression_serializes_and_parses_to_itself(
-    const Poincare::Internal::Tree* expression);
 
 void assert_expression_parses_and_serializes_to(
     const char* expression, const char* result,

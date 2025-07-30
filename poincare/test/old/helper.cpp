@@ -327,11 +327,6 @@ void assert_expression_serializes_and_parses_to(
   assert_parsed_expression_is(buffer, result);
 }
 
-void assert_expression_serializes_and_parses_to_itself(
-    const Poincare::Internal::Tree *expression) {
-  return assert_expression_serializes_and_parses_to(expression, expression);
-}
-
 void assert_expression_parses_and_serializes_to(
     const char *expression, const char *result,
     Shared::GlobalContext *globalContext, Preferences::PrintFloatMode mode,

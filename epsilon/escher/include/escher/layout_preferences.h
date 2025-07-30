@@ -33,16 +33,6 @@ class LayoutPreferencesInterface {
   bool operator==(const LayoutPreferencesInterface&) const = default;
 };
 
-class DummyLayoutPreferences : public LayoutPreferencesInterface {
-  bool linearMode() const override { return false; };
-  Escher::LogarithmKeyEvent logarithmKeyEvent() const override {
-    return Escher::LogarithmKeyEvent::Default;
-  };
-  Poincare::Preferences::PrintFloatMode displayMode() const override {
-    return Poincare::Preferences::PrintFloatMode::Decimal;
-  };
-};
-
 class LayoutPreferences {
  public:
   inline static LayoutPreferencesInterface* SharedPreferences() {

@@ -5,26 +5,30 @@
 
 namespace OMG {
 
-Store::Store(char* buffer, size_t bufferSize)
+template <auto L, auto U>
+Store<L, U>::Store(char* buffer, size_t bufferSize)
     : m_buffer(buffer), m_bufferSize(bufferSize), m_numberOfElements(0) {
   static_assert(std::is_same_v<offset_t, uint16_t>);
   assert(bufferSize < UINT16_MAX);
 }
 
-void* Store::elementAtIndex(int index) const {
+template <auto L, auto U>
+void* Store<L, U>::elementAtIndex(int index) const {
   assert(0 <= index && index <= numberOfElements() - 1);
   return index == numberOfElements() - 1 ? m_buffer
                                          : endOfElementAtIndex(index + 1);
 }
 
-void Store::makeRoomForElement(size_t neededSize) {
+template <auto L, auto U>
+void Store<L, U>::makeRoomForElement(size_t neededSize) {
   assert(neededSize < m_bufferSize);
   while (remainingSize() < neededSize) {
     deleteOldestElement();
   }
 }
 
-char* Store::endOfElementAtIndex(int index) const {
+template <auto L, auto U>
+char* Store<L, U>::endOfElementAtIndex(int index) const {
   assert(0 <= index && index < numberOfElements());
   char* res = m_buffer + offsetArray()[index];
   /* Make sure the element pointed to is inside the buffer */
@@ -32,14 +36,17 @@ char* Store::endOfElementAtIndex(int index) const {
   return res;
 }
 
-size_t Store::spaceForNewElements(const char* currentEndOfElements) const {
+template <auto L, auto U>
+size_t Store<L, U>::spaceForNewElements(
+    const char* currentEndOfElements) const {
   // Be careful with size_t: negative values are not handled
   return currentEndOfElements + sizeof(offset_t) < offsetArea()
              ? (offsetArea() - currentEndOfElements) - sizeof(offset_t)
              : 0;
 }
 
-void Store::deleteElementAtIndex(int index) {
+template <auto Lock, auto Unlock>
+void Store<Lock, Unlock>::deleteElementAtIndex(int index) {
   char* deletionStart = index == numberOfElements() - 1
                             ? m_buffer
                             : endOfElementAtIndex(index + 1);
@@ -49,18 +56,18 @@ void Store::deleteElementAtIndex(int index) {
   assert(endOfElements() >= deletionEnd);
   size_t shiftedMemorySize = endOfElements() - deletionEnd;
 
-  // TODO
-  // Ion::CircuitBreaker::lock();
+  Lock();
   memmove(deletionStart, deletionEnd, shiftedMemorySize);
 
   for (int i = index - 1; i >= 0; i--) {
     offsetArray()[i + 1] = offsetArray()[i] - deletedSize;
   }
   m_numberOfElements--;
-  // Ion::CircuitBreaker::unlock();
+  Unlock();
 }
 
-void* Store::pushElement(const void* element, int size) {
+template <auto L, auto U>
+void* Store<L, U>::pushElement(const void* element, int size) {
   char* destination = endOfElements();
   assert(destination >= m_buffer &&
          destination + size + sizeof(offset_t) <= offsetArea());
@@ -70,7 +77,8 @@ void* Store::pushElement(const void* element, int size) {
   return destination;
 }
 
-void Store::registerElement(char* element, int size) {
+template <auto L, auto U>
+void Store<L, U>::registerElement(char* element, int size) {
   assert(m_buffer <= element && element + size <= m_buffer + m_bufferSize);
   // Write the pointer to the new element at pointerArea()
   offsetArray()[-1] = element + size - m_buffer;

@@ -31,6 +31,10 @@ with p_i = m_buffer + o_i
 
 */
 
+/* Lock and Unlock are functions to call to prevent interruptions in critical
+ * parts. */
+
+template <auto Lock = []() {}, auto Unlock = []() {}>
 class Store {
  public:
   Store(char* buffer, size_t bufferSize);
@@ -82,3 +86,5 @@ class Store {
 };
 
 }  // namespace OMG
+
+#include <omg/src/store_impl.inc>

@@ -41,7 +41,7 @@ class Store {
   int numberOfElements() const { return m_numberOfElements; }
   void* elementAtIndex(int index) const;
 
-  size_t maximumSize() const { return m_bufferSize - sizeof(offset_t); }
+  size_t maximumSize() const { return m_bufferSize - sizeof(Offset); }
   size_t remainingSize() const { return spaceForNewElements(endOfElements()); }
 
   void* pushElement(const void* element, int size);
@@ -71,12 +71,12 @@ class Store {
   void registerElement(char* element, int size);
 
  private:
-  using offset_t = uint16_t;
+  using Offset = uint16_t;
   char* offsetArea() const {
-    return m_buffer + m_bufferSize - m_numberOfElements * sizeof(offset_t);
+    return m_buffer + m_bufferSize - m_numberOfElements * sizeof(Offset);
   }
-  offset_t* offsetArray() const {
-    return reinterpret_cast<offset_t*>(offsetArea());
+  Offset* offsetArray() const {
+    return reinterpret_cast<Offset*>(offsetArea());
   }
 
   char* const m_buffer;

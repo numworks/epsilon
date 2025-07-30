@@ -32,7 +32,7 @@ class LayoutPreferences {
   static const Interface* s_preferences;
 };
 
-extern LayoutPreferences SharedPreferences;
+extern const LayoutPreferences SharedPreferences;
 
 }  // namespace Escher
 #endif

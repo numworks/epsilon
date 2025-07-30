@@ -14,7 +14,7 @@ class FloatList : public List, public DatasetColumn<T> {
     return static_cast<FloatList<T>&>(list);
   }
 
-  void addValueAtIndex(T value, int index);
+  void addValue(T value);
   void replaceValueAtIndex(T value, int index);
   void removeValueAtIndex(int index);
   T valueAtIndex(int index) const override;

@@ -115,9 +115,9 @@ bool DoublePairStore::set(double f, int series, int i, int j, bool delayUpdate,
   assert(j <= numberOfPairsOfSeries(series));
   if (j >= lengthOfColumn(series, i)) {
     for (int k = lengthOfColumn(series, i); k < j; k++) {
-      m_dataLists[series][i].addValueAtIndex(NAN, k);
+      m_dataLists[series][i].addValue(NAN);
     }
-    m_dataLists[series][i].addValueAtIndex(f, j);
+    m_dataLists[series][i].addValue(f);
   } else {
     m_dataLists[series][i].replaceValueAtIndex(f, j);
   }

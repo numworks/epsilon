@@ -75,10 +75,10 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       .m_context = App::app()->localContext()};
   function = function.cloneAndReduce(projCtx, &reductionFailure);
   assert(!reductionFailure);
-  function = function.getSystemFunction(Shared::Function::k_unknownName);
+  function = function.getPreparedFunction(Shared::Function::k_unknownName);
   Curve2DEvaluation<float> evaluateFunction = [](float t, void* model,
                                                  void* context) {
-    Poincare::SystemFunction* e = (Poincare::SystemFunction*)model;
+    Poincare::PreparedFunction* e = (Poincare::PreparedFunction*)model;
     return Poincare::Coordinate2D<float>(
         t, e->approximateToRealScalarWithValue(t));
   };

@@ -504,8 +504,8 @@ SystemExpression SystemExpression::getReducedDerivative(
   return SystemExpression::Builder(result);
 }
 
-SystemFunction SystemExpression::getSystemFunction(const char* symbolName,
-                                                   bool scalarsOnly) const {
+PreparedFunction SystemExpression::getPreparedFunction(const char* symbolName,
+                                                       bool scalarsOnly) const {
   Tree* result = tree()->cloneTree();
   Internal::Dimension dimension = Internal::Dimension::Get(tree());
   if ((scalarsOnly &&
@@ -534,7 +534,7 @@ T UserExpression::approximateToRealScalar(AngleUnit angleUnit,
 }
 
 template <typename T>
-T SystemFunctionScalar::approximateToRealScalarWithValue(
+T PreparedFunctionScalar::approximateToRealScalarWithValue(
     T x, int listElement) const {
   return Approximation::To<T>(
       tree(), x, Approximation::Parameters{.isRootAndCanHaveRandom = true},
@@ -612,17 +612,17 @@ bool UserExpression::isComplexScalar(
   return false;
 }
 
-bool SystemFunction::involvesDiscontinuousFunction() const {
+bool PreparedFunction::involvesDiscontinuousFunction() const {
   return Continuity::InvolvesDiscontinuousFunction(tree());
 }
 
 template <typename T>
-bool SystemFunction::isDiscontinuousOnInterval(T minBound, T maxBound) const {
+bool PreparedFunction::isDiscontinuousOnInterval(T minBound, T maxBound) const {
   return Continuity::IsDiscontinuousOnInterval<T>(tree(), minBound, maxBound);
 }
 
 template <typename T>
-PointOrRealScalar<T> SystemFunction::approximateToPointOrRealScalarWithValue(
+PointOrRealScalar<T> PreparedFunction::approximateToPointOrRealScalarWithValue(
     T x) const {
   return Internal::Approximation::ToPointOrRealScalar<T>(
       tree(), x, Approximation::Parameters{.isRootAndCanHaveRandom = true});
@@ -1213,24 +1213,25 @@ template SystemExpression SystemExpression::Builder<double>(
     PointOrRealScalar<double>);
 
 template PointOrRealScalar<float>
-SystemFunction::approximateToPointOrRealScalarWithValue<float>(float) const;
+PreparedFunction::approximateToPointOrRealScalarWithValue<float>(float) const;
 template PointOrRealScalar<double>
-SystemFunction::approximateToPointOrRealScalarWithValue<double>(double) const;
+PreparedFunction::approximateToPointOrRealScalarWithValue<double>(double) const;
 
 template SystemExpression SystemExpression::approximateListAndSort<float>()
     const;
 template SystemExpression SystemExpression::approximateListAndSort<double>()
     const;
 
-template float SystemFunctionScalar::approximateToRealScalarWithValue<float>(
+template float PreparedFunctionScalar::approximateToRealScalarWithValue<float>(
     float, int) const;
-template double SystemFunctionScalar::approximateToRealScalarWithValue<double>(
-    double, int) const;
+template double
+PreparedFunctionScalar::approximateToRealScalarWithValue<double>(double,
+                                                                 int) const;
 
-template bool SystemFunction::isDiscontinuousOnInterval<float>(float,
-                                                               float) const;
-template bool SystemFunction::isDiscontinuousOnInterval<double>(double,
-                                                                double) const;
+template bool PreparedFunction::isDiscontinuousOnInterval<float>(float,
+                                                                 float) const;
+template bool PreparedFunction::isDiscontinuousOnInterval<double>(double,
+                                                                  double) const;
 
 template float SystemExpression::approximateSystemToRealScalar<float>() const;
 template double SystemExpression::approximateSystemToRealScalar<double>() const;

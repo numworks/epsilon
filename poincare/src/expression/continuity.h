@@ -39,7 +39,7 @@ class Continuity {
     return e->hasDescendantSatisfying(ShallowIsDiscontinuous);
   }
 
-  // e must be a system function
+  // e must be a prepared function
   template <typename T>
   static bool IsDiscontinuousOnInterval(const Tree* e, T minBound, T maxBound);
 

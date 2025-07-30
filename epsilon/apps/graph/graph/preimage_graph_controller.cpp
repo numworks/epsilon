@@ -23,7 +23,7 @@ Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
   if (stretch) {
     solver.stretch();
   }
-  SystemFunction f =
+  PreparedFunction f =
       functionStore()->modelForRecord(m_record)->expressionApproximated(
           context);
   return solver

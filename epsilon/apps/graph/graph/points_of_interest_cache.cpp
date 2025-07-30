@@ -295,9 +295,9 @@ PointOfInterest findIntersections(void* searchContext) {
        !f->shouldDisplayIntersections())) {
     return PointOfInterest{};
   }
-  SystemFunction memoizedOtherFunction;
+  PreparedFunction memoizedOtherFunction;
   int n = ctx->store->numberOfModels();
-  SystemFunction e = f->expressionApproximated(ctx->context);
+  PreparedFunction e = f->expressionApproximated(ctx->context);
   bool alongY = f->isAlongY();
   bool fIsStrict = f->properties().isStrictInequality();
   while (ctx->counter < n) {
@@ -341,7 +341,7 @@ PointOfInterest findIntersections(void* searchContext) {
       }
     }
     ++ctx->counter;
-    memoizedOtherFunction = SystemFunction{};
+    memoizedOtherFunction = PreparedFunction{};
     ctx->reinitSolver();
   }
 

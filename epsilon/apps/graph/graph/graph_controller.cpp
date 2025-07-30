@@ -83,7 +83,8 @@ static Coordinate2D<T> evaluatorSecondCurve(T t, const void* model) {
 }
 template <typename T, int coordinate>
 static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model) {
-  const SystemFunctionPoint* e = static_cast<const SystemFunctionPoint*>(model);
+  const PreparedFunctionPoint* e =
+      static_cast<const PreparedFunctionPoint*>(model);
   assert(e->isPoint());
   assert(coordinate == 0 || coordinate == 1);
   // TODO: Approximating the other coordinate could be skipped for performances.
@@ -132,7 +133,7 @@ Range2D<float> GraphController::optimalRange(
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
         f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
-      SystemFunctionPoint e = f->parametricForm(context).getSystemFunction(
+      PreparedFunctionPoint e = f->parametricForm(context).getPreparedFunction(
           Shared::Function::k_unknownName);
       // Compute the ordinate range of x(t) and y(t)
       Range1D<float> ranges[2];
@@ -188,8 +189,8 @@ Range2D<float> GraphController::optimalRange(
           f->expressionApproximated(context).tree()->firstDescendantSatisfying(
               [](const Internal::Tree* t) { return t->isPiecewise(); });
       if (piecewise) {
-        zoom.fitConditions(SystemFunction::Builder(piecewise), evaluator<float>,
-                           &fModel, alongY);
+        zoom.fitConditions(PreparedFunction::Builder(piecewise),
+                           evaluator<float>, &fModel, alongY);
       }
 
       if (canComputeIntersections[i] &&

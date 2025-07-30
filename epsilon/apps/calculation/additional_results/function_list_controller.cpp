@@ -32,12 +32,12 @@ void FunctionListController::computeAdditionalResults(
           input, k_symbolName, &abscissa);
 
   bool reductionFailure = false;
-  SystemFunction simplifiedExpression =
+  PreparedFunction simplifiedExpression =
       PoincareHelpers::CloneAndReduce(
           inputClone, context,
           {.complexFormat = complexFormat(), .angleUnit = angleUnit()},
           &reductionFailure)
-          .getSystemFunction(k_symbolName, true);
+          .getPreparedFunction(k_symbolName, true);
   /* Reduction should always succeed when in the additional results, as they are
    * blocked if the Calculation had a reduction failure. */
   assert(!simplifiedExpression.isUninitialized() && !reductionFailure);

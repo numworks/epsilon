@@ -178,7 +178,7 @@ bool ContinuousFunction::isNamed() const {
 
 bool ContinuousFunction::isDiscontinuousOnFloatInterval(
     float minBound, float maxBound, Poincare::Context* context) const {
-  SystemFunction equation = expressionApproximated(context);
+  PreparedFunction equation = expressionApproximated(context);
   return equation.isDiscontinuousOnInterval<float>(minBound, maxBound);
 }
 
@@ -369,7 +369,7 @@ PointOrRealScalar<T> ContinuousFunction::approximateDerivative(
     return PointOrRealScalar<T>(NAN);
   }
   // Derivative is simplified once and for all
-  SystemFunction derivate = expressionApproximated(context, derivationOrder);
+  PreparedFunction derivate = expressionApproximated(context, derivationOrder);
   return derivate.approximateToPointOrRealScalarWithValue(t);
 }
 
@@ -486,7 +486,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
   int derivationOrder = derivationOrderFromSubCurveIndex(subCurveIndex);
-  SystemFunction e = expressionApproximated(context, derivationOrder);
+  PreparedFunction e = expressionApproximated(context, derivationOrder);
 
   if (properties().isScatterPlot()) {
     assert(e.dimension().isPointOrListOfPoints() ||
@@ -700,11 +700,11 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
   return m_expression;
 }
 
-Poincare::SystemFunction ContinuousFunction::Model::expressionApproximated(
+Poincare::PreparedFunction ContinuousFunction::Model::expressionApproximated(
     const Ion::Storage::Record* record, Poincare::Context* context,
     int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
-  SystemFunction* approximated;
+  PreparedFunction* approximated;
   switch (derivationOrder) {
     case 0:
       approximated = &m_expressionApproximated;
@@ -724,9 +724,9 @@ Poincare::SystemFunction ContinuousFunction::Model::expressionApproximated(
             : expressionDerivateReduced(record, context, derivationOrder);
     // TODO: factorise the next line with other methods?
     *approximated =
-        e.getSystemFunction(properties(record).isAlongY()
-                                ? ContinuousFunctionProperties::k_ordinateName
-                                : k_unknownName);
+        e.getPreparedFunction(properties(record).isAlongY()
+                                  ? ContinuousFunctionProperties::k_ordinateName
+                                  : k_unknownName);
   }
   return *approximated;
 }
@@ -947,7 +947,7 @@ SystemExpression ContinuousFunction::Model::expressionDerivateReduced(
   return *derivative;
 }
 
-SystemFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
+PreparedFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
     const Ion::Storage::Record* record, Context* context) const {
   /* Slope is only needed for parametric and polar functions.
    * For cartesian function, it is the same as the derivative.
@@ -971,7 +971,7 @@ SystemFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
                   .KB = expression.cloneChildAtIndex(0).getReducedDerivative(
                       k_unknownName),
               })
-              .getSystemFunction(k_unknownName);
+              .getPreparedFunction(k_unknownName);
     }
   }
   return m_expressionSlope;

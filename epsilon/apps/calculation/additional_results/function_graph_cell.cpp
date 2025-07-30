@@ -64,11 +64,11 @@ bool FunctionAxis<N>::labelWillBeDisplayed(size_t labelIndex,
 
 void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
                                    KDContext* ctx, KDRect rect) const {
-  SystemFunctionScalar function = m_model->function();
+  PreparedFunctionScalar function = m_model->function();
   assert(!function.recursivelyMatches(&Expression::isSequence));
 
   Curve2DEvaluation<float> evaluateFunction = [](float t, void* model, void*) {
-    SystemFunctionScalar* e = (Expression*)model;
+    PreparedFunctionScalar* e = (Expression*)model;
     return Coordinate2D<float>(t, e->approximateToRealScalarWithValue(t));
   };
 

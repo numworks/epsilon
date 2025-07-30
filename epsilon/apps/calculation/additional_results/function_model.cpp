@@ -9,8 +9,8 @@ using namespace Poincare;
 
 namespace Calculation {
 
-void FunctionModel::setParameters(SystemFunctionScalar function, float abscissa,
-                                  float ordinate) {
+void FunctionModel::setParameters(PreparedFunctionScalar function,
+                                  float abscissa, float ordinate) {
   // We do not want to display additional results for sequences.
   assert(!function.recursivelyMatches(&Expression::isSequence));
   m_function = function;
@@ -30,8 +30,8 @@ float FunctionModel::RangeMargin(bool maxMargin, float rangeBound, float value,
 
 template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model) {
-  const SystemFunctionScalar* f =
-      static_cast<const SystemFunctionScalar*>(model);
+  const PreparedFunctionScalar* f =
+      static_cast<const PreparedFunctionScalar*>(model);
   return Coordinate2D<T>(t, f->approximateToRealScalarWithValue(t));
 }
 

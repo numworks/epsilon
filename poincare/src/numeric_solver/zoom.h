@@ -69,7 +69,7 @@ class Zoom {
                 bool* finiteNumberOfPoints = nullptr);
   void fitIntersections(Function2D<T> f1, const void* model1, Function2D<T> f2,
                         const void* model2, bool vertical = false);
-  /* Piecewise should be a system function. */
+  /* Piecewise should be a prepared function. */
   void fitConditions(const Internal::Tree* piecewise,
                      Function2D<T> fullFunction, const void* model,
                      bool vertical = false);

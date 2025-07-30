@@ -106,15 +106,6 @@ class SystemOfEquations {
   constexpr static Poincare::Range1D<double> k_fallbackRange =
       Poincare::Range1D<double>(-10.0, 10.0);
 
-  class ContextWithoutT : public Poincare::ContextWithParent {
-   public:
-    using Poincare::ContextWithParent::ContextWithParent;
-
-   private:
-    const Poincare::Internal::Tree* expressionForUserNamed(
-        const Poincare::Internal::Tree* symbol) const override;
-  };
-
   Error registerExactSolution(Poincare::UserExpression exact,
                               Poincare::UserExpression approximate,
                               Poincare::Context* context);

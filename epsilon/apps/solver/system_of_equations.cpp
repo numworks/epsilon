@@ -85,17 +85,6 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   return error;
 }
 
-const Internal::Tree*
-SystemOfEquations::ContextWithoutT::expressionForUserNamed(
-    const Internal::Tree* symbol) const {
-  assert(symbol->isUserNamed());
-  if (symbol->isUserSymbol() &&
-      strcmp(Internal::Symbol::GetName(symbol), "t") == 0) {
-    return UserExpression();
-  }
-  return ContextWithParent::expressionForUserNamed(symbol);
-}
-
 void SystemOfEquations::setApproximateSolvingRange(
     Poincare::Range1D<double> approximateSolvingRange) {
   m_isUsingAutoSolvingRange = false;

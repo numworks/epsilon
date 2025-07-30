@@ -1,7 +1,7 @@
 #ifndef INFERENCE_MODELS_GOODNESS_TEST_H
 #define INFERENCE_MODELS_GOODNESS_TEST_H
 
-#include <poincare/old/float_list.h>
+#include <poincare/float_list.h>
 
 #include "chi2_test.h"
 

@@ -29,7 +29,6 @@ _sources_poincare_extended := $(addprefix src/, \
 $(addprefix old/, \
   context.cpp \
   empty_context.cpp \
-  float_list.cpp:-nopool \
   pool_variable_context.cpp:-nopool \
   tree_variable_context.cpp \
 ) \
@@ -210,6 +209,7 @@ $(addprefix statistics/, \
 ) \
   additional_results_helper.cpp:-nopool \
   comparison_operator.cpp \
+  float_list.cpp:-nopool \
   print.cpp \
   random.cpp \
   range.cpp \

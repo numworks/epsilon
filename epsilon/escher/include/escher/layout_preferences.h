@@ -1,5 +1,5 @@
-#ifndef ESCHER_PREFERENCES_H
-#define ESCHER_PREFERENCES_H
+#ifndef ESCHER_LAYOUT_PREFERENCES_H
+#define ESCHER_LAYOUT_PREFERENCES_H
 
 #include <poincare/preferences.h>
 

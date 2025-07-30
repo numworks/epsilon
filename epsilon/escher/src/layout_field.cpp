@@ -303,7 +303,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
   }
   // The text is parsable, we create its layout an insert it.
   Layout resultLayout = resultExpression.createLayout(
-      LayoutPreferences::SharedPreferences()->displayMode(),
+      SharedPreferences->displayMode(),
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
       App::app() ? App::app()->localContext() : nullptr);
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
@@ -636,7 +636,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
         Expression::Parse(layout, EmptyContext{}, {.preserveInput = true});
     if (!e.isUninitialized()) {
       layout =
-          e.createLayout(LayoutPreferences::SharedPreferences()->displayMode(),
+          e.createLayout(SharedPreferences->displayMode(),
                          Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
                          nullptr, OMG::Base::Decimal, true);
       cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,

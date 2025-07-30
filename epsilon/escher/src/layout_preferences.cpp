@@ -3,6 +3,6 @@
 
 namespace Escher {
 
-LayoutPreferencesInterface* LayoutPreferences::s_preferences = nullptr;
+const LayoutPreferences::Interface* SharedPreferences = nullptr;
 
 }

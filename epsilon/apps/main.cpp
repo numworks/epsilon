@@ -12,10 +12,11 @@
 #include <escher/layout_preferences.h>
 #include <ion.h>
 
-class DummyLayoutPreferences : public Escher::LayoutPreferencesInterface {
+class DummyLayoutPreferences : public Escher::LayoutPreferences::Interface {
   bool linearMode() const override { return false; };
-  Escher::LogarithmKeyEvent logarithmKeyEvent() const override {
-    return Escher::LogarithmKeyEvent::Default;
+  Escher::LayoutPreferences::LogarithmKeyEvent logarithmKeyEvent()
+      const override {
+    return Escher::LayoutPreferences::LogarithmKeyEvent::Default;
   };
   Poincare::Preferences::PrintFloatMode displayMode() const override {
     return Poincare::Preferences::PrintFloatMode::Decimal;

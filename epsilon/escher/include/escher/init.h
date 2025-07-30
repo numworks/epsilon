@@ -5,7 +5,7 @@
 
 namespace Escher {
 
-void Init(LayoutPreferencesInterface* preferences);
+void Init(const LayoutPreferences::Interface* preferences);
 
 }
 

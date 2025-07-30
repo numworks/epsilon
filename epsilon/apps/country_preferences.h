@@ -90,7 +90,7 @@ class CountryPreferences {
       RegressionApp regressionAppVariant,
       GraphTemplatesLayout graphTemplatesLayout,
       Poincare::Preferences::LogarithmBasePosition logarithmBasePosition,
-      Escher::LogarithmKeyEvent logarithmKeyEvent,
+      Escher::LayoutPreferences::LogarithmKeyEvent logarithmKeyEvent,
       Poincare::Preferences::ParabolaParameter parabolaParameter,
       SolverDoubleRootName solverDoubleRootName,
       GraphTemplateDefault graphTemplateDefault,
@@ -165,7 +165,8 @@ class CountryPreferences {
       const {
     return m_logarithmBasePosition;
   }
-  constexpr Escher::LogarithmKeyEvent logarithmKeyEvent() const {
+  constexpr Escher::LayoutPreferences::LogarithmKeyEvent logarithmKeyEvent()
+      const {
     return m_logarithmKeyEvent;
   }
   constexpr Poincare::Preferences::ParabolaParameter parabolaParameter() const {
@@ -199,7 +200,7 @@ class CountryPreferences {
   const RegressionApp m_regressionAppVariant;
   const GraphTemplatesLayout m_graphTemplatesLayout;
   const Poincare::Preferences::LogarithmBasePosition m_logarithmBasePosition;
-  const Escher::LogarithmKeyEvent m_logarithmKeyEvent;
+  const Escher::LayoutPreferences::LogarithmKeyEvent m_logarithmKeyEvent;
   const Poincare::Preferences::ParabolaParameter m_parabolaParameter;
   const SolverDoubleRootName m_solverDoubleRootName;
   const GraphTemplateDefault m_graphTemplateDefault;

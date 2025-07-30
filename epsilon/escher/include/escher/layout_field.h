@@ -79,7 +79,9 @@ class LayoutField : public EditableField {
   virtual KDCoordinate inputViewHeight() const;
 
  protected:
-  bool linearMode() const { return LayoutPreferences::LinearMode(); }
+  bool linearMode() const {
+    return LayoutPreferences::SharedPreferences()->linearMode();
+  }
   bool insertText(const char* text, bool indentation = false,
                   bool forceCursorRightOfText = false);
   void reload(KDSize previousSize);

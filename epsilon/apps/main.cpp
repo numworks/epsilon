@@ -9,6 +9,7 @@
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
+#include <escher/layout_preferences.h>
 #include <ion.h>
 
 char digit_to_char(int n) { return '0' + (n % 10); }
@@ -20,7 +21,8 @@ void ion_main(int argc, const char* const argv[]) {
   constexpr int bufsiz = 32;
   char txtbuf[bufsiz];
 
-  Escher::Init();
+  Escher::DummyLayoutPreferences prefs;
+  Escher::Init(&prefs);
 
   while (1) {
     float volt = Ion::Battery::voltage();
@@ -45,8 +47,8 @@ void ion_main(int argc, const char* const argv[]) {
 void ion_main(int argc, const char* const argv[]) {
   // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
   Poincare::Init();
-  Escher::Init();
   Apps::Init();
+  Escher::Init(GlobalPreferences::SharedGlobalPreferences());
 
 #if EPSILON_GETOPT
   for (int i = 1; i < argc; i++) {

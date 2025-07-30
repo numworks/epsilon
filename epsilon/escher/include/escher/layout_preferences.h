@@ -1,7 +1,6 @@
 #ifndef ESCHER_MATH_PREFERENCES_H
 #define ESCHER_MATH_PREFERENCES_H
 
-#include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 
 #include "layout_preferences_enum.h"
@@ -9,6 +8,7 @@
 namespace Escher {
 
 /**
+ * TODO: outdated comment, update
  * This is the Escher pendant of Apps::MathPreferences.
  * The sole purpose of this class is to provide a way to access some protected
  * methods of Poincare::Preferences.
@@ -25,30 +25,38 @@ namespace Escher {
  * It's named LayoutPreferences to avoid name conflicts with
  * Poincare::Preferences See comment in poincare/preferences.h.
  */
-/* TODO: remove dependency to apps. One solution could be call Escher::Init with
- * a pointer to an abstart class that declares the necessary methods */
-class LayoutPreferences : public GlobalPreferences {
+class LayoutPreferencesInterface {
  public:
-  inline static LayoutPreferences* SharedPreferences() {
-    return static_cast<LayoutPreferences*>(
-        GlobalPreferences::SharedGlobalPreferences());
-  }
-
-  Poincare::Preferences::PrintFloatMode displayMode() {
-    return GlobalPreferences::SharedGlobalPreferences()->displayMode();
-  }
-
-  Escher::LogarithmKeyEvent logarithmKeyEvent() {
-    return GlobalPreferences::SharedGlobalPreferences()->logarithmKeyEvent();
-  }
-
-  static bool LinearMode() {
-    return GlobalPreferences::SharedGlobalPreferences()->editionMode() ==
-           GlobalPreferences::EditionMode::Edition1D;
-  }
+  virtual bool linearMode() const = 0;
+  virtual Escher::LogarithmKeyEvent logarithmKeyEvent() const = 0;
+  virtual Poincare::Preferences::PrintFloatMode displayMode() const = 0;
+  bool operator==(const LayoutPreferencesInterface&) const = default;
 };
 
-static_assert(sizeof(LayoutPreferences) == sizeof(GlobalPreferences));
+class DummyLayoutPreferences : public LayoutPreferencesInterface {
+  bool linearMode() const override { return false; };
+  Escher::LogarithmKeyEvent logarithmKeyEvent() const override {
+    return Escher::LogarithmKeyEvent::Default;
+  };
+  Poincare::Preferences::PrintFloatMode displayMode() const override {
+    return Poincare::Preferences::PrintFloatMode::Decimal;
+  };
+};
+
+class LayoutPreferences {
+ public:
+  inline static LayoutPreferencesInterface* SharedPreferences() {
+    assert(s_preferences);
+    return s_preferences;
+  }
+
+  static void Init(LayoutPreferencesInterface* preferences) {
+    s_preferences = preferences;
+  }
+
+ private:
+  static LayoutPreferencesInterface* s_preferences;
+};
 
 }  // namespace Escher
 #endif

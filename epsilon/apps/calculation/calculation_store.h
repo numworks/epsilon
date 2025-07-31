@@ -45,7 +45,7 @@ class CalculationStore
 
   OMG::ExpiringPointer<Calculation> push(
       Poincare::Layout input, Poincare::VariableStore* variableStore);
-  void deleteCalculationAtIndex(int index) { deleteElementAtIndex(index); }
+  void deleteCalculationAtIndex(int index);
   bool preferencesHaveChanged();
 
   Poincare::PoolVariableContext createAnsContext(Poincare::Context* context);

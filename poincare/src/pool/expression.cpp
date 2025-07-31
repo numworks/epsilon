@@ -305,6 +305,8 @@ Expression Expression::Builder(Tree* tree) {
   return result;
 }
 
+Expression Expression::Undefined() { return Expression::Builder(KUndef); }
+
 UserExpression UserExpression::Builder(Preferences::AngleUnit angleUnit) {
   return UserExpression::Builder(Units::Unit::Push(angleUnit));
 }
@@ -1067,13 +1069,6 @@ int Expression::numberOfChildren() const { return tree()->numberOfChildren(); }
 ComparisonJunior::Operator Expression::comparisonOperator() const {
   assert(isComparison());
   return Internal::Binary::ComparisonOperatorForType(tree()->type());
-}
-
-/* Undefined */
-
-Undefined Undefined::Builder() {
-  Expression e = Expression::Builder(KUndef);
-  return static_cast<Undefined&>(e);
 }
 
 /* Infinity */

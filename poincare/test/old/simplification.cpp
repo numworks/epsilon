@@ -79,7 +79,7 @@ QUIZ_CASE(poincare_simplification_rational) {
   assert_parsed_expression_simplify_to("56^56", "56^56");
   assert_parsed_expression_simplify_to("999^999", "999^999");
   assert_parsed_expression_simplify_to("999^-999", "1/999^999");
-  assert_parsed_expression_simplify_to("0^0", Undefined::Name());
+  assert_parsed_expression_simplify_to("0^0", "undef");
   assert_parsed_expression_simplify_to("π^0", "1");
   assert_parsed_expression_simplify_to("(-3)^0", "1");
   assert_parsed_expression_simplify_to("2ᴇ200/2ᴇ200", "1");
@@ -87,12 +87,12 @@ QUIZ_CASE(poincare_simplification_rational) {
 
 QUIZ_CASE(poincare_simplification_infinity) {
   // 0 and infinity
-  assert_parsed_expression_simplify_to("0/0", Undefined::Name());
+  assert_parsed_expression_simplify_to("0/0", "undef");
   assert_parsed_expression_simplify_to("0/inf", "0");
-  assert_parsed_expression_simplify_to("inf/0", Undefined::Name());
-  assert_parsed_expression_simplify_to("0×inf", Undefined::Name());
-  assert_parsed_expression_simplify_to("0×inf×π", Undefined::Name());
-  assert_parsed_expression_simplify_to("3×inf/inf", Undefined::Name());
+  assert_parsed_expression_simplify_to("inf/0", "undef");
+  assert_parsed_expression_simplify_to("0×inf", "undef");
+  assert_parsed_expression_simplify_to("0×inf×π", "undef");
+  assert_parsed_expression_simplify_to("3×inf/inf", "undef");
   assert_parsed_expression_simplify_to("1ᴇ1001", "∞");
   assert_parsed_expression_simplify_to("-1ᴇ1001", "-∞");
   assert_parsed_expression_simplify_to("-1ᴇ-1001", "0");
@@ -101,18 +101,17 @@ QUIZ_CASE(poincare_simplification_infinity) {
 
   // Power
   assert_parsed_expression_simplify_to("0^inf", "0");
-  assert_parsed_expression_simplify_to("0^(-inf)", Undefined::Name());
-  assert_parsed_expression_simplify_to("1^inf", Undefined::Name());
-  assert_parsed_expression_simplify_to("1^(-inf)", Undefined::Name());
-  assert_parsed_expression_simplify_to("(-1)^inf", Undefined::Name());
-  assert_parsed_expression_simplify_to("(-1)^(-inf)", Undefined::Name());
+  assert_parsed_expression_simplify_to("0^(-inf)", "undef");
+  assert_parsed_expression_simplify_to("1^inf", "undef");
+  assert_parsed_expression_simplify_to("1^(-inf)", "undef");
+  assert_parsed_expression_simplify_to("(-1)^inf", "undef");
+  assert_parsed_expression_simplify_to("(-1)^(-inf)", "undef");
   assert_parsed_expression_simplify_to("2^inf", "∞");
   assert_expression_simplifies_approximates_to<float>("2^inf", "∞");
   assert_parsed_expression_simplify_to("2^(-inf)", "0");
   assert_expression_simplifies_approximates_to<float>("2^(-inf)", "0");
   assert_parsed_expression_simplify_to("(-2)^inf", "(-2)^∞");
-  assert_expression_simplifies_approximates_to<float>("(-2)^inf",
-                                                      Undefined::Name());
+  assert_expression_simplifies_approximates_to<float>("(-2)^inf", "undef");
   assert_parsed_expression_simplify_to("(-2)^(-inf)",
                                        "(-2)^\U00000012-∞\U00000013");
   assert_expression_simplifies_approximates_to<float>("(-2)^(-inf)", "0");
@@ -124,13 +123,12 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_expression_simplifies_approximates_to<float>("(-0.2)^inf", "0");
   assert_parsed_expression_simplify_to("(-0.2)^(-inf)",
                                        "(-1/5)^\U00000012-∞\U00000013");
-  assert_expression_simplifies_approximates_to<float>("(-0.2)^(-inf)",
-                                                      Undefined::Name());
-  assert_parsed_expression_simplify_to("i^inf", Undefined::Name());
-  assert_parsed_expression_simplify_to("i^(-inf)", Undefined::Name());
-  assert_parsed_expression_simplify_to("(3+4i)^inf", Undefined::Name());
-  assert_parsed_expression_simplify_to("(3+4i)^(-inf)", Undefined::Name());
-  assert_parsed_expression_simplify_to("inf^0", Undefined::Name());
+  assert_expression_simplifies_approximates_to<float>("(-0.2)^(-inf)", "undef");
+  assert_parsed_expression_simplify_to("i^inf", "undef");
+  assert_parsed_expression_simplify_to("i^(-inf)", "undef");
+  assert_parsed_expression_simplify_to("(3+4i)^inf", "undef");
+  assert_parsed_expression_simplify_to("(3+4i)^(-inf)", "undef");
+  assert_parsed_expression_simplify_to("inf^0", "undef");
   assert_parsed_expression_simplify_to("1^(X^inf)", "1^(X^∞)");
   assert_parsed_expression_simplify_to("inf^(-1)", "0");
   assert_parsed_expression_simplify_to("(-inf)^(-1)", "0");
@@ -145,18 +143,18 @@ QUIZ_CASE(poincare_simplification_infinity) {
   assert_parsed_expression_simplify_to("e^(inf)/inf", "0×e^(∞)");
 
   // Logarithm
-  assert_parsed_expression_simplify_to("log(inf,0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(inf,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(0,inf)", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(inf,0)", "undef");
+  assert_parsed_expression_simplify_to("log(inf,1)", "undef");
+  assert_parsed_expression_simplify_to("log(0,inf)", "undef");
   assert_parsed_expression_simplify_to("log(1,inf)", "0");
-  assert_parsed_expression_simplify_to("log(inf,inf)", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(inf,inf)", "undef");
 
   assert_parsed_expression_simplify_to("ln(inf)", "∞");
   assert_parsed_expression_simplify_to("log(inf,-3)", "log(∞,-3)");
   assert_parsed_expression_simplify_to("log(inf,3)", "∞");
   assert_parsed_expression_simplify_to("log(inf,0.3)", "-∞");
   assert_parsed_expression_simplify_to("log(inf,x)", "log(∞,x)");
-  assert_parsed_expression_simplify_to("ln(inf)*0", Undefined::Name());
+  assert_parsed_expression_simplify_to("ln(inf)*0", "undef");
 }
 
 QUIZ_CASE(poincare_simplification_addition) {
@@ -200,9 +198,9 @@ QUIZ_CASE(poincare_simplification_addition) {
                                        "(3661×π)/648000×_rad");
   assert_parsed_expression_simplify_to(
       "[[1,2+i][3,4][5,6]]+[[1,2+i][3,4][5,6]]", "[[2,4+2×i][6,8][10,12]]");
-  assert_parsed_expression_simplify_to("3+[[1,2][3,4]]", Undefined::Name());
+  assert_parsed_expression_simplify_to("3+[[1,2][3,4]]", "undef");
   assert_parsed_expression_simplify_to("[[1][3][5]]+[[1,2+i][3,4][5,6]]",
-                                       Undefined::Name());
+                                       "undef");
   // Beautification order
   assert_parsed_expression_simplify_to("√(2)+4+3×π+√(5)+2×√(5)",
                                        "3×π+4+3×√(5)+√(2)");
@@ -221,7 +219,7 @@ QUIZ_CASE(poincare_simplification_addition) {
 }
 
 QUIZ_CASE(poincare_simplification_multiplication) {
-  assert_parsed_expression_simplify_to("undef×x", Undefined::Name());
+  assert_parsed_expression_simplify_to("undef×x", "undef");
   assert_parsed_expression_simplify_to("0×x+P", "dep(P,{x})");
   assert_parsed_expression_simplify_to("0×x×0×32×cos(3)", "dep(0,{x})");
   assert_parsed_expression_simplify_to("3×M^4×P^x×P^2×(M^2+2)×2×1.2",
@@ -543,14 +541,14 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("100×_°C→_K", "373.15×_K");
   assert_parsed_expression_simplify_to("-100×_°C→_K", "173.15×_K");
   assert_parsed_expression_simplify_to("(12_m/6_m)×_°C", "2×_°C");
-  assert_parsed_expression_simplify_to("_°C+_°C", Undefined::Name());
-  assert_parsed_expression_simplify_to("_°C+_°F", Undefined::Name());
-  assert_parsed_expression_simplify_to("_K+_°F", Undefined::Name());
-  assert_parsed_expression_simplify_to("2*20_°F", Undefined::Name());
-  assert_parsed_expression_simplify_to("_°C^2", Undefined::Name());
-  assert_parsed_expression_simplify_to("1/(-3_°C)", Undefined::Name());
-  assert_parsed_expression_simplify_to("-1×100×_°C→_K", Undefined::Name());
-  assert_parsed_expression_simplify_to("_K×_°C", Undefined::Name());
+  assert_parsed_expression_simplify_to("_°C+_°C", "undef");
+  assert_parsed_expression_simplify_to("_°C+_°F", "undef");
+  assert_parsed_expression_simplify_to("_K+_°F", "undef");
+  assert_parsed_expression_simplify_to("2*20_°F", "undef");
+  assert_parsed_expression_simplify_to("_°C^2", "undef");
+  assert_parsed_expression_simplify_to("1/(-3_°C)", "undef");
+  assert_parsed_expression_simplify_to("-1×100×_°C→_K", "undef");
+  assert_parsed_expression_simplify_to("_K×_°C", "undef");
   assert_parsed_expression_simplify_to("°C→x", "_°C→x");
   assert_parsed_expression_simplify_to("123°C→x", "123×_°C→x");
   assert_parsed_expression_simplify_to("-4.56°C→x", "-4.56×_°C→x");
@@ -673,118 +671,111 @@ QUIZ_CASE(poincare_simplification_units) {
   assert_parsed_expression_simplify_to("inf×_s", "∞×_s");
   assert_parsed_expression_simplify_to("-inf×_oz", "-∞×_kg");
   assert_parsed_expression_simplify_to("2_s+3_s-5_s", "0×_s");
-  assert_parsed_expression_simplify_to("log(0)×_s", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(undef)*_s", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(0)×_s", "undef");
+  assert_parsed_expression_simplify_to("log(undef)*_s", "undef");
 
   /* Units with invalid exponent */
-  assert_parsed_expression_simplify_to("_s^(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("_s^(π)", Undefined::Name());
+  assert_parsed_expression_simplify_to("_s^(_s)", "undef");
+  assert_parsed_expression_simplify_to("_s^(π)", "undef");
 
   /* Inhomogeneous expressions */
-  assert_parsed_expression_simplify_to("1+_s", Undefined::Name());
-  assert_parsed_expression_simplify_to("0+_A", Undefined::Name());
-  assert_parsed_expression_simplify_to("i_A", Undefined::Name());
-  assert_parsed_expression_simplify_to("_A+i", Undefined::Name());
-  assert_parsed_expression_simplify_to("_m+_s", Undefined::Name());
-  assert_parsed_expression_simplify_to("_m^2+_m", Undefined::Name());
-  assert_parsed_expression_simplify_to("acos(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("arcosh(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("arg(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("asin(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("arsinh(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("arctan(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("artanh(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binomcdf(_s,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binomcdf(2,_s,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binomcdf(2,3,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binomial(_s,2)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binomial(2,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binompdf(_s,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binompdf(2,_s,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binompdf(2,3,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("conj(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("cos(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("cosh(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("cross(_s,[[1][2][3]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("det(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("det([[_s]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("1+_s", "undef");
+  assert_parsed_expression_simplify_to("0+_A", "undef");
+  assert_parsed_expression_simplify_to("i_A", "undef");
+  assert_parsed_expression_simplify_to("_A+i", "undef");
+  assert_parsed_expression_simplify_to("_m+_s", "undef");
+  assert_parsed_expression_simplify_to("_m^2+_m", "undef");
+  assert_parsed_expression_simplify_to("acos(_s)", "undef");
+  assert_parsed_expression_simplify_to("arcosh(_s)", "undef");
+  assert_parsed_expression_simplify_to("arg(_s)", "undef");
+  assert_parsed_expression_simplify_to("asin(_s)", "undef");
+  assert_parsed_expression_simplify_to("arsinh(_s)", "undef");
+  assert_parsed_expression_simplify_to("arctan(_s)", "undef");
+  assert_parsed_expression_simplify_to("artanh(_s)", "undef");
+  assert_parsed_expression_simplify_to("binomcdf(_s,2,3)", "undef");
+  assert_parsed_expression_simplify_to("binomcdf(2,_s,3)", "undef");
+  assert_parsed_expression_simplify_to("binomcdf(2,3,_s)", "undef");
+  assert_parsed_expression_simplify_to("binomial(_s,2)", "undef");
+  assert_parsed_expression_simplify_to("binomial(2,_s)", "undef");
+  assert_parsed_expression_simplify_to("binompdf(_s,2,3)", "undef");
+  assert_parsed_expression_simplify_to("binompdf(2,_s,3)", "undef");
+  assert_parsed_expression_simplify_to("binompdf(2,3,_s)", "undef");
+  assert_parsed_expression_simplify_to("conj(_s)", "undef");
+  assert_parsed_expression_simplify_to("cos(_s)", "undef");
+  assert_parsed_expression_simplify_to("cosh(_s)", "undef");
+  assert_parsed_expression_simplify_to("cross(_s,[[1][2][3]])", "undef");
+  assert_parsed_expression_simplify_to("det(_s)", "undef");
+  assert_parsed_expression_simplify_to("det([[_s]])", "undef");
   assert_parsed_expression_simplify_to("det([[cos(3gon)]])",
                                        "cos(\U000000123×π\U00000013/200)");
-  assert_parsed_expression_simplify_to("diff(_s,x,0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("diff(0,x,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("dim(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("dot(_s,[[1][2][3]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("factor(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("(_s)!", Undefined::Name());
-  assert_parsed_expression_simplify_to("frac(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("gcd(1,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("gcd(_s,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("gcd(1,2,3,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("identity(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("im(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("int(_s,x,0,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("int(0,x,_s,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("int(0,x,0,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invbinom(_s,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invbinom(2,_s,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invbinom(2,3,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invnorm(_s,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invnorm(2,_s,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invnorm(2,3,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("inverse(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("lcm(1,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("lcm(_s,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("lcm(1,2,3,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("ln(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(_s,2)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(1,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(_N^2,_N)", Undefined::Name());
-  assert_parsed_expression_simplify_to("norm(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("normcdf(_s,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("normcdf(2,_s,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("normcdf(2,3,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("normcdfrange(_s,2,3,4)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("normcdfrange(2,_s,3,4)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("normcdfrange(2,3,_s,4)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("normcdfrange(2,3,4,_s)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("normpdf(_s,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("normpdf(2,_s,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("normpdf(2,3,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("permute(_s,2)", Undefined::Name());
-  assert_parsed_expression_simplify_to("permute(2,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("product(_s,x,0,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("product(1,x,_s,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("product(1,x,0,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("quo(_s,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("quo(1,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("re(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("ref(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("ref([[_s]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("diff(_s,x,0)", "undef");
+  assert_parsed_expression_simplify_to("diff(0,x,_s)", "undef");
+  assert_parsed_expression_simplify_to("dim(_s)", "undef");
+  assert_parsed_expression_simplify_to("dot(_s,[[1][2][3]])", "undef");
+  assert_parsed_expression_simplify_to("factor(_s)", "undef");
+  assert_parsed_expression_simplify_to("(_s)!", "undef");
+  assert_parsed_expression_simplify_to("frac(_s)", "undef");
+  assert_parsed_expression_simplify_to("gcd(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("gcd(_s,1)", "undef");
+  assert_parsed_expression_simplify_to("gcd(1,2,3,_s)", "undef");
+  assert_parsed_expression_simplify_to("identity(_s)", "undef");
+  assert_parsed_expression_simplify_to("im(_s)", "undef");
+  assert_parsed_expression_simplify_to("int(_s,x,0,1)", "undef");
+  assert_parsed_expression_simplify_to("int(0,x,_s,1)", "undef");
+  assert_parsed_expression_simplify_to("int(0,x,0,_s)", "undef");
+  assert_parsed_expression_simplify_to("invbinom(_s,2,3)", "undef");
+  assert_parsed_expression_simplify_to("invbinom(2,_s,3)", "undef");
+  assert_parsed_expression_simplify_to("invbinom(2,3,_s)", "undef");
+  assert_parsed_expression_simplify_to("invnorm(_s,2,3)", "undef");
+  assert_parsed_expression_simplify_to("invnorm(2,_s,3)", "undef");
+  assert_parsed_expression_simplify_to("invnorm(2,3,_s)", "undef");
+  assert_parsed_expression_simplify_to("inverse(_s)", "undef");
+  assert_parsed_expression_simplify_to("lcm(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("lcm(_s,1)", "undef");
+  assert_parsed_expression_simplify_to("lcm(1,2,3,_s)", "undef");
+  assert_parsed_expression_simplify_to("ln(_s)", "undef");
+  assert_parsed_expression_simplify_to("log(_s)", "undef");
+  assert_parsed_expression_simplify_to("log(_s,2)", "undef");
+  assert_parsed_expression_simplify_to("log(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("log(_N^2,_N)", "undef");
+  assert_parsed_expression_simplify_to("norm(_s)", "undef");
+  assert_parsed_expression_simplify_to("normcdf(_s,2,3)", "undef");
+  assert_parsed_expression_simplify_to("normcdf(2,_s,3)", "undef");
+  assert_parsed_expression_simplify_to("normcdf(2,3,_s)", "undef");
+  assert_parsed_expression_simplify_to("normcdfrange(_s,2,3,4)", "undef");
+  assert_parsed_expression_simplify_to("normcdfrange(2,_s,3,4)", "undef");
+  assert_parsed_expression_simplify_to("normcdfrange(2,3,_s,4)", "undef");
+  assert_parsed_expression_simplify_to("normcdfrange(2,3,4,_s)", "undef");
+  assert_parsed_expression_simplify_to("normpdf(_s,2,3)", "undef");
+  assert_parsed_expression_simplify_to("normpdf(2,_s,3)", "undef");
+  assert_parsed_expression_simplify_to("normpdf(2,3,_s)", "undef");
+  assert_parsed_expression_simplify_to("permute(_s,2)", "undef");
+  assert_parsed_expression_simplify_to("permute(2,_s)", "undef");
+  assert_parsed_expression_simplify_to("product(_s,x,0,1)", "undef");
+  assert_parsed_expression_simplify_to("product(1,x,_s,1)", "undef");
+  assert_parsed_expression_simplify_to("product(1,x,0,_s)", "undef");
+  assert_parsed_expression_simplify_to("quo(_s,1)", "undef");
+  assert_parsed_expression_simplify_to("quo(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("re(_s)", "undef");
+  assert_parsed_expression_simplify_to("ref(_s)", "undef");
+  assert_parsed_expression_simplify_to("ref([[_s]])", "undef");
   assert_parsed_expression_simplify_to("ref([[cos(3gon)]])", "[[1]]");
-  assert_parsed_expression_simplify_to("rem(_s,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("rem(1,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("round(1,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("round(1_s,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("round(1_s,0.1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("round(1_s,0.1)+abs(1_s)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("rref(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("sin(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("sinh(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("sum(_s,x,0,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("sum(0,x,_s,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("sum(0,x,0,_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("tan(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("tanh(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("trace(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("transpose(_s)", Undefined::Name());
+  assert_parsed_expression_simplify_to("rem(_s,1)", "undef");
+  assert_parsed_expression_simplify_to("rem(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("round(1,_s)", "undef");
+  assert_parsed_expression_simplify_to("round(1_s,_s)", "undef");
+  assert_parsed_expression_simplify_to("round(1_s,0.1)", "undef");
+  assert_parsed_expression_simplify_to("round(1_s,0.1)+abs(1_s)", "undef");
+  assert_parsed_expression_simplify_to("rref(_s)", "undef");
+  assert_parsed_expression_simplify_to("sin(_s)", "undef");
+  assert_parsed_expression_simplify_to("sinh(_s)", "undef");
+  assert_parsed_expression_simplify_to("sum(_s,x,0,1)", "undef");
+  assert_parsed_expression_simplify_to("sum(0,x,_s,1)", "undef");
+  assert_parsed_expression_simplify_to("sum(0,x,0,_s)", "undef");
+  assert_parsed_expression_simplify_to("tan(_s)", "undef");
+  assert_parsed_expression_simplify_to("tanh(_s)", "undef");
+  assert_parsed_expression_simplify_to("trace(_s)", "undef");
+  assert_parsed_expression_simplify_to("transpose(_s)", "undef");
 
   /* Valid expressions */
   assert_parsed_expression_simplify_to("-2×_A", "-2×_A");
@@ -799,17 +790,17 @@ QUIZ_CASE(poincare_simplification_units) {
                                        User, Radian, Imperial);
   assert_parsed_expression_simplify_to("abs(_s)", "1×_s");
   assert_parsed_expression_simplify_to("abs(3_m)", "3×_m");
-  assert_parsed_expression_simplify_to("ceil(3.3_m)", Undefined::Name());
-  assert_parsed_expression_simplify_to("floor(_s)", Undefined::Name());
-  assert_parsed_expression_simplify_to("floor(3.3_m)", Undefined::Name());
-  assert_parsed_expression_simplify_to("round(3.3_m, 0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("round(_s,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("sign(-2_m)", Undefined::Name());
-  assert_parsed_expression_simplify_to("sign(4_m)", Undefined::Name());
-  assert_parsed_expression_simplify_to("sign(_s)", Undefined::Name());
+  assert_parsed_expression_simplify_to("ceil(3.3_m)", "undef");
+  assert_parsed_expression_simplify_to("floor(_s)", "undef");
+  assert_parsed_expression_simplify_to("floor(3.3_m)", "undef");
+  assert_parsed_expression_simplify_to("round(3.3_m, 0)", "undef");
+  assert_parsed_expression_simplify_to("round(_s,1)", "undef");
+  assert_parsed_expression_simplify_to("sign(-2_m)", "undef");
+  assert_parsed_expression_simplify_to("sign(4_m)", "undef");
+  assert_parsed_expression_simplify_to("sign(_s)", "undef");
   assert_parsed_expression_simplify_to(
-      "abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("sign(3_m) + 2", Undefined::Name());
+      "abs(2_m) + ceil(3_m) + floor(4_m) + round(5_m, 1)", "undef");
+  assert_parsed_expression_simplify_to("sign(3_m) + 2", "undef");
   assert_parsed_expression_simplify_to("1/_m+1/_km", "1.001×_m^(-1)");
   assert_parsed_expression_simplify_to("10000_kg", "10×_t");
   assert_parsed_expression_simplify_to("1000000_kg", "1×_kt");
@@ -826,10 +817,10 @@ QUIZ_CASE(poincare_simplification_power) {
   assert_parsed_expression_simplify_to("1^x", "1");
   assert_parsed_expression_simplify_to("x^1", "x");
   assert_parsed_expression_simplify_to("0^3", "0");
-  assert_parsed_expression_simplify_to("0^0", Undefined::Name());
-  assert_parsed_expression_simplify_to("0^i", Undefined::Name());
-  assert_parsed_expression_simplify_to("0^(-3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("0^(-5+ln(5))", Undefined::Name());
+  assert_parsed_expression_simplify_to("0^0", "undef");
+  assert_parsed_expression_simplify_to("0^i", "undef");
+  assert_parsed_expression_simplify_to("0^(-3)", "undef");
+  assert_parsed_expression_simplify_to("0^(-5+ln(5))", "undef");
   assert_parsed_expression_simplify_to("0^(5+ln(5))", "0");
   assert_parsed_expression_simplify_to("4^0.5", "2");
   assert_parsed_expression_simplify_to("8^0.5", "2×√(2)");
@@ -1000,9 +991,9 @@ QUIZ_CASE(poincare_simplification_power) {
 QUIZ_CASE(poincare_simplification_factorial) {
   assert_parsed_expression_simplify_to("1/3!", "1/6");
   assert_parsed_expression_simplify_to("5!", "120");
-  assert_parsed_expression_simplify_to("(1/3)!", Undefined::Name());
-  assert_parsed_expression_simplify_to("π!", Undefined::Name());
-  assert_parsed_expression_simplify_to("e!", Undefined::Name());
+  assert_parsed_expression_simplify_to("(1/3)!", "undef");
+  assert_parsed_expression_simplify_to("π!", "undef");
+  assert_parsed_expression_simplify_to("e!", "undef");
 }
 
 QUIZ_CASE(poincare_simplification_percent) {
@@ -1024,15 +1015,15 @@ QUIZ_CASE(poincare_simplification_percent) {
 }
 
 QUIZ_CASE(poincare_simplification_logarithm) {
-  assert_parsed_expression_simplify_to("log(0,0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(0,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(1,0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(2,0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(0,14)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(0,0.14)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(0,0.14+i)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(2,1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(x,1)", Undefined::Name());
+  assert_parsed_expression_simplify_to("log(0,0)", "undef");
+  assert_parsed_expression_simplify_to("log(0,1)", "undef");
+  assert_parsed_expression_simplify_to("log(1,0)", "undef");
+  assert_parsed_expression_simplify_to("log(2,0)", "undef");
+  assert_parsed_expression_simplify_to("log(0,14)", "undef");
+  assert_parsed_expression_simplify_to("log(0,0.14)", "undef");
+  assert_parsed_expression_simplify_to("log(0,0.14+i)", "undef");
+  assert_parsed_expression_simplify_to("log(2,1)", "undef");
+  assert_parsed_expression_simplify_to("log(x,1)", "undef");
   assert_parsed_expression_simplify_to("log(12925)",
                                        "log(47)+log(11)+2×log(5)");
   assert_parsed_expression_simplify_to("ln(12925)", "ln(47)+ln(11)+2×ln(5)");
@@ -1113,7 +1104,7 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("abs(√(√(√(√(√(√(i)))))))", "1");
   assert_parsed_expression_simplify_to("abs(√(√(√(√(√(√(πi)))))))",
                                        "root(π,64)");
-  assert_parsed_expression_simplify_to("arg(0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("arg(0)", "undef");
   assert_parsed_expression_simplify_to("arg(123)", "0");
   assert_parsed_expression_simplify_to("arg(-1ᴇ123)", "π");
   assert_parsed_expression_simplify_to("arg(i)", "π/2");
@@ -1141,7 +1132,7 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("quo(19,0)", "∞");
   assert_parsed_expression_simplify_to("rem(19,3)", "1");
   assert_parsed_expression_simplify_to("rem(-19,3)", "2");
-  assert_parsed_expression_simplify_to("rem(19,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("rem(19,0)", "undef");
   assert_parsed_expression_simplify_to(
       "99!",
       "933262154439441526816992388562667004907159682643816214685929638952175999"
@@ -1152,8 +1143,8 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("factor(1008/6895)",
                                        "(2^4×3^2)/(5×197)");
   assert_parsed_expression_simplify_to("factor(10007)", "10007");
-  assert_parsed_expression_simplify_to("factor(10007^2)", Undefined::Name());
-  assert_parsed_expression_simplify_to("factor(i)", Undefined::Name());
+  assert_parsed_expression_simplify_to("factor(10007^2)", "undef");
+  assert_parsed_expression_simplify_to("factor(i)", "undef");
   assert_parsed_expression_simplify_to("floor(-1.3)", "-2");
   assert_parsed_expression_simplify_to("floor(2π)", "6");
   assert_parsed_expression_simplify_to(
@@ -1199,7 +1190,7 @@ QUIZ_CASE(poincare_simplification_function) {
   assert_parsed_expression_simplify_to("sign(0)", "0");
   assert_parsed_expression_simplify_to("sign(inf)", "1");
   assert_parsed_expression_simplify_to("sign(-inf)", "-1");
-  assert_parsed_expression_simplify_to("sign(undef)", Undefined::Name());
+  assert_parsed_expression_simplify_to("sign(undef)", "undef");
   assert_parsed_expression_simplify_to("sign(23)", "1");
   assert_parsed_expression_simplify_to("sign(log(18))", "1");
   assert_parsed_expression_simplify_to("sign(-√(2))", "-1");
@@ -1214,7 +1205,7 @@ QUIZ_CASE(poincare_simplification_function) {
                                        MetricUnitFormat, Cartesian,
                                        ReplaceAllSymbols);
   assert_parsed_expression_simplify_to("permute(99,4)", "90345024");
-  assert_parsed_expression_simplify_to("permute(20,-10)", Undefined::Name());
+  assert_parsed_expression_simplify_to("permute(20,-10)", "undef");
   assert_parsed_expression_simplify_to("re(1/2)", "1/2");
 }
 
@@ -1334,12 +1325,10 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   // -- tan
   assert_parsed_expression_simplify_to("tan(0)", "0");
   assert_parsed_expression_simplify_to("tan(π)", "0");
-  assert_parsed_expression_simplify_to("tan(3×π/2)", Undefined::Name());
-  assert_parsed_expression_simplify_to("tan(π/2)", Undefined::Name());
-  assert_parsed_expression_simplify_to("tan(90)", Undefined::Name(), User,
-                                       Degree);
-  assert_parsed_expression_simplify_to("tan(100)", Undefined::Name(), User,
-                                       Gradian);
+  assert_parsed_expression_simplify_to("tan(3×π/2)", "undef");
+  assert_parsed_expression_simplify_to("tan(π/2)", "undef");
+  assert_parsed_expression_simplify_to("tan(90)", "undef", User, Degree);
+  assert_parsed_expression_simplify_to("tan(100)", "undef", User, Gradian);
   assert_parsed_expression_simplify_to("tan(π×35/29)", "tan((6×π)/29)");
   assert_parsed_expression_simplify_to("tan(-π×35/29)", "-tan((6×π)/29)");
   assert_parsed_expression_simplify_to("tan(π×340000)", "0");
@@ -1348,7 +1337,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("tan(π/12)", "2-√(3)");
   assert_parsed_expression_simplify_to("tan(-π/12)", "-2+√(3)");
   assert_parsed_expression_simplify_to("tan(-π×√(2))", "-tan(√(2)×π)");
-  assert_parsed_expression_simplify_to("tan(1311π/6)", Undefined::Name());
+  assert_parsed_expression_simplify_to("tan(1311π/6)", "undef");
   assert_parsed_expression_simplify_to("tan(-π17/8)", "1-√(2)");
   assert_parsed_expression_simplify_to("tan(41π/6)", "-√(3)/3");
   assert_parsed_expression_simplify_to("tan(π/4+1000π)", "1");
@@ -1369,8 +1358,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("tan(-15)", "-2+√(3)", User, Degree);
   assert_parsed_expression_simplify_to("tan(-180×√(2))", "-tan(180×√(2))", User,
                                        Degree);
-  assert_parsed_expression_simplify_to("tan(39330)", Undefined::Name(), User,
-                                       Degree);
+  assert_parsed_expression_simplify_to("tan(39330)", "undef", User, Degree);
   assert_parsed_expression_simplify_to("tan(-382.5)", "1-√(2)", User, Degree);
   assert_parsed_expression_simplify_to("tan(1230)", "-√(3)/3", User, Degree);
   assert_parsed_expression_simplify_to("tan(180045)", "1", User, Degree);
@@ -1395,7 +1383,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("acos(cos(9))", "9-2×π");
   assert_parsed_expression_simplify_to("acos(cos(10^125))",
                                        "arccos(cos(10^125))");
-  assert_parsed_expression_simplify_to("acos(cos(1/0))", Undefined::Name());
+  assert_parsed_expression_simplify_to("acos(cos(1/0))", "undef");
   assert_parsed_expression_simplify_to("acos(cos(-8.8))", "44/5-2×π");
   assert_parsed_expression_simplify_to("acos(cos(π+26))", "-26+9×π");
   assert_parsed_expression_simplify_to("acos(cos(0))", "0");
@@ -1484,8 +1472,7 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
   assert_parsed_expression_simplify_to("atan(√(3))", "60", User, Degree);
   assert_parsed_expression_simplify_to("atan(∞)", "π/2", User, Radian);
   assert_parsed_expression_simplify_to("atan(-∞)", "-π/2", User, Radian);
-  assert_parsed_expression_simplify_to("tan(atan(∞))", Undefined::Name(), User,
-                                       Radian);
+  assert_parsed_expression_simplify_to("tan(atan(∞))", "undef", User, Radian);
   assert_parsed_expression_simplify_to("atan(1/x)",
                                        "dep((π×sign(x)-2×arctan(x))/2,{1/x})");
   assert_parsed_expression_simplify_to(
@@ -1537,27 +1524,26 @@ QUIZ_CASE(poincare_simplification_trigonometry_functions) {
 
 QUIZ_CASE(poincare_simplification_matrix) {
   // OMatrix can't contain matrix or lists
-  assert_parsed_expression_simplify_to("[[[[1,2][3,4]],2][3,4]]",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("[[{9,8,7},2][3,4]]", Undefined::Name());
+  assert_parsed_expression_simplify_to("[[[[1,2][3,4]],2][3,4]]", "undef");
+  assert_parsed_expression_simplify_to("[[{9,8,7},2][3,4]]", "undef");
 
   // OMatrix don't bubble-up undefined/unreal or unit
   assert_parsed_expression_simplify_to("[[1,1/0][3,4]]", "[[1,undef][3,4]]");
   assert_parsed_expression_simplify_to("[[1,(-1)^(1/2)][3,4]]",
                                        "[[1,nonreal][3,4]]", User, Radian,
                                        MetricUnitFormat, Real);
-  assert_parsed_expression_simplify_to("[[1,3_kg][3,4]]", Undefined::Name(),
-                                       User, Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("[[1,3_kg][3,4]]", "undef", User, Radian,
+                                       MetricUnitFormat, Real);
 
   // Addition OMatrix
-  assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", Undefined::Name());
-  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+1", Undefined::Name());
+  assert_parsed_expression_simplify_to("1+[[1,2,3][4,5,6]]", "undef");
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+1", "undef");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]+[[1,2,3][4,5,6]]",
-                                       Undefined::Name());
+                                       "undef");
   assert_parsed_expression_simplify_to("2+[[1,2,3][4,5,6]]+[[1,2,3][4,5,6]]",
-                                       Undefined::Name());
+                                       "undef");
   assert_parsed_expression_simplify_to(
-      "[[1,2,3][4,5,6]]+cos(2)+[[1,2,3][4,5,6]]", Undefined::Name());
+      "[[1,2,3][4,5,6]]+cos(2)+[[1,2,3][4,5,6]]", "undef");
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]+[[1,2,3][4,5,6]]",
                                        "[[2,4,6][8,10,12]]");
 
@@ -1571,7 +1557,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]*[[1,2][2,3][5,6]]",
                                        "[[20,26][44,59]]");
   assert_parsed_expression_simplify_to("[[1,2,3,4][4,5,6,5]]*[[1,2][2,3][5,6]]",
-                                       Undefined::Name());
+                                       "undef");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-3)*[[1,2][3,4]]",
                                        "[[11/2,-5/2][-15/4,7/4]]");
   assert_parsed_expression_simplify_to(
@@ -1582,21 +1568,19 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to(
       "[[1,2,3][4,5,6][7,8,9]]^3",
       "[[468,576,684][1062,1305,1548][1656,2034,2412]]");
-  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]^(-1)",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("[[1,2,3][4,5,6]]^(-1)", "undef");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^(-1)",
                                        "[[-2,1][3/2,-1/2]]");
   assert_parsed_expression_simplify_to("[[1,2][3,4]]^0", "[[1,0][0,1]]");
-  assert_parsed_expression_simplify_to("[[1][2]]^0", Undefined::Name());
-  assert_parsed_expression_simplify_to("[[1][2]]^1", Undefined::Name());
+  assert_parsed_expression_simplify_to("[[1][2]]^0", "undef");
+  assert_parsed_expression_simplify_to("[[1][2]]^1", "undef");
 
   // Determinant
-  assert_parsed_expression_simplify_to("det(π+π)", Undefined::Name());
+  assert_parsed_expression_simplify_to("det(π+π)", "undef");
   assert_parsed_expression_simplify_to("det([[π+π]])", "2×π");
   assert_parsed_expression_simplify_to("det([[1,2][3,4]])", "-2");
   assert_parsed_expression_simplify_to("det([[2,2][3,4]])", "2");
-  assert_parsed_expression_simplify_to("det([[2,2][3,4][3,4]])",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("det([[2,2][3,4][3,4]])", "undef");
   assert_parsed_expression_simplify_to("det([[2,2][3,3]])", "0");
   assert_parsed_expression_simplify_to("det([[1,2,3][4,5,6][7,8,9]])", "0");
   assert_parsed_expression_simplify_to("det([[1,2,3][4,5,6][7,8,9]])", "0");
@@ -1605,26 +1589,25 @@ QUIZ_CASE(poincare_simplification_matrix) {
   assert_parsed_expression_simplify_to("det(identity(5))", "1");
 
   // Dimension
-  assert_parsed_expression_simplify_to("dim(3)", Undefined::Name());
+  assert_parsed_expression_simplify_to("dim(3)", "undef");
   assert_parsed_expression_simplify_to("dim([[1/√(2),1/2,3][2,1,-3]])",
                                        "[[2,3]]");
 
   // Inverse
   assert_parsed_expression_simplify_to("inverse([[1/√(2),1/2,3][2,1,-3]])",
-                                       Undefined::Name());
+                                       "undef");
   assert_parsed_expression_simplify_to("inverse([[1,2][3,4]])",
                                        "[[-2,1][3/2,-1/2]]");
   assert_parsed_expression_simplify_to("inverse([[π,2×π][3,2]])",
                                        "[[-1/(2×π),1/2][3/(4×π),-1/4]]");
 
   // Divison : should be undefined
-  assert_parsed_expression_simplify_to("[[1,2][3,4]]/[[1,2][-2,3]]",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("1/identity(2)^500", Undefined::Name());
+  assert_parsed_expression_simplify_to("[[1,2][3,4]]/[[1,2][-2,3]]", "undef");
+  assert_parsed_expression_simplify_to("1/identity(2)^500", "undef");
 
   // Trace
   assert_parsed_expression_simplify_to("trace([[1/√(2),1/2,3][2,1,-3]])",
-                                       Undefined::Name());
+                                       "undef");
   assert_parsed_expression_simplify_to("trace([[√(2),2][4,3+log(3)]])",
                                        "log(3)+3+√(2)");
   assert_parsed_expression_simplify_to("trace(√(2)+log(3))", "undef");
@@ -1683,8 +1666,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   // Cross product
   assert_parsed_expression_simplify_to("cross([[0][1/√(2)][0]],[[0][0][1]])",
                                        "[[√(2)/2][0][0]]");
-  assert_parsed_expression_simplify_to("cross([[1,2,3]],[[4][7][8]])",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("cross([[1,2,3]],[[4][7][8]])", "undef");
   assert_parsed_expression_simplify_to("cross([[1,2,3]],[[4,7,8]])",
                                        "[[-5,4,-1]]");
   assert_parsed_expression_simplify_to("cross([[1,π,i]],[[iπ,iπ^2,-π]])",
@@ -1693,8 +1675,7 @@ QUIZ_CASE(poincare_simplification_matrix) {
   // Dot product
   assert_parsed_expression_simplify_to("dot([[1/√(2)][0][0]],[[1][0][0]])",
                                        "√(2)/2");
-  assert_parsed_expression_simplify_to("dot([[1,1,0]],[[0][0][1]])",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("dot([[1,1,0]],[[0][0][1]])", "undef");
   assert_parsed_expression_simplify_to("dot([[1,1,0]],[[0,0,1]])", "0");
   assert_parsed_expression_simplify_to("dot([[1,1,1]],[[0,π,i]])", "π+i");
 
@@ -1705,86 +1686,65 @@ QUIZ_CASE(poincare_simplification_matrix) {
 }
 
 QUIZ_CASE(poincare_simplification_functions_of_matrices) {
-  assert_parsed_expression_simplify_to("abs([[1,-1][2,-3]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("acos([[1/√(2),1/2][1,-1]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("asin([[1,0]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("binomial([[0,180]],1)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("binomial(1,[[0,180]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("binomial([[0,180]],[[1]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("ceil([[0.3,180]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("arg([[1,1+i]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("conj([[1,1+i]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("cos([[π/3,0][π/7,π/2]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("cos([[0,π]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("diff([[0,180]],x,1)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("diff(1,x,[[0,180]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("quo([[0,180]],1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("quo(1,[[0,180]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("quo([[0,180]],[[1]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("rem([[0,180]],1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("rem(1,[[0,180]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("rem([[0,180]],[[1]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("factor([[0,180]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("[[1,3]]!", Undefined::Name());
+  assert_parsed_expression_simplify_to("abs([[1,-1][2,-3]])", "undef");
+  assert_parsed_expression_simplify_to("acos([[1/√(2),1/2][1,-1]])", "undef");
+  assert_parsed_expression_simplify_to("asin([[1,0]])", "undef");
+  assert_parsed_expression_simplify_to("binomial([[0,180]],1)", "undef");
+  assert_parsed_expression_simplify_to("binomial(1,[[0,180]])", "undef");
+  assert_parsed_expression_simplify_to("binomial([[0,180]],[[1]])", "undef");
+  assert_parsed_expression_simplify_to("ceil([[0.3,180]])", "undef");
+  assert_parsed_expression_simplify_to("arg([[1,1+i]])", "undef");
+  assert_parsed_expression_simplify_to("conj([[1,1+i]])", "undef");
+  assert_parsed_expression_simplify_to("cos([[π/3,0][π/7,π/2]])", "undef");
+  assert_parsed_expression_simplify_to("cos([[0,π]])", "undef");
+  assert_parsed_expression_simplify_to("diff([[0,180]],x,1)", "undef");
+  assert_parsed_expression_simplify_to("diff(1,x,[[0,180]])", "undef");
+  assert_parsed_expression_simplify_to("quo([[0,180]],1)", "undef");
+  assert_parsed_expression_simplify_to("quo(1,[[0,180]])", "undef");
+  assert_parsed_expression_simplify_to("quo([[0,180]],[[1]])", "undef");
+  assert_parsed_expression_simplify_to("rem([[0,180]],1)", "undef");
+  assert_parsed_expression_simplify_to("rem(1,[[0,180]])", "undef");
+  assert_parsed_expression_simplify_to("rem([[0,180]],[[1]])", "undef");
+  assert_parsed_expression_simplify_to("factor([[0,180]])", "undef");
+  assert_parsed_expression_simplify_to("[[1,3]]!", "undef");
   assert_parsed_expression_simplify_to("floor([[1/√(2),1/2][1,-1.3]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("frac([[0.3,180]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("gcd([[0,180]],1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("gcd(1,[[0,180]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("gcd([[0,180]],[[1]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("gcd(1,2,[[1]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("arsinh([[0,π]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("artanh([[0,π]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("sinh([[0,π]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("im([[1,1+i]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("int([[0,180]],x,1,2)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("int(1,x,[[0,180]],1)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("int(1,x,1,[[0,180]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("log([[2,3]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("log(5,[[2,3]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("ln([[2,3]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("root([[2,3]],5)", Undefined::Name());
-  assert_parsed_expression_simplify_to("root(5,[[2,3]])", Undefined::Name());
+                                       "undef");
+  assert_parsed_expression_simplify_to("frac([[0.3,180]])", "undef");
+  assert_parsed_expression_simplify_to("gcd([[0,180]],1)", "undef");
+  assert_parsed_expression_simplify_to("gcd(1,[[0,180]])", "undef");
+  assert_parsed_expression_simplify_to("gcd([[0,180]],[[1]])", "undef");
+  assert_parsed_expression_simplify_to("gcd(1,2,[[1]])", "undef");
+  assert_parsed_expression_simplify_to("arsinh([[0,π]])", "undef");
+  assert_parsed_expression_simplify_to("artanh([[0,π]])", "undef");
+  assert_parsed_expression_simplify_to("sinh([[0,π]])", "undef");
+  assert_parsed_expression_simplify_to("im([[1,1+i]])", "undef");
+  assert_parsed_expression_simplify_to("int([[0,180]],x,1,2)", "undef");
+  assert_parsed_expression_simplify_to("int(1,x,[[0,180]],1)", "undef");
+  assert_parsed_expression_simplify_to("int(1,x,1,[[0,180]])", "undef");
+  assert_parsed_expression_simplify_to("log([[2,3]])", "undef");
+  assert_parsed_expression_simplify_to("log(5,[[2,3]])", "undef");
+  assert_parsed_expression_simplify_to("ln([[2,3]])", "undef");
+  assert_parsed_expression_simplify_to("root([[2,3]],5)", "undef");
+  assert_parsed_expression_simplify_to("root(5,[[2,3]])", "undef");
   // Opposite is mapped on matrix
   assert_parsed_expression_simplify_to("-[[1/√(2),1/2,3][2,1,-3]]",
                                        "[[-√(2)/2,-1/2,-3][-2,-1,3]]");
-  assert_parsed_expression_simplify_to("permute([[2,3]],5)", Undefined::Name());
-  assert_parsed_expression_simplify_to("permute(5,[[2,3]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("product(1,x,[[0,180]],1)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("product(1,x,1,[[0,180]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("re([[1,i]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("round(1.3, [[2.1,3.4]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("round(1.3, [[2.1,3.4]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("sign([[2.1,3.4]])", Undefined::Name());
-  assert_parsed_expression_simplify_to("sin([[π/3,0][π/7,π/2]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("sum(1,x,[[0,180]],1)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("sum(1,x,1,[[0,180]])",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("√([[2.1,3.4]])", Undefined::Name());
+  assert_parsed_expression_simplify_to("permute([[2,3]],5)", "undef");
+  assert_parsed_expression_simplify_to("permute(5,[[2,3]])", "undef");
+  assert_parsed_expression_simplify_to("product(1,x,[[0,180]],1)", "undef");
+  assert_parsed_expression_simplify_to("product(1,x,1,[[0,180]])", "undef");
+  assert_parsed_expression_simplify_to("re([[1,i]])", "undef");
+  assert_parsed_expression_simplify_to("round(1.3, [[2.1,3.4]])", "undef");
+  assert_parsed_expression_simplify_to("round(1.3, [[2.1,3.4]])", "undef");
+  assert_parsed_expression_simplify_to("sign([[2.1,3.4]])", "undef");
+  assert_parsed_expression_simplify_to("sin([[π/3,0][π/7,π/2]])", "undef");
+  assert_parsed_expression_simplify_to("sum(1,x,[[0,180]],1)", "undef");
+  assert_parsed_expression_simplify_to("sum(1,x,1,[[0,180]])", "undef");
+  assert_parsed_expression_simplify_to("√([[2.1,3.4]])", "undef");
   assert_parsed_expression_simplify_to("[[2,3.4]]-[[0.1,3.1]]",
                                        "[[19/10,3/10]]");
-  assert_parsed_expression_simplify_to("[[2,3.4]]-1", Undefined::Name());
-  assert_parsed_expression_simplify_to("1-[[0.1,3.1]]", Undefined::Name());
+  assert_parsed_expression_simplify_to("[[2,3.4]]-1", "undef");
+  assert_parsed_expression_simplify_to("1-[[0.1,3.1]]", "undef");
 }
 
 QUIZ_CASE(poincare_simplification_store) {
@@ -1863,7 +1823,7 @@ QUIZ_CASE(poincare_simplification_unit_convert) {
   assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m");
   assert_parsed_expression_simplify_to("-5_cm→_m", "-0.05×_m", User, Radian,
                                        Imperial);
-  assert_parsed_expression_simplify_to("10_m/_s→_km", Undefined::Name());
+  assert_parsed_expression_simplify_to("10_m/_s→_km", "undef");
 
   assert_parsed_expression_simplify_to("π_rad→_'", "10800×_'");
   assert_parsed_expression_simplify_to("1_°+60_'+3600_\"→_°", "3×_°");
@@ -2257,8 +2217,8 @@ QUIZ_CASE(poincare_simplification_user_function) {
                                        MetricUnitFormat, Polar);
   // f: x → 3
   assert_reduce_and_store("3→f(x)", Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("f(1/0)", Undefined::Name(), User,
-                                       Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("f(1/0)", "undef", User, Radian,
+                                       MetricUnitFormat, Polar);
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 }
@@ -2414,14 +2374,14 @@ QUIZ_CASE(poincare_hyperbolic_trigonometry) {
 
 QUIZ_CASE(poincare_advanced_trigonometry) {
   // Exact values
-  assert_parsed_expression_simplify_to("csc(0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("csc(0)", "undef");
   assert_parsed_expression_simplify_to("sec(0)", "1");
-  assert_parsed_expression_simplify_to("cot(0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("cot(0)", "undef");
   assert_parsed_expression_simplify_to("arccsc(2/√(3))", "π/3");
   assert_parsed_expression_simplify_to("arcsec(2/√(3))", "π/6");
   assert_parsed_expression_simplify_to("arccot(0)", "π/2");
   assert_parsed_expression_simplify_to("csc(π/2)", "1");
-  assert_parsed_expression_simplify_to("sec(π/2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("sec(π/2)", "undef");
   assert_parsed_expression_simplify_to("cot(π/2)", "0");
   assert_parsed_expression_simplify_to("arccsc(1)", "π/2");
   assert_parsed_expression_simplify_to("arcsec(1)", "0");
@@ -2474,54 +2434,54 @@ QUIZ_CASE(poincare_advanced_trigonometry) {
 }
 
 QUIZ_CASE(poincare_probability) {
-  assert_parsed_expression_simplify_to("binompdf(2,4,-1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binompdf(2,4,1.2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("binompdf(2,4,-1)", "undef");
+  assert_parsed_expression_simplify_to("binompdf(2,4,1.2)", "undef");
   assert_parsed_expression_simplify_to("binompdf(-inf,4,0.4)", "0");
   assert_parsed_expression_simplify_to("binompdf(inf,4,0.4)", "0");
-  assert_parsed_expression_simplify_to("binomcdf(2,4,-1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("binomcdf(2,4,1.2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("binomcdf(2,4,-1)", "undef");
+  assert_parsed_expression_simplify_to("binomcdf(2,4,1.2)", "undef");
   assert_parsed_expression_simplify_to("binomcdf(-inf,4,0.4)", "0");
   assert_parsed_expression_simplify_to("binomcdf(inf,4,0.4)", "1");
-  assert_parsed_expression_simplify_to("invbinom(1,4,-1)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invbinom(0,4,1.2)", Undefined::Name());
+  assert_parsed_expression_simplify_to("invbinom(1,4,-1)", "undef");
+  assert_parsed_expression_simplify_to("invbinom(0,4,1.2)", "undef");
   assert_parsed_expression_simplify_to("invbinom(1,4,0.4)", "4");
-  assert_parsed_expression_simplify_to("invbinom(0,4,0.4)", Undefined::Name());
+  assert_parsed_expression_simplify_to("invbinom(0,4,0.4)", "undef");
   assert_parsed_expression_simplify_to("invbinom(1,4,1)", "4");
   assert_parsed_expression_simplify_to("invbinom(0,4,1)", "0");
 
-  assert_parsed_expression_simplify_to("geompdf(1,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("geompdf(1,0)", "undef");
   assert_parsed_expression_simplify_to("geomcdf(inf,0.5)", "1");
   assert_parsed_expression_simplify_to("invgeom(1,1)", "1");
 
-  assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", Undefined::Name());
+  assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", "undef");
+  assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", "undef");
+  assert_parsed_expression_simplify_to("invnorm(-1.3,2,3)", "undef");
   assert_parsed_expression_simplify_to("invnorm(0,2,3)", "-∞");
   assert_parsed_expression_simplify_to("invnorm(0.5,2,3)", "2");
   assert_parsed_expression_simplify_to("invnorm(1,2,3)", "∞");
-  assert_parsed_expression_simplify_to("invnorm(1.3,2,3)", Undefined::Name());
+  assert_parsed_expression_simplify_to("invnorm(1.3,2,3)", "undef");
   // random can be 0
   assert_parsed_expression_simplify_to("invnorm(3/4,2,random())",
                                        "invnorm(3/4,2,random())");
-  assert_parsed_expression_simplify_to("invnorm(0.5,2,0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("invnorm(0.5,2,-1)", Undefined::Name());
+  assert_parsed_expression_simplify_to("invnorm(0.5,2,0)", "undef");
+  assert_parsed_expression_simplify_to("invnorm(0.5,2,-1)", "undef");
   assert_parsed_expression_simplify_to("normcdf(2,0,1)", "normcdf(2,0,1)");
   assert_parsed_expression_simplify_to("normcdfrange(-inf,inf,20,4)", "1");
   assert_parsed_expression_simplify_to("normcdfrange(1,2,0,1)",
                                        "normcdfrange(1,2,0,1)");
   assert_parsed_expression_simplify_to("normpdf(2,0,1)", "normpdf(2,0,1)");
 
-  assert_parsed_expression_simplify_to("poissonpdf(1,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("poissonpdf(1,0)", "undef");
   assert_parsed_expression_simplify_to("poissoncdf(inf,0.5)", "1");
 
-  assert_parsed_expression_simplify_to("tpdf(-inf,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("tpdf(-inf,0)", "undef");
   assert_parsed_expression_simplify_to("tpdf(-inf,2)", "0");
   assert_parsed_expression_simplify_to("tpdf(inf,2)", "0");
   assert_parsed_expression_simplify_to("tcdf(-inf,2)", "0");
   assert_parsed_expression_simplify_to("tcdf(inf,2)", "1");
-  assert_parsed_expression_simplify_to("invt(0.5,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("invt(0.5,0)", "undef");
   assert_parsed_expression_simplify_to("invt(0.5,12)", "0");
-  assert_parsed_expression_simplify_to("invt(0.5,0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("invt(0.5,0)", "undef");
 
   assert_parsed_expression_simplify_to("invt(0.3,4)+normcdf(2,0,1)+invt(0.3,4)",
                                        "2×invt(3/10,4)+normcdf(2,0,1)");
@@ -2542,8 +2502,8 @@ QUIZ_CASE(poincare_simplification_system_circuit_breaker_handled) {
 QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("{}", "{}");
   // Lists can't contain matrix or lists
-  assert_parsed_expression_simplify_to("{{1,2},3}", Undefined::Name());
-  assert_parsed_expression_simplify_to("{[[1,2][3,4]],2,3}", Undefined::Name());
+  assert_parsed_expression_simplify_to("{{1,2},3}", "undef");
+  assert_parsed_expression_simplify_to("{[[1,2][3,4]],2,3}", "undef");
   // Inner simplifications
   assert_parsed_expression_simplify_to("{1,2,3}", "{1,2,3}");
   assert_parsed_expression_simplify_to("{1,8/4,27/45}", "{1,2,3/5}");
@@ -2551,9 +2511,9 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("{-1,1/0}", "{-1,undef}");
 
   // Operations on lists of different lengths
-  assert_parsed_expression_simplify_to("{}+{1}+{2,3}", Undefined::Name());
-  assert_parsed_expression_simplify_to("{1,2,3,4}×{-1,-2}", Undefined::Name());
-  assert_parsed_expression_simplify_to("{1,4,9}^{1,1/2}", Undefined::Name());
+  assert_parsed_expression_simplify_to("{}+{1}+{2,3}", "undef");
+  assert_parsed_expression_simplify_to("{1,2,3,4}×{-1,-2}", "undef");
+  assert_parsed_expression_simplify_to("{1,4,9}^{1,1/2}", "undef");
   // Operations on lists of the same length
   assert_parsed_expression_simplify_to("{}×{}", "{}");
   assert_parsed_expression_simplify_to("{1,2,3}-{3,2,1}", "{-2,0,2}");
@@ -2571,11 +2531,11 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("l1(1)", "1");
   assert_parsed_expression_simplify_to("l1(2)", "4");
   assert_parsed_expression_simplify_to("l1(3)", "9");
-  assert_parsed_expression_simplify_to("l1(0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("l1(5)", Undefined::Name());
-  assert_parsed_expression_simplify_to("l1(-2)", Undefined::Name());
-  assert_parsed_expression_simplify_to("l1(1.23)", Undefined::Name());
-  assert_parsed_expression_simplify_to("l2(1)", Undefined::Name());
+  assert_parsed_expression_simplify_to("l1(0)", "undef");
+  assert_parsed_expression_simplify_to("l1(5)", "undef");
+  assert_parsed_expression_simplify_to("l1(-2)", "undef");
+  assert_parsed_expression_simplify_to("l1(1.23)", "undef");
+  assert_parsed_expression_simplify_to("l2(1)", "undef");
   // Slice of a list
   assert_parsed_expression_simplify_to("l1(1,2)", "{1,4}");
   assert_parsed_expression_simplify_to("l1(2,3)", "{4,9}");
@@ -2591,7 +2551,7 @@ QUIZ_CASE(poincare_simplification_list) {
   // OList length
   assert_parsed_expression_simplify_to("dim({})", "0");
   assert_parsed_expression_simplify_to("dim({1,2,3})", "3");
-  assert_parsed_expression_simplify_to("dim({{1,2,3,4,5}})", Undefined::Name());
+  assert_parsed_expression_simplify_to("dim({{1,2,3,4,5}})", "undef");
   // Sum of elements
   assert_parsed_expression_simplify_to("sum({})", "0");
   assert_parsed_expression_simplify_to("sum({1,2,3})", "6");
@@ -2628,70 +2588,68 @@ QUIZ_CASE(poincare_simplification_list) {
       "sort({(inf,1),(6,1),(5,-3),(-inf,9),(-inf,1)})",
       "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}");
   // Mean of a list
-  assert_parsed_expression_simplify_to("mean({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("mean({})", "undef");
   assert_parsed_expression_simplify_to("mean({1,2,3})", "2");
   assert_parsed_expression_simplify_to("mean({5,8,7,4,12})", "36/5");
   assert_parsed_expression_simplify_to("mean({1,6,3,4,5,2},{2,3,1,2,3,1})",
                                        "4");
   assert_parsed_expression_simplify_to("mean({1,6,3,undef,5,2},{2,3,1,2,3,1})",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{2})",
-                                       Undefined::Name());
+                                       "undef");
+  assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{2})", "undef");
   assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{0,0,0,0,0})",
-                                       Undefined::Name());
+                                       "undef");
   assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{-2,4,4,4,4})",
-                                       Undefined::Name());
+                                       "undef");
   // Minimum of a list
-  assert_parsed_expression_simplify_to("min({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("min({})", "undef");
   assert_parsed_expression_simplify_to("min({1,2,3})", "1");
-  assert_parsed_expression_simplify_to("min({3,undef,-2})", Undefined::Name());
+  assert_parsed_expression_simplify_to("min({3,undef,-2})", "undef");
   // Do not simplify when a value can't be approximated
   assert_parsed_expression_simplify_to("min({3,x,-2})", "min({3,x,-2})");
   assert_parsed_expression_simplify_to("min({3,-inf,-2})", "-∞");
   assert_parsed_expression_simplify_to("min({-7,0,i})", "min({-7,0,i})");
-  assert_parsed_expression_simplify_to("min({-7,undef,i})", Undefined::Name());
+  assert_parsed_expression_simplify_to("min({-7,undef,i})", "undef");
 
   // Maximum of a list
-  assert_parsed_expression_simplify_to("max({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("max({})", "undef");
   assert_parsed_expression_simplify_to("max({1,2,3})", "3");
-  assert_parsed_expression_simplify_to("max({3,undef,-2})", Undefined::Name());
+  assert_parsed_expression_simplify_to("max({3,undef,-2})", "undef");
   // Do not simplify when a value can't be approximated
   assert_parsed_expression_simplify_to("max({3,x,-2})", "max({3,x,-2})");
   assert_parsed_expression_simplify_to("max({3,inf,-2})", "∞");
   assert_parsed_expression_simplify_to("max({-7,0,i})", "max({-7,0,i})");
-  assert_parsed_expression_simplify_to("max({-7,undef,i})", Undefined::Name());
+  assert_parsed_expression_simplify_to("max({-7,undef,i})", "undef");
 
   // Variance of a list
-  assert_parsed_expression_simplify_to("var({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("var({})", "undef");
   assert_parsed_expression_simplify_to("var({1})", "0");
   assert_parsed_expression_simplify_to("var({1,2,3,4,5,6})", "35/12");
   assert_parsed_expression_simplify_to("var({1,2,3,4,5,6},{2,3,2,1,3,1})",
                                        "43/16");
   // Standard deviation of a list
-  assert_parsed_expression_simplify_to("stddev({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("stddev({})", "undef");
   assert_parsed_expression_simplify_to("stddev({1})", "0");
   assert_parsed_expression_simplify_to("stddev({1,2,3,4,5,6})", "√(105)/6");
   assert_parsed_expression_simplify_to("stddev({1,2,3,4,5,6},{2,3,1,1,2,4})",
                                        "(2×√(157))/13");
   // Sample standard deviation of a list
-  assert_parsed_expression_simplify_to("samplestddev({})", Undefined::Name());
-  assert_parsed_expression_simplify_to("samplestddev({1})", Undefined::Name());
+  assert_parsed_expression_simplify_to("samplestddev({})", "undef");
+  assert_parsed_expression_simplify_to("samplestddev({1})", "undef");
   assert_parsed_expression_simplify_to("samplestddev({1,2,3,4,5,6})",
                                        "√(14)/2");
   assert_parsed_expression_simplify_to(
       "samplestddev({1,2,3,4,5,6},{2,3,1,1,2,4})", "√(6123)/39");
   // Median of a list
-  assert_parsed_expression_simplify_to("med({})", Undefined::Name());
+  assert_parsed_expression_simplify_to("med({})", "undef");
   assert_parsed_expression_simplify_to("med({1})", "1");
   assert_parsed_expression_simplify_to("med({4,2,3,1,6})", "3");
   assert_parsed_expression_simplify_to("med({1,6,3,4,5,2})", "7/2");
-  assert_parsed_expression_simplify_to("med({1,undef,2,3})", Undefined::Name());
+  assert_parsed_expression_simplify_to("med({1,undef,2,3})", "undef");
   // Do not reduce if a child can't be approximated
   assert_parsed_expression_simplify_to("med({1,x,2,3})", "med({1,x,2,3})");
 #if TODO_PCJ
   assert_parsed_expression_simplify_to("med({1,6,3,4,5,2},{1,2,1,1,2,2})", "4");
-  assert_parsed_expression_simplify_to("med({1,6,3},{1,1,undef})",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("med({1,6,3},{1,1,undef})", "undef");
   // Do not reduce if a child can't be approximated
   assert_parsed_expression_simplify_to("med({1,6,3},{1,1,x})",
                                        "med({1,6,3},{1,1,x})");
@@ -2723,8 +2681,7 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
   assert_parsed_expression_simplify_to("atan({1,0})", "{π/4,0}");
   assert_parsed_expression_simplify_to("binomial(3,{2,3})", "{3,1}");
   assert_parsed_expression_simplify_to("binomial({2,3},1)", "{2,3}");
-  assert_parsed_expression_simplify_to("binomial({0,180},{1})",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("binomial({0,180},{1})", "undef");
   assert_parsed_expression_simplify_to("ceil({0.3,180})", "{1,180}");
   assert_parsed_expression_simplify_to("arg({1,1+i})", "{0,π/4}");
   assert_parsed_expression_simplify_to("conj({1,1+i})", "{1,1-i}");
@@ -2791,12 +2748,11 @@ QUIZ_CASE(poincare_simplification_functions_of_lists) {
 }
 
 QUIZ_CASE(poincare_simplification_mix_lists) {
-  assert_parsed_expression_simplify_to("{{1,2},{3,4}}", Undefined::Name());
-  assert_parsed_expression_simplify_to("{[[1,2][3,4]]}", Undefined::Name());
-  assert_parsed_expression_simplify_to("[[{1,2},{3,4}][3,4]]",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("{1,2}+[[1,2][3,4]]", Undefined::Name());
-  assert_parsed_expression_simplify_to("{1,2}*[[1,2][3,4]]", Undefined::Name());
+  assert_parsed_expression_simplify_to("{{1,2},{3,4}}", "undef");
+  assert_parsed_expression_simplify_to("{[[1,2][3,4]]}", "undef");
+  assert_parsed_expression_simplify_to("[[{1,2},{3,4}][3,4]]", "undef");
+  assert_parsed_expression_simplify_to("{1,2}+[[1,2][3,4]]", "undef");
+  assert_parsed_expression_simplify_to("{1,2}*[[1,2][3,4]]", "undef");
   assert_parsed_expression_simplify_to("{1_kg, 2_kg}+3_kg", "{4×_kg,5×_kg}",
                                        User, Radian, MetricUnitFormat);
 }
@@ -2812,9 +2768,9 @@ QUIZ_CASE(poincare_simplification_mixed_fraction) {
 QUIZ_CASE(poincare_simplification_booleans) {
   assert_parsed_expression_simplify_to("true", "True");
   assert_parsed_expression_simplify_to("false", "False");
-  assert_parsed_expression_simplify_to("True + False", Undefined::Name());
-  assert_parsed_expression_simplify_to("2True", Undefined::Name());
-  assert_parsed_expression_simplify_to("False^3", Undefined::Name());
+  assert_parsed_expression_simplify_to("True + False", "undef");
+  assert_parsed_expression_simplify_to("2True", "undef");
+  assert_parsed_expression_simplify_to("False^3", "undef");
 }
 
 QUIZ_CASE(poincare_simplification_comparison_operators) {
@@ -2842,22 +2798,21 @@ QUIZ_CASE(poincare_simplification_comparison_operators) {
   assert_parsed_expression_simplify_to("3 != 3", "False");
   assert_parsed_expression_simplify_to("3 != 2", "True");
 
-  assert_parsed_expression_simplify_to("undef = 2", Undefined::Name());
-  assert_parsed_expression_simplify_to("undef != 2", Undefined::Name());
+  assert_parsed_expression_simplify_to("undef = 2", "undef");
+  assert_parsed_expression_simplify_to("undef != 2", "undef");
 
   assert_parsed_expression_simplify_to("3 + i < 1 + 2i", "undef");
   assert_parsed_expression_simplify_to("3 + i < 1 + i", "undef");
   assert_parsed_expression_simplify_to("3 + i = 3 + i", "True");
-  assert_parsed_expression_simplify_to("[[0, 0]] < [[1, 1]]",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("[[0, 0]] < [[1, 1]]", "undef");
 
   assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 - 3 != 6", "True");
   assert_parsed_expression_simplify_to("3 < 2 >= 1 = 4 - 3 != 6", "False");
-  assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 / 0", Undefined::Name());
+  assert_parsed_expression_simplify_to("3 > 2 >= 1 = 4 / 0", "undef");
 
   assert_parsed_expression_simplify_to("3=3+3<4", "False");
-  assert_parsed_expression_simplify_to("(3=3)+(3<4)", Undefined::Name());
-  assert_parsed_expression_simplify_to("ln(3=5)", Undefined::Name());
+  assert_parsed_expression_simplify_to("(3=3)+(3<4)", "undef");
+  assert_parsed_expression_simplify_to("ln(3=5)", "undef");
 
   assert_parsed_expression_simplify_to("4000!4=9",
                                        "\U000000124×4000!\U00000013=9");
@@ -2903,7 +2858,7 @@ static void testLogicalOperatorTruthTable(const char* operatorString,
   buffer[length] = ' ';
   length++;
   strlcpy(buffer + length, numberString, strlen(numberString) + 1);
-  assert_parsed_expression_simplify_to(buffer, Undefined::Name());
+  assert_parsed_expression_simplify_to(buffer, "undef");
 }
 
 QUIZ_CASE(poincare_simplification_logical_operators) {
@@ -2927,14 +2882,14 @@ QUIZ_CASE(poincare_simplification_logical_operators) {
   assert_parsed_expression_simplify_to("True xor {False,True,False,True}",
                                        "{True,False,True,False}");
 
-  assert_parsed_expression_simplify_to("True and -5.2", Undefined::Name());
-  assert_parsed_expression_simplify_to("True and [[-5,2]]", Undefined::Name());
-  assert_parsed_expression_simplify_to("True or undef", Undefined::Name());
-  assert_parsed_expression_simplify_to("not undef", Undefined::Name());
+  assert_parsed_expression_simplify_to("True and -5.2", "undef");
+  assert_parsed_expression_simplify_to("True and [[-5,2]]", "undef");
+  assert_parsed_expression_simplify_to("True or undef", "undef");
+  assert_parsed_expression_simplify_to("not undef", "undef");
   assert_parsed_expression_simplify_to("True and 2 = 2 ", "True");
-  assert_parsed_expression_simplify_to("(True and 2) = 2", Undefined::Name());
+  assert_parsed_expression_simplify_to("(True and 2) = 2", "undef");
 
-  assert_parsed_expression_simplify_to("3×not True", Undefined::Name());
+  assert_parsed_expression_simplify_to("3×not True", "undef");
 }
 
 QUIZ_CASE(poincare_simplification_piecewise_operator) {
@@ -2943,10 +2898,8 @@ QUIZ_CASE(poincare_simplification_piecewise_operator) {
   assert_parsed_expression_simplify_to("piecewise(3,0>1,4,0>2,5,0<6,2)", "5");
   assert_parsed_expression_simplify_to("piecewise(3,0<1,4,0<2,5,0<6,2)", "3");
 
-  assert_parsed_expression_simplify_to("piecewise(3,1<0,2,3=4)",
-                                       Undefined::Name());
-  assert_parsed_expression_simplify_to("piecewise(3,1<0,undef)",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("piecewise(3,1<0,2,3=4)", "undef");
+  assert_parsed_expression_simplify_to("piecewise(3,1<0,undef)", "undef");
   assert_parsed_expression_simplify_to("piecewise(3,1>0,undef)", "3");
   assert_parsed_expression_simplify_to("piecewise(-x/x,x>0,0)",
                                        "piecewise(dep(-1,{x^0}),x>0,0)");
@@ -2966,8 +2919,8 @@ QUIZ_CASE(poincare_simplification_integral) {
 QUIZ_CASE(poincare_simplification_point) {
   assert_parsed_expression_simplify_to("(1,2)", "(1,2)");
   assert_parsed_expression_simplify_to("(1/0,2)", "(undef,2)");
-  assert_parsed_expression_simplify_to("(1,2)+3", Undefined::Name());
-  assert_parsed_expression_simplify_to("abs((1.23,4.56))", Undefined::Name());
+  assert_parsed_expression_simplify_to("(1,2)+3", "undef");
+  assert_parsed_expression_simplify_to("abs((1.23,4.56))", "undef");
   assert_parsed_expression_simplify_to("{(1+2,3+4),(5+6,7+8)}",
                                        "{(3,7),(11,15)}");
   assert_parsed_expression_simplify_to("sequence((k,-k+1),k,4)",

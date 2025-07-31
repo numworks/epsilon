@@ -137,8 +137,7 @@ QUIZ_CASE(poincare_approximation_float) {
   assert_float_approximates_to<double>(Expression::Builder<double>(INFINITY),
                                        "∞");
   assert_float_approximates_to<float>(Expression::Builder<float>(0.0f), "0");
-  assert_float_approximates_to<float>(Expression::Builder<float>(NAN),
-                                      Undefined::Name());
+  assert_float_approximates_to<float>(Expression::Builder<float>(NAN), "undef");
 }
 
 QUIZ_CASE(poincare_approximation_infinity) {
@@ -150,28 +149,28 @@ QUIZ_CASE(poincare_approximation_infinity) {
   assert_expression_approximates_to<double>("(inf×i)×(i)", "-∞");
   assert_expression_approximates_to<double>("(inf×i)×(2)", "∞×i");
   // (inf+i)×(2) = inf * 2 - 1 * 0 + i * (inf * 0 + 1 * 2), inf * 0 return NAN
-  assert_expression_approximates_to<double>("(inf+i)×(2)", Undefined::Name());
+  assert_expression_approximates_to<double>("(inf+i)×(2)", "undef");
 
   // Power
   assert_expression_approximates_to<double>("0^inf", "0");
-  assert_expression_approximates_to<double>("0^(-inf)", Undefined::Name());
-  assert_expression_approximates_to<double>("1^inf", Undefined::Name());
-  assert_expression_approximates_to<double>("1^(-inf)", Undefined::Name());
-  assert_expression_approximates_to<double>("(-1)^inf", Undefined::Name());
-  assert_expression_approximates_to<double>("(-1)^(-inf)", Undefined::Name());
+  assert_expression_approximates_to<double>("0^(-inf)", "undef");
+  assert_expression_approximates_to<double>("1^inf", "undef");
+  assert_expression_approximates_to<double>("1^(-inf)", "undef");
+  assert_expression_approximates_to<double>("(-1)^inf", "undef");
+  assert_expression_approximates_to<double>("(-1)^(-inf)", "undef");
   assert_expression_approximates_to<double>("2^inf", "∞");
   assert_expression_approximates_to<double>("2^(-inf)", "0");
-  assert_expression_approximates_to<double>("(-2)^inf", Undefined::Name());
+  assert_expression_approximates_to<double>("(-2)^inf", "undef");
   assert_expression_approximates_to<double>("(-2)^(-inf)", "0");
   assert_expression_approximates_to<double>("0.2^inf", "0");
   assert_expression_approximates_to<double>("0.2^(-inf)", "∞");
   assert_expression_approximates_to<double>("(-0.2)^inf", "0");
-  assert_expression_approximates_to<double>("(-0.2)^(-inf)", Undefined::Name());
-  assert_expression_approximates_to<double>("i^inf", Undefined::Name());
-  assert_expression_approximates_to<double>("i^(-inf)", Undefined::Name());
-  assert_expression_approximates_to<double>("(-i)^inf", Undefined::Name());
-  assert_expression_approximates_to<double>("(-i)^(-inf)", Undefined::Name());
-  assert_expression_approximates_to<double>("(3+4i)^inf", Undefined::Name());
+  assert_expression_approximates_to<double>("(-0.2)^(-inf)", "undef");
+  assert_expression_approximates_to<double>("i^inf", "undef");
+  assert_expression_approximates_to<double>("i^(-inf)", "undef");
+  assert_expression_approximates_to<double>("(-i)^inf", "undef");
+  assert_expression_approximates_to<double>("(-i)^(-inf)", "undef");
+  assert_expression_approximates_to<double>("(3+4i)^inf", "undef");
   assert_expression_approximates_to<double>("(3+4i)^(-inf)", "0");
 }
 
@@ -179,14 +178,10 @@ QUIZ_CASE(poincare_approximation_addition) {
   assert_expression_approximates_to<float>("1+2", "3");
   assert_expression_approximates_to<float>("i+i", "2×i");
   assert_expression_approximates_to<double>("2+i+4+i", "6+2×i");
-  assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]+3",
-                                           Undefined::Name());
-  assert_expression_approximates_to<double>("[[1,2+i][3,4][5,6]]+3+i",
-                                            Undefined::Name());
-  assert_expression_approximates_to<float>("3+[[1,2][3,4][5,6]]",
-                                           Undefined::Name());
-  assert_expression_approximates_to<double>("3+i+[[1,2+i][3,4][5,6]]",
-                                            Undefined::Name());
+  assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]+3", "undef");
+  assert_expression_approximates_to<double>("[[1,2+i][3,4][5,6]]+3+i", "undef");
+  assert_expression_approximates_to<float>("3+[[1,2][3,4][5,6]]", "undef");
+  assert_expression_approximates_to<double>("3+i+[[1,2+i][3,4][5,6]]", "undef");
   assert_expression_approximates_to<float>(
       "[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", "[[2,4][6,8][10,12]]");
   assert_expression_approximates_to<double>(
@@ -195,15 +190,13 @@ QUIZ_CASE(poincare_approximation_addition) {
   assert_expression_approximates_to<float>("{1,2,3}+10", "{11,12,13}");
   assert_expression_approximates_to<float>("10+{1,2,3}", "{11,12,13}");
   assert_expression_approximates_to<float>("{1,2,3}+{4,5,6}", "{5,7,9}");
-  assert_expression_approximates_to<float>("{1,2,3}+{4,5}", Undefined::Name());
-  assert_expression_approximates_to<float>("{1,2,3}+[[4,5,6]]",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}+{4,5}", "undef");
+  assert_expression_approximates_to<float>("{1,2,3}+[[4,5,6]]", "undef");
   assert_expression_approximates_to<double>("{1,2,3}+10", "{11,12,13}");
   assert_expression_approximates_to<double>("10+{1,2,3}", "{11,12,13}");
   assert_expression_approximates_to<double>("{1,2,3}+{4,5,6}", "{5,7,9}");
-  assert_expression_approximates_to<double>("{1,2,3}+{4,5}", Undefined::Name());
-  assert_expression_approximates_to<double>("{1,2,3}+[[4,5,6]]",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}+{4,5}", "undef");
+  assert_expression_approximates_to<double>("{1,2,3}+[[4,5,6]]", "undef");
 
   assert_expression_approximates_to_scalar<float>("1+2", 3.0f);
   assert_expression_approximates_to_scalar<double>("i+i", NAN);
@@ -234,15 +227,13 @@ QUIZ_CASE(poincare_approximation_multiplication) {
   assert_expression_approximates_to<float>("{1,2,3}×10", "{10,20,30}");
   assert_expression_approximates_to<float>("10×{1,2,3}", "{10,20,30}");
   assert_expression_approximates_to<float>("{1,2,3}×{4,5,6}", "{4,10,18}");
-  assert_expression_approximates_to<float>("{1,2,3}×{4,5}", Undefined::Name());
-  assert_expression_approximates_to<float>("{1,2,3}×[[4,5,6]]",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}×{4,5}", "undef");
+  assert_expression_approximates_to<float>("{1,2,3}×[[4,5,6]]", "undef");
   assert_expression_approximates_to<double>("{1,2,3}×10", "{10,20,30}");
   assert_expression_approximates_to<double>("10×{1,2,3}", "{10,20,30}");
   assert_expression_approximates_to<double>("{1,2,3}×{4,5,6}", "{4,10,18}");
-  assert_expression_approximates_to<double>("{1,2,3}×{4,5}", Undefined::Name());
-  assert_expression_approximates_to<double>("{1,2,3}×[[4,5,6]]",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}×{4,5}", "undef");
+  assert_expression_approximates_to<double>("{1,2,3}×[[4,5,6]]", "undef");
 
   assert_expression_approximates_to_scalar<float>("1×2", 2.0f);
   assert_expression_approximates_to_scalar<double>("(3+i)×(4+i)", NAN);
@@ -256,9 +247,9 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<double>(
       "(3+i)^(3+i)", "-11.898191759852+19.592921596609×i");
 
-  assert_expression_approximates_to<double>("0^0", Undefined::Name());
+  assert_expression_approximates_to<double>("0^0", "undef");
   assert_expression_approximates_to<double>("0^2", "0");
-  assert_expression_approximates_to<double>("0^(-2)", Undefined::Name());
+  assert_expression_approximates_to<double>("0^(-2)", "undef");
 
   assert_expression_approximates_to<double>(
       "(-2)^4.2", "14.8690638497+10.8030072384×i", Radian, MetricUnitFormat,
@@ -267,8 +258,8 @@ QUIZ_CASE(poincare_approximation_power) {
                                             MetricUnitFormat, Cartesian, 12);
 
   assert_expression_approximates_to<float>("0^2", "0");
-  assert_expression_approximates_to<float>("0^i", Undefined::Name());
-  assert_expression_approximates_to<float>("0^(4i)", Undefined::Name());
+  assert_expression_approximates_to<float>("0^i", "undef");
+  assert_expression_approximates_to<float>("0^(4i)", "undef");
   assert_expression_approximates_to<float>("0^(3+4i)", "0");
   assert_expression_approximates_to<double>("i^i", "0.20787957635076");
   assert_expression_approximates_to<float>(
@@ -303,15 +294,13 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<float>("{1,2,3}^2", "{1,4,9}");
   assert_expression_approximates_to<float>("2^{1,2,3}", "{2,4,8}");
   assert_expression_approximates_to<float>("{1,2,3}^{1,2,3}", "{1,4,27}");
-  assert_expression_approximates_to<float>("{1,2,3}^{4,5}", Undefined::Name());
-  assert_expression_approximates_to<float>("{1,2,3}^[[4,5,6]]",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}^{4,5}", "undef");
+  assert_expression_approximates_to<float>("{1,2,3}^[[4,5,6]]", "undef");
   assert_expression_approximates_to<double>("{1,2,3}^2", "{1,4,9}");
   assert_expression_approximates_to<double>("2^{1,2,3}", "{2,4,8}");
   assert_expression_approximates_to<double>("{1,2,3}^{1,2,3}", "{1,4,27}");
-  assert_expression_approximates_to<double>("{1,2,3}^{4,5}", Undefined::Name());
-  assert_expression_approximates_to<double>("{1,2,3}^[[4,5,6]]",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}^{4,5}", "undef");
+  assert_expression_approximates_to<double>("{1,2,3}^[[4,5,6]]", "undef");
 
   assert_expression_approximates_to_scalar<float>("2^3", 8.0f);
   assert_expression_approximates_to_scalar<double>("(3+i)^(4+i)", NAN);
@@ -325,20 +314,17 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_simplifies_approximates_to<float>("3.5^2.0000001", "12.25");
   assert_expression_simplifies_approximates_to<float>("3.7^2.0000001", "13.69");
   assert_expression_simplifies_approximates_to<double>(
-      "(13619-(185477161)^(1/2))^(-1)", Undefined::Name());
+      "(13619-(185477161)^(1/2))^(-1)", "undef");
 }
 
 QUIZ_CASE(poincare_approximation_subtraction) {
   assert_expression_approximates_to<float>("1-2", "-1");
   assert_expression_approximates_to<double>("3+i-(4+i)", "-1");
-  assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]-3",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]-3", "undef");
   assert_expression_approximates_to<double>("[[1,2+i][3,4][5,6]]-(4+i)",
-                                            Undefined::Name());
-  assert_expression_approximates_to<float>("3-[[1,2][3,4][5,6]]",
-                                           Undefined::Name());
-  assert_expression_approximates_to<double>("3+i-[[1,2+i][3,4][5,6]]",
-                                            Undefined::Name());
+                                            "undef");
+  assert_expression_approximates_to<float>("3-[[1,2][3,4][5,6]]", "undef");
+  assert_expression_approximates_to<double>("3+i-[[1,2+i][3,4][5,6]]", "undef");
   assert_expression_approximates_to<float>(
       "[[1,2][3,4][5,6]]-[[6,5][4,3][2,1]]", "[[-5,-3][-1,1][3,5]]");
   assert_expression_approximates_to<double>(
@@ -347,15 +333,13 @@ QUIZ_CASE(poincare_approximation_subtraction) {
   assert_expression_approximates_to<float>("{1,2,3}-10", "{-9,-8,-7}");
   assert_expression_approximates_to<float>("10-{1,2,3}", "{9,8,7}");
   assert_expression_approximates_to<float>("{1,2,3}-{4,5,6}", "{-3,-3,-3}");
-  assert_expression_approximates_to<float>("{1,2,3}-{4,5}", Undefined::Name());
-  assert_expression_approximates_to<float>("{1,2,3}-[[4,5,6]]",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}-{4,5}", "undef");
+  assert_expression_approximates_to<float>("{1,2,3}-[[4,5,6]]", "undef");
   assert_expression_approximates_to<double>("{1,2,3}-10", "{-9,-8,-7}");
   assert_expression_approximates_to<double>("10-{1,2,3}", "{9,8,7}");
   assert_expression_approximates_to<double>("{1,2,3}-{4,5,6}", "{-3,-3,-3}");
-  assert_expression_approximates_to<double>("{1,2,3}-{4,5}", Undefined::Name());
-  assert_expression_approximates_to<double>("{1,2,3}-[[4,5,6]]",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}-{4,5}", "undef");
+  assert_expression_approximates_to<double>("{1,2,3}-[[4,5,6]]", "undef");
 
   assert_expression_approximates_to_scalar<float>("1-2", -1.0f);
   assert_expression_approximates_to_scalar<double>("(1)-(4+i)", NAN);
@@ -387,7 +371,7 @@ QUIZ_CASE(poincare_approximation_constant) {
                                                         info.m_value);
       } else {
         assert_expression_approximates_to<double>(constantNameAlias,
-                                                  Undefined::Name());
+                                                  "undef");
         assert_expression_approximates_to_scalar<float>(constantNameAlias, NAN);
       }
     }
@@ -407,9 +391,8 @@ QUIZ_CASE(poincare_approximation_division) {
   assert_expression_approximates_to<float>("[[1,2][3,4][5,6]]/2",
                                            "[[0.5,1][1.5,2][2.5,3]]");
   assert_expression_approximates_to<double>("[[1,2][3,4]]/[[3,4][6,9]]",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("3/[[3,4][5,6]]",
-                                            Undefined::Name());
+                                            "undef");
+  assert_expression_approximates_to<double>("3/[[3,4][5,6]]", "undef");
   // assert_expression_approximates_to<double>("(3+4i)/[[3,4][1,i]]",
   // "[[1,4×i][i,-3×i]]");
   /* TODO: this tests fails because of negligible real or imaginary parts.
@@ -424,15 +407,13 @@ QUIZ_CASE(poincare_approximation_division) {
   assert_expression_approximates_to<float>("{1,2,3}/10", "{0.1,0.2,0.3}");
   assert_expression_approximates_to<float>("10/{1,2,4}", "{10,5,2.5}");
   assert_expression_approximates_to<float>("{12,100,1}/{4,2,1}", "{3,50,1}");
-  assert_expression_approximates_to<float>("{1,2,3}/{4,5}", Undefined::Name());
-  assert_expression_approximates_to<float>("{1,2,3}/[[4,5,6]]",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("{1,2,3}/{4,5}", "undef");
+  assert_expression_approximates_to<float>("{1,2,3}/[[4,5,6]]", "undef");
   assert_expression_approximates_to<double>("{1,2,3}/10", "{0.1,0.2,0.3}");
   assert_expression_approximates_to<double>("10/{1,2,4}", "{10,5,2.5}");
   assert_expression_approximates_to<double>("{12,100,1}/{4,2,1}", "{3,50,1}");
-  assert_expression_approximates_to<double>("{1,2,3}/{4,5}", Undefined::Name());
-  assert_expression_approximates_to<double>("{1,2,3}/[[4,5,6]]",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("{1,2,3}/{4,5}", "undef");
+  assert_expression_approximates_to<double>("{1,2,3}/[[4,5,6]]", "undef");
 
   assert_expression_approximates_to_scalar<float>("1/2", 0.5f);
   assert_expression_approximates_to_scalar<float>("(3+i)/(4+i)", NAN);
@@ -461,9 +442,9 @@ QUIZ_CASE(poincare_approximation_logarithm) {
                                            "0.731199+0.1652518×i");
   assert_expression_approximates_to<double>(
       "ln(5+2×i)", "1.6836479149932+0.38050637711236×i");
-  assert_expression_approximates_to<double>("log(0,0)", Undefined::Name());
-  assert_expression_approximates_to<double>("log(0)", Undefined::Name());
-  assert_expression_approximates_to<double>("log(2,0)", Undefined::Name());
+  assert_expression_approximates_to<double>("log(0,0)", "undef");
+  assert_expression_approximates_to<double>("log(0)", "undef");
+  assert_expression_approximates_to<double>("log(2,0)", "undef");
 
   // WARNING: evaluate on branch cut can be multi-valued
   assert_expression_approximates_to<double>(
@@ -518,10 +499,8 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("binomial(10, -1)", "0");
   assert_expression_approximates_to<float>("binomial(-5, -10)", "0");
   assert_expression_approximates_to<double>("binomial(-5, -10)", "0");
-  assert_expression_approximates_to<float>("binomial(10, 2.1)",
-                                           Undefined::Name());
-  assert_expression_approximates_to<double>("binomial(10, 2.1)",
-                                            Undefined::Name());
+  assert_expression_approximates_to<float>("binomial(10, 2.1)", "undef");
+  assert_expression_approximates_to<double>("binomial(10, 2.1)", "undef");
 
   assert_expression_approximates_to<float>("ceil(0.2)", "1");
   assert_expression_approximates_to<double>("ceil(0.2)", "1");
@@ -533,8 +512,7 @@ QUIZ_CASE(poincare_approximation_function) {
                                            Cartesian, 6);
   assert_expression_approximates_to<double>("det([[1,23,3][4,5,6][7,8,9]])",
                                             "126");
-  assert_expression_approximates_to<double>("det([[1,undef][4,6]])",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("det([[1,undef][4,6]])", "undef");
 
   // FIXME: the determinant computation is not precised enough to be displayed
   // with 7 significant digits
@@ -587,39 +565,31 @@ QUIZ_CASE(poincare_approximation_function) {
    */
   // Integers that can't be accurately represented as float
   // 1
-  assert_expression_approximates_to<float>("gcd(16777219,13)",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("gcd(16777219,13)", "undef");
   assert_expression_approximates_to<double>("gcd(16777219,13)", "1");
   // 16777219
-  assert_expression_approximates_to<float>("lcm(1549, 10831)",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("lcm(1549, 10831)", "undef");
   assert_expression_approximates_to<double>("lcm(1549, 10831)", "16777219");
   // Integers overflowing int, but not uint32_t
   // 13
-  assert_expression_approximates_to<float>("gcd(2147483650,13)",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("gcd(2147483650,13)", "undef");
   assert_expression_approximates_to<double>("gcd(2147483650,13)", "13");
   // 2147483650
-  assert_expression_approximates_to<float>("lcm(2,25,13,41,61,1321)",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("lcm(2,25,13,41,61,1321)", "undef");
   assert_expression_approximates_to<double>("lcm(2,25,13,41,61,1321)",
                                             "2147483650");
   // Integers overflowing uint32_t
   // 13
-  assert_expression_approximates_to<float>("gcd(4294967300,13)",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("gcd(4294967300,13)", "undef");
   // 13
-  assert_expression_approximates_to<double>("gcd(4294967300,13)",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("gcd(4294967300,13)", "undef");
   // 4294967300
-  assert_expression_approximates_to<float>("lcm(4,25,13,41,61,1321)",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("lcm(4,25,13,41,61,1321)", "undef");
   // 4294967300
-  assert_expression_approximates_to<double>("lcm(4,25,13,41,61,1321)",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("lcm(4,25,13,41,61,1321)", "undef");
   // Integers that can't be accurately represented as double
-  assert_expression_approximates_to<float>("gcd(1ᴇ16,10)", Undefined::Name());
-  assert_expression_approximates_to<double>("gcd(1ᴇ16,10)", Undefined::Name());
+  assert_expression_approximates_to<float>("gcd(1ᴇ16,10)", "undef");
+  assert_expression_approximates_to<double>("gcd(1ᴇ16,10)", "undef");
 
   assert_expression_approximates_to<float>("invbinom(0.9647324002, 15, 0.7)",
                                            "13");
@@ -692,7 +662,7 @@ QUIZ_CASE(poincare_approximation_function) {
 
   assert_expression_approximates_to<float>("factor(-23/4)", "-5.75");
   assert_expression_approximates_to<double>("factor(-123/24)", "-5.125");
-  assert_expression_approximates_to<float>("factor(i)", Undefined::Name());
+  assert_expression_approximates_to<float>("factor(i)", "undef");
 
   // inverse is not precise enough to display 7 significative digits
   assert_expression_approximates_to<float>(
@@ -752,9 +722,9 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<float>("sign(-inf)", "-1");
   assert_expression_approximates_to<float>("sign(0)", "0");
   assert_expression_approximates_to<float>("sign(-0)", "0");
-  assert_expression_approximates_to<float>("sign(x)", Undefined::Name());
-  assert_expression_approximates_to<double>("sign(2+i)", Undefined::Name());
-  assert_expression_approximates_to<double>("sign(undef)", Undefined::Name());
+  assert_expression_approximates_to<float>("sign(x)", "undef");
+  assert_expression_approximates_to<double>("sign(2+i)", "undef");
+  assert_expression_approximates_to<double>("sign(undef)", "undef");
 
   assert_expression_approximates_to<double>("sum(2+n×i,n,1,5)", "10+15×i");
   assert_expression_approximates_to<double>("sum(2+n×i,n,1,5)", "10+15×i");
@@ -856,15 +826,13 @@ QUIZ_CASE(poincare_approximation_function) {
   assert_expression_approximates_to<double>("randint({1,1})", "{1,1}");
   assert_expression_approximates_to<double>("randint({1,2},{1,2})", "{1,2}");
   assert_expression_approximates_to<double>("1/randint(2,2)+1/2", "1");
-  assert_expression_approximates_to<double>("randint(45,4)", Undefined::Name());
-  assert_expression_approximates_to<double>("randint(1, inf)",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("randint(-inf, 3)",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("randint(4, 3)", Undefined::Name());
+  assert_expression_approximates_to<double>("randint(45,4)", "undef");
+  assert_expression_approximates_to<double>("randint(1, inf)", "undef");
+  assert_expression_approximates_to<double>("randint(-inf, 3)", "undef");
+  assert_expression_approximates_to<double>("randint(4, 3)", "undef");
 #if 0  // TODO_PCJ:
   assert_expression_approximates_to<double>("randint(2, 23345678909876545678)",
-                                            Undefined::Name());
+                                            "undef");
 #endif
 }
 
@@ -899,12 +867,9 @@ void assert_no_duplicates_in_list(const char *expression) {
 }
 
 QUIZ_CASE(poincare_approximation_unique_random) {
-  assert_expression_approximates_to<double>("randintnorep(10,1,3)",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("randintnorep(1,10,100)",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("randintnorep(1,10,-1)",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("randintnorep(10,1,3)", "undef");
+  assert_expression_approximates_to<double>("randintnorep(1,10,100)", "undef");
+  assert_expression_approximates_to<double>("randintnorep(1,10,-1)", "undef");
   assert_expression_approximates_to<double>("randintnorep(1,10,0)", "{}");
   assert_expression_approximates_to<double>(
       "randintnorep(536427840,-2145711360,4)", "undef");
@@ -925,7 +890,7 @@ QUIZ_CASE(poincare_approximation_unique_random) {
 QUIZ_CASE(poincare_approximation_integral) {
   assert_expression_approximates_to<float>("int(x,x, 1, 2)", "1.5");
   assert_expression_approximates_to<double>("int(x,x, 1, 2)", "1.5");
-  assert_expression_approximates_to<float>("int(1/x,x,0,1)", Undefined::Name());
+  assert_expression_approximates_to<float>("int(1/x,x,0,1)", "undef");
 
   // Ensure this does not take up too much time
   assert_expression_approximates_to<double>("int(e^(x^3),x,0,6)",
@@ -961,8 +926,7 @@ QUIZ_CASE(poincare_approximation_integral) {
   assert_expression_approximates_to<double>("int(e^(-x)/√(x),x,0,inf)",
                                             "1.7724", Radian, MetricUnitFormat,
                                             Cartesian, 5);
-  assert_expression_approximates_to<double>("int(1,x,inf,0)",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("int(1,x,inf,0)", "undef");
   assert_expression_approximates_to<double>("int(e^(-x),x,inf,0)", "-1");
 
   // singularities
@@ -1019,8 +983,7 @@ QUIZ_CASE(poincare_approximation_integral) {
 
   /* The integral approximation escapes before finding a result, because it
    * would take too much time. */
-  assert_expression_approximates_to<float>("int(sin((10^7)*x),x,0,1)",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("int(sin((10^7)*x),x,0,1)", "undef");
 }
 
 QUIZ_CASE(poincare_approximation_trigonometry_functions) {
@@ -1165,12 +1128,10 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                            Gradian, MetricUnitFormat, Cartesian,
                                            6);
   // tan(π/2)
-  assert_expression_approximates_to<double>("tan(π/2)", Undefined::Name(),
+  assert_expression_approximates_to<double>("tan(π/2)", "undef", Radian);
+  assert_expression_approximates_to<double>("sin(π/2)/cos(π/2)", "undef",
                                             Radian);
-  assert_expression_approximates_to<double>("sin(π/2)/cos(π/2)",
-                                            Undefined::Name(), Radian);
-  assert_expression_approximates_to<double>("1/cot(π/2)", Undefined::Name(),
-                                            Radian);
+  assert_expression_approximates_to<double>("1/cot(π/2)", "undef", Radian);
   // tan(almost π/2)
   assert_expression_approximates_to<double>("tan(1.57079632)",
                                             "147169276.57047", Radian);
@@ -1188,8 +1149,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
                                            Radian, MetricUnitFormat, Cartesian,
                                            6);
   // cot(π/2)
-  assert_expression_approximates_to<double>("1/tan(π/2)", Undefined::Name(),
-                                            Radian);
+  assert_expression_approximates_to<double>("1/tan(π/2)", "undef", Radian);
   assert_expression_approximates_to<double>("cos(π/2)/sin(π/2)", "0", Radian);
   assert_expression_approximates_to<double>("cot(π/2)", "0", Radian);
   // cot(almost π/2)
@@ -1375,7 +1335,7 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // On [-i, i]
   assert_expression_approximates_to<float>("atan(0.2×i)", "0.202733×i", Radian,
                                            MetricUnitFormat, Cartesian, 6);
-  assert_expression_approximates_to<float>("atan(i)", Undefined::Name());
+  assert_expression_approximates_to<float>("atan(i)", "undef");
   // Symmetry: odd
   assert_expression_approximates_to<float>(
       "atan(-0.2×i)", "-0.202733×i", Radian, MetricUnitFormat, Cartesian, 6);
@@ -1410,8 +1370,8 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // Key values
   assert_expression_approximates_to<float>("atan(0)", "0", Degree);
   assert_expression_approximates_to<float>("atan(0)", "0", Gradian);
-  assert_expression_approximates_to<double>("atan(-i)", Undefined::Name());
-  assert_expression_approximates_to<double>("atan(i)", Undefined::Name());
+  assert_expression_approximates_to<double>("atan(-i)", "undef");
+  assert_expression_approximates_to<double>("atan(i)", "undef");
   // Advanced function : acot
   assert_expression_approximates_to<double>("arccot(-0.45765755436029)", "2",
                                             Radian);
@@ -1506,13 +1466,13 @@ QUIZ_CASE(poincare_approximation_trigonometry_functions) {
   // Tangent-style
   // FIXME: this depends on the libm implementation and does not work on
   // travis/appveyor servers
-  /*assert_expression_approximates_to<float>("tanh(π×i/2)", Undefined::Name(),
+  /*assert_expression_approximates_to<float>("tanh(π×i/2)", "undef",
   Radian); assert_expression_approximates_to<float>("tanh(5×π×i/2)",
-  Undefined::Name(), Radian);
-  assert_expression_approximates_to<float>("tanh(7×π×i/2)", Undefined::Name(),
+  "undef", Radian);
+  assert_expression_approximates_to<float>("tanh(7×π×i/2)", "undef",
   Radian); assert_expression_approximates_to<float>("tanh(8×π×i/2)", "0",
   Radian); assert_expression_approximates_to<float>("tanh(9×π×i/2)",
-  Undefined::Name(), Radian);*/
+  "undef", Radian);*/
   // On C
   assert_expression_approximates_to<float>("tanh(i-4)", "-1.00028+6.10241ᴇ-4×i",
                                            Radian, MetricUnitFormat, Cartesian,
@@ -1713,10 +1673,8 @@ QUIZ_CASE(poincare_approximation_list_sequence) {
 
 QUIZ_CASE(poincare_approximation_map_on_list) {
   // We do not map on matrices anymore
-  assert_expression_approximates_to<float>("abs([[1,-2][3,-4]])",
-                                           Undefined::Name());
-  assert_expression_approximates_to<double>("abs([[1,-2][3,-4]])",
-                                            Undefined::Name());
+  assert_expression_approximates_to<float>("abs([[1,-2][3,-4]])", "undef");
+  assert_expression_approximates_to<double>("abs([[1,-2][3,-4]])", "undef");
 
   // TODO: Implement more tests on lists, with every functions
   assert_expression_approximates_to<float>("abs({1,-1,2,-3})", "{1,1,2,3}");
@@ -1771,7 +1729,7 @@ QUIZ_CASE(poincare_approximation_probability) {
   assert_expression_approximates_to<double>("geompdf(1,1)", "1");
   assert_expression_approximates_to<double>("geompdf(2,0.5)", "0.25");
   assert_expression_approximates_to<double>("geompdf(2,1)", "0");
-  assert_expression_approximates_to<double>("geompdf(1,0)", Undefined::Name());
+  assert_expression_approximates_to<double>("geompdf(1,0)", "undef");
   assert_expression_approximates_to<double>("geomcdf(2,0.5)", "0.75");
   assert_expression_approximates_to<double>("geomcdfrange(2,3,0.5)", "0.375");
   assert_expression_approximates_to<double>("geomcdfrange(2,2,0.5)", "0.25");
@@ -1795,10 +1753,8 @@ QUIZ_CASE(poincare_approximation_probability) {
                                             "0.60937014162821");
   assert_expression_approximates_to<double>("invhgeom(.5,4,2,3)", "1");
   assert_expression_approximates_to<double>("invhgeom(.6,40,20,30)", "15");
-  assert_expression_approximates_to<double>("invhgeom(-1,4,2,3)",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("invhgeom(0,4,2,2)",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("invhgeom(-1,4,2,3)", "undef");
+  assert_expression_approximates_to<double>("invhgeom(0,4,2,2)", "undef");
   assert_expression_approximates_to<double>("invhgeom(0,4,2,3)", "0");
   assert_expression_approximates_to<double>("invhgeom(1,4,2,3)", "2");
 
@@ -2040,9 +1996,8 @@ QUIZ_CASE(poincare_approximation_complex_format) {
   assert_expression_approximates_to<double>("-2ᴇ360+2ᴇ360×i", "-∞+∞×i");
   assert_expression_approximates_to<float>("-2ᴇ100+2ᴇ10×i", "-∞+2ᴇ10×i");
   assert_expression_approximates_to<double>("-2ᴇ360+2×i", "-∞+2×i");
-  assert_expression_approximates_to<float>("undef+2ᴇ100×i", Undefined::Name());
-  assert_expression_approximates_to<double>("-2ᴇ360+undef×i",
-                                            Undefined::Name());
+  assert_expression_approximates_to<float>("undef+2ᴇ100×i", "undef");
+  assert_expression_approximates_to<double>("-2ᴇ360+undef×i", "undef");
 }
 
 QUIZ_CASE(poincare_approximation_mix) {
@@ -2100,11 +2055,11 @@ QUIZ_CASE(poincare_approximation_lists_access) {
   assert_reduce_and_store("{1,2,3,4,5}→L");
 
   assert_expression_approximates_to<float>("L(1)", "1");
-  assert_expression_approximates_to<float>("L(0)", Undefined::Name());
-  assert_expression_approximates_to<float>("L(7)", Undefined::Name());
+  assert_expression_approximates_to<float>("L(0)", "undef");
+  assert_expression_approximates_to<float>("L(7)", "undef");
   assert_expression_approximates_to<double>("L(1)", "1");
-  assert_expression_approximates_to<double>("L(0)", Undefined::Name());
-  assert_expression_approximates_to<double>("L(7)", Undefined::Name());
+  assert_expression_approximates_to<double>("L(0)", "undef");
+  assert_expression_approximates_to<double>("L(7)", "undef");
 
   assert_expression_approximates_to<float>("L(1,3)", "{1,2,3}");
   assert_expression_approximates_to<float>("L(1,9)", "{1,2,3,4,5}");
@@ -2145,12 +2100,11 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to_scalar<double>("mean({5,8,7,4,12})", 7.2);
   assert_expression_approximates_to_scalar<double>(
       "mean({5,8,7,4,12},{1,2,3,5,6})", 7.882352941176471);
-  assert_expression_approximates_to<double>("mean({5,8,7,4,12},{2})",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("mean({5,8,7,4,12},{2})", "undef");
   assert_expression_approximates_to<double>("mean({5,8,7,4,12},{-1,1,1,1,1})",
-                                            Undefined::Name());
+                                            "undef");
   assert_expression_approximates_to<double>("mean({5,8,7,4,12},{0,0,0,0,0})",
-                                            Undefined::Name());
+                                            "undef");
   assert_expression_approximates_to_scalar<double>("stddev({1,2,3,4,5,6})",
                                                    1.707825127659933);
   assert_expression_approximates_to_scalar<double>(
@@ -2161,40 +2115,35 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to_scalar<double>(
       "med({1,6,3,4,5,2},{2,3,0.1,2.8,3,1})", 5.);
   assert_expression_approximates_to<double>("med({1,undef,6,3,5,undef,2})",
-                                            Undefined::Name());
+                                            "undef");
   assert_expression_approximates_to_scalar<double>("var({1,2,3,4,5,6})",
                                                    2.916666666666666);
   assert_expression_approximates_to<double>("var({1,2,3,undef,4,5,6})",
-                                            Undefined::Name());
+                                            "undef");
   assert_expression_approximates_to_scalar<double>(
       "var({1,2,3,4,5,6},{7,0.1,2,0,1,10})", 5.2815524368208706);
   assert_expression_approximates_to<double>(
-      "var({1,2,3,3,4,5,6},{-2,2,2,2,2,2,2})", Undefined::Name());
+      "var({1,2,3,3,4,5,6},{-2,2,2,2,2,2,2})", "undef");
   assert_expression_approximates_to<double>("var({1,2,3,4,5,6},{0,0,0,0,0,0})",
-                                            Undefined::Name());
+                                            "undef");
   assert_expression_approximates_to_scalar<double>(
       "samplestddev({1,2,3,4,5,6})", 1.8708286933869704);
   assert_expression_approximates_to_scalar<double>(
       "samplestddev({1,2,3,4,5,6},{6,2,3,4,5,1})", 1.7113069358158486);
-  assert_expression_approximates_to<double>("samplestddev({1})",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("samplestddev({1})", "undef");
   assert_expression_approximates_to_scalar<double>("dim({1,2,3})", 3.);
   assert_expression_approximates_to_scalar<double>("min({1,2,3})", 1.);
   // undef is never the min (unless there are only undef in the list)
-  assert_expression_approximates_to<double>("min({undef})", Undefined::Name());
-  assert_expression_approximates_to<double>("min({1,undef,3})",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("min({1,undef,i})",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("min({1,7,i})", Undefined::Name());
+  assert_expression_approximates_to<double>("min({undef})", "undef");
+  assert_expression_approximates_to<double>("min({1,undef,3})", "undef");
+  assert_expression_approximates_to<double>("min({1,undef,i})", "undef");
+  assert_expression_approximates_to<double>("min({1,7,i})", "undef");
   assert_expression_approximates_to_scalar<double>("max({1,2,3})", 3.);
   // undef is never the max (unless there are only undef in the list)
-  assert_expression_approximates_to<double>("max({undef})", Undefined::Name());
-  assert_expression_approximates_to<double>("max({1,undef,3})",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("max({1,undef,i})",
-                                            Undefined::Name());
-  assert_expression_approximates_to<double>("max({1,7,i})", Undefined::Name());
+  assert_expression_approximates_to<double>("max({undef})", "undef");
+  assert_expression_approximates_to<double>("max({1,undef,3})", "undef");
+  assert_expression_approximates_to<double>("max({1,undef,i})", "undef");
+  assert_expression_approximates_to<double>("max({1,7,i})", "undef");
   assert_expression_approximates_to_scalar<double>("sum({1,2,3})", 6.);
   assert_expression_approximates_to_scalar<double>("prod({1,4,9})", 36.);
 }
@@ -2244,8 +2193,8 @@ QUIZ_CASE(poincare_approximation_booleans) {
   assert_expression_approximates_to<float>("3>π or False", "False");
   assert_expression_approximates_to<float>("not({3<π, 3>π})", "{False,True}");
 
-  assert_expression_approximates_to<float>("2 and 3", Undefined::Name());
-  assert_expression_approximates_to<float>("True + 3", Undefined::Name());
+  assert_expression_approximates_to<float>("2 and 3", "undef");
+  assert_expression_approximates_to<float>("True + 3", "undef");
 }
 
 QUIZ_CASE(poincare_approximation_comparison_operators) {
@@ -2261,24 +2210,21 @@ QUIZ_CASE(poincare_approximation_piecewise_operator) {
   assert_expression_approximates_to<float>("piecewise(3,0<1,4,0<2,5,0<6,2)",
                                            "3");
 
-  assert_expression_approximates_to<float>("piecewise(3,1<0,2,3=4)",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("piecewise(3,1<0,2,3=4)", "undef");
 }
 
 QUIZ_CASE(poincare_approximation_point) {
   assert_expression_approximates_to<float>("(1,2)", "(1,2)");
   assert_expression_approximates_to<float>("(1/0,2)", "(undef,2)");
-  assert_expression_approximates_to<float>("(1,2)+3", Undefined::Name());
-  assert_expression_approximates_to<float>("abs((1.23,4.56))",
-                                           Undefined::Name());
+  assert_expression_approximates_to<float>("(1,2)+3", "undef");
+  assert_expression_approximates_to<float>("abs((1.23,4.56))", "undef");
   assert_expression_approximates_to<float>("{(1+2,3+4),(5+6,7+8)}",
                                            "{(3,7),(11,15)}");
 
   assert_expression_approximates_to<double>("(1,2)", "(1,2)");
   assert_expression_approximates_to<double>("(1/0,2)", "(undef,2)");
-  assert_expression_approximates_to<double>("(1,2)+3", Undefined::Name());
-  assert_expression_approximates_to<double>("abs((1.23,4.56))",
-                                            Undefined::Name());
+  assert_expression_approximates_to<double>("(1,2)+3", "undef");
+  assert_expression_approximates_to<double>("abs((1.23,4.56))", "undef");
   assert_expression_approximates_to<double>("{(1+2,3+4),(5+6,7+8)}",
                                             "{(3,7),(11,15)}");
 
@@ -2303,11 +2249,10 @@ QUIZ_CASE(poincare_approximation_keeping_symbols) {
       "{x,undef,cos(10)+x,cos(10)}", "{x,undef,x+0.984807753,0.984807753}");
   assert_expression_approximates_keeping_symbols_to("cos(10)→x",
                                                     "0.984807753→x");
-  assert_expression_approximates_keeping_symbols_to("4×kg×s^(-3)",
-                                                    Undefined::Name());
+  assert_expression_approximates_keeping_symbols_to("4×kg×s^(-3)", "undef");
   // TODO_PCJ investigate why this one crashes on the CI only
   // assert_expression_approximates_keeping_symbols_to("piecewise(T×x<0)",
-  // Undefined::Name());
+  // "undef");
   // Check that it still reduces
   assert_expression_approximates_keeping_symbols_to("x^2+x×x", "2×x^2");
 }

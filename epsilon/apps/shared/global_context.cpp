@@ -125,7 +125,7 @@ bool GlobalContext::setExpressionForUserNamed(
   UserExpression e =
       UserExpression::Builder(expressionForSymbolAndRecord(symbolTree, record));
   if (e.isUninitialized()) {
-    e = Undefined::Builder();
+    e = Expression::Undefined();
   }
   UserExpression finalExpression = expression.clone();
   finalExpression.replaceSymbolWithExpression(symbol, e);

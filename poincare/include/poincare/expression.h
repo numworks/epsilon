@@ -161,6 +161,8 @@ class Expression : public PoolHandle {
   static Expression Builder(Internal::Tree* tree);
   // Build the unit corresponding to the angleUnit preference.
   static UserExpression Builder(Preferences::AngleUnit angleUnit);
+  // Build an expression of Undefined tree.
+  static Expression Undefined();
 
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : object()->tree();
@@ -420,13 +422,6 @@ class Expression : public PoolHandle {
   Expression privateCloneAndReduceOrSimplify(
       const Internal::ProjectionContext& context, bool beautify,
       bool* reductionFailure = nullptr) const;
-};
-
-class Undefined final : public Expression {
- public:
-  static Undefined Builder();
-  constexpr static const char* Name() { return "undef"; }
-  constexpr static int NameSize() { return 6; }
 };
 
 class Infinity {

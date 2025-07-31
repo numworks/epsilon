@@ -665,7 +665,7 @@ QUIZ_CASE(pcj_sign_is_real) {
   assert_projected_is_not_real("2.3i");
   assert_projected_is_real("random()");
   assert_projected_is_not_real("nonreal");
-  assert_projected_is_not_real(Undefined::Name());
+  assert_projected_is_not_real("undef");
 
   // Real if does not contain a matrix
   assert_projected_is_real("abs(2)");

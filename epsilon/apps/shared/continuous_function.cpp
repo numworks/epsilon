@@ -583,7 +583,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
   m_expression = expressionReducedForAnalysis(record, context);
   ContinuousFunctionProperties thisProperties = properties(record);
   if (!thisProperties.isEnabled()) {
-    m_expression = Undefined::Builder();
+    m_expression = Expression::Undefined();
     return m_expression;
   }
   Preferences::ComplexFormat complexFormat =
@@ -616,7 +616,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       int xDegree = m_expression.polynomialDegree(k_unknownName);
       if (xDegree < 1 || xDegree > 2) {
         // Such degrees of equation in y and x are not handled.
-        m_expression = Undefined::Builder();
+        m_expression = Expression::Undefined();
         return m_expression;
       }
       // Equation can be plotted along y. For example : x=cos(y) or x^2=1
@@ -662,7 +662,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       /* TODO: We could handle simple equations of any degree by solving the
        * equation within the graph view bounds, to plot as many vertical or
        * horizontal lines as needed. */
-      m_expression = Undefined::Builder();
+      m_expression = Expression::Undefined();
       return m_expression;
     }
   } else {
@@ -830,7 +830,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     bool* isCartesianEquation) const {
   UserExpression result = ExpressionModel::expressionClone(record);
   if (result.isUninitialized()) {
-    return Undefined::Builder();
+    return Expression::Undefined();
   }
   ContinuousFunctionProperties::SymbolType tempFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
@@ -850,12 +850,12 @@ UserExpression ContinuousFunction::Model::expressionEquation(
      * - The input text is too long and "f(x)=" can't be inserted.
      * - When inputting amiguous equations like "x+y>2>y".
      * - When result is uninitialized because of circular definition.  */
-    return Undefined::Builder();
+    return Expression::Undefined();
   }
 
   ComparisonJunior::Operator equationType = result.comparisonOperator();
   if (equationType == ComparisonJunior::Operator::NotEqual) {
-    return Undefined::Builder();
+    return Expression::Undefined();
   }
   if (computedEquationType) {
     *computedEquationType = equationType;
@@ -918,7 +918,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
 
   if (result.isUninitialized()) {
     // result was Circularly defined
-    return Undefined::Builder();
+    return Expression::Undefined();
   }
   if (isUnnamedFunction) {
     result.replaceSymbolWithExpression(

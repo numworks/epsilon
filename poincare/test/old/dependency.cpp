@@ -27,8 +27,8 @@ QUIZ_CASE(poincare_dependency_function) {
   assert_parsed_expression_simplify_to("f(2)", "3");
   assert_parsed_expression_simplify_to("g(-1.23)", "3");
   // Dependencies makes sure f(undef) = undef for all f
-  assert_parsed_expression_simplify_to("f(1/0)", Undefined::Name());
-  assert_parsed_expression_simplify_to("g(1/0)", Undefined::Name());
+  assert_parsed_expression_simplify_to("f(1/0)", "undef");
+  assert_parsed_expression_simplify_to("g(1/0)", "undef");
 }
 
 QUIZ_CASE(poincare_dependency_derivative) {
@@ -42,8 +42,7 @@ QUIZ_CASE(poincare_dependency_derivative) {
   assert_parsed_expression_simplify_to("diff(cos(x)+f(y),x,0)", "0");
   assert_parsed_expression_simplify_to("diff(cos(x)+f(y),x,x)", "-sin(x)");
   assert_reduce_and_store("1/0→y");
-  assert_parsed_expression_simplify_to("diff(cos(x)+f(y),x,0)",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("diff(cos(x)+f(y),x,0)", "undef");
 }
 
 QUIZ_CASE(poincare_dependency_parametered_expression) {
@@ -52,8 +51,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   assert_reduce_and_store("1→f(x)");
   assert_parsed_expression_simplify_to("int(f(x)+f(a),x,0,1)", "int(2,x,0,1)");
   assert_reduce_and_store("1/0→a");
-  assert_parsed_expression_simplify_to("int(f(x)+f(a),x,0,1)",
-                                       Undefined::Name());
+  assert_parsed_expression_simplify_to("int(f(x)+f(a),x,0,1)", "undef");
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
@@ -81,7 +79,7 @@ QUIZ_CASE(poincare_dependency_sequence) {
   // Sequence are kept in dependency
   assert_parsed_expression_simplify_to("f(u(n))", "dep(3,{u(n)})");
   // Except if the sequence can already be approximated.
-  assert_parsed_expression_simplify_to("f(u(2))", Undefined::Name());
+  assert_parsed_expression_simplify_to("f(u(2))", "undef");
 }
 
 QUIZ_CASE(poincare_dependency_power) {

@@ -27,12 +27,12 @@ Internal::ProjectionContext context() {
 UserExpression getExpression(const std::vector<std::string>& args) {
   if (args.size() != 1) {
     std::cerr << "This command expects an expression tree\n";
-    return Undefined::Builder();
+    return Expression::Undefined();
   }
   UserExpression e = Expression::Parse(args[0].c_str(), &s_historyContext);
   if (e.isUninitialized()) {
     std::cerr << "Syntax error\n";
-    return Undefined::Builder();
+    return Expression::Undefined();
   }
   return e;
 }

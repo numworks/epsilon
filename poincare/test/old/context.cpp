@@ -62,31 +62,31 @@ QUIZ_CASE(poincare_context_user_variable_simple) {
 QUIZ_CASE(poincare_context_user_variable_2_circular_variables) {
   assert_reduce_and_store("a→b");
   assert_reduce_and_store("b→a");
-  assert_expression_approximates_to<double>("a", Undefined::Name());
-  assert_expression_approximates_to<double>("b", Undefined::Name());
+  assert_expression_approximates_to<double>("a", "undef");
+  assert_expression_approximates_to<double>("b", "undef");
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_variables) {
   assert_reduce_and_store("a→b");
   assert_reduce_and_store("b→c");
   assert_reduce_and_store("c→a");
-  assert_expression_approximates_to<double>("a", Undefined::Name());
-  assert_expression_approximates_to<double>("b", Undefined::Name());
-  assert_expression_approximates_to<double>("c", Undefined::Name());
+  assert_expression_approximates_to<double>("a", "undef");
+  assert_expression_approximates_to<double>("b", "undef");
+  assert_expression_approximates_to<double>("c", "undef");
 }
 
 QUIZ_CASE(poincare_context_user_variable_1_circular_function) {
   // h: x → h(x)
   assert_reduce_and_store("h(x)→h(x)");
-  assert_expression_approximates_to<double>("h(1)", Undefined::Name());
+  assert_expression_approximates_to<double>("h(1)", "undef");
 }
 
 QUIZ_CASE(poincare_context_user_variable_2_circular_functions) {
   assert_reduce_and_store("1→f(x)");
   assert_reduce_and_store("f(x)→g(x)");
   assert_reduce_and_store("g(x)→f(x)");
-  assert_expression_approximates_to<double>("f(1)", Undefined::Name());
-  assert_expression_approximates_to<double>("g(1)", Undefined::Name());
+  assert_expression_approximates_to<double>("f(1)", "undef");
+  assert_expression_approximates_to<double>("g(1)", "undef");
 }
 
 QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
@@ -94,18 +94,18 @@ QUIZ_CASE(poincare_context_user_variable_3_circular_functions) {
   assert_reduce_and_store("f(x)→g(x)");
   assert_reduce_and_store("g(x)→h(x)");
   assert_reduce_and_store("h(x)→f(x)");
-  assert_expression_approximates_to<double>("f(1)", Undefined::Name());
-  assert_expression_approximates_to<double>("g(1)", Undefined::Name());
-  assert_expression_approximates_to<double>("h(1)", Undefined::Name());
+  assert_expression_approximates_to<double>("f(1)", "undef");
+  assert_expression_approximates_to<double>("g(1)", "undef");
+  assert_expression_approximates_to<double>("h(1)", "undef");
 }
 
 QUIZ_CASE(poincare_context_user_variable_circular_variables_and_functions) {
   assert_reduce_and_store("a→b");
   assert_reduce_and_store("b→a");
   assert_reduce_and_store("a→f(x)");
-  assert_expression_approximates_to<double>("f(1)", Undefined::Name());
-  assert_expression_approximates_to<double>("a", Undefined::Name());
-  assert_expression_approximates_to<double>("b", Undefined::Name());
+  assert_expression_approximates_to<double>("f(1)", "undef");
+  assert_expression_approximates_to<double>("a", "undef");
+  assert_expression_approximates_to<double>("b", "undef");
 }
 
 QUIZ_CASE(poincare_context_user_variable_composed_functions) {
@@ -172,9 +172,9 @@ QUIZ_CASE(poincare_context_user_variable_properties) {
 QUIZ_CASE(poincare_context_function_evaluate_at_undef) {
   assert_reduce_and_store("0→f(x)");
   assert_reduce_and_store("f(1/0)→a");
-  assert_parsed_expression_simplify_to("a", Undefined::Name());
+  assert_parsed_expression_simplify_to("a", "undef");
   assert_reduce_and_store("f(1/0)→g(x)");
-  assert_parsed_expression_simplify_to("g(1)", Undefined::Name());
+  assert_parsed_expression_simplify_to("g(1)", "undef");
   assert_reduce_and_store("f(undef)→b");
-  assert_parsed_expression_simplify_to("b", Undefined::Name());
+  assert_parsed_expression_simplify_to("b", "undef");
 }

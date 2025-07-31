@@ -98,7 +98,7 @@ SystemExpression ExpressionModel::expressionReduced(
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
     if (isCircularlyDefined(record, context)) {
-      m_expression = Undefined::Builder();
+      m_expression = Expression::Undefined();
     } else {
       m_expression = SystemExpression::ExpressionFromAddress(
           expressionAddress(record), expressionSize(record));

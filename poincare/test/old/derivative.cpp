@@ -16,12 +16,12 @@ void assert_reduces_to_formal_expression(
 
 QUIZ_CASE(poincare_derivative_formal) {
   // Undefined
-  assert_reduces_to_formal_expression("diff(undef,x,x)", Undefined::Name());
+  assert_reduces_to_formal_expression("diff(undef,x,x)", "undef");
   assert_reduces_to_formal_expression("diff(nonreal,x,x)", "nonreal");
-  assert_reduces_to_formal_expression("diff(inf,x,x)", Undefined::Name());
+  assert_reduces_to_formal_expression("diff(inf,x,x)", "undef");
 
   // Constants
-  assert_reduces_to_formal_expression("diff(i,x,x)", Undefined::Name());
+  assert_reduces_to_formal_expression("diff(i,x,x)", "undef");
   assert_reduces_to_formal_expression("diff(π,x,x)", "0");
   assert_reduces_to_formal_expression("diff(e,x,x)", "0");
 
@@ -120,10 +120,9 @@ QUIZ_CASE(poincare_derivative_formal) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   // On matrices
-  assert_reduces_to_formal_expression("diff([[x]],x,x)", Undefined::Name());
-  assert_reduces_to_formal_expression("diff([[2t,3t]],t,t)", Undefined::Name());
-  assert_reduces_to_formal_expression("diff([[2t][3t]],t,t)",
-                                      Undefined::Name());
+  assert_reduces_to_formal_expression("diff([[x]],x,x)", "undef");
+  assert_reduces_to_formal_expression("diff([[2t,3t]],t,t)", "undef");
+  assert_reduces_to_formal_expression("diff([[2t][3t]],t,t)", "undef");
 }
 
 QUIZ_CASE(poincare_derivative_formal_higher_order) {
@@ -132,8 +131,8 @@ QUIZ_CASE(poincare_derivative_formal_higher_order) {
   assert_reduces_to_formal_expression("diff(x^5+1,x,x,10)", "0");
   assert_reduces_to_formal_expression("diff(e^(2x),x,x,8)", "256×e^(2×x)");
   assert_reduces_to_formal_expression("diff(x^3,x,x,0)", "x^3");
-  assert_reduces_to_formal_expression("diff(x^3,x,x,-1)", Undefined::Name());
-  assert_reduces_to_formal_expression("diff(x^3,x,x,1.3)", Undefined::Name());
+  assert_reduces_to_formal_expression("diff(x^3,x,x,-1)", "undef");
+  assert_reduces_to_formal_expression("diff(x^3,x,x,1.3)", "undef");
   assert_reduces_to_formal_expression("diff(x^3,x,x,n)", "diff(x^3,x,x,n)");
 
   // On points
@@ -156,25 +155,25 @@ QUIZ_CASE(poincare_derivative_reduced_approximation) {
              .isNull());
   assert_reduces_for_approximation("diff(ln(x),x,1)", "1");
   assert_reduces_for_approximation("diff(ln(x),x,2.2)", "5/11");
-  assert_reduces_for_approximation("diff(ln(x),x,0)", Undefined::Name());
-  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", Undefined::Name());
-  assert_reduces_for_approximation("diff(log(x),x,-10)", Undefined::Name());
+  assert_reduces_for_approximation("diff(ln(x),x,0)", "undef");
+  assert_reduces_for_approximation("diff(ln(x),x,-3.1)", "undef");
+  assert_reduces_for_approximation("diff(log(x),x,-10)", "undef");
 
   assert_reduces_for_approximation("diff(abs(x),x,123)", "1");
   assert_reduces_for_approximation("diff(abs(x),x,-2.34)", "-1");
-  assert_reduces_for_approximation("diff(abs(x),x,0)", Undefined::Name());
+  assert_reduces_for_approximation("diff(abs(x),x,0)", "undef");
 
   assert_reduces_for_approximation("diff(sign(x),x,123)", "0");
   assert_reduces_for_approximation("diff(sign(x),x,-2.34)", "0");
-  assert_reduces_for_approximation("diff(sign(x),x,0)", Undefined::Name());
+  assert_reduces_for_approximation("diff(sign(x),x,0)", "undef");
 
-  assert_reduces_for_approximation("diff(√(x),x,-1)", Undefined::Name(), Radian,
+  assert_reduces_for_approximation("diff(√(x),x,-1)", "undef", Radian,
                                    Cartesian);
 
-  assert_reduces_for_approximation("diff(asin(x),x,1)", Undefined::Name());
-  assert_reduces_for_approximation("diff(asin(x),x,-1)", Undefined::Name());
-  assert_reduces_for_approximation("diff(acos(x),x,1)", Undefined::Name());
-  assert_reduces_for_approximation("diff(acos(x),x,-1)", Undefined::Name());
+  assert_reduces_for_approximation("diff(asin(x),x,1)", "undef");
+  assert_reduces_for_approximation("diff(asin(x),x,-1)", "undef");
+  assert_reduces_for_approximation("diff(acos(x),x,1)", "undef");
+  assert_reduces_for_approximation("diff(acos(x),x,-1)", "undef");
   assert_reduces_for_approximation("diff(arccot(x),x,0)", "-1");
 
   assert_reduces_for_approximation("diff(1/x,x,-2)", "-1/4");
@@ -208,14 +207,14 @@ QUIZ_CASE(poincare_derivative_approximation) {
   assert_approximate_to("diff(2×\"TO\"^2, \"TO\", 7)", "28");
   assert_approximate_to("diff(ln(x),x,1)", "1");
   assert_approximate_to("diff(ln(x),x,2.2)", "0.455");
-  assert_approximate_to("diff(ln(x),x,0)", Undefined::Name());
-  assert_approximate_to("diff(ln(x),x,-3.1)", Undefined::Name());
-  assert_approximate_to("diff(log(x),x,-10)", Undefined::Name());
+  assert_approximate_to("diff(ln(x),x,0)", "undef");
+  assert_approximate_to("diff(ln(x),x,-3.1)", "undef");
+  assert_approximate_to("diff(log(x),x,-10)", "undef");
   assert_approximate_to("diff(abs(x),x,123)", "1");
   assert_approximate_to("diff(abs(x),x,-2.34)", "-1");
   assert_approximate_to("diff(1/x,x,-2)", "-0.25");
   assert_approximate_to("diff(x^3+5*x^2,x,0)", "0");
-  assert_approximate_to("diff(abs(x),x,0)", "0");  // Undefined::Name());
+  assert_approximate_to("diff(abs(x),x,0)", "0");  // "undef");
   // FIXME error too big on floats
   // assert_expression_approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)",
   // "0");
@@ -232,10 +231,10 @@ QUIZ_CASE(poincare_derivative_approximation_higher_order) {
   assert_expression_approximates_to<double>("diff(x^3,x,1,4)", "0");
   assert_expression_approximates_to<double>("diff(e^(2x),x,0,4)", "16");
   assert_approximate_to("diff(x^3,x,3,0)", "27");
-  assert_approximate_to("diff(x^3,x,3,-1)", Undefined::Name());
-  assert_approximate_to("diff(x^3,x,3,1.3)", Undefined::Name());
+  assert_approximate_to("diff(x^3,x,3,-1)", "undef");
+  assert_approximate_to("diff(x^3,x,3,1.3)", "undef");
   // Order 5 and above are not handled because recursively too long
-  assert_approximate_to("diff(e^(2x),x,0,5)", Undefined::Name());
+  assert_approximate_to("diff(e^(2x),x,0,5)", "undef");
 
   // On points
   assert_expression_approximates_to<double>("diff((2t,ln(t)),t,2,2)",

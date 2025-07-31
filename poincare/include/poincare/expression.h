@@ -395,6 +395,7 @@ class Expression : public PoolHandle {
   // Return true if expression is a number, constant, inf or undef.
   bool isConstantNumber() const;
   bool isPureAngleUnit() const;
+  bool isVector() const;
   bool allChildrenAreUndefined() const;
   bool hasRandomNumber() const;
   bool hasRandomList() const;
@@ -419,24 +420,6 @@ class Expression : public PoolHandle {
   Expression privateCloneAndReduceOrSimplify(
       const Internal::ProjectionContext& context, bool beautify,
       bool* reductionFailure = nullptr) const;
-};
-
-// TODO_PCJ: Actually implement methods. Assert its block type is Matrix
-class Matrix final : public Expression {
- public:
-  /* Cap the matrix's size for inverse and determinant computation.
-   * TODO: Find another solution */
-  constexpr static int k_maxNumberOfChildren = 100;
-  static Matrix Builder();
-  void setDimensions(int rows, int columns);
-  bool isVector() const;
-  int numberOfRows() const;
-  int numberOfColumns() const;
-  void addChildAtIndexInPlace(Expression t, int index,
-                              int currentNumberOfChildren);
-  Expression matrixChild(int i, int j);
-  // rank returns -1 if the rank cannot be computed
-  int rank(Context* context, bool forceCanonization = false);
 };
 
 class Undefined final : public Expression {

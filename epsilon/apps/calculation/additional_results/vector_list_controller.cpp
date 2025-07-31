@@ -72,10 +72,8 @@ void VectorListController::computeAdditionalResults(
   setLineAtIndex(index++, UserExpression(), normalized, &ctx);
 
   // 3. Angle with x-axis
-  assert(approximateOutput.isMatrix());
-  Matrix vector = static_cast<const Matrix&>(approximateOutput);
-  assert(vector.isVector());
-  if (vector.numberOfChildren() != 2) {
+  assert(approximateOutput.isVector());
+  if (approximateOutput.numberOfChildren() != 2) {
     // Vector is not 2D
     return;
   }
@@ -106,10 +104,10 @@ void VectorListController::computeAdditionalResults(
 
   // 4. Illustration
   float xApproximation =
-      vector.cloneChildAtIndex(0).approximateToRealScalar<float>(
+      approximateOutput.cloneChildAtIndex(0).approximateToRealScalar<float>(
           angleUnit(), complexFormat(), context);
   float yApproximation =
-      vector.cloneChildAtIndex(1).approximateToRealScalar<float>(
+      approximateOutput.cloneChildAtIndex(1).approximateToRealScalar<float>(
           angleUnit(), complexFormat(), context);
   if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
       (OMG::LaxToZero(xApproximation) == 0.f &&

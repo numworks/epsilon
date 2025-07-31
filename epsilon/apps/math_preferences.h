@@ -37,37 +37,14 @@ class MathPreferences : public GlobalPreferences {
   bool forceExamModeReload() const {
     return Poincare::Preferences::SharedPreferences()->forceExamModeReload();
   }
-  bool mixedFractionsAreEnabled() const {
-    return Poincare::Preferences::SharedPreferences()
-        ->mixedFractionsAreEnabled();
-  }
-  void enableMixedFractions(Poincare::Preferences::MixedFractions enable) {
-    Poincare::Preferences::SharedPreferences()->enableMixedFractions(enable);
-  }
-  Poincare::Preferences::CombinatoricSymbols combinatoricSymbols() const {
-    return Poincare::Preferences::SharedPreferences()->combinatoricSymbols();
-  }
-  void setCombinatoricSymbols(
-      Poincare::Preferences::CombinatoricSymbols combinatoricSymbols) {
-    Poincare::Preferences::SharedPreferences()->setCombinatoricSymbols(
-        combinatoricSymbols);
-  }
-
-  void setLogarithmBasePosition(
-      Poincare::Preferences::LogarithmBasePosition position) {
-    Poincare::Preferences::SharedPreferences()->setLogarithmBasePosition(
-        position);
-  }
-  void setParabolaParameter(
-      Poincare::Preferences::ParabolaParameter parameter) {
-    Poincare::Preferences::SharedPreferences()->setParabolaParameter(parameter);
-  }
 
   using GlobalPreferences::angleUnit;
   using GlobalPreferences::calculationPreferences;
+  using GlobalPreferences::combinatoricSymbols;
   using GlobalPreferences::complexFormat;
   using GlobalPreferences::displayMode;
   using GlobalPreferences::mathPreferencesCheckSum;
+  using GlobalPreferences::mixedFractionsAreEnabled;
   using GlobalPreferences::numberOfSignificantDigits;
   using GlobalPreferences::setAngleUnit;
   using GlobalPreferences::setComplexFormat;

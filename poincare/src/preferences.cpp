@@ -11,6 +11,7 @@ constexpr int Preferences::LargeNumberOfSignificantDigits;
 constexpr int Preferences::MediumNumberOfSignificantDigits;
 constexpr int Preferences::ShortNumberOfSignificantDigits;
 constexpr int Preferences::VeryShortNumberOfSignificantDigits;
+Preferences::PartialInterface* Preferences::s_otherPreferences = nullptr;
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Internal::Tree* exp, Context* context,
@@ -25,14 +26,14 @@ Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
   return projectionContext.m_complexFormat;
 }
 
-ExamMode Preferences::examMode() const {
+ExamMode Preferences::Instance::examMode() const {
   if (m_examMode.isUninitialized()) {
     m_examMode = ExamMode(Ion::ExamMode::get());
   }
   return m_examMode;
 }
 
-void Preferences::setExamMode(ExamMode mode) {
+void Preferences::Instance::setExamMode(ExamMode mode) {
   m_forceExamModeReload = false;
   m_examMode = mode;
   Ion::ExamMode::set(mode);

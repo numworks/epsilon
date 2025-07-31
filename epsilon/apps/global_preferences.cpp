@@ -1,7 +1,6 @@
 #include "global_preferences.h"
 
 #include "apps_container_helper.h"
-#include "math_preferences.h"
 
 GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
   static GlobalPreferences* ptr = Ion::Storage::FileSystem::sharedFileSystem
@@ -12,13 +11,6 @@ GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
 }
 
 void GlobalPreferences::countryHasChanged(bool updateSnapshots) {
-  MathPreferences::SharedPreferences()->setCombinatoricSymbols(
-      combinatoricsSymbols());
-  MathPreferences::SharedPreferences()->enableMixedFractions(mixedFractions());
-  MathPreferences::SharedPreferences()->setLogarithmBasePosition(
-      logarithmBasePosition());
-  MathPreferences::SharedPreferences()->setParabolaParameter(
-      parabolaParameter());
   if (!updateSnapshots) {
     return;
   }

@@ -4,16 +4,16 @@
 
 namespace Poincare {
 
-void Preferences::Init() {
-  Ion::Storage::FileSystem::sharedFileSystem->initSystemRecord<Preferences>();
+void Preferences::Init(Preferences::PartialInterface* partial) {
+  Ion::Storage::FileSystem::sharedFileSystem->initSystemRecord<Instance>();
+  s_otherPreferences = partial;
 }
 
-Preferences* Preferences::SharedPreferences() {
-  static Preferences* ptr = Ion::Storage::FileSystem::sharedFileSystem
-                                ->findSystemRecord<Preferences>();
+Preferences::Interface* Preferences::SharedPreferences() {
+  static Instance* ptr =
+      Ion::Storage::FileSystem::sharedFileSystem->findSystemRecord<Instance>();
   assert(Ion::Storage::FileSystem::sharedFileSystem
-             ->findSystemRecord<Preferences>() == ptr);
+             ->findSystemRecord<Instance>() == ptr);
   return ptr;
 }
-
 }  // namespace Poincare

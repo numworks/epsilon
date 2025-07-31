@@ -27,10 +27,8 @@ using SymbolicComputation = Internal::SymbolicComputation;
  * the data to be aligned.
  * TODO: Ideally the class should be final, but we need to override it with
  * Apps::MathPreferences and Escher::LayoutPreferences. See comment below. */
-class __attribute__((packed)) Preferences {
-  friend Ion::Storage::FileSystem;
+class Preferences {
   friend PreferencesTestBuilder;
-  friend OMG::GlobalBox<Poincare::Preferences>;
 
  public:
   constexpr static int DefaultNumberOfPrintedSignificantDigits = 10;
@@ -73,7 +71,6 @@ class __attribute__((packed)) Preferences {
   struct CalculationPreferences {
     AngleUnit angleUnit : k_numberOfBitsForAngleUnit;
     PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
-    bool dummy : 1;  // Filler to avoid changing the size of the struct
     ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
     /* Explicitly declare padding bits to avoid uninitalized values. */
     uint8_t padding
@@ -88,7 +85,6 @@ class __attribute__((packed)) Preferences {
   constexpr static CalculationPreferences k_defaultCalculationPreferences = {
       .angleUnit = AngleUnit::Radian,
       .displayMode = Preferences::PrintFloatMode::Decimal,
-      .dummy = false,
       .complexFormat = Preferences::ComplexFormat::Real,
       .numberOfSignificantDigits =
           Preferences::DefaultNumberOfPrintedSignificantDigits};
@@ -118,94 +114,97 @@ class __attribute__((packed)) Preferences {
 
   constexpr static LogarithmBasePosition k_defaultLogarithmBasePosition =
       LogarithmBasePosition::BottomRight;
+  constexpr static CombinatoricSymbols k_defaultCombinatoricSymbol =
+      CombinatoricSymbols::Default;
+  constexpr static ParabolaParameter k_defaultParabolaParameter =
+      ParabolaParameter::Default;
 
-  static void Init();
-  static Preferences* SharedPreferences();
+  class PartialInterface {
+   public:
+    virtual CombinatoricSymbols combinatoricSymbols() const = 0;
+    virtual bool mixedFractionsAreEnabled() const = 0;
+    virtual LogarithmBasePosition logarithmBasePosition() const = 0;
+    virtual TranslateBuiltins translateBuiltins() const = 0;
+    virtual void setTranslateBuiltins(TranslateBuiltins translate) = 0;
+    virtual ParabolaParameter parabolaParameter() const = 0;
+    bool operator==(const PartialInterface&) const = default;
+  };
 
-  bool operator==(const Preferences&) const = default;
+  class Interface : public PartialInterface {
+   public:
+    virtual bool forceExamModeReload() const = 0;
+    virtual ExamMode examMode() const = 0;
+    virtual void setExamMode(ExamMode examMode) = 0;
+  };
+
+  static void Init(PartialInterface*);
+  static Interface* SharedPreferences();
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const Internal::Tree* e, Context* context,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols);
 
-  CombinatoricSymbols combinatoricSymbols() const {
-    return m_combinatoricSymbols;
-  }
-  void setCombinatoricSymbols(CombinatoricSymbols combinatoricSymbols) {
-    m_combinatoricSymbols = combinatoricSymbols;
-  }
-  bool mixedFractionsAreEnabled() const { return m_mixedFractionsAreEnabled; }
-  void enableMixedFractions(MixedFractions enable) {
-    m_mixedFractionsAreEnabled = static_cast<bool>(enable);
-  }
-  LogarithmBasePosition logarithmBasePosition() const {
-    return m_logarithmBasePosition;
-  }
-  void setLogarithmBasePosition(LogarithmBasePosition position) {
-    m_logarithmBasePosition = position;
-  }
-  TranslateBuiltins translateBuiltins() const {
-#if POINCARE_TRANSLATE_BUILTINS
-    return m_translatedBuiltins;
-#else
-    return TranslateBuiltins::No;
-#endif
-  }
-  void setTranslateBuiltins(TranslateBuiltins translate) {
-#if POINCARE_TRANSLATE_BUILTINS
-    m_translatedBuiltins = translate;
-#endif
-  }
-  ParabolaParameter parabolaParameter() const { return m_parabolaParameter; }
-  void setParabolaParameter(ParabolaParameter parameter) {
-    m_parabolaParameter = parameter;
-  }
-
-  bool forceExamModeReload() const { return m_forceExamModeReload; }
-  ExamMode examMode() const;
-  void setExamMode(ExamMode examMode);
-
  private:
-  // TODO: remove this and associated member
-  enum class LogarithmKeyEvent : uint8_t { Default };
-  constexpr static uint8_t k_version = 0;
+  static PartialInterface* s_otherPreferences;
 
-  /* Preferences is a singleton, hence the private constructor. The unique
-   * instance can be accessed through the Preferences::SharedPreferences()
-   * pointer. */
-  Preferences() = default;
+  class __attribute__((packed)) Instance : public Interface {
+    friend OMG::GlobalBox<Instance>;
+    friend Ion::Storage::FileSystem;
 
-  CODE_GUARD(
-      poincare_preferences, 2067043470,  //
-      uint8_t m_version = k_version;
-      CalculationPreferences m_calculationPreferences =
-          k_defaultCalculationPreferences;
-      mutable ExamMode m_examMode =
-          ExamMode(Ion::ExamMode::Ruleset::Uninitialized);
-      /* This flag can only be asserted by writing it via DFU. When set,
-       * it will force the reactivation of the exam mode after leaving
-       * DFU to synchronize the persisting bytes with the Preferences. */
-      bool m_forceExamModeReload = false;
-      CombinatoricSymbols m_combinatoricSymbols = CombinatoricSymbols::Default;
-      bool m_mixedFractionsAreEnabled =
-          static_cast<bool>(k_defaultMixedFraction);
-      LogarithmBasePosition m_logarithmBasePosition =
-          k_defaultLogarithmBasePosition;
-      LogarithmKeyEvent m_logarithmKeyEvent = LogarithmKeyEvent::Default;
-      ParabolaParameter m_parabolaParameter = ParabolaParameter::Default;)
+   public:
+    constexpr static char k_recordName[] = "pr";
+    bool operator==(const Instance&) const = default;
 
-#if POINCARE_TRANSLATE_BUILTINS
-  mutable TranslateBuiltins m_translatedBuiltins;
+    bool forceExamModeReload() const { return m_forceExamModeReload; }
+    ExamMode examMode() const;
+    void setExamMode(ExamMode examMode);
+
+    CombinatoricSymbols combinatoricSymbols() const {
+      return s_otherPreferences->combinatoricSymbols();
+    };
+    bool mixedFractionsAreEnabled() const {
+      return s_otherPreferences->mixedFractionsAreEnabled();
+    };
+    LogarithmBasePosition logarithmBasePosition() const {
+      return s_otherPreferences->logarithmBasePosition();
+    };
+    TranslateBuiltins translateBuiltins() const {
+      return s_otherPreferences->translateBuiltins();
+    };
+    void setTranslateBuiltins(TranslateBuiltins translate) {
+      s_otherPreferences->setTranslateBuiltins(translate);
+    };
+    ParabolaParameter parabolaParameter() const {
+      return s_otherPreferences->parabolaParameter();
+    };
+
+   private:
+    constexpr static uint8_t k_version = 1;
+
+    /* Preferences is a singleton, hence the private constructor. The unique
+     * instance can be accessed through the Preferences::SharedPreferences()
+     * pointer. */
+    Instance() = default;
+
+    // TODO: update website
+    // TODO 2: merge examMode in GlobalPrefs, update website further
+    CODE_GUARD(
+        poincare_preferences, 1308047289,  //
+        uint8_t m_version = k_version;
+        mutable ExamMode m_examMode =
+            ExamMode(Ion::ExamMode::Ruleset::Uninitialized);
+        /* This flag can only be asserted by writing it via DFU. When set,
+         * it will force the reactivation of the exam mode after leaving
+         * DFU to synchronize the persisting bytes with the Preferences. */
+        bool m_forceExamModeReload = false;)
+    static_assert(sizeof(CalculationPreferences) == sizeof(uint16_t));
+  };
+#if PLATFORM_DEVICE
+  static_assert(sizeof(Instance) == 8,
+                "Class Preferences::Instance changed size");
 #endif
-
-  /* Settings that alter layouts should be tracked by
-   * CalculationStore::preferencesMightHaveChanged */
 };
-
-#if PLATFORM_DEVICE && !POINCARE_TRANSLATE_BUILTINS
-static_assert(sizeof(Preferences) == 11, "Class Preferences changed size");
-#endif
 
 #if __EMSCRIPTEN__
 /* Preferences live in the Storage which does not enforce alignment, so make

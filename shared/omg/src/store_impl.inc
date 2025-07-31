@@ -63,6 +63,26 @@ void Store<Lock, Unlock>::deleteElementAtIndex(int index) {
   Unlock();
 }
 
+template <auto Lock, auto Unlock>
+void Store<Lock, Unlock>::updateElementAtIndex(int index, const void* element,
+                                               int size) {
+  char* deletionStart = static_cast<char*>(elementAtIndex(index));
+  char* deletionEnd = endOfElementAtIndex(index);
+  assert(deletionEnd >= deletionStart);
+  size_t deletedSize = deletionEnd - deletionStart;
+  assert(endOfElements() >= deletionEnd);
+  size_t shiftedMemorySize = endOfElements() - deletionEnd;
+
+  Lock();
+  memmove(deletionStart + size, deletionEnd, shiftedMemorySize);
+  memcpy(deletionStart, element, size);
+
+  for (int i = index; i < m_numberOfElements; i++) {
+    offset(i) = offset(i) - deletedSize + size;
+  }
+  Unlock();
+}
+
 template <auto L, auto U>
 void* Store<L, U>::pushElement(const void* element, int size) {
   char* destination = endOfElements();

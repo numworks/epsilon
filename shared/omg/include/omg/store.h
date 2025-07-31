@@ -44,6 +44,8 @@ class Store {
   size_t maximumSize() const { return m_bufferSize - sizeof(Offset); }
   size_t remainingSize() const { return spaceForNewElements(endOfElements()); }
 
+  void updateElementAtIndex(int index, const void* element, int size);
+
   void* pushElement(const void* element, int size);
 
   /* Make space by clearing some older elements if needed.

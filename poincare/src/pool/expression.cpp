@@ -1125,27 +1125,6 @@ int Poincare::Matrix::rank(Context* context, bool forceCanonization) {
   return result;
 }
 
-/* Point */
-
-Point Point::Builder(const Tree* x, const Tree* y) {
-  Tree* tree = KPoint->cloneNode();
-  x->cloneTree();
-  y->cloneTree();
-  Expression temp = Expression::Builder(tree);
-  return static_cast<Point&>(temp);
-}
-
-Poincare::Layout Point::create2DLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int significantDigits,
-    Context* context) const {
-  Poincare::Layout child0 = cloneChildAtIndex(0).createLayout(
-      floatDisplayMode, significantDigits, context);
-  Poincare::Layout child1 = cloneChildAtIndex(1).createLayout(
-      floatDisplayMode, significantDigits, context);
-  return Poincare::Layout::Create(KPoint2DL(KA, KB),
-                                  {.KA = child0, .KB = child1});
-}
-
 /* Unit */
 
 Expression Unit::Builder(Preferences::AngleUnit angleUnit) {

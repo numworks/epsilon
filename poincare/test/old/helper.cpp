@@ -257,11 +257,11 @@ void assert_expression_simplifies_approximates_to(
       numberOfSignificantDigits);
 }
 
-void assert_expression_serializes_to(const Tree *expression,
-                                     const char *serialization,
-                                     Preferences::PrintFloatMode mode,
-                                     int numberOfSignificantDigits,
-                                     OMG::Base base) {
+void assert_expression_serializes_to_old(const Tree *expression,
+                                         const char *serialization,
+                                         Preferences::PrintFloatMode mode,
+                                         int numberOfSignificantDigits,
+                                         OMG::Base base) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   Tree *layout = Internal::Layouter::LayoutExpression(
@@ -321,19 +321,7 @@ void assert_layout_serializes_to(const Tree *layout,
   LayoutSerializer::Serialize(layout, buffer);
   copy_without_system_chars(buffer, buffer);
   bool success = strcmp(buffer, result) == 0;
-#if POINCARE_STRICT_TESTS
-#if POINCARE_TREE_LOG
-  if (!success) {
-    std::cout << "\nSerialization test failure with: \n";
-    layout->log();
-    std::cout << "\nSerialized to " << buffer << " instead of " << result
-              << "\n\n";
-  }
-#endif
-  quiz_assert(success);
-#else
-  quiz_tolerate_print_if_failure(success, serialization, serialization, buffer);
-#endif
+  quiz_assert_print_if_failure(success, serialization, serialization, buffer);
 }
 
 template void assert_expression_approximates_to<float>(

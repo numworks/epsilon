@@ -89,13 +89,6 @@ class ExpressionObject final : public PoolObject {
   void logAttributes(std::ostream& stream) const override;
 #endif
 
-  // Properties
-
-  template <typename T>
-  SystemExpression approximateToTree(Preferences::AngleUnit angleUnit,
-                                     Preferences::ComplexFormat complexFormat,
-                                     Context* context) const;
-
   // Layout
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits, Context* context,
@@ -253,11 +246,15 @@ class Expression : public PoolHandle {
   SystemExpression removeUndefListElements() const;
 
   template <typename T>
-  SystemExpression approximateToTree(Preferences::AngleUnit angleUnit,
-                                     Preferences::ComplexFormat complexFormat,
-                                     Context* context) const {
-    return object()->approximateToTree<T>(angleUnit, complexFormat, context);
-  }
+  SystemExpression approximateSystemToTree(
+      Preferences::AngleUnit angleUnit,
+      Preferences::ComplexFormat complexFormat, Context* context) const;
+
+  template <typename T>
+  SystemExpression approximateUserToTree(
+      Preferences::AngleUnit angleUnit,
+      Preferences::ComplexFormat complexFormat, Context* context) const;
+
   /* Approximation Helper
    * Return NAN for all non real scalar expressions. */
   template <typename T>

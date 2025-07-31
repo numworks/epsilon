@@ -133,14 +133,6 @@ void ExpressionObject::logAttributes(std::ostream& stream) const {
 }
 #endif
 
-template <typename T>
-SystemExpression ExpressionObject::approximateToTree(
-    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const {
-  return SystemExpression::Builder(Approximation::ToTree<T>(
-      tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true},
-      Approximation::Context(angleUnit, complexFormat, context)));
-}
-
 Poincare::Layout ExpressionObject::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
     Context* context, OMG::Base base, bool linearMode) const {
@@ -339,6 +331,28 @@ bool Expression::deepIsOfType(std::initializer_list<Internal::AnyType> types,
                    : OMG::Troolean::Unknown;
       },
       context, SymbolicComputation::ReplaceDefinedSymbols, &types);
+}
+
+template <typename T>
+SystemExpression SystemExpression::approximateSystemToTree(
+    Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
+    Context* context) const {
+  return SystemExpression::Builder(Approximation::ToTree<T>(
+      tree(),
+      Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                .prepare = true},
+      Approximation::Context(angleUnit, complexFormat, context)));
+}
+
+template <typename T>
+SystemExpression UserExpression::approximateUserToTree(
+    Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
+    Context* context) const {
+  return SystemExpression::Builder(Approximation::ToTree<T>(
+      tree(),
+      Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                .projectLocalVariables = true},
+      Approximation::Context(angleUnit, complexFormat, context)));
 }
 
 bool UserExpression::cloneAndSimplifyAndApproximate(
@@ -1197,9 +1211,14 @@ const char* Poincare::Infinity::k_infinityName =
 const char* Poincare::Infinity::k_minusInfinityName =
     Internal::Infinity::k_minusInfinityName;
 
-template SystemExpression ExpressionObject::approximateToTree<float>(
+template SystemExpression SystemExpression::approximateSystemToTree<float>(
     AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
-template SystemExpression ExpressionObject::approximateToTree<double>(
+template SystemExpression SystemExpression::approximateSystemToTree<double>(
+    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
+
+template SystemExpression UserExpression::approximateUserToTree<float>(
+    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
+template SystemExpression UserExpression::approximateUserToTree<double>(
     AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
 
 template SystemExpression SystemExpression::Builder<float>(float);

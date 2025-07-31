@@ -48,7 +48,7 @@ void VectorListController::computeAdditionalResults(
   setLineAtIndex(index++, UserExpression(), norm, &ctx);
 
   // 2. Normalized vector
-  SystemExpression approximatedNorm = PoincareHelpers::Approximate<double>(
+  SystemExpression approximatedNorm = PoincareHelpers::ApproximateUser<double>(
       norm, context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   Sign sign = approximatedNorm.sign();
@@ -84,7 +84,7 @@ void VectorListController::computeAdditionalResults(
       KACos(KA), {.KA = normalized.cloneChildAtIndex(0)});
   /* ComplexSign needs a reduced expression. Using approximation here, but a
    * reduction would also work. */
-  SystemExpression yApprox = PoincareHelpers::Approximate<double>(
+  SystemExpression yApprox = PoincareHelpers::ApproximateUser<double>(
       normalized.cloneChildAtIndex(1), context,
       {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
   sign = yApprox.sign();

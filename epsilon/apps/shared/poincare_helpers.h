@@ -64,8 +64,8 @@ struct ApproximationParameters {
 
 // Approximate to tree and keep units
 template <class T>
-inline Poincare::Expression Approximate(
-    Poincare::Expression e, Poincare::Context* context,
+inline Poincare::Expression ApproximateUser(
+    Poincare::UserExpression e, Poincare::Context* context,
     const ApproximationParameters& approximationParameters = {}) {
   Poincare::Preferences::ComplexFormat complexFormat =
       approximationParameters.complexFormat;
@@ -74,8 +74,23 @@ inline Poincare::Expression Approximate(
         Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
             complexFormat, e, context);
   }
-  return e.approximateToTree<T>(approximationParameters.angleUnit,
-                                complexFormat, context);
+  return e.approximateUserToTree<T>(approximationParameters.angleUnit,
+                                    complexFormat, context);
+}
+
+template <class T>
+inline Poincare::Expression ApproximateSystem(
+    Poincare::SystemExpression e, Poincare::Context* context,
+    const ApproximationParameters& approximationParameters = {}) {
+  Poincare::Preferences::ComplexFormat complexFormat =
+      approximationParameters.complexFormat;
+  if (approximationParameters.updateComplexFormatWithExpression) {
+    complexFormat =
+        Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
+            complexFormat, e, context);
+  }
+  return e.approximateSystemToTree<T>(approximationParameters.angleUnit,
+                                      complexFormat, context);
 }
 
 // Approximate a real scalar expression. Contexts are not handled.

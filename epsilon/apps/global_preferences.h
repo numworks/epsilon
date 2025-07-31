@@ -15,7 +15,8 @@
  * packed attribute ensures the compiler will not emit instructions that require
  * the data to be aligned. */
 class __attribute__((packed)) GlobalPreferences
-    : public Escher::LayoutPreferences::Interface {
+    : public Escher::LayoutPreferences::Interface,
+      public Poincare::Preferences::PartialInterface {
   friend OMG::GlobalBox<GlobalPreferences>;
   friend Ion::Storage::FileSystem;
 
@@ -75,7 +76,7 @@ class __attribute__((packed)) GlobalPreferences
     return countryPreferences().statsRowsLayout();
   }
   constexpr Poincare::Preferences::CombinatoricSymbols combinatoricSymbols()
-      const {
+      const override {
     return countryPreferences().combinatoricSymbols();
   }
   constexpr CountryPreferences::ListsStatsOrderInToolbox
@@ -85,6 +86,10 @@ class __attribute__((packed)) GlobalPreferences
   constexpr Poincare::Preferences::MixedFractions mixedFractions() const {
     return countryPreferences().mixedFractions();
   }
+  constexpr bool mixedFractionsAreEnabled() const override {
+    return countryPreferences().mixedFractions() ==
+           Poincare::Preferences::MixedFractions::Enabled;
+  }
   constexpr CountryPreferences::RegressionApp regressionAppVariant() const {
     return countryPreferences().regressionAppVariant();
   }
@@ -93,14 +98,15 @@ class __attribute__((packed)) GlobalPreferences
     return countryPreferences().graphTemplatesLayout();
   }
   constexpr Poincare::Preferences::LogarithmBasePosition logarithmBasePosition()
-      const {
+      const override {
     return countryPreferences().logarithmBasePosition();
   }
   constexpr Escher::LayoutPreferences::LogarithmKeyEvent logarithmKeyEvent()
       const override {
     return countryPreferences().logarithmKeyEvent();
   }
-  constexpr Poincare::Preferences::ParabolaParameter parabolaParameter() const {
+  constexpr Poincare::Preferences::ParabolaParameter parabolaParameter()
+      const override {
     return countryPreferences().parabolaParameter();
   }
   constexpr CountryPreferences::SolverDoubleRootName solverDoubleRootName()
@@ -116,6 +122,13 @@ class __attribute__((packed)) GlobalPreferences
     return countryPreferences().stepAdjustmentWarning();
   }
   int sequencesInitialRank() const;
+  // NOTE: this in only used in Scandium
+  constexpr Poincare::Preferences::TranslateBuiltins translateBuiltins()
+      const override {
+    return Poincare::Preferences::TranslateBuiltins::No;
+  }
+  constexpr void setTranslateBuiltins(
+      Poincare::Preferences::TranslateBuiltins) override{};
 
   const char* openIntervalChar(bool left) const {
     /* This should be done by country instead of language. However, some
@@ -225,7 +238,7 @@ class __attribute__((packed)) GlobalPreferences
   /* TODO: group all 1 bit settings (showPopUp, font & editionMode) into a
    * struct of size 1byte */
   CODE_GUARD(
-      global_preferences, 2443540429,  //
+      global_preferences, 3565246052,  //
       uint8_t m_version = k_version;
       BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;
       I18n::Language m_language = k_defaultLanguage;
@@ -236,7 +249,7 @@ class __attribute__((packed)) GlobalPreferences
       Poincare::Preferences::CalculationPreferences m_calculationPreferences =
           Poincare::Preferences::k_defaultCalculationPreferences;
       DimmingTimeType m_dimmingTime = k_defaultDimmingTime; public
-      : static constexpr int k_objectSize = 20;)
+      : static constexpr int k_objectSize = 24;)
 };
 
 #if PLATFORM_DEVICE

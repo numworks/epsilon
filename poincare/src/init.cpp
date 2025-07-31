@@ -9,8 +9,8 @@
 
 namespace Poincare {
 
-void Init() {
-  Preferences::Init();
+void Init(Preferences::PartialInterface* partialPreferences) {
+  Preferences::Init(partialPreferences);
   Pool::sharedPool.init();
   Internal::SharedTreeStack.init();
 }

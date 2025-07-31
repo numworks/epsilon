@@ -150,6 +150,7 @@ class Preferences {
 
   class __attribute__((packed)) Instance : public Interface {
     friend OMG::GlobalBox<Instance>;
+    friend PreferencesTestBuilder;
     friend Ion::Storage::FileSystem;
 
    public:

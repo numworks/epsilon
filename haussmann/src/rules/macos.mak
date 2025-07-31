@@ -6,7 +6,7 @@ $(call document_extension,run,Execute <...>.bin)
 
 # Run in the debugger
 $(OUTPUT_DIRECTORY)/%.bin.debug: $(OUTPUT_DIRECTORY)/%.bin
-	$(GDB) -- $^
+	lldb -- $^
 
 $(call document_extension,debug,Execute <...>.bin in a debugger)
 
@@ -22,6 +22,12 @@ include $(PATH_haussmann)/src/rules/shared.apple.mak
 	open $^
 
 $(call document_extension,app.run,Start the simulator)
+
+# Debug the simulator
+%.app.debug: $(_simulator_app)
+	lldb -- $^
+
+$(call document_extension,app.debug,Debug the simulator)
 
 # Reload the simulator
 %.app.reload: $(_simulator_app)

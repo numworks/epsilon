@@ -238,3 +238,4 @@ jobs:
     uses: ./.github/workflows/code_coverage.yml
     with:
       project-path: epsilon
+      coverage-scope: ""

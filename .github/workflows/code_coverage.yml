@@ -5,6 +5,8 @@ on:
     inputs:
       project-path:
         type: string
+      coverage-scope:
+        type: string
 jobs:
   coverage:
     timeout-minutes: 15
@@ -69,7 +71,7 @@ jobs:
           name: base_summary
           path: ${{ env.COVERAGE_OUTPUT_DIR }}
       - name: Generate diff file
-        run: $DOCKER_RUN "touch ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt && /usr/local/share/lcov/support-scripts/gitdiff --prefix \$(pwd) ${{ steps.common_ancestor.outputs.commit_sha }} ${{ github.event.pull_request.head.sha }} > ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt"
+        run: $DOCKER_RUN "touch ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt && /usr/local/share/lcov/support-scripts/gitdiff ${{ inputs.coverage-scope }} --prefix \$(pwd) ${{ steps.common_ancestor.outputs.commit_sha }} ${{ github.event.pull_request.head.sha }} > ${{ env.COVERAGE_OUTPUT_DIR }}/diff.txt"
       - name: Upload diff file # useful for debug
         id: diff
         uses: actions/upload-artifact@v4

@@ -29,7 +29,7 @@ endef
 # run_screenshot_tests, <epsilon_bin>
 define run_screenshot_tests
 	@echo Running screenshot tests with executable $1
-	python3 tools/screenshots/compare_crc.py --no-screenshots --ignore-failure $1
+	$(PYTHON) tools/screenshots/compare_crc.py --no-screenshots --ignore-failure $1
 endef
 
 # generate_coverage_info, <file_name>, <coverage_dir>
@@ -38,7 +38,7 @@ define generate_coverage_info
 	lcov $(COVERAGE_lcov_args) -j 32 --capture --directory $2 --output-file $2/$1.info \
 	--rc function_coverage=0 --rc geninfo_unexecuted_blocks=1 \
 	--rc omit_lines=default: --rc omit_lines=OMG::unreachable
-	python3 tools/metrics/resolve_symlinks_in_info.py $2/$1.info
+	$(PYTHON) tools/metrics/resolve_symlinks_in_info.py $2/$1.info
 endef
 
 # rule_for_coverage,<coverage_dir>

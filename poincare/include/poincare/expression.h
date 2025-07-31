@@ -462,13 +462,6 @@ class Undefined final : public Expression {
   constexpr static int NameSize() { return 6; }
 };
 
-class NonReal final : public Expression {
- public:
-  static NonReal Builder();
-  constexpr static const char* Name() { return "nonreal"; }
-  constexpr static int NameSize() { return 8; }
-};
-
 class Infinity {
  public:
   static const char* k_infinityName;

@@ -1169,13 +1169,6 @@ Undefined Undefined::Builder() {
   return static_cast<Undefined&>(e);
 }
 
-/* NonReal */
-
-NonReal NonReal::Builder() {
-  Expression e = Expression::Builder(KNonReal);
-  return static_cast<NonReal&>(e);
-}
-
 /* Infinity */
 
 const char* Poincare::Infinity::k_infinityName =

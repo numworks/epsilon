@@ -159,6 +159,8 @@ class Expression : public PoolHandle {
   static Expression Builder(const Internal::Tree* tree);
   // Eat the tree
   static Expression Builder(Internal::Tree* tree);
+  // Build the unit corresponding to the angleUnit preference.
+  static UserExpression Builder(Preferences::AngleUnit angleUnit);
 
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : object()->tree();
@@ -435,14 +437,6 @@ class Matrix final : public Expression {
   Expression matrixChild(int i, int j);
   // rank returns -1 if the rank cannot be computed
   int rank(Context* context, bool forceCanonization = false);
-};
-
-class Unit final {
- public:
-  // Build default unit for given angleUnit preference.
-  static Expression Builder(Preferences::AngleUnit angleUnit);
-  static bool IsPureAngleUnit(Expression expression, bool radianOnly);
-  static bool HasAngleDimension(Expression expression);
 };
 
 class Undefined final : public Expression {

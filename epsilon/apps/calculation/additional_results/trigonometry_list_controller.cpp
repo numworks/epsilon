@@ -38,8 +38,8 @@ void TrigonometryListController::computeAdditionalResults(
   m_isStrictlyEqual[0] = trigonometryResults.angleIsExact;
 
   UserExpression exactAngleWithUnit = UserExpression::Create(
-      KMult(KA, KB),
-      {.KA = trigonometryResults.exactAngle, .KB = Unit::Builder(angleUnit())});
+      KMult(KA, KB), {.KA = trigonometryResults.exactAngle,
+                      .KB = UserExpression::Builder(angleUnit())});
 
   size_t index = 0;
   m_layouts[index] = Layout::String("θ");
@@ -48,13 +48,13 @@ void TrigonometryListController::computeAdditionalResults(
       UserExpression::Create(
           KUnitConversion(KA, KB),
           {.KA = exactAngleWithUnit,
-           .KB = Unit::Builder(Preferences::AngleUnit::Radian)}),
+           .KB = UserExpression::Builder(Preferences::AngleUnit::Radian)}),
       &ctx);
   m_approximatedLayouts[index] = GetExactLayoutFromExpression(
       UserExpression::Create(
           KUnitConversion(KA, KB),
           {.KA = exactAngleWithUnit,
-           .KB = Unit::Builder(Preferences::AngleUnit::Degree)}),
+           .KB = UserExpression::Builder(Preferences::AngleUnit::Degree)}),
       &ctx);
 
   constexpr KTree k_symbol = "θ"_e;

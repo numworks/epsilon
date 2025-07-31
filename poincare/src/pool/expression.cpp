@@ -1032,6 +1032,12 @@ bool Expression::isPureAngleUnit() const {
          Internal::Dimension::Get(tree()).isSimpleAngleUnit();
 }
 
+bool Expression::isVector() const {
+  return !isUninitialized() && tree()->isMatrix() &&
+         (Internal::Matrix::NumberOfRows(tree()) == 1 ||
+          Internal::Matrix::NumberOfColumns(tree()) == 1);
+}
+
 bool Expression::isInRadians(Context* context) const {
   return Internal::Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
 }
@@ -1061,72 +1067,6 @@ int Expression::numberOfChildren() const { return tree()->numberOfChildren(); }
 ComparisonJunior::Operator Expression::comparisonOperator() const {
   assert(isComparison());
   return Internal::Binary::ComparisonOperatorForType(tree()->type());
-}
-
-/* Matrix */
-
-Poincare::Matrix Poincare::Matrix::Builder() {
-  Expression expr = Expression::Builder(SharedTreeStack->pushMatrix(0, 0));
-  return static_cast<Poincare::Matrix&>(expr);
-}
-
-void Poincare::Matrix::setDimensions(int rows, int columns) {
-  assert(rows * columns == numberOfChildren());
-  Tree* clone = tree()->cloneTree();
-  Internal::Matrix::SetNumberOfColumns(clone, columns);
-  Internal::Matrix::SetNumberOfRows(clone, rows);
-  Expression temp = Expression::Builder(clone);
-  *this = static_cast<Poincare::Matrix&>(temp);
-}
-
-bool Poincare::Matrix::isVector() const {
-  const Tree* t = tree();
-  return Internal::Matrix::NumberOfRows(t) == 1 ||
-         Internal::Matrix::NumberOfColumns(t) == 1;
-}
-
-int Poincare::Matrix::numberOfRows() const {
-  return Internal::Matrix::NumberOfRows(tree());
-}
-
-int Poincare::Matrix::numberOfColumns() const {
-  return Internal::Matrix::NumberOfColumns(tree());
-}
-
-// TODO_PCJ: Rework this and its usage
-void Poincare::Matrix::addChildAtIndexInPlace(Expression t, int index,
-                                              int currentNumberOfChildren) {
-  Tree* clone = tree()->cloneTree();
-  TreeRef newChild = t.tree()->cloneTree();
-  if (index >= clone->numberOfChildren()) {
-    int rows = Internal::Matrix::NumberOfRows(clone);
-    int columns = Internal::Matrix::NumberOfColumns(clone);
-    for (int i = 1; i < columns; i++) {
-      KUndef->cloneTree();
-    }
-    Internal::Matrix::SetNumberOfRows(clone, rows + 1);
-  } else {
-    Tree* previousChild = clone->child(index);
-    previousChild->removeTree();
-    newChild->moveTreeAtNode(previousChild);
-  }
-  Expression temp = Expression::Builder(clone);
-  *this = static_cast<Poincare::Matrix&>(temp);
-}
-
-Expression Poincare::Matrix::matrixChild(int i, int j) {
-  return Expression::Builder(Internal::Matrix::Child(tree(), i, j));
-}
-
-int Poincare::Matrix::rank(Context* context, bool forceCanonization) {
-  if (!forceCanonization) {
-    return Internal::Matrix::Rank(tree());
-  }
-  Tree* clone = tree()->cloneTree();
-  int result = Internal::Matrix::CanonizeAndRank(clone);
-  Expression temp = Expression::Builder(clone);
-  *this = static_cast<Poincare::Matrix&>(temp);
-  return result;
 }
 
 /* Undefined */

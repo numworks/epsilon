@@ -74,7 +74,7 @@ class __attribute__((packed)) GlobalPreferences
   constexpr CountryPreferences::StatsRowsLayout statsRowsLayout() const {
     return countryPreferences().statsRowsLayout();
   }
-  constexpr Poincare::Preferences::CombinatoricSymbols combinatoricsSymbols()
+  constexpr Poincare::Preferences::CombinatoricSymbols combinatoricSymbols()
       const {
     return countryPreferences().combinatoricSymbols();
   }

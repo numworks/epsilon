@@ -183,6 +183,12 @@ inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
 
 // Serialization
 
+void assert_expression_serializes_to(
+    const Poincare::Internal::Tree* expression, const char* serialization,
+    Poincare::Preferences::PrintFloatMode mode =
+        Poincare::Preferences::PrintFloatMode::Scientific,
+    int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
+
 void serialize_expression(const Poincare::Internal::Tree* expression,
                           std::span<char> buffer);
 

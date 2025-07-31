@@ -144,7 +144,7 @@ void assert_expression_simplifies_approximates_to(
 
 // Serialization
 
-void assert_expression_serializes_to(
+void assert_expression_serializes_to_old(
     const Poincare::Internal::Tree* expression, const char* serialization,
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);

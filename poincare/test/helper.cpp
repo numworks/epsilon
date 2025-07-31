@@ -248,3 +248,19 @@ void serialize_expression(const Tree* expression, std::span<char> buffer) {
   remove_system_codepoints(buffer.data());
   layout->removeTree();
 }
+
+void assert_expression_serializes_to(const Tree* expression,
+                                     const char* serialization,
+                                     Preferences::PrintFloatMode mode,
+                                     int numberOfSignificantDigits,
+                                     OMG::Base base) {
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  Tree* layout =
+      Layouter::LayoutExpression(expression->cloneTree(), true, false,
+                                 numberOfSignificantDigits, mode, base);
+  LayoutSerializer::Serialize(layout, buffer);
+  bool test = strcmp(serialization, buffer) == 0;
+  layout->removeTree();
+  quiz_assert_print_if_failure(test, serialization, serialization, buffer);
+}

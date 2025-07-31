@@ -305,6 +305,10 @@ Expression Expression::Builder(Tree* tree) {
   return result;
 }
 
+UserExpression UserExpression::Builder(Preferences::AngleUnit angleUnit) {
+  return UserExpression::Builder(Units::Unit::Push(angleUnit));
+}
+
 Expression Expression::cloneChildAtIndex(int i) const {
   assert(tree());
   return Builder(tree()->child(i));
@@ -1125,22 +1129,6 @@ int Poincare::Matrix::rank(Context* context, bool forceCanonization) {
   return result;
 }
 
-/* Unit */
-
-Expression Unit::Builder(Preferences::AngleUnit angleUnit) {
-  return Expression::Builder(Units::Unit::Push(angleUnit));
-}
-
-bool Unit::IsPureAngleUnit(Expression expression, bool isRadian) {
-  return Units::IsPureAngleUnit(expression.tree()) &&
-         (!isRadian || Units::Unit::GetRepresentative(expression.tree()) ==
-                           &Units::Angle::representatives.radian);
-}
-
-bool Unit::HasAngleDimension(Expression expression) {
-  assert(Internal::Dimension::DeepCheck(expression.tree()));
-  return Internal::Dimension::Get(expression.tree()).isSimpleAngleUnit();
-}
 /* Undefined */
 
 Undefined Undefined::Builder() {

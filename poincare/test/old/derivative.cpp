@@ -17,7 +17,7 @@ void assert_reduces_to_formal_expression(
 QUIZ_CASE(poincare_derivative_formal) {
   // Undefined
   assert_reduces_to_formal_expression("diff(undef,x,x)", Undefined::Name());
-  assert_reduces_to_formal_expression("diff(nonreal,x,x)", NonReal::Name());
+  assert_reduces_to_formal_expression("diff(nonreal,x,x)", "nonreal");
   assert_reduces_to_formal_expression("diff(inf,x,x)", Undefined::Name());
 
   // Constants

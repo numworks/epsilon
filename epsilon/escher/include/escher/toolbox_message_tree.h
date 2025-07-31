@@ -19,7 +19,8 @@ class ToolboxMessageTree : public MessageTree {
   virtual Poincare::Layout layout() const { return {}; }
   virtual constexpr I18n::Message text() const { return I18n::Message(0); }
   virtual I18n::Message insertedText() const { return I18n::Message(0); }
-  virtual bool stripInsertedText() const { return true; }
+  // Do not parse the key text nor postprocess the inserted text
+  virtual bool useRaw() const { return false; }
   bool isFork() const { return numberOfChildren() < 0; }
 };
 
@@ -27,21 +28,21 @@ class ToolboxMessageLeaf : public ToolboxMessageTree {
  public:
   constexpr ToolboxMessageLeaf(I18n::Message label,
                                I18n::Message text = (I18n::Message)0,
-                               bool stripInsertedText = true,
+                               bool useRaw = false,
                                I18n::Message insertedText = (I18n::Message)0)
       : ToolboxMessageTree(label),
         m_text(text),
         m_insertedText(insertedText == (I18n::Message)0 ? label : insertedText),
-        m_stripInsertedText(stripInsertedText){};
+        m_useRaw(useRaw){};
 
   constexpr I18n::Message text() const override { return m_text; }
   I18n::Message insertedText() const override { return m_insertedText; }
-  bool stripInsertedText() const override { return m_stripInsertedText; }
+  bool useRaw() const override { return m_useRaw; }
 
  private:
   I18n::Message m_text;
   I18n::Message m_insertedText;
-  bool m_stripInsertedText;
+  bool m_useRaw;
 };
 
 class ToolboxMessageMath : public ToolboxMessageTree {

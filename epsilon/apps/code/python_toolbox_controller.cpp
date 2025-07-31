@@ -1092,7 +1092,7 @@ bool PythonToolboxController::selectLeaf(int selectedRow) {
   const char* editedText = I18n::translate(node->insertedText());
   // strippedEditedText array needs to be in the same scope as editedText
   char strippedEditedText[k_maxMessageSize];
-  if (node->stripInsertedText()) {
+  if (!node->useRaw()) {
     int strippedEditedTextMaxLength = strlen(editedText) + 1;
     assert(strippedEditedTextMaxLength <= k_maxMessageSize);
     Shared::ToolboxHelpers::TextToInsertForCommandMessage(

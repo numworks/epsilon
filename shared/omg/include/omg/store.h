@@ -24,8 +24,8 @@ namespace OMG {
 | Element 3 | Element 2 | Element 1 | Element 0 |                  |o0|o1|o2|o3|
 |   Oldest  |           |           |           |                  |  |  |  |  |
 +------------------------------------------------------------------------------+
-^           ^           ^           ^           ^                              ^
-m_buffer    p3          p2          p1          p0                  offsetArea()
+^           ^           ^           ^           ^                  ^
+m_buffer    p3          p2          p1          p0                 offsetArea()
 
 with p_i = m_buffer + o_i
 

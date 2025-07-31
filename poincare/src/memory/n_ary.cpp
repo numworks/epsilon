@@ -223,6 +223,17 @@ void NAry::SortedInsertChild(Tree* nary, Tree* child, Order::OrderType order) {
   AddChildAtIndex(nary, child, a);
 }
 
+bool NAry::DeepSort(Tree* expression, Order::OrderType order) {
+  bool changed = false;
+  for (Tree* child : expression->children()) {
+    changed = DeepSort(child, order) || changed;
+  }
+  if (expression->isNAry()) {
+    changed = Sort(expression, order) || changed;
+  }
+  return changed;
+}
+
 bool NAry::ContainsSame(const Tree* nary, const Tree* value) {
   assert(nary->isNAry());
   for (const Tree* element : nary->children()) {

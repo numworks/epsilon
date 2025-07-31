@@ -32,6 +32,8 @@ bool Sanitize(Tree* nary);
 bool Sort(Tree* nary, Order::OrderType order = Order::OrderType::System);
 void SortedInsertChild(Tree* nary, Tree* child,
                        Order::OrderType order = Order::OrderType::System);
+bool DeepSort(Tree* expression,
+              Order::OrderType order = Order::OrderType::System);
 bool ContainsSame(const Tree* nary, const Tree* value);
 Tree* CloneSubRange(const Tree* nary, int startIndex, int endIndex);
 

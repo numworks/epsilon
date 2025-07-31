@@ -270,7 +270,7 @@ int MathToolboxController::indexAfterFork(
   }
   if (forkMessageTree->childrenList() == binomialFork ||
       forkMessageTree->childrenList() == permuteFork) {
-    if (GlobalPreferences::SharedGlobalPreferences()->combinatoricsSymbols() ==
+    if (GlobalPreferences::SharedGlobalPreferences()->combinatoricSymbols() ==
         Preferences::CombinatoricSymbols::LetterWithSubAndSuperscript) {
       return 1;
     }

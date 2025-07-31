@@ -19,40 +19,26 @@
 
 using namespace Poincare::Internal;
 
-void assert_tokenizes_as(const Token::Type* tokenTypes, const char* string) {
+void assert_tokenizes_as(Token::Type expectedToken, const char* string) {
   ParsingContext parsingContext;
-  bool test = true;
   Rack* inputLayout = RackFromText(string);
   Tokenizer tokenizer(inputLayout, &parsingContext);
-  while (true) {
-    Token token = tokenizer.popToken();
-    if (token.type() != *tokenTypes) {
-      test = false;
-      break;
-    }
-    if (token.type() == Token::Type::EndOfStream) {
-      break;
-    }
-    tokenTypes++;
-  }
-  quiz_assert_print_if_failure(test, string, "expected token",
-                               "unexpected token");
+  quiz_assert_print_if_failure(tokenizer.popToken().type() == expectedToken,
+                               string, "expected token", "unexpected token");
+  quiz_assert(tokenizer.popToken().type() == Token::Type::EndOfStream);
   inputLayout->removeTree();
 }
 
 void assert_tokenizes_as_number(const char* string) {
-  const Token::Type types[] = {Token::Type::Number, Token::Type::EndOfStream};
-  assert_tokenizes_as(types, string);
+  assert_tokenizes_as(Token::Type::Number, string);
 }
 
 void assert_tokenizes_as_unit(const char* string) {
-  const Token::Type types[] = {Token::Type::Unit, Token::Type::EndOfStream};
-  assert_tokenizes_as(types, string);
+  assert_tokenizes_as(Token::Type::Unit, string);
 }
 
 void assert_tokenizes_as_constant(const char* string) {
-  const Token::Type types[] = {Token::Type::Constant, Token::Type::EndOfStream};
-  assert_tokenizes_as(types, string);
+  assert_tokenizes_as(Token::Type::Constant, string);
 }
 
 void assert_tokenizes_as_undefined_token(const char* string) {
@@ -144,12 +130,8 @@ QUIZ_CASE(pcj_parse_tokenize_numbers) {
   assert_tokenizes_as_number("1.ᴇ-4");
   assert_tokenizes_as_number("1.ᴇ9999");
 
-  const Token::Type binaryType[] = {Token::Type::BinaryNumber,
-                                    Token::Type::EndOfStream};
-  assert_tokenizes_as(binaryType, "0b0011010101");
-  const Token::Type hexadecimalType[] = {Token::Type::HexadecimalNumber,
-                                         Token::Type::EndOfStream};
-  assert_tokenizes_as(hexadecimalType, "0x1234567890ABCDEF");
+  assert_tokenizes_as(Token::Type::BinaryNumber, "0b0011010101");
+  assert_tokenizes_as(Token::Type::HexadecimalNumber, "0x1234567890ABCDEF");
 
   assert_tokenizes_as_undefined_token("1ᴇ");
   assert_tokenizes_as_undefined_token("1..");

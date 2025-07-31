@@ -2103,6 +2103,7 @@ QUIZ_CASE(pcj_simplification_integral) {
                 "dep(y×int(t,t,0,1),{real((y^2×int(t,t,0,1))/2)})");
   simplifies_to("diff(int(x^2/2+t,t,0,1),x,y)",
                 "dep(y,{real(y^2/2+int(t,t,0,1))})");
+  simplifies_to("int(diff(x^2,x,x),x,0,1)", "2×int(x,x,0,1)");
 }
 
 QUIZ_CASE(pcj_simplification_roots) {

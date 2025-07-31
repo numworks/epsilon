@@ -5,6 +5,7 @@
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "advanced_reduction.h"
+#include "dependency.h"
 #include "parametric.h"
 #include "systematic_reduction.h"
 #include "variables.h"
@@ -72,6 +73,10 @@ static Tree* Integrate(const Tree* symbol, const Tree* a, const Tree* b,
 
 bool Integration::Reduce(Tree* e) {
   assert(e->isIntegral());
+  /* Dependencies cannot be bubbled up outside of integrals because we need to
+   * make sure the integrand is defined between bounds. Remove useless
+   * dependencies here to still be able to reduce the integral if possible. */
+  bool changed = Dependency::DeepRemoveUselessDependencies(e);
   Tree* integrandExpanded = e->child(Parametric::k_integrandIndex)->cloneTree();
   /* Expand the integrand to improve output's approximation. This step could
    * rely on advanced reduction, or be moved in the multiplication case in
@@ -86,7 +91,7 @@ bool Integration::Reduce(Tree* e) {
     e->moveTreeOverTree(result);
     return true;
   }
-  return false;
+  return changed;
 }
 
 }  // namespace Poincare::Internal

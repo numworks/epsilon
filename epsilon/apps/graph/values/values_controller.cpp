@@ -9,6 +9,7 @@
 #include <poincare/cas.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/helpers/layout.h>
+#include <poincare/k_tree.h>
 #include <poincare/layout.h>
 
 #include "../app.h"
@@ -404,16 +405,21 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     }
   }
   assert(!result.isUninitialized());
+  Poincare::Preferences::PrintFloatMode floatDisplayMode =
+      preferences->displayMode();
+  uint8_t significantDigits = preferences->numberOfSignificantDigits();
   Layout layout =
-      result.createLayout(preferences->displayMode(),
-                          preferences->numberOfSignificantDigits(), context);
+      result.createLayout(floatDisplayMode, significantDigits, context);
   if (result.isPoint() && layout->layoutSize(k_cellFont).width() >
                               ApproximatedParametricCellSize().width() -
                                   2 * Metric::SmallCellMargin) {
     // Fallback on two rows point display if one row does not fit
-    layout = static_cast<const Point&>(result).create2DLayout(
-        preferences->displayMode(), preferences->numberOfSignificantDigits(),
-        context);
+    Poincare::Layout child0 = result.cloneChildAtIndex(0).createLayout(
+        floatDisplayMode, significantDigits, context);
+    Poincare::Layout child1 = result.cloneChildAtIndex(1).createLayout(
+        floatDisplayMode, significantDigits, context);
+    layout = Poincare::Layout::Create(KPoint2DL(KA, KB),
+                                      {.KA = child0, .KB = child1});
   }
   *memoizedLayoutAtIndex(index) = layout;
 }

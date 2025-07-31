@@ -437,16 +437,6 @@ class Matrix final : public Expression {
   int rank(Context* context, bool forceCanonization = false);
 };
 
-class Point final : public Expression {
- public:
-  static Point Builder(const Internal::Tree* x, const Internal::Tree* y);
-  static Point Builder(const Expression x, const Expression y) {
-    return Builder(x.tree(), y.tree());
-  }
-  Layout create2DLayout(Preferences::PrintFloatMode floatDisplayMode,
-                        int significantDigits, Context* context) const;
-};
-
 class Unit final {
  public:
   // Build default unit for given angleUnit preference.

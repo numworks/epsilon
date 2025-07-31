@@ -6,6 +6,7 @@
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/simplification.h>
 #include <poincare/src/expression/variables.h>
+#include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 namespace Poincare {
@@ -18,10 +19,15 @@ Tree* BuildIntegralTree(const SystemExpression& expression,
                         const SystemExpression& upperBound) {
   Tree* function = expression.tree()->cloneTree();
   Variables::ReplaceSymbol(function, variableName, 0, ComplexSign::Real());
+  // Sort again, since Var and UserSymbol don't sort the same way.
+  NAry::DeepSort(function);
+
   if (!Internal::Dimension::Get(function).isScalar()) {
+    // Non-scalar functions cannot be integrated
     function->cloneTreeOverTree(KUndefUnhandledDimension);
     return function;
   }
+
   TreeRef result = PatternMatching::CreateReduce(
       // Unknown doesn't matter and could be anything
       KIntegral(KTemporaryUnknownSymbol, KA, KB, KC),

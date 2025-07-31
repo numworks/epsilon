@@ -1,4 +1,3 @@
-#include <escher/init.h>
 #include <poincare/init.h>
 
 #include "apps_container.h"
@@ -9,6 +8,7 @@
 #define DUMMY_MAIN 0
 #if DUMMY_MAIN
 
+#include <escher/init.h>
 #include <escher/layout_preferences.h>
 #include <ion.h>
 
@@ -58,9 +58,6 @@ void ion_main(int argc, const char* const argv[]) {
 void ion_main(int argc, const char* const argv[]) {
   // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
   Apps::Init();
-  // NOTE: GlobalPreferences object is initialized in Apps::Init
-  Poincare::Init(GlobalPreferences::SharedGlobalPreferences());
-  Escher::Init(GlobalPreferences::SharedGlobalPreferences());
 
 #if EPSILON_GETOPT
   for (int i = 1; i < argc; i++) {

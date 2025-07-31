@@ -1,6 +1,5 @@
 #include <apps/global_preferences.h>
 #include <apps/init.h>
-#include <escher/init.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/init.h>
 #include <poincare/pool.h>
@@ -16,9 +15,6 @@ class GlobalPreferencesTestBuilder {
 void init() {
   // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
   Apps::Init();
-  // NOTE: GlobalPreferences object is initialized in Apps::Init
-  Poincare::Init(GlobalPreferences::SharedGlobalPreferences());
-  Escher::Init(GlobalPreferences::SharedGlobalPreferences());
 
   // Initialize the exam mode to "Off" before running the tests
   Poincare::Preferences::SharedPreferences()->examMode();

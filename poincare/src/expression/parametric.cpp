@@ -125,13 +125,12 @@ Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
     // TODO: add ceil around bounds
     constexpr SimpleKTrees::KTree numberOfTerms =
         KAdd(1_e, KA, KMult(-1_e, KB));
-    TreeRef body = function->cloneTree();
-    Variables::LeaveScope(body);
-    PatternMatching::CreateReduce(
+    Tree* result = function->cloneTree();
+    Variables::LeaveScope(result);
+    result->moveTreeOverTree(PatternMatching::CreateReduce(
         isSum ? KMult(numberOfTerms, KC) : KPow(KC, numberOfTerms),
-        {.KA = upperBound, .KB = lowerBound, .KC = body});
-    body->removeTree();
-    return body;  // Contains CreateReduce result
+        {.KA = upperBound, .KB = lowerBound, .KC = result}));
+    return result;
   }
 
   // sum(a*f(k),k,m,n) = a*sum(f(k),k,m,n)
@@ -158,11 +157,8 @@ Tree* ReduceSumOrProductAux(const Tree* e, const Tree* lowerBound,
       return nullptr;
     }
     assert(function->numberOfChildren() > 0);  // Because HasVariable
-    if (function->numberOfChildren() == 1) {
-      // Shallow reduce to remove the Mult
-      // TODO: Squash is should be enough
-      SystematicReduction::ShallowReduce(function);
-    }
+    NAry::SquashIfUnary(function);
+    assert(!SystematicReduction::ShallowReduce(function));
     // Shallow reduce the Sum
     SystematicReduction::ShallowReduce(sum);
     // Shallow reduce a*Sum
@@ -231,6 +227,7 @@ bool Parametric::ReduceSumOrProduct(Tree* e) {
   if (!result) {
     return false;
   }
+  // TODO: Skip the dependency if signLowerBound+signUpperBound are `isInteger`
   e->moveTreeOverTree(PatternMatching::CreateReduce(
       KDep(KA, KDepList(KRealInteger(KB), KRealInteger(KC))),
       {.KA = result, .KB = lowerBound, .KC = upperBound}));

@@ -410,14 +410,6 @@ class Expression : public PoolHandle {
 
   ComparisonJunior::Operator comparisonOperator() const;
 
-#if 1
-  /* TODO_PCJ: Remove those methods from PoolHandle once only Expression
-   * remains. In the meantime, they are overriden there to assert false in case
-   * they are still used. */
-  void setParentIdentifier(uint16_t id) { assert(false); }
-  void deleteParentIdentifier() { assert(false); }
-#endif
-
  private:
   Expression privateCloneAndReduceOrSimplify(
       const Internal::ProjectionContext& context, bool beautify,

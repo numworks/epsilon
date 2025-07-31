@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <omg/code_point.h>
 #include <poincare/old/empty_context.h>
@@ -598,8 +599,9 @@ QUIZ_CASE(pcj_parse_mixed_fraction) {
                        KMixedFraction(1_e, KDiv(2_e, 3_e)),
                        {.preserveInput = true});
 
-  Poincare::Preferences::SharedPreferences()->enableMixedFractions(
-      Poincare::Preferences::MixedFractions::Enabled);
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::US);
+  assert(
+      Poincare::Preferences::SharedPreferences()->mixedFractionsAreEnabled());
   assert_parsed_expression_is("1 2/3", KMixedFraction(1_e, KDiv(2_e, 3_e)));
   assert_parsed_expression_is(
       "1((2)/(3))",
@@ -614,8 +616,7 @@ QUIZ_CASE(pcj_parse_mixed_fraction) {
   assert_parsed_expression_is("1(2.5/3)",
                               KMult(1_e, KParentheses(KDiv(2.5_e, 3_e))));
 
-  Poincare::Preferences::SharedPreferences()->enableMixedFractions(
-      Poincare::Preferences::MixedFractions::Disabled);
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);
 
   assert_text_not_parsable("1 1/2");
 }

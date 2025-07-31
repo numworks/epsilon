@@ -8,15 +8,20 @@
 
 class PreferencesTestBuilder {
  public:
-  static Poincare::Preferences buildDefault() {
-    Poincare::Preferences defaultPreferences{};
+  static Poincare::Preferences::Instance* buildDefault() {
+    static Poincare::Preferences::Instance defaultPreferences{};
     // Initialize the exam mode to "Off"
     defaultPreferences.examMode();
 #if POINCARE_TRANSLATE_BUILTINS
     defaultPreferences.setTranslateBuiltins(
         Poincare::Preferences::TranslateBuiltins::TranslateToFrench);
 #endif
-    return defaultPreferences;
+    return &defaultPreferences;
+  }
+  static bool SharedPreferencesIsDefault() {
+    return *static_cast<Poincare::Preferences::Instance*>(
+               Poincare::Preferences::SharedPreferences()) ==
+           *PreferencesTestBuilder::buildDefault();
   }
 };
 
@@ -25,6 +30,5 @@ void flushGlobalDataNoPool() {
   quiz_assert(Poincare::Context::GlobalContext == nullptr);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   // Check that preferences are at default values after each test
-  quiz_assert(*Poincare::Preferences::SharedPreferences() ==
-              PreferencesTestBuilder::buildDefault());
+  quiz_assert(PreferencesTestBuilder::SharedPreferencesIsDefault());
 }

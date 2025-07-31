@@ -17,7 +17,7 @@
 
 static_assert(
     GlobalPreferences::defaultCountryPreferences().combinatoricSymbols() ==
-    Poincare::Preferences::CombinatoricSymbols::Default);
+    Poincare::Preferences::k_defaultCombinatoricSymbol);
 
 static_assert(GlobalPreferences::defaultCountryPreferences().mixedFractions() ==
               Poincare::Preferences::k_defaultMixedFraction);
@@ -27,11 +27,7 @@ static_assert(
     Poincare::Preferences::k_defaultLogarithmBasePosition);
 
 static_assert(
-    GlobalPreferences::defaultCountryPreferences().logarithmKeyEvent() ==
-    Escher::LayoutPreferences::LogarithmKeyEvent::Default);
-
-static_assert(
     GlobalPreferences::defaultCountryPreferences().parabolaParameter() ==
-    Poincare::Preferences::ParabolaParameter::Default);
+    Poincare::Preferences::k_defaultParabolaParameter);
 
 #endif

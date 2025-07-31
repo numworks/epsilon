@@ -43,8 +43,12 @@ CalculationStore::CalculationStore(char* buffer, size_t bufferSize)
 OMG::ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
     int index) const {
   assert(0 <= index && index <= numberOfCalculations() - 1);
-  return OMG::ExpiringPointer(
-      reinterpret_cast<Calculation*>(elementAtIndex(index)));
+  return OMG::ExpiringPointer(reinterpret_cast<Calculation*>(
+      elementAtIndex(numberOfElements() - 1 - index)));
+}
+
+void CalculationStore::deleteCalculationAtIndex(int index) {
+  deleteElementAtIndex(numberOfElements() - 1 - index);
 }
 
 UserExpression CalculationStore::ansExpression(Context* context) const {

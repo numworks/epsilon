@@ -21,7 +21,7 @@ namespace OMG {
                                                  for new elements ->
 +------------------------------------------------------------------------------+
 |           |           |           |           |                  |  |  |  |  |
-| Element 3 | Element 2 | Element 1 | Element 0 |                  |o0|o1|o2|o3|
+| Element 0 | Element 1 | Element 2 | Element 3 |                  |o3|o2|o1|o0|
 |   Oldest  |           |           |           |                  |  |  |  |  |
 +------------------------------------------------------------------------------+
 ^           ^           ^           ^           ^                  ^
@@ -55,7 +55,9 @@ class Store {
 
  protected:
   char* endOfElements() const {
-    return numberOfElements() == 0 ? m_buffer : endOfElementAtIndex(0);
+    return numberOfElements() == 0
+               ? m_buffer
+               : endOfElementAtIndex(numberOfElements() - 1);
   }
   char* endOfElementAtIndex(int index) const;
 
@@ -64,7 +66,7 @@ class Store {
 
   void deleteOldestElement() {
     assert(numberOfElements() > 0);
-    deleteElementAtIndex(numberOfElements() - 1);
+    deleteElementAtIndex(0);
   }
 
   // Track an element that has been already copied/constructed in the buffer
@@ -75,8 +77,8 @@ class Store {
   char* offsetArea() const {
     return m_buffer + m_bufferSize - m_numberOfElements * sizeof(Offset);
   }
-  Offset* offsetArray() const {
-    return reinterpret_cast<Offset*>(offsetArea());
+  Offset& offset(int i) const {
+    return *(reinterpret_cast<Offset*>(m_buffer + m_bufferSize) - i - 1);
   }
 
   char* const m_buffer;

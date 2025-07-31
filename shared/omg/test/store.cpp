@@ -24,6 +24,6 @@ QUIZ_CASE(omg_store) {
   quiz_assert(store.numberOfElements() == 1);
   store.pushElement("a larger one", 13);
 
-  quiz_assert(strcmp((char*)store.elementAtIndex(0), "a larger one") == 0);
-  quiz_assert(strcmp((char*)store.elementAtIndex(1), "!") == 0);
+  quiz_assert(strcmp((char*)store.elementAtIndex(0), "!") == 0);
+  quiz_assert(strcmp((char*)store.elementAtIndex(1), "a larger one") == 0);
 }

@@ -97,7 +97,7 @@ constexpr ToolboxMessage unitAngleToolbox[] = {
     ToolboxMessageLeaf(I18n::Message::UnitAngleDegreeSymbol,
                        I18n::Message::UnitAngleDegree),
     ToolboxMessageLeaf(I18n::Message::UnitAngleDMSShortcut,
-                       I18n::Message::UnitAngleDMS, false,
+                       I18n::Message::UnitAngleDMS, true,
                        I18n::Message::UnitAngleDMSShortcut2),
     ToolboxMessageLeaf(I18n::Message::UnitAngleRadianSymbol,
                        I18n::Message::UnitAngleRadian),
@@ -479,7 +479,7 @@ constexpr ToolboxMessage ConstantsChildren[] = {
 
 constexpr ToolboxMessage unitChildren[] = {
     ToolboxMessageLeaf(I18n::Message::UnitConversionCommandWithArg,
-                       I18n::Message::UnitConversion, false,
+                       I18n::Message::UnitConversion, true,
                        I18n::Message::UnitConversionCommand),
     ToolboxMessageNode(I18n::Message::UnitDistanceAndAngleMenu,
                        distanceAndAngleChildren),
@@ -543,7 +543,7 @@ constexpr ToolboxMessage combinatoricsChildren[] = {
     ToolboxMessageNode(I18n::Message::Combination, binomialFork, true),
     ToolboxMessageNode(I18n::Message::Permutation, permuteFork, true),
     ToolboxMessageLeaf(I18n::Message::FactorialCommandWithArg,
-                       I18n::Message::Factorial, false,
+                       I18n::Message::Factorial, true,
                        I18n::Message::FactorialCommand),
 };
 
@@ -800,17 +800,17 @@ constexpr ToolboxMessage logicChildren[] = {
                        I18n::Message::GreaterOrEqualText),
     ToolboxMessageLeaf(I18n::Message::NotEqual, I18n::Message::NotEqualText),
     ToolboxMessageLeaf(I18n::Message::AndCommand, I18n::Message::AndMessage,
-                       false, I18n::Message::AndCommandWithSpaces),
-    ToolboxMessageLeaf(I18n::Message::OrCommand, I18n::Message::OrMessage,
-                       false, I18n::Message::OrCommandWithSpaces),
+                       true, I18n::Message::AndCommandWithSpaces),
+    ToolboxMessageLeaf(I18n::Message::OrCommand, I18n::Message::OrMessage, true,
+                       I18n::Message::OrCommandWithSpaces),
     ToolboxMessageLeaf(I18n::Message::NotCommand, I18n::Message::NotMessage,
-                       false, I18n::Message::NotCommandWithSpace),
+                       true, I18n::Message::NotCommandWithSpace),
     ToolboxMessageLeaf(I18n::Message::XorCommand, I18n::Message::XorMessage,
-                       false, I18n::Message::XorCommandWithSpaces),
+                       true, I18n::Message::XorCommandWithSpaces),
     ToolboxMessageLeaf(I18n::Message::NorCommand, I18n::Message::NorMessage,
-                       false, I18n::Message::NorCommandWithSpaces),
+                       true, I18n::Message::NorCommandWithSpaces),
     ToolboxMessageLeaf(I18n::Message::NandCommand, I18n::Message::NandMessage,
-                       false, I18n::Message::NandCommandWithSpaces)};
+                       true, I18n::Message::NandCommandWithSpaces)};
 
 extern constexpr ToolboxMessage logFork[] = {
     ToolboxMessageMath("log"_l ^ KSubscriptL("a"_l) ^ KParenthesesL("x"_l),

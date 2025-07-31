@@ -123,7 +123,8 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
       const char* text = I18n::translate(messageTree->label());
 
       if (MathPreferences::SharedPreferences()->editionMode() ==
-          Poincare::Preferences::EditionMode::Edition2D) {
+              Poincare::Preferences::EditionMode::Edition2D &&
+          !messageTree->useRaw()) {
         // No context is given so that f(x) is never parsed as f×(x)
         UserExpression resultExpression = UserExpression::Parse(text, nullptr);
         if (!resultExpression.isUninitialized()) {
@@ -135,7 +136,8 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
         }
       }
       if (resultLayout.isUninitialized()) {
-        // If 2D parsing failed or edition is in 1D, try a simpler layout
+        /* If 2D parsing failed, or edition is in 1D, or useRaw is true, try a
+         * simpler layout */
         resultLayout = Layout::String(text, strlen(text));
       }
     } else if (MathPreferences::SharedPreferences()->editionMode() ==
@@ -185,7 +187,7 @@ bool MathToolboxController::selectLeaf(int selectedRow) {
   const char* text = I18n::translate(messageTree->insertedText());
   // Has to be in the same scope as handleEventWithText
   char textToInsert[k_maxMessageSize];
-  if (messageTree->stripInsertedText()) {
+  if (!messageTree->useRaw()) {
     int maxTextToInsertLength = strlen(text) + 1;
     assert(maxTextToInsertLength <= k_maxMessageSize);
     ToolboxHelpers::TextToInsertForCommandText(text, -1, textToInsert,

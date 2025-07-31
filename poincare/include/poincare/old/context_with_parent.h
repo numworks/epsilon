@@ -7,6 +7,7 @@
 
 namespace Poincare {
 
+// If parentContext is nullptr, this context will behave like an empty context
 class ContextWithParent : public Context {
  public:
   ContextWithParent(Context* parentContext) : m_parentContext(parentContext) {}
@@ -14,15 +15,17 @@ class ContextWithParent : public Context {
   // Context
   const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) const override {
-    assert(m_parentContext);
-    return m_parentContext->expressionForUserNamed(symbol);
+    return m_parentContext ? m_parentContext->expressionForUserNamed(symbol)
+                           : nullptr;
   }
 
   UserNamedType expressionTypeForIdentifier(const char* identifier,
                                             int length) const override {
-    assert(m_parentContext);
-    return m_parentContext->expressionTypeForIdentifier(identifier, length);
+    return m_parentContext ? m_parentContext->expressionTypeForIdentifier(
+                                 identifier, length)
+                           : UserNamedType::None;
   }
+
   bool setExpressionForUserNamed(const Internal::Tree* expression,
                                  const Internal::Tree* symbol) override {
     assert(m_parentContext);
@@ -31,8 +34,9 @@ class ContextWithParent : public Context {
 
   double approximateSequenceAtRank(const char* identifier,
                                    int rank) const override {
-    assert(m_parentContext);
-    return m_parentContext->approximateSequenceAtRank(identifier, rank);
+    return m_parentContext
+               ? m_parentContext->approximateSequenceAtRank(identifier, rank)
+               : NAN;
   }
 
  private:

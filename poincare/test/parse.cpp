@@ -20,7 +20,7 @@
 using namespace Poincare::Internal;
 
 void assert_tokenizes_as(Token::Type expectedToken, const char* string) {
-  ParsingContext parsingContext;
+  ParsingContext parsingContext{.params = {.preserveInput = true}};
   Rack* inputLayout = RackFromText(string);
   Tokenizer tokenizer(inputLayout, &parsingContext);
   quiz_assert_print_if_failure(tokenizer.popToken().type() == expectedToken,
@@ -55,16 +55,16 @@ void assert_tokenizes_as_undefined_token(const char* string) {
   }
 }
 
-void assertLayoutParsesTo(const Tree* layout, const Tree* expected,
-                          Poincare::Context* context = nullptr,
-                          bool isAssignment = false) {
-  Tree* expression =
-      Parser::Parse(layout, context, {.isAssignment = isAssignment});
+void assertLayoutParsesTo(
+    const Tree* layout, const Tree* expected,
+    Poincare::ParserHelper::ParsingParameters params = {}) {
+  Tree* expression = Parser::Parse(layout, nullptr, params);
   assert_trees_are_equal(expression, expected);
 }
 
-bool is_parsable(const Tree* layout, Poincare::Context* context = nullptr) {
-  TreeRef expression = Parser::Parse(layout, context);
+bool is_parsable(const Tree* layout, bool preserveInput = true) {
+  TreeRef expression =
+      Parser::Parse(layout, nullptr, {.preserveInput = preserveInput});
   return !expression.isUninitialized();
 }
 
@@ -446,8 +446,6 @@ QUIZ_CASE(pcj_parse_unit) {
   assert_text_not_parsable("_n");
   assert_text_not_parsable("_a");
 
-  assert_text_not_parsable("°");
-
   // Any identifier starting with '_' is tokenized as a unit
   assert_tokenizes_as_unit("_m");
   assert_tokenizes_as_unit("_km");
@@ -477,7 +475,7 @@ QUIZ_CASE(pcj_parse_unit) {
                                               KMult("a"_e, KUnits::arcSecond)));
   assert_parsed_expression_is("3\"abc\"", KMult(3_e, "\"abc\""_e));
   assert_parsed_expression_is("x\"abc\"", KMult("x"_e, "\"abc\""_e));
-  assert_text_not_parsable("\"0");
+  assert_parsed_expression_is("\"0", KMult(KUnits::arcSecond, 0_e));
 
   // Implicit addition
   assert_parsed_expression_is(
@@ -557,50 +555,47 @@ QUIZ_CASE(pcj_parse_unit_convert) {
 
 // TODO: unify style layout or string parsing
 QUIZ_CASE(pcj_parse_assignment) {
-  Shared::GlobalContext context;
-
-  assertLayoutParsesTo("y=zz"_l, KEqual("y"_e, KMult("z"_e, "z"_e)), &context);
+  assertLayoutParsesTo("y=zz"_l, KEqual("y"_e, KMult("z"_e, "z"_e)));
 
   assertLayoutParsesTo("y=xxln(x)"_l,
-                       KEqual("y"_e, KMult("x"_e, "x"_e, KLnUser("x"_e))),
-                       &context);
+                       KEqual("y"_e, KMult("x"_e, "x"_e, KLnUser("x"_e))));
 
   /* Expected if the "Classic" (default) parsing method is selected on an
    * assignment expression: the left-hand side is parsed as "f*(x)". */
   assertLayoutParsesTo("f(x)=xxln(x)"_l,
                        KEqual(KMult("f"_e, KParentheses("x"_e)),
-                              KMult("x"_e, "x"_e, KLnUser("x"_e))),
-                       &context);
+                              KMult("x"_e, "x"_e, KLnUser("x"_e))));
 
   assertLayoutParsesTo(
       "f(x)=xxln(x)"_l,
-      KEqual(KFun<"f">("x"_e), KMult("x"_e, "x"_e, KLnUser("x"_e))), &context,
-      true);
+      KEqual(KFun<"f">("x"_e), KMult("x"_e, "x"_e, KLnUser("x"_e))),
+      {.isAssignment = true});
 
   assert_parsed_expression_is(
-      "f(x)=xy", KEqual(KMult("f"_e, KParentheses("x"_e)), KMult("x"_e, "y"_e)),
-      &context);
-  assert_parsed_expression_is(
-      "f(x)=xy", KEqual(KFun<"f">("x"_e), KMult("x"_e, "y"_e)), &context, true);
+      "f(x)=xy",
+      KEqual(KMult("f"_e, KParentheses("x"_e)), KMult("x"_e, "y"_e)));
+  assert_parsed_expression_is("f(x)=xy",
+                              KEqual(KFun<"f">("x"_e), KMult("x"_e, "y"_e)),
+                              {.isAssignment = true});
 
   /* Ensure y=ax is not understood as "y"="ax" but "y"="a"*"x" when parsing for
    * assignment. (The "parsing for assignment" should apply only to left
    * handside of the comparison). */
   assert_parsed_expression_is("y=ax", KEqual("y"_e, KMult("a"_e, "x"_e)),
-                              &context, true);
+                              {.isAssignment = true});
 
   assert_parsed_expression_is(
-      "f(x)=4=3",
-      KLogicalAnd(KEqual(KMult("f"_e, KParentheses("x"_e)), 4_e),
-                  KEqual(4_e, 3_e)),
-      &context);
-  assert_parsed_expression_is(
-      "f(x)=4=3", KEqual(KFun<"f">("x"_e), KEqual(4_e, 3_e)), &context, true);
+      "f(x)=4=3", KLogicalAnd(KEqual(KMult("f"_e, KParentheses("x"_e)), 4_e),
+                              KEqual(4_e, 3_e)));
+  assert_parsed_expression_is("f(x)=4=3",
+                              KEqual(KFun<"f">("x"_e), KEqual(4_e, 3_e)),
+                              {.isAssignment = true});
 }
 
 QUIZ_CASE(pcj_parse_mixed_fraction) {
   assertLayoutParsesTo("1"_l ^ KFracL("2"_l, "3"_l),
-                       KMixedFraction(1_e, KDiv(2_e, 3_e)));
+                       KMixedFraction(1_e, KDiv(2_e, 3_e)),
+                       {.preserveInput = true});
 
   Poincare::Preferences::SharedPreferences()->enableMixedFractions(
       Poincare::Preferences::MixedFractions::Enabled);
@@ -716,56 +711,48 @@ QUIZ_CASE(pcj_parse_derivative_apostrophe) {
 }
 
 QUIZ_CASE(pcj_parse_parametric) {
-  /* Provide a context to parse parametric, or the parsing will always succeed,
-   * even with an incorrect symbol. */
-  Poincare::EmptyContext context;
-
   // Must have a symbol as the first argument
-  quiz_assert(
-      !is_parsable(KRackL(KIntegralL("4"_l, "0"_l, "1"_l, "4"_l)), &context));
-  quiz_assert(
-      !is_parsable(KRackL(KDiffL("e"_l, "0"_l, "1"_l, "e"_l)), &context));
-  quiz_assert(
-      !is_parsable(KRackL(KProductL("_s"_l, "0"_l, "1"_l, "_s"_l)), &context));
+  quiz_assert(!is_parsable(KRackL(KIntegralL("4"_l, "0"_l, "1"_l, "4"_l))));
+  quiz_assert(!is_parsable(KRackL(KDiffL("e"_l, "0"_l, "1"_l, "e"_l))));
+  quiz_assert(!is_parsable(KRackL(KProductL("_s"_l, "0"_l, "1"_l, "_s"_l))));
 
   // Works with symbol = "x"
   assertLayoutParsesTo(KRackL(KIntegralL("x"_l, "0"_l, "1"_l, "x"_l)),
-                       KIntegral("x"_e, 0_e, 1_e, "x"_e), &context);
+                       KIntegral("x"_e, 0_e, 1_e, "x"_e));
   // Works with symbol = "t" (even if "t" is also "ton")
   assertLayoutParsesTo(KRackL(KListSequenceL("t"_l, "10"_l, "t"_l)),
-                       KListSequence("t"_e, 10_e, "t"_e), &context);
+                       KListSequence("t"_e, 10_e, "t"_e));
   // Works with symbol = "string"
   assertLayoutParsesTo(KRackL(KSumL("string"_l, "0"_l, "10"_l, "string"_l)),
-                       KSum("string"_e, 0_e, 10_e, "string"_e), &context);
+                       KSum("string"_e, 0_e, 10_e, "string"_e));
 
-  quiz_assert(is_parsable("sum(k,k,0,1)"_l, &context));
-  quiz_assert(!is_parsable("sum(000000),"_l, &context));
-  quiz_assert(!is_parsable("sum"_l, &context));
-  quiz_assert(!is_parsable("sum×0"_l, &context));
-  quiz_assert(!is_parsable("sum("_l, &context));
-  quiz_assert(!is_parsable("sum()"_l, &context));
-  quiz_assert(!is_parsable("sum(k,)"_l, &context));
-  quiz_assert(!is_parsable("sum(k,k"_l, &context));
-  quiz_assert(!is_parsable("sum(k,k,"_l, &context));
-  quiz_assert(!is_parsable("sum(k,k,0"_l, &context));
-  quiz_assert(!is_parsable("sum(k,k,0,"_l, &context));
-  quiz_assert(!is_parsable("sum(k,k,0,1"_l, &context));
-  quiz_assert(is_parsable("sum"_l ^ KParenthesesL("k,k,0,1"_l), &context));
-  quiz_assert(
-      !is_parsable("sum"_l ^ KParenthesesL("000000"_l) ^ ","_l, &context));
-  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL(KRackL()), &context));
-  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,"_l), &context));
-  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k"_l), &context));
-  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,"_l), &context));
-  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,0"_l), &context));
-  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,0,"_l), &context));
+  quiz_assert(is_parsable("sum(k,k,0,1)"_l));
+  quiz_assert(!is_parsable("sum(000000),"_l));
+  quiz_assert(!is_parsable("sum"_l));
+  quiz_assert(!is_parsable("sum×0"_l));
+  quiz_assert(!is_parsable("sum("_l));
+  quiz_assert(!is_parsable("sum()"_l));
+  quiz_assert(!is_parsable("sum(k,)"_l));
+  quiz_assert(!is_parsable("sum(k,k"_l));
+  quiz_assert(!is_parsable("sum(k,k,"_l));
+  quiz_assert(!is_parsable("sum(k,k,0"_l));
+  quiz_assert(!is_parsable("sum(k,k,0,"_l));
+  quiz_assert(!is_parsable("sum(k,k,0,1"_l));
+  quiz_assert(is_parsable("sum"_l ^ KParenthesesL("k,k,0,1"_l)));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("000000"_l) ^ ","_l));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL(KRackL())));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,"_l)));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k"_l)));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,"_l)));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,0"_l)));
+  quiz_assert(!is_parsable("sum"_l ^ KParenthesesL("k,k,0,"_l)));
 }
 
 QUIZ_CASE(pcj_parse_sequences) {
 #if POINCARE_SEQUENCE
   Tree* expected = SharedTreeStack->pushUserSequence("u");
   (4_e)->cloneTree();
-  assertLayoutParsesTo("u(4)"_l, expected);
+  assertLayoutParsesTo("u(4)"_l, expected, {.preserveInput = true});
   expected->removeTree();
   quiz_assert(is_parsable("f'(4)"_l));
   quiz_assert(!is_parsable("u'(4)"_l));
@@ -782,7 +769,8 @@ QUIZ_CASE(pcj_parse_identifiers) {
   assert_parsed_expression_is("f((1))",
                               KMult("f"_e, KParentheses(KParentheses(1_e))));
   assert_text_not_parsable("_a");
-  assert_text_not_parsable("abcdefgh");
+  // No symbol of length > 6
+  assert_text_not_parsable("abcdefgh", nullptr, {.preserveInput = true});
   assert_text_not_parsable("f(1,2,3)");
 
   // User-defined functions

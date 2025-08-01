@@ -140,6 +140,7 @@ static void compareSolutions(SystemOfEquations* system,
     Internal::ProjectionContext projCtx{
         .m_complexFormat = Internal::ComplexFormat::Cartesian,
         .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
+        .m_context = ctx,
         .m_advanceReduce = false};
     Expression expectedExpression =
         Expression::Parse(expectedValue, ctx, {.forceUnitUnderscore = true})
@@ -159,6 +160,7 @@ static void compareSolutions(SystemOfEquations* system,
     projCtx = {
         .m_complexFormat = Internal::ComplexFormat::Cartesian,
         .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
+        .m_context = ctx,
         .m_advanceReduce = false};
     Expression obtainedExpression =
         parsedExpression.cloneAndReduce(projCtx, &reductionFailure);

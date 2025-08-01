@@ -5,6 +5,7 @@
 #include <poincare/src/memory/tree_helpers.h>
 
 #include "angle.h"
+#include "context.h"
 #include "decimal.h"
 #include "dependency.h"
 #include "k_tree.h"
@@ -23,6 +24,9 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
    * the second child was a user symbol. */
   if (symbolic == SymbolicComputation::KeepAllSymbols) {
     return false;
+  }
+  if (symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
+    return DeepReplaceUserNamedWithUndefined(e);
   }
   // Check for circularity
   if (Symbol::InvolvesCircularity(e, context)) {
@@ -46,8 +50,27 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
   return changed;
 }
 
+bool Projection::DeepReplaceUserNamedWithUndefined(Tree* e) {
+  if (e->isParametric()) {
+    // Skip Parametric node and its variable, never replaced.
+    return false;
+  }
+  if (e->isUserFunction() || (e->isUserSymbol())) {
+    e->cloneTreeOverTree(KNotDefined);
+    return true;
+  }
+  bool changed = false;
+  for (Tree* child : e->children()) {
+    changed = changed || DeepReplaceUserNamedWithUndefined(child);
+  }
+  return changed;
+}
+
 bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
                                          SymbolicComputation symbolic) {
+  /* ReplaceAllSymbolsWithUndefined and KeepAllSymbols are escaped in
+   * DeepReplaceUserNamed */
+  assert(symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   assert(symbolic != SymbolicComputation::KeepAllSymbols);
   bool eIsUserFunction = e->isUserFunction();
   if (!eIsUserFunction &&
@@ -55,10 +78,6 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
        symbolic == SymbolicComputation::ReplaceDefinedFunctions)) {
     // TODO: skip also system symbol?
     return false;
-  }
-  if (symbolic == SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
-    e->cloneTreeOverTree(KNotDefined);
-    return true;
   }
   // Get Definition
   const Tree* definition =

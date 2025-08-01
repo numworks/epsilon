@@ -615,6 +615,11 @@ QUIZ_CASE(pcj_parse_mixed_fraction) {
 
   Poincare::Preferences::SharedPreferences()->enableMixedFractions(
       Poincare::Preferences::MixedFractions::Disabled);
+
+  /* Pass context to ensure the mixed fraction is not parsed, see comment in
+   * RackParser::generateMixedFractionIfNeeded */
+  Shared::GlobalContext globalContext;
+  assert_text_not_parsable("1 1/2", &globalContext);
 }
 
 QUIZ_CASE(pcj_parse_derivative_apostrophe) {

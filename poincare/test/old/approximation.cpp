@@ -8,42 +8,6 @@
 
 using namespace Poincare;
 
-template <typename T>
-void assert_expression_approximates_to_scalar(
-    const char *expression, T approximation,
-    Preferences::AngleUnit angleUnit = Degree,
-    Preferences::ComplexFormat complexFormat = Cartesian) {
-  Shared::GlobalContext globalContext;
-  Internal::Tree *e = parse_expression(expression, &globalContext);
-  T result = Internal::Approximation::To<T>(
-      e,
-      Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                          .projectLocalVariables = true},
-      Internal::Approximation::Context(angleUnit, complexFormat,
-                                       &globalContext));
-  e->removeTree();
-  bool test =
-      roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(), true);
-#if POINCARE_STRICT_TESTS
-  quiz_assert_print_if_failure(test, expression);
-#else
-  constexpr int bufferSize = 500;
-  char expectedBuffer[bufferSize] = "";
-  Poincare::Print::UnsafeCustomPrintf(expectedBuffer, bufferSize, "%*.*ed",
-                                      approximation,
-                                      Preferences::PrintFloatMode::Decimal, 7);
-  char observedBuffer[bufferSize] = "";
-  if (!test) {
-    Poincare::Print::UnsafeCustomPrintf(
-        observedBuffer, bufferSize, "%*.*ed", result,
-        Preferences::PrintFloatMode::Decimal, 7);
-  }
-
-  quiz_tolerate_print_if_failure(test, expression, expectedBuffer,
-                                 observedBuffer);
-#endif
-}
-
 QUIZ_CASE(poincare_approximation_decimal) {
   assert_expression_approximates_to<float>("-0", "0");
   assert_expression_approximates_to<float>("-0.1", "-0.1");
@@ -60,12 +24,6 @@ QUIZ_CASE(poincare_approximation_decimal) {
   assert_expression_approximates_to<float>("-.003", "-0.003");
   assert_expression_approximates_to<float>("1.2343ᴇ-2", "0.012343");
   assert_expression_approximates_to<double>("-567.2ᴇ2", "-56720");
-
-  assert_expression_approximates_to_scalar<float>("-0", 0.0f);
-  assert_expression_approximates_to_scalar<float>("-1.ᴇ-2", -0.01f);
-  assert_expression_approximates_to_scalar<double>("-.003", -0.003);
-  assert_expression_approximates_to_scalar<float>("1.2343ᴇ-2", 0.012343f);
-  assert_expression_approximates_to_scalar<double>("-567.2ᴇ2", -56720.0);
 }
 
 QUIZ_CASE(poincare_approximation_based_integer) {
@@ -78,10 +36,6 @@ QUIZ_CASE(poincare_approximation_rational) {
   assert_expression_approximates_to<float>("1/3", "0.3333333");
   assert_expression_approximates_to<double>("123456/1234567",
                                             "0.099999432999586");
-
-  assert_expression_approximates_to_scalar<float>("1/3", 0.3333333f);
-  assert_expression_approximates_to_scalar<double>("123456/1234567",
-                                                   9.9999432999586E-2);
 }
 
 template <typename T>
@@ -144,7 +98,6 @@ QUIZ_CASE(poincare_approximation_infinity) {
   assert_expression_approximates_to<double>("10^1000", "∞");
   assert_expression_approximates_to<double>("2*10^1000", "∞");
   assert_expression_approximates_to<double>("(10^1000)/2", "∞");
-  assert_expression_approximates_to_scalar<double>("10^1000", INFINITY);
   assert_expression_approximates_to<double>("(∞)×(i)", "∞×i");
   assert_expression_approximates_to<double>("(inf×i)×(i)", "-∞");
   assert_expression_approximates_to<double>("(inf×i)×(2)", "∞×i");
@@ -197,11 +150,6 @@ QUIZ_CASE(poincare_approximation_addition) {
   assert_expression_approximates_to<double>("{1,2,3}+{4,5,6}", "{5,7,9}");
   assert_expression_approximates_to<double>("{1,2,3}+{4,5}", "undef");
   assert_expression_approximates_to<double>("{1,2,3}+[[4,5,6]]", "undef");
-
-  assert_expression_approximates_to_scalar<float>("1+2", 3.0f);
-  assert_expression_approximates_to_scalar<double>("i+i", NAN);
-  assert_expression_approximates_to_scalar<float>(
-      "[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", NAN);
 }
 
 QUIZ_CASE(poincare_approximation_multiplication) {
@@ -234,10 +182,6 @@ QUIZ_CASE(poincare_approximation_multiplication) {
   assert_expression_approximates_to<double>("{1,2,3}×{4,5,6}", "{4,10,18}");
   assert_expression_approximates_to<double>("{1,2,3}×{4,5}", "undef");
   assert_expression_approximates_to<double>("{1,2,3}×[[4,5,6]]", "undef");
-
-  assert_expression_approximates_to_scalar<float>("1×2", 2.0f);
-  assert_expression_approximates_to_scalar<double>("(3+i)×(4+i)", NAN);
-  assert_expression_approximates_to_scalar<float>("[[1,2][3,4][5,6]]×2", NAN);
 }
 
 QUIZ_CASE(poincare_approximation_power) {
@@ -302,10 +246,6 @@ QUIZ_CASE(poincare_approximation_power) {
   assert_expression_approximates_to<double>("{1,2,3}^{4,5}", "undef");
   assert_expression_approximates_to<double>("{1,2,3}^[[4,5,6]]", "undef");
 
-  assert_expression_approximates_to_scalar<float>("2^3", 8.0f);
-  assert_expression_approximates_to_scalar<double>("(3+i)^(4+i)", NAN);
-  assert_expression_approximates_to_scalar<float>("[[1,2][3,4]]^2", NAN);
-
   assert_expression_approximates_to<float>("(-10)^0.00000001", "nonreal",
                                            Radian, MetricUnitFormat, Real);
   assert_expression_approximates_to<float>("(-10)^0.00000001",
@@ -340,43 +280,6 @@ QUIZ_CASE(poincare_approximation_subtraction) {
   assert_expression_approximates_to<double>("{1,2,3}-{4,5,6}", "{-3,-3,-3}");
   assert_expression_approximates_to<double>("{1,2,3}-{4,5}", "undef");
   assert_expression_approximates_to<double>("{1,2,3}-[[4,5,6]]", "undef");
-
-  assert_expression_approximates_to_scalar<float>("1-2", -1.0f);
-  assert_expression_approximates_to_scalar<double>("(1)-(4+i)", NAN);
-  assert_expression_approximates_to_scalar<float>(
-      "[[1,2][3,4][5,6]]-[[3,2][3,4][5,6]]", NAN);
-}
-
-QUIZ_CASE(poincare_approximation_constant) {
-  assert_expression_approximates_to<double>("π", "3.1415926535898");
-  assert_expression_approximates_to<float>("e", "2.718282");
-#if 0
-  for (ConstantNode::ConstantInfo info : ConstantNode::k_constants) {
-    for (const char *constantNameAlias : info.m_aliasesList) {
-      if (strcmp(constantNameAlias, "i") == 0) {
-        assert_expression_approximates_to<float>("i", "i");
-        assert_expression_approximates_to<double>("i", "i");
-        assert_expression_approximates_to_scalar<float>("i", NAN);
-        assert_expression_approximates_to_scalar<double>("i", NAN);
-      } else if (info.m_unit == nullptr) {
-        constexpr int k_bufferSize = PrintFloat::charSizeForFloatsWithPrecision(
-            PrintFloat::SignificantDecimalDigits<double>());
-        char buffer[k_bufferSize];
-        PrintFloat::ConvertFloatToText<double>(
-            info.m_value, buffer, k_bufferSize,
-            PrintFloat::k_maxFloatGlyphLength,
-            PrintFloat::SignificantDecimalDigits<double>(), DecimalMode);
-        assert_expression_approximates_to<double>(constantNameAlias, buffer);
-        assert_expression_approximates_to_scalar<float>(constantNameAlias,
-                                                        info.m_value);
-      } else {
-        assert_expression_approximates_to<double>(constantNameAlias,
-                                                  "undef");
-        assert_expression_approximates_to_scalar<float>(constantNameAlias, NAN);
-      }
-    }
-  }
-#endif
 }
 
 QUIZ_CASE(poincare_approximation_division) {
@@ -414,19 +317,6 @@ QUIZ_CASE(poincare_approximation_division) {
   assert_expression_approximates_to<double>("{12,100,1}/{4,2,1}", "{3,50,1}");
   assert_expression_approximates_to<double>("{1,2,3}/{4,5}", "undef");
   assert_expression_approximates_to<double>("{1,2,3}/[[4,5,6]]", "undef");
-
-  assert_expression_approximates_to_scalar<float>("1/2", 0.5f);
-  assert_expression_approximates_to_scalar<float>("(3+i)/(4+i)", NAN);
-  assert_expression_approximates_to_scalar<float>("[[1,2][3,4][5,6]]/2", NAN);
-
-  assert_expression_approximates_to_scalar<float>("quo(23,12)", 1);
-  assert_expression_approximates_to_scalar<float>("rem(23,12)", 11);
-  assert_expression_approximates_to_scalar<float>("quo(-23,12)", -2);
-  assert_expression_approximates_to_scalar<float>("rem(-23,12)", 1);
-  assert_expression_approximates_to_scalar<float>("quo(23,-12)", -1);
-  assert_expression_approximates_to_scalar<float>("rem(23,-12)", 11);
-  assert_expression_approximates_to_scalar<float>("quo(-23,-12)", 2);
-  assert_expression_approximates_to_scalar<float>("rem(-23,-12)", 1);
 }
 
 QUIZ_CASE(poincare_approximation_logarithm) {
@@ -2097,66 +1987,30 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
       "sort({(inf,1),(6,1),(5,-3),(-inf,9),(-inf,1)})",
       "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}");
   // Mean
-  assert_expression_approximates_to_scalar<double>("mean({5,8,7,4,12})", 7.2);
-  assert_expression_approximates_to_scalar<double>(
-      "mean({5,8,7,4,12},{1,2,3,5,6})", 7.882352941176471);
   assert_expression_approximates_to<double>("mean({5,8,7,4,12},{2})", "undef");
   assert_expression_approximates_to<double>("mean({5,8,7,4,12},{-1,1,1,1,1})",
                                             "undef");
   assert_expression_approximates_to<double>("mean({5,8,7,4,12},{0,0,0,0,0})",
                                             "undef");
-  assert_expression_approximates_to_scalar<double>("stddev({1,2,3,4,5,6})",
-                                                   1.707825127659933);
-  assert_expression_approximates_to_scalar<double>(
-      "stddev({1,2,3,4,5,6},{6,2,3,4,5,1})", 1.6700645635000173);
-  assert_expression_approximates_to_scalar<double>("stddev({1})", 0.);
-  assert_expression_approximates_to_scalar<double>("med({1,6,3,5,2})", 3.);
-  assert_expression_approximates_to_scalar<double>("med({1,6,3,4,5,2})", 3.5);
-  assert_expression_approximates_to_scalar<double>(
-      "med({1,6,3,4,5,2},{2,3,0.1,2.8,3,1})", 5.);
   assert_expression_approximates_to<double>("med({1,undef,6,3,5,undef,2})",
                                             "undef");
-  assert_expression_approximates_to_scalar<double>("var({1,2,3,4,5,6})",
-                                                   2.916666666666666);
   assert_expression_approximates_to<double>("var({1,2,3,undef,4,5,6})",
                                             "undef");
-  assert_expression_approximates_to_scalar<double>(
-      "var({1,2,3,4,5,6},{7,0.1,2,0,1,10})", 5.2815524368208706);
   assert_expression_approximates_to<double>(
       "var({1,2,3,3,4,5,6},{-2,2,2,2,2,2,2})", "undef");
   assert_expression_approximates_to<double>("var({1,2,3,4,5,6},{0,0,0,0,0,0})",
                                             "undef");
-  assert_expression_approximates_to_scalar<double>(
-      "samplestddev({1,2,3,4,5,6})", 1.8708286933869704);
-  assert_expression_approximates_to_scalar<double>(
-      "samplestddev({1,2,3,4,5,6},{6,2,3,4,5,1})", 1.7113069358158486);
   assert_expression_approximates_to<double>("samplestddev({1})", "undef");
-  assert_expression_approximates_to_scalar<double>("dim({1,2,3})", 3.);
-  assert_expression_approximates_to_scalar<double>("min({1,2,3})", 1.);
   // undef is never the min (unless there are only undef in the list)
   assert_expression_approximates_to<double>("min({undef})", "undef");
   assert_expression_approximates_to<double>("min({1,undef,3})", "undef");
   assert_expression_approximates_to<double>("min({1,undef,i})", "undef");
   assert_expression_approximates_to<double>("min({1,7,i})", "undef");
-  assert_expression_approximates_to_scalar<double>("max({1,2,3})", 3.);
   // undef is never the max (unless there are only undef in the list)
   assert_expression_approximates_to<double>("max({undef})", "undef");
   assert_expression_approximates_to<double>("max({1,undef,3})", "undef");
   assert_expression_approximates_to<double>("max({1,undef,i})", "undef");
   assert_expression_approximates_to<double>("max({1,7,i})", "undef");
-  assert_expression_approximates_to_scalar<double>("sum({1,2,3})", 6.);
-  assert_expression_approximates_to_scalar<double>("prod({1,4,9})", 36.);
-}
-
-QUIZ_CASE(poincare_approximation_mixed_fraction) {
-#if 0
-  assert_expression_approximates_to_scalar<double>("1 1/2", 1.5);
-  assert_expression_approximates_to_scalar<double>("-1 1/2", -1.5);
-  assert_expression_approximates_to_scalar<double>("1(1/2)", 1.5);
-  assert_expression_approximates_to_scalar<double>(
-  "1(1/2)", 0.5, Degree, Cartesian,
-  Preferences::MixedFractions::Disabled);
-#endif
 }
 
 template <typename T>

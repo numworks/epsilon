@@ -1,0 +1,16 @@
+name: Build Docker container and define variable DOCKER_RUN to run it
+description: |
+  Build Docker container and define DOCKER_RUN variable.
+  It binds CCACHE_DIR and pass MAKEFLAGS to the container.
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Build Docker container
+      shell: bash
+      run: docker build -f tools/Dockerfile-android . --tag epsilon-android-builder
+
+    - name: Define DOCKER_RUN environment variable
+      shell: bash
+      run: |
+        echo "DOCKER_RUN=docker run -i --user=$(id -u):$(id -g) --env MAKEFLAGS --mount type=bind,source=.,target=/monorepo epsilon-android-builder:latest sh -c" >> $GITHUB_ENV

@@ -1131,19 +1131,18 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
   /* Check the context: if the identifier does not already exist as a function,
    * seq or list, interpret it as a symbol, even if there are parentheses
    * afterwards.
-   * If preserveInput is true, f(x) is always parsed  as a function and u{n}
-   * as a sequence*/
+   * If preserveInput is true and the symbol is not defined, f(x) is always
+   * parsed  as a function and u{n} as a sequence*/
   Poincare::Context::UserNamedType idType =
       Poincare::Context::UserNamedType::None;
-  if (!m_parsingContext.params.preserveInput &&
-      !m_parsingContext.metadata.isAssignmentDeclaration) {
+  if (!m_parsingContext.metadata.isAssignmentDeclaration) {
     idType = m_parsingContext.context
                  ? m_parsingContext.context->expressionTypeForIdentifier(name,
                                                                          length)
                  : Poincare::Context::UserNamedType::None;
-    if (idType != Poincare::Context::UserNamedType::Function &&
-        idType != Poincare::Context::UserNamedType::Sequence &&
-        idType != Poincare::Context::UserNamedType::List) {
+    if (idType == Poincare::Context::UserNamedType::Symbol ||
+        (!m_parsingContext.params.preserveInput &&
+         idType == Poincare::Context::UserNamedType::None)) {
       leftHandSide = SharedTreeStack->pushUserSymbol(name);
       return;
     }

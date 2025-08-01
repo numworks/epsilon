@@ -54,8 +54,8 @@ void FunctionModelsParameterController::viewWillAppear() {
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     char buffer[k_maxSizeOfNamedModel];
     Poincare::UserExpression e = UserExpression::Parse(
-        ModelWithDefaultName(model[i], buffer, k_maxSizeOfNamedModel),
-        nullptr);  // No context needed
+        ModelWithDefaultName(model[i], buffer, k_maxSizeOfNamedModel), nullptr,
+        {.preserveInput = true});
     m_layouts[i] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits,

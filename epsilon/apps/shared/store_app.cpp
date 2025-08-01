@@ -27,7 +27,9 @@ bool StoreApp::Snapshot::memoizeFormula(Poincare::Layout formula, int index) {
 }
 
 Layout StoreApp::Snapshot::memoizedFormula(int index) const {
-  return Expression::Parse(m_memoizedFormulasBuffer[index], nullptr)
+  // TODO: This doesn't work
+  return Expression::Parse(m_memoizedFormulasBuffer[index], nullptr,
+                           {.preserveInput = true})
       .createLayout(Preferences::PrintFloatMode::Decimal,
                     PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
 }

@@ -137,7 +137,7 @@ UserExpression FormulaTemplateMenuController::templateExpressionForCell(
   assert(cell < Cell::MaxNumberOfRows && cell > Cell::EmptyTemplate);
   if (cell <= Cell::Logarithm) {
     return UserExpression::Parse(k_templates[static_cast<int>(cell) - 1],
-                                 nullptr);
+                                 nullptr, {.preserveInput = true});
   }
   // Build the expression "X2+X3"
   if (cell == Cell::OtherColumns) {

@@ -133,7 +133,7 @@ Tree* RackParser::parseExpressionWithRightwardsArrow(
     // This is instantiated outside the condition so that the pointer is not
     // lost.
     Poincare::TreeVariableContext assignmentContext("", &tempContext);
-    if (rightHandSide->isUserFunction() && m_parsingContext.context) {
+    if (rightHandSide->isUserFunction()) {
       /* If assigning a function, set the function parameter in the context
        * for parsing leftHandSide.
        * This is to ensure that 3g->f(g) is correctly parsed */
@@ -1014,9 +1014,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       powerFunction = true;
     }
   }
-  bool isParametricWithParsingContext =
-      m_parsingContext.context && builtin->type().isParametric();
-  if (!isParametricWithParsingContext) {
+  if (!builtin->type().isParametric()) {
     leftHandSide = parseFunctionParameters();
   } else {
     char name[Symbol::k_maxNameLength];
@@ -1133,14 +1131,16 @@ void RackParser::privateParseCustomIdentifier(TreeRef& leftHandSide,
   /* Check the context: if the identifier does not already exist as a function,
    * seq or list, interpret it as a symbol, even if there are parentheses
    * afterwards.
-   * If there is no context, f(x) is always parsed as a function and u{n} as
-   * a sequence*/
+   * If preserveInput is true, f(x) is always parsed  as a function and u{n}
+   * as a sequence*/
   Poincare::Context::UserNamedType idType =
       Poincare::Context::UserNamedType::None;
-  if (m_parsingContext.context &&
+  if (!m_parsingContext.params.preserveInput &&
       !m_parsingContext.metadata.isAssignmentDeclaration) {
-    idType =
-        m_parsingContext.context->expressionTypeForIdentifier(name, length);
+    idType = m_parsingContext.context
+                 ? m_parsingContext.context->expressionTypeForIdentifier(name,
+                                                                         length)
+                 : Poincare::Context::UserNamedType::None;
     if (idType != Poincare::Context::UserNamedType::Function &&
         idType != Poincare::Context::UserNamedType::Sequence &&
         idType != Poincare::Context::UserNamedType::List) {
@@ -1284,8 +1284,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
 
   if (result->type() == Type::UserFunction &&
       parameter->type() == Type::UserSymbol &&
-      m_nextToken.type() == Token::Type::AssignmentEqual &&
-      m_parsingContext.context) {
+      m_nextToken.type() == Token::Type::AssignmentEqual) {
     /* Set the parameter in the context to ensure that f(t)=t is not
      * understood as f(t)=1_t
      * If we decide that functions can be assigned with any parameter,
@@ -1582,16 +1581,14 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
 }
 
 bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
-  if (m_parsingContext.context &&
+  if (!m_parsingContext.params.preserveInput &&
       !Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
-    /* If m_context == nullptr, the expression has already been parsed.
-     * We do not escape here because we want to parse it the same way it was
-     * parsed the first time.
-     * It can for example be a mixed fraction input earlier with a different
-     * country preference.
-     * There is no risk of confusion with a multiplication since a parsed
-     * multiplication between an integer and a fraction will be beautified
-     * by adding a multiplication symbol between the two. */
+    /* If preserveInput is true, we do not escape here because we want to
+     * keep its expression as close as the original layout. It can for example
+     * be a mixed fraction input earlier with a different country preference.
+     * There is no risk of confusion with a multiplication since a
+     * multiplication between an integer and a fraction should already have been
+     * beautified by adding a multiplication symbol between the two. */
     return false;
   }
   State previousState = currentState();

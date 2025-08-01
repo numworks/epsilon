@@ -79,18 +79,8 @@ inline Poincare::Expression ApproximateUser(
 }
 
 template <class T>
-inline Poincare::Expression ApproximateSystem(
-    Poincare::SystemExpression e, Poincare::Context* context,
-    const ApproximationParameters& approximationParameters = {}) {
-  Poincare::Preferences::ComplexFormat complexFormat =
-      approximationParameters.complexFormat;
-  if (approximationParameters.updateComplexFormatWithExpression) {
-    complexFormat =
-        Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-            complexFormat, e, context);
-  }
-  return e.approximateSystemToTree<T>(approximationParameters.angleUnit,
-                                      complexFormat, context);
+inline Poincare::Expression ApproximateSystem(Poincare::SystemExpression e) {
+  return e.approximateSystemToTree<T>();
 }
 
 // Approximate a real scalar expression. Contexts are not handled.

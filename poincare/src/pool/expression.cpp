@@ -26,6 +26,7 @@
 #include <poincare/src/expression/units/representatives.h>
 #include <poincare/src/expression/units/unit.h>
 #include <poincare/src/expression/variables.h>
+#include <poincare/src/expression/vector.h>
 #include <poincare/src/layout/layout_serializer.h>
 #include <poincare/src/layout/layouter.h>
 #include <poincare/src/layout/parser.h>
@@ -1035,9 +1036,7 @@ bool Expression::isPureAngleUnit() const {
 }
 
 bool Expression::isVector() const {
-  return !isUninitialized() && tree()->isMatrix() &&
-         (Internal::Matrix::NumberOfRows(tree()) == 1 ||
-          Internal::Matrix::NumberOfColumns(tree()) == 1);
+  return !isUninitialized() && Vector::IsVector(tree());
 }
 
 bool Expression::isInRadians(Context* context) const {

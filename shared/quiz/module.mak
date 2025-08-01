@@ -22,7 +22,7 @@ $(call assert_defined,QUIZ_cases_directories)
 _test_sources := $(shell find -H $(QUIZ_cases_directories) -path "**/test/**.c" -or -path "**/test/**.cpp")
 
 # TODO Requires :+test to be the last taste
-$(OUTPUT_DIRECTORY)/$(PATH_quiz)/src/test_symbols.c: $(_test_sources) | $$(@D)/.
+$(call generated_sources_for,$(PATH_quiz)/src/test_symbols.c): $(_test_sources) | $$(@D)/.
 	$(call rule_label,AWK)
 	awk -v QUIZ_TEST_FILTER=$(QUIZ_TEST_FILTER) -f $(PATH_quiz)/src/symbols.awk \
 		$(foreach m,$(filter %.test,$(MODULES_$(GOAL))), \

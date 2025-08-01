@@ -9,7 +9,8 @@ ifeq ($(KANDINSKY_font_variant),scandium)
 _sources_kandinsky_fonts := SmallFont.ttf
 endif
 
-KANDINSKY_fonts_dependencies := $(patsubst %.ttf,$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/%.h,$(_sources_kandinsky_fonts))
+_kandinsky_generated_fonts_dir := $(call generated_sources_for,$(PATH_kandinsky)/fonts)
+KANDINSKY_fonts_dependencies := $(patsubst %.ttf,$(_kandinsky_generated_fonts_dir)/%.h,$(_sources_kandinsky_fonts))
 
 _sources_kandinsky_minimal := $(addprefix src/, \
   color.cpp \
@@ -75,21 +76,21 @@ $(_kandinsky_rasterizer): TOOLS_LDFLAGS += $(_ldflags_kandinsky_rasterizer)
 # raster_font, <name>, <size>, <packed width>, <packed height>
 define raster_font
 $(eval \
-$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$(KANDINSKY_font_variant)/$1.cpp: $(PATH_kandinsky)/fonts/$(KANDINSKY_font_variant)/$1.ttf $(_kandinsky_rasterizer) | $$$$(@D)/.
+$(_kandinsky_generated_fonts_dir)/$(KANDINSKY_font_variant)/$1.cpp: $(PATH_kandinsky)/fonts/$(KANDINSKY_font_variant)/$1.ttf $(_kandinsky_rasterizer) | $$$$(@D)/.
 	$$(call rule_label,RASTER)
 	$(_kandinsky_rasterizer) \
 		$$< \
 		$2 $2 $3 $4 \
 		$1 \
-		$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.h \
+		$(_kandinsky_generated_fonts_dir)/$1.h \
 		$$@ \
-		$(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$(notdir $(_kandinsky_glyph_index)) \
+		$(_kandinsky_generated_fonts_dir)/codepoint_to_glyph_index.cpp \
 		$$(if $(_has_libpng),$$(basename $$@).png,)
 
-$(addprefix $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/,codepoint_to_glyph_index.cpp $1.h): $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$(KANDINSKY_font_variant)/$1.cpp
+$(addprefix $(_kandinsky_generated_fonts_dir)/,codepoint_to_glyph_index.cpp $1.h): $(_kandinsky_generated_fonts_dir)/$(KANDINSKY_font_variant)/$1.cpp
 )
 
-generated_headers: $(OUTPUT_DIRECTORY)/$(PATH_kandinsky)/fonts/$1.h
+generated_headers: $(_kandinsky_generated_fonts_dir)/$1.h
 endef
 
 

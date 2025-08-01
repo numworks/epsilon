@@ -80,6 +80,11 @@ $(strip $(if $(ARCHS),\
 	$(call objects_for_sources,,$1) $(foreach d,$(ALL_SPECIAL_SUBDIRECTORIES),$(call objects_for_sources,$d/,$1))))
 endef
 
+# generated_sources_for, <sources list>
+define generated_sources_for
+$(addprefix $(OUTPUT_DIRECTORY)/,$(subst ../,,$1))
+endef
+
 # strip_directory, <directories>, <path>
 define strip_directory
 $(call text_or,$(strip $(foreach d,$1,$(patsubst $d/%,%,$(filter $d/%,$2)))),$2)

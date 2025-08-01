@@ -43,7 +43,8 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
       static_assert(Parametric::k_variableIndex == 0);
       e = e->nextNode()->nextTree();
     }
-    changed = ShallowReplaceUserNamed(e, context, symbolic) || changed;
+    assert(context);
+    changed = ShallowReplaceUserNamed(e, *context, symbolic) || changed;
     e = e->nextNode();
   }
   removeMarker(marker);
@@ -66,13 +67,13 @@ bool Projection::DeepReplaceUserNamedWithUndefined(Tree* e) {
   return changed;
 }
 
-bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
+bool Projection::ShallowReplaceUserNamed(Tree* e,
+                                         const Poincare::Context& context,
                                          SymbolicComputation symbolic) {
   /* ReplaceAllSymbolsWithUndefined and KeepAllSymbols are escaped in
    * DeepReplaceUserNamed */
   assert(symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   assert(symbolic != SymbolicComputation::KeepAllSymbols);
-  assert(context);
   bool eIsUserFunction = e->isUserFunction();
   if (!eIsUserFunction &&
       (!e->isUserSymbol() ||
@@ -81,7 +82,7 @@ bool Projection::ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
     return false;
   }
   // Get Definition
-  const Tree* definition = context->expressionForUserNamed(e);
+  const Tree* definition = context.expressionForUserNamed(e);
   if (symbolic == SymbolicComputation::ReplaceAllSymbols && !definition) {
     e->cloneTreeOverTree(KNotDefined);
     return true;

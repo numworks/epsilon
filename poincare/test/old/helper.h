@@ -65,12 +65,6 @@ constexpr Poincare::Preferences::ComplexFormat Polar =
     Poincare::Preferences::ComplexFormat::Polar;
 constexpr Poincare::Preferences::ComplexFormat Real =
     Poincare::Preferences::ComplexFormat::Real;
-constexpr Poincare::Preferences::PrintFloatMode DecimalMode =
-    Poincare::Preferences::PrintFloatMode::Decimal;
-constexpr Poincare::Preferences::PrintFloatMode ScientificMode =
-    Poincare::Preferences::PrintFloatMode::Scientific;
-constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
-    Poincare::Preferences::PrintFloatMode::Engineering;
 
 void quiz_assert_log_if_failure(bool test, Poincare::PoolHandle tree);
 
@@ -143,19 +137,6 @@ void assert_expression_simplifies_approximates_to(
         Poincare::PrintFloat::SignificantDecimalDigits<T>());
 
 // Serialization
-
-void assert_expression_serializes_to_old(
-    const Poincare::Internal::Tree* expression, const char* serialization,
-    Poincare::Preferences::PrintFloatMode mode = ScientificMode,
-    int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
-
-void assert_expression_parses_and_serializes_to(
-    const char* expression, const char* result,
-    Shared::GlobalContext* globalContext,
-    Poincare::Preferences::PrintFloatMode mode = ScientificMode,
-    int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
-void assert_expression_parses_and_serializes_to_itself(
-    const char* expression, Shared::GlobalContext* globalContext);
 
 void assert_layout_serializes_to(const Poincare::Internal::Tree* layout,
                                  const char* serialization);

@@ -257,51 +257,6 @@ void assert_expression_simplifies_approximates_to(
       numberOfSignificantDigits);
 }
 
-void assert_expression_serializes_to_old(const Tree *expression,
-                                         const char *serialization,
-                                         Preferences::PrintFloatMode mode,
-                                         int numberOfSignificantDigits,
-                                         OMG::Base base) {
-  constexpr int bufferSize = 500;
-  char buffer[bufferSize];
-  Tree *layout = Internal::Layouter::LayoutExpression(
-      expression->cloneTree(), true, false, numberOfSignificantDigits, mode,
-      base);
-  LayoutSerializer::Serialize(layout, buffer);
-  bool test = strcmp(serialization, buffer) == 0;
-  layout->removeTree();
-#if POINCARE_STRICT_TESTS
-  if (!test) {
-    build_failure_infos(information, bufferSize, "serialized expression",
-                        buffer, serialization);
-  }
-  quiz_assert_print_if_failure(test, information);
-#else
-  quiz_tolerate_print_if_failure(test, serialization, serialization, buffer);
-#endif
-}
-
-void assert_expression_parses_and_serializes_to(
-    const char *expression, const char *result,
-    Shared::GlobalContext *globalContext, Preferences::PrintFloatMode mode,
-    int numberOfSignificantDigits, OMG::Base base) {
-  Tree *e = parse_expression(expression, globalContext);
-  Tree *l = Internal::Layouter::LayoutExpression(
-      e, true, false, numberOfSignificantDigits, mode, base);
-  constexpr int bufferSize = 500;
-  char buffer[bufferSize];
-  LayoutSerializer::Serialize(l, buffer);
-  l->removeTree();
-  const bool test = strcmp(buffer, result) == 0;
-  quiz_assert_print_if_failure(test, expression, result, buffer);
-}
-
-void assert_expression_parses_and_serializes_to_itself(
-    const char *expression, Shared::GlobalContext *globalContext) {
-  return assert_expression_parses_and_serializes_to(expression, expression,
-                                                    globalContext);
-}
-
 void assert_layout_serializes_to(const Tree *layout,
                                  const char *serialization) {
   assert(layout);

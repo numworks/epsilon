@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <float.h>
 #include <omg/float.h>
@@ -173,6 +174,50 @@ QUIZ_CASE(pcj_approximation_scalar) {
   approximates_to(KRealInteger(KUndef), NAN);
   approximates_to(KRealInteger(π_e), NAN);
   approximates_to(KRealInteger(i_e), NAN);
+
+  approximates_to<float>("-0", 0.0f);
+  approximates_to<float>("-1.ᴇ-2", -0.01f);
+  approximates_to<double>("-.003", -0.003);
+  approximates_to<float>("1.2343ᴇ-2", 0.012343f);
+  approximates_to<double>("-567.2ᴇ2", -56720.0);
+}
+
+QUIZ_CASE(pcj_approximation_rational) {
+  approximates_to<float>("1/3", 0.3333333f);
+  approximates_to<double>("123456/1234567", 9.9999432999586E-2);
+}
+
+QUIZ_CASE(pcj_approximation_addition) {
+  approximates_to<float>("1+2", 3.0f);
+  approximates_to<double>("i+i", NAN);
+  approximates_to<float>("[[1,2][3,4][5,6]]+[[1,2][3,4][5,6]]", NAN);
+}
+
+QUIZ_CASE(pcj_approximation_multiplication) {
+  approximates_to<float>("1×2", 2.0f);
+  approximates_to<double>("(3+i)×(4+i)", NAN);
+  approximates_to<float>("[[1,2][3,4][5,6]]×2", NAN);
+}
+
+QUIZ_CASE(pcj_approximation_substraction) {
+  approximates_to<float>("1-2", -1.0f);
+  approximates_to<double>("(1)-(4+i)", NAN);
+  approximates_to<float>("[[1,2][3,4][5,6]]-[[3,2][3,4][5,6]]", NAN);
+}
+
+QUIZ_CASE(pcj_approximation_division) {
+  approximates_to<float>("1/2", 0.5f);
+  approximates_to<float>("(3+i)/(4+i)", NAN);
+  approximates_to<float>("[[1,2][3,4][5,6]]/2", NAN);
+
+  approximates_to<float>("quo(23,12)", 1);
+  approximates_to<float>("rem(23,12)", 11);
+  approximates_to<float>("quo(-23,12)", -2);
+  approximates_to<float>("rem(-23,12)", 1);
+  approximates_to<float>("quo(23,-12)", -1);
+  approximates_to<float>("rem(23,-12)", 11);
+  approximates_to<float>("quo(-23,-12)", 2);
+  approximates_to<float>("rem(-23,-12)", 1);
 }
 
 QUIZ_CASE(pcj_approximation_boolean) {
@@ -230,6 +275,10 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("(-888888)^(.5)", "7.118005ᴇ-5+942.8084×i",
                          cartesianCtx);
 #endif
+
+  approximates_to<float>("2^3", 8.0f);
+  approximates_to<double>("(3+i)^(4+i)", NAN);
+  approximates_to<float>("[[1,2][3,4]]^2", NAN);
 }
 
 QUIZ_CASE(pcj_approximation_list) {
@@ -245,6 +294,38 @@ QUIZ_CASE(pcj_approximation_list) {
   approximates_to<float>("sequence(1/(k-2)=3, k, 5)",
                          "{False,undef,False,False,False}");
   // TODO_PCJ: approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
+}
+
+QUIZ_CASE(pcj_approximation_lists_functions) {
+  // Mean
+  approximates_to<double>("mean({5,8,7,4,12})", 7.2);
+  approximates_to<double>("mean({5,8,7,4,12},{1,2,3,5,6})", 7.882352941176471);
+  // Median
+  approximates_to<double>("med({1,6,3,5,2})", 3.);
+  approximates_to<double>("med({1,6,3,4,5,2})", 3.5);
+  approximates_to<double>("med({1,6,3,4,5,2},{2,3,0.1,2.8,3,1})", 5.);
+  // Standard deviation
+  approximates_to<double>("stddev({1,2,3,4,5,6})", 1.707825127659933);
+  approximates_to<double>("stddev({1,2,3,4,5,6},{6,2,3,4,5,1})",
+                          1.6700645635000173);
+  approximates_to<double>("stddev({1})", 0.);
+  approximates_to<double>("samplestddev({1,2,3,4,5,6})", 1.8708286933869704);
+  approximates_to<double>("samplestddev({1,2,3,4,5,6},{6,2,3,4,5,1})",
+                          1.7113069358158486);
+  // Variance
+  approximates_to<double>("var({1,2,3,4,5,6},{7,0.1,2,0,1,10})",
+                          5.2815524368208706);
+  approximates_to<double>("var({1,2,3,4,5,6})", 2.916666666666666);
+  // Dimension
+  approximates_to<double>("dim({1,2,3})", 3.);
+  // Minimum
+  approximates_to<double>("min({1,2,3})", 1.);
+  // Maximum
+  approximates_to<double>("max({1,2,3})", 3.);
+  // Sum
+  approximates_to<double>("sum({1,2,3})", 6.);
+  // Product
+  approximates_to<double>("prod({1,4,9})", 36.);
 }
 
 QUIZ_CASE(pcj_approximation_matrix) {
@@ -278,6 +359,7 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("inf×(-inf)", "-∞");
   approximates_to<float>("1/inf", "0");
   approximates_to<float>("0/inf", "0");
+  approximates_to<double>("10^1000", INFINITY);
 
   // x^inf
   approximates_to<float>("(-2)^inf", "undef");  // complex inf
@@ -361,6 +443,27 @@ QUIZ_CASE(pcj_approximation_infinity) {
   approximates_to<float>("[[√(-1),2]]", "[[nonreal,2]]");
 }
 
+QUIZ_CASE(pcj_approximation_constant) {
+  approximates_to<double>("π", "3.1415926535898");
+  approximates_to<float>("e", "2.718282");
+  approximates_to<float>("i", NAN);
+  approximates_to<double>("i", NAN);
+  approximates_to<float>("_c", 299792458.0);
+  approximates_to<float>("_e", 1.602176634e-19);
+  approximates_to<float>("_G", 6.67430e-11);
+  approximates_to<float>("_g0", 9.80665);
+  approximates_to<float>("_k", 1.380649e-23);
+  approximates_to<float>("_ke", 8.9875517873681764e9);
+  approximates_to<float>("_me", 9.1093837015e-31);
+  approximates_to<float>("_mn", 1.67492749804e-27);
+  approximates_to<float>("_mp", 1.67262192369e-27);
+  approximates_to<float>("_Na", 6.02214076e23);
+  approximates_to<float>("_R", 8.31446261815324);
+  approximates_to<float>("_ε0", 8.854187817e-12);
+  approximates_to<float>("_μ0", 1.25663706212e-6);
+  approximates_to<float>("_hplanck", 6.62607015e-34);
+}
+
 QUIZ_CASE(pcj_approximation_units) {
   // Make input scalar to bypass hindered unit approximation.
   approximates_to<float>("(12_m)/(_m)", "12");
@@ -420,6 +523,15 @@ QUIZ_CASE(pcj_approximation_arithmetic) {
   approximates_to<float>("ceil(π)", "4");
   approximates_to<float>("ceil(-π)", "-3");
   approximates_to<float>("ceil(1+i)", "undef");
+}
+
+QUIZ_CASE(pcj_approximation_mixed_fraction) {
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::US);
+  assert(
+      Poincare::Preferences::SharedPreferences()->mixedFractionsAreEnabled());
+  approximates_to<double>("1 1/2", 1.5);
+  approximates_to<double>("-1 1/2", -1.5);
+  GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);
 }
 
 QUIZ_CASE(pcj_approximation_parametrics) {

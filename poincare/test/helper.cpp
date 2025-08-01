@@ -102,8 +102,10 @@ void simplify(Tree* e, const ProjectionContext& ctx, bool beautify) {
 void process_tree_and_compare(const char* input, const char* output,
                               ProcessTree process,
                               ProjectionContext projectionContext) {
-  Tree* expected = parse(output, projectionContext.m_context);
-  Tree* expression = parse(input, projectionContext.m_context);
+  Tree* expected =
+      parse(output, projectionContext.m_context, {.preserveInput = true});
+  Tree* expression =
+      parse(input, projectionContext.m_context, {.preserveInput = true});
   if (!expression || !expected) {
     // Parsing failed
     quiz_assert(false);
@@ -155,10 +157,10 @@ void process_tree_and_compare(const char* input, const char* output,
 }
 
 Tree* private_parse(const char* input, Poincare::Context* context,
-                    bool isAssignment = false, bool assertNotParsable = false) {
+                    ParsingParameters params = {},
+                    bool assertNotParsable = false) {
   Tree* layout = RackFromText(input);
-  Tree* expression =
-      Parser::Parse(layout, context, {.isAssignment = isAssignment});
+  Tree* expression = Parser::Parse(layout, context, params);
   if (assertNotParsable || !expression) {
     quiz_assert(assertNotParsable == !expression);
     layout->removeTree();
@@ -168,8 +170,9 @@ Tree* private_parse(const char* input, Poincare::Context* context,
   return layout;
 }
 
-Tree* parse(const char* input, Poincare::Context* context, bool isAssignment) {
-  return private_parse(input, context, isAssignment);
+Tree* parse(const char* input, Poincare::Context* context,
+            ParsingParameters params) {
+  return private_parse(input, context, params);
 }
 
 Tree* parse_and_reduce(const char* input, bool beautify) {
@@ -182,16 +185,16 @@ Tree* parse_and_reduce(const char* input, bool beautify) {
 
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
-                                 bool isAssignment) {
+                                 ParsingParameters params) {
   Shared::GlobalContext context;
-  assert_parsed_expression_is(expression, expected, &context, isAssignment);
+  assert_parsed_expression_is(expression, expected, &context, params);
 }
 
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
                                  Poincare::Context* context,
-                                 bool isAssignment) {
-  Tree* parsed = parse(expression, context, isAssignment);
+                                 ParsingParameters params) {
+  Tree* parsed = parse(expression, context, params);
   bool test = parsed && parsed->treeIsIdenticalTo(expected);
   quiz_assert_print_if_failure(test, expression, "parsed and identical",
                                parsed ? "not identical" : "not parsed");
@@ -221,8 +224,9 @@ void assert_expression_serializes_and_parses_to(
   assert_parsed_expression_is(buffer, result);
 }
 
-void assert_text_not_parsable(const char* input, Poincare::Context* context) {
-  bool parsed = private_parse(input, context, false, true);
+void assert_text_not_parsable(const char* input, Poincare::Context* context,
+                              ParsingParameters params) {
+  bool parsed = private_parse(input, context, params, true);
   quiz_assert(!parsed);
 }
 

@@ -50,8 +50,8 @@ bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
   return result;
 }
 
-bool hasInvalidDimOrLen(const Tree* e, Poincare::Context* ctx = nullptr) {
-  bool res = !Dimension::DeepCheck(e, ctx);
+bool hasInvalidDimOrLen(const Tree* e) {
+  bool res = !Dimension::DeepCheck(e, nullptr);
 #if POINCARE_TREE_LOG
   if (!res) {
     std::cout << "Got valid but expected invalid dim/len for: ";
@@ -62,9 +62,9 @@ bool hasInvalidDimOrLen(const Tree* e, Poincare::Context* ctx = nullptr) {
   return res;
 }
 
-bool hasInvalidDimOrLen(const char* input, Poincare::Context* ctx = nullptr) {
-  Tree* e = parse(input, ctx);
-  bool result = hasInvalidDimOrLen(e, ctx);
+bool hasInvalidDimOrLen(const char* input) {
+  Tree* e = parse(input, nullptr, {.preserveInput = true});
+  bool result = hasInvalidDimOrLen(e);
   e->removeTree();
   return result;
 }

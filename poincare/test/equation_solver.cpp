@@ -15,7 +15,8 @@ bool check_solutions(
     EquationSolver::Error expectedError = EquationSolver::Error::NoError) {
   Tree* equationList = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
-    NAry::AddChild(equationList, parse(equation));
+    NAry::AddChild(equationList,
+                   parse(equation, nullptr, {.preserveInput = true}));
   }
   EquationSolver::SolverResult result =
       EquationSolver::ExactSolveAdaptive(equationList, projectionContext);
@@ -31,7 +32,10 @@ bool check_solutions(
             : SymbolicComputation::ReplaceDefinedSymbols;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
-      Tree* expectedSolution = parse(output);
+      Tree* expectedSolution = parse(output, nullptr,
+                                     {
+                                         .preserveInput = true,
+                                     });
       simplify(expectedSolution, projectionContext);
       quiz_assert(solution->treeIsIdenticalTo(expectedSolution));
       solution = solution->nextTree();

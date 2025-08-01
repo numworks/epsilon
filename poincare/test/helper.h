@@ -1,6 +1,7 @@
 #ifndef POINCAREJ_TEST_HELPER_H
 #define POINCAREJ_TEST_HELPER_H
 
+#include <poincare/helpers/parser.h>
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
@@ -148,21 +149,22 @@ const char* BigOverflowedIntegerString();  // OverflowedIntegerString with a 2
 const char* ApproximatedParsedIntegerString();
 
 // Parsing
+using ParsingParameters = Poincare::ParserHelper::ParsingParameters;
 
 Poincare::Internal::Tree* parse(const char* input,
                                 Poincare::Context* context = nullptr,
-                                bool isAssignment = false);
+                                ParsingParameters params = {});
 
 Poincare::Internal::Tree* parse_and_reduce(const char* input,
                                            bool beautify = false);
 
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
-                                 bool isAssignment = false);
+                                 ParsingParameters params = {});
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
                                  Poincare::Context* context,
-                                 bool isAssignment = false);
+                                 ParsingParameters params = {});
 void assert_parse_to_same_expression(const char* expression1,
                                      const char* expression2,
                                      Poincare::Context* context);
@@ -172,7 +174,8 @@ void assert_expression_serializes_and_parses_to(
     const Poincare::Internal::Tree* result);
 
 void assert_text_not_parsable(const char* input,
-                              Poincare::Context* context = nullptr);
+                              Poincare::Context* context = nullptr,
+                              ParsingParameters params = {});
 void assert_parse_to_integer_overflow(const char* input,
                                       Poincare::Context* context = nullptr);
 

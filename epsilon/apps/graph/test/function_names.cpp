@@ -81,7 +81,7 @@ void assert_will_display_parametric_name_error(const char* definition,
                                                ContinuousFunction* f,
                                                bool expectedHasError) {
   Poincare::Expression expression =
-      Poincare::Expression::Parse(definition, nullptr);
+      Poincare::Expression::Parse(definition, nullptr, {.preserveInput = true});
   bool hasError =
       FunctionNameHelper::ParametricComponentsNameError(expression, f);
   quiz_assert(hasError == expectedHasError);

@@ -21,7 +21,7 @@ _sources_poincare_checkpoint := $(addprefix src/, \
 )
 
 _sources_poincare_storage := $(addprefix src/, \
-  old/preferences_in_storage.cpp:-nostorage \
+  preferences_in_storage.cpp:-nostorage \
   preferences_no_storage.cpp:+nostorage \
 )
 

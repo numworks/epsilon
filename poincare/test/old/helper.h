@@ -129,7 +129,16 @@ void assert_expression_approximates_keeping_symbols_to(
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char* expression, const char* approximation,
-    Poincare::Context* context = nullptr,
+    Poincare::Context* context,
+    Poincare::Preferences::AngleUnit angleUnit = Degree,
+    Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
+    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    int numberOfSignificantDigits =
+        Poincare::PrintFloat::SignificantDecimalDigits<T>());
+
+template <typename T>
+void assert_expression_simplifies_approximates_to(
+    const char* expression, const char* approximation,
     Poincare::Preferences::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,

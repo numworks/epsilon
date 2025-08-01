@@ -128,7 +128,8 @@ QUIZ_CASE(pcj_equation_solver) {
 void check_range(const char* input, double min, double max) {
   Tree* equationList = TreeStack::SharedTreeStack->pushList(1);
   parse(input);
-  ProjectionContext ctx;
+  Shared::GlobalContext globalContext;
+  ProjectionContext ctx{.m_context = &globalContext};
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       equationList, ctx, Poincare::Range1D<double>(), 10);
   quiz_assert(result.solutionMetadata.solvingRange.min() == min);

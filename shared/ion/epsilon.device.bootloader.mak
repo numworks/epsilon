@@ -101,14 +101,14 @@ _ion_png_serializer := $(PATH_ion)/image/png_serializer.py
 # depends_on_compressed_png, <list of cpp>, <list of png>
 define depends_on_compressed_png
 $(eval \
-$(call all_objects_for,$(strip $1)): $(patsubst %.png,$(OUTPUT_DIRECTORY)/%.h,$(strip $2))
-$(call all_objects_for,$(strip $1)): SFLAGS += $(foreach d,$(addprefix $(OUTPUT_DIRECTORY)/,$(sort $(dir $(strip $2)))),-I$d)
+$(call all_objects_for,$(strip $1)): $(call generated_sources_for,$(patsubst %.png,%.h,$(strip $2)))
+$(call all_objects_for,$(strip $1)): SFLAGS += $(foreach d,$(call generated_sources_for,$(sort $(dir $(strip $2)))),-I$d)
 
-$(patsubst %.png,$(OUTPUT_DIRECTORY)/%.h,$(strip $2)): $(OUTPUT_DIRECTORY)/%.h: %.png | $$$$(@D)/.
+$(call generated_sources_for,$(patsubst %.png,%.h,$(strip $2))): $(OUTPUT_DIRECTORY)/%.h: ../%.png | $$$$(@D)/.
 	$$(call rule_label,PNGSER)
 	$(PYTHON) $(_ion_png_serializer) --png $$< --header $$@ --cimplementation $$(@:.h=.cpp)
 
-$(patsubst %.png,$(OUTPUT_DIRECTORY)/%.cpp,$(strip $2)): %.cpp: %.h
+$(call generated_sources_for,$(patsubst %.png,%.cpp,$(strip $2))): %.cpp: %.h
 	@ :
 )
 endef

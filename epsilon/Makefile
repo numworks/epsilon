@@ -24,7 +24,16 @@ SFLAGS += \
 
 include build/config.$(PLATFORM_TYPE).mak
 
-QUIZ_cases_directories := apps escher ion kandinsky liba libaxx omg poincare python
+QUIZ_cases_directories := \
+  apps \
+  escher \
+  python \
+  ../poincare \
+  ../shared/ion \
+  ../shared/kandinsky \
+  ../shared/liba \
+  ../shared/libaxx \
+  ../shared/omg \
 
 # Select the font and layout
 KANDINSKY_font_variant := epsilon
@@ -34,17 +43,17 @@ POINCARE_variant := epsilon
 
 # Import modules
 
-$(call import_module,liba,liba)
-$(call import_module,libaxx,libaxx)
-$(call import_module,omg,omg)
-$(call import_module,kandinsky,kandinsky)
-$(call import_module,ion,ion)
+$(call import_module,liba,../shared/liba)
+$(call import_module,libaxx,../shared/libaxx)
+$(call import_module,omg,../shared/omg)
+$(call import_module,kandinsky,../shared/kandinsky)
+$(call import_module,ion,../shared/ion)
+$(call import_module,quiz,../shared/quiz)
+$(call import_module,poincare,../poincare)
 $(call import_module,eadk,eadk)
-$(call import_module,poincare,poincare)
 $(call import_module,escher,escher)
 $(call import_module,python,python)
 $(call import_module,apps,apps)
-$(call import_module,quiz,quiz)
 
 # Declare goals
 

@@ -12,6 +12,8 @@ SFLAGS := \
   -I. \
   -I$(OUTPUT_DIRECTORY) \
   -I$(OUTPUT_DIRECTORY)/shared \
+  -I.. \
+  -I../shared \
   -MMD \
   -MP \
   -Wall

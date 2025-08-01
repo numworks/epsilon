@@ -4,7 +4,7 @@ $(error Epsilon cannot be built with the gcc compiler on macOS)
 endif
 endif
 
-$(call import_module,sdl,ion/src/simulator/external)
+$(call import_module,sdl,$(PATH_ion)/src/simulator/external)
 
 $(call create_goal,epsilon, \
   apps \

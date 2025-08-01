@@ -230,6 +230,17 @@ void assert_expression_approximates_keeping_symbols_to(
 
 template <typename T>
 void assert_expression_simplifies_approximates_to(
+    const char *expression, const char *approximation,
+    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
+  Shared::GlobalContext globalContext;
+  assert_expression_simplifies_approximates_to<T>(
+      expression, approximation, &globalContext, angleUnit, unitFormat,
+      complexFormat, numberOfSignificantDigits);
+}
+
+template <typename T>
+void assert_expression_simplifies_approximates_to(
     const char *expression, const char *approximation, Context *context,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
@@ -283,3 +294,9 @@ template void assert_expression_simplifies_approximates_to<float>(
 template void assert_expression_simplifies_approximates_to<double>(
     char const *, char const *, Context *context, Preferences::AngleUnit,
     Preferences::UnitFormat, Preferences::ComplexFormat, int);
+template void assert_expression_simplifies_approximates_to<float>(
+    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
+    Preferences::ComplexFormat, int);
+template void assert_expression_simplifies_approximates_to<double>(
+    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
+    Preferences::ComplexFormat, int);

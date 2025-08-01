@@ -16,7 +16,7 @@ endif
 # List of the files that may contain a QUIZ_CASE and should cause test_symbols.c
 # to be rebuilt. It is coarser than using goals but it is hard to have
 # prerequisites that depend on the current goal.
-# TODO: Each app has to be nammed here to avoid (slowly) searching in output.
+# TODO: Each app has to be named here to avoid (slowly) searching in output.
 #       Find a better solution.
 $(call assert_defined,QUIZ_cases_directories)
 _test_sources := $(shell find -H $(QUIZ_cases_directories) -path "**/test/**.c" -or -path "**/test/**.cpp")

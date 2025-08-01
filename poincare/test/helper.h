@@ -17,6 +17,13 @@
 #include <iostream>
 #endif
 
+constexpr Poincare::Preferences::PrintFloatMode DecimalMode =
+    Poincare::Preferences::PrintFloatMode::Decimal;
+constexpr Poincare::Preferences::PrintFloatMode ScientificMode =
+    Poincare::Preferences::PrintFloatMode::Scientific;
+constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
+    Poincare::Preferences::PrintFloatMode::Engineering;
+
 typedef void (*ProcessTree)(
     Poincare::Internal::Tree*,
     Poincare::Internal::ProjectionContext projectionContext);
@@ -188,6 +195,13 @@ void assert_expression_serializes_to(
     Poincare::Preferences::PrintFloatMode mode =
         Poincare::Preferences::PrintFloatMode::Scientific,
     int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
+
+void assert_expression_parses_and_serializes_to(
+    const char* expression, const char* result, Poincare::Context* context,
+    Poincare::Preferences::PrintFloatMode mode = ScientificMode,
+    int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
+void assert_expression_parses_and_serializes_to_itself(
+    const char* expression, Poincare::Context* context);
 
 void serialize_expression(const Poincare::Internal::Tree* expression,
                           std::span<char> buffer);

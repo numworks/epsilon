@@ -264,3 +264,24 @@ void assert_expression_serializes_to(const Tree* expression,
   layout->removeTree();
   quiz_assert_print_if_failure(test, serialization, serialization, buffer);
 }
+
+void assert_expression_parses_and_serializes_to(
+    const char* expression, const char* result, Poincare::Context* context,
+    Preferences::PrintFloatMode mode, int numberOfSignificantDigits,
+    OMG::Base base) {
+  Tree* e = parse(expression, context);
+  Tree* l = Layouter::LayoutExpression(e, true, false,
+                                       numberOfSignificantDigits, mode, base);
+  constexpr int bufferSize = 500;
+  char buffer[bufferSize];
+  LayoutSerializer::Serialize(l, buffer);
+  l->removeTree();
+  const bool test = strcmp(buffer, result) == 0;
+  quiz_assert_print_if_failure(test, expression, result, buffer);
+}
+
+void assert_expression_parses_and_serializes_to_itself(
+    const char* expression, Poincare::Context* context) {
+  return assert_expression_parses_and_serializes_to(expression, expression,
+                                                    context);
+}

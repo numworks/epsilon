@@ -37,7 +37,7 @@ endef
 
 # objects_for_sources, <arch directory>, <sources list>
 define objects_for_sources
-$(addprefix $(OUTPUT_DIRECTORY)/$1,$(addsuffix .o,$(basename $2)))
+$(addprefix $(OUTPUT_DIRECTORY)/$1,$(addsuffix .o,$(basename $(subst ../,,$2))))
 endef
 
 # document_extension, <name>, <documentation>
@@ -108,6 +108,10 @@ generated_headers:
 define rule_for_object
 $(eval \
 $(OUTPUT_DIRECTORY)/%.o: $$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
+	$$(call rule_label,$1)
+	$3
+
+$(OUTPUT_DIRECTORY)/%.o: ../$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$3
 

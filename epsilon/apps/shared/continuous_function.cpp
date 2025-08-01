@@ -600,9 +600,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
       // m_expression may be an empty, dimension-less list after this.
     } else {
       assert(m_expression.dimension().isPoint());
-      m_expression = PoincareHelpers::ApproximateSystem<double>(
-          m_expression, context,
-          {.complexFormat = complexFormat, .angleUnit = angleUnit});
+      m_expression = PoincareHelpers::ApproximateSystem<double>(m_expression);
     }
   } else if (!thisProperties.isPolar() && !thisProperties.isInversePolar() &&
              (record->fullName() == nullptr ||

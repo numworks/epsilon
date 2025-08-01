@@ -192,9 +192,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
 
   if (reduced.hasRandomList() || !reduced.isList()) {
     // Sometimes the formula is a list but the reduction failed.
-    // TODO_CONTEXT: prepare for approximation ?
-    reduced =
-        PoincareHelpers::ApproximateSystem<double>(reduced, &storeContext);
+    reduced = PoincareHelpers::ApproximateSystem<double>(reduced);
   }
 
   if (reduced.isList()) {

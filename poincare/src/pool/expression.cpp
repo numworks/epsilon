@@ -334,14 +334,10 @@ bool Expression::deepIsOfType(std::initializer_list<Internal::AnyType> types,
 }
 
 template <typename T>
-SystemExpression SystemExpression::approximateSystemToTree(
-    Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
-    Context* context) const {
+SystemExpression SystemExpression::approximateSystemToTree() const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
-      tree(),
-      Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                .prepare = true},
-      Approximation::Context(angleUnit, complexFormat, context)));
+      tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                        .prepare = true}));
 }
 
 template <typename T>
@@ -1211,10 +1207,10 @@ const char* Poincare::Infinity::k_infinityName =
 const char* Poincare::Infinity::k_minusInfinityName =
     Internal::Infinity::k_minusInfinityName;
 
-template SystemExpression SystemExpression::approximateSystemToTree<float>(
-    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
-template SystemExpression SystemExpression::approximateSystemToTree<double>(
-    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
+template SystemExpression SystemExpression::approximateSystemToTree<float>()
+    const;
+template SystemExpression SystemExpression::approximateSystemToTree<double>()
+    const;
 
 template SystemExpression UserExpression::approximateUserToTree<float>(
     AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;

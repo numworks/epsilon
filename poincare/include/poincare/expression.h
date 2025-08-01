@@ -246,9 +246,7 @@ class Expression : public PoolHandle {
   SystemExpression removeUndefListElements() const;
 
   template <typename T>
-  SystemExpression approximateSystemToTree(
-      Preferences::AngleUnit angleUnit,
-      Preferences::ComplexFormat complexFormat, Context* context) const;
+  SystemExpression approximateSystemToTree() const;
 
   template <typename T>
   SystemExpression approximateUserToTree(

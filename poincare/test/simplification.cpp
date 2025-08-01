@@ -21,9 +21,6 @@ constexpr ProjectionContext polarCtx = {.m_complexFormat =
 // Default complex format
 constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 
-constexpr ProjectionContext replaceSymbolCtx = {
-    .m_symbolic = SymbolicComputation::ReplaceAllSymbols};
-
 constexpr ProjectionContext keepAllSymbolsCtx = {
     .m_symbolic = SymbolicComputation::KeepAllSymbols,
 };
@@ -914,6 +911,10 @@ QUIZ_CASE(pcj_simplification_list_bubble_up) {
 }
 
 QUIZ_CASE(pcj_simplification_list) {
+  Shared::GlobalContext globalContext;
+  ProjectionContext replaceSymbolCtx = {
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .m_context = &globalContext};
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");
   simplifies_to("{0,1}=0", "{True,False}");
@@ -1138,6 +1139,10 @@ QUIZ_CASE(pcj_simplification_constants) {
 }
 
 QUIZ_CASE(pcj_simplification_unit) {
+  Shared::GlobalContext globalContext;
+  ProjectionContext replaceSymbolCtx = {
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
+      .m_context = &globalContext};
   simplifies_to("12_m", "12×_m");
   simplifies_to("1_s", "1×_s");
   simplifies_to("1_m+1_s", "undef");

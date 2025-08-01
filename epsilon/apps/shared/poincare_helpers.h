@@ -167,7 +167,8 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
   // Extract displayed value
   return Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<T>(
       buffer, context, MathPreferences::SharedPreferences()->complexFormat(),
-      MathPreferences::SharedPreferences()->angleUnit());
+      MathPreferences::SharedPreferences()->angleUnit(),
+      Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 }
 
 // Conversions to float

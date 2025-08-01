@@ -2,6 +2,8 @@
 
 #include <ion/display.h>
 
+#include <type_traits>
+
 #include "svcall.h"
 
 namespace Ion {
@@ -27,19 +29,10 @@ void SVC_ATTRIBUTES POSTPushMulticolor(int rootNumberTiles, int tileSize) {
   SVC_RETURNING_VOID(SVC_DISPLAY_POST_PUSH_MULTICOLOR)
 }
 
-// This assert ensures that the signature of drawString stays the same
-template <class T1, class T2>
-struct SameType {
-  enum { value = false };
-};
-template <class T>
-struct SameType<T, T> {
-  enum { value = true };
-};
 static_assert(
-    SameType<decltype(&drawString),
-             void (*)(const char* text, KDPoint point, bool largeFont,
-                      KDColor textColor, KDColor backgroundColor)>::value,
+    std::is_same_v<decltype(&drawString),
+                   void (*)(const char* text, KDPoint point, bool largeFont,
+                            KDColor textColor, KDColor backgroundColor)>,
     "Signature of drawString changed");
 
 void drawString(const char* text, KDPoint point, bool largeFont,

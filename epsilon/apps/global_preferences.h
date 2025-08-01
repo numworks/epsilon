@@ -139,8 +139,10 @@ class __attribute__((packed)) GlobalPreferences
                                 : I18n::Message::OpenRightInterval);
   }
 
-  bool showPopUp() const { return m_showPopUp; }
-  void setShowPopUp(bool showPopUp) { m_showPopUp = showPopUp; }
+  bool showPopUp() const { return m_combinedPreferences.showPopUp; }
+  void setShowPopUp(bool showPopUp) {
+    m_combinedPreferences.showPopUp = showPopUp;
+  }
 
   constexpr static int NumberOfBrightnessStates = 12;
   int brightnessLevel() const { return m_brightnessLevel; }
@@ -149,18 +151,20 @@ class __attribute__((packed)) GlobalPreferences
   int dimmingTime() const { return m_dimmingTime; }
   void setDimmingTime(int dimmingTime) { m_dimmingTime = dimmingTime; }
 
-  KDFont::Size font() const { return m_font; }
-  void setFont(KDFont::Size font) { m_font = font; }
+  KDFont::Size font() const { return m_combinedPreferences.font; }
+  void setFont(KDFont::Size font) { m_combinedPreferences.font = font; }
 
   enum class EditionMode : bool {
     Edition2D = 0,
     Edition1D = 1,
   };
-  EditionMode editionMode() const { return m_editionMode; }
+  EditionMode editionMode() const { return m_combinedPreferences.editionMode; }
   bool linearMode() const override {
     return editionMode() == EditionMode::Edition1D;
   }
-  void setEditionMode(EditionMode editionMode) { m_editionMode = editionMode; }
+  void setEditionMode(EditionMode editionMode) {
+    m_combinedPreferences.editionMode = editionMode;
+  }
 
   // In milliseconds
   constexpr static uint32_t k_defaultDimmingTime = 30 * 1000;
@@ -235,17 +239,25 @@ class __attribute__((packed)) GlobalPreferences
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
 
+  struct CombinedPreferences {
+    bool showPopUp : 1;
+    KDFont::Size font : 1;
+    EditionMode editionMode : 1;
+    uint8_t padding : OMG::BitHelper::numberOfBitsIn<uint8_t>() - 3;
+    bool operator==(const CombinedPreferences&) const = default;
+  };
+  constexpr static CombinedPreferences k_defaultCombinedPreferences = {
+      k_defaultShowPopUp, k_defaultFont, k_defaultEditionMode, 0};
+
   /* TODO: group all 1 bit settings (showPopUp, font & editionMode) into a
    * struct of size 1byte */
   CODE_GUARD(
-      global_preferences, 3565246052,  //
+      global_preferences, 2886062991,  //
       uint8_t m_version = k_version;
       BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;
       I18n::Language m_language = k_defaultLanguage;
       I18n::Country m_country = k_defaultCountry;
-      bool m_showPopUp = k_defaultShowPopUp;
-      KDFont::Size m_font = k_defaultFont;
-      EditionMode m_editionMode = k_defaultEditionMode;
+      CombinedPreferences m_combinedPreferences = k_defaultCombinedPreferences;
       Poincare::Preferences::CalculationPreferences m_calculationPreferences =
           Poincare::Preferences::k_defaultCalculationPreferences;
       DimmingTimeType m_dimmingTime = k_defaultDimmingTime; public

@@ -9,7 +9,6 @@
 #include <poincare/layout.h>
 #include <string.h>
 
-#include "global_context.h"
 #include "toolbox_helpers.h"
 
 using namespace Poincare;
@@ -125,8 +124,9 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
       if (MathPreferences::SharedPreferences()->editionMode() ==
               Poincare::Preferences::EditionMode::Edition2D &&
           !messageTree->useRaw()) {
-        // No context is given so that f(x) is never parsed as f×(x)
-        UserExpression resultExpression = UserExpression::Parse(text, nullptr);
+        // preserveInput is true so that f(x) is never parsed as f×(x)
+        UserExpression resultExpression =
+            UserExpression::Parse(text, nullptr, {.preserveInput = true});
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
           resultLayout = resultExpression.createLayout(

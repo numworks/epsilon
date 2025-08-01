@@ -11,11 +11,22 @@ struct ParsingParameters {
   bool isAssignment = false;
   // If true, "g" will never be parsed as a unit (for solver)
   bool forceUnitUnderscore = false;
-  /* If true, the layout w_n = [] is allowed. This is useful for turning
-   * 2D sequences into 1D sequences when inserting from toolbox.
-   * TODO: It's very niche. Should probably be refactored at the same time as
-   * nullptr parsing. */
-  bool allowEmptySequence = false;
+
+  /* This tells the parser that the layout is intentionally structured as-is and
+   * should be interpreted as minimally as possible.
+   * If preserveInput is true:
+   * - Sequences can have an empty definition (e.g. w_n = [])
+   *   (useful for turning 2D sequences into 1D sequences when inserting from
+   *    toolbox).
+   * - f(x) is understood as a function and not f*(x)
+   * - abc is understood as abc and not a*b*c.
+   *   (the two previous points mean that isAssignment is included in
+   *    preserveInput)
+   * - g is always understood as a variable and not a unit.
+   *   (this means that forceUnitUnderscore is included in preserveInput)
+   * - 1 2/3 is always understood as a mixed fraction and not 1*2/3
+   */
+  bool preserveInput = false;
 };
 
 }  // namespace Poincare::ParserHelper

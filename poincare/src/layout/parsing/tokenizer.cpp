@@ -21,7 +21,7 @@ Token::Type TokenizerFailure(const char* reason) {
 
 bool Tokenizer::CanBeCustomIdentifier(UnicodeDecoder& decoder, size_t length) {
 #if TODO_PCJ
-  ParsingContext parsingContext{.param = {.isAssignment = true}};
+  ParsingContext parsingContext{.param = {.preserveInput = true}};
   Tokenizer tokenizer(decoder, &parsingContext);
   Token t = tokenizer.popToken();
   if (t.type() != Token::Type::CustomIdentifier ||
@@ -496,23 +496,22 @@ Token::Type Tokenizer::stringTokenType(const Layout* start,
   char string[Symbol::k_maxNameSize];
   LayoutSpanDecoder decoder(span);
   decoder.printInBuffer(string, std::size(string));
+  /* If preserveInput or isAssignmentDeclaration, any identifier is
+   * understood as a CustomIdentifier */
   if (!hasUnitOnlyCodePoint  // CustomIdentifiers can't contain °, ' or "
       && (m_parsingContext->metadata.isAssignmentDeclaration ||
-          m_parsingContext->context == nullptr ||
-          m_parsingContext->context->expressionTypeForIdentifier(
-              string, *length) != Context::UserNamedType::None)) {
+          m_parsingContext->params.preserveInput ||
+          (m_parsingContext->context &&
+           m_parsingContext->context->expressionTypeForIdentifier(
+               string, *length) != Context::UserNamedType::None))) {
     return Token::Type::CustomIdentifier;
   }
 
-  /* If not unit conversion and "m" has been or is being declared by the user
-   * it's understood as a variable before being understood as a unit.
-   * That's why the following condition is checked after the previous one.
-   * NOTE: We check if context isn't nullptr because when context is nullptr
-   * it's expected that no units is allowed without "_".
-   * This basically fixes the toolbox parsing of °'"
-   * TODO: Rework the way nullptr context is handled in the parser */
+  /* If "m" has been or is being declared by the user, it's understood as a
+   * variable before being understood as a unit. That's why the following
+   * condition is checked after the previous one.
+   * Also escape if unitConversion, as it was already checked earlier  */
   if (!m_parsingContext->metadata.isUnitConversion &&
-      m_parsingContext->context != nullptr &&
       !m_parsingContext->params.forceUnitUnderscore &&
       Units::Unit::CanParse(span, nullptr, nullptr)) {
     return Token::Type::Unit;

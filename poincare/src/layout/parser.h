@@ -11,7 +11,8 @@ namespace Poincare::Internal {
 
 namespace Parser {
 
-// Parses a top-level layout
+/* Parses a top-level layout.
+ * nullptr context behaves like an empty context. */
 inline Tree* Parse(const Tree* l, Context* context = nullptr,
                    ParserHelper::ParsingParameters params = {}) {
   return LayoutParser::Parse(l, {.context = context,

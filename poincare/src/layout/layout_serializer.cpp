@@ -83,7 +83,7 @@ char* LayoutSerializer::SerializeRack(const Rack* rack, char* buffer,
 }
 
 bool mayNeedParentheses(const Rack* rack) {
-  ParsingContext parsingContext{};
+  ParsingContext parsingContext{.params = {.preserveInput = true}};
   Tokenizer tokenizer(rack, &parsingContext);
   Token t = tokenizer.popToken();
   // Racks containing a single token should not need parentheses

@@ -69,8 +69,7 @@ bool is_parsable(const Tree* layout, Poincare::Context* context = nullptr) {
 }
 
 QUIZ_CASE(pcj_parse_layout_tokenize) {
-  Shared::GlobalContext ctx;
-  ParsingContext context = {.context = &ctx};
+  ParsingContext context;
   Tokenizer tokenizer(Rack::From("ab*123.45"_l), &context);
   Token token = tokenizer.popToken();
   quiz_assert(token.type() == Token::Type::CustomIdentifier &&

@@ -145,8 +145,8 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
 
       // Sequence expression
       currentChild = currentChild->nextTree();
-      if (Rack::IsEmpty(currentChild) &&
-          parsingContext.params.allowEmptySequence) {
+      // Only allow empty sequence if preserveInput is true
+      if (Rack::IsEmpty(currentChild) && parsingContext.params.preserveInput) {
         SharedTreeStack->pushBlock(Type::EmptySequenceExpression);
       } else if (!Parse(currentChild, parsingContext.cloneWithoutMetadata())) {
         TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
@@ -181,31 +181,33 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
 
       /* TODO: The behaviour relative to the parametric expressions
        * is duplicated with RackParser::parseReservedFunction */
-      bool useParameterContext = parsingContext.context && ref->isParametric();
+      bool isParametric = ref->isParametric();
       TreeVariableContext parameterContext;  // For parametric
 
       for (int i = 0; i < n; i++) {
         Context* childContext = parsingContext.context;
-
-        if (useParameterContext) {
+        bool preserveInput = parsingContext.params.preserveInput;
+        if (isParametric) {
           if (i == Parametric::k_variableIndex) {
-            /* Set the context to nullptr for the variable so that it's properly
-             * parsed as a symbol, and not as a unit or a product. */
-            childContext = nullptr;
+            /* Set preserveInput to true for the variable so that it's
+             * properly parsed as a symbol, and not as a unit or a product. */
+            preserveInput = true;
           } else if (Parametric::IsFunctionIndex(i, ref)) {
             // Use the parameter context for the function child
             childContext = &parameterContext;
           }
         }
 
-        TreeRef parsedChild =
-            Parse(l->child(i),
-                  {.context = childContext, .params = parsingContext.params});
+        ParserHelper::ParsingParameters childParams = parsingContext.params;
+        childParams.preserveInput = preserveInput;
+
+        TreeRef parsedChild = Parse(
+            l->child(i), {.context = childContext, .params = childParams});
         if (!parsedChild) {
           TreeStackCheckpoint::Raise(ExceptionType::ParseFail);
         }
 
-        if (useParameterContext && i == Parametric::k_variableIndex) {
+        if (isParametric && i == Parametric::k_variableIndex) {
           /* Store the variable child in the parameter context */
           if (!parsedChild->isUserSymbol()) {
             TreeStackCheckpoint::Raise(ExceptionType::ParseFail);

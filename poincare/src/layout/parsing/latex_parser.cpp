@@ -780,8 +780,7 @@ void BuildIntegrandChildFromLatex(const char** latexString,
        */
       Rack* rack = RackFromText(identifierStart, identifierEnd);
 
-      EmptyContext emptyContext;
-      ParsingContext parsingContext{.context = &emptyContext};
+      ParsingContext parsingContext;
       Tokenizer tokenizer(rack, &parsingContext);
       Token currentToken;
       size_t totalTokensLength = 0;

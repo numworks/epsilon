@@ -284,10 +284,11 @@ bool LayoutField::insertText(const char* text, bool indentation,
       return true;
     }
   }
-  // Single keys are not parsed to avoid changing " or g to _" or _g
-  Expression resultExpression = UTF8Helper::StringGlyphLength(text) > 1
-                                    ? Expression::Parse(text, nullptr)
-                                    : Expression();
+  // Single keys are not parsed to avoid changing " to _"
+  Expression resultExpression =
+      UTF8Helper::StringGlyphLength(text) > 1
+          ? Expression::Parse(text, nullptr, {.preserveInput = true})
+          : Expression();
   // If first inserted character was empty, cursor must be left of layout
   bool forceCursorLeftOfText =
       !forceCursorRightOfText && text[0] == UCodePointEmpty;
@@ -630,8 +631,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       Poincare::Preferences::EditionMode::Edition1D) {
     /* TODO_PCJ: Check if layout is already a 1D layout. If so, insert it
      * directly. */
-    Expression e =
-        Expression::Parse(layout, nullptr, {.allowEmptySequence = true});
+    // Parse with preserveInput to avoid modifying the layout unwantedly.
+    Expression e = Expression::Parse(layout, nullptr, {.preserveInput = true});
     if (!e.isUninitialized()) {
       layout =
           e.createLayout(LayoutPreferences::SharedPreferences()->displayMode(),

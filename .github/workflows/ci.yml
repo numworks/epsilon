@@ -43,16 +43,13 @@ env:
 jobs:
   android:
     timeout-minutes: 15
-    runs-on: ubuntu-latest
-    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.android)) }}
-    env:
-      MAKEFLAGS: '-j2'
+    runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
     steps:
-      - run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "ndk;22.1.7171670"
       - uses: actions/checkout@v4
-      - run: tools/setup.sh --only-simulator
-      - run: make -C epsilon PLATFORM=simulator TARGET=android ASSERTIONS=1 test.apk
-      - run: make -C epsilon PLATFORM=simulator TARGET=android ASSERTIONS=1 epsilon.apk
+      - name: Build container and define DOCKER_RUN
+        uses: ./.github/actions/docker-builder-android
+      - run: $DOCKER_RUN "make -C epsilon CCACHE=0 PLATFORM=android ANDROID_HOME=/opt/android-sdk ASSERTIONS=1 epsilon.apk"
+        # TODO test.apk
       - uses: actions/upload-artifact@master
         with:
           name: epsilon-android.apk

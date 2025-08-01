@@ -1,0 +1,25 @@
+# Dockerfile used by the CI
+
+FROM debian:bookworm-slim
+
+WORKDIR /runner
+
+RUN echo 'APT::Get::Assume-Yes "true";' > /etc/apt/apt.conf.d/assume-yes && \
+    apt-get update && \
+    apt-get upgrade && \
+    apt-get install --no-install-recommends sudo
+
+COPY tools/setup.sh tools/setup.sh
+
+RUN tools/setup.sh --ci
+
+RUN apt-get install sdkmanager
+RUN sdkmanager "ndk;27.2.12479018" "build-tools;29.0.2"
+
+RUN apt-get install openjdk-17-jdk
+
+RUN sdkmanager "platforms;android-34" "build-tools;30.0.2"
+
+ENV PYTHON=/runner/.venv/bin/python
+
+WORKDIR /monorepo

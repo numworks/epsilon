@@ -60,7 +60,7 @@ class Projection {
   static bool HasForbiddenDescendants(const Tree* e);
 
  private:
-  static bool ShallowReplaceUserNamed(Tree* e, Poincare::Context* context,
+  static bool ShallowReplaceUserNamed(Tree* e, const Poincare::Context& context,
                                       SymbolicComputation symbolic);
   static bool ShallowSystemProject(Tree* e, void* ctx);
 };

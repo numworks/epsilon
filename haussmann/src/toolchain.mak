@@ -11,6 +11,7 @@ SFLAGS := \
   -DDEBUG=$(DEBUG) \
   -I. \
   -I$(OUTPUT_DIRECTORY) \
+  -I$(OUTPUT_DIRECTORY)/shared \
   -MMD \
   -MP \
   -Wall

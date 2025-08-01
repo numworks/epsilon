@@ -235,8 +235,7 @@ class __attribute__((packed)) GlobalPreferences
       EditionMode m_editionMode = k_defaultEditionMode;
       Poincare::Preferences::CalculationPreferences m_calculationPreferences =
           Poincare::Preferences::k_defaultCalculationPreferences;
-      DimmingTimeType m_dimmingTime = k_defaultDimmingTime;
-      public
+      DimmingTimeType m_dimmingTime = k_defaultDimmingTime; public
       : static constexpr int k_objectSize = 20;)
 };
 

@@ -41,8 +41,12 @@ class Projection {
    * if updated. */
   static bool UpdateComplexFormatWithExpressionInput(
       const Tree* e, ProjectionContext* projectionContext);
+  /* User variables are fetched from the Context and replaced according to the
+  SymbolicComputation strategy */
   static bool DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
                                    SymbolicComputation symbolic);
+  // All user variables are replaced with Undefined
+  static bool DeepReplaceUserNamedWithUndefined(Tree* e);
   static bool DeepSystemProject(Tree* e, ProjectionContext ctx = {});
 
   /* Some projections are performed during advanced reduction instead so the

@@ -65,7 +65,7 @@ KDSize AbstractFunctionCell::minimalSizeForOptimalDisplay() const {
 }
 
 bool AbstractFunctionCell::displayFunctionType() const {
-  return !MathPreferences::SharedPreferences()->examMode().forbidGraphDetails();
+  return !ExamModeManager::ExamMode().forbidGraphDetails();
 }
 
 View* AbstractFunctionCell::subviewAtIndex(int index) {

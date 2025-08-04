@@ -25,7 +25,7 @@ static void enhancePushedExpression(UserExpression& expression) {
    *     If angleUnit = deg, cos(π) is enhanced to cos(π°)
    *     If angleUnit = *, 2->rad is enhanced to 2*->rad
    * */
-  if (!MathPreferences::SharedPreferences()->examMode().forbidUnits()) {
+  if (!ExamModeManager::ExamMode().forbidUnits()) {
     Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
         expression, MathPreferences::SharedPreferences()->angleUnit());
   }
@@ -254,8 +254,7 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
       computeInterruptible(inputExpression, complexFormat, variableStore);
 
   postProcessOutputs(calculationResult.outputs, inputExpression,
-                     m_inUsePreferences.examMode().forbidUnits(),
-                     variableStore);
+                     ExamModeManager::ExamMode().forbidUnits(), variableStore);
 
   return CalculationElements{inputExpression, calculationResult.outputs,
                              calculationResult.hasReductionFailure,

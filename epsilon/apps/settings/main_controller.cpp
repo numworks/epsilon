@@ -355,8 +355,7 @@ bool MainController::hasTestModeCell() const {
   return !hideExamModes() &&
          (examMode == CountryPreferences::AvailableExamModes::All ||
           examMode == CountryPreferences::AvailableExamModes::AmericanAll) &&
-         MathPreferences::SharedPreferences()->examMode().ruleset() ==
-             ExamMode::Ruleset::Off;
+         ExamModeManager::ExamMode().ruleset() == ExamMode::Ruleset::Off;
 }
 
 int MainController::getModelIndex(int index) const {

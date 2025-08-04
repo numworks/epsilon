@@ -76,7 +76,7 @@ KDCoordinate MathToolboxController::nonMemoizedRowHeight(int row) {
 bool MathToolboxController::isMessageTreeDisabled(
     const ToolboxMessageTree* messageTree) const {
   I18n::Message label = messageTree->label();
-  ExamMode examMode = MathPreferences::SharedPreferences()->examMode();
+  ExamMode examMode = ExamModeManager::ExamMode();
   return (messageTree->text() == I18n::Message::Sum && examMode.forbidSum()) ||
          (label == I18n::Message::BasedLogarithm &&
           examMode.forbidBasedLogarithm()) ||
@@ -234,8 +234,7 @@ int MathToolboxController::maxNumberOfDisplayedRows() const {
 }
 
 int MathToolboxController::controlChecksum() const {
-  return static_cast<int>(
-             MathPreferences::SharedPreferences()->examMode().ruleset()) *
+  return static_cast<int>(ExamModeManager::ExamMode().ruleset()) *
              I18n::NumberOfCountries +
          static_cast<int>(
              GlobalPreferences::SharedGlobalPreferences()->country()) +

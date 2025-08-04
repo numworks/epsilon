@@ -39,9 +39,7 @@ class FunctionParameterController : public Shared::ListParameterController,
   constexpr static int k_numberOfRows =
       Shared::ListParameterController::k_numberOfSharedCells + 3;
   bool displayDetails() const {
-    assert(!MathPreferences::SharedPreferences()
-                ->examMode()
-                .forbidGraphDetails() ||
+    assert(!ExamModeManager::ExamMode().forbidGraphDetails() ||
            m_detailsParameterController.detailsNumberOfSections() == 0);
     return m_detailsParameterController.detailsNumberOfSections() > 0;
   }

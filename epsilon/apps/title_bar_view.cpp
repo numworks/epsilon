@@ -89,7 +89,7 @@ void TitleBarView::layoutSubviews(bool force) {
                  Metric::TitleBarExternHorizontalMargin,
              (bounds().height() - batterySize.height()) / 2, batterySize),
       force);
-  if (MathPreferences::SharedPreferences()->examMode().isActive()) {
+  if (ExamModeManager::ExamMode().isActive()) {
     setChildFrame(
         &m_examModeIconView,
         KDRect(k_examIconMargin, (bounds().height() - k_examIconHeight) / 2,
@@ -100,7 +100,7 @@ void TitleBarView::layoutSubviews(bool force) {
                          k_examTextWidth, bounds().height() - k_verticalShift),
                   force);
     I18n::Message examModeMessage;
-    switch (MathPreferences::SharedPreferences()->examMode().ruleset()) {
+    switch (ExamModeManager::ExamMode().ruleset()) {
       case ExamMode::Ruleset::English:
         examModeMessage = I18n::Message::ExamModeTitleBarUK;
         break;

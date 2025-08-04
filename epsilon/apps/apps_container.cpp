@@ -48,12 +48,12 @@ AppsContainer::AppsContainer()
 
 int AppsContainer::numberOfExternalApps() {
   return Ion::ExternalApps::numberOfApps(
-      MathPreferences::SharedPreferences()->examMode().isActive());
+      ExamModeManager::ExamMode().isActive());
 }
 
 Ion::ExternalApps::App AppsContainer::externalAppAtIndex(int index) {
-  for (Ion::ExternalApps::App a : Ion::ExternalApps::Apps(
-           MathPreferences::SharedPreferences()->examMode().isActive())) {
+  for (Ion::ExternalApps::App a :
+       Ion::ExternalApps::Apps(ExamModeManager::ExamMode().isActive())) {
     if (index == 0) {
       return a;
     }
@@ -92,7 +92,7 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
   }
 
   // Apply exam mode and delete data
-  MathPreferences::SharedPreferences()->setExamMode(targetExamMode);
+  ExamModeManager::SetExamMode(targetExamMode);
 
   // Update storage records (functions, variables, python scripts)
   if (targetExamMode == previousMode) {
@@ -194,9 +194,9 @@ bool AppsContainer::processEvent(Ion::Events::Event event) {
       Ion::USB::clearEnumerationInterrupt();
       return false;
     }
-    if (!MathPreferences::SharedPreferences()->examMode().isActive()) {
+    if (!ExamModeManager::ExamMode().isActive()) {
       openDFU(true);
-      if (MathPreferences::SharedPreferences()->examMode().isActive()) {
+      if (ExamModeManager::ExamMode().isActive()) {
         Ion::USB::enable();
       }
     } else if (m_firstUSBEnumeration) {
@@ -293,10 +293,8 @@ void AppsContainer::handleRunException() {
 
 void AppsContainer::run() {
   window()->setAbsoluteFrame(Ion::Display::Rect);
-  const MathPreferences* preferences = MathPreferences::SharedPreferences();
-  Poincare::ExamMode examMode = preferences->examMode();
-  if (examMode.isActive()) {
-    setExamMode(examMode,
+  if (ExamModeManager::ExamMode().isActive()) {
+    setExamMode(ExamModeManager::ExamMode(),
                 Poincare::ExamMode(Ion::ExamMode::Ruleset::Uninitialized));
   } else {
     refreshPreferences();
@@ -458,10 +456,9 @@ void AppsContainer::resetShiftAlphaStatus() {
 }
 
 void AppsContainer::openDFU(bool blocking) {
-  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   App::Snapshot* activeSnapshot =
       (activeApp() == nullptr ? homeAppSnapshot() : activeApp()->snapshot());
-  Poincare::ExamMode activeExamMode = preferences->examMode();
+  Poincare::ExamMode activeExamMode = ExamModeManager::ExamMode();
 
   /* Just after a software update, the battery timer does not have time to
    * fire before the calculator enters DFU mode. As the DFU mode blocks the
@@ -485,10 +482,10 @@ void AppsContainer::openDFU(bool blocking) {
           Ion::Authentication::ClearanceLevel::NumWorks) {
     assert(Ion::ExamMode::get() == activeExamMode);
     setExamMode(ExamMode(ExamMode::Ruleset::Off), activeExamMode);
-  } else if (preferences->examMode() != activeExamMode ||
-             preferences->forceExamModeReload()) {
+  } else if (ExamModeManager::ExamMode() != activeExamMode ||
+             ExamModeManager::ForceExamModeReload()) {
     assert(Ion::ExamMode::get() == activeExamMode);
-    setExamMode(preferences->examMode(), activeExamMode);
+    setExamMode(ExamModeManager::ExamMode(), activeExamMode);
     m_firstUSBEnumeration = true;
   }
   // Update LED when exiting DFU mode

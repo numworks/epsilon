@@ -156,8 +156,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
 
   EquationStore* store = m_store;
 
-  bool forbidExactSolution =
-      MathPreferences::SharedPreferences()->examMode().forbidExactResults();
+  bool forbidExactSolution = ExamModeManager::ExamMode().forbidExactResults();
 
   int nEquations = store->numberOfDefinedModels();
   int i = 0;

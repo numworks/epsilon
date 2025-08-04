@@ -146,9 +146,7 @@ void ContinuousFunctionProperties::update(
   setSymbolType(precomputedFunctionSymbol);
   setEquationType(precomputedOperatorType);
 
-  if (MathPreferences::SharedPreferences()
-          ->examMode()
-          .forbidInequalityGraphing() &&
+  if (ExamModeManager::ExamMode().forbidInequalityGraphing() &&
       precomputedOperatorType != ComparisonJunior::Operator::Equal) {
     setErrorStatusAndUpdateCaption(Status::Banned);
     return;
@@ -293,7 +291,7 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  if (MathPreferences::SharedPreferences()->examMode().forbidImplicitPlots()) {
+  if (ExamModeManager::ExamMode().forbidImplicitPlots()) {
     CodePoint symbol = willBeAlongX ? k_ordinateSymbol : UCodePointUnknown;
     if (!IsExplicitEquation(inputEquation, symbol)) {
       setErrorStatusAndUpdateCaption(Status::Banned);
@@ -400,7 +398,7 @@ void ContinuousFunctionProperties::setCartesianEquationProperties(
                                   : CurveParameterType::CartesianFunction);
 
   if (xDeg >= 1 && xDeg <= 2 &&
-      !MathPreferences::SharedPreferences()->examMode().forbidImplicitPlots()) {
+      !ExamModeManager::ExamMode().forbidImplicitPlots()) {
     /* If implicit plots are forbidden, ignore conics (such as y=x^2) to hide
      * details. Otherwise, try to identify a conic.
      * For instance, x*y=1 as an hyperbola. */

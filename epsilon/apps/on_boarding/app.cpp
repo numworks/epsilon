@@ -33,8 +33,7 @@ void App::didBecomeActive(Window* window) {
   ::App::didBecomeActive(window);
   // Disable spinner
   Ion::Events::setSpinner(false);
-  if (MathPreferences::SharedPreferences()->examMode().color() ==
-      KDColorBlack) {
+  if (ExamModeManager::ExamMode().color() == KDColorBlack) {
     // Forbid standby in exam mode with led since it disables the led
     Ion::Power::selectStandbyMode(true);
   }

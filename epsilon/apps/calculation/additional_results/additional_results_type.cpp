@@ -94,9 +94,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
    * from creating new expressions with store node as a child. We don't
    * return any additional outputs for them to avoid bothering with special
    * cases. */
-  if (MathPreferences::SharedPreferences()
-          ->examMode()
-          .forbidAdditionalResults() ||
+  if (ExamModeManager::ExamMode().forbidAdditionalResults() ||
       input.isUninitialized() || exactOutput.isUninitialized() ||
       approximateOutput.isUninitialized() || input.isStore() ||
       exactOutput.isList() || approximateOutput.isList() ||

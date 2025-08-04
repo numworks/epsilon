@@ -43,8 +43,8 @@ OMG::GlobalBox<DefaultPreferencesWithTranslateBuiltins> s_sharedPreferences;
 OMG::GlobalBox<DefaultPreferences> s_sharedPreferences;
 #endif
 
-void Preferences::Init(Preferences::PartialInterface* partialPreferences) {
-  assert(partialPreferences == nullptr);
+void Preferences::Init(Preferences::Interface* preferences) {
+  assert(preferences == nullptr);
   s_sharedPreferences.init();
   s_preferences = s_sharedPreferences.get();
 }

@@ -4,8 +4,8 @@
 
 namespace Poincare {
 
-void Preferences::Init(Preferences::PartialInterface* partial) {
-  s_preferences = partial;
+void Preferences::Init(Preferences::Interface* preferences) {
+  s_preferences = preferences;
 }
 
 }  // namespace Poincare

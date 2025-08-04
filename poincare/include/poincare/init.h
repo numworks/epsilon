@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-void Init(Preferences::PartialInterface* prefs = nullptr,
+void Init(Preferences::Interface* preferences = nullptr,
           const ExamMode* examModePtr = nullptr);
 void Shutdown();
 

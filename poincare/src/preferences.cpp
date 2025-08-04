@@ -11,7 +11,7 @@ constexpr int Preferences::LargeNumberOfSignificantDigits;
 constexpr int Preferences::MediumNumberOfSignificantDigits;
 constexpr int Preferences::ShortNumberOfSignificantDigits;
 constexpr int Preferences::VeryShortNumberOfSignificantDigits;
-Preferences::PartialInterface* Preferences::s_otherPreferences = nullptr;
+Preferences::Interface* Preferences::s_preferences = nullptr;
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Internal::Tree* exp, Context* context,

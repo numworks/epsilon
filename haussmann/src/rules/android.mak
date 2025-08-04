@@ -27,3 +27,12 @@ $(OUTPUT_DIRECTORY)/%.apk: $$(simulator_app_deps) $(apk_deps)
 	$(Q) cp $(OUTPUT_DIRECTORY)/app/outputs/apk/release/android-release*.apk $@
 
 $(call document_extension,apk)
+
+$(OUTPUT_DIRECTORY)/%.apk.opt: $(OUTPUT_DIRECTORY)/%.apk
+	$(call rule_label,ZIPALGN)
+	$(BUILD_TOOLS_PATH)/zipalign -f 4 $< $@.temp; $(BUILD_TOOLS_PATH)/zipalign -f 4 $@.temp $@
+
+%.apk.opt: $(OUTPUT_DIRECTORY)/%.apk.opt
+	:
+
+$(call document_extension,.apk.opt,Zipaligned APK)

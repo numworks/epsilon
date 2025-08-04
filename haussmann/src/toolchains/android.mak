@@ -1,6 +1,10 @@
 ANDROID_HOME ?= /usr/local/android
 NDK_BUNDLE_VERSION ?= 28.2.13676358
 NDK_PATH ?= $(ANDROID_HOME)/ndk/$(NDK_BUNDLE_VERSION)
+# This is the version installed by gradle when building epsilon if not already
+# present.
+BUILD_TOOLS_VERSION ?= 30.0.2
+BUILD_TOOLS_PATH ?= $(ANDROID_HOME)/build-tools/$(BUILD_TOOLS_VERSION)
 
 ifeq ($(HOST),macos)
 NDK_HOST_TAG ?= darwin-x86_64

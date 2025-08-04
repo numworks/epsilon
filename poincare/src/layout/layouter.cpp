@@ -3,7 +3,6 @@
 #include <omg/unreachable.h>
 #include <omg/utf8_helper.h>
 #include <poincare/comparison_operator.h>
-#include <poincare/print_float.h>
 #include <poincare/src/expression/binary.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/expression/decimal.h>
@@ -486,7 +485,8 @@ void Layouter::serializeDecimalOrFloat(const Tree* expression, char* buffer,
     return;
   }
   int numberOfSignificantDigits =
-      m_numberOfSignificantDigits != k_undefinedNumberOfSignificantDigits
+      m_numberOfSignificantDigits !=
+              PrintFloat::k_undefinedNumberOfSignificantDigits
           ? m_numberOfSignificantDigits
       : expression->isSingleFloat()
           ? Poincare::PrintFloat::SignificantDecimalDigits<float>()

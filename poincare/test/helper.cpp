@@ -101,7 +101,8 @@ void simplify(Tree* e, const ProjectionContext& ctx, bool beautify) {
 
 void process_tree_and_compare(const char* input, const char* output,
                               ProcessTree process,
-                              ProjectionContext projectionContext) {
+                              ProjectionContext projectionContext,
+                              int nbOfSignificantDigits) {
   Tree* expected =
       parse(output, projectionContext.m_context, {.preserveInput = true});
   Tree* expression =
@@ -125,21 +126,19 @@ void process_tree_and_compare(const char* input, const char* output,
   }
   bool ok = expression->treeIsIdenticalTo(expected);
   if (!ok) {
-#ifndef PLATFORM_DEVICE
-    float expectedMetric =
-        Metric::GetMetric(expected, projectionContext.m_reductionTarget);
-    float expressionMetric =
-        Metric::GetMetric(expression, projectionContext.m_reductionTarget);
-#endif
     constexpr size_t bufferSize = 1024;
     char buffer[bufferSize];
-    serialize_expression(expression, buffer);
+    serialize_expression(expression, buffer, nbOfSignificantDigits);
     bool visuallyOk = strcmp(output, buffer) == 0;
     if (visuallyOk) {
       ok = true;
     }
 #ifndef PLATFORM_DEVICE
     else {
+      float expectedMetric =
+          Metric::GetMetric(expected, projectionContext.m_reductionTarget);
+      float expressionMetric =
+          Metric::GetMetric(expression, projectionContext.m_reductionTarget);
       const char* metricText =
           expectedMetric > expressionMetric
               ? " (better "
@@ -245,8 +244,10 @@ void store(const char* storeExpression, Poincare::Context* ctx) {
   Poincare::StoreHelper::PerformStore(ctx, s);
 }
 
-void serialize_expression(const Tree* expression, std::span<char> buffer) {
-  Tree* layout = Layouter::LayoutExpression(expression->cloneTree(), true);
+void serialize_expression(const Tree* expression, std::span<char> buffer,
+                          int numberOfSignificantDigits) {
+  Tree* layout = Layouter::LayoutExpression(expression->cloneTree(), true,
+                                            false, numberOfSignificantDigits);
   quiz_assert(layout);
   LayoutSerializer::Serialize(layout, buffer);
   remove_system_codepoints(buffer.data());

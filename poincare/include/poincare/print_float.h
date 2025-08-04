@@ -12,6 +12,7 @@ namespace Poincare {
  */
 class PrintFloat {
  public:
+  constexpr static int k_undefinedNumberOfSignificantDigits = -1;
   constexpr static size_t k_floatNumberOfSignificantDigits = 7;
   constexpr static size_t k_maxNumberOfSignificantDigits = 14;
   // ᴇ is 3 bytes long

@@ -2,6 +2,7 @@
 #define POINCARE_LAYOUTER_H
 
 #include <omg/enums.h>
+#include <poincare/print_float.h>
 #include <poincare/src/expression/decimal.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/memory/tree_ref.h>
@@ -12,12 +13,11 @@ namespace Poincare::Internal {
 
 class Layouter {
  public:
-  constexpr static int k_undefinedNumberOfSignificantDigits = -1;
-
   // Eats expression to built its layout inplace.
   static Tree* LayoutExpression(
       Tree* expression, bool linearMode = false, bool compactMode = false,
-      int numberOfSignificantDigits = k_undefinedNumberOfSignificantDigits,
+      int numberOfSignificantDigits =
+          PrintFloat::k_undefinedNumberOfSignificantDigits,
       Preferences::PrintFloatMode floatMode =
           Preferences::PrintFloatMode::Decimal,
       OMG::Base base = OMG::Base::Decimal);
@@ -41,7 +41,8 @@ class Layouter {
   // Eats expression to built its layout inplace. May raise TreeStack exceptions
   static Tree* UnsafeLayoutExpression(
       Tree* expression, bool linearMode = false, bool compactMode = false,
-      int numberOfSignificantDigits = k_undefinedNumberOfSignificantDigits,
+      int numberOfSignificantDigits =
+          PrintFloat::k_undefinedNumberOfSignificantDigits,
       Preferences::PrintFloatMode floatMode =
           Preferences::PrintFloatMode::Decimal,
       OMG::Base base = OMG::Base::Decimal);

@@ -19,6 +19,8 @@ using namespace Poincare::Internal;
 constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 constexpr ProjectionContext cartesianCtx = {.m_complexFormat =
                                                 ComplexFormat::Cartesian};
+constexpr ProjectionContext polarCtx = {.m_complexFormat =
+                                            ComplexFormat::Polar};
 
 constexpr ProjectionContext degreeCtx = {.m_angleUnit = AngleUnit::Degree};
 constexpr ProjectionContext gradianCtx = {.m_angleUnit = AngleUnit::Gradian};
@@ -224,6 +226,13 @@ QUIZ_CASE(pcj_approximation_scalar) {
 QUIZ_CASE(pcj_approximation_rational) {
   approximates_to<float>("1/3", 0.3333333f);
   approximates_to<double>("123456/1234567", 9.9999432999586E-2);
+
+  approximates_to<float>("-2-3", "-5");
+  approximates_to<float>("5-2/3", "4.333333");
+  approximates_to<double>("2/3-5", "-4.3333333333333");
+  approximates_to<float>("-2/3-5", "-5.666667");
+  approximates_to<float>("4/2×(2+3)", "10");
+  approximates_to<double>("4/2×(2+3)", "10");
 }
 
 QUIZ_CASE(pcj_approximation_addition) {
@@ -487,6 +496,35 @@ QUIZ_CASE(pcj_approximation_power) {
   projected_approximates_to<float>("3.7^2.0000001", "13.69");
   projected_approximates_to<double>("(13619-(185477161)^(1/2))^(-1)", "undef");
 
+  approximates_to<float>("1.2×e^(1)", "3.261938");
+  // WARNING: the 7th significant digit is wrong on blackbos simulator
+  approximates_to<float>("2e^(3)", "40.1711", realCtx, 6);
+  // WARNING: the 7th significant digit is wrong on simulator
+  approximates_to<float>("e^2×e^(1)", "20.0855", realCtx, 6);
+  approximates_to<double>("e^2×e^(1)", "20.085536923188");
+  approximates_to<double>("2×3^4+2", "164");
+  approximates_to<float>("-2×3^4+2", "-160");
+  simplified_approximates_to<double>("1.0092^(20)", "1.2010050593402");
+  simplified_approximates_to<double>("1.0092^(50)×ln(3/2)", "0.6409373488899",
+                                     realCtx, 13);
+  simplified_approximates_to<double>("1.0092^(50)×ln(1.0092)",
+                                     "0.01447637354655", realCtx, 13);
+  approximates_to<double>("1.0092^(20)", "1.2010050593402");
+  approximates_to<double>("1.0092^(50)×ln(3/2)", "0.6409373488899", realCtx,
+                          13);
+  approximates_to<double>("1.0092^(50)×ln(1.0092)", "0.01447637354655", realCtx,
+                          13);
+  simplified_approximates_to<double>("1.0092^(20)", "1.2010050593402");
+  simplified_approximates_to<double>("1.0092^(50)×ln(3/2)", "0.6409373488899",
+                                     realCtx, 13);
+  // approximates_to<float>("1.0092^(20)", "1.201005"); TODO
+  // does not work
+  approximates_to<float>("1.0092^(50)×ln(3/2)", "0.6409366");
+  // simplifies_approximates_to<float>("1.0092^(20)", "1.2010050593402"); TODO
+  // does not work
+  // simplifies_approximates_to<float>("1.0092^(50)×ln(3/2)",
+  // "6.4093734888993ᴇ-1"); TODO does not work
+
   // Lists
   approximates_to<float>("{1,2,3}^2", "{1,4,9}");
   approximates_to<float>("2^{1,2,3}", "{2,4,8}");
@@ -522,23 +560,19 @@ QUIZ_CASE(pcj_approximation_logarithm) {
 }
 
 QUIZ_CASE(pcj_approximation_list) {
-  approximates_to<float>("sort({True,False,True})", "{False,True,True}");
-  approximates_to<float>("sort({1,3,4,2})", "{1,2,3,4}");
-  approximates_to<float>("sort({(3,2),(1,4),(2,0),(1,1)})",
-                         "{(1,1),(1,4),(2,0),(3,2)}");
+  approximates_to<float>("{1,2,3,4,5,6}", "{1,2,3,4,5,6}");
+  approximates_to<double>("{1,2,3,4,5,6}", "{1,2,3,4,5,6}");
+  approximates_to<float>("{1,2,3,4}(-5,1)", "undef");
+  approximates_to<float>("{1,2,3,4}(0,2)", "{1,2}");
+
   approximates_to<float>("sequence(k<=1, k, 2)", "{True,False}");
   approximates_to<float>("sequence(1/(k-2)<=3, k, 5)",
                          "{True,undef,True,True,True}");
   approximates_to<float>("sequence(1/(k-2)=3, k, 5)",
                          "{False,undef,False,False,False}");
   // TODO_PCJ: approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
-
   approximates_to<float>("sequence(k^2,k,4)", "{1,4,9,16}");
   approximates_to<double>("sequence(k/2,k,7)", "{0.5,1,1.5,2,2.5,3,3.5}");
-  approximates_to<float>("{1,2,3,4,5,6}", "{1,2,3,4,5,6}");
-  approximates_to<double>("{1,2,3,4,5,6}", "{1,2,3,4,5,6}");
-  approximates_to<float>("{1,2,3,4}(-5,1)", "undef");
-  approximates_to<float>("{1,2,3,4}(0,2)", "{1,2}");
 
   Shared::GlobalContext globalContext;
   store("{1,2,3,4,5}→L", &globalContext);
@@ -603,6 +637,147 @@ QUIZ_CASE(pcj_approximation_lists_functions) {
   approximates_to<double>("sum({1,2,3})", 6.);
   // Product
   approximates_to<double>("prod({1,4,9})", 36.);
+
+  // Sort a list of scalars or booleans
+  approximates_to<float>("sort({True,False,True})", "{False,True,True}");
+  approximates_to<float>("sort({1,3,4,2})", "{1,2,3,4}");
+  approximates_to<float>("sort({(3,2),(1,4),(2,0),(1,1)})",
+                         "{(1,1),(1,4),(2,0),(3,2)}");
+  approximates_to<double>("sort({})", "{}");
+  approximates_to<double>("sort({4})", "{4}");
+  approximates_to<double>("sort({undef})", "{undef}");
+  approximates_to<double>("sort({-1,5,2+6,-0})", "{-1,0,5,8}");
+  approximates_to<double>("sort({-1,-2,-inf,inf})", "{-∞,-2,-1,∞}");
+  approximates_to<double>("sort({i})", "{i}", cartesianCtx);
+  approximates_to<double>("sort({-1,undef,-2,-inf,inf})",
+                          "{undef,undef,undef,undef,undef}");
+  approximates_to<double>("sort({-1,undef,1})", "{undef,undef,undef}");
+  // Sort list of points
+  approximates_to<double>("sort({(8,1),(5,0),(5,-3),(1,0),(5,9)})",
+                          "{(1,0),(5,-3),(5,0),(5,9),(8,1)}");
+  approximates_to<double>("sort({(inf,1),(6,1),(5,-3),(-inf,9),(-inf,1)})",
+                          "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}");
+}
+
+QUIZ_CASE(pcj_approximation_complex_format) {
+  // Real
+  approximates_to<float>("0", "0");
+  approximates_to<double>("0", "0");
+  approximates_to<float>("10", "10");
+  approximates_to<double>("-10", "-10");
+  approximates_to<float>("100", "100");
+  approximates_to<double>("0.1", "0.1");
+  approximates_to<float>("0.1234567", "0.1234567");
+  approximates_to<double>("0.123456789012345", "0.12345678901235");
+#if 0  // TODO_PCJ: returns undef or i instead of nonreal
+  projected_approximates_to<float>("1+2×i", "nonreal");
+  projected_approximates_to<double>("1+i-i", "nonreal");
+  projected_approximates_to<double>("3-i", "nonreal");
+  projected_approximates_to<float>("3-i-3", "nonreal");
+  projected_approximates_to<float>("i", "nonreal");
+#endif
+  projected_approximates_to<float>("1+i-1", "nonreal");
+  projected_approximates_to<double>("1+i", "nonreal");
+  projected_approximates_to<float>("3+i", "nonreal");
+  projected_approximates_to<double>("√(-1)", "nonreal");
+  projected_approximates_to<double>("√(-1)×√(-1)", "nonreal");
+  projected_approximates_to<double>("ln(-2)", "nonreal");
+  // Power/Root approximates to the first REAL root in Real mode
+  // Power have to be simplified first in order to spot the right form c^(p/q)
+  // with p, q integers
+  simplified_approximates_to<double>("(-8)^(1/3)", "-2");
+  // Root approximates to the first REAL root in Real mode
+  approximates_to<double>("root(-8,3)", "-2");
+  approximates_to<double>("8^(1/3)", "2");
+  // Power have to be simplified first (cf previous comment)
+  simplified_approximates_to<float>("(-8)^(2/3)", "4");
+  approximates_to<float>("root(-8, 3)^2", "4");
+  approximates_to<double>("root(-8,3)", "-2");
+
+  // Cartesian
+  approximates_to<float>("0", "0", cartesianCtx);
+  approximates_to<double>("0", "0", cartesianCtx);
+  approximates_to<float>("10", "10", cartesianCtx);
+  approximates_to<double>("-10", "-10", cartesianCtx);
+  approximates_to<float>("100", "100", cartesianCtx);
+  approximates_to<double>("0.1", "0.1", cartesianCtx);
+  approximates_to<float>("0.1234567", "0.1234567", cartesianCtx);
+  approximates_to<double>("0.123456789012345", "0.12345678901235",
+                          cartesianCtx);
+  approximates_to<float>("1+2×i", "1+2×i", cartesianCtx);
+  approximates_to<double>("1+i-i", "1", cartesianCtx);
+  approximates_to<float>("1+i-1", "i", cartesianCtx);
+  approximates_to<double>("1+i", "1+i", cartesianCtx);
+  approximates_to<float>("3+i", "3+i", cartesianCtx);
+  approximates_to<double>("3-i", "3-i", cartesianCtx);
+  approximates_to<float>("3-i-3", "-i", cartesianCtx);
+  approximates_to<float>("i", "i", cartesianCtx);
+  approximates_to<double>("√(-1)", "i", cartesianCtx);
+  approximates_to<double>("√(-1)×√(-1)", "-1", cartesianCtx);
+  approximates_to<double>("ln(-2)", "0.69314718055995+3.1415926535898×i",
+                          cartesianCtx);
+  approximates_to<double>("(-8)^(1/3)", "1+1.7320508075689×i", cartesianCtx);
+  approximates_to<float>("(-8)^(2/3)", "-2+3.4641×i", cartesianCtx, 6);
+  approximates_to<double>("root(-8,3)", "1+1.7320508075689×i", cartesianCtx);
+
+  // Polar
+  approximates_to<float>("0", "0", polarCtx);
+  approximates_to<double>("0", "0", polarCtx);
+  approximates_to<float>("10", "10", polarCtx);
+  approximates_to<double>("-10", "10×e^(3.1415926535898×i)", polarCtx);
+
+  approximates_to<float>("100", "100", polarCtx);
+  approximates_to<double>("0.1", "0.1", polarCtx);
+  approximates_to<float>("0.1234567", "0.1234567", polarCtx);
+  approximates_to<double>("0.12345678", "0.12345678", polarCtx);
+
+  approximates_to<float>("1+2×i", "2.236068×e^(1.107149×i)", polarCtx);
+  approximates_to<float>("1+i-i", "1", polarCtx);
+  approximates_to<double>("1+i-1", "e^(1.57079632679×i)", polarCtx, 12);
+  approximates_to<float>("1+i", "1.414214×e^(0.7853982×i)", polarCtx);
+  approximates_to<double>("3+i", "3.16227766017×e^(0.321750554397×i)", polarCtx,
+                          12);
+  approximates_to<float>("3-i", "3.162278×e^(-0.3217506×i)", polarCtx);
+  approximates_to<double>("3-i-3", "e^(-1.57079632679×i)", polarCtx, 12);
+  // 2e^(i) has a too low precision in float on the web platform
+  approximates_to<float>("3e^(2*i)", "3×e^(2×i)", polarCtx, 4);
+#if 0  // TODO_PCJ: approximates to -1*i, fix beautification?
+  approximates_to<double>("2e^(-i)", "2×e^(-i)", polarCtx, 9);
+#endif
+
+  approximates_to<float>("i", "e^(1.570796×i)", polarCtx);
+  approximates_to<double>("√(-1)", "e^(1.5707963267949×i)", polarCtx);
+  approximates_to<double>("√(-1)×√(-1)", "e^(3.1415926535898×i)", polarCtx);
+  approximates_to<double>("(-8)^(1/3)", "2×e^(1.0471975511966×i)", polarCtx);
+  approximates_to<float>("(-8)^(2/3)", "4×e^(2.094395×i)", polarCtx);
+  approximates_to<double>("root(-8,3)", "2×e^(1.0471975511966×i)", polarCtx);
+
+  // Cartesian to Polar and vice versa
+  approximates_to<double>("2+3×i", "3.60555127546×e^(0.982793723247×i)",
+                          polarCtx, 12);
+  approximates_to<double>("3.60555127546×e^(0.982793723247×i)", "2+3×i",
+                          cartesianCtx, 12);
+  approximates_to<float>("12.04159457879229548012824103×e^(1.4876550949×i)",
+                         "1+12×i", cartesianCtx, 5);
+
+  // Overflow
+  approximates_to<float>("-2ᴇ20+2ᴇ20×i", "-2ᴇ20+2ᴇ20×i", cartesianCtx);
+  /* TODO: this test fails on the device because libm hypotf (which is called
+   * eventually by std::abs) is not accurate enough. We might change the
+   * embedded libm? */
+  // approximates_to<float>("-2ᴇ20+2ᴇ20×i", "2.828427ᴇ20×e^(2.356194×i)",
+  // polarCtx);
+  approximates_to<double>("1ᴇ155-1ᴇ155×i", "1ᴇ155-1ᴇ155×i", cartesianCtx);
+  approximates_to<double>("1ᴇ155-1ᴇ155×i", "∞×e^(-0.785398163397×i)", polarCtx,
+                          12);
+#if 0  // TODO_PCJ: fix, returns undef
+  approximates_to<float>("-2ᴇ100+2ᴇ100×i", "-∞+∞×i");
+  approximates_to<double>("-2ᴇ360+2ᴇ360×i", "-∞+∞×i");
+  approximates_to<float>("-2ᴇ100+2ᴇ10×i", "-∞+2ᴇ10×i");
+  approximates_to<double>("-2ᴇ360+2×i", "-∞+2×i");
+#endif
+  approximates_to<float>("undef+2ᴇ100×i", "undef");
+  approximates_to<double>("-2ᴇ360+undef×i", "undef");
 }
 
 QUIZ_CASE(pcj_approximation_map_on_list) {
@@ -721,6 +896,20 @@ QUIZ_CASE(pcj_approximation_matrix) {
   // We do not map on matrices anymore
   approximates_to<float>("abs([[1,-2][3,-4]])", "undef");
   approximates_to<double>("abs([[1,-2][3,-4]])", "undef");
+}
+
+QUIZ_CASE(pcj_approximation_point) {
+  approximates_to<float>("(1,2)", "(1,2)");
+  approximates_to<float>("(1/0,2)", "(undef,2)");
+  approximates_to<float>("(1,2)+3", "undef");
+  approximates_to<float>("abs((1.23,4.56))", "undef");
+  approximates_to<float>("{(1+2,3+4),(5+6,7+8)}", "{(3,7),(11,15)}");
+
+  approximates_to<double>("(1,2)", "(1,2)");
+  approximates_to<double>("(1/0,2)", "(undef,2)");
+  approximates_to<double>("(1,2)+3", "undef");
+  approximates_to<double>("abs((1.23,4.56))", "undef");
+  approximates_to<double>("{(1+2,3+4),(5+6,7+8)}", "{(3,7),(11,15)}");
 }
 
 QUIZ_CASE(pcj_approximation_infinity) {
@@ -900,6 +1089,8 @@ QUIZ_CASE(pcj_approximation_units) {
 }
 
 QUIZ_CASE(pcj_approximation_trigonometry) {
+  approximates_to<double>("sin(3)2(4+2)", "1.6934400967184");
+  approximates_to<double>("-sin(3)×2-3", "-3.2822400161197");
   approximates_to<float>("arccot(0)", "1.570796");
   approximates_to<float>("arccot(0)", "90", degreeCtx);
   approximates_to<float>("arccot(0.5)", "1.107149");

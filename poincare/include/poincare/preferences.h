@@ -57,26 +57,31 @@ class Preferences {
       OMG::BitHelper::numberOfBitsToCountUpTo(
           static_cast<uint8_t>(ComplexFormat::NFormats));
 
-  struct CalculationPreferences {
-    AngleUnit angleUnit : k_numberOfBitsForAngleUnit;
-    PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
-    ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
-    /* Explicitly declare padding bits to avoid uninitalized values. */
-    uint8_t padding
-        : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
-          k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode -
-          1 - k_numberOfBitsForComplexFormat;
-    uint8_t numberOfSignificantDigits;
-
-    bool operator==(const CalculationPreferences&) const = default;
-  };
+  /* NOTE: This code guard is not currently necessary as those preferenes aren't
+   * handled by the website. But they might. */
+  CODE_GUARD(
+      calculation_preferences, 3458444324,  //
+      struct CalculationPreferences {
+        uint8_t numberOfSignificantDigits;
+        AngleUnit angleUnit : k_numberOfBitsForAngleUnit;
+        PrintFloatMode displayMode : k_numberOfBitsForPrintFloatMode;
+        ComplexFormat complexFormat : k_numberOfBitsForComplexFormat;
+        /* Explicitly declare padding bits to avoid uninitalized values. */
+        uint8_t padding
+            : OMG::BitHelper::numberOfBitsIn<uint8_t>() -
+              k_numberOfBitsForAngleUnit - k_numberOfBitsForPrintFloatMode -
+              k_numberOfBitsForComplexFormat;
+        bool operator==(const CalculationPreferences&) const = default;
+      };)
 
   constexpr static CalculationPreferences k_defaultCalculationPreferences = {
+      .numberOfSignificantDigits =
+          Preferences::DefaultNumberOfPrintedSignificantDigits,
       .angleUnit = AngleUnit::Radian,
       .displayMode = Preferences::PrintFloatMode::Decimal,
       .complexFormat = Preferences::ComplexFormat::Real,
-      .numberOfSignificantDigits =
-          Preferences::DefaultNumberOfPrintedSignificantDigits};
+      .padding = 0,
+  };
 
   // --- Country-dependent preferences ---
 
@@ -137,7 +142,7 @@ class Preferences {
  private:
   Preferences() = default;
   static Interface* s_preferences;
-};
+};  // namespace Poincare
 static_assert(sizeof(Preferences) == 1,
               "Preferences should not contain anything");
 

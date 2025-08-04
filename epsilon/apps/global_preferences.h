@@ -6,6 +6,7 @@
 #include <ion.h>
 #include <kandinsky/font.h>
 #include <omg/global_box.h>
+#include <omg/unreachable.h>
 
 #include "apps_container_helper.h"
 
@@ -13,22 +14,17 @@
 #include <emscripten.h>
 #endif
 
-/* GlobalPreferences live in the Storage, which does not enforce alignment. The
- * packed attribute ensures the compiler will not emit instructions that require
- * the data to be aligned. */
-class __attribute__((packed)) GlobalPreferences
-    : public Escher::LayoutPreferences::Interface,
-      public Poincare::Preferences::Interface {
-  friend OMG::GlobalBox<GlobalPreferences>;
-  friend Ion::Storage::FileSystem;
-
+/* [GlobalPreferences] is a singleton, its unique instance is accessible via
+ * [SharedGlobalPreferences()].
+ * The preferences are stored in Storage via a struct [GlobalPreferencesData].
+ * See comment before CODE_GUARD for more context. */
+class GlobalPreferences : public Escher::LayoutPreferences::Interface,
+                          public Poincare::Preferences::Interface {
   /* Friend class for test purposes that can access the GlobalPreferences
    * private constructor. */
   friend class GlobalPreferencesTestBuilder;
 
  public:
-  constexpr static char k_recordName[] = "gp";
-
   constexpr static I18n::Country k_defaultCountry = I18n::Country::WW;
 
   constexpr static const CountryPreferences& defaultCountryPreferences() {
@@ -37,89 +33,82 @@ class __attribute__((packed)) GlobalPreferences
   }
 
   static GlobalPreferences* SharedGlobalPreferences();
+  static void Init();
 
-  bool operator==(const GlobalPreferences&) const = default;
-
-  I18n::Language language() const { return m_language; }
-  void setLanguage(I18n::Language language) { m_language = language; }
-  I18n::Country country() const { return m_country; }
-  void setCountry(I18n::Country country) {
-    m_country = country;
+  I18n::Language language() const { return s_data->m_language; }
+  void setLanguage(I18n::Language language) { s_data->m_language = language; }
+  I18n::Country country() const { return s_data->m_country; }
+  void setCountry(I18n::Country country, bool updateSnapshots = true) {
+    s_data->m_country = country;
     AppsContainerHelper::notifyCountryChangeToSnapshots();
   }
 
-  constexpr CountryPreferences::AvailableExamModes availableExamModes() const {
+  CountryPreferences::AvailableExamModes availableExamModes() const {
     return countryPreferences().availableExamModes();
   }
-  constexpr CountryPreferences::MethodForQuartiles methodForQuartiles() const {
+  CountryPreferences::MethodForQuartiles methodForQuartiles() const {
     return countryPreferences().methodForQuartiles();
   }
-  constexpr CountryPreferences::OutlierDefaultVisibility outliersStatus()
-      const {
+  CountryPreferences::OutlierDefaultVisibility outliersStatus() const {
     return countryPreferences().outliersStatus();
   }
-  constexpr CountryPreferences::HistogramsOffset histogramOffset() const {
+  CountryPreferences::HistogramsOffset histogramOffset() const {
     return countryPreferences().histogramOffset();
   }
-  constexpr Poincare::Preferences::UnitFormat unitFormat() const {
+  Poincare::Preferences::UnitFormat unitFormat() const {
     return countryPreferences().unitFormat();
   }
-  constexpr CountryPreferences::HomeAppsLayout homeAppsLayout() const {
+  CountryPreferences::HomeAppsLayout homeAppsLayout() const {
     return countryPreferences().homeAppsLayout();
   }
-  constexpr const char* discriminantSymbol() const {
+  const char* discriminantSymbol() const {
     return countryPreferences().discriminantSymbol();
   }
-  constexpr const char* yPredictedSymbol() const {
+  const char* yPredictedSymbol() const {
     return countryPreferences().yPredictedSymbol();
   }
-  constexpr CountryPreferences::StatsRowsLayout statsRowsLayout() const {
+  CountryPreferences::StatsRowsLayout statsRowsLayout() const {
     return countryPreferences().statsRowsLayout();
   }
-  constexpr Poincare::Preferences::CombinatoricSymbols combinatoricSymbols()
+  Poincare::Preferences::CombinatoricSymbols combinatoricSymbols()
       const override {
     return countryPreferences().combinatoricSymbols();
   }
-  constexpr CountryPreferences::ListsStatsOrderInToolbox
-  listsStatsOrderInToolbox() const {
+  CountryPreferences::ListsStatsOrderInToolbox listsStatsOrderInToolbox()
+      const {
     return countryPreferences().listsStatsOrderInToolbox();
   }
-  constexpr Poincare::Preferences::MixedFractions mixedFractions() const {
+  Poincare::Preferences::MixedFractions mixedFractions() const {
     return countryPreferences().mixedFractions();
   }
-  constexpr bool mixedFractionsAreEnabled() const override {
+  bool mixedFractionsAreEnabled() const override {
     return countryPreferences().mixedFractions() ==
            Poincare::Preferences::MixedFractions::Enabled;
   }
-  constexpr CountryPreferences::RegressionApp regressionAppVariant() const {
+  CountryPreferences::RegressionApp regressionAppVariant() const {
     return countryPreferences().regressionAppVariant();
   }
-  constexpr CountryPreferences::GraphTemplatesLayout graphTemplatesLayout()
-      const {
+  CountryPreferences::GraphTemplatesLayout graphTemplatesLayout() const {
     return countryPreferences().graphTemplatesLayout();
   }
-  constexpr Poincare::Preferences::LogarithmBasePosition logarithmBasePosition()
+  Poincare::Preferences::LogarithmBasePosition logarithmBasePosition()
       const override {
     return countryPreferences().logarithmBasePosition();
   }
-  constexpr Escher::LayoutPreferences::LogarithmKeyEvent logarithmKeyEvent()
+  Escher::LayoutPreferences::LogarithmKeyEvent logarithmKeyEvent()
       const override {
     return countryPreferences().logarithmKeyEvent();
   }
-  constexpr Poincare::Preferences::ParabolaParameter parabolaParameter()
-      const override {
+  Poincare::Preferences::ParabolaParameter parabolaParameter() const override {
     return countryPreferences().parabolaParameter();
   }
-  constexpr CountryPreferences::SolverDoubleRootName solverDoubleRootName()
-      const {
+  CountryPreferences::SolverDoubleRootName solverDoubleRootName() const {
     return countryPreferences().solverDoubleRootName();
   }
-  constexpr CountryPreferences::GraphTemplateDefault graphTemplateDefault()
-      const {
+  CountryPreferences::GraphTemplateDefault graphTemplateDefault() const {
     return countryPreferences().graphTemplateDefault();
   }
-  constexpr CountryPreferences::StepAdjustmentWarning stepAdjustmentWarning()
-      const {
+  CountryPreferences::StepAdjustmentWarning stepAdjustmentWarning() const {
     return countryPreferences().stepAdjustmentWarning();
   }
   int sequencesInitialRank() const;
@@ -141,68 +130,72 @@ class __attribute__((packed)) GlobalPreferences
                                 : I18n::Message::OpenRightInterval);
   }
 
-  bool showPopUp() const { return m_combinedPreferences.showPopUp; }
+  bool showPopUp() const { return s_data->m_combinedPreferences.showPopUp; }
   void setShowPopUp(bool showPopUp) {
-    m_combinedPreferences.showPopUp = showPopUp;
+    s_data->m_combinedPreferences.showPopUp = showPopUp;
   }
 
   constexpr static int NumberOfBrightnessStates = 12;
-  int brightnessLevel() const { return m_brightnessLevel; }
+  int brightnessLevel() const { return s_data->m_brightnessLevel; }
   void setBrightnessLevel(int brightnessLevel);
 
-  int dimmingTime() const { return m_dimmingTime; }
-  void setDimmingTime(int dimmingTime) { m_dimmingTime = dimmingTime; }
+  int dimmingTime() const { return s_data->m_dimmingTime; }
+  void setDimmingTime(int dimmingTime) { s_data->m_dimmingTime = dimmingTime; }
 
-  KDFont::Size font() const { return m_combinedPreferences.font; }
-  void setFont(KDFont::Size font) { m_combinedPreferences.font = font; }
+  KDFont::Size font() const { return s_data->m_combinedPreferences.font; }
+  void setFont(KDFont::Size font) { s_data->m_combinedPreferences.font = font; }
 
   enum class EditionMode : bool {
     Edition2D = 0,
     Edition1D = 1,
   };
-  EditionMode editionMode() const { return m_combinedPreferences.editionMode; }
+  EditionMode editionMode() const {
+    return s_data->m_combinedPreferences.editionMode;
+  }
   bool linearMode() const override {
     return editionMode() == EditionMode::Edition1D;
   }
   void setEditionMode(EditionMode editionMode) {
-    m_combinedPreferences.editionMode = editionMode;
+    s_data->m_combinedPreferences.editionMode = editionMode;
   }
 
   // In milliseconds
   constexpr static uint32_t k_defaultDimmingTime = 30 * 1000;
 
   Poincare::Preferences::CalculationPreferences calculationPreferences() const {
-    return m_calculationPreferences;
+    return s_data->m_calculationPreferences;
   }
   Poincare::Preferences::AngleUnit angleUnit() const {
-    return m_calculationPreferences.angleUnit;
+    return s_data->m_calculationPreferences.angleUnit;
   }
   void setAngleUnit(Poincare::Preferences::AngleUnit angleUnit) {
-    m_calculationPreferences.angleUnit = angleUnit;
+    s_data->m_calculationPreferences.angleUnit = angleUnit;
   }
   Poincare::Preferences::PrintFloatMode displayMode() const override {
-    return m_calculationPreferences.displayMode;
+    return s_data->m_calculationPreferences.displayMode;
   }
   void setDisplayMode(Poincare::Preferences::PrintFloatMode displayMode) {
-    m_calculationPreferences.displayMode = displayMode;
+    s_data->m_calculationPreferences.displayMode = displayMode;
   }
   Poincare::Preferences::ComplexFormat complexFormat() const {
-    return m_calculationPreferences.complexFormat;
+    return s_data->m_calculationPreferences.complexFormat;
   }
   void setComplexFormat(Poincare::Preferences::ComplexFormat complexFormat) {
-    m_calculationPreferences.complexFormat = complexFormat;
+    s_data->m_calculationPreferences.complexFormat = complexFormat;
   }
   uint8_t numberOfSignificantDigits() const {
-    return m_calculationPreferences.numberOfSignificantDigits;
+    return s_data->m_calculationPreferences.numberOfSignificantDigits;
   }
   void setNumberOfSignificantDigits(uint8_t numberOfSignificantDigits) {
-    m_calculationPreferences.numberOfSignificantDigits =
+    s_data->m_calculationPreferences.numberOfSignificantDigits =
         numberOfSignificantDigits;
   }
   uint32_t mathPreferencesCheckSum() const {
     return (static_cast<uint32_t>(complexFormat()) << 8) +
            static_cast<uint32_t>(angleUnit());
   }
+
+  static GlobalPreferences GlobalPreferencesInstance;
 
  private:
   constexpr static uint8_t k_version = 2;
@@ -224,12 +217,12 @@ class __attribute__((packed)) GlobalPreferences
 
   /* GlobalPreferences is a singleton, hence the private constructor. The unique
    * instance can be accessed through the
-   * GlobalPreferences::SharedGlobalPreferences() pointer.
-   */
+   * GlobalPreferences::SharedGlobalPreferences() pointer. */
   GlobalPreferences() = default;
 
-  constexpr const CountryPreferences& countryPreferences() const {
-    return I18n::CountryPreferencesArray[static_cast<uint8_t>(m_country)];
+  const CountryPreferences& countryPreferences() const {
+    return I18n::CountryPreferencesArray[static_cast<uint8_t>(
+        s_data->m_country)];
   }
 
   /* There should already have been an error when processing an empty
@@ -241,40 +234,60 @@ class __attribute__((packed)) GlobalPreferences
   static_assert(I18n::NumberOfCountries > 0,
                 "I18n::NumberOfCountries is not superior to 0");
 
-  struct CombinedPreferences {
-    bool showPopUp : 1;
-    KDFont::Size font : 1;
-    EditionMode editionMode : 1;
-    uint8_t padding : OMG::BitHelper::numberOfBitsIn<uint8_t>() - 3;
-    bool operator==(const CombinedPreferences&) const = default;
-  };
+  CODE_GUARD(
+      combined_preferences, 1870460707,  //
+      struct __attribute__((packed)) CombinedPreferences {
+        bool showPopUp : 1;
+        KDFont::Size font : 1;
+        EditionMode editionMode : 1;
+        uint8_t padding : OMG::BitHelper::numberOfBitsIn<uint8_t>() - 3;
+        bool operator==(const CombinedPreferences&) const = default;
+      };)
   constexpr static CombinedPreferences k_defaultCombinedPreferences = {
       k_defaultShowPopUp, k_defaultFont, k_defaultEditionMode, 0};
 
-  /* TODO: group all 1 bit settings (showPopUp, font & editionMode) into a
-   * struct of size 1byte */
+  /* Instead of storing [GlobalPreferences] to the Storage, we use a smaller
+   * struct [GlobalPreferencesData], this is because [m_version] field need to
+   * be located at byte 0 in the stored record for the website.
+   * But the vtables of [GlobalPreferences] due to inheritance causes an
+   * unwanted offset in the stored version number location */
   CODE_GUARD(
-      global_preferences, 2886062991,  //
-      uint8_t m_version = k_version;
-      BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;
-      I18n::Language m_language = k_defaultLanguage;
-      I18n::Country m_country = k_defaultCountry;
-      CombinedPreferences m_combinedPreferences = k_defaultCombinedPreferences;
-      Poincare::Preferences::CalculationPreferences m_calculationPreferences =
-          Poincare::Preferences::k_defaultCalculationPreferences;
-      DimmingTimeType m_dimmingTime = k_defaultDimmingTime; public
-      : static constexpr int k_objectSize = 24;)
-};
+      global_preferences, 3515784298,  //
+      struct __attribute__((packed)) GlobalPreferencesData {
+        friend OMG::GlobalBox<GlobalPreferences>;
+        friend Ion::Storage::FileSystem;
+        constexpr static char k_recordName[] = "gp";
+
+        uint8_t m_version = k_version;
+        BrightnessType m_brightnessLevel = k_defaultBrightnessLevel;
+        I18n::Language m_language = k_defaultLanguage;
+        I18n::Country m_country = k_defaultCountry;
+        CombinedPreferences m_combinedPreferences =
+            k_defaultCombinedPreferences;
+        Poincare::Preferences::CalculationPreferences m_calculationPreferences =
+            Poincare::Preferences::k_defaultCalculationPreferences;
+        DimmingTimeType m_dimmingTime = k_defaultDimmingTime;
+        bool operator==(const GlobalPreferencesData&) const = default;
+      };
+      static_assert(sizeof(Poincare::Preferences::CalculationPreferences) ==
+                    2);)
+  static GlobalPreferencesData* s_data;
 
 #if PLATFORM_DEVICE
-static_assert(sizeof(GlobalPreferences) == GlobalPreferences::k_objectSize,
-              "Class GlobalPreferences changed size");
+  static_assert(
+      sizeof(GlobalPreferencesData) == 14,
+      "Class GlobalPreferencesData changed size, might affect website");
 #endif
 
 #if __EMSCRIPTEN
-/* GlobalPreferences live in the Storage which does not enforce alignment, so
- * make sure Emscripten cannot attempt unaligned accesses. */
-static_assert(std::alignment_of<GlobalPreferences>() == 1);
+  /* GlobalPreferencesData lives in the Storage which does not enforce
+   * alignment, so make sure Emscripten cannot attempt unaligned accesses. */
+  static_assert(std::alignment_of<GlobalPreferencesData>() == 1);
 #endif
+};
+
+// TODO?
+// inline constexpr GlobalPreferences& SharedGlobalPreferences =
+//     GlobalPreferences::GlobalPreferencesInstance;
 
 #endif

@@ -1,5 +1,5 @@
-def EPSILON_BUILD_DIR = project.getProperty("outputDirectory")
-def BUILD_DIR = EPSILON_BUILD_DIR+'/app'
+def OUTPUT_DIR = project.getProperty("outputDirectory")
+def GRADLE_BUILD_DIR = OUTPUT_DIR+'/app'
 
 def projectVariable(name) {
   /* This function retrieves a variable from the environment and falls back
@@ -26,7 +26,7 @@ allprojects {
     jcenter()
     google()
   }
-  buildDir = BUILD_DIR
+  buildDir = GRADLE_BUILD_DIR
 }
 
 apply plugin: 'com.android.application'
@@ -65,10 +65,10 @@ android {
   sourceSets{
     main {
       manifest.srcFile 'src/AndroidManifest.xml'
-      res.srcDir BUILD_DIR + '/res'
+      res.srcDir GRADLE_BUILD_DIR + '/res'
       java.srcDir 'src'
-      jniLibs.srcDir BUILD_DIR + '/libs/epsilon'
-      assets.srcDirs = ['../assets', EPSILON_BUILD_DIR + '/ion/src/simulator/assets']
+      jniLibs.srcDir GRADLE_BUILD_DIR + '/libs/epsilon'
+      assets.srcDirs = ['../assets', OUTPUT_DIR + '/ion/src/simulator/assets']
     }
   }
   lintOptions {

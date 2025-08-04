@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <omg/unreachable.h>
 #include <poincare/preferences.h>
 
 namespace Poincare {
@@ -20,13 +21,14 @@ class DefaultPreferences : public Preferences::Interface {
     return Preferences::TranslateBuiltins::No;
   }
   void setTranslateBuiltins(Preferences::TranslateBuiltins translate) override {
+    OMG::unreachable();
   }
   constexpr Preferences::ParabolaParameter parabolaParameter() const override {
     return Preferences::k_defaultParabolaParameter;
   }
 };
 
-#ifdef POINCARE_TRANSLATE_BUILTINS
+#if POINCARE_TRANSLATE_BUILTINS
 class DefaultPreferencesWithTranslateBuiltins : public DefaultPreferences {
   Preferences::TranslateBuiltins translateBuiltins() const override {
     return m_translatedBuiltins;

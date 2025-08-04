@@ -10,22 +10,16 @@
 #include <poincare/src/expression/context.h>
 #include <stdint.h>
 
-// Forward-declarations of friend classes in other namespaces
-namespace Ion::Storage {
-class FileSystem;
-}
-
 namespace Poincare {
 
 using ReductionTarget = Internal::ReductionTarget;
 using SymbolicComputation = Internal::SymbolicComputation;
 
-/**
- * Preferences live in the Storage, which does not enforce alignment. The
- * packed attribute ensures the compiler will not emit instructions that require
- * the data to be aligned.
- * TODO: Ideally the class should be final, but we need to override it with
- * Apps::MathPreferences and Escher::LayoutPreferences. See comment below. */
+/* [Preferences] is a singleton accessible via the [SharedPreferences] instance.
+ * The object gives access to an implementation of [Preferences::Interface].
+ * The class also defines (or uses) structs and enums relative to Poincare
+ * settings.
+ */
 class Preferences {
  public:
   constexpr static int DefaultNumberOfPrintedSignificantDigits = 10;
@@ -35,9 +29,7 @@ class Preferences {
   constexpr static int ShortNumberOfSignificantDigits = 4;
   constexpr static int VeryShortNumberOfSignificantDigits = 3;
 
-  constexpr static char k_recordName[] = "pr";
-
-  // Calculation preferences
+  // --- Calculation preferences ---
 
   using AngleUnit = Internal::AngleUnit;
   /* The 'PrintFloatMode' refers to the way to display float 'scientific' or
@@ -86,10 +78,10 @@ class Preferences {
       .numberOfSignificantDigits =
           Preferences::DefaultNumberOfPrintedSignificantDigits};
 
-  // Other preferences
+  // --- Country-dependent preferences ---
+
   using UnitFormat = Internal::UnitFormat;
-  /* The symbol used for combinations and permutations is country-dependent and
-   * set in apps but it stored there to be accessible from Poincare */
+
   enum class CombinatoricSymbols : uint8_t {
     Default = 0,
     LetterWithSubAndSuperscript,
@@ -116,6 +108,9 @@ class Preferences {
   constexpr static ParabolaParameter k_defaultParabolaParameter =
       ParabolaParameter::Default;
 
+  /* These country-dependent preferences are needed inside Poincare.
+   * This [Interface] allows the storage of those preferences to be outside
+   * Poincare while maintaining Poincare's independence */
   class Interface {
    public:
     virtual CombinatoricSymbols combinatoricSymbols() const = 0;
@@ -143,6 +138,8 @@ class Preferences {
   Preferences() = default;
   static Interface* s_preferences;
 };
+static_assert(sizeof(Preferences) == 1,
+              "Preferences should not contain anything");
 
 inline constexpr const Preferences& SharedPreferences =
     Preferences::PreferencesInstance;

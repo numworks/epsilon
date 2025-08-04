@@ -7,11 +7,11 @@
 # named libepsilon.so), and it's easy to make Gradle use a given executable by
 # simply using the jniLibs.src directive.
 define path_for_arch_jni_lib
-$$(OUTPUT_DIRECTORY)/app/libs/epsilon/$(1)/libepsilon.so
+$$(OUTPUT_DIRECTORY)/app/libs/%/$(1)/libepsilon.so
 endef
 
 define rule_for_arch_jni_lib
-$(call path_for_arch_jni_lib,$(1)): $$(OUTPUT_DIRECTORY)/$(1)/epsilon.so | $$$$(@D)/.
+$(call path_for_arch_jni_lib,$(1)): $$(OUTPUT_DIRECTORY)/$(1)/%.so | $$$$(@D)/.
 	$(Q) cp $$< $$@
 endef
 
@@ -23,7 +23,7 @@ apk_deps += $(addprefix $(OUTPUT_DIRECTORY)/app/res/,mipmap/ic_launcher.png mipm
 
 $(OUTPUT_DIRECTORY)/%.apk: $$(simulator_app_deps) $(apk_deps)
 	$(call rule_label,GRADLE)
-	$(Q) ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle -PappVersion=$(APP_VERSION) -PoutputDirectory=$$(realpath $(OUTPUT_DIRECTORY)) -PndkBundleVersion=$(NDK_BUNDLE_VERSION) assembleRelease
+	$(Q) ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle -PappVersion=$(APP_VERSION) -PoutputDirectory=$$(realpath $(OUTPUT_DIRECTORY)) -PgoalName=$(basename $(notdir $@)) -PndkBundleVersion=$(NDK_BUNDLE_VERSION) assembleRelease
 	$(Q) cp $(OUTPUT_DIRECTORY)/app/outputs/apk/release/android-release*.apk $@
 
 $(call document_extension,apk)

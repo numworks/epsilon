@@ -217,7 +217,7 @@ void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
           expression->child(expression->numberOfChildren() - 1));
     }
     const char* name = builtin->aliases()->mainAlias();
-    if (Preferences::SharedPreferences()->translateBuiltins() ==
+    if (SharedPreferences->translateBuiltins() ==
             Preferences::TranslateBuiltins::TranslateToFrench &&
         builtin->canBeTranslated()) {
       name = builtin->translation();
@@ -663,9 +663,8 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       break;
     case Type::Binomial:
     case Type::Permute:
-      if (m_linearMode ||
-          Preferences::SharedPreferences()->combinatoricSymbols() ==
-              Preferences::CombinatoricSymbols::Default) {
+      if (m_linearMode || SharedPreferences->combinatoricSymbols() ==
+                              Preferences::CombinatoricSymbols::Default) {
         layoutBuiltin(layoutParent, expression);
       } else {
         TreeRef layout = SharedTreeStack->pushBlock(
@@ -681,7 +680,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
       }
       constexpr const char* log =
           Builtin::GetReservedFunction(Type::LogBase)->aliases()->mainAlias();
-      bool nlLog = Preferences::SharedPreferences()->logarithmBasePosition() ==
+      bool nlLog = SharedPreferences->logarithmBasePosition() ==
                    Preferences::LogarithmBasePosition::TopLeft;
       if (!nlLog) {
         layoutText(layoutParent, log);

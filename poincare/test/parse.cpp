@@ -600,8 +600,7 @@ QUIZ_CASE(pcj_parse_mixed_fraction) {
                        {.preserveInput = true});
 
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::US);
-  assert(
-      Poincare::Preferences::SharedPreferences()->mixedFractionsAreEnabled());
+  assert(Poincare::SharedPreferences->mixedFractionsAreEnabled());
   assert_parsed_expression_is("1 2/3", KMixedFraction(1_e, KDiv(2_e, 3_e)));
   assert_parsed_expression_is(
       "1((2)/(3))",

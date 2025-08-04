@@ -68,7 +68,7 @@ bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
     return false;
   }
 #if POINCARE_PT_COMBINATORICS_LAYOUTS
-  if (Preferences::SharedPreferences()->combinatoricSymbols() ==
+  if (SharedPreferences->combinatoricSymbols() ==
           Preferences::CombinatoricSymbols::LetterWithSubAndSuperscript &&
       TokenizeAndBeautifyIdentifiers(
           cursorRack, position - 1, k_specialCombinatoricsRules,
@@ -125,7 +125,7 @@ bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
       return false;
     }
 #if POINCARE_PT_COMBINATORICS_LAYOUTS
-    if (Preferences::SharedPreferences()->combinatoricSymbols() ==
+    if (SharedPreferences->combinatoricSymbols() ==
             Preferences::CombinatoricSymbols::LetterWithSubAndSuperscript &&
         TokenizeAndBeautifyIdentifiers(
             h, insertedLayoutIndex - 1, k_specialCombinatoricsRules,

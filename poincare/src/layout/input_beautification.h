@@ -1,6 +1,7 @@
 #ifndef POINCARE_INPUT_BEAUTIFICATION_H
 #define POINCARE_INPUT_BEAUTIFICATION_H
 
+#include <poincare/preferences.h>
 #include <poincare/src/expression/aliases.h>
 #include <poincare/src/expression/builtin.h>
 #include <poincare/src/memory/n_ary.h>
@@ -253,9 +254,8 @@ class InputBeautification {
   constexpr static BeautificationRule k_logarithmRule = {
       "log", 2, [](TreeRef* parameters) -> Tree* {
         // TODO: factorize with Layouter and LayoutCursor
-        bool nlLog =
-            Preferences::SharedPreferences()->logarithmBasePosition() ==
-            Preferences::LogarithmBasePosition::TopLeft;
+        bool nlLog = SharedPreferences->logarithmBasePosition() ==
+                     Preferences::LogarithmBasePosition::TopLeft;
         TreeRef log = "log"_l->cloneTree();
         TreeRef base =
             nlLog ? KPrefixSuperscriptL->cloneNode() : KSubscriptL->cloneNode();

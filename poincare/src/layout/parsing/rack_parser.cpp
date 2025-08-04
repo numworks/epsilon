@@ -1581,7 +1581,7 @@ bool RackParser::parseIntegerCaretForFunction(bool allowParenthesis,
 
 bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
   if (!m_parsingContext.params.preserveInput &&
-      !Preferences::SharedPreferences()->mixedFractionsAreEnabled()) {
+      !SharedPreferences->mixedFractionsAreEnabled()) {
     /* If preserveInput is true, we do not escape here because we want to
      * keep its expression as close as the original layout. It can for example
      * be a mixed fraction input earlier with a different country preference.

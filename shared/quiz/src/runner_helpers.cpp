@@ -1,7 +1,7 @@
 #include "runner_helpers.h"
 
 #include <ion/storage/file_system.h>
-#include <poincare/include/poincare/preferences.h>
+#include <poincare/preferences.h>
 #include <poincare/src/memory/tree_stack.h>
 
 #include "quiz.h"
@@ -21,6 +21,6 @@ void flushGlobalDataNoPool() {
   /* Check that preferences are at default values after each test.
    * translateBuiltins is the only field that can be edited on a
    * Poincare::Preferences::Interface */
-  quiz_assert(Poincare::Preferences::SharedPreferences()->translateBuiltins() ==
+  quiz_assert(Poincare::SharedPreferences->translateBuiltins() ==
               defaultTranslateBuiltin());
 }

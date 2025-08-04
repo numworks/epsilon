@@ -186,7 +186,7 @@ class AddEmptyLayoutHelpers {
   }
   void addEmptyLogarithmWithBase10Layout(Poincare::Context* context) {
     const Tree* l =
-        Preferences::SharedPreferences()->logarithmBasePosition() ==
+        SharedPreferences->logarithmBasePosition() ==
                 Preferences::LogarithmBasePosition::TopLeft
             ? KPrefixSuperscriptL("10"_l) ^ "log"_l ^
                   KParenthesesRightTempL(""_l)

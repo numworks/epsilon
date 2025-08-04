@@ -7,7 +7,15 @@
 #include <kandinsky/font.h>
 #include <omg/global_box.h>
 
-class ExamModeManager {
+/* [ExamModeManager] is a singleton, hence the private constructor.
+ * Its unique instance lives in Storage.
+ *
+ * Storage does not enforce alignment. The [packed] attribute ensures the
+ * compiler will not emit instructions that require the data to be aligned.
+ *
+ * The static helper methods are the unique way to interact with the
+ * [ExamModeManager]. */
+class __attribute__((packed)) ExamModeManager {
   friend OMG::GlobalBox<ExamModeManager>;
   friend Ion::Storage::FileSystem;
 
@@ -15,7 +23,6 @@ class ExamModeManager {
   /* Legacy name, inherited from the old Poincare::Preferences object, not
    * changed to preserve website retro-compatibility */
   constexpr static char k_recordName[] = "pr";
-  // bool operator==(const Instance&) const = default;
 
   static void Init() {
     Ion::Storage::FileSystem::sharedFileSystem
@@ -45,18 +52,15 @@ class ExamModeManager {
   constexpr static uint8_t k_version = 1;
   static ExamModeManager* s_examModeManagerInstance;
 
-  /* ExamModeManager is a singleton, hence the private constructor. The unique
-   * instance can be accessed through the ExamModeManager::Shared()
-   * pointer. */
   ExamModeManager() : m_examMode(Poincare::ExamMode(Ion::ExamMode::get())){};
 
-  CODE_GUARD(poincare_preferences, 125945507,  //
+  CODE_GUARD(poincare_preferences, 1248687274,  //
              uint8_t m_version = k_version;
-             mutable Poincare::ExamMode m_examMode =
-                 Poincare::ExamMode(Ion::ExamMode::Ruleset::Uninitialized);
-             /* This flag can only be asserted by writing it via DFU. When set,
-              * it will force the reactivation of the exam mode after leaving
-              * DFU to synchronize the persisting bytes with the Preferences. */
+             Poincare::ExamMode m_examMode;
+             /* This flag can only be asserted by writing it via
+              * DFU. When set, it will force the reactivation of
+              * the exam mode after leaving DFU to synchronize
+              * the persisting bytes with the Preferences. */
              bool m_forceExamModeReload = false;)
 };
 

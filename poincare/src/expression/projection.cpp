@@ -62,7 +62,7 @@ bool Projection::DeepReplaceUserNamedWithUndefined(Tree* e) {
   }
   bool changed = false;
   for (Tree* child : e->children()) {
-    changed = changed || DeepReplaceUserNamedWithUndefined(child);
+    changed = DeepReplaceUserNamedWithUndefined(child) || changed;
   }
   return changed;
 }

@@ -191,8 +191,8 @@ QUIZ_CASE(graph_function_properties) {
           ContinuousFunctionProperties::CurveParameterType::Line};
 
   for (const ExamMode examMode : examModes) {
-    if (MathPreferences::SharedPreferences()->examMode() != examMode) {
-      MathPreferences::SharedPreferences()->setExamMode(examMode);
+    if (ExamModeManager::ExamMode() != examMode) {
+      ExamModeManager::SetExamMode(examMode);
     }
     bool noInequations = examMode.forbidInequalityGraphing();
     bool noImplicitPlot = examMode.forbidImplicitPlots();
@@ -902,14 +902,9 @@ QUIZ_CASE(graph_function_properties) {
     // Restore cartesian complex format
     MathPreferences::SharedPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Cartesian);
-
-    // Restore an Off exam mode.
-    if (MathPreferences::SharedPreferences()->examMode() !=
-        ExamMode(ExamMode::Ruleset::Off)) {
-      MathPreferences::SharedPreferences()->setExamMode(
-          ExamMode(ExamMode::Ruleset::Off));
-    }
   }
+
+  ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Off));
 
   // Restore default preferences
   MathPreferences::SharedPreferences()->setComplexFormat(

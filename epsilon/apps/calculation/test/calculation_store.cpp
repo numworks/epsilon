@@ -133,16 +133,7 @@ void assertAnsIs(
 QUIZ_CASE(calculation_ans) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
-  // Setup complex format and exam mode
-  Preferences::ComplexFormat previousComplexFormat =
-      MathPreferences::SharedPreferences()->complexFormat();
-  ExamMode previousExamMode = MathPreferences::SharedPreferences()->examMode();
-  MathPreferences::SharedPreferences()->setComplexFormat(
-      Preferences::ComplexFormat::Real);
-  if (previousExamMode != ExamMode(ExamMode::Ruleset::Off)) {
-    MathPreferences::SharedPreferences()->setExamMode(
-        ExamMode(ExamMode::Ruleset::Off));
-  }
+  // Real + No exam mode
   pushAndProcessCalculation(&store, "1+3/4", &globalContext);
   pushAndProcessCalculation(&store, "ans+2/3", &globalContext);
   OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
@@ -178,17 +169,14 @@ QUIZ_CASE(calculation_ans) {
 
   assertAnsIs("√(1+1)", "√(2)", &globalContext, &store);
 
-  MathPreferences::SharedPreferences()->setExamMode(
-      ExamMode(ExamMode::Ruleset::Dutch));
+  ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Dutch));
   assert(CAS::ShouldOnlyDisplayApproximation(
       UserExpression::Builder(KSqrt(2_e)), UserExpression::Builder(KSqrt(2_e)),
       Expression(), nullptr));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 
-  // Restore complex format and exam mode
-  MathPreferences::SharedPreferences()->setExamMode(previousExamMode);
-  MathPreferences::SharedPreferences()->setComplexFormat(previousComplexFormat);
+  ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Off));
 
   pushAndProcessCalculation(&store, "_g0", &globalContext);
   pushAndProcessCalculation(&store, "ans→m*s^-2", &globalContext);
@@ -465,9 +453,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
       Preferences::AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
-  ExamMode previousExamMode = MathPreferences::SharedPreferences()->examMode();
-  MathPreferences::SharedPreferences()->setExamMode(
-      ExamMode(ExamMode::Ruleset::Dutch));
+  ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Dutch));
 
   assertCalculationIs("1+1", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "2", nullptr, &globalContext, &store);
@@ -489,7 +475,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       "undef", nullptr, &globalContext, &store);
 
   using PTTFlags = ExamMode::PressToTestFlags::Flags;
-  MathPreferences::SharedPreferences()->setExamMode(ExamMode(
+  ExamModeManager::SetExamMode(ExamMode(
       ExamMode::Ruleset::PressToTest,
       ExamMode::PressToTestFlags().setFlag(PTTFlags::ForbidBasedLogarithm)));
 
@@ -511,7 +497,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       EqualSign::Approximation, "(ln(89))/(ln(5))",
                       "2.7889465850494", &globalContext, &store);
 
-  MathPreferences::SharedPreferences()->setExamMode(previousExamMode);
+  ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Off));
   MathPreferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
   MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
       previousNumberOfSignificantDigits);

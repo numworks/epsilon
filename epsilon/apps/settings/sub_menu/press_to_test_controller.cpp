@@ -53,10 +53,9 @@ PressToTestController::PressToTestController(Responder* parentResponder)
 
 void PressToTestController::resetController() {
   selectFirstCell();
-  if (MathPreferences::SharedPreferences()->examMode().isActive()) {
+  if (ExamModeManager::ExamMode().isActive()) {
     // Reset switches states to press-to-test current parameter.
-    m_tempPressToTestParams =
-        MathPreferences::SharedPreferences()->examMode().flags();
+    m_tempPressToTestParams = ExamModeManager::ExamMode().flags();
   } else {
     // Reset switches so that all features are enabled.
     m_tempPressToTestParams = {};
@@ -88,8 +87,8 @@ bool PressToTestController::getParamAtIndex(int index) {
 }
 
 void PressToTestController::setMessages() {
-  if (MathPreferences::SharedPreferences()->examMode().isActive()) {
-    assert(MathPreferences::SharedPreferences()->examMode().ruleset() ==
+  if (ExamModeManager::ExamMode().isActive()) {
+    assert(ExamModeManager::ExamMode().ruleset() ==
            ExamMode::Ruleset::PressToTest);
     m_topMessageView.setMessage(I18n::Message::PressToTestActiveIntro);
     setBottomView(&m_bottomMessageView);
@@ -104,7 +103,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
   if (typeAtRow(row) == k_switchCellType &&
       static_cast<PressToTestSwitch*>(m_selectableListView.cell(selectedRow()))
           ->canBeActivatedByEvent(event) &&
-      !MathPreferences::SharedPreferences()->examMode().isActive()) {
+      !ExamModeManager::ExamMode().isActive()) {
     assert(row >= 0 && row < k_numberOfSwitchCells);
     setParamAtIndex(row, !getParamAtIndex(row));
     /* Memoization isn't resetted here because changing a switch state does not
@@ -115,7 +114,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
   if (event == Ion::Events::Left || event == Ion::Events::Back) {
     // Deselect table because select cell will change anyway
     m_selectableListView.deselectTable();
-    if (!MathPreferences::SharedPreferences()->examMode().isActive() &&
+    if (!ExamModeManager::ExamMode().isActive() &&
         !(m_tempPressToTestParams == ExamMode::PressToTestFlags{})) {
       // Scroll to validation cell if m_confirmPopUpController is discarded.
       selectLastCell();
@@ -132,7 +131,7 @@ bool PressToTestController::handleEvent(Ion::Events::Event event) {
 
 void PressToTestController::viewWillAppear() {
   // Reset selection and params only if exam mode has been activated.
-  if (MathPreferences::SharedPreferences()->examMode().isActive()) {
+  if (ExamModeManager::ExamMode().isActive()) {
     resetController();
   }
   setMessages();
@@ -141,7 +140,7 @@ void PressToTestController::viewWillAppear() {
 
 int PressToTestController::numberOfRows() const {
   return k_numberOfSwitchCells +
-         (MathPreferences::SharedPreferences()->examMode().isActive() ? 0 : 1);
+         (ExamModeManager::ExamMode().isActive() ? 0 : 1);
 }
 
 int PressToTestController::typeAtRow(int row) const {
@@ -165,7 +164,7 @@ int PressToTestController::reusableCellCount(int type) const {
 
 void PressToTestController::fillCellForRow(HighlightCell* cell, int row) {
   if (typeAtRow(row) == k_buttonCellType) {
-    assert(!MathPreferences::SharedPreferences()->examMode().isActive());
+    assert(!ExamModeManager::ExamMode().isActive());
     return;
   }
   assert(typeAtRow(row) == k_switchCellType);
@@ -173,16 +172,14 @@ void PressToTestController::fillCellForRow(HighlightCell* cell, int row) {
   // A true params means the feature is disabled,
   bool featureIsDisabled = getParamAtIndex(row);
   myCell->label()->setMessage(LabelAtIndex(row));
-  myCell->label()->setTextColor(
-      MathPreferences::SharedPreferences()->examMode().isActive() &&
-              featureIsDisabled
-          ? Palette::GrayDark
-          : KDColorBlack);
+  myCell->label()->setTextColor(ExamModeManager::ExamMode().isActive() &&
+                                        featureIsDisabled
+                                    ? Palette::GrayDark
+                                    : KDColorBlack);
   myCell->subLabel()->setMessage(SubLabelAtIndex(row));
   // Switch is toggled if the feature must stay activated.
   myCell->accessory()->switchView()->setState(!featureIsDisabled);
-  myCell->accessory()->setDisplayImage(
-      MathPreferences::SharedPreferences()->examMode().isActive());
+  myCell->accessory()->setDisplayImage(ExamModeManager::ExamMode().isActive());
 }
 
 I18n::Message PressToTestController::LabelAtIndex(int i) {

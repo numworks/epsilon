@@ -16,14 +16,6 @@ class MathPreferences : public GlobalPreferences {
         GlobalPreferences::SharedGlobalPreferences());
   }
 
-  Poincare::ExamMode examMode() const { return ExamModeManager::ExamMode(); }
-  void setExamMode(Poincare::ExamMode examMode) {
-    ExamModeManager::SetExamMode(examMode);
-  }
-  bool forceExamModeReload() const {
-    return ExamModeManager::ForceExamModeReload();
-  }
-
   using GlobalPreferences::angleUnit;
   using GlobalPreferences::calculationPreferences;
   using GlobalPreferences::combinatoricSymbols;

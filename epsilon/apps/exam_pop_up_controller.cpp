@@ -85,7 +85,7 @@ I18n::Message ExamPopUpController::activationWarningMessage() const {
   ExamMode::Ruleset rules = m_targetExamMode.ruleset();
   size_t index = static_cast<size_t>(rules) * messagesPerMode;
   index += (rules == ExamMode::Ruleset::Off &&
-            MathPreferences::SharedPreferences()->examMode().ruleset() ==
+            ExamModeManager::ExamMode().ruleset() ==
                 ExamMode::Ruleset::PressToTest) ||
            Ion::Authentication::clearanceLevel() !=
                Ion::Authentication::ClearanceLevel::NumWorks;
@@ -97,6 +97,6 @@ bool ExamPopUpController::handleButton() const {
   /* Warning : By unplugging before confirmation, the examMode may then be
    *           deactivated while unplugged. */
   AppsContainer::sharedAppsContainer()->setExamMode(
-      m_targetExamMode, MathPreferences::SharedPreferences()->examMode());
+      m_targetExamMode, ExamModeManager::ExamMode());
   return true;
 }

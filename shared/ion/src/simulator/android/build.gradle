@@ -1,4 +1,4 @@
-def EPSILON_BUILD_DIR = '../../../../'+project.getProperty("outputDirectory")
+def EPSILON_BUILD_DIR = project.getProperty("outputDirectory")
 def BUILD_DIR = EPSILON_BUILD_DIR+'/app'
 
 def projectVariable(name) {

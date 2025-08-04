@@ -122,24 +122,30 @@ class Preferences {
     virtual bool mixedFractionsAreEnabled() const = 0;
     virtual LogarithmBasePosition logarithmBasePosition() const = 0;
     virtual TranslateBuiltins translateBuiltins() const = 0;
+    // TODO: setTranslateBuiltins should only be accessible in Scandium
     virtual void setTranslateBuiltins(TranslateBuiltins translate) = 0;
     virtual ParabolaParameter parabolaParameter() const = 0;
     bool operator==(const Interface&) const = default;
   };
 
   static void Init(Interface*);
-  static Interface* SharedPreferences() {
-    return static_cast<Interface*>(s_preferences);
-  };
+  Interface* operator->() const { return s_preferences; }
 
+  static const Preferences PreferencesInstance;
+
+  // TODO: this has nothing to do here
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const Internal::Tree* e, Context* context,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols);
 
  private:
+  Preferences() = default;
   static Interface* s_preferences;
 };
+
+inline constexpr const Preferences& SharedPreferences =
+    Preferences::PreferencesInstance;
 
 #if __EMSCRIPTEN__
 /* Preferences live in the Storage which does not enforce alignment, so make

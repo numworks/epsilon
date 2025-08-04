@@ -12,6 +12,7 @@ constexpr int Preferences::MediumNumberOfSignificantDigits;
 constexpr int Preferences::ShortNumberOfSignificantDigits;
 constexpr int Preferences::VeryShortNumberOfSignificantDigits;
 Preferences::Interface* Preferences::s_preferences = nullptr;
+const Preferences Preferences::PreferencesInstance;
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
     ComplexFormat complexFormat, const Internal::Tree* exp, Context* context,

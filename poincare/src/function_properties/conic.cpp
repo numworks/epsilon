@@ -412,7 +412,7 @@ double CartesianConic::getParameter() const {
   assert(isCanonical());
   assert(m_shape == Shape::Parabola);
   double defaultParameter = std::abs(m_e) / 2;
-  return Preferences::SharedPreferences()->parabolaParameter() ==
+  return SharedPreferences->parabolaParameter() ==
                  Preferences::ParabolaParameter::FocalLength
              ? defaultParameter / 2
              : defaultParameter;

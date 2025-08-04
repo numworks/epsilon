@@ -1814,7 +1814,7 @@ QUIZ_CASE(pcj_approximation_arithmetic) {
 
 QUIZ_CASE(pcj_approximation_mixed_fraction) {
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::US);
-  assert(Preferences::SharedPreferences()->mixedFractionsAreEnabled());
+  assert(Poincare::SharedPreferences->mixedFractionsAreEnabled());
   approximates_to<double>("1 1/2", 1.5);
   approximates_to<double>("-1 1/2", -1.5);
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);

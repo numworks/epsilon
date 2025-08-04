@@ -7,6 +7,8 @@
 #include <kandinsky/font.h>
 #include <omg/global_box.h>
 
+#include "apps_container_helper.h"
+
 #if __EMSCRIPTEN__
 #include <emscripten.h>
 #endif
@@ -41,11 +43,10 @@ class __attribute__((packed)) GlobalPreferences
   I18n::Language language() const { return m_language; }
   void setLanguage(I18n::Language language) { m_language = language; }
   I18n::Country country() const { return m_country; }
-  void setCountry(I18n::Country country, bool updateSnapshots = true) {
+  void setCountry(I18n::Country country) {
     m_country = country;
-    countryHasChanged(updateSnapshots);
+    AppsContainerHelper::notifyCountryChangeToSnapshots();
   }
-  void countryHasChanged(bool updateSnapshots = true);
 
   constexpr CountryPreferences::AvailableExamModes availableExamModes() const {
     return countryPreferences().availableExamModes();

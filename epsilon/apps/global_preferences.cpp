@@ -10,13 +10,6 @@ GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
   return ptr;
 }
 
-void GlobalPreferences::countryHasChanged(bool updateSnapshots) {
-  if (!updateSnapshots) {
-    return;
-  }
-  AppsContainerHelper::notifyCountryChangeToSnapshots();
-}
-
 void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {
   if (m_brightnessLevel != brightnessLevel) {
     brightnessLevel = brightnessLevel < 0 ? 0 : brightnessLevel;

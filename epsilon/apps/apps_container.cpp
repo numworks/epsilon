@@ -479,7 +479,7 @@ void AppsContainer::openDFU(bool blocking) {
 
   /* DFU might have changed preferences and global preferences, update those
    * that have callbacks: country and exam mode.*/
-  GlobalPreferences::SharedGlobalPreferences()->countryHasChanged();
+  AppsContainerHelper::notifyCountryChangeToSnapshots();
   if (activeExamMode.isActive() &&
       Ion::Authentication::clearanceLevel() !=
           Ion::Authentication::ClearanceLevel::NumWorks) {

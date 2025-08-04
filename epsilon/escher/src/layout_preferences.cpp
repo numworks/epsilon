@@ -3,7 +3,7 @@
 
 namespace Escher {
 
-const LayoutPreferences SharedPreferences;
+const LayoutPreferences LayoutPreferences::PreferencesInstance;
 const LayoutPreferences::Interface* LayoutPreferences::s_preferences = nullptr;
 
 }  // namespace Escher

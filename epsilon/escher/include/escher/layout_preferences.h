@@ -5,6 +5,10 @@
 
 namespace Escher {
 
+/* [LayoutPreferences] is a singleton accessible via the [SharedPreferences]
+ * instance.
+ * The object gives access to an implementation of [Interface], which provides
+ * settings/preferences for Escher layouting and whatnot. */
 class LayoutPreferences {
  public:
   enum class LogarithmKeyEvent : char { Default, WithBaseTen };
@@ -17,9 +21,9 @@ class LayoutPreferences {
     bool operator==(const Interface&) const = default;
   };
 
-  static void Init(const Interface* prefs) {
-    assert(prefs);
-    s_preferences = prefs;
+  static void Init(const Interface* preferences) {
+    assert(preferences);
+    s_preferences = preferences;
   }
 
   const Interface* operator->() const {
@@ -27,12 +31,15 @@ class LayoutPreferences {
     return s_preferences;
   }
 
+  static const LayoutPreferences PreferencesInstance;
+
  private:
-  LayoutPreferences operator=(LayoutPreferences) = delete;
+  LayoutPreferences() = default;
   static const Interface* s_preferences;
 };
 
-extern const LayoutPreferences SharedPreferences;
+inline constexpr const LayoutPreferences& SharedPreferences =
+    LayoutPreferences::PreferencesInstance;
 
 }  // namespace Escher
 #endif

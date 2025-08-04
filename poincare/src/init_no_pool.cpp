@@ -8,8 +8,10 @@
 
 namespace Poincare {
 
-void Init(Preferences::PartialInterface* partialPrefs) {
+void Init(Preferences::PartialInterface* partialPrefs,
+          const ExamMode* examModePtr) {
   Preferences::Init(partialPrefs);
+  ExamModeStore::Init(examModePtr);
   Internal::SharedTreeStack.init();
 }
 

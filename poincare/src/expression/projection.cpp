@@ -189,24 +189,22 @@ bool Projection::DeepSystemProject(Tree* e,
 }
 
 bool Projection::IsForbidden(const Tree* e) {
-  Poincare::ExamMode examMode =
-      Poincare::Preferences::SharedPreferences()->examMode();
   switch (e->type()) {
     case Type::PhysicalConstant:
     case Type::Unit:
     case Type::UnitConversion:
-      return examMode.forbidUnits();
+      return SharedExamMode->forbidUnits();
     case Type::LogBase:
-      return examMode.forbidBasedLogarithm() &&
+      return SharedExamMode->forbidBasedLogarithm() &&
              !e->child(1)->treeIsIdenticalTo(10_e) &&
              !e->child(1)->treeIsIdenticalTo(e_e);
     case Type::Sum:
-      return examMode.forbidSum();
+      return SharedExamMode->forbidSum();
     case Type::Norm:
-      return examMode.forbidVectorNorm();
+      return SharedExamMode->forbidVectorNorm();
     case Type::Cross:
     case Type::Dot:
-      return examMode.forbidVectorProduct();
+      return SharedExamMode->forbidVectorProduct();
     default:
       return false;
   }
@@ -214,7 +212,7 @@ bool Projection::IsForbidden(const Tree* e) {
 
 bool Projection::HasForbiddenDescendants(const Tree* e) {
   // early escape if exam mode is not active, preventing a deep search.
-  if (!Poincare::Preferences::SharedPreferences()->examMode().isActive()) {
+  if (!SharedExamMode->isActive()) {
     assert(!e->hasDescendantSatisfying(IsForbidden));
     return false;
   }

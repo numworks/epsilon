@@ -139,6 +139,31 @@ class __attribute__((packed)) ExamMode : public Ion::ExamMode::Configuration {
 static_assert(sizeof(ExamMode) == sizeof(Ion::ExamMode::Configuration),
               "ExamMode size is not compatible with PersistingBytes");
 
+class ExamModeStore {
+ public:
+  static void Init(const ExamMode* examModePtr) {
+    if (!examModePtr) {
+      static ExamMode off(Ion::ExamMode::Ruleset::Off);
+      examModePtr = &off;
+    }
+    s_examModePtr = examModePtr;
+  }
+
+  const ExamMode* operator->() const {
+    assert(s_examModePtr);
+    return s_examModePtr;
+  }
+
+  static const ExamModeStore StoreInstance;
+
+ private:
+  ExamModeStore() = default;
+  static const ExamMode* s_examModePtr;
+};
+
+inline constexpr const ExamModeStore& SharedExamMode =
+    ExamModeStore::StoreInstance;
+
 }  // namespace Poincare
 
 #endif

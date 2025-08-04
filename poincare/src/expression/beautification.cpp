@@ -447,9 +447,7 @@ bool ShallowBeautify(Tree* e, void* context) {
       e->moveTreeOverTree(
           PatternMatching::Create(KMult(KA_s, KLog(KB), KC_s, KE_s), ctx));
       changed = true;
-    } else if (!Poincare::Preferences::SharedPreferences()
-                    ->examMode()
-                    .forbidBasedLogarithm()) {
+    } else if (!SharedExamMode->forbidBasedLogarithm()) {
       e->moveTreeOverTree(PatternMatching::Create(
           KMult(KA_s, KLogBase(KB, KD), KC_s, KE_s), ctx));
       changed = true;

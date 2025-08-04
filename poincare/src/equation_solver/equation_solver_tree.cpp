@@ -373,9 +373,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
     error = Error::TooManyVariables;
   } else if ((equationList->numberOfChildren() > 1 ||
               expectedNumberOfUnknowns > 1) &&
-             Preferences::SharedPreferences()
-                 ->examMode()
-                 .forbidSimultaneousEquationSolver()) {
+             SharedExamMode->forbidSimultaneousEquationSolver()) {
     error = Error::DisabledInExamMode;
   }
 

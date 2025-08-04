@@ -1,6 +1,7 @@
 #ifndef APPS_MATH_PREFERENCES_H
 #define APPS_MATH_PREFERENCES_H
 
+#include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 
@@ -28,14 +29,12 @@ class MathPreferences : public GlobalPreferences {
         GlobalPreferences::SharedGlobalPreferences());
   }
 
-  Poincare::ExamMode examMode() const {
-    return Poincare::Preferences::SharedPreferences()->examMode();
-  }
+  Poincare::ExamMode examMode() const { return ExamModeManager::ExamMode(); }
   void setExamMode(Poincare::ExamMode examMode) {
-    Poincare::Preferences::SharedPreferences()->setExamMode(examMode);
+    ExamModeManager::SetExamMode(examMode);
   }
   bool forceExamModeReload() const {
-    return Poincare::Preferences::SharedPreferences()->forceExamModeReload();
+    return ExamModeManager::ForceExamModeReload();
   }
 
   using GlobalPreferences::angleUnit;

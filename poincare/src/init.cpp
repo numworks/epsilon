@@ -1,3 +1,4 @@
+#include <poincare/exam_mode.h>
 #include <poincare/init.h>
 #include <poincare/pool.h>
 #include <poincare/preferences.h>
@@ -9,8 +10,10 @@
 
 namespace Poincare {
 
-void Init(Preferences::PartialInterface* partialPreferences) {
+void Init(Preferences::PartialInterface* partialPreferences,
+          const ExamMode* examModePtr) {
   Preferences::Init(partialPreferences);
+  ExamModeStore::Init(examModePtr);
   Pool::sharedPool.init();
   Internal::SharedTreeStack.init();
 }

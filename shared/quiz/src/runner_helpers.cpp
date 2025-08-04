@@ -6,29 +6,21 @@
 
 #include "quiz.h"
 
-class PreferencesTestBuilder {
- public:
-  static Poincare::Preferences::Instance* buildDefault() {
-    static Poincare::Preferences::Instance defaultPreferences{};
-    // Initialize the exam mode to "Off"
-    defaultPreferences.examMode();
+Poincare::Preferences::TranslateBuiltins defaultTranslateBuiltin() {
 #if POINCARE_TRANSLATE_BUILTINS
-    defaultPreferences.setTranslateBuiltins(
-        Poincare::Preferences::TranslateBuiltins::TranslateToFrench);
+  return Poincare::Preferences::TranslateBuiltins::TranslateToFrench;
+#else
+  return Poincare::Preferences::TranslateBuiltins::No;
 #endif
-    return &defaultPreferences;
-  }
-  static bool SharedPreferencesIsDefault() {
-    return *static_cast<Poincare::Preferences::Instance*>(
-               Poincare::Preferences::SharedPreferences()) ==
-           *PreferencesTestBuilder::buildDefault();
-  }
-};
+}
 
 void flushGlobalDataNoPool() {
   Poincare::Internal::SharedTreeStack->flush();
   quiz_assert(Poincare::Context::GlobalContext == nullptr);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
-  // Check that preferences are at default values after each test
-  quiz_assert(PreferencesTestBuilder::SharedPreferencesIsDefault());
+  /* Check that preferences are at default values after each test.
+   * translateBuiltins is the only field that can be edited on a
+   * Poincare::Preferences::Interface */
+  quiz_assert(Poincare::Preferences::SharedPreferences()->translateBuiltins() ==
+              defaultTranslateBuiltin());
 }

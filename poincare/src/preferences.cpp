@@ -26,17 +26,4 @@ Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
   return projectionContext.m_complexFormat;
 }
 
-ExamMode Preferences::Instance::examMode() const {
-  if (m_examMode.isUninitialized()) {
-    m_examMode = ExamMode(Ion::ExamMode::get());
-  }
-  return m_examMode;
-}
-
-void Preferences::Instance::setExamMode(ExamMode mode) {
-  m_forceExamModeReload = false;
-  m_examMode = mode;
-  Ion::ExamMode::set(mode);
-}
-
 }  // namespace Poincare

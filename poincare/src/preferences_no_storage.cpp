@@ -24,11 +24,6 @@ class DefaultPreferences : public Preferences::Interface {
   constexpr Preferences::ParabolaParameter parabolaParameter() const override {
     return Preferences::k_defaultParabolaParameter;
   }
-  constexpr bool forceExamModeReload() const override { return false; }
-  ExamMode examMode() const override {
-    return ExamMode(Ion::ExamMode::Ruleset::Off);
-  };
-  void setExamMode(ExamMode) override{};
 };
 
 #ifdef POINCARE_TRANSLATE_BUILTINS
@@ -43,18 +38,15 @@ class DefaultPreferencesWithTranslateBuiltins : public DefaultPreferences {
  private:
   Preferences::TranslateBuiltins m_translatedBuiltins;
 };
-OMG::GlobalBox<DefaultPreferencesWithTranslateBuiltins> s_SharedPreferences;
+OMG::GlobalBox<DefaultPreferencesWithTranslateBuiltins> s_sharedPreferences;
 #else
-OMG::GlobalBox<DefaultPreferences> s_SharedPreferences;
+OMG::GlobalBox<DefaultPreferences> s_sharedPreferences;
 #endif
 
 void Preferences::Init(Preferences::PartialInterface* partialPreferences) {
   assert(partialPreferences == nullptr);
-  s_SharedPreferences.init();
-}
-
-Preferences::Interface* Preferences::SharedPreferences() {
-  return s_SharedPreferences;
+  s_sharedPreferences.init();
+  s_preferences = s_sharedPreferences.get();
 }
 
 }  // namespace Poincare

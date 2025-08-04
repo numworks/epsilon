@@ -9,7 +9,6 @@
 
 class ExamModeManager {
   friend OMG::GlobalBox<ExamModeManager>;
-  friend PreferencesTestBuilder;
   friend Ion::Storage::FileSystem;
 
  public:

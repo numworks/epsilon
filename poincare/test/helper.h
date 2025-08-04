@@ -4,6 +4,7 @@
 #include <poincare/helpers/parser.h>
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>
+#include <poincare/print_float.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
@@ -30,7 +31,9 @@ typedef void (*ProcessTree)(
     Poincare::Internal::ProjectionContext projectionContext);
 void process_tree_and_compare(
     const char* input, const char* output, ProcessTree process,
-    Poincare::Internal::ProjectionContext projectionContext);
+    Poincare::Internal::ProjectionContext projectionContext,
+    int nbOfSignificantDigits =
+        Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits);
 
 void quiz_tolerate_print_if_failure(bool test, const char* input,
                                     const char* expected = "",
@@ -207,7 +210,8 @@ void assert_expression_parses_and_serializes_to_itself(
     const char* expression, Poincare::Context* context);
 
 void serialize_expression(const Poincare::Internal::Tree* expression,
-                          std::span<char> buffer);
+                          std::span<char> buffer,
+                          int numberOfSignificantDigits);
 
 // Simplification
 void simplify(Poincare::Internal::Tree* e,

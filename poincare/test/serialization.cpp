@@ -4,7 +4,6 @@
 #include <poincare/helpers/layout.h>
 #include <poincare/k_tree.h>
 #include <poincare/preferences.h>
-#include <poincare/print_float.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/derivation.h>
 #include <poincare/src/expression/k_tree.h>

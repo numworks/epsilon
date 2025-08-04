@@ -11,7 +11,6 @@
 #include <stdint.h>
 
 // Forward-declarations of friend classes in other namespaces
-class PreferencesTestBuilder;
 namespace Ion::Storage {
 class FileSystem;
 }
@@ -28,8 +27,6 @@ using SymbolicComputation = Internal::SymbolicComputation;
  * TODO: Ideally the class should be final, but we need to override it with
  * Apps::MathPreferences and Escher::LayoutPreferences. See comment below. */
 class Preferences {
-  friend PreferencesTestBuilder;
-
  public:
   constexpr static int DefaultNumberOfPrintedSignificantDigits = 10;
   constexpr static int VeryLargeNumberOfSignificantDigits = 7;
@@ -119,6 +116,7 @@ class Preferences {
   constexpr static ParabolaParameter k_defaultParabolaParameter =
       ParabolaParameter::Default;
 
+  // TODO: remanme PartialInterface to Interface
   class PartialInterface {
    public:
     virtual CombinatoricSymbols combinatoricSymbols() const = 0;
@@ -130,15 +128,12 @@ class Preferences {
     bool operator==(const PartialInterface&) const = default;
   };
 
-  class Interface : public PartialInterface {
-   public:
-    virtual bool forceExamModeReload() const = 0;
-    virtual ExamMode examMode() const = 0;
-    virtual void setExamMode(ExamMode examMode) = 0;
-  };
+  class Interface : public PartialInterface {};
 
   static void Init(PartialInterface*);
-  static Interface* SharedPreferences();
+  static Interface* SharedPreferences() {
+    return static_cast<Interface*>(s_preferences);
+  };
 
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
       ComplexFormat complexFormat, const Internal::Tree* e, Context* context,
@@ -146,65 +141,7 @@ class Preferences {
           SymbolicComputation::ReplaceDefinedSymbols);
 
  private:
-  static PartialInterface* s_otherPreferences;
-
-  class __attribute__((packed)) Instance : public Interface {
-    friend OMG::GlobalBox<Instance>;
-    friend PreferencesTestBuilder;
-    friend Ion::Storage::FileSystem;
-
-   public:
-    constexpr static char k_recordName[] = "old_pr";
-    bool operator==(const Instance&) const = default;
-
-    bool forceExamModeReload() const { return m_forceExamModeReload; }
-    ExamMode examMode() const;
-    void setExamMode(ExamMode examMode);
-
-    CombinatoricSymbols combinatoricSymbols() const {
-      return s_otherPreferences->combinatoricSymbols();
-    };
-    bool mixedFractionsAreEnabled() const {
-      return s_otherPreferences->mixedFractionsAreEnabled();
-    };
-    LogarithmBasePosition logarithmBasePosition() const {
-      return s_otherPreferences->logarithmBasePosition();
-    };
-    TranslateBuiltins translateBuiltins() const {
-      return s_otherPreferences->translateBuiltins();
-    };
-    void setTranslateBuiltins(TranslateBuiltins translate) {
-      s_otherPreferences->setTranslateBuiltins(translate);
-    };
-    ParabolaParameter parabolaParameter() const {
-      return s_otherPreferences->parabolaParameter();
-    };
-
-   private:
-    constexpr static uint8_t k_version = 1;
-
-    /* Preferences is a singleton, hence the private constructor. The unique
-     * instance can be accessed through the Preferences::SharedPreferences()
-     * pointer. */
-    Instance() = default;
-
-    // TODO: update website
-    // TODO 2: merge examMode in GlobalPrefs, update website further
-    CODE_GUARD(
-        poincare_preferences, 1308047289,  //
-        uint8_t m_version = k_version;
-        mutable ExamMode m_examMode =
-            ExamMode(Ion::ExamMode::Ruleset::Uninitialized);
-        /* This flag can only be asserted by writing it via DFU. When set,
-         * it will force the reactivation of the exam mode after leaving
-         * DFU to synchronize the persisting bytes with the Preferences. */
-        bool m_forceExamModeReload = false;)
-    static_assert(sizeof(CalculationPreferences) == sizeof(uint16_t));
-  };
-#if PLATFORM_DEVICE
-  static_assert(sizeof(Instance) == 8,
-                "Class Preferences::Instance changed size");
-#endif
+  static PartialInterface* s_preferences;
 };
 
 #if __EMSCRIPTEN__

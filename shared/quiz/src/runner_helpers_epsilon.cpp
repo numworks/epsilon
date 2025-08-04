@@ -16,9 +16,6 @@ class GlobalPreferencesTestBuilder {
 void init() {
   // Initialize TreePool::sharedPool and TreeStack::SharedTreeStack
   Apps::Init();
-
-  // Initialize the exam mode to "Off" before running the tests
-  Poincare::Preferences::SharedPreferences()->examMode();
 }
 
 void shutdown() { Poincare::Shutdown(); }

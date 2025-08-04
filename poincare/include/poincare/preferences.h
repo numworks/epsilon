@@ -116,8 +116,7 @@ class Preferences {
   constexpr static ParabolaParameter k_defaultParabolaParameter =
       ParabolaParameter::Default;
 
-  // TODO: remanme PartialInterface to Interface
-  class PartialInterface {
+  class Interface {
    public:
     virtual CombinatoricSymbols combinatoricSymbols() const = 0;
     virtual bool mixedFractionsAreEnabled() const = 0;
@@ -125,12 +124,10 @@ class Preferences {
     virtual TranslateBuiltins translateBuiltins() const = 0;
     virtual void setTranslateBuiltins(TranslateBuiltins translate) = 0;
     virtual ParabolaParameter parabolaParameter() const = 0;
-    bool operator==(const PartialInterface&) const = default;
+    bool operator==(const Interface&) const = default;
   };
 
-  class Interface : public PartialInterface {};
-
-  static void Init(PartialInterface*);
+  static void Init(Interface*);
   static Interface* SharedPreferences() {
     return static_cast<Interface*>(s_preferences);
   };
@@ -141,7 +138,7 @@ class Preferences {
           SymbolicComputation::ReplaceDefinedSymbols);
 
  private:
-  static PartialInterface* s_preferences;
+  static Interface* s_preferences;
 };
 
 #if __EMSCRIPTEN__

@@ -16,7 +16,7 @@
  * the data to be aligned. */
 class __attribute__((packed)) GlobalPreferences
     : public Escher::LayoutPreferences::Interface,
-      public Poincare::Preferences::PartialInterface {
+      public Poincare::Preferences::Interface {
   friend OMG::GlobalBox<GlobalPreferences>;
   friend Ion::Storage::FileSystem;
 

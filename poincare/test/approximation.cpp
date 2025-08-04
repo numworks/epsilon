@@ -15,9 +15,10 @@
 
 using namespace Poincare::Internal;
 
+// Default context is realCtx
+constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 constexpr ProjectionContext cartesianCtx = {.m_complexFormat =
                                                 ComplexFormat::Cartesian};
-constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
 
 constexpr ProjectionContext degreeCtx = {.m_angleUnit = AngleUnit::Degree};
 constexpr ProjectionContext gradianCtx = {.m_angleUnit = AngleUnit::Gradian};
@@ -532,6 +533,10 @@ QUIZ_CASE(pcj_approximation_list) {
                          "{False,undef,False,False,False}");
   // TODO_PCJ: approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
 
+  approximates_to<float>("sequence(k^2,k,4)", "{1,4,9,16}");
+  approximates_to<double>("sequence(k/2,k,7)", "{0.5,1,1.5,2,2.5,3,3.5}");
+  approximates_to<float>("{1,2,3,4,5,6}", "{1,2,3,4,5,6}");
+  approximates_to<double>("{1,2,3,4,5,6}", "{1,2,3,4,5,6}");
   approximates_to<float>("{1,2,3,4}(-5,1)", "undef");
   approximates_to<float>("{1,2,3,4}(0,2)", "{1,2}");
 
@@ -600,6 +605,27 @@ QUIZ_CASE(pcj_approximation_lists_functions) {
   approximates_to<double>("prod({1,4,9})", 36.);
 }
 
+QUIZ_CASE(pcj_approximation_map_on_list) {
+  // TODO: Implement more tests on lists, with every functions
+  approximates_to<float>("abs({1,-1,2,-3})", "{1,1,2,3}");
+  approximates_to<float>("ceil({0.3,180})", "{1,180}");
+  approximates_to<float>("cos({0,π})", "{1,-1}");
+  approximates_to<float>("{1,3}!", "{1,6}");
+  approximates_to<float>("{1,2,3,4}!", "{1,2,6,24}");
+  approximates_to<float>("floor({1/√(2),1/2,1,-1.3})", "{0,0,1,-2}");
+  approximates_to<float>("floor({0.3,180})", "{0,180}");
+  approximates_to<float>("frac({0.3,180})", "{0.3,0}");
+  approximates_to<float>("im({1/√(2),1/2,1,-1})", "{0,0,0,0}");
+  approximates_to<float>("im({1,1+i})", "{0,1}", cartesianCtx);
+  approximates_to<float>("re({1,i})", "{1,0}", cartesianCtx);
+  approximates_to<float>("round({2.12,3.42}, 1)", "{2.1,3.4}");
+  approximates_to<float>("round(1.23456, {2,3})", "{1.23,1.235}");
+  approximates_to<float>("sin({0,π})", "{0,0}");
+  approximates_to<float>("{2,3.4}-{0.1,3.1}", "{1.9,0.3}");
+  approximates_to<float>("tan({0,π/4})", "{0,1}");
+  approximates_to<float>("abs(sum({0}×k,k,0,0))", "{0}");
+}
+
 QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<float>("trace([[1,2][4,3]])", "4");
   approximates_to<float>("identity(3)", "[[1,0,0][0,1,0][0,0,1]]");
@@ -612,6 +638,9 @@ QUIZ_CASE(pcj_approximation_matrix) {
   approximates_to<float>("det(inverse([[0]]))", "undef");
   approximates_to<float>("transpose(inverse([[0]]))", "undef");
   approximates_to<float>("dot([[1]], inverse([[0]]))", "undef");
+
+  approximates_to<float>("[[1,2,3][4,5,6]]", "[[1,2,3][4,5,6]]");
+  approximates_to<double>("[[1,2,3][4,5,6]]", "[[1,2,3][4,5,6]]");
 
   approximates_to<float>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
   approximates_to<double>("trace([[1,2,3][4,5,6][7,8,9]])", "15");
@@ -688,6 +717,10 @@ QUIZ_CASE(pcj_approximation_matrix) {
       "00333636639369-0.00181983621474×i,0.36093418259+0.534728541098×i,-0."
       "130118289354-0.357597816197×i]]",
       cartesianCtx, 12);
+
+  // We do not map on matrices anymore
+  approximates_to<float>("abs([[1,-2][3,-4]])", "undef");
+  approximates_to<double>("abs([[1,-2][3,-4]])", "undef");
 }
 
 QUIZ_CASE(pcj_approximation_infinity) {
@@ -1600,6 +1633,83 @@ QUIZ_CASE(pcj_approximation_percent) {
   approximates_to<float>("10+98%^2", "10.9604");
 }
 
+QUIZ_CASE(pcj_approximation_probability) {
+  // FIXME: precision problem
+  approximates_to<float>("binomcdf(5.3, 9, 0.7)", "0.270341", realCtx, 6);
+  // FIXME precision problem
+  approximates_to<double>("binomcdf(5.3, 9, 0.7)", "0.270340902", realCtx, 10);
+  // FIXME: precision problem
+  approximates_to<float>("binompdf(4.4, 9, 0.7)", "0.0735138", realCtx, 6);
+  approximates_to<double>("binompdf(4.4, 9, 0.7)", "0.073513818");
+  approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
+  approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
+  approximates_to<float>("invbinom(0.95,100,0.42)", "50");
+  approximates_to<double>("invbinom(0.95,100,0.42)", "50");
+  approximates_to<float>("invbinom(0.01,150,0.9)", "126");
+  approximates_to<double>("invbinom(0.01,150,0.9)", "126");
+
+  approximates_to<double>("geompdf(1,1)", "1");
+  approximates_to<double>("geompdf(2,0.5)", "0.25");
+  approximates_to<double>("geompdf(2,1)", "0");
+  approximates_to<double>("geompdf(1,0)", "undef");
+  approximates_to<double>("geomcdf(2,0.5)", "0.75");
+  approximates_to<double>("geomcdfrange(2,3,0.5)", "0.375");
+  approximates_to<double>("geomcdfrange(2,2,0.5)", "0.25");
+  approximates_to<double>("invgeom(1,1)", "1");
+  approximates_to<double>("invgeom(0.825,0.5)", "3");
+
+  approximates_to<double>("hgeompdf(-1,2,1,1)", "0");
+  approximates_to<double>("hgeompdf(0,2,1,1)", "0.5");
+  approximates_to<double>("hgeompdf(1,2,1,1)", "0.5");
+  approximates_to<double>("hgeompdf(2,2,1,1)", "0");
+  approximates_to<double>("hgeompdf(3,2,1,1)", "0");
+  approximates_to<double>("hgeompdf(0,2,1,2)", "0");
+  approximates_to<double>("hgeompdf(1,2,1,2)", "1");
+  approximates_to<double>("hgeompdf(2,2,1,2)", "0");
+  approximates_to<double>("hgeompdf(0,42,0,42)", "1");
+  approximates_to<double>("hgeompdf(24,42,24,42)", "1");
+  approximates_to<double>("hgeomcdf(1,4,2,3)", "0.5");
+  approximates_to<double>("hgeomcdf(24,42,24,34)", "1");
+  approximates_to<double>("hgeomcdfrange(2,3,6,3,4)", "0.8");
+  approximates_to<double>("hgeomcdfrange(13,15,40,20,30)", "0.60937014162821");
+  approximates_to<double>("invhgeom(.5,4,2,3)", "1");
+  approximates_to<double>("invhgeom(.6,40,20,30)", "15");
+  approximates_to<double>("invhgeom(-1,4,2,3)", "undef");
+  approximates_to<double>("invhgeom(0,4,2,2)", "undef");
+  approximates_to<double>("invhgeom(0,4,2,3)", "0");
+  approximates_to<double>("invhgeom(1,4,2,3)", "2");
+
+  approximates_to<double>("normcdf(5, 7, 0.3162)", "1.265256ᴇ-10", realCtx, 7);
+  approximates_to<float>("normcdf(1.2, 3.4, 5.6)", "0.3472125");
+  approximates_to<double>("normcdf(1.2, 3.4, 5.6)", "0.34721249841587");
+  approximates_to<float>("normcdf(-1ᴇ99,3.4,5.6)", "0");
+  approximates_to<float>("normcdf(1ᴇ99,3.4,5.6)", "1");
+  approximates_to<float>("normcdf(-6,0,1)", "0");
+  approximates_to<float>("normcdf(6,0,1)", "1");
+  approximates_to<float>("normcdfrange(0.5, 3.6, 1.3, 3.4)", "0.3436388");
+  approximates_to<double>("normcdfrange(0.5, 3.6, 1.3, 3.4)",
+                          "0.34363881299147");
+  approximates_to<float>("normpdf(1.2, 3.4, 5.6)", "0.06594901");
+  approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
+  // FIXME precision error
+  // approximates_to<double>("invnorm(0.56, 1.3, 2.4)", "1.6623258450088");
+
+  approximates_to<float>("poissonpdf(2,1)", "0.1839397");
+  approximates_to<double>("poissonpdf(2,1)", "0.18393972058572");
+  approximates_to<float>("poissonpdf(2,2)", "0.2706706");
+  approximates_to<float>("poissoncdf(2,2)", "0.6766764");
+  approximates_to<double>("poissoncdf(2,2)", "0.67667641618306");
+
+  approximates_to<float>("tpdf(1.2, 3.4)", "0.1706051");
+  approximates_to<double>("tpdf(1.2, 3.4)", "0.17060506917323");
+  approximates_to<float>("tcdf(0.5, 2)", "0.6666667");
+  approximates_to<float>("tcdf(1.2, 3.4)", "0.8464878");
+  // FIXME: precision problem
+  approximates_to<double>("tcdf(1.2, 3.4)", "0.8464877995", realCtx, 10);
+  approximates_to<float>("invt(0.8464878,3.4)", "1.2");
+  approximates_to<double>("invt(0.84648779949601043,3.4)", "1.2", realCtx, 10);
+}
+
 QUIZ_CASE(pcj_approximation_decimal) {
   approximates_to<float>("-0", "0");
   approximates_to<float>("-0.1", "-0.1");
@@ -1667,17 +1777,6 @@ QUIZ_CASE(pcj_approximation_function) {
 
   approximates_to<float>("permute(10, 4)", "5040");
   approximates_to<double>("permute(10, 4)", "5040");
-
-  approximates_to<float>("invbinom(0.9647324002, 15, 0.7)", "13");
-  approximates_to<double>("invbinom(0.9647324002, 15, 0.7)", "13");
-  approximates_to<float>("invbinom(0.95,100,0.42)", "50");
-  approximates_to<double>("invbinom(0.95,100,0.42)", "50");
-  approximates_to<float>("invbinom(0.01,150,0.9)", "126");
-  approximates_to<double>("invbinom(0.01,150,0.9)", "126");
-
-  approximates_to<float>("invnorm(0.56, 1.3, 2.4)", "1.662326");
-  // approximates_to<double>("invnorm(0.56, 1.3, 2.4)",
-  // "1.6623258450088"); FIXME precision error
 
   approximates_to<float>("re(2+i)", "2", cartesianCtx);
   approximates_to<double>("re(2+i)", "2", cartesianCtx);

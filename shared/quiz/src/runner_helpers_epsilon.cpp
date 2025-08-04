@@ -10,7 +10,10 @@
 
 class GlobalPreferencesTestBuilder {
  public:
-  static GlobalPreferences buildDefault() { return GlobalPreferences(); }
+  static bool IsGlobalPreferenceDefault() {
+    return GlobalPreferences::GlobalPreferencesData() ==
+           *GlobalPreferences::s_data;
+  }
 };
 
 void init() {
@@ -26,8 +29,7 @@ void flushGlobalData() {
 
   flushGlobalDataNoPool();
   quiz_assert(Poincare::Pool::sharedPool->numberOfObjects() == 0);
-  quiz_assert(*GlobalPreferences::SharedGlobalPreferences() ==
-              GlobalPreferencesTestBuilder::buildDefault());
+  quiz_assert(GlobalPreferencesTestBuilder::IsGlobalPreferenceDefault());
   quiz_assert(!ExamModeManager::ExamMode().isActive());
 }
 

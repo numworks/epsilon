@@ -2,22 +2,30 @@
 
 #include "apps_container_helper.h"
 
+GlobalPreferences GlobalPreferences::GlobalPreferencesInstance;
+GlobalPreferences::GlobalPreferencesData* GlobalPreferences::s_data = nullptr;
+
+void GlobalPreferences::Init() {
+  Ion::Storage::FileSystem::sharedFileSystem
+      ->initSystemRecord<GlobalPreferencesData>();
+  s_data = Ion::Storage::FileSystem::sharedFileSystem
+               ->findSystemRecord<GlobalPreferencesData>();
+}
+
 GlobalPreferences* GlobalPreferences::SharedGlobalPreferences() {
-  static GlobalPreferences* ptr = Ion::Storage::FileSystem::sharedFileSystem
-                                      ->findSystemRecord<GlobalPreferences>();
   assert(Ion::Storage::FileSystem::sharedFileSystem
-             ->findSystemRecord<GlobalPreferences>() == ptr);
-  return ptr;
+             ->findSystemRecord<GlobalPreferencesData>() == s_data);
+  return &GlobalPreferencesInstance;
 }
 
 void GlobalPreferences::setBrightnessLevel(int brightnessLevel) {
-  if (m_brightnessLevel != brightnessLevel) {
+  if (s_data->m_brightnessLevel != brightnessLevel) {
     brightnessLevel = brightnessLevel < 0 ? 0 : brightnessLevel;
     brightnessLevel = brightnessLevel > Ion::Backlight::MaxBrightness
                           ? Ion::Backlight::MaxBrightness
                           : brightnessLevel;
-    m_brightnessLevel = brightnessLevel;
-    Ion::Backlight::setBrightness(m_brightnessLevel);
+    s_data->m_brightnessLevel = brightnessLevel;
+    Ion::Backlight::setBrightness(s_data->m_brightnessLevel);
   }
 }
 

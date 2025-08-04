@@ -9,8 +9,7 @@
 namespace Apps {
 
 void Init() {
-  Ion::Storage::FileSystem::sharedFileSystem
-      ->initSystemRecord<GlobalPreferences>();
+  GlobalPreferences::Init();
   ExamModeManager::Init();
   Poincare::Init(GlobalPreferences::SharedGlobalPreferences(),
                  ExamModeManager::ExamModePtr());

@@ -1,3 +1,4 @@
+#include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
 #include <apps/init.h>
 #include <poincare/exception_checkpoint.h>
@@ -30,6 +31,7 @@ void flushGlobalData() {
   quiz_assert(Poincare::Pool::sharedPool->numberOfObjects() == 0);
   quiz_assert(*GlobalPreferences::SharedGlobalPreferences() ==
               GlobalPreferencesTestBuilder::buildDefault());
+  quiz_assert(!ExamModeManager::ExamMode().isActive());
 }
 
 void exception_run(void (*inner_main)(const char*, const char*, const char*,

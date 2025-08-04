@@ -1,3 +1,4 @@
+#include <poincare/exam_mode.h>
 #include <poincare/preferences.h>
 #include <poincare/src/memory/tree.h>
 
@@ -22,7 +23,7 @@ bool isPrimeFactorization(const Tree* expression) {
 }
 
 bool exactExpressionIsForbidden(const Tree* exactOutput) {
-  if (!Preferences::SharedPreferences()->examMode().forbidExactResults()) {
+  if (!SharedExamMode->forbidExactResults()) {
     return false;
   }
   if (exactOutput->isOpposite()) {

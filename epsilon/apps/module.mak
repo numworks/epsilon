@@ -12,6 +12,7 @@ $(call create_module,apps,1, \
   battery_timer.cpp:-test \
   battery_view.cpp:-test \
   empty_battery_window.cpp \
+  exam_mode_manager.cpp \
   exam_pop_up_controller.cpp:-test \
   global_preferences.cpp \
   init.cpp:-test \

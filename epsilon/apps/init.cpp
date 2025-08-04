@@ -4,6 +4,7 @@
 #include <poincare/init.h>
 
 #include "apps_container_storage.h"
+#include "exam_mode_manager.h"
 #include "global_preferences.h"
 #include "shared/global_context.h"
 
@@ -12,7 +13,9 @@ namespace Apps {
 void Init() {
   Ion::Storage::FileSystem::sharedFileSystem
       ->initSystemRecord<GlobalPreferences>();
-  Poincare::Init(GlobalPreferences::SharedGlobalPreferences());
+  ExamModeManager::Init();
+  Poincare::Init(GlobalPreferences::SharedGlobalPreferences(),
+                 ExamModeManager::ExamModePtr());
   Escher::Init(GlobalPreferences::SharedGlobalPreferences());
 
   ::Shared::GlobalContext::s_sequenceStore.init();

@@ -154,7 +154,7 @@ class Preferences {
     friend Ion::Storage::FileSystem;
 
    public:
-    constexpr static char k_recordName[] = "pr";
+    constexpr static char k_recordName[] = "old_pr";
     bool operator==(const Instance&) const = default;
 
     bool forceExamModeReload() const { return m_forceExamModeReload; }

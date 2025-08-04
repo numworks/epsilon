@@ -208,6 +208,7 @@ $(addprefix statistics/, \
   statistics_dataset_column.cpp \
 ) \
   additional_results_helper.cpp:-nopool \
+  exam_mode.cpp \
   comparison_operator.cpp \
   float_list.cpp:-nopool \
   print.cpp \

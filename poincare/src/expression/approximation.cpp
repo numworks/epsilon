@@ -269,18 +269,19 @@ T FloatBinomial(T n, T k) {
   if (k != std::round(k)) {
     return NAN;
   }
-  if (k < 0) {
-    return 0;
+  bool nIsInt = n == std::round(n);
+  if (k < 0 || (nIsInt && 0 < n && n < k)) {
+    return 0.;
   }
   // Generalized definition allows any n value
-  bool generalized = (n != std::round(n) || n < k);
+  bool generalized = !nIsInt || n < k;
   // Take advantage of symmetry
   k = (!generalized && k > (n - k)) ? n - k : k;
 
   T result = 1;
   for (T i = 0; i < k; i++) {
     result *= (n - i) / (k - i);
-    if (std::isinf(result) || std::isnan(result)) {
+    if (std::isinf(result) || std::isnan(result) || result == 0.) {
       return result;
     }
   }

@@ -68,7 +68,7 @@ android {
       res.srcDir GRADLE_BUILD_DIR + '/res'
       java.srcDir 'src'
       jniLibs.srcDir GRADLE_BUILD_DIR + '/libs/' + project.getProperty("goalName")
-      assets.srcDirs = ['../assets', OUTPUT_DIR + '/ion/src/simulator/assets']
+      assets.srcDirs = ['../assets', OUTPUT_DIR + '/app/assets']
     }
   }
   lintOptions {

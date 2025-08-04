@@ -21,7 +21,7 @@ apk_deps = $(foreach ARCH,$(ARCHS),$(call path_for_arch_jni_lib,$(ARCH)))
 apk_deps += $(subst ion/src/simulator/android/src/res,$(OUTPUT_DIRECTORY)/app/res,$(wildcard ion/src/simulator/android/src/res/*/*))
 apk_deps += $(addprefix $(OUTPUT_DIRECTORY)/app/res/,mipmap/ic_launcher.png mipmap-v26/ic_launcher_foreground.png)
 
-$(OUTPUT_DIRECTORY)/%.apk: $$(simulator_app_deps) $(apk_deps)
+$(OUTPUT_DIRECTORY)/%.apk: $$(_ion_simulator_assets) $(apk_deps)
 	$(call rule_label,GRADLE)
 	$(Q) ion/src/simulator/android/gradlew -b ion/src/simulator/android/build.gradle -PappVersion=$(APP_VERSION) -PoutputDirectory=$$(realpath $(OUTPUT_DIRECTORY)) -PgoalName=$(basename $(notdir $@)) -PndkBundleVersion=$(NDK_BUNDLE_VERSION) assembleRelease
 	$(Q) cp $(OUTPUT_DIRECTORY)/app/outputs/apk/release/android-release*.apk $@

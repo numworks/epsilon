@@ -44,6 +44,7 @@ jobs:
   android:
     timeout-minutes: 15
     runs-on: ${{ fromJSON(vars.EPSILON_CACHED_RUNNER_LABELS) }}
+    if: ${{ (fromJSON(vars.ADVANCED_JOBS) || fromJSON(github.event.inputs.android)) }}
     steps:
       - uses: actions/checkout@v4
       - name: Build container and define DOCKER_RUN

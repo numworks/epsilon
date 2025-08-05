@@ -7,6 +7,7 @@
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/src/expression/variables.h>
 #include <poincare/test/float_helper.h>
 
 #include <cmath>
@@ -175,6 +176,25 @@ void projected_approximates_to(
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
+}
+
+template <typename T>
+void approximates_to_keeping_symbols(
+    const char* expression, const char* simplifiedExpression,
+    const ProjectionContext& projectionContext = realCtx,
+    int numberOfSignificantDigits =
+        PrintFloat::k_undefinedNumberOfSignificantDigits) {
+  process_tree_and_compare(
+      expression, simplifiedExpression,
+      [](Tree* tree, ProjectionContext projectionContext) {
+        Variables::ProjectLocalVariablesToId(tree);
+        Approximation::ApproximateAndReplaceEveryScalar<T>(
+            tree, Approximation::Context(projectionContext.m_angleUnit,
+                                         projectionContext.m_complexFormat,
+                                         projectionContext.m_context));
+        Variables::BeautifyToName(tree);
+      },
+      projectionContext, numberOfSignificantDigits);
 }
 
 template <typename T>
@@ -481,6 +501,26 @@ QUIZ_CASE(pcj_approximation_replace) {
       KMult(2.0_de, KDiv("x"_e, KAdd(1_e, 2.0_fe)), KAdd(1_e, 2_e, 10.5_fe)));
   quiz_assert(Approximation::ApproximateAndReplaceEveryScalar<float>(ref4));
   assert_trees_are_equal(ref4, KMult(KDiv("x"_e, 3.0_fe), 27_fe));
+}
+
+QUIZ_CASE(pcj_approximation_keeping_symbols) {
+  approximates_to_keeping_symbols<double>("ln(10)+cos(10)+3x",
+                                          "3.287392846+3×x", degreeCtx, 10);
+  approximates_to_keeping_symbols<double>(
+      "cos(4/3+ln(x-1/2))", "cos(1.333333333+ln(x-0.5))", degreeCtx, 10);
+  approximates_to_keeping_symbols<double>("ln(ln(ln(10+10)))+ln(ln(ln(x+10)))",
+                                          "0.09275118142+ln(ln(ln(x+10)))",
+                                          realCtx, 10);
+  approximates_to_keeping_symbols<double>("int(x,x,0,2)+int(x,x,0,x)",
+                                          "2+int(x,x,0,x)", realCtx, 10);
+  approximates_to_keeping_symbols<double>(
+      "[[x,cos(10)][1/2+x,cos(4/3+x)]]",
+      "[[x,0.984807753][0.5+x,cos(1.333333333+x)]]", degreeCtx, 10);
+  approximates_to_keeping_symbols<double>("{x,undef,cos(10)+x,cos(10)}",
+                                          "{x,undef,0.984807753+x,0.984807753}",
+                                          degreeCtx, 10);
+  approximates_to_keeping_symbols<double>("cos(10)→x", "0.984807753→x",
+                                          degreeCtx, 10);
 }
 
 QUIZ_CASE(pcj_approximation_power) {

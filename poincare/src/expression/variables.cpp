@@ -63,7 +63,7 @@ void Variables::Private::GetUserSymbols(const Tree* e, Tree* set,
      * symbol has to be discarded. */
     Tree* subSet = Set::PushEmpty();
     GetUserSymbols(ctx->expressionForUserNamed(e), subSet, ctx);
-    Tree* symbolToRemove = KSet(KUnknownSymbol)->cloneTree();
+    Tree* symbolToRemove = KList(KUnknownSymbol)->cloneTree();
     subSet = Set::Difference(subSet, symbolToRemove);
     set = Set::Union(set, subSet);
     // Also get UserSymbols in the function's child.

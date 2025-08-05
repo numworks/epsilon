@@ -154,7 +154,6 @@ constexpr auto KMult = KNAry<Type::Mult>();
 constexpr auto KGCD = KNAry<Type::GCD>();
 constexpr auto KLCM = KNAry<Type::LCM>();
 constexpr auto KList = KNAry<Type::List>();
-constexpr auto KSet = KList;
 constexpr auto KDepList = KNAry<Type::DepList>();
 
 #if POINCARE_PIECEWISE

@@ -11,7 +11,7 @@ QUIZ_CASE(pcj_set) {
   Set::Add(set0, 1_e);
   Set::Add(set0, 2_e);
   Set::Add(set0, 3_e);
-  assert_trees_are_equal(set0, KSet(1_e, 2_e, 3_e));
+  assert_trees_are_equal(set0, KList(1_e, 2_e, 3_e));
 
   // Inclusion
   quiz_assert(Set::Includes(set0, 1_e));
@@ -22,18 +22,18 @@ QUIZ_CASE(pcj_set) {
 
   // Union {2, 3} U {-1, 2, 5, 6, 7}
   TreeRef unionSet =
-      Set::Union(set0, KSet(-1_e, 2_e, 5_e, 6_e, 7_e)->cloneTree());
-  assert_trees_are_equal(unionSet, KSet(-1_e, 2_e, 3_e, 5_e, 6_e, 7_e));
+      Set::Union(set0, KList(-1_e, 2_e, 5_e, 6_e, 7_e)->cloneTree());
+  assert_trees_are_equal(unionSet, KList(-1_e, 2_e, 3_e, 5_e, 6_e, 7_e));
 
   // Intersection {2, 3, 5, 6, 7} ∩ {3, 7, 8_e}
-  set0->cloneTreeOverTree(KSet(2_e, 3_e, 5_e, 6_e, 7_e));
+  set0->cloneTreeOverTree(KList(2_e, 3_e, 5_e, 6_e, 7_e));
   TreeRef intersectionSet =
-      Set::Intersection(set0, KSet(3_e, 7_e, 8_e)->cloneTree());
-  assert_trees_are_equal(intersectionSet, KSet(3_e, 7_e));
+      Set::Intersection(set0, KList(3_e, 7_e, 8_e)->cloneTree());
+  assert_trees_are_equal(intersectionSet, KList(3_e, 7_e));
 
   // Difference {3, 5, 6} \ {2, 5, 6}
-  set0->cloneTreeOverTree(KSet(3_e, 5_e, 6_e));
+  set0->cloneTreeOverTree(KList(3_e, 5_e, 6_e));
   TreeRef differenceSet =
-      Set::Difference(set0, KSet(2_e, 5_e, 6_e)->cloneTree());
-  assert_trees_are_equal(differenceSet, KSet(3_e));
+      Set::Difference(set0, KList(2_e, 5_e, 6_e)->cloneTree());
+  assert_trees_are_equal(differenceSet, KList(3_e));
 }

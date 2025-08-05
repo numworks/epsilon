@@ -270,11 +270,11 @@ T FloatBinomial(T n, T k) {
     return NAN;
   }
   bool nIsInt = n == std::round(n);
-  if (k < 0 || (nIsInt && 0 < n && n < k)) {
+  if (k < 0 || (nIsInt && 0 <= n && n < k)) {
     return 0.;
   }
   // Generalized definition allows any n value
-  bool generalized = !nIsInt || n < k;
+  bool generalized = !nIsInt || n < 0;
   // Take advantage of symmetry
   k = (!generalized && k > (n - k)) ? n - k : k;
 

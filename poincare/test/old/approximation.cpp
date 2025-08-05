@@ -16,35 +16,6 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
                                             "{(undef,1),(6,1),(5,-3)}");
 }
 
-template <typename T>
-void assert_expression_approximates_with_value_for_symbol(
-    const char *expression, T approximation, const char *symbol, T symbolValue,
-    Preferences::AngleUnit angleUnit = Degree,
-    Preferences::ComplexFormat complexFormat = Cartesian) {
-  Shared::GlobalContext globalContext;
-#if 0
-  Internal::Tree *e = parse_expression(expression, &globalContext);
-  ApproximationContext approximationContext(&globalContext, complexFormat,
-                                            angleUnit);
-  T result = e.approximateToRealScalarWithValueForSymbol<T>(symbol, symbolValue,
-                                                        approximationContext);
-  quiz_assert_print_if_failure(
-      roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(),
-                    true),
-      expression);
-#endif
-}
-
-QUIZ_CASE(poincare_approximation_floor_ceil_integer) {
-  constexpr double upperBound = 1000.;
-  for (double d = 0.; d < upperBound; d += 1.) {
-    assert_expression_approximates_with_value_for_symbol(
-        "floor(x * (x+1)^(-1) + x^2 * (x+1)^(-1))", d, "x", d);
-    assert_expression_approximates_with_value_for_symbol(
-        "ceil(x * (x+1)^(-1) + x^2 * (x+1)^(-1))", d, "x", d);
-  }
-}
-
 QUIZ_CASE(poincare_approximation_point) {
   assert_expression_approximates_to<double>("(undef,i)", "(undef,undef)");
   assert_expression_approximates_to<double>("(undef,i)", "(undef,undef)",

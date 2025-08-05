@@ -7,7 +7,7 @@
 
 namespace Poincare::Internal {
 
-Tree* Set::PushEmpty() { return KSet()->cloneTree(); }
+Tree* Set::PushEmpty() { return KList()->cloneTree(); }
 
 bool Set::Includes(const Tree* set, const Tree* e) {
   for (const Tree* child : set->children()) {

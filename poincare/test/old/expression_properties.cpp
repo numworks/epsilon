@@ -232,26 +232,26 @@ QUIZ_CASE(poincare_properties_get_variables) {
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
           "sys"));
 
-  assert_expression_has_variables("x+y", KSet("x"_e, "y"_e), &projCtx);
-  assert_expression_has_variables("x+y+z+2w", KSet("w"_e, "x"_e, "y"_e, "z"_e),
+  assert_expression_has_variables("x+y", KList("x"_e, "y"_e), &projCtx);
+  assert_expression_has_variables("x+y+z+2w", KList("w"_e, "x"_e, "y"_e, "z"_e),
                                   &projCtx);
   assert_expression_has_variables(
-      "a+x^2+2y+k!B", KSet("B"_e, "a"_e, "k"_e, "x"_e, "y"_e), &projCtx);
+      "a+x^2+2y+k!B", KList("B"_e, "a"_e, "k"_e, "x"_e, "y"_e), &projCtx);
 
   store("x→BABA", &globalContext);
   store("y→abab", &globalContext);
-  assert_expression_has_variables("BABA+abab", KSet("BABA"_e, "abab"_e),
+  assert_expression_has_variables("BABA+abab", KList("BABA"_e, "abab"_e),
                                   &projCtx);
   store("z→BBBBBB", &globalContext);
-  assert_expression_has_variables("BBBBBB", KSet("BBBBBB"_e), &projCtx);
+  assert_expression_has_variables("BBBBBB", KList("BBBBBB"_e), &projCtx);
   assert_expression_has_variables(
       "a+b+c+d+f+j+k+n+o+p+q+r",
-      KSet("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e, "k"_e, "n"_e, "o"_e, "p"_e,
-           "q"_e, "r"_e),
+      KList("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e, "k"_e, "n"_e, "o"_e,
+            "p"_e, "q"_e, "r"_e),
       &projCtx);
   store("1+π×x+x^2+\"toto\"→f(x)", &globalContext);
   assert_expression_has_variables("f(\"tata\")",
-                                  KSet("\"tata\""_e, "\"toto\""_e), &projCtx);
+                                  KList("\"tata\""_e, "\"toto\""_e), &projCtx);
 
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("BABA.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("abab.exp").destroy();
@@ -259,44 +259,44 @@ QUIZ_CASE(poincare_properties_get_variables) {
       .destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
-  assert_expression_has_variables("diff(3x,x,0)y-2", KSet("y"_e), &projCtx);
+  assert_expression_has_variables("diff(3x,x,0)y-2", KList("y"_e), &projCtx);
   assert_expression_has_variables(
-      "a+b+c+d+f+j", KSet("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e), &projCtx);
+      "a+b+c+d+f+j", KList("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e), &projCtx);
   assert_expression_has_variables("\"box\"+y×int(z,x,a,0)",
-                                  KSet("\"box\""_e, "a"_e, "y"_e, "z"_e),
+                                  KList("\"box\""_e, "a"_e, "y"_e, "z"_e),
                                   &projCtx);
 
   store("0→f(x)", &globalContext);
   store("x→va", &globalContext);
-  assert_expression_has_variables("f(va)", KSet("va"_e), &projCtx);
+  assert_expression_has_variables("f(va)", KList("va"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   store("12→a", &globalContext);
   store("a→f(x)", &globalContext);
-  assert_expression_has_variables("f(x)", KSet("a"_e, "x"_e), &projCtx);
+  assert_expression_has_variables("f(x)", KList("a"_e, "x"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   store("1→f(x)", &globalContext);
   store("2→g(x)", &globalContext);
-  assert_expression_has_variables("f(g(x)+y)", KSet("x"_e, "y"_e), &projCtx);
+  assert_expression_has_variables("f(g(x)+y)", KList("x"_e, "y"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 
   store("1→x", &globalContext);
-  assert_expression_has_variables("x+y", KSet("x"_e, "y"_e), &projCtx);
+  assert_expression_has_variables("x+y", KList("x"_e, "y"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 
   store("1→a", &globalContext);
   store("a+b+c→x", &globalContext);
-  assert_expression_has_variables("x+y", KSet("x"_e, "y"_e), &projCtx);
+  assert_expression_has_variables("x+y", KList("x"_e, "y"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   store("b+c+x→a", &globalContext);
   store("x+b→g(x)", &globalContext);
   store("a+g(x+y)→f(x)", &globalContext);
-  assert_expression_has_variables("f(x)", KSet("a"_e, "b"_e, "x"_e, "y"_e),
+  assert_expression_has_variables("f(x)", KList("a"_e, "b"_e, "x"_e, "y"_e),
                                   &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();

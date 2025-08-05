@@ -122,11 +122,11 @@ QUIZ_CASE(pcj_simplification_contraction) {
 }
 
 QUIZ_CASE(pcj_simplification_variables) {
-  assert_trees_are_equal(Variables::GetUserSymbols(0_e), KSet());
+  assert_trees_are_equal(Variables::GetUserSymbols(0_e), KList());
   const Tree* e = KMult(
       KAdd(KSin("y"_e), KSum("x"_e, 2_e, 4_e, KPow("z"_e, "x"_e))), "m"_e);
   assert_trees_are_equal(Variables::GetUserSymbols(e),
-                         KSet("m"_e, "y"_e, "z"_e));
+                         KList("m"_e, "y"_e, "z"_e));
   const Tree* s = KSum("k"_e, 1_e, 2_e, KAdd(KVarK, π_e));
   quiz_assert(!Variables::HasVariables(s));
   quiz_assert(Variables::HasVariables(s->lastChild()));

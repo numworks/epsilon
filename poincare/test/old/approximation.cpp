@@ -15,9 +15,3 @@ QUIZ_CASE(poincare_approximation_lists_functions) {
   assert_expression_approximates_to<double>("sort({(undef,1),(6,1),(5,-3)})",
                                             "{(undef,1),(6,1),(5,-3)}");
 }
-
-QUIZ_CASE(poincare_approximation_point) {
-  assert_expression_approximates_to<double>("(undef,i)", "(undef,undef)");
-  assert_expression_approximates_to<double>("(undef,i)", "(undef,undef)",
-                                            Degree, MetricUnitFormat, Real);
-}

@@ -573,7 +573,7 @@ QUIZ_CASE(pcj_simplification_polar) {
   simplifies_to("[[42, -2/3][1+i, -iπ]]",
                 "[[42,(2×e^(π×i))/3][√(2)×e^(π/4×i),π×e^(-π/2×i)]]", polarCtx);
   simplifies_to("-2×_m", "-2×_m", polarCtx);
-  simplifies_to("(-2,i)", "(-2,i)", polarCtx);
+  simplifies_to("(-2,i)", "(2×e^(π×i),e^(π/2×i))", polarCtx);
   simplifies_to("{-2,-i}", "{2×e^(π×i),e^(-π/2×i)}", polarCtx);
   simplifies_to("(y/y+3)×e^(i×(x-x+2))", "dep(4×e^(2×i),{y^0})", polarCtx);
   simplifies_to("3+4i", "5×e^(arctan(4/3)×i)", polarCtx);

@@ -217,7 +217,6 @@ $(addprefix statistics/, \
 
 _sources_poincare_test := $(addprefix test/, \
   old/additional_results_helper.cpp \
-  old/approximation.cpp \
   old/arithmetic.cpp \
   old/conics.cpp \
   old/dependency.cpp \

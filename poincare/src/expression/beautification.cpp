@@ -528,8 +528,9 @@ bool ApplyComplexFormat(Tree* e, Dimension dim,
     return false;
   }
   assert(format == ComplexFormat::Cartesian || format == ComplexFormat::Polar);
-  // Apply element-wise on explicit lists, matrices, sets.
-  if (e->isMatrix() || e->isSet() || (dim.isScalar() && e->isList())) {
+  // Apply element-wise on explicit lists, matrices, points, sets.
+  if (e->isMatrix() || e->isPoint() || e->isSet() ||
+      (dim.isScalar() && e->isList())) {
     bool changed = false;
     for (Tree* child : e->children()) {
       assert(Dimension::Get(child).isScalar());

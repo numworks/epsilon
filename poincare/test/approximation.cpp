@@ -1005,6 +1005,10 @@ QUIZ_CASE(pcj_approximation_point) {
   approximates_to<double>("(1,2)+3", "undef");
   approximates_to<double>("abs((1.23,4.56))", "undef");
   approximates_to<double>("{(1+2,3+4),(5+6,7+8)}", "{(3,7),(11,15)}");
+
+  // undef is not bubbled up in points
+  approximates_to<double>("(undef,i)", "(undef,nonreal)", realCtx);
+  approximates_to<double>("(undef,i)", "(undef,i)", cartesianCtx);
 }
 
 QUIZ_CASE(pcj_approximation_infinity) {

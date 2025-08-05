@@ -69,6 +69,7 @@ void replaces_to(const Tree* input, const Tree* output,
   Poincare::Internal::Projection::DeepReplaceUserNamed(e, context,
                                                        symbolicPolicy);
   quiz_assert(e->treeIsIdenticalTo(output));
+  e->removeTree();
 }
 
 QUIZ_CASE(pcj_projection_variable_replacement) {

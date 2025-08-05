@@ -208,26 +208,6 @@ void assert_expression_approximates_to(const char *expression,
       numberOfSignificantDigits);
 }
 
-void assert_expression_approximates_keeping_symbols_to(
-    const char *expression, const char *simplifiedExpression,
-    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
-    Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
-  Shared::GlobalContext globalContext;
-  assert_parsed_expression_process_to(
-      expression, simplifiedExpression, &globalContext, SystemForApproximation,
-      complexFormat, angleUnit, unitFormat, ReplaceDefinedSymbols,
-      [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
-#if 0
-        Tree *simplifiedExpression;
-        e.cloneAndSimplifyAndApproximate(&simplifiedExpression, nullptr,
-                                         projCtx);
-        return simplifiedExpression;
-#endif
-        return e;
-      },
-      numberOfSignificantDigits);
-}
-
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char *expression, const char *approximation,

@@ -386,9 +386,20 @@ class Tree : public TypeBlock {
   Nodes selfAndDescendants() { return {this, 1}; }
 
   ConstTrees children() const { return {nextNode(), numberOfChildren()}; }
-  ConstNodes descendants() const { return {nextNode(), numberOfChildren()}; }
   // Do not alter number of children while iterating
   Trees children() { return {nextNode(), numberOfChildren()}; }
+
+  ConstTrees childrenRange(int startIndex) const {
+    assert(startIndex >= 0 && startIndex < numberOfChildren());
+    return {child(startIndex), numberOfChildren() - startIndex};
+  }
+  // Do not alter number of children while iterating
+  Trees childrenRange(int startIndex) {
+    assert(startIndex >= 0 && startIndex < numberOfChildren());
+    return {child(startIndex), numberOfChildren() - startIndex};
+  }
+
+  ConstNodes descendants() const { return {nextNode(), numberOfChildren()}; }
   // Do not alter number of children while iterating
   Nodes descendants() { return {nextNode(), numberOfChildren()}; }
 

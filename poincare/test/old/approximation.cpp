@@ -9,62 +9,6 @@
 using namespace Poincare;
 
 template <typename T>
-void assert_float_approximates_to(Expression f, const char *result) {
-#if 0  // TODO_PCJ
-  Shared::GlobalContext globalContext;
-  int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
-  char buffer[500];
-  f.approximate<T>(ApproximationContext(&globalContext, Cartesian, Radian))
-      .serialize(buffer, sizeof(buffer), DecimalMode, numberOfDigits);
-  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
-#endif
-}
-
-QUIZ_CASE(poincare_approximation_float) {
-  assert_float_approximates_to<double>(
-      Expression::Builder<double>(-1.23456789E30), "-1.23456789ᴇ30");
-  assert_float_approximates_to<double>(
-      Expression::Builder<double>(1.23456789E30), "1.23456789ᴇ30");
-  assert_float_approximates_to<double>(
-      Expression::Builder<double>(-1.23456789E-30), "-1.23456789ᴇ-30");
-  assert_float_approximates_to<double>(Expression::Builder<double>(-1.2345E-3),
-                                       "-0.0012345");
-  assert_float_approximates_to<double>(Expression::Builder<double>(1.2345E-3),
-                                       "0.0012345");
-  assert_float_approximates_to<double>(Expression::Builder<double>(1.2345E3),
-                                       "1234.5");
-  assert_float_approximates_to<double>(Expression::Builder<double>(-1.2345E3),
-                                       "-1234.5");
-  assert_float_approximates_to<double>(
-      Expression::Builder<double>(0.99999999999995), "0.99999999999995");
-  assert_float_approximates_to<double>(
-      Expression::Builder<double>(0.00000099999999999995),
-      "9.9999999999995ᴇ-7");
-  assert_float_approximates_to<double>(
-      Expression::Builder<double>(
-          0.0000009999999999901200121020102010201201201021099995),
-      "9.9999999999012ᴇ-7");
-  assert_float_approximates_to<float>(Expression::Builder<float>(1.2345E-1),
-                                      "0.12345");
-  assert_float_approximates_to<float>(Expression::Builder<float>(1), "1");
-  assert_float_approximates_to<float>(
-      Expression::Builder<float>(0.9999999999999995), "1");
-  assert_float_approximates_to<float>(Expression::Builder<float>(1.2345E6),
-                                      "1234500");
-  assert_float_approximates_to<float>(Expression::Builder<float>(-1.2345E6),
-                                      "-1234500");
-  assert_float_approximates_to<float>(
-      Expression::Builder<float>(0.0000009999999999999995), "1ᴇ-6");
-  assert_float_approximates_to<float>(Expression::Builder<float>(-1.2345E-1),
-                                      "-0.12345");
-
-  assert_float_approximates_to<double>(Expression::Builder<double>(INFINITY),
-                                       "∞");
-  assert_float_approximates_to<float>(Expression::Builder<float>(0.0f), "0");
-  assert_float_approximates_to<float>(Expression::Builder<float>(NAN), "undef");
-}
-
-template <typename T>
 void assert_expression_approximation_is_bounded(const char *expression,
                                                 T lowBound, T upBound,
                                                 bool upBoundIncluded = false) {

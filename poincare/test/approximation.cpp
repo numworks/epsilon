@@ -13,6 +13,7 @@
 #include "apps/shared/poincare_helpers.h"
 #include "helper.h"
 
+using namespace Poincare;
 using namespace Poincare::Internal;
 
 // Default context is realCtx
@@ -112,11 +113,10 @@ void approximates_to(const char* input, T f,
 }
 
 template <typename T>
-void approximates_to(
-    const char* input, const char* output,
-    const ProjectionContext& projectionContext = realCtx,
-    int nbOfSignificantDigits =
-        Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits) {
+void approximates_to(const char* input, const char* output,
+                     const ProjectionContext& projectionContext = realCtx,
+                     int nbOfSignificantDigits =
+                         PrintFloat::k_undefinedNumberOfSignificantDigits) {
   // TODO: use same test and log as approximates_to?
   process_tree_and_compare(
       input, output,
@@ -138,7 +138,7 @@ void simplified_approximates_to(
     const char* input, const char* output,
     const ProjectionContext& projectionContext = realCtx,
     int nbOfSignificantDigits =
-        Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits) {
+        PrintFloat::k_undefinedNumberOfSignificantDigits) {
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
@@ -160,7 +160,7 @@ void projected_approximates_to(
     const char* input, const char* output,
     const ProjectionContext& projectionContext = realCtx,
     int nbOfSignificantDigits =
-        Poincare::PrintFloat::k_undefinedNumberOfSignificantDigits) {
+        PrintFloat::k_undefinedNumberOfSignificantDigits) {
   process_tree_and_compare(
       input, output,
       [](Tree* tree, ProjectionContext projectionContext) {
@@ -175,6 +175,61 @@ void projected_approximates_to(
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
+}
+
+template <typename T>
+void assert_float_approximates_to(Expression f, const char* result) {
+  Shared::GlobalContext globalContext;
+  int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
+  char buffer[500];
+  f.approximateUserToTree<T>(AngleUnit::Radian, ComplexFormat::Cartesian,
+                             &globalContext)
+      .serialize(buffer, false, DecimalMode, numberOfDigits);
+  quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
+}
+
+QUIZ_CASE(pcj_approximation_float) {
+  assert_float_approximates_to<double>(
+      Expression::Builder<double>(-1.23456789E30), "-1.23456789ᴇ30");
+  assert_float_approximates_to<double>(
+      Expression::Builder<double>(1.23456789E30), "1.23456789ᴇ30");
+  assert_float_approximates_to<double>(
+      Expression::Builder<double>(-1.23456789E-30), "-1.23456789ᴇ-30");
+  assert_float_approximates_to<double>(Expression::Builder<double>(-1.2345E-3),
+                                       "-0.0012345");
+  assert_float_approximates_to<double>(Expression::Builder<double>(1.2345E-3),
+                                       "0.0012345");
+  assert_float_approximates_to<double>(Expression::Builder<double>(1.2345E3),
+                                       "1234.5");
+  assert_float_approximates_to<double>(Expression::Builder<double>(-1.2345E3),
+                                       "-1234.5");
+  assert_float_approximates_to<double>(
+      Expression::Builder<double>(0.99999999999995), "0.99999999999995");
+  assert_float_approximates_to<double>(
+      Expression::Builder<double>(0.00000099999999999995),
+      "9.9999999999995ᴇ-7");
+  assert_float_approximates_to<double>(
+      Expression::Builder<double>(
+          0.0000009999999999901200121020102010201201201021099995),
+      "9.9999999999012ᴇ-7");
+  assert_float_approximates_to<float>(Expression::Builder<float>(1.2345E-1),
+                                      "0.12345");
+  assert_float_approximates_to<float>(Expression::Builder<float>(1), "1");
+  assert_float_approximates_to<float>(
+      Expression::Builder<float>(0.9999999999999995), "1");
+  assert_float_approximates_to<float>(Expression::Builder<float>(1.2345E6),
+                                      "1234500");
+  assert_float_approximates_to<float>(Expression::Builder<float>(-1.2345E6),
+                                      "-1234500");
+  assert_float_approximates_to<float>(
+      Expression::Builder<float>(0.0000009999999999999995), "1ᴇ-6");
+  assert_float_approximates_to<float>(Expression::Builder<float>(-1.2345E-1),
+                                      "-0.12345");
+
+  assert_float_approximates_to<double>(Expression::Builder<double>(INFINITY),
+                                       "∞");
+  assert_float_approximates_to<float>(Expression::Builder<float>(0.0f), "0");
+  assert_float_approximates_to<float>(Expression::Builder<float>(NAN), "undef");
 }
 
 QUIZ_CASE(pcj_approximation_can_approximate) {
@@ -1693,8 +1748,7 @@ QUIZ_CASE(pcj_approximation_arithmetic) {
 
 QUIZ_CASE(pcj_approximation_mixed_fraction) {
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::US);
-  assert(
-      Poincare::Preferences::SharedPreferences()->mixedFractionsAreEnabled());
+  assert(Preferences::SharedPreferences()->mixedFractionsAreEnabled());
   approximates_to<double>("1 1/2", 1.5);
   approximates_to<double>("-1 1/2", -1.5);
   GlobalPreferences::SharedGlobalPreferences()->setCountry(I18n::Country::WW);

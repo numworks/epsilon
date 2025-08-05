@@ -1,3 +1,4 @@
+#include <apps/shared/global_context.h>
 #include <float.h>
 #include <omg/float.h>
 #include <poincare/src/expression/approximation.h>
@@ -127,6 +128,15 @@ void assert_approximate_is_float(const char* input, float lowerBound = 0.0f,
   e->removeTree();
 }
 
+void assert_approximate_is_double(const char* input, double lowerBound = 0.0,
+                                  double upperBound = 1.0) {
+  Tree* e = parse_and_reduce(input, true);
+  assert(!Dimension::IsList(e));
+  quiz_assert_print_if_failure(
+      approximate_is_between_bounds<double>(e, lowerBound, upperBound), input);
+  e->removeTree();
+}
+
 void assert_approximate_is_int(const char* input, int lowerBound,
                                int upperBound) {
   Tree* e = parse_and_reduce(input, true);
@@ -152,14 +162,60 @@ void assert_approximate_is_int(const char* input, int lowerBound,
 
 QUIZ_CASE(pcj_random_range_values) {
   assert_approximate_is_float("random()");
+  assert_approximate_is_double("random()");
   assert_approximate_is_float("random()-random()", -1.0f, 1.0f);
+  assert_approximate_is_double("random()-random()", -1.0, 1.0);
   assert_approximate_is_float("3*random()", 0.0f, 3.0f);
-  assert_approximate_is_float("stddev({random(), random()})", 0.0f, 1.0f);
+  assert_approximate_is_double("3*random()", 0.0, 3.0);
+  assert_approximate_is_float("stddev({random(), random()})");
+  assert_approximate_is_double("stddev({random(), random()})");
+  assert_approximate_is_float("randint(123456789876543, 123456789876543+10)",
+                              static_cast<float>(123456789876543),
+                              static_cast<float>(123456789876553));
+  assert_approximate_is_float("randint(-123456789876543, 123456789876543)",
+                              static_cast<float>(-123456789876543),
+                              static_cast<float>(123456789876543));
 
   assert_approximate_is_int("_m * random()^0", 1, 1);
   assert_approximate_is_int("randint(0,1)_m", 0, 1);
   assert_approximate_is_int("randint(0,1)", 0, 1);
   assert_approximate_is_int("randint(-10,0)", -10, 0);
+  assert_approximate_is_int("randint(1,10)", 1, 10);
+  assert_approximate_is_int("randint(4,45)", 4, 45);
+  assert_approximate_is_int("randint(0, 2^31 - 1)", 0,
+                            static_cast<int>(0x7FFFFFFF));
 
   assert_approximate_is_int("randintnorep(-2, 2, 4)", -2, 2);
+}
+
+template <typename T>
+void assert_no_duplicates_in_list(const char* expression) {
+  Shared::GlobalContext globalContext;
+  Tree* e = parse(expression, &globalContext);
+  // Sort list
+  e->cloneNodeAtNode(KListSort);
+  simplify(e, {.m_context = &globalContext}, false);
+  e->moveTreeOverTree(Approximation::ToTree<T>(
+      e, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
+  // Find duplicates
+  assert(e->isList());
+  int n = e->numberOfChildren();
+  bool bad = false;
+  for (int i = 1; i < n; i++) {
+    if (e->child(i)->treeIsIdenticalTo(e->child(i - 1))) {
+      bad = true;
+      break;
+    }
+  }
+  quiz_assert_print_if_failure(!bad, expression, "no duplicates", "duplicates");
+  e->removeTree();
+}
+
+QUIZ_CASE(pcj_random_no_duplicates) {
+  assert_no_duplicates_in_list<float>("randintnorep(0,15,16)");
+  assert_no_duplicates_in_list<float>("randintnorep(-5,5,10)");
+#if 0  // TODO_PCJ: random nodes cannot support a large number of seeds
+  assert_no_duplicates_in_list<float>("randintnorep(-100,99,200)");
+  assert_no_duplicates_in_list<float>("randintnorep(1234,5678,20)");
+#endif
 }

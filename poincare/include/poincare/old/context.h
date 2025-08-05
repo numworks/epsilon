@@ -35,10 +35,6 @@ class Context {
     return NAN;
   }
 
-#if TARGET_POINCARE_JS
-  virtual ~Context() = default;
-#endif
-
   // TODO: remove, only a static SequenceContext may still be needed
   static Context* GlobalContext;
 };

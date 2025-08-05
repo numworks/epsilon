@@ -1,6 +1,7 @@
 #ifndef POINCARE_VARIABLE_STORE_H
 #define POINCARE_VARIABLE_STORE_H
 
+#include <assert.h>
 #include <poincare/old/context.h>
 
 /*  This file is temporary! Store is only performed in the Apps. Poincare only

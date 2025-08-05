@@ -7,10 +7,10 @@
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/projection.h>
+#include <poincare/test/float_helper.h>
 
 #include <cmath>
 
-#include "apps/shared/poincare_helpers.h"
 #include "helper.h"
 
 using namespace Poincare;
@@ -2143,6 +2143,34 @@ QUIZ_CASE(pcj_approximation_with_context) {
   approximates_to<float>("h(3)", "[[3,0][0,3]]", ctx);
   approximates_to<float>("h(1/0)", "undef", ctx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+}
+
+template <typename T>
+void assert_expression_approximates_with_value_for_symbol(
+    const char* expression, T approximation, const char* symbol, T symbolValue,
+    Preferences::AngleUnit angleUnit = AngleUnit::Degree,
+    Preferences::ComplexFormat complexFormat = ComplexFormat::Cartesian) {
+  Shared::GlobalContext globalContext;
+  UserExpression e = Expression::Builder(parse(expression, &globalContext));
+  bool reductionFailure = false;
+  SystemExpression eReplaced = e.cloneAndReplaceSymbolWithExpression(
+      symbol, Expression::Builder(symbolValue), &reductionFailure,
+      SymbolicComputation::ReplaceAllSymbols);
+  T result = eReplaced.approximateToRealScalar<T>(angleUnit, complexFormat,
+                                                  &globalContext);
+  quiz_assert_print_if_failure(
+      roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(), true),
+      expression);
+}
+
+QUIZ_CASE(pcj_approximation_floor_ceil_integer) {
+  constexpr double upperBound = 1000.;
+  for (double d = 0.; d < upperBound; d += 1.) {
+    assert_expression_approximates_with_value_for_symbol(
+        "floor(x * (x+1)^(-1) + x^2 * (x+1)^(-1))", d, "x", d);
+    assert_expression_approximates_with_value_for_symbol(
+        "ceil(x * (x+1)^(-1) + x^2 * (x+1)^(-1))", d, "x", d);
+  }
 }
 
 // Use projected trees

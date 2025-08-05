@@ -30,11 +30,17 @@ struct ParsingParameters {
    *    toolbox).
    * - abc is understood as abc and not a*b*c (like in isAssignment).
    * - If f is not defined in the context, f(x) is understood as a function
-   *   (this rule is slightly different as for isAssignment, since if "f" is
-   *   already defined as a variable or a list, it will be understood as such).
+   *   (this rule is slightly different from isAssignment. In the preserveInput
+   *    case, if "f" is already defined with another symbol type like variable,
+   *    sequence or list, it won't be understood as a function).
    * - g is always understood as a variable and not a unit.
    *   (this means that forceUnitUnderscore is included in preserveInput)
    * - 1 2/3 is always understood as a mixed fraction and not 1*2/3
+   *
+   * Impact on the other parameters:
+   * - forceUnitUnderscore will be ignored.
+   * - isAssignment can still be used (in order to undersetand "f(x)=" as a
+   *   function assignment even if "f" is already defined as a variable).
    */
   bool preserveInput = false;
 };

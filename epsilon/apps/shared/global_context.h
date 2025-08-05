@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
 #include <omg/global_box.h>
-#include <poincare/old/context.h>
+#include <poincare/variable_store.h>
 
 #include <array>
 
@@ -15,7 +15,7 @@
 
 namespace Shared {
 
-class GlobalContext final : public Poincare::Context {
+class GlobalContext final : public Poincare::VariableStore {
  public:
   constexpr static const char* k_extensions[] = {
       Ion::Storage::expressionExtension,

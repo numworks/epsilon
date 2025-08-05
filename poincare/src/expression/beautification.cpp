@@ -224,6 +224,11 @@ bool DeepBeautifyUnits(Tree* e) {
 
 bool DeepBeautify(Tree* e, ProjectionContext projectionContext) {
   assert(projectionContext.m_reductionTarget == ReductionTarget::User);
+  if (projectionContext.m_dimension.isNone()) {
+    // Dimension is default, update it.
+    projectionContext.m_dimension =
+        Dimension::Get(e, projectionContext.m_context);
+  }
   bool changed =
       ApplyComplexFormat(e, projectionContext.m_dimension, projectionContext);
 

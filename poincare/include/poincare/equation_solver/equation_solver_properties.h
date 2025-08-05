@@ -37,8 +37,7 @@ class VariableArray : public OMG::StaticVector<char[k_maxVariableSize],
   }
 
   void fillWithList(const Internal::Tree* list) {
-    assert((list->isList() || list->isSet()) &&
-           list->numberOfChildren() <= capacity());
+    assert(list->isList() && list->numberOfChildren() <= capacity());
     clear();
     for (const Internal::Tree* variable : list->children()) {
       push(Internal::Symbol::GetName(variable));

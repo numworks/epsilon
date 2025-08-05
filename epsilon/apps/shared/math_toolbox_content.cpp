@@ -96,6 +96,7 @@ constexpr ToolboxMessage unitDistanceFork[] = {
 constexpr ToolboxMessage unitAngleToolbox[] = {
     ToolboxMessageLeaf(I18n::Message::UnitAngleDegreeSymbol,
                        I18n::Message::UnitAngleDegree),
+    // Set useRaw to true to avoid parsing °'", which would be turned into °*'*"
     ToolboxMessageLeaf(I18n::Message::UnitAngleDMSShortcut,
                        I18n::Message::UnitAngleDMS, true,
                        I18n::Message::UnitAngleDMSShortcut2),

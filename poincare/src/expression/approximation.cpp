@@ -279,8 +279,9 @@ T FloatBinomial(T n, T k) {
   k = (!generalized && k > (n - k)) ? n - k : k;
 
   T result = 1;
-  for (T i = 0; i < k; i++) {
-    result *= (n - i) / (k - i);
+  // NOTE: i being a float could lead to infinite loop due to i+1 == i
+  for (double i = 0; i < k; i++) {
+    result *= (n - static_cast<T>(i)) / (k - static_cast<T>(i));
     if (std::isinf(result) || std::isnan(result) || result == 0.) {
       return result;
     }

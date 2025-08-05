@@ -88,7 +88,6 @@ constexpr static int OperatorPriority(TypeBlock type) {
       return 14;
 
     case Type::Point:
-    case Type::Set:
     case Type::DepList:
     case Type::List:
       return 18;
@@ -104,7 +103,7 @@ constexpr static int OperatorPriority(TypeBlock type) {
 }
 
 // Commas have no associated block but behave like an operator
-constexpr static int k_commaPriority = OperatorPriority(Type::Set);
+constexpr static int k_commaPriority = OperatorPriority(Type::List);
 
 Tree* Layouter::LayoutExpression(Tree* expression, bool linearMode,
                                  bool compactMode,
@@ -822,7 +821,6 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
                        OperatorPriority(type));
       break;
     case Type::List:
-    case Type::Set:
     case Type::DepList:
     case Type::Point: {
       TreeRef newParent =

@@ -315,7 +315,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
 
   Context* context = projectionContext->m_context;
   Tree* userSymbols = Variables::GetUserSymbols(equationList, context);
-  assert(userSymbols->isSet());
+  assert(userSymbols->isList());
 
   VariableArray undefinedVariables;
   /* The total number can be over the capacity of VariableArray. Either:

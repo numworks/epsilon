@@ -135,7 +135,6 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
     case Type::ListSlice:
       return childLength[0] >= 0 && childLength[1] == k_nonListListLength &&
              childLength[2] == k_nonListListLength;
-    case Type::Set:
     case Type::List: {
       for (int i = 0; i < e->numberOfChildren(); i++) {
         if (childLength[i] >= 0) {
@@ -326,7 +325,6 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
           break;
         case Type::Dim:
         case Type::Dep:
-        case Type::Set:
         case Type::List:
         case Type::ListSort:
           break;
@@ -497,7 +495,6 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
       // Children can have a different dimension : [[x/x]] -> dep([[1]],
       // {1/x})
       return true;
-    case Type::Set:
     case Type::List:
       /* Lists can contain scalars, points or booleans but they must all be of
        * the same type. */
@@ -704,7 +701,6 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
                              nullptr);
     case Type::Point:
       return Point();
-    case Type::Set:
     case Type::ListSlice:
     case Type::List:
       return ListLength(e, ctx) > 0 ? Get(e->child(0), ctx) : Scalar();

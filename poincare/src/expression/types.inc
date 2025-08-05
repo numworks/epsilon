@@ -358,7 +358,6 @@ NODE(RealPos, BASE, 1)
 // RealInteger(x) = {0 if x ∈ ℤ, undef} (only used in DepList)
 NODE(RealInteger, BASE, 1)
 
-NODE(Set, BASE, NARY)
 NODE(Parentheses, BASE, 1)
 
 // 10 - Undefined expressions

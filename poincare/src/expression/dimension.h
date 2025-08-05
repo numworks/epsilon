@@ -14,10 +14,10 @@ namespace Internal {
 class Tree;
 
 struct Dimension {
-  constexpr Dimension(DimensionType type = DimensionType::Scalar)
+  constexpr Dimension(DimensionType type = DimensionType::None)
       : type(type), matrix({0, 0}) {
     assert(type == DimensionType::Scalar || type == DimensionType::Boolean ||
-           type == DimensionType::Point);
+           type == DimensionType::Point || type == DimensionType::None);
   };
   Dimension(MatrixDimension iMatrix)
       : type(DimensionType::Matrix), matrix(iMatrix){};
@@ -43,7 +43,7 @@ struct Dimension {
     return !(isMatrix() && matrix.rows * matrix.cols == 0) &&
            !(isUnit() && unit.vector.isEmpty());
   }
-
+  bool isNone() const { return type == DimensionType::None; }
   bool isScalar() const { return type == DimensionType::Scalar; }
   bool isMatrix() const {
     return POINCARE_MATRIX && type == DimensionType::Matrix;
@@ -113,6 +113,9 @@ struct Dimension {
       case DimensionType::Matrix:
         std::cout << "Matrix (" << (int)matrix.rows << ',' << (int)matrix.cols
                   << ')' << std::endl;
+        return;
+      case DimensionType::None:
+        std::cout << "None" << std::endl;
         return;
     }
   }

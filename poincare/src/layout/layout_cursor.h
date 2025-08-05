@@ -204,12 +204,13 @@ class AddEmptyLayoutHelpers {
   }
 };
 
-class TreeStackCursor final : public LayoutCursor,
-                              public AddEmptyLayoutHelpers<TreeStackCursor> {
+class TreeStackCursor : public LayoutCursor,
+                        public AddEmptyLayoutHelpers<TreeStackCursor> {
   friend class PoolLayoutCursor;
   friend class InputBeautification;
 
  public:
+  TreeStackCursor() : LayoutCursor(0, -1) {}
   TreeStackCursor(int position, int startOfSelection, int cursorOffset)
       : LayoutCursor(position, startOfSelection) {
     if (cursorOffset != -1) {
@@ -276,6 +277,20 @@ class TreeStackCursor final : public LayoutCursor,
   void beautifyLeftAction(Poincare::Context* context, const void* /* no arg */);
 
   TreeRef m_cursorRackRef;
+};
+
+class RootedTreeStackCursor : public TreeStackCursor {
+ public:
+  RootedTreeStackCursor() : m_rootRack(nullptr) {}
+  RootedTreeStackCursor(Tree* root, Tree* cursor, int position = 0)
+      : Poincare::Internal::TreeStackCursor(
+            position, -1, cursor->block() - SharedTreeStack->firstBlock()),
+        m_rootRack(root) {}
+
+  Rack* rootRack() const override { return static_cast<Rack*>(m_rootRack); }
+
+ private:
+  Tree* m_rootRack;
 };
 
 }  // namespace Poincare::Internal

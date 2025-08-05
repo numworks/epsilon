@@ -1991,6 +1991,37 @@ QUIZ_CASE(pcj_approximation_based_integer) {
   approximates_to<double>("0xabc1234", "180097588");
 }
 
+QUIZ_CASE(pcj_approximation_random) {
+  /* All random nodes need to be at least projected so they can be seeded.
+   * Randint of list also needs to be simplified to bubble up the list */
+  simplified_approximates_to<double>("randint({1,1})", "{1,1}");
+  simplified_approximates_to<double>("randint({1,2},{1,2})", "{1,2}");
+  projected_approximates_to<double>("1/randint(2,2)+1/2", "1");
+  projected_approximates_to<double>("randint(45,4)", "undef");
+  projected_approximates_to<double>("randint(1, inf)", "undef");
+  projected_approximates_to<double>("randint(-inf, 3)", "undef");
+  projected_approximates_to<double>("randint(4, 3)", "undef");
+#if 0  // TODO_PCJ:
+  projected_approximates_to<double>("randint(2, 23345678909876545678)",
+                                    "undef");
+#endif
+
+  projected_approximates_to<double>("randintnorep(10,1,3)", "undef");
+  projected_approximates_to<double>("randintnorep(1,10,100)", "undef");
+  projected_approximates_to<double>("randintnorep(1,10,-1)", "undef");
+  projected_approximates_to<double>("randintnorep(1,10,0)", "{}");
+  projected_approximates_to<double>("randintnorep(536427840,-2145711360,4)",
+                                    "undef");
+
+  // Random lists can be sorted
+  projected_approximates_to<double>("sort(randintnorep(5,8,4))", "{5,6,7,8}");
+
+  /* The simplification process should understand that the expression is not a
+   * scalar if it encounters a randintnorep. */
+  simplified_approximates_to<double>("rem(randintnorep(1,10,5),1)",
+                                     "{0,0,0,0,0}");
+}
+
 QUIZ_CASE(pcj_approximation_function) {
   approximates_to<float>("abs(-1)", "1");
   approximates_to<double>("abs(-1)", "1");

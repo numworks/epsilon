@@ -52,16 +52,16 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
 }
 
 bool Projection::DeepReplaceUserNamedWithUndefined(Tree* e) {
-  if (e->isParametric()) {
-    // Skip Parametric node and its variable, never replaced.
-    return false;
-  }
   if (e->isUserFunction() || (e->isUserSymbol())) {
     e->cloneTreeOverTree(KNotDefined);
     return true;
   }
   bool changed = false;
-  for (Tree* child : e->children()) {
+  Tree::Trees childrenRange =
+      e->isParametric() ? e->childrenRange(1) : e->children();
+  /*  Do not replace the parametric variable symbol in
+   * Parametric(variableSymbol, start, end, function) */
+  for (Tree* child : childrenRange) {
     changed = DeepReplaceUserNamedWithUndefined(child) || changed;
   }
   return changed;

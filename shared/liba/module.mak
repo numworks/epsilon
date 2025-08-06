@@ -130,17 +130,17 @@ _sources_liba_openbsd := $(addprefix src/external/openbsd/, \
 )
 
 _sources_liba_test += $(addprefix test/, \
-  aeabi.c \
-  double.c \
-  float.c \
-  ieee754.c \
-  limits.c \
-  long.c \
-  math.c \
-  setjmp.c \
-  stddef.c \
-  stdint.c \
-  strlcpy.c \
+  aeabi.cpp \
+  double.cpp \
+  float.cpp \
+  ieee754.cpp \
+  limits.cpp \
+  long.cpp \
+  math.cpp \
+  setjmp.cpp \
+  stddef.cpp \
+  stdint.cpp \
+  strlcpy.cpp \
 )
 
 $(call create_module,liba,1, \

@@ -1,7 +1,10 @@
 #include <assert.h>
 #include <math.h>
-#include <private/ieee754.h>
 #include <quiz.h>
+
+extern "C" {
+#include <private/ieee754.h>
+}
 
 QUIZ_CASE(liba_ieee754) {
   quiz_assert(ieee754man32(123.456f) == 7793017);

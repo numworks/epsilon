@@ -34,6 +34,9 @@ apply plugin: 'com.android.application'
 android {
   compileSdkVersion 34
   defaultConfig {
+    // TODO: change id between scandium/epsilon, the following works but I do
+    // not know if changing the applicationId of an app in production is good practice?
+    // applicationId "com.numworks." + project.getProperty("goalName")
     applicationId "com.numworks.calculator"
     minSdkVersion 21
     targetSdkVersion 34

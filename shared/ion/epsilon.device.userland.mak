@@ -44,6 +44,8 @@ $(addprefix device/userland/drivers/, \
 ) \
 $(addprefix device/shared/, \
   boot/rt0.cpp \
+  boot/rt0_no_init_array.cpp:-test \
+  boot/rt0_init_array.cpp:+test \
   post_and_hardware_tests.cpp:-nopost \
 ) \
 $(addprefix device/shared/drivers/, \
@@ -75,11 +77,13 @@ endif
 
 $(call all_objects_for,$(addprefix $(PATH_ion)/src/,$(_sources_ion_userland_svc))): SFLAGS += -fno-lto
 
-_ldflags_ion_userland := \
-  -Wl,-T,$(PATH_ion)/src/device/userland/flash/userland_A.ld:+A \
-  -Wl,-T,$(PATH_ion)/src/device/userland/flash/userland_B.ld:+B \
-  -L$(PATH_ion)/src/device/userland/flash
 
 _lddeps_ion_userland := \
-  $(PATH_ion)/src/device/userland/flash/userland_A.ld:+A \
-  $(PATH_ion)/src/device/userland/flash/userland_B.ld:+B
+  $(PATH_ion)/src/device/userland/flash/userland_A.ld:+A:-test \
+  $(PATH_ion)/src/device/userland/flash/userland_test_A.ld:+A:+test \
+  $(PATH_ion)/src/device/userland/flash/userland_B.ld:+B:-test \
+  $(PBTH_ion)/src/device/userland/flash/userland_test_B.ld:+B:+test \
+
+_ldflags_ion_userland := \
+  $(patsubst %,-Wl$(,)-T$(,)%,$(_lddeps_ion_userland)) \
+  -L$(PATH_ion)/src/device/userland/flash

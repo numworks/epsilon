@@ -68,7 +68,10 @@ $(addprefix device/core/device/shared-core/drivers/, \
   usb_gpio_$(PLATFORM).cpp \
   wakeup.cpp \
 ) \
-device/shared/boot/rt0.cpp \
+$(addprefix device/shared/boot/, \
+  rt0.cpp \
+  rt0_no_init_array.cpp \
+) \
 $(addprefix device/shared/drivers/, \
   base64.cpp \
   serial_number.cpp \

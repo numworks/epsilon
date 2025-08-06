@@ -2,6 +2,7 @@ _sources_ion_bootloader := \
 shared/dummy/assert.cpp \
 $(addprefix device/shared/, \
   boot/rt0.cpp \
+  boot/rt0_no_init_array.cpp \
   boot/ssp.c \
   drivers/base64.cpp \
   drivers/dfu_interfaces.cpp \

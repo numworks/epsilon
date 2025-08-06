@@ -2,8 +2,10 @@
 #include <quiz.h>
 #include <stdint.h>
 
+extern "C" {
 long long __aeabi_llsl(long long value, int shift);
 long long __aeabi_llsr(long long value, int shift);
+}
 
 QUIZ_CASE(liba_llsl) {
   quiz_assert(__aeabi_llsl((uint64_t)1, 1) == (uint64_t)0x2);

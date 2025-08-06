@@ -1,4 +1,5 @@
 #include <ion.h>
+#include <omg/list.h>
 #include <poincare/print.h>
 
 #include "quiz.h"
@@ -142,7 +143,20 @@ static inline void ion_main_inner(const char* testFilter,
 #endif
 }
 
+void sortQuizCases() {
+  OMG::List::Sort(
+      [](int i, int j, void* context, int nbElements) {
+        std::swap(quiz_case_names[i], quiz_case_names[j]);
+        std::swap(quiz_cases[i], quiz_cases[j]);
+      },
+      [](int i, int j, void* context, int nbElements) {
+        return strcmp(quiz_case_names[i], quiz_case_names[j]) > 0;
+      },
+      nullptr, quiz_number_of_cases);
+}
+
 void ion_main(int argc, const char* const argv[]) {
+  sortQuizCases();
   const char* testFilter = nullptr;
   const char* fromFilter = nullptr;
   const char* untilFilter = nullptr;

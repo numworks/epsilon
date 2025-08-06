@@ -230,7 +230,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/layout.cpp \
   old/layout_serialization.cpp \
   old/layout_to_expression.cpp \
-  old/matrix.cpp \
   old/numeric_solver.cpp \
   old/print.cpp \
   old/print_float.cpp \

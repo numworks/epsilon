@@ -120,6 +120,10 @@ $(OUTPUT_DIRECTORY)/%.o: ../$$$$(call strip_arch_and_special_dir,%).$(strip $2) 
 	$$(call rule_label,$1)
 	$3
 
+$(OUTPUT_DIRECTORY)/%.o: ../../$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
+	$$(call rule_label,$1)
+	$3
+
 $(OUTPUT_DIRECTORY)/%.o: $(OUTPUT_DIRECTORY)/$$$$(call strip_arch_and_special_dir,%).$(strip $2) generated_headers | $$$$(@D)/.
 	$$(call rule_label,$1)
 	$3

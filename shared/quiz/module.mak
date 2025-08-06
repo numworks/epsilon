@@ -13,23 +13,5 @@ ifeq ($(TOOLCHAIN),emscripten)
 LDFLAGS_quiz := -s MODULARIZE=0
 endif
 
-# List of the files that may contain a QUIZ_CASE and should cause test_symbols.c
-# to be rebuilt. It is coarser than using goals but it is hard to have
-# prerequisites that depend on the current goal.
-# TODO: Each app has to be named here to avoid (slowly) searching in output.
-#       Find a better solution.
-$(call assert_defined,QUIZ_cases_directories)
-_test_sources := $(shell find -H $(QUIZ_cases_directories) -path "**/test/**.c" -or -path "**/test/**.cpp")
-
-# TODO Requires :+test to be the last taste
-$(call generated_sources_for,$(PATH_quiz)/src/test_symbols.c): $(_test_sources) | $$(@D)/.
-	$(call rule_label,AWK)
-	awk -v QUIZ_TEST_FILTER=$(QUIZ_TEST_FILTER) -f $(PATH_quiz)/src/symbols.awk \
-		$(foreach m,$(filter %.test,$(MODULES_$(GOAL))), \
-			$(call tasteless_filter,$(filter %:+test,$(SOURCES_$(firstword $(subst ., ,$m)))))) \
-		> $@
-
-$(call all_objects_for,$(PATH_quiz)/src/test_symbols.c): SFLAGS += -I$(PATH_quiz)/src
-
 $(call assert_defined,KANDINSKY_fonts_dependencies)
 $(call all_objects_for,$(SOURCES_quiz)): $(KANDINSKY_fonts_dependencies)

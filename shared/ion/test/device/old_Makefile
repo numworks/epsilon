@@ -1,1 +1,0 @@
--include ion/test/device/$(MODEL)/Makefile

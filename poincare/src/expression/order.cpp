@@ -290,8 +290,14 @@ int Order::RealLineCompare(const Tree* e1, const Tree* e2) {
     /* TODO: make less calls to Dimension::Get */
     Coordinate2D<double> p1 =
         Approximation::ToPoint<double>(e1, Approximation::Parameters{});
+    if (std::isnan(p1.x()) || std::isnan(p1.y())) {
+      TreeStackCheckpoint::Raise(ExceptionType::SortFail);
+    }
     Coordinate2D<double> p2 =
         Approximation::ToPoint<double>(e2, Approximation::Parameters{});
+    if (std::isnan(p2.x()) || std::isnan(p2.y())) {
+      TreeStackCheckpoint::Raise(ExceptionType::SortFail);
+    }
     return p1.x() < p2.x()   ? -1
            : p1.x() > p2.x() ? 1
            : p1.y() < p2.y() ? -1

@@ -41,14 +41,14 @@ $(addprefix $(PATH_ion)/src/simulator/assets/, \
 # Some android resources needs to be filtered through ImageMagick. Others are
 # simply copied over.
 
-$(OUTPUT_DIRECTORY)/app/res/mipmap/ic_launcher.png: ion/src/simulator/assets/logo.svg | $$(@D)/.
+$(OUTPUT_DIRECTORY)/app/res/mipmap/ic_launcher.png: $(PATH_ion)/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
 	$(Q) convert -background "#FFB734" MSVG:$< $@
 
-$(OUTPUT_DIRECTORY)/app/res/mipmap-v26/ic_launcher_foreground.png: ion/src/simulator/assets/logo.svg | $$(@D)/.
+$(OUTPUT_DIRECTORY)/app/res/mipmap-v26/ic_launcher_foreground.png: $(PATH_ion)/src/simulator/assets/logo.svg | $$(@D)/.
 	$(call rule_label,CONVERT)
 	$(Q) convert -background none MSVG:$< -resize 512x512 -gravity center -background none -extent 1024x1024 $@
 
-$(OUTPUT_DIRECTORY)/app/res/%.xml: ion/src/simulator/android/src/res/%.xml | $$(@D)/.
+$(OUTPUT_DIRECTORY)/app/res/%.xml: $(PATH_ion)/src/simulator/android/src/res/%.xml | $$(@D)/.
 	$(call rule_label,COPY)
 	$(Q) cp $< $@

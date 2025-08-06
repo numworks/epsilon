@@ -428,7 +428,7 @@ QUIZ_CASE(pcj_approximation_division) {
   approximates_to<double>("3/[[3,4][5,6]]", "undef");
   // approximates_to<double>("(3+4i)/[[3,4][1,i]]",
   // "[[1,4×i][i,-3×i]]");
-  /* TODO: this tests fails because of negligible real or imaginary parts.
+  /* TODO_PCJ: this test fails because of negligible real or imaginary parts.
    * It currently approximates to
    * [[1+5.5511151231258ᴇ-17×i,-2.2204460492503ᴇ-16+4×i][i,-3×i]] or
    * [[1-1.1102230246252ᴇ-16×i,2.2204460492503ᴇ-16+4×i]
@@ -547,7 +547,7 @@ QUIZ_CASE(pcj_approximation_power) {
   approximates_to<float>("1/(0.752^-0.245)", 0.9325527);
   approximates_to<float>("1/(0.75^-0.245)", 0.9319444);
 #if 0
-  // TODO: should be a pure imaginary
+  // TODO_PCJ: should be a pure imaginary
   approximates_to<float>("(-888888)^(.5)", "7.118005ᴇ-5+942.8084×i",
                          cartesianCtx);
 #endif
@@ -612,13 +612,12 @@ QUIZ_CASE(pcj_approximation_power) {
   simplified_approximates_to<double>("1.0092^(20)", "1.2010050593402");
   simplified_approximates_to<double>("1.0092^(50)×ln(3/2)", "0.6409373488899",
                                      realCtx, 13);
-  // approximates_to<float>("1.0092^(20)", "1.201005"); TODO
-  // does not work
   approximates_to<float>("1.0092^(50)×ln(3/2)", "0.6409366");
-  // simplifies_approximates_to<float>("1.0092^(20)", "1.2010050593402"); TODO
-  // does not work
-  // simplifies_approximates_to<float>("1.0092^(50)×ln(3/2)",
-  // "6.4093734888993ᴇ-1"); TODO does not work
+  approximates_to<float>("1.0092^(20)", "1.201005");
+  // TODO_PCJ: failing power tests
+  // simplified_approximates_to<float>("1.0092^(20)", "1.2010050593402");
+  // simplified_approximates_to<float>("1.0092^(50)×ln(3/2)",
+  //                                   "6.4093734888993ᴇ-1");
 
   // Lists
   approximates_to<float>("{1,2,3}^2", "{1,4,9}");
@@ -665,7 +664,6 @@ QUIZ_CASE(pcj_approximation_list) {
                          "{True,undef,True,True,True}");
   approximates_to<float>("sequence(1/(k-2)=3, k, 5)",
                          "{False,undef,False,False,False}");
-  // TODO_PCJ: approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
   approximates_to<float>("sequence(k^2,k,4)", "{1,4,9,16}");
   approximates_to<double>("sequence(k/2,k,7)", "{0.5,1,1.5,2,2.5,3,3.5}");
 
@@ -772,7 +770,7 @@ QUIZ_CASE(pcj_approximation_complex_format) {
   approximates_to<double>("0.1", "0.1");
   approximates_to<float>("0.1234567", "0.1234567");
   approximates_to<double>("0.123456789012345", "0.12345678901235");
-#if 0  // TODO_PCJ: returns undef or i instead of nonreal
+#if 0  // TODO_PCJ: nonreal not correctly bubbled up
   projected_approximates_to<float>("1+2×i", "nonreal");
   projected_approximates_to<double>("1+i-i", "nonreal");
   projected_approximates_to<double>("3-i", "nonreal");
@@ -865,15 +863,15 @@ QUIZ_CASE(pcj_approximation_complex_format) {
 
   // Overflow
   approximates_to<float>("-2ᴇ20+2ᴇ20×i", "-2ᴇ20+2ᴇ20×i", cartesianCtx);
-  /* TODO: this test fails on the device because libm hypotf (which is called
-   * eventually by std::abs) is not accurate enough. We might change the
+  /* TODO_PCJ: this test fails on the device because libm hypotf (which is
+   * called eventually by std::abs) is not accurate enough. We might change the
    * embedded libm? */
   // approximates_to<float>("-2ᴇ20+2ᴇ20×i", "2.828427ᴇ20×e^(2.356194×i)",
   // polarCtx);
   approximates_to<double>("1ᴇ155-1ᴇ155×i", "1ᴇ155-1ᴇ155×i", cartesianCtx);
   approximates_to<double>("1ᴇ155-1ᴇ155×i", "∞×e^(-0.785398163397×i)", polarCtx,
                           12);
-#if 0  // TODO_PCJ: fix, returns undef
+#if 0  // TODO_PCJ: nonreal not correctly bubbled up
   approximates_to<float>("-2ᴇ100+2ᴇ100×i", "-∞+∞×i");
   approximates_to<double>("-2ᴇ360+2ᴇ360×i", "-∞+∞×i");
   approximates_to<float>("-2ᴇ100+2ᴇ10×i", "-∞+2ᴇ10×i");
@@ -2053,7 +2051,7 @@ QUIZ_CASE(pcj_approximation_random) {
   projected_approximates_to<double>("randint(1, inf)", "undef");
   projected_approximates_to<double>("randint(-inf, 3)", "undef");
   projected_approximates_to<double>("randint(4, 3)", "undef");
-#if 0  // TODO_PCJ:
+#if 0  // TODO_PCJ: limit randint bounds
   projected_approximates_to<double>("randint(2, 23345678909876545678)",
                                     "undef");
 #endif
@@ -2066,6 +2064,7 @@ QUIZ_CASE(pcj_approximation_random) {
                                     "undef");
 
   // Random lists can be sorted
+  projected_approximates_to<float>("sort(randintnorep(1,4,4))", "{1,2,3,4}");
   projected_approximates_to<double>("sort(randintnorep(5,8,4))", "{5,6,7,8}");
 
   /* The simplification process should understand that the expression is not a

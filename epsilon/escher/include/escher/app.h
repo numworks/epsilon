@@ -10,7 +10,7 @@
 #include <escher/view_controller.h>
 #include <escher/warning_controller.h>
 #include <ion/storage/file_system.h>
-#include <poincare/old/context.h>
+#include <poincare/variable_store.h>
 
 /* An app is fed events and outputs drawing calls.
  *
@@ -93,7 +93,8 @@ class App : public Responder {
     assert(false);
     return nullptr;
   }
-  virtual Poincare::Context* localContext() { return nullptr; }
+  // TODO: rename method
+  virtual Poincare::VariableStore* localContext() { return nullptr; }
   virtual EditableFieldHelpBox* toolbox() { return nullptr; }
   virtual EditableFieldHelpBox* variableBox() { return nullptr; }
 

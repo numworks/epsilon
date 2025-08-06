@@ -2,6 +2,7 @@
 #define POINCARE_HELPERS_STORE_H
 
 #include <poincare/expression.h>
+#include <poincare/variable_store.h>
 
 namespace Poincare {
 
@@ -9,8 +10,9 @@ namespace StoreHelper {
 
 const Expression Value(const UserExpression& e);
 const UserExpression Symbol(const UserExpression& e);
-bool PerformStore(Context* context, const UserExpression& e);
-bool StoreValueForSymbol(Context* context, const UserExpression& value,
+bool PerformStore(VariableStore* variableStore, const UserExpression& e);
+bool StoreValueForSymbol(VariableStore* variableStore,
+                         const UserExpression& value,
                          const UserExpression& symbol);
 
 }  // namespace StoreHelper

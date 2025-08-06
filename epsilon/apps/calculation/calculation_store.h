@@ -7,6 +7,7 @@
 #include <omg/expiring_pointer.h>
 #include <omg/store.h>
 #include <poincare/old/pool_variable_context.h>
+#include <poincare/variable_store.h>
 #include <stddef.h>
 
 #include "calculation.h"
@@ -42,8 +43,8 @@ class CalculationStore
   void replaceAnsInExpression(Poincare::UserExpression& expression,
                               Poincare::Context* context) const;
 
-  OMG::ExpiringPointer<Calculation> push(Poincare::Layout input,
-                                         Poincare::Context* context);
+  OMG::ExpiringPointer<Calculation> push(
+      Poincare::Layout input, Poincare::VariableStore* variableStore);
   void deleteCalculationAtIndex(int index) { deleteElementAtIndex(index); }
   bool preferencesHaveChanged();
 
@@ -77,7 +78,7 @@ class CalculationStore
                                       Poincare::Context* context);
 
   CalculationElements computeAndProcess(Poincare::Expression inputExpression,
-                                        Poincare::Context* context);
+                                        Poincare::VariableStore* variableStore);
 
   /* Push an empty calculation at a certain location. Assumes there is enough
    * space to push an empty calculation. Returns a pointer to the new

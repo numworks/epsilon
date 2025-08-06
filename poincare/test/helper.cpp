@@ -11,6 +11,7 @@
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
+#include <poincare/variable_store.h>
 
 using namespace Poincare::Internal;
 
@@ -239,9 +240,11 @@ void assert_parse_to_integer_overflow(const char* input,
   SharedTreeStack->flush();
 }
 
-void store(const char* storeExpression, Poincare::Context* ctx) {
-  Poincare::Expression s = Poincare::Expression::Parse(storeExpression, ctx);
-  Poincare::StoreHelper::PerformStore(ctx, s);
+void store(const char* storeExpression,
+           Poincare::VariableStore* variableStore) {
+  Poincare::Expression s =
+      Poincare::Expression::Parse(storeExpression, variableStore);
+  Poincare::StoreHelper::PerformStore(variableStore, s);
 }
 
 void serialize_expression(const Tree* expression, std::span<char> buffer,

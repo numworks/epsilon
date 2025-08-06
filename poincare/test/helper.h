@@ -11,6 +11,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>
 #include <poincare/src/memory/tree_stack.h>
+#include <poincare/variable_store.h>
 #include <quiz.h>
 
 #include <span>
@@ -182,7 +183,7 @@ void assert_text_not_parsable(const char* input,
 void assert_parse_to_integer_overflow(const char* input,
                                       Poincare::Context* context = nullptr);
 
-void store(const char* storeExpression, Poincare::Context* ctx);
+void store(const char* storeExpression, Poincare::VariableStore* variableStore);
 
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
     const char* function, Poincare::Internal::ProjectionContext ctx = {}) {

@@ -5,6 +5,7 @@
 #include <poincare/cas.h>
 #include <poincare/helpers/store.h>
 #include <poincare/k_tree.h>
+#include <poincare/variable_store.h>
 
 #include "app_with_store_menu.h"
 
@@ -129,8 +130,8 @@ void StoreMenuController::openAbortWarning() {
 
 bool StoreMenuController::store(Layout layout) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
-  Context* context = app->localContext();
-  UserExpression input = UserExpression::Parse(layout, context);
+  VariableStore* variableStore = app->localContext();
+  UserExpression input = UserExpression::Parse(layout, variableStore);
   if (input.isUninitialized() || !input.isStore()) {
     openAbortWarning();
     return false;
@@ -139,7 +140,7 @@ bool StoreMenuController::store(Layout layout) {
   UserExpression symbol = StoreHelper::Symbol(input);
   close();
   app->prepareForIntrusiveStorageChange();
-  bool stored = StoreHelper::StoreValueForSymbol(context, value, symbol);
+  bool stored = StoreHelper::StoreValueForSymbol(variableStore, value, symbol);
   app->concludeIntrusiveStorageChange();
   if (!stored) {
     /* TODO: we could detect this before the close and open the warning over the

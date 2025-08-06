@@ -4,6 +4,7 @@
 #include <ion/display.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/preferences.h>
+#include <poincare/variable_store.h>
 
 #include "app.h"
 
@@ -133,9 +134,9 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   assert(layoutField->context() == context());
-  Context* context = this->context();
+  VariableStore* variableStore = this->context();
   PoolVariableContext ansContext =
-      m_calculationStore->createAnsContext(context);
+      m_calculationStore->createAnsContext(variableStore);
   if (!layoutField->isEmpty()) {
     m_lastInput = layoutField->layout().clone();
   }
@@ -150,9 +151,9 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layout.isUninitialized());
   // TODO layout is parsed twice : in isAcceptableLayout and in push
   Calculation* calculation =
-      m_calculationStore->push(layout, context).pointer();
+      m_calculationStore->push(layout, variableStore).pointer();
   if (calculation) {
-    HistoryViewCell::ComputeCalculationHeights(calculation, context);
+    HistoryViewCell::ComputeCalculationHeights(calculation, variableStore);
     m_historyController->reload(false);
     layoutField->clearAndSetEditing(true);
     return true;

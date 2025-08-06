@@ -10,6 +10,7 @@
 #include <poincare/k_tree.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
+#include <poincare/variable_store.h>
 
 using namespace Poincare;
 using namespace Shared;
@@ -158,23 +159,22 @@ static CalculationResult computeInterruptible(
 
 static void processStore(OutputExpressions& outputs,
                          Poincare::UserExpression input,
-                         Poincare::Context* context) {
-  /* The global context performs the store and ensures that no symbol is kept in
-   * the definition of a variable.
+                         Poincare::VariableStore* variableStore) {
+  /* The global variable store performs the store and ensures that no symbol is
+   * kept in the definition of a variable.
    * Once this is done, the output is replaced with the stored expression. To do
    * so, the expression of the symbol is retrieved after it is stored because it
-   * can be different from the value in the store expression.
-   * e.g. if f(x) = cos(x), the expression "f(x^2)->f(x)" will return
-   * "cos(x^2)". */
+   * can be different from the value in the store expression. e.g. if f(x) =
+   * cos(x), the expression "f(x^2)->f(x)" will return "cos(x^2)". */
 
   // TODO: factorize with StoreMenuController::parseAndStore
   // TODO: add circuit breaker?
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   UserExpression valueApprox =
-      PoincareHelpers::ApproximateUser<double>(value, context);
-  if (symbol.isUserSymbol() &&
-      CAS::ShouldOnlyDisplayApproximation(input, value, valueApprox, context)) {
+      PoincareHelpers::ApproximateUser<double>(value, variableStore);
+  if (symbol.isUserSymbol() && CAS::ShouldOnlyDisplayApproximation(
+                                   input, value, valueApprox, variableStore)) {
     value = valueApprox;
   }
 #if 0
@@ -183,7 +183,7 @@ static void processStore(OutputExpressions& outputs,
 assert(!value.recursivelyMatches(
 [](const Expression e) { return e.isUserSymbol(); }));
 #endif
-  if (StoreHelper::StoreValueForSymbol(context, value, symbol)) {
+  if (StoreHelper::StoreValueForSymbol(variableStore, value, symbol)) {
     outputs.exact = value;
     outputs.approximate = valueApprox;
     assert(!outputs.exact.isUninitialized() &&
@@ -197,7 +197,7 @@ assert(!value.recursivelyMatches(
 static void postProcessOutputs(OutputExpressions& outputs,
                                Poincare::UserExpression inputExpression,
                                bool unitsForbidden,
-                               Poincare::Context* context) {
+                               Poincare::VariableStore* variableStore) {
   /* TODO: the two following operations should be performed in a
    * CircuitBreakerCheckpoint to handle the "Back" interruption properly,
    * although it is very unlikely to happen because these operations are fast.
@@ -216,7 +216,7 @@ static void postProcessOutputs(OutputExpressions& outputs,
    * above the checkpoint. */
   // TODO: improve the safety of the store operation
   if (outputs.exact.isStore()) {
-    processStore(outputs, inputExpression, context);
+    processStore(outputs, inputExpression, variableStore);
   }
 }
 
@@ -246,14 +246,16 @@ Poincare::UserExpression CalculationStore::parseInput(
 }
 
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
-    Poincare::UserExpression inputExpression, Poincare::Context* context) {
+    Poincare::UserExpression inputExpression,
+    Poincare::VariableStore* variableStore) {
   Poincare::Preferences::ComplexFormat complexFormat =
       MathPreferences::SharedPreferences()->complexFormat();
   CalculationResult calculationResult =
-      computeInterruptible(inputExpression, complexFormat, context);
+      computeInterruptible(inputExpression, complexFormat, variableStore);
 
   postProcessOutputs(calculationResult.outputs, inputExpression,
-                     m_inUsePreferences.examMode().forbidUnits(), context);
+                     m_inUsePreferences.examMode().forbidUnits(),
+                     variableStore);
 
   return CalculationElements{inputExpression, calculationResult.outputs,
                              calculationResult.hasReductionFailure,
@@ -261,8 +263,9 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
 }
 
 OMG::ExpiringPointer<Calculation> CalculationStore::push(
-    Poincare::Layout inputLayout, Poincare::Context* context) {
-  Poincare::UserExpression inputExpression = parseInput(inputLayout, context);
+    Poincare::Layout inputLayout, Poincare::VariableStore* variableStore) {
+  Poincare::UserExpression inputExpression =
+      parseInput(inputLayout, variableStore);
   if (inputExpression.isUninitialized()) {
     /* If parsing was interrupted (which is unlikely to happen), do not update
      * the calculation store */
@@ -270,7 +273,7 @@ OMG::ExpiringPointer<Calculation> CalculationStore::push(
   }
 
   CalculationElements calculationToPush =
-      computeAndProcess(inputExpression, context);
+      computeAndProcess(inputExpression, variableStore);
 
   size_t neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
   if (neededSize > maximumSize()) {

@@ -1,6 +1,7 @@
 #include <poincare/expression.h>
 #include <poincare/helpers/store.h>
 #include <poincare/src/expression/dimension.h>
+#include <poincare/variable_store.h>
 
 namespace Poincare {
 
@@ -16,16 +17,17 @@ const UserExpression StoreHelper::Symbol(const UserExpression& e) {
   return symbol;
 }
 
-bool StoreHelper::PerformStore(Context* context, const UserExpression& e) {
-  return StoreValueForSymbol(context, Value(e), Symbol(e));
+bool StoreHelper::PerformStore(VariableStore* variableStore,
+                               const UserExpression& e) {
+  return StoreValueForSymbol(variableStore, Value(e), Symbol(e));
 }
 
-bool StoreHelper::StoreValueForSymbol(Context* context,
+bool StoreHelper::StoreValueForSymbol(VariableStore* variableStore,
                                       const UserExpression& value,
                                       const UserExpression& symbol) {
   assert(!value.isUninitialized());
   assert(symbol.isUserSymbol() || symbol.isUserFunction());
-  return context->setExpressionForUserNamed(value, symbol);
+  return variableStore->setExpressionForUserNamed(value, symbol);
 }
 
 }  // namespace Poincare

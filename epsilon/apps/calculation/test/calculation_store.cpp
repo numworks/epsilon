@@ -9,6 +9,7 @@
 #include <poincare/old/context.h>
 #include <poincare/test/helper.h>
 #include <poincare/test/old/helper.h>
+#include <poincare/variable_store.h>
 #include <quiz.h>
 #include <string.h>
 
@@ -35,18 +36,19 @@ void assert_store_is(CalculationStore* store, const char** result) {
 }
 
 OutputLayouts pushAndProcessCalculation(CalculationStore* store,
-                                        const char* input, Context* context) {
+                                        const char* input,
+                                        VariableStore* variableStore) {
   /* These two variables mirror the "font" and "maxVisibleWidth" variables in
    * HistoryViewCell::setNewCalculation */
   constexpr static KDFont::Size font = KDFont::Size::Large;
   constexpr static KDCoordinate maxVisibleWidth = 280;
 
-  store->push(Layout::String(input), context);
+  store->push(Layout::String(input), variableStore);
   OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 
-  return lastCalculation->layoutCalculation(font, maxVisibleWidth, context,
-                                            true);
+  return lastCalculation->layoutCalculation(font, maxVisibleWidth,
+                                            variableStore, true);
 }
 
 QUIZ_CASE(calculation_store) {
@@ -116,13 +118,13 @@ QUIZ_CASE(calculation_store) {
 }
 
 void assertAnsIs(
-    const char* input, const char* expectedAnsInputText, Context* context,
-    CalculationStore* store,
+    const char* input, const char* expectedAnsInputText,
+    VariableStore* variableStore, CalculationStore* store,
     Poincare::Preferences::PrintFloatMode displayMode = ScientificMode) {
-  pushAndProcessCalculation(store, input, context);
+  pushAndProcessCalculation(store, input, variableStore);
   OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
-  pushAndProcessCalculation(store, "Ans", context);
+  pushAndProcessCalculation(store, "Ans", variableStore);
   lastCalculation = store->calculationAtIndex(0);
   assert_expression_serializes_to(lastCalculation->input(),
                                   expectedAnsInputText, displayMode);
@@ -207,11 +209,11 @@ void assertCalculationIs(const char* input, DisplayOutput expectedDisplay,
                          EqualSign expectedSign,
                          const char* expectedExactOutput,
                          const char* expectedApproximateOutput,
-                         Context* context, CalculationStore* store,
+                         VariableStore* variableStore, CalculationStore* store,
                          const char* expectedStoredInput = nullptr,
                          bool skipApproximation = false) {
   OutputLayouts outputLayouts =
-      pushAndProcessCalculation(store, input, context);
+      pushAndProcessCalculation(store, input, variableStore);
   OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
 
@@ -524,9 +526,10 @@ QUIZ_CASE(calculation_big_expressions) {
 }
 
 void assertMainCalculationOutputIs(const char* input, const char* output,
-                                   Context* context, CalculationStore* store) {
+                                   VariableStore* variableStore,
+                                   CalculationStore* store) {
   // For the next test, we only need to checkout input and output text.
-  pushAndProcessCalculation(store, input, context);
+  pushAndProcessCalculation(store, input, variableStore);
   OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   switch (lastCalculation->displayOutput()) {
@@ -906,12 +909,13 @@ bool operator==(const AdditionalResultsType& a,
 
 void assertCalculationAdditionalResultTypeHas(
     const char* input, const AdditionalResultsType additionalResultsType,
-    Context* context, CalculationStore* store) {
-  pushAndProcessCalculation(store, input, context);
+    VariableStore* variableStore, CalculationStore* store) {
+  pushAndProcessCalculation(store, input, variableStore);
   OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   quiz_assert_print_if_failure(
-      lastCalculation->additionalResultsType(context) == additionalResultsType,
+      lastCalculation->additionalResultsType(variableStore) ==
+          additionalResultsType,
       input, "correct additional results", "incorrect additional results");
   store->deleteAll();
 }

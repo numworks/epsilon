@@ -1,6 +1,7 @@
 #include "shared_app.h"
 
 #include <apps/apps_container_helper.h>
+#include <poincare/variable_store.h>
 
 #include "../apps_container.h"
 
@@ -30,7 +31,7 @@ void SharedApp::Snapshot::reset() {
 SharedApp::SharedApp(Snapshot* snapshot, ViewController* rootViewController)
     : ::App(snapshot, rootViewController) {}
 
-Context* SharedApp::localContext() {
+VariableStore* SharedApp::localContext() {
   return AppsContainerHelper::sharedAppsContainerGlobalContext();
 }
 

@@ -946,7 +946,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
       &store, &context);
 
   // Add a predefined a symbol
-  assert_reduce_and_store("0→a", Preferences::AngleUnit::Radian,
+  assert_reduce_and_store("0→a", context, Preferences::AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
                           Poincare::Preferences::ComplexFormat::Real);
   assert_check_function_properties("y=a*x+1", k_horizontalLineProperties,
@@ -954,7 +954,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   assert_check_function_properties("a*y*y+y=x", k_lineProperties, &store,
                                    &context);
 
-  assert_reduce_and_store("1→a", Preferences::AngleUnit::Radian,
+  assert_reduce_and_store("1→a", context, Preferences::AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
                           Poincare::Preferences::ComplexFormat::Real);
   assert_check_function_properties("y=a*x+1", k_lineProperties, &store,
@@ -968,7 +968,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
       &store, &context);
 
   // Add a predefined y symbol
-  assert_reduce_and_store("1→y", Preferences::AngleUnit::Radian,
+  assert_reduce_and_store("1→y", context, Preferences::AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
                           Poincare::Preferences::ComplexFormat::Real);
   assert_check_function_properties("y=x", k_lineProperties, &store, &context);

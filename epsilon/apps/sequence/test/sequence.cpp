@@ -743,32 +743,32 @@ QUIZ_CASE(sequence_context) {
   SequenceStore* store = globalContext.s_sequenceStore;
   SequenceContext* sequenceContext = globalContext.sequenceContext();
 
-  assert_reduce_and_store("3→f(x)");
+  assert_reduce_and_store("3→f(x)", globalContext);
   assert_expression_simplifies_approximates_to<double>("f(u(0))", "undef",
-                                                       &globalContext);
+                                                       globalContext);
 
   addSequence(store, Sequence::Type::Explicit, "1", nullptr, nullptr,
               sequenceContext);
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "3",
-                                                       &globalContext);
+                                                       globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   store->removeAll();
   addSequence(store, Sequence::Type::Explicit, "1/0", nullptr, nullptr,
               sequenceContext);
   assert_expression_simplifies_approximates_to<double>("f(u(2))", "undef",
-                                                       &globalContext);
+                                                       globalContext);
 
   store->removeAll();
-  assert_reduce_and_store("3→a");
+  assert_reduce_and_store("3→a", globalContext);
   addSequence(store, Sequence::Type::Explicit, "a+1", nullptr, nullptr,
               sequenceContext);
   assert_expression_simplifies_approximates_to<double>("u(34)", "4",
-                                                       &globalContext);
-  assert_reduce_and_store("-3→a");
+                                                       globalContext);
+  assert_reduce_and_store("-3→a", globalContext);
   globalContext.storageDidChangeForRecord(Ion::Storage::Record("a.exp"));
   assert_expression_simplifies_approximates_to<double>("u(34)", "-2",
-                                                       &globalContext);
+                                                       globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
   store->removeAll();

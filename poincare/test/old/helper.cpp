@@ -13,6 +13,7 @@
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/test/helper.h>
+#include <poincare/variable_store.h>
 
 using namespace Poincare;
 using namespace Poincare::Internal;
@@ -137,20 +138,20 @@ Internal::Tree *parse_expression(const char *expression, Context *context,
   return result;
 }
 
+/* TODO: rethink about this test:
+- should it be in Poincare? In Poincare no store is ever performed (the store
+operator is ignored in simplification etc.). Storing is actually performed in
+the apps (in the CalculationStore and in the StoreMenuController).
+- more generally, some dedicated TestVariableContext and TestVariableStore
+classes should be used in the unit tests. */
 void assert_reduce_and_store(const char *expression,
+                             VariableStore &variableStore,
                              Preferences::AngleUnit angleUnit,
                              Preferences::UnitFormat unitFormat,
                              Preferences::ComplexFormat complexFormat,
                              ReductionTarget target) {
   // TODO_PCJ: reduce expression (to check it stays a store expression)
-  if (Poincare::Context::GlobalContext) {
-    store(expression, Poincare::Context::GlobalContext);
-  } else {
-    /* TODO: we should assert a global context exists instead since it doesn't
-     * make much sense to store in a temporary context. */
-    Shared::GlobalContext globalContext;
-    store(expression, &globalContext);
-  }
+  store(expression, &variableStore);
 }
 
 void assert_parsed_expression_simplify_to(
@@ -161,8 +162,20 @@ void assert_parsed_expression_simplify_to(
     SymbolicComputation symbolicComputation, bool beautify) {
   Shared::GlobalContext globalContext;
   // TODO_PCJ also approximate to see if it crashes
+  assert_parsed_expression_simplify_to(
+      expression, simplifiedExpression, globalContext, target, angleUnit,
+      unitFormat, complexFormat, symbolicComputation, beautify);
+}
+
+void assert_parsed_expression_simplify_to(
+    const char *expression, const char *simplifiedExpression, Context &context,
+    ReductionTarget target, Preferences::AngleUnit angleUnit,
+    Preferences::UnitFormat unitFormat,
+    Preferences::ComplexFormat complexFormat,
+    SymbolicComputation symbolicComputation, bool beautify) {
+  // TODO_PCJ also approximate to see if it crashes
   assert_parsed_expression_process_to(
-      expression, simplifiedExpression, &globalContext, target, complexFormat,
+      expression, simplifiedExpression, &context, target, complexFormat,
       angleUnit, unitFormat, symbolicComputation,
       beautify ?
       [](Tree *e, Internal::ProjectionContext &projCtx) {
@@ -186,18 +199,18 @@ void assert_expression_simplifies_approximates_to(
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   Shared::GlobalContext globalContext;
   assert_expression_simplifies_approximates_to<T>(
-      expression, approximation, &globalContext, angleUnit, unitFormat,
+      expression, approximation, globalContext, angleUnit, unitFormat,
       complexFormat, numberOfSignificantDigits);
 }
 
 template <typename T>
 void assert_expression_simplifies_approximates_to(
-    const char *expression, const char *approximation, Context *context,
+    const char *expression, const char *approximation, Context &context,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   assert_parsed_expression_process_to(
-      expression, approximation, context, SystemForApproximation, complexFormat,
-      angleUnit, unitFormat, ReplaceAllSymbols,
+      expression, approximation, &context, SystemForApproximation,
+      complexFormat, angleUnit, unitFormat, ReplaceAllSymbols,
       [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
         simplify(e, projCtx, false);
         TreeRef result = Internal::Approximation::ToTree<T>(
@@ -234,10 +247,10 @@ void assert_layout_serializes_to(const Tree *layout,
 }
 
 template void assert_expression_simplifies_approximates_to<float>(
-    char const *, char const *, Context *context, Preferences::AngleUnit,
+    char const *, char const *, Context &context, Preferences::AngleUnit,
     Preferences::UnitFormat, Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<double>(
-    char const *, char const *, Context *context, Preferences::AngleUnit,
+    char const *, char const *, Context &context, Preferences::AngleUnit,
     Preferences::UnitFormat, Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<float>(
     char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,

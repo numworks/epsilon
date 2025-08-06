@@ -1915,8 +1915,48 @@ QUIZ_CASE(pcj_approximation_integrals) {
   approximates_to<float>("int(sin((10^7)*x),x,0,1)", "undef");
 }
 
+void assert_approximate_to(const char* expression, const char* result,
+                           ProjectionContext projCtx = realCtx) {
+  /* Reduce significant numbers to 3 to handle platforms discrepancies when
+   * computing floats. This allows to expect the same results from both double
+   * and float approximations. */
+  approximates_to<float>(expression, result, projCtx, 3);
+  approximates_to<double>(expression, result, projCtx, 3);
+}
+
 QUIZ_CASE(pcj_approximation_derivatives) {
   approximates_to<float>("diff(ln(x), x, -1)", "undef");
+
+  assert_approximate_to("diff(2×x, x, 2)", "2");
+  assert_approximate_to("diff(2×\"TO\"^2, \"TO\", 7)", "28");
+  assert_approximate_to("diff(ln(x),x,1)", "1");
+  assert_approximate_to("diff(ln(x),x,2.2)", "0.455");
+  assert_approximate_to("diff(ln(x),x,0)", "undef");
+  assert_approximate_to("diff(ln(x),x,-3.1)", "undef");
+  assert_approximate_to("diff(log(x),x,-10)", "undef");
+  assert_approximate_to("diff(abs(x),x,123)", "1");
+  assert_approximate_to("diff(abs(x),x,-2.34)", "-1");
+  assert_approximate_to("diff(1/x,x,-2)", "-0.25");
+  assert_approximate_to("diff(x^3+5*x^2,x,0)", "0");
+  assert_approximate_to("diff(abs(x),x,0)", "0");  // "undef");
+  // TODO_PCJ: error too big on floats
+  // approximates_to<float>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
+  approximates_to<double>("diff(-1/3×x^3+6x^2-11x-50,x,11)", "0");
+  // On points
+  assert_approximate_to("diff((sin(t),cos(t)),t,π/2)", "(0,-1)");
+
+  // Higher order
+  // We have to approximate to double because error is too big on floats
+  approximates_to<double>("diff(x^3,x,10,2)", "60");
+  approximates_to<double>("diff(x^3,x,1,4)", "0");
+  approximates_to<double>("diff(e^(2x),x,0,4)", "16");
+  assert_approximate_to("diff(x^3,x,3,0)", "27");
+  assert_approximate_to("diff(x^3,x,3,-1)", "undef");
+  assert_approximate_to("diff(x^3,x,3,1.3)", "undef");
+  // Order 5 and above are not handled because recursively too long
+  assert_approximate_to("diff(e^(2x),x,0,5)", "undef");
+  // On points
+  approximates_to<double>("diff((2t,ln(t)),t,2,2)", "(0,-0.25)");
 }
 
 QUIZ_CASE(pcj_approximation_percent) {

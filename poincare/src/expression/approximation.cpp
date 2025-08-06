@@ -14,22 +14,17 @@
 #include <complex>
 
 #include "arithmetic.h"
-#include "beautification.h"
 #include "context.h"
-#include "decimal.h"
 #include "dependency.h"
 #include "dimension.h"
 #include "float_helper.h"
-#include "list.h"
 #include "matrix.h"
 #include "number.h"
 #include "physical_constant.h"
 #include "random.h"
-#include "rational.h"
 #include "simplification.h"
 #include "symbol.h"
 #include "undefined.h"
-#include "units/representatives.h"
 #include "units/unit.h"
 #include "variables.h"
 #include "vector.h"
@@ -775,7 +770,9 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       }
       assert(ctx);
       tempCtx.m_listElement = i;
-      return PrivateToComplex<T>(values, &tempCtx);
+      std::complex<T> result = PrivateToComplex<T>(values, &tempCtx);
+      ctx->updateRandomContext(tempCtx.m_randomContext);
+      return result;
     }
     case Type::ListSlice: {
       assert(ctx && ctx->m_listElement != -1);
@@ -786,7 +783,9 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       int start = std::max(Integer::Handler(startIndex).to<uint8_t>() - 1, 0);
       assert(start >= 0);
       tempCtx.m_listElement += start;
-      return PrivateToComplex<T>(values, &tempCtx);
+      std::complex<T> result = PrivateToComplex<T>(values, &tempCtx);
+      ctx->updateRandomContext(tempCtx.m_randomContext);
+      return result;
     }
     case Type::ListSum:
     case Type::ListProduct: {
@@ -799,6 +798,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
         std::complex<T> v = PrivateToComplex<T>(values, &tempCtx);
         result = e->isListSum() ? result + v : result * v;
       }
+      ctx->updateRandomContext(tempCtx.m_randomContext);
       return result;
     }
     case Type::Min:
@@ -819,6 +819,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
           result = v.real();
         }
       }
+      ctx->updateRandomContext(tempCtx.m_randomContext);
       return result;
     }
     case Type::Mean:
@@ -844,6 +845,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
         sumOfSquares += c.real() * v * v;
         coefficientsSum += c.real();
       }
+      ctx->updateRandomContext(tempCtx.m_randomContext);
       if (coefficientsSum == 0) {
         return NAN;
       }
@@ -1400,6 +1402,7 @@ Tree* Private::ToList(const Tree* e, const Context* ctx) {
     tempCtx.m_listElement = i;
     PrivateToTree<T>(e, dimension, &tempCtx);
   }
+  ctx->updateRandomContext(tempCtx.m_randomContext);
   return list;
 }
 
@@ -1412,6 +1415,7 @@ Tree* Private::PrivateToPoint(const Tree* e, const Context* ctx) {
   ToComplexTree<T>(e, &tempCtx);
   tempCtx.m_pointElement = 1;
   ToComplexTree<T>(e, &tempCtx);
+  ctx->updateRandomContext(tempCtx.m_randomContext);
   return point;
 }
 

@@ -16,20 +16,6 @@ Context::UserNamedType PoolVariableContext::expressionTypeForIdentifier(
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
-bool PoolVariableContext::setExpressionForUserNamed(
-    const Internal::Tree* expression, const Internal::Tree* symbol) {
-  if (m_name != nullptr &&
-      strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
-    assert(symbol->isUserSymbol());
-    if (!expression) {
-      return false;
-    }
-    m_value = Expression::Builder(expression->cloneTree());
-    return true;
-  }
-  return ContextWithParent::setExpressionForUserNamed(expression, symbol);
-}
-
 const Internal::Tree* PoolVariableContext::expressionForUserNamed(
     const Internal::Tree* symbol) const {
   if (m_name != nullptr &&

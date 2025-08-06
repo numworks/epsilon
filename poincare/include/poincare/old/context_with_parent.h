@@ -26,12 +26,6 @@ class ContextWithParent : public Context {
                            : UserNamedType::None;
   }
 
-  bool setExpressionForUserNamed(const Internal::Tree* expression,
-                                 const Internal::Tree* symbol) override {
-    assert(m_parentContext);
-    return m_parentContext->setExpressionForUserNamed(expression, symbol);
-  }
-
   double approximateSequenceAtRank(const char* identifier,
                                    int rank) const override {
     return m_parentContext

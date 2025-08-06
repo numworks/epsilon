@@ -23,7 +23,7 @@ class HistoryContext : public Poincare::Context {
   }
 
   UserNamedType expressionTypeForIdentifier(const char* identifier,
-                                            int length) override {
+                                            int length) const override {
     if (!s_isInteractive) {
       return UserNamedType::None;
     }
@@ -33,7 +33,7 @@ class HistoryContext : public Poincare::Context {
     return UserNamedType::Symbol;
   }
 
-  const Tree* expressionForUserNamed(const Tree* symbol) override {
+  const Tree* expressionForUserNamed(const Tree* symbol) const override {
     if (!s_isInteractive) {
       return nullptr;
     }
@@ -49,11 +49,6 @@ class HistoryContext : public Poincare::Context {
       return nullptr;
     }
     return Tree::FromBlocks(m_history[n].data());
-  }
-
-  bool setExpressionForUserNamed(const Tree* expression,
-                                 const Tree* symbol) override {
-    return false;
   }
 
  private:

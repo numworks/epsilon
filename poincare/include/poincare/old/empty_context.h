@@ -14,11 +14,6 @@ class EmptyContext : public Context {
                                             int length) const override {
     return UserNamedType::None;
   }
-  bool setExpressionForUserNamed(const Internal::Tree* expression,
-                                 const Internal::Tree* symbol) override {
-    assert(false);
-    return false;
-  }
 
   const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) const override;

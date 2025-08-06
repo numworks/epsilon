@@ -26,10 +26,6 @@ class Context {
   virtual const Internal::Tree* expressionForUserNamed(
       const Internal::Tree* symbol) const = 0;
 
-  // TODO_PCJ: This should be removed as it's only used by Apps
-  virtual bool setExpressionForUserNamed(const Internal::Tree* expression,
-                                         const Internal::Tree* symbol) = 0;
-
   virtual double approximateSequenceAtRank(const char* identifier,
                                            int rank) const {
     return NAN;

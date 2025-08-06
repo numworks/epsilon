@@ -3,11 +3,13 @@
 
 #include <omg/enums.h>
 #include <omg/float.h>
+#include <poincare/old/context.h>
 #include <poincare/pool_handle.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/test/float_helper.h>
+#include <poincare/variable_store.h>
 #include <quiz.h>
 
 #include <algorithm>
@@ -94,11 +96,22 @@ Poincare::Internal::Tree* parse_expression(const char* expression,
 // Simplification
 
 void assert_reduce_and_store(
-    const char* expression, Poincare::Preferences::AngleUnit angleUnit = Radian,
+    const char* expression, Poincare::VariableStore& variableStore,
+    Poincare::Preferences::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     Poincare::ReductionTarget target = User);
 
+/* The two signatures (with and without a context parameter) are there for
+ * retro-compatibilty with the old tests */
+void assert_parsed_expression_simplify_to(
+    const char* expression, const char* simplifiedExpression,
+    Poincare::Context& context, Poincare::ReductionTarget target = User,
+    Poincare::Preferences::AngleUnit angleUnit = Radian,
+    Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
+    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    Poincare::SymbolicComputation symbolicComputation = ReplaceDefinedSymbols,
+    bool beautify = true);
 void assert_parsed_expression_simplify_to(
     const char* expression, const char* simplifiedExpression,
     Poincare::ReductionTarget target = User,
@@ -110,16 +123,26 @@ void assert_parsed_expression_simplify_to(
 
 // Approximation
 
+/* The two signatures (with and without a context parameter) are there for
+ * retro-compatibilty with the old tests */
 template <typename T>
-void assert_expression_simplifies_approximates_to(
+void assert_expression_approximates_to(
     const char* expression, const char* approximation,
-    Poincare::Context* context,
+    Poincare::Context& context,
     Poincare::Preferences::AngleUnit angleUnit = Degree,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
     int numberOfSignificantDigits =
         Poincare::PrintFloat::SignificantDecimalDigits<T>());
-
+template <typename T>
+void assert_expression_simplifies_approximates_to(
+    const char* expression, const char* approximation,
+    Poincare::Context& context,
+    Poincare::Preferences::AngleUnit angleUnit = Degree,
+    Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
+    Poincare::Preferences::ComplexFormat complexFormat = Cartesian,
+    int numberOfSignificantDigits =
+        Poincare::PrintFloat::SignificantDecimalDigits<T>());
 template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char* expression, const char* approximation,

@@ -16,20 +16,6 @@ Context::UserNamedType TreeVariableContext::expressionTypeForIdentifier(
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
-bool TreeVariableContext::setExpressionForUserNamed(
-    const Internal::Tree* expression, const Internal::Tree* symbol) {
-  if (m_name != nullptr &&
-      strcmp(Internal::Symbol::GetName(symbol), m_name) == 0) {
-    assert(symbol->isUserSymbol());
-    if (!expression) {
-      return false;
-    }
-    m_value = expression;
-    return true;
-  }
-  return ContextWithParent::setExpressionForUserNamed(expression, symbol);
-}
-
 const Internal::Tree* TreeVariableContext::expressionForUserNamed(
     const Internal::Tree* symbol) const {
   if (m_name != nullptr &&

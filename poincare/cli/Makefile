@@ -25,20 +25,22 @@ endif
 KANDINSKY_font_variant := epsilon
 POINCARE_variant = epsilon
 
+_path_ion := ../../shared/ion
+
 # FIXME: Flags to build ion files
 SFLAGS += \
-  -Iion/include \
-  -Iion/include/ion/keyboard/epsilon \
+  -I$(_path_ion)/include \
+  -I$(_path_ion)/include/ion/keyboard/epsilon \
   -DION_DISPLAY_WIDTH=1000 \
   -DION_DISPLAY_HEIGHT=1000 \
   -DION_DISPLAY_BORDER=0 \
   -DION_KEYBOARD_COLUMNS=6 \
   -DION_KEYBOARD_ROWS=9
 
-$(call import_module,liba,liba)
-$(call import_module,omg,omg)
-$(call import_module,kandinsky,kandinsky)
-$(call import_module,poincare,poincare)
+$(call import_module,liba,../../shared/liba)
+$(call import_module,omg,../../shared/omg)
+$(call import_module,kandinsky,../../shared/kandinsky)
+$(call import_module,poincare,../../poincare)
 
 # Module poincare_cli
 $(call import_module,poincare_cli,.)
@@ -48,7 +50,7 @@ $(call create_module,poincare_cli,1, \
     main.cpp \
     timing.cpp \
   ) \
-  $(addprefix ion/src/, \
+  $(addprefix $(_path_ion)/src/, \
    $(addprefix shared/, \
       exam_mode.cpp \
     ) \

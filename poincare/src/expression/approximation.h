@@ -79,6 +79,12 @@ class Context {
     assert(m_localContext);
     m_localContext->setLocalValue(value);
   }
+  /* Should always be called after calling an approximation function with a
+   * temporary context.
+   * TODO: separate random context from the rest. */
+  void updateRandomContext(Random::Context randomCtx) const {
+    m_randomContext = randomCtx;
+  }
   // TODO_PCJ : Maybe better separate const and non const ctx ?
   mutable Random::Context m_randomContext;
   // LocalContext is used to store the values of local variables

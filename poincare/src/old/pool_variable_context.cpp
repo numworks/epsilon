@@ -7,11 +7,6 @@
 
 namespace Poincare {
 
-template <typename T>
-void PoolVariableContext::setApproximationForVariable(T value) {
-  m_value = Expression::Builder<T>(value);
-}
-
 Context::UserNamedType PoolVariableContext::expressionTypeForIdentifier(
     const char* identifier, int length) const {
   if (UTF8Helper::CompareNonNullTerminatedStringWithNullTerminated(
@@ -46,8 +41,5 @@ const Internal::Tree* PoolVariableContext::expressionForUserNamed(
   }
   return ContextWithParent::expressionForUserNamed(symbol);
 }
-
-template void PoolVariableContext::setApproximationForVariable(float);
-template void PoolVariableContext::setApproximationForVariable(double);
 
 }  // namespace Poincare

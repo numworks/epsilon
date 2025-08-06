@@ -69,8 +69,8 @@ Evaluation<T> ParameteredExpressionNode::approximateExpressionWithArgument(
   assert(childAtIndex(1)->otype() == Type::Symbol);
   Symbol symbol = Symbol(static_cast<SymbolNode*>(childAtIndex(1)));
   PoolVariableContext variableContext =
-      PoolVariableContext(symbol.name(), approximationContext.context());
-  variableContext.setApproximationForVariable<T>(x);
+      PoolVariableContext(symbol.name(), UserExpression::Builder<T>(x),
+                          approximationContext.context());
   /* Here we cannot use OExpression::approximateToRealScalarWithValueForSymbol
    * which would reset the sApproximationEncounteredComplex flag. */
   ApproximationContext childContext = approximationContext;

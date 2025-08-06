@@ -1,3 +1,4 @@
+#include <apps/shared/global_context.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/matrix.h>
 #include <poincare/src/expression/simplification.h>
@@ -29,4 +30,22 @@ QUIZ_CASE(pcj_matrix) {
   SharedTreeStack->flush();
 
   assert_trees_are_equal(parse("[[1,2,3][4,5,6]]"), w1);
+}
+
+static inline void assert_has_rank(const char* exp, int rank) {
+  Shared::GlobalContext context;
+  Tree* e = parse(exp, &context);
+  quiz_assert(e->isMatrix());
+  quiz_assert(rank == Matrix::Rank(e));
+  e->removeTree();
+}
+
+QUIZ_CASE(pcj_matrix_rank) {
+  assert_has_rank("[[1,2,3][1,3,4][1,4,6]]", 3);
+  assert_has_rank("[[0,0,0][0,0,0][0,0,0]]", 0);
+  assert_has_rank("[[1,0,0][0,1,0][0,0,0][0,0,0][1,1,1][0,0,1]]", 3);
+  assert_has_rank("[[1,-1,0][0,1,2][0,1,2][0,1,2][0,1,2][0,1,2]]", 2);
+  assert_has_rank("[[1,0,0,0,0,0][-1,1,1,1,1,1][0,2,2,2,2,2]]", 2);
+  assert_has_rank("[[1,2,3][1,3,x][1,4,6]]", -1);
+  assert_has_rank("[[1,1,0][0,0,0][0,1,x]]", -1);
 }

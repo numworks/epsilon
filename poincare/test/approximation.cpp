@@ -999,6 +999,16 @@ QUIZ_CASE(pcj_approximation_matrix) {
   // We do not map on matrices anymore
   approximates_to<float>("abs([[1,-2][3,-4]])", "undef");
   approximates_to<double>("abs([[1,-2][3,-4]])", "undef");
+
+  // Undefined
+  approximates_to<float>("cross([[0]],[[0]])", "undef");
+  approximates_to<float>("det(cross([[0]],[[0]]))", "undef");
+  approximates_to<float>("dim(cross([[0]],[[0]]))", "undef");
+  approximates_to<float>("inverse(cross([[0]],[[0]]))", "undef");
+  approximates_to<float>("norm(cross([[0]],[[0]]))", "undef");
+  approximates_to<float>("ref(cross([[0]],[[0]]))", "undef");
+  approximates_to<float>("trace(cross([[0]],[[0]]))", "undef");
+  approximates_to<float>("transpose(cross([[0]],[[0]]))", "undef");
 }
 
 QUIZ_CASE(pcj_approximation_point) {

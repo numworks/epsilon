@@ -129,6 +129,9 @@ T Approximation::Private::ApproximateRandomHelper(const Tree* randomTree,
      * yet.*/
     if (result >= check) {
       result += 1.0;
+    } else {
+      // Result is strictly smaller than all remaining values to check.
+      return result;
     }
     previousCheck = check;
     check = b + 1.0;

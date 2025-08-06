@@ -56,8 +56,7 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* Dependencies are not bubbled up out of an integral, but they are still
    * present inside the integral. */
   assert_reduce_and_store("1→f(x)", context);
-  assert_parsed_expression_simplify_to("int(f(x)+f(a),x,0,1)", "int(2,x,0,1)",
-                                       context);
+  assert_parsed_expression_simplify_to("int(f(x)+f(a),x,0,1)", "2", context);
   assert_reduce_and_store("1/0→a", context);
   assert_parsed_expression_simplify_to("int(f(x)+f(a),x,0,1)", "undef",
                                        context);
@@ -67,8 +66,8 @@ QUIZ_CASE(poincare_dependency_parametered_expression) {
   /* If the derivation is not handled properly, the symbol x could be reduced
    * to undef. */
   assert_reduce_and_store("x→f(x)", context);
-  assert_parsed_expression_simplify_to("int(diff(f(x),x,x),x,0,1)",
-                                       "int(1,x,0,1)", context);
+  assert_parsed_expression_simplify_to("int(diff(f(x),x,x),x,0,1)", "1",
+                                       context);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
   /* When trimming dependencies, we must be able to recognize unreduced

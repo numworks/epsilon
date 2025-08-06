@@ -2195,7 +2195,7 @@ QUIZ_CASE(poincare_simplification_complex_format) {
 
   assert_reduce_and_store("x+1+i→f(x)", globalContext, Radian, MetricUnitFormat,
                           Polar);
-  assert_parsed_expression_simplify_to("f(3)", "√(17)×e^((-2×arctan(4)+π)/2×i)",
+  assert_parsed_expression_simplify_to("f(3)", "√(17)×e^(arctan(1/4)×i)",
                                        globalContext, User, Radian,
                                        MetricUnitFormat, Polar);
   // Clean the storage for other tests

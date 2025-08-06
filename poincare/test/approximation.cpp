@@ -751,13 +751,15 @@ QUIZ_CASE(pcj_approximation_lists_functions) {
   approximates_to<double>("sort({(inf,1),(6,1),(5,-3),(-inf,9),(-inf,1)})",
                           "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}");
 
-#if 0  // TODO_PCJ: fix order
-  approximates_to<double>("sort({-1,i,8,-0})", "{-1,i,8,0}", cartesianCtx);
+  // Do not sort complexes or undefined expressions
+  approximates_to<double>("sort({-1,i,8,-0})", "{undef,undef,undef,undef}",
+                          cartesianCtx);
   approximates_to<double>("sort({(8,1),(5,i),(5,-3)})",
-                          "{(8,1),(5,undef),(5,-3)}", cartesianCtx);
+                          "{(undef,undef),(undef,undef),(undef,undef)}",
+                          cartesianCtx);
   approximates_to<double>("sort({(undef,1),(6,1),(5,-3)})",
-                          "{(undef,1),(6,1),(5,-3)}", cartesianCtx);
-#endif
+                          "{(undef,undef),(undef,undef),(undef,undef)}",
+                          cartesianCtx);
 }
 
 QUIZ_CASE(pcj_approximation_complex_format) {

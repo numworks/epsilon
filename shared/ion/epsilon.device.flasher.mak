@@ -5,6 +5,7 @@ $(addprefix shared/, \
 ) \
 $(addprefix device/shared/, \
   boot/rt0.cpp \
+  boot/rt0_no_init_array.cpp \
   drivers/base64.cpp \
   drivers/dfu_interfaces.cpp \
   drivers/serial_number.cpp \

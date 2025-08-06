@@ -10,6 +10,7 @@ $(addprefix shared/, \
 ) \
 $(addprefix device/shared/boot/, \
   rt0.cpp \
+  rt0_no_init_array.cpp \
   ssp.c \
 ) \
 $(addprefix device/shared/drivers/, \

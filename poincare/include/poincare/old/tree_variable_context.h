@@ -9,9 +9,12 @@ namespace Poincare {
 
 class TreeVariableContext : public ContextWithParent {
  public:
+  TreeVariableContext(const char* name, const Internal::Tree* value,
+                      const Context* parentContext = nullptr)
+      : ContextWithParent(parentContext), m_name(name), m_value(value) {}
   TreeVariableContext(const char* name = nullptr,
                       const Context* parentContext = nullptr)
-      : ContextWithParent(parentContext), m_name(name), m_value(nullptr) {}
+      : TreeVariableContext(name, nullptr, parentContext) {}
 
   // Context
   UserNamedType expressionTypeForIdentifier(const char* identifier,

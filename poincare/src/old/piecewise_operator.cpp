@@ -1,3 +1,4 @@
+#include <poincare/expression.h>
 #include <poincare/layout.h>
 #include <poincare/old/addition.h>
 #include <poincare/old/boolean.h>
@@ -212,9 +213,8 @@ int PiecewiseOperator::indexOfFirstTrueConditionWithValueForSymbol(
     const char* symbol, T x,
     const ApproximationContext& approximationContext) const {
   assert(numberOfChildren() > 0);
-  PoolVariableContext variableContext =
-      PoolVariableContext(symbol, approximationContext.context());
-  variableContext.setApproximationForVariable<T>(x);
+  PoolVariableContext variableContext = PoolVariableContext(
+      symbol, UserExpression::Builder<T>(x), approximationContext.context());
   ApproximationContext newContext = ApproximationContext(
       &variableContext, approximationContext.complexFormat(),
       approximationContext.angleUnit());

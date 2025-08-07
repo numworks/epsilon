@@ -154,7 +154,7 @@ def main():
 
     try:
         proc = subprocess.run(
-            ["arm-none-eabi-nm", "-SCn", args.elf_file],
+            ["arm-none-eabi-nm", "-SCn", "--no-recursion-limit", args.elf_file],
             capture_output=True,
             text=True,
             check=True,

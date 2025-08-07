@@ -314,9 +314,8 @@ bool CalculationStore::preferencesHaveChanged() {
 }
 
 PoolVariableContext CalculationStore::createAnsContext(Context* context) {
-  PoolVariableContext ansContext(SymbolHelper::AnsMainAlias(),
-                                 ansExpression(context), context);
-  return ansContext;
+  return PoolVariableContext(SymbolHelper::AnsMainAlias(),
+                             ansExpression(context), context);
 }
 
 // Private

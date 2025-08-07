@@ -4,6 +4,10 @@
 #ifdef __cplusplus
 constexpr
 #endif
-    int k_grayscaleBitsPerPixel = 4;
+#if KANDINSKY_FONT_MONOCHROME
+    int k_grayscaleBitsPerPixel = 1;
+#else
+int k_grayscaleBitsPerPixel = 4;
+#endif
 
 #endif

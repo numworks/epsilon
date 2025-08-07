@@ -5,7 +5,7 @@
 #include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 
-/* [MathPreferences] is now just a preferences accessor that regroup all the
+/* [MathPreferences] is just a preferences accessor that regroup all the
  * "math" related settings.
  * TODO: get rid of it by directly accessing relevent preferences object in apps
  */

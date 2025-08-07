@@ -25,7 +25,7 @@ struct ParsingMetadata {
 };
 
 struct ParsingContext {
-  Poincare::Context* context = nullptr;
+  const Poincare::Context* context = nullptr;
   const ParserHelper::ParsingParameters params = {};
   ParsingMetadata metadata = {};
   ParsingContext cloneWithoutMetadata() const {

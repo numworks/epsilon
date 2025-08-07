@@ -1024,7 +1024,7 @@ void RackParser::privateParseReservedFunction(TreeRef& leftHandSide,
       leftHandSide = parseFunctionParameters();
     } else {
       // We must make sure that the parameter is parsed as a single variable.
-      Poincare::Context* oldContext = m_parsingContext.context;
+      const Poincare::Context* oldContext = m_parsingContext.context;
       Poincare::TreeVariableContext parameterContext(name, oldContext);
       m_parsingContext.context = &parameterContext;
       leftHandSide = parseFunctionParameters();
@@ -1289,7 +1289,7 @@ bool RackParser::privateParseCustomIdentifierWithParameters(
      * If we decide that functions can be assigned with any parameter,
      * this will ensure that f(abc)=abc is understood like f(x)=x
      */
-    Poincare::Context* previousContext = m_parsingContext.context;
+    const Poincare::Context* previousContext = m_parsingContext.context;
     Poincare::TreeVariableContext functionAssignmentContext(
         Symbol::GetName(parameter), m_parsingContext.context);
     m_parsingContext.context = &functionAssignmentContext;

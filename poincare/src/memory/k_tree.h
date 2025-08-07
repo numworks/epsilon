@@ -12,7 +12,14 @@
 
 namespace Poincare::Internal {
 
+// Helpers to construct constexpr Trees
+
 using namespace KTrees;
+
+/* In this file TSC stands for Tree SubClass and may designate Tree or a
+ * subclass such as ViewTree used to properly type check the different uses of
+ * Trees. TSC is given as a template parameter to most of the file since it has
+ * to be passed to the whole helpers hierarchy. */
 
 /* Tree has a false flexible member m_valueBlocks[0]. It can be used to access
  * and set the value blocks as expected but it cannot be filled in a constexpr
@@ -45,9 +52,6 @@ constexpr static ConstexprTree<TSC, sizeof...(Blocks)> k_tree{
 
 template <typename TSC>
 struct KTreesImplementation {
-  // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
-  // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
-
   /* The KTree template class is the compile time representation of a constexpr
    * tree. Its complete block representation is specified as template parameters
    * in order to be able to use the address of the static singleton (in flash)
@@ -57,6 +61,8 @@ struct KTreesImplementation {
   struct KTree : public AbstractKTree {
     constexpr static size_t k_size = sizeof...(Blocks);
     static_assert(k_size > 0);
+    /* k_blocks is only use to concatenate KTrees more easily that using k_tree.
+     * It should not appear in the binary. */
     constexpr static Block k_blocks[k_size] = {Blocks...};
     constexpr operator const TSC*() const {
       return &k_tree<TSC, static_cast<char>(static_cast<uint8_t>(Blocks))...>;
@@ -74,7 +80,6 @@ struct KTreesImplementation {
    * Binary(CT1, CT2) { return Concat<Tree<Tag>, CT1, CT2>();
    * }
    */
-
   template <size_t N1, const Block B1[N1], size_t N2, const Block B2[N2],
             typename IS = decltype(std::make_index_sequence<N1 + N2>())>
   struct __BlockConcat;

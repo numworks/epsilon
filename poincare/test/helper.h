@@ -3,6 +3,7 @@
 
 #include <poincare/helpers/parser.h>
 #include <poincare/old/context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/approximation.h>
@@ -155,9 +156,10 @@ const char* ApproximatedParsedIntegerString();
 // Parsing
 using ParsingParameters = Poincare::ParserHelper::ParsingParameters;
 
-Poincare::Internal::Tree* parse(const char* input,
-                                Poincare::Context* context = nullptr,
-                                ParsingParameters params = {});
+Poincare::Internal::Tree* parse(
+    const char* input,
+    const Poincare::Context& context = Poincare::EmptyContext{},
+    ParsingParameters params = {});
 
 Poincare::Internal::Tree* parse_and_reduce(const char* input,
                                            bool beautify = false);
@@ -167,28 +169,31 @@ void assert_parsed_expression_is(const char* expression,
                                  ParsingParameters params = {});
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
-                                 Poincare::Context* context,
+                                 const Poincare::Context& context,
                                  ParsingParameters params = {});
 void assert_parse_to_same_expression(const char* expression1,
                                      const char* expression2,
-                                     Poincare::Context* context);
+                                     const Poincare::Context& context);
 
 void assert_expression_serializes_and_parses_to(
     const Poincare::Internal::Tree* expression,
     const Poincare::Internal::Tree* result);
 
-void assert_text_not_parsable(const char* input,
-                              Poincare::Context* context = nullptr,
-                              ParsingParameters params = {});
-void assert_parse_to_integer_overflow(const char* input,
-                                      Poincare::Context* context = nullptr);
+void assert_text_not_parsable(
+    const char* input,
+    const Poincare::Context& context = Poincare::EmptyContext{},
+    ParsingParameters params = {});
+void assert_parse_to_integer_overflow(
+    const char* input,
+    const Poincare::Context& context = Poincare::EmptyContext{});
 
 void store(const char* storeExpression, Poincare::VariableStore* variableStore);
 
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
     const char* function, Poincare::Internal::ProjectionContext ctx = {}) {
   constexpr const char* k_symbol = "x";
-  Poincare::Internal::Tree* e = parse(function, ctx.m_context);
+  assert(ctx.m_context);
+  Poincare::Internal::Tree* e = parse(function, *ctx.m_context);
   Poincare::Internal::Simplification::ToSystem(e, &ctx);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
       e, k_symbol, ctx.m_complexFormat);
@@ -204,11 +209,13 @@ void assert_expression_serializes_to(
     int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
 
 void assert_expression_parses_and_serializes_to(
-    const char* expression, const char* result, Poincare::Context* context,
+    const char* expression, const char* result,
+    const Poincare::Context& context = Poincare::EmptyContext{},
     Poincare::Preferences::PrintFloatMode mode = ScientificMode,
     int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
 void assert_expression_parses_and_serializes_to_itself(
-    const char* expression, Poincare::Context* context);
+    const char* expression,
+    const Poincare::Context& context = Poincare::EmptyContext{});
 
 void serialize_expression(const Poincare::Internal::Tree* expression,
                           std::span<char> buffer,

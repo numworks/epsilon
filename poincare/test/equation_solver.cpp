@@ -1,4 +1,5 @@
 #include <apps/shared/global_context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/equation_solver/equation_solver_tree.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/simplification.h>
@@ -6,6 +7,7 @@
 #include <poincare/src/memory/tree_stack.h>
 
 #include "helper.h"
+
 using namespace Poincare::Internal;
 
 bool check_solutions(
@@ -15,8 +17,8 @@ bool check_solutions(
     EquationSolver::Error expectedError = EquationSolver::Error::NoError) {
   Tree* equationList = Poincare::Internal::List::PushEmpty();
   for (const char* equation : inputs) {
-    NAry::AddChild(equationList,
-                   parse(equation, nullptr, {.preserveInput = true}));
+    NAry::AddChild(equationList, parse(equation, Poincare::EmptyContext{},
+                                       {.preserveInput = true}));
   }
   EquationSolver::SolverResult result =
       EquationSolver::ExactSolveAdaptive(equationList, projectionContext);
@@ -32,7 +34,7 @@ bool check_solutions(
             : SymbolicComputation::ReplaceDefinedSymbols;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
-      Tree* expectedSolution = parse(output, nullptr,
+      Tree* expectedSolution = parse(output, Poincare::EmptyContext{},
                                      {
                                          .preserveInput = true,
                                      });

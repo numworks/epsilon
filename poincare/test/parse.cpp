@@ -545,9 +545,9 @@ QUIZ_CASE(pcj_parse_unit_convert) {
   Shared::GlobalContext context;
   store("_m→a", &context);
   store("_m→b", &context);
-  assert_text_not_parsable("1_km→a×b", &context);
+  assert_text_not_parsable("1_km→a×b", context);
   store("2→a", &context);
-  assert_text_not_parsable("3_m→a×_km", &context);
+  assert_text_not_parsable("3_m→a×_km", context);
   store("2→f(x)", &context);
   assert_text_not_parsable("3_m→f(2)×_km");
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
@@ -661,55 +661,55 @@ QUIZ_CASE(pcj_parse_derivative_apostrophe) {
       "f'(x)",
       KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 1_e,
             KFun<"f">(Derivation::k_functionDerivativeVariable)),
-      &globalContext);
+      globalContext);
   assert_parsed_expression_is(
       "f\"(x)",
       KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 2_e,
             KFun<"f">(Derivation::k_functionDerivativeVariable)),
-      &globalContext);
-  assert_parse_to_same_expression("f'(x)", "f^(1)(x)", &globalContext);
-  assert_parse_to_same_expression("f\"(x)", "f^(2)(x)", &globalContext);
-  assert_parse_to_same_expression("f''(x)", "f^(2)(x)", &globalContext);
-  assert_parse_to_same_expression("f'''(x)", "f^(3)(x)", &globalContext);
-  assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)", &globalContext);
-  assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)", &globalContext);
+      globalContext);
+  assert_parse_to_same_expression("f'(x)", "f^(1)(x)", globalContext);
+  assert_parse_to_same_expression("f\"(x)", "f^(2)(x)", globalContext);
+  assert_parse_to_same_expression("f''(x)", "f^(2)(x)", globalContext);
+  assert_parse_to_same_expression("f'''(x)", "f^(3)(x)", globalContext);
+  assert_parse_to_same_expression("f\"\"(x)", "f^(4)(x)", globalContext);
+  assert_parse_to_same_expression("f'\"'(x)", "f^(4)(x)", globalContext);
   assert_parsed_expression_is(
       "f^(3)(x)",
       KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 3_e,
             KFun<"f">(Derivation::k_functionDerivativeVariable)),
-      &globalContext);
+      globalContext);
   assert_parsed_expression_is(
       "f^(3/2)(x)",
       KMult(KPow("f"_e, KParentheses(KDiv(3_e, 2_e))), KParentheses("x"_e)),
-      &globalContext);
+      globalContext);
   assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit),
-                              &globalContext);
-  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), &globalContext);
+                              globalContext);
+  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), globalContext);
   assert_parsed_expression_is(
-      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), &globalContext);
+      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), globalContext);
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)),
-                              &globalContext);
+                              globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Expression defined
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "exp", "", 0);
   assert_parsed_expression_is("f'", KMult("f"_e, apostropheUnit),
-                              &globalContext);
-  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), &globalContext);
+                              globalContext);
+  assert_parsed_expression_is("f\"", KMult("f"_e, quoteUnit), globalContext);
   assert_parsed_expression_is(
-      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), &globalContext);
+      "f''", KMult("f"_e, apostropheUnit, apostropheUnit), globalContext);
   assert_parsed_expression_is("f^(1)", KPow("f"_e, KParentheses(1_e)),
-                              &globalContext);
+                              globalContext);
   assert_parsed_expression_is("f^(2)", KPow("f"_e, KParentheses(2_e)),
-                              &globalContext);
+                              globalContext);
   assert_parsed_expression_is("f^(3)", KPow("f"_e, KParentheses(3_e)),
-                              &globalContext);
+                              globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   assert_text_not_parsable(
       "→M^\U00000012√\U00000012^\U000000122\U00000013\U00000013\U00000013",
-      &globalContext);
+      globalContext);
 }
 
 QUIZ_CASE(pcj_parse_parametric) {
@@ -772,7 +772,8 @@ QUIZ_CASE(pcj_parse_identifiers) {
                               KMult("f"_e, KParentheses(KParentheses(1_e))));
   assert_text_not_parsable("_a");
   // No symbol of length > 6
-  assert_text_not_parsable("abcdefgh", nullptr, {.preserveInput = true});
+  assert_text_not_parsable("abcdefgh", Poincare::EmptyContext{},
+                           {.preserveInput = true});
   assert_text_not_parsable("f(1,2,3)");
 
   // User-defined functions
@@ -914,20 +915,18 @@ QUIZ_CASE(pcj_parse_identifiers) {
   store("0→azfoo", &globalContext);
   store("x→foobar(x)", &globalContext);
   store("0→a3b", &globalContext);
-  assert_parsed_expression_is("xyz", KMult("x"_e, "y"_e, "z"_e),
-                              &globalContext);
+  assert_parsed_expression_is("xyz", KMult("x"_e, "y"_e, "z"_e), globalContext);
   assert_parsed_expression_is("xy123z", KMult("x"_e, "y123"_e, "z"_e),
-                              &globalContext);
-  assert_parsed_expression_is("3→xyz", KStore(3_e, "xyz"_e), &globalContext);
-  assert_parsed_expression_is("ab", "ab"_e, &globalContext);
-  assert_parsed_expression_is("ab3", KMult("a"_e, "b3"_e), &globalContext);
-  assert_parsed_expression_is("a3b", "a3b"_e, &globalContext);
+                              globalContext);
+  assert_parsed_expression_is("3→xyz", KStore(3_e, "xyz"_e), globalContext);
+  assert_parsed_expression_is("ab", "ab"_e, globalContext);
+  assert_parsed_expression_is("ab3", KMult("a"_e, "b3"_e), globalContext);
+  assert_parsed_expression_is("a3b", "a3b"_e, globalContext);
   assert_parsed_expression_is("aacos(x)", KMult("a"_e, KACos("x"_e)),
-                              &globalContext);
-  assert_parsed_expression_is("bacos(x)", KFun<"bacos">("x"_e), &globalContext);
-  assert_parsed_expression_is("azfoobar(x)",
-                              KMult("a"_e, "z"_e, KFun<"foobar">("x"_e)),
-                              &globalContext);
+                              globalContext);
+  assert_parsed_expression_is("bacos(x)", KFun<"bacos">("x"_e), globalContext);
+  assert_parsed_expression_is(
+      "azfoobar(x)", KMult("a"_e, "z"_e, KFun<"foobar">("x"_e)), globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 

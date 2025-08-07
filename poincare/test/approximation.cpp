@@ -50,7 +50,9 @@ void approximates_to_boolean(const Tree* n,
 void approximates_to_boolean(const char* input,
                              Approximation::BooleanOrUndefined expected,
                              const ProjectionContext& projectionContext) {
-  Tree* expression = parse(input, projectionContext.m_context);
+  Tree* expression = projectionContext.m_context
+                         ? parse(input, *projectionContext.m_context)
+                         : parse(input);
   Approximation::BooleanOrUndefined approx = Approximation::ToBoolean<float>(
       expression,
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
@@ -90,7 +92,9 @@ void approximates_to(const Tree* n, T f) {
 template <typename T>
 void approximates_to(const char* input, T f,
                      const ProjectionContext& projectionContext = realCtx) {
-  Tree* expression = parse(input, projectionContext.m_context);
+  Tree* expression = projectionContext.m_context
+                         ? parse(input, *projectionContext.m_context)
+                         : parse(input);
   T approx = Approximation::To<T>(
       expression,
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
@@ -2278,12 +2282,12 @@ void assert_expression_approximates_with_value_for_symbol(
     const char* expression, T approximation, const char* symbol, T symbolValue,
     Preferences::AngleUnit angleUnit = AngleUnit::Degree,
     Preferences::ComplexFormat complexFormat = ComplexFormat::Cartesian) {
-  Shared::GlobalContext globalContext;
-  UserExpression e = Expression::Builder(parse(expression, &globalContext));
+  UserExpression e = Expression::Builder(parse(expression));
   bool reductionFailure = false;
   SystemExpression eReplaced = e.cloneAndReplaceSymbolWithExpression(
       symbol, Expression::Builder(symbolValue), &reductionFailure,
       SymbolicComputation::ReplaceAllSymbols);
+  Shared::GlobalContext globalContext;
   T result = eReplaced.approximateToRealScalar<T>(angleUnit, complexFormat,
                                                   &globalContext);
   quiz_assert_print_if_failure(

@@ -427,8 +427,8 @@ QUIZ_CASE(pcj_sign) {
 }
 
 void assert_projected_is_null(const char* input, OMG::Troolean isNull) {
+  Tree* e = parse(input);
   ProjectionContext context;
-  Tree* e = parse(input, context.m_context);
   Simplification::ToSystem(e, &context);
   ComplexSign sign = GetComplexSign(e);
   quiz_assert_print_if_failure(
@@ -476,8 +476,8 @@ QUIZ_CASE(pcj_sign_is_zero) {
 }
 
 void assert_projected_is_positive(const char* input, OMG::Troolean isPositive) {
+  Tree* e = parse(input);
   ProjectionContext context;
-  Tree* e = parse(input, context.m_context);
   Simplification::ToSystem(e, &context);
   ComplexSign sign = GetComplexSign(e);
   quiz_assert_print_if_failure(
@@ -541,7 +541,7 @@ void assert_reduced_is_positive(
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = globalContext,
       .m_advanceReduce = false};
-  Tree* e = parse(input, globalContext);
+  Tree* e = parse(input, *globalContext);
   Simplification::ProjectAndReduce(e, &projCtx);
   ComplexSign sign = GetComplexSign(e);
   quiz_assert_print_if_failure(
@@ -595,8 +595,8 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
 
 void assert_sign_sets_to(const char* input,
                          NonStrictSign isPositive = NonStrictSign::Positive) {
+  Tree* e = parse(input);
   ProjectionContext projCtx;
-  Tree* e = parse(input, projCtx.m_context);
   Simplification::ProjectAndReduce(e, &projCtx);
   ComplexSign eSign = GetComplexSign(e);
   bool eIsPositive = OMG::TrooleanToBool(
@@ -643,8 +643,8 @@ QUIZ_CASE(pcj_sign_set) {
 }
 
 void assert_projected_is_real_or_not(const char* input, bool isReal = true) {
+  Tree* e = parse(input);
   ProjectionContext context;
-  Tree* e = parse(input, context.m_context);
   Simplification::ToSystem(e, &context);
   ComplexSign sign = GetComplexSign(e);
   quiz_assert_print_if_failure(sign.isReal() == isReal, input);

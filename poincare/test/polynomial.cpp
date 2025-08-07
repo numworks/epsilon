@@ -96,7 +96,9 @@ QUIZ_CASE(pcj_polynomial_operations) {
 void assert_polynomial_degree_is(ProjectionContext projectionContext,
                                  const char* input, int expectedDegree,
                                  const char* symbolName = "x") {
-  Tree* expression = parse(input, projectionContext.m_context);
+  Tree* expression = projectionContext.m_context
+                         ? parse(input, *projectionContext.m_context)
+                         : parse(input);
   Simplification::ProjectAndReduce(expression, &projectionContext);
   int degree = Degree::Get(expression, symbolName);
   quiz_assert(degree == expectedDegree);

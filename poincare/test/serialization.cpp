@@ -3,6 +3,7 @@
 #include <poincare/expression_or_float.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/k_tree.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/derivation.h>
@@ -217,7 +218,6 @@ QUIZ_CASE(pcj_serialization_rational) {
 }
 
 QUIZ_CASE(pcj_serialization_decimal) {
-  Shared::GlobalContext ctx;
   const Tree* d0 = KOpposite(KDecimal(123456789_e, -22_e));
   assert_expression_serializes_to(d0, "-1.23456789ᴇ30", ScientificMode);
   assert_expression_serializes_to(d0, "-1.23456789ᴇ30", DecimalMode);
@@ -284,29 +284,36 @@ QUIZ_CASE(pcj_serialization_decimal) {
                                   DecimalMode);
   assert_expression_serializes_to(1.0_e, "1");
   assert_expression_parses_and_serializes_to(
-      "0.99999999999999999999999999999996", "1", &ctx);
+      "0.99999999999999999999999999999996", "1");
   assert_expression_parses_and_serializes_to(
       "0.999999999999999999999999999995", "9.99999999999999999999999999995ᴇ-1",
-      &ctx, ScientificMode, 14);
+      Poincare::EmptyContext{}, ScientificMode, 14);
   assert_expression_parses_and_serializes_to(
       "0.000000999999999999999999999999999995",
-      "9.99999999999999999999999999995ᴇ-7", &ctx, ScientificMode, 14);
+      "9.99999999999999999999999999995ᴇ-7", Poincare::EmptyContext{},
+      ScientificMode, 14);
   assert_expression_parses_and_serializes_to(
-      "0.0000009999999999999999999999999999995", "1ᴇ-6", &ctx, DecimalMode);
+      "0.0000009999999999999999999999999999995", "1ᴇ-6",
+      Poincare::EmptyContext{}, DecimalMode);
   assert_expression_parses_and_serializes_to(
       "0.0000009999999999999999999999999901200121020102010201201201021099995",
-      "9.9999999999999999999999999012ᴇ-7", &ctx, DecimalMode, 14);
-  assert_expression_parses_and_serializes_to("99999999999999999999999999999.53",
-                                             "99999999999999999999999999999.5",
-                                             &ctx, DecimalMode, 14);
+      "9.9999999999999999999999999012ᴇ-7", Poincare::EmptyContext{},
+      DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
-      "999999999999999999999999999999.54", "1ᴇ30", &ctx, DecimalMode, 14);
+      "99999999999999999999999999999.53", "99999999999999999999999999999.5",
+      Poincare::EmptyContext{}, DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
-      "9999999999999999999999999999999.54", "1ᴇ31", &ctx, DecimalMode, 14);
+      "999999999999999999999999999999.54", "1ᴇ30", Poincare::EmptyContext{},
+      DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
-      "99999999999999999999999999999999.54", "1ᴇ32", &ctx, DecimalMode, 14);
+      "9999999999999999999999999999999.54", "1ᴇ31", Poincare::EmptyContext{},
+      DecimalMode, 14);
   assert_expression_parses_and_serializes_to(
-      "-9.702365051313ᴇ-297", "-9.702365051313ᴇ-297", &ctx, DecimalMode, 14);
+      "99999999999999999999999999999999.54", "1ᴇ32", Poincare::EmptyContext{},
+      DecimalMode, 14);
+  assert_expression_parses_and_serializes_to(
+      "-9.702365051313ᴇ-297", "-9.702365051313ᴇ-297", Poincare::EmptyContext{},
+      DecimalMode, 14);
 
   // Engineering notation
   assert_expression_serializes_to(0.0_e, "0", EngineeringMode);
@@ -374,7 +381,6 @@ QUIZ_CASE(pcj_serialization_power) {
 }
 
 QUIZ_CASE(pcj_serialization_derivative) {
-  Shared::GlobalContext ctx;
   assert_expression_serializes_to(KDiff("x"_e, "x"_e, 1_e, KFun<"f">("x"_e)),
                                   "diff(f(x),x,x)");
   assert_expression_serializes_to(KDiff("x"_e, "x"_e, 2_e, KFun<"f">("x"_e)),
@@ -393,28 +399,32 @@ QUIZ_CASE(pcj_serialization_derivative) {
       KDiff(Derivation::k_functionDerivativeVariable, "x"_e, 3_e,
             KFun<"f">(Derivation::k_functionDerivativeVariable)),
       "f^(3)(x)");
-  assert_expression_parses_and_serializes_to("f'(x)", "f×_'×(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f\"(x)", "f×_\"×(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f''(x)", "f×_'×_'×(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f'\"(x)", "f×_'×_\"×(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f\"\"(x)", "f×_\"×_\"×(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f^(1)(x)", "f^(1)×(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f^(2)(x)", "f^(2)×(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)×(x)", &ctx);
+  assert_expression_parses_and_serializes_to("f'(x)", "f×_'×(x)");
+  assert_expression_parses_and_serializes_to("f\"(x)", "f×_\"×(x)");
+  assert_expression_parses_and_serializes_to("f''(x)", "f×_'×_'×(x)");
+  assert_expression_parses_and_serializes_to("f'\"(x)", "f×_'×_\"×(x)");
+  assert_expression_parses_and_serializes_to("f\"\"(x)", "f×_\"×_\"×(x)");
+  assert_expression_parses_and_serializes_to("f^(1)(x)", "f^(1)×(x)");
+  assert_expression_parses_and_serializes_to("f^(2)(x)", "f^(2)×(x)");
+  assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)×(x)");
+  // TODO: create record through a Context instance
   Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
       "f", "func", "", 0);
-  assert_expression_parses_and_serializes_to_itself("f(x)", &ctx);
-  assert_expression_parses_and_serializes_to_itself("f'(x+1)", &ctx);
-  assert_expression_parses_and_serializes_to_itself("f\"(x+1)", &ctx);
-  assert_expression_parses_and_serializes_to_itself("f^(3)(x+1)", &ctx);
-  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a)", &ctx);
-  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a,2)", &ctx);
-  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a,3)", &ctx);
-  assert_expression_parses_and_serializes_to("f''(x)", "f\"(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f'''(x)", "f^(3)(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f'\"(x)", "f^(3)(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f\"\"(x)", "f^(4)(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f^(1)(x)", "f'(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f^(2)(x)", "f\"(x)", &ctx);
-  assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)(x)", &ctx);
+  Shared::GlobalContext context;
+  assert_expression_parses_and_serializes_to_itself("f(x)", context);
+  assert_expression_parses_and_serializes_to_itself("f'(x+1)", context);
+  assert_expression_parses_and_serializes_to_itself("f\"(x+1)", context);
+  assert_expression_parses_and_serializes_to_itself("f^(3)(x+1)", context);
+  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a)", context);
+  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a,2)",
+                                                    context);
+  assert_expression_parses_and_serializes_to_itself("diff(f(x),x,a,3)",
+                                                    context);
+  assert_expression_parses_and_serializes_to("f''(x)", "f\"(x)", context);
+  assert_expression_parses_and_serializes_to("f'''(x)", "f^(3)(x)", context);
+  assert_expression_parses_and_serializes_to("f'\"(x)", "f^(3)(x)", context);
+  assert_expression_parses_and_serializes_to("f\"\"(x)", "f^(4)(x)", context);
+  assert_expression_parses_and_serializes_to("f^(1)(x)", "f'(x)", context);
+  assert_expression_parses_and_serializes_to("f^(2)(x)", "f\"(x)", context);
+  assert_expression_parses_and_serializes_to("f^(3)(x)", "f^(3)(x)", context);
 }

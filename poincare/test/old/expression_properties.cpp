@@ -12,17 +12,15 @@ using namespace Poincare;
 using namespace Poincare::Internal;
 
 void assert_is_number(const char* input, bool isNumber = true) {
-  Shared::GlobalContext context;
-  UserExpression e = UserExpression::Builder(parse(input, &context));
+  UserExpression e = UserExpression::Builder(parse(input));
   quiz_assert_print_if_failure(e.isConstantNumber() == isNumber, input);
 }
 
 void assert_reduced_is_number(const char* input, bool isNumber = true) {
-  Shared::GlobalContext context;
-  UserExpression e1 = UserExpression::Builder(parse(input, &context));
-  ProjectionContext projectionContext{.m_context = &context};
+  UserExpression e1 = UserExpression::Builder(parse(input));
   bool reductionFailure = false;
-  SystemExpression e2 = e1.cloneAndReduce(projectionContext, &reductionFailure);
+  SystemExpression e2 =
+      e1.cloneAndReduce(ProjectionContext{}, &reductionFailure);
   quiz_assert(!reductionFailure);
   quiz_assert_print_if_failure(e2.isConstantNumber() == isNumber, input);
 }
@@ -62,11 +60,10 @@ QUIZ_CASE(poincare_properties_is_number) {
 }
 
 void assert_reduced_is_rational(const char* input, bool isRational = true) {
-  Shared::GlobalContext context;
-  UserExpression e1 = UserExpression::Builder(parse(input, &context));
-  ProjectionContext projectionContext{.m_context = &context};
+  UserExpression e1 = UserExpression::Builder(parse(input));
   bool reductionFailure = false;
-  SystemExpression e2 = e1.cloneAndReduce(projectionContext, &reductionFailure);
+  SystemExpression e2 =
+      e1.cloneAndReduce(ProjectionContext{}, &reductionFailure);
   quiz_assert(!reductionFailure);
   quiz_assert_print_if_failure(e2.isRational() == isRational, input);
 }
@@ -88,8 +85,7 @@ QUIZ_CASE(poincare_properties_is_rational_number) {
 }
 
 void assert_has_random(const char* input, bool hasRandom = true) {
-  Shared::GlobalContext context;
-  UserExpression e = UserExpression::Builder(parse(input, &context));
+  UserExpression e = UserExpression::Builder(parse(input));
   quiz_assert_print_if_failure(e.hasRandomNumber() == hasRandom, input);
 }
 
@@ -104,8 +100,7 @@ QUIZ_CASE(poincare_properties_has_random) {
 
 void assert_is_parametered_expression(const char* input,
                                       bool isParametered = true) {
-  Shared::GlobalContext context;
-  UserExpression e = UserExpression::Builder(parse(input, &context));
+  UserExpression e = UserExpression::Builder(parse(input));
   quiz_assert_print_if_failure(e.isParametric() == isParametered, input);
 }
 
@@ -123,8 +118,8 @@ QUIZ_CASE(poincare_properties_is_parametered_expression) {
 template <typename T>
 void assert_expression_has_property_or_not(const char* input, T test,
                                            bool hasProperty) {
+  UserExpression e = UserExpression::Builder(parse(input));
   Shared::GlobalContext context;
-  UserExpression e = UserExpression::Builder(parse(input, &context));
   quiz_assert_print_if_failure(
       e.recursivelyMatches(test, &context) == hasProperty, input);
 }
@@ -178,7 +173,8 @@ QUIZ_CASE(poincare_properties_has_matrix) {
 
 void assert_projected_is_infinity(const char* input, ProjectionContext* projCtx,
                                   bool isInfinity = true) {
-  Tree* e = parse(input, projCtx->m_context);
+  Tree* e =
+      projCtx->m_context ? parse(input, *projCtx->m_context) : parse(input);
   Simplification::ToSystem(e, projCtx);
   SystemExpression expr = SystemExpression::Builder(e);
   quiz_assert_print_if_failure(
@@ -211,7 +207,8 @@ QUIZ_CASE(poincare_properties_is_infinity) {
 void assert_expression_has_variables(const char* input,
                                      const Tree* expectedVariables,
                                      ProjectionContext* projCtx) {
-  Tree* e = parse(input, projCtx->m_context);
+  Tree* e =
+      projCtx->m_context ? parse(input, *projCtx->m_context) : parse(input);
   Simplification::ToSystem(e, projCtx);
   const Tree* variables = Variables::GetUserSymbols(e);
   assert_trees_are_equal(variables, expectedVariables);
@@ -317,7 +314,7 @@ void assert_reduced_expression_has_polynomial_coefficient(
                                 .m_angleUnit = angleUnit,
                                 .m_symbolic = symbolicComputation,
                                 .m_context = globalContext};
-  UserExpression e = UserExpression::Builder(parse(input, globalContext));
+  UserExpression e = UserExpression::Builder(parse(input, *globalContext));
   bool reductionFailure = false;
   e = e.cloneAndReduce(projContext, &reductionFailure);
   quiz_assert(!reductionFailure);
@@ -374,9 +371,9 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
 
 void assert_list_length_in_children_is(const char* definition,
                                        int targetLength) {
-  Shared::GlobalContext context;
-  UserExpression e = UserExpression::Builder(parse(definition, &context));
+  UserExpression e = UserExpression::Builder(parse(definition));
   bool isValid = targetLength != -2;
+  Shared::GlobalContext context;
   quiz_assert_print_if_failure(
       Poincare::Internal::Dimension::DeepCheck(e.tree(), &context) == isValid,
       definition);
@@ -400,7 +397,8 @@ QUIZ_CASE(poincare_properties_children_list_length) {
 
 void assert_is_list_of_points(const char* input, Context* context,
                               bool truth = true) {
-  UserExpression e = UserExpression::Builder(parse(input, context));
+  assert(context);
+  UserExpression e = UserExpression::Builder(parse(input, *context));
   bool isListOfPoints = e.dimension(context).isListOfPoints();
   quiz_assert_print_if_failure(isListOfPoints == truth, input);
 }
@@ -437,11 +435,10 @@ QUIZ_CASE(poincare_properties_list_of_points) {
 
 void assert_is_continuous_on_interval(const char* input, float x1, float x2,
                                       bool isContinuous) {
-  Shared::GlobalContext context;
-  UserExpression e1 = UserExpression::Builder(parse(input, &context));
-  ProjectionContext projectionContext{.m_context = &context};
+  UserExpression e1 = UserExpression::Builder(parse(input));
   bool reductionFailure = false;
-  SystemExpression e2 = e1.cloneAndReduce(projectionContext, &reductionFailure);
+  SystemExpression e2 =
+      e1.cloneAndReduce(ProjectionContext{}, &reductionFailure);
   quiz_assert(!reductionFailure);
   PreparedFunction e3 = e2.getPreparedFunction("x", true);
   quiz_assert_print_if_failure(
@@ -470,12 +467,12 @@ QUIZ_CASE(poincare_properties_is_continuous) {
 
 void assert_reduced_deep_is_symbolic(const char* input,
                                      bool isSymbolic = true) {
-  Shared::GlobalContext context;
-  UserExpression e1 = UserExpression::Builder(parse(input, &context));
-  ProjectionContext projectionContext{.m_context = &context};
+  UserExpression e1 = UserExpression::Builder(parse(input));
   bool reductionFailure = false;
-  SystemExpression e2 = e1.cloneAndReduce(projectionContext, &reductionFailure);
+  SystemExpression e2 =
+      e1.cloneAndReduce(ProjectionContext{}, &reductionFailure);
   quiz_assert(!reductionFailure);
+  Shared::GlobalContext context;
   quiz_assert_print_if_failure(
       e2.deepIsOfType(
           {Type::UserSymbol, Type::UserFunction, Type::UserSequence},

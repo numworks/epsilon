@@ -1,4 +1,5 @@
 #include <apps/shared/global_context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/units/k_units.h>
@@ -32,7 +33,7 @@ bool dim(const Tree* e, Dimension dExpected, Poincare::Context* ctx = nullptr) {
 }
 
 bool dim(const char* input, Dimension d, Poincare::Context* ctx = nullptr) {
-  Tree* e = parse(input, ctx);
+  Tree* e = ctx ? parse(input, *ctx) : parse(input);
   bool result = dim(e, d, ctx);
   e->removeTree();
   return result;
@@ -44,7 +45,7 @@ bool len(const Tree* e, int n, Poincare::Context* ctx = nullptr) {
 }
 
 bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
-  Tree* e = parse(input, ctx);
+  Tree* e = ctx ? parse(input, *ctx) : parse(input);
   bool result = len(e, n, ctx);
   e->removeTree();
   return result;
@@ -63,7 +64,7 @@ bool hasInvalidDimOrLen(const Tree* e) {
 }
 
 bool hasInvalidDimOrLen(const char* input) {
-  Tree* e = parse(input, nullptr, {.preserveInput = true});
+  Tree* e = parse(input, Poincare::EmptyContext{}, {.preserveInput = true});
   bool result = hasInvalidDimOrLen(e);
   e->removeTree();
   return result;

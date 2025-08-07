@@ -4,6 +4,7 @@
 #include <poincare/src/expression/approximation.h>
 
 #include "helper.h"
+#include "poincare/src/expression/projection.h"
 
 using namespace Poincare::Internal;
 
@@ -190,11 +191,10 @@ QUIZ_CASE(pcj_random_range_values) {
 
 template <typename T>
 void assert_no_duplicates_in_list(const char* expression) {
-  Shared::GlobalContext globalContext;
-  Tree* e = parse(expression, &globalContext);
+  Tree* e = parse(expression);
   // Sort list
   e->cloneNodeAtNode(KListSort);
-  simplify(e, {.m_context = &globalContext}, false);
+  simplify(e, ProjectionContext{}, false);
   e->moveTreeOverTree(Approximation::ToTree<T>(
       e, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
   // Find duplicates

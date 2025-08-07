@@ -13,7 +13,8 @@ namespace Parser {
 
 /* Parses a top-level layout.
  * nullptr context behaves like an empty context. */
-inline Tree* Parse(const Tree* l, Context* context = nullptr,
+// TODO: the signature will be updated to const Context&
+inline Tree* Parse(const Tree* l, const Context* context = nullptr,
                    ParserHelper::ParsingParameters params = {}) {
   return LayoutParser::Parse(l, {.context = context,
                                  .params = params,

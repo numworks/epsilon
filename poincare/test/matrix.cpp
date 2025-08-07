@@ -33,8 +33,7 @@ QUIZ_CASE(pcj_matrix) {
 }
 
 static inline void assert_has_rank(const char* exp, int rank) {
-  Shared::GlobalContext context;
-  Tree* e = parse(exp, &context);
+  Tree* e = parse(exp);
   quiz_assert(e->isMatrix());
   quiz_assert(rank == Matrix::Rank(e));
   e->removeTree();

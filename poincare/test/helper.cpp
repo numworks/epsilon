@@ -3,6 +3,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/store.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/metric.h>
@@ -105,9 +106,14 @@ void process_tree_and_compare(const char* input, const char* output,
                               ProjectionContext projectionContext,
                               int nbOfSignificantDigits) {
   Tree* expected =
-      parse(output, projectionContext.m_context, {.preserveInput = true});
+      projectionContext.m_context
+          ? parse(output, *projectionContext.m_context, {.preserveInput = true})
+          : parse(output, Poincare::EmptyContext{}, {.preserveInput = true});
   Tree* expression =
-      parse(input, projectionContext.m_context, {.preserveInput = true});
+      projectionContext.m_context
+          ? parse(input, *projectionContext.m_context, {.preserveInput = true})
+          : parse(input, Poincare::EmptyContext{}, {.preserveInput = true});
+  ;
   if (!expression || !expected) {
     // Parsing failed
     quiz_assert(false);
@@ -156,11 +162,12 @@ void process_tree_and_compare(const char* input, const char* output,
   assert(SharedTreeStack->numberOfTrees() == 0);
 }
 
-Tree* private_parse(const char* input, Poincare::Context* context,
+Tree* private_parse(const char* input, const Poincare::Context& context,
                     ParsingParameters params = {},
                     bool assertNotParsable = false) {
   Tree* layout = RackFromText(input);
-  Tree* expression = Parser::Parse(layout, context, params);
+  // TODO: will become Parser::Parse(layout, context, params)
+  Tree* expression = Parser::Parse(layout, &context, params);
   if (assertNotParsable || !expression) {
     quiz_assert(assertNotParsable == !expression);
     layout->removeTree();
@@ -170,7 +177,7 @@ Tree* private_parse(const char* input, Poincare::Context* context,
   return layout;
 }
 
-Tree* parse(const char* input, Poincare::Context* context,
+Tree* parse(const char* input, const Poincare::Context& context,
             ParsingParameters params) {
   return private_parse(input, context, params);
 }
@@ -187,12 +194,12 @@ void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
                                  ParsingParameters params) {
   Shared::GlobalContext context;
-  assert_parsed_expression_is(expression, expected, &context, params);
+  assert_parsed_expression_is(expression, expected, context, params);
 }
 
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
-                                 Poincare::Context* context,
+                                 const Poincare::Context& context,
                                  ParsingParameters params) {
   Tree* parsed = parse(expression, context, params);
   bool test = parsed && parsed->treeIsIdenticalTo(expected);
@@ -205,7 +212,7 @@ void assert_parsed_expression_is(const char* expression,
 
 void assert_parse_to_same_expression(const char* expression1,
                                      const char* expression2,
-                                     Poincare::Context* context) {
+                                     const Poincare::Context& context) {
   Tree* e1 = parse(expression1, context);
   Tree* e2 = parse(expression2, context);
   quiz_assert(e1);
@@ -224,14 +231,15 @@ void assert_expression_serializes_and_parses_to(
   assert_parsed_expression_is(buffer, result);
 }
 
-void assert_text_not_parsable(const char* input, Poincare::Context* context,
+void assert_text_not_parsable(const char* input,
+                              const Poincare::Context& context,
                               ParsingParameters params) {
   bool parsed = private_parse(input, context, params, true);
   quiz_assert(!parsed);
 }
 
 void assert_parse_to_integer_overflow(const char* input,
-                                      Poincare::Context* context) {
+                                      const Poincare::Context& context) {
   ExceptionTry {
     private_parse(input, context);
     quiz_assert(false);
@@ -274,9 +282,9 @@ void assert_expression_serializes_to(const Tree* expression,
 }
 
 void assert_expression_parses_and_serializes_to(
-    const char* expression, const char* result, Poincare::Context* context,
-    Preferences::PrintFloatMode mode, int numberOfSignificantDigits,
-    OMG::Base base) {
+    const char* expression, const char* result,
+    const Poincare::Context& context, Preferences::PrintFloatMode mode,
+    int numberOfSignificantDigits, OMG::Base base) {
   Tree* e = parse(expression, context);
   Tree* l = Layouter::LayoutExpression(e, true, false,
                                        numberOfSignificantDigits, mode, base);
@@ -289,7 +297,7 @@ void assert_expression_parses_and_serializes_to(
 }
 
 void assert_expression_parses_and_serializes_to_itself(
-    const char* expression, Poincare::Context* context) {
+    const char* expression, const Poincare::Context& context) {
   return assert_expression_parses_and_serializes_to(expression, expression,
                                                     context);
 }

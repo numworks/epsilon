@@ -128,8 +128,9 @@ class __attribute__((packed)) GlobalPreferences
       const override {
     return Poincare::Preferences::TranslateBuiltins::No;
   }
-  constexpr void setTranslateBuiltins(
-      Poincare::Preferences::TranslateBuiltins) override{};
+  void setTranslateBuiltins(Poincare::Preferences::TranslateBuiltins) override {
+    OMG::unreachable();
+  };
 
   const char* openIntervalChar(bool left) const {
     /* This should be done by country instead of language. However, some

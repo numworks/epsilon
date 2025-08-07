@@ -17,6 +17,7 @@
 #include "number.h"
 #include "projection.h"
 #include "rational.h"
+#include "sign.h"
 #include "symbol.h"
 #include "systematic_reduction.h"
 #include "undefined.h"
@@ -27,6 +28,8 @@ namespace Poincare::Internal::Beautification {
 
 bool ApplyComplexFormat(Tree* e, Dimension dim,
                         const ProjectionContext& projectionContext);
+bool ApplyComplexFormatCartesianOrPolar(
+    Tree* e, Dimension dim, const ProjectionContext& projectionContext);
 Tree* GetPolarFormat(const Tree* e, const ProjectionContext& projectionContext);
 Tree* GetCartesianFormat(const Tree* e,
                          const ProjectionContext& projectionContext);
@@ -522,17 +525,31 @@ bool ShallowBeautify(Tree* e, void* context) {
 bool ApplyComplexFormat(Tree* e, Dimension dim,
                         const ProjectionContext& projectionContext) {
   ComplexFormat format = projectionContext.m_complexFormat;
-  if (e->isUndefined() || e->isFactor() || format == ComplexFormat::Real) {
+  if (e->isUndefined() || e->isFactor()) {
     return false;
   }
+  if (format == ComplexFormat::Real) {
+    if (dim.isScalar() && GetComplexSign(e).isNonReal()) {
+      // Real format is the default, no need to apply it.
+      e->cloneTreeOverTree(KNonReal);
+      return true;
+    }
+    return false;
+  }
+  return ApplyComplexFormatCartesianOrPolar(e, dim, projectionContext);
+}
+
+bool ApplyComplexFormatCartesianOrPolar(
+    Tree* e, Dimension dim, const ProjectionContext& projectionContext) {
+  ComplexFormat format = projectionContext.m_complexFormat;
   assert(format == ComplexFormat::Cartesian || format == ComplexFormat::Polar);
   // Apply element-wise on explicit lists, matrices & points.
   if (e->isMatrix() || e->isPoint() || (dim.isScalar() && e->isList())) {
     bool changed = false;
     for (Tree* child : e->children()) {
       assert(Dimension::Get(child).isScalar());
-      changed |=
-          ApplyComplexFormat(child, Dimension::Scalar(), projectionContext);
+      changed |= ApplyComplexFormatCartesianOrPolar(child, Dimension::Scalar(),
+                                                    projectionContext);
       if (e->isDep()) {
         // Skip DepList
         break;

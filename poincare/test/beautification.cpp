@@ -65,7 +65,10 @@ void beautifies_to(const char* input, const char* output) {
                              Projection::DeepSystemProject(e, ctx);
                              Beautification::DeepBeautify(e, ctx);
                            },
-                           {});
+                           {
+                               .m_complexFormat = ComplexFormat::Cartesian,
+                               .m_advanceReduce = false,
+                           });
 }
 
 QUIZ_CASE(pcj_beautification_complex) {

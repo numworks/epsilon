@@ -32,6 +32,7 @@ bool check_solutions(
         result.equationMetadata.overrideDefinedVariables
             ? SymbolicComputation::KeepAllSymbols
             : SymbolicComputation::ReplaceDefinedSymbols;
+    projectionContext.m_complexFormat = result.equationMetadata.complexFormat;
     const Tree* solution = solutions->nextNode();
     for (const char* output : outputs) {
       Tree* expectedSolution = parse(output, Poincare::EmptyContext{},

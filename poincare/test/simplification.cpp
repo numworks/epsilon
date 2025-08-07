@@ -764,11 +764,11 @@ QUIZ_CASE(pcj_simplification_hyperbolic_trigonometry) {
   simplifies_to("arsinh(-x)", "arsinh(-x)");
   simplifies_to("artanh(-x)", "artanh(-x)");
   simplifies_to("cosh(i)", "cos(1)");
-  simplifies_to("sinh(i)", "sin(1)×i");
-  simplifies_to("tanh(i)", "tan(1)×i");
-  simplifies_to("arcosh(i)", "arcosh(i)");
-  simplifies_to("arsinh(i)", "π/2×i");
-  simplifies_to("artanh(i)", "π/4×i");
+  simplifies_to("sinh(i)", "sin(1)×i", cartesianCtx);
+  simplifies_to("tanh(i)", "tan(1)×i", cartesianCtx);
+  simplifies_to("arcosh(i)", "arcosh(i)", cartesianCtx);
+  simplifies_to("arsinh(i)", "π/2×i", cartesianCtx);
+  simplifies_to("artanh(i)", "π/4×i", cartesianCtx);
   simplifies_to("cosh(2*pi+1)", "cosh(1+2×π)", cartesianCtx);
   simplifies_to("cosh(-x)+sinh(x)", "e^(x)");
   simplifies_to("cosh(x)^2-sinh(-x)^2", "1");
@@ -1103,7 +1103,8 @@ QUIZ_CASE(pcj_simplification_float) {
 }
 
 QUIZ_CASE(pcj_simplification_constants) {
-  simplifies_to("i", "i");
+  simplifies_to("i", "nonreal", realCtx);
+  simplifies_to("i", "i", cartesianCtx);
   simplifies_to("π", "π");
   simplifies_to("e", "e");
   simplifies_to("_mn + _mp", "3.34754942651ᴇ-27×_kg");
@@ -1593,9 +1594,9 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("1/inf", "0");
   simplifies_to("0/inf", "0");
   simplifies_to("inf×i×i×i×i", "∞");
-  simplifies_to("inf×2i", "∞×i");
-  simplifies_to("-i×inf", "-∞×i");
-  simplifies_to("inf×cos(3)×i", "∞×sign(cos(3)×i)");
+  simplifies_to("inf×2i", "∞×i", cartesianCtx);
+  simplifies_to("-i×inf", "-∞×i", cartesianCtx);
+  simplifies_to("inf×cos(3)×i", "∞×sign(cos(3)×i)", cartesianCtx);
 
   Shared::GlobalContext globalContext;
   store("x→f(x)", globalContext);
@@ -1905,7 +1906,7 @@ QUIZ_CASE(pcj_simplification_advanced) {
       "cos(b)×cos(a)-1/2×cos(b)×cos(a)-1/2×sin(b)×sin(a)+1/2×cos(b)×cos(a)+1/"
       "4×cos(b+a)-1/4×cos(b-a)-cos(a+b)",
       "(3×cos(a)×cos(b))/4-(3×cos(a+b))/4-(3×sin(a)×sin(b))/4");
-  simplifies_to("1/(i-1)^2", "1/2×i");
+  simplifies_to("1/(i-1)^2", "1/2×i", cartesianCtx);
   simplifies_to("(x+y)^3-x^3-y^3-3*y^2*x-3*y*x^2", "0");
   // TODO_PCJ: we used to reduce to (π+1)/(π+2)
   simplifies_to("1/(1+1/(1+π))", "1/(1+1/(1+π))");
@@ -1979,7 +1980,7 @@ QUIZ_CASE(pcj_simplification_large_numbers) {
   simplifies_to("123450000000000000000000000000", "1.2345×10^29");
   simplifies_to("123450000000000000000000000000/(5×7)", "(2.469×10^28)/7");
   simplifies_to("π/(12345×10^5)^2", "π/(1.52399025×10^18)");
-  simplifies_to("10^14+i", "10^14+i");
+  simplifies_to("10^14+i", "10^14+i", cartesianCtx);
   simplifies_to("e^(3×10^15)", "e^(3×10^15)");
 
   /* Edge cases */
@@ -2153,7 +2154,7 @@ QUIZ_CASE(pcj_simplification_rational_power) {
                 "(2×2^(7/9)×root(11,9))/11");  // "(2×root(1408,9))/11"
   simplifies_to("(5/2)^(-4/3)", "(2×root(50,3))/25");
   // (1+i)/(1-i) => i
-  simplifies_to("(1+i)/(1-i)", "i");
+  simplifies_to("(1+i)/(1-i)", "i", cartesianCtx);
   // Big rational
   simplifies_to("0.884^128",
                 "12084008767286860548509735467047410159658206261001805757652392"

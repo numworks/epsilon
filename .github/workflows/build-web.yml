@@ -24,8 +24,10 @@ jobs:
           sdk: ${{ env.EMSDK_VERSION }}
       - name: Setup
         run: tools/setup.sh --only-simulator
-      - name: Build
-        run: make DEBUG=$DEBUG PLATFORM=web epsilon.html epsilon.htmlpack.zip
+      - name: Build html
+        run: make DEBUG=$DEBUG PLATFORM=web epsilon.html
+      - name: Build htmlpack
+        run: make DEBUG=$DEBUG PLATFORM=web epsilon.htmlpack.zip
       - name: Upload epsilon.html
         uses: actions/upload-artifact@v4
         with:

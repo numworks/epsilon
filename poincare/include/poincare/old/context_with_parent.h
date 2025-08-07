@@ -10,7 +10,8 @@ namespace Poincare {
 // If parentContext is nullptr, this context will behave like an empty context
 class ContextWithParent : public Context {
  public:
-  ContextWithParent(Context* parentContext) : m_parentContext(parentContext) {}
+  ContextWithParent(const Context* parentContext)
+      : m_parentContext(parentContext) {}
 
   // Context
   const Internal::Tree* expressionForUserNamed(
@@ -34,7 +35,7 @@ class ContextWithParent : public Context {
   }
 
  private:
-  Context* m_parentContext;
+  const Context* m_parentContext;
 };
 
 }  // namespace Poincare

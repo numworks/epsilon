@@ -16,9 +16,13 @@ constexpr
         0x21,  // ! // EXCLAMATION MARK
         0x22,  // " // QUOTATION MARK
         0x23,  // # // NUMBER SIGN
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x24,  // $ // DOLLAR SIGN
+#endif
         0x25,  // % // PERCENT SIGN
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x26,  // & // AMPERSAND
+#endif
         0x27,  // ' // APOSTROPHE
         0x28,  // ( // LEFT PARENTHESIS
         0x29,  // ) // RIGHT PARENTHESIS
@@ -108,71 +112,92 @@ constexpr
         0x7b,  // { // LEFT CURLY BRACKET
         0x7c,  // | // VERTICAL LINE
         0x7d,  // } // RIGHT CURLY BRACKET
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x7e,  // ~ // TILDE
 
         0xaa,  // ª // Feminine Ordinal Indicator
+#endif
         0xb0,  // ° // DEGREE SIGN
         0xb1,  // ± // PLUS OR MINUS SIGN
         0xb7,  // · // MIDDLE DOT
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0xba,  // º // Masculine Ordinal Indicator
 
         0xc6,  // Æ // LATIN CAPITAL LETTER AE
         0xd0,  // Ð // LATIN CAPITAL LETTER ETH
+#endif
         0xd7,  // × // MULTIPLICATION SIGN
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0xd8,  // Ø // LATIN CAPITAL LETTER O WITH STROKE
         0xde,  // Þ // LATIN CAPITAL LETTER THORN
         0xdf,  // ß // LATIN SMALL LETTER SHARP S
         0xe6,  // æ // LATIN SMALL LETTER AE
         0xf0,  // ð // LATIN SMALL LETTER ETH
+#endif
         0xf7,  // ÷ // DIVISION SIGN
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0xf8,  // ø // LATIN SMALL LETTER O WITH STROKE
         0xfe,  // þ // LATIN SMALL LETTER THORN
-
+#endif
         0x300,  //  ̀ // COMBINING GRAVE ACCENT
         0x301,  //  ́ // COMBINING ACUTE ACCENT
         0x302,  //  ̂ // COMBINING CIRCUMFLEX ACCENT
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x303,  //  ̃ // COMBINING TILDE
+#endif
         0x305,  //  ̅ // COMBINING OVERLINE
         0x308,  //  ̈ // COMBINING DIAERESIS
 #if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x30a,  //  ̊ // COMBINING RING ABOVE
 #endif
         0x327,  //  ̧ // COMBINING CEDILLA
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x338,  // ◌̸ // COMBINING LONG SOLIDUS OVERLAY
 
-        0x393,   // Γ // GREEK CAPITAL LETTER GAMMA
-        0x394,   // Δ // GREEK CAPITAL LETTER DELTA
-        0x3a3,   // Σ // GREEK CAPITAL LETTER SIGMA
-        0x3a9,   // Ω // GREEK CAPITAL LETTER OMEGA
-        0x3b1,   // α // GREEK SMALL LETTER ALPHA
-        0x3b2,   // β // GREEK SMALL LETTER BETA
-        0x3b3,   // γ // GREEK SMALL LETTER GAMMA
-        0x3b4,   // δ // GREEK SMALL LETTER DELTA
-        0x3b5,   // ε // GREEK SMALL LETTER EPSILON
-        0x3b6,   // ζ // GREEK SMALL LETTER ZETA
-        0x3b7,   // η // GREEK SMALL LETTER ETA
-        0x3b8,   // θ // GREEK SMALL LETTER THETA
-        0x3bb,   // λ // GREEK SMALL LETTER LAMDA
-        0x3bc,   // μ // GREEK SMALL LETTER MU
-        0x3c0,   // π // GREEK SMALL LETTER PI
-        0x3c1,   // ρ // GREEK SMALL LETTER RHO
-        0x3c3,   // σ // GREEK SMALL LETTER SIGMA
+        0x393,  // Γ // GREEK CAPITAL LETTER GAMMA
+        0x394,  // Δ // GREEK CAPITAL LETTER DELTA
+        0x3a3,  // Σ // GREEK CAPITAL LETTER SIGMA
+        0x3a9,  // Ω // GREEK CAPITAL LETTER OMEGA
+        0x3b1,  // α // GREEK SMALL LETTER ALPHA
+        0x3b2,  // β // GREEK SMALL LETTER BETA
+        0x3b3,  // γ // GREEK SMALL LETTER GAMMA
+        0x3b4,  // δ // GREEK SMALL LETTER DELTA
+        0x3b5,  // ε // GREEK SMALL LETTER EPSILON
+        0x3b6,  // ζ // GREEK SMALL LETTER ZETA
+        0x3b7,  // η // GREEK SMALL LETTER ETA
+        0x3b8,  // θ // GREEK SMALL LETTER THETA
+        0x3bb,  // λ // GREEK SMALL LETTER LAMDA
+        0x3bc,  // μ // GREEK SMALL LETTER MU
+#endif
+        0x3c0,  // π // GREEK SMALL LETTER PI
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
+        0x3c1,  // ρ // GREEK SMALL LETTER RHO
+#endif
+        0x3c3,  // σ // GREEK SMALL LETTER SIGMA
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x3C7,   // χ // GREEK SMALL LETTER CHI
         0x3C9,   // ω // GREEK SMALL LETTER OMEGA
         0x1d07,  // ᴇ // LATIN LETTER SMALL CAPITAL E
         0x2192,  // → // RIGHTWARDS ARROW
         0x2197,  // ↗ // NORTH EAST ARROW
         0x2198,  // ↘ // SOUTH EAST ARROW
+#endif
         0x2211,  // ∑ // N-ARY SUMMATION
         0x221a,  // √ // SQUARE ROOT
         0x221e,  // ∞ // INFINITY
         0x222b,  // ∫ // INTEGRAL
         0x2248,  // ≈ // ALMOST EQUAL TO
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x2264,  // ≤ // LESS-THAN OR EQUAL TO
         0x2265,  // ≥ // GREATER-THAN OR EQUAL TO
+#endif
+#if KANDINSKY_CODEPOINTS_SCANDIUM
         0x22a6,  // ⊦ // ASSERTION
+#endif
+#if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x27E8,  // ⟨ // LEFT ANGLE BRACKET
         0x27E9,  // ⟩ // RIGHT ANGLE BRACKET
+#endif
         0xFFFD,  // � // REPLACEMENT CHARACTER
 };
 

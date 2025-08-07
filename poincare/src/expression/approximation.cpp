@@ -1784,7 +1784,7 @@ bool Private::PrivateApproximateAndReplaceEveryScalar(Tree* e,
   if (Approximation::CanApproximate(e) &&
       Dimension::IsNonListScalar(e, ctx->m_symbolContext)) {
     e->moveTreeOverTree(
-        PrivateToTree<T>(e, Dimension::Get(e, ctx->m_symbolContext), ctx));
+        PrivateToTree<T>(e, Dimension(DimensionType::Scalar), ctx));
     return true;
   }
   bool changed = false;

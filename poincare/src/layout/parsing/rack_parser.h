@@ -176,7 +176,6 @@ class RackParser {
   // Save and restore parser state
   struct State {
     Tokenizer::State tokenizerState;
-    Context* parsingContextContext;
     Token currentToken;
     Token nextToken;
     bool pendingImplicitOperator;
@@ -185,7 +184,6 @@ class RackParser {
   State currentState() const {
     return State{
         .tokenizerState = m_tokenizer.currentState(),
-        .parsingContextContext = m_parsingContext.context,
         .currentToken = m_currentToken,
         .nextToken = m_nextToken,
         .pendingImplicitOperator = m_pendingImplicitOperator,

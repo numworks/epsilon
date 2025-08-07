@@ -1619,7 +1619,6 @@ bool RackParser::generateMixedFractionIfNeeded(TreeRef& leftHandSide) {
 
 void RackParser::setState(const State& state) {
   m_tokenizer.setState(state.tokenizerState);
-  m_parsingContext.context = state.parsingContextContext;
   m_currentToken = state.currentToken;
   m_nextToken = state.nextToken;
   m_pendingImplicitOperator = state.pendingImplicitOperator;

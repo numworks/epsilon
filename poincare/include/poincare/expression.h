@@ -396,6 +396,8 @@ class Expression : public PoolHandle {
   bool isRational() const;
   // Return true if expression is a number, constant, inf or undef.
   bool isConstantNumber() const;
+  // Return true if Decimal, Integer or Opposite of those.
+  bool isParsedNumber() const;
   bool isPureAngleUnit() const;
   bool isVector() const;
   bool allChildrenAreUndefined() const;

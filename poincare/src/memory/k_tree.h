@@ -46,9 +46,11 @@ struct ConstexprTree : public TSC {
 
 /* This the actual static Tree stored in flash. It uses chars to improve
  * the mangled name size. */
-template <typename TSC, char... Blocks>
-constexpr static ConstexprTree<TSC, sizeof...(Blocks)> k_tree{
-    static_cast<uint8_t>(Blocks)...};
+struct KTreeOwner {
+  template <typename TSC, char... Blocks>
+  constexpr static ConstexprTree<TSC, sizeof...(Blocks)> k_tree{
+      static_cast<uint8_t>(Blocks)...};
+};
 
 template <typename TSC>
 struct KTreesImplementation {
@@ -65,7 +67,8 @@ struct KTreesImplementation {
      * It should not appear in the binary. */
     constexpr static Block k_blocks[k_size] = {Blocks...};
     constexpr operator const TSC*() const {
-      return &k_tree<TSC, static_cast<char>(static_cast<uint8_t>(Blocks))...>;
+      return &KTreeOwner::k_tree<TSC, static_cast<char>(
+                                          static_cast<uint8_t>(Blocks))...>;
     }
     constexpr TypeBlock type() {
       return static_cast<Type>(static_cast<uint8_t>(k_blocks[0]));

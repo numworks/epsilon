@@ -9,7 +9,7 @@ namespace Shared {
 
 class StoreContext : public Poincare::ContextWithParent {
  public:
-  StoreContext(Shared::DoublePairStore* store, Context* parentContext)
+  StoreContext(Shared::DoublePairStore* store, const Context* parentContext)
       : Poincare::ContextWithParent(parentContext), m_store(store) {}
 
   Poincare::Context::UserNamedType expressionTypeForIdentifier(

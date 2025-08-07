@@ -233,14 +233,6 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
     ShallowSystemProject(e, context);
     return true;
   }
-  bool realMode = projectionContext->m_complexFormat == ComplexFormat::Real;
-  if (realMode && e->isComplexI()) {
-    /* Discard complex inputs in real mode. As some complex are introduced
-     * during projection, make sure these are done after this step, and that
-     * the resulting expression is not projected again. */
-    e->cloneNodeOverNode(KNonReal);
-    return true;
-  }
   bool changed = false;
   if (e->isDecimal()) {
     Decimal::Project(e);
@@ -273,7 +265,8 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   } else if (e->isOfType({Type::ASin, Type::ACos, Type::ATan})) {
     /* Project inverse trigonometric functions here to avoid infinite projection
      * to radian loop. */
-    if (realMode && !e->isATan()) {
+    if (projectionContext->m_complexFormat == ComplexFormat::Real &&
+        !e->isATan()) {
 #if POINCARE_PIECEWISE
       // Only real functions asin and acos have a domain of definition
       // acos(A) -> atrig(A, 0) if -1 <= A <= 1
@@ -312,6 +305,7 @@ bool Projection::ShallowSystemProject(Tree* e, void* context) {
   }
 
   // Under Real complex format, use node alternative to properly handle nonreal.
+  bool realMode = projectionContext->m_complexFormat == ComplexFormat::Real;
   if (e->isPow()) {
     if (PatternMatching::MatchReplace(e, KPow(e_e, KA), KExp(KA))) {
       changed = true;

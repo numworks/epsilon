@@ -63,13 +63,18 @@ _ion_simulator_files := 0
 
 _ion_web_path := $(PATH_ion)/src/simulator/web
 
-$(call generated_sources_for, $(_ion_web_path)/calculator.html): $(addprefix $(PATH_ion)/src/simulator/,shared/$(ION_layout_variant)/layout.json web/css_html_layout.py) | $$(@D)/.
+
+$(call generated_sources_for, app/src/background-with-shadow.webp): $(PATH_ion)/src/simulator/assets/$(ION_layout_variant)/background-with-shadow.webp | $$(@D)/.
+	$(call rule_label,COPY)
+	cp $^ $@
+
+$(call generated_sources_for, app/src/calculator.html): $(addprefix $(PATH_ion)/src/simulator/,shared/$(ION_layout_variant)/layout.json web/css_html_layout.py) | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) --html $@ --css $(basename $@).css $(filter %.json,$^)
 
-$(call generated_sources_for, $(_ion_web_path)/calculator.css): $(call generated_sources_for, $(_ion_web_path)/calculator.html)
+$(call generated_sources_for, app/src/calculator.css): $(call generated_sources_for, app/src/calculator.html) | $$(@D)/.
 
-$(call generated_sources_for, $(_ion_web_path)/calculator.js): $(_ion_web_path)/calculator.js
+$(call generated_sources_for, app/src/calculator.js): $(_ion_web_path)/calculator.js | $$(@D)/.
 	$(call rule_label,HOSTCPP)
 	$(HOSTCPP) \
 		-E -CC \
@@ -77,7 +82,7 @@ $(call generated_sources_for, $(_ion_web_path)/calculator.js): $(_ion_web_path)/
 		-P $(filter %.js,$^) \
 		$@
 
-$(call generated_sources_for, $(_ion_web_path)/simulator_%html): $(_ion_web_path)/simulator.html.inc $(call generated_sources_for, $(_ion_web_path)/calculator.html $(_ion_web_path)/calculator.css)
+$(call generated_sources_for, app/src/simulator_%html): $(_ion_web_path)/simulator.html.inc $(call generated_sources_for, $(addprefix app/src/calculator.,html css)) | $$(@D)/.
 	$(call rule_label,HOSTCPP)
 	$(HOSTCPP) \
                 -MMD -MP \

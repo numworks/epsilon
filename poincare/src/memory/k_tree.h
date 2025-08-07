@@ -42,6 +42,12 @@ struct KTreesImplementation {
 #endif
   };
 
+  /* This the actual static Tree stored in flash. It uses chars to improve the
+   * mangled name size. */
+  template <char... Blocks>
+  constexpr static ConstexprTree<sizeof...(Blocks)> k_tree{
+      static_cast<uint8_t>(Blocks)...};
+
   /* The KTree template class is the compile time representation of a constexpr
    * tree. Its complete block representation is specified as template parameters
    * in order to be able to use the address of the static singleton (in flash)
@@ -52,9 +58,12 @@ struct KTreesImplementation {
     constexpr static size_t k_size = sizeof...(Blocks);
     static_assert(k_size > 0);
     constexpr static Block k_blocks[k_size] = {Blocks...};
-    constexpr static ConstexprTree<k_size> k_tree{Blocks...};
-    constexpr operator const TSC*() const { return &k_tree; }
-    constexpr TypeBlock type() { return k_tree.type(); }
+    constexpr operator const TSC*() const {
+      return &k_tree<static_cast<char>(static_cast<uint8_t>(Blocks))...>;
+    }
+    constexpr TypeBlock type() {
+      return static_cast<Type>(static_cast<uint8_t>(k_blocks[0]));
+    }
     const TSC* operator->() const { return operator const TSC*(); }
   };
 

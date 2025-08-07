@@ -14,10 +14,6 @@ else
 EPSILON_GETOPT := 1
 endif
 
-ifeq ($(PLATFORM),web)
-ION_em_module_js := epsilon.js
-endif
-
 ifeq ($(PLATFORM),linux)
 # If MICROPY_NLR_SETJMP is 0, the MicroPython NLR done by
 # python/src/py/nlrx64.c crashes on linux.

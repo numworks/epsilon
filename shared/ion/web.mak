@@ -63,13 +63,13 @@ _ion_simulator_files := 0
 
 _ion_web_path := $(PATH_ion)/src/simulator/web
 
-$(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.html: $(addprefix $(PATH_ion)/src/simulator/,shared/$(ION_layout_variant)/layout.json web/css_html_layout.py) | $$(@D)/.
+$(call generated_sources_for, $(_ion_web_path)/calculator.html): $(addprefix $(PATH_ion)/src/simulator/,shared/$(ION_layout_variant)/layout.json web/css_html_layout.py) | $$(@D)/.
 	$(call rule_label,LAYOUT)
 	$(PYTHON) $(filter %.py,$^) --html $@ --css $(basename $@).css $(filter %.json,$^)
 
-$(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.css: $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.html
+$(call generated_sources_for, $(_ion_web_path)/calculator.css): $(call generated_sources_for, $(_ion_web_path)/calculator.html)
 
-$(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.js: $(_ion_web_path)/calculator.js
+$(call generated_sources_for, $(_ion_web_path)/calculator.js): $(_ion_web_path)/calculator.js
 	$(call rule_label,HOSTCPP)
 	$(HOSTCPP) \
 		-E -CC \
@@ -77,14 +77,14 @@ $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.js: $(_ion_web_path)/calculator.
 		-P $(filter %.js,$^) \
 		$@
 
-$(OUTPUT_DIRECTORY)/$(_ion_web_path)/simulator.html: $(_ion_web_path)/simulator.html.inc $(addprefix $(OUTPUT_DIRECTORY)/$(_ion_web_path)/calculator.,html css)
+$(call generated_sources_for, $(_ion_web_path)/simulator_%html): $(_ion_web_path)/simulator.html.inc $(call generated_sources_for, $(_ion_web_path)/calculator.html $(_ion_web_path)/calculator.css)
 	$(call rule_label,HOSTCPP)
 	$(HOSTCPP) \
                 -MMD -MP \
 		-I$(dir $@) \
 		-MD -MP \
 		-DEM_MODULE_NAME=$(APP_NAME) \
-		-DEM_MODULE_JS='"$(ION_em_module_js)"' \
+		-DEM_MODULE_JS='"$*js"' \
 		-DPATCH_LEVEL=\"$(PATCH_LEVEL)\" \
 		-DEPSILON_VERSION=\"$(APP_VERSION)\" \
 		-DION_DISPLAY_WIDTH=$(_ion_display_width_$(ION_layout_variant)) \

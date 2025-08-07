@@ -670,7 +670,7 @@ SystemExpression SystemExpression::approximateListAndSort() const {
   return SystemExpression::Builder(clone);
 }
 
-SystemExpression SystemExpression::removeUndefListElements() const {
+SystemExpression SystemExpression::removeUndefAndComplexListElements() const {
   Tree* clone = tree()->cloneTree();
   assert(clone->isList());
   int n = clone->numberOfChildren();
@@ -678,8 +678,10 @@ SystemExpression SystemExpression::removeUndefListElements() const {
   Tree* child = clone->nextNode();
   for (int i = 0; i < n; i++) {
     if (child->isUndefined() ||
+        (Internal::Dimension::Get(child).isScalar() &&
+         GetComplexSign(child).isNonReal()) ||
         (child->isPoint() && child->hasChildSatisfying([](const Tree* e) {
-          return e->isUndefined();
+          return e->isUndefined() || GetComplexSign(e).isNonReal();
         }))) {
       child->removeTree();
       remainingChildren--;

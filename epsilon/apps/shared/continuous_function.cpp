@@ -595,7 +595,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
      * in advance. In addition, they are sorted to be traveled from left to
      * right (i.e. in order of ascending x). */
     if (m_expression.dimension().isListOfPoints()) {
-      m_expression = m_expression.removeUndefListElements()
+      m_expression = m_expression.removeUndefAndComplexListElements()
                          .approximateListAndSort<double>();
       // m_expression may be an empty, dimension-less list after this.
     } else {

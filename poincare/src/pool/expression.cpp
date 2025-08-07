@@ -1050,6 +1050,14 @@ bool Expression::isConstantNumber() const {
                                 tree()->isUndefined() || tree()->isDecimal());
 };
 
+bool UserExpression::isParsedNumber() const {
+  const Internal::Tree* tree = this->tree();
+  if (tree->isOpposite()) {
+    tree = tree->nextNode();
+  }
+  return tree->isInteger() || tree->isDecimal();
+}
+
 bool Expression::allChildrenAreUndefined() const {
   return !tree()->hasChildSatisfying(
       [](const Tree* e) { return !e->isUndefined(); });

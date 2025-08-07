@@ -247,7 +247,7 @@ class Expression : public PoolHandle {
   template <typename T>
   SystemExpression approximateListAndSort() const;
   // Return SystemExpression with undef list elements or points removed.
-  SystemExpression removeUndefListElements() const;
+  SystemExpression removeUndefAndComplexListElements() const;
 
   template <typename T>
   SystemExpression approximateSystemToTree() const;

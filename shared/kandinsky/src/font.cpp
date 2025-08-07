@@ -5,6 +5,7 @@ extern "C" {
 #include <assert.h>
 #include <omg/memory.h>
 #include <omg/utf8_decoder.h>
+#include <string.h>
 
 #include <algorithm>
 
@@ -79,10 +80,17 @@ void KDFont::accumulateGlyphGrayscalesForCodePoint(
 
 void KDFont::fetchGrayscaleGlyphAtIndex(KDFont::GlyphIndex index,
                                         uint8_t* grayscaleBuffer) const {
-  OMG::Memory::Decompress(
-      compressedGlyphData(index), grayscaleBuffer,
-      compressedGlyphDataSize(index),
-      m_glyphSize.width() * m_glyphSize.height() * k_grayscaleBitsPerPixel / 8);
+  int expectedSize =
+      m_glyphSize.width() * m_glyphSize.height() * k_grayscaleBitsPerPixel / 8;
+#if KANDINSKY_FONT_COMPRESS
+  OMG::Memory::Decompress(compressedGlyphData(index), grayscaleBuffer,
+                          compressedGlyphDataSize(index), expectedSize);
+
+#else
+  assert(compressedGlyphDataSize(index) == expectedSize);
+  // TODO: remove the copy
+  memcpy(grayscaleBuffer, compressedGlyphData(index), expectedSize);
+#endif
 }
 
 void KDFont::colorizeGlyphBuffer(const RenderPalette* renderPalette,

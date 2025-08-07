@@ -257,7 +257,6 @@ void writeFontSourceFile(const char* fontSourceFilename, const char* fontName,
   prettyPrintArray(fontFile, 80, 2, glyphDataOffset, glyphDataOffsetLength);
   fprintf(fontFile, "};\n\n");
 
-  size_t finalDataSize = glyphDataLength;
   size_t initialDataSize = NumberOfCodePoints * glyphWidth * glyphHeight;
 
   fprintf(fontFile, "/* Rasterized  = %5zu bytes (%d glyphs x %d pixels)\n",
@@ -265,8 +264,14 @@ void writeFontSourceFile(const char* fontSourceFilename, const char* fontName,
   fprintf(fontFile, " * Downsampled = %5lu bytes (1/%d of rasterized)\n",
           initialDataSize * grayscaleBitsPerPixel / 8,
           8 / grayscaleBitsPerPixel);
+
+#if KANDINSKY_FONT_COMPRESS
+  size_t finalDataSize = glyphDataLength;
   fprintf(fontFile, " * Compressed  = %5zu bytes (%.2f%% of rasterized) */\n",
           finalDataSize, 100.0 * finalDataSize / initialDataSize);
+#else
+  fprintf(fontFile, " * No compression */\n");
+#endif
 
   // glyphData
   fprintf(fontFile, "constexpr static uint8_t glyphData[%d] = {",
@@ -393,9 +398,15 @@ void generateGlyphData(FT_Face face, uint16_t* glyphDataOffset,
     drawGlyphOnBuffer(face->glyph, glyphWidth, glyphHeight, maxAboveBaseline,
                       uncompressedGlyphBuffer, sizeOfUncompressedGlyphBuffer,
                       grayscaleBitsPerPixel);
+#if KANDINSKY_FONT_COMPRESS
     offset += compressAndAppend(uncompressedGlyphBuffer,
                                 sizeOfUncompressedGlyphBuffer, glyphData,
                                 offset, sizeOfGlyphData);
+#else
+    memcpy(glyphData + offset, uncompressedGlyphBuffer,
+           sizeOfUncompressedGlyphBuffer);
+    offset += sizeOfUncompressedGlyphBuffer;
+#endif
     glyphDataOffset[*glyphDataOffsetLength] = offset;
     (*glyphDataOffsetLength)++;
   }

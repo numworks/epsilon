@@ -63,7 +63,6 @@ _ion_simulator_files := 0
 
 _ion_web_path := $(PATH_ion)/src/simulator/web
 
-
 $(call generated_sources_for, app/src/background-with-shadow.webp): $(PATH_ion)/src/simulator/assets/$(ION_layout_variant)/background-with-shadow.webp | $$(@D)/.
 	$(call rule_label,COPY)
 	cp $^ $@

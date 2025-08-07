@@ -23,9 +23,9 @@ jobs:
         with:
           sdk: ${{ env.EMSDK_VERSION }}
       - name: Setup
-        run: build/setup.sh --only-simulator
+        run: tools/setup.sh --only-simulator
       - name: Build
-        run: make -C epsilon DEBUG=$DEBUG PLATFORM=web epsilon.html htmlpack.zip
+        run: make DEBUG=$DEBUG PLATFORM=web epsilon.html epsilon.htmlpack.zip
       - name: Upload epsilon.html
         uses: actions/upload-artifact@v4
         with:
@@ -36,5 +36,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: htmlpack.zip
-          path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/htmlpack.zip
+          path: epsilon/output/${{ fromJSON(github.event.inputs.debug) && 'debug' || 'release' }}/web/epsilon.htmlpack.zip
           retention-days: 7

@@ -185,7 +185,7 @@ Tree* LayoutParser::Parse(const Tree* l, ParsingContext parsingContext) {
       TreeVariableContext parameterContext;  // For parametric
 
       for (int i = 0; i < n; i++) {
-        Context* childContext = parsingContext.context;
+        const Context* childContext = parsingContext.context;
         bool preserveInput = parsingContext.params.preserveInput;
         if (isParametric) {
           if (i == Parametric::k_variableIndex) {

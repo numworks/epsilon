@@ -100,10 +100,10 @@ $(call raster_font,SmallFont,12,7,14)
 $(call raster_font,LargeFont,16,10,18)
 endif
 ifeq ($(KANDINSKY_font_variant),scandium)
-SFLAGS += -DKANDINSKY_FONT_VARIABLE_WIDTH=1
+SFLAGS_kandinsky += -DKANDINSKY_FONT_VARIABLE_WIDTH=1 -DKANDINSKY_FONT_MONOCHROME=1
 # This flag remove some unsuitable codepoints glyphs from the set to
 # be rasterized, should we reduce the set aggressively to save flash ?
-TOOLS_CFLAGS += -DKANDINSKY_CODEPOINTS_SCANDIUM=1
+TOOLS_CFLAGS += -DKANDINSKY_CODEPOINTS_SCANDIUM=1 -DKANDINSKY_FONT_MONOCHROME=1
 $(call raster_font,SmallFont,12,8,13)
 endif
 

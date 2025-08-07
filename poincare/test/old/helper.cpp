@@ -180,35 +180,6 @@ void assert_parsed_expression_simplify_to(
 }
 
 template <typename T>
-void assert_expression_approximates_to(const char *expression,
-                                       const char *approximation,
-                                       Preferences::AngleUnit angleUnit,
-                                       Preferences::UnitFormat unitFormat,
-                                       Preferences::ComplexFormat complexFormat,
-                                       int numberOfSignificantDigits) {
-  Shared::GlobalContext globalContext;
-  assert_parsed_expression_process_to(
-      expression, approximation, &globalContext, User, complexFormat, angleUnit,
-      unitFormat, ReplaceAllSymbols,
-      [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
-        /* tree is projected beforehand so we can prepare it for
-         * approximation, and have better results on integrals for example. */
-        Simplification::ToSystem(e, &projCtx);
-        TreeRef result = Internal::Approximation::ToTree<T>(
-            e,
-            Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
-                                                .prepare = true},
-            Internal::Approximation::Context(projCtx.m_angleUnit,
-                                             projCtx.m_complexFormat,
-                                             projCtx.m_context));
-        Beautification::DeepBeautify(result, projCtx);
-        e->removeTree();
-        return result;
-      },
-      numberOfSignificantDigits);
-}
-
-template <typename T>
 void assert_expression_simplifies_approximates_to(
     const char *expression, const char *approximation,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
@@ -262,12 +233,6 @@ void assert_layout_serializes_to(const Tree *layout,
   quiz_assert_print_if_failure(success, serialization, serialization, buffer);
 }
 
-template void assert_expression_approximates_to<float>(
-    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
-    Preferences::ComplexFormat, int);
-template void assert_expression_approximates_to<double>(
-    char const *, char const *, Preferences::AngleUnit, Preferences::UnitFormat,
-    Preferences::ComplexFormat, int);
 template void assert_expression_simplifies_approximates_to<float>(
     char const *, char const *, Context *context, Preferences::AngleUnit,
     Preferences::UnitFormat, Preferences::ComplexFormat, int);

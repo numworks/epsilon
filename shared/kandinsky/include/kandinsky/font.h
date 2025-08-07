@@ -177,13 +177,8 @@ class KDFont {
   void fetchGrayscaleGlyphAtIndex(GlyphIndex index,
                                   uint8_t* grayscaleBuffer) const;
 
-  const uint8_t* compressedGlyphData(GlyphIndex index) const {
-    return &m_data[m_glyphDataOffset[index]];
-  }
-
-  uint16_t compressedGlyphDataSize(GlyphIndex index) const {
-    return m_glyphDataOffset[index + 1] - m_glyphDataOffset[index];
-  }
+  const uint8_t* compressedGlyphData(GlyphIndex index) const;
+  uint16_t compressedGlyphDataSize(GlyphIndex index) const;
 
   int signedCharAsIndex(const char c) const {
     /* TODO this method and setGlyphGrayscalesForCharacter should be removed

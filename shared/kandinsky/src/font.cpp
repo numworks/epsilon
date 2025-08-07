@@ -93,6 +93,26 @@ void KDFont::fetchGrayscaleGlyphAtIndex(KDFont::GlyphIndex index,
 #endif
 }
 
+const uint8_t* KDFont::compressedGlyphData(GlyphIndex index) const {
+#if KANDINSKY_FONT_COMPRESS
+  return &m_data[m_glyphDataOffset[index]];
+#else
+  int glyphDataSize =
+      m_glyphSize.width() * m_glyphSize.height() * k_grayscaleBitsPerPixel / 8;
+  return &m_data[index * glyphDataSize];
+#endif
+}
+
+uint16_t KDFont::compressedGlyphDataSize(GlyphIndex index) const {
+#if KANDINSKY_FONT_COMPRESS
+  return m_glyphDataOffset[index + 1] - m_glyphDataOffset[index];
+#else
+  int glyphDataSize =
+      m_glyphSize.width() * m_glyphSize.height() * k_grayscaleBitsPerPixel / 8;
+  return glyphDataSize;
+#endif
+}
+
 void KDFont::colorizeGlyphBuffer(const RenderPalette* renderPalette,
                                  GlyphBuffer* glyphBuffer) const {
   /* Since a grayscale value is smaller than a color value (see assertion), we

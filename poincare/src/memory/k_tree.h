@@ -14,39 +14,39 @@ namespace Poincare::Internal {
 
 using namespace KTrees;
 
+/* Tree has a false flexible member m_valueBlocks[0]. It can be used to access
+ * and set the value blocks as expected but it cannot be filled in a constexpr
+ * way since it is of size zero.
+ * This sub-class adds an array member m_valueBlock[] of the suitable size.
+ *
+ * As an alternative, we could use a real flexible member directly in Tree but
+ * Clang does not accept flexible members in base classes even when inherited
+ * classes (Rack...) have no members. */
+template <typename TSC, size_t N>
+struct ConstexprTree : public TSC {
+  template <class... Blocks>
+  consteval ConstexprTree(Block type, Blocks... blocks)
+      : TSC(static_cast<Type>(static_cast<uint8_t>(type))),
+        m_valueBlocks{
+            static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...} {}
+
+  ValueBlock m_valueBlocks[N - 1];  // 1 for the type, N-1 for the values
+#if ASSERTIONS
+  // Marker used by assertion to ensure we never access out
+  ValueBlock m_border = static_cast<uint8_t>(Type::TreeBorder);
+#endif
+};
+
+/* This the actual static Tree stored in flash. It uses chars to improve
+ * the mangled name size. */
+template <typename TSC, char... Blocks>
+constexpr static ConstexprTree<TSC, sizeof...(Blocks)> k_tree{
+    static_cast<uint8_t>(Blocks)...};
+
 template <typename TSC>
 struct KTreesImplementation {
   // https://stackoverflow.com/questions/40920149/is-it-possible-to-create-templated-user-defined-literals-literal-suffixes-for
   // https://akrzemi1.wordpress.com/2012/10/29/user-defined-literals-part-iii/
-
-  /* Tree has a false flexible member m_valueBlocks[0]. It can be used to access
-   * and set the value blocks as expected but it cannot be filled in a constexpr
-   * way since it is of size zero.
-   * This sub-class adds an array member m_valueBlock[] of the suitable size.
-   *
-   * As an alternative, we could use a real flexible member directly in Tree but
-   * Clang does not accept flexible members in base classes even when inherited
-   * classes (Rack...) have no members. */
-  template <size_t N>
-  struct ConstexprTree : public TSC {
-    template <class... Blocks>
-    consteval ConstexprTree(Block type, Blocks... blocks)
-        : TSC(static_cast<Type>(static_cast<uint8_t>(type))),
-          m_valueBlocks{
-              static_cast<ValueBlock>(static_cast<uint8_t>(blocks))...} {}
-
-    ValueBlock m_valueBlocks[N - 1];  // 1 for the type, N-1 for the values
-#if ASSERTIONS
-    // Marker used by assertion to ensure we never access out
-    ValueBlock m_border = static_cast<uint8_t>(Type::TreeBorder);
-#endif
-  };
-
-  /* This the actual static Tree stored in flash. It uses chars to improve the
-   * mangled name size. */
-  template <char... Blocks>
-  constexpr static ConstexprTree<sizeof...(Blocks)> k_tree{
-      static_cast<uint8_t>(Blocks)...};
 
   /* The KTree template class is the compile time representation of a constexpr
    * tree. Its complete block representation is specified as template parameters
@@ -59,7 +59,7 @@ struct KTreesImplementation {
     static_assert(k_size > 0);
     constexpr static Block k_blocks[k_size] = {Blocks...};
     constexpr operator const TSC*() const {
-      return &k_tree<static_cast<char>(static_cast<uint8_t>(Blocks))...>;
+      return &k_tree<TSC, static_cast<char>(static_cast<uint8_t>(Blocks))...>;
     }
     constexpr TypeBlock type() {
       return static_cast<Type>(static_cast<uint8_t>(k_blocks[0]));

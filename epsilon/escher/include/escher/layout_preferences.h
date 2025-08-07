@@ -37,6 +37,8 @@ class LayoutPreferences {
   LayoutPreferences() = default;
   static const Interface* s_preferences;
 };
+static_assert(sizeof(LayoutPreferences) == 1,
+              "LayoutPreferences should not contain anything");
 
 inline constexpr const LayoutPreferences& SharedPreferences =
     LayoutPreferences::PreferencesInstance;

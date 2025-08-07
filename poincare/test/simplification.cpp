@@ -2163,3 +2163,114 @@ QUIZ_CASE(pcj_simplification_for_approximation_and_analysis) {
   projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ctxForApproximation);
   projects_and_reduces_to("x^2-x^4", "-x^4+x^2", ctxForAnalysis);
 }
+
+QUIZ_CASE(pcj_simplification_context) {
+  Shared::GlobalContext globalContext;
+  ProjectionContext projCtx = {
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .m_context = &globalContext};
+
+  // Fill variable
+  store("1+2→Adadas", &globalContext);
+  simplifies_to("Adadas", "3", projCtx);
+
+  // Fill f1
+  store("1+x→f1(x)", &globalContext);
+  simplifies_to("f1(4)", "5", projCtx);
+  simplifies_to("f1(Adadas)", "4", projCtx);
+
+  // Fill f2
+  store("x-1→f2(x)", &globalContext);
+  simplifies_to("f2(4)", "3", projCtx);
+  simplifies_to("f2(Adadas)", "2", projCtx);
+
+  // Define fBoth with f1 and f2
+  store("f1(x)+f2(x)→fBoth(x)", &globalContext);
+  simplifies_to("fBoth(4)", "8", projCtx);
+  simplifies_to("fBoth(Adadas)", "6", projCtx);
+
+  // Change f2
+  store("x→f2(x)", &globalContext);
+  simplifies_to("f2(4)", "4", projCtx);
+  simplifies_to("f2(Adadas)", "3", projCtx);
+
+  // Make sure fBoth has changed
+  simplifies_to("fBoth(4)", "9", projCtx);
+  simplifies_to("fBoth(Adadas)", "7", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Circular variables
+  store("a→b", &globalContext);
+  store("b→a", &globalContext);
+  simplifies_to("a", "undef", projCtx);
+  simplifies_to("b", "undef", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  store("a→b", &globalContext);
+  store("b→c", &globalContext);
+  store("c→a", &globalContext);
+  simplifies_to("a", "undef", projCtx);
+  simplifies_to("b", "undef", projCtx);
+  simplifies_to("c", "undef", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Circular functions
+  // f: x → f(x)
+  store("(f(x))→f(x)", &globalContext);
+  simplifies_to("f(1)", "undef", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  store("1→f(x)", &globalContext);
+  store("f(x)→g(x)", &globalContext);
+  store("g(x)→f(x)", &globalContext);
+  simplifies_to("f(1)", "undef", projCtx);
+  simplifies_to("g(1)", "undef", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  store("1→f(x)", &globalContext);
+  store("f(x)→g(x)", &globalContext);
+  store("g(x)→h(x)", &globalContext);
+  store("h(x)→f(x)", &globalContext);
+  simplifies_to("f(1)", "undef", projCtx);
+  simplifies_to("g(1)", "undef", projCtx);
+  simplifies_to("h(1)", "undef", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Circular variables and functions
+  store("a→b", &globalContext);
+  store("b→a", &globalContext);
+  store("a→f(x)", &globalContext);
+  simplifies_to("f(1)", "undef", projCtx);
+  simplifies_to("a", "undef", projCtx);
+  simplifies_to("b", "undef", projCtx);
+
+  // Composed functions
+  // f: x→x^2
+  store("x^2→f(x)", &globalContext);
+  // g: x→f(x-2)
+  store("f(x-2)→g(x)", &globalContext);
+  simplifies_to("f(2)", "4", projCtx);
+  simplifies_to("g(3)", "1", projCtx);
+  simplifies_to("g(5)", "9", projCtx);
+
+  // g: x→f(x-2)+f(x+1)
+  store("f(x-2)+f(x+1)→g(x)", &globalContext);
+  // Add a sum to bypass simplification
+  simplifies_to("g(3)+sum(1, n, 2, 4)", "20", projCtx);
+  simplifies_to("g(5)", "45", projCtx);
+
+  // g: x→x+1
+  store("x+1→g(x)", &globalContext);
+  simplifies_to("f(g(4))", "25", projCtx);
+  // Add a sum to bypass simplification
+  simplifies_to("f(g(4))+sum(1, n, 2, 4)", "28", projCtx);
+
+  // Evaluate at undef
+  store("0→f(x)", &globalContext);
+  store("f(1/0)→a", &globalContext);
+  simplifies_to("a", "undef", projCtx);
+  store("f(1/0)→g(x)", &globalContext);
+  simplifies_to("g(1)", "undef", projCtx);
+  store("f(undef)→b", &globalContext);
+  simplifies_to("b", "undef", projCtx);
+}

@@ -3,6 +3,7 @@
 #include <apps/apps_container.h>
 #include <assert.h>
 #include <omg/utf8_helper.h>
+#include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <string.h>
@@ -56,10 +57,11 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record* record,
 Preferences::ComplexFormat ExpressionModel::complexFormat(
     const Storage::Record* record, Context* context) const {
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
-    if (Preferences::ComplexFormat::Real !=
-        Preferences::UpdatedComplexFormatWithExpressionInput(
-            Preferences::ComplexFormat::Real,
-            ExpressionModel::expressionClone(record), context)) {
+    UserExpression expression = ExpressionModel::expressionClone(record);
+    if (!expression.isUninitialized() &&
+        (Preferences::UpdatedComplexFormatWithExpressionInput(
+             Preferences::ComplexFormat::Real, expression, context) !=
+         Preferences::ComplexFormat::Real)) {
       m_expressionComplexFormat = MemoizedComplexFormat::Complex;
     } else {
       m_expressionComplexFormat = MemoizedComplexFormat::Any;

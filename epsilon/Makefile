@@ -12,6 +12,7 @@ ALL_SPECIAL_SUBDIRECTORIES := bootloader kernel coverage
 GCC_MINIMUM_VERSION := 11
 CLANG_MINIMUM_VERSION := 14
 
+ION_layout_variant := epsilon
 include $(PATH_haussmann)/Makefile
 
 # Further configuration

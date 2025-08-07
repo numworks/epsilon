@@ -1,26 +1,27 @@
-PATH_ion = ../shared/ion
-
+# NOTE: order matter here as the following %zip pattern is a superset of %htmlpack.zip
 $(call create_zip,%htmlpack.zip, $(call generated_sources_for, \
   %js \
-  $(PATH_ion)/src/simulator/web/calculator.html \
-  $(PATH_ion)/src/simulator/web/calculator.css \
-  $(PATH_ion)/src/simulator/web/calculator.js \
+  app/src/calculator.html \
+  app/src/calculator.css \
+  app/src/calculator.js \
   app/assets/background.jpg \
   app/assets/background-no-shadow.webp \
+  app/src/background-with-shadow.webp \
 ) \
-  $(PATH_ion)/src/simulator/assets/$(ION_layout_variant)/background-with-shadow.webp \
 )
 
 $(call create_zip,%zip, $(call generated_sources_for, \
   %js \
-  $(PATH_ion)/src/simulator/web/simulator_%html \
+  app/src/simulator_%html \
   app/assets/background.jpg \
 ))
 
 %html: $(OUTPUT_DIRECTORY)/%html
 	@ :
 
-$(OUTPUT_DIRECTORY)/%html: $(call generated_sources_for, %js $(PATH_ion)/src/simulator/web/simulator_%html app/assets/background.jpg) $(PATH_ion)/src/simulator/assets/$(ION_layout_variant)/background-with-shadow.webp $(PATH_ion)/src/simulator/web/inline.py
+_python_inlining_script := ../shared/ion/src/simulator/web/inline.py
+
+$(OUTPUT_DIRECTORY)/%html: $(call generated_sources_for, %js app/src/simulator_%html app/assets/background.jpg app/src/background-with-shadow.webp) $(_python_inlining_script)
 	$(call rule_label,INLINE)
 	$(PYTHON) $(filter %.py,$^) \
       --script $(filter %.js,$^) \

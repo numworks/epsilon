@@ -193,6 +193,7 @@ constexpr
 #endif
 #if KANDINSKY_CODEPOINTS_SCANDIUM
         0x22a6,  // ⊦ // ASSERTION
+        0x22ef,  // ⋯ // MIDLINE HORIZONTAL ELLIPSIS
 #endif
 #if !KANDINSKY_CODEPOINTS_SCANDIUM
         0x27E8,  // ⟨ // LEFT ANGLE BRACKET

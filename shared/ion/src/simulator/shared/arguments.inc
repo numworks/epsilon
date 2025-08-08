@@ -6,6 +6,7 @@
  *      and pointing to the string given by --longForm string if given
  */
 
+BOOL_ARG(help, "--help", "-help", "Show this help message")
 TEXT_ARG(stateFile, "--load-state-file", "-l",
          "Fetch events from an .nws state file", "statefile.nws")
 

@@ -101,7 +101,7 @@ SystemExpression ExpressionModel::expressionReduced(
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
     if (isCircularlyDefined(record, context)) {
-      m_expression = Expression::Undefined();
+      m_expression = SystemExpression::Undefined();
     } else {
       m_expression = SystemExpression::ExpressionFromAddress(
           expressionAddress(record), expressionSize(record));
@@ -228,7 +228,7 @@ void ExpressionModel::tidyDownstreamPoolFrom(
     const PoolObject* treePoolCursor) const {
   if (treePoolCursor == nullptr ||
       m_expression.isDownstreamOf(treePoolCursor)) {
-    m_expression = UserExpression();
+    m_expression = SystemExpression();
     m_circular = -1;
     m_expressionComplexFormat = MemoizedComplexFormat::NotMemoized;
   }

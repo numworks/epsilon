@@ -77,8 +77,9 @@ class CalculationStore
   Poincare::UserExpression parseInput(Poincare::Layout inputLayout,
                                       Poincare::Context* context);
 
-  CalculationElements computeAndProcess(Poincare::Expression inputExpression,
-                                        Poincare::VariableStore* variableStore);
+  CalculationElements computeAndProcess(
+      Poincare::UserExpression inputExpression,
+      Poincare::VariableStore* variableStore);
 
   /* Push an empty calculation at a certain location. Assumes there is enough
    * space to push an empty calculation. Returns a pointer to the new

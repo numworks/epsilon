@@ -64,7 +64,7 @@ struct ApproximationParameters {
 
 // Approximate to tree and keep units
 template <class T>
-inline Poincare::Expression ApproximateUser(
+inline Poincare::SystemExpression ApproximateUser(
     Poincare::UserExpression e, Poincare::Context* context,
     const ApproximationParameters& approximationParameters = {}) {
   Poincare::Preferences::ComplexFormat complexFormat =
@@ -79,13 +79,14 @@ inline Poincare::Expression ApproximateUser(
 }
 
 template <class T>
-inline Poincare::Expression ApproximateSystem(Poincare::SystemExpression e) {
+inline Poincare::SystemExpression ApproximateSystem(
+    Poincare::SystemExpression e) {
   return e.approximateSystemToTree<T>();
 }
 
 // Approximate a real scalar expression. Contexts are not handled.
 template <class FloatType = float>
-inline FloatType ApproximateToRealScalar(Poincare::Expression e) {
+inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {
   static_assert(std::is_floating_point_v<FloatType>);
   return e.approximateToRealScalar<FloatType>(
       MathPreferences::SharedPreferences()->angleUnit(),
@@ -107,7 +108,7 @@ struct ReductionParameters {
 };
 
 inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
-    const Poincare::Expression e, Poincare::Context* context,
+    const Poincare::UserExpression e, Poincare::Context* context,
     const ReductionParameters& reductionParameters) {
   Poincare::Internal::ProjectionContext projectionContext = {
       .m_complexFormat = reductionParameters.complexFormat,
@@ -125,7 +126,7 @@ inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
 }
 
 inline void CloneAndSimplify(
-    Poincare::Expression* e, Poincare::Context* context,
+    Poincare::UserExpression* e, Poincare::Context* context,
     const ReductionParameters& reductionParameters = {},
     bool* reductionFailure = nullptr) {
   assert(reductionFailure);
@@ -165,10 +166,10 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
   // Silence compiler warnings for assert
   (void)numberOfChar;
   // Extract displayed value
-  return Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<T>(
-      buffer, context, MathPreferences::SharedPreferences()->complexFormat(),
-      MathPreferences::SharedPreferences()->angleUnit(),
-      Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  return Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
+      T>(buffer, context, MathPreferences::SharedPreferences()->complexFormat(),
+         MathPreferences::SharedPreferences()->angleUnit(),
+         Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 }
 
 // Conversions to float

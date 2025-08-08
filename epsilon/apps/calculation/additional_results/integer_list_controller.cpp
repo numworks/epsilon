@@ -38,7 +38,7 @@ void IntegerListController::computeAdditionalResults(
                              nullptr, baseAtIndex(index));
   }
   // Computing factorExpression
-  Expression factor = UserExpression::Create(KFactor(KA), {.KA = integer});
+  UserExpression factor = UserExpression::Create(KFactor(KA), {.KA = integer});
   bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
       &factor, App::app()->localContext(),

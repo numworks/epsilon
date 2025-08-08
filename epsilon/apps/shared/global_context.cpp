@@ -45,7 +45,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
     return PoincareHelpers::CreateLayout(
-        Expression::Builder(ExpressionForUserSymbol(record)), context);
+        UserExpression::Builder(ExpressionForUserSymbol(record)), context);
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
              record.hasExtension(Ion::Storage::regressionExtension)) {
@@ -61,7 +61,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
       symbol = CodePoints::k_cartesianSymbol;
     }
     UserExpression expression =
-        Expression::Builder(ExpressionForUserFunction(record));
+        UserExpression::Builder(ExpressionForUserFunction(record));
     expression.replaceUnknownWithSymbol(symbol);
     return PoincareHelpers::CreateLayout(expression, context);
   } else {
@@ -125,7 +125,7 @@ bool GlobalContext::setExpressionForUserNamed(
   UserExpression e =
       UserExpression::Builder(expressionForSymbolAndRecord(symbolTree, record));
   if (e.isUninitialized()) {
-    e = Expression::Undefined();
+    e = UserExpression::Undefined();
   }
   UserExpression finalExpression = expression.clone();
   finalExpression.replaceSymbolWithExpression(symbol, e);

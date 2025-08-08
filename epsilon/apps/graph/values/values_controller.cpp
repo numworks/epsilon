@@ -377,7 +377,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
     assert(derivationOrder == 0);
     SystemExpression e = function->expressionReduced(context);
     SystemExpression abscissaExpression =
-        Expression::DecimalBuilderFromDouble(abscissa);
+        SystemExpression::DecimalBuilderFromDouble(abscissa);
     bool simplificationFailure = false;
     /* Defined symbols should have been replaced at this point. Remaining ones
      * are undefined and will be replaced as such. */

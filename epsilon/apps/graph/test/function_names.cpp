@@ -81,7 +81,7 @@ QUIZ_CASE(graph_list_default_function_name) {
 void assert_will_display_parametric_name_error(const char* definition,
                                                ContinuousFunction* f,
                                                bool expectedHasError) {
-  Poincare::Expression expression = Poincare::Expression::Parse(
+  Poincare::UserExpression expression = Poincare::UserExpression::Parse(
       definition, Poincare::EmptyContext{}, {.preserveInput = true});
   bool hasError =
       FunctionNameHelper::ParametricComponentsNameError(expression, f);

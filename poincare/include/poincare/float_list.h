@@ -7,7 +7,7 @@
 namespace Poincare {
 
 template <typename T>
-class FloatList : public Expression, public DatasetColumn<T> {
+class FloatList : public SystemExpression, public DatasetColumn<T> {
  public:
   static FloatList<T> Builder();
 

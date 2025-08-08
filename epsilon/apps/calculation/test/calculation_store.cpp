@@ -173,7 +173,7 @@ QUIZ_CASE(calculation_ans) {
   ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Dutch));
   assert(CAS::ShouldOnlyDisplayApproximation(
       UserExpression::Builder(KSqrt(2_e)), UserExpression::Builder(KSqrt(2_e)),
-      Expression(), nullptr));
+      UserExpression(), nullptr));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 

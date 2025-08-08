@@ -15,14 +15,15 @@ void assert_cartesian_function_type_is(
     const char* expression, FunctionType::CartesianType expectedType) {
   const char* symbol = "x";
   Shared::GlobalContext context;
-  Expression e = Expression::Builder(parse_expression(expression, &context));
+  UserExpression e =
+      UserExpression::Builder(parse_expression(expression, &context));
   bool reductionFailure = false;
-  e = e.cloneAndReduce(
+  SystemExpression s = e.cloneAndReduce(
       Internal::Projection::DefaultProjectionContextForAnalysis(&context),
       &reductionFailure);
-  assert(!reductionFailure && !e.isUninitialized());
+  assert(!reductionFailure && !s.isUninitialized());
   FunctionType::CartesianType type =
-      FunctionType::CartesianFunctionType(e, symbol);
+      FunctionType::CartesianFunctionType(s, symbol);
   quiz_assert_print_if_failure(type == expectedType, expression);
 }
 
@@ -53,13 +54,14 @@ void assert_polar_line_type_is(const char* expression,
                                FunctionType::LineType expectedType) {
   const char* symbol = "θ";
   Shared::GlobalContext context;
-  Expression e = Expression::Builder(parse_expression(expression, &context));
+  UserExpression e =
+      UserExpression::Builder(parse_expression(expression, &context));
   bool reductionFailure = false;
-  e = e.cloneAndReduce(
+  SystemExpression s = e.cloneAndReduce(
       Internal::Projection::DefaultProjectionContextForAnalysis(&context),
       &reductionFailure);
-  assert(!reductionFailure && !e.isUninitialized());
-  FunctionType::LineType type = FunctionType::PolarLineType(e, symbol);
+  assert(!reductionFailure && !s.isUninitialized());
+  FunctionType::LineType type = FunctionType::PolarLineType(s, symbol);
   quiz_assert_print_if_failure(type == expectedType, expression);
 }
 

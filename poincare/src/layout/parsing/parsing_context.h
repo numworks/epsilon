@@ -25,6 +25,11 @@ struct ParsingMetadata {
 };
 
 struct ParsingContext {
+  /* The Parser uses a `const Context*` internally, because it can change the
+   * Context that is currently used for parsing to another temporary Context.
+   * Re-assigning to another value is possible with a pointer-to-const, but
+   * would not be with a const reference, so we need a pointer-to-const in the
+   * Parser. */
   const Poincare::Context* context = nullptr;
   const ParserHelper::ParsingParameters params = {};
   ParsingMetadata metadata = {};

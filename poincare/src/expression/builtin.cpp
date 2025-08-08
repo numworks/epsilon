@@ -30,7 +30,11 @@ constexpr static Builtin s_specialIdentifiers[] = {
     {Type::UndefNotDefined, BuiltinsAliases::k_undefinedAlias},
     {Type::UndefForbidden, BuiltinsAliases::k_undefinedAlias},
     {Type::UndefFailedSimplification, BuiltinsAliases::k_undefinedAlias},
+#if POINCARE_COMPLEX_BUILTINS
     {Type::NonReal, "nonreal"},
+#else
+    {Type::NonReal, BuiltinsAliases::k_undefinedAlias},
+#endif
     {Type::ComplexI, "i"},
     {Type::Inf, BuiltinsAliases::k_infinityAliases},
 #if POINCARE_BOOLEAN

@@ -300,22 +300,20 @@ PointOfInterest findIntersections(void* searchContext) {
   PreparedFunction e = f->expressionApproximated(ctx->context);
   bool alongY = f->isAlongY();
   bool fIsStrict = f->properties().isStrictInequality();
+  // TODO: this can be a for loop
   while (ctx->counter < n) {
-    int otherFunctionIndex = ctx->counter;
-    if (memoizedOtherFunction.isUninitialized()) {
-      ctx->otherRecord = ctx->store->recordAtIndex(otherFunctionIndex);
-      if (ctx->record == ctx->otherRecord) {
-        ++ctx->counter;
-        continue;
-      }
-      OMG::ExpiringPointer<ContinuousFunction> g =
-          ctx->store->modelForRecord(ctx->otherRecord);
-      if (!g->shouldDisplayIntersections()) {
-        ++ctx->counter;
-        continue;
-      }
-      memoizedOtherFunction = g->expressionApproximated(ctx->context);
+    ctx->otherRecord = ctx->store->recordAtIndex(ctx->counter);
+    if (ctx->record == ctx->otherRecord) {
+      ++ctx->counter;
+      continue;
     }
+    OMG::ExpiringPointer<ContinuousFunction> g =
+        ctx->store->modelForRecord(ctx->otherRecord);
+    if (!g->shouldDisplayIntersections()) {
+      ++ctx->counter;
+      continue;
+    }
+    memoizedOtherFunction = g->expressionApproximated(ctx->context);
     ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
     Solver<double>::Solution solution;
     while (std::isfinite(
@@ -341,7 +339,6 @@ PointOfInterest findIntersections(void* searchContext) {
       }
     }
     ++ctx->counter;
-    memoizedOtherFunction = PreparedFunction{};
     ctx->reinitSolver();
   }
 

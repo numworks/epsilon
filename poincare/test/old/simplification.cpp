@@ -1,6 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/expression/builtin.h>
 
 #include "../helper.h"
@@ -1878,328 +1879,297 @@ QUIZ_CASE(poincare_simplification_complex_format) {
   assert_parsed_expression_simplify_to("atan(-2)", "-arctan(2)", User, Radian,
                                        MetricUnitFormat, Real);
 
-  // User defined variable
-  assert_parsed_expression_simplify_to("a", "a", User, Radian, MetricUnitFormat,
-                                       Real);
-  // a = 2+i
-  Shared::GlobalContext globalContext;
-  assert_reduce_and_store("2+i→a", globalContext, Radian, MetricUnitFormat,
-                          Real);
-  assert_parsed_expression_simplify_to("a", "nonreal", globalContext, User,
-                                       Radian, MetricUnitFormat, Real);
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  // User defined function
-  // f : x → x+1
-  assert_reduce_and_store("x+1+i→f(x)", globalContext, Radian, MetricUnitFormat,
-                          Real);
-  assert_parsed_expression_simplify_to("f(3)", "nonreal", globalContext, User,
-                                       Radian, MetricUnitFormat, Real);
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  {
+    // User defined variable
+    assert_parsed_expression_simplify_to("a", "a", User, Radian,
+                                         MetricUnitFormat, Real);
+    // a = 2+i
+    Shared::GlobalContext globalContext;
+    assert_reduce_and_store("2+i→a", globalContext, Radian, MetricUnitFormat,
+                            Real);
+    assert_parsed_expression_simplify_to("a", "nonreal", globalContext, User,
+                                         Radian, MetricUnitFormat, Real);
+    // Clean the storage for other tests
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+    // User defined function
+    // f : x → x+1
+    assert_reduce_and_store("x+1+i→f(x)", globalContext, Radian,
+                            MetricUnitFormat, Real);
+    assert_parsed_expression_simplify_to("f(3)", "nonreal", globalContext, User,
+                                         Radian, MetricUnitFormat, Real);
+    // Clean the storage for other tests
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  }
 
   // Cartesian
-  assert_parsed_expression_simplify_to("-2.3ᴇ3", "-2300", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("3", "3", globalContext, User, Radian,
+  assert_parsed_expression_simplify_to("-2.3ᴇ3", "-2300", User, Radian,
                                        MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("∞", "∞", globalContext, User, Radian,
+  assert_parsed_expression_simplify_to("3", "3", User, Radian, MetricUnitFormat,
+                                       Cartesian);
+  assert_parsed_expression_simplify_to("∞", "∞", User, Radian, MetricUnitFormat,
+                                       Cartesian);
+  assert_parsed_expression_simplify_to("1+2+i", "3+i", User, Radian,
                                        MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("1+2+i", "3+i", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("-(5+2×i)", "-5-2×i", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("(5+2×i)", "5+2×i", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("i+i", "2×i", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("-2+2×i", "-2+2×i", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("(3+i)-(2+4×i)", "1-3×i", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("(2+3×i)×(4-2×i)", "14+8×i",
-                                       globalContext, User, Radian,
+  assert_parsed_expression_simplify_to("-(5+2×i)", "-5-2×i", User, Radian,
                                        MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("(3+i)/2", "3/2+1/2×i", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("(3+i)/(2+i)", "7/5-1/5×i",
-                                       globalContext, User, Radian,
+  assert_parsed_expression_simplify_to("(5+2×i)", "5+2×i", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("i+i", "2×i", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("-2+2×i", "-2+2×i", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("(3+i)-(2+4×i)", "1-3×i", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("(2+3×i)×(4-2×i)", "14+8×i", User,
+                                       Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("(3+i)/2", "3/2+1/2×i", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("(3+i)/(2+i)", "7/5-1/5×i", User, Radian,
                                        MetricUnitFormat, Cartesian);
   // The simplification of (3+i)^(2+i) in a Cartesian complex form generates to
   // many nodes
   // assert_parsed_expression_simplify_to("(3+i)^(2+i)",
   // "10×cos((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×e^((2×atan(3)-π)/2)+10×sin((-4×atan(3)+ln(2)+ln(5)+2×π)/2)×e^((2×atan(3)-π)/2)i",
-  // globalContext, User, Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("(3+i)^(2+i)", "(i+3)^(i+2)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to(
-      "√(1+6i)", "√(2+2×√(37))/2+√(-2+2×√(37))/2×i", globalContext, User,
-      Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("(1+i)^2", "2×i", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("2×i", "2×i", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("i!", "i!", globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("3!", "6", globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("x!", "x!", globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("e", "e", globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("π", "π", globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("i", "i", globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-
-  assert_parsed_expression_simplify_to("arctan(2)", "arctan(2)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("arctan(-2)", "-arctan(2)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("abs(-3)", "3", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("abs(-3+i)", "√(10)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("arctan(2)", "arctan(2)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("arctan(2+i)", "arctan(2+i)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("binomial(10, 4)", "210", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("ceil(-1.3)", "-1", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("arg(-2)", "π", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("conj(-2)", "-2", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("conj(-2+2×i+i)", "-2-3×i",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("cos(12)", "cos(12)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to(
-      "cos(12+i)", "cos(12)×cosh(1)-sin(12)×sinh(1)×i", globalContext, User,
-      Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("diff(3×x, x, 3)", "3", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("quo(34,x)", "quo(34,x)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("rem(5,3)", "2", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("floor(x)", "floor(x)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("frac(x)", "frac(x)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("gcd(x,y)", "gcd(x,y)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("gcd(x,gcd(y,z))", "gcd(x,y,z)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("gcd(3, 1, 2, x, x^2)", "gcd(1,x^2,x)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("im(1+i)", "1", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("int(x^2, x, 1, 2)", "int(x^2,x,1,2)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("lcm(x,y)", "lcm(x,y)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("lcm(x,lcm(y,z))", "lcm(x,y,z)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("lcm(3, 1, 2, x, x^2)", "lcm(6,x^2,x)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  // TODO: dim is not simplified yet
-  // assert_parsed_expression_simplify_to("dim(x)", "dim(x)", globalContext,
   // User, Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("(3+i)^(2+i)", "(i+3)^(i+2)", User,
+                                       Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("√(1+6i)",
+                                       "√(2+2×√(37))/2+√(-2+2×√(37))/2×i", User,
+                                       Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("(1+i)^2", "2×i", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("2×i", "2×i", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("i!", "i!", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("3!", "6", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("x!", "x!", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("e", "e", User, Radian, MetricUnitFormat,
+                                       Cartesian);
+  assert_parsed_expression_simplify_to("π", "π", User, Radian, MetricUnitFormat,
+                                       Cartesian);
+  assert_parsed_expression_simplify_to("i", "i", User, Radian, MetricUnitFormat,
+                                       Cartesian);
+
+  assert_parsed_expression_simplify_to("arctan(2)", "arctan(2)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("arctan(-2)", "-arctan(2)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("abs(-3)", "3", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("abs(-3+i)", "√(10)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("arctan(2)", "arctan(2)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("arctan(2+i)", "arctan(2+i)", User,
+                                       Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("binomial(10, 4)", "210", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("ceil(-1.3)", "-1", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("arg(-2)", "π", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("conj(-2)", "-2", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("conj(-2+2×i+i)", "-2-3×i", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("cos(12)", "cos(12)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to(
+      "cos(12+i)", "cos(12)×cosh(1)-sin(12)×sinh(1)×i", User, Radian,
+      MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("diff(3×x, x, 3)", "3", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("quo(34,x)", "quo(34,x)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("rem(5,3)", "2", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("floor(x)", "floor(x)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("frac(x)", "frac(x)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("gcd(x,y)", "gcd(x,y)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("gcd(x,gcd(y,z))", "gcd(x,y,z)", User,
+                                       Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("gcd(3, 1, 2, x, x^2)", "gcd(1,x^2,x)",
+                                       User, Radian, MetricUnitFormat,
+                                       Cartesian);
+  assert_parsed_expression_simplify_to("im(1+i)", "1", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("int(x^2, x, 1, 2)", "int(x^2,x,1,2)",
+                                       User, Radian, MetricUnitFormat,
+                                       Cartesian);
+  assert_parsed_expression_simplify_to("lcm(x,y)", "lcm(x,y)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("lcm(x,lcm(y,z))", "lcm(x,y,z)", User,
+                                       Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("lcm(3, 1, 2, x, x^2)", "lcm(6,x^2,x)",
+                                       User, Radian, MetricUnitFormat,
+                                       Cartesian);
+  // TODO: dim is not simplified yet
+  // assert_parsed_expression_simplify_to("dim(x)", "dim(x)", User, Radian,
+  // MetricUnitFormat, Cartesian);
 
   assert_parsed_expression_simplify_to("root(2,i)", "cos(ln(2))-sin(ln(2))×i",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to(
-      "root(2,i+1)", "√(2)×cos((90×ln(2))/π)-√(2)×sin((90×ln(2))/π)×i",
-      globalContext, User, Degree, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to(
-      "root(2,i+1)", "√(2)×cos(ln(2)/2)-√(2)×sin(ln(2)/2)×i", globalContext,
-      User, Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("permute(10, 4)", "5040", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("random()", "random()", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("re(x)", "x", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("round(x,y)", "round(x,y)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("sign(x)", "sign(x)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("sin(23)", "sin(23)", globalContext,
                                        User, Radian, MetricUnitFormat,
                                        Cartesian);
   assert_parsed_expression_simplify_to(
-      "sin(23+i)", "sin(23)×cosh(1)+cos(23)×sinh(1)×i", globalContext, User,
-      Radian, MetricUnitFormat, Cartesian);
+      "root(2,i+1)", "√(2)×cos((90×ln(2))/π)-√(2)×sin((90×ln(2))/π)×i", User,
+      Degree, MetricUnitFormat, Cartesian);
   assert_parsed_expression_simplify_to(
-      "√(1-i)", "√(2+2×√(2))/2-√(-2+2×√(2))/2×i", globalContext, User, Radian,
+      "root(2,i+1)", "√(2)×cos(ln(2)/2)-√(2)×sin(ln(2)/2)×i", User, Radian,
       MetricUnitFormat, Cartesian);
-  assert_parsed_expression_simplify_to("tan(23)", "tan(23)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("tan(23+i)", "tan(23+i)", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
-  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,i]]", globalContext,
-                                       User, Radian, MetricUnitFormat,
-                                       Cartesian);
+  assert_parsed_expression_simplify_to("permute(10, 4)", "5040", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("random()", "random()", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("re(x)", "x", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("round(x,y)", "round(x,y)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("sign(x)", "sign(x)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("sin(23)", "sin(23)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to(
+      "sin(23+i)", "sin(23)×cosh(1)+cos(23)×sinh(1)×i", User, Radian,
+      MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("√(1-i)",
+                                       "√(2+2×√(2))/2-√(-2+2×√(2))/2×i", User,
+                                       Radian, MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("tan(23)", "tan(23)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("tan(23+i)", "tan(23+i)", User, Radian,
+                                       MetricUnitFormat, Cartesian);
+  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,i]]", User, Radian,
+                                       MetricUnitFormat, Cartesian);
 
   // User defined variable
-  assert_parsed_expression_simplify_to("a", "a", globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  // a = 2+i
-  assert_reduce_and_store("2+i→a", globalContext, Radian, MetricUnitFormat,
-                          Cartesian);
-  assert_parsed_expression_simplify_to("a", "2+i", globalContext, User, Radian,
-                                       MetricUnitFormat, Cartesian);
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  // User defined function
-  // f : x → x+1
-  assert_reduce_and_store("x+1+i→f(x)", globalContext, Radian, MetricUnitFormat,
-                          Cartesian);
-  assert_parsed_expression_simplify_to("f(3)", "4+i", globalContext, User,
-                                       Radian, MetricUnitFormat, Cartesian);
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
-
+  assert_parsed_expression_simplify_to("a", "a", User, Radian, MetricUnitFormat,
+                                       Cartesian);
+  {
+    // a = 2+i
+    Shared::GlobalContext globalContext;
+    assert_reduce_and_store("2+i→a", globalContext, Radian, MetricUnitFormat,
+                            Cartesian);
+    assert_parsed_expression_simplify_to("a", "2+i", globalContext, User,
+                                         Radian, MetricUnitFormat, Cartesian);
+    // Clean the storage for other tests
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+    // User defined function
+    // f : x → x+1
+    assert_reduce_and_store("x+1+i→f(x)", globalContext, Radian,
+                            MetricUnitFormat, Cartesian);
+    assert_parsed_expression_simplify_to("f(3)", "4+i", globalContext, User,
+                                         Radian, MetricUnitFormat, Cartesian);
+    // Clean the storage for other tests
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  }
   // Polar
-  assert_parsed_expression_simplify_to("-2.3ᴇ3", "2300×e^(π×i)", globalContext,
-                                       User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("3", "3", globalContext, User, Radian,
+  assert_parsed_expression_simplify_to("-2.3ᴇ3", "2300×e^(π×i)", User, Radian,
                                        MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("∞", "∞", globalContext, User, Radian,
+  assert_parsed_expression_simplify_to("3", "3", User, Radian, MetricUnitFormat,
+                                       Polar);
+  assert_parsed_expression_simplify_to("∞", "∞", User, Radian, MetricUnitFormat,
+                                       Polar);
+  assert_parsed_expression_simplify_to("1+2+i",
+                                       "√(10)×e^((-2×arctan(3)+π)/2×i)", User,
+                                       Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("1+2+i",
+                                       "√(10)×e^((-π×arctan(3)+90×π)/180×i)",
+                                       User, Degree, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("-(5+2×i)",
+                                       "√(29)×e^((-2×arctan(5/2)-π)/2×i)", User,
+                                       Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("(5+2×i)",
+                                       "√(29)×e^((-2×arctan(5/2)+π)/2×i)", User,
+                                       Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("i+i", "2×e^(π/2×i)", User, Radian,
                                        MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to(
-      "1+2+i", "√(10)×e^((-2×arctan(3)+π)/2×i)", globalContext, User, Radian,
-      MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to(
-      "1+2+i", "√(10)×e^((-π×arctan(3)+90×π)/180×i)", globalContext, User,
-      Degree, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to(
-      "-(5+2×i)", "√(29)×e^((-2×arctan(5/2)-π)/2×i)", globalContext, User,
-      Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to(
-      "(5+2×i)", "√(29)×e^((-2×arctan(5/2)+π)/2×i)", globalContext, User,
-      Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("i+i", "2×e^(π/2×i)", globalContext,
-                                       User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("i+i", "2×e^(π/2×i)", globalContext,
-                                       User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("-2+2×i", "2×√(2)×e^((3×π)/4×i)",
-                                       globalContext, User, Radian,
+  assert_parsed_expression_simplify_to("i+i", "2×e^(π/2×i)", User, Radian,
                                        MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to(
-      "(3+i)-(2+4×i)", "√(10)×e^((2×arctan(1/3)-π)/2×i)", globalContext, User,
-      Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to(
-      "(2+3×i)×(4-2×i)", "2×√(65)×e^((-2×arctan(7/4)+π)/2×i)", globalContext,
-      User, Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("-2+2×i", "2×√(2)×e^((3×π)/4×i)", User,
+                                       Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("(3+i)-(2+4×i)",
+                                       "√(10)×e^((2×arctan(1/3)-π)/2×i)", User,
+                                       Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("(2+3×i)×(4-2×i)",
+                                       "2×√(65)×e^((-2×arctan(7/4)+π)/2×i)",
+                                       User, Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("(3+i)/2", "√(10)/2×e^(arctan(1/3)×i)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to(
-      "(3+i)/(2+i)", "√(2)×e^((2×arctan(7)-π)/2×i)", globalContext, User,
-      Radian, MetricUnitFormat, Polar);
+                                       User, Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("(3+i)/(2+i)",
+                                       "√(2)×e^((2×arctan(7)-π)/2×i)", User,
+                                       Radian, MetricUnitFormat, Polar);
   // TODO: simplify arctan(tan(x)) = x±k×pi?
   // assert_parsed_expression_simplify_to("(3+i)^(2+i)",
   // "10e^((2×arctan(3)-π)/2)×e^(((-4×arctan(3)+ln(2)+ln(5)+2π)/2)i)",
-  // globalContext, User, Radian, MetricUnitFormat, Polar);
+  //  User, Radian, MetricUnitFormat, Polar);
   // The simplification of (3+i)^(2+i) in a Polar complex form generates to many
   // nodes
   // assert_parsed_expression_simplify_to("(3+i)^(2+i)",
   // "10e^((2×arctan(3)-π)/2)×e^((arctan(tan((-4×arctan(3)+ln(2)+ln(5)+2×π)/2))+π)i)",
-  // globalContext, User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("(3+i)^(2+i)", "(i+3)^(i+2)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("(1+i)^2", "2×e^(π/2×i)", globalContext,
-                                       User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("2×i", "2×e^(π/2×i)", globalContext,
-                                       User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("3!", "6", globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("x!", "x!", globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("e", "e", globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("π", "π", globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("i", "e^(π/2×i)", globalContext, User,
+  //  User, Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("(3+i)^(2+i)", "(i+3)^(i+2)", User,
                                        Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("abs(-3)", "3", globalContext, User,
-                                       Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("abs(-3+i)", "√(10)", globalContext,
-                                       User, Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("(1+i)^2", "2×e^(π/2×i)", User, Radian,
+                                       MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("2×i", "2×e^(π/2×i)", User, Radian,
+                                       MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("3!", "6", User, Radian,
+                                       MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("x!", "x!", User, Radian,
+                                       MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("e", "e", User, Radian, MetricUnitFormat,
+                                       Polar);
+  assert_parsed_expression_simplify_to("π", "π", User, Radian, MetricUnitFormat,
+                                       Polar);
+  assert_parsed_expression_simplify_to("i", "e^(π/2×i)", User, Radian,
+                                       MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("abs(-3)", "3", User, Radian,
+                                       MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("abs(-3+i)", "√(10)", User, Radian,
+                                       MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("conj(2×e^(i×π/2))", "2×e^(-π/2×i)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("-2×e^(i×π/2)", "2×e^(-π/2×i)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,e^(π/2×i)]]",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("arctan(2)", "arctan(2)", globalContext,
                                        User, Radian, MetricUnitFormat, Polar);
-  assert_parsed_expression_simplify_to("arctan(-2)", "arctan(2)×e^(π×i)",
-                                       globalContext, User, Radian,
+  assert_parsed_expression_simplify_to("-2×e^(i×π/2)", "2×e^(-π/2×i)", User,
+                                       Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("[[1,√(-1)]]", "[[1,e^(π/2×i)]]", User,
+                                       Radian, MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("arctan(2)", "arctan(2)", User, Radian,
                                        MetricUnitFormat, Polar);
+  assert_parsed_expression_simplify_to("arctan(-2)", "arctan(2)×e^(π×i)", User,
+                                       Radian, MetricUnitFormat, Polar);
   assert_parsed_expression_simplify_to("cos(42π)", "-cos(42×π)×e^\x12π×i\x13",
-                                       globalContext, User, Degree,
-                                       MetricUnitFormat, Polar);
+                                       User, Degree, MetricUnitFormat, Polar);
 
   // User defined variable
-  assert_parsed_expression_simplify_to("a", "a", globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  // a = 2 + i
-  assert_reduce_and_store("2+i→a", globalContext, Radian, MetricUnitFormat,
-                          Polar);
-  assert_parsed_expression_simplify_to("a", "√(5)×e^((-2×arctan(2)+π)/2×i)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  // User defined function
-  // f: x → x+1
+  assert_parsed_expression_simplify_to("a", "a", User, Radian, MetricUnitFormat,
+                                       Polar);
+  {
+    Shared::GlobalContext globalContext;
+    // a = 2 + i
+    assert_reduce_and_store("2+i→a", globalContext, Radian, MetricUnitFormat,
+                            Polar);
+    assert_parsed_expression_simplify_to("a", "√(5)×e^((-2×arctan(2)+π)/2×i)",
+                                         globalContext, User, Radian,
+                                         MetricUnitFormat, Polar);
+    // Clean the storage for other tests
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+    // User defined function
+    // f: x → x+1
 
-  assert_reduce_and_store("x+1+i→f(x)", globalContext, Radian, MetricUnitFormat,
-                          Polar);
-  assert_parsed_expression_simplify_to("f(3)", "√(17)×e^(arctan(1/4)×i)",
-                                       globalContext, User, Radian,
-                                       MetricUnitFormat, Polar);
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+    assert_reduce_and_store("x+1+i→f(x)", globalContext, Radian,
+                            MetricUnitFormat, Polar);
+    assert_parsed_expression_simplify_to("f(3)", "√(17)×e^(arctan(1/4)×i)",
+                                         globalContext, User, Radian,
+                                         MetricUnitFormat, Polar);
+    // Clean the storage for other tests
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  }
 }
 
 QUIZ_CASE(poincare_simplification_reduction_target) {
@@ -2581,176 +2551,154 @@ QUIZ_CASE(poincare_simplification_list) {
   assert_parsed_expression_simplify_to("11/{11,33,55,77}", "{1,1/3,1/5,1/7}");
   assert_parsed_expression_simplify_to("{1,4,9,16,25}^(1/2)", "{1,2,3,4,5}");
 
-  // Access to an element
-  Shared::GlobalContext globalContext;
-  assert_reduce_and_store("{1,4,9}→l1", globalContext);
-  assert_reduce_and_store("{}→l2", globalContext);
-  assert_parsed_expression_simplify_to("l1(1)", "1", globalContext);
-  assert_parsed_expression_simplify_to("l1(2)", "4", globalContext);
-  assert_parsed_expression_simplify_to("l1(3)", "9", globalContext);
-  assert_parsed_expression_simplify_to("l1(0)", "undef", globalContext);
-  assert_parsed_expression_simplify_to("l1(5)", "undef", globalContext);
-  assert_parsed_expression_simplify_to("l1(-2)", "undef", globalContext);
-  assert_parsed_expression_simplify_to("l1(1.23)", "undef", globalContext);
-  assert_parsed_expression_simplify_to("l2(1)", "undef", globalContext);
-  // Slice of a list
-  assert_parsed_expression_simplify_to("l1(1,2)", "{1,4}", globalContext);
-  assert_parsed_expression_simplify_to("l1(2,3)", "{4,9}", globalContext);
-  assert_parsed_expression_simplify_to("l1(1,3)", "{1,4,9}", globalContext);
-  assert_parsed_expression_simplify_to("l1(2,2)", "{4}", globalContext);
-  assert_parsed_expression_simplify_to("l1(0,2)", "{1,4}", globalContext);
-  assert_parsed_expression_simplify_to("l1(1,5)", "{1,4,9}", globalContext);
-  assert_parsed_expression_simplify_to("l1(3,2)", "{}", globalContext);
-  assert_parsed_expression_simplify_to("l2(1,2)", "{}", globalContext);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("l1.lis").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("l2.lis").destroy();
+  {
+    // Access to an element
+    Shared::GlobalContext globalContext;
+    assert_reduce_and_store("{1,4,9}→l1", globalContext);
+    assert_reduce_and_store("{}→l2", globalContext);
+    assert_parsed_expression_simplify_to("l1(1)", "1", globalContext);
+    assert_parsed_expression_simplify_to("l1(2)", "4", globalContext);
+    assert_parsed_expression_simplify_to("l1(3)", "9", globalContext);
+    assert_parsed_expression_simplify_to("l1(0)", "undef", globalContext);
+    assert_parsed_expression_simplify_to("l1(5)", "undef", globalContext);
+    assert_parsed_expression_simplify_to("l1(-2)", "undef", globalContext);
+    assert_parsed_expression_simplify_to("l1(1.23)", "undef", globalContext);
+    assert_parsed_expression_simplify_to("l2(1)", "undef", globalContext);
+    // Slice of a list
+    assert_parsed_expression_simplify_to("l1(1,2)", "{1,4}", globalContext);
+    assert_parsed_expression_simplify_to("l1(2,3)", "{4,9}", globalContext);
+    assert_parsed_expression_simplify_to("l1(1,3)", "{1,4,9}", globalContext);
+    assert_parsed_expression_simplify_to("l1(2,2)", "{4}", globalContext);
+    assert_parsed_expression_simplify_to("l1(0,2)", "{1,4}", globalContext);
+    assert_parsed_expression_simplify_to("l1(1,5)", "{1,4,9}", globalContext);
+    assert_parsed_expression_simplify_to("l1(3,2)", "{}", globalContext);
+    assert_parsed_expression_simplify_to("l2(1,2)", "{}", globalContext);
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("l1.lis").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("l2.lis").destroy();
+  }
   // Functions on lists
   // OList length
-  assert_parsed_expression_simplify_to("dim({})", "0", globalContext);
-  assert_parsed_expression_simplify_to("dim({1,2,3})", "3", globalContext);
-  assert_parsed_expression_simplify_to("dim({{1,2,3,4,5}})", "undef",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("dim({})", "0");
+  assert_parsed_expression_simplify_to("dim({1,2,3})", "3");
+  assert_parsed_expression_simplify_to("dim({{1,2,3,4,5}})", "undef");
   // Sum of elements
-  assert_parsed_expression_simplify_to("sum({})", "0", globalContext);
-  assert_parsed_expression_simplify_to("sum({1,2,3})", "6", globalContext);
+  assert_parsed_expression_simplify_to("sum({})", "0");
+  assert_parsed_expression_simplify_to("sum({1,2,3})", "6");
   // Product of elements
-  assert_parsed_expression_simplify_to("prod({})", "1", globalContext);
-  assert_parsed_expression_simplify_to("prod({1,4,9})", "36", globalContext);
+  assert_parsed_expression_simplify_to("prod({})", "1");
+  assert_parsed_expression_simplify_to("prod({1,4,9})", "36");
   // Sort a list of complexes
-  assert_parsed_expression_simplify_to("sort({})", "{}", globalContext);
-  assert_parsed_expression_simplify_to("sort({4})", "{4}", globalContext);
-  assert_parsed_expression_simplify_to("sort({undef})", "{undef}",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("sort({i})", "sort({i})", globalContext);
-  assert_parsed_expression_simplify_to("sort({-1,5,2+6,-0})", "{-1,0,5,8}",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("sort({})", "{}");
+  assert_parsed_expression_simplify_to("sort({4})", "{4}");
+  assert_parsed_expression_simplify_to("sort({undef})", "{undef}");
+  assert_parsed_expression_simplify_to("sort({i})", "sort({i})");
+  assert_parsed_expression_simplify_to("sort({-1,5,2+6,-0})", "{-1,0,5,8}");
 #if TODO_PCJ
-  assert_parsed_expression_simplify_to("sort({-1,-2,-inf,inf})", "{-∞,-2,-1,∞}",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("sort({-1,-2,-inf,inf})",
+                                       "{-∞,-2,-1,∞}");
 #endif
   assert_parsed_expression_simplify_to("sort({-1,undef,-2,-inf,inf})",
-                                       "{-1,undef,-2,-∞,∞}", globalContext);
-  assert_parsed_expression_simplify_to("sort({-1,i,8,-0})", "sort({-1,i,8,0})",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("sort({-1,undef,1})", "{-1,undef,1}",
-                                       globalContext);
+                                       "{-1,undef,-2,-∞,∞}");
+  assert_parsed_expression_simplify_to("sort({-1,i,8,-0})", "sort({-1,i,8,0})");
+  assert_parsed_expression_simplify_to("sort({-1,undef,1})", "{-1,undef,1}");
 #if TOOD_PCJ
-  assert_parsed_expression_simplify_to(
-      "sort(ln({7-π7,7}))", "sort({ln(-7×π+7),ln(7)})", globalContext, User,
-      Radian, MetricUnitFormat, Real);
+  assert_parsed_expression_simplify_to("sort(ln({7-π7,7}))",
+                                       "sort({ln(-7×π+7),ln(7)})", User, Radian,
+                                       MetricUnitFormat, Real);
 #endif
   // Sort list of points
   assert_parsed_expression_simplify_to("sort({(8,1),(5,0),(5,-3),(1,0),(5,9)})",
-                                       "{(1,0),(5,-3),(5,0),(5,9),(8,1)}",
-                                       globalContext);
+                                       "{(1,0),(5,-3),(5,0),(5,9),(8,1)}");
   assert_parsed_expression_simplify_to("sort({(8,1),(5,i),(5,-3)})",
-                                       "sort({(8,1),(5,i),(5,-3)})",
-                                       globalContext);
+                                       "sort({(8,1),(5,i),(5,-3)})");
   assert_parsed_expression_simplify_to("sort({(undef,1),(6,1),(5,-3)})",
-                                       "{(undef,1),(6,1),(5,-3)}",
-                                       globalContext);
+                                       "{(undef,1),(6,1),(5,-3)}");
   assert_parsed_expression_simplify_to(
       "sort({(inf,1),(6,1),(5,-3),(-inf,9),(-inf,1)})",
-      "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}", globalContext);
+      "{(-∞,1),(-∞,9),(5,-3),(6,1),(∞,1)}");
   // Mean of a list
-  assert_parsed_expression_simplify_to("mean({})", "undef", globalContext);
-  assert_parsed_expression_simplify_to("mean({1,2,3})", "2", globalContext);
-  assert_parsed_expression_simplify_to("mean({5,8,7,4,12})", "36/5",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("mean({1,6,3,4,5,2},{2,3,1,2,3,1})", "4",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("mean({})", "undef");
+  assert_parsed_expression_simplify_to("mean({1,2,3})", "2");
+  assert_parsed_expression_simplify_to("mean({5,8,7,4,12})", "36/5");
+  assert_parsed_expression_simplify_to("mean({1,6,3,4,5,2},{2,3,1,2,3,1})",
+                                       "4");
   assert_parsed_expression_simplify_to("mean({1,6,3,undef,5,2},{2,3,1,2,3,1})",
-                                       "undef", globalContext);
-  assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{2})", "undef",
-                                       globalContext);
+                                       "undef");
+  assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{2})", "undef");
   assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{0,0,0,0,0})",
-                                       "undef", globalContext);
+                                       "undef");
   assert_parsed_expression_simplify_to("mean({5,8,7,4,12},{-2,4,4,4,4})",
-                                       "undef", globalContext);
+                                       "undef");
   // Minimum of a list
-  assert_parsed_expression_simplify_to("min({})", "undef", globalContext);
-  assert_parsed_expression_simplify_to("min({1,2,3})", "1", globalContext);
-  assert_parsed_expression_simplify_to("min({3,undef,-2})", "undef",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("min({})", "undef");
+  assert_parsed_expression_simplify_to("min({1,2,3})", "1");
+  assert_parsed_expression_simplify_to("min({3,undef,-2})", "undef");
   // Do not simplify when a value can't be approximated
-  assert_parsed_expression_simplify_to("min({3,x,-2})", "min({3,x,-2})",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("min({3,-inf,-2})", "-∞", globalContext);
-  assert_parsed_expression_simplify_to("min({-7,0,i})", "min({-7,0,i})",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("min({-7,undef,i})", "undef",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("min({3,x,-2})", "min({3,x,-2})");
+  assert_parsed_expression_simplify_to("min({3,-inf,-2})", "-∞");
+  assert_parsed_expression_simplify_to("min({-7,0,i})", "min({-7,0,i})");
+  assert_parsed_expression_simplify_to("min({-7,undef,i})", "undef");
 
   // Maximum of a list
-  assert_parsed_expression_simplify_to("max({})", "undef", globalContext);
-  assert_parsed_expression_simplify_to("max({1,2,3})", "3", globalContext);
-  assert_parsed_expression_simplify_to("max({3,undef,-2})", "undef",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("max({})", "undef");
+  assert_parsed_expression_simplify_to("max({1,2,3})", "3");
+  assert_parsed_expression_simplify_to("max({3,undef,-2})", "undef");
   // Do not simplify when a value can't be approximated
-  assert_parsed_expression_simplify_to("max({3,x,-2})", "max({3,x,-2})",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("max({3,inf,-2})", "∞", globalContext);
-  assert_parsed_expression_simplify_to("max({-7,0,i})", "max({-7,0,i})",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("max({-7,undef,i})", "undef",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("max({3,x,-2})", "max({3,x,-2})");
+  assert_parsed_expression_simplify_to("max({3,inf,-2})", "∞");
+  assert_parsed_expression_simplify_to("max({-7,0,i})", "max({-7,0,i})");
+  assert_parsed_expression_simplify_to("max({-7,undef,i})", "undef");
 
   // Variance of a list
-  assert_parsed_expression_simplify_to("var({})", "undef", globalContext);
-  assert_parsed_expression_simplify_to("var({1})", "0", globalContext);
-  assert_parsed_expression_simplify_to("var({1,2,3,4,5,6})", "35/12",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("var({})", "undef");
+  assert_parsed_expression_simplify_to("var({1})", "0");
+  assert_parsed_expression_simplify_to("var({1,2,3,4,5,6})", "35/12");
   assert_parsed_expression_simplify_to("var({1,2,3,4,5,6},{2,3,2,1,3,1})",
-                                       "43/16", globalContext);
+                                       "43/16");
   // Standard deviation of a list
-  assert_parsed_expression_simplify_to("stddev({})", "undef", globalContext);
-  assert_parsed_expression_simplify_to("stddev({1})", "0", globalContext);
-  assert_parsed_expression_simplify_to("stddev({1,2,3,4,5,6})", "√(105)/6",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("stddev({})", "undef");
+  assert_parsed_expression_simplify_to("stddev({1})", "0");
+  assert_parsed_expression_simplify_to("stddev({1,2,3,4,5,6})", "√(105)/6");
   assert_parsed_expression_simplify_to("stddev({1,2,3,4,5,6},{2,3,1,1,2,4})",
-                                       "(2×√(157))/13", globalContext);
+                                       "(2×√(157))/13");
   // Sample standard deviation of a list
-  assert_parsed_expression_simplify_to("samplestddev({})", "undef",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("samplestddev({1})", "undef",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("samplestddev({1,2,3,4,5,6})", "√(14)/2",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("samplestddev({})", "undef");
+  assert_parsed_expression_simplify_to("samplestddev({1})", "undef");
+  assert_parsed_expression_simplify_to("samplestddev({1,2,3,4,5,6})",
+                                       "√(14)/2");
   assert_parsed_expression_simplify_to(
-      "samplestddev({1,2,3,4,5,6},{2,3,1,1,2,4})", "√(6123)/39", globalContext);
+      "samplestddev({1,2,3,4,5,6},{2,3,1,1,2,4})", "√(6123)/39");
   // Median of a list
-  assert_parsed_expression_simplify_to("med({})", "undef", globalContext);
-  assert_parsed_expression_simplify_to("med({1})", "1", globalContext);
-  assert_parsed_expression_simplify_to("med({4,2,3,1,6})", "3", globalContext);
-  assert_parsed_expression_simplify_to("med({1,6,3,4,5,2})", "7/2",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("med({1,undef,2,3})", "undef",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("med({})", "undef");
+  assert_parsed_expression_simplify_to("med({1})", "1");
+  assert_parsed_expression_simplify_to("med({4,2,3,1,6})", "3");
+  assert_parsed_expression_simplify_to("med({1,6,3,4,5,2})", "7/2");
+  assert_parsed_expression_simplify_to("med({1,undef,2,3})", "undef");
   // Do not reduce if a child can't be approximated
-  assert_parsed_expression_simplify_to("med({1,x,2,3})", "med({1,x,2,3})",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("med({1,x,2,3})", "med({1,x,2,3})");
 #if TODO_PCJ
-  assert_parsed_expression_simplify_to("med({1,6,3,4,5,2},{1,2,1,1,2,2})", "4",
-                                       globalContext);
-  assert_parsed_expression_simplify_to("med({1,6,3},{1,1,undef})", "undef",
-                                       globalContext);
+  assert_parsed_expression_simplify_to("med({1,6,3,4,5,2},{1,2,1,1,2,2})", "4");
+  assert_parsed_expression_simplify_to("med({1,6,3},{1,1,undef})", "undef");
   // Do not reduce if a child can't be approximated
   assert_parsed_expression_simplify_to("med({1,6,3},{1,1,x})",
-                                       "med({1,6,3},{1,1,x})", globalContext);
+                                       "med({1,6,3},{1,1,x})");
 #endif
   // OList sequences
-  assert_parsed_expression_simplify_to("sequence(1,k,1)", "{1}", globalContext);
+  assert_parsed_expression_simplify_to("sequence(1,k,1)", "{1}");
   assert_parsed_expression_simplify_to("sequence(k,k,10)",
-                                       "{1,2,3,4,5,6,7,8,9,10}", globalContext);
+                                       "{1,2,3,4,5,6,7,8,9,10}");
   assert_parsed_expression_simplify_to("sequence(1/(n-3),n,5)",
-                                       "{-1/2,-1,undef,1,1/2}", globalContext);
-  assert_parsed_expression_simplify_to("sequence(x^2,x,3)", "{1,4,9}",
-                                       globalContext);
-  // Do not confuse u{n} and L*{n}
-  assert_reduce_and_store("{3}→L", globalContext);
-  assert_parsed_expression_simplify_to("L{2}", "{6}", globalContext);  // L*{2}
-  // Clean the storage for other tests
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("L.lis").destroy();
+                                       "{-1/2,-1,undef,1,1/2}");
+  assert_parsed_expression_simplify_to("sequence(x^2,x,3)", "{1,4,9}");
+  {
+    // Do not confuse u{n} and L*{n}
+    Shared::GlobalContext globalContext;
+    assert_reduce_and_store("{3}→L", globalContext);
+    assert_parsed_expression_simplify_to("L{2}", "{6}",
+                                         globalContext);  // L*{2}
+    // Clean the storage for other tests
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("L.lis").destroy();
+  }
 }
 
 QUIZ_CASE(poincare_simplification_functions_of_lists) {

@@ -2282,31 +2282,30 @@ QUIZ_CASE(pcj_approximation_context) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
-template <typename T>
-void assert_expression_approximates_with_value_for_symbol(
-    const char* expression, T approximation, const char* symbol, T symbolValue,
-    Preferences::AngleUnit angleUnit = AngleUnit::Degree,
-    Preferences::ComplexFormat complexFormat = ComplexFormat::Cartesian) {
-  UserExpression e = UserExpression::Builder(parse(expression));
-  bool reductionFailure = false;
-  SystemExpression eReplaced = e.cloneAndReplaceSymbolWithExpression(
-      symbol, Expression::Builder(symbolValue), &reductionFailure,
-      SymbolicComputation::ReplaceAllSymbols);
-  Shared::GlobalContext globalContext;
-  T result = eReplaced.approximateToRealScalar<T>(angleUnit, complexFormat,
-                                                  &globalContext);
-  quiz_assert_print_if_failure(
-      roughly_equal(result, approximation, OMG::Float::EpsilonLax<T>(), true),
-      expression);
-}
-
 QUIZ_CASE(pcj_approximation_floor_ceil_integer) {
-  constexpr double upperBound = 1000.;
-  for (double d = 0.; d < upperBound; d += 1.) {
-    assert_expression_approximates_with_value_for_symbol(
-        "floor(x * (x+1)^(-1) + x^2 * (x+1)^(-1))", d, "x", d);
-    assert_expression_approximates_with_value_for_symbol(
-        "ceil(x * (x+1)^(-1) + x^2 * (x+1)^(-1))", d, "x", d);
+  const char* expr1 = "floor(x * (x+1)^(-1) + x^2 * (x+1)^(-1))";
+  const char* expr2 = "ceil(x * (x+1)^(-1) + x^2 * (x+1)^(-1))";
+  Tree* t1 = parse(expr1);
+  Tree* t2 = parse(expr2);
+  Variables::ReplaceSymbol(t1, "x"_e, 0, ComplexSign::RealFinite());
+  Variables::ReplaceSymbol(t2, "x"_e, 0, ComplexSign::RealFinite());
+  Approximation::Context ctx;
+  Approximation::Private::LocalContext localCtx =
+      Approximation::Private::LocalContext(0.0, nullptr);
+  ctx.m_localContext = &localCtx;
+  constexpr double upperBound = 1000.0;
+  for (double d = 0.0; d < upperBound; d += 1.0) {
+    localCtx.setLocalValue(d);
+    double result1 =
+        Approximation::To<double>(t1, Approximation::Parameters{}, ctx);
+    double result2 =
+        Approximation::To<double>(t2, Approximation::Parameters{}, ctx);
+    quiz_assert_print_if_failure(
+        roughly_equal(result1, d, OMG::Float::EpsilonLax<double>(), true),
+        expr1);
+    quiz_assert_print_if_failure(
+        roughly_equal(result2, d, OMG::Float::EpsilonLax<double>(), true),
+        expr2);
   }
 }
 

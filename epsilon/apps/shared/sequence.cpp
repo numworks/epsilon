@@ -218,8 +218,10 @@ double Sequence::approximateAtContextRank(Context* ctx, int rank,
     return NAN;
   }
   if (rank >= firstNonInitialRank()) {
-    return expressionReduced(ctx).approximateToRealScalarWithValue(
-        static_cast<double>(rank - order()));
+    // TODO: Prepared function of expressionReduced could be memoized.
+    return expressionReduced(ctx)
+        .getPreparedFunction(Function::k_unknownName)
+        .approximateToRealScalarWithValue(static_cast<double>(rank - order()));
   }
   assert(type() != Type::Explicit);
   SystemExpression e;

@@ -1,6 +1,7 @@
 #ifndef POINCARE_EXPRESSION_BUILTINS_H
 #define POINCARE_EXPRESSION_BUILTINS_H
 
+#include <poincare/preferences.h>
 #include <poincare/src/layout/layout_span_decoder.h>
 #include <poincare/src/memory/type_block.h>
 
@@ -44,12 +45,14 @@ class Builtin {
   }
   static bool HasCustomIdentifier(LayoutSpan name);
   static const Builtin* GetReservedFunction(LayoutSpan name);
-  static const Builtin* GetReservedFunction(const Tree* e);
-  constexpr static const Builtin* GetReservedFunction(Type type);
+  static const Builtin* GetReservedFunction(
+      const Tree* e, Preferences::TranslateBuiltins translateBuiltins =
+                         Preferences::TranslateBuiltins::No);
+  constexpr static const Builtin* GetReservedFunction(
+      Type type, Preferences::TranslateBuiltins translateBuiltins =
+                     Preferences::TranslateBuiltins::No);
   static const Builtin* GetSpecialIdentifier(LayoutSpan name);
   static const Builtin* GetSpecialIdentifier(Type type);
-  bool canBeTranslated() const;
-  const char* translation() const;
 
  private:
   Type m_type;
@@ -147,12 +150,13 @@ constexpr static Builtin s_builtins[] = {
     {Type::Re, "re"},
     {Type::Im, "im"},
 #endif
-#if POINCARE_TRANSLATE_BUILTINS
-    {Type::GCD, Aliases("\01gcd\00PGCD\00")},
-    {Type::LCM, Aliases("\01lcm\00PPCM\00")},
-#else
     {Type::GCD, "gcd"},
+#if POINCARE_TRANSLATE_BUILTINS
+    {Type::GCD, Aliases("PGCD")},
+#endif
     {Type::LCM, "lcm"},
+#if POINCARE_TRANSLATE_BUILTINS
+    {Type::LCM, Aliases("PPCM")},
 #endif
     {Type::Quo, "quo"},
     {Type::Rem, "rem"},
@@ -221,11 +225,22 @@ constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
 #endif
 };
 
-constexpr const Builtin* Builtin::GetReservedFunction(Type type) {
-  for (const Builtin& builtin : s_builtins) {
-    if (builtin.m_type == type) {
-      return &builtin;
+constexpr const Builtin* Builtin::GetReservedFunction(
+    Type type, Preferences::TranslateBuiltins translate) {
+  constexpr size_t numberOfBuiltins = std::size(s_builtins);
+  for (size_t i = 0; i < numberOfBuiltins; i++) {
+    const Builtin& builtin = s_builtins[i];
+    if (builtin.m_type != type) {
+      continue;
     }
+#if POINCARE_TRANSLATE_BUILTINS
+    uint8_t translationOffset = static_cast<uint8_t>(translate);
+    if (i + translationOffset < numberOfBuiltins &&
+        s_builtins[i + translationOffset].m_type == type) {
+      return &s_builtins[i + translationOffset];
+    }
+#endif
+    return &builtin;
   }
   for (const Builtin& builtin : s_builtinsWithLayout) {
     if (builtin.m_type == type) {

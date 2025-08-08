@@ -102,8 +102,6 @@ namespace BuiltinsAliases {
 // Special identifiers
 constexpr static Aliases k_undefinedAlias = "undef";
 constexpr static Aliases k_ansAliases = "\01Ans\00ans\00";
-constexpr static Aliases k_trueAliases = "\01True\00true\00";
-constexpr static Aliases k_falseAliases = "\01False\00false\00";
 constexpr static Aliases k_infinityAliases = "\01∞\00inf\00";
 // Constants
 constexpr static Aliases k_piAliases = "\01π\00pi\00";

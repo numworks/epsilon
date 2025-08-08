@@ -123,38 +123,40 @@ class BooleanOrUndefined {
 /* Approximation methods (with Parameters) */
 
 template <typename T>
-Tree* ToTree(const Tree* e, Parameters params, Context context = Context());
+Tree* ToTree(const Tree* e, Parameters params,
+             const Context& context = Context());
 
 /* Approximate to real any scalar, unit or list with a list element. Return
  * NAN otherwise. */
 template <typename T>
-T To(const Tree* e, Parameters params, Context context = Context());
+T To(const Tree* e, Parameters params, const Context& context = Context());
 
 /* Approximate to real any scalar, unit, list/point with a list/point element,
 with given value for VarX */
 template <typename T>
-T To(const Tree* e, T abscissa, Parameters params, Context context = Context());
+T To(const Tree* e, T abscissa, Parameters params,
+     const Context& context = Context());
 
 template <typename T>
 std::complex<T> ToComplex(const Tree* e, Parameters params,
-                          Context context = Context());
+                          const Context& context = Context());
 
 template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
-                                         Context context = Context());
+                                         const Context& context = Context());
 // Approximate with given value for VarX
 template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
                                          Parameters params,
-                                         Context context = Context());
+                                         const Context& context = Context());
 
 template <typename T>
 Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
-                        Context context = Context());
+                        const Context& context = Context());
 
 template <typename T>
 BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
-                             Context context = Context());
+                             const Context& context = Context());
 
 /* Helpers */
 
@@ -172,7 +174,8 @@ bool CanApproximate(const Tree* e, bool approxLocalVar = false);
 
 // Approximate every scalar subtree that can be approximated.
 template <typename T>
-bool ApproximateAndReplaceEveryScalar(Tree* e, Context context = Context());
+bool ApproximateAndReplaceEveryScalar(Tree* e,
+                                      const Context& context = Context());
 
 /* Returns -1 if every condition is false, it assumes there is no other free
  * variable than VarX */
@@ -196,8 +199,14 @@ bool IsNonReal(std::complex<T> x) {
 
 namespace Private {
 // Update the approximation's context. Return a clone of e if necessary.
+/* Note that the Context is const in this method although the random context
+ * will be updated. This is taking advantage of the mutable m_randomContext.
+ * This allows to call PrepareTreeAndContext in methods where the Context is
+ * const, without the need to create a copy of the whole Context just to update
+ * the random context. */
 template <typename T>
-Tree* PrepareTreeAndContext(const Tree* e, Parameters params, Context& context);
+Tree* PrepareTreeAndContext(const Tree* e, Parameters params,
+                            const Context& context);
 
 // Tree can be of any dimension
 template <typename T>

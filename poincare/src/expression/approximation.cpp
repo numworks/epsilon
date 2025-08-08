@@ -39,7 +39,7 @@ static_assert(!POINCARE_NO_FLOAT_APPROXIMATION ||
               "and booleans");
 
 template <typename T>
-Tree* ToTree(const Tree* e, Parameters params, Context context) {
+Tree* ToTree(const Tree* e, Parameters params, const Context& context) {
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return KUndefUnhandledDimension->cloneTree();
   }
@@ -56,9 +56,10 @@ Tree* ToTree(const Tree* e, Parameters params, Context context) {
   if (listLength != Dimension::k_nonListListLength) {
     assert(!dim.isMatrix());
     result = SharedTreeStack->pushList(listLength);
+    Context listEvaluationContext = context;
     for (int i = 0; i < listLength; i++) {
-      context.m_listElement = i;
-      PrivateToTree<T>(target, dim, &context);
+      listEvaluationContext.m_listElement = i;
+      PrivateToTree<T>(target, dim, &listEvaluationContext);
     }
   } else {
     result = PrivateToTree<T>(target, dim, &context);
@@ -72,7 +73,8 @@ Tree* ToTree(const Tree* e, Parameters params, Context context) {
 }
 
 template <typename T>
-std::complex<T> ToComplex(const Tree* e, Parameters params, Context context) {
+std::complex<T> ToComplex(const Tree* e, Parameters params,
+                          const Context& context) {
   if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return NAN;
   }
@@ -89,7 +91,7 @@ std::complex<T> ToComplex(const Tree* e, Parameters params, Context context) {
 
 template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
-                                         Context context) {
+                                         const Context& context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
@@ -100,13 +102,16 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
                                                : PointOrRealScalar<T>(NAN, NAN);
   if (!context.m_localContext || !(std::isnan(context.variable(0).real()) ||
                                    std::isnan(context.variable(0).imag()))) {
-    T xScalar;
+    T xScalar, yScalar;
     if (dim.isPoint()) {
-      context.m_pointElement = 0;
-      xScalar = PrivateTo<T>(target, &context);
-      context.m_pointElement = 1;
+      Context pointEvaluationContext = context;
+      pointEvaluationContext.m_pointElement = 0;
+      xScalar = PrivateTo<T>(target, &pointEvaluationContext);
+      pointEvaluationContext.m_pointElement = 1;
+      yScalar = PrivateTo<T>(target, &pointEvaluationContext);
+    } else {
+      yScalar = PrivateTo<T>(target, &context);
     }
-    T yScalar = PrivateTo<T>(target, &context);
     result = dim.isPoint() ? PointOrRealScalar<T>(xScalar, yScalar)
                            : PointOrRealScalar<T>(yScalar);
   }
@@ -118,15 +123,18 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
 
 template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
-                                         Parameters params, Context context) {
-  LocalContext localContext(abscissa, context.m_localContext);
-  context.m_localContext = &localContext;
-  return ToPointOrRealScalar<T>(e, params, context);
+                                         Parameters params,
+                                         const Context& context) {
+  // TODO: rework the LocalContext creation workflow
+  Context contextCopy = context;
+  LocalContext localContext(abscissa, contextCopy.m_localContext);
+  contextCopy.m_localContext = &localContext;
+  return ToPointOrRealScalar<T>(e, params, contextCopy);
 }
 
 template <typename T>
 BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
-                             Context context) {
+                             const Context& context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
          Dimension::Get(e, context.m_symbolContext).isBoolean());
   assert(!params.optimize);
@@ -140,7 +148,7 @@ BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
 };
 
 template <typename T>
-T To(const Tree* e, Parameters params, Context context) {
+T To(const Tree* e, Parameters params, const Context& context) {
   // Units are tolerated in scalar approximation (replaced with SI ratios).
   assert(Dimension::DeepCheck(e, context.m_symbolContext));
   Dimension dim = Dimension::Get(e, context.m_symbolContext);
@@ -153,14 +161,17 @@ T To(const Tree* e, Parameters params, Context context) {
 };
 
 template <typename T>
-T To(const Tree* e, T abscissa, Parameters params, Context context) {
-  LocalContext localContext(abscissa, context.m_localContext);
-  context.m_localContext = &localContext;
-  return To<T>(e, params, context);
+T To(const Tree* e, T abscissa, Parameters params, const Context& context) {
+  // TODO: rework the LocalContext creation workflow
+  Context contextCopy = context;
+  LocalContext localContext(abscissa, contextCopy.m_localContext);
+  contextCopy.m_localContext = &localContext;
+  return To<T>(e, params, contextCopy);
 }
 
 template <typename T>
-Coordinate2D<T> ToPoint(const Tree* e, Parameters params, Context context) {
+Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
+                        const Context& context) {
   assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
          Dimension::Get(e, context.m_symbolContext).isPoint());
   return ToPointOrRealScalar<T>(e, params, context).toPoint();
@@ -192,7 +203,7 @@ Tree* Private::ToComplexTree(const Tree* e, const Context* ctx) {
 
 template <typename T>
 Tree* Private::PrepareTreeAndContext(const Tree* e, Parameters params,
-                                     Context& context) {
+                                     const Context& context) {
   // Only clone if necessary
   Tree* clone = nullptr;
   if (params.projectLocalVariables) {
@@ -1727,7 +1738,7 @@ bool Private::SkipApproximation(TypeBlock type, TypeBlock parentType,
 }
 
 template <typename T>
-bool ApproximateAndReplaceEveryScalar(Tree* e, Context context) {
+bool ApproximateAndReplaceEveryScalar(Tree* e, const Context& context) {
   // Prevent float to double conversion
   if (sizeof(T) == sizeof(double) &&
       e->hasDescendantSatisfying(
@@ -1818,36 +1829,41 @@ Tree* ExtractRealPart(const Tree* e) {
  * correct ToComplex<T> as needed since the code is mostly independent of the
  * float type used in the tree. */
 
-template Tree* ToTree<float>(const Tree*, Parameters, Context);
-template Tree* ToTree<double>(const Tree*, Parameters, Context);
+template Tree* ToTree<float>(const Tree*, Parameters, const Context&);
+template Tree* ToTree<double>(const Tree*, Parameters, const Context&);
 
-template std::complex<float> ToComplex(const Tree*, Parameters, Context);
-template std::complex<double> ToComplex(const Tree*, Parameters, Context);
+template std::complex<float> ToComplex(const Tree*, Parameters, const Context&);
+template std::complex<double> ToComplex(const Tree*, Parameters,
+                                        const Context&);
 
 template Tree* Private::ToMatrix<float>(const Tree*, const Context*);
 template Tree* Private::ToMatrix<double>(const Tree*, const Context*);
 
 template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, Parameters,
-                                                      Context);
+                                                      const Context&);
 template PointOrRealScalar<double> ToPointOrRealScalar(const Tree*, Parameters,
-                                                       Context);
+                                                       const Context&);
 
 template PointOrRealScalar<float> ToPointOrRealScalar(const Tree*, float,
-                                                      Parameters, Context);
+                                                      Parameters,
+                                                      const Context&);
 template PointOrRealScalar<double> ToPointOrRealScalar(const Tree*, double,
-                                                       Parameters, Context);
+                                                       Parameters,
+                                                       const Context&);
 
-template BooleanOrUndefined ToBoolean<float>(const Tree*, Parameters, Context);
-template BooleanOrUndefined ToBoolean<double>(const Tree*, Parameters, Context);
+template BooleanOrUndefined ToBoolean<float>(const Tree*, Parameters,
+                                             const Context&);
+template BooleanOrUndefined ToBoolean<double>(const Tree*, Parameters,
+                                              const Context&);
 
-template float To(const Tree*, Parameters, Context);
-template double To(const Tree*, Parameters, Context);
+template float To(const Tree*, Parameters, const Context&);
+template double To(const Tree*, Parameters, const Context&);
 
-template float To(const Tree*, float, Parameters, Context);
-template double To(const Tree*, double, Parameters, Context);
+template float To(const Tree*, float, Parameters, const Context&);
+template double To(const Tree*, double, Parameters, const Context&);
 
-template Coordinate2D<float> ToPoint(const Tree*, Parameters, Context);
-template Coordinate2D<double> ToPoint(const Tree*, Parameters, Context);
+template Coordinate2D<float> ToPoint(const Tree*, Parameters, const Context&);
+template Coordinate2D<double> ToPoint(const Tree*, Parameters, const Context&);
 
 template float FloatBinomial(float, float);
 template double FloatBinomial(double, double);
@@ -1869,8 +1885,8 @@ template double ToLocalContext(const Tree*, const Context*, double);
 template int IndexOfActivePiecewiseBranchAt(const Tree*, float);
 template int IndexOfActivePiecewiseBranchAt(const Tree*, double);
 
-template bool ApproximateAndReplaceEveryScalar<float>(Tree*, Context);
-template bool ApproximateAndReplaceEveryScalar<double>(Tree*, Context);
+template bool ApproximateAndReplaceEveryScalar<float>(Tree*, const Context&);
+template bool ApproximateAndReplaceEveryScalar<double>(Tree*, const Context&);
 
 template bool Private::PrivateApproximateAndReplaceEveryScalar<float>(
     Tree*, const Context*);
@@ -1883,8 +1899,8 @@ template bool Private::SkipApproximation<double>(TypeBlock, TypeBlock, int,
                                                  bool);
 
 template Tree* Private::PrepareTreeAndContext<float>(const Tree*, Parameters,
-                                                     Context&);
+                                                     const Context&);
 template Tree* Private::PrepareTreeAndContext<double>(const Tree*, Parameters,
-                                                      Context&);
+                                                      const Context&);
 
 }  // namespace Poincare::Internal::Approximation

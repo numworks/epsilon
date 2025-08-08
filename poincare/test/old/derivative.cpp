@@ -106,38 +106,40 @@ QUIZ_CASE(poincare_derivative_formal) {
       "piecewise(x,x=1,2×x,x<5,3)})");
 #endif
 
-  Shared::GlobalContext context;
-  assert_reduce_and_store("2→a", context);
-  assert_reduce_and_store("-1→b", context);
-  assert_reduce_and_store("3→c", context);
-  assert_reduce_and_store("x/2→f(x)", context);
+  {
+    Shared::GlobalContext context;
+    assert_reduce_and_store("2→a", context);
+    assert_reduce_and_store("-1→b", context);
+    assert_reduce_and_store("3→c", context);
+    assert_reduce_and_store("x/2→f(x)", context);
 
-  assert_reduces_to_formal_expression("diff(a×x^2+b×x+c,x,x)", "4×x-1",
-                                      context);
-  assert_reduces_to_formal_expression("diff(f(x),x,x)", "1/2", context);
-  assert_reduces_to_formal_expression("diff(a^2,a,x)", "2×x", context);
-  assert_reduces_to_formal_expression("diff(a^2,a,a)", "4", context);
-  assert_reduces_to_formal_expression("diff(b^2,b,2)", "4", context, Radian,
-                                      Real);
+    assert_reduces_to_formal_expression("diff(a×x^2+b×x+c,x,x)", "4×x-1",
+                                        context);
+    assert_reduces_to_formal_expression("diff(f(x),x,x)", "1/2", context);
+    assert_reduces_to_formal_expression("diff(a^2,a,x)", "2×x", context);
+    assert_reduces_to_formal_expression("diff(a^2,a,a)", "4", context);
+    assert_reduces_to_formal_expression("diff(b^2,b,2)", "4", context, Radian,
+                                        Real);
 
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("c.exp").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("b.exp").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("c.exp").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
-  // On points
-  assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,t)",
-                                      "(cos(t),-sin(t))", context);
-  assert_reduce_and_store("(3t,-2t^2)→f(t)", context);
-  assert_reduces_to_formal_expression("diff(f(t),t,t)", "(3,-4×t)", context);
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fx.pc").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fy.pc").destroy();
-  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+    // On points
+    assert_reduces_to_formal_expression("diff((sin(t),cos(t)),t,t)",
+                                        "(cos(t),-sin(t))", context);
+    assert_reduce_and_store("(3t,-2t^2)→f(t)", context);
+    assert_reduces_to_formal_expression("diff(f(t),t,t)", "(3,-4×t)", context);
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fx.pc").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("fy.pc").destroy();
+    Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  }
 
   // On matrices
-  assert_reduces_to_formal_expression("diff([[x]],x,x)", "undef", context);
-  assert_reduces_to_formal_expression("diff([[2t,3t]],t,t)", "undef", context);
-  assert_reduces_to_formal_expression("diff([[2t][3t]],t,t)", "undef", context);
+  assert_reduces_to_formal_expression("diff([[x]],x,x)", "undef");
+  assert_reduces_to_formal_expression("diff([[2t,3t]],t,t)", "undef");
+  assert_reduces_to_formal_expression("diff([[2t][3t]],t,t)", "undef");
 }
 
 QUIZ_CASE(poincare_derivative_formal_higher_order) {
@@ -167,7 +169,6 @@ void assert_reduces_for_approximation(
 
 QUIZ_CASE(poincare_derivative_reduced_approximation) {
   Shared::GlobalContext context;
-
   assert(Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp")
              .isNull());
   assert_reduces_for_approximation("diff(ln(x),x,1)", "1", context);

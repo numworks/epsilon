@@ -208,7 +208,8 @@ void Layouter::layoutText(TreeRef& layoutParent, const char* text) {
 
 void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
   assert(Builtin::IsReservedFunction(expression));
-  const Builtin* builtin = Builtin::GetReservedFunction(expression);
+  const Builtin* builtin = Builtin::GetReservedFunction(
+      expression, SharedPreferences->translateBuiltins());
   if (m_linearMode || !builtin->has2DLayout()) {
     // Built "builtin(child1, child2)"
     if (expression->isParametric()) {
@@ -217,11 +218,6 @@ void Layouter::layoutBuiltin(TreeRef& layoutParent, Tree* expression) {
           expression->child(expression->numberOfChildren() - 1));
     }
     const char* name = builtin->aliases()->mainAlias();
-    if (SharedPreferences->translateBuiltins() ==
-            Preferences::TranslateBuiltins::TranslateToFrench &&
-        builtin->canBeTranslated()) {
-      name = builtin->translation();
-    }
     layoutFunctionCall(layoutParent, expression, name);
   } else {
     // Built 2D layout associated with builtin

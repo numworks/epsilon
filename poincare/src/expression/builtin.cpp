@@ -102,12 +102,6 @@ constexpr static DistributionBuiltin s_distributionsBuiltins[] = {
 #endif
 };
 
-bool Builtin::canBeTranslated() const {
-  return m_type == Type::GCD || m_type == Type::LCM;
-}
-
-const char* Builtin::translation() const { return *(++aliases()->begin()); }
-
 Tree* Builtin::pushNode(int numberOfChildren) const {
   Tree* result = SharedTreeStack->pushBlock(m_type);
   if (TypeBlock(m_type).isNAry()) {
@@ -164,8 +158,9 @@ const Builtin* Builtin::GetReservedFunction(LayoutSpan name) {
   return nullptr;
 }
 
-const Builtin* Builtin::GetReservedFunction(const Tree* e) {
-  const Builtin* builtin = GetReservedFunction(e->type());
+const Builtin* Builtin::GetReservedFunction(
+    const Tree* e, Preferences::TranslateBuiltins translate) {
+  const Builtin* builtin = GetReservedFunction(e->type(), translate);
   if (builtin) {
     return builtin;
   }

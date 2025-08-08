@@ -103,7 +103,7 @@ QUIZ_CASE(poincare_pool_expression_can_start_uninitialized) {
   Expression e;
   assert_pool_size(initialPoolSize);
   {
-    Expression i = Expression::Builder(1);
+    UserExpression i = UserExpression::Builder(1);
     assert_pool_size(initialPoolSize + 1);
     e = i;
     assert_pool_size(initialPoolSize + 1);

@@ -54,7 +54,7 @@ UserExpression SymbolHelper::BuildSymbol(const char* name, int length) {
     name = BuiltinsAliases::k_thetaAliases.mainAlias();
     length = strlen(name);
   }
-  return Expression::Builder(
+  return UserExpression::Builder(
       SharedTreeStack->pushUserSymbol(name, static_cast<size_t>(length + 1)));
 }
 
@@ -67,7 +67,8 @@ UserExpression SymbolHelper::BuildSymbol(CodePoint name) {
   return BuildSymbol(buffer, codePointLength);
 }
 
-UserExpression SymbolHelper::BuildFunction(const char* name, Expression child) {
+UserExpression SymbolHelper::BuildFunction(const char* name,
+                                           UserExpression child) {
   if (BuiltinsAliases::k_thetaAliases.contains(name)) {
     name = BuiltinsAliases::k_thetaAliases.mainAlias();
   }
@@ -75,17 +76,18 @@ UserExpression SymbolHelper::BuildFunction(const char* name, Expression child) {
       Internal::SharedTreeStack->pushUserFunction(name, strlen(name) + 1);
   assert(!child.isUninitialized());
   child.tree()->cloneTree();
-  return Expression::Builder(e);
+  return UserExpression::Builder(e);
 }
 
-UserExpression SymbolHelper::BuildSequence(const char* name, Expression child) {
+UserExpression SymbolHelper::BuildSequence(const char* name,
+                                           UserExpression child) {
   // If needed, handle theta like functions and symbols
   assert(!BuiltinsAliases::k_thetaAliases.contains(name));
   Internal::Tree* e =
       Internal::SharedTreeStack->pushUserSequence(name, strlen(name) + 1);
   assert(!child.isUninitialized());
   child.tree()->cloneTree();
-  return Expression::Builder(e);
+  return UserExpression::Builder(e);
 }
 
 }  // namespace Poincare

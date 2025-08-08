@@ -33,7 +33,7 @@ QUIZ_CASE(code_clipboard_enters_and_exits_python) {
    * have its exponent in parentheses.
   assert_clipboard_enters_and_exits_python("1+e^x", "1+exp(x)");
    */
-  Expression e = Expression::Parse("1+e^x", EmptyContext{});
+  UserExpression e = UserExpression::Parse("1+e^x", EmptyContext{});
   char buffer[32];
   e.serialize(buffer);
   assert_clipboard_enters_and_exits_python(buffer, "1+exp(x)");

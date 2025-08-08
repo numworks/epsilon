@@ -39,7 +39,9 @@ PointOfInterest pointFromTree(const Internal::Tree* t) {
 
 }  // namespace
 
-void PointsOfInterestList::init() { m_list = Expression::Builder(KList()); }
+void PointsOfInterestList::init() {
+  m_list = SystemExpression::Builder(KList());
+}
 
 int PointsOfInterestList::numberOfPoints() const {
   if (m_list.isUninitialized()) {
@@ -68,7 +70,7 @@ void PointsOfInterestList::sort() {
                pointFromTree(pointAddressInTree(l, j)).abscissa;
       },
       editableList, numberOfPoints());
-  m_list = Expression::Builder(editableList);
+  m_list = SystemExpression::Builder(editableList);
 }
 
 void PointsOfInterestList::filterOutOfBounds(double start, double end) {
@@ -79,7 +81,7 @@ void PointsOfInterestList::filterOutOfBounds(double start, double end) {
       Internal::NAry::AddChild(editableList, child->cloneTree());
     }
   }
-  m_list = Expression::Builder(editableList);
+  m_list = SystemExpression::Builder(editableList);
 }
 
 Expression PointsOfInterestList::BuildStash(Provider provider,
@@ -110,7 +112,7 @@ Expression PointsOfInterestList::BuildStash(Provider provider,
         }
       }
 
-      return Expression::Builder(stash);
+      return SystemExpression::Builder(stash);
     } else {
       return {};
     }
@@ -140,7 +142,7 @@ bool PointsOfInterestList::merge(Expression& stash) {
              [](const Internal::Tree* t) { return !t->isPointOfInterest(); }));
   /* No need for a checkpoint, since the combined pool object is smaller
    * than both list and stash separate. */
-  m_list = Expression::Builder(stackedList);
+  m_list = SystemExpression::Builder(stackedList);
   return true;
 }
 

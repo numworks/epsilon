@@ -250,8 +250,8 @@ void assert_parse_to_integer_overflow(const char* input,
 void store(const char* storeExpression,
            Poincare::VariableStore* variableStore) {
   assert(variableStore);
-  Poincare::Expression s =
-      Poincare::Expression::Parse(storeExpression, *variableStore);
+  Poincare::UserExpression s =
+      Poincare::UserExpression::Parse(storeExpression, *variableStore);
   Poincare::StoreHelper::PerformStore(variableStore, s);
 }
 

@@ -149,7 +149,7 @@ static CalculationResult computeInterruptible(
     GlobalContext::s_sequenceStore->tidyDownstreamPoolFrom(
         checkpoint.endOfPoolBeforeCheckpoint());
     // If the output computation is interrupted, return undef
-    outputs = {Expression::Undefined(), Expression::Undefined()};
+    outputs = {UserExpression::Undefined(), UserExpression::Undefined()};
     hasReductionFailure = true;
   }
 
@@ -190,8 +190,8 @@ assert(!value.recursivelyMatches(
     assert(!outputs.exact.isUninitialized() &&
            !outputs.approximate.isUninitialized());
   } else {
-    outputs.exact = Expression::Undefined();
-    outputs.approximate = Expression::Undefined();
+    outputs.exact = UserExpression::Undefined();
+    outputs.approximate = UserExpression::Undefined();
   }
 }
 
@@ -206,7 +206,7 @@ static void postProcessOutputs(OutputExpressions& outputs,
    * unexplained problems that should be investigated in more details.
    */
   if (unitsForbidden && outputs.approximate.hasUnit()) {
-    outputs = {Expression::Undefined(), Expression::Undefined()};
+    outputs = {UserExpression::Undefined(), UserExpression::Undefined()};
   }
   enhancePushedExpression(outputs.exact);
 
@@ -280,8 +280,8 @@ OMG::ExpiringPointer<Calculation> CalculationStore::push(
     /* The calculation is too big to hold on the buffer, even if all previous
      * calculations were deleted. Replace its outputs by undefined, it should
      * now fit on the calculation buffer. */
-    calculationToPush.outputs.exact = Expression::Undefined();
-    calculationToPush.outputs.approximate = Expression::Undefined();
+    calculationToPush.outputs.exact = UserExpression::Undefined();
+    calculationToPush.outputs.approximate = UserExpression::Undefined();
     neededSize = neededSizeForCalculation(calculationToPush.sizeOfTrees());
     if (neededSize > maximumSize()) {
       /* If the calculation with undefined outputs is still too big, it means

@@ -71,11 +71,11 @@ bool HypothesisController::textFieldDidReceiveEvent(
 bool HypothesisController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
-      Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<double>(
-          textField->draftText(),
-          AppsContainerHelper::sharedAppsContainerGlobalContext(),
-          MathPreferences::SharedPreferences()->complexFormat(),
-          MathPreferences::SharedPreferences()->angleUnit());
+      Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
+          double>(textField->draftText(),
+                  AppsContainerHelper::sharedAppsContainerGlobalContext(),
+                  MathPreferences::SharedPreferences()->complexFormat(),
+                  MathPreferences::SharedPreferences()->angleUnit());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);

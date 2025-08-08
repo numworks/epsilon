@@ -22,7 +22,8 @@ Tree* floatNodeAtIndex(const Tree* tree, int index) {
 
 template <typename T>
 FloatList<T> FloatList<T>::Builder() {
-  Expression expr = Expression::Builder(SharedTreeStack->pushList(0));
+  SystemExpression expr =
+      SystemExpression::Builder(SharedTreeStack->pushList(0));
   return static_cast<FloatList<T>&>(expr);
 }
 
@@ -34,7 +35,7 @@ void FloatList<T>::addValue(T value) {
   Tree* clone = tree()->cloneTree();
   TreeRef newChild = SharedTreeStack->pushFloat(value);
   NAry::SetNumberOfChildren(clone, clone->numberOfChildren() + 1);
-  Expression temp = Expression::Builder(clone);
+  SystemExpression temp = SystemExpression::Builder(clone);
   *this = static_cast<FloatList<T>&>(temp);
 }
 
@@ -44,7 +45,7 @@ void FloatList<T>::replaceValueAtIndex(T value, int index) {
   Tree* clone = tree()->cloneTree();
   Tree* child = floatNodeAtIndex<T>(clone, index);
   child->nodeValueBlock(0)->set<T>(value);
-  Expression temp = Expression::Builder(clone);
+  SystemExpression temp = SystemExpression::Builder(clone);
   *this = static_cast<FloatList<T>&>(temp);
 }
 
@@ -53,7 +54,7 @@ void FloatList<T>::removeValueAtIndex(int index) {
   assert(index < numberOfChildren());
   Tree* clone = tree()->cloneTree();
   NAry::RemoveChildAtIndex(clone, index);
-  Expression temp = Expression::Builder(clone);
+  SystemExpression temp = SystemExpression::Builder(clone);
   *this = static_cast<FloatList<T>&>(temp);
 }
 

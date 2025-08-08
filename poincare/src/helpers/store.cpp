@@ -5,7 +5,7 @@
 
 namespace Poincare {
 
-const Expression StoreHelper::Value(const UserExpression& e) {
+const UserExpression StoreHelper::Value(const UserExpression& e) {
   assert(!e.isUninitialized() && e.isStore());
   return e.cloneChildAtIndex(0);
 }

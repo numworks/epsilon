@@ -19,7 +19,7 @@ CartesianConic buildCartesianConic(const char* expression) {
                                    .m_advanceReduce = false};
   Tree* e = parse_expression(expression, &globalContext);
   Simplification::ProjectAndReduce(e, &projContext);
-  return CartesianConic(Expression::Builder(e));
+  return CartesianConic(SystemExpression::Builder(e));
 }
 
 PolarConic buildPolarConic(const char* expression) {
@@ -29,7 +29,7 @@ PolarConic buildPolarConic(const char* expression) {
                                    .m_advanceReduce = false};
   Tree* e = parse_expression(expression, &globalContext);
   Simplification::ProjectAndReduce(e, &projContext);
-  return PolarConic(Expression::Builder(e));
+  return PolarConic(SystemExpression::Builder(e));
 }
 
 ParametricConic buildParametricConic(const char* expression) {
@@ -42,7 +42,7 @@ ParametricConic buildParametricConic(const char* expression) {
       "t", UserExpression::Builder<float>(0.f), &globalContext);
   Tree* e = parse_expression(expression, &tContext);
   Simplification::ProjectAndReduce(e, &projContext);
-  return ParametricConic(Expression::Builder(e));
+  return ParametricConic(SystemExpression::Builder(e));
 }
 
 void quiz_assert_shape(const char* expression, CoordinateType type,

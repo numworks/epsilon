@@ -87,7 +87,7 @@ void UnitListController::computeAdditionalResults(
   Poincare::UserExpression expressions[k_maxNumberOfExpressionCells];
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     m_layouts[i] = Layout();
-    expressions[i] = Expression();
+    expressions[i] = UserExpression();
   }
 
   // Build an expression for each relevant unit display mode
@@ -99,7 +99,7 @@ void UnitListController::computeAdditionalResults(
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(ctx, &reductionFailure);
   if (reductionFailure) {
-    expressions[--numberOfExpressions] = Expression();
+    expressions[--numberOfExpressions] = UserExpression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 #if 0  // TODO: correctly implement AutomaticInput and reenable it
@@ -114,14 +114,14 @@ void UnitListController::computeAdditionalResults(
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(ctx, &reductionFailure);
   if (reductionFailure) {
-    expressions[--numberOfExpressions] = Expression();
+    expressions[--numberOfExpressions] = UserExpression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
   ctx.m_unitDisplay = Internal::UnitDisplay::Equivalent;
   expressions[numberOfExpressions++] =
       input.cloneAndSimplify(ctx, &reductionFailure);
   if (reductionFailure) {
-    expressions[--numberOfExpressions] = Expression();
+    expressions[--numberOfExpressions] = UserExpression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 
@@ -130,7 +130,7 @@ void UnitListController::computeAdditionalResults(
     expressions[numberOfExpressions++] =
         input.cloneAndSimplify(ctx, &reductionFailure);
     if (reductionFailure) {
-      expressions[--numberOfExpressions] = Expression();
+      expressions[--numberOfExpressions] = UserExpression();
     }
     assert(!expressions[numberOfExpressions - 1].isUninitialized());
   }
@@ -139,7 +139,7 @@ void UnitListController::computeAdditionalResults(
   input.cloneAndSimplifyAndApproximate(expressions + numberOfExpressions++,
                                        &approximatedSIExpression, ctx);
   if (reductionFailure) {
-    expressions[--numberOfExpressions] = Expression();
+    expressions[--numberOfExpressions] = UserExpression();
   }
   assert(!expressions[numberOfExpressions - 1].isUninitialized());
 

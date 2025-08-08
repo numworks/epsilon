@@ -184,7 +184,7 @@ QUIZ_CASE(pcj_rational_integer_power) {
 static const Tree* GetMixedFractionTree(const Tree* rational,
                                         bool mixedFractionsEnabled) {
   return AdditionalResultsHelper::CreateMixedFraction(
-             Expression::Builder(rational), mixedFractionsEnabled)
+             SystemExpression::Builder(rational), mixedFractionsEnabled)
       .tree();
 }
 

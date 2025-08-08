@@ -133,7 +133,7 @@ QUIZ_CASE(pcj_serialization_expression_or_float) {
       Preferences::PrintFloatMode::Decimal,
       Preferences::ShortNumberOfSignificantDigits);
 
-  auto approximationFunction = [](Expression expression) {
+  auto approximationFunction = [](UserExpression expression) {
     return expression.approximateToRealScalar<float>(
         Preferences::AngleUnit::Radian, Preferences::ComplexFormat::Real);
   };

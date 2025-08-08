@@ -120,7 +120,7 @@ constexpr static Aliases k_squareRootAliases = "\01√\00sqrt\00";
 
 #if POINCARE_TRANSLATE_BUILTINS
 #define BUILTIN_TRANSLATION(type, ...) \
-  { type, __VA_ARGS__ }
+  , { type, __VA_ARGS__ }
 #else
 #define BUILTIN_TRANSLATION(...)
 #endif
@@ -172,10 +172,8 @@ constexpr static Builtin s_builtins[] = {
     {Type::Re, "re"},
     {Type::Im, "im"},
 #endif
-    {Type::GCD, "gcd"},
-    BUILTIN_TRANSLATION(Type::GCD, "PGCD"),
-    {Type::LCM, "lcm"},
-    BUILTIN_TRANSLATION(Type::LCM, "PPCM"),
+    {Type::GCD, "gcd"} BUILTIN_TRANSLATION(Type::GCD, "PGCD"),
+    {Type::LCM, "lcm"} BUILTIN_TRANSLATION(Type::LCM, "PPCM"),
     {Type::Quo, "quo"},
     {Type::Rem, "rem"},
     {Type::Factor, "factor"},

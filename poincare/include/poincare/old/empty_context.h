@@ -19,6 +19,8 @@ class EmptyContext : public Context {
       const Internal::Tree* symbol) const override;
 };
 
+static const EmptyContext k_emptyContext;
+
 }  // namespace Poincare
 
 #endif

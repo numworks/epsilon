@@ -13,17 +13,16 @@ def fileIfPath(path) {
 
 buildscript {
   repositories {
-    jcenter()
+    mavenCentral()
     google()
   }
   dependencies {
-    classpath 'com.android.tools.build:gradle:7.0.0'
+    classpath 'com.android.tools.build:gradle:8.12.0'
   }
 }
-
 allprojects {
   repositories {
-    jcenter()
+    mavenCentral()
     google()
   }
   buildDir = GRADLE_BUILD_DIR
@@ -32,14 +31,15 @@ allprojects {
 apply plugin: 'com.android.application'
 
 android {
-  compileSdkVersion 34
+  compileSdkVersion = 35
   defaultConfig {
     // TODO: change id between scandium/epsilon, the following works but I do
     // not know if changing the applicationId of an app in production is good practice?
     // applicationId "com.numworks." + project.getProperty("goalName")
-    applicationId "com.numworks.calculator"
-    minSdkVersion 21
-    targetSdkVersion 34
+    applicationId = "com.numworks.calculator"
+    namespace = "com.numworks.calculator"
+    minSdkVersion = 21
+    targetSdkVersion = 35
     def appVersion = project.getProperty("appVersion")
     def (major, minor, patch) = appVersion.toLowerCase().tokenize('.').collect{it.toInteger()}
     versionCode major*1000000 + minor*10000 + patch * 100
@@ -75,10 +75,10 @@ android {
     }
   }
   lintOptions {
-    abortOnError false
-    checkReleaseBuilds false
+    abortOnError = false
+    checkReleaseBuilds = false
   }
-  ndkVersion project.getProperty("ndkBundleVersion")
+  ndkVersion = project.getProperty("ndkBundleVersion")
 }
 
 dependencies {

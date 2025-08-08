@@ -1,28 +1,13 @@
-ifeq ($(findstring multiple,${MAKECMDGOALS}),multiple)
-
 SUBDIRS := epsilon scandium poincare
 
-multiple:
+.PHONY: subdir_combined_make_call
+subdir_combined_make_call:
 	@for subdir in $(SUBDIRS); do \
 		targets=`echo $(MAKECMDGOALS) | xargs -n1 | grep -E "^$${subdir}" | xargs`; \
 		if [ -n "$$targets" ]; then \
-			echo Running: make -C $$subdir $$targets; \
 			$(MAKE) -C $$subdir $$targets; \
 		fi; \
 	done
-
-%:
-	@:
-else
-
-epsilon%:
-	@ $(MAKE) -C epsilon $@
-
-scandium%:
-	@ $(MAKE) -C scandium $@
-
-poincare%:
-	@ $(MAKE) -C poincare $@
 
 # Using format from epsilon is a simple hack to avoid setting up haussmann here
 format:
@@ -35,4 +20,6 @@ clean:
 	@ $(MAKE) -C epsilon $@
 	@ $(MAKE) -C scandium $@
 	@ $(MAKE) -C poincare $@
-endif
+
+%: subdir_combined_make_call
+	@:

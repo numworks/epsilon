@@ -25,7 +25,7 @@ jobs:
       - name: Setup
         run: tools/setup.sh --only-simulator
       - name: Build
-        run: make multiple DEBUG=$DEBUG PLATFORM=web epsilon.html epsilon.htmlpack.zip
+        run: make DEBUG=$DEBUG PLATFORM=web epsilon.html epsilon.htmlpack.zip
       - name: Upload epsilon.html
         uses: actions/upload-artifact@v4
         with:

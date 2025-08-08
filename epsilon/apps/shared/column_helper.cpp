@@ -183,7 +183,9 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   bool reductionFailure = false;
   SystemExpression reduced = PoincareHelpers::CloneAndReduce(
       formula, &storeContext,
-      {.symbolicComputation = SymbolicComputation::ReplaceAllSymbols},
+      MathPreferences::SharedPreferences()->complexFormat(),
+      MathPreferences::SharedPreferences()->angleUnit(), true,
+      Poincare::ReductionTarget::User, SymbolicComputation::ReplaceAllSymbols,
       &reductionFailure);
 
   if (reductionFailure || reduced.isUndefined()) {

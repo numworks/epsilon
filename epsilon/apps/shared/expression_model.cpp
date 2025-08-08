@@ -110,9 +110,10 @@ SystemExpression ExpressionModel::expressionReduced(
        * 'Simplify'. Thus, we use a temporary expression. */
       bool reductionFailure = false;
       m_expression = PoincareHelpers::CloneAndReduce(
-          userExpression, context,
-          {.complexFormat = complexFormat(record, context),
-           .updateComplexFormatWithExpression = false},
+          userExpression, context, complexFormat(record, context),
+          MathPreferences::SharedPreferences()->angleUnit(), false,
+          Poincare::ReductionTarget::User,
+          Poincare::SymbolicComputation::ReplaceDefinedSymbols,
           &reductionFailure);
       if (reductionFailure) {
         m_expression = SystemExpression::Builder(KFailedSimplification);

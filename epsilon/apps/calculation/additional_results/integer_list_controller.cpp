@@ -41,9 +41,9 @@ void IntegerListController::computeAdditionalResults(
   UserExpression factor = UserExpression::Create(KFactor(KA), {.KA = integer});
   bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
-      &factor, App::app()->localContext(),
-      {.complexFormat = complexFormat(), .angleUnit = angleUnit()},
-      &reductionFailure);
+      &factor, App::app()->localContext(), complexFormat(), angleUnit(), true,
+      Poincare::ReductionTarget::User,
+      SymbolicComputation::ReplaceDefinedSymbols, &reductionFailure);
   if (!reductionFailure && !factor.isUndefined() &&
       !factor.tree()->treeIsIdenticalTo(1_e) &&
       !factor.tree()->treeIsIdenticalTo(0_e)) {

@@ -44,8 +44,8 @@ void DoublePairStore::initListsFromStorage(bool delayUpdate) {
       if (listData.size == 0) {
         continue;
       }
-      UserExpression e =
-          UserExpression::ExpressionFromAddress(listData.buffer, listData.size);
+      SystemExpression e = SystemExpression::ExpressionFromAddress(
+          listData.buffer, listData.size);
       if (!e.isList()) {
         continue;
       }

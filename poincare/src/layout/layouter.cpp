@@ -894,7 +894,9 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         layoutBuiltin(layoutParent, expression);
       } else if (Builtin::HasSpecialIdentifier(type)) {
         layoutText(layoutParent,
-                   Builtin::SpecialIdentifierName(type).mainAlias());
+                   Builtin::SpecialIdentifierName(
+                       type, SharedPreferences->translateBuiltins())
+                       .mainAlias());
       } else {
 #if POINCARE_TREE_LOG  // Improves Tree::logSerialize
         layoutFunctionCall(

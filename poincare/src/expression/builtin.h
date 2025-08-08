@@ -55,6 +55,20 @@ class Builtin {
   static const Builtin* GetSpecialIdentifier(Type type);
 
  private:
+  constexpr static const Builtin* SearchForTranslation(
+      const Builtin* array, size_t size, size_t index,
+      Preferences::TranslateBuiltins translate) {
+#if POINCARE_TRANSLATE_BUILTINS
+    uint8_t translationOffset = static_cast<uint8_t>(translate);
+    return (index + translationOffset < size &&
+            array[index + translationOffset].m_type == array[index].m_type)
+               ? &array[index + translationOffset]
+               : &array[index];
+#else
+    return &array[index];
+#endif
+  }
+
   Type m_type;
   Aliases m_aliases;
 };
@@ -233,14 +247,7 @@ constexpr const Builtin* Builtin::GetReservedFunction(
     if (builtin.m_type != type) {
       continue;
     }
-#if POINCARE_TRANSLATE_BUILTINS
-    uint8_t translationOffset = static_cast<uint8_t>(translate);
-    if (i + translationOffset < numberOfBuiltins &&
-        s_builtins[i + translationOffset].m_type == type) {
-      return &s_builtins[i + translationOffset];
-    }
-#endif
-    return &builtin;
+    return SearchForTranslation(s_builtins, numberOfBuiltins, i, translate);
   }
   for (const Builtin& builtin : s_builtinsWithLayout) {
     if (builtin.m_type == type) {

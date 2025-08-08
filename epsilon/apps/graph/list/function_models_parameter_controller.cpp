@@ -6,6 +6,7 @@
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <poincare/layout.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/preferences.h>
 #include <string.h>
 
@@ -54,8 +55,8 @@ void FunctionModelsParameterController::viewWillAppear() {
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
     char buffer[k_maxSizeOfNamedModel];
     Poincare::UserExpression e = UserExpression::Parse(
-        ModelWithDefaultName(model[i], buffer, k_maxSizeOfNamedModel), nullptr,
-        {.preserveInput = true});
+        ModelWithDefaultName(model[i], buffer, k_maxSizeOfNamedModel),
+        EmptyContext{}, {.preserveInput = true});
     m_layouts[i] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits,

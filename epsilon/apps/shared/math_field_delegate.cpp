@@ -47,7 +47,8 @@ bool AbstractMathFieldDelegate::isAcceptableText(const char* text,
    * some errors could be missed.
    * Sometimes the field needs to be parsed for assignment but this is
    * done later, namely by ContinuousFunction::buildExpressionFromLayout. */
-  UserExpression exp = UserExpression::Parse(text, context);
+  assert(context);
+  UserExpression exp = UserExpression::Parse(text, *context);
   if (exp.isUninitialized()) {
     // Unparsable expression
     return false;
@@ -86,7 +87,8 @@ bool MathLayoutFieldDelegate::isAcceptableLayout(Layout layout,
     // Accept empty layouts
     return true;
   }
-  UserExpression exp = UserExpression::Parse(layout, context);
+  assert(context);
+  UserExpression exp = UserExpression::Parse(layout, *context);
   return isAcceptableExpression(exp, context);
 }
 

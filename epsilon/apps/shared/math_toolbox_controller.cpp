@@ -7,6 +7,7 @@
 #include <escher/abstract_text_field.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/layout.h>
+#include <poincare/old/empty_context.h>
 #include <string.h>
 
 #include "toolbox_helpers.h"
@@ -125,8 +126,8 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
               Poincare::Preferences::EditionMode::Edition2D &&
           !messageTree->useRaw()) {
         // preserveInput is true so that f(x) is never parsed as f×(x)
-        UserExpression resultExpression =
-            UserExpression::Parse(text, nullptr, {.preserveInput = true});
+        UserExpression resultExpression = UserExpression::Parse(
+            text, EmptyContext{}, {.preserveInput = true});
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
           resultLayout = resultExpression.createLayout(

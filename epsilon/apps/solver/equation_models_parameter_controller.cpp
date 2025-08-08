@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <poincare/k_layout.h>
 #include <poincare/layout.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/preferences.h>
 
 #include "list_controller.h"
@@ -31,8 +32,8 @@ EquationModelsParameterController::EquationModelsParameterController(
   m_selectableListView.resetMargins();
   m_selectableListView.hideScrollBars();
   for (int i = 0; i < k_numberOfExpressionCells; i++) {
-    Poincare::UserExpression e = UserExpression::Parse(k_models[i + 1], nullptr,
-                                                       {.preserveInput = true});
+    Poincare::UserExpression e = UserExpression::Parse(
+        k_models[i + 1], EmptyContext{}, {.preserveInput = true});
     m_layouts[i] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits, nullptr);

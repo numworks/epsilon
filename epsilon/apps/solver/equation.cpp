@@ -80,8 +80,9 @@ Poincare::UserExpression Equation::Model::buildExpressionFromLayout(
   if (l.isUninitialized() || l.isEmpty()) {
     return UserExpression();
   }
+  assert(context);
   UserExpression expressionToStore =
-      UserExpression::Parse(l, context, {.forceUnitUnderscore = true});
+      UserExpression::Parse(l, *context, {.forceUnitUnderscore = true});
   return ReplaceSymbolWithUnknown(expressionToStore, symbol);
 }
 

@@ -6,6 +6,7 @@
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/old/empty_context.h>
 #include <string.h>
 
 #include <algorithm>
@@ -242,7 +243,10 @@ Poincare::UserExpression ExpressionModel::buildExpressionFromLayout(
     return UserExpression();
   }
   // Compute the expression to store, without replacing symbols
-  UserExpression expressionToStore = UserExpression::Parse(l, context);
+  // Note: temporary until EmptyContext is passed instead of nullptr
+  UserExpression expressionToStore =
+      context ? UserExpression::Parse(l, *context)
+              : UserExpression::Parse(l, EmptyContext{});
   return ReplaceSymbolWithUnknown(expressionToStore, symbol);
 }
 

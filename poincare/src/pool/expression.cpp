@@ -5,6 +5,8 @@
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
+#include <poincare/old/context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>
@@ -179,12 +181,12 @@ const Tree* Expression::TreeFromAddress(const void* address) {
   return reinterpret_cast<const ExpressionObject*>(address)->tree();
 }
 
-UserExpression UserExpression::Parse(const Tree* layout, Context* context,
+UserExpression UserExpression::Parse(const Tree* layout, const Context& context,
                                      ParserHelper::ParsingParameters params) {
   return Builder(Parser::Parse(layout, context, params));
 }
 
-UserExpression UserExpression::Parse(const char* string, Context* context,
+UserExpression UserExpression::Parse(const char* string, const Context& context,
                                      ParserHelper::ParsingParameters params) {
   if (string[0] == 0) {
     return UserExpression();
@@ -199,7 +201,7 @@ UserExpression UserExpression::Parse(const char* string, Context* context,
 }
 
 UserExpression UserExpression::ParseLatex(
-    const char* latex, Context* context,
+    const char* latex, const Context& context,
     ParserHelper::ParsingParameters params) {
   Tree* layout = LatexParser::LatexToLayout(latex);
   if (!layout) {
@@ -273,7 +275,7 @@ SystemExpression Expression::DecimalBuilderFromDouble(double value) {
   assert(buffer[0] != 0);
   Tree* layout = RackFromText(buffer);
   assert(layout);
-  TreeRef expression = Parser::Parse(layout);
+  TreeRef expression = Parser::Parse(layout, EmptyContext{});
   // expression is only made of numbers and simple nodes, no need for contextes.
   layout->removeTree();
   ProjectionContext context = {};
@@ -564,7 +566,9 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
     const char* text, Context* context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     SymbolicComputation symbolicComputation) {
-  UserExpression exp = Parse(text, context);
+  // Note : temporary until EmptyContext is passed instead  of nullptr
+  UserExpression exp =
+      context ? Parse(text, *context) : Parse(text, EmptyContext{});
   if (exp.isUninitialized()) {
     return NAN;
   }

@@ -192,7 +192,8 @@ bool EditExpressionController::isAcceptableExpression(
                        PrintFloat::k_maxNumberOfSignificantDigits, context);
   assert(!layout.isUninitialized());
   layout = layout.cloneWithoutMargins();
-  exp = UserExpression::Parse(layout, context);
+  assert(context);
+  exp = UserExpression::Parse(layout, *context);
   // Replacing Ans made the expression un-parsable.
   return !exp.isUninitialized();
 }

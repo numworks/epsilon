@@ -166,8 +166,7 @@ Tree* private_parse(const char* input, const Poincare::Context& context,
                     ParsingParameters params = {},
                     bool assertNotParsable = false) {
   Tree* layout = RackFromText(input);
-  // TODO: will become Parser::Parse(layout, context, params)
-  Tree* expression = Parser::Parse(layout, &context, params);
+  Tree* expression = Parser::Parse(layout, context, params);
   if (assertNotParsable || !expression) {
     quiz_assert(assertNotParsable == !expression);
     layout->removeTree();
@@ -250,8 +249,9 @@ void assert_parse_to_integer_overflow(const char* input,
 
 void store(const char* storeExpression,
            Poincare::VariableStore* variableStore) {
+  assert(variableStore);
   Poincare::Expression s =
-      Poincare::Expression::Parse(storeExpression, variableStore);
+      Poincare::Expression::Parse(storeExpression, *variableStore);
   Poincare::StoreHelper::PerformStore(variableStore, s);
 }
 

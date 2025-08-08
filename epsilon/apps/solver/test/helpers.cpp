@@ -137,13 +137,14 @@ static void compareSolutions(SystemOfEquations* system,
      * creating an expression from a layout. */
 
     bool reductionFailure = false;
+    assert(ctx);
     Internal::ProjectionContext projCtx{
         .m_complexFormat = Internal::ComplexFormat::Cartesian,
         .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = ctx,
         .m_advanceReduce = false};
     Expression expectedExpression =
-        Expression::Parse(expectedValue, ctx, {.forceUnitUnderscore = true})
+        Expression::Parse(expectedValue, *ctx, {.forceUnitUnderscore = true})
             .cloneAndReduce(projCtx, &reductionFailure);
     quiz_assert(!reductionFailure && !expectedExpression.isUninitialized());
 
@@ -155,7 +156,7 @@ static void compareSolutions(SystemOfEquations* system,
     char obtainedLayoutBuffer[bufferSize];
     obtainedLayout.serialize(obtainedLayoutBuffer);
     Expression parsedExpression = Expression::Parse(
-        obtainedLayoutBuffer, ctx, {.forceUnitUnderscore = true});
+        obtainedLayoutBuffer, *ctx, {.forceUnitUnderscore = true});
     quiz_assert(!parsedExpression.isUninitialized());
     projCtx = {
         .m_complexFormat = Internal::ComplexFormat::Cartesian,

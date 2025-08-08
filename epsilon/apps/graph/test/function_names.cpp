@@ -2,6 +2,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/code_points.h>
 #include <poincare/helpers/symbol.h>
+#include <poincare/old/empty_context.h>
 #include <quiz.h>
 
 #include <cmath>
@@ -80,8 +81,8 @@ QUIZ_CASE(graph_list_default_function_name) {
 void assert_will_display_parametric_name_error(const char* definition,
                                                ContinuousFunction* f,
                                                bool expectedHasError) {
-  Poincare::Expression expression =
-      Poincare::Expression::Parse(definition, nullptr, {.preserveInput = true});
+  Poincare::Expression expression = Poincare::Expression::Parse(
+      definition, Poincare::EmptyContext{}, {.preserveInput = true});
   bool hasError =
       FunctionNameHelper::ParametricComponentsNameError(expression, f);
   quiz_assert(hasError == expectedHasError);

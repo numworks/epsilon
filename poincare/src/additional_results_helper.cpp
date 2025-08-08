@@ -34,8 +34,9 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
   // Find the angle
   UserExpression exactAngle =
       directTrigonometry
-          ? ExtractExactAngleFromDirectTrigo(input, exactOutput, ctx->m_context,
-                                             calculationPreferences)
+          ? ExtractExactAngleFromDirectTrigo(
+                input, exactOutput,  // NOTE: const_cast is temporary
+                &const_cast<Context&>(ctx->m_context), calculationPreferences)
           : exactOutput;
   assert(!exactAngle.isUninitialized() && !exactAngle.isUndefined());
 
@@ -70,7 +71,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
           UserExpression::Builder(
               static_cast<const Tree*>(approximateAngleTree)),
-          ctx->m_context)) {
+          // NOTE: const_cast is temporary
+          &const_cast<Context&>(ctx->m_context))) {
     if (directTrigonometry) {
       assert(!approximateAngleTree);
       /* Do not approximate the FracPart, which could lead to truncation error
@@ -85,7 +87,9 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           Approximation::To<double>(
               sine, Approximation::Parameters{.projectLocalVariables = true},
               Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                                     ctx->m_context)) < 0;
+                                     // NOTE: const_cast is temporary
+                                     &const_cast<Context&>(ctx->m_context))) <
+          0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -97,7 +101,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
         approximateAngleTree,
         Approximation::Parameters{.projectLocalVariables = true},
         Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                               ctx->m_context)));
+                               // NOTE: const_cast is temporary
+                               &const_cast<Context&>(ctx->m_context))));
     Beautification::DeepBeautify(approximateAngleTree, *ctx);
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
@@ -118,7 +123,8 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                             ctx->m_context));
+                             // NOTE: const_cast is temporary
+                             &const_cast<Context&>(ctx->m_context)));
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
@@ -188,7 +194,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = context,
+      .m_context = *context,
   };
 
   /* TODO: Second Simplify could be avoided by calling
@@ -460,10 +466,11 @@ Poincare::Layout AdditionalResultsHelper::ScientificLayout(
     const Preferences::CalculationPreferences calculationPreferences) {
   assert(calculationPreferences.displayMode !=
          Preferences::PrintFloatMode::Scientific);
+  assert(context);
   ProjectionContext ctx = {.m_complexFormat = ComplexFormat::Cartesian,
                            .m_strategy = Strategy::ApproximateToFloat,
                            .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-                           .m_context = context,
+                           .m_context = *context,
                            .m_advanceReduce = false};
   Tree* e = approximateOutput.tree()->cloneTree();
   Simplification::ProjectAndReduce(e, &ctx);
@@ -501,7 +508,10 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
         determinant->isUndefined() || determinant->isZero();
     // TODO_PCJ: Prevent having to update ctx here.
     Internal::Dimension previousDimension = ctx.m_dimension;
-    ctx.m_dimension = Internal::Dimension::Get(determinant, ctx.m_context);
+    ctx.m_dimension =
+        Internal::Dimension::Get(determinant,
+                                 // NOTE: const_cast is temporary
+                                 &const_cast<Context&>(ctx.m_context));
     determinantL = CreateBeautifiedLayout(determinant, &ctx, displayMode,
                                           numberOfSignificantDigits);
     ctx.m_dimension = previousDimension;
@@ -541,7 +551,10 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (isSquared) {
     Tree* trace = Internal::Matrix::Trace(matrix);
     // TODO_PCJ: Prevent having to update ctx here.
-    ctx.m_dimension = Internal::Dimension::Get(trace, ctx.m_context);
+    ctx.m_dimension =
+        Internal::Dimension::Get(trace,
+                                 // NOTE: const_cast is temporary
+                                 &const_cast<Context&>(ctx.m_context));
     traceL = CreateBeautifiedLayout(trace, &ctx, displayMode,
                                     numberOfSignificantDigits);
   }

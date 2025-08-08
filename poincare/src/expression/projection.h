@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_PROJECTION_H
 
 #include <poincare/old/context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include "context.h"
@@ -17,7 +18,7 @@ struct ProjectionContext {
   Dimension m_dimension = Dimension();
   UnitFormat m_unitFormat = UnitFormat::Metric;
   SymbolicComputation m_symbolic = SymbolicComputation::KeepAllSymbols;
-  Poincare::Context* m_context = nullptr;
+  const Poincare::Context& m_context = k_emptyContext;
   UnitDisplay m_unitDisplay = UnitDisplay::MainOutput;
   // Optional simplification step
   bool m_advanceReduce = true;
@@ -25,14 +26,13 @@ struct ProjectionContext {
 
 class Projection {
  public:
-  static ProjectionContext DefaultProjectionContextForAnalysis(
-      Poincare::Context* context) {
+  static ProjectionContext DefaultProjectionContextForAnalysis() {
     ProjectionContext projCtx{
         .m_complexFormat = ComplexFormat::Cartesian,
         .m_angleUnit = AngleUnit::Radian,
         .m_unitFormat = UnitFormat::Metric,
         .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = context};
+        .m_context = k_emptyContext};
     return projCtx;
   }
   /* Update complexFormat if tree contains i, Re, Im, Arg or Conj. Return true

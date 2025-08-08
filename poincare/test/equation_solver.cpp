@@ -57,7 +57,7 @@ QUIZ_CASE(pcj_equation_solver) {
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
           "sys"));
-  ProjectionContext projCtx = {.m_context = &globalContext};
+  ProjectionContext projCtx = {.m_context = globalContext};
 
   check_solutions({"x-3+y", "y-x+1"}, {"2", "1"}, projCtx);
   check_solutions({"x+x"}, {"0"}, projCtx);
@@ -134,8 +134,7 @@ QUIZ_CASE(pcj_equation_solver) {
 void check_range(const char* input, double min, double max) {
   Tree* equationList = TreeStack::SharedTreeStack->pushList(1);
   parse(input);
-  Shared::GlobalContext globalContext;
-  ProjectionContext ctx{.m_context = &globalContext};
+  ProjectionContext ctx;
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       equationList, ctx, Poincare::Range1D<double>(), 10);
   quiz_assert(result.solutionMetadata.solvingRange.min() == min);

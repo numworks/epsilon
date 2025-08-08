@@ -50,16 +50,15 @@ void approximates_to_boolean(const Tree* n,
 void approximates_to_boolean(const char* input,
                              Approximation::BooleanOrUndefined expected,
                              const ProjectionContext& projectionContext) {
-  Tree* expression = projectionContext.m_context
-                         ? parse(input, *projectionContext.m_context)
-                         : parse(input);
+  Tree* expression = parse(input, projectionContext.m_context);
   Approximation::BooleanOrUndefined approx = Approximation::ToBoolean<float>(
       expression,
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(projectionContext.m_angleUnit,
-                             projectionContext.m_complexFormat,
-                             projectionContext.m_context));
+      Approximation::Context(
+          projectionContext.m_angleUnit, projectionContext.m_complexFormat,
+          // NOTE: const_cast is temporary
+          &const_cast<Poincare::Context&>(projectionContext.m_context)));
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
     quiz_assert(approx.value() == expected.value());
@@ -92,16 +91,15 @@ void approximates_to(const Tree* n, T f) {
 template <typename T>
 void approximates_to(const char* input, T f,
                      const ProjectionContext& projectionContext = realCtx) {
-  Tree* expression = projectionContext.m_context
-                         ? parse(input, *projectionContext.m_context)
-                         : parse(input);
+  Tree* expression = parse(input, projectionContext.m_context);
   T approx = Approximation::To<T>(
       expression,
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(projectionContext.m_angleUnit,
-                             projectionContext.m_complexFormat,
-                             projectionContext.m_context));
+      Approximation::Context(
+          projectionContext.m_angleUnit, projectionContext.m_complexFormat,
+          // NOTE: const_cast is temporary
+          &const_cast<Context&>(projectionContext.m_context)));
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -130,9 +128,11 @@ void approximates_to(const char* input, const char* output,
             tree,
             Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                       .projectLocalVariables = true},
-            Approximation::Context(projectionContext.m_angleUnit,
-                                   projectionContext.m_complexFormat,
-                                   projectionContext.m_context)));
+            Approximation::Context(
+                projectionContext.m_angleUnit,
+                projectionContext.m_complexFormat,
+                // NOTE: const_cast is temporary
+                &const_cast<Context&>(projectionContext.m_context))));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
@@ -152,9 +152,11 @@ void simplified_approximates_to(
             tree,
             Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                       .projectLocalVariables = true},
-            Approximation::Context(projectionContext.m_angleUnit,
-                                   projectionContext.m_complexFormat,
-                                   projectionContext.m_context)));
+            Approximation::Context(
+                projectionContext.m_angleUnit,
+                projectionContext.m_complexFormat,
+                // NOTE: const_cast is temporary
+                &const_cast<Context&>(projectionContext.m_context))));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
@@ -174,9 +176,11 @@ void projected_approximates_to(
             tree,
             Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                       .prepare = true},
-            Approximation::Context(projectionContext.m_angleUnit,
-                                   projectionContext.m_complexFormat,
-                                   projectionContext.m_context)));
+            Approximation::Context(
+                projectionContext.m_angleUnit,
+                projectionContext.m_complexFormat,
+                // NOTE: const_cast is temporary
+                &const_cast<Context&>(projectionContext.m_context))));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
@@ -193,9 +197,11 @@ void approximates_to_keeping_symbols(
       [](Tree* tree, ProjectionContext projectionContext) {
         Variables::ProjectLocalVariablesToId(tree);
         Approximation::ApproximateAndReplaceEveryScalar<T>(
-            tree, Approximation::Context(projectionContext.m_angleUnit,
-                                         projectionContext.m_complexFormat,
-                                         projectionContext.m_context));
+            tree, Approximation::Context(
+                      projectionContext.m_angleUnit,
+                      projectionContext.m_complexFormat,
+                      // NOTE: const_cast is temporary
+                      &const_cast<Context&>(projectionContext.m_context)));
         Variables::BeautifyToName(tree);
       },
       projectionContext, numberOfSignificantDigits);
@@ -203,11 +209,9 @@ void approximates_to_keeping_symbols(
 
 template <typename T>
 void assert_float_approximates_to(UserExpression f, const char* result) {
-  Shared::GlobalContext globalContext;
   ProjectionContext projectionContext = Poincare::Internal::ProjectionContext{
       .m_complexFormat = ComplexFormat::Cartesian,
-      .m_angleUnit = AngleUnit::Radian,
-      .m_context = &globalContext};
+      .m_angleUnit = AngleUnit::Radian};
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
   f.cloneAndApproximate<T>(projectionContext)
@@ -678,18 +682,17 @@ QUIZ_CASE(pcj_approximation_list) {
 
   Shared::GlobalContext globalContext;
   store("{1,2,3,4,5}→L", &globalContext);
-  approximates_to<float>("L(1)", "1", {.m_context = &globalContext});
-  approximates_to<float>("L(0)", "undef", {.m_context = &globalContext});
-  approximates_to<float>("L(7)", "undef", {.m_context = &globalContext});
-  approximates_to<double>("L(1)", "1", {.m_context = &globalContext});
-  approximates_to<double>("L(0)", "undef", {.m_context = &globalContext});
-  approximates_to<double>("L(7)", "undef", {.m_context = &globalContext});
-  approximates_to<float>("L(1,3)", "{1,2,3}", {.m_context = &globalContext});
-  approximates_to<float>("L(1,9)", "{1,2,3,4,5}",
-                         {.m_context = &globalContext});
-  approximates_to<float>("L(-5,3)", "undef", {.m_context = &globalContext});
-  approximates_to<float>("L(3,1)", "{}", {.m_context = &globalContext});
-  approximates_to<float>("L(8,9)", "{}", {.m_context = &globalContext});
+  approximates_to<float>("L(1)", "1", {.m_context = globalContext});
+  approximates_to<float>("L(0)", "undef", {.m_context = globalContext});
+  approximates_to<float>("L(7)", "undef", {.m_context = globalContext});
+  approximates_to<double>("L(1)", "1", {.m_context = globalContext});
+  approximates_to<double>("L(0)", "undef", {.m_context = globalContext});
+  approximates_to<double>("L(7)", "undef", {.m_context = globalContext});
+  approximates_to<float>("L(1,3)", "{1,2,3}", {.m_context = globalContext});
+  approximates_to<float>("L(1,9)", "{1,2,3,4,5}", {.m_context = globalContext});
+  approximates_to<float>("L(-5,3)", "undef", {.m_context = globalContext});
+  approximates_to<float>("L(3,1)", "{}", {.m_context = globalContext});
+  approximates_to<float>("L(8,9)", "{}", {.m_context = globalContext});
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
 
@@ -2232,11 +2235,11 @@ QUIZ_CASE(pcj_approximation_context) {
   Shared::GlobalContext globalContext;
   ProjectionContext cartesianCtx = {
       .m_complexFormat = ComplexFormat::Cartesian,
-      .m_context = &globalContext,
+      .m_context = globalContext,
   };
   ProjectionContext realCtx = {
       .m_complexFormat = ComplexFormat::Real,
-      .m_context = &globalContext,
+      .m_context = globalContext,
   };
 
   store("2x+5→f(x)", &globalContext);

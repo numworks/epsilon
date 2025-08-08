@@ -163,7 +163,9 @@ bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
   bool changed = maxRandomSeed > previousMaxRandomSeed;
   // Replace UserFunctions before projecting local variables
   const SymbolicComputation symbolic = projectionContext->m_symbolic;
-  Poincare::Context* context = projectionContext->m_context;
+  // NOTE: const_cast is temporary
+  Poincare::Context* context =
+      &const_cast<Context&>(projectionContext->m_context);
   if (symbolic != SymbolicComputation::KeepAllSymbols &&
       symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     if (Projection::DeepReplaceUserNamed(
@@ -260,9 +262,11 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
                    bool reduceIfSuccess) {
   if (projectionContext.m_strategy != Strategy::ApproximateToFloat ||
       !Approximation::ApproximateAndReplaceEveryScalar<double>(
-          e, Approximation::Context(projectionContext.m_angleUnit,
-                                    projectionContext.m_complexFormat,
-                                    projectionContext.m_context))) {
+          e,
+          Approximation::Context(
+              projectionContext.m_angleUnit, projectionContext.m_complexFormat,
+              // NOTE: const_cast is temporary
+              &const_cast<Context&>(projectionContext.m_context)))) {
     return false;
   }
   if (reduceIfSuccess) {

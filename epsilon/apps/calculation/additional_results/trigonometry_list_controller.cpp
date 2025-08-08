@@ -29,7 +29,7 @@ void TrigonometryListController::computeAdditionalResults(
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = context};
+      .m_context = *context};
 
   AdditionalResultsHelper::TrigonometryResults trigonometryResults =
       AdditionalResultsHelper::TrigonometryAngleHelper(

@@ -86,8 +86,10 @@ Layout IllustratedExpressionsListController::layoutAtIndex(HighlightCell* cell,
 void IllustratedExpressionsListController::setLineAtIndex(
     int index, const UserExpression formula, const UserExpression expression,
     const Internal::ProjectionContext* ctx) {
-  m_layouts[index] =
-      Shared::PoincareHelpers::CreateLayout(formula, ctx->m_context);
+  m_layouts[index] = Shared::PoincareHelpers::CreateLayout(
+      formula,
+      // NOTE: const_cast is temporary
+      &const_cast<Context&>(ctx->m_context));
   m_exactLayouts[index] = GetExactLayoutFromExpression(
       expression, ctx, &(m_approximatedLayouts[index]),
       &(m_isStrictlyEqual[index]));

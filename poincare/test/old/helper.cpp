@@ -92,7 +92,7 @@ void copy_without_system_chars(char *buffer, const char *input) {
 }
 
 void assert_parsed_expression_process_to(
-    const char *expression, const char *oldResult, Context *ctx,
+    const char *expression, const char *oldResult, const Context &ctx,
     ReductionTarget target, Preferences::ComplexFormat complexFormat,
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     SymbolicComputation symbolicComputation, ProcessExpression process,
@@ -128,12 +128,11 @@ void assert_parsed_expression_process_to(
 #endif
 }
 
-Internal::Tree *parse_expression(const char *expression, Context *context,
+Internal::Tree *parse_expression(const char *expression, const Context &context,
                                  bool isAssignment) {
   Tree *inputLayout = RackFromText(expression);
-  assert(context);
   TreeRef result =
-      Parser::Parse(inputLayout, *context, {.isAssignment = isAssignment});
+      Parser::Parse(inputLayout, context, {.isAssignment = isAssignment});
   inputLayout->removeTree();
   quiz_assert_print_if_failure(result != nullptr, expression);
   return result;
@@ -176,7 +175,7 @@ void assert_parsed_expression_simplify_to(
     SymbolicComputation symbolicComputation, bool beautify) {
   // TODO_PCJ also approximate to see if it crashes
   assert_parsed_expression_process_to(
-      expression, simplifiedExpression, &context, target, complexFormat,
+      expression, simplifiedExpression, context, target, complexFormat,
       angleUnit, unitFormat, symbolicComputation,
       beautify ?
       [](Tree *e, Internal::ProjectionContext &projCtx) {
@@ -210,17 +209,18 @@ void assert_expression_simplifies_approximates_to(
     Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat, int numberOfSignificantDigits) {
   assert_parsed_expression_process_to(
-      expression, approximation, &context, SystemForApproximation,
-      complexFormat, angleUnit, unitFormat, ReplaceAllSymbols,
+      expression, approximation, context, SystemForApproximation, complexFormat,
+      angleUnit, unitFormat, ReplaceAllSymbols,
       [](Tree *e, Internal::ProjectionContext &projCtx) -> Tree * {
         simplify(e, projCtx, false);
         TreeRef result = Internal::Approximation::ToTree<T>(
             e,
             Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                                 .prepare = true},
-            Internal::Approximation::Context(projCtx.m_angleUnit,
-                                             projCtx.m_complexFormat,
-                                             projCtx.m_context));
+            Internal::Approximation::Context(
+                projCtx.m_angleUnit, projCtx.m_complexFormat,
+                // NOTE: const_cast is temporary
+                &const_cast<Context &>(projCtx.m_context)));
         /* Expression may have been reduced in another target, but it has been
          * approximated in the meantime. */
         ReductionTarget previousReductionTarget = projCtx.m_reductionTarget;

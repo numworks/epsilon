@@ -28,7 +28,7 @@ void ComplexListController::computeAdditionalResults(
       .m_complexFormat = Preferences::ComplexFormat::Cartesian,
       .m_angleUnit = angleUnit(),
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = context};
+      .m_context = *context};
 
   // Fill Calculation Store
   constexpr KTree k_symbol = "z"_e;

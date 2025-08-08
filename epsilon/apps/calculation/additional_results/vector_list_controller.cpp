@@ -49,8 +49,7 @@ void VectorListController::computeAdditionalResults(
 
   // 2. Normalized vector
   SystemExpression approximatedNorm = PoincareHelpers::ApproximateUser<double>(
-      norm, context,
-      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
+      norm, context, complexFormat(), angleUnit());
   Sign sign = approximatedNorm.sign();
   assert(!sign.canBeStrictlyNegative());
   if (sign.canBeNull() || approximatedNorm.isPlusOrMinusInfinity()) {
@@ -83,8 +82,7 @@ void VectorListController::computeAdditionalResults(
   /* ComplexSign needs a reduced expression. Using approximation here, but a
    * reduction would also work. */
   SystemExpression yApprox = PoincareHelpers::ApproximateUser<double>(
-      normalized.cloneChildAtIndex(1), context,
-      {.complexFormat = complexFormat(), .angleUnit = angleUnit()});
+      normalized.cloneChildAtIndex(1), context, complexFormat(), angleUnit());
   sign = yApprox.sign();
   // HasVector should be false if any vector's child is complex.
   if (sign.canBeStrictlyNegative() && !sign.canBeStrictlyPositive()) {

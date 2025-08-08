@@ -63,14 +63,23 @@ size_t Tokenizer::popWhile(PopTest popTest) {
   size_t length = 0;
   bool didPop = true;
   while (true) {
-    if (!m_decoder.nextLayoutIsCodePoint()) {
+    bool nextIsCombinedCodePoint = m_decoder.nextLayoutIsCombinedCodePoint();
+    if (!m_decoder.nextLayoutIsCodePoint() && !nextIsCombinedCodePoint) {
       break;
     }
+    /* If the next layout is a combined code point, calling nextCodePoint will
+     * pop both the base and the combining code point, but only the base code
+     * point is returned. This is to ensure symmetry between number of calls to
+     * nextTree and nextCodePoint. */
+    size_t combiningExtraLength =
+        nextIsCombinedCodePoint
+            ? UTF8Decoder::CharSizeOfCodePoint(m_decoder.combiningCodePoint())
+            : 0;
     CodePoint c = nextCodePoint(popTest, &didPop);
     if (!didPop) {
       break;
     }
-    length += UTF8Decoder::CharSizeOfCodePoint(c);
+    length += UTF8Decoder::CharSizeOfCodePoint(c) + combiningExtraLength;
   }
   return length;
 }

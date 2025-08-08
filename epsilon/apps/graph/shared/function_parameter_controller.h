@@ -1,6 +1,7 @@
 #ifndef GRAPH_SHARED_FUNCTION_PARAMETER_CONTROLLER_H
 #define GRAPH_SHARED_FUNCTION_PARAMETER_CONTROLLER_H
 
+#include <apps/exam_mode_manager.h>
 #include <apps/shared/column_parameter_controller.h>
 #include <apps/shared/list_parameter_controller.h>
 #include <escher/buffer_text_view.h>

@@ -1,6 +1,7 @@
 #include "../calculation_store.h"
 
 #include <apps/calculation/additional_results/additional_results_type.h>
+#include <apps/exam_mode_manager.h>
 #include <apps/math_preferences.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>

@@ -118,9 +118,6 @@ SystemExpression ExpressionModel::expressionReduced(
       if (reductionFailure) {
         m_expression = SystemExpression::Builder(KFailedSimplification);
       }
-      /* TODO_PCJ not the appropriate place but sequences use their
-       * expressionReduced to approximate directly */
-      m_expression = m_expression.getPreparedFunction(Function::k_unknownName);
     }
   }
   return m_expression;

@@ -68,7 +68,7 @@ void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
   assert(!function.recursivelyMatches(&Expression::isSequence));
 
   Curve2DEvaluation<float> evaluateFunction = [](float t, void* model, void*) {
-    PreparedFunctionScalar* e = (Expression*)model;
+    PreparedFunctionScalar* e = (PreparedFunctionScalar*)model;
     return Coordinate2D<float>(t, e->approximateToRealScalarWithValue(t));
   };
 

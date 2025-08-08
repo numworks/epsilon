@@ -316,9 +316,9 @@ void assert_reduced_expression_has_polynomial_coefficient(
                                 .m_context = globalContext};
   UserExpression e = UserExpression::Builder(parse(input, *globalContext));
   bool reductionFailure = false;
-  e = e.cloneAndReduce(projContext, &reductionFailure);
+  SystemExpression s = e.cloneAndReduce(projContext, &reductionFailure);
   quiz_assert(!reductionFailure);
-  Tree* coefficients = PolynomialParser::GetReducedCoefficients(e, symbolName);
+  Tree* coefficients = PolynomialParser::GetReducedCoefficients(s, symbolName);
   assert_trees_are_equal(coefficients, expectedCoefficients);
 }
 

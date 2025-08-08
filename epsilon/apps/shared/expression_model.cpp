@@ -103,14 +103,14 @@ SystemExpression ExpressionModel::expressionReduced(
     if (isCircularlyDefined(record, context)) {
       m_expression = SystemExpression::Undefined();
     } else {
-      m_expression = SystemExpression::ExpressionFromAddress(
+      UserExpression userExpression = Expression::ExpressionFromAddress(
           expressionAddress(record), expressionSize(record));
       /* 'Simplify' routine might need to call expressionReduced on the very
        * same function. So we need to keep a valid m_expression while executing
        * 'Simplify'. Thus, we use a temporary expression. */
       bool reductionFailure = false;
       m_expression = PoincareHelpers::CloneAndReduce(
-          m_expression, context,
+          userExpression, context,
           {.complexFormat = complexFormat(record, context),
            .updateComplexFormatWithExpression = false},
           &reductionFailure);

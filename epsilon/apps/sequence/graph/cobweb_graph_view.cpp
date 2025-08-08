@@ -73,9 +73,11 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       .m_symbolic =
           Poincare::Internal::SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = App::app()->localContext()};
-  function = function.cloneAndReduce(projCtx, &reductionFailure);
+  Poincare::SystemExpression reducedFunction =
+      function.cloneAndReduce(projCtx, &reductionFailure);
   assert(!reductionFailure);
-  function = function.getPreparedFunction(Shared::Function::k_unknownName);
+  Poincare::PreparedFunction preparedFunction =
+      reducedFunction.getPreparedFunction(Shared::Function::k_unknownName);
   Curve2DEvaluation<float> evaluateFunction = [](float t, void* model,
                                                  void* context) {
     Poincare::PreparedFunction* e = (Poincare::PreparedFunction*)model;
@@ -85,8 +87,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   if (!shouldUpdate()) {
     float xMin = plotView->range()->xMin();
     float xMax = plotView->range()->xMax();
-    CurveDrawing plot(Curve2D(evaluateFunction, &function), context, xMin, xMax,
-                      plotView->pixelWidth(), fadedColor);
+    CurveDrawing plot(Curve2D(evaluateFunction, &preparedFunction), context,
+                      xMin, xMax, plotView->pixelWidth(), fadedColor);
     plot.draw(plotView, ctx, rect);
     plotView->drawSegment(ctx, rect, {xMin, xMin}, {xMax, xMax}, fadedColor,
                           true);

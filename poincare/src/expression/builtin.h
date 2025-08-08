@@ -30,9 +30,10 @@ class Builtin {
     assert(GetReservedFunction(e));
     return GetReservedFunction(e)->m_aliases;
   }
-  static Aliases SpecialIdentifierName(Type type) {
-    assert(GetSpecialIdentifier(type));
-    return GetSpecialIdentifier(type)->m_aliases;
+  static Aliases SpecialIdentifierName(
+      Type type, Preferences::TranslateBuiltins translate) {
+    assert(GetSpecialIdentifier(type, translate));
+    return GetSpecialIdentifier(type, translate)->m_aliases;
   }
   static bool HasReservedFunction(LayoutSpan name) {
     return GetReservedFunction(name) != nullptr;
@@ -41,7 +42,8 @@ class Builtin {
     return GetSpecialIdentifier(name) != nullptr;
   }
   static bool HasSpecialIdentifier(Type type) {
-    return GetSpecialIdentifier(type) != nullptr;
+    return GetSpecialIdentifier(type, Preferences::TranslateBuiltins::No) !=
+           nullptr;
   }
   static bool HasCustomIdentifier(LayoutSpan name);
   static const Builtin* GetReservedFunction(LayoutSpan name);
@@ -52,7 +54,8 @@ class Builtin {
       Type type, Preferences::TranslateBuiltins translateBuiltins =
                      Preferences::TranslateBuiltins::No);
   static const Builtin* GetSpecialIdentifier(LayoutSpan name);
-  static const Builtin* GetSpecialIdentifier(Type type);
+  static const Builtin* GetSpecialIdentifier(
+      Type type, Preferences::TranslateBuiltins translateBuiltins);
 
  private:
   constexpr static const Builtin* SearchForTranslation(
@@ -244,13 +247,11 @@ constexpr static BuiltinWithLayout s_builtinsWithLayout[] = {
 
 constexpr const Builtin* Builtin::GetReservedFunction(
     Type type, Preferences::TranslateBuiltins translate) {
-  constexpr size_t numberOfBuiltins = std::size(s_builtins);
-  for (size_t i = 0; i < numberOfBuiltins; i++) {
-    const Builtin& builtin = s_builtins[i];
-    if (builtin.m_type != type) {
-      continue;
+  for (const Builtin& builtin : s_builtins) {
+    if (builtin.m_type == type) {
+      return SearchForTranslation(s_builtins, std::size(s_builtins),
+                                  &builtin - s_builtins, translate);
     }
-    return SearchForTranslation(s_builtins, numberOfBuiltins, i, translate);
   }
   for (const Builtin& builtin : s_builtinsWithLayout) {
     if (builtin.m_type == type) {

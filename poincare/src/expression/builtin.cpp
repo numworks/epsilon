@@ -19,21 +19,9 @@ constexpr static Aliases s_customIdentifiers[] = {
 
 constexpr static Builtin s_specialIdentifiers[] = {
     {Type::Undef, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefZeroPowerZero, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefZeroDivision, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefBoolean, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefUnit, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefUnhandled, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefUnhandledDimension, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefBadType, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefOutOfDefinition, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefNotDefined, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefForbidden, BuiltinsAliases::k_undefinedAlias},
-    {Type::UndefFailedSimplification, BuiltinsAliases::k_undefinedAlias},
+    BUILTIN_TRANSLATION(Type::Undef, "indéfini"),
 #if POINCARE_COMPLEX_BUILTINS
     {Type::NonReal, "nonreal"},
-#else
-    {Type::NonReal, BuiltinsAliases::k_undefinedAlias},
 #endif
     {Type::ComplexI, "i"},
     {Type::Inf, BuiltinsAliases::k_infinityAliases},
@@ -189,10 +177,30 @@ const Builtin* Builtin::GetSpecialIdentifier(LayoutSpan name) {
   return nullptr;
 }
 
-const Builtin* Builtin::GetSpecialIdentifier(Type type) {
+const Builtin* Builtin::GetSpecialIdentifier(
+    Type type, Preferences::TranslateBuiltins translate) {
+  switch (type) {
+    case Type::UndefZeroPowerZero:
+    case Type::UndefZeroDivision:
+    case Type::UndefBoolean:
+    case Type::UndefUnit:
+    case Type::UndefUnhandled:
+    case Type::UndefUnhandledDimension:
+    case Type::UndefBadType:
+    case Type::UndefOutOfDefinition:
+    case Type::UndefNotDefined:
+    case Type::UndefForbidden:
+    case Type::UndefFailedSimplification:
+#if !POINCARE_COMPLEX_BUILTINS
+    case Type::NonReal:
+#endif
+      return GetSpecialIdentifier(Type::Undef, translate);
+  }
   for (const Builtin& builtin : s_specialIdentifiers) {
     if (builtin.m_type == type) {
-      return &builtin;
+      return SearchForTranslation(s_specialIdentifiers,
+                                  std::size(s_specialIdentifiers),
+                                  &builtin - s_specialIdentifiers, translate);
     }
   }
   return nullptr;

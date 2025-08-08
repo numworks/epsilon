@@ -217,7 +217,6 @@ $(addprefix statistics/, \
 )
 
 _sources_poincare_test := $(addprefix test/, \
-  old/additional_results_helper.cpp \
   old/conics.cpp \
   old/dependency.cpp \
   old/derivative.cpp \
@@ -240,6 +239,7 @@ _sources_poincare_test := $(addprefix test/, \
   old/tree/helpers.cpp \
   old/tree/tree_handle.cpp \
   old/zoom.cpp \
+  additional_results_helper.cpp \
   approximation.cpp \
   beautification.cpp \
   bounds.cpp \

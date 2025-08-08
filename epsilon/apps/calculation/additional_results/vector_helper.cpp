@@ -24,11 +24,9 @@ UserExpression BuildVectorNorm(
   UserExpression norm = UserExpression::Create(KNorm(KA), {.KA = exactOutput});
   bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
-      &norm, context,
-      {.complexFormat = calculationPreferences.complexFormat,
-       .angleUnit = calculationPreferences.angleUnit,
-       .symbolicComputation = VectorListController::k_symbolicComputation},
-      &reductionFailure);
+      &norm, context, calculationPreferences.complexFormat,
+      calculationPreferences.angleUnit, true, Poincare::ReductionTarget::User,
+      VectorListController::k_symbolicComputation, &reductionFailure);
   return reductionFailure || norm.isUninitialized() || norm.isUndefined()
              ? UserExpression()
              : norm;

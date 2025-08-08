@@ -100,55 +100,56 @@ inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {
 
 // ===== Reduction =====
 
-struct ReductionParameters {
-  Poincare::Preferences::ComplexFormat complexFormat =
-      MathPreferences::SharedPreferences()->complexFormat();
-  Poincare::Preferences::AngleUnit angleUnit =
-      MathPreferences::SharedPreferences()->angleUnit();
-  bool updateComplexFormatWithExpression = true;
-
-  Poincare::ReductionTarget target = Poincare::ReductionTarget::User;
-  Poincare::SymbolicComputation symbolicComputation =
-      Poincare::SymbolicComputation::ReplaceDefinedSymbols;
-};
-
 inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
     const Poincare::UserExpression e, Poincare::Context* context,
-    const ReductionParameters& reductionParameters) {
+    Poincare::Preferences::ComplexFormat complexFormat,
+    Poincare::Preferences::AngleUnit angleUnit,
+    bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
+    Poincare::SymbolicComputation symbolicComputation) {
   Poincare::Internal::ProjectionContext projectionContext = {
-      .m_complexFormat = reductionParameters.complexFormat,
-      .m_angleUnit = reductionParameters.angleUnit,
-      .m_reductionTarget = reductionParameters.target,
+      .m_complexFormat = complexFormat,
+      .m_angleUnit = angleUnit,
+      .m_reductionTarget = target,
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
-      .m_symbolic = reductionParameters.symbolicComputation,
+      .m_symbolic = symbolicComputation,
       .m_context = context};
-  if (reductionParameters.updateComplexFormatWithExpression) {
+  if (updateComplexFormatWithExpression) {
     Poincare::Internal::Projection::UpdateComplexFormatWithExpressionInput(
         e, &projectionContext);
   }
   return projectionContext;
 }
 
-inline void CloneAndSimplify(
-    Poincare::UserExpression* e, Poincare::Context* context,
-    const ReductionParameters& reductionParameters = {},
-    bool* reductionFailure = nullptr) {
+inline void CloneAndSimplify(Poincare::UserExpression* e,
+                             Poincare::Context* context,
+                             Poincare::Preferences::ComplexFormat complexFormat,
+                             Poincare::Preferences::AngleUnit angleUnit,
+                             bool updateComplexFormatWithExpression,
+                             Poincare::ReductionTarget target,
+                             Poincare::SymbolicComputation symbolicComputation,
+                             bool* reductionFailure) {
   assert(reductionFailure);
 
   *e = e->cloneAndSimplify(
-      ProjectionContextForParameters(*e, context, reductionParameters),
+      ProjectionContextForParameters(*e, context, complexFormat, angleUnit,
+                                     updateComplexFormatWithExpression, target,
+                                     symbolicComputation),
       reductionFailure);
   assert(!e->isUninitialized());
 }
 
 inline Poincare::SystemExpression CloneAndReduce(
     Poincare::UserExpression e, Poincare::Context* context,
-    const ReductionParameters& reductionParameters = {},
-    bool* reductionFailure = nullptr) {
+    Poincare::Preferences::ComplexFormat complexFormat,
+    Poincare::Preferences::AngleUnit angleUnit,
+    bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
+    Poincare::SymbolicComputation symbolicComputation, bool* reductionFailure) {
   assert(reductionFailure);
   return e.cloneAndReduce(
-      ProjectionContextForParameters(e, context, reductionParameters),
+      ProjectionContextForParameters(e, context, complexFormat, angleUnit,
+                                     updateComplexFormatWithExpression, target,
+                                     symbolicComputation),
       reductionFailure);
 }
 

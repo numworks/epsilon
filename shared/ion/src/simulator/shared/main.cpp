@@ -37,33 +37,50 @@ extern size_t eadk_external_data_size;
 #include <dlfcn.h>
 #endif
 
-#if ION_SIMULATOR_FILES
-constexpr static const char* k_loadStateFileKeys[] = {"--load-state-file",
-                                                      "-l"};
-#endif
-constexpr static const char* k_headlessFlags[] = {"--headless", "-h"};
-constexpr static const char* k_languageFlag = "--language";
-constexpr static const char* k_limitStackUsageFlag = "--limit-stack-usage";
+struct Args {
+#define BOOL_ARG(variable, longForm, shortForm, desc) bool variable = false;
+#define TEXT_ARG(variable, longForm, shortForm, desc, argName) \
+  const char* variable = nullptr;
+#include "arguments.inc"
+#undef BOOL_ARG
+#undef TEXT_ARG
+};
+
+struct ArgNames {
+#define BOOL_ARG(variable, longForm, shortForm, desc) \
+  static constexpr const char* variable = longForm;
+#define TEXT_ARG(variable, longForm, shortForm, desc, argName) \
+  static constexpr const char* variable = longForm;
+#include "arguments.inc"
+#undef BOOL_ARG
+#undef TEXT_ARG
+};
 
 /* The Args class allows parsing and editing command-line arguments
  * The editing part allows us to add/remove arguments before forwarding them to
  * ion_main. */
 
-class Args {
+class ArgParser {
  public:
-  Args(int argc, char* argv[]) : m_arguments(argv, argv + argc) {}
+  ArgParser(int argc, char* argv[]) : m_arguments(argv, argv + argc) {}
+  Args parse();
+
+ private:
   bool has(const char* key) const;
   const char* get(const char* key, bool pop = false);
   const char* pop(const char* key) { return get(key, true); }
   const char* pop(const char* const* keys, size_t numberOfKeys);
   bool popFlag(const char* flag);
   bool popFlags(const char* const* flags, size_t numberOfFlags);
+
+ public:
   void push(const char* key, const char* value) {
     if (key != nullptr && value != nullptr) {
       m_arguments.push_back(key);
       m_arguments.push_back(value);
     }
   }
+
   void push(const char* argument) { m_arguments.push_back(argument); }
   int argc() const { return m_arguments.size(); }
   const char* const* argv() const { return &m_arguments[0]; }
@@ -73,11 +90,11 @@ class Args {
   std::vector<const char*> m_arguments;
 };
 
-bool Args::has(const char* name) const {
+bool ArgParser::has(const char* name) const {
   return find(name) != m_arguments.end();
 }
 
-const char* Args::get(const char* argument, bool pop) {
+const char* ArgParser::get(const char* argument, bool pop) {
   auto nameIt = find(argument);
   if (nameIt != m_arguments.end()) {
     auto valueIt = std::next(nameIt);
@@ -96,7 +113,7 @@ const char* Args::get(const char* argument, bool pop) {
   return nullptr;
 }
 
-const char* Args::pop(const char* const* keys, size_t numberOfKeys) {
+const char* ArgParser::pop(const char* const* keys, size_t numberOfKeys) {
   const char* result = nullptr;
   for (size_t i = 0; !result && i < numberOfKeys; i++) {
     result = pop(keys[i]);
@@ -104,7 +121,7 @@ const char* Args::pop(const char* const* keys, size_t numberOfKeys) {
   return result;
 }
 
-bool Args::popFlag(const char* argument) {
+bool ArgParser::popFlag(const char* argument) {
   auto flagIt = find(argument);
   if (flagIt != m_arguments.end()) {
     m_arguments.erase(flagIt);
@@ -113,7 +130,7 @@ bool Args::popFlag(const char* argument) {
   return false;
 }
 
-bool Args::popFlags(const char* const* flags, size_t numberOfFlags) {
+bool ArgParser::popFlags(const char* const* flags, size_t numberOfFlags) {
   bool result = false;
   for (size_t i = 0; !result && i < numberOfFlags; i++) {
     result = popFlag(flags[i]);
@@ -121,9 +138,24 @@ bool Args::popFlags(const char* const* flags, size_t numberOfFlags) {
   return result;
 }
 
-std::vector<const char*>::const_iterator Args::find(const char* name) const {
+std::vector<const char*>::const_iterator ArgParser::find(
+    const char* name) const {
   return std::find_if(m_arguments.begin(), m_arguments.end(),
                       [name](const char* s) { return strcmp(s, name) == 0; });
+}
+
+Args ArgParser::parse() {
+  Args result;
+#define BOOL_ARG(variable, longForm, shortForm, desc) \
+  result.variable =                                   \
+      popFlag(longForm) || (strlen(shortForm) && popFlag(shortForm));
+#define TEXT_ARG(variable, longForm, shortForm, desc, argName) \
+  result.variable = pop(longForm);                             \
+  if (!result.variable && strlen(shortForm)) result.variable = pop(shortForm);
+#include "arguments.inc"
+#undef BOOL_ARG
+#undef TEXT_ARG
+  return result;
 }
 
 #if ION_SIMULATOR_EXTERNAL_APP
@@ -173,11 +205,12 @@ static inline int load_eadk_external_data(const char* path) {
 using namespace Ion::Simulator;
 
 int main(int argc, char* argv[]) {
-  Args args(argc, argv);
+  ArgParser parser(argc, argv);
+  Args args = parser.parse();
 
 #ifndef __WIN32__
 #ifdef ASAN
-  if (args.popFlag(k_limitStackUsageFlag)) {
+  if (args.limitStackUsage) {
     fprintf(stderr, "Unable to have stack limit with ASAN\n");
   }
 #else
@@ -205,7 +238,7 @@ int main(int argc, char* argv[]) {
    * will automatically stop at the exec call. To bypass this behaviour, write
    * "settings set target.process.stop-on-exec false" in ~/.lldbinit */
   constexpr int k_stackLimit = 0x20000;
-  if (args.popFlag(k_limitStackUsageFlag)) {
+  if (args.limitStackUsage) {
     struct rlimit stackLimits = {0, 0};
     if (getrlimit(RLIMIT_STACK, &stackLimits) == 0) {
       if (stackLimits.rlim_cur > k_stackLimit) {
@@ -214,29 +247,25 @@ int main(int argc, char* argv[]) {
           execv(argv[0], argv);
         }
         fprintf(stderr, "Unable to SET stack limit: ignoring flag %s\n",
-                k_limitStackUsageFlag);
+                ArgNames::limitStackUsage);
       }
     } else {
       fprintf(stderr, "Unable to GET stack limit: ignoring flag %s\n",
-              k_limitStackUsageFlag);
+              ArgNames::limitStackUsage);
     }
   }
 #endif
 #endif
 
 #if ION_SIMULATOR_FILES
-  const char* stateFile =
-      args.pop(k_loadStateFileKeys, std::size(k_loadStateFileKeys));
-  if (stateFile) {
+  if (args.stateFile) {
     assert(Journal::replayJournal());
-    bool headlessStateFile = args.popFlag("--headless-state-file");
-    StateFile::load(stateFile, headlessStateFile);
-    if (args.has(k_languageFlag)) {
+    StateFile::load(args.stateFile, args.headlessStateFile);
+    if (args.language) {
       // Override any language setting if there is
       fprintf(stderr,
               "Warning: the language passed as an option will be ignored and "
               "the language of the statefile will be used instead.\n");
-      args.pop(k_languageFlag);
     }
     const char* replayJournalLanguage =
         Journal::replayJournal()->startingLanguage();
@@ -246,29 +275,26 @@ int main(int argc, char* argv[]) {
        * statefile stays consistent whatever the platform language. */
       replayJournalLanguage = "none";
     }
-    args.push(k_languageFlag, replayJournalLanguage);
+    args.language = replayJournalLanguage;
   }
 
-  const char* screenshotPath = args.pop("--take-screenshot");
-  if (screenshotPath) {
-    Ion::Simulator::Screenshot::commandlineScreenshot()->init(screenshotPath);
-  }
-
-  const char* allScreenshotsFolder = args.pop("--take-all-screenshots");
-  if (allScreenshotsFolder) {
+  if (args.screenshotPath) {
     Ion::Simulator::Screenshot::commandlineScreenshot()->init(
-        allScreenshotsFolder, true);
+        args.screenshotPath);
   }
 
-  bool computeScreenshotsHash = args.popFlag("--compute-hash");
-  if (computeScreenshotsHash) {
+  if (args.allScreenshotsFolder) {
+    Ion::Simulator::Screenshot::commandlineScreenshot()->init(
+        args.allScreenshotsFolder, true);
+  }
+
+  if (args.computeScreenshotsHash) {
     Ion::Simulator::Screenshot::commandlineScreenshot()->init(nullptr, true,
                                                               true);
   }
 
 #if ION_LOG_EVENTS_NAME
-  bool doNotLogEvents = args.popFlag("--hide-events");
-  if (doNotLogEvents) {
+  if (args.doNotLogEvents) {
     Ion::Events::SetLogEvents(false);
   }
 #endif
@@ -279,19 +305,18 @@ int main(int argc, char* argv[]) {
 #endif
 
   // Default language
-  if (!args.has(k_languageFlag)) {
-    args.push(k_languageFlag, Platform::languageCode());
+  if (!args.language) {
+    args.language = Platform::languageCode();
   }
 
-  bool headless = Window::isAlwaysHeadless() ||
-                  args.popFlags(k_headlessFlags, std::size(k_headlessFlags));
+  bool headless = Window::isAlwaysHeadless() || args.headless;
 
   Random::init();
   if (!headless) {
     Journal::init();
-    if (args.has(k_languageFlag) && Journal::logJournal()) {
+    if (Journal::logJournal()) {
       // Set log journal starting language
-      Journal::logJournal()->setStartingLanguage(args.get(k_languageFlag));
+      Journal::logJournal()->setStartingLanguage(args.language);
     }
     Window::init();
     Haptics::init();
@@ -299,14 +324,13 @@ int main(int argc, char* argv[]) {
 
   Ion::Init();
 #if ION_SIMULATOR_EXTERNAL_APP
-  const char* nwb = args.pop("--nwb");
-  if (nwb) {
-    if (load_eadk_external_data(args.pop("--nwb-external-data"))) {
+  if (args.externalApp) {
+    if (load_eadk_external_data(args.externalAppData)) {
       return -1;
     }
-    void* handle = dlopen(nwb, RTLD_LAZY);
+    void* handle = dlopen(args.externalApp, RTLD_LAZY);
     if (handle == nullptr) {
-      fprintf(stderr, "Error loading %s: %s\n", nwb, dlerror());
+      fprintf(stderr, "Error loading %s: %s\n", args.externalApp, dlerror());
       return -1;
     }
     int (*nwb_main)(int argc, const char* const argv[]);
@@ -326,11 +350,14 @@ int main(int argc, char* argv[]) {
      * spinner in onRuntimeInitialized instead but it would cause a small
      * visible delay where the screen is solid gray. */
     Journal::logJournal()->pushEvent(Ion::Events::None);
-    nwb_main(args.argc(), args.argv());
+    nwb_main(parser.argc(), parser.argv());
     dlclose(handle);
   } else {
 #endif
-    ion_main(args.argc(), args.argv());
+    // These two arguments are handled by ion_main
+    parser.push(ArgNames::language, args.language);
+    parser.push(ArgNames::openApp, args.openApp);
+    ion_main(parser.argc(), parser.argv());
 #if ION_SIMULATOR_EXTERNAL_APP
   }
 #endif

@@ -222,11 +222,7 @@ _sources_poincare_test := $(addprefix test/, \
   old/erf_inv.cpp \
   old/exam_mode.cpp \
   old/expression_properties.cpp \
-  old/expression_to_layout.cpp \
   old/helper.cpp \
-  old/layout.cpp \
-  old/layout_serialization.cpp \
-  old/layout_to_expression.cpp \
   old/numeric_solver.cpp \
   old/print.cpp \
   old/print_float.cpp \

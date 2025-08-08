@@ -152,9 +152,4 @@ void assert_expression_simplifies_approximates_to(
     int numberOfSignificantDigits =
         Poincare::PrintFloat::SignificantDecimalDigits<T>());
 
-// Serialization
-
-void assert_layout_serializes_to(const Poincare::Internal::Tree* layout,
-                                 const char* serialization);
-
 #endif

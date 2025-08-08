@@ -491,7 +491,7 @@ Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
   if (properties().isScatterPlot()) {
     assert(e.dimension().isPointOrListOfPoints() ||
            e.dimension().isEmptyList());
-    SystemExpression point;
+    PreparedFunction point;
     if (e.dimension().isPoint()) {
       if (t != static_cast<T>(0.)) {
         return Coordinate2D<T>();

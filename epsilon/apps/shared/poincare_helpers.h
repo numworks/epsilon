@@ -54,28 +54,20 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 
 // ===== Approximation =====
 
-struct ApproximationParameters {
-  Poincare::Preferences::ComplexFormat complexFormat =
-      MathPreferences::SharedPreferences()->complexFormat();
-  Poincare::Preferences::AngleUnit angleUnit =
-      MathPreferences::SharedPreferences()->angleUnit();
-  bool updateComplexFormatWithExpression = true;
-};
-
 // Approximate to tree and keep units
 template <class T>
 inline Poincare::SystemExpression ApproximateUser(
     Poincare::UserExpression e, Poincare::Context* context,
-    const ApproximationParameters& approximationParameters = {}) {
-  Poincare::Preferences::ComplexFormat complexFormat =
-      approximationParameters.complexFormat;
-  if (approximationParameters.updateComplexFormatWithExpression) {
-    complexFormat =
-        Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-            complexFormat, e, context);
-  }
-  return e.approximateUserToTree<T>(approximationParameters.angleUnit,
-                                    complexFormat, context);
+    Poincare::Preferences::ComplexFormat complexFormat =
+        MathPreferences::SharedPreferences()->complexFormat(),
+    Poincare::Preferences::AngleUnit angleUnit =
+        MathPreferences::SharedPreferences()->angleUnit()) {
+  complexFormat =
+      Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
+          complexFormat, e, context);
+  return e.approximateUserToTree<T>(
+      MathPreferences::SharedPreferences()->angleUnit(), complexFormat,
+      context);
 }
 
 template <class T>

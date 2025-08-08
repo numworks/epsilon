@@ -172,8 +172,10 @@ static void processStore(OutputExpressions& outputs,
   // TODO: add circuit breaker?
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
+  Internal::ProjectionContext projectionContext =
+      PoincareHelpers::ProjectionContextForPreferences(value, variableStore);
   UserExpression valueApprox =
-      PoincareHelpers::ApproximateUser<double>(value, variableStore);
+      value.cloneAndApproximate<double>(projectionContext);
   if (symbol.isUserSymbol() && CAS::ShouldOnlyDisplayApproximation(
                                    input, value, valueApprox, variableStore)) {
     value = valueApprox;

@@ -190,13 +190,12 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
     UserExpression& expression, const char* name,
     Ion::Storage::Record previousRecord) {
   bool storeApproximation = CAS::NeverDisplayReductionOfInput(expression, this);
-  PoincareHelpers::ReductionParameters params = {
-      .symbolicComputation = SymbolicComputation::ReplaceAllSymbols};
-  bool reductionFailure = false;
-  PoincareHelpers::CloneAndSimplify(&expression, this, params,
-                                    &reductionFailure);
-  SystemExpression approximation =
-      PoincareHelpers::ApproximateUser<double>(expression, this);
+  Internal::ProjectionContext projectionContext =
+      PoincareHelpers::ProjectionContextForPreferences(expression, this);
+  projectionContext.m_symbolic = SymbolicComputation::ReplaceAllSymbols;
+  UserExpression approximation;
+  bool reductionFailure = expression.cloneAndSimplifyAndApproximate(
+      &expression, &approximation, projectionContext);
   // Do not store exact derivative, etc.
   if (reductionFailure || storeApproximation ||
       CAS::ShouldOnlyDisplayApproximation(UserExpression(), expression,

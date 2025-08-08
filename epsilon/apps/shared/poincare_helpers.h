@@ -84,6 +84,19 @@ inline Poincare::SystemExpression ApproximateSystem(
   return e.approximateSystemToTree<T>();
 }
 
+inline Poincare::Internal::ProjectionContext ProjectionContextForPreferences(
+    const Poincare::UserExpression e, Poincare::Context* context) {
+  Poincare::Internal::ProjectionContext projectionContext = {
+      .m_complexFormat = MathPreferences::SharedPreferences()->complexFormat(),
+      .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+      .m_unitFormat =
+          GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
+      .m_context = context};
+  Poincare::Internal::Projection::UpdateComplexFormatWithExpressionInput(
+      e, &projectionContext);
+  return projectionContext;
+}
+
 // Approximate a real scalar expression. Contexts are not handled.
 template <class FloatType = float>
 inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {

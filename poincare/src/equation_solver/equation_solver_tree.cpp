@@ -4,6 +4,7 @@
 #include <poincare/helpers/polynomial.h>
 #include <poincare/numeric_solver/roots.h>
 #include <poincare/numeric_solver/solver.h>
+#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
@@ -104,8 +105,10 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   // Step 2. Solve the equations
 
   // Step 2.1. Try with linear system solving
-  SolverResult result = SolveLinearSystem(reducedEquationList, equationMetadata,
-                                          projectionContext.m_context);
+  // NOTE: const_cast is temporary
+  SolverResult result =
+      SolveLinearSystem(reducedEquationList, equationMetadata,
+                        &const_cast<Context&>(projectionContext.m_context));
 
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
@@ -150,9 +153,10 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   /* Approximate */
 
   if (result.solutionMetadata.solutionType != SolutionType::Formal) {
-    Approximation::Context approxCtx(projectionContext.m_angleUnit,
-                                     projectionContext.m_complexFormat,
-                                     projectionContext.m_context);
+    // NOTE: const_cast is temporary
+    Approximation::Context approxCtx(
+        projectionContext.m_angleUnit, projectionContext.m_complexFormat,
+        &const_cast<Context&>(projectionContext.m_context));
     result.approximateSolutionList = Approximation::ToTree<double>(
         result.exactSolutionList,
         Approximation::Parameters{.isRootAndCanHaveRandom = true,
@@ -312,8 +316,9 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
   EquationMetadata equationMetadata;
 
   // Step 1. Retrieve user symbols and infer the list of unknowns
-
-  Context* context = projectionContext->m_context;
+  // NOTE: const_cast is temporary
+  Context* context = &const_cast<Context&>(projectionContext->m_context);
+  // NOTE: const_cast is temporary
   Tree* userSymbols = Variables::GetUserSymbols(equationList, context);
   assert(userSymbols->isList());
 

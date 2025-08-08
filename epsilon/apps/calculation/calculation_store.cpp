@@ -110,6 +110,7 @@ static bool compute(Poincare::UserExpression inputExpression,
       Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
           complexFormat, inputExpression, context);
 
+  assert(context);
   Internal::ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
@@ -117,7 +118,7 @@ static bool compute(Poincare::UserExpression inputExpression,
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
                                    : SymbolicComputation::ReplaceAllSymbols,
-      .m_context = context};
+      .m_context = *context};
 
   return inputExpression.cloneAndSimplifyAndApproximate(
       &exactOutputExpression, &approximateOutputExpression, projContext);
@@ -173,7 +174,7 @@ static void processStore(OutputExpressions& outputs,
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   Internal::ProjectionContext projectionContext =
-      PoincareHelpers::ProjectionContextForPreferences(value, variableStore);
+      PoincareHelpers::ProjectionContextForPreferences(value, *variableStore);
   UserExpression valueApprox =
       value.cloneAndApproximate<double>(projectionContext);
   if (symbol.isUserSymbol() && CAS::ShouldOnlyDisplayApproximation(

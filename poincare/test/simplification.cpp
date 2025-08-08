@@ -484,16 +484,13 @@ QUIZ_CASE(pcj_simplification_matrix) {
 }
 
 QUIZ_CASE(pcj_simplification_complex) {
-  Shared::GlobalContext globalContext;
   ProjectionContext ctx = {
       .m_complexFormat = ComplexFormat::Cartesian,
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
-      .m_context = &globalContext,
   };
   ProjectionContext PolarCtx = {
       .m_complexFormat = ComplexFormat::Polar,
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
-      .m_context = &globalContext,
   };
   simplifies_to("2×i×i", "-2", ctx);
   simplifies_to("1+i×(1+i×(1+i))", "0", ctx);
@@ -681,7 +678,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   store("x→f(x)", &globalContext);
   ProjectionContext ctx = {
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
-      .m_context = &globalContext,
+      .m_context = globalContext,
   };
 
   // contract sum
@@ -751,7 +748,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   store("diff(f(x),x,x)→h(x)", &globalContext);
   ProjectionContext ctx2 = {
       .m_symbolic = SymbolicComputation::ReplaceDefinedFunctions,
-      .m_context = &globalContext,
+      .m_context = globalContext,
   };
   simplifies_to("f'(4)", "8", ctx2);
   simplifies_to("g(4)", "8", ctx2);
@@ -914,7 +911,7 @@ QUIZ_CASE(pcj_simplification_list) {
   Shared::GlobalContext globalContext;
   ProjectionContext replaceSymbolCtx = {
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = &globalContext};
+      .m_context = globalContext};
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");
   simplifies_to("{0,1}=0", "{True,False}");
@@ -1142,7 +1139,7 @@ QUIZ_CASE(pcj_simplification_unit) {
   Shared::GlobalContext globalContext;
   ProjectionContext replaceSymbolCtx = {
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = &globalContext};
+      .m_context = globalContext};
   simplifies_to("12_m", "12×_m");
   simplifies_to("1_s", "1×_s");
   simplifies_to("1_m+1_s", "undef");
@@ -1521,7 +1518,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   store("x→f(x)", &globalContext);
   ProjectionContext ctx = {
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
-      .m_context = &globalContext,
+      .m_context = globalContext,
   };
   simplifies_to("f(x)-inf", "f(x)-∞", ctx);
 
@@ -1977,7 +1974,7 @@ QUIZ_CASE(pcj_simplification_function) {
   store("x→f(x)", &globalContext);
   ProjectionContext projCtx = {
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
-      .m_context = &globalContext,
+      .m_context = globalContext,
   };
   simplifies_to("f(x)", "f(x)", projCtx);
   simplifies_to("f(2+2)", "f(4)");
@@ -1993,7 +1990,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
 
   ProjectionContext projCtx = {
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = &globalContext};
+      .m_context = globalContext};
 
   store("4→y", &globalContext);
   simplifies_to("x+y", "x+4", projCtx);
@@ -2015,7 +2012,7 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
 
   ProjectionContext projCtx2 = {
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = &globalContext};
+      .m_context = globalContext};
   simplifies_to("y+2", "6", projCtx2);
   simplifies_to("y+x", "undef", projCtx2);
   simplifies_to("diff(y*y, y, y)", "8", projCtx2);
@@ -2168,7 +2165,7 @@ QUIZ_CASE(pcj_simplification_context) {
   Shared::GlobalContext globalContext;
   ProjectionContext projCtx = {
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = &globalContext};
+      .m_context = globalContext};
 
   // Fill variable
   store("1+2→Adadas", &globalContext);

@@ -4,6 +4,7 @@
 #include <omg/enums.h>
 #include <omg/float.h>
 #include <poincare/old/context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/pool_handle.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/projection.h>
@@ -77,7 +78,7 @@ typedef Poincare::Internal::Tree* (*ProcessExpression)(
     Poincare::Internal::ProjectionContext& projectionContext);
 
 void assert_parsed_expression_process_to(
-    const char* expression, const char* result, Poincare::Context* ctx,
+    const char* expression, const char* result, const Poincare::Context& ctx,
     Poincare::ReductionTarget target,
     Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::Preferences::AngleUnit angleUnit,
@@ -89,9 +90,10 @@ void assert_parsed_expression_process_to(
 
 // Parsing
 
-Poincare::Internal::Tree* parse_expression(const char* expression,
-                                           Poincare::Context* context,
-                                           bool isAssignment = false);
+Poincare::Internal::Tree* parse_expression(
+    const char* expression,
+    const Poincare::Context& context = Poincare::EmptyContext{},
+    bool isAssignment = false);
 
 // Simplification
 

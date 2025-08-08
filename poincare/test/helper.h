@@ -192,8 +192,7 @@ void store(const char* storeExpression, Poincare::VariableStore* variableStore);
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
     const char* function, Poincare::Internal::ProjectionContext ctx = {}) {
   constexpr const char* k_symbol = "x";
-  assert(ctx.m_context);
-  Poincare::Internal::Tree* e = parse(function, *ctx.m_context);
+  Poincare::Internal::Tree* e = parse(function);
   Poincare::Internal::Simplification::ToSystem(e, &ctx);
   Poincare::Internal::Approximation::PrepareFunctionForApproximation(
       e, k_symbol, ctx.m_complexFormat);

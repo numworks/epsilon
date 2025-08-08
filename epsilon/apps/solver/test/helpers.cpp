@@ -141,7 +141,7 @@ static void compareSolutions(SystemOfEquations* system,
     Internal::ProjectionContext projCtx{
         .m_complexFormat = Internal::ComplexFormat::Cartesian,
         .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = ctx,
+        .m_context = *ctx,
         .m_advanceReduce = false};
     SystemExpression expectedExpression =
         UserExpression::Parse(expectedValue, *ctx,
@@ -159,13 +159,15 @@ static void compareSolutions(SystemOfEquations* system,
     UserExpression parsedExpression = UserExpression::Parse(
         obtainedLayoutBuffer, *ctx, {.forceUnitUnderscore = true});
     quiz_assert(!parsedExpression.isUninitialized());
-    projCtx = {
+    /* TODO: no need to recreate a projectionContext when const and non const
+     * members of ProjectionContext are split (parameters vs metadata) */
+    Internal::ProjectionContext projCtx2 = {
         .m_complexFormat = Internal::ComplexFormat::Cartesian,
         .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
-        .m_context = ctx,
+        .m_context = *ctx,
         .m_advanceReduce = false};
     SystemExpression obtainedExpression =
-        parsedExpression.cloneAndReduce(projCtx, &reductionFailure);
+        parsedExpression.cloneAndReduce(projCtx2, &reductionFailure);
     quiz_assert(!reductionFailure && !obtainedExpression.isUninitialized());
 #if 0
     quiz_assert(

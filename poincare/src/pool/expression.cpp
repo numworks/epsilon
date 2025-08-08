@@ -22,6 +22,7 @@
 #include <poincare/src/expression/order.h>
 #include <poincare/src/expression/parametric.h>
 #include <poincare/src/expression/polynomial.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/rational.h>
 #include <poincare/src/expression/sign.h>
 #include <poincare/src/expression/simplification.h>
@@ -379,7 +380,8 @@ template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
     Internal::ProjectionContext& context) const {
   Approximation::Context approxCtx(context.m_angleUnit, context.m_complexFormat,
-                                   context.m_context);
+                                   // NOTE: const_cast is temporary
+                                   &const_cast<Context&>(context.m_context));
   Tree* a;
   if (CAS::Enabled()) {
     a = tree()->cloneTree();
@@ -574,10 +576,15 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   if (exp.isUninitialized()) {
     return NAN;
   }
-  ProjectionContext ctx = {.m_complexFormat = complexFormat,
-                           .m_angleUnit = angleUnit,
-                           .m_symbolic = symbolicComputation,
-                           .m_context = context};
+  // Note : temporary until EmptyContext is passed instead  of nullptr
+  ProjectionContext ctx =
+      context ? ProjectionContext{.m_complexFormat = complexFormat,
+                                  .m_angleUnit = angleUnit,
+                                  .m_symbolic = symbolicComputation,
+                                  .m_context = *context}
+              : ProjectionContext{.m_complexFormat = complexFormat,
+                                  .m_angleUnit = angleUnit,
+                                  .m_symbolic = symbolicComputation};
   bool reductionFailure;
   exp = exp.cloneAndSimplify(ctx, &reductionFailure);
   assert(!exp.isUninitialized());

@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/numeric_solver/zoom.h>
+#include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/simplification.h>
 
 #include <cmath>
@@ -90,9 +91,7 @@ Coordinate2D<T> expressionEvaluator(T t, const void* model) {
 template <typename T>
 void assert_points_of_interest_range_is(const char* expression,
                                         Range2D<T> expectedRange) {
-  Shared::GlobalContext context;
-  Tree* e =
-      parseAndPrepareForApproximation(expression, {.m_context = &context});
+  Tree* e = parseAndPrepareForApproximation(expression, ProjectionContext{});
   ZoomTest zoom(Range1D<T>(-k_maxFloat, k_maxFloat));
   zoom.zoom()->fitPointsOfInterest(expressionEvaluator<T>, e, false,
                                    expressionEvaluator<double>);
@@ -159,11 +158,10 @@ QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
 void assert_intersections_range_is(const char* expression1,
                                    const char* expression2,
                                    Range2D<float> expectedRange) {
-  Shared::GlobalContext context;
   TreeRef e1 =
-      parseAndPrepareForApproximation(expression1, {.m_context = &context});
+      parseAndPrepareForApproximation(expression1, ProjectionContext{});
   TreeRef e2 =
-      parseAndPrepareForApproximation(expression2, {.m_context = &context});
+      parseAndPrepareForApproximation(expression2, ProjectionContext{});
   ZoomTest zoom(Range1D<float>(-k_maxFloat, k_maxFloat));
   zoom.zoom()->fitIntersections(expressionEvaluator, e1, expressionEvaluator,
                                 e2);

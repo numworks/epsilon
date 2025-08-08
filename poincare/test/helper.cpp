@@ -106,13 +106,9 @@ void process_tree_and_compare(const char* input, const char* output,
                               ProjectionContext projectionContext,
                               int nbOfSignificantDigits) {
   Tree* expected =
-      projectionContext.m_context
-          ? parse(output, *projectionContext.m_context, {.preserveInput = true})
-          : parse(output, Poincare::EmptyContext{}, {.preserveInput = true});
+      parse(output, projectionContext.m_context, {.preserveInput = true});
   Tree* expression =
-      projectionContext.m_context
-          ? parse(input, *projectionContext.m_context, {.preserveInput = true})
-          : parse(input, Poincare::EmptyContext{}, {.preserveInput = true});
+      parse(input, projectionContext.m_context, {.preserveInput = true});
   ;
   if (!expression || !expected) {
     // Parsing failed

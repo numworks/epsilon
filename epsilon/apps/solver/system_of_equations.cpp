@@ -45,6 +45,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
   m_equationMetadata.unknownVariables.clear();
   m_equationMetadata.definedVariables.clear();
 
+  assert(context);
   UserExpression eqList = equationList(m_store);
   EquationSolver::SolverResult result = EquationSolver::ExactSolveAdaptive(
       eqList,
@@ -52,7 +53,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
           .m_complexFormat =
               MathPreferences::SharedPreferences()->complexFormat(),
           .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
-          .m_context = context,
+          .m_context = *context,
       });
   UserExpression exactSolutionList = result.exactSolutionList;
   UserExpression approximateSolutionList = result.approximateSolutionList;
@@ -108,11 +109,12 @@ void SystemOfEquations::approximateSolve(Context* context) {
   m_wasInterrupted = false;
   UserExpression eqList = equationList(m_store);
 
+  assert(context);
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       eqList,
       {.m_complexFormat = MathPreferences::SharedPreferences()->complexFormat(),
        .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
-       .m_context = context},
+       .m_context = *context},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
                                 : m_approximateSolvingRange,
       k_maxNumberOfApproximateSolutions);
@@ -188,7 +190,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
         // Any remaining symbol at this point should be an unknown parameter.
         .m_symbolic = SymbolicComputation::KeepAllSymbols,
-        .m_context = context,
+        .m_context = *context,
         .m_advanceReduce = false};
     bool failure = false;
     approximate = exact.cloneAndSimplify(projCtx, &failure);

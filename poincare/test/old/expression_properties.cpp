@@ -1,6 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/dimension.h>
 #include <poincare/src/expression/polynomial.h>
@@ -173,13 +174,14 @@ QUIZ_CASE(poincare_properties_has_matrix) {
 
 void assert_projected_is_infinity(const char* input, ProjectionContext* projCtx,
                                   bool isInfinity = true) {
-  Tree* e =
-      projCtx->m_context ? parse(input, *projCtx->m_context) : parse(input);
+  Tree* e = parse(input, projCtx->m_context);
   Simplification::ToSystem(e, projCtx);
   SystemExpression expr = SystemExpression::Builder(e);
   quiz_assert_print_if_failure(
       expr.recursivelyMatches(&SystemExpression::isPlusOrMinusInfinity,
-                              projCtx->m_context) == isInfinity,
+                              // NOTE: const_cast is temporary
+                              &const_cast<Context&>(projCtx->m_context)) ==
+          isInfinity,
       input);
 }
 
@@ -187,7 +189,7 @@ QUIZ_CASE(poincare_properties_is_infinity) {
   Shared::GlobalContext globalContext;
   ProjectionContext projCtx = {
       .m_symbolic = SymbolicComputation::ReplaceDefinedFunctions,
-      .m_context = &globalContext,
+      .m_context = globalContext,
   };
   assert_projected_is_infinity("3.4+inf", &projCtx);
   assert_projected_is_infinity("2.3+1", &projCtx, false);
@@ -207,8 +209,7 @@ QUIZ_CASE(poincare_properties_is_infinity) {
 void assert_expression_has_variables(const char* input,
                                      const Tree* expectedVariables,
                                      ProjectionContext* projCtx) {
-  Tree* e =
-      projCtx->m_context ? parse(input, *projCtx->m_context) : parse(input);
+  Tree* e = parse(input, projCtx->m_context);
   Simplification::ToSystem(e, projCtx);
   const Tree* variables = Variables::GetUserSymbols(e);
   assert_trees_are_equal(variables, expectedVariables);
@@ -222,7 +223,7 @@ QUIZ_CASE(poincare_properties_get_variables) {
   Shared::GlobalContext globalContext;
   ProjectionContext projCtx = {
       .m_symbolic = SymbolicComputation::ReplaceDefinedFunctions,
-      .m_context = &globalContext,
+      .m_context = globalContext,
   };
   assert(
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
@@ -303,7 +304,7 @@ QUIZ_CASE(poincare_properties_get_variables) {
 
 void assert_reduced_expression_has_polynomial_coefficient(
     const char* input, const char* symbolName, const Tree* expectedCoefficients,
-    Shared::GlobalContext* globalContext,
+    const Context& context = Poincare::EmptyContext{},
     Preferences::ComplexFormat complexFormat =
         Preferences::ComplexFormat::Cartesian,
     Preferences::AngleUnit angleUnit = Preferences::AngleUnit::Radian,
@@ -313,8 +314,8 @@ void assert_reduced_expression_has_polynomial_coefficient(
   ProjectionContext projContext{.m_complexFormat = complexFormat,
                                 .m_angleUnit = angleUnit,
                                 .m_symbolic = symbolicComputation,
-                                .m_context = globalContext};
-  UserExpression e = UserExpression::Builder(parse(input, *globalContext));
+                                .m_context = context};
+  UserExpression e = UserExpression::Builder(parse(input, context));
   bool reductionFailure = false;
   SystemExpression s = e.cloneAndReduce(projContext, &reductionFailure);
   quiz_assert(!reductionFailure);
@@ -323,43 +324,42 @@ void assert_reduced_expression_has_polynomial_coefficient(
 }
 
 QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
-  Shared::GlobalContext globalContext;
+  assert_reduced_expression_has_polynomial_coefficient("x^2+x+2", "x",
+                                                       KList(2_e, 1_e, 1_e));
   assert_reduced_expression_has_polynomial_coefficient(
-      "x^2+x+2", "x", KList(2_e, 1_e, 1_e), &globalContext);
-  assert_reduced_expression_has_polynomial_coefficient(
-      "3×(x+2)^2-6×π", "x", KList(KAdd(12_e, KMult(-6_e, π_e)), 12_e, 3_e),
-      &globalContext);
+      "3×(x+2)^2-6×π", "x", KList(KAdd(12_e, KMult(-6_e, π_e)), 12_e, 3_e));
   assert_reduced_expression_has_polynomial_coefficient(
       "2×(n+1)^3-4n+32×x", "n",
-      KList(KAdd(2_e, KMult(32_e, "x"_e)), 2_e, 6_e, 2_e), &globalContext);
+      KList(KAdd(2_e, KMult(32_e, "x"_e)), 2_e, 6_e, 2_e));
   assert_reduced_expression_has_polynomial_coefficient(
-      "x^2-π×x+1", "x", KList(1_e, KMult(-1_e, π_e), 1_e), &globalContext);
+      "x^2-π×x+1", "x", KList(1_e, KMult(-1_e, π_e), 1_e));
 
+  Shared::GlobalContext globalContext;
   // f: x→x^2+Px+1
   store("1+π×x+x^2→f(x)", &globalContext);
   assert_reduced_expression_has_polynomial_coefficient(
-      "f(x)", "x", KList(1_e, π_e, 1_e), &globalContext);
+      "f(x)", "x", KList(1_e, π_e, 1_e), globalContext);
+  assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
+                                                       KList(0_e, i_e));
   assert_reduced_expression_has_polynomial_coefficient(
-      "√(-1)x", "x", KList(0_e, i_e), &globalContext);
-  assert_reduced_expression_has_polynomial_coefficient(
-      "√(-1)x", "x", KList(KNonReal), &globalContext,
+      "√(-1)x", "x", KList(KNonReal), Poincare::EmptyContext{},
       Preferences::ComplexFormat::Real);
 
   // 3 -> x
   store("3→x", &globalContext);
   assert_reduced_expression_has_polynomial_coefficient("x+1", "x", KList(4_e),
-                                                       &globalContext);
+                                                       globalContext);
   assert_reduced_expression_has_polynomial_coefficient(
-      "x+2", "x", KList(2_e, 1_e), &globalContext,
+      "x+2", "x", KList(2_e, 1_e), globalContext,
       Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian,
       Preferences::UnitFormat::Metric, SymbolicComputation::KeepAllSymbols);
   assert_reduced_expression_has_polynomial_coefficient(
-      "x+2", "x", KList(2_e, 1_e), &globalContext,
+      "x+2", "x", KList(2_e, 1_e), globalContext,
       Preferences::ComplexFormat::Real, Preferences::AngleUnit::Radian,
       Preferences::UnitFormat::Metric,
       SymbolicComputation::ReplaceDefinedFunctions);
   assert_reduced_expression_has_polynomial_coefficient(
-      "f(x)", "x", KList(1_e, π_e, 1_e), &globalContext,
+      "f(x)", "x", KList(1_e, π_e, 1_e), globalContext,
       Preferences::ComplexFormat::Cartesian, Preferences::AngleUnit::Radian,
       Preferences::UnitFormat::Metric,
       SymbolicComputation::ReplaceDefinedFunctions);

@@ -77,7 +77,7 @@ inline Poincare::SystemExpression ApproximateSystem(
 }
 
 inline Poincare::Internal::ProjectionContext ProjectionContextForPreferences(
-    const Poincare::UserExpression e, Poincare::Context* context) {
+    const Poincare::UserExpression e, const Poincare::Context& context) {
   Poincare::Internal::ProjectionContext projectionContext = {
       .m_complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
@@ -102,7 +102,7 @@ inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {
 // ===== Reduction =====
 
 inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
-    const Poincare::UserExpression e, Poincare::Context* context,
+    Poincare::UserExpression e, const Poincare::Context& context,
     Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::Preferences::AngleUnit angleUnit,
     bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
@@ -131,9 +131,9 @@ inline void CloneAndSimplify(Poincare::UserExpression* e,
                              Poincare::SymbolicComputation symbolicComputation,
                              bool* reductionFailure) {
   assert(reductionFailure);
-
+  assert(context);
   *e = e->cloneAndSimplify(
-      ProjectionContextForParameters(*e, context, complexFormat, angleUnit,
+      ProjectionContextForParameters(*e, *context, complexFormat, angleUnit,
                                      updateComplexFormatWithExpression, target,
                                      symbolicComputation),
       reductionFailure);
@@ -147,8 +147,9 @@ inline Poincare::SystemExpression CloneAndReduce(
     bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation, bool* reductionFailure) {
   assert(reductionFailure);
+  assert(context);
   return e.cloneAndReduce(
-      ProjectionContextForParameters(e, context, complexFormat, angleUnit,
+      ProjectionContextForParameters(e, *context, complexFormat, angleUnit,
                                      updateComplexFormatWithExpression, target,
                                      symbolicComputation),
       reductionFailure);

@@ -14,12 +14,10 @@ namespace Graph {
 void assert_cartesian_function_type_is(
     const char* expression, FunctionType::CartesianType expectedType) {
   const char* symbol = "x";
-  Shared::GlobalContext context;
-  UserExpression e =
-      UserExpression::Builder(parse_expression(expression, &context));
+  UserExpression e = Expression::Builder(parse_expression(expression));
   bool reductionFailure = false;
   SystemExpression s = e.cloneAndReduce(
-      Internal::Projection::DefaultProjectionContextForAnalysis(&context),
+      Internal::Projection::DefaultProjectionContextForAnalysis(),
       &reductionFailure);
   assert(!reductionFailure && !s.isUninitialized());
   FunctionType::CartesianType type =
@@ -53,12 +51,10 @@ QUIZ_CASE(graph_cartesian_function_type) {
 void assert_polar_line_type_is(const char* expression,
                                FunctionType::LineType expectedType) {
   const char* symbol = "θ";
-  Shared::GlobalContext context;
-  UserExpression e =
-      UserExpression::Builder(parse_expression(expression, &context));
+  UserExpression e = Expression::Builder(parse_expression(expression));
   bool reductionFailure = false;
   SystemExpression s = e.cloneAndReduce(
-      Internal::Projection::DefaultProjectionContextForAnalysis(&context),
+      Internal::Projection::DefaultProjectionContextForAnalysis(),
       &reductionFailure);
   assert(!reductionFailure && !s.isUninitialized());
   FunctionType::LineType type = FunctionType::PolarLineType(s, symbol);

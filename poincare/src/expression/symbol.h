@@ -38,7 +38,7 @@ const char* GetName(const Tree* e);
 
 ComplexSign GetComplexSign(const Tree* e);
 
-bool InvolvesCircularity(const Tree* e, Poincare::Context* context);
+bool InvolvesCircularity(const Tree* e, const Poincare::Context& context);
 };  // namespace Symbol
 
 }  // namespace Poincare::Internal

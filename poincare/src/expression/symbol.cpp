@@ -28,13 +28,9 @@ ComplexSign Symbol::GetComplexSign(const Tree* e) {
   return e->isUserSymbol() ? ComplexSign::RealFinite() : ComplexSign::Unknown();
 }
 
-bool involvesCircularity(const Tree* e, Poincare::Context* context,
+bool involvesCircularity(const Tree* e, const Poincare::Context& context,
                          int maxDepth, const char** visitedSymbols,
                          int numberOfVisitedSymbols) {
-  // If no context is provided, we cannot check for circularity.
-  if (!context) {
-    return false;
-  }
   // Check for circularity only when a symbol/function is encountered
   if (!e->isUserFunction() && !e->isUserSymbol()) {
     for (const Tree* child : e->children()) {
@@ -81,8 +77,7 @@ bool involvesCircularity(const Tree* e, Poincare::Context* context,
     e->cloneTree();
   }
 
-  const Tree* definition =
-      context ? context->expressionForUserNamed(symbol) : nullptr;
+  const Tree* definition = context.expressionForUserNamed(symbol);
   bool isCircular =
       definition && involvesCircularity(definition, context, maxDepth,
                                         visitedSymbols, numberOfVisitedSymbols);
@@ -90,7 +85,8 @@ bool involvesCircularity(const Tree* e, Poincare::Context* context,
   return isCircular;
 }
 
-bool Symbol::InvolvesCircularity(const Tree* e, Poincare::Context* context) {
+bool Symbol::InvolvesCircularity(const Tree* e,
+                                 const Poincare::Context& context) {
   const char* visitedSymbols[k_maxSymbolReplacementsCount];
   return involvesCircularity(e, context, k_maxSymbolReplacementsCount,
                              visitedSymbols, 0);

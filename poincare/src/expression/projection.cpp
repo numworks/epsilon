@@ -29,7 +29,8 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
     return DeepReplaceUserNamedWithUndefined(e);
   }
   // Check for circularity
-  if (Symbol::InvolvesCircularity(e, context)) {
+  assert(context);
+  if (Symbol::InvolvesCircularity(e, *context)) {
     e->cloneTreeOverTree(KUndef);
     return true;
   }
@@ -137,10 +138,7 @@ bool hasComplexNodes(const Tree* e, ProjectionContext& projectionContext) {
           [[fallthrough]];
         default: {
           const Tree* definition =
-              projectionContext.m_context
-                  ? projectionContext.m_context->expressionForUserNamed(
-                        descendant)
-                  : nullptr;
+              projectionContext.m_context.expressionForUserNamed(descendant);
           assert(definition != e);
           if (definition && hasComplexNodes(definition, projectionContext)) {
             return true;

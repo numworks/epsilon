@@ -32,7 +32,7 @@ PolarConic buildPolarConic(const char* expression) {
 ParametricConic buildParametricConic(const char* expression) {
   Shared::GlobalContext globalContext;
   ProjectionContext projContext = {.m_complexFormat = ComplexFormat::Cartesian,
-                                   .m_context = &globalContext,
+                                   .m_context = globalContext,
                                    .m_advanceReduce = false};
   // Prevent t from being interpreted as ton
   Poincare::PoolVariableContext tContext(

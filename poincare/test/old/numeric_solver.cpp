@@ -2,6 +2,7 @@
 #include <omg/float.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/old/context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>
@@ -18,7 +19,7 @@ using namespace Poincare::Internal;
 typedef Poincare::Solver<double>::Interest Interest;
 typedef Poincare::Solver<double>::Solution Solution;
 
-void assert_next_solution_is(const char* expression, Context* context,
+void assert_next_solution_is(const char* expression, const Context& context,
                              Poincare::Solver<double>* solver,
                              Poincare::Coordinate2D<double> expected,
                              Interest interest, const char* otherExpression,
@@ -72,10 +73,10 @@ void assert_solutions_are(
   Shared::GlobalContext context;
   Poincare::Solver<double> solver(start, end, &context);
   for (Poincare::Coordinate2D<double> c : expected) {
-    assert_next_solution_is(expression, &context, &solver, c, interest,
-                            otherExpression, angleUnit);
+    assert_next_solution_is(expression, Poincare::EmptyContext{}, &solver, c,
+                            interest, otherExpression, angleUnit);
   }
-  assert_next_solution_is(expression, &context, &solver,
+  assert_next_solution_is(expression, Poincare::EmptyContext{}, &solver,
                           Poincare::Coordinate2D<double>(NAN, NAN), interest,
                           otherExpression, angleUnit);
 }

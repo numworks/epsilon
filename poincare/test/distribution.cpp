@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <cmath>
 
-#include "../float_helper.h"
-#include "../helper.h"
+#include "float_helper.h"
+#include "helper.h"
 
 using namespace Poincare::Internal;
 
@@ -126,7 +126,7 @@ DistributionTestCase getStudentTestCase(int i) {
   return s_studentTests[i];
 }
 
-QUIZ_CASE(poincare_student_distribution) {
+QUIZ_CASE(pcj_distribution_student) {
   Distribution::Type student = Distribution::Type::Student;
   for (int i = 0; i < k_numberOfStudentTestCases; i++) {
     DistributionTestCase t = getStudentTestCase(i);
@@ -281,7 +281,7 @@ DistributionTestCase getChi2TestCase(int i) {
   return s_chi2Tests[i];
 }
 
-QUIZ_CASE(poincare_chi2_distribution) {
+QUIZ_CASE(pcj_distribution_chi2) {
   Distribution::Type chi2 = Distribution::Type::Chi2;
   for (unsigned int i = 0; i < k_numberOfChi2TestCases; i++) {
     DistributionTestCase t = getChi2TestCase(i);
@@ -387,7 +387,7 @@ QUIZ_CASE(poincare_chi2_distribution) {
       INFINITY);
 }
 
-QUIZ_CASE(poincare_normal_distribution_find_parameters) {
+QUIZ_CASE(pcj_distribution_normal_find_parameters) {
   Distribution::Type normal = Distribution::Type::Normal;
   // Compute mu
   Distribution::ParametersArray<double> parameters1 = {NAN, 3.};
@@ -418,7 +418,7 @@ QUIZ_CASE(poincare_normal_distribution_find_parameters) {
       1., 1.e-3, false);
 }
 
-QUIZ_CASE(poincare_distribution_infinity) {
+QUIZ_CASE(pcj_distribution_infinity) {
   Distribution::Type distributions[] = {
       Distribution::Type::Student,   Distribution::Type::Chi2,
       Distribution::Type::Normal,    Distribution::Type::Poisson,

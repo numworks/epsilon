@@ -219,7 +219,6 @@ $(addprefix statistics/, \
 _sources_poincare_test := $(addprefix test/, \
   old/dependency.cpp \
   old/derivative.cpp \
-  old/distribution.cpp \
   old/erf_inv.cpp \
   old/exam_mode.cpp \
   old/expression_properties.cpp \
@@ -244,6 +243,7 @@ _sources_poincare_test := $(addprefix test/, \
   bounds.cpp \
   conics.cpp \
   dimension.cpp \
+  distribution.cpp \
   equation_solver.cpp \
   float_helper.cpp \
   helper.cpp \

@@ -9,6 +9,9 @@
 
 #include <algorithm>
 #include <array>
+#include <iomanip>
+#include <iostream>
+#include <string>
 #include <vector>
 
 #include "haptics.h"
@@ -64,6 +67,7 @@ class ArgParser {
  public:
   ArgParser(int argc, char* argv[]) : m_arguments(argv, argv + argc) {}
   Args parse();
+  void printHelp();
 
  private:
   bool has(const char* key) const;
@@ -72,6 +76,8 @@ class ArgParser {
   const char* pop(const char* const* keys, size_t numberOfKeys);
   bool popFlag(const char* flag);
   bool popFlags(const char* const* flags, size_t numberOfFlags);
+  void printArgument(const char* longForm, const char* shortForm,
+                     const char* description, const char* argName);
 
  public:
   void push(const char* key, const char* value) {
@@ -158,6 +164,32 @@ Args ArgParser::parse() {
   return result;
 }
 
+void ArgParser::printArgument(const char* longForm, const char* shortForm,
+                              const char* description, const char* argName) {
+  std::string arg;
+  arg += longForm;
+  if (strlen(shortForm)) {
+    arg += '|';
+    arg += shortForm;
+  }
+  if (argName) {
+    arg += ' ';
+    arg += argName;
+  }
+  std::cout << "  " << std::setw(40) << std::left << arg << description << '\n';
+}
+
+void ArgParser::printHelp() {
+  std::cout << "Arguments:\n";
+#define BOOL_ARG(variable, longForm, shortForm, desc) \
+  printArgument(longForm, shortForm, desc, nullptr);
+#define TEXT_ARG(variable, longForm, shortForm, desc, argName) \
+  printArgument(longForm, shortForm, desc, argName);
+#include "arguments.inc"
+#undef BOOL_ARG
+#undef TEXT_ARG
+}
+
 #if ION_SIMULATOR_EXTERNAL_APP
 static inline int load_eadk_external_data(const char* path) {
   if (path == nullptr) {
@@ -207,6 +239,11 @@ using namespace Ion::Simulator;
 int main(int argc, char* argv[]) {
   ArgParser parser(argc, argv);
   Args args = parser.parse();
+
+  if (args.help) {
+    parser.printHelp();
+    return 0;
+  }
 
 #ifndef __WIN32__
 #ifdef ASAN

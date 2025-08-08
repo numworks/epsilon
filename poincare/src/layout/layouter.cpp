@@ -201,8 +201,14 @@ void Layouter::layoutText(TreeRef& layoutParent, const char* text) {
   UTF8Decoder decoder(text);
   CodePoint codePoint = decoder.nextCodePoint();
   while (codePoint != UCodePointNull) {
-    PushCodePoint(layoutParent, codePoint);
-    codePoint = decoder.nextCodePoint();
+    CodePoint nextCodePoint = decoder.nextCodePoint();
+    if (nextCodePoint.isCombining()) {
+      PushCombinedCodePoint(layoutParent, codePoint, nextCodePoint);
+      codePoint = decoder.nextCodePoint();
+    } else {
+      PushCodePoint(layoutParent, codePoint);
+      codePoint = nextCodePoint;
+    }
   }
 }
 

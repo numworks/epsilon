@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstring>
 #include <iomanip>
 #include <iostream>
 #include <string>
@@ -64,10 +65,11 @@ Arguments ArgumentsParser::parse() {
   Arguments result;
 #define BOOL_ARG(variable, longForm, shortForm, desc) \
   result.variable =                                   \
-      popFlag(longForm) || (strlen(shortForm) && popFlag(shortForm));
+      popFlag(longForm) || (std::strlen(shortForm) && popFlag(shortForm));
 #define TEXT_ARG(variable, longForm, shortForm, desc, argName) \
   result.variable = pop(longForm);                             \
-  if (!result.variable && strlen(shortForm)) result.variable = pop(shortForm);
+  if (!result.variable && std::strlen(shortForm))              \
+    result.variable = pop(shortForm);
 #include "arguments.inc"
 #undef BOOL_ARG
 #undef TEXT_ARG
@@ -79,7 +81,7 @@ void ArgumentsParser::printArgument(const char* longForm, const char* shortForm,
                                     const char* argName) {
   std::string arg;
   arg += longForm;
-  if (strlen(shortForm)) {
+  if (std::strlen(shortForm)) {
     arg += '|';
     arg += shortForm;
   }

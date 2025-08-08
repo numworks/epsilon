@@ -1,7 +1,7 @@
 #include "app.h"
 
 #include <apps/apps_container.h>
-#include <apps/math_preferences.h>
+#include <apps/exam_mode_manager.h>
 #include <assert.h>
 
 using namespace Escher;

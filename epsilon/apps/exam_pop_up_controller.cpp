@@ -7,7 +7,7 @@
 #include <array>
 
 #include "apps_container.h"
-#include "math_preferences.h"
+#include "exam_mode_manager.h"
 
 using namespace Escher;
 using namespace Poincare;

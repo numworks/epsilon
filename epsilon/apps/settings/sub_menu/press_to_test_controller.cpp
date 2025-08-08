@@ -1,8 +1,8 @@
 #include "press_to_test_controller.h"
 
 #include <apps/apps_container.h>
+#include <apps/exam_mode_manager.h>
 #include <apps/i18n.h>
-#include <apps/math_preferences.h>
 #include <assert.h>
 #include <escher/stack_view_controller.h>
 

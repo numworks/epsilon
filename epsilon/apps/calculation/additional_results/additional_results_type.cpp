@@ -1,5 +1,6 @@
 #include "additional_results_type.h"
 
+#include <apps/exam_mode_manager.h>
 #include <poincare/additional_results_helper.h>
 #include <poincare/old/context.h>
 #include <poincare/preferences.h>

@@ -1,6 +1,6 @@
 #include "continuous_function_properties.h"
 
-#include <apps/math_preferences.h>
+#include <apps/exam_mode_manager.h>
 #include <omg/unreachable.h>
 #include <poincare/cas.h>
 #include <poincare/code_points.h>

@@ -1,5 +1,6 @@
 #include "calculation_store.h"
 
+#include <apps/exam_mode_manager.h>
 #include <apps/shared/global_context.h>
 #include <poincare/cas.h>
 #include <poincare/circuit_breaker_checkpoint.h>

@@ -1,6 +1,7 @@
 #include "system_of_equations.h"
 
 #include <apps/constant.h>
+#include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/print.h>

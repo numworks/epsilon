@@ -1,5 +1,6 @@
 #include "graph_options_controller.h"
 
+#include <apps/exam_mode_manager.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/clipboard.h>

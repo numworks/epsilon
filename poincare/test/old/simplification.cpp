@@ -2856,14 +2856,14 @@ QUIZ_CASE(poincare_simplification_comparison_operators) {
 typedef bool (*BoolCompare)(bool a, bool b);
 static void testLogicalOperatorTruthTable(const char* operatorString,
                                           BoolCompare evaluationFunction) {
+  constexpr const char* booleanNames[] = {"False", "True"};
   constexpr static int bufferSize = 17;  // 9 == strlen("False nand False") + 1
   char buffer[bufferSize];
   int operatorLength = strlen(operatorString);
   assert(operatorLength <= 4);
   // Test truth table
   for (int a = 0; a <= 1; a++) {
-    const char* aString = a == 1 ? BuiltinsAliases::k_trueAliases.mainAlias()
-                                 : BuiltinsAliases::k_falseAliases.mainAlias();
+    const char* aString = booleanNames[a];
     int length = strlcpy(buffer, aString, strlen(aString) + 1);
     buffer[length] = ' ';
     length++;
@@ -2871,14 +2871,10 @@ static void testLogicalOperatorTruthTable(const char* operatorString,
     buffer[length] = ' ';
     length++;
     for (int b = 0; b <= 1; b++) {
-      const char* bString = b == 1
-                                ? BuiltinsAliases::k_trueAliases.mainAlias()
-                                : BuiltinsAliases::k_falseAliases.mainAlias();
+      const char* bString = booleanNames[b];
       strlcpy(buffer + length, bString, strlen(bString) + 1);
-      const char* truthString =
-          evaluationFunction(static_cast<bool>(a), static_cast<bool>(b))
-              ? BuiltinsAliases::k_trueAliases.mainAlias()
-              : BuiltinsAliases::k_falseAliases.mainAlias();
+      const char* truthString = booleanNames[evaluationFunction(
+          static_cast<bool>(a), static_cast<bool>(b))];
       assert_parsed_expression_simplify_to(buffer, truthString);
     }
   }

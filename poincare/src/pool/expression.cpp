@@ -371,10 +371,12 @@ bool UserExpression::cloneAndSimplifyAndApproximate(
   assert(!simplifiedExpression->isUninitialized());
   // Step 2: approximate
   assert(approximatedExpression && approximatedExpression->isUninitialized());
-  *approximatedExpression = simplifiedExpression->cloneAndApproximate(context);
+  *approximatedExpression =
+      simplifiedExpression->cloneAndApproximate<double>(context);
   return reductionFailure;
 }
 
+template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
     Internal::ProjectionContext& context) const {
   Approximation::Context approxCtx(context.m_angleUnit, context.m_complexFormat,
@@ -384,10 +386,10 @@ UserExpression UserExpression::cloneAndApproximate(
     a = tree()->cloneTree();
     /* We are using ApproximateAndReplaceEveryScalar to approximate
      * expressions with symbols such as π*x → 3.14*x. */
-    Approximation::ApproximateAndReplaceEveryScalar<double>(a, approxCtx);
+    Approximation::ApproximateAndReplaceEveryScalar<T>(a, approxCtx);
   } else {
     // Note: The non-beautified expression could be approximated instead.
-    a = Approximation::ToTree<double>(
+    a = Approximation::ToTree<T>(
         tree(),
         Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                   .projectLocalVariables = true},
@@ -437,7 +439,8 @@ void SystemExpression::cloneAndBeautifyAndApproximate(
   assert(beautifiedExpression && beautifiedExpression->isUninitialized());
   *beautifiedExpression = cloneAndBeautify(context);
   assert(approximatedExpression && approximatedExpression->isUninitialized());
-  *approximatedExpression = beautifiedExpression->cloneAndApproximate(context);
+  *approximatedExpression =
+      beautifiedExpression->cloneAndApproximate<double>(context);
 }
 
 UserExpression SystemExpression::cloneAndBeautify(
@@ -1100,6 +1103,11 @@ template SystemExpression UserExpression::approximateUserToTree<float>(
     AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
 template SystemExpression UserExpression::approximateUserToTree<double>(
     AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
+
+template UserExpression UserExpression::cloneAndApproximate<float>(
+    Internal::ProjectionContext&) const;
+template UserExpression UserExpression::cloneAndApproximate<double>(
+    Internal::ProjectionContext&) const;
 
 template SystemExpression SystemExpression::Builder<float>(float);
 template SystemExpression SystemExpression::Builder<double>(double);

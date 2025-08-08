@@ -204,10 +204,13 @@ void approximates_to_keeping_symbols(
 template <typename T>
 void assert_float_approximates_to(UserExpression f, const char* result) {
   Shared::GlobalContext globalContext;
+  ProjectionContext projectionContext = Poincare::Internal::ProjectionContext{
+      .m_complexFormat = ComplexFormat::Cartesian,
+      .m_angleUnit = AngleUnit::Radian,
+      .m_context = &globalContext};
   int numberOfDigits = PrintFloat::SignificantDecimalDigits<T>();
   char buffer[500];
-  f.approximateUserToTree<T>(AngleUnit::Radian, ComplexFormat::Cartesian,
-                             &globalContext)
+  f.cloneAndApproximate<T>(projectionContext)
       .serialize(buffer, false, DecimalMode, numberOfDigits);
   quiz_assert_print_if_failure(strcmp(buffer, result) == 0, result);
 }

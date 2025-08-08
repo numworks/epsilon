@@ -9,7 +9,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/old/context.h>
 #include <poincare/test/helper.h>
-#include <poincare/test/old/helper.h>
 #include <poincare/variable_store.h>
 #include <quiz.h>
 #include <string.h>

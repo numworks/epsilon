@@ -233,20 +233,6 @@ void assert_expression_simplifies_approximates_to(
       numberOfSignificantDigits);
 }
 
-void assert_layout_serializes_to(const Tree *layout,
-                                 const char *serialization) {
-  assert(layout);
-  assert(serialization);
-  constexpr int bufferSize = 255;
-  char buffer[bufferSize];
-  char result[bufferSize];
-  copy_without_system_chars(result, serialization);
-  LayoutSerializer::Serialize(layout, buffer);
-  copy_without_system_chars(buffer, buffer);
-  bool success = strcmp(buffer, result) == 0;
-  quiz_assert_print_if_failure(success, serialization, serialization, buffer);
-}
-
 template void assert_expression_simplifies_approximates_to<float>(
     char const *, char const *, Context &context, Preferences::AngleUnit,
     Preferences::UnitFormat, Preferences::ComplexFormat, int);

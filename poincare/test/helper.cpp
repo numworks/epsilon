@@ -281,6 +281,18 @@ void assert_expression_serializes_to(const Tree* expression,
   quiz_assert_print_if_failure(test, serialization, serialization, buffer);
 }
 
+void assert_layout_serializes_to(const Tree* layout,
+                                 const char* serialization) {
+  assert(layout);
+  assert(serialization);
+  constexpr int bufferSize = 255;
+  char buffer[bufferSize];
+  LayoutSerializer::Serialize(layout, buffer);
+  remove_system_codepoints(buffer);
+  bool success = strcmp(buffer, serialization) == 0;
+  quiz_assert_print_if_failure(success, serialization, serialization, buffer);
+}
+
 void assert_expression_parses_and_serializes_to(
     const char* expression, const char* result,
     const Poincare::Context& context, Preferences::PrintFloatMode mode,

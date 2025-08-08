@@ -208,6 +208,9 @@ void assert_expression_serializes_to(
         Poincare::Preferences::PrintFloatMode::Scientific,
     int numberOfSignificantDigits = 7, OMG::Base base = OMG::Base::Decimal);
 
+void assert_layout_serializes_to(const Poincare::Internal::Tree* layout,
+                                 const char* serialization);
+
 void assert_expression_parses_and_serializes_to(
     const char* expression, const char* result,
     const Poincare::Context& context = Poincare::EmptyContext{},

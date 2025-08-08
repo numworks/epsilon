@@ -29,6 +29,7 @@ $(addprefix shared/dummy/, \
   usb.cpp \
 ) \
 $(addprefix simulator/shared/, \
+  arguments_parser.cpp \
   clipboard.cpp \
   clipboard_helper.cpp \
   compilation_flags.cpp \

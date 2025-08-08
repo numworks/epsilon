@@ -117,6 +117,13 @@ constexpr static Aliases k_atanAliases = "\01arctan\00atan\00";
 constexpr static Aliases k_squareRootAliases = "\01√\00sqrt\00";
 }  // namespace BuiltinsAliases
 
+#if POINCARE_TRANSLATE_BUILTINS
+#define BUILTIN_TRANSLATION(type, ...) \
+  { type, __VA_ARGS__ }
+#else
+#define BUILTIN_TRANSLATION(...)
+#endif
+
 constexpr static Builtin s_builtins[] = {
     {Type::Cos, "cos"},
     {Type::Sin, "sin"},
@@ -165,13 +172,9 @@ constexpr static Builtin s_builtins[] = {
     {Type::Im, "im"},
 #endif
     {Type::GCD, "gcd"},
-#if POINCARE_TRANSLATE_BUILTINS
-    {Type::GCD, Aliases("PGCD")},
-#endif
+    BUILTIN_TRANSLATION(Type::GCD, "PGCD"),
     {Type::LCM, "lcm"},
-#if POINCARE_TRANSLATE_BUILTINS
-    {Type::LCM, Aliases("PPCM")},
-#endif
+    BUILTIN_TRANSLATION(Type::LCM, "PPCM"),
     {Type::Quo, "quo"},
     {Type::Rem, "rem"},
     {Type::Factor, "factor"},

@@ -181,13 +181,13 @@ const Tree* Expression::TreeFromAddress(const void* address) {
   return reinterpret_cast<const ExpressionObject*>(address)->tree();
 }
 
-UserExpression UserExpression::Parse(const Tree* layout, const Context& context,
-                                     ParserHelper::ParsingParameters params) {
-  return Builder(Parser::Parse(layout, context, params));
+UserExpression Expression::Parse(const Tree* layout, const Context& context,
+                                 ParserHelper::ParsingParameters params) {
+  return UserExpression::Builder(Parser::Parse(layout, context, params));
 }
 
-UserExpression UserExpression::Parse(const char* string, const Context& context,
-                                     ParserHelper::ParsingParameters params) {
+UserExpression Expression::Parse(const char* string, const Context& context,
+                                 ParserHelper::ParsingParameters params) {
   if (string[0] == 0) {
     return UserExpression();
   }
@@ -200,9 +200,8 @@ UserExpression UserExpression::Parse(const char* string, const Context& context,
   return result;
 }
 
-UserExpression UserExpression::ParseLatex(
-    const char* latex, const Context& context,
-    ParserHelper::ParsingParameters params) {
+UserExpression Expression::ParseLatex(const char* latex, const Context& context,
+                                      ParserHelper::ParsingParameters params) {
   Tree* layout = LatexParser::LatexToLayout(latex);
   if (!layout) {
     return UserExpression();
@@ -212,24 +211,24 @@ UserExpression UserExpression::ParseLatex(
   return result;
 }
 
-UserExpression UserExpression::Create(const Tree* structure,
-                                      ContextTrees ctxTrees) {
+UserExpression Expression::Create(const Tree* structure,
+                                  ContextTrees ctxTrees) {
   /* Since we build a [NoScopeContext], it is expected that the trees of [ctx]
    * come from UserExpression */
-  return Builder(PatternMatching::Create(
+  return UserExpression::Builder(PatternMatching::Create(
       structure, PatternMatching::Context::NoScopeContext(ctxTrees)));
 }
 
-SystemExpression SystemExpression::CreateReduce(const Tree* structure,
-                                                ContextTrees ctx) {
+SystemExpression Expression::CreateReduce(const Tree* structure,
+                                          ContextTrees ctx) {
   Tree* tree = PatternMatching::CreateReduce(structure, ctx);
-  return Builder(tree);
+  return SystemExpression::Builder(tree);
 }
 
-SystemExpression SystemExpression::CreateIntegralOfAbsOfDifference(
+SystemExpression Expression::CreateIntegralOfAbsOfDifference(
     SystemExpression lowerBound, SystemExpression upperBound,
     SystemExpression integrandA, SystemExpression integrandB) {
-  return Builder(
+  return SystemExpression::Builder(
       PatternMatching::Create(KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
                               {.KA = KUnknownSymbol,
                                .KB = lowerBound,
@@ -251,8 +250,9 @@ SystemExpression SystemExpression::Builder(T x) {
 
 template <typename T>
 SystemExpression SystemExpression::Builder(Coordinate2D<T> point) {
-  return Create(KPoint(KA, KB),
-                {.KA = Builder<T>(point.x()), .KB = Builder<T>(point.y())});
+  return SystemExpression::CreateReduce(
+      KPoint(KA, KB),
+      {.KA = Builder<T>(point.x()), .KB = Builder<T>(point.y())});
 }
 
 template <typename T>
@@ -264,7 +264,7 @@ SystemExpression SystemExpression::Builder(
   return Builder<T>(pointOrRealScalar.toPoint());
 }
 
-SystemExpression Expression::DecimalBuilderFromDouble(double value) {
+SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
   // TODO: this is a workaround until we port old Decimal::Builder(double)
   char buffer[PrintFloat::k_maxFloatCharSize];
   PrintFloat::PrintFloat::ConvertFloatToText(
@@ -535,7 +535,7 @@ PreparedFunction SystemExpression::getPreparedFunction(const char* symbolName,
     Approximation::PrepareFunctionForApproximation(result, symbolName,
                                                    ComplexFormat::Real);
   }
-  return Expression::Builder(result);
+  return PreparedFunction::Builder(result);
 }
 
 template <typename T>
@@ -753,9 +753,9 @@ size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
   return length;
 }
 
-bool Expression::replaceSymbolWithExpression(const UserExpression& symbol,
-                                             const Expression& expression,
-                                             bool onlySecondTerm) {
+bool UserExpression::replaceSymbolWithExpression(const UserExpression& symbol,
+                                                 const Expression& expression,
+                                                 bool onlySecondTerm) {
   /* TODO_PCJ: Handle functions and sequences as well. See
    * replaceSymbolWithExpression implementations. */
   if (isUninitialized()) {
@@ -767,20 +767,20 @@ bool Expression::replaceSymbolWithExpression(const UserExpression& symbol,
   if (Variables::ReplaceSymbolWithTree(
           onlySecondTerm ? result->child(1) : result, symbol.tree(),
           expression.tree())) {
-    *this = Expression::Builder(result);
+    *this = UserExpression::Builder(result);
     return true;
   }
   result->removeTree();
   return false;
 }
 
-bool Expression::replaceSymbolWithUnknown(const UserExpression& symbol,
-                                          bool onlySecondTerm) {
+bool UserExpression::replaceSymbolWithUnknown(const UserExpression& symbol,
+                                              bool onlySecondTerm) {
   return replaceSymbolWithExpression(symbol, SymbolHelper::SystemSymbol(),
                                      onlySecondTerm);
 }
 
-bool Expression::replaceUnknownWithSymbol(CodePoint symbol) {
+bool UserExpression::replaceUnknownWithSymbol(CodePoint symbol) {
   return replaceSymbolWithExpression(SymbolHelper::SystemSymbol(),
                                      SymbolHelper::BuildSymbol(symbol));
 }
@@ -793,7 +793,7 @@ bool UserExpression::replaceSymbols(Poincare::Context* context,
    * with random for example). */
   Tree* clone = tree()->cloneTree();
   bool didReplace = Projection::DeepReplaceUserNamed(clone, context, symbolic);
-  *this = Expression::Builder(clone);
+  *this = UserExpression::Builder(clone);
   return didReplace;
 }
 
@@ -992,7 +992,7 @@ bool Expression::isApproximate() const {
   return tree()->isDecimal() || tree()->isFloat() || tree()->isDoubleFloat();
 }
 
-bool SystemExpression::isPlusOrMinusInfinity() const {
+bool Expression::isPlusOrMinusInfinity() const {
   return Internal::Infinity::IsPlusOrMinusInfinity(tree());
 }
 

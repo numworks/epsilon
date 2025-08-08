@@ -1,7 +1,7 @@
 #include "about_controller.h"
 
 #include <apps/apps_container.h>
-#include <apps/math_preferences.h>
+#include <apps/exam_mode_manager.h>
 #include <assert.h>
 #include <ion/device_name.h>
 #include <ion/src/shared/events.h>

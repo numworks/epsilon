@@ -1,6 +1,7 @@
 #include "math_toolbox_controller.h"
 
 #include <apps/apps_container.h>
+#include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
 #include <apps/math_preferences.h>
 #include <assert.h>

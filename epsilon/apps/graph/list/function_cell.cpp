@@ -1,6 +1,6 @@
 #include "function_cell.h"
 
-#include <apps/math_preferences.h>
+#include <apps/exam_mode_manager.h>
 #include <escher/palette.h>
 
 using namespace Escher;

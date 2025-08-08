@@ -1,8 +1,8 @@
 #include "controller.h"
 
 #include <apps/apps_container.h>
+#include <apps/exam_mode_manager.h>
 #include <apps/home/apps_layout.h>
-#include <apps/math_preferences.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/preferences.h>
 

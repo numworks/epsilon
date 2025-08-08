@@ -7,6 +7,7 @@
 #include <array>
 
 #include "exam_icon.h"
+#include "exam_mode_manager.h"
 #include "math_preferences.h"
 
 extern "C" {

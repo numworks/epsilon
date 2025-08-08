@@ -1,7 +1,6 @@
 #ifndef APPS_MATH_PREFERENCES_H
 #define APPS_MATH_PREFERENCES_H
 
-#include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 

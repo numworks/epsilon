@@ -1,4 +1,7 @@
+#include <limits.h>
+#include <poincare/print.h>
 #include <poincare/sign.h>
+#include <poincare/src/expression/arithmetic.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
@@ -357,9 +360,24 @@ QUIZ_CASE(pcj_integer_factorial) {
 }
 
 static void assert_gcd_to(const char* a, const char* b, const char* c) {
-  quiz_assert(
-      IntegerHandler::GCD(CreateIntegerHandler(a), CreateIntegerHandler(b))
-          ->treeIsIdenticalTo(CreateInteger(c)));
+  constexpr size_t bufferSize = 100;
+  char buffer[bufferSize];
+  Print::CustomPrintf(buffer, bufferSize, "gcd(%s,%s)", a, b);
+
+  IntegerHandler aInt = CreateIntegerHandler(a);
+  IntegerHandler bInt = CreateIntegerHandler(b);
+  IntegerHandler cInt = CreateIntegerHandler(c);
+
+  IntegerHandler gcd = Integer::Handler(IntegerHandler::GCD(aInt, bInt));
+  quiz_assert_print_if_failure(IntegerHandler::Compare(gcd, cInt) == 0, buffer);
+  if (aInt.is<int>() && bInt.is<int>()) {
+    // Test Arithmetic::GCD(int, int)
+    aInt.setSign(NonStrictSign::Positive);
+    bInt.setSign(NonStrictSign::Positive);
+    int extractedGcd = Arithmetic::GCD(aInt.to<int>(), bInt.to<int>());
+    quiz_assert_print_if_failure(
+        cInt.is<int>() && extractedGcd == cInt.to<int>(), buffer);
+  }
   flush_stack();
 }
 
@@ -372,6 +390,147 @@ QUIZ_CASE(pcj_integer_gcd) {
   assert_gcd_to("1", "-1", "1");
   assert_gcd_to("0", "-3", "3");
   assert_gcd_to("0", "0", "0");
+  assert_gcd_to("11", "121", "11");
+  assert_gcd_to("-256", "321", "1");
+  assert_gcd_to("-8", "-40", "8");
+  assert_gcd_to("1234567899876543456", "234567890098765445678", "2");
+  assert_gcd_to("45678998789", "1461727961248", "45678998789");
+}
+
+static void assert_lcm_to(const char* a, const char* b, const char* c) {
+  constexpr size_t bufferSize = 100;
+  char buffer[bufferSize];
+  Print::CustomPrintf(buffer, bufferSize, "lcm(%s,%s)", a, b);
+
+  IntegerHandler aInt = CreateIntegerHandler(a);
+  IntegerHandler bInt = CreateIntegerHandler(b);
+  IntegerHandler cInt = CreateIntegerHandler(c);
+
+  IntegerHandler lcm = Integer::Handler(IntegerHandler::LCM(aInt, bInt));
+  quiz_assert_print_if_failure(IntegerHandler::Compare(lcm, cInt) == 0, buffer);
+  if (aInt.is<int>() && bInt.is<int>()) {
+    // Test Arithmetic::LCM(int, int) if possible
+    bool isUndefined = false;
+    aInt.setSign(NonStrictSign::Positive);
+    bInt.setSign(NonStrictSign::Positive);
+    int extractedLcm =
+        Arithmetic::LCM(aInt.to<int>(), bInt.to<int>(), &isUndefined);
+    quiz_assert_print_if_failure(
+        cInt.is<int>() ? extractedLcm == cInt.to<int>() : isUndefined, buffer);
+  }
+  flush_stack();
+}
+
+QUIZ_CASE(pcj_integer_lcm) {
+  assert_lcm_to("11", "121", "121");
+  assert_lcm_to("-31", "52", "1612");
+  assert_lcm_to("-8", "-40", "40");
+  assert_lcm_to("1234567899876543456", "234567890098765445678",
+                "144794993728852353909143567804987191584");
+  // Inputs are extractable, but not the output.
+  assert_lcm_to("24278576", "23334", "283258146192");
+  assert_lcm_to("45678998789", "1461727961248", "1461727961248");
+}
+
+static void assert_prime_factorization_to(const char* a, uint32_t* factors,
+                                          uint8_t* coefficients, int length) {
+  constexpr size_t bufferSize = 100;
+  char buffer[bufferSize];
+  Print::CustomPrintf(buffer, bufferSize, "factor(%s)", a);
+
+  IntegerHandler aInt = CreateIntegerHandler(a);
+  int tempAValue = aInt.is<int>() ? aInt.to<int>() : INT_MAX;
+  Arithmetic::FactorizedInteger f = Arithmetic::PrimeFactorization(aInt);
+  // a should remain unchanged
+  quiz_assert_print_if_failure(
+      tempAValue == (aInt.is<int>() ? aInt.to<int>() : INT_MAX), buffer);
+  quiz_assert_print_if_failure(f.numberOfFactors == length, buffer);
+  for (int index = 0; index < length; index++) {
+    quiz_assert_print_if_failure(f.factors[index] == factors[index], buffer);
+    quiz_assert_print_if_failure(f.coefficients[index] == coefficients[index],
+                                 buffer);
+  }
+}
+
+QUIZ_CASE(pcj_integer_prime_factor) {
+  uint32_t factors0[5] = {2, 3, 5, 79, 1319};
+  uint8_t coefficients0[5] = {2, 1, 1, 1, 1};
+  assert_prime_factorization_to("6252060", factors0, coefficients0, 5);
+
+  uint32_t factors1[3] = {3, 2969, 6907};
+  uint8_t coefficients1[3] = {1, 1, 1};
+  assert_prime_factorization_to("61520649", factors1, coefficients1, 3);
+
+  uint32_t factors2[3] = {2, 5, 7};
+  uint8_t coefficients2[3] = {2, 4, 2};
+  assert_prime_factorization_to("122500", factors2, coefficients2, 3);
+
+  uint32_t factors3[7] = {3, 7, 11, 13, 19, 3607, 3803};
+  uint8_t coefficients3[7] = {4, 2, 2, 2, 2, 2, 2};
+  assert_prime_factorization_to("5513219850886344455940081", factors3,
+                                coefficients3, 7);
+
+  uint32_t factors4[2] = {8017, 8039};
+  uint8_t coefficients4[2] = {1, 1};
+  assert_prime_factorization_to("64448663", factors4, coefficients4, 2);
+
+  uint32_t factors5[1] = {10007};
+  uint8_t coefficients5[1] = {1};
+  assert_prime_factorization_to("10007", factors5, coefficients5, 1);
+
+  // 10007*10007
+  uint32_t factors6[0] = {};
+  uint8_t coefficients6[0] = {};
+  assert_prime_factorization_to(
+      "100140049", factors6, coefficients6,
+      Arithmetic::FactorizedInteger::k_factorizationFailed);
+
+  uint32_t factors7[0] = {};
+  uint8_t coefficients7[0] = {};
+  assert_prime_factorization_to("1", factors7, coefficients7, 0);
+
+  uint32_t factors8[1] = {101119};
+  uint8_t coefficients8[1] = {1};
+  assert_prime_factorization_to("101119", factors8, coefficients8, 1);
+}
+
+template <unsigned long N>
+void assert_divisors_to(uint32_t a, const std::array<uint32_t, N>& expectedList,
+                        bool divisorListFailed = false) {
+  static_assert(N <= Arithmetic::Divisors::k_maxNumberOfDivisors);
+  Arithmetic::Divisors result = Arithmetic::ListPositiveDivisors(a);
+  if (divisorListFailed) {
+    quiz_assert_print_if_failure(
+        result.numberOfDivisors == Arithmetic::Divisors::k_divisorListFailed,
+        "divisor list computation should have failed");
+  } else {
+    quiz_assert_print_if_failure(
+        result.numberOfDivisors != Arithmetic::Divisors::k_divisorListFailed,
+        "divisor list computation failed");
+    quiz_assert_print_if_failure(result.numberOfDivisors == N,
+                                 "incorrect number of divisors");
+    for (unsigned long i = 0; i < N; i++) {
+      quiz_assert_print_if_failure(result.list[i] == expectedList[i],
+                                   "incorrect divisor value");
+    }
+  }
+}
+
+QUIZ_CASE(pcj_integer_divisors) {
+  assert_divisors_to<0>(0, {}, true);
+  assert_divisors_to<1>(1, {1});
+  assert_divisors_to<2>(2, {1, 2});
+  assert_divisors_to<6>(12, {1, 2, 3, 4, 6, 12});
+  assert_divisors_to<9>(100, {1, 2, 4, 5, 10, 20, 25, 50, 100});
+  assert_divisors_to<9>(225, {1, 3, 5, 9, 15, 25, 45, 75, 225});
+  assert_divisors_to<40>(
+      1680,
+      {1,   2,   3,   4,   5,   6,   7,   8,   10,  12,  14,  15,  16, 20,
+       21,  24,  28,  30,  35,  40,  42,  48,  56,  60,  70,  80,  84, 105,
+       112, 120, 140, 168, 210, 240, 280, 336, 420, 560, 840, 1680});
+  assert_divisors_to<2>(INT_MAX, {1, INT_MAX});
+  /* Too many divisors */
+  assert_divisors_to<0>(10080, {}, true);
 }
 
 typedef void (*Action)();
@@ -551,7 +710,7 @@ QUIZ_CASE(pcj_integer_cast) {
 
 static void assert_integer_serializes_to(const IntegerHandler integer,
                                          const char* serialization) {
-  size_t bufferSize = 500;
+  constexpr size_t bufferSize = 500;
   char buffer[bufferSize];
   integer.serialize(buffer, bufferSize);
   quiz_assert(strcmp(buffer, serialization) == 0);

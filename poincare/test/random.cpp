@@ -11,9 +11,13 @@ using namespace Poincare::Internal;
 template <typename T>
 void compare_approximates(const Tree* e1, const Tree* e2, bool equal,
                           Approximation::Parameters params) {
-  Approximation::Context ctx(AngleUnit::Radian);
-  T approx1 = Approximation::To<T>(e1, params, ctx);
-  T approx2 = Approximation::To<T>(e2, params, ctx);
+  /* The two approximations are done with two distinct instances of the
+   * approximation context, so that the random() of the two expressions are
+   * evaluated differently */
+  T approx1 = Approximation::To<T>(e1, params,
+                                   Approximation::Context(AngleUnit::Radian));
+  T approx2 = Approximation::To<T>(e2, params,
+                                   Approximation::Context(AngleUnit::Radian));
   bool equalResult = OMG::Float::RoughlyEqual<T>(
       approx1, approx2, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG

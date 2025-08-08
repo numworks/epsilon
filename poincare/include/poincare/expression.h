@@ -201,6 +201,7 @@ class Expression : public PoolHandle {
       const Internal::ProjectionContext& projectionContext,
       bool* reductionFailure) const;
   // Only on UserExpression
+  template <typename T>
   UserExpression cloneAndApproximate(
       Internal::ProjectionContext& context) const;
 

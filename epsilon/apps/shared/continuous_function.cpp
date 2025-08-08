@@ -1042,8 +1042,9 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
     return UserExpression();
   }
   /* Parse the expression to store as possible function assignment. */
+  assert(context);
   UserExpression expressionToStore =
-      UserExpression::Parse(l, context, {.isAssignment = true});
+      UserExpression::Parse(l, *context, {.isAssignment = true});
   if (expressionToStore.isUninitialized()) {
     return expressionToStore;
   }

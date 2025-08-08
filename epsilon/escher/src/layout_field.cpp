@@ -13,6 +13,7 @@
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/old/context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/xnt.h>
@@ -287,7 +288,7 @@ bool LayoutField::insertText(const char* text, bool indentation,
   // Single keys are not parsed to avoid changing " to _"
   Expression resultExpression =
       UTF8Helper::StringGlyphLength(text) > 1
-          ? Expression::Parse(text, nullptr, {.preserveInput = true})
+          ? Expression::Parse(text, EmptyContext{}, {.preserveInput = true})
           : Expression();
   // If first inserted character was empty, cursor must be left of layout
   bool forceCursorLeftOfText =
@@ -632,7 +633,8 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
     /* TODO_PCJ: Check if layout is already a 1D layout. If so, insert it
      * directly. */
     // Parse with preserveInput to avoid modifying the layout unwantedly.
-    Expression e = Expression::Parse(layout, nullptr, {.preserveInput = true});
+    Expression e =
+        Expression::Parse(layout, EmptyContext{}, {.preserveInput = true});
     if (!e.isUninitialized()) {
       layout =
           e.createLayout(LayoutPreferences::SharedPreferences()->displayMode(),

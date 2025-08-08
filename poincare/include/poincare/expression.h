@@ -124,11 +124,12 @@ class Expression : public PoolHandle {
    * ExpressionFromAddress.tree() because it points to the storage directly. */
   static const Internal::Tree* TreeFromAddress(const void* address);
 
-  static UserExpression Parse(const Internal::Tree* layout, Context* context,
+  static UserExpression Parse(const Internal::Tree* layout,
+                              const Context& context,
                               ParserHelper::ParsingParameters params = {});
-  static UserExpression Parse(const char* layout, Context* context,
+  static UserExpression Parse(const char* layout, const Context& context,
                               ParserHelper::ParsingParameters params = {});
-  static UserExpression ParseLatex(const char* latex, Context* context,
+  static UserExpression ParseLatex(const char* latex, const Context& context,
                                    ParserHelper::ParsingParameters params = {});
 
   static UserExpression Create(const Internal::Tree* structure,

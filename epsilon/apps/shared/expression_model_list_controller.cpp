@@ -258,7 +258,7 @@ bool ExpressionModelListController::layoutFieldDidFinishEditing(
   /* It's not a problem if f(t) is understood as f*(t) as we're just trying to
    * detect the variable */
   UserExpression parsedExpression =
-      UserExpression::Parse(layoutField->layout(), App::app()->localContext(),
+      UserExpression::Parse(layoutField->layout(), *App::app()->localContext(),
                             {.forceUnitUnderscore = true});
   if (parsedExpression.isUninitialized()) {
     App::app()->displayWarning(I18n::Message::SyntaxError);

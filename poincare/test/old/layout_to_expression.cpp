@@ -1,4 +1,5 @@
 #include <poincare/expression.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/layout/parser.h>
@@ -13,7 +14,7 @@ void assert_layout_is_not_parsed(Layout l) {
   constexpr int bufferSize = 500;
   char buffer[bufferSize];
   l.serialize(buffer);
-  UserExpression e = UserExpression::Parse(buffer, nullptr);
+  UserExpression e = UserExpression::Parse(buffer, EmptyContext{});
   quiz_assert_print_if_failure(e.isUninitialized(), buffer);
 }
 

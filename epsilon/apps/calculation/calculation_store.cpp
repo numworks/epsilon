@@ -234,7 +234,7 @@ Poincare::UserExpression CalculationStore::parseInput(
      * variable assignment. */
     PoolVariableContext ansContext = createAnsContext(context);
     UserExpression inputExpression =
-        UserExpression::Parse(inputLayout, &ansContext);
+        UserExpression::Parse(inputLayout, ansContext);
     replaceAnsInExpression(inputExpression, context);
     enhancePushedExpression(inputExpression);
     return inputExpression;

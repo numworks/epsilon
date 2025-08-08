@@ -131,8 +131,9 @@ void assert_parsed_expression_process_to(
 Internal::Tree *parse_expression(const char *expression, Context *context,
                                  bool isAssignment) {
   Tree *inputLayout = RackFromText(expression);
+  assert(context);
   TreeRef result =
-      Parser::Parse(inputLayout, context, {.isAssignment = isAssignment});
+      Parser::Parse(inputLayout, *context, {.isAssignment = isAssignment});
   inputLayout->removeTree();
   quiz_assert_print_if_failure(result != nullptr, expression);
   return result;

@@ -1,5 +1,7 @@
 #include "store_app.h"
 
+#include <poincare/old/empty_context.h>
+
 using namespace Poincare;
 
 namespace Shared {
@@ -28,7 +30,7 @@ bool StoreApp::Snapshot::memoizeFormula(Poincare::Layout formula, int index) {
 
 Layout StoreApp::Snapshot::memoizedFormula(int index) const {
   // TODO: This doesn't work
-  return Expression::Parse(m_memoizedFormulasBuffer[index], nullptr,
+  return Expression::Parse(m_memoizedFormulasBuffer[index], EmptyContext{},
                            {.preserveInput = true})
       .createLayout(Preferences::PrintFloatMode::Decimal,
                     PrintFloat::k_maxNumberOfSignificantDigits, nullptr);

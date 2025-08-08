@@ -157,7 +157,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
                                                 int* series, int* column) {
   StoreContext storeContext(store(), m_parentContext);
   UserExpression formula = UserExpression::Parse(
-      formulaLayout.tree(), &storeContext, {.isAssignment = true});
+      formulaLayout.tree(), storeContext, {.isAssignment = true});
   if (formula.isUninitialized()) {
     return FillColumnStatus::SyntaxError;
   }

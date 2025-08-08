@@ -131,7 +131,8 @@ void StoreMenuController::openAbortWarning() {
 bool StoreMenuController::store(Layout layout) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
   VariableStore* variableStore = app->localContext();
-  UserExpression input = UserExpression::Parse(layout, variableStore);
+  assert(variableStore);
+  UserExpression input = UserExpression::Parse(layout, *variableStore);
   if (input.isUninitialized() || !input.isStore()) {
     openAbortWarning();
     return false;

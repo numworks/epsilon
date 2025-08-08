@@ -42,7 +42,7 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
   /* Check the global context to know whether units need an underscore. */
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
-  UserExpression unit = UserExpression::Parse(rawUnit(), globalContext);
+  UserExpression unit = UserExpression::Parse(rawUnit(), *globalContext);
 
   if (unit.isUninitialized()) {
     return value.createLayout(floatDisplayMode, significantDigits,

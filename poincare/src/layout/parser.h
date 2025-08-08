@@ -3,6 +3,7 @@
 
 #include <poincare/helpers/parser.h>
 #include <poincare/old/context.h>
+#include <poincare/old/empty_context.h>
 #include <poincare/src/memory/tree.h>
 
 #include "parsing/layout_parser.h"
@@ -11,12 +12,10 @@ namespace Poincare::Internal {
 
 namespace Parser {
 
-/* Parses a top-level layout.
- * nullptr context behaves like an empty context. */
-// TODO: the signature will be updated to const Context&
-inline Tree* Parse(const Tree* l, const Context* context = nullptr,
+// Parses a top-level layout.
+inline Tree* Parse(const Tree* l, const Context& context = EmptyContext{},
                    ParserHelper::ParsingParameters params = {}) {
-  return LayoutParser::Parse(l, {.context = context,
+  return LayoutParser::Parse(l, {.context = &context,
                                  .params = params,
                                  .metadata = {.isTopLevelRack = true}});
 }

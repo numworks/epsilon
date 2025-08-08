@@ -5,7 +5,7 @@ ion/src/simulator/android/.gradle/
 .venv/
 __pycache__
 node_modules/
-/.cache/
+.cache/
 /compile_commands.json
 .clangd
 .DS_Store

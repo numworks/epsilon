@@ -7,7 +7,7 @@
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <poincare/layout.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <string.h>
 

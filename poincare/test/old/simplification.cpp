@@ -1,7 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <ion/storage/file_system.h>
 #include <poincare/expression.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/src/expression/builtin.h>
 
 #include "../helper.h"

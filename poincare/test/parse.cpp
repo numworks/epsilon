@@ -1,7 +1,7 @@
 #include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <omg/code_point.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/src/expression/derivation.h>
 #include <poincare/src/expression/integer.h>
 #include <poincare/src/expression/k_tree.h>

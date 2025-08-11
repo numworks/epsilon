@@ -217,7 +217,6 @@ $(addprefix statistics/, \
 )
 
 _sources_poincare_test := $(addprefix test/, \
-  old/dependency.cpp \
   old/derivative.cpp \
   old/erf_inv.cpp \
   old/exam_mode.cpp \

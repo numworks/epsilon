@@ -1475,6 +1475,100 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   const Tree* r5 = KDep(1_e, KDepList(KAdd("x"_e, KInf, KOpposite(KInf))));
   simplify(e5, context);
   assert_trees_are_equal(e5, r5);
+
+  SharedTreeStack->flush();
+
+  Shared::GlobalContext globalContext;
+  ProjectionContext projCtx = {
+      .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
+      .m_context = globalContext};
+
+  // No dependencies
+  store("1→a", &globalContext);
+  simplifies_to("1+2", "3", projCtx);
+  simplifies_to("a", "1", projCtx);
+  simplifies_to("a+1", "2", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Function
+  store("x+1→f(x)", &globalContext);
+  store("3→g(x)", &globalContext);
+  store("1+2→a", &globalContext);
+  // A variable argument is used as dependency only if needed
+  simplifies_to("f(x)", "x+1", projCtx);
+  simplifies_to("f(x+y)", "x+y+1", projCtx);
+  simplifies_to("g(x)", "3", projCtx);
+  simplifies_to("g(x+a+3+4)", "3", projCtx);
+  // A constant argument does not create dependencies
+  simplifies_to("f(2)", "3", projCtx);
+  simplifies_to("g(-1.23)", "3", projCtx);
+  // Dependencies makes sure f(undef) = undef for all f
+  simplifies_to("f(1/0)", "undef", projCtx);
+  simplifies_to("g(1/0)", "undef", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Derivative
+  store("x^2→f(x)", &globalContext);
+  simplifies_to("diff(cos(x),x,0)", "0", projCtx);
+  simplifies_to("diff(2x,x,y)", "2", projCtx);
+  simplifies_to("diff(f(x),x,a)", "2×a", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+
+  store("3→f(x)", &globalContext);
+  simplifies_to("diff(cos(x)+f(y),x,0)", "0", projCtx);
+  simplifies_to("diff(cos(x)+f(y),x,x)", "-sin(x)", projCtx);
+  store("1/0→y", &globalContext);
+  simplifies_to("diff(cos(x)+f(y),x,0)", "undef", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Parametric
+  /* Dependencies are not bubbled up out of an integral, but they are still
+   * present inside the integral. */
+  store("1→f(x)", &globalContext);
+  simplifies_to("int(f(x)+f(a),x,0,1)", "2", projCtx);
+  store("1/0→a", &globalContext);
+  simplifies_to("int(f(x)+f(a),x,0,1)", "undef", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
+  /* If the derivation is not handled properly, the symbol x could be reduced
+   * to undef. */
+  store("x→f(x)", &globalContext);
+  simplifies_to("int(diff(f(x),x,x),x,0,1)", "1", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
+  /* When trimming dependencies, we must be able to recognize unreduced
+   * expression that are nevertheless undefined. */
+  store("1→f(x)", &globalContext);
+  simplifies_to("f(a)", "1", projCtx);
+  // Check that deepIsSymbolic works fine and remove parametered dependencies
+  simplifies_to("f(sum(1/n,n,1,5))", "1", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Sequence
+  const char* emptyString = "";
+  Ion::Storage::FileSystem::sharedFileSystem
+      ->createRecordWithFullNameAndDataChunks(
+          "u.seq", reinterpret_cast<const void**>(&emptyString), 0, 0);
+  store("3→f(x)", &globalContext);
+  // Sequence are kept in dependency
+  simplifies_to("f(u(n))", "dep(3,{u(n)})", projCtx);
+  // Except if the sequence can already be approximated.
+  simplifies_to("f(u(2))", "undef", projCtx);
+  Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
+
+  // Power
+  simplifies_to("1/(1/x)", "dep(x,{nonNull(x)})", cartesianCtx);
+  simplifies_to("x/√(x)", "dep(√(x),{-ln(x)/2})", cartesianCtx);
+  simplifies_to("(1+x)/(1+x)", "dep(1,{(x+1)^0})", cartesianCtx);
+  simplifies_to("x^0", "dep(1,{x^0})", cartesianCtx);
+  simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", cartesianCtx);
+
+  // Multiplication
+  simplifies_to("ln(x)-ln(x)", "dep(0,{0×ln(x),nonNull(x)})", cartesianCtx);
+  simplifies_to("0*random()", "0", cartesianCtx);
+  simplifies_to("0*randint(1,0)", "dep(0,{randint(1,0)})", cartesianCtx);
+  // Dependency is properly reduced even when containing symbols
+  simplifies_to("0x^arcsin(π)", "dep(0,{0×x^arcsin(π)})", cartesianCtx);
+  simplifies_to("0x^arcsin(π)", "dep(nonreal,{0×x^arcsin(π)})");
 }
 
 QUIZ_CASE(pcj_simplification_infinity) {

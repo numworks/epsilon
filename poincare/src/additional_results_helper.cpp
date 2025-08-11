@@ -87,9 +87,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           Approximation::To<double>(
               sine, Approximation::Parameters{.projectLocalVariables = true},
               Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                                     // NOTE: const_cast is temporary
-                                     &const_cast<Context&>(ctx->m_context))) <
-          0;
+                                     ctx->m_context)) < 0;
       sine->removeTree();
       if (removePeriod) {
         approximateAngleTree->moveTreeOverTree(PatternMatching::Create(
@@ -101,8 +99,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
         approximateAngleTree,
         Approximation::Parameters{.projectLocalVariables = true},
         Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                               // NOTE: const_cast is temporary
-                               &const_cast<Context&>(ctx->m_context))));
+                               ctx->m_context)));
     Beautification::DeepBeautify(approximateAngleTree, *ctx);
     exactAngle =
         UserExpression::Builder(static_cast<const Tree*>(approximateAngleTree));
@@ -123,8 +120,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
       approximateAngleTree ? approximateAngleTree : simplifiedAngle,
       Approximation::Parameters{.projectLocalVariables = true},
       Approximation::Context(ctx->m_angleUnit, ctx->m_complexFormat,
-                             // NOTE: const_cast is temporary
-                             &const_cast<Context&>(ctx->m_context)));
+                             ctx->m_context));
   if (approximateAngleTree) {
     approximateAngleTree->removeTree();
   }
@@ -141,6 +137,8 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
     Context* context,
     const Preferences::CalculationPreferences calculationPreferences) {
+  assert(context);
+
   const Tree* inputTree = input.tree();
   const Tree* exactTree = exactOutput.tree();
   Internal::Dimension dimension = Internal::Dimension::Get(inputTree, context);
@@ -219,7 +217,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   if (reductionFailure ||
       !std::isfinite(Approximation::To<float>(
           exactAngle, Approximation::Parameters{.projectLocalVariables = true},
-          Approximation::Context(angleUnit, complexFormat, context)))) {
+          Approximation::Context(angleUnit, complexFormat, *context)))) {
     exactAngle->removeTree();
     return UserExpression();
   }

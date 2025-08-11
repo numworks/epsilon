@@ -153,10 +153,9 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   /* Approximate */
 
   if (result.solutionMetadata.solutionType != SolutionType::Formal) {
-    // NOTE: const_cast is temporary
-    Approximation::Context approxCtx(
-        projectionContext.m_angleUnit, projectionContext.m_complexFormat,
-        &const_cast<Context&>(projectionContext.m_context));
+    Approximation::Context approxCtx(projectionContext.m_angleUnit,
+                                     projectionContext.m_complexFormat,
+                                     projectionContext.m_context);
     result.approximateSolutionList = Approximation::ToTree<double>(
         result.exactSolutionList,
         Approximation::Parameters{.isRootAndCanHaveRandom = true,

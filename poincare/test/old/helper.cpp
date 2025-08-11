@@ -217,10 +217,9 @@ void assert_expression_simplifies_approximates_to(
             e,
             Internal::Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                                 .prepare = true},
-            Internal::Approximation::Context(
-                projCtx.m_angleUnit, projCtx.m_complexFormat,
-                // NOTE: const_cast is temporary
-                &const_cast<Context &>(projCtx.m_context)));
+            Internal::Approximation::Context(projCtx.m_angleUnit,
+                                             projCtx.m_complexFormat,
+                                             projCtx.m_context));
         /* Expression may have been reduced in another target, but it has been
          * approximated in the meantime. */
         ReductionTarget previousReductionTarget = projCtx.m_reductionTarget;

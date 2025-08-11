@@ -55,10 +55,9 @@ void approximates_to_boolean(const char* input,
       expression,
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(
-          projectionContext.m_angleUnit, projectionContext.m_complexFormat,
-          // NOTE: const_cast is temporary
-          &const_cast<Poincare::Context&>(projectionContext.m_context)));
+      Approximation::Context(projectionContext.m_angleUnit,
+                             projectionContext.m_complexFormat,
+                             projectionContext.m_context));
   quiz_assert(approx.isUndefined() == expected.isUndefined());
   if (!approx.isUndefined()) {
     quiz_assert(approx.value() == expected.value());
@@ -96,10 +95,9 @@ void approximates_to(const char* input, T f,
       expression,
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(
-          projectionContext.m_angleUnit, projectionContext.m_complexFormat,
-          // NOTE: const_cast is temporary
-          &const_cast<Context&>(projectionContext.m_context)));
+      Approximation::Context(projectionContext.m_angleUnit,
+                             projectionContext.m_complexFormat,
+                             projectionContext.m_context));
   bool result =
       OMG::Float::RoughlyEqual<T>(approx, f, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -128,11 +126,9 @@ void approximates_to(const char* input, const char* output,
             tree,
             Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                       .projectLocalVariables = true},
-            Approximation::Context(
-                projectionContext.m_angleUnit,
-                projectionContext.m_complexFormat,
-                // NOTE: const_cast is temporary
-                &const_cast<Context&>(projectionContext.m_context))));
+            Approximation::Context(projectionContext.m_angleUnit,
+                                   projectionContext.m_complexFormat,
+                                   projectionContext.m_context)));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
@@ -152,11 +148,9 @@ void simplified_approximates_to(
             tree,
             Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                       .projectLocalVariables = true},
-            Approximation::Context(
-                projectionContext.m_angleUnit,
-                projectionContext.m_complexFormat,
-                // NOTE: const_cast is temporary
-                &const_cast<Context&>(projectionContext.m_context))));
+            Approximation::Context(projectionContext.m_angleUnit,
+                                   projectionContext.m_complexFormat,
+                                   projectionContext.m_context)));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
@@ -176,11 +170,9 @@ void projected_approximates_to(
             tree,
             Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                       .prepare = true},
-            Approximation::Context(
-                projectionContext.m_angleUnit,
-                projectionContext.m_complexFormat,
-                // NOTE: const_cast is temporary
-                &const_cast<Context&>(projectionContext.m_context))));
+            Approximation::Context(projectionContext.m_angleUnit,
+                                   projectionContext.m_complexFormat,
+                                   projectionContext.m_context)));
         Beautification::DeepBeautify(tree, projectionContext);
       },
       projectionContext, nbOfSignificantDigits);
@@ -197,11 +189,9 @@ void approximates_to_keeping_symbols(
       [](Tree* tree, ProjectionContext projectionContext) {
         Variables::ProjectLocalVariablesToId(tree);
         Approximation::ApproximateAndReplaceEveryScalar<T>(
-            tree, Approximation::Context(
-                      projectionContext.m_angleUnit,
-                      projectionContext.m_complexFormat,
-                      // NOTE: const_cast is temporary
-                      &const_cast<Context&>(projectionContext.m_context)));
+            tree, Approximation::Context(projectionContext.m_angleUnit,
+                                         projectionContext.m_complexFormat,
+                                         projectionContext.m_context));
         Variables::BeautifyToName(tree);
       },
       projectionContext, numberOfSignificantDigits);

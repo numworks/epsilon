@@ -1857,6 +1857,10 @@ QUIZ_CASE(pcj_simplification_trigonometry) {
                 "cos(x))),piecewise(0,abs(cos((180×π×x)/(180×π)))≤1,nonreal)})",
                 {.m_angleUnit = AngleUnit::Degree});
   simplifies_to("tan(20)^2*tan(2)", "tan(2)*tan(20)^2");
+
+  // atan(1/x)
+  simplifies_to("arctan(1/(1+x^2))", "π/2-arctan(x^2+1)");
+  simplifies_to("arctan(-1/(1+abs(x)))", "-π/2+arctan(1+abs(x))");
 }
 
 QUIZ_CASE(pcj_simplification_advanced) {

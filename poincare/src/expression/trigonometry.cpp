@@ -11,6 +11,7 @@
 #include "k_tree.h"
 #include "number.h"
 #include "order.h"
+#include "poincare/sign.h"
 #include "polynomial.h"
 #include "projection.h"
 #include "rational.h"
@@ -519,7 +520,21 @@ bool Trigonometry::ReduceArcTangentRad(Tree* e) {
     return true;
   }
 
-  // TODO_PCJ: Reduce atan(1/x) in dep(sign(x)*π/2-atan(x),{1/x})
+  ctx = PatternMatching::Context();
+  if (PatternMatching::Match(eMain, KATanRad(KPow(KA, -1_e)), &ctx)) {
+    // atan(1/x) = sign(x)*π/2-atan(x) if sign(x) is known and non-null
+    ComplexSign s = GetComplexSign(ctx.getTree(KA));
+    if (!s.isReal() || !(s.realSign().isStrictlyPositive() ||
+                         s.realSign().isStrictlyNegative())) {
+      return false;
+    }
+    e->moveTreeOverTree(PatternMatching::CreateReduce(
+        s.realSign().isStrictlyPositive()
+            ? KAdd(KMult(π_e, 1_e / 2_e), KMult(-1_e, KATanRad(KA)))
+            : KAdd(KMult(π_e, -1_e / 2_e), KMult(-1_e, KATanRad(KA))),
+        ctx));
+    return true;
+  }
   return false;
 }
 

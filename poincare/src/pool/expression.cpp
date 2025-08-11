@@ -137,25 +137,6 @@ void ExpressionObject::logAttributes(std::ostream& stream) const {
 }
 #endif
 
-Poincare::Layout ExpressionObject::createLayout(
-    Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context, OMG::Base base, bool linearMode) const {
-  return Poincare::Layout::Builder(Layouter::LayoutExpression(
-      tree()->cloneTree(), linearMode, false, numberOfSignificantDigits,
-      floatDisplayMode, base));
-}
-
-size_t ExpressionObject::serialize(std::span<char> buffer, bool compactMode,
-                                   Preferences::PrintFloatMode floatDisplayMode,
-                                   int numberOfSignificantDigits) const {
-  Tree* layout = Layouter::LayoutExpression(
-      tree()->cloneTree(), true, compactMode, numberOfSignificantDigits);
-  size_t size = LayoutSerializer::Serialize(layout, buffer);
-  assert(size <= buffer.size() || size == LayoutHelpers::k_bufferOverflow);
-  layout->removeTree();
-  return size;
-}
-
 const Tree* ExpressionObject::tree() const {
   return Tree::FromBlocks(m_blocks);
 }
@@ -795,8 +776,9 @@ Poincare::Layout UserExpression::createLayout(
   if (isUninitialized()) {
     return Poincare::Layout();
   }
-  return object()->createLayout(floatDisplayMode, numberOfSignificantDigits,
-                                context, base, linearMode);
+  return Poincare::Layout::Builder(Layouter::LayoutExpression(
+      tree()->cloneTree(), linearMode, false, numberOfSignificantDigits,
+      floatDisplayMode, base));
 }
 
 char* UserExpression::toLatex(char* buffer, int bufferSize,
@@ -813,10 +795,13 @@ char* UserExpression::toLatex(char* buffer, int bufferSize,
 size_t UserExpression::serialize(std::span<char> buffer, bool compactMode,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {
-  size_t length = isUninitialized() ? 0
-                                    : object()->serialize(
-                                          buffer, compactMode, floatDisplayMode,
-                                          numberOfSignificantDigits);
+  if (isUninitialized()) {
+    return 0;
+  }
+  Tree* layout = Layouter::LayoutExpression(
+      tree()->cloneTree(), true, compactMode, numberOfSignificantDigits);
+  size_t length = LayoutSerializer::Serialize(layout, buffer);
+  layout->removeTree();
   assert(length <= buffer.size() || length == LayoutHelpers::k_bufferOverflow);
   return length;
 }

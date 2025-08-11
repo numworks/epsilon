@@ -81,15 +81,6 @@ class ExpressionObject final : public PoolObject {
   void logAttributes(std::ostream& stream) const override;
 #endif
 
-  // Layout
-  Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits, Context* context,
-                      OMG::Base base = OMG::Base::Decimal,
-                      bool linearMode = false) const;
-  size_t serialize(std::span<char> buffer, bool compactMode,
-                   Preferences::PrintFloatMode floatDisplayMode,
-                   int numberOfSignificantDigits) const;
-
  private:
   // PCJ
   const Internal::Tree* tree() const;

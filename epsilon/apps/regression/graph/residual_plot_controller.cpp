@@ -1,5 +1,6 @@
 #include "residual_plot_controller.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/stack_view_controller.h>
 #include <poincare/preferences.h>
@@ -29,9 +30,9 @@ void ResidualPlotController::updateCursor() {
                         &m_curveView);
 
   const int significantDigits =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      MathPreferences::SharedPreferences()->displayMode();
+      GlobalPreferences::SharedGlobalPreferences()->displayMode();
   constexpr size_t bufferSize =
       Shared::BannerView::BannerBufferTextView::MaxTextSize();
   constexpr static int k_maxNumberOfGlyphs =

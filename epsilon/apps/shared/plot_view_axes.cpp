@@ -1,6 +1,6 @@
 #include "plot_view_axes.h"
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <limits.h>
 #include <poincare/print.h>
 
@@ -349,8 +349,8 @@ int AbstractLabeledAxis::computeLabel(size_t labelIndex,
   PrintFloat::TextLengths textLengths = t.writeText(
       std::span<char>{mutableLabel(labelIndex), k_labelBufferMaxSize},
       ExpressionOrFloat::ApproximationParameters{
-          MathPreferences::SharedPreferences()->angleUnit(),
-          MathPreferences::SharedPreferences()->complexFormat()},
+          GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+          GlobalPreferences::SharedGlobalPreferences()->complexFormat()},
       k_numberSignificantDigits, Preferences::PrintFloatMode::Decimal,
       k_labelBufferMaxGlyphLength);
   assert(strlen(mutableLabel(labelIndex)) == textLengths.CharLength);

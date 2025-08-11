@@ -1,6 +1,6 @@
 #include "graph_controller_helper.h"
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/ieee754.h>
@@ -123,7 +123,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       // Also round t so that f(x) matches f evaluated at displayed x
       t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
           t, context,
-          MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
+          GlobalPreferences::SharedGlobalPreferences()
+              ->numberOfSignificantDigits(),
           pixelWidth, false);
     }
     // Snap to interest could have corrupted ExpiringPointer
@@ -149,7 +150,8 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
         t, App::app()->localContext(),
-        MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
+        GlobalPreferences::SharedGlobalPreferences()
+            ->numberOfSignificantDigits(),
         0.05 * step, true);
   }
   // t must have changed
@@ -206,9 +208,9 @@ GraphControllerHelper::reloadDerivativeInBannerViewForCursorOnFunction(
       function->nameWithArgument(buffer, bufferSize, derivationOrder);
   assert(function->canDisplayDerivative());
   Preferences::PrintFloatMode mode =
-      MathPreferences::SharedPreferences()->displayMode();
+      GlobalPreferences::SharedGlobalPreferences()->displayMode();
   int precision =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   if (function->properties().isParametric()) {
     assert(derivative.isPoint());
     Coordinate2D<double> xy = derivative.toPoint();
@@ -257,8 +259,9 @@ double GraphControllerHelper::reloadSlopeInBannerViewForCursorOnFunction(
   Print::CustomPrintf(
       buffer, bufferSize, "%s=%*.*ed",
       I18n::translate(I18n::Message::CartesianSlopeFormula), slope,
-      MathPreferences::SharedPreferences()->displayMode(),
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits());
+      GlobalPreferences::SharedGlobalPreferences()->displayMode(),
+      GlobalPreferences::SharedGlobalPreferences()
+          ->numberOfSignificantDigits());
   bannerView()->slopeView()->setText(buffer);
   bannerView()->reload();
   return slope;

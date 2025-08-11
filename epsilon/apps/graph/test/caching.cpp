@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <quiz.h>
 
@@ -135,8 +136,8 @@ void assert_cache_stays_valid(const char* definition, float rangeXMin = -5,
 
 QUIZ_CASE(graph_caching) {
   Preferences::AngleUnit previousAngleUnit =
-      MathPreferences::SharedPreferences()->angleUnit();
-  MathPreferences::SharedPreferences()->setAngleUnit(
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(
       Preferences::AngleUnit::Degree);
   assert_cache_stays_valid("f(x)=x");
   assert_cache_stays_valid("f(x)=x^2");
@@ -154,7 +155,7 @@ QUIZ_CASE(graph_caching) {
   assert_cache_stays_valid("r=cos(5θ)", 0.f, 360.f);
   assert_cache_stays_valid("r=cos(5θ)", -1e8f, 1e8f);
 
-  MathPreferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(previousAngleUnit);
 }
 
 }  // namespace Graph

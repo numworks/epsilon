@@ -1,5 +1,6 @@
 #include "curve_parameter_controller.h"
 
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <apps/shared/color_names.h>
 #include <apps/shared/function_name_helper.h>
@@ -265,7 +266,7 @@ bool CurveParameterController::confirmParameterAtIndex(ParameterIndex index,
       (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
   f = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       f, App::app()->localContext(),
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits(),
       pixelWidth, false);
 
   m_graphRange->setZoomAuto(false);

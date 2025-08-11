@@ -1,6 +1,6 @@
 #include "plot_controller.h"
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <poincare/print.h>
 
 #include "../data/store_controller.h"
@@ -62,9 +62,9 @@ bool PlotController::reloadBannerView() {
       bannerView()->minimalSizeForOptimalDisplay().height();
 
   int precision =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      MathPreferences::SharedPreferences()->displayMode();
+      GlobalPreferences::SharedGlobalPreferences()->displayMode();
   constexpr static int k_bufferSize =
       Escher::Metric::MaxNumberOfSmallGlyphsInDisplayWidth;
   char buffer[k_bufferSize] = "";

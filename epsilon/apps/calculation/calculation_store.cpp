@@ -1,6 +1,7 @@
 #include "calculation_store.h"
 
 #include <apps/exam_mode_manager.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <poincare/cas.h>
 #include <poincare/circuit_breaker_checkpoint.h>
@@ -28,7 +29,7 @@ static void enhancePushedExpression(UserExpression& expression) {
    * */
   if (!ExamModeManager::ExamMode().forbidUnits()) {
     Trigonometry::DeepAddAngleUnitToAmbiguousDirectFunctions(
-        expression, MathPreferences::SharedPreferences()->angleUnit());
+        expression, GlobalPreferences::SharedGlobalPreferences()->angleUnit());
   }
 }
 
@@ -113,7 +114,7 @@ static bool compute(Poincare::UserExpression inputExpression,
   assert(context);
   Internal::ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
-      .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+      .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
@@ -253,7 +254,7 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
     Poincare::UserExpression inputExpression,
     Poincare::VariableStore* variableStore) {
   Poincare::Preferences::ComplexFormat complexFormat =
-      MathPreferences::SharedPreferences()->complexFormat();
+      GlobalPreferences::SharedGlobalPreferences()->complexFormat();
   CalculationResult calculationResult =
       computeInterruptible(inputExpression, complexFormat, variableStore);
 
@@ -322,7 +323,7 @@ Calculation* CalculationStore::pushEmptyCalculation(char** location) {
   Calculation* newCalculation = reinterpret_cast<Calculation*>(*location);
   assert(spaceForNewElements(*location) >= sizeof(Calculation));
   new (*location) Calculation(
-      MathPreferences::SharedPreferences()->calculationPreferences());
+      GlobalPreferences::SharedGlobalPreferences()->calculationPreferences());
   *location += sizeof(Calculation);
   return newCalculation;
 }

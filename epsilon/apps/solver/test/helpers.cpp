@@ -1,7 +1,6 @@
 #include "helpers.h"
 
 #include <apps/global_preferences.h>
-#include <apps/math_preferences.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <limits.h>
@@ -270,6 +269,6 @@ void assert_auto_solving_range_is(const char* equation, double min, double max,
 
 void setComplexFormatAndAngleUnit(Preferences::ComplexFormat complexFormat,
                                   Preferences::AngleUnit angleUnit) {
-  MathPreferences::SharedPreferences()->setComplexFormat(complexFormat);
-  MathPreferences::SharedPreferences()->setAngleUnit(angleUnit);
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(complexFormat);
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(angleUnit);
 }

@@ -1,6 +1,6 @@
 #include "values_controller.h"
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <limits.h>
 #include <poincare/k_tree.h>
@@ -130,8 +130,10 @@ int ValuesController::numberOfColumns() const { return m_numberOfColumns; }
 void ValuesController::fillCellForLocation(HighlightCell* cell, int column,
                                            int row) {
   fillCellForLocationWithDisplayMode(
-      cell, column, row, MathPreferences::SharedPreferences()->displayMode(),
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits());
+      cell, column, row,
+      GlobalPreferences::SharedGlobalPreferences()->displayMode(),
+      GlobalPreferences::SharedGlobalPreferences()
+          ->numberOfSignificantDigits());
   // The cell is not a title cell and not editable
   if (typeAtLocation(column, row) == k_notEditableValueCellType) {
     EvenOddExpressionCell* myCell = static_cast<EvenOddExpressionCell*>(cell);
@@ -295,11 +297,11 @@ int ValuesController::numberOfElementsInColumn(int column) const {
 }
 
 KDCoordinate ValuesController::defaultColumnWidth() {
-  KDCoordinate width =
-      PrintFloat::glyphLengthForFloatWithPrecision(
-          MathPreferences::SharedPreferences()->numberOfSignificantDigits()) *
-          KDFont::GlyphWidth(k_cellFont) +
-      2 * Escher::Metric::SmallCellMargin;
+  KDCoordinate width = PrintFloat::glyphLengthForFloatWithPrecision(
+                           GlobalPreferences::SharedGlobalPreferences()
+                               ->numberOfSignificantDigits()) *
+                           KDFont::GlyphWidth(k_cellFont) +
+                       2 * Escher::Metric::SmallCellMargin;
   return std::max(EditableCellTableViewController::defaultColumnWidth(), width);
 }
 

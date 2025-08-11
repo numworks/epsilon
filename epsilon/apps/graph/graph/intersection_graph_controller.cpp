@@ -1,5 +1,6 @@
 #include "intersection_graph_controller.h"
 
+#include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
@@ -49,10 +50,11 @@ void IntersectionGraphController::reloadBannerView() {
     numberOfChar = fNameLength;
   }
   assert(numberOfChar <= bufferSize);
-  Print::CustomPrintf(buffer + numberOfChar, bufferSize - numberOfChar,
-                      "%s%*.*ed", legend, m_cursor->y(),
-                      MathPreferences::SharedPreferences()->displayMode(),
-                      numberOfSignificantDigits());
+  Print::CustomPrintf(
+      buffer + numberOfChar, bufferSize - numberOfChar, "%s%*.*ed", legend,
+      m_cursor->y(),
+      GlobalPreferences::SharedGlobalPreferences()->displayMode(),
+      numberOfSignificantDigits());
   bannerView()->ordinateView()->setText(buffer);
   bannerView()->reload();
 }

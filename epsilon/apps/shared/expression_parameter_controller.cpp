@@ -1,6 +1,6 @@
 #include "expression_parameter_controller.h"
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
 
@@ -28,8 +28,8 @@ void ExpressionParameterController::fillCellForRow(HighlightCell* cell,
   parameterAtIndex(row).writeText(
       buffer,
       ExpressionOrFloat::ApproximationParameters{
-          MathPreferences::SharedPreferences()->angleUnit(),
-          MathPreferences::SharedPreferences()->complexFormat()},
+          GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+          GlobalPreferences::SharedGlobalPreferences()->complexFormat()},
       precision, Preferences::PrintFloatMode::Decimal);
   textFieldOfCellAtIndex(cell, row)->setText(buffer);
 }

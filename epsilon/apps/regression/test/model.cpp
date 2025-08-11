@@ -1,5 +1,6 @@
 #include "../model.h"
 
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <apps/shared/store_context.h>
 #include <assert.h>
@@ -496,7 +497,7 @@ void assert_trigonometric_regression_is(
     double residualStdDeviation) {
   // Test the trigonometric regression at all angle units
   const Preferences::AngleUnit previousAngleUnit =
-      MathPreferences::SharedPreferences()->angleUnit();
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   // TODO: C++23: use std::to_underlying instead of static_cast
   constexpr size_t k_numberOfUnits =
       static_cast<size_t>(Poincare::Preferences::AngleUnit::NUnits);
@@ -506,7 +507,7 @@ void assert_trigonometric_regression_is(
       Poincare::Preferences::AngleUnit::Gradian};
   for (size_t i = 0; i < k_numberOfUnits; ++i) {
     Poincare::Preferences::AngleUnit unit = units[i];
-    MathPreferences::SharedPreferences()->setAngleUnit(unit);
+    GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(unit);
     double unitFactor = Trigonometry::PiInAngleUnit(unit) /
                         Trigonometry::PiInAngleUnit(trueCoeffcientsUnit);
     // True coefficients b and c are converted to the tested angle unit
@@ -517,7 +518,7 @@ void assert_trigonometric_regression_is(
                          coefficientsUnit, NAN, NAN, residualStdDeviation);
   }
   // Restore previous angleUnit
-  MathPreferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(previousAngleUnit);
 }
 
 QUIZ_CASE(regression_trigonometric_1) {

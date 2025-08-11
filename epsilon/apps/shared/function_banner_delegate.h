@@ -1,7 +1,7 @@
 #ifndef SHARED_FUNCTION_BANNER_DELEGATE_H
 #define SHARED_FUNCTION_BANNER_DELEGATE_H
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <poincare/preferences.h>
 
 #include "curve_view_cursor.h"
@@ -38,8 +38,8 @@ class FunctionBannerDelegate {
       Poincare::Context* context, bool cappedNumberOfSignificantDigits = false);
   virtual XYBannerView* bannerView() = 0;
   virtual int numberOfSignificantDigits(bool capped = false) const {
-    int userDigits =
-        MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+    int userDigits = GlobalPreferences::SharedGlobalPreferences()
+                         ->numberOfSignificantDigits();
     return capped && userDigits > k_cappedNumberOfSignificantDigits
                ? k_cappedNumberOfSignificantDigits
                : userDigits;

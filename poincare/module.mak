@@ -27,7 +27,6 @@ _sources_poincare_storage := $(addprefix src/, \
 
 _sources_poincare_extended := $(addprefix src/, \
 $(addprefix old/, \
-  context.cpp \
   empty_context.cpp \
   pool_variable_context.cpp:-nopool \
   tree_variable_context.cpp \

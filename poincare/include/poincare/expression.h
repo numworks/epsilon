@@ -215,8 +215,6 @@ class Expression : public PoolHandle {
   int numberOfChildren() const;
 
   // More complex bool properties
-  bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
-               bool replaceSymbols = false, Context* ctx = nullptr) const;
   bool isInRadians(Context* context) const;
 
   ComparisonJunior::Operator comparisonOperator() const;
@@ -357,6 +355,9 @@ class UserExpression : public Expression {
       Preferences::ComplexFormat complexFormat =
           Preferences::ComplexFormat::None,
       const Context& context = EmptyContext{}) const;
+
+  bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
+               bool replaceSymbols = false, Context* ctx = nullptr) const;
 
  private:
   UserExpression privateCloneAndSimplify(

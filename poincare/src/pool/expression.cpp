@@ -1025,8 +1025,8 @@ Poincare::Dimension Expression::dimension(Context* context) const {
 
 Sign SystemExpression::sign() const { return GetSign(tree()); }
 
-bool Expression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
-                         bool replaceSymbols, Context* ctx) const {
+bool UserExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
+                             bool replaceSymbols, Context* ctx) const {
   if (hasAngleUnits) {
     *hasAngleUnits = false;
   }

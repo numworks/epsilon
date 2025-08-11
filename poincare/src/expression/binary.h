@@ -19,7 +19,7 @@ class Binary {
    * result only when there is a comparison operator. */
   static bool IsComparisonOperatorString(LayoutSpan name, Type* returnType,
                                          size_t* returnLength);
-  static ComparisonJunior::Operator ComparisonOperatorForType(TypeBlock type);
+  static Comparison::Operator ComparisonOperatorForType(TypeBlock type);
 
   static bool ReduceBooleanOperator(Tree* e);
 
@@ -49,18 +49,18 @@ class Binary {
 
   struct OperatorForType {
     Type type;
-    ComparisonJunior::Operator op;
+    Comparison::Operator op;
   };
 
 #if POINCARE_BOOLEAN
   constexpr static int k_numberOfComparisons = 6;
   constexpr static OperatorForType k_operatorForType[] = {
-      {Type::Equal, ComparisonJunior::Operator::Equal},
-      {Type::NotEqual, ComparisonJunior::Operator::NotEqual},
-      {Type::Superior, ComparisonJunior::Operator::Superior},
-      {Type::Inferior, ComparisonJunior::Operator::Inferior},
-      {Type::SuperiorEqual, ComparisonJunior::Operator::SuperiorEqual},
-      {Type::InferiorEqual, ComparisonJunior::Operator::InferiorEqual},
+      {Type::Equal, Comparison::Operator::Equal},
+      {Type::NotEqual, Comparison::Operator::NotEqual},
+      {Type::Superior, Comparison::Operator::Superior},
+      {Type::Inferior, Comparison::Operator::Inferior},
+      {Type::SuperiorEqual, Comparison::Operator::SuperiorEqual},
+      {Type::InferiorEqual, Comparison::Operator::InferiorEqual},
   };
   static_assert(std::size(k_operatorForType) == k_numberOfComparisons,
                 "Missing comparison  operator for type.");

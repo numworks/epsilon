@@ -17,15 +17,16 @@ namespace Inference {
 void TestPlotPolicy::drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
                               KDRect rect) const {
   float z = static_cast<float>(m_test->testCriticalValue());
-  ComparisonJunior::Operator op = m_test->hypothesis()->m_alternative;
+  Comparison::Operator op = m_test->hypothesis()->m_alternative;
   drawZLabelAndZGraduation(plotView, ctx, rect, z, op);
   drawTestCurve(plotView, ctx, rect, z, op);
 }
 
-void TestPlotPolicy::drawZLabelAndZGraduation(
-    const AbstractPlotView* plotView, KDContext* ctx, KDRect rect, float z,
-    ComparisonJunior::Operator op) const {
-  if (op == ComparisonJunior::Operator::NotEqual) {
+void TestPlotPolicy::drawZLabelAndZGraduation(const AbstractPlotView* plotView,
+                                              KDContext* ctx, KDRect rect,
+                                              float z,
+                                              Comparison::Operator op) const {
+  if (op == Comparison::Operator::NotEqual) {
     Layout absolute =
         Layout::Create(KAbsL(KA), {.KA = m_test->criticalValueLayout()});
     drawLabelAndGraduation(plotView, ctx, rect, std::abs(z), absolute);
@@ -57,18 +58,18 @@ static Coordinate2D<float> evaluateZero(float, void*, void*) {
 
 void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
                                    KDContext* ctx, KDRect rect, float z,
-                                   ComparisonJunior::Operator op,
+                                   Comparison::Operator op,
                                    double factor) const {
   CurveViewRange* range = plotView->range();
-  if (op == ComparisonJunior::Operator::NotEqual) {
+  if (op == Comparison::Operator::NotEqual) {
     z = std::fabs(z);
     if (range->xMax() > 0) {
-      drawTestCurve(plotView, ctx, rect, z,
-                    ComparisonJunior::Operator::Superior, 0.5);
+      drawTestCurve(plotView, ctx, rect, z, Comparison::Operator::Superior,
+                    0.5);
     }
     if (range->xMin() < 0) {
-      drawTestCurve(plotView, ctx, rect, -z,
-                    ComparisonJunior::Operator::Inferior, 0.5);
+      drawTestCurve(plotView, ctx, rect, -z, Comparison::Operator::Inferior,
+                    0.5);
     }
     return;
   }
@@ -87,7 +88,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
   Pattern patternBoth, patternSingle;
   float bothStart, bothEnd, singleStart, singleEnd, singleCurveStart,
       singleCurveEnd;
-  if (op == ComparisonJunior::Operator::Superior) {
+  if (op == Comparison::Operator::Superior) {
     patternBoth = Pattern(true, false, false, true, Palette::PurpleBright,
                           Palette::YellowDark);
     singleCurveStart = range->xMin();
@@ -104,7 +105,7 @@ void TestPlotPolicy::drawTestCurve(const Shared::AbstractPlotView* plotView,
     singleCurveEnd = singleEnd = bothStart;
     bothEnd = range->xMax();
   } else {
-    assert(op == ComparisonJunior::Operator::Inferior);
+    assert(op == Comparison::Operator::Inferior);
     patternBoth = Pattern(true, false, true, false, Palette::PurpleBright,
                           Palette::YellowDark);
     bothStart = range->xMin();

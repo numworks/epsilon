@@ -35,7 +35,7 @@ const char* Binary::OperatorName(TypeBlock type) {
   OMG::unreachable();
 }
 
-ComparisonJunior::Operator Binary::ComparisonOperatorForType(TypeBlock type) {
+Comparison::Operator Binary::ComparisonOperatorForType(TypeBlock type) {
   assert(type.isComparison());
   for (const OperatorForType& opForType : k_operatorForType) {
     if (type == opForType.type) {
@@ -53,7 +53,7 @@ bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
   for (int i = 0; i < k_numberOfComparisons; i++) {
     Type currentOperatorType = k_operatorForType[i].type;
     const char* currentOperatorString =
-        ComparisonJunior::OperatorString(k_operatorForType[i].op);
+        Comparison::OperatorString(k_operatorForType[i].op);
     // Loop twice, once on the main string, the other on the alternative string
     for (int k = 0; k < 2; k++) {
       size_t operatorLength =
@@ -67,7 +67,7 @@ bool Binary::IsComparisonOperatorString(LayoutSpan name, Type* returnType,
         typeOfFoundOperator = currentOperatorType;
       }
       currentOperatorString =
-          ComparisonJunior::OperatorAlternativeString(k_operatorForType[i].op);
+          Comparison::OperatorAlternativeString(k_operatorForType[i].op);
       if (!currentOperatorString) {
         break;
       }

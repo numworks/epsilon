@@ -60,7 +60,7 @@ class SignificanceTest : public InferenceModel {
   /* Returns the value above/below (depending on the operator) which the
    * probability of landing is inferior to a given significance level. */
   bool canRejectNull();
-  double thresholdAbscissa(Poincare::ComparisonJunior::Operator op,
+  double thresholdAbscissa(Poincare::Comparison::Operator op,
                            double factor = 1.0) const;
   bool isGraphable() const override {
     return std::isfinite(m_testCriticalValue) && std::isfinite(m_pValue);

@@ -811,7 +811,7 @@ void Layouter::layoutExpression(TreeRef& layoutParent, Tree* expression,
         PushCombinedCodePoint(layoutParent, CodePoint('='),
                               UCodePointCombiningLongSolidusOverlay);
       } else {
-        layoutText(layoutParent, ComparisonJunior::OperatorString(
+        layoutText(layoutParent, Comparison::OperatorString(
                                      Binary::ComparisonOperatorForType(type)));
       }
 

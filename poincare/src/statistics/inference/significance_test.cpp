@@ -133,20 +133,20 @@ double ComputeCriticalValue(Type type, double h0,
 }
 
 double ComputePValue(StatisticType statisticType,
-                     ComparisonJunior::Operator haOperator,
-                     double criticalValue, double degreesOfFreedom) {
+                     Comparison::Operator haOperator, double criticalValue,
+                     double degreesOfFreedom) {
   Distribution::Type distrib = DistributionType(statisticType);
   Distribution::ParametersArray<double> distribParams =
       DistributionParameters(statisticType, degreesOfFreedom);
 
   switch (haOperator) {
-    case ComparisonJunior::Operator::Inferior:
+    case Comparison::Operator::Inferior:
       return Distribution::CumulativeDistributiveFunctionAtAbscissa(
           distrib, criticalValue, distribParams);
-    case ComparisonJunior::Operator::Superior:
+    case Comparison::Operator::Superior:
       return 1.0 - Distribution::CumulativeDistributiveFunctionAtAbscissa(
                        distrib, criticalValue, distribParams);
-    case ComparisonJunior::Operator::NotEqual:
+    case Comparison::Operator::NotEqual:
       return 2.0 * Distribution::CumulativeDistributiveFunctionAtAbscissa(
                        distrib, -std::fabs(criticalValue), distribParams);
     default:
@@ -187,15 +187,15 @@ Poincare::Layout EstimateLayoutAtIndex(TestType testType, int index) {
 Hypothesis DefaultHypothesis(TestType testType) {
   switch (testType) {
     case TestType::OneProportion:
-      return Hypothesis{0.08, ComparisonJunior::Operator::Superior};
+      return Hypothesis{0.08, Comparison::Operator::Superior};
     case TestType::TwoProportions:
-      return Hypothesis{0., ComparisonJunior::Operator::NotEqual};
+      return Hypothesis{0., Comparison::Operator::NotEqual};
     case TestType::OneMean:
-      return Hypothesis{50., ComparisonJunior::Operator::Inferior};
+      return Hypothesis{50., Comparison::Operator::Inferior};
     case TestType::TwoMeans:
     case TestType::Slope:
     case TestType::Chi2:
-      return Hypothesis{0., ComparisonJunior::Operator::Superior};
+      return Hypothesis{0., Comparison::Operator::Superior};
     default:
       OMG::unreachable();
   }

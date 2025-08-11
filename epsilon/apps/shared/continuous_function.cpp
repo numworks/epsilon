@@ -732,7 +732,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   }
   ContinuousFunctionProperties::SymbolType computedFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
-  ComparisonJunior::Operator computedEquationType =
+  Comparison::Operator computedEquationType =
       ContinuousFunctionProperties::k_defaultEquationType;
   bool isCartesianEquation = false;
   UserExpression equation =
@@ -818,7 +818,7 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
 
 UserExpression ContinuousFunction::Model::expressionEquation(
     const Ion::Storage::Record* record, Context* context,
-    ComparisonJunior::Operator* computedEquationType,
+    Comparison::Operator* computedEquationType,
     ContinuousFunctionProperties::SymbolType* computedFunctionSymbol,
     bool* isCartesianEquation) const {
   UserExpression result = ExpressionModel::expressionClone(record);
@@ -847,8 +847,8 @@ UserExpression ContinuousFunction::Model::expressionEquation(
     return UserExpression::Undefined();
   }
 
-  ComparisonJunior::Operator equationType = result.comparisonOperator();
-  if (equationType == ComparisonJunior::Operator::NotEqual) {
+  Comparison::Operator equationType = result.comparisonOperator();
+  if (equationType == Comparison::Operator::NotEqual) {
     return UserExpression::Undefined();
   }
   if (computedEquationType) {

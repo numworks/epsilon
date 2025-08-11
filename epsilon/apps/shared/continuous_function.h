@@ -401,7 +401,7 @@ class ContinuousFunction : public Function {
      * (turns "f(x)=xy" into "xy" and "xy=a" into "xy-a") */
     Poincare::UserExpression expressionEquation(
         const Ion::Storage::Record* record, Poincare::Context* context,
-        Poincare::ComparisonJunior::Operator* computedEquationType = nullptr,
+        Poincare::Comparison::Operator* computedEquationType = nullptr,
         ContinuousFunctionProperties::SymbolType* computedFunctionSymbol =
             nullptr,
         bool* isCartesianEquation = nullptr) const;

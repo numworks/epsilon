@@ -9,17 +9,17 @@ using namespace Escher;
 
 namespace Inference {
 
-Poincare::ComparisonJunior::Operator
+Poincare::Comparison::Operator
 ComparisonOperatorPopupDataSource::OperatorTypeForRow(int row) {
   assert(row >= 0 && row < k_numberOfOperators);
   switch (row) {
     case 0:
-      return Poincare::ComparisonJunior::Operator::Inferior;
+      return Poincare::Comparison::Operator::Inferior;
     case 1:
-      return Poincare::ComparisonJunior::Operator::NotEqual;
+      return Poincare::Comparison::Operator::NotEqual;
     default:
       assert(row == 2);
-      return Poincare::ComparisonJunior::Operator::Superior;
+      return Poincare::Comparison::Operator::Superior;
   }
 }
 
@@ -33,7 +33,7 @@ void ComparisonOperatorPopupDataSource::updateMessages() {
   for (int row = 0; row < k_numberOfOperators; row++) {
     Poincare::Print::CustomPrintf(
         buffer, bufferSize, "%s%s%*.*ed", symbol,
-        Poincare::ComparisonJunior::OperatorString(OperatorTypeForRow(row)),
+        Poincare::Comparison::OperatorString(OperatorTypeForRow(row)),
         firstParam, Poincare::Preferences::PrintFloatMode::Decimal,
         Poincare::Preferences::ShortNumberOfSignificantDigits);
     m_cells[row].setText(buffer);

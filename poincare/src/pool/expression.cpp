@@ -1142,7 +1142,7 @@ bool Expression::hasRandomList() const {
 
 int Expression::numberOfChildren() const { return tree()->numberOfChildren(); }
 
-ComparisonJunior::Operator Expression::comparisonOperator() const {
+Comparison::Operator Expression::comparisonOperator() const {
   assert(isComparison());
   return Internal::Binary::ComparisonOperatorForType(tree()->type());
 }

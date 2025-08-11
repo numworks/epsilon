@@ -17,23 +17,6 @@
 using namespace Poincare;
 using namespace Poincare::Internal;
 
-// Default context is realCtx
-constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
-constexpr ProjectionContext cartesianCtx = {.m_complexFormat =
-                                                ComplexFormat::Cartesian};
-constexpr ProjectionContext polarCtx = {.m_complexFormat =
-                                            ComplexFormat::Polar};
-
-constexpr ProjectionContext degreeCtx = {.m_angleUnit = AngleUnit::Degree};
-constexpr ProjectionContext gradianCtx = {.m_angleUnit = AngleUnit::Gradian};
-
-constexpr ProjectionContext degreeCartesianCtx = {
-    .m_complexFormat = ComplexFormat::Cartesian,
-    .m_angleUnit = AngleUnit::Degree};
-constexpr ProjectionContext gradianCartesianCtx = {
-    .m_complexFormat = ComplexFormat::Cartesian,
-    .m_angleUnit = AngleUnit::Gradian};
-
 void approximates_to_boolean(const Tree* n,
                              Approximation::BooleanOrUndefined expected) {
   Approximation::BooleanOrUndefined approx = Approximation::ToBoolean<float>(

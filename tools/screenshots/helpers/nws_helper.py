@@ -16,10 +16,10 @@ def import_events_names(path, array):
 
 
 import_events_names(
-    "ion/src/shared/layout_events/epsilon/events_names.inc", events_names
+    "shared/ion/src/shared/layout_events/epsilon/events_names.inc", events_names
 )
 import_events_names(
-    "ion/src/shared/layout_events/epsilon/events_names_extended.inc",
+    "shared/ion/src/shared/layout_events/epsilon/events_names_extended.inc",
     events_names_extended,
 )
 

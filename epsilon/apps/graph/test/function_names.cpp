@@ -1,8 +1,8 @@
 #include <apps/shared/function_name_helper.h>
 #include <apps/shared/global_context.h>
 #include <poincare/code_points.h>
+#include <poincare/context.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/old/context.h>
 #include <quiz.h>
 
 #include <cmath>

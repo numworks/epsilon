@@ -6,10 +6,10 @@
 #include <apps/shared/poincare_helpers.h>
 #include <omg/print.h>
 #include <poincare/cas.h>
+#include <poincare/context.h>
 #include <poincare/equation_solver/equation_solver_pool.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/expression_equal_sign.h>
-#include <poincare/old/context.h>
 #include <poincare/old/pool_variable_context.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/approximation.h>

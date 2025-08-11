@@ -7,7 +7,7 @@
 #include <escher/layout_view.h>
 #include <escher/text_field.h>
 #include <kandinsky/point.h>
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 
 namespace Escher {
 

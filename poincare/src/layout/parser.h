@@ -1,8 +1,8 @@
 #ifndef POINCARE_LAYOUT_PARSER_H
 #define POINCARE_LAYOUT_PARSER_H
 
+#include <poincare/context.h>
 #include <poincare/helpers/parser.h>
-#include <poincare/old/context.h>
 #include <poincare/src/memory/tree.h>
 
 #include "parsing/layout_parser.h"

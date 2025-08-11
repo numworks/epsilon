@@ -6,8 +6,8 @@
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <poincare/cas.h>
+#include <poincare/context.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/context.h>
 #include <poincare/test/helper.h>
 #include <poincare/variable_store.h>
 #include <quiz.h>

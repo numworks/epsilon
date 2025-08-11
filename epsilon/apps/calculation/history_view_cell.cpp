@@ -2,8 +2,8 @@
 
 #include <apps/constant.h>
 #include <assert.h>
+#include <poincare/context.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/old/context.h>
 #include <string.h>
 
 #include <algorithm>

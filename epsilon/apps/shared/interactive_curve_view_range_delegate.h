@@ -3,7 +3,7 @@
 
 #include <apps/global_preferences.h>
 #include <assert.h>
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 #include <poincare/range.h>
 
 #include "function_store.h"

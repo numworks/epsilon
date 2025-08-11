@@ -1,9 +1,9 @@
 #ifndef POINCARE_REGRESSION_REGRESSION_H
 #define POINCARE_REGRESSION_REGRESSION_H
 
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>
-#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/context.h>
 #include <poincare/src/statistics/data_table.h>

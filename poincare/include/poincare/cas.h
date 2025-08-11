@@ -2,7 +2,8 @@
 #define POINCARE_CAS_H
 
 #include <poincare/expression.h>
-#include <poincare/old/context.h>
+
+#include "context.h"
 
 namespace Poincare {
 

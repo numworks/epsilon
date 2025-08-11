@@ -6,8 +6,8 @@
 #include <apps/shared/function_name_helper.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
+#include <poincare/context.h>
 #include <poincare/layout.h>
-#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <string.h>
 

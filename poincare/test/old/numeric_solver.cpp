@@ -1,7 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <omg/float.h>
+#include <poincare/context.h>
 #include <poincare/numeric_solver/solver.h>
-#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>

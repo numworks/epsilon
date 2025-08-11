@@ -1,8 +1,8 @@
 #include "formula_template_menu_controller.h"
 
 #include <ion/storage/record.h>
+#include <poincare/context.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/context.h>
 #include <poincare/print.h>
 
 #include "column_helper.h"

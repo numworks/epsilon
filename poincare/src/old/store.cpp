@@ -1,9 +1,9 @@
 #include <assert.h>
 #include <ion/circuit_breaker.h>
 #include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/old/complex.h>
-#include <poincare/old/context.h>
 #include <poincare/old/store.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>

@@ -1,8 +1,8 @@
 #ifndef POINCAREJ_TEST_HELPER_H
 #define POINCAREJ_TEST_HELPER_H
 
+#include <poincare/context.h>
 #include <poincare/helpers/parser.h>
-#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/approximation.h>

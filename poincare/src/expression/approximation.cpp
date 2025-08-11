@@ -3,7 +3,7 @@
 #include <omg/float.h>
 #include <omg/unreachable.h>
 #include <omg/vector.h>
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/statistics/distributions/distribution_method.h>
 #include <poincare/src/statistics/statistics_dataset.h>

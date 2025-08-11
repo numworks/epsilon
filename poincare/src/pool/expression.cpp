@@ -1,12 +1,12 @@
 #include <omg/utf8_helper.h>
 #include <poincare/cas.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/function_properties/integral.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/context.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>

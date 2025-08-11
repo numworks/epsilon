@@ -6,13 +6,13 @@
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <omg/utf8_helper.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
-#include <poincare/old/context.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/xnt.h>

@@ -1,7 +1,7 @@
 #include "variables.h"
 
 #include <omg/unreachable.h>
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 #include <poincare/src/memory/pattern_matching.h>
 #include <poincare/src/memory/tree_stack.h>
 #include <string.h>

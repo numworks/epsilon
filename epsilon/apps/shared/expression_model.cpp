@@ -4,10 +4,10 @@
 #include <apps/global_preferences.h>
 #include <assert.h>
 #include <omg/utf8_helper.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/context.h>
 #include <string.h>
 
 #include <algorithm>

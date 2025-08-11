@@ -6,9 +6,10 @@
 #include <omg/code_guard.h>
 #include <omg/global_box.h>
 #include <poincare/exam_mode.h>
-#include <poincare/old/context.h>
 #include <poincare/src/expression/context.h>
 #include <stdint.h>
+
+#include "context.h"
 
 namespace Poincare {
 

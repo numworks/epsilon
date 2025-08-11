@@ -3,7 +3,7 @@
 
 #include <omg/enums.h>
 #include <omg/float.h>
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 #include <poincare/pool_handle.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/projection.h>

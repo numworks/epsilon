@@ -3,7 +3,7 @@
 
 #include <omg/directions.h>
 #include <omg/unreachable.h>
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>

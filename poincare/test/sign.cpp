@@ -1,5 +1,5 @@
 #include <apps/shared/global_context.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/src/expression/number.h>
 #include <poincare/src/expression/projection.h>
 #include <poincare/src/expression/sign.h>

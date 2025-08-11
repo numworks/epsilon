@@ -35,6 +35,22 @@ class Context {
   static inline Context* GlobalContext = nullptr;
 };
 
+class EmptyContext : public Context {
+ public:
+  // Context
+  UserNamedType expressionTypeForIdentifier(const char* identifier,
+                                            int length) const override {
+    return UserNamedType::None;
+  }
+
+  const Internal::Tree* expressionForUserNamed(
+      const Internal::Tree* symbol) const override {
+    return nullptr;
+  }
+};
+
+static const EmptyContext k_emptyContext;
+
 }  // namespace Poincare
 
 #endif

@@ -7,7 +7,7 @@
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <string.h>
 
 #include <algorithm>

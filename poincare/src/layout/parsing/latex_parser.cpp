@@ -1,7 +1,7 @@
 #include "latex_parser.h"
 
 #include <omg/utf8_decoder.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/src/layout/code_point_layout.h>
 #include <poincare/src/layout/indices.h>
 #include <poincare/src/layout/k_tree.h>

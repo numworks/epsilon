@@ -3,7 +3,7 @@
 #include <apps/shared/global_context.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/store.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/metric.h>

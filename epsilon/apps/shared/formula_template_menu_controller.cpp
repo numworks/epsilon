@@ -2,7 +2,7 @@
 
 #include <ion/storage/record.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/print.h>
 
 #include "column_helper.h"

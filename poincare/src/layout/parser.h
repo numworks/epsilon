@@ -3,7 +3,6 @@
 
 #include <poincare/helpers/parser.h>
 #include <poincare/old/context.h>
-#include <poincare/old/empty_context.h>
 #include <poincare/src/memory/tree.h>
 
 #include "parsing/layout_parser.h"

@@ -2,7 +2,6 @@
 #include <omg/float.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/old/context.h>
-#include <poincare/old/empty_context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/projection.h>

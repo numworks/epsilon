@@ -3,7 +3,6 @@
 
 #include <omg/signaling_nan.h>
 #include <poincare/old/context.h>
-#include <poincare/old/empty_context.h>
 #include <poincare/point_or_scalar.h>
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_ref.h>

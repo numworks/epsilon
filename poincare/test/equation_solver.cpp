@@ -1,5 +1,5 @@
 #include <apps/shared/global_context.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/src/equation_solver/equation_solver_tree.h>
 #include <poincare/src/expression/list.h>
 #include <poincare/src/expression/simplification.h>

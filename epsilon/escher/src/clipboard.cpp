@@ -4,7 +4,7 @@
 #include <omg/utf8_decoder.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/src/layout/k_tree.h>
 #include <poincare/src/memory/tree.h>
 

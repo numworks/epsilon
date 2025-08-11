@@ -7,7 +7,6 @@
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/old/context.h>
-#include <poincare/old/empty_context.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>
 #include <poincare/src/expression/beautification.h>

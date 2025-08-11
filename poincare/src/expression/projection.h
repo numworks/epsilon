@@ -2,7 +2,6 @@
 #define POINCARE_EXPRESSION_PROJECTION_H
 
 #include <poincare/old/context.h>
-#include <poincare/old/empty_context.h>
 #include <poincare/src/memory/tree_ref.h>
 
 #include "context.h"

@@ -13,7 +13,6 @@
 #include <poincare/layout.h>
 #include <poincare/layout_cursor.h>
 #include <poincare/old/context.h>
-#include <poincare/old/empty_context.h>
 #include <poincare/src/layout/rack_layout.h>
 #include <poincare/src/layout/rack_layout_decoder.h>
 #include <poincare/xnt.h>

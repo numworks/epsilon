@@ -3,7 +3,7 @@
 #include <omg/code_point.h>
 #include <omg/unicode_helper.h>
 #include <omg/utf8_decoder.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/old/tree_variable_context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/approximation.h>

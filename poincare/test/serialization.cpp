@@ -3,7 +3,7 @@
 #include <poincare/expression_or_float.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/empty_context.h>
+#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/beautification.h>
 #include <poincare/src/expression/derivation.h>

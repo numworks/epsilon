@@ -16,7 +16,9 @@ class EmptyContext : public Context {
   }
 
   const Internal::Tree* expressionForUserNamed(
-      const Internal::Tree* symbol) const override;
+      const Internal::Tree* symbol) const override {
+    return nullptr;
+  }
 };
 
 static const EmptyContext k_emptyContext;

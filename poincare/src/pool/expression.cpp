@@ -1,6 +1,7 @@
 #include <omg/utf8_helper.h>
 #include <poincare/cas.h>
 #include <poincare/expression.h>
+#include <poincare/function_properties/integral.h>
 #include <poincare/helpers/layout.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
@@ -228,14 +229,12 @@ SystemExpression Expression::CreateReduce(const Tree* structure,
 SystemExpression Expression::CreateIntegralOfAbsOfDifference(
     SystemExpression lowerBound, SystemExpression upperBound,
     SystemExpression integrandA, SystemExpression integrandB) {
-  return SystemExpression::Builder(
-      PatternMatching::Create(KIntegral(KA, KB, KC, KAbs(KSub(KD, KE))),
-                              {.KA = KUnknownSymbol,
-                               .KB = lowerBound,
-                               .KC = upperBound,
-                               .KD = integrandA,
-                               .KE = integrandB},
-                              {.KD = 1, .KE = 1}));
+  Tree* integrand = PatternMatching::CreateReduce(
+      KAbs(KAdd(KA, KMult(-1_e, KB))), {.KA = integrandA, .KB = integrandB});
+  // KUnknownSymbol is the variable used in the grapher app
+  return IntegralBetweenBounds(SystemExpression::Builder(integrand),
+                               Internal::Symbol::GetName(KUnknownSymbol),
+                               lowerBound, upperBound);
 }
 
 // Builders from value.

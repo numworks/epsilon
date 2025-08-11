@@ -15,7 +15,7 @@ namespace Graph {
 void assert_cartesian_function_type_is(
     const char* expression, FunctionType::CartesianType expectedType) {
   const char* symbol = "x";
-  UserExpression e = Expression::Builder(parse_expression(expression));
+  UserExpression e = UserExpression::Builder(parse_expression(expression));
   bool reductionFailure = false;
   SystemExpression s = e.cloneAndReduce(
       Internal::Projection::DefaultProjectionContextForAnalysis(),
@@ -52,7 +52,7 @@ QUIZ_CASE(graph_cartesian_function_type) {
 void assert_polar_line_type_is(const char* expression,
                                FunctionType::LineType expectedType) {
   const char* symbol = "θ";
-  UserExpression e = Expression::Builder(parse_expression(expression));
+  UserExpression e = UserExpression::Builder(parse_expression(expression));
   bool reductionFailure = false;
   SystemExpression s = e.cloneAndReduce(
       Internal::Projection::DefaultProjectionContextForAnalysis(),

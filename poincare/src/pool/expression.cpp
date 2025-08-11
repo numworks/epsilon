@@ -55,7 +55,7 @@ Poincare::Dimension::Dimension(const Expression e, const Context& context)
       m_isList(false),
       m_isValid(false),
       m_isEmptyList(false) {
-  // TODO_PCJ: Remove checks in ProjectedExpression implementation of this
+  // TODO_PCJ: Remove checks in SystemExpression implementation of this
   if (!Internal::Dimension::DeepCheck(e.tree(), context)) {
     return;
   }
@@ -175,6 +175,18 @@ Expression Expression::ExpressionFromAddress(const void* address, size_t size) {
       Pool::sharedPool->copyTreeFromAddress(address, size)));
 }
 
+UserExpression UserExpression::ExpressionFromAddress(const void* address,
+                                                     size_t size) {
+  Expression e = Expression::ExpressionFromAddress(address, size);
+  return static_cast<UserExpression&>(e);
+}
+
+SystemExpression SystemExpression::ExpressionFromAddress(const void* address,
+                                                         size_t size) {
+  Expression e = Expression::ExpressionFromAddress(address, size);
+  return static_cast<SystemExpression&>(e);
+}
+
 const Tree* Expression::TreeFromAddress(const void* address) {
   if (address == nullptr) {
     return nullptr;
@@ -247,6 +259,15 @@ SystemExpression SystemExpression::Builder(T x) {
   return Builder(SharedTreeStack->pushFloat(x));
 }
 
+UserExpression UserExpression::Builder(int32_t n) {
+  return Builder(Integer::Push(n));
+}
+
+template <typename T>
+UserExpression UserExpression::Builder(T x) {
+  return Builder(SharedTreeStack->pushFloat(x));
+}
+
 template <typename T>
 SystemExpression SystemExpression::Builder(Coordinate2D<T> point) {
   return SystemExpression::CreateReduce(
@@ -261,6 +282,20 @@ SystemExpression SystemExpression::Builder(
     return Builder<T>(pointOrRealScalar.toRealScalar());
   }
   return Builder<T>(pointOrRealScalar.toPoint());
+}
+
+template <typename T>
+UserExpression UserExpression::Builder(PointOrRealScalar<T> pointOrRealScalar) {
+  if (pointOrRealScalar.isRealScalar()) {
+    return Builder<T>(pointOrRealScalar.toRealScalar());
+  }
+  return Builder<T>(pointOrRealScalar.toPoint());
+}
+
+template <typename T>
+UserExpression UserExpression::Builder(Coordinate2D<T> point) {
+  return UserExpression::Create(KPoint(KA, KB), {.KA = Builder<T>(point.x()),
+                                                 .KB = Builder<T>(point.y())});
 }
 
 SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
@@ -307,13 +342,33 @@ Expression Expression::Builder(Tree* tree) {
   return result;
 }
 
-Expression Expression::Undefined() { return Expression::Builder(KUndef); }
+UserExpression UserExpression::Undefined() {
+  return UserExpression::Builder(KUndef);
+}
+SystemExpression SystemExpression::Undefined() {
+  return SystemExpression::Builder(KUndef);
+}
 
 UserExpression UserExpression::Builder(Preferences::AngleUnit angleUnit) {
   return UserExpression::Builder(Units::Unit::Push(angleUnit));
 }
 
 Expression Expression::cloneChildAtIndex(int i) const {
+  assert(tree());
+  return Builder(tree()->child(i));
+}
+
+UserExpression UserExpression::cloneChildAtIndex(int i) const {
+  assert(tree());
+  return Builder(tree()->child(i));
+}
+
+SystemExpression SystemExpression::cloneChildAtIndex(int i) const {
+  assert(tree());
+  return Builder(tree()->child(i));
+}
+
+PreparedFunction PreparedFunction::cloneChildAtIndex(int i) const {
   assert(tree());
   return Builder(tree()->child(i));
 }
@@ -416,10 +471,11 @@ SystemExpression UserExpression::cloneAndReduce(
     bool* reductionFailure) const {
   assert(reductionFailure);
   return privateCloneAndReduceOrSimplify(projectionContext, false,
-                                         reductionFailure);
+                                         reductionFailure)
+      .cloneAsSystemExpression();
 }
 
-Expression UserExpression::privateCloneAndReduceOrSimplify(
+UserExpression UserExpression::privateCloneAndReduceOrSimplify(
     const Internal::ProjectionContext& context, bool beautify,
     bool* reductionFailure) const {
   assert(!isUninitialized());
@@ -429,7 +485,8 @@ Expression UserExpression::privateCloneAndReduceOrSimplify(
   if (reductionFailure) {
     *reductionFailure = !reductionSuccess;
   }
-  return Builder(e);
+  // TODO: Split privateCloneAndReduceOrSimplify in two methods
+  return UserExpression::Builder(e);
 }
 
 void SystemExpression::cloneAndBeautifyAndApproximate(
@@ -666,6 +723,13 @@ Coordinate2D<T> SystemExpression::approximateToPoint() const {
 }
 
 template <typename T>
+Coordinate2D<T> PreparedFunction::approximateToPoint() const {
+  return Approximation::ToPoint<T>(
+      tree(), Approximation::Parameters{.isRootAndCanHaveRandom = true,
+                                        .prepare = false});
+}
+
+template <typename T>
 SystemExpression SystemExpression::approximateListAndSort() const {
   assert(dimension().isList());
   Tree* clone = SharedTreeStack->pushListSort();
@@ -851,7 +915,8 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
     }
     assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
            tree()->isUserFunction());
-    Expression e = clone();
+    // TODO : Fix this.
+    UserExpression e = cloneAsUserExpression();
     // Undefined symbols must be preserved.
     // NOTE: temporary until recursivelyMatches takes a const Context&
     if (context) {
@@ -1104,6 +1169,73 @@ const char* Poincare::Infinity::k_infinityName =
 const char* Poincare::Infinity::k_minusInfinityName =
     Internal::Infinity::k_minusInfinityName;
 
+UserExpression Expression::cloneAsUserExpression() const {
+  PoolHandle clone = PoolHandle::clone();
+  return static_cast<UserExpression&>(clone);
+}
+
+SystemExpression Expression::cloneAsSystemExpression() const {
+  PoolHandle clone = PoolHandle::clone();
+  return static_cast<SystemExpression&>(clone);
+}
+
+UserExpression UserExpression::Builder(const Tree* tree) {
+  if (!tree) {
+    return UserExpression();
+  }
+  size_t size = tree->treeSize();
+  void* bufferNode = Pool::sharedPool->alloc(sizeof(ExpressionObject) + size);
+  ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
+  PoolHandle h = PoolHandle::Build(node);
+  return static_cast<UserExpression&>(h);
+}
+
+UserExpression UserExpression::Builder(Tree* tree) {
+  UserExpression result = Builder(const_cast<const Tree*>(tree));
+  if (tree) {
+    tree->removeTree();
+  }
+  return result;
+}
+
+SystemExpression SystemExpression::Builder(const Tree* tree) {
+  if (!tree) {
+    return SystemExpression();
+  }
+  size_t size = tree->treeSize();
+  void* bufferNode = Pool::sharedPool->alloc(sizeof(ExpressionObject) + size);
+  ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
+  PoolHandle h = PoolHandle::Build(node);
+  return static_cast<SystemExpression&>(h);
+}
+
+SystemExpression SystemExpression::Builder(Tree* tree) {
+  SystemExpression result = Builder(const_cast<const Tree*>(tree));
+  if (tree) {
+    tree->removeTree();
+  }
+  return result;
+}
+
+PreparedFunction PreparedFunction::Builder(const Tree* tree) {
+  if (!tree) {
+    return PreparedFunction();
+  }
+  size_t size = tree->treeSize();
+  void* bufferNode = Pool::sharedPool->alloc(sizeof(ExpressionObject) + size);
+  ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
+  PoolHandle h = PoolHandle::Build(node);
+  return static_cast<PreparedFunction&>(h);
+}
+
+PreparedFunction PreparedFunction::Builder(Tree* tree) {
+  PreparedFunction result = Builder(const_cast<const Tree*>(tree));
+  if (tree) {
+    tree->removeTree();
+  }
+  return result;
+}
+
 template SystemExpression SystemExpression::approximateSystemToTree<float>()
     const;
 template SystemExpression SystemExpression::approximateSystemToTree<double>()
@@ -1119,6 +1251,11 @@ template UserExpression UserExpression::cloneAndApproximate<float>(
 template UserExpression UserExpression::cloneAndApproximate<double>(
     Internal::ProjectionContext&) const;
 
+template UserExpression UserExpression::Builder<float>(float);
+template UserExpression UserExpression::Builder<double>(double);
+template UserExpression UserExpression::Builder<float>(Coordinate2D<float>);
+template UserExpression UserExpression::Builder<double>(Coordinate2D<double>);
+
 template SystemExpression SystemExpression::Builder<float>(float);
 template SystemExpression SystemExpression::Builder<double>(double);
 template SystemExpression SystemExpression::Builder<float>(Coordinate2D<float>);
@@ -1127,6 +1264,11 @@ template SystemExpression SystemExpression::Builder<double>(
 template SystemExpression SystemExpression::Builder<float>(
     PointOrRealScalar<float>);
 template SystemExpression SystemExpression::Builder<double>(
+    PointOrRealScalar<double>);
+
+template UserExpression UserExpression::Builder<float>(
+    PointOrRealScalar<float>);
+template UserExpression UserExpression::Builder<double>(
     PointOrRealScalar<double>);
 
 template PointOrRealScalar<float>
@@ -1156,6 +1298,11 @@ template double SystemExpression::approximateSystemToRealScalar<double>() const;
 template Coordinate2D<float> SystemExpression::approximateToPoint<float>()
     const;
 template Coordinate2D<double> SystemExpression::approximateToPoint<double>()
+    const;
+
+template Coordinate2D<float> PreparedFunction::approximateToPoint<float>()
+    const;
+template Coordinate2D<double> PreparedFunction::approximateToPoint<double>()
     const;
 
 template float UserExpression::ParseAndSimplifyAndApproximateToRealScalar<

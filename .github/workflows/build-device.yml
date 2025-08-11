@@ -20,18 +20,13 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup
         run: tools/setup.sh
-      - name: Check for core
-        run: '[[ -e ion/src/device/core ]]'
       # Not using matrix strategy to avoid multiplying setups and uploads.
       - name: Build n0110
-        run: make -C epsilon MODEL=n0110 epsilon.onboarding$BETA.dfu
-      - run: make -C epsilon MODEL=n0110 epsilon.onboarding$BETA.allow3rdparty.dfu
+        run: make PLATFORM=n0110 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Build n0115
-        run: make -C epsilon MODEL=n0115 epsilon.onboarding$BETA.dfu
-      - run: make -C epsilon MODEL=n0115 epsilon.onboarding$BETA.allow3rdparty.dfu
+        run: make PLATFORM=n0115 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Build n0120
-        run: make -C epsilon MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding$BETA.dfu
-      - run: make -C epsilon MODEL=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding$BETA.allow3rdparty.dfu
+        run: make PLATFORM=n0120 EMBED_EXTRA_DATA=1 epsilon.onboarding$BETA.dfu epsilon.onboarding$BETA.allow3rdparty.dfu
       - name: Upload
         uses: actions/upload-artifact@v4
         with:

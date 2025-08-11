@@ -72,27 +72,20 @@ jobs:
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
 
-      - name: Check for core
-        id: core
-        run: '[[ -e ion/src/device/core ]]'
-        continue-on-error: true
       - name: Disable core directory
         if: ${{ steps.core.outcome == 'success' }}
         run: mv ion/src/device/core ion/src/device/core-disable
       - name: Build userlands
         # Since both slots have the exact same amount of Flash reserved, it is pointless to build both the A and B elfs for every variant.
-        # As an exception,  because we'll build epsilon.dfu that on both userland.A.elf and userland.B.elf, we still build those here
+        # As an exception, because we'll build epsilon.dfu that on both userland.A.elf and userland.B.elf, we still build those here
         # TODO: It is also probably useless to build so many variants
-        run: $DOCKER_RUN "make -C epsilon MODEL=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf"
-      - name: Restore core directory
-        if: ${{ steps.core.outcome == 'success' }}
-        run: mv ion/src/device/core-disable ion/src/device/core
-      - if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make -C epsilon MODEL=${{ matrix.model }} epsilon.dfu"
-      - if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make -C epsilon MODEL=${{ matrix.model }} flasher.dfu"
-      - if: ${{ steps.core.outcome == 'success' }}
-        run: $DOCKER_RUN "make -C epsilon MODEL=${{ matrix.model }} bench.ram.dfu"
+        run: $DOCKER_RUN "make -C epsilon PLATFORM=${{ matrix.model }} userland.A.elf userland.B.elf userland.allow3rdparty.A.elf userland.onboarding.A.elf userland.onboarding.allow3rdparty.A.elf userland.onboarding.update.A.elf userland.onboarding.beta.A.elf userland.onboarding.beta.allow3rdparty.A.elf"
+      - name: Build epsilon
+        run: $DOCKER_RUN "make -C epsilon PLATFORM=${{ matrix.model }} epsilon.dfu"
+      - name: Build flasher
+        run: $DOCKER_RUN "make -C epsilon PLATFORM=${{ matrix.model }} flasher.dfu"
+      - name: Build bench
+        run: $DOCKER_RUN "make -C epsilon PLATFORM=${{ matrix.model }} bench.ram.dfu"
   windows:
     timeout-minutes: 15
     runs-on: windows-latest

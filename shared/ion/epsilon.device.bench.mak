@@ -2,13 +2,11 @@ _sources_ion_bench := $(addprefix device/core/device/bench/command/, \
   adc.cpp \
   backlight.cpp \
   charge.cpp \
-  check_backup.cpp:-n0110 \
   command.cpp \
   crc.cpp \
   display.cpp \
   exit.cpp \
   external_flash_id.cpp \
-  fill_backup.cpp:-n0110 \
   jump.cpp \
   keyboard.cpp \
   lcd_data.cpp \
@@ -18,12 +16,10 @@ _sources_ion_bench := $(addprefix device/core/device/bench/command/, \
   mcu_serial.cpp \
   ping.cpp \
   print.cpp \
-  rtc_off.cpp:-n0110 \
   screen_id.cpp \
   sleep.cpp \
   standby.cpp \
   stop.cpp \
-  time.cpp:-n0110 \
   usb_plugged.cpp \
   vblank.cpp \
 ) \
@@ -42,12 +38,9 @@ $(addprefix device/core/device/bench/drivers/, \
 $(addprefix device/core/device/shared-core/drivers/, \
   backlight.cpp \
   backlight_advanced.cpp \
-  backup_ram_$(PLATFORM).cpp \
-  backup_ram.cpp \
   battery_$(_ion_mcu_suffix).cpp \
   battery_charge.cpp \
   board_frequency_$(_ion_mcu_suffix).cpp \
-  board_power_supply_$(_ion_mcu_suffix).cpp \
   board_privileged.cpp \
   board_privileged_$(_ion_mcu_suffix).cpp \
   board_unprotected.cpp \
@@ -65,12 +58,10 @@ $(addprefix device/core/device/shared-core/drivers/, \
   keyboard_epsilon.cpp \
   keyboard_$(_ion_mcu_suffix).cpp \
   keyboard_init.cpp \
-  keyboard_pins_$(_ion_mcu_suffix).cpp \
   led.cpp \
   power_$(_ion_mcu_suffix).cpp \
   power_standby_$(_ion_mcu_suffix).cpp \
   reset.cpp \
-  rtc.cpp \
   swd.cpp \
   timing.cpp \
   usb.cpp \
@@ -88,14 +79,37 @@ $(addprefix shared/, \
   console_line.cpp \
   display_context.cpp \
   exam_mode.cpp \
-) \
+)
 
 ifeq ($(PLATFORM),n0120)
 _sources_ion_bench += \
+  device/core/device/shared-core/drivers/board_power_supply_stm32h.cpp \
+  device/core/device/shared-core/drivers/keyboard_pins_stm32h.cpp \
   device/core/device/shared-core/drivers/external_flash_sscg.cpp
 else
 _sources_ion_bench += \
+  device/core/device/shared-core/drivers/external_flash_qspi_$(PLATFORM).cpp \
   device/core/device/shared-core/drivers/external_flash_no_sscg.cpp
+endif
+
+ifeq ($(PLATFORM),n0110)
+_sources_ion_bench += $(addprefix device/core/device/bench/command/dummy/, \
+  check_backup.cpp \
+  fill_backup.cpp \
+  rtc_off.cpp \
+  time.cpp)
+else
+_sources_ion_bench += $(addprefix device/core/device/bench/command/, \
+  time.cpp \
+  rtc_off.cpp \
+  check_backup.cpp \
+  fill_backup.cpp \
+) \
+$(addprefix device/core/device/shared-core/drivers/, \
+	backup_ram_$(PLATFORM).cpp \
+	backup_ram.cpp \
+	rtc.cpp \
+)
 endif
 
 _ldflags_ion_bench := \

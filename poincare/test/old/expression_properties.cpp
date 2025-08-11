@@ -102,7 +102,8 @@ QUIZ_CASE(poincare_properties_has_random) {
 void assert_is_parametered_expression(const char* input,
                                       bool isParametered = true) {
   UserExpression e = UserExpression::Builder(parse(input));
-  quiz_assert_print_if_failure(e.isParametric() == isParametered, input);
+  quiz_assert_print_if_failure(e.tree()->isParametric() == isParametered,
+                               input);
 }
 
 QUIZ_CASE(poincare_properties_is_parametered_expression) {

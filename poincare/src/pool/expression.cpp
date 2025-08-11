@@ -1077,10 +1077,6 @@ bool Expression::isPercent() const {
   return tree()->isPercentSimple() || tree()->isPercentAddition();
 }
 
-bool Expression::isSequence() const { return tree()->isSequence(); }
-
-bool Expression::isParametric() const { return tree()->isParametric(); }
-
 bool Expression::isBoolean() const { return tree()->isBoolean(); }
 
 bool Expression::isList() const { return tree()->isList(); }
@@ -1231,6 +1227,19 @@ PreparedFunction PreparedFunction::Builder(Tree* tree) {
     tree->removeTree();
   }
   return result;
+}
+
+bool PreparedFunction::hasSequences() const {
+  return !isUninitialized() &&
+         tree()->hasDescendantSatisfying(
+             [](const Tree* e) { return e->isSequence(); });
+}
+
+bool PreparedFunction::approximationBasedOnCostlyAlgorithms() const {
+  return !isUninitialized() &&
+         tree()->hasDescendantSatisfying([](const Tree* e) {
+           return e->isSequence() || e->isParametric();
+         });
 }
 
 template SystemExpression SystemExpression::approximateSystemToTree<float>()

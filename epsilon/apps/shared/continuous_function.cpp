@@ -430,10 +430,7 @@ float ContinuousFunction::autoTMin() const {
 
 bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
     Context* context) const {
-  return expressionApproximated(context).recursivelyMatches(
-      [](const Expression e) {
-        return !e.isUninitialized() && (e.isSequence() || e.isParametric());
-      });
+  return expressionApproximated(context).approximationBasedOnCostlyAlgorithms();
 }
 
 void ContinuousFunction::trimResolutionInterval(double* start,

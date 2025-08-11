@@ -5,7 +5,7 @@
 
 #include <cmath>
 
-#include "../helper.h"
+#include "helper.h"
 
 using namespace Poincare;
 using namespace Poincare::Internal;
@@ -70,19 +70,6 @@ void assert_ranges_equal(Range2D<T> observed, Range2D<T> expected,
 template <typename T>
 Coordinate2D<T> expressionEvaluator(T t, const void* model) {
   const Tree* e = static_cast<const Tree*>(model);
-  // TODO_PCJ : Handle matrixes
-#if 0
-  ApproximationContext approximationContext(context, Real, Radian);
-  if (e->otype() == ExpressionNode::Type::OMatrix) {
-    return Coordinate2D<T>(
-        e->childAtIndex(0).approximateToRealScalarWithValueForSymbol(
-            k_symbol, t, approximationContext),
-        e->childAtIndex(1).approximateToRealScalarWithValueForSymbol(
-            k_symbol, t, approximationContext));
-  }
-  return Coordinate2D<T>(t, e->approximateToRealScalarWithValueForSymbol(
-                                k_symbol, t, approximationContext));
-#endif
   return Coordinate2D<T>(
       t, Approximation::To<T>(
              e, t, Approximation::Parameters{.isRootAndCanHaveRandom = true}));
@@ -99,7 +86,7 @@ void assert_points_of_interest_range_is(const char* expression,
   assert_ranges_equal(zoom.interestingRange(), expectedRange, expression);
 }
 
-QUIZ_CASE(poincare_zoom_fit_points_of_interest) {
+QUIZ_CASE(pcj_zoom_fit_points_of_interest) {
   assert_points_of_interest_range_is("1", Range2D<float>());
   assert_points_of_interest_range_is("x", Range2D<float>(0, 0, 0, 0));
   assert_points_of_interest_range_is("x-30", Range2D<float>(30, 30, 0, 0));
@@ -170,7 +157,7 @@ void assert_intersections_range_is(const char* expression1,
   assert_ranges_equal(zoom.interestingRange(), expectedRange, expression1);
 }
 
-QUIZ_CASE(poincare_zoom_fit_intersections) {
+QUIZ_CASE(pcj_zoom_fit_intersections) {
   assert_intersections_range_is("x/2+2", "2x-1", Range2D<float>(2, 2, 3, 3));
   assert_intersections_range_is("x^2", "-x^2/3+x",
                                 Range2D<float>(0, 0.75, 0, 0.5631));
@@ -183,7 +170,7 @@ void assert_sanitized_range_is(Range2D<float> inputRange,
       expectedRange);
 }
 
-QUIZ_CASE(poincare_zoom_sanitation) {
+QUIZ_CASE(pcj_zoom_sanitation) {
   assert_ranges_equal(Zoom<float>::DefaultRange(k_normalRatio, k_maxFloat),
                       Range2D<float>(-10, 10, -4.42358822, 4.42358822));
   assert_ranges_equal(Zoom<float>::DefaultRange(1, k_maxFloat),

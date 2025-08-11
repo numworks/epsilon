@@ -230,7 +230,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/simplification.cpp \
   old/tree/helpers.cpp \
   old/tree/tree_handle.cpp \
-  old/zoom.cpp \
   additional_results_helper.cpp \
   approximation.cpp \
   beautification.cpp \
@@ -262,6 +261,7 @@ _sources_poincare_test := $(addprefix test/, \
   simplification.cpp \
   tree_stack.cpp \
   trigonometry_exact_formulas.cpp \
+  zoom.cpp \
 $(addprefix helpers/, \
   expression_equal_sign.cpp \
 ) \

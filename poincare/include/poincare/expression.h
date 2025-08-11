@@ -361,15 +361,16 @@ class UserExpression : public Expression {
 /* Expressions that have been projected and systematic reduced. */
 class SystemExpression : public Expression {
  public:
-  static SystemExpression CreateReduce(const Internal::Tree* structure,
-                                       Internal::ContextTrees ctx);
-  static SystemExpression CreateIntegralOfAbsOfDifference(
-      SystemExpression lowerBound, SystemExpression upperBound,
-      SystemExpression integrandA, SystemExpression integrandB);
-
+  /* Static builders */
   static SystemExpression ExpressionFromAddress(const void* address,
                                                 size_t size);
-  // Builders from value.
+  static SystemExpression Builder(const Internal::Tree* tree);
+  // Eat the tree
+  static SystemExpression Builder(Internal::Tree* tree);
+  template <Internal::KTrees::KTreeConcept T>
+  static SystemExpression Builder(T x) {
+    return Builder(static_cast<const Internal::Tree*>(x));
+  }
   static SystemExpression Builder(int32_t n);
   template <typename T>
   static SystemExpression Builder(T x);
@@ -377,59 +378,62 @@ class SystemExpression : public Expression {
   static SystemExpression Builder(Coordinate2D<T> point);
   template <typename T>
   static SystemExpression Builder(PointOrRealScalar<T> pointOrReal);
+  // Build an expression of Undefined tree.
+  static SystemExpression Undefined();
 
   static SystemExpression DecimalBuilderFromDouble(double v);
   static SystemExpression RationalBuilder(int32_t numerator,
                                           int32_t denominator);
+  static SystemExpression CreateReduce(const Internal::Tree* structure,
+                                       Internal::ContextTrees ctx);
+  static SystemExpression CreateIntegralOfAbsOfDifference(
+      SystemExpression lowerBound, SystemExpression upperBound,
+      SystemExpression integrandA, SystemExpression integrandB);
 
-  template <Internal::KTrees::KTreeConcept T>
-  static SystemExpression Builder(T x) {
-    return Builder(static_cast<const Internal::Tree*>(x));
-  }
-  static SystemExpression Builder(const Internal::Tree* tree);
-  // Eat the tree
-  static SystemExpression Builder(Internal::Tree* tree);
-  // Build an expression of Undefined tree.
-  static SystemExpression Undefined();
-
+  /* General helpers */
   SystemExpression cloneChildAtIndex(int i) const;
   SystemExpression clone() const {
     PoolHandle clone = PoolHandle::clone();
     return static_cast<SystemExpression&>(clone);
   }
+
+  /* SystemExpression to SystemExpression helpers */
   template <typename T>
   SystemExpression approximateSystemToTree() const;
-  // Only on SystemExpression. Expressions in parameters are outputs.
+  // Replace symbol and reduce.
+  SystemExpression cloneAndReplaceSymbolWithExpression(
+      const char* symbolName, const SystemExpression& replaceSymbolWith,
+      bool* reductionFailure, SymbolicComputation symbolic) const;
+  SystemExpression getReducedDerivative(const char* symbolName,
+                                        int derivationOrder = 1) const;
+  // Return SystemExpression with sorted approximated elements.
+  template <typename T>
+  SystemExpression approximateListAndSort() const;
+  // Return SystemExpression with undef list elements or points removed.
+  SystemExpression removeUndefAndComplexListElements() const;
+
+  /* Other helpers */
+
+  // Expressions in parameters are outputs.
   void cloneAndBeautifyAndApproximate(
       UserExpression* beautifiedExpression,
       UserExpression* approximatedExpression,
       Internal::ProjectionContext& context) const;
-  // Only on SystemExpression
   UserExpression cloneAndBeautify(Internal::ProjectionContext& context) const;
-  // Only on SystemExpression. Replace symbol and reduce.
-  SystemExpression cloneAndReplaceSymbolWithExpression(
-      const char* symbolName, const SystemExpression& replaceSymbolWith,
-      bool* reductionFailure, SymbolicComputation symbolic) const;
-
-  SystemExpression getReducedDerivative(const char* symbolName,
-                                        int derivationOrder = 1) const;
   /* Replace some UserSymbol into Var0 for
-   * approximateToPointOrRealScalarWithValue Returns undef if the expression's
+   * approximateToPointOrRealScalarWithValue. Returns undef if the expression's
    * dimension is not point or scalar. If scalarsOnly = true, returns undef if
    * it's a point or a list. */
   PreparedFunction getPreparedFunction(const char* symbolName,
                                        bool scalarsOnly = false) const;
   template <typename T>
   T approximateSystemToRealScalar() const;
-
   template <typename T>
   Coordinate2D<T> approximateToPoint() const;
 
-  // Return SystemExpression with sorted approximated elements.
-  template <typename T>
-  SystemExpression approximateListAndSort() const;
-  // Return SystemExpression with undef list elements or points removed.
-  SystemExpression removeUndefAndComplexListElements() const;
+  /* Properties getters */
+
+  Sign sign() const;
   int polynomialDegree(const char* symbolName) const;
   /* Fills the table coefficients with the expressions of the first 3 polynomial
    * coefficients and returns the  polynomial degree. It is supposed to be
@@ -442,7 +446,6 @@ class SystemExpression : public Expression {
                                        Preferences::UnitFormat unitFormat,
                                        SymbolicComputation symbolicComputation,
                                        bool keepDependencies = false) const;
-  Sign sign() const;
 };
 
 /* Expressions that have been prepared for approximation. It can depend on a

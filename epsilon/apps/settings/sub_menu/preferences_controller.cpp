@@ -2,7 +2,6 @@
 
 #include <apps/apps_container.h>
 #include <apps/global_preferences.h>
-#include <apps/math_preferences.h>
 #include <assert.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
@@ -108,7 +107,7 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
    * implementing a setter. This would make the code more modular and avoid such
    * hard-to-read if/else blocks. */
 
-  MathPreferences* preferences = MathPreferences::SharedPreferences();
+  GlobalPreferences* preferences = GlobalPreferences::SharedGlobalPreferences();
   if (message == I18n::Message::AngleUnit) {
     preferences->setAngleUnit((Preferences::AngleUnit)valueIndex);
   } else if (message == I18n::Message::DisplayMode) {
@@ -122,13 +121,12 @@ void PreferencesController::setPreferenceWithValueIndex(I18n::Message message,
           std::max<int>(preferences->numberOfSignificantDigits(), 3));
     }
   } else if (message == I18n::Message::EditionMode) {
-    GlobalPreferences::SharedGlobalPreferences()->setEditionMode(
-        (GlobalPreferences::EditionMode)valueIndex);
+    preferences->setEditionMode((GlobalPreferences::EditionMode)valueIndex);
   } else if (message == I18n::Message::ComplexFormat) {
     preferences->setComplexFormat((Preferences::ComplexFormat)valueIndex);
   } else if (message == I18n::Message::FontSizes) {
-    GlobalPreferences::SharedGlobalPreferences()->setFont(
-        valueIndex == 0 ? KDFont::Size::Large : KDFont::Size::Small);
+    preferences->setFont(valueIndex == 0 ? KDFont::Size::Large
+                                         : KDFont::Size::Small);
   }
 }
 
@@ -139,7 +137,8 @@ int PreferencesController::valueIndexForPreference(
    * implementing a getter. This would make the code more modular and avoid such
    * hard-to-read if/else blocks. */
 
-  const MathPreferences* preferences = MathPreferences::SharedPreferences();
+  const GlobalPreferences* preferences =
+      GlobalPreferences::SharedGlobalPreferences();
   if (message == I18n::Message::AngleUnit) {
     return (int)preferences->angleUnit();
   }

@@ -32,7 +32,7 @@ class Context {
   }
 
   // TODO: remove, only a static SequenceContext may still be needed
-  static Context* GlobalContext;
+  static inline Context* GlobalContext = nullptr;
 };
 
 }  // namespace Poincare

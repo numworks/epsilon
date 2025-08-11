@@ -21,7 +21,7 @@ enum class ComplexFormat : uint8_t {
   NFormats = None
 };
 
-enum class Strategy { Default, ApproximateToFloat };
+enum class Strategy { Default, ApproximateToFloat, DeepExpandAlgebraic };
 
 enum class ReductionTarget {
   /* Optimized for approximation : (1+x)^3 will not be developed. */

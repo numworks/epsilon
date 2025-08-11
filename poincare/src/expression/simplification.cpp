@@ -21,7 +21,15 @@ static Tree* ApplySimplify(const Tree* dataTree,
 
 static bool HandleUnits(Tree* e, ProjectionContext* projectionContext);
 static bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
-                          bool reduceIfSuccess);
+                          bool insideReduction);
+static bool ApplyProjectionStrategy(
+    Tree* e, const ProjectionContext& projectionContext) {
+  return ApplyStrategy(e, projectionContext, false);
+}
+static bool ApplyReductionStrategy(Tree* e,
+                                   const ProjectionContext& projectionContext) {
+  return ApplyStrategy(e, projectionContext, true);
+}
 
 /* Some patterns are not reduced by the systematic and the advanced reductions,
  * but if the expression contains one of these patterns at the end of reduction,
@@ -137,7 +145,7 @@ void ProjectAndReduce(Tree* e, ProjectionContext* projectionContext) {
   ReduceSystem(e, projectionContext->m_advanceReduce,
                projectionContext->m_reductionTarget);
   // Non-approximated numbers or node may have appeared during reduction.
-  ApplyStrategy(e, *projectionContext, true);
+  ApplyReductionStrategy(e, *projectionContext);
 }
 
 bool BeautifyReduced(Tree* e, ProjectionContext* projectionContext) {
@@ -198,7 +206,7 @@ bool ToSystem(Tree* e, ProjectionContext* projectionContext) {
   /* 2 - Update projection context */
   projectionContext->m_dimension = Dimension::Get(e);
   /* 3 - Apply projection strategy */
-  changed = ApplyStrategy(e, *projectionContext, false) || changed;
+  changed = ApplyProjectionStrategy(e, *projectionContext) || changed;
   /* 4 - Project */
   changed = Projection::DeepSystemProject(e, *projectionContext) || changed;
   return changed;
@@ -243,7 +251,7 @@ bool HandleUnits(Tree* e, ProjectionContext* projectionContext) {
     }
     // Re-apply strategy to make sure introduced integers are floats.
     if (projectionContext->m_strategy == Strategy::ApproximateToFloat) {
-      ApplyStrategy(e, *projectionContext, true);
+      ApplyReductionStrategy(e, *projectionContext);
     }
     ReduceSystem(e, false, projectionContext->m_reductionTarget);
     changed = true;
@@ -252,26 +260,37 @@ bool HandleUnits(Tree* e, ProjectionContext* projectionContext) {
       !projectionContext->m_dimension.isAngleUnit()) {
     // Only angle units are expected not to be approximated.
     projectionContext->m_strategy = Strategy::ApproximateToFloat;
-    ApplyStrategy(e, *projectionContext, true);
+    ApplyReductionStrategy(e, *projectionContext);
   }
 #endif
   return changed;
 }
 
 bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
-                   bool reduceIfSuccess) {
-  if (projectionContext.m_strategy != Strategy::ApproximateToFloat ||
-      !Approximation::ApproximateAndReplaceEveryScalar<double>(
+                   bool insideReduction) {
+  bool changed = false;
+
+  switch (projectionContext.m_strategy) {
+    case Strategy::Default:
+      break;
+    case Strategy::ApproximateToFloat:
+      changed = Approximation::ApproximateAndReplaceEveryScalar<double>(
           e, Approximation::Context(projectionContext.m_angleUnit,
                                     projectionContext.m_complexFormat,
-                                    projectionContext.m_context))) {
-    return false;
+                                    projectionContext.m_context));
+      break;
+    case Strategy::DeepExpandAlgebraic:
+      changed = insideReduction && AdvancedReduction::DeepExpandAlgebraic(e);
+      break;
+    default:
+      OMG::unreachable();
   }
-  if (reduceIfSuccess) {
+
+  if (changed && insideReduction) {
     // NAries could be sorted again, some children may be merged.
     SystematicReduction::DeepReduce(e);
   }
-  return true;
+  return changed;
 }
 
 }  // namespace Poincare::Internal::Simplification

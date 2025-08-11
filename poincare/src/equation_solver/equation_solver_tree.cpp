@@ -424,8 +424,9 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
    *  - Reduction (Done in ProjectAndReduce). */
 
   // Step 3.2. Replace UserFunctions
+  assert(context);
   Projection::DeepReplaceUserNamed(
-      reducedEquationList, context,
+      reducedEquationList, *context,
       SymbolicComputation::ReplaceDefinedFunctions);
 
   // Step 3.3. Replace unkowns

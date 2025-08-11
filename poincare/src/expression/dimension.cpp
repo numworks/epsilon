@@ -96,7 +96,8 @@ bool IsIntegerExpression(const Tree* e, bool excludeFunctionCalls = false) {
 Tree* CloneAndReplaceSymbols(const Tree* e, Context* ctx) {
   Tree* clone = e->cloneTree();
   // Replace every nested defined symbols and functions
-  Projection::DeepReplaceUserNamed(clone, ctx,
+  assert(ctx);
+  Projection::DeepReplaceUserNamed(clone, *ctx,
                                    SymbolicComputation::ReplaceDefinedSymbols);
   return clone;
 }

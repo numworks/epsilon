@@ -803,7 +803,8 @@ bool UserExpression::replaceSymbols(Poincare::Context* context,
    * as the rest of the expression (otherwise inconsistencies could appear like
    * with random for example). */
   Tree* clone = tree()->cloneTree();
-  bool didReplace = Projection::DeepReplaceUserNamed(clone, context, symbolic);
+  assert(context);
+  bool didReplace = Projection::DeepReplaceUserNamed(clone, *context, symbolic);
   *this = UserExpression::Builder(clone);
   return didReplace;
 }

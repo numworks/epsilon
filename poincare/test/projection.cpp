@@ -63,7 +63,7 @@ QUIZ_CASE(pcj_projection) {
 }
 
 void replaces_to(const Tree* input, const Tree* output,
-                 Shared::GlobalContext* context,
+                 const Poincare::Context& context,
                  Poincare::SymbolicComputation symbolicPolicy) {
   Tree* e = input->cloneTree();
   Poincare::Internal::Projection::DeepReplaceUserNamed(e, context,
@@ -75,48 +75,48 @@ void replaces_to(const Tree* input, const Tree* output,
 QUIZ_CASE(pcj_projection_variable_replacement) {
   Shared::GlobalContext globalContext;
   globalContext.setExpressionForUserNamed(3_e, "x"_e);
-  replaces_to(KMult("x"_e, "y"_e), KMult("x"_e, "y"_e), &globalContext,
+  replaces_to(KMult("x"_e, "y"_e), KMult("x"_e, "y"_e), globalContext,
               Poincare::SymbolicComputation::KeepAllSymbols);
-  replaces_to(KMult("x"_e, "y"_e), KMult(3_e, "y"_e), &globalContext,
+  replaces_to(KMult("x"_e, "y"_e), KMult(3_e, "y"_e), globalContext,
               Poincare::SymbolicComputation::ReplaceDefinedSymbols);
-  replaces_to(KMult("x"_e, "y"_e), KMult(3_e, KNotDefined), &globalContext,
+  replaces_to(KMult("x"_e, "y"_e), KMult(3_e, KNotDefined), globalContext,
               Poincare::SymbolicComputation::ReplaceAllSymbols);
   replaces_to(KMult("x"_e, "y"_e), KMult(KNotDefined, KNotDefined),
-              &globalContext,
+              globalContext,
               Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 
   globalContext.setExpressionForUserNamed(KPow(KUnknownSymbol, 2_e),
                                           KFun<"f">(KUnknownSymbol));
   replaces_to(KFun<"f">(KAdd("x"_e, "y"_e)), KFun<"f">(KAdd("x"_e, "y"_e)),
-              &globalContext, Poincare::SymbolicComputation::KeepAllSymbols);
+              globalContext, Poincare::SymbolicComputation::KeepAllSymbols);
   replaces_to(KFun<"f">(KAdd("x"_e, "y"_e)), KPow(KAdd("x"_e, "y"_e), 2_e),
-              &globalContext,
+              globalContext,
               Poincare::SymbolicComputation::ReplaceDefinedFunctions);
   replaces_to(KFun<"f">(KAdd("x"_e, "y"_e)), KPow(KAdd(3_e, "y"_e), 2_e),
-              &globalContext,
+              globalContext,
               Poincare::SymbolicComputation::ReplaceDefinedSymbols);
   replaces_to(KFun<"f">(KAdd("x"_e, "y"_e)), KPow(KAdd(3_e, KNotDefined), 2_e),
-              &globalContext, Poincare::SymbolicComputation::ReplaceAllSymbols);
-  replaces_to(KFun<"f">(KAdd("x"_e, "y"_e)), KNotDefined, &globalContext,
+              globalContext, Poincare::SymbolicComputation::ReplaceAllSymbols);
+  replaces_to(KFun<"f">(KAdd("x"_e, "y"_e)), KNotDefined, globalContext,
               Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 
   replaces_to(KIntegral("t"_e, "y"_e, "x"_e, KFun<"f">("t"_e)),
-              KIntegral("t"_e, "y"_e, "x"_e, KFun<"f">("t"_e)), &globalContext,
+              KIntegral("t"_e, "y"_e, "x"_e, KFun<"f">("t"_e)), globalContext,
               Poincare::SymbolicComputation::KeepAllSymbols);
   replaces_to(KIntegral("t"_e, "y"_e, "x"_e, KFun<"f">("t"_e)),
-              KIntegral("t"_e, "y"_e, "x"_e, KPow("t"_e, 2_e)), &globalContext,
+              KIntegral("t"_e, "y"_e, "x"_e, KPow("t"_e, 2_e)), globalContext,
               Poincare::SymbolicComputation::ReplaceDefinedFunctions);
   replaces_to(KIntegral("t"_e, "y"_e, "x"_e, KFun<"f">("t"_e)),
-              KIntegral("t"_e, "y"_e, 3_e, KPow("t"_e, 2_e)), &globalContext,
+              KIntegral("t"_e, "y"_e, 3_e, KPow("t"_e, 2_e)), globalContext,
               Poincare::SymbolicComputation::ReplaceDefinedSymbols);
   /* ReplaceAllSymbols and ReplaceAllSymbolsWithUndefined make more sense on
    * SystemExpressions, where user symbols representing local parametric
    * variables have been replaced with Var0, Var1 etc. */
   replaces_to(KIntegral("t"_e, "y"_e, "x"_e, KFun<"f">(KVarX)),
               KIntegral("t"_e, KNotDefined, 3_e, KPow(KVarX, 2_e)),
-              &globalContext, Poincare::SymbolicComputation::ReplaceAllSymbols);
+              globalContext, Poincare::SymbolicComputation::ReplaceAllSymbols);
   replaces_to(KIntegral("t"_e, "y"_e, "x"_e, KFun<"f">(KVarX)),
               KIntegral("t"_e, KNotDefined, KNotDefined, KNotDefined),
-              &globalContext,
+              globalContext,
               Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 }

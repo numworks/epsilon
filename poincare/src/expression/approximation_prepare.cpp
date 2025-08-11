@@ -1,3 +1,4 @@
+#include <poincare/context.h>
 #include <poincare/src/memory/pattern_matching.h>
 
 #include "advanced_reduction.h"
@@ -97,7 +98,7 @@ void PrepareFunctionForApproximation(Tree* e, const char* variable,
   /* All symbols should already have been replaced by their definition.
    * Leftover symbols can be replaced by undefined. */
   Projection::DeepReplaceUserNamed(
-      e, nullptr, SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+      e, EmptyContext{}, SymbolicComputation::ReplaceAllSymbolsWithUndefined);
   e->moveTreeOverTree(ToTree<double>(
       e,
       Parameters{

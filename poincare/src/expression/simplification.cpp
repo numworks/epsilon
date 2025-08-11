@@ -171,13 +171,11 @@ bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
   bool changed = maxRandomSeed > previousMaxRandomSeed;
   // Replace UserFunctions before projecting local variables
   const SymbolicComputation symbolic = projectionContext->m_symbolic;
-  // NOTE: const_cast is temporary
-  Poincare::Context* context =
-      &const_cast<Context&>(projectionContext->m_context);
   if (symbolic != SymbolicComputation::KeepAllSymbols &&
       symbolic != SymbolicComputation::ReplaceAllSymbolsWithUndefined) {
     if (Projection::DeepReplaceUserNamed(
-            e, context, SymbolicComputation::ReplaceDefinedFunctions)) {
+            e, projectionContext->m_context,
+            SymbolicComputation::ReplaceDefinedFunctions)) {
       // Seed random nodes that may have appeared after replacing
       maxRandomSeed = Random::SeedRandomNodes(e, maxRandomSeed);
       changed = true;
@@ -186,9 +184,12 @@ bool PrepareForProjection(Tree* e, ProjectionContext* projectionContext) {
   changed = Variables::ProjectLocalVariablesToId(e) || changed;
   // Replace user named symbols after having projected local variables
   if (symbolic != SymbolicComputation::ReplaceDefinedFunctions) {
-    changed = Projection::DeepReplaceUserNamed(e, context, symbolic) || changed;
+    changed = Projection::DeepReplaceUserNamed(e, projectionContext->m_context,
+                                               symbolic) ||
+              changed;
   } else {
-    assert(!Projection::DeepReplaceUserNamed(e, context, symbolic));
+    assert(!Projection::DeepReplaceUserNamed(e, projectionContext->m_context,
+                                             symbolic));
   }
   // No additional random nodes should have appeared
   assert(Random::SeedRandomNodes(e, maxRandomSeed) == maxRandomSeed);

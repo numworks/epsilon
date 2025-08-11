@@ -223,8 +223,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/expression_properties.cpp \
   old/helper.cpp \
   old/numeric_solver.cpp \
-  old/print.cpp \
-  old/print_float.cpp \
   old/range.cpp \
   old/regularized_function.cpp \
   old/simplification.cpp \
@@ -251,6 +249,7 @@ _sources_poincare_test := $(addprefix test/, \
   order.cpp \
   parse.cpp \
   polynomial.cpp \
+  print.cpp \
   projection.cpp \
   random.cpp \
   rational.cpp \

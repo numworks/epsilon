@@ -95,70 +95,78 @@ class Expression : public PoolHandle {
   Expression() : PoolHandle() {}
   Expression(const ExpressionObject* n) : PoolHandle(n) {}
 
+  /* General properties */
+
+  int numberOfDescendants(bool includeSelf) const;
+  int numberOfChildren() const;
+  // Comparing trees. Expressions could be of a different derived class.
   bool isIdenticalTo(const Expression e) const;
+
+  /* Boolean properties */
+  // TODO: Specialize these properties if relevant to a derived class.
+  bool allChildrenAreUndefined() const;
+  bool hasRandomList() const;
+  bool hasRandomNumber() const;
+  bool isApproximate() const;
+  bool isBasedInteger() const;
+  bool isBoolean() const;
+  bool isComparison() const;
+  // Return true if expression is a number, constant, inf or undef.
+  bool isConstantNumber() const;
+  bool isDep() const;
+  bool isDiff() const;
+  bool isDiv() const;
+  bool isEquality() const;
+  bool isFactor() const;
+  bool isInRadians(Context* context) const;
+  bool isIntegral() const;
+  bool isList() const;
+  bool isMatrix() const;
+  bool isNAry() const;
+  bool isNonReal() const;
+  bool isOfMatrixDimension() const;
+  bool isOpposite() const;
+  bool isPercent() const;
+  bool isPlusOrMinusInfinity() const;
+  bool isPoint() const;
+  // Return true if Decimal, Integer or Opposite of those.
+  bool isPureAngleUnit() const;
+  bool isRational() const;
+  bool isStore() const;
+  bool isUndefined() const;
+  bool isUndefinedOrNonReal() const;
+  bool isUserFunction() const;
+  bool isUserSymbol() const;
+  bool isVector() const;
+
+  /* Other properties */
+
+  Dimension dimension(Context* context = nullptr) const;
+  // Only called on expressions that are comparisons
+  Comparison::Operator comparisonOperator() const;
+
+  /* Tree manipulation */
+  // TODO: These methods should be protected
 
   /* Get a Tree from the storage, more efficient and safer than
    * ExpressionFromAddress.tree() because it points to the storage directly. */
   static const Internal::Tree* TreeFromAddress(const void* address);
   operator const Internal::Tree*() const { return tree(); }
-
   const Internal::Tree* tree() const {
     return isUninitialized() ? nullptr : object()->tree();
   }
-  int numberOfDescendants(bool includeSelf) const;
-
-  Dimension dimension(Context* context = nullptr) const;
-
-  // Simple bool properties
-  bool isUndefined() const;
-  bool isUndefinedOrNonReal() const;
-  bool isNAry() const;
-  bool isApproximate() const;
-  bool isPlusOrMinusInfinity() const;
-  bool isPercent() const;
-  bool isIntegral() const;
-  bool isDiff() const;
-  bool isBoolean() const;
-  bool isList() const;
-  bool isUserSymbol() const;
-  bool isUserFunction() const;
-  bool isStore() const;
-  bool isFactor() const;
-  bool isPoint() const;
-  bool isMatrix() const;
-  bool isOfMatrixDimension() const;
-  bool isNonReal() const;
-  bool isOpposite() const;
-  bool isDiv() const;
-  bool isBasedInteger() const;
-  bool isDep() const;
-  bool isComparison() const;
-  bool isEquality() const;
-  bool isRational() const;
-  // Return true if expression is a number, constant, inf or undef.
-  bool isConstantNumber() const;
-  // Return true if Decimal, Integer or Opposite of those.
-  bool isPureAngleUnit() const;
-  bool isVector() const;
-  bool allChildrenAreUndefined() const;
-  bool hasRandomNumber() const;
-  bool hasRandomList() const;
-  int numberOfChildren() const;
-
-  // More complex bool properties
-  bool isInRadians(Context* context) const;
-
-  Comparison::Operator comparisonOperator() const;
 
  protected:
+  static Expression ExpressionFromAddress(const void* address, size_t size);
+
+ private:
   ExpressionObject* object() const {
     assert(identifier() != PoolObject::NoObjectIdentifier);
     return static_cast<ExpressionObject*>(PoolHandle::object());
   }
-  static Expression ExpressionFromAddress(const void* address, size_t size);
 };
 
-// UserExpression can be layoutted and have not been projected
+/* Expressions that can be laid out and have not been projected */
 class UserExpression : public Expression {
  public:
   static UserExpression Parse(const Internal::Tree* layout,
@@ -339,7 +347,7 @@ class UserExpression : public Expression {
       bool* reductionFailure = nullptr) const;
 };
 
-// SystemExpression must have been projected and systematic reduced.
+/* Expressions that have been projected and systematic reduced. */
 class SystemExpression : public Expression {
  public:
   static SystemExpression CreateReduce(const Internal::Tree* structure,
@@ -426,8 +434,8 @@ class SystemExpression : public Expression {
   Sign sign() const;
 };
 
-// PreparedFunction can depend on a Variable and has been prepared for
-// approximation.
+/* Expressions that have been prepared for approximation. It can depend on a
+ * Variable of index 0 called Var0. */
 class PreparedFunction : public Expression {
  public:
   template <Internal::KTrees::KTreeConcept T>

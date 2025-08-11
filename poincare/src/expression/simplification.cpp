@@ -262,11 +262,9 @@ bool ApplyStrategy(Tree* e, const ProjectionContext& projectionContext,
                    bool reduceIfSuccess) {
   if (projectionContext.m_strategy != Strategy::ApproximateToFloat ||
       !Approximation::ApproximateAndReplaceEveryScalar<double>(
-          e,
-          Approximation::Context(
-              projectionContext.m_angleUnit, projectionContext.m_complexFormat,
-              // NOTE: const_cast is temporary
-              &const_cast<Context&>(projectionContext.m_context)))) {
+          e, Approximation::Context(projectionContext.m_angleUnit,
+                                    projectionContext.m_complexFormat,
+                                    projectionContext.m_context))) {
     return false;
   }
   if (reduceIfSuccess) {

@@ -643,7 +643,10 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       if (dim.isUnit()) {
         float index = Approximation::To<float>(
             e->child(1), Approximation::Parameters{},
-            Approximation::Context(AngleUnit::None, ComplexFormat::None, ctx));
+            // Note : temporary until EmptyContext is passed instead of nullptr
+            ctx ? Approximation::Context(AngleUnit::None, ComplexFormat::None,
+                                         *ctx)
+                : Approximation::Context(AngleUnit::None, ComplexFormat::None));
         assert(!std::isnan(index) && index <= static_cast<float>(INT8_MAX) &&
                index >= static_cast<float>(INT8_MIN) &&
                std::round(index) == index);

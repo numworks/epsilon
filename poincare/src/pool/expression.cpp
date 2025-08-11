@@ -353,11 +353,12 @@ template <typename T>
 SystemExpression UserExpression::approximateUserToTree(
     Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
     Context* context) const {
+  assert(context);
   return SystemExpression::Builder(Approximation::ToTree<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat, context)));
+      Approximation::Context(angleUnit, complexFormat, *context)));
 }
 
 bool UserExpression::cloneAndSimplifyAndApproximate(
@@ -380,8 +381,7 @@ template <typename T>
 UserExpression UserExpression::cloneAndApproximate(
     Internal::ProjectionContext& context) const {
   Approximation::Context approxCtx(context.m_angleUnit, context.m_complexFormat,
-                                   // NOTE: const_cast is temporary
-                                   &const_cast<Context&>(context.m_context));
+                                   context.m_context);
   Tree* a;
   if (CAS::Enabled()) {
     a = tree()->cloneTree();
@@ -549,11 +549,13 @@ T UserExpression::approximateToRealScalar(AngleUnit angleUnit,
   static_assert(std::is_floating_point_v<T>);
   assert(Poincare::Dimension(*this, context).isScalar() ||
          Poincare::Dimension(*this, context).isUnit());
+  // Note : temporary until EmptyContext is passed instead of nullptr
   return Approximation::To<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat, context));
+      context ? Approximation::Context(angleUnit, complexFormat, *context)
+              : Approximation::Context(angleUnit, complexFormat));
 }
 
 template <typename T>
@@ -561,8 +563,8 @@ T PreparedFunctionScalar::approximateToRealScalarWithValue(
     T x, int listElement) const {
   return Approximation::To<T>(
       tree(), x, Approximation::Parameters{.isRootAndCanHaveRandom = true},
-      Approximation::Context(AngleUnit::None, ComplexFormat::None, nullptr,
-                             listElement));
+      Approximation::Context(AngleUnit::None, ComplexFormat::None,
+                             EmptyContext{}, listElement));
 }
 
 template <typename T>
@@ -576,7 +578,7 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   if (exp.isUninitialized()) {
     return NAN;
   }
-  // Note : temporary until EmptyContext is passed instead  of nullptr
+  // Note : temporary until EmptyContext is passed instead of nullptr
   ProjectionContext ctx =
       context ? ProjectionContext{.m_complexFormat = complexFormat,
                                   .m_angleUnit = angleUnit,
@@ -605,11 +607,12 @@ bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
       !Internal::Dimension::IsNonListScalar(tree())) {
     return false;
   }
+  assert(context);
   std::complex<T> z = Approximation::ToComplex<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat, context));
+      Approximation::Context(angleUnit, complexFormat, *context));
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
     return false;

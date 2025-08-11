@@ -1,5 +1,6 @@
 #include "function_parameter_controller.h"
 
+#include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <escher/metric.h>
@@ -91,7 +92,7 @@ void FunctionParameterController::viewWillAppear() {
     char buffer[bufferSize];
     writeInterval(buffer, bufferSize, min, max,
                   Preferences::VeryShortNumberOfSignificantDigits,
-                  MathPreferences::SharedPreferences()->displayMode());
+                  GlobalPreferences::SharedGlobalPreferences()->displayMode());
     // Cell's layout will adapt to fit the subLabel.
     m_functionDomainCell.subLabel()->setText(buffer);
   }

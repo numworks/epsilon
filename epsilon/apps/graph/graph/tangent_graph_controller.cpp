@@ -1,6 +1,7 @@
 #include "tangent_graph_controller.h"
 
 #include <apps/apps_container_helper.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>
@@ -103,15 +104,15 @@ void TangentGraphController::reloadBannerView() {
         reloadSlopeInBannerViewForCursorOnFunction(m_cursor, m_record);
   }
 
-  Print::CustomPrintf(buffer, bufferSize, "a=%*.*ed", coefficientA,
-                      MathPreferences::SharedPreferences()->displayMode(),
-                      precision);
+  Print::CustomPrintf(
+      buffer, bufferSize, "a=%*.*ed", coefficientA,
+      GlobalPreferences::SharedGlobalPreferences()->displayMode(), precision);
   m_bannerView->aView()->setText(buffer);
 
   double coefficientB = -coefficientA * m_cursor->x() + m_cursor->y();
-  Print::CustomPrintf(buffer, bufferSize, "b=%*.*ed", coefficientB,
-                      MathPreferences::SharedPreferences()->displayMode(),
-                      precision);
+  Print::CustomPrintf(
+      buffer, bufferSize, "b=%*.*ed", coefficientB,
+      GlobalPreferences::SharedGlobalPreferences()->displayMode(), precision);
   m_bannerView->bView()->setText(buffer);
   m_bannerView->reload();
 }

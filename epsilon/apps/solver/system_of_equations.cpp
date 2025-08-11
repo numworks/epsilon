@@ -51,8 +51,9 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
       eqList,
       {
           .m_complexFormat =
-              MathPreferences::SharedPreferences()->complexFormat(),
-          .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+              GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+          .m_angleUnit =
+              GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
           .m_context = *context,
       });
   UserExpression exactSolutionList = result.exactSolutionList;
@@ -112,8 +113,9 @@ void SystemOfEquations::approximateSolve(Context* context) {
   assert(context);
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       eqList,
-      {.m_complexFormat = MathPreferences::SharedPreferences()->complexFormat(),
-       .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+      {.m_complexFormat =
+           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
        .m_context = *context},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
                                 : m_approximateSolvingRange,
@@ -184,7 +186,8 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     // Re-reduce exact solution but approximate during reduction.
     Internal::ProjectionContext projCtx = {
         .m_complexFormat = m_equationMetadata.complexFormat,
-        .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+        .m_angleUnit =
+            GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
         .m_strategy = Internal::Strategy::ApproximateToFloat,
         .m_unitFormat =
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),

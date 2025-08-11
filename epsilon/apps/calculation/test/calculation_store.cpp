@@ -2,7 +2,7 @@
 
 #include <apps/calculation/additional_results/additional_results_type.h>
 #include <apps/exam_mode_manager.h>
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <assert.h>
 #include <poincare/cas.h>
@@ -156,10 +156,10 @@ QUIZ_CASE(calculation_ans) {
 
   assertAnsIs("1+1", "2", &globalContext, &store);
   assertAnsIs("13.3", "13.3", &globalContext, &store, DecimalMode);
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
   assertAnsIs("√(-1-1)", "√(2)×i", &globalContext, &store);
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
   assertAnsIs("int(diff(x^2,x,x),x,0,1)", "int(diff(x^2,x,x),x,0,1)",
               &globalContext, &store);
@@ -281,13 +281,13 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
   Preferences::AngleUnit previousAngleUnit =
-      MathPreferences::SharedPreferences()->angleUnit();
-  MathPreferences::SharedPreferences()->setAngleUnit(
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(
       Preferences::AngleUnit::Degree);
 
   uint8_t previousNumberOfSignificantDigits =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
-  MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       PrintFloat::k_maxNumberOfSignificantDigits);
 
   assertCalculationIs("1/2", DisplayOutput::ExactAndApproximateToggle,
@@ -421,7 +421,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
   assertCalculationIs("45→gon", DisplayOutput::ApproximateOnly,
                       EqualSign::Hidden, nullptr, "50gon", &globalContext,
                       &store);
-  MathPreferences::SharedPreferences()->setAngleUnit(
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(
       Preferences::AngleUnit::Radian);
   assertCalculationIs("2+π→_rad", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "(2+π)rad",
@@ -449,7 +449,7 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       DisplayOutput::ApproximateOnly, EqualSign::Hidden,
                       nullptr, "1", &globalContext, &store);
 
-  MathPreferences::SharedPreferences()->setAngleUnit(
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(
       Preferences::AngleUnit::Degree);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
@@ -498,8 +498,8 @@ QUIZ_CASE(calculation_display_exact_approximate) {
                       "2.7889465850494", &globalContext, &store);
 
   ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Off));
-  MathPreferences::SharedPreferences()->setAngleUnit(previousAngleUnit);
-  MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
+  GlobalPreferences::SharedGlobalPreferences()->setAngleUnit(previousAngleUnit);
+  GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       previousNumberOfSignificantDigits);
 }
 
@@ -777,11 +777,11 @@ QUIZ_CASE(calculation_complex_format) {
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
   uint8_t previousNumberOfSignificantDigits =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
-  MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
+  GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       PrintFloat::k_maxNumberOfSignificantDigits);
 
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
   assertCalculationIs("1+i", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "1+i", nullptr, &globalContext,
@@ -802,7 +802,7 @@ QUIZ_CASE(calculation_complex_format) {
   assertCalculationIs("(-2)^(1/4)", DisplayOutput::ExactOnly, EqualSign::Hidden,
                       "nonreal", nullptr, &globalContext, &store);
 
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
   assertCalculationIs("1+i", DisplayOutput::ApproximateIsIdenticalToExact,
                       EqualSign::Hidden, "1+i", nullptr, &globalContext,
@@ -826,7 +826,7 @@ QUIZ_CASE(calculation_complex_format) {
                       "0.84089641525371+0.84089641525371i", &globalContext,
                       &store);
 
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Polar);
   assertCalculationIs("1+i", DisplayOutput::ExactAndApproximate,
                       EqualSign::Approximation, "√(2)e^((π/4)i)",
@@ -853,10 +853,10 @@ QUIZ_CASE(calculation_complex_format) {
                       "1.1892071150027e^(0.78539816339745i)", &globalContext,
                       &store);
 
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
 
-  MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
+  GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       previousNumberOfSignificantDigits);
 }
 
@@ -910,7 +910,7 @@ QUIZ_CASE(calculation_additional_results) {
   Shared::GlobalContext globalContext;
   CalculationStore store(calculationBuffer, calculationBufferSize);
 
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
   assertCalculationAdditionalResultTypeHas("1+1", {.integer = true},
                                            &globalContext, &store);
@@ -1007,11 +1007,11 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("0^(10^600)", {}, &globalContext,
                                            &store);
 
-  MathPreferences::SharedPreferences()->setDisplayMode(
+  GlobalPreferences::SharedGlobalPreferences()->setDisplayMode(
       Preferences::PrintFloatMode::Scientific);
   assertCalculationAdditionalResultTypeHas("e^(2+3)", {}, &globalContext,
                                            &store);
-  MathPreferences::SharedPreferences()->setDisplayMode(
+  GlobalPreferences::SharedGlobalPreferences()->setDisplayMode(
       Preferences::PrintFloatMode::Decimal);
 
   assertCalculationAdditionalResultTypeHas("√(-1)", {}, &globalContext, &store);
@@ -1033,13 +1033,13 @@ QUIZ_CASE(calculation_additional_results) {
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("z.exp").destroy();
 
 #if 0  // TODO: Fix additional results for negative numbers in polar form
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Polar);
   assertCalculationAdditionalResultTypeHas("-10", {.complex = true},
                                            &globalContext, &store);
 #endif
 
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
   assertCalculationAdditionalResultTypeHas("√(-1)", {.complex = true},
                                            &globalContext, &store);
@@ -1048,6 +1048,6 @@ QUIZ_CASE(calculation_additional_results) {
   assertCalculationAdditionalResultTypeHas("-10", {.scientificNotation = true},
                                            &globalContext, &store);
 
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
 }

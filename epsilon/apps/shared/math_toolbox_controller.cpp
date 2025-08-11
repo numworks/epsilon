@@ -3,7 +3,6 @@
 #include <apps/apps_container.h>
 #include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
-#include <apps/math_preferences.h>
 #include <assert.h>
 #include <escher/abstract_text_field.h>
 #include <poincare/exception_checkpoint.h>
@@ -132,7 +131,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
         if (!resultExpression.isUninitialized()) {
           // The text is parsable, we create its layout an insert it.
           resultLayout = resultExpression.createLayout(
-              MathPreferences::SharedPreferences()->displayMode(),
+              GlobalPreferences::SharedGlobalPreferences()->displayMode(),
               Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
               App::app()->localContext());
         }
@@ -248,7 +247,8 @@ int MathToolboxController::controlChecksum() const {
 int MathToolboxController::indexAfterFork(
     const ToolboxMessageTree* forkMessageTree) const {
   if (forkMessageTree->childrenList() == arithmeticFork) {
-    if (MathPreferences::SharedPreferences()->mixedFractionsAreEnabled()) {
+    if (GlobalPreferences::SharedGlobalPreferences()
+            ->mixedFractionsAreEnabled()) {
       return 0;
     }
     return 1;

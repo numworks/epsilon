@@ -1,5 +1,6 @@
 #include "graph_view.h"
 
+#include <apps/global_preferences.h>
 #include <poincare/trigonometry.h>
 
 #include "../app.h"
@@ -414,7 +415,7 @@ void GraphView::drawPolar(KDContext* ctx, KDRect rect, ContinuousFunction* f,
       pixelToFloat(OMG::Axis::Vertical, rect.bottom() + k_externRectMargin);
 
   const Preferences::AngleUnit angleUnit =
-      MathPreferences::SharedPreferences()->angleUnit();
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   const float piInAngleUnit = Trigonometry::PiInAngleUnit(angleUnit);
   /* Cancel optimization if :
    * - One of rect limits is nan.

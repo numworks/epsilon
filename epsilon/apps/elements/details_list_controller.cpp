@@ -1,6 +1,6 @@
 #include "details_list_controller.h"
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <escher/clipboard.h>
 
 #include "app.h"
@@ -85,7 +85,7 @@ void DetailsListController::fillCellForRow(HighlightCell* cell, int row) {
 
   typedCell->subLabel()->setMessage(sublabel);
   int significantDigits =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   typedCell->label()->setLayout(dataField->fieldSymbolLayout());
   typedCell->accessory()->setLayout(dataField->getLayout(z, significantDigits));
 }

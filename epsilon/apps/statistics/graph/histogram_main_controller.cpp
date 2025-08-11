@@ -1,6 +1,6 @@
 #include "histogram_main_controller.h"
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <omg/float.h>
 #include <omg/unreachable.h>
 #include <poincare/preferences.h>
@@ -159,9 +159,9 @@ void HistogramMainController::updateBannerView() {
       m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 
   int precision =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      MathPreferences::SharedPreferences()->displayMode();
+      GlobalPreferences::SharedGlobalPreferences()->displayMode();
   constexpr static int k_bufferSize =
       sizeof("Intervalle : [-1.2345ᴇ-123;-1.2345ᴇ-123[");  // longest case
   constexpr static int k_maxNumberOfGlyphs =

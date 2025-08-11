@@ -1,7 +1,7 @@
 #ifndef REGRESSION_MODEL_H
 #define REGRESSION_MODEL_H
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <escher/i18n.h>
 #include <poincare/expression.h>
 #include <poincare/statistics/regression.h>
@@ -73,7 +73,7 @@ class Model {
   bool useLinearMxpbForm() const;
   const Poincare::Regression* regression() const {
     return Poincare::Regression::Get(
-        m_type, MathPreferences::SharedPreferences()->angleUnit());
+        m_type, GlobalPreferences::SharedGlobalPreferences()->angleUnit());
   }
   Type m_type;
 };

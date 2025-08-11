@@ -1,6 +1,6 @@
 #include "box_controller.h"
 
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <poincare/print.h>
 
 #include "../app.h"
@@ -60,9 +60,9 @@ bool BoxController::reloadBannerView() {
       m_view.bannerView()->minimalSizeForOptimalDisplay().height();
 
   int precision =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      MathPreferences::SharedPreferences()->displayMode();
+      GlobalPreferences::SharedGlobalPreferences()->displayMode();
   constexpr int k_bufferSize =
       1 + Ion::Display::Width / KDFont::GlyphWidth(KDFont::Size::Small);
   char buffer[k_bufferSize] = "";

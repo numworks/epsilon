@@ -1,5 +1,6 @@
 #include "function_go_to_parameter_controller.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <ion/display.h>
 
@@ -27,7 +28,7 @@ bool FunctionGoToParameterController::confirmParameterAtIndex(
       (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
   f = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       f, app->localContext(),
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits(),
       pixelWidth, false);
   m_graphController->moveCursorAndCenterIfNeeded(f);
 

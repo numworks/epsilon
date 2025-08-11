@@ -1,3 +1,4 @@
+#include <apps/global_preferences.h>
 #include <apps/shared/global_context.h>
 #include <poincare/function_properties/function_type.h>
 #include <poincare/src/expression/projection.h>
@@ -156,7 +157,7 @@ void assert_same_function_properties(const char* expression1,
 }
 
 QUIZ_CASE(graph_function_properties) {
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
 
   // Test the plot type under different Press-to-test parameters :
@@ -175,7 +176,7 @@ QUIZ_CASE(graph_function_properties) {
                    .setFlag(PTTFlags::ForbidImplicitPlots)),
   };
 
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Cartesian);
 
   constexpr static FunctionProperties k_linearProperties = FunctionProperties{
@@ -884,28 +885,28 @@ QUIZ_CASE(graph_function_properties) {
         k_undefinedParametric);
     // === Updated complex format ===
 
-    assert(MathPreferences::SharedPreferences()->complexFormat() ==
+    assert(GlobalPreferences::SharedGlobalPreferences()->complexFormat() ==
            Preferences::ComplexFormat::Cartesian);
     assert_check_function_properties("y=(√(-1))^2", k_horizontalLineProperties);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);
     assert_check_function_properties("y=im(i*x+1)", k_lineProperties);
 
-    MathPreferences::SharedPreferences()->setComplexFormat(
+    GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Real);
     assert_check_function_properties("y=(√(-1))^2", k_unhandledCartesian);
     assert_check_function_properties("y=(i)^2", k_horizontalLineProperties);
     assert_check_function_properties("f(x)=im(i*x+1)", k_linearProperties);
     assert_check_function_properties("y=im(i*x+1)", k_lineProperties);
     // Restore cartesian complex format
-    MathPreferences::SharedPreferences()->setComplexFormat(
+    GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
         Preferences::ComplexFormat::Cartesian);
   }
 
   ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Off));
 
   // Restore default preferences
-  MathPreferences::SharedPreferences()->setComplexFormat(
+  GlobalPreferences::SharedGlobalPreferences()->setComplexFormat(
       Preferences::ComplexFormat::Real);
 }
 

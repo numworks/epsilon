@@ -1,5 +1,6 @@
 #include "interactive_curve_view_controller.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/tab_view_controller.h>
 #include <float.h>
@@ -172,7 +173,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(
       floatBody, App::app()->localContext(),
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits(),
       curveView()->pixelWidth(), false);
   moveCursorAndCenterIfNeeded(floatBody);
   return true;

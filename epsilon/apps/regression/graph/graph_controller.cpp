@@ -2,6 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/exam_mode_manager.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/function_banner_delegate.h>
 #include <apps/shared/poincare_helpers.h>
 #include <omg/utf8_helper.h>
@@ -141,9 +142,9 @@ bool GraphController::buildRegressionExpression(
 void GraphController::reloadBannerView() {
   const int selectedSeries = selectedSeriesIndex();
   const int significantDigits =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Poincare::Preferences::PrintFloatMode displayMode =
-      MathPreferences::SharedPreferences()->displayMode();
+      GlobalPreferences::SharedGlobalPreferences()->displayMode();
 
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined =

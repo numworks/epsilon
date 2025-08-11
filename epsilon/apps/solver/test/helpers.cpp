@@ -143,8 +143,9 @@ static void compareSolutions(SystemOfEquations* system,
         .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = ctx,
         .m_advanceReduce = false};
-    Expression expectedExpression =
-        Expression::Parse(expectedValue, *ctx, {.forceUnitUnderscore = true})
+    SystemExpression expectedExpression =
+        UserExpression::Parse(expectedValue, *ctx,
+                              {.forceUnitUnderscore = true})
             .cloneAndReduce(projCtx, &reductionFailure);
     quiz_assert(!reductionFailure && !expectedExpression.isUninitialized());
 
@@ -175,9 +176,9 @@ static void compareSolutions(SystemOfEquations* system,
                    expectedExpression.isIdenticalTo(obtainedExpression));
     if (!result && approximationThreshold != 0.) {
       double expectedApproxed =
-          expectedExpression.approximateToRealScalar<double>();
+          expectedExpression.approximateSystemToRealScalar<double>();
       double obtainedApproxed =
-          obtainedExpression.approximateToRealScalar<double>();
+          obtainedExpression.approximateSystemToRealScalar<double>();
       result = roughly_equal(obtainedApproxed, expectedApproxed,
                              approximationThreshold);
 #if POINCARE_TREE_LOG

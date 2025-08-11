@@ -96,11 +96,8 @@ void check_sum_of_sequence_between_bounds(double result, double start,
   Sequence* seq = addSequence(store, type, definition, condition1, condition2,
                               sequenceContext);
 
-  double sum =
-      seq->sumBetweenBounds(start, end, sequenceContext)
-          .approximateToRealScalar<double>(
-              GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-              seq->complexFormat(sequenceContext));
+  double sum = seq->sumBetweenBounds(start, end, sequenceContext)
+                   .approximateSystemToRealScalar<double>();
   assert_roughly_equal(sum, result);
 
   store->removeAll();

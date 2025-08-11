@@ -1,6 +1,7 @@
 #include "expression_model.h"
 
 #include <apps/apps_container.h>
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <omg/utf8_helper.h>
 #include <poincare/expression.h>
@@ -70,7 +71,7 @@ Preferences::ComplexFormat ExpressionModel::complexFormat(
   }
   assert(m_expressionComplexFormat != MemoizedComplexFormat::NotMemoized);
   Preferences::ComplexFormat userComplexFormat =
-      MathPreferences::SharedPreferences()->complexFormat();
+      GlobalPreferences::SharedGlobalPreferences()->complexFormat();
   if (m_expressionComplexFormat == MemoizedComplexFormat::Complex &&
       userComplexFormat == Preferences::ComplexFormat::Real) {
     return Preferences::k_defaultComplexFormatIfNotReal;
@@ -111,7 +112,7 @@ SystemExpression ExpressionModel::expressionReduced(
       bool reductionFailure = false;
       m_expression = PoincareHelpers::CloneAndReduce(
           userExpression, context, complexFormat(record, context),
-          MathPreferences::SharedPreferences()->angleUnit(), false,
+          GlobalPreferences::SharedGlobalPreferences()->angleUnit(), false,
           Poincare::ReductionTarget::User,
           Poincare::SymbolicComputation::ReplaceDefinedSymbols,
           &reductionFailure);

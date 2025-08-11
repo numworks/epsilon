@@ -1,5 +1,6 @@
 #include "display_mode_controller.h"
 
+#include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <omg/print.h>
@@ -51,9 +52,10 @@ void DisplayModeController::fillCellForRow(HighlightCell* cell, int row) {
     GenericSubController::fillCellForRow(cell, row);
     constexpr int bufferSize = 3;
     char buffer[bufferSize];
-    int length = OMG::Print::IntLeft(
-        MathPreferences::SharedPreferences()->numberOfSignificantDigits(),
-        buffer, bufferSize);
+    int length =
+        OMG::Print::IntLeft(GlobalPreferences::SharedGlobalPreferences()
+                                ->numberOfSignificantDigits(),
+                            buffer, bufferSize);
     buffer[length] = 0;
     m_editableCell.textField()->setText(buffer);
     return;
@@ -76,7 +78,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (floatBody < 1.0) {
     floatBody = 1.0;
   }
-  if (MathPreferences::SharedPreferences()->displayMode() ==
+  if (GlobalPreferences::SharedGlobalPreferences()->displayMode() ==
           Poincare::Preferences::PrintFloatMode::Engineering &&
       floatBody < 3.0) {
     floatBody = 3.0;
@@ -84,7 +86,7 @@ bool DisplayModeController::textFieldDidFinishEditing(
   if (floatBody > Poincare::PrintFloat::k_maxNumberOfSignificantDigits) {
     floatBody = Poincare::PrintFloat::k_maxNumberOfSignificantDigits;
   }
-  MathPreferences::SharedPreferences()->setNumberOfSignificantDigits(
+  GlobalPreferences::SharedGlobalPreferences()->setNumberOfSignificantDigits(
       (char)std::round(floatBody));
   m_selectableListView.reloadSelectedCell();
   if (event == Ion::Events::Up || event == Ion::Events::OK) {

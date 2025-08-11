@@ -2,7 +2,7 @@
 #define CALCULATION_CALCULATION_STORE_H
 
 #include <apps/constant.h>
-#include <apps/math_preferences.h>
+#include <apps/global_preferences.h>
 #include <ion/circuit_breaker.h>
 #include <omg/expiring_pointer.h>
 #include <omg/store.h>

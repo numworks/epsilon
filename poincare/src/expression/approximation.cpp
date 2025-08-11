@@ -41,10 +41,7 @@ static_assert(!POINCARE_NO_FLOAT_APPROXIMATION ||
 
 template <typename T>
 Tree* ToTree(const Tree* e, Parameters params, const Context& context) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(context.m_symbolContext);
-  if (!Dimension::DeepCheck(e, tempContextPointer)) {
+  if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return KUndefUnhandledDimension->cloneTree();
   }
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
@@ -55,8 +52,8 @@ Tree* ToTree(const Tree* e, Parameters params, const Context& context) {
   }
   const Tree* target = clone ? clone : e;
   Tree* result;
-  Dimension dim = Dimension::Get(target, tempContextPointer);
-  int listLength = Dimension::ListLength(target, tempContextPointer);
+  Dimension dim = Dimension::Get(target, context.m_symbolContext);
+  int listLength = Dimension::ListLength(target, context.m_symbolContext);
   if (listLength != Dimension::k_nonListListLength) {
     assert(!dim.isMatrix());
     result = SharedTreeStack->pushList(listLength);
@@ -79,13 +76,10 @@ Tree* ToTree(const Tree* e, Parameters params, const Context& context) {
 template <typename T>
 std::complex<T> ToComplex(const Tree* e, Parameters params,
                           const Context& context) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(context.m_symbolContext);
-  if (!Dimension::DeepCheck(e, tempContextPointer)) {
+  if (!Dimension::DeepCheck(e, context.m_symbolContext)) {
     return NAN;
   }
-  assert(Dimension::IsNonListScalar(e, tempContextPointer));
+  assert(Dimension::IsNonListScalar(e, context.m_symbolContext));
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
@@ -99,14 +93,11 @@ std::complex<T> ToComplex(const Tree* e, Parameters params,
 template <typename T>
 PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, Parameters params,
                                          const Context& context) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(context.m_symbolContext);
-  assert(Dimension::DeepCheck(e, tempContextPointer));
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
-  Dimension dim = Dimension::Get(target, tempContextPointer);
+  Dimension dim = Dimension::Get(target, context.m_symbolContext);
   assert(dim.isScalar() || dim.isPoint() || dim.isUnit());
   PointOrRealScalar<T> result = dim.isScalar() ? PointOrRealScalar<T>(NAN)
                                                : PointOrRealScalar<T>(NAN, NAN);
@@ -145,11 +136,8 @@ PointOrRealScalar<T> ToPointOrRealScalar(const Tree* e, T abscissa,
 template <typename T>
 BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
                              const Context& context) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(context.m_symbolContext);
-  assert(Dimension::DeepCheck(e, tempContextPointer) &&
-         Dimension::Get(e, tempContextPointer).isBoolean());
+  assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
+         Dimension::Get(e, context.m_symbolContext).isBoolean());
   assert(!params.optimize);
   Tree* clone = PrepareTreeAndContext<T>(e, params, context);
   const Tree* target = clone ? clone : e;
@@ -162,17 +150,14 @@ BooleanOrUndefined ToBoolean(const Tree* e, Parameters params,
 
 template <typename T>
 T To(const Tree* e, Parameters params, const Context& context) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(context.m_symbolContext);
   // Units are tolerated in scalar approximation (replaced with SI ratios).
-  assert(Dimension::DeepCheck(e, tempContextPointer));
-  Dimension dim = Dimension::Get(e, tempContextPointer);
+  assert(Dimension::DeepCheck(e, context.m_symbolContext));
+  Dimension dim = Dimension::Get(e, context.m_symbolContext);
   if (!(dim.isScalar() || dim.isUnit())) {
     return NAN;
   }
   assert(context.m_listElement != -1 ||
-         !Dimension::IsList(e, tempContextPointer));
+         !Dimension::IsList(e, context.m_symbolContext));
   return ToPointOrRealScalar<T>(e, params, context).toRealScalar();
 };
 
@@ -188,11 +173,8 @@ T To(const Tree* e, T abscissa, Parameters params, const Context& context) {
 template <typename T>
 Coordinate2D<T> ToPoint(const Tree* e, Parameters params,
                         const Context& context) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(context.m_symbolContext);
-  assert(Dimension::DeepCheck(e, tempContextPointer) &&
-         Dimension::Get(e, tempContextPointer).isPoint());
+  assert(Dimension::DeepCheck(e, context.m_symbolContext) &&
+         Dimension::Get(e, context.m_symbolContext).isPoint());
   return ToPointOrRealScalar<T>(e, params, context).toPoint();
 };
 
@@ -362,13 +344,10 @@ static std::complex<T> FloatDivision(std::complex<T> c, std::complex<T> d) {
  * otherwise */
 std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
                                                      const Context* ctx) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(ctx->m_symbolContext);
   // Dependency children may have different dimensions.
   std::complex<float> undefValue = std::complex<float>(0);
   for (const Tree* child : Dependency::Dependencies(dep)->children()) {
-    Dimension dim = Dimension::Get(child, tempContextPointer);
+    Dimension dim = Dimension::Get(child, ctx->m_symbolContext);
     if (dim.isScalar()) {
       // Optimize most cases
       std::complex<float> c = PrivateToComplex<float>(child, ctx);
@@ -382,7 +361,7 @@ std::complex<float> Private::HelperUndefDependencies(const Tree* dep,
       }
     } else {
       Tree* a = PrivateToTree<float>(
-          child, Dimension::Get(child, tempContextPointer), ctx);
+          child, Dimension::Get(child, ctx->m_symbolContext), ctx);
       if (a->isUndefined()) {
         undefValue = NAN;
       }
@@ -774,9 +753,6 @@ std::complex<T> MatrixToComplex(const Tree* e, const Context* ctx) {
 template <typename T>
 std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
   Context tempCtx(*ctx);
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(ctx->m_symbolContext);
   switch (e->type()) {
     case Type::List:
       assert(ctx && ctx->m_listElement != -1);
@@ -793,7 +769,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       return PrivateToComplex<T>(e->child(2), &ctxCopy);
     }
     case Type::Dim: {
-      int n = Dimension::ListLength(e->child(0), tempContextPointer);
+      int n = Dimension::ListLength(e->child(0), ctx->m_symbolContext);
       return n >= 0 ? n : NAN;
     }
     case Type::ListElement: {
@@ -801,7 +777,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       const Tree* index = e->child(1);
       assert(Integer::Is<uint8_t>(index));
       int i = Integer::Handler(index).to<uint8_t>() - 1;
-      if (i < 0 || i >= Dimension::ListLength(values, tempContextPointer)) {
+      if (i < 0 || i >= Dimension::ListLength(values, ctx->m_symbolContext)) {
         return NAN;
       }
       assert(ctx);
@@ -827,7 +803,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
     case Type::ListProduct: {
       assert(ctx);
       const Tree* values = e->child(0);
-      int length = Dimension::ListLength(values, tempContextPointer);
+      int length = Dimension::ListLength(values, ctx->m_symbolContext);
       std::complex<T> result = e->isListSum() ? 0 : 1;
       for (int i = 0; i < length; i++) {
         tempCtx.m_listElement = i;
@@ -841,7 +817,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
     case Type::Max: {
       assert(ctx);
       const Tree* values = e->child(0);
-      int length = Dimension::ListLength(values, tempContextPointer);
+      int length = Dimension::ListLength(values, ctx->m_symbolContext);
       assert(length > 0);
       T result = 0.0;
       for (int i = 0; i < length; i++) {
@@ -865,7 +841,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       assert(ctx);
       const Tree* values = e->child(0);
       const Tree* coefficients = e->child(1);
-      int length = Dimension::ListLength(values, tempContextPointer);
+      int length = Dimension::ListLength(values, ctx->m_symbolContext);
       std::complex<T> sum = 0;
       std::complex<T> sumOfSquares = 0;
       T coefficientsSum = 0;
@@ -931,7 +907,7 @@ std::complex<T> ListToComplex(const Tree* e, const Context* ctx) {
       Tree* list = ToList<T>(e->child(0), ctx);
       TreeDatasetColumn<T> values(list);
       T median;
-      if (Dimension::IsList(e->child(1), tempContextPointer)) {
+      if (Dimension::IsList(e->child(1), ctx->m_symbolContext)) {
         Tree* weightsList = ToList<T>(e->child(1), ctx);
         TreeDatasetColumn<T> weights(weightsList);
         median = StatisticsDataset<T>(&values, &weights).median();
@@ -1429,11 +1405,8 @@ BooleanOrUndefined Private::PrivateToBoolean(const Tree* e,
 template <typename T>
 Tree* Private::ToList(const Tree* e, const Context* ctx) {
   assert(ctx);
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(ctx->m_symbolContext);
-  Dimension dimension = Dimension::Get(e, tempContextPointer);
-  int length = Dimension::ListLength(e, tempContextPointer);
+  Dimension dimension = Dimension::Get(e, ctx->m_symbolContext);
+  int length = Dimension::ListLength(e, ctx->m_symbolContext);
   assert(length != Dimension::k_nonListListLength);
   Context tempCtx(*ctx);
   Tree* list = SharedTreeStack->pushList(length);
@@ -1460,9 +1433,6 @@ Tree* Private::PrivateToPoint(const Tree* e, const Context* ctx) {
 
 template <typename T>
 Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(ctx->m_symbolContext);
   /* TODO: Normal matrix nodes and operations with approximated children are
    * used to carry matrix approximation. A dedicated node that knows its
    * children have a fixed size would be more efficient. */
@@ -1508,7 +1478,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       Tree* result = nullptr;
       for (const Tree* child : e->children()) {
         bool childIsMatrix =
-            Dimension::Get(child, tempContextPointer).isMatrix();
+            Dimension::Get(child, ctx->m_symbolContext).isMatrix();
         Tree* approx = childIsMatrix ? ToMatrix<T>(child, ctx)
                                      : ToComplexTree<T>(child, ctx);
         if (result == nullptr) {
@@ -1572,7 +1542,7 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
       return result;
     }
     case Type::Dim: {
-      Dimension dim = Dimension::Get(e->child(0), tempContextPointer);
+      Dimension dim = Dimension::Get(e->child(0), ctx->m_symbolContext);
       assert(dim.isMatrix());
       Tree* result = SharedTreeStack->pushMatrix(1, 2);
       SharedTreeStack->pushFloat(T(dim.matrix.rows));
@@ -1634,14 +1604,11 @@ Tree* Private::ToMatrix(const Tree* e, const Context* ctx) {
 
 template <typename T>
 T Private::PrivateTo(const Tree* e, const Context* ctx) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(ctx->m_symbolContext);
 #if ASSERTIONS
-  Dimension dim = Dimension::Get(e, tempContextPointer);
+  Dimension dim = Dimension::Get(e, ctx->m_symbolContext);
 #endif
   assert((dim.isScalar() && (ctx->m_listElement != -1 ||
-                             !Dimension::IsList(e, tempContextPointer))) ||
+                             !Dimension::IsList(e, ctx->m_symbolContext))) ||
          (dim.isPoint() && ctx->m_pointElement != -1) || dim.isUnit());
   std::complex<T> value = PrivateToComplex<T>(e, ctx);
   // Remove signaling nan
@@ -1826,11 +1793,8 @@ static bool MergeChildrenOfMultOrAdd(Tree* e) {
 template <typename T>
 bool Private::PrivateApproximateAndReplaceEveryScalar(Tree* e,
                                                       const Context* ctx) {
-  // NOTE: const_cast is temporary
-  Poincare::Context* tempContextPointer =
-      &const_cast<Poincare::Context&>(ctx->m_symbolContext);
   if (Approximation::CanApproximate(e) &&
-      Dimension::IsNonListScalar(e, tempContextPointer)) {
+      Dimension::IsNonListScalar(e, ctx->m_symbolContext)) {
     e->moveTreeOverTree(
         PrivateToTree<T>(e, Dimension(DimensionType::Scalar), ctx));
     return true;

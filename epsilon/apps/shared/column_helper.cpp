@@ -203,8 +203,9 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     /* List in another context may allow other types (boolean for instance) but
      * in this context only scalar is allowed since anything else would be
      * nonsensical */
+    assert(m_parentContext);
     if (formulaNumberOfChildren > 0 &&
-        !Poincare::Dimension(reduced.cloneChildAtIndex(0), m_parentContext)
+        !Poincare::Dimension(reduced.cloneChildAtIndex(0), *m_parentContext)
              .isScalar()) {
       return FillColumnStatus::DataNotSuitable;
     }

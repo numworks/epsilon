@@ -24,14 +24,14 @@ namespace Poincare::Internal {
 template <typename T>
 class LazyArray {
  public:
-  LazyArray(const Tree* root, Poincare::Context* ctx,
-            T (*getter)(const Tree* e, Poincare::Context* ctx))
+  LazyArray(const Tree* root, const Poincare::Context& ctx,
+            T (*getter)(const Tree* e, const Poincare::Context& ctx))
       : m_root(root), m_ctx(ctx), m_getter(getter), m_lastAccessedIndex(0) {
     if (m_root->numberOfChildren() > 0) {
       m_element0 = m_getter(m_root->child(0), m_ctx);
     }
   }
-  const T operator[](size_t index) {
+  T operator[](size_t index) {
     if (index == 0) {
       return m_element0;
     }
@@ -47,8 +47,8 @@ class LazyArray {
   T m_element0;
   T m_lastAccessedElement;
   const Tree* m_root;
-  Poincare::Context* m_ctx;
-  T (*m_getter)(const Tree* e, Poincare::Context* ctx);
+  const Poincare::Context& m_ctx;
+  T (*m_getter)(const Tree* e, const Poincare::Context& ctx);
   size_t m_lastAccessedIndex;
 };
 
@@ -93,16 +93,27 @@ bool IsIntegerExpression(const Tree* e, bool excludeFunctionCalls = false) {
   }
 }
 
-Tree* CloneAndReplaceSymbols(const Tree* e, Context* ctx) {
+Tree* CloneAndReplaceFunctionDefinition(const Tree* e, const Tree* definition) {
   Tree* clone = e->cloneTree();
-  // Replace every nested defined symbols and functions
-  assert(ctx);
-  Projection::DeepReplaceUserNamed(clone, *ctx,
-                                   SymbolicComputation::ReplaceDefinedSymbols);
+  assert(e->isUserFunction());
+  Variables::ReplaceUserFunctionOrSequenceWithTree(clone, definition);
   return clone;
 }
 
-bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
+/* Returns nullptr if the variable is not defined in the context, returns undef
+ * if the definition exists but is circular, and returns the variable definition
+ * otherwise. */
+const Tree* DefinitionWithCircularityCheck(const Tree* e,
+                                           const Context& context) {
+  const Tree* definition = context.expressionForUserNamed(e);
+  if (definition && Symbol::InvolvesCircularity(definition, context)) {
+    return KUndef;
+  }
+  return definition;
+}
+
+bool Dimension::DeepCheckListLength(const Tree* e,
+                                    const Poincare::Context& ctx) {
   // TODO complexity should be linear
   LazyArray<int> childLength(e, ctx, ListLength);
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
@@ -148,17 +159,18 @@ bool Dimension::DeepCheckListLength(const Tree* e, Poincare::Context* ctx) {
     case Type::UserSymbol: {
       // UserSymbols in context should always be well defined
 #if ASSERTIONS
-      const Tree* definition = ctx ? ctx->expressionForUserNamed(e) : nullptr;
+      const Tree* definition = ctx.expressionForUserNamed(e);
       assert(!definition || DeepCheckListLength(definition, ctx));
 #endif
       return true;
     }
     case Type::UserFunction: {
-      if (ctx) {
-        Tree* clone = CloneAndReplaceSymbols(e, ctx);
-        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
-        bool result = DeepCheckListLength(clone, nullptr);
-        clone->removeTree();
+      const Tree* definition = DefinitionWithCircularityCheck(e, ctx);
+      if (definition) {
+        Tree* functionEvaluation =
+            CloneAndReplaceFunctionDefinition(e, definition);
+        bool result = DeepCheckListLength(functionEvaluation, ctx);
+        functionEvaluation->removeTree();
         return result;
       }
       return true;
@@ -200,7 +212,7 @@ bool Dimension::hasNonKelvinTemperatureUnit() const {
   return isUnit() && Units::Unit::IsNonKelvinTemperature(unit.representative);
 }
 
-int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
+int Dimension::ListLength(const Tree* e, const Poincare::Context& ctx) {
   switch (e->type()) {
     case Type::Mean:
     case Type::StdDev:
@@ -241,18 +253,19 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
       assert(Integer::Is<uint8_t>(e->child(2)));
       return Integer::Handler(e->child(2)).to<uint8_t>();
     case Type::UserSymbol: {
-      const Tree* definition = ctx ? ctx->expressionForUserNamed(e) : nullptr;
+      const Tree* definition = ctx.expressionForUserNamed(e);
       if (definition) {
         return ListLength(definition, ctx);
       }
       return k_nonListListLength;
     }
     case Type::UserFunction: {
-      if (ctx) {
-        Tree* clone = CloneAndReplaceSymbols(e, ctx);
-        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
-        int result = ListLength(clone, nullptr);
-        clone->removeTree();
+      const Tree* definition = DefinitionWithCircularityCheck(e, ctx);
+      if (definition) {
+        Tree* functionEvaluation =
+            CloneAndReplaceFunctionDefinition(e, definition);
+        int result = ListLength(functionEvaluation, ctx);
+        functionEvaluation->removeTree();
         return result;
       }
       // Fallthrough so f({1,3,4}) returns 3. TODO : Maybe k_nonListListLength ?
@@ -271,7 +284,8 @@ int Dimension::ListLength(const Tree* e, Poincare::Context* ctx) {
   }
 }
 
-bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
+bool Dimension::DeepCheckDimensions(const Tree* e,
+                                    const Poincare::Context& ctx) {
   bool hasUnitChild = false;
   bool hasNonKelvinChild = false;
   for (IndexedChild<const Tree*> child : e->indexedChildren()) {
@@ -344,7 +358,7 @@ bool Dimension::DeepCheckDimensions(const Tree* e, Poincare::Context* ctx) {
  * frame without risking a stack overflow on big Trees when evaluating the
  * recursive part of [DeepCheckDimensions] */
 bool __attribute__((noinline))
-Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
+Dimension::DeepCheckDimensionsAux(const Tree* e, const Poincare::Context& ctx,
                                   bool hasUnitChild, bool hasNonKelvinChild) {
   LazyArray<Dimension> childDim(e, ctx, Get);
   bool unitsAllowed = false;
@@ -554,17 +568,18 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
     case Type::UserSymbol: {
       // UserSymbols in context should always be well defined
 #if ASSERTIONS
-      const Tree* definition = ctx ? ctx->expressionForUserNamed(e) : nullptr;
+      const Tree* definition = ctx.expressionForUserNamed(e);
       assert(!definition || DeepCheckDimensions(definition, ctx));
 #endif
       return true;
     }
     case Type::UserFunction: {
-      if (ctx) {
-        Tree* clone = CloneAndReplaceSymbols(e, ctx);
-        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
-        bool result = DeepCheckDimensions(clone, nullptr);
-        clone->removeTree();
+      const Tree* definition = DefinitionWithCircularityCheck(e, ctx);
+      if (definition) {
+        Tree* functionEvaluation =
+            CloneAndReplaceFunctionDefinition(e, definition);
+        bool result = DeepCheckDimensions(functionEvaluation, ctx);
+        functionEvaluation->removeTree();
         return result;
       }
       [[fallthrough]];
@@ -601,7 +616,7 @@ Dimension::DeepCheckDimensionsAux(const Tree* e, Poincare::Context* ctx,
   return true;
 }
 
-Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
+Dimension Dimension::Get(const Tree* e, const Poincare::Context& ctx) {
   switch (e->type()) {
     case Type::Div:
     case Type::Mult: {
@@ -644,10 +659,7 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
       if (dim.isUnit()) {
         float index = Approximation::To<float>(
             e->child(1), Approximation::Parameters{},
-            // Note : temporary until EmptyContext is passed instead of nullptr
-            ctx ? Approximation::Context(AngleUnit::None, ComplexFormat::None,
-                                         *ctx)
-                : Approximation::Context(AngleUnit::None, ComplexFormat::None));
+            Approximation::Context(AngleUnit::None, ComplexFormat::None, ctx));
         assert(!std::isnan(index) && index <= static_cast<float>(INT8_MAX) &&
                index >= static_cast<float>(INT8_MIN) &&
                std::round(index) == index);
@@ -709,18 +721,19 @@ Dimension Dimension::Get(const Tree* e, Poincare::Context* ctx) {
     case Type::List:
       return ListLength(e, ctx) > 0 ? Get(e->child(0), ctx) : Scalar();
     case Type::UserSymbol: {
-      const Tree* definition = ctx ? ctx->expressionForUserNamed(e) : nullptr;
+      const Tree* definition = ctx.expressionForUserNamed(e);
       if (definition) {
         return Get(definition, ctx);
       }
       return Scalar();
     }
     case Type::UserFunction: {
-      if (ctx) {
-        Tree* clone = CloneAndReplaceSymbols(e, ctx);
-        // Ignore ctx to prevent infinite loops, nothing else can be replaced.
-        Dimension result = Get(clone, nullptr);
-        clone->removeTree();
+      const Tree* definition = DefinitionWithCircularityCheck(e, ctx);
+      if (definition) {
+        Tree* functionEvaluation =
+            CloneAndReplaceFunctionDefinition(e, definition);
+        Dimension result = Get(functionEvaluation, ctx);
+        functionEvaluation->removeTree();
         return result;
       }
       /* Without definition, consider the function to be scalar. */

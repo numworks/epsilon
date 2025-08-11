@@ -373,14 +373,13 @@ void assert_list_length_in_children_is(const char* definition,
                                        int targetLength) {
   UserExpression e = UserExpression::Builder(parse(definition));
   bool isValid = targetLength != -2;
-  Shared::GlobalContext context;
   quiz_assert_print_if_failure(
-      Poincare::Internal::Dimension::DeepCheck(e.tree(), &context) == isValid,
+      Poincare::Internal::Dimension::DeepCheck(e.tree()) == isValid,
       definition);
   if (isValid) {
-    quiz_assert_print_if_failure(Poincare::Internal::Dimension::ListLength(
-                                     e.tree(), &context) == targetLength,
-                                 definition);
+    quiz_assert_print_if_failure(
+        Poincare::Internal::Dimension::ListLength(e.tree()) == targetLength,
+        definition);
   }
 }
 

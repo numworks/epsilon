@@ -74,8 +74,8 @@ bool neverDisplayExactOutput(const Tree* exactOutput, Context* context) {
        (exactOutput->isList() || exactOutput->isMatrix())) {
     return true;
   }
-
-  Internal::Dimension d = Internal::Dimension::Get(exactOutput, context);
+  assert(context);
+  Internal::Dimension d = Internal::Dimension::Get(exactOutput, *context);
   // Angle units can have an exact output contrary to other units
   return d.isUnit() && !d.isAngleUnit();
 }
@@ -89,7 +89,8 @@ bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
    * To do so, the approximateOutput is checked rather than the exactOutput,
    * because the approximateOutput has a unit only if the degree unit is not
    * in a trig function. */
-  Internal::Dimension d = Internal::Dimension::Get(approximateOutput, context);
+  assert(context);
+  Internal::Dimension d = Internal::Dimension::Get(approximateOutput, *context);
   return d.isUnit() && !d.isSimpleRadianAngleUnit();
 }
 

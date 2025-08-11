@@ -177,11 +177,11 @@ inline T ValueOfFloatAsDisplayed(
   // Silence compiler warnings for assert
   (void)numberOfChar;
   // Extract displayed value
-  return Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-      T>(buffer, context,
-         GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
-         GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-         Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
+  return Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<T>(
+      buffer, context,
+      GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+      Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 }
 
 // Conversions to float

@@ -582,11 +582,11 @@ T PreparedFunctionScalar::approximateToRealScalarWithValue(
 }
 
 template <typename T>
-T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
+T Expression::ParseAndSimplifyAndApproximateToRealScalar(
     const char* text, const Context& context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     SymbolicComputation symbolicComputation) {
-  UserExpression exp = Parse(text, context);
+  UserExpression exp = UserExpression::Parse(text, context);
   if (exp.isUninitialized()) {
     return NAN;
   }
@@ -1263,12 +1263,12 @@ template Coordinate2D<float> PreparedFunction::approximateToPoint<float>()
 template Coordinate2D<double> PreparedFunction::approximateToPoint<double>()
     const;
 
-template float UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-    float>(const char*, const Context&, Preferences::ComplexFormat,
-           Preferences::AngleUnit, SymbolicComputation);
-template double UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-    double>(const char*, const Context&, Preferences::ComplexFormat,
-            Preferences::AngleUnit, SymbolicComputation);
+template float Expression::ParseAndSimplifyAndApproximateToRealScalar<float>(
+    const char*, const Context&, Preferences::ComplexFormat,
+    Preferences::AngleUnit, SymbolicComputation);
+template double Expression::ParseAndSimplifyAndApproximateToRealScalar<double>(
+    const char*, const Context&, Preferences::ComplexFormat,
+    Preferences::AngleUnit, SymbolicComputation);
 
 template bool UserExpression::hasDefinedComplexApproximation<float>(
     AngleUnit angleUnit, ComplexFormat complexFormat, const Context& context,

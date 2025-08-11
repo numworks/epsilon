@@ -9,8 +9,7 @@
 
 namespace Poincare {
 
-// TODO: Rename Comparison when old/comparison.h is deleted
-class ComparisonJunior {
+class Comparison {
  public:
   enum class Operator : uint8_t {
     Equal = 0,

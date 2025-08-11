@@ -45,16 +45,16 @@ bool ContinuousFunctionProperties::canHavePreimage() const {
 ContinuousFunctionProperties::AreaType ContinuousFunctionProperties::areaType()
     const {
   assert(isInitialized());
-  if (!isEnabled() || equationType() == ComparisonJunior::Operator::Equal) {
+  if (!isEnabled() || equationType() == Comparison::Operator::Equal) {
     return AreaType::None;
   }
   // To draw y^2>a, the area plotted should be Outside and not Above.
-  if (equationType() == ComparisonJunior::Operator::Inferior ||
-      equationType() == ComparisonJunior::Operator::InferiorEqual) {
+  if (equationType() == Comparison::Operator::Inferior ||
+      equationType() == Comparison::Operator::InferiorEqual) {
     return isOfDegreeTwo() ? AreaType::Inside : AreaType::Below;
   }
-  assert(equationType() == ComparisonJunior::Operator::Superior ||
-         equationType() == ComparisonJunior::Operator::SuperiorEqual);
+  assert(equationType() == Comparison::Operator::Superior ||
+         equationType() == Comparison::Operator::SuperiorEqual);
   return isOfDegreeTwo() ? AreaType::Outside : AreaType::Above;
 }
 
@@ -138,7 +138,7 @@ void ContinuousFunctionProperties::update(
     const Poincare::SystemExpression reducedEquation,
     const Poincare::UserExpression inputEquation, Context* context,
     Preferences::ComplexFormat complexFormat,
-    ComparisonJunior::Operator precomputedOperatorType,
+    Comparison::Operator precomputedOperatorType,
     SymbolType precomputedFunctionSymbol, bool isCartesianEquation) {
   reset();
   m_isInitialized = true;
@@ -147,7 +147,7 @@ void ContinuousFunctionProperties::update(
   setEquationType(precomputedOperatorType);
 
   if (ExamModeManager::ExamMode().forbidInequalityGraphing() &&
-      precomputedOperatorType != ComparisonJunior::Operator::Equal) {
+      precomputedOperatorType != Comparison::Operator::Equal) {
     setErrorStatusAndUpdateCaption(Status::Banned);
     return;
   }
@@ -184,9 +184,8 @@ void ContinuousFunctionProperties::update(
   int yDeg = analyzedExpression.polynomialDegree(k_ordinateName);
   if (!isCartesianEquation) {
     // There should be no y symbol. Inequations are handled on cartesians only
-    if (yDeg > 0 ||
-        (precomputedOperatorType != ComparisonJunior::Operator::Equal &&
-         precomputedFunctionSymbol != SymbolType::X)) {
+    if (yDeg > 0 || (precomputedOperatorType != Comparison::Operator::Equal &&
+                     precomputedFunctionSymbol != SymbolType::X)) {
       setErrorStatusAndUpdateCaption(Status::Unhandled);
       return;
     }
@@ -273,7 +272,7 @@ void ContinuousFunctionProperties::update(
     return;
   }
 
-  if (precomputedOperatorType != ComparisonJunior::Operator::Equal) {
+  if (precomputedOperatorType != Comparison::Operator::Equal) {
     if (highestCoefficientIsPositive == OMG::Troolean::Unknown ||
         (yDeg == 2 && xDeg == -1)) {
       /* Are unhandled equation with :
@@ -285,8 +284,7 @@ void ContinuousFunctionProperties::update(
     if (highestCoefficientIsPositive == OMG::Troolean::False) {
       // Oppose the comparison operator
       precomputedOperatorType =
-          ComparisonJunior::OperatorReverseInferiorSuperior(
-              precomputedOperatorType);
+          Comparison::OperatorReverseInferiorSuperior(precomputedOperatorType);
       setEquationType(precomputedOperatorType);
     }
   }

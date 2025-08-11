@@ -163,7 +163,7 @@ class Expression : public PoolHandle {
   // More complex bool properties
   bool isInRadians(Context* context) const;
 
-  ComparisonJunior::Operator comparisonOperator() const;
+  Comparison::Operator comparisonOperator() const;
 
  protected:
   ExpressionObject* object() const {

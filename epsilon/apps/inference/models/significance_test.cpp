@@ -37,12 +37,12 @@ bool SignificanceTest::canRejectNull() {
   return pValue() <= m_threshold;
 }
 
-double SignificanceTest::thresholdAbscissa(
-    Poincare::ComparisonJunior::Operator op, double factor) const {
-  assert(op != Poincare::ComparisonJunior::Operator::NotEqual);
+double SignificanceTest::thresholdAbscissa(Poincare::Comparison::Operator op,
+                                           double factor) const {
+  assert(op != Poincare::Comparison::Operator::NotEqual);
   double t = factor * threshold();
   return cumulativeDistributiveInverseForProbability(
-      op == Poincare::ComparisonJunior::Operator::Inferior ? t : 1.0 - t);
+      op == Poincare::Comparison::Operator::Inferior ? t : 1.0 - t);
 }
 
 void SignificanceTest::inferenceResultAtIndex(int index, double* value,
@@ -97,8 +97,7 @@ static float interpolate(float a, float b, float alpha) {
 }
 
 bool SignificanceTest::hasTwoSides() {
-  return m_hypothesis.m_alternative ==
-         Poincare::ComparisonJunior::Operator::NotEqual;
+  return m_hypothesis.m_alternative == Poincare::Comparison::Operator::NotEqual;
 }
 
 bool SignificanceTest::shouldForbidZoom(float alpha, float criticalValue) {
@@ -114,15 +113,12 @@ bool SignificanceTest::computeCurveViewRange(float transition, bool zoomSide) {
   // Transition goes from 0 (default view) to 1 (zoomed view)
   float alpha;
   float z = testCriticalValue();
-  if (hypothesis()->m_alternative ==
-      Poincare::ComparisonJunior::Operator::NotEqual) {
+  if (hypothesis()->m_alternative == Poincare::Comparison::Operator::NotEqual) {
     if (zoomSide) {
-      alpha = thresholdAbscissa(Poincare::ComparisonJunior::Operator::Superior,
-                                0.5);
+      alpha = thresholdAbscissa(Poincare::Comparison::Operator::Superior, 0.5);
       z = std::abs(z);
     } else {
-      alpha = thresholdAbscissa(Poincare::ComparisonJunior::Operator::Inferior,
-                                0.5);
+      alpha = thresholdAbscissa(Poincare::Comparison::Operator::Inferior, 0.5);
       z = -std::abs(z);
     }
   } else {

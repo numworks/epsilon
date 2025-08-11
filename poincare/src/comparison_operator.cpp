@@ -6,7 +6,7 @@
 
 namespace Poincare {
 
-const char* ComparisonJunior::OperatorString(ComparisonJunior::Operator op) {
+const char* Comparison::OperatorString(Comparison::Operator op) {
   for (const OperatorStringType& opString : k_operatorStrings) {
     if (op == opString.op) {
       return opString.mainString;
@@ -15,8 +15,7 @@ const char* ComparisonJunior::OperatorString(ComparisonJunior::Operator op) {
   OMG::unreachable();
 }
 
-const char* ComparisonJunior::OperatorAlternativeString(
-    ComparisonJunior::Operator op) {
+const char* Comparison::OperatorAlternativeString(Comparison::Operator op) {
   for (const OperatorStringType& opString : k_operatorStrings) {
     if (op == opString.op) {
       return opString.alternativeString;
@@ -25,8 +24,8 @@ const char* ComparisonJunior::OperatorAlternativeString(
   OMG::unreachable();
 }
 
-ComparisonJunior::Operator ComparisonJunior::OperatorReverseInferiorSuperior(
-    ComparisonJunior::Operator op) {
+Comparison::Operator Comparison::OperatorReverseInferiorSuperior(
+    Comparison::Operator op) {
   switch (op) {
     case Operator::Superior:
       return Operator::Inferior;

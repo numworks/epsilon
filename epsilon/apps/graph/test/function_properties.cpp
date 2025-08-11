@@ -78,7 +78,7 @@ struct FunctionProperties {
   I18n::Message m_caption = ContinuousFunctionProperties::k_defaultCaption;
   ContinuousFunctionProperties::SymbolType m_symbolType =
       ContinuousFunctionProperties::k_defaultSymbolType;
-  ComparisonJunior::Operator m_equationType =
+  Comparison::Operator m_equationType =
       ContinuousFunctionProperties::k_defaultEquationType;
   ContinuousFunctionProperties::CurveParameterType m_curveParameterType =
       ContinuousFunctionProperties::k_defaultCurveParameterType;
@@ -375,17 +375,16 @@ QUIZ_CASE(graph_function_properties) {
                                        : k_alongYOfDegreeTwoWithTwoSubCurves);
 
     assert_check_function_properties(
-        "x^2<0",
-        (noInequations || noImplicitPlot)
-            ? k_bannedProperties
-            : FunctionProperties{
-                  .m_caption = I18n::Message::InequalityType,
-                  .m_equationType = ComparisonJunior::Operator::Inferior,
-                  .m_isOfDegreeTwo = true,
-                  .m_numberOfSubCurves = 1,
-                  .m_isAlongY = true,
-                  .m_areaType =
-                      ContinuousFunctionProperties::AreaType::Inside});
+        "x^2<0", (noInequations || noImplicitPlot)
+                     ? k_bannedProperties
+                     : FunctionProperties{
+                           .m_caption = I18n::Message::InequalityType,
+                           .m_equationType = Comparison::Operator::Inferior,
+                           .m_isOfDegreeTwo = true,
+                           .m_numberOfSubCurves = 1,
+                           .m_isAlongY = true,
+                           .m_areaType =
+                               ContinuousFunctionProperties::AreaType::Inside});
 
     assert_check_function_properties(
         "y>log(x)",
@@ -393,7 +392,7 @@ QUIZ_CASE(graph_function_properties) {
             ? k_bannedProperties
             : FunctionProperties{
                   .m_caption = I18n::Message::InequalityType,
-                  .m_equationType = ComparisonJunior::Operator::Superior,
+                  .m_equationType = Comparison::Operator::Superior,
                   .m_curveParameterType = ContinuousFunctionProperties::
                       CurveParameterType::CartesianFunction,
                   .m_areaType = ContinuousFunctionProperties::AreaType::Above});
@@ -404,7 +403,7 @@ QUIZ_CASE(graph_function_properties) {
             ? k_bannedProperties
             : FunctionProperties{
                   .m_caption = I18n::Message::InequalityType,
-                  .m_equationType = ComparisonJunior::Operator::Inferior,
+                  .m_equationType = Comparison::Operator::Inferior,
                   .m_curveParameterType = ContinuousFunctionProperties::
                       CurveParameterType::CartesianFunction,
                   .m_areaType = ContinuousFunctionProperties::AreaType::Below});
@@ -416,7 +415,7 @@ QUIZ_CASE(graph_function_properties) {
             ? k_bannedProperties
             : FunctionProperties{
                   .m_caption = I18n::Message::InequalityType,
-                  .m_equationType = ComparisonJunior::Operator::Inferior,
+                  .m_equationType = Comparison::Operator::Inferior,
                   .m_conicShape = Poincare::Conic::Shape::Circle,
                   .m_isOfDegreeTwo = true,
                   .m_numberOfSubCurves = 2,
@@ -429,7 +428,7 @@ QUIZ_CASE(graph_function_properties) {
             : FunctionProperties{
                   .m_status = ContinuousFunctionProperties::Status::Unhandled,
                   .m_caption = I18n::Message::UnhandledType,
-                  .m_equationType = ComparisonJunior::Operator::Superior});
+                  .m_equationType = Comparison::Operator::Superior});
     assert_check_function_properties(
         "x^2+y^2=12",
         noImplicitPlot
@@ -509,7 +508,7 @@ QUIZ_CASE(graph_function_properties) {
             ? k_bannedProperties
             : FunctionProperties{
                   .m_caption = I18n::Message::InequalityType,
-                  .m_equationType = ComparisonJunior::Operator::Superior,
+                  .m_equationType = Comparison::Operator::Superior,
                   .m_isOfDegreeTwo = true,
                   .m_numberOfSubCurves = 2,
                   .m_areaType =
@@ -521,7 +520,7 @@ QUIZ_CASE(graph_function_properties) {
             ? k_bannedProperties
             : FunctionProperties{
                   .m_caption = I18n::Message::InequalityType,
-                  .m_equationType = ComparisonJunior::Operator::SuperiorEqual,
+                  .m_equationType = Comparison::Operator::SuperiorEqual,
                   .m_isOfDegreeTwo = true,
                   .m_numberOfSubCurves = 1,
                   .m_areaType =
@@ -839,7 +838,7 @@ QUIZ_CASE(graph_function_properties) {
             : FunctionProperties{
                   .m_status = ContinuousFunctionProperties::Status::Unhandled,
                   .m_caption = I18n::Message::UnhandledType,
-                  .m_equationType = ComparisonJunior::Operator::Superior});
+                  .m_equationType = Comparison::Operator::Superior});
 
     assert_check_function_properties(
         "2-y^2>log(x)",
@@ -848,7 +847,7 @@ QUIZ_CASE(graph_function_properties) {
             : FunctionProperties{
                   .m_status = ContinuousFunctionProperties::Status::Unhandled,
                   .m_caption = I18n::Message::UnhandledType,
-                  .m_equationType = ComparisonJunior::Operator::Superior});
+                  .m_equationType = Comparison::Operator::Superior});
 
     assert_check_function_properties("x*y^2=x", k_unhandledCartesian);
     assert_check_function_properties("y=piecewise(3y,x<2,x)",

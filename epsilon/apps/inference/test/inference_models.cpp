@@ -17,7 +17,7 @@
 #include "inference/models/two_proportions_statistic.h"
 
 using namespace Inference;
-using ComparisonJunior = Poincare::ComparisonJunior;
+using Comparison = Poincare::Comparison;
 
 /* TODO: some values have been computed from an approximative source of
  * truth... It should be double-checked. */
@@ -25,7 +25,7 @@ using ComparisonJunior = Poincare::ComparisonJunior;
 struct InferenceTestCase {
   // Inputs
   double m_firstHypothesisParam;
-  ComparisonJunior::Operator m_op;
+  Comparison::Operator m_op;
   int m_numberOfInputs;
   double m_inputs[100];
   double m_significanceLevel;
@@ -118,7 +118,7 @@ void testInterval(ConfidenceInterval* interval, InferenceTestCase& testCase) {
 QUIZ_CASE(inference_one_proportion_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.4;
-  tests[0].m_op = ComparisonJunior::Operator::Inferior;
+  tests[0].m_op = Comparison::Operator::Inferior;
   tests[0].m_numberOfInputs = 2;
   tests[0].m_inputs[0] = 12;
   tests[0].m_inputs[1] = 50;
@@ -137,7 +137,7 @@ QUIZ_CASE(inference_one_proportion_statistic) {
       0.118381403945045355252671217772915115472924012968494600568522469792;
 
   tests[1].m_firstHypothesisParam = 0.9;
-  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
+  tests[1].m_op = Comparison::Operator::NotEqual;
   tests[1].m_numberOfInputs = 2;
   tests[1].m_inputs[0] = 84;
   tests[1].m_inputs[1] = 100;
@@ -166,7 +166,7 @@ QUIZ_CASE(inference_one_proportion_statistic) {
 QUIZ_CASE(inference_one_mean_t_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 128;
-  tests[0].m_op = ComparisonJunior::Operator::Inferior;
+  tests[0].m_op = Comparison::Operator::Inferior;
   tests[0].m_numberOfInputs = 3;
   tests[0].m_inputs[0] = 127.8;
   tests[0].m_inputs[1] = 3.2;
@@ -185,7 +185,7 @@ QUIZ_CASE(inference_one_mean_t_statistic) {
   tests[0].m_marginOfError = 0.9094301462;
 
   tests[1].m_firstHypothesisParam = -4;
-  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
+  tests[1].m_op = Comparison::Operator::NotEqual;
   tests[1].m_numberOfInputs = 3;
   tests[1].m_inputs[0] = 1.4;
   tests[1].m_inputs[1] = 5;
@@ -217,7 +217,7 @@ QUIZ_CASE(inference_one_mean_t_statistic) {
 QUIZ_CASE(inference_one_mean_z_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 128;
-  tests[0].m_op = ComparisonJunior::Operator::Inferior;
+  tests[0].m_op = Comparison::Operator::Inferior;
   tests[0].m_numberOfInputs = 3;
   tests[0].m_inputs[0] = 127.8;
   tests[0].m_inputs[1] = 3.2;
@@ -235,7 +235,7 @@ QUIZ_CASE(inference_one_mean_z_statistic) {
   tests[0].m_marginOfError = 0.8869786859;
 
   tests[1].m_firstHypothesisParam = 0.9;
-  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
+  tests[1].m_op = Comparison::Operator::NotEqual;
   tests[1].m_numberOfInputs = 3;
   tests[1].m_inputs[0] = 2.3;
   tests[1].m_inputs[1] = 14;
@@ -267,7 +267,7 @@ QUIZ_CASE(inference_one_mean_z_statistic) {
 QUIZ_CASE(inference_two_proportions_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0;
-  tests[0].m_op = ComparisonJunior::Operator::Superior;
+  tests[0].m_op = Comparison::Operator::Superior;
   tests[0].m_numberOfInputs = 4;
   tests[0].m_inputs[0] = 20;
   tests[0].m_inputs[1] = 50;
@@ -286,7 +286,7 @@ QUIZ_CASE(inference_two_proportions_statistic) {
   tests[0].m_marginOfError = 0.1625613272;
 
   tests[1].m_firstHypothesisParam = 0.3;
-  tests[1].m_op = ComparisonJunior::Operator::Inferior;
+  tests[1].m_op = Comparison::Operator::Inferior;
   tests[1].m_numberOfInputs = 4;
   tests[1].m_inputs[0] = 60;
   tests[1].m_inputs[1] = 100;
@@ -317,7 +317,7 @@ QUIZ_CASE(inference_two_proportions_statistic) {
 QUIZ_CASE(inference_two_means_t_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0;
-  tests[0].m_op = ComparisonJunior::Operator::Superior;
+  tests[0].m_op = Comparison::Operator::Superior;
   tests[0].m_numberOfInputs = 6;
   tests[0].m_inputs[0] = 20;
   tests[0].m_inputs[1] = 2;
@@ -339,7 +339,7 @@ QUIZ_CASE(inference_two_means_t_statistic) {
   tests[0].m_marginOfError = 4.6813974380;
 
   tests[1].m_firstHypothesisParam = -12.345;
-  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
+  tests[1].m_op = Comparison::Operator::NotEqual;
   tests[1].m_numberOfInputs = 6;
   tests[1].m_inputs[0] = 4.2;
   tests[1].m_inputs[1] = 46;
@@ -374,7 +374,7 @@ QUIZ_CASE(inference_two_means_t_statistic) {
 QUIZ_CASE(inference_pooled_t_test) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.3;
-  tests[0].m_op = ComparisonJunior::Operator::Superior;
+  tests[0].m_op = Comparison::Operator::Superior;
   tests[0].m_numberOfInputs = 6;
   tests[0].m_inputs[0] = 213.4;
   tests[0].m_inputs[1] = 14;
@@ -396,7 +396,7 @@ QUIZ_CASE(inference_pooled_t_test) {
   tests[0].m_marginOfError = 13.8193244934;
 
   tests[1].m_firstHypothesisParam = 0.;
-  tests[1].m_op = ComparisonJunior::Operator::Superior;
+  tests[1].m_op = Comparison::Operator::Superior;
   tests[1].m_numberOfInputs = 6;
   tests[1].m_inputs[0] = 1.23;
   tests[1].m_inputs[1] = 1.23;
@@ -431,7 +431,7 @@ QUIZ_CASE(inference_pooled_t_test) {
 QUIZ_CASE(inference_two_means_z_statistic) {
   InferenceTestCase tests[2];
   tests[0].m_firstHypothesisParam = 0.;
-  tests[0].m_op = ComparisonJunior::Operator::Superior;
+  tests[0].m_op = Comparison::Operator::Superior;
   tests[0].m_numberOfInputs = 6;
   tests[0].m_inputs[0] = 3.14;
   tests[0].m_inputs[1] = 2;
@@ -453,7 +453,7 @@ QUIZ_CASE(inference_two_means_z_statistic) {
   tests[0].m_marginOfError = 0.5091147423;
 
   tests[1].m_firstHypothesisParam = 0.;
-  tests[1].m_op = ComparisonJunior::Operator::NotEqual;
+  tests[1].m_op = Comparison::Operator::NotEqual;
   tests[1].m_numberOfInputs = 6;
   tests[1].m_inputs[0] = 1542;
   tests[1].m_inputs[1] = 140;
@@ -487,7 +487,7 @@ QUIZ_CASE(inference_two_means_z_statistic) {
 QUIZ_CASE(inference_goodness_test) {
   GoodnessTest inference;
   InferenceTestCase tests[1];
-  tests[0].m_op = ComparisonJunior::Operator::Superior;
+  tests[0].m_op = Comparison::Operator::Superior;
   tests[0].m_numberOfInputs = 8;
   tests[0].m_inputs[0] = 1;
   tests[0].m_inputs[1] = 2;
@@ -525,7 +525,7 @@ QUIZ_CASE(inference_goodness_test) {
 QUIZ_CASE(inference_homogeneity_test) {
   // clang-format off
   InferenceTestCase tests[1];
-  tests[0].m_op = ComparisonJunior::Operator::Superior;
+  tests[0].m_op = Comparison::Operator::Superior;
   tests[0].m_numberOfInputs = HomogeneityTest::k_maxNumberOfColumns *
                           HomogeneityTest::k_maxNumberOfRows;
   /*{1,   2,   4,   NAN, NAN, NAN, NAN, NAN, NAN,
@@ -592,7 +592,7 @@ QUIZ_CASE(inference_homogeneity_test) {
 QUIZ_CASE(inference_slope_t_statistic) {
   InferenceTestCase testCase;
   testCase.m_firstHypothesisParam = 0.;
-  testCase.m_op = ComparisonJunior::Operator::NotEqual;
+  testCase.m_op = Comparison::Operator::NotEqual;
   testCase.m_numberOfInputs = 16;
   testCase.m_inputs[0] = 7;
   testCase.m_inputs[1] = 7.10;
@@ -638,7 +638,7 @@ QUIZ_CASE(inference_one_mean_t_with_table) {
 
   InferenceTestCase rawDataCase{
       .m_firstHypothesisParam = 128,
-      .m_op = ComparisonJunior::Operator::Inferior,
+      .m_op = Comparison::Operator::Inferior,
       .m_numberOfInputs = 100,
       .m_significanceLevel = 0.05,
       .m_confidenceLevel = 0.95,

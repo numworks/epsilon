@@ -162,7 +162,7 @@ Results Compute(const DataTable* contributions, double degreesOfFreedom) {
 
   // Always use the superior operator for the chi2 test
   results.pValue =
-      ComputePValue(StatisticType::Chi2, ComparisonJunior::Operator::Superior,
+      ComputePValue(StatisticType::Chi2, Comparison::Operator::Superior,
                     results.criticalValue, degreesOfFreedom);
   return results;
 }

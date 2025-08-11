@@ -13,16 +13,15 @@ namespace SignificanceTest {
 
 struct Hypothesis {
   double m_h0;
-  Poincare::ComparisonJunior::Operator m_alternative;
-  constexpr Hypothesis(double h0,
-                       Poincare::ComparisonJunior::Operator alternative)
+  Poincare::Comparison::Operator m_alternative;
+  constexpr Hypothesis(double h0, Poincare::Comparison::Operator alternative)
       : m_h0(h0), m_alternative(alternative) {
-    assert(alternative == Poincare::ComparisonJunior::Operator::Inferior ||
-           alternative == Poincare::ComparisonJunior::Operator::Superior ||
-           alternative == Poincare::ComparisonJunior::Operator::NotEqual);
+    assert(alternative == Poincare::Comparison::Operator::Inferior ||
+           alternative == Poincare::Comparison::Operator::Superior ||
+           alternative == Poincare::Comparison::Operator::NotEqual);
   }
   constexpr Hypothesis()
-      : Hypothesis(0.0, Poincare::ComparisonJunior::Operator::Superior) {}
+      : Hypothesis(0.0, Poincare::Comparison::Operator::Superior) {}
 };
 
 Hypothesis DefaultHypothesis(TestType testType);
@@ -75,8 +74,8 @@ double DefaultParameterAtIndex(Type type, int index);
 // ===== PRIVATE =====
 
 double ComputePValue(StatisticType statisticType,
-                     ComparisonJunior::Operator haOperator,
-                     double criticalValue, double degreesOfFreedom);
+                     Comparison::Operator haOperator, double criticalValue,
+                     double degreesOfFreedom);
 Estimates ComputeEstimates(TestType testType, const ParametersArray parameters);
 double ComputeCriticalValue(Type type, double h0,
                             const ParametersArray parameters);

@@ -100,22 +100,6 @@ class Expression : public PoolHandle {
   /* Get a Tree from the storage, more efficient and safer than
    * ExpressionFromAddress.tree() because it points to the storage directly. */
   static const Internal::Tree* TreeFromAddress(const void* address);
-
-  static UserExpression Parse(const Internal::Tree* layout,
-                              const Context& context,
-                              ParserHelper::ParsingParameters params = {});
-  static UserExpression Parse(const char* layout, const Context& context,
-                              ParserHelper::ParsingParameters params = {});
-  static UserExpression ParseLatex(const char* latex, const Context& context,
-                                   ParserHelper::ParsingParameters params = {});
-
-  static UserExpression Create(const Internal::Tree* structure,
-                               Internal::ContextTrees ctx);
-  static SystemExpression CreateReduce(const Internal::Tree* structure,
-                                       Internal::ContextTrees ctx);
-  static SystemExpression CreateIntegralOfAbsOfDifference(
-      SystemExpression lowerBound, SystemExpression upperBound,
-      SystemExpression integrandA, SystemExpression integrandB);
   operator const Internal::Tree*() const { return tree(); }
 
   const Internal::Tree* tree() const {
@@ -181,6 +165,17 @@ class Expression : public PoolHandle {
 // UserExpression can be layoutted and have not been projected
 class UserExpression : public Expression {
  public:
+  static UserExpression Parse(const Internal::Tree* layout,
+                              const Context& context,
+                              ParserHelper::ParsingParameters params = {});
+  static UserExpression Parse(const char* layout, const Context& context,
+                              ParserHelper::ParsingParameters params = {});
+  static UserExpression ParseLatex(const char* latex, const Context& context,
+                                   ParserHelper::ParsingParameters params = {});
+
+  static UserExpression Create(const Internal::Tree* structure,
+                               Internal::ContextTrees ctx);
+
   static UserExpression ExpressionFromAddress(const void* address, size_t size);
   // Builders from value.
   static UserExpression Builder(int32_t n);
@@ -351,6 +346,12 @@ class UserExpression : public Expression {
 // SystemExpression must have been projected and systematic reduced.
 class SystemExpression : public Expression {
  public:
+  static SystemExpression CreateReduce(const Internal::Tree* structure,
+                                       Internal::ContextTrees ctx);
+  static SystemExpression CreateIntegralOfAbsOfDifference(
+      SystemExpression lowerBound, SystemExpression upperBound,
+      SystemExpression integrandA, SystemExpression integrandB);
+
   static SystemExpression ExpressionFromAddress(const void* address,
                                                 size_t size);
   // Builders from value.

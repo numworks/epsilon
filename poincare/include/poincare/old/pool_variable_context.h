@@ -1,10 +1,9 @@
 #ifndef POINCARE_POOL_VARIABLE_CONTEXT_H
 #define POINCARE_POOL_VARIABLE_CONTEXT_H
 
+#include <poincare/context_with_parent.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/symbol.h>
-
-#include "context_with_parent.h"
 
 namespace Poincare {
 

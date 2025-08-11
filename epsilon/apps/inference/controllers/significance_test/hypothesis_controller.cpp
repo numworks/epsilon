@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <apps/apps_container_helper.h>
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <escher/invocation.h>
 #include <escher/stack_view_controller.h>
@@ -74,8 +75,8 @@ bool HypothesisController::textFieldDidFinishEditing(
       Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
           double>(textField->draftText(),
                   AppsContainerHelper::sharedAppsContainerGlobalContext(),
-                  MathPreferences::SharedPreferences()->complexFormat(),
-                  MathPreferences::SharedPreferences()->angleUnit());
+                  GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+                  GlobalPreferences::SharedGlobalPreferences()->angleUnit());
   // Check
   if (std::isnan(h0) || !m_test->isValidH0(h0)) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);

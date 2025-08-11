@@ -1,6 +1,7 @@
 #include "column_helper.h"
 
 #include <apps/constant.h>
+#include <apps/global_preferences.h>
 #include <escher/container.h>
 #include <omg/utf8_helper.h>
 #include <poincare/helpers/symbol.h>
@@ -183,8 +184,8 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   bool reductionFailure = false;
   SystemExpression reduced = PoincareHelpers::CloneAndReduce(
       formula, &storeContext,
-      MathPreferences::SharedPreferences()->complexFormat(),
-      MathPreferences::SharedPreferences()->angleUnit(), true,
+      GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit(), true,
       Poincare::ReductionTarget::User, SymbolicComputation::ReplaceAllSymbols,
       &reductionFailure);
 

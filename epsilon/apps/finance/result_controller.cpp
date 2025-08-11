@@ -1,5 +1,6 @@
 #include "result_controller.h"
 
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
@@ -26,7 +27,7 @@ void ResultController::viewWillAppear() {
   constexpr int bufferSize = Escher::FloatBufferTextView<>::MaxTextSize();
   char buffer[bufferSize];
   int precision =
-      MathPreferences::SharedPreferences()->numberOfSignificantDigits();
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
       value, buffer, bufferSize, precision,
       Poincare::Preferences::PrintFloatMode::Decimal);

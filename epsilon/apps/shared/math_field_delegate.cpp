@@ -1,6 +1,7 @@
 #include "math_field_delegate.h"
 
 #include <apps/constant.h>
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <poincare/expression.h>
 
@@ -60,7 +61,8 @@ bool AbstractMathFieldDelegate::isAcceptableText(const char* text,
   constexpr int bufferSize = TextField::MaxBufferSize();
   char buffer[bufferSize];
   int length = exp.serialize(
-      buffer, false, MathPreferences::SharedPreferences()->displayMode());
+      buffer, false,
+      GlobalPreferences::SharedGlobalPreferences()->displayMode());
   if (length >= bufferSize - 1) {
     /* If the buffer is totally full, it is VERY likely that writeTextInBuffer
      * escaped before printing utterly the expression. */
@@ -129,8 +131,8 @@ template <typename T>
 T MathTextFieldDelegate::ParseInputFloatValue(const char* text) {
   return UserExpression::ParseAndSimplifyAndApproximateToRealScalar<T>(
       text, App::app()->localContext(),
-      MathPreferences::SharedPreferences()->complexFormat(),
-      MathPreferences::SharedPreferences()->angleUnit());
+      GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit());
 }
 
 template <typename T>

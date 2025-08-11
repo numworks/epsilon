@@ -2,6 +2,7 @@
 
 #include <apps/apps_container.h>
 #include <apps/constant.h>
+#include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <apps/shared/store_app.h>
 #include <assert.h>
@@ -112,7 +113,8 @@ void StoreController::fillCellForLocation(HighlightCell* cell, int column,
     myCell->editableTextCell()->textField()->setTextColor(textColor);
   }
   fillCellForLocationWithDisplayMode(
-      cell, column, row, MathPreferences::SharedPreferences()->displayMode(),
+      cell, column, row,
+      GlobalPreferences::SharedGlobalPreferences()->displayMode(),
       AbstractEvenOddBufferTextCell::k_defaultPrecision);
 }
 

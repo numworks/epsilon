@@ -2,7 +2,6 @@
 #define SHARED_POINCARE_HELPERS_H
 
 #include <apps/global_preferences.h>
-#include <apps/math_preferences.h>
 #include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
 #include <poincare/preferences.h>
@@ -20,9 +19,10 @@ namespace PoincareHelpers {
 inline Poincare::Layout CreateLayout(
     const Poincare::UserExpression e, Poincare::Context* context,
     Poincare::Preferences::PrintFloatMode displayMode =
-        MathPreferences::SharedPreferences()->displayMode(),
+        GlobalPreferences::SharedGlobalPreferences()->displayMode(),
     uint8_t numberOfSignificantDigits =
-        MathPreferences::SharedPreferences()->numberOfSignificantDigits()) {
+        GlobalPreferences::SharedGlobalPreferences()
+            ->numberOfSignificantDigits()) {
   return e.createLayout(displayMode, numberOfSignificantDigits, context);
 }
 
@@ -36,7 +36,7 @@ inline size_t ConvertFloatToText(T d, char* buffer, size_t bufferSize,
              Poincare::PrintFloat::glyphLengthForFloatWithPrecision(
                  numberOfSignificantDigits),
              numberOfSignificantDigits,
-             MathPreferences::SharedPreferences()->displayMode())
+             GlobalPreferences::SharedGlobalPreferences()->displayMode())
       .CharLength;
 }
 
@@ -59,14 +59,14 @@ template <class T>
 inline Poincare::SystemExpression ApproximateUser(
     Poincare::UserExpression e, Poincare::Context* context,
     Poincare::Preferences::ComplexFormat complexFormat =
-        MathPreferences::SharedPreferences()->complexFormat(),
+        GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
     Poincare::Preferences::AngleUnit angleUnit =
-        MathPreferences::SharedPreferences()->angleUnit()) {
+        GlobalPreferences::SharedGlobalPreferences()->angleUnit()) {
   complexFormat =
       Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
           complexFormat, e, context);
   return e.approximateUserToTree<T>(
-      MathPreferences::SharedPreferences()->angleUnit(), complexFormat,
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit(), complexFormat,
       context);
 }
 
@@ -79,8 +79,9 @@ inline Poincare::SystemExpression ApproximateSystem(
 inline Poincare::Internal::ProjectionContext ProjectionContextForPreferences(
     const Poincare::UserExpression e, Poincare::Context* context) {
   Poincare::Internal::ProjectionContext projectionContext = {
-      .m_complexFormat = MathPreferences::SharedPreferences()->complexFormat(),
-      .m_angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+      .m_complexFormat =
+          GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+      .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_unitFormat =
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_context = context};
@@ -94,8 +95,8 @@ template <class FloatType = float>
 inline FloatType ApproximateToRealScalar(Poincare::UserExpression e) {
   static_assert(std::is_floating_point_v<FloatType>);
   return e.approximateToRealScalar<FloatType>(
-      MathPreferences::SharedPreferences()->angleUnit(),
-      MathPreferences::SharedPreferences()->complexFormat());
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
+      GlobalPreferences::SharedGlobalPreferences()->complexFormat());
 }
 
 // ===== Reduction =====
@@ -173,8 +174,9 @@ inline T ValueOfFloatAsDisplayed(T t, int precision,
   (void)numberOfChar;
   // Extract displayed value
   return Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-      T>(buffer, context, MathPreferences::SharedPreferences()->complexFormat(),
-         MathPreferences::SharedPreferences()->angleUnit(),
+      T>(buffer, context,
+         GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
+         GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
          Poincare::SymbolicComputation::ReplaceAllSymbolsWithUndefined);
 }
 
@@ -206,9 +208,10 @@ FloatType ToFloat(Poincare::ExpressionOrFloat value) {
   static_assert(std::is_floating_point_v<FloatType>);
   return value.approximation<FloatType>(
       Poincare::ExpressionOrFloat::ApproximationParameters{
-          .angleUnit = MathPreferences::SharedPreferences()->angleUnit(),
+          .angleUnit =
+              GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
           .complexFormat =
-              MathPreferences::SharedPreferences()->complexFormat()});
+              GlobalPreferences::SharedGlobalPreferences()->complexFormat()});
 }
 
 }  // namespace PoincareHelpers

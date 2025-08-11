@@ -1,5 +1,6 @@
 #include "calculation_controller.h"
 
+#include <apps/global_preferences.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <poincare/preferences.h>
@@ -236,7 +237,8 @@ void CalculationController::reload() {
         m_distribution->parameterAtIndex(
             m_distribution->uninitializedParameterIndex()),
         Poincare::Preferences::PrintFloatMode::Decimal,
-        MathPreferences::SharedPreferences()->numberOfSignificantDigits());
+        GlobalPreferences::SharedGlobalPreferences()
+            ->numberOfSignificantDigits());
     m_contentView.unknownParameterValue()->setText(buffer);
   }
   m_contentView.reload();

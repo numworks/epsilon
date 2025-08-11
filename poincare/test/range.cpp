@@ -1,11 +1,10 @@
 #include <omg/numeric_comparison.h>
 #include <poincare/range.h>
-
-#include "../helper.h"
+#include <quiz.h>
 
 using namespace Poincare;
 
-QUIZ_CASE(poincare_range_1d_validity) {
+QUIZ_CASE(pcj_range_1d_validity) {
   quiz_assert(Range1D<float>(-10, 10).isValid());
   quiz_assert(!Range1D<float>(NAN, NAN).isValid());
   quiz_assert(!Range1D<float>(1, 1).isValid());
@@ -23,7 +22,7 @@ void assert_length_and_center_are(Range1D<float> r, float expextedLength,
   quiz_assert(OMG::EqualOrBothNan(c, expextedCenter));
 }
 
-QUIZ_CASE(poincare_range_1d_geometry) {
+QUIZ_CASE(pcj_range_1d_geometry) {
   assert_length_and_center_are(Range1D<float>(NAN, NAN), NAN, NAN);
   assert_length_and_center_are(Range1D<float>(0, 0), 0, 0);
   assert_length_and_center_are(Range1D<float>(-123, -123), 0, -123);
@@ -38,7 +37,7 @@ void assert_valid_range_is(float min, float max, Range1D<float> expected,
   quiz_assert(range.max() == expected.max());
 }
 
-QUIZ_CASE(poincare_range_1d_make_valid) {
+QUIZ_CASE(pcj_range_1d_make_valid) {
   assert_valid_range_is(1, 2, Range1D<float>(1, 2));
   // Stretch range
   assert_valid_range_is(1, 1, Range1D<float>(0.995, 1.005));
@@ -59,7 +58,7 @@ void assert_range_after_setting_bound(Range1D<float> range, float newBound,
   quiz_assert(range.max() == expected.max());
 }
 
-QUIZ_CASE(poincare_range_1d_set_bound) {
+QUIZ_CASE(pcj_range_1d_set_bound) {
   assert_range_after_setting_bound(Range1D<float>(1, 2), 3, true,
                                    Range1D<float>(1, 3));
   assert_range_after_setting_bound(Range1D<float>(1, 2), 0, false,
@@ -86,7 +85,7 @@ void assert_range_extends_to(Range1D<float> r1, float p, Range1D<float> r2) {
   quiz_assert(OMG::EqualOrBothNan(r1.max(), r2.max()));
 }
 
-QUIZ_CASE(poincare_range_1d_extend) {
+QUIZ_CASE(pcj_range_1d_extend) {
   assert_range_extends_to(Range1D<float>(NAN, NAN), NAN,
                           Range1D<float>(NAN, NAN));
   assert_range_extends_to(Range1D<float>(-1, 3), NAN, Range1D<float>(-1, 3));
@@ -111,7 +110,7 @@ void assert_range_zooms_to(Range1D<float> r1, float r, float c,
   quiz_assert(OMG::EqualOrBothNan(r1.max(), r2.max()));
 }
 
-QUIZ_CASE(poincare_range_1d_zoom) {
+QUIZ_CASE(pcj_range_1d_zoom) {
   assert_range_zooms_to(Range1D<float>(NAN, NAN), NAN, NAN,
                         Range1D<float>(NAN, NAN));
   assert_range_zooms_to(Range1D<float>(NAN, NAN), 2, 1.23,

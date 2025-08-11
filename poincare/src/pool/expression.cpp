@@ -1201,25 +1201,37 @@ bool PreparedFunction::approximationBasedOnCostlyAlgorithms() const {
          });
 }
 
-template SystemExpression SystemExpression::approximateSystemToTree<float>()
-    const;
-template SystemExpression SystemExpression::approximateSystemToTree<double>()
-    const;
+/* Template declarations - Expression */
 
-template SystemExpression UserExpression::approximateUserToTree<float>(
-    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
-template SystemExpression UserExpression::approximateUserToTree<double>(
-    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context) const;
+template float Expression::ParseAndSimplifyAndApproximateToRealScalar<float>(
+    const char*, const Context&, ComplexFormat, AngleUnit, SymbolicComputation);
+template double Expression::ParseAndSimplifyAndApproximateToRealScalar<double>(
+    const char*, const Context&, ComplexFormat, AngleUnit, SymbolicComputation);
 
-template UserExpression UserExpression::cloneAndApproximate<float>(
-    Internal::ProjectionContext&) const;
-template UserExpression UserExpression::cloneAndApproximate<double>(
-    Internal::ProjectionContext&) const;
+/* Template declarations - UserExpression */
 
 template UserExpression UserExpression::Builder<float>(float);
 template UserExpression UserExpression::Builder<double>(double);
 template UserExpression UserExpression::Builder<float>(Coordinate2D<float>);
 template UserExpression UserExpression::Builder<double>(Coordinate2D<double>);
+template UserExpression UserExpression::Builder<float>(
+    PointOrRealScalar<float>);
+template UserExpression UserExpression::Builder<double>(
+    PointOrRealScalar<double>);
+template UserExpression UserExpression::cloneAndApproximate<float>(
+    Internal::ProjectionContext&) const;
+template UserExpression UserExpression::cloneAndApproximate<double>(
+    Internal::ProjectionContext&) const;
+template float UserExpression::approximateToRealScalar<float>(
+    AngleUnit, ComplexFormat, const Context&) const;
+template double UserExpression::approximateToRealScalar<double>(
+    AngleUnit, ComplexFormat, const Context&) const;
+template bool UserExpression::hasDefinedComplexApproximation<float>(
+    AngleUnit, ComplexFormat, const Context&, float*, float*) const;
+template bool UserExpression::hasDefinedComplexApproximation<double>(
+    AngleUnit, ComplexFormat, const Context&, double*, double*) const;
+
+/* Template declarations - SystemExpression */
 
 template SystemExpression SystemExpression::Builder<float>(float);
 template SystemExpression SystemExpression::Builder<double>(double);
@@ -1230,63 +1242,43 @@ template SystemExpression SystemExpression::Builder<float>(
     PointOrRealScalar<float>);
 template SystemExpression SystemExpression::Builder<double>(
     PointOrRealScalar<double>);
-
-template UserExpression UserExpression::Builder<float>(
-    PointOrRealScalar<float>);
-template UserExpression UserExpression::Builder<double>(
-    PointOrRealScalar<double>);
-
-template PointOrRealScalar<float>
-PreparedFunction::approximateToPointOrRealScalarWithValue<float>(float) const;
-template PointOrRealScalar<double>
-PreparedFunction::approximateToPointOrRealScalarWithValue<double>(double) const;
-
+template SystemExpression UserExpression::approximateUserToTree<float>(
+    AngleUnit, ComplexFormat, Context*) const;
+template SystemExpression UserExpression::approximateUserToTree<double>(
+    AngleUnit, ComplexFormat, Context*) const;
+template SystemExpression SystemExpression::approximateSystemToTree<float>()
+    const;
+template SystemExpression SystemExpression::approximateSystemToTree<double>()
+    const;
+template float SystemExpression::approximateSystemToRealScalar<float>() const;
+template double SystemExpression::approximateSystemToRealScalar<double>() const;
+template Coordinate2D<float> SystemExpression::approximateToPoint<float>()
+    const;
+template Coordinate2D<double> SystemExpression::approximateToPoint<double>()
+    const;
 template SystemExpression SystemExpression::approximateListAndSort<float>()
     const;
 template SystemExpression SystemExpression::approximateListAndSort<double>()
     const;
+
+/* Template declarations - PreparedFunction */
 
 template float PreparedFunctionScalar::approximateToRealScalarWithValue<float>(
     float, int) const;
 template double
 PreparedFunctionScalar::approximateToRealScalarWithValue<double>(double,
                                                                  int) const;
-
-template bool PreparedFunction::isDiscontinuousOnInterval<float>(float,
-                                                                 float) const;
-template bool PreparedFunction::isDiscontinuousOnInterval<double>(double,
-                                                                  double) const;
-
-template float SystemExpression::approximateSystemToRealScalar<float>() const;
-template double SystemExpression::approximateSystemToRealScalar<double>() const;
-
-template Coordinate2D<float> SystemExpression::approximateToPoint<float>()
-    const;
-template Coordinate2D<double> SystemExpression::approximateToPoint<double>()
-    const;
-
+template PointOrRealScalar<float>
+PreparedFunction::approximateToPointOrRealScalarWithValue<float>(float) const;
+template PointOrRealScalar<double>
+PreparedFunction::approximateToPointOrRealScalarWithValue<double>(double) const;
 template Coordinate2D<float> PreparedFunction::approximateToPoint<float>()
     const;
 template Coordinate2D<double> PreparedFunction::approximateToPoint<double>()
     const;
-
-template float Expression::ParseAndSimplifyAndApproximateToRealScalar<float>(
-    const char*, const Context&, Preferences::ComplexFormat,
-    Preferences::AngleUnit, SymbolicComputation);
-template double Expression::ParseAndSimplifyAndApproximateToRealScalar<double>(
-    const char*, const Context&, Preferences::ComplexFormat,
-    Preferences::AngleUnit, SymbolicComputation);
-
-template bool UserExpression::hasDefinedComplexApproximation<float>(
-    AngleUnit angleUnit, ComplexFormat complexFormat, const Context& context,
-    float*, float*) const;
-template bool UserExpression::hasDefinedComplexApproximation<double>(
-    AngleUnit angleUnit, ComplexFormat complexFormat, const Context& context,
-    double*, double*) const;
-
-template float UserExpression::approximateToRealScalar<float>(
-    Preferences::AngleUnit, Preferences::ComplexFormat, const Context&) const;
-template double UserExpression::approximateToRealScalar<double>(
-    Preferences::AngleUnit, Preferences::ComplexFormat, const Context&) const;
+template bool PreparedFunction::isDiscontinuousOnInterval<float>(float,
+                                                                 float) const;
+template bool PreparedFunction::isDiscontinuousOnInterval<double>(double,
+                                                                  double) const;
 
 }  // namespace Poincare

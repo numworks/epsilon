@@ -27,7 +27,6 @@ _sources_poincare_storage := $(addprefix src/, \
 
 _sources_poincare_extended := $(addprefix src/, \
 $(addprefix old/, \
-  pool_variable_context.cpp:-nopool \
   tree_variable_context.cpp \
 ) \
 $(addprefix equation_solver/, \
@@ -209,6 +208,7 @@ $(addprefix statistics/, \
   exam_mode.cpp \
   comparison_operator.cpp \
   float_list.cpp:-nopool \
+  pool_variable_context.cpp:-nopool \
   print.cpp \
   random.cpp \
   range.cpp \

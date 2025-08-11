@@ -6,7 +6,7 @@
 #include <ion/circuit_breaker.h>
 #include <omg/expiring_pointer.h>
 #include <omg/store.h>
-#include <poincare/old/pool_variable_context.h>
+#include <poincare/pool_variable_context.h>
 #include <poincare/variable_store.h>
 #include <stddef.h>
 

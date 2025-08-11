@@ -9,7 +9,8 @@
 
 using namespace Poincare::Internal;
 
-bool dim(const Tree* e, Dimension dExpected, Poincare::Context* ctx = nullptr) {
+bool dim(const Tree* e, Dimension dExpected,
+         const Poincare::Context& ctx = Poincare::EmptyContext{}) {
   if (!Dimension::DeepCheck(e, ctx)) {
 #if POINCARE_TREE_LOG
     std::cout << "EXPECTED VALID dimension for: ";
@@ -32,27 +33,30 @@ bool dim(const Tree* e, Dimension dExpected, Poincare::Context* ctx = nullptr) {
   return true;
 }
 
-bool dim(const char* input, Dimension d, Poincare::Context* ctx = nullptr) {
-  Tree* e = ctx ? parse(input, *ctx) : parse(input);
+bool dim(const char* input, Dimension d,
+         const Poincare::Context& ctx = Poincare::EmptyContext{}) {
+  Tree* e = parse(input, ctx);
   bool result = dim(e, d, ctx);
   e->removeTree();
   return result;
 }
 
-bool len(const Tree* e, int n, Poincare::Context* ctx = nullptr) {
+bool len(const Tree* e, int n,
+         const Poincare::Context& ctx = Poincare::EmptyContext{}) {
   assert(Dimension::DeepCheck(e, ctx));
   return Dimension::ListLength(e, ctx) == n;
 }
 
-bool len(const char* input, int n, Poincare::Context* ctx = nullptr) {
-  Tree* e = ctx ? parse(input, *ctx) : parse(input);
+bool len(const char* input, int n,
+         const Poincare::Context& ctx = Poincare::EmptyContext{}) {
+  Tree* e = parse(input, ctx);
   bool result = len(e, n, ctx);
   e->removeTree();
   return result;
 }
 
 bool hasInvalidDimOrLen(const Tree* e) {
-  bool res = !Dimension::DeepCheck(e, nullptr);
+  bool res = !Dimension::DeepCheck(e);
 #if POINCARE_TREE_LOG
   if (!res) {
     std::cout << "Got valid but expected invalid dim/len for: ";
@@ -210,15 +214,15 @@ QUIZ_CASE(pcj_dimension) {
   store("(x,2*x)→h(x)", &globalContext);
   store("0.2*x→j(x)", &globalContext);
 
-  QUIZ_ASSERT(dim("a", Scalar, &globalContext));
-  QUIZ_ASSERT(dim("b", Scalar, &globalContext));
-  QUIZ_ASSERT(dim("c", Point, &globalContext));
-  QUIZ_ASSERT(dim("d", Dimension::Unit(KUnits::meter), &globalContext));
-  QUIZ_ASSERT(dim("v", Matrix(1, 1), &globalContext));
-  QUIZ_ASSERT(dim("f(x)", Matrix(1, 1), &globalContext));
-  QUIZ_ASSERT(dim("g(a)+b+{1,6}", Scalar, &globalContext));
-  QUIZ_ASSERT(len("h(b)", 2, &globalContext));
-  QUIZ_ASSERT(dim("i(2)", Scalar, &globalContext));
+  QUIZ_ASSERT(dim("a", Scalar, globalContext));
+  QUIZ_ASSERT(dim("b", Scalar, globalContext));
+  QUIZ_ASSERT(dim("c", Point, globalContext));
+  QUIZ_ASSERT(dim("d", Dimension::Unit(KUnits::meter), globalContext));
+  QUIZ_ASSERT(dim("v", Matrix(1, 1), globalContext));
+  QUIZ_ASSERT(dim("f(x)", Matrix(1, 1), globalContext));
+  QUIZ_ASSERT(dim("g(a)+b+{1,6}", Scalar, globalContext));
+  QUIZ_ASSERT(len("h(b)", 2, globalContext));
+  QUIZ_ASSERT(dim("i(2)", Scalar, globalContext));
 
   QUIZ_ASSERT(SharedTreeStack->numberOfTrees() == 0);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();

@@ -49,7 +49,7 @@ using namespace Internal;
 
 /* Dimension */
 
-Poincare::Dimension::Dimension(const Expression e, Context* context)
+Poincare::Dimension::Dimension(const Expression e, const Context& context)
     : m_matrixDimension({.rows = 0, .cols = 0}),
       m_type(DimensionType::Scalar),
       m_isList(false),
@@ -546,8 +546,15 @@ T UserExpression::approximateToRealScalar(AngleUnit angleUnit,
                                           ComplexFormat complexFormat,
                                           Context* context) const {
   static_assert(std::is_floating_point_v<T>);
-  assert(Poincare::Dimension(*this, context).isScalar() ||
-         Poincare::Dimension(*this, context).isUnit());
+  // NOTE: temporary until approximateToRealScalar takes a const ref
+  if (context) {
+    assert(Poincare::Dimension(*this, *context).isScalar() ||
+           Poincare::Dimension(*this, *context).isUnit());
+  } else {
+    assert(Poincare::Dimension(*this).isScalar() ||
+           Poincare::Dimension(*this).isUnit());
+  }
+
   // Note : temporary until EmptyContext is passed instead of nullptr
   return Approximation::To<T>(
       tree(),
@@ -571,13 +578,15 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
     const char* text, Context* context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     SymbolicComputation symbolicComputation) {
-  // Note : temporary until EmptyContext is passed instead  of nullptr
+  /* Note: temporary until ParseAndSimplifyAndApproximateToRealScalar passes
+   * Context as a const reference */
   UserExpression exp =
       context ? Parse(text, *context) : Parse(text, EmptyContext{});
   if (exp.isUninitialized()) {
     return NAN;
   }
-  // Note : temporary until EmptyContext is passed instead of nullptr
+  /* Note: temporary until ParseAndSimplifyAndApproximateToRealScalar passes
+   * Context as a const reference */
   ProjectionContext ctx =
       context ? ProjectionContext{.m_complexFormat = complexFormat,
                                   .m_angleUnit = angleUnit,
@@ -589,7 +598,11 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
   bool reductionFailure;
   exp = exp.cloneAndSimplify(ctx, &reductionFailure);
   assert(!exp.isUninitialized());
-  if (!Poincare::Dimension(exp, context).isScalar()) {
+  /* Note: temporary until ParseAndSimplifyAndApproximateToRealScalar passes
+   * Context as a const reference */
+  Poincare::Dimension dimension =
+      context ? Poincare::Dimension(exp, *context) : Poincare::Dimension(exp);
+  if (!dimension.isScalar()) {
     return NAN;
   }
   return exp.approximateToRealScalar<T>(ctx.m_angleUnit, ctx.m_complexFormat,
@@ -955,7 +968,9 @@ bool Expression::recursivelyMatches(ExpressionTestAuxiliary test,
 }
 
 Poincare::Dimension Expression::dimension(Context* context) const {
-  return Poincare::Dimension(*this, context);
+  // Note: temporary until dimension passes Context as a const reference
+  return context ? Poincare::Dimension(*this, *context)
+                 : Poincare::Dimension(*this);
 }
 
 Sign SystemExpression::sign() const { return GetSign(tree()); }
@@ -1058,7 +1073,10 @@ bool Expression::isVector() const {
 }
 
 bool Expression::isInRadians(Context* context) const {
-  return Internal::Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
+  // Note: temporary until isInRadians passes Context as a const reference
+  return context ? Internal::Dimension::Get(tree(), *context)
+                       .isSimpleRadianAngleUnit()
+                 : Internal::Dimension::Get(tree()).isSimpleRadianAngleUnit();
 }
 
 bool Expression::isConstantNumber() const {

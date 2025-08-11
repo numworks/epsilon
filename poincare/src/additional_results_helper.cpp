@@ -141,11 +141,11 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
 
   const Tree* inputTree = input.tree();
   const Tree* exactTree = exactOutput.tree();
-  Internal::Dimension dimension = Internal::Dimension::Get(inputTree, context);
+  Internal::Dimension dimension = Internal::Dimension::Get(inputTree, *context);
 
-  assert(dimension == Internal::Dimension::Get(exactTree, context));
+  assert(dimension == Internal::Dimension::Get(exactTree, *context));
   if (!dimension.isScalarOrUnit() ||
-      Internal::Dimension::IsList(exactTree, context) ||
+      Internal::Dimension::IsList(exactTree, *context) ||
       (dimension.isUnit() && !dimension.isSimpleAngleUnit())) {
     return UserExpression();
   }
@@ -182,7 +182,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
   Tree* exactAngle = directTrigoFunction->child(0)->cloneTree();
   assert(exactAngle && !exactAngle->isUndefined());
   Internal::Dimension exactAngleDimension =
-      Internal::Dimension::Get(exactAngle, context);
+      Internal::Dimension::Get(exactAngle, *context);
   assert(exactAngleDimension.isScalar() ||
          exactAngleDimension.isSimpleAngleUnit());
   Preferences::ComplexFormat complexFormat =
@@ -506,10 +506,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
         determinant->isUndefined() || determinant->isZero();
     // TODO_PCJ: Prevent having to update ctx here.
     Internal::Dimension previousDimension = ctx.m_dimension;
-    ctx.m_dimension =
-        Internal::Dimension::Get(determinant,
-                                 // NOTE: const_cast is temporary
-                                 &const_cast<Context&>(ctx.m_context));
+    ctx.m_dimension = Internal::Dimension::Get(determinant, ctx.m_context);
     determinantL = CreateBeautifiedLayout(determinant, &ctx, displayMode,
                                           numberOfSignificantDigits);
     ctx.m_dimension = previousDimension;
@@ -549,10 +546,7 @@ void AdditionalResultsHelper::ComputeMatrixProperties(
   if (isSquared) {
     Tree* trace = Internal::Matrix::Trace(matrix);
     // TODO_PCJ: Prevent having to update ctx here.
-    ctx.m_dimension =
-        Internal::Dimension::Get(trace,
-                                 // NOTE: const_cast is temporary
-                                 &const_cast<Context&>(ctx.m_context));
+    ctx.m_dimension = Internal::Dimension::Get(trace, ctx.m_context);
     traceL = CreateBeautifiedLayout(trace, &ctx, displayMode,
                                     numberOfSignificantDigits);
   }

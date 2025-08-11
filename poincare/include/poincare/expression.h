@@ -3,6 +3,7 @@
 
 #include <omg/enums.h>
 #include <poincare/comparison_operator.h>
+#include <poincare/context.h>
 #include <poincare/helpers/parser.h>
 #include <poincare/layout.h>
 #include <poincare/point_or_scalar.h>
@@ -48,7 +49,7 @@ using PreparedFunctionPoint = PreparedFunction;
 
 class Dimension {
  public:
-  Dimension(const Expression e, Context* context = nullptr);
+  Dimension(const Expression e, const Context& context = EmptyContext{});
 
   bool isScalar();
   bool isMatrix();

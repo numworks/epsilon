@@ -305,25 +305,6 @@ SystemExpression SystemExpression::RationalBuilder(int32_t numerator,
       Rational::Push(IntegerHandler(numerator), IntegerHandler(denominator)));
 }
 
-Expression Expression::Builder(const Tree* tree) {
-  if (!tree) {
-    return Expression();
-  }
-  size_t size = tree->treeSize();
-  void* bufferNode = Pool::sharedPool->alloc(sizeof(ExpressionObject) + size);
-  ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
-  PoolHandle h = PoolHandle::Build(node);
-  return static_cast<Expression&>(h);
-}
-
-Expression Expression::Builder(Tree* tree) {
-  Expression result = Builder(const_cast<const Tree*>(tree));
-  if (tree) {
-    tree->removeTree();
-  }
-  return result;
-}
-
 UserExpression UserExpression::Undefined() {
   return UserExpression::Builder(KUndef);
 }
@@ -333,11 +314,6 @@ SystemExpression SystemExpression::Undefined() {
 
 UserExpression UserExpression::Builder(Preferences::AngleUnit angleUnit) {
   return UserExpression::Builder(Units::Unit::Push(angleUnit));
-}
-
-Expression Expression::cloneChildAtIndex(int i) const {
-  assert(tree());
-  return Builder(tree()->child(i));
 }
 
 UserExpression UserExpression::cloneChildAtIndex(int i) const {

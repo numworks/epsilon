@@ -110,10 +110,11 @@ endif
 ifneq ($(EMBED_EXTRA_DATA),0)
 _sources_ion_kernel += trampoline.o bootloader.o
 
-$(OUTPUT_DIRECTORY)/kernel/$(PATH_ion)/src/trampoline.o: $(OUTPUT_DIRECTORY)/kernel/$(PATH_ion)/src/bootloader.o
+$(call generated_sources_for, kernel/$(PATH_ion)/src/trampoline.o): $(call generated_sources_for, kernel/$(PATH_ion)/src/bootloader.o)
 	@ :
 
-$(OUTPUT_DIRECTORY)/kernel/$(PATH_ion)/src/bootloader.o: $(OUTPUT_DIRECTORY)/bootloader/bootloader.elf
+$(call generated_sources_for, kernel/$(PATH_ion)/src/bootloader.o): $(call generated_sources_for, bootloader/bootloader.elf)
+	$(call rule_label, OBJCOPY)
 	$(Q) $(OBJCOPY) -O binary -S -R .trampoline -R .pseudo_otp -R .unused_flash $< $(@:.o=.bin)
 	$(Q) $(OBJCOPY) -O binary -S -j .trampoline $< $(@:bootloader.o=trampoline.bin)
 	$(Q) $(OBJCOPY) -I binary -O elf32-littlearm -B arm --rename-section .data=.bootloader $(@:.o=.bin) $@

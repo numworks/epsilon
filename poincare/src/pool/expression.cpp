@@ -378,15 +378,15 @@ int Expression::numberOfDescendants(bool includeSelf) const {
   return tree()->numberOfDescendants(includeSelf);
 }
 
-bool Expression::isOfType(
+bool UserExpression::isOfType(
     std::initializer_list<Internal::AnyType> types) const {
   return tree()->isOfType(types);
 }
 
-bool Expression::deepIsOfType(std::initializer_list<Internal::AnyType> types,
-                              Context* context) const {
+bool UserExpression::deepIsOfType(
+    std::initializer_list<Internal::AnyType> types, Context* context) const {
   return recursivelyMatches(
-      [](const Expression e, Context* context, void* auxiliary) {
+      [](const UserExpression e, Context* context, void* auxiliary) {
         return e.isOfType(
                    *static_cast<std::initializer_list<Internal::AnyType>*>(
                        auxiliary))
@@ -865,8 +865,8 @@ bool UserExpression::replaceSymbols(const Poincare::Context& context,
   return didReplace;
 }
 
-static bool IsIgnoredSymbol(const Expression* e,
-                            Expression::IgnoredSymbols* ignoredSymbols) {
+static bool IsIgnoredSymbol(const UserExpression* e,
+                            UserExpression::IgnoredSymbols* ignoredSymbols) {
   if (!e->tree()->isUserSymbol()) {
     return false;
   }
@@ -876,16 +876,16 @@ static bool IsIgnoredSymbol(const Expression* e,
       return true;
     }
     ignoredSymbols =
-        reinterpret_cast<Expression::IgnoredSymbols*>(ignoredSymbols->tail);
+        reinterpret_cast<UserExpression::IgnoredSymbols*>(ignoredSymbols->tail);
   }
   return false;
 }
 
-bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
-                                    Context* context,
-                                    SymbolicComputation replaceSymbols,
-                                    void* auxiliary,
-                                    IgnoredSymbols* ignoredSymbols) const {
+bool UserExpression::recursivelyMatches(ExpressionTrinaryTest test,
+                                        Context* context,
+                                        SymbolicComputation replaceSymbols,
+                                        void* auxiliary,
+                                        IgnoredSymbols* ignoredSymbols) const {
   if (!context) {
     replaceSymbols = SymbolicComputation::KeepAllSymbols;
   }
@@ -944,10 +944,11 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
     if (isParametered && i == Parametric::k_variableIndex) {
       continue;
     }
-    Expression childToAnalyze = cloneChildAtIndex(i);
+    UserExpression childToAnalyze = cloneChildAtIndex(i);
     bool matches;
     if (isParametered && i == Parametric::FunctionIndex(tree())) {
-      Expression symbolExpr = cloneChildAtIndex(Parametric::k_variableIndex);
+      UserExpression symbolExpr =
+          cloneChildAtIndex(Parametric::k_variableIndex);
       IgnoredSymbols updatedIgnoredSymbols = {.head = &symbolExpr,
                                               .tail = ignoredSymbols};
       matches = childToAnalyze.recursivelyMatches(
@@ -963,9 +964,10 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
   return false;
 }
 
-bool Expression::recursivelyMatches(ExpressionTest test, Context* context,
-                                    SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const Expression e, Context* context,
+bool UserExpression::recursivelyMatches(
+    ExpressionTest test, Context* context,
+    SymbolicComputation replaceSymbols) const {
+  ExpressionTrinaryTest ternary = [](const UserExpression e, Context* context,
                                      void* auxiliary) {
     ExpressionTest* trueTest = static_cast<ExpressionTest*>(auxiliary);
     return (*trueTest)(e, context) ? OMG::Troolean::True
@@ -974,9 +976,10 @@ bool Expression::recursivelyMatches(ExpressionTest test, Context* context,
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
-bool Expression::recursivelyMatches(SimpleExpressionTest test, Context* context,
-                                    SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const Expression e, Context* context,
+bool UserExpression::recursivelyMatches(
+    SimpleExpressionTest test, Context* context,
+    SymbolicComputation replaceSymbols) const {
+  ExpressionTrinaryTest ternary = [](const UserExpression e, Context* context,
                                      void* auxiliary) {
     SimpleExpressionTest* trueTest =
         static_cast<SimpleExpressionTest*>(auxiliary);
@@ -985,10 +988,10 @@ bool Expression::recursivelyMatches(SimpleExpressionTest test, Context* context,
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
-bool Expression::recursivelyMatches(NonStaticSimpleExpressionTest test,
-                                    Context* context,
-                                    SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const Expression e, Context* context,
+bool UserExpression::recursivelyMatches(
+    NonStaticSimpleExpressionTest test, Context* context,
+    SymbolicComputation replaceSymbols) const {
+  ExpressionTrinaryTest ternary = [](const UserExpression e, Context* context,
                                      void* auxiliary) {
     NonStaticSimpleExpressionTest* trueTest =
         static_cast<NonStaticSimpleExpressionTest*>(auxiliary);
@@ -997,15 +1000,15 @@ bool Expression::recursivelyMatches(NonStaticSimpleExpressionTest test,
   return recursivelyMatches(ternary, context, replaceSymbols, &test);
 }
 
-bool Expression::recursivelyMatches(ExpressionTestAuxiliary test,
-                                    Context* context,
-                                    SymbolicComputation replaceSymbols,
-                                    void* auxiliary) const {
+bool UserExpression::recursivelyMatches(ExpressionTestAuxiliary test,
+                                        Context* context,
+                                        SymbolicComputation replaceSymbols,
+                                        void* auxiliary) const {
   struct Pack {
     ExpressionTestAuxiliary* test;
     void* auxiliary;
   };
-  ExpressionTrinaryTest ternary = [](const Expression e, Context* context,
+  ExpressionTrinaryTest ternary = [](const UserExpression e, Context* context,
                                      void* pack) {
     ExpressionTestAuxiliary* trueTest =
         static_cast<ExpressionTestAuxiliary*>(static_cast<Pack*>(pack)->test);
@@ -1036,7 +1039,7 @@ bool UserExpression::hasUnit(bool ignoreAngleUnits, bool* hasAngleUnits,
   };
   Pack pack{ignoreAngleUnits, hasAngleUnits};
   return recursivelyMatches(
-      [](const Expression e, Context* context, void* arg) {
+      [](const UserExpression e, Context* context, void* arg) {
         Pack* pack = static_cast<Pack*>(arg);
         bool isAngleUnit = e.isPureAngleUnit();
         bool* hasAngleUnits = pack->hasAngleUnits;

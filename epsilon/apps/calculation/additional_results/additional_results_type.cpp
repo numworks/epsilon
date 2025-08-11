@@ -99,7 +99,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
       input.isUninitialized() || exactOutput.isUninitialized() ||
       approximateOutput.isUninitialized() || input.isStore() ||
       exactOutput.isList() || approximateOutput.isList() ||
-      approximateOutput.recursivelyMatches([](const Expression e) {
+      approximateOutput.recursivelyMatches([](const UserExpression e) {
         return e.isUndefinedOrNonReal() || e.isPlusOrMinusInfinity();
       })) {
     return true;

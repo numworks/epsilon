@@ -12,7 +12,7 @@ const char* SymbolHelper::AnsMainAlias() {
   return BuiltinsAliases::k_ansAliases.mainAlias();
 }
 
-bool SymbolHelper::IsTheta(Expression e) {
+bool SymbolHelper::IsTheta(UserExpression e) {
   return e.isUserSymbol() &&
          BuiltinsAliases::k_thetaAliases.contains(GetName(e));
 }

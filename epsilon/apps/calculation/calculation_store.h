@@ -98,7 +98,23 @@ class CalculationStore
    * calculation. */
   Calculation* pushCalculation(const CalculationElements& calculationToPush);
 
-  MathPreferences m_inUsePreferences;
+  struct HeightSensitivePreferences {
+    uint8_t numberOfSignificantDigits;
+    Poincare::Preferences::CombinatoricSymbols combinatoricSymbols;
+    Poincare::Preferences::LogarithmBasePosition logarithmBasePosition;
+    bool operator==(const HeightSensitivePreferences&) const = default;
+  };
+
+  HeightSensitivePreferences getCurrentPreferences() {
+    return {
+        GlobalPreferences::SharedGlobalPreferences()
+            ->numberOfSignificantDigits(),
+        GlobalPreferences::SharedGlobalPreferences()->combinatoricSymbols(),
+        GlobalPreferences::SharedGlobalPreferences()->logarithmBasePosition(),
+    };
+  }
+
+  HeightSensitivePreferences m_inUsePreferences;
 };
 
 }  // namespace Calculation

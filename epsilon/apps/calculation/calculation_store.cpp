@@ -37,7 +37,7 @@ static void enhancePushedExpression(UserExpression& expression) {
 CalculationStore::CalculationStore(char* buffer, size_t bufferSize)
     : Store<Ion::CircuitBreaker::lock, Ion::CircuitBreaker::unlock>(buffer,
                                                                     bufferSize),
-      m_inUsePreferences(*MathPreferences::SharedPreferences()) {}
+      m_inUsePreferences(getCurrentPreferences()) {}
 
 OMG::ExpiringPointer<Calculation> CalculationStore::calculationAtIndex(
     int index) const {
@@ -226,7 +226,7 @@ static void postProcessOutputs(OutputExpressions& outputs,
 
 Poincare::UserExpression CalculationStore::parseInput(
     Poincare::Layout inputLayout, Poincare::Context* context) {
-  m_inUsePreferences = *MathPreferences::SharedPreferences();
+  m_inUsePreferences = getCurrentPreferences();
 
   CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
@@ -303,16 +303,11 @@ OMG::ExpiringPointer<Calculation> CalculationStore::push(
 
 bool CalculationStore::preferencesHaveChanged() {
   // Track settings that might invalidate HistoryCells heights
-  const MathPreferences* preferences = MathPreferences::SharedPreferences();
-  if (m_inUsePreferences.combinatoricSymbols() ==
-          preferences->combinatoricSymbols() &&
-      m_inUsePreferences.numberOfSignificantDigits() ==
-          preferences->numberOfSignificantDigits() &&
-      m_inUsePreferences.logarithmBasePosition() ==
-          preferences->logarithmBasePosition()) {
+  HeightSensitivePreferences currentPreferences = getCurrentPreferences();
+  if (currentPreferences == m_inUsePreferences) {
     return false;
   }
-  m_inUsePreferences = *preferences;
+  m_inUsePreferences = currentPreferences;
   return true;
 }
 

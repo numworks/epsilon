@@ -8,7 +8,7 @@
 
 #include "exam_icon.h"
 #include "exam_mode_manager.h"
-#include "math_preferences.h"
+#include "global_preferences.h"
 
 extern "C" {
 #include <assert.h>
@@ -147,9 +147,9 @@ void TitleBarView::layoutSubviews(bool force) {
 
 void TitleBarView::refreshPreferences() {
   char buffer[k_preferenceTextSize];
-  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   // Display Sci/ or Eng/ if the print float mode is not decimal
-  const Preferences::PrintFloatMode printFloatMode = preferences->displayMode();
+  const Preferences::PrintFloatMode printFloatMode =
+      GlobalPreferences::SharedGlobalPreferences()->displayMode();
   I18n::Message floatModeMessage =
       printFloatMode == Preferences::PrintFloatMode::Decimal
           ? I18n::Message::Default
@@ -157,7 +157,8 @@ void TitleBarView::refreshPreferences() {
                  ? I18n::Message::Sci
                  : I18n::Message::Eng);
   // Display the angle unit
-  const Preferences::AngleUnit angleUnit = preferences->angleUnit();
+  const Preferences::AngleUnit angleUnit =
+      GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   I18n::Message angleMessage;
   switch (angleUnit) {
     case Preferences::AngleUnit::Degree:

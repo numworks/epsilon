@@ -1,5 +1,6 @@
 #include "sum_graph_controller.h"
 
+#include <apps/global_preferences.h>
 #include <assert.h>
 #include <escher/clipboard.h>
 #include <poincare/k_tree.h>
@@ -305,10 +306,11 @@ void SumGraphController::LegendView::setSumLayout(Step step, double start,
   if (step == Step::Result) {
     Layout leftLayout;
     Layout equalLayout = Layout::String(" = ", 3);
-    const MathPreferences* preferences = MathPreferences::SharedPreferences();
-    Layout resultLayout =
-        valueLayout(result, preferences->numberOfSignificantDigits(),
-                    preferences->displayMode());
+    Layout resultLayout = valueLayout(
+        result,
+        GlobalPreferences::SharedGlobalPreferences()
+            ->numberOfSignificantDigits(),
+        GlobalPreferences::SharedGlobalPreferences()->displayMode());
     if (functionLayout.isUninitialized() ||
         (sumLayout->layoutSize(k_font).width() +
              functionLayout->layoutSize(k_font).width() +

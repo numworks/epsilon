@@ -361,8 +361,6 @@ void ValuesController::setStartEndMessages(
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
-  const MathPreferences* preferences =
-      GlobalPreferences::SharedGlobalPreferences();
   double abscissa;
   int derivationOrder;
   OMG::ExpiringPointer<ContinuousFunction> function =
@@ -409,8 +407,9 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   }
   assert(!result.isUninitialized());
   Poincare::Preferences::PrintFloatMode floatDisplayMode =
-      preferences->displayMode();
-  uint8_t significantDigits = preferences->numberOfSignificantDigits();
+      GlobalPreferences::SharedGlobalPreferences()->displayMode();
+  uint8_t significantDigits =
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Layout layout =
       result.createLayout(floatDisplayMode, significantDigits, context);
   if (result.isPoint() && layout->layoutSize(k_cellFont).width() >

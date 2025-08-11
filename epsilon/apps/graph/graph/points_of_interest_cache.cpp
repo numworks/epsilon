@@ -300,17 +300,14 @@ PointOfInterest findIntersections(void* searchContext) {
   PreparedFunction e = f->expressionApproximated(ctx->context);
   bool alongY = f->isAlongY();
   bool fIsStrict = f->properties().isStrictInequality();
-  // TODO: this can be a for loop
-  while (ctx->counter < n) {
+  for (; ctx->counter < n; ++ctx->counter) {
     ctx->otherRecord = ctx->store->recordAtIndex(ctx->counter);
     if (ctx->record == ctx->otherRecord) {
-      ++ctx->counter;
       continue;
     }
     OMG::ExpiringPointer<ContinuousFunction> g =
         ctx->store->modelForRecord(ctx->otherRecord);
     if (!g->shouldDisplayIntersections()) {
-      ++ctx->counter;
       continue;
     }
     memoizedOtherFunction = g->expressionApproximated(ctx->context);
@@ -338,7 +335,6 @@ PointOfInterest findIntersections(void* searchContext) {
         };
       }
     }
-    ++ctx->counter;
     ctx->reinitSolver();
   }
 

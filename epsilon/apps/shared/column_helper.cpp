@@ -227,7 +227,7 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
   }
   /* Formula isn't a list and has already been reduced with context, which is no
    * longer needed. Set each cell to the same value */
-  double evaluation = reduced.approximateToRealScalar<double>();
+  double evaluation = reduced.approximateSystemToRealScalar<double>();
   if (std::isnan(evaluation)) {
     return FillColumnStatus::DataNotSuitable;
   }

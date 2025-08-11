@@ -143,9 +143,7 @@ bool DoublePairStore::setList(SystemExpression& list, int series, int i,
       continue;
     }
     double evaluation =
-        list.cloneChildAtIndex(j).approximateToRealScalar<double>(
-            MathPreferences::SharedPreferences()->angleUnit(),
-            MathPreferences::SharedPreferences()->complexFormat(), m_context);
+        list.cloneChildAtIndex(j).approximateSystemToRealScalar<double>();
     set(evaluation, series, i, j, true, setOtherColumnToDefaultIfEmpty);
   }
   return updateSeries(series, delayUpdate);

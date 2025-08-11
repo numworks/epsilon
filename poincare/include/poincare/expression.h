@@ -300,16 +300,11 @@ class UserExpression : public Expression {
   typedef OMG::Troolean (*ExpressionTrinaryTest)(const UserExpression e,
                                                  Context* context,
                                                  void* auxiliary);
-  struct IgnoredSymbols {
-    UserExpression* head;
-    void* tail;
-  };
   bool recursivelyMatches(ExpressionTrinaryTest test,
                           Context* context = nullptr,
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols,
-                          void* auxiliary = nullptr,
-                          IgnoredSymbols* ignoredSymbols = nullptr) const;
+                          void* auxiliary = nullptr) const;
 
   typedef bool (*ExpressionTest)(const UserExpression e, Context* context);
   bool recursivelyMatches(ExpressionTest test, Context* context = nullptr,
@@ -342,6 +337,16 @@ class UserExpression : public Expression {
                     Context* context = nullptr) const;
 
  private:
+  struct IgnoredSymbols {
+    UserExpression* head;
+    void* tail;
+  };
+  static bool IsIgnoredSymbol(const UserExpression* e,
+                              UserExpression::IgnoredSymbols* ignoredSymbols);
+  bool recursivelyMatches(ExpressionTrinaryTest test, Context* context,
+                          SymbolicComputation replaceSymbols, void* auxiliary,
+                          IgnoredSymbols* ignoredSymbols) const;
+
   UserExpression privateCloneAndSimplify(
       const Internal::ProjectionContext& context,
       bool* reductionFailure = nullptr) const;

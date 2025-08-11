@@ -827,8 +827,8 @@ bool UserExpression::replaceSymbols(const Poincare::Context& context,
   return didReplace;
 }
 
-static bool IsIgnoredSymbol(const UserExpression* e,
-                            UserExpression::IgnoredSymbols* ignoredSymbols) {
+bool UserExpression::IsIgnoredSymbol(
+    const UserExpression* e, UserExpression::IgnoredSymbols* ignoredSymbols) {
   if (!e->tree()->isUserSymbol()) {
     return false;
   }
@@ -841,6 +841,13 @@ static bool IsIgnoredSymbol(const UserExpression* e,
         reinterpret_cast<UserExpression::IgnoredSymbols*>(ignoredSymbols->tail);
   }
   return false;
+}
+
+bool UserExpression::recursivelyMatches(ExpressionTrinaryTest test,
+                                        Context* context,
+                                        SymbolicComputation replaceSymbols,
+                                        void* auxiliary) const {
+  return recursivelyMatches(test, context, replaceSymbols, auxiliary, nullptr);
 }
 
 bool UserExpression::recursivelyMatches(ExpressionTrinaryTest test,

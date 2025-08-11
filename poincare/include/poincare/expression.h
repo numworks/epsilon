@@ -185,10 +185,8 @@ class Expression : public PoolHandle {
   bool isApproximate() const;
   bool isPlusOrMinusInfinity() const;
   bool isPercent() const;
-  bool isSequence() const;
   bool isIntegral() const;
   bool isDiff() const;
-  bool isParametric() const;
   bool isBoolean() const;
   bool isList() const;
   bool isUserSymbol() const;
@@ -476,6 +474,8 @@ class PreparedFunction : public Expression {
   // Approximate to PointOrRealScalar replacing Var0 with value.
   template <typename T>
   PointOrRealScalar<T> approximateToPointOrRealScalarWithValue(T x) const;
+  bool hasSequences() const;
+  bool approximationBasedOnCostlyAlgorithms() const;
 };
 
 }  // namespace Poincare

@@ -40,7 +40,7 @@ class Projection {
       const Tree* e, ProjectionContext* projectionContext);
   /* User variables are fetched from the Context and replaced according to the
   SymbolicComputation strategy */
-  static bool DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
+  static bool DeepReplaceUserNamed(Tree* e, const Poincare::Context& context,
                                    SymbolicComputation symbolic);
   // All user variables are replaced with Undefined
   static bool DeepReplaceUserNamedWithUndefined(Tree* e);

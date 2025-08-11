@@ -17,7 +17,7 @@
 
 namespace Poincare::Internal {
 
-bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
+bool Projection::DeepReplaceUserNamed(Tree* e, const Poincare::Context& context,
                                       SymbolicComputation symbolic) {
   /* TODO_PCJ: in old poincare, we did not do anything for sequence trees (not
    * only nodes), and for store trees we only replaced in the first child and if
@@ -29,8 +29,7 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
     return DeepReplaceUserNamedWithUndefined(e);
   }
   // Check for circularity
-  assert(context);
-  if (Symbol::InvolvesCircularity(e, *context)) {
+  if (Symbol::InvolvesCircularity(e, context)) {
     e->cloneTreeOverTree(KUndef);
     return true;
   }
@@ -44,8 +43,7 @@ bool Projection::DeepReplaceUserNamed(Tree* e, Poincare::Context* context,
       static_assert(Parametric::k_variableIndex == 0);
       e = e->nextNode()->nextTree();
     }
-    assert(context);
-    changed = ShallowReplaceUserNamed(e, *context, symbolic) || changed;
+    changed = ShallowReplaceUserNamed(e, context, symbolic) || changed;
     e = e->nextNode();
   }
   removeMarker(marker);

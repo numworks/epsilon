@@ -452,23 +452,23 @@ class SystemExpression : public Expression {
  * Variable of index 0 called Var0. */
 class PreparedFunction : public Expression {
  public:
+  /* Static builders */
+  static PreparedFunction Builder(const Internal::Tree* tree);
+  // Eat the tree
+  static PreparedFunction Builder(Internal::Tree* tree);
   template <Internal::KTrees::KTreeConcept T>
   static PreparedFunction Builder(T x) {
     return Builder(static_cast<const Internal::Tree*>(x));
   }
-  static PreparedFunction Builder(const Internal::Tree* tree);
-  // Eat the tree
-  static PreparedFunction Builder(Internal::Tree* tree);
 
+  /* General helpers */
   PreparedFunction cloneChildAtIndex(int i) const;
   PreparedFunction clone() const {
     PoolHandle clone = PoolHandle::clone();
     return static_cast<PreparedFunction&>(clone);
   }
-  bool involvesDiscontinuousFunction() const;
-  template <typename T>
-  bool isDiscontinuousOnInterval(T minBound, T maxBound) const;
 
+  /* Other helpers */
   template <typename T>
   Coordinate2D<T> approximateToPoint() const;
   // Approximate to real scalar replacing Var0 with value.
@@ -477,6 +477,11 @@ class PreparedFunction : public Expression {
   // Approximate to PointOrRealScalar replacing Var0 with value.
   template <typename T>
   PointOrRealScalar<T> approximateToPointOrRealScalarWithValue(T x) const;
+
+  /* Properties getters */
+  bool involvesDiscontinuousFunction() const;
+  template <typename T>
+  bool isDiscontinuousOnInterval(T minBound, T maxBound) const;
   bool hasSequences() const;
   bool approximationBasedOnCostlyAlgorithms() const;
 };

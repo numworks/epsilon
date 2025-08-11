@@ -11,7 +11,6 @@
 #include "apps_container_storage.h"
 #include "exam_mode_manager.h"
 #include "global_preferences.h"
-#include "math_preferences.h"
 #include "on_boarding/startup_prompt_controller.h"
 #include "shared/record_restrictive_extensions_helper.h"
 

@@ -1,7 +1,7 @@
 #include <omg/utf8_helper.h>
-#include <poincare/old/tree_variable_context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/symbol.h>
+#include <poincare/tree_variable_context.h>
 
 #include <cmath>
 

@@ -194,18 +194,19 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
       PoincareHelpers::ProjectionContextForPreferences(expression, this);
   projectionContext.m_symbolic = SymbolicComputation::ReplaceAllSymbols;
   UserExpression approximation;
+  UserExpression simplifiedExpression;
   bool reductionFailure = expression.cloneAndSimplifyAndApproximate(
-      &expression, &approximation, projectionContext);
+      &simplifiedExpression, &approximation, projectionContext);
   // Do not store exact derivative, etc.
   if (reductionFailure || storeApproximation ||
-      CAS::ShouldOnlyDisplayApproximation(UserExpression(), expression,
-                                          approximation, this)) {
-    expression = approximation;
+      CAS::ShouldOnlyDisplayApproximation(
+          UserExpression(), simplifiedExpression, approximation, this)) {
+    simplifiedExpression = approximation;
   }
   const char* extension;
-  if (expression.isList()) {
+  if (simplifiedExpression.isList()) {
     extension = Ion::Storage::listExtension;
-  } else if (expression.isMatrix()) {
+  } else if (simplifiedExpression.isMatrix()) {
     extension = Ion::Storage::matrixExtension;
   } else {
     extension = Ion::Storage::expressionExtension;
@@ -213,7 +214,8 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
   /* If there is another record competing with this one for its name,
    * it is destroyed directly in Storage, through the record_name_verifier. */
   return Ion::Storage::FileSystem::sharedFileSystem->createRecordWithExtension(
-      name, extension, expression.addressInPool(), expression.size(), true);
+      name, extension, simplifiedExpression.addressInPool(),
+      simplifiedExpression.size(), true);
 }
 
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserFunction(

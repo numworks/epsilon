@@ -1147,13 +1147,6 @@ ComparisonJunior::Operator Expression::comparisonOperator() const {
   return Internal::Binary::ComparisonOperatorForType(tree()->type());
 }
 
-/* Infinity */
-
-const char* Poincare::Infinity::k_infinityName =
-    Internal::Infinity::k_infinityName;
-const char* Poincare::Infinity::k_minusInfinityName =
-    Internal::Infinity::k_minusInfinityName;
-
 UserExpression UserExpression::Builder(const Tree* tree) {
   if (!tree) {
     return UserExpression();

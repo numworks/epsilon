@@ -129,7 +129,7 @@ bool MathTextFieldDelegate::textFieldDidFinishEditing(
 
 template <typename T>
 T MathTextFieldDelegate::ParseInputFloatValue(const char* text) {
-  return UserExpression::ParseAndSimplifyAndApproximateToRealScalar<T>(
+  return Expression::ParseAndSimplifyAndApproximateToRealScalar<T>(
       text, *App::app()->localContext(),
       GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       GlobalPreferences::SharedGlobalPreferences()->angleUnit());

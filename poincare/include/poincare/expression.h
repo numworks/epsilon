@@ -145,6 +145,16 @@ class Expression : public PoolHandle {
   // Only called on expressions that are comparisons
   Comparison::Operator comparisonOperator() const;
 
+  /* Approximation Helper
+   * Return NAN for all non real scalar expressions. */
+  template <typename T>
+  static T ParseAndSimplifyAndApproximateToRealScalar(
+      const char* text, const Context& context,
+      Preferences::ComplexFormat complexFormat,
+      Preferences::AngleUnit angleUnit,
+      SymbolicComputation symbolicComputation =
+          SymbolicComputation::ReplaceAllSymbols);
+
   /* Tree manipulation */
   // TODO: These methods should be protected
 
@@ -251,16 +261,6 @@ class UserExpression : public Expression {
   bool isComplexScalar(
       Preferences::CalculationPreferences calculationPreferences,
       const Context& context) const;
-
-  /* Approximation Helper
-   * Return NAN for all non real scalar expressions. */
-  template <typename T>
-  static T ParseAndSimplifyAndApproximateToRealScalar(
-      const char* text, const Context& context,
-      Preferences::ComplexFormat complexFormat,
-      Preferences::AngleUnit angleUnit,
-      SymbolicComputation symbolicComputation =
-          SymbolicComputation::ReplaceAllSymbols);
 
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
                       int numberOfSignificantDigits, Context* context,

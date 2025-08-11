@@ -235,8 +235,6 @@ class Expression : public PoolHandle {
   static Expression Builder(Internal::Tree* tree);
   // TODO: Remove the need for this method
   UserExpression cloneAsUserExpression() const;
-  // TODO: Remove the need for this method
-  SystemExpression cloneAsSystemExpression() const;
 };
 
 class Infinity {
@@ -363,8 +361,8 @@ class UserExpression : public Expression {
       const Context& context = EmptyContext{}) const;
 
  private:
-  UserExpression privateCloneAndReduceOrSimplify(
-      const Internal::ProjectionContext& context, bool beautify,
+  UserExpression privateCloneAndSimplify(
+      const Internal::ProjectionContext& context,
       bool* reductionFailure = nullptr) const;
 };
 

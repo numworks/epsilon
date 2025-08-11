@@ -458,34 +458,36 @@ UserExpression UserExpression::cloneAndApproximate(
 UserExpression UserExpression::cloneAndSimplify(
     const Internal::ProjectionContext& context, bool* reductionFailure) const {
   assert(reductionFailure);
-  return privateCloneAndReduceOrSimplify(context, true, reductionFailure);
+  return privateCloneAndSimplify(context, reductionFailure);
 }
 
 UserExpression UserExpression::cloneAndTrySimplify(
     const Internal::ProjectionContext& context) const {
-  return privateCloneAndReduceOrSimplify(context, true, nullptr);
+  return privateCloneAndSimplify(context, nullptr);
 }
 
 SystemExpression UserExpression::cloneAndReduce(
     const Internal::ProjectionContext& projectionContext,
     bool* reductionFailure) const {
   assert(reductionFailure);
-  return privateCloneAndReduceOrSimplify(projectionContext, false,
-                                         reductionFailure)
-      .cloneAsSystemExpression();
+  Tree* e = tree()->cloneTree();
+  bool reductionSuccess = Simplification::Simplify(e, projectionContext, false);
+  if (reductionFailure) {
+    /* TODO: In case of reductionFailure, returned expression is actually a
+     * UserExpression ([this]). */
+    *reductionFailure = !reductionSuccess;
+  }
+  return SystemExpression::Builder(e);
 }
 
-UserExpression UserExpression::privateCloneAndReduceOrSimplify(
-    const Internal::ProjectionContext& context, bool beautify,
-    bool* reductionFailure) const {
+UserExpression UserExpression::privateCloneAndSimplify(
+    const Internal::ProjectionContext& context, bool* reductionFailure) const {
   assert(!isUninitialized());
   Tree* e = tree()->cloneTree();
-  // TODO_PCJ: Decide if a projection is needed or not
-  bool reductionSuccess = Simplification::Simplify(e, context, beautify);
+  bool reductionSuccess = Simplification::Simplify(e, context, true);
   if (reductionFailure) {
     *reductionFailure = !reductionSuccess;
   }
-  // TODO: Split privateCloneAndReduceOrSimplify in two methods
   return UserExpression::Builder(e);
 }
 
@@ -1172,11 +1174,6 @@ const char* Poincare::Infinity::k_minusInfinityName =
 UserExpression Expression::cloneAsUserExpression() const {
   PoolHandle clone = PoolHandle::clone();
   return static_cast<UserExpression&>(clone);
-}
-
-SystemExpression Expression::cloneAsSystemExpression() const {
-  PoolHandle clone = PoolHandle::clone();
-  return static_cast<SystemExpression&>(clone);
 }
 
 UserExpression UserExpression::Builder(const Tree* tree) {

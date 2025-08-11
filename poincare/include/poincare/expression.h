@@ -185,8 +185,6 @@ class Expression : public PoolHandle {
   static Expression Builder(const Internal::Tree* tree);
   // Eat the tree
   static Expression Builder(Internal::Tree* tree);
-  // TODO: Remove the need for this method
-  UserExpression cloneAsUserExpression() const;
 };
 
 class Infinity {

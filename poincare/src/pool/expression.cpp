@@ -917,9 +917,8 @@ bool UserExpression::recursivelyMatches(ExpressionTrinaryTest test,
     }
     assert(replaceSymbols == SymbolicComputation::ReplaceDefinedSymbols ||
            tree()->isUserFunction());
-    // TODO : Fix this.
-    UserExpression e = cloneAsUserExpression();
     // Undefined symbols must be preserved.
+    UserExpression e = clone();
     // NOTE: temporary until recursivelyMatches takes a const Context&
     if (context) {
       e.replaceSymbols(*context, SymbolicComputation::ReplaceDefinedSymbols);
@@ -1169,11 +1168,6 @@ const char* Poincare::Infinity::k_infinityName =
     Internal::Infinity::k_infinityName;
 const char* Poincare::Infinity::k_minusInfinityName =
     Internal::Infinity::k_minusInfinityName;
-
-UserExpression Expression::cloneAsUserExpression() const {
-  PoolHandle clone = PoolHandle::clone();
-  return static_cast<UserExpression&>(clone);
-}
 
 UserExpression UserExpression::Builder(const Tree* tree) {
   if (!tree) {

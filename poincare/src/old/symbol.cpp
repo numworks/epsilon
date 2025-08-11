@@ -1,9 +1,9 @@
 #include <assert.h>
 #include <omg/utf8_decoder.h>
 #include <omg/utf8_helper.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>
-#include <poincare/old/context.h>
 #include <poincare/old/parametered_expression.h>
 #include <poincare/old/rational.h>
 #include <poincare/old/symbol.h>

@@ -1,8 +1,8 @@
 #ifndef POINCARE_LAYOUT_PARSING_CONTEXT_H
 #define POINCARE_LAYOUT_PARSING_CONTEXT_H
 
+#include <poincare/context.h>
 #include <poincare/helpers/parser.h>
-#include <poincare/old/context.h>
 
 namespace Poincare::Internal {
 

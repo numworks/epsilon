@@ -3,9 +3,9 @@
 
 #include <apps/calculation/additional_results/additional_results_type.h>
 #include <apps/shared/poincare_helpers.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/k_tree.h>
-#include <poincare/old/context.h>
 
 #if __EMSCRIPTEN__
 #include <emscripten.h>

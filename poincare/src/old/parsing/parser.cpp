@@ -1,7 +1,7 @@
 #include "parser.h"
 
 #include <omg/utf8_decoder.h>
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 #include <poincare/old/simplification_helper.h>
 #include <stdlib.h>
 

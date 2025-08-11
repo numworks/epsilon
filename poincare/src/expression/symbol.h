@@ -1,7 +1,7 @@
 #ifndef POINCARE_EXPRESSION_SYMBOL_H
 #define POINCARE_EXPRESSION_SYMBOL_H
 
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 #include <poincare/sign.h>
 
 #include "context.h"

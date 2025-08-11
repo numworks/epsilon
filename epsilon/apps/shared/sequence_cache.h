@@ -2,7 +2,7 @@
 #define APPS_SHARED_SEQUENCE_CACHE_H
 
 #include <omg/troolean.h>
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 
 namespace Shared {
 

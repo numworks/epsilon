@@ -1,8 +1,8 @@
 #ifndef CALCULATION_ADDITIONAL_RESULTS_TYPE_CONTROLLER_H
 #define CALCULATION_ADDITIONAL_RESULTS_TYPE_CONTROLLER_H
 
+#include <poincare/context.h>
 #include <poincare/expression.h>
-#include <poincare/old/context.h>
 
 namespace Calculation {
 

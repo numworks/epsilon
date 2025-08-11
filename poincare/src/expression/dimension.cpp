@@ -1,6 +1,6 @@
 #include "dimension.h"
 
-#include <poincare/old/context.h>
+#include <poincare/context.h>
 #include <poincare/src/memory/n_ary.h>
 
 #include <algorithm>

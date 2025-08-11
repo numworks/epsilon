@@ -2,9 +2,9 @@
 #define SHARED_EXPRESSION_MODEL_H
 
 #include <ion/storage/record.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/layout.h>
-#include <poincare/old/context.h>
 
 namespace Shared {
 

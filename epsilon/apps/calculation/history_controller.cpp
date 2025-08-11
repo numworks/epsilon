@@ -2,8 +2,8 @@
 
 #include <assert.h>
 #include <poincare/circuit_breaker_checkpoint.h>
+#include <poincare/context.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/old/context.h>
 
 #include "app.h"
 

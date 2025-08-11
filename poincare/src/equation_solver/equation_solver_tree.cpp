@@ -1,10 +1,10 @@
 #include "equation_solver_tree.h"
 
+#include <poincare/context.h>
 #include <poincare/equation_solver/equation_solver_properties.h>
 #include <poincare/helpers/polynomial.h>
 #include <poincare/numeric_solver/roots.h>
 #include <poincare/numeric_solver/solver.h>
-#include <poincare/old/context.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>

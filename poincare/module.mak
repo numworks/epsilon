@@ -223,7 +223,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/expression_properties.cpp \
   old/helper.cpp \
   old/numeric_solver.cpp \
-  old/regularized_function.cpp \
   old/simplification.cpp \
   old/tree/helpers.cpp \
   old/tree/tree_handle.cpp \
@@ -253,6 +252,7 @@ _sources_poincare_test := $(addprefix test/, \
   random.cpp \
   range.cpp \
   rational.cpp \
+  regularized_function.cpp \
   roots.cpp \
   serialization.cpp \
   set.cpp \

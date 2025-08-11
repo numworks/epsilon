@@ -1,13 +1,13 @@
 #include "layout_parser.h"
 
 #include <omg/unreachable.h>
-#include <poincare/old/tree_variable_context.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/symbol.h>
 #include <poincare/src/layout/grid.h>
 #include <poincare/src/layout/sequence.h>
 #include <poincare/src/memory/n_ary.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
+#include <poincare/tree_variable_context.h>
 
 #include "rack_parser.h"
 

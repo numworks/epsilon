@@ -1,7 +1,7 @@
 #ifndef POINCARE_VARIABLE_CONTEXT_H
 #define POINCARE_VARIABLE_CONTEXT_H
 
-#include <poincare/context_with_parent.h>
+#include "context_with_parent.h"
 
 namespace Poincare {
 

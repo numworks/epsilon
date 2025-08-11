@@ -26,9 +26,6 @@ _sources_poincare_storage := $(addprefix src/, \
 )
 
 _sources_poincare_extended := $(addprefix src/, \
-$(addprefix old/, \
-  tree_variable_context.cpp \
-) \
 $(addprefix equation_solver/, \
   equation_solver_pool.cpp:-nopool \
   equation_solver_tree.cpp \
@@ -205,6 +202,7 @@ $(addprefix statistics/, \
   statistics_dataset_column.cpp \
 ) \
   additional_results_helper.cpp:-nopool \
+  tree_variable_context.cpp \
   exam_mode.cpp \
   comparison_operator.cpp \
   float_list.cpp:-nopool \

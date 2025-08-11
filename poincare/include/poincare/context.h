@@ -1,16 +1,10 @@
 #ifndef POINCARE_CONTEXT_H
 #define POINCARE_CONTEXT_H
 
+#include <poincare/src/memory/tree.h>
 #include <stdint.h>
 
 #include <cmath>
-
-// TODO: this file should be moved to the "new" Poincare.
-
-// TODO: no need to forward-declare Tree once moved to the new Poincare
-namespace Poincare::Internal {
-class Tree;
-}
 
 namespace Poincare {
 

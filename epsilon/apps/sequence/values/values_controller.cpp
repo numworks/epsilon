@@ -1,5 +1,6 @@
 #include "values_controller.h"
 
+#include <apps/global_preferences.h>
 #include <apps/i18n.h>
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
@@ -147,7 +148,6 @@ Layout* ValuesController::memoizedLayoutAtIndex(int i) {
 }
 
 Layout ValuesController::functionTitleLayout(int column) {
-  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   bool isSumColumn = false;
   Shared::Sequence* sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
@@ -161,13 +161,13 @@ Layout ValuesController::functionTitleLayout(int column) {
       {.KA = UserExpression::Builder(sequence->initialRank()),
        .KB = Poincare::SymbolHelper::BuildSequence(
            sequenceName, UserExpression::Builder("k"_e))});
-  return sumExpression.createLayout(preferences->displayMode(),
-                                    preferences->numberOfSignificantDigits(),
-                                    nullptr);
+  return sumExpression.createLayout(
+      GlobalPreferences::SharedGlobalPreferences()->displayMode(),
+      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits(),
+      nullptr);
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
-  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   double abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
   bool isSumColumn = false;
@@ -180,7 +180,9 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
                   : sequence->evaluateXYAtParameter(abscissa, context).y();
   *memoizedLayoutAtIndex(index) =
       UserExpression::Builder(sumValue).createLayout(
-          preferences->displayMode(), preferences->numberOfSignificantDigits(),
+          GlobalPreferences::SharedGlobalPreferences()->displayMode(),
+          GlobalPreferences::SharedGlobalPreferences()
+              ->numberOfSignificantDigits(),
           context);
 }
 

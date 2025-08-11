@@ -1,6 +1,7 @@
 #include "domain_parameter_controller.h"
 
 #include <assert.h>
+#include <poincare/infinity.h>
 #include <poincare/k_tree.h>
 
 #include "../app.h"

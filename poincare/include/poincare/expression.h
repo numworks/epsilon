@@ -178,12 +178,6 @@ class Expression : public PoolHandle {
   static Expression Builder(Internal::Tree* tree);
 };
 
-class Infinity {
- public:
-  static const char* k_infinityName;
-  static const char* k_minusInfinityName;
-};
-
 // UserExpression can be layoutted and have not been projected
 class UserExpression : public Expression {
  public:

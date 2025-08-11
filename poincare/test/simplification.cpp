@@ -14,17 +14,6 @@
 
 using namespace Poincare::Internal;
 
-constexpr ProjectionContext cartesianCtx = {.m_complexFormat =
-                                                ComplexFormat::Cartesian};
-constexpr ProjectionContext polarCtx = {.m_complexFormat =
-                                            ComplexFormat::Polar};
-// Default complex format
-constexpr ProjectionContext realCtx = {.m_complexFormat = ComplexFormat::Real};
-
-constexpr ProjectionContext keepAllSymbolsCtx = {
-    .m_symbolic = SymbolicComputation::KeepAllSymbols,
-};
-
 void deepSystematicReduce_and_operation_to(const Tree* input,
                                            Tree::Operation operation,
                                            const Tree* output) {

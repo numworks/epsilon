@@ -28,6 +28,31 @@ constexpr Poincare::Preferences::PrintFloatMode ScientificMode =
 constexpr Poincare::Preferences::PrintFloatMode EngineeringMode =
     Poincare::Preferences::PrintFloatMode::Engineering;
 
+// Default context is realCtx
+constexpr Poincare::Internal::ProjectionContext realCtx = {
+    .m_complexFormat = Poincare::Internal::ComplexFormat::Real};
+
+constexpr Poincare::Internal::ProjectionContext cartesianCtx = {
+    .m_complexFormat = Poincare::Internal::ComplexFormat::Cartesian};
+constexpr Poincare::Internal::ProjectionContext polarCtx = {
+    .m_complexFormat = Poincare::Internal::ComplexFormat::Polar};
+
+constexpr Poincare::Internal::ProjectionContext degreeCtx = {
+    .m_angleUnit = Poincare::Internal::AngleUnit::Degree};
+constexpr Poincare::Internal::ProjectionContext gradianCtx = {
+    .m_angleUnit = Poincare::Internal::AngleUnit::Gradian};
+
+constexpr Poincare::Internal::ProjectionContext degreeCartesianCtx = {
+    .m_complexFormat = Poincare::Internal::ComplexFormat::Cartesian,
+    .m_angleUnit = Poincare::Internal::AngleUnit::Degree};
+constexpr Poincare::Internal::ProjectionContext gradianCartesianCtx = {
+    .m_complexFormat = Poincare::Internal::ComplexFormat::Cartesian,
+    .m_angleUnit = Poincare::Internal::AngleUnit::Gradian};
+
+constexpr Poincare::Internal::ProjectionContext keepAllSymbolsCtx = {
+    .m_symbolic = Poincare::SymbolicComputation::KeepAllSymbols,
+};
+
 typedef void (*ProcessTree)(
     Poincare::Internal::Tree*,
     Poincare::Internal::ProjectionContext projectionContext);

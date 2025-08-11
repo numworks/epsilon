@@ -202,11 +202,11 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
     *slope = NAN;
     *intercept = NAN;
   } else {
-    *intercept = coefficients[0].approximateToRealScalar<double>();
+    *intercept = coefficients[0].approximateSystemToRealScalar<double>();
     if (d == 0) {
       *slope = 0.0;
     } else {
-      *slope = coefficients[1].approximateToRealScalar<double>();
+      *slope = coefficients[1].approximateSystemToRealScalar<double>();
     }
   }
 }

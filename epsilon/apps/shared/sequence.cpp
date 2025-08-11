@@ -231,7 +231,7 @@ double Sequence::approximateAtContextRank(Context* ctx, int rank,
     assert(type() == Type::DoubleRecurrence);
     e = secondInitialConditionExpressionReduced(ctx);
   }
-  return e.approximateToRealScalar<double>();
+  return e.approximateSystemToRealScalar<double>();
 }
 
 double Sequence::sumBetweenBoundsValue(double start, double end,

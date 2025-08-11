@@ -156,10 +156,6 @@ class Expression : public PoolHandle {
     return static_cast<ExpressionObject*>(PoolHandle::object());
   }
   static Expression ExpressionFromAddress(const void* address, size_t size);
-  Expression cloneChildAtIndex(int i) const;
-  static Expression Builder(const Internal::Tree* tree);
-  // Eat the tree
-  static Expression Builder(Internal::Tree* tree);
 };
 
 // UserExpression can be layoutted and have not been projected

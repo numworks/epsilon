@@ -175,13 +175,13 @@ const Tree* Expression::TreeFromAddress(const void* address) {
   return reinterpret_cast<const ExpressionObject*>(address)->tree();
 }
 
-UserExpression Expression::Parse(const Tree* layout, const Context& context,
-                                 ParserHelper::ParsingParameters params) {
+UserExpression UserExpression::Parse(const Tree* layout, const Context& context,
+                                     ParserHelper::ParsingParameters params) {
   return UserExpression::Builder(Parser::Parse(layout, context, params));
 }
 
-UserExpression Expression::Parse(const char* string, const Context& context,
-                                 ParserHelper::ParsingParameters params) {
+UserExpression UserExpression::Parse(const char* string, const Context& context,
+                                     ParserHelper::ParsingParameters params) {
   if (string[0] == 0) {
     return UserExpression();
   }
@@ -194,8 +194,9 @@ UserExpression Expression::Parse(const char* string, const Context& context,
   return result;
 }
 
-UserExpression Expression::ParseLatex(const char* latex, const Context& context,
-                                      ParserHelper::ParsingParameters params) {
+UserExpression UserExpression::ParseLatex(
+    const char* latex, const Context& context,
+    ParserHelper::ParsingParameters params) {
   Tree* layout = LatexParser::LatexToLayout(latex);
   if (!layout) {
     return UserExpression();
@@ -205,21 +206,21 @@ UserExpression Expression::ParseLatex(const char* latex, const Context& context,
   return result;
 }
 
-UserExpression Expression::Create(const Tree* structure,
-                                  ContextTrees ctxTrees) {
+UserExpression UserExpression::Create(const Tree* structure,
+                                      ContextTrees ctxTrees) {
   /* Since we build a [NoScopeContext], it is expected that the trees of [ctx]
    * come from UserExpression */
   return UserExpression::Builder(PatternMatching::Create(
       structure, PatternMatching::Context::NoScopeContext(ctxTrees)));
 }
 
-SystemExpression Expression::CreateReduce(const Tree* structure,
-                                          ContextTrees ctx) {
+SystemExpression SystemExpression::CreateReduce(const Tree* structure,
+                                                ContextTrees ctx) {
   Tree* tree = PatternMatching::CreateReduce(structure, ctx);
   return SystemExpression::Builder(tree);
 }
 
-SystemExpression Expression::CreateIntegralOfAbsOfDifference(
+SystemExpression SystemExpression::CreateIntegralOfAbsOfDifference(
     SystemExpression lowerBound, SystemExpression upperBound,
     SystemExpression integrandA, SystemExpression integrandB) {
   Tree* integrand = PatternMatching::CreateReduce(

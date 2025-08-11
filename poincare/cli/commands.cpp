@@ -27,22 +27,23 @@ Internal::ProjectionContext context() {
 UserExpression getExpression(const std::vector<std::string>& args) {
   if (args.size() != 1) {
     std::cerr << "This command expects an expression tree\n";
-    return Expression::Undefined();
+    return UserExpression::Undefined();
   }
-  UserExpression e = Expression::Parse(args[0].c_str(), &s_historyContext);
+  UserExpression e = UserExpression::Parse(args[0].c_str(), &s_historyContext);
   if (e.isUninitialized()) {
     std::cerr << "Syntax error\n";
-    return Expression::Undefined();
+    return UserExpression::Expression::Undefined();
   }
   return e;
 }
 
-void printExpression(const UserExpression& expr) {
+void printExpression(const Expression& expr) {
   if (s_isInteractive) {
     int id = s_historyContext.addOutput(expr);
     std::cout << "o" << id << " = ";
   }
   char buffer[65536];
+  // TODO: expr could be of any subType.
   expr.serialize(buffer);
   std::cout << buffer << std::endl;
 }
@@ -55,7 +56,7 @@ void expandCommand(const std::vector<std::string>& args) {
   Internal::Simplification::ToSystem(p, &ctx);
   Internal::SystematicReduction::DeepReduce(p);
   Internal::AdvancedReduction::DeepExpand(p);
-  Expression r = Expression::Builder(p);
+  SystemExpression r = SystemExpression::Builder(p);
   printExpression(r);
 }
 

@@ -39,7 +39,7 @@ bool ExpressionParameterController::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
   const char* text = textField->draftText();
   UserExpression parsedExpression =
-      Expression::Parse(text, *App::app()->localContext());
+      UserExpression::Parse(text, *App::app()->localContext());
   if (!parsedExpression.isUninitialized() &&
       !Poincare::Dimension(parsedExpression).isScalar()) {
     App::app()->displayWarning(I18n::Message::UndefinedValue);

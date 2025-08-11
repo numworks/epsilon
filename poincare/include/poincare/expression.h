@@ -20,7 +20,7 @@
 namespace Poincare::Internal {
 class Tree;
 struct ContextTrees;
-// TODO_PCJ: Expose ProjectionContext
+// TODO: Expose ProjectionContext
 struct ProjectionContext;
 }  // namespace Poincare::Internal
 
@@ -31,7 +31,7 @@ class UserExpression;
 class SystemExpression;
 class PreparedFunction;
 
-/* Aliases used to specify a Expression's type. TODO_PCJ: split them into
+/* Aliases used to specify a Expression's type. TODO: split them into
  * actual classes to prevent casting one into another. */
 // PreparedFunction with Scalar approximation
 using PreparedFunctionScalar = PreparedFunction;
@@ -82,7 +82,6 @@ class ExpressionObject final : public PoolObject {
 #endif
 
  private:
-  // PCJ
   const Internal::Tree* tree() const;
 
   Internal::Block m_blocks[0];

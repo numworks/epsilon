@@ -3,7 +3,6 @@
 #include <apps/exam_mode_manager.h>
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
-#include <apps/math_preferences.h>
 #include <assert.h>
 #include <ion/authentication.h>
 
@@ -89,8 +88,7 @@ MainController::MainController(Responder* parentResponder)
 }
 
 bool MainController::handleEvent(Ion::Events::Event event) {
-  GlobalPreferences* globalPreferences =
-      GlobalPreferences::SharedGlobalPreferences();
+  GlobalPreferences* preferences = GlobalPreferences::SharedGlobalPreferences();
   int index = selectedRow();
   int type = typeAtRow(index);
   if (type == k_resetCellType) {
@@ -105,15 +103,15 @@ bool MainController::handleEvent(Ion::Events::Event event) {
   }
 
   if (type == k_popUpCellType) {
-    globalPreferences->setShowPopUp(!globalPreferences->showPopUp());
+    preferences->setShowPopUp(!preferences->showPopUp());
     m_selectableListView.reloadSelectedCell();
   } else if (type == k_brightnessCellType) {
     int delta = Ion::Backlight::MaxBrightness /
                 GlobalPreferences::NumberOfBrightnessStates;
     assert(GaugeView::DirectionForEvent(event) != 0);
-    globalPreferences->setBrightnessLevel(globalPreferences->brightnessLevel() +
-                                          GaugeView::DirectionForEvent(event) *
-                                              delta);
+    preferences->setBrightnessLevel(preferences->brightnessLevel() +
+                                    GaugeView::DirectionForEvent(event) *
+                                        delta);
     m_selectableListView.reloadSelectedCell();
   } else {
     assert(type == k_defaultCellType);
@@ -206,12 +204,11 @@ int MainController::typeAtRow(int row) const {
 void MainController::fillCellForRow(HighlightCell* cell, int row) {
   /* TODO: each child controller (m_preferencesController,
    * m_displayModeController...) should be responsible for getting the current
-   * value from GlobalPreferences or MathPreferences::SharedPreferences(). This
-   * would make the code more modular and thus clearer. */
+   * value from GlobalPreferences. This would make the code more modular and
+   * thus clearer. */
 
-  const GlobalPreferences* globalPreferences =
+  const GlobalPreferences* preferences =
       GlobalPreferences::SharedGlobalPreferences();
-  const MathPreferences* preferences = MathPreferences::SharedPreferences();
   int modelIndex = getModelIndex(row);
   I18n::Message title = model()->childAtIndex(modelIndex)->label();
   int type = typeAtRow(row);
@@ -219,7 +216,7 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
     assert(&m_brightnessCell == cell);
     m_brightnessCell.label()->setMessage(title);
     m_brightnessCell.accessory()->setLevel(
-        (float)globalPreferences->brightnessLevel() /
+        (float)preferences->brightnessLevel() /
         (float)Ion::Backlight::MaxBrightness);
     return;
   }
@@ -231,7 +228,7 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
       ->setMessage(title);
   if (type == k_popUpCellType) {
     assert(cell == &m_popUpCell);
-    m_popUpCell.accessory()->setState(globalPreferences->showPopUp());
+    m_popUpCell.accessory()->setState(preferences->showPopUp());
     return;
   }
   assert(type == k_defaultCellType);
@@ -240,13 +237,13 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
    * case that appears right after. */
   I18n::Message message = messageAtModelIndex(modelIndex);
   if (message == I18n::Message::Language) {
-    int languageIndex = (int)(globalPreferences->language());
+    int languageIndex = (int)(preferences->language());
     static_cast<SubMenuCell*>(cell)->subLabel()->setMessage(
         I18n::LanguageNames[languageIndex]);
     return;
   }
   if (message == I18n::Message::Country) {
-    int countryIndex = (int)(globalPreferences->country());
+    int countryIndex = (int)(preferences->country());
     static_cast<SubMenuCell*>(cell)->subLabel()->setMessage(
         I18n::CountryNames[countryIndex]);
     return;
@@ -261,21 +258,17 @@ void MainController::fillCellForRow(HighlightCell* cell, int row) {
       childIndex = (int)preferences->displayMode();
       break;
     case I18n::Message::EditionMode:
-      childIndex =
-          (int)GlobalPreferences::SharedGlobalPreferences()->editionMode();
+      childIndex = (int)preferences->editionMode();
       break;
     case I18n::Message::ComplexFormat:
       childIndex = (int)preferences->complexFormat();
       break;
     case I18n::Message::ScreenTimeout:
-      childIndex = ScreenTimeoutController::toRowLabel(
-          GlobalPreferences::SharedGlobalPreferences()->dimmingTime());
+      childIndex =
+          ScreenTimeoutController::toRowLabel(preferences->dimmingTime());
       break;
     case I18n::Message::FontSizes:
-      childIndex = GlobalPreferences::SharedGlobalPreferences()->font() ==
-                           KDFont::Size::Large
-                       ? 0
-                       : 1;
+      childIndex = preferences->font() == KDFont::Size::Large ? 0 : 1;
       break;
     default:
       childIndex = -1;

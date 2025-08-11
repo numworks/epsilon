@@ -6,11 +6,11 @@
 #include <poincare/old/dependency.h>
 #include <poincare/old/derivative.h>
 #include <poincare/old/piecewise_operator.h>
-#include <poincare/old/pool_variable_context.h>
 #include <poincare/old/serialization_helper.h>
 #include <poincare/old/simplification_helper.h>
 #include <poincare/old/symbol.h>
 #include <poincare/old/undefined.h>
+#include <poincare/pool_variable_context.h>
 
 namespace Poincare {
 

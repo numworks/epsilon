@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <omg/utf8_decoder.h>
 #include <poincare/old/parametered_expression.h>
-#include <poincare/old/pool_variable_context.h>
 #include <poincare/old/symbol.h>
+#include <poincare/pool_variable_context.h>
 #include <string.h>
 
 #include "parsing/tokenizer.h"

@@ -226,7 +226,6 @@ _sources_poincare_test := $(addprefix test/, \
   old/print.cpp \
   old/print_float.cpp \
   old/range.cpp \
-  old/rational.cpp \
   old/regularized_function.cpp \
   old/simplification.cpp \
   old/tree/helpers.cpp \

@@ -11,6 +11,40 @@
 using namespace Poincare;
 using namespace Poincare::Internal;
 
+static inline void assert_equal(const Tree* e1, const Tree* e2) {
+  quiz_assert(Rational::Compare(e1, e2) == 0);
+}
+
+static inline void assert_not_equal(const Tree* e1, const Tree* e2) {
+  quiz_assert(Rational::Compare(e1, e2) != 0);
+}
+
+static inline void assert_lower(const Tree* e1, const Tree* e2) {
+  quiz_assert(Rational::Compare(e1, e2) < 0);
+}
+
+static inline void assert_greater(const Tree* e1, const Tree* e2) {
+  quiz_assert(Rational::Compare(e1, e2) > 0);
+}
+
+QUIZ_CASE(pcj_rational_order) {
+  Tree* e1 = Rational::Push(123_e, 324_e);
+  Tree* e2 = Rational::Push(41_e, 108_e);
+  assert_equal(e1, e2);
+  Tree* e3 = Rational::Push(123_e, 234_e);
+  Tree* e4 = Rational::Push(42_e, 108_e);
+  assert_not_equal(e3, e4);
+  Tree* e5 = Rational::Push(456_e, 567_e);
+  assert_lower(e3, e5);
+  Tree* e6 = Rational::Push(-123_e, 234_e);
+  assert_lower(e6, e5);
+  Tree* e7 = Rational::Push(-456_e, 567_e);
+  assert_greater(e3, e7);
+  Tree* i = parse("12345678912345678910");
+  Tree* e8 = Rational::Push(123456789123456789_e, i);
+  assert_greater(e3, e8);
+}
+
 static bool integer_handler_same_absolute_value(IntegerHandler a,
                                                 IntegerHandler b) {
   a.setSign(NonStrictSign::Positive);
@@ -164,6 +198,12 @@ QUIZ_CASE(pcj_rational_addition) {
   assert_operation(1237_e, 5257_e, -3_e, 4_e, Rational::Addition, -10823_e,
                    21028_e);
   assert_operation(1_e, 2_e, 1_e, 4_e, 2_e, 8_e, Rational::Addition, 1_e, 1_e);
+  assert_operation(1_e, 2_e, 1_e, 1_e, Rational::Addition, 3_e, 2_e);
+  Tree* i = parse("18446744073709551616");
+  assert_operation(i, 4294967296_e, 8_e, 9_e, Rational::Addition, 38654705672_e,
+                   9_e);
+  assert_operation(i, 4294967296_e, -8_e, 9_e, Rational::Addition,
+                   38654705656_e, 9_e);
 }
 
 QUIZ_CASE(pcj_rational_multiplication) {
@@ -179,6 +219,8 @@ QUIZ_CASE(pcj_rational_integer_power) {
   assert_operation(1_e, 2_e, 10_e, 1_e, Rational::IntegerPower, 1_e, 1024_e);
   assert_operation(7123_e, 3_e, 2_e, 1_e, Rational::IntegerPower, 50737129_e,
                    9_e);
+  assert_operation(4_e, 5_e, 3_e, 1_e, Rational::IntegerPower, 64_e, 125_e);
+  assert_operation(4_e, 5_e, -3_e, 1_e, Rational::IntegerPower, 125_e, 64_e);
 }
 
 static const Tree* GetMixedFractionTree(const Tree* rational,

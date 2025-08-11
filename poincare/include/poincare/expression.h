@@ -177,11 +177,6 @@ class Expression : public PoolHandle {
   bool deepIsOfType(std::initializer_list<Internal::AnyType> types,
                     Context* context = nullptr) const;
 
-  ExpressionObject* object() const {
-    assert(identifier() != PoolObject::NoObjectIdentifier);
-    return static_cast<ExpressionObject*>(PoolHandle::object());
-  }
-
   /* Only on UserExpression. Expressions in parameters are outputs. The return
    * boolean indicates the reduction status (success or failure) */
   bool cloneAndSimplifyAndApproximate(
@@ -418,6 +413,10 @@ class Expression : public PoolHandle {
   Expression privateCloneAndReduceOrSimplify(
       const Internal::ProjectionContext& context, bool beautify,
       bool* reductionFailure = nullptr) const;
+  ExpressionObject* object() const {
+    assert(identifier() != PoolObject::NoObjectIdentifier);
+    return static_cast<ExpressionObject*>(PoolHandle::object());
+  }
 };
 
 class Infinity {

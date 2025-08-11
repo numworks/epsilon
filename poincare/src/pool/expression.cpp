@@ -448,7 +448,7 @@ UserExpression SystemExpression::cloneAndBeautify(
   Tree* e = tree()->cloneTree();
   context.m_dimension = Internal::Dimension::Get(e);
   Simplification::BeautifyReduced(e, &context);
-  return Builder(e);
+  return UserExpression::Builder(e);
 }
 
 /* If reductionFailure is true, skip simplification. TODO: Like similar methods,

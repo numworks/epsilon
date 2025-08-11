@@ -4,6 +4,7 @@
 #include <poincare/expression.h>
 #include <poincare/src/expression/continuity.h>
 #include <poincare/src/expression/dimension.h>
+#include <poincare/src/expression/infinity.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/variables.h>
 
@@ -177,19 +178,16 @@ void assert_projected_is_infinity(const char* input, ProjectionContext* projCtx,
                                   bool isInfinity = true) {
   Tree* e = parse(input, projCtx->m_context);
   Simplification::ToSystem(e, projCtx);
-  SystemExpression expr = SystemExpression::Builder(e);
-  quiz_assert_print_if_failure(
-      expr.recursivelyMatches(&SystemExpression::isPlusOrMinusInfinity,
-                              // NOTE: const_cast is temporary
-                              &const_cast<Context&>(projCtx->m_context)) ==
-          isInfinity,
-      input);
+  quiz_assert_print_if_failure(e->hasDescendantSatisfying([](const Tree* e) {
+    return Internal::Infinity::IsPlusOrMinusInfinity(e);
+  }) == isInfinity,
+                               input);
 }
 
 QUIZ_CASE(poincare_properties_is_infinity) {
   Shared::GlobalContext globalContext;
   ProjectionContext projCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceDefinedFunctions,
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = globalContext,
   };
   assert_projected_is_infinity("3.4+inf", &projCtx);
@@ -467,17 +465,13 @@ QUIZ_CASE(poincare_properties_is_continuous) {
 
 void assert_reduced_deep_is_symbolic(const char* input,
                                      bool isSymbolic = true) {
-  UserExpression e1 = UserExpression::Builder(parse(input));
   bool reductionFailure = false;
-  SystemExpression e2 =
-      e1.cloneAndReduce(ProjectionContext{}, &reductionFailure);
+  SystemExpression reducedExpression =
+      UserExpression::Builder(parse(input))
+          .cloneAndReduce(ProjectionContext{}, &reductionFailure);
   quiz_assert(!reductionFailure);
-  Shared::GlobalContext context;
   quiz_assert_print_if_failure(
-      e2.deepIsOfType(
-          {Type::UserSymbol, Type::UserFunction, Type::UserSequence},
-          &context) == isSymbolic,
-      input);
+      Variables::HasUserSymbols(reducedExpression.tree()) == isSymbolic, input);
 }
 
 QUIZ_CASE(poincare_properties_deep_is_symbolic) {

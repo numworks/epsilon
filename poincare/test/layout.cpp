@@ -2,6 +2,7 @@
 #include <omg/unicode_helper.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
+#include <poincare/layout.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/units/k_units.h>
 #include <poincare/src/layout/grid.h>

@@ -5,8 +5,8 @@
 #include <poincare/comparison_operator.h>
 #include <poincare/context.h>
 #include <poincare/helpers/parser.h>
-#include <poincare/layout.h>
 #include <poincare/point_or_scalar.h>
+#include <poincare/pool_handle.h>
 #include <poincare/pool_object.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
@@ -26,6 +26,7 @@ struct ProjectionContext;
 
 namespace Poincare {
 
+class Layout;
 class Expression;
 class UserExpression;
 class SystemExpression;

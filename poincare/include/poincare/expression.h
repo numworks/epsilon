@@ -132,50 +132,6 @@ class Expression : public PoolHandle {
   }
   int numberOfDescendants(bool includeSelf) const;
 
-  // The following two methods should be moved out of Expression's public
-  // API.
-  bool isOfType(std::initializer_list<Internal::AnyType> types) const;
-  bool deepIsOfType(std::initializer_list<Internal::AnyType> types,
-                    Context* context = nullptr) const;
-
-  typedef OMG::Troolean (*ExpressionTrinaryTest)(const Expression e,
-                                                 Context* context,
-                                                 void* auxiliary);
-  struct IgnoredSymbols {
-    Expression* head;
-    void* tail;
-  };
-  bool recursivelyMatches(ExpressionTrinaryTest test,
-                          Context* context = nullptr,
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols,
-                          void* auxiliary = nullptr,
-                          IgnoredSymbols* ignoredSymbols = nullptr) const;
-
-  typedef bool (*ExpressionTest)(const Expression e, Context* context);
-  bool recursivelyMatches(ExpressionTest test, Context* context = nullptr,
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols) const;
-
-  typedef bool (*SimpleExpressionTest)(const Expression e);
-  bool recursivelyMatches(SimpleExpressionTest test, Context* context = nullptr,
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols) const;
-
-  typedef bool (Expression::*NonStaticSimpleExpressionTest)() const;
-  bool recursivelyMatches(NonStaticSimpleExpressionTest test,
-                          Context* context = nullptr,
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols) const;
-
-  typedef bool (*ExpressionTestAuxiliary)(const Expression e, Context* context,
-                                          void* auxiliary);
-  bool recursivelyMatches(ExpressionTestAuxiliary test,
-                          Context* context = nullptr,
-                          SymbolicComputation replaceSymbols =
-                              SymbolicComputation::ReplaceDefinedSymbols,
-                          void* auxiliary = nullptr) const;
-
   Dimension dimension(Context* context = nullptr) const;
 
   // Simple bool properties
@@ -358,6 +314,50 @@ class UserExpression : public Expression {
 
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
                bool replaceSymbols = false, Context* ctx = nullptr) const;
+
+  typedef OMG::Troolean (*ExpressionTrinaryTest)(const UserExpression e,
+                                                 Context* context,
+                                                 void* auxiliary);
+  struct IgnoredSymbols {
+    UserExpression* head;
+    void* tail;
+  };
+  bool recursivelyMatches(ExpressionTrinaryTest test,
+                          Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols,
+                          void* auxiliary = nullptr,
+                          IgnoredSymbols* ignoredSymbols = nullptr) const;
+
+  typedef bool (*ExpressionTest)(const UserExpression e, Context* context);
+  bool recursivelyMatches(ExpressionTest test, Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols) const;
+
+  typedef bool (*SimpleExpressionTest)(const UserExpression e);
+  bool recursivelyMatches(SimpleExpressionTest test, Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols) const;
+
+  typedef bool (UserExpression::*NonStaticSimpleExpressionTest)() const;
+  bool recursivelyMatches(NonStaticSimpleExpressionTest test,
+                          Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols) const;
+
+  typedef bool (*ExpressionTestAuxiliary)(const UserExpression e,
+                                          Context* context, void* auxiliary);
+  bool recursivelyMatches(ExpressionTestAuxiliary test,
+                          Context* context = nullptr,
+                          SymbolicComputation replaceSymbols =
+                              SymbolicComputation::ReplaceDefinedSymbols,
+                          void* auxiliary = nullptr) const;
+
+  // The following two methods should be moved out of Expression's public
+  // API.
+  bool isOfType(std::initializer_list<Internal::AnyType> types) const;
+  bool deepIsOfType(std::initializer_list<Internal::AnyType> types,
+                    Context* context = nullptr) const;
 
  private:
   UserExpression privateCloneAndSimplify(

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <assert.h>
-#include <poincare/src/memory/tree_stack.h>
 #include <setjmp.h>
 
 #include "block.h"

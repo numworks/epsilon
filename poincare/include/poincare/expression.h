@@ -301,45 +301,50 @@ class UserExpression : public Expression {
       const Context& context) const;
   bool isParsedNumber() const;
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
-               bool replaceSymbols = false, Context* ctx = nullptr) const;
+               bool replaceSymbols = false,
+               const Context& ctx = EmptyContext{}) const;
 
   /* TODO: The following two methods should be made private or deleted to hide
    *       Internal node types. */
   bool isOfType(std::initializer_list<Internal::AnyType> types) const;
   bool deepIsOfType(std::initializer_list<Internal::AnyType> types,
-                    Context* context = nullptr) const;
+                    const Context& context = EmptyContext{}) const;
 
   /* recursivelyMatches */
 
   typedef OMG::Troolean (*UserExpressionTrinaryTest)(const UserExpression e,
-                                                     Context* context,
+                                                     const Context& context,
                                                      void* auxiliary);
   bool recursivelyMatches(UserExpressionTrinaryTest test,
-                          Context* context = nullptr,
+                          const Context& context = EmptyContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols,
                           void* auxiliary = nullptr) const;
 
-  typedef bool (*ExpressionTest)(const UserExpression e, Context* context);
-  bool recursivelyMatches(ExpressionTest test, Context* context = nullptr,
+  typedef bool (*ExpressionTest)(const UserExpression e,
+                                 const Context& context);
+  bool recursivelyMatches(ExpressionTest test,
+                          const Context& context = EmptyContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (*SimpleExpressionTest)(const UserExpression e);
-  bool recursivelyMatches(SimpleExpressionTest test, Context* context = nullptr,
+  bool recursivelyMatches(SimpleExpressionTest test,
+                          const Context& context = EmptyContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (UserExpression::*NonStaticSimpleExpressionTest)() const;
   bool recursivelyMatches(NonStaticSimpleExpressionTest test,
-                          Context* context = nullptr,
+                          const Context& context = EmptyContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols) const;
 
   typedef bool (*ExpressionTestAuxiliary)(const UserExpression e,
-                                          Context* context, void* auxiliary);
+                                          const Context& context,
+                                          void* auxiliary);
   bool recursivelyMatches(ExpressionTestAuxiliary test,
-                          Context* context = nullptr,
+                          const Context& context = EmptyContext{},
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols,
                           void* auxiliary = nullptr) const;
@@ -351,7 +356,8 @@ class UserExpression : public Expression {
   };
   static bool IsIgnoredSymbol(const UserExpression* e,
                               UserExpression::IgnoredSymbols* ignoredSymbols);
-  bool recursivelyMatches(UserExpressionTrinaryTest test, Context* context,
+  bool recursivelyMatches(UserExpressionTrinaryTest test,
+                          const Context& context,
                           SymbolicComputation replaceSymbols, void* auxiliary,
                           IgnoredSymbols* ignoredSymbols) const;
 

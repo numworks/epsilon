@@ -124,7 +124,7 @@ void assert_expression_has_property_or_not(const char* input, T test,
   UserExpression e = UserExpression::Builder(parse(input));
   Shared::GlobalContext context;
   quiz_assert_print_if_failure(
-      e.recursivelyMatches(test, &context) == hasProperty, input);
+      e.recursivelyMatches(test, context) == hasProperty, input);
 }
 
 template <typename T>

@@ -267,10 +267,11 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
                                           *context)) {
     return ApproximateOnly;
   }
+  assert(context);
   if (input.isIdenticalTo(exactOutput) ||
-      input.recursivelyMatches(&Expression::isApproximate, context) ||
-      exactOutput.recursivelyMatches(&Expression::isApproximate, context) ||
-      input.recursivelyMatches(&Expression::isPercent, context)) {
+      input.recursivelyMatches(&Expression::isApproximate, *context) ||
+      exactOutput.recursivelyMatches(&Expression::isApproximate, *context) ||
+      input.recursivelyMatches(&Expression::isPercent, *context)) {
     return ExactAndApproximateToggle;
   }
   return ExactAndApproximate;

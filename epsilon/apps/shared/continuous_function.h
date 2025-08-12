@@ -41,8 +41,7 @@ class ContinuousFunction : public Function {
   ContinuousFunctionProperties properties() const {
     return m_model.properties(this);
   }
-  Ion::Storage::Record::ErrorStatus updateNameIfNeeded(
-      Poincare::Context* context);
+  Ion::Storage::Record::ErrorStatus updateNameIfNeeded();
 
   /* Function */
 
@@ -122,7 +121,7 @@ class ContinuousFunction : public Function {
     return m_model.originalEquation(this, symbol());
   }
   // Update plotType as well as tMin and tMax values.
-  void updateModel(Poincare::Context* context, bool wasCartesian);
+  void updateModel(bool wasCartesian);
   Poincare::PreparedFunction expressionApproximated(
       Poincare::Context* context, int derivationOrder = 0) const {
     return m_model.expressionApproximated(this, context, derivationOrder);
@@ -413,7 +412,7 @@ class ContinuousFunction : public Function {
         const Ion::Storage::Record* record, Poincare::Context* context) const;
     // Rename the record if needed. Record pointer might get corrupted.
     Ion::Storage::Record::ErrorStatus renameRecordIfNeeded(
-        Ion::Storage::Record* record, Poincare::Context* context) const;
+        Ion::Storage::Record* record) const;
     // Build the expression from layout, handling f(x)=... cartesian equations
     Poincare::UserExpression buildExpressionFromLayout(
         Poincare::Layout l, CodePoint symbol = 0,

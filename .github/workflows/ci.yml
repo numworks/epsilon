@@ -139,8 +139,8 @@ jobs:
         with:
           sdk: ${{ env.EMSDK_VERSION }}
       - run: tools/setup.sh --only-simulator
-      - run: make -C epsilon PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html test.js
-      - run: node epsilon/output/debug/optimized/web/test.js --headless --limit-stack-usage
+      - run: make -C epsilon PLATFORM=simulator TARGET=web ASSERTIONS=1 epsilon.html epsilon_test.js
+      - run: node epsilon/output/debug/optimized/web/epsilon_test.js --headless --limit-stack-usage
         timeout-minutes: 5
       - uses: actions/upload-artifact@v4
         with:

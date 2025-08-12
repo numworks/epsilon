@@ -54,6 +54,7 @@ class Store {
 
   void deleteElementAtIndex(int index);
   void deleteAll() { m_numberOfElements = 0; }
+  void makeElementLast(int index, char* workBuffer);
 
  protected:
   char* endOfElements() const {

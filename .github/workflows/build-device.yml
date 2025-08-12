@@ -18,6 +18,8 @@ jobs:
         uses: numworks/setup-arm-toolchain@latest
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Check for core
+        run: '[[ -e shared/ion/src/device/core ]]'
       - name: Setup
         run: tools/setup.sh
       # Not using matrix strategy to avoid multiplying setups and uploads.

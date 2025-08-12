@@ -166,16 +166,18 @@ bool Sequence::isEmpty() const {
                                       data->initialConditionSize(1) == 0)));
 }
 
-bool Sequence::isSuitableForCobweb(Context* context) const {
+bool Sequence::isSuitableForCobweb(const Context& context) const {
   return type() == Type::SingleRecurrence &&
          !std::isnan(approximateAtRank(
              initialRank(),
-             reinterpret_cast<SequenceContext*>(context)->cache(), context)) &&
+             reinterpret_cast<const SequenceContext&>(context).cache(),
+             // NOTE: const_cast is temporary
+             &const_cast<Context&>(context))) &&
          !mainExpressionContainsForbiddenTerms(context, true, false, false);
 }
 
 bool Sequence::mainExpressionContainsForbiddenTerms(
-    Context* context, bool recursionIsAllowed, bool systemSymbolIsAllowed,
+    const Context& context, bool recursionIsAllowed, bool systemSymbolIsAllowed,
     bool otherSequencesAreAllowed) const {
   constexpr size_t bufferSize = SequenceStore::k_maxSequenceNameLength + 1;
   char buffer[bufferSize];

@@ -830,28 +830,28 @@ QUIZ_CASE(sequence_suitable_for_cobweb) {
   SequenceContext* sequenceContext = globalContext.sequenceContext();
   quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,
                           "3(u(n)+2)+u(n)", "0", nullptr, sequenceContext)
-                  ->isSuitableForCobweb(sequenceContext));
+                  ->isSuitableForCobweb(*sequenceContext));
   store->removeAll();
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "v(n)+2",
                            "0", nullptr, sequenceContext)
-                   ->isSuitableForCobweb(sequenceContext));
+                   ->isSuitableForCobweb(*sequenceContext));
   store->removeAll();
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence,
                            "u(n)+cos(n)", "0", nullptr, sequenceContext)
-                   ->isSuitableForCobweb(sequenceContext));
+                   ->isSuitableForCobweb(*sequenceContext));
   store->removeAll();
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence, "2*u(n-2)",
                            "0", nullptr, sequenceContext)
-                   ->isSuitableForCobweb(sequenceContext));
+                   ->isSuitableForCobweb(*sequenceContext));
   store->removeAll();
   quiz_assert(addSequence(store, Sequence::Type::SingleRecurrence,
                           "2*u(n)+u(0)", "0", nullptr, sequenceContext)
-                  ->isSuitableForCobweb(sequenceContext));
+                  ->isSuitableForCobweb(*sequenceContext));
   store->removeAll();
   sequenceContext->resetCache();  // for computation of u(0)
   quiz_assert(!addSequence(store, Sequence::Type::SingleRecurrence,
                            "2*u(n)+u(0)", "n", nullptr, sequenceContext)
-                   ->isSuitableForCobweb(sequenceContext));
+                   ->isSuitableForCobweb(*sequenceContext));
   store->removeAll();
   store->tidyDownstreamPoolFrom();
 }

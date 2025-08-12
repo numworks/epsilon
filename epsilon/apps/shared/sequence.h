@@ -113,14 +113,18 @@ class Sequence : public Function {
    * - u(n+1) depends only on u(n) or u(i) and not on n, on another sequence or
    *   on another rank of u
    * - u(i) has a non NAN value */
-  bool isSuitableForCobweb(Poincare::Context* context) const;
+  bool isSuitableForCobweb(const Poincare::Context& context) const;
   /* Sequence u (with initial rank i) can be handled as explicit if main
    * expression does not contains forbidden terms:
    * - explicit: any term of u
    * - simple recurrence: any term of u other than u(i)
    * - double recurrence: any term of u other than u(i+1), u(i) */
   bool canBeHandledAsExplicit(Poincare::Context* context) const {
-    return !mainExpressionContainsForbiddenTerms(context, false, true, false);
+    // NOTE: temporary
+    return context ? !mainExpressionContainsForbiddenTerms(*context, false,
+                                                           true, false)
+                   : !mainExpressionContainsForbiddenTerms(
+                         Poincare::EmptyContext{}, false, true, false);
   }
   /* Sequence u (with initial rank i) is not computable if main expression
    * contains another sequence or forbidden terms:
@@ -128,7 +132,8 @@ class Sequence : public Function {
    * - simple recurrence: any term of u other than u(n), u(i)
    * - double recurrence: any term of u other than u(n+1), u(n), u(i+1), u(i) */
   bool mainExpressionIsNotComputable(Poincare::Context* context) const {
-    return mainExpressionContainsForbiddenTerms(context, true, true, true);
+    assert(context);
+    return mainExpressionContainsForbiddenTerms(*context, true, true, true);
   }
   int order() const { return static_cast<int>(type()); }
   int firstNonInitialRank() const { return initialRank() + order(); }
@@ -270,7 +275,7 @@ class Sequence : public Function {
   RecordDataBuffer* recordData() const;
 
   bool mainExpressionContainsForbiddenTerms(
-      Poincare::Context* context, bool recursionIsAllowed,
+      const Poincare::Context& context, bool recursionIsAllowed,
       bool systemSymbolIsAllowed, bool otherSequencesAreAllowed) const;
 
   DefinitionModel m_definition;

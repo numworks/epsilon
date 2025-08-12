@@ -36,7 +36,7 @@ void SequenceHelper::SetFirstRank(Layout l, uint8_t firstRank) {
 }
 
 bool SequenceHelper::MainExpressionContainsForbiddenTerms(
-    UserExpression e, Context* ctx, const char* name, Type type,
+    UserExpression e, const Context& ctx, const char* name, Type type,
     int initialRank, bool recursion, bool systemSymbol, bool otherSequences) {
   return Internal::Sequence::MainExpressionContainsForbiddenTerms(
       e.tree(), ctx, name, GetType(type), initialRank, recursion, systemSymbol,

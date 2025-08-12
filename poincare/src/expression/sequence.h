@@ -22,8 +22,8 @@ class Sequence {
                                         bool isFirstCondition = true);
 
   static bool MainExpressionContainsForbiddenTerms(
-      const Tree* e, Context* ctx, const char* name, Type type, int initialRank,
-      bool recursion, bool systemSymbol, bool otherSequences);
+      const Tree* e, const Context& ctx, const char* name, Type type,
+      int initialRank, bool recursion, bool systemSymbol, bool otherSequences);
 };
 
 }  // namespace Poincare::Internal

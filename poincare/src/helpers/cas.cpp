@@ -6,13 +6,13 @@ namespace Poincare {
 bool CAS::Enabled() { return Internal::CAS::Enabled(); }
 
 bool CAS::NeverDisplayReductionOfInput(const UserExpression& input,
-                                       Context* ctx) {
+                                       const Context& ctx) {
   return Internal::CAS::NeverDisplayReductionOfInput(input, ctx);
 }
 
 bool CAS::ShouldOnlyDisplayApproximation(
     const UserExpression& input, const UserExpression& exactOutput,
-    const UserExpression& approximateOutput, Context* ctx) {
+    const UserExpression& approximateOutput, const Context& ctx) {
   return Internal::CAS::ShouldOnlyDisplayApproximation(input, exactOutput,
                                                        approximateOutput, ctx);
 }

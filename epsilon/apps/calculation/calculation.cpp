@@ -255,6 +255,7 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
     UserExpression input, UserExpression exactOutput,
     UserExpression approximateOutput, Poincare::Context* context) {
   using enum Calculation::Calculation::DisplayOutput;
+  assert(context);
   if (input.isUninitialized() || exactOutput.isUninitialized() ||
       ShouldOnlyDisplayExactOutput(input) ||
       exactOutput.isUndefinedOrNonReal()) {
@@ -263,7 +264,7 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
   if (approximateOutput.isUndefinedOrNonReal() ||
       // Other conditions are factorized in CAS
       CAS::ShouldOnlyDisplayApproximation(input, exactOutput, approximateOutput,
-                                          context)) {
+                                          *context)) {
     return ApproximateOnly;
   }
   if (input.isIdenticalTo(exactOutput) ||

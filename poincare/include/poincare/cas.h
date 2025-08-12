@@ -12,10 +12,10 @@ class CAS {
   static bool Enabled();
 
   static bool NeverDisplayReductionOfInput(const UserExpression& input,
-                                           Context*);
+                                           const Context&);
   static bool ShouldOnlyDisplayApproximation(
       const UserExpression& input, const UserExpression& exactOutput,
-      const UserExpression& approximateOutput, Context*);
+      const UserExpression& approximateOutput, const Context&);
 };
 
 }  // namespace Poincare

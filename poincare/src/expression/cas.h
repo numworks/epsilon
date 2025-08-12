@@ -9,10 +9,11 @@ namespace Poincare::Internal {
 namespace CAS {
 bool Enabled();
 
-bool NeverDisplayReductionOfInput(const Tree* input, Context*);
+bool NeverDisplayReductionOfInput(const Tree* input, const Context&);
 
 bool ShouldOnlyDisplayApproximation(const Tree* input, const Tree* exactOutput,
-                                    const Tree* approximateOutput, Context*);
+                                    const Tree* approximateOutput,
+                                    const Context&);
 }  // namespace CAS
 
 }  // namespace Poincare::Internal

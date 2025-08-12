@@ -400,7 +400,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
      * non-beautified expression. */
     if (simplificationFailure || !m_exactValuesAreActivated ||
         CAS::ShouldOnlyDisplayApproximation(function->originalEquation(),
-                                            result, approximation, context)) {
+                                            result, approximation, *context)) {
       // Do not show exact expressions in certain cases, use approximate result
       result = approximation;
     }

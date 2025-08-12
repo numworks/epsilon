@@ -156,9 +156,7 @@ void ContinuousFunctionProperties::update(
    * user. We do not care (neither have) an approximate expression. Indeed we
    * only check display permissions for input expression.*/
   bool genericCaptionOnly = CAS::ShouldOnlyDisplayApproximation(
-      inputEquation, UserExpression(), UserExpression(),
-      // NOTE: const_cast is temporary
-      &const_cast<Context&>(context));
+      inputEquation, UserExpression(), UserExpression(), context);
 
   setHideDetails(genericCaptionOnly);
 

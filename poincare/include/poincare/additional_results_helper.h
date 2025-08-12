@@ -14,7 +14,7 @@ class AdditionalResultsHelper final {
    * and passed here as parameter. */
   typedef bool (*ShouldOnlyDisplayApproximation)(
       const UserExpression& input, const UserExpression& exactOutput,
-      const UserExpression& approximateOutput, Context* context);
+      const UserExpression& approximateOutput, const Context& context);
 
   struct TrigonometryResults {
     UserExpression exactAngle;

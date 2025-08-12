@@ -189,7 +189,8 @@ const Internal::Tree* GlobalContext::ExpressionForUserFunction(
 Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
     UserExpression& expression, const char* name,
     Ion::Storage::Record previousRecord) {
-  bool storeApproximation = CAS::NeverDisplayReductionOfInput(expression, this);
+  bool storeApproximation =
+      CAS::NeverDisplayReductionOfInput(expression, *this);
   Internal::ProjectionContext projectionContext =
       PoincareHelpers::ProjectionContextForPreferences(expression, *this);
   projectionContext.m_symbolic = SymbolicComputation::ReplaceAllSymbols;
@@ -200,7 +201,7 @@ Ion::Storage::Record::ErrorStatus GlobalContext::setExpressionForUserSymbol(
   // Do not store exact derivative, etc.
   if (reductionFailure || storeApproximation ||
       CAS::ShouldOnlyDisplayApproximation(
-          UserExpression(), simplifiedExpression, approximation, this)) {
+          UserExpression(), simplifiedExpression, approximation, *this)) {
     simplifiedExpression = approximation;
   }
   const char* extension;

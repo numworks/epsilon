@@ -168,6 +168,7 @@ class Expression : public PoolHandle {
 
  protected:
   static Expression ExpressionFromAddress(const void* address, size_t size);
+  static PoolHandle BuildPoolHandleFromTree(const Internal::Tree* tree);
 
  private:
   ExpressionObject* object() const {

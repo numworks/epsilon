@@ -48,7 +48,7 @@ class Sequence : public Function {
   // Aggregated layout
   Poincare::Layout aggregatedLayout();
   Ion::Storage::Record::ErrorStatus setLayoutsForAggregated(
-      Poincare::Layout l, Poincare::Context* ctx);
+      Poincare::Layout l, const Poincare::Context& ctx);
 
   // Definition
   Poincare::Layout definitionName() { return m_definition.name(this); }
@@ -60,7 +60,7 @@ class Sequence : public Function {
     return m_firstInitialCondition.text(this, buffer, bufferSize);
   }
   Poincare::SystemExpression firstInitialConditionExpressionReduced(
-      Poincare::Context* context) const {
+      const Poincare::Context& context) const {
     return m_firstInitialCondition.expressionReduced(this, context);
   }
   Poincare::UserExpression firstInitialConditionExpressionClone() const {
@@ -70,11 +70,9 @@ class Sequence : public Function {
     return m_firstInitialCondition.layout(this);
   }
   Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(
-      Poincare::Layout l, Poincare::Context* context) {
-    // NOTE: temporary until EmptyContext can be passed
-    return context ? m_firstInitialCondition.setContent(this, l, *context)
-                   : m_firstInitialCondition.setContent(
-                         this, l, Poincare::EmptyContext{});
+      Poincare::Layout l,
+      const Poincare::Context& context = Poincare::EmptyContext{}) {
+    return m_firstInitialCondition.setContent(this, l, context);
   }
   // Second initial condition
   Poincare::Layout secondInitialConditionName() {
@@ -84,7 +82,7 @@ class Sequence : public Function {
     return m_secondInitialCondition.text(this, buffer, bufferSize);
   }
   Poincare::SystemExpression secondInitialConditionExpressionReduced(
-      Poincare::Context* context) const {
+      const Poincare::Context& context) const {
     return m_secondInitialCondition.expressionReduced(this, context);
   }
   Poincare::UserExpression secondInitialConditionExpressionClone() const {
@@ -94,11 +92,9 @@ class Sequence : public Function {
     return m_secondInitialCondition.layout(this);
   }
   Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
-      Poincare::Layout l, Poincare::Context* context) {
-    // NOTE: temporary until EmptyContext can be passed
-    return context ? m_secondInitialCondition.setContent(this, l, *context)
-                   : m_secondInitialCondition.setContent(
-                         this, l, Poincare::EmptyContext{});
+      Poincare::Layout l,
+      const Poincare::Context& context = Poincare::EmptyContext{}) {
+    return m_secondInitialCondition.setContent(this, l, context);
   }
   void tidyDownstreamPoolFrom(
       const Poincare::PoolObject* treePoolCursor = nullptr) const override;
@@ -119,45 +115,41 @@ class Sequence : public Function {
    * - explicit: any term of u
    * - simple recurrence: any term of u other than u(i)
    * - double recurrence: any term of u other than u(i+1), u(i) */
-  bool canBeHandledAsExplicit(Poincare::Context* context) const {
-    // NOTE: temporary
-    return context ? !mainExpressionContainsForbiddenTerms(*context, false,
-                                                           true, false)
-                   : !mainExpressionContainsForbiddenTerms(
-                         Poincare::EmptyContext{}, false, true, false);
+  bool canBeHandledAsExplicit(const Poincare::Context& context) const {
+    return !mainExpressionContainsForbiddenTerms(context, false, true, false);
   }
   /* Sequence u (with initial rank i) is not computable if main expression
    * contains another sequence or forbidden terms:
    * - explicit: any term of u
    * - simple recurrence: any term of u other than u(n), u(i)
    * - double recurrence: any term of u other than u(n+1), u(n), u(i+1), u(i) */
-  bool mainExpressionIsNotComputable(Poincare::Context* context) const {
-    assert(context);
-    return mainExpressionContainsForbiddenTerms(*context, true, true, true);
+  bool mainExpressionIsNotComputable(const Poincare::Context& context) const {
+    return mainExpressionContainsForbiddenTerms(context, true, true, true);
   }
   int order() const { return static_cast<int>(type()); }
   int firstNonInitialRank() const { return initialRank() + order(); }
 
   // Approximation
   Poincare::Coordinate2D<float> evaluateXYAtParameter(
-      float x, Poincare::Context* context,
+      float x, const Poincare::Context& context,
       int subCurveIndex = 0) const override {
     return Poincare::Coordinate2D<float>(x, privateEvaluateYAtX(x, context));
   }
   Poincare::Coordinate2D<double> evaluateXYAtParameter(
-      double x, Poincare::Context* context,
+      double x, const Poincare::Context& context,
       int subCurveIndex = 0) const override {
     return Poincare::Coordinate2D<double>(x, privateEvaluateYAtX(x, context));
   }
-  double approximateAtContextRank(Poincare::Context* ctx, int rank,
+  double approximateAtContextRank(const Poincare::Context& ctx, int rank,
                                   bool intermediateComputation) const;
   double approximateAtRank(int rank, SequenceCache* sqctx,
                            Poincare::Context* ctx) const;
 
   double sumBetweenBoundsValue(double start, double end,
-                               Poincare::Context* context) const;
+                               const Poincare::Context& context) const;
   Poincare::SystemExpression sumBetweenBounds(
-      double start, double end, Poincare::Context* context) const override;
+      double start, double end,
+      const Poincare::Context& context) const override;
 
   // m_initialRank is capped by 255
   constexpr static int k_maxInitialRank = 255;
@@ -269,7 +261,7 @@ class Sequence : public Function {
   };
 
   template <typename T>
-  T privateEvaluateYAtX(T x, Poincare::Context* context) const;
+  T privateEvaluateYAtX(T x, const Poincare::Context& context) const;
   size_t metaDataSize() const override { return sizeof(RecordDataBuffer); }
   const ExpressionModel* model() const override { return &m_definition; }
   RecordDataBuffer* recordData() const;

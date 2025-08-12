@@ -37,10 +37,11 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
   assert(numberOfChar <= k_textBufferSize);
   numberOfChar += UTF8Helper::WriteCodePoint(
       buffer + numberOfChar, k_textBufferSize - numberOfChar, '=');
+  assert(context);
   numberOfChar += function->printFunctionValue(
       cursorT, cursorX, cursorY, buffer + numberOfChar,
       k_textBufferSize - numberOfChar,
-      numberOfSignificantDigits(cappedNumberOfSignificantDigits), context);
+      numberOfSignificantDigits(cappedNumberOfSignificantDigits), *context);
   assert(numberOfChar < k_textBufferSize - 1);
   buffer[numberOfChar++] = 0;
   bannerView()->ordinateView()->setText(buffer);

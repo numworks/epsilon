@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <omg/signaling_nan.h>
+#include <poincare/context.h>
 
 #include "sequence_store.h"
 
@@ -100,8 +101,9 @@ void SequenceCache::stepUntilRank(int sequenceIndex, int rank,
   const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
   assert(s->isDefined());
   assert(rank >= s->initialRank());
-  bool explicitComputation = rank >= s->firstNonInitialRank() &&
-                             s->canBeHandledAsExplicit(nullptr /* TODO this*/);
+  bool explicitComputation =
+      rank >= s->firstNonInitialRank() &&
+      s->canBeHandledAsExplicit(Poincare::EmptyContext{} /* TODO this*/);
   if (!explicitComputation && rank > k_maxRecurrentRank) {
     return;
   }
@@ -152,8 +154,9 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
     }
     const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
     assert(s->isDefined());
+    assert(ctx);
     *values = s->approximateAtContextRank(
-        ctx, rank(sequenceIndex, intermediateComputation),
+        *ctx, rank(sequenceIndex, intermediateComputation),
         intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
     // Store value in initial storage if rank is in the right range
@@ -201,8 +204,10 @@ bool SequenceCache::sequenceIsNotComputable(Poincare::Context* ctx,
                                             int sequenceIndex) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   if (m_sequenceIsNotComputable[sequenceIndex] == OMG::Troolean::Unknown) {
-    m_sequenceIsNotComputable[sequenceIndex] = OMG::BoolToTroolean(
-        sequenceAtNameIndex(sequenceIndex)->mainExpressionIsNotComputable(ctx));
+    assert(ctx);
+    m_sequenceIsNotComputable[sequenceIndex] =
+        OMG::BoolToTroolean(sequenceAtNameIndex(sequenceIndex)
+                                ->mainExpressionIsNotComputable(*ctx));
   }
   return TrooleanToBool(m_sequenceIsNotComputable[sequenceIndex]);
 }

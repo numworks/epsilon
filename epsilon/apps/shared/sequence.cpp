@@ -51,14 +51,14 @@ void Sequence::setType(Type t) {
   switch (t) {
     case Type::Explicit:
       error = setExpressionContent(UserExpression());
-      setFirstInitialConditionContent(Layout(), nullptr);
-      setSecondInitialConditionContent(Layout(), nullptr);
+      setFirstInitialConditionContent(Layout());
+      setSecondInitialConditionContent(Layout());
       break;
     case Type::SingleRecurrence: {
       error = setExpressionContent(SymbolHelper::BuildSequence(
           name, UserExpression::Builder(KUnknownSymbol)));
-      setFirstInitialConditionContent("1"_l, nullptr);
-      setSecondInitialConditionContent(Layout(), nullptr);
+      setFirstInitialConditionContent("1"_l);
+      setSecondInitialConditionContent(Layout());
       break;
     }
     case Type::DoubleRecurrence: {
@@ -68,8 +68,8 @@ void Sequence::setType(Type t) {
                name, UserExpression::Builder(KAdd(KUnknownSymbol, 1_e))),
            .KB = SymbolHelper::BuildSequence(
                name, UserExpression::Builder(KUnknownSymbol))}));
-      setFirstInitialConditionContent("1"_l, nullptr);
-      setSecondInitialConditionContent("1"_l, nullptr);
+      setFirstInitialConditionContent("1"_l);
+      setSecondInitialConditionContent("1"_l);
       break;
     }
   }
@@ -112,11 +112,10 @@ Layout Sequence::aggregatedLayout() {
 }
 
 Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
-    Layout l, Context* ctx) {
-  assert(ctx);
+    Layout l, const Context& ctx) {
   if (SequenceHelper::IsSequenceInsideRack(l)) {
     Ion::Storage::Record::ErrorStatus error =
-        setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), *ctx);
+        setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), ctx);
     if (type() == Type::Explicit ||
         error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
@@ -131,7 +130,7 @@ Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
         SequenceHelper::ExtractExpressionAtRow(l, 2), ctx);
   } else {
     // Handle layout as main expression
-    return setContent(l, *ctx);
+    return setContent(l, ctx);
   }
 }
 
@@ -195,12 +194,14 @@ void Sequence::tidyDownstreamPoolFrom(const PoolObject* treePoolCursor) const {
 }
 
 template <typename T>
-T Sequence::privateEvaluateYAtX(T x, Context* context) const {
+T Sequence::privateEvaluateYAtX(T x, const Context& context) const {
   // Round behaviour changes platform-wise if std::isnan(x)
   assert(!std::isnan(x));
   int n = std::round(x);
   return static_cast<T>(approximateAtRank(
-      n, reinterpret_cast<SequenceContext*>(context)->cache(), context));
+      n, reinterpret_cast<const SequenceContext&>(context).cache(),
+      // NOTE: const_cast is temporary
+      &const_cast<Context&>(context)));
 }
 
 double Sequence::approximateAtRank(int rank, SequenceCache* sqctx,
@@ -215,7 +216,7 @@ double Sequence::approximateAtRank(int rank, SequenceCache* sqctx,
   return sqctx->storedValueOfSequenceAtRank(sequenceIndex, rank);
 }
 
-double Sequence::approximateAtContextRank(Context* ctx, int rank,
+double Sequence::approximateAtContextRank(const Context& ctx, int rank,
                                           bool intermediateComputation) const {
   if (rank < initialRank()) {
     return NAN;
@@ -238,7 +239,7 @@ double Sequence::approximateAtContextRank(Context* ctx, int rank,
 }
 
 double Sequence::sumBetweenBoundsValue(double start, double end,
-                                       Context* context) const {
+                                       const Context& context) const {
   double result = 0.0;
   if (end - start > k_maxNumberOfSteps || start + 1.0 == start) {
     return NAN;
@@ -257,7 +258,7 @@ double Sequence::sumBetweenBoundsValue(double start, double end,
 }
 
 SystemExpression Sequence::sumBetweenBounds(double start, double end,
-                                            Context* context) const {
+                                            const Context& context) const {
   return SystemExpression::Builder<double>(
       sumBetweenBoundsValue(start, end, context));
 }
@@ -386,7 +387,9 @@ void Sequence::InitialConditionModel::buildName(Sequence* sequence) {
                            .KB = Layout::String(buffer)});
 }
 
-template double Sequence::privateEvaluateYAtX<double>(double, Context*) const;
-template float Sequence::privateEvaluateYAtX<float>(float, Context*) const;
+template double Sequence::privateEvaluateYAtX<double>(double,
+                                                      const Context&) const;
+template float Sequence::privateEvaluateYAtX<float>(float,
+                                                    const Context&) const;
 
 }  // namespace Shared

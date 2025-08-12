@@ -17,7 +17,7 @@ class ExpressionModelHandle : public Ion::Storage::Record {
     return model()->text(this, buffer, bufferSize, symbol());
   }
   virtual Poincare::SystemExpression expressionReduced(
-      Poincare::Context* context) const {
+      const Poincare::Context& context) const {
     return model()->expressionReduced(this, context);
   }
   Poincare::UserExpression expressionClone() const {
@@ -49,9 +49,8 @@ class ExpressionModelHandle : public Ion::Storage::Record {
   }
 
   Poincare::Preferences::ComplexFormat complexFormat(
-      Poincare::Context* context) const {
-    assert(context);
-    return model()->complexFormat(this, *context);
+      const Poincare::Context& context) const {
+    return model()->complexFormat(this, context);
   }
 
  protected:

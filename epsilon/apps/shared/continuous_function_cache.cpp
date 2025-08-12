@@ -56,8 +56,8 @@ void ContinuousFunctionCache::clear() {
 }
 
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valueForParameter(
-    const ContinuousFunction* function, Poincare::Context* context, float t,
-    int curveIndex) {
+    const ContinuousFunction* function, const Poincare::Context& context,
+    float t, int curveIndex) {
   int resIndex = indexForParameter(function, t, curveIndex);
   if (resIndex < 0) {
     return function->privateEvaluateXYAtParameter(t, context, curveIndex);
@@ -131,8 +131,8 @@ int ContinuousFunctionCache::indexForParameter(
 }
 
 Poincare::Coordinate2D<float> ContinuousFunctionCache::valuesAtIndex(
-    const ContinuousFunction* function, Poincare::Context* context, float t,
-    int i, int curveIndex) {
+    const ContinuousFunction* function, const Poincare::Context& context,
+    float t, int i, int curveIndex) {
   assert(curveIndex == 0);
   if (function->properties().isCartesian()) {
     if (OMG::IsSignalingNan(m_cache[i])) {

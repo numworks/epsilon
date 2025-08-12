@@ -136,7 +136,7 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(
 
 void ContinuousFunctionProperties::update(
     const Poincare::SystemExpression reducedEquation,
-    const Poincare::UserExpression inputEquation, Context* context,
+    const Poincare::UserExpression inputEquation, const Context& context,
     Preferences::ComplexFormat complexFormat,
     Comparison::Operator precomputedOperatorType,
     SymbolType precomputedFunctionSymbol, bool isCartesianEquation) {
@@ -156,7 +156,9 @@ void ContinuousFunctionProperties::update(
    * user. We do not care (neither have) an approximate expression. Indeed we
    * only check display permissions for input expression.*/
   bool genericCaptionOnly = CAS::ShouldOnlyDisplayApproximation(
-      inputEquation, UserExpression(), UserExpression(), context);
+      inputEquation, UserExpression(), UserExpression(),
+      // NOTE: const_cast is temporary
+      &const_cast<Context&>(context));
 
   setHideDetails(genericCaptionOnly);
 
@@ -191,7 +193,9 @@ void ContinuousFunctionProperties::update(
     }
 
     // Check dimension
-    Dimension dimension = analyzedExpression.dimension(context);
+    Dimension dimension = analyzedExpression.dimension(
+        // NOTE: const_cast is temporary
+        &const_cast<Context&>(context));
     if (((precomputedFunctionSymbol == SymbolType::X ||
           precomputedFunctionSymbol == SymbolType::Theta ||
           precomputedFunctionSymbol == SymbolType::Radius) &&
@@ -297,7 +301,11 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  assert(analyzedExpression.dimension(context).isScalar());
+  assert(analyzedExpression
+             .dimension(
+                 // NOTE: const_cast is temporary
+                 &const_cast<Context&>(context))
+             .isScalar());
   setCartesianEquationProperties(analyzedExpression, xDeg, yDeg,
                                  highestCoefficientIsPositive);
   if (genericCaptionOnly) {

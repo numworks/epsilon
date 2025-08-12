@@ -62,7 +62,7 @@ size_t Function::printAbscissaValue(double cursorT, double cursorX,
 size_t Function::printFunctionValue(double cursorT, double cursorX,
                                     double cursorY, char* buffer,
                                     size_t bufferSize, int precision,
-                                    Poincare::Context* context) {
+                                    const Poincare::Context& context) {
   return PoincareHelpers::ConvertFloatToText<double>(cursorY, buffer,
                                                      bufferSize, precision);
 }

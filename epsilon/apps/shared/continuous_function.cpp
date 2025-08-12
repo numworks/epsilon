@@ -128,7 +128,7 @@ size_t ContinuousFunction::printAbscissaValue(double cursorT, double cursorX,
 size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
                                               double cursorY, char* buffer,
                                               size_t bufferSize, int precision,
-                                              Context* context) {
+                                              const Context& context) {
   ContinuousFunctionProperties thisProperties = properties();
   if (thisProperties.isParametric()) {
     Preferences::PrintFloatMode mode =
@@ -177,13 +177,13 @@ bool ContinuousFunction::isNamed() const {
 }
 
 bool ContinuousFunction::isDiscontinuousOnFloatInterval(
-    float minBound, float maxBound, Poincare::Context* context) const {
+    float minBound, float maxBound, const Context& context) const {
   PreparedFunction equation = expressionApproximated(context);
   return equation.isDiscontinuousOnInterval<float>(minBound, maxBound);
 }
 
 void ContinuousFunction::getLineParameters(double* slope, double* intercept,
-                                           Context* context) const {
+                                           const Context& context) const {
   assert(properties().isLine());
   SystemExpression equation = expressionReduced(context);
   // Compute metrics for details view of Line
@@ -191,7 +191,9 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
       PolynomialHelpers::k_lineDegree)];
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
-      k_unknownName, coefficients, context, complexFormat(context),
+      k_unknownName, coefficients,
+      // NOTE: const_cast is temporary
+      &const_cast<Context&>(context), complexFormat(context),
       GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       ContinuousFunctionProperties::k_defaultUnitFormat,
       SymbolicComputation::ReplaceAllSymbols);
@@ -212,7 +214,7 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
 }
 
 CartesianConic ContinuousFunction::cartesianConicParameters(
-    Context* context) const {
+    const Context& context) const {
   assert(properties().isConic() && properties().isCartesian());
   return CartesianConic(expressionReducedForAnalysis(context), k_unknownName);
 }
@@ -358,7 +360,7 @@ void ContinuousFunction::valuesToDisplayOnDerivativeCurve(
 
 template <typename T>
 PointOrRealScalar<T> ContinuousFunction::approximateDerivative(
-    T t, Context* context, int derivationOrder, bool useDomain) const {
+    T t, const Context& context, int derivationOrder, bool useDomain) const {
   assert(canDisplayDerivative());
   assert(!isAlongY());
   assert(numberOfSubCurves() == 1);
@@ -374,7 +376,7 @@ PointOrRealScalar<T> ContinuousFunction::approximateDerivative(
 }
 
 double ContinuousFunction::approximateSlope(double t,
-                                            Poincare::Context* context) const {
+                                            const Context& context) const {
   if (t < tMin() || t > tMax()) {
     return NAN;
   }
@@ -429,7 +431,7 @@ float ContinuousFunction::autoTMin() const {
 }
 
 bool ContinuousFunction::approximationBasedOnCostlyAlgorithms(
-    Context* context) const {
+    const Context& context) const {
   return expressionApproximated(context).approximationBasedOnCostlyAlgorithms();
 }
 
@@ -440,8 +442,8 @@ void ContinuousFunction::trimResolutionInterval(double* start,
   *end = *end < tmin ? tmin : tmax < *end ? tmax : *end;
 }
 
-SystemExpression ContinuousFunction::sumBetweenBounds(double start, double end,
-                                                      Context* context) const {
+SystemExpression ContinuousFunction::sumBetweenBounds(
+    double start, double end, const Context& context) const {
   assert(properties().isCartesian());
   // KUnknownSymbol is the variable used in the grapher app
   return Poincare::IntegralBetweenBounds(
@@ -460,7 +462,7 @@ float ContinuousFunction::rangeStep() const {
 
 template <typename T>
 Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
-    T t, Context* context, int subCurveIndex) const {
+    T t, const Context& context, int subCurveIndex) const {
   ContinuousFunctionProperties thisProperties = properties();
   Coordinate2D<T> x1x2 =
       templatedApproximateAtParameter(t, context, subCurveIndex);
@@ -479,7 +481,7 @@ Coordinate2D<T> ContinuousFunction::privateEvaluateXYAtParameter(
 
 template <typename T>
 Coordinate2D<T> ContinuousFunction::templatedApproximateAtParameter(
-    T t, Context* context, int subCurveIndex) const {
+    T t, const Context& context, int subCurveIndex) const {
   if (t < tMin() || t > tMax()) {
     return Coordinate2D<T>(properties().isCartesian() ? t : NAN, NAN);
   }
@@ -572,7 +574,7 @@ void ContinuousFunction::RecordDataBuffer::setColor(KDColor color,
 /* ContinuousFunction::Model */
 
 SystemExpression ContinuousFunction::Model::expressionReduced(
-    const Ion::Storage::Record* record, Context* context) const {
+    const Ion::Storage::Record* record, const Context& context) const {
   // m_expression might already be memmoized.
   if (!m_expression.isUninitialized()) {
     return m_expression;
@@ -584,9 +586,8 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     m_expression = SystemExpression::Undefined();
     return m_expression;
   }
-  assert(context);
   Preferences::ComplexFormat complexFormat =
-      this->complexFormat(record, *context);
+      this->complexFormat(record, context);
   Preferences::AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (thisProperties.isScatterPlot()) {
@@ -629,7 +630,9 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     int degree = m_expression.getPolynomialReducedCoefficients(
         willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
                      : k_unknownName,
-        coefficients, context, complexFormat, angleUnit,
+        coefficients,
+        // NOTE: const_cast is temporary
+        &const_cast<Context&>(context), complexFormat, angleUnit,
         ContinuousFunctionProperties::k_defaultUnitFormat,
         SymbolicComputation::ReplaceDefinedSymbols, true);
 
@@ -680,7 +683,9 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     if (!equation.isUninitialized()) {
       bool reductionFailure = false;
       SystemExpression resultForApproximation = PoincareHelpers::CloneAndReduce(
-          equation, context, complexFormat, angleUnit, false,
+          equation,
+          // NOTE: const_cast is temporary
+          &const_cast<Context&>(context), complexFormat, angleUnit, false,
           ReductionTarget::SystemForApproximation,
           SymbolicComputation::KeepAllSymbols, &reductionFailure);
       assert(!resultForApproximation.isUninitialized() && !reductionFailure);
@@ -694,7 +699,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
 }
 
 Poincare::PreparedFunction ContinuousFunction::Model::expressionApproximated(
-    const Ion::Storage::Record* record, Poincare::Context* context,
+    const Ion::Storage::Record* record, const Context& context,
     int derivationOrder) const {
   assert(0 <= derivationOrder && derivationOrder <= 2);
   PreparedFunction* approximated;
@@ -726,7 +731,7 @@ Poincare::PreparedFunction ContinuousFunction::Model::expressionApproximated(
 
 Poincare::SystemExpression
 ContinuousFunction::Model::expressionReducedForAnalysis(
-    const Ion::Storage::Record* record, Poincare::Context* context) const {
+    const Ion::Storage::Record* record, const Context& context) const {
   if (!m_expressionForAnalysis.isUninitialized()) {
     return m_expressionForAnalysis;
   }
@@ -741,14 +746,15 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   SystemExpression result;
   // NOTE: temporary until expressionReducedForAnalysis takes a const&
   Preferences::ComplexFormat complexFormat =
-      context ? this->complexFormat(record, *context)
-              : this->complexFormat(record, Poincare::EmptyContext{});
+      this->complexFormat(record, context);
   Preferences::AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (!equation.isUndefined()) {
     bool reductionFailure = false;
     result = PoincareHelpers::CloneAndReduce(
-        equation, context, complexFormat, angleUnit, false,
+        equation,
+        // NOTE: const_cast is temporary
+        &const_cast<Context&>(context), complexFormat, angleUnit, false,
         ReductionTarget::SystemForAnalysis,
         // Symbols have already been replaced.
         SymbolicComputation::KeepAllSymbols, &reductionFailure);
@@ -817,7 +823,7 @@ bool ContinuousFunction::IsFunctionAssignment(const UserExpression e) {
 }
 
 UserExpression ContinuousFunction::Model::expressionEquation(
-    const Ion::Storage::Record* record, Context* context,
+    const Ion::Storage::Record* record, const Context& context,
     Comparison::Operator* computedEquationType,
     ContinuousFunctionProperties::SymbolType* computedFunctionSymbol,
     bool* isCartesianEquation) const {
@@ -825,16 +831,19 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   if (result.isUninitialized()) {
     return UserExpression::Undefined();
   }
-  assert(context);
   ContinuousFunctionProperties::SymbolType tempFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
   if (!result.isComparison()) {
-    if (result.dimension(context).isPointOrListOfPoints()) {
+    if (result
+            .dimension(
+                // NOTE: const_cast is temporary
+                &const_cast<Context&>(context))
+            .isPointOrListOfPoints()) {
       if (computedFunctionSymbol) {
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;
       }
-      result.replaceSymbols(*context);
+      result.replaceSymbols(context);
       if (!result.isUninitialized()) {
         // Result is not circularly defined.
         return result;
@@ -908,7 +917,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
         SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
-  result.replaceSymbols(*context);
+  result.replaceSymbols(context);
 
   if (result.isUninitialized()) {
     // result was Circularly defined
@@ -924,7 +933,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
 }
 
 SystemExpression ContinuousFunction::Model::expressionDerivateReduced(
-    const Ion::Storage::Record* record, Context* context,
+    const Ion::Storage::Record* record, const Context& context,
     int derivationOrder) const {
   // Derivative isn't available on curves with multiple subcurves
   assert(numberOfSubCurves(record) == 1);
@@ -940,7 +949,7 @@ SystemExpression ContinuousFunction::Model::expressionDerivateReduced(
 }
 
 PreparedFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
-    const Ion::Storage::Record* record, Context* context) const {
+    const Ion::Storage::Record* record, const Context& context) const {
   /* Slope is only needed for parametric and polar functions.
    * For cartesian function, it is the same as the derivative.
    * For curves with multiple subcurves and for inverse polar,
@@ -1026,8 +1035,7 @@ CodePoint ContinuousFunction::Model::CodePointForSymbol(
 }
 
 Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
-    Poincare::Layout l, CodePoint symbol,
-    const Poincare::Context& context) const {
+    Poincare::Layout l, CodePoint symbol, const Context& context) const {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */
@@ -1090,7 +1098,7 @@ ContinuousFunctionProperties ContinuousFunction::Model::properties(
     const Ion::Storage::Record* record) const {
   if (!m_properties.isInitialized()) {
     // Computing the expression equation will update the function properties
-    expressionReducedForAnalysis(record, Poincare::Context::GlobalContext);
+    expressionReducedForAnalysis(record, *Context::GlobalContext);
   }
   assert(m_properties.isInitialized());
   return m_properties;
@@ -1100,8 +1108,7 @@ int ContinuousFunction::Model::numberOfSubCurves(
     const Ion::Storage::Record* record) const {
   ContinuousFunctionProperties prop = properties(record);
   if (prop.isCartesian()) {
-    SystemExpression e =
-        expressionReduced(record, Poincare::Context::GlobalContext);
+    SystemExpression e = expressionReduced(record, *Context::GlobalContext);
     if (e.isList()) {
       assert(prop.isOfDegreeTwo());
       return e.numberOfChildren();
@@ -1111,7 +1118,7 @@ int ContinuousFunction::Model::numberOfSubCurves(
 }
 
 SystemExpression ContinuousFunction::Model::parametricForm(
-    const Ion::Storage::Record* record, Poincare::Context* context) const {
+    const Ion::Storage::Record* record, const Context& context) const {
   ContinuousFunctionProperties prop = properties(record);
   assert(prop.isPolar() || prop.isInversePolar() || prop.isParametric());
   SystemExpression e = expressionReduced(record, context);
@@ -1149,19 +1156,22 @@ void ContinuousFunction::Model::setStorageChangeFlag() const {
 }
 
 template Coordinate2D<float>
-ContinuousFunction::templatedApproximateAtParameter<float>(float, Context*,
+ContinuousFunction::templatedApproximateAtParameter<float>(float,
+                                                           const Context&,
                                                            int) const;
 template Coordinate2D<double>
-ContinuousFunction::templatedApproximateAtParameter<double>(double, Context*,
+ContinuousFunction::templatedApproximateAtParameter<double>(double,
+                                                            const Context&,
                                                             int) const;
 
 template Coordinate2D<float>
-ContinuousFunction::privateEvaluateXYAtParameter<float>(float, Context*,
+ContinuousFunction::privateEvaluateXYAtParameter<float>(float, const Context&,
                                                         int) const;
 template Coordinate2D<double>
-ContinuousFunction::privateEvaluateXYAtParameter<double>(double, Context*,
+ContinuousFunction::privateEvaluateXYAtParameter<double>(double, const Context&,
                                                          int) const;
 template PointOrRealScalar<double> ContinuousFunction::approximateDerivative(
-    double t, Context* context, int derivationOrder, bool useDomain) const;
+    double t, const Context& context, int derivationOrder,
+    bool useDomain) const;
 
 }  // namespace Shared

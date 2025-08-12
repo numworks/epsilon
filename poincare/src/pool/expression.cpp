@@ -843,14 +843,14 @@ bool UserExpression::IsIgnoredSymbol(
   return false;
 }
 
-bool UserExpression::recursivelyMatches(ExpressionTrinaryTest test,
+bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
                                         Context* context,
                                         SymbolicComputation replaceSymbols,
                                         void* auxiliary) const {
   return recursivelyMatches(test, context, replaceSymbols, auxiliary, nullptr);
 }
 
-bool UserExpression::recursivelyMatches(ExpressionTrinaryTest test,
+bool UserExpression::recursivelyMatches(UserExpressionTrinaryTest test,
                                         Context* context,
                                         SymbolicComputation replaceSymbols,
                                         void* auxiliary,
@@ -902,8 +902,8 @@ bool UserExpression::recursivelyMatches(ExpressionTrinaryTest test,
   }
 
   /* TODO_PCJ: This is highly ineffective : each child of the tree is cloned on
-   * the pool to be recursivelyMatched. We do so so that ExpressionTrinaryTest
-   * can use Expression API. */
+   * the pool to be recursivelyMatched. We do so so that
+   * UserExpressionTrinaryTest can use Expression API. */
   const int childrenCount = numberOfChildren();
 
   bool isParametered = tree()->isParametric();
@@ -935,8 +935,8 @@ bool UserExpression::recursivelyMatches(ExpressionTrinaryTest test,
 bool UserExpression::recursivelyMatches(
     ExpressionTest test, Context* context,
     SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const UserExpression e, Context* context,
-                                     void* auxiliary) {
+  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+                                         Context* context, void* auxiliary) {
     ExpressionTest* trueTest = static_cast<ExpressionTest*>(auxiliary);
     return (*trueTest)(e, context) ? OMG::Troolean::True
                                    : OMG::Troolean::Unknown;
@@ -947,8 +947,8 @@ bool UserExpression::recursivelyMatches(
 bool UserExpression::recursivelyMatches(
     SimpleExpressionTest test, Context* context,
     SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const UserExpression e, Context* context,
-                                     void* auxiliary) {
+  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+                                         Context* context, void* auxiliary) {
     SimpleExpressionTest* trueTest =
         static_cast<SimpleExpressionTest*>(auxiliary);
     return (*trueTest)(e) ? OMG::Troolean::True : OMG::Troolean::Unknown;
@@ -959,8 +959,8 @@ bool UserExpression::recursivelyMatches(
 bool UserExpression::recursivelyMatches(
     NonStaticSimpleExpressionTest test, Context* context,
     SymbolicComputation replaceSymbols) const {
-  ExpressionTrinaryTest ternary = [](const UserExpression e, Context* context,
-                                     void* auxiliary) {
+  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+                                         Context* context, void* auxiliary) {
     NonStaticSimpleExpressionTest* trueTest =
         static_cast<NonStaticSimpleExpressionTest*>(auxiliary);
     return (e.**trueTest)() ? OMG::Troolean::True : OMG::Troolean::Unknown;
@@ -976,8 +976,8 @@ bool UserExpression::recursivelyMatches(ExpressionTestAuxiliary test,
     ExpressionTestAuxiliary* test;
     void* auxiliary;
   };
-  ExpressionTrinaryTest ternary = [](const UserExpression e, Context* context,
-                                     void* pack) {
+  UserExpressionTrinaryTest ternary = [](const UserExpression e,
+                                         Context* context, void* pack) {
     ExpressionTestAuxiliary* trueTest =
         static_cast<ExpressionTestAuxiliary*>(static_cast<Pack*>(pack)->test);
     return (*trueTest)(e, context, static_cast<Pack*>(pack)->auxiliary)

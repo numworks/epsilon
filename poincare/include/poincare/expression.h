@@ -310,10 +310,10 @@ class UserExpression : public Expression {
 
   /* recursivelyMatches */
 
-  typedef OMG::Troolean (*ExpressionTrinaryTest)(const UserExpression e,
-                                                 Context* context,
-                                                 void* auxiliary);
-  bool recursivelyMatches(ExpressionTrinaryTest test,
+  typedef OMG::Troolean (*UserExpressionTrinaryTest)(const UserExpression e,
+                                                     Context* context,
+                                                     void* auxiliary);
+  bool recursivelyMatches(UserExpressionTrinaryTest test,
                           Context* context = nullptr,
                           SymbolicComputation replaceSymbols =
                               SymbolicComputation::ReplaceDefinedSymbols,
@@ -350,7 +350,7 @@ class UserExpression : public Expression {
   };
   static bool IsIgnoredSymbol(const UserExpression* e,
                               UserExpression::IgnoredSymbols* ignoredSymbols);
-  bool recursivelyMatches(ExpressionTrinaryTest test, Context* context,
+  bool recursivelyMatches(UserExpressionTrinaryTest test, Context* context,
                           SymbolicComputation replaceSymbols, void* auxiliary,
                           IgnoredSymbols* ignoredSymbols) const;
 

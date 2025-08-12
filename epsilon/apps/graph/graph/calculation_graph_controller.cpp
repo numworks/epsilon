@@ -54,7 +54,7 @@ bool CalculationGraphController::handleEnter() {
       App::app()
           ->functionStore()
           ->modelForRecord(m_record)
-          ->evaluateXYAtParameter(t, App::app()->localContext());
+          ->evaluateXYAtParameter(t, *App::app()->localContext());
   m_cursor->moveTo(t, xy.x(), xy.y());
   return Shared::SimpleInteractiveCurveViewController::handleEnter();
 }

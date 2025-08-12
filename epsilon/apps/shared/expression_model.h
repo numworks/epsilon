@@ -16,7 +16,8 @@ class ExpressionModel {
   void text(const Ion::Storage::Record* record, char* buffer, size_t bufferSize,
             CodePoint symbol = 0) const;
   virtual Poincare::SystemExpression expressionReduced(
-      const Ion::Storage::Record* record, Poincare::Context* context) const;
+      const Ion::Storage::Record* record,
+      const Poincare::Context& context) const;
   virtual Poincare::UserExpression expressionClone(
       const Ion::Storage::Record* record) const;
 

@@ -176,8 +176,8 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
   double sumValue =
       isSumColumn ? sequence->sumBetweenBoundsValue(sequence->initialRank(),
-                                                    abscissa, context)
-                  : sequence->evaluateXYAtParameter(abscissa, context).y();
+                                                    abscissa, *context)
+                  : sequence->evaluateXYAtParameter(abscissa, *context).y();
   *memoizedLayoutAtIndex(index) =
       UserExpression::Builder(sumValue).createLayout(
           GlobalPreferences::SharedGlobalPreferences()->displayMode(),

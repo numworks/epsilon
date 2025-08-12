@@ -32,12 +32,12 @@ Sequence* addSequence(SequenceStore* store, Sequence::Type type,
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   if (condition1) {
     err =
-        u->setFirstInitialConditionContent(Layout::Parse(condition1), context);
+        u->setFirstInitialConditionContent(Layout::Parse(condition1), *context);
     assert(err == Ion::Storage::Record::ErrorStatus::None);
   }
   if (condition2) {
-    err =
-        u->setSecondInitialConditionContent(Layout::Parse(condition2), context);
+    err = u->setSecondInitialConditionContent(Layout::Parse(condition2),
+                                              *context);
     assert(err == Ion::Storage::Record::ErrorStatus::None);
   }
   (void)err;  // Silence compilation warning.
@@ -64,7 +64,7 @@ void check_sequences_defined_by(
     for (int i = 0; i < SequenceStore::k_maxNumberOfSequences; i++) {
       if (seqs[i]->isDefined()) {
         double un =
-            seqs[i]->evaluateXYAtParameter((double)j, sequenceContext).y();
+            seqs[i]->evaluateXYAtParameter((double)j, *sequenceContext).y();
         bool isEqual = OMG::Float::RoughlyEqual<double>(
             un, result[i][j], OMG::Float::EpsilonLax<double>(), true);
         constexpr size_t bufferSize = 100;
@@ -97,7 +97,7 @@ void check_sum_of_sequence_between_bounds(double result, double start,
   Sequence* seq = addSequence(store, type, definition, condition1, condition2,
                               sequenceContext);
 
-  double sum = seq->sumBetweenBounds(start, end, sequenceContext)
+  double sum = seq->sumBetweenBounds(start, end, *sequenceContext)
                    .approximateSystemToRealScalar<double>();
   assert_roughly_equal(sum, result);
 
@@ -799,7 +799,7 @@ QUIZ_CASE(sequence_order) {
   assert(v->fullName()[0] == 'v');
 
   sequenceContext->resetCache();
-  quiz_assert(v->evaluateXYAtParameter(1., sequenceContext).y() == 4.);
+  quiz_assert(v->evaluateXYAtParameter(1., *sequenceContext).y() == 4.);
 
   store->removeAll();
   u = addSequence(store, Sequence::Type::Explicit, "0", nullptr, nullptr,
@@ -808,7 +808,7 @@ QUIZ_CASE(sequence_order) {
                   sequenceContext);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("u.seq").destroy();
   sequenceContext->resetCache();
-  quiz_assert(v->evaluateXYAtParameter(1., sequenceContext).y() == 1.);
+  quiz_assert(v->evaluateXYAtParameter(1., *sequenceContext).y() == 1.);
 
   store->removeAll();
   store->tidyDownstreamPoolFrom();

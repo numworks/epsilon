@@ -80,7 +80,7 @@ Preferences::ComplexFormat ExpressionModel::complexFormat(
 }
 
 SystemExpression ExpressionModel::expressionReduced(
-    const Storage::Record* record, Poincare::Context* context) const {
+    const Storage::Record* record, const Poincare::Context& context) const {
   /* TODO
    * By calling isCircularlyDefined and then Simplify, the expression tree is
    * browsed twice. Note that Simplify does ALMOST the job of
@@ -101,8 +101,7 @@ SystemExpression ExpressionModel::expressionReduced(
    */
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
-    assert(context);
-    if (isCircularlyDefined(record, *context)) {
+    if (isCircularlyDefined(record, context)) {
       m_expression = SystemExpression::Undefined();
     } else {
       UserExpression userExpression = UserExpression::ExpressionFromAddress(
@@ -112,7 +111,10 @@ SystemExpression ExpressionModel::expressionReduced(
        * 'Simplify'. Thus, we use a temporary expression. */
       bool reductionFailure = false;
       m_expression = PoincareHelpers::CloneAndReduce(
-          userExpression, context, complexFormat(record, *context),
+          userExpression,
+          // NOTE: const_cast is temporary
+          &const_cast<Poincare::Context&>(context),
+          complexFormat(record, context),
           GlobalPreferences::SharedGlobalPreferences()->angleUnit(), false,
           Poincare::ReductionTarget::User,
           Poincare::SymbolicComputation::ReplaceDefinedSymbols,

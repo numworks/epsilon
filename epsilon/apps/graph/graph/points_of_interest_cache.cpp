@@ -197,6 +197,7 @@ namespace {
 
 struct PointSearchContext {
   const float start, end;
+  // TODO: const Context&
   Context* const context;
   ContinuousFunctionStore* const store;
   const float searchStep;
@@ -224,8 +225,9 @@ PointOfInterest findYIntercept(void* searchContext) {
     int n = f->numberOfSubCurves();
     while (ctx->counter < n) {
       uint8_t subCurve = ctx->counter++;
+      assert(ctx->context);
       Coordinate2D<double> xy =
-          f->evaluateXYAtParameter(0., ctx->context, subCurve);
+          f->evaluateXYAtParameter(0., *ctx->context, subCurve);
       if (std::isfinite(xy.x()) && std::isfinite(xy.y())) {
         if (f->isAlongY()) {
           xy = Coordinate2D<double>(xy.y(), xy.x());
@@ -266,9 +268,10 @@ PointOfInterest findRootOrExtremum(void* searchContext) {
     }
     ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Fast);
     Solver<double>::Solution solution;
+    assert(ctx->context);
     while (
         std::isfinite((solution = (ctx->solver.*next)(f->expressionApproximated(
-                           ctx->context)) /* assignment in expression */)
+                           *ctx->context)) /* assignment in expression */)
                           .x())) {
       /* Loop over finite solutions to exhaust solutions out of the interval
        * without returning NAN. */
@@ -297,7 +300,8 @@ PointOfInterest findIntersections(void* searchContext) {
   }
   PreparedFunction memoizedOtherFunction;
   int n = ctx->store->numberOfModels();
-  PreparedFunction e = f->expressionApproximated(ctx->context);
+  assert(ctx->context);
+  PreparedFunction e = f->expressionApproximated(*ctx->context);
   bool alongY = f->isAlongY();
   bool fIsStrict = f->properties().isStrictInequality();
   for (; ctx->counter < n; ++ctx->counter) {
@@ -310,7 +314,7 @@ PointOfInterest findIntersections(void* searchContext) {
     if (!g->shouldDisplayIntersections()) {
       continue;
     }
-    memoizedOtherFunction = g->expressionApproximated(ctx->context);
+    memoizedOtherFunction = g->expressionApproximated(*ctx->context);
     ctx->solver.setGrowthSpeed(Solver<double>::GrowthSpeed::Precise);
     Solver<double>::Solution solution;
     while (std::isfinite(

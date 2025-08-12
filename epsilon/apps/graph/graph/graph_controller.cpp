@@ -73,13 +73,15 @@ template <typename T>
 static Coordinate2D<T> evaluator(T t, const void* model) {
   const ContinuousFunctionAndContext curve =
       *static_cast<const ContinuousFunctionAndContext*>(model);
-  return curve.func->evaluateXYAtParameter(t, curve.ctx);
+  assert(curve.ctx);
+  return curve.func->evaluateXYAtParameter(t, *curve.ctx);
 }
 template <typename T>
 static Coordinate2D<T> evaluatorSecondCurve(T t, const void* model) {
   const ContinuousFunctionAndContext curve =
       *static_cast<const ContinuousFunctionAndContext*>(model);
-  return curve.func->evaluateXYAtParameter(t, curve.ctx, 1);
+  assert(curve.ctx);
+  return curve.func->evaluateXYAtParameter(t, *curve.ctx, 1);
 }
 template <typename T, int coordinate>
 static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model) {
@@ -127,13 +129,13 @@ Range2D<float> GraphController::optimalRange(
     OMG::ExpiringPointer<const ContinuousFunction> f =
         store->constModelForRecord(store->activeRecordAtIndex(i));
     ContinuousFunctionAndContext fModel{.func = f.operator->(), .ctx = context};
-    if (f->approximationBasedOnCostlyAlgorithms(context)) {
+    if (f->approximationBasedOnCostlyAlgorithms(*context)) {
       continue;
     }
     if (f->properties().isPolar() || f->properties().isInversePolar() ||
         f->properties().isParametric()) {
       assert(std::isfinite(f->tMin()) && std::isfinite(f->tMax()));
-      PreparedFunctionPoint e = f->parametricForm(context).getPreparedFunction(
+      PreparedFunctionPoint e = f->parametricForm(*context).getPreparedFunction(
           Shared::Function::k_unknownName);
       // Compute the ordinate range of x(t) and y(t)
       Range1D<float> ranges[2];
@@ -158,7 +160,7 @@ Range2D<float> GraphController::optimalRange(
       zoom.fitPoint(Coordinate2D<float>(ranges[0].max(), ranges[1].max()));
       zoom.fitPoint(Coordinate2D<float>(ranges[0].min(), ranges[1].min()));
     } else if (f->properties().isScatterPlot()) {
-      for (Coordinate2D<float> p : f->iterateScatterPlot(context)) {
+      for (Coordinate2D<float> p : f->iterateScatterPlot(*context)) {
         zoom.fitPoint(p);
       }
     } else {
@@ -186,7 +188,7 @@ Range2D<float> GraphController::optimalRange(
        * have its conditions fitted. It is assumed that expressions containing
        * more than one piecewise will be rare. */
       const Internal::Tree* piecewise =
-          f->expressionApproximated(context).tree()->firstDescendantSatisfying(
+          f->expressionApproximated(*context).tree()->firstDescendantSatisfying(
               [](const Internal::Tree* t) { return t->isPiecewise(); });
       if (piecewise) {
         zoom.fitConditions(PreparedFunction::Builder(piecewise),
@@ -203,7 +205,7 @@ Range2D<float> GraphController::optimalRange(
               g->properties()
                   .canComputeIntersectionsWithFunctionsAlongSameVariable() &&
               g->isAlongY() == alongY &&
-              !g->approximationBasedOnCostlyAlgorithms(context)) {
+              !g->approximationBasedOnCostlyAlgorithms(*context)) {
             ContinuousFunctionAndContext gModel{.func = g.operator->(),
                                                 .ctx = context};
             zoom.fitIntersections(evaluator<float>, &fModel, evaluator<float>,
@@ -219,7 +221,7 @@ Range2D<float> GraphController::optimalRange(
     for (int i = 0; i < nbFunctions; i++) {
       OMG::ExpiringPointer<ContinuousFunction> f =
           store->modelForRecord(store->activeRecordAtIndex(i));
-      if (f->approximationBasedOnCostlyAlgorithms(context) ||
+      if (f->approximationBasedOnCostlyAlgorithms(*context) ||
           !f->properties().isCartesian()) {
         continue;
       }
@@ -385,7 +387,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
   Poincare::Context* context = App::app()->localContext();
   if (function->properties().isScatterPlot()) {
     float t = 0;
-    for (Coordinate2D<float> p : function->iterateScatterPlot(context)) {
+    for (Coordinate2D<float> p : function->iterateScatterPlot(*context)) {
       if (isCursorVisibleAtPosition(p, ignoreMargins)) {
         return t;
       }
@@ -410,7 +412,7 @@ double GraphController::defaultCursorT(Ion::Storage::Record record,
      * tMin+0.75*tRange / tMax */
     currentT = tMin + i * (tRange / numberOfRangeSubdivisions);
     // Using first subCurve for default cursor.
-    currentXY = function->evaluateXYAtParameter(currentT, context, 0);
+    currentXY = function->evaluateXYAtParameter(currentT, *context, 0);
     if (isCursorVisibleAtPosition(currentXY, ignoreMargins)) {
       break;
     }
@@ -463,7 +465,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     double nextX = nextT;
     nextT = -1;
     double previousX = -INFINITY;
-    for (Coordinate2D<float> xy : nextF->iterateScatterPlot(context)) {
+    for (Coordinate2D<float> xy : nextF->iterateScatterPlot(*context)) {
       if (xy.x() >= nextX) {
         if (xy.x() - nextX < nextX - previousX) {
           ++nextT;
@@ -520,7 +522,7 @@ void GraphController::jumpToLeftRightCurve(double t,
         for (int subCurveIndex = 0; subCurveIndex < f->numberOfSubCurves();
              subCurveIndex++) {
           Coordinate2D<double> xy = f->evaluateXYAtParameter(
-              potentialNextT, App::app()->localContext(), subCurveIndex);
+              potentialNextT, *App::app()->localContext(), subCurveIndex);
           if (currentXDelta < xDelta || std::abs(xy.y() - m_cursor->y()) <
                                             std::abs(nextY - m_cursor->y())) {
             nextCurveIndex = i;

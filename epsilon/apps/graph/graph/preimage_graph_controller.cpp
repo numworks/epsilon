@@ -19,13 +19,14 @@ PreimageGraphController::PreimageGraphController(
 
 Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
     double start, double max, Context* context, bool stretch) {
+  assert(context);
   Solver<double> solver = Poincare::Solver(start, max, context);
   if (stretch) {
     solver.stretch();
   }
   PreparedFunction f =
       functionStore()->modelForRecord(m_record)->expressionApproximated(
-          context);
+          *context);
   return solver
       .nextIntersection(SystemExpression::Builder<double>(m_image).tree(),
                         f.tree())

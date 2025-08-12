@@ -160,7 +160,7 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
     currentX = middle + (iterations % 2 == 0 ? -1 : 1) *
                             ((iterations + 1) / 2) * gridUnit;
     // Using first subCurve for default cursor.
-    currentY = function->evaluateXYAtParameter(currentX, context, 0).y();
+    currentY = function->evaluateXYAtParameter(currentX, *context, 0).y();
     iterations++;
   } while (xMin < currentX && currentX < xMax &&
            !isCursorVisibleAtPosition(Coordinate2D<float>(currentX, currentY),
@@ -184,7 +184,7 @@ void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(
   OMG::ExpiringPointer<Function> function =
       functionStore()->modelForRecord(record);
   *t = defaultCursorT(record, ignoreMargins);
-  *xy = function->evaluateXYAtParameter(*t, App::app()->localContext(), 0);
+  *xy = function->evaluateXYAtParameter(*t, *App::app()->localContext(), 0);
 }
 
 void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
@@ -239,7 +239,7 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
   }
   Poincare::Context* context = App::app()->localContext();
   Poincare::Coordinate2D<double> cursorPosition =
-      f->evaluateXYAtParameter(nextT, context, nextSubCurve);
+      f->evaluateXYAtParameter(nextT, *context, nextSubCurve);
   m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
   selectCurveAtIndex(nextCurve, true, nextSubCurve);
   // Prevent the abscissaValue from edition if the function is along y
@@ -271,9 +271,10 @@ AbstractPlotView* FunctionGraphController::curveView() {
 Coordinate2D<double> FunctionGraphController::xyValues(
     int curveIndex, double t, Poincare::Context* context,
     int subCurveIndex) const {
+  assert(context);
   return functionStore()
       ->modelForRecord(recordAtCurveIndex(curveIndex))
-      ->evaluateXYAtParameter(t, context, subCurveIndex);
+      ->evaluateXYAtParameter(t, *context, subCurveIndex);
 }
 
 int FunctionGraphController::numberOfSubCurves(int curveIndex) const {

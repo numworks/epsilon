@@ -65,7 +65,8 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   OMG::ExpiringPointer<ContinuousFunction> f =
       functionStore()->modelForRecord(record);
 
-  PreparedFunction e = f->expressionApproximated(context());
+  assert(context());
+  PreparedFunction e = f->expressionApproximated(*context());
   ContinuousFunctionProperties::AreaType area = f->properties().areaType();
   assert(f->numberOfSubCurves() <= 2);
   if (area == ContinuousFunctionProperties::AreaType::None) {
@@ -156,26 +157,30 @@ ContinuousFunctionStore* GraphView::functionStore() const {
 
 template <typename T>
 static Coordinate2D<T> evaluateXY(T t, void* model, void* context) {
+  assert(context);
   return reinterpret_cast<ContinuousFunction*>(model)->evaluateXYAtParameter(
-      t, reinterpret_cast<Context*>(context), 0);
+      t, *reinterpret_cast<Context*>(context), 0);
 }
 template <typename T>
 static Coordinate2D<T> evaluateXYSecondCurve(T t, void* model, void* context) {
+  assert(context);
   return reinterpret_cast<ContinuousFunction*>(model)->evaluateXYAtParameter(
-      t, reinterpret_cast<Context*>(context), 1);
+      t, *reinterpret_cast<Context*>(context), 1);
 }
 template <typename T>
 static Coordinate2D<T> evaluateXYFirstDerivative(T t, void* model,
                                                  void* context) {
+  assert(context);
   return reinterpret_cast<ContinuousFunction*>(model)
-      ->evaluateXYDerivativeAtParameter(t, reinterpret_cast<Context*>(context),
+      ->evaluateXYDerivativeAtParameter(t, *reinterpret_cast<Context*>(context),
                                         1);
 }
 template <typename T>
 static Coordinate2D<T> evaluateXYSecondDerivative(T t, void* model,
                                                   void* context) {
+  assert(context);
   return reinterpret_cast<ContinuousFunction*>(model)
-      ->evaluateXYDerivativeAtParameter(t, reinterpret_cast<Context*>(context),
+      ->evaluateXYDerivativeAtParameter(t, *reinterpret_cast<Context*>(context),
                                         2);
 }
 
@@ -193,9 +198,10 @@ bool GraphView::FunctionIsDiscontinuousOnFloatInterval(float minBound,
                                                        float maxBound,
                                                        void* model,
                                                        void* context) {
+  assert(context);
   return static_cast<ContinuousFunction*>(model)
       ->isDiscontinuousOnFloatInterval(
-          minBound, maxBound, static_cast<Poincare::Context*>(context));
+          minBound, maxBound, *static_cast<Poincare::Context*>(context));
 }
 
 template <typename T>
@@ -322,7 +328,8 @@ void GraphView::drawTangent(KDContext* ctx, KDRect rect,
   assert(f->canComputeTangent());
   /* TODO: We could handle tangent on second curve here by finding out
    * which of the two curves is selected. */
-  float tangentParameterA = f->approximateSlope(m_cursor->t(), context());
+  assert(context());
+  float tangentParameterA = f->approximateSlope(m_cursor->t(), *context());
   float tangentParameterB = -tangentParameterA * m_cursor->x() + m_cursor->y();
 
   /* To represent the tangent, we draw segment between the intersections
@@ -539,7 +546,8 @@ void GraphView::drawScatterPlot(KDContext* ctx, KDRect rect,
                                 ContinuousFunction* f) const {
   assert(f->properties().isScatterPlot());
   // TODO Handle limiting tMax and tMin ?
-  for (Coordinate2D<float> p : f->iterateScatterPlot(context())) {
+  assert(context());
+  for (Coordinate2D<float> p : f->iterateScatterPlot(*context())) {
     drawDot(ctx, rect, k_dotSize, p, f->color());
   }
 }

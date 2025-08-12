@@ -1,5 +1,7 @@
 #include "graph_view.h"
 
+#include <poincare/context.h>
+
 #include <cmath>
 
 using namespace Poincare;
@@ -23,7 +25,13 @@ void GraphView::drawRecord(Ion::Storage::Record record, int index,
   int xMax = static_cast<int>(std::floor(range()->xMax()));
   int x = xMin;
   while ((x = nextDotIndex(s, x)) <= xMax) {
-    float y = s->evaluateXYAtParameter(static_cast<float>(x), context()).y();
+    // NOTE: temporary
+    float y =
+        context()
+            ? s->evaluateXYAtParameter(static_cast<float>(x), *context()).y()
+            : s->evaluateXYAtParameter(static_cast<float>(x),
+                                       Poincare::EmptyContext{})
+                  .y();
     if (std::isnan(y)) {
       continue;
     }

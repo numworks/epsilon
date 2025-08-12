@@ -61,15 +61,17 @@ class Function : public ExpressionModelHandle {
   virtual size_t printFunctionValue(double cursorT, double cursorX,
                                     double cursorY, char* buffer,
                                     size_t bufferSize, int precision,
-                                    Poincare::Context* context);
+                                    const Poincare::Context& context);
 
   // Evaluation
   virtual Poincare::Coordinate2D<float> evaluateXYAtParameter(
-      float t, Poincare::Context* context, int subCurveIndex = 0) const = 0;
+      float t, const Poincare::Context& context,
+      int subCurveIndex = 0) const = 0;
   virtual Poincare::Coordinate2D<double> evaluateXYAtParameter(
-      double t, Poincare::Context* context, int subCurveIndex = 0) const = 0;
+      double t, const Poincare::Context& context,
+      int subCurveIndex = 0) const = 0;
   virtual Poincare::SystemExpression sumBetweenBounds(
-      double start, double end, Poincare::Context* context) const = 0;
+      double start, double end, const Poincare::Context& context) const = 0;
 
   virtual int derivationOrderFromSubCurveIndex(int subCurveIndex) const {
     return 0;

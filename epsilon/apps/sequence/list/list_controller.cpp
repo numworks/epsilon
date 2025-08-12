@@ -141,7 +141,7 @@ bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
   Shared::Sequence* sequence = modelStore()->modelForRecord(record);
   Context* context = App::app()->localContext();
   Ion::Storage::Record::ErrorStatus error;
-  error = sequence->setLayoutsForAggregated(layout, context);
+  error = sequence->setLayoutsForAggregated(layout, *context);
   didChangeModelsList();
   return error == Ion::Storage::Record::ErrorStatus::None;
 }

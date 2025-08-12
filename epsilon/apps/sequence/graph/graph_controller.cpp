@@ -112,7 +112,7 @@ Range2D<float> GraphController::optimalRange(
     for (int n = min; n <= max; n++) {
       for (int i = 0; i < nbOfActiveModels; i++) {
         zoom.fitPoint(sequences[i]->evaluateXYAtParameter(static_cast<float>(n),
-                                                          context));
+                                                          *context));
       }
     }
     *result.y() = *zoom.range(true, false).y();
@@ -146,7 +146,7 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
     return false;
   }
   double y = s->evaluateXYAtParameter(static_cast<double>(x),
-                                      App::app()->localContext())
+                                      *App::app()->localContext())
                  .y();
   m_cursor->moveTo(x, x, y);
   return true;

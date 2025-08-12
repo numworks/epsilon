@@ -511,7 +511,8 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
   return equation.isComparison() &&
          SymbolHelper::IsSymbol(equation.cloneChildAtIndex(0), symbol) &&
          !equation.cloneChildAtIndex(1).recursivelyMatches(
-             [](const UserExpression e, Context* context, void* auxiliary) {
+             [](const UserExpression e, const Context& context,
+                void* auxiliary) {
                const CodePoint* symbol =
                    static_cast<const CodePoint*>(auxiliary);
                return (!e.isUninitialized() &&
@@ -519,7 +520,7 @@ bool ContinuousFunctionProperties::IsExplicitEquation(
                           ? OMG::Troolean::True
                           : OMG::Troolean::Unknown;
              },
-             nullptr, SymbolicComputation::KeepAllSymbols,
+             EmptyContext{}, SymbolicComputation::KeepAllSymbols,
              static_cast<void*>(&symbol));
 }
 

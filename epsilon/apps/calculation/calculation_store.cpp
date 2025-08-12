@@ -52,6 +52,7 @@ void CalculationStore::deleteCalculationAtIndex(int index) {
 }
 
 UserExpression CalculationStore::ansExpression(Context* context) const {
+  assert(context);
   const UserExpression defaultAns = UserExpression::Builder(0_e);
   if (numberOfCalculations() == 0) {
     return defaultAns;
@@ -80,7 +81,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
        * calculation. */
       ansExpr = ansExpr.cloneChildAtIndex(0);
     }
-  } else if (input.recursivelyMatches(&Expression::isApproximate, context) &&
+  } else if (input.recursivelyMatches(&Expression::isApproximate, *context) &&
              mostRecentCalculation->equalSign() ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.

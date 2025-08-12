@@ -11,6 +11,8 @@
 
 #include <algorithm>
 
+#include "poincare/context.h"
+
 using namespace Escher;
 using namespace Poincare;
 
@@ -235,7 +237,7 @@ void ExpressionModelListController::finishEdition() {
 static CodePoint symbolForEquation(UserExpression expression) {
   CodePoint symbol = CodePoints::k_cartesianSymbol;
   expression.recursivelyMatches(
-      [](const UserExpression e, Context* context, void* auxiliary) {
+      [](const UserExpression e, const Context& context, void* auxiliary) {
         CodePoint* symbol = static_cast<CodePoint*>(auxiliary);
         assert(symbol);
         if (SymbolHelper::IsSymbol(e, CodePoints::k_polarSymbol)) {
@@ -248,7 +250,7 @@ static CodePoint symbolForEquation(UserExpression expression) {
         }
         return false;
       },
-      nullptr, SymbolicComputation::KeepAllSymbols, &symbol);
+      EmptyContext{}, SymbolicComputation::KeepAllSymbols, &symbol);
   return symbol;
 }
 

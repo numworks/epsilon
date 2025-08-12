@@ -834,11 +834,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   ContinuousFunctionProperties::SymbolType tempFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
   if (!result.isComparison()) {
-    if (result
-            .dimension(
-                // NOTE: const_cast is temporary
-                &const_cast<Context&>(context))
-            .isPointOrListOfPoints()) {
+    if (result.dimension(context).isPointOrListOfPoints()) {
       if (computedFunctionSymbol) {
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;

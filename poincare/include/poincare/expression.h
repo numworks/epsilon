@@ -141,7 +141,7 @@ class Expression : public PoolHandle {
 
   /* Other properties */
 
-  Dimension dimension(Context* context = nullptr) const;
+  Dimension dimension(const Context& context = EmptyContext{}) const;
   // Only called on expressions that are comparisons
   Comparison::Operator comparisonOperator() const;
 

@@ -64,6 +64,17 @@ void Store<Lock, Unlock>::deleteElementAtIndex(int index) {
 }
 
 template <auto Lock, auto Unlock>
+void Store<Lock, Unlock>::makeElementLast(int index, char* workBuffer) {
+  assert(workBuffer);
+
+  char* element = static_cast<char*>(elementAtIndex(index));
+  size_t size = endOfElementAtIndex(index) - element;
+  memcpy(workBuffer, element, size);
+  deleteElementAtIndex(index);
+  pushElement(workBuffer, size);
+}
+
+template <auto Lock, auto Unlock>
 void Store<Lock, Unlock>::updateElementAtIndex(int index, const void* element,
                                                int size) {
   char* deletionStart = static_cast<char*>(elementAtIndex(index));

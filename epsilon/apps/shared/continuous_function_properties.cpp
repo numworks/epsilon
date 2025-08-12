@@ -193,9 +193,7 @@ void ContinuousFunctionProperties::update(
     }
 
     // Check dimension
-    Dimension dimension = analyzedExpression.dimension(
-        // NOTE: const_cast is temporary
-        &const_cast<Context&>(context));
+    Dimension dimension = analyzedExpression.dimension(context);
     if (((precomputedFunctionSymbol == SymbolType::X ||
           precomputedFunctionSymbol == SymbolType::Theta ||
           precomputedFunctionSymbol == SymbolType::Radius) &&
@@ -301,11 +299,7 @@ void ContinuousFunctionProperties::update(
     }
   }
 
-  assert(analyzedExpression
-             .dimension(
-                 // NOTE: const_cast is temporary
-                 &const_cast<Context&>(context))
-             .isScalar());
+  assert(analyzedExpression.dimension(context).isScalar());
   setCartesianEquationProperties(analyzedExpression, xDeg, yDeg,
                                  highestCoefficientIsPositive);
   if (genericCaptionOnly) {

@@ -393,10 +393,9 @@ QUIZ_CASE(poincare_properties_children_list_length) {
   assert_list_length_in_children_is("{1,2}+{3,4,5}", k_mismatchedLists);
 }
 
-void assert_is_list_of_points(const char* input, Context* context,
+void assert_is_list_of_points(const char* input, const Context& context,
                               bool truth = true) {
-  assert(context);
-  UserExpression e = UserExpression::Builder(parse(input, *context));
+  UserExpression e = UserExpression::Builder(parse(input, context));
   bool isListOfPoints = e.dimension(context).isListOfPoints();
   quiz_assert_print_if_failure(isListOfPoints == truth, input);
 }
@@ -411,24 +410,24 @@ QUIZ_CASE(poincare_properties_list_of_points) {
   store("(1,2)→a", &globalContext);
   store("3→b", &globalContext);
 
-  assert_is_list_of_points("{(1,2)}", &globalContext);
-  assert_is_list_of_points("{(1,-2),(-3.4,5.6)}", &globalContext);
-  assert_is_list_of_points("{a,(3,4)}", &globalContext);
+  assert_is_list_of_points("{(1,2)}", globalContext);
+  assert_is_list_of_points("{(1,-2),(-3.4,5.6)}", globalContext);
+  assert_is_list_of_points("{a,(3,4)}", globalContext);
   assert_is_list_of_points("{(undef,1),(3,undef),(undef, undef)}",
-                           &globalContext);
+                           globalContext);
 
-  assert_is_list_of_points("{1,2,3}", &globalContext, false);
-  assert_is_list_of_points("{(1,2),3}", &globalContext, false);
-  assert_is_list_of_points("{(1,2),3,(4,5)}", &globalContext, false);
-  assert_is_list_of_points("{undef,1}", &globalContext, false);
-  assert_is_list_of_points("{b}", &globalContext, false);
+  assert_is_list_of_points("{1,2,3}", globalContext, false);
+  assert_is_list_of_points("{(1,2),3}", globalContext, false);
+  assert_is_list_of_points("{(1,2),3,(4,5)}", globalContext, false);
+  assert_is_list_of_points("{undef,1}", globalContext, false);
+  assert_is_list_of_points("{b}", globalContext, false);
 
   // TODO_PCJ: These used to be lists of points but are not anymore.
-  assert_is_list_of_points("{}", &globalContext, false);
-  assert_is_list_of_points("{undef}", &globalContext, false);
-  assert_is_list_of_points("{x}", &globalContext, false);
-  assert_is_list_of_points("{a,undef,(3,4)}", &globalContext, false);
-  assert_is_list_of_points("{a,x,(3,4)}", &globalContext, false);
+  assert_is_list_of_points("{}", globalContext, false);
+  assert_is_list_of_points("{undef}", globalContext, false);
+  assert_is_list_of_points("{x}", globalContext, false);
+  assert_is_list_of_points("{a,undef,(3,4)}", globalContext, false);
+  assert_is_list_of_points("{a,x,(3,4)}", globalContext, false);
 }
 
 void assert_is_continuous_on_interval(const char* input, float x1, float x2,

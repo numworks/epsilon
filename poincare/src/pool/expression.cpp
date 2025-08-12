@@ -988,10 +988,8 @@ bool UserExpression::recursivelyMatches(ExpressionTestAuxiliary test,
   return recursivelyMatches(ternary, context, replaceSymbols, &pack);
 }
 
-Poincare::Dimension Expression::dimension(Context* context) const {
-  // Note: temporary until dimension passes Context as a const reference
-  return context ? Poincare::Dimension(*this, *context)
-                 : Poincare::Dimension(*this);
+Poincare::Dimension Expression::dimension(const Context& context) const {
+  return Poincare::Dimension(*this, context);
 }
 
 Sign SystemExpression::sign() const { return GetSign(tree()); }

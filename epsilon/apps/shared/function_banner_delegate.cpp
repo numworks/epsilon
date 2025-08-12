@@ -56,8 +56,9 @@ double FunctionBannerDelegate::GetValueDisplayedOnBanner(
     return 0.0;
   }
   // Round to displayed value
+  assert(context);
   double displayedValue = PoincareHelpers::ValueOfFloatAsDisplayed<double>(
-      t, significantDigits, context);
+      t, significantDigits, *context);
   // Return displayed value if difference from t is under deltaThreshold
   return std::fabs(displayedValue - t) < deltaThreshold ? displayedValue : t;
 }

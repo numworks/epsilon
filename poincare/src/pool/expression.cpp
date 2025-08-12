@@ -544,24 +544,15 @@ PreparedFunction SystemExpression::getPreparedFunction(const char* symbolName,
 template <typename T>
 T UserExpression::approximateToRealScalar(AngleUnit angleUnit,
                                           ComplexFormat complexFormat,
-                                          Context* context) const {
+                                          const Context& context) const {
   static_assert(std::is_floating_point_v<T>);
-  // NOTE: temporary until approximateToRealScalar takes a const ref
-  if (context) {
-    assert(Poincare::Dimension(*this, *context).isScalar() ||
-           Poincare::Dimension(*this, *context).isUnit());
-  } else {
-    assert(Poincare::Dimension(*this).isScalar() ||
-           Poincare::Dimension(*this).isUnit());
-  }
-
-  // Note : temporary until EmptyContext is passed instead of nullptr
+  assert(Poincare::Dimension(*this, context).isScalar() ||
+         Poincare::Dimension(*this, context).isUnit());
   return Approximation::To<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      context ? Approximation::Context(angleUnit, complexFormat, *context)
-              : Approximation::Context(angleUnit, complexFormat));
+      Approximation::Context(angleUnit, complexFormat, context));
 }
 
 template <typename T>
@@ -575,33 +566,21 @@ T PreparedFunctionScalar::approximateToRealScalarWithValue(
 
 template <typename T>
 T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
-    const char* text, Context* context,
+    const char* text, const Context& context,
     Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
     SymbolicComputation symbolicComputation) {
-  /* Note: temporary until ParseAndSimplifyAndApproximateToRealScalar passes
-   * Context as a const reference */
-  UserExpression exp =
-      context ? Parse(text, *context) : Parse(text, EmptyContext{});
+  UserExpression exp = Parse(text, context);
   if (exp.isUninitialized()) {
     return NAN;
   }
-  /* Note: temporary until ParseAndSimplifyAndApproximateToRealScalar passes
-   * Context as a const reference */
-  ProjectionContext ctx =
-      context ? ProjectionContext{.m_complexFormat = complexFormat,
-                                  .m_angleUnit = angleUnit,
-                                  .m_symbolic = symbolicComputation,
-                                  .m_context = *context}
-              : ProjectionContext{.m_complexFormat = complexFormat,
-                                  .m_angleUnit = angleUnit,
-                                  .m_symbolic = symbolicComputation};
+  ProjectionContext ctx = ProjectionContext{.m_complexFormat = complexFormat,
+                                            .m_angleUnit = angleUnit,
+                                            .m_symbolic = symbolicComputation,
+                                            .m_context = context};
   bool reductionFailure;
   exp = exp.cloneAndSimplify(ctx, &reductionFailure);
   assert(!exp.isUninitialized());
-  /* Note: temporary until ParseAndSimplifyAndApproximateToRealScalar passes
-   * Context as a const reference */
-  Poincare::Dimension dimension =
-      context ? Poincare::Dimension(exp, *context) : Poincare::Dimension(exp);
+  Poincare::Dimension dimension = Poincare::Dimension(exp, context);
   if (!dimension.isScalar()) {
     return NAN;
   }
@@ -1176,10 +1155,10 @@ template Coordinate2D<double> SystemExpression::approximateToPoint<double>()
     const;
 
 template float UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-    float>(const char*, Context*, Preferences::ComplexFormat,
+    float>(const char*, const Context&, Preferences::ComplexFormat,
            Preferences::AngleUnit, SymbolicComputation);
 template double UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
-    double>(const char*, Context*, Preferences::ComplexFormat,
+    double>(const char*, const Context&, Preferences::ComplexFormat,
             Preferences::AngleUnit, SymbolicComputation);
 
 template bool UserExpression::hasDefinedComplexApproximation<float>(
@@ -1190,8 +1169,8 @@ template bool UserExpression::hasDefinedComplexApproximation<double>(
     double*) const;
 
 template float UserExpression::approximateToRealScalar<float>(
-    Preferences::AngleUnit, Preferences::ComplexFormat, Context*) const;
+    Preferences::AngleUnit, Preferences::ComplexFormat, const Context&) const;
 template double UserExpression::approximateToRealScalar<double>(
-    Preferences::AngleUnit, Preferences::ComplexFormat, Context*) const;
+    Preferences::AngleUnit, Preferences::ComplexFormat, const Context&) const;
 
 }  // namespace Poincare

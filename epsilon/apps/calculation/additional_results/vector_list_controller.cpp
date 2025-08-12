@@ -89,7 +89,7 @@ void VectorListController::computeAdditionalResults(
         {.KA = Trigonometry::Period(ctx.m_angleUnit), .KB = angle});
   }
   float angleApproximation = angle.approximateToRealScalar<float>(
-      angleUnit(), complexFormat(), context);
+      angleUnit(), complexFormat(), *context);
   if (!std::isfinite(angleApproximation)) {
     return;
   }
@@ -101,10 +101,10 @@ void VectorListController::computeAdditionalResults(
   // 4. Illustration
   float xApproximation =
       approximateOutput.cloneChildAtIndex(0).approximateToRealScalar<float>(
-          angleUnit(), complexFormat(), context);
+          angleUnit(), complexFormat(), *context);
   float yApproximation =
       approximateOutput.cloneChildAtIndex(1).approximateToRealScalar<float>(
-          angleUnit(), complexFormat(), context);
+          angleUnit(), complexFormat(), *context);
   if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
       (OMG::LaxToZero(xApproximation) == 0.f &&
        OMG::LaxToZero(yApproximation) == 0.f)) {

@@ -100,7 +100,7 @@ void Interval::computeElements() {
       m_intervalBuffer.push(0.0);
     } else {
       double value = PoincareHelpers::ValueOfFloatAsDisplayed<double>(
-          m_parameters.start() + i * m_parameters.step(), precision, nullptr);
+          m_parameters.start() + i * m_parameters.step(), precision);
       m_intervalBuffer.push(value);
       checkForElementZero = checkForElementZero && value < 0.0;
     }

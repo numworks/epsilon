@@ -49,7 +49,7 @@ void FunctionListController::computeAdditionalResults(
    */
   // TODO_CONTEXT: prepare for approximation ?
   float ordinate = approximateOutput.approximateToRealScalar<float>(
-      angleUnit(), complexFormat(), context);
+      angleUnit(), complexFormat(), *context);
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
   m_layouts[0] = Layout::Create(

@@ -303,7 +303,8 @@ class UserExpression : public Expression {
   bool hasUnit(bool ignoreAngleUnits = false, bool* hasAngleUnits = nullptr,
                bool replaceSymbols = false, Context* ctx = nullptr) const;
 
-  // The following two methods should be moved out of Expression's public API.
+  /* TODO: The following two methods should be made private or deleted to hide
+   *       Internal node types. */
   bool isOfType(std::initializer_list<Internal::AnyType> types) const;
   bool deepIsOfType(std::initializer_list<Internal::AnyType> types,
                     Context* context = nullptr) const;

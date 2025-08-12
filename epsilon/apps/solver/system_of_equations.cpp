@@ -168,8 +168,9 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   while (i < nEquations && !forbidExactSolution) {
     OMG::ExpiringPointer<Equation> equation =
         store->modelForRecord(store->definedRecordAtIndex(i));
+    assert(context);
     if (CAS::NeverDisplayReductionOfInput(equation->expressionClone(),
-                                          context)) {
+                                          *context)) {
       forbidExactSolution = true;
     }
     i++;
@@ -181,7 +182,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
 
   forbidExactSolution =
       forbidExactSolution ||
-      CAS::ShouldOnlyDisplayApproximation(exact, exact, approximate, context);
+      CAS::ShouldOnlyDisplayApproximation(exact, exact, approximate, *context);
 
   if (forbidExactSolution && approximate.isUninitialized()) {
     // Re-reduce exact solution but approximate during reduction.

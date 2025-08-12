@@ -173,6 +173,8 @@ static void processStore(OutputExpressions& outputs,
    * can be different from the value in the store expression. e.g. if f(x) =
    * cos(x), the expression "f(x^2)->f(x)" will return "cos(x^2)". */
 
+  assert(variableStore);
+
   // TODO: factorize with StoreMenuController::parseAndStore
   // TODO: add circuit breaker?
   UserExpression value = StoreHelper::Value(outputs.exact);
@@ -182,7 +184,7 @@ static void processStore(OutputExpressions& outputs,
   UserExpression valueApprox =
       value.cloneAndApproximate<double>(projectionContext);
   if (symbol.isUserSymbol() && CAS::ShouldOnlyDisplayApproximation(
-                                   input, value, valueApprox, variableStore)) {
+                                   input, value, valueApprox, *variableStore)) {
     value = valueApprox;
   }
 #if 0

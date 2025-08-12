@@ -5,14 +5,14 @@ namespace Poincare::Internal {
 bool CAS::Enabled() { return true; }
 
 bool CAS::NeverDisplayReductionOfInput(const Internal::Tree* input,
-                                       Context* context) {
+                                       const Context& context) {
   // FIXME Implement CAS
   return false;
 }
 
 bool CAS::ShouldOnlyDisplayApproximation(
     const Internal::Tree* input, const Internal::Tree* exactOutput,
-    const Internal::Tree* approximateOutput, Context* context) {
+    const Internal::Tree* approximateOutput, const Context& context) {
   // FIXME Implement CAS
   return false;
 }

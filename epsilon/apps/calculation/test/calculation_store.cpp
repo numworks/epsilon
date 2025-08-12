@@ -172,7 +172,7 @@ QUIZ_CASE(calculation_ans) {
   ExamModeManager::SetExamMode(ExamMode(ExamMode::Ruleset::Dutch));
   assert(CAS::ShouldOnlyDisplayApproximation(
       UserExpression::Builder(KSqrt(2_e)), UserExpression::Builder(KSqrt(2_e)),
-      UserExpression(), nullptr));
+      UserExpression(), Poincare::EmptyContext{}));
 
   assertAnsIs("√(1+1)", "√(1+1)", &globalContext, &store);
 

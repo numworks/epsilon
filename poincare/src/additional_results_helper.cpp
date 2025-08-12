@@ -71,8 +71,7 @@ AdditionalResultsHelper::TrigonometryAngleHelper(
           UserExpression::Builder(static_cast<const Tree*>(simplifiedAngle)),
           UserExpression::Builder(
               static_cast<const Tree*>(approximateAngleTree)),
-          // NOTE: const_cast is temporary
-          &const_cast<Context&>(ctx->m_context))) {
+          ctx->m_context)) {
     if (directTrigonometry) {
       assert(!approximateAngleTree);
       /* Do not approximate the FracPart, which could lead to truncation error

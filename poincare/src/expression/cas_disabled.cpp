@@ -39,7 +39,7 @@ bool exactExpressionIsForbidden(const Tree* exactOutput) {
       isFraction || isPrimeFactorization(exactOutput));
 }
 
-bool neverDisplayExactOutput(const Tree* exactOutput, Context* context) {
+bool neverDisplayExactOutput(const Tree* exactOutput, const Context& context) {
   if (!exactOutput) {
     return false;
   }
@@ -74,14 +74,13 @@ bool neverDisplayExactOutput(const Tree* exactOutput, Context* context) {
        (exactOutput->isList() || exactOutput->isMatrix())) {
     return true;
   }
-  assert(context);
-  Internal::Dimension d = Internal::Dimension::Get(exactOutput, *context);
+  Internal::Dimension d = Internal::Dimension::Get(exactOutput, context);
   // Angle units can have an exact output contrary to other units
   return d.isUnit() && !d.isAngleUnit();
 }
 
 bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
-                                                Context* context) {
+                                                const Context& context) {
   /* The angle units could display exact output but we want to avoid exact
    * results that are not in radians like "(3/sqrt(2))°" because they are not
    * relevant for the user.
@@ -89,8 +88,7 @@ bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
    * To do so, the approximateOutput is checked rather than the exactOutput,
    * because the approximateOutput has a unit only if the degree unit is not
    * in a trig function. */
-  assert(context);
-  Internal::Dimension d = Internal::Dimension::Get(approximateOutput, *context);
+  Internal::Dimension d = Internal::Dimension::Get(approximateOutput, context);
   return d.isUnit() && !d.isSimpleRadianAngleUnit();
 }
 
@@ -99,7 +97,7 @@ bool neverDisplayExactExpressionOfApproximation(const Tree* approximateOutput,
 bool CAS::Enabled() { return false; }
 
 bool CAS::NeverDisplayReductionOfInput(const Internal::Tree* input,
-                                       Context* context) {
+                                       const Context& context) {
   if (!input) {
     return false;
   }
@@ -123,7 +121,7 @@ bool CAS::NeverDisplayReductionOfInput(const Internal::Tree* input,
 
 bool CAS::ShouldOnlyDisplayApproximation(
     const Internal::Tree* input, const Internal::Tree* exactOutput,
-    const Internal::Tree* approximateOutput, Context* context) {
+    const Internal::Tree* approximateOutput, const Context& context) {
   return NeverDisplayReductionOfInput(input, context) ||
          neverDisplayExactOutput(exactOutput, context) ||
          (approximateOutput && neverDisplayExactExpressionOfApproximation(

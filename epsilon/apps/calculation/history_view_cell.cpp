@@ -304,7 +304,11 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
   /* m_calculationDisplayOutput must have been updated before computing the
    * additional results type (a forbidden expression could hide the exact
    * results). */
-  m_hasEllipsis = calculation->additionalResultsType(context).isNotEmpty();
+
+  // NOTE: temporary until setNewCalculation takes a const Context&
+  m_hasEllipsis =
+      context ? calculation->additionalResultsType(*context).isNotEmpty()
+              : calculation->additionalResultsType(EmptyContext{}).isNotEmpty();
 
   /* Update m_scrollableOutputView. Must be done once m_calculationDisplayOutput
    * has been updated. We must set which subviews are displayed before

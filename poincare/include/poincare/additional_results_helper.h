@@ -30,7 +30,7 @@ class AdditionalResultsHelper final {
 
   static UserExpression ExtractExactAngleFromDirectTrigo(
       const UserExpression input, const UserExpression exactOutput,
-      Context* context,
+      const Context& context,
       const Preferences::CalculationPreferences calculationPreferences);
 
   static bool expressionIsInterestingFunction(const UserExpression e);
@@ -62,7 +62,7 @@ class AdditionalResultsHelper final {
 
   /* Scientific notation additional results */
   static Layout ScientificLayout(
-      const UserExpression approximateOutput, Context* context,
+      const UserExpression approximateOutput, const Context& context,
       const Preferences::CalculationPreferences calculationPreferences);
 
   /* Matrix additional results */

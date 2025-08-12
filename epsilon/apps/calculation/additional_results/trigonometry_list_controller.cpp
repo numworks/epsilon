@@ -20,10 +20,10 @@ void TrigonometryListController::computeAdditionalResults(
   Context* context = App::app()->localContext();
   assert((m_directTrigonometry &&
           AdditionalResultsType::HasDirectTrigo(
-              input, exactOutput, m_calculationPreferences, context)) ||
+              input, exactOutput, m_calculationPreferences, *context)) ||
          (!m_directTrigonometry && AdditionalResultsType::HasInverseTrigo(
                                        input, exactOutput, approximateOutput,
-                                       m_calculationPreferences, context)));
+                                       m_calculationPreferences, *context)));
 
   Internal::ProjectionContext ctx = {
       .m_complexFormat = complexFormat(),

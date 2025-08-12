@@ -313,7 +313,8 @@ void HistoryController::handleOK() {
   OMG::ExpiringPointer<Calculation> selectedCalculation =
       calculationAtIndex(focusRow);
   UserExpression i, a, e;
-  selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a, context);
+  selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a,
+                                                           *context);
   assert(Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
              selectedCalculation->calculationPreferences().complexFormat, i,
              *context) ==
@@ -322,7 +323,7 @@ void HistoryController::handleOK() {
   /* Reuse the same angle unit and updated complexFormat as when the calculation
    * was computed. */
   m_additionalResultsController.openAdditionalResults(
-      selectedCalculation->additionalResultsType(context), i, e, a,
+      selectedCalculation->additionalResultsType(*context), i, e, a,
       selectedCalculation->calculationPreferences());
 }
 

@@ -56,14 +56,14 @@ class SequenceContext final : public Poincare::VariableStore {
 
   SequenceStore* sequenceStore() { return m_sequenceStore; }
   bool sequenceIsNotComputable(Poincare::Context* ctx, int sequenceIndex);
-  void resetCache() { cache()->resetCache(); }
+  void resetCache() const { cache()->resetCache(); }
   Sequence* sequenceAtNameIndex(int sequenceIndex) const;
 
  private:
   constexpr static int k_numberOfSequences =
       SequenceStore::k_maxNumberOfSequences;
 
-  SequenceCache* cache();
+  SequenceCache* cache() const;
 
   VariableStore* m_parentStore;
   SequenceStore* m_sequenceStore;

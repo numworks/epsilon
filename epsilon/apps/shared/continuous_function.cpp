@@ -67,16 +67,14 @@ ContinuousFunction::ContinuousFunction(Ion::Storage::Record record)
    *  now be updated as the function f(x), so the record needs a renaming.
    * */
   if (!record.isNull()) {
-    Ion::Storage::Record::ErrorStatus error =
-        updateNameIfNeeded(Poincare::Context::GlobalContext);
+    Ion::Storage::Record::ErrorStatus error = updateNameIfNeeded();
     assert(error == Ion::Storage::Record::ErrorStatus::None);
     (void)error;
   }
 }
 
-Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded(
-    Context* context) {
-  return m_model.renameRecordIfNeeded(this, context);
+Ion::Storage::Record::ErrorStatus ContinuousFunction::updateNameIfNeeded() {
+  return m_model.renameRecordIfNeeded(this);
 }
 
 size_t ContinuousFunction::nameWithoutArgument(char* buffer, size_t bufferSize,
@@ -157,9 +155,9 @@ Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
       m_model.setContent(this, l, context, k_unnamedExpressionSymbol);
   if (error == Ion::Storage::Record::ErrorStatus::None && !isNull()) {
     // Set proper name
-    error = updateNameIfNeeded(context);
+    error = updateNameIfNeeded();
     // Update model
-    updateModel(context, wasCartesian);
+    updateModel(wasCartesian);
   }
   return error;
 }
@@ -222,7 +220,7 @@ KDColor ContinuousFunction::subCurveColor(int subCurveIndex) const {
   return color(derivationOrderFromSubCurveIndex(subCurveIndex));
 }
 
-void ContinuousFunction::updateModel(Context* context, bool wasCartesian) {
+void ContinuousFunction::updateModel(bool wasCartesian) {
   setCache(nullptr);
   m_model.resetProperties();  // Reset model's properties.
   properties();               // update properties.
@@ -970,8 +968,8 @@ PreparedFunctionScalar ContinuousFunction::Model::expressionSlopeReduced(
 }
 
 Ion::Storage::Record::ErrorStatus
-ContinuousFunction::Model::renameRecordIfNeeded(Ion::Storage::Record* record,
-                                                Context* context) const {
+ContinuousFunction::Model::renameRecordIfNeeded(
+    Ion::Storage::Record* record) const {
   /* Use ExpressionModel::expressionClone because it does not alter
    * the left-hand side of "f(x)=" and "f(t)=", which allows the name
    * of the function to be found. */

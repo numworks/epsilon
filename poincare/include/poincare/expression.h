@@ -227,7 +227,7 @@ class Expression : public PoolHandle {
       Preferences::AngleUnit angleUnit = Preferences::AngleUnit::None,
       Preferences::ComplexFormat complexFormat =
           Preferences::ComplexFormat::None,
-      Context* context = nullptr) const;
+      const Context& context = EmptyContext{}) const;
   // Approximate to real scalar replacing Var0 with value.
   template <typename T>
   T approximateToRealScalarWithValue(T x, int listElement = -1) const;
@@ -259,7 +259,7 @@ class Expression : public PoolHandle {
    * Return NAN for all non real scalar expressions. */
   template <typename T>
   static T ParseAndSimplifyAndApproximateToRealScalar(
-      const char* text, Context* context,
+      const char* text, const Context& context,
       Preferences::ComplexFormat complexFormat,
       Preferences::AngleUnit angleUnit,
       SymbolicComputation symbolicComputation =

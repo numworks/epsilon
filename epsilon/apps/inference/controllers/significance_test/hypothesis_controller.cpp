@@ -74,7 +74,7 @@ bool HypothesisController::textFieldDidFinishEditing(
   double h0 =
       Poincare::UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
           double>(textField->draftText(),
-                  AppsContainerHelper::sharedAppsContainerGlobalContext(),
+                  *AppsContainerHelper::sharedAppsContainerGlobalContext(),
                   GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
                   GlobalPreferences::SharedGlobalPreferences()->angleUnit());
   // Check

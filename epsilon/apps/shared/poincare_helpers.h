@@ -2,6 +2,7 @@
 #define SHARED_POINCARE_HELPERS_H
 
 #include <apps/global_preferences.h>
+#include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
 #include <poincare/preferences.h>
@@ -159,8 +160,9 @@ inline Poincare::SystemExpression CloneAndReduce(
 
 // Return the nearest number from t's representation with given precision.
 template <class T>
-inline T ValueOfFloatAsDisplayed(T t, int precision,
-                                 Poincare::Context* context) {
+inline T ValueOfFloatAsDisplayed(
+    T t, int precision,
+    const Poincare::Context& context = Poincare::EmptyContext{}) {
   assert(
       precision <=
       static_cast<int>(Poincare::PrintFloat::k_maxNumberOfSignificantDigits));

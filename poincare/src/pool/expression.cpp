@@ -1131,15 +1131,22 @@ Comparison::Operator Expression::comparisonOperator() const {
   return Internal::Binary::ComparisonOperatorForType(tree()->type());
 }
 
-UserExpression UserExpression::Builder(const Tree* tree) {
+PoolHandle Expression::BuildPoolHandleFromTree(const Tree* tree) {
   if (!tree) {
-    return UserExpression();
+    return Expression();
   }
   size_t size = tree->treeSize();
   void* bufferNode = Pool::sharedPool->alloc(sizeof(ExpressionObject) + size);
   ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
-  PoolHandle h = PoolHandle::Build(node);
-  return static_cast<UserExpression&>(h);
+  return PoolHandle::Build(node);
+}
+
+/* TODO: Find a better way to avoid duplication of Builder, clone, and
+ *       cloneChildAtIndex methods. */
+
+UserExpression UserExpression::Builder(const Tree* tree) {
+  PoolHandle p = BuildPoolHandleFromTree(tree);
+  return static_cast<UserExpression&>(p);
 }
 
 UserExpression UserExpression::Builder(Tree* tree) {
@@ -1151,14 +1158,8 @@ UserExpression UserExpression::Builder(Tree* tree) {
 }
 
 SystemExpression SystemExpression::Builder(const Tree* tree) {
-  if (!tree) {
-    return SystemExpression();
-  }
-  size_t size = tree->treeSize();
-  void* bufferNode = Pool::sharedPool->alloc(sizeof(ExpressionObject) + size);
-  ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
-  PoolHandle h = PoolHandle::Build(node);
-  return static_cast<SystemExpression&>(h);
+  PoolHandle p = BuildPoolHandleFromTree(tree);
+  return static_cast<SystemExpression&>(p);
 }
 
 SystemExpression SystemExpression::Builder(Tree* tree) {
@@ -1170,14 +1171,8 @@ SystemExpression SystemExpression::Builder(Tree* tree) {
 }
 
 PreparedFunction PreparedFunction::Builder(const Tree* tree) {
-  if (!tree) {
-    return PreparedFunction();
-  }
-  size_t size = tree->treeSize();
-  void* bufferNode = Pool::sharedPool->alloc(sizeof(ExpressionObject) + size);
-  ExpressionObject* node = new (bufferNode) ExpressionObject(tree, size);
-  PoolHandle h = PoolHandle::Build(node);
-  return static_cast<PreparedFunction&>(h);
+  PoolHandle p = BuildPoolHandleFromTree(tree);
+  return static_cast<PreparedFunction&>(p);
 }
 
 PreparedFunction PreparedFunction::Builder(Tree* tree) {

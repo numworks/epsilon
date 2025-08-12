@@ -40,7 +40,7 @@ class ExpressionModelHandle : public Ion::Storage::Record {
     model()->tidyDownstreamPoolFrom(treePoolCursor);
   }
   virtual Ion::Storage::Record::ErrorStatus setContent(
-      const Poincare::Layout& l, Poincare::Context* context) {
+      const Poincare::Layout& l, const Poincare::Context& context) {
     return editableModel()->setContent(this, l, context, symbol());
   }
   Ion::Storage::Record::ErrorStatus setExpressionContent(
@@ -50,7 +50,8 @@ class ExpressionModelHandle : public Ion::Storage::Record {
 
   Poincare::Preferences::ComplexFormat complexFormat(
       Poincare::Context* context) const {
-    return model()->complexFormat(this, context);
+    assert(context);
+    return model()->complexFormat(this, *context);
   }
 
  protected:

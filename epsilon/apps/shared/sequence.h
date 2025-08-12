@@ -4,6 +4,7 @@
 #include <assert.h>
 #include <ion/storage/file_system.h>
 #include <poincare/code_points.h>
+#include <poincare/context.h>
 #include <poincare/helpers/sequence.h>
 
 #include "function.h"
@@ -70,7 +71,10 @@ class Sequence : public Function {
   }
   Ion::Storage::Record::ErrorStatus setFirstInitialConditionContent(
       Poincare::Layout l, Poincare::Context* context) {
-    return m_firstInitialCondition.setContent(this, l, context);
+    // NOTE: temporary until EmptyContext can be passed
+    return context ? m_firstInitialCondition.setContent(this, l, *context)
+                   : m_firstInitialCondition.setContent(
+                         this, l, Poincare::EmptyContext{});
   }
   // Second initial condition
   Poincare::Layout secondInitialConditionName() {
@@ -91,7 +95,10 @@ class Sequence : public Function {
   }
   Ion::Storage::Record::ErrorStatus setSecondInitialConditionContent(
       Poincare::Layout l, Poincare::Context* context) {
-    return m_secondInitialCondition.setContent(this, l, context);
+    // NOTE: temporary until EmptyContext can be passed
+    return context ? m_secondInitialCondition.setContent(this, l, *context)
+                   : m_secondInitialCondition.setContent(
+                         this, l, Poincare::EmptyContext{});
   }
   void tidyDownstreamPoolFrom(
       const Poincare::PoolObject* treePoolCursor = nullptr) const override;

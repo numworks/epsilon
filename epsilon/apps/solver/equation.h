@@ -2,6 +2,7 @@
 #define SOLVER_EQUATION_h
 
 #include <apps/shared/expression_model_handle.h>
+#include <poincare/context.h>
 
 namespace Solver {
 
@@ -28,7 +29,8 @@ class Equation : public Shared::ExpressionModelHandle {
      * an underscore, so that they are not mixed with symbols. */
     Poincare::UserExpression buildExpressionFromLayout(
         Poincare::Layout l, CodePoint symbol = 0,
-        Poincare::Context* context = nullptr) const override;
+        const Poincare::Context& context =
+            Poincare::EmptyContext{}) const override;
 
    private:
     void* expressionAddress(const Ion::Storage::Record* record) const override;

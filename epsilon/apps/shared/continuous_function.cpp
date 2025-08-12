@@ -5,6 +5,7 @@
 #include <escher/palette.h>
 #include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
+#include <poincare/context.h>
 #include <poincare/function_properties/integral.h>
 #include <poincare/helpers/polynomial.h>
 #include <poincare/helpers/symbol.h>
@@ -144,7 +145,7 @@ size_t ContinuousFunction::printFunctionValue(double cursorT, double cursorX,
 }
 
 Ion::Storage::Record::ErrorStatus ContinuousFunction::setContent(
-    const Poincare::Layout& l, Context* context) {
+    const Poincare::Layout& l, const Context& context) {
   setCache(nullptr);
   bool wasCartesian = properties().isCartesian();
   /* About to set the content, the symbol does not matter here yet. We don't use
@@ -586,8 +587,9 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     m_expression = SystemExpression::Undefined();
     return m_expression;
   }
+  assert(context);
   Preferences::ComplexFormat complexFormat =
-      this->complexFormat(record, context);
+      this->complexFormat(record, *context);
   Preferences::AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (thisProperties.isScatterPlot()) {
@@ -740,8 +742,10 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
       expressionEquation(record, context, &computedEquationType,
                          &computedFunctionSymbol, &isCartesianEquation);
   SystemExpression result;
+  // NOTE: temporary until expressionReducedForAnalysis takes a const&
   Preferences::ComplexFormat complexFormat =
-      this->complexFormat(record, context);
+      context ? this->complexFormat(record, *context)
+              : this->complexFormat(record, Poincare::EmptyContext{});
   Preferences::AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (!equation.isUndefined()) {
@@ -824,6 +828,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
   if (result.isUninitialized()) {
     return UserExpression::Undefined();
   }
+  assert(context);
   ContinuousFunctionProperties::SymbolType tempFunctionSymbol =
       ContinuousFunctionProperties::k_defaultSymbolType;
   if (!result.isComparison()) {
@@ -832,7 +837,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
         *computedFunctionSymbol =
             ContinuousFunctionProperties::SymbolType::NoSymbol;
       }
-      result.replaceSymbols(context);
+      result.replaceSymbols(*context);
       if (!result.isUninitialized()) {
         // Result is not circularly defined.
         return result;
@@ -906,7 +911,7 @@ UserExpression ContinuousFunction::Model::expressionEquation(
         SymbolHelper::BuildSymbol(UCodePointTemporaryUnknown));
   }
   // Replace all defined symbols and functions to extract symbols
-  result.replaceSymbols(context);
+  result.replaceSymbols(*context);
 
   if (result.isUninitialized()) {
     // result was Circularly defined
@@ -1024,7 +1029,8 @@ CodePoint ContinuousFunction::Model::CodePointForSymbol(
 }
 
 Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
-    Poincare::Layout l, CodePoint symbol, Poincare::Context* context) const {
+    Poincare::Layout l, CodePoint symbol,
+    const Poincare::Context& context) const {
   /* The symbol parameter is discarded in this implementation. Either there is a
    * valid named left expression and the symbol will be extracted, either the
    * symbol should be the default symbol used in unnamed expressions. */
@@ -1034,9 +1040,8 @@ Poincare::UserExpression ContinuousFunction::Model::buildExpressionFromLayout(
     return UserExpression();
   }
   /* Parse the expression to store as possible function assignment. */
-  assert(context);
   UserExpression expressionToStore =
-      UserExpression::Parse(l, *context, {.isAssignment = true});
+      UserExpression::Parse(l, context, {.isAssignment = true});
   if (expressionToStore.isUninitialized()) {
     return expressionToStore;
   }

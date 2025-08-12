@@ -133,7 +133,8 @@ class Preferences {
 
   // TODO: this has nothing to do here
   static ComplexFormat UpdatedComplexFormatWithExpressionInput(
-      ComplexFormat complexFormat, const Internal::Tree* e, Context* context,
+      ComplexFormat complexFormat, const Internal::Tree* e,
+      const Context& context,
       SymbolicComputation replaceSymbols =
           SymbolicComputation::ReplaceDefinedSymbols);
 

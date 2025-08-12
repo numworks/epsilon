@@ -15,13 +15,12 @@ Preferences::Interface* Preferences::s_preferences = nullptr;
 const Preferences Preferences::PreferencesInstance;
 
 Preferences::ComplexFormat Preferences::UpdatedComplexFormatWithExpressionInput(
-    ComplexFormat complexFormat, const Internal::Tree* exp, Context* context,
-    SymbolicComputation replaceSymbols) {
-  assert(context);
+    ComplexFormat complexFormat, const Internal::Tree* exp,
+    const Context& context, SymbolicComputation replaceSymbols) {
   Internal::ProjectionContext projectionContext = {
       .m_complexFormat = complexFormat,
       .m_symbolic = replaceSymbols,
-      .m_context = *context,
+      .m_context = context,
   };
   Internal::Projection::UpdateComplexFormatWithExpressionInput(
       exp, &projectionContext);

@@ -100,6 +100,7 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
 SystemExpression AreaBetweenCurvesGraphController::createSumExpression(
     double startSum, double endSum, Context* context) {
   // Get the expression of the first function
+  assert(context);
   OMG::ExpiringPointer<Shared::Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
   SystemExpression expressionF = function->expressionReduced(context).clone();

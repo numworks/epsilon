@@ -29,7 +29,7 @@ class ExpressionModel {
   // Setters
   Ion::Storage::Record::ErrorStatus setContent(Ion::Storage::Record* record,
                                                const Poincare::Layout& l,
-                                               Poincare::Context* context,
+                                               const Poincare::Context& context,
                                                CodePoint symbol = 0);
   Ion::Storage::Record::ErrorStatus setExpressionContent(
       Ion::Storage::Record* record,
@@ -39,19 +39,20 @@ class ExpressionModel {
       const Poincare::PoolObject* treePoolCursor = nullptr) const;
 
   Poincare::Preferences::ComplexFormat complexFormat(
-      const Ion::Storage::Record* record, Poincare::Context* context) const;
+      const Ion::Storage::Record* record,
+      const Poincare::Context& context) const;
 
  protected:
   // Setters helper
   virtual Poincare::UserExpression buildExpressionFromLayout(
       Poincare::Layout l, CodePoint symbol = 0,
-      Poincare::Context* context = nullptr) const;
+      const Poincare::Context& context = Poincare::EmptyContext{}) const;
   static Poincare::UserExpression ReplaceSymbolWithUnknown(
       Poincare::UserExpression e, CodePoint symbol,
       bool onlySecondTerm = false);
 
   bool isCircularlyDefined(const Ion::Storage::Record* record,
-                           Poincare::Context* context) const;
+                           const Poincare::Context& context) const;
   virtual void updateNewDataWithExpression(
       Ion::Storage::Record* record,
       const Poincare::UserExpression& expressionToStore,

@@ -63,9 +63,10 @@ inline Poincare::SystemExpression ApproximateUser(
         GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
     Poincare::Preferences::AngleUnit angleUnit =
         GlobalPreferences::SharedGlobalPreferences()->angleUnit()) {
+  assert(context);
   complexFormat =
       Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-          complexFormat, e, context);
+          complexFormat, e, *context);
   return e.approximateUserToTree<T>(
       GlobalPreferences::SharedGlobalPreferences()->angleUnit(), complexFormat,
       context);

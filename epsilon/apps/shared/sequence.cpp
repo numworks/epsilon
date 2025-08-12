@@ -113,9 +113,10 @@ Layout Sequence::aggregatedLayout() {
 
 Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
     Layout l, Context* ctx) {
+  assert(ctx);
   if (SequenceHelper::IsSequenceInsideRack(l)) {
     Ion::Storage::Record::ErrorStatus error =
-        setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), ctx);
+        setContent(SequenceHelper::ExtractExpressionAtRow(l, 0), *ctx);
     if (type() == Type::Explicit ||
         error != Ion::Storage::Record::ErrorStatus::None) {
       return error;
@@ -130,7 +131,7 @@ Ion::Storage::Record::ErrorStatus Sequence::setLayoutsForAggregated(
         SequenceHelper::ExtractExpressionAtRow(l, 2), ctx);
   } else {
     // Handle layout as main expression
-    return setContent(l, ctx);
+    return setContent(l, *ctx);
   }
 }
 

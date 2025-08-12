@@ -1,10 +1,15 @@
 #ifndef POINCARE_CONTEXT_H
 #define POINCARE_CONTEXT_H
 
-#include <poincare/src/memory/tree.h>
 #include <stdint.h>
 
 #include <cmath>
+
+// TODO: refactor to have an Internal Context and a public API Context
+
+namespace Poincare::Internal {
+class Tree;
+}
 
 namespace Poincare {
 

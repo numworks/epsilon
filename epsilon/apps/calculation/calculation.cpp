@@ -334,7 +334,7 @@ void Calculation::computeEqualSign(const OutputLayouts& outputLayouts,
 
 void Calculation::fillExpressionsForAdditionalResults(
     UserExpression* input, UserExpression* exactOutput,
-    UserExpression* approximateOutput, Context* context) {
+    UserExpression* approximateOutput, const Context& context) {
   *input = this->input();
   *approximateOutput = this->approximateOutput();
   assert(m_displayOutput != DisplayOutput::Unknown);
@@ -343,7 +343,8 @@ void Calculation::fillExpressionsForAdditionalResults(
                      : this->exactOutput();
 }
 
-AdditionalResultsType Calculation::additionalResultsType(Context* context) {
+AdditionalResultsType Calculation::additionalResultsType(
+    const Context& context) {
   if (m_additionalResultsType.isUninitialized()) {
     if (m_reductionFailure) {
       // Hide the additional result if the calculation had a reduction failure

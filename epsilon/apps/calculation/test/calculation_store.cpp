@@ -900,7 +900,7 @@ void assertCalculationAdditionalResultTypeHas(
   OMG::ExpiringPointer<Calculation::Calculation> lastCalculation =
       store->calculationAtIndex(0);
   quiz_assert_print_if_failure(
-      lastCalculation->additionalResultsType(variableStore) ==
+      lastCalculation->additionalResultsType(*variableStore) ==
           additionalResultsType,
       input, "correct additional results", "incorrect additional results");
   store->deleteAll();

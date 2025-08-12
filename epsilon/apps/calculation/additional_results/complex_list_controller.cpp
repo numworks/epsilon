@@ -22,7 +22,7 @@ void ComplexListController::computeAdditionalResults(
    * setComplex ?
    * - do the same for abs(z) and arg(z) for exponential form ? */
   assert(AdditionalResultsType::HasComplex(approximateOutput,
-                                           m_calculationPreferences, context));
+                                           m_calculationPreferences, *context));
   assert(complexFormat() != Preferences::ComplexFormat::Real);
   Internal::ProjectionContext ctx = {
       .m_complexFormat = Preferences::ComplexFormat::Cartesian,

@@ -135,8 +135,9 @@ class Calculation {
 
   void fillExpressionsForAdditionalResults(
       Poincare::UserExpression* input, Poincare::UserExpression* exactOutput,
-      Poincare::UserExpression* approximateOutput, Poincare::Context* context);
-  AdditionalResultsType additionalResultsType(Poincare::Context* context);
+      Poincare::UserExpression* approximateOutput,
+      const Poincare::Context& context);
+  AdditionalResultsType additionalResultsType(const Poincare::Context& context);
 
  private:
   /* An exact result of length longer than 58 characters will be hidden. Add a

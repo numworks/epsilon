@@ -24,7 +24,7 @@ void VectorListController::computeAdditionalResults(
     const UserExpression approximateOutput) {
   Context* context = App::app()->localContext();
   assert(AdditionalResultsType::HasVector(exactOutput, approximateOutput,
-                                          m_calculationPreferences, context));
+                                          m_calculationPreferences, *context));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
@@ -42,7 +42,7 @@ void VectorListController::computeAdditionalResults(
   UserExpression exactClone = exactOutput.clone();
 
   // 1. Vector norm
-  UserExpression norm = VectorHelper::BuildVectorNorm(exactClone, context,
+  UserExpression norm = VectorHelper::BuildVectorNorm(exactClone, *context,
                                                       m_calculationPreferences);
   assert(!norm.isUninitialized() && !norm.isUndefined());
   setLineAtIndex(index++, UserExpression(), norm, &ctx);

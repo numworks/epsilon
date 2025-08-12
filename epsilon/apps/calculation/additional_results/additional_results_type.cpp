@@ -19,7 +19,7 @@ AdditionalResultsType AdditionalResultsType::AdditionalResultsForExpressions(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
-    Poincare::Context* context) {
+    const Poincare::Context& context) {
   if (ForbidAdditionalResults(input, exactOutput, approximateOutput)) {
     return AdditionalResultsType{.empty = true};
   }
@@ -111,7 +111,7 @@ bool AdditionalResultsType::ForbidAdditionalResults(
 bool AdditionalResultsType::HasComplex(
     const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
-    Context* context) {
+    const Context& context) {
   /* We have 2 edge cases:
    * 1) exact output assessed to scalar complex but not approximate output
    * ex:
@@ -128,14 +128,13 @@ bool AdditionalResultsType::HasComplex(
    *    complex, while the exact output is not.
    * We chosed to handle the 2nd case and not to display any additional results
    * in the 1st case. */
-  assert(context);
-  return approximateOutput.isComplexScalar(calculationPreferences, *context);
+  return approximateOutput.isComplexScalar(calculationPreferences, context);
 }
 
 bool AdditionalResultsType::HasDirectTrigo(
     const UserExpression input, const UserExpression exactOutput,
     const Preferences::CalculationPreferences calculationPreferences,
-    Context* context) {
+    const Context& context) {
   assert(!exactOutput.hasUnit(true));
   Expression exactAngle =
       AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
@@ -147,7 +146,7 @@ bool AdditionalResultsType::HasInverseTrigo(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
-    Poincare::Context* context) {
+    const Poincare::Context& context) {
   // If the result is complex, it is treated as a complex result instead.
   assert(!HasComplex(exactOutput, calculationPreferences, context));
   assert(!exactOutput.hasUnit(true));
@@ -211,7 +210,7 @@ bool AdditionalResultsType::HasUnit(
 bool AdditionalResultsType::HasVector(
     const UserExpression exactOutput, const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
-    Context* context) {
+    const Context& context) {
   Expression norm = VectorHelper::BuildVectorNorm(exactOutput.clone(), context,
                                                   calculationPreferences);
   if (norm.isUninitialized()) {
@@ -251,7 +250,7 @@ bool AdditionalResultsType::HasFunction(
 bool AdditionalResultsType::HasScientificNotation(
     const UserExpression approximateOutput,
     const Preferences::CalculationPreferences calculationPreferences,
-    Context* context) {
+    const Context& context) {
   assert(!approximateOutput.isUninitialized());
   assert(!approximateOutput.hasUnit());
   if (approximateOutput.isNonReal() ||
@@ -263,7 +262,9 @@ bool AdditionalResultsType::HasScientificNotation(
    * compared. */
   Poincare::Layout historyResult = approximateOutput.createLayout(
       calculationPreferences.displayMode,
-      calculationPreferences.numberOfSignificantDigits, context);
+      calculationPreferences.numberOfSignificantDigits,
+      // NOTE: const_cast is temporary
+      &const_cast<Context&>(context));
   return !historyResult.isIdenticalTo(
       AdditionalResultsHelper::ScientificLayout(approximateOutput, context,
                                                 calculationPreferences),

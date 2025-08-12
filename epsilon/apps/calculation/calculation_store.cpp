@@ -110,12 +110,11 @@ static bool compute(Poincare::UserExpression inputExpression,
                     Poincare::Preferences::ComplexFormat& complexFormat,
                     Poincare::Context* context) {
   assert(!inputExpression.isUninitialized());
+  assert(context);
   // Update complexFormat with input expression
   complexFormat =
       Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-          complexFormat, inputExpression, context);
-
-  assert(context);
+          complexFormat, inputExpression, *context);
   Internal::ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),

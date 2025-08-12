@@ -591,19 +591,18 @@ T UserExpression::ParseAndSimplifyAndApproximateToRealScalar(
 template <typename T>
 bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
                                                     ComplexFormat complexFormat,
-                                                    Context* context,
+                                                    const Context& context,
                                                     T* returnRealPart,
                                                     T* returnImagPart) const {
   if (complexFormat == Preferences::ComplexFormat::Real ||
       !Internal::Dimension::IsNonListScalar(tree())) {
     return false;
   }
-  assert(context);
   std::complex<T> z = Approximation::ToComplex<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat, *context));
+      Approximation::Context(angleUnit, complexFormat, context));
   T b = z.imag();
   if (b == static_cast<T>(0.) || std::isinf(b) || std::isnan(b)) {
     return false;
@@ -623,7 +622,7 @@ bool UserExpression::hasDefinedComplexApproximation(AngleUnit angleUnit,
 
 bool UserExpression::isComplexScalar(
     Preferences::CalculationPreferences calculationPreferences,
-    Context* context) const {
+    const Context& context) const {
   Preferences::ComplexFormat complexFormat =
       Preferences::UpdatedComplexFormatWithExpressionInput(
           calculationPreferences.complexFormat, *this, context);
@@ -788,15 +787,14 @@ bool UserExpression::replaceUnknownWithSymbol(CodePoint symbol) {
                                      SymbolHelper::BuildSymbol(symbol));
 }
 
-bool UserExpression::replaceSymbols(Poincare::Context* context,
+bool UserExpression::replaceSymbols(const Poincare::Context& context,
                                     SymbolicComputation symbolic) {
   /* Caution: must be called on an unprojected expression!
    * Indeed, the projection of the replacements has to be done at the same time
    * as the rest of the expression (otherwise inconsistencies could appear like
    * with random for example). */
   Tree* clone = tree()->cloneTree();
-  assert(context);
-  bool didReplace = Projection::DeepReplaceUserNamed(clone, *context, symbolic);
+  bool didReplace = Projection::DeepReplaceUserNamed(clone, context, symbolic);
   *this = UserExpression::Builder(clone);
   return didReplace;
 }
@@ -855,7 +853,13 @@ bool Expression::recursivelyMatches(ExpressionTrinaryTest test,
            tree()->isUserFunction());
     Expression e = clone();
     // Undefined symbols must be preserved.
-    e.replaceSymbols(context, SymbolicComputation::ReplaceDefinedSymbols);
+    // NOTE: temporary until recursivelyMatches takes a const Context&
+    if (context) {
+      e.replaceSymbols(*context, SymbolicComputation::ReplaceDefinedSymbols);
+    } else {
+      e.replaceSymbols(EmptyContext{},
+                       SymbolicComputation::ReplaceDefinedSymbols);
+    }
     return !e.isUninitialized() &&
            e.recursivelyMatches(test, context,
                                 SymbolicComputation::KeepAllSymbols, auxiliary,
@@ -1162,11 +1166,11 @@ template double UserExpression::ParseAndSimplifyAndApproximateToRealScalar<
             Preferences::AngleUnit, SymbolicComputation);
 
 template bool UserExpression::hasDefinedComplexApproximation<float>(
-    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context, float*,
-    float*) const;
+    AngleUnit angleUnit, ComplexFormat complexFormat, const Context& context,
+    float*, float*) const;
 template bool UserExpression::hasDefinedComplexApproximation<double>(
-    AngleUnit angleUnit, ComplexFormat complexFormat, Context* context, double*,
-    double*) const;
+    AngleUnit angleUnit, ComplexFormat complexFormat, const Context& context,
+    double*, double*) const;
 
 template float UserExpression::approximateToRealScalar<float>(
     Preferences::AngleUnit, Preferences::ComplexFormat, const Context&) const;

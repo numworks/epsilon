@@ -870,7 +870,7 @@ QUIZ_CASE(calculation_involving_sequence) {
       seqStore->recordAtIndex(seqStore->numberOfModels() - 1);
   Shared::Sequence* u = seqStore->modelForRecord(record);
   u->setType(Shared::Sequence::Type::Explicit);
-  err = u->setContent(Layout::String("i"), &globalContext);
+  err = u->setContent(Layout::String("i"), globalContext);
   assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void)err;  // Silence compilation warning.
 

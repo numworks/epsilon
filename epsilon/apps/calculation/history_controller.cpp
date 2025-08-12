@@ -316,7 +316,7 @@ void HistoryController::handleOK() {
   selectedCalculation->fillExpressionsForAdditionalResults(&i, &e, &a, context);
   assert(Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
              selectedCalculation->calculationPreferences().complexFormat, i,
-             context) ==
+             *context) ==
          selectedCalculation->calculationPreferences().complexFormat);
 
   /* Reuse the same angle unit and updated complexFormat as when the calculation

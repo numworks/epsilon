@@ -159,7 +159,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
    * However if the result is complex, it is treated as a complex result.
    * When both inputs and outputs are direct trigo functions, we take the input
    * because the angle might not be the same modulo 2π. */
-  assert(!exactOutput.isComplexScalar(calculationPreferences, context));
+  assert(!exactOutput.isComplexScalar(calculationPreferences, *context));
   const Tree* directTrigoFunction;
   if ((inputTree->isDirectTrigonometryFunction() ||
        inputTree->isDirectAdvancedTrigonometryFunction()) &&

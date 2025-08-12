@@ -269,12 +269,12 @@ class Expression : public PoolHandle {
    * imaginary part is not null. */
   bool hasDefinedComplexApproximation(Preferences::AngleUnit angleUnit,
                                       Preferences::ComplexFormat complexFormat,
-                                      Context* context,
+                                      const Context& context,
                                       T* returnRealPart = nullptr,
                                       T* returnImagPart = nullptr) const;
   bool isComplexScalar(
       Preferences::CalculationPreferences calculationPreferences,
-      Context* context) const;
+      const Context& context) const;
   bool involvesDiscontinuousFunction() const;
   template <typename T>
   bool isDiscontinuousOnInterval(T minBound, T maxBound) const;
@@ -317,7 +317,7 @@ class Expression : public PoolHandle {
                                 bool onlySecondTerm = false);
   bool replaceUnknownWithSymbol(CodePoint symbol);
 
-  bool replaceSymbols(Poincare::Context* context,
+  bool replaceSymbols(const Poincare::Context& context,
                       SymbolicComputation symbolic =
                           SymbolicComputation::ReplaceDefinedSymbols);
 

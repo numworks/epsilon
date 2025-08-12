@@ -128,7 +128,8 @@ bool AdditionalResultsType::HasComplex(
    *    complex, while the exact output is not.
    * We chosed to handle the 2nd case and not to display any additional results
    * in the 1st case. */
-  return approximateOutput.isComplexScalar(calculationPreferences, context);
+  assert(context);
+  return approximateOutput.isComplexScalar(calculationPreferences, *context);
 }
 
 bool AdditionalResultsType::HasDirectTrigo(

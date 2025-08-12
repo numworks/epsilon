@@ -46,8 +46,8 @@ void ExpressionModel::text(const Storage::Record* record, char* buffer,
   }
 }
 
-bool ExpressionModel::isCircularlyDefined(const Storage::Record* record,
-                                          Poincare::Context* context) const {
+bool ExpressionModel::isCircularlyDefined(
+    const Storage::Record* record, const Poincare::Context& context) const {
   if (m_circular == -1) {
     UserExpression e = expressionClone(record);
     e.replaceSymbols(context);
@@ -57,7 +57,7 @@ bool ExpressionModel::isCircularlyDefined(const Storage::Record* record,
 }
 
 Preferences::ComplexFormat ExpressionModel::complexFormat(
-    const Storage::Record* record, Context* context) const {
+    const Storage::Record* record, const Context& context) const {
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
     UserExpression expression = ExpressionModel::expressionClone(record);
     if (!expression.isUninitialized() &&
@@ -101,7 +101,8 @@ SystemExpression ExpressionModel::expressionReduced(
    */
   if (m_expression.isUninitialized()) {
     assert(record->fullName() != nullptr);
-    if (isCircularlyDefined(record, context)) {
+    assert(context);
+    if (isCircularlyDefined(record, *context)) {
       m_expression = SystemExpression::Undefined();
     } else {
       UserExpression userExpression = UserExpression::ExpressionFromAddress(
@@ -111,7 +112,7 @@ SystemExpression ExpressionModel::expressionReduced(
        * 'Simplify'. Thus, we use a temporary expression. */
       bool reductionFailure = false;
       m_expression = PoincareHelpers::CloneAndReduce(
-          userExpression, context, complexFormat(record, context),
+          userExpression, context, complexFormat(record, *context),
           GlobalPreferences::SharedGlobalPreferences()->angleUnit(), false,
           Poincare::ReductionTarget::User,
           Poincare::SymbolicComputation::ReplaceDefinedSymbols,
@@ -167,7 +168,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
 }
 
 Ion::Storage::Record::ErrorStatus ExpressionModel::setContent(
-    Ion::Storage::Record* record, const Layout& l, Context* context,
+    Ion::Storage::Record* record, const Layout& l, const Context& context,
     CodePoint symbol) {
   UserExpression e = buildExpressionFromLayout(l, symbol, context);
   return setExpressionContent(record, e);
@@ -237,15 +238,13 @@ void ExpressionModel::tidyDownstreamPoolFrom(
 }
 
 Poincare::UserExpression ExpressionModel::buildExpressionFromLayout(
-    Poincare::Layout l, CodePoint symbol, Poincare::Context* context) const {
+    Poincare::Layout l, CodePoint symbol,
+    const Poincare::Context& context) const {
   if (l.isUninitialized() || l.isEmpty()) {
     return UserExpression();
   }
   // Compute the expression to store, without replacing symbols
-  // Note: temporary until EmptyContext is passed instead of nullptr
-  UserExpression expressionToStore =
-      context ? UserExpression::Parse(l, *context)
-              : UserExpression::Parse(l, EmptyContext{});
+  UserExpression expressionToStore = UserExpression::Parse(l, context);
   return ReplaceSymbolWithUnknown(expressionToStore, symbol);
 }
 

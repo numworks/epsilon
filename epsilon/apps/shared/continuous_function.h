@@ -10,6 +10,7 @@
  */
 
 #include <apps/i18n.h>
+#include <poincare/context.h>
 #include <poincare/function_properties/conic.h>
 #include <poincare/helpers/scatter_plot_iterable.h>
 #include <poincare/point_or_scalar.h>
@@ -69,7 +70,7 @@ class ContinuousFunction : public Function {
   /* ExpressionModelHandle */
 
   Ion::Storage::Record::ErrorStatus setContent(
-      const Poincare::Layout& l, Poincare::Context* context) override;
+      const Poincare::Layout& l, const Poincare::Context& context) override;
   void tidyDownstreamPoolFrom(
       const Poincare::PoolObject* treePoolCursor = nullptr) const override;
 
@@ -240,6 +241,7 @@ class ContinuousFunction : public Function {
   Poincare::ScatterPlotIterable iterateScatterPlot(
       Poincare::Context* context) const {
     assert(properties().isScatterPlot());
+    assert(context);
     return Poincare::ScatterPlotIterable(expressionReduced(context));
   }
 
@@ -416,7 +418,8 @@ class ContinuousFunction : public Function {
     // Build the expression from layout, handling f(x)=... cartesian equations
     Poincare::UserExpression buildExpressionFromLayout(
         Poincare::Layout l, CodePoint symbol = 0,
-        Poincare::Context* context = nullptr) const override;
+        const Poincare::Context& context =
+            Poincare::EmptyContext{}) const override;
     // Tidy the model
     void tidyDownstreamPoolFrom(
         const Poincare::PoolObject* treePoolCursor) const override;

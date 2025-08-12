@@ -175,8 +175,9 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
     i++;
   }
 
+  assert(context);
   assert(m_solutionMetadata.solutionType == SolutionType::Formal ||
-         !exact.clone().replaceSymbols(context));
+         !exact.clone().replaceSymbols(*context));
 
   forbidExactSolution =
       forbidExactSolution ||

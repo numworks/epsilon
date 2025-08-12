@@ -31,7 +31,8 @@ void solve_and_process_error(std::initializer_list<const char*> equations,
     Ion::Storage::Record record =
         equationStore.recordAtIndex(equationStore.numberOfModels() - 1);
     OMG::ExpiringPointer<Equation> model = equationStore.modelForRecord(record);
-    err = model->setContent(Layout::Parse(equation), ctx);
+    assert(ctx);
+    err = model->setContent(Layout::Parse(equation), *ctx);
     quiz_assert_print_if_failure(err == Ion::Storage::Record::ErrorStatus::None,
                                  equation);
   }

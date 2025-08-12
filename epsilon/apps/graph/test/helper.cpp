@@ -15,7 +15,8 @@ Shared::ContinuousFunction* addFunction(const char* definition,
         store->modelForRecord(record).operator->());
     // Prevent further use of record as it may get invalidated by setContent.
   }
-  err = f->setContent(Poincare::Layout::Parse(definition), context);
+  assert(context);
+  err = f->setContent(Poincare::Layout::Parse(definition), *context);
   quiz_assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void)err;  // Silence compilation warning.
 

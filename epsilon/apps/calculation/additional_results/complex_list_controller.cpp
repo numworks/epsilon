@@ -50,7 +50,7 @@ void ComplexListController::computeAdditionalResults(
   double imagPart;
   bool hasComplexApprox =
       approximateOutput.hasDefinedComplexApproximation<double>(
-          ctx.m_angleUnit, ctx.m_complexFormat, context, &realPart, &imagPart);
+          ctx.m_angleUnit, ctx.m_complexFormat, *context, &realPart, &imagPart);
 
   assert(hasComplexApprox);
   (void)hasComplexApprox;  // Silence the compiler;

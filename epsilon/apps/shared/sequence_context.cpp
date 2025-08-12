@@ -48,7 +48,7 @@ bool SequenceContext::sequenceIsNotComputable(Context* ctx, int sequenceIndex) {
   return cache()->sequenceIsNotComputable(ctx, sequenceIndex);
 }
 
-SequenceCache* SequenceContext::cache() {
+SequenceCache* SequenceContext::cache() const {
   return GlobalContext::s_sequenceCache;
 }
 

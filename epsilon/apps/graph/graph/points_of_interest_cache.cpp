@@ -208,11 +208,8 @@ struct PointSearchContext {
   int counter = 0;
   Ion::Storage::Record otherRecord;
 
-  void reinitSolver() {
-    solver = {start, end, context};
-    solver.setSearchStep(searchStep);
-    solver.stretch();
-  }
+  void reinitSolver() { solver.reset(start, end, searchStep); }
+
   OMG::ExpiringPointer<ContinuousFunction> model() const {
     return store->modelForRecord(record);
   }

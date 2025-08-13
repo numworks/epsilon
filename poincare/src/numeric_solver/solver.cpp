@@ -23,6 +23,15 @@ Solver<T>::Solver(T xStart, T xEnd, Context* context)
 }
 
 template <typename T>
+void Solver<T>::reset(T xStart, T xEnd, T searchStep) {
+  m_xStart = xStart;
+  m_xEnd = xEnd;
+  setSearchStep(searchStep);
+  stretch();
+  m_solutionQueue = {};
+}
+
+template <typename T>
 typename Solver<T>::Interest Solver<T>::TestBetween(Coordinate2D<T> a,
                                                     Coordinate2D<T> b,
                                                     BracketTest test,
@@ -832,7 +841,8 @@ bool Solver<T>::FindMinimalIntervalContainingDiscontinuity(
 
 // Explicit template instantiations
 
-template Solver<double>::Solver(double, double, Context*);
+template Solver<double>::Solver(double, double, const Context&);
+template void Solver<double>::reset(double, double, double);
 template Solver<double>::Solution Solver<double>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);
@@ -853,7 +863,8 @@ template bool Solver<double>::DiscontinuityTestBetweenPoints(
 
 template Solver<float>::Interest Solver<float>::EvenOrOddRootInBracket(
     Coordinate2D<float>, Coordinate2D<float>, Coordinate2D<float>, const void*);
-template Solver<float>::Solver(float, float, Context*);
+template Solver<float>::Solver(float, float, const Context&);
+template void Solver<float>::reset(float, float, float);
 template Solver<float>::Solution Solver<float>::next(
     FunctionEvaluation, const void*, BracketTest, HoneResult,
     DiscontinuityEvaluation discontinuityTest);

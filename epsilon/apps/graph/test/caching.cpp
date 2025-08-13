@@ -115,7 +115,7 @@ void assert_cache_stays_valid(const char* definition, float rangeXMin = -5,
 
   CurveViewCursor cursor;
   ContinuousFunction* function =
-      addFunction(definition, &functionStore, &globalContext);
+      addFunction(definition, &functionStore, globalContext);
   Coordinate2D<float> origin =
       function->evaluateXYAtParameter(0.f, globalContext, 0);
   cursor.moveTo(0.f, origin.x(), origin.y());

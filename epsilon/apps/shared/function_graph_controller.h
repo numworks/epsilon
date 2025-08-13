@@ -88,7 +88,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
   virtual FunctionStore* functionStore() const;
   virtual int nextCurveIndexVertically(OMG::VerticalDirection direction,
                                        int currentCurveIndex,
-                                       Poincare::Context* context,
+                                       const Poincare::Context& context,
                                        int currentSubCurveIndex,
                                        int* subCurveIndex) const {
     return closestCurveIndexVertically(direction, currentCurveIndex, context,

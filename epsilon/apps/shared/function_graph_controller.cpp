@@ -132,7 +132,7 @@ void FunctionGraphController::reloadBannerView() {
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
   reloadBannerViewForCursorOnFunction(
       m_cursor->t(), m_cursor->x(), m_cursor->y(), record, functionStore(),
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+      *AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
@@ -217,7 +217,7 @@ bool FunctionGraphController::moveCursorVertically(
   Poincare::Context* context = App::app()->localContext();
   int nextSubCurve = 0;
   int nextCurve =
-      nextCurveIndexVertically(direction, currentActiveFunctionIndex, context,
+      nextCurveIndexVertically(direction, currentActiveFunctionIndex, *context,
                                m_selectedSubCurveIndex, &nextSubCurve);
   if (nextCurve < 0) {
     return false;

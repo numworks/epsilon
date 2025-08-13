@@ -198,7 +198,7 @@ void UnitListController::computeAdditionalResults(
       angleUnit(), complexFormat());
   // Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
-      m_SIValue, approximatedSIExpression, context, m_referenceValues,
+      m_SIValue, approximatedSIExpression, *context, m_referenceValues,
       &m_tableIndexForComparison);
   if (m_numberOfExpressionCells + m_numberOfBufferCells == 0) {
     /* No reference values nor relevant unit display modes have been found, fall

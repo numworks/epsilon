@@ -94,7 +94,7 @@ struct FunctionProperties {
 void assert_check_function_properties(const char* expression,
                                       FunctionProperties expectedProperties,
                                       ContinuousFunctionStore* store,
-                                      Context* context) {
+                                      const Context& context) {
   ContinuousFunction* function = addFunction(expression, store, context);
   ContinuousFunctionProperties fProperties = function->properties();
   quiz_assert(fProperties.caption() == expectedProperties.m_caption);
@@ -122,13 +122,13 @@ void assert_check_function_properties(const char* expression,
   GlobalContext context;
   ContinuousFunctionStore store;
   assert_check_function_properties(expression, expectedProperties, &store,
-                                   &context);
+                                   context);
   store.removeAll();
 }
 
 void assert_same_function_properties(const char* expression1,
                                      const char* expression2,
-                                     Context* context) {
+                                     const Context& context) {
   ContinuousFunctionStore store;
   ContinuousFunction* function1 = addFunction(expression1, &store, context);
   ContinuousFunctionProperties properties1 = function1->properties();
@@ -153,7 +153,7 @@ void assert_same_function_properties(const char* expression1,
 void assert_same_function_properties(const char* expression1,
                                      const char* expression2) {
   GlobalContext context;
-  assert_same_function_properties(expression1, expression2, &context);
+  assert_same_function_properties(expression1, expression2, context);
 }
 
 QUIZ_CASE(graph_function_properties) {
@@ -924,81 +924,81 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
   GlobalContext context;
   ContinuousFunctionStore store;
   // Add a predefined test function
-  addFunction("test(x)=1+x", &store, &context);
+  addFunction("test(x)=1+x", &store, context);
 
-  assert_check_function_properties("y=x", k_lineProperties, &store, &context);
+  assert_check_function_properties("y=x", k_lineProperties, &store, context);
   assert_check_function_properties("y=test(x)", k_lineProperties, &store,
-                                   &context);
+                                   context);
   assert_check_function_properties("y=a*x+1", k_lineProperties, &store,
-                                   &context);
+                                   context);
   assert_check_function_properties(
       "a*y*y+y=x",
       FunctionProperties{.m_caption = I18n::Message::Equation,
                          .m_isOfDegreeTwo = true,
                          .m_numberOfSubCurves = 2},
-      &store, &context);
+      &store, context);
 
   // Add a predefined a symbol
   assert_reduce_and_store("0→a", context, Preferences::AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
                           Poincare::Preferences::ComplexFormat::Real);
   assert_check_function_properties("y=a*x+1", k_horizontalLineProperties,
-                                   &store, &context);
+                                   &store, context);
   assert_check_function_properties("a*y*y+y=x", k_lineProperties, &store,
-                                   &context);
+                                   context);
 
   assert_reduce_and_store("1→a", context, Preferences::AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
                           Poincare::Preferences::ComplexFormat::Real);
   assert_check_function_properties("y=a*x+1", k_lineProperties, &store,
-                                   &context);
+                                   context);
   assert_check_function_properties(
       "a*y*y+y=x",
       FunctionProperties{.m_caption = I18n::Message::ParabolaType,
                          .m_conicShape = Poincare::Conic::Shape::Parabola,
                          .m_isOfDegreeTwo = true,
                          .m_numberOfSubCurves = 2},
-      &store, &context);
+      &store, context);
 
   // Add a predefined y symbol
   assert_reduce_and_store("1→y", context, Preferences::AngleUnit::Radian,
                           Poincare::Preferences::UnitFormat::Metric,
                           Poincare::Preferences::ComplexFormat::Real);
-  assert_check_function_properties("y=x", k_lineProperties, &store, &context);
+  assert_check_function_properties("y=x", k_lineProperties, &store, context);
 
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
   store.removeAll();
 
   // For derivatives
-  addFunction("f(x)=3x", &store, &context);
+  addFunction("f(x)=3x", &store, context);
   assert_same_function_properties("f1(x)=f'(x)", "f2(x)=diff(f(x),x,x)",
-                                  &context);
+                                  context);
   assert_same_function_properties("f1(x)=f\"(x)", "f2(x)=diff(f(x),x,x,2)",
-                                  &context);
+                                  context);
   assert_same_function_properties("f1(x)=f^(3)(x)", "f2(x)=diff(f(x),x,x,3)",
-                                  &context);
-  assert_same_function_properties("y=f'(x)", "y=diff(f(x),x,x)", &context);
-  assert_same_function_properties("y=f\"(x)", "y=diff(f(x),x,x,2)", &context);
-  assert_same_function_properties("y=f^(3)(x)", "y=diff(f(x),x,x,3)", &context);
-  addFunction("r1(θ)=cos(θ)", &store, &context);
+                                  context);
+  assert_same_function_properties("y=f'(x)", "y=diff(f(x),x,x)", context);
+  assert_same_function_properties("y=f\"(x)", "y=diff(f(x),x,x,2)", context);
+  assert_same_function_properties("y=f^(3)(x)", "y=diff(f(x),x,x,3)", context);
+  addFunction("r1(θ)=cos(θ)", &store, context);
   assert_same_function_properties("r2(θ)=r1'(θ)", "r3(θ)=diff(r1(θ),θ,θ)",
-                                  &context);
+                                  context);
   assert_same_function_properties("r2(θ)=r1\"(θ)", "r3(θ)=diff(r1(θ),θ,θ,2)",
-                                  &context);
+                                  context);
   assert_same_function_properties("r2(θ)=r1^(3)(θ)", "r3(θ)=diff(r1(θ),θ,θ,3)",
-                                  &context);
-  assert_same_function_properties("r=r1'(θ)", "r=diff(r1(θ),θ,θ)", &context);
-  assert_same_function_properties("r=r1\"(θ)", "r=diff(r1(θ),θ,θ,2)", &context);
+                                  context);
+  assert_same_function_properties("r=r1'(θ)", "r=diff(r1(θ),θ,θ)", context);
+  assert_same_function_properties("r=r1\"(θ)", "r=diff(r1(θ),θ,θ,2)", context);
   assert_same_function_properties("r=r1^(3)(θ)", "r=diff(r1(θ),θ,θ,3)",
-                                  &context);
-  addFunction("g(t)=(-t,t)", &store, &context);
+                                  context);
+  addFunction("g(t)=(-t,t)", &store, context);
   assert_same_function_properties("g1(t)=g'(t)", "g2(t)=diff(g(t),t,t)",
-                                  &context);
+                                  context);
   assert_same_function_properties("g1(t)=g\"(t)", "g2(t)=diff(g(t),t,t,2)",
-                                  &context);
+                                  context);
   assert_same_function_properties("g1(t)=g^(3)(t)", "g2(t)=diff(g(t),t,t,3)",
-                                  &context);
+                                  context);
 
   // We do not distibute operations on points
   assert_check_function_properties(
@@ -1008,7 +1008,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
           .m_symbolType = ContinuousFunctionProperties::SymbolType::T,
           .m_curveParameterType =
               ContinuousFunctionProperties::CurveParameterType::Parametric},
-      &store, &context);
+      &store, context);
   assert_check_function_properties(
       "h(t)=g'(t)",
       FunctionProperties{
@@ -1017,7 +1017,7 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
           .m_curveParameterType =
               ContinuousFunctionProperties::CurveParameterType::Parametric,
           .m_conicShape = Poincare::Conic::Shape::Parabola},
-      &store, &context);
+      &store, context);
   constexpr static FunctionProperties k_undefinedParametric =
       FunctionProperties{
           .m_status = ContinuousFunctionProperties::Status::Undefined,
@@ -1026,9 +1026,9 @@ QUIZ_CASE(graph_function_properties_with_predefined_variables) {
           .m_curveParameterType =
               ContinuousFunctionProperties::CurveParameterType::Parametric};
   assert_check_function_properties("h(t)=2g(t)", k_undefinedParametric, &store,
-                                   &context);
+                                   context);
   assert_check_function_properties("h(t)=2g'(t)", k_undefinedParametric, &store,
-                                   &context);
+                                   context);
 
   store.removeAll();
 }

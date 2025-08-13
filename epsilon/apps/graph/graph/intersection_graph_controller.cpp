@@ -60,7 +60,7 @@ void IntersectionGraphController::reloadBannerView() {
 }
 
 Coordinate2D<double> IntersectionGraphController::computeNewPointOfInterest(
-    double start, double max, Poincare::Context* context, bool stretch) {
+    double start, double max, const Poincare::Context& context, bool stretch) {
   PointOfInterest p =
       computeAtLeastOnePointOfInterest(start, max, context, stretch);
   if (!p.isUninitialized()) {

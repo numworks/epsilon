@@ -19,7 +19,7 @@ class IntersectionGraphController : public CalculationGraphController {
     return Poincare::Solver<double>::Interest::Intersection;
   }
   Poincare::Coordinate2D<double> computeNewPointOfInterest(
-      double start, double max, Poincare::Context* context,
+      double start, double max, const Poincare::Context& context,
       bool stretch) override;
 
   Ion::Storage::Record m_intersectedRecord;

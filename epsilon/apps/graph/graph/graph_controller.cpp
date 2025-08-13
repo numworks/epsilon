@@ -338,7 +338,7 @@ void GraphController::selectCurveAtIndex(int curveIndex, bool willBeVisible,
 
 int GraphController::nextCurveIndexVertically(OMG::VerticalDirection direction,
                                               int currentCurveIndex,
-                                              Poincare::Context* context,
+                                              const Poincare::Context& context,
                                               int currentSubCurveIndex,
                                               int* nextSubCurveIndex) const {
   assert(nextSubCurveIndex != nullptr);
@@ -446,7 +446,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
 
   int nextSubCurve = 0;
   int nextCurve =
-      nextCurveIndexVertically(direction, currentActiveFunctionIndex, context,
+      nextCurveIndexVertically(direction, currentActiveFunctionIndex, *context,
                                m_selectedSubCurveIndex, &nextSubCurve);
   if (nextCurve < 0) {
     return false;
@@ -546,7 +546,7 @@ void GraphController::jumpToLeftRightCurve(double t,
 
 void GraphController::reloadBannerViewForCursorOnFunction(
     double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
-    FunctionStore* functionStore, Poincare::Context* context,
+    FunctionStore* functionStore, const Poincare::Context& context,
     bool cappedNumberOfSignificantDigits) {
   OMG::ExpiringPointer<ContinuousFunction> function =
       App::app()->functionStore()->modelForRecord(record);

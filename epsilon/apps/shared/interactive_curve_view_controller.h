@@ -101,7 +101,7 @@ class InteractiveCurveViewController
   // Closest vertical curve helper
   int closestCurveIndexVertically(OMG::VerticalDirection direction,
                                   int currentCurveIndex,
-                                  Poincare::Context* context,
+                                  const Poincare::Context& context,
                                   int currentSubCurveIndex = 0,
                                   int* newSubCurveIndex = nullptr) const;
   int selectedCurveIndex() const { return *m_selectedCurveIndex; }

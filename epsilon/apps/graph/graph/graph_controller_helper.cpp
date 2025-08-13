@@ -122,7 +122,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
       t = magnitude * std::round(t / magnitude);
       // Also round t so that f(x) matches f evaluated at displayed x
       t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-          t, context,
+          t, *context,
           GlobalPreferences::SharedGlobalPreferences()
               ->numberOfSignificantDigits(),
           pixelWidth, false);
@@ -149,7 +149,7 @@ bool GraphControllerHelper::privateMoveCursorHorizontally(
     t += dir * step * scrollSpeed;
     // If possible, round t so that f(x) matches f evaluated at displayed x
     t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-        t, App::app()->localContext(),
+        t, *App::app()->localContext(),
         GlobalPreferences::SharedGlobalPreferences()
             ->numberOfSignificantDigits(),
         0.05 * step, true);

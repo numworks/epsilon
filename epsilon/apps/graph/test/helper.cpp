@@ -4,7 +4,7 @@ namespace Graph {
 
 Shared::ContinuousFunction* addFunction(const char* definition,
                                         Shared::ContinuousFunctionStore* store,
-                                        Poincare::Context* context) {
+                                        const Poincare::Context& context) {
   Ion::Storage::Record::ErrorStatus err = store->addEmptyModel();
   quiz_assert(err == Ion::Storage::Record::ErrorStatus::None);
   Shared::ContinuousFunction* f;
@@ -15,8 +15,7 @@ Shared::ContinuousFunction* addFunction(const char* definition,
         store->modelForRecord(record).operator->());
     // Prevent further use of record as it may get invalidated by setContent.
   }
-  assert(context);
-  err = f->setContent(Poincare::Layout::Parse(definition), *context);
+  err = f->setContent(Poincare::Layout::Parse(definition), context);
   quiz_assert(err == Ion::Storage::Record::ErrorStatus::None);
   (void)err;  // Silence compilation warning.
 

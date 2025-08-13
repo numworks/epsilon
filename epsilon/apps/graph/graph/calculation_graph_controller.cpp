@@ -48,7 +48,7 @@ bool CalculationGraphController::handleEnter() {
    * moved to the value displayed on the banner. */
   double t = m_cursor->t();
   t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-      t, App::app()->localContext(), numberOfSignificantDigits(),
+      t, *App::app()->localContext(), numberOfSignificantDigits(),
       curveView()->pixelWidth());
   Coordinate2D<double> xy =
       App::app()
@@ -96,7 +96,7 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 void CalculationGraphController::reloadBannerView() {
   reloadBannerViewForCursorOnFunction(
       m_cursor->t(), m_cursor->x(), m_cursor->y(), m_record, functionStore(),
-      AppsContainerHelper::sharedAppsContainerGlobalContext());
+      *AppsContainerHelper::sharedAppsContainerGlobalContext());
 }
 
 Coordinate2D<double>
@@ -106,12 +106,12 @@ CalculationGraphController::computeNewPointOfInterestFromAbscissa(
       direction.isRight() ? m_graphRange->xMax() : m_graphRange->xMin();
   functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start,
                                                                     &max);
-  return computeNewPointOfInterest(start, max, App::app()->localContext(),
+  return computeNewPointOfInterest(start, max, *App::app()->localContext(),
                                    stretch);
 }
 
 PointOfInterest CalculationGraphController::computeAtLeastOnePointOfInterest(
-    double start, double max, Poincare::Context* context, bool stretch) {
+    double start, double max, const Poincare::Context& context, bool stretch) {
   // Compute at least 1 point of interest before displaying the view
   PointsOfInterestCache* pointsOfInterest =
       App::app()->graphController()->pointsOfInterestForSelectedRecord();

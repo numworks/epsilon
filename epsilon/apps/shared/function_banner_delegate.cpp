@@ -10,7 +10,7 @@ namespace Shared {
 
 void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
     double cursorT, double cursorX, double cursorY, Ion::Storage::Record record,
-    FunctionStore* functionStore, Poincare::Context* context,
+    FunctionStore* functionStore, const Poincare::Context& context,
     bool cappedNumberOfSignificantDigits) {
   OMG::ExpiringPointer<Function> function =
       functionStore->modelForRecord(record);
@@ -37,11 +37,10 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
   assert(numberOfChar <= k_textBufferSize);
   numberOfChar += UTF8Helper::WriteCodePoint(
       buffer + numberOfChar, k_textBufferSize - numberOfChar, '=');
-  assert(context);
   numberOfChar += function->printFunctionValue(
       cursorT, cursorX, cursorY, buffer + numberOfChar,
       k_textBufferSize - numberOfChar,
-      numberOfSignificantDigits(cappedNumberOfSignificantDigits), *context);
+      numberOfSignificantDigits(cappedNumberOfSignificantDigits), context);
   assert(numberOfChar < k_textBufferSize - 1);
   buffer[numberOfChar++] = 0;
   bannerView()->ordinateView()->setText(buffer);
@@ -50,16 +49,15 @@ void FunctionBannerDelegate::reloadBannerViewForCursorOnFunction(
 }
 
 double FunctionBannerDelegate::GetValueDisplayedOnBanner(
-    double t, Poincare::Context* context, int significantDigits,
+    double t, const Poincare::Context& context, int significantDigits,
     double deltaThreshold, bool roundToZero) {
   if (roundToZero && std::fabs(t) < deltaThreshold) {
     // Round to 0 to avoid rounding to unnecessary low non-zero value.
     return 0.0;
   }
   // Round to displayed value
-  assert(context);
   double displayedValue = PoincareHelpers::ValueOfFloatAsDisplayed<double>(
-      t, significantDigits, *context);
+      t, significantDigits, context);
   // Return displayed value if difference from t is under deltaThreshold
   return std::fabs(displayedValue - t) < deltaThreshold ? displayedValue : t;
 }

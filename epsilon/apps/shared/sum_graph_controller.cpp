@@ -216,7 +216,7 @@ void SumGraphController::reloadBannerView() {
     assert(!selectedRecord().isNull());
     Poincare::Context* context = FunctionApp::app()->localContext();
     Poincare::SystemExpression sum =
-        createSumExpression(m_startSum, endSum, context);
+        createSumExpression(m_startSum, endSum, *context);
     result = sum.approximateSystemToRealScalar<double>();
     functionLayout = createFunctionLayout();
   } else {
@@ -229,11 +229,10 @@ void SumGraphController::reloadBannerView() {
 }
 
 Poincare::SystemExpression SumGraphController::createSumExpression(
-    double startSum, double endSum, Poincare::Context* context) {
-  assert(context);
+    double startSum, double endSum, const Poincare::Context& context) {
   OMG::ExpiringPointer<Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
-  return function->sumBetweenBounds(startSum, endSum, *context);
+  return function->sumBetweenBounds(startSum, endSum, context);
 }
 
 /* Legend View */

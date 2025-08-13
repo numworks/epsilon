@@ -162,7 +162,7 @@ void ListController::layoutFieldDidAbortEditing(
 }
 
 bool ListController::isAcceptableExpression(const Poincare::UserExpression exp,
-                                            Poincare::Context* context) {
+                                            const Poincare::Context& context) {
   /* Complete SharedApp acceptable conditions by only accepting
    * the Equal OperatorType in the list of equations. */
   return MathLayoutFieldDelegate::isAcceptableExpression(exp, context) &&

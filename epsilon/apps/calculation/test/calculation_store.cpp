@@ -48,7 +48,7 @@ OutputLayouts pushAndProcessCalculation(CalculationStore* store,
       store->calculationAtIndex(0);
 
   return lastCalculation->layoutCalculation(font, maxVisibleWidth,
-                                            variableStore, true);
+                                            *variableStore, true);
 }
 
 QUIZ_CASE(calculation_store) {

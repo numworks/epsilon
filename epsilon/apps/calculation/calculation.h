@@ -99,11 +99,11 @@ class Calculation {
   Poincare::UserExpression approximateOutput();
 
   // Layouts
-  Poincare::Layout createInputLayout(Poincare::Context* context);
-  Poincare::Layout createExactOutputLayout(Poincare::Context* context,
+  Poincare::Layout createInputLayout(const Poincare::Context& context);
+  Poincare::Layout createExactOutputLayout(const Poincare::Context& context,
                                            bool* couldNotCreateExactLayout);
   Poincare::Layout createApproximateOutputLayout(
-      Poincare::Context* context, bool* couldNotCreateApproximateLayout,
+      const Poincare::Context& context, bool* couldNotCreateApproximateLayout,
       bool forEditing = false);
 
   // Heights
@@ -130,7 +130,7 @@ class Calculation {
    * m_displayOutput and m_equalSign members are also computed. */
   OutputLayouts layoutCalculation(KDFont::Size font,
                                   KDCoordinate maxVisibleWidth,
-                                  Poincare::Context* context,
+                                  const Poincare::Context& context,
                                   bool canChangeDisplayOutput);
 
   void fillExpressionsForAdditionalResults(
@@ -155,12 +155,14 @@ class Calculation {
 
   static DisplayOutput ComputeDisplayOutput(
       Poincare::UserExpression input, Poincare::UserExpression exactOutput,
-      Poincare::UserExpression approximateOutput, Poincare::Context* context);
+      Poincare::UserExpression approximateOutput,
+      const Poincare::Context& context);
 
   static EqualSign ComputeEqualSignFromOutputs(
       const OutputLayouts& outputLayouts,
       Poincare::Internal::ComplexFormat complexFormat,
-      Poincare::Internal::AngleUnit angleUnit, Poincare::Context* context);
+      Poincare::Internal::AngleUnit angleUnit,
+      const Poincare::Context& context);
 
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }
 
@@ -191,11 +193,11 @@ class Calculation {
            m_approximatedOutputTreeSize;
   }
 
-  void computeDisplayOutput(Poincare::Context* context);
+  void computeDisplayOutput(const Poincare::Context& context);
 
   /* Returns the output layouts (exact and approximate). Optionally
    * (canChangeDisplayOutput), can change the m_displayOutput member variable */
-  OutputLayouts createOutputLayouts(Poincare::Context* context,
+  OutputLayouts createOutputLayouts(const Poincare::Context& context,
                                     bool canChangeDisplayOutput,
                                     KDCoordinate maxVisibleWidth,
                                     KDFont::Size font);
@@ -203,7 +205,7 @@ class Calculation {
   /* Compute the sign to be displayed for this expression by comparing the exact
    * output layout and the approximate output layout. */
   void computeEqualSign(const OutputLayouts& outputLayouts,
-                        Poincare::Context* context);
+                        const Poincare::Context& context);
 
   /* Buffers holding text expressions have to be longer than the text written
    * by user (of maximum length TextField::MaxBufferSize()) because when we

@@ -131,6 +131,8 @@ class Solver {
    * Expression. */
   Solver(T xStart, T xEnd, Context* context = nullptr);
 
+  void reset(T xStart, T xEnd, T searchStep);
+
   /* These methods will return the solution in ]xStart,xEnd[ (or ]xEnd,xStart[)
    * closest to xStart, or NAN if it does not exist.
    * TODO_PCJ: The unknown variable must have been projected to id 0. */

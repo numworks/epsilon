@@ -1,6 +1,7 @@
 #ifndef POINCARE_POOL_POOL_LAYOUT_CURSOR_H
 #define POINCARE_POOL_POOL_LAYOUT_CURSOR_H
 
+#include <poincare/context.h>
 #include <poincare/layout.h>
 #include <poincare/src/layout/layout_cursor.h>
 
@@ -32,14 +33,16 @@ class PoolLayoutCursor final : public LayoutCursor,
   Rack* cursorRack() const override { return rootRack() + m_cursorRack; }
 
   /* Layout insertion */
-  void insertText(const char* text, Poincare::Context* context = nullptr,
+  void insertText(const char* text,
+                  const Poincare::Context& context = Poincare::EmptyContext{},
                   bool forceRight = false, bool forceLeft = false,
                   bool linearMode = false) {
     TreeStackCursor::InsertTextContext insertTextContext{text, forceRight,
                                                          forceLeft, linearMode};
     execute(&TreeStackCursor::insertText, context, &insertTextContext);
   }
-  void insertLayout(const Tree* l, Poincare::Context* context = nullptr,
+  void insertLayout(const Tree* l,
+                    const Poincare::Context& context = Poincare::EmptyContext{},
                     bool forceRight = false, bool forceLeft = false,
                     bool collapseSiblings = true) {
     TreeStackCursor::InsertLayoutContext insertLayoutContext{
@@ -54,22 +57,24 @@ class PoolLayoutCursor final : public LayoutCursor,
     m_rootLayout->invalidAllSizesPositionsAndBaselines();
   }
 
-  void beautifyLeft(Poincare::Context* context);
+  void beautifyLeft(const Poincare::Context& context);
 
  private:
   TreeStackCursor createTreeStackCursor() const {
     return TreeStackCursor(m_position, m_startOfSelection, cursorRackOffset());
   }
   void applyTreeStackCursor(TreeStackCursor cursor);
-  typedef void (TreeStackCursor::*Action)(Poincare::Context* context,
+  typedef void (TreeStackCursor::*Action)(const Poincare::Context& context,
                                           const void* data);
-  void execute(Action action, Poincare::Context* context = nullptr,
+  void execute(Action action,
+               const Poincare::Context& context = Poincare::EmptyContext{},
                const void* data = nullptr);
   void setCursorRack(Rack* rack) override {
     // Don't use rack here as it may be invalid during execute
     m_cursorRack = rack - Rack::From(static_cast<Tree*>(rootRack()));
   }
-  bool beautifyRightOfRack(Rack* rack, Poincare::Context* context) override;
+  bool beautifyRightOfRack(Rack* rack,
+                           const Poincare::Context& context) override;
 
   Poincare::Layout m_rootLayout;
   int m_cursorRack;

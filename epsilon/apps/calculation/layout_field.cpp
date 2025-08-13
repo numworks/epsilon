@@ -2,6 +2,7 @@
 
 #include <apps/global_preferences.h>
 #include <apps/i18n.h>
+#include <poincare/context.h>
 #include <poincare/helpers/symbol.h>
 #include <poincare/k_tree.h>
 
@@ -28,7 +29,7 @@ bool LayoutField::handleEvent(Ion::Events::Event event) {
       /* Beautify and save the cursor before moving up, otherwise moving up may
        * beautify and the copied cursor will be pointing to the pre-beautified
        * layout. */
-      cursor()->beautifyLeft(nullptr);
+      cursor()->beautifyLeft(EmptyContext{});
       m_insertionCursor = *cursor();
       /* Ensure insertion cursor will stay valid even when the current layout is
        * exited */

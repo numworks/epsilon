@@ -50,7 +50,7 @@ KDSize LayoutField::ContentView::minimalSizeForOptimalDisplay() const {
   return KDSize(evSize.width() + TextCursorView::k_width, evSize.height());
 }
 
-void LayoutField::ContentView::copySelection(Poincare::Context* context,
+void LayoutField::ContentView::copySelection(const Poincare::Context& context,
                                              bool intoStoreMenu) {
   // Unit tests use this method without any static app
   assert((!App::app() && !intoStoreMenu) ||
@@ -157,8 +157,11 @@ void LayoutField::setLayout(Poincare::Layout newLayout) {
   insertLayoutAtCursor(newLayout, true);
 }
 
-Poincare::Context* LayoutField::context() const {
-  return m_delegate ? m_delegate->context() : nullptr;
+const Poincare::Context& LayoutField::context() const {
+  if (m_delegate) {
+    return *m_delegate->context();
+  }
+  return k_emptyContext;
 }
 
 size_t LayoutField::dumpContent(char* buffer, size_t bufferSize,
@@ -226,7 +229,7 @@ void LayoutField::reload(KDSize previousSize) {
 }
 
 using LayoutInsertionMethod =
-    void (Poincare::LayoutCursor::*)(Poincare::Context* context);
+    void (Poincare::LayoutCursor::*)(const Poincare::Context& context);
 
 bool LayoutField::insertText(const char* text, bool indentation,
                              bool forceCursorRightOfText) {

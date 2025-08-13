@@ -4,7 +4,7 @@
 
 namespace Poincare::Internal {
 
-void PoolLayoutCursor::beautifyLeft(Poincare::Context* context) {
+void PoolLayoutCursor::beautifyLeft(const Poincare::Context& context) {
   execute(&TreeStackCursor::beautifyLeftAction, context, nullptr);
   if (position() > cursorRack()->numberOfChildren() + 1) {
     /* Beautification does not preserve the cursor so its position may be
@@ -19,7 +19,7 @@ void PoolLayoutCursor::beautifyLeft(Poincare::Context* context) {
 }
 
 bool PoolLayoutCursor::beautifyRightOfRack(Rack* rack,
-                                           Poincare::Context* context) {
+                                           const Poincare::Context& context) {
   TreeStackCursor::BeautifyContext ctx{static_cast<int>(rack - cursorRack()),
                                        false};
   execute(&TreeStackCursor::beautifyRightOfRackAction, context, &ctx);
@@ -35,7 +35,7 @@ void PoolLayoutCursor::applyTreeStackCursor(TreeStackCursor cursor) {
       Tree::FromBlocks(rootRack()->block() + cursor.cursorRackOffset())));
 }
 
-void PoolLayoutCursor::execute(Action action, Poincare::Context* context,
+void PoolLayoutCursor::execute(Action action, const Poincare::Context& context,
                                const void* data) {
   assert(SharedTreeStack->numberOfTrees() == 0);
   // Clone layoutBuffer into the TreeStack

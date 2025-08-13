@@ -17,7 +17,7 @@ class LayoutField : public EditableField {
               LayoutFieldDelegate* delegate = nullptr,
               KDGlyph::Format format = {});
   void setDelegate(LayoutFieldDelegate* delegate);
-  Poincare::Context* context() const;
+  const Poincare::Context& context() const;
   bool isEditing() const { return m_contentView.isEditing(); }
   void setEditing(bool isEditing);
   void clearLayout();
@@ -122,7 +122,7 @@ class LayoutField : public EditableField {
     // View
     KDSize minimalSizeForOptimalDisplay() const override;
     // Selection
-    void copySelection(Poincare::Context* context, bool intoStoreMenu);
+    void copySelection(const Poincare::Context& context, bool intoStoreMenu);
     KDFont::Size font() const { return m_layoutView.font(); }
 
     KDRect cursorRect() const override;

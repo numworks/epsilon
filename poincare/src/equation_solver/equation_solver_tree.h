@@ -74,7 +74,7 @@ class EquationSolver {
    * returned SolverResult.  */
   static SolverResult SolveLinearSystem(
       const Tree* equationList, const EquationMetadata& equationMetadata,
-      Context* context);
+      const Context& context);
 
   /* Checks if the equationList is a deg 2 or 3 polynomial, and if so, computes
    * the solutions. The equationMetada passed as arguments are contained in the
@@ -92,7 +92,7 @@ class EquationSolver {
   // Return the userSymbol for the next additional parameter variable.
   static Tree* GetNextParameterSymbol(size_t* parameterIndex,
                                       uint32_t usedParameterIndices,
-                                      Poincare::Context* context);
+                                      const Poincare::Context& context);
 };
 
 }  // namespace Poincare::Internal

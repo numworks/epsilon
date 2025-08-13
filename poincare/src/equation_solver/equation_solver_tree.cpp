@@ -105,10 +105,8 @@ EquationSolver::SolverResult EquationSolver::ExactSolve(
   // Step 2. Solve the equations
 
   // Step 2.1. Try with linear system solving
-  // NOTE: const_cast is temporary
-  SolverResult result =
-      SolveLinearSystem(reducedEquationList, equationMetadata,
-                        &const_cast<Context&>(projectionContext.m_context));
+  SolverResult result = SolveLinearSystem(reducedEquationList, equationMetadata,
+                                          projectionContext.m_context);
 
 #if POINCARE_POLYNOMIAL_SOLVER
   // Step 2.2. Try with polynomial solving
@@ -314,9 +312,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
   EquationMetadata equationMetadata;
 
   // Step 1. Retrieve user symbols and infer the list of unknowns
-  // NOTE: const_cast is temporary
-  Context* context = &const_cast<Context&>(projectionContext->m_context);
-  // NOTE: const_cast is temporary
+  const Context& context = projectionContext->m_context;
   Tree* userSymbols = Variables::GetUserSymbols(equationList, context);
   assert(userSymbols->isList());
 
@@ -335,7 +331,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
 
   for (Tree* userSymbol : userSymbols->children()) {
     const char* symbolName = Symbol::GetName(userSymbol);
-    if (context && context->expressionForUserNamed(userSymbol)) {
+    if (context.expressionForUserNamed(userSymbol)) {
       if (!equationMetadata.definedVariables.isFull()) {
         equationMetadata.definedVariables.push(symbolName);
       }
@@ -423,9 +419,8 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
    *  - Reduction (Done in ProjectAndReduce). */
 
   // Step 3.2. Replace UserFunctions
-  assert(context);
   Projection::DeepReplaceUserNamed(
-      reducedEquationList, *context,
+      reducedEquationList, context,
       SymbolicComputation::ReplaceDefinedFunctions);
 
   // Step 3.3. Replace unkowns
@@ -467,7 +462,7 @@ EquationSolver::PreprocessingResult EquationSolver::PreprocessEquationList(
 
 EquationSolver::SolverResult EquationSolver::SolveLinearSystem(
     const Tree* reducedEquationList, const EquationMetadata& equationMetadata,
-    Context* context) {
+    const Context& context) {
   SolutionMetadata solutionMetadata{
       .solvingMethod = SolvingMethod::LinearSystem,
       .solutionType = SolutionType::Exact,
@@ -910,7 +905,7 @@ uint32_t EquationSolver::TagParametersUsedAsVariables(VariableArray variables) {
 
 Tree* EquationSolver::GetNextParameterSymbol(size_t* parameterIndex,
                                              uint32_t usedParameterIndices,
-                                             Context* context) {
+                                             const Context& context) {
   /* Equation had more solution and introduced new unknowns variables, name
    * them 't' + 2 digits + '\0' */
   constexpr size_t k_parameterNameSize = 1 + 2 + 1;
@@ -934,7 +929,7 @@ Tree* EquationSolver::GetNextParameterSymbol(size_t* parameterIndex,
     parameterName[parameterNameLength] = 0;
     Tree* symbol =
         SharedTreeStack->pushUserSymbol(parameterName, parameterNameLength + 1);
-    if (!context->expressionForUserNamed(symbol)) {
+    if (!context.expressionForUserNamed(symbol)) {
       return symbol;
     }
     // Skip already used parameter indices in global variables

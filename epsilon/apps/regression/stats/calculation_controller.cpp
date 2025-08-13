@@ -248,7 +248,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
          OMG::EqualOrBothNan(*calculation, m_store->columnProductSum(series))));
     result = *calculation;
   } else if (c >= Calculation::CoefficientM && c <= Calculation::CoefficientE) {
-    if (!m_store->coefficientsAreDefined(series, globContext)) {
+    if (!m_store->coefficientsAreDefined(series, *globContext)) {
       // Put dashes if regression is not defined
       return DashBufferCell(bufferCell);
     }
@@ -265,7 +265,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       return DashBufferCell(bufferCell);
     }
     result =
-        m_store->coefficientsForSeries(series, globContext)[coefficientIndex];
+        m_store->coefficientsForSeries(series, *globContext)[coefficientIndex];
   } else if (c == Calculation::CorrelationCoeff) {
     // This could be memoized but don't seem to slow the table down for now.
     if (!Store::DisplayR(regressionType)) {
@@ -279,7 +279,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
     if (!Store::DisplayResidualStandardDeviation(regressionType)) {
       return DashBufferCell(bufferCell);
     }
-    result = m_store->residualStandardDeviation(series, globContext);
+    result = m_store->residualStandardDeviation(series, *globContext);
   } else {
     assert(c == Calculation::DeterminationCoeff || c == Calculation::RSquared);
     if ((c == Calculation::DeterminationCoeff &&
@@ -289,7 +289,7 @@ void CalculationController::fillCellForLocation(HighlightCell* cell, int column,
       if (forbidStatsDiagnostics) {
         return DisableBufferCell(bufferCell);
       }
-      result = m_store->determinationCoefficientForSeries(series, globContext);
+      result = m_store->determinationCoefficientForSeries(series, *globContext);
     } else {
       return DashBufferCell(bufferCell);
     }

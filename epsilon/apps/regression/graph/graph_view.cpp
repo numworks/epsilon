@@ -44,7 +44,7 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
     // - Draw regression curve
     Model* seriesModel = m_store->modelForSeries(series);
     CurveDrawing plot(Curve2D(evaluateRegression, seriesModel),
-                      m_store->coefficientsForSeries(series, globalContext),
+                      m_store->coefficientsForSeries(series, *globalContext),
                       plotView->range()->xMin(), plotView->range()->xMax(),
                       plotView->pixelWidth(), color);
     plot.draw(plotView, ctx, rect);

@@ -18,7 +18,7 @@ class LinearRegression : public AffineRegression {
   Poincare::UserExpression privateExpression(
       const double* modelCoefficients) const override;
   Coefficients privateFit(const Series* series,
-                          Poincare::Context* context) const override;
+                          const Poincare::Context& context) const override;
   /* In a+bx form, Coefficients are swapped */
   int slopeCoefficientIndex() const override { return m_isApbxForm; }
   int yInterceptCoefficientIndex() const override { return !m_isApbxForm; }

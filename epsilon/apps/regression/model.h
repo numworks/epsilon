@@ -50,11 +50,11 @@ class Model {
     return regression()->evaluate(modelCoefficients, x);
   };
   double levelSet(double* modelCoefficients, double xMin, double xMax, double y,
-                  Poincare::Context* context) {
+                  const Poincare::Context& context) {
     return regression()->levelSet(modelCoefficients, xMin, xMax, y, context);
   };
   void fit(const Store* store, int series, double* modelCoefficients,
-           Poincare::Context* context);
+           const Poincare::Context& context);
   double correlationCoefficient(const Store* store, int series);
   double determinationCoefficient(const Store* store, int series,
                                   const double* modelCoefficients);

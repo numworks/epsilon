@@ -55,7 +55,7 @@ void ResidualPlotController::updateCursor() {
       I18n::translate(I18n::Message::ColonConvention),
       m_store->residualStandardDeviation(
           m_selectedSeriesIndex,
-          AppsContainerHelper::sharedAppsContainerGlobalContext()),
+          *AppsContainerHelper::sharedAppsContainerGlobalContext()),
       displayMode);
   m_bannerView.stddevView()->setText(buffer);
 

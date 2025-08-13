@@ -10,7 +10,7 @@
 namespace Regression {
 
 void Model::fit(const Store* store, int series, double* modelCoefficients,
-                Poincare::Context* context) {
+                const Poincare::Context& context) {
   Shared::StoreToSeries bridge(store, series);
   return regression()->fit(&bridge, modelCoefficients, context);
 }

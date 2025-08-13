@@ -16,9 +16,9 @@ double ProportionalRegression::privateEvaluate(
   return modelCoefficients[0] * x;
 }
 
-double ProportionalRegression::levelSet(const double* modelCoefficients,
-                                        double xMin, double xMax, double y,
-                                        Poincare::Context* context) const {
+double ProportionalRegression::levelSet(
+    const double* modelCoefficients, double xMin, double xMax, double y,
+    const Poincare::Context& context) const {
   const double a = modelCoefficients[0];
   if (a == 0.0) {
     return NAN;

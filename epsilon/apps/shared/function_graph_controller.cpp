@@ -58,7 +58,7 @@ void FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (curveIndex != *m_selectedCurveIndex) {
     selectCurveAtIndex(curveIndex, false);
     Coordinate2D<double> xy =
-        xyValues(curveIndex, m_cursor->t(), App::app()->localContext(),
+        xyValues(curveIndex, m_cursor->t(), *App::app()->localContext(),
                  m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
@@ -260,7 +260,7 @@ bool FunctionGraphController::selectedModelIsValid() const {
 Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(
     double t) const {
   assert(selectedModelIsValid());
-  return xyValues(*m_selectedCurveIndex, t, App::app()->localContext(),
+  return xyValues(*m_selectedCurveIndex, t, *App::app()->localContext(),
                   m_selectedSubCurveIndex);
 }
 
@@ -269,12 +269,11 @@ AbstractPlotView* FunctionGraphController::curveView() {
 }
 
 Coordinate2D<double> FunctionGraphController::xyValues(
-    int curveIndex, double t, Poincare::Context* context,
+    int curveIndex, double t, const Poincare::Context& context,
     int subCurveIndex) const {
-  assert(context);
   return functionStore()
       ->modelForRecord(recordAtCurveIndex(curveIndex))
-      ->evaluateXYAtParameter(t, *context, subCurveIndex);
+      ->evaluateXYAtParameter(t, context, subCurveIndex);
 }
 
 int FunctionGraphController::numberOfSubCurves(int curveIndex) const {

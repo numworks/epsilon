@@ -76,7 +76,7 @@ class FunctionGraphController : public InteractiveCurveViewController,
   bool selectedModelIsValid() const override;
   Poincare::Coordinate2D<double> selectedModelXyValues(double t) const override;
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t,
-                                          Poincare::Context* context,
+                                          const Poincare::Context& context,
                                           int subCurveIndex = 0) const override;
   int numberOfSubCurves(int curveIndex) const override;
   bool isAlongY(int curveIndex) const override;

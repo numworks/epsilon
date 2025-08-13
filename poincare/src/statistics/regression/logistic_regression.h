@@ -13,11 +13,11 @@ class LogisticRegression : public Regression {
   }
 
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
-                  double y, Poincare::Context* context) const override;
+                  double y, const Poincare::Context& context) const override;
 
  private:
   Coefficients privateFit(const Series* series,
-                          Poincare::Context* context) const override;
+                          const Poincare::Context& context) const override;
   double privateEvaluate(const Coefficients& modelCoefficients,
                          double x) const override;
   Poincare::UserExpression privateExpression(

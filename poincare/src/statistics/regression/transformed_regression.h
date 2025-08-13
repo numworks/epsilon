@@ -11,11 +11,11 @@ namespace Poincare::Internal {
 class TransformedRegression : public Regression {
  public:
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
-                  double y, Poincare::Context* context) const override;
+                  double y, const Poincare::Context& context) const override;
 
  protected:
   Coefficients privateFit(const Series* series,
-                          Poincare::Context* context) const override;
+                          const Poincare::Context& context) const override;
   bool dataSuitableForFit(const Series* series) const override;
 
   bool applyLnOnX() const { return FitsLnX(type()); };

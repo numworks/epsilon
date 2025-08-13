@@ -17,8 +17,8 @@ UserExpression LinearRegression::privateExpression(
        .KB = UserExpression::Builder(modelCoefficients[1])});
 }
 
-Regression::Coefficients LinearRegression::privateFit(const Series* series,
-                                                      Context* context) const {
+Regression::Coefficients LinearRegression::privateFit(
+    const Series* series, const Context& context) const {
   Coefficients result;
   size_t slopeIndex = slopeCoefficientIndex();
   size_t yInterceptIndex = yInterceptCoefficientIndex();

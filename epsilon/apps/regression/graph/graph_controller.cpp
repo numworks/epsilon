@@ -124,7 +124,7 @@ bool GraphController::buildRegressionExpression(
     int significantDigits,
     Poincare::Preferences::PrintFloatMode displayMode) const {
   double* coefficients =
-      m_store->coefficientsForSeries(selectedSeriesIndex(), globalContext());
+      m_store->coefficientsForSeries(selectedSeriesIndex(), *globalContext());
   Layout l = m_store->regressionModel(modelType)->equationLayout(
       coefficients,
       GlobalPreferences::SharedGlobalPreferences()->yPredictedSymbol(),
@@ -148,7 +148,7 @@ void GraphController::reloadBannerView() {
 
   // If any coefficient is NAN, display that data is not suitable
   bool coefficientsAreDefined =
-      m_store->coefficientsAreDefined(selectedSeries, globalContext());
+      m_store->coefficientsAreDefined(selectedSeries, *globalContext());
   if (coefficientsAreDefined && *m_selectedDotIndex < 0 &&
       curveIsScatterPlot(*m_selectedCurveIndex)) {
     // Regression model has been removed, reinitialize cursor
@@ -231,7 +231,7 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
                       interactiveCurveViewRange()->xGridUnit()) /
                   static_cast<double>(k_numberOfCursorStepsInGradUnit);
     x = m_cursor->x() + step;
-    y = yValue(*m_selectedCurveIndex, x, globalContext());
+    y = yValue(*m_selectedCurveIndex, x, *globalContext());
   }
   m_cursor->moveTo(x, x, y);
   return true;
@@ -245,7 +245,7 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (*m_selectedCurveIndex != curveIndex) {
     *m_selectedCurveIndex = curveIndex;
     Coordinate2D<double> xy =
-        xyValues(curveIndex, m_cursor->t(), App::app()->localContext());
+        xyValues(curveIndex, m_cursor->t(), *App::app()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
   if (curveIsScatterPlot(*m_selectedCurveIndex)) {
@@ -284,7 +284,7 @@ Poincare::Coordinate2D<double> GraphController::selectedModelXyValues(
     double t) const {
   assert(selectedModelIsValid());
   if (*m_selectedDotIndex == -1) {
-    return xyValues(*m_selectedCurveIndex, t, globalContext());
+    return xyValues(*m_selectedCurveIndex, t, *globalContext());
   }
   return Coordinate2D<double>(
       dotAbscissa(*m_selectedCurveIndex, *m_selectedDotIndex),
@@ -306,7 +306,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
   int closesDotSeries = -1;
   int dotSelected = m_store->closestVerticalDot(
       direction, x, y, selectedSeriesIndex(), *m_selectedDotIndex,
-      &closesDotSeries, context);
+      &closesDotSeries, *context);
   int closesDotCurve =
       closesDotSeries == -1 ? -1 : curveIndexFromSeriesIndex(closesDotSeries);
 
@@ -326,7 +326,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     } else {
       // Compare the y distances
       double regressionDistanceY =
-          std::fabs(yValue(closestRegressionCurve, x, context) - y);
+          std::fabs(yValue(closestRegressionCurve, x, *context) - y);
       double dotDistanceY =
           std::fabs(dotOrdinate(closesDotCurve, dotSelected) - y);
       if (regressionDistanceY <= dotDistanceY) {
@@ -350,7 +350,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
     }
     *m_selectedDotIndex = -1;
     setRoundCrossCursorView();
-    double newY = yValue(*m_selectedCurveIndex, x, context);
+    double newY = yValue(*m_selectedCurveIndex, x, *context);
     m_cursor->moveTo(x, x, newY);
     setAbscissaInputAsFirstResponder();
     return true;
@@ -378,7 +378,7 @@ bool GraphController::moveCursorVertically(OMG::VerticalDirection direction) {
 }
 
 Coordinate2D<double> GraphController::xyValues(int curveIndex, double t,
-                                               Poincare::Context* context,
+                                               const Poincare::Context& context,
                                                int subCurveIndex) const {
   return Coordinate2D<double>(t, yValue(curveIndex, t, context));
 }

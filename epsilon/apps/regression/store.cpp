@@ -52,7 +52,7 @@ void Store::setSeriesRegressionType(int series, Model::Type type) {
 
 int Store::closestVerticalDot(OMG::VerticalDirection direction, double x,
                               double y, int currentSeries, int currentDot,
-                              int* nextSeries, Context* globalContext) {
+                              int* nextSeries, const Context& globalContext) {
   double nextX = INFINITY;
   double nextY = INFINITY;
   int nextDot = -1;
@@ -172,7 +172,7 @@ bool Store::updateSeries(int series, bool delayUpdate) {
 
 /* Calculations */
 
-void Store::updateCoefficients(int series, Context* globalContext) {
+void Store::updateCoefficients(int series, const Context& globalContext) {
   assert(series >= 0 && series <= k_numberOfSeries);
   assert(seriesIsActive(series));
   if (!m_recomputeCoefficients[series]) {
@@ -205,12 +205,12 @@ void Store::updateCoefficients(int series, Context* globalContext) {
       computeResidualStandardDeviation(series, globalContext);
 }
 
-double* Store::coefficientsForSeries(int series, Context* globalContext) {
+double* Store::coefficientsForSeries(int series, const Context& globalContext) {
   updateCoefficients(series, globalContext);
   return m_regressionCoefficients[series];
 }
 
-bool Store::coefficientsAreDefined(int series, Context* globalContext,
+bool Store::coefficientsAreDefined(int series, const Context& globalContext,
                                    bool finite) {
   double* coefficients = coefficientsForSeries(series, globalContext);
   int numberOfCoefficients = modelForSeries(series)->numberOfCoefficients();
@@ -228,14 +228,15 @@ double Store::correlationCoefficient(int series) const {
 }
 
 double Store::determinationCoefficientForSeries(int series,
-                                                Context* globalContext) {
+                                                const Context& globalContext) {
   /* Returns the Determination coefficient (R2).
    * It will be updated if the regression has been updated */
   updateCoefficients(series, globalContext);
   return m_determinationCoefficient[series];
 }
 
-double Store::residualStandardDeviation(int series, Context* globalContext) {
+double Store::residualStandardDeviation(int series,
+                                        const Context& globalContext) {
   updateCoefficients(series, globalContext);
   return m_residualStandardDeviation[series];
 }
@@ -263,12 +264,14 @@ float Store::minValueOfColumn(int series, int i) const {
   return minColumn;
 }
 
-double Store::yValueForXValue(int series, double x, Context* globalContext) {
+double Store::yValueForXValue(int series, double x,
+                              const Context& globalContext) {
   double* coefficients = coefficientsForSeries(series, globalContext);
   return modelForSeries(series)->evaluate(coefficients, x);
 }
 
-double Store::xValueForYValue(int series, double y, Context* globalContext) {
+double Store::xValueForYValue(int series, double y,
+                              const Context& globalContext) {
   double* coefficients = coefficientsForSeries(series, globalContext);
   return modelForSeries(series)->levelSet(
       coefficients, App::app()->graphRange()->xMin(),
@@ -276,7 +279,7 @@ double Store::xValueForYValue(int series, double y, Context* globalContext) {
 }
 
 double Store::residualAtIndexForSeries(int series, int index,
-                                       Context* globalContext) {
+                                       const Context& globalContext) {
   const double* modelCoefficients =
       coefficientsForSeries(series, globalContext);
   return modelForSeries(series)->residualAtIndex(this, series,
@@ -294,7 +297,7 @@ bool Store::AnyActiveSeriesSatisfies(TypeProperty property) const {
 }
 
 double Store::computeDeterminationCoefficient(int series,
-                                              Context* globalContext) {
+                                              const Context& globalContext) {
   const double* modelCoefficients =
       coefficientsForSeries(series, globalContext);
   return modelForSeries(series)->determinationCoefficient(this, series,
@@ -302,7 +305,7 @@ double Store::computeDeterminationCoefficient(int series,
 }
 
 double Store::computeResidualStandardDeviation(int series,
-                                               Context* globalContext) {
+                                               const Context& globalContext) {
   const double* modelCoefficients =
       coefficientsForSeries(series, globalContext);
   return modelForSeries(series)->residualStandardDeviation(this, series,

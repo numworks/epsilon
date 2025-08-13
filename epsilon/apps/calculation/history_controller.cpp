@@ -168,7 +168,7 @@ void HistoryController::recomputeHistoryCellHeightsIfNeeded() {
     /* The void context is used since there is no reasons for the
      * heightComputer to resolve symbols */
     HistoryViewCell::ComputeCalculationHeights(calculationAtIndex(i).pointer(),
-                                               nullptr);
+                                               EmptyContext{});
   }
 }
 
@@ -194,7 +194,7 @@ void HistoryController::fillCellForRow(HighlightCell* cell, int row) {
   myCell->setCalculation(
       calculationAtIndex(row).pointer(),
       row == selectedRow() && m_selectedSubviewType == SubviewType::Output,
-      context);
+      *context);
   myCell->setEven(row % 2 == 0);
   myCell->reloadSubviewHighlight();
 }
@@ -284,7 +284,7 @@ void HistoryController::handleOK() {
   if (m_selectedSubviewType == SubviewType::Input) {
     m_selectableListView.deselectTable();
     editController->insertLayout(
-        calculationAtIndex(focusRow)->createInputLayout(context));
+        calculationAtIndex(focusRow)->createInputLayout(*context));
     return;
   }
 
@@ -299,11 +299,11 @@ void HistoryController::handleOK() {
             ScrollableTwoLayoutsView::SubviewPosition::Right &&
         Calculation::CanDisplayApproximate(displayOutput)) {
       editController->insertLayout(
-          calculation->createApproximateOutputLayout(context, &dummy, true));
+          calculation->createApproximateOutputLayout(*context, &dummy, true));
     } else {
       assert(Calculation::CanDisplayExact(displayOutput));
       editController->insertLayout(
-          calculation->createExactOutputLayout(context, &dummy));
+          calculation->createExactOutputLayout(*context, &dummy));
     }
     return;
   }

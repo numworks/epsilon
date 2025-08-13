@@ -19,7 +19,7 @@ namespace Calculation {
 /* HistoryViewCell */
 
 void HistoryViewCell::ComputeCalculationHeights(Calculation* calculation,
-                                                Context* context) {
+                                                const Context& context) {
   HistoryViewCell cell(nullptr);
   cell.setNewCalculation(calculation, false, context, true);
   KDCoordinate unExpandedHeight = cell.minimalHeightForOptimalDisplay();
@@ -256,7 +256,7 @@ void HistoryViewCell::resetMemoization() {
 }
 
 void HistoryViewCell::setCalculation(Calculation* calculation, bool expanded,
-                                     Context* context,
+                                     const Context& context,
                                      bool canChangeDisplayOutput) {
   uint32_t newCalculationCRC =
       Ion::crc32Byte((const uint8_t*)calculation,
@@ -283,7 +283,7 @@ void HistoryViewCell::setCalculation(Calculation* calculation, bool expanded,
 }
 
 void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
-                                        Poincare::Context* context,
+                                        const Poincare::Context& context,
                                         bool canChangeDisplayOutput) {
   // Memoization
   m_inputView.setLayout(calculation->createInputLayout(context));
@@ -305,10 +305,7 @@ void HistoryViewCell::setNewCalculation(Calculation* calculation, bool expanded,
    * additional results type (a forbidden expression could hide the exact
    * results). */
 
-  // NOTE: temporary until setNewCalculation takes a const Context&
-  m_hasEllipsis =
-      context ? calculation->additionalResultsType(*context).isNotEmpty()
-              : calculation->additionalResultsType(EmptyContext{}).isNotEmpty();
+  m_hasEllipsis = calculation->additionalResultsType(context).isNotEmpty();
 
   /* Update m_scrollableOutputView. Must be done once m_calculationDisplayOutput
    * has been updated. We must set which subviews are displayed before

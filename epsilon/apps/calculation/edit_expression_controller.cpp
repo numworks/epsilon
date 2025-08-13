@@ -154,7 +154,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   Calculation* calculation =
       m_calculationStore->push(layout, variableStore).pointer();
   if (calculation) {
-    HistoryViewCell::ComputeCalculationHeights(calculation, variableStore);
+    HistoryViewCell::ComputeCalculationHeights(calculation, *variableStore);
     m_historyController->reload(false);
     layoutField->clearAndSetEditing(true);
     return true;

@@ -4,6 +4,7 @@
 #include <omg/float.h>
 #include <omg/troolean.h>
 #include <omg/vector.h>
+#include <poincare/context.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/src/expression/context.h>
 #include <poincare/src/memory/tree.h>
@@ -13,8 +14,6 @@
 
 /* TODO_PCJ: Change signatures to preparedFunctions instead of Trees. */
 namespace Poincare {
-
-class Context;
 
 template <typename T>
 class Solver {
@@ -129,7 +128,7 @@ class Solver {
 
   /* Arguments beyond xEnd are only required if the Solver manipulates
    * Expression. */
-  Solver(T xStart, T xEnd, Context* context = nullptr);
+  Solver(T xStart, T xEnd, const Context& context = EmptyContext{});
 
   void reset(T xStart, T xEnd, T searchStep);
 
@@ -213,7 +212,8 @@ class Solver {
   T nextX(T x, T direction, T slope) const;
   T nextPossibleRootInChild(const Internal::Tree* e, int childIndex) const;
   typedef bool (*ExpressionTestAuxiliary)(const Internal::Tree* e,
-                                          Context* context, void* auxiliary);
+                                          const Context& context,
+                                          void* auxiliary);
   T nextRootInChildren(const Internal::Tree* e, ExpressionTestAuxiliary test,
                        void* aux) const;
   T nextRootInMultiplication(const Internal::Tree* m) const;
@@ -242,7 +242,7 @@ class Solver {
   T m_xStart;
   T m_xEnd;
   T m_searchStep;
-  Context* m_context;
+  const Context& m_context;
   GrowthSpeed m_growthSpeed;
   SolutionQueue m_solutionQueue;
 };

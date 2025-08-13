@@ -69,8 +69,7 @@ void assert_solutions_are(
     std::initializer_list<Poincare::Coordinate2D<double>> expected,
     Interest interest, Preferences::AngleUnit angleUnit,
     const char* otherExpression) {
-  Shared::GlobalContext context;
-  Poincare::Solver<double> solver(start, end, &context);
+  Poincare::Solver<double> solver(start, end);
   for (Poincare::Coordinate2D<double> c : expected) {
     assert_next_solution_is(expression, Poincare::EmptyContext{}, &solver, c,
                             interest, otherExpression, angleUnit);

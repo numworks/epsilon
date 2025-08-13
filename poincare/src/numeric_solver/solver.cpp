@@ -13,7 +13,7 @@ using namespace Poincare::Internal;
 namespace Poincare {
 
 template <typename T>
-Solver<T>::Solver(T xStart, T xEnd, Context* context)
+Solver<T>::Solver(T xStart, T xEnd, const Context& context)
     : m_xStart(xStart),
       m_xEnd(xEnd),
       m_context(context),
@@ -549,7 +549,7 @@ template <typename T>
 T Solver<T>::nextRootInMultiplication(const Tree* e) const {
   assert(e->isMult());
   return nextRootInChildren(
-      e, [](const Tree*, Context*, void*) { return true; }, nullptr);
+      e, [](const Tree*, const Context&, void*) { return true; }, nullptr);
 }
 
 template <typename T>
@@ -561,7 +561,7 @@ T Solver<T>::nextRootInAddition(const Tree* e) const {
    * Since the expression does not change sign around x0, the usual numerical
    * schemes won't work. We instead look for the zeroes of f, and check whether
    * they are zeroes of the whole expression. */
-  ExpressionTestAuxiliary test = [](const Tree* e, Context* context,
+  ExpressionTestAuxiliary test = [](const Tree* e, const Context& context,
                                     void* aux) {
     /* TODO_PCJ: Either ensure expression is projected, or pass approximation
      * context(ComplexFormat, AngleUnit) and replace defined symbols. */

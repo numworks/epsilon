@@ -188,12 +188,12 @@ bool EditExpressionController::isAcceptableExpression(
   UserExpression exp = expression.clone();
   m_calculationStore->replaceAnsInExpression(exp, context);
   assert(!exp.isUninitialized());
+  assert(context);
   Layout layout =
       exp.createLayout(Preferences::PrintFloatMode::Decimal,
-                       PrintFloat::k_maxNumberOfSignificantDigits, context);
+                       PrintFloat::k_maxNumberOfSignificantDigits, *context);
   assert(!layout.isUninitialized());
   layout = layout.cloneWithoutMargins();
-  assert(context);
   exp = UserExpression::Parse(layout, *context);
   // Replacing Ans made the expression un-parsable.
   return !exp.isUninitialized();

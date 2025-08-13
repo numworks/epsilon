@@ -307,7 +307,8 @@ bool LayoutField::insertText(const char* text, bool indentation,
   Layout resultLayout = resultExpression.createLayout(
       SharedPreferences->displayMode(),
       Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-      App::app() ? App::app()->localContext() : nullptr);
+      App::app() ? static_cast<const Context&>(*App::app()->localContext())
+                 : k_emptyContext);
   if (currentNumberOfLayouts + resultLayout.numberOfDescendants(true) >=
       k_maxNumberOfLayouts) {
     return false;
@@ -640,7 +641,7 @@ void LayoutField::insertLayoutAtCursor(Layout layout,
       layout =
           e.createLayout(SharedPreferences->displayMode(),
                          Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-                         nullptr, OMG::Base::Decimal, true);
+                         Poincare::EmptyContext{}, OMG::Base::Decimal, true);
       cursor()->insertLayout(layout.tree(), context(), forceCursorRightOfLayout,
                              forceCursorLeftOfLayout);
     } else {

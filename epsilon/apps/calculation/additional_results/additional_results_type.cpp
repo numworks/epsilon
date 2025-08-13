@@ -262,9 +262,7 @@ bool AdditionalResultsType::HasScientificNotation(
    * compared. */
   Poincare::Layout historyResult = approximateOutput.createLayout(
       calculationPreferences.displayMode,
-      calculationPreferences.numberOfSignificantDigits,
-      // NOTE: const_cast is temporary
-      &const_cast<Context&>(context));
+      calculationPreferences.numberOfSignificantDigits, context);
   return !historyResult.isIdenticalTo(
       AdditionalResultsHelper::ScientificLayout(approximateOutput, context,
                                                 calculationPreferences),

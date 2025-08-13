@@ -5,6 +5,7 @@
 #include <poincare/k_tree.h>
 
 #include "../app.h"
+#include "poincare/context.h"
 
 using namespace Poincare;
 using namespace Shared;
@@ -35,7 +36,7 @@ void IntegerListController::computeAdditionalResults(
     m_layouts[index] =
         integer.createLayout(Preferences::PrintFloatMode::Decimal,
                              Preferences::LargeNumberOfSignificantDigits,
-                             nullptr, baseAtIndex(index));
+                             EmptyContext{}, baseAtIndex(index));
   }
   // Computing factorExpression
   UserExpression factor = UserExpression::Create(KFactor(KA), {.KA = integer});
@@ -48,7 +49,7 @@ void IntegerListController::computeAdditionalResults(
       !factor.tree()->treeIsIdenticalTo(1_e) &&
       !factor.tree()->treeIsIdenticalTo(0_e)) {
     m_layouts[k_indexOfFactorExpression] =
-        PoincareHelpers::CreateLayout(factor, App::app()->localContext());
+        PoincareHelpers::CreateLayout(factor, *App::app()->localContext());
   }
 }
 

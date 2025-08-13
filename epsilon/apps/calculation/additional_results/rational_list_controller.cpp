@@ -53,9 +53,9 @@ void RationalListController::computeAdditionalResults(
 
   int index = 0;
   m_layouts[index++] =
-      PoincareHelpers::CreateLayout(mixedFraction, App::app()->localContext());
+      PoincareHelpers::CreateLayout(mixedFraction, *App::app()->localContext());
   m_layouts[index++] =
-      PoincareHelpers::CreateLayout(euclideanDiv, App::app()->localContext());
+      PoincareHelpers::CreateLayout(euclideanDiv, *App::app()->localContext());
 }
 
 I18n::Message RationalListController::messageAtIndex(int index) {

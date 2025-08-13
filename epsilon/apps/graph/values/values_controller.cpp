@@ -321,7 +321,7 @@ Layout ValuesController::functionTitleLayout(int column) {
   char buffer[bufferNameSize];
   if (derivationOrder == 0 && !function->isNamed()) {
     return PoincareHelpers::CreateLayout(function->originalEquation(),
-                                         App::app()->localContext());
+                                         *App::app()->localContext());
   }
   function->nameWithArgument(buffer, bufferNameSize, derivationOrder);
   return Layout::String(buffer);
@@ -411,15 +411,15 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   uint8_t significantDigits =
       GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Layout layout =
-      result.createLayout(floatDisplayMode, significantDigits, context);
+      result.createLayout(floatDisplayMode, significantDigits, *context);
   if (result.isPoint() && layout->layoutSize(k_cellFont).width() >
                               ApproximatedParametricCellSize().width() -
                                   2 * Metric::SmallCellMargin) {
     // Fallback on two rows point display if one row does not fit
     Poincare::Layout child0 = result.cloneChildAtIndex(0).createLayout(
-        floatDisplayMode, significantDigits, context);
+        floatDisplayMode, significantDigits, *context);
     Poincare::Layout child1 = result.cloneChildAtIndex(1).createLayout(
-        floatDisplayMode, significantDigits, context);
+        floatDisplayMode, significantDigits, *context);
     layout = Poincare::Layout::Create(KPoint2DL(KA, KB),
                                       {.KA = child0, .KB = child1});
   }

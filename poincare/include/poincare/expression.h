@@ -270,12 +270,13 @@ class UserExpression : public Expression {
       const Context& context = EmptyContext{}) const;
 
   Layout createLayout(Preferences::PrintFloatMode floatDisplayMode,
-                      int numberOfSignificantDigits, Context* context,
+                      int numberOfSignificantDigits,
+                      const Context& context = EmptyContext{},
                       OMG::Base base = OMG::Base::Decimal,
                       bool linearMode = false) const;
   char* toLatex(char* buffer, int bufferSize,
                 Preferences::PrintFloatMode floatDisplayMode,
-                int numberOfSignificantDigits, Context* context,
+                int numberOfSignificantDigits, const Context& context,
                 bool withThousandsSeparator = false) const;
   /* TODO: detect when the buffer size was to small to hold the expression
    * serialization, and return an error code so that the caller can handle this

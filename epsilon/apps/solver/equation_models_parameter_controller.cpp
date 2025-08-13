@@ -36,7 +36,7 @@ EquationModelsParameterController::EquationModelsParameterController(
         k_models[i + 1], EmptyContext{}, {.preserveInput = true});
     m_layouts[i] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
-                       Preferences::ShortNumberOfSignificantDigits, nullptr);
+                       Preferences::ShortNumberOfSignificantDigits);
     m_modelCells[i].label()->setLayout(m_layouts[i]);
   }
 }

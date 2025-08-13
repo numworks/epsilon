@@ -61,7 +61,7 @@ void FunctionModelsParameterController::viewWillAppear() {
     m_layouts[i] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits,
-                       AppsContainer::sharedAppsContainer()->globalContext());
+                       *AppsContainer::sharedAppsContainer()->globalContext());
     m_modelCells[i].label()->setLayout(m_layouts[i]);
   }
   m_selectableListView.selectCell(0);

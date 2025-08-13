@@ -161,7 +161,7 @@ Layout ExpressionModel::layout(const Storage::Record* record,
       clone.replaceUnknownWithSymbol(symbol);
     }
     m_layout = PoincareHelpers::CreateLayout(
-        clone, Escher::App::app()->localContext());
+        clone, *Escher::App::app()->localContext());
     if (m_layout.isUninitialized()) {
       m_layout = KRackL();
     }

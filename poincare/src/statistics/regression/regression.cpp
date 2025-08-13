@@ -27,7 +27,7 @@ Layout Regression::equationLayout(
   SharedTreeStack->pushUserSymbol(ySymbol);
   formula.tree()->cloneTree();
   return UserExpression::Builder(expr).createLayout(displayMode,
-                                                    significantDigits, nullptr);
+                                                    significantDigits);
 }
 
 UserExpression Regression::expression(const double* modelCoefficients) const {

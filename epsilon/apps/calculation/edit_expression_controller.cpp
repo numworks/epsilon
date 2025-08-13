@@ -146,7 +146,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   if (layout.isUninitialized()) {
     return false;
   }
-  if (!isAcceptableLayout(layout, &ansContext)) {
+  if (!isAcceptableLayout(layout, ansContext)) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
@@ -181,26 +181,21 @@ void EditExpressionController::layoutFieldDidChangeSize(
 }
 
 bool EditExpressionController::isAcceptableExpression(
-    const Poincare::UserExpression expression, Context* context) {
+    const Poincare::UserExpression expression, const Context& context) {
   if (expression.isUninitialized()) {
     return false;
   }
   // Replace ans with its value and check layout
   UserExpression exp = expression.clone();
-  // NOTE: temporary until isAcceptableExpression takes a const Context&
-  if (context) {
-    m_calculationStore->replaceAnsInExpression(exp, *context);
-  } else {
-    m_calculationStore->replaceAnsInExpression(exp, EmptyContext{});
-  }
+  m_calculationStore->replaceAnsInExpression(exp, context);
+
   assert(!exp.isUninitialized());
-  assert(context);
   Layout layout =
       exp.createLayout(Preferences::PrintFloatMode::Decimal,
-                       PrintFloat::k_maxNumberOfSignificantDigits, *context);
+                       PrintFloat::k_maxNumberOfSignificantDigits, context);
   assert(!layout.isUninitialized());
   layout = layout.cloneWithoutMargins();
-  exp = UserExpression::Parse(layout, *context);
+  exp = UserExpression::Parse(layout, context);
   // Replacing Ans made the expression un-parsable.
   return !exp.isUninitialized();
 }

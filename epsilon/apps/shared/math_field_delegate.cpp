@@ -37,19 +37,18 @@ CodePoint AbstractMathFieldDelegate::defaultXNT() {
 }
 
 bool AbstractMathFieldDelegate::isAcceptableExpression(const UserExpression exp,
-                                                       Context* context) {
+                                                       const Context& context) {
   return !exp.isUninitialized() && !exp.isStore();
 }
 
 bool AbstractMathFieldDelegate::isAcceptableText(const char* text,
-                                                 Context* context) {
+                                                 const Context& context) {
   /* Parsing
    * Do not parse for assignment to detect if there is a syntax error, since
    * some errors could be missed.
    * Sometimes the field needs to be parsed for assignment but this is
    * done later, namely by ContinuousFunction::buildExpressionFromLayout. */
-  assert(context);
-  UserExpression exp = UserExpression::Parse(text, *context);
+  UserExpression exp = UserExpression::Parse(text, context);
   if (exp.isUninitialized()) {
     // Unparsable expression
     return false;
@@ -83,21 +82,20 @@ bool MathLayoutFieldDelegate::layoutFieldDidReceiveEvent(
              : handleEventForField(layoutField, event);
 }
 
-bool MathLayoutFieldDelegate::isAcceptableLayout(Layout layout,
-                                                 Poincare::Context* context) {
+bool MathLayoutFieldDelegate::isAcceptableLayout(
+    Layout layout, const Poincare::Context& context) {
   if (layout.isEmpty()) {
     // Accept empty layouts
     return true;
   }
-  assert(context);
-  UserExpression exp = UserExpression::Parse(layout, *context);
+  UserExpression exp = UserExpression::Parse(layout, context);
   return isAcceptableExpression(exp, context);
 }
 
 bool MathLayoutFieldDelegate::layoutFieldDidFinishEditing(
     LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
-  if (!isAcceptableLayout(layoutField->layout(), context())) {
+  if (!isAcceptableLayout(layoutField->layout(), *context())) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
@@ -120,7 +118,7 @@ bool MathTextFieldDelegate::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
   assert(!textField->isEditing());
   if (textField->text()[0] != 0 &&
-      !isAcceptableText(textField->text(), App::app()->localContext())) {
+      !isAcceptableText(textField->text(), *App::app()->localContext())) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }

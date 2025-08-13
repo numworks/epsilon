@@ -20,7 +20,7 @@ PreimageGraphController::PreimageGraphController(
 Coordinate2D<double> PreimageGraphController::computeNewPointOfInterest(
     double start, double max, Context* context, bool stretch) {
   assert(context);
-  Solver<double> solver = Poincare::Solver(start, max, context);
+  Solver<double> solver = Poincare::Solver(start, max, *context);
   if (stretch) {
     solver.stretch();
   }

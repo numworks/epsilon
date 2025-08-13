@@ -273,8 +273,7 @@ EquationSolver::SolverResult EquationSolver::ApproximateSolve(
   // Step 3. Compute the solutions
   assert(range.isValid());
   solutionMetadata.solvingRange = range;
-  Solver<double> solver =
-      Poincare::Solver<double>(range.min(), range.max(), nullptr /*context*/);
+  Solver<double> solver = Poincare::Solver<double>(range.min(), range.max());
   solver.stretch();
 
   TreeRef resultList = List::PushEmpty();

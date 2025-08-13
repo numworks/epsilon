@@ -654,7 +654,7 @@ QUIZ_CASE(pcj_approximation_list) {
   approximates_to<double>("sequence(k/2,k,7)", "{0.5,1,1.5,2,2.5,3,3.5}");
 
   Shared::GlobalContext globalContext;
-  store("{1,2,3,4,5}→L", &globalContext);
+  store("{1,2,3,4,5}→L", globalContext);
   approximates_to<float>("L(1)", "1", {.m_context = globalContext});
   approximates_to<float>("L(0)", "undef", {.m_context = globalContext});
   approximates_to<float>("L(7)", "undef", {.m_context = globalContext});
@@ -2215,42 +2215,42 @@ QUIZ_CASE(pcj_approximation_context) {
       .m_context = globalContext,
   };
 
-  store("2x+5→f(x)", &globalContext);
-  store("π+1→a", &globalContext);
-  store("[[4]]→b", &globalContext);
+  store("2x+5→f(x)", globalContext);
+  store("π+1→a", globalContext);
+  store("[[4]]→b", globalContext);
   approximates_to<float>("a", "4.141593", cartesianCtx);
   approximates_to<float>("f(a)", "13.28319", cartesianCtx);
   approximates_to<float>("f(a+i)", "13.28319+2×i", cartesianCtx);
   approximates_to<float>("z", "undef", cartesianCtx);
   approximates_to<float>("b*[[5]]", "[[20]]", cartesianCtx);
 
-  store("x>0→g(x)", &globalContext);
-  store("true→t", &globalContext);
+  store("x>0→g(x)", globalContext);
+  store("true→t", globalContext);
   approximates_to_boolean("g(2)", true, cartesianCtx);
   approximates_to_boolean("g(1/0)", Approximation::BooleanOrUndefined::Undef(),
                           cartesianCtx);
   approximates_to_boolean("t", true, cartesianCtx);
 
-  store("[[x,0][0,x]]→h(x)", &globalContext);
+  store("[[x,0][0,x]]→h(x)", globalContext);
   approximates_to<float>("h(3)", "[[3,0][0,3]]", cartesianCtx);
   approximates_to<float>("h(1/0)", "undef", cartesianCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // f : x→ x^2
-  store("x^2→f(x)", &globalContext);
+  store("x^2→f(x)", globalContext);
   // Approximate f(x-2) with x = 5
-  store("5→x", &globalContext);
+  store("5→x", globalContext);
   approximates_to<double>("f(x-2)", 9.0, cartesianCtx);
   // Approximate f(x-1)+f(x+1) with x = 3
-  store("3→x", &globalContext);
+  store("3→x", globalContext);
   approximates_to<double>("f(x-1)+f(x+1)", 20.0, cartesianCtx);
   // Clean the storage for other tests
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // f : x → √(-1)×√(-1)
-  store("√(-1)×√(-1)→f(x)", &globalContext);
+  store("√(-1)×√(-1)→f(x)", globalContext);
   // Approximate f(x) with x = 1
-  store("1→x", &globalContext);
+  store("1→x", globalContext);
   // Cartesian
   approximates_to<double>("f(x)", -1.0, cartesianCtx);
   // Real

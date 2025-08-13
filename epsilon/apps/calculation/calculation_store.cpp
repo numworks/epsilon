@@ -51,8 +51,7 @@ void CalculationStore::deleteCalculationAtIndex(int index) {
   deleteElementAtIndex(numberOfElements() - 1 - index);
 }
 
-UserExpression CalculationStore::ansExpression(Context* context) const {
-  assert(context);
+UserExpression CalculationStore::ansExpression(const Context& context) const {
   const UserExpression defaultAns = UserExpression::Builder(0_e);
   if (numberOfCalculations() == 0) {
     return defaultAns;
@@ -81,7 +80,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
        * calculation. */
       ansExpr = ansExpr.cloneChildAtIndex(0);
     }
-  } else if (input.recursivelyMatches(&Expression::isApproximate, *context) &&
+  } else if (input.recursivelyMatches(&Expression::isApproximate, context) &&
              mostRecentCalculation->equalSign() ==
                  Calculation::EqualSign::Equal) {
     /* Case 2.
@@ -99,7 +98,7 @@ UserExpression CalculationStore::ansExpression(Context* context) const {
 }
 
 void CalculationStore::replaceAnsInExpression(UserExpression& expression,
-                                              Context* context) const {
+                                              const Context& context) const {
   UserExpression ansSymbol = SymbolHelper::Ans();
   UserExpression ansExpression = this->ansExpression(context);
   expression.replaceSymbolWithExpression(ansSymbol, ansExpression);
@@ -109,13 +108,12 @@ static bool compute(Poincare::UserExpression inputExpression,
                     Poincare::UserExpression& exactOutputExpression,
                     Poincare::UserExpression& approximateOutputExpression,
                     Poincare::Preferences::ComplexFormat& complexFormat,
-                    Poincare::Context* context) {
+                    const Poincare::Context& context) {
   assert(!inputExpression.isUninitialized());
-  assert(context);
   // Update complexFormat with input expression
   complexFormat =
       Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-          complexFormat, inputExpression, *context);
+          complexFormat, inputExpression, context);
   Internal::ProjectionContext projContext = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
@@ -123,7 +121,7 @@ static bool compute(Poincare::UserExpression inputExpression,
           GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
       .m_symbolic = CAS::Enabled() ? SymbolicComputation::ReplaceDefinedSymbols
                                    : SymbolicComputation::ReplaceAllSymbols,
-      .m_context = *context};
+      .m_context = context};
 
   return inputExpression.cloneAndSimplifyAndApproximate(
       &exactOutputExpression, &approximateOutputExpression, projContext);
@@ -137,7 +135,7 @@ struct CalculationResult {
 static CalculationResult computeInterruptible(
     Poincare::UserExpression inputExpression,
     Poincare::Preferences::ComplexFormat& complexFormat,
-    Poincare::Context* context) {
+    const Poincare::Context& context) {
   /* TODO: we could refine this UserCircuitBreaker. When interrupted during
    * simplification, we could still try to display the approximate result? When
    * interrupted during approximation, we could at least display the exact
@@ -166,7 +164,7 @@ static CalculationResult computeInterruptible(
 
 static void processStore(OutputExpressions& outputs,
                          Poincare::UserExpression input,
-                         Poincare::VariableStore* variableStore) {
+                         Poincare::VariableStore& variableStore) {
   /* The global variable store performs the store and ensures that no symbol is
    * kept in the definition of a variable.
    * Once this is done, the output is replaced with the stored expression. To do
@@ -174,18 +172,16 @@ static void processStore(OutputExpressions& outputs,
    * can be different from the value in the store expression. e.g. if f(x) =
    * cos(x), the expression "f(x^2)->f(x)" will return "cos(x^2)". */
 
-  assert(variableStore);
-
   // TODO: factorize with StoreMenuController::parseAndStore
   // TODO: add circuit breaker?
   UserExpression value = StoreHelper::Value(outputs.exact);
   UserExpression symbol = StoreHelper::Symbol(outputs.exact);
   Internal::ProjectionContext projectionContext =
-      PoincareHelpers::ProjectionContextForPreferences(value, *variableStore);
+      PoincareHelpers::ProjectionContextForPreferences(value, variableStore);
   UserExpression valueApprox =
       value.cloneAndApproximate<double>(projectionContext);
   if (symbol.isUserSymbol() && CAS::ShouldOnlyDisplayApproximation(
-                                   input, value, valueApprox, *variableStore)) {
+                                   input, value, valueApprox, variableStore)) {
     value = valueApprox;
   }
 #if 0
@@ -208,7 +204,7 @@ assert(!value.recursivelyMatches(
 static void postProcessOutputs(OutputExpressions& outputs,
                                Poincare::UserExpression inputExpression,
                                bool unitsForbidden,
-                               Poincare::VariableStore* variableStore) {
+                               Poincare::VariableStore& variableStore) {
   /* TODO: the two following operations should be performed in a
    * CircuitBreakerCheckpoint to handle the "Back" interruption properly,
    * although it is very unlikely to happen because these operations are fast.
@@ -232,7 +228,7 @@ static void postProcessOutputs(OutputExpressions& outputs,
 }
 
 Poincare::UserExpression CalculationStore::parseInput(
-    Poincare::Layout inputLayout, Poincare::Context* context) {
+    Poincare::Layout inputLayout, const Poincare::Context& context) {
   m_inUsePreferences = getCurrentPreferences();
 
   CircuitBreakerCheckpoint checkpoint(
@@ -258,7 +254,7 @@ Poincare::UserExpression CalculationStore::parseInput(
 
 CalculationStore::CalculationElements CalculationStore::computeAndProcess(
     Poincare::UserExpression inputExpression,
-    Poincare::VariableStore* variableStore) {
+    Poincare::VariableStore& variableStore) {
   Poincare::Preferences::ComplexFormat complexFormat =
       GlobalPreferences::SharedGlobalPreferences()->complexFormat();
   CalculationResult calculationResult =
@@ -273,7 +269,7 @@ CalculationStore::CalculationElements CalculationStore::computeAndProcess(
 }
 
 OMG::ExpiringPointer<Calculation> CalculationStore::push(
-    Poincare::Layout inputLayout, Poincare::VariableStore* variableStore) {
+    Poincare::Layout inputLayout, Poincare::VariableStore& variableStore) {
   Poincare::UserExpression inputExpression =
       parseInput(inputLayout, variableStore);
   if (inputExpression.isUninitialized()) {
@@ -318,9 +314,9 @@ bool CalculationStore::preferencesHaveChanged() {
   return true;
 }
 
-PoolVariableContext CalculationStore::createAnsContext(Context* context) {
+PoolVariableContext CalculationStore::createAnsContext(const Context& context) {
   return PoolVariableContext(SymbolHelper::AnsMainAlias(),
-                             ansExpression(context), context);
+                             ansExpression(context), &context);
 }
 
 // Private

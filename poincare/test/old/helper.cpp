@@ -151,7 +151,7 @@ void assert_reduce_and_store(const char *expression,
                              Preferences::ComplexFormat complexFormat,
                              ReductionTarget target) {
   // TODO_PCJ: reduce expression (to check it stays a store expression)
-  store(expression, &variableStore);
+  store(expression, variableStore);
 }
 
 void assert_parsed_expression_simplify_to(

@@ -584,7 +584,7 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
   assert_reduced_is_positive("1-1%", OMG::Troolean::Unknown);
   assert_reduced_is_positive("a", OMG::Troolean::Unknown);
   Shared::GlobalContext globalContext;
-  store("42→a", &globalContext);
+  store("42→a", globalContext);
   assert_reduced_is_positive("a", OMG::Troolean::True, globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 }

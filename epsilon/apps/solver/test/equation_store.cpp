@@ -391,7 +391,7 @@ QUIZ_CASE(solver_approximate) {
 }
 
 void set(const char* variable, const char* expression,
-         Shared::GlobalContext* globalContext) {
+         Shared::GlobalContext& globalContext) {
   char buffer[50];
   int expressionLen = strlen(expression);
   strlcpy(buffer, expression, expressionLen + 1);
@@ -435,19 +435,19 @@ QUIZ_CASE(solver_complex_real) {
 #endif
 
   // With a predefined variable that should be ignored
-  set("h", "3", &globalContext);
+  set("h", "3", globalContext);
   assert_solves_to("(h-1)*(h-2)=0", {"h=1", "h=2", "delta=1"}, &globalContext);
-  set("h", "1", &globalContext);
+  set("h", "1", globalContext);
   assert_solves_to("h^2=-1", {"delta=-4"},
                    &globalContext);  // No real solutions
-  set("h", "i+1", &globalContext);
+  set("h", "i+1", globalContext);
   assert_solves_to("h^2=-1", {"delta=-4"},
                    &globalContext);  // No real solutions
   //  - We still want complex solutions if the input has some complex value
-  set("h", "1", &globalContext);
+  set("h", "1", globalContext);
   assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"},
                    &globalContext);  // Complex solutions
-  set("h", "i+1", &globalContext);
+  set("h", "i+1", globalContext);
   assert_solves_to("(h-i)^2=0", {"h=i", "delta=0"},
                    &globalContext);  // Complex solutions
 }
@@ -524,7 +524,7 @@ QUIZ_CASE(solver_symbolic_computation) {
   /* This test case needs the user defined variable. Indeed, in the equation
    * store, m_variables is just before m_userVariables, so bad fetching in
    * m_variables might fetch into m_userVariables and create problems. */
-  set("x", "0", &globalContext);
+  set("x", "0", globalContext);
   assert_solves_to_infinite_solutions(
       {"D=0", "b=0", "c=0", "x+y+z+t=0"},
       {"D=0", "b=0", "c=0", "t=-(t1+t2)", "y=t2", "z=t1"}, &globalContext);
@@ -537,11 +537,11 @@ QUIZ_CASE(solver_symbolic_computation) {
 
   /* Without the user defined variable, this test has too many variables.
    * With the user defined variable, it has no solutions. */
-  set("g", "0", &globalContext);
+  set("g", "0", globalContext);
   assert_solves_to_no_solution({"a=a+1", "a+b+c+d+f+g+h=0"}, &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  set("a", "x", &globalContext);
+  set("a", "x", globalContext);
   // a is undef
   assert_solves_to("a=0", {"a=0"}, &globalContext);
 
@@ -550,14 +550,14 @@ QUIZ_CASE(solver_symbolic_computation) {
   assert_solves_to_infinite_solutions({"x+a=0"}, {"a=-t", "x=t"},
                                       &globalContext);
 
-  set("a", "-3", &globalContext);
+  set("a", "-3", globalContext);
   assert_solves_to("x+a=0", "x=3", &globalContext);
 
   assert_solves_to("a=0", "a=0", &globalContext);
   /* The equation has no solution since the user defined a = -3. So a is not
    * replaced with its context value, and the solution is a = 0. */
 
-  set("b", "-4", &globalContext);
+  set("b", "-4", globalContext);
   assert_solves_to_infinite_solutions({"a+b=0"}, {"a=-t", "b=t"},
                                       &globalContext);
   /* The equation has no solution since the user defined a = -3 and b = -4.
@@ -570,7 +570,7 @@ QUIZ_CASE(solver_symbolic_computation) {
   /* The system has no solution since the user defined a = -3. So a is not
    * replaced with its context value, and the solution is a = 3 and c = -3. */
 
-  set("f(x)", "x+1", &globalContext);
+  set("f(x)", "x+1", globalContext);
 
   assert_solves_to("f(x)=0", "x=-1", &globalContext);
 
@@ -578,7 +578,7 @@ QUIZ_CASE(solver_symbolic_computation) {
   /* The equation has no solution since the user defined a = -3. So a is not
    * replaced with its context value, and the solution is a = -1. */
 
-  set("g(x)", "a+x+2", &globalContext);
+  set("g(x)", "a+x+2", globalContext);
 
   assert_solves_to("g(x)=0", "x=1", &globalContext);
 
@@ -588,9 +588,9 @@ QUIZ_CASE(solver_symbolic_computation) {
    * The solution is therefore a = -1. */
 
 #if 0
-  set("d", "5", &globalContext);
-  set("c", "d", &globalContext);
-  set("h(x)", "c+d+3", &globalContext);
+  set("d", "5", globalContext);
+  set("c", "d", globalContext);
+  set("h(x)", "c+d+3", globalContext);
   assert_solves_to_infinite_solutions({"h(x)=0", "c=-3"},
                                       {"c=-3", "d=0", "x=t"}, &globalContext);
   // c and d context values should not be used
@@ -598,42 +598,42 @@ QUIZ_CASE(solver_symbolic_computation) {
 
   assert_solves_to({"c+d=5", "c-d=1"}, {"c=3", "d=2"}, &globalContext);
 
-  set("j", "8_g", &globalContext);
+  set("j", "8_g", globalContext);
   assert_solves_to("j+1=0", {"j=-1"}, &globalContext);
 
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  set("a", "0", &globalContext);
+  set("a", "0", globalContext);
   assert_solves_to("a=0", "a=0", &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  set("b", "0", &globalContext);
+  set("b", "0", globalContext);
   assert_solves_to_no_solution({"b*b=1", "a=b"}, &globalContext);
   // If predefined variable had been ignored, there would have been this error
   // assert_solves_to_error({"b*b=1","a=b"}, NonLinearSystem, &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  set("x", "-1", &globalContext);
+  set("x", "-1", globalContext);
   assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution,
                          &globalContext);
-  set("x", "1", &globalContext);
+  set("x", "1", globalContext);
   assert_solves_to_error("x^5+x^2+x+1=0", RequireApproximateSolution,
                          &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  set("t", "1", &globalContext);
-  set("a", "2", &globalContext);
+  set("t", "1", globalContext);
+  set("a", "2", globalContext);
   assert_solves_to_infinite_solutions({"ax=y"}, {"x=t1/2", "y=t1"},
                                       &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  set("a", "0", &globalContext);
+  set("a", "0", globalContext);
   assert_solves_to_error("cos(πx)+cos(a)=0", RequireApproximateSolution,
                          &globalContext);
   // Value of a was not ignored, which would have resulted in a NonLinearSystem
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  set("c", "arcsin(10)cb=0", &globalContext);
+  set("c", "arcsin(10)cb=0", globalContext);
   assert_solves_to_error("arcsin(10)cb=0", NonLinearSystem, &globalContext);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 

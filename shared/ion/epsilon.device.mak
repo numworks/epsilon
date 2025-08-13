@@ -81,8 +81,8 @@ LDFLAGS_ion += \
   $(foreach c,$(_ion_firmware_components),$(addsuffix :+$c,$(_ldflags_ion_$c))) \
   -L$(PATH_ion)/src/device/core/device/shared-core/flash \
   -L$(PATH_ion)/src/device/shared/flash \
-  -L$(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/core/device/shared-core/flash \
-  -L$(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/shared/flash
+  -L$(call generated_sources_for, $(PATH_ion)/src/device/core/device/shared-core/flash) \
+  -L$(call generated_sources_for, $(PATH_ion)/src/device/shared/flash)
 
 # Prevent building kernel or userland without a slot.
 LDFLAGS_ion += \
@@ -91,9 +91,9 @@ LDFLAGS_ion += \
 
 LDDEPS_ion += \
   $(foreach c,$(_ion_firmware_components),$(addsuffix :+$c,$(_lddeps_ion_$c))) \
-  $(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/shared/flash/board.ld
+  $(call generated_sources_for, $(PATH_ion)/src/device/shared/flash/board.ld)
 
-$(OUTPUT_DIRECTORY)/$(PATH_ion)/src/device/shared/flash/board.ld: $(PATH_ion)/src/device/include/$(PLATFORM)/config/board.h | $$(@D)/.
+$(call generated_sources_for, $(PATH_ion)/src/device/shared/flash/board.ld): $(PATH_ion)/src/device/include/$(PLATFORM)/config/board.h | $$(@D)/.
 	$(call rule_label,AWK)
 	$(CXX) $(SFLAGS) -E $< -o $(@:.ld=.h)
 	awk '/^constexpr/ {$$1=$$2=""; sub(";.*", ";"); print}; /^static_assert/ {sub("static_assert", "ASSERT"); print}' $(@:.ld=.h) >$@

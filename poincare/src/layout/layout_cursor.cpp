@@ -93,7 +93,8 @@ bool LayoutCursor::isOnEmptySquare() const {
 
 /* Move */
 bool LayoutCursor::move(OMG::Direction direction, bool selecting,
-                        bool* shouldRedrawLayout, Poincare::Context* context) {
+                        bool* shouldRedrawLayout,
+                        const Poincare::Context& context) {
   *shouldRedrawLayout = false;
   if (!selecting && isSelecting()) {
     stopSelecting();
@@ -138,7 +139,7 @@ bool LayoutCursor::move(OMG::Direction direction, bool selecting,
 
 bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
                                      bool selecting, bool* shouldRedrawLayout,
-                                     Poincare::Context* context) {
+                                     const Poincare::Context& context) {
   assert(step > 0);
   *shouldRedrawLayout = false;
   for (int i = 0; i < step; i++) {
@@ -154,7 +155,7 @@ bool LayoutCursor::moveMultipleSteps(OMG::Direction direction, int step,
 
 // TreeStackCursor
 
-void TreeStackCursor::beautifyLeftAction(Poincare::Context* context,
+void TreeStackCursor::beautifyLeftAction(const Poincare::Context& context,
                                          const void*) {
   // TODO_PCJ: We used to handle beautification while selecting here.
   if (!isSelecting()) {
@@ -163,7 +164,7 @@ void TreeStackCursor::beautifyLeftAction(Poincare::Context* context,
 }
 
 bool TreeStackCursor::beautifyRightOfRack(Rack* targetRack,
-                                          Poincare::Context* context) {
+                                          const Poincare::Context& context) {
   // TODO_PCJ: We used to handle beautification while selecting here.
   if (isSelecting()) {
     return false;
@@ -174,8 +175,8 @@ bool TreeStackCursor::beautifyRightOfRack(Rack* targetRack,
                                                                    context);
 }
 
-void TreeStackCursor::beautifyRightOfRackAction(Poincare::Context* context,
-                                                const void* rackOffset) {
+void TreeStackCursor::beautifyRightOfRackAction(
+    const Poincare::Context& context, const void* rackOffset) {
   const BeautifyContext* ctx = static_cast<const BeautifyContext*>(rackOffset);
   Rack* targetRack = cursorRack() + ctx->m_rackOffset;
   ctx->m_shouldRedraw = beautifyRightOfRack(targetRack, context);
@@ -209,7 +210,7 @@ static int ReplaceCollapsableLayoutsLeftOfIndexWithParenthesis(Rack* rack,
 }
 
 /* const Tree* insertion */
-void TreeStackCursor::insertLayout(Poincare::Context* context,
+void TreeStackCursor::insertLayout(const Poincare::Context& context,
                                    const void* data) {
   const InsertLayoutContext* insertLayoutContext =
       static_cast<const InsertLayoutContext*>(data);
@@ -387,7 +388,8 @@ void TreeStackCursor::insertLayout(Poincare::Context* context,
   }
 }
 
-void TreeStackCursor::insertText(Poincare::Context* context, const void* data) {
+void TreeStackCursor::insertText(const Poincare::Context& context,
+                                 const void* data) {
   const InsertTextContext* insertTextContext =
       static_cast<const InsertTextContext*>(data);
   const char* text = insertTextContext->m_text;
@@ -478,7 +480,7 @@ void TreeStackCursor::insertText(Poincare::Context* context, const void* data) {
   // TODO: Restore beautification
 }
 
-void TreeStackCursor::performBackspace(Poincare::Context* context,
+void TreeStackCursor::performBackspace(const Poincare::Context& context,
                                        const void* data) {
   assert(data == nullptr);
   if (isSelecting()) {
@@ -504,7 +506,7 @@ void TreeStackCursor::performBackspace(Poincare::Context* context,
   removeEmptyRowOrColumnOfGridParentIfNeeded();
 }
 
-void TreeStackCursor::deleteAndResetSelection(Poincare::Context* context,
+void TreeStackCursor::deleteAndResetSelection(const Poincare::Context& context,
                                               const void* data) {
   assert(data == nullptr);
   LayoutSelection selec = selection();

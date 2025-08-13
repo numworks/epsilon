@@ -61,7 +61,7 @@ InputBeautification::BeautificationMethodWhenInsertingLayout(
 }
 
 bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
-    LayoutCursor* layoutCursor, Poincare::Context* context) {
+    LayoutCursor* layoutCursor, const Poincare::Context& context) {
   Tree* cursorRack = layoutCursor->cursorRack();
   int position = layoutCursor->position();
   if (position == 0) {
@@ -82,7 +82,7 @@ bool InputBeautification::BeautifyLeftOfCursorBeforeCursorMove(
 }
 
 bool InputBeautification::BeautifyLeftOfCursorAfterInsertion(
-    LayoutCursor* layoutCursor, Poincare::Context* context) {
+    LayoutCursor* layoutCursor, const Poincare::Context& context) {
   Tree* cursorRack = layoutCursor->cursorRack();
   Tree* rootRack = layoutCursor->rootRack();
   int position = layoutCursor->position();
@@ -205,7 +205,7 @@ bool InputBeautification::BeautifySymbols(Tree* rack,
 bool InputBeautification::TokenizeAndBeautifyIdentifiers(
     Tree* rack, int rightmostIndexToBeautify,
     const BeautificationRule* rulesList, size_t numberOfRules,
-    Poincare::Context* context, LayoutCursor* layoutCursor,
+    const Poincare::Context& context, LayoutCursor* layoutCursor,
     bool logBeautification) {
   assert(rack);
   assert(rightmostIndexToBeautify < rack->numberOfChildren() &&
@@ -251,7 +251,7 @@ bool InputBeautification::TokenizeAndBeautifyIdentifiers(
 
   /* Tokenize the identifiers string (ex: xpiabs = x*pi*abs) and try to
    * beautify each token. */
-  ParsingContext parsingContext{.context = context};
+  ParsingContext parsingContext{.context = &context};
 
   /* The content of rack will be modified if token match which would break the
    * tokenizer. To avoid this we run the tokenizer on rack and modifications on
@@ -355,7 +355,7 @@ bool InputBeautification::BeautifyPipeKey(Tree* rack, int indexOfPipeKey,
   cursorForInsertion.moveCursorToLayout(rack, OMG::Direction::Left());
   cursorForInsertion.setPosition(indexOfPipeKey);
   TreeStackCursor::InsertLayoutContext data{toInsert};
-  cursorForInsertion.insertLayout(nullptr, &data);
+  cursorForInsertion.insertLayout(EmptyContext{}, &data);
   if (cursor->cursorRack() == rack &&
       cursor->position() == indexOfPipeKey + 1) {
     cursor->moveCursorToLayout(cursorForInsertion.cursorRack(),
@@ -417,7 +417,7 @@ bool InputBeautification::BeautifyFirstOrderDerivativeIntoNthOrder(
 }
 
 bool InputBeautification::BeautifySum(Tree* rack, int indexOfComma,
-                                      Poincare::Context* context,
+                                      const Poincare::Context& context,
                                       LayoutCursor* layoutCursor) {
 #if !POINCARE_SUM_AND_PRODUCT
   return false;

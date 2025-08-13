@@ -134,7 +134,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     ::LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
-  assert(layoutField->context() == context());
+  assert(&layoutField->context() == context());
   VariableStore* variableStore = this->context();
   PoolVariableContext ansContext =
       m_calculationStore->createAnsContext(variableStore);

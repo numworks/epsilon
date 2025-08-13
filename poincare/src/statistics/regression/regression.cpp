@@ -41,7 +41,7 @@ UserExpression Regression::expression(const double* modelCoefficients) const {
 
 double Regression::levelSet(const double* modelCoefficients, double xMin,
                             double xMax, double y,
-                            Poincare::Context* context) const {
+                            const Poincare::Context& context) const {
   UserExpression e = expression(modelCoefficients);
   if (e.isUninitialized()) {
     return NAN;
@@ -55,8 +55,7 @@ double Regression::levelSet(const double* modelCoefficients, double xMin,
   Approximation::PrepareFunctionForApproximation(diff, "x",
                                                  ComplexFormat::Real);
   // TODO: use y+evaluate() instead of yTree+e in nextIntersection
-  assert(context);
-  Poincare::Solver solver = Poincare::Solver(xMin, xMax, *context);
+  Poincare::Solver solver = Poincare::Solver(xMin, xMax, context);
   solver.stretch();
   double result = solver.nextRoot(diff).x();
   diff->removeTree();
@@ -71,7 +70,7 @@ double Regression::evaluate(const double* modelCoefficients, double x) const {
 }
 
 void Regression::fit(const Series* series, double* modelCoefficients,
-                     Poincare::Context* context) const {
+                     const Poincare::Context& context) const {
   if (!dataSuitableForFit(series)) {
     Coefficients initialCoefficients = initCoefficientsForFit(NAN, true, 0);
     memmove(modelCoefficients, initialCoefficients.data(),
@@ -84,7 +83,7 @@ void Regression::fit(const Series* series, double* modelCoefficients,
 }
 
 Regression::Coefficients Regression::privateFit(
-    const Series* series, Poincare::Context* context) const {
+    const Series* series, const Poincare::Context& context) const {
   double lowestResidualsSquareSum = OMG::Float::Max<double>();
   Coefficients bestModelCoefficients;
   /* The coefficients are initialized to zero, so that in the worst case (it
@@ -148,7 +147,7 @@ bool Regression::dataSuitableForFit(const Series* series) const {
 
 void Regression::fitLevenbergMarquardt(const Series* series,
                                        Coefficients& modelCoefficients,
-                                       Context* context) const {
+                                       const Context& context) const {
   /* We want to find the best coefficients of the regression to minimize the sum
    * of the squares of the difference between a data point and the corresponding
    * point of the fitting regression (chi2 function).
@@ -285,7 +284,7 @@ double Regression::betaCoefficient(const Series* series,
 
 int Regression::solveLinearSystem(double* solutions, double* coefficients,
                                   double* constants, int solutionDimension,
-                                  Context* context) const {
+                                  const Context& context) const {
   int n = solutionDimension;
   assert(n <= k_maxNumberOfCoefficients);
   double

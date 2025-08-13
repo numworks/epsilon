@@ -66,7 +66,7 @@ double LogisticRegression::privateEvaluate(
 }
 
 Regression::Coefficients LogisticRegression::privateFit(
-    const Series* series, Poincare::Context* context) const {
+    const Series* series, const Poincare::Context& context) const {
   if (m_isInternal) {
     return Regression::privateFit(series, context);
   }
@@ -83,7 +83,7 @@ Regression::Coefficients LogisticRegression::privateFit(
 
 double LogisticRegression::levelSet(const double* modelCoefficients,
                                     double xMin, double xMax, double y,
-                                    Poincare::Context* context) const {
+                                    const Poincare::Context& context) const {
   assert(!m_isInternal);
   double a = modelCoefficients[0];
   double b = modelCoefficients[1];

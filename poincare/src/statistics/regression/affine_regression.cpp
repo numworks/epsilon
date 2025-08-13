@@ -22,7 +22,7 @@ double AffineRegression::privateEvaluate(const Coefficients& modelCoefficients,
 
 double AffineRegression::levelSet(const double* modelCoefficients, double xMin,
                                   double xMax, double y,
-                                  Poincare::Context* context) const {
+                                  const Poincare::Context& context) const {
   double slope = modelCoefficients[slopeCoefficientIndex()];
   double yIntercept = modelCoefficients[yInterceptCoefficientIndex()];
   if (slope == 0) {

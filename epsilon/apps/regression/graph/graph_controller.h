@@ -110,7 +110,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
     return const_cast<CurveSelectionController*>(&m_curveSelectionController);
   }
   Poincare::Coordinate2D<double> xyValues(int curveIndex, double t,
-                                          Poincare::Context* context,
+                                          const Poincare::Context& context,
                                           int subCurveIndex = 0) const override;
   bool suitableYValue(double y) const override;
   int numberOfCurves() const override {
@@ -149,7 +149,8 @@ class GraphController : public Shared::InteractiveCurveViewController {
     return dotCoordinate(curveIndex, dotIndex, 1);
   }
   double dotCoordinate(int curveIndex, int dotIndex, int coordinate) const;
-  double yValue(int curveIndex, double t, Poincare::Context* context) const {
+  double yValue(int curveIndex, double t,
+                const Poincare::Context& context) const {
     return m_store->yValueForXValue(seriesIndexFromCurveIndex(curveIndex), t,
                                     context);
   }

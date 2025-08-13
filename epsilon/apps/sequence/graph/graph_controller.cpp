@@ -80,7 +80,7 @@ bool GraphController::textFieldDidFinishEditing(AbstractTextField* textField,
 }
 
 void GraphController::moveToRank(int n) {
-  double y = xyValues(selectedCurveIndex(), n, App::app()->localContext()).y();
+  double y = xyValues(selectedCurveIndex(), n, *App::app()->localContext()).y();
   m_cursor->moveTo(n, n, y);
   panToMakeCursorVisible();
   reloadBannerView();

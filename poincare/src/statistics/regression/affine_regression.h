@@ -10,7 +10,7 @@ namespace Poincare::Internal {
 class AffineRegression : public Regression {
  public:
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
-                  double y, Poincare::Context* context) const override;
+                  double y, const Poincare::Context& context) const override;
 
  protected:
   virtual int slopeCoefficientIndex() const { return 0; }
@@ -24,7 +24,7 @@ class AffineRegression : public Regression {
                          double x) const override;
 
   Coefficients privateFit(const Series* series,
-                          Poincare::Context* context) const override = 0;
+                          const Poincare::Context& context) const override = 0;
 };
 
 }  // namespace Poincare::Internal

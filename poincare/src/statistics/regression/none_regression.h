@@ -11,7 +11,7 @@ class NoneRegression : public Regression {
   Type type() const override { return Type::None; }
 
   double levelSet(const double* modelCoefficients, double xMin, double xMax,
-                  double y, Poincare::Context* context) const override {
+                  double y, const Poincare::Context& context) const override {
     assert(false);
     return NAN;
   }
@@ -26,7 +26,7 @@ class NoneRegression : public Regression {
     return UserExpression();
   }
   Coefficients privateFit(const Series* series,
-                          Poincare::Context* context) const override {
+                          const Poincare::Context& context) const override {
     return {};
   }
 };

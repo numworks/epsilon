@@ -174,9 +174,9 @@ class Regression {
 
   virtual double levelSet(const double* modelCoefficients, double xMin,
                           double xMax, double y,
-                          Poincare::Context* context) const;
+                          const Poincare::Context& context) const;
   void fit(const Series* series, double* modelCoefficients,
-           Poincare::Context* context) const;
+           const Poincare::Context& context) const;
 
   static Coefficients CoefficientsToMatchMean(const Series* series, Type type);
   double correlationCoefficient(const Series* series) const;
@@ -205,7 +205,7 @@ class Regression {
   size_t m_initialParametersIterations;
 
   virtual Coefficients privateFit(const Series* series,
-                                  Poincare::Context* context) const;
+                                  const Poincare::Context& context) const;
   virtual bool dataSuitableForFit(const Series* series) const;
   constexpr static int k_maxNumberOfPairs = 100;
 
@@ -267,7 +267,7 @@ class Regression {
   constexpr static int k_consecutiveSmallChi2ChangesLimit = 10;
   void fitLevenbergMarquardt(const Series* series,
                              Coefficients& modelCoefficients,
-                             Poincare::Context* context) const;
+                             const Poincare::Context& context) const;
   double chi2(const Series* series,
               const Coefficients& modelCoefficients) const;
   double alphaPrimeCoefficient(const Series* series,
@@ -280,7 +280,7 @@ class Regression {
                          const Coefficients& modelCoefficients, int k) const;
   int solveLinearSystem(double* solutions, double* coefficients,
                         double* constants, int solutionDimension,
-                        Poincare::Context* context) const;
+                        const Poincare::Context& context) const;
   Coefficients initCoefficientsForFit(double defaultValue,
                                       bool forceDefaultValue,
                                       size_t attemptNumber,

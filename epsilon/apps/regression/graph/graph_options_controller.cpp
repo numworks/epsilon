@@ -81,7 +81,7 @@ void GraphOptionsController::viewWillAppear() {
 
   // Regression equation cell
   double* coefficients = m_store->coefficientsForSeries(
-      series, m_graphController->globalContext());
+      series, *m_graphController->globalContext());
   m_regressionEquationCell.label()->setLayout(
       model->equationLayout(coefficients, "y", significantDigits, displayMode));
 
@@ -110,7 +110,7 @@ void GraphOptionsController::viewWillAppear() {
     char buffer[bufferSize];
     double value = isRCell ? m_store->correlationCoefficient(series)
                            : m_store->determinationCoefficientForSeries(
-                                 series, m_graphController->globalContext());
+                                 series, *m_graphController->globalContext());
     int insertedChars =
         Shared::PoincareHelpers::ConvertFloatToTextWithDisplayMode<double>(
             value, buffer, bufferSize, significantDigits, displayMode);
@@ -212,7 +212,7 @@ HighlightCell* GraphOptionsController::cell(int row) {
 bool GraphOptionsController::displayRegressionEquationCell() const {
   return m_store->coefficientsAreDefined(
       m_graphController->selectedSeriesIndex(),
-      m_graphController->globalContext());
+      *m_graphController->globalContext());
 }
 
 bool GraphOptionsController::displayRCell() const {
@@ -231,7 +231,7 @@ bool GraphOptionsController::displayR2Cell() const {
 bool GraphOptionsController::displayResidualPlotCell() const {
   return m_store->coefficientsAreDefined(
       m_graphController->selectedSeriesIndex(),
-      m_graphController->globalContext(), true);
+      *m_graphController->globalContext(), true);
 }
 
 }  // namespace Regression

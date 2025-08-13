@@ -192,7 +192,7 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(
 
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   Coordinate2D<double> xy =
-      xyValues(selectedCurveIndex(), t, App::app()->localContext(),
+      xyValues(selectedCurveIndex(), t, *App::app()->localContext(),
                m_selectedSubCurveIndex);
   m_cursor->moveTo(t, xy.x(), xy.y());
   reloadBannerView();
@@ -268,7 +268,7 @@ int InteractiveCurveViewController::closestCurveIndexVertically(
         continue;
       }
       Poincare::Coordinate2D<double> newXY =
-          xyValues(curveIndex, x, context, subCurveIndex);
+          xyValues(curveIndex, x, *context, subCurveIndex);
       double newY = newXY.y();
       if (isAlongY(curveIndex)) {
         newY = newXY.x();

@@ -50,14 +50,14 @@ bool GoToParameterController::confirmParameterAtIndex(int parameterIndex,
   Poincare::Context* globContext =
       AppsContainerHelper::sharedAppsContainerGlobalContext();
   double unknown = m_xPrediction
-                       ? m_store->yValueForXValue(series, f, globContext)
-                       : m_store->xValueForYValue(series, f, globContext);
+                       ? m_store->yValueForXValue(series, f, *globContext)
+                       : m_store->xValueForYValue(series, f, *globContext);
 
   if (std::isnan(unknown) || std::isinf(unknown)) {
     if (!m_xPrediction) {
       double x = m_cursor->x();
       unknown = m_store->modelForSeries(series)->evaluate(
-          m_store->coefficientsForSeries(series, globContext), x);
+          m_store->coefficientsForSeries(series, *globContext), x);
       if (std::fabs(unknown - f) < DBL_EPSILON) {
         // If the computed value is NaN and the current abscissa is solution
         m_graphController->selectRegressionCurve();
@@ -74,7 +74,7 @@ bool GoToParameterController::confirmParameterAtIndex(int parameterIndex,
     m_cursor->moveTo(f, f, unknown);
   } else {
     double yFromX = m_store->modelForSeries(series)->evaluate(
-        m_store->coefficientsForSeries(series, globContext), unknown);
+        m_store->coefficientsForSeries(series, *globContext), unknown);
     /* We here compute y2 = a*((y1-b)/a)+b, which does not always give y1,
      * because of computation precision. y2 migth thus be invalid. */
     if (std::isnan(yFromX) || std::isinf(yFromX)) {

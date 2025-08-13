@@ -24,7 +24,7 @@ class ResidualPlotController : public Escher::ViewController {
   double yAtIndex(int index) const {
     return m_store->residualAtIndexForSeries(
         m_selectedSeriesIndex, index,
-        AppsContainerHelper::sharedAppsContainerGlobalContext());
+        *AppsContainerHelper::sharedAppsContainerGlobalContext());
   }
   KDColor selectedSeriesColor() const {
     return Store::colorOfSeriesAtIndex(m_selectedSeriesIndex);

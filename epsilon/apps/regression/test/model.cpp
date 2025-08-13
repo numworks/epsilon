@@ -48,7 +48,7 @@ void assert_regression_data_is_not_suitable(const double* xi, const double* yi,
   store.setSeriesRegressionType(series, modelType);
   Shared::StoreContext context(&store, &globalContext);
 
-  quiz_assert(!store.coefficientsAreDefined(series, &context, finite));
+  quiz_assert(!store.coefficientsAreDefined(series, context, finite));
 }
 
 void assert_regression_is(const double* xi, const double* yi,
@@ -74,7 +74,7 @@ void assert_regression_is(const double* xi, const double* yi,
   double nullExpectedPrecision = 1e-9;
 
   // Compute and compare the coefficients
-  double* coefficients = store.coefficientsForSeries(series, &context);
+  double* coefficients = store.coefficientsForSeries(series, context);
   int numberOfCoefs = store.modelForSeries(series)->numberOfCoefficients();
 
   // Move the double* to an std::array for easier debugging
@@ -99,8 +99,8 @@ void assert_regression_is(const double* xi, const double* yi,
   }
 
   double r = store.correlationCoefficient(series);
-  double r2 = store.determinationCoefficientForSeries(series, &globalContext);
-  double sr = store.residualStandardDeviation(series, &globalContext);
+  double r2 = store.determinationCoefficientForSeries(series, globalContext);
+  double sr = store.residualStandardDeviation(series, globalContext);
 
   if (!Store::DisplayR(modelType)) {
     assert(std::isnan(r) && std::isnan(trueR));

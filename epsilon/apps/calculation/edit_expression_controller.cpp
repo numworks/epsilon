@@ -8,6 +8,7 @@
 #include <poincare/variable_store.h>
 
 #include "app.h"
+#include "poincare/context.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -135,7 +136,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
   assert(&layoutField->context() == context());
-  VariableStore* variableStore = this->context();
+  VariableStore& variableStore = *this->context();
   PoolVariableContext ansContext =
       m_calculationStore->createAnsContext(variableStore);
   if (!layoutField->isEmpty()) {
@@ -154,7 +155,7 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   Calculation* calculation =
       m_calculationStore->push(layout, variableStore).pointer();
   if (calculation) {
-    HistoryViewCell::ComputeCalculationHeights(calculation, *variableStore);
+    HistoryViewCell::ComputeCalculationHeights(calculation, variableStore);
     m_historyController->reload(false);
     layoutField->clearAndSetEditing(true);
     return true;
@@ -186,7 +187,12 @@ bool EditExpressionController::isAcceptableExpression(
   }
   // Replace ans with its value and check layout
   UserExpression exp = expression.clone();
-  m_calculationStore->replaceAnsInExpression(exp, context);
+  // NOTE: temporary until isAcceptableExpression takes a const Context&
+  if (context) {
+    m_calculationStore->replaceAnsInExpression(exp, *context);
+  } else {
+    m_calculationStore->replaceAnsInExpression(exp, EmptyContext{});
+  }
   assert(!exp.isUninitialized());
   assert(context);
   Layout layout =

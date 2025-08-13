@@ -45,7 +45,7 @@ const Tree* Variables::Private::ToSymbol(const Tree* variables, uint8_t id) {
   return variables->child(id);
 }
 
-Tree* Variables::GetUserSymbols(const Tree* e, Poincare::Context* ctx) {
+Tree* Variables::GetUserSymbols(const Tree* e, const Poincare::Context& ctx) {
   // TODO Is it worth to represent the empty set with nullptr ?
   Tree* set = Set::PushEmpty();
   Private::GetUserSymbols(e, set, ctx);
@@ -53,16 +53,16 @@ Tree* Variables::GetUserSymbols(const Tree* e, Poincare::Context* ctx) {
 }
 
 void Variables::Private::GetUserSymbols(const Tree* e, Tree* set,
-                                        Poincare::Context* ctx) {
+                                        const Poincare::Context& ctx) {
   if (e->isUserSymbol()) {
     return Set::Add(set, e);
   }
-  if (ctx && e->isUserFunction()) {
-    assert(ctx->expressionForUserNamed(e));
+  if (e->isUserFunction()) {
+    assert(ctx.expressionForUserNamed(e));
     /* If ctx is given, we look inside the user function definition. Unknown
      * symbol has to be discarded. */
     Tree* subSet = Set::PushEmpty();
-    GetUserSymbols(ctx->expressionForUserNamed(e), subSet, ctx);
+    GetUserSymbols(ctx.expressionForUserNamed(e), subSet, ctx);
     Tree* symbolToRemove = KList(KUnknownSymbol)->cloneTree();
     subSet = Set::Difference(subSet, symbolToRemove);
     set = Set::Union(set, subSet);

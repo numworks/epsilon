@@ -346,9 +346,8 @@ double GlobalContext::approximateSequenceAtRank(const char* identifier,
   double result = s_sequenceCache->storedValueOfSequenceAtRank(index, rank);
   if (OMG::IsSignalingNan(result)) {
     // compute value if not in cache
-    result = sequence->approximateAtRank(
-        rank, s_sequenceCache,
-        const_cast<SequenceContext*>(&m_sequenceContext));
+    result =
+        sequence->approximateAtRank(rank, s_sequenceCache, m_sequenceContext);
   }
   return result;
 }

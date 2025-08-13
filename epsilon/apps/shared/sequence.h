@@ -48,7 +48,7 @@ class Sequence : public Function {
   // Aggregated layout
   Poincare::Layout aggregatedLayout();
   Ion::Storage::Record::ErrorStatus setLayoutsForAggregated(
-      Poincare::Layout l, const Poincare::Context& ctx);
+      Poincare::Layout l, const Poincare::Context& context);
 
   // Definition
   Poincare::Layout definitionName() { return m_definition.name(this); }
@@ -140,10 +140,10 @@ class Sequence : public Function {
       int subCurveIndex = 0) const override {
     return Poincare::Coordinate2D<double>(x, privateEvaluateYAtX(x, context));
   }
-  double approximateAtContextRank(const Poincare::Context& ctx, int rank,
+  double approximateAtContextRank(const Poincare::Context& context, int rank,
                                   bool intermediateComputation) const;
   double approximateAtRank(int rank, SequenceCache* sqctx,
-                           Poincare::Context* ctx) const;
+                           const Poincare::Context& context) const;
 
   double sumBetweenBoundsValue(double start, double end,
                                const Poincare::Context& context) const;

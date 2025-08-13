@@ -738,7 +738,6 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
       expressionEquation(record, context, &computedEquationType,
                          &computedFunctionSymbol, &isCartesianEquation);
   SystemExpression result;
-  // NOTE: temporary until expressionReducedForAnalysis takes a const&
   Preferences::ComplexFormat complexFormat =
       this->complexFormat(record, context);
   Preferences::AngleUnit angleUnit =

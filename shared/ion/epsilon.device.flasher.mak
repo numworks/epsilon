@@ -32,6 +32,8 @@ $(addprefix device/core/device/shared-core/drivers/, \
   internal_flash.cpp \
   internal_flash_$(_ion_mcu_suffix).cpp \
   internal_flash_otp.cpp \
+  option_bytes_$(_ion_mcu_suffix).cpp \
+  option_bytes.cpp \
   reset.cpp \
   swd.cpp \
   timing.cpp \
@@ -54,8 +56,11 @@ _sources_ion_flasher += \
   device/core/device/shared-core/drivers/external_flash_qspi_$(PLATFORM).cpp
 endif
 
+# _linker_script := ram.ld
+_linker_script := signable_ram.ld
+
 _ldflags_ion_flasher := \
-  -Wl,-T,$(PATH_ion)/src/device/core/device/flasher/ram.ld
+  -Wl,-T,$(PATH_ion)/src/device/core/device/flasher/$(_linker_script)
 
 _lddeps_ion_flasher := \
-  $(PATH_ion)/src/device/core/device/flasher/ram.ld
+  $(PATH_ion)/src/device/core/device/flasher/$(_linker_script)

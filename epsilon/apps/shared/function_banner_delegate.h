@@ -24,7 +24,8 @@ class FunctionBannerDelegate {
    * prevents him from being sent to x = 1
    * Note : Due to double encoding, not all values of t can be properly rounded.
    * For instance, x displayed as 0.01 can at best be encoded to x=0.010...02 */
-  static double GetValueDisplayedOnBanner(double t, Poincare::Context* context,
+  static double GetValueDisplayedOnBanner(double t,
+                                          const Poincare::Context& context,
                                           int significantDigits,
                                           double deltaThreshold,
                                           bool roundToZero = false);
@@ -35,7 +36,8 @@ class FunctionBannerDelegate {
   virtual void reloadBannerViewForCursorOnFunction(
       double cursorT, double cursorX, double cursorY,
       Ion::Storage::Record record, FunctionStore* functionStore,
-      Poincare::Context* context, bool cappedNumberOfSignificantDigits = false);
+      const Poincare::Context& context,
+      bool cappedNumberOfSignificantDigits = false);
   virtual XYBannerView* bannerView() = 0;
   virtual int numberOfSignificantDigits(bool capped = false) const {
     int userDigits = GlobalPreferences::SharedGlobalPreferences()

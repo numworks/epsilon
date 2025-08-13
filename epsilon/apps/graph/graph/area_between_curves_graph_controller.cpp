@@ -98,16 +98,15 @@ Layout AreaBetweenCurvesGraphController::createFunctionLayout() {
 }
 
 SystemExpression AreaBetweenCurvesGraphController::createSumExpression(
-    double startSum, double endSum, Context* context) {
+    double startSum, double endSum, const Context& context) {
   // Get the expression of the first function
-  assert(context);
   OMG::ExpiringPointer<Shared::Function> function =
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
-  SystemExpression expressionF = function->expressionReduced(*context).clone();
+  SystemExpression expressionF = function->expressionReduced(context).clone();
   // Get the expression of the second function
   function = FunctionApp::app()->functionStore()->modelForRecord(
       secondSelectedRecord());
-  SystemExpression expressionG = function->expressionReduced(*context).clone();
+  SystemExpression expressionG = function->expressionReduced(context).clone();
   SystemExpression result = SystemExpression::CreateIntegralOfAbsOfDifference(
       SystemExpression::Builder<double>(startSum),
       SystemExpression::Builder<double>(endSum), expressionF, expressionG);

@@ -109,7 +109,7 @@ class GraphController : public Shared::FunctionGraphController,
                           int subCurveIndex = -1) override;
   int nextCurveIndexVertically(OMG::VerticalDirection direction,
                                int currentCurveIndex,
-                               Poincare::Context* context,
+                               const Poincare::Context& context,
                                int currentSubCurveIndex,
                                int* nextSubCurveIndex) const override;
   double defaultCursorT(Ion::Storage::Record record,
@@ -132,7 +132,7 @@ class GraphController : public Shared::FunctionGraphController,
   void reloadBannerViewForCursorOnFunction(
       double cursorT, double cursorX, double cursorY,
       Ion::Storage::Record record, Shared::FunctionStore* functionStore,
-      Poincare::Context* context,
+      const Poincare::Context& context,
       bool cappedNumberOfSignificantDigits = false) override;
 
   bool defaultRangeIsNormalized() const {

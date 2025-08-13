@@ -9,7 +9,7 @@ namespace Graph {
 
 Shared::ContinuousFunction* addFunction(const char* definition,
                                         Shared::ContinuousFunctionStore* store,
-                                        Poincare::Context* context);
+                                        const Poincare::Context& context);
 
 }
 

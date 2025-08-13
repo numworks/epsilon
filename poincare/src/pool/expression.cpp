@@ -365,13 +365,12 @@ SystemExpression SystemExpression::approximateSystemToTree() const {
 template <typename T>
 SystemExpression UserExpression::approximateUserToTree(
     Preferences::AngleUnit angleUnit, Preferences::ComplexFormat complexFormat,
-    Context* context) const {
-  assert(context);
+    const Context& context) const {
   return SystemExpression::Builder(Approximation::ToTree<T>(
       tree(),
       Approximation::Parameters{.isRootAndCanHaveRandom = true,
                                 .projectLocalVariables = true},
-      Approximation::Context(angleUnit, complexFormat, *context)));
+      Approximation::Context(angleUnit, complexFormat, context)));
 }
 
 bool UserExpression::cloneAndSimplifyAndApproximate(
@@ -729,10 +728,10 @@ int SystemExpression::polynomialDegree(const char* symbolName) const {
 }
 
 int SystemExpression::getPolynomialReducedCoefficients(
-    const char* symbolName, SystemExpression coefficients[], Context* context,
-    Preferences::ComplexFormat complexFormat, Preferences::AngleUnit angleUnit,
-    Preferences::UnitFormat unitFormat, SymbolicComputation symbolicComputation,
-    bool keepDependencies) const {
+    const char* symbolName, SystemExpression coefficients[],
+    const Context& context, Preferences::ComplexFormat complexFormat,
+    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
+    SymbolicComputation symbolicComputation, bool keepDependencies) const {
   Tree* coefList = PolynomialParser::GetReducedCoefficients(tree(), symbolName,
                                                             keepDependencies);
   if (!coefList) {
@@ -1080,11 +1079,8 @@ bool Expression::isVector() const {
   return !isUninitialized() && Vector::IsVector(tree());
 }
 
-bool Expression::isInRadians(Context* context) const {
-  // Note: temporary until isInRadians passes Context as a const reference
-  return context ? Internal::Dimension::Get(tree(), *context)
-                       .isSimpleRadianAngleUnit()
-                 : Internal::Dimension::Get(tree()).isSimpleRadianAngleUnit();
+bool Expression::isInRadians(const Context& context) const {
+  return Internal::Dimension::Get(tree(), context).isSimpleRadianAngleUnit();
 }
 
 bool Expression::isConstantNumber() const {
@@ -1229,9 +1225,9 @@ template SystemExpression SystemExpression::Builder<float>(
 template SystemExpression SystemExpression::Builder<double>(
     PointOrRealScalar<double>);
 template SystemExpression UserExpression::approximateUserToTree<float>(
-    AngleUnit, ComplexFormat, Context*) const;
+    AngleUnit, ComplexFormat, const Context&) const;
 template SystemExpression UserExpression::approximateUserToTree<double>(
-    AngleUnit, ComplexFormat, Context*) const;
+    AngleUnit, ComplexFormat, const Context&) const;
 template SystemExpression SystemExpression::approximateSystemToTree<float>()
     const;
 template SystemExpression SystemExpression::approximateSystemToTree<double>()

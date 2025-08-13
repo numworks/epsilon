@@ -191,9 +191,7 @@ void ContinuousFunction::getLineParameters(double* slope, double* intercept,
       PolynomialHelpers::k_lineDegree)];
   // Separate the two line coefficients for approximation.
   int d = equation.getPolynomialReducedCoefficients(
-      k_unknownName, coefficients,
-      // NOTE: const_cast is temporary
-      &const_cast<Context&>(context), complexFormat(context),
+      k_unknownName, coefficients, context, complexFormat(context),
       GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       ContinuousFunctionProperties::k_defaultUnitFormat,
       SymbolicComputation::ReplaceAllSymbols);
@@ -630,9 +628,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     int degree = m_expression.getPolynomialReducedCoefficients(
         willBeAlongX ? ContinuousFunctionProperties::k_ordinateName
                      : k_unknownName,
-        coefficients,
-        // NOTE: const_cast is temporary
-        &const_cast<Context&>(context), complexFormat, angleUnit,
+        coefficients, context, complexFormat, angleUnit,
         ContinuousFunctionProperties::k_defaultUnitFormat,
         SymbolicComputation::ReplaceDefinedSymbols, true);
 
@@ -683,9 +679,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     if (!equation.isUninitialized()) {
       bool reductionFailure = false;
       SystemExpression resultForApproximation = PoincareHelpers::CloneAndReduce(
-          equation,
-          // NOTE: const_cast is temporary
-          &const_cast<Context&>(context), complexFormat, angleUnit, false,
+          equation, context, complexFormat, angleUnit, false,
           ReductionTarget::SystemForApproximation,
           SymbolicComputation::KeepAllSymbols, &reductionFailure);
       assert(!resultForApproximation.isUninitialized() && !reductionFailure);
@@ -752,9 +746,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
   if (!equation.isUndefined()) {
     bool reductionFailure = false;
     result = PoincareHelpers::CloneAndReduce(
-        equation,
-        // NOTE: const_cast is temporary
-        &const_cast<Context&>(context), complexFormat, angleUnit, false,
+        equation, context, complexFormat, angleUnit, false,
         ReductionTarget::SystemForAnalysis,
         // Symbols have already been replaced.
         SymbolicComputation::KeepAllSymbols, &reductionFailure);

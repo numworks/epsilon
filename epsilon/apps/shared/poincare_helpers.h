@@ -58,15 +58,14 @@ inline size_t ConvertFloatToTextWithDisplayMode(
 // Approximate to tree and keep units
 template <class T>
 inline Poincare::SystemExpression ApproximateUser(
-    Poincare::UserExpression e, Poincare::Context* context,
+    Poincare::UserExpression e, const Poincare::Context& context,
     Poincare::Preferences::ComplexFormat complexFormat =
         GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
     Poincare::Preferences::AngleUnit angleUnit =
         GlobalPreferences::SharedGlobalPreferences()->angleUnit()) {
-  assert(context);
   complexFormat =
       Poincare::Preferences::UpdatedComplexFormatWithExpressionInput(
-          complexFormat, e, *context);
+          complexFormat, e, context);
   return e.approximateUserToTree<T>(
       GlobalPreferences::SharedGlobalPreferences()->angleUnit(), complexFormat,
       context);
@@ -125,7 +124,7 @@ inline Poincare::Internal::ProjectionContext ProjectionContextForParameters(
 }
 
 inline void CloneAndSimplify(Poincare::UserExpression* e,
-                             Poincare::Context* context,
+                             const Poincare::Context& context,
                              Poincare::Preferences::ComplexFormat complexFormat,
                              Poincare::Preferences::AngleUnit angleUnit,
                              bool updateComplexFormatWithExpression,
@@ -133,9 +132,8 @@ inline void CloneAndSimplify(Poincare::UserExpression* e,
                              Poincare::SymbolicComputation symbolicComputation,
                              bool* reductionFailure) {
   assert(reductionFailure);
-  assert(context);
   *e = e->cloneAndSimplify(
-      ProjectionContextForParameters(*e, *context, complexFormat, angleUnit,
+      ProjectionContextForParameters(*e, context, complexFormat, angleUnit,
                                      updateComplexFormatWithExpression, target,
                                      symbolicComputation),
       reductionFailure);
@@ -143,15 +141,14 @@ inline void CloneAndSimplify(Poincare::UserExpression* e,
 }
 
 inline Poincare::SystemExpression CloneAndReduce(
-    Poincare::UserExpression e, Poincare::Context* context,
+    Poincare::UserExpression e, const Poincare::Context& context,
     Poincare::Preferences::ComplexFormat complexFormat,
     Poincare::Preferences::AngleUnit angleUnit,
     bool updateComplexFormatWithExpression, Poincare::ReductionTarget target,
     Poincare::SymbolicComputation symbolicComputation, bool* reductionFailure) {
   assert(reductionFailure);
-  assert(context);
   return e.cloneAndReduce(
-      ProjectionContextForParameters(e, *context, complexFormat, angleUnit,
+      ProjectionContextForParameters(e, context, complexFormat, angleUnit,
                                      updateComplexFormatWithExpression, target,
                                      symbolicComputation),
       reductionFailure);

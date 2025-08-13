@@ -42,7 +42,7 @@ void IntegerListController::computeAdditionalResults(
   UserExpression factor = UserExpression::Create(KFactor(KA), {.KA = integer});
   bool reductionFailure = false;
   PoincareHelpers::CloneAndSimplify(
-      &factor, App::app()->localContext(), complexFormat(), angleUnit(), true,
+      &factor, *App::app()->localContext(), complexFormat(), angleUnit(), true,
       Poincare::ReductionTarget::User,
       SymbolicComputation::ReplaceDefinedSymbols, &reductionFailure);
   if (!reductionFailure && !factor.isUndefined() &&

@@ -118,7 +118,7 @@ class Expression : public PoolHandle {
   bool isDiv() const;
   bool isEquality() const;
   bool isFactor() const;
-  bool isInRadians(Context* context) const;
+  bool isInRadians(const Context& context) const;
   bool isIntegral() const;
   bool isList() const;
   bool isMatrix() const;
@@ -260,7 +260,7 @@ class UserExpression : public Expression {
   template <typename T>
   SystemExpression approximateUserToTree(
       Preferences::AngleUnit angleUnit,
-      Preferences::ComplexFormat complexFormat, Context* context) const;
+      Preferences::ComplexFormat complexFormat, const Context& context) const;
   // Approximate real scalar or unit
   template <typename T>
   T approximateToRealScalar(
@@ -449,7 +449,7 @@ class SystemExpression : public Expression {
    * called on a reduced expression. coefficients has up to 3 entries.  */
   int getPolynomialReducedCoefficients(const char* symbolName,
                                        SystemExpression coefficients[],
-                                       Context* context,
+                                       const Context& context,
                                        Preferences::ComplexFormat complexFormat,
                                        Preferences::AngleUnit angleUnit,
                                        Preferences::UnitFormat unitFormat,

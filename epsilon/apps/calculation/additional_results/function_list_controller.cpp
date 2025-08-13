@@ -34,7 +34,7 @@ void FunctionListController::computeAdditionalResults(
   bool reductionFailure = false;
   PreparedFunction simplifiedExpression =
       PoincareHelpers::CloneAndReduce(
-          inputClone, context, complexFormat(), angleUnit(), false,
+          inputClone, *context, complexFormat(), angleUnit(), false,
           ReductionTarget::User, SymbolicComputation::ReplaceDefinedSymbols,
           &reductionFailure)
           .getPreparedFunction(k_symbolName, true);

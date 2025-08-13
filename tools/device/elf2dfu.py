@@ -50,7 +50,9 @@ def generate_dfu_file(targets, usb_vid_pid, dfu_file):
         target_data = b""
         alt_setting = 0
         for image in target:
-            if image["address"] >= 0x20000000 and image["address"] < 0x20040000:
+            if (image["address"] >= 0x20000000 and image["address"] < 0x20040000) or (
+                image["address"] >= 0x24000000 and image["address"] < 0x24040000
+            ):
                 # sRAM corresponds to the alternate setting 1
                 alt_setting = 1
             # Pad the image to 8 bytes, this seems to be needed

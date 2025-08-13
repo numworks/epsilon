@@ -16,6 +16,8 @@
     <array>
       <string>iPhoneOS</string>
     </array>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>UIDeviceFamily</key>

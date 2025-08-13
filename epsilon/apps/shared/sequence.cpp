@@ -170,8 +170,7 @@ bool Sequence::isSuitableForCobweb(const Context& context) const {
          !std::isnan(approximateAtRank(
              initialRank(),
              reinterpret_cast<const SequenceContext&>(context).cache(),
-             // NOTE: const_cast is temporary
-             &const_cast<Context&>(context))) &&
+             context)) &&
          !mainExpressionContainsForbiddenTerms(context, true, false, false);
 }
 
@@ -199,41 +198,39 @@ T Sequence::privateEvaluateYAtX(T x, const Context& context) const {
   assert(!std::isnan(x));
   int n = std::round(x);
   return static_cast<T>(approximateAtRank(
-      n, reinterpret_cast<const SequenceContext&>(context).cache(),
-      // NOTE: const_cast is temporary
-      &const_cast<Context&>(context)));
+      n, reinterpret_cast<const SequenceContext&>(context).cache(), context));
 }
 
 double Sequence::approximateAtRank(int rank, SequenceCache* sqctx,
-                                   Context* ctx) const {
+                                   const Context& context) const {
   int sequenceIndex = SequenceStore::SequenceIndexForName(fullName()[0]);
   if (!isDefined() || rank < initialRank() ||
       (rank >= firstNonInitialRank() &&
-       sqctx->sequenceIsNotComputable(ctx, sequenceIndex))) {
+       sqctx->sequenceIsNotComputable(context, sequenceIndex))) {
     return NAN;
   }
-  sqctx->stepUntilRank(sequenceIndex, rank, ctx);
+  sqctx->stepUntilRank(sequenceIndex, rank, context);
   return sqctx->storedValueOfSequenceAtRank(sequenceIndex, rank);
 }
 
-double Sequence::approximateAtContextRank(const Context& ctx, int rank,
+double Sequence::approximateAtContextRank(const Context& context, int rank,
                                           bool intermediateComputation) const {
   if (rank < initialRank()) {
     return NAN;
   }
   if (rank >= firstNonInitialRank()) {
     // TODO: Prepared function of expressionReduced could be memoized.
-    return expressionReduced(ctx)
+    return expressionReduced(context)
         .getPreparedFunction(Function::k_unknownName)
         .approximateToRealScalarWithValue(static_cast<double>(rank - order()));
   }
   assert(type() != Type::Explicit);
   SystemExpression e;
   if (rank == initialRank()) {
-    e = firstInitialConditionExpressionReduced(ctx);
+    e = firstInitialConditionExpressionReduced(context);
   } else {
     assert(type() == Type::DoubleRecurrence);
-    e = secondInitialConditionExpressionReduced(ctx);
+    e = secondInitialConditionExpressionReduced(context);
   }
   return e.approximateSystemToRealScalar<double>();
 }

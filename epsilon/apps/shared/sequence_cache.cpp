@@ -95,7 +95,7 @@ void SequenceCache::shiftValuesRight(int sequenceIndex,
 }
 
 void SequenceCache::stepUntilRank(int sequenceIndex, int rank,
-                                  Poincare::Context* ctx) {
+                                  const Poincare::Context& context) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   bool intermediateComputation = m_isInsideComputation;
   const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
@@ -117,12 +117,12 @@ void SequenceCache::stepUntilRank(int sequenceIndex, int rank,
   }
   while (*currentRank < rank) {
     int step = jumpToRank ? rank - *currentRank : 1;
-    stepRanks(sequenceIndex, intermediateComputation, step, ctx);
+    stepRanks(sequenceIndex, intermediateComputation, step, context);
   }
 }
 
 void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
-                              int step, Poincare::Context* ctx) {
+                              int step, const Poincare::Context& context) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
 
   // Update computation state
@@ -154,9 +154,8 @@ void SequenceCache::stepRanks(int sequenceIndex, bool intermediateComputation,
     }
     const Shared::Sequence* s = sequenceAtNameIndex(sequenceIndex);
     assert(s->isDefined());
-    assert(ctx);
     *values = s->approximateAtContextRank(
-        *ctx, rank(sequenceIndex, intermediateComputation),
+        context, rank(sequenceIndex, intermediateComputation),
         intermediateComputation);
     m_smallestRankBeingComputed[sequenceIndex] = previousSmallestRank;
     // Store value in initial storage if rank is in the right range
@@ -200,14 +199,13 @@ int SequenceCache::rankForInitialValuesStorage(int sequenceIndex) const {
   return sequenceAtNameIndex(sequenceIndex)->initialRank() + k_storageDepth - 1;
 }
 
-bool SequenceCache::sequenceIsNotComputable(Poincare::Context* ctx,
+bool SequenceCache::sequenceIsNotComputable(const Poincare::Context& context,
                                             int sequenceIndex) {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   if (m_sequenceIsNotComputable[sequenceIndex] == OMG::Troolean::Unknown) {
-    assert(ctx);
     m_sequenceIsNotComputable[sequenceIndex] =
         OMG::BoolToTroolean(sequenceAtNameIndex(sequenceIndex)
-                                ->mainExpressionIsNotComputable(*ctx));
+                                ->mainExpressionIsNotComputable(context));
   }
   return TrooleanToBool(m_sequenceIsNotComputable[sequenceIndex]);
 }

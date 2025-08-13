@@ -213,10 +213,10 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   Layout exactLayout, approximateLayout;
   if (!forbidExactSolution) {
     assert(!exact.isUninitialized());
-    exactLayout = PoincareHelpers::CreateLayout(exact, context);
+    exactLayout = PoincareHelpers::CreateLayout(exact, *context);
   }
   if (!approximate.isUninitialized()) {
-    approximateLayout = PoincareHelpers::CreateLayout(approximate, context);
+    approximateLayout = PoincareHelpers::CreateLayout(approximate, *context);
   }
 
   assert(!approximateLayout.isUninitialized() ||

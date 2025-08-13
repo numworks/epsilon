@@ -89,9 +89,13 @@ Layout Calculation::createInputLayout(Context* context) {
   if (ExceptionRun(ecp)) {
     UserExpression e = input();
     if (!e.isUninitialized()) {
-      return e.createLayout(Preferences::PrintFloatMode::Decimal,
-                            PrintFloat::k_maxNumberOfSignificantDigits,
-                            context);
+      // NOTE: temporary until createInputLayout takes a const Context&
+      return context
+                 ? e.createLayout(Preferences::PrintFloatMode::Decimal,
+                                  PrintFloat::k_maxNumberOfSignificantDigits,
+                                  *context)
+                 : e.createLayout(Preferences::PrintFloatMode::Decimal,
+                                  PrintFloat::k_maxNumberOfSignificantDigits);
     }
   }
   return Layout();
@@ -103,9 +107,13 @@ Layout Calculation::createExactOutputLayout(Context* context,
   if (ExceptionRun(ecp)) {
     UserExpression e = exactOutput();
     if (!e.isUninitialized()) {
-      return e.createLayout(Preferences::PrintFloatMode::Decimal,
-                            PrintFloat::k_maxNumberOfSignificantDigits,
-                            context);
+      // NOTE: temporary until createInputLayout takes a const Context&
+      return context
+                 ? e.createLayout(Preferences::PrintFloatMode::Decimal,
+                                  PrintFloat::k_maxNumberOfSignificantDigits,
+                                  *context)
+                 : e.createLayout(Preferences::PrintFloatMode::Decimal,
+                                  PrintFloat::k_maxNumberOfSignificantDigits);
     }
   }
   *couldNotCreateExactLayout = true;
@@ -120,13 +128,21 @@ Layout Calculation::createApproximateOutputLayout(
     if (!e.isUninitialized()) {
       /* In calculation, we replace the compact 2ᴇ-10 notation with a 2D layout.
        * TODO: apply this at layouting step. */
-      return e
-          .createLayout(
-              m_calculationPreferences.displayMode,
-              forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
-                         : m_calculationPreferences.numberOfSignificantDigits,
-              context)
-          .cloneAndTurnEToTenPowerLayout(false);
+      // NOTE: temporary until createInputLayout takes a const Context&
+      return context
+                 ? e.createLayout(
+                        m_calculationPreferences.displayMode,
+                        forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
+                                   : m_calculationPreferences
+                                         .numberOfSignificantDigits,
+                        *context)
+                       .cloneAndTurnEToTenPowerLayout(false)
+                 : e.createLayout(
+                        m_calculationPreferences.displayMode,
+                        forEditing ? PrintFloat::k_maxNumberOfSignificantDigits
+                                   : m_calculationPreferences
+                                         .numberOfSignificantDigits)
+                       .cloneAndTurnEToTenPowerLayout(false);
     }
   }
   *couldNotCreateApproximateLayout = true;

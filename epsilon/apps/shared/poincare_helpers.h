@@ -18,7 +18,7 @@ namespace PoincareHelpers {
 // ===== Layout =====
 
 inline Poincare::Layout CreateLayout(
-    const Poincare::UserExpression e, Poincare::Context* context,
+    const Poincare::UserExpression e, const Poincare::Context& context,
     Poincare::Preferences::PrintFloatMode displayMode =
         GlobalPreferences::SharedGlobalPreferences()->displayMode(),
     uint8_t numberOfSignificantDigits =

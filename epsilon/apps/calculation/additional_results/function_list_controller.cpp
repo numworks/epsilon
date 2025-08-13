@@ -55,7 +55,7 @@ void FunctionListController::computeAdditionalResults(
   m_layouts[0] = Layout::Create(
       KA ^ KB, {.KA = Layout::String("y="),
                 .KB = Layout(inputClone.createLayout(
-                    displayMode(), numberOfSignificantDigits(), context))});
+                    displayMode(), numberOfSignificantDigits(), *context))});
   setShowIllustration(true);
 }
 

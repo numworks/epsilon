@@ -45,7 +45,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
     return PoincareHelpers::CreateLayout(
-        UserExpression::Builder(ExpressionForUserSymbol(record)), context);
+        UserExpression::Builder(ExpressionForUserSymbol(record)), *context);
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
              record.hasExtension(Ion::Storage::regressionExtension)) {
@@ -63,7 +63,7 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
     UserExpression expression =
         UserExpression::Builder(ExpressionForUserFunction(record));
     expression.replaceUnknownWithSymbol(symbol);
-    return PoincareHelpers::CreateLayout(expression, context);
+    return PoincareHelpers::CreateLayout(expression, *context);
   } else {
     assert(record.hasExtension(Ion::Storage::sequenceExtension));
     return Sequence(record).layout();

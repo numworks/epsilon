@@ -46,13 +46,13 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
 
   if (unit.isUninitialized()) {
     return value.createLayout(floatDisplayMode, significantDigits,
-                              globalContext);
+                              *globalContext);
   }
 
   UserExpression result =
       UserExpression::Create(KMult(KA, KB), {.KA = value, .KB = unit});
   return result.createLayout(floatDisplayMode, significantDigits,
-                             globalContext);
+                             *globalContext);
 }
 
 DataField::ColorPair DoubleDataField::getColors(AtomicNumber z) const {
@@ -106,7 +106,7 @@ Poincare::Layout ZDataField::getLayout(AtomicNumber z,
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
   return UserExpression::Builder(static_cast<int>(z))
-      .createLayout(floatDisplayMode, significantDigits, globalContext);
+      .createLayout(floatDisplayMode, significantDigits, *globalContext);
 }
 
 // ADataField
@@ -121,7 +121,7 @@ Layout ADataField::getLayout(AtomicNumber z, int significantDigits) const {
   Context* globalContext =
       AppsContainer::sharedAppsContainer()->globalContext();
   return UserExpression::Builder(static_cast<int>(a))
-      .createLayout(floatDisplayMode, significantDigits, globalContext);
+      .createLayout(floatDisplayMode, significantDigits, *globalContext);
 }
 
 bool ADataField::canBeStored(AtomicNumber z) const {
@@ -218,11 +218,11 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z,
           KA ^ KB ^ KC ^ KSuperscriptL(KD),
           {.KA = res,
            .KB = UserExpression::Builder(n).createLayout(
-               floatDisplayMode, significantDigits, globalContext),
+               floatDisplayMode, significantDigits, *globalContext),
            .KC = Layout::CodePoint(k_lSymbols[l]),
            .KD = UserExpression::Builder(conf[index])
                      .createLayout(floatDisplayMode, significantDigits,
-                                   globalContext)});
+                                   *globalContext)});
     }
   }
 

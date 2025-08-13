@@ -97,8 +97,7 @@ Poincare::Layout Clipboard::storedLayout() {
     return Poincare::UserExpression::Parse(systemText, Poincare::EmptyContext{},
                                            {.preserveInput = true})
         .createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
-                      Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-                      nullptr);
+                      Poincare::PrintFloat::k_maxNumberOfSignificantDigits);
   }
   if (m_bufferState == TreeOutdated) {
     updateTreeFromText();

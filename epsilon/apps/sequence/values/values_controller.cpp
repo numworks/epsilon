@@ -163,8 +163,8 @@ Layout ValuesController::functionTitleLayout(int column) {
            sequenceName, UserExpression::Builder("k"_e))});
   return sumExpression.createLayout(
       GlobalPreferences::SharedGlobalPreferences()->displayMode(),
-      GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits(),
-      nullptr);
+      GlobalPreferences::SharedGlobalPreferences()
+          ->numberOfSignificantDigits());
 }
 
 void ValuesController::createMemoizedLayout(int column, int row, int index) {
@@ -183,7 +183,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
           GlobalPreferences::SharedGlobalPreferences()->displayMode(),
           GlobalPreferences::SharedGlobalPreferences()
               ->numberOfSignificantDigits(),
-          context);
+          *context);
 }
 
 Shared::Interval* ValuesController::intervalAtColumn(int column) {

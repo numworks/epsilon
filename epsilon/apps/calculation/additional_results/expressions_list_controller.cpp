@@ -167,16 +167,12 @@ Layout ExpressionsListController::GetExactLayoutFromExpression(
   assert(!exactExpression.isUninitialized() &&
          !approximateExpression.isUninitialized());
   Layout approximateLayout = Shared::PoincareHelpers::CreateLayout(
-                                 approximateExpression,
-                                 // NOTE: const_cast is temporary
-                                 &const_cast<Context&>(ctx->m_context))
+                                 approximateExpression, ctx->m_context)
                                  .cloneAndTurnEToTenPowerLayout(false);
   Layout exactLayout = exactExpression.isUninitialized()
                            ? approximateLayout
                            : Shared::PoincareHelpers::CreateLayout(
-                                 exactExpression,
-                                 // NOTE: const_cast is temporary
-                                 &const_cast<Context&>(ctx->m_context));
+                                 exactExpression, ctx->m_context);
   if (approximate) {
     // TODO_PCJ: Factorize with CAS::ShouldOnlyDisplayApproximation
     if (approximateExpression.isUndefined()) {

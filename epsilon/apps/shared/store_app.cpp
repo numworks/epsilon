@@ -33,7 +33,7 @@ Layout StoreApp::Snapshot::memoizedFormula(int index) const {
   return UserExpression::Parse(m_memoizedFormulasBuffer[index], EmptyContext{},
                                {.preserveInput = true})
       .createLayout(Preferences::PrintFloatMode::Decimal,
-                    PrintFloat::k_maxNumberOfSignificantDigits, nullptr);
+                    PrintFloat::k_maxNumberOfSignificantDigits);
 }
 
 }  // namespace Shared

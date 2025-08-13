@@ -750,7 +750,7 @@ int SystemExpression::getPolynomialReducedCoefficients(
 
 Poincare::Layout UserExpression::createLayout(
     Preferences::PrintFloatMode floatDisplayMode, int numberOfSignificantDigits,
-    Context* context, OMG::Base base, bool linearMode) const {
+    const Context& context, OMG::Base base, bool linearMode) const {
   if (isUninitialized()) {
     return Poincare::Layout();
   }
@@ -761,7 +761,8 @@ Poincare::Layout UserExpression::createLayout(
 
 char* UserExpression::toLatex(char* buffer, int bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
-                              int numberOfSignificantDigits, Context* context,
+                              int numberOfSignificantDigits,
+                              const Context& context,
                               bool withThousandsSeparator) const {
   return LatexParser::LayoutToLatex(
       Rack::From(

@@ -111,10 +111,7 @@ SystemExpression ExpressionModel::expressionReduced(
        * 'Simplify'. Thus, we use a temporary expression. */
       bool reductionFailure = false;
       m_expression = PoincareHelpers::CloneAndReduce(
-          userExpression,
-          // NOTE: const_cast is temporary
-          &const_cast<Poincare::Context&>(context),
-          complexFormat(record, context),
+          userExpression, context, complexFormat(record, context),
           GlobalPreferences::SharedGlobalPreferences()->angleUnit(), false,
           Poincare::ReductionTarget::User,
           Poincare::SymbolicComputation::ReplaceDefinedSymbols,

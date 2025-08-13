@@ -170,7 +170,7 @@ void UnitListController::computeAdditionalResults(
         continue;
       }
       // Radians may have two layouts to display
-      if (expressions[i].isInRadians(context)) {
+      if (expressions[i].isInRadians(*context)) {
         // Approximated radian expression has already been computed.
         Layout approximatedLayout = Shared::PoincareHelpers::CreateLayout(
                                         approximatedSIExpression, *context)

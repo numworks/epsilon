@@ -6,10 +6,6 @@
 
 namespace Poincare {
 
-int ListSortNode::numberOfChildren() const {
-  return ListSort::s_functionHelper.numberOfChildren();
-}
-
 size_t ListSortNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

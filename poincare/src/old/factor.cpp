@@ -16,10 +16,6 @@ extern "C" {
 
 namespace Poincare {
 
-int FactorNode::numberOfChildren() const {
-  return Factor::s_functionHelper.numberOfChildren();
-}
-
 size_t FactorNode::serialize(char* buffer, size_t bufferSize,
                              Preferences::PrintFloatMode floatDisplayMode,
                              int numberOfSignificantDigits) const {

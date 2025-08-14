@@ -14,10 +14,6 @@ extern "C" {
 
 namespace Poincare {
 
-int PermuteCoefficientNode::numberOfChildren() const {
-  return PermuteCoefficient::s_functionHelper.numberOfChildren();
-}
-
 size_t PermuteCoefficientNode::serialize(
     char *buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

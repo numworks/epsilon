@@ -18,10 +18,6 @@ namespace Poincare {
 
 constexpr OExpression::FunctionHelper Integral::s_functionHelper;
 
-int IntegralNode::numberOfChildren() const {
-  return Integral::s_functionHelper.numberOfChildren();
-}
-
 size_t IntegralNode::serialize(char* buffer, size_t bufferSize,
                                Preferences::PrintFloatMode floatDisplayMode,
                                int numberOfSignificantDigits) const {

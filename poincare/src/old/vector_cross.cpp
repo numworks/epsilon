@@ -8,10 +8,6 @@
 
 namespace Poincare {
 
-int VectorCrossNode::numberOfChildren() const {
-  return VectorCross::s_functionHelper.numberOfChildren();
-}
-
 size_t VectorCrossNode::serialize(char* buffer, size_t bufferSize,
                                   Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits) const {

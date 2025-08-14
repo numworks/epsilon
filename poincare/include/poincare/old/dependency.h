@@ -30,7 +30,7 @@ class DependencyNode : public ExpressionNode {
   }
 
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,
                 OExpression symbolValue) override;
 

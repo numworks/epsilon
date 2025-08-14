@@ -1,0 +1,5 @@
+# Overrides poincare/.clang-format to minimize changes on files to be deleted.
+Language:     Cpp
+Standard:     c++20
+BasedOnStyle: Google
+DerivePointerAlignment: true

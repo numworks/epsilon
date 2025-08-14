@@ -12,11 +12,6 @@ int VectorCrossNode::numberOfChildren() const {
   return VectorCross::s_functionHelper.numberOfChildren();
 }
 
-OExpression VectorCrossNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return VectorCross(this).shallowReduce(reductionContext);
-}
-
 size_t VectorCrossNode::serialize(char* buffer, size_t bufferSize,
                                   Preferences::PrintFloatMode floatDisplayMode,
                                   int numberOfSignificantDigits) const {

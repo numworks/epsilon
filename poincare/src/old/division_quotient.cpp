@@ -26,11 +26,6 @@ OMG::Troolean DivisionQuotientNode::isPositive(Context *context) const {
   return OMG::BoolToTroolean(numeratorPositive == denominatorPositive);
 }
 
-OExpression DivisionQuotientNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return DivisionQuotient(this).shallowReduce(reductionContext);
-}
-
 size_t DivisionQuotientNode::serialize(
     char *buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

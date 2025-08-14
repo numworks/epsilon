@@ -29,11 +29,6 @@ OMG::Troolean ComplexCartesianNode::isNull(Context* context) const {
   return TrooleanAnd(realIsNull, imagIsNull);
 }
 
-OExpression ComplexCartesianNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return ComplexCartesian(this).shallowReduce(reductionContext);
-}
-
 OExpression ComplexCartesianNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return ComplexCartesian(this).shallowBeautify(reductionContext);

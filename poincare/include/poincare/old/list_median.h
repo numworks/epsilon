@@ -19,7 +19,6 @@ class ListMedianNode : public ListFunctionWithOneOrTwoParametersNode {
   Type otype() const override { return Type::ListMedian; }
 
  private:
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class ListMedian

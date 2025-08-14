@@ -13,7 +13,7 @@ class SumAndProductNode : public ParameteredExpressionNode {
 
  private:
   // Simplication
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   };

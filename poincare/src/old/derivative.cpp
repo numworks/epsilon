@@ -67,11 +67,6 @@ size_t DerivativeNode::serialize(char* buffer, size_t bufferSize,
       SerializationHelper::ParenthesisType::Classic, lastChildIndex);
 }
 
-OExpression DerivativeNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Derivative(this).shallowReduce(reductionContext);
-}
-
 bool DerivativeNode::isValidCondensedForm() const {
   // Returns true if of the form diff(f(SystemSymbol),SystemSymbol,x,n)
   return childAtIndex(0)->otype() == ExpressionNode::Type::Function &&

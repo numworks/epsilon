@@ -31,7 +31,7 @@ class RandintNode final : public ExpressionNodeWithOneOrTwoChildren {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   // Evaluation
   Evaluation<float> approximate(
       SinglePrecision p,

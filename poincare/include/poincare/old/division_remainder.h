@@ -40,7 +40,6 @@ class DivisionRemainderNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class DivisionRemainder final

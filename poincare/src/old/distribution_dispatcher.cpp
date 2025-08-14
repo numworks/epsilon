@@ -63,11 +63,6 @@ int DistributionDispatcherNode::simplificationOrderSameType(
                                                      ignoreParentheses);
 }
 
-OExpression DistributionDispatcherNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return DistributionDispatcher(this).shallowReduce(reductionContext);
-}
-
 OExpression DistributionDispatcher::shallowReduce(
     ReductionContext reductionContext, bool *stopReduction) {
   if (stopReduction != nullptr) {

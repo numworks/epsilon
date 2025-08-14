@@ -11,11 +11,6 @@ int MatrixEchelonFormNode::numberOfChildren() const {
   return sNumberOfChildren;
 }
 
-OExpression MatrixEchelonFormNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return MatrixEchelonForm(this).shallowReduce(reductionContext);
-}
-
 size_t MatrixEchelonFormNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

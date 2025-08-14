@@ -19,7 +19,7 @@ class StoreNode final : public RightwardsArrowExpressionNode {
 
  private:
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   // Evalutation
   Evaluation<float> approximate(
       SinglePrecision p,

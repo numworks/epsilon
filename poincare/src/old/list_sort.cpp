@@ -18,11 +18,6 @@ size_t ListSortNode::serialize(char* buffer, size_t bufferSize,
       ListSort::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression ListSortNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return ListSort(this).shallowReduce(reductionContext);
-}
-
 template <typename T>
 Evaluation<T> ListSortNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {

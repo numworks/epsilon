@@ -48,7 +48,7 @@ class PowerNode final : public ExpressionNode {
   // Simplify
   OExpression shallowBeautify(
       const ReductionContext& reductionContext) override;
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override {
     return childAtIndex(0)->leftLayoutShape();
   }

@@ -48,11 +48,6 @@ size_t ConstantNode::serialize(char* buffer, size_t bufferSize,
   return std::min<size_t>(strlcpy(buffer, name(), bufferSize), bufferSize - 1);
 }
 
-OExpression ConstantNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Constant(this).shallowReduce(reductionContext);
-}
-
 bool ConstantNode::derivate(const ReductionContext& reductionContext,
                             Symbol symbol, OExpression symbolValue) {
   return Constant(this).derivate(reductionContext, symbol, symbolValue);

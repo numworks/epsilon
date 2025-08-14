@@ -122,7 +122,6 @@ class ComparisonNode : public ExpressionNode {
       const ApproximationContext& approximationContext) const;
 
   // Simplification
-  OExpression shallowReduce(const ReductionContext& ReductionContext) override;
 
   uint16_t m_numberOfOperands;
   /* This variable contains the list of operators to insert between the

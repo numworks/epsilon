@@ -5,11 +5,6 @@
 
 namespace Poincare {
 
-OExpression HyperbolicTrigonometricFunctionNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return HyperbolicTrigonometricFunction(this).shallowReduce(reductionContext);
-}
-
 OExpression HyperbolicTrigonometricFunction::shallowReduce(
     ReductionContext reductionContext) {
   {

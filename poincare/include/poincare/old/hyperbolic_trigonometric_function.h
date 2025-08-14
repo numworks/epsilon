@@ -22,7 +22,7 @@ class HyperbolicTrigonometricFunctionNode : public ExpressionNode {
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   virtual bool isNotableValue(OExpression e, Context* context) const {
     return e.isNull(context) == OMG::Troolean::True;
   }

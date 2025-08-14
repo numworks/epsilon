@@ -188,7 +188,6 @@ class DistributionDispatcherNode : public NAryExpressionNode {
                                   bool ignoreParentheses) const override;
 
  private:
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,

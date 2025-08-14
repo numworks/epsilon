@@ -28,7 +28,7 @@ class RandintNoRepeatNode : public ExpressionNode {
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   Evaluation<float> approximate(
       SinglePrecision p,
       const ApproximationContext& approximationContext) const override {

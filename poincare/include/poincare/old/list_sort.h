@@ -28,8 +28,6 @@ class ListSortNode : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
 
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
-
   Evaluation<float> approximate(
       SinglePrecision p,
       const ApproximationContext& approximationContext) const override {

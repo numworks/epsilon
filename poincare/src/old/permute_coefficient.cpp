@@ -27,11 +27,6 @@ size_t PermuteCoefficientNode::serialize(
       PermuteCoefficient::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression PermuteCoefficientNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return PermuteCoefficient(this).shallowReduce(reductionContext);
-}
-
 OExpression PermuteCoefficient::shallowReduce(
     ReductionContext reductionContext) {
   {

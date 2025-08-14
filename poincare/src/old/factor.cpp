@@ -28,11 +28,6 @@ size_t FactorNode::serialize(char* buffer, size_t bufferSize,
       Factor::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression FactorNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Factor(this).shallowReduce(reductionContext);
-}
-
 OExpression FactorNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return Factor(this).shallowBeautify(reductionContext);

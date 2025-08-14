@@ -34,7 +34,6 @@ class SymbolNode final : public SymbolAbstractNode {
   /* Layout */
 
   /* Simplification */
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   /* Derivation */
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,

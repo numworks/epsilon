@@ -139,11 +139,6 @@ int DecimalNode::simplificationOrderSameType(const ExpressionNode *e,
   return ((int)Number(this).isPositive()) * unsignedComparison;
 }
 
-OExpression DecimalNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return Decimal(this).shallowReduce(reductionContext);
-}
-
 size_t DecimalNode::serialize(char *buffer, size_t bufferSize,
                               Preferences::PrintFloatMode floatDisplayMode,
                               int numberOfSignificantDigits) const {

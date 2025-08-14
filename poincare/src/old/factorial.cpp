@@ -42,11 +42,6 @@ bool FactorialNode::childNeedsSystemParenthesesAtSerialization(
 
 // Simplification
 
-OExpression FactorialNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Factorial(this).shallowReduce(reductionContext);
-}
-
 size_t FactorialNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

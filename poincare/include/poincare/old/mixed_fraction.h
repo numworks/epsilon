@@ -25,7 +25,7 @@ class MixedFractionNode final : public ExpressionNode {
 
  private:
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override { return LayoutShape::Integer; };
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::Fraction;

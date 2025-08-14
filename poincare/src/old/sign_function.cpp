@@ -32,11 +32,6 @@ size_t SignFunctionNode::serialize(char* buffer, size_t bufferSize,
       SignFunction::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression SignFunctionNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return SignFunction(this).shallowReduce(reductionContext);
-}
-
 bool SignFunctionNode::derivate(const ReductionContext& reductionContext,
                                 Symbol symbol, OExpression symbolValue) {
   return SignFunction(this).derivate(reductionContext, symbol, symbolValue);

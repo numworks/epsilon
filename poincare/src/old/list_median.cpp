@@ -9,11 +9,6 @@
 
 namespace Poincare {
 
-OExpression ListMedianNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return ListMedian(this).shallowReduce(reductionContext);
-}
-
 OExpression ListMedian::shallowReduce(ReductionContext reductionContext) {
   ApproximationContext approximationContext(reductionContext, true);
   for (int k = 0; k < numberOfChildren(); k++) {

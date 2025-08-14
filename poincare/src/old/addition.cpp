@@ -53,11 +53,6 @@ size_t AdditionNode::serialize(char* buffer, size_t bufferSize,
 
 // Simplication
 
-OExpression AdditionNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Addition(this).shallowReduce(reductionContext);
-}
-
 OExpression AdditionNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return Addition(this).shallowBeautify(reductionContext);

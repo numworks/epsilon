@@ -36,7 +36,7 @@ class FactorialNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplication
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override {
     return childAtIndex(0)->leftLayoutShape();
   };

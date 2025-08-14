@@ -36,16 +36,8 @@ size_t ListAccessNode<U>::serialize(
 }
 
 template <>
-OExpression ListAccessNode<1>::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return ListElement(this).shallowReduce(reductionContext);
-}
 
 template <>
-OExpression ListAccessNode<2>::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return ListSlice(this).shallowReduce(reductionContext);
-}
 
 OExpression ListElement::shallowReduce(ReductionContext reductionContext) {
   {

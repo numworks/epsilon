@@ -19,7 +19,6 @@ class ListMeanNode : public ListFunctionWithOneOrTwoParametersNode {
   Type otype() const override { return Type::ListMean; }
 
  private:
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class ListMean : public ExpressionUpToTwoChildren<ListMean, ListMeanNode> {

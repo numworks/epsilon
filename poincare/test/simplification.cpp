@@ -897,10 +897,8 @@ QUIZ_CASE(pcj_simplification_list_bubble_up) {
 }
 
 QUIZ_CASE(pcj_simplification_list) {
-  Shared::GlobalContext globalContext;
   ProjectionContext replaceSymbolCtx = {
-      .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = globalContext};
+      .m_symbolic = SymbolicComputation::ReplaceAllSymbols};
   simplifies_to("{1,2}+3", "{4,5}");
   simplifies_to("{1,2}*{3,4}", "{3,8}");
   simplifies_to("{0,1}=0", "{True,False}");

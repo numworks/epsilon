@@ -168,9 +168,9 @@ void assert_parsed_expression_simplify_to(
 }
 
 void assert_parsed_expression_simplify_to(
-    const char *expression, const char *simplifiedExpression, Context &context,
-    ReductionTarget target, Preferences::AngleUnit angleUnit,
-    Preferences::UnitFormat unitFormat,
+    const char *expression, const char *simplifiedExpression,
+    const Context &context, ReductionTarget target,
+    Preferences::AngleUnit angleUnit, Preferences::UnitFormat unitFormat,
     Preferences::ComplexFormat complexFormat,
     SymbolicComputation symbolicComputation, bool beautify) {
   // TODO_PCJ also approximate to see if it crashes

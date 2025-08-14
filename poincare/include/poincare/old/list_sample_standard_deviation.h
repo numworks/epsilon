@@ -22,7 +22,6 @@ class ListSampleStandardDeviationNode
   Type otype() const override { return Type::ListSampleStandardDeviation; }
 
  private:
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class ListSampleStandardDeviation

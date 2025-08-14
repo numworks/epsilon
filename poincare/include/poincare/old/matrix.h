@@ -33,7 +33,6 @@ class MatrixNode final : public Array, public ExpressionNode {
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   };
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Layout
   size_t serialize(char* buffer, size_t bufferSize,

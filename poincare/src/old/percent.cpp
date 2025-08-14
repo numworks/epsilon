@@ -65,11 +65,6 @@ OExpression PercentSimpleNode::shallowBeautify(
   return PercentSimple(this).shallowBeautify(reductionContext);
 }
 
-OExpression PercentSimpleNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return PercentSimple(this).shallowReduce(reductionContext);
-}
-
 /* PercentAdditionNode */
 
 // Properties
@@ -134,11 +129,6 @@ int PercentAdditionNode::serializeSecondChild(
 OExpression PercentAdditionNode::shallowBeautify(
     const ReductionContext& reductionContext) {
   return PercentAddition(this).shallowBeautify(reductionContext);
-}
-
-OExpression PercentAdditionNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return PercentAddition(this).shallowReduce(reductionContext);
 }
 
 /* PercentSimple */

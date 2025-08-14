@@ -56,11 +56,6 @@ int SymbolNode::getVariables(Context* context, isVariableTest isVariable,
   return nextVariableIndex;
 }
 
-OExpression SymbolNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Symbol(this).shallowReduce(reductionContext);
-}
-
 bool SymbolNode::derivate(const ReductionContext& reductionContext,
                           Symbol symbol, OExpression symbolValue) {
   return Symbol(this).derivate(reductionContext, symbol, symbolValue);

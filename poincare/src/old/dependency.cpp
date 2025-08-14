@@ -12,11 +12,6 @@ constexpr OExpression::FunctionHelper Dependency::s_functionHelper;
 
 // DependencyNode
 
-OExpression DependencyNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return Dependency(this).shallowReduce(reductionContext);
-}
-
 bool DependencyNode::derivate(const ReductionContext &reductionContext,
                               Symbol symbol, OExpression symbolValue) {
   assert(false);

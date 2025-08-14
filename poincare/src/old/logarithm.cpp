@@ -33,11 +33,6 @@ size_t LogarithmNode::serialize(char* buffer, size_t bufferSize,
       Logarithm::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression LogarithmNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Logarithm(this).shallowReduce(reductionContext);
-}
-
 bool LogarithmNode::derivate(const ReductionContext& reductionContext,
                              Symbol symbol, OExpression symbolValue) {
   // One child logarithm disappears at reduction.

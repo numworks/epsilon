@@ -39,11 +39,6 @@ size_t SequenceNode::serialize(char* buffer, size_t bufferSize,
   return result;
 }
 
-OExpression SequenceNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Sequence(this).shallowReduce(reductionContext);
-}
-
 Evaluation<float> SequenceNode::approximate(
     SinglePrecision p, const ApproximationContext& approximationContext) const {
   return templatedApproximate<float>(approximationContext);

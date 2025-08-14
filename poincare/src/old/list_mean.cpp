@@ -9,11 +9,6 @@
 
 namespace Poincare {
 
-OExpression ListMeanNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return ListMean(this).shallowReduce(reductionContext);
-}
-
 OExpression ListMean::shallowReduce(ReductionContext reductionContext) {
   assert(numberOfChildren() == 1 || numberOfChildren() == 2);
   OExpression children[2];

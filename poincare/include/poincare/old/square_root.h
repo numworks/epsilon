@@ -38,7 +38,7 @@ class SquareRootNode final : public ExpressionNode {
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override { return LayoutShape::Root; };
 };
 

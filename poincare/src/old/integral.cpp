@@ -30,11 +30,6 @@ size_t IntegralNode::serialize(char* buffer, size_t bufferSize,
       Integral::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression IntegralNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Integral(this).shallowReduce(reductionContext);
-}
-
 template <typename T>
 Evaluation<T> IntegralNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {

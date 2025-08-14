@@ -278,11 +278,6 @@ Evaluation<T> ComparisonNode::templatedApproximate(
   return BooleanEvaluation<T>::Builder(true);
 }
 
-OExpression ComparisonNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Comparison(this).shallowReduce(reductionContext);
-}
-
 Comparison Comparison::Builder(OExpression child0,
                                ComparisonNode::OperatorType operatorType,
                                OExpression child1) {

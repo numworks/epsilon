@@ -18,11 +18,6 @@ int BinomialCoefficientNode::numberOfChildren() const {
   return BinomialCoefficient::s_functionHelper.numberOfChildren();
 }
 
-OExpression BinomialCoefficientNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return BinomialCoefficient(this).shallowReduce(reductionContext);
-}
-
 size_t BinomialCoefficientNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

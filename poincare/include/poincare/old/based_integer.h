@@ -45,7 +45,7 @@ class BasedIntegerNode final : public NumberNode {
  private:
   int simplificationOrderSameType(const ExpressionNode* e, bool ascending,
                                   bool ignoreParentheses) const override;
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override {
     return m_base == OMG::Base::Decimal ? LayoutShape::Integer
                                         : LayoutShape::Default;

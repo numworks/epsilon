@@ -28,11 +28,6 @@ size_t SquareRootNode::serialize(char *buffer, size_t bufferSize,
       SquareRoot::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression SquareRootNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return SquareRoot(this).shallowReduce(reductionContext);
-}
-
 bool SquareRoot::SplitRadical(OExpression term, OExpression *factor,
                               OExpression *underRoot) {
   /* We expect term to be a reduction of a√b, with a or b eventually equal to 1

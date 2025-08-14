@@ -20,11 +20,6 @@ size_t RandintNoRepeatNode::serialize(
       RandintNoRepeat::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression RandintNoRepeatNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return RandintNoRepeat(this).shallowReduce(reductionContext);
-}
-
 template <typename T>
 Evaluation<T> RandintNoRepeatNode::templatedApproximate(
     const ApproximationContext& approximationContext) const {

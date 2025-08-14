@@ -23,11 +23,6 @@ size_t PiecewiseOperatorNode::serialize(
       PiecewiseOperator::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression PiecewiseOperatorNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return PiecewiseOperator(this).shallowReduce(reductionContext);
-}
-
 template <typename T>
 int PiecewiseOperatorNode::indexOfFirstTrueCondition(
     const ApproximationContext& approximationContext) const {

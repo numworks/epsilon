@@ -25,11 +25,6 @@ size_t DivisionRemainderNode::serialize(
       DivisionRemainder::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression DivisionRemainderNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return DivisionRemainder(this).shallowReduce(reductionContext);
-}
-
 OExpression DivisionRemainder::shallowReduce(
     ReductionContext reductionContext) {
   {

@@ -96,7 +96,7 @@ class ConstantNode final : public ExpressionNode {
                                   bool ignoreParentheses) const override;
 
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::OneLetter;
   };

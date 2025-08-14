@@ -53,7 +53,6 @@ class LogicalOperatorNotNode : public LogicalOperatorNode {
                    int numberOfSignificantDigits) const override;
 
   // Reduction
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class LogicalOperatorNot
@@ -110,7 +109,6 @@ class BinaryLogicalOperatorNode : public LogicalOperatorNode {
                    int numberOfSignificantDigits) const override;
 
   // Reduction
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   OperatorType m_typeOfOperator;
 };

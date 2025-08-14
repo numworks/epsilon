@@ -74,7 +74,7 @@ class RationalNode final : public NumberNode {
                                   bool ignoreParentheses) const override;
   OExpression shallowBeautify(
       const ReductionContext& reductionContext) override;
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override {
     assert(!m_negative);
     return isInteger() ? LayoutShape::Integer : LayoutShape::Fraction;

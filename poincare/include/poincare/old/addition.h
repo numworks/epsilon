@@ -51,7 +51,6 @@ class AdditionNode final : public NAryInfixExpressionNode {
   // Simplification
   OExpression shallowBeautify(
       const ReductionContext& reductionContext) override;
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Derivation
   bool derivate(const ReductionContext& reductionContext, Symbol symbol,

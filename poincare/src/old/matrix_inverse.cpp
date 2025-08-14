@@ -16,11 +16,6 @@ int MatrixInverseNode::numberOfChildren() const {
   return MatrixInverse::s_functionHelper.numberOfChildren();
 }
 
-OExpression MatrixInverseNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return MatrixInverse(this).shallowReduce(reductionContext);
-}
-
 size_t MatrixInverseNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

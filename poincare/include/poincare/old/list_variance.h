@@ -19,7 +19,6 @@ class ListVarianceNode : public ListFunctionWithOneOrTwoParametersNode {
   Type otype() const override { return Type::ListVariance; }
 
  private:
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class ListVariance

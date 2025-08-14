@@ -27,8 +27,6 @@ class ListMaximumNode : public ExpressionNode {
   size_t serialize(char* buffer, size_t bufferSize,
                    Preferences::PrintFloatMode floatDisplayMode,
                    int numberOfSignificantDigits) const override;
-
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class ListMaximum : public ExpressionOneChild<ListMaximum, ListMaximumNode> {

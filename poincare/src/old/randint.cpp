@@ -36,11 +36,6 @@ size_t RandintNode::serialize(char* buffer, size_t bufferSize,
       Randint::s_functionHelper.aliasesList().mainAlias());
 }
 
-OExpression RandintNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return Randint(this).shallowReduce(reductionContext);
-}
-
 template <typename T>
 Evaluation<T> RandintNode::templateApproximate(
     const ApproximationContext& approximationContext,

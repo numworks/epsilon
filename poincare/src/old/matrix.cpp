@@ -25,11 +25,6 @@
 
 namespace Poincare {
 
-OExpression MatrixNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return OMatrix(this).shallowReduce(reductionContext);
-}
-
 size_t MatrixNode::serialize(char *buffer, size_t bufferSize,
                              Preferences::PrintFloatMode floatDisplayMode,
                              int numberOfSignificantDigits) const {

@@ -28,7 +28,6 @@ class ListNode : public ExpressionNode {
   LayoutShape leftLayoutShape() const override { return LayoutShape::Brace; };
 
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Helper functions
   int extremumIndex(const ApproximationContext& approximationContext,

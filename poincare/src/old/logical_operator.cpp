@@ -66,11 +66,6 @@ size_t LogicalOperatorNotNode::serialize(
       nameBuffer, SerializationHelper::ParenthesisType::None);
 }
 
-OExpression LogicalOperatorNotNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return LogicalOperatorNot(this).shallowReduce(reductionContext);
-}
-
 OExpression LogicalOperatorNot::shallowReduce(
     ReductionContext reductionContext) {
   {
@@ -151,11 +146,6 @@ size_t BinaryLogicalOperatorNode::serialize(
                                        operatorName(), true);
   return SerializationHelper::Infix(this, buffer, bufferSize, floatDisplayMode,
                                     numberOfSignificantDigits, nameBuffer);
-}
-
-OExpression BinaryLogicalOperatorNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return BinaryLogicalOperator(this).shallowReduce(reductionContext);
 }
 
 OExpression BinaryLogicalOperator::shallowReduce(

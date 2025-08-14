@@ -42,7 +42,7 @@ class PercentSimpleNode : public ExpressionNode {
   // Simplication
   OExpression shallowBeautify(
       const ReductionContext& reductionContext) override;
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override {
     return childAtIndex(0)->leftLayoutShape();
   }
@@ -71,7 +71,6 @@ class PercentAdditionNode final : public PercentSimpleNode {
   // Simplication
   OExpression shallowBeautify(
       const ReductionContext& reductionContext) override;
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class PercentSimple

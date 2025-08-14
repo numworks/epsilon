@@ -20,7 +20,6 @@ class ListStandardDeviationNode
   Type otype() const override { return Type::ListStandardDeviation; }
 
  private:
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 };
 
 class ListStandardDeviation

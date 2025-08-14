@@ -32,7 +32,7 @@ class FunctionNode final : public SymbolAbstractNode {
                    int numberOfSignificantDigits) const override;
 
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape rightLayoutShape() const override {
     return LayoutShape::BoundaryPunctuation;
   }

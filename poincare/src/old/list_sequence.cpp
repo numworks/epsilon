@@ -16,11 +16,6 @@ int ListSequenceNode::numberOfChildren() const {
   return ListSequence::s_functionHelper.numberOfChildren();
 }
 
-OExpression ListSequenceNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return ListSequence(this).shallowReduce(reductionContext);
-}
-
 size_t ListSequenceNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {

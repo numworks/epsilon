@@ -118,11 +118,6 @@ size_t MultiplicationNode::serialize(
                                     numberOfSignificantDigits, string);
 }
 
-OExpression MultiplicationNode::shallowReduce(
-    const ReductionContext &reductionContext) {
-  return Multiplication(this).shallowReduce(reductionContext);
-}
-
 OExpression MultiplicationNode::shallowBeautify(
     const ReductionContext &reductionContext) {
   return Multiplication(this).shallowBeautify(reductionContext);

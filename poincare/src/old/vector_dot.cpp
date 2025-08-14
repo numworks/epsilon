@@ -12,11 +12,6 @@ int VectorDotNode::numberOfChildren() const {
   return VectorDot::s_functionHelper.numberOfChildren();
 }
 
-OExpression VectorDotNode::shallowReduce(
-    const ReductionContext& reductionContext) {
-  return VectorDot(this).shallowReduce(reductionContext);
-}
-
 size_t VectorDotNode::serialize(char* buffer, size_t bufferSize,
                                 Preferences::PrintFloatMode floatDisplayMode,
                                 int numberOfSignificantDigits) const {

@@ -78,7 +78,7 @@ class DecimalNode final : public NumberNode {
                                   bool ignoreParentheses) const override;
 
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override {
     assert(!m_negative);
     return LayoutShape::Decimal;

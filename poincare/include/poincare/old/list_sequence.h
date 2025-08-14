@@ -23,7 +23,6 @@ class ListSequenceNode final : public ParameteredExpressionNode {
 
  private:
   // Simplification
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
 
   // Layout
   LayoutShape leftLayoutShape() const override {

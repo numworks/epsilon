@@ -31,7 +31,7 @@ class LogarithmNode final : public ExpressionNodeWithOneOrTwoChildren {
   // Simplification
   OExpression shallowBeautify(
       const ReductionContext& reductionContext) override;
-  OExpression shallowReduce(const ReductionContext& reductionContext) override;
+
   LayoutShape leftLayoutShape() const override {
     return LayoutShape::MoreLetters;
   };

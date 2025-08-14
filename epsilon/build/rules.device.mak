@@ -131,9 +131,17 @@ $(call document_other_target,custom_userland.flash,Write firmware as a custom us
 
 ifeq ($(PLATFORM),n0120)
 flasher%flash: DFULEAVE := 0x24030000
+eraser%flash: DFULEAVE := 0x24000000
 else
 flasher%flash: DFULEAVE := 0x20030000
+eraser%flash: DFULEAVE := 0x20000000
 endif
+
+## The eraser flash requires `-a` option
+$(OUTPUT_DIRECTORY)/eraser.flash: $(OUTPUT_DIRECTORY)/eraser.dfu
+	$(call rule_label,FLASH)
+	dfu-util -D $< && \
+	dfu-util -a 1 -s $(DFULEAVE):leave
 
 # Firmware component - bench
 

@@ -14,10 +14,6 @@
 
 namespace Poincare {
 
-int BinomialCoefficientNode::numberOfChildren() const {
-  return BinomialCoefficient::s_functionHelper.numberOfChildren();
-}
-
 size_t BinomialCoefficientNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

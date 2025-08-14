@@ -20,10 +20,6 @@
 
 namespace Poincare {
 
-int SignFunctionNode::numberOfChildren() const {
-  return SignFunction::s_functionHelper.numberOfChildren();
-}
-
 size_t SignFunctionNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {

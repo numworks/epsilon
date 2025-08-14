@@ -16,10 +16,6 @@
 
 namespace Poincare {
 
-int SquareRootNode::numberOfChildren() const {
-  return SquareRoot::s_functionHelper.numberOfChildren();
-}
-
 size_t SquareRootNode::serialize(char *buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {

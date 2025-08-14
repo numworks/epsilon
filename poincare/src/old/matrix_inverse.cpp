@@ -12,10 +12,6 @@
 
 namespace Poincare {
 
-int MatrixInverseNode::numberOfChildren() const {
-  return MatrixInverse::s_functionHelper.numberOfChildren();
-}
-
 size_t MatrixInverseNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

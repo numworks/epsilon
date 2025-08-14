@@ -7,10 +7,6 @@
 
 namespace Poincare {
 
-int RandintNoRepeatNode::numberOfChildren() const {
-  return RandintNoRepeat::s_functionHelper.numberOfChildren();
-}
-
 size_t RandintNoRepeatNode::serialize(
     char* buffer, size_t bufferSize,
     Preferences::PrintFloatMode floatDisplayMode,

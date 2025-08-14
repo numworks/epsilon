@@ -8,10 +8,6 @@
 
 namespace Poincare {
 
-int VectorNormNode::numberOfChildren() const {
-  return VectorNorm::s_functionHelper.numberOfChildren();
-}
-
 size_t VectorNormNode::serialize(char* buffer, size_t bufferSize,
                                  Preferences::PrintFloatMode floatDisplayMode,
                                  int numberOfSignificantDigits) const {

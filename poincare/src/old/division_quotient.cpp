@@ -12,10 +12,6 @@
 
 namespace Poincare {
 
-int DivisionQuotientNode::numberOfChildren() const {
-  return DivisionQuotient::s_functionHelper.numberOfChildren();
-}
-
 OMG::Troolean DivisionQuotientNode::isPositive(Context *context) const {
   OMG::Troolean numeratorPositive = childAtIndex(0)->isPositive(context);
   OMG::Troolean denominatorPositive = childAtIndex(1)->isPositive(context);

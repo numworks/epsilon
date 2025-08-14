@@ -12,10 +12,6 @@ namespace Poincare {
 
 constexpr OExpression::FunctionHelper ListSequence::s_functionHelper;
 
-int ListSequenceNode::numberOfChildren() const {
-  return ListSequence::s_functionHelper.numberOfChildren();
-}
-
 size_t ListSequenceNode::serialize(char* buffer, size_t bufferSize,
                                    Preferences::PrintFloatMode floatDisplayMode,
                                    int numberOfSignificantDigits) const {

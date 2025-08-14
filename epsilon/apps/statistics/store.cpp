@@ -367,10 +367,7 @@ double Store::squaredValueSum(int series) const {
 }
 
 int Store::numberOfModes(int series) const {
-  double modeFreq;
-  int modesTotal;
-  computeModes(series, -1, &modeFreq, &modesTotal);
-  return modesTotal;
+  return m_datasets[series].modeData().numberOfModes;
 }
 
 bool Store::shouldDisplayModes(int series) const {
@@ -392,61 +389,11 @@ int Store::totalNumberOfModes() const {
 }
 
 double Store::modeAtIndex(int series, int index) const {
-  double modeFreq;
-  int modesTotal;
-  return computeModes(series, index, &modeFreq, &modesTotal);
+  return m_datasets[series].modeValueAtIndex(index);
 }
 
 double Store::modeFrequency(int series) const {
-  double modeFreq;
-  int modesTotal;
-  computeModes(series, -1, &modeFreq, &modesTotal);
-  return modeFreq;
-}
-
-double Store::computeModes(int series, int i, double* modeFreq,
-                           int* modesTotal) const {
-  *modesTotal = 0;
-  *modeFreq = 0.0;
-  double ithValue = NAN;
-  double currentValue = NAN;
-  double currentValueFrequency = NAN;
-  int numberOfPairs = numberOfPairsOfSeries(series);
-  for (int j = 0; j <= numberOfPairs; j++) {
-    double value, valueFrequency;
-    if (j < numberOfPairs) {
-      int valueIndex = valueIndexAtSortedIndex(series, j);
-      value = get(series, 0, valueIndex);
-      valueFrequency = get(series, 1, valueIndex);
-    } else {
-      // Iterating one last time to process the last value
-      value = valueFrequency = NAN;
-    }
-    // currentValue != value returns true if currentValue or value is NAN
-    if (currentValue != value) {
-      // A new value has been found
-      if (currentValueFrequency > *modeFreq) {
-        // A better mode has been found, reset solutions
-        *modeFreq = currentValueFrequency;
-        *modesTotal = 0;
-        ithValue = NAN;
-      }
-      if (currentValueFrequency == *modeFreq) {
-        // Another mode has been found
-        if (*modesTotal == i) {
-          ithValue = currentValue;
-        }
-        *modesTotal += 1;
-      }
-      currentValueFrequency = 0.0;
-      currentValue = value;
-    }
-    currentValueFrequency += valueFrequency;
-  }
-  // A valid total, frequency and ithValue (if requested) have been calculated
-  assert(*modesTotal > 0 && *modeFreq > 0.0 &&
-         std::isnan(ithValue) == (i == -1));
-  return ithValue;
+  return m_datasets[series].modeData().modeWeight;
 }
 
 /* Private methods */

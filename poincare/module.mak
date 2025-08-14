@@ -20,9 +20,9 @@ _sources_poincare_checkpoint := $(addprefix src/, \
   pool_checkpoint_dummy.cpp:+nocheckpoint \
 )
 
-_sources_poincare_storage := $(addprefix src/, \
-  preferences_in_storage.cpp:-nostorage \
-  preferences_no_storage.cpp:+nostorage \
+_sources_poincare_preferences := $(addprefix src/, \
+  preferences_init_custom.cpp:-defaultpreferences \
+  preferences_init_default.cpp:+defaultpreferences \
 )
 
 _sources_poincare_extended := $(addprefix src/, \
@@ -265,7 +265,7 @@ $(addprefix helpers/, \
 $(call create_module,poincare,1, \
   $(_sources_poincare_minimal) \
   $(_sources_poincare_checkpoint) \
-  $(_sources_poincare_storage) \
+  $(_sources_poincare_preferences) \
   $(addsuffix :-minimal,$(_sources_poincare_extended)) \
   $(addsuffix :+test,$(_sources_poincare_test)) \
 )

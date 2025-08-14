@@ -97,7 +97,7 @@ $ git bisect run ./poincare/cli/bisect.sh simplify 2+2 4
 running  './poincare/cli/bisect.sh' 's' '2+2' '4'
 [...]
 CXX     arm64/poincare/src/expression/number.o
-AR      arm64/poincare.nostorage.a
+AR      arm64/poincare.defaultpreferences.a
 LD      arm64/poincare_cli.bin
 d8fee27c99b3bdcbe89bef3f63d0ed6577884f01 is the first bad commit
 commit d8fee27c99b3bdcbe89bef3f63d0ed6577884f01

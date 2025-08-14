@@ -84,6 +84,6 @@ $(call create_goal,poincare_cli, \
   kandinsky \
   liba_bridge \
   omg \
-  poincare.nostorage \
+  poincare.defaultpreferences \
   poincare_cli \
 )

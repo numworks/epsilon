@@ -40,12 +40,11 @@ UserExpression equationList(const EquationStore* store) {
 }
 
 SystemOfEquations::Error SystemOfEquations::exactSolve(
-    Poincare::Context* context) {
+    const Poincare::Context& context) {
   m_wasInterrupted = false;
   m_equationMetadata.unknownVariables.clear();
   m_equationMetadata.definedVariables.clear();
 
-  assert(context);
   UserExpression eqList = equationList(m_store);
   EquationSolver::SolverResult result = EquationSolver::ExactSolveAdaptive(
       eqList,
@@ -54,7 +53,7 @@ SystemOfEquations::Error SystemOfEquations::exactSolve(
               GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
           .m_angleUnit =
               GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-          .m_context = *context,
+          .m_context = context,
       });
   UserExpression exactSolutionList = result.exactSolutionList;
   UserExpression approximateSolutionList = result.approximateSolutionList;
@@ -105,18 +104,17 @@ void SystemOfEquations::cancelApproximateSolve() {
       Poincare::EquationSolver::SolutionType::Approximate;
 }
 
-void SystemOfEquations::approximateSolve(Context* context) {
+void SystemOfEquations::approximateSolve(const Context& context) {
   assert(m_store->numberOfDefinedModels() == 1);
   m_wasInterrupted = false;
   UserExpression eqList = equationList(m_store);
 
-  assert(context);
   EquationSolver::SolverResult result = EquationSolver::ApproximateSolve(
       eqList,
       {.m_complexFormat =
            GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
        .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-       .m_context = *context},
+       .m_context = context},
       m_isUsingAutoSolvingRange ? m_memoizedAutoSolvingRange
                                 : m_approximateSolvingRange,
       k_maxNumberOfApproximateSolutions);
@@ -155,7 +153,7 @@ void SystemOfEquations::tidy(PoolObject* treePoolCursor) {
 }
 
 SystemOfEquations::Error SystemOfEquations::registerExactSolution(
-    UserExpression exact, UserExpression approximate, Context* context) {
+    UserExpression exact, UserExpression approximate, const Context& context) {
   assert(m_solutionMetadata.solutionType != SolutionType::Approximate);
   assert(!exact.isUninitialized());
 
@@ -168,21 +166,19 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   while (i < nEquations && !forbidExactSolution) {
     OMG::ExpiringPointer<Equation> equation =
         store->modelForRecord(store->definedRecordAtIndex(i));
-    assert(context);
     if (CAS::NeverDisplayReductionOfInput(equation->expressionClone(),
-                                          *context)) {
+                                          context)) {
       forbidExactSolution = true;
     }
     i++;
   }
 
-  assert(context);
   assert(m_solutionMetadata.solutionType == SolutionType::Formal ||
-         !exact.clone().replaceSymbols(*context));
+         !exact.clone().replaceSymbols(context));
 
   forbidExactSolution =
       forbidExactSolution ||
-      CAS::ShouldOnlyDisplayApproximation(exact, exact, approximate, *context);
+      CAS::ShouldOnlyDisplayApproximation(exact, exact, approximate, context);
 
   if (forbidExactSolution && approximate.isUninitialized()) {
     // Re-reduce exact solution but approximate during reduction.
@@ -195,7 +191,7 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
             GlobalPreferences::SharedGlobalPreferences()->unitFormat(),
         // Any remaining symbol at this point should be an unknown parameter.
         .m_symbolic = SymbolicComputation::KeepAllSymbols,
-        .m_context = *context,
+        .m_context = context,
         .m_advanceReduce = false};
     bool failure = false;
     approximate = exact.cloneAndSimplify(projCtx, &failure);
@@ -213,10 +209,10 @@ SystemOfEquations::Error SystemOfEquations::registerExactSolution(
   Layout exactLayout, approximateLayout;
   if (!forbidExactSolution) {
     assert(!exact.isUninitialized());
-    exactLayout = PoincareHelpers::CreateLayout(exact, *context);
+    exactLayout = PoincareHelpers::CreateLayout(exact, context);
   }
   if (!approximate.isUninitialized()) {
-    approximateLayout = PoincareHelpers::CreateLayout(approximate, *context);
+    approximateLayout = PoincareHelpers::CreateLayout(approximate, context);
   }
 
   assert(!approximateLayout.isUninitialized() ||

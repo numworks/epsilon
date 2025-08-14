@@ -83,8 +83,8 @@ class SystemOfEquations {
   }
 
   // Solving methods
-  Error exactSolve(Poincare::Context* context);
-  void approximateSolve(Poincare::Context* context);
+  Error exactSolve(const Poincare::Context& context);
+  void approximateSolve(const Poincare::Context& context);
 
   /* Cancel intermediate results of setApproximateSolvingRange and
    * approximateSolve */
@@ -108,7 +108,7 @@ class SystemOfEquations {
 
   Error registerExactSolution(Poincare::UserExpression exact,
                               Poincare::UserExpression approximate,
-                              Poincare::Context* context);
+                              const Poincare::Context& context);
 
   Solution m_solutions[k_maxNumberOfSolutions];
   Poincare::EquationSolver::EquationMetadata m_equationMetadata;

@@ -189,7 +189,7 @@ void ListController::resolveEquations() {
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     using Error = SystemOfEquations::Error;
-    Error e = App::app()->system()->exactSolve(context);
+    Error e = App::app()->system()->exactSolve(*context);
     switch (e) {
       case Error::EquationUndefined:
         App::app()->displayWarning(I18n::Message::UndefinedEquation);
@@ -218,7 +218,7 @@ void ListController::resolveEquations() {
         App::app()->system()->resetSolvingRanges();
         App::app()->system()->useAutoSolvingRange();
         if (CircuitBreakerRun(subCheckpoint)) {
-          App::app()->system()->approximateSolve(context);
+          App::app()->system()->approximateSolve(*context);
         } else {
           modelStore()->tidyDownstreamPoolFrom(
               subCheckpoint.endOfPoolBeforeCheckpoint());

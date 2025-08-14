@@ -98,7 +98,7 @@ void IntervalController::pop(bool onConfirmation) {
     Poincare::CircuitBreakerCheckpoint checkpoint(
         Ion::CircuitBreaker::CheckpointType::Back);
     if (CircuitBreakerRun(checkpoint)) {
-      system->approximateSolve(App::app()->localContext());
+      system->approximateSolve(*App::app()->localContext());
     } else {
       App::app()->equationStore()->tidyDownstreamPoolFrom(
           checkpoint.endOfPoolBeforeCheckpoint());

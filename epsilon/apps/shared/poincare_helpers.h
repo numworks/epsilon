@@ -5,6 +5,7 @@
 #include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/expression_or_float.h>
+#include <poincare/layout.h>
 #include <poincare/preferences.h>
 #include <poincare/print_float.h>
 #include <poincare/src/expression/projection.h>

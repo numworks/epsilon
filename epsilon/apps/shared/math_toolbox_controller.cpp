@@ -7,6 +7,7 @@
 #include <escher/abstract_text_field.h>
 #include <poincare/context.h>
 #include <poincare/exception_checkpoint.h>
+#include <poincare/expression.h>
 #include <poincare/layout.h>
 #include <string.h>
 

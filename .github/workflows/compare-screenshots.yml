@@ -24,11 +24,17 @@ jobs:
         uses: actions/checkout@v4
       - name: Build container and define DOCKER_RUN
         uses: ./.github/actions/docker-builder
-      - name: Build PR head
-        run: $DOCKER_RUN "make -C epsilon TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 epsilon.bin epsilon.cas.bin"
       - name: Compare crc of screenshots (No CAS)
         timeout-minutes: 15
-        run: $DOCKER_RUN "\$PYTHON tools/screenshots/compare_crc.py epsilon/output/debug/optimized/linux/epsilon.bin -d epsilon/tests/screenshots_dataset -n"
+        run: |
+          $DOCKER_RUN "make \
+                       TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 \
+                       ARGS='--dataset tests/screenshots_dataset --no-screenshots' \
+                       epsilon.compare"
       - name: Compare crc of screenshots (CAS)
         timeout-minutes: 15
-        run: $DOCKER_RUN "\$PYTHON tools/screenshots/compare_crc.py -d epsilon/tests/screenshots_dataset_cas epsilon/output/debug/optimized/linux/epsilon.cas.bin -n"
+        run: |
+          $DOCKER_RUN "make \
+                       TOOLCHAIN=host-clang PLATFORM=simulator ASSERTIONS=1 \
+                       ARGS='--dataset tests/screenshots_dataset_cas --no-screenshots' \
+                       epsilon.cas.compare"

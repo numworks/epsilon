@@ -201,7 +201,7 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
 }
 
 template <typename T>
-StatisticsDataset<T>::ModeData StatisticsDataset<T>::modeData() const {
+typename StatisticsDataset<T>::ModeData StatisticsDataset<T>::modeData() const {
   if (m_memoizedModeData.numberOfModes > 0) {
     return m_memoizedModeData;
   }

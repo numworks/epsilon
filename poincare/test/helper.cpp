@@ -188,8 +188,8 @@ Tree* parse_and_reduce(const char* input, bool beautify) {
 void assert_parsed_expression_is(const char* expression,
                                  const Poincare::Internal::Tree* expected,
                                  ParsingParameters params) {
-  Shared::GlobalContext context;
-  assert_parsed_expression_is(expression, expected, context, params);
+  assert_parsed_expression_is(expression, expected, Poincare::EmptyContext{},
+                              params);
 }
 
 void assert_parsed_expression_is(const char* expression,

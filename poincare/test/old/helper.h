@@ -12,13 +12,6 @@
 #include <poincare/variable_store.h>
 #include <quiz.h>
 
-#include <algorithm>
-#include <cmath>
-
-namespace Shared {
-class GlobalContext;
-}
-
 namespace Poincare::Internal {
 class Tree;
 }
@@ -107,7 +100,7 @@ void assert_reduce_and_store(
  * retro-compatibilty with the old tests */
 void assert_parsed_expression_simplify_to(
     const char* expression, const char* simplifiedExpression,
-    Poincare::Context& context, Poincare::ReductionTarget target = User,
+    const Poincare::Context& context, Poincare::ReductionTarget target = User,
     Poincare::Preferences::AngleUnit angleUnit = Radian,
     Poincare::Preferences::UnitFormat unitFormat = MetricUnitFormat,
     Poincare::Preferences::ComplexFormat complexFormat = Cartesian,

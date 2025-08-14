@@ -156,10 +156,6 @@ class Store : public Shared::StatisticsStore {
   void countDistinctValues(int series, int start, int end, int i,
                            bool handleNullFrequencies, double* value,
                            int* distinctValues) const;
-  /* Find the i-th mode (ordered by value). Also retrieve the total number of
-   * modes and the mode frequency. */
-  double computeModes(int series, int i, double* modeFreq,
-                      int* modesTotal) const;
   double sortedElementAtCumulatedFrequency(
       int series, double k, bool createMiddleElement = false) const;
   double sortedElementAtCumulatedPopulation(

@@ -2,6 +2,7 @@
 
 #include <omg/float.h>
 #include <omg/list.h>
+#include <omg/unreachable.h>
 
 #include <algorithm>
 #include <cmath>
@@ -197,6 +198,86 @@ int StatisticsDataset<T>::indexAtCumulatedWeight(T weight,
     }
   }
   return elementIndex;
+}
+
+template <typename T>
+StatisticsDataset<T>::ModeData StatisticsDataset<T>::modeData() const {
+  if (m_memoizedModeData.numberOfModes > 0) {
+    return m_memoizedModeData;
+  }
+  ModeData modeData;
+  modeData.numberOfModes = 0;
+  modeData.modeWeight = 0.0;
+  T currentValue = NAN;
+  T currentWeight = 0.0;
+  int n = datasetLength();
+  for (int j = 0; j <= n; j++) {
+    T value, weight;
+    if (j < n) {
+      int valueIndex = indexAtSortedIndex(j);
+      value = valueAtIndex(valueIndex);
+      weight = weightAtIndex(valueIndex);
+    } else {
+      // Iterating one last time to process the last value
+      value = weight = NAN;
+    }
+    // currentValue != value returns true if currentValue or value is NAN
+    if (currentValue != value) {
+      // A new value has been found
+      if (currentWeight > modeData.modeWeight) {
+        // A better mode has been found, reset solutions
+        modeData.modeWeight = currentWeight;
+        modeData.numberOfModes = 0;
+      }
+      if (currentWeight == modeData.modeWeight) {
+        // Another mode has been found
+        modeData.numberOfModes += 1;
+      }
+      currentWeight = 0.0;
+      currentValue = value;
+    }
+    currentWeight += weight;
+  }
+  // A valid total and weight have been calculated
+  assert(modeData.numberOfModes > 0 && modeData.modeWeight > 0.0);
+  m_memoizedModeData = modeData;
+  return m_memoizedModeData;
+}
+
+template <typename T>
+T StatisticsDataset<T>::modeValueAtIndex(int index) const {
+  ModeData modeData = this->modeData();
+  assert(index >= 0 && index < modeData.numberOfModes);
+  int n = datasetLength();
+  int currentIndex = 0;
+  T currentValue = NAN;
+  T currentWeight = 0.0;
+  for (int j = 0; j <= n; j++) {
+    T value, weight;
+    if (j < n) {
+      int valueIndex = indexAtSortedIndex(j);
+      value = valueAtIndex(valueIndex);
+      weight = weightAtIndex(valueIndex);
+    } else {
+      // Iterating one last time to process the last value
+      value = weight = NAN;
+    }
+    // currentValue != value returns true if currentValue or value is NAN
+    if (currentValue != value) {
+      // A new value has been found
+      if (currentWeight == modeData.modeWeight) {
+        if (currentIndex == index) {
+          return currentValue;
+        }
+        currentIndex++;
+      }
+      currentWeight = 0.0;
+      currentValue = value;
+    }
+    currentWeight += weight;
+  }
+  // Already checked that index < numberOfModes
+  OMG::unreachable();
 }
 
 template <typename T>

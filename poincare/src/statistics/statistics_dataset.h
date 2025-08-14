@@ -99,6 +99,7 @@ class StatisticsDataset {
         m_weights(other.m_weights),
         m_recomputeSortedIndex(other.m_recomputeSortedIndex),
         m_memoizedTotalWeight(other.m_memoizedTotalWeight),
+        m_memoizedModeData(other.m_memoizedModeData),
         m_lnOfValues(other.m_lnOfValues),
         m_oppositeOfValues(other.m_oppositeOfValues) {
     deleteSortedIndex();
@@ -112,6 +113,7 @@ class StatisticsDataset {
     m_weights = other.m_weights;
     m_recomputeSortedIndex = other.m_recomputeSortedIndex;
     m_memoizedTotalWeight = other.m_memoizedTotalWeight;
+    m_memoizedModeData = other.m_memoizedModeData;
     m_lnOfValues = other.m_lnOfValues;
     m_oppositeOfValues = other.m_oppositeOfValues;
     deleteSortedIndex();
@@ -124,6 +126,7 @@ class StatisticsDataset {
   void setHasBeenModified() {
     m_recomputeSortedIndex = true;
     m_memoizedTotalWeight = NAN;
+    m_memoizedModeData = ModeData();
 #ifdef TARGET_POINCARE_JS
     deleteSortedIndex();
 #endif
@@ -165,6 +168,14 @@ class StatisticsDataset {
     return valueAtIndex(indexAtSortedIndex(datasetLength() - 1));
   }
 
+  struct ModeData {
+    int numberOfModes = 0;
+    T modeWeight = 0.;
+  };
+
+  ModeData modeData() const;
+  T modeValueAtIndex(int index) const;
+
  private:
   int datasetLength() const {
     assert(m_weights == nullptr || m_weights->length() == m_values->length());
@@ -187,6 +198,7 @@ class StatisticsDataset {
 #endif
   mutable bool m_recomputeSortedIndex;
   mutable double m_memoizedTotalWeight;
+  mutable ModeData m_memoizedModeData;
   bool m_lnOfValues;
   bool m_oppositeOfValues;
 };

@@ -1,4 +1,4 @@
-_ion_firmware_components := bench bootloader flasher kernel userland
+_ion_firmware_components := bench bootloader flasher eraser kernel userland
 
 ifeq ($(PLATFORM),n0120)
 _ion_mcu_suffix := stm32h
@@ -43,6 +43,7 @@ $(addprefix stack/descriptor/, \
   calculator.cpp \
   calculator_bootloader.cpp:+bootloader \
   calculator_flasher_$(_ion_mcu_suffix).cpp:+flasher \
+  calculator_flasher_$(_ion_mcu_suffix).cpp:+eraser \
   calculator_userland_leave.cpp:+userland:+allow3rdparty \
   calculator_userland_leave_reset.cpp:+userland:-allow3rdparty \
   dfu_interface.cpp \

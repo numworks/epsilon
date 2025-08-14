@@ -107,6 +107,16 @@ $(call create_goal,flasher, \
 ,,Building flasher.flash will automatically jump at the right address \
 )
 
+$(call create_goal,eraser, \
+  ion.eraser \
+  kandinsky.minimal \
+  liba.minimal \
+  libaxx \
+  omg.minimal \
+)
+
+eraser%: EMBED_EXTRA_DATA := 1
+
 .PHONY: custom_userland.flash
 custom_userland.flash:
 	@echo "Finding connected device model and inactive slot."

@@ -371,7 +371,9 @@ int Store::numberOfModes(int series) const {
 }
 
 bool Store::shouldDisplayModes(int series) const {
-  return columnIsIntegersOnly(series, 1) && modeFrequency(series) != 1.f;
+  /* We want to avoid to display hundreds of modes when the series is
+   * automatically filled with ones */
+  return modeFrequency(series) != 1.f;
 }
 
 int Store::totalNumberOfModes() const {

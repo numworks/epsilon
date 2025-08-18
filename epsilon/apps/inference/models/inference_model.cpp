@@ -18,13 +18,6 @@
 
 namespace Inference {
 
-static Shared::GlobalContext* getContext() {
-  /* TEMPORARY: Statistics tests do not need a Context* at all in their
-   * constructor, it will simplify constructor signatures to just access the
-   * Shared::GlobalContextAccessor::Store() where it is needed. */
-  return &Shared::GlobalContextAccessor::Store();
-}
-
 static void* initialize(SubApp subApp, Poincare::Inference::Type type,
                         CategoricalType categoricalType,
                         InferenceModel* target) {
@@ -34,20 +27,20 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
         case TestType::OneMean:
           switch (type.statisticType) {
             case StatisticType::T:
-              return new (target) OneMeanTTest(getContext());
+              return new (target) OneMeanTTest();
             case StatisticType::Z:
-              return new (target) OneMeanZTest(getContext());
+              return new (target) OneMeanZTest();
             default:
               OMG::unreachable();
           }
         case TestType::TwoMeans:
           switch (type.statisticType) {
             case StatisticType::T:
-              return new (target) TwoMeansTTest(getContext());
+              return new (target) TwoMeansTTest();
             case StatisticType::TPooled:
-              return new (target) PooledTwoMeansTTest(getContext());
+              return new (target) PooledTwoMeansTTest();
             case StatisticType::Z:
-              return new (target) TwoMeansZTest(getContext());
+              return new (target) TwoMeansZTest();
             default:
               OMG::unreachable();
           }
@@ -56,7 +49,7 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
         case TestType::TwoProportions:
           return new (target) TwoProportionsZTest();
         case TestType::Slope:
-          return new (target) SlopeTTest(getContext());
+          return new (target) SlopeTTest{};
         case TestType::Chi2:
           switch (categoricalType) {
             case CategoricalType::GoodnessOfFit:
@@ -74,20 +67,20 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
         case TestType::OneMean:
           switch (type.statisticType) {
             case StatisticType::T:
-              return new (target) OneMeanTInterval(getContext());
+              return new (target) OneMeanTInterval();
             case StatisticType::Z:
-              return new (target) OneMeanZInterval(getContext());
+              return new (target) OneMeanZInterval();
             default:
               OMG::unreachable();
           }
         case TestType::TwoMeans:
           switch (type.statisticType) {
             case StatisticType::T:
-              return new (target) TwoMeansTInterval(getContext());
+              return new (target) TwoMeansTInterval();
             case StatisticType::TPooled:
-              return new (target) PooledTwoMeansTInterval(getContext());
+              return new (target) PooledTwoMeansTInterval();
             case StatisticType::Z:
-              return new (target) TwoMeansZInterval(getContext());
+              return new (target) TwoMeansZInterval();
             default:
               OMG::unreachable();
           }
@@ -96,7 +89,7 @@ static void* initialize(SubApp subApp, Poincare::Inference::Type type,
         case TestType::TwoProportions:
           return new (target) TwoProportionsZInterval();
         case TestType::Slope:
-          return new (target) SlopeTInterval(getContext());
+          return new (target) SlopeTInterval();
         default:
           OMG::unreachable();
       }

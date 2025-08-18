@@ -14,8 +14,7 @@ namespace Inference {
 
 class SlopeTStatistic : public InputTableFromRegressionStore {
  public:
-  SlopeTStatistic(Shared::GlobalContext* context)
-      : InputTableFromRegressionStore(context) {
+  SlopeTStatistic() : InputTableFromRegressionStore() {
     m_series[0] = 0;
     initListsFromStorage();
   }

@@ -104,11 +104,7 @@ App::CalculationTab::CalculationTab()
 
 App::App(Snapshot* snapshot)
     : StoreApp(snapshot, &m_inputViewController),
-      /* TEMPORARY: GlobalStore does not need to be passed in successive
-     constructors, only access the static instance where it is needed (in
-     DoublePairStore) */
-      m_store(&GlobalContextAccessor::Store(), snapshot->storePreferences(),
-              snapshot->regressionTypes()),
+      m_store(snapshot->storePreferences(), snapshot->regressionTypes()),
       m_regressionController(nullptr, &m_store),
       m_inputViewController(&m_modalViewController, &m_tabViewController,
                             MathLayoutFieldDelegate::Default()),

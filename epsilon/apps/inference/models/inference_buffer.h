@@ -20,7 +20,7 @@ namespace Inference {
 union InferenceBuffer {
  public:
   InferenceBuffer() {
-    new (&m_oneMeanTInterval) OneMeanTInterval(nullptr);
+    new (&m_oneMeanTInterval) OneMeanTInterval();
     inference()->initParameters();
   }
   ~InferenceBuffer() { inference()->~InferenceModel(); }

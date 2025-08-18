@@ -16,7 +16,7 @@ class Store : public Shared::StatisticsStore {
  public:
   constexpr static int k_numberOfQuantiles = 5;
 
-  Store(Shared::GlobalContext* context, UserPreferences* userPreferences);
+  Store(UserPreferences* userPreferences);
 
   bool graphViewHasBeenInvalidated() const { return m_graphViewInvalidated; }
   void graphViewHasBeenSelected() { m_graphViewInvalidated = false; }

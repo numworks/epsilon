@@ -25,10 +25,9 @@ const char* Store::SeriesTitle(int series) {
   return k_seriesTitles[static_cast<size_t>(series)];
 }
 
-Store::Store(Shared::GlobalContext* context,
-             DoublePairStorePreferences* preferences,
+Store::Store(DoublePairStorePreferences* preferences,
              Model::Type* regressionTypes)
-    : LinearRegressionStore(context, preferences),
+    : LinearRegressionStore(preferences),
       m_regressionTypes(regressionTypes),
       m_recomputeCoefficients{true, true, true} {
   initListsFromStorage();

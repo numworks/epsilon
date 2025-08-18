@@ -37,8 +37,7 @@ class DoublePairStore {
   constexpr static size_t k_tableNameLength =
       2 * k_columnNamesLength + sizeof("/");
 
-  DoublePairStore(GlobalContext* context,
-                  DoublePairStorePreferences* preferences);
+  DoublePairStore(DoublePairStorePreferences* preferences);
   // Delete the implicit copy constructor: the object is heavy
   DoublePairStore(const DoublePairStore&) = delete;
 
@@ -178,8 +177,6 @@ class DoublePairStore {
   bool storeColumn(int series, int i) const;
   void deleteTrailingUndef(int series, int i);
   void deletePairsOfUndef(int series);
-
-  GlobalContext* m_context;
 };
 
 }  // namespace Shared

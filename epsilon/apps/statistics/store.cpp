@@ -18,8 +18,8 @@ constexpr I18n::Message Store::k_quantilesName[Store::k_numberOfQuantiles];
 constexpr Store::CalculPointer
     Store::k_quantileCalculation[Store::k_numberOfQuantiles];
 
-Store::Store(GlobalContext* context, UserPreferences* userPreferences)
-    : StatisticsStore(context, userPreferences),
+Store::Store(UserPreferences* userPreferences)
+    : StatisticsStore(userPreferences),
       m_memoizedMaxNumberOfModes(-1),
       m_graphViewInvalidated(true) {
   initDatasets();

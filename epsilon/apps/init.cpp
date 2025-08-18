@@ -11,16 +11,19 @@
 namespace Apps {
 
 void Init() {
-  GlobalPreferences::Init();
-  ExamModeManager::Init();
-  Poincare::Init(GlobalPreferences::SharedGlobalPreferences(),
-                 ExamModeManager::ExamModePtr());
-  Escher::Init(GlobalPreferences::SharedGlobalPreferences());
-
   ::Shared::GlobalContext::s_sequenceStore.init();
   ::Shared::GlobalContext::s_sequenceCache.init(
       Shared::GlobalContext::s_sequenceStore.get());
   ::Shared::GlobalContext::s_continuousFunctionStore.init();
+
+  GlobalPreferences::Init();
+  ExamModeManager::Init();
+  Shared::GlobalContextAccessor::Init();
+  Poincare::Init(GlobalPreferences::SharedGlobalPreferences(),
+                 ExamModeManager::ExamModePtr(),
+                 Shared::GlobalContextAccessor::GlobalContext());
+  Escher::Init(GlobalPreferences::SharedGlobalPreferences());
+
   ::AppsContainerStorage::sharedAppsContainerStorage.init();
 }
 

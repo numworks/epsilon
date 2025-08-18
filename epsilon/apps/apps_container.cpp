@@ -5,7 +5,6 @@
 #include <omg/unreachable.h>
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
-#include <poincare/init.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 
 #include "apps_container_storage.h"
@@ -118,7 +117,7 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
 }
 
 Shared::GlobalContext* AppsContainer::globalContext() {
-  return &m_globalContext;
+  return GlobalContextAccessor::GlobalContext();
 }
 
 void AppsContainer::didSuspend() {
@@ -417,7 +416,7 @@ bool AppsContainer::storageCanChangeForRecordName(
 
 void AppsContainer::storageDidChangeForRecord(
     const Ion::Storage::Record record) {
-  m_globalContext.storageDidChangeForRecord(record);
+  GlobalContextAccessor::GlobalContext()->storageDidChangeForRecord(record);
   if (activeApp()) {
     activeApp()->storageDidChangeForRecord(record);
   }

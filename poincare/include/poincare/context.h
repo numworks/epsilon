@@ -30,6 +30,10 @@ class Context {
     return NAN;
   }
 
+  static inline void Init(Context* globalContext) {
+    GlobalContext = globalContext;
+  }
+
   // TODO: remove, only a static SequenceContext may still be needed
   static inline Context* GlobalContext = nullptr;
 };

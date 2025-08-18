@@ -41,18 +41,13 @@ class GlobalContext final : public Poincare::VariableStore {
   static void DeleteParametricComponentsOfRecord(Ion::Storage::Record record);
   static void StoreParametricComponentsOfRecord(Ion::Storage::Record record);
 
-  GlobalContext() : m_sequenceContext(this, s_sequenceStore) {
-    // GlobalContext expects to have a single instance at a time
-    assert(Poincare::Context::GlobalContext == nullptr);
-    Poincare::Context::GlobalContext = this;
-  };
+  GlobalContext() : m_sequenceContext(this, s_sequenceStore){};
 
   ~GlobalContext() {
     // Destroy all static cache and stores
     s_sequenceStore->removeAll();
     s_sequenceCache->resetCache();
     s_continuousFunctionStore->removeAll();
-    Poincare::Context::GlobalContext = nullptr;
   }
 
   /* Expression for symbol
@@ -96,6 +91,18 @@ class GlobalContext final : public Poincare::VariableStore {
   double approximateSequenceAtRank(const char* identifier,
                                    int rank) const override;
   SequenceContext m_sequenceContext;
+};
+
+class GlobalContextAccessor {
+ public:
+  static inline Shared::GlobalContext* GlobalContext() {
+    return s_globalContext.get();
+  }
+
+  static inline void Init() { s_globalContext.init(); }
+
+ private:
+  static inline OMG::GlobalBox<Shared::GlobalContext> s_globalContext;
 };
 
 }  // namespace Shared

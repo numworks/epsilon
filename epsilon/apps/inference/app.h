@@ -106,7 +106,7 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
   }
 
  private:
-  App(Snapshot* snapshot, Poincare::Context* parentContext);
+  App(Snapshot* snapshot);
   Snapshot* snapshot() const {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }

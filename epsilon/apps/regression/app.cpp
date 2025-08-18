@@ -50,9 +50,7 @@ App::Snapshot::Snapshot()
 }
 
 App* App::Snapshot::unpack(Container* container) {
-  // TEMPORARY: App does not need a Context* in its constructor
-  return new (container->currentAppBuffer())
-      App(this, &GlobalContextAccessor::Store());
+  return new (container->currentAppBuffer()) App(this);
 }
 
 void App::Snapshot::reset() {
@@ -68,8 +66,10 @@ const App::Descriptor* App::Snapshot::descriptor() const {
 }
 
 App::StoreTab::StoreTab()
-    : m_storeController(&m_storeHeader, &app()->m_store, &m_storeHeader,
-                        app()->m_context),
+    : m_storeController(
+          &m_storeHeader, &app()->m_store, &m_storeHeader,
+          // TEMPORARY: StoreController doesn't need a Context param
+          &GlobalContextAccessor::Store()),
       m_storeHeader(&m_storeStackViewController, &m_storeController,
                     &m_storeController),
       m_storeStackViewController(
@@ -102,7 +102,7 @@ App::CalculationTab::CalculationTab()
                           &m_calculationAlternateEmptyViewController,
                           &m_calculationController) {}
 
-App::App(Snapshot* snapshot, Poincare::Context* parentContext)
+App::App(Snapshot* snapshot)
     : StoreApp(snapshot, &m_inputViewController),
       /* TEMPORARY: GlobalStore does not need to be passed in successive
      constructors, only access the static instance where it is needed (in
@@ -112,7 +112,6 @@ App::App(Snapshot* snapshot, Poincare::Context* parentContext)
       m_regressionController(nullptr, &m_store),
       m_inputViewController(&m_modalViewController, &m_tabViewController,
                             MathLayoutFieldDelegate::Default()),
-      m_context(parentContext),
       m_tabViewController(&m_inputViewController, snapshot, &m_tabs) {}
 
 }  // namespace Regression

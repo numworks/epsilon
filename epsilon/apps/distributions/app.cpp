@@ -14,12 +14,10 @@ const Escher::Image* App::Descriptor::icon() const {
 }
 
 App* App::Snapshot::unpack(Container* container) {
-  // TEMPORARY: App does not need a Context* in its constructor
-  return new (container->currentAppBuffer())
-      App(this, &Shared::GlobalContextAccessor::Store());
+  return new (container->currentAppBuffer()) App(this);
 }
 
-App::App(Snapshot* snapshot, Poincare::Context* parentContext)
+App::App(Snapshot* snapshot)
     : MathApp(snapshot, &m_stackViewController),
       m_calculationController(&m_stackViewController, snapshot->distribution(),
                               snapshot->calculation()),

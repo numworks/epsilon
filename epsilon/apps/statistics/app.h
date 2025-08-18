@@ -70,7 +70,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   }
 
  private:
-  App(Snapshot* snapshot, Poincare::Context* parentContext);
+  App(Snapshot* snapshot);
   int activeViewControllerIndex() const override {
     return GraphViewModel::IndexOfGraphView(
         snapshot()->graphViewModel()->selectedGraphView());
@@ -130,7 +130,6 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   };
 
   Store m_store;
-  Poincare::Context* m_context;
   Escher::InputViewController m_inputViewController;
   Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_tabs;
   Escher::TabUnionViewController m_tabViewController;

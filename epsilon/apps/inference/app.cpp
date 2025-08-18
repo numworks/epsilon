@@ -19,12 +19,10 @@ const Escher::Image* App::Descriptor::icon() const {
 
 App* App::Snapshot::unpack(Container* container) {
   inference()->init();
-  // TEMPORARY: App does not need a Context* in its constructor
-  return new (container->currentAppBuffer())
-      App(this, &Shared::GlobalContextAccessor::Store());
+  return new (container->currentAppBuffer()) App(this);
 }
 
-App::App(Snapshot* snapshot, Poincare::Context* parentContext)
+App::App(Snapshot* snapshot)
     : MathApp(snapshot, &m_inputViewController),
       m_testGraphController(
           &m_stackViewController,
@@ -45,11 +43,14 @@ App::App(Snapshot* snapshot, Poincare::Context* parentContext)
       m_inputGoodnessController(
           &m_stackViewController, &m_goodnessResultsController,
           static_cast<GoodnessTest*>(snapshot->inference())),
+      // TEMPORARY: InputStoreController does not need to pass a context in its
+      // constructor
       m_inputStoreController1(&m_stackViewController, &m_resultsController, 0,
                               &m_inputStoreController2, snapshot->inference(),
-                              parentContext),
+                              &Shared::GlobalContextAccessor::Store()),
       m_inputStoreController2(&m_stackViewController, &m_resultsController, 1,
-                              nullptr, snapshot->inference(), parentContext),
+                              nullptr, snapshot->inference(),
+                              &Shared::GlobalContextAccessor::Store()),
       m_resultsController(&m_stackViewController, snapshot->inference(),
                           &m_testGraphController, &m_intervalGraphController),
       m_inputController(&m_stackViewController, &m_resultsController,

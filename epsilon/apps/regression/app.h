@@ -68,7 +68,7 @@ class App : public Shared::StoreApp {
   }
 
  private:
-  App(Snapshot* snapshot, Poincare::Context* parentContext);
+  App(Snapshot* snapshot);
 
   struct StoreTab : public Escher::Tab {
     StoreTab();
@@ -104,7 +104,6 @@ class App : public Shared::StoreApp {
   Store m_store;
   RegressionController m_regressionController;
   Escher::InputViewController m_inputViewController;
-  Poincare::Context* m_context;
   Escher::TabUnion<StoreTab, GraphTab, CalculationTab> m_tabs;
   Escher::TabUnionViewController m_tabViewController;
 };

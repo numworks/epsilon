@@ -42,7 +42,8 @@ class GraphController : public Shared::FunctionGraphController,
       bool computeX, bool computeY,
       Poincare::Range2D<float> originalRange) const override {
     return OptimalRange(computeX, computeY, originalRange, functionStore(),
-                        defaultRangeIsNormalized());
+                        m_graphRange->gridType() ==
+                            Shared::InteractiveCurveViewRange::GridType::Polar);
   }
   static Poincare::Range2D<float> OptimalRange(
       bool computeX, bool computeY, Poincare::Range2D<float> originalRange,
@@ -141,11 +142,6 @@ class GraphController : public Shared::FunctionGraphController,
       const Poincare::Context& context,
       bool cappedNumberOfSignificantDigits = false) override;
 
-  bool defaultRangeIsNormalized() const {
-    return functionStore()->displaysFunctionsToNormalize() ||
-           m_graphRange->gridType() ==
-               Shared::InteractiveCurveViewRange::GridType::Polar;
-  }
   void interestingFunctionRange(
       OMG::ExpiringPointer<Shared::ContinuousFunction> f, float tMin,
       float tMax, float step, float* xm, float* xM, float* ym, float* yM) const;

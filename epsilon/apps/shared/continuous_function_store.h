@@ -28,7 +28,6 @@ class ContinuousFunctionStore : public FunctionStore {
   // Remove all functions and memoized functions.
   void removeAll() override;
   bool displaysOnlyCartesianFunctions(int* nbActiveFunctions = nullptr) const;
-  bool displaysFunctionsToNormalize(int* nbActiveFunctions = nullptr) const;
   int numberOfActiveFunctionsInTableOfSymbolType(
       ContinuousFunctionProperties::SymbolType symbolType) const {
     return numberOfModelsSatisfyingTest(&IsFunctionActiveInTableOfSymbolType,

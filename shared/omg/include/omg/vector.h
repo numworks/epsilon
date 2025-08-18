@@ -4,6 +4,8 @@
 #include <assert.h>
 #include <stddef.h>
 
+#include <span>
+
 /* The StaticVector class is a simple static array that can hold up to a max
  * number of elements and tracks its current size.
  * It's partly inspired by boost's static_vector class:
@@ -74,6 +76,10 @@ class StaticVector : public AbstractStaticVector<T> {
 
   size_t capacity() const { return CAPACITY; }
   bool isFull() const { return this->m_size == CAPACITY; }
+  std::span<const T> span() const {
+    return std::span<const T>(this->m_data, this->size());
+  }
+  std::span<T> span() { return std::span<T>(this->m_data, this->size()); }
 
  protected:
   T m_data[CAPACITY];

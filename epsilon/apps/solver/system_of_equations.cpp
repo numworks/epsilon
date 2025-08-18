@@ -27,16 +27,13 @@ using namespace Shared;
 namespace Solver {
 
 UserExpression equationList(const EquationStore* store) {
-  Internal::Tree* equationList = Internal::List::PushEmpty();
-  int nEquations = store->numberOfDefinedModels();
-  for (int i = 0; i < nEquations; i++) {
-    OMG::ExpiringPointer<Equation> equation =
-        store->modelForRecord(store->definedRecordAtIndex(i));
-    Poincare::Expression equationExpression = equation->expressionClone();
-    Internal::NAry::AddChild(equationList,
-                             equationExpression.tree()->cloneTree());
+  OMG::StaticVector<UserExpression, EquationStore::k_maxNumberOfEquations>
+      expressions;
+  int nb = store->numberOfDefinedModels();
+  for (int i = 0; i < nb; i++) {
+    expressions.push(store->cloneExpressionOfEquationAtIndex(i));
   }
-  return UserExpression::Builder(equationList);
+  return UserExpression::BuildListOfExpressions(expressions.span());
 }
 
 SystemOfEquations::Error SystemOfEquations::exactSolve(

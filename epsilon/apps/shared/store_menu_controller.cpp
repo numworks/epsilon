@@ -8,6 +8,7 @@
 #include <poincare/variable_store.h>
 
 #include "app_with_store_menu.h"
+#include "global_context.h"
 
 using namespace Poincare;
 using namespace Escher;
@@ -130,9 +131,8 @@ void StoreMenuController::openAbortWarning() {
 
 bool StoreMenuController::store(Layout layout) {
   AppWithStoreMenu* app = static_cast<AppWithStoreMenu*>(App::app());
-  VariableStore* variableStore = app->localContext();
-  assert(variableStore);
-  UserExpression input = UserExpression::Parse(layout, *variableStore);
+  UserExpression input =
+      UserExpression::Parse(layout, GlobalContextAccessor::Context());
   if (input.isUninitialized() || !input.isStore()) {
     openAbortWarning();
     return false;
@@ -141,7 +141,8 @@ bool StoreMenuController::store(Layout layout) {
   UserExpression symbol = StoreHelper::Symbol(input);
   close();
   app->prepareForIntrusiveStorageChange();
-  bool stored = StoreHelper::StoreValueForSymbol(*variableStore, value, symbol);
+  bool stored = StoreHelper::StoreValueForSymbol(GlobalContextAccessor::Store(),
+                                                 value, symbol);
   app->concludeIntrusiveStorageChange();
   if (!stored) {
     /* TODO: we could detect this before the close and open the warning over the

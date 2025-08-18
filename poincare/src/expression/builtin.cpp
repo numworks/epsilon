@@ -180,22 +180,14 @@ const Builtin* Builtin::GetSpecialIdentifier(LayoutSpan name) {
 
 const Builtin* Builtin::GetSpecialIdentifier(
     Type type, Preferences::TranslateBuiltins translate) {
-  switch (type) {
-    case Type::UndefZeroPowerZero:
-    case Type::UndefZeroDivision:
-    case Type::UndefBoolean:
-    case Type::UndefUnit:
-    case Type::UndefUnhandled:
-    case Type::UndefUnhandledDimension:
-    case Type::UndefBadType:
-    case Type::UndefOutOfDefinition:
-    case Type::UndefNotDefined:
-    case Type::UndefForbidden:
-    case Type::UndefFailedSimplification:
-#if !POINCARE_COMPLEX_BUILTINS
-    case Type::NonReal:
+  if (TypeBlock::IsUndefined(type) && type != Type::Undef
+#if POINCARE_COMPLEX_BUILTINS
+      && type != Type::NonReal
 #endif
-      return GetSpecialIdentifier(Type::Undef, translate);
+  ) {
+    // If the type is undefined, we return the Undef special identifier.
+    // This is useful for the parser to handle undefined expressions.
+    return GetSpecialIdentifier(Type::Undef, translate);
   }
   for (const Builtin& builtin : s_specialIdentifiers) {
     if (builtin.m_type == type) {

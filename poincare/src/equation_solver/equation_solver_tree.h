@@ -2,6 +2,8 @@
 #define POINCARE_EXPRESSION_EQUATION_SOLVER_H
 
 #include <poincare/equation_solver/equation_solver_properties.h>
+#include <poincare/src/expression/projection.h>
+#include <poincare/src/memory/tree_ref.h>
 
 namespace Poincare::Internal {
 

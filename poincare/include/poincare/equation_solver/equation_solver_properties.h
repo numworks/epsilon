@@ -5,9 +5,8 @@
 #include <omg/vector.h>
 #include <poincare/helpers/polynomial.h>
 #include <poincare/helpers/symbol.h>
+#include <poincare/preferences.h>
 #include <poincare/range.h>
-#include <poincare/src/expression/projection.h>
-#include <poincare/src/memory/tree.h>
 
 /* This file is used by equation_solver_pool and equation_solver_tree.
  * It's splitted to ensure Scandium can use it without including expression.h */
@@ -79,7 +78,8 @@ struct EquationMetadata {
   // If true, definedVariables are included in unknownVariables.
   bool overrideDefinedVariables = false;
   // Complex format used for projection
-  Internal::ComplexFormat complexFormat = Internal::ComplexFormat::Cartesian;
+  Preferences::ComplexFormat complexFormat =
+      Preferences::ComplexFormat::Cartesian;
 };
 
 struct SolutionMetadata {

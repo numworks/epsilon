@@ -110,7 +110,7 @@ const Internal::Tree* GlobalContext::expressionForUserNamed(
     const Internal::Tree* symbol) const {
   assert(symbol->isUserSymbol() || symbol->isUserFunction());
   Ion::Storage::Record r =
-      UserNamedRecordWithBaseName(Internal::Symbol::GetName(symbol));
+      UserNamedRecordWithBaseName(SymbolHelper::GetName(symbol));
   return expressionForSymbolAndRecord(symbol, r);
 }
 

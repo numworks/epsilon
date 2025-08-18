@@ -33,6 +33,10 @@ const char* SymbolHelper::GetName(Expression e) {
   return Internal::Symbol::GetName(e.tree());
 }
 
+const char* SymbolHelper::GetName(const Tree* e) {
+  return Internal::Symbol::GetName(e);
+}
+
 size_t SymbolHelper::NameWithoutQuotationMarks(char* buffer, size_t bufferSize,
                                                const char* name,
                                                size_t nameLength) {

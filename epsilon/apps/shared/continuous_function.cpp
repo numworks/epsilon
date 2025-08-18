@@ -445,7 +445,7 @@ SystemExpression ContinuousFunction::sumBetweenBounds(
   assert(properties().isCartesian());
   // KUnknownSymbol is the variable used in the grapher app
   return Poincare::IntegralBetweenBounds(
-      expressionReduced(context), Internal::Symbol::GetName(KUnknownSymbol),
+      expressionReduced(context), SymbolHelper::GetName(KUnknownSymbol),
       SystemExpression::Builder(std::max<double>(start, tMin())),
       SystemExpression::Builder(std::min<double>(end, tMax())));
 }

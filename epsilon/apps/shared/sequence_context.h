@@ -3,7 +3,6 @@
 
 #include <poincare/context_with_parent.h>
 #include <poincare/expression.h>
-#include <poincare/variable_store.h>
 
 #include "sequence_cache.h"
 #include "sequence_store.h"
@@ -12,11 +11,11 @@ namespace Shared {
 
 class Sequence;
 
-class SequenceContext final : public Poincare::VariableStore {
+class SequenceContext final : public Poincare::ContextWithParent {
   friend class Sequence;
 
  public:
-  SequenceContext(Poincare::VariableStore* parentStore,
+  SequenceContext(const Poincare::Context* parentContext,
                   SequenceStore* sequenceStore);
 
   // Context
@@ -30,27 +29,6 @@ class SequenceContext final : public Poincare::VariableStore {
    * expressionForUserNamed) always call the parent context. */
   Poincare::Context::UserNamedType expressionTypeForIdentifier(
       const char* identifier, int length) const override;
-
-  const Poincare::Internal::Tree* expressionForUserNamed(
-      const Poincare::Internal::Tree* symbol) const override {
-    assert(m_parentStore);
-    return m_parentStore->expressionForUserNamed(symbol);
-  }
-
-  double approximateSequenceAtRank(const char* identifier,
-                                   int rank) const override {
-    assert(m_parentStore);
-    return m_parentStore->approximateSequenceAtRank(identifier, rank);
-  }
-
-  // VariableStore
-
-  bool setExpressionForUserNamed(
-      const Poincare::Internal::Tree* expression,
-      const Poincare::Internal::Tree* symbol) override {
-    assert(m_parentStore);
-    return m_parentStore->setExpressionForUserNamed(expression, symbol);
-  }
 
   // SequenceContext
 
@@ -66,7 +44,6 @@ class SequenceContext final : public Poincare::VariableStore {
 
   SequenceCache* cache() const;
 
-  VariableStore* m_parentStore;
   SequenceStore* m_sequenceStore;
 };
 

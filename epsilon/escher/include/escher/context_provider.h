@@ -2,14 +2,13 @@
 #define ESCHER_CONTEXT_PROVIDER_H
 
 #include <escher/container.h>
-#include <poincare/variable_store.h>
+#include <poincare/context.h>
 
 namespace Escher {
 
 class ContextProvider {
  public:
-  // TODO: rename method
-  Poincare::VariableStore* context() const {
+  Poincare::Context* context() const {
     assert(Escher::App::app());
     return Escher::App::app()->localContext();
   }

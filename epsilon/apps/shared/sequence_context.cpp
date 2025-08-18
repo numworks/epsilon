@@ -9,16 +9,15 @@
 #include <array>
 #include <cmath>
 
-#include "poincare/variable_store.h"
 #include "sequence_store.h"
 
 using namespace Poincare;
 
 namespace Shared {
 
-SequenceContext::SequenceContext(VariableStore* parentStore,
+SequenceContext::SequenceContext(const Context* parentContext,
                                  SequenceStore* sequenceStore)
-    : m_parentStore(parentStore), m_sequenceStore(sequenceStore) {}
+    : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
 Context::UserNamedType SequenceContext::expressionTypeForIdentifier(
     const char* identifier, int length) const {
@@ -29,8 +28,7 @@ Context::UserNamedType SequenceContext::expressionTypeForIdentifier(
       return Context::UserNamedType::Sequence;
     }
   }
-  assert(m_parentStore);
-  return m_parentStore->expressionTypeForIdentifier(identifier, length);
+  return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
 Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {

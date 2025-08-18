@@ -2,7 +2,7 @@
 
 #include <apps/apps_container_helper.h>
 #include <apps/shared/global_context.h>
-#include <poincare/variable_store.h>
+#include <poincare/context.h>
 
 #include "../apps_container.h"
 
@@ -30,7 +30,8 @@ void SharedApp::Snapshot::reset() { GlobalContextAccessor::Store().reset(); }
 SharedApp::SharedApp(Snapshot* snapshot, ViewController* rootViewController)
     : ::App(snapshot, rootViewController) {}
 
-VariableStore* SharedApp::localContext() {
+Context* SharedApp::localContext() {
+  // TEMPORARY: will return GlobalContextAccessor::Context()
   return &GlobalContextAccessor::Store();
 }
 

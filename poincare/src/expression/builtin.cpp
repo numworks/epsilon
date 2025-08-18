@@ -18,18 +18,17 @@ constexpr static Aliases s_customIdentifiers[] = {
 };
 
 constexpr static Builtin s_specialIdentifiers[] = {
-    {Type::Undef, BuiltinsAliases::k_undefinedAlias} BUILTIN_TRANSLATION(
-        Type::Undef, "indéfini"),
+    BUILTIN_TRANSLATIONS(Type::Undef, BuiltinsAliases::k_undefinedAlias,
+                         "indéfini"),
 #if POINCARE_COMPLEX_BUILTINS
     {Type::NonReal, "nonreal"},
 #endif
     {Type::ComplexI, "i"},
     {Type::Inf, BuiltinsAliases::k_infinityAliases},
 #if POINCARE_BOOLEAN
-    {Type::False, "\01False\00false\00"} BUILTIN_TRANSLATION(
-        Type::False, "\01Faux\00faux\00"),
-    {Type::True, "\01True\00true\00"} BUILTIN_TRANSLATION(Type::True,
-                                                          "\01Vrai\00vrai\00"),
+    BUILTIN_TRANSLATIONS(Type::False, "\01False\00false\00",
+                         "\01Faux\00faux\00"),
+    BUILTIN_TRANSLATIONS(Type::True, "\01True\00true\00", "\01Vrai\00vrai\00"),
 #endif
     {Type::Pi, BuiltinsAliases::k_piAliases},
     {Type::EulerE, "e"},

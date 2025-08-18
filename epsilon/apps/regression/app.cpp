@@ -7,6 +7,7 @@
 #include <array>
 
 #include "regression_icon.h"
+#include "shared/global_context.h"
 
 using namespace Shared;
 using namespace Escher;
@@ -49,8 +50,9 @@ App::Snapshot::Snapshot()
 }
 
 App* App::Snapshot::unpack(Container* container) {
+  // TEMPORARY: App does not need a Context* in its constructor
   return new (container->currentAppBuffer())
-      App(this, static_cast<AppsContainer*>(container)->globalContext());
+      App(this, &GlobalContextAccessor::Store());
 }
 
 void App::Snapshot::reset() {
@@ -102,8 +104,11 @@ App::CalculationTab::CalculationTab()
 
 App::App(Snapshot* snapshot, Poincare::Context* parentContext)
     : StoreApp(snapshot, &m_inputViewController),
-      m_store(AppsContainerHelper::sharedAppsContainerGlobalContext(),
-              snapshot->storePreferences(), snapshot->regressionTypes()),
+      /* TEMPORARY: GlobalStore does not need to be passed in successive
+     constructors, only access the static instance where it is needed (in
+     DoublePairStore) */
+      m_store(&GlobalContextAccessor::Store(), snapshot->storePreferences(),
+              snapshot->regressionTypes()),
       m_regressionController(nullptr, &m_store),
       m_inputViewController(&m_modalViewController, &m_tabViewController,
                             MathLayoutFieldDelegate::Default()),

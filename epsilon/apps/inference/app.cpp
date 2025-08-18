@@ -7,6 +7,7 @@
 #include "images/significance_test.h"
 #include "inference_icon.h"
 #include "models/homogeneity_test.h"
+#include "shared/global_context.h"
 
 using namespace Escher;
 
@@ -18,8 +19,9 @@ const Escher::Image* App::Descriptor::icon() const {
 
 App* App::Snapshot::unpack(Container* container) {
   inference()->init();
+  // TEMPORARY: App does not need a Context* in its constructor
   return new (container->currentAppBuffer())
-      App(this, static_cast<AppsContainer*>(container)->globalContext());
+      App(this, &Shared::GlobalContextAccessor::Store());
 }
 
 App::App(Snapshot* snapshot, Poincare::Context* parentContext)

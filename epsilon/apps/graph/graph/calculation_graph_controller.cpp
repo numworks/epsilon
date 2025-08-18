@@ -4,6 +4,7 @@
 #include <escher/clipboard.h>
 
 #include "../app.h"
+#include "shared/global_context.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -94,9 +95,9 @@ void CalculationGraphController::setRecord(Ion::Storage::Record record) {
 }
 
 void CalculationGraphController::reloadBannerView() {
-  reloadBannerViewForCursorOnFunction(
-      m_cursor->t(), m_cursor->x(), m_cursor->y(), m_record, functionStore(),
-      *AppsContainerHelper::sharedAppsContainerGlobalContext());
+  reloadBannerViewForCursorOnFunction(m_cursor->t(), m_cursor->x(),
+                                      m_cursor->y(), m_record, functionStore(),
+                                      Shared::GlobalContextAccessor::Context());
 }
 
 Coordinate2D<double>

@@ -1,3 +1,4 @@
+#include <apps/shared/global_context.h>
 #include <quiz.h>
 
 #include "helpers.h"

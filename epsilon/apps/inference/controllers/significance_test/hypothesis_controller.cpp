@@ -73,8 +73,7 @@ bool HypothesisController::textFieldDidFinishEditing(
     Escher::AbstractTextField* textField, Ion::Events::Event event) {
   double h0 =
       Poincare::Expression::ParseAndSimplifyAndApproximateToRealScalar<double>(
-          textField->draftText(),
-          *AppsContainerHelper::sharedAppsContainerGlobalContext(),
+          textField->draftText(), Shared::GlobalContextAccessor::Context(),
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
           GlobalPreferences::SharedGlobalPreferences()->angleUnit());
   // Check

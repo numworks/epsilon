@@ -19,7 +19,10 @@
 namespace Inference {
 
 static Shared::GlobalContext* getContext() {
-  return AppsContainerHelper::sharedAppsContainerGlobalContext();
+  /* TEMPORARY: Statistics tests do not need a Context* at all in their
+   * constructor, it will simplify constructor signatures to just access the
+   * Shared::GlobalContextAccessor::Store() where it is needed. */
+  return &Shared::GlobalContextAccessor::Store();
 }
 
 static void* initialize(SubApp subApp, Poincare::Inference::Type type,

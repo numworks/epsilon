@@ -11,6 +11,7 @@
 #include "exam_mode_manager.h"
 #include "global_preferences.h"
 #include "on_boarding/startup_prompt_controller.h"
+#include "shared/global_context.h"
 #include "shared/record_restrictive_extensions_helper.h"
 
 extern "C" {
@@ -114,10 +115,6 @@ void AppsContainer::setExamMode(Poincare::ExamMode targetExamMode,
   }
 
   refreshPreferences();
-}
-
-Shared::GlobalContext* AppsContainer::globalContext() {
-  return GlobalContextAccessor::GlobalContext();
 }
 
 void AppsContainer::didSuspend() {
@@ -242,7 +239,7 @@ void AppsContainer::switchToBuiltinApp(App::Snapshot* snapshot) {
   }
   if (snapshot) {
     m_window.setTitle(snapshot->descriptor()->upperName());
-    globalContext()->prepareForNewApp();
+    GlobalContextAccessor::Store().prepareForNewApp();
   }
   return Container::switchToBuiltinApp(snapshot);
 }
@@ -416,7 +413,7 @@ bool AppsContainer::storageCanChangeForRecordName(
 
 void AppsContainer::storageDidChangeForRecord(
     const Ion::Storage::Record record) {
-  GlobalContextAccessor::GlobalContext()->storageDidChangeForRecord(record);
+  GlobalContextAccessor::Store().storageDidChangeForRecord(record);
   if (activeApp()) {
     activeApp()->storageDidChangeForRecord(record);
   }

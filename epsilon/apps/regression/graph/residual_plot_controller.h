@@ -4,6 +4,7 @@
 #include <apps/apps_container_helper.h>
 #include <apps/i18n.h>
 #include <apps/shared/curve_view_cursor.h>
+#include <apps/shared/global_context.h>
 #include <apps/shared/memoized_curve_view_range.h>
 #include <apps/shared/round_cursor_view.h>
 #include <escher/view_controller.h>
@@ -23,8 +24,7 @@ class ResidualPlotController : public Escher::ViewController {
   }
   double yAtIndex(int index) const {
     return m_store->residualAtIndexForSeries(
-        m_selectedSeriesIndex, index,
-        *AppsContainerHelper::sharedAppsContainerGlobalContext());
+        m_selectedSeriesIndex, index, Shared::GlobalContextAccessor::Context());
   }
   KDColor selectedSeriesColor() const {
     return Store::colorOfSeriesAtIndex(m_selectedSeriesIndex);

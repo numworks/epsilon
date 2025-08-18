@@ -71,8 +71,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       .m_complexFormat =
           GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
-      .m_symbolic =
-          Poincare::Internal::SymbolicComputation::ReplaceDefinedSymbols,
+      .m_symbolic = Poincare::SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = App::app()->localContext()};
   Poincare::SystemExpression reducedFunction =
       function.cloneAndReduce(projCtx, &reductionFailure);

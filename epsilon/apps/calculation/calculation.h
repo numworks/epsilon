@@ -160,8 +160,8 @@ class Calculation {
 
   static EqualSign ComputeEqualSignFromOutputs(
       const OutputLayouts& outputLayouts,
-      Poincare::Internal::ComplexFormat complexFormat,
-      Poincare::Internal::AngleUnit angleUnit,
+      Poincare::Preferences::ComplexFormat complexFormat,
+      Poincare::Preferences::AngleUnit angleUnit,
       const Poincare::Context& context);
 
   void forceDisplayOutput(DisplayOutput d) { m_displayOutput = d; }

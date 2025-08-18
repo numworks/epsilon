@@ -278,8 +278,9 @@ Calculation::DisplayOutput Calculation::ComputeDisplayOutput(
 
 Calculation::EqualSign Calculation::ComputeEqualSignFromOutputs(
     const OutputLayouts& outputLayouts,
-    Poincare::Internal::ComplexFormat complexFormat,
-    Poincare::Internal::AngleUnit angleUnit, const Poincare::Context& context) {
+    Poincare::Preferences::ComplexFormat complexFormat,
+    Poincare::Preferences::AngleUnit angleUnit,
+    const Poincare::Context& context) {
   /* Displaying the right equal symbol is less important than displaying a
    * result, so we do not want computeEqualSign to create a pool failure that
    * would prevent from displaying a result that we managed to compute. We thus

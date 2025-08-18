@@ -19,6 +19,9 @@ class Range1D {
   constexpr static T k_maxFloat = sizeof(T) == sizeof(float) ? 1e35f : 1e300;
   constexpr static T k_minLength = sizeof(T) == sizeof(float) ? 1e-4f : 1e-30;
 
+  constexpr static Range1D<T> FromHalfLength(T halfLength) {
+    return Range1D<T>(-halfLength, halfLength);
+  }
   static T DefaultLengthAt(T t) {
     return std::max(
         std::pow(static_cast<T>(10.),
@@ -80,6 +83,10 @@ class Range2D {
   constexpr Range2D(Range1D<T> x, Range1D<T> y) : m_x(x), m_y(y) {}
   constexpr Range2D(T xMin = NAN, T xMax = NAN, T yMin = NAN, T yMax = NAN)
       : Range2D<T>(Range1D<T>(xMin, xMax), Range1D<T>(yMin, yMax)) {}
+  constexpr static Range2D<T> FromHalfLength(T halfLength) {
+    return Range2D<T>(Range1D<T>::FromHalfLength(halfLength),
+                      Range1D<T>::FromHalfLength(halfLength));
+  }
 
   bool operator!=(const Range2D& other) const {
     return m_x != other.m_x || m_y != other.m_y;

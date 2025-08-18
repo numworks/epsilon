@@ -45,6 +45,10 @@ class MemoizedCurveViewRange : public CurveViewRange {
     setYRange(range.min(), range.max());
   }
 
+  constexpr static Poincare::Range2D<float> k_defaultRange =
+      Poincare::Range2D<float>::FromHalfLength(
+          Poincare::Range1D<float>::k_defaultHalfLength);
+
  protected:
   Poincare::Range2D<float> memoizedRange() const { return m_range; }
   virtual Poincare::ExpressionOrFloat computeGridUnit(OMG::Axis axis) {

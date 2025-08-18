@@ -103,8 +103,8 @@ Range2D<float> GraphController::optimalRange(
   if (store->memoizationOverflows()) {
     /* Do not compute autozoom if store is full because the computation is too
      * slow. */
-    Range1D<float> xRange(-Range1D<float>::k_defaultHalfLength,
-                          Range1D<float>::k_defaultHalfLength);
+    Range1D<float> xRange =
+        Range1D<float>::FromHalfLength(Range1D<float>::k_defaultHalfLength);
     Range2D<float> defaultRange(xRange, xRange);
     defaultRange.setRatio(InteractiveCurveViewRange::NormalYXRatio(), true,
                           k_maxFloat);

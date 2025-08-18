@@ -3,7 +3,7 @@
 
 #include <escher/app.h>
 #include <escher/nested_menu_controller.h>
-#include <poincare/variable_store.h>
+#include <poincare/context.h>
 
 namespace Shared {
 
@@ -14,7 +14,7 @@ class SharedApp : public Escher::App {
     void tidy() override;
     void reset() override;
   };
-  Poincare::VariableStore* localContext() override;
+  Poincare::Context* localContext() override;
 
  protected:
   SharedApp(Snapshot* snapshot, Escher::ViewController* rootViewController);

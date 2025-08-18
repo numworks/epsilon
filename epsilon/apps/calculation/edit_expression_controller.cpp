@@ -1,14 +1,14 @@
 #include "edit_expression_controller.h"
 
 #include <apps/global_preferences.h>
+#include <apps/shared/global_context.h>
 #include <assert.h>
 #include <ion/display.h>
+#include <poincare/context.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/preferences.h>
-#include <poincare/variable_store.h>
 
 #include "app.h"
-#include "poincare/context.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -135,10 +135,9 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
     ::LayoutField* layoutField, Ion::Events::Event event) {
   assert(!layoutField->isEditing());
   assert(m_contentView.layoutField() == layoutField);
-  assert(&layoutField->context() == context());
-  VariableStore& variableStore = *this->context();
+  assert(&layoutField->context() == &GlobalContextAccessor::Context());
   PoolVariableContext ansContext =
-      m_calculationStore->createAnsContext(variableStore);
+      m_calculationStore->createAnsContext(GlobalContextAccessor::Context());
   if (!layoutField->isEmpty()) {
     m_lastInput = layoutField->layout().clone();
   }
@@ -153,9 +152,11 @@ bool EditExpressionController::layoutFieldDidFinishEditing(
   assert(!layout.isUninitialized());
   // TODO layout is parsed twice : in isAcceptableLayout and in push
   Calculation* calculation =
-      m_calculationStore->push(layout, variableStore).pointer();
+      m_calculationStore->push(layout, GlobalContextAccessor::Store())
+          .pointer();
   if (calculation) {
-    HistoryViewCell::ComputeCalculationHeights(calculation, variableStore);
+    HistoryViewCell::ComputeCalculationHeights(
+        calculation, GlobalContextAccessor::Context());
     m_historyController->reload(false);
     layoutField->clearAndSetEditing(true);
     return true;

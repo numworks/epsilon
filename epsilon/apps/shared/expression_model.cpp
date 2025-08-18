@@ -6,6 +6,7 @@
 #include <omg/utf8_helper.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <string.h>

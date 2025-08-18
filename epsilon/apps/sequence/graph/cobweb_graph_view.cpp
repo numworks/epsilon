@@ -9,6 +9,7 @@
 #include <omg/code_point.h>
 #include <poincare/coordinate_2D.h>
 #include <poincare/expression.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
 #include <poincare/preferences.h>
 #include <poincare/print.h>

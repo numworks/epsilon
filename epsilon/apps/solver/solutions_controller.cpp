@@ -3,6 +3,7 @@
 #include <apps/shared/poincare_helpers.h>
 #include <assert.h>
 #include <omg/print.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/preferences.h>

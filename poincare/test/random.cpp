@@ -1,6 +1,7 @@
 #include <apps/shared/global_context.h>
 #include <float.h>
 #include <omg/float.h>
+#include <poincare/k_tree.h>
 #include <poincare/src/expression/approximation.h>
 
 #include "helper.h"

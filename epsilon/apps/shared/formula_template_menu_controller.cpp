@@ -2,6 +2,7 @@
 
 #include <ion/storage/record.h>
 #include <poincare/context.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
 #include <poincare/print.h>
 

@@ -108,7 +108,8 @@ $(addprefix helpers/, \
   scatter_plot_iterable.cpp:-nopool \
   sequence.cpp:-nopool \
   store.cpp:-nopool \
-  symbol.cpp:-nopool \
+  symbol.cpp: \
+  symbol_pool.cpp:-nopool \
   trigonometry.cpp:-nopool \
 ) \
 $(addprefix layout/, \

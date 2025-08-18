@@ -4,9 +4,9 @@
 #include <assert.h>
 #include <omg/vector.h>
 #include <poincare/helpers/polynomial.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/range.h>
 #include <poincare/src/expression/projection.h>
-#include <poincare/src/expression/symbol.h>
 #include <poincare/src/memory/tree.h>
 
 /* This file is used by equation_solver_pool and equation_solver_tree.
@@ -22,9 +22,7 @@ constexpr static size_t k_maxNumberOfExactSolutions =
              // +1 for delta
              PolynomialHelpers::k_maxSolvableDegree + 1);
 
-/* TODO: This cannot be extracted from SymbolHelper because it includes
- * expression.h, which cannot be included in Scandium */
-constexpr static size_t k_maxVariableSize = Internal::Symbol::k_maxNameSize;
+constexpr static size_t k_maxVariableSize = SymbolHelper::k_maxNameSize;
 
 class VariableArray : public OMG::StaticVector<char[k_maxVariableSize],
                                                k_maxNumberOfVariables> {
@@ -40,7 +38,7 @@ class VariableArray : public OMG::StaticVector<char[k_maxVariableSize],
     assert(list->isList() && list->numberOfChildren() <= capacity());
     clear();
     for (const Internal::Tree* variable : list->children()) {
-      push(Internal::Symbol::GetName(variable));
+      push(SymbolHelper::GetName(variable));
     }
   }
 

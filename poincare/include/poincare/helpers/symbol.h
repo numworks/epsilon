@@ -1,40 +1,27 @@
 #ifndef POINCARE_HELPERS_SYMBOL_H
 #define POINCARE_HELPERS_SYMBOL_H
 
-#include <poincare/expression.h>
-#include <poincare/src/expression/symbol.h>
+#include <poincare/src/memory/tree.h>
+#include <stddef.h>
 
-namespace Poincare {
+namespace Poincare::SymbolHelper {
 
-namespace SymbolHelper {
-using Internal::Symbol::k_maxNameLength;
-using Internal::Symbol::k_maxNameLengthWithoutQuotationMarks;
-using Internal::Symbol::k_maxNameSize;
-using Internal::Symbol::NameHasQuotationMarks;
-using Internal::Symbol::NameLengthIsValid;
+/* A symbol  can have a max length of 7 chars, or 9 if it's
+ * surrounded by quotation marks.
+ * This makes it so a 9 chars name (with quotation marks), can be
+ * turned into a 7 char name in the result cells of the solver (by
+ * removing the quotation marks). */
+constexpr size_t k_maxNameLengthWithoutQuotationMarks = 7;
+constexpr size_t k_maxNameLength = k_maxNameLengthWithoutQuotationMarks + 2;
+constexpr size_t k_maxNameSize = k_maxNameLength + 1;
 
 size_t NameWithoutQuotationMarks(char* buffer, size_t bufferSize,
                                  const char* name, size_t nameLength);
 
 const char* AnsMainAlias();
-bool IsTheta(UserExpression e);
-bool IsSymbol(Expression e, CodePoint c);
-const char* GetName(Expression e);
 // TODO remove function exposing `const Tree*`
 const char* GetName(const Internal::Tree* e);
 
-// Builders
-UserExpression BuildSymbol(const char* name, int length = -1);
-UserExpression BuildSymbol(CodePoint name);
-UserExpression BuildFunction(const char* name, UserExpression child);
-UserExpression BuildSequence(const char* name, UserExpression child);
-
-static inline UserExpression Ans() { return BuildSymbol(AnsMainAlias()); }
-static inline UserExpression SystemSymbol() {
-  return BuildSymbol(UCodePointUnknown);
-}
-
-}  // namespace SymbolHelper
-}  // namespace Poincare
+}  // namespace Poincare::SymbolHelper
 
 #endif

@@ -4,7 +4,7 @@
 #include <poincare/expression.h>
 #include <poincare/function_properties/integral.h>
 #include <poincare/helpers/layout.h>
-#include <poincare/helpers/symbol.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <poincare/src/expression/advanced_reduction.h>

@@ -7,7 +7,7 @@
 #include <poincare/circuit_breaker_checkpoint.h>
 #include <poincare/exception_checkpoint.h>
 #include <poincare/helpers/store.h>
-#include <poincare/helpers/symbol.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <poincare/helpers/trigonometry.h>
 #include <poincare/k_tree.h>
 #include <poincare/src/expression/projection.h>

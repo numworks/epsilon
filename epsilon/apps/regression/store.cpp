@@ -4,6 +4,7 @@
 #include <float.h>
 #include <ion/storage/file_system.h>
 #include <omg/print.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <poincare/preferences.h>
 #include <string.h>
 

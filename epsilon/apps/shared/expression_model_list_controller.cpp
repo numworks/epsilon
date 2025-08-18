@@ -7,7 +7,7 @@
 #include <ion/events.h>
 #include <ion/keyboard/layout_events.h>
 #include <poincare/code_points.h>
-#include <poincare/helpers/symbol.h>
+#include <poincare/helpers/symbol_pool.h>
 
 #include <algorithm>
 

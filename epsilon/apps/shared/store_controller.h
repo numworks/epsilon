@@ -19,8 +19,7 @@ class StoreController : public EditableCellTableViewController,
                         public StoreColumnHelper {
  public:
   StoreController(Escher::Responder* parentResponder, DoublePairStore* store,
-                  Escher::ButtonRowController* header,
-                  Poincare::Context* parentContext);
+                  Escher::ButtonRowController* header);
 
   // TextFieldDelegate
   bool textFieldDidFinishEditing(Escher::AbstractTextField* textField,

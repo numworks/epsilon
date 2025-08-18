@@ -66,10 +66,7 @@ const App::Descriptor* App::Snapshot::descriptor() const {
 }
 
 App::StoreTab::StoreTab()
-    : m_storeController(
-          &m_storeHeader, &app()->m_store, &m_storeHeader,
-          // TEMPORARY: StoreController doesn't need a Context param
-          &GlobalContextAccessor::Store()),
+    : m_storeController(&m_storeHeader, &app()->m_store, &m_storeHeader),
       m_storeHeader(&m_storeStackViewController, &m_storeController,
                     &m_storeController),
       m_storeStackViewController(

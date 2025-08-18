@@ -8,6 +8,7 @@
 #include <poincare/print.h>
 
 #include "column_parameter_controller.h"
+#include "global_context.h"
 #include "poincare_helpers.h"
 
 using namespace Escher;
@@ -45,13 +46,11 @@ void ClearColumnHelper::setClearPopUpContent() {
 /* StoreColumnHelper */
 
 StoreColumnHelper::StoreColumnHelper(Escher::Responder* responder,
-                                     Context* parentContext,
                                      ClearColumnHelper* clearColumnHelper)
     : m_clearColumnHelper(clearColumnHelper),
       m_templateController(responder, this),
       m_templateStackController(nullptr, &m_templateController,
-                                StackViewController::Style::PurpleWhite),
-      m_parentContext(parentContext) {}
+                                StackViewController::Style::PurpleWhite) {}
 
 bool StoreColumnHelper::switchSelectedColumnHideStatus() {
   int series = selectedSeries();
@@ -156,7 +155,7 @@ int StoreColumnHelper::formulaMemoizationIndex(int series, int column) {
 StoreColumnHelper::FillColumnStatus
 StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
                                                 int* series, int* column) {
-  StoreContext storeContext(store(), m_parentContext);
+  StoreContext storeContext(store(), &GlobalContextAccessor::Context());
   UserExpression formula = UserExpression::Parse(
       formulaLayout.tree(), storeContext, {.isAssignment = true});
   if (formula.isUninitialized()) {
@@ -203,9 +202,9 @@ StoreColumnHelper::privateFillColumnWithFormula(const Layout& formulaLayout,
     /* List in another context may allow other types (boolean for instance) but
      * in this context only scalar is allowed since anything else would be
      * nonsensical */
-    assert(m_parentContext);
     if (formulaNumberOfChildren > 0 &&
-        !Poincare::Dimension(reduced.cloneChildAtIndex(0), *m_parentContext)
+        !Poincare::Dimension(reduced.cloneChildAtIndex(0),
+                             GlobalContextAccessor::Context())
              .isScalar()) {
       return FillColumnStatus::DataNotSuitable;
     }

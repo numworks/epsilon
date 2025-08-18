@@ -37,7 +37,6 @@ class ClearColumnHelper {
 class StoreColumnHelper {
  public:
   StoreColumnHelper(Escher::Responder* responder,
-                    Poincare::Context* parentContext,
                     ClearColumnHelper* clearColumnHelper);
 
   int referencedColumn() { return table()->selectedColumn(); }
@@ -99,7 +98,6 @@ class StoreColumnHelper {
   /* Fill with formula */
   FormulaTemplateMenuController m_templateController;
   Escher::StackViewController::Default m_templateStackController;
-  Poincare::Context* m_parentContext;
 };
 
 }  // namespace Shared

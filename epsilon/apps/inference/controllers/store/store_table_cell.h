@@ -16,7 +16,6 @@ class StoreTableCell : public DoubleColumnTableCell,
                        public Shared::StoreColumnHelper {
  public:
   StoreTableCell(Escher::Responder* parentResponder, InferenceModel* inference,
-                 Poincare::Context* parentContext,
                  InputStoreController* inputStoreController,
                  Escher::ScrollViewDelegate* scrollViewDelegate);
 

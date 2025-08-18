@@ -13,11 +13,10 @@ namespace Inference {
 
 StoreTableCell::StoreTableCell(Responder* parentResponder,
                                InferenceModel* inference,
-                               Poincare::Context* parentContext,
                                InputStoreController* inputStoreController,
                                Escher::ScrollViewDelegate* scrollViewDelegate)
     : DoubleColumnTableCell(parentResponder, inference, scrollViewDelegate),
-      StoreColumnHelper(this, parentContext, this),
+      StoreColumnHelper(this, this),
       m_inputStoreController(inputStoreController) {
   for (int i = 0; i < k_maxNumberOfColumns; i++) {
     m_header[i].setEven(true);

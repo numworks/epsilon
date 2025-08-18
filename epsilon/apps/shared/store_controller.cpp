@@ -17,11 +17,10 @@ namespace Shared {
 
 StoreController::StoreController(Responder* parentResponder,
                                  DoublePairStore* store,
-                                 ButtonRowController* header,
-                                 Context* parentContext)
+                                 ButtonRowController* header)
     : EditableCellTableViewController(parentResponder, &m_prefacedTableView),
       ButtonRowDelegate(header, nullptr),
-      StoreColumnHelper(this, parentContext, this),
+      StoreColumnHelper(this, this),
       m_prefacedTableView(0, this, &m_selectableTableView, this, this),
       m_store(store),
       m_widthManager(this) {

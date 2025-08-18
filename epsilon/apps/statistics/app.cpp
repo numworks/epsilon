@@ -62,8 +62,7 @@ const App::Descriptor* App::Snapshot::descriptor() const {
 }
 
 App::StoreTab::StoreTab()
-    : m_storeController(&m_storeHeader, &app()->m_store, &m_storeHeader,
-                        &GlobalContextAccessor::Store()),
+    : m_storeController(&m_storeHeader, &app()->m_store, &m_storeHeader),
       m_storeHeader(&m_storeStackViewController, &m_storeController,
                     &m_storeController),
       m_storeStackViewController(

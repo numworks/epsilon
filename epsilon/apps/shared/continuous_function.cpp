@@ -1085,7 +1085,7 @@ ContinuousFunctionProperties ContinuousFunction::Model::properties(
     const Ion::Storage::Record* record) const {
   if (!m_properties.isInitialized()) {
     // Computing the expression equation will update the function properties
-    expressionReducedForAnalysis(record, *Context::GlobalContext);
+    expressionReducedForAnalysis(record, GlobalContextAccessor::Context());
   }
   assert(m_properties.isInitialized());
   return m_properties;
@@ -1095,7 +1095,8 @@ int ContinuousFunction::Model::numberOfSubCurves(
     const Ion::Storage::Record* record) const {
   ContinuousFunctionProperties prop = properties(record);
   if (prop.isCartesian()) {
-    SystemExpression e = expressionReduced(record, *Context::GlobalContext);
+    SystemExpression e =
+        expressionReduced(record, GlobalContextAccessor::Context());
     if (e.isList()) {
       assert(prop.isOfDegreeTwo());
       return e.numberOfChildren();

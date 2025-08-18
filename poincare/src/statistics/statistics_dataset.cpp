@@ -205,53 +205,32 @@ typename StatisticsDataset<T>::ModeData StatisticsDataset<T>::modeData() const {
   if (m_memoizedModeData.numberOfModes > 0) {
     return m_memoizedModeData;
   }
-  ModeData modeData;
-  modeData.numberOfModes = 0;
-  modeData.modeWeight = 0.0;
-  T currentValue = NAN;
-  T currentWeight = 0.0;
-  int n = datasetLength();
-  for (int j = 0; j <= n; j++) {
-    T value, weight;
-    if (j < n) {
-      int valueIndex = indexAtSortedIndex(j);
-      value = valueAtIndex(valueIndex);
-      weight = weightAtIndex(valueIndex);
-    } else {
-      // Iterating one last time to process the last value
-      value = weight = NAN;
-    }
-    // currentValue != value returns true if currentValue or value is NAN
-    if (currentValue != value) {
-      // A new value has been found
-      if (currentWeight > modeData.modeWeight) {
-        // A better mode has been found, reset solutions
-        modeData.modeWeight = currentWeight;
-        modeData.numberOfModes = 0;
-      }
-      if (currentWeight == modeData.modeWeight) {
-        // Another mode has been found
-        modeData.numberOfModes += 1;
-      }
-      currentWeight = 0.0;
-      currentValue = value;
-    }
-    currentWeight += weight;
-  }
-  // A valid total and weight have been calculated
-  assert(modeData.numberOfModes > 0 && modeData.modeWeight > 0.0);
-  m_memoizedModeData = modeData;
+  computeMode(&m_memoizedModeData);
   return m_memoizedModeData;
 }
 
 template <typename T>
 T StatisticsDataset<T>::modeValueAtIndex(int index) const {
-  ModeData modeData = this->modeData();
-  assert(index >= 0 && index < modeData.numberOfModes);
+  T result;
+  computeMode(&m_memoizedModeData, index, &result);
+  return result;
+}
+
+template <typename T>
+void StatisticsDataset<T>::computeMode(StatisticsDataset<T>::ModeData* data,
+                                       int computedValueIndex,
+                                       T* computedValue) const {
+  bool computeData = data->numberOfModes == 0;
+  if (computeData) {
+    // Ensure modeWeight is properly reset
+    data->modeWeight = 0.0;
+  }
+
   int n = datasetLength();
-  int currentIndex = 0;
+  int currentModeIndex = 0;
   T currentValue = NAN;
   T currentWeight = 0.0;
+
   for (int j = 0; j <= n; j++) {
     T value, weight;
     if (j < n) {
@@ -262,22 +241,42 @@ T StatisticsDataset<T>::modeValueAtIndex(int index) const {
       // Iterating one last time to process the last value
       value = weight = NAN;
     }
+
     // currentValue != value returns true if currentValue or value is NAN
     if (currentValue != value) {
       // A new value has been found
-      if (currentWeight == modeData.modeWeight) {
-        if (currentIndex == index) {
-          return currentValue;
-        }
-        currentIndex++;
+      if (computeData && currentWeight > data->modeWeight) {
+        // A better mode has been found, reset solutions
+        data->modeWeight = currentWeight;
+        data->numberOfModes = 0;
+        currentModeIndex = 0;
       }
+      if (currentWeight == data->modeWeight) {
+        if (computeData) {
+          // Another mode has been found
+          data->numberOfModes += 1;
+        }
+        if (computedValue && currentModeIndex == computedValueIndex) {
+          *computedValue = currentValue;
+          if (!computeData) {
+            /* Do not escape early if computeData is true, since modeWeight
+             * could still change, and thus the computed value too */
+            return;
+          }
+        }
+        currentModeIndex++;
+      }
+
       currentWeight = 0.0;
       currentValue = value;
     }
+
     currentWeight += weight;
   }
-  // Already checked that index < numberOfModes
-  OMG::unreachable();
+
+  // A valid total and weight have been calculated
+  assert(data->numberOfModes > 0 && data->modeWeight > 0.0);
+  assert(computedValueIndex < data->numberOfModes);
 }
 
 template <typename T>

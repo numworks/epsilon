@@ -280,6 +280,16 @@ UserExpression UserExpression::Builder(Coordinate2D<T> point) {
                                                  .KB = Builder<T>(point.y())});
 }
 
+UserExpression UserExpression::BuildListOfExpressions(
+    std::span<const UserExpression> expressions) {
+  Internal::Tree* list = Internal::SharedTreeStack->pushList(0);
+  for (UserExpression expr : expressions) {
+    expr.tree()->cloneTree();
+  }
+  Internal::NAry::SetNumberOfChildren(list, expressions.size());
+  return Builder(list);
+};
+
 SystemExpression SystemExpression::DecimalBuilderFromDouble(double value) {
   // TODO: this is a workaround until we port old Decimal::Builder(double)
   char buffer[PrintFloat::k_maxFloatCharSize];

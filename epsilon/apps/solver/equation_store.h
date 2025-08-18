@@ -16,6 +16,11 @@ class EquationStore : public Shared::ExpressionModelStore {
 
   // ExpressionModelStore
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;
+
+  Poincare::UserExpression cloneExpressionOfEquationAtIndex(int i) const {
+    return modelForRecord(definedRecordAtIndex(i))->expressionClone();
+  }
+
   OMG::ExpiringPointer<Equation> modelForRecord(
       Ion::Storage::Record record) const {
     return OMG::ExpiringPointer<Equation>(

@@ -10,6 +10,7 @@
 
 #include "graph/graph_controller.h"
 #include "list/list_controller.h"
+#include "shared/global_context.h"
 #include "values/values_controller.h"
 
 namespace Graph {
@@ -31,9 +32,7 @@ class App : public Shared::FunctionApp {
     void tidy() override;
     const Descriptor* descriptor() const override;
     Shared::ContinuousFunctionStore* functionStore() override {
-      return static_cast<Shared::GlobalContext*>(
-                 AppsContainerHelper::sharedAppsContainerGlobalContext())
-          ->s_continuousFunctionStore;
+      return Shared::GlobalContext::s_continuousFunctionStore;
     }
     Shared::InteractiveCurveViewRange* graphRange() { return &m_graphRange; }
     Shared::Interval* intervalForSymbolType(

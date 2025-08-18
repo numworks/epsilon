@@ -30,12 +30,12 @@ class Context {
     return NAN;
   }
 
-  static inline void Init(Context* globalContext) {
+  static inline void Init(const Context* globalContext) {
     GlobalContext = globalContext;
   }
 
   // TODO: remove, only a static SequenceContext may still be needed
-  static inline Context* GlobalContext = nullptr;
+  static inline const Context* GlobalContext = nullptr;
 };
 
 class EmptyContext : public Context {

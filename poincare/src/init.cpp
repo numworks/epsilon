@@ -12,7 +12,7 @@
 namespace Poincare {
 
 void Init(Preferences::Interface* preferences, const ExamMode* examModePtr,
-          Poincare::Context* globalContext) {
+          const Poincare::Context* globalContext) {
   Preferences::Init(preferences);
   ExamModeStore::Init(examModePtr);
   Context::Init(globalContext);

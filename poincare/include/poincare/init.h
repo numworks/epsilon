@@ -9,7 +9,7 @@ namespace Poincare {
 
 void Init(Preferences::Interface* preferences = nullptr,
           const ExamMode* examModePtr = nullptr,
-          Poincare::Context* globalContext = nullptr);
+          const Poincare::Context* globalContext = nullptr);
 void Shutdown();
 
 }  // namespace Poincare

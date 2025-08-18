@@ -95,11 +95,12 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model) {
   return Coordinate2D<T>(t, (coordinate == 0) ? value.x() : value.y());
 }
 
-Range2D<float> GraphController::optimalRange(
-    bool computeX, bool computeY, Range2D<float> originalRange) const {
+Range2D<float> GraphController::OptimalRange(
+    bool computeX, bool computeY, Range2D<float> originalRange,
+    Shared::ContinuousFunctionStore* store, bool defaultRangeIsNormalized) {
+  constexpr float k_maxFloat = Shared::InteractiveCurveViewRange::k_maxFloat;
   Context* context = App::app()->localContext();
   Zoom zoom(NAN, NAN, InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
-  ContinuousFunctionStore* store = functionStore();
   if (store->memoizationOverflows()) {
     /* Do not compute autozoom if store is full because the computation is too
      * slow. */
@@ -238,7 +239,7 @@ Range2D<float> GraphController::optimalRange(
     }
   }
 
-  Range2D<float> newRange = zoom.range(true, defaultRangeIsNormalized());
+  Range2D<float> newRange = zoom.range(true, defaultRangeIsNormalized);
   return Range2D<float>(*(computeX ? newRange : originalRange).x(),
                         *(computeY ? newRange : originalRange).y());
 }

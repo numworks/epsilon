@@ -16,7 +16,6 @@ Poincare::Preferences::TranslateBuiltins defaultTranslateBuiltin() {
 
 void flushGlobalDataNoPool() {
   Poincare::Internal::SharedTreeStack->flush();
-  quiz_assert(Poincare::Context::GlobalContext == nullptr);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   /* Check that preferences are at default values after each test.
    * translateBuiltins is the only field that can be edited on a

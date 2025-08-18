@@ -3,7 +3,7 @@
 #include <apps/global_preferences.h>
 
 Shared::GlobalContext* AppsContainerHelper::sharedAppsContainerGlobalContext() {
-  return AppsContainer::sharedAppsContainer()->globalContext();
+  return Shared::GlobalContextAccessor::GlobalContext();
 }
 
 void AppsContainerHelper::notifyCountryChangeToSnapshots() {

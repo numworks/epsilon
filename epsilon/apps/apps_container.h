@@ -34,6 +34,7 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   Home::App::Snapshot* homeAppSnapshot() { return &m_homeSnapshot; }
   void setExamMode(Poincare::ExamMode targetExamMode,
                    Poincare::ExamMode previousMode);
+  // TEMPORARY: this method will be removed from AppsContainer
   Shared::GlobalContext* globalContext();
   void didSuspend();
   bool dispatchEvent(Ion::Events::Event event) override;
@@ -81,7 +82,6 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   bool m_dfuBetweenEvents;
   AppsWindow m_window;
   EmptyBatteryWindow m_emptyBatteryWindow;
-  Shared::GlobalContext m_globalContext;
   ExamPopUpController m_examPopUpController;
   Shared::PromptController m_promptController;
   BatteryTimer m_batteryTimer;

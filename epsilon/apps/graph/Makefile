@@ -13,7 +13,6 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/,$(addsuffix :-test, \
   graph/integral_graph_controller.cpp \
   graph/interest_view.cpp \
   graph/intersection_graph_controller.cpp \
-  graph/optimal_range.cpp \
   graph/points_of_interest_cache.cpp \
   graph/preimage_graph_controller.cpp\
   graph/preimage_parameter_controller.cpp\
@@ -32,10 +31,12 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/,$(addsuffix :-test, \
   values/values_controller.cpp \
   graph_icon.png \
 ) \
+  graph/optimal_range.cpp \
   test/caching.cpp:+test \
   test/helper.cpp:+test \
   test/function_names.cpp:+test \
   test/function_properties.cpp:+test \
+  test/optimal_range.cpp:+test \
 )
 
 $(call depends_on_image,apps/graph/app.cpp,apps/graph/graph_icon.png)

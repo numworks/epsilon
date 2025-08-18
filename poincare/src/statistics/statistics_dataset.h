@@ -185,6 +185,12 @@ class StatisticsDataset {
   T weightAtIndex(int index) const;
   T privateTotalWeight() const;
 
+  /* If the data is invalid (numberOfModes == 0), it's recomputed.
+   * If computedValueIndex and computedValue are provided, the mode at this
+   * index is computed */
+  void computeMode(ModeData* data, int computedValueIndex = -1,
+                   T* computedValue = nullptr) const;
+
   void buildMemoizedSortedIndex() const;
 
   const DatasetColumn<T>* m_values;

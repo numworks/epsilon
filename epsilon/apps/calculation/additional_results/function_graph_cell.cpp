@@ -67,7 +67,8 @@ void FunctionGraphPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
   PreparedFunctionScalar function = m_model->function();
   assert(!function.hasSequences());
 
-  Curve2DEvaluation<float> evaluateFunction = [](float t, void* model, void*) {
+  Curve2DEvaluation<float> evaluateFunction = [](float t, const void* model,
+                                                 const void*) {
     PreparedFunctionScalar* e = (PreparedFunctionScalar*)model;
     return Coordinate2D<float>(t, e->approximateToRealScalarWithValue(t));
   };

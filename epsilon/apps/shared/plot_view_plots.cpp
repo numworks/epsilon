@@ -97,7 +97,7 @@ void WithCurves::Pattern::drawInLine(const AbstractPlotView* plotView,
 
 // WithCurves::CurveDrawing
 
-WithCurves::CurveDrawing::CurveDrawing(Curve2D curve, void* context,
+WithCurves::CurveDrawing::CurveDrawing(Curve2D curve, const void* context,
                                        float tStart, float tEnd, float tStep,
                                        KDColor color, bool thick, bool dashed)
     : m_curve(curve),
@@ -352,8 +352,8 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView* plotView,
                                  height / plotView->pixelHeight());
   float angleStep = segmentLength / radiusInPixel;
   float parameters[] = {center.x(), center.y(), width, height};
-  Curve2DEvaluation<float> arc = [](float t, void* model, void*) {
-    float* parameters = reinterpret_cast<float*>(model);
+  Curve2DEvaluation<float> arc = [](float t, const void* model, const void*) {
+    const float* parameters = static_cast<const float*>(model);
     float x = parameters[0];
     float y = parameters[1];
     float a = parameters[2];
@@ -369,9 +369,10 @@ void WithCurves::drawArcOfEllipse(const AbstractPlotView* plotView,
 // WithHistogram::HistogramDrawing
 
 WithHistogram::HistogramDrawing::HistogramDrawing(
-    Curve1D curve, void* model, void* context, HighlightTest highlightTest,
-    double start, double barsWidth, bool displayBorder, bool fillBars,
-    KDColor color, KDColor highlightColor, KDColor borderColor)
+    Curve1D curve, const void* model, const void* context,
+    HighlightTest highlightTest, double start, double barsWidth,
+    bool displayBorder, bool fillBars, KDColor color, KDColor highlightColor,
+    KDColor borderColor)
     : m_curve(curve),
       m_model(model),
       m_context(context),

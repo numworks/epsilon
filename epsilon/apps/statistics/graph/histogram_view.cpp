@@ -10,17 +10,18 @@ namespace Statistics {
 
 // HistogramPlotPolicy
 
-static double histogramLevels(double x, void* model, void* context) {
-  Store* store = reinterpret_cast<Store*>(model);
-  double* parameters = reinterpret_cast<double*>(context);
+static double histogramLevels(double x, const void* model,
+                              const void* context) {
+  const Store* store = reinterpret_cast<const Store*>(model);
+  const double* parameters = static_cast<const double*>(context);
   double maxSize = parameters[0];
   double series = parameters[1];
   assert(maxSize >= 0);
   return maxSize == 0 ? 0 : store->heightOfBarAtValue(series, x) / maxSize;
 }
 
-static bool barIsHighlighted(double x, void* model, void* context) {
-  double* parameters = reinterpret_cast<double*>(context);
+static bool barIsHighlighted(double x, const void* model, const void* context) {
+  const double* parameters = static_cast<const double*>(context);
   double start = parameters[2];
   double end = parameters[3];
   return start <= x && x < end;

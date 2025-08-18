@@ -16,10 +16,10 @@ namespace Regression {
 
 // RegressionPlotPolicy
 
-static Coordinate2D<float> evaluateRegression(float x, void* model,
-                                              void* context) {
-  Model* regression = reinterpret_cast<Model*>(model);
-  double* coeffs = reinterpret_cast<double*>(context);
+static Coordinate2D<float> evaluateRegression(float x, const void* model,
+                                              const void* context) {
+  const Model* regression = static_cast<const Model*>(model);
+  const double* coeffs = static_cast<const double*>(context);
   return Poincare::Coordinate2D<float>(x, regression->evaluate(coeffs, x));
 }
 

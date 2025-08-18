@@ -156,52 +156,54 @@ ContinuousFunctionStore* GraphView::functionStore() const {
 }
 
 template <typename T>
-static Coordinate2D<T> evaluateXY(T t, void* model, void* context) {
+static Coordinate2D<T> evaluateXY(T t, const void* model, const void* context) {
   assert(context);
-  return reinterpret_cast<ContinuousFunction*>(model)->evaluateXYAtParameter(
-      t, *reinterpret_cast<Context*>(context), 0);
+  return static_cast<const ContinuousFunction*>(model)->evaluateXYAtParameter(
+      t, *static_cast<const Context*>(context), 0);
 }
 template <typename T>
-static Coordinate2D<T> evaluateXYSecondCurve(T t, void* model, void* context) {
+static Coordinate2D<T> evaluateXYSecondCurve(T t, const void* model,
+                                             const void* context) {
   assert(context);
-  return reinterpret_cast<ContinuousFunction*>(model)->evaluateXYAtParameter(
-      t, *reinterpret_cast<Context*>(context), 1);
+  return static_cast<const ContinuousFunction*>(model)->evaluateXYAtParameter(
+      t, *static_cast<const Context*>(context), 1);
 }
 template <typename T>
-static Coordinate2D<T> evaluateXYFirstDerivative(T t, void* model,
-                                                 void* context) {
+static Coordinate2D<T> evaluateXYFirstDerivative(T t, const void* model,
+                                                 const void* context) {
   assert(context);
-  return reinterpret_cast<ContinuousFunction*>(model)
-      ->evaluateXYDerivativeAtParameter(t, *reinterpret_cast<Context*>(context),
-                                        1);
+  return static_cast<const ContinuousFunction*>(model)
+      ->evaluateXYDerivativeAtParameter(
+          t, *static_cast<const Context*>(context), 1);
 }
 template <typename T>
-static Coordinate2D<T> evaluateXYSecondDerivative(T t, void* model,
-                                                  void* context) {
+static Coordinate2D<T> evaluateXYSecondDerivative(T t, const void* model,
+                                                  const void* context) {
   assert(context);
-  return reinterpret_cast<ContinuousFunction*>(model)
-      ->evaluateXYDerivativeAtParameter(t, *reinterpret_cast<Context*>(context),
-                                        2);
+  return static_cast<const ContinuousFunction*>(model)
+      ->evaluateXYDerivativeAtParameter(
+          t, *static_cast<const Context*>(context), 2);
 }
 
-static Coordinate2D<float> evaluateInfinity(float t, void*, void*) {
+static Coordinate2D<float> evaluateInfinity(float t, const void*, const void*) {
   return Coordinate2D<float>(INFINITY, INFINITY);
 }
-static Coordinate2D<float> evaluateMinusInfinity(float t, void*, void*) {
+static Coordinate2D<float> evaluateMinusInfinity(float t, const void*,
+                                                 const void*) {
   return Coordinate2D<float>(-INFINITY, -INFINITY);
 }
-static Coordinate2D<float> evaluateZero(float t, void*, void*) {
+static Coordinate2D<float> evaluateZero(float t, const void*, const void*) {
   return Coordinate2D<float>(t, 0.f);
 }
 
 bool GraphView::FunctionIsDiscontinuousOnFloatInterval(float minBound,
                                                        float maxBound,
-                                                       void* model,
-                                                       void* context) {
+                                                       const void* model,
+                                                       const void* context) {
   assert(context);
-  return static_cast<ContinuousFunction*>(model)
+  return static_cast<const ContinuousFunction*>(model)
       ->isDiscontinuousOnFloatInterval(
-          minBound, maxBound, *static_cast<Poincare::Context*>(context));
+          minBound, maxBound, *static_cast<const Poincare::Context*>(context));
 }
 
 template <typename T>

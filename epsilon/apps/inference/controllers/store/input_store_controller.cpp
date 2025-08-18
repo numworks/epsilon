@@ -13,7 +13,7 @@ namespace Inference {
 InputStoreController::InputStoreController(
     StackViewController* parent, ViewController* nextController,
     uint8_t pageIndex, InputStoreController* nextInputStoreController,
-    InferenceModel* inference, Poincare::Context* context)
+    InferenceModel* inference)
     : InputCategoricalController(parent, nextController, inference,
                                  Invocation::Builder<InputStoreController>(
                                      &InputStoreController::ButtonAction, this),
@@ -23,7 +23,7 @@ InputStoreController::InputStoreController(
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),
           InputCategoricalCell<LayoutView>(&m_selectableListView, this),
       },
-      m_storeTableCell(&m_selectableListView, inference, context, this, this),
+      m_storeTableCell(&m_selectableListView, inference, this, this),
       m_secondStackController(this, &m_storeParameterController,
                               StackViewController::Style::WhiteUniform),
       m_storeParameterController(parent, &m_storeTableCell),

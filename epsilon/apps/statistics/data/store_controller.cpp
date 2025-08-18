@@ -18,9 +18,8 @@ using namespace Escher;
 namespace Statistics {
 
 StoreController::StoreController(Responder* parentResponder, Store* store,
-                                 ButtonRowController* header,
-                                 Context* parentContext)
-    : Shared::StoreController(parentResponder, store, header, parentContext),
+                                 ButtonRowController* header)
+    : Shared::StoreController(parentResponder, store, header),
       m_store(store),
       m_storeParameterController(this, this, store) {}
 

@@ -43,14 +43,10 @@ App::App(Snapshot* snapshot)
       m_inputGoodnessController(
           &m_stackViewController, &m_goodnessResultsController,
           static_cast<GoodnessTest*>(snapshot->inference())),
-      // TEMPORARY: InputStoreController does not need to pass a context in its
-      // constructor
       m_inputStoreController1(&m_stackViewController, &m_resultsController, 0,
-                              &m_inputStoreController2, snapshot->inference(),
-                              &Shared::GlobalContextAccessor::Store()),
+                              &m_inputStoreController2, snapshot->inference()),
       m_inputStoreController2(&m_stackViewController, &m_resultsController, 1,
-                              nullptr, snapshot->inference(),
-                              &Shared::GlobalContextAccessor::Store()),
+                              nullptr, snapshot->inference()),
       m_resultsController(&m_stackViewController, snapshot->inference(),
                           &m_testGraphController, &m_intervalGraphController),
       m_inputController(&m_stackViewController, &m_resultsController,

@@ -130,6 +130,7 @@ Range2D<float> GraphController::OptimalRange(
     OMG::ExpiringPointer<const ContinuousFunction> f =
         store->constModelForRecord(store->activeRecordAtIndex(i));
     ContinuousFunctionAndContext fModel{.func = f.operator->(), .ctx = context};
+    defaultRangeIsNormalized |= f->properties().enforcePlotNormalization();
     if (f->approximationBasedOnCostlyAlgorithms(*context)) {
       continue;
     }

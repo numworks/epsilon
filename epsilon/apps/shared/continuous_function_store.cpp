@@ -26,15 +26,6 @@ bool ContinuousFunctionStore::displaysOnlyCartesianFunctions(
              &ContinuousFunctionProperties::isCartesian) == nActive;
 }
 
-bool ContinuousFunctionStore::displaysFunctionsToNormalize(
-    int* nbActiveFunctions) const {
-  if (nbActiveFunctions != nullptr) {
-    *nbActiveFunctions = numberOfActiveFunctions();
-  }
-  return numberOfActiveFunctionsWithProperty(
-             &ContinuousFunctionProperties::enforcePlotNormalization) != 0;
-}
-
 int ContinuousFunctionStore::numberOfActiveFunctions() const {
   uint32_t checksum = Ion::Storage::FileSystem::sharedFileSystem->checksum();
   if (m_memoizedNumberOfActiveFunctions < 0 || checksum != m_storageCheckSum) {

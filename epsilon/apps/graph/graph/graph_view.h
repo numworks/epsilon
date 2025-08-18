@@ -51,8 +51,8 @@ class GraphView : public Shared::FunctionGraphView,
 
   static bool FunctionIsDiscontinuousOnFloatInterval(float minBound,
                                                      float maxBound,
-                                                     void* model,
-                                                     void* context);
+                                                     const void* model,
+                                                     const void* context);
   Escher::View* ornamentView() const override {
     return const_cast<InterestView*>(&m_interestView);
   }

@@ -10,8 +10,8 @@ namespace Shared {
 
 class FunctionGraphPolicy {
  public:
-  Poincare::Context* context() const { return m_context; }
-  void setContext(Poincare::Context* context) { m_context = context; }
+  const Poincare::Context* context() const { return m_context; }
+  void setContext(const Poincare::Context* context) { m_context = context; }
 
  protected:
   void drawPlot(const AbstractPlotView* plotView, KDContext* ctx,
@@ -29,7 +29,7 @@ class FunctionGraphPolicy {
   bool functionWasInterrupted(int index) const;
   void setFunctionInterrupted(int index) const;
 
-  Poincare::Context* m_context;
+  const Poincare::Context* m_context;
   mutable uint32_t m_functionsInterrupted;
 };
 

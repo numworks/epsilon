@@ -46,7 +46,7 @@ class Model {
 
   /* Evaluate cannot use the expression and approximate it since it would be
    * too time consuming. */
-  double evaluate(double* modelCoefficients, double x) const {
+  double evaluate(const double* modelCoefficients, double x) const {
     return regression()->evaluate(modelCoefficients, x);
   };
   double levelSet(double* modelCoefficients, double xMin, double xMax, double y,

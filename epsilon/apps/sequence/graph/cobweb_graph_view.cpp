@@ -79,8 +79,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   assert(!reductionFailure);
   Poincare::PreparedFunction preparedFunction =
       reducedFunction.getPreparedFunction(Shared::Function::k_unknownName);
-  Curve2DEvaluation<float> evaluateFunction = [](float t, void* model,
-                                                 void* context) {
+  Curve2DEvaluation<float> evaluateFunction = [](float t, const void* model,
+                                                 const void* context) {
     Poincare::PreparedFunction* e = (Poincare::PreparedFunction*)model;
     return Poincare::Coordinate2D<float>(
         t, e->approximateToRealScalarWithValue(t));

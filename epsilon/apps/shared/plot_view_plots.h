@@ -23,28 +23,30 @@ class WithCurves {
   /* The 'model' argument is specific to one curve, while the 'context'
    * argument is shared between all curves in one drawing. */
   template <typename T>
-  using Curve2DEvaluation = Poincare::Coordinate2D<T> (*)(T, void* model,
-                                                          void* context);
+  using Curve2DEvaluation = Poincare::Coordinate2D<T> (*)(T, const void* model,
+                                                          const void* context);
 
   class Curve2D {
    public:
-    Curve2D(Curve2DEvaluation<float> f = nullptr, void* model = nullptr)
+    Curve2D(Curve2DEvaluation<float> f = nullptr, const void* model = nullptr)
         : m_f(f), m_model(model) {}
     operator bool() const { return m_f != nullptr; }
-    void* model() const { return m_model; }
-    Poincare::Coordinate2D<float> evaluate(float t, void* context) const {
+    const void* model() const { return m_model; }
+    Poincare::Coordinate2D<float> evaluate(float t, const void* context) const {
       assert(m_f);
       return m_f(t, m_model, context);
     }
 
    private:
     Curve2DEvaluation<float> m_f;
-    void* m_model;
+    const void* m_model;
   };
 
-  typedef bool (*DiscontinuityTest)(float, float, void*, void*);
+  typedef bool (*DiscontinuityTest)(float, float, const void*, const void*);
 
-  static bool NoDiscontinuity(float, float, void*, void*) { return false; }
+  static bool NoDiscontinuity(float, float, const void*, const void*) {
+    return false;
+  }
 
   /* The screen is tiled with a 4×4 pattern. It takes the form of a
    * lattice with four colored sections and a transparent background.
@@ -81,7 +83,7 @@ class WithCurves {
 
   class CurveDrawing {
    public:
-    CurveDrawing(Curve2D curve, void* context, float tStart, float tEnd,
+    CurveDrawing(Curve2D curve, const void* context, float tStart, float tEnd,
                  float tStep, KDColor color, bool thick = true,
                  bool dashed = false);
     /* If one of the pattern bound is nullptr, the main curve is used instead.
@@ -117,7 +119,7 @@ class WithCurves {
     Curve2D m_patternLowerBound;
     Curve2D m_patternUpperBound;
     Pattern m_pattern;
-    void* m_context;
+    const void* m_context;
     Curve2DEvaluation<double> m_curveDouble;
     DiscontinuityTest m_discontinuity;
     float m_tStart;
@@ -146,12 +148,12 @@ class WithCurves {
 class WithHistogram {
  protected:
   constexpr static KDCoordinate k_borderWidth = 1;
-  typedef double (*Curve1D)(double, void*, void*);
-  typedef bool (*HighlightTest)(double, void*, void*);
+  typedef double (*Curve1D)(double, const void*, const void*);
+  typedef bool (*HighlightTest)(double, const void*, const void*);
 
   class HistogramDrawing {
    public:
-    HistogramDrawing(Curve1D curve, void* model, void* context,
+    HistogramDrawing(Curve1D curve, const void* model, const void* context,
                      HighlightTest highlightTest, double start,
                      double barsWidth, bool displayBorder, bool fillBars,
                      KDColor color, KDColor highlightColor,
@@ -163,8 +165,8 @@ class WithHistogram {
     constexpr static KDCoordinate k_hollowBarWidth = 2;
 
     Curve1D m_curve;
-    void* m_model;
-    void* m_context;
+    const void* m_model;
+    const void* m_context;
     HighlightTest m_highlightTest;
     double m_start;
     double m_barsWidth;

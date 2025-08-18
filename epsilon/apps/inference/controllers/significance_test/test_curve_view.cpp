@@ -47,12 +47,12 @@ void TestPlotPolicy::drawLabelAndGraduation(const AbstractPlotView* plotView,
                        AbstractPlotView::RelativePosition::After, KDColorBlack);
 }
 
-static Coordinate2D<float> evaluate(float x, void* model, void*) {
-  SignificanceTest* test = reinterpret_cast<SignificanceTest*>(model);
+static Coordinate2D<float> evaluate(float x, const void* model, const void*) {
+  const SignificanceTest* test = static_cast<const SignificanceTest*>(model);
   return Coordinate2D<float>(x, test->evaluateAtAbscissa(x));
 }
 
-static Coordinate2D<float> evaluateZero(float, void*, void*) {
+static Coordinate2D<float> evaluateZero(float, const void*, const void*) {
   return Coordinate2D<float>(0.f, 0.f);
 }
 

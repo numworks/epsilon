@@ -137,8 +137,8 @@ static void compareSolutions(SystemOfEquations* system,
 
     bool reductionFailure = false;
     Internal::ProjectionContext projCtx{
-        .m_complexFormat = Internal::ComplexFormat::Cartesian,
-        .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
+        .m_complexFormat = Preferences::ComplexFormat::Cartesian,
+        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = context,
         .m_advanceReduce = false};
     SystemExpression expectedExpression =
@@ -160,8 +160,8 @@ static void compareSolutions(SystemOfEquations* system,
     /* TODO: no need to recreate a projectionContext when const and non const
      * members of ProjectionContext are split (parameters vs metadata) */
     Internal::ProjectionContext projCtx2 = {
-        .m_complexFormat = Internal::ComplexFormat::Cartesian,
-        .m_symbolic = Internal::SymbolicComputation::ReplaceDefinedSymbols,
+        .m_complexFormat = Preferences::ComplexFormat::Cartesian,
+        .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
         .m_context = context,
         .m_advanceReduce = false};
     SystemExpression obtainedExpression =

@@ -37,15 +37,15 @@ void assert_regression_data_is_not_suitable(const double* xi, const double* yi,
                                             Model::Type modelType,
                                             bool finite) {
   int series = 0;
-  Shared::GlobalContext globalContext;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
                                    Model::Type::None, Model::Type::None,
                                    Model::Type::None, Model::Type::None};
   Shared::DoublePairStorePreferences storePreferences;
-  Store store(&globalContext, &storePreferences, regressionTypes);
+  Store store(&storePreferences, regressionTypes);
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
   store.setSeriesRegressionType(series, modelType);
+  Shared::GlobalContext globalContext;
   Shared::StoreContext context(&store, &globalContext);
 
   quiz_assert(!store.coefficientsAreDefined(series, context, finite));
@@ -58,15 +58,15 @@ void assert_regression_is(const double* xi, const double* yi,
                           bool acceptNAN = false,
                           bool exactCoefficients = false) {
   int series = 0;
-  Shared::GlobalContext globalContext;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
                                    Model::Type::None, Model::Type::None,
                                    Model::Type::None, Model::Type::None};
   Shared::DoublePairStorePreferences storePreferences;
-  Store store(&globalContext, &storePreferences, regressionTypes);
+  Store store(&storePreferences, regressionTypes);
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
   store.setSeriesRegressionType(series, modelType);
+  Shared::GlobalContext globalContext;
   Shared::StoreContext context(&store, &globalContext);
 
   double precision = 1e-2;
@@ -787,12 +787,11 @@ void assert_column_calculations_is(const double* xi, int numberOfPoints,
                                    double trueStandardDeviation,
                                    double trueVariance) {
   int series = 0;
-  Shared::GlobalContext globalContext;
   Shared::DoublePairStorePreferences storePreferences;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
                                    Model::Type::None, Model::Type::None,
                                    Model::Type::None, Model::Type::None};
-  Store store(&globalContext, &storePreferences, regressionTypes);
+  Store store(&storePreferences, regressionTypes);
 
   setRegressionPoints(&store, series, numberOfPoints, xi);
 
@@ -846,12 +845,11 @@ void assert_regression_calculations_is(const double* xi, const double* yi,
                                        double trueCovariance,
                                        double trueProductSum, double trueR) {
   int series = 0;
-  Shared::GlobalContext globalContext;
   Shared::DoublePairStorePreferences storePreferences;
   Model::Type regressionTypes[] = {Model::Type::None, Model::Type::None,
                                    Model::Type::None, Model::Type::None,
                                    Model::Type::None, Model::Type::None};
-  Store store(&globalContext, &storePreferences, regressionTypes);
+  Store store(&storePreferences, regressionTypes);
 
   setRegressionPoints(&store, series, numberOfPoints, xi, yi);
 

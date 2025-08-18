@@ -12,8 +12,7 @@ class StatisticsStore : public DoublePairStore {
   constexpr static const char* const* k_columnNames =
       DoublePairStore::k_statisticsColumNames;
 
-  StatisticsStore(GlobalContext* context,
-                  DoublePairStorePreferences* preferences);
+  StatisticsStore(DoublePairStorePreferences* preferences);
 
   void invalidateSortedIndexes();
   void clearColumn(int series, int column);

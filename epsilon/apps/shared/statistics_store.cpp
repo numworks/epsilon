@@ -4,9 +4,8 @@
 
 namespace Shared {
 
-StatisticsStore::StatisticsStore(GlobalContext* context,
-                                 DoublePairStorePreferences* preferences)
-    : DoublePairStore(context, preferences) {}
+StatisticsStore::StatisticsStore(DoublePairStorePreferences* preferences)
+    : DoublePairStore(preferences) {}
 
 void StatisticsStore::invalidateSortedIndexes() {
   for (int i = 0; i < k_numberOfSeries; i++) {

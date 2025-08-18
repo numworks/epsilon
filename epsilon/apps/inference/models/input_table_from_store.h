@@ -70,9 +70,9 @@ class InputTableFromStore : public InputTable {
 class InputTableFromStatisticStore : public InputTableFromStore,
                                      public Shared::StatisticsStore {
  public:
-  InputTableFromStatisticStore(Shared::GlobalContext* context)
+  InputTableFromStatisticStore()
       : InputTableFromStore(),
-        Shared::StatisticsStore(context, &m_dblePairStorePreferences) {}
+        Shared::StatisticsStore(&m_dblePairStorePreferences) {}
 
   // DoublePairStore
   int seriesAtColumn(int column) const override {
@@ -100,9 +100,9 @@ class InputTableFromStatisticStore : public InputTableFromStore,
 class InputTableFromRegressionStore : public InputTableFromStore,
                                       public Shared::LinearRegressionStore {
  public:
-  InputTableFromRegressionStore(Shared::GlobalContext* context)
+  InputTableFromRegressionStore()
       : InputTableFromStore(),
-        Shared::LinearRegressionStore(context, &m_dblePairStorePreferences) {}
+        Shared::LinearRegressionStore(&m_dblePairStorePreferences) {}
 
   void deleteValuesInColumn(int column) override;
 

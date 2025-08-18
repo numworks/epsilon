@@ -13,15 +13,15 @@
 
 #include "double_pair_store_preferences.h"
 #include "poincare_helpers.h"
+#include "shared/global_context.h"
 
 using namespace Poincare;
 using namespace Ion::Storage;
 
 namespace Shared {
 
-DoublePairStore::DoublePairStore(GlobalContext* context,
-                                 DoublePairStorePreferences* preferences)
-    : m_storePreferences(preferences), m_context(context) {}
+DoublePairStore::DoublePairStore(DoublePairStorePreferences* preferences)
+    : m_storePreferences(preferences) {}
 
 void DoublePairStore::initListsInPool() {
   // Initialize empty list in the pool
@@ -399,8 +399,8 @@ bool DoublePairStore::storeColumn(int series, int i) const {
   /* TODO: add a flag to tell setExpressionForUserNamed not to reduce the
    * float list since there is nothing to reduce and it may be long. Break in
    * regression_trigonometric_4 to see the performance issue. */
-  return m_context->setExpressionForUserNamed(m_dataLists[series][i],
-                                              listSymbol);
+  return GlobalContextAccessor::Store().setExpressionForUserNamed(
+      m_dataLists[series][i], listSymbol);
 }
 
 void DoublePairStore::deleteTrailingUndef(int series, int i) {

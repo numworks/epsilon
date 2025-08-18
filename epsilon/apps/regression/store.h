@@ -19,8 +19,7 @@ class Store : public Shared::LinearRegressionStore {
   static const char* SeriesTitle(int series);
   constexpr static const char* k_functionName = "R";
 
-  Store(Shared::GlobalContext* context,
-        Shared::DoublePairStorePreferences* preferences,
+  Store(Shared::DoublePairStorePreferences* preferences,
         Model::Type* regressionTypes);
 
   void reset();

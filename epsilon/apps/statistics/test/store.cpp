@@ -233,7 +233,7 @@ void assert_data_box_plot(Store* store, int numberOfData,
 QUIZ_CASE(statistics) {
   GlobalContext context;
   UserPreferences userPreferences;
-  Store store(&context, &userPreferences);
+  Store store(&userPreferences);
 
   /* 1 2 3 4
    * 1 1 1 1 */
@@ -973,7 +973,7 @@ void assert_data_statistics_multiple_series_equal_to(
 QUIZ_CASE(statistics_multiple_series) {
   GlobalContext context;
   UserPreferences userPreferences;
-  Store store(&context, &userPreferences);
+  Store store(&userPreferences);
 
   constexpr int listLength1 = 4;
   double v1[listLength1] = {-12.0, 3.0, -0.001, 4000.0};
@@ -999,9 +999,8 @@ QUIZ_CASE(statistics_multiple_series) {
 }
 
 QUIZ_CASE(statistics_histograms) {
-  GlobalContext context;
   UserPreferences userPreferences;
-  Store store(&context, &userPreferences);
+  Store store(&userPreferences);
 
   constexpr int seriesIndex1 = 0;
   constexpr int listLength1 = 8;

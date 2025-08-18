@@ -19,8 +19,7 @@ void Init() {
   Shared::GlobalContextAccessor::Init();
   Poincare::Init(GlobalPreferences::SharedGlobalPreferences(),
                  ExamModeManager::ExamModePtr(),
-                 // TEMPORARY: a const Context should be passed to Poincare
-                 &Shared::GlobalContextAccessor::Store());
+                 &Shared::GlobalContextAccessor::Context());
   Escher::Init(GlobalPreferences::SharedGlobalPreferences());
 }
 

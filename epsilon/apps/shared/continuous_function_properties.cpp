@@ -5,8 +5,8 @@
 #include <poincare/cas.h>
 #include <poincare/code_points.h>
 #include <poincare/function_properties/function_type.h>
+#include <poincare/helpers/polynomial_pool.h>
 #include <poincare/helpers/symbol.h>
-#include <poincare/src/expression/polynomial.h>
 
 #include "continuous_function.h"
 
@@ -264,9 +264,8 @@ void ContinuousFunctionProperties::update(
   const char* symbolName =
       willBeAlongX ? k_ordinateName : Function::k_unknownName;
   OMG::Troolean highestCoefficientIsPositive = OMG::Troolean::Unknown;
-  if (!Poincare::Internal::PolynomialParser::HasNonNullCoefficients(
-          analyzedExpression.tree(), symbolName,
-          &highestCoefficientIsPositive)) {
+  if (!Poincare::PolynomialHelpers::HasNonNullCoefficients(
+          analyzedExpression, symbolName, &highestCoefficientIsPositive)) {
     // The equation must have at least one nonNull coefficient.
     setErrorStatusAndUpdateCaption(Status::Unhandled);
     return;

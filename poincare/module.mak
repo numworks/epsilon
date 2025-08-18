@@ -104,6 +104,7 @@ $(addprefix helpers/, \
   cas.cpp:-nopool \
   expression_equal_sign.cpp:-nopool \
   layout.cpp \
+  polynomial_pool.cpp:-nopool \
   scatter_plot_iterable.cpp:-nopool \
   sequence.cpp:-nopool \
   store.cpp:-nopool \

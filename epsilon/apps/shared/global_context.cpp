@@ -6,9 +6,8 @@
 #include <poincare/cas.h>
 #include <poincare/code_points.h>
 #include <poincare/expression.h>
-#include <poincare/helpers/symbol.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
-#include <poincare/src/expression/symbol.h>
 
 #include "continuous_function.h"
 #include "continuous_function_store.h"

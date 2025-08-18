@@ -2,6 +2,7 @@
 #define POINCARE_EXPRESSION_SYMBOL_H
 
 #include <poincare/context.h>
+#include <poincare/helpers/symbol.h>
 #include <poincare/sign.h>
 
 #include "context.h"
@@ -10,14 +11,10 @@
 namespace Poincare::Internal {
 
 namespace Symbol {
-/* A symbol  can have a max length of 7 chars, or 9 if it's
- * surrounded by quotation marks.
- * This makes it so a 9 chars name (with quotation marks), can be
- * turned into a 7 char name in the result cells of the solver (by
- * removing the quotation marks). */
-constexpr size_t k_maxNameLengthWithoutQuotationMarks = 7;
-constexpr size_t k_maxNameLength = k_maxNameLengthWithoutQuotationMarks + 2;
-constexpr size_t k_maxNameSize = k_maxNameLength + 1;
+
+using SymbolHelper::k_maxNameLength;
+using SymbolHelper::k_maxNameLengthWithoutQuotationMarks;
+using SymbolHelper::k_maxNameSize;
 
 constexpr int k_maxSymbolReplacementsCount = 10;
 

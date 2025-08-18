@@ -5,6 +5,7 @@
 #include <float.h>
 #include <omg/print.h>
 #include <omg/utf8_helper.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <poincare/k_tree.h>
 #include <poincare/layout.h>
 #include <string.h>

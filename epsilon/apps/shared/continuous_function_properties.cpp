@@ -6,7 +6,7 @@
 #include <poincare/code_points.h>
 #include <poincare/function_properties/function_type.h>
 #include <poincare/helpers/polynomial_pool.h>
-#include <poincare/helpers/symbol.h>
+#include <poincare/helpers/symbol_pool.h>
 
 #include "continuous_function.h"
 

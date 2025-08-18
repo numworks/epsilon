@@ -6,6 +6,7 @@
 #include <omg/list.h>
 #include <omg/memory.h>
 #include <omg/utf8_helper.h>
+#include <poincare/helpers/symbol_pool.h>
 #include <stddef.h>
 
 #include <algorithm>

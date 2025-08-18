@@ -3,7 +3,7 @@
 #include <apps/shared/global_context.h>
 #include <omg/utf8_helper.h>
 #include <poincare/code_points.h>
-#include <poincare/helpers/symbol.h>
+#include <poincare/helpers/symbol_pool.h>
 
 using namespace Poincare;
 

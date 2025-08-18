@@ -41,10 +41,6 @@ class GraphController : public Shared::FunctionGraphController,
   Poincare::Range2D<float> optimalRange(
       bool computeX, bool computeY,
       Poincare::Range2D<float> originalRange) const override;
-  static Poincare::Range2D<float> OptimalRange(
-      bool computeX, bool computeY, Poincare::Range2D<float> originalRange,
-      Shared::ContinuousFunctionStore* store, bool defaultRangeIsNormalized,
-      Poincare::Context* context);
 
   // TextFieldDelegate
   bool textFieldIsEditable(Escher::AbstractTextField*) override {

@@ -13,6 +13,7 @@ SOURCES_apps += $(addprefix $(PATH_apps)/graph/,$(addsuffix :-test, \
   graph/integral_graph_controller.cpp \
   graph/interest_view.cpp \
   graph/intersection_graph_controller.cpp \
+  graph/optimal_range.cpp \
   graph/points_of_interest_cache.cpp \
   graph/preimage_graph_controller.cpp\
   graph/preimage_parameter_controller.cpp\

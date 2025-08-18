@@ -6,6 +6,7 @@
 
 #include "../app.h"
 #include "../model.h"
+#include "shared/global_context.h"
 
 using namespace Escher;
 using namespace Poincare;
@@ -24,8 +25,6 @@ static Coordinate2D<float> evaluateRegression(float x, void* model,
 
 void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
                                     KDContext* ctx, KDRect rect) const {
-  Context* globalContext =
-      AppsContainerHelper::sharedAppsContainerGlobalContext();
   int selectedSeries = App::app()->graphController()->selectedSeriesIndex();
   for (int s = 0; s <= Store::k_numberOfSeries; s++) {
     // Draw the selected series last
@@ -44,7 +43,8 @@ void RegressionPlotPolicy::drawPlot(const Shared::AbstractPlotView* plotView,
     // - Draw regression curve
     Model* seriesModel = m_store->modelForSeries(series);
     CurveDrawing plot(Curve2D(evaluateRegression, seriesModel),
-                      m_store->coefficientsForSeries(series, *globalContext),
+                      m_store->coefficientsForSeries(
+                          series, GlobalContextAccessor::Context()),
                       plotView->range()->xMin(), plotView->range()->xMax(),
                       plotView->pixelWidth(), color);
     plot.draw(plotView, ctx, rect);

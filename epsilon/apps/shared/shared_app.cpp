@@ -1,6 +1,7 @@
 #include "shared_app.h"
 
 #include <apps/apps_container_helper.h>
+#include <apps/shared/global_context.h>
 #include <poincare/variable_store.h>
 
 #include "../apps_container.h"
@@ -20,19 +21,17 @@ void SharedApp::Snapshot::tidy() {
   /* Since the sequence store and the continuous function store is now
    * accessible from every app, when exiting any application, we need to tidy
    * it.*/
-  AppsContainerHelper::sharedAppsContainerGlobalContext()->tidyStores();
+  GlobalContextAccessor::Store().tidyStores();
   Escher::App::Snapshot::tidy();
 }
 
-void SharedApp::Snapshot::reset() {
-  AppsContainerHelper::sharedAppsContainerGlobalContext()->reset();
-}
+void SharedApp::Snapshot::reset() { GlobalContextAccessor::Store().reset(); }
 
 SharedApp::SharedApp(Snapshot* snapshot, ViewController* rootViewController)
     : ::App(snapshot, rootViewController) {}
 
 VariableStore* SharedApp::localContext() {
-  return AppsContainerHelper::sharedAppsContainerGlobalContext();
+  return &GlobalContextAccessor::Store();
 }
 
 }  // namespace Shared

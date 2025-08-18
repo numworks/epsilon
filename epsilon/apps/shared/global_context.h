@@ -95,8 +95,13 @@ class GlobalContext final : public Poincare::VariableStore {
 
 class GlobalContextAccessor {
  public:
-  static inline Shared::GlobalContext* GlobalContext() {
-    return s_globalContext.get();
+  // const access
+  static inline const Shared::GlobalContext& Context() {
+    return *s_globalContext.get();
+  }
+  // mutable access
+  static inline Shared::GlobalContext& Store() {
+    return *s_globalContext.get();
   }
 
   static inline void Init() { s_globalContext.init(); }

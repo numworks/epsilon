@@ -1,6 +1,7 @@
 #include "function_graph_controller.h"
 
 #include <apps/apps_container_helper.h>
+#include <apps/shared/global_context.h>
 #include <assert.h>
 #include <float.h>
 #include <poincare/coordinate_2D.h>
@@ -130,9 +131,9 @@ void FunctionGraphController::FunctionSelectionController::
 void FunctionGraphController::reloadBannerView() {
   assert(numberOfCurves() > 0);
   Ion::Storage::Record record = recordAtSelectedCurveIndex();
-  reloadBannerViewForCursorOnFunction(
-      m_cursor->t(), m_cursor->x(), m_cursor->y(), record, functionStore(),
-      *AppsContainerHelper::sharedAppsContainerGlobalContext());
+  reloadBannerViewForCursorOnFunction(m_cursor->t(), m_cursor->x(),
+                                      m_cursor->y(), record, functionStore(),
+                                      Shared::GlobalContextAccessor::Context());
 }
 
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,

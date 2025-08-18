@@ -13,7 +13,6 @@
 #include "hardware_test/app.h"
 #include "home/app.h"
 #include "on_boarding/app.h"
-#include "shared/global_context.h"
 #include "shared/prompt_controller.h"
 #include "suspend_timer.h"
 #include "usb/app.h"
@@ -34,8 +33,6 @@ class AppsContainer : public Escher::Container, Ion::Storage::StorageDelegate {
   Home::App::Snapshot* homeAppSnapshot() { return &m_homeSnapshot; }
   void setExamMode(Poincare::ExamMode targetExamMode,
                    Poincare::ExamMode previousMode);
-  // TEMPORARY: this method will be removed from AppsContainer
-  Shared::GlobalContext* globalContext();
   void didSuspend();
   bool dispatchEvent(Ion::Events::Event event) override;
   void switchToBuiltinApp(Escher::App::Snapshot* snapshot) override;

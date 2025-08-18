@@ -51,7 +51,7 @@ class GraphController : public Shared::InteractiveCurveViewController {
   int selectedSeriesIndex() const {
     return seriesIndexFromCurveIndex(*m_selectedCurveIndex);
   }
-  Poincare::Context* globalContext() const;
+  const Poincare::Context& globalContext() const;
 
  protected:
   // Responder

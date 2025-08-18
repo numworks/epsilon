@@ -54,9 +54,7 @@ class App : public Shared::FunctionApp {
    * appear there NestedMenuController * variableBox(EditableField *
    * textInput) override; */
   Shared::SequenceContext* localContext() override {
-    return static_cast<Shared::GlobalContext*>(
-               AppsContainerHelper::sharedAppsContainerGlobalContext())
-        ->sequenceContext();
+    return Shared::GlobalContextAccessor::Store().sequenceContext();
   }
   Shared::SequenceStore* functionStore() const override {
     return Shared::GlobalContext::s_sequenceStore;

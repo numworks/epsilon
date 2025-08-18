@@ -9,6 +9,7 @@
 #include <array>
 
 #include "elements_data_base.h"
+#include "shared/global_context.h"
 
 using namespace Poincare;
 
@@ -40,19 +41,18 @@ Layout DoubleDataField::getLayout(AtomicNumber z, int significantDigits) const {
 
   UserExpression value = UserExpression::Builder<double>(v);
   /* Check the global context to know whether units need an underscore. */
-  Context* globalContext =
-      AppsContainer::sharedAppsContainer()->globalContext();
-  UserExpression unit = UserExpression::Parse(rawUnit(), *globalContext);
+  const Context& globalContext = Shared::GlobalContextAccessor::Context();
+  UserExpression unit = UserExpression::Parse(rawUnit(), globalContext);
 
   if (unit.isUninitialized()) {
     return value.createLayout(floatDisplayMode, significantDigits,
-                              *globalContext);
+                              globalContext);
   }
 
   UserExpression result =
       UserExpression::Create(KMult(KA, KB), {.KA = value, .KB = unit});
   return result.createLayout(floatDisplayMode, significantDigits,
-                             *globalContext);
+                             globalContext);
 }
 
 DataField::ColorPair DoubleDataField::getColors(AtomicNumber z) const {
@@ -103,10 +103,9 @@ Poincare::Layout ZDataField::getLayout(AtomicNumber z,
                                        int significantDigits) const {
   Preferences::PrintFloatMode floatDisplayMode =
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
-  Context* globalContext =
-      AppsContainer::sharedAppsContainer()->globalContext();
+  const Context& globalContext = Shared::GlobalContextAccessor::Context();
   return UserExpression::Builder(static_cast<int>(z))
-      .createLayout(floatDisplayMode, significantDigits, *globalContext);
+      .createLayout(floatDisplayMode, significantDigits, globalContext);
 }
 
 // ADataField
@@ -118,10 +117,9 @@ Layout ADataField::getLayout(AtomicNumber z, int significantDigits) const {
   }
   Preferences::PrintFloatMode floatDisplayMode =
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
-  Context* globalContext =
-      AppsContainer::sharedAppsContainer()->globalContext();
+  const Context& globalContext = Shared::GlobalContextAccessor::Context();
   return UserExpression::Builder(static_cast<int>(a))
-      .createLayout(floatDisplayMode, significantDigits, *globalContext);
+      .createLayout(floatDisplayMode, significantDigits, globalContext);
 }
 
 bool ADataField::canBeStored(AtomicNumber z) const {
@@ -204,8 +202,7 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z,
 
   Preferences::PrintFloatMode floatDisplayMode =
       GlobalPreferences::SharedGlobalPreferences()->displayMode();
-  Context* globalContext =
-      AppsContainer::sharedAppsContainer()->globalContext();
+  const Context& globalContext = Shared::GlobalContextAccessor::Context();
 
   /* Subshells are displayed in order of increasing n, then increasing l. */
   for (n = 1; n <= k_nMax; n++) {
@@ -218,11 +215,11 @@ Layout ConfigurationDataField::getLayout(AtomicNumber z,
           KA ^ KB ^ KC ^ KSuperscriptL(KD),
           {.KA = res,
            .KB = UserExpression::Builder(n).createLayout(
-               floatDisplayMode, significantDigits, *globalContext),
+               floatDisplayMode, significantDigits, globalContext),
            .KC = Layout::CodePoint(k_lSymbols[l]),
            .KD = UserExpression::Builder(conf[index])
                      .createLayout(floatDisplayMode, significantDigits,
-                                   *globalContext)});
+                                   globalContext)});
     }
   }
 

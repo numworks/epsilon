@@ -184,12 +184,11 @@ void ListController::resolveEquations() {
   // altered
   modelStore()->tidyDownstreamPoolFrom();
   App::app()->system()->tidy();
-  Poincare::Context* context = App::app()->localContext();
   Poincare::CircuitBreakerCheckpoint checkpoint(
       Ion::CircuitBreaker::CheckpointType::Back);
   if (CircuitBreakerRun(checkpoint)) {
     using Error = SystemOfEquations::Error;
-    Error e = App::app()->system()->exactSolve(*context);
+    Error e = App::app()->system()->exactSolve(App::app()->localContext());
     switch (e) {
       case Error::EquationUndefined:
         App::app()->displayWarning(I18n::Message::UndefinedEquation);
@@ -218,7 +217,7 @@ void ListController::resolveEquations() {
         App::app()->system()->resetSolvingRanges();
         App::app()->system()->useAutoSolvingRange();
         if (CircuitBreakerRun(subCheckpoint)) {
-          App::app()->system()->approximateSolve(*context);
+          App::app()->system()->approximateSolve(App::app()->localContext());
         } else {
           modelStore()->tidyDownstreamPoolFrom(
               subCheckpoint.endOfPoolBeforeCheckpoint());

@@ -11,7 +11,7 @@ Poincare::Range2D<float> OptimalRange(bool computeX, bool computeY,
                                       Poincare::Range2D<float> originalRange,
                                       Shared::ContinuousFunctionStore* store,
                                       bool defaultRangeIsNormalized,
-                                      Poincare::Context* context);
+                                      const Poincare::Context& context);
 
 }
 

@@ -58,15 +58,14 @@ void CobwebController::viewWillAppear() {
 void CobwebController::setupRange() {
   /* Compute the bounding rect of the maximum number of values we will want to
    * draw such that we never need to move the view. */
-  SequenceContext* sequenceContext = App::app()->localContext();
+  const SequenceContext& sequenceContext = App::app()->localContext();
   Zoom zoom(0.f, INFINITY, InteractiveCurveViewRange::NormalYXRatio(),
             InteractiveCurveViewRange::k_maxFloat);
   for (int step = 0; step < CobwebGraphView::k_maximumNumberOfSteps; step++) {
-    float value =
-        sequence()
-            ->evaluateXYAtParameter(static_cast<float>(rankAtStep(step)),
-                                    *sequenceContext)
-            .y();
+    float value = sequence()
+                      ->evaluateXYAtParameter(
+                          static_cast<float>(rankAtStep(step)), sequenceContext)
+                      .y();
     zoom.fitPoint(Coordinate2D<float>(value, step == 0 ? 0.f : value), false,
                   k_margin, k_margin, k_margin, k_margin);
   }
@@ -80,7 +79,7 @@ void CobwebController::setupRange() {
 
 void CobwebController::setRecord(Ion::Storage::Record record) {
   m_record = record;
-  m_isSuitable = sequence()->isSuitableForCobweb(*App::app()->localContext());
+  m_isSuitable = sequence()->isSuitableForCobweb(App::app()->localContext());
 }
 
 OMG::ExpiringPointer<Shared::Sequence> CobwebController::sequence() const {
@@ -99,7 +98,7 @@ void CobwebController::reloadBannerView() {
   double u_n =
       sequence()
           ->evaluateXYAtParameter(static_cast<double>(rankAtCurrentStep()),
-                                  *App::app()->localContext())
+                                  App::app()->localContext())
           .y();
   Poincare::Print::CustomPrintf(buffer + nameLength, bufferSize - nameLength,
                                 "=%*.*ef", u_n,
@@ -118,7 +117,7 @@ bool CobwebController::handleZoom(Ion::Events::Event event) {
   float value =
       sequence()
           ->evaluateXYAtParameter(static_cast<float>(rankAtCurrentStep()),
-                                  *App::app()->localContext())
+                                  App::app()->localContext())
           .y();
   interactiveCurveViewRange()->zoom(ratio, value, m_step ? value : 0.f);
   m_graphView.resetCachedStep();
@@ -135,7 +134,7 @@ bool CobwebController::updateStep(int delta) {
   double u_n =
       sequence()
           ->evaluateXYAtParameter(static_cast<double>(rankAtCurrentStep()),
-                                  *App::app()->localContext())
+                                  App::app()->localContext())
           .y();
   double x = u_n;
   double y = m_step == 0 ? 0.f : u_n;

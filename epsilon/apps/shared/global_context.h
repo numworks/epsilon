@@ -63,6 +63,7 @@ class GlobalContext final : public Poincare::VariableStore {
   static OMG::GlobalBox<ContinuousFunctionStore> s_continuousFunctionStore;
   void storageDidChangeForRecord(const Ion::Storage::Record record);
   SequenceContext* sequenceContext() { return &m_sequenceContext; }
+  const SequenceContext* sequenceContext() const { return &m_sequenceContext; }
   void tidyStores();
   void prepareForNewApp();
   void reset();

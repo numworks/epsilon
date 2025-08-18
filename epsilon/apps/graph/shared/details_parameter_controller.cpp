@@ -86,15 +86,15 @@ void DetailsParameterController::setRecord(Ion::Storage::Record record) {
   m_record = record;
   if (!m_record.isNull()) {
     OMG::ExpiringPointer<Shared::ContinuousFunction> f = function();
-    Poincare::Context* context = App::app()->localContext();
     if (functionIsNonVerticalLine()) {
       double slope, intercept;
-      f->getLineParameters(&slope, &intercept, *context);
+      f->getLineParameters(&slope, &intercept, App::app()->localContext());
       setLineDetailsValues(slope, intercept);
     } else if (f->properties().isConic() && f->properties().isCartesian()) {
       /* For now this is only implemented for cartesian conics but could also
        * be for polar and parametric conics. */
-      CartesianConic c = f->cartesianConicParameters(*context);
+      CartesianConic c =
+          f->cartesianConicParameters(App::app()->localContext());
       setConicDetailsValues(&c);
     }
   }

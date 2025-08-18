@@ -48,7 +48,7 @@ void FunctionGraphController::viewWillAppear() {
   functionGraphView()->setAreaHighlight(NAN, NAN);
 
   if (functionGraphView()->context() == nullptr) {
-    functionGraphView()->setContext(App::app()->localContext());
+    functionGraphView()->setContext(&App::app()->localContext());
   }
 
   InteractiveCurveViewController::viewWillAppear();
@@ -59,7 +59,7 @@ void FunctionGraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (curveIndex != *m_selectedCurveIndex) {
     selectCurveAtIndex(curveIndex, false);
     Coordinate2D<double> xy =
-        xyValues(curveIndex, m_cursor->t(), *App::app()->localContext(),
+        xyValues(curveIndex, m_cursor->t(), App::app()->localContext(),
                  m_selectedSubCurveIndex);
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
@@ -138,7 +138,6 @@ void FunctionGraphController::reloadBannerView() {
 
 double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
                                                bool ignoreMargins) {
-  Poincare::Context* context = App::app()->localContext();
   OMG::ExpiringPointer<Function> function =
       functionStore()->modelForRecord(record);
   float gridUnit =
@@ -161,7 +160,9 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
     currentX = middle + (iterations % 2 == 0 ? -1 : 1) *
                             ((iterations + 1) / 2) * gridUnit;
     // Using first subCurve for default cursor.
-    currentY = function->evaluateXYAtParameter(currentX, *context, 0).y();
+    currentY =
+        function->evaluateXYAtParameter(currentX, App::app()->localContext(), 0)
+            .y();
     iterations++;
   } while (xMin < currentX && currentX < xMax &&
            !isCursorVisibleAtPosition(Coordinate2D<float>(currentX, currentY),
@@ -185,7 +186,7 @@ void FunctionGraphController::computeDefaultPositionForFunctionAtIndex(
   OMG::ExpiringPointer<Function> function =
       functionStore()->modelForRecord(record);
   *t = defaultCursorT(record, ignoreMargins);
-  *xy = function->evaluateXYAtParameter(*t, *App::app()->localContext(), 0);
+  *xy = function->evaluateXYAtParameter(*t, App::app()->localContext(), 0);
 }
 
 void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
@@ -215,11 +216,10 @@ void FunctionGraphController::initCursorParameters(bool ignoreMargins) {
 bool FunctionGraphController::moveCursorVertically(
     OMG::VerticalDirection direction) {
   int currentActiveFunctionIndex = *m_selectedCurveIndex;
-  Poincare::Context* context = App::app()->localContext();
   int nextSubCurve = 0;
-  int nextCurve =
-      nextCurveIndexVertically(direction, currentActiveFunctionIndex, *context,
-                               m_selectedSubCurveIndex, &nextSubCurve);
+  int nextCurve = nextCurveIndexVertically(
+      direction, currentActiveFunctionIndex, App::app()->localContext(),
+      m_selectedSubCurveIndex, &nextSubCurve);
   if (nextCurve < 0) {
     return false;
   }
@@ -238,9 +238,8 @@ void FunctionGraphController::moveCursorVerticallyToPosition(int nextCurve,
     assert(!std::isnan(f->tMax()));
     nextT = std::min<double>(f->tMax(), std::max<double>(f->tMin(), nextT));
   }
-  Poincare::Context* context = App::app()->localContext();
   Poincare::Coordinate2D<double> cursorPosition =
-      f->evaluateXYAtParameter(nextT, *context, nextSubCurve);
+      f->evaluateXYAtParameter(nextT, App::app()->localContext(), nextSubCurve);
   m_cursor->moveTo(nextT, cursorPosition.x(), cursorPosition.y());
   selectCurveAtIndex(nextCurve, true, nextSubCurve);
   // Prevent the abscissaValue from edition if the function is along y
@@ -261,7 +260,7 @@ bool FunctionGraphController::selectedModelIsValid() const {
 Poincare::Coordinate2D<double> FunctionGraphController::selectedModelXyValues(
     double t) const {
   assert(selectedModelIsValid());
-  return xyValues(*m_selectedCurveIndex, t, *App::app()->localContext(),
+  return xyValues(*m_selectedCurveIndex, t, App::app()->localContext(),
                   m_selectedSubCurveIndex);
 }
 

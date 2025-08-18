@@ -171,19 +171,21 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   double abscissa = intervalAtColumn(column)->element(
       row - 1);  // Subtract the title row from row to get the element index
   bool isSumColumn = false;
-  Context* context = App::app()->localContext();
   OMG::ExpiringPointer<Shared::Sequence> sequence =
       functionStore()->modelForRecord(recordAtColumn(column, &isSumColumn));
   double sumValue =
-      isSumColumn ? sequence->sumBetweenBoundsValue(sequence->initialRank(),
-                                                    abscissa, *context)
-                  : sequence->evaluateXYAtParameter(abscissa, *context).y();
+      isSumColumn
+          ? sequence->sumBetweenBoundsValue(sequence->initialRank(), abscissa,
+                                            App::app()->localContext())
+          : sequence
+                ->evaluateXYAtParameter(abscissa, App::app()->localContext())
+                .y();
   *memoizedLayoutAtIndex(index) =
       UserExpression::Builder(sumValue).createLayout(
           GlobalPreferences::SharedGlobalPreferences()->displayMode(),
           GlobalPreferences::SharedGlobalPreferences()
               ->numberOfSignificantDigits(),
-          *context);
+          App::app()->localContext());
 }
 
 Shared::Interval* ValuesController::intervalAtColumn(int column) {

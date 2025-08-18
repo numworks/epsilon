@@ -40,12 +40,12 @@ bool GlobalContext::UserNameIsFree(const char* baseName) {
 
 const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
   assert(!record.isNull());
-  Context* context = Escher::App::app()->localContext();
   if (record.hasExtension(Ion::Storage::expressionExtension) ||
       record.hasExtension(Ion::Storage::listExtension) ||
       record.hasExtension(Ion::Storage::matrixExtension)) {
     return PoincareHelpers::CreateLayout(
-        UserExpression::Builder(ExpressionForUserSymbol(record)), *context);
+        UserExpression::Builder(ExpressionForUserSymbol(record)),
+        Escher::App::app()->localContext());
   } else if (record.hasExtension(Ion::Storage::functionExtension) ||
              record.hasExtension(Ion::Storage::parametricComponentExtension) ||
              record.hasExtension(Ion::Storage::regressionExtension)) {
@@ -63,7 +63,8 @@ const Layout GlobalContext::LayoutForRecord(Ion::Storage::Record record) {
     UserExpression expression =
         UserExpression::Builder(ExpressionForUserFunction(record));
     expression.replaceUnknownWithSymbol(symbol);
-    return PoincareHelpers::CreateLayout(expression, *context);
+    return PoincareHelpers::CreateLayout(expression,
+                                         Escher::App::app()->localContext());
   } else {
     assert(record.hasExtension(Ion::Storage::sequenceExtension));
     return Sequence(record).layout();

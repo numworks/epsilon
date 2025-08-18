@@ -25,7 +25,7 @@ void MatrixListController::computeAdditionalResults(
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = *App::app()->localContext(),
+      .m_context = App::app()->localContext(),
       .m_advanceReduce = false};
 
   // Compute all layouts at once to reuse intermediate results

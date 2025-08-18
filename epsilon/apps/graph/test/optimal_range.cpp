@@ -36,7 +36,7 @@ void quiz_assert_optimal_range_is(
     i++;
   }
   Range2D<float> range = Graph::OptimalRange(computeX, computeY, originalRange,
-                                             &store, false, &context);
+                                             &store, false, context);
 
   struct testCaseResult {
     const char* name;

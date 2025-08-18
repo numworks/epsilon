@@ -24,8 +24,6 @@ void FunctionListController::computeAdditionalResults(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
 
-  Context* context = App::app()->localContext();
-
   float abscissa;
   UserExpression inputClone =
       AdditionalResultsHelper::CloneReplacingNumericalValuesWithSymbol(
@@ -34,9 +32,9 @@ void FunctionListController::computeAdditionalResults(
   bool reductionFailure = false;
   PreparedFunction simplifiedExpression =
       PoincareHelpers::CloneAndReduce(
-          inputClone, *context, complexFormat(), angleUnit(), false,
-          ReductionTarget::User, SymbolicComputation::ReplaceDefinedSymbols,
-          &reductionFailure)
+          inputClone, App::app()->localContext(), complexFormat(), angleUnit(),
+          false, ReductionTarget::User,
+          SymbolicComputation::ReplaceDefinedSymbols, &reductionFailure)
           .getPreparedFunction(k_symbolName, true);
   /* Reduction should always succeed when in the additional results, as they are
    * blocked if the Calculation had a reduction failure. */
@@ -49,13 +47,14 @@ void FunctionListController::computeAdditionalResults(
    */
   // TODO_CONTEXT: prepare for approximation ?
   float ordinate = approximateOutput.approximateToRealScalar<float>(
-      angleUnit(), complexFormat(), *context);
+      angleUnit(), complexFormat(), App::app()->localContext());
   m_model.setParameters(simplifiedExpression, abscissa, ordinate);
 
-  m_layouts[0] = Layout::Create(
-      KA ^ KB, {.KA = Layout::String("y="),
-                .KB = Layout(inputClone.createLayout(
-                    displayMode(), numberOfSignificantDigits(), *context))});
+  m_layouts[0] =
+      Layout::Create(KA ^ KB, {.KA = Layout::String("y="),
+                               .KB = Layout(inputClone.createLayout(
+                                   displayMode(), numberOfSignificantDigits(),
+                                   App::app()->localContext()))});
   setShowIllustration(true);
 }
 

@@ -30,9 +30,8 @@ void SharedApp::Snapshot::reset() { GlobalContextAccessor::Store().reset(); }
 SharedApp::SharedApp(Snapshot* snapshot, ViewController* rootViewController)
     : ::App(snapshot, rootViewController) {}
 
-Context* SharedApp::localContext() {
-  // TEMPORARY: will return GlobalContextAccessor::Context()
-  return &GlobalContextAccessor::Store();
+const Poincare::Context& SharedApp::localContext() const {
+  return GlobalContextAccessor::Context();
 }
 
 }  // namespace Shared

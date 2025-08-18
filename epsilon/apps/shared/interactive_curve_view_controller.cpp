@@ -172,7 +172,7 @@ bool InteractiveCurveViewController::textFieldDidFinishEditing(
   /* If possible, round floatBody so that we go to the evaluation of the
    * displayed floatBody */
   floatBody = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-      floatBody, *App::app()->localContext(),
+      floatBody, App::app()->localContext(),
       GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits(),
       curveView()->pixelWidth(), false);
   moveCursorAndCenterIfNeeded(floatBody);
@@ -192,7 +192,7 @@ bool InteractiveCurveViewController::textFieldDidReceiveEvent(
 
 void InteractiveCurveViewController::moveCursorAndCenterIfNeeded(double t) {
   Coordinate2D<double> xy =
-      xyValues(selectedCurveIndex(), t, *App::app()->localContext(),
+      xyValues(selectedCurveIndex(), t, App::app()->localContext(),
                m_selectedSubCurveIndex);
   m_cursor->moveTo(t, xy.x(), xy.y());
   reloadBannerView();

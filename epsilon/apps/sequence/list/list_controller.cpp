@@ -133,15 +133,14 @@ void ListController::editExpression(Ion::Events::Event event) {
   }
   m_editableCell.setHighlighted(true);
   // Invalidate the sequences context cache
-  App::app()->localContext()->resetCache();
+  App::app()->localContext().resetCache();
 }
 
 bool ListController::editSelectedRecordWithLayout(Poincare::Layout layout) {
   Ion::Storage::Record record = selectedRecord();
   Shared::Sequence* sequence = modelStore()->modelForRecord(record);
-  Context* context = App::app()->localContext();
   Ion::Storage::Record::ErrorStatus error;
-  error = sequence->setLayoutsForAggregated(layout, *context);
+  error = sequence->setLayoutsForAggregated(layout, App::app()->localContext());
   didChangeModelsList();
   return error == Ion::Storage::Record::ErrorStatus::None;
 }
@@ -187,7 +186,7 @@ void ListController::addNewModelAction() {
 bool ListController::removeModelRow(Ion::Storage::Record record) {
   Shared::FunctionListController::removeModelRow(record);
   // Invalidate the sequences context cache
-  App::app()->localContext()->resetCache();
+  App::app()->localContext().resetCache();
   return true;
 }
 

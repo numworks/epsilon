@@ -16,19 +16,18 @@ namespace Calculation {
 void ComplexListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
-  Context* context = App::app()->localContext();
   /* TODO:
    * - save values of re(z), im(z) during setLineAtIndex to directly use them in
    * setComplex ?
    * - do the same for abs(z) and arg(z) for exponential form ? */
-  assert(AdditionalResultsType::HasComplex(approximateOutput,
-                                           m_calculationPreferences, *context));
+  assert(AdditionalResultsType::HasComplex(
+      approximateOutput, m_calculationPreferences, App::app()->localContext()));
   assert(complexFormat() != Preferences::ComplexFormat::Real);
   Internal::ProjectionContext ctx = {
       .m_complexFormat = Preferences::ComplexFormat::Cartesian,
       .m_angleUnit = angleUnit(),
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = *context};
+      .m_context = App::app()->localContext()};
 
   // Fill Calculation Store
   constexpr KTree k_symbol = "z"_e;
@@ -50,7 +49,8 @@ void ComplexListController::computeAdditionalResults(
   double imagPart;
   bool hasComplexApprox =
       approximateOutput.hasDefinedComplexApproximation<double>(
-          ctx.m_angleUnit, ctx.m_complexFormat, *context, &realPart, &imagPart);
+          ctx.m_angleUnit, ctx.m_complexFormat, App::app()->localContext(),
+          &realPart, &imagPart);
 
   assert(hasComplexApprox);
   (void)hasComplexApprox;  // Silence the compiler;

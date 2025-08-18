@@ -248,9 +248,9 @@ double CurveParameterController::parameterAtIndex(int index) {
   int derivationOrder = derivationOrderOfParameterAtIndex(parameterIndex);
   if (derivationOrder >= 1) {
     return evaluateDerivativeAt(parameterIndex, derivationOrder,
-                                *App::app()->localContext());
+                                App::app()->localContext());
   }
-  return evaluateCurveAt(parameterIndex, *App::app()->localContext());
+  return evaluateCurveAt(parameterIndex, App::app()->localContext());
 }
 
 bool CurveParameterController::confirmParameterAtIndex(ParameterIndex index,
@@ -263,7 +263,7 @@ bool CurveParameterController::confirmParameterAtIndex(ParameterIndex index,
   double pixelWidth =
       (m_graphRange->xMax() - m_graphRange->xMin()) / Ion::Display::Width;
   f = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-      f, *App::app()->localContext(),
+      f, App::app()->localContext(),
       GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits(),
       pixelWidth, false);
 

@@ -48,8 +48,8 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   size_t nameLength = sequence->name(name, bufferSize);
   KDColor fadedColor =
       KDColor::Blend(sequence->color(), KDColorWhite, k_curveFadeRatio);
-  SequenceContext* context =
-      reinterpret_cast<SequenceContext*>(App::app()->localContext());
+  const SequenceContext& context =
+      reinterpret_cast<const SequenceContext&>(App::app()->localContext());
   Poincare::UserExpression function = sequence->expressionClone();
 
   /* Replace initial term by its value, to avoid replacing it by a wrong value
@@ -58,7 +58,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       Poincare::SymbolHelper::BuildSequence(
           name, Poincare::UserExpression::Builder(sequence->initialRank()));
   Poincare::SystemExpression initialExpression =
-      sequence->firstInitialConditionExpressionReduced(*context);
+      sequence->firstInitialConditionExpressionReduced(context);
   function.replaceSymbolWithExpression(initialSymbol, initialExpression);
 
   // Replace u(n) by n: u(n) becomes the variable
@@ -73,7 +73,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
       .m_angleUnit = GlobalPreferences::SharedGlobalPreferences()->angleUnit(),
       .m_symbolic =
           Poincare::Internal::SymbolicComputation::ReplaceDefinedSymbols,
-      .m_context = *App::app()->localContext()};
+      .m_context = App::app()->localContext()};
   Poincare::SystemExpression reducedFunction =
       function.cloneAndReduce(projCtx, &reductionFailure);
   assert(!reductionFailure);
@@ -88,7 +88,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   if (!shouldUpdate()) {
     float xMin = plotView->range()->xMin();
     float xMax = plotView->range()->xMax();
-    CurveDrawing plot(Curve2D(evaluateFunction, &preparedFunction), context,
+    CurveDrawing plot(Curve2D(evaluateFunction, &preparedFunction), &context,
                       xMin, xMax, plotView->pixelWidth(), fadedColor);
     plot.draw(plotView, ctx, rect);
     plotView->drawSegment(ctx, rect, {xMin, xMin}, {xMax, xMax}, fadedColor,
@@ -100,11 +100,11 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
   float x =
       increasing
           ? m_x
-          : sequence->evaluateXYAtParameter(static_cast<float>(rank), *context)
+          : sequence->evaluateXYAtParameter(static_cast<float>(rank), context)
                 .y();
   float y = rank == sequence->initialRank() ? 0 : x;
   float uOfX =
-      sequence->evaluateXYAtParameter(static_cast<float>(rank + 1), *context)
+      sequence->evaluateXYAtParameter(static_cast<float>(rank + 1), context)
           .y();
   KDMeasuringContext measuringContext(*ctx);
   for (int i = initialStep; i < m_step; i++) {
@@ -118,7 +118,7 @@ void CobwebPlotPolicy::drawPlot(const AbstractPlotView* plotView,
                                         uOfX, sequence->color());
     y = uOfX;
     float uOfuOfX =
-        sequence->evaluateXYAtParameter(static_cast<float>(rank + 1), *context)
+        sequence->evaluateXYAtParameter(static_cast<float>(rank + 1), context)
             .y();
     measuringContext.reset();
     plotView->drawDashedStraightSegment(&measuringContext, rect,

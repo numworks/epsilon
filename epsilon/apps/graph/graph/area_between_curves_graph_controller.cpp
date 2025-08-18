@@ -42,7 +42,7 @@ void AreaBetweenCurvesGraphController::makeCursorVisibleOnSecondCurve(float x) {
       FunctionApp::app()->functionStore()->modelForRecord(
           secondSelectedRecord());
   float yG =
-      functionG->evaluateXYAtParameter(x, *FunctionApp::app()->localContext())
+      functionG->evaluateXYAtParameter(x, FunctionApp::app()->localContext())
           .y();
   // zoomOut is always true so that the user can see both dots
   makeDotVisible(x, yG, true);

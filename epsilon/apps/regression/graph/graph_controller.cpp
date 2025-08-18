@@ -246,7 +246,7 @@ void GraphController::openMenuForCurveAtIndex(int curveIndex) {
   if (*m_selectedCurveIndex != curveIndex) {
     *m_selectedCurveIndex = curveIndex;
     Coordinate2D<double> xy =
-        xyValues(curveIndex, m_cursor->t(), *App::app()->localContext());
+        xyValues(curveIndex, m_cursor->t(), App::app()->localContext());
     m_cursor->moveTo(m_cursor->t(), xy.x(), xy.y());
   }
   if (curveIsScatterPlot(*m_selectedCurveIndex)) {

@@ -47,7 +47,7 @@ bool ListParameterController::textFieldDidFinishEditing(
 
   App::app()->snapshot()->updateInterval();
   // Invalidate sequence context cache when changing initial rank
-  App::app()->localContext()->resetCache();
+  App::app()->localContext().resetCache();
   m_selectableListView.handleEvent(event);
   return true;
 }
@@ -87,7 +87,7 @@ void ListParameterController::viewWillAppear() {
 bool ListParameterController::handleEvent(Ion::Events::Event event) {
   HighlightCell* cell = selectedCell();
   if (cell == &m_enableCell && m_enableCell.canBeActivatedByEvent(event)) {
-    App::app()->localContext()->resetCache();
+    App::app()->localContext().resetCache();
   }
   return Shared::ListParameterController::handleEvent(event);
 }

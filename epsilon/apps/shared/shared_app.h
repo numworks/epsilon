@@ -14,7 +14,7 @@ class SharedApp : public Escher::App {
     void tidy() override;
     void reset() override;
   };
-  Poincare::Context* localContext() override;
+  const Poincare::Context& localContext() const override;
 
  protected:
   SharedApp(Snapshot* snapshot, Escher::ViewController* rootViewController);

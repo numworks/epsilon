@@ -127,7 +127,7 @@ void SumGraphController::makeCursorVisible() {
       FunctionApp::app()->functionStore()->modelForRecord(selectedRecord());
   float y =
       function
-          ->evaluateXYAtParameter(position, *FunctionApp::app()->localContext())
+          ->evaluateXYAtParameter(position, FunctionApp::app()->localContext())
           .y();
   // Do not zoom out if user is selecting first parameter
   makeDotVisible(position, y, m_step != Step::FirstParameter);
@@ -214,9 +214,8 @@ void SumGraphController::reloadBannerView() {
   if (m_step == Step::Result) {
     endSum = m_cursor->x();
     assert(!selectedRecord().isNull());
-    Poincare::Context* context = FunctionApp::app()->localContext();
-    Poincare::SystemExpression sum =
-        createSumExpression(m_startSum, endSum, *context);
+    Poincare::SystemExpression sum = createSumExpression(
+        m_startSum, endSum, FunctionApp::app()->localContext());
     result = sum.approximateSystemToRealScalar<double>();
     functionLayout = createFunctionLayout();
   } else {

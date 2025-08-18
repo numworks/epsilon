@@ -372,16 +372,15 @@ Expression PointsOfInterestCache::computeBetween(float start, float end) {
   }
 
   ContinuousFunctionStore* store = App::app()->functionStore();
-  Context* context = App::app()->localContext();
 
   PointSearchContext searchContext{
       .start = start,
       .end = end,
-      .context = *context,
+      .context = App::app()->localContext(),
       .store = store,
       .searchStep = static_cast<float>(
           Solver<double>::DefaultSearchStepForAmplitude(m_start - m_end)),
-      .solver = Solver<double>(start, end, *context),
+      .solver = Solver<double>(start, end, App::app()->localContext()),
       .record = m_record,
   };
   searchContext.reinitSolver();

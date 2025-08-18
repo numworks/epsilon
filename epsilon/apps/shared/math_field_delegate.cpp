@@ -118,7 +118,7 @@ bool MathTextFieldDelegate::textFieldDidFinishEditing(
     AbstractTextField* textField, Ion::Events::Event event) {
   assert(!textField->isEditing());
   if (textField->text()[0] != 0 &&
-      !isAcceptableText(textField->text(), *App::app()->localContext())) {
+      !isAcceptableText(textField->text(), App::app()->localContext())) {
     App::app()->displayWarning(I18n::Message::SyntaxError);
     return false;
   }
@@ -128,7 +128,7 @@ bool MathTextFieldDelegate::textFieldDidFinishEditing(
 template <typename T>
 T MathTextFieldDelegate::ParseInputFloatValue(const char* text) {
   return Expression::ParseAndSimplifyAndApproximateToRealScalar<T>(
-      text, *App::app()->localContext(),
+      text, App::app()->localContext(),
       GlobalPreferences::SharedGlobalPreferences()->complexFormat(),
       GlobalPreferences::SharedGlobalPreferences()->angleUnit());
 }

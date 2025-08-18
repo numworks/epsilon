@@ -49,13 +49,13 @@ bool CalculationGraphController::handleEnter() {
    * moved to the value displayed on the banner. */
   double t = m_cursor->t();
   t = FunctionBannerDelegate::GetValueDisplayedOnBanner(
-      t, *App::app()->localContext(), numberOfSignificantDigits(),
+      t, App::app()->localContext(), numberOfSignificantDigits(),
       curveView()->pixelWidth());
   Coordinate2D<double> xy =
       App::app()
           ->functionStore()
           ->modelForRecord(m_record)
-          ->evaluateXYAtParameter(t, *App::app()->localContext());
+          ->evaluateXYAtParameter(t, App::app()->localContext());
   m_cursor->moveTo(t, xy.x(), xy.y());
   return Shared::SimpleInteractiveCurveViewController::handleEnter();
 }
@@ -107,7 +107,7 @@ CalculationGraphController::computeNewPointOfInterestFromAbscissa(
       direction.isRight() ? m_graphRange->xMax() : m_graphRange->xMin();
   functionStore()->modelForRecord(m_record)->trimResolutionInterval(&start,
                                                                     &max);
-  return computeNewPointOfInterest(start, max, *App::app()->localContext(),
+  return computeNewPointOfInterest(start, max, App::app()->localContext(),
                                    stretch);
 }
 

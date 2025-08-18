@@ -22,9 +22,9 @@ namespace Calculation {
 void VectorListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
-  Context* context = App::app()->localContext();
+  const Context& context = App::app()->localContext();
   assert(AdditionalResultsType::HasVector(exactOutput, approximateOutput,
-                                          m_calculationPreferences, *context));
+                                          m_calculationPreferences, context));
   static_assert(
       k_maxNumberOfRows >= k_maxNumberOfOutputRows,
       "k_maxNumberOfRows must be greater than k_maxNumberOfOutputRows");
@@ -33,7 +33,7 @@ void VectorListController::computeAdditionalResults(
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = *context};
+      .m_context = context};
   assert(!Internal::Projection::UpdateComplexFormatWithExpressionInput(
       exactOutput, &ctx));
 
@@ -42,14 +42,14 @@ void VectorListController::computeAdditionalResults(
   UserExpression exactClone = exactOutput.clone();
 
   // 1. Vector norm
-  UserExpression norm = VectorHelper::BuildVectorNorm(exactClone, *context,
+  UserExpression norm = VectorHelper::BuildVectorNorm(exactClone, context,
                                                       m_calculationPreferences);
   assert(!norm.isUninitialized() && !norm.isUndefined());
   setLineAtIndex(index++, UserExpression(), norm, &ctx);
 
   // 2. Normalized vector
   SystemExpression approximatedNorm = PoincareHelpers::ApproximateUser<double>(
-      norm, *context, complexFormat(), angleUnit());
+      norm, context, complexFormat(), angleUnit());
   Sign sign = approximatedNorm.sign();
   assert(!sign.canBeStrictlyNegative());
   if (sign.canBeNull() || approximatedNorm.isPlusOrMinusInfinity()) {
@@ -58,7 +58,7 @@ void VectorListController::computeAdditionalResults(
   UserExpression normalized =
       UserExpression::Create(KDiv(KA, KB), {.KA = exactClone, .KB = norm});
   bool reductionFailure = false;
-  PoincareHelpers::CloneAndSimplify(&normalized, *context, complexFormat(),
+  PoincareHelpers::CloneAndSimplify(&normalized, context, complexFormat(),
                                     angleUnit(), true,
                                     Poincare::ReductionTarget::User,
                                     k_symbolicComputation, &reductionFailure);
@@ -80,7 +80,7 @@ void VectorListController::computeAdditionalResults(
   /* ComplexSign needs a reduced expression. Using approximation here, but a
    * reduction would also work. */
   SystemExpression yApprox = PoincareHelpers::ApproximateUser<double>(
-      normalized.cloneChildAtIndex(1), *context, complexFormat(), angleUnit());
+      normalized.cloneChildAtIndex(1), context, complexFormat(), angleUnit());
   sign = yApprox.sign();
   // HasVector should be false if any vector's child is complex.
   if (sign.canBeStrictlyNegative() && !sign.canBeStrictlyPositive()) {
@@ -89,7 +89,7 @@ void VectorListController::computeAdditionalResults(
         {.KA = Trigonometry::Period(ctx.m_angleUnit), .KB = angle});
   }
   float angleApproximation = angle.approximateToRealScalar<float>(
-      angleUnit(), complexFormat(), *context);
+      angleUnit(), complexFormat(), context);
   if (!std::isfinite(angleApproximation)) {
     return;
   }
@@ -101,10 +101,10 @@ void VectorListController::computeAdditionalResults(
   // 4. Illustration
   float xApproximation =
       approximateOutput.cloneChildAtIndex(0).approximateToRealScalar<float>(
-          angleUnit(), complexFormat(), *context);
+          angleUnit(), complexFormat(), context);
   float yApproximation =
       approximateOutput.cloneChildAtIndex(1).approximateToRealScalar<float>(
-          angleUnit(), complexFormat(), *context);
+          angleUnit(), complexFormat(), context);
   if (!std::isfinite(xApproximation) || !std::isfinite(yApproximation) ||
       (OMG::LaxToZero(xApproximation) == 0.f &&
        OMG::LaxToZero(yApproximation) == 0.f)) {

@@ -17,19 +17,20 @@ namespace Calculation {
 void TrigonometryListController::computeAdditionalResults(
     const UserExpression input, const UserExpression exactOutput,
     const UserExpression approximateOutput) {
-  Context* context = App::app()->localContext();
   assert((m_directTrigonometry &&
-          AdditionalResultsType::HasDirectTrigo(
-              input, exactOutput, m_calculationPreferences, *context)) ||
-         (!m_directTrigonometry && AdditionalResultsType::HasInverseTrigo(
-                                       input, exactOutput, approximateOutput,
-                                       m_calculationPreferences, *context)));
+          AdditionalResultsType::HasDirectTrigo(input, exactOutput,
+                                                m_calculationPreferences,
+                                                App::app()->localContext())) ||
+         (!m_directTrigonometry &&
+          AdditionalResultsType::HasInverseTrigo(
+              input, exactOutput, approximateOutput, m_calculationPreferences,
+              App::app()->localContext())));
 
   Internal::ProjectionContext ctx = {
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = *context};
+      .m_context = App::app()->localContext()};
 
   AdditionalResultsHelper::TrigonometryResults trigonometryResults =
       AdditionalResultsHelper::TrigonometryAngleHelper(

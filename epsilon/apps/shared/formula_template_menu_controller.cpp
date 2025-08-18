@@ -170,7 +170,7 @@ void FormulaTemplateMenuController::computeUninitializedLayouts() {
     m_layouts[i - 1] =
         e.createLayout(Poincare::Preferences::PrintFloatMode::Decimal,
                        Preferences::ShortNumberOfSignificantDigits,
-                       *App::app()->localContext());
+                       App::app()->localContext());
   }
 }
 

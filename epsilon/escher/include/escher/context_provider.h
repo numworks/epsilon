@@ -8,9 +8,9 @@ namespace Escher {
 
 class ContextProvider {
  public:
-  Poincare::Context* context() const {
+  const Poincare::Context* context() const {
     assert(Escher::App::app());
-    return Escher::App::app()->localContext();
+    return &Escher::App::app()->localContext();
   }
 };
 }  // namespace Escher

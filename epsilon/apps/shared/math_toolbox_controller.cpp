@@ -134,7 +134,7 @@ void MathToolboxController::fillCellForRow(HighlightCell* cell, int row) {
           resultLayout = resultExpression.createLayout(
               GlobalPreferences::SharedGlobalPreferences()->displayMode(),
               Poincare::PrintFloat::k_maxNumberOfSignificantDigits,
-              *App::app()->localContext());
+              App::app()->localContext());
         }
       }
       if (resultLayout.isUninitialized()) {

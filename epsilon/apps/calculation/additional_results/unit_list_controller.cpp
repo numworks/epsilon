@@ -74,13 +74,13 @@ void UnitListController::computeAdditionalResults(
   assert(AdditionalResultsType::HasUnit(exactOutput, m_calculationPreferences));
   Preferences::UnitFormat unitFormat =
       GlobalPreferences::SharedGlobalPreferences()->unitFormat();
-  Poincare::Context* context = App::app()->localContext();
+  const Context& context = App::app()->localContext();
   Internal::ProjectionContext ctx = {
       .m_complexFormat = complexFormat(),
       .m_angleUnit = angleUnit(),
       .m_unitFormat = unitFormat,
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
-      .m_context = *context,
+      .m_context = context,
   };
 
   // Initialize expressions and layouts
@@ -145,12 +145,12 @@ void UnitListController::computeAdditionalResults(
 
   // Memoize distinct layouts
   Layout exactOutputLayout =
-      Shared::PoincareHelpers::CreateLayout(exactOutput, *context)
+      Shared::PoincareHelpers::CreateLayout(exactOutput, context)
           .cloneAndTurnEToTenPowerLayout(false);
   for (size_t i = 0; i < k_maxNumberOfExpressionCells; i++) {
     if (!expressions[i].isUninitialized() && !expressions[i].isUndefined()) {
       Layout layout =
-          Shared::PoincareHelpers::CreateLayout(expressions[i], *context)
+          Shared::PoincareHelpers::CreateLayout(expressions[i], context)
               .cloneAndTurnEToTenPowerLayout(false);
       // Skip layouts identical to exactOutput
       if (exactOutputLayout.isIdenticalTo(layout, true)) {
@@ -170,10 +170,10 @@ void UnitListController::computeAdditionalResults(
         continue;
       }
       // Radians may have two layouts to display
-      if (expressions[i].isInRadians(*context)) {
+      if (expressions[i].isInRadians(context)) {
         // Approximated radian expression has already been computed.
         Layout approximatedLayout = Shared::PoincareHelpers::CreateLayout(
-                                        approximatedSIExpression, *context)
+                                        approximatedSIExpression, context)
                                         .cloneAndTurnEToTenPowerLayout(false);
         if (!approximatedLayout.isIdenticalTo(layout, true)) {
           m_exactLayouts[m_numberOfExpressionCells] = layout;
@@ -198,7 +198,7 @@ void UnitListController::computeAdditionalResults(
       angleUnit(), complexFormat());
   // Set upper and lower reference values
   m_numberOfBufferCells = UnitComparison::FindUpperAndLowerReferenceValues(
-      m_SIValue, approximatedSIExpression, *context, m_referenceValues,
+      m_SIValue, approximatedSIExpression, context, m_referenceValues,
       &m_tableIndexForComparison);
   if (m_numberOfExpressionCells + m_numberOfBufferCells == 0) {
     /* No reference values nor relevant unit display modes have been found, fall

@@ -13,6 +13,7 @@
 #include <poincare/layout.h>
 
 #include "../app.h"
+#include "escher/app.h"
 
 using namespace Shared;
 using namespace Poincare;
@@ -321,7 +322,7 @@ Layout ValuesController::functionTitleLayout(int column) {
   char buffer[bufferNameSize];
   if (derivationOrder == 0 && !function->isNamed()) {
     return PoincareHelpers::CreateLayout(function->originalEquation(),
-                                         *App::app()->localContext());
+                                         App::app()->localContext());
   }
   function->nameWithArgument(buffer, bufferNameSize, derivationOrder);
   return Layout::String(buffer);
@@ -365,17 +366,17 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   int derivationOrder;
   OMG::ExpiringPointer<ContinuousFunction> function =
       functionAtIndex(column, row, &abscissa, &derivationOrder);
-  Context* context = App::app()->localContext();
+  const Context& context = App::app()->localContext();
   UserExpression result;
   if (derivationOrder >= 1) {
     // Compute derivative approximate result
     assert(derivationOrder == 1 || derivationOrder == 2);
     result = UserExpression::Builder(function->approximateDerivative<double>(
-        abscissa, *context, derivationOrder, false));
+        abscissa, context, derivationOrder, false));
   } else {
     // Compute exact result
     assert(derivationOrder == 0);
-    SystemExpression e = function->expressionReduced(*context);
+    SystemExpression e = function->expressionReduced(context);
     SystemExpression abscissaExpression =
         SystemExpression::DecimalBuilderFromDouble(abscissa);
     bool simplificationFailure = false;
@@ -400,7 +401,7 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
      * non-beautified expression. */
     if (simplificationFailure || !m_exactValuesAreActivated ||
         CAS::ShouldOnlyDisplayApproximation(function->originalEquation(),
-                                            result, approximation, *context)) {
+                                            result, approximation, context)) {
       // Do not show exact expressions in certain cases, use approximate result
       result = approximation;
     }
@@ -411,15 +412,15 @@ void ValuesController::createMemoizedLayout(int column, int row, int index) {
   uint8_t significantDigits =
       GlobalPreferences::SharedGlobalPreferences()->numberOfSignificantDigits();
   Layout layout =
-      result.createLayout(floatDisplayMode, significantDigits, *context);
+      result.createLayout(floatDisplayMode, significantDigits, context);
   if (result.isPoint() && layout->layoutSize(k_cellFont).width() >
                               ApproximatedParametricCellSize().width() -
                                   2 * Metric::SmallCellMargin) {
     // Fallback on two rows point display if one row does not fit
     Poincare::Layout child0 = result.cloneChildAtIndex(0).createLayout(
-        floatDisplayMode, significantDigits, *context);
+        floatDisplayMode, significantDigits, context);
     Poincare::Layout child1 = result.cloneChildAtIndex(1).createLayout(
-        floatDisplayMode, significantDigits, *context);
+        floatDisplayMode, significantDigits, context);
     layout = Poincare::Layout::Create(KPoint2DL(KA, KB),
                                       {.KA = child0, .KB = child1});
   }

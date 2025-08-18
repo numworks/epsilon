@@ -53,8 +53,8 @@ class App : public Shared::FunctionApp {
   /* TODO: override variableBox to lock sequence in the variable box once they
    * appear there NestedMenuController * variableBox(EditableField *
    * textInput) override; */
-  Shared::SequenceContext* localContext() override {
-    return Shared::GlobalContextAccessor::Store().sequenceContext();
+  const Shared::SequenceContext& localContext() const override {
+    return *Shared::GlobalContextAccessor::Context().sequenceContext();
   }
   Shared::SequenceStore* functionStore() const override {
     return Shared::GlobalContext::s_sequenceStore;

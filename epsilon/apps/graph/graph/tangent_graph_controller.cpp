@@ -66,7 +66,7 @@ bool TangentGraphController::textFieldDidFinishEditing(
   }
   OMG::ExpiringPointer<ContinuousFunction> f = function();
   Coordinate2D<double> xy =
-      f->evaluateXYAtParameter(floatBody, *App::app()->localContext());
+      f->evaluateXYAtParameter(floatBody, App::app()->localContext());
   m_cursor->moveTo(floatBody, xy.x(), xy.y());
   panToMakeCursorVisible();
   reloadBannerView();

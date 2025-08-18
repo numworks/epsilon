@@ -93,8 +93,9 @@ class App : public Responder {
     assert(false);
     return nullptr;
   }
-  // TODO: rename method
-  virtual Poincare::Context* localContext() { return nullptr; }
+  virtual const Poincare::Context& localContext() const {
+    return Poincare::k_emptyContext;
+  }
   virtual EditableFieldHelpBox* toolbox() { return nullptr; }
   virtual EditableFieldHelpBox* variableBox() { return nullptr; }
 

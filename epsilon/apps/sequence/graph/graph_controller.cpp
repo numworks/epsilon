@@ -80,7 +80,7 @@ bool GraphController::textFieldDidFinishEditing(AbstractTextField* textField,
 }
 
 void GraphController::moveToRank(int n) {
-  double y = xyValues(selectedCurveIndex(), n, *App::app()->localContext()).y();
+  double y = xyValues(selectedCurveIndex(), n, App::app()->localContext()).y();
   m_cursor->moveTo(n, n, y);
   panToMakeCursorVisible();
   reloadBannerView();
@@ -97,7 +97,6 @@ Range2D<float> GraphController::optimalRange(
     *result.x() = *originalRange.x();
   }
   if (computeY) {
-    Poincare::Context* context = App::app()->localContext();
     Zoom zoom(result.xMin(), result.xMax(),
               InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
@@ -111,8 +110,8 @@ Range2D<float> GraphController::optimalRange(
     /* Loop first on abscissa so that sequences step ranks together. */
     for (int n = min; n <= max; n++) {
       for (int i = 0; i < nbOfActiveModels; i++) {
-        zoom.fitPoint(sequences[i]->evaluateXYAtParameter(static_cast<float>(n),
-                                                          *context));
+        zoom.fitPoint(sequences[i]->evaluateXYAtParameter(
+            static_cast<float>(n), App::app()->localContext()));
       }
     }
     *result.y() = *zoom.range(true, false).y();
@@ -146,7 +145,7 @@ bool GraphController::moveCursorHorizontally(OMG::HorizontalDirection direction,
     return false;
   }
   double y = s->evaluateXYAtParameter(static_cast<double>(x),
-                                      *App::app()->localContext())
+                                      App::app()->localContext())
                  .y();
   m_cursor->moveTo(x, x, y);
   return true;

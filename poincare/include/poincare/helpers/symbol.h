@@ -20,6 +20,8 @@ const char* AnsMainAlias();
 bool IsTheta(UserExpression e);
 bool IsSymbol(Expression e, CodePoint c);
 const char* GetName(Expression e);
+// TODO remove function exposing `const Tree*`
+const char* GetName(const Internal::Tree* e);
 
 // Builders
 UserExpression BuildSymbol(const char* name, int length = -1);

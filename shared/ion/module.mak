@@ -55,7 +55,7 @@ endif
 
 ifeq ($(PLATFORM_TYPE),simulator)
 include $(PATH_ion)/shared.simulator.mak
-else ifeq ($(PLATFORM),u0-discovery)
+else ifneq ($(filter $(PLATFORM),n0200 u0-discovery),)
 include $(PATH_ion)/scandium.shared.mak
 else
 include $(PATH_ion)/epsilon.$(PLATFORM_TYPE).mak

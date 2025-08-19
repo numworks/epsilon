@@ -50,6 +50,9 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
     void reset() override;
 
     InferenceModel* inference() { return m_inferenceBuffer.inference(); }
+    const InferenceModel* inference() const {
+      return m_inferenceBuffer.inference();
+    }
 
     OMG::RingBuffer<Escher::ViewController*,
                     LargeStackViewController::k_maxNumberOfChildren>*
@@ -107,8 +110,11 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
 
  private:
   App(Snapshot* snapshot);
-  Snapshot* snapshot() const {
+  Snapshot* snapshot() override {
     return static_cast<Snapshot*>(Escher::App::snapshot());
+  }
+  const Snapshot* snapshot() const override {
+    return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
 
   // Controllers

@@ -69,7 +69,8 @@ class App : public Responder {
   /* The destructor has to be virtual. Otherwise calling a destructor on an
    * App * pointing to a Derived App would have undefined behaviour. */
   virtual ~App() = default;
-  Snapshot* snapshot() const { return m_snapshot; }
+  virtual Snapshot* snapshot() { return m_snapshot; }
+  virtual const Snapshot* snapshot() const { return m_snapshot; }
   void setFirstResponder(Responder* responder, bool force = false);
   Responder* firstResponder() { return m_firstResponder; }
   virtual bool processEvent(Ion::Events::Event event);

@@ -54,8 +54,11 @@ class App : public Shared::MathApp {
     return app()->snapshot()->data()->setModel(selectedModel);
   }
 
-  Snapshot* snapshot() const {
+  Snapshot* snapshot() override {
     return static_cast<Snapshot*>(Escher::App::snapshot());
+  }
+  const Snapshot* snapshot() const override {
+    return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
 
   void didBecomeActive(Escher::Window* window) override;

@@ -46,12 +46,15 @@ class App : public Shared::FunctionApp {
         [Shared::ContinuousFunctionProperties::k_numberOfVariableSymbolTypes];
   };
   static App* app() { return static_cast<App*>(Escher::App::app()); }
-  Snapshot* snapshot() const {
+  Snapshot* snapshot() override {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }
-
+  const Snapshot* snapshot() const override {
+    return static_cast<const Snapshot*>(Escher::App::snapshot());
+  }
   Shared::ContinuousFunctionStore* functionStore() const override {
-    return snapshot()->functionStore();
+    // TEMPORARY const_cast, divide the getter in two
+    return const_cast<Snapshot*>(snapshot())->functionStore();
   }
   Shared::Interval* intervalForSymbolType(
       Shared::ContinuousFunctionProperties::SymbolType symbolType) {

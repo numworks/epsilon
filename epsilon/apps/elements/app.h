@@ -48,8 +48,11 @@ class App : public Shared::AppWithStoreMenu {
 
   static App* app() { return static_cast<App*>(Escher::App::app()); }
 
-  Snapshot* snapshot() {
+  Snapshot* snapshot() override {
     return static_cast<Snapshot*>(Escher::App::snapshot());
+  }
+  const Snapshot* snapshot() const override {
+    return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
   ElementsViewDataSource* elementsViewDataSource() { return &m_dataSource; }
 

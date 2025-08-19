@@ -23,7 +23,7 @@ class GraphViewModel {
   static uint8_t IndexOfGraphView(GraphView graphView);
 
   GraphViewModel() : m_selectedGraphView(GraphView::Histogram) {}
-  GraphView selectedGraphView() { return m_selectedGraphView; }
+  GraphView selectedGraphView() const { return m_selectedGraphView; }
   void selectGraphView(GraphView graphView) { m_selectedGraphView = graphView; }
 
  private:

@@ -34,13 +34,19 @@ class FunctionApp : public MathApp {
     return static_cast<FunctionApp*>(Escher::App::app());
   }
   virtual ~FunctionApp() = default;
-  Snapshot* snapshot() const {
+  Snapshot* snapshot() override {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }
-
-  virtual FunctionStore* functionStore() const {
-    return snapshot()->functionStore();
+  const Snapshot* snapshot() const override {
+    return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
+
+  // TODO: divide into const getter and non-const getter
+  virtual FunctionStore* functionStore() const {
+    // TEMPORARY const_cast
+    return const_cast<Snapshot*>(snapshot())->functionStore();
+  }
+
   virtual ValuesController* valuesController() = 0;
 
   bool storageCanChangeForRecordName(

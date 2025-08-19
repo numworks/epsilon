@@ -57,10 +57,13 @@ class App : public Shared::StoreApp {
   Escher::InputViewController* inputViewController() {
     return &m_inputViewController;
   }
-  Snapshot* snapshot() const {
+  Snapshot* snapshot() override {
     return static_cast<Snapshot*>(Shared::SharedApp::snapshot());
   }
-  Shared::InteractiveCurveViewRange* graphRange() const {
+  const Snapshot* snapshot() const override {
+    return static_cast<const Snapshot*>(Shared::SharedApp::snapshot());
+  }
+  Shared::InteractiveCurveViewRange* graphRange() {
     return snapshot()->graphRange();
   }
   GraphController* graphController() {

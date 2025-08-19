@@ -37,6 +37,7 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
     const Descriptor* descriptor() const override;
     uint32_t* storeVersion() { return &m_storeVersion; }
     GraphViewModel* graphViewModel() { return &m_graphViewModel; }
+    const GraphViewModel* graphViewModel() const { return &m_graphViewModel; }
     UserPreferences* userPreferences() { return &m_userPreferences; }
     int8_t selectedSeries() const { return m_selectedSeries; }
     int16_t selectedIndex() const { return m_selectedIndex; }
@@ -65,8 +66,11 @@ class App : public Shared::StoreApp, Escher::AlternateViewDelegate {
   Escher::InputViewController* inputViewController() {
     return &m_inputViewController;
   }
-  Snapshot* snapshot() const {
+  Snapshot* snapshot() override {
     return static_cast<Snapshot*>(Escher::App::snapshot());
+  }
+  const Snapshot* snapshot() const override {
+    return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
 
  private:

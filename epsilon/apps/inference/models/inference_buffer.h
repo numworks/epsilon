@@ -33,6 +33,9 @@ union InferenceBuffer {
   InferenceModel* inference() {
     return reinterpret_cast<InferenceModel*>(this);
   }
+  const InferenceModel* inference() const {
+    return reinterpret_cast<const InferenceModel*>(this);
+  }
 
  private:
   // Tests

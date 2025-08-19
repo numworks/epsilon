@@ -33,18 +33,18 @@ class FileSystem {
   static OMG::GlobalBox<FileSystem> sharedFileSystem;
 
 #if ION_STORAGE_LOG
-  void log();
+  void log() const;
 #endif
 
   /* Free space by deleting disabled records if needed. Return false if it was
    * not possible, or it wouldn't be enough. */
   bool freeSpaceFor(int size);
-  size_t availableSize();
+  size_t availableSize() const;
   // Put all the storage available space at the end of the record.
   size_t putAvailableSpaceAtEndOfRecord(Record r);
   // Remove data from the end of the record
   void removeDataFromEndOfRecord(Record r, size_t dataSize);
-  uint32_t checksum();
+  uint32_t checksum() const;
 
   // Storage delegate
   void setDelegate(StorageDelegate* delegate) { m_delegate = delegate; }
@@ -55,13 +55,13 @@ class FileSystem {
   RecordNameVerifier* recordNameVerifier() { return &m_recordNameVerifier; }
 
   // Record counters
-  int numberOfRecords();
-  int numberOfRecordsWithExtension(const char* extension) {
+  int numberOfRecords() const;
+  int numberOfRecordsWithExtension(const char* extension) const {
     return numberOfRecordsWithFilter(extension, ExtensionOnlyFilter);
   }
   // NOTE: We could handle the "hidden" status at Record level instead of this
   int numberOfRecordsStartingWithout(const char nonStartingChar,
-                                     const char* extension) {
+                                     const char* extension) const {
     return numberOfRecordsWithFilter(extension, FirstCharFilter,
                                      &nonStartingChar);
   }
@@ -71,10 +71,11 @@ class FileSystem {
                                       void* auxiliary);
   int firstAvailableNameFromPrefix(char* buffer, size_t prefixLength,
                                    size_t bufferSize, IsNameAvailableTest test,
-                                   void* auxiliary = nullptr, int maxId = 99);
+                                   void* auxiliary = nullptr,
+                                   int maxId = 99) const;
   int firstAvailableNameFromPrefix(char* buffer, size_t prefixLength,
                                    size_t bufferSize, const char* extension,
-                                   int maxId = 99);
+                                   int maxId = 99) const;
 
   // Record creation
   Record::ErrorStatus createRecordWithExtension(
@@ -99,34 +100,34 @@ class FileSystem {
   }
 
   // Record getters
-  bool hasRecord(Record r) { return pointerOfRecord(r) != nullptr; }
-  Record recordWithExtensionAtIndex(const char* extension, int index) {
+  bool hasRecord(Record r) const { return pointerOfRecord(r) != nullptr; }
+  Record recordWithExtensionAtIndex(const char* extension, int index) const {
     return recordWithFilterAtIndex(extension, index, ExtensionOnlyFilter);
   }
   Record recordWithExtensionAtIndexStartingWithout(const char nonStartingChar,
                                                    const char* extension,
-                                                   int index) {
+                                                   int index) const {
     return recordWithFilterAtIndex(extension, index, FirstCharFilter,
                                    &nonStartingChar);
   }
-  Record recordNamed(Record::Name name);
-  Record recordNamed(const char* fullName) {
+  Record recordNamed(Record::Name name) const;
+  Record recordNamed(const char* fullName) const {
     return recordNamed(Record::CreateRecordNameFromFullName(fullName));
   }
   Record recordBaseNamedWithExtension(const char* baseName,
-                                      const char* extension) {
+                                      const char* extension) const {
     return recordNamed(
         Record::CreateRecordNameFromBaseNameAndExtension(baseName, extension));
   }
   Record recordBaseNamedWithExtensions(const char* baseName,
                                        const char* const extensions[],
-                                       size_t numberOfExtensions);
+                                       size_t numberOfExtensions) const;
   const char* extensionOfRecordBaseNamedWithExtensions(
       const char* baseName, int baseNameLength, const char* const extensions[],
-      size_t numberOfExtensions);
+      size_t numberOfExtensions) const;
 
   template <typename T>
-  T* findSystemRecord() {
+  T* findSystemRecord() const {
     Ion::Storage::Record record = recordBaseNamedWithExtension(
         T::k_recordName, Ion::Storage::systemExtension);
     assert(!record.isNull());
@@ -170,26 +171,26 @@ class FileSystem {
   };
   // Private record counters and getters
   int numberOfRecordsWithFilter(const char* extension, RecordFilter filter,
-                                const void* auxiliary = nullptr);
+                                const void* auxiliary = nullptr) const;
   Record recordWithFilterAtIndex(const char* extension, int index,
                                  RecordFilter filter,
-                                 const void* auxiliary = nullptr);
+                                 const void* auxiliary = nullptr) const;
   void destroyRecordsMatching(RecordFilter filter, const void* auxiliary);
 
   FileSystem();
 
   /* Getters/Setters on recordID */
-  Record::Name nameOfRecord(const Record record) const;
+  Record::Name nameOfRecord(Record record) const;
   Record::ErrorStatus setNameOfRecord(Record* record, Record::Name name);
-  Record::Data valueOfRecord(const Record record);
-  Record::ErrorStatus setValueOfRecord(const Record record, Record::Data data);
-  bool destroyRecord(const Record record, bool notifyDelegate = true);
+  Record::Data valueOfRecord(Record record) const;
+  Record::ErrorStatus setValueOfRecord(Record record, Record::Data data);
+  bool destroyRecord(Record record, bool notifyDelegate = true);
 
   /* Getters on address in buffer */
-  char* pointerOfRecord(const Record record) const;
-  record_size_t sizeOfRecordStarting(char* start) const;
-  const void* valueOfRecordStarting(char* start) const;
-  Record::Name nameOfRecordStarting(char* start) const;
+  char* pointerOfRecord(Record record) const;
+  record_size_t sizeOfRecordStarting(const char* start) const;
+  const void* valueOfRecordStarting(const char* start) const;
+  Record::Name nameOfRecordStarting(const char* start) const;
 
   /* Overriders */
   size_t overrideSizeAtPosition(char* position, record_size_t size);
@@ -197,9 +198,11 @@ class FileSystem {
   size_t overrideValueAtPosition(char* position, const void* data,
                                  record_size_t size);
 
-  bool isNameOfRecordTaken(Record r, const Record* recordToExclude = nullptr);
+  bool isNameOfRecordTaken(Record r,
+                           const Record* recordToExclude = nullptr) const;
   char* endBuffer();
-  size_t sizeOfRecordWithName(Record::Name name, size_t dataSize);
+  const char* endBuffer() const;
+  size_t sizeOfRecordWithName(Record::Name name, size_t dataSize) const;
   bool slideBuffer(char* position, int delta);
   class RecordIterator {
    public:
@@ -214,7 +217,7 @@ class FileSystem {
     char* m_recordStart;
   };
   RecordIterator begin() const {
-    if (sizeOfRecordStarting((char*)m_buffer) == 0) {
+    if (sizeOfRecordStarting((const char*)m_buffer) == 0) {
       return nullptr;
     }
     return RecordIterator((char*)m_buffer);
@@ -223,11 +226,11 @@ class FileSystem {
 
   Record privateRecordBasedNamedWithExtensions(
       const char* baseName, int baseNameLength, const char* const extensions[],
-      size_t numberOfExtensions, const char** extensionResult = nullptr);
+      size_t numberOfExtensions, const char** extensionResult = nullptr) const;
   bool recordNameHasBaseNameAndOneOfTheseExtensions(
       Record::Name name, const char* baseName, int baseNameLength,
       const char* const extensions[], size_t numberOfExtensions,
-      const char** extensionResult);
+      const char** extensionResult) const;
 
   uint32_t m_magicHeader;
   char m_buffer[k_totalSize];

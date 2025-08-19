@@ -34,6 +34,9 @@ class App : public Shared::FunctionApp {
     Shared::SequenceStore* functionStore() override {
       return Shared::GlobalContext::s_sequenceStore;
     }
+    const Shared::SequenceStore* functionStore() const override {
+      return Shared::GlobalContext::s_sequenceStore;
+    }
     CurveViewRange* graphRange() { return &m_graphRange; }
     Shared::Interval* interval() { return &m_interval; }
     bool intervalModifiedByUser() { return m_intervalModifiedByUser; }
@@ -59,7 +62,9 @@ class App : public Shared::FunctionApp {
   const Shared::SequenceContext& localContext() const override {
     return *Shared::GlobalContextAccessor::Context().sequenceContext();
   }
-  // TODO: const and non-const version of functionStore getter
+  Shared::SequenceStore* functionStore() override {
+    return Shared::GlobalContext::s_sequenceStore;
+  }
   Shared::SequenceStore* functionStore() const override {
     return Shared::GlobalContext::s_sequenceStore;
   }

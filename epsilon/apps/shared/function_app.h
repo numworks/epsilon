@@ -23,6 +23,7 @@ class FunctionApp : public MathApp {
     Snapshot();
     CurveViewCursor* cursor() { return &m_cursor; }
     virtual FunctionStore* functionStore() = 0;
+    virtual const FunctionStore* functionStore() const = 0;
     int* selectedCurveIndex() { return &m_selectedCurveIndex; }
     void reset() override;
 
@@ -41,10 +42,10 @@ class FunctionApp : public MathApp {
     return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
 
-  // TODO: divide into const getter and non-const getter
-  virtual FunctionStore* functionStore() const {
-    // TEMPORARY const_cast
-    return const_cast<Snapshot*>(snapshot())->functionStore();
+  virtual FunctionStore* functionStore() { return snapshot()->functionStore(); }
+
+  virtual const FunctionStore* functionStore() const {
+    return snapshot()->functionStore();
   }
 
   virtual ValuesController* valuesController() = 0;

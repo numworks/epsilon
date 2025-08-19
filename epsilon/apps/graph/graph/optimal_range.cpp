@@ -50,7 +50,7 @@ static Coordinate2D<T> parametricExpressionEvaluator(T t, const void* model) {
 
 Range2D<float> OptimalRange(bool computeX, bool computeY,
                             Range2D<float> originalRange,
-                            ContinuousFunctionStore* store,
+                            const ContinuousFunctionStore* store,
                             bool defaultRangeIsNormalized,
                             const Context& context) {
   constexpr float k_maxFloat = InteractiveCurveViewRange::k_maxFloat;

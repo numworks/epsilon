@@ -85,7 +85,8 @@ class FunctionGraphController : public InteractiveCurveViewController,
                                   int subCurveIndex = -1);
   virtual double defaultCursorT(Ion::Storage::Record record,
                                 bool ignoreMargins);
-  virtual FunctionStore* functionStore() const;
+  virtual FunctionStore* functionStore();
+  virtual const FunctionStore* functionStore() const;
   virtual int nextCurveIndexVertically(OMG::VerticalDirection direction,
                                        int currentCurveIndex,
                                        const Poincare::Context& context,

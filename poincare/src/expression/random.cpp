@@ -30,7 +30,7 @@ uint8_t Random::GetMaxSeed(const Tree* e) {
 }
 
 uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
-  uint8_t currentSeed = maxSeed;
+  int currentSeed = maxSeed;
   for (Tree* descendant : e->selfAndDescendants()) {
     if (!descendant->isRandomized()) {
       continue;
@@ -50,13 +50,22 @@ uint8_t Random::SeedRandomNodes(Tree* e, uint8_t maxSeed) {
       // Keep a size 1 to increment currentSeed anyway.
       size = std::max(Dimension::ListLength(descendant), 1);
     }
-    assert(static_cast<int>(currentSeed) + size < k_maxNumberOfSeeds);
-    if (currentSeed + size > Context::k_maxNumberOfVariables) {
-      assert(GetSeed(descendant) == 0);
-      return currentSeed;
+    if (descendant->isRandIntNoRep() &&
+        currentSeed + size > Context::k_maxNumberOfVariables) {
+      /* RandIntNoRep should not be seeded if all its content doesn't fit in the
+       * Context */
+      size = 0;
+      // Keep seed 0
+    } else {
+      /* Continue seeding RandInt and Random node even past the
+       * [k_maxNumberOfVariables] limit as they will behave like seed 0 */
+      SetSeed(descendant, currentSeed + 1);
     }
-    SetSeed(descendant, currentSeed + 1);
     currentSeed += size;
+    if (currentSeed >= k_maxNumberOfSeeds) {
+      // No more seeds available
+      break;
+    }
   }
   return currentSeed;
 }
@@ -68,25 +77,23 @@ T Approximation::Private::ApproximateRandom(const Tree* randomTree,
   if (randomTree->isRandIntNoRep()) {
     assert(approxCtx->m_listElement >= 0);
     if (seed > 0) {
+      assert(approxCtx->m_listElement + seed <= UINT8_MAX);
       seed += approxCtx->m_listElement;
     }
   }
-  assert(seed <= Random::Context::k_maxNumberOfVariables);
-  if (seed > 0) {
-    if (!approxCtx || !approxCtx->m_randomContext.m_isInitialized) {
-      return NAN;
-    }
-    T result = approxCtx->m_randomContext.m_list[seed - 1];
-    if (!std::isnan(result)) {
-      return result;
-    }
+  if (seed == 0 || seed > Random::Context::k_maxNumberOfVariables) {
+    return ApproximateRandomHelper<T>(randomTree, approxCtx);
   }
-  // Context is needed with RandIntNoRep
-  T result = ApproximateRandomHelper<T>(randomTree, approxCtx);
-  if (seed > 0) {
-    approxCtx->m_randomContext.m_list[seed - 1] = result;
+  if (!approxCtx || !approxCtx->m_randomContext.m_isInitialized) {
+    return NAN;
   }
-  return result;
+  Random::Context::VariableType* resultPtr =
+      &approxCtx->m_randomContext.m_list[seed - 1];
+  if (std::isnan(*resultPtr)) {
+    // Context is needed with RandIntNoRep
+    *resultPtr = ApproximateRandomHelper<T>(randomTree, approxCtx);
+  }
+  return *resultPtr;
 }
 
 template <typename T>

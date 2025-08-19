@@ -42,10 +42,7 @@ class SequenceStore : public FunctionStore {
   }();
   constexpr static int k_maxNumberOfSequences = 3;
   constexpr static int k_maxRecurrenceDepth = 2;
-  Sequence sequenceAtIndex(int i) {
-    assert(i < SequenceStore::k_maxNumberOfSequences && i >= 0);
-    return m_sequences[i];
-  }
+
   float smallestInitialRank() const;
 
  private:

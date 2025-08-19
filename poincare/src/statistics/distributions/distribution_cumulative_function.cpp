@@ -6,10 +6,10 @@
 #include <poincare/src/numeric_solver/regularized_gamma_function.h>
 #include <poincare/src/numeric_solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/numeric_solver/solver_algorithms.h>
+#include <poincare/statistics/distribution.h>
 
-#include "distribution.h"
-
-namespace Poincare::Internal::Distribution {
+namespace Poincare::Distribution {
+using namespace Internal;
 
 template <typename T>
 T binomialCumulativeDistributiveFunction(T x,
@@ -210,4 +210,4 @@ template float CumulativeDistributiveFunctionForRange(
 template double CumulativeDistributiveFunctionForRange(
     Type type, double x, double y, const ParametersArray<double> parameters);
 
-}  // namespace Poincare::Internal::Distribution
+}  // namespace Poincare::Distribution

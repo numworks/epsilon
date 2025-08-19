@@ -2,14 +2,12 @@
 #include <omg/float.h>
 #include <omg/troolean.h>
 #include <omg/unreachable.h>
-#include <poincare/src/numeric_solver/beta_function.h>
 #include <poincare/src/numeric_solver/erf_inv.h>
-#include <poincare/src/numeric_solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/numeric_solver/solver_algorithms.h>
+#include <poincare/statistics/distribution.h>
 
-#include "distribution.h"
-
-namespace Poincare::Internal::Distribution {
+namespace Poincare::Distribution {
+using namespace Internal;
 
 template <typename T>
 void findBoundsForBinarySearch(
@@ -372,4 +370,4 @@ template double CumulativeDistributiveInverseForProbability(
     Type type, double probability,
     const Distribution::ParametersArray<double> parameters);
 
-}  // namespace Poincare::Internal::Distribution
+}  // namespace Poincare::Distribution

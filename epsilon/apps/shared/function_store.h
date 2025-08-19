@@ -28,10 +28,14 @@ class FunctionStore : public ExpressionModelStore {
     }
     return -1;
   }
-  OMG::ExpiringPointer<Function> modelForRecord(
-      Ion::Storage::Record record) const {
+  OMG::ExpiringPointer<Function> modelForRecord(Ion::Storage::Record record) {
     return OMG::ExpiringPointer<Function>(
         static_cast<Function*>(privateModelForRecord(record)));
+  }
+  OMG::ExpiringPointer<const Function> modelForRecord(
+      Ion::Storage::Record record) const {
+    return OMG::ExpiringPointer<const Function>(
+        static_cast<const Function*>(privateModelForRecord(record)));
   }
 
  protected:

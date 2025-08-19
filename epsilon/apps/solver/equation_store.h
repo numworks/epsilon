@@ -21,10 +21,14 @@ class EquationStore : public Shared::ExpressionModelStore {
     return modelForRecord(definedRecordAtIndex(i))->expressionClone();
   }
 
-  OMG::ExpiringPointer<Equation> modelForRecord(
-      Ion::Storage::Record record) const {
+  OMG::ExpiringPointer<Equation> modelForRecord(Ion::Storage::Record record) {
     return OMG::ExpiringPointer<Equation>(
         static_cast<Equation*>(privateModelForRecord(record)));
+  }
+  OMG::ExpiringPointer<const Equation> modelForRecord(
+      Ion::Storage::Record record) const {
+    return OMG::ExpiringPointer<const Equation>(
+        static_cast<const Equation*>(privateModelForRecord(record)));
   }
   static void RemoveAll() {
     Shared::ExpressionModelStore::RemoveAll(k_extension);

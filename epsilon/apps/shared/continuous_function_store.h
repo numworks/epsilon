@@ -54,11 +54,11 @@ class ContinuousFunctionStore : public FunctionStore {
                                        &symbolType);
   }
   OMG::ExpiringPointer<ContinuousFunction> modelForRecord(
-      Ion::Storage::Record record) const {
+      Ion::Storage::Record record) {
     return OMG::ExpiringPointer<ContinuousFunction>(
         static_cast<ContinuousFunction*>(privateModelForRecord(record)));
   }
-  OMG::ExpiringPointer<const ContinuousFunction> constModelForRecord(
+  OMG::ExpiringPointer<const ContinuousFunction> modelForRecord(
       Ion::Storage::Record record) const {
     return OMG::ExpiringPointer<const ContinuousFunction>(
         static_cast<const ContinuousFunction*>(privateModelForRecord(record)));

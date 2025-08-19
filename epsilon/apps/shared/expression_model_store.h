@@ -30,8 +30,13 @@ class ExpressionModelStore {
     return recordSatisfyingTestAtIndex(i, &isModelDefined, nullptr);
   }
   OMG::ExpiringPointer<ExpressionModelHandle> modelForRecord(
-      Ion::Storage::Record record) const {
+      Ion::Storage::Record record) {
     return OMG::ExpiringPointer<ExpressionModelHandle>(
+        privateModelForRecord(record));
+  }
+  OMG::ExpiringPointer<const ExpressionModelHandle> modelForRecord(
+      Ion::Storage::Record record) const {
+    return OMG::ExpiringPointer<const ExpressionModelHandle>(
         privateModelForRecord(record));
   }
 

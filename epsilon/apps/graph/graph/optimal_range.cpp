@@ -82,7 +82,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
   for (int i = 0; i < nbFunctions; i++) {
     canComputeIntersections[i] = false;
     OMG::ExpiringPointer<const ContinuousFunction> f =
-        store->constModelForRecord(store->activeRecordAtIndex(i));
+        store->modelForRecord(store->activeRecordAtIndex(i));
     ContinuousFunctionAndContext fModel{.func = f.operator->(),
                                         .ctx = &context};
     defaultRangeIsNormalized |= f->properties().enforcePlotNormalization();
@@ -157,7 +157,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
               .canComputeIntersectionsWithFunctionsAlongSameVariable()) {
         for (int j = 0; j < i; j++) {
           OMG::ExpiringPointer<const ContinuousFunction> g =
-              store->constModelForRecord(store->activeRecordAtIndex(j));
+              store->modelForRecord(store->activeRecordAtIndex(j));
           if (canComputeIntersections[j] &&
               g->properties()
                   .canComputeIntersectionsWithFunctionsAlongSameVariable() &&
@@ -176,7 +176,7 @@ Range2D<float> OptimalRange(bool computeX, bool computeY,
   if (computeY) {
     zoom.setBounds(xBounds.min(), xBounds.max());
     for (int i = 0; i < nbFunctions; i++) {
-      OMG::ExpiringPointer<ContinuousFunction> f =
+      OMG::ExpiringPointer<const ContinuousFunction> f =
           store->modelForRecord(store->activeRecordAtIndex(i));
       if (f->approximationBasedOnCostlyAlgorithms(context) ||
           !f->properties().isCartesian()) {

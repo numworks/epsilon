@@ -16,7 +16,10 @@ class SequenceStore : public FunctionStore {
   /* Sequence Store holds all its Sequences in an array. The Sequence pointers
    * returned by modelForRecord are therefore non-expirable. We choose to return
    * Sequence * instead of OMG::ExpiringPointer<Sequence>. */
-  Sequence* modelForRecord(Ion::Storage::Record record) const {
+  Sequence* modelForRecord(Ion::Storage::Record record) {
+    return static_cast<Sequence*>(privateModelForRecord(record));
+  }
+  const Sequence* modelForRecord(Ion::Storage::Record record) const {
     return static_cast<Sequence*>(privateModelForRecord(record));
   }
   Ion::Storage::Record::ErrorStatus addEmptyModel() override;

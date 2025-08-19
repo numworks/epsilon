@@ -101,7 +101,8 @@ Range2D<float> GraphController::optimalRange(
               InteractiveCurveViewRange::NormalYXRatio(), k_maxFloat);
     int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
     assert(nbOfActiveModels <= Shared::SequenceStore::k_maxNumberOfSequences);
-    Shared::Sequence* sequences[Shared::SequenceStore::k_maxNumberOfSequences];
+    const Shared::Sequence*
+        sequences[Shared::SequenceStore::k_maxNumberOfSequences];
     for (int i = 0; i < nbOfActiveModels; i++) {
       sequences[i] = functionStore()->modelForRecord(recordAtCurveIndex(i));
     }

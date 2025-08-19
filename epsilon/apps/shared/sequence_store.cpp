@@ -88,7 +88,7 @@ float SequenceStore::smallestInitialRank() const {
   int smallestRank = Shared::Sequence::k_maxInitialRank;
   for (int i = 0, end = numberOfActiveFunctions(); i < end; i++) {
     Storage::Record record = activeRecordAtIndex(i);
-    Shared::Sequence* s = modelForRecord(record);
+    const Shared::Sequence* s = modelForRecord(record);
     smallestRank = std::min(s->initialRank(), smallestRank);
   }
   return smallestRank;

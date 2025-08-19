@@ -35,7 +35,7 @@ class Random {
    public:
     using VariableType = double;
     Context(bool isInitialized = true);
-    constexpr static int k_maxNumberOfVariables = 16;
+    constexpr static int k_maxNumberOfVariables = 100;
     VariableType m_list[k_maxNumberOfVariables];
     bool m_isInitialized;
   };

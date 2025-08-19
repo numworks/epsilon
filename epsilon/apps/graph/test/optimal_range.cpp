@@ -28,7 +28,7 @@ void quiz_assert_optimal_range_is(
   for (const char* equation : equations) {
     ContinuousFunction* function = addFunction(equation, &store, context);
     if (intervals.size() > 0) {
-      Range1D<float> interval = *(intervals.begin() + i);
+      const Range1D<float>& interval = intervals.begin()[i];
       function->setTAuto(false);
       function->setTMin(interval.min());
       function->setTMax(interval.max());

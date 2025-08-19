@@ -6,12 +6,12 @@
 #include <poincare/src/numeric_solver/regularized_incomplete_beta_function.h>
 #include <poincare/src/numeric_solver/solver_algorithms.h>
 #include <poincare/src/statistics/domain.h>
+#include <poincare/statistics/distribution.h>
 
 #include <cmath>
 
-#include "distribution.h"
-
-namespace Poincare::Internal::Distribution {
+namespace Poincare::Distribution {
+using namespace Poincare::Internal;
 
 bool IsNan(double val) { return std::isnan(val); }
 bool IsNan(float val) { return std::isnan(val); }
@@ -99,4 +99,4 @@ template OMG::Troolean AreParametersValid(
 template OMG::Troolean AreParametersValid(
     Type type, const Distribution::ParametersArray<const Tree*> parameters);
 
-}  // namespace Poincare::Internal::Distribution
+}  // namespace Poincare::Distribution

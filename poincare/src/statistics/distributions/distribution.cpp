@@ -4,9 +4,11 @@
 #include <omg/unreachable.h>
 #include <poincare/src/numeric_solver/solver_algorithms.h>
 
-namespace Poincare::Internal::Distribution {
+namespace Poincare::Distribution {
 
-Type GetType(const Tree* tree) {
+using namespace Internal::Distribution;
+
+Type GetType(const Internal::Tree* tree) {
   assert(tree->isDistribution());
   return tree->nodeValueBlock(1)->get<Type>();
 }
@@ -62,47 +64,6 @@ double EvaluateParameterForProbabilityAndBound(
   }
   double result = (bound - mu) / abscissaForStandardDistribution;
   return result > 0.0 ? result : NAN;  // Sigma can't be negative or null
-}
-
-template <typename T>
-T GetFisherMode(Type type, const ParametersArray<T> parameters) {
-  assert(type == Type::Fisher);
-
-  const float d1 = parameters[0];
-  if (d1 > 2.0f) {
-    const float d2 = parameters[1];
-    return (d1 - 2.0f) / d1 * d2 / (d2 + 2.0f);
-  }
-  return NAN;
-}
-
-template <typename T>
-T GetUniformXExtremum(Type type, const ParametersArray<T> parameters,
-                      bool min) {
-  assert(type == Type::Uniform);
-  int coefficient = min ? -1 : 1;
-  int paramIndex = min ? 0 : 1;
-
-  assert(parameters[1] >= parameters[0]);
-  T range = parameters[1] - parameters[0];
-  if (range < FLT_EPSILON) {
-    // If parameter is too big, adding/subtracting only 1.0 wouldn't do
-    // anything.
-    return parameters[paramIndex] + coefficient;
-  }
-  return parameters[paramIndex] + coefficient * 0.5f * range;
-}
-
-template <typename T>
-T GetNormalXExtremum(Type type, const ParametersArray<T> parameters, bool min) {
-  assert(type == Type::Normal);
-  int coefficient = min ? -1 : 1;
-
-  assert(!std::isnan(parameters[0]) && !std::isnan(parameters[1]));
-  if (parameters[1] == 0.0f) {
-    return parameters[0] + coefficient * 1.0f;
-  }
-  return parameters[0] + coefficient * 4.5f * std::fabs(parameters[1]);
 }
 
 template <typename T>
@@ -255,11 +216,6 @@ template float MeanAbscissa(
 template double MeanAbscissa(
     Type type, const Distribution::ParametersArray<double> parameters);
 
-template float GetFisherMode(
-    Type type, const Distribution::ParametersArray<float> parameters);
-template double GetFisherMode(
-    Type type, const Distribution::ParametersArray<double> parameters);
-
 template float ComputeXMin(
     Type type, const Distribution::ParametersArray<float> parameters);
 template double ComputeXMin(
@@ -273,5 +229,56 @@ template double ComputeXMax(
 template float ComputeYMax(
     Type type, const Distribution::ParametersArray<float> parameters);
 template double ComputeYMax(
+    Type type, const Distribution::ParametersArray<double> parameters);
+
+}  // namespace Poincare::Distribution
+
+namespace Poincare::Internal::Distribution {
+using Poincare::Distribution::Type;
+
+template <typename T>
+T GetFisherMode(Type type, const ParametersArray<T> parameters) {
+  assert(type == Type::Fisher);
+
+  const float d1 = parameters[0];
+  if (d1 > 2.0f) {
+    const float d2 = parameters[1];
+    return (d1 - 2.0f) / d1 * d2 / (d2 + 2.0f);
+  }
+  return NAN;
+}
+
+template <typename T>
+T GetUniformXExtremum(Type type, const ParametersArray<T> parameters,
+                      bool min) {
+  assert(type == Type::Uniform);
+  int coefficient = min ? -1 : 1;
+  int paramIndex = min ? 0 : 1;
+
+  assert(parameters[1] >= parameters[0]);
+  T range = parameters[1] - parameters[0];
+  if (range < FLT_EPSILON) {
+    // If parameter is too big, adding/subtracting only 1.0 wouldn't do
+    // anything.
+    return parameters[paramIndex] + coefficient;
+  }
+  return parameters[paramIndex] + coefficient * 0.5f * range;
+}
+
+template <typename T>
+T GetNormalXExtremum(Type type, const ParametersArray<T> parameters, bool min) {
+  assert(type == Type::Normal);
+  int coefficient = min ? -1 : 1;
+
+  assert(!std::isnan(parameters[0]) && !std::isnan(parameters[1]));
+  if (parameters[1] == 0.0f) {
+    return parameters[0] + coefficient * 1.0f;
+  }
+  return parameters[0] + coefficient * 4.5f * std::fabs(parameters[1]);
+}
+
+template float GetFisherMode(
+    Type type, const Distribution::ParametersArray<float> parameters);
+template double GetFisherMode(
     Type type, const Distribution::ParametersArray<double> parameters);
 }  // namespace Poincare::Internal::Distribution

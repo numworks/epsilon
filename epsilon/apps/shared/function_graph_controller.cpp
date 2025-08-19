@@ -176,7 +176,11 @@ double FunctionGraphController::defaultCursorT(Ion::Storage::Record record,
   return currentX;
 }
 
-FunctionStore* FunctionGraphController::functionStore() const {
+FunctionStore* FunctionGraphController::functionStore() {
+  return FunctionApp::app()->functionStore();
+}
+
+const FunctionStore* FunctionGraphController::functionStore() const {
   return FunctionApp::app()->functionStore();
 }
 

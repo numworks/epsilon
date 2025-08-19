@@ -114,8 +114,12 @@ class GraphController : public Shared::FunctionGraphController,
                                int* nextSubCurveIndex) const override;
   double defaultCursorT(Ion::Storage::Record record,
                         bool ignoreMargins) override;
-  Shared::ContinuousFunctionStore* functionStore() const override {
+  Shared::ContinuousFunctionStore* functionStore() override {
     return static_cast<Shared::ContinuousFunctionStore*>(
+        Shared::FunctionGraphController::functionStore());
+  }
+  const Shared::ContinuousFunctionStore* functionStore() const override {
+    return static_cast<const Shared::ContinuousFunctionStore*>(
         Shared::FunctionGraphController::functionStore());
   }
   GraphView* functionGraphView() override { return &m_view; }

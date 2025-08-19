@@ -7,6 +7,7 @@
 #include <poincare/helpers/symbol.h>
 #include <poincare/preferences.h>
 #include <poincare/range.h>
+#include <string.h>
 
 /* This file is used by equation_solver_pool and equation_solver_tree.
  * It's splitted to ensure Scandium can use it without including expression.h */
@@ -33,13 +34,7 @@ class VariableArray : public OMG::StaticVector<char[k_maxVariableSize],
     m_size++;
   }
 
-  void fillWithList(const Internal::Tree* list) {
-    assert(list->isList() && list->numberOfChildren() <= capacity());
-    clear();
-    for (const Internal::Tree* variable : list->children()) {
-      push(SymbolHelper::GetName(variable));
-    }
-  }
+  void fillWithList(const Internal::Tree* list);
 
  private:
   // Prevent pushing arrays

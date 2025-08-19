@@ -1,8 +1,11 @@
 #ifndef POINCARE_HELPERS_SYMBOL_H
 #define POINCARE_HELPERS_SYMBOL_H
 
-#include <poincare/src/memory/tree.h>
 #include <stddef.h>
+
+namespace Poincare::Internal {
+class Tree;
+}
 
 namespace Poincare::SymbolHelper {
 

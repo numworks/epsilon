@@ -38,17 +38,27 @@ void quiz_assert_optimal_range_is(
   Range2D<float> range = Graph::OptimalRange(computeX, computeY, originalRange,
                                              &store, false, &context);
 
+  struct testCaseResult {
+    const char* name;
+    float observed;
+    float expected;
+    bool isEqual;
+  };
+  testCaseResult results[4] = {
+      {"xMin", range.xMin(), optimalRange.xMin(), false},
+      {"xMax", range.xMax(), optimalRange.xMax(), false},
+      {"yMin", range.yMin(), optimalRange.yMin(), false},
+      {"yMax", range.yMax(), optimalRange.yMax(), false},
+  };
+  bool success = true;
   // A great precision is not expected in this test.
   float precision = 0.01f;
-  bool xMinEqual =
-      roughly_equal<float>(range.xMin(), optimalRange.xMin(), precision);
-  bool xMaxEqual =
-      roughly_equal<float>(range.xMax(), optimalRange.xMax(), precision);
-  bool yMinEqual =
-      roughly_equal<float>(range.yMin(), optimalRange.yMin(), precision);
-  bool yMaxEqual =
-      roughly_equal<float>(range.yMax(), optimalRange.yMax(), precision);
-  if (xMinEqual && xMaxEqual && yMinEqual && yMaxEqual) {
+  for (int i = 0; i < 4; i++) {
+    results[i].isEqual = roughly_equal<float>(results[i].observed,
+                                              results[i].expected, precision);
+    success &= results[i].isEqual;
+  }
+  if (success) {
     return;
   }
   constexpr size_t bufferSize = 200;
@@ -58,33 +68,15 @@ void quiz_assert_optimal_range_is(
                                   equation);
   }
   quiz_print(buffer);
-  if (!xMinEqual) {
-    Poincare::Print::CustomPrintf(
-        buffer, bufferSize, "\txMin : %*.*ed instead of %*.*ed", range.xMin(),
-        Preferences::PrintFloatMode::Decimal, 7, optimalRange.xMin(),
-        Preferences::PrintFloatMode::Decimal, 7);
-    quiz_print(buffer);
-  }
-  if (!xMaxEqual) {
-    Poincare::Print::CustomPrintf(
-        buffer, bufferSize, "\txMax : %*.*ed instead of %*.*ed", range.xMax(),
-        Preferences::PrintFloatMode::Decimal, 7, optimalRange.xMax(),
-        Preferences::PrintFloatMode::Decimal, 7);
-    quiz_print(buffer);
-  }
-  if (!yMinEqual) {
-    Poincare::Print::CustomPrintf(
-        buffer, bufferSize, "\tyMin : %*.*ed instead of %*.*ed", range.yMin(),
-        Preferences::PrintFloatMode::Decimal, 7, optimalRange.yMin(),
-        Preferences::PrintFloatMode::Decimal, 7);
-    quiz_print(buffer);
-  }
-  if (!yMaxEqual) {
-    Poincare::Print::CustomPrintf(
-        buffer, bufferSize, "\tyMax : %*.*ed instead of %*.*ed", range.yMax(),
-        Preferences::PrintFloatMode::Decimal, 7, optimalRange.yMax(),
-        Preferences::PrintFloatMode::Decimal, 7);
-    quiz_print(buffer);
+  for (int i = 0; i < 4; i++) {
+    if (!results[i].isEqual) {
+      Poincare::Print::CustomPrintf(
+          buffer, bufferSize, "\t%s : %*.*ed instead of %*.*ed",
+          results[i].name, results[i].observed,
+          Preferences::PrintFloatMode::Decimal, 7, results[i].expected,
+          Preferences::PrintFloatMode::Decimal, 7);
+      quiz_print(buffer);
+    }
   }
   quiz_assert(false);
 }

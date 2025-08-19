@@ -15,10 +15,10 @@ class ContinuousFunctionStore : public FunctionStore {
     return numberOfModels() > maxNumberOfMemoizedModels();
   }
 
-  static bool IsFunctionAreaCompatible(ExpressionModelHandle* model,
-                                       void* context) {
+  static bool IsFunctionAreaCompatible(const ExpressionModelHandle* model,
+                                       const void* context) {
     return IsFunctionActive(model, context) &&
-           static_cast<ContinuousFunction*>(model)->canComputeArea();
+           static_cast<const ContinuousFunction*>(model)->canComputeArea();
   }
 
   ContinuousFunctionStore() : FunctionStore() {}
@@ -79,31 +79,31 @@ class ContinuousFunctionStore : public FunctionStore {
   int maxNumberOfModels() const override { return k_maxNumberOfModels; }
 
  private:
-  static bool IsFunctionActiveInTable(ExpressionModelHandle* model,
-                                      void* context) {
+  static bool IsFunctionActiveInTable(const ExpressionModelHandle* model,
+                                      const void* context) {
     // An active function must be defined
     return IsFunctionActive(model, context) &&
-           static_cast<ContinuousFunction*>(model)->isActiveInTable();
+           static_cast<const ContinuousFunction*>(model)->isActiveInTable();
   }
-  static bool IsFunctionActiveAndHasProperty(ExpressionModelHandle* model,
-                                             void* context) {
-    HasProperty propertyFunction = *static_cast<HasProperty*>(context);
+  static bool IsFunctionActiveAndHasProperty(const ExpressionModelHandle* model,
+                                             const void* context) {
+    HasProperty propertyFunction = *static_cast<const HasProperty*>(context);
     return IsFunctionActive(model, context) &&
-           (static_cast<ContinuousFunction*>(model)->properties().*
+           (static_cast<const ContinuousFunction*>(model)->properties().*
             propertyFunction)();
   }
-  static bool IsFunctionActiveInTableOfSymbolType(ExpressionModelHandle* model,
-                                                  void* context) {
+  static bool IsFunctionActiveInTableOfSymbolType(
+      const ExpressionModelHandle* model, const void* context) {
     ContinuousFunctionProperties::SymbolType symbolType =
-        *static_cast<ContinuousFunctionProperties::SymbolType*>(context);
+        *static_cast<const ContinuousFunctionProperties::SymbolType*>(context);
     return IsFunctionActiveInTable(model, context) &&
-           symbolType == static_cast<ContinuousFunction*>(model)
+           symbolType == static_cast<const ContinuousFunction*>(model)
                              ->properties()
                              .symbolType();
   }
-  static bool IsFunctionIntersectable(ExpressionModelHandle* model,
-                                      void* context) {
-    return static_cast<ContinuousFunction*>(model)
+  static bool IsFunctionIntersectable(const ExpressionModelHandle* model,
+                                      const void* context) {
+    return static_cast<const ContinuousFunction*>(model)
         ->shouldDisplayIntersections();
   }
   int maxNumberOfMemoizedModels() const override {

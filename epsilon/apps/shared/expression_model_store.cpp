@@ -47,8 +47,8 @@ void ExpressionModelStore::tidyDownstreamPoolFrom(
   }
 }
 
-int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test,
-                                                       void* context) const {
+int ExpressionModelStore::numberOfModelsSatisfyingTest(
+    ModelTest test, const void* context) const {
   int count = 0;
   int index = 0;
   Ion::Storage::Record record = recordAtIndex(0);
@@ -62,7 +62,7 @@ int ExpressionModelStore::numberOfModelsSatisfyingTest(ModelTest test,
 }
 
 Ion::Storage::Record ExpressionModelStore::recordSatisfyingTestAtIndex(
-    int i, ModelTest test, void* context) const {
+    int i, ModelTest test, const void* context) const {
   assert(i >= 0);
   int count = 0;
   int index = 0;

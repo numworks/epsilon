@@ -35,10 +35,11 @@ class FunctionStore : public ExpressionModelStore {
   }
 
  protected:
-  static bool IsFunctionActive(ExpressionModelHandle* model, void* context) {
+  static bool IsFunctionActive(const ExpressionModelHandle* model,
+                               const void* context) {
     // An active function must be defined
     return isModelDefined(model, context) &&
-           static_cast<Function*>(model)->isActive();
+           static_cast<const Function*>(model)->isActive();
   }
 };
 

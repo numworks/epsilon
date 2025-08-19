@@ -56,11 +56,13 @@ class ExpressionModelStore {
 
  protected:
   virtual int maxNumberOfMemoizedModels() const = 0;
-  typedef bool (*ModelTest)(ExpressionModelHandle* model, void* context);
-  int numberOfModelsSatisfyingTest(ModelTest test, void* context) const;
+  typedef bool (*ModelTest)(const ExpressionModelHandle* model,
+                            const void* context);
+  int numberOfModelsSatisfyingTest(ModelTest test, const void* context) const;
   Ion::Storage::Record recordSatisfyingTestAtIndex(int i, ModelTest test,
-                                                   void* context) const;
-  static bool isModelDefined(ExpressionModelHandle* model, void* context) {
+                                                   const void* context) const;
+  static bool isModelDefined(const ExpressionModelHandle* model,
+                             const void* context) {
     return model->isDefined();
   }
   ExpressionModelHandle* privateModelForRecord(

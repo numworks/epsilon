@@ -340,7 +340,7 @@ void GlobalContext::StoreParametricComponentsOfRecord(
 double GlobalContext::approximateSequenceAtRank(const char* identifier,
                                                 int rank) const {
   int index = s_sequenceStore->SequenceIndexForName(identifier[0]);
-  Sequence* sequence = m_sequenceContext.sequenceAtNameIndex(index);
+  const Sequence* sequence = m_sequenceContext.sequenceAtNameIndex(index);
   if (sequence == nullptr) {
     return NAN;
   }

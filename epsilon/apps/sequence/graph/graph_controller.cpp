@@ -60,7 +60,7 @@ float GraphController::interestingXMin() const {
   int nmin = INT_MAX;
   int nbOfActiveModels = functionStore()->numberOfActiveFunctions();
   for (int i = 0; i < nbOfActiveModels; i++) {
-    Shared::Sequence* s =
+    const Shared::Sequence* s =
         functionStore()->modelForRecord(recordAtCurveIndex(i));
     nmin = std::min(nmin, s->initialRank());
   }

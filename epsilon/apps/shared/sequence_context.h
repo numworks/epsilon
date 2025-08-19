@@ -16,7 +16,7 @@ class SequenceContext final : public Poincare::ContextWithParent {
 
  public:
   SequenceContext(const Poincare::Context* parentContext,
-                  SequenceStore* sequenceStore);
+                  const SequenceStore* sequenceStore);
 
   // Context
 
@@ -32,11 +32,10 @@ class SequenceContext final : public Poincare::ContextWithParent {
 
   // SequenceContext
 
-  SequenceStore* sequenceStore() { return m_sequenceStore; }
   bool sequenceIsNotComputable(const Poincare::Context& context,
                                int sequenceIndex) const;
   void resetCache() const { cache()->resetCache(); }
-  Sequence* sequenceAtNameIndex(int sequenceIndex) const;
+  const Sequence* sequenceAtNameIndex(int sequenceIndex) const;
 
  private:
   constexpr static int k_numberOfSequences =
@@ -44,7 +43,7 @@ class SequenceContext final : public Poincare::ContextWithParent {
 
   SequenceCache* cache() const;
 
-  SequenceStore* m_sequenceStore;
+  const SequenceStore* m_sequenceStore;
 };
 
 }  // namespace Shared

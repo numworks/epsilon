@@ -1,5 +1,5 @@
-#include <poincare/numeric_solver/roots.h>
 #include <poincare/src/expression/dependency.h>
+#include <poincare/src/numeric_solver/roots.h>
 
 #include "helper.h"
 

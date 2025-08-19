@@ -1,6 +1,7 @@
+#include "roots.h"
+
 #include <omg/float.h>
 #include <omg/list.h>
-#include <poincare/numeric_solver/roots.h>
 #include <poincare/sign.h>
 #include <poincare/src/expression/advanced_reduction.h>
 #include <poincare/src/expression/approximation.h>

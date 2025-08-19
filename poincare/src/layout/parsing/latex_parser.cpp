@@ -163,6 +163,10 @@ constexpr static LatexTokenChild lesserOrEqualToken[] = {{"\\le", k_noChild}};
 constexpr static LatexTokenChild greaterOrEqualToken[] = {{"\\ge", k_noChild}};
 constexpr static LatexTokenChild degreeToken[] = {{"\\degree", k_noChild}};
 constexpr static LatexTokenChild rightwardsArrowToken[] = {{"\\to", k_noChild}};
+constexpr static LatexTokenChild northEastArrowToken[] = {
+    {"\\nearrow", k_noChild}};
+constexpr static LatexTokenChild southEastArrowToken[] = {
+    {"\\searrow", k_noChild}};
 constexpr static LatexTokenChild infinityToken[] = {{"\\infty", k_noChild}};
 constexpr static LatexTokenChild divisionToken[] = {{"\\div", k_noChild}};
 
@@ -321,6 +325,10 @@ constexpr static LatexLayoutRule k_rules[] = {
     CODEPOINT_RULE(degreeToken, UCodePointDegreeSign),
     // ->
     CODEPOINT_RULE(rightwardsArrowToken, UCodePointRightwardsArrow),
+    // ↗
+    CODEPOINT_RULE(northEastArrowToken, UCodePointNorthEastArrow),
+    // ↘
+    CODEPOINT_RULE(southEastArrowToken, UCodePointSouthEastArrow),
     // Infinity
     CODEPOINT_RULE(infinityToken, UCodePointInfinity),
     // ÷

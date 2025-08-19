@@ -159,6 +159,7 @@ $(addprefix numeric_solver/, \
   regularized_gamma_function.cpp \
   regularized_incomplete_beta_function.cpp \
   roots.cpp \
+  roots_pool.cpp:-nopool \
   solver.cpp \
   solver_algorithms.cpp \
   zoom.cpp \

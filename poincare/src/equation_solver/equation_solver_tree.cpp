@@ -3,7 +3,6 @@
 #include <poincare/context.h>
 #include <poincare/equation_solver/equation_solver_properties.h>
 #include <poincare/helpers/polynomial.h>
-#include <poincare/numeric_solver/roots.h>
 #include <poincare/numeric_solver/solver.h>
 #include <poincare/preferences.h>
 #include <poincare/src/expression/advanced_reduction.h>
@@ -23,6 +22,7 @@
 #include <poincare/src/memory/tree.h>
 #include <poincare/src/memory/tree_helpers.h>
 #include <poincare/src/memory/tree_ref.h>
+#include <poincare/src/numeric_solver/roots.h>
 #include <poincare/src/numeric_solver/zoom.h>
 
 namespace Poincare::Internal {

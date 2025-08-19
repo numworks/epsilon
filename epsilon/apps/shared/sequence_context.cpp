@@ -16,7 +16,7 @@ using namespace Poincare;
 namespace Shared {
 
 SequenceContext::SequenceContext(const Context* parentContext,
-                                 SequenceStore* sequenceStore)
+                                 const SequenceStore* sequenceStore)
     : ContextWithParent(parentContext), m_sequenceStore(sequenceStore) {}
 
 Context::UserNamedType SequenceContext::expressionTypeForIdentifier(
@@ -31,14 +31,14 @@ Context::UserNamedType SequenceContext::expressionTypeForIdentifier(
   return ContextWithParent::expressionTypeForIdentifier(identifier, length);
 }
 
-Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
+const Sequence* SequenceContext::sequenceAtNameIndex(int sequenceIndex) const {
   assert(0 <= sequenceIndex && sequenceIndex < k_numberOfSequences);
   Ion::Storage::Record record =
       m_sequenceStore->recordAtNameIndex(sequenceIndex);
   if (record.isNull()) {
     return nullptr;
   }
-  Sequence* s = m_sequenceStore->modelForRecord(record);
+  const Sequence* s = m_sequenceStore->modelForRecord(record);
   return s;
 }
 

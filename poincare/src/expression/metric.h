@@ -40,6 +40,7 @@ class Metric {
   constexpr static float k_defaultMetric = 1.f;
 
   static float GetMetric(Type type);
+  static float GetAddMultMetric(const Tree* e);
 #endif
 };
 

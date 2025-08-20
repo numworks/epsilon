@@ -81,7 +81,7 @@ QUIZ_CASE(solver_linear_system) {
       {"t1=t4+t7", "t2=t4+t7-t8", "t3=t8", "t5=t7", "t6=t4"}, globalContext);
 
   assert_solves_to_infinite_solutions(
-      {"a+2b+c+3d=0", "c-d=2"}, {"a=-4t1-2t2-2", "b=t2", "c=t1+2", "d=t1"},
+      {"a+2b+c+3d=0", "c-d=2"}, {"a=-4×t1-2×(1+t2)", "b=t2", "c=t1+2", "d=t1"},
       globalContext);
   assert_solves_to_no_solution("2=0", globalContext);
   assert_solves_to_no_solution("e=1", globalContext);
@@ -139,7 +139,7 @@ QUIZ_CASE(solver_quadratic) {
                    {"x=2/3-√(2)/3×i", "x=2/3+√(2)/3×i", "delta=-8"},
                    globalContext);
   assert_solves_to("x^2+x+1=3×x^2+π×x-√(5)",
-                   {"x=-(-1+π+√(9-2×π+π^2+8×√(5)))/4",
+                   {"x=1/4-π/4-√(9-2×π+π^2+8×√(5))/4",
                     "x=(1-π+√(9-2×π+π^2+8×√(5)))/4", "delta=9-2×π+π^2+8×√(5)"},
                    globalContext);
 

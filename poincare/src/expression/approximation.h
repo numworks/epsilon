@@ -287,8 +287,6 @@ T ApproximateDerivative(const Tree* function, T at, int order,
 
 template <typename T>
 T ApproximateRandom(const Tree* random, const Context* ctx);
-template <typename T>
-T ApproximateRandomHelper(const Tree* randomTree, const Context* ctx);
 
 template <typename T>
 std::complex<T> ApproximatePower(const Tree* power, const Context* ctx,

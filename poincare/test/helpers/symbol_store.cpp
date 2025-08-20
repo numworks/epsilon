@@ -8,10 +8,11 @@ namespace PoincareTest {
 
 void store(const char* storeExpression,
            Poincare::VariableStore& variableStore) {
-  Poincare::UserExpression s =
+  Poincare::UserExpression storeUserExpression =
       Poincare::UserExpression::Parse(storeExpression, variableStore);
-  // TODO: do not use Poincare::StoreHelper
-  Poincare::StoreHelper::PerformStore(variableStore, s);
+  variableStore.setExpressionForUserNamed(
+      Poincare::StoreHelper::Value(storeUserExpression),
+      Poincare::StoreHelper::Symbol(storeUserExpression));
 }
 
 // TODO: create VariableStore class for poincare tests

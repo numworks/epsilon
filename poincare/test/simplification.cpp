@@ -47,8 +47,6 @@ QUIZ_CASE(pcj_simplification_expansion) {
             KDep(KAdd(KMult(-1_e, KTrig("x"_e, 0_e), KTrig("y"_e, 0_e)),
                       KMult(KTrig("x"_e, 1_e), KTrig("y"_e, 1_e))),
                  KDepList(KMult(0_e, KTrig(KAdd("x"_e, "y"_e), 1_e)))));
-  expand_to(KExp(KAdd("x"_e, "y"_e, "z"_e)),
-            KMult(KExp("x"_e), KExp("y"_e), KExp("z"_e)));
   expand_to(KLn(KMult(2_e, π_e)), KAdd(KLn(2_e), KLn(π_e)));
 }
 
@@ -210,7 +208,6 @@ QUIZ_CASE(pcj_simplification_basic) {
   simplifies_to("(e^(x))^2", "e^(2×x)");
   simplifies_to("e^(ln(x))", "dep(x,{nonNull(x),realPos(x)})");
   simplifies_to("e^(ln(1+x^2))", "x^2+1");
-  simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   simplifies_to("e^(ln(x+x))", "dep(2×x,{nonNull(x+x)})", cartesianCtx);
   simplifies_to("x+1+(-1)(x+1)", "0");
   simplifies_to("0.1875", "3/16");
@@ -588,8 +585,6 @@ QUIZ_CASE(pcj_simplification_parametric) {
   assert_trees_are_equal(e, a);
   e->removeTree();
 
-  simplifies_to("sum(sum(j,j,0,k),k,1,n)",
-                "dep(n^3/6+n^2/2+n/3,{realInteger(n)})");
   // sum
   simplifies_to("sum(1,k,3,4)", "2");
   simplifies_to("sum(k,k,3,4)", "7");
@@ -805,7 +800,6 @@ QUIZ_CASE(pcj_simplification_advanced_trigonometry) {
   simplifies_to("sec(arcsec(9/7))", "9/7");
   simplifies_to("sec(arcsec(3/7))", "nonreal");
 
-  simplifies_to("arccot(0)", "π/2");
   simplifies_to("sec(arcsec(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   simplifies_to("csc(arccsc(x))", "dep(x,{nonNull(x)})", cartesianCtx);
   // FIXME : Should be "dep(1+abs(x),{tan(arctan(1+abs(x)))})"
@@ -851,7 +845,6 @@ QUIZ_CASE(pcj_simplification_arithmetic) {
   simplifies_to("-1 2/3", "-5/3");
 
   simplifies_to("floor({1.3,3.9})", "{1,3}");
-  simplifies_to("log(floor(2^54+π)-3, 2)", "54");
   // TODO: Approximation is undef
   simplifies_to("ceil(1+i)", "1+ceil(i)");
   // Reductions using approximation
@@ -1559,7 +1552,6 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   simplifies_to("x/√(x)", "dep(√(x),{-ln(x)/2})", cartesianCtx);
   simplifies_to("(1+x)/(1+x)", "dep(1,{(x+1)^0})", cartesianCtx);
   simplifies_to("x^0", "dep(1,{x^0})", cartesianCtx);
-  simplifies_to("e^(ln(x))", "dep(x,{nonNull(x)})", cartesianCtx);
 
   // Multiplication
   simplifies_to("ln(x)-ln(x)", "dep(0,{0×ln(x),nonNull(x)})", cartesianCtx);

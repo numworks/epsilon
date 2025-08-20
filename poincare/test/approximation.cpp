@@ -2211,11 +2211,21 @@ QUIZ_CASE(pcj_approximation_store) {
   symbolStore.setExpressionForUserNamed(3_e, "a"_e);
   symbolStore.setExpressionForUserNamed(2_e, "b"_e);
   PoincareTest::store("π+1→c", symbolStore);
+  PoincareTest::store("2x→f(x)", symbolStore);
+
   assert_trees_are_equal(symbolStore.expressionForUserNamed("a"_e), 3_e);
   assert_trees_are_equal(symbolStore.expressionForUserNamed("b"_e), 2_e);
   assert_trees_are_equal(symbolStore.expressionForUserNamed("c"_e),
                          KAdd(π_e, 1_e));
   assert_trees_are_equal(symbolStore.expressionForUserNamed("x"_e), nullptr);
+  assert_trees_are_equal(symbolStore.expressionForUserNamed("f"_e),
+                         KMult(2_e, KUnknownSymbol));
+
+  ProjectionContext knowingSymbolContext{.m_context = symbolStore};
+  approximates_to<float>("a", "undef");
+  approximates_to<float>("a", "3", knowingSymbolContext);
+  approximates_to<float>("f(1)", "2", knowingSymbolContext);
+  approximates_to<float>("f(b)", "4", knowingSymbolContext);
 };
 
 QUIZ_CASE(pcj_approximation_context) {

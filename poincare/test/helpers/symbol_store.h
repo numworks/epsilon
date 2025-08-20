@@ -44,6 +44,13 @@ class SymbolStore : public Poincare::VariableStore {
         m_expressionBuffer;
   };
 
+  bool setExpressionForUserFunction(
+      const Poincare::Internal::Tree* expression,
+      const Poincare::Internal::Tree* functionSymbol);
+
+  bool push(const Poincare::Internal::Tree* expression, char symbolName,
+            UserNamedType symbolType);
+
   static constexpr size_t k_maxSymbols = 10;
   using SymbolTable = OMG::StaticVector<SymbolWithExpression, k_maxSymbols>;
   SymbolTable m_symbolTable;

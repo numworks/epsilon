@@ -2205,6 +2205,19 @@ QUIZ_CASE(pcj_approximation_function) {
   approximates_to<double>("product(2+o×i,o, 1, 5)", "-100-540×i", cartesianCtx);
 }
 
+// This quiz_case is temporary, just to test PoincareTest::SymbolStore
+QUIZ_CASE(pcj_approximation_store) {
+  PoincareTest::SymbolStore symbolStore;
+  symbolStore.setExpressionForUserNamed(3_e, "a"_e);
+  symbolStore.setExpressionForUserNamed(2_e, "b"_e);
+  PoincareTest::store("π+1→c", symbolStore);
+  assert_trees_are_equal(symbolStore.expressionForUserNamed("a"_e), 3_e);
+  assert_trees_are_equal(symbolStore.expressionForUserNamed("b"_e), 2_e);
+  assert_trees_are_equal(symbolStore.expressionForUserNamed("c"_e),
+                         KAdd(π_e, 1_e));
+  assert_trees_are_equal(symbolStore.expressionForUserNamed("x"_e), nullptr);
+};
+
 QUIZ_CASE(pcj_approximation_context) {
   Shared::GlobalContext globalContext;
   ProjectionContext cartesianCtx = {

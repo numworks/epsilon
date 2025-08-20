@@ -7,6 +7,7 @@
 #include <poincare/src/expression/infinity.h>
 #include <poincare/src/expression/polynomial.h>
 #include <poincare/src/expression/variables.h>
+#include <poincare/test/helpers/symbol_store.h>
 
 #include "../helper.h"
 
@@ -194,10 +195,10 @@ QUIZ_CASE(poincare_properties_is_infinity) {
   assert_projected_is_infinity("2.3+1", &projCtx, false);
   assert_projected_is_infinity("a", &projCtx, false);
 
-  store("42.3+inf→a", globalContext);
+  PoincareTest::store("42.3+inf→a", globalContext);
   assert_projected_is_infinity("a", &projCtx);
 
-  store("1+inf→x", globalContext);
+  PoincareTest::store("1+inf→x", globalContext);
   assert_projected_is_infinity("x", &projCtx);
   assert_projected_is_infinity("diff(x^2,x,3)", &projCtx, false);
 
@@ -235,18 +236,18 @@ QUIZ_CASE(poincare_properties_get_variables) {
   assert_expression_has_variables(
       "a+x^2+2y+k!B", KList("B"_e, "a"_e, "k"_e, "x"_e, "y"_e), &projCtx);
 
-  store("x→BABA", globalContext);
-  store("y→abab", globalContext);
+  PoincareTest::store("x→BABA", globalContext);
+  PoincareTest::store("y→abab", globalContext);
   assert_expression_has_variables("BABA+abab", KList("BABA"_e, "abab"_e),
                                   &projCtx);
-  store("z→BBBBBB", globalContext);
+  PoincareTest::store("z→BBBBBB", globalContext);
   assert_expression_has_variables("BBBBBB", KList("BBBBBB"_e), &projCtx);
   assert_expression_has_variables(
       "a+b+c+d+f+j+k+n+o+p+q+r",
       KList("a"_e, "b"_e, "c"_e, "d"_e, "f"_e, "j"_e, "k"_e, "n"_e, "o"_e,
             "p"_e, "q"_e, "r"_e),
       &projCtx);
-  store("1+π×x+x^2+\"toto\"→f(x)", globalContext);
+  PoincareTest::store("1+π×x+x^2+\"toto\"→f(x)", globalContext);
   assert_expression_has_variables("f(\"tata\")",
                                   KList("\"tata\""_e, "\"toto\""_e), &projCtx);
 
@@ -263,36 +264,36 @@ QUIZ_CASE(poincare_properties_get_variables) {
                                   KList("\"box\""_e, "a"_e, "y"_e, "z"_e),
                                   &projCtx);
 
-  store("0→f(x)", globalContext);
-  store("x→va", globalContext);
+  PoincareTest::store("0→f(x)", globalContext);
+  PoincareTest::store("x→va", globalContext);
   assert_expression_has_variables("f(va)", KList("va"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
-  store("12→a", globalContext);
-  store("a→f(x)", globalContext);
+  PoincareTest::store("12→a", globalContext);
+  PoincareTest::store("a→f(x)", globalContext);
   assert_expression_has_variables("f(x)", KList("a"_e, "x"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
-  store("1→f(x)", globalContext);
-  store("2→g(x)", globalContext);
+  PoincareTest::store("1→f(x)", globalContext);
+  PoincareTest::store("2→g(x)", globalContext);
   assert_expression_has_variables("f(g(x)+y)", KList("x"_e, "y"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("g.func").destroy();
 
-  store("1→x", globalContext);
+  PoincareTest::store("1→x", globalContext);
   assert_expression_has_variables("x+y", KList("x"_e, "y"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
 
-  store("1→a", globalContext);
-  store("a+b+c→x", globalContext);
+  PoincareTest::store("1→a", globalContext);
+  PoincareTest::store("a+b+c→x", globalContext);
   assert_expression_has_variables("x+y", KList("x"_e, "y"_e), &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("x.exp").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
 
-  store("b+c+x→a", globalContext);
-  store("x+b→g(x)", globalContext);
-  store("a+g(x+y)→f(x)", globalContext);
+  PoincareTest::store("b+c+x→a", globalContext);
+  PoincareTest::store("x+b→g(x)", globalContext);
+  PoincareTest::store("a+g(x+y)→f(x)", globalContext);
   assert_expression_has_variables("f(x)", KList("a"_e, "b"_e, "x"_e, "y"_e),
                                   &projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
@@ -334,7 +335,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
 
   Shared::GlobalContext globalContext;
   // f: x→x^2+Px+1
-  store("1+π×x+x^2→f(x)", globalContext);
+  PoincareTest::store("1+π×x+x^2→f(x)", globalContext);
   assert_reduced_expression_has_polynomial_coefficient(
       "f(x)", "x", KList(1_e, π_e, 1_e), globalContext);
   assert_reduced_expression_has_polynomial_coefficient("√(-1)x", "x",
@@ -344,7 +345,7 @@ QUIZ_CASE(poincare_properties_get_polynomial_coefficients) {
       ComplexFormat::Real);
 
   // 3 -> x
-  store("3→x", globalContext);
+  PoincareTest::store("3→x", globalContext);
   assert_reduced_expression_has_polynomial_coefficient("x+1", "x", KList(4_e),
                                                        globalContext);
   assert_reduced_expression_has_polynomial_coefficient(
@@ -405,8 +406,8 @@ QUIZ_CASE(poincare_properties_list_of_points) {
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
           "sys"));
 
-  store("(1,2)→a", globalContext);
-  store("3→b", globalContext);
+  PoincareTest::store("(1,2)→a", globalContext);
+  PoincareTest::store("3→b", globalContext);
 
   assert_is_list_of_points("{(1,2)}", globalContext);
   assert_is_list_of_points("{(1,-2),(-3.4,5.6)}", globalContext);

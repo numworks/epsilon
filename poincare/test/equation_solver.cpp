@@ -7,6 +7,7 @@
 #include <poincare/src/memory/tree_stack.h>
 
 #include "helper.h"
+#include "helpers/symbol_store.h"
 
 using namespace Poincare::Internal;
 
@@ -80,7 +81,7 @@ QUIZ_CASE(pcj_equation_solver) {
   check_solutions({"a-b", "b-c", "c-d", "d-f", "f-g", "g-a", "a+b+c+d+f+g+1"},
                   {"-1/6", "-1/6", "-1/6", "-1/6", "-1/6", "-1/6"}, projCtx);
   // User variables
-  store("2→a", globalContext);
+  PoincareTest::store("2→a", globalContext);
   check_solutions({"a*x-2"}, {"1"}, projCtx);
   check_solutions({"a+x-2", "x"}, {"0"}, projCtx);
   check_solutions({"a+x-3", "x"}, {"3", "0"}, projCtx);
@@ -110,14 +111,14 @@ QUIZ_CASE(pcj_equation_solver) {
 
   // Complex format detection
   projCtx.m_complexFormat = Poincare::ComplexFormat::Real;
-  store("i→a", globalContext);
+  PoincareTest::store("i→a", globalContext);
   check_solutions({"x-a", "x-a+y-root(-1,3)"}, {"i", "1/2+√(3)/2×i"}, projCtx);
   check_solutions({"x-a", "x-a+y-root(-1,3)", "a-1"}, {"1", "1", "-1"},
                   projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
   check_solutions({"x^2+1"}, {"-4"}, projCtx, EquationSolver::Error::NoError);
 
-  store("x+1→f(x)", globalContext);
+  PoincareTest::store("x+1→f(x)", globalContext);
   check_solutions({"f(a)+x", "f(x)"}, {"0", "-1"}, projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 

@@ -8,6 +8,7 @@
 #include <poincare/src/expression/systematic_reduction.h>
 
 #include "helper.h"
+#include "helpers/symbol_store.h"
 
 using namespace Poincare::Internal;
 
@@ -137,19 +138,19 @@ QUIZ_CASE(pcj_polynomial_degree) {
   assert_polynomial_degree_is(projCtx, "x^257", Degree::k_maxPolynomialDegree);
 
   // f: y→y^2+πy+1
-  store("1+π×y+y^2→f(y)", globalContext);
+  PoincareTest::store("1+π×y+y^2→f(y)", globalContext);
   assert_polynomial_degree_is(projCtx, "f(x)", 2);
   // With y=1
-  store("1→y", globalContext);
+  PoincareTest::store("1→y", globalContext);
   assert_polynomial_degree_is(projCtx, "f(x)", 2);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("y.exp").destroy();
   // a : undef and f : y→ay+πy+1
-  store("undef→a", globalContext);
-  store("1+π×y+y×a→f(y)", globalContext);
+  PoincareTest::store("undef→a", globalContext);
+  PoincareTest::store("1+π×y+y×a→f(y)", globalContext);
   assert_polynomial_degree_is(projCtx, "f(x)", 0);  // a is undefined
   // With a = 1
-  store("1→a", globalContext);
+  PoincareTest::store("1→a", globalContext);
   assert_polynomial_degree_is(projCtx, "f(x)", 1);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();

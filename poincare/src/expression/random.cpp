@@ -80,6 +80,8 @@ T PrivateApproximateRandIntNoRep(const Tree* randInNoRep,
                                  const Approximation::Context* approxCtx,
                                  const int listElement, const T* min = nullptr,
                                  const T* max = nullptr) {
+  /* TODO we plan to use a LCG RNG sequence to avoid storing all previous terms
+   * of the RandIntNoRep in the Random::Context */
   assert(randInNoRep->isRandIntNoRep());
   assert(listElement >= 0);
   uint8_t seed = Random::GetSeed(randInNoRep);

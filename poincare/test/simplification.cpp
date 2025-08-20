@@ -609,9 +609,8 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("sum(sum(x*j,j,1,n),k,1,2)", "dep(n×(n+1)×x,{realInteger(n)})");
   simplifies_to("sum(sum(a*k,a,0,j),k,1,n)",
                 "dep((j×(j+1)×n×(n+1))/4,{realInteger(j),realInteger(n)})");
-  // TODO: simplify to n^3/6+n^2/2+n/3
   simplifies_to("sum(sum(j,j,0,k),k,1,n)",
-                "dep(sum(k^2+k,k,1,n)/2,{realInteger(n)})");
+                "dep(n^3/6+n^2/2+n/3,{realInteger(n)})");
   simplifies_to("sum(sum(j,j,0,k+π),k,1,n)", "undef");
   simplifies_to("sum(π^k,k,4,2)", "0");
   simplifies_to("sum(sin(k),k,a+10,a)", "dep(0,{realInteger(a)})");

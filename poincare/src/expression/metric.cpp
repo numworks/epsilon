@@ -255,10 +255,11 @@ float Metric::GetMetric(Type type) {
     case Type::Random:
     case Type::RandInt:
       return k_defaultMetric * 2.f;
-    case Type::Sum:
     case Type::Var:
     case Type::UserSymbol:
       return k_defaultMetric * 3.f;
+    case Type::Sum:
+      return k_defaultMetric * 4.f;
   }
 }
 

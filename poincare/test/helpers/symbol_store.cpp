@@ -3,7 +3,9 @@
 #include <poincare/context.h>
 #include <poincare/expression.h>
 #include <poincare/helpers/store.h>
+#include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/symbol.h>
+#include <poincare/src/expression/variables.h>
 #include <poincare/src/layout/parser.h>
 #include <poincare/src/memory/tree.h>
 #include <string.h>
@@ -63,11 +65,38 @@ Poincare::Context::UserNamedType SymbolStore::expressionTypeForIdentifier(
   return UserNamedType::None;
 }
 
+bool SymbolStore::push(const Tree* expression, char symbolName,
+                       UserNamedType symbolType) {
+  // TODO: check whether the symbol already exists
+  m_symbolTable.push(SymbolWithExpression(symbolName, symbolType, expression));
+  return true;
+}
+
+bool SymbolStore::setExpressionForUserFunction(
+    const Poincare::Internal::Tree* expression,
+    const Poincare::Internal::Tree* functionSymbol) {
+  const Tree* variableSymbol = functionSymbol->child(0);
+  assert(variableSymbol->isUserSymbol());
+  // Replace the user symbol with KUnknown in the expression
+  Tree* storedTree = expression->cloneTree();
+  Poincare::Internal::Variables::ReplaceSymbolWithTree(
+      storedTree, variableSymbol, Poincare::Internal::KUnknownSymbol);
+
+  bool success = push(storedTree, SymbolNameFromTree(functionSymbol),
+                      UserNamedType::Function);
+  storedTree->removeTree();
+  return success;
+}
+
 bool SymbolStore::setExpressionForUserNamed(const Tree* expression,
                                             const Tree* symbol) {
-  m_symbolTable.push(SymbolWithExpression(SymbolNameFromTree(symbol),
-                                          UserNamedType::Symbol, expression));
-  return true;
+  if (symbol->isUserSymbol()) {
+    return push(expression, SymbolNameFromTree(symbol), UserNamedType::Symbol);
+  }
+  if (symbol->isUserFunction()) {
+    return setExpressionForUserFunction(expression, symbol);
+  }
+  return false;
 }
 
 }  // namespace PoincareTest

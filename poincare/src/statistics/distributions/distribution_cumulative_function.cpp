@@ -13,7 +13,7 @@ using namespace Internal;
 
 template <typename T>
 T binomialCumulativeDistributiveFunction(T x,
-                                         const ParametersArray<T> parameters) {
+                                         const ParametersArray<T>& parameters) {
   T n = parameters[Params::Binomial::N];
   T p = parameters[Params::Binomial::P];
   if (x < static_cast<T>(0.0)) {
@@ -27,7 +27,8 @@ T binomialCumulativeDistributiveFunction(T x,
 }
 
 template <typename T>
-T chi2CumulativeDistributiveFunction(T x, const ParametersArray<T> parameters) {
+T chi2CumulativeDistributiveFunction(T x,
+                                     const ParametersArray<T>& parameters) {
   constexpr static int k_maxRegularizedGammaIterations = 1000;
   constexpr static double k_regularizedGammaPrecision = DBL_EPSILON;
   const T k = parameters[Params::Chi2::K];
@@ -41,7 +42,7 @@ T chi2CumulativeDistributiveFunction(T x, const ParametersArray<T> parameters) {
 
 template <typename T>
 T exponentialCumulativeDistributiveFunction(T x,
-                                            const ParametersArray<T> params) {
+                                            const ParametersArray<T>& params) {
   if (x < 0.0) {
     return static_cast<T>(0.0);
   }
@@ -50,7 +51,7 @@ T exponentialCumulativeDistributiveFunction(T x,
 }
 
 template <typename T>
-T fisherCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
+T fisherCumulativeDistributiveFunction(T x, const ParametersArray<T>& params) {
   const T d1 = params[Params::Fisher::D1];
   const T d2 = params[Params::Fisher::D2];
   return RegularizedIncompleteBetaFunction(d1 / 2.0, d2 / 2.0,
@@ -77,7 +78,7 @@ static T standardNormalCumulativeDistributiveFunction(T abscissa) {
 }
 
 template <typename T>
-T normalCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
+T normalCumulativeDistributiveFunction(T x, const ParametersArray<T>& params) {
   const T mu = params[Params::Normal::Mu];
   const T sigma = params[Params::Normal::Sigma];
   return standardNormalCumulativeDistributiveFunction<T>((x - mu) /
@@ -85,7 +86,7 @@ T normalCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
 }
 
 template <typename T>
-T studentCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
+T studentCumulativeDistributiveFunction(T x, const ParametersArray<T>& params) {
   const T k = params[Params::Student::K];
   if (x == 0.0) {
     return static_cast<T>(0.5);
@@ -99,7 +100,7 @@ T studentCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
 }
 
 template <typename T>
-T uniformCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
+T uniformCumulativeDistributiveFunction(T x, const ParametersArray<T>& params) {
   const T a = params[Params::Uniform::A];
   const T b = params[Params::Uniform::B];
   if (x <= a) {
@@ -113,7 +114,7 @@ T uniformCumulativeDistributiveFunction(T x, const ParametersArray<T> params) {
 
 template <typename T>
 T discreteCumulativeDistributiveFunction(Type distribType, T x,
-                                         const ParametersArray<T> parameters) {
+                                         const ParametersArray<T>& parameters) {
   if (x < static_cast<T>(0.0)) {
     return static_cast<T>(0.0);
   }
@@ -132,7 +133,7 @@ T discreteCumulativeDistributiveFunction(Type distribType, T x,
 
 template <typename T>
 T CumulativeDistributiveFunctionAtAbscissa(
-    Type type, T x, const ParametersArray<T> parameters) {
+    Type type, T x, const ParametersArray<T>& parameters) {
   if (AreParametersValid(type, parameters) != OMG::Troolean::True ||
       std::isnan(x)) {
     return NAN;
@@ -167,7 +168,7 @@ T CumulativeDistributiveFunctionAtAbscissa(
 // The range is inclusive on both ends
 template <typename T>
 T discreteCumulativeDistributiveFunctionForRange(
-    Type distribType, T x, T y, const ParametersArray<T> parameters) {
+    Type distribType, T x, T y, const ParametersArray<T>& parameters) {
   if (y < x) {
     return 0.0f;
   }
@@ -178,7 +179,7 @@ T discreteCumulativeDistributiveFunctionForRange(
 
 template <typename T>
 T continuousCumulativeDistributiveFunctionForRange(
-    Type distribType, T x, T y, const ParametersArray<T> parameters) {
+    Type distribType, T x, T y, const ParametersArray<T>& parameters) {
   if (y <= x) {
     return 0.0f;
   }
@@ -188,7 +189,7 @@ T continuousCumulativeDistributiveFunctionForRange(
 
 template <typename T>
 T CumulativeDistributiveFunctionForRange(Type type, T x, T y,
-                                         const ParametersArray<T> parameters) {
+                                         const ParametersArray<T>& parameters) {
   if (AreParametersValid(type, parameters) != OMG::Troolean::True ||
       std::isnan(x) || std::isnan(y)) {
     return NAN;
@@ -201,13 +202,13 @@ T CumulativeDistributiveFunctionForRange(Type type, T x, T y,
 }
 
 template float CumulativeDistributiveFunctionAtAbscissa(
-    Type type, float x, const ParametersArray<float> parameters);
+    Type type, float x, const ParametersArray<float>& parameters);
 template double CumulativeDistributiveFunctionAtAbscissa(
-    Type type, double x, const ParametersArray<double> parameters);
+    Type type, double x, const ParametersArray<double>& parameters);
 
 template float CumulativeDistributiveFunctionForRange(
-    Type type, float x, float y, const ParametersArray<float> parameters);
+    Type type, float x, float y, const ParametersArray<float>& parameters);
 template double CumulativeDistributiveFunctionForRange(
-    Type type, double x, double y, const ParametersArray<double> parameters);
+    Type type, double x, double y, const ParametersArray<double>& parameters);
 
 }  // namespace Poincare::Distribution

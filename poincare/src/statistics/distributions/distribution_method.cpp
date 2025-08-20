@@ -15,7 +15,7 @@ Type GetType(const Tree* tree) {
 template <typename T>
 T EvaluateAtAbscissa(Type method, const Abscissae<T> x,
                      Distribution::Type distribType,
-                     const Distribution::ParametersArray<T> parameters) {
+                     const Distribution::ParametersArray<T>& parameters) {
   switch (method) {
     case Type::PDF:
       return Distribution::EvaluateAtAbscissa(distribType, x[0], parameters);
@@ -36,7 +36,7 @@ T EvaluateAtAbscissa(Type method, const Abscissae<T> x,
 bool shallowReducePDF(
     const DistributionMethod::Abscissae<const Tree*> abscissae,
     Distribution::Type distribType,
-    const Distribution::ParametersArray<const Tree*> parameters,
+    const Distribution::ParametersArray<const Tree*>& parameters,
     Tree* expression) {
   const Tree* x = abscissae[0];
 
@@ -73,7 +73,7 @@ bool shallowReducePDF(
 bool shallowReduceCDF(
     const DistributionMethod::Abscissae<const Tree*> abscissae,
     Distribution::Type distribType,
-    const Distribution::ParametersArray<const Tree*> parameters,
+    const Distribution::ParametersArray<const Tree*>& parameters,
     Tree* expression) {
   const Tree* x = abscissae[0];
 
@@ -92,7 +92,7 @@ bool shallowReduceCDF(
 bool shallowReduceCDFRange(
     const DistributionMethod::Abscissae<const Tree*> abscissae,
     Distribution::Type distribType,
-    const Distribution::ParametersArray<const Tree*> parameters,
+    const Distribution::ParametersArray<const Tree*>& parameters,
     Tree* expression) {
   const Tree* x = abscissae[0];
   const Tree* y = abscissae[1];
@@ -116,7 +116,7 @@ bool shallowReduceCDFRange(
 bool shallowReduceInverse(
     const DistributionMethod::Abscissae<const Tree*> abscissae,
     Distribution::Type distribType,
-    const Distribution::ParametersArray<const Tree*> parameters,
+    const Distribution::ParametersArray<const Tree*>& parameters,
     Tree* expression) {
   const Tree* a = abscissae[0];
   // Check a
@@ -205,7 +205,7 @@ bool shallowReduceInverse(
 
 bool ShallowReduce(Type method, const Abscissae<const Tree*> abscissae,
                    Distribution::Type distribType,
-                   const Distribution::ParametersArray<const Tree*> parameters,
+                   const Distribution::ParametersArray<const Tree*>& parameters,
                    Tree* expression) {
   switch (method) {
     case Type::PDF:
@@ -225,9 +225,9 @@ bool ShallowReduce(Type method, const Abscissae<const Tree*> abscissae,
 
 template float EvaluateAtAbscissa(
     Type method, const Abscissae<float> x, Distribution::Type distribType,
-    const Distribution::ParametersArray<float> parameters);
+    const Distribution::ParametersArray<float>& parameters);
 template double EvaluateAtAbscissa(
     Type method, const Abscissae<double> x, Distribution::Type distribType,
-    const Distribution::ParametersArray<double> parameters);
+    const Distribution::ParametersArray<double>& parameters);
 
 }  // namespace Poincare::Internal::DistributionMethod

@@ -20,6 +20,9 @@ namespace OMG {
 template <typename T>
 class AbstractStaticVector {
  public:
+  using iterator = T*;
+  using const_iterator = const T*;
+
   size_t size() const { return m_size; }
   void clear() { m_size = 0; }
   void resize(size_t size) {
@@ -35,6 +38,11 @@ class AbstractStaticVector {
     assert(index < m_size);
     return m_data[index];
   }
+
+  constexpr iterator begin() { return m_data; }
+  constexpr const_iterator begin() const { return m_data; }
+  constexpr iterator end() { return m_data + m_size; }
+  constexpr const_iterator end() const { return m_data + m_size; }
 
   void push(const T& value) { (*this)[m_size++] = value; }
   T& pop() {

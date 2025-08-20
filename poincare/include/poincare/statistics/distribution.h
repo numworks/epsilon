@@ -68,7 +68,7 @@ struct Fisher {
 
 constexpr int k_maxNumberOfParameters = 3;
 
-namespace internal {
+namespace detail {
 /* TODO find a way to hide this better.
  * TypeDescription and DescriptionForType should not be visible outside of this
  * file */
@@ -101,30 +101,30 @@ constexpr static TypeDescription DescriptionForType(Type type) {
   }
   OMG::unreachable();
 }
-}  // namespace internal
+}  // namespace detail
 
 Type GetType(const Internal::Tree* tree);
 
 constexpr int NumberOfParameters(Type type) {
-  return internal::DescriptionForType(type).numberOfParameters;
+  return detail::DescriptionForType(type).numberOfParameters;
 }
 
 constexpr const char* ParameterNameAtIndex(Type type, int index) {
   assert(index >= 0 && index < NumberOfParameters(type));
-  return internal::DescriptionForType(type).parameterNames[index];
+  return detail::DescriptionForType(type).parameterNames[index];
 }
 
 constexpr double DefaultParameterAtIndex(Type type, int index) {
   assert(index >= 0 && index < NumberOfParameters(type));
-  return internal::DescriptionForType(type).defaultParameters[index];
+  return detail::DescriptionForType(type).defaultParameters[index];
 }
 
 constexpr bool IsContinuous(Type type) {
-  return internal::DescriptionForType(type).isContinuous;
+  return detail::DescriptionForType(type).isContinuous;
 }
 
 constexpr bool IsSymmetrical(Type type) {
-  return internal::DescriptionForType(type).isSymmetrical;
+  return detail::DescriptionForType(type).isSymmetrical;
 }
 
 template <typename T>

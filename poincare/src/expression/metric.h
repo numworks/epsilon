@@ -36,11 +36,6 @@ class Metric {
    * this metric then [CannotBeReducedFurther] is [true] */
   constexpr static float k_perfectMetric = 0.f;
 
- private:
-  constexpr static float k_defaultMetric = 1.f;
-
-  static float GetMetric(Type type);
-  static float GetAddMultMetric(const Tree* e);
 #endif
 };
 

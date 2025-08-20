@@ -25,6 +25,9 @@ class SymbolStore : public Poincare::VariableStore {
       const Poincare::Internal::Tree* expression,
       const Poincare::Internal::Tree* symbol) override;
 
+  // Destroy all symbols
+  void reset() { m_symbolTable.clear(); }
+
  private:
   class SymbolWithExpression {
    public:

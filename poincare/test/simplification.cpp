@@ -11,6 +11,7 @@
 #include <poincare/src/memory/tree_stack.h>
 
 #include "helper.h"
+#include "helpers/symbol_store.h"
 
 using namespace Poincare::Internal;
 using Poincare::AngleUnit;
@@ -661,7 +662,7 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to("product(sin(k),k,a+1,a+1)", "dep(sin(a+1),{realInteger(a)})");
 
   Shared::GlobalContext globalContext;
-  store("x→f(x)", globalContext);
+  PoincareTest::store("x→f(x)", globalContext);
   ProjectionContext ctx = {
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
       .m_context = globalContext,
@@ -729,9 +730,9 @@ QUIZ_CASE(pcj_simplification_parametric) {
   simplifies_to_no_beautif("product([[0]],k,1,pi)", "[[undef]]");
 
   // Parametric in functions
-  store("x^2→f(x)", globalContext);
-  store("f'(x)→g(x)", globalContext);
-  store("diff(f(x),x,x)→h(x)", globalContext);
+  PoincareTest::store("x^2→f(x)", globalContext);
+  PoincareTest::store("f'(x)→g(x)", globalContext);
+  PoincareTest::store("diff(f(x),x,x)→h(x)", globalContext);
   ProjectionContext ctx2 = {
       .m_symbolic = SymbolicComputation::ReplaceDefinedFunctions,
       .m_context = globalContext,
@@ -1494,16 +1495,16 @@ QUIZ_CASE(pcj_simplification_dependencies) {
       .m_context = globalContext};
 
   // No dependencies
-  store("1→a", globalContext);
+  PoincareTest::store("1→a", globalContext);
   simplifies_to("1+2", "3", projCtx);
   simplifies_to("a", "1", projCtx);
   simplifies_to("a+1", "2", projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Function
-  store("x+1→f(x)", globalContext);
-  store("3→g(x)", globalContext);
-  store("1+2→a", globalContext);
+  PoincareTest::store("x+1→f(x)", globalContext);
+  PoincareTest::store("3→g(x)", globalContext);
+  PoincareTest::store("1+2→a", globalContext);
   // A variable argument is used as dependency only if needed
   simplifies_to("f(x)", "x+1", projCtx);
   simplifies_to("f(x+y)", "x+y+1", projCtx);
@@ -1518,36 +1519,36 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Derivative
-  store("x^2→f(x)", globalContext);
+  PoincareTest::store("x^2→f(x)", globalContext);
   simplifies_to("diff(cos(x),x,0)", "0", projCtx);
   simplifies_to("diff(2x,x,y)", "2", projCtx);
   simplifies_to("diff(f(x),x,a)", "2×a", projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
 
-  store("3→f(x)", globalContext);
+  PoincareTest::store("3→f(x)", globalContext);
   simplifies_to("diff(cos(x)+f(y),x,0)", "0", projCtx);
   simplifies_to("diff(cos(x)+f(y),x,x)", "-sin(x)", projCtx);
-  store("1/0→y", globalContext);
+  PoincareTest::store("1/0→y", globalContext);
   simplifies_to("diff(cos(x)+f(y),x,0)", "undef", projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Parametric
   /* Dependencies are not bubbled up out of an integral, but they are still
    * present inside the integral. */
-  store("1→f(x)", globalContext);
+  PoincareTest::store("1→f(x)", globalContext);
   simplifies_to("int(f(x)+f(a),x,0,1)", "2", projCtx);
-  store("1/0→a", globalContext);
+  PoincareTest::store("1/0→a", globalContext);
   simplifies_to("int(f(x)+f(a),x,0,1)", "undef", projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("a.exp").destroy();
   /* If the derivation is not handled properly, the symbol x could be reduced
    * to undef. */
-  store("x→f(x)", globalContext);
+  PoincareTest::store("x→f(x)", globalContext);
   simplifies_to("int(diff(f(x),x,x),x,0,1)", "1", projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->recordNamed("f.func").destroy();
   /* When trimming dependencies, we must be able to recognize unreduced
    * expression that are nevertheless undefined. */
-  store("1→f(x)", globalContext);
+  PoincareTest::store("1→f(x)", globalContext);
   simplifies_to("f(a)", "1", projCtx);
   // Check that deepIsSymbolic works fine and remove parametered dependencies
   simplifies_to("f(sum(1/n,n,1,5))", "1", projCtx);
@@ -1558,7 +1559,7 @@ QUIZ_CASE(pcj_simplification_dependencies) {
   Ion::Storage::FileSystem::sharedFileSystem
       ->createRecordWithFullNameAndDataChunks(
           "u.seq", reinterpret_cast<const void**>(&emptyString), 0, 0);
-  store("3→f(x)", globalContext);
+  PoincareTest::store("3→f(x)", globalContext);
   // Sequence are kept in dependency
   simplifies_to("f(u(n))", "dep(3,{u(n)})", projCtx);
   // Except if the sequence can already be approximated.
@@ -1607,7 +1608,7 @@ QUIZ_CASE(pcj_simplification_infinity) {
   simplifies_to("inf×cos(3)×i", "∞×sign(cos(3)×i)", cartesianCtx);
 
   Shared::GlobalContext globalContext;
-  store("x→f(x)", globalContext);
+  PoincareTest::store("x→f(x)", globalContext);
   ProjectionContext ctx = {
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
       .m_context = globalContext,
@@ -2066,7 +2067,7 @@ QUIZ_CASE(pcj_simplification_distributions) {
 
 QUIZ_CASE(pcj_simplification_function) {
   Shared::GlobalContext globalContext;
-  store("x→f(x)", globalContext);
+  PoincareTest::store("x→f(x)", globalContext);
   ProjectionContext projCtx = {
       .m_symbolic = SymbolicComputation::KeepAllSymbols,
       .m_context = globalContext,
@@ -2087,13 +2088,13 @@ QUIZ_CASE(pcj_simplification_variable_replace) {
       .m_symbolic = SymbolicComputation::ReplaceDefinedSymbols,
       .m_context = globalContext};
 
-  store("4→y", globalContext);
+  PoincareTest::store("4→y", globalContext);
   simplifies_to("x+y", "x+4", projCtx);
 
-  store("x^2→f(x)", globalContext);
+  PoincareTest::store("x^2→f(x)", globalContext);
   simplifies_to("f(z+f(y))", "z^2+32×z+256", projCtx);
 
-  store("{5,4,3,2,1}→l", globalContext);
+  PoincareTest::store("{5,4,3,2,1}→l", globalContext);
   simplifies_to("sum(l)", "15", projCtx);
   simplifies_to("l(2)", "4", projCtx);
   simplifies_to("l(3^2-4)", "1", projCtx);
@@ -2260,26 +2261,26 @@ QUIZ_CASE(pcj_simplification_context) {
       .m_context = globalContext};
 
   // Fill variable
-  store("1+2→Adadas", globalContext);
+  PoincareTest::store("1+2→Adadas", globalContext);
   simplifies_to("Adadas", "3", projCtx);
 
   // Fill f1
-  store("1+x→f1(x)", globalContext);
+  PoincareTest::store("1+x→f1(x)", globalContext);
   simplifies_to("f1(4)", "5", projCtx);
   simplifies_to("f1(Adadas)", "4", projCtx);
 
   // Fill f2
-  store("x-1→f2(x)", globalContext);
+  PoincareTest::store("x-1→f2(x)", globalContext);
   simplifies_to("f2(4)", "3", projCtx);
   simplifies_to("f2(Adadas)", "2", projCtx);
 
   // Define fBoth with f1 and f2
-  store("f1(x)+f2(x)→fBoth(x)", globalContext);
+  PoincareTest::store("f1(x)+f2(x)→fBoth(x)", globalContext);
   simplifies_to("fBoth(4)", "8", projCtx);
   simplifies_to("fBoth(Adadas)", "6", projCtx);
 
   // Change f2
-  store("x→f2(x)", globalContext);
+  PoincareTest::store("x→f2(x)", globalContext);
   simplifies_to("f2(4)", "4", projCtx);
   simplifies_to("f2(Adadas)", "3", projCtx);
 
@@ -2289,15 +2290,15 @@ QUIZ_CASE(pcj_simplification_context) {
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Circular variables
-  store("a→b", globalContext);
-  store("b→a", globalContext);
+  PoincareTest::store("a→b", globalContext);
+  PoincareTest::store("b→a", globalContext);
   simplifies_to("a", "undef", projCtx);
   simplifies_to("b", "undef", projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  store("a→b", globalContext);
-  store("b→c", globalContext);
-  store("c→a", globalContext);
+  PoincareTest::store("a→b", globalContext);
+  PoincareTest::store("b→c", globalContext);
+  PoincareTest::store("c→a", globalContext);
   simplifies_to("a", "undef", projCtx);
   simplifies_to("b", "undef", projCtx);
   simplifies_to("c", "undef", projCtx);
@@ -2305,61 +2306,61 @@ QUIZ_CASE(pcj_simplification_context) {
 
   // Circular functions
   // f: x → f(x)
-  store("(f(x))→f(x)", globalContext);
+  PoincareTest::store("(f(x))→f(x)", globalContext);
   simplifies_to("f(1)", "undef", projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  store("1→f(x)", globalContext);
-  store("f(x)→g(x)", globalContext);
-  store("g(x)→f(x)", globalContext);
+  PoincareTest::store("1→f(x)", globalContext);
+  PoincareTest::store("f(x)→g(x)", globalContext);
+  PoincareTest::store("g(x)→f(x)", globalContext);
   simplifies_to("f(1)", "undef", projCtx);
   simplifies_to("g(1)", "undef", projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
-  store("1→f(x)", globalContext);
-  store("f(x)→g(x)", globalContext);
-  store("g(x)→h(x)", globalContext);
-  store("h(x)→f(x)", globalContext);
+  PoincareTest::store("1→f(x)", globalContext);
+  PoincareTest::store("f(x)→g(x)", globalContext);
+  PoincareTest::store("g(x)→h(x)", globalContext);
+  PoincareTest::store("h(x)→f(x)", globalContext);
   simplifies_to("f(1)", "undef", projCtx);
   simplifies_to("g(1)", "undef", projCtx);
   simplifies_to("h(1)", "undef", projCtx);
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 
   // Circular variables and functions
-  store("a→b", globalContext);
-  store("b→a", globalContext);
-  store("a→f(x)", globalContext);
+  PoincareTest::store("a→b", globalContext);
+  PoincareTest::store("b→a", globalContext);
+  PoincareTest::store("a→f(x)", globalContext);
   simplifies_to("f(1)", "undef", projCtx);
   simplifies_to("a", "undef", projCtx);
   simplifies_to("b", "undef", projCtx);
 
   // Composed functions
   // f: x→x^2
-  store("x^2→f(x)", globalContext);
+  PoincareTest::store("x^2→f(x)", globalContext);
   // g: x→f(x-2)
-  store("f(x-2)→g(x)", globalContext);
+  PoincareTest::store("f(x-2)→g(x)", globalContext);
   simplifies_to("f(2)", "4", projCtx);
   simplifies_to("g(3)", "1", projCtx);
   simplifies_to("g(5)", "9", projCtx);
 
   // g: x→f(x-2)+f(x+1)
-  store("f(x-2)+f(x+1)→g(x)", globalContext);
+  PoincareTest::store("f(x-2)+f(x+1)→g(x)", globalContext);
   // Add a sum to bypass simplification
   simplifies_to("g(3)+sum(1, n, 2, 4)", "20", projCtx);
   simplifies_to("g(5)", "45", projCtx);
 
   // g: x→x+1
-  store("x+1→g(x)", globalContext);
+  PoincareTest::store("x+1→g(x)", globalContext);
   simplifies_to("f(g(4))", "25", projCtx);
   // Add a sum to bypass simplification
   simplifies_to("f(g(4))+sum(1, n, 2, 4)", "28", projCtx);
 
   // Evaluate at undef
-  store("0→f(x)", globalContext);
-  store("f(1/0)→a", globalContext);
+  PoincareTest::store("0→f(x)", globalContext);
+  PoincareTest::store("f(1/0)→a", globalContext);
   simplifies_to("a", "undef", projCtx);
-  store("f(1/0)→g(x)", globalContext);
+  PoincareTest::store("f(1/0)→g(x)", globalContext);
   simplifies_to("g(1)", "undef", projCtx);
-  store("f(undef)→b", globalContext);
+  PoincareTest::store("f(undef)→b", globalContext);
   simplifies_to("b", "undef", projCtx);
 }

@@ -3,7 +3,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/context.h>
 #include <poincare/expression.h>
-#include <poincare/helpers/store.h>
 #include <poincare/print.h>
 #include <poincare/src/expression/k_tree.h>
 #include <poincare/src/expression/metric.h>
@@ -241,13 +240,6 @@ void assert_parse_to_integer_overflow(const char* input,
   }
   ExceptionCatch(type) { quiz_assert(type == ExceptionType::IntegerOverflow); }
   SharedTreeStack->flush();
-}
-
-void store(const char* storeExpression,
-           Poincare::VariableStore& variableStore) {
-  Poincare::UserExpression s =
-      Poincare::UserExpression::Parse(storeExpression, variableStore);
-  Poincare::StoreHelper::PerformStore(variableStore, s);
 }
 
 void serialize_expression(const Tree* expression, std::span<char> buffer,

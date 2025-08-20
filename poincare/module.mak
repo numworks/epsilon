@@ -263,6 +263,7 @@ _sources_poincare_test := $(addprefix test/, \
   zoom.cpp \
 $(addprefix helpers/, \
   expression_equal_sign.cpp \
+  symbol_store.cpp \
 ) \
 )
 

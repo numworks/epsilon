@@ -1,5 +1,6 @@
 #include <apps/shared/global_context.h>
 #include <poincare/test/helper.h>
+#include <poincare/test/helpers/symbol_store.h>
 #include <quiz.h>
 #include <string.h>
 
@@ -398,7 +399,7 @@ void set(const char* variable, const char* expression,
   strlcpy(buffer + expressionLen, storeSymbol, storeSymbolLen + 1);
   strlcpy(buffer + expressionLen + storeSymbolLen, variable,
           strlen(variable) + 1);
-  store(buffer, globalContext);
+  PoincareTest::store(buffer, globalContext);
 }
 
 QUIZ_CASE(solver_complex_real) {

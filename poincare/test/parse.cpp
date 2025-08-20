@@ -17,6 +17,7 @@
 #include <quiz.h>
 
 #include "helper.h"
+#include "helpers/symbol_store.h"
 
 using namespace Poincare::Internal;
 
@@ -545,12 +546,12 @@ QUIZ_CASE(pcj_parse_unit_convert) {
   assert_text_not_parsable("0→_K");
 
   Shared::GlobalContext context;
-  store("_m→a", context);
-  store("_m→b", context);
+  PoincareTest::store("_m→a", context);
+  PoincareTest::store("_m→b", context);
   assert_text_not_parsable("1_km→a×b", context);
-  store("2→a", context);
+  PoincareTest::store("2→a", context);
   assert_text_not_parsable("3_m→a×_km", context);
-  store("2→f(x)", context);
+  PoincareTest::store("2→f(x)", context);
   assert_text_not_parsable("3_m→f(2)×_km");
   Ion::Storage::FileSystem::sharedFileSystem->destroyAllRecords();
 }
@@ -911,11 +912,11 @@ QUIZ_CASE(pcj_parse_identifiers) {
   assert_text_not_parsable("ln^(2)(2)");
 
   Shared::GlobalContext globalContext;
-  store("0→ab", globalContext);
-  store("x→bacos(x)", globalContext);
-  store("0→azfoo", globalContext);
-  store("x→foobar(x)", globalContext);
-  store("0→a3b", globalContext);
+  PoincareTest::store("0→ab", globalContext);
+  PoincareTest::store("x→bacos(x)", globalContext);
+  PoincareTest::store("0→azfoo", globalContext);
+  PoincareTest::store("x→foobar(x)", globalContext);
+  PoincareTest::store("0→a3b", globalContext);
   assert_parsed_expression_is("xyz", KMult("x"_e, "y"_e, "z"_e), globalContext);
   assert_parsed_expression_is("xy123z", KMult("x"_e, "y123"_e, "z"_e),
                               globalContext);

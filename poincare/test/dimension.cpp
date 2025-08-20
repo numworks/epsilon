@@ -6,6 +6,7 @@
 #include <poincare/src/expression/units/representatives.h>
 
 #include "helper.h"
+#include "helpers/symbol_store.h"
 
 using namespace Poincare::Internal;
 
@@ -204,15 +205,15 @@ QUIZ_CASE(pcj_dimension) {
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecords() ==
       Ion::Storage::FileSystem::sharedFileSystem->numberOfRecordsWithExtension(
           "sys"));
-  store("2→a", globalContext);
-  store("{4,2}→b", globalContext);
-  store("(1,3)→c", globalContext);
-  store("33_m→d", globalContext);
-  store("[[1]]→v", globalContext);
-  store("[[x]]→f(x)", globalContext);
-  store("{x,2*x}→g(x)", globalContext);
-  store("(x,2*x)→h(x)", globalContext);
-  store("0.2*x→j(x)", globalContext);
+  PoincareTest::store("2→a", globalContext);
+  PoincareTest::store("{4,2}→b", globalContext);
+  PoincareTest::store("(1,3)→c", globalContext);
+  PoincareTest::store("33_m→d", globalContext);
+  PoincareTest::store("[[1]]→v", globalContext);
+  PoincareTest::store("[[x]]→f(x)", globalContext);
+  PoincareTest::store("{x,2*x}→g(x)", globalContext);
+  PoincareTest::store("(x,2*x)→h(x)", globalContext);
+  PoincareTest::store("0.2*x→j(x)", globalContext);
 
   QUIZ_ASSERT(dim("a", Scalar, globalContext));
   QUIZ_ASSERT(dim("b", Scalar, globalContext));

@@ -13,6 +13,7 @@
 #include <poincare/src/layout/rack_from_text.h>
 #include <poincare/src/memory/tree_stack_checkpoint.h>
 #include <poincare/test/helper.h>
+#include <poincare/test/helpers/symbol_store.h>
 #include <poincare/variable_store.h>
 
 using namespace Poincare;
@@ -149,7 +150,7 @@ void assert_reduce_and_store(const char *expression,
                              ComplexFormat complexFormat,
                              ReductionTarget target) {
   // TODO_PCJ: reduce expression (to check it stays a store expression)
-  store(expression, variableStore);
+  PoincareTest::store(expression, variableStore);
 }
 
 void assert_parsed_expression_simplify_to(

@@ -210,8 +210,6 @@ void assert_parse_to_integer_overflow(
     const char* input,
     const Poincare::Context& context = Poincare::EmptyContext{});
 
-void store(const char* storeExpression, Poincare::VariableStore& variableStore);
-
 inline Poincare::Internal::Tree* parseAndPrepareForApproximation(
     const char* function, Poincare::Internal::ProjectionContext ctx = {}) {
   constexpr const char* k_symbol = "x";

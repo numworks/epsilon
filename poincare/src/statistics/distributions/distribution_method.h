@@ -36,11 +36,11 @@ constexpr static int NumberOfParameters(Type f) {
 template <typename T>
 T EvaluateAtAbscissa(Type method, const Abscissae<T> x,
                      Distribution::Type distribType,
-                     const Distribution::ParametersArray<T> parameters);
+                     const Distribution::ParametersArray<T>& parameters);
 
 bool ShallowReduce(Type method, const Abscissae<const Tree*> abscissae,
                    Distribution::Type distribType,
-                   const Distribution::ParametersArray<const Tree*> parameters,
+                   const Distribution::ParametersArray<const Tree*>& parameters,
                    Tree* expression);
 
 };  // namespace DistributionMethod

@@ -19,7 +19,7 @@ bool IsNan(const Tree* val) { return val == nullptr; }
 
 template <typename U>
 OMG::Troolean IsParameterValid(Type type, U val, int index,
-                               const ParametersArray<U> parameters) {
+                               const ParametersArray<U>& parameters) {
   assert(index >= 0 && index < NumberOfParameters(type));
   if (IsNan(val)) {
     return OMG::Troolean::False;
@@ -66,7 +66,7 @@ OMG::Troolean IsParameterValid(Type type, U val, int index,
 
 template <typename U>
 OMG::Troolean AreParametersValid(Type type,
-                                 const ParametersArray<U> parameters) {
+                                 const ParametersArray<U>& parameters) {
   int nParams = NumberOfParameters(type);
   OMG::Troolean result = OMG::Troolean::True;
   for (int i = 0; i < nParams; i++) {
@@ -84,19 +84,19 @@ OMG::Troolean AreParametersValid(Type type,
 
 template OMG::Troolean IsParameterValid(
     Type type, float val, int index,
-    const Distribution::ParametersArray<float> parameters);
+    const Distribution::ParametersArray<float>& parameters);
 template OMG::Troolean IsParameterValid(
     Type type, double val, int index,
-    const Distribution::ParametersArray<double> parameters);
+    const Distribution::ParametersArray<double>& parameters);
 template OMG::Troolean IsParameterValid(
     Type type, const Tree* val, int index,
-    const Distribution::ParametersArray<const Tree*> parameters);
+    const Distribution::ParametersArray<const Tree*>& parameters);
 
 template OMG::Troolean AreParametersValid(
-    Type type, const Distribution::ParametersArray<float> parameters);
+    Type type, const Distribution::ParametersArray<float>& parameters);
 template OMG::Troolean AreParametersValid(
-    Type type, const Distribution::ParametersArray<double> parameters);
+    Type type, const Distribution::ParametersArray<double>& parameters);
 template OMG::Troolean AreParametersValid(
-    Type type, const Distribution::ParametersArray<const Tree*> parameters);
+    Type type, const Distribution::ParametersArray<const Tree*>& parameters);
 
 }  // namespace Poincare::Distribution

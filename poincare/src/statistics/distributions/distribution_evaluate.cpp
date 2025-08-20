@@ -14,7 +14,7 @@ namespace Poincare::Distribution {
 using namespace Internal;
 
 template <typename T>
-T evalBinomial(T x, const ParametersArray<T> parameters) {
+T evalBinomial(T x, const ParametersArray<T>& parameters) {
   const T n = parameters[Params::Binomial::N];
   const T p = parameters[Params::Binomial::P];
   constexpr T precision = OMG::Float::Epsilon<T>();
@@ -48,7 +48,7 @@ T evalBinomial(T x, const ParametersArray<T> parameters) {
 }
 
 template <typename T>
-T evalChi2(T x, const ParametersArray<T> parameters) {
+T evalChi2(T x, const ParametersArray<T>& parameters) {
   if (x == 0.0) {
     return 0.;
   }
@@ -60,13 +60,13 @@ T evalChi2(T x, const ParametersArray<T> parameters) {
 }
 
 template <typename T>
-T evalExponential(T x, const ParametersArray<T> params) {
+T evalExponential(T x, const ParametersArray<T>& params) {
   const T lambda = params[Params::Exponential::Lambda];
   return lambda * std::exp(-lambda * x);
 }
 
 template <typename T>
-T evalFisher(T x, const ParametersArray<T> params) {
+T evalFisher(T x, const ParametersArray<T>& params) {
   const T d1 = params[Params::Fisher::D1];
   const T d2 = params[Params::Fisher::D2];
   if (x == 0.) {
@@ -83,7 +83,7 @@ T evalFisher(T x, const ParametersArray<T> params) {
 }
 
 template <typename T>
-T evalGeometric(T x, const ParametersArray<T> params) {
+T evalGeometric(T x, const ParametersArray<T>& params) {
   constexpr T castedOne = static_cast<T>(1.0);
   if (x < castedOne) {
     return static_cast<T>(0.0);
@@ -98,7 +98,7 @@ T evalGeometric(T x, const ParametersArray<T> params) {
 }
 
 template <typename T>
-T evalHyperGeometric(T k, const ParametersArray<T> parameters) {
+T evalHyperGeometric(T k, const ParametersArray<T>& parameters) {
   const T N = parameters[Params::Hypergeometric::NPop];
   const T K = parameters[Params::Hypergeometric::K];
   const T n = parameters[Params::Hypergeometric::NSample];
@@ -131,7 +131,7 @@ T evalHyperGeometric(T k, const ParametersArray<T> parameters) {
 }
 
 template <typename T>
-T evalNormal(T x, const ParametersArray<T> params) {
+T evalNormal(T x, const ParametersArray<T>& params) {
   const T mu = params[Params::Normal::Mu];
   const T sigma = params[Params::Normal::Sigma];
   const float xMinusMuOverVar = (x - mu) / sigma;
@@ -141,7 +141,7 @@ T evalNormal(T x, const ParametersArray<T> params) {
 }
 
 template <typename T>
-T evalPoisson(T x, const ParametersArray<T> parameters) {
+T evalPoisson(T x, const ParametersArray<T>& parameters) {
   const T lambda = parameters[Params::Poisson::Lambda];
   T lResult = -lambda + std::floor(x) * std::log(lambda) -
               std::lgamma(std::floor(x) + 1);
@@ -149,7 +149,7 @@ T evalPoisson(T x, const ParametersArray<T> parameters) {
 }
 
 template <typename T>
-T evalStudent(T x, const ParametersArray<T> params) {
+T evalStudent(T x, const ParametersArray<T>& params) {
   const T k = params[Params::Student::K];
   T lnCoefficient = std::lgamma((k + 1.f) / 2.f) - std::lgamma(k / 2.f) -
                     std::log(std::sqrt(k * M_PI));
@@ -157,7 +157,7 @@ T evalStudent(T x, const ParametersArray<T> params) {
 }
 
 template <typename T>
-T evaluateUniform(T x, const ParametersArray<T> params) {
+T evaluateUniform(T x, const ParametersArray<T>& params) {
   const T a = params[Params::Uniform::A];
   const T b = params[Params::Uniform::B];
   if (a <= x && x <= b) {
@@ -167,7 +167,7 @@ T evaluateUniform(T x, const ParametersArray<T> params) {
 }
 
 template <typename T>
-T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T> parameters) {
+T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T>& parameters) {
   if (std::isnan(x) ||
       AreParametersValid(type, parameters) != OMG::Troolean::True ||
       (AcceptsOnlyPositiveAbscissa(type) && x < static_cast<T>(0.))) {
@@ -203,8 +203,8 @@ T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T> parameters) {
 }
 
 template float EvaluateAtAbscissa(Type type, float x,
-                                  const ParametersArray<float> parameters);
+                                  const ParametersArray<float>& parameters);
 template double EvaluateAtAbscissa(Type type, double x,
-                                   const ParametersArray<double> parameters);
+                                   const ParametersArray<double>& parameters);
 
 }  // namespace Poincare::Distribution

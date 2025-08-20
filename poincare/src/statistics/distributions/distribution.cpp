@@ -14,7 +14,7 @@ Type GetType(const Internal::Tree* tree) {
 }
 
 template <typename T>
-T MeanAbscissa(Type type, const ParametersArray<T> parameters) {
+T MeanAbscissa(Type type, const ParametersArray<T>& parameters) {
   switch (type) {
     case Type::Normal:
       return parameters[Params::Normal::Mu];
@@ -29,7 +29,7 @@ T MeanAbscissa(Type type, const ParametersArray<T> parameters) {
 }
 
 double EvaluateParameterForProbabilityAndBound(
-    Type type, int parameterIndex, const ParametersArray<double> parameters,
+    Type type, int parameterIndex, const ParametersArray<double>& parameters,
     double probability, double bound, bool isUpperBound) {
   // Only implemented for Normal Distribution
   assert(type == Type::Normal);
@@ -67,7 +67,7 @@ double EvaluateParameterForProbabilityAndBound(
 }
 
 template <typename T>
-T ComputeXMin(Type type, const ParametersArray<T> parameters) {
+T ComputeXMin(Type type, const ParametersArray<T>& parameters) {
   switch (type) {
     case Type::Uniform:
       return GetUniformXExtremum(type, parameters, true);
@@ -90,7 +90,7 @@ T ComputeXMin(Type type, const ParametersArray<T> parameters) {
 }
 
 template <typename T>
-T ComputeXMax(Type type, const ParametersArray<T> parameters) {
+T ComputeXMax(Type type, const ParametersArray<T>& parameters) {
   switch (type) {
     case Type::Binomial:
       return parameters[0] > 0.0f ? parameters[0] : 1.0f;
@@ -130,7 +130,7 @@ T ComputeXMax(Type type, const ParametersArray<T> parameters) {
 }
 
 template <typename T>
-T ComputeYMax(Type type, const ParametersArray<T> parameters) {
+T ComputeYMax(Type type, const ParametersArray<T>& parameters) {
   switch (type) {
     case Type::Binomial: {
       int maxAbscissa = parameters[1] < 1.0f
@@ -212,24 +212,24 @@ T ComputeYMax(Type type, const ParametersArray<T> parameters) {
 }
 
 template float MeanAbscissa(
-    Type type, const Distribution::ParametersArray<float> parameters);
+    Type type, const Distribution::ParametersArray<float>& parameters);
 template double MeanAbscissa(
-    Type type, const Distribution::ParametersArray<double> parameters);
+    Type type, const Distribution::ParametersArray<double>& parameters);
 
 template float ComputeXMin(
-    Type type, const Distribution::ParametersArray<float> parameters);
+    Type type, const Distribution::ParametersArray<float>& parameters);
 template double ComputeXMin(
-    Type type, const Distribution::ParametersArray<double> parameters);
+    Type type, const Distribution::ParametersArray<double>& parameters);
 
 template float ComputeXMax(
-    Type type, const Distribution::ParametersArray<float> parameters);
+    Type type, const Distribution::ParametersArray<float>& parameters);
 template double ComputeXMax(
-    Type type, const Distribution::ParametersArray<double> parameters);
+    Type type, const Distribution::ParametersArray<double>& parameters);
 
 template float ComputeYMax(
-    Type type, const Distribution::ParametersArray<float> parameters);
+    Type type, const Distribution::ParametersArray<float>& parameters);
 template double ComputeYMax(
-    Type type, const Distribution::ParametersArray<double> parameters);
+    Type type, const Distribution::ParametersArray<double>& parameters);
 
 }  // namespace Poincare::Distribution
 
@@ -237,7 +237,7 @@ namespace Poincare::Internal::Distribution {
 using Poincare::Distribution::Type;
 
 template <typename T>
-T GetFisherMode(Type type, const ParametersArray<T> parameters) {
+T GetFisherMode(Type type, const ParametersArray<T>& parameters) {
   assert(type == Type::Fisher);
 
   const float d1 = parameters[0];
@@ -249,7 +249,7 @@ T GetFisherMode(Type type, const ParametersArray<T> parameters) {
 }
 
 template <typename T>
-T GetUniformXExtremum(Type type, const ParametersArray<T> parameters,
+T GetUniformXExtremum(Type type, const ParametersArray<T>& parameters,
                       bool min) {
   assert(type == Type::Uniform);
   int coefficient = min ? -1 : 1;
@@ -266,7 +266,8 @@ T GetUniformXExtremum(Type type, const ParametersArray<T> parameters,
 }
 
 template <typename T>
-T GetNormalXExtremum(Type type, const ParametersArray<T> parameters, bool min) {
+T GetNormalXExtremum(Type type, const ParametersArray<T>& parameters,
+                     bool min) {
   assert(type == Type::Normal);
   int coefficient = min ? -1 : 1;
 
@@ -278,7 +279,7 @@ T GetNormalXExtremum(Type type, const ParametersArray<T> parameters, bool min) {
 }
 
 template float GetFisherMode(
-    Type type, const Distribution::ParametersArray<float> parameters);
+    Type type, const Distribution::ParametersArray<float>& parameters);
 template double GetFisherMode(
-    Type type, const Distribution::ParametersArray<double> parameters);
+    Type type, const Distribution::ParametersArray<double>& parameters);
 }  // namespace Poincare::Internal::Distribution

@@ -132,19 +132,19 @@ using ParametersArray = std::array<T, k_maxNumberOfParameters>;
 
 template <typename U>  // float, double or const Tree*
 OMG::Troolean IsParameterValid(Type type, U val, int index,
-                               const ParametersArray<U> parameters);
+                               const ParametersArray<U>& parameters);
 template <typename U>  // float, double or const Tree*
 OMG::Troolean AreParametersValid(Type type,
-                                 const ParametersArray<U> parameters);
+                                 const ParametersArray<U>& parameters);
 
 template <typename U>  // float, double or const Tree*
 bool IsParameterValidBool(Type type, U val, int index,
-                          const ParametersArray<U> parameters) {
+                          const ParametersArray<U>& parameters) {
   return OMG::SafeTrooleanToBool(
       IsParameterValid(type, val, index, parameters));
 }
 template <typename U>  // float, double or const Tree*
-bool AreParametersValidBool(Type type, const ParametersArray<U> parameters) {
+bool AreParametersValidBool(Type type, const ParametersArray<U>& parameters) {
   return OMG::SafeTrooleanToBool(AreParametersValid(type, parameters));
 }
 
@@ -153,36 +153,36 @@ constexpr bool AcceptsOnlyPositiveAbscissa(Type type) {
          type == Type::Fisher;
 }
 template <typename T>
-T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T> parameters);
+T EvaluateAtAbscissa(Type type, T x, const ParametersArray<T>& parameters);
 
 template <typename T>
-T MeanAbscissa(Type type, const ParametersArray<T> parameters);
+T MeanAbscissa(Type type, const ParametersArray<T>& parameters);
 
 template <typename T>
-T CumulativeDistributiveFunctionAtAbscissa(Type type, T x,
-                                           const ParametersArray<T> parameters);
+T CumulativeDistributiveFunctionAtAbscissa(
+    Type type, T x, const ParametersArray<T>& parameters);
 
 /* WARNING: This has inconsistent behavior for p~0. or p~1 depending on the
  * Distribution type. It should be reworked */
 template <typename T>
 T CumulativeDistributiveInverseForProbability(
-    Type type, T probability, const ParametersArray<T> parameters);
+    Type type, T probability, const ParametersArray<T>& parameters);
 
 template <typename T>
 T CumulativeDistributiveFunctionForRange(Type type, T x, T y,
-                                         const ParametersArray<T> parameters);
+                                         const ParametersArray<T>& parameters);
 
 // Only implemented for NormalDistribution
 double EvaluateParameterForProbabilityAndBound(
-    Type type, int parameterIndex, const ParametersArray<double> parameters,
+    Type type, int parameterIndex, const ParametersArray<double>& parameters,
     double probability, double bound, bool isUpperBound);
 
 template <typename T>
-T ComputeXMin(Type type, const ParametersArray<T> parameters);
+T ComputeXMin(Type type, const ParametersArray<T>& parameters);
 template <typename T>
-T ComputeXMax(Type type, const ParametersArray<T> parameters);
+T ComputeXMax(Type type, const ParametersArray<T>& parameters);
 template <typename T>
-T ComputeYMax(Type type, const ParametersArray<T> parameters);
+T ComputeYMax(Type type, const ParametersArray<T>& parameters);
 
 };  // namespace Distribution
 

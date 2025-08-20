@@ -92,9 +92,10 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
     case Type::RationalPosBig:
     case Type::IntegerNegBig:
     case Type::IntegerPosBig:
-      return willBeBeautified
-                 ? GetTypeMetric(ShortTypeForBigType(e->type())) * e->nodeSize()
-                 : GetTypeMetric(e->type());
+      if (willBeBeautified) {
+        return GetTypeMetric(ShortTypeForBigType(e->type())) * e->nodeSize();
+      }
+      break;
     case Type::Mult: {
       result = GetAddMultMetric(e);
       if (willBeBeautified) {
@@ -113,11 +114,11 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
                 &ctx) ||
             PatternMatching::Match(
                 e, KMult(KA_s, KATanRad(KMult(KB_s, i_e)), KC_s, i_e), &ctx)) {
-          result +=
-              GetTypeMetric(Type::MinusOne) - GetTypeMetric(Type::ComplexI) * 2;
           if (ctx.getNumberOfTrees(KB) == 1) {
             result -= GetAddMultMetric(e);
           }
+          result +=
+              GetTypeMetric(Type::MinusOne) - GetTypeMetric(Type::ComplexI) * 2;
         }
         // Reset context
         ctx = PatternMatching::Context();
@@ -135,11 +136,11 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
           if (hasLn && ctx.getTree(KB)) {
             assert((lastInvLn == nullptr) == (ctx.getTree(KB) == nullptr));
             // Discard 1/ln(B) cost, but preserve B cost.
-            result -= GetTrueMetric(lastInvLn, reductionTarget);
-            result += GetTrueMetric(ctx.getTree(KB), reductionTarget);
             if (e->numberOfChildren() == 2) {
               result -= GetAddMultMetric(e);
             }
+            result -= GetTrueMetric(lastInvLn, reductionTarget);
+            result += GetTrueMetric(ctx.getTree(KB), reductionTarget);
             break;
           }
         }

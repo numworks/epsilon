@@ -46,8 +46,8 @@ void findBoundsForBinarySearch(
 }
 
 template <typename T>
-T binomialCumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& parameters) {
+T binomialCumulativeDistributiveInverse(T probability,
+                                        const ParametersArray<T>& parameters) {
   const T n = parameters[Params::Binomial::N];
   const T p = parameters[Params::Binomial::P];
   constexpr T precision = OMG::Float::Epsilon<T>();
@@ -70,17 +70,16 @@ T binomialCumulativeDistributiveInverse(
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const Distribution::ParametersArray<T>* params =
-            reinterpret_cast<const Distribution::ParametersArray<T>*>(
-                auxiliary);
+        const ParametersArray<T>* params =
+            reinterpret_cast<const ParametersArray<T>*>(auxiliary);
         return EvaluateAtAbscissa(Type::Binomial, x, *params);
       },
       &parameters);
 }
 
 template <typename T>
-T chi2CumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& parameters) {
+T chi2CumulativeDistributiveInverse(T probability,
+                                    const ParametersArray<T>& parameters) {
   // Compute inverse using SolverAlgorithms::IncreasingFunctionRoot
   if (probability > 1.0 - DBL_EPSILON) {
     return INFINITY;
@@ -101,7 +100,7 @@ T chi2CumulativeDistributiveInverse(
     const Args* args = static_cast<const Args*>(auxiliary);
     double dblK = static_cast<double>(args->k);
     return CumulativeDistributiveFunctionAtAbscissa<double>(
-               Type::Chi2, x, Distribution::ParametersArray<double>({dblK})) -
+               Type::Chi2, x, ParametersArray<double>({dblK})) -
            args->proba;
   };
 
@@ -114,18 +113,18 @@ T chi2CumulativeDistributiveInverse(
 }
 
 template <typename T>
-T exponentialCumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& params) {
+T exponentialCumulativeDistributiveInverse(T probability,
+                                           const ParametersArray<T>& params) {
   const T lambda = params[Params::Exponential::Lambda];
   return -std::log(1.0 - probability) / lambda;
 }
 
 template <typename T>
-T fisherCumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& params) {
+T fisherCumulativeDistributiveInverse(T probability,
+                                      const ParametersArray<T>& params) {
   const T d1 = params[Params::Fisher::D1];
   const T d2 = params[Params::Fisher::D2];
-  Distribution::ParametersArray<double> dbleParameters{};
+  ParametersArray<double> dbleParameters{};
   dbleParameters[Params::Fisher::D1] = static_cast<double>(d1);
   dbleParameters[Params::Fisher::D2] = static_cast<double>(d2);
 
@@ -145,8 +144,8 @@ T fisherCumulativeDistributiveInverse(
       [](double x, const void* auxiliary) {
         const void* const* pack = static_cast<const void* const*>(auxiliary);
         const double* proba = static_cast<const double*>(pack[0]);
-        const Distribution::ParametersArray<double>* parameters =
-            static_cast<const Distribution::ParametersArray<double>*>(pack[1]);
+        const ParametersArray<double>* parameters =
+            static_cast<const ParametersArray<double>*>(pack[1]);
         // This needs to be an increasing function
         return CumulativeDistributiveFunctionAtAbscissa(Type::Fisher, x,
                                                         *parameters) -
@@ -172,8 +171,8 @@ T fisherCumulativeDistributiveInverse(
 }
 
 template <typename T>
-T geometricCumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& params) {
+T geometricCumulativeDistributiveInverse(T probability,
+                                         const ParametersArray<T>& params) {
   constexpr T precision = OMG::Float::Epsilon<T>();
   if (std::abs(probability) < precision) {
     return NAN;
@@ -193,14 +192,14 @@ T geometricCumulativeDistributiveInverse(
       [](T x, const void* auxiliary) {
         return EvaluateAtAbscissa(
             Type::Geometric, x,
-            *static_cast<const Distribution::ParametersArray<T>*>(auxiliary));
+            *static_cast<const ParametersArray<T>*>(auxiliary));
       },
       &params);
 }
 
 template <typename T>
-T hypergeomCumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& parameters) {
+T hypergeomCumulativeDistributiveInverse(T probability,
+                                         const ParametersArray<T>& parameters) {
   const T N = parameters[Params::Hypergeometric::NPop];
   const T K = parameters[Params::Hypergeometric::K];
   const T n = parameters[Params::Hypergeometric::NSample];
@@ -220,8 +219,8 @@ T hypergeomCumulativeDistributiveInverse(
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const Distribution::ParametersArray<T>* params =
-            static_cast<const Distribution::ParametersArray<T>*>(auxiliary);
+        const ParametersArray<T>* params =
+            static_cast<const ParametersArray<T>*>(auxiliary);
         return EvaluateAtAbscissa(Type::Hypergeometric, x, *params);
       },
       &parameters);
@@ -249,8 +248,8 @@ static T standardNormalCumulativeDistributiveInverse(T probability) {
 }
 
 template <typename T>
-T normalCumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& params) {
+T normalCumulativeDistributiveInverse(T probability,
+                                      const ParametersArray<T>& params) {
   const T mu = params[Params::Normal::Mu];
   const T sigma = params[Params::Normal::Sigma];
   return standardNormalCumulativeDistributiveInverse(probability) *
@@ -259,8 +258,8 @@ T normalCumulativeDistributiveInverse(
 }
 
 template <typename T>
-T poissonCumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& parameters) {
+T poissonCumulativeDistributiveInverse(T probability,
+                                       const ParametersArray<T>& parameters) {
   constexpr T precision = OMG::Float::Epsilon<T>();
   if (std::abs(probability) < precision) {
     return NAN;
@@ -272,16 +271,16 @@ T poissonCumulativeDistributiveInverse(
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const Distribution::ParametersArray<T>* params =
-            static_cast<const Distribution::ParametersArray<T>*>(auxiliary);
+        const ParametersArray<T>* params =
+            static_cast<const ParametersArray<T>*>(auxiliary);
         return EvaluateAtAbscissa(Type::Poisson, x, *params);
       },
       &parameters);
 }
 
 template <typename T>
-T studentCumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& params) {
+T studentCumulativeDistributiveInverse(T probability,
+                                       const ParametersArray<T>& params) {
   if (probability == 0.5) {
     return static_cast<T>(0.0);
   } else if (probability > 1.0 - DBL_EPSILON) {
@@ -299,10 +298,9 @@ T studentCumulativeDistributiveInverse(
                                                      const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
     const T k = args->k;
-    return static_cast<double>(
-        CumulativeDistributiveFunctionAtAbscissa<T>(
-            Type::Student, x, Distribution::ParametersArray<T>({k})) -
-        args->proba);
+    return static_cast<double>(CumulativeDistributiveFunctionAtAbscissa<T>(
+                                   Type::Student, x, ParametersArray<T>({k})) -
+                               args->proba);
   };
 
   double xmin, xmax;
@@ -316,8 +314,8 @@ T studentCumulativeDistributiveInverse(
 }
 
 template <typename T>
-T uniformCumulativeDistributiveInverse(
-    T probability, const Distribution::ParametersArray<T>& params) {
+T uniformCumulativeDistributiveInverse(T probability,
+                                       const ParametersArray<T>& params) {
   const T a = params[Params::Uniform::A];
   const T b = params[Params::Uniform::B];
   if (probability >= static_cast<T>(1.)) {
@@ -364,10 +362,8 @@ T CumulativeDistributiveInverseForProbability(
 }
 
 template float CumulativeDistributiveInverseForProbability(
-    Type type, float probability,
-    const Distribution::ParametersArray<float>& parameters);
+    Type type, float probability, const ParametersArray<float>& parameters);
 template double CumulativeDistributiveInverseForProbability(
-    Type type, double probability,
-    const Distribution::ParametersArray<double>& parameters);
+    Type type, double probability, const ParametersArray<double>& parameters);
 
 }  // namespace Poincare::Distribution

@@ -137,8 +137,7 @@ void ContinuousFunctionProperties::setErrorStatusAndUpdateCaption(
 void ContinuousFunctionProperties::update(
     const Poincare::SystemExpression reducedEquation,
     const Poincare::UserExpression inputEquation, const Context& context,
-    Preferences::ComplexFormat complexFormat,
-    Comparison::Operator precomputedOperatorType,
+    ComplexFormat complexFormat, Comparison::Operator precomputedOperatorType,
     SymbolType precomputedFunctionSymbol, bool isCartesianEquation) {
   reset();
   m_isInitialized = true;

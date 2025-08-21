@@ -68,7 +68,7 @@ class CalculationStore
     Poincare::UserExpression input;
     OutputExpressions outputs;
     bool hasReductionFailure;
-    Poincare::Preferences::ComplexFormat complexFormat;
+    Poincare::ComplexFormat complexFormat;
 
     size_t sizeOfTrees() const {
       return input.tree()->treeSize() + outputs.exact.tree()->treeSize() +

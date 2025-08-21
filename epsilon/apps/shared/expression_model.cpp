@@ -57,24 +57,24 @@ bool ExpressionModel::isCircularlyDefined(
   return m_circular;
 }
 
-Preferences::ComplexFormat ExpressionModel::complexFormat(
-    const Storage::Record* record, const Context& context) const {
+ComplexFormat ExpressionModel::complexFormat(const Storage::Record* record,
+                                             const Context& context) const {
   if (m_expressionComplexFormat == MemoizedComplexFormat::NotMemoized) {
     UserExpression expression = ExpressionModel::expressionClone(record);
     if (!expression.isUninitialized() &&
         (Preferences::UpdatedComplexFormatWithExpressionInput(
-             Preferences::ComplexFormat::Real, expression, context) !=
-         Preferences::ComplexFormat::Real)) {
+             ComplexFormat::Real, expression, context) !=
+         ComplexFormat::Real)) {
       m_expressionComplexFormat = MemoizedComplexFormat::Complex;
     } else {
       m_expressionComplexFormat = MemoizedComplexFormat::Any;
     }
   }
   assert(m_expressionComplexFormat != MemoizedComplexFormat::NotMemoized);
-  Preferences::ComplexFormat userComplexFormat =
+  ComplexFormat userComplexFormat =
       GlobalPreferences::SharedGlobalPreferences()->complexFormat();
   if (m_expressionComplexFormat == MemoizedComplexFormat::Complex &&
-      userComplexFormat == Preferences::ComplexFormat::Real) {
+      userComplexFormat == ComplexFormat::Real) {
     return Preferences::k_defaultComplexFormatIfNotReal;
   }
   return userComplexFormat;

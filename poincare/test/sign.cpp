@@ -533,9 +533,8 @@ QUIZ_CASE(pcj_sign_is_positive) {
 void assert_reduced_is_positive(
     const char* input, OMG::Troolean isPositive,
     const Context& context = Poincare::EmptyContext{},
-    Preferences::ComplexFormat complexFormat =
-        Preferences::ComplexFormat::Cartesian,
-    AngleUnit angleUnit = Poincare::AngleUnit::Radian) {
+    ComplexFormat complexFormat = ComplexFormat::Cartesian,
+    AngleUnit angleUnit = AngleUnit::Radian) {
   ProjectionContext projCtx = {
       .m_complexFormat = complexFormat,
       .m_angleUnit = angleUnit,
@@ -572,11 +571,10 @@ QUIZ_CASE(pcj_sign_reduced_is_positive) {
   assert_reduced_is_positive("0", OMG::Troolean::True);
   assert_reduced_is_positive("cos(π/2)", OMG::Troolean::True);
   assert_reduced_is_positive("cos(90)", OMG::Troolean::True, EmptyContext{},
-                             Preferences::ComplexFormat::Cartesian,
-                             AngleUnit::Degree);
+                             ComplexFormat::Cartesian, AngleUnit::Degree);
   assert_reduced_is_positive("√(-1)", OMG::Troolean::Unknown);
   assert_reduced_is_positive("√(-1)", OMG::Troolean::Unknown, EmptyContext{},
-                             Preferences::ComplexFormat::Real);
+                             ComplexFormat::Real);
   assert_reduced_is_positive("sign(π)", OMG::Troolean::True);
   assert_reduced_is_positive("sign(-π)", OMG::Troolean::False);
   assert_reduced_is_positive("1%", OMG::Troolean::True);

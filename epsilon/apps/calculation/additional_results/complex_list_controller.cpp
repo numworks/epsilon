@@ -22,9 +22,9 @@ void ComplexListController::computeAdditionalResults(
    * - do the same for abs(z) and arg(z) for exponential form ? */
   assert(AdditionalResultsType::HasComplex(
       approximateOutput, m_calculationPreferences, App::app()->localContext()));
-  assert(complexFormat() != Preferences::ComplexFormat::Real);
+  assert(complexFormat() != ComplexFormat::Real);
   Internal::ProjectionContext ctx = {
-      .m_complexFormat = Preferences::ComplexFormat::Cartesian,
+      .m_complexFormat = ComplexFormat::Cartesian,
       .m_angleUnit = angleUnit(),
       .m_symbolic = SymbolicComputation::ReplaceAllSymbols,
       .m_context = App::app()->localContext()};
@@ -34,7 +34,7 @@ void ComplexListController::computeAdditionalResults(
   size_t index = 0;
   ctx.m_complexFormat = complexFormToDisplay();
   setLineAtIndex(index++, UserExpression::Builder(k_symbol), exactOutput, &ctx);
-  ctx.m_complexFormat = Preferences::ComplexFormat::Cartesian;
+  ctx.m_complexFormat = ComplexFormat::Cartesian;
   setLineAtIndex(index++, UserExpression::Builder(KAbs(k_symbol)),
                  UserExpression::Create(KAbs(KA), {.KA = exactOutput}), &ctx);
   setLineAtIndex(index++, UserExpression::Builder(KArg(k_symbol)),
@@ -62,17 +62,15 @@ void ComplexListController::computeAdditionalResults(
 }
 
 I18n::Message ComplexListController::messageAtIndex(int index) {
-  return index == 0
-             ? complexFormToDisplay() == Preferences::ComplexFormat::Cartesian
-                   ? I18n::Message::CartesianForm
-                   : I18n::Message::ExponentialForm
-             : I18n::Message::Default;
+  return index == 0 ? complexFormToDisplay() == ComplexFormat::Cartesian
+                          ? I18n::Message::CartesianForm
+                          : I18n::Message::ExponentialForm
+                    : I18n::Message::Default;
 };
 
-Preferences::ComplexFormat ComplexListController::complexFormToDisplay() const {
-  return complexFormat() == Preferences::ComplexFormat::Polar
-             ? Preferences::ComplexFormat::Cartesian
-             : Preferences::ComplexFormat::Polar;
+ComplexFormat ComplexListController::complexFormToDisplay() const {
+  return complexFormat() == ComplexFormat::Polar ? ComplexFormat::Cartesian
+                                                 : ComplexFormat::Polar;
 }
 
 }  // namespace Calculation

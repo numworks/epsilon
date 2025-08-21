@@ -181,8 +181,7 @@ UserExpression AdditionalResultsHelper::ExtractExactAngleFromDirectTrigo(
       Internal::Dimension::Get(exactAngle, context);
   assert(exactAngleDimension.isScalar() ||
          exactAngleDimension.isSimpleAngleUnit());
-  Preferences::ComplexFormat complexFormat =
-      calculationPreferences.complexFormat;
+  ComplexFormat complexFormat = calculationPreferences.complexFormat;
   AngleUnit angleUnit = calculationPreferences.angleUnit;
   ProjectionContext projCtx = {
       .m_complexFormat = complexFormat,

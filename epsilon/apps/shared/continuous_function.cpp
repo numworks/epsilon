@@ -584,8 +584,7 @@ SystemExpression ContinuousFunction::Model::expressionReduced(
     m_expression = SystemExpression::Undefined();
     return m_expression;
   }
-  Preferences::ComplexFormat complexFormat =
-      this->complexFormat(record, context);
+  ComplexFormat complexFormat = this->complexFormat(record, context);
   AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (thisProperties.isScatterPlot()) {
@@ -727,8 +726,7 @@ ContinuousFunction::Model::expressionReducedForAnalysis(
       expressionEquation(record, context, &computedEquationType,
                          &computedFunctionSymbol, &isCartesianEquation);
   SystemExpression result;
-  Preferences::ComplexFormat complexFormat =
-      this->complexFormat(record, context);
+  ComplexFormat complexFormat = this->complexFormat(record, context);
   AngleUnit angleUnit =
       GlobalPreferences::SharedGlobalPreferences()->angleUnit();
   if (!equation.isUndefined()) {

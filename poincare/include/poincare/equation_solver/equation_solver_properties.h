@@ -73,8 +73,7 @@ struct EquationMetadata {
   // If true, definedVariables are included in unknownVariables.
   bool overrideDefinedVariables = false;
   // Complex format used for projection
-  Preferences::ComplexFormat complexFormat =
-      Preferences::ComplexFormat::Cartesian;
+  ComplexFormat complexFormat = ComplexFormat::Cartesian;
 };
 
 struct SolutionMetadata {

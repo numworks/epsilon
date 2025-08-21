@@ -71,8 +71,6 @@ Arguments ArgumentsParser::parse() {
   if (!result.variable && std::strlen(shortForm))              \
     result.variable = pop(shortForm);
 #include "arguments.inc"
-#undef BOOL_ARG
-#undef TEXT_ARG
   return result;
 }
 
@@ -99,6 +97,4 @@ void ArgumentsParser::printHelp() {
 #define TEXT_ARG(variable, longForm, shortForm, desc, argName) \
   printArgument(longForm, shortForm, desc, argName);
 #include "arguments.inc"
-#undef BOOL_ARG
-#undef TEXT_ARG
 }

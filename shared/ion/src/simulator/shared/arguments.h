@@ -5,8 +5,6 @@ struct Arguments {
 #define TEXT_ARG(variable, longForm, shortForm, desc, argName) \
   const char* variable = nullptr;
 #include "arguments.inc"
-#undef BOOL_ARG
-#undef TEXT_ARG
 };
 
 struct ArgumentNames {
@@ -15,6 +13,4 @@ struct ArgumentNames {
 #define TEXT_ARG(variable, longForm, shortForm, desc, argName) \
   static constexpr const char* variable = longForm;
 #include "arguments.inc"
-#undef BOOL_ARG
-#undef TEXT_ARG
 };

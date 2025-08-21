@@ -1,16 +1,11 @@
 #ifndef POINCARE_STATISTICS_STATISTICS_DATASET_COLUMN_H
 #define POINCARE_STATISTICS_STATISTICS_DATASET_COLUMN_H
 
+#include <poincare/statistics/dataset_column.h>
+
 namespace Poincare::Internal {
 
 class Tree;
-
-template <typename T>
-class DatasetColumn {
- public:
-  virtual T valueAtIndex(int index) const = 0;
-  virtual int length() const = 0;
-};
 
 template <typename T>
 class ConstantDatasetColumn : public DatasetColumn<T> {

@@ -6,7 +6,7 @@
 
 namespace Poincare::Internal {
 
-class DatasetColumnAdapter : public Internal::DatasetColumn<double> {
+class DatasetColumnAdapter : public DatasetColumn<double> {
  public:
   DatasetColumnAdapter(const DataTable* data, int column)
       : m_dataTable(data), m_column(column) {

@@ -110,10 +110,10 @@ class App : public Shared::MathApp, public Shared::MenuControllerDelegate {
 
  private:
   App(Snapshot* snapshot);
-  Snapshot* snapshot() override {
+  Snapshot* snapshot() {
     return static_cast<Snapshot*>(Escher::App::snapshot());
   }
-  const Snapshot* snapshot() const override {
+  const Snapshot* snapshot() const {
     return static_cast<const Snapshot*>(Escher::App::snapshot());
   }
 

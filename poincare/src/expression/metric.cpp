@@ -63,13 +63,13 @@ constexpr float GetAddMultMetric(const Tree* e) {
 }
 
 float ChildrenCoeffLn(ComplexSign sign) {
-  float childrenCoeff = 2;
+  float childrenCoeff = 2.f;
   if (sign.isReal() && sign.realSign().isStrictlyNegative()) {
     // Increase cost of real negative children in roots
-    childrenCoeff = 4;
+    childrenCoeff = 4.f;
   } else if (!sign.isReal()) {
     // Increase cost of non-real children even more
-    childrenCoeff = 8;
+    childrenCoeff = 8.f;
   }
   return childrenCoeff;
 }
@@ -84,7 +84,7 @@ float LnMetric(const Tree* firstChild, bool willBeBeautified, bool inRoot) {
     assert(sum != 1.f);
     if (inRoot) {
       // In roots, √(11)*√(2) should not be favored over √(22)
-      return 0.5f * std::log(sum);
+      return 2.f * std::log(sum);
     } else {
       return 4.f * (sum - 1.f);
     }
@@ -185,19 +185,52 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
     case Type::Exp: {
       if (willBeBeautified &&
           PatternMatching::Match(e, KExp(KMult(KA_s, KLn(KB))), &ctx)) {
-        // exp(A*ln(B)) -> Root(B,A) exception
-        Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
-        if (!exponent->isHalf()) {
-          // Ignore cost of exponent for squareroot
-          result += GetTrueMetric(exponent, reductionTarget);
-        }
-        exponent->removeTree();
+        // exp(A*ln(B)) is beautified in many forms of B^A
+        result -= GetTypeMetric(Type::Exp);
         const Tree* base = ctx.getTree(KB);
         childrenCoeff = ChildrenCoeffLn(GetComplexSign(base));
-        // TODO: Explain why this works...
-        return result + (GetTrueMetric(base, reductionTarget) +
-                         LnMetric(base, willBeBeautified, true)) *
-                            childrenCoeff;
+        // Favor smaller bases
+        childrenCoeff += LnMetric(base, willBeBeautified, true);
+
+        Tree* exponent = PatternMatching::Create(KMult(KA_s), ctx);
+        if (exponent->isHalf() || Rational::IsMinusHalf(exponent)) {
+          // exp(A*ln(B)) -> √(B)
+          result += GetTypeMetric(Type::Sqrt);
+          if (Rational::IsMinusHalf(exponent)) {
+            // exp(A*ln(B)) -> 1/√(B)
+            result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
+          }
+        } else if (exponent->isRational() &&
+                   (Rational::Numerator(exponent).isOne() ||
+                    Rational::Numerator(exponent).isMinusOne())) {
+          // exp(A*ln(B)) -> Root(B,A)
+          static_assert(GetTypeMetric(Type::IntegerPosShort) ==
+                        GetTypeMetric(Type::IntegerPosBig));
+          result += GetTypeMetric(Type::IntegerPosShort);
+          result += GetTypeMetric(Type::Root);
+          if (Rational::Numerator(exponent).isMinusOne()) {
+            // exp(A*ln(B)) -> 1/Root(B,A)
+            result += GetTypeMetric(Type::One) + GetTypeMetric(Type::Div);
+          }
+        } else {
+          // exp(A*ln(B)) -> B^A
+          result += GetTypeMetric(Type::Pow);
+          result += GetTrueMetric(exponent, reductionTarget);
+          if (exponent->isRational()) {
+            /* Favor root forms over power of rationals(e.g. Root(4,3) over
+             * 2^(2/3))  */
+            childrenCoeff += 3 * k_defaultMetric;
+          }
+        }
+        if (base->isPow()) {
+          // Favor 1/Root(A,B) over Root(1/A,B)
+          childrenCoeff += 3 * k_defaultMetric;
+        }
+        exponent->removeTree();
+        /* Escape next steps since we ignore cost of ln, multiplication and
+         * sometimes of the exponent. */
+        float baseMetric = GetTrueMetric(base, reductionTarget);
+        return result + baseMetric * childrenCoeff;
       }
       break;
     }

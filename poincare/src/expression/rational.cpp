@@ -337,6 +337,10 @@ ComplexSign Rational::ComplexSignOfLn(const Tree* e) {
   return ComplexSign::Unknown();
 }
 
+bool Rational::IsMinusHalf(const Tree* e) {
+  return e->treeIsIdenticalTo(-1_e / 2_e);
+}
+
 template float Rational::To<float>(const Tree* e);
 template double Rational::To<double>(const Tree* e);
 

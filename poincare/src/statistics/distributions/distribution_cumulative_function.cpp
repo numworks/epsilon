@@ -118,17 +118,18 @@ T discreteCumulativeDistributiveFunction(Type distribType, T x,
   if (x < static_cast<T>(0.0)) {
     return static_cast<T>(0.0);
   }
-  const void* pack[2] = {&distribType, &parameters};
+  struct Args {
+    Type type;
+    ParametersArray<T> params;
+  };
+  Args args = {distribType, parameters};
   return SolverAlgorithms::CumulativeDistributiveFunctionForNDefinedFunction<T>(
       x,
       [](T k, const void* auxiliary) {
-        const void* const* pack = static_cast<const void* const*>(auxiliary);
-        Type* type = const_cast<Type*>(static_cast<const Type*>(pack[0]));
-        const ParametersArray<T>* parameters =
-            static_cast<const ParametersArray<T>*>(pack[1]);
-        return EvaluateAtAbscissa(*type, k, *parameters);
+        const Args* args = static_cast<const Args*>(auxiliary);
+        return EvaluateAtAbscissa(args->type, k, args->params);
       },
-      pack);
+      &args);
 }
 
 template <typename T>

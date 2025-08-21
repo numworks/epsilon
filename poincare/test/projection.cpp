@@ -6,6 +6,8 @@
 #include "helper.h"
 
 using namespace Poincare::Internal;
+using Poincare::AngleUnit;
+using Poincare::ComplexFormat;
 
 QUIZ_CASE(pcj_projection) {
   TreeRef ref(KCos(KSin(KPow(

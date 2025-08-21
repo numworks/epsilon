@@ -4,6 +4,7 @@
 #include <omg/code_point.h>
 #include <omg/global_box.h>
 #include <omg/unreachable.h>
+#include <poincare/math_options.h>
 #include <string.h>
 
 #include "block_stack.h"

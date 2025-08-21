@@ -15,10 +15,10 @@ void compare_approximates(const Tree* e1, const Tree* e2, bool equal,
   /* The two approximations are done with two distinct instances of the
    * approximation context, so that the random() of the two expressions are
    * evaluated differently */
-  T approx1 = Approximation::To<T>(e1, params,
-                                   Approximation::Context(AngleUnit::Radian));
-  T approx2 = Approximation::To<T>(e2, params,
-                                   Approximation::Context(AngleUnit::Radian));
+  T approx1 = Approximation::To<T>(
+      e1, params, Approximation::Context(Poincare::AngleUnit::Radian));
+  T approx2 = Approximation::To<T>(
+      e2, params, Approximation::Context(Poincare::AngleUnit::Radian));
   bool equalResult = OMG::Float::RoughlyEqual<T>(
       approx1, approx2, OMG::Float::EpsilonLax<T>(), true);
 #if POINCARE_TREE_LOG
@@ -117,7 +117,7 @@ bool approximate_is_between_bounds(const Tree* e, T lowerBound, T upperBound) {
   bool result = true;
   float approx = Approximation::To<float>(
       e, Approximation::Parameters{.isRootAndCanHaveRandom = true},
-      Approximation::Context(AngleUnit::Radian));
+      Approximation::Context(Poincare::AngleUnit::Radian));
   if (std::is_same<T, int>::value) {
     result = OMG::Float::RoughlyEqual(approx, std::round(approx),
                                       OMG::Float::EpsilonLax<float>());

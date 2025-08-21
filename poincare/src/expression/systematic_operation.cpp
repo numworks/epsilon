@@ -650,12 +650,20 @@ static bool ReduceNestedRadicals(Tree* e) {
 }
 
 static bool ReduceSquareRoot(Tree* e) {
-  // √(m^2*n) = m√(n)
   PatternMatching::Context ctx;
-  if (!(PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KA))), &ctx) &&
-        ctx.getTree(KA)->isPositiveInteger())) {
+  if (!PatternMatching::Match(e, KExp(KMult(1_e / 2_e, KLn(KA))), &ctx)) {
     return false;
   }
+  if (ctx.getTree(KA)->isNegativeRational()) {
+    // √(-m) = i*√(m)
+    return PatternMatching::MatchReplaceReduce(
+        e, KExp(KMult(1_e / 2_e, KLn(KA))),
+        KMult(i_e, KExp(KMult(1_e / 2_e, KLn(KMult(-1_e, KA))))));
+  }
+  if (!ctx.getTree(KA)->isPositiveInteger()) {
+    return false;
+  }
+  // √(m^2*n) = m√(n)
   Arithmetic::FactorizedInteger factorization =
       Arithmetic::PrimeFactorization(Rational::Numerator(ctx.getTree(KA)));
   if (factorization.numberOfFactors ==

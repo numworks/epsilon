@@ -70,9 +70,9 @@ T binomialCumulativeDistributiveInverse(T probability,
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const ParametersArray<T>* params =
-            reinterpret_cast<const ParametersArray<T>*>(auxiliary);
-        return EvaluateAtAbscissa(Type::Binomial, x, *params);
+        const ParametersArray<T> params =
+            *static_cast<const ParametersArray<T>*>(auxiliary);
+        return EvaluateAtAbscissa(Type::Binomial, x, params);
       },
       &parameters);
 }
@@ -87,20 +87,19 @@ T chi2CumulativeDistributiveInverse(T probability,
     return 0.;
   }
 
-  const T k = parameters[Params::Chi2::K];
+  const double k = static_cast<double>(parameters[Params::Chi2::K]);
 
   struct Args {
     T proba;
-    T k;
+    double k;
   };
   Args args{probability, k};
 
   Solver<double>::FunctionEvaluation evaluation = [](double x,
                                                      const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
-    double dblK = static_cast<double>(args->k);
     return CumulativeDistributiveFunctionAtAbscissa<double>(
-               Type::Chi2, x, ParametersArray<double>({dblK})) -
+               Type::Chi2, x, ParametersArray<double>({args->k})) -
            args->proba;
   };
 
@@ -138,20 +137,21 @@ T fisherCumulativeDistributiveInverse(T probability,
   }
   double ax = DBL_EPSILON;
   double bx = 100.0;  // Arbitrary value
-  const void* pack[2] = {&p, &dbleParameters};
+  struct Args {
+    const double proba;
+    ParametersArray<double> params;
+  };
+  Args args = {p, dbleParameters};
   Coordinate2D<double> result = SolverAlgorithms::IncreasingFunctionRoot(
       ax, bx, DBL_EPSILON,
       [](double x, const void* auxiliary) {
-        const void* const* pack = static_cast<const void* const*>(auxiliary);
-        const double* proba = static_cast<const double*>(pack[0]);
-        const ParametersArray<double>* parameters =
-            static_cast<const ParametersArray<double>*>(pack[1]);
+        const Args* args = static_cast<const Args*>(auxiliary);
         // This needs to be an increasing function
         return CumulativeDistributiveFunctionAtAbscissa(Type::Fisher, x,
-                                                        *parameters) -
-               *proba;
+                                                        args->params) -
+               args->proba;
       },
-      pack);
+      &args);
 
   /* Enter this condition if an unprecise result is found that is not at
    * abscissa ax or bx.
@@ -190,9 +190,9 @@ T geometricCumulativeDistributiveInverse(T probability,
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        return EvaluateAtAbscissa(
-            Type::Geometric, x,
-            *static_cast<const ParametersArray<T>*>(auxiliary));
+        const ParametersArray<T> params =
+            *static_cast<const ParametersArray<T>*>(auxiliary);
+        return EvaluateAtAbscissa(Type::Geometric, x, params);
       },
       &params);
 }
@@ -219,9 +219,9 @@ T hypergeomCumulativeDistributiveInverse(T probability,
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const ParametersArray<T>* params =
-            static_cast<const ParametersArray<T>*>(auxiliary);
-        return EvaluateAtAbscissa(Type::Hypergeometric, x, *params);
+        const ParametersArray<T> params =
+            *static_cast<const ParametersArray<T>*>(auxiliary);
+        return EvaluateAtAbscissa(Type::Hypergeometric, x, params);
       },
       &parameters);
 }
@@ -271,9 +271,9 @@ T poissonCumulativeDistributiveInverse(T probability,
   return SolverAlgorithms::CumulativeDistributiveInverseForNDefinedFunction<T>(
       &proba,
       [](T x, const void* auxiliary) {
-        const ParametersArray<T>* params =
-            static_cast<const ParametersArray<T>*>(auxiliary);
-        return EvaluateAtAbscissa(Type::Poisson, x, *params);
+        const ParametersArray<T> params =
+            *static_cast<const ParametersArray<T>*>(auxiliary);
+        return EvaluateAtAbscissa(Type::Poisson, x, params);
       },
       &parameters);
 }
@@ -297,10 +297,10 @@ T studentCumulativeDistributiveInverse(T probability,
   Solver<double>::FunctionEvaluation evaluation = [](double x,
                                                      const void* auxiliary) {
     const Args* args = static_cast<const Args*>(auxiliary);
-    const T k = args->k;
-    return static_cast<double>(CumulativeDistributiveFunctionAtAbscissa<T>(
-                                   Type::Student, x, ParametersArray<T>({k})) -
-                               args->proba);
+    return static_cast<double>(
+        CumulativeDistributiveFunctionAtAbscissa<T>(
+            Type::Student, x, ParametersArray<T>({args->k})) -
+        args->proba);
   };
 
   double xmin, xmax;

@@ -57,6 +57,8 @@ class Rational final {
 
   static Poincare::ComplexSign ComplexSignOfLn(const Tree* e);
 
+  static bool IsMinusHalf(const Tree* e);
+
  private:
   static bool IsIrreducible(const Tree* e);
   static Tree* PushIrreducible(IntegerHandler numerator,

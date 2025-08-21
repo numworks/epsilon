@@ -13,8 +13,10 @@ constexpr static KDColor k_chargingPromptColors[] = {
 constexpr static uint8_t k_chargingPromptNumberOfMessages = 4;
 
 static bool HandleEvent(Ion::Events::Event event) {
-  if (!Ion::USB::isPlugged() ||
-      (event.isKeyPress() && event != Ion::Events::OnOff)) {
+  if (event == Ion::Events::OnOff) {
+    return false;
+  }
+  if (!Ion::USB::isPlugged() || event.isKeyPress()) {
     Escher::App::app()->modalViewController()->dismissModal();
     return true;
   }

@@ -32,6 +32,8 @@ constexpr float GetTypeMetric(Type type) {
       return k_defaultMetric / 3.f;
     case Type::IntegerNegShort:
     case Type::IntegerPosShort:
+    case Type::IntegerNegBig:
+    case Type::IntegerPosBig:
       return k_defaultMetric / 2.f;
     default:
       return k_defaultMetric;
@@ -60,21 +62,6 @@ constexpr float GetAddMultMetric(const Tree* e) {
   return GetAddMultMetric(e->numberOfChildren());
 }
 
-Type ShortTypeForBigType(Type t) {
-  switch (t) {
-    case Type::RationalNegBig:
-      return Type::RationalNegShort;
-    case Type::RationalPosBig:
-      return Type::RationalPosShort;
-    case Type::IntegerNegBig:
-      return Type::IntegerNegShort;
-    case Type::IntegerPosBig:
-      return Type::IntegerPosShort;
-    default:
-      OMG::unreachable();
-  }
-}
-
 float ChildrenCoeffLn(ComplexSign sign) {
   float childrenCoeff = 2;
   if (sign.isReal() && sign.realSign().isStrictlyNegative()) {
@@ -87,14 +74,20 @@ float ChildrenCoeffLn(ComplexSign sign) {
   return childrenCoeff;
 }
 
-float LnMetric(const Tree* firstChild, bool willBeBeautified) {
+float LnMetric(const Tree* firstChild, bool willBeBeautified, bool inRoot) {
   if (willBeBeautified && firstChild->isRational() && !firstChild->isZero()) {
     // Increase cost of rationals in ln according to their value
     IntegerHandler p = Rational::Numerator(firstChild);
     IntegerHandler q = Rational::Denominator(firstChild);
     p.setSign(NonStrictSign::Positive);
-    assert(p.to<float>() + q.to<float>() != 1.f);
-    return 4.f * (p.to<float>() + q.to<float>() - 1.f);
+    float sum = p.to<float>() + q.to<float>();
+    assert(sum != 1.f);
+    if (inRoot) {
+      // In roots, √(11)*√(2) should not be favored over √(22)
+      return 0.5f * std::log(sum);
+    } else {
+      return 4.f * (sum - 1.f);
+    }
   }
   return 0.f;
 }
@@ -111,14 +104,6 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
   float childrenCoeff = 1;
   PatternMatching::Context ctx;
   switch (e->type()) {
-    case Type::RationalNegBig:
-    case Type::RationalPosBig:
-    case Type::IntegerNegBig:
-    case Type::IntegerPosBig:
-      if (willBeBeautified) {
-        return GetTypeMetric(ShortTypeForBigType(e->type())) * e->nodeSize();
-      }
-      break;
     case Type::Mult: {
       result += GetAddMultMetric(e);
       if (willBeBeautified) {
@@ -209,7 +194,10 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
         exponent->removeTree();
         const Tree* base = ctx.getTree(KB);
         childrenCoeff = ChildrenCoeffLn(GetComplexSign(base));
-        return result + GetTrueMetric(base, reductionTarget) * childrenCoeff;
+        // TODO: Explain why this works...
+        return result + (GetTrueMetric(base, reductionTarget) +
+                         LnMetric(base, willBeBeautified, true)) *
+                            childrenCoeff;
       }
       break;
     }
@@ -243,7 +231,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       childrenCoeff = ChildrenCoeffLn(GetComplexSign(e->child(0)));
       const Tree* firstChild =
           e->child(0)->isMult() ? e->child(0)->child(0) : e->child(0);
-      childrenCoeff += LnMetric(firstChild, willBeBeautified);
+      childrenCoeff += LnMetric(firstChild, willBeBeautified, false);
       break;
     }
     case Type::Abs:

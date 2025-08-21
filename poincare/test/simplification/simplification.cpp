@@ -382,6 +382,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("ln((2-√(3))^10)+ln((2+√(3))^10)", "0");
   simplifies_to("√(865)", "√(865)");
   simplifies_to("√(865)/6", "√(865)/6");
+  simplifies_to("√(30)", "√(30)");
 
   // Real powers
   simplifies_to("√(x)^2", "√(x)^2");
@@ -407,7 +408,7 @@ QUIZ_CASE(pcj_simplification_power) {
   simplifies_to("√(x)^2", "x", k_cartesianCtx);
   /* TODO: Should be 0, (exp(i*(arg(A) + arg(B) - arg(A*B))) should be
    * simplified to 1 */
-  simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))", "√(-2)+√(-1-i)×√(1-i)",
+  simplifies_to("√(-i-1)*√(-i+1)+√((-i-1)*(-i+1))", "√(-(1+i))×√(1-i)+√(2)×i",
                 k_cartesianCtx);
 
   // Expand/Contract
@@ -700,6 +701,12 @@ QUIZ_CASE(pcj_simplification_roots) {
   simplifies_to("1/√(-4+√(17))", "√(4+√(17))");
   // TODO: simplify the minus sign
   simplifies_to("1/√(-3+√(19))", "√(-(-3-√(19))/10)");
+
+  simplifies_to("root(48,3)", "2*root(6,3)");
+  simplifies_to("root(81,3)", "3*root(3,3)");
+  simplifies_to("2*root(81,3)", "6*root(3,3)");
+  simplifies_to("7*root(81,3)", "21*root(3,3)");
+  simplifies_to("21*root(3,3)", "21*root(3,3)");
 }
 
 QUIZ_CASE(pcj_simplification_undef) {

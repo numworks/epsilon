@@ -20,6 +20,11 @@ constexpr static float k_defaultMetric = 1.f;
 
 constexpr float GetTypeMetric(Type type) {
   switch (type) {
+    case Type::Add:
+    case Type::Mult:
+      /* Add and Mult metrics depend on their number of children. See
+       * GetAddMultMetric. */
+      return 0.f;
     case Type::Zero:
     case Type::One:
     case Type::Two:
@@ -45,8 +50,8 @@ constexpr float GetTypeMetric(Type type) {
 /* Add/Mult Metric must depend on its number of children to ensure that if A is
  * better than B*C, A*D will also be better than B*C*D. */
 constexpr float GetAddMultMetric(int numberOfChildren) {
-  static_assert(GetTypeMetric(Type::Mult) == k_defaultMetric);
-  static_assert(GetTypeMetric(Type::Add) == k_defaultMetric);
+  static_assert(GetTypeMetric(Type::Mult) == 0.f);
+  static_assert(GetTypeMetric(Type::Add) == 0.f);
   return k_defaultMetric * (numberOfChildren - 1);
 }
 
@@ -103,11 +108,12 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       }
       break;
     case Type::Mult: {
-      result = GetAddMultMetric(e);
+      result += GetAddMultMetric(e);
       if (willBeBeautified) {
         // Ignore cost of multiplication in (-A)
         if (e->child(0)->isMinusOne() && e->numberOfChildren() == 2) {
-          result = 0;
+          assert(result == GetAddMultMetric(e));
+          result = 0.f;
         }
         /* Trigonometry with complexes is beautified into hyperbolic
          * trigonometry (cosh, sinh, asinh and atanh)*/
@@ -121,7 +127,8 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
             PatternMatching::Match(
                 e, KMult(KA_s, KATanRad(KMult(KB_s, i_e)), KC_s, i_e), &ctx)) {
           if (ctx.getNumberOfTrees(KB) == 1) {
-            result -= GetAddMultMetric(e);
+            assert(result == GetAddMultMetric(e));
+            result = 0.f;
           }
           result +=
               GetTypeMetric(Type::MinusOne) - GetTypeMetric(Type::ComplexI) * 2;
@@ -143,7 +150,8 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
             assert((lastInvLn == nullptr) == (ctx.getTree(KB) == nullptr));
             // Discard 1/ln(B) cost, but preserve B cost.
             if (e->numberOfChildren() == 2) {
-              result -= GetAddMultMetric(e);
+              assert(result == GetAddMultMetric(e));
+              result = 0.f;
             }
             result -= GetTrueMetric(lastInvLn, reductionTarget);
             result += GetTrueMetric(ctx.getTree(KB), reductionTarget);
@@ -154,7 +162,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       break;
     }
     case Type::Add: {
-      result = GetAddMultMetric(e);
+      result += GetAddMultMetric(e);
       if (shouldExpand &&
           PatternMatching::Match(
               e, KAdd(KA_s, KMult(KB, KC), KD_s, KMult(KB, KE), KF_s), &ctx)) {

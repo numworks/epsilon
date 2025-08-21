@@ -2,12 +2,11 @@
 #define POINCARE_SOLVER_STATISTICS_DATASET_H
 
 #include <assert.h>
+#include <poincare/statistics/dataset_column.h>
 #include <stdint.h>
 
 #include <algorithm>
 #include <cmath>
-
-#include "statistics_dataset_column.h"
 
 /* This class is used to compute basic statistics functions on a dataset.
  *

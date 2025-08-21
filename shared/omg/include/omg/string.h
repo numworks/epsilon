@@ -39,5 +39,9 @@ constexpr static bool StringsAreEqual(const char* s1, const char* s2) {
   return *s1 == *s2 &&
          ((*s1 == '\0' && *s2 == '\0') || StringsAreEqual(s1 + 1, s2 + 1));
 }
+constexpr static bool StringsAreEqual(std::span<const char> s1,
+                                      std::span<const char> s2) {
+  return StringsAreEqual(s1.data(), s2.data());
+}
 
 }  // namespace OMG

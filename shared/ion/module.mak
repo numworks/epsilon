@@ -20,7 +20,7 @@ _ion_display_border_color_scandium = KDColor::RGB888(0x88, 0x96, 0x8C)
 
 _ion_keyboard_columns = 6
 _ion_keyboard_rows_epsilon = 9
-_ion_keyboard_rows_scandium = 8
+_ion_keyboard_rows_scandium = 7
 
 SFLAGS_ion += \
   -I$(PATH_ion)/include/ion/keyboard/$(ION_layout_variant) \

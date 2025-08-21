@@ -87,6 +87,18 @@ float ChildrenCoeffLn(ComplexSign sign) {
   return childrenCoeff;
 }
 
+float LnMetric(const Tree* firstChild, bool willBeBeautified) {
+  if (willBeBeautified && firstChild->isRational() && !firstChild->isZero()) {
+    // Increase cost of rationals in ln according to their value
+    IntegerHandler p = Rational::Numerator(firstChild);
+    IntegerHandler q = Rational::Denominator(firstChild);
+    p.setSign(NonStrictSign::Positive);
+    assert(p.to<float>() + q.to<float>() != 1.f);
+    return 4.f * (p.to<float>() + q.to<float>() - 1.f);
+  }
+  return 0.f;
+}
+
 }  // namespace
 
 float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
@@ -231,15 +243,7 @@ float Metric::GetTrueMetric(const Tree* e, ReductionTarget reductionTarget) {
       childrenCoeff = ChildrenCoeffLn(GetComplexSign(e->child(0)));
       const Tree* firstChild =
           e->child(0)->isMult() ? e->child(0)->child(0) : e->child(0);
-      if (willBeBeautified && firstChild->isRational() &&
-          !firstChild->isZero()) {
-        // Increase cost of rationals in ln according to their value
-        IntegerHandler p = Rational::Numerator(firstChild);
-        IntegerHandler q = Rational::Denominator(firstChild);
-        p.setSign(NonStrictSign::Positive);
-        assert(p.to<float>() + q.to<float>() != 1.f);
-        childrenCoeff += 4.f * (p.to<float>() + q.to<float>() - 1.f);
-      }
+      childrenCoeff += LnMetric(firstChild, willBeBeautified);
       break;
     }
     case Type::Abs:

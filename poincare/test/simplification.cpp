@@ -597,9 +597,9 @@ QUIZ_CASE(pcj_simplification_parametric) {
                 "dep((j^2-n^2+j+n)/2,{realInteger(n),realInteger(j)})");
   simplifies_to("2×sum(k,k,0,n)+n", "dep(n×(n+2),{realInteger(n)})");
   simplifies_to("2×sum(k,k,3,n)+n", "dep(n×(n+2)-6,{realInteger(n)})");
-  simplifies_to(
-      "sum(k^2,k,n,j)",
-      "dep((2×j^3-2×n^3+3×j^2+3×n^2+j-n)/6,{realInteger(n),realInteger(j)})");
+  simplifies_to("sum(k^2,k,n,j)",
+                "dep((j×(j+1)×(2×j+1)-n×(n-1)×(2×n-1))/"
+                "6,{realInteger(n),realInteger(j)})");
   simplifies_to("sum(k^2,k,2,5)", "54");
   simplifies_to("sum((2k)^2,k,2,5)", "216");
   simplifies_to("sum((2k)^2,k,0,n)",

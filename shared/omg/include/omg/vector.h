@@ -76,9 +76,6 @@ class StaticVector : public AbstractStaticVector<T> {
 
   size_t capacity() const { return CAPACITY; }
   bool isFull() const { return this->m_size == CAPACITY; }
-  std::span<const T> span() const {
-    return std::span<const T>(this->m_data, this->size());
-  }
   std::span<T> span() { return std::span<T>(this->m_data, this->size()); }
 
  protected:

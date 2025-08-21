@@ -31,9 +31,9 @@ class SymbolStore : public Poincare::VariableStore {
  private:
   class SymbolWithExpression {
    public:
-    SymbolWithExpression() = default;
     SymbolWithExpression(char name, UserNamedType type,
                          const Poincare::Internal::Tree* e);
+    SymbolWithExpression() = default;
 
     char name() const { return m_name; }
     UserNamedType type() const { return m_type; }
@@ -56,6 +56,7 @@ class SymbolStore : public Poincare::VariableStore {
 
   // Returns a nullptr if the symbol does not exist in the store
   const SymbolWithExpression* findSymbolInStore(char symbolName) const;
+  SymbolWithExpression* findSymbolInStore(char symbolName);
 
   static constexpr size_t k_maxSymbols = 10;
   using SymbolTable = OMG::StaticVector<SymbolWithExpression, k_maxSymbols>;

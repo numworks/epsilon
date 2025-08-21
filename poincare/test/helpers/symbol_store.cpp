@@ -78,9 +78,26 @@ const SymbolStore::SymbolWithExpression* SymbolStore::findSymbolInStore(
   return result;
 }
 
+SymbolStore::SymbolWithExpression* SymbolStore::findSymbolInStore(
+    char symbolName) {
+  SymbolWithExpression* result =
+      std::find_if(m_symbolTable.begin(), m_symbolTable.end(),
+                   [symbolName](const SymbolWithExpression& storedSymbol) {
+                     return storedSymbol.name() == symbolName;
+                   });
+  if (result == m_symbolTable.end()) {
+    return nullptr;
+  }
+  return result;
+}
+
 bool SymbolStore::push(const Tree* expression, char symbolName,
                        UserNamedType symbolType) {
-  // TODO: check whether the symbol already exists
+  SymbolWithExpression* existingSymbol = findSymbolInStore(symbolName);
+  if (existingSymbol) {
+    *existingSymbol = SymbolWithExpression(symbolName, symbolType, expression);
+    return true;
+  }
   m_symbolTable.push(SymbolWithExpression(symbolName, symbolType, expression));
   return true;
 }

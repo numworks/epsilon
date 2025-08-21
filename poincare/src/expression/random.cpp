@@ -89,7 +89,7 @@ T PrivateApproximateRandIntNoRep(const Tree* randInNoRep,
     // Cannot access a single element for unseeded RandIntNoRep.
     return NAN;
   }
-  assert(listElement + seed <= Random::Context::k_maxNumberOfVariables);
+  assert(listElement <= Random::Context::k_maxNumberOfVariables - seed);
   seed += listElement;
   Random::Context::VariableType* cachedValue =
       &approxCtx->m_randomContext.m_list[seed - 1];

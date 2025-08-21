@@ -29,8 +29,7 @@ namespace Solver {
 UserExpression equationList(const EquationStore* store) {
   OMG::StaticVector<UserExpression, EquationStore::k_maxNumberOfEquations>
       expressions;
-  int nb = store->numberOfDefinedModels();
-  for (int i = 0; i < nb; i++) {
+  for (int i = 0; i < store->numberOfDefinedModels(); i++) {
     expressions.push(store->cloneExpressionOfEquationAtIndex(i));
   }
   return UserExpression::BuildListOfExpressions(expressions.span());
